@@ -39,8 +39,8 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 import sys
 import socket
-import select
 import base64
+import threading
 
 import colony.libs.string_buffer_util
 
@@ -221,6 +221,12 @@ class HttpClient:
     password = "none"
     """ The password to be used in authentication """
 
+    _http_client = None
+    """ The http client object used to provide connections """
+
+    _http_client_lock = None
+    """ Lock to control the fetching of the queries """
+
     def __init__(self, main_client_http, protocol_version, content_type_charset = DEFAULT_CHARSET):
         """
         Constructor of the class.
@@ -237,6 +243,22 @@ class HttpClient:
         self.main_client_http = main_client_http
         self.protocol_version = protocol_version
         self.content_type_charset = content_type_charset
+
+        self._http_client_lock = threading.RLock()
+
+    def open(self, parameters):
+        # generates the parameters
+        client_parameters = self._generate_client_parameters(parameters)
+
+        # creates the http client, generating the internal structures
+        self._http_client = self.main_client_http.main_client_http_plugin.main_client_utils_plugin.generate_client(client_parameters)
+
+        # starts the http client
+        self._http_client.start_client()
+
+    def close(self, parameters):
+        # stops the http client
+        self._http_client.stop_client()
 
     def fetch_url(self, url, method, parameters = {}, protocol_version = HTTP_1_1_VERSION, content_type_charset = DEFAULT_CHARSET):
         """
@@ -262,17 +284,23 @@ class HttpClient:
         # retrieves the socket name from the protocol socket map
         socket_name = PROTOCOL_SOCKET_NAME_MAP.get(protocol, None)
 
-        # creates a new connection and connects
-        self.http_connection = self._get_socket(socket_name)
-        self.http_connection.connect((host, port))
+        # retrieves the corresponding (http) client connection
+        client_connection = self._http_client.get_client_connection((host, port, socket_name))
 
-        # sends the request for the host, port, path,
-        # parameters, method, protocol version and content type
-        # charset and retrieves the request
-        request = self.send_request(host, port, path, parameters, method, protocol_version, content_type_charset)
+        # acquires the http client lock
+        self._http_client_lock.acquire()
 
-        # retrieves the response
-        response = self.retrieve_response(request)
+        try:
+            # sends the request for the client connection, host, port, path,
+            # parameters, method, protocol version and content type
+            # charset and retrieves the request
+            request = self.send_request(client_connection, host, port, path, parameters, method, protocol_version, content_type_charset)
+
+            # retrieves the response, using the client connection
+            response = self.retrieve_response(client_connection, request)
+        finally:
+            # releases the http client lock
+            self._http_client_lock.release()
 
         # returns the response
         return response
@@ -328,10 +356,12 @@ class HttpClient:
         # return the built url
         return url
 
-    def send_request(self, host, port, path, parameters, operation_type, protocol_version, content_type_charset):
+    def send_request(self, client_connection, host, port, path, parameters, operation_type, protocol_version, content_type_charset):
         """
         Sends the request for the given parameters.
 
+        @type client_connection: ClientConnection
+        @param client_connection: The client connection to be used.
         @type host: String
         @param host: The host to be used by the request.
         @type port: int
@@ -363,15 +393,17 @@ class HttpClient:
         result_value = request.get_result()
 
         # sends the result value
-        self.http_connection.sendall(result_value)
+        client_connection.send(result_value)
 
         # returns the request
         return request
 
-    def retrieve_response(self, request, response_timeout = RESPONSE_TIMEOUT):
+    def retrieve_response(self, client_connection, request, response_timeout = RESPONSE_TIMEOUT):
         """
         Retrieves the response from the sent request.
 
+        @type client_connection: ClientConnection
+        @param client_connection: The client connection to be used.
         @rtype: HttpRequest
         @return: The request that originated the response.
         @type response_timeout: int
@@ -408,7 +440,7 @@ class HttpClient:
         # continuous loop
         while True:
             # retrieves the data
-            data = self.retrieve_data(response_timeout)
+            data = client_connection.retrieve_data(response_timeout)
 
             # retrieves the data length
             data_length = len(data)
@@ -564,7 +596,7 @@ class HttpClient:
                     # returns the response
                     return response
 
-    def retrieve_response_chunked(self, response, message_value, response_timeout = RESPONSE_TIMEOUT):
+    def retrieve_response_chunked(self, client_connection, response, message_value, response_timeout = RESPONSE_TIMEOUT):
         # creates the message string buffer
         message = colony.libs.string_buffer_util.StringBuffer()
 
@@ -582,7 +614,7 @@ class HttpClient:
             # iterates while the end of octets part is not found
             while octet_end_index == -1:
                 # retrieves the data
-                data = self.retrieve_data(response_timeout)
+                data = client_connection.retrieve_data(response_timeout)
 
                 # retrieves the data length
                 data_length = len(data)
@@ -705,31 +737,6 @@ class HttpClient:
         # decodes the message value into unicode using the given charset
         response.received_message = received_message_value.decode(content_type_charset)
 
-    def retrieve_data(self, response_timeout = RESPONSE_TIMEOUT, chunk_size = CHUNK_SIZE):
-        try:
-            # sets the connection to non blocking mode
-            self.http_connection.setblocking(0)
-
-            # runs the select in the http connection, with timeout
-            selected_values = select.select([self.http_connection], [], [], response_timeout)
-
-            # sets the connection to blocking mode
-            self.http_connection.setblocking(1)
-        except:
-            raise main_client_http_exceptions.ResponseClosed("invalid socket")
-
-        if selected_values == ([], [], []):
-            self.http_connection.close()
-            raise main_client_http_exceptions.ClientResponseTimeout("%is timeout" % response_timeout)
-        try:
-            # receives the data in chunks
-            data = self.http_connection.recv(chunk_size)
-        except:
-            raise main_client_http_exceptions.ServerResponseTimeout("timeout")
-
-        # returns the data
-        return data
-
     def set_authentication(self, username, password):
         """
         Sets the authentication values, to be used in the request.
@@ -819,6 +826,24 @@ class HttpClient:
 
         # returns the quoted string value
         return self.quote(string_value, safe)
+
+    def _generate_client_parameters(self, parameters):
+        """
+        Retrieves the client parameters map from the base parameters
+        map.
+
+        @type parameters: Dictionary
+        @param parameters: The base parameters map to be used to build
+        the final client parameters map.
+        @rtype: Dictionary
+        @return: The client service parameters map.
+        """
+
+        # creates the parameters map
+        parameters = {"client_plugin" : self.main_client_http.main_client_http_plugin}
+
+        # returns the parameters
+        return parameters
 
     def _get_socket(self, socket_name = "normal"):
         """

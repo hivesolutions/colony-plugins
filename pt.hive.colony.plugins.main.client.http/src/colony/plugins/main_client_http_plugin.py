@@ -58,6 +58,8 @@ class MainClienthttpPlugin(colony.plugins.plugin_system.Plugin):
     capabilities = ["client.http", "build_automation_item"]
     capabilities_allowed = ["socket_provider"]
     dependencies = [colony.plugins.plugin_system.PluginDependency(
+                    "pt.hive.colony.plugins.main.client.utils", "1.0.0"),
+                    colony.plugins.plugin_system.PluginDependency(
                     "pt.hive.colony.plugins.misc.url_parser", "1.0.0")]
     events_handled = []
     events_registrable = []
@@ -67,6 +69,7 @@ class MainClienthttpPlugin(colony.plugins.plugin_system.Plugin):
 
     socket_provider_plugins = []
 
+    main_client_utils_plugin = None
     url_parser_plugin = None
 
     def load_plugin(self):
@@ -109,6 +112,13 @@ class MainClienthttpPlugin(colony.plugins.plugin_system.Plugin):
     @colony.plugins.decorators.unload_allowed_capability("socket_provider")
     def socket_provider_unload_allowed(self, plugin, capability):
         self.socket_provider_plugins.remove(plugin)
+
+    def get_main_client_utils_plugin(self):
+        return self.main_client_utils_plugin
+
+    @colony.plugins.decorators.plugin_inject("pt.hive.colony.plugins.main.client.utils")
+    def set_main_client_utils_plugin(self, main_client_utils_plugin):
+        self.main_client_utils_plugin = main_client_utils_plugin
 
     def get_url_parser_plugin(self):
         return self.url_parser_plugin
