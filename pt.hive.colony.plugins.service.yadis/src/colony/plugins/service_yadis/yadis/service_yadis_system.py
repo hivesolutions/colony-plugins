@@ -257,8 +257,6 @@ class YadisClient:
         # retrieves the contents from the http response
         contents = http_response.received_message
 
-        print repr(contents)
-
         # returns the contents
         return contents
 
