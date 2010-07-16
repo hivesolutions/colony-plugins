@@ -234,7 +234,7 @@ class AbstractClient:
         """
 
         # iterates over all the client connections, to closes them
-        for _connection_tuple, client_connection in self.client_connections_map:
+        for _connection_tuple, client_connection in self.client_connections_map.items():
             # closes the client connection
             client_connection.close()
 
@@ -560,7 +560,7 @@ class ClientConnection:
             self.connection_socket.setblocking(1)
         except:
             # raises the request closed exception
-            raise main_client_utils_exceptions.RequestClosed("invalid socket2")
+            raise main_client_utils_exceptions.RequestClosed("invalid socket")
 
         if not selected_values[0] == []:
             # receives the data from the socket
