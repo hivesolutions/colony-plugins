@@ -110,12 +110,14 @@ class ServiceTwitter:
 
         self.service_twitter_plugin = service_twitter_plugin
 
-    def create_remote_client(self, service_attributes):
+    def create_remote_client(self, service_attributes, open_client = True):
         """
         Creates a remote client, with the given service attributes.
 
         @type service_attributes: Dictionary
         @param service_attributes: The service attributes to be used.
+        @type open_client: bool
+        @param open_client: If the client should be opened.
         @rtype: TwitterClient
         @return: The created remote client.
         """
@@ -140,6 +142,10 @@ class ServiceTwitter:
 
         # creates a new twitter client with the given options
         twitter_client = TwitterClient(json_plugin, main_client_http_plugin, username, password, encoding, oauth_structure)
+
+        # in case the client is meant to be open
+        # open the client
+        open_client and twitter_client.open()
 
         # returns the twitter client
         return twitter_client
@@ -199,6 +205,23 @@ class TwitterClient:
         self.oauth_structure = oauth_structure
 
         self.request_header = {}
+
+    def open(self):
+        """
+        Opens the twitter client.
+        """
+
+        pass
+
+    def close(self):
+        """
+        Closes the twitter client.
+        """
+
+        # in case an http client is defined
+        if self.http_client:
+            # closes the http client
+            self.http_client.close({})
 
     def generate_oauth_structure(self, oauth_consumer_key, oauth_consumer_secret, oauth_signature_method = DEFAULT_OAUTH_SIGNATURE_METHOD, oauth_signature = None, oauth_timestamp = None, oauth_nonce = None, oauth_version = DEFAULT_OAUTH_VERSION, oauth_callback = OUT_OF_BAND_CALLBACK_VALUE, set_structure = True):
         """
@@ -1047,12 +1070,15 @@ class TwitterClient:
         """
 
         # in case no http client exists
-        #if not self.http_client:
+        if not self.http_client:
             # creates the http client
-        #    self.http_client = self.main_client_http_plugin.create_client({})
+            self.http_client = self.main_client_http_plugin.create_client({})
+
+            # opens the http client
+            self.http_client.open({})
 
         # returns the http client
-        return self.main_client_http_plugin.create_client({})
+        return self.http_client
 
 class OauthStructure:
     """
