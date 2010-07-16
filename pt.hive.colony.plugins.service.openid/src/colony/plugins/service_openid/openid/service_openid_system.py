@@ -400,13 +400,13 @@ class OpenidClient:
         # retrieves the types list
         types_list = first_service.types_list
 
-        # sets the provider url in the open id structure
+        # sets the provider url in the openid structure
         self.openid_structure.provider_url = provider_url
 
-        # sets the local id in the open id structure
+        # sets the local id in the openid structure
         self.openid_structure.local_id = local_id
 
-        # sets the types list in the open id structure
+        # sets the types list in the openid structure
         self.openid_structure.types_list = types_list
 
         # prints a debug message
