@@ -671,13 +671,15 @@ class MainServiceAbeculaCommunicationPushHandler:
         @return: The generated communication handler
         """
 
-        def communication_handler(notification):
+        def communication_handler(notification, communication_name):
             """
             The "base" communication handler function.
             to be used in the generation of the communication handler.
 
             @type notification: PushNotification
             @param notification: The push notification to be sent.
+            @type communication_name: String
+            @param communication_name: The name of the communication to be used.
             """
 
             # creates a new response
@@ -687,7 +689,7 @@ class MainServiceAbeculaCommunicationPushHandler:
             operation_id = self._generate_operation_id()
 
             # encodes the notification, retrieving the encoded notification
-            encoded_notification = self._encode_notification(notification)
+            encoded_notification = self._encode_notification(notification, communication_name)
 
             # sets the response properties
             response.set_operation_id("S" + str(operation_id))
@@ -924,13 +926,15 @@ class MainServiceAbeculaCommunicationPushHandler:
         # removes the service connection from the service connection communication client id map
         del self.service_connection_communication_client_id_map[service_connection]
 
-    def _encode_notification(self, notification):
+    def _encode_notification(self, notification, communication_name):
         """
         Encodes the given notification into the required
         output format.
 
         @type notification: PushNotification
         @param notification: The push notification to be encoded.
+        @type communication_name: String
+        @param communication_name: The communication name.
         @rtype: String
         @return: The encoded notification in string format.
         """
@@ -938,7 +942,6 @@ class MainServiceAbeculaCommunicationPushHandler:
         # retrieves the notification attributes
         message = notification.get_message()
         sender_id = notification.get_sender_id()
-        communication_name = notification.get_communication_name()
 
         # creates the complete message contents from the original message contents
         message_contents = {COMMUNICATION_NAME_VALUE : communication_name,
