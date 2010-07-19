@@ -75,14 +75,28 @@ class WebMvcCommunicationPushController:
         # returns true
         return True
 
-    def handle_broadcast(self, rest_request, parameters = {}):
-        # sends the broadcast message for the given request
-        self._send_broadcast(rest_request)
+    def handle_message(self, rest_request, parameters = {}):
+        # sends the message for the given request
+        self._message(rest_request)
 
         # returns true
         return True
 
-    def _send_broadcast(self, rest_request):
+    def handle_set_profile(self, rest_request, parameters = {}):
+        # sets the profile for the given request
+        self._set_profile(rest_request)
+
+        # returns true
+        return True
+
+    def handle_unset_profile(self, rest_request, parameters = {}):
+        # unsets the profile for the given request
+        self._unset_profile(rest_request)
+
+        # returns true
+        return True
+
+    def _message(self, rest_request):
         # retrieves the communication push plugin
         communication_push_plugin = self.web_mvc_communication_push_plugin.communication_push_plugin
 
@@ -90,12 +104,41 @@ class WebMvcCommunicationPushController:
         form_data_map = self.process_form_data(rest_request, DEFAULT_ENCODING)
 
         # retrieves the form data attributes
+        communication_handler_name = form_data_map["communication_handler_name"]
         communication_name = form_data_map["communication_name"]
         message = form_data_map["message"]
 
         # generates the notification
-        notification = communication_push_plugin.generate_notification(message, None)
+        notification = communication_push_plugin.generate_notification(message, communication_handler_name)
 
         # sends the broadcast notification, for the communication name
         # and notification
         communication_push_plugin.send_broadcast_notification(communication_name, notification)
+
+    def _set_profile(self, rest_request):
+        # retrieves the communication push plugin
+        communication_push_plugin = self.web_mvc_communication_push_plugin.communication_push_plugin
+
+        # processes the form data
+        form_data_map = self.process_form_data(rest_request, DEFAULT_ENCODING)
+
+        # retrieves the form data attributes
+        communication_profile_name = form_data_map["communication_profile_name"]
+        communication_name = form_data_map["communication_name"]
+
+        # sets the communication profile
+        communication_push_plugin.set_communication_profile(communication_profile_name, communication_name)
+
+    def _unset_profile(self, rest_request):
+        # retrieves the communication push plugin
+        communication_push_plugin = self.web_mvc_communication_push_plugin.communication_push_plugin
+
+        # processes the form data
+        form_data_map = self.process_form_data(rest_request, DEFAULT_ENCODING)
+
+        # retrieves the form data attributes
+        communication_profile_name = form_data_map["communication_profile_name"]
+        communication_name = form_data_map["communication_name"]
+
+        # unsets the communication profile
+        communication_push_plugin.unset_communication_profile(communication_profile_name, communication_name)
