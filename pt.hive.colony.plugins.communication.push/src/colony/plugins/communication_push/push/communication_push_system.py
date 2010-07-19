@@ -51,6 +51,21 @@ COMMUNICATION_HANDLER_NAMES_VALUE = "communication_handler_names"
 PROPERTIES_VALUE = "properties"
 """ The properties value """
 
+NUMBER_THREADS = 3
+""" The number of threads """
+
+SCHEDULING_ALGORITHM = 2
+""" The scheduling algorithm """
+
+MAXIMUM_NUMBER_THREADS = 5
+""" The maximum number of threads """
+
+MAXIMUM_NUMBER_WORKER_THREADS = 5
+""" The maximum number of workers per thread """
+
+WORK_SCHEDULING_ALGORITHM = 1
+""" The work scheduling algorithm """
+
 class CommunicationPush:
     """
     The communication push plugin.
@@ -68,11 +83,11 @@ class CommunicationPush:
     communication_handler_name_communication_handler_method = {}
     """ The map associating a communication handler and name tuple with the communication handler method """
 
-    communication_handler_name_push_notifications = {}
-    """ The map associating the communication handler name with the list of pending push notifications """
-
     communication_handler_name_properties_map = {}
     """ The map associating the communication handler name with the map of properties """
+
+    work_pool = None
+    """ Thw work pool associated with the processing of the push notifications """
 
     def __init__(self, comnunication_push_plugin):
         """
@@ -87,8 +102,32 @@ class CommunicationPush:
         self.communication_name_communication_handlers_map = {}
         self.communication_handler_communication_names = {}
         self.communication_handler_name_communication_handler_method = {}
-        self.communication_handler_name_push_notifications = {}
         self.communication_handler_name_properties = {}
+
+    def start_pool(self):
+        """
+        Starts the work pool.
+        """
+
+        # retrieves the work pool manager pool
+        work_pool_manager_plugin = self.comnunication_push_plugin.work_pool_manager_plugin
+
+        # creates the work pool
+        self.work_pool = work_pool_manager_plugin.create_new_work_pool("communication push system pool", "communication push system work pool", ProcessingClass, [self, self.comnunication_push_plugin], NUMBER_THREADS, SCHEDULING_ALGORITHM, MAXIMUM_NUMBER_THREADS, MAXIMUM_NUMBER_WORKER_THREADS, WORK_SCHEDULING_ALGORITHM)
+
+        # starts the pool
+        self.work_pool.start_pool()
+
+    def stop_pool(self):
+        """
+        Stops the work pool.
+        """
+
+        # stops the pool tasks
+        self.work_pool.stop_pool_tasks()
+
+        # stops the pool
+        self.work_pool.stop_pool()
 
     def add_communication_handler(self, communication_name, communication_handler_name, communication_handler_method):
         """
@@ -139,12 +178,6 @@ class CommunicationPush:
         # sets the communication handler name tuple for the communication handler method
         # in the communication handler name communication handler method map
         self.communication_handler_name_communication_handler_method[communication_handler_name_tuple] = communication_handler_method
-
-        # in case the communication handler is not defined in the communication handler name
-        # push notification map
-        if not communication_handler_name in self.communication_handler_name_push_notifications:
-            # creates a new list to hold the push notification for the communication handler name
-            self.communication_handler_name_push_notifications[communication_handler_name] = []
 
     def remove_communication_handler(self, communication_name, communication_handler_name, communication_handler_method):
         """
@@ -254,14 +287,11 @@ class CommunicationPush:
                 # passes the iteration
                 continue
 
-            # in case there is a communication handler method
-            # defined use it
-            if communication_handler_method:
-                # calls the communication handler method, with the push notification
-                communication_handler_method(push_notification)
-            # otherwise puts the message into the "mail box"
-            else:
-                self.communication_handler_name_push_notifications[communication_handler_name].append(push_notification)
+            # creates a new push notification work
+            push_notification_work = PushNotificationWork(push_notification, communication_handler_method)
+
+            # inserts a push notification work into the work pool (in order to be processed)
+            self.work_pool.insert_work(push_notification_work)
 
     def get_communication_information(self, communication_handler_name):
         """
@@ -477,3 +507,169 @@ class PushNotification:
         """
 
         self.sender_id = sender_id
+
+class ProcessingClass:
+    """
+    The processing class.
+    """
+
+    communication_push = None
+    """ The communication push """
+
+    communication_push_plugin = None
+    """ The communication push plugin """
+
+    work_list = []
+    """ The list of work to do """
+
+    def __init__(self, communication_push, communication_push_plugin):
+        """
+        Constructor of the class.
+
+        @type communication_push: CommunicationPush
+        @param communication_push: The communication push.
+        @type communication_push_plugin: CommunicationPushPlugin
+        @param communication_push_plugin: The communication push plugin.
+        """
+
+        self.communication_push = communication_push
+        self.communication_push_plugin = communication_push_plugin
+
+        self.work_list = []
+
+    def start(self):
+        """
+        Starts the processing class.
+        """
+
+        pass
+
+    def stop(self):
+        """
+        Stops the processing class.
+        """
+
+        pass
+
+    def process(self):
+        """
+        Processes an iteration of the processing class.
+        """
+
+        # iterates over all the work in the
+        # work list
+        for work in self.work_list:
+            try:
+                # retrieves the push notification from the work
+                push_notification = work.get_push_notification()
+
+                # retrieves the communication handler method from the work
+                communication_handler_method = work.get_communication_handler_method()
+
+                # calls the communication handler method with
+                # the push notification
+                communication_handler_method(push_notification)
+            except Exception, exception:
+                # prints an information message
+                self.communication_push_plugin.info("Problem calling the communication handler method for push notification: %s" % str(exception))
+
+                # removes the work
+                self.remove_work(work)
+            else:
+                # removes the work
+                self.remove_work(work)
+
+    def wake(self):
+        """
+        "Wakes" the processing class.
+        """
+
+        pass
+
+    def work_added(self, work_reference):
+        """
+        Adds a work to the work list.
+
+        @type work_reference: Object
+        @param work_reference: The work to be added
+        to the work list.
+        """
+
+        self.work_list.append(work_reference)
+
+    def work_removed(self, work_reference):
+        """
+        Removes a work from the work list.
+
+        @type work_reference: Object
+        @param work_reference: The work to be removed
+        from the work list.
+        """
+
+        self.work_list.remove(work_reference)
+
+class PushNotificationWork:
+    """
+    The push notification work class.
+    """
+
+    push_notification = None
+    """ The push notification associated with the work """
+
+    communication_handler_method = None
+    """ The communication handler method """
+
+    def __init__(self, push_notification, communication_handler_method):
+        """
+        Constructor of the class.
+
+        @type push_notification: PushNotification
+        @param push_notification: The push notification associated
+        with the work.
+        @type communication_handler_method: Method
+        @param communication_handler_method: The communication handler method.
+        """
+
+        self.push_notification = push_notification
+        self.communication_handler_method = communication_handler_method
+
+    def get_push_notification(self):
+        """
+        Retrieves the push notification.
+
+        @rtype: PushNotification
+        @return: The push notification.
+        """
+
+        return self.push_notification
+
+    def set_push_notification(self, push_notification):
+        """
+        Sets the push notification.
+
+        @type push_notification: PushNotification
+        @param push_notification: The push notification.
+        """
+
+        self.push_notification = push_notification
+
+    def get_communication_handler_method(self):
+        """
+        Retrieves the communication handler method.
+
+        @rtype: Method
+        @return: The communication handler method.
+        """
+
+        return self.communication_handler_method
+
+    def set_communication_handler_method(self, communication_handler_method):
+        """
+        Sets the communication handler method.
+
+        @type communication_handler_method: Method
+        @param communication_handler_method: The communication
+        handler method.
+        """
+
+        self.communication_handler_method = communication_handler_method

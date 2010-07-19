@@ -38,6 +38,7 @@ __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
 import colony.plugins.plugin_system
+import colony.plugins.decorators
 
 class CommunicationPushPlugin(colony.plugins.plugin_system.Plugin):
     """
@@ -57,12 +58,15 @@ class CommunicationPushPlugin(colony.plugins.plugin_system.Plugin):
     attributes = {"build_automation_file_path" : "$base{plugin_directory}/communication_push/push/resources/baf.xml"}
     capabilities = ["communication.push", "build_automation_item"]
     capabilities_allowed = []
-    dependencies = []
+    dependencies = [colony.plugins.plugin_system.PluginDependency(
+                    "pt.hive.colony.plugins.main.work.work_pool_manager", "1.0.0")]
     events_handled = []
     events_registrable = []
     main_modules = ["communication_push.push.communication_push_system"]
 
     communication_push = None
+
+    work_pool_manager_plugin = None
 
     def load_plugin(self):
         colony.plugins.plugin_system.Plugin.load_plugin(self)
@@ -72,9 +76,11 @@ class CommunicationPushPlugin(colony.plugins.plugin_system.Plugin):
 
     def end_load_plugin(self):
         colony.plugins.plugin_system.Plugin.end_load_plugin(self)
+        self.communication_push.start_pool()
 
     def unload_plugin(self):
         colony.plugins.plugin_system.Plugin.unload_plugin(self)
+        self.communication_push.stop_pool()
 
     def end_unload_plugin(self):
         colony.plugins.plugin_system.Plugin.end_unload_plugin(self)
@@ -85,6 +91,7 @@ class CommunicationPushPlugin(colony.plugins.plugin_system.Plugin):
     def unload_allowed(self, plugin, capability):
         colony.plugins.plugin_system.Plugin.unload_allowed(self, plugin, capability)
 
+    @colony.plugins.decorators.inject_dependencies("pt.hive.colony.plugins.communication.push", "1.0.0")
     def dependency_injected(self, plugin):
         colony.plugins.plugin_system.Plugin.dependency_injected(self, plugin)
 
@@ -216,3 +223,10 @@ class CommunicationPushPlugin(colony.plugins.plugin_system.Plugin):
         """
 
         return self.communication_push.generate_notification(message, sender_id)
+
+    def get_work_pool_manager_plugin(self):
+        return self.work_pool_manager_plugin
+
+    @colony.plugins.decorators.plugin_inject("pt.hive.colony.plugins.main.work.work_pool_manager")
+    def set_work_pool_manager_plugin(self, work_pool_manager_plugin):
+        self.work_pool_manager_plugin = work_pool_manager_plugin
