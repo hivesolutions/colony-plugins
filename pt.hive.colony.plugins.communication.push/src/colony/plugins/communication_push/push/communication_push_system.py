@@ -113,7 +113,7 @@ class CommunicationPush:
         work_pool_manager_plugin = self.comnunication_push_plugin.work_pool_manager_plugin
 
         # creates the work pool
-        self.work_pool = work_pool_manager_plugin.create_new_work_pool("communication push system pool", "communication push system work pool", ProcessingClass, [self, self.comnunication_push_plugin], NUMBER_THREADS, SCHEDULING_ALGORITHM, MAXIMUM_NUMBER_THREADS, MAXIMUM_NUMBER_WORKER_THREADS, WORK_SCHEDULING_ALGORITHM)
+        self.work_pool = work_pool_manager_plugin.create_new_work_pool("communication push system pool", "communication push system work pool", CommunicationPushProcessingTask, [self, self.comnunication_push_plugin], NUMBER_THREADS, SCHEDULING_ALGORITHM, MAXIMUM_NUMBER_THREADS, MAXIMUM_NUMBER_WORKER_THREADS, WORK_SCHEDULING_ALGORITHM)
 
         # starts the pool
         self.work_pool.start_pool()
@@ -443,6 +443,109 @@ class CommunicationPush:
 
         return self.communication_handler_name_properties_map.get(communication_handler_name, {})
 
+class CommunicationPushProcessingTask:
+    """
+    The communication push processing task.
+    """
+
+    communication_push = None
+    """ The communication push """
+
+    communication_push_plugin = None
+    """ The communication push plugin """
+
+    work_list = []
+    """ The list of work to do """
+
+    def __init__(self, communication_push, communication_push_plugin):
+        """
+        Constructor of the class.
+
+        @type communication_push: CommunicationPush
+        @param communication_push: The communication push.
+        @type communication_push_plugin: CommunicationPushPlugin
+        @param communication_push_plugin: The communication push plugin.
+        """
+
+        self.communication_push = communication_push
+        self.communication_push_plugin = communication_push_plugin
+
+        self.work_list = []
+
+    def start(self):
+        """
+        Starts the communication push
+        processing task.
+        """
+
+        pass
+
+    def stop(self):
+        """
+        Stops the communication push
+        processing task.
+        """
+
+        pass
+
+    def process(self):
+        """
+        Processes an iteration of the communication push processing task.
+        """
+
+        # iterates over all the work in the
+        # work list
+        for work in self.work_list:
+            try:
+                # retrieves the push notification from the work
+                push_notification = work.get_push_notification()
+
+                # retrieves the communication handler method from the work
+                communication_handler_method = work.get_communication_handler_method()
+
+                # calls the communication handler method with
+                # the push notification
+                communication_handler_method(push_notification)
+            except Exception, exception:
+                # prints an information message
+                self.communication_push_plugin.info("Problem calling the communication handler method for push notification: %s" % str(exception))
+
+                # removes the work
+                self.remove_work(work)
+            else:
+                # removes the work
+                self.remove_work(work)
+
+    def wake(self):
+        """
+        "Wakes" the communication push
+        processing task.
+        """
+
+        pass
+
+    def work_added(self, work_reference):
+        """
+        Adds a work to the work list.
+
+        @type work_reference: Object
+        @param work_reference: The work to be added
+        to the work list.
+        """
+
+        self.work_list.append(work_reference)
+
+    def work_removed(self, work_reference):
+        """
+        Removes a work from the work list.
+
+        @type work_reference: Object
+        @param work_reference: The work to be removed
+        from the work list.
+        """
+
+        self.work_list.remove(work_reference)
+
 class PushNotification:
     """
     The push notification class.
@@ -507,106 +610,6 @@ class PushNotification:
         """
 
         self.sender_id = sender_id
-
-class ProcessingClass:
-    """
-    The processing class.
-    """
-
-    communication_push = None
-    """ The communication push """
-
-    communication_push_plugin = None
-    """ The communication push plugin """
-
-    work_list = []
-    """ The list of work to do """
-
-    def __init__(self, communication_push, communication_push_plugin):
-        """
-        Constructor of the class.
-
-        @type communication_push: CommunicationPush
-        @param communication_push: The communication push.
-        @type communication_push_plugin: CommunicationPushPlugin
-        @param communication_push_plugin: The communication push plugin.
-        """
-
-        self.communication_push = communication_push
-        self.communication_push_plugin = communication_push_plugin
-
-        self.work_list = []
-
-    def start(self):
-        """
-        Starts the processing class.
-        """
-
-        pass
-
-    def stop(self):
-        """
-        Stops the processing class.
-        """
-
-        pass
-
-    def process(self):
-        """
-        Processes an iteration of the processing class.
-        """
-
-        # iterates over all the work in the
-        # work list
-        for work in self.work_list:
-            try:
-                # retrieves the push notification from the work
-                push_notification = work.get_push_notification()
-
-                # retrieves the communication handler method from the work
-                communication_handler_method = work.get_communication_handler_method()
-
-                # calls the communication handler method with
-                # the push notification
-                communication_handler_method(push_notification)
-            except Exception, exception:
-                # prints an information message
-                self.communication_push_plugin.info("Problem calling the communication handler method for push notification: %s" % str(exception))
-
-                # removes the work
-                self.remove_work(work)
-            else:
-                # removes the work
-                self.remove_work(work)
-
-    def wake(self):
-        """
-        "Wakes" the processing class.
-        """
-
-        pass
-
-    def work_added(self, work_reference):
-        """
-        Adds a work to the work list.
-
-        @type work_reference: Object
-        @param work_reference: The work to be added
-        to the work list.
-        """
-
-        self.work_list.append(work_reference)
-
-    def work_removed(self, work_reference):
-        """
-        Removes a work from the work list.
-
-        @type work_reference: Object
-        @param work_reference: The work to be removed
-        from the work list.
-        """
-
-        self.work_list.remove(work_reference)
 
 class PushNotificationWork:
     """
