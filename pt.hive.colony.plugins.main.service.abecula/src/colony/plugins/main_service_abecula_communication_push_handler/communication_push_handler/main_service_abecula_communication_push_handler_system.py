@@ -381,16 +381,8 @@ class MainServiceAbeculaCommunicationPushHandler:
         # tries to retrieve the message contents
         message_contents = decoded_request_contents.get(MESSAGE_CONTENTS_VALUE, None)
 
-        # creates the complete message contents from the original message contents
-        complete_message_contents = {COMMUNICATION_NAME_VALUE : communication_name,
-                                     COMMUNICATION_CLIENT_ID_VALUE : communication_client_id,
-                                     MESSAGE_CONTENTS_VALUE : message_contents}
-
-        # encodes the complete message contents
-        complete_message_contents_encoded = self._encode(complete_message_contents)
-
         # generates a new notification for the message contents and the communication client id
-        notification = communication_push_plugin.generate_notification(complete_message_contents_encoded, communication_client_id)
+        notification = communication_push_plugin.generate_notification(message_contents, communication_client_id)
 
         # sends the notification in broadcast mode
         communication_push_plugin.send_broadcast_notification(communication_name, notification)
@@ -694,16 +686,16 @@ class MainServiceAbeculaCommunicationPushHandler:
             # generates a new operation id
             operation_id = self._generate_operation_id()
 
+            # encodes the notification, retrieving the encoded notification
+            encoded_notification = self._encode_notification(notification)
+
             # sets the response properties
             response.set_operation_id("S" + str(operation_id))
             response.set_operation_type(MESSAGE_VALUE)
             response.set_target(HANDLER_NAME)
 
-            # retrieves the notification message
-            notification_message = notification.get_message()
-
-            # writes the notification message to the response
-            response.write(notification_message)
+            # writes the encoded notification message to the response
+            response.write(encoded_notification)
 
             # sends the response to the service connection
             service_handler.send_response(service_connection, response)
@@ -931,6 +923,33 @@ class MainServiceAbeculaCommunicationPushHandler:
 
         # removes the service connection from the service connection communication client id map
         del self.service_connection_communication_client_id_map[service_connection]
+
+    def _encode_notification(self, notification):
+        """
+        Encodes the given notification into the required
+        output format.
+
+        @type notification: PushNotification
+        @param notification: The push notification to be encoded.
+        @rtype: String
+        @return: The encoded notification in string format.
+        """
+
+        # retrieves the notification attributes
+        message = notification.get_message()
+        sender_id = notification.get_sender_id()
+        communication_name = notification.get_communication_name()
+
+        # creates the complete message contents from the original message contents
+        message_contents = {COMMUNICATION_NAME_VALUE : communication_name,
+                            COMMUNICATION_CLIENT_ID_VALUE : sender_id,
+                            MESSAGE_CONTENTS_VALUE : message}
+
+        # encodes the message contents
+        message_contents_encoded = self._encode(message_contents)
+
+        # returns the message contents encoded
+        return message_contents_encoded
 
     def _encode(self, value):
         """
