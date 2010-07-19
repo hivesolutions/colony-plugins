@@ -214,6 +214,15 @@ class MainServiceAbeculaCommunicationPushHandler:
         # handles the operation
         operation_handler_method(request, communication_push_plugin)
 
+    def print_diagnostics(self):
+        """
+        Prints diagnostic information about the plugin instance.
+        """
+
+        print "service_connection_name_communication_handler_map:" + str(self.service_connection_name_communication_handler_map)
+        print "service_connection_profile_name_communication_handler_map:" + str(self.service_connection_profile_name_communication_handler_map)
+        print "service_connection_communication_client_id_map:" + str(self.service_connection_communication_client_id_map)
+
     def handle_connect(self, request, communication_push_plugin):
         """
         Handles the abecula connect command.

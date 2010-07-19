@@ -56,7 +56,7 @@ class MainServiceAbeculaCommunicationPushHandlerPlugin(colony.plugins.plugin_sys
                  colony.plugins.plugin_system.JYTHON_ENVIRONMENT,
                  colony.plugins.plugin_system.IRON_PYTHON_ENVIRONMENT]
     attributes = {"build_automation_file_path" : "$base{plugin_directory}/main_service_abecula_communication_push_handler/communication_push_handler/resources/baf.xml"}
-    capabilities = ["abecula_service_handler", "build_automation_item"]
+    capabilities = ["abecula_service_handler", "diagnostics", "build_automation_item"]
     capabilities_allowed = []
     dependencies = [colony.plugins.plugin_system.PluginDependency(
                     "pt.hive.colony.plugins.communication.push", "1.0.0"),
@@ -118,6 +118,13 @@ class MainServiceAbeculaCommunicationPushHandlerPlugin(colony.plugins.plugin_sys
         """
 
         return self.main_service_abecula_communication_push_handler.handle_request(request)
+
+    def print_diagnostics(self):
+        """
+        Prints diagnostic information about the plugin instance.
+        """
+
+        return self.main_service_abecula_communication_push_handler.print_diagnostics()
 
     def get_communication_push_plugin(self):
         return self.communication_push_plugin
