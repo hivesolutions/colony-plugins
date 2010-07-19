@@ -309,7 +309,7 @@ class CommunicationPush:
                 continue
 
             # creates a new push notification work
-            push_notification_work = PushNotificationWork(push_notification, communication_handler_method)
+            push_notification_work = PushNotificationWork(push_notification, communication_name, communication_handler_method)
 
             # inserts a push notification work into the work pool (in order to be processed)
             self.work_pool.insert_work(push_notification_work)
@@ -751,12 +751,15 @@ class CommunicationPushProcessingTask:
                 # retrieves the push notification from the work
                 push_notification = work.get_push_notification()
 
+                # retrieves the communication name from the work
+                communication_name = work.get_communication_name()
+
                 # retrieves the communication handler method from the work
                 communication_handler_method = work.get_communication_handler_method()
 
                 # calls the communication handler method with
-                # the push notification
-                communication_handler_method(push_notification)
+                # the push notification and the communication name
+                communication_handler_method(push_notification, communication_name)
             except Exception, exception:
                 # prints an information message
                 self.communication_push_plugin.info("Problem calling the communication handler method for push notification: %s" % str(exception))
@@ -870,21 +873,28 @@ class PushNotificationWork:
     push_notification = None
     """ The push notification associated with the work """
 
+    communication_name = None
+    """ The name of the communication used to send push notification """
+
     communication_handler_method = None
     """ The communication handler method """
 
-    def __init__(self, push_notification, communication_handler_method):
+    def __init__(self, push_notification, communication_name, communication_handler_method):
         """
         Constructor of the class.
 
         @type push_notification: PushNotification
         @param push_notification: The push notification associated
         with the work.
+        @type communication_name: String
+        @param communication_name: The name of the communication used to
+        send push notification.
         @type communication_handler_method: Method
         @param communication_handler_method: The communication handler method.
         """
 
         self.push_notification = push_notification
+        self.communication_name = communication_name
         self.communication_handler_method = communication_handler_method
 
     def get_push_notification(self):
@@ -906,6 +916,26 @@ class PushNotificationWork:
         """
 
         self.push_notification = push_notification
+
+    def get_communication_name(self):
+        """
+        Retrieves the push notification.
+
+        @rtype: String
+        @return: The communication name.
+        """
+
+        return self.communication_name
+
+    def set_communication_name(self, communication_name):
+        """
+        Sets the push notification.
+
+        @type communication_name: String
+        @param communication_name: The communication name.
+        """
+
+        self.communication_name = communication_name
 
     def get_communication_handler_method(self):
         """
