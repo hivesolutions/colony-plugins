@@ -61,6 +61,8 @@ class MainServiceAbeculaCommunicationPushHandlerPlugin(colony.plugins.plugin_sys
     dependencies = [colony.plugins.plugin_system.PluginDependency(
                     "pt.hive.colony.plugins.communication.push", "1.0.0"),
                     colony.plugins.plugin_system.PluginDependency(
+                    "pt.hive.colony.plugins.main.authentication", "1.0.0"),
+                    colony.plugins.plugin_system.PluginDependency(
                     "pt.hive.colony.plugins.misc.json", "1.0.0")]
     events_handled = []
     events_registrable = []
@@ -69,6 +71,7 @@ class MainServiceAbeculaCommunicationPushHandlerPlugin(colony.plugins.plugin_sys
     main_service_abecula_communication_push_handler = None
 
     communication_push_plugin = None
+    main_authentication_plugin = None
     json_plugin = None
 
     def load_plugin(self):
@@ -122,6 +125,13 @@ class MainServiceAbeculaCommunicationPushHandlerPlugin(colony.plugins.plugin_sys
     @colony.plugins.decorators.plugin_inject("pt.hive.colony.plugins.communication.push")
     def set_communication_push_plugin(self, communication_push_plugin):
         self.communication_push_plugin = communication_push_plugin
+
+    def get_main_authentication_plugin(self):
+        return self.main_authentication_plugin
+
+    @colony.plugins.decorators.plugin_inject("pt.hive.colony.plugins.main.authentication")
+    def set_main_authentication_plugin(self, main_authentication_plugin):
+        self.main_authentication_plugin = main_authentication_plugin
 
     def get_json_plugin(self):
         return self.json_plugin

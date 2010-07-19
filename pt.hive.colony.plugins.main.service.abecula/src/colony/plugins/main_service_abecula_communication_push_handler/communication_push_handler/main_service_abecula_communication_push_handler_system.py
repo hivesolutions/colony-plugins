@@ -38,6 +38,7 @@ __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
 import types
+import base64
 import threading
 
 import main_service_abecula_communication_push_handler_exceptions
@@ -87,6 +88,24 @@ PROPERTY_NAME_VALUE = "property_name"
 PROPERTY_VALUE_VALUE = "property_value"
 """ The property value value """
 
+AUTHENTICATED_OPERATION_VALUE = "authenticated_operations"
+""" The authenticated operation value """
+
+AUTHENTICATION_PROPERTIES_VALUE = "authentication_properties"
+""" The authentication properties value """
+
+AUTHENTICATION_HANDLER_VALUE = "authentication_handler"
+""" The authentication handler value """
+
+ARGUMENTS_VALUE = "arguments"
+""" The arguments value """
+
+VALID_VALUE = "valid"
+""" The valid value """
+
+AUTHORIZATION_VALUE = "Authorization"
+""" The authorization value """
+
 class MainServiceAbeculaCommunicationPushHandler:
     """
     The main service abecula communication push handler class.
@@ -104,11 +123,17 @@ class MainServiceAbeculaCommunicationPushHandler:
     operation_id = 0
     """ The operation id """
 
+    operation_id_lock = None
+    """ The lock to control operation id creation """
+
     communication_client_id = 0
     """ The communication client id """
 
     communication_client_id_lock = None
     """ The lock to control communication client id creation """
+
+    handler_configuration = {}
+    """ The handler configuration """
 
     def __init__(self, main_service_abecula_communication_push_handler_plugin):
         """
@@ -123,7 +148,10 @@ class MainServiceAbeculaCommunicationPushHandler:
         self.service_connection_name_communication_handler_map = {}
         self.service_connection_communication_client_id_map = {}
 
+        self.operation_id_lock = threading.RLock()
         self.communication_client_id_lock = threading.RLock()
+
+        self.handler_configuration = self._get_handler_configuration()
 
     def get_handler_name(self):
         """
@@ -163,6 +191,15 @@ class MainServiceAbeculaCommunicationPushHandler:
 
         # retrieves the operation handler method
         operation_handler_method = getattr(self, operation_handler_name)
+
+        # retrieves the authenticated operations
+        authenticated_operations = self.handler_configuration.get(AUTHENTICATED_OPERATION_VALUE, {})
+
+        # in case the operation type is set in the authenticated
+        # operations list
+        if operation_type in authenticated_operations:
+            # requires authentication in the request
+            self._require_authentication(request)
 
         # handles the operation
         operation_handler_method(request, communication_push_plugin)
@@ -490,8 +527,11 @@ class MainServiceAbeculaCommunicationPushHandler:
             # creates a new response
             response = service_handler.create_response()
 
+            # generates a new operation id
+            operation_id = self._generate_operation_id()
+
             # sets the response properties
-            response.set_operation_id("S" + str(self.operation_id))
+            response.set_operation_id("S" + str(operation_id))
             response.set_operation_type(MESSAGE_VALUE)
             response.set_target(HANDLER_NAME)
 
@@ -504,11 +544,86 @@ class MainServiceAbeculaCommunicationPushHandler:
             # sends the response to the service connection
             service_handler.send_response(service_connection, response)
 
-            # increments the operation id
-            self.operation_id += 1
-
         # returns the communication handler
         return communication_handler
+
+    def _require_authentication(self, request):
+        """
+        Requires authentication on the given request.
+        In case no valid authentication is set an exception
+        is raised.
+
+        @type request: AbeculaRequest
+        @param request: The abecula request to be used in
+        the request for authentication.
+        """
+
+        # retrieves the main authentication plugin
+        main_authentication_plugin = self.main_service_abecula_communication_push_handler_plugin.main_authentication_plugin
+
+        # retrieves the authentication token from the request headers
+        authentication_token = request.headers_map.get(AUTHORIZATION_VALUE, None)
+
+        # in case no authentication token is set
+        if not authentication_token:
+            # raises the authentication error
+            raise main_service_abecula_communication_push_handler_exceptions.AuthenticationError("no authentication token defined in the request")
+
+        # decodes the authentication token using the base 64 decoder
+        # in order to retrieve the decoded authentication token
+        decoded_authentication_token = base64.b64decode(authentication_token)
+
+        # splits the decoded authentication token to retrieve
+        # the username and the password
+        username, password = decoded_authentication_token.split(":", 1)
+
+        # retrieves the authentication properties
+        authentication_properties = self.handler_configuration.get(AUTHENTICATION_PROPERTIES_VALUE, {})
+
+        # retrieves the authentication handler
+        authentication_handler = authentication_properties.get(AUTHENTICATION_HANDLER_VALUE, None)
+
+        # retrieves the authentication arguments
+        authentication_arguments = authentication_properties.get(ARGUMENTS_VALUE, None)
+
+        # authenticates the user
+        return_value = main_authentication_plugin.authenticate_user(username, password, authentication_handler, authentication_arguments)
+
+        # in case no return value is received
+        if not return_value:
+            # raises the authentication error
+            raise main_service_abecula_communication_push_handler_exceptions.AuthenticationError("invalid authentication credentials")
+
+        # tries to retrieve the valid value from the return value
+        valid_value = return_value.get(VALID_VALUE, False)
+
+        # in case no valid value is set
+        if not valid_value:
+            # raises the authentication error
+            raise main_service_abecula_communication_push_handler_exceptions.AuthenticationError("invalid authentication credentials")
+
+    def _generate_operation_id(self):
+        """
+        Generates a new operation id.
+
+        @rtype: int
+        @return: The generated operation id.
+        """
+
+        # acquires the operation id lock
+        self.operation_id_lock.acquire()
+
+        # retrieves the current operation id
+        operation_id = self.operation_id
+
+        # increment the operation id
+        self.operation_id += 1
+
+        # releases the operation id lock
+        self.operation_id_lock.release()
+
+        # returns the operation id
+        return operation_id
 
     def _generate_communication_client_id(self):
         """
@@ -677,3 +792,25 @@ class MainServiceAbeculaCommunicationPushHandler:
 
         # returns the decoded value
         return decoded_value
+
+    def _get_handler_configuration(self):
+        """
+        Retrieves the currently set handler configuration.
+
+        @rtype: Dictionary
+        @return: The currently set handler configuration.
+        """
+
+        # retrieves the handler configuration property
+        handler_configuration_property = self.main_service_abecula_communication_push_handler_plugin.get_configuration_property("handler_configuration")
+
+        # in case the handler configuration property is defined
+        if handler_configuration_property:
+            # retrieves the handler configuration
+            handler_configuration = handler_configuration_property.get_data()
+        else:
+            # sets the handler configuration as an empty map
+            handler_configuration = {}
+
+        # returns the handler configuration
+        return handler_configuration
