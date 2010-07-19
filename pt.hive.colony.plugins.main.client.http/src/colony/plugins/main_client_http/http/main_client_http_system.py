@@ -932,7 +932,7 @@ class HttpClient:
             # adds the location to the path
             path += "#" + url_structure.location
 
-        # returns the tuple containing the protocol, the host, the port,
+        # returns the tuple containing the protocol, the host, the port
         # and the path
         return (protocol, host, port, path)
 
