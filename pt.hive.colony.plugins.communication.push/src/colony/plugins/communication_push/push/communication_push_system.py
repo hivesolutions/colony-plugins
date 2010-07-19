@@ -670,7 +670,7 @@ class CommunicationPush:
 
     def _register_communication_profile(self, communication_profile_name, communication_name):
         # retrieves the communication handler tuples list
-        communication_handler_tuples_list = self.communication_profile_name_communication_handler_tuples_map[communication_profile_name]
+        communication_handler_tuples_list = self.communication_profile_name_communication_handler_tuples_map.get(communication_profile_name, [])
 
         # iterates over all the communication handler tuples to add the communication
         # handlers for the communication name
@@ -683,7 +683,7 @@ class CommunicationPush:
 
     def _unregister_communication_profile(self, communication_profile_name, communication_name):
         # retrieves the communication handler tuples list
-        communication_handler_tuples_list = self.communication_profile_name_communication_handler_tuples_map[communication_profile_name]
+        communication_handler_tuples_list = self.communication_profile_name_communication_handler_tuples_map.get(communication_profile_name, [])
 
         # iterates over all the communication handler tuples to remove the communication
         # handlers for the communication name
