@@ -67,6 +67,9 @@ COMMUNICATION_NAME_VALUE = "communication_name"
 COMMUNICATION_NAMES_VALUE = "communication_names"
 """ The communication names value """
 
+COMMUNICATION_PROFILE_NAMES_VALUE = "communication_profile_names"
+""" The communication profile names value """
+
 INFORMATION_VALUE = "information"
 """ The information value """
 
@@ -75,6 +78,9 @@ INFORMATION_ITEM_VALUE = "information_item"
 
 INFORMATION_KEY_VALUE = "information_key"
 """ The information key value """
+
+COMMUNICATION_PROFILE_NAME_VALUE = "communication_profile_name"
+""" The communication profile name value """
 
 COMMUNICATION_VALUE = "communication"
 """ The communication value """
@@ -117,6 +123,9 @@ class MainServiceAbeculaCommunicationPushHandler:
     service_connection_name_communication_handler_map = {}
     """ The map associating a service connection and communication name tuple with the communication handler """
 
+    service_connection_profile_name_communication_handler_map = {}
+    """ The map associating a service connection and communication profile name tuple with the communication handler """
+
     service_connection_communication_client_id_map = {}
     """ The map associating a service connection with the communication client id """
 
@@ -146,6 +155,7 @@ class MainServiceAbeculaCommunicationPushHandler:
         self.main_service_abecula_communication_push_handler_plugin = main_service_abecula_communication_push_handler_plugin
 
         self.service_connection_name_communication_handler_map = {}
+        self.service_connection_profile_name_communication_handler_map = {}
         self.service_connection_communication_client_id_map = {}
 
         self.operation_id_lock = threading.RLock()
@@ -253,6 +263,9 @@ class MainServiceAbeculaCommunicationPushHandler:
 
         # removes all the communication handlers for the communication client id
         communication_push_plugin.remove_all_communication_handler(communication_client_id)
+
+        # unloads all the communication profiles for the communication client id
+        communication_push_plugin.unload_all_communication_profile(communication_client_id)
 
         # sets the encoded request contents
         self._set_encoded_request_contents(request, {RESULT_VALUE : SUCCESS_VALUE})
@@ -464,6 +477,154 @@ class MainServiceAbeculaCommunicationPushHandler:
         # sets the encoded request contents
         self._set_encoded_request_contents(request, {RESULT_VALUE : SUCCESS_VALUE})
 
+    def handle_load(self, request, communication_push_plugin):
+        """
+        Handles the abecula load command.
+
+        @type request: AbeculaRequest
+        @param request: The abecula request for the command.
+        @type communication_push_plugin: Plugin
+        @param communication_push_plugin: The communication push plugin.
+        """
+
+        # retrieves the service handler
+        service_handler = request.get_service_handler()
+
+        # retrieves the service connection
+        service_connection = request.get_service_connection()
+
+        # retrieves the decoded request contents from the request
+        decoded_request_contents = self._get_decoded_request_contents(request)
+
+        # tries to retrieve the communication client id
+        communication_client_id = decoded_request_contents.get(COMMUNICATION_CLIENT_ID_VALUE, None)
+
+        # tries to retrieve the communication profile name
+        communication_profile_name = decoded_request_contents.get(COMMUNICATION_PROFILE_NAME_VALUE, None)
+
+        # retrieves the communication profile names for the communication profile name
+        communication_profile_names = self._get_values(communication_profile_name)
+
+        # generates a communication handler for the given service handler and service connection
+        generated_communication_handler = self.generate_handler(service_handler, service_connection)
+
+        # iterates over all the communication profile names to load them
+        for communication_profile_name in communication_profile_names:
+            # creates the service communication profile name tuple
+            service_connection_profile_name_tuple = (service_connection, communication_profile_name)
+
+            # sets the generated communication handler in the service connection profile name communication handler map
+            self.service_connection_profile_name_communication_handler_map[service_connection_profile_name_tuple] = generated_communication_handler
+
+            # loads the communication profile
+            communication_push_plugin.load_communication_profile(communication_client_id, communication_profile_name, generated_communication_handler)
+
+        # sets the encoded request contents
+        self._set_encoded_request_contents(request, {RESULT_VALUE : SUCCESS_VALUE})
+
+    def handle_unload(self, request, communication_push_plugin):
+        """
+        Handles the abecula unload command.
+
+        @type request: AbeculaRequest
+        @param request: The abecula request for the command.
+        @type communication_push_plugin: Plugin
+        @param communication_push_plugin: The communication push plugin.
+        """
+
+        # retrieves the service connection
+        service_connection = request.get_service_connection()
+
+        # retrieves the decoded request contents from the request
+        decoded_request_contents = self._get_decoded_request_contents(request)
+
+        # tries to retrieve the communication client id
+        communication_client_id = decoded_request_contents.get(COMMUNICATION_CLIENT_ID_VALUE, None)
+
+        # tries to retrieve the communication profile name
+        communication_profile_name = decoded_request_contents.get(COMMUNICATION_PROFILE_NAME_VALUE, None)
+
+        # retrieves the communication profile names for the communication name
+        communication_profile_names = self._get_values(communication_profile_name)
+
+        # iterates over all the communication profile names to unregister
+        # them in the communication push plugin
+        for communication_profile_name in communication_profile_names:
+            # creates the service communication profile name tuple
+            service_connection_profile_name_tuple = (service_connection, communication_profile_name)
+
+            # retrieves the generated communication handler for the service connection and communication profile name
+            generated_communication_handler = self.service_connection_profile_name_communication_handler_map[service_connection_profile_name_tuple]
+
+            # unloads the communication profile
+            communication_push_plugin.unload_communication_profile(communication_client_id, communication_profile_name, generated_communication_handler)
+
+            # removes the service connection profile name from the service connection profile name communication handler map
+            del self.service_connection_profile_name_communication_handler_map[service_connection_profile_name_tuple]
+
+        # sets the encoded request contents
+        self._set_encoded_request_contents(request, {RESULT_VALUE : SUCCESS_VALUE})
+
+    def handle_set(self, request, communication_push_plugin):
+        """
+        Handles the abecula set command.
+
+        @type request: AbeculaRequest
+        @param request: The abecula request for the command.
+        @type communication_push_plugin: Plugin
+        @param communication_push_plugin: The communication push plugin.
+        """
+
+        # retrieves the decoded request contents from the request
+        decoded_request_contents = self._get_decoded_request_contents(request)
+
+        # tries to retrieve the communication profile name
+        communication_profile_name = decoded_request_contents.get(COMMUNICATION_PROFILE_NAME_VALUE, None)
+
+        # tries to retrieve the communication name
+        communication_name = decoded_request_contents.get(COMMUNICATION_NAME_VALUE, None)
+
+        # retrieves the communication names for the communication name
+        communication_names = self._get_values(communication_name)
+
+        # iterates over all the communication names to set them
+        for communication_name in communication_names:
+            # sets the communication profile
+            communication_push_plugin.set_communication_profile(communication_profile_name, communication_name)
+
+        # sets the encoded request contents
+        self._set_encoded_request_contents(request, {RESULT_VALUE : SUCCESS_VALUE})
+
+    def handle_unset(self, request, communication_push_plugin):
+        """
+        Handles the abecula unset command.
+
+        @type request: AbeculaRequest
+        @param request: The abecula request for the command.
+        @type communication_push_plugin: Plugin
+        @param communication_push_plugin: The communication push plugin.
+        """
+
+        # retrieves the decoded request contents from the request
+        decoded_request_contents = self._get_decoded_request_contents(request)
+
+        # tries to retrieve the communication profile name
+        communication_profile_name = decoded_request_contents.get(COMMUNICATION_PROFILE_NAME_VALUE, None)
+
+        # tries to retrieve the communication name
+        communication_name = decoded_request_contents.get(COMMUNICATION_NAME_VALUE, None)
+
+        # retrieves the communication names for the communication name
+        communication_names = self._get_values(communication_name)
+
+        # iterates over all the communication names to set them
+        for communication_name in communication_names:
+            # unsets the communication profile
+            communication_push_plugin.unset_communication_profile(communication_profile_name, communication_name)
+
+        # sets the encoded request contents
+        self._set_encoded_request_contents(request, {RESULT_VALUE : SUCCESS_VALUE})
+
     def handle_ping(self, request, communication_push_plugin):
         """
         Handles the abecula ping command.
@@ -499,6 +660,9 @@ class MainServiceAbeculaCommunicationPushHandler:
 
         # removes all the communication handlers for the communication client id
         communication_push_plugin.remove_all_communication_handler(communication_client_id)
+
+        # unloads all the communication profiles for the communication client id
+        communication_push_plugin.unload_all_communication_profile(communication_client_id)
 
     def generate_handler(self, service_handler, service_connection):
         """
@@ -749,6 +913,18 @@ class MainServiceAbeculaCommunicationPushHandler:
 
             # removes the service connection name from the service connection name communication handler map
             del self.service_connection_name_communication_handler_map[service_connection_name_tuple]
+
+        # retrieves the communication profile names from the communication handler information
+        communication_profile_names = communication_handler_information[COMMUNICATION_PROFILE_NAMES_VALUE]
+
+        # iterates over all the communication profile names to unload
+        # the service connection information
+        for communication_profile_name in communication_profile_names:
+            # creates the service connection profile name tuple
+            service_connection_profile_name_tuple = (service_connection, communication_profile_name)
+
+            # removes the service connection name from the service connection profile name communication handler map
+            del self.service_connection_profile_name_communication_handler_map[service_connection_profile_name_tuple]
 
         # removes the service connection from the service connection communication client id map
         del self.service_connection_communication_client_id_map[service_connection]
