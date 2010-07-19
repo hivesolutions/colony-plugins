@@ -256,7 +256,7 @@ class CommunicationPush:
             communication_handler_name_tuple = (communication_name, communication_handler_name)
 
             # retrieves the communication handler method for the communication handler name tuple
-            communication_handler_method = self.communication_handler_name_communication_handler_method[communication_handler_name_tuple]
+            communication_handler_method = self.communication_handler_name_communication_handler_method_map[communication_handler_name_tuple]
 
             # removes the communication handler for the communication name, communication handler name
             # and communication handler method
@@ -611,8 +611,12 @@ class CommunicationPush:
         # iterates over all the communication names to remove
         # the communication handler from the communication name
         for communication_name in communication_names_list:
-            # removes the communication handler from the communication name
-            self.remove_communication_handler(communication_name, communication_handler_name, communication_handler_method)
+            try:
+                # removes the communication handler from the communication name
+                self.remove_communication_handler(communication_name, communication_handler_name, communication_handler_method)
+            except Exception, exception:
+                # prints an information message about the exception
+                self.comnunication_push_plugin.info("Unable to remove communication '%s' for handler '%s', probably due to double removal (%s)" % (communication_name , communication_handler_name, str(exception)))
 
     def _register_communication_profile(self, communication_profile_name, communication_name):
         # retrieves the communication handler tuples list
