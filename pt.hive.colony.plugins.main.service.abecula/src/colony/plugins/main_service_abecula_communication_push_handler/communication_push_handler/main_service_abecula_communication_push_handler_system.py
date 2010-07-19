@@ -88,7 +88,7 @@ PROPERTY_NAME_VALUE = "property_name"
 PROPERTY_VALUE_VALUE = "property_value"
 """ The property value value """
 
-AUTHENTICATED_OPERATION_VALUE = "authenticated_operations"
+AUTHENTICATED_OPERATIONS_VALUE = "authenticated_operations"
 """ The authenticated operation value """
 
 AUTHENTICATION_PROPERTIES_VALUE = "authentication_properties"
@@ -193,7 +193,7 @@ class MainServiceAbeculaCommunicationPushHandler:
         operation_handler_method = getattr(self, operation_handler_name)
 
         # retrieves the authenticated operations
-        authenticated_operations = self.handler_configuration.get(AUTHENTICATED_OPERATION_VALUE, {})
+        authenticated_operations = self.handler_configuration.get(AUTHENTICATED_OPERATIONS_VALUE, [])
 
         # in case the operation type is set in the authenticated
         # operations list
