@@ -911,8 +911,11 @@ class MainServiceAbeculaCommunicationPushHandler:
             # creates the service connection name tuple
             service_connection_name_tuple = (service_connection, communication_name)
 
-            # removes the service connection name from the service connection name communication handler map
-            del self.service_connection_name_communication_handler_map[service_connection_name_tuple]
+            # in case the service connection name tuple exists in the service connection
+            # name communication handler map
+            if service_connection_name_tuple in self.service_connection_name_communication_handler_map:
+                # removes the service connection name from the service connection name communication handler map
+                del self.service_connection_name_communication_handler_map[service_connection_name_tuple]
 
         # retrieves the communication profile names from the communication handler information
         communication_profile_names = communication_handler_information[COMMUNICATION_PROFILE_NAMES_VALUE]
