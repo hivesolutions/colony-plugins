@@ -101,6 +101,9 @@ class MainServiceAbeculaCommunicationPushHandler:
     service_connection_communication_client_id_map = {}
     """ The map associating a service connection with the communication client id """
 
+    operation_id = 0
+    """ The operation id """
+
     communication_client_id = 0
     """ The communication client id """
 
@@ -488,7 +491,7 @@ class MainServiceAbeculaCommunicationPushHandler:
             response = service_handler.create_response()
 
             # sets the response properties
-            response.set_operation_id("C124")
+            response.set_operation_id("S" + str(self.operation_id))
             response.set_operation_type(MESSAGE_VALUE)
             response.set_target(HANDLER_NAME)
 
@@ -500,6 +503,9 @@ class MainServiceAbeculaCommunicationPushHandler:
 
             # sends the response to the service connection
             service_handler.send_response(service_connection, response)
+
+            # increments the operation id
+            self.operation_id += 1
 
         # returns the communication handler
         return communication_handler
