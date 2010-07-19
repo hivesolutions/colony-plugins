@@ -223,6 +223,11 @@ class CommunicationPush:
         # removes the communication name from the communication names list
         communication_names_list.remove(communication_name)
 
+        # in case the communication names list is empty (no more communication names associated)
+        if not communication_names_list:
+            # removes the communication handler name from the communication handler communication names map
+            del self.communication_handler_communication_names_map[communication_handler_name]
+
         # creates the communication handler name tuple with the communication name
         # and the communication handler name
         communication_handler_name_tuple = (communication_name, communication_handler_name)
