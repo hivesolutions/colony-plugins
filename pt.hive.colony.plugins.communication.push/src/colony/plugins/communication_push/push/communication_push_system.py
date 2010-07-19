@@ -617,8 +617,7 @@ class CommunicationPush:
 
     def print_diagnostics(self):
         """
-        Prints diagnostic information about the communication
-        push system.
+        Prints diagnostic information about the plugin instance.
         """
 
         print "communication_name_communication_handlers_map:" + str(self.communication_name_communication_handlers_map)

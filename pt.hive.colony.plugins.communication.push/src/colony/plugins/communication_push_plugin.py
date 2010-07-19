@@ -56,7 +56,7 @@ class CommunicationPushPlugin(colony.plugins.plugin_system.Plugin):
                  colony.plugins.plugin_system.JYTHON_ENVIRONMENT,
                  colony.plugins.plugin_system.IRON_PYTHON_ENVIRONMENT]
     attributes = {"build_automation_file_path" : "$base{plugin_directory}/communication_push/push/resources/baf.xml"}
-    capabilities = ["communication.push", "build_automation_item"]
+    capabilities = ["communication.push", "diagnostics", "build_automation_item"]
     capabilities_allowed = []
     dependencies = [colony.plugins.plugin_system.PluginDependency(
                     "pt.hive.colony.plugins.main.work.work_pool_manager", "1.0.0")]
@@ -299,8 +299,7 @@ class CommunicationPushPlugin(colony.plugins.plugin_system.Plugin):
 
     def print_diagnostics(self):
         """
-        Prints diagnostic information about the communication
-        push system.
+        Prints diagnostic information about the plugin instance.
         """
 
         return self.communication_push.print_diagnostics()
