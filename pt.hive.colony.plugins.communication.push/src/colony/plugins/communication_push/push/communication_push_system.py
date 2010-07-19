@@ -42,6 +42,9 @@ import copy
 COMMUNICATION_NAMES_VALUE = "communication_names"
 """ The communication names value """
 
+COMMUNICATION_PROFILE_NAMES_VALUE = "communication_profile_names"
+""" The communication profile names value """
+
 COMMUNICATION_HANDLER_COUNT_VALUE = "communication_handler_count"
 """ The communication handler count value """
 
@@ -77,17 +80,26 @@ class CommunicationPush:
     communication_name_communication_handlers_map = {}
     """ The map associating a communication with a list of communication handlers """
 
-    communication_handler_communication_names = {}
+    communication_handler_communication_names_map = {}
     """ The map associating a communication handler with the communication names it handles """
 
-    communication_handler_name_communication_handler_method = {}
+    communication_handler_name_communication_handler_method_map = {}
     """ The map associating a communication handler and name tuple with the communication handler method """
 
     communication_handler_name_properties_map = {}
     """ The map associating the communication handler name with the map of properties """
 
+    communication_profile_name_communication_handler_tuples_map = {}
+    """ The map associating the communication profile name with the communication handler tuples """
+
+    communication_profile_name_communication_names_map = {}
+    """ The map associating the communication profile name with the communication names """
+
+    communication_handler_profile_communication_handler_method = {}
+    """ The map associating the communication handler and profile tuple with the communication handler method """
+
     work_pool = None
-    """ Thw work pool associated with the processing of the push notifications """
+    """ The work pool associated with the processing of the push notifications """
 
     def __init__(self, comnunication_push_plugin):
         """
@@ -100,9 +112,13 @@ class CommunicationPush:
         self.comnunication_push_plugin = comnunication_push_plugin
 
         self.communication_name_communication_handlers_map = {}
-        self.communication_handler_communication_names = {}
-        self.communication_handler_name_communication_handler_method = {}
-        self.communication_handler_name_properties = {}
+        self.communication_handler_communication_names_map = {}
+        self.communication_handler_name_communication_handler_method_map = {}
+        self.communication_handler_name_properties_map = {}
+        self.communication_profile_name_communication_handler_tuples_map = {}
+        self.communication_profile_name_communication_names_map = {}
+        self.communication_handler_communication_profile_names_map = {}
+        self.communication_handler_profile_communication_handler_method = {}
 
     def start_pool(self):
         """
@@ -160,13 +176,13 @@ class CommunicationPush:
 
         # in case the communication handler name is not defined in the communication handler
         # communication names map
-        if not communication_handler_name in self.communication_handler_communication_names:
+        if not communication_handler_name in self.communication_handler_communication_names_map:
             # sets the value of the communication handler name in the communication handler
             # communication names map to a new empty list
-            self.communication_handler_communication_names[communication_handler_name] = []
+            self.communication_handler_communication_names_map[communication_handler_name] = []
 
         # retrieves the communication names list for the communication handler name
-        communication_names_list = self.communication_handler_communication_names[communication_handler_name]
+        communication_names_list = self.communication_handler_communication_names_map[communication_handler_name]
 
         # adds the communication name to the communication names list
         communication_names_list.append(communication_name)
@@ -177,7 +193,7 @@ class CommunicationPush:
 
         # sets the communication handler name tuple for the communication handler method
         # in the communication handler name communication handler method map
-        self.communication_handler_name_communication_handler_method[communication_handler_name_tuple] = communication_handler_method
+        self.communication_handler_name_communication_handler_method_map[communication_handler_name_tuple] = communication_handler_method
 
     def remove_communication_handler(self, communication_name, communication_handler_name, communication_handler_method):
         """
@@ -202,7 +218,7 @@ class CommunicationPush:
         communication_handlers_list.remove(communication_handler_tuple)
 
         # retrieves the communication names list for the communication handler name
-        communication_names_list = self.communication_handler_communication_names[communication_handler_name]
+        communication_names_list = self.communication_handler_communication_names_map[communication_handler_name]
 
         # removes the communication name from the communication names list
         communication_names_list.remove(communication_name)
@@ -213,7 +229,7 @@ class CommunicationPush:
 
         # removes the communication handler name tuple for the communication handler method
         # in the communication handler name communication handler method map
-        del self.communication_handler_name_communication_handler_method[communication_handler_name_tuple]
+        del self.communication_handler_name_communication_handler_method_map[communication_handler_name_tuple]
 
     def remove_all_communication_handler(self, communication_handler_name):
         """
@@ -227,7 +243,7 @@ class CommunicationPush:
         """
 
         # retrieves the communication names list for the communication handler name
-        communication_names_list = self.communication_handler_communication_names.get(communication_handler_name, [])
+        communication_names_list = self.communication_handler_communication_names_map.get(communication_handler_name, [])
 
         # creates a copy of the communication names list, in order to avoid
         # possible list corruption during iteration
@@ -345,13 +361,17 @@ class CommunicationPush:
         """
 
         # retrieves the communication names list for the communication handler name
-        communication_names_list = self.communication_handler_communication_names.get(communication_handler_name, [])
+        communication_names_list = self.communication_handler_communication_names_map.get(communication_handler_name, [])
+
+        # retrieves the communication profile names list for the communication handler name
+        communication_profile_names_list = self.communication_handler_communication_profile_names_map.get(communication_handler_name, [])
 
         # retrieves the properties map for the communication handler
         properties_map = self._get_communication_handler_properties(communication_handler_name)
 
         # creates the communication handler information
         communication_handler_information = {COMMUNICATION_NAMES_VALUE : communication_names_list,
+                                             COMMUNICATION_PROFILE_NAMES_VALUE : communication_profile_names_list,
                                              PROPERTIES_VALUE : properties_map}
 
         # returns the communication handler information
@@ -411,6 +431,214 @@ class CommunicationPush:
 
         # set the property value in the properties map
         properties_map[property_name] = property_value
+
+    def load_communication_profile(self, communication_handler_name, communication_profile_name, communication_handler_method):
+        """
+        Loads a communication profile into a communication handler.
+        The loading of the communication profile implies the registration of all the
+        communication "channels" associated with the profile.
+
+        @type communication_handler_name: String
+        @param communication_handler_name: The name of the communication handler
+        to be loaded with the profile.
+        @type communication_profile_name: String
+        @param communication_profile_name: The name of the profile to be used in the
+        profile loading.
+        @type communication_handler_method: Method
+        @param communication_handler_method: The method to be called on communication notification.
+        """
+
+        # creates the communication handler tuple
+        communication_handler_tuple = (communication_handler_name, communication_handler_method)
+
+        # creates the communication handler profile tuple
+        communication_handler_profile_tuple = (communication_handler_name, communication_profile_name)
+
+        # in case the communication profile name is not defined in the communication
+        # profile name communication handler tuples map
+        if not communication_profile_name in self.communication_profile_name_communication_handler_tuples_map:
+            # creates the list for the communication profile name
+            self.communication_profile_name_communication_handler_tuples_map[communication_profile_name] = []
+
+        # retrieves the communication handler tuples list
+        communication_handler_tuples_list = self.communication_profile_name_communication_handler_tuples_map[communication_profile_name]
+
+        # adds the communication handler tuple to the communication handler names list
+        communication_handler_tuples_list.append(communication_handler_tuple)
+
+        # in case the communication handler name is not defined in the communication handler communication
+        # profile names map
+        if not communication_handler_name in self.communication_handler_communication_profile_names_map:
+            # creates the list for the communication handler
+            self.communication_handler_communication_profile_names_map[communication_handler_name] = []
+
+        # retrieves the communication profile names list
+        communication_profile_names_list = self.communication_handler_communication_profile_names_map[communication_handler_name]
+
+        # adds the communication profile name to the communication profile names list
+        communication_profile_names_list.append(communication_profile_name)
+
+        # sets the communication handler method for the communication handler profile tuple
+        self.communication_handler_name_communication_handler_method_map[communication_handler_profile_tuple] = communication_handler_method
+
+        # loads the communication profile (internal structures) in the communication handler
+        self._load_communication_profile(communication_handler_name, communication_profile_name, communication_handler_method)
+
+    def unload_communication_profile(self, communication_handler_name, communication_profile_name, communication_handler_method):
+        """
+        Unloads a communication profile from a communication handler.
+        The loading of the communication profile implies the unregistration from all the
+        communication "channels" associated with the profile.
+
+        @type communication_handler_name: String
+        @param communication_handler_name: The name of the communication handler
+        to be unloaded from the profile.
+        @type communication_profile_name: String
+        @param communication_profile_name: The name of the profile to be used in the
+        profile unloading.
+        @type communication_handler_method: Method
+        @param communication_handler_method: The method to be called on communication notification.
+        """
+
+        # creates the communication handler tuple
+        communication_handler_tuple = (communication_handler_name, communication_handler_method)
+
+        # creates the communication handler profile tuple
+        communication_handler_profile_tuple = (communication_handler_name, communication_profile_name)
+
+        # retrieves the communication handler tuples list
+        communication_handler_tuples_list = self.communication_profile_name_communication_handler_tuples_map[communication_profile_name]
+
+        # removes the communication handler name from the communication handler tuples list
+        communication_handler_tuples_list.remove(communication_handler_tuple)
+
+        # retrieves the communication profile names list
+        communication_profile_names_list = self.communication_handler_communication_profile_names_map[communication_handler_name]
+
+        # removes the communication profile name from the communication profile names list
+        communication_profile_names_list.remove(communication_profile_name)
+
+        # removes the communication handler profile tuple from the communication
+        # handler name communication handler method map
+        del self.communication_handler_name_communication_handler_method_map[communication_handler_profile_tuple]
+
+        # unloads the communication profile (internal structures) from communication handler
+        self._unload_communication_profile(communication_handler_name, communication_profile_name, communication_handler_method)
+
+    def unload_all_communication_profile(self, communication_handler_name):
+        """
+        Removes the communication handler from all the communication profiles.
+
+        @type communication_handler_name: String
+        @param communication_handler_name: The name of the handler to have the
+        communication profiles removed.
+        """
+
+        # retrieves the communication profile names list for the communication handler name
+        communication_profile_names_list = self.communication_handler_communication_profile_names_map[communication_handler_name]
+
+        # iterates over all the communication profile names list
+        for communication_profile_name in communication_profile_names_list:
+            # creates the communication handler profile tuple
+            communication_handler_profile_tuple = (communication_handler_name, communication_profile_name)
+
+            # retrieves the communication handler method fo the communication handler profile tuple
+            communication_handler_method = self.communication_handler_name_communication_handler_method_map[communication_handler_profile_tuple]
+
+            # unloads the communication profile for the handler name, profile name and handler method
+            self.unload_communication_profile(communication_handler_name, communication_profile_name, communication_handler_method)
+
+    def set_communication_profile(self, communication_profile_name, communication_name):
+        """
+        Sets (adds) a communication to the given communication profile.
+
+        @type communication_profile_name: String
+        @param communication_profile_name: The name of the communication profile
+        to add the communication.
+        @type communication_name: String
+        @param communication_name: The name of the communication to be added.
+        """
+
+        # in case the communication profile name is not defined in the communication
+        # profile name communication names map
+        if not communication_profile_name in self.communication_profile_name_communication_names_map:
+            # creates the list for the communication profile name
+            self.communication_profile_name_communication_names_map[communication_profile_name] = []
+
+        # retrieves the communication names list
+        communication_names_list = self.communication_profile_name_communication_names_map[communication_profile_name]
+
+        # adds the communication name to the communication names list
+        communication_names_list.append(communication_name)
+
+        # registers the new communication name in the communication profile
+        self._register_communication_profile(communication_profile_name, communication_name)
+
+    def unset_communication_profile(self, communication_profile_name, communication_name):
+        """
+        Unsets (removes) a communication from the given communication profile.
+
+        @type communication_profile_name: String
+        @param communication_profile_name: The name of the communication profile
+        to remove the communication.
+        @type communication_name: String
+        @param communication_name: The name of the communication to be removed.
+        """
+
+        # retrieves the communication names list
+        communication_names_list = self.communication_profile_name_communication_names_map[communication_profile_name]
+
+        # removes the communication name from the communication names list
+        communication_names_list.remove(communication_name)
+
+        # unregisters the new communication name in the communication profile
+        self._unregister_communication_profile(communication_profile_name, communication_name)
+
+    def _load_communication_profile(self, communication_handler_name, communication_profile_name, communication_handler_method):
+        # retrieves the communication names list
+        communication_names_list = self.communication_profile_name_communication_names_map.get(communication_profile_name, [])
+
+        # iterates over all the communication names to
+        # add the communication handler to the communication name
+        for communication_name in communication_names_list:
+            # adds the communication handler to the communication name
+            self.add_communication_handler(communication_name, communication_handler_name, communication_handler_method)
+
+    def _unload_communication_profile(self, communication_handler_name, communication_profile_name, communication_handler_method):
+        # retrieves the communication names list
+        communication_names_list = self.communication_profile_name_communication_names_map.get(communication_profile_name, [])
+
+        # iterates over all the communication names to remove
+        # the communication handler from the communication name
+        for communication_name in communication_names_list:
+            # removes the communication handler from the communication name
+            self.remove_communication_handler(communication_name, communication_handler_name, communication_handler_method)
+
+    def _register_communication_profile(self, communication_profile_name, communication_name):
+        # retrieves the communication handler tuples list
+        communication_handler_tuples_list = self.communication_profile_name_communication_handler_tuples_map[communication_profile_name]
+
+        # iterates over all the communication handler tuples to add the communication
+        # handlers for the communication name
+        for communication_handler_tuple in communication_handler_tuples_list:
+            # retrieves the communication handler name and method from the communication handler tuple
+            communication_handler_name, communication_handler_method = communication_handler_tuple
+
+            # adds the communication handler to the communication name
+            self.add_communication_handler(communication_name, communication_handler_name, communication_handler_method)
+
+    def _unregister_communication_profile(self, communication_profile_name, communication_name):
+        # retrieves the communication handler tuples list
+        communication_handler_tuples_list = self.communication_profile_name_communication_handler_tuples_map[communication_profile_name]
+
+        # iterates over all the communication handler tuples to remove the communication
+        # handlers for the communication name
+        for communication_handler_tuple in communication_handler_tuples_list:
+            # retrieves the communication handler name and method from the communication handler tuple
+            communication_handler_name, communication_handler_method = communication_handler_tuple
+
+            # removes the communication handler from the communication name
+            self.remove_communication_handler(communication_name, communication_handler_name, communication_handler_method)
 
     def generate_notification(self, message, sender_id):
         """

@@ -209,6 +209,79 @@ class CommunicationPushPlugin(colony.plugins.plugin_system.Plugin):
 
         return self.communication_push.set_communication_handler_property(communication_handler_name, property_name, property_value)
 
+    def load_communication_profile(self, communication_handler_name, communication_profile_name, communication_handler_method):
+        """
+        Loads a communication profile into a communication handler.
+        The loading of the communication profile implies the registration of all the
+        communication "channels" associated with the profile.
+
+        @type communication_handler_name: String
+        @param communication_handler_name: The name of the communication handler
+        to be loaded with the profile.
+        @type communication_profile_name: String
+        @param communication_profile_name: The name of the profile to be used in the
+        profile loading.
+        @type communication_handler_method: Method
+        @param communication_handler_method: The method to be called on communication notification.
+        """
+
+        return self.communication_push.load_communication_profile(communication_handler_name, communication_profile_name, communication_handler_method)
+
+    def unload_communication_profile(self, communication_handler_name, communication_profile_name, communication_handler_method):
+        """
+        Unloads a communication profile from a communication handler.
+        The loading of the communication profile implies the unregistration from all the
+        communication "channels" associated with the profile.
+
+        @type communication_handler_name: String
+        @param communication_handler_name: The name of the communication handler
+        to be unloaded from the profile.
+        @type communication_profile_name: String
+        @param communication_profile_name: The name of the profile to be used in the
+        profile unloading.
+        @type communication_handler_method: Method
+        @param communication_handler_method: The method to be called on communication notification.
+        """
+
+        return self.communication_push.unload_communication_profile(communication_handler_name, communication_profile_name, communication_handler_method)
+
+    def unload_all_communication_profile(self, communication_handler_name):
+        """
+        Removes the communication handler from all the communication profiles.
+
+        @type communication_handler_name: String
+        @param communication_handler_name: The name of the handler to have the
+        communication profiles removed.
+        """
+
+        return self.communication_push.unload_all_communication_profile(communication_handler_name)
+
+    def set_communication_profile(self, communication_profile_name, communication_name):
+        """
+        Sets (adds) a communication to the given communication profile.
+
+        @type communication_profile_name: String
+        @param communication_profile_name: The name of the communication profile
+        to add the communication.
+        @type communication_name: String
+        @param communication_name: The name of the communication to be added.
+        """
+
+        return self.communication_push.set_communication_profile(communication_profile_name, communication_name)
+
+    def unset_communication_profile(self, communication_profile_name, communication_name):
+        """
+        Unsets (removes) a communication from the given communication profile.
+
+        @type communication_profile_name: String
+        @param communication_profile_name: The name of the communication profile
+        to remove the communication.
+        @type communication_name: String
+        @param communication_name: The name of the communication to be removed.
+        """
+
+        return self.communication_push.unset_communication_profile(communication_profile_name, communication_name)
+
     def generate_notification(self, message, sender_id):
         """
         Generates a push notification for the given message and
