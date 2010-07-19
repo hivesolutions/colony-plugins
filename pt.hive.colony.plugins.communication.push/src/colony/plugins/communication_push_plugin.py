@@ -297,6 +297,14 @@ class CommunicationPushPlugin(colony.plugins.plugin_system.Plugin):
 
         return self.communication_push.generate_notification(message, sender_id)
 
+    def print_diagnostics(self):
+        """
+        Prints diagnostic information about the communication
+        push system.
+        """
+
+        return self.communication_push.print_diagnostics()
+
     def get_work_pool_manager_plugin(self):
         return self.work_pool_manager_plugin
 

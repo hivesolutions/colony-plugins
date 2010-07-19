@@ -594,6 +594,51 @@ class CommunicationPush:
         # unregisters the new communication name in the communication profile
         self._unregister_communication_profile(communication_profile_name, communication_name)
 
+    def generate_notification(self, message, sender_id):
+        """
+        Generates a push notification for the given message and
+        sender id.
+
+        @type message: String
+        @param message: The message to be used in the notification.
+        @type sender_id: String
+        @param sender_id: The id of the notification sender.
+        @rtype: PushNotification
+        @return: The generated push notification reference.
+        """
+
+        # returns the generated notification
+        return PushNotification(message, sender_id)
+
+    def print_diagnostics(self):
+        """
+        Prints diagnostic information about the communication
+        push system.
+        """
+
+        print "communication_name_communication_handlers_map:" + str(self.communication_name_communication_handlers_map)
+        print "communication_handler_communication_names_map:" + str(self.communication_handler_communication_names_map)
+        print "communication_handler_name_communication_handler_method_map:" + str(self.communication_handler_name_communication_handler_method_map)
+        print "communication_handler_name_properties_map:" + str(self.communication_handler_name_properties_map)
+        print "communication_profile_name_communication_handler_tuples_map:" + str(self.communication_profile_name_communication_handler_tuples_map)
+        print "communication_profile_name_communication_names_map:" + str(self.communication_profile_name_communication_names_map)
+        print "communication_handler_profile_communication_handler_method:" + str(self.communication_handler_profile_communication_handler_method)
+
+    def _get_communication_handler_properties(self, communication_handler_name):
+        """
+        Retrieves a map containing the communication handler properties
+        for the given communication handler name.
+
+        @type communication_handler_name: String
+        @param communication_handler_name: The name of the communication
+        handler to retrieve the map of properties.
+        @rtype: Dictionary
+        @return: The map containing the properties of the communication
+        handler.
+        """
+
+        return self.communication_handler_name_properties_map.get(communication_handler_name, {})
+
     def _load_communication_profile(self, communication_handler_name, communication_profile_name, communication_handler_method):
         # retrieves the communication names list
         communication_names_list = self.communication_profile_name_communication_names_map.get(communication_profile_name, [])
@@ -643,37 +688,6 @@ class CommunicationPush:
 
             # removes the communication handler from the communication name
             self.remove_communication_handler(communication_name, communication_handler_name, communication_handler_method)
-
-    def generate_notification(self, message, sender_id):
-        """
-        Generates a push notification for the given message and
-        sender id.
-
-        @type message: String
-        @param message: The message to be used in the notification.
-        @type sender_id: String
-        @param sender_id: The id of the notification sender.
-        @rtype: PushNotification
-        @return: The generated push notification reference.
-        """
-
-        # returns the generated notification
-        return PushNotification(message, sender_id)
-
-    def _get_communication_handler_properties(self, communication_handler_name):
-        """
-        Retrieves a map containing the communication handler properties
-        for the given communication handler name.
-
-        @type communication_handler_name: String
-        @param communication_handler_name: The name of the communication
-        handler to retrieve the map of properties.
-        @rtype: Dictionary
-        @return: The map containing the properties of the communication
-        handler.
-        """
-
-        return self.communication_handler_name_properties_map.get(communication_handler_name, {})
 
 class CommunicationPushProcessingTask:
     """
