@@ -195,16 +195,16 @@ class WebMvcCommunicationPushController:
             message = notification.get_message()
             sender_id = notification.get_sender_id()
 
+            # creates the parameters map
             parameters = {COMMUNICATION_NAME_VALUE : communication_name,
                           COMMUNICATION_HANDLER_NAME_VALUE : sender_id,
                           MESSAGE_CONTENTS_VALUE : message}
 
-            contents = http_client.fetch_url(return_url, method, parameters)
+            # fetches the url, retrieving the contents
+            http_client.fetch_url(return_url, method, parameters)
 
             # closes the http client
             http_client.close({})
-
-            print contents.received_message
 
         # returns the communication handler
         return communication_handler
