@@ -87,6 +87,8 @@ class WebMvcCommunicationPush:
                 r"^web_mvc_communication_push/register$" : self.web_mvc_communication_push_controller.handle_register,
                 r"^web_mvc_communication_push/unregister$" : self.web_mvc_communication_push_controller.handle_unregister,
                 r"^web_mvc_communication_push/message$" : self.web_mvc_communication_push_controller.handle_message,
+                r"^web_mvc_communication_push/load_profile$" : self.web_mvc_communication_push_controller.handle_load_profile,
+                r"^web_mvc_communication_push/unload_profile$" : self.web_mvc_communication_push_controller.handle_unload_profile,
                 r"^web_mvc_communication_push/set_profile$" : self.web_mvc_communication_push_controller.handle_set_profile,
                 r"^web_mvc_communication_push/unset_profile$" : self.web_mvc_communication_push_controller.handle_unset_profile}
 

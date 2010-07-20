@@ -78,6 +78,9 @@ class WebMvcCommunicationPushController:
     service_connection_name_communication_handler_map = {}
     """ The map associating the service connection name with the communication handler """
 
+    service_connection_profile_name_communication_handler_map = {}
+    """ The map associating the service connection profile name with the communication handler """
+
     def __init__(self, web_mvc_communication_push_plugin, web_mvc_communication_push):
         """
         Constructor of the class.
@@ -92,8 +95,16 @@ class WebMvcCommunicationPushController:
         self.web_mvc_communication_push = web_mvc_communication_push
 
         self.service_connection_name_communication_handler_map = {}
+        self.service_connection_profile_name_communication_handler_map = {}
 
     def handle_show(self, rest_request, parameters = {}):
+        # sets the result for the rest request
+        rest_request.set_result_translated(str(self.service_connection_name_communication_handler_map))
+
+        # flushes the rest request
+        rest_request.flush()
+
+        # returns true
         return True
 
     def handle_register(self, rest_request, parameters = {}):
@@ -113,6 +124,20 @@ class WebMvcCommunicationPushController:
     def handle_message(self, rest_request, parameters = {}):
         # sends the message for the given request
         self._message(rest_request)
+
+        # returns true
+        return True
+
+    def handle_load_profile(self, rest_request, parameters = {}):
+        # loads the profile for the given request
+        self._load_profile(rest_request)
+
+        # returns true
+        return True
+
+    def handle_unload_profile(self, rest_request, parameters = {}):
+        # unloads the profile for the given request
+        self._unload_profile(rest_request)
 
         # returns true
         return True
@@ -251,6 +276,55 @@ class WebMvcCommunicationPushController:
         # sends the broadcast notification, for the communication name
         # and notification
         communication_push_plugin.send_broadcast_notification(communication_name, notification)
+
+    def _load_profile(self, rest_request):
+        # retrieves the communication push plugin
+        communication_push_plugin = self.web_mvc_communication_push_plugin.communication_push_plugin
+
+        # processes the form data
+        form_data_map = self.process_form_data(rest_request, DEFAULT_ENCODING)
+
+        # retrieves the form data attributes
+        communication_handler_name = form_data_map[COMMUNICATION_HANDLER_NAME_VALUE]
+        communication_profile_name = form_data_map[COMMUNICATION_PROFILE_NAME_VALUE]
+        return_url = form_data_map[RETURN_URL_VALUE]
+        method = form_data_map.get(METHOD_VALUE, GET_METHOD_VALUE)
+
+        # generates a communication handler for the given return url and method
+        generated_communication_handler = self.generate_handler(return_url, method)
+
+        # creates the service connection profile name tuple
+        service_connection_profile_name_tuple = (communication_handler_name, return_url, communication_profile_name)
+
+        # sets the generated communication handler in the service connection profile name communication handler map
+        self.service_connection_profile_name_communication_handler_map[service_connection_profile_name_tuple] = generated_communication_handler
+
+        # loads the communication profile
+        communication_push_plugin.load_communication_profile(communication_handler_name, communication_profile_name, generated_communication_handler)
+
+    def _unload_profile(self, rest_request):
+        # retrieves the communication push plugin
+        communication_push_plugin = self.web_mvc_communication_push_plugin.communication_push_plugin
+
+        # processes the form data
+        form_data_map = self.process_form_data(rest_request, DEFAULT_ENCODING)
+
+        # retrieves the form data attributes
+        communication_handler_name = form_data_map[COMMUNICATION_HANDLER_NAME_VALUE]
+        communication_profile_name = form_data_map[COMMUNICATION_PROFILE_NAME_VALUE]
+        return_url = form_data_map[RETURN_URL_VALUE]
+
+        # creates the service connection profile name tuple
+        service_connection_profile_name_tuple = (communication_handler_name, return_url, communication_profile_name)
+
+        # retrieves the generated communication handler for the service connection and communication profile name
+        generated_communication_handler = self.service_connection_profile_name_communication_handler_map[service_connection_profile_name_tuple]
+
+        # unloads the communication profile
+        communication_push_plugin.unload_communication_profile(communication_handler_name, communication_profile_name, generated_communication_handler)
+
+        # removes the service connection profile name from the service connection profile name communication handler map
+        del self.service_connection_profile_name_communication_handler_map[service_connection_profile_name_tuple]
 
     def _set_profile(self, rest_request):
         # retrieves the communication push plugin
