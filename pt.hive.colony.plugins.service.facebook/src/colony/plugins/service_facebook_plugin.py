@@ -57,6 +57,8 @@ class ServiceFacebookPlugin(colony.plugins.plugin_system.Plugin):
     capabilities = ["service.facebook", "build_automation_item"]
     capabilities_allowed = []
     dependencies = [colony.plugins.plugin_system.PluginDependency(
+                    "pt.hive.colony.plugins.main.client.http", "1.0.0"),
+                    colony.plugins.plugin_system.PluginDependency(
                     "pt.hive.colony.plugins.misc.json", "1.0.0")]
     events_handled = []
     events_registrable = []
@@ -64,6 +66,7 @@ class ServiceFacebookPlugin(colony.plugins.plugin_system.Plugin):
 
     service_facebook = None
 
+    main_client_http_plugin = None
     json_plugin = None
 
     def load_plugin(self):
@@ -102,6 +105,13 @@ class ServiceFacebookPlugin(colony.plugins.plugin_system.Plugin):
         """
 
         return self.service_facebook.create_remote_client(service_attributes)
+
+    def get_main_client_http_plugin(self):
+        return self.main_client_http_plugin
+
+    @colony.plugins.decorators.plugin_inject("pt.hive.colony.plugins.main.client.http")
+    def set_main_client_http_plugin(self, main_client_http_plugin):
+        self.main_client_http_plugin = main_client_http_plugin
 
     def get_json_plugin(self):
         return self.json_plugin

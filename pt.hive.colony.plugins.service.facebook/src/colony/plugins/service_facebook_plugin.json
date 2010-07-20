@@ -10,6 +10,9 @@
     "capabilities" : ["service.facebook", "build_automation_item"],
     "capabilities_allowed" : [],
     "dependencies" : [{
+                "id" : "pt.hive.colony.plugins.main.client.http",
+                "version" : "1.0.0"
+            }, {
                 "id" : "pt.hive.colony.plugins.misc.json",
                 "version" : "1.0.0"
             }],

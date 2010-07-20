@@ -38,8 +38,6 @@ __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
 import types
-import urllib
-import urllib2
 import hashlib
 
 import colony.libs.string_buffer_util
@@ -101,6 +99,9 @@ class ServiceFacebook:
         @return: The created remote client.
         """
 
+        # retrieves the main client http plugin
+        main_client_http_plugin = self.service_facebook_plugin.main_client_http_plugin
+
         # retrieves the json plugin
         json_plugin = self.service_facebook_plugin.json_plugin
 
@@ -108,7 +109,7 @@ class ServiceFacebook:
         facebook_structure = service_attributes.get("facebook_structure", None)
 
         # creates a new facebook client with the given options
-        facebook_client = FacebookClient(json_plugin, urllib2, facebook_structure)
+        facebook_client = FacebookClient(json_plugin, main_client_http_plugin, facebook_structure)
 
         # returns the facebook client
         return facebook_client
@@ -121,27 +122,47 @@ class FacebookClient:
     json_plugin = None
     """ The json plugin """
 
-    http_client_plugin = None
-    """ The http client plugin """
+    main_client_http_plugin = None
+    """ The main client http plugin """
 
     facebook_structure = None
     """ The facebook structure """
 
-    def __init__(self, json_plugin = None, http_client_plugin = None, facebook_structure = None):
+    http_client = None
+    """ The http client for the connection """
+
+    def __init__(self, json_plugin = None, main_client_http_plugin = None, facebook_structure = None):
         """
         Constructor of the class.
 
         @type json_plugin: JsonPlugin
         @param json_plugin: The json plugin.
-        @type http_client_plugin: HttpClientPlugin
-        @param http_client_plugin: The http client plugin.
+        @type main_client_http_plugin: MainClientHttpPlugin
+        @param main_client_http_plugin: The main client http plugin.
         @type facebook_structure: FacebookStructure
         @param facebook_structure: The facebook structure.
         """
 
         self.json_plugin = json_plugin
-        self.http_client_plugin = http_client_plugin
+        self.main_client_http_plugin = main_client_http_plugin
         self.facebook_structure = facebook_structure
+
+    def open(self):
+        """
+        Opens the facebook client.
+        """
+
+        pass
+
+    def close(self):
+        """
+        Closes the facebook client.
+        """
+
+        # in case an http client is defined
+        if self.http_client:
+            # closes the http client
+            self.http_client.close({})
 
     def generate_facebook_structure(self, consumer_key, consumer_secret, next, api_version = DEFAULT_API_VERSION, set_structure = True):
         """
@@ -193,7 +214,7 @@ class FacebookClient:
         self._set_base_parameters("auth.createToken", parameters)
 
         # fetches the retrieval url with the given parameters retrieving the json
-        json = self._fetch_url(retrieval_url, parameters, method = POST_METHOD_VALUE)
+        json = self._fetch_url(retrieval_url, parameters, POST_METHOD_VALUE)
 
         # loads json retrieving the data
         data = self.json_plugin.loads(json)
@@ -229,7 +250,7 @@ class FacebookClient:
         self._set_base_parameters("auth.getSession", parameters)
 
         # fetches the retrieval url with the given parameters retrieving the json
-        json = self._fetch_url(retrieval_url, parameters, method = POST_METHOD_VALUE)
+        json = self._fetch_url(retrieval_url, parameters, POST_METHOD_VALUE)
 
         # loads json retrieving the data
         data = self.json_plugin.loads(json)
@@ -317,7 +338,7 @@ class FacebookClient:
         self._set_base_parameters("users.getInfo", parameters)
 
         # fetches the retrieval url with the given parameters retrieving the json
-        json = self._fetch_url(retrieval_url, parameters, method = POST_METHOD_VALUE)
+        json = self._fetch_url(retrieval_url, parameters, POST_METHOD_VALUE)
 
         # loads json retrieving the data
         data = self.json_plugin.loads(json)
@@ -450,36 +471,16 @@ class FacebookClient:
         # calculates and sets the signature value
         parameters["sig"] = self._get_signature(parameters)
 
-    def _get_opener(self, url):
+    def _fetch_url(self, url, parameters = None, method = GET_METHOD_VALUE):
         """
-        Retrieves the opener to the connection.
-
-        @type url: String
-        @param url: The url to create the opener.
-        @rtype: Opener
-        @return: The opener to the connection.
-        """
-
-        # builds the opener
-        opener = urllib2.build_opener()
-
-        # returns the opener
-        return opener
-
-    def _fetch_url(self, url, parameters = None, post_data = None, method = GET_METHOD_VALUE, headers = False):
-        """
-        Fetches the given url for the given parameters, post data and using the given method.
+        Fetches the given url for the given parameters and using the given method.
 
         @type url: String
         @param url: The url to be fetched.
         @type parameters: Dictionary
         @param parameters: The parameters to be used the fetch.
-        @type post_data: Dictionary
-        @param post_data: The post data to be used the fetch.
         @type method: String
         @param method: The method to be used in the fetch.
-        @type headers: bool
-        @param headers: If the headers should be returned.
         @rtype: String
         @return: The fetched data.
         """
@@ -489,43 +490,19 @@ class FacebookClient:
             # creates a new parameters map
             parameters = {}
 
-        # in case post data is not defined
-        if not post_data:
-            # creates a new post data map
-            post_data = {}
+        # retrieves the http client
+        http_client = self._get_http_client()
 
-        if method == GET_METHOD_VALUE:
-            pass
-        elif method == POST_METHOD_VALUE:
-            post_data = parameters
+        # fetches the url retrieving the http response
+        http_response = http_client.fetch_url(url, method, parameters)
 
-        # builds the url
-        url = self._build_url(url, parameters)
+        # retrieves the contents from the http response
+        contents = http_response.received_message
 
-        # encodes the post data
-        encoded_post_data = self._encode_post_data(post_data)
+        # returns the contents
+        return contents
 
-        # retrieves the opener for the given url
-        opener = self._get_opener(url)
-
-        # opens the url with the given encoded post data
-        url_structure = opener.open(url, encoded_post_data)
-
-        # reads the contents from the url structure
-        contents = url_structure.read()
-
-        # in case the headers flag is set
-        if headers:
-            # creates the headers map
-            headers_map = dict(url_structure.info().items())
-
-            # returns the contents and the headers map
-            return contents, headers_map
-        else:
-            # returns the contents
-            return contents
-
-    def _build_url(self, url, parameters):
+    def _build_url(self, base_url, parameters):
         """
         Builds the url for the given url and parameters.
 
@@ -537,65 +514,14 @@ class FacebookClient:
         @return: The built url for the given parameters.
         """
 
-        # in case the parameters are valid and the length
-        # of them is greater than zero
-        if parameters and len(parameters) > 0:
-            # retrieves the extra query
-            extra_query = self._encode_parameters(parameters)
+        # retrieves the http client
+        http_client = self._get_http_client()
 
-            # adds it to the url
-            url += "?" + extra_query
+        # build the url from the base urtl
+        url = http_client.build_url(base_url, GET_METHOD_VALUE, parameters)
 
         # returns the url
         return url
-
-    def _encode_parameters(self, parameters):
-        """
-        Encodes the given parameters into url encoding.
-
-        @type parameters: Dictionary
-        @param parameters: The parameters map to be encoded.
-        @rtype: String
-        @return: The encoded parameters.
-        """
-
-        # in case the parameters are defined
-        if parameters:
-            # returns the encoded parameters
-            return urllib.urlencode(dict([(parameter_key, self._encode(parameter_value)) for parameter_key, parameter_value in parameters.items() if parameter_value is not None]))
-        else:
-            # returns none
-            return None
-
-    def _encode_post_data(self, post_data):
-        """
-        Encodes the post data into url encoding.
-
-        @type post_data: Dictionary
-        @param post_data: The post data map to be encoded.
-        @rtype: String
-        @return: The encoded post data.
-        """
-
-        # in case the post data is defined
-        if post_data:
-            # returns the encoded post data
-            return urllib.urlencode(dict([(post_data_key, self._encode(post_data_value)) for post_data_key, post_data_value in post_data.items()]))
-        else:
-            # returns none
-            return None
-
-    def _encode(self, string_value):
-        """
-        Encodes the given string value to the current encoding.
-
-        @type string_value: String
-        @param string_value: The string value to be encoded.
-        @rtype: String
-        @return: The given string value encoded in the current encoding.
-        """
-
-        return unicode(string_value).encode("utf-8")
 
     def _check_facebook_errors(self, data):
         """
@@ -628,6 +554,26 @@ class FacebookClient:
 
         # raises the facebook pi error
         raise service_facebook_exceptions.FacebookApiError("error in request: " + error_message)
+
+    def _get_http_client(self):
+        """
+        Retrieves the http client currently in use (in case it's created)
+        if not created creates the http client.
+
+        @rtype: HttpClient
+        @return: The retrieved http client.
+        """
+
+        # in case no http client exists
+        if not self.http_client:
+            # creates the http client
+            self.http_client = self.main_client_http_plugin.create_client({})
+
+            # opens the http client
+            self.http_client.open({})
+
+        # returns the http client
+        return self.http_client
 
 class FacebookStructure:
     """
