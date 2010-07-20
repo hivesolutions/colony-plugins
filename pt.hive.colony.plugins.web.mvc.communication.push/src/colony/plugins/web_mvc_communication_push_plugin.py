@@ -59,7 +59,9 @@ class WebMvcCommunicationPushPlugin(colony.plugins.plugin_system.Plugin):
     dependencies = [colony.plugins.plugin_system.PluginDependency(
                     "pt.hive.colony.plugins.web.mvc.utils", "1.0.0"),
                     colony.plugins.plugin_system.PluginDependency(
-                    "pt.hive.colony.plugins.communication.push", "1.0.0")]
+                    "pt.hive.colony.plugins.communication.push", "1.0.0"),
+                    colony.plugins.plugin_system.PluginDependency(
+                    "pt.hive.colony.plugins.main.client.http", "1.0.0")]
     events_handled = []
     events_registrable = []
     main_modules = ["web_mvc_communication_push.communication_push.web_mvc_communication_push_controllers", "web_mvc_communication_push.communication_push.web_mvc_communication_push_system"]
@@ -68,6 +70,7 @@ class WebMvcCommunicationPushPlugin(colony.plugins.plugin_system.Plugin):
 
     web_mvc_utils_plugin = None
     communication_push_plugin = None
+    main_client_http_plugin = None
 
     def load_plugin(self):
         colony.plugins.plugin_system.Plugin.load_plugin(self)
@@ -148,3 +151,10 @@ class WebMvcCommunicationPushPlugin(colony.plugins.plugin_system.Plugin):
     @colony.plugins.decorators.plugin_inject("pt.hive.colony.plugins.communication.push")
     def set_communication_push_plugin(self, communication_push_plugin):
         self.communication_push_plugin = communication_push_plugin
+
+    def get_main_client_http_plugin(self):
+        return self.main_client_http_plugin
+
+    @colony.plugins.decorators.plugin_inject("pt.hive.colony.plugins.main.client.http")
+    def set_main_client_http_plugin(self, main_client_http_plugin):
+        self.main_client_http_plugin = main_client_http_plugin

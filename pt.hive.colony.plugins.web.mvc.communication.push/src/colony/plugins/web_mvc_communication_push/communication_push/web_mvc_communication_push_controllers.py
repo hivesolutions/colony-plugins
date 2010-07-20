@@ -40,6 +40,30 @@ __license__ = "GNU General Public License (GPL), Version 3"
 DEFAULT_ENCODING = "utf-8"
 """ The default encoding value """
 
+GET_METHOD_VALUE = "GET"
+""" The get method value """
+
+COMMUNICATION_NAME_VALUE = "communication_name"
+""" The communication name value """
+
+COMMUNICATION_HANDLER_NAME_VALUE = "communication_handler_name"
+""" The communication handler name value """
+
+COMMUNICATION_PROFILE_NAME_VALUE = "communication_profile_name"
+""" The communication profile name value """
+
+MESSAGE_VALUE = "message"
+""" The message value """
+
+MESSAGE_CONTENTS_VALUE = "message_contents"
+""" The message contents value """
+
+RETURN_URL_VALUE = "return_url"
+""" The return url value """
+
+METHOD_VALUE = "method"
+""" The method value """
+
 class WebMvcCommunicationPushController:
     """
     The web mvc communication push controller.
@@ -50,6 +74,9 @@ class WebMvcCommunicationPushController:
 
     web_mvc_communication_push = None
     """ The web mvc communication push """
+
+    service_connection_name_communication_handler_map = {}
+    """ The map associating the service connection name with the communication handler """
 
     def __init__(self, web_mvc_communication_push_plugin, web_mvc_communication_push):
         """
@@ -64,14 +91,22 @@ class WebMvcCommunicationPushController:
         self.web_mvc_communication_push_plugin = web_mvc_communication_push_plugin
         self.web_mvc_communication_push = web_mvc_communication_push
 
+        self.service_connection_name_communication_handler_map = {}
+
     def handle_show(self, rest_request, parameters = {}):
         return True
 
     def handle_register(self, rest_request, parameters = {}):
+        # registers for the given request
+        self._register(rest_request)
+
         # returns true
         return True
 
     def handle_unregister(self, rest_request, parameters = {}):
+        # unregisters for the given request
+        self._unregister(rest_request)
+
         # returns true
         return True
 
@@ -96,6 +131,108 @@ class WebMvcCommunicationPushController:
         # returns true
         return True
 
+    def generate_handler(self, return_url, method):
+        """
+        Generates a communication handler for the
+        given request.
+
+        @type return_url: String
+        @param return_url: The url to be used in the returning
+        of the generated handler.
+        @type method: String
+        @param method: The http method to be used to retrieve
+        the return url.
+        @rtype: Function
+        @return: The generated communication handler
+        """
+
+        def communication_handler(notification, communication_name):
+            """
+            The "base" communication handler function.
+            to be used in the generation of the communication handler.
+
+            @type notification: PushNotification
+            @param notification: The push notification to be sent.
+            @type communication_name: String
+            @param communication_name: The name of the communication to be used.
+            """
+
+            # retrieves the main client http plugin
+            main_client_http_plugin = self.web_mvc_communication_push_plugin.main_client_http_plugin
+
+            # creates the http client
+            http_client = main_client_http_plugin.create_client({})
+
+            # opens the http client
+            http_client.open({})
+
+            # retrieves the notification attributes
+            message = notification.get_message()
+            sender_id = notification.get_sender_id()
+
+            parameters = {COMMUNICATION_NAME_VALUE : communication_name,
+                          COMMUNICATION_HANDLER_NAME_VALUE : sender_id,
+                          MESSAGE_CONTENTS_VALUE : message}
+
+            contents = http_client.fetch_url(return_url, method, parameters)
+
+            # closes the http client
+            http_client.close({})
+
+            print contents.received_message
+
+        # returns the communication handler
+        return communication_handler
+
+    def _register(self, rest_request):
+        # retrieves the communication push plugin
+        communication_push_plugin = self.web_mvc_communication_push_plugin.communication_push_plugin
+
+        # processes the form data
+        form_data_map = self.process_form_data(rest_request, DEFAULT_ENCODING)
+
+        # retrieves the form data attributes
+        communication_handler_name = form_data_map[COMMUNICATION_HANDLER_NAME_VALUE]
+        communication_name = form_data_map[COMMUNICATION_NAME_VALUE]
+        return_url = form_data_map[RETURN_URL_VALUE]
+        method = form_data_map.get(METHOD_VALUE, GET_METHOD_VALUE)
+
+        # generates a communication handler for the given return url and method
+        generated_communication_handler = self.generate_handler(return_url, method)
+
+        # creates the service connection name tuple
+        service_connection_name_tuple = (communication_handler_name, return_url, communication_name)
+
+        # sets the generated communication handler in the service connection name communication handler map
+        self.service_connection_name_communication_handler_map[service_connection_name_tuple] = generated_communication_handler
+
+        # adds a new communication handler
+        communication_push_plugin.add_communication_handler(communication_name, communication_handler_name, generated_communication_handler)
+
+    def _unregister(self, rest_request):
+        # retrieves the communication push plugin
+        communication_push_plugin = self.web_mvc_communication_push_plugin.communication_push_plugin
+
+        # processes the form data
+        form_data_map = self.process_form_data(rest_request, DEFAULT_ENCODING)
+
+        # retrieves the form data attributes
+        communication_handler_name = form_data_map[COMMUNICATION_HANDLER_NAME_VALUE]
+        communication_name = form_data_map[COMMUNICATION_NAME_VALUE]
+        return_url = form_data_map[RETURN_URL_VALUE]
+
+        # creates the service connection name tuple
+        service_connection_name_tuple = (communication_handler_name, return_url, communication_name)
+
+        # retrieves the generated communication handler for the service connection and communication name
+        generated_communication_handler = self.service_connection_name_communication_handler_map[service_connection_name_tuple]
+
+        # removes the communication handler
+        communication_push_plugin.remove_communication_handler(communication_name, communication_handler_name, generated_communication_handler)
+
+        # removes the service connection name from the service connection name communication handler map
+        del self.service_connection_name_communication_handler_map[service_connection_name_tuple]
+
     def _message(self, rest_request):
         # retrieves the communication push plugin
         communication_push_plugin = self.web_mvc_communication_push_plugin.communication_push_plugin
@@ -104,9 +241,9 @@ class WebMvcCommunicationPushController:
         form_data_map = self.process_form_data(rest_request, DEFAULT_ENCODING)
 
         # retrieves the form data attributes
-        communication_handler_name = form_data_map["communication_handler_name"]
-        communication_name = form_data_map["communication_name"]
-        message = form_data_map["message"]
+        communication_handler_name = form_data_map[COMMUNICATION_HANDLER_NAME_VALUE]
+        communication_name = form_data_map[COMMUNICATION_NAME_VALUE]
+        message = form_data_map[MESSAGE_VALUE]
 
         # generates the notification
         notification = communication_push_plugin.generate_notification(message, communication_handler_name)
@@ -123,8 +260,8 @@ class WebMvcCommunicationPushController:
         form_data_map = self.process_form_data(rest_request, DEFAULT_ENCODING)
 
         # retrieves the form data attributes
-        communication_profile_name = form_data_map["communication_profile_name"]
-        communication_name = form_data_map["communication_name"]
+        communication_profile_name = form_data_map[COMMUNICATION_PROFILE_NAME_VALUE]
+        communication_name = form_data_map[COMMUNICATION_NAME_VALUE]
 
         # sets the communication profile
         communication_push_plugin.set_communication_profile(communication_profile_name, communication_name)
@@ -137,8 +274,8 @@ class WebMvcCommunicationPushController:
         form_data_map = self.process_form_data(rest_request, DEFAULT_ENCODING)
 
         # retrieves the form data attributes
-        communication_profile_name = form_data_map["communication_profile_name"]
-        communication_name = form_data_map["communication_name"]
+        communication_profile_name = form_data_map[COMMUNICATION_PROFILE_NAME_VALUE]
+        communication_name = form_data_map[COMMUNICATION_NAME_VALUE]
 
         # unsets the communication profile
         communication_push_plugin.unset_communication_profile(communication_profile_name, communication_name)
