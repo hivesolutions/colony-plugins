@@ -9,7 +9,10 @@
     "author" : "Hive Solutions Lda. <development@hive.pt>",
     "capabilities" : ["service.yadis", "build_automation_item"],
     "capabilities_allowed" : [],
-    "dependencies" : [],
+    "dependencies" : [{
+                "id" : "pt.hive.colony.plugins.main.client.http",
+                "version" : "1.0.0"
+            }],
     "main_file" : "service_yadis_plugin.py",
     "resources" : ["service_yadis_plugin.py", "service_yadis/__init__.py",
             "service_yadis/yadis/__init__.py",
