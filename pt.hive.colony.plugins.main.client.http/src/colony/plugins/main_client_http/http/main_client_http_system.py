@@ -260,7 +260,7 @@ class HttpClient:
         # stops the http client
         self._http_client.stop_client()
 
-    def fetch_url(self, url, method, parameters = {}, protocol_version = HTTP_1_1_VERSION, content_type_charset = DEFAULT_CHARSET):
+    def fetch_url(self, url, method = GET_METHOD_VALUE, parameters = {}, protocol_version = HTTP_1_1_VERSION, content_type_charset = DEFAULT_CHARSET):
         """
         Fetches the url for the given url, method and (http) parameters.
 
