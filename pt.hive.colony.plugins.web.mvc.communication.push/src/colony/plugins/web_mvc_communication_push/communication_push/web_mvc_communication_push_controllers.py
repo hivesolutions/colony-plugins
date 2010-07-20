@@ -98,6 +98,18 @@ class WebMvcCommunicationPushController:
         self.service_connection_profile_name_communication_handler_map = {}
 
     def handle_show(self, rest_request, parameters = {}):
+        """
+        Handles the given show rest request.
+
+        @type rest_request: RestRequest
+        @param rest_request: The header rest request
+        to be handled.
+        @type parameters: Dictionary
+        @param parameters: The handler parameters.
+        @rtype: bool
+        @return: The result of the handling.
+        """
+
         # sets the result for the rest request
         rest_request.set_result_translated(str(self.service_connection_name_communication_handler_map))
 
@@ -108,6 +120,18 @@ class WebMvcCommunicationPushController:
         return True
 
     def handle_register(self, rest_request, parameters = {}):
+        """
+        Handles the given register rest request.
+
+        @type rest_request: RestRequest
+        @param rest_request: The header rest request
+        to be handled.
+        @type parameters: Dictionary
+        @param parameters: The handler parameters.
+        @rtype: bool
+        @return: The result of the handling.
+        """
+
         # registers for the given request
         self._register(rest_request)
 
@@ -115,6 +139,18 @@ class WebMvcCommunicationPushController:
         return True
 
     def handle_unregister(self, rest_request, parameters = {}):
+        """
+        Handles the given unregister rest request.
+
+        @type rest_request: RestRequest
+        @param rest_request: The header rest request
+        to be handled.
+        @type parameters: Dictionary
+        @param parameters: The handler parameters.
+        @rtype: bool
+        @return: The result of the handling.
+        """
+
         # unregisters for the given request
         self._unregister(rest_request)
 
@@ -122,6 +158,18 @@ class WebMvcCommunicationPushController:
         return True
 
     def handle_message(self, rest_request, parameters = {}):
+        """
+        Handles the given message rest request.
+
+        @type rest_request: RestRequest
+        @param rest_request: The header rest request
+        to be handled.
+        @type parameters: Dictionary
+        @param parameters: The handler parameters.
+        @rtype: bool
+        @return: The result of the handling.
+        """
+
         # sends the message for the given request
         self._message(rest_request)
 
@@ -129,6 +177,18 @@ class WebMvcCommunicationPushController:
         return True
 
     def handle_load_profile(self, rest_request, parameters = {}):
+        """
+        Handles the given load profile rest request.
+
+        @type rest_request: RestRequest
+        @param rest_request: The header rest request
+        to be handled.
+        @type parameters: Dictionary
+        @param parameters: The handler parameters.
+        @rtype: bool
+        @return: The result of the handling.
+        """
+
         # loads the profile for the given request
         self._load_profile(rest_request)
 
@@ -136,6 +196,18 @@ class WebMvcCommunicationPushController:
         return True
 
     def handle_unload_profile(self, rest_request, parameters = {}):
+        """
+        Handles the given unload profile rest request.
+
+        @type rest_request: RestRequest
+        @param rest_request: The header rest request
+        to be handled.
+        @type parameters: Dictionary
+        @param parameters: The handler parameters.
+        @rtype: bool
+        @return: The result of the handling.
+        """
+
         # unloads the profile for the given request
         self._unload_profile(rest_request)
 
@@ -143,6 +215,18 @@ class WebMvcCommunicationPushController:
         return True
 
     def handle_set_profile(self, rest_request, parameters = {}):
+        """
+        Handles the given set profile rest request.
+
+        @type rest_request: RestRequest
+        @param rest_request: The header rest request
+        to be handled.
+        @type parameters: Dictionary
+        @param parameters: The handler parameters.
+        @rtype: bool
+        @return: The result of the handling.
+        """
+
         # sets the profile for the given request
         self._set_profile(rest_request)
 
@@ -150,6 +234,18 @@ class WebMvcCommunicationPushController:
         return True
 
     def handle_unset_profile(self, rest_request, parameters = {}):
+        """
+        Handles the given unset profile rest request.
+
+        @type rest_request: RestRequest
+        @param rest_request: The header rest request
+        to be handled.
+        @type parameters: Dictionary
+        @param parameters: The handler parameters.
+        @rtype: bool
+        @return: The result of the handling.
+        """
+
         # unsets the profile for the given request
         self._unset_profile(rest_request)
 
