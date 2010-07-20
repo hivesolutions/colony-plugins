@@ -540,7 +540,7 @@ class CommunicationPush:
         """
 
         # retrieves the communication profile names list for the communication handler name
-        communication_profile_names_list = self.communication_handler_communication_profile_names_map[communication_handler_name]
+        communication_profile_names_list = self.communication_handler_communication_profile_names_map.get(communication_handler_name, [])
 
         # iterates over all the communication profile names list
         for communication_profile_name in communication_profile_names_list:
