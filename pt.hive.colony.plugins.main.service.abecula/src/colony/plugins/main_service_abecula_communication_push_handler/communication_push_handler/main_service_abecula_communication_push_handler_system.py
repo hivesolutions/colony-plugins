@@ -654,8 +654,17 @@ class MainServiceAbeculaCommunicationPushHandler:
         # tries to retrieve the count
         count = decoded_request_contents.get(COUNT_VALUE, None)
 
-        # retrieves the notification from the notifications buffer of the communication
-        notifications = communication_push_plugin.get_notifications_buffer(communication_name, count)
+        # tries to retrieve the guid
+        guid = decoded_request_contents.get(GUID_VALUE, None)
+
+        # in case the guid is set
+        if guid:
+            # retrieves the notification from the notifications buffer of the communication
+            notifications = communication_push_plugin.get_notifications_buffer_guid(communication_name, guid)
+        # otherwise the count should be used
+        else:
+            # retrieves the notification from the notifications buffer of the communication
+            notifications = communication_push_plugin.get_notifications_buffer(communication_name, count)
 
         # creates the list for the structured notifications
         structured_notifications = []
