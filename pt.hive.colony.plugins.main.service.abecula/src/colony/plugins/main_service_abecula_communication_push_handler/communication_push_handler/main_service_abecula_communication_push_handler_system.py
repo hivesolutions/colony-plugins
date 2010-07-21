@@ -109,6 +109,9 @@ AUTHENTICATION_PROPERTIES_VALUE = "authentication_properties"
 AUTHENTICATION_HANDLER_VALUE = "authentication_handler"
 """ The authentication handler value """
 
+GUID_VALUE = "guid"
+""" The guid value """
+
 ARGUMENTS_VALUE = "arguments"
 """ The arguments value """
 
@@ -992,10 +995,12 @@ class MainServiceAbeculaCommunicationPushHandler:
         # retrieves the notification attributes
         message = notification.get_message()
         sender_id = notification.get_sender_id()
+        guid = notification.get_guid()
 
         # creates the complete message contents from the original message contents
         message_contents = {COMMUNICATION_NAME_VALUE : communication_name,
                             COMMUNICATION_CLIENT_ID_VALUE : sender_id,
+                            GUID_VALUE : guid,
                             MESSAGE_CONTENTS_VALUE : message}
 
         # returns the message contents
