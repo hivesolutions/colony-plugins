@@ -37,6 +37,12 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
+PAGE_SIZE = 4096
+""" The size of a page """
+
+DEFAULT_NUMBER_PAGES = 64
+""" The default number of pages """
+
 class MainStorageBufferManager:
     """
     The main storage buffer manager class.
@@ -55,3 +61,65 @@ class MainStorageBufferManager:
         """
 
         self.main_storage_buffer_manager_plugin = main_storage_buffer_manager_plugin
+
+class BufferPool:
+    """
+    The buffer pool class.
+    Manages a pool representing a buffer
+    for file access.
+    """
+
+    number_pages = DEFAULT_NUMBER_PAGES
+    """ The number of pages of the buffer pool """
+
+    def __init__(self, number_pages = DEFAULT_NUMBER_PAGES):
+        """
+        Constructor of the class.
+
+        @type number_pages: int
+        @param number_pages: The number of pages of the
+        buffer pool.
+        """
+
+        self.number_pages = number_pages
+
+    def get_page(self, page_id, transaction = None, permissions = None):
+        pass
+
+    def release_page(self, page_id, transaction):
+        pass
+
+    def insert_tuple(self, tuple, table, transaction):
+        pass
+
+    def delete_tuple(self, tuple, table, transaction):
+        pass
+
+class PageId:
+
+    table_id = None
+
+    page_number = None
+
+class HeapPageId(PageId):
+    pass
+
+class HeapFile:
+    """
+    The heap file class.
+    Represent a file that is structured as a heap,
+    all the pages are stored in random order.
+    """
+
+    file = None
+    """ The file used to maintain the heap file """
+
+    def __init__(self, file):
+        """
+        Constructor of the class.
+
+        @type file: File
+        @param file: The file used to maintain the heap file.
+        """
+
+        self.file = file
