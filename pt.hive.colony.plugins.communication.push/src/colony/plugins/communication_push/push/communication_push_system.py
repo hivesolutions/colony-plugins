@@ -69,6 +69,9 @@ MAXIMUM_NUMBER_WORKER_THREADS = 5
 WORK_SCHEDULING_ALGORITHM = 1
 """ The work scheduling algorithm """
 
+MAXIMUM_NOTIFICATION_BUFFER_SIZE = 50
+""" The maximum size of the notification buffer """
+
 class CommunicationPush:
     """
     The communication push plugin.
@@ -76,6 +79,9 @@ class CommunicationPush:
 
     comnunication_push_plugin = None
     """ The communication push plugin """
+
+    communication_name_push_notifications_map = {}
+    """ The map associating a communication with the list of push notifications (notification buffer) """
 
     communication_name_communication_handlers_map = {}
     """ The map associating a communication with a list of communication handlers """
@@ -87,16 +93,16 @@ class CommunicationPush:
     """ The map associating a communication handler and name tuple with the communication handler method """
 
     communication_handler_name_properties_map = {}
-    """ The map associating the communication handler name with the map of properties """
+    """ The map associating a communication handler name with the map of properties """
 
     communication_profile_name_communication_handler_tuples_map = {}
-    """ The map associating the communication profile name with the communication handler tuples """
+    """ The map associating a communication profile name with the communication handler tuples """
 
     communication_profile_name_communication_names_map = {}
-    """ The map associating the communication profile name with the communication names """
+    """ The map associating a communication profile name with the communication names """
 
     communication_handler_profile_communication_handler_method = {}
-    """ The map associating the communication handler and profile tuple with the communication handler method """
+    """ The map associating a communication handler and profile tuple with the communication handler method """
 
     work_pool = None
     """ The work pool associated with the processing of the push notifications """
@@ -111,6 +117,7 @@ class CommunicationPush:
 
         self.comnunication_push_plugin = comnunication_push_plugin
 
+        self.communication_name_push_notifications_map = {}
         self.communication_name_communication_handlers_map = {}
         self.communication_handler_communication_names_map = {}
         self.communication_handler_name_communication_handler_method_map = {}
@@ -283,6 +290,9 @@ class CommunicationPush:
         @type push_notification: PushNotification
         @param push_notification: The push notification to be broadcasted.
         """
+
+        # inserts the notification in the notification buffer
+        self.insert_notification_buffer(communication_name, push_notification)
 
         # in case the communication name is not defined in the communication name
         # communication handlers map, there is no need to continue
@@ -599,6 +609,85 @@ class CommunicationPush:
         # unregisters the new communication name in the communication profile
         self._unregister_communication_profile(communication_profile_name, communication_name)
 
+    def insert_notification_buffer(self, communication_name, push_notification):
+        """
+        Inserts a notification into the notification buffer of the given
+        communication name.
+
+        @type communication_name: String
+        @param communication_name: The name of the communication to
+        insert the push notification.
+        @type push_notification: PushNotification
+        @param push_notification: The push notification to be inserted.
+        """
+
+        # in case the communication name is not defined in the communication name
+        # push notifications map
+        if not communication_name in self.communication_name_push_notifications_map:
+            # creates a list for the communication name in the communication
+            # name push notifications map
+            self.communication_name_push_notifications_map[communication_name] = []
+
+        # retrieves the push notifications list from the communication name push
+        # notifications map
+        push_notifications_list = self.communication_name_push_notifications_map[communication_name]
+
+        # adds (to the front) the push notification to the push notifications list
+        push_notifications_list.insert(0, push_notification)
+
+        # retrieves the push notifications list length
+        push_notifications_list_length = len(push_notifications_list)
+
+        # in case the maximum size of the push notifications list
+        # is reached (overflow)
+        if push_notifications_list_length > MAXIMUM_NOTIFICATION_BUFFER_SIZE:
+            # pops the last (oldest) element
+            push_notifications_list.pop()
+
+    def get_notifications_buffer(self, communication_name, count = None):
+        """
+        Retrieves the notifications from the notification buffer, for the given
+        communication and respecting the given count value.
+
+        @type communication_name: String
+        @param communication_name: The name of the communication to
+        retrieve the notifications.
+        @type count: int
+        @param count: The maximum number of notifications to be retrieved.
+        @rtype: List
+        @return: The list of retrieved notifications.
+        """
+
+        # retrieves the push notifications list from the communication name push
+        # notifications map
+        push_notification_list = self.communication_name_push_notifications_map.get(communication_name, [])
+
+        # retrieves the push notifications list length
+        push_notification_list_length = len(push_notification_list)
+
+        # sets the count value
+        count = count or push_notification_list_length
+
+        # retrieves the sub set of required push notifications
+        required_push_notifications_list = push_notification_list[:count]
+
+        # returns the sub set of required push notifications
+        return required_push_notifications_list
+
+    def clear_notifications_buffer(self, communication_name):
+        """
+        Clears the notifications notification buffer for the given
+        communication name.
+
+        @type communication_name: String
+        @param communication_name: The communication name of the
+        notification buffer to cleared.
+        """
+
+        # creates a new list for the communication name in the communication
+        # name push notifications map
+        self.communication_name_push_notifications_map[communication_name] = []
+
     def generate_notification(self, message, sender_id):
         """
         Generates a push notification for the given message and
@@ -620,6 +709,7 @@ class CommunicationPush:
         Prints diagnostic information about the plugin instance.
         """
 
+        print "communication_name_push_notifications_map: " + str(self.communication_name_push_notifications_map)
         print "communication_name_communication_handlers_map:" + str(self.communication_name_communication_handlers_map)
         print "communication_handler_communication_names_map:" + str(self.communication_handler_communication_names_map)
         print "communication_handler_name_communication_handler_method_map:" + str(self.communication_handler_name_communication_handler_method_map)

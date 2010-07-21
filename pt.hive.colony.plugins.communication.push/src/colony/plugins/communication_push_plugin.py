@@ -282,6 +282,48 @@ class CommunicationPushPlugin(colony.plugins.plugin_system.Plugin):
 
         return self.communication_push.unset_communication_profile(communication_profile_name, communication_name)
 
+    def insert_notification_buffer(self, communication_name, push_notification):
+        """
+        Inserts a notification into the notification buffer of the given
+        communication name.
+
+        @type communication_name: String
+        @param communication_name: The name of the communication to
+        insert the push notification.
+        @type push_notification: PushNotification
+        @param push_notification: The push notification to be inserted.
+        """
+
+        return self.communication_push.insert_notification_buffer(communication_name, push_notification)
+
+    def get_notifications_buffer(self, communication_name, count):
+        """
+        Retrieves the notifications from the notification buffer, for the given
+        communication and respecting the given count value.
+
+        @type communication_name: String
+        @param communication_name: The name of the communication to
+        retrieve the notifications.
+        @type count: int
+        @param count: The maximum number of notifications to be retrieved.
+        @rtype: List
+        @return: The list of retrieved notifications.
+        """
+
+        return self.communication_push.get_notifications_buffer(communication_name, count)
+
+    def clear_notifications_buffer(self, communication_name):
+        """
+        Clears the notifications notification buffer for the given
+        communication name.
+
+        @type communication_name: String
+        @param communication_name: The communication name of the
+        notification buffer to cleared.
+        """
+
+        return self.communication_push.clear_notifications_buffer(communication_name)
+
     def generate_notification(self, message, sender_id):
         """
         Generates a push notification for the given message and
