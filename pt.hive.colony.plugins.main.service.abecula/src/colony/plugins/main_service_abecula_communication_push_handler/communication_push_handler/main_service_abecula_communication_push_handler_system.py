@@ -70,6 +70,12 @@ COMMUNICATION_NAMES_VALUE = "communication_names"
 COMMUNICATION_PROFILE_NAMES_VALUE = "communication_profile_names"
 """ The communication profile names value """
 
+COUNT_VALUE = "count"
+""" The count value """
+
+NOTIFICATIONS_VALUE = "notifications"
+""" The notifications value """
+
 INFORMATION_VALUE = "information"
 """ The information value """
 
@@ -626,6 +632,42 @@ class MainServiceAbeculaCommunicationPushHandler:
         # sets the encoded request contents
         self._set_encoded_request_contents(request, {RESULT_VALUE : SUCCESS_VALUE})
 
+    def handle_get(self, request, communication_push_plugin):
+        """
+        Handles the abecula get command.
+
+        @type request: AbeculaRequest
+        @param request: The abecula request for the command.
+        @type communication_push_plugin: Plugin
+        @param communication_push_plugin: The communication push plugin.
+        """
+
+        # retrieves the decoded request contents from the request
+        decoded_request_contents = self._get_decoded_request_contents(request)
+
+        # tries to retrieve the communication name
+        communication_name = decoded_request_contents.get(COMMUNICATION_NAME_VALUE, None)
+
+        # tries to retrieve the count
+        count = decoded_request_contents.get(COUNT_VALUE, None)
+
+        # retrieves the notification from the notifications buffer of the communication
+        notifications = communication_push_plugin.get_notifications_buffer(communication_name, count)
+
+        # creates the list for the structured notifications
+        structured_notifications = []
+
+        # iterates over all the notifications
+        for notification in notifications:
+            # structures the notification retrieving the structured notification
+            structured_notification = self._structure_notification(notification, communication_name)
+
+            # adds the structured notification to the structured notifications
+            structured_notifications.append(structured_notification)
+
+        # sets the encoded request contents
+        self._set_encoded_request_contents(request, {RESULT_VALUE : SUCCESS_VALUE, NOTIFICATIONS_VALUE : structured_notifications})
+
     def handle_ping(self, request, communication_push_plugin):
         """
         Handles the abecula ping command.
@@ -935,6 +977,30 @@ class MainServiceAbeculaCommunicationPushHandler:
         # removes the service connection from the service connection communication client id map
         del self.service_connection_communication_client_id_map[service_connection]
 
+    def _structure_notification(self, notification, communication_name):
+        """
+        Structures the notification into a map.
+
+        @type notification: PushNotification
+        @param notification: The push notification to be structured.
+        @type communication_name: String
+        @param communication_name: The communication name.
+        @rtype: Dictionary
+        @return: The structured notification in map format.
+        """
+
+        # retrieves the notification attributes
+        message = notification.get_message()
+        sender_id = notification.get_sender_id()
+
+        # creates the complete message contents from the original message contents
+        message_contents = {COMMUNICATION_NAME_VALUE : communication_name,
+                            COMMUNICATION_CLIENT_ID_VALUE : sender_id,
+                            MESSAGE_CONTENTS_VALUE : message}
+
+        # returns the message contents
+        return message_contents
+
     def _encode_notification(self, notification, communication_name):
         """
         Encodes the given notification into the required
@@ -948,14 +1014,8 @@ class MainServiceAbeculaCommunicationPushHandler:
         @return: The encoded notification in string format.
         """
 
-        # retrieves the notification attributes
-        message = notification.get_message()
-        sender_id = notification.get_sender_id()
-
-        # creates the complete message contents from the original message contents
-        message_contents = {COMMUNICATION_NAME_VALUE : communication_name,
-                            COMMUNICATION_CLIENT_ID_VALUE : sender_id,
-                            MESSAGE_CONTENTS_VALUE : message}
+        # structures the notification retrieving the message contents
+        message_contents = self._structure_notification(notification, communication_name)
 
         # encodes the message contents
         message_contents_encoded = self._encode(message_contents)
