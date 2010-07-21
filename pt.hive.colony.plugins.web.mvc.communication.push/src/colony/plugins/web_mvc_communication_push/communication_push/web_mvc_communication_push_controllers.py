@@ -58,6 +58,9 @@ MESSAGE_VALUE = "message"
 MESSAGE_CONTENTS_VALUE = "message_contents"
 """ The message contents value """
 
+GUID_VALUE = "guid"
+""" The guid value """
+
 RETURN_URL_VALUE = "return_url"
 """ The return url value """
 
@@ -290,10 +293,12 @@ class WebMvcCommunicationPushController:
             # retrieves the notification attributes
             message = notification.get_message()
             sender_id = notification.get_sender_id()
+            guid = notification.get_guid()
 
             # creates the parameters map
             parameters = {COMMUNICATION_NAME_VALUE : communication_name,
                           COMMUNICATION_HANDLER_NAME_VALUE : sender_id,
+                          GUID_VALUE : guid,
                           MESSAGE_CONTENTS_VALUE : message}
 
             # fetches the url, retrieving the contents
