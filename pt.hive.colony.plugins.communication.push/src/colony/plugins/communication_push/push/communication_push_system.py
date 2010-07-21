@@ -663,16 +663,59 @@ class CommunicationPush:
 
         # retrieves the push notifications list from the communication name push
         # notifications map
-        push_notification_list = self.communication_name_push_notifications_map.get(communication_name, [])
+        push_notifications_list = self.communication_name_push_notifications_map.get(communication_name, [])
 
         # retrieves the push notifications list length
-        push_notification_list_length = len(push_notification_list)
+        push_notifications_list_length = len(push_notifications_list)
 
         # sets the count value
-        count = count or push_notification_list_length
+        count = count or push_notifications_list_length
 
         # retrieves the sub set of required push notifications
-        required_push_notifications_list = push_notification_list[:count]
+        required_push_notifications_list = push_notifications_list[:count]
+
+        # returns the sub set of required push notifications
+        return required_push_notifications_list
+
+    def get_notifications_buffer_guid(self, communication_name, guid):
+        """
+        Retrieves the notifications from the notification buffer, for the given
+        communication and respecting the given count value.
+        This method uses the guid as a filter for notification retrieval.
+
+        @type communication_name: String
+        @param communication_name: The name of the communication to
+        retrieve the notifications.
+        @type guid: String
+        @param guid: The guid to be used as filter to the retrieval
+        of the notifications.
+        @rtype: List
+        @return: The list of retrieved notifications.
+        """
+
+        # retrieves the push notifications list from the communication name push
+        # notifications map
+        push_notifications_list = self.communication_name_push_notifications_map.get(communication_name, [])
+
+        # starts the index value
+        index = 0
+
+        # iterates over all the push notification in the
+        # push notifications list
+        for push_notification in push_notifications_list:
+            # retrieves the current guid
+            current_guid = push_notification.get_guid()
+
+            # in case the target guid is found
+            if current_guid == guid:
+                # breaks the cycle
+                break
+
+            # increments the index value
+            index += 1
+
+        # retrieves the sub set of required push notifications
+        required_push_notifications_list = push_notifications_list[:index]
 
         # returns the sub set of required push notifications
         return required_push_notifications_list

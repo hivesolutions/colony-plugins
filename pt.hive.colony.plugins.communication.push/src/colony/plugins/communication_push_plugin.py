@@ -315,6 +315,24 @@ class CommunicationPushPlugin(colony.plugins.plugin_system.Plugin):
 
         return self.communication_push.get_notifications_buffer(communication_name, count)
 
+    def get_notifications_buffer_guid(self, communication_name, guid):
+        """
+        Retrieves the notifications from the notification buffer, for the given
+        communication and respecting the given count value.
+        This method uses the guid as a filter for notification retrieval.
+
+        @type communication_name: String
+        @param communication_name: The name of the communication to
+        retrieve the notifications.
+        @type guid: String
+        @param guid: The guid to be used as filter to the retrieval
+        of the notifications.
+        @rtype: List
+        @return: The list of retrieved notifications.
+        """
+
+        return self.communication_push.get_notifications_buffer_guid(communication_name, guid)
+
     def clear_notifications_buffer(self, communication_name):
         """
         Clears the notifications notification buffer for the given
