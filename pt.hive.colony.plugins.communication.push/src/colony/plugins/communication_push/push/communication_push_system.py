@@ -291,6 +291,9 @@ class CommunicationPush:
         @param push_notification: The push notification to be broadcasted.
         """
 
+        # processes the notification, updating some of its values
+        self._process_notification(push_notification)
+
         # inserts the notification in the notification buffer
         self.insert_notification_buffer(communication_name, push_notification)
 
@@ -783,6 +786,33 @@ class CommunicationPush:
             # removes the communication handler from the communication name
             self.remove_communication_handler(communication_name, communication_handler_name, communication_handler_method)
 
+    def _process_notification(self, push_notification):
+        """
+        Processes the given notification.
+
+        @type push_notification: PushNotification
+        @param push_notification: The push notification to be processed.
+        """
+
+        # retrieves the plugin manager
+        plugin_manager = self.comnunication_push_plugin.manager
+
+        # retrieves the guid plugin
+        guid_plugin = self.comnunication_push_plugin.guid_plugin
+
+        # generates a new guid for the push notification
+        generated_guid = guid_plugin.generate_guid()
+
+        # retrieves the plugin manager uid
+        plugin_manager_uid = plugin_manager.uid
+
+        # creates the composite guid as the concatenation of the plugin
+        # manager guid and the generated guid
+        composite_guid = plugin_manager_uid + "-" + generated_guid
+
+        # sets the composite guid in the push notification
+        push_notification.set_guid(composite_guid)
+
 class CommunicationPushProcessingTask:
     """
     The communication push processing task.
@@ -901,6 +931,9 @@ class PushNotification:
     sender_id = None
     """ The identification of the sender """
 
+    guid = None
+    """ the global unique identifier """
+
     def __init__(self, message, sender_id = None):
         """
         Constructor of the class.
@@ -946,13 +979,34 @@ class PushNotification:
 
     def set_sender_id(self, sender_id):
         """
-        Sets the sender id
+        Sets the sender id.
 
         @type sender_id: String
         @param sender_id: The sender id.
         """
 
         self.sender_id = sender_id
+
+
+    def get_guid(self):
+        """
+        Retrieves the guid.
+
+        @rtype: String
+        @return: The guid.
+        """
+
+        return self.guid
+
+    def set_guid(self, guid):
+        """
+        Sets the guid.
+
+        @type guid: String
+        @param guid: The guid.
+        """
+
+        self.guid = guid
 
 class PushNotificationWork:
     """

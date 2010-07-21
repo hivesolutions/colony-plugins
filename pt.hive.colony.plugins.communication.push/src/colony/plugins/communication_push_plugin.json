@@ -9,7 +9,13 @@
     "author" : "Hive Solutions Lda. <development@hive.pt>",
     "capabilities" : ["communication.push", "build_automation_item"],
     "capabilities_allowed" : [],
-    "dependencies" : [],
+    "dependencies" : [{
+                "id" : "pt.hive.colony.plugins.main.work.work_pool_manager",
+                "version" : "1.0.0"
+            }, {
+                "id" : "pt.hive.colony.plugins.misc.guid",
+                "version" : "1.0.0"
+            }],
     "main_file" : "communication_push_plugin.py",
     "resources" : ["communication_push_plugin.py",
             "communication_push/__init__.py",

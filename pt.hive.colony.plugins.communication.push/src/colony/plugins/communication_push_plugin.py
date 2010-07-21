@@ -59,7 +59,9 @@ class CommunicationPushPlugin(colony.plugins.plugin_system.Plugin):
     capabilities = ["communication.push", "diagnostics", "build_automation_item"]
     capabilities_allowed = []
     dependencies = [colony.plugins.plugin_system.PluginDependency(
-                    "pt.hive.colony.plugins.main.work.work_pool_manager", "1.0.0")]
+                    "pt.hive.colony.plugins.main.work.work_pool_manager", "1.0.0"),
+                    colony.plugins.plugin_system.PluginDependency(
+                    "pt.hive.colony.plugins.misc.guid", "1.0.0")]
     events_handled = []
     events_registrable = []
     main_modules = ["communication_push.push.communication_push_system"]
@@ -67,6 +69,7 @@ class CommunicationPushPlugin(colony.plugins.plugin_system.Plugin):
     communication_push = None
 
     work_pool_manager_plugin = None
+    guid_plugin = None
 
     def load_plugin(self):
         colony.plugins.plugin_system.Plugin.load_plugin(self)
@@ -352,3 +355,10 @@ class CommunicationPushPlugin(colony.plugins.plugin_system.Plugin):
     @colony.plugins.decorators.plugin_inject("pt.hive.colony.plugins.main.work.work_pool_manager")
     def set_work_pool_manager_plugin(self, work_pool_manager_plugin):
         self.work_pool_manager_plugin = work_pool_manager_plugin
+
+    def get_guid_plugin(self):
+        return self.guid_plugin
+
+    @colony.plugins.decorators.plugin_inject("pt.hive.colony.plugins.misc.guid")
+    def set_guid_plugin(self, guid_plugin):
+        self.guid_plugin = guid_plugin
