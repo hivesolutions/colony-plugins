@@ -96,8 +96,8 @@ class BufferPool:
         pass
 
 class PageId:
-
     table_id = None
+    """ The id of the table associated with the page """
 
     page_number = None
 
