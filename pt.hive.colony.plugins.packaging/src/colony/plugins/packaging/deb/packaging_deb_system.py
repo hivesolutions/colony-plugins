@@ -720,7 +720,7 @@ class DebFileEntry:
         md5_structure = hashlib.md5()
 
         # loops indefinitely
-        while 1:
+        while True:
             # reads the file contents
             file_contents = self.file.read(BUFFER_SIZE)
 

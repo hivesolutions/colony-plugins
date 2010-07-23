@@ -397,7 +397,7 @@ class ArFile:
         self.file.write(file_header)
 
         # loops indefinitely
-        while 1:
+        while True:
             # reads the file contents
             file_contents = file.read(BUFFER_SIZE)
 
@@ -466,7 +466,7 @@ class ArFile:
             raise packaging_ar_exceptions.InvalidFileFormat("invalid magic string value: " + magic_string)
 
         # loops continuously
-        while 1:
+        while True:
             # reads the file header from the file
             file_header = self.file.read(FILE_HEADER_SIZE)
 
