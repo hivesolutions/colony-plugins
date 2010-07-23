@@ -1757,7 +1757,7 @@ class HttpRequest:
         current_index = boundary_value_length + 2
 
         # iterates indefinitely
-        while 1:
+        while True:
             # retrieves the end index (boundary start index)
             end_index = self.multipart.find(boundary_value, current_index)
 
