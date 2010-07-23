@@ -116,7 +116,7 @@ class RoundRobinAlgorithm(WorkPoolManagerAlgorithm):
         initial_current_index = self.current_index
 
         # iterates continuously
-        while 1:
+        while True:
             # in case the current index contains the same
             # value as the work tasks list length
             if self.current_index == work_tasks_list_length:
