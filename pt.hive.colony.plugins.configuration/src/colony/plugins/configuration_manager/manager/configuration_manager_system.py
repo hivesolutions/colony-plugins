@@ -169,7 +169,7 @@ class ConfigurationManager:
         target_file = open(target_file_path, "wb")
 
         try:
-            while 1:
+            while True:
                 # reads the contents from the file and copies them to
                 # the target file
                 contents = file.read(CHUNK_SIZE)
