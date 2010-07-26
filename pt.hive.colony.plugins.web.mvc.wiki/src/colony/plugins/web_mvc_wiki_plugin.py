@@ -58,7 +58,9 @@ class WebMvcWikiPlugin(colony.plugins.plugin_system.Plugin):
     dependencies = [colony.plugins.plugin_system.PluginDependency(
                     "pt.hive.colony.plugins.web.mvc.utils", "1.0.0"),
                     colony.plugins.plugin_system.PluginDependency(
-                    "pt.hive.colony.plugins.language.wiki", "1.0.0")]
+                    "pt.hive.colony.plugins.language.wiki", "1.0.0"),
+                     colony.plugins.plugin_system.PluginDependency(
+                    "pt.hive.colony.plugins.main.cache.manager", "1.0.0")]
     events_handled = []
     events_registrable = []
     main_modules = ["web_mvc_wiki.mvc_wiki.web_mvc_wiki_system"]
@@ -67,6 +69,7 @@ class WebMvcWikiPlugin(colony.plugins.plugin_system.Plugin):
 
     web_mvc_utils_plugin = None
     language_wiki_plugin = None
+    main_cache_manager_plugin = None
 
     def load_plugin(self):
         colony.plugins.plugin_system.Plugin.load_plugin(self)
@@ -147,3 +150,10 @@ class WebMvcWikiPlugin(colony.plugins.plugin_system.Plugin):
     @colony.plugins.decorators.plugin_inject("pt.hive.colony.plugins.language.wiki")
     def set_language_wiki_plugin(self, language_wiki_plugin):
         self.language_wiki_plugin = language_wiki_plugin
+
+    def get_main_cache_manager_plugin(self):
+        return self.main_cache_manager_plugin
+
+    @colony.plugins.decorators.plugin_inject("pt.hive.colony.plugins.main.cache.manager")
+    def set_main_cache_manager_plugin(self, main_cache_manager_plugin):
+        self.main_cache_manager_plugin = main_cache_manager_plugin

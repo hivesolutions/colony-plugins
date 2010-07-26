@@ -37,6 +37,7 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
+import os
 import time
 
 WEB_MVC_WIKI_RESOURCES_PATH = "web_mvc_wiki/mvc_wiki/resources"
@@ -44,6 +45,9 @@ WEB_MVC_WIKI_RESOURCES_PATH = "web_mvc_wiki/mvc_wiki/resources"
 
 TEMPLATES_PATH = WEB_MVC_WIKI_RESOURCES_PATH + "/templates"
 """ The templates path """
+
+CACHE_DIRECTORY_IDENTIFIER = "web_mvc_wiki"
+""" The cache directory identifier """
 
 class WebMvcWiki:
     """
@@ -175,7 +179,13 @@ class WebMvcWikiController:
 
         base_file_path = "c:/Users/joamag/workspace/pt.hive.colony.documentation.technical"
 
-        base_target_path = "c:/generated"
+        # creates the base target path as the cache directory path
+        base_target_path = self._get_cache_directory_path()
+
+        # in case the base target path does not exists
+        if not os.path.exists(base_target_path):
+            # creates the base target path
+            os.makedirs(base_target_path)
 
         # sets the content type for the rest request
         rest_request.set_content_type("text/html")
@@ -274,9 +284,11 @@ class WebMvcWikiController:
 
         partial_file_path = "/".join(rest_request.path_list[1:])
 
-        target_path = "c:/generated"
+        # creates the base target path as the cache directory path
+        base_target_path = self._get_cache_directory_path()
 
-        full_file_path = target_path + "/" + partial_file_path + "." + rest_request.encoder_name
+        # creates the full path to the file to be read
+        full_file_path = base_target_path + "/" + partial_file_path + "." + rest_request.encoder_name
 
         # opens the resource file
         resource_file = open(full_file_path, "rb")
@@ -295,3 +307,23 @@ class WebMvcWikiController:
 
         # returns true
         return True
+
+    def _get_cache_directory_path(self):
+        """
+        Retrieves the reference path for the cache directory.
+
+        @rtype: String
+        @return: The reference path to the cache directory.
+        """
+
+        # retrieves the main cache manager plugin
+        main_cache_manager_plugin = self.web_mvc_wiki_plugin.main_cache_manager_plugin
+
+        # retrieves the base cache directory path
+        base_cache_directory_path = main_cache_manager_plugin.get_cache_directory_path()
+
+        # creates the cache directory path appending the unique identifier
+        cache_diretory_path = base_cache_directory_path + "/" + CACHE_DIRECTORY_IDENTIFIER
+
+        # returns the cache directory path
+        return cache_diretory_path
