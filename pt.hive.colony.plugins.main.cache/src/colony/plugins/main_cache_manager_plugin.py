@@ -87,6 +87,16 @@ class MainCacheManagerPlugin(colony.plugins.plugin_system.Plugin):
     def dependency_injected(self, plugin):
         colony.plugins.plugin_system.Plugin.dependency_injected(self, plugin)
 
+    def get_cache_directory_path(self):
+        """
+        Retrieves the default cache directory path.
+
+        @rtype: String
+        @return: The default cache directory path.
+        """
+
+        return self.main_cache_manager.get_cache_directory_path()
+
     def generate_cache_context(self, parameters):
         """
         Generates a new cache context using the given parameters.

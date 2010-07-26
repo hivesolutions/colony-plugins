@@ -37,6 +37,9 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
+CACHE_DIRECTORY_IDENTIFIER = "cache_generated"
+""" The cache directory identifier """
+
 class MainCacheManager:
     """
     The main cache manager class.
@@ -54,3 +57,44 @@ class MainCacheManager:
         """
 
         self.main_cache_manager_plugin = main_cache_manager_plugin
+
+    def get_cache_directory_path(self):
+        """
+        Retrieves the default cache directory path.
+
+        @rtype: String
+        @return: The default cache directory path.
+        """
+
+        # retrieves the plugin manager
+        plugin_manager = self.main_cache_manager_plugin.manager
+
+        # retrieves the configuration path for the main cache manager plugin
+        _configuration_path, workspace_path = plugin_manager.get_plugin_configuration_paths_by_id(self.main_cache_manager_plugin.id)
+
+        # creates the full cache directory path appending
+        # the cache generated part to the workspace path
+        cache_directory_path = workspace_path + "/" + CACHE_DIRECTORY_IDENTIFIER
+
+        # returns the cache directory path
+        return cache_directory_path
+
+    def generate_cache_context(self, parameters):
+        """
+        Generates a new cache context using the given parameters.
+
+        @type parameters: Dictionary
+        @param parameters: The parameters to the cache context generation.
+        @rtype: CacheContext
+        @return: The generated cache context.
+        """
+
+        return self.main_cache_manager.generate_cache_context(parameters)
+
+class CacheContext:
+    """
+    The cache context class.
+    """
+
+    def __init__(self):
+        pass
