@@ -216,8 +216,8 @@ class RevisionControlBazaarAdapter:
         return resources_revision
 
     def create_revision(self, revision_control_reference, revision_identifier):
-        # creates the revision object
-        revision = Revision()
+        # creates the revision
+        revision = BazaarRevision()
 
         # splits the revision attributes in the revision identifier
         revision_attributes = revision_identifier.split("-")
@@ -242,9 +242,9 @@ class RevisionControlBazaarAdapter:
     def get_adapter_name(self):
         return ADAPTER_NAME
 
-class Revision:
+class BazaarRevision:
     """
-    The generic revision for revision control management.
+    The bazaar revision class.
     """
 
     identifier = None
@@ -261,6 +261,29 @@ class Revision:
 
     message = None
     """ The revision message """
+
+    def __init__(self):
+        """
+        Constructor of the class.
+        """
+
+        pass
+
+    def __str__(self):
+        # retrieves the revision number
+        revision_number = self.get_number()
+
+        # retrieves the revision identifier
+        revision_identifier = self.get_identifier()
+
+        # builds the revision_string
+        if revision_number:
+            revision_string = "%d:%s" % (revision_number, revision_identifier)
+        else:
+            revision_string = revision_identifier
+
+        # returns the revision string
+        return revision_string
 
     def get_identifier(self):
         return self.identifier
@@ -291,19 +314,3 @@ class Revision:
 
     def set_message(self, message):
         self.message = message
-
-    def __str__(self):
-        # retrieves the revision number
-        revision_number = self.get_number()
-
-        # retrieves the revision identifier
-        revision_identifier = self.get_identifier()
-
-        # builds the revision_string
-        if revision_number:
-            revision_string = "%d:%s" % (revision_number, revision_identifier)
-        else:
-            revision_string = revision_identifier
-
-        # returns the revision string
-        return revision_string

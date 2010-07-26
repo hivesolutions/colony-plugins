@@ -63,6 +63,9 @@ DATE_FORMAT = "%Y/%m/%d"
 DATE_TIME_FORMAT = "%a %b %d %H:%M:%S %Y %Z"
 """ The format for the displayed date times """
 
+STATUS_STRING_LIST = ("M", "A", "R", "D", "U", "I", "C")
+""" The status string list """
+
 class ConsoleRevisionControlManager:
     """
     The console revision control manager class.
@@ -121,8 +124,25 @@ class ConsoleRevisionControlManager:
         output_method(stripped_output_string)
 
     def process_checkout(self, args, output_method):
-        # outputs the retrieved configurations
-        output_method("not implemented")
+        # returns in case an invalid number of arguments was provided
+        if len(args) < 3:
+            output_method(INVALID_NUMBER_ARGUMENTS_MESSAGE)
+            return
+
+        # retrieves the adapter name
+        adapter_name = args[0]
+
+        # retrieves the source
+        source = args[1]
+
+        # retrieves the destination
+        destination = args[2]
+
+        # creates a revision control manager to use on the resource
+        revision_control_manager = self.load_revision_control_manager(adapter_name)
+
+        # uses the revision control manager to perform the checkout
+        revision_control_manager.checkout(source, destination)
 
     def process_update(self, args, output_method):
         # returns in case an invalid number of arguments was provided
@@ -143,7 +163,7 @@ class ConsoleRevisionControlManager:
             revision = None
 
         # creates a revision control manager to use on the resource
-        revision_control_manager = self.load_revision_control_manager(adapter_name, resource_identifier)
+        revision_control_manager = self.load_revision_control_manager(adapter_name)
 
         # creates the resource identifiers list
         resource_identifiers = [resource_identifier]
@@ -353,7 +373,7 @@ class ConsoleRevisionControlManager:
                 # outputs the result
                 output_method("problem retrieving the resource's content for revision " + revision + ": " + str(exception))
 
-    def load_revision_control_manager(self, adapter_name, resource_identifier):
+    def load_revision_control_manager(self, adapter_name, resource_identifier = None):
         # creates the revision control parameters
         revision_control_parameters = {"repository_path" : resource_identifier}
 
@@ -388,14 +408,16 @@ class ConsoleRevisionControlManager:
             output_method("summary:     " + log_entry_message)
 
     def output_status(self, status, output_method):
-        status_string_list = ["M", "A", "R", "D", "U", "I", "C"]
+        # retrieves the status length
+        status_length = len(status)
 
-        for status_type_index in range(len(status)):
+        # iterates over the status length range
+        for status_type_index in range(status_length):
             # retrieves the resources for the current status type
             status_type_resource_identifiers = status[status_type_index]
 
             # retrieves the string for the current status type
-            status_string = status_string_list[status_type_index]
+            status_string = STATUS_STRING_LIST[status_type_index]
 
             # for all the resources of the current status type
             for resource_identifier in status_type_resource_identifiers:

@@ -71,6 +71,10 @@ class RevisionControlSubversionAdapter:
         # returns the svn client as the revision control reference
         return client
 
+    def checkout(self, revision_control_reference, source, destination):
+        # performs the svn checkout
+        print repr(revision_control_reference.checkout(source, destination))
+
     def update(self, revision_control_reference, resource_identifiers, revision):
         # retrieves the first resource identifier
         resource_identifier = resource_identifiers[0]
@@ -233,6 +237,10 @@ class RevisionControlSubversionAdapter:
         return revision
 
 class SubversionRevision:
+    """
+    The subversion revision class.
+    """
+
     _subversion_revision = None
     """ The adapted subversion revision """
 
@@ -246,8 +254,19 @@ class SubversionRevision:
     """ The revision message """
 
     def __init__(self, subversion_revision):
+        """
+        Constructor of the class.
+
+        @type subversion_revision: CSubversionRevision
+        @param subversion_revision: The adapted subversion revision.
+        """
+
         # sets the adapted subversion revision
         self._subversion_revision = subversion_revision
+
+    def __str__(self):
+        # uses the subversion revision number as the string representation
+        return str(self._subversion_revision.number)
 
     def get_identifier(self):
         # retrieves the revision identifier from the subversion revision's string representation
@@ -276,7 +295,3 @@ class SubversionRevision:
 
     def set_message(self, message):
         self.message = message
-
-    def __str__(self):
-        # uses the subversion revision number as the string representation
-        return str(self._subversion_revision.number)

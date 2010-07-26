@@ -269,6 +269,22 @@ class MercurialRevision:
         # sets the adapted mercurial change context
         self._mercurial_change_context = mercurial_change_context
 
+    def __str__(self):
+        # retrieves the revision number
+        revision_number = self.get_number()
+
+        # retrieves the revision identifier
+        revision_identifier = self.get_identifier()
+
+        # builds the revision_string
+        if revision_number:
+            revision_string = "%d:%s" % (revision_number, revision_identifier)
+        else:
+            revision_string = revision_identifier
+
+        # returns the revision string
+        return revision_string
+
     def get_identifier(self):
         # retrieves the revision identifier
         identifier = str(self._mercurial_change_context)
@@ -306,19 +322,3 @@ class MercurialRevision:
 
         # returns the message
         return message
-
-    def __str__(self):
-        # retrieves the revision number
-        revision_number = self.get_number()
-
-        # retrieves the revision identifier
-        revision_identifier = self.get_identifier()
-
-        # builds the revision_string
-        if revision_number:
-            revision_string = "%d:%s" % (revision_number, revision_identifier)
-        else:
-            revision_string = revision_identifier
-
-        # returns the revision string
-        return revision_string

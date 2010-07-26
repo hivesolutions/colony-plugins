@@ -65,8 +65,8 @@ class RevisionControlManager:
         @param revision_control_parameters: The parameters with which to load revision control manager
         """
 
-        # retrieve the first revision control manager adapter for the specified adapter name
-        revision_control_adapter_plugin  = self.get_revision_control_adapter_plugin(adapter_name)
+        # retrieves the first revision control manager adapter for the specified adapter name
+        revision_control_adapter_plugin = self.get_revision_control_adapter_plugin(adapter_name)
 
         # creates the revision control adapter using the retrieved adapter plugin
         revision_control_adapter = RevisionControlAdapter(revision_control_adapter_plugin)
@@ -102,6 +102,10 @@ class RevisionControlAdapter:
     def __init__(self, revision_control_adapter_plugin):
         """
         The constructor of the class.
+
+        @type revision_control_adapter_plugin: RevisionControlAdapterPlugin
+        @param revision_control_adapter_plugin: The revision control
+        adapter plugin.
         """
 
         # stores the revision control manager adapter plugin
@@ -116,6 +120,10 @@ class RevisionControlAdapter:
     def load(self, revision_control_parameters):
         """
         Loads the revision control adapter.
+
+        @type revision_control_parameters: Dictionary
+        @param revision_control_parameters: The parameters used
+        in the initialization of the adapter.
         """
 
         # sets the revision control parameters
@@ -124,9 +132,29 @@ class RevisionControlAdapter:
         # creates the revision control reference using the configured plugin
         self._revision_control_reference = self.revision_control_adapter_plugin.create_revision_control_reference(revision_control_parameters)
 
+    def checkout(self, source, destination):
+        """
+        Performs a checkout from the given source into
+        the defined destination
+
+        @type source: String
+        @param source: The source path to be used.
+        @type destination: String
+        @param destination: The destination of the checkout.
+        """
+
+        return self.revision_control_adapter_plugin.checkout(self._revision_control_reference, source, destination)
+
     def update(self, resource_identifiers, revision):
         """
         Update working directory.
+
+        @type resource_identifiers: List
+        @param resource_identifiers: The list of resource identifiers.
+        @type revision: Revision
+        @param revision: The revision to update to.
+        @rtype: Revision
+        @return: The updated revision.
         """
 
         return self.revision_control_adapter_plugin.update(self._revision_control_reference, resource_identifiers, revision)
@@ -134,6 +162,13 @@ class RevisionControlAdapter:
     def commit(self, resource_identifiers, commit_message):
         """
         Commit the specified files or all outstanding changes.
+
+        @type resource_identifiers: List
+        @param resource_identifiers: The list of resource identifiers.
+        @type commit_message: String
+        @param commit_message: The message describing the commit.
+        @rtype: Revision
+        @return: The updated revision.
         """
 
         return self.revision_control_adapter_plugin.commit(self._revision_control_reference, resource_identifiers, commit_message)
@@ -166,19 +201,60 @@ class RevisionControlAdapter:
 
         return self.revision_control_adapter_plugin.get_resources_revision(self._revision_control_reference, resource_identifiers, revision)
 
-
 class Revision:
+    """
+    The abstract revision class.
+    """
+
     number = None
+    """ The revision number """
+
     identifier = None
+    """ The identifier of the revision """
+
+    def __init__(self):
+        """
+        Constructor of the class.
+        """
+
+        pass
 
     def get_number(self):
+        """
+        Retrieves the number.
+
+        @rtype: int
+        @return: The number.
+        """
+
         return self.number
 
     def set_number(self, number):
+        """
+        Sets the number.
+
+        @type number: int
+        @param number: The number.
+        """
+
         self.number = number
 
     def get_identifier(self):
+        """
+        Retrieves the identifier.
+
+        @rtype: String
+        @return: The identifier.
+        """
+
         return self.identifier
 
     def set_identifier(self, identifier):
+        """
+        Sets the identifier.
+
+        @type identifier: String
+        @param identifier: The identifier.
+        """
+
         self.identifier = identifier
