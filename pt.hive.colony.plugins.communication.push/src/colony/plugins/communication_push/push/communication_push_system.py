@@ -38,6 +38,7 @@ __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
 import copy
+import threading
 
 COMMUNICATION_NAMES_VALUE = "communication_names"
 """ The communication names value """
@@ -72,6 +73,9 @@ WORK_SCHEDULING_ALGORITHM = 1
 MAXIMUM_NOTIFICATION_BUFFER_SIZE = 50
 """ The maximum size of the notification buffer """
 
+INITIAL_SEQUENCE_ID = 0
+""" The initial sequence id """
+
 class CommunicationPush:
     """
     The communication push plugin.
@@ -104,6 +108,12 @@ class CommunicationPush:
     communication_handler_profile_communication_handler_method = {}
     """ The map associating a communication handler and profile tuple with the communication handler method """
 
+    communication_name_sequence_id_map = {}
+    """ The map associating a commmunication with the current sequence id """
+
+    process_notification_lock = None
+    """ The lock to control the access to the process notification method """
+
     work_pool = None
     """ The work pool associated with the processing of the push notifications """
 
@@ -126,6 +136,9 @@ class CommunicationPush:
         self.communication_profile_name_communication_names_map = {}
         self.communication_handler_communication_profile_names_map = {}
         self.communication_handler_profile_communication_handler_method = {}
+        self.communication_name_sequence_id_map = {}
+
+        self.process_notification_lock = threading.RLock()
 
     def start_pool(self):
         """
@@ -292,7 +305,7 @@ class CommunicationPush:
         """
 
         # processes the notification, updating some of its values
-        self._process_notification(push_notification)
+        self._process_notification(push_notification, communication_name)
 
         # inserts the notification in the notification buffer
         self.insert_notification_buffer(communication_name, push_notification)
@@ -829,13 +842,18 @@ class CommunicationPush:
             # removes the communication handler from the communication name
             self.remove_communication_handler(communication_name, communication_handler_name, communication_handler_method)
 
-    def _process_notification(self, push_notification):
+    def _process_notification(self, push_notification, communication_name):
         """
         Processes the given notification.
 
+        @type communication_name: String
+        @param communication_name: The name of the communication.
         @type push_notification: PushNotification
         @param push_notification: The push notification to be processed.
         """
+
+        # acquires the process notification lock
+        self.process_notification_lock.acquire()
 
         # retrieves the plugin manager
         plugin_manager = self.comnunication_push_plugin.manager
@@ -853,8 +871,38 @@ class CommunicationPush:
         # manager guid and the generated guid
         composite_guid = plugin_manager_uid + "-" + generated_guid
 
+        # retrieves the sequence id for the communication name
+        sequence_id = self._get_sequence_id_communication_name(communication_name)
+
         # sets the composite guid in the push notification
         push_notification.set_guid(composite_guid)
+
+        # sets the sequence id in the push notification
+        push_notification.set_sequence_id(sequence_id)
+
+        # releases the process notification lock
+        self.process_notification_lock.release()
+
+    def _get_sequence_id_communication_name(self, communication_name):
+        """
+        Retrieves the next sequence id for the
+        communication with the given name.
+
+        @type communication_name: String
+        @param communication_name: The name of the communication
+        to retrieve the sequence id.
+        @rtype: int
+        @return: The sequence id for the given communication name.
+        """
+
+        # retrieves the sequence id for the communication name
+        sequence_id = self.communication_name_sequence_id_map.get(communication_name, 0)
+
+        # sets the increments sequence id in the communication name sequence id map
+        self.communication_name_sequence_id_map[communication_name] = sequence_id + 1
+
+        # returns the sequence id
+        return sequence_id
 
 class CommunicationPushProcessingTask:
     """
@@ -975,7 +1023,10 @@ class PushNotification:
     """ The identification of the sender """
 
     guid = None
-    """ the global unique identifier """
+    """ The global unique identifier """
+
+    sequence_id = None
+    """ The sequence id associated """
 
     def __init__(self, message, sender_id = None):
         """
@@ -1030,7 +1081,6 @@ class PushNotification:
 
         self.sender_id = sender_id
 
-
     def get_guid(self):
         """
         Retrieves the guid.
@@ -1050,6 +1100,26 @@ class PushNotification:
         """
 
         self.guid = guid
+
+    def get_sequence_id(self):
+        """
+        Retrieves the sequence id.
+
+        @rtype: int
+        @return: The sequence id.
+        """
+
+        return self.sequence_id
+
+    def set_sequence_id(self, sequence_id):
+        """
+        Sets the sequence id.
+
+        @type sequence_id: int
+        @param sequence_id: The sequence id.
+        """
+
+        self.sequence_id = sequence_id
 
 class PushNotificationWork:
     """
