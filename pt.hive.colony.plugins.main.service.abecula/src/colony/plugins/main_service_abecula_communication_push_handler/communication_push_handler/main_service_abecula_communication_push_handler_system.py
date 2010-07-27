@@ -112,6 +112,9 @@ AUTHENTICATION_HANDLER_VALUE = "authentication_handler"
 GUID_VALUE = "guid"
 """ The guid value """
 
+SEQUENCE_ID_VALUE = "sequence_id"
+""" The squence id value """
+
 ARGUMENTS_VALUE = "arguments"
 """ The arguments value """
 
@@ -1005,11 +1008,13 @@ class MainServiceAbeculaCommunicationPushHandler:
         message = notification.get_message()
         sender_id = notification.get_sender_id()
         guid = notification.get_guid()
+        sequence_id = notification.get_sequence_id()
 
         # creates the complete message contents from the original message contents
         message_contents = {COMMUNICATION_NAME_VALUE : communication_name,
                             COMMUNICATION_CLIENT_ID_VALUE : sender_id,
                             GUID_VALUE : guid,
+                            SEQUENCE_ID_VALUE : sequence_id,
                             MESSAGE_CONTENTS_VALUE : message}
 
         # returns the message contents
