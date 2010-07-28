@@ -221,24 +221,6 @@ class CommunicationPush:
         # in the communication handler name communication handler method map
         self.communication_handler_name_communication_handler_method_map[communication_handler_name_tuple] = communication_handler_method
 
-    def _send_notification(self, notification_message, communication_name, communication_handler_method):
-        # creates a new push notificaiton for the notification message
-        push_notification = PushNotification(notification_message)
-
-        # calls the communication handler method
-        communication_handler_method(push_notification, communication_name)
-
-    def _send_service_notification(self, command, arguments, communication_name, communication_handler_method):
-        # serializes the arguments
-        arguments_serialized = " ".join([str(argument) for argument in arguments])
-
-        # creates the notification message appending the push notification token with the command
-        # and the arguments serialized
-        notification_message = PUSH_SERVICE_NOTIFICATION_TOKEN + " " + command + " " + arguments_serialized
-
-        # sends the notification to the communication name
-        self._send_notification(notification_message, communication_name, communication_handler_method)
-
     def remove_communication_handler(self, communication_name, communication_handler_name, communication_handler_method):
         """
         Removes a communication handler from the communication push system.
@@ -859,6 +841,30 @@ class CommunicationPush:
 
             # removes the communication handler from the communication name
             self.remove_communication_handler(communication_name, communication_handler_name, communication_handler_method)
+
+    def _send_notification(self, notification_message, communication_name, communication_handler_method, allow_failure = True):
+        # creates a new push notificaiton for the notification message
+        push_notification = PushNotification(notification_message)
+
+        try:
+            # calls the communication handler method
+            communication_handler_method(push_notification, communication_name)
+        except Exception, exception:
+            # in case no failure is tolerated
+            if not allow_failure:
+                # prints an information message about the exception
+                self.communication_push_plugin.debug("Problem sending notification: %s" % str(exception))
+
+    def _send_service_notification(self, command, arguments, communication_name, communication_handler_method):
+        # serializes the arguments
+        arguments_serialized = " ".join([str(argument) for argument in arguments])
+
+        # creates the notification message appending the push notification token with the command
+        # and the arguments serialized
+        notification_message = PUSH_SERVICE_NOTIFICATION_TOKEN + " " + command + " " + arguments_serialized
+
+        # sends the notification to the communication name (on failure no verbosity)
+        self._send_notification(notification_message, communication_name, communication_handler_method)
 
     def _process_notification(self, push_notification, communication_name):
         """
