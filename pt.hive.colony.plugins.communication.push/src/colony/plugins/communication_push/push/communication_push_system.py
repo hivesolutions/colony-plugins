@@ -76,6 +76,12 @@ MAXIMUM_NOTIFICATION_BUFFER_SIZE = 50
 INITIAL_SEQUENCE_ID = 0
 """ The initial sequence id """
 
+PUSH_SERVICE_NOTIFICATION_TOKEN = "%{PUSH}%"
+""" The push service notification token """
+
+REMOVED_VALUE = "REMOVED"
+""" The removed value """
+
 class CommunicationPush:
     """
     The communication push plugin.
@@ -215,12 +221,23 @@ class CommunicationPush:
         # in the communication handler name communication handler method map
         self.communication_handler_name_communication_handler_method_map[communication_handler_name_tuple] = communication_handler_method
 
-    def _send_notification(self, notification_message, communication_handler_method, communication_name):
+    def _send_notification(self, notification_message, communication_name, communication_handler_method):
         # creates a new push notificaiton for the notification message
         push_notification = PushNotification(notification_message)
 
         # calls the communication handler method
         communication_handler_method(push_notification, communication_name)
+
+    def _send_service_notification(self, command, arguments, communication_name, communication_handler_method):
+        # serializes the arguments
+        arguments_serialized = " ".join([str(argument) for argument in arguments])
+
+        # creates the notification message appending the push notification token with the command
+        # and the arguments serialized
+        notification_message = PUSH_SERVICE_NOTIFICATION_TOKEN + " " + command + " " + arguments_serialized
+
+        # sends the notification to the communication name
+        self._send_notification(notification_message, communication_name, communication_handler_method)
 
     def remove_communication_handler(self, communication_name, communication_handler_name, communication_handler_method):
         """
@@ -234,8 +251,8 @@ class CommunicationPush:
         @param communication_handler_method: The method to be called on communication notification.
         """
 
-        # sends the notification to the communication name
-        self._send_notification("%{PUSH}% REMOVED " + communication_name, communication_handler_method, communication_name)
+        # sends the removed service notificaiton to communication handler
+        self._send_service_notification(REMOVED_VALUE, [communication_name], communication_name, communication_handler_method)
 
         # creates the communication handler tuple with the handler name
         # and the handler method
