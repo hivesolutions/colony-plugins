@@ -335,7 +335,7 @@ class MainServiceAbeculaCommunicationPushHandler:
             communication_push_plugin.add_communication_handler(communication_name, communication_client_id, generated_communication_handler)
 
         # sets the encoded request contents
-        self._set_encoded_request_contents(request, {RESULT_VALUE : SUCCESS_VALUE})
+        self._set_encoded_request_contents(request, {RESULT_VALUE : SUCCESS_VALUE, COMMUNICATION_NAME_VALUE : communication_name})
 
     def handle_unregister(self, request, communication_push_plugin):
         """
@@ -378,7 +378,7 @@ class MainServiceAbeculaCommunicationPushHandler:
             del self.service_connection_name_communication_handler_map[service_connection_name_tuple]
 
         # sets the encoded request contents
-        self._set_encoded_request_contents(request, {RESULT_VALUE : SUCCESS_VALUE})
+        self._set_encoded_request_contents(request, {RESULT_VALUE : SUCCESS_VALUE, COMMUNICATION_NAME_VALUE : communication_name})
 
     def handle_message(self, request, communication_push_plugin):
         """
