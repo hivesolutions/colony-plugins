@@ -843,6 +843,21 @@ class CommunicationPush:
             self.remove_communication_handler(communication_name, communication_handler_name, communication_handler_method)
 
     def _send_notification(self, notification_message, communication_name, communication_handler_method, allow_failure = True):
+        """
+        Sends the given notification message using the given communication handler method
+        and for the given communication name.
+        The allow failire flag controls the tolerance to the failure.
+
+        @type notification_message: String
+        @param notification_message: The notification message to be sent.
+        @type communication_name: String
+        @param communication_name: The name of the communication to be used.
+        @type communication_handler_method: Method
+        @param communication_handler_method: The communication handler method to be used.
+        @type allow_failure: bool
+        @param allow_failure: The tolerance to failure.
+        """
+
         # creates a new push notificaiton for the notification message
         push_notification = PushNotification(notification_message)
 
@@ -856,6 +871,20 @@ class CommunicationPush:
                 self.communication_push_plugin.debug("Problem sending notification: %s" % str(exception))
 
     def _send_service_notification(self, command, arguments, communication_name, communication_handler_method):
+        """
+        Sends a service notification using the given communication handler method
+        and for the given communication name.
+
+        @type command: String
+        @param command: The command to be sent.
+        @type arguments: List
+        @param arguments: The list of arguments for the command.
+        @type communication_name: String
+        @param communication_name: The name of the communication to be used.
+        @type communication_handler_method: Method
+        @param communication_handler_method: The communication handler method to be used.
+        """
+
         # serializes the arguments
         arguments_serialized = " ".join([str(argument) for argument in arguments])
 
