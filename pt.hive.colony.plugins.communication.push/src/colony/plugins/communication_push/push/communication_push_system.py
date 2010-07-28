@@ -215,6 +215,13 @@ class CommunicationPush:
         # in the communication handler name communication handler method map
         self.communication_handler_name_communication_handler_method_map[communication_handler_name_tuple] = communication_handler_method
 
+    def _send_notification(self, notification_message, communication_handler_method, communication_name):
+        # creates a new push notificaiton for the notification message
+        push_notification = PushNotification(notification_message)
+
+        # calls the communication handler method
+        communication_handler_method(push_notification, communication_name)
+
     def remove_communication_handler(self, communication_name, communication_handler_name, communication_handler_method):
         """
         Removes a communication handler from the communication push system.
@@ -226,6 +233,9 @@ class CommunicationPush:
         @type communication_handler_method: Method
         @param communication_handler_method: The method to be called on communication notification.
         """
+
+        # sends the notification to the communication name
+        self._send_notification("%{PUSH}% REMOVED " + communication_name, communication_handler_method, communication_name)
 
         # creates the communication handler tuple with the handler name
         # and the handler method
@@ -316,9 +326,6 @@ class CommunicationPush:
             # returns immediately
             return
 
-        # retrieves the push notification sender id
-        push_notification_sender_id = push_notification.get_sender_id()
-
         # retrieves the communication handlers list for the communication name
         communication_handlers_list = self.communication_name_communication_handlers_map[communication_name]
 
@@ -326,13 +333,7 @@ class CommunicationPush:
         for communication_handler in communication_handlers_list:
             # retrieves the communication handler name and method, unpacking
             # the communication handler tuple
-            communication_handler_name, communication_handler_method = communication_handler
-
-            # in case the communication handler is the push notification sender id
-            # (no message is sent) this avoid notification of the sender
-            if communication_handler_name == push_notification_sender_id:
-                # passes the iteration
-                continue
+            _communication_handler_name, communication_handler_method = communication_handler
 
             # creates a new push notification work
             push_notification_work = PushNotificationWork(push_notification, communication_name, communication_handler_method)
