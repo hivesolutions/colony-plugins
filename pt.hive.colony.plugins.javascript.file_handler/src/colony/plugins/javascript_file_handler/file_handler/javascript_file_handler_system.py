@@ -48,7 +48,7 @@ FILE_MIME_TYPE_MAPPING = {"html" : "text/html", "txt" : "text/plain", "css" : "t
                           "jpg" : "image/jpg", "png" : "image/png"}
 """ The map that relates the file extension and the associated mime type """
 
-EXPIRATION_DELTA_TIMESTAMP = -31536000
+EXPIRATION_DELTA_TIMESTAMP = 31536000
 """ The expiration delta timestamp """
 
 DEFAULT_MIME_TYPE = "text/plain"
