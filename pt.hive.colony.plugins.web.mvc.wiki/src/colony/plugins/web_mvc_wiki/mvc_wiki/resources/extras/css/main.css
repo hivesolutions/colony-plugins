@@ -53,6 +53,7 @@
 }
 
 #wiki-sub-header {
+    display: none;
     background: transparent url(../images/sub-header-shadow.png) repeat-x;
     height: 60px;
     margin-top: -15px;
@@ -74,17 +75,12 @@
     margin-top: 8px;
 }
 
-.wiki-button.disabled {
-    background-color: #b3c1d9;
-    border: 1px solid #ffffff;
-    color: #ffffff;
-}
-
-.wiki-page-edit {
-    background: #f0f0f0 url(../bg.png) repeat-x;
+#wiki-page-edit {
+    display: none;
+    background: #cad4e4 url(../images/wiki-page-edit-background.png) repeat-x;
     margin: 0 auto 10px;
     clear: both;
-    width: 40%;
+    width: 60%;
     height: 460px;
     padding: 24px 48px 24px 48px;
     border: 1px solid #4b6ea4;
@@ -111,7 +107,9 @@
 
 .wiki-page-edit-label {
     color: #20435c;
-    font-size: 130%;
+    font-size: 100%;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
 }
 
 #wiki-summary-input {
@@ -119,8 +117,10 @@
 }
 
 #wiki-page-contents-text-area {
-    height: 238px;
+    height: 272px;
     margin: 0px 0px 0px 0px;
+    font-family: monospace;
+    font-size: 120%;
     border-radius: 0px 0px 6px 6px;
     -moz-border-radius: 0px 0px 6px 6px;
     -webkit-border-radius: 0px 0px 6px 6px;
@@ -131,18 +131,27 @@
     float: left;
     height: 24px;
     width: 120px;
+    margin-left: 6px;
+    margin-right: 6px;
     padding-top: 8px;
     vertical-align: middle;
     background-color: #214c8f;
     border: 1px solid #ffffff;
     color: #ffffff;
-    font-family: Verdana;
     font-size: 10pt;
     text-align: center;
+    text-shadow: 1px 1px #333333;
     cursor: pointer;
     border-radius: 6px 6px 6px 6px;
     -moz-border-radius: 6px 6px 6px 6px;
     -webkit-border-radius: 6px 6px 6px 6px;
+}
+
+.wiki-button.disabled {
+    background-color: #b3c1d9;
+    border: 1px solid #ffffff;
+    color: #ffffff;
+    text-shadow: 1px 1px #555555;
 }
 
 .wiki-input {
@@ -163,8 +172,7 @@
 .wiki-text-area {
     width: 100%;
     background-color: #ffffff;
-    padding: 12px 0px 12px 0px;
-    text-indent: 8px;
+    padding: 0px 0px 0px 0px;
     border: 1px solid #214c8f;
     font-family:"Lucida Grande",Verdana,Lucida,Helvetica,Arial,sans-serif;
     font-size: 90%;
@@ -173,32 +181,9 @@
     -webkit-border-radius: 6px 6px 6px 6px;
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 #wiki-page-edit-body-controls {
     width: 100%;
-    height: 26px;
+    height: 32px;
     margin: 0px 0px 0px 0px;
     background-color: #bcc9dd;
     border-top: 1px solid #214c8f;
@@ -211,9 +196,8 @@
 
 #wiki-page-edit-body-controls-icons {
     padding-top: 6px;
-    padding-left: 2px;
+    padding-left: 6px;
 }
-
 
 .wiki-control-icon {
     float: left;

@@ -10,4 +10,5 @@
 
 <!-- javascript inclusion -->
 <script type="text/javascript" src="${out_none value=base_path /}js/main.js"></script>
+<script type="text/javascript" src="${out_none value=base_path /}resources/libs/jquery/jquery-1.4.2-min.js"></script>
 <script type="text/javascript" src="${out_none value=base_path /}resources/js/main.js"></script>

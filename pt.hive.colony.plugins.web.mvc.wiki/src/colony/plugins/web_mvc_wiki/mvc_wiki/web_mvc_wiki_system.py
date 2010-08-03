@@ -244,6 +244,15 @@ class WebMvcWikiController:
         # closes the target file
         target_file.close()
 
+        # opens the wiki file
+        wiki_file = open(wiki_file_path, "rb")
+
+        # reads the wiki file contents
+        wiki_file_contents = wiki_file.read()
+
+        # closes the wiki file
+        wiki_file.close()
+
         if not rest_request.encoder_name or rest_request.encoder_name == "html":
             # retrieves the template file
             template_file = self.retrieve_template_file("general.html.tpl")
@@ -256,6 +265,12 @@ class WebMvcWikiController:
 
             # creates the generation time string
             generation_time_string = "%.2f" % generation_time
+
+            # sets the page name in the template file
+            template_file.assign("page_name", file_path)
+
+            # sets the page source in the template file
+            template_file.assign("page_source", wiki_file_contents)
 
             # sets the page page contents to be loaded in the template file
             template_file.assign("page_contents", target_file_contents)
