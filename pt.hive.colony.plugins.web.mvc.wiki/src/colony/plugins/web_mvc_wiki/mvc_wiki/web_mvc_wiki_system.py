@@ -244,18 +244,18 @@ class WebMvcWikiController:
         # closes the target file
         target_file.close()
 
-        # opens the wiki file
-        wiki_file = open(wiki_file_path, "rb")
-
-        # reads the wiki file contents
-        wiki_file_contents = wiki_file.read()
-
-        # closes the wiki file
-        wiki_file.close()
-
         if not rest_request.encoder_name or rest_request.encoder_name == "html":
             # retrieves the template file
             template_file = self.retrieve_template_file("general.html.tpl")
+
+            # opens the wiki file
+            wiki_file = open(wiki_file_path, "rb")
+
+            # reads the wiki file contents
+            wiki_file_contents = wiki_file.read()
+
+            # closes the wiki file
+            wiki_file.close()
 
             # retrieves the final time
             final_time = time.clock()
