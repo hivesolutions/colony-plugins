@@ -46,6 +46,9 @@ WEB_MVC_WIKI_RESOURCES_PATH = "web_mvc_wiki/mvc_wiki/resources"
 TEMPLATES_PATH = WEB_MVC_WIKI_RESOURCES_PATH + "/templates"
 """ The templates path """
 
+EXTRAS_PATH = WEB_MVC_WIKI_RESOURCES_PATH + "/extras"
+""" The extras path """
+
 CACHE_DIRECTORY_IDENTIFIER = "web_mvc_wiki"
 """ The cache directory identifier """
 
@@ -121,7 +124,13 @@ class WebMvcWiki:
         to the web mvc service.
         """
 
-        return {}
+        # retrieves the plugin manager
+        plugin_manager = self.web_mvc_wiki_plugin.manager
+
+        # retrieves the web mvc wiki plugin path
+        web_mvc_wiki_plugin_path = plugin_manager.get_plugin_path_by_id(self.web_mvc_wiki_plugin.id)
+
+        return {r"^wiki/resources/.+$" : (web_mvc_wiki_plugin_path + "/" + EXTRAS_PATH, "wiki/resources")}
 
 class WebMvcWikiController:
     """

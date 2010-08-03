@@ -13,6 +13,50 @@
         </div>
     </div>
 </div>
+<div id="wiki-sub-header">			
+	<div id="wiki-sub-header-contents">
+		<div id="wiki-sub-header-left">
+			<h1 id="wiki-page-title">Page Title Goes Here!</h1>
+		</div>
+		<div id="wiki-sub-header-right">
+			<div class="wiki-float-left">
+				<div class="wiki-button">Edit</div>
+			</div>
+			<div id="wiki-page-search-container" class="wiki-float-left">
+				<input id="wiki-page-search" name="wiki-page-search" class="wiki-input" type="text" value="type to search..." />
+			</div>
+		</div>
+	</div>
+</div>
+<div id="wiki-page-edit-container">
+	<div class="wiki-page-edit">
+		<div class="wiki-page-edit-area">
+			<div class="wiki-page-edit-line">
+				<label class="wiki-page-edit-label">Summary</label>
+			</div>
+			<div class="wiki-page-edit-line">
+				<input id="wiki-summary-input" name="wiki-summary-input" class="wiki-input" type="text" value="Page Title Goes Here" />
+			</div>
+		</div>
+		<div class="wiki-page-edit-line">
+			<label class="wiki-page-edit-label">Body</label>
+		</div>
+		<div class="wiki-page-edit-line">
+			<div id="wiki-page-edit-body-controls">
+				<div id="wiki-page-edit-body-controls-icons">
+					<div class="wiki-control-icon wiki-control-icon-bold"></div>
+					<div class="wiki-control-icon wiki-control-icon-italic"></div>
+					<div class="wiki-control-icon wiki-control-icon-quote"></div>
+				</div>
+			</div>
+			<textarea id="wiki-page-contents-text-area" class="wiki-text-area">Content</textarea>
+		</div>	
+		<div id="wiki-page-edit-buttons" class="wiki-page-edit-line">
+			<div class="wiki-button">Preview</div>
+			<div class="wiki-button wiki-button-inactive">Publish</div>
+		</div>
+	</div>
+</div>
 <div id="environment-variables">
     <div id="base-path">${out_none value=base_path /}</div>
 </div>
