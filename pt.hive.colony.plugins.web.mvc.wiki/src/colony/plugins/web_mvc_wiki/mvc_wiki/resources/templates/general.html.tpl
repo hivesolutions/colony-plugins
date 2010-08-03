@@ -1,6 +1,6 @@
 ${include file="doctype.html.tpl" /}
 <head>
-    <title>Hive Solutions - The diary</title>
+    <title>Hive Wiki - ${out_none value=page_name /}</title>
     ${include file="includes.html.tpl" /}
 </head>
 <body>
