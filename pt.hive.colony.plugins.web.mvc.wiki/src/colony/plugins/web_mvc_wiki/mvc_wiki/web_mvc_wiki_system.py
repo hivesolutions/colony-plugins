@@ -546,11 +546,13 @@ class WebMvcWikiController:
         # reads the target file contents
         target_file_contents = target_file.read()
 
-        # decodes the file contents using the file encoding
-        target_file_contents = target_file_contents.decode(TARGET_FILE_ENCODING)
-
         # closes the target file
         target_file.close()
+
+        # in case the file is html one
+        if file_extension == "html":
+            # decodes the file contents using the file encoding
+            target_file_contents = target_file_contents.decode(TARGET_FILE_ENCODING)
 
         if not rest_request.encoder_name or rest_request.encoder_name == "html":
             # retrieves the template file
