@@ -40,6 +40,9 @@ __license__ = "GNU General Public License (GPL), Version 3"
 import os
 import time
 
+DEFAULT_ENCODING = "utf-8"
+""" The default encoding value """
+
 WEB_MVC_WIKI_RESOURCES_PATH = "web_mvc_wiki/mvc_wiki/resources"
 """ The web mvc wiki resources path """
 
@@ -63,6 +66,9 @@ class WebMvcWiki:
     web_mvc_wiki_controller = None
     """ The web mvc wiki controller """
 
+    web_mvc_wiki_page_controller = None
+    """ The web mvc wiki page controller """
+
     def __init__(self, web_mvc_wiki_plugin):
         """
         Constructor of the class.
@@ -85,42 +91,46 @@ class WebMvcWiki:
         # create the web mvc wiki controller
         self.web_mvc_wiki_controller = web_mvc_utils_plugin.create_controller(WebMvcWikiController, [self.web_mvc_wiki_plugin, self], {})
 
+        # create the web mvc wiki page controller
+        self.web_mvc_wiki_page_controller = web_mvc_utils_plugin.create_controller(WebMvcWikiPageController, [self.web_mvc_wiki_plugin, self], {})
+
     def get_patterns(self):
         """
-        Retrieves the map of regular expressions to be used as patters,
-        to the web mvc service. The map should relate the route with the handler
+        Retrieves the tuple of regular expressions to be used as patterns,
+        to the web mvc service. The tuple should relate the route with the handler
         method/function.
 
-        @rtype: Dictionary
-        @return: The map of regular expressions to be used as patterns,
+        @rtype: Tuple
+        @return: The tuple of regular expressions to be used as patterns,
         to the web mvc service.
         """
 
-        return {r"^wiki/[a-zA-Z0-9_\.]*$" : self.web_mvc_wiki_controller.handle_wiki,
-                r"^wiki/(?:js|images|css)/.*$" : self.web_mvc_wiki_controller.handle_resources}
+        return ((r"^wiki/page/edit$", self.web_mvc_wiki_page_controller.handle_edit),
+                (r"^wiki/[a-zA-Z0-9_\.]*$", self.web_mvc_wiki_controller.handle_wiki),
+                (r"^wiki/(?:js|images|css)/.*$", self.web_mvc_wiki_controller.handle_resources))
 
     def get_communication_patterns(self):
         """
-        Retrieves the map of regular expressions to be used as communication patters,
-        to the web mvc service. The map should relate the route with a tuple
+        Retrieves the tuple of regular expressions to be used as communication patterns,
+        to the web mvc service. The tuple should relate the route with a tuple
         containing the data handler, the connection changed handler and the name
         of the connection.
 
-        @rtype: Dictionary
-        @return: The map of regular expressions to be used as communication patterns,
+        @rtype: Tuple
+        @return: The tuple of regular expressions to be used as communication patterns,
         to the web mvc service.
         """
 
-        return {}
+        return ()
 
     def get_resource_patterns(self):
         """
-        Retrieves the map of regular expressions to be used as resource patters,
-        to the web mvc service. The map should relate the route with the base
+        Retrieves the tuple of regular expressions to be used as resource patterns,
+        to the web mvc service. The tuple should relate the route with the base
         file system path to be used.
 
-        @rtype: Dictionary
-        @return: The map of regular expressions to be used as resource patterns,
+        @rtype: Tuple
+        @return: The tuple of regular expressions to be used as resource patterns,
         to the web mvc service.
         """
 
@@ -130,7 +140,63 @@ class WebMvcWiki:
         # retrieves the web mvc wiki plugin path
         web_mvc_wiki_plugin_path = plugin_manager.get_plugin_path_by_id(self.web_mvc_wiki_plugin.id)
 
-        return {r"^wiki/resources/.+$" : (web_mvc_wiki_plugin_path + "/" + EXTRAS_PATH, "wiki/resources")}
+        return ((r"^wiki/resources/.+$", (web_mvc_wiki_plugin_path + "/" + EXTRAS_PATH, "wiki/resources")),)
+
+class WebMvcWikiPageController:
+    """
+    The web mvc wiki page controller.
+    """
+
+    def __init__(self, web_mvc_wiki_plugin, web_mvc_wiki):
+        """
+        Constructor of the class.
+
+        @type web_mvc_wiki_plugin: WebMvcWikiPlugin
+        @param web_mvc_wiki_plugin: The web vmc wiki plugin.
+        @type web_mvc_wiki: WebMvcWiki
+        @param web_mvc_wiki: The web mvc wiki.
+        """
+
+        self.web_mvc_wiki_plugin = web_mvc_wiki_plugin
+        self.web_mvc_wiki = web_mvc_wiki
+
+    def start(self):
+        """
+        Method called upon structure initialization
+        """
+
+        # retrieves the plugin manager
+        plugin_manager = self.web_mvc_wiki_plugin.manager
+
+        # retrieves the web mvc manager plugin path
+        web_mvc_manager_plugin_path = plugin_manager.get_plugin_path_by_id(self.web_mvc_wiki_plugin.id)
+
+        # creates the templates path
+        templates_path = web_mvc_manager_plugin_path + "/" + TEMPLATES_PATH
+
+        # sets the templates path
+        self.set_templates_path(templates_path)
+
+    def handle_edit(self, rest_request, parameters):
+        """
+        Handles the given page rest request.
+
+        @type rest_request: RestRequest
+        @param rest_request: The page rest request to be handled.
+        @rtype: bool
+        @return: The result of the handling.
+        """
+
+        # processes the form data
+        form_data_map = self.process_form_data(rest_request, DEFAULT_ENCODING)
+
+        # sets the result for the rest request
+        rest_request.set_result_translated("asda")
+
+        # flushes the rest request
+        rest_request.flush()
+
+        print repr(form_data_map)
 
 class WebMvcWikiController:
     """
