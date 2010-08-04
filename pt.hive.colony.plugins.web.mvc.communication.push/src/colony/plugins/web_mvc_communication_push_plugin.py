@@ -100,12 +100,12 @@ class WebMvcCommunicationPushPlugin(colony.plugins.plugin_system.Plugin):
 
     def get_patterns(self):
         """
-        Retrieves the map of regular expressions to be used as patters,
-        to the web mvc service. The map should relate the route with the handler
+        Retrieves the tuple of regular expressions to be used as patterns,
+        to the web mvc service. The tuple should relate the route with the handler
         method/function.
 
-        @rtype: Dictionary
-        @return: The map of regular expressions to be used as patterns,
+        @rtype: Tuple
+        @return: The tuple of regular expressions to be used as patterns,
         to the web mvc service.
         """
 
@@ -113,13 +113,13 @@ class WebMvcCommunicationPushPlugin(colony.plugins.plugin_system.Plugin):
 
     def get_communication_patterns(self):
         """
-        Retrieves the map of regular expressions to be used as communication patters,
-        to the web mvc service. The map should relate the route with a tuple
+        Retrieves the tuple of regular expressions to be used as communication patterns,
+        to the web mvc service. The tuple should relate the route with a tuple
         containing the data handler, the connection changed handler and the name
         of the connection.
 
-        @rtype: Dictionary
-        @return: The map of regular expressions to be used as communication patterns,
+        @rtype: Tuple
+        @return: The tuple of regular expressions to be used as communication patterns,
         to the web mvc service.
         """
 
@@ -127,12 +127,12 @@ class WebMvcCommunicationPushPlugin(colony.plugins.plugin_system.Plugin):
 
     def get_resource_patterns(self):
         """
-        Retrieves the map of regular expressions to be used as resource patters,
-        to the web mvc service. The map should relate the route with the base
+        Retrieves the tuple of regular expressions to be used as resource patterns,
+        to the web mvc service. The tuple should relate the route with the base
         file system path to be used.
 
-        @rtype: Dictionary
-        @return: The map of regular expressions to be used as resource patterns,
+        @rtype: Tuple
+        @return: The tuple of regular expressions to be used as resource patterns,
         to the web mvc service.
         """
 

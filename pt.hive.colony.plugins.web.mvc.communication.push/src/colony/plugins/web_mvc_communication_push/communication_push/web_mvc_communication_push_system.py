@@ -74,47 +74,47 @@ class WebMvcCommunicationPush:
 
     def get_patterns(self):
         """
-        Retrieves the map of regular expressions to be used as patters,
-        to the web mvc service. The map should relate the route with the handler
+        Retrieves the tuple of regular expressions to be used as patterns,
+        to the web mvc service. The tuple should relate the route with the handler
         method/function.
 
-        @rtype: Dictionary
-        @return: The map of regular expressions to be used as patterns,
+        @rtype: Tuple
+        @return: The tuple of regular expressions to be used as patterns,
         to the web mvc service.
         """
 
-        return {r"^web_mvc_communication_push/?$" : self.web_mvc_communication_push_controller.handle_show,
-                r"^web_mvc_communication_push/register$" : self.web_mvc_communication_push_controller.handle_register,
-                r"^web_mvc_communication_push/unregister$" : self.web_mvc_communication_push_controller.handle_unregister,
-                r"^web_mvc_communication_push/message$" : self.web_mvc_communication_push_controller.handle_message,
-                r"^web_mvc_communication_push/load_profile$" : self.web_mvc_communication_push_controller.handle_load_profile,
-                r"^web_mvc_communication_push/unload_profile$" : self.web_mvc_communication_push_controller.handle_unload_profile,
-                r"^web_mvc_communication_push/set_profile$" : self.web_mvc_communication_push_controller.handle_set_profile,
-                r"^web_mvc_communication_push/unset_profile$" : self.web_mvc_communication_push_controller.handle_unset_profile}
+        return ((r"^web_mvc_communication_push/?$", self.web_mvc_communication_push_controller.handle_show),
+                (r"^web_mvc_communication_push/register$", self.web_mvc_communication_push_controller.handle_register),
+                (r"^web_mvc_communication_push/unregister$", self.web_mvc_communication_push_controller.handle_unregister),
+                (r"^web_mvc_communication_push/message$", self.web_mvc_communication_push_controller.handle_message),
+                (r"^web_mvc_communication_push/load_profile$", self.web_mvc_communication_push_controller.handle_load_profile),
+                (r"^web_mvc_communication_push/unload_profile$", self.web_mvc_communication_push_controller.handle_unload_profile),
+                (r"^web_mvc_communication_push/set_profile$", self.web_mvc_communication_push_controller.handle_set_profile),
+                (r"^web_mvc_communication_push/unset_profile$", self.web_mvc_communication_push_controller.handle_unset_profile))
 
     def get_communication_patterns(self):
         """
-        Retrieves the map of regular expressions to be used as communication patters,
-        to the web mvc service. The map should relate the route with a tuple
+        Retrieves the tuple of regular expressions to be used as communication patterns,
+        to the web mvc service. The tuple should relate the route with a tuple
         containing the data handler, the connection changed handler and the name
         of the connection.
 
-        @rtype: Dictionary
-        @return: The map of regular expressions to be used as communication patterns,
+        @rtype: Tuple
+        @return: The tuple of regular expressions to be used as communication patterns,
         to the web mvc service.
         """
 
-        return {}
+        return ()
 
     def get_resource_patterns(self):
         """
-        Retrieves the map of regular expressions to be used as resource patters,
-        to the web mvc service. The map should relate the route with the base
+        Retrieves the tuple of regular expressions to be used as resource patterns,
+        to the web mvc service. The tuple should relate the route with the base
         file system path to be used.
 
-        @rtype: Dictionary
-        @return: The map of regular expressions to be used as resource patterns,
+        @rtype: Tuple
+        @return: The tuple of regular expressions to be used as resource patterns,
         to the web mvc service.
         """
 
-        return {}
+        return ()
