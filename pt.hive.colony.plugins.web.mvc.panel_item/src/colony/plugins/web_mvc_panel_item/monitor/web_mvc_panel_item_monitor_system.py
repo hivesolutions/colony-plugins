@@ -78,16 +78,16 @@ class WebMvcPanelItemMonitor:
 
     def get_resource_patterns(self):
         """
-        Retrieves the map of regular expressions to be used as resource patters,
-        to the web mvc panel item. The map should relate the route with the base
+        Retrieves the tuple of regular expressions to be used as resource patterns,
+        to the web mvc service. The tuple should relate the route with the base
         file system path to be used.
 
-        @rtype: Dictionary
-        @return: The map of regular expressions to be used as resource patterns,
-        to the web mvc panel item.
+        @rtype: Tuple
+        @return: The tuple of regular expressions to be used as resource patterns,
+        to the web mvc service.
         """
 
-        return {}
+        return ()
 
     def get_panel_item(self, parameters):
         """
