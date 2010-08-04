@@ -120,8 +120,8 @@ class RevisionControlMercurialAdapter:
         # retrieves the change context for the working directory
         commit_change_context = revision_control_reference[commit_change_context_node]
 
-        # retrieves the revision node
-        commit_revision = self.adapt_change_context(commit_change_context)
+        # creates the mercuial revision resulting from the commit
+        commit_revision = self.create_revision(commit_change_context)
 
         return commit_revision
 
@@ -157,7 +157,7 @@ class RevisionControlMercurialAdapter:
             change_contexts.append(change_context)
 
         # adapts the change context to revisions
-        revisions = self.adapt_change_contexts(change_contexts)
+        revisions = [self.create_revision(change_context) for change_context in change_contexts]
 
         return revisions
 
@@ -243,14 +243,7 @@ class RevisionControlMercurialAdapter:
     def get_adapter_name(self):
         return ADAPTER_NAME
 
-    def adapt_change_contexts(self, change_contexts):
-        # adapts the mercurial change contexts to the standard revision control manager revisions
-        revisions = [self.adapt_change_context(change_context) for change_context in change_contexts]
-
-        # returns the adapted log entries
-        return revisions
-
-    def adapt_change_context(self, change_context):
+    def create_revision(self, change_context):
         # creates the revision object from the change context
         revision = MercurialRevision(change_context)
 

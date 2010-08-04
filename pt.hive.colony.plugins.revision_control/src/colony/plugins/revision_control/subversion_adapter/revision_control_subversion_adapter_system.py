@@ -102,9 +102,10 @@ class RevisionControlSubversionAdapter:
         # retrieves the result revisions
         commit_subversion_revision = revision_control_reference.checkin(resource_identifiers, commit_message)
 
-        # retrieves the revision identifier
-        commit_revision = str(commit_subversion_revision.number)
+        # creates the subversion revision resulting from the commit
+        commit_revision = self.create_revision(commit_subversion_revision)
 
+        # returns the commit revision
         return commit_revision
 
     def log(self, revision_control_reference, resource_identifiers, start_revision, end_revision):
@@ -222,7 +223,7 @@ class RevisionControlSubversionAdapter:
         subversion_revision = log_entry["revision"]
 
         # creates the revision
-        revision = SubversionRevision(subversion_revision)
+        revision = self.create_revision(subversion_revision)
 
         # sets the author in the revision
         revision.set_author(author)
@@ -234,6 +235,13 @@ class RevisionControlSubversionAdapter:
         revision.set_message(message)
 
         # returns the assembled revision
+        return revision
+
+    def create_revision(self, subversion_revision):
+        # wraps the binding's revision object into the adapter's revision object
+        revision = SubversionRevision(subversion_revision)
+
+        # returns the revision object
         return revision
 
 class SubversionRevision:
