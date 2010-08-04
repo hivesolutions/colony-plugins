@@ -87,12 +87,12 @@ class WebMvcManagerPageItemCodeExecution:
 
     def get_resource_patterns(self):
         """
-        Retrieves the map of regular expressions to be used as resource patters,
-        to the web mvc service. The map should relate the route with the base
+        Retrieves the tuple of regular expressions to be used as resource patterns,
+        to the web mvc service. The tuple should relate the route with the base
         file system path to be used.
 
-        @rtype: Dictionary
-        @return: The map of regular expressions to be used as resource patterns,
+        @rtype: Tuple
+        @return: The tuple of regular expressions to be used as resource patterns,
         to the web mvc service.
         """
 
@@ -102,7 +102,7 @@ class WebMvcManagerPageItemCodeExecution:
         # retrieves the web mvc manager page item code_execution plugin path
         web_mvc_manager_page_item_code_execution_plugin_path = plugin_manager.get_plugin_path_by_id(self.web_mvc_manager_page_item_code_execution_plugin.id)
 
-        return {r"^web_mvc_manager/resources_page_item_code_execution/.+$" : (web_mvc_manager_page_item_code_execution_plugin_path + "/" + EXTRAS_PATH, "web_mvc_manager/resources_page_item_code_execution")}
+        return ((r"^web_mvc_manager/resources_page_item_code_execution/.+$", (web_mvc_manager_page_item_code_execution_plugin_path + "/" + EXTRAS_PATH, "web_mvc_manager/resources_page_item_code_execution")),)
 
     def get_page_item_bundle(self, parameters):
         """
