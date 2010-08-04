@@ -165,13 +165,13 @@ class WebMvcManager:
                                (r"^web_mvc_manager/side_panel/update$", self.web_mvc_manager_side_panel_controller.handle_update),
                                (r"^web_mvc_manager/header$", self.web_mvc_manager_header_controller.handle_header),
                                (r"^web_mvc_manager/plugins$", self.web_mvc_manager_plugin_controller.handle_list),
-                               #(r"^web_mvc_manager/plugins/[a-zA-Z0-9\._]+$", self.web_mvc_manager_plugin_controller.handle_show),
                                (r"^web_mvc_manager/plugins/partial$", self.web_mvc_manager_plugin_controller.handle_partial_list),
                                (r"^web_mvc_manager/plugins/new$", self.web_mvc_manager_plugin_controller.handle_new),
                                (r"^web_mvc_manager/plugins/change_status$", self.web_mvc_manager_plugin_controller.handle_change_status),
+                               (r"^web_mvc_manager/plugins/[a-zA-Z0-9\._]+$", self.web_mvc_manager_plugin_controller.handle_show),
                                (r"^web_mvc_manager/capabilities$", self.web_mvc_manager_capability_controller.handle_list),
-                               #(r"^web_mvc_manager/capabilities/[a-zA-Z0-9\._]+$", self.web_mvc_manager_capability_controller.handle_show),
-                               (r"^web_mvc_manager/capabilities/partial$", self.web_mvc_manager_capability_controller.handle_partial_list))
+                               (r"^web_mvc_manager/capabilities/partial$", self.web_mvc_manager_capability_controller.handle_partial_list),
+                               (r"^web_mvc_manager/capabilities/[a-zA-Z0-9\._]+$", self.web_mvc_manager_capability_controller.handle_show))
 
         # extends the base patterns tuple with the extra patterns tuple retrieving the result
         # patterns tuple
