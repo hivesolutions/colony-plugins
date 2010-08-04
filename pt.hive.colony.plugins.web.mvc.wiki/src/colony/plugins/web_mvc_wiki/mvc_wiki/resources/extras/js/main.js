@@ -50,4 +50,74 @@ $(document).ready(function() {
                             $("#wiki-sub-header").fadeIn(300);
                         }
                     });
+
+            $(".wiki-input, .wiki-text-area").focus(function() {
+                        $(this).addClass("selected");
+                    });
+
+            $(".wiki-input, .wiki-text-area").blur(function() {
+                        $(this).removeClass("selected");
+                    });
+
+            $(".wiki-input").each(function(index, value) {
+                        // retrieves the value reference
+                        var valueReference = $(value);
+
+                        // retrieves the current status
+                        var currentStatus = valueReference.attr("current_status");
+
+                        // retrieves the original value
+                        var originalValue = valueReference.attr("original_value");
+
+                        // in case the current status is invalid
+                        if (currentStatus == "invalid") {
+                            // adds the invalid mode class
+                            valueReference.addClass("invalid");
+                        } else if (currentStatus != "") {
+                            valueReference.attr("value", currentStatus);
+                        }
+
+                        // retrieves the current value
+                        var currentValue = valueReference.attr("value");
+
+                        // in case the current value is the original one
+                        if (currentValue == originalValue) {
+                            // adds the lower (background) mode class
+                            valueReference.addClass("lower");
+                        }
+
+                        // registers for the focus event
+                        valueReference.focus(function(event) {
+                                    // retrieves the current value
+                                    var currentValue = valueReference.attr("value");
+
+                                    // in case the current value is
+                                    // the original one
+                                    if (currentValue == originalValue) {
+                                        valueReference.attr("value", "");
+                                        valueReference.removeClass("lower");
+                                        if (currentStatus == "invalid") {
+                                            // removes the invalid mode class
+                                            valueReference.removeClass("invalid");
+                                        }
+                                    }
+                                });
+
+                        // registers for the blur event
+                        valueReference.blur(function(event) {
+                                    // retrieves the current value
+                                    var currentValue = valueReference.attr("value");
+
+                                    // in case the current value is empty
+                                    if (currentValue == "") {
+                                        valueReference.attr("value",
+                                                originalValue);
+                                        valueReference.addClass("lower");
+                                        if (currentStatus == "invalid") {
+                                            // adds the invalid mode class
+                                            valueReference.addClass("invalid");
+                                        }
+                                    }
+                                });
+                    });
         });

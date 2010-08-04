@@ -24,7 +24,7 @@
                 <div id="wiki-page-edit-button" class="wiki-button">Edit</div>
             </div>
             <div id="wiki-page-search-container" class="wiki-float-left">
-                <input id="wiki-page-search" name="wiki-page-search" class="wiki-input" type="text" value="type to search..." />
+                <input id="wiki-page-search" name="wiki-page-search" class="wiki-input" type="text" value="Search" current_status="" original_value="Search" />
             </div>
         </div>
     </div>
@@ -36,7 +36,7 @@
                 <label class="wiki-page-edit-label">Summary</label>
             </div>
             <div class="wiki-page-edit-line">
-                <input id="wiki-summary-input" name="wiki-summary-input" class="wiki-input" type="text" value="Page Title Goes Here" />
+                <input id="wiki-summary-input" name="wiki-summary-input" class="wiki-input" type="text" value="Describe your wiki modification" current_status="" original_value="Describe your wiki modification" />
             </div>
         </div>
         <div class="wiki-page-edit-line">
