@@ -24,100 +24,126 @@
 // __license__   = GNU General Public License (GPL), Version 3
 
 $(document).ready(function() {
-            $("#wiki-page-edit-button").click(function(event) {
-                        if ($("#wiki-page-edit").is(":visible")) {
-                            $("#wiki-page-edit").fadeOut(200);
-                        } else {
-                            $("#wiki-page-edit").fadeIn(300);
-                        }
+    $("#wiki-page-edit-button").click(function(event) {
+                if ($("#wiki-page-edit").is(":visible")) {
+                    $("#wiki-page-edit").fadeOut(200);
+                } else {
+                    $("#wiki-page-edit").fadeIn(300);
+                }
 
-                        event.stopPropagation();
-                    });
+                event.stopPropagation();
+            });
 
-            $(document).click(function() {
-                        $("#wiki-page-edit").fadeOut(200);
-                    });
+    $(document).click(function() {
+                $("#wiki-page-edit").fadeOut(200);
+            });
 
-            $("#wiki-page-edit").click(function(event) {
-                        // stops the event propagation to avoid handling by the body
-                        event.stopPropagation();
-                    });
+    $("#wiki-page-edit").click(function(event) {
+                // stops the event propagation to avoid handling by the body
+                event.stopPropagation();
+            });
 
-            $("#wiki-more-button").click(function() {
-                        if ($("#wiki-sub-header").is(":visible")) {
-                            $("#wiki-sub-header").fadeOut(200);
-                        } else {
-                            $("#wiki-sub-header").fadeIn(300);
-                        }
-                    });
+    $("#wiki-more-button").click(function() {
+                if ($("#wiki-sub-header").is(":visible")) {
+                    $("#wiki-sub-header").fadeOut(200);
+                } else {
+                    $("#wiki-sub-header").fadeIn(300);
+                }
+            });
 
-            $(".wiki-input, .wiki-text-area").focus(function() {
-                        $(this).addClass("selected");
-                    });
+    $(".wiki-input, .wiki-text-area").focus(function() {
+                $(this).addClass("selected");
+            });
 
-            $(".wiki-input, .wiki-text-area").blur(function() {
-                        $(this).removeClass("selected");
-                    });
+    $(".wiki-input, .wiki-text-area").blur(function() {
+                $(this).removeClass("selected");
+            });
 
-            $(".wiki-input").each(function(index, value) {
-                        // retrieves the value reference
-                        var valueReference = $(value);
+    $("#wiki-publish-button").click(function() {
+                // retrieves the contents value
+                var contents = $("#wiki-page-contents-text-area").attr("value");
 
-                        // retrieves the current status
-                        var currentStatus = valueReference.attr("current_status");
+                // retrieves the symmary value
+                var summary = $("#wiki-summary-input").attr("value");
 
-                        // retrieves the original value
-                        var originalValue = valueReference.attr("original_value");
+                // retrieves the wiki page value
+                var wikiPage = $("#wiki-page-title").html();
 
-                        // in case the current status is invalid
-                        if (currentStatus == "invalid") {
-                            // adds the invalid mode class
-                            valueReference.addClass("invalid");
-                        } else if (currentStatus != "") {
-                            valueReference.attr("value", currentStatus);
-                        }
+                // creates the complete url
+                var completeUrl = "page/edit/" + wikiPage;
 
-                        // retrieves the current value
-                        var currentValue = valueReference.attr("value");
+                // calls the edit resource
+                $.ajax({
+                            type : "post",
+                            url : completeUrl,
+                            data : {
+                                contents : contents,
+                                summary : summary
+                            },
+                            success : function(data) {
+                                console.info(data);
+                            }
+                        });
+            });
 
-                        // in case the current value is the original one
-                        if (currentValue == originalValue) {
-                            // adds the lower (background) mode class
-                            valueReference.addClass("lower");
-                        }
+    $(".wiki-input").each(function(index, value) {
+                // retrieves the value reference
+                var valueReference = $(value);
 
-                        // registers for the focus event
-                        valueReference.focus(function(event) {
-                                    // retrieves the current value
-                                    var currentValue = valueReference.attr("value");
+                // retrieves the current status
+                var currentStatus = valueReference.attr("current_status");
 
-                                    // in case the current value is
-                                    // the original one
-                                    if (currentValue == originalValue) {
-                                        valueReference.attr("value", "");
-                                        valueReference.removeClass("lower");
-                                        if (currentStatus == "invalid") {
-                                            // removes the invalid mode class
-                                            valueReference.removeClass("invalid");
-                                        }
-                                    }
-                                });
+                // retrieves the original value
+                var originalValue = valueReference.attr("original_value");
 
-                        // registers for the blur event
-                        valueReference.blur(function(event) {
-                                    // retrieves the current value
-                                    var currentValue = valueReference.attr("value");
+                // in case the current status is invalid
+                if (currentStatus == "invalid") {
+                    // adds the invalid mode class
+                    valueReference.addClass("invalid");
+                } else if (currentStatus != "") {
+                    valueReference.attr("value", currentStatus);
+                }
 
-                                    // in case the current value is empty
-                                    if (currentValue == "") {
-                                        valueReference.attr("value",
-                                                originalValue);
-                                        valueReference.addClass("lower");
-                                        if (currentStatus == "invalid") {
-                                            // adds the invalid mode class
-                                            valueReference.addClass("invalid");
-                                        }
-                                    }
-                                });
-                    });
-        });
+                // retrieves the current value
+                var currentValue = valueReference.attr("value");
+
+                // in case the current value is the original one
+                if (currentValue == originalValue) {
+                    // adds the lower (background) mode class
+                    valueReference.addClass("lower");
+                }
+
+                // registers for the focus event
+                valueReference.focus(function(event) {
+                            // retrieves the current value
+                            var currentValue = valueReference.attr("value");
+
+                            // in case the current value is
+                            // the original one
+                            if (currentValue == originalValue) {
+                                valueReference.attr("value", "");
+                                valueReference.removeClass("lower");
+                                if (currentStatus == "invalid") {
+                                    // removes the invalid mode class
+                                    valueReference.removeClass("invalid");
+                                }
+                            }
+                        });
+
+                // registers for the blur event
+                valueReference.blur(function(event) {
+                            // retrieves the current value
+                            var currentValue = valueReference.attr("value");
+
+                            // in case the current value is empty
+                            if (currentValue == "") {
+                                valueReference.attr("value", originalValue);
+                                valueReference.addClass("lower");
+                                if (currentStatus == "invalid") {
+                                    // adds the invalid mode class
+                                    valueReference.addClass("invalid");
+                                }
+                            }
+                        });
+            });
+});

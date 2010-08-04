@@ -54,7 +54,7 @@
         </div>
         <div id="wiki-page-edit-buttons" class="wiki-page-edit-line">
             <div class="wiki-button disabled">Preview</div>
-            <div class="wiki-button">Publish</div>
+            <div id="wiki-publish-button" class="wiki-button">Publish</div>
         </div>
     </div>
 </div>

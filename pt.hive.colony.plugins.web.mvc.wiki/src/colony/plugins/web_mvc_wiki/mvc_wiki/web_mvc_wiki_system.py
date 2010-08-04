@@ -105,7 +105,7 @@ class WebMvcWiki:
         to the web mvc service.
         """
 
-        return ((r"^wiki/page/edit$", self.web_mvc_wiki_page_controller.handle_edit),
+        return ((r"^wiki/page/edit/[a-zA-Z0-9_\.]+$", self.web_mvc_wiki_page_controller.handle_edit),
                 (r"^wiki/[a-zA-Z0-9_\.]*$", self.web_mvc_wiki_controller.handle_wiki),
                 (r"^wiki/(?:js|images|css)/.*$", self.web_mvc_wiki_controller.handle_resources))
 
@@ -142,10 +142,213 @@ class WebMvcWiki:
 
         return ((r"^wiki/resources/.+$", (web_mvc_wiki_plugin_path + "/" + EXTRAS_PATH, "wiki/resources")),)
 
+
+
+#!/usr/bin/python
+# -*- coding: UTF-8 -*-
+
+# Hive Administration Scripts
+# Copyright (C) 2008 Hive Solutions Lda.
+#
+# This file is part of Hive Administration Scripts.
+#
+# Hive Administration Scripts is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# Hive Administration Scripts is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with Hive Administration Scripts. If not, see <http://www.gnu.org/licenses/>.
+
+# __author__    = João Magalhães <joamag@hive.pt>
+# __version__   = 1.0.0
+# __revision__  = $LastChangedRevision$
+# __date__      = $LastChangedDate$
+# __copyright__ = Copyright (c) 2008 Hive Solutions Lda.
+# __license__   = GNU General Public License (GPL), Version 3
+
+import os
+import sys
+import stat
+import getopt
+import StringIO
+import os.path
+
+USAGE_MESSAGE="remove-trailing-spaces-python path [-r] [-t] [-n] [-u] [-e file_extension_1, file_extension_2, ...]"
+""" The usage message """
+
+SPACE_TAB = "    "
+""" The space tab string """
+
+def remove_trailing_newlines(file_path, windows_newline):
+    # opens the file for reading
+    file = open(file_path, "r")
+
+    # creates a string buffer for buffering
+    string_buffer = StringIO.StringIO();
+
+    # reads the file lines
+    file_lines = file.readlines()
+
+    # reverses the file lines
+    file_lines.reverse()
+
+    # start the index
+    index = 0
+
+    # iterates over all the lines in the file
+    for line in file_lines:
+        # in case the line is not just a newline character
+        if not line == "\n" and not line == "\r\n":
+            break
+        index -= 1
+
+    # reverses the file lines
+    file_lines.reverse()
+
+    if index == 0:
+        # retrieves the valid file lines
+        valid_file_lines = file_lines
+    else:
+        # retrieves the valid file lines
+        valid_file_lines = file_lines[:index]
+
+    # iterates over all the file lines
+    for valid_file_line in valid_file_lines:
+        # writes the valid file line to the string buffer
+        string_buffer.write(valid_file_line)
+
+    # closes the file for reading
+    file.close()
+
+    # retrieves the string value from the string buffer
+    string_value = string_buffer.getvalue()
+
+    # opens the file for writing
+    file = open(file_path, "w")
+
+    # writes the string value to the file
+    file.write(string_value)
+
+    # closes the file for writing
+    file.close()
+
+def remove_trailing_spaces(file_path, tab_to_spaces, windows_newline):
+    # opens the file for reading
+    file = open(file_path, "r")
+
+    # creates a string buffer for buffering
+    string_buffer = StringIO.StringIO()
+
+    # iterates over all the lines in the file
+    for line in file:
+        # strips the line
+        line_stripped = line.rstrip()
+
+        # in case the tab must be replaced with spaces
+        if tab_to_spaces:
+            # replaces the tab characters with spaces
+            line_stripped = line_stripped.replace("\t", SPACE_TAB)
+
+        # writes the stripped line to the string buffer
+        string_buffer.write(line_stripped)
+
+        # in case the newline is of type windows
+        # and the current platform is not windows
+        if windows_newline and not sys.platform == "win32":
+            # writes the carriage return character and the new line character
+            string_buffer.write("\r\n")
+        else:
+            # writes the new line character
+            string_buffer.write("\n")
+
+    # closes the file for reading
+    file.close()
+
+    # retrieves the string value from the string buffer
+    string_value = string_buffer.getvalue()
+
+    # opens the file for writing
+    file = open(file_path, "w")
+
+    # writes the string value to the file
+    file.write(string_value)
+
+    # closes the file for writing
+    file.close()
+
+def remove_trailing_spaces_walker(arguments, directory_name, names):
+    tab_to_spaces, trailing_newlines, windows_newline, file_extensions = arguments
+
+    valid_complete_names = [directory_name + "/" + name for name in names if not stat.S_ISDIR(os.stat(directory_name + "/" + name)[stat.ST_MODE])]
+
+    valid_complete_names_extensions = [name for name in valid_complete_names if file_extensions == None or name.split(".")[-1] in file_extensions]
+
+    for valid_complete_names_extension in valid_complete_names_extensions:
+        print "Removing trail in file: %s" % (valid_complete_names_extension, )
+        remove_trailing_spaces(valid_complete_names_extension, tab_to_spaces, windows_newline)
+        if trailing_newlines:
+            print "Removing trail newlines in file: %s" % (valid_complete_names_extension, )
+            remove_trailing_newlines(valid_complete_names_extension, windows_newline)
+
+def remove_trailing_spaces_recursive(directory_path, tab_to_spaces, trailing_newlines, windows_newline, file_extensions = None, ):
+    os.path.walk(directory_path, remove_trailing_spaces_walker, (tab_to_spaces, trailing_newlines, windows_newline, file_extensions))
+
+if __name__ == "__main__":
+    if len(sys.argv) < 2:
+        print "Invalid number of arguments"
+        print "Usage: " + USAGE_MESSAGE
+        sys.exit(2)
+
+    path = sys.argv[1]
+    recursive = False
+    tab_to_spaces = False
+    trailing_newlines = False
+    windows_newline = True
+    file_extensions = None
+
+    if len(sys.argv) > 2:
+        try:
+            opts, args = getopt.getopt(sys.argv[2:], "rtnue:", [])
+        except getopt.GetoptError, error:
+            print "Invalid number of arguments"
+            print "Usage: " + USAGE_MESSAGE
+            sys.exit(2)
+
+        for option, value in opts:
+            if option == "-r":
+                recursive = True
+            elif option == "-t":
+                tab_to_spaces = True
+            elif option == "-n":
+                trailing_newlines = True
+            elif option == "-u":
+                windows_newline = False
+            elif option == "-e":
+                file_extensions = [value.strip() for value in value.split(",")]
+
+    if recursive:
+        remove_trailing_spaces_recursive(path, tab_to_spaces, trailing_newlines, windows_newline, file_extensions)
+    else:
+        remove_trailing_spaces(path, tab_to_spaces, windows_newline)
+        if trailing_newlines:
+            remove_trailing_newlines(path, windows_newline)
+
 class WebMvcWikiPageController:
     """
     The web mvc wiki page controller.
     """
+
+    web_mvc_wiki_plugin = None
+    """ The web mvc wiki plugin """
+
+    web_mvc_wiki = None
+    """ The web mvc wiki """
 
     def __init__(self, web_mvc_wiki_plugin, web_mvc_wiki):
         """
@@ -187,8 +390,34 @@ class WebMvcWikiPageController:
         @return: The result of the handling.
         """
 
+        # retrieves the revision control manager plugin
+        revision_control_manager_plugin = self.web_mvc_wiki_plugin.revision_control_manager_plugin
+
         # processes the form data
         form_data_map = self.process_form_data(rest_request, DEFAULT_ENCODING)
+
+        summary = form_data_map.get("summary", "automated wiki commit")
+        contents =  form_data_map.get("contents", "")
+
+        base_file_path = "c:/Users/joamag/workspace/pt.hive.colony.documentation.technical"
+
+        complete_file_path = base_file_path + "/" + rest_request.path_list[-1] + ".wiki"
+
+        file = open(complete_file_path, "wb")
+        file.write(contents)
+        file.close()
+
+        remove_trailing_newlines(complete_file_path, True);
+        remove_trailing_spaces(complete_file_path, True, True);
+
+        # creates the revision control parameters
+        revision_control_parameters = {"repository_path" : base_file_path}
+
+        # loads a new revision control manager for the specified adapter name
+        revision_control_manager = revision_control_manager_plugin.load_revision_control_manager("svn", revision_control_parameters)
+
+        # uses the revision control manager to perform the commit
+        commit_revision = revision_control_manager.commit([complete_file_path], summary)
 
         # sets the result for the rest request
         rest_request.set_result_translated("asda")
@@ -196,7 +425,7 @@ class WebMvcWikiPageController:
         # flushes the rest request
         rest_request.flush()
 
-        print repr(form_data_map)
+        return True
 
 class WebMvcWikiController:
     """
