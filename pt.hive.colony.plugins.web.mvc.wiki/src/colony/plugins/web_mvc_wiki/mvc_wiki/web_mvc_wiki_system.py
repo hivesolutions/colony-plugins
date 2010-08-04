@@ -172,7 +172,6 @@ class WebMvcWiki:
 # __copyright__ = Copyright (c) 2008 Hive Solutions Lda.
 # __license__   = GNU General Public License (GPL), Version 3
 
-import os
 import sys
 import stat
 import getopt
@@ -420,7 +419,7 @@ class WebMvcWikiPageController:
         commit_revision = revision_control_manager.commit([complete_file_path], summary)
 
         # sets the result for the rest request
-        rest_request.set_result_translated("asda")
+        rest_request.set_result_translated("revision: " + str(commit_revision.get_number()))
 
         # flushes the rest request
         rest_request.flush()
