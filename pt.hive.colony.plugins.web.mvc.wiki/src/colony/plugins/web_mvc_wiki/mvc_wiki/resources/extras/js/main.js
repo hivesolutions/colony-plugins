@@ -81,7 +81,14 @@ $(document).ready(function() {
                                 summary : summary
                             },
                             success : function(data) {
-                                console.info(data);
+                                $.ajax({
+                                            type : "get",
+                                            url : wikiPage + ".ajx",
+                                            success : function(data) {
+                                                $("#wiki-contents").html(data);
+                                                $("#wiki-page-edit").fadeOut(200);
+                                            }
+                                        });
                             }
                         });
             });

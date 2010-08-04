@@ -37,7 +37,6 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-import os
 import time
 
 DEFAULT_ENCODING = "utf-8"
@@ -52,8 +51,14 @@ TEMPLATES_PATH = WEB_MVC_WIKI_RESOURCES_PATH + "/templates"
 EXTRAS_PATH = WEB_MVC_WIKI_RESOURCES_PATH + "/extras"
 """ The extras path """
 
+TARGET_FILE_ENCODING = "Cp1252"
+""" The target file encoding """
+
 CACHE_DIRECTORY_IDENTIFIER = "web_mvc_wiki"
 """ The cache directory identifier """
+
+DEFAULT_SUMMARY = "automated wiki commit"
+""" The default summary value """
 
 class WebMvcWiki:
     """
@@ -395,8 +400,9 @@ class WebMvcWikiPageController:
         # processes the form data
         form_data_map = self.process_form_data(rest_request, DEFAULT_ENCODING)
 
-        summary = form_data_map.get("summary", "automated wiki commit")
-        contents =  form_data_map.get("contents", "")
+        # retrieves the summary and the contents
+        summary = form_data_map.get("summary", DEFAULT_SUMMARY)
+        contents =  form_data_map["contents"]
 
         base_file_path = "c:/Users/joamag/workspace/pt.hive.colony.documentation.technical"
 
@@ -506,9 +512,7 @@ class WebMvcWikiController:
         else:
             encoder_name = "html"
 
-        target_file_path = base_target_path + "/" + file_path + "." + encoder_name
-
-        if not rest_request.encoder_name or rest_request.encoder_name == "html":
+        if not rest_request.encoder_name or rest_request.encoder_name in ("html", "ajx"):
             # creates the wiki file path
             wiki_file_path = base_file_path + "/" + file_path + ".wiki"
 
@@ -529,11 +533,21 @@ class WebMvcWikiController:
             # generates the html files using the wiki engine with the given engine properties
             language_wiki_plugin.generate("html", engine_properties)
 
+        # retrieves the file extension
+        file_extension = encoder_name == "ajx" and "html" or encoder_name
+
+        # creates the target file path appending the base target path with the file path
+        # and the file extension
+        target_file_path = base_target_path + "/" + file_path + "." + file_extension
+
         # opens the target file
         target_file = open(target_file_path, "rb")
 
         # reads the target file contents
         target_file_contents = target_file.read()
+
+        # decodes the file contents using the file encoding
+        target_file_contents = target_file_contents.decode(TARGET_FILE_ENCODING)
 
         # closes the target file
         target_file.close()
