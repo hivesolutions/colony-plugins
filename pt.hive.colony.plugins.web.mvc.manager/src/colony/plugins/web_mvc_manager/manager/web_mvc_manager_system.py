@@ -94,7 +94,11 @@ class WebMvcManager:
 
     side_panel_items_map = {}
 
+    extra_patterns_list = []
+    """ The list containing the extra patterns """
+
     extra_patterns_map = {}
+    """ The map containing the extra patterns """
 
     def __init__(self, web_mvc_manager_plugin):
         """
@@ -108,6 +112,7 @@ class WebMvcManager:
 
         self.menu_items_map = {}
         self.side_panel_items_map = {}
+        self.extra_patterns_list = []
         self.extra_patterns_map = {}
 
     def load_components(self):
@@ -145,60 +150,60 @@ class WebMvcManager:
 
     def get_patterns(self):
         """
-        Retrieves the map of regular expressions to be used as patters,
-        to the web mvc service. The map should relate the route with the handler
+        Retrieves the tuple of regular expressions to be used as patterns,
+        to the web mvc service. The tuple should relate the route with the handler
         method/function.
 
-        @rtype: Dictionary
-        @return: The map of regular expressions to be used as patterns,
+        @rtype: Tuple
+        @return: The tuple of regular expressions to be used as patterns,
         to the web mvc service.
         """
 
-        base_patters_map = {r"^web_mvc_manager/?$" : self.web_mvc_manager_main_controller.handle_web_mvc_manager_index,
-                            r"^web_mvc_manager/index$" : self.web_mvc_manager_main_controller.handle_web_mvc_manager_index,
-                            r"^web_mvc_manager/side_panel/configuration$" : self.web_mvc_manager_side_panel_controller.handle_configuration,
-                            r"^web_mvc_manager/side_panel/update$" : self.web_mvc_manager_side_panel_controller.handle_update,
-                            r"^web_mvc_manager/header$" : self.web_mvc_manager_header_controller.handle_header,
-                            r"^web_mvc_manager/plugins$" : self.web_mvc_manager_plugin_controller.handle_list,
-                            #r"^web_mvc_manager/plugins/[a-zA-Z0-9\._]+$" : self.web_mvc_manager_plugin_controller.handle_show,
-                            r"^web_mvc_manager/plugins/partial$" : self.web_mvc_manager_plugin_controller.handle_partial_list,
-                            r"^web_mvc_manager/plugins/new$" : self.web_mvc_manager_plugin_controller.handle_new,
-                            r"^web_mvc_manager/plugins/change_status$" : self.web_mvc_manager_plugin_controller.handle_change_status,
-                            r"^web_mvc_manager/capabilities$" : self.web_mvc_manager_capability_controller.handle_list,
-                            #r"^web_mvc_manager/capabilities/[a-zA-Z0-9\._]+$" : self.web_mvc_manager_capability_controller.handle_show,
-                            r"^web_mvc_manager/capabilities/partial$" : self.web_mvc_manager_capability_controller.handle_partial_list}
+        base_patterns_tuple = ((r"^web_mvc_manager/?$", self.web_mvc_manager_main_controller.handle_web_mvc_manager_index),
+                               (r"^web_mvc_manager/index$", self.web_mvc_manager_main_controller.handle_web_mvc_manager_index),
+                               (r"^web_mvc_manager/side_panel/configuration$", self.web_mvc_manager_side_panel_controller.handle_configuration),
+                               (r"^web_mvc_manager/side_panel/update$", self.web_mvc_manager_side_panel_controller.handle_update),
+                               (r"^web_mvc_manager/header$", self.web_mvc_manager_header_controller.handle_header),
+                               (r"^web_mvc_manager/plugins$", self.web_mvc_manager_plugin_controller.handle_list),
+                               #(r"^web_mvc_manager/plugins/[a-zA-Z0-9\._]+$", self.web_mvc_manager_plugin_controller.handle_show),
+                               (r"^web_mvc_manager/plugins/partial$", self.web_mvc_manager_plugin_controller.handle_partial_list),
+                               (r"^web_mvc_manager/plugins/new$", self.web_mvc_manager_plugin_controller.handle_new),
+                               (r"^web_mvc_manager/plugins/change_status$", self.web_mvc_manager_plugin_controller.handle_change_status),
+                               (r"^web_mvc_manager/capabilities$", self.web_mvc_manager_capability_controller.handle_list),
+                               #(r"^web_mvc_manager/capabilities/[a-zA-Z0-9\._]+$", self.web_mvc_manager_capability_controller.handle_show),
+                               (r"^web_mvc_manager/capabilities/partial$", self.web_mvc_manager_capability_controller.handle_partial_list))
 
-        # extends the base patterns map with the extra patterns map retrieving the result
-        # patterns map
-        result_patterns_map = colony.libs.map_util.map_extend(base_patters_map, self.extra_patterns_map)
+        # extends the base patterns tuple with the extra patterns tuple retrieving the result
+        # patterns tuple
+        result_patterns_tuple = base_patterns_tuple + tuple(self.extra_patterns_list)
 
-        # returns the result patterns maps
-        return result_patterns_map
+        # returns the result patterns tuple
+        return result_patterns_tuple
 
     def get_communication_patterns(self):
         """
-        Retrieves the map of regular expressions to be used as communication patters,
-        to the web mvc service. The map should relate the route with a tuple
+        Retrieves the tuple of regular expressions to be used as communication patterns,
+        to the web mvc service. The tuple should relate the route with a tuple
         containing the data handler, the connection changed handler and the name
         of the connection.
 
-        @rtype: Dictionary
-        @return: The map of regular expressions to be used as communication patterns,
+        @rtype: Tuple
+        @return: The tuple of regular expressions to be used as communication patterns,
         to the web mvc service.
         """
 
-        return {r"^web_mvc_manager/communication$" : (self.web_mvc_manager_communication_controller.handle_data,
+        return ((r"^web_mvc_manager/communication$", (self.web_mvc_manager_communication_controller.handle_data,
                                                       self.web_mvc_manager_communication_controller.handle_connection_changed,
-                                                      "web_mvc_manager/communication")}
+                                                      "web_mvc_manager/communication")),)
 
     def get_resource_patterns(self):
         """
-        Retrieves the map of regular expressions to be used as resource patters,
-        to the web mvc service. The map should relate the route with the base
+        Retrieves the tuple of regular expressions to be used as resource patterns,
+        to the web mvc service. The tuple should relate the route with the base
         file system path to be used.
 
-        @rtype: Dictionary
-        @return: The map of regular expressions to be used as resource patterns,
+        @rtype: Tuple
+        @return: The tuple of regular expressions to be used as resource patterns,
         to the web mvc service.
         """
 
@@ -220,9 +225,9 @@ class WebMvcManager:
         # retrieves the web mvc resources ui plugin resources path
         web_mvc_resources_ui_plugin_resources_path = web_mvc_resources_ui_plugin.get_resources_path()
 
-        return {r"^web_mvc_manager/resources/.+$" : (web_mvc_manager_plugin_path + "/" + EXTRAS_PATH, "web_mvc_manager/resources"),
-                r"^web_mvc_manager/resources_base/.+$" : (web_mvc_resources_base_plugin_resources_path, "web_mvc_manager/resources_base"),
-                r"^web_mvc_manager/resources_ui/.+$" : (web_mvc_resources_ui_plugin_resources_path, "web_mvc_manager/resources_ui")}
+        return ((r"^web_mvc_manager/resources/.+$", (web_mvc_manager_plugin_path + "/" + EXTRAS_PATH, "web_mvc_manager/resources")),
+                (r"^web_mvc_manager/resources_base/.+$", (web_mvc_resources_base_plugin_resources_path, "web_mvc_manager/resources_base")),
+                (r"^web_mvc_manager/resources_ui/.+$", (web_mvc_resources_ui_plugin_resources_path, "web_mvc_manager/resources_ui")))
 
     def load_web_mvc_manager_page_item_bundle_plugin(self, web_mvc_manager_page_item_bundle_plugin):
         # retrieves the page item bundle from the web mvc manager page item bundle plugin
@@ -263,6 +268,12 @@ class WebMvcManager:
 
             # retrieves the page item value
             page_item_value = self.web_mvc_manager_main_controller.generate_handle_handle_web_mvc_manager_page_item(page_item_action)
+
+            # creates the page item tuple with the page item pattern name and value
+            page_item_tuple = (page_item_pattern_name, page_item_value)
+
+            # sets the page item tuple in the extra patterns list
+            self.extra_patterns_list.append(page_item_tuple)
 
             # sets the page item in the extra patterns map
             self.extra_patterns_map[page_item_pattern_name] = page_item_value
@@ -306,6 +317,15 @@ class WebMvcManager:
 
             # retrieves the page item pattern name
             page_item_pattern_name = page_item_pattern[0]
+
+            # sets the page item in the extra patterns map
+            page_item_value = self.extra_patterns_map[page_item_pattern_name]
+
+            # creates the page item tuple with the page item pattern name and value
+            pattern_tuple = (page_item_pattern_name, page_item_value)
+
+            # removes the patter tuple from the extra patterns list
+            self.extra_patterns_list.remove(pattern_tuple)
 
             # unsets the page item in the extra patterns map
             del self.extra_patterns_map[page_item_pattern_name]
@@ -664,6 +684,7 @@ class WebMvcManagerMainController:
             handler_parameters = colony.libs.map_util.map_extend(parameters, {"template_file" : template_file,
                                                                               "search_helper" : web_mvc_manager_search_helper,
                                                                               "communication_helper" : web_mvc_manager_communication_helper})
+
             # sends the request to the original handler and returns the result
             return original_handler(rest_request, handler_parameters)
 
