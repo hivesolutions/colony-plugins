@@ -23,6 +23,24 @@
 // __copyright__ = Copyright (c) 2008 Hive Solutions Lda.
 // __license__   = GNU General Public License (GPL), Version 3
 
+function txtGetSelection(token, endToken, space) {
+    var spaceValue = space ? " " : "";
+
+    var txt = document.getElementById("wiki-page-contents-text-area");
+
+    var delta = txt.selectionEnd - txt.selectionStart;
+
+    var first = txt.value.slice(0, txt.selectionStart);
+    var second = txt.value.slice(txt.selectionStart, txt.selectionEnd);
+    var third = txt.value.slice(txt.selectionEnd, txt.value.length);
+
+    var valor_final = first + token + spaceValue + second + spaceValue
+            + endToken + third;
+
+    txt.value = valor_final;
+
+}
+
 $(document).ready(function() {
     $("#wiki-page-edit-button").click(function(event) {
                 if ($("#wiki-page-edit").is(":visible")) {
@@ -57,6 +75,18 @@ $(document).ready(function() {
 
     $(".wiki-input, .wiki-text-area").blur(function() {
                 $(this).removeClass("selected");
+            });
+
+    $(".wiki-control-icon-bold").click(function() {
+                txtGetSelection("**", "**", false);
+            });
+
+    $(".wiki-control-icon-italic").click(function() {
+                txtGetSelection("//", "//", false);
+            });
+
+    $(".wiki-control-icon-quote").click(function() {
+                txtGetSelection("<quote author=\"...\">", "</quote>", false);
             });
 
     $("#wiki-publish-button").click(function() {
