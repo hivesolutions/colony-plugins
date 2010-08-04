@@ -46,6 +46,9 @@ body {
     font-variant: normal;
     font-weight: normal;
     line-height: normal;
+    overflow: -moz-scrollbars-vertical;
+    overflow-x: auto;
+    overflow-y: scroll;
 }
 
 #wiki-contents {
