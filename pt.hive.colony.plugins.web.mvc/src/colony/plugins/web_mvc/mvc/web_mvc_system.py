@@ -45,7 +45,7 @@ import web_mvc_exceptions
 import web_mvc_file_handler
 import web_mvc_communication_handler
 
-REGEX_COMILATION_LIMIT = 99
+REGEX_COMPILATION_LIMIT = 99
 """ The regex compilation limit """
 
 FILE_HANDLER_VALUE = "file_handler"
@@ -142,19 +142,6 @@ class WebMvc:
 
         return [r"^mvc/.*$"]
 
-    def get_resource_patterns(self):
-        """
-        Retrieves the map of regular expressions to be used as resource patters,
-        to the web mvc service. The map should relate the route with the base
-        file system path to be used.
-
-        @rtype: Dictionary
-        @return: The map of regular expressions to be used as resource patterns,
-        to the web mvc service.
-        """
-
-        return {}
-
     def handle_rest_request(self, rest_request):
         """
         Handles the given rest request.
@@ -219,25 +206,34 @@ class WebMvc:
         web_mvc_service_plugin_patterns = web_mvc_service_plugin.get_patterns()
 
         # iterates over all the patterns in the web mvc service plugin patterns
-        for pattern_key, pattern_value in web_mvc_service_plugin_patterns.items():
+        for pattern_key, pattern_value in web_mvc_service_plugin_patterns:
             # adds the pattern to the web mvc service patterns map
             self.web_mvc_service_patterns_map[pattern_key] = pattern_value
+
+            # adds the pattern to the web mvc service patterns list
+            self.web_mvc_service_patterns_list.append(pattern_key)
 
         # retrieves the web mvc service plugin communication patterns
         web_mvc_service_plugin_communication_patterns = web_mvc_service_plugin.get_communication_patterns()
 
         # iterates over all the communication patterns in the web mvc service plugin communication patterns
-        for pattern_key, pattern_value in web_mvc_service_plugin_communication_patterns.items():
+        for pattern_key, pattern_value in web_mvc_service_plugin_communication_patterns:
             # adds the pattern to the web mvc service communication patterns map
             self.web_mvc_service_communication_patterns_map[pattern_key] = pattern_value
+
+            # adds the pattern to the web mvc service communication patterns list
+            self.web_mvc_service_communication_patterns_list.append(pattern_key)
 
         # retrieves the web mvc service plugin resource patterns
         web_mvc_service_plugin_resource_patterns = web_mvc_service_plugin.get_resource_patterns()
 
         # iterates over all the resource patterns in the web mvc service plugin resource patterns
-        for pattern_key, pattern_value in web_mvc_service_plugin_resource_patterns.items():
+        for pattern_key, pattern_value in web_mvc_service_plugin_resource_patterns:
             # adds the pattern to the web mvc service resource patterns map
             self.web_mvc_service_resource_patterns_map[pattern_key] = pattern_value
+
+            # adds the pattern to the web mvc service resource patterns list
+            self.web_mvc_service_resource_patterns_list.append(pattern_key)
 
         # updates the matching regex
         self._update_matching_regex()
@@ -260,31 +256,40 @@ class WebMvc:
         web_mvc_service_plugin_patterns = web_mvc_service_plugin.get_patterns()
 
         # iterates over all the patterns in the web mvc service plugin patterns
-        for pattern_key in web_mvc_service_plugin_patterns:
+        for pattern_key, _pattern_value in web_mvc_service_plugin_patterns:
             # in case the pattern key exists in the web mvc service patterns map
             if pattern_key in self.web_mvc_service_patterns_map:
                 # removes the pattern from the web mvc service patterns map
                 del self.web_mvc_service_patterns_map[pattern_key]
 
+                # removes the pattern from the web mvc service patterns list
+                self.web_mvc_service_patterns_list.remove(pattern_key)
+
         # retrieves the web mvc service plugin communication patterns
         web_mvc_service_plugin_communication_patterns = web_mvc_service_plugin.get_communication_patterns()
 
         # iterates over all the communication patterns in the web mvc service plugin communication patterns
-        for pattern_key in web_mvc_service_plugin_communication_patterns:
+        for pattern_key, _pattern_value in web_mvc_service_plugin_communication_patterns:
             # in case the pattern key exists in the web mvc service communication patterns map
             if pattern_key in self.web_mvc_service_communication_patterns_map:
                 # removes the pattern from the web mvc service communication patterns map
                 del self.web_mvc_service_communication_patterns_map[pattern_key]
 
+                # removes the pattern from the web mvc service communication patterns list
+                self.web_mvc_service_communication_patterns_list.remove(pattern_key)
+
         # retrieves the web mvc service plugin resource patterns
         web_mvc_service_plugin_resource_patterns = web_mvc_service_plugin.get_resource_patterns()
 
         # iterates over all the resource patterns in the web mvc service plugin resource patterns
-        for pattern_key in web_mvc_service_plugin_resource_patterns:
+        for pattern_key, _pattern_value in web_mvc_service_plugin_resource_patterns:
             # in case the pattern key exists in the web mvc service resource patterns map
             if pattern_key in self.web_mvc_service_resource_patterns_map:
                 # removes the pattern from the web mvc service resource patterns map
                 del self.web_mvc_service_resource_patterns_map[pattern_key]
+
+                # removes the pattern from the web mvc service resource patterns list
+                self.web_mvc_service_resource_patterns_list.remove(pattern_key)
 
         # updates the matching regex
         self._update_matching_regex()
@@ -398,9 +403,6 @@ class WebMvc:
         # starts the matching regex value buffer
         matching_regex_value_buffer = colony.libs.string_buffer_util.StringBuffer()
 
-        # clears the web mvc service patterns list
-        self.web_mvc_service_patterns_list = []
-
         # clears the matching regex list
         self.matching_regex_list = []
 
@@ -416,8 +418,8 @@ class WebMvc:
         # starts the current base value
         current_base_value = 0
 
-        # iterates over all the patterns in the web mvc service patterns map
-        for pattern in self.web_mvc_service_patterns_map:
+        # iterates over all the patterns in the web mvc service patterns list
+        for pattern in self.web_mvc_service_patterns_list:
             # in case it's the first
             if is_first:
                 # unsets the is first flag
@@ -429,15 +431,12 @@ class WebMvc:
             # adds the group name part of the regex to the matching regex value buffer
             matching_regex_value_buffer.write("(" + pattern + ")")
 
-            # adds the pattern to the web mvc service patterns list
-            self.web_mvc_service_patterns_list.append(pattern)
-
             # increments the index
             index += 1
 
             # in case the current index is in the limit of the python
             # regex compilation
-            if index % REGEX_COMILATION_LIMIT == 0:
+            if index % REGEX_COMPILATION_LIMIT == 0:
                 # retrieves the matching regex value from the matching
                 # regex value buffer
                 matching_regex_value = matching_regex_value_buffer.get_value()
@@ -464,6 +463,11 @@ class WebMvc:
         # regex value buffer
         matching_regex_value = matching_regex_value_buffer.get_value()
 
+        # in case the matching regex value is invalid (empty)
+        if not matching_regex_value:
+            # returns immediately
+            return
+
         # compiles the matching regex value
         matching_regex = re.compile(matching_regex_value)
 
@@ -481,9 +485,6 @@ class WebMvc:
         # starts the communication matching regex value buffer
         communication_matching_regex_value_buffer = colony.libs.string_buffer_util.StringBuffer()
 
-        # clears the web mvc service communication patterns list
-        self.web_mvc_service_communication_patterns_list = []
-
         # clears the communication matching regex list
         self.communication_matching_regex_list = []
 
@@ -499,8 +500,8 @@ class WebMvc:
         # starts the current base value
         current_base_value = 0
 
-        # iterates over all the patterns in the web mvc service communication patterns map
-        for pattern in self.web_mvc_service_communication_patterns_map:
+        # iterates over all the patterns in the web mvc service communication patterns list
+        for pattern in self.web_mvc_service_communication_patterns_list:
             # in case it's the first
             if is_first:
                 # unsets the is first flag
@@ -512,15 +513,12 @@ class WebMvc:
             # adds the group name part of the regex to the communication matching regex value buffer
             communication_matching_regex_value_buffer.write("(" + pattern + ")")
 
-            # adds the pattern to the web mvc service communication patterns list
-            self.web_mvc_service_communication_patterns_list.append(pattern)
-
             # increments the index
             index += 1
 
             # in case the current index is in the limit of the python
             # regex compilation
-            if index % REGEX_COMILATION_LIMIT == 0:
+            if index % REGEX_COMPILATION_LIMIT == 0:
                 # retrieves the communication matching regex value from the communication matching
                 # regex value buffer
                 communication_matching_regex_value = communication_matching_regex_value_buffer.get_value()
@@ -547,6 +545,11 @@ class WebMvc:
         # regex value buffer
         communication_matching_regex_value = communication_matching_regex_value_buffer.get_value()
 
+        # in case the communication matching regex value is invalid (empty)
+        if not communication_matching_regex_value:
+            # returns immediately
+            return
+
         # compiles the communication matching regex value
         communication_matching_regex = re.compile(communication_matching_regex_value)
 
@@ -564,9 +567,6 @@ class WebMvc:
         # starts the resource matching regex value buffer
         resource_matching_regex_value_buffer = colony.libs.string_buffer_util.StringBuffer()
 
-        # clears the web mvc service resource patterns list
-        self.web_mvc_service_resource_patterns_list = []
-
         # clears the resource matching regex list
         self.resource_matching_regex_list = []
 
@@ -582,8 +582,8 @@ class WebMvc:
         # starts the current base value
         current_base_value = 0
 
-        # iterates over all the patterns in the web mvc service resource patterns map
-        for pattern in self.web_mvc_service_resource_patterns_map:
+        # iterates over all the patterns in the web mvc service resource patterns list
+        for pattern in self.web_mvc_service_resource_patterns_list:
             # in case it's the first
             if is_first:
                 # unsets the is first flag
@@ -595,15 +595,12 @@ class WebMvc:
             # adds the group name part of the regex to the resource matching regex value buffer
             resource_matching_regex_value_buffer.write("(" + pattern + ")")
 
-            # adds the pattern to the web mvc service resource patterns list
-            self.web_mvc_service_resource_patterns_list.append(pattern)
-
             # increments the index
             index += 1
 
             # in case the current index is in the limit of the python
             # regex compilation
-            if index % REGEX_COMILATION_LIMIT == 0:
+            if index % REGEX_COMPILATION_LIMIT == 0:
                 # retrieves the resource matching regex value from the resource matching
                 # regex value buffer
                 resource_matching_regex_value = resource_matching_regex_value_buffer.get_value()
@@ -629,6 +626,11 @@ class WebMvc:
         # retrieves the resource matching regex value from the resource matching
         # regex value buffer
         resource_matching_regex_value = resource_matching_regex_value_buffer.get_value()
+
+        # in case the resource matching regex value is invalid (empty)
+        if not resource_matching_regex_value:
+            # returns immediately
+            return
 
         # compiles the resource matching regex value
         resource_matching_regex = re.compile(resource_matching_regex_value)
