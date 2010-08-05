@@ -209,24 +209,6 @@ h5:hover > a.headerlink {
     padding-bottom: 12px;
 }
 
-.wiki-footer-contents .logo-image {
-    float: left;
-    margin-top: 4px;
-    margin-right: 12px;
-}
-
-.wiki-footer-contents .logo-image img {
-    border: none;
-}
-
-.wiki-footer-contents .logo-image a:hover {
-    border-bottom: none;
-}
-
-.wiki-footer-contents .separator {
-    float: left;
-}
-
 .wiki-footer-contents .text-contents {
     float: left;
     margin-top: 4px;
