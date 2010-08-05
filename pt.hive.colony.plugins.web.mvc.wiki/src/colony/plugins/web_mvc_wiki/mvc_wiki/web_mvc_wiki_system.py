@@ -512,7 +512,7 @@ class WebMvcWikiController:
         else:
             encoder_name = "html"
 
-        if not rest_request.encoder_name or rest_request.encoder_name in ("html", "ajx"):
+        if not rest_request.encoder_name or rest_request.encoder_name in ("html", "ajx", "prt"):
             # creates the wiki file path
             wiki_file_path = base_file_path + "/" + file_path + ".wiki"
 
@@ -534,7 +534,7 @@ class WebMvcWikiController:
             language_wiki_plugin.generate("html", engine_properties)
 
         # retrieves the file extension
-        file_extension = encoder_name == "ajx" and "html" or encoder_name
+        file_extension = encoder_name in ("ajx", "prt") and "html" or encoder_name
 
         # creates the target file path appending the base target path with the file path
         # and the file extension
@@ -554,9 +554,15 @@ class WebMvcWikiController:
             # decodes the file contents using the file encoding
             target_file_contents = target_file_contents.decode(TARGET_FILE_ENCODING)
 
-        if not rest_request.encoder_name or rest_request.encoder_name == "html":
+        if not rest_request.encoder_name or rest_request.encoder_name in ("html", "prt"):
+
+            if not rest_request.encoder_name or rest_request.encoder_name == "html":
+                template_file_name = "general.html.tpl"
+            elif rest_request.encoder_name == "prt":
+                template_file_name = "general_print.html.tpl"
+
             # retrieves the template file
-            template_file = self.retrieve_template_file("general.html.tpl")
+            template_file = self.retrieve_template_file(template_file_name)
 
             # opens the wiki file
             wiki_file = open(wiki_file_path, "rb")

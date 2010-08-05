@@ -21,8 +21,7 @@
         </div>
         <div id="wiki-sub-header-right">
             <div class="wiki-float-left">
-            	<div id="wiki-page-edit-button" class="wiki-button wiki-button-blue">Edit</div>
-                <div id="wiki-page-edit-button" class="wiki-button wiki-button-grey">Edit</div>
+                <div id="wiki-page-edit-button" class="wiki-button wiki-button-blue">Edit</div>
             </div>
             <div id="wiki-page-search-container" class="wiki-float-left">
                 <input id="wiki-page-search" name="wiki-page-search" class="wiki-input" type="text" value="Search" current_status="" original_value="Search" />
@@ -55,8 +54,8 @@
             <textarea id="wiki-page-contents-text-area" class="wiki-text-area">${out_none value=page_source /}</textarea>
         </div>
         <div id="wiki-page-edit-buttons" class="wiki-page-edit-line">
-            <div class="wiki-button disabled">Preview</div>
-            <div id="wiki-publish-button" class="wiki-button">Publish</div>
+            <div class="wiki-button wiki-button-grey disabled">Preview</div>
+            <div id="wiki-publish-button" class="wiki-button wiki-button-blue">Publish</div>
         </div>
     </div>
 </div>

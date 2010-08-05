@@ -67,6 +67,10 @@ $(document).ready(function() {
                 }
             });
 
+    $("#wiki-options-button").click(function() {
+                window.location = $("#wiki-page-title").html() + ".prt";
+            });
+
     $(".wiki-button").mousedown(function() {
                 $(this).addClass("click");
             });

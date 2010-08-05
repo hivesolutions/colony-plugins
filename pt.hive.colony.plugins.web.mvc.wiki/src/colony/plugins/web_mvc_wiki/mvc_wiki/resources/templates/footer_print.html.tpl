@@ -1,6 +1,6 @@
 <div id="wiki-footer">
     <div class="wiki-footer-contents">
-        <div id="wiki-footer-contents-left">
+           <div id="wiki-footer-contents-left">
             <div class="logo-image">
                 <a href="http://getcolony.com"><img src="images/powered_by_colony.png"/></a>
             </div>
@@ -13,7 +13,7 @@
             </div>
         </div>
         <div id="wiki-footer-contents-right">
-            <div id="wiki-options-button" class="wiki-button wiki-button-grey">Options</div>
+            <div class="text-contents">Document generated in ${datetime /}</div>
         </div>
     </div>
 </div>

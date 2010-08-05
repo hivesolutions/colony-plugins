@@ -29,7 +29,6 @@
  __license__   = GNU General Public License (GPL), Version 3
 */
 
-
 /* general */
 .wiki-float-left {
     float: left;
@@ -139,6 +138,15 @@
     font-size: 120%;
 }
 
+#wiki-footer-contents-left {
+    float: left;
+}
+
+#wiki-footer-contents-right {
+    float: right;
+    font-size: 160%;
+}
+
 /* components */
 .wiki-button-container {
     float: left;
@@ -195,20 +203,8 @@
     text-shadow: 1px 1px #2a629c;
     border-top: 1px solid #9cb4cf;
     border-left: 1px solid #9cb4cf;
-       border-bottom: 1px solid transparent;
+    border-bottom: 1px solid transparent;
     border-right: 1px solid transparent;
-}
-
-.wiki-button.wiki-button-blue.click {
-}
-
-.wiki-button.wiki-button-blue.disabled {
-    border-top: 1px solid transparent;
-    border-left: 1px solid transparent;
-}
-
-.wiki-button.wiki-button-blue.disabled {
-    color: #2a629c;
 }
 
 .wiki-button.wiki-button-grey {
@@ -217,20 +213,8 @@
     text-shadow: 1px 1px #ffffff;
     border-top: 1px solid #ffffff;
     border-left: 1px solid #ffffff;
-       border-bottom: 1px solid transparent;
+    border-bottom: 1px solid transparent;
     border-right: 1px solid transparent;
-}
-
-.wiki-button.wiki-button-grey.click {
-}
-
-.wiki-button.wiki-button-grey.disabled {
-    border-top: 1px solid transparent;
-    border-left: 1px solid transparent;
-}
-
-.wiki-button.wiki-button-grey.disabled {
-    color: #b3b3b3;
 }
 
 .wiki-input {
