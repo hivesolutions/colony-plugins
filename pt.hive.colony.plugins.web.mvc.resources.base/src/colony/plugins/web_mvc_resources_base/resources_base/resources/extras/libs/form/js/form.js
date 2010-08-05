@@ -260,8 +260,8 @@
                     if (opts.extraData)
                         for (var n in opts.extraData)
                             extraInputs.push($('<input type="hidden" name="'
-                                            + n + '" value="'
-                                            + opts.extraData[n] + '" />').appendTo(form)[0]);
+                                    + n + '" value="' + opts.extraData[n]
+                                    + '" />').appendTo(form)[0]);
 
                     // add iframe to doc and submit the form
                     $io.appendTo('body');
@@ -276,7 +276,6 @@
                     $(extraInputs).remove();
                 }
             }
-            ;
 
             if (opts.forceSync)
                 doSubmit();
@@ -372,7 +371,6 @@
                             xhr.responseXML = null;
                         }, 100);
             }
-            ;
 
             function toXml(s, doc) {
                 if (window.ActiveXObject) {
@@ -385,9 +383,7 @@
                         ? doc
                         : null;
             }
-            ;
         }
-        ;
     };
 
     /**
@@ -450,9 +446,8 @@
      * formToArray() gathers form element data into an array of objects that can
      * be passed to any of the following ajax functions: $.get, $.post, or load.
      * Each object in the array has both a 'name' and 'value' property. An
-     * example of an array for a simple login form might be:
-     *  [ { name: 'username', value: 'jresig' }, { name: 'password', value:
-     * 'secret' } ]
+     * example of an array for a simple login form might be: [ { name:
+     * 'username', value: 'jresig' }, { name: 'password', value: 'secret' } ]
      *
      * It is this array that is passed to pre-submit callback functions provided
      * to the ajaxSubmit() and ajaxForm() methods.
@@ -731,6 +726,4 @@
                 window.opera.postError(msg);
         }
     }
-    ;
-
 })(jQuery);
