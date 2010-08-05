@@ -38,10 +38,43 @@ function txtGetSelection(token, endToken, space) {
             + endToken + third;
 
     txt.value = valor_final;
-
 }
 
 $(document).ready(function() {
+
+    $(".wiki-button").each(function(index, element) {
+                var elemento = $(element).clone();
+
+                var html = "<div class=\"wiki-button-container\"></div>";
+
+                var elemento = $(html);
+
+                var novoElement = $(element).replaceWith(elemento);
+
+                elemento.append($(element))
+
+                var classes = $(element).attr("class");
+
+                var classesList = classes.split(" ")
+
+                for (var i = 0; i < classesList.length; i++) {
+                    var classValue = classesList[i].trim();
+
+                    if (classValue != "wiki-button") {
+                        elemento.addClass(classValue);
+
+                    }
+                }
+            });
+
+    $(".wiki-button").mousedown(function() {
+                $(this).addClass("click");
+            });
+
+    $(".wiki-button").mouseup(function() {
+                $(this).removeClass("click");
+            });
+
     $("#wiki-page-edit-button").click(function(event) {
                 if ($("#wiki-page-edit").is(":visible")) {
                     $("#wiki-page-edit").fadeOut(200);

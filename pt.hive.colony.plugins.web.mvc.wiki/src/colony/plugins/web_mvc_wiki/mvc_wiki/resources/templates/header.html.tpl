@@ -21,10 +21,12 @@
         </div>
         <div id="wiki-sub-header-right">
             <div class="wiki-float-left">
-                <div id="wiki-page-edit-button" class="wiki-button">Edit</div>
+            	<div id="wiki-page-edit-button" class="wiki-button wiki-button-blue">Edit</div>
+                <div id="wiki-page-edit-button" class="wiki-button wiki-button-grey">Edit</div>
             </div>
             <div id="wiki-page-search-container" class="wiki-float-left">
                 <input id="wiki-page-search" name="wiki-page-search" class="wiki-input" type="text" value="Search" current_status="" original_value="Search" />
+                <div id="wiki-page-search-background"></div>
             </div>
         </div>
     </div>
