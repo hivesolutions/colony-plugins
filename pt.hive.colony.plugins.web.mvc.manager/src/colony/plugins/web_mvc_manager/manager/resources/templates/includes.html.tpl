@@ -9,12 +9,12 @@
 
 <!-- javascript inclusion -->
 <script type="text/javascript" src="${out_none value=base_path /}resources_base/libs/jquery/jquery-1.4.2-min.js"></script>
+<script type="text/javascript" src="${out_none value=base_path /}resources_base/libs/jquery_util/communication/js/communication.js"></script>
+<script type="text/javascript" src="${out_none value=base_path /}resources_base/libs/jquery_util/form/js/form.js"></script>
+<script type="text/javascript" src="${out_none value=base_path /}resources_base/libs/jquery_util/history/js/history.js"></script>
+<script type="text/javascript" src="${out_none value=base_path /}resources_base/libs/jquery_util/scroll_to/js/scroll_to.js"></script>
 <script type="text/javascript" src="${out_none value=base_path /}resources_base/libs/util/browser.js"></script>
 <script type="text/javascript" src="${out_none value=base_path /}resources_base/libs/util/string_buffer.js"></script>
-<script type="text/javascript" src="${out_none value=base_path /}resources_base/libs/communication/js/communication.js"></script>
-<script type="text/javascript" src="${out_none value=base_path /}resources_base/libs/form/js/form.js"></script>
-<script type="text/javascript" src="${out_none value=base_path /}resources_base/libs/history/js/history.js"></script>
-<script type="text/javascript" src="${out_none value=base_path /}resources_base/libs/scroll_to/js/scroll_to.js"></script>
 <script type="text/javascript" src="${out_none value=base_path /}resources_ui/libs/autocomplete/js/autocomplete.js"></script>
 <script type="text/javascript" src="${out_none value=base_path /}resources_ui/js/plugins_ui_general.js"></script>
 <script type="text/javascript" src="${out_none value=base_path /}resources_ui/js/plugins_ui_components.js"></script>
