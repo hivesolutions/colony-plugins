@@ -41,7 +41,7 @@ import sys
 
 import wiki_code.wiki_code_extension_system
 
-from xml_highlighting.xml_lexer import *
+from xml_highlighting.xml_lexer import * #@UnusedWildImport
 
 COLONY_GENERATOR_PATH = "../../pt.hive.colony.language.generator/src/colony"
 """ The colony generator path """

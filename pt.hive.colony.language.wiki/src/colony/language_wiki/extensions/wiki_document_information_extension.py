@@ -98,9 +98,6 @@ class WikiDocumentInformationExtension(language_wiki.wiki_extension_system.WikiE
         @return: The generated html code.
         """
 
-        # retrieves the tag contents
-        contents = tag_node.contents
-
         # retrieves the tag attributes map
         attributes_map = tag_node.attributes_map
 
