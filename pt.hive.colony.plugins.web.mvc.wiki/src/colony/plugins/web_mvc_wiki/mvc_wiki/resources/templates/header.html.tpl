@@ -54,7 +54,7 @@
             <textarea id="wiki-page-contents-text-area" class="wiki-text-area">${out_none value=page_source /}</textarea>
         </div>
         <div id="wiki-page-edit-buttons" class="wiki-page-edit-line">
-            <div class="wiki-button wiki-button-grey disabled">Preview</div>
+            <div class="wiki-button wiki-button-blue disabled">Preview</div>
             <div id="wiki-publish-button" class="wiki-button wiki-button-blue">Publish</div>
         </div>
     </div>
