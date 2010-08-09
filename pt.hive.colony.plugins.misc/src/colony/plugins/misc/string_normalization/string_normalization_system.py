@@ -37,8 +37,18 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
+import sys
+import stat
+
+import os.path
+
+import colony.libs.string_buffer_util
+
 SPACE_TAB = "    "
 """ The space tab string """
+
+WIN32_SYSTEM = "win32"
+""" The win32 system value """
 
 class StringNormalization:
     """
@@ -58,31 +68,12 @@ class StringNormalization:
 
         self.string_normalization_plugin = string_normalization_plugin
 
-
-
-
-
-
-
-
-
-import sys
-import stat
-import getopt
-import StringIO
-import os.path
-
-USAGE_MESSAGE="remove-trailing-spaces-python path [-r] [-t] [-n] [-u] [-e file_extension_1, file_extension_2, ...]"
-""" The usage message """
-
-
-
 def remove_trailing_newlines(file_path, windows_newline):
     # opens the file for reading
     file = open(file_path, "r")
 
     # creates a string buffer for buffering
-    string_buffer = StringIO.StringIO();
+    string_buffer = colony.libs.string_buffer_util.StringBuffer()
 
     # reads the file lines
     file_lines = file.readlines()
@@ -94,10 +85,13 @@ def remove_trailing_newlines(file_path, windows_newline):
     index = 0
 
     # iterates over all the lines in the file
+    # in order to count the final newlines
     for line in file_lines:
         # in case the line is not just a newline character
         if not line == "\n" and not line == "\r\n":
             break
+
+        # decrements the index value
         index -= 1
 
     # reverses the file lines
@@ -119,7 +113,7 @@ def remove_trailing_newlines(file_path, windows_newline):
     file.close()
 
     # retrieves the string value from the string buffer
-    string_value = string_buffer.getvalue()
+    string_value = string_buffer.get_value()
 
     # opens the file for writing
     file = open(file_path, "w")
@@ -135,7 +129,7 @@ def remove_trailing_spaces(file_path, tab_to_spaces, windows_newline):
     file = open(file_path, "r")
 
     # creates a string buffer for buffering
-    string_buffer = StringIO.StringIO()
+    string_buffer = colony.libs.string_buffer_util.StringBuffer()
 
     # iterates over all the lines in the file
     for line in file:
@@ -152,7 +146,7 @@ def remove_trailing_spaces(file_path, tab_to_spaces, windows_newline):
 
         # in case the newline is of type windows
         # and the current platform is not windows
-        if windows_newline and not sys.platform == "win32":
+        if windows_newline and not sys.platform == WIN32_SYSTEM:
             # writes the carriage return character and the new line character
             string_buffer.write("\r\n")
         else:
@@ -163,7 +157,7 @@ def remove_trailing_spaces(file_path, tab_to_spaces, windows_newline):
     file.close()
 
     # retrieves the string value from the string buffer
-    string_value = string_buffer.getvalue()
+    string_value = string_buffer.get_value()
 
     # opens the file for writing
     file = open(file_path, "w")
