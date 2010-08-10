@@ -44,7 +44,7 @@ class StringNormalizationPlugin(colony.plugins.plugin_system.Plugin):
     The main class for the String Normalization plugin.
     """
 
-    id = "pt.hive.colony.plugins.misc.string_normalication"
+    id = "pt.hive.colony.plugins.misc.string_normalization"
     name = "String Normalization Plugin"
     short_name = "String Normalization"
     description = "A plugin to manage the normalization of strings"
@@ -93,7 +93,7 @@ class StringNormalizationPlugin(colony.plugins.plugin_system.Plugin):
         return self.string_normalization.remove_trailing_spaces_file(file_path, tab_to_spaces, windows_newline)
 
     def remove_trailing_spaces(self, contents, tab_to_spaces, windows_newline):
-        self.string_normalization.remove_trailing_spaces(contents, tab_to_spaces, windows_newline)
+        return self.string_normalization.remove_trailing_spaces(contents, tab_to_spaces, windows_newline)
 
     def remove_trailing_spaces_recursive(self, directory_path, tab_to_spaces, trailing_newlines, windows_newline, file_extensions):
         """
@@ -113,4 +113,4 @@ class StringNormalizationPlugin(colony.plugins.plugin_system.Plugin):
         @param file_extensions: The list of file extensions to be filtered.
         """
 
-        self.string_normalization.remove_trailing_spaces_recursive(directory_path, tab_to_spaces, trailing_newlines, windows_newline, file_extensions)
+        return self.string_normalization.remove_trailing_spaces_recursive(directory_path, tab_to_spaces, trailing_newlines, windows_newline, file_extensions)
