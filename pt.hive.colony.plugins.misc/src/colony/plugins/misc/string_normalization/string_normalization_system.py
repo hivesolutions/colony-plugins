@@ -78,6 +78,18 @@ class StringNormalization:
         self.string_normalization_plugin = string_normalization_plugin
 
     def remove_trailing_newlines_file(self, file_path, windows_newline):
+        """
+        Removes the trailing newlines from the contents given.
+        This method uses a file and the given file replaces with the
+        new contents.
+
+        @type file_path: String
+        @param file_path: The path to the file to have the trailing
+        newlines removed.
+        @type windows_newline: bool
+        @param windows_newline: If the windows newline should be used.
+        """
+
         # reads the file retrieving the file contents
         file_contents = self._read_file(file_path)
 
@@ -89,6 +101,17 @@ class StringNormalization:
         self._write_file(file_path, valid_contents)
 
     def remove_trailing_newlines(self, contents, windows_newline):
+        """
+        Removes the trailing newlines from the contents given.
+
+        @type contents: String
+        @param contents: The contents to have the trailing newlines removed.
+        @type windows_newline: bool
+        @param windows_newline: If the windows newline should be used.
+        @rtype: String
+        @return: The contents with the trailing newlines removed.
+        """
+
         # prepares the contents lines, retrieving
         # the lines list
         lines_list = self._prepare_lines(contents)
@@ -123,6 +146,20 @@ class StringNormalization:
         return string_value
 
     def remove_trailing_spaces_file(self, file_path, tab_to_spaces, windows_newline):
+        """
+        Removes the trailing spaces from the contents given.
+        This method uses a file and the given file replaces with the
+        new contents.
+
+        @type file_path: String
+        @param file_path: The path to the file to have the trailing
+        newlines removed.
+        @type tab_to_spaces: bool
+        @param tab_to_spaces: If the tab characters should be converted to spaces.
+        @type windows_newline: bool
+        @param windows_newline: If the windows newline should be used.
+        """
+
         # reads the file retrieving the file contents
         file_contents = self._read_file(file_path)
 
@@ -134,6 +171,19 @@ class StringNormalization:
         self._write_file(file_path, valid_contents)
 
     def remove_trailing_spaces(self, contents, tab_to_spaces, windows_newline):
+        """
+        Removes the trailing spaces from the contents given.
+
+        @type contents: String
+        @param contents: The contents to have the trailing spaces removed.
+        @type tab_to_spaces: bool
+        @param tab_to_spaces: If the tab characters should be converted to spaces.
+        @type windows_newline: bool
+        @param windows_newline: If the windows newline should be used.
+        @rtype: String
+        @return: The contents with the trailing spaces removed.
+        """
+
         # prepares the contents lines, retrieving
         # the lines list
         lines_list = self._prepare_lines(contents)

@@ -84,15 +84,65 @@ class StringNormalizationPlugin(colony.plugins.plugin_system.Plugin):
         colony.plugins.plugin_system.Plugin.unload_allowed(self, plugin, capability)
 
     def remove_trailing_newlines_file(self, file_path, windows_newline):
+        """
+        Removes the trailing newlines from the contents given.
+        This method uses a file and the given file replaces with the
+        new contents.
+
+        @type file_path: String
+        @param file_path: The path to the file to have the trailing
+        newlines removed.
+        @type windows_newline: bool
+        @param windows_newline: If the windows newline should be used.
+        """
+
         return self.string_normalization.remove_trailing_newlines_file(file_path, windows_newline)
 
     def remove_trailing_newlines(self, contents, windows_newline):
+        """
+        Removes the trailing newlines from the contents given.
+
+        @type contents: String
+        @param contents: The contents to have the trailing newlines removed.
+        @type windows_newline: bool
+        @param windows_newline: If the windows newline should be used.
+        @rtype: String
+        @return: The contents with the trailing newlines removed.
+        """
+
         return self.string_normalization.remove_trailing_newlines(contents, windows_newline)
 
     def remove_trailing_spaces_file(self, file_path, tab_to_spaces, windows_newline):
+        """
+        Removes the trailing spaces from the contents given.
+        This method uses a file and the given file replaces with the
+        new contents.
+
+        @type file_path: String
+        @param file_path: The path to the file to have the trailing
+        newlines removed.
+        @type tab_to_spaces: bool
+        @param tab_to_spaces: If the tab characters should be converted to spaces.
+        @type windows_newline: bool
+        @param windows_newline: If the windows newline should be used.
+        """
+
         return self.string_normalization.remove_trailing_spaces_file(file_path, tab_to_spaces, windows_newline)
 
     def remove_trailing_spaces(self, contents, tab_to_spaces, windows_newline):
+        """
+        Removes the trailing spaces from the contents given.
+
+        @type contents: String
+        @param contents: The contents to have the trailing spaces removed.
+        @type tab_to_spaces: bool
+        @param tab_to_spaces: If the tab characters should be converted to spaces.
+        @type windows_newline: bool
+        @param windows_newline: If the windows newline should be used.
+        @rtype: String
+        @return: The contents with the trailing spaces removed.
+        """
+
         return self.string_normalization.remove_trailing_spaces(contents, tab_to_spaces, windows_newline)
 
     def remove_trailing_spaces_recursive(self, directory_path, tab_to_spaces, trailing_newlines, windows_newline, file_extensions):
