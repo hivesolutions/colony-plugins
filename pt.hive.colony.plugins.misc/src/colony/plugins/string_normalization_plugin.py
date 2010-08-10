@@ -83,6 +83,9 @@ class StringNormalizationPlugin(colony.plugins.plugin_system.Plugin):
     def unload_allowed(self, plugin, capability):
         colony.plugins.plugin_system.Plugin.unload_allowed(self, plugin, capability)
 
+    def hello(self):
+        print "hello"
+
     def remove_trailing_newlines_file(self, file_path, windows_newline):
         """
         Removes the trailing newlines from the contents given.
