@@ -62,7 +62,9 @@ class WebMvcWikiPlugin(colony.plugins.plugin_system.Plugin):
                      colony.plugins.plugin_system.PluginDependency(
                     "pt.hive.colony.plugins.main.cache.manager", "1.0.0"),
                     colony.plugins.plugin_system.PluginDependency(
-                    "pt.hive.colony.plugins.revision_control.manager", "1.0.0")]
+                    "pt.hive.colony.plugins.revision_control.manager", "1.0.0"),
+                    colony.plugins.plugin_system.PluginDependency(
+                    "pt.hive.colony.plugins.misc.string_normalization", "1.0.0")]
     events_handled = []
     events_registrable = []
     main_modules = ["web_mvc_wiki.mvc_wiki.web_mvc_wiki_system"]
@@ -73,6 +75,7 @@ class WebMvcWikiPlugin(colony.plugins.plugin_system.Plugin):
     language_wiki_plugin = None
     main_cache_manager_plugin = None
     revision_control_manager_plugin = None
+    string_normalization_plugin = None
 
     def load_plugin(self):
         colony.plugins.plugin_system.Plugin.load_plugin(self)
@@ -167,3 +170,10 @@ class WebMvcWikiPlugin(colony.plugins.plugin_system.Plugin):
     @colony.plugins.decorators.plugin_inject("pt.hive.colony.plugins.revision_control.manager")
     def set_revision_control_manager_plugin(self, revision_control_manager_plugin):
         self.revision_control_manager_plugin = revision_control_manager_plugin
+
+    def get_string_normalization_plugin(self):
+        return self.string_normalization_plugin
+
+    @colony.plugins.decorators.plugin_inject("pt.hive.colony.plugins.misc.string_normalization")
+    def set_string_normalization_plugin(self, string_normalization_plugin):
+        self.string_normalization_plugin = string_normalization_plugin

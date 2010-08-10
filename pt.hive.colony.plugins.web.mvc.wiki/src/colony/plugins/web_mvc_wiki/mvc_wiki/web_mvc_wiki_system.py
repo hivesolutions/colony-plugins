@@ -37,6 +37,7 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
+import os
 import time
 
 DEFAULT_ENCODING = "utf-8"
@@ -208,16 +209,16 @@ class WebMvcWikiPageController:
         summary = form_data_map.get("summary", DEFAULT_SUMMARY)
         contents =  form_data_map["contents"]
 
+        # normalizes the contents
+        normalized_contents = self._normalize_contents(contents)
+
         base_file_path = "c:/Users/joamag/workspace/pt.hive.colony.documentation.technical"
 
+        # creates the complete file path for the wiki file
         complete_file_path = base_file_path + "/" + rest_request.path_list[-1] + ".wiki"
 
-        file = open(complete_file_path, "wb")
-        file.write(contents)
-        file.close()
-
-        remove_trailing_newlines(complete_file_path, True);
-        remove_trailing_spaces(complete_file_path, True, True);
+        # writes the normalized contents to the wiki file (in the complete file path)
+        self._write_file(complete_file_path, normalized_contents)
 
         # creates the revision control parameters
         revision_control_parameters = {"repository_path" : base_file_path}
@@ -235,6 +236,49 @@ class WebMvcWikiPageController:
         rest_request.flush()
 
         return True
+
+    def _normalize_contents(self, contents):
+        """
+        Normalizes the given contents, using the string normalization plugin.
+        The output should be a string without trailing spaces and
+        without extra newlines.
+
+        @type contents: String
+        @param contents: The contents to be normalized.
+        @rtype: String
+        @return: The normalized contents.
+        """
+
+        # retrieves the string normalization plugin
+        string_normalization_plugin = self.web_mvc_wiki_plugin.string_normalization_plugin
+
+        # normalizes the contents by removing the trailing spaces and the extra newlines
+        normalized_contents = string_normalization_plugin.remove_trailing_spaces(contents, True, True)
+        normalized_contents = string_normalization_plugin.remove_trailing_newlines(normalized_contents, True)
+
+        # returns the normalized contents
+        return normalized_contents
+
+    def _write_file(self, file_path, contents):
+        """
+        Writes the contents to the file in the given
+        file path, using default text encoding.
+
+        @type file_path: String
+        @param file_path: The path to the file to write.
+        @type contents: String
+        @param contents: The contents to be written.
+        """
+
+        # opens the file for writing
+        file = open(file_path, "w")
+
+        try:
+            # writes the contents
+            file.write(contents)
+        finally:
+            # closes the file
+            file.close()
 
 class WebMvcWikiController:
     """
