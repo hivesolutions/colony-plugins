@@ -55,9 +55,6 @@ INVALID_PLUGIN_ID_MESSAGE = "invalid plugin id"
 ERROR_IN_HCS_SCRIPT = "there is an error in the hcs script"
 """ The error in hcs script message """
 
-CARET = ">>"
-""" The caret to be used in the console display """
-
 HELP_TEXT = "### PLUGIN SYSTEM HELP ###\n\
 help [extension-id] - shows this message or the referred console extension help message\n\
 helpall             - shows the help message of all the loaded console extensions\n\
@@ -106,9 +103,6 @@ class MainConsole:
     manager = None
     """ The plugin manager """
 
-    continue_flag = True
-    """ The continue flag, used to control the shutdown of the plugin """
-
     def __init__(self, main_console_plugin):
         """
         Constructor of the class.
@@ -119,41 +113,6 @@ class MainConsole:
 
         self.main_console_plugin = main_console_plugin
         self.manager = main_console_plugin.manager
-
-        self.continue_flag = True
-
-    def load_console(self):
-        """
-        Loads the console system.
-        """
-
-        # notifies the ready semaphore
-        self.main_console_plugin.release_ready_semaphore()
-
-        # if the continue flag is valid continues the iteration
-        while self.continue_flag:
-            # writes the caret character
-            sys.stdout.write(CARET + " ")
-
-            # flushes the standard output
-            sys.stdout.flush()
-
-            # reads a line from the standard input (locks)
-            line = sys.stdin.readline()
-
-            # in case there is no valid line
-            if not line:
-                break
-
-            # processes the command line
-            self.process_command_line(line)
-
-    def unload_console(self):
-        """
-        Unloads the console system.
-        """
-
-        self.continue_flag = False
 
     def process_command_line(self, command_line, output_method = None):
         """

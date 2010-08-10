@@ -56,7 +56,7 @@ class MainConsolePlugin(colony.plugins.plugin_system.Plugin):
                  colony.plugins.plugin_system.JYTHON_ENVIRONMENT,
                  colony.plugins.plugin_system.IRON_PYTHON_ENVIRONMENT]
     attributes = {"build_automation_file_path" : "$base{plugin_directory}/main_console/console/resources/baf.xml"}
-    capabilities = ["main", "main_console", "test_case", "build_automation_item"]
+    capabilities = ["main_console", "test_case", "build_automation_item"]
     capabilities_allowed = ["console_command_extension"]
     dependencies = []
     events_handled = []
@@ -76,27 +76,15 @@ class MainConsolePlugin(colony.plugins.plugin_system.Plugin):
         import main_console.console.main_console_test
         self.console = main_console.console.main_console.MainConsole(self)
         self.console_test_case_class = main_console.console.main_console_test.MainConsoleTestCase
-        self.console.load_console()
 
     def end_load_plugin(self):
         colony.plugins.plugin_system.Plugin.end_load_plugin(self)
 
-        # notifies the ready semaphore
-        self.release_ready_semaphore()
-
     def unload_plugin(self):
         colony.plugins.plugin_system.Plugin.unload_plugin(self)
 
-        # notifies the ready semaphore
-        self.release_ready_semaphore()
-
-        self.console.unload_console()
-
     def end_unload_plugin(self):
         colony.plugins.plugin_system.Plugin.end_unload_plugin(self)
-
-        # notifies the ready semaphore
-        self.release_ready_semaphore()
 
     @colony.plugins.decorators.load_allowed("pt.hive.colony.plugins.main.console", "1.0.0")
     def load_allowed(self, plugin, capability):
@@ -108,6 +96,9 @@ class MainConsolePlugin(colony.plugins.plugin_system.Plugin):
 
     def dependency_injected(self, plugin):
         colony.plugins.plugin_system.Plugin.dependency_injected(self, plugin)
+
+    def execute_command_line(self, command_line):
+        self.console.process_command_line(command_line, None)
 
     def process_command_line(self, command_line, output_method):
         """
