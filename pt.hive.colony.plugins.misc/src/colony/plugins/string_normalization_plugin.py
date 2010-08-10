@@ -82,3 +82,35 @@ class StringNormalizationPlugin(colony.plugins.plugin_system.Plugin):
 
     def unload_allowed(self, plugin, capability):
         colony.plugins.plugin_system.Plugin.unload_allowed(self, plugin, capability)
+
+    def remove_trailing_newlines_file(self, file_path, windows_newline):
+        return self.string_normalization.remove_trailing_newlines_file(file_path, windows_newline)
+
+    def remove_trailing_newlines(self, contents, windows_newline):
+        return self.string_normalization.remove_trailing_newlines(contents, windows_newline)
+
+    def remove_trailing_spaces_file(self, file_path, tab_to_spaces, windows_newline):
+        return self.string_normalization.remove_trailing_spaces_file(file_path, tab_to_spaces, windows_newline)
+
+    def remove_trailing_spaces(self, contents, tab_to_spaces, windows_newline):
+        self.string_normalization.remove_trailing_spaces(contents, tab_to_spaces, windows_newline)
+
+    def remove_trailing_spaces_recursive(self, directory_path, tab_to_spaces, trailing_newlines, windows_newline, file_extensions):
+        """
+        Removes the trailing spaces recursively from the given directory path.
+        The control parameters include tab to spaces, removal of trailing newlines
+        use of the windows line and file extensions filter.
+
+        @type directory_path: String
+        @param directory_path: The path to the directory to be used.
+        @type tab_to_spaces: bool
+        @param tab_to_spaces: If the tab characters should be converted to spaces.
+        @type trailing_newlines: bool
+        @param trailing_newlines: If the trailing newlines should be removed.
+        @type windows_newline: bool
+        @param windows_newline: If the windows newline should be used.
+        @type file_extensions: List
+        @param file_extensions: The list of file extensions to be filtered.
+        """
+
+        self.string_normalization.remove_trailing_spaces_recursive(directory_path, tab_to_spaces, trailing_newlines, windows_newline, file_extensions)
