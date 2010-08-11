@@ -244,8 +244,6 @@ class ResourceManager:
             # sets the plugin configuration resources list in the plugin id configuration resources list map
             self.plugin_id_configuration_resources_list_map[plugin_configuration_plugin_id] = plugin_configuration_resources_list
 
-        print repr(base_resource_list)
-
         # iterates over all the resources in the base resource list
         for resource in base_resource_list:
             # registers the resource
