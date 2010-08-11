@@ -418,6 +418,9 @@ class WebMvcWikiController:
             # reads the wiki file contents
             wiki_file_contents = wiki_file.read()
 
+            # decodes the wiki file contents
+            wiki_file_contents = wiki_file_contents.decode("Cp1252")
+
             # closes the wiki file
             wiki_file.close()
 
@@ -450,6 +453,8 @@ class WebMvcWikiController:
 
             # processes the template file and sets the request contents
             self.process_set_contents(rest_request, template_file)
+
+
         else:
             # sets the result for the rest request
             rest_request.set_result_translated(target_file_contents)
