@@ -52,60 +52,60 @@
         <namespace>system.path</namespace>
         <name>base</name>
         <type>string</type>
-        <data>../../</data>
+        <data>$resource{colony.manager_path}/../../</data>
     </resource>
     <resource>
         <namespace>system.path</namespace>
         <name>colony</name>
         <type>string</type>
-        <data>../../</data>
+        <data>$resource{colony.manager_path}/../../</data>
     </resource>
     <resource>
         <namespace>system.path</namespace>
         <name>omni</name>
         <type>string</type>
-        <data>../../</data>
+        <data>$resource{colony.manager_path}/../../</data>
     </resource>
     <resource>
         <namespace>system.path</namespace>
         <name>colony_web</name>
         <type>string</type>
-        <data>../../</data>
+        <data>$resource{colony.manager_path}/../../</data>
     </resource>
     <resource>
         <namespace>system.path</namespace>
         <name>omni_web</name>
         <type>string</type>
-        <data>../../</data>
+        <data>$resource{colony.manager_path}/../../</data>
     </resource>
     <resource>
         <namespace>system.path</namespace>
         <name>colony_web_ui</name>
         <type>string</type>
-        <data>../../</data>
+        <data>$resource{colony.manager_path}/../../</data>
     </resource>
     <resource>
         <namespace>system.path</namespace>
         <name>colony_demo</name>
         <type>string</type>
-        <data>../../</data>
+        <data>$resource{colony.manager_path}/../../</data>
     </resource>
     <resource>
         <namespace>system.path</namespace>
         <name>hive_site</name>
         <type>string</type>
-        <data>../../</data>
+        <data>$resource{colony.manager_path}/../../</data>
     </resource>
     <resource>
         <namespace>system.path</namespace>
         <name>hive_blog</name>
         <type>string</type>
-        <data>../../</data>
+        <data>$resource{colony.manager_path}/../../</data>
     </resource>
     <resource>
         <namespace>system.path</namespace>
         <name>take_the_bill</name>
         <type>string</type>
-        <data>../../</data>
+        <data>$resource{colony.manager_path}/../../</data>
     </resource>
 </resources>

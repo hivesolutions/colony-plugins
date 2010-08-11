@@ -66,6 +66,15 @@ GLOBAL_VARIABLE_REGEX = "\$global\{[a-zA-Z0-9_.]*\}"
 LOCAL_VARIABLE_REGEX = "\$local\{[a-zA-Z0-9_.]*\}"
 """ The regular expression for the local variable """
 
+COLONY_VALUE = "colony"
+""" The colony value """
+
+MANAGER_PATH_VALUE = "manager_path"
+""" The manager path value """
+
+STRING_VALUE = "string"
+""" The string value """
+
 class ResourceManager:
     """
     Stores and indexes miscellaneous resources.
@@ -132,6 +141,34 @@ class ResourceManager:
 
         # compiles the local variable regular expression
         self.local_variable_regex = re.compile(LOCAL_VARIABLE_REGEX)
+
+    def load_system(self):
+        """
+        Loads the system internals, loading the base system resources.
+        """
+
+        # loads the internal resourcs
+        self.load_internal_resources()
+
+        # loads the base resources
+        self.load_base_resources()
+
+    def load_internal_resources(self):
+        """
+        Loads the resources dedicated to describe the internal
+        values of the colony manager.
+        This method exposes resources to be consumed by other resource
+        files.
+        """
+
+        # retrieves the plugin manager
+        plugin_manager = self.resource_manager_plugin.manager
+
+        # retrieves the manager path from the plugin manager
+        manager_path = plugin_manager.get_manager_path()
+
+        # registers the internal resources
+        self.register_resource(COLONY_VALUE, MANAGER_PATH_VALUE, STRING_VALUE, manager_path)
 
     def load_base_resources(self):
         """
@@ -206,6 +243,8 @@ class ResourceManager:
 
             # sets the plugin configuration resources list in the plugin id configuration resources list map
             self.plugin_id_configuration_resources_list_map[plugin_configuration_plugin_id] = plugin_configuration_resources_list
+
+        print repr(base_resource_list)
 
         # iterates over all the resources in the base resource list
         for resource in base_resource_list:
