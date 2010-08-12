@@ -244,8 +244,6 @@ class ResourceManager:
             # sets the plugin configuration resources list in the plugin id configuration resources list map
             self.plugin_id_configuration_resources_list_map[plugin_configuration_plugin_id] = plugin_configuration_resources_list
 
-        print repr(base_resource_list)
-
         # iterates over all the resources in the base resource list
         for resource in base_resource_list:
             # registers the resource
@@ -322,7 +320,7 @@ class ResourceManager:
             resource.data = float(resource.data)
         # in case the resource type is string
         elif resource_type == "string":
-            resource.data = str(resource.data)
+            resource.data = unicode(resource.data)
         # in case the resource type exists in the
         # map of resource parser plugins
         elif resource_type in self.resource_parser_plugins_map:
