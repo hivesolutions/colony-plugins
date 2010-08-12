@@ -56,7 +56,7 @@ def MessagingManagerException(Exception):
         Exception.__init__(self)
         self.message = message
 
-    def __repr__(self):
+    def __str__(self):
         """
         Returns the string representation of the class.
 
@@ -81,7 +81,7 @@ def InvalidMessagingServiceIdException(BuildAutomationException):
 
         MessagingManagerException.__init__(self, message)
 
-    def __repr__(self):
+    def __str__(self):
         """
         Returns the string representation of the class.
 

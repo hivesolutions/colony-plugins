@@ -37,8 +37,6 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-import sys
-
 RESOURCE_PARSER_NAME = "python"
 """ The resource parser name """
 
@@ -76,12 +74,6 @@ class PythonResourceParser:
         # creates the full python file path
         # from the full resources path and the python file path
         full_python_file_path = full_resources_path + "/" + python_file_path
-
-        # retrieves the file system encoding
-        file_system_encoding = sys.getfilesystemencoding()
-
-        # encodes the full python file path using the file system encoding
-        full_python_file_path = full_python_file_path.encode(file_system_encoding)
 
         # creates the symbols map to be used in the interpretation
         # of the file as the locals and globals map

@@ -118,16 +118,8 @@ class MainServiceHttpTemplateErrorHandler:
 
         # in case the traceback list is valid
         if traceback_list:
-            # creates the (initial) formated traceback
             formated_traceback = traceback.format_tb(traceback_list)
-
-            # retrieves the file system encoding
-            file_system_encoding = sys.getfilesystemencoding()
-
-            # decodes the traceback values using the file system encoding
-            formated_traceback = [value.decode(file_system_encoding) for value in formated_traceback]
         else:
-            # sets an empty formated traceback
             formated_traceback = ()
 
         # retrieves the error description

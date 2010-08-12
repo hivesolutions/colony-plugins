@@ -262,7 +262,7 @@ class MercurialRevision:
         # sets the adapted mercurial change context
         self._mercurial_change_context = mercurial_change_context
 
-    def __repr__(self):
+    def __str__(self):
         # retrieves the revision number
         revision_number = self.get_number()
 

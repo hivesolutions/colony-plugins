@@ -61,7 +61,7 @@ class MissingParameter(PackagingDebException):
         PackagingDebException.__init__(self)
         self.message = message
 
-    def __repr__(self):
+    def __str__(self):
         """
         Returns the string representation of the class.
 
@@ -87,7 +87,7 @@ class FileNotFound(PackagingDebException):
         PackagingDebException.__init__(self)
         self.message = message
 
-    def __repr__(self):
+    def __str__(self):
         """
         Returns the string representation of the class.
 
@@ -113,7 +113,7 @@ class InvalidFileFormat(PackagingDebException):
         PackagingDebException.__init__(self)
         self.message = message
 
-    def __repr__(self):
+    def __str__(self):
         """
         Returns the string representation of the class.
 

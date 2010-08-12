@@ -212,7 +212,7 @@ class WebMvcWikiPageController:
         # normalizes the contents
         normalized_contents = self._normalize_contents(contents)
 
-        base_file_path = "C:/Users/joamag/workspace/pt.hive.colony.documentation.technical"
+        base_file_path = "c:/Users/joamag/workspace/pt.hive.colony.documentation.technical"
 
         # creates the complete file path for the wiki file
         complete_file_path = base_file_path + "/" + rest_request.path_list[-1] + ".wiki"
@@ -274,9 +274,6 @@ class WebMvcWikiPageController:
         file = open(file_path, "w")
 
         try:
-            # encodes the contents to the file encoding
-            contents = contents.encode(TARGET_FILE_ENCODING)
-
             # writes the contents
             file.write(contents)
         finally:
@@ -337,7 +334,7 @@ class WebMvcWikiController:
         # retrieves the initial time
         initial_time = time.clock()
 
-        base_file_path = "C:/Users/joamag/workspace/pt.hive.colony.documentation.technical"
+        base_file_path = "c:/Users/joamag/workspace/pt.hive.colony.documentation.technical"
 
         # creates the base target path as the cache directory path
         base_target_path = self._get_cache_directory_path()
@@ -456,6 +453,8 @@ class WebMvcWikiController:
 
             # processes the template file and sets the request contents
             self.process_set_contents(rest_request, template_file)
+
+
         else:
             # sets the result for the rest request
             rest_request.set_result_translated(target_file_contents)

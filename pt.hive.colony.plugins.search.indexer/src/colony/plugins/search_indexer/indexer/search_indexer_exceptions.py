@@ -61,7 +61,7 @@ class MissingProperty(SearchIndexerException):
         SearchIndexerException.__init__(self)
         self.message = message
 
-    def __repr__(self):
+    def __str__(self):
         """
         Returns the string representation of the class.
 
@@ -87,7 +87,7 @@ class MissingMetric(SearchIndexerException):
         SearchIndexerException.__init__(self)
         self.message = message
 
-    def __repr__(self):
+    def __str__(self):
         """
         Returns the string representation of the class.
 

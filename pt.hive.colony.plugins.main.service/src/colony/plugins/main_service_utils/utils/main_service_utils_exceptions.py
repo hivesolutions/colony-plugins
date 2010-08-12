@@ -61,7 +61,7 @@ class SocketProviderNotFound(MainServiceUtilsException):
         MainServiceUtilsException.__init__(self)
         self.message = message
 
-    def __repr__(self):
+    def __str__(self):
         """
         Returns the string representation of the class.
 
@@ -87,7 +87,7 @@ class SocketUpgraderNotFound(MainServiceUtilsException):
         MainServiceUtilsException.__init__(self)
         self.message = message
 
-    def __repr__(self):
+    def __str__(self):
         """
         Returns the string representation of the class.
 
@@ -113,7 +113,7 @@ class ServerRequestTimeout(MainServiceUtilsException):
         MainServiceUtilsException.__init__(self)
         self.message = message
 
-    def __repr__(self):
+    def __str__(self):
         """
         Returns the string representation of the class.
 
@@ -139,7 +139,7 @@ class ClientRequestTimeout(MainServiceUtilsException):
         MainServiceUtilsException.__init__(self)
         self.message = message
 
-    def __repr__(self):
+    def __str__(self):
         """
         Returns the string representation of the class.
 
@@ -165,7 +165,7 @@ class RequestClosed(MainServiceUtilsException):
         MainServiceUtilsException.__init__(self)
         self.message = message
 
-    def __repr__(self):
+    def __str__(self):
         """
         Returns the string representation of the class.
 
@@ -191,7 +191,7 @@ class PortStarvationReached(MainServiceUtilsException):
         MainServiceUtilsException.__init__(self)
         self.message = message
 
-    def __repr__(self):
+    def __str__(self):
         """
         Returns the string representation of the class.
 

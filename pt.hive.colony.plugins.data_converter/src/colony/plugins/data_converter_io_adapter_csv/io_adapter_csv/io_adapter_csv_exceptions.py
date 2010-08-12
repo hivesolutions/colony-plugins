@@ -57,7 +57,7 @@ class IoAdapterCsvMethodNotImplemented(IoAdapterCsvException):
 
         IoAdapterCsvException.__init__(self)
 
-    def __repr__(self):
+    def __str__(self):
         """
         Returns the string representation of the class.
 
@@ -83,7 +83,7 @@ class IoAdapterCsvMandatoryOptionNotFound(IoAdapterCsvException):
         IoAdapterCsvException.__init__(self)
         self.message = message
 
-    def __repr__(self):
+    def __str__(self):
         """
         Returns the string representation of the class.
 
@@ -109,7 +109,7 @@ class IoAdapterCsvFileNotFound(IoAdapterCsvException):
         IoAdapterCsvException.__init__(self)
         self.message = message
 
-    def __repr__(self):
+    def __str__(self):
         """
         Returns the string representation of the class.
 
@@ -135,7 +135,7 @@ class IoAdapterCsvEntitySchemaNotFound(IoAdapterCsvException):
         IoAdapterCsvException.__init__(self)
         self.message = message
 
-    def __repr__(self):
+    def __str__(self):
         """
         Returns the string representation of the class.
 

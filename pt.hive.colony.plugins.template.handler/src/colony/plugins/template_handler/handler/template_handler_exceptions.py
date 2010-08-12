@@ -67,7 +67,7 @@ class FileNotFoundException(TemplateHandlerException):
         self.message = message
         self.status_code = status_code
 
-    def __repr__(self):
+    def __str__(self):
         """
         Returns the string representation of the class.
 

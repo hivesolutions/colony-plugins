@@ -269,7 +269,7 @@ class BazaarRevision:
 
         pass
 
-    def __repr__(self):
+    def __str__(self):
         # retrieves the revision number
         revision_number = self.get_number()
 

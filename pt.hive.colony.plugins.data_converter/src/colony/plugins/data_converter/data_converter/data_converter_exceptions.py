@@ -61,7 +61,7 @@ class DataConverterConfigurationPluginNotFound(DataConverterException):
         DataConverterException.__init__(self)
         self.message = message
 
-    def __repr__(self):
+    def __str__(self):
         """
         Returns the string representation of the class.
 
@@ -87,7 +87,7 @@ class DataConverterConfigurationNotFound(DataConverterException):
         DataConverterException.__init__(self)
         self.message = message
 
-    def __repr__(self):
+    def __str__(self):
         """
         Returns the string representation of the class.
 
@@ -113,7 +113,7 @@ class DataConverterConfigurationOptionNotFound(DataConverterException):
         DataConverterException.__init__(self)
         self.message = message
 
-    def __repr__(self):
+    def __str__(self):
         """
         Returns the string representation of the class.
 
@@ -135,7 +135,7 @@ class DataConverterOperationNotImplemented(DataConverterException):
 
         DataConverterException.__init__(self)
 
-    def __repr__(self):
+    def __str__(self):
         """
         Returns the string representation of the class.
 
@@ -161,7 +161,7 @@ class DataConverterMandatoryOptionNotFound(DataConverterException):
         DataConverterException.__init__(self)
         self.message = message
 
-    def __repr__(self):
+    def __str__(self):
         """
         Returns the string representation of the class.
 
@@ -187,7 +187,7 @@ class DataConverterIoAdapterPluginNotFound(DataConverterException):
         DataConverterException.__init__(self)
         self.message = message
 
-    def __repr__(self):
+    def __str__(self):
         """
         Returns the string representation of the class.
 
@@ -213,7 +213,7 @@ class DataConverterIndexElementTypeUnknown(DataConverterException):
         DataConverterException.__init__(self)
         self.message = message
 
-    def __repr__(self):
+    def __str__(self):
         """
         Returns the string representation of the class.
 
@@ -239,7 +239,7 @@ class DataConverterEntityNotFound(DataConverterException):
         DataConverterException.__init__(self)
         self.message = message
 
-    def __repr__(self):
+    def __str__(self):
         """
         Returns the string representation of the class.
 
@@ -265,7 +265,7 @@ class DataConverterCreatorInputEntityNotFound(DataConverterException):
         DataConverterException.__init__(self)
         self.message = message
 
-    def __repr__(self):
+    def __str__(self):
         """
         Returns the string representation of the class.
 
@@ -291,7 +291,7 @@ class DataConverterUnexpectedNumberInputEntitiesException(DataConverterException
         DataConverterException.__init__(self)
         self.message = message
 
-    def __repr__(self):
+    def __str__(self):
         """
         Returns the string representation of the class.
 
@@ -317,7 +317,7 @@ class IntermediateStructureEntityNotFound(DataConverterException):
         DataConverterException.__init__(self)
         self.message = message
 
-    def __repr__(self):
+    def __str__(self):
         """
         Returns the string representation of the class.
 
@@ -343,7 +343,7 @@ class IntermediateStructureEntityNameAlreadyAllocated(DataConverterException):
         DataConverterException.__init__(self)
         self.message = message
 
-    def __repr__(self):
+    def __str__(self):
         """
         Returns the string representation of the class.
 
@@ -369,7 +369,7 @@ class IntermediateStructureEntityNotAllowed(DataConverterException):
         DataConverterException.__init__(self)
         self.message = message
 
-    def __repr__(self):
+    def __str__(self):
         """
         Returns the string representation of the class.
 
@@ -395,7 +395,7 @@ class IntermediateStructureEntityAttributeNotFound(DataConverterException):
         DataConverterException.__init__(self)
         self.message = message
 
-    def __repr__(self):
+    def __str__(self):
         """
         Returns the string representation of the class.
 
@@ -421,7 +421,7 @@ class IntermediateStructureEntityAttributeNotAllowed(DataConverterException):
         DataConverterException.__init__(self)
         self.message = message
 
-    def __repr__(self):
+    def __str__(self):
         """
         Returns the string representation of the class.
 
@@ -447,7 +447,7 @@ class IntermediateStructureEntityAttributeDataTypeNotAllowed(DataConverterExcept
         DataConverterException.__init__(self)
         self.message = message
 
-    def __repr__(self):
+    def __str__(self):
         """
         Returns the string representation of the class.
 
@@ -473,7 +473,7 @@ class IntermediateStructureIndexOccupied(DataConverterException):
         DataConverterException.__init__(self)
         self.message = message
 
-    def __repr__(self):
+    def __str__(self):
         """
         Returns the string representation of the class.
 
@@ -499,7 +499,7 @@ class IntermediateStructureIndexNotTuple(DataConverterException):
         DataConverterException.__init__(self)
         self.message = message
 
-    def __repr__(self):
+    def __str__(self):
         """
         Returns the string representation of the class.
 
@@ -525,7 +525,7 @@ class DataConverterConfigurationOutputEntityNotDefined(DataConverterException):
         DataConverterException.__init__(self)
         self.message = message
 
-    def __repr__(self):
+    def __str__(self):
         """
         Returns the string representation of the class.
 
@@ -551,7 +551,7 @@ class DataConverterConfigurationOutputAttributeNameAlreadyDefined(DataConverterE
         DataConverterException.__init__(self)
         self.message = message
 
-    def __repr__(self):
+    def __str__(self):
         """
         Returns the string representation of the class.
 
@@ -577,7 +577,7 @@ class DataConverterConfigurationIoAdapterOptionAlreadyDefined(DataConverterExcep
         DataConverterException.__init__(self)
         self.message = message
 
-    def __repr__(self):
+    def __str__(self):
         """
         Returns the string representation of the class.
 
@@ -603,7 +603,7 @@ class DataConverterConfigurationInputEntityNotDefined(DataConverterException):
         DataConverterException.__init__(self)
         self.message = message
 
-    def __repr__(self):
+    def __str__(self):
         """
         Returns the string representation of the class.
 
@@ -629,7 +629,7 @@ class DataConverterConfigurationOutputAttributeNotDefined(DataConverterException
         DataConverterException.__init__(self)
         self.message = message
 
-    def __repr__(self):
+    def __str__(self):
         """
         Returns the string representation of the class.
 
@@ -655,7 +655,7 @@ class DataConverterConfigurationDefaultValueAlreadyDefined(DataConverterExceptio
         DataConverterException.__init__(self)
         self.message = message
 
-    def __repr__(self):
+    def __str__(self):
         """
         Returns the string representation of the class.
 
@@ -681,7 +681,7 @@ class DataConverterConfigurationInputAttributeNameAlreadyDefined(DataConverterEx
         DataConverterException.__init__(self)
         self.message = message
 
-    def __repr__(self):
+    def __str__(self):
         """
         Returns the string representation of the class.
 
@@ -707,7 +707,7 @@ class DataConverterConfigurationConfigurationItemTypeNotDefined(DataConverterExc
         DataConverterException.__init__(self)
         self.message = message
 
-    def __repr__(self):
+    def __str__(self):
         """
         Returns the string representation of the class.
 
@@ -733,7 +733,7 @@ class DataConverterConfigurationConfigurationItemNotDefined(DataConverterExcepti
         DataConverterException.__init__(self)
         self.message = message
 
-    def __repr__(self):
+    def __str__(self):
         """
         Returns the string representation of the class.
 
@@ -759,7 +759,7 @@ class DataConverterConfigurationConfigurationItemAlreadyEnabled(DataConverterExc
         DataConverterException.__init__(self)
         self.message = message
 
-    def __repr__(self):
+    def __str__(self):
         """
         Returns the string representation of the class.
 
@@ -785,7 +785,7 @@ class DataConverterConfigurationConfigurationItemAlreadyDisabled(DataConverterEx
         DataConverterException.__init__(self)
         self.message = message
 
-    def __repr__(self):
+    def __str__(self):
         """
         Returns the string representation of the class.
 
@@ -811,7 +811,7 @@ class DataConverterConfigurationConfigurationItemTypeNotRecognized(DataConverter
         DataConverterException.__init__(self)
         self.message = message
 
-    def __repr__(self):
+    def __str__(self):
         """
         Returns the string representation of the class.
 

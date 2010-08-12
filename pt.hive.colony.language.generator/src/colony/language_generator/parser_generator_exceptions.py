@@ -61,7 +61,7 @@ class InvalidStateFile(ParserGeneratorException):
         ParserGeneratorException.__init__(self, message)
         self.message = message
 
-    def __repr__(self):
+    def __str__(self):
         """
         Returns the string representation of the class.
 
@@ -87,7 +87,7 @@ class InvalidState(ParserGeneratorException):
         ParserGeneratorException.__init__(self, message)
         self.message = message
 
-    def __repr__(self):
+    def __str__(self):
         """
         Returns the string representation of the class.
 
@@ -156,7 +156,7 @@ class ShiftReduceConflict(ParsingConflict):
 
         ParsingConflict.__init__(self, message, item_set)
 
-    def __repr__(self):
+    def __str__(self):
         """
         Returns the string representation of the class.
 
@@ -190,7 +190,7 @@ class ReduceReduceConflict(ParsingConflict):
 
         ParsingConflict.__init__(self, message, item_set)
 
-    def __repr__(self):
+    def __str__(self):
         """
         Returns the string representation of the class.
 

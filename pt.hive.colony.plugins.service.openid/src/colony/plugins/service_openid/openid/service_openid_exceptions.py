@@ -61,7 +61,7 @@ class InvalidData(ServiceOpenidException):
         ServiceOpenidException.__init__(self)
         self.message = message
 
-    def __repr__(self):
+    def __str__(self):
         """
         Returns the string representation of the class.
 
@@ -87,7 +87,7 @@ class ProviderError(ServiceOpenidException):
         ServiceOpenidException.__init__(self)
         self.message = message
 
-    def __repr__(self):
+    def __str__(self):
         """
         Returns the string representation of the class.
 
@@ -113,7 +113,7 @@ class VerificationFailed(ServiceOpenidException):
         ServiceOpenidException.__init__(self)
         self.message = message
 
-    def __repr__(self):
+    def __str__(self):
         """
         Returns the string representation of the class.
 
@@ -139,7 +139,7 @@ class InvalidHashFunction(ServiceOpenidException):
         ServiceOpenidException.__init__(self)
         self.message = message
 
-    def __repr__(self):
+    def __str__(self):
         """
         Returns the string representation of the class.
 
@@ -165,7 +165,7 @@ class InvalidClaimedId(ServiceOpenidException):
         ServiceOpenidException.__init__(self)
         self.message = message
 
-    def __repr__(self):
+    def __str__(self):
         """
         Returns the string representation of the class.
 

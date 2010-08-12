@@ -61,7 +61,7 @@ class MissingProperty(SearchScorerMetricRepositoryException):
         SearchScorerMetricRepositoryException.__init__(self)
         self.message = message
 
-    def __repr__(self):
+    def __str__(self):
         """
         Returns the string representation of the class.
 
@@ -87,7 +87,7 @@ class InvalidMetricRequested(SearchScorerMetricRepositoryException):
         SearchScorerMetricRepositoryException.__init__(self)
         self.message = message
 
-    def __repr__(self):
+    def __str__(self):
         """
         Returns the string representation of the class.
 
@@ -113,7 +113,7 @@ class DuplicateMetricIdentifier(SearchScorerMetricRepositoryException):
         SearchScorerMetricRepositoryException.__init__(self)
         self.message = message
 
-    def __repr__(self):
+    def __str__(self):
         """
         Returns the string representation of the class.
 
