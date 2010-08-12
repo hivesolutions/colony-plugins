@@ -212,7 +212,7 @@ class WebMvcWikiPageController:
         # normalizes the contents
         normalized_contents = self._normalize_contents(contents)
 
-        base_file_path = "c:/Users/joamag/workspace/pt.hive.colony.documentation.technical"
+        base_file_path = u"C:\hive-main„„\pt.hive.colony.documentation\trunk\pt.hive.colony.documentation.technical"
 
         # creates the complete file path for the wiki file
         complete_file_path = base_file_path + "/" + rest_request.path_list[-1] + ".wiki"
@@ -337,7 +337,7 @@ class WebMvcWikiController:
         # retrieves the initial time
         initial_time = time.clock()
 
-        base_file_path = "c:/Users/joamag/workspace/pt.hive.colony.documentation.technical"
+        base_file_path = u"C:\hive-main„„\pt.hive.colony.documentation\trunk\pt.hive.colony.documentation.technical"
 
         # creates the base target path as the cache directory path
         base_target_path = self._get_cache_directory_path()
