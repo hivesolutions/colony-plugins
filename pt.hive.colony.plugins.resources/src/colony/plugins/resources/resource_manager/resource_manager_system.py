@@ -320,7 +320,7 @@ class ResourceManager:
             resource.data = float(resource.data)
         # in case the resource type is string
         elif resource_type == "string":
-            resource.data = str(resource.data)
+            resource.data = unicode(resource.data)
         # in case the resource type exists in the
         # map of resource parser plugins
         elif resource_type in self.resource_parser_plugins_map:
