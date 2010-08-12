@@ -274,6 +274,9 @@ class WebMvcWikiPageController:
         file = open(file_path, "w")
 
         try:
+            # encodes the contents to the file encoding
+            contents = contents.encode(TARGET_FILE_ENCODING)
+
             # writes the contents
             file.write(contents)
         finally:
@@ -453,8 +456,6 @@ class WebMvcWikiController:
 
             # processes the template file and sets the request contents
             self.process_set_contents(rest_request, template_file)
-
-
         else:
             # sets the result for the rest request
             rest_request.set_result_translated(target_file_contents)
