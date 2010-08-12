@@ -61,7 +61,7 @@ class SmtpRuntimeException(MainServiceSmtpException):
         MainServiceSmtpException.__init__(self)
         self.message = message
 
-    def __str__(self):
+    def __repr__(self):
         """
         Returns the string representation of the class.
 
@@ -86,7 +86,7 @@ class SmtpInvalidDataException(SmtpRuntimeException):
 
         SmtpRuntimeException.__init__(self, message)
 
-    def __str__(self):
+    def __repr__(self):
         """
         Returns the string representation of the class.
 
@@ -111,7 +111,7 @@ class SmtpNoHandlerException(SmtpRuntimeException):
 
         SmtpRuntimeException.__init__(self, message)
 
-    def __str__(self):
+    def __repr__(self):
         """
         Returns the string representation of the class.
 
@@ -136,7 +136,7 @@ class SmtpHandlerNotFoundException(SmtpRuntimeException):
 
         SmtpRuntimeException.__init__(self, message)
 
-    def __str__(self):
+    def __repr__(self):
         """
         Returns the string representation of the class.
 
@@ -161,7 +161,7 @@ class SmtpDataRetrievalException(SmtpRuntimeException):
 
         SmtpRuntimeException.__init__(self, message)
 
-    def __str__(self):
+    def __repr__(self):
         """
         Returns the string representation of the class.
 

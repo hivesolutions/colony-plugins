@@ -61,7 +61,7 @@ class ClientResponseTimeout(MainClientSmtpException):
         MainClientSmtpException.__init__(self)
         self.message = message
 
-    def __str__(self):
+    def __repr__(self):
         """
         Returns the string representation of the class.
 
@@ -87,7 +87,7 @@ class ServerResponseTimeout(MainClientSmtpException):
         MainClientSmtpException.__init__(self)
         self.message = message
 
-    def __str__(self):
+    def __repr__(self):
         """
         Returns the string representation of the class.
 
@@ -113,7 +113,7 @@ class ResponseClosed(MainClientSmtpException):
         MainClientSmtpException.__init__(self)
         self.message = message
 
-    def __str__(self):
+    def __repr__(self):
         """
         Returns the string representation of the class.
 
@@ -139,7 +139,7 @@ class SmtpRuntimeException(MainClientSmtpException):
         MainClientSmtpException.__init__(self)
         self.message = message
 
-    def __str__(self):
+    def __repr__(self):
         """
         Returns the string representation of the class.
 
@@ -164,7 +164,7 @@ class SmtpInvalidDataException(SmtpRuntimeException):
 
         SmtpRuntimeException.__init__(self, message)
 
-    def __str__(self):
+    def __repr__(self):
         """
         Returns the string representation of the class.
 
@@ -189,7 +189,7 @@ class SmtpResponseError(SmtpRuntimeException):
 
         SmtpRuntimeException.__init__(self, message)
 
-    def __str__(self):
+    def __repr__(self):
         """
         Returns the string representation of the class.
 

@@ -56,7 +56,7 @@ class SpecificationGeneratorException(Exception):
         Exception.__init__(self)
         self.message = message
 
-    def __str__(self):
+    def __repr__(self):
         """
         Returns the string representation of the class.
 
@@ -81,7 +81,7 @@ class SpecificationGeneratorHandlerNotAvailable(SpecificationGeneratorException)
 
         SpecificationGeneratorException.__init__(self, message)
 
-    def __str__(self):
+    def __repr__(self):
         """
         Returns the string representation of the class.
 

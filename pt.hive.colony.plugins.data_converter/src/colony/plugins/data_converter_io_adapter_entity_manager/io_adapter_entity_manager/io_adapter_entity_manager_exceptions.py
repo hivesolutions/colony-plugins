@@ -61,7 +61,7 @@ class IoAdapterEntityManagerFileNotFound(IoAdapterEntityManagerException):
         IoAdapterEntityManagerException.__init__(self)
         self.message = message
 
-    def __str__(self):
+    def __repr__(self):
         """
         Returns the string representation of the class.
 
@@ -87,7 +87,7 @@ class IoAdapterEntityManagerMandatoryOptionNotFound(IoAdapterEntityManagerExcept
         IoAdapterEntityManagerException.__init__(self)
         self.message = message
 
-    def __str__(self):
+    def __repr__(self):
         """
         Returns the string representation of the class.
 
@@ -113,7 +113,7 @@ class IoAdapterEntityManagerEntityClassNotFound(IoAdapterEntityManagerException)
         IoAdapterEntityManagerException.__init__(self)
         self.message = message
 
-    def __str__(self):
+    def __repr__(self):
         """
         Returns the string representation of the class.
 
@@ -135,7 +135,7 @@ class IoAdapterEntityManagerUnexpectedNumberIntermediateEntities(IoAdapterEntity
 
         IoAdapterEntityManagerException.__init__(self)
 
-    def __str__(self):
+    def __repr__(self):
         """
         Returns the string representation of the class.
 

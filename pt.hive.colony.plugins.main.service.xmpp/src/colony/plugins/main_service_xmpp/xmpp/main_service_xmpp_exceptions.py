@@ -61,7 +61,7 @@ class XmppRuntimeException(MainServiceXmppException):
         MainServiceXmppException.__init__(self)
         self.message = message
 
-    def __str__(self):
+    def __repr__(self):
         """
         Returns the string representation of the class.
 
@@ -86,7 +86,7 @@ class XmppInvalidDataException(XmppRuntimeException):
 
         XmppRuntimeException.__init__(self, message)
 
-    def __str__(self):
+    def __repr__(self):
         """
         Returns the string representation of the class.
 
@@ -111,7 +111,7 @@ class XmppDataRetrievalException(XmppRuntimeException):
 
         XmppRuntimeException.__init__(self, message)
 
-    def __str__(self):
+    def __repr__(self):
         """
         Returns the string representation of the class.
 

@@ -61,7 +61,7 @@ class SocketProviderNotFound(MainClientUtilsException):
         MainClientUtilsException.__init__(self)
         self.message = message
 
-    def __str__(self):
+    def __repr__(self):
         """
         Returns the string representation of the class.
 
@@ -87,7 +87,7 @@ class SocketUpgraderNotFound(MainClientUtilsException):
         MainClientUtilsException.__init__(self)
         self.message = message
 
-    def __str__(self):
+    def __repr__(self):
         """
         Returns the string representation of the class.
 
@@ -113,7 +113,7 @@ class ClientRequestTimeout(MainClientUtilsException):
         MainClientUtilsException.__init__(self)
         self.message = message
 
-    def __str__(self):
+    def __repr__(self):
         """
         Returns the string representation of the class.
 
@@ -139,7 +139,7 @@ class ServerRequestTimeout(MainClientUtilsException):
         MainClientUtilsException.__init__(self)
         self.message = message
 
-    def __str__(self):
+    def __repr__(self):
         """
         Returns the string representation of the class.
 
@@ -165,7 +165,7 @@ class RequestClosed(MainClientUtilsException):
         MainClientUtilsException.__init__(self)
         self.message = message
 
-    def __str__(self):
+    def __repr__(self):
         """
         Returns the string representation of the class.
 

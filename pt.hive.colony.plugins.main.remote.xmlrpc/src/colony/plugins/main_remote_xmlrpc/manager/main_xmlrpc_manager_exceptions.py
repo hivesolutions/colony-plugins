@@ -75,7 +75,7 @@ class InvalidNumberArguments(BadServiceRequest):
         BadServiceRequest.__init__(self)
         self.message = message
 
-    def __str__(self):
+    def __repr__(self):
         """
         Returns the string representation of the class.
 
@@ -101,7 +101,7 @@ class InvalidMethod(BadServiceRequest):
         BadServiceRequest.__init__(self)
         self.message = message
 
-    def __str__(self):
+    def __repr__(self):
         """
         Returns the string representation of the class.
 
@@ -127,7 +127,7 @@ class XmlEncodeException(Exception):
         Exception.__init__(self)
         self.object = object
 
-    def __str__(self):
+    def __repr__(self):
         """
         Returns the string representation of the class.
 
@@ -156,7 +156,7 @@ class XmlDecodeException(Exception):
         Exception.__init__(self)
         self.message = message
 
-    def __str__(self):
+    def __repr__(self):
         """
         Returns the string representation of the class.
 

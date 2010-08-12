@@ -61,7 +61,7 @@ class DnsRuntimeException(MainServiceDnsException):
         MainServiceDnsException.__init__(self)
         self.message = message
 
-    def __str__(self):
+    def __repr__(self):
         """
         Returns the string representation of the class.
 
@@ -86,7 +86,7 @@ class DnsInvalidDataException(DnsRuntimeException):
 
         DnsRuntimeException.__init__(self, message)
 
-    def __str__(self):
+    def __repr__(self):
         """
         Returns the string representation of the class.
 
@@ -111,7 +111,7 @@ class DnsNoHandlerException(DnsRuntimeException):
 
         DnsRuntimeException.__init__(self, message)
 
-    def __str__(self):
+    def __repr__(self):
         """
         Returns the string representation of the class.
 
@@ -136,7 +136,7 @@ class DnsHandlerNotFoundException(DnsRuntimeException):
 
         DnsRuntimeException.__init__(self, message)
 
-    def __str__(self):
+    def __repr__(self):
         """
         Returns the string representation of the class.
 

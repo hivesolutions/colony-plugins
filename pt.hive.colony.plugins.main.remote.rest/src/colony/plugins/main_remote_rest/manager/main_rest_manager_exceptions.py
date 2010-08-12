@@ -75,7 +75,7 @@ class InvalidNumberArguments(BadServiceRequest):
         BadServiceRequest.__init__(self)
         self.message = message
 
-    def __str__(self):
+    def __repr__(self):
         """
         Returns the string representation of the class.
 
@@ -101,7 +101,7 @@ class InvalidMethod(BadServiceRequest):
         BadServiceRequest.__init__(self)
         self.message = message
 
-    def __str__(self):
+    def __repr__(self):
         """
         Returns the string representation of the class.
 
@@ -127,7 +127,7 @@ class InvalidEncoder(BadServiceRequest):
         BadServiceRequest.__init__(self)
         self.message = message
 
-    def __str__(self):
+    def __repr__(self):
         """
         Returns the string representation of the class.
 
@@ -153,7 +153,7 @@ class RestRequestNotHandled(BadServiceRequest):
         BadServiceRequest.__init__(self)
         self.message = message
 
-    def __str__(self):
+    def __repr__(self):
         """
         Returns the string representation of the class.
 
@@ -179,7 +179,7 @@ class InvalidPath(BadServiceRequest):
         BadServiceRequest.__init__(self)
         self.message = message
 
-    def __str__(self):
+    def __repr__(self):
         """
         Returns the string representation of the class.
 
@@ -205,7 +205,7 @@ class InvalidSession(ServiceException):
         ServiceException.__init__(self)
         self.message = message
 
-    def __str__(self):
+    def __repr__(self):
         """
         Returns the string representation of the class.
 
@@ -231,7 +231,7 @@ class InvalidCookie(ServiceException):
         ServiceException.__init__(self)
         self.message = message
 
-    def __str__(self):
+    def __repr__(self):
         """
         Returns the string representation of the class.
 

@@ -61,7 +61,7 @@ class UndefinedVariable(TemplateEngineException):
         TemplateEngineException.__init__(self)
         self.message = message
 
-    def __str__(self):
+    def __repr__(self):
         """
         Returns the string representation of the class.
 
@@ -87,7 +87,7 @@ class UndefinedReference(TemplateEngineException):
         TemplateEngineException.__init__(self)
         self.message = message
 
-    def __str__(self):
+    def __repr__(self):
         """
         Returns the string representation of the class.
 
@@ -113,7 +113,7 @@ class VariableNotIterable(TemplateEngineException):
         TemplateEngineException.__init__(self)
         self.message = message
 
-    def __str__(self):
+    def __repr__(self):
         """
         Returns the string representation of the class.
 
@@ -139,7 +139,7 @@ class InvalidNumberAttributes(TemplateEngineException):
         TemplateEngineException.__init__(self)
         self.message = message
 
-    def __str__(self):
+    def __repr__(self):
         """
         Returns the string representation of the class.
 
@@ -165,7 +165,7 @@ class InvalidBooleanValue(TemplateEngineException):
         TemplateEngineException.__init__(self)
         self.message = message
 
-    def __str__(self):
+    def __repr__(self):
         """
         Returns the string representation of the class.
 

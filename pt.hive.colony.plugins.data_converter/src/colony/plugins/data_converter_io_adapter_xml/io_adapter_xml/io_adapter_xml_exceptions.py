@@ -57,7 +57,7 @@ class IoAdapterXmlMethodNotImplemented(IoAdapterXmlException):
 
         IoAdapterXmlException.__init__(self)
 
-    def __str__(self):
+    def __repr__(self):
         """
         Returns the string representation of the class.
 
@@ -79,7 +79,7 @@ class IoAdapterXmlUnexpectedNumberRootEntities(IoAdapterXmlException):
 
         IoAdapterXmlException.__init__(self)
 
-    def __str__(self):
+    def __repr__(self):
         """
         Returns the string representation of the class.
 

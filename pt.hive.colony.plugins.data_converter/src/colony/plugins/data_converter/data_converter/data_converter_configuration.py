@@ -194,7 +194,7 @@ class DataConverterConfiguration:
         self.configuration_item_type_configuration_item_ids_map[RELATION_MAPPING_VALUE] = []
         self.option_name_value_map = {}
 
-    def __str__(self):
+    def __repr__(self):
         return self.configuration_plugin_id
 
     def get_configuration_id(self):
@@ -717,7 +717,7 @@ class OutputEntityMapping:
         self.relation_mappings = []
         self.enabled = True
 
-    def __str__(self):
+    def __repr__(self):
         return OUTPUT_ENTITY_MAPPING_DESCRIPTION_TEMPLATE % (self.output_entity_name)
 
     def get_configuration_item_id(self):
@@ -862,7 +862,7 @@ class InputEntityMapping:
         self.input_output_entity_mappings = []
         self.enabled = True
 
-    def __str__(self):
+    def __repr__(self):
         return INPUT_ENTITY_MAPPING_DESCRIPTION_TEMPLATE % (self.input_entity_name)
 
     def is_enabled(self):
@@ -969,7 +969,7 @@ class InputOutputEntityMapping:
         self.output_attribute_name_output_attribute_mapping_map = {}
         self.enabled = True
 
-    def __str__(self):
+    def __repr__(self):
         return ""
 
     def is_enabled(self):
@@ -1155,7 +1155,7 @@ class OutputAttributeMapping:
         self.handlers = []
         self.enabled = True
 
-    def __str__(self):
+    def __repr__(self):
         return OUTPUT_ATTRIBUTE_MAPPING_DESCRIPTION_TEMPLATE % (self.output_attribute_name)
 
     def is_enabled(self):
@@ -1280,7 +1280,7 @@ class RelationMapping:
         self.connectors = []
         self.enabled = True
 
-    def __str__(self):
+    def __repr__(self):
         return RELATION_MAPPING_DESCRIPTION_TEMPLATE % (self.entity_relation_attribute_names, self.related_entity_relation_attribute_names)
 
     def is_enabled(self):

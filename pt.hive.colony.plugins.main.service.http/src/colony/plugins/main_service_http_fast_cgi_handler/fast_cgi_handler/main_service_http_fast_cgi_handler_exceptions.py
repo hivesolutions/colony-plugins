@@ -61,7 +61,7 @@ class RequestNotHandled(MainServiceHttpFastCgiHandlerException):
         MainServiceHttpFastCgiHandlerException.__init__(self)
         self.message = message
 
-    def __str__(self):
+    def __repr__(self):
         """
         Returns the string representation of the class.
 
@@ -87,7 +87,7 @@ class InvalidFastCgiData(MainServiceHttpFastCgiHandlerException):
         MainServiceHttpFastCgiHandlerException.__init__(self)
         self.message = message
 
-    def __str__(self):
+    def __repr__(self):
         """
         Returns the string representation of the class.
 
@@ -113,7 +113,7 @@ class InvalidFastCgiHeader(MainServiceHttpFastCgiHandlerException):
         MainServiceHttpFastCgiHandlerException.__init__(self)
         self.message = message
 
-    def __str__(self):
+    def __repr__(self):
         """
         Returns the string representation of the class.
 

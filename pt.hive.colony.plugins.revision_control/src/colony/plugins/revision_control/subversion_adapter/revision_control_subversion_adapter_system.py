@@ -272,7 +272,7 @@ class SubversionRevision:
         # sets the adapted subversion revision
         self._subversion_revision = subversion_revision
 
-    def __str__(self):
+    def __repr__(self):
         # uses the subversion revision number as the string representation
         return str(self._subversion_revision.number)
 

@@ -75,7 +75,7 @@ class InvalidTokenValue(BadServiceRequest):
         BadServiceRequest.__init__(self)
         self.message = message
 
-    def __str__(self):
+    def __repr__(self):
         """
         Returns the string representation of the class.
 
@@ -101,7 +101,7 @@ class MvcRequestNotHandled(BadServiceRequest):
         BadServiceRequest.__init__(self)
         self.message = message
 
-    def __str__(self):
+    def __repr__(self):
         """
         Returns the string representation of the class.
 
@@ -132,7 +132,7 @@ class FileNotFoundException(MvcRequestNotHandled):
         MvcRequestNotHandled.__init__(self, message)
         self.status_code = status_code
 
-    def __str__(self):
+    def __repr__(self):
         """
         Returns the string representation of the class.
 
@@ -163,7 +163,7 @@ class InvalidCommunicationCommandException(MvcRequestNotHandled):
         MvcRequestNotHandled.__init__(self, message)
         self.status_code = status_code
 
-    def __str__(self):
+    def __repr__(self):
         """
         Returns the string representation of the class.
 
@@ -188,7 +188,7 @@ class CommunicationCommandException(MvcRequestNotHandled):
 
         MvcRequestNotHandled.__init__(self, message)
 
-    def __str__(self):
+    def __repr__(self):
         """
         Returns the string representation of the class.
 

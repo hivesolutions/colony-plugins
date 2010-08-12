@@ -61,7 +61,7 @@ class AbeculaRuntimeException(MainServiceAbeculaException):
         MainServiceAbeculaException.__init__(self)
         self.message = message
 
-    def __str__(self):
+    def __repr__(self):
         """
         Returns the string representation of the class.
 
@@ -86,7 +86,7 @@ class AbeculaInvalidDataException(AbeculaRuntimeException):
 
         AbeculaRuntimeException.__init__(self, message)
 
-    def __str__(self):
+    def __repr__(self):
         """
         Returns the string representation of the class.
 
@@ -111,7 +111,7 @@ class AbeculaNoHandlerException(AbeculaRuntimeException):
 
         AbeculaRuntimeException.__init__(self, message)
 
-    def __str__(self):
+    def __repr__(self):
         """
         Returns the string representation of the class.
 
@@ -136,7 +136,7 @@ class AbeculaHandlerNotFoundException(AbeculaRuntimeException):
 
         AbeculaRuntimeException.__init__(self, message)
 
-    def __str__(self):
+    def __repr__(self):
         """
         Returns the string representation of the class.
 
@@ -161,7 +161,7 @@ class AbeculaDataRetrievalException(AbeculaRuntimeException):
 
         AbeculaRuntimeException.__init__(self, message)
 
-    def __str__(self):
+    def __repr__(self):
         """
         Returns the string representation of the class.
 

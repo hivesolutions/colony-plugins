@@ -61,7 +61,7 @@ class BencodeEncodeException(BencodeException):
         BencodeException.__init__(self)
         self.object = object
 
-    def __str__(self):
+    def __repr__(self):
         """
         Returns the string representation of the class.
 
@@ -87,7 +87,7 @@ class BencodeDecodeException(BencodeException):
         BencodeException.__init__(self)
         self.message = message
 
-    def __str__(self):
+    def __repr__(self):
         """
         Returns the string representation of the class.
 

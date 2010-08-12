@@ -61,7 +61,7 @@ class PopRuntimeException(MainServicePopException):
         MainServicePopException.__init__(self)
         self.message = message
 
-    def __str__(self):
+    def __repr__(self):
         """
         Returns the string representation of the class.
 
@@ -86,7 +86,7 @@ class PopInvalidDataException(PopRuntimeException):
 
         PopRuntimeException.__init__(self, message)
 
-    def __str__(self):
+    def __repr__(self):
         """
         Returns the string representation of the class.
 
@@ -111,7 +111,7 @@ class PopNoHandlerException(PopRuntimeException):
 
         PopRuntimeException.__init__(self, message)
 
-    def __str__(self):
+    def __repr__(self):
         """
         Returns the string representation of the class.
 
@@ -136,7 +136,7 @@ class PopHandlerNotFoundException(PopRuntimeException):
 
         PopRuntimeException.__init__(self, message)
 
-    def __str__(self):
+    def __repr__(self):
         """
         Returns the string representation of the class.
 
@@ -161,7 +161,7 @@ class PopDataRetrievalException(PopRuntimeException):
 
         PopRuntimeException.__init__(self, message)
 
-    def __str__(self):
+    def __repr__(self):
         """
         Returns the string representation of the class.
 

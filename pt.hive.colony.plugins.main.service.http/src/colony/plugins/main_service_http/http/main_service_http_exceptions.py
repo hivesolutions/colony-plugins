@@ -61,7 +61,7 @@ class EncodingNotFound(MainServiceHttpException):
         MainServiceHttpException.__init__(self)
         self.message = message
 
-    def __str__(self):
+    def __repr__(self):
         """
         Returns the string representation of the class.
 
@@ -87,7 +87,7 @@ class ClientRequestSecurityViolation(MainServiceHttpException):
         MainServiceHttpException.__init__(self)
         self.message = message
 
-    def __str__(self):
+    def __repr__(self):
         """
         Returns the string representation of the class.
 
@@ -113,7 +113,7 @@ class HttpRuntimeException(MainServiceHttpException):
         MainServiceHttpException.__init__(self)
         self.message = message
 
-    def __str__(self):
+    def __repr__(self):
         """
         Returns the string representation of the class.
 
@@ -138,7 +138,7 @@ class HttpInvalidDataException(HttpRuntimeException):
 
         HttpRuntimeException.__init__(self, message)
 
-    def __str__(self):
+    def __repr__(self):
         """
         Returns the string representation of the class.
 
@@ -163,7 +163,7 @@ class HttpNoHandlerException(HttpRuntimeException):
 
         HttpRuntimeException.__init__(self, message)
 
-    def __str__(self):
+    def __repr__(self):
         """
         Returns the string representation of the class.
 
@@ -188,7 +188,7 @@ class HttpHandlerNotFoundException(HttpRuntimeException):
 
         HttpRuntimeException.__init__(self, message)
 
-    def __str__(self):
+    def __repr__(self):
         """
         Returns the string representation of the class.
 
@@ -213,7 +213,7 @@ class HttpInvalidMultipartRequestException(HttpRuntimeException):
 
         HttpRuntimeException.__init__(self, message)
 
-    def __str__(self):
+    def __repr__(self):
         """
         Returns the string representation of the class.
 
@@ -238,7 +238,7 @@ class HttpDataRetrievalException(HttpRuntimeException):
 
         HttpRuntimeException.__init__(self, message)
 
-    def __str__(self):
+    def __repr__(self):
         """
         Returns the string representation of the class.
 
