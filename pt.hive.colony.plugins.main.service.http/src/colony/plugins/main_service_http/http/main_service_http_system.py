@@ -1024,7 +1024,7 @@ class HttpClientServiceHandler:
         request.write("colony web server - " + str(request.status_code) + " " + status_code_value + "\n")
 
         # writes the error message
-        request.write("error: '" + str(error) + "'\n")
+        request.write("error: '" + unicode(error) + "'\n")
 
         # writes the traceback message in the request
         request.write("traceback:\n")
@@ -1034,8 +1034,16 @@ class HttpClientServiceHandler:
 
         # in case the traceback list is valid
         if traceback_list:
+            # creates the (initial) formated traceback
             formated_traceback = traceback.format_tb(traceback_list)
+
+            # retrieves the file system encoding
+            file_system_encoding = sys.getfilesystemencoding()
+
+            # decodes the traceback values using the file system encoding
+            formated_traceback = [value.decode(file_system_encoding) for value in formated_traceback]
         else:
+            # sets an empty formated traceback
             formated_traceback = ()
 
         # iterates over the traceback lines
