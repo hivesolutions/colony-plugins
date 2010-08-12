@@ -130,6 +130,7 @@ class FileNotFoundException(MvcRequestNotHandled):
         """
 
         MvcRequestNotHandled.__init__(self, message)
+        self.message = message
         self.status_code = status_code
 
     def __repr__(self):
@@ -161,6 +162,7 @@ class InvalidCommunicationCommandException(MvcRequestNotHandled):
         """
 
         MvcRequestNotHandled.__init__(self, message)
+        self.message = message
         self.status_code = status_code
 
     def __repr__(self):
@@ -187,6 +189,7 @@ class CommunicationCommandException(MvcRequestNotHandled):
         """
 
         MvcRequestNotHandled.__init__(self, message)
+        self.message = message
 
     def __repr__(self):
         """
