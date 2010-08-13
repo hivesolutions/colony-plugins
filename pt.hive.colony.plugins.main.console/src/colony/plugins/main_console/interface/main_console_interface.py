@@ -89,6 +89,7 @@ class MainConsoleInterface:
 
             # in case there is no valid line
             if not line:
+                # breaks the cycle
                 break
 
             # processes the command line, outputting the result to
