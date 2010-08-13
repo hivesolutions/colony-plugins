@@ -113,10 +113,13 @@ class InvalidMethod(BadServiceRequest):
 
         return "Invalid Method: %s" % self.message
 
-class JsonEncodeException(Exception):
+class JsonEncodeException(colony.plugins.plugin_system_exceptions.ColonyException):
     """
     The json encode exception class.
     """
+
+    message = None
+    """ The exception's message """
 
     def __init__(self, object):
         """
@@ -139,10 +142,13 @@ class JsonEncodeException(Exception):
 
         return "Object not encodeable: %s" % self.object
 
-class JsonDecodeException(Exception):
+class JsonDecodeException(colony.plugins.plugin_system_exceptions.ColonyException):
     """
     The json decode exception class.
     """
+
+    message = None
+    """ The exception's message """
 
     def __init__(self, message):
         """
