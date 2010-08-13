@@ -695,7 +695,7 @@ class OpenidClient:
             yadis_html_parser.feed(result)
         except Exception, exception:
             # prints an info message
-            self.service_openid_plugin.info("There was a problem parsing yadis html: %s" % str(exception))
+            self.service_openid_plugin.info("There was a problem parsing yadis html: %s" % unicode(exception))
 
         # retrieves the yadis provider url
         yadis_provider_url = yadis_html_parser.yadis_provider_url

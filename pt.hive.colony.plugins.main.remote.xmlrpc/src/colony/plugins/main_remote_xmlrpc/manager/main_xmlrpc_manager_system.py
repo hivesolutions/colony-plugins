@@ -145,7 +145,7 @@ class MainXmlrpcManager:
                     error = None
                 except Exception, exception:
                     # prints info message about exception
-                    self.main_xmlrpc_manager_plugin.info("There was an exception handling xml rpc the request: " + str(exception))
+                    self.main_xmlrpc_manager_plugin.info("There was an exception handling xml rpc the request: " + unicode(exception))
 
                     result = None
                     error = exception
@@ -384,7 +384,7 @@ class MainXmlrpcManager:
             error_fault = xmlrpclib.Fault("XmlEncodeException", "Result Object Not Serializable")
             data = xmlrpclib.dumps(error_fault, None, True)
         except Exception, exception:
-            error_fault = xmlrpclib.Fault("XmlEncodeException", "Result Object Not Serializable: " + str(exception))
+            error_fault = xmlrpclib.Fault("XmlEncodeException", "Result Object Not Serializable: " + unicode(exception))
             data = xmlrpclib.dumps(error_fault, None, True)
 
         # returns the xml data

@@ -159,7 +159,7 @@ class MainJsonrpcManager:
                     error = None
                 except Exception, exception:
                     # prints info message about exception
-                    self.main_jsonrpc_manager_plugin.info("There was an exception handling json rpc the request: " + str(exception))
+                    self.main_jsonrpc_manager_plugin.info("There was an exception handling json rpc the request: " + unicode(exception))
 
                     result = None
                     error = exception

@@ -226,7 +226,7 @@ class Autoloader:
             self.manager.load_plugin(plugin.id)
         except Exception, exception:
             # prints an error message
-            self.autoloader_plugin.error("There was a problem loading module %s: %s" % (module_name, str(exception)))
+            self.autoloader_plugin.error("There was a problem loading module %s: %s" % (module_name, unicode(exception)))
 
     def unload_module(self, module_name):
         """
@@ -244,7 +244,7 @@ class Autoloader:
             self.manager.stop_module(module_name)
         except Exception, exception:
             # prints an error message
-            self.autoloader_plugin.error("There was a problem unloading module %s: %s" % (module_name, str(exception)))
+            self.autoloader_plugin.error("There was a problem unloading module %s: %s" % (module_name, unicode(exception)))
 
     def reload_module(self, plugin, module_name):
         """
@@ -295,7 +295,7 @@ class Autoloader:
                 self.manager.load_plugin(loaded_plugin_id)
         except Exception, exception:
             # prints an error message
-            self.autoloader_plugin.error("There was a problem reloading module %s: %s" % (module_name, str(exception)))
+            self.autoloader_plugin.error("There was a problem reloading module %s: %s" % (module_name, unicode(exception)))
 
     def unload_autoloader(self):
         """

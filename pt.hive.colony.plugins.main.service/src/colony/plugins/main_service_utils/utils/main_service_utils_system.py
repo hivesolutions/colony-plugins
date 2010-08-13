@@ -591,7 +591,7 @@ class AbstractService:
             self._insert_connection_pool(service_connection, service_address)
         except Exception, exception:
             # prints an error message about the problem accepting the socket
-            self.main_service_utils_plugin.error("Error accepting socket: " + str(exception))
+            self.main_service_utils_plugin.error("Error accepting socket: " + unicode(exception))
 
     def _read_service_socket(self):
         """
@@ -607,7 +607,7 @@ class AbstractService:
             self._insert_data_pool(service_data, service_address)
         except Exception, exception:
             # prints an error message about the problem reading from socket
-            self.main_service_utils_plugin.error("Error reading from socket: " + str(exception))
+            self.main_service_utils_plugin.error("Error reading from socket: " + unicode(exception))
 
     def _activate_service_socket(self):
         """
@@ -892,7 +892,7 @@ class AbstractServiceConnectionHandler:
             self.add_connection(connection_socket, connection_address, connection_port)
         except Exception, exception:
             # prints an error for not being able to add connection
-            self.service.main_service_utils_plugin.error("Problem while adding connection to service connection handler: %s" % str(exception))
+            self.service.main_service_utils_plugin.error("Problem while adding connection to service connection handler: %s" % unicode(exception))
 
     def work_removed(self, work_reference):
         """
@@ -911,7 +911,7 @@ class AbstractServiceConnectionHandler:
             self.remove_connection_socket(connection_socket)
         except Exception, exception:
             # prints an error for not being able to remove connection
-            self.service.main_service_utils_plugin.error("Problem while removing connection from service connection handler: %s" % str(exception))
+            self.service.main_service_utils_plugin.error("Problem while removing connection from service connection handler: %s" % unicode(exception))
 
     def add_connection(self, connection_socket, connection_address, connection_port):
         """

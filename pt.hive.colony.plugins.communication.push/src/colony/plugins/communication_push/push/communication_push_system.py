@@ -814,7 +814,7 @@ class CommunicationPush:
                 self.remove_communication_handler(communication_name, communication_handler_name, communication_handler_method)
             except Exception, exception:
                 # prints an information message about the exception
-                self.comnunication_push_plugin.info("Unable to remove communication '%s' for handler '%s', probably due to double removal (%s)" % (communication_name , communication_handler_name, str(exception)))
+                self.comnunication_push_plugin.info("Unable to remove communication '%s' for handler '%s', probably due to double removal (%s)" % (communication_name , communication_handler_name, unicode(exception)))
 
     def _register_communication_profile(self, communication_profile_name, communication_name):
         # retrieves the communication handler tuples list
@@ -868,7 +868,7 @@ class CommunicationPush:
             # in case no failure is tolerated
             if not allow_failure:
                 # prints an information message about the exception
-                self.communication_push_plugin.debug("Problem sending notification: %s" % str(exception))
+                self.communication_push_plugin.debug("Problem sending notification: %s" % unicode(exception))
 
     def _send_service_notification(self, command, arguments, communication_name, communication_handler_method):
         """
@@ -1025,7 +1025,7 @@ class CommunicationPushProcessingTask:
                 communication_handler_method(push_notification, communication_name)
             except Exception, exception:
                 # prints an information message
-                self.communication_push_plugin.info("Problem calling the communication handler method for push notification: %s" % str(exception))
+                self.communication_push_plugin.info("Problem calling the communication handler method for push notification: %s" % unicode(exception))
 
                 # removes the work
                 self.remove_work(work)

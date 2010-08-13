@@ -159,7 +159,7 @@ class WebMvcManagerPageItemCodeExecutionController:
             output_message = stdout_stream.getvalue()
         except Exception, exception:
             # sets the exception as the output message
-            output_message = str(exception)
+            output_message = unicode(exception)
 
         # restores stdout
         sys.stdout = sys.__stdout__

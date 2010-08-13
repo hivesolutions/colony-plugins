@@ -141,7 +141,7 @@ class DnsStorageDatabaseClient:
             # rolls back the transaction
             entity_manager.rollback_transaction()
 
-            # re-throws the exception
+            # re-raises the exception
             raise
         else:
             # commits the transaction
@@ -182,7 +182,7 @@ class DnsStorageDatabaseClient:
             # rolls back the transaction
             entity_manager.rollback_transaction()
 
-            # re-throws the exception
+            # re-raises the exception
             raise
         else:
             # commits the transaction

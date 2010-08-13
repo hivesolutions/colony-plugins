@@ -108,7 +108,7 @@ class DummyEntityManager:
             # persists the entity in the entity manager
             entity_manager.save(dummy_entity)
         except Exception, exception:
-            print "error saving: " + str(exception)
+            print "error saving: " + unicode(exception)
 
         # finds the entity
         entity_find = entity_manager.find(dummy_entity_class, "dummy")
@@ -137,7 +137,7 @@ class DummyEntityManager:
             # persists the entity in the entity manager
             entity_manager.save(dummy_entity_bundle_association)
         except Exception, exception:
-            print "error saving: " + str(exception)
+            print "error saving: " + unicode(exception)
 
         # creates a new entity bundle instance
         dummy_entity_bundle = dummy_entity_bundle_class()
@@ -152,7 +152,7 @@ class DummyEntityManager:
             # persists the entity in the entity manager
             entity_manager.save(dummy_entity_bundle)
         except Exception, exception:
-            print "error saving: " + str(exception)
+            print "error saving: " + unicode(exception)
 
         # retrieves the dummy entity bundle class with test_name key
         entity_manager.find(dummy_entity_bundle_class, "test_name")

@@ -72,7 +72,7 @@ class MainServiceTelnetConsoleHandler:
             write_function = self.create_write(request)
         except Exception, exception:
             # raises the write function creation error
-            raise main_service_telnet_console_handler_exceptions.WriteFunctionCreationError("problem creating write function: " + str(exception))
+            raise main_service_telnet_console_handler_exceptions.WriteFunctionCreationError("problem creating write function: " + unicode(exception))
 
         # processes the command line
         self.main_service_telnet_console_handler_plugin.main_console_plugin.process_command_line(message, write_function)

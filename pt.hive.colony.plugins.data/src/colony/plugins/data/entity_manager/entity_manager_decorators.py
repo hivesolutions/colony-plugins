@@ -78,7 +78,7 @@ def transaction(transaction_type = "required"):
                 # "rollsback" the transaction
                 self_value.entity_manager.rollback_transaction()
 
-                # re-throws the exception
+                # re-raises the exception
                 raise
 
             # closes the transaction

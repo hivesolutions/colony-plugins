@@ -461,7 +461,7 @@ class HttpClientServiceHandler:
             request = self.retrieve_request(service_connection, request_timeout)
         except main_service_http_exceptions.MainServiceHttpException:
             # prints a debug message about the connection closing
-            self.service_plugin.debug("Connection: %s closed by peer, timeout or invalid request" % unicode(service_connection))
+            self.service_plugin.debug("Connection: %s closed by peer, timeout or invalid request" % str(service_connection))
 
             # returns false (connection closed)
             return False

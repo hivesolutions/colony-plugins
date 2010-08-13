@@ -308,7 +308,7 @@ class AbeculaClientServiceHandler:
             request = self.retrieve_request(service_connection, request_timeout)
         except main_service_abecula_exceptions.MainServiceAbeculaException:
             # prints a debug message about the connection closing
-            self.service_plugin.debug("Connection: %s closed by peer, timeout or invalid request" % str(service_connection))
+            self.service_plugin.debug("Connection: %s closed by peer, timeout or invalid request" % unicode(service_connection))
 
             # returns false (connection closed)
             return False
@@ -353,7 +353,7 @@ class AbeculaClientServiceHandler:
             self.send_request(service_connection, request)
         except Exception, exception:
             # prints info message about exception
-            self.service_plugin.info("There was an exception handling the request: " + str(exception))
+            self.service_plugin.info("There was an exception handling the request: " + unicode(exception))
 
             # sends the exception
             self.send_exception(service_connection, request, exception)

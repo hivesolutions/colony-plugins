@@ -179,7 +179,7 @@ class ConsoleRevisionControlManager:
                 output_method("successfully updated")
         except Exception, exception:
             # outputs the result
-            output_method("problem updating resources: " + str(exception))
+            output_method("problem updating resources: " + unicode(exception))
 
     def process_commit(self, args, output_method):
         # returns in case an invalid number of arguments was provided
@@ -215,7 +215,7 @@ class ConsoleRevisionControlManager:
                 output_method("nothing to commit")
         except Exception, exception:
             # outputs the result
-            output_method("problem committing resources: " + str(exception))
+            output_method("problem committing resources: " + unicode(exception))
 
     def process_log(self, args, output_method):
         # determines the number of arguments
@@ -258,7 +258,7 @@ class ConsoleRevisionControlManager:
             self.output_log_entries(log_entries, output_method)
         except Exception, exception:
             # outputs the result
-            output_method("problem retrieving change set log: " + str(exception))
+            output_method("problem retrieving change set log: " + unicode(exception))
 
     def process_status(self, args, output_method):
         # returns in case an invalid number of arguments was provided
@@ -286,7 +286,7 @@ class ConsoleRevisionControlManager:
             self.output_status(status, output_method)
         except Exception, exception:
             # outputs the result
-            output_method("problem retrieving status: " + str(exception))
+            output_method("problem retrieving status: " + unicode(exception))
 
     def process_diff(self, args, output_method):
         # returns in case an invalid number of arguments was provided
@@ -329,7 +329,7 @@ class ConsoleRevisionControlManager:
             self.output_diffs(diffs, output_method)
         except Exception, exception:
             # outputs the result
-            output_method("problem computing diff: " + str(exception))
+            output_method("problem computing diff: " + unicode(exception))
 
     def process_get_resource_revision(self, args, output_method):
         # returns in case an invalid number of arguments was provided
@@ -368,10 +368,10 @@ class ConsoleRevisionControlManager:
         except Exception, exception:
             if not revision:
                 # outputs the result
-                output_method("problem retrieving the resource's content: " + str(exception))
+                output_method("problem retrieving the resource's content: " + unicode(exception))
             else:
                 # outputs the result
-                output_method("problem retrieving the resource's content for revision " + revision + ": " + str(exception))
+                output_method("problem retrieving the resource's content for revision " + revision + ": " + unicode(exception))
 
     def load_revision_control_manager(self, adapter_name, resource_identifier = None):
         # creates the revision control parameters
