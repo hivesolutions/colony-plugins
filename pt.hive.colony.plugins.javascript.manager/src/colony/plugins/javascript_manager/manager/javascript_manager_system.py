@@ -118,9 +118,6 @@ class JavascriptManager:
         # retrieves the resource manager plugin
         resource_manager_plugin = self.javascript_manager_plugin.resource_manager_plugin
 
-        # retrieves the manager path
-        manager_path = self.javascript_manager_plugin.manager.get_manager_path()
-
         # retrieves the workspace home path resource
         workspace_home_path_resource = resource_manager_plugin.get_resource("system.path.workspace_home")
 
@@ -134,7 +131,7 @@ class JavascriptManager:
         colony_web_path = colony_web_path_resource.data
 
         # retrieves the colony web real path value
-        colony_web_real_path = os.path.realpath(manager_path + "/" + colony_web_path)
+        colony_web_real_path = os.path.realpath(colony_web_path)
 
         # retrieves the omni web path resource
         omni_web_path_resource = resource_manager_plugin.get_resource("system.path.omni_web")
@@ -143,7 +140,7 @@ class JavascriptManager:
         omni_web_path = omni_web_path_resource.data
 
         # retrieves the omni web real path value
-        omni_web_real_path = os.path.realpath(manager_path + "/" + omni_web_path)
+        omni_web_real_path = os.path.realpath(omni_web_path)
 
         # retrieves the colony web ui path resource
         colony_web_ui_path_resource = resource_manager_plugin.get_resource("system.path.colony_web_ui")
@@ -152,7 +149,7 @@ class JavascriptManager:
         colony_web_ui_path = colony_web_ui_path_resource.data
 
         # retrieves the colony web ui real path value
-        colony_web_ui_real_path = os.path.realpath(manager_path + "/" + colony_web_ui_path)
+        colony_web_ui_real_path = os.path.realpath(colony_web_ui_path)
 
         # retrieves the colony demo path resource
         colony_demo_path_resource = resource_manager_plugin.get_resource("system.path.colony_demo")
@@ -160,10 +157,8 @@ class JavascriptManager:
         # retrieves the colony demo path value
         colony_demo_path = colony_demo_path_resource.data
 
-        self.colony_demo_path = colony_demo_path
-
         # retrieves the colony demo real path value
-        colony_demo_real_path = os.path.realpath(manager_path + "/" + colony_demo_path)
+        colony_demo_real_path = os.path.realpath(colony_demo_path)
 
         # sets the workspace base path
         self.workspace_base_path = workspace_home_path
@@ -477,7 +472,7 @@ class JavascriptManager:
             if relative_file_path_item in current_plugin_search_directories_map:
                 current_plugin_search_directories_map = current_plugin_search_directories_map[relative_file_path_item]
             else:
-                raise javascript_manager_exceptions.InvalidFileNameException(str(self.colony_demo_path) + "the file: " + relative_file_path_item + " is not valid" + str(current_plugin_search_directories_map))
+                raise javascript_manager_exceptions.InvalidFileNameException("the file: " + relative_file_path_item + " is not valid" + str(current_plugin_search_directories_map))
 
         # returns the full file path
         return current_plugin_search_directories_map
