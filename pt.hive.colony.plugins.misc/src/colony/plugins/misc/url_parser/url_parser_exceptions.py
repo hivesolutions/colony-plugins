@@ -37,7 +37,9 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-class UrlParserException(Exception):
+import colony.plugins.plugin_system_exceptions
+
+class UrlParserException(colony.plugins.plugin_system_exceptions.ColonyException):
     """
     The url parser exception class.
     """

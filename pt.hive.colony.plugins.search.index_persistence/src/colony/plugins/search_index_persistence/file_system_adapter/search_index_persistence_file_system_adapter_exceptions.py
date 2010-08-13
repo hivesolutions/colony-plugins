@@ -37,7 +37,9 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-class SearchIndexPersistenceFileSystemAdapterException(Exception):
+import colony.plugins.plugin_system_exceptions
+
+class SearchIndexPersistenceFileSystemAdapterException(colony.plugins.plugin_system_exceptions.ColonyException):
     """
     The search index persistence file system adapter exception class.
     """

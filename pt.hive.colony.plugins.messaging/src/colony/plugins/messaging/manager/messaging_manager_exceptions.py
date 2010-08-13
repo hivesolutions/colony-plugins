@@ -37,7 +37,9 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-def MessagingManagerException(Exception):
+import colony.plugins.plugin_system_exceptions
+
+class MessagingManagerException(colony.plugins.plugin_system_exceptions.ColonyException):
     """
     The messaging manager exception class.
     """
@@ -45,28 +47,7 @@ def MessagingManagerException(Exception):
     message = None
     """ The exception's message """
 
-    def __init__(self, message):
-        """
-        Constructor of the class.
-
-        @type message: String
-        @param message: The message to be printed.
-        """
-
-        Exception.__init__(self)
-        self.message = message
-
-    def __str__(self):
-        """
-        Returns the string representation of the class.
-
-        @rtype: String
-        @return: The string representation of the class.
-        """
-
-        return "Messaging manager exception: %s" % self.message
-
-def InvalidMessagingServiceIdException(BuildAutomationException):
+class InvalidMessagingServiceIdException(MessagingManagerException):
     """
     The invalid messaging service id exception class.
     """
@@ -80,6 +61,7 @@ def InvalidMessagingServiceIdException(BuildAutomationException):
         """
 
         MessagingManagerException.__init__(self, message)
+        self.message = message
 
     def __str__(self):
         """

@@ -37,7 +37,9 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-class MainServicePopMainSessionHandlerException(Exception):
+import colony.plugins.plugin_system_exceptions
+
+class MainServicePopMainSessionHandlerException(colony.plugins.plugin_system_exceptions.ColonyException):
     """
     The main service pop main session handler exception class.
     """

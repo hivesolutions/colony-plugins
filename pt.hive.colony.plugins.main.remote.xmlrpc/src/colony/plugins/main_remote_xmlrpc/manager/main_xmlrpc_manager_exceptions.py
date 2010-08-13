@@ -37,7 +37,9 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-class ServiceException(Exception):
+import colony.plugins.plugin_system_exceptions
+
+class ServiceException(colony.plugins.plugin_system_exceptions.ColonyException):
     """
     The service exception class.
     """
@@ -111,7 +113,7 @@ class InvalidMethod(BadServiceRequest):
 
         return "Invalid Method: %s" % self.message
 
-class XmlEncodeException(Exception):
+class XmlEncodeException(colony.plugins.plugin_system_exceptions.ColonyException):
     """
     The xml encode exception class.
     """
@@ -137,7 +139,7 @@ class XmlEncodeException(Exception):
 
         return "Object not encodeable: %s" % self.object
 
-class XmlDecodeException(Exception):
+class XmlDecodeException(colony.plugins.plugin_system_exceptions.ColonyException):
     """
     The xml decode exception class.
     """

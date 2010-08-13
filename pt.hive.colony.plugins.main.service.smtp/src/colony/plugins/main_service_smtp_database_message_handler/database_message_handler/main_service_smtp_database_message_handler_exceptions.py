@@ -37,7 +37,9 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-class MainServiceSmtpDatabaseMessageHandlerException(Exception):
+import colony.plugins.plugin_system_exceptions
+
+class MainServiceSmtpDatabaseMessageHandlerException(colony.plugins.plugin_system_exceptions.ColonyException):
     """
     The main service smtp database message handler exception class.
     """

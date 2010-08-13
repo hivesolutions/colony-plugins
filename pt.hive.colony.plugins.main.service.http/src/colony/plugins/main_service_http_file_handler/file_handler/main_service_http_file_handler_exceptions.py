@@ -37,7 +37,9 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-class MainServiceHttpFileHandlerException(Exception):
+import colony.plugins.plugin_system_exceptions
+
+class MainServiceHttpFileHandlerException(colony.plugins.plugin_system_exceptions.ColonyException):
     """
     The main service http file handler exception class.
     """
