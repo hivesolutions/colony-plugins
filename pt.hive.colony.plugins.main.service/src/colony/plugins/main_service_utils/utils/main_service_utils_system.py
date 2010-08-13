@@ -394,32 +394,36 @@ class AbstractService:
         Starts the service.
         """
 
-        # creates the work pool
-        self._create_pool()
+        try:
+            # creates the work pool
+            self._create_pool()
 
-        # creates and sets the service socket
-        self._create_service_socket()
+            # creates and sets the service socket
+            self._create_service_socket()
 
-        # activates and listens the service socket
-        self._activate_service_socket()
+            # activates and listens the service socket
+            self._activate_service_socket()
 
-        # in case the service type is connection
-        if self.service_type == CONNECTION_TYPE_VALUE:
-            # runs the loop for connection type
-            self._loop_connection()
-        # in case the service type is connectionless
-        elif self.service_type == CONNECTIONLESS_TYPE_VALUE:
-            # runs the loop for connectionless type
-            self._loop_connectionless()
+            # in case the service type is connection
+            if self.service_type == CONNECTION_TYPE_VALUE:
+                # runs the loop for connection type
+                self._loop_connection()
+            # in case the service type is connectionless
+            elif self.service_type == CONNECTIONLESS_TYPE_VALUE:
+                # runs the loop for connectionless type
+                self._loop_connectionless()
+        except:
+            # sets the service connection active flag as false
+            self.service_connection_active = False
+        finally:
+            # disables the service socket
+            self._disable_service_socket()
 
-        # disables the service socket
-        self._disable_service_socket()
+            # clears the service connection close event
+            self.service_connection_close_event.clear()
 
-        # clears the service connection close event
-        self.service_connection_close_event.clear()
-
-        # sets the service connection close end event
-        self.service_connection_close_end_event.set()
+            # sets the service connection close end event
+            self.service_connection_close_end_event.set()
 
     def stop_service(self):
         """
