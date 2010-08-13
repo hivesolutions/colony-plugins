@@ -43,6 +43,8 @@ import stat
 import zipfile
 import tarfile
 
+import colony.libs.path_util
+
 SERVICE_NAME = "colony"
 """ The service name """
 
@@ -465,7 +467,8 @@ class ColonyPluginCompressedFile:
         # file path to the target path
         complete_target_path = target_path + "/" + file_path
 
-        target_path_normalized = os.path.normpath(complete_target_path)
+        # normalizes the target path
+        target_path_normalized = colony.libs.path_util.normalize_path(complete_target_path)
 
         # retrieves all the upper directories
         upper_directory_paths = os.path.dirname(target_path_normalized)
