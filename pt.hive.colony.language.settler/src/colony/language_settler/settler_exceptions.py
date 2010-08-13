@@ -45,6 +45,16 @@ class SettlerException(Exception):
     message = None
     """ The exception's message """
 
+    def __unicode__(self):
+        """
+        Returns the unicode representation of the class.
+
+        @rtype: String
+        @return: The unicode representation of the class.
+        """
+
+        return self.__str__()
+
 class SettlerSymbolNotFound(SettlerException):
     """
     The settler symbol not found class.
