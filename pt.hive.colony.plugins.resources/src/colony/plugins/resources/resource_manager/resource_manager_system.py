@@ -39,6 +39,7 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 import os
 import re
+import sys
 
 import resource_manager_parser
 
@@ -351,6 +352,9 @@ class ResourceManager:
         @return: The converted string.
         """
 
+        # retrieves the file system encoding
+        file_system_encoding = sys.getfilesystemencoding()
+
         # checks the string value in the string value real string value map
         if string_value in self.string_value_real_string_value_map:
             # retrieves the real string value
@@ -373,8 +377,8 @@ class ResourceManager:
             # retrieves the variable name
             variable_name = match_group[2:-1]
 
-            # retrieves the variable value
-            variable_value = os.environ.get(variable_name, "")
+            # retrieves the variable value, decoding it with the file system encoding
+            variable_value = os.environ.get(variable_name, "").decode(file_system_encoding)
 
             # sets the new resource data
             real_string_value = real_string_value.replace(match_group, variable_value)
