@@ -97,7 +97,7 @@ class MainServiceDnsDatabaseHandler:
             # from the query
             name, type, class_ = query
 
-            # retrieves the records thall fullfill the given query
+            # retrieves the records that fullfill the given query
             query_records = dns_storage_database_client.get_records_filtered(name, type, class_)
 
             # extends the record list with the retrieved
