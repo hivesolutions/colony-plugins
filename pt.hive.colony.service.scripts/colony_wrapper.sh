@@ -39,7 +39,7 @@ LOG_FILE_STDERR=/var/log/colony_wrapper.stderr.log
 export COLONY_HOME
 
 # launches the colony and redirects the standard output and error
-setsid $COLONY_PATH --configuration_path=$COLONY_CONFIGURATION 1> $LOG_FILE_STDOUT 2> $LOG_FILE_STDERR &
+setsid $COLONY_PATH --configuration_file=$COLONY_CONFIGURATION 1> $LOG_FILE_STDOUT 2> $LOG_FILE_STDERR &
 
 # touches the pid file with the current pid value
 echo $! > $PID_FILE
