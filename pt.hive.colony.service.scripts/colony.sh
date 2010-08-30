@@ -54,7 +54,7 @@ SCRIPTNAME=/etc/init.d/$NAME
 # loads the verbose setting and other rcS variables
 . /lib/init/vars.sh
 
-# defines LSB log_* functions
+# defines lsb log_* functions
 . /lib/lsb/init-functions
 
 # overrides the verbose setting
@@ -67,7 +67,11 @@ do_start()
     #   0 if daemon has been started
     #   1 if daemon was already running
     #   2 if daemon could not be started
+
+    # tests the daemonn to check if it is already running
     start-stop-daemon --start --quiet --pidfile $PIDFILE --exec $DAEMON --test > /dev/null || return 1
+
+    # launches the daemon and checks if it was successful
     start-stop-daemon --start --quiet --pidfile $PIDFILE --exec $DAEMON -- $DAEMON_ARGS || return 2
 
     # returns valid
@@ -82,6 +86,8 @@ do_stop()
     #   1 if daemon was already stopped
     #   2 if daemon could not be stopped
     #   other if a failure occurred
+
+    # stops the daemon
     start-stop-daemon --stop --quiet --retry=TERM/30/KILL/5 --pidfile $PIDFILE
 
     # sets the retval with the return value
