@@ -1,0 +1,15 @@
+#!/bin/sh
+if [ "$1" != "upgrade" ]; then
+	grep root=/usr/share/webmin /etc/webmin/miniserv.conf >/dev/null 2>&1
+	if [ "$?" = 0 ]; then
+		# Package is being removed, and no new version of webmin
+		# has taken it's place. Run uninstalls and stop the server
+		if [ "webmin" = "webmin" ]; then
+			echo "Running uninstall scripts .."
+			(cd /usr/share/webmin ; WEBMIN_CONFIG=/etc/webmin WEBMIN_VAR=/var/webmin LANG= /usr/share/webmin/run-uninstalls.pl)
+		fi
+		/etc/init.d/webmin stop >/dev/null 2>&1 </dev/null
+		/etc/webmin/stop >/dev/null 2>&1 </dev/null
+		/bin/true
+	fi
+fi

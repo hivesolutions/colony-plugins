@@ -1,0 +1,33 @@
+#!/bin/sh
+perl <<EOD;
+# maketemp.pl
+# Create the /tmp/.webmin directory if needed
+
+\$tmp_dir = \$ENV{'tempdir'} || "/tmp/.webmin";
+
+while(\$tries++ < 10) {
+	local @st = lstat(\$tmp_dir);
+	exit(0) if (\$st[4] == \$< && (-d _) && (\$st[2] & 0777) == 0755);
+	if (@st) {
+		unlink(\$tmp_dir) || rmdir(\$tmp_dir) ||
+			system("/bin/rm -rf ".quotemeta(\$tmp_dir));
+		}
+	mkdir(\$tmp_dir, 0755) || next;
+	chown(\$<, \$(, \$tmp_dir);
+	chmod(0755, \$tmp_dir);
+	}
+exit(1);
+
+EOD
+if [ "$1" != "upgrade" ]; then
+	if [ "$WEBMIN_PORT" != "" ]; then
+		port=$WEBMIN_PORT
+	else
+		port=10000
+	fi
+	perl -e 'use Socket; socket(FOO, PF_INET, SOCK_STREAM, getprotobyname("tcp")); setsockopt(FOO, SOL_SOCKET, SO_REUSEADDR, pack("l", 1)); bind(FOO, pack_sockaddr_in($ARGV[0], INADDR_ANY)) || exit(1); exit(0);' $port
+	if [ "$?" != "0" ]; then
+		echo Port $port is already in use
+		exit 2
+	fi
+fi
