@@ -38,7 +38,7 @@ LOG_FILE_STDERR=/var/log/colony_wrapper.stderr.log
 COLONY_DAEMON_FILE=/var/colony/colony.daemon
 COLONY_DAEMON_CHECK_TIMEOUT=120
 
-# export the colony home variable
+# exports the colony home variable
 export COLONY_HOME
 
 # launches the colony and redirects the standard output and error
@@ -47,7 +47,7 @@ setsid $COLONY_PATH --configuration_file=$COLONY_CONFIGURATION 1> $LOG_FILE_STDO
 # saves the pid value
 PID_VALUE=$!
 
-# checks the colony daemon sanity
+# checks the colony daemon sanity for the current pid value
 $COLONY_DAEMON_TEST_PATH $COLONY_DAEMON_FILE $PID_VALUE $COLONY_DAEMON_CHECK_TIMEOUT
 
 # saves the daemon test return value
