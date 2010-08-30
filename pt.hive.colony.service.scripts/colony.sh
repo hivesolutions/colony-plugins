@@ -134,56 +134,56 @@ do_reload() {
 
 # switches over the service option
 case "$1" in
-  start)
-    # prints a log message
-    [ "$VERBOSE" != no ] && log_daemon_msg "Starting $DESC" "$NAME"
+    start)
+        # prints a log message
+        [ "$VERBOSE" != no ] && log_daemon_msg "Starting $DESC" "$NAME"
 
-    # calls the do start function
-    do_start
-    case "$?" in
-        0|1) [ "$VERBOSE" != no ] && log_end_msg 0 ;;
-        2) [ "$VERBOSE" != no ] && log_end_msg 1 ;;
-    esac
-    ;;
-  stop)
-    [ "$VERBOSE" != no ] && log_daemon_msg "Stopping $DESC" "$NAME"
-
-    # call the do stop function
-    do_stop
-
-    case "$?" in
-        0|1) [ "$VERBOSE" != no ] && log_end_msg 0 ;;
-        2) [ "$VERBOSE" != no ] && log_end_msg 1 ;;
-    esac
-    ;;
-  restart|force-reload)
-    # prints a log message
-    log_daemon_msg "Restarting $DESC" "$NAME"
-
-    # calls the do stop function
-    do_stop
-
-    case "$?" in
-      0|1)
+        # calls the do start function
         do_start
         case "$?" in
-            0) log_end_msg 0 ;;
-            1) log_end_msg 1 ;; # old process is still running
-            *) log_end_msg 1 ;; # failed to start
+            0|1) [ "$VERBOSE" != no ] && log_end_msg 0 ;;
+            2) [ "$VERBOSE" != no ] && log_end_msg 1 ;;
+        esac
+        ;;
+    stop)
+        [ "$VERBOSE" != no ] && log_daemon_msg "Stopping $DESC" "$NAME"
+
+        # call the do stop function
+        do_stop
+
+        case "$?" in
+            0|1) [ "$VERBOSE" != no ] && log_end_msg 0 ;;
+            2) [ "$VERBOSE" != no ] && log_end_msg 1 ;;
+        esac
+        ;;
+      restart|force-reload)
+        # prints a log message
+        log_daemon_msg "Restarting $DESC" "$NAME"
+
+        # calls the do stop function
+        do_stop
+
+        case "$?" in
+              0|1)
+                do_start
+                case "$?" in
+                    0) log_end_msg 0 ;;
+                    1) log_end_msg 1 ;; # old process is still running
+                    *) log_end_msg 1 ;; # failed to start
+                esac
+                ;;
+              *)
+                # failed to stop
+                log_end_msg 1
+                ;;
         esac
         ;;
       *)
-        # failed to stop
-        log_end_msg 1
-        ;;
-    esac
-    ;;
-  *)
-    # prints the usage message
-    echo "Usage: $SCRIPTNAME {start|stop|restart|force-reload}" >&2
+        # prints the usage message
+        echo "Usage: $SCRIPTNAME {start|stop|restart|force-reload}" >&2
 
-    # exits
-    exit 3
-    ;;
+        # exits
+        exit 3
+        ;;
 esac
 :
