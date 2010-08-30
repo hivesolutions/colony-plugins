@@ -61,12 +61,12 @@ $(document).ready(function() {
     };
 
     // retrieves the repository plugins plugin table
-    var repositotyPluginsTable = $("#repository-plugins-table");
+    var repositoryPluginsTable = $("#repository-plugins-table");
 
     // registers the extra handlers for the repository plugins table
-    _registerExtraHandlers(repositotyPluginsTable);
+    _registerExtraHandlers(repositoryPluginsTable);
 
-    repositotyPluginsTable.bind("content_change",
+    repositoryPluginsTable.bind("content_change",
             function(event, targetElements) {
                 _registerExtraHandlers(targetElements);
             });
