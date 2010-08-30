@@ -56,9 +56,9 @@ DAEMON_TEST_RETURN_VALUE=$?
 # in case the daemon test was successful
 if [ $DAEMON_TEST_RETURN_VALUE -eq 0 ]; then
     # touches the pid file with the current pid value
-    echo DEFAULT_SLEEP_TIME > $PID_FILE
+    echo $PID_VALUE > $PID_FILE
 fi
 
 # exits the process with the returning code of
 # the daemon test
-exit DAEMON_TEST_RETURN_VALUE
+exit $DAEMON_TEST_RETURN_VALUE
