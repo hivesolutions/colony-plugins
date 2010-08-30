@@ -156,7 +156,7 @@ case "$1" in
             2) [ "$VERBOSE" != no ] && log_end_msg 1 ;;
         esac
         ;;
-      restart|force-reload)
+    restart|force-reload)
         # prints a log message
         log_daemon_msg "Restarting $DESC" "$NAME"
 
@@ -178,7 +178,7 @@ case "$1" in
                 ;;
         esac
         ;;
-      *)
+    *)
         # prints the usage message
         echo "Usage: $SCRIPTNAME {start|stop|restart|force-reload}" >&2
 
