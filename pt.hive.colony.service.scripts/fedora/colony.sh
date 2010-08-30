@@ -25,20 +25,20 @@
 PATH=/sbin:/bin:/usr/bin:/usr/sbin
 prog="auditd"
 
-# Source function library.
+# source function library
 . /etc/init.d/functions
 
-# Allow anyone to run status
+# allow anyone to run status
 if [ "$1" = "status" ] ; then
     status $prog
     RETVAL=$?
     exit $RETVAL
 fi
 
-# Check that we are root ... so non-root users stop here
-test $EUID = 0  ||  exit 4
+# checks that we are root... so non-root users stop here
+test $EUID = 0 || exit 4
 
-# Check config
+# check config
 test -f /etc/sysconfig/auditd && . /etc/sysconfig/auditd
 
 RETVAL=0
