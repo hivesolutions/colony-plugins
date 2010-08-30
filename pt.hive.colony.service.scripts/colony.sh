@@ -31,7 +31,7 @@
 # Default-Start:     2 3 4 5
 # Default-Stop:      0 1 6
 # Short-Description: Colony initscript
-# Description:       The file is used to init the colony service.
+# Description:       Starts or stops the hive colony framework service.
 ### END INIT INFO
 
 # Author: Luís Martinho <lmartinho@hive.pt>
@@ -68,8 +68,16 @@ do_start()
     #   1 if daemon was already running
     #   2 if daemon could not be started
 
+    # in case the pid file already exists
+    if [ -e $PIDFILE ]; then
+        return 1
+    fi
+
     # tests the daemonn to check if it is already running
     start-stop-daemon --start --quiet --pidfile $PIDFILE --exec $DAEMON --test > /dev/null || return 1
+
+    # touches the pid file to lock the starting process
+    touch $PIDFILE
 
     # launches the daemon and checks if it was successful
     start-stop-daemon --start --quiet --pidfile $PIDFILE --exec $DAEMON -- $DAEMON_ARGS || return 2
