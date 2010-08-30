@@ -61,8 +61,7 @@ SCRIPTNAME=/etc/init.d/$NAME
 VERBOSE=yes
 
 # Function that starts the daemon/service.
-do_start()
-{
+do_start() {
     # returns
     #   0 if daemon has been started
     #   1 if daemon was already running
@@ -87,8 +86,7 @@ do_start()
 }
 
 # Function that stops the daemon/service.
-do_stop()
-{
+do_stop() {
     # returns
     #   0 if daemon has been stopped
     #   1 if daemon was already stopped
