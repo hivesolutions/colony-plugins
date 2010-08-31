@@ -39,15 +39,15 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 import colony.plugins.plugin_system_exceptions
 
-class InstallationManagerException(colony.plugins.plugin_system_exceptions.ColonyException):
+class InstallationDebException(colony.plugins.plugin_system_exceptions.ColonyException):
     """
-    The installation manager exception class.
+    The installation deb exception class.
     """
 
     message = None
     """ The exception's message """
 
-class MissingParameter(InstallationManagerException):
+class MissingParameter(InstallationDebException):
     """
     The missing parameter class.
     """
@@ -60,7 +60,7 @@ class MissingParameter(InstallationManagerException):
         @param message: The message to be printed.
         """
 
-        InstallationManagerException.__init__(self)
+        InstallationDebException.__init__(self)
         self.message = message
 
     def __str__(self):
