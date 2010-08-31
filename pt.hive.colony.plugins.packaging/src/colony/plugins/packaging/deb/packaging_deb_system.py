@@ -274,6 +274,9 @@ class DebFile:
         mode = file_stat[stat.ST_MODE]
         size = file_stat[stat.ST_SIZE]
 
+        # normalizes the mode removing the extra parameters
+        mode = stat.S_IMODE(mode)
+
         # tries to retrieve the file properties
         file_properties = parameters.get(FILE_PROPERTIES_VALUE, {})
 
@@ -421,6 +424,7 @@ class DebFile:
         # contents of the control file
         control = self.deb_file_arguments[CONTROL_VALUE]
         conffiles = self.deb_file_arguments.get("conffiles", empty_string_buffer)
+        config = self.deb_file_arguments.get("config", empty_string_buffer)
         postinst = self.deb_file_arguments.get("postinst", empty_string_buffer)
         postrm = self.deb_file_arguments.get("postrm", empty_string_buffer)
         prerm = self.deb_file_arguments.get("prerm", empty_string_buffer)
@@ -429,6 +433,7 @@ class DebFile:
         # retrieves the control files from the control string
         control_file = self._get_file(control)
         conffiles_file = self._get_file(conffiles)
+        config_file = self._get_file(config)
         postinst_file = self._get_file(postinst)
         postrm_file = self._get_file(postrm)
         prerm_file = self._get_file(prerm)
@@ -446,6 +451,7 @@ class DebFile:
             # writes the various control files
             self._write_control_file(compressed_file, control_file, "control")
             self._write_control_file(compressed_file, conffiles_file, "conffiles")
+            self._write_control_file(compressed_file, config_file, "config")
             self._write_control_file(compressed_file, postinst_file, "postinst")
             self._write_control_file(compressed_file, postrm_file, "postrm")
             self._write_control_file(compressed_file, prerm_file, "prerm")
@@ -504,7 +510,7 @@ class DebFile:
             pending_file_info = tarfile.TarInfo()
 
             # sets the various values of the tar info structure
-            pending_file_info.name = "./" + pending_file_descriptor.get_name()
+            pending_file_info.name = pending_file_descriptor.get_name()
             pending_file_info.size = pending_file_descriptor.get_size()
             pending_file_info.mtime = pending_file_descriptor.get_modification_timestamp()
             pending_file_info.mode = pending_file_descriptor.get_mode()
@@ -565,7 +571,7 @@ class DebFile:
         file.seek(0, os.SEEK_SET)
 
         # sets the various values of the tar info structure
-        file_info.name = "./" + file_name
+        file_info.name = file_name
         file_info.size = file_size
         file_info.mtime = int(time.time())
         file_info.mode = 0
@@ -822,7 +828,7 @@ class DebFileEntry:
         @return: The mode.
         """
 
-        return self.group_id
+        return self.mode
 
     def set_mode(self, mode):
         """
