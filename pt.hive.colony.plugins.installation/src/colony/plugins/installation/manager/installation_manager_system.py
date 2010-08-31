@@ -78,11 +78,6 @@ class InstallationManager:
             # raises the missing parameter exception
             raise installation_manager_exceptions.MissingParameter(INSTALLATION_ADAPTER_VALUE)
 
-        # in case the installation adapter is not in the parameters map
-        if not INSTALLATION_ADAPTER_VALUE in parameters:
-            # raises the missing parameter exception
-            raise installation_manager_exceptions.MissingParameter(INSTALLATION_ADAPTER_VALUE)
-
         # retrieves the installation adapter name from the parameters
         installation_adapter_name = parameters[INSTALLATION_ADAPTER_VALUE]
 

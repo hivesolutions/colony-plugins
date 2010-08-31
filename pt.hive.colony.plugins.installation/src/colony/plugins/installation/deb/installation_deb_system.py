@@ -37,13 +37,21 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
+import os
+import time
+
 import installation_deb_exceptions
+
+import colony.libs.path_util
 
 ADAPTER_NAME = "deb"
 """ The adapter name """
 
 FILE_PATH_VALUE = "file_path"
 """ The file path value """
+
+RESOURCES_PATH = "installation/deb/resources"
+""" The resources path """
 
 class InstallationDeb:
     """
@@ -81,10 +89,8 @@ class InstallationDeb:
         @param parameters: The parameters for the installation file generation.
         """
 
-        # in case the file path is not in the parameters map
-        if not FILE_PATH_VALUE in parameters:
-            # raises the missing parameter exception
-            raise installation_deb_exceptions.MissingParameter(FILE_PATH_VALUE)
+        # retrieves the plugin manager
+        plugin_manager = self.installation_deb_plugin.manager
 
         # in case the file path is not in the parameters map
         if not FILE_PATH_VALUE in parameters:
@@ -94,14 +100,131 @@ class InstallationDeb:
         # retrieves the file path from the parameters
         file_path = parameters[FILE_PATH_VALUE]
 
-        # retrieves the file format from the parameters
-        #file_format = parameters.get(FILE_FORMAT_VALUE, DEFAULT_FILE_FORMAT)
 
-        # retrieves the file path references from the parameters
-        #deb_file_arguments = parameters.get(DEB_FILE_ARGUMENTS_VALUE, DEFAULT_DEB_FILE_ARGUMENTS)
 
-        # creates a new deb file
-        #deb_file = DebFile(self, file_path, file_format, deb_file_arguments)
 
-        # returns the deb file
-        #return deb_file
+        # retrieves the temporary plugin path
+        temporary_plugin_path = plugin_manager.get_temporary_plugin_path_by_id(self.installation_deb_plugin.id)
+
+        current_time = int(time.time() * 1000)
+
+        # creates the (final) temporary path for the current time
+        temporary_path = temporary_plugin_path + "/" + str(current_time)
+
+        # normalizes the temporary path
+        temporary_path_normalized = colony.libs.path_util.normalize_path(temporary_path)
+
+        # in case the temporary path does not exists
+        if not os.path.exists(temporary_path_normalized):
+            # creates the directories to the temporary path
+            os.makedirs(temporary_path_normalized)
+
+
+        control_file_contents = self._generate_control_file(parameters)
+
+        self._write_file_contents(temporary_path, "control", control_file_contents)
+
+
+        # removes the used directory
+        colony.libs.path_util.remove_directory(temporary_path_normalized)
+
+    def _write_file_contents(self, temporary_path, file_name, file_contents):
+        # create the complete file path by append the file name
+        complete_file_path = temporary_path + "/" + file_name
+
+        # normalizes the complete file path
+        complete_file_path_normalized = colony.libs.path_util.normalize_path(complete_file_path)
+
+        file = open(complete_file_path_normalized, "wb")
+
+        try:
+            file.write(file_contents)
+        finally:
+            file.close()
+
+    def _generate_control_file(self, parameters):
+        package_parameters = parameters.get("package", {})
+
+        self._check_parameters(("package_name", "package_version"), package_parameters)
+
+        # retrieves the mandatory attributes
+        package_name = package_parameters["package_name"]
+        package_version = package_parameters["package_version"]
+
+        # retrieves the conditional attributes
+        pacakge_section = package_parameters.get("package_section", "devel")
+        pacakge_priority = package_parameters.get("package_priority", "optional")
+        package_architecture = package_parameters.get("package_architecture", "all")
+        package_essential = package_parameters.get("package_essential", "no")
+        package_dependencies = package_parameters.get("package_dependencies", "")
+        package_pre_dependencies = package_parameters.get("package_pre_dependencies", "bash")
+        package_installed_size = package_parameters.get("package_installed_size", "0")
+        package_maintainer = package_parameters.get("package_maintainer", "Hive Solutions <development@hive.pt>")
+        package_provides = package_parameters.get("package_provides", package_name)
+        package_replaces = package_parameters.get("package_replaces", "")
+        package_description = package_parameters.get("package_description", "")
+
+        # creates the parameters map
+        parameters_map = {"package" : {"name" : package_name,
+                                   "version" : package_version,
+                                   "section" : pacakge_section,
+                                   "priority" : pacakge_priority,
+                                   "architecture" : package_architecture,
+                                   "essential" : package_essential,
+                                   "dependencies" : package_dependencies,
+                                   "pre_dependencies" : package_pre_dependencies,
+                                   "installed_size" : package_installed_size,
+                                   "maintainer" : package_maintainer,
+                                   "provides" : package_provides,
+                                   "replaces" : package_replaces,
+                                   "description" : package_description}}
+
+        return self._process_template_file("control.tpl", parameters_map)
+
+    def _check_parameters(self, parameters_list, parameters):
+        """
+        Checks if the parameters in the parameters list are defined
+        in the given parameters map.
+        In case a check fails an exception is raised.
+
+        @type parameters_list: List
+        @param parameters_list: The list of parameters to be checked.
+        @type parameters: Dictionary
+        @param parameters: The parameters map to be checked.
+        """
+
+        # iterates over all the parameters in the parameters list
+        for parameter in parameters_list:
+            # in case the parameter is not in the parameters map
+            if not parameter in parameters:
+                # raises the missing parameter exception
+                raise installation_deb_exceptions.MissingParameter(parameter)
+
+    def _process_template_file(self, template_file_name, parameters_map):
+        # retrieves the plugin manager
+        plugin_manager = self.installation_deb_plugin.manager
+
+        # retrieves the template engine manager plugin
+        template_engine_manager_plugin = self.installation_deb_plugin.template_engine_manager_plugin
+
+        # retrieves the installation plugin path
+        installation_deb_plugin_path = plugin_manager.get_plugin_path_by_id(self.installation_deb_plugin.id)
+
+        # creates the full template file path
+        template_file_path = installation_deb_plugin_path + "/" + RESOURCES_PATH + "/control_file_templates/" + template_file_name
+
+        # parses the template file path
+        template_file = template_engine_manager_plugin.parse_file_path(template_file_path)
+
+        for parameter_name, parameter_value in parameters_map.items():
+            # assigns the parameter to the template file
+            template_file.assign(parameter_name, parameter_value)
+
+        # processes the template file
+        processed_template_file = template_file.process()
+
+        # decodes the processed template file into a unicode object
+        processed_template_file_decoded = processed_template_file.decode("Cp1252")
+
+        # returns the processed template file decoded
+        return processed_template_file_decoded

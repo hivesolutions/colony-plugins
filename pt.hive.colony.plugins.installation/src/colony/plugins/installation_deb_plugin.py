@@ -57,7 +57,9 @@ class InstallationDebPlugin(colony.plugins.plugin_system.Plugin):
     capabilities = ["installation.adapter"]
     capabilities_allowed = []
     dependencies = [colony.plugins.plugin_system.PluginDependency(
-                    "pt.hive.colony.plugins.packaging.deb", "1.0.0")]
+                    "pt.hive.colony.plugins.packaging.deb", "1.0.0"),
+                    colony.plugins.plugin_system.PluginDependency(
+                    "pt.hive.colony.plugins.template_engine.manager", "1.0.0")]
     events_handled = []
     events_registrable = []
     main_modules = ["installation.deb.installation_deb_exceptions", "installation.deb.installation_deb_system"]
@@ -65,6 +67,7 @@ class InstallationDebPlugin(colony.plugins.plugin_system.Plugin):
     installation_deb = None
 
     packaging_deb_plugin = None
+    template_engine_manager_plugin = None
 
     def load_plugin(self):
         colony.plugins.plugin_system.Plugin.load_plugin(self)
@@ -117,3 +120,10 @@ class InstallationDebPlugin(colony.plugins.plugin_system.Plugin):
     @colony.plugins.decorators.plugin_inject("pt.hive.colony.plugins.packaging.deb")
     def set_packaging_deb_plugin(self, packaging_deb_plugin):
         self.packaging_deb_plugin = packaging_deb_plugin
+
+    def get_template_engine_manager_plugin(self):
+        return self.template_engine_manager_plugin
+
+    @colony.plugins.decorators.plugin_inject("pt.hive.colony.plugins.template_engine.manager")
+    def set_template_engine_manager_plugin(self, template_engine_manager_plugin):
+        self.template_engine_manager_plugin = template_engine_manager_plugin
