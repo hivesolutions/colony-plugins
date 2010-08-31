@@ -127,19 +127,22 @@ class InstallationDeb:
 
 
         control_file_contents = self._generate_control_file(parameters)
+        config_file_contents = self._generate_config_file(parameters)
         prerm_file_contents = self._generate_prerm_file(parameters)
         postrm_file_contents = self._generate_postrm_file(parameters)
         postinst_file_contents = self._generate_postinst_file(parameters)
 
         self._write_file_contents(temporary_path_normalized, "control", control_file_contents)
+        self._write_file_contents(temporary_path_normalized, "config", config_file_contents)
         self._write_file_contents(temporary_path_normalized, "prerm", prerm_file_contents)
         self._write_file_contents(temporary_path_normalized, "postrm", postrm_file_contents)
         self._write_file_contents(temporary_path_normalized, "postinst", postinst_file_contents)
 
         # creates the deb file parameters map
         deb_file_parameters = {"file_path" : file_path,
-                               "file_format" : "tar",
+                               "file_format" : "tar_gz",
                                "deb_file_arguments" : {"control" : os.path.join(temporary_path_normalized, "control"),
+                                                       "config" : os.path.join(temporary_path_normalized, "config"),
                                                        "prerm" : os.path.join(temporary_path_normalized, "prerm"),
                                                        "postrm" : os.path.join(temporary_path_normalized, "postrm"),
                                                        "postinst" : os.path.join(temporary_path_normalized, "postinst")}}
@@ -152,7 +155,7 @@ class InstallationDeb:
 
         try:
             # writes the file to the deb file
-            deb_file.write("c:/colony_development_database.db", "/tmp/colony_development_database.db")
+            deb_file.write("c:/colony_development_database.db", "tmp/colony_development_database.db")
         finally:
             # closes the deb file
             deb_file.close()
@@ -176,6 +179,9 @@ class InstallationDeb:
         finally:
             # closes the file
             file.close()
+
+    def _generate_config_file(self, parameters):
+        return self._process_template_file("config.tpl", {})
 
     def _generate_prerm_file(self, parameters):
         return self._process_template_file("prerm.tpl", {})
