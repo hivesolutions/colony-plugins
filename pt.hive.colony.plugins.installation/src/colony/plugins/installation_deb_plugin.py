@@ -39,34 +39,34 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 import colony.plugins.plugin_system
 
-class InstallationManagerPlugin(colony.plugins.plugin_system.Plugin):
+class InstallationDebPlugin(colony.plugins.plugin_system.Plugin):
     """
-    The main class for the Packaging Ar plugin.
+    The main class for the Installation Deb plugin.
     """
 
-    id = "pt.hive.colony.plugins.installation.base"
-    name = "Installation Base Plugin"
-    short_name = "Installation Base"
-    description = "A plugin to manage the installation generation of the base packages"
+    id = "pt.hive.colony.plugins.installation.deb"
+    name = "Installation Deb Plugin"
+    short_name = "Installation Deb"
+    description = "A plugin to manage the installation generation of deb packages"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     loading_type = colony.plugins.plugin_system.EAGER_LOADING_TYPE
     platforms = [colony.plugins.plugin_system.CPYTHON_ENVIRONMENT]
-    attributes = {"build_automation_file_path" : "$base{plugin_directory}/installation/base/resources/baf.xml"}
-    capabilities = ["installation.base"]
+    attributes = {"build_automation_file_path" : "$base{plugin_directory}/installation/deb/resources/baf.xml"}
+    capabilities = ["installation.deb"]
     capabilities_allowed = []
     dependencies = []
     events_handled = []
     events_registrable = []
-    main_modules = ["installation.base.installation_base_exceptions", "installation.base.installation_base_system"]
+    main_modules = ["installation.deb.installation_deb_exceptions", "installation.deb.installation_deb_system"]
 
-    installation_base = None
+    installation_deb = None
 
     def load_plugin(self):
         colony.plugins.plugin_system.Plugin.load_plugin(self)
         global installation
-        import installation.base.installation_base_system
-        self.installation_base = installation.base.installation_base_system.InstallationBase(self)
+        import installation.deb.installation_deb_system
+        self.installation_deb = installation.deb.installation_deb_system.InstallationDeb(self)
 
     def end_load_plugin(self):
         colony.plugins.plugin_system.Plugin.end_load_plugin(self)
@@ -94,4 +94,4 @@ class InstallationManagerPlugin(colony.plugins.plugin_system.Plugin):
         @param parameters: The parameters for the installation file generation.
         """
 
-        return self.installation_base.generate_file(parameters)
+        return self.installation_deb.generate_file(parameters)

@@ -37,28 +37,28 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-import installation_base_exceptions
+import installation_manager_exceptions
 
 FILE_PATH_VALUE = "file_path"
 """ The file path value """
 
-class InstallationBase:
+class InstallationManager:
     """
-    The installation base class.
+    The installation manager class.
     """
 
-    installation_base_plugin = None
-    """ The installation base plugin """
+    installation_manager_plugin = None
+    """ The installation manager plugin """
 
-    def __init__(self, installation_base_plugin):
+    def __init__(self, installation_manager_plugin):
         """
         Constructor of the class.
 
-        @type installation_base_plugin: InstallationBasePlugin
-        @param installation_base_plugin: The installation base plugin.
+        @type installation_manager_plugin: InstallationManagerPlugin
+        @param installation_manager_plugin: The installation manager plugin.
         """
 
-        self.installation_base_plugin = installation_base_plugin
+        self.installation_manager_plugin = installation_manager_plugin
 
     def create_file(self, parameters):
         """
@@ -73,12 +73,12 @@ class InstallationBase:
         # in case the file path is not in the parameters map
         if not FILE_PATH_VALUE in parameters:
             # raises the missing parameter exception
-            raise installation_base_exceptions.MissingParameter(FILE_PATH_VALUE)
+            raise installation_manager_exceptions.MissingParameter(FILE_PATH_VALUE)
 
         # in case the file path is not in the parameters map
         if not FILE_PATH_VALUE in parameters:
             # raises the missing parameter exception
-            raise installation_base_exceptions.MissingParameter(FILE_PATH_VALUE)
+            raise installation_manager_exceptions.MissingParameter(FILE_PATH_VALUE)
 
         # retrieves the file path from the parameters
         file_path = parameters[FILE_PATH_VALUE]
