@@ -138,11 +138,6 @@ class PackagingDeb:
             # raises the missing parameter exception
             raise packaging_deb_exceptions.MissingParameter(FILE_PATH_VALUE)
 
-        # in case the file path is not in the parameters map
-        if not FILE_PATH_VALUE in parameters:
-            # raises the missing parameter exception
-            raise packaging_deb_exceptions.MissingParameter(FILE_PATH_VALUE)
-
         # retrieves the file path from the parameters
         file_path = parameters[FILE_PATH_VALUE]
 
