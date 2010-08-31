@@ -39,7 +39,7 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 import colony.plugins.plugin_system
 
-class PackagingArPlugin(colony.plugins.plugin_system.Plugin):
+class InstallationManagerPlugin(colony.plugins.plugin_system.Plugin):
     """
     The main class for the Packaging Ar plugin.
     """
@@ -86,14 +86,12 @@ class PackagingArPlugin(colony.plugins.plugin_system.Plugin):
     def dependency_injected(self, plugin):
         colony.plugins.plugin_system.Plugin.dependency_injected(self, plugin)
 
-    def create_file(self, parameters):
+    def generate_installation_file(self, parameters):
         """
-        Creates the file for the given parameters.
+        Generates the installation file for the given parameters.
 
         @type parameters: Dictionary
-        @param parameters: The parameters for the file creation.
-        @rtype: InstallationFile
-        @return: The created file.
+        @param parameters: The parameters for the installation file generation.
         """
 
-        return self.installation_base.create_file(parameters)
+        return self.installation_base.generate_file(parameters)
