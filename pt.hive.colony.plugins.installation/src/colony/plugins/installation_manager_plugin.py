@@ -38,6 +38,7 @@ __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
 import colony.plugins.plugin_system
+import colony.plugins.decorators
 
 class InstallationManagerPlugin(colony.plugins.plugin_system.Plugin):
     """
@@ -54,13 +55,15 @@ class InstallationManagerPlugin(colony.plugins.plugin_system.Plugin):
     platforms = [colony.plugins.plugin_system.CPYTHON_ENVIRONMENT]
     attributes = {"build_automation_file_path" : "$base{plugin_directory}/installation/manager/resources/baf.xml"}
     capabilities = ["installation.manager"]
-    capabilities_allowed = []
+    capabilities_allowed = ["installation.adapter"]
     dependencies = []
     events_handled = []
     events_registrable = []
     main_modules = ["installation.manager.installation_manager_exceptions", "installation.manager.installation_manager_system"]
 
     installation_manager = None
+
+    installation_adapter_plugins = []
 
     def load_plugin(self):
         colony.plugins.plugin_system.Plugin.load_plugin(self)
@@ -77,9 +80,11 @@ class InstallationManagerPlugin(colony.plugins.plugin_system.Plugin):
     def end_unload_plugin(self):
         colony.plugins.plugin_system.Plugin.end_unload_plugin(self)
 
+    @colony.plugins.decorators.load_allowed("pt.hive.colony.plugins.installation.manager", "1.0.0")
     def load_allowed(self, plugin, capability):
         colony.plugins.plugin_system.Plugin.load_allowed(self, plugin, capability)
 
+    @colony.plugins.decorators.unload_allowed("pt.hive.colony.plugins.installation.manager", "1.0.0")
     def unload_allowed(self, plugin, capability):
         colony.plugins.plugin_system.Plugin.unload_allowed(self, plugin, capability)
 
@@ -95,3 +100,13 @@ class InstallationManagerPlugin(colony.plugins.plugin_system.Plugin):
         """
 
         return self.installation_manager.generate_installation_file(parameters)
+
+    @colony.plugins.decorators.load_allowed_capability("installation.adapter")
+    def installation_adapter_load_allowed(self, plugin, capability):
+        self.installation_adapter_plugins.append(plugin)
+        self.installation_manager.installation_adapter_load(plugin)
+
+    @colony.plugins.decorators.unload_allowed_capability("installation.adapter")
+    def installation_adapter_unload_allowed(self, plugin, capability):
+        self.installation_adapter_plugins.remove(plugin)
+        self.installation_manager.installation_adapter_unload(plugin)

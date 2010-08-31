@@ -39,8 +39,8 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 import installation_manager_exceptions
 
-FILE_PATH_VALUE = "file_path"
-""" The file path value """
+INSTALLATION_ADAPTER_VALUE = "installation_adapter"
+""" The installation adapter value """
 
 class InstallationManager:
     """
@@ -49,6 +49,9 @@ class InstallationManager:
 
     installation_manager_plugin = None
     """ The installation manager plugin """
+
+    installation_adapter_plugins_map = {}
+    """ The installation adapter plugins map """
 
     def __init__(self, installation_manager_plugin):
         """
@@ -60,6 +63,8 @@ class InstallationManager:
 
         self.installation_manager_plugin = installation_manager_plugin
 
+        self.installation_adapter_plugins_map = {}
+
     def generate_installation_file(self, parameters):
         """
         Generates the installation file for the given parameters.
@@ -68,30 +73,38 @@ class InstallationManager:
         @param parameters: The parameters for the installation file generation.
         """
 
-        # in case the file path is not in the parameters map
-        if not FILE_PATH_VALUE in parameters:
+        # in case the installation adapter is not in the parameters map
+        if not INSTALLATION_ADAPTER_VALUE in parameters:
             # raises the missing parameter exception
-            raise installation_manager_exceptions.MissingParameter(FILE_PATH_VALUE)
+            raise installation_manager_exceptions.MissingParameter(INSTALLATION_ADAPTER_VALUE)
 
-        # in case the file path is not in the parameters map
-        if not FILE_PATH_VALUE in parameters:
+        # in case the installation adapter is not in the parameters map
+        if not INSTALLATION_ADAPTER_VALUE in parameters:
             # raises the missing parameter exception
-            raise installation_manager_exceptions.MissingParameter(FILE_PATH_VALUE)
+            raise installation_manager_exceptions.MissingParameter(INSTALLATION_ADAPTER_VALUE)
 
-        # retrieves the file path from the parameters
-        file_path = parameters[FILE_PATH_VALUE]
+        # retrieves the installation adapter name from the parameters
+        installation_adapter_name = parameters[INSTALLATION_ADAPTER_VALUE]
 
-        # retrieves the file format from the parameters
-        #file_format = parameters.get(FILE_FORMAT_VALUE, DEFAULT_FILE_FORMAT)
+        # in case the adapter is not found in the adapter plugins map
+        if not installation_adapter_name in self.installation_adapter_plugins_map:
+            # raises an installation adapter not found exception
+            raise installation_manager_exceptions.IsntallationHandlerNotFoundException("no adapter found for current request: " + installation_adapter_name)
 
-        # retrieves the file path references from the parameters
-        #deb_file_arguments = parameters.get(DEB_FILE_ARGUMENTS_VALUE, DEFAULT_DEB_FILE_ARGUMENTS)
+        # retrieves the installation adapter from the installation adapter plugins map
+        installation_adapter = self.installation_adapter_plugins_map[installation_adapter_name]
 
-        # creates a new deb file
-        #deb_file = DebFile(self, file_path, file_format, deb_file_arguments)
+        # generates the installation file using the installation adapter
+        installation_adapter.generate_installation_file(parameters)
 
-        # returns the deb file
-        #return deb_file
+    def installation_adapter_load(self, installation_adapter_plugin):
+        # retrieves the plugin adapter name
+        adapter_name = installation_adapter_plugin.get_adapter_name()
 
-class InstallationFile:
-    pass
+        self.installation_adapter_plugins_map[adapter_name] = installation_adapter_plugin
+
+    def installation_adapter_unload(self, installation_adapter_plugin):
+        # retrieves the plugin adapter name
+        adapter_name = installation_adapter_plugin.get_adapter_name()
+
+        del self.installation_adapter_plugins_map[adapter_name]

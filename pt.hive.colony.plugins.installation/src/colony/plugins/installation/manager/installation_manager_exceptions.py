@@ -72,3 +72,54 @@ class MissingParameter(InstallationManagerException):
         """
 
         return "Missing parameter: %s" % self.message
+
+class InstallationRuntimeException(InstallationManagerException):
+    """
+    The installation runtime exception class.
+    """
+
+    def __init__(self, message):
+        """
+        Constructor of the class.
+
+        @type message: String
+        @param message: The message to be printed.
+        """
+
+        InstallationManagerException.__init__(self)
+        self.message = message
+
+    def __str__(self):
+        """
+        Returns the string representation of the class.
+
+        @rtype: String
+        @return: The string representation of the class.
+        """
+
+        return "Installation runtime exception: %s" % self.message
+
+class IsntallationHandlerNotFoundException(InstallationManagerException):
+    """
+    The installation handler not found exception.
+    """
+
+    def __init__(self, message):
+        """
+        Constructor of the class.
+
+        @type message: String
+        @param message: The message to be printed.
+        """
+
+        InstallationManagerException.__init__(self, message)
+
+    def __str__(self):
+        """
+        Returns the string representation of the class.
+
+        @rtype: String
+        @return: The string representation of the class.
+        """
+
+        return "Installation handler not found exception: %s" % self.message
