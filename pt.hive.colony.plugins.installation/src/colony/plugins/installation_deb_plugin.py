@@ -91,6 +91,16 @@ class InstallationDebPlugin(colony.plugins.plugin_system.Plugin):
     def dependency_injected(self, plugin):
         colony.plugins.plugin_system.Plugin.dependency_injected(self, plugin)
 
+    def get_adapter_name(self):
+        """
+        Retrieves the adapter name.
+
+        @rtype: String
+        @return: The adapter name.
+        """
+
+        return self.installation_deb.get_adapter_name()
+
     def generate_installation_file(self, parameters):
         """
         Generates the installation file for the given parameters.

@@ -39,6 +39,9 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 import installation_deb_exceptions
 
+ADAPTER_NAME = "deb"
+""" The adapter name """
+
 FILE_PATH_VALUE = "file_path"
 """ The file path value """
 
@@ -59,6 +62,16 @@ class InstallationDeb:
         """
 
         self.installation_deb_plugin = installation_deb_plugin
+
+    def get_adapter_name(self):
+        """
+        Retrieves the adapter name.
+
+        @rtype: String
+        @return: The adapter name.
+        """
+
+        return ADAPTER_NAME
 
     def generate_installation_file(self, parameters):
         """
