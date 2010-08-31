@@ -73,13 +73,13 @@ do_start() {
     fi
 
     # tests the daemonn to check if it is already running
-    start-stop-daemon --start --quiet --pidfile $PIDFILE --exec $DAEMON --test > /dev/null || return 1
+    start-stop-daemon --start --quiet --pidfile $PIDFILE --exec $DAEMON --test > /dev/null || (rm -f $PIDFILE && return 1)
 
     # touches the pid file to lock the starting process
     touch $PIDFILE
 
     # launches the daemon and checks if it was successful
-    start-stop-daemon --start --quiet --pidfile $PIDFILE --exec $DAEMON -- $DAEMON_ARGS || return 2
+    start-stop-daemon --start --quiet --pidfile $PIDFILE --exec $DAEMON -- $DAEMON_ARGS || (rm -f $PIDFILE && return 2)
 
     # returns valid
     return 0
