@@ -55,12 +55,15 @@ class InstallationDebPlugin(colony.plugins.plugin_system.Plugin):
     attributes = {"build_automation_file_path" : "$base{plugin_directory}/installation/deb/resources/baf.xml"}
     capabilities = ["installation.deb"]
     capabilities_allowed = []
-    dependencies = []
+    dependencies = [colony.plugins.plugin_system.PluginDependency(
+                    "pt.hive.colony.plugins.packaging.deb", "1.0.0")]
     events_handled = []
     events_registrable = []
     main_modules = ["installation.deb.installation_deb_exceptions", "installation.deb.installation_deb_system"]
 
     installation_deb = None
+
+    packaging_deb_plugin = None
 
     def load_plugin(self):
         colony.plugins.plugin_system.Plugin.load_plugin(self)
@@ -94,4 +97,11 @@ class InstallationDebPlugin(colony.plugins.plugin_system.Plugin):
         @param parameters: The parameters for the installation file generation.
         """
 
-        return self.installation_deb.generate_file(parameters)
+        return self.installation_deb.generate_installation_file(parameters)
+
+    def get_packaging_deb_plugin(self):
+        return self.packaging_deb_plugin
+
+    @colony.plugins.decorators.plugin_inject("pt.hive.colony.plugins.packaging.deb")
+    def set_packaging_deb_plugin(self, packaging_deb_plugin):
+        self.packaging_deb_plugin = packaging_deb_plugin

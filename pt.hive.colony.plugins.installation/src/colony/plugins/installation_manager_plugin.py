@@ -94,4 +94,4 @@ class InstallationManagerPlugin(colony.plugins.plugin_system.Plugin):
         @param parameters: The parameters for the installation file generation.
         """
 
-        return self.installation_manager.generate_file(parameters)
+        return self.installation_manager.generate_installation_file(parameters)

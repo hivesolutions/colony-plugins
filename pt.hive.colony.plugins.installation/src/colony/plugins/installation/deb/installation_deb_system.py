@@ -60,14 +60,12 @@ class InstallationDeb:
 
         self.installation_deb_plugin = installation_deb_plugin
 
-    def create_file(self, parameters):
+    def generate_installation_file(self, parameters):
         """
-        Creates the file for the given parameters.
+        Generates the installation file for the given parameters.
 
         @type parameters: Dictionary
-        @param parameters: The parameters for the file creation.
-        @rtype: InstallationFile
-        @return: The created file.
+        @param parameters: The parameters for the installation file generation.
         """
 
         # in case the file path is not in the parameters map
