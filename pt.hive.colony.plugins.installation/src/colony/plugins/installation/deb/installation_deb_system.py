@@ -105,6 +105,3 @@ class InstallationDeb:
 
         # returns the deb file
         #return deb_file
-
-class InstallationFile:
-    pass
