@@ -127,18 +127,35 @@ class InstallationDeb:
 
 
         control_file_contents = self._generate_control_file(parameters)
+        prerm_file_contents = self._generate_prerm_file(parameters)
+        postrm_file_contents = self._generate_postrm_file(parameters)
+        postinst_file_contents = self._generate_postinst_file(parameters)
 
         self._write_file_contents(temporary_path_normalized, "control", control_file_contents)
+        self._write_file_contents(temporary_path_normalized, "prerm", prerm_file_contents)
+        self._write_file_contents(temporary_path_normalized, "postrm", postrm_file_contents)
+        self._write_file_contents(temporary_path_normalized, "postinst", postinst_file_contents)
 
+        # creates the deb file parameters map
+        deb_file_parameters = {"file_path" : file_path,
+                               "file_format" : "tar",
+                               "deb_file_arguments" : {"control" : os.path.join(temporary_path_normalized, "control"),
+                                                       "prerm" : os.path.join(temporary_path_normalized, "prerm"),
+                                                       "postrm" : os.path.join(temporary_path_normalized, "postrm"),
+                                                       "postinst" : os.path.join(temporary_path_normalized, "postinst")}}
 
-        mapa = {"file_path" : file_path,
-                "file_format" : "tar",
-                "deb_file_arguments" : {"control" : os.path.join(temporary_path_normalized, "control")}}
+        # creates the deb file
+        deb_file = packaging_deb_plugin.create_file(deb_file_parameters)
 
-        file = packaging_deb_plugin.create_file(mapa)
-        file.open("wb+")
-        file.write("c:/a_la_carte.db", "/a_la_carte.db")
-        file.close()
+        # opens the deb file
+        deb_file.open("wb+")
+
+        try:
+            # writes the file to the deb file
+            deb_file.write("c:/colony_development_database.db", "/tmp/colony_development_database.db")
+        finally:
+            # closes the deb file
+            deb_file.close()
 
         # removes the used directory
         colony.libs.path_util.remove_directory(temporary_path_normalized)
@@ -160,9 +177,20 @@ class InstallationDeb:
             # closes the file
             file.close()
 
+    def _generate_prerm_file(self, parameters):
+        return self._process_template_file("prerm.tpl", {})
+
+    def _generate_postrm_file(self, parameters):
+        return self._process_template_file("postrm.tpl", {})
+
+    def _generate_postinst_file(self, parameters):
+        return self._process_template_file("postinst.tpl", {})
+
     def _generate_control_file(self, parameters):
+        # retrieves the package parameters from the paramters
         package_parameters = parameters.get("package", {})
 
+        # checks the package parameters
         self._check_parameters(("package_name", "package_version"), package_parameters)
 
         # retrieves the mandatory attributes
@@ -184,18 +212,18 @@ class InstallationDeb:
 
         # creates the parameters map
         parameters_map = {"package" : {"name" : package_name,
-                                   "version" : package_version,
-                                   "section" : pacakge_section,
-                                   "priority" : pacakge_priority,
-                                   "architecture" : package_architecture,
-                                   "essential" : package_essential,
-                                   "dependencies" : package_dependencies,
-                                   "pre_dependencies" : package_pre_dependencies,
-                                   "installed_size" : package_installed_size,
-                                   "maintainer" : package_maintainer,
-                                   "provides" : package_provides,
-                                   "replaces" : package_replaces,
-                                   "description" : package_description}}
+                                       "version" : package_version,
+                                       "section" : pacakge_section,
+                                       "priority" : pacakge_priority,
+                                       "architecture" : package_architecture,
+                                       "essential" : package_essential,
+                                       "dependencies" : package_dependencies,
+                                       "pre_dependencies" : package_pre_dependencies,
+                                       "installed_size" : package_installed_size,
+                                       "maintainer" : package_maintainer,
+                                       "provides" : package_provides,
+                                       "replaces" : package_replaces,
+                                       "description" : package_description}}
 
         return self._process_template_file("control.tpl", parameters_map)
 
