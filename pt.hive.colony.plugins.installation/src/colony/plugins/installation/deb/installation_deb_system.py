@@ -92,6 +92,9 @@ class InstallationDeb:
         # retrieves the plugin manager
         plugin_manager = self.installation_deb_plugin.manager
 
+        # retrieves the packaging deb plugin
+        packaging_deb_plugin = self.installation_deb_plugin.packaging_deb_plugin
+
         # in case the file path is not in the parameters map
         if not FILE_PATH_VALUE in parameters:
             # raises the missing parameter exception
@@ -114,6 +117,9 @@ class InstallationDeb:
         # normalizes the temporary path
         temporary_path_normalized = colony.libs.path_util.normalize_path(temporary_path)
 
+
+
+
         # in case the temporary path does not exists
         if not os.path.exists(temporary_path_normalized):
             # creates the directories to the temporary path
@@ -122,8 +128,17 @@ class InstallationDeb:
 
         control_file_contents = self._generate_control_file(parameters)
 
-        self._write_file_contents(temporary_path, "control", control_file_contents)
+        self._write_file_contents(temporary_path_normalized, "control", control_file_contents)
 
+
+        mapa = {"file_path" : file_path,
+                "file_format" : "tar",
+                "deb_file_arguments" : {"control" : os.path.join(temporary_path_normalized, "control")}}
+
+        file = packaging_deb_plugin.create_file(mapa)
+        file.open("wb+")
+        file.write("c:/a_la_carte.db", "/a_la_carte.db")
+        file.close()
 
         # removes the used directory
         colony.libs.path_util.remove_directory(temporary_path_normalized)
@@ -135,11 +150,14 @@ class InstallationDeb:
         # normalizes the complete file path
         complete_file_path_normalized = colony.libs.path_util.normalize_path(complete_file_path)
 
+        # opens the file
         file = open(complete_file_path_normalized, "wb")
 
         try:
+            # writes the file contents to the file
             file.write(file_contents)
         finally:
+            # closes the file
             file.close()
 
     def _generate_control_file(self, parameters):
