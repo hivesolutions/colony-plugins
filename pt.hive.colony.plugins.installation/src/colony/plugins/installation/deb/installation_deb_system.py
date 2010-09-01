@@ -154,10 +154,10 @@ class InstallationDeb:
 
         directories = contents.get("directory", [])
         files = contents.get("file", [])
+        links = contents.get("link", [])
 
-        #for directory in directories:
-        #    directory_path = directory["path"]
-
+        # iterates over all the (simple) files
+        # to write them into the deb file
         for file in files:
             # retrieves the file path
             file_path = file["path"]
@@ -167,6 +167,19 @@ class InstallationDeb:
 
             # writes the file to the deb file
             deb_file.write(file_path, file_target)
+
+        # iterates over all the links
+        # to put them into the deb file
+        for link in links:
+            # retrieves the link source
+            link_source = link["parameters"]["deb"]["source"]
+
+            # retrieves the link source
+            link_target = link["parameters"]["deb"]["target"]
+
+            # writes the file to the deb file
+            deb_file.write_string_value("", link_source, {"file_properties" : {"type" : "link",
+                                                                               "link_name" : link_target}})
 
     def _write_file_contents(self, temporary_path, file_name, file_contents):
         # create the complete file path by append the file name
