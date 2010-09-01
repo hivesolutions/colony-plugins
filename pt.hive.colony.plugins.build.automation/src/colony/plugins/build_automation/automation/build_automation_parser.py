@@ -37,6 +37,8 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
+import types
+
 import xml.dom.minidom
 
 class Parser:
@@ -466,7 +468,7 @@ class BuildAutomationFileParser(Parser):
 
         if len(generic_element.childNodes) == 1 and generic_element.firstChild.nodeType == xml.dom.minidom.Node.TEXT_NODE:
             data_value = generic_element.firstChild.data.strip()
-            setattr(generic_structure, node_name, data_value)
+            self._setattr(generic_structure, node_name, data_value)
         else:
             # creates a new generic structure
             new_generic_structure = GenericElement()
@@ -478,7 +480,41 @@ class BuildAutomationFileParser(Parser):
                 if valid_node(child_node):
                     self.parse_generic_element(child_node, new_generic_structure)
 
-            setattr(generic_structure, node_name, new_generic_structure)
+            self._setattr(generic_structure, node_name, new_generic_structure)
+
+    def _setattr(self, structure, name, value):
+        """
+        Sets a value in a structure (object) with a given name.
+        In case the value already exists a new list is created for
+        the given name and the value is appended.
+
+        @type structure: Object
+        @param structure: The object to have the value set.
+        @type name: String
+        @param name: The name of the value (attribute) in the structure.
+        @type value: Object
+        @param value: The value (attribute) to be set in the structure.
+        """
+
+        # in case the name already exists in the structure
+        # the duplicated value must be converted to a list
+        if hasattr(structure, name):
+            # retrieves the base value from the structure
+            base_value = getattr(structure, name)
+
+            # in case the base value is not a list yet
+            if not type(base_value) == types.ListType:
+                # sets the (new) list in the structure
+                setattr(structure, name, [base_value])
+
+            # retrieves the base value from the structure
+            base_value = getattr(structure, name)
+
+            # adds the value to the base value (list)
+            base_value.append(value)
+        else:
+            # sets the (simple) value in the structure
+            setattr(structure, name, value)
 
 class GenericElement:
     """

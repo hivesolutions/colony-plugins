@@ -63,6 +63,9 @@ RESOURCE_REGEX = "\$resource\{(\$\{[^\}]*\}|[^\}])*\}"
 EXCLUSION_LIST = ("__doc__", "__init__", "__module__")
 """ The exclusion list """
 
+PLUGIN_SYSTEM_DIRECTORY_VALUE = "plugin_system_directory"
+""" The plugin system directory value """
+
 PLUGIN_DIRECTORY_VALUE = "plugin_directory"
 """ The plugin directory value """
 
@@ -541,25 +544,23 @@ class BuildAutomation:
             # retrieves the configuration item from the configuration structure
             configuration_item = getattr(configuration_structure, configuration_name)
 
-            if type(configuration_item) in types.StringTypes:
+            # retrieves the configuration item type
+            configuration_item_type = type(configuration_item)
+
+            if configuration_item_type in types.StringTypes:
                 # parses the string value
                 parsed_configuration_item = self.parse_string(configuration_item, build_automation_structure)
 
                 # adds the parsed configuration item value to the base map for the current configuration name
-                base_map[configuration_name] = parsed_configuration_item
-            elif type(configuration_item) == types.InstanceType and configuration_item.__class__ == build_automation_parser.GenericElement:
-                # creates a new map
-                new_map = {}
-
-                # retrieves the new configuration names
-                new_configuration_names = [value for value in dir(configuration_item) if not value in EXCLUSION_LIST]
-
-                # adds the new map to the base map for the current configuration name
-                base_map[configuration_name] = new_map
-
-                # sets the configuration values for the new map, the new configuration names the configuration item
-                # and the build automation structure
-                self.set_configuration_values(new_map, new_configuration_names, configuration_item, build_automation_structure)
+                self._set_base_map(base_map, configuration_name, parsed_configuration_item)
+            elif configuration_item_type == types.ListType:
+                # iterates over the configuration item (retrieving the various configuration items)
+                for configuration_single_item in configuration_item:
+                    # sets the configuration composite value
+                    self._set_configuration_composite_value(base_map, configuration_name, configuration_single_item, build_automation_structure)
+            elif configuration_item_type == types.InstanceType and configuration_item.__class__ == build_automation_parser.GenericElement:
+                # sets the configuration composite value
+                self._set_configuration_composite_value(base_map, configuration_name, configuration_item, build_automation_structure)
 
     def generate_build_automation_profiles_structure(self, build_automation_parsing_structure, build_automation_structure):
         # retrieves the profiles parsing value
@@ -782,8 +783,15 @@ class BuildAutomation:
         @return: The real value of the base resource value.
         """
 
+        # retrieves the plugin manager
+        plugin_manager = self.build_automation_plugin.manager
+
+        # in case the base value is plugin system directory value
+        if base_value == PLUGIN_SYSTEM_DIRECTORY_VALUE:
+            # sets the value as the plugin manager path (directory)
+            value = plugin_manager.get_manager_path()
         # in case the base value is plugin directory value
-        if base_value == PLUGIN_DIRECTORY_VALUE:
+        elif base_value == PLUGIN_DIRECTORY_VALUE:
             # sets the value as the plugin path (directory)
             value = build_automation_structure.get_plugin_path()
 
@@ -868,6 +876,52 @@ class BuildAutomation:
         else:
             # returns invalid
             return None
+
+    def _set_configuration_composite_value(self, base_map, configuration_name, configuration_item, build_automation_structure):
+        # creates a new map
+        new_map = {}
+
+        # retrieves the new configuration names
+        new_configuration_names = [value for value in dir(configuration_item) if not value in EXCLUSION_LIST]
+
+        # adds the new map to the base map for the current configuration name
+        self._set_base_map(base_map, configuration_name, new_map)
+
+        # sets the configuration values for the new map, the new configuration names the configuration item
+        # and the build automation structure
+        self.set_configuration_values(new_map, new_configuration_names, configuration_item, build_automation_structure)
+
+    def _set_base_map(self, base_map, key, value):
+        """
+        Sets the given value in the given base map for
+        the given key.
+        In case the value already exists in the base map
+        a new list is created and the value appended to it.
+
+        @type base_map: Dictionary
+        @param base_map: The base map to hold the value.
+        @type key: String
+        @param key: The key to refer to the value in the map
+        @type value: Object
+        @param value: The value to be set in the map.
+        """
+
+        # in case the key already exists in the base map
+        # the duplicated value must be converted to a list
+        if key in base_map:
+            # retrieves the base value from the base map
+            base_value = base_map[key]
+
+            # in case the base value is not a list yet
+            if not type(base_value) == types.ListType:
+                # sets the (new) list in the base map
+                base_map[key] = [base_value]
+
+            # adds the value to the base map list
+            base_map[key].append(value)
+        else:
+            # sets the (simple) value in the base map
+            base_map[key] = value
 
 class BuildAutomationStructure:
     """
