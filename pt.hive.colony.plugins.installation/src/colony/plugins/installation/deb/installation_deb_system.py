@@ -126,12 +126,14 @@ class InstallationDeb:
             os.makedirs(temporary_path_normalized)
 
 
+        # generates the various control files
         control_file_contents = self._generate_control_file(parameters)
         config_file_contents = self._generate_config_file(parameters)
         prerm_file_contents = self._generate_prerm_file(parameters)
         postrm_file_contents = self._generate_postrm_file(parameters)
         postinst_file_contents = self._generate_postinst_file(parameters)
 
+        # writes the various control files to the file system
         self._write_file_contents(temporary_path_normalized, "control", control_file_contents)
         self._write_file_contents(temporary_path_normalized, "config", config_file_contents)
         self._write_file_contents(temporary_path_normalized, "prerm", prerm_file_contents)
@@ -193,7 +195,7 @@ class InstallationDeb:
         return self._process_template_file("postinst.tpl", {})
 
     def _generate_control_file(self, parameters):
-        # retrieves the package parameters from the paramters
+        # retrieves the package parameters from the parameters
         package_parameters = parameters.get("package", {})
 
         # checks the package parameters
