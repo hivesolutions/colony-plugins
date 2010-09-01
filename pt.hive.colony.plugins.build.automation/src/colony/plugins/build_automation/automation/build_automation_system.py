@@ -40,6 +40,7 @@ __license__ = "GNU General Public License (GPL), Version 3"
 import os
 import re
 import copy
+import types
 
 import build_automation_exceptions
 import build_automation_parser
@@ -59,7 +60,7 @@ CALL_REGEX = "\$call\{(\$\{[^\}]*\}|[^\}])*\}"
 RESOURCE_REGEX = "\$resource\{(\$\{[^\}]*\}|[^\}])*\}"
 """ The regular expression for the resource """
 
-EXCLUSION_LIST = ["__doc__", "__init__", "__module__"]
+EXCLUSION_LIST = ("__doc__", "__init__", "__module__")
 """ The exclusion list """
 
 PLUGIN_DIRECTORY_VALUE = "plugin_directory"
@@ -522,25 +523,43 @@ class BuildAutomation:
             # initializes the map containing the automation plugins configurations for the current build automation plugin
             build_automation_structure.automation_plugins_configurations[build_automation_plugin_tuple] = {}
 
+            # retrieves the map containing the automation plugins configurations for the current build automation plugin
+            build_automation_plugin_automation_plugins_configurations = build_automation_structure.automation_plugins_configurations[build_automation_plugin_tuple]
+
             # retrieves all the build automation plugin configuration item names
             build_automation_plugin_configuration_item_names = dir(build_automation_plugin_configuration)
 
             # filters all the build automation plugin configuration item names
             build_automation_plugin_configuration_filtered_item_names = [value for value in build_automation_plugin_configuration_item_names if value not in EXCLUSION_LIST]
 
-            # iterates over all the build automation plugin configuration filtered item names
-            for build_automation_plugin_configuration_filtered_item_name in build_automation_plugin_configuration_filtered_item_names:
-                # retrieves the build automation plugin configuration item
-                build_automation_plugin_configuration_item = getattr(build_automation_plugin_configuration, build_automation_plugin_configuration_filtered_item_name)
+            # sets the configuration values for the build automation plugin using the build automation structure
+            self.set_configuration_values(build_automation_plugin_automation_plugins_configurations, build_automation_plugin_configuration_filtered_item_names, build_automation_plugin_configuration, build_automation_structure)
 
+    def set_configuration_values(self, base_map, configuration_names, configuration_structure, build_automation_structure):
+        # iterates over all the configuration names
+        for configuration_name in configuration_names:
+            # retrieves the configuration item from the configuration structure
+            configuration_item = getattr(configuration_structure, configuration_name)
+
+            if type(configuration_item) in types.StringTypes:
                 # parses the string value
-                parsed_build_automation_plugin_configuration_item = self.parse_string(build_automation_plugin_configuration_item, build_automation_structure)
+                parsed_configuration_item = self.parse_string(configuration_item, build_automation_structure)
 
-                # retrieves the map containing the automation plugins configurations for the current build automation plugin
-                build_automation_plugin_automation_plugins_configurations = build_automation_structure.automation_plugins_configurations[build_automation_plugin_tuple]
+                # adds the parsed configuration item value to the base map for the current configuration name
+                base_map[configuration_name] = parsed_configuration_item
+            elif type(configuration_item) == types.InstanceType and configuration_item.__class__ == build_automation_parser.GenericElement:
+                # creates a new map
+                new_map = {}
 
-                # adds the value to the map containing the automation plugins configurations for the current build automation plugin
-                build_automation_plugin_automation_plugins_configurations[build_automation_plugin_configuration_filtered_item_name] = parsed_build_automation_plugin_configuration_item
+                # retrieves the new configuration names
+                new_configuration_names = [value for value in dir(configuration_item) if not value in EXCLUSION_LIST]
+
+                # adds the new map to the base map for the current configuration name
+                base_map[configuration_name] = new_map
+
+                # sets the configuration values for the new map, the new configuration names the configuration item
+                # and the build automation structure
+                self.set_configuration_values(new_map, new_configuration_names, configuration_item, build_automation_structure)
 
     def generate_build_automation_profiles_structure(self, build_automation_parsing_structure, build_automation_structure):
         # retrieves the profiles parsing value

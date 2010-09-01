@@ -468,7 +468,10 @@ class BuildAutomationFileParser(Parser):
             data_value = generic_element.firstChild.data.strip()
             setattr(generic_structure, node_name, data_value)
         else:
+            # creates a new generic structure
             new_generic_structure = GenericElement()
+            new_generic_structure.element_name = node_name
+
             child_nodes = generic_element.childNodes
 
             for child_node in child_nodes:
