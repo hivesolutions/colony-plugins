@@ -111,6 +111,9 @@ REGISTER_TYPE = "register"
 LINK_TYPE = "link"
 """ The link type """
 
+DIRECTORY_TYPE = "directory"
+""" The directory type """
+
 class PackagingDeb:
     """
     The packaging deb class.
@@ -790,6 +793,8 @@ class DebFileEntry:
             return tarfile.REGTYPE
         elif self.type == LINK_TYPE:
             return tarfile.SYMTYPE
+        elif self.type == DIRECTORY_TYPE:
+            return tarfile.DIRTYPE
 
     def get_name(self):
         """
