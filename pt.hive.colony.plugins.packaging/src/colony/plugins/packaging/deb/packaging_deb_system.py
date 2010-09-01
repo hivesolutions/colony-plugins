@@ -105,6 +105,12 @@ BUFFER_SIZE = 1024
 DEBIAN_BINARY_VALUE = "2.0\n"
 """ The debian binary value """
 
+REGISTER_TYPE = "register"
+""" The register type """
+
+LINK_TYPE = "link"
+""" The link type """
+
 class PackagingDeb:
     """
     The packaging deb class.
@@ -383,13 +389,15 @@ class DebFile:
 
         # retrieves the values from the file properties map
         modification_timestamp = file_properties.get("modification_timestamp", 0)
+        type = file_properties.get("type", REGISTER_TYPE)
+        link_name = file_properties.get("link_name", "")
         owner_id = file_properties.get("owner_id", 0)
         group_id = file_properties.get("group_id", 0)
         mode = file_properties.get("mode", 0)
         size = file_properties.get("size", 0)
 
         # creates the file entry from the file information
-        file_entry = DebFileEntry(archive_path, modification_timestamp, owner_id, group_id, mode, size, file)
+        file_entry = DebFileEntry(archive_path, modification_timestamp, type, link_name, owner_id, group_id, mode, size, file)
 
         # sets the file entry in the index map
         self.index_map[archive_path] = file_entry
@@ -514,7 +522,8 @@ class DebFile:
             pending_file_info.size = pending_file_descriptor.get_size()
             pending_file_info.mtime = pending_file_descriptor.get_modification_timestamp()
             pending_file_info.mode = pending_file_descriptor.get_mode()
-            pending_file_info.type = tarfile.REGTYPE
+            pending_file_info.type = pending_file_descriptor.get_tar_type()
+            pending_file_info.linkname = pending_file_descriptor.get_link_name()
             pending_file_info.uid = pending_file_descriptor.get_owner_id()
             pending_file_info.gid = pending_file_descriptor.get_group_id()
 
@@ -677,6 +686,12 @@ class DebFileEntry:
     modification_timestamp = None
     """ The modification timestamp """
 
+    type = None
+    """ The type of the entry """
+
+    link_name = None
+    """ The link name for file link """
+
     owner_id = None
     """ The owner id """
 
@@ -692,13 +707,34 @@ class DebFileEntry:
     file = None
     """ The file of the deb file """
 
-    def __init__(self, name = None, modification_timestamp = None, owner_id = None, group_id = None, mode = None, size = None, file = None):
+    def __init__(self, name = None, modification_timestamp = None, type = None, link_name = None, owner_id = None, group_id = None, mode = None, size = None, file = None):
         """
         Constructor of the file.
+
+        @type name: String
+        @param name: The name of the deb file.
+        @type modification_timestamp: int
+        @param modification_timestamp: The modification timestamp.
+        @type type: String
+        @param type: The type of the entry.
+        @type link_name: String
+        @param link_name: The link name for file link.
+        @type owner_id: int
+        @param owner_id: The owner id.
+        @type group_id: int
+        @param group_id: The group id.
+        @type mode: int
+        @param mode: The mode of access to the file.
+        @type size: int
+        @param size: The size of the deb file.
+        @type file: File
+        @param file: The file of the deb file.
         """
 
         self.name = name
         self.modification_timestamp = modification_timestamp
+        self.type = type
+        self.link_name = link_name
         self.owner_id = owner_id
         self.group_id = group_id
         self.mode = mode
@@ -740,6 +776,21 @@ class DebFileEntry:
         # returns the md5 in hexadecimal
         return md5_hexadecimal
 
+    def get_tar_type(self):
+        """
+        Retrieves the tar type for the
+        currently selected type.
+
+        @rtype: int
+        @return: The tar type for the currently
+        selected type.
+        """
+
+        if self.type == REGISTER_TYPE:
+            return tarfile.REGTYPE
+        elif self.type == LINK_TYPE:
+            return tarfile.SYMTYPE
+
     def get_name(self):
         """
         Retrieves the name.
@@ -779,6 +830,46 @@ class DebFileEntry:
         """
 
         self.modification_timestamp = modification_timestamp
+
+    def get_type(self):
+        """
+        Retrieves the type.
+
+        @rtype: String
+        @return: The type.
+        """
+
+        return self.type
+
+    def set_type(self, type):
+        """
+        Sets the type.
+
+        @type type: String
+        @param type: The type.
+        """
+
+        self.type = type
+
+    def get_link_name(self):
+        """
+        Retrieves the link name.
+
+        @rtype: String
+        @return: The link name.
+        """
+
+        return self.link_name
+
+    def set_link_name(self, link_name):
+        """
+        Sets the link name.
+
+        @type link_name: String
+        @param link_name: The link name.
+        """
+
+        self.link_name = link_name
 
     def get_owner_id(self):
         """
