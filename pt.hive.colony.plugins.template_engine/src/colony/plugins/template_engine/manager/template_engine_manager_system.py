@@ -225,7 +225,7 @@ class TemplateEngineManager:
         literal_match_orderer_list = []
 
         # creates the initial previous end
-        previous_end = 1
+        previous_end = 0
 
         # iterates over all the matches in
         # the match orderer list
@@ -235,9 +235,9 @@ class TemplateEngineManager:
 
             # in case the current match orderer value start is not the same
             # as the previous end plus one
-            if not match_orderer_match_start == previous_end:
+            if not match_orderer_match_start == previous_end + 1:
                 # calculates the literal match start
-                literal_match_start = previous_end - 1
+                literal_match_start = previous_end
 
                 # calculates the literal match end
                 literal_match_end = match_orderer_match_start
@@ -257,12 +257,12 @@ class TemplateEngineManager:
                 literal_match_orderer_list.append(literal_match_orderer)
 
             # updates the previous end value
-            previous_end = match_orderer.match.end() + 1
+            previous_end = match_orderer.match.end()
 
         # in case there is still a final literal to be processed
         if not previous_end == len(file_contents):
             # calculates the literal match start
-            literal_match_start = previous_end - 1
+            literal_match_start = previous_end
 
             # calculates the literal match end
             literal_match_end = len(file_contents)
