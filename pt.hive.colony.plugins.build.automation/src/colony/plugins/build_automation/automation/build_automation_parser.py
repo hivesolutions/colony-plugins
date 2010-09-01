@@ -41,6 +41,9 @@ import types
 
 import xml.dom.minidom
 
+TEXT_NODE_TYPES = (xml.dom.minidom.Node.TEXT_NODE, xml.dom.minidom.Node.CDATA_SECTION_NODE)
+""" The text node types tuple """
+
 class Parser:
     """
     The abstract parser class
@@ -466,7 +469,7 @@ class BuildAutomationFileParser(Parser):
     def parse_generic_element(self, generic_element, generic_structure):
         node_name = generic_element.nodeName
 
-        if len(generic_element.childNodes) == 1 and generic_element.firstChild.nodeType == xml.dom.minidom.Node.TEXT_NODE:
+        if len(generic_element.childNodes) == 1 and generic_element.firstChild.nodeType in TEXT_NODE_TYPES:
             data_value = generic_element.firstChild.data.strip()
             self._setattr(generic_structure, node_name, data_value)
         else:
