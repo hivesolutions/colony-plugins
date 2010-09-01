@@ -150,11 +150,27 @@ class InstallationDeb:
         colony.libs.path_util.remove_directory(temporary_plugin_generated_path)
 
     def _process_contents(self, deb_file, parameters):
+        # retrieves the contents map from the parameters
         contents = parameters["contents"]
 
         directories = contents.get("directory", [])
         files = contents.get("file", [])
         links = contents.get("link", [])
+
+        # iterates over all the directories
+        # to write their contents into the deb files
+        for directory in directories:
+            # retrieves the file path
+            directory_path = directory.get("path", None)
+
+            # retrieves the directory recursive value
+            directory_recursive = directory.get("recursive", True)
+
+            # retrieves the file target
+            directory_target = directory["parameters"]["deb"]["target"]
+
+            # writes the file to the deb file
+            self._process_directory_contents(deb_file, directory_path, directory_target, directory_recursive)
 
         # iterates over all the (simple) files
         # to write them into the deb file
@@ -180,6 +196,40 @@ class InstallationDeb:
             # writes the file to the deb file
             deb_file.write_string_value("", link_source, {"file_properties" : {"type" : "link",
                                                                                "link_name" : link_target}})
+
+    def _process_directory_contents(self, deb_file, directory_path, directory_target, recursive = True):
+        # writes the directory registry in the deb file
+        deb_file.write_string_value("", directory_target, {"file_properties" : {"type" : "directory"}})
+
+        # in case no directory path is defined
+        if not directory_path:
+            # returns immediately
+            return
+
+        # retrieves the directory contents
+        directory_contents = os.listdir(directory_path)
+
+        import re
+
+        # @todo: GENERALIZE THESE CONTENTS
+        exclusion_regex = re.compile("(.*.svn$)|(.*.pyc$)")
+
+        # iterates over the directory contents
+        for directory_item in directory_contents:
+            if exclusion_regex.match(directory_item):
+                continue
+
+            directory_item_path = directory_path + "/" + directory_item
+
+            directory_item_target = directory_target + "/" + directory_item
+
+            # in case the directory item is a directory
+            if os.path.isdir(directory_item_path):
+                # in case the recursive flag is active processes the inner directory
+                recursive and self._process_directory_contents(deb_file, directory_item_path, directory_item_target, recursive)
+            else:
+                # writes the directory item (file) to the deb file
+                deb_file.write(directory_item_path, directory_item_target)
 
     def _write_file_contents(self, temporary_path, file_name, file_contents):
         # create the complete file path by append the file name
