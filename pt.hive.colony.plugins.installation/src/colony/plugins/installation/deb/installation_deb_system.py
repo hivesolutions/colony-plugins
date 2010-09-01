@@ -141,14 +141,32 @@ class InstallationDeb:
         deb_file.open("wb+")
 
         try:
-            # writes the file to the deb file
-            deb_file.write("c:/colony_development_database.db", "tmp/colony_development_database.db")
+            self._process_contents(deb_file, parameters)
         finally:
             # closes the deb file
             deb_file.close()
 
         # removes the used directory
         colony.libs.path_util.remove_directory(temporary_plugin_generated_path)
+
+    def _process_contents(self, deb_file, parameters):
+        contents = parameters["contents"]
+
+        directories = contents.get("directory", [])
+        files = contents.get("file", [])
+
+        #for directory in directories:
+        #    directory_path = directory["path"]
+
+        for file in files:
+            # retrieves the file path
+            file_path = file["path"]
+
+            # retrieves the file target
+            file_target = file["parameters"]["deb"]["target"]
+
+            # writes the file to the deb file
+            deb_file.write(file_path, file_target)
 
     def _write_file_contents(self, temporary_path, file_name, file_contents):
         # create the complete file path by append the file name
