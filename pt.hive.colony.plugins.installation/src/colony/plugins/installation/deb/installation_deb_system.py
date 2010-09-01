@@ -38,11 +38,11 @@ __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
 import os
-import time
 
 import installation_deb_exceptions
 
 import colony.libs.path_util
+import colony.libs.map_util
 
 ADAPTER_NAME = "deb"
 """ The adapter name """
@@ -103,28 +103,13 @@ class InstallationDeb:
         # retrieves the file path from the parameters
         file_path = parameters[FILE_PATH_VALUE]
 
-
-
-
-        # retrieves the temporary plugin path
-        temporary_plugin_path = plugin_manager.get_temporary_plugin_path_by_id(self.installation_deb_plugin.id)
-
-        current_time = int(time.time() * 1000)
-
-        # creates the (final) temporary path for the current time
-        temporary_path = temporary_plugin_path + "/" + str(current_time)
-
-        # normalizes the temporary path
-        temporary_path_normalized = colony.libs.path_util.normalize_path(temporary_path)
-
-
-
+        # retrieves the temporary plugin generated path
+        temporary_plugin_generated_path = plugin_manager.get_temporary_plugin_generated_path_by_id(self.installation_deb_plugin.id)
 
         # in case the temporary path does not exists
-        if not os.path.exists(temporary_path_normalized):
+        if not os.path.exists(temporary_plugin_generated_path):
             # creates the directories to the temporary path
-            os.makedirs(temporary_path_normalized)
-
+            os.makedirs(temporary_plugin_generated_path)
 
         # generates the various control files
         control_file_contents = self._generate_control_file(parameters)
@@ -134,20 +119,20 @@ class InstallationDeb:
         postinst_file_contents = self._generate_postinst_file(parameters)
 
         # writes the various control files to the file system
-        self._write_file_contents(temporary_path_normalized, "control", control_file_contents)
-        self._write_file_contents(temporary_path_normalized, "config", config_file_contents)
-        self._write_file_contents(temporary_path_normalized, "prerm", prerm_file_contents)
-        self._write_file_contents(temporary_path_normalized, "postrm", postrm_file_contents)
-        self._write_file_contents(temporary_path_normalized, "postinst", postinst_file_contents)
+        self._write_file_contents(temporary_plugin_generated_path, "control", control_file_contents)
+        self._write_file_contents(temporary_plugin_generated_path, "config", config_file_contents)
+        self._write_file_contents(temporary_plugin_generated_path, "prerm", prerm_file_contents)
+        self._write_file_contents(temporary_plugin_generated_path, "postrm", postrm_file_contents)
+        self._write_file_contents(temporary_plugin_generated_path, "postinst", postinst_file_contents)
 
         # creates the deb file parameters map
         deb_file_parameters = {"file_path" : file_path,
                                "file_format" : "tar_gz",
-                               "deb_file_arguments" : {"control" : os.path.join(temporary_path_normalized, "control"),
-                                                       "config" : os.path.join(temporary_path_normalized, "config"),
-                                                       "prerm" : os.path.join(temporary_path_normalized, "prerm"),
-                                                       "postrm" : os.path.join(temporary_path_normalized, "postrm"),
-                                                       "postinst" : os.path.join(temporary_path_normalized, "postinst")}}
+                               "deb_file_arguments" : {"control" : os.path.join(temporary_plugin_generated_path, "control"),
+                                                       "config" : os.path.join(temporary_plugin_generated_path, "config"),
+                                                       "prerm" : os.path.join(temporary_plugin_generated_path, "prerm"),
+                                                       "postrm" : os.path.join(temporary_plugin_generated_path, "postrm"),
+                                                       "postinst" : os.path.join(temporary_plugin_generated_path, "postinst")}}
 
         # creates the deb file
         deb_file = packaging_deb_plugin.create_file(deb_file_parameters)
@@ -163,7 +148,7 @@ class InstallationDeb:
             deb_file.close()
 
         # removes the used directory
-        colony.libs.path_util.remove_directory(temporary_path_normalized)
+        colony.libs.path_util.remove_directory(temporary_plugin_generated_path)
 
     def _write_file_contents(self, temporary_path, file_name, file_contents):
         # create the complete file path by append the file name
@@ -198,8 +183,8 @@ class InstallationDeb:
         # retrieves the package parameters from the parameters
         package_parameters = parameters.get("package", {})
 
-        # checks the package parameters
-        self._check_parameters(("package_name", "package_version"), package_parameters)
+        # checks the mandatory package parameters
+        colony.libs.map_util.map_check_parameters(package_parameters, ("package_name", "package_version"), installation_deb_exceptions.MissingParameter)
 
         # retrieves the mandatory attributes
         package_name = package_parameters["package_name"]
@@ -234,25 +219,6 @@ class InstallationDeb:
                                        "description" : package_description}}
 
         return self._process_template_file("control.tpl", parameters_map)
-
-    def _check_parameters(self, parameters_list, parameters):
-        """
-        Checks if the parameters in the parameters list are defined
-        in the given parameters map.
-        In case a check fails an exception is raised.
-
-        @type parameters_list: List
-        @param parameters_list: The list of parameters to be checked.
-        @type parameters: Dictionary
-        @param parameters: The parameters map to be checked.
-        """
-
-        # iterates over all the parameters in the parameters list
-        for parameter in parameters_list:
-            # in case the parameter is not in the parameters map
-            if not parameter in parameters:
-                # raises the missing parameter exception
-                raise installation_deb_exceptions.MissingParameter(parameter)
 
     def _process_template_file(self, template_file_name, parameters_map):
         # retrieves the plugin manager
