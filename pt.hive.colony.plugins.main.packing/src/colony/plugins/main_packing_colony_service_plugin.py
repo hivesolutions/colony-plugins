@@ -37,9 +37,9 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-import colony.plugins.plugin_system
+import colony.base.plugin_system
 
-class MainPackingColonyServicePlugin(colony.plugins.plugin_system.Plugin):
+class MainPackingColonyServicePlugin(colony.base.plugin_system.Plugin):
     """
     The main class for the Packing Colony Service Main plugin.
     """
@@ -50,12 +50,12 @@ class MainPackingColonyServicePlugin(colony.plugins.plugin_system.Plugin):
     description = "Packing Colony Service Main Plugin"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
-    loading_type = colony.plugins.plugin_system.EAGER_LOADING_TYPE
-    platforms = [colony.plugins.plugin_system.CPYTHON_ENVIRONMENT]
+    loading_type = colony.base.plugin_system.EAGER_LOADING_TYPE
+    platforms = [colony.base.plugin_system.CPYTHON_ENVIRONMENT]
     attributes = {"build_automation_file_path" : "$base{plugin_directory}/main_packing/colony_service/resources/baf.xml"}
     capabilities = ["packing_service", "build_automation_item"]
     capabilities_allowed = []
-    dependencies = [colony.plugins.plugin_system.PluginDependency(
+    dependencies = [colony.base.plugin_system.PluginDependency(
                     "pt.hive.colony.plugins.specifications.specification_manager", "1.0.0")]
     events_handled = []
     events_registrable = []
@@ -66,29 +66,29 @@ class MainPackingColonyServicePlugin(colony.plugins.plugin_system.Plugin):
     specification_manager_plugin = None
 
     def load_plugin(self):
-        colony.plugins.plugin_system.Plugin.load_plugin(self)
+        colony.base.plugin_system.Plugin.load_plugin(self)
         global main_packing
         import main_packing.colony_service.main_packing_colony_service_system
         self.main_packing_colony_service = main_packing.colony_service.main_packing_colony_service_system.MainPackingColonyService(self)
 
     def end_load_plugin(self):
-        colony.plugins.plugin_system.Plugin.end_load_plugin(self)
+        colony.base.plugin_system.Plugin.end_load_plugin(self)
 
     def unload_plugin(self):
-        colony.plugins.plugin_system.Plugin.unload_plugin(self)
+        colony.base.plugin_system.Plugin.unload_plugin(self)
 
     def end_unload_plugin(self):
-        colony.plugins.plugin_system.Plugin.end_unload_plugin(self)
+        colony.base.plugin_system.Plugin.end_unload_plugin(self)
 
     def load_allowed(self, plugin, capability):
-        colony.plugins.plugin_system.Plugin.load_allowed(self, plugin, capability)
+        colony.base.plugin_system.Plugin.load_allowed(self, plugin, capability)
 
     def unload_allowed(self, plugin, capability):
-        colony.plugins.plugin_system.Plugin.unload_allowed(self, plugin, capability)
+        colony.base.plugin_system.Plugin.unload_allowed(self, plugin, capability)
 
-    @colony.plugins.decorators.inject_dependencies("pt.hive.colony.plugins.main.packing.colony_service", "1.0.0")
+    @colony.base.decorators.inject_dependencies("pt.hive.colony.plugins.main.packing.colony_service", "1.0.0")
     def dependency_injected(self, plugin):
-        colony.plugins.plugin_system.Plugin.dependency_injected(self, plugin)
+        colony.base.plugin_system.Plugin.dependency_injected(self, plugin)
 
     def get_service_name(self):
         """
@@ -140,6 +140,6 @@ class MainPackingColonyServicePlugin(colony.plugins.plugin_system.Plugin):
     def get_specification_manager_plugin(self):
         return self.specification_manager_plugin
 
-    @colony.plugins.decorators.plugin_inject("pt.hive.colony.plugins.specifications.specification_manager")
+    @colony.base.decorators.plugin_inject("pt.hive.colony.plugins.specifications.specification_manager")
     def set_specification_manager_plugin(self, specification_manager_plugin):
         self.specification_manager_plugin = specification_manager_plugin

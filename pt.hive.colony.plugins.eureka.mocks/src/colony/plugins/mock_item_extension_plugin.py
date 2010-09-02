@@ -37,9 +37,9 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-import colony.plugins.plugin_system
+import colony.base.plugin_system
 
-class MockItemExtensionPlugin(colony.plugins.plugin_system.Plugin):
+class MockItemExtensionPlugin(colony.base.plugin_system.Plugin):
     """
     The main class for the Eureka Engine plugin.
     """
@@ -50,8 +50,8 @@ class MockItemExtensionPlugin(colony.plugins.plugin_system.Plugin):
     description = "Mock Item Extension plugin to illustrate and test the eureka_item_extension capability"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
-    loading_type = colony.plugins.plugin_system.EAGER_LOADING_TYPE
-    platforms = [colony.plugins.plugin_system.CPYTHON_ENVIRONMENT]
+    loading_type = colony.base.plugin_system.EAGER_LOADING_TYPE
+    platforms = [colony.base.plugin_system.CPYTHON_ENVIRONMENT]
     attributes = {"build_automation_file_path" : "$base{plugin_directory}/eureka_mocks_mock_item_extension/mock_item_extension/resources/baf.xml"}
     capabilities = ["eureka_item_extension", "build_automation_item"]
     capabilities_allowed = ["eureka_item_processer.filter", "eureka_item_processer.mapper", "eureka_item_processer.sorter"]
@@ -66,7 +66,7 @@ class MockItemExtensionPlugin(colony.plugins.plugin_system.Plugin):
     eureka_item_sorter_plugins = []
 
     def load_plugin(self):
-        colony.plugins.plugin_system.Plugin.load_plugin(self)
+        colony.base.plugin_system.Plugin.load_plugin(self)
         global eureka
         global eureka_mocks_mock_item_extension
         import eureka.eureka_item
@@ -85,16 +85,16 @@ class MockItemExtensionPlugin(colony.plugins.plugin_system.Plugin):
         self.all_items = [entity_item, operation_item, procedure_item, text_parameter_item]
 
     def end_load_plugin(self):
-        colony.plugins.plugin_system.Plugin.end_load_plugin(self)
+        colony.base.plugin_system.Plugin.end_load_plugin(self)
 
     def unload_plugin(self):
-        colony.plugins.plugin_system.Plugin.unload_plugin(self)
+        colony.base.plugin_system.Plugin.unload_plugin(self)
 
     def end_unload_plugin(self):
-        colony.plugins.plugin_system.Plugin.end_unload_plugin(self)
+        colony.base.plugin_system.Plugin.end_unload_plugin(self)
 
     def load_allowed(self, plugin, capability):
-        colony.plugins.plugin_system.Plugin.load_allowed(self, plugin, capability)
+        colony.base.plugin_system.Plugin.load_allowed(self, plugin, capability)
 
         if capability == "eureka_item_processer.filter":
             self.eureka_item_filter_plugins.append(plugin)
@@ -106,7 +106,7 @@ class MockItemExtensionPlugin(colony.plugins.plugin_system.Plugin):
             self.eureka_item_sorter_plugins.append(plugin)
 
     def unload_allowed(self, plugin, capability):
-        colony.plugins.plugin_system.Plugin.unload_allowed(self, plugin, capability)
+        colony.base.plugin_system.Plugin.unload_allowed(self, plugin, capability)
 
         if capability == "eureka_item_processer.filter":
             self.eureka_item_filter_plugins.remove(plugin)
@@ -118,7 +118,7 @@ class MockItemExtensionPlugin(colony.plugins.plugin_system.Plugin):
             self.eureka_item_sorter_plugins.remove(plugin)
 
     def dependency_injected(self, plugin):
-        colony.plugins.plugin_system.Plugin.dependency_injected(self, plugin)
+        colony.base.plugin_system.Plugin.dependency_injected(self, plugin)
 
     def get_all_items(self, search_string, context, max_items):
         """

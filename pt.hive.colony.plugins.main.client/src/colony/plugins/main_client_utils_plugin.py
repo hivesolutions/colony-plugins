@@ -37,9 +37,9 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-import colony.plugins.plugin_system
+import colony.base.plugin_system
 
-class MainClientUtilsPlugin(colony.plugins.plugin_system.Plugin):
+class MainClientUtilsPlugin(colony.base.plugin_system.Plugin):
     """
     The main class for the Client Main Utils plugin.
     """
@@ -50,10 +50,10 @@ class MainClientUtilsPlugin(colony.plugins.plugin_system.Plugin):
     description = "The plugin that offers a utils for clients"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
-    loading_type = colony.plugins.plugin_system.EAGER_LOADING_TYPE
-    platforms = [colony.plugins.plugin_system.CPYTHON_ENVIRONMENT,
-                 colony.plugins.plugin_system.JYTHON_ENVIRONMENT,
-                 colony.plugins.plugin_system.IRON_PYTHON_ENVIRONMENT]
+    loading_type = colony.base.plugin_system.EAGER_LOADING_TYPE
+    platforms = [colony.base.plugin_system.CPYTHON_ENVIRONMENT,
+                 colony.base.plugin_system.JYTHON_ENVIRONMENT,
+                 colony.base.plugin_system.IRON_PYTHON_ENVIRONMENT]
     attributes = {"build_automation_file_path" : "$base{plugin_directory}/main_client_utils/utils/resources/baf.xml"}
     capabilities = []
     capabilities_allowed = ["socket_provider", "socket_upgrader"]
@@ -68,30 +68,30 @@ class MainClientUtilsPlugin(colony.plugins.plugin_system.Plugin):
     socket_upgrader_plugins = []
 
     def load_plugin(self):
-        colony.plugins.plugin_system.Plugin.load_plugin(self)
+        colony.base.plugin_system.Plugin.load_plugin(self)
         global main_client_utils
         import main_client_utils.utils.main_client_utils_system
         self.main_client_utils = main_client_utils.utils.main_client_utils_system.MainClientUtils(self)
 
     def end_load_plugin(self):
-        colony.plugins.plugin_system.Plugin.end_load_plugin(self)
+        colony.base.plugin_system.Plugin.end_load_plugin(self)
 
     def unload_plugin(self):
-        colony.plugins.plugin_system.Plugin.unload_plugin(self)
+        colony.base.plugin_system.Plugin.unload_plugin(self)
 
     def end_unload_plugin(self):
-        colony.plugins.plugin_system.Plugin.end_unload_plugin(self)
+        colony.base.plugin_system.Plugin.end_unload_plugin(self)
 
-    @colony.plugins.decorators.load_allowed("pt.hive.colony.plugins.main.client.utils", "1.0.0")
+    @colony.base.decorators.load_allowed("pt.hive.colony.plugins.main.client.utils", "1.0.0")
     def load_allowed(self, plugin, capability):
-        colony.plugins.plugin_system.Plugin.load_allowed(self, plugin, capability)
+        colony.base.plugin_system.Plugin.load_allowed(self, plugin, capability)
 
-    @colony.plugins.decorators.unload_allowed("pt.hive.colony.plugins.main.client.utils", "1.0.0")
+    @colony.base.decorators.unload_allowed("pt.hive.colony.plugins.main.client.utils", "1.0.0")
     def unload_allowed(self, plugin, capability):
-        colony.plugins.plugin_system.Plugin.unload_allowed(self, plugin, capability)
+        colony.base.plugin_system.Plugin.unload_allowed(self, plugin, capability)
 
     def dependency_injected(self, plugin):
-        colony.plugins.plugin_system.Plugin.dependency_injected(self, plugin)
+        colony.base.plugin_system.Plugin.dependency_injected(self, plugin)
 
     def generate_client(self, parameters):
         """
@@ -105,22 +105,22 @@ class MainClientUtilsPlugin(colony.plugins.plugin_system.Plugin):
 
         return self.main_client_utils.generate_client(parameters)
 
-    @colony.plugins.decorators.load_allowed_capability("socket_provider")
+    @colony.base.decorators.load_allowed_capability("socket_provider")
     def socket_provider_load_allowed(self, plugin, capability):
         self.socket_provider_plugins.append(plugin)
         self.main_client_utils.socket_provider_load(plugin)
 
-    @colony.plugins.decorators.load_allowed_capability("socket_upgrader")
+    @colony.base.decorators.load_allowed_capability("socket_upgrader")
     def socket_upgrader_load_allowed(self, plugin, capability):
         self.socket_upgrader_plugins.append(plugin)
         self.main_client_utils.socket_upgrader_load(plugin)
 
-    @colony.plugins.decorators.unload_allowed_capability("socket_provider")
+    @colony.base.decorators.unload_allowed_capability("socket_provider")
     def socket_provider_unload_allowed(self, plugin, capability):
         self.socket_provider_plugins.remove(plugin)
         self.main_client_utils.socket_provider_unload(plugin)
 
-    @colony.plugins.decorators.unload_allowed_capability("socket_upgrader")
+    @colony.base.decorators.unload_allowed_capability("socket_upgrader")
     def socket_upgrader_unload_allowed(self, plugin, capability):
         self.socket_upgrader_plugins.remove(plugin)
         self.main_client_utils.socket_upgrader_unload(plugin)

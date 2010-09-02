@@ -37,10 +37,10 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-import colony.plugins.plugin_system
-import colony.plugins.decorators
+import colony.base.plugin_system
+import colony.base.decorators
 
-class WebMvcManagerPlugin(colony.plugins.plugin_system.Plugin):
+class WebMvcManagerPlugin(colony.base.plugin_system.Plugin):
     """
     The main class for the Web Mvc Manager plugin.
     """
@@ -51,20 +51,20 @@ class WebMvcManagerPlugin(colony.plugins.plugin_system.Plugin):
     description = "The plugin that offers the web mvc manager base infrastructure"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
-    loading_type = colony.plugins.plugin_system.EAGER_LOADING_TYPE
-    platforms = [colony.plugins.plugin_system.CPYTHON_ENVIRONMENT]
+    loading_type = colony.base.plugin_system.EAGER_LOADING_TYPE
+    platforms = [colony.base.plugin_system.CPYTHON_ENVIRONMENT]
     attributes = {"build_automation_file_path" : "$base{plugin_directory}/web_mvc_manager/manager/resources/baf.xml"}
     capabilities = ["web.mvc_service", "build_automation_item"]
     capabilities_allowed = ["web.mvc.manager.page_item_bundle", "web.mvc.panel_item"]
-    dependencies = [colony.plugins.plugin_system.PluginDependency(
+    dependencies = [colony.base.plugin_system.PluginDependency(
                     "pt.hive.colony.plugins.web.mvc.utils", "1.0.0"),
-                    colony.plugins.plugin_system.PluginDependency(
+                    colony.base.plugin_system.PluginDependency(
                     "pt.hive.colony.plugins.web.mvc.resources.base", "1.0.0"),
-                    colony.plugins.plugin_system.PluginDependency(
+                    colony.base.plugin_system.PluginDependency(
                     "pt.hive.colony.plugins.web.mvc.resources.ui", "1.0.0"),
-                    colony.plugins.plugin_system.PluginDependency(
+                    colony.base.plugin_system.PluginDependency(
                     "pt.hive.colony.plugins.misc.json", "1.0.0"),
-                    colony.plugins.plugin_system.PluginDependency(
+                    colony.base.plugin_system.PluginDependency(
                     "pt.hive.colony.plugins.main.packing.manager", "1.0.0")]
     events_handled = ["web.mvc.patterns", "web.mvc.communication"]
     events_registrable = ["web.mvc.side_panel_reload"]
@@ -83,7 +83,7 @@ class WebMvcManagerPlugin(colony.plugins.plugin_system.Plugin):
     packing_manager_plugin = None
 
     def load_plugin(self):
-        colony.plugins.plugin_system.Plugin.load_plugin(self)
+        colony.base.plugin_system.Plugin.load_plugin(self)
         global web_mvc_manager
         import web_mvc_manager.manager.web_mvc_manager_system
         self.web_mvc_manager = web_mvc_manager.manager.web_mvc_manager_system.WebMvcManager(self)
@@ -91,30 +91,30 @@ class WebMvcManagerPlugin(colony.plugins.plugin_system.Plugin):
         self.web_mvc_panel_item_plugins = []
 
     def end_load_plugin(self):
-        colony.plugins.plugin_system.Plugin.end_load_plugin(self)
+        colony.base.plugin_system.Plugin.end_load_plugin(self)
         self.web_mvc_manager.load_components()
 
     def unload_plugin(self):
-        colony.plugins.plugin_system.Plugin.unload_plugin(self)
+        colony.base.plugin_system.Plugin.unload_plugin(self)
 
     def end_unload_plugin(self):
-        colony.plugins.plugin_system.Plugin.end_unload_plugin(self)
+        colony.base.plugin_system.Plugin.end_unload_plugin(self)
 
-    @colony.plugins.decorators.load_allowed("pt.hive.colony.plugins.web.mvc.manager", "1.0.0")
+    @colony.base.decorators.load_allowed("pt.hive.colony.plugins.web.mvc.manager", "1.0.0")
     def load_allowed(self, plugin, capability):
-        colony.plugins.plugin_system.Plugin.load_allowed(self, plugin, capability)
+        colony.base.plugin_system.Plugin.load_allowed(self, plugin, capability)
 
-    @colony.plugins.decorators.unload_allowed("pt.hive.colony.plugins.web.mvc.manager", "1.0.0")
+    @colony.base.decorators.unload_allowed("pt.hive.colony.plugins.web.mvc.manager", "1.0.0")
     def unload_allowed(self, plugin, capability):
-        colony.plugins.plugin_system.Plugin.unload_allowed(self, plugin, capability)
+        colony.base.plugin_system.Plugin.unload_allowed(self, plugin, capability)
 
-    @colony.plugins.decorators.inject_dependencies("pt.hive.colony.plugins.web.mvc.manager", "1.0.0")
+    @colony.base.decorators.inject_dependencies("pt.hive.colony.plugins.web.mvc.manager", "1.0.0")
     def dependency_injected(self, plugin):
-        colony.plugins.plugin_system.Plugin.dependency_injected(self, plugin)
+        colony.base.plugin_system.Plugin.dependency_injected(self, plugin)
 
-    @colony.plugins.decorators.event_handler("pt.hive.colony.plugins.web.mvc.manager", "1.0.0")
+    @colony.base.decorators.event_handler("pt.hive.colony.plugins.web.mvc.manager", "1.0.0")
     def event_handler(self, event_name, *event_args):
-        colony.plugins.plugin_system.Plugin.event_handler(self, event_name, *event_args)
+        colony.base.plugin_system.Plugin.event_handler(self, event_name, *event_args)
 
     def get_patterns(self):
         """
@@ -156,22 +156,22 @@ class WebMvcManagerPlugin(colony.plugins.plugin_system.Plugin):
 
         return self.web_mvc_manager.get_resource_patterns()
 
-    @colony.plugins.decorators.load_allowed_capability("web.mvc.manager.page_item_bundle")
+    @colony.base.decorators.load_allowed_capability("web.mvc.manager.page_item_bundle")
     def web_mvc_manager_page_item_bundle_load_allowed(self, plugin, capability):
         self.web_mvc_manager_page_item_bundle_plugins.append(plugin)
         self.web_mvc_manager.load_web_mvc_manager_page_item_bundle_plugin(plugin)
 
-    @colony.plugins.decorators.load_allowed_capability("web.mvc.panel_item")
+    @colony.base.decorators.load_allowed_capability("web.mvc.panel_item")
     def web_mvc_panel_item_load_allowed(self, plugin, capability):
         self.web_mvc_panel_item_plugins.append(plugin)
         self.web_mvc_manager.load_web_mvc_panel_item_plugin(plugin)
 
-    @colony.plugins.decorators.unload_allowed_capability("web.mvc.manager.page_item_bundle")
+    @colony.base.decorators.unload_allowed_capability("web.mvc.manager.page_item_bundle")
     def web_mvc_manager_page_item_bundle_unload_allowed(self, plugin, capability):
         self.web_mvc_manager_page_item_bundle_plugins.remove(plugin)
         self.web_mvc_manager.unload_web_mvc_manager_page_item_bundle_plugin(plugin)
 
-    @colony.plugins.decorators.unload_allowed_capability("web.mvc.panel_item")
+    @colony.base.decorators.unload_allowed_capability("web.mvc.panel_item")
     def web_mvc_panel_item_unload_allowed(self, plugin, capability):
         self.web_mvc_panel_item_plugins.remove(plugin)
         self.web_mvc_manager.unload_web_mvc_panel_item_plugin(plugin)
@@ -179,38 +179,38 @@ class WebMvcManagerPlugin(colony.plugins.plugin_system.Plugin):
     def get_web_mvc_utils_plugin(self):
         return self.web_mvc_utils_plugin
 
-    @colony.plugins.decorators.plugin_inject("pt.hive.colony.plugins.web.mvc.utils")
+    @colony.base.decorators.plugin_inject("pt.hive.colony.plugins.web.mvc.utils")
     def set_web_mvc_utils_plugin(self, web_mvc_utils_plugin):
         self.web_mvc_utils_plugin = web_mvc_utils_plugin
 
     def get_web_mvc_resources_base_plugin(self):
         return self.web_mvc_resources_base_plugin
 
-    @colony.plugins.decorators.plugin_inject("pt.hive.colony.plugins.web.mvc.resources.base")
+    @colony.base.decorators.plugin_inject("pt.hive.colony.plugins.web.mvc.resources.base")
     def set_web_mvc_resources_base_plugin(self, web_mvc_resources_base_plugin):
         self.web_mvc_resources_base_plugin = web_mvc_resources_base_plugin
 
     def get_web_mvc_resources_ui_plugin(self):
         return self.web_mvc_resources_ui_plugin
 
-    @colony.plugins.decorators.plugin_inject("pt.hive.colony.plugins.web.mvc.resources.ui")
+    @colony.base.decorators.plugin_inject("pt.hive.colony.plugins.web.mvc.resources.ui")
     def set_web_mvc_resources_ui_plugin(self, web_mvc_resources_ui_plugin):
         self.web_mvc_resources_ui_plugin = web_mvc_resources_ui_plugin
 
     def get_json_plugin(self):
         return self.json_plugin
 
-    @colony.plugins.decorators.plugin_inject("pt.hive.colony.plugins.misc.json")
+    @colony.base.decorators.plugin_inject("pt.hive.colony.plugins.misc.json")
     def set_json_plugin(self, json_plugin):
         self.json_plugin = json_plugin
 
     def get_packing_manager_plugin(self):
         return self.packing_manager_plugin
 
-    @colony.plugins.decorators.plugin_inject("pt.hive.colony.plugins.main.packing.manager")
+    @colony.base.decorators.plugin_inject("pt.hive.colony.plugins.main.packing.manager")
     def set_packing_manager_plugin(self, packing_manager_plugin):
         self.packing_manager_plugin = packing_manager_plugin
 
-    @colony.plugins.decorators.event_handler_method("web.mvc.side_panel_reload")
+    @colony.base.decorators.event_handler_method("web.mvc.side_panel_reload")
     def web_mvc_communication_handler(self, event_name, *event_args):
         self.web_mvc_manager.process_web_mvc_side_panel_reload_event(event_name, *event_args)

@@ -37,9 +37,9 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-import colony.plugins.plugin_system
+import colony.base.plugin_system
 
-class RevisionControlMercurialAdapterPlugin(colony.plugins.plugin_system.Plugin):
+class RevisionControlMercurialAdapterPlugin(colony.base.plugin_system.Plugin):
     """
     The main class for the Revision Control Mercurial adapter plugin
     """
@@ -50,12 +50,12 @@ class RevisionControlMercurialAdapterPlugin(colony.plugins.plugin_system.Plugin)
     description = "Revision Control Mercurial Adapter Plugin"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
-    loading_type = colony.plugins.plugin_system.EAGER_LOADING_TYPE
-    platforms = [colony.plugins.plugin_system.CPYTHON_ENVIRONMENT]
+    loading_type = colony.base.plugin_system.EAGER_LOADING_TYPE
+    platforms = [colony.base.plugin_system.CPYTHON_ENVIRONMENT]
     attributes = {"build_automation_file_path" : "$base{plugin_directory}/revision_control/mercurial_adapter/resources/baf.xml"}
     capabilities = ["revision_control.adapter", "build_automation_item"]
     capabilities_allowed = []
-    dependencies = [colony.plugins.plugin_system.PackageDependency(
+    dependencies = [colony.base.plugin_system.PackageDependency(
                     "Mercurial", "mercurial", "1.4.x", "http://mercurial.selenic.com")]
     events_handled = []
     events_registrable = []
@@ -64,28 +64,28 @@ class RevisionControlMercurialAdapterPlugin(colony.plugins.plugin_system.Plugin)
     revision_control_mercurial_adapter = None
 
     def load_plugin(self):
-        colony.plugins.plugin_system.Plugin.load_plugin(self)
+        colony.base.plugin_system.Plugin.load_plugin(self)
         global revision_control
         import revision_control.mercurial_adapter.revision_control_mercurial_adapter_system
         self.revision_control_mercurial_adapter = revision_control.mercurial_adapter.revision_control_mercurial_adapter_system.RevisionControlMercurialAdapter(self)
 
     def end_load_plugin(self):
-        colony.plugins.plugin_system.Plugin.end_load_plugin(self)
+        colony.base.plugin_system.Plugin.end_load_plugin(self)
 
     def unload_plugin(self):
-        colony.plugins.plugin_system.Plugin.unload_plugin(self)
+        colony.base.plugin_system.Plugin.unload_plugin(self)
 
     def end_unload_plugin(self):
-        colony.plugins.plugin_system.Plugin.end_unload_plugin(self)
+        colony.base.plugin_system.Plugin.end_unload_plugin(self)
 
     def load_allowed(self, plugin, capability):
-        colony.plugins.plugin_system.Plugin.load_allowed(self, plugin, capability)
+        colony.base.plugin_system.Plugin.load_allowed(self, plugin, capability)
 
     def unload_allowed(self, plugin, capability):
-        colony.plugins.plugin_system.Plugin.unload_allowed(self, plugin, capability)
+        colony.base.plugin_system.Plugin.unload_allowed(self, plugin, capability)
 
     def dependency_injected(self, plugin):
-        colony.plugins.plugin_system.Plugin.dependency_injected(self, plugin)
+        colony.base.plugin_system.Plugin.dependency_injected(self, plugin)
 
     def create_revision_control_reference(self, revision_control_parameters):
         return self.revision_control_mercurial_adapter.create_revision_control_reference(revision_control_parameters)

@@ -37,9 +37,9 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-import colony.plugins.plugin_system
+import colony.base.plugin_system
 
-class GoogleDataClientPlugin(colony.plugins.plugin_system.Plugin):
+class GoogleDataClientPlugin(colony.base.plugin_system.Plugin):
     """
     The main class for the Google Data Client plugin.
     """
@@ -50,12 +50,12 @@ class GoogleDataClientPlugin(colony.plugins.plugin_system.Plugin):
     description = "Google Data Client Plugin"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
-    loading_type = colony.plugins.plugin_system.EAGER_LOADING_TYPE
-    platforms = [colony.plugins.plugin_system.CPYTHON_ENVIRONMENT]
+    loading_type = colony.base.plugin_system.EAGER_LOADING_TYPE
+    platforms = [colony.base.plugin_system.CPYTHON_ENVIRONMENT]
     attributes = {"build_automation_file_path" : "$base{plugin_directory}/misc/google_data_client/resources/baf.xml"}
     capabilities = ["google_data_client", "console_command_extension", "build_automation_item"]
     capabilities_allowed = []
-    dependencies = [colony.plugins.plugin_system.PackageDependency(
+    dependencies = [colony.base.plugin_system.PackageDependency(
                     "Google Data API Python Client Library", ["gdata", "gdata.docs", "gdata.youtube"], "1.1.x", "http://code.google.com/p/gdata-python-client")]
     events_handled = []
     events_registrable = []
@@ -64,7 +64,7 @@ class GoogleDataClientPlugin(colony.plugins.plugin_system.Plugin):
     console_google_data_client = None
 
     def load_plugin(self):
-        colony.plugins.plugin_system.Plugin.load_plugin(self)
+        colony.base.plugin_system.Plugin.load_plugin(self)
         global misc
         import misc.google_data_client.google_data_client_system
         import misc.google_data_client.console_google_data_client
@@ -72,22 +72,22 @@ class GoogleDataClientPlugin(colony.plugins.plugin_system.Plugin):
         self.console_google_data_client = misc.google_data_client.console_google_data_client.ConsoleGoogleDataClient(self)
 
     def end_load_plugin(self):
-        colony.plugins.plugin_system.Plugin.end_load_plugin(self)
+        colony.base.plugin_system.Plugin.end_load_plugin(self)
 
     def unload_plugin(self):
-        colony.plugins.plugin_system.Plugin.unload_plugin(self)
+        colony.base.plugin_system.Plugin.unload_plugin(self)
 
     def end_unload_plugin(self):
-        colony.plugins.plugin_system.Plugin.end_unload_plugin(self)
+        colony.base.plugin_system.Plugin.end_unload_plugin(self)
 
     def load_allowed(self, plugin, capability):
-        colony.plugins.plugin_system.Plugin.load_allowed(self, plugin, capability)
+        colony.base.plugin_system.Plugin.load_allowed(self, plugin, capability)
 
     def unload_allowed(self, plugin, capability):
-        colony.plugins.plugin_system.Plugin.unload_allowed(self, plugin, capability)
+        colony.base.plugin_system.Plugin.unload_allowed(self, plugin, capability)
 
     def dependency_injected(self, plugin):
-        colony.plugins.plugin_system.Plugin.dependency_injected(self, plugin)
+        colony.base.plugin_system.Plugin.dependency_injected(self, plugin)
 
     def connect(self, username, password):
         """

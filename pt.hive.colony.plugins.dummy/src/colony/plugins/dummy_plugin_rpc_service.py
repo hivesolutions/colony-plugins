@@ -37,10 +37,10 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-import colony.plugins.plugin_system
-import colony.plugins.decorators
+import colony.base.plugin_system
+import colony.base.decorators
 
-class DummyPluginRpcService(colony.plugins.plugin_system.Plugin):
+class DummyPluginRpcService(colony.base.plugin_system.Plugin):
     """
     The main class for the Dummy Rpc Service plugin.
     """
@@ -51,8 +51,8 @@ class DummyPluginRpcService(colony.plugins.plugin_system.Plugin):
     description = "Dummy Rpc Service Plugin"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
-    loading_type = colony.plugins.plugin_system.LAZY_LOADING_TYPE
-    platforms = [colony.plugins.plugin_system.CPYTHON_ENVIRONMENT]
+    loading_type = colony.base.plugin_system.LAZY_LOADING_TYPE
+    platforms = [colony.base.plugin_system.CPYTHON_ENVIRONMENT]
     attributes = {"build_automation_file_path" : "$base{plugin_directory}/dummy/rpc_service/resources/baf.xml"}
     capabilities = ["rpc_service", "build_automation_item"]
     capabilities_allowed = []
@@ -61,39 +61,39 @@ class DummyPluginRpcService(colony.plugins.plugin_system.Plugin):
     events_registrable = []
 
     def load_plugin(self):
-        colony.plugins.plugin_system.Plugin.load_plugin(self)
+        colony.base.plugin_system.Plugin.load_plugin(self)
 
     def end_load_plugin(self):
-        colony.plugins.plugin_system.Plugin.end_load_plugin(self)
+        colony.base.plugin_system.Plugin.end_load_plugin(self)
 
     def unload_plugin(self):
-        colony.plugins.plugin_system.Plugin.unload_plugin(self)
+        colony.base.plugin_system.Plugin.unload_plugin(self)
 
     def end_unload_plugin(self):
-        colony.plugins.plugin_system.Plugin.end_unload_plugin(self)
+        colony.base.plugin_system.Plugin.end_unload_plugin(self)
 
     def load_allowed(self, plugin, capability):
-        colony.plugins.plugin_system.Plugin.load_allowed(self, plugin, capability)
+        colony.base.plugin_system.Plugin.load_allowed(self, plugin, capability)
 
     def unload_allowed(self, plugin, capability):
-        colony.plugins.plugin_system.Plugin.unload_allowed(self, plugin, capability)
+        colony.base.plugin_system.Plugin.unload_allowed(self, plugin, capability)
 
     def dependency_injected(self, plugin):
-        colony.plugins.plugin_system.Plugin.dependency_injected(self, plugin)
+        colony.base.plugin_system.Plugin.dependency_injected(self, plugin)
 
-    @colony.plugins.decorators.plugin_call(True)
+    @colony.base.decorators.plugin_call(True)
     def get_service_id(self):
         return "dummy_service"
 
-    @colony.plugins.decorators.plugin_call(True)
+    @colony.base.decorators.plugin_call(True)
     def get_service_alias(self):
         return []
 
-    @colony.plugins.decorators.plugin_call(True)
+    @colony.base.decorators.plugin_call(True)
     def get_available_rpc_methods(self):
         return [self.echo]
 
-    @colony.plugins.decorators.plugin_call(True)
+    @colony.base.decorators.plugin_call(True)
     def get_rpc_methods_alias(self):
         return {self.echo : []}
 

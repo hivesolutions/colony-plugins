@@ -37,21 +37,21 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-import colony.plugins.plugin_system
+import colony.base.plugin_system
 
-class JavascriptMinifierUtilPlugin(colony.plugins.plugin_system.Plugin):
+class JavascriptMinifierUtilPlugin(colony.base.plugin_system.Plugin):
     """
     The main class for the Javascript Minifier Util plugin.
     """
 
-    id = "pt.hive.colony.plugins.util.javascript.minifier"
+    id = "pt.hive.colony.base.util.javascript.minifier"
     name = "Javascript Minifier Util plugin"
     short_name = "Javascript Minifier Util"
     description = "The plugin that offers minification support for javascript"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
-    loading_type = colony.plugins.plugin_system.EAGER_LOADING_TYPE
-    platforms = [colony.plugins.plugin_system.CPYTHON_ENVIRONMENT]
+    loading_type = colony.base.plugin_system.EAGER_LOADING_TYPE
+    platforms = [colony.base.plugin_system.CPYTHON_ENVIRONMENT]
     attributes = {"build_automation_file_path" : "$base{plugin_directory}/util_javascript_minifier/javascript_minifier/resources/baf.xml"}
     capabilities = ["build_automation_item"]
     capabilities_allowed = []
@@ -62,28 +62,28 @@ class JavascriptMinifierUtilPlugin(colony.plugins.plugin_system.Plugin):
     util_javascript_minifier = None
 
     def load_plugin(self):
-        colony.plugins.plugin_system.Plugin.load_plugin(self)
+        colony.base.plugin_system.Plugin.load_plugin(self)
         global util_javascript_minifier
         import util_javascript_minifier.javascript_minifier.util_javascript_minifier_system
         self.util_javascript_minifier = util_javascript_minifier.javascript_minifier.util_javascript_minifier_system.UtilJavascriptMinifier(self)
 
     def end_load_plugin(self):
-        colony.plugins.plugin_system.Plugin.end_load_plugin(self)
+        colony.base.plugin_system.Plugin.end_load_plugin(self)
 
     def unload_plugin(self):
-        colony.plugins.plugin_system.Plugin.unload_plugin(self)
+        colony.base.plugin_system.Plugin.unload_plugin(self)
 
     def end_unload_plugin(self):
-        colony.plugins.plugin_system.Plugin.end_unload_plugin(self)
+        colony.base.plugin_system.Plugin.end_unload_plugin(self)
 
     def load_allowed(self, plugin, capability):
-        colony.plugins.plugin_system.Plugin.load_allowed(self, plugin, capability)
+        colony.base.plugin_system.Plugin.load_allowed(self, plugin, capability)
 
     def unload_allowed(self, plugin, capability):
-        colony.plugins.plugin_system.Plugin.unload_allowed(self, plugin, capability)
+        colony.base.plugin_system.Plugin.unload_allowed(self, plugin, capability)
 
     def dependency_injected(self, plugin):
-        colony.plugins.plugin_system.Plugin.dependency_injected(self, plugin)
+        colony.base.plugin_system.Plugin.dependency_injected(self, plugin)
 
     def event_handler(self, event_name, *event_args):
-        colony.plugins.plugin_system.Plugin.event_handler(self, event_name, *event_args)
+        colony.base.plugin_system.Plugin.event_handler(self, event_name, *event_args)

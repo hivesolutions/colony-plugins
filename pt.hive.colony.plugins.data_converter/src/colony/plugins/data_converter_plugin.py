@@ -37,10 +37,10 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-import colony.plugins.plugin_system
-import colony.plugins.decorators
+import colony.base.plugin_system
+import colony.base.decorators
 
-class DataConverterPlugin(colony.plugins.plugin_system.Plugin):
+class DataConverterPlugin(colony.base.plugin_system.Plugin):
     """
     Provides a means to convert data from one medium and schema to another.
     """
@@ -51,15 +51,15 @@ class DataConverterPlugin(colony.plugins.plugin_system.Plugin):
     description = "Provides plugin to convert data from one medium and schema to another"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
-    loading_type = colony.plugins.plugin_system.EAGER_LOADING_TYPE
-    platforms = [colony.plugins.plugin_system.CPYTHON_ENVIRONMENT]
+    loading_type = colony.base.plugin_system.EAGER_LOADING_TYPE
+    platforms = [colony.base.plugin_system.CPYTHON_ENVIRONMENT]
     attributes = {"build_automation_file_path" : "$base{plugin_directory}/data_converter/data_converter/resources/baf.xml"}
     capabilities = ["console_command_extension", "build_automation_item"]
     capabilities_allowed = ["data_converter_io_adapter",
                             "data_converter_configuration"]
-    dependencies = [colony.plugins.plugin_system.PluginDependency(
+    dependencies = [colony.base.plugin_system.PluginDependency(
                     "pt.hive.colony.plugins.main.log", "1.0.0"),
-                    colony.plugins.plugin_system.PluginDependency(
+                    colony.base.plugin_system.PluginDependency(
                     "pt.hive.colony.plugins.resources.resource_manager", "1.0.0")]
     events_handled = []
     events_registrable = []
@@ -83,10 +83,10 @@ class DataConverterPlugin(colony.plugins.plugin_system.Plugin):
     """ Resource manager plugin """
 
     def __init__(self, manager):
-        colony.plugins.plugin_system.Plugin.__init__(self, manager)
+        colony.base.plugin_system.Plugin.__init__(self, manager)
 
     def load_plugin(self):
-        colony.plugins.plugin_system.Plugin.load_plugin(self)
+        colony.base.plugin_system.Plugin.load_plugin(self)
         global data_converter
         import data_converter.data_converter.data_converter_system
         import data_converter.data_converter.console_data_converter
@@ -95,10 +95,10 @@ class DataConverterPlugin(colony.plugins.plugin_system.Plugin):
         self.data_converter.load_data_converter()
 
     def end_load_plugin(self):
-        colony.plugins.plugin_system.Plugin.end_load_plugin(self)
+        colony.base.plugin_system.Plugin.end_load_plugin(self)
 
     def unload_plugin(self):
-        colony.plugins.plugin_system.Plugin.unload_plugin(self)
+        colony.base.plugin_system.Plugin.unload_plugin(self)
         self.data_converter = None
         self.io_adapter_plugins = []
         self.configuration_plugins = []
@@ -106,19 +106,19 @@ class DataConverterPlugin(colony.plugins.plugin_system.Plugin):
         self.resource_manager_plugin = None
 
     def end_unload_plugin(self):
-        colony.plugins.plugin_system.Plugin.end_unload_plugin(self)
+        colony.base.plugin_system.Plugin.end_unload_plugin(self)
 
-    @colony.plugins.decorators.load_allowed("pt.hive.colony.plugins.data_converter", "1.0.0")
+    @colony.base.decorators.load_allowed("pt.hive.colony.plugins.data_converter", "1.0.0")
     def load_allowed(self, plugin, capability):
-        colony.plugins.plugin_system.Plugin.load_allowed(self, plugin, capability)
+        colony.base.plugin_system.Plugin.load_allowed(self, plugin, capability)
 
-    @colony.plugins.decorators.unload_allowed("pt.hive.colony.plugins.data_converter", "1.0.0")
+    @colony.base.decorators.unload_allowed("pt.hive.colony.plugins.data_converter", "1.0.0")
     def unload_allowed(self, plugin, capability):
-        colony.plugins.plugin_system.Plugin.unload_allowed(self, plugin, capability)
+        colony.base.plugin_system.Plugin.unload_allowed(self, plugin, capability)
 
-    @colony.plugins.decorators.inject_dependencies("pt.hive.colony.plugins.data_converter", "1.0.0")
+    @colony.base.decorators.inject_dependencies("pt.hive.colony.plugins.data_converter", "1.0.0")
     def dependency_injected(self, plugin):
-        colony.plugins.plugin_system.Plugin.dependency_injected(self, plugin)
+        colony.base.plugin_system.Plugin.dependency_injected(self, plugin)
 
     def get_console_extension_name(self):
         return self.console_data_converter.get_console_extension_name()
@@ -262,22 +262,22 @@ class DataConverterPlugin(colony.plugins.plugin_system.Plugin):
 
         return self.data_converter.convert_data(configuration_id)
 
-    @colony.plugins.decorators.load_allowed_capability("data_converter_io_adapter")
+    @colony.base.decorators.load_allowed_capability("data_converter_io_adapter")
     def data_converter_io_adapter_load_allowed(self, plugin, capability):
         self.io_adapter_plugins.append(plugin)
         self.data_converter.add_io_adapter_plugin(plugin)
 
-    @colony.plugins.decorators.unload_allowed_capability("data_converter_io_adapter")
+    @colony.base.decorators.unload_allowed_capability("data_converter_io_adapter")
     def data_converter_io_adapter_unload_allowed(self, plugin, capability):
         self.io_adapter_plugins.remove(plugin)
         self.data_converter.remove_io_adapter_plugin(plugin)
 
-    @colony.plugins.decorators.load_allowed_capability("data_converter_configuration")
+    @colony.base.decorators.load_allowed_capability("data_converter_configuration")
     def data_converter_configuration_load_allowed(self, plugin, capability):
         self.configuration_plugins.append(plugin)
         self.data_converter.add_configuration_plugin(plugin)
 
-    @colony.plugins.decorators.unload_allowed_capability("data_converter_configuration")
+    @colony.base.decorators.unload_allowed_capability("data_converter_configuration")
     def data_converter_configuration_unload_allowed(self, plugin, capability):
         self.configuration_plugins.remove(plugin)
         self.data_converter.remove_configuration_plugin(plugin)
@@ -285,14 +285,14 @@ class DataConverterPlugin(colony.plugins.plugin_system.Plugin):
     def get_logger_plugin(self):
         return self.logger_plugin
 
-    @colony.plugins.decorators.plugin_inject("pt.hive.colony.plugins.main.log")
+    @colony.base.decorators.plugin_inject("pt.hive.colony.plugins.main.log")
     def set_logger_plugin(self, logger_plugin):
         self.logger_plugin = logger_plugin
 
     def get_resource_manager_plugin(self):
         return self.resource_manager_plugin
 
-    @colony.plugins.decorators.plugin_inject("pt.hive.colony.plugins.resources.resource_manager")
+    @colony.base.decorators.plugin_inject("pt.hive.colony.plugins.resources.resource_manager")
     def set_resource_manager_plugin(self, resource_manager_plugin):
         self.resource_manager_plugin = resource_manager_plugin
 

@@ -37,9 +37,9 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-import colony.plugins.plugin_system
+import colony.base.plugin_system
 
-class WebMvcPlugin(colony.plugins.plugin_system.Plugin):
+class WebMvcPlugin(colony.base.plugin_system.Plugin):
     """
     The main class for the Web Mvc plugin.
     """
@@ -50,14 +50,14 @@ class WebMvcPlugin(colony.plugins.plugin_system.Plugin):
     description = "The plugin that offers a web strategy abstraction for mvc management"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
-    loading_type = colony.plugins.plugin_system.EAGER_LOADING_TYPE
-    platforms = [colony.plugins.plugin_system.CPYTHON_ENVIRONMENT]
+    loading_type = colony.base.plugin_system.EAGER_LOADING_TYPE
+    platforms = [colony.base.plugin_system.CPYTHON_ENVIRONMENT]
     attributes = {"build_automation_file_path" : "$base{plugin_directory}/web_mvc/mvc/resources/baf.xml"}
     capabilities = ["web.mvc", "rest_service", "build_automation_item"]
     capabilities_allowed = ["web.mvc_service"]
-    dependencies = [colony.plugins.plugin_system.PluginDependency(
+    dependencies = [colony.base.plugin_system.PluginDependency(
                     "pt.hive.colony.plugins.misc.random", "1.0.0"),
-                    colony.plugins.plugin_system.PluginDependency(
+                    colony.base.plugin_system.PluginDependency(
                     "pt.hive.colony.plugins.misc.json", "1.0.0")]
     events_handled = []
     events_registrable = ["web.mvc.patterns", "web.mvc.communication"]
@@ -72,35 +72,35 @@ class WebMvcPlugin(colony.plugins.plugin_system.Plugin):
     json_plugin = None
 
     def load_plugin(self):
-        colony.plugins.plugin_system.Plugin.load_plugin(self)
+        colony.base.plugin_system.Plugin.load_plugin(self)
         global web_mvc
         import web_mvc.mvc.web_mvc_system
         self.web_mvc = web_mvc.mvc.web_mvc_system.WebMvc(self)
 
     def end_load_plugin(self):
-        colony.plugins.plugin_system.Plugin.end_load_plugin(self)
+        colony.base.plugin_system.Plugin.end_load_plugin(self)
 
     def unload_plugin(self):
-        colony.plugins.plugin_system.Plugin.unload_plugin(self)
+        colony.base.plugin_system.Plugin.unload_plugin(self)
 
     def end_unload_plugin(self):
-        colony.plugins.plugin_system.Plugin.end_unload_plugin(self)
+        colony.base.plugin_system.Plugin.end_unload_plugin(self)
 
-    @colony.plugins.decorators.load_allowed("pt.hive.colony.plugins.web.mvc", "1.0.0")
+    @colony.base.decorators.load_allowed("pt.hive.colony.plugins.web.mvc", "1.0.0")
     def load_allowed(self, plugin, capability):
-        colony.plugins.plugin_system.Plugin.load_allowed(self, plugin, capability)
+        colony.base.plugin_system.Plugin.load_allowed(self, plugin, capability)
 
-    @colony.plugins.decorators.unload_allowed("pt.hive.colony.plugins.web.mvc", "1.0.0")
+    @colony.base.decorators.unload_allowed("pt.hive.colony.plugins.web.mvc", "1.0.0")
     def unload_allowed(self, plugin, capability):
-        colony.plugins.plugin_system.Plugin.unload_allowed(self, plugin, capability)
+        colony.base.plugin_system.Plugin.unload_allowed(self, plugin, capability)
 
-    @colony.plugins.decorators.inject_dependencies("pt.hive.colony.plugins.web.mvc", "1.0.0")
+    @colony.base.decorators.inject_dependencies("pt.hive.colony.plugins.web.mvc", "1.0.0")
     def dependency_injected(self, plugin):
-        colony.plugins.plugin_system.Plugin.dependency_injected(self, plugin)
+        colony.base.plugin_system.Plugin.dependency_injected(self, plugin)
 
-    @colony.plugins.decorators.event_handler("pt.hive.colony.plugins.web.mvc", "1.0.0")
+    @colony.base.decorators.event_handler("pt.hive.colony.plugins.web.mvc", "1.0.0")
     def event_handler(self, event_name, *event_args):
-        colony.plugins.plugin_system.Plugin.event_handler(self, event_name, *event_args)
+        colony.base.plugin_system.Plugin.event_handler(self, event_name, *event_args)
 
     def get_routes(self):
         """
@@ -126,12 +126,12 @@ class WebMvcPlugin(colony.plugins.plugin_system.Plugin):
 
         return self.web_mvc.handle_rest_request(rest_request)
 
-    @colony.plugins.decorators.load_allowed_capability("web.mvc_service")
+    @colony.base.decorators.load_allowed_capability("web.mvc_service")
     def web_mvc_service_extension_load_allowed(self, plugin, capability):
         self.web_mvc_service_plugins.append(plugin)
         self.web_mvc.load_web_mvc_service_plugin(plugin)
 
-    @colony.plugins.decorators.unload_allowed_capability("web.mvc_service")
+    @colony.base.decorators.unload_allowed_capability("web.mvc_service")
     def web_mvc_service_extension_unload_allowed(self, plugin, capability):
         self.web_mvc_service_plugins.remove(plugin)
         self.web_mvc.unload_web_mvc_service_plugin(plugin)
@@ -139,21 +139,21 @@ class WebMvcPlugin(colony.plugins.plugin_system.Plugin):
     def get_random_plugin(self):
         return self.random_plugin
 
-    @colony.plugins.decorators.plugin_inject("pt.hive.colony.plugins.misc.random")
+    @colony.base.decorators.plugin_inject("pt.hive.colony.plugins.misc.random")
     def set_random_plugin(self, random_plugin):
         self.random_plugin = random_plugin
 
     def get_json_plugin(self):
         return self.json_plugin
 
-    @colony.plugins.decorators.plugin_inject("pt.hive.colony.plugins.misc.json")
+    @colony.base.decorators.plugin_inject("pt.hive.colony.plugins.misc.json")
     def set_json_plugin(self, json_plugin):
         self.json_plugin = json_plugin
 
-    @colony.plugins.decorators.event_handler_method("web.mvc.patterns")
+    @colony.base.decorators.event_handler_method("web.mvc.patterns")
     def web_mvc_patterns_handler(self, event_name, *event_args):
         self.web_mvc.process_web_mvc_patterns_event(event_name, *event_args)
 
-    @colony.plugins.decorators.event_handler_method("web.mvc.communication")
+    @colony.base.decorators.event_handler_method("web.mvc.communication")
     def web_mvc_communication_handler(self, event_name, *event_args):
         self.web_mvc.process_web_mvc_communication_event(event_name, *event_args)

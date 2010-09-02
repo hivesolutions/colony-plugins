@@ -37,10 +37,10 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-import colony.plugins.plugin_system
-import colony.plugins.decorators
+import colony.base.plugin_system
+import colony.base.decorators
 
-class MainServiceHttpPlugin(colony.plugins.plugin_system.Plugin):
+class MainServiceHttpPlugin(colony.base.plugin_system.Plugin):
     """
     The main class for the Http Service Main plugin.
     """
@@ -51,14 +51,14 @@ class MainServiceHttpPlugin(colony.plugins.plugin_system.Plugin):
     description = "The plugin that offers the http service"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
-    loading_type = colony.plugins.plugin_system.EAGER_LOADING_TYPE
-    platforms = [colony.plugins.plugin_system.CPYTHON_ENVIRONMENT,
-                 colony.plugins.plugin_system.JYTHON_ENVIRONMENT,
-                 colony.plugins.plugin_system.IRON_PYTHON_ENVIRONMENT]
+    loading_type = colony.base.plugin_system.EAGER_LOADING_TYPE
+    platforms = [colony.base.plugin_system.CPYTHON_ENVIRONMENT,
+                 colony.base.plugin_system.JYTHON_ENVIRONMENT,
+                 colony.base.plugin_system.IRON_PYTHON_ENVIRONMENT]
     attributes = {"build_automation_file_path" : "$base{plugin_directory}/main_service_http/http/resources/baf.xml"}
     capabilities = ["service.http", "build_automation_item"]
     capabilities_allowed = ["http_service_handler", "http_service_encoding", "http_service_error_handler"]
-    dependencies = [colony.plugins.plugin_system.PluginDependency(
+    dependencies = [colony.base.plugin_system.PluginDependency(
                     "pt.hive.colony.plugins.main.service.utils", "1.0.0")]
     events_handled = []
     events_registrable = []
@@ -73,31 +73,31 @@ class MainServiceHttpPlugin(colony.plugins.plugin_system.Plugin):
     main_service_utils_plugin = None
 
     def load_plugin(self):
-        colony.plugins.plugin_system.Plugin.load_plugin(self)
+        colony.base.plugin_system.Plugin.load_plugin(self)
         global main_service_http
         import main_service_http.http.main_service_http_system
         self.main_service_http = main_service_http.http.main_service_http_system.MainServiceHttp(self)
 
     def end_load_plugin(self):
-        colony.plugins.plugin_system.Plugin.end_load_plugin(self)
+        colony.base.plugin_system.Plugin.end_load_plugin(self)
 
     def unload_plugin(self):
-        colony.plugins.plugin_system.Plugin.unload_plugin(self)
+        colony.base.plugin_system.Plugin.unload_plugin(self)
 
     def end_unload_plugin(self):
-        colony.plugins.plugin_system.Plugin.end_unload_plugin(self)
+        colony.base.plugin_system.Plugin.end_unload_plugin(self)
 
-    @colony.plugins.decorators.load_allowed("pt.hive.colony.plugins.main.service.http", "1.0.0")
+    @colony.base.decorators.load_allowed("pt.hive.colony.plugins.main.service.http", "1.0.0")
     def load_allowed(self, plugin, capability):
-        colony.plugins.plugin_system.Plugin.load_allowed(self, plugin, capability)
+        colony.base.plugin_system.Plugin.load_allowed(self, plugin, capability)
 
-    @colony.plugins.decorators.unload_allowed("pt.hive.colony.plugins.main.service.http", "1.0.0")
+    @colony.base.decorators.unload_allowed("pt.hive.colony.plugins.main.service.http", "1.0.0")
     def unload_allowed(self, plugin, capability):
-        colony.plugins.plugin_system.Plugin.unload_allowed(self, plugin, capability)
+        colony.base.plugin_system.Plugin.unload_allowed(self, plugin, capability)
 
-    @colony.plugins.decorators.inject_dependencies("pt.hive.colony.plugins.main.service.http", "1.0.0")
+    @colony.base.decorators.inject_dependencies("pt.hive.colony.plugins.main.service.http", "1.0.0")
     def dependency_injected(self, plugin):
-        colony.plugins.plugin_system.Plugin.dependency_injected(self, plugin)
+        colony.base.plugin_system.Plugin.dependency_injected(self, plugin)
 
     def start_service(self, parameters):
         self.main_service_http.start_service(parameters)
@@ -105,35 +105,35 @@ class MainServiceHttpPlugin(colony.plugins.plugin_system.Plugin):
     def stop_service(self, parameters):
         self.main_service_http.stop_service(parameters)
 
-    @colony.plugins.decorators.load_allowed_capability("http_service_handler")
+    @colony.base.decorators.load_allowed_capability("http_service_handler")
     def http_service_handler_load_allowed(self, plugin, capability):
         self.http_service_handler_plugins.append(plugin)
         self.main_service_http.http_service_handler_load(plugin)
 
-    @colony.plugins.decorators.load_allowed_capability("http_service_encoding")
+    @colony.base.decorators.load_allowed_capability("http_service_encoding")
     def http_service_encoding_load_allowed(self, plugin, capability):
         self.http_service_encoding_plugins.append(plugin)
 
-    @colony.plugins.decorators.load_allowed_capability("http_service_error_handler")
+    @colony.base.decorators.load_allowed_capability("http_service_error_handler")
     def http_service_error_handler_load_allowed(self, plugin, capability):
         self.http_service_error_handler_plugins.append(plugin)
 
-    @colony.plugins.decorators.unload_allowed_capability("http_service_handler")
+    @colony.base.decorators.unload_allowed_capability("http_service_handler")
     def http_service_handler_unload_allowed(self, plugin, capability):
         self.http_service_handler_plugins.remove(plugin)
         self.main_service_http.http_service_handler_unload(plugin)
 
-    @colony.plugins.decorators.unload_allowed_capability("http_service_encoding")
+    @colony.base.decorators.unload_allowed_capability("http_service_encoding")
     def http_service_encoding_unload_allowed(self, plugin, capability):
         self.http_service_encoding_plugins.remove(plugin)
 
-    @colony.plugins.decorators.unload_allowed_capability("http_service_error_handler")
+    @colony.base.decorators.unload_allowed_capability("http_service_error_handler")
     def http_service_error_handler_unload_allowed(self, plugin, capability):
         self.http_service_error_handler_plugins.remove(plugin)
 
     def get_main_service_utils_plugin(self):
         return self.main_service_utils_plugin
 
-    @colony.plugins.decorators.plugin_inject("pt.hive.colony.plugins.main.service.utils")
+    @colony.base.decorators.plugin_inject("pt.hive.colony.plugins.main.service.utils")
     def set_main_service_utils_plugin(self, main_service_utils_plugin):
         self.main_service_utils_plugin = main_service_utils_plugin

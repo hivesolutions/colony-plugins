@@ -37,9 +37,9 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-import colony.plugins.plugin_system
+import colony.base.plugin_system
 
-class MainAuthenticationEntityManagerHandlerPlugin(colony.plugins.plugin_system.Plugin):
+class MainAuthenticationEntityManagerHandlerPlugin(colony.base.plugin_system.Plugin):
     """
     The main class for the Authentication Entity Manager Handler Main plugin.
     """
@@ -50,8 +50,8 @@ class MainAuthenticationEntityManagerHandlerPlugin(colony.plugins.plugin_system.
     description = "Authentication Entity Manager Handler Plugin"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
-    loading_type = colony.plugins.plugin_system.EAGER_LOADING_TYPE
-    platforms = [colony.plugins.plugin_system.CPYTHON_ENVIRONMENT]
+    loading_type = colony.base.plugin_system.EAGER_LOADING_TYPE
+    platforms = [colony.base.plugin_system.CPYTHON_ENVIRONMENT]
     attributes = {"build_automation_file_path" : "$base{plugin_directory}/main_authentication_entity_manager_handler/entity_manager_handler/resources/baf.xml"}
     capabilities = ["authentication_handler", "build_automation_item"]
     capabilities_allowed = []
@@ -62,28 +62,28 @@ class MainAuthenticationEntityManagerHandlerPlugin(colony.plugins.plugin_system.
     main_authentication_entity_manager_handler = None
 
     def load_plugin(self):
-        colony.plugins.plugin_system.Plugin.load_plugin(self)
+        colony.base.plugin_system.Plugin.load_plugin(self)
         global main_authentication_entity_manager_handler
         import main_authentication_entity_manager_handler.entity_manager_handler.main_authentication_entity_manager_handler_system
         self.main_authentication_entity_manager_handler = main_authentication_entity_manager_handler.entity_manager_handler.main_authentication_entity_manager_handler_system.MainAuthenticationEntityManagerHandler(self)
 
     def end_load_plugin(self):
-        colony.plugins.plugin_system.Plugin.end_load_plugin(self)
+        colony.base.plugin_system.Plugin.end_load_plugin(self)
 
     def unload_plugin(self):
-        colony.plugins.plugin_system.Plugin.unload_plugin(self)
+        colony.base.plugin_system.Plugin.unload_plugin(self)
 
     def end_unload_plugin(self):
-        colony.plugins.plugin_system.Plugin.end_unload_plugin(self)
+        colony.base.plugin_system.Plugin.end_unload_plugin(self)
 
     def load_allowed(self, plugin, capability):
-        colony.plugins.plugin_system.Plugin.load_allowed(self, plugin, capability)
+        colony.base.plugin_system.Plugin.load_allowed(self, plugin, capability)
 
     def unload_allowed(self, plugin, capability):
-        colony.plugins.plugin_system.Plugin.unload_allowed(self, plugin, capability)
+        colony.base.plugin_system.Plugin.unload_allowed(self, plugin, capability)
 
     def dependency_injected(self, plugin):
-        colony.plugins.plugin_system.Plugin.dependency_injected(self, plugin)
+        colony.base.plugin_system.Plugin.dependency_injected(self, plugin)
 
     def get_handler_name(self):
         return self.main_authentication_entity_manager_handler.get_handler_name()

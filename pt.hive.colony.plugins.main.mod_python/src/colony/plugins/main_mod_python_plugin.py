@@ -37,9 +37,9 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-import colony.plugins.plugin_system
+import colony.base.plugin_system
 
-class MainModPythonPlugin(colony.plugins.plugin_system.Plugin):
+class MainModPythonPlugin(colony.base.plugin_system.Plugin):
     """
     The main class for the Mod Python Main plugin
     """
@@ -50,8 +50,8 @@ class MainModPythonPlugin(colony.plugins.plugin_system.Plugin):
     description = "Mod Python Main Plugin"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
-    loading_type = colony.plugins.plugin_system.EAGER_LOADING_TYPE
-    platforms = [colony.plugins.plugin_system.CPYTHON_ENVIRONMENT]
+    loading_type = colony.base.plugin_system.EAGER_LOADING_TYPE
+    platforms = [colony.base.plugin_system.CPYTHON_ENVIRONMENT]
     attributes = {"build_automation_file_path" : "$base{plugin_directory}/main_mod_python/mod_python/resources/baf.xml"}
     capabilities = ["mod_python", "build_automation_item"]
     capabilities_allowed = ["http_python_handler"]
@@ -64,38 +64,38 @@ class MainModPythonPlugin(colony.plugins.plugin_system.Plugin):
     http_python_handler_plugins = []
 
     def load_plugin(self):
-        colony.plugins.plugin_system.Plugin.load_plugin(self)
+        colony.base.plugin_system.Plugin.load_plugin(self)
         global main_mod_python
         import main_mod_python.mod_python.main_mod_python_system
         self.main_mod_python = main_mod_python.mod_python.main_mod_python_system.MainModPython(self)
 
     def end_load_plugin(self):
-        colony.plugins.plugin_system.Plugin.end_load_plugin(self)
+        colony.base.plugin_system.Plugin.end_load_plugin(self)
 
     def unload_plugin(self):
-        colony.plugins.plugin_system.Plugin.unload_plugin(self)
+        colony.base.plugin_system.Plugin.unload_plugin(self)
 
     def end_unload_plugin(self):
-        colony.plugins.plugin_system.Plugin.end_unload_plugin(self)
+        colony.base.plugin_system.Plugin.end_unload_plugin(self)
 
-    @colony.plugins.decorators.load_allowed("pt.hive.colony.plugins.main.mod_python", "1.0.0")
+    @colony.base.decorators.load_allowed("pt.hive.colony.plugins.main.mod_python", "1.0.0")
     def load_allowed(self, plugin, capability):
-        colony.plugins.plugin_system.Plugin.load_allowed(self, plugin, capability)
+        colony.base.plugin_system.Plugin.load_allowed(self, plugin, capability)
 
-    @colony.plugins.decorators.unload_allowed("pt.hive.colony.plugins.main.mod_python", "1.0.0")
+    @colony.base.decorators.unload_allowed("pt.hive.colony.plugins.main.mod_python", "1.0.0")
     def unload_allowed(self, plugin, capability):
-        colony.plugins.plugin_system.Plugin.unload_allowed(self, plugin, capability)
+        colony.base.plugin_system.Plugin.unload_allowed(self, plugin, capability)
 
     def dependency_injected(self, plugin):
-        colony.plugins.plugin_system.Plugin.dependency_injected(self, plugin)
+        colony.base.plugin_system.Plugin.dependency_injected(self, plugin)
 
     def handle_request(self, request, plugin_handler_id):
         self.main_mod_python.handle_request(request, plugin_handler_id)
 
-    @colony.plugins.decorators.load_allowed_capability("http_python_handler")
+    @colony.base.decorators.load_allowed_capability("http_python_handler")
     def http_python_handler_capability_load_allowed(self, plugin, capability):
         self.http_python_handler_plugins.append(plugin)
 
-    @colony.plugins.decorators.unload_allowed_capability("http_python_handler")
+    @colony.base.decorators.unload_allowed_capability("http_python_handler")
     def http_python_handler_capability_unload_allowed(self, plugin, capability):
         self.http_python_handler_plugins.remove(plugin)

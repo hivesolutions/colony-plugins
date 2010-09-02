@@ -37,10 +37,10 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-import colony.plugins.plugin_system
-import colony.plugins.decorators
+import colony.base.plugin_system
+import colony.base.decorators
 
-class SearchProcessorPlugin(colony.plugins.plugin_system.Plugin):
+class SearchProcessorPlugin(colony.base.plugin_system.Plugin):
     """
     The main class for the Search Processor plugin.
     """
@@ -51,8 +51,8 @@ class SearchProcessorPlugin(colony.plugins.plugin_system.Plugin):
     description = "Plugin that provides the interface with processor adapters for the main search plugin"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
-    loading_type = colony.plugins.plugin_system.EAGER_LOADING_TYPE
-    platforms = [colony.plugins.plugin_system.CPYTHON_ENVIRONMENT]
+    loading_type = colony.base.plugin_system.EAGER_LOADING_TYPE
+    platforms = [colony.base.plugin_system.CPYTHON_ENVIRONMENT]
     attributes = {"build_automation_file_path" : "$base{plugin_directory}/search_processor/processor/resources/baf.xml"}
     capabilities = ["search_processor", "build_automation_item"]
     capabilities_allowed = ["search_processor_adapter"]
@@ -67,30 +67,30 @@ class SearchProcessorPlugin(colony.plugins.plugin_system.Plugin):
     search_provider_file_system_plugins = []
 
     def load_plugin(self):
-        colony.plugins.plugin_system.Plugin.load_plugin(self)
+        colony.base.plugin_system.Plugin.load_plugin(self)
         global search_processor
         import search_processor.processor.search_processor_system
         self.search_processor = search_processor.processor.search_processor_system.SearchProcessor(self)
 
     def end_load_plugin(self):
-        colony.plugins.plugin_system.Plugin.end_load_plugin(self)
+        colony.base.plugin_system.Plugin.end_load_plugin(self)
 
     def unload_plugin(self):
-        colony.plugins.plugin_system.Plugin.unload_plugin(self)
+        colony.base.plugin_system.Plugin.unload_plugin(self)
 
     def end_unload_plugin(self):
-        colony.plugins.plugin_system.Plugin.end_unload_plugin(self)
+        colony.base.plugin_system.Plugin.end_unload_plugin(self)
 
-    @colony.plugins.decorators.load_allowed("pt.hive.colony.plugins.search.processor", "1.0.0")
+    @colony.base.decorators.load_allowed("pt.hive.colony.plugins.search.processor", "1.0.0")
     def load_allowed(self, plugin, capability):
-        colony.plugins.plugin_system.Plugin.load_allowed(self, plugin, capability)
+        colony.base.plugin_system.Plugin.load_allowed(self, plugin, capability)
 
-    @colony.plugins.decorators.unload_allowed("pt.hive.colony.plugins.search.processor", "1.0.0")
+    @colony.base.decorators.unload_allowed("pt.hive.colony.plugins.search.processor", "1.0.0")
     def unload_allowed(self, plugin, capability):
-        colony.plugins.plugin_system.Plugin.unload_allowed(self, plugin, capability)
+        colony.base.plugin_system.Plugin.unload_allowed(self, plugin, capability)
 
     def dependency_injected(self, plugin):
-        colony.plugins.plugin_system.Plugin.dependency_injected(self, plugin)
+        colony.base.plugin_system.Plugin.dependency_injected(self, plugin)
 
     def process_results(self, search_results, properties):
         return self.search_processor.process_results(search_results, properties)
@@ -98,12 +98,12 @@ class SearchProcessorPlugin(colony.plugins.plugin_system.Plugin):
     def get_search_processor_adapter_types(self):
         return self.search_processor.get_search_processor_adapter_types()
 
-    @colony.plugins.decorators.load_allowed_capability("search_processor_adapter")
+    @colony.base.decorators.load_allowed_capability("search_processor_adapter")
     def search_processor_adapter_load_allowed(self, plugin, capability):
         self.search_processor_adapter_plugins.append(plugin)
         self.search_processor.add_search_processor_adapter_plugin(plugin)
 
-    @colony.plugins.decorators.unload_allowed_capability("search_processor_adapter")
+    @colony.base.decorators.unload_allowed_capability("search_processor_adapter")
     def search_processor_adapter_unload_allowed(self, plugin, capability):
         self.search_processor_adapter_plugins.remove(plugin)
         self.search_processor.remove_search_processor_adapter_plugin(plugin)

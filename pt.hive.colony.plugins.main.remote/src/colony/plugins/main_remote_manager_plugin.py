@@ -37,9 +37,9 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-import colony.plugins.plugin_system
+import colony.base.plugin_system
 
-class MainRemoteManagerPlugin(colony.plugins.plugin_system.Plugin):
+class MainRemoteManagerPlugin(colony.base.plugin_system.Plugin):
     """
     The main class for the Remote Manager Main plugin.
     """
@@ -50,8 +50,8 @@ class MainRemoteManagerPlugin(colony.plugins.plugin_system.Plugin):
     description = "Remote Manager Main Plugin"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
-    loading_type = colony.plugins.plugin_system.EAGER_LOADING_TYPE
-    platforms = [colony.plugins.plugin_system.CPYTHON_ENVIRONMENT]
+    loading_type = colony.base.plugin_system.EAGER_LOADING_TYPE
+    platforms = [colony.base.plugin_system.CPYTHON_ENVIRONMENT]
     attributes = {"build_automation_file_path" : "$base{plugin_directory}/main_remote/manager/resources/baf.xml"}
     capabilities = ["rpc_handler_manager", "build_automation_item"]
     capabilities_allowed = ["rpc_handler"]
@@ -64,38 +64,38 @@ class MainRemoteManagerPlugin(colony.plugins.plugin_system.Plugin):
     rpc_handler_plugins = []
 
     def load_plugin(self):
-        colony.plugins.plugin_system.Plugin.load_plugin(self)
+        colony.base.plugin_system.Plugin.load_plugin(self)
         global main_remote
         import main_remote.manager.main_remote_manager_system
         self.distribution_bonjour_client = main_remote.manager.main_remote_manager_system.MainRemoteManager(self)
 
     def end_load_plugin(self):
-        colony.plugins.plugin_system.Plugin.end_load_plugin(self)
+        colony.base.plugin_system.Plugin.end_load_plugin(self)
 
     def unload_plugin(self):
-        colony.plugins.plugin_system.Plugin.unload_plugin(self)
+        colony.base.plugin_system.Plugin.unload_plugin(self)
 
     def end_unload_plugin(self):
-        colony.plugins.plugin_system.Plugin.end_unload_plugin(self)
+        colony.base.plugin_system.Plugin.end_unload_plugin(self)
 
-    @colony.plugins.decorators.load_allowed("pt.hive.colony.plugins.main.remote.manager", "1.0.0")
+    @colony.base.decorators.load_allowed("pt.hive.colony.plugins.main.remote.manager", "1.0.0")
     def load_allowed(self, plugin, capability):
-        colony.plugins.plugin_system.Plugin.load_allowed(self, plugin, capability)
+        colony.base.plugin_system.Plugin.load_allowed(self, plugin, capability)
 
-    @colony.plugins.decorators.unload_allowed("pt.hive.colony.plugins.main.remote.manager", "1.0.0")
+    @colony.base.decorators.unload_allowed("pt.hive.colony.plugins.main.remote.manager", "1.0.0")
     def unload_allowed(self, plugin, capability):
-        colony.plugins.plugin_system.Plugin.unload_allowed(self, plugin, capability)
+        colony.base.plugin_system.Plugin.unload_allowed(self, plugin, capability)
 
     def dependency_injected(self, plugin):
-        colony.plugins.plugin_system.Plugin.dependency_injected(self, plugin)
+        colony.base.plugin_system.Plugin.dependency_injected(self, plugin)
 
     def get_available_rpc_handlers(self):
         return self.distribution_bonjour_client.get_available_rpc_handlers()
 
-    @colony.plugins.decorators.load_allowed_capability("rpc_handler")
+    @colony.base.decorators.load_allowed_capability("rpc_handler")
     def rpc_handler_load_allowed(self, plugin, capability):
         self.rpc_handler_plugins.append(plugin)
 
-    @colony.plugins.decorators.unload_allowed_capability("rpc_handler")
+    @colony.base.decorators.unload_allowed_capability("rpc_handler")
     def rpc_handler_unload_allowed(self, plugin, capability):
         self.rpc_handler_plugins.remove(plugin)

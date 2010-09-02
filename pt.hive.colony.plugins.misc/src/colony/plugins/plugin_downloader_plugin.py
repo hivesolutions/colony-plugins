@@ -37,9 +37,9 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-import colony.plugins.plugin_system
+import colony.base.plugin_system
 
-class PluginDownloaderPlugin(colony.plugins.plugin_system.Plugin):
+class PluginDownloaderPlugin(colony.base.plugin_system.Plugin):
     """
     The main class for the Plugin Downloader plugin.
     """
@@ -50,16 +50,16 @@ class PluginDownloaderPlugin(colony.plugins.plugin_system.Plugin):
     description = "A plugin to automatically download plugins and dependencies"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
-    loading_type = colony.plugins.plugin_system.EAGER_LOADING_TYPE
-    platforms = [colony.plugins.plugin_system.CPYTHON_ENVIRONMENT]
+    loading_type = colony.base.plugin_system.EAGER_LOADING_TYPE
+    platforms = [colony.base.plugin_system.CPYTHON_ENVIRONMENT]
     attributes = {"build_automation_file_path" : "$base{plugin_directory}/misc/plugin_downloader/resources/baf.xml"}
     capabilities = ["console_command_extension", "build_automation_item"]
     capabilities_allowed = []
-    dependencies = [colony.plugins.plugin_system.PluginDependency(
+    dependencies = [colony.base.plugin_system.PluginDependency(
                     "pt.hive.colony.plugins.misc.downloader", "1.0.0"),
-                    colony.plugins.plugin_system.PluginDependency(
+                    colony.base.plugin_system.PluginDependency(
                     "pt.hive.colony.plugins.misc.zip", "1.0.0"),
-                    colony.plugins.plugin_system.PluginDependency(
+                    colony.base.plugin_system.PluginDependency(
                     "pt.hive.colony.plugins.misc.dependencies_calculator", "1.0.0", False)]
     events_handled = []
     events_registrable = []
@@ -77,7 +77,7 @@ class PluginDownloaderPlugin(colony.plugins.plugin_system.Plugin):
     """ Plugin to calculate dependencies """
 
     def load_plugin(self):
-        colony.plugins.plugin_system.Plugin.load_plugin(self)
+        colony.base.plugin_system.Plugin.load_plugin(self)
         global misc
         import misc.plugin_downloader.plugin_downloading_system
         import misc.plugin_downloader.console_plugin_downloader
@@ -86,27 +86,27 @@ class PluginDownloaderPlugin(colony.plugins.plugin_system.Plugin):
         self.plugin_downloader.load_plugin_downloader()
 
     def end_load_plugin(self):
-        colony.plugins.plugin_system.Plugin.end_load_plugin(self)
+        colony.base.plugin_system.Plugin.end_load_plugin(self)
 
     def unload_plugin(self):
-        colony.plugins.plugin_system.Plugin.unload_plugin(self)
+        colony.base.plugin_system.Plugin.unload_plugin(self)
 
     def end_unload_plugin(self):
-        colony.plugins.plugin_system.Plugin.end_unload_plugin(self)
+        colony.base.plugin_system.Plugin.end_unload_plugin(self)
 
     def load_allowed(self, plugin, capability):
-        colony.plugins.plugin_system.Plugin.load_allowed(self, plugin, capability)
+        colony.base.plugin_system.Plugin.load_allowed(self, plugin, capability)
 
     def unload_allowed(self, plugin, capability):
-        colony.plugins.plugin_system.Plugin.unload_allowed(self, plugin, capability)
+        colony.base.plugin_system.Plugin.unload_allowed(self, plugin, capability)
 
     def dependency_injected(self, plugin):
-        colony.plugins.plugin_system.Plugin.dependency_injected(self, plugin)
-        if colony.plugins.plugin_system.is_capability_or_sub_capability_in_list("download", plugin.capabilities):
+        colony.base.plugin_system.Plugin.dependency_injected(self, plugin)
+        if colony.base.plugin_system.is_capability_or_sub_capability_in_list("download", plugin.capabilities):
             self.downloader_plugin = plugin
-        elif colony.plugins.plugin_system.is_capability_or_sub_capability_in_list("zip", plugin.capabilities):
+        elif colony.base.plugin_system.is_capability_or_sub_capability_in_list("zip", plugin.capabilities):
             self.zip_plugin = plugin
-        elif colony.plugins.plugin_system.is_capability_or_sub_capability_in_list("dependencies_calculator", plugin.capabilities):
+        elif colony.base.plugin_system.is_capability_or_sub_capability_in_list("dependencies_calculator", plugin.capabilities):
             self.dependencies_calculator_plugin = plugin
 
     def get_console_extension_name(self):

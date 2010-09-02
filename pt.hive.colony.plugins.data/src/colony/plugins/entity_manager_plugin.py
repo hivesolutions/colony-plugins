@@ -37,10 +37,10 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-import colony.plugins.plugin_system
-import colony.plugins.decorators
+import colony.base.plugin_system
+import colony.base.decorators
 
-class EntityManagerPlugin(colony.plugins.plugin_system.Plugin):
+class EntityManagerPlugin(colony.base.plugin_system.Plugin):
     """
     The main class for the Entity Manager plugin.
     """
@@ -51,8 +51,8 @@ class EntityManagerPlugin(colony.plugins.plugin_system.Plugin):
     description = "The plugin that manages the entity manager orm system"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
-    loading_type = colony.plugins.plugin_system.EAGER_LOADING_TYPE
-    platforms = [colony.plugins.plugin_system.CPYTHON_ENVIRONMENT]
+    loading_type = colony.base.plugin_system.EAGER_LOADING_TYPE
+    platforms = [colony.base.plugin_system.CPYTHON_ENVIRONMENT]
     attributes = {"build_automation_file_path" : "$base{plugin_directory}/data/entity_manager/resources/baf.xml"}
     capabilities = ["entity_manager", "build_automation_item"]
     capabilities_allowed = ["entity_manager_engine", "entity", "entity_bundle"]
@@ -65,31 +65,31 @@ class EntityManagerPlugin(colony.plugins.plugin_system.Plugin):
     entity_manager = None
 
     def load_plugin(self):
-        colony.plugins.plugin_system.Plugin.load_plugin(self)
+        colony.base.plugin_system.Plugin.load_plugin(self)
         global data
         import data.entity_manager.entity_manager_system
         import data.entity_manager.entity_manager_decorators
         self.entity_manager = data.entity_manager.entity_manager_system.DataEntityManager(self)
 
     def end_load_plugin(self):
-        colony.plugins.plugin_system.Plugin.end_load_plugin(self)
+        colony.base.plugin_system.Plugin.end_load_plugin(self)
 
     def unload_plugin(self):
-        colony.plugins.plugin_system.Plugin.unload_plugin(self)
+        colony.base.plugin_system.Plugin.unload_plugin(self)
 
     def end_unload_plugin(self):
-        colony.plugins.plugin_system.Plugin.end_unload_plugin(self)
+        colony.base.plugin_system.Plugin.end_unload_plugin(self)
 
-    @colony.plugins.decorators.load_allowed("pt.hive.colony.plugins.data.entity_manager", "1.0.0")
+    @colony.base.decorators.load_allowed("pt.hive.colony.plugins.data.entity_manager", "1.0.0")
     def load_allowed(self, plugin, capability):
-        colony.plugins.plugin_system.Plugin.load_allowed(self, plugin, capability)
+        colony.base.plugin_system.Plugin.load_allowed(self, plugin, capability)
 
-    @colony.plugins.decorators.unload_allowed("pt.hive.colony.plugins.data.entity_manager", "1.0.0")
+    @colony.base.decorators.unload_allowed("pt.hive.colony.plugins.data.entity_manager", "1.0.0")
     def unload_allowed(self, plugin, capability):
-        colony.plugins.plugin_system.Plugin.unload_allowed(self, plugin, capability)
+        colony.base.plugin_system.Plugin.unload_allowed(self, plugin, capability)
 
     def dependency_injected(self, plugin):
-        colony.plugins.plugin_system.Plugin.dependency_injected(self, plugin)
+        colony.base.plugin_system.Plugin.dependency_injected(self, plugin)
 
     def load_entity_manager(self, engine_name):
         """
@@ -129,30 +129,30 @@ class EntityManagerPlugin(colony.plugins.plugin_system.Plugin):
 
         return data.entity_manager.entity_manager_decorators.transaction
 
-    @colony.plugins.decorators.load_allowed_capability("entity_manager_engine")
+    @colony.base.decorators.load_allowed_capability("entity_manager_engine")
     def entity_manager_engine_load_allowed(self, plugin, capability):
         self.entity_manager.register_entity_manager_engine_plugin(plugin)
 
-    @colony.plugins.decorators.load_allowed_capability("entity")
+    @colony.base.decorators.load_allowed_capability("entity")
     def entity_capability_load_allowed(self, plugin, capability):
         entity_class = plugin.get_entity_class()
         self.entity_manager.load_entity_class(entity_class)
 
-    @colony.plugins.decorators.load_allowed_capability("entity_bundle")
+    @colony.base.decorators.load_allowed_capability("entity_bundle")
     def entity_bundle_capability_load_allowed(self, plugin, capability):
         entity_bundle = plugin.get_entity_bundle()
         self.entity_manager.load_entity_bundle(entity_bundle)
 
-    @colony.plugins.decorators.unload_allowed_capability("entity_manager_engine")
+    @colony.base.decorators.unload_allowed_capability("entity_manager_engine")
     def entity_manager_engine_unload_allowed(self, plugin, capability):
         self.entity_manager.unregister_entity_manager_engine_plugin(plugin)
 
-    @colony.plugins.decorators.unload_allowed_capability("entity")
+    @colony.base.decorators.unload_allowed_capability("entity")
     def entity_capability_unload_allowed(self, plugin, capability):
         entity_class = plugin.get_entity_class()
         self.entity_manager.unload_entity_class(entity_class)
 
-    @colony.plugins.decorators.unload_allowed_capability("entity_bundle")
+    @colony.base.decorators.unload_allowed_capability("entity_bundle")
     def entity_bundle_capability_unload_allowed(self, plugin, capability):
         entity_bundle = plugin.get_entity_bundle()
         self.entity_manager.unload_entity_bundle(entity_bundle)

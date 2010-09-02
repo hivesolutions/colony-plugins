@@ -37,10 +37,10 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-import colony.plugins.plugin_system
-import colony.plugins.decorators
+import colony.base.plugin_system
+import colony.base.decorators
 
-class DistributionRegistryServicePlugin(colony.plugins.plugin_system.Plugin):
+class DistributionRegistryServicePlugin(colony.base.plugin_system.Plugin):
     """
     The main class for the Distribution Registry Service plugin.
     """
@@ -51,12 +51,12 @@ class DistributionRegistryServicePlugin(colony.plugins.plugin_system.Plugin):
     description = "Distribution Registry Service Plugin"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
-    loading_type = colony.plugins.plugin_system.EAGER_LOADING_TYPE
-    platforms = [colony.plugins.plugin_system.CPYTHON_ENVIRONMENT]
+    loading_type = colony.base.plugin_system.EAGER_LOADING_TYPE
+    platforms = [colony.base.plugin_system.CPYTHON_ENVIRONMENT]
     attributes = {"build_automation_file_path" : "$base{plugin_directory}/distribution_registry/service/resources/baf.xml"}
     capabilities = ["rpc_service", "build_automation_item"]
     capabilities_allowed = []
-    dependencies = [colony.plugins.plugin_system.PluginDependency(
+    dependencies = [colony.base.plugin_system.PluginDependency(
                     "pt.hive.colony.plugins.distribution.registry", "1.0.0")]
     events_handled = []
     events_registrable = []
@@ -65,63 +65,63 @@ class DistributionRegistryServicePlugin(colony.plugins.plugin_system.Plugin):
 
     distribution_registry_plugin = None
 
-    @colony.plugins.decorators.load_plugin("pt.hive.colony.plugins.distribution.registry.service", "1.0.0")
+    @colony.base.decorators.load_plugin("pt.hive.colony.plugins.distribution.registry.service", "1.0.0")
     def load_plugin(self):
-        colony.plugins.plugin_system.Plugin.load_plugin(self)
+        colony.base.plugin_system.Plugin.load_plugin(self)
         global distribution_registry
         import distribution_registry.service.distribution_registry_service_system
         self.distribution_registry_service = distribution_registry.service.distribution_registry_service_system.DistributionRegistryService(self)
 
     def end_load_plugin(self):
-        colony.plugins.plugin_system.Plugin.end_load_plugin(self)
+        colony.base.plugin_system.Plugin.end_load_plugin(self)
 
     def unload_plugin(self):
-        colony.plugins.plugin_system.Plugin.unload_plugin(self)
+        colony.base.plugin_system.Plugin.unload_plugin(self)
 
     def end_unload_plugin(self):
-        colony.plugins.plugin_system.Plugin.end_unload_plugin(self)
+        colony.base.plugin_system.Plugin.end_unload_plugin(self)
 
     def load_allowed(self, plugin, capability):
-        colony.plugins.plugin_system.Plugin.load_allowed(self, plugin, capability)
+        colony.base.plugin_system.Plugin.load_allowed(self, plugin, capability)
 
     def unload_allowed(self, plugin, capability):
-        colony.plugins.plugin_system.Plugin.unload_allowed(self, plugin, capability)
+        colony.base.plugin_system.Plugin.unload_allowed(self, plugin, capability)
 
-    @colony.plugins.decorators.inject_dependencies("pt.hive.colony.plugins.distribution.registry.service", "1.0.0")
+    @colony.base.decorators.inject_dependencies("pt.hive.colony.plugins.distribution.registry.service", "1.0.0")
     def dependency_injected(self, plugin):
-        colony.plugins.plugin_system.Plugin.dependency_injected(self, plugin)
+        colony.base.plugin_system.Plugin.dependency_injected(self, plugin)
 
-    @colony.plugins.decorators.plugin_call(True)
+    @colony.base.decorators.plugin_call(True)
     def get_service_id(self):
         return self.distribution_registry_service.get_service_id()
 
-    @colony.plugins.decorators.plugin_call(True)
+    @colony.base.decorators.plugin_call(True)
     def get_service_alias(self):
         return self.distribution_registry_service.get_service_alias()
 
-    @colony.plugins.decorators.plugin_call(True)
+    @colony.base.decorators.plugin_call(True)
     def get_available_rpc_methods(self):
         return self.distribution_registry_service.get_available_rpc_methods()
 
-    @colony.plugins.decorators.plugin_call(True)
+    @colony.base.decorators.plugin_call(True)
     def get_rpc_methods_alias(self):
         return self.distribution_registry_service.get_rpc_methods_alias()
 
-    @colony.plugins.decorators.plugin_meta_information("rpc_method", {"alias" : []})
+    @colony.base.decorators.plugin_meta_information("rpc_method", {"alias" : []})
     def register_entry(self, hostname, name, type, endpoints, metadata):
         return self.distribution_registry_service.register_entry(hostname, name, type, endpoints, metadata)
 
-    @colony.plugins.decorators.plugin_meta_information("rpc_method", {"alias" : []})
+    @colony.base.decorators.plugin_meta_information("rpc_method", {"alias" : []})
     def unregister_entry(self, hostname, name):
         return self.distribution_registry_service.unregister_entry(hostname, name)
 
-    @colony.plugins.decorators.plugin_meta_information("rpc_method", {"alias" : []})
+    @colony.base.decorators.plugin_meta_information("rpc_method", {"alias" : []})
     def get_all_registry_entries(self):
         return self.distribution_registry_service.get_all_registry_entries()
 
     def get_distribution_registry_plugin(self):
         return self.distribution_registry_plugin
 
-    @colony.plugins.decorators.plugin_inject("pt.hive.colony.plugins.distribution.registry")
+    @colony.base.decorators.plugin_inject("pt.hive.colony.plugins.distribution.registry")
     def set_distribution_registry_plugin(self, distribution_registry_plugin):
         self.distribution_registry_plugin = distribution_registry_plugin

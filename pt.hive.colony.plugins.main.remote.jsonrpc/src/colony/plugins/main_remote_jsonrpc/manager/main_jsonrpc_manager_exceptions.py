@@ -37,9 +37,9 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-import colony.plugins.plugin_system_exceptions
+import colony.base.plugin_system_exceptions
 
-class ServiceException(colony.plugins.plugin_system_exceptions.ColonyException):
+class ServiceException(colony.base.plugin_system_exceptions.ColonyException):
     """
     The service exception class.
     """
@@ -113,7 +113,7 @@ class InvalidMethod(BadServiceRequest):
 
         return "Invalid Method: %s" % self.message
 
-class JsonEncodeException(colony.plugins.plugin_system_exceptions.ColonyException):
+class JsonEncodeException(colony.base.plugin_system_exceptions.ColonyException):
     """
     The json encode exception class.
     """
@@ -142,7 +142,7 @@ class JsonEncodeException(colony.plugins.plugin_system_exceptions.ColonyExceptio
 
         return "Object not encodeable: %s" % self.object
 
-class JsonDecodeException(colony.plugins.plugin_system_exceptions.ColonyException):
+class JsonDecodeException(colony.base.plugin_system_exceptions.ColonyException):
     """
     The json decode exception class.
     """

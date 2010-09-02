@@ -37,10 +37,10 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-import colony.plugins.plugin_system
-import colony.plugins.decorators
+import colony.base.plugin_system
+import colony.base.decorators
 
-class MainServiceXmppStreamHandlerPlugin(colony.plugins.plugin_system.Plugin):
+class MainServiceXmppStreamHandlerPlugin(colony.base.plugin_system.Plugin):
     """
     The main class for the Xmpp Service Main Stream Handler plugin.
     """
@@ -51,9 +51,9 @@ class MainServiceXmppStreamHandlerPlugin(colony.plugins.plugin_system.Plugin):
     description = "The plugin that offers the xmpp service stream handler"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
-    loading_type = colony.plugins.plugin_system.EAGER_LOADING_TYPE
-    platforms = [colony.plugins.plugin_system.CPYTHON_ENVIRONMENT,
-                 colony.plugins.plugin_system.JYTHON_ENVIRONMENT]
+    loading_type = colony.base.plugin_system.EAGER_LOADING_TYPE
+    platforms = [colony.base.plugin_system.CPYTHON_ENVIRONMENT,
+                 colony.base.plugin_system.JYTHON_ENVIRONMENT]
     attributes = {"build_automation_file_path" : "$base{plugin_directory}/main_service_xmpp_stream_handler/stream_handler/resources/baf.xml"}
     capabilities = ["xmpp_service_handler", "build_automation_item"]
     capabilities_allowed = []
@@ -65,28 +65,28 @@ class MainServiceXmppStreamHandlerPlugin(colony.plugins.plugin_system.Plugin):
     main_service_xmpp_stream_handler = None
 
     def load_plugin(self):
-        colony.plugins.plugin_system.Plugin.load_plugin(self)
+        colony.base.plugin_system.Plugin.load_plugin(self)
         global main_service_xmpp_stream_handler
         import main_service_xmpp_stream_handler.stream_handler.main_service_xmpp_stream_handler_system
         self.main_service_xmpp_stream_handler =  main_service_xmpp_stream_handler.stream_handler.main_service_xmpp_stream_handler_system.MainServiceXmppStreamHandler(self)
 
     def end_load_plugin(self):
-        colony.plugins.plugin_system.Plugin.end_load_plugin(self)
+        colony.base.plugin_system.Plugin.end_load_plugin(self)
 
     def unload_plugin(self):
-        colony.plugins.plugin_system.Plugin.unload_plugin(self)
+        colony.base.plugin_system.Plugin.unload_plugin(self)
 
     def end_unload_plugin(self):
-        colony.plugins.plugin_system.Plugin.end_unload_plugin(self)
+        colony.base.plugin_system.Plugin.end_unload_plugin(self)
 
     def load_allowed(self, plugin, capability):
-        colony.plugins.plugin_system.Plugin.load_allowed(self, plugin, capability)
+        colony.base.plugin_system.Plugin.load_allowed(self, plugin, capability)
 
     def unload_allowed(self, plugin, capability):
-        colony.plugins.plugin_system.Plugin.unload_allowed(self, plugin, capability)
+        colony.base.plugin_system.Plugin.unload_allowed(self, plugin, capability)
 
     def dependency_injected(self, plugin):
-        colony.plugins.plugin_system.Plugin.dependency_injected(self, plugin)
+        colony.base.plugin_system.Plugin.dependency_injected(self, plugin)
 
     def get_handler_name(self):
         return self.main_service_xmpp_stream_handler.get_handler_name()

@@ -37,9 +37,9 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-import colony.plugins.plugin_system
+import colony.base.plugin_system
 
-class MainLogManagerPlugin(colony.plugins.plugin_system.Plugin):
+class MainLogManagerPlugin(colony.base.plugin_system.Plugin):
     """
     The main class for the Log Main plugin
     """
@@ -50,8 +50,8 @@ class MainLogManagerPlugin(colony.plugins.plugin_system.Plugin):
     description = "Log Main Plugin"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
-    loading_type = colony.plugins.plugin_system.EAGER_LOADING_TYPE
-    platforms = [colony.plugins.plugin_system.CPYTHON_ENVIRONMENT]
+    loading_type = colony.base.plugin_system.EAGER_LOADING_TYPE
+    platforms = [colony.base.plugin_system.CPYTHON_ENVIRONMENT]
     attributes = {"build_automation_file_path" : "$base{plugin_directory}/main_log/log/resources/baf.xml"}
     capabilities = ["log", "build_automation_item"]
     capabilities_allowed = []
@@ -62,7 +62,7 @@ class MainLogManagerPlugin(colony.plugins.plugin_system.Plugin):
     loggers_map = {}
 
     def load_plugin(self):
-        colony.plugins.plugin_system.Plugin.load_plugin(self)
+        colony.base.plugin_system.Plugin.load_plugin(self)
         global main_log
         import main_log.log.logging_system
 

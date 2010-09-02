@@ -37,9 +37,9 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-import colony.plugins.plugin_system
+import colony.base.plugin_system
 
-class SearchScorerFunctionRepositoryPlugin(colony.plugins.plugin_system.Plugin):
+class SearchScorerFunctionRepositoryPlugin(colony.base.plugin_system.Plugin):
     """
     The main class for the Search Scorer Function Repository Plugin.
     """
@@ -50,8 +50,8 @@ class SearchScorerFunctionRepositoryPlugin(colony.plugins.plugin_system.Plugin):
     description = "Plugin that provides directory services to discover available function types for scoring purposes"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
-    loading_type = colony.plugins.plugin_system.EAGER_LOADING_TYPE
-    platforms = [colony.plugins.plugin_system.CPYTHON_ENVIRONMENT]
+    loading_type = colony.base.plugin_system.EAGER_LOADING_TYPE
+    platforms = [colony.base.plugin_system.CPYTHON_ENVIRONMENT]
     attributes = {"build_automation_file_path" : "$base{plugin_directory}/search_scorer/function_repository/resources/baf.xml"}
     capabilities = ["search_scorer_function_repository", "build_automation_item"]
     capabilities_allowed = ["search_scorer_function_bundle"]
@@ -64,30 +64,30 @@ class SearchScorerFunctionRepositoryPlugin(colony.plugins.plugin_system.Plugin):
     search_scorer_function_bundle_plugins = []
 
     def load_plugin(self):
-        colony.plugins.plugin_system.Plugin.load_plugin(self)
+        colony.base.plugin_system.Plugin.load_plugin(self)
         global search_scorer
         import search_scorer.function_repository.search_scorer_function_repository_system
         self.search_scorer_function_repository = search_scorer.function_repository.search_scorer_function_repository_system.SearchScorerFunctionRepository(self)
 
     def end_load_plugin(self):
-        colony.plugins.plugin_system.Plugin.end_load_plugin(self)
+        colony.base.plugin_system.Plugin.end_load_plugin(self)
 
     def unload_plugin(self):
-        colony.plugins.plugin_system.Plugin.unload_plugin(self)
+        colony.base.plugin_system.Plugin.unload_plugin(self)
 
     def end_unload_plugin(self):
-        colony.plugins.plugin_system.Plugin.end_unload_plugin(self)
+        colony.base.plugin_system.Plugin.end_unload_plugin(self)
 
-    @colony.plugins.decorators.load_allowed("pt.hive.colony.plugins.search.scorer.function_repository", "1.0.0")
+    @colony.base.decorators.load_allowed("pt.hive.colony.plugins.search.scorer.function_repository", "1.0.0")
     def load_allowed(self, plugin, capability):
-        colony.plugins.plugin_system.Plugin.load_allowed(self, plugin, capability)
+        colony.base.plugin_system.Plugin.load_allowed(self, plugin, capability)
 
-    @colony.plugins.decorators.unload_allowed("pt.hive.colony.plugins.search.scorer.function_repository", "1.0.0")
+    @colony.base.decorators.unload_allowed("pt.hive.colony.plugins.search.scorer.function_repository", "1.0.0")
     def unload_allowed(self, plugin, capability):
-        colony.plugins.plugin_system.Plugin.unload_allowed(self, plugin, capability)
+        colony.base.plugin_system.Plugin.unload_allowed(self, plugin, capability)
 
     def dependency_injected(self, plugin):
-        colony.plugins.plugin_system.Plugin.dependency_injected(self, plugin)
+        colony.base.plugin_system.Plugin.dependency_injected(self, plugin)
 
     def get_function_identifiers(self):
         return self.search_scorer_function_repository.get_function_identifiers()
@@ -95,14 +95,14 @@ class SearchScorerFunctionRepositoryPlugin(colony.plugins.plugin_system.Plugin):
     def get_function(self, scorer_function_identifier):
         return self.search_scorer_function_repository.get_function(scorer_function_identifier)
 
-    @colony.plugins.decorators.load_allowed_capability("search_scorer_function_bundle")
+    @colony.base.decorators.load_allowed_capability("search_scorer_function_bundle")
     def search_scorer_function_bundle_load_allowed(self, plugin, capability):
         self.search_scorer_function_bundle_plugins.append(plugin)
 
         plugin_functions_map = plugin.get_functions_map()
         self.search_scorer_function_repository.add_search_scorer_functions_map(plugin_functions_map)
 
-    @colony.plugins.decorators.unload_allowed_capability("search_scorer_function_bundle")
+    @colony.base.decorators.unload_allowed_capability("search_scorer_function_bundle")
     def search_scorer_function_bundle_unload_allowed(self, plugin, capability):
         self.search_scorer_function_bundle_plugins.remove(plugin)
 

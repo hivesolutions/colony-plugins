@@ -37,9 +37,9 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-import colony.plugins.plugin_system
+import colony.base.plugin_system
 
-class SearchScorerMetricRepositoryPlugin(colony.plugins.plugin_system.Plugin):
+class SearchScorerMetricRepositoryPlugin(colony.base.plugin_system.Plugin):
     """
     The main class for the Search Scorer Metric Repository Plugin.
     """
@@ -50,8 +50,8 @@ class SearchScorerMetricRepositoryPlugin(colony.plugins.plugin_system.Plugin):
     description = "Plugin that provides directory services to discover available metric types for scoring purposes"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
-    loading_type = colony.plugins.plugin_system.EAGER_LOADING_TYPE
-    platforms = [colony.plugins.plugin_system.CPYTHON_ENVIRONMENT]
+    loading_type = colony.base.plugin_system.EAGER_LOADING_TYPE
+    platforms = [colony.base.plugin_system.CPYTHON_ENVIRONMENT]
     attributes = {"build_automation_file_path" : "$base{plugin_directory}/search_scorer/metric_repository/resources/baf.xml"}
     capabilities = ["search_scorer_metric_repository", "build_automation_item"]
     capabilities_allowed = ["search_scorer_metric_bundle"]
@@ -64,30 +64,30 @@ class SearchScorerMetricRepositoryPlugin(colony.plugins.plugin_system.Plugin):
     search_scorer_metric_bundle_plugins = []
 
     def load_plugin(self):
-        colony.plugins.plugin_system.Plugin.load_plugin(self)
+        colony.base.plugin_system.Plugin.load_plugin(self)
         global search_scorer
         import search_scorer.metric_repository.search_scorer_metric_repository_system
         self.search_scorer_metric_repository = search_scorer.metric_repository.search_scorer_metric_repository_system.SearchScorerMetricRepository(self)
 
     def end_load_plugin(self):
-        colony.plugins.plugin_system.Plugin.end_load_plugin(self)
+        colony.base.plugin_system.Plugin.end_load_plugin(self)
 
     def unload_plugin(self):
-        colony.plugins.plugin_system.Plugin.unload_plugin(self)
+        colony.base.plugin_system.Plugin.unload_plugin(self)
 
     def end_unload_plugin(self):
-        colony.plugins.plugin_system.Plugin.end_unload_plugin(self)
+        colony.base.plugin_system.Plugin.end_unload_plugin(self)
 
-    @colony.plugins.decorators.load_allowed("pt.hive.colony.plugins.search.scorer.metric_repository", "1.0.0")
+    @colony.base.decorators.load_allowed("pt.hive.colony.plugins.search.scorer.metric_repository", "1.0.0")
     def load_allowed(self, plugin, capability):
-        colony.plugins.plugin_system.Plugin.load_allowed(self, plugin, capability)
+        colony.base.plugin_system.Plugin.load_allowed(self, plugin, capability)
 
-    @colony.plugins.decorators.unload_allowed("pt.hive.colony.plugins.search.scorer.metric_repository", "1.0.0")
+    @colony.base.decorators.unload_allowed("pt.hive.colony.plugins.search.scorer.metric_repository", "1.0.0")
     def unload_allowed(self, plugin, capability):
-        colony.plugins.plugin_system.Plugin.unload_allowed(self, plugin, capability)
+        colony.base.plugin_system.Plugin.unload_allowed(self, plugin, capability)
 
     def dependency_injected(self, plugin):
-        colony.plugins.plugin_system.Plugin.dependency_injected(self, plugin)
+        colony.base.plugin_system.Plugin.dependency_injected(self, plugin)
 
     def get_metric_identifiers(self):
         return self.search_scorer_metric_repository.get_metric_identifiers()
@@ -98,14 +98,14 @@ class SearchScorerMetricRepositoryPlugin(colony.plugins.plugin_system.Plugin):
     def get_metrics(self, scorer_metric_identifier_list):
         return self.search_scorer_metric_repository.get_metrics(scorer_metric_identifier_list)
 
-    @colony.plugins.decorators.load_allowed_capability("search_scorer_metric_bundle")
+    @colony.base.decorators.load_allowed_capability("search_scorer_metric_bundle")
     def search_scorer_metric_bundle_load_allowed(self, plugin, capability):
         self.search_scorer_metric_bundle_plugins.append(plugin)
 
         plugin_metrics_map = plugin.get_metrics_map()
         self.search_scorer_metric_repository.add_search_scorer_metrics_map(plugin_metrics_map)
 
-    @colony.plugins.decorators.unload_allowed_capability("search_scorer_metric_bundle")
+    @colony.base.decorators.unload_allowed_capability("search_scorer_metric_bundle")
     def search_scorer_metric_bundle_unload_allowed(self, plugin, capability):
         self.search_scorer_metric_bundle_plugins.remove(plugin)
 

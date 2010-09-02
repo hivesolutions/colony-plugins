@@ -37,10 +37,10 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-import colony.plugins.plugin_system
-import colony.plugins.decorators
+import colony.base.plugin_system
+import colony.base.decorators
 
-class EurekaEnginePlugin(colony.plugins.plugin_system.Plugin):
+class EurekaEnginePlugin(colony.base.plugin_system.Plugin):
     """
     The main class for the Eureka Engine plugin.
     """
@@ -51,8 +51,8 @@ class EurekaEnginePlugin(colony.plugins.plugin_system.Plugin):
     description = "Eureka Engine Plugin"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
-    loading_type = colony.plugins.plugin_system.EAGER_LOADING_TYPE
-    platforms = [colony.plugins.plugin_system.CPYTHON_ENVIRONMENT]
+    loading_type = colony.base.plugin_system.EAGER_LOADING_TYPE
+    platforms = [colony.base.plugin_system.CPYTHON_ENVIRONMENT]
     attributes = {"build_automation_file_path" : "$base{plugin_directory}/eureka/resources/baf.xml"}
     capabilities = ["eureka_engine", "plugin_test_case_bundle", "build_automation_item"]
     capabilities_allowed = ["eureka_item_extension", "eureka_engine_item_processer.filter", "eureka_engine_item_processer.mapper", "eureka_engine_item_processer.sorter"]
@@ -69,7 +69,7 @@ class EurekaEnginePlugin(colony.plugins.plugin_system.Plugin):
     eureka_item_sorter_plugins = []
 
     def load_plugin(self):
-        colony.plugins.plugin_system.Plugin.load_plugin(self)
+        colony.base.plugin_system.Plugin.load_plugin(self)
         global eureka
         import eureka.eureka_engine_system
         import eureka.eureka_engine_test
@@ -77,24 +77,24 @@ class EurekaEnginePlugin(colony.plugins.plugin_system.Plugin):
         self.eureka_engine_test = eureka.eureka_engine_test.EurekaEngineTest(self)
 
     def end_load_plugin(self):
-        colony.plugins.plugin_system.Plugin.end_load_plugin(self)
+        colony.base.plugin_system.Plugin.end_load_plugin(self)
 
     def unload_plugin(self):
-        colony.plugins.plugin_system.Plugin.unload_plugin(self)
+        colony.base.plugin_system.Plugin.unload_plugin(self)
 
     def end_unload_plugin(self):
-        colony.plugins.plugin_system.Plugin.end_unload_plugin(self)
+        colony.base.plugin_system.Plugin.end_unload_plugin(self)
 
-    @colony.plugins.decorators.load_allowed("pt.hive.colony.plugins.eureka.engine", "1.0.0")
+    @colony.base.decorators.load_allowed("pt.hive.colony.plugins.eureka.engine", "1.0.0")
     def load_allowed(self, plugin, capability):
-        colony.plugins.plugin_system.Plugin.load_allowed(self, plugin, capability)
+        colony.base.plugin_system.Plugin.load_allowed(self, plugin, capability)
 
-    @colony.plugins.decorators.unload_allowed("pt.hive.colony.plugins.eureka.engine", "1.0.0")
+    @colony.base.decorators.unload_allowed("pt.hive.colony.plugins.eureka.engine", "1.0.0")
     def unload_allowed(self, plugin, capability):
-        colony.plugins.plugin_system.Plugin.unload_allowed(self, plugin, capability)
+        colony.base.plugin_system.Plugin.unload_allowed(self, plugin, capability)
 
     def dependency_injected(self, plugin):
-        colony.plugins.plugin_system.Plugin.dependency_injected(self, plugin)
+        colony.base.plugin_system.Plugin.dependency_injected(self, plugin)
 
     def get_items_for_string(self, search_string, max_items):
         """
@@ -137,34 +137,34 @@ class EurekaEnginePlugin(colony.plugins.plugin_system.Plugin):
     def get_plugin_test_case_bundle(self):
         return self.eureka_engine_test.get_plugin_test_case_bundle()
 
-    @colony.plugins.decorators.load_allowed_capability("eureka_item_extension")
+    @colony.base.decorators.load_allowed_capability("eureka_item_extension")
     def eureka_item_extension_load_allowed(self, plugin, capability):
         self.eureka_item_extension_plugins.append(plugin)
 
-    @colony.plugins.decorators.load_allowed_capability("eureka_engine_item_processer.filter")
+    @colony.base.decorators.load_allowed_capability("eureka_engine_item_processer.filter")
     def eureka_item_filter_load_allowed(self, plugin, capability):
         self.eureka_item_filter_plugins.append(plugin)
 
-    @colony.plugins.decorators.load_allowed_capability("eureka_engine_item_processer.mapper")
+    @colony.base.decorators.load_allowed_capability("eureka_engine_item_processer.mapper")
     def eureka_item_mapper_load_allowed(self, plugin, capability):
         self.eureka_item_mapper_plugins.append(plugin)
 
-    @colony.plugins.decorators.load_allowed_capability("eureka_engine_item_processer.sorter")
+    @colony.base.decorators.load_allowed_capability("eureka_engine_item_processer.sorter")
     def eureka_item_sorter_load_allowed(self, plugin, capability):
         self.eureka_item_sorter_plugins.append(plugin)
 
-    @colony.plugins.decorators.unload_allowed_capability("eureka_item_extension")
+    @colony.base.decorators.unload_allowed_capability("eureka_item_extension")
     def eureka_item_extension_unload_allowed(self, plugin, capability):
         self.eureka_item_extension_plugins.remove(plugin)
 
-    @colony.plugins.decorators.unload_allowed_capability("eureka_engine_item_processer.filter")
+    @colony.base.decorators.unload_allowed_capability("eureka_engine_item_processer.filter")
     def eureka_item_filter_unload_allowed(self, plugin, capability):
         self.eureka_item_filter_plugins.remove(plugin)
 
-    @colony.plugins.decorators.unload_allowed_capability("eureka_engine_item_processer.mapper")
+    @colony.base.decorators.unload_allowed_capability("eureka_engine_item_processer.mapper")
     def eureka_item_mapper_unload_allowed(self, plugin, capability):
         self.eureka_item_mapper_plugins.remove(plugin)
 
-    @colony.plugins.decorators.unload_allowed_capability("eureka_engine_item_processer.sorter")
+    @colony.base.decorators.unload_allowed_capability("eureka_engine_item_processer.sorter")
     def eureka_item_sorter_unload_allowed(self, plugin, capability):
         self.eureka_item_sorter_plugins.remove(plugin)

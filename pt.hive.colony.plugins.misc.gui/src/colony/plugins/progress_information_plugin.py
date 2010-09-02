@@ -37,9 +37,9 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-import colony.plugins.plugin_system
+import colony.base.plugin_system
 
-class ProgressInformationPlugin(colony.plugins.plugin_system.Plugin):
+class ProgressInformationPlugin(colony.base.plugin_system.Plugin):
     """
     The main class for the Progress Information plugin
     """
@@ -50,14 +50,14 @@ class ProgressInformationPlugin(colony.plugins.plugin_system.Plugin):
     description = "Progress Information Plugin"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
-    loading_type = colony.plugins.plugin_system.EAGER_LOADING_TYPE
-    platforms = [colony.plugins.plugin_system.CPYTHON_ENVIRONMENT]
+    loading_type = colony.base.plugin_system.EAGER_LOADING_TYPE
+    platforms = [colony.base.plugin_system.CPYTHON_ENVIRONMENT]
     attributes = {"build_automation_file_path" : "$base{plugin_directory}/misc_gui/progress_information/resources/baf.xml"}
     capabilities = ["gui_progress_information", "build_automation_item"]
     capabilities_allowed = ["task_information"]
-    dependencies = [colony.plugins.plugin_system.PluginDependency(
+    dependencies = [colony.base.plugin_system.PluginDependency(
                     "pt.hive.colony.plugins.misc.bitmap_loader", "1.0.0"),
-                    colony.plugins.plugin_system.PackageDependency(
+                    colony.base.plugin_system.PackageDependency(
                     "Wx Python", "wx", "2.8.7.x", "http://wxpython.org")]
     events_handled = ["gui_progress_information_changed"]
     events_registrable = ["task_information_changed"]
@@ -68,37 +68,37 @@ class ProgressInformationPlugin(colony.plugins.plugin_system.Plugin):
     bitmap_loader_plugin = None
 
     def load_plugin(self):
-        colony.plugins.plugin_system.Plugin.load_plugin(self)
+        colony.base.plugin_system.Plugin.load_plugin(self)
         global misc_gui
         import misc_gui.progress_information.progress_information_system
         self.progress_information = misc_gui.progress_information.progress_information_system.ProgressInformation(self)
 
     def end_load_plugin(self):
-        colony.plugins.plugin_system.Plugin.end_load_plugin(self)
+        colony.base.plugin_system.Plugin.end_load_plugin(self)
 
     def unload_plugin(self):
-        colony.plugins.plugin_system.Plugin.unload_plugin(self)
+        colony.base.plugin_system.Plugin.unload_plugin(self)
 
     def end_unload_plugin(self):
-        colony.plugins.plugin_system.Plugin.end_unload_plugin(self)
+        colony.base.plugin_system.Plugin.end_unload_plugin(self)
 
     def load_allowed(self, plugin, capability):
-        colony.plugins.plugin_system.Plugin.load_allowed(self, plugin, capability)
+        colony.base.plugin_system.Plugin.load_allowed(self, plugin, capability)
 
     def unload_allowed(self, plugin, capability):
-        colony.plugins.plugin_system.Plugin.unload_allowed(self, plugin, capability)
+        colony.base.plugin_system.Plugin.unload_allowed(self, plugin, capability)
 
     def dependency_injected(self, plugin):
-        colony.plugins.plugin_system.Plugin.dependency_injected(self, plugin)
-        if colony.plugins.plugin_system.is_capability_or_sub_capability_in_list("bitmap_load", plugin.capabilities):
+        colony.base.plugin_system.Plugin.dependency_injected(self, plugin)
+        if colony.base.plugin_system.is_capability_or_sub_capability_in_list("bitmap_load", plugin.capabilities):
             self.bitmap_loader_plugin = plugin
 
-    @colony.plugins.decorators.event_handler("pt.hive.colony.plugins.misc.gui.progress_information", "1.0.0")
+    @colony.base.decorators.event_handler("pt.hive.colony.plugins.misc.gui.progress_information", "1.0.0")
     def event_handler(self, event_name, *event_args):
         try:
-            colony.plugins.plugin_system.Plugin.event_handler(self, event_name, *event_args)
+            colony.base.plugin_system.Plugin.event_handler(self, event_name, *event_args)
         except Exception, exception:
-            colony.plugins.plugin_system.Plugin.treat_exception(self, exception)
+            colony.base.plugin_system.Plugin.treat_exception(self, exception)
 
     def do_panel(self, parent):
         return self.progress_information.do_panel(parent)
@@ -106,6 +106,6 @@ class ProgressInformationPlugin(colony.plugins.plugin_system.Plugin):
     def add_task_progress_information_item(self, task_name, task_description, current_description, percentage_complete, bitmap):
         return self.progress_information.add_task_progress_information_item(task_name, task_description, current_description, percentage_complete, bitmap)
 
-    @colony.plugins.decorators.event_handler_method("task_information_changed")
+    @colony.base.decorators.event_handler_method("task_information_changed")
     def task_information_changed_handler(self, event_name, *event_args):
         self.progress_information.process_task_information_changed_event(event_name, event_args)

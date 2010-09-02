@@ -37,10 +37,10 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-import colony.plugins.plugin_system
-import colony.plugins.decorators
+import colony.base.plugin_system
+import colony.base.decorators
 
-class SpecificationManagerPlugin(colony.plugins.plugin_system.Plugin):
+class SpecificationManagerPlugin(colony.base.plugin_system.Plugin):
     """
     The main class for the Specification Manager plugin.
     """
@@ -51,8 +51,8 @@ class SpecificationManagerPlugin(colony.plugins.plugin_system.Plugin):
     description = "Plugin used to retrieve specification from plugin description file"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
-    loading_type = colony.plugins.plugin_system.EAGER_LOADING_TYPE
-    platforms = [colony.plugins.plugin_system.CPYTHON_ENVIRONMENT]
+    loading_type = colony.base.plugin_system.EAGER_LOADING_TYPE
+    platforms = [colony.base.plugin_system.CPYTHON_ENVIRONMENT]
     attributes = {"build_automation_file_path" : "$base{plugin_directory}/specifications/specification_manager/resources/baf.xml"}
     capabilities = ["specification_manager", "build_automation_item"]
     capabilities_allowed = ["specification_parser"]
@@ -66,30 +66,30 @@ class SpecificationManagerPlugin(colony.plugins.plugin_system.Plugin):
     specification_parser_plugins = []
 
     def load_plugin(self):
-        colony.plugins.plugin_system.Plugin.load_plugin(self)
+        colony.base.plugin_system.Plugin.load_plugin(self)
         global specifications
         import specifications.specification_manager.specification_manager_system
         self.specification_manager = specifications.specification_manager.specification_manager_system.SepecificationManager(self)
 
     def end_load_plugin(self):
-        colony.plugins.plugin_system.Plugin.end_load_plugin(self)
+        colony.base.plugin_system.Plugin.end_load_plugin(self)
 
     def unload_plugin(self):
-        colony.plugins.plugin_system.Plugin.unload_plugin(self)
+        colony.base.plugin_system.Plugin.unload_plugin(self)
 
     def end_unload_plugin(self):
-        colony.plugins.plugin_system.Plugin.end_unload_plugin(self)
+        colony.base.plugin_system.Plugin.end_unload_plugin(self)
 
-    @colony.plugins.decorators.load_allowed("pt.hive.colony.plugins.specifications.specification_manager", "1.0.0")
+    @colony.base.decorators.load_allowed("pt.hive.colony.plugins.specifications.specification_manager", "1.0.0")
     def load_allowed(self, plugin, capability):
-        colony.plugins.plugin_system.Plugin.load_allowed(self, plugin, capability)
+        colony.base.plugin_system.Plugin.load_allowed(self, plugin, capability)
 
-    @colony.plugins.decorators.unload_allowed("pt.hive.colony.plugins.specifications.specification_manager", "1.0.0")
+    @colony.base.decorators.unload_allowed("pt.hive.colony.plugins.specifications.specification_manager", "1.0.0")
     def unload_allowed(self, plugin, capability):
-        colony.plugins.plugin_system.Plugin.unload_allowed(self, plugin, capability)
+        colony.base.plugin_system.Plugin.unload_allowed(self, plugin, capability)
 
     def dependency_injected(self, plugin):
-        colony.plugins.plugin_system.Plugin.dependency_injected(self, plugin)
+        colony.base.plugin_system.Plugin.dependency_injected(self, plugin)
 
     def get_plugin_specification(self, file_path, properties):
         """
@@ -119,12 +119,12 @@ class SpecificationManagerPlugin(colony.plugins.plugin_system.Plugin):
 
         return self.specification_manager.get_plugin_specification_file_buffer(file_buffer, properties)
 
-    @colony.plugins.decorators.load_allowed_capability("specification_parser")
+    @colony.base.decorators.load_allowed_capability("specification_parser")
     def specification_parser_capability_load_allowed(self, plugin, capability):
         self.specification_parser_plugins.append(plugin)
         self.specification_manager.specification_parser_load(plugin)
 
-    @colony.plugins.decorators.unload_allowed_capability("specification_parser")
+    @colony.base.decorators.unload_allowed_capability("specification_parser")
     def specification_parser_capability_unload_allowed(self, plugin, capability):
         self.specification_parser_plugins.remove(plugin)
         self.specification_manager.specification_parser_unload(plugin)

@@ -37,10 +37,10 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-import colony.plugins.plugin_system
-import colony.plugins.decorators
+import colony.base.plugin_system
+import colony.base.decorators
 
-class MessagingManagerPlugin(colony.plugins.plugin_system.Plugin):
+class MessagingManagerPlugin(colony.base.plugin_system.Plugin):
     """
     The main class for the Messaging Manager plugin.
     """
@@ -51,8 +51,8 @@ class MessagingManagerPlugin(colony.plugins.plugin_system.Plugin):
     description = "A plugin to manage the messaging service"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
-    loading_type = colony.plugins.plugin_system.EAGER_LOADING_TYPE
-    platforms = [colony.plugins.plugin_system.CPYTHON_ENVIRONMENT]
+    loading_type = colony.base.plugin_system.EAGER_LOADING_TYPE
+    platforms = [colony.base.plugin_system.CPYTHON_ENVIRONMENT]
     attributes = {"build_automation_file_path" : "$base{plugin_directory}/messaging/manager/resources/baf.xml"}
     capabilities = ["messaging_manager", "build_automation_item"]
     capabilities_allowed = ["messaging_extension"]
@@ -65,40 +65,40 @@ class MessagingManagerPlugin(colony.plugins.plugin_system.Plugin):
     messaging_extension_plugins = []
 
     def load_plugin(self):
-        colony.plugins.plugin_system.Plugin.load_plugin(self)
+        colony.base.plugin_system.Plugin.load_plugin(self)
         global messaging
         import messaging.manager.messaging_manager_system
         self.messaging_manager = messaging.manager.messaging_manager_system.MessagingManager(self)
 
     def end_load_plugin(self):
-        colony.plugins.plugin_system.Plugin.end_load_plugin(self)
+        colony.base.plugin_system.Plugin.end_load_plugin(self)
 
     def unload_plugin(self):
-        colony.plugins.plugin_system.Plugin.unload_plugin(self)
+        colony.base.plugin_system.Plugin.unload_plugin(self)
 
     def end_unload_plugin(self):
-        colony.plugins.plugin_system.Plugin.end_unload_plugin(self)
+        colony.base.plugin_system.Plugin.end_unload_plugin(self)
 
-    @colony.plugins.decorators.load_allowed("pt.hive.colony.plugins.messaging.manager", "1.0.0")
+    @colony.base.decorators.load_allowed("pt.hive.colony.plugins.messaging.manager", "1.0.0")
     def load_allowed(self, plugin, capability):
-        colony.plugins.plugin_system.Plugin.load_allowed(self, plugin, capability)
+        colony.base.plugin_system.Plugin.load_allowed(self, plugin, capability)
 
-    @colony.plugins.decorators.unload_allowed("pt.hive.colony.plugins.messaging.manager", "1.0.0")
+    @colony.base.decorators.unload_allowed("pt.hive.colony.plugins.messaging.manager", "1.0.0")
     def unload_allowed(self, plugin, capability):
-        colony.plugins.plugin_system.Plugin.unload_allowed(self, plugin, capability)
+        colony.base.plugin_system.Plugin.unload_allowed(self, plugin, capability)
 
     def dependency_injected(self, plugin):
-        colony.plugins.plugin_system.Plugin.dependency_injected(self, plugin)
+        colony.base.plugin_system.Plugin.dependency_injected(self, plugin)
 
     def send_message(self, messaging_service_id, message_attributes):
         self.messaging_manager.send_message(messaging_service_id, message_attributes)
 
-    @colony.plugins.decorators.load_allowed_capability("messaging_extension")
+    @colony.base.decorators.load_allowed_capability("messaging_extension")
     def messaging_extension_load_allowed(self, plugin, capability):
         self.messaging_extension_plugins.append(plugin)
         self.messaging_manager.load_messaging_extension_plugin(plugin)
 
-    @colony.plugins.decorators.unload_allowed_capability("messaging_extension")
+    @colony.base.decorators.unload_allowed_capability("messaging_extension")
     def messaging_extension_unload_allowed(self, plugin, capability):
         self.messaging_extension_plugins.remove(plugin)
         self.messaging_manager.unload_messaging_extension_plugin(plugin)

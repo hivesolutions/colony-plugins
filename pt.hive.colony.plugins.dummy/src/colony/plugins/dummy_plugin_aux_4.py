@@ -39,7 +39,7 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 import time
 
-import colony.plugins.plugin_system
+import colony.base.plugin_system
 
 STATUS_TASK_CREATED = 1
 STATUS_TASK_RUNNING = 2
@@ -48,7 +48,7 @@ STATUS_TASK_STOPPED = 4
 
 TIMEOUT = 0.5
 
-class DummyPluginAux4(colony.plugins.plugin_system.Plugin):
+class DummyPluginAux4(colony.base.plugin_system.Plugin):
     """
     The main class for the Dummy Aux 4 plugin.
     """
@@ -59,14 +59,14 @@ class DummyPluginAux4(colony.plugins.plugin_system.Plugin):
     description = "Dummy Aux 4 Plugin"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
-    loading_type = colony.plugins.plugin_system.EAGER_LOADING_TYPE
-    platforms = [colony.plugins.plugin_system.CPYTHON_ENVIRONMENT,
-                 colony.plugins.plugin_system.JYTHON_ENVIRONMENT,
-                 colony.plugins.plugin_system.IRON_PYTHON_ENVIRONMENT]
+    loading_type = colony.base.plugin_system.EAGER_LOADING_TYPE
+    platforms = [colony.base.plugin_system.CPYTHON_ENVIRONMENT,
+                 colony.base.plugin_system.JYTHON_ENVIRONMENT,
+                 colony.base.plugin_system.IRON_PYTHON_ENVIRONMENT]
     attributes = {"build_automation_file_path" : "$base{plugin_directory}/dummy/aux_4/resources/baf.xml"}
     capabilities = ["dummy_aux4_capability", "task_information", "build_automation_item"]
     capabilities_allowed = []
-    dependencies = [colony.plugins.plugin_system.PluginDependency(
+    dependencies = [colony.base.plugin_system.PluginDependency(
                     "pt.hive.colony.plugins.main.tasks.task_manager", "1.0.0")]
     events_handled = ["task_information_changed"]
     events_registrable = []
@@ -74,30 +74,30 @@ class DummyPluginAux4(colony.plugins.plugin_system.Plugin):
     task_manager_plugin = None
 
     def load_plugin(self):
-        colony.plugins.plugin_system.Plugin.load_plugin(self)
+        colony.base.plugin_system.Plugin.load_plugin(self)
         print "loading dummy aux 4..."
 
     def end_load_plugin(self):
-        colony.plugins.plugin_system.Plugin.end_load_plugin(self)
+        colony.base.plugin_system.Plugin.end_load_plugin(self)
 
     def unload_plugin(self):
-        colony.plugins.plugin_system.Plugin.unload_plugin(self)
+        colony.base.plugin_system.Plugin.unload_plugin(self)
         print "unloading dummy aux 4..."
 
     def end_unload_plugin(self):
-        colony.plugins.plugin_system.Plugin.end_unload_plugin(self)
+        colony.base.plugin_system.Plugin.end_unload_plugin(self)
 
     def load_allowed(self, plugin, capability):
-        colony.plugins.plugin_system.Plugin.load_allowed(self, plugin, capability)
+        colony.base.plugin_system.Plugin.load_allowed(self, plugin, capability)
         print "loading dummy aux 4 allowed..."
 
     def unload_allowed(self, plugin, capability):
-        colony.plugins.plugin_system.Plugin.unload_allowed(self, plugin, capability)
+        colony.base.plugin_system.Plugin.unload_allowed(self, plugin, capability)
         print "unloading dummy aux 4 allowed..."
 
     def dependency_injected(self, plugin):
-        colony.plugins.plugin_system.Plugin.dependency_injected(self, plugin)
-        if colony.plugins.plugin_system.is_capability_or_sub_capability_in_list("task_manager", plugin.capabilities):
+        colony.base.plugin_system.Plugin.dependency_injected(self, plugin)
+        if colony.base.plugin_system.is_capability_or_sub_capability_in_list("task_manager", plugin.capabilities):
             self.task_manager_plugin = plugin
 
     def test_create_task(self):

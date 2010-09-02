@@ -37,10 +37,10 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-import colony.plugins.plugin_system
-import colony.plugins.decorators
+import colony.base.plugin_system
+import colony.base.decorators
 
-class SearchInterpreterPlugin(colony.plugins.plugin_system.Plugin):
+class SearchInterpreterPlugin(colony.base.plugin_system.Plugin):
     """
     The main class for the Search Interpreter plugin.
     """
@@ -51,8 +51,8 @@ class SearchInterpreterPlugin(colony.plugins.plugin_system.Plugin):
     description = "Search Interpreter Plugin"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
-    loading_type = colony.plugins.plugin_system.EAGER_LOADING_TYPE
-    platforms = [colony.plugins.plugin_system.CPYTHON_ENVIRONMENT]
+    loading_type = colony.base.plugin_system.EAGER_LOADING_TYPE
+    platforms = [colony.base.plugin_system.CPYTHON_ENVIRONMENT]
     attributes = {"build_automation_file_path" : "$base{plugin_directory}/search_interpreter/interpreter/resources/baf.xml"}
     capabilities = ["search_interpreter", "build_automation_item"]
     capabilities_allowed = ["search_interpreter_adapter"]
@@ -65,38 +65,38 @@ class SearchInterpreterPlugin(colony.plugins.plugin_system.Plugin):
     search_interpreter_adapter_plugins = []
 
     def load_plugin(self):
-        colony.plugins.plugin_system.Plugin.load_plugin(self)
+        colony.base.plugin_system.Plugin.load_plugin(self)
         global search_interpreter
         import search_interpreter.interpreter.search_interpreter_system
         self.search_intepreter = search_interpreter.interpreter.search_interpreter_system.SearchInterpreter(self)
 
     def end_load_plugin(self):
-        colony.plugins.plugin_system.Plugin.end_load_plugin(self)
+        colony.base.plugin_system.Plugin.end_load_plugin(self)
 
     def unload_plugin(self):
-        colony.plugins.plugin_system.Plugin.unload_plugin(self)
+        colony.base.plugin_system.Plugin.unload_plugin(self)
 
     def end_unload_plugin(self):
-        colony.plugins.plugin_system.Plugin.end_unload_plugin(self)
+        colony.base.plugin_system.Plugin.end_unload_plugin(self)
 
-    @colony.plugins.decorators.load_allowed("pt.hive.colony.plugins.search.interpreter", "1.0.0")
+    @colony.base.decorators.load_allowed("pt.hive.colony.plugins.search.interpreter", "1.0.0")
     def load_allowed(self, plugin, capability):
-        colony.plugins.plugin_system.Plugin.load_allowed(self, plugin, capability)
+        colony.base.plugin_system.Plugin.load_allowed(self, plugin, capability)
 
-    @colony.plugins.decorators.unload_allowed("pt.hive.colony.plugins.search.interpreter", "1.0.0")
+    @colony.base.decorators.unload_allowed("pt.hive.colony.plugins.search.interpreter", "1.0.0")
     def unload_allowed(self, plugin, capability):
-        colony.plugins.plugin_system.Plugin.unload_allowed(self, plugin, capability)
+        colony.base.plugin_system.Plugin.unload_allowed(self, plugin, capability)
 
     def dependency_injected(self, plugin):
-        colony.plugins.plugin_system.Plugin.dependency_injected(self, plugin)
+        colony.base.plugin_system.Plugin.dependency_injected(self, plugin)
 
     def process_tokens_list(self, tokens_list, properties):
         return self.search_intepreter.process_tokens_list(tokens_list, properties)
 
-    @colony.plugins.decorators.load_allowed_capability("search_interpreter_adapter")
+    @colony.base.decorators.load_allowed_capability("search_interpreter_adapter")
     def search_interpreter_adapter_load_allowed(self, plugin, capability):
         self.search_interpreter_adapter_plugins.append(plugin)
 
-    @colony.plugins.decorators.unload_allowed_capability("search_interpreter_adapter")
+    @colony.base.decorators.unload_allowed_capability("search_interpreter_adapter")
     def search_interpreter_adapter_unload_allowed(self, plugin, capability):
         self.search_interpreter_adapter_plugins.remove(plugin)

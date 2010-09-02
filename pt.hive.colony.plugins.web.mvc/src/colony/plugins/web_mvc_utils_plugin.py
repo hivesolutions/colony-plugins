@@ -37,10 +37,10 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-import colony.plugins.plugin_system
-import colony.plugins.decorators
+import colony.base.plugin_system
+import colony.base.decorators
 
-class WebMvcUtilsPlugin(colony.plugins.plugin_system.Plugin):
+class WebMvcUtilsPlugin(colony.base.plugin_system.Plugin):
     """
     The main class for the Web Mvc Utils plugin.
     """
@@ -51,18 +51,18 @@ class WebMvcUtilsPlugin(colony.plugins.plugin_system.Plugin):
     description = "The plugin that offers the top-level abstractions for mvc processing"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
-    loading_type = colony.plugins.plugin_system.EAGER_LOADING_TYPE
-    platforms = [colony.plugins.plugin_system.CPYTHON_ENVIRONMENT]
+    loading_type = colony.base.plugin_system.EAGER_LOADING_TYPE
+    platforms = [colony.base.plugin_system.CPYTHON_ENVIRONMENT]
     attributes = {"build_automation_file_path" : "$base{plugin_directory}/web_mvc_utils/mvc_utils/resources/baf.xml"}
     capabilities = ["web.mvc.utils", "build_automation_item"]
     capabilities_allowed = []
-    dependencies = [colony.plugins.plugin_system.PluginDependency(
+    dependencies = [colony.base.plugin_system.PluginDependency(
                     "pt.hive.colony.plugins.template_engine.manager", "1.0.0"),
-                    colony.plugins.plugin_system.PluginDependency(
+                    colony.base.plugin_system.PluginDependency(
                     "pt.hive.colony.plugins.data.entity_manager", "1.0.0"),
-                    colony.plugins.plugin_system.PluginDependency(
+                    colony.base.plugin_system.PluginDependency(
                     "pt.hive.colony.plugins.business.helper", "1.0.0"),
-                    colony.plugins.plugin_system.PluginDependency(
+                    colony.base.plugin_system.PluginDependency(
                     "pt.hive.colony.plugins.web.mvc.search", "1.0.0")]
     events_handled = []
     events_registrable = []
@@ -78,29 +78,29 @@ class WebMvcUtilsPlugin(colony.plugins.plugin_system.Plugin):
     web_mvc_search_plugin = None
 
     def load_plugin(self):
-        colony.plugins.plugin_system.Plugin.load_plugin(self)
+        colony.base.plugin_system.Plugin.load_plugin(self)
         global web_mvc_utils
         import web_mvc_utils.mvc_utils.web_mvc_utils_system
         self.web_mvc_utils = web_mvc_utils.mvc_utils.web_mvc_utils_system.WebMvcUtils(self)
 
     def end_load_plugin(self):
-        colony.plugins.plugin_system.Plugin.end_load_plugin(self)
+        colony.base.plugin_system.Plugin.end_load_plugin(self)
 
     def unload_plugin(self):
-        colony.plugins.plugin_system.Plugin.unload_plugin(self)
+        colony.base.plugin_system.Plugin.unload_plugin(self)
 
     def end_unload_plugin(self):
-        colony.plugins.plugin_system.Plugin.end_unload_plugin(self)
+        colony.base.plugin_system.Plugin.end_unload_plugin(self)
 
     def load_allowed(self, plugin, capability):
-        colony.plugins.plugin_system.Plugin.load_allowed(self, plugin, capability)
+        colony.base.plugin_system.Plugin.load_allowed(self, plugin, capability)
 
     def unload_allowed(self, plugin, capability):
-        colony.plugins.plugin_system.Plugin.unload_allowed(self, plugin, capability)
+        colony.base.plugin_system.Plugin.unload_allowed(self, plugin, capability)
 
-    @colony.plugins.decorators.inject_dependencies("pt.hive.colony.plugins.web.mvc.utils", "1.0.0")
+    @colony.base.decorators.inject_dependencies("pt.hive.colony.plugins.web.mvc.utils", "1.0.0")
     def dependency_injected(self, plugin):
-        colony.plugins.plugin_system.Plugin.dependency_injected(self, plugin)
+        colony.base.plugin_system.Plugin.dependency_injected(self, plugin)
 
     def create_model(self, base_model, base_arguments_list, base_arguments_map):
         return self.web_mvc_utils.create_model(base_model, base_arguments_list, base_arguments_map)
@@ -117,27 +117,27 @@ class WebMvcUtilsPlugin(colony.plugins.plugin_system.Plugin):
     def get_template_engine_manager_plugin(self):
         return self.template_engine_manager_plugin
 
-    @colony.plugins.decorators.plugin_inject("pt.hive.colony.plugins.template_engine.manager")
+    @colony.base.decorators.plugin_inject("pt.hive.colony.plugins.template_engine.manager")
     def set_template_engine_manager_plugin(self, template_engine_manager_plugin):
         self.template_engine_manager_plugin = template_engine_manager_plugin
 
     def get_entity_manager_plugin(self):
         return self.entity_manager_plugin
 
-    @colony.plugins.decorators.plugin_inject("pt.hive.colony.plugins.data.entity_manager")
+    @colony.base.decorators.plugin_inject("pt.hive.colony.plugins.data.entity_manager")
     def set_entity_manager_plugin(self, entity_manager_plugin):
         self.entity_manager_plugin = entity_manager_plugin
 
     def get_business_helper_plugin(self):
         return self.business_helper_plugin
 
-    @colony.plugins.decorators.plugin_inject("pt.hive.colony.plugins.business.helper")
+    @colony.base.decorators.plugin_inject("pt.hive.colony.plugins.business.helper")
     def set_business_helper_plugin(self, business_helper_plugin):
         self.business_helper_plugin = business_helper_plugin
 
     def get_web_mvc_search_plugin(self):
         return self.web_mvc_search_plugin
 
-    @colony.plugins.decorators.plugin_inject("pt.hive.colony.plugins.web.mvc.search")
+    @colony.base.decorators.plugin_inject("pt.hive.colony.plugins.web.mvc.search")
     def set_web_mvc_search_plugin(self, web_mvc_search_plugin):
         self.web_mvc_search_plugin = web_mvc_search_plugin

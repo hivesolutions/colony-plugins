@@ -43,7 +43,7 @@ import stat
 import wx.lib.scrolledpanel
 
 import progress_information_logic
-import colony.plugins.plugin_system
+import colony.base.plugin_system
 
 BASE_PATH = "/misc_gui"
 PROGRESS_INFORMATION_PATH = BASE_PATH + "/" + "progress_information"
@@ -120,7 +120,7 @@ class ProgressInformation:
 
     def process_task_information_changed_event(self, event_name, event_args):
         # in case it's a new task event
-        if colony.plugins.plugin_system.is_event_or_sub_event("task_information_changed.new_task", event_name):
+        if colony.base.plugin_system.is_event_or_sub_event("task_information_changed.new_task", event_name):
             # retrieves the task object from the event arguments
             task = event_args[0]
 
@@ -134,7 +134,7 @@ class ProgressInformation:
 
             self.task_id_task_progress_information_item_map[task.id] = task_progress_information_item
         # in case it's an updated task event
-        elif colony.plugins.plugin_system.is_event_or_sub_event("task_information_changed.updated_task", event_name):
+        elif colony.base.plugin_system.is_event_or_sub_event("task_information_changed.updated_task", event_name):
             # retrieves the task object from the event arguments
             task = event_args[0]
             # retrieves the map object with the argument value
@@ -154,7 +154,7 @@ class ProgressInformation:
                 elif args == "percentage_complete":
                     task_progress_information_item.set_percentage_complete(args_map[args])
         # in case it's a stopped task event
-        elif colony.plugins.plugin_system.is_event_or_sub_event("task_information_changed.stopped_task", event_name):
+        elif colony.base.plugin_system.is_event_or_sub_event("task_information_changed.stopped_task", event_name):
             # retrieves the task object from the event arguments
             task = event_args[0]
 

@@ -38,7 +38,7 @@ __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
 import colony.base.plugin_system
-import colony.plugins.decorators
+import colony.base.decorators
 
 class InstallationManagerPlugin(colony.base.plugin_system.Plugin):
     """
@@ -80,11 +80,11 @@ class InstallationManagerPlugin(colony.base.plugin_system.Plugin):
     def end_unload_plugin(self):
         colony.base.plugin_system.Plugin.end_unload_plugin(self)
 
-    @colony.plugins.decorators.load_allowed("pt.hive.colony.plugins.installation.manager", "1.0.0")
+    @colony.base.decorators.load_allowed("pt.hive.colony.plugins.installation.manager", "1.0.0")
     def load_allowed(self, plugin, capability):
         colony.base.plugin_system.Plugin.load_allowed(self, plugin, capability)
 
-    @colony.plugins.decorators.unload_allowed("pt.hive.colony.plugins.installation.manager", "1.0.0")
+    @colony.base.decorators.unload_allowed("pt.hive.colony.plugins.installation.manager", "1.0.0")
     def unload_allowed(self, plugin, capability):
         colony.base.plugin_system.Plugin.unload_allowed(self, plugin, capability)
 
@@ -101,12 +101,12 @@ class InstallationManagerPlugin(colony.base.plugin_system.Plugin):
 
         return self.installation_manager.generate_installation_file(parameters)
 
-    @colony.plugins.decorators.load_allowed_capability("installation.adapter")
+    @colony.base.decorators.load_allowed_capability("installation.adapter")
     def installation_adapter_load_allowed(self, plugin, capability):
         self.installation_adapter_plugins.append(plugin)
         self.installation_manager.installation_adapter_load(plugin)
 
-    @colony.plugins.decorators.unload_allowed_capability("installation.adapter")
+    @colony.base.decorators.unload_allowed_capability("installation.adapter")
     def installation_adapter_unload_allowed(self, plugin, capability):
         self.installation_adapter_plugins.remove(plugin)
         self.installation_manager.installation_adapter_unload(plugin)

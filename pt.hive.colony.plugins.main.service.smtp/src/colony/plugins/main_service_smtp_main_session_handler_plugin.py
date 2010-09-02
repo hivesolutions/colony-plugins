@@ -37,9 +37,9 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-import colony.plugins.plugin_system
+import colony.base.plugin_system
 
-class MainServiceSmtpMainSessionHandlerPlugin(colony.plugins.plugin_system.Plugin):
+class MainServiceSmtpMainSessionHandlerPlugin(colony.base.plugin_system.Plugin):
     """
     The main class for the Smtp Service Main Main Session Handler plugin.
     """
@@ -50,9 +50,9 @@ class MainServiceSmtpMainSessionHandlerPlugin(colony.plugins.plugin_system.Plugi
     description = "The plugin that offers the smtp service session main handler"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
-    loading_type = colony.plugins.plugin_system.EAGER_LOADING_TYPE
-    platforms = [colony.plugins.plugin_system.CPYTHON_ENVIRONMENT,
-                 colony.plugins.plugin_system.JYTHON_ENVIRONMENT]
+    loading_type = colony.base.plugin_system.EAGER_LOADING_TYPE
+    platforms = [colony.base.plugin_system.CPYTHON_ENVIRONMENT,
+                 colony.base.plugin_system.JYTHON_ENVIRONMENT]
     attributes = {"build_automation_file_path" : "$base{plugin_directory}/main_service_smtp_main_session_handler/main_session_handler/resources/baf.xml"}
     capabilities = ["smtp_service_session_handler", "build_automation_item"]
     capabilities_allowed = ["smtp_service_message_handler"]
@@ -67,30 +67,30 @@ class MainServiceSmtpMainSessionHandlerPlugin(colony.plugins.plugin_system.Plugi
     smtp_service_message_handler_plugins = []
 
     def load_plugin(self):
-        colony.plugins.plugin_system.Plugin.load_plugin(self)
+        colony.base.plugin_system.Plugin.load_plugin(self)
         global main_service_smtp_main_session_handler
         import main_service_smtp_main_session_handler.main_session_handler.main_service_smtp_main_session_handler_system
         self.main_service_smtp_main_session_handler = main_service_smtp_main_session_handler.main_session_handler.main_service_smtp_main_session_handler_system.MainServiceSmtpMainSessionHandler(self)
 
     def end_load_plugin(self):
-        colony.plugins.plugin_system.Plugin.end_load_plugin(self)
+        colony.base.plugin_system.Plugin.end_load_plugin(self)
 
     def unload_plugin(self):
-        colony.plugins.plugin_system.Plugin.unload_plugin(self)
+        colony.base.plugin_system.Plugin.unload_plugin(self)
 
     def end_unload_plugin(self):
-        colony.plugins.plugin_system.Plugin.end_unload_plugin(self)
+        colony.base.plugin_system.Plugin.end_unload_plugin(self)
 
-    @colony.plugins.decorators.load_allowed("pt.hive.colony.plugins.main.service.smtp.main_session_handler", "1.0.0")
+    @colony.base.decorators.load_allowed("pt.hive.colony.plugins.main.service.smtp.main_session_handler", "1.0.0")
     def load_allowed(self, plugin, capability):
-        colony.plugins.plugin_system.Plugin.load_allowed(self, plugin, capability)
+        colony.base.plugin_system.Plugin.load_allowed(self, plugin, capability)
 
-    @colony.plugins.decorators.unload_allowed("pt.hive.colony.plugins.main.service.smtp.main_session_handler", "1.0.0")
+    @colony.base.decorators.unload_allowed("pt.hive.colony.plugins.main.service.smtp.main_session_handler", "1.0.0")
     def unload_allowed(self, plugin, capability):
-        colony.plugins.plugin_system.Plugin.unload_allowed(self, plugin, capability)
+        colony.base.plugin_system.Plugin.unload_allowed(self, plugin, capability)
 
     def dependency_injected(self, plugin):
-        colony.plugins.plugin_system.Plugin.dependency_injected(self, plugin)
+        colony.base.plugin_system.Plugin.dependency_injected(self, plugin)
 
     def get_handler_name(self):
         """
@@ -114,12 +114,12 @@ class MainServiceSmtpMainSessionHandlerPlugin(colony.plugins.plugin_system.Plugi
 
         self.main_service_smtp_main_session_handler.handle_session(session, properties)
 
-    @colony.plugins.decorators.load_allowed_capability("smtp_service_message_handler")
+    @colony.base.decorators.load_allowed_capability("smtp_service_message_handler")
     def smtp_service_message_handler_load_allowed(self, plugin, capability):
         self.smtp_service_message_handler_plugins.append(plugin)
         self.main_service_smtp_main_session_handler.smtp_service_message_handler_load(plugin)
 
-    @colony.plugins.decorators.unload_allowed_capability("smtp_service_message_handler")
+    @colony.base.decorators.unload_allowed_capability("smtp_service_message_handler")
     def smtp_service_message_handler_unload_allowed(self, plugin, capability):
         self.smtp_service_message_handler_plugins.remove(plugin)
         self.main_service_smtp_main_session_handler.smtp_service_message_handler_unload(plugin)

@@ -37,10 +37,10 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-import colony.plugins.plugin_system
-import colony.plugins.decorators
+import colony.base.plugin_system
+import colony.base.decorators
 
-class MainDistributionPluginSystemPlugin(colony.plugins.plugin_system.Plugin):
+class MainDistributionPluginSystemPlugin(colony.base.plugin_system.Plugin):
     """
     The main class for the Distribution Main Plugin System plugin.
     """
@@ -51,8 +51,8 @@ class MainDistributionPluginSystemPlugin(colony.plugins.plugin_system.Plugin):
     description = "Distribution Main Plugin System Plugin"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
-    loading_type = colony.plugins.plugin_system.EAGER_LOADING_TYPE
-    platforms = [colony.plugins.plugin_system.CPYTHON_ENVIRONMENT]
+    loading_type = colony.base.plugin_system.EAGER_LOADING_TYPE
+    platforms = [colony.base.plugin_system.CPYTHON_ENVIRONMENT]
     attributes = {"build_automation_file_path" : "$base{plugin_directory}/main_distribution/plugin_system/resources/baf.xml"}
     capabilities = ["build_automation_item"]
     capabilities_allowed = []
@@ -63,28 +63,28 @@ class MainDistributionPluginSystemPlugin(colony.plugins.plugin_system.Plugin):
     main_distribution_plugin_system = None
 
     def load_plugin(self):
-        colony.plugins.plugin_system.Plugin.load_plugin(self)
+        colony.base.plugin_system.Plugin.load_plugin(self)
         global main_distribution
         import main_distribution.plugin_system.main_distribution_plugin_system_system
         self.main_distribution_plugin_system = main_distribution.plugin_system.main_distribution_plugin_system_system.MainDistributionPluginSystem(self)
 
     def end_load_plugin(self):
-        colony.plugins.plugin_system.Plugin.end_load_plugin(self)
+        colony.base.plugin_system.Plugin.end_load_plugin(self)
 
     def unload_plugin(self):
-        colony.plugins.plugin_system.Plugin.unload_plugin(self)
+        colony.base.plugin_system.Plugin.unload_plugin(self)
 
     def end_unload_plugin(self):
-        colony.plugins.plugin_system.Plugin.end_unload_plugin(self)
+        colony.base.plugin_system.Plugin.end_unload_plugin(self)
 
     def load_allowed(self, plugin, capability):
-        colony.plugins.plugin_system.Plugin.load_allowed(self, plugin, capability)
+        colony.base.plugin_system.Plugin.load_allowed(self, plugin, capability)
 
     def unload_allowed(self, plugin, capability):
-        colony.plugins.plugin_system.Plugin.unload_allowed(self, plugin, capability)
+        colony.base.plugin_system.Plugin.unload_allowed(self, plugin, capability)
 
     def dependency_injected(self, plugin):
-        colony.plugins.plugin_system.Plugin.dependency_injected(self, plugin)
+        colony.base.plugin_system.Plugin.dependency_injected(self, plugin)
 
     def create_plugin_proxy(self, plugin):
         self.main_distribution_plugin_system.create_plugin_proxy(plugin)

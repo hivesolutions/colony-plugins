@@ -37,10 +37,10 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-import colony.plugins.plugin_system
-import colony.plugins.decorators
+import colony.base.plugin_system
+import colony.base.decorators
 
-class DistributionRegistryServerPlugin(colony.plugins.plugin_system.Plugin):
+class DistributionRegistryServerPlugin(colony.base.plugin_system.Plugin):
     """
     The main class for the Distribution Registry Server plugin.
     """
@@ -51,14 +51,14 @@ class DistributionRegistryServerPlugin(colony.plugins.plugin_system.Plugin):
     description = "Distribution Registry Server Plugin"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
-    loading_type = colony.plugins.plugin_system.EAGER_LOADING_TYPE
-    platforms = [colony.plugins.plugin_system.CPYTHON_ENVIRONMENT]
+    loading_type = colony.base.plugin_system.EAGER_LOADING_TYPE
+    platforms = [colony.base.plugin_system.CPYTHON_ENVIRONMENT]
     attributes = {"build_automation_file_path" : "$base{plugin_directory}/distribution/registry_server/resources/baf.xml"}
     capabilities = ["distribution_server_adapter", "build_automation_item"]
     capabilities_allowed = ["distribution_helper"]
-    dependencies = [colony.plugins.plugin_system.PluginDependency(
+    dependencies = [colony.base.plugin_system.PluginDependency(
                     "pt.hive.colony.plugins.distribution.registry", "1.0.0"),
-                    colony.plugins.plugin_system.PluginDependency(
+                    colony.base.plugin_system.PluginDependency(
                     "pt.hive.colony.plugins.main.remote.manager", "1.0.0")]
     events_handled = []
     events_registrable = []
@@ -71,31 +71,31 @@ class DistributionRegistryServerPlugin(colony.plugins.plugin_system.Plugin):
     main_remote_manager_plugin = None
 
     def load_plugin(self):
-        colony.plugins.plugin_system.Plugin.load_plugin(self)
+        colony.base.plugin_system.Plugin.load_plugin(self)
         global distribution
         import distribution.registry_server.distribution_registry_server_system
         self.distribution_registry_server = distribution.registry_server.distribution_registry_server_system.DistributionRegistryServer(self)
 
     def end_load_plugin(self):
-        colony.plugins.plugin_system.Plugin.end_load_plugin(self)
+        colony.base.plugin_system.Plugin.end_load_plugin(self)
 
     def unload_plugin(self):
-        colony.plugins.plugin_system.Plugin.unload_plugin(self)
+        colony.base.plugin_system.Plugin.unload_plugin(self)
 
     def end_unload_plugin(self):
-        colony.plugins.plugin_system.Plugin.end_unload_plugin(self)
+        colony.base.plugin_system.Plugin.end_unload_plugin(self)
 
-    @colony.plugins.decorators.load_allowed("pt.hive.colony.plugins.distribution.registry_server", "1.0.0")
+    @colony.base.decorators.load_allowed("pt.hive.colony.plugins.distribution.registry_server", "1.0.0")
     def load_allowed(self, plugin, capability):
-        colony.plugins.plugin_system.Plugin.load_allowed(self, plugin, capability)
+        colony.base.plugin_system.Plugin.load_allowed(self, plugin, capability)
 
-    @colony.plugins.decorators.unload_allowed("pt.hive.colony.plugins.distribution.registry_server", "1.0.0")
+    @colony.base.decorators.unload_allowed("pt.hive.colony.plugins.distribution.registry_server", "1.0.0")
     def unload_allowed(self, plugin, capability):
-        colony.plugins.plugin_system.Plugin.unload_allowed(self, plugin, capability)
+        colony.base.plugin_system.Plugin.unload_allowed(self, plugin, capability)
 
-    @colony.plugins.decorators.inject_dependencies("pt.hive.colony.plugins.distribution.registry_server", "1.0.0")
+    @colony.base.decorators.inject_dependencies("pt.hive.colony.plugins.distribution.registry_server", "1.0.0")
     def dependency_injected(self, plugin):
-        colony.plugins.plugin_system.Plugin.dependency_injected(self, plugin)
+        colony.base.plugin_system.Plugin.dependency_injected(self, plugin)
 
     def get_distribution_server_type(self):
         return self.distribution_registry_server.get_distribution_server_type()
@@ -106,24 +106,24 @@ class DistributionRegistryServerPlugin(colony.plugins.plugin_system.Plugin):
     def deactivate_server(self, properties):
         self.distribution_registry_server.deactivate_server(properties)
 
-    @colony.plugins.decorators.load_allowed_capability("distribution_helper")
+    @colony.base.decorators.load_allowed_capability("distribution_helper")
     def distribution_helper_load_allowed(self, plugin, capability):
         self.distribution_helper_plugins.append(plugin)
 
-    @colony.plugins.decorators.unload_allowed_capability("distribution_helper")
+    @colony.base.decorators.unload_allowed_capability("distribution_helper")
     def distribution_helper_unload_allowed(self, plugin, capability):
         self.distribution_helper_plugins.remove(plugin)
 
     def get_distribution_registry_plugin(self):
         return self.distribution_registry_plugin
 
-    @colony.plugins.decorators.plugin_inject("pt.hive.colony.plugins.distribution.registry")
+    @colony.base.decorators.plugin_inject("pt.hive.colony.plugins.distribution.registry")
     def set_distribution_registry_plugin(self, distribution_registry_plugin):
         self.distribution_registry_plugin = distribution_registry_plugin
 
     def get_main_remote_manager_plugin(self):
         return self.main_remote_manager_plugin
 
-    @colony.plugins.decorators.plugin_inject("pt.hive.colony.plugins.main.remote.manager")
+    @colony.base.decorators.plugin_inject("pt.hive.colony.plugins.main.remote.manager")
     def set_main_remote_manager_plugin(self, main_remote_manager_plugin):
         self.main_remote_manager_plugin = main_remote_manager_plugin

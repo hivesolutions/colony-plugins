@@ -37,10 +37,10 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-import colony.plugins.plugin_system
-import colony.plugins.decorators
+import colony.base.plugin_system
+import colony.base.decorators
 
-class MainPackingManagerPlugin(colony.plugins.plugin_system.Plugin):
+class MainPackingManagerPlugin(colony.base.plugin_system.Plugin):
     """
     The main class for the Packing Manager Main plugin.
     """
@@ -51,8 +51,8 @@ class MainPackingManagerPlugin(colony.plugins.plugin_system.Plugin):
     description = "Packing Manager Main Plugin"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
-    loading_type = colony.plugins.plugin_system.EAGER_LOADING_TYPE
-    platforms = [colony.plugins.plugin_system.CPYTHON_ENVIRONMENT]
+    loading_type = colony.base.plugin_system.EAGER_LOADING_TYPE
+    platforms = [colony.base.plugin_system.CPYTHON_ENVIRONMENT]
     attributes = {"build_automation_file_path" : "$base{plugin_directory}/main_packing/manager/resources/baf.xml"}
     capabilities = ["packing_manager", "build_automation_item"]
     capabilities_allowed = ["packing_service"]
@@ -66,30 +66,30 @@ class MainPackingManagerPlugin(colony.plugins.plugin_system.Plugin):
     packing_service_plugins = []
 
     def load_plugin(self):
-        colony.plugins.plugin_system.Plugin.load_plugin(self)
+        colony.base.plugin_system.Plugin.load_plugin(self)
         global main_packing
         import main_packing.manager.main_packing_manager_system
         self.main_packing_manager = main_packing.manager.main_packing_manager_system.MainPackingManager(self)
 
     def end_load_plugin(self):
-        colony.plugins.plugin_system.Plugin.end_load_plugin(self)
+        colony.base.plugin_system.Plugin.end_load_plugin(self)
 
     def unload_plugin(self):
-        colony.plugins.plugin_system.Plugin.unload_plugin(self)
+        colony.base.plugin_system.Plugin.unload_plugin(self)
 
     def end_unload_plugin(self):
-        colony.plugins.plugin_system.Plugin.end_unload_plugin(self)
+        colony.base.plugin_system.Plugin.end_unload_plugin(self)
 
-    @colony.plugins.decorators.load_allowed("pt.hive.colony.plugins.main.packing.manager", "1.0.0")
+    @colony.base.decorators.load_allowed("pt.hive.colony.plugins.main.packing.manager", "1.0.0")
     def load_allowed(self, plugin, capability):
-        colony.plugins.plugin_system.Plugin.load_allowed(self, plugin, capability)
+        colony.base.plugin_system.Plugin.load_allowed(self, plugin, capability)
 
-    @colony.plugins.decorators.unload_allowed("pt.hive.colony.plugins.main.packing.manager", "1.0.0")
+    @colony.base.decorators.unload_allowed("pt.hive.colony.plugins.main.packing.manager", "1.0.0")
     def unload_allowed(self, plugin, capability):
-        colony.plugins.plugin_system.Plugin.unload_allowed(self, plugin, capability)
+        colony.base.plugin_system.Plugin.unload_allowed(self, plugin, capability)
 
     def dependency_injected(self, plugin):
-        colony.plugins.plugin_system.Plugin.dependency_injected(self, plugin)
+        colony.base.plugin_system.Plugin.dependency_injected(self, plugin)
 
     def pack_directory(self, directory_path, properties, service_name):
         """
@@ -134,12 +134,12 @@ class MainPackingManagerPlugin(colony.plugins.plugin_system.Plugin):
 
         self.main_packing_manager.unpack_files(file_paths_list, properties, service_name)
 
-    @colony.plugins.decorators.load_allowed_capability("packing_service")
+    @colony.base.decorators.load_allowed_capability("packing_service")
     def packing_service_capability_load_allowed(self, plugin, capability):
         self.packing_service_plugins.append(plugin)
         self.main_packing_manager.packing_service_load(plugin)
 
-    @colony.plugins.decorators.unload_allowed_capability("packing_service")
+    @colony.base.decorators.unload_allowed_capability("packing_service")
     def packing_service_capability_unload_allowed(self, plugin, capability):
         self.packing_service_plugins.remove(plugin)
         self.main_packing_manager.packing_service_unload(plugin)

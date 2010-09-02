@@ -37,10 +37,10 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-import colony.plugins.plugin_system
-import colony.plugins.decorators
+import colony.base.plugin_system
+import colony.base.decorators
 
-class MainDistributionServicePlugin(colony.plugins.plugin_system.Plugin):
+class MainDistributionServicePlugin(colony.base.plugin_system.Plugin):
     """
     The main class for the Distribution Main Service plugin.
     """
@@ -51,79 +51,79 @@ class MainDistributionServicePlugin(colony.plugins.plugin_system.Plugin):
     description = "Distribution Main Service Plugin"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
-    loading_type = colony.plugins.plugin_system.EAGER_LOADING_TYPE
-    platforms = [colony.plugins.plugin_system.CPYTHON_ENVIRONMENT]
+    loading_type = colony.base.plugin_system.EAGER_LOADING_TYPE
+    platforms = [colony.base.plugin_system.CPYTHON_ENVIRONMENT]
     attributes = {"build_automation_file_path" : "$base{plugin_directory}/main_distribution/service/resources/baf.xml"}
     capabilities = ["rpc_service", "build_automation_item"]
     capabilities_allowed = []
-    dependencies = [colony.plugins.plugin_system.PluginDependency(
+    dependencies = [colony.base.plugin_system.PluginDependency(
                     "pt.hive.colony.plugins.distribution.main.plugin_system", "1.0.0")]
     events_handled = []
     events_registrable = []
 
     main_distribution_service = None
 
-    @colony.plugins.decorators.load_plugin("pt.hive.colony.plugins.distribution.main.registry.service", "1.0.0")
+    @colony.base.decorators.load_plugin("pt.hive.colony.plugins.distribution.main.registry.service", "1.0.0")
     def load_plugin(self):
-        colony.plugins.plugin_system.Plugin.load_plugin(self)
+        colony.base.plugin_system.Plugin.load_plugin(self)
         global main_distribution
         import main_distribution.service.main_distribution_service_system
         self.main_distribution_service = main_distribution.service.main_distribution_service_system.MainDistributionService(self)
 
     def end_load_plugin(self):
-        colony.plugins.plugin_system.Plugin.end_load_plugin(self)
+        colony.base.plugin_system.Plugin.end_load_plugin(self)
 
     def unload_plugin(self):
-        colony.plugins.plugin_system.Plugin.unload_plugin(self)
+        colony.base.plugin_system.Plugin.unload_plugin(self)
 
     def end_unload_plugin(self):
-        colony.plugins.plugin_system.Plugin.end_unload_plugin(self)
+        colony.base.plugin_system.Plugin.end_unload_plugin(self)
 
     def load_allowed(self, plugin, capability):
-        colony.plugins.plugin_system.Plugin.load_allowed(self, plugin, capability)
+        colony.base.plugin_system.Plugin.load_allowed(self, plugin, capability)
 
     def unload_allowed(self, plugin, capability):
-        colony.plugins.plugin_system.Plugin.unload_allowed(self, plugin, capability)
+        colony.base.plugin_system.Plugin.unload_allowed(self, plugin, capability)
 
-    @colony.plugins.decorators.inject_dependencies("pt.hive.colony.plugins.distribution.main.registry.service", "1.0.0")
+    @colony.base.decorators.inject_dependencies("pt.hive.colony.plugins.distribution.main.registry.service", "1.0.0")
     def dependency_injected(self, plugin):
-        colony.plugins.plugin_system.Plugin.dependency_injected(self, plugin)
+        colony.base.plugin_system.Plugin.dependency_injected(self, plugin)
 
-    @colony.plugins.decorators.plugin_call(True)
+    @colony.base.decorators.plugin_call(True)
     def get_service_id(self):
         return self.main_distribution_service.get_service_id()
 
-    @colony.plugins.decorators.plugin_call(True)
+    @colony.base.decorators.plugin_call(True)
     def get_service_alias(self):
         return self.main_distribution_service.get_service_alias()
 
-    @colony.plugins.decorators.plugin_call(True)
+    @colony.base.decorators.plugin_call(True)
     def get_available_rpc_methods(self):
         return self.main_distribution_service.get_available_rpc_methods()
 
-    @colony.plugins.decorators.plugin_call(True)
+    @colony.base.decorators.plugin_call(True)
     def get_rpc_methods_alias(self):
         return self.main_distribution_service.get_rpc_methods_alias()
 
-    @colony.plugins.decorators.plugin_meta_information("rpc_method", {"alias" : []})
+    @colony.base.decorators.plugin_meta_information("rpc_method", {"alias" : []})
     def unload_plugin_manager(self):
         return self.main_distribution_service.unload_plugin_manager()
 
-    @colony.plugins.decorators.plugin_meta_information("rpc_method", {"alias" : []})
+    @colony.base.decorators.plugin_meta_information("rpc_method", {"alias" : []})
     def unload_plugin_by_id(self, plugin_id):
         return self.main_distribution_service.unload_plugin_by_id(plugin_id)
 
-    @colony.plugins.decorators.plugin_meta_information("rpc_method", {"alias" : []})
+    @colony.base.decorators.plugin_meta_information("rpc_method", {"alias" : []})
     def get_plugin_proxy_by_id(self, plugin_id):
         return self.main_distribution_service.get_plugin_proxy_by_id(plugin_id)
 
-    @colony.plugins.decorators.plugin_meta_information("rpc_method", {"alias" : []})
+    @colony.base.decorators.plugin_meta_information("rpc_method", {"alias" : []})
     def call_plugin_proxy_method(self, plugin_id, plugin_version, method_name, arguments):
         return self.main_distribution_service.call_plugin_proxy_method(plugin_id, plugin_version, method_name, arguments)
 
     def get_main_distribution_plugin_system_plugin(self):
         return self.main_distribution_plugin_system_plugin
 
-    @colony.plugins.decorators.plugin_inject("pt.hive.colony.plugins.distribution.main.plugin_system")
+    @colony.base.decorators.plugin_inject("pt.hive.colony.plugins.distribution.main.plugin_system")
     def set_main_distribution_plugin_system_plugin(self, main_distribution_plugin_system_plugin):
         self.main_distribution_plugin_system_plugin = main_distribution_plugin_system_plugin

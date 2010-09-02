@@ -37,10 +37,10 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-import colony.plugins.plugin_system
-import colony.plugins.decorators
+import colony.base.plugin_system
+import colony.base.decorators
 
-class DummyPluginWindowsForms(colony.plugins.plugin_system.Plugin):
+class DummyPluginWindowsForms(colony.base.plugin_system.Plugin):
     """
     The main class for the Dummy Windows Forms plugin.
     """
@@ -51,8 +51,8 @@ class DummyPluginWindowsForms(colony.plugins.plugin_system.Plugin):
     description = "Dummy Windows Forms Plugin"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
-    loading_type = colony.plugins.plugin_system.EAGER_LOADING_TYPE
-    platforms = [colony.plugins.plugin_system.IRON_PYTHON_ENVIRONMENT]
+    loading_type = colony.base.plugin_system.EAGER_LOADING_TYPE
+    platforms = [colony.base.plugin_system.IRON_PYTHON_ENVIRONMENT]
     attributes = {"build_automation_file_path" : "$base{plugin_directory}/dummy/windows_forms/resources/baf.xml"}
     capabilities = ["main", "dummy_windows_forms", "build_automation_item"]
     capabilities_allowed = ["dummy_windows_forms_label"]
@@ -63,21 +63,21 @@ class DummyPluginWindowsForms(colony.plugins.plugin_system.Plugin):
     dummy_windows_forms = None
 
     def load_plugin(self):
-        colony.plugins.plugin_system.Plugin.load_plugin(self)
+        colony.base.plugin_system.Plugin.load_plugin(self)
         print "loading dummy windows forms..."
 
         # notifies the ready semaphore
         self.release_ready_semaphore()
 
     def end_load_plugin(self):
-        colony.plugins.plugin_system.Plugin.end_load_plugin(self)
+        colony.base.plugin_system.Plugin.end_load_plugin(self)
         global dummy
         import dummy.windows_forms.dummy_windows_forms_system
         self.dummy_windows_forms = dummy.windows_forms.dummy_windows_forms_system.DummyWindowsForms(self)
         self.dummy_windows_forms.start()
 
     def unload_plugin(self):
-        colony.plugins.plugin_system.Plugin.unload_plugin(self)
+        colony.base.plugin_system.Plugin.unload_plugin(self)
         print "unloading dummy windows forms..."
         self.dummy_windows_forms.stop()
 
@@ -85,30 +85,30 @@ class DummyPluginWindowsForms(colony.plugins.plugin_system.Plugin):
         self.release_ready_semaphore()
 
     def end_unload_plugin(self):
-        colony.plugins.plugin_system.Plugin.end_unload_plugin(self)
+        colony.base.plugin_system.Plugin.end_unload_plugin(self)
 
         # notifies the ready semaphore
         self.release_ready_semaphore()
 
-    @colony.plugins.decorators.load_allowed("pt.hive.colony.plugins.dummy.windows_forms", "1.0.0")
+    @colony.base.decorators.load_allowed("pt.hive.colony.plugins.dummy.windows_forms", "1.0.0")
     def load_allowed(self, plugin, capability):
-        colony.plugins.plugin_system.Plugin.load_allowed(self, plugin, capability)
+        colony.base.plugin_system.Plugin.load_allowed(self, plugin, capability)
         print "loading dummy windows forms allowed..."
 
-    @colony.plugins.decorators.unload_allowed("pt.hive.colony.plugins.dummy.windows_forms", "1.0.0")
+    @colony.base.decorators.unload_allowed("pt.hive.colony.plugins.dummy.windows_forms", "1.0.0")
     def unload_allowed(self, plugin, capability):
-        colony.plugins.plugin_system.Plugin.unload_allowed(self, plugin, capability)
+        colony.base.plugin_system.Plugin.unload_allowed(self, plugin, capability)
         print "unloading dummy windows forms allowed..."
 
     def dependency_injected(self, plugin):
-        colony.plugins.plugin_system.Plugin.dependency_injected(self, plugin)
+        colony.base.plugin_system.Plugin.dependency_injected(self, plugin)
 
-    @colony.plugins.decorators.load_allowed_capability("dummy_windows_forms_label")
+    @colony.base.decorators.load_allowed_capability("dummy_windows_forms_label")
     def dummy_windows_forms_label_load_allowed(self, plugin, capability):
         label = plugin.get_label()
         self.dummy_windows_forms.add_label(label)
 
-    @colony.plugins.decorators.unload_allowed_capability("dummy_windows_forms_label")
+    @colony.base.decorators.unload_allowed_capability("dummy_windows_forms_label")
     def dummy_windows_forms_label_unload_allowed(self, plugin, capability):
         label = plugin.get_label()
         self.dummy_windows_forms.remove_label(label)

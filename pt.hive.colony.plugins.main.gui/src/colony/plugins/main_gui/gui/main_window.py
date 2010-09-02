@@ -47,8 +47,8 @@ import wx.lib.wordwrap
 import plugin_tree
 import tab_container_panel
 
-import colony.plugins.plugin_system
-import colony.plugins.util
+import colony.base.plugin_system
+import colony.base.util
 
 ID_CreateGrid = wx.NewId()
 ID_CreatePerspective = wx.NewId()
@@ -340,9 +340,9 @@ class MainFrame(wx.Frame):
         self.Refresh()
 
     def process_gui_progress_information_changed_event(self, event_name, event_args):
-        if colony.plugins.plugin_system.is_event_or_sub_event("gui_progress_information_changed.show_panel", event_name):
+        if colony.base.plugin_system.is_event_or_sub_event("gui_progress_information_changed.show_panel", event_name):
             self.show_progress_information_frame()
-        elif colony.plugins.plugin_system.is_event_or_sub_event("gui_progress_information_changed.hide_panel", event_name):
+        elif colony.base.plugin_system.is_event_or_sub_event("gui_progress_information_changed.hide_panel", event_name):
             self.hide_progress_information_frame()
 
     def on_idle(self, event):
@@ -557,12 +557,12 @@ class MainFrame(wx.Frame):
         self.plugin_tree.refresh()
 
     def refresh_panel_tabs(self):
-        event = colony.plugins.util.Event("refresh_panel_tabs")
+        event = colony.base.util.Event("refresh_panel_tabs")
         self.event_queue.append(event)
         self.Refresh()
 
     def create_progress_information_frame(self):
-        event = colony.plugins.util.Event("create_progress_information_frame")
+        event = colony.base.util.Event("create_progress_information_frame")
         self.event_queue.append(event)
         self.Refresh()
 
@@ -571,7 +571,7 @@ class MainFrame(wx.Frame):
         if self.progress_information_frame.IsShown():
             return
 
-        event = colony.plugins.util.Event("show_progress_information_frame")
+        event = colony.base.util.Event("show_progress_information_frame")
         self.event_queue.append(event)
         self.Refresh()
 
@@ -580,7 +580,7 @@ class MainFrame(wx.Frame):
         if not self.progress_information_frame.IsShown():
             return
 
-        event = colony.plugins.util.Event("hide_progress_information_frame")
+        event = colony.base.util.Event("hide_progress_information_frame")
         self.event_queue.append(event)
         self.Refresh()
 
@@ -753,7 +753,7 @@ class MainApplication(wx.App):
         # in case the application is loaded
         if self.is_loaded():
             # creates the exit event
-            event = colony.plugins.util.Event("exit")
+            event = colony.base.util.Event("exit")
 
             # send the exit event to the queue
             self.main_frame.event_queue.append(event)

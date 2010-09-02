@@ -37,9 +37,9 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-import colony.plugins.plugin_system
+import colony.base.plugin_system
 
-class DistributionRegistryClientPlugin(colony.plugins.plugin_system.Plugin):
+class DistributionRegistryClientPlugin(colony.base.plugin_system.Plugin):
     """
     The main class for the Distribution Registry Client plugin.
     """
@@ -50,8 +50,8 @@ class DistributionRegistryClientPlugin(colony.plugins.plugin_system.Plugin):
     description = "Distribution Registry Client Plugin"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
-    loading_type = colony.plugins.plugin_system.EAGER_LOADING_TYPE
-    platforms = [colony.plugins.plugin_system.CPYTHON_ENVIRONMENT]
+    loading_type = colony.base.plugin_system.EAGER_LOADING_TYPE
+    platforms = [colony.base.plugin_system.CPYTHON_ENVIRONMENT]
     attributes = {"build_automation_file_path" : "$base{plugin_directory}/distribution/registry_client/resources/baf.xml"}
     capabilities = ["distribution_client_adapter", "build_automation_item"]
     capabilities_allowed = ["distribution_helper"]
@@ -64,38 +64,38 @@ class DistributionRegistryClientPlugin(colony.plugins.plugin_system.Plugin):
     distribution_helper_plugins = []
 
     def load_plugin(self):
-        colony.plugins.plugin_system.Plugin.load_plugin(self)
+        colony.base.plugin_system.Plugin.load_plugin(self)
         global distribution
         import distribution.registry_client.distribution_registry_client_system
         self.distribution_registry_client = distribution.registry_client.distribution_registry_client_system.DistributionRegistryClient(self)
 
     def end_load_plugin(self):
-        colony.plugins.plugin_system.Plugin.end_load_plugin(self)
+        colony.base.plugin_system.Plugin.end_load_plugin(self)
 
     def unload_plugin(self):
-        colony.plugins.plugin_system.Plugin.unload_plugin(self)
+        colony.base.plugin_system.Plugin.unload_plugin(self)
 
     def end_unload_plugin(self):
-        colony.plugins.plugin_system.Plugin.end_unload_plugin(self)
+        colony.base.plugin_system.Plugin.end_unload_plugin(self)
 
-    @colony.plugins.decorators.load_allowed("pt.hive.colony.plugins.distribution.registry_client", "1.0.0")
+    @colony.base.decorators.load_allowed("pt.hive.colony.plugins.distribution.registry_client", "1.0.0")
     def load_allowed(self, plugin, capability):
-        colony.plugins.plugin_system.Plugin.load_allowed(self, plugin, capability)
+        colony.base.plugin_system.Plugin.load_allowed(self, plugin, capability)
 
-    @colony.plugins.decorators.unload_allowed("pt.hive.colony.plugins.distribution.registry_clieny", "1.0.0")
+    @colony.base.decorators.unload_allowed("pt.hive.colony.plugins.distribution.registry_clieny", "1.0.0")
     def unload_allowed(self, plugin, capability):
-        colony.plugins.plugin_system.Plugin.unload_allowed(self, plugin, capability)
+        colony.base.plugin_system.Plugin.unload_allowed(self, plugin, capability)
 
     def dependency_injected(self, plugin):
-        colony.plugins.plugin_system.Plugin.dependency_injected(self, plugin)
+        colony.base.plugin_system.Plugin.dependency_injected(self, plugin)
 
     def get_remote_instance_references(self, properties):
         return self.distribution_registry_client.get_remote_instance_references(properties)
 
-    @colony.plugins.decorators.load_allowed_capability("distribution_helper")
+    @colony.base.decorators.load_allowed_capability("distribution_helper")
     def distribution_helper_load_allowed(self, plugin, capability):
         self.distribution_helper_plugins.append(plugin)
 
-    @colony.plugins.decorators.unload_allowed_capability("distribution_helper")
+    @colony.base.decorators.unload_allowed_capability("distribution_helper")
     def distribution_helper_unload_allowed(self, plugin, capability):
         self.distribution_helper_plugins.remove(plugin)

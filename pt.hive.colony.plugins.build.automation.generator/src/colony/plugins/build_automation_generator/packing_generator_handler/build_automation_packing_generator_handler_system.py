@@ -37,7 +37,7 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-import colony.plugins.plugin_system
+import colony.base.plugin_system
 import colony.libs.string_buffer_util
 
 BUILD_AUTOMATION_GENERATOR_HANDLER_NAME = "packing"
@@ -160,11 +160,11 @@ class BuildAutomationPackingGeneratorHandler:
             else:
                 string_buffer.write(", ")
 
-            if platform == colony.plugins.plugin_system.CPYTHON_ENVIRONMENT:
+            if platform == colony.base.plugin_system.CPYTHON_ENVIRONMENT:
                 string_buffer.write("\"cpython\"")
-            elif platform == colony.plugins.plugin_system.JYTHON_ENVIRONMENT:
+            elif platform == colony.base.plugin_system.JYTHON_ENVIRONMENT:
                 string_buffer.write("\"jython\"")
-            elif platform == colony.plugins.plugin_system.IRON_PYTHON_ENVIRONMENT:
+            elif platform == colony.base.plugin_system.IRON_PYTHON_ENVIRONMENT:
                 string_buffer.write("\"iron_python\"")
 
         # writes the list end
@@ -223,7 +223,7 @@ class BuildAutomationPackingGeneratorHandler:
             else:
                 string_buffer.write(", ")
 
-            if dependency.__class__ == colony.plugins.plugin_system.PluginDependency:
+            if dependency.__class__ == colony.base.plugin_system.PluginDependency:
                 string_buffer.write("{\"id\" : \"%s\", \"version\" : \"%s\"}" % (dependency.plugin_id, dependency.plugin_version))
 
         # writes the list end

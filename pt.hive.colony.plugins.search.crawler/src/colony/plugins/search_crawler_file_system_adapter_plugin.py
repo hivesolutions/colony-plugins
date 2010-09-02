@@ -37,10 +37,10 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-import colony.plugins.plugin_system
-import colony.plugins.decorators
+import colony.base.plugin_system
+import colony.base.decorators
 
-class SearchCrawlerFileSystemAdapterPlugin(colony.plugins.plugin_system.Plugin):
+class SearchCrawlerFileSystemAdapterPlugin(colony.base.plugin_system.Plugin):
     """
     The main class for the Search Crawler File System Adapter plugin.
     """
@@ -51,8 +51,8 @@ class SearchCrawlerFileSystemAdapterPlugin(colony.plugins.plugin_system.Plugin):
     description = "Search Crawler File System Adapter Plugin"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
-    loading_type = colony.plugins.plugin_system.EAGER_LOADING_TYPE
-    platforms = [colony.plugins.plugin_system.CPYTHON_ENVIRONMENT]
+    loading_type = colony.base.plugin_system.EAGER_LOADING_TYPE
+    platforms = [colony.base.plugin_system.CPYTHON_ENVIRONMENT]
     attributes = {"build_automation_file_path" : "$base{plugin_directory}/search_crawler/file_system_adapter/resources/baf.xml"}
     capabilities = ["search_crawler_adapter.file_system", "build_automation_item"]
     capabilities_allowed = ["search_provider.file_system"]
@@ -65,30 +65,30 @@ class SearchCrawlerFileSystemAdapterPlugin(colony.plugins.plugin_system.Plugin):
     search_provider_file_system_plugins = []
 
     def load_plugin(self):
-        colony.plugins.plugin_system.Plugin.load_plugin(self)
+        colony.base.plugin_system.Plugin.load_plugin(self)
         global search_crawler
         import search_crawler.file_system_adapter.search_crawler_file_system_adapter_system
         self.search_crawler_file_system_adapter = search_crawler.file_system_adapter.search_crawler_file_system_adapter_system.SearchCrawlerFileSystemAdapter(self)
 
     def end_load_plugin(self):
-        colony.plugins.plugin_system.Plugin.end_load_plugin(self)
+        colony.base.plugin_system.Plugin.end_load_plugin(self)
 
     def unload_plugin(self):
-        colony.plugins.plugin_system.Plugin.unload_plugin(self)
+        colony.base.plugin_system.Plugin.unload_plugin(self)
 
     def end_unload_plugin(self):
-        colony.plugins.plugin_system.Plugin.end_unload_plugin(self)
+        colony.base.plugin_system.Plugin.end_unload_plugin(self)
 
-    @colony.plugins.decorators.load_allowed("pt.hive.colony.plugins.search.crawler.file_system_adapter", "1.0.0")
+    @colony.base.decorators.load_allowed("pt.hive.colony.plugins.search.crawler.file_system_adapter", "1.0.0")
     def load_allowed(self, plugin, capability):
-        colony.plugins.plugin_system.Plugin.load_allowed(self, plugin, capability)
+        colony.base.plugin_system.Plugin.load_allowed(self, plugin, capability)
 
-    @colony.plugins.decorators.unload_allowed("pt.hive.colony.plugins.search.crawler.file_system_adapter", "1.0.0")
+    @colony.base.decorators.unload_allowed("pt.hive.colony.plugins.search.crawler.file_system_adapter", "1.0.0")
     def unload_allowed(self, plugin, capability):
-        colony.plugins.plugin_system.Plugin.unload_allowed(self, plugin, capability)
+        colony.base.plugin_system.Plugin.unload_allowed(self, plugin, capability)
 
     def dependency_injected(self, plugin):
-        colony.plugins.plugin_system.Plugin.dependency_injected(self, plugin)
+        colony.base.plugin_system.Plugin.dependency_injected(self, plugin)
 
     def get_type(self):
         return self.search_crawler_file_system_adapter.get_type()
@@ -96,10 +96,10 @@ class SearchCrawlerFileSystemAdapterPlugin(colony.plugins.plugin_system.Plugin):
     def get_tokens(self, properties):
         return self.search_crawler_file_system_adapter.get_tokens(properties)
 
-    @colony.plugins.decorators.load_allowed_capability("search_provider.file_system")
+    @colony.base.decorators.load_allowed_capability("search_provider.file_system")
     def search_provider_file_system_load_allowed(self, plugin, capability):
         self.search_provider_file_system_plugins.append(plugin)
 
-    @colony.plugins.decorators.unload_allowed_capability("search_provider.file_system")
+    @colony.base.decorators.unload_allowed_capability("search_provider.file_system")
     def search_provider_file_system_unload_allowed(self, plugin, capability):
         self.search_provider_file_system_plugins.remove(plugin)

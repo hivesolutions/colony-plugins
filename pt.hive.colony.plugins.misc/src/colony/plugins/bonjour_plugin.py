@@ -37,10 +37,10 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-import colony.plugins.plugin_system
-import colony.plugins.decorators
+import colony.base.plugin_system
+import colony.base.decorators
 
-class BonjourPlugin(colony.plugins.plugin_system.Plugin):
+class BonjourPlugin(colony.base.plugin_system.Plugin):
     """
     The main class for the Bonjour plugin.
     """
@@ -51,14 +51,14 @@ class BonjourPlugin(colony.plugins.plugin_system.Plugin):
     description = "A plugin to manage the bonjour API"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
-    loading_type = colony.plugins.plugin_system.EAGER_LOADING_TYPE
-    platforms = [colony.plugins.plugin_system.CPYTHON_ENVIRONMENT]
+    loading_type = colony.base.plugin_system.EAGER_LOADING_TYPE
+    platforms = [colony.base.plugin_system.CPYTHON_ENVIRONMENT]
     attributes = {"build_automation_file_path" : "$base{plugin_directory}/misc/bonjour/resources/baf.xml"}
     capabilities = ["thread", "bonjour", "build_automation_item"]
     capabilities_allowed = []
-    dependencies = [colony.plugins.plugin_system.PluginDependency(
+    dependencies = [colony.base.plugin_system.PluginDependency(
                     "pt.hive.colony.plugins.misc.guid", "1.0.0"),
-                    colony.plugins.plugin_system.PackageDependency(
+                    colony.base.plugin_system.PackageDependency(
                     "Bonjour", "bonjour", "0.2.x", "http://www.apple.com")]
     events_handled = []
     events_registrable = []
@@ -68,7 +68,7 @@ class BonjourPlugin(colony.plugins.plugin_system.Plugin):
     guid_plugin = None
 
     def load_plugin(self):
-        colony.plugins.plugin_system.Plugin.load_plugin(self)
+        colony.base.plugin_system.Plugin.load_plugin(self)
         global misc
         import misc.bonjour.bonjour_system
         self.bonjour = misc.bonjour.bonjour_system.Bonjour(self)
@@ -79,13 +79,13 @@ class BonjourPlugin(colony.plugins.plugin_system.Plugin):
         self.bonjour.start_browsing_loop()
 
     def end_load_plugin(self):
-        colony.plugins.plugin_system.Plugin.end_load_plugin(self)
+        colony.base.plugin_system.Plugin.end_load_plugin(self)
 
         # notifies the ready semaphore
         self.release_ready_semaphore()
 
     def unload_plugin(self):
-        colony.plugins.plugin_system.Plugin.unload_plugin(self)
+        colony.base.plugin_system.Plugin.unload_plugin(self)
 
         self.bonjour.stop_browsing_loop()
 
@@ -93,20 +93,20 @@ class BonjourPlugin(colony.plugins.plugin_system.Plugin):
         self.release_ready_semaphore()
 
     def end_unload_plugin(self):
-        colony.plugins.plugin_system.Plugin.end_unload_plugin(self)
+        colony.base.plugin_system.Plugin.end_unload_plugin(self)
 
         # notifies the ready semaphore
         self.release_ready_semaphore()
 
     def load_allowed(self, plugin, capability):
-        colony.plugins.plugin_system.Plugin.load_allowed(self, plugin, capability)
+        colony.base.plugin_system.Plugin.load_allowed(self, plugin, capability)
 
     def unload_allowed(self, plugin, capability):
-        colony.plugins.plugin_system.Plugin.unload_allowed(self, plugin, capability)
+        colony.base.plugin_system.Plugin.unload_allowed(self, plugin, capability)
 
-    @colony.plugins.decorators.inject_dependencies("pt.hive.colony.plugins.misc.bonjour", "1.0.0")
+    @colony.base.decorators.inject_dependencies("pt.hive.colony.plugins.misc.bonjour", "1.0.0")
     def dependency_injected(self, plugin):
-        colony.plugins.plugin_system.Plugin.dependency_injected(self, plugin)
+        colony.base.plugin_system.Plugin.dependency_injected(self, plugin)
 
     def add_service_for_browsing(self, registration_type, domain):
         self.bonjour.add_service_for_browsing(registration_type, domain)
@@ -126,6 +126,6 @@ class BonjourPlugin(colony.plugins.plugin_system.Plugin):
     def get_guid_plugin(self):
         return self.guid_plugin
 
-    @colony.plugins.decorators.plugin_inject("pt.hive.colony.plugins.misc.guid")
+    @colony.base.decorators.plugin_inject("pt.hive.colony.plugins.misc.guid")
     def set_guid_plugin(self, guid_plugin):
         self.guid_plugin = guid_plugin

@@ -37,9 +37,9 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-import colony.plugins.plugin_system
+import colony.base.plugin_system
 
-class AutoloaderPlugin(colony.plugins.plugin_system.Plugin):
+class AutoloaderPlugin(colony.base.plugin_system.Plugin):
     """
     The main class for the Autoloader plugin.
     """
@@ -50,9 +50,9 @@ class AutoloaderPlugin(colony.plugins.plugin_system.Plugin):
     description = "Autoloader Plugin"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
-    loading_type = colony.plugins.plugin_system.EAGER_LOADING_TYPE
-    platforms = [colony.plugins.plugin_system.CPYTHON_ENVIRONMENT,
-                 colony.plugins.plugin_system.JYTHON_ENVIRONMENT]
+    loading_type = colony.base.plugin_system.EAGER_LOADING_TYPE
+    platforms = [colony.base.plugin_system.CPYTHON_ENVIRONMENT,
+                 colony.base.plugin_system.JYTHON_ENVIRONMENT]
     attributes = {"build_automation_file_path" : "$base{plugin_directory}/misc/autoloader/resources/baf.xml"}
     capabilities = ["main", "autoload", "console_command_extension", "build_automation_item"]
     capabilities_allowed = []
@@ -65,7 +65,7 @@ class AutoloaderPlugin(colony.plugins.plugin_system.Plugin):
     console_autoloader = None
 
     def load_plugin(self):
-        colony.plugins.plugin_system.Plugin.load_plugin(self)
+        colony.base.plugin_system.Plugin.load_plugin(self)
         global misc
         import misc.autoloader.autoloading_system
         import misc.autoloader.console_autoloader
@@ -74,32 +74,32 @@ class AutoloaderPlugin(colony.plugins.plugin_system.Plugin):
         self.autoloader.load_autoloader()
 
     def end_load_plugin(self):
-        colony.plugins.plugin_system.Plugin.end_load_plugin(self)
+        colony.base.plugin_system.Plugin.end_load_plugin(self)
 
         # notifies the ready semaphore
         self.release_ready_semaphore()
 
     def unload_plugin(self):
-        colony.plugins.plugin_system.Plugin.unload_plugin(self)
+        colony.base.plugin_system.Plugin.unload_plugin(self)
         self.autoloader.unload_autoloader()
 
         # notifies the ready semaphore
         self.release_ready_semaphore()
 
     def end_unload_plugin(self):
-        colony.plugins.plugin_system.Plugin.end_unload_plugin(self)
+        colony.base.plugin_system.Plugin.end_unload_plugin(self)
 
         # notifies the ready semaphore
         self.release_ready_semaphore()
 
     def load_allowed(self, plugin, capability):
-        colony.plugins.plugin_system.Plugin.load_allowed(self, plugin, capability)
+        colony.base.plugin_system.Plugin.load_allowed(self, plugin, capability)
 
     def unload_allowed(self, plugin, capability):
-        colony.plugins.plugin_system.Plugin.unload_allowed(self, plugin, capability)
+        colony.base.plugin_system.Plugin.unload_allowed(self, plugin, capability)
 
     def dependency_injected(self, plugin):
-        colony.plugins.plugin_system.Plugin.dependency_injected(self, plugin)
+        colony.base.plugin_system.Plugin.dependency_injected(self, plugin)
 
     def get_console_extension_name(self):
         return self.console_autoloader.get_console_extension_name()

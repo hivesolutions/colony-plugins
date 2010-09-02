@@ -38,7 +38,7 @@ __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
 import colony.base.plugin_system
-import colony.plugins.decorators
+import colony.base.decorators
 
 class InstallationDebPlugin(colony.base.plugin_system.Plugin):
     """
@@ -90,7 +90,7 @@ class InstallationDebPlugin(colony.base.plugin_system.Plugin):
     def unload_allowed(self, plugin, capability):
         colony.base.plugin_system.Plugin.unload_allowed(self, plugin, capability)
 
-    @colony.plugins.decorators.inject_dependencies("pt.hive.colony.plugins.installation.deb", "1.0.0")
+    @colony.base.decorators.inject_dependencies("pt.hive.colony.plugins.installation.deb", "1.0.0")
     def dependency_injected(self, plugin):
         colony.base.plugin_system.Plugin.dependency_injected(self, plugin)
 
@@ -117,13 +117,13 @@ class InstallationDebPlugin(colony.base.plugin_system.Plugin):
     def get_packaging_deb_plugin(self):
         return self.packaging_deb_plugin
 
-    @colony.plugins.decorators.plugin_inject("pt.hive.colony.plugins.packaging.deb")
+    @colony.base.decorators.plugin_inject("pt.hive.colony.plugins.packaging.deb")
     def set_packaging_deb_plugin(self, packaging_deb_plugin):
         self.packaging_deb_plugin = packaging_deb_plugin
 
     def get_template_engine_manager_plugin(self):
         return self.template_engine_manager_plugin
 
-    @colony.plugins.decorators.plugin_inject("pt.hive.colony.plugins.template_engine.manager")
+    @colony.base.decorators.plugin_inject("pt.hive.colony.plugins.template_engine.manager")
     def set_template_engine_manager_plugin(self, template_engine_manager_plugin):
         self.template_engine_manager_plugin = template_engine_manager_plugin

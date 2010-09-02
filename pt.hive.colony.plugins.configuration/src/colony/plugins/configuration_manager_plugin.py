@@ -37,10 +37,10 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-import colony.plugins.plugin_system
-import colony.plugins.decorators
+import colony.base.plugin_system
+import colony.base.decorators
 
-class ConfigurationManagerPlugin(colony.plugins.plugin_system.Plugin):
+class ConfigurationManagerPlugin(colony.base.plugin_system.Plugin):
     """
     The main class for the Configuration Manager plugin.
     """
@@ -51,8 +51,8 @@ class ConfigurationManagerPlugin(colony.plugins.plugin_system.Plugin):
     description = "The plugin that controls the deployment and retrieval of configurations"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
-    loading_type = colony.plugins.plugin_system.EAGER_LOADING_TYPE
-    platforms = [colony.plugins.plugin_system.CPYTHON_ENVIRONMENT]
+    loading_type = colony.base.plugin_system.EAGER_LOADING_TYPE
+    platforms = [colony.base.plugin_system.CPYTHON_ENVIRONMENT]
     attributes = {"build_automation_file_path" : "$base{plugin_directory}/configuration_manager/manager/resources/baf.xml"}
     capabilities = ["startup", "configuration_manager", "build_automation_item"]
     capabilities_allowed = ["configuration_model_provider"]
@@ -66,37 +66,37 @@ class ConfigurationManagerPlugin(colony.plugins.plugin_system.Plugin):
     configuration_model_provider_plugins = []
 
     def load_plugin(self):
-        colony.plugins.plugin_system.Plugin.load_plugin(self)
+        colony.base.plugin_system.Plugin.load_plugin(self)
         global configuration_manager
         import configuration_manager.manager.configuration_manager_system
         self.configuration_manager = configuration_manager.manager.configuration_manager_system.ConfigurationManager(self)
 
     def end_load_plugin(self):
-        colony.plugins.plugin_system.Plugin.end_load_plugin(self)
+        colony.base.plugin_system.Plugin.end_load_plugin(self)
 
     def unload_plugin(self):
-        colony.plugins.plugin_system.Plugin.unload_plugin(self)
+        colony.base.plugin_system.Plugin.unload_plugin(self)
 
     def end_unload_plugin(self):
-        colony.plugins.plugin_system.Plugin.end_unload_plugin(self)
+        colony.base.plugin_system.Plugin.end_unload_plugin(self)
 
-    @colony.plugins.decorators.load_allowed("pt.hive.colony.plugins.configuration.manager", "1.0.0")
+    @colony.base.decorators.load_allowed("pt.hive.colony.plugins.configuration.manager", "1.0.0")
     def load_allowed(self, plugin, capability):
-        colony.plugins.plugin_system.Plugin.load_allowed(self, plugin, capability)
+        colony.base.plugin_system.Plugin.load_allowed(self, plugin, capability)
 
-    @colony.plugins.decorators.unload_allowed("pt.hive.colony.plugins.configuration.manager", "1.0.0")
+    @colony.base.decorators.unload_allowed("pt.hive.colony.plugins.configuration.manager", "1.0.0")
     def unload_allowed(self, plugin, capability):
-        colony.plugins.plugin_system.Plugin.unload_allowed(self, plugin, capability)
+        colony.base.plugin_system.Plugin.unload_allowed(self, plugin, capability)
 
     def dependency_injected(self, plugin):
-        colony.plugins.plugin_system.Plugin.dependency_injected(self, plugin)
+        colony.base.plugin_system.Plugin.dependency_injected(self, plugin)
 
-    @colony.plugins.decorators.load_allowed_capability("configuration_model_provider")
+    @colony.base.decorators.load_allowed_capability("configuration_model_provider")
     def configuration_model_provider_load_allowed(self, plugin, capability):
         self.configuration_model_provider_plugins.append(plugin)
         self.configuration_manager.configuration_model_provider_load(plugin)
 
-    @colony.plugins.decorators.unload_allowed_capability("configuration_model_provider")
+    @colony.base.decorators.unload_allowed_capability("configuration_model_provider")
     def configuration_model_provider_unload_allowed(self, plugin, capability):
         self.configuration_model_provider_plugins.remove(plugin)
         self.configuration_manager.configuration_model_provider_unload(plugin)

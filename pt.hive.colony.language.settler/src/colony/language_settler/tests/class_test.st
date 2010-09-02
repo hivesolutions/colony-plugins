@@ -24,7 +24,7 @@
 # __license__   = GNU General Public License (GPL), Version
 
 import sys
-import colony.plugins.plugin_system
+import colony.base.plugin_system
 
 class Settler1:
     function print_hello():
@@ -55,7 +55,7 @@ plugin SettlerPlugin implements SettlerCapability allows T1:
 
     id = "pt.hive.settler"
 
-    platforms = [colony.plugins.plugin_system.CPYTHON_ENVIRONMENT]
+    platforms = [colony.base.plugin_system.CPYTHON_ENVIRONMENT]
 
     function set_settler(b):
         self.a = b
@@ -64,7 +64,7 @@ plugin SettlerPlugin implements SettlerCapability allows T1:
 
 end
 
-platforms = [colony.plugins.plugin_system.CPYTHON_ENVIRONMENT]
+platforms = [colony.base.plugin_system.CPYTHON_ENVIRONMENT]
 
 # creates the first settler instance
 settler_instance_1 = Settler()

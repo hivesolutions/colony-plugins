@@ -37,10 +37,10 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-import colony.plugins.plugin_system
-import colony.plugins.decorators
+import colony.base.plugin_system
+import colony.base.decorators
 
-class MainConsolePlugin(colony.plugins.plugin_system.Plugin):
+class MainConsolePlugin(colony.base.plugin_system.Plugin):
     """
     The main class for the Console Main plugin.
     """
@@ -51,10 +51,10 @@ class MainConsolePlugin(colony.plugins.plugin_system.Plugin):
     description = "The main console plugin that controls the console"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
-    loading_type = colony.plugins.plugin_system.EAGER_LOADING_TYPE
-    platforms = [colony.plugins.plugin_system.CPYTHON_ENVIRONMENT,
-                 colony.plugins.plugin_system.JYTHON_ENVIRONMENT,
-                 colony.plugins.plugin_system.IRON_PYTHON_ENVIRONMENT]
+    loading_type = colony.base.plugin_system.EAGER_LOADING_TYPE
+    platforms = [colony.base.plugin_system.CPYTHON_ENVIRONMENT,
+                 colony.base.plugin_system.JYTHON_ENVIRONMENT,
+                 colony.base.plugin_system.IRON_PYTHON_ENVIRONMENT]
     attributes = {"build_automation_file_path" : "$base{plugin_directory}/main_console/console/resources/baf.xml"}
     capabilities = ["main_console", "test_case", "build_automation_item"]
     capabilities_allowed = ["console_command_extension"]
@@ -69,7 +69,7 @@ class MainConsolePlugin(colony.plugins.plugin_system.Plugin):
     console_command_plugins = []
 
     def load_plugin(self):
-        colony.plugins.plugin_system.Plugin.load_plugin(self)
+        colony.base.plugin_system.Plugin.load_plugin(self)
         self.console_command_plugins = []
         global main_console
         import main_console.console.main_console
@@ -78,24 +78,24 @@ class MainConsolePlugin(colony.plugins.plugin_system.Plugin):
         self.console_test_case_class = main_console.console.main_console_test.MainConsoleTestCase
 
     def end_load_plugin(self):
-        colony.plugins.plugin_system.Plugin.end_load_plugin(self)
+        colony.base.plugin_system.Plugin.end_load_plugin(self)
 
     def unload_plugin(self):
-        colony.plugins.plugin_system.Plugin.unload_plugin(self)
+        colony.base.plugin_system.Plugin.unload_plugin(self)
 
     def end_unload_plugin(self):
-        colony.plugins.plugin_system.Plugin.end_unload_plugin(self)
+        colony.base.plugin_system.Plugin.end_unload_plugin(self)
 
-    @colony.plugins.decorators.load_allowed("pt.hive.colony.plugins.main.console", "1.0.0")
+    @colony.base.decorators.load_allowed("pt.hive.colony.plugins.main.console", "1.0.0")
     def load_allowed(self, plugin, capability):
-        colony.plugins.plugin_system.Plugin.load_allowed(self, plugin, capability)
+        colony.base.plugin_system.Plugin.load_allowed(self, plugin, capability)
 
-    @colony.plugins.decorators.unload_allowed("pt.hive.colony.plugins.main.console", "1.0.0")
+    @colony.base.decorators.unload_allowed("pt.hive.colony.plugins.main.console", "1.0.0")
     def unload_allowed(self, plugin, capability):
-        colony.plugins.plugin_system.Plugin.unload_allowed(self, plugin, capability)
+        colony.base.plugin_system.Plugin.unload_allowed(self, plugin, capability)
 
     def dependency_injected(self, plugin):
-        colony.plugins.plugin_system.Plugin.dependency_injected(self, plugin)
+        colony.base.plugin_system.Plugin.dependency_injected(self, plugin)
 
     def execute_command_line(self, command_line):
         self.console.process_command_line(command_line, None)
@@ -134,10 +134,10 @@ class MainConsolePlugin(colony.plugins.plugin_system.Plugin):
 
         return self.console_test_case_class
 
-    @colony.plugins.decorators.load_allowed_capability("console_command_extension")
+    @colony.base.decorators.load_allowed_capability("console_command_extension")
     def console_command_extension_load_allowed(self, plugin, capability):
         self.console_command_plugins.append(plugin)
 
-    @colony.plugins.decorators.unload_allowed_capability("console_command_extension")
+    @colony.base.decorators.unload_allowed_capability("console_command_extension")
     def console_command_extension_unload_allowed(self, plugin, capability):
         self.console_command_plugins.remove(plugin)

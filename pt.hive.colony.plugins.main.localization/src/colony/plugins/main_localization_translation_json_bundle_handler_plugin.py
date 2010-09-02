@@ -37,10 +37,10 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-import colony.plugins.plugin_system
-import colony.plugins.decorators
+import colony.base.plugin_system
+import colony.base.decorators
 
-class MainLocalizationTranslationJsonBundleHandlerPlugin(colony.plugins.plugin_system.Plugin):
+class MainLocalizationTranslationJsonBundleHandlerPlugin(colony.base.plugin_system.Plugin):
     """
     The main class for the Localization Translation Json Bundle Handler Main plugin
     """
@@ -51,12 +51,12 @@ class MainLocalizationTranslationJsonBundleHandlerPlugin(colony.plugins.plugin_s
     description = "Localization Translation Json Bundle Handler Main Plugin"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
-    loading_type = colony.plugins.plugin_system.EAGER_LOADING_TYPE
-    platforms = [colony.plugins.plugin_system.CPYTHON_ENVIRONMENT]
+    loading_type = colony.base.plugin_system.EAGER_LOADING_TYPE
+    platforms = [colony.base.plugin_system.CPYTHON_ENVIRONMENT]
     attributes = {"build_automation_file_path" : "$base{plugin_directory}/main_localization_translation_json_bundle_handler/translation_json_bundle_handler/resources/baf.xml"}
     capabilities = ["localization_translation_bundle_handler", "build_automation_item"]
     capabilities_allowed = []
-    dependencies = [colony.plugins.plugin_system.PluginDependency(
+    dependencies = [colony.base.plugin_system.PluginDependency(
                     "pt.hive.colony.plugins.misc.json", "1.0.0")]
     events_handled = []
     events_registrable = []
@@ -67,29 +67,29 @@ class MainLocalizationTranslationJsonBundleHandlerPlugin(colony.plugins.plugin_s
     json_plugin = None
 
     def load_plugin(self):
-        colony.plugins.plugin_system.Plugin.load_plugin(self)
+        colony.base.plugin_system.Plugin.load_plugin(self)
         global main_localization_translation_json_bundle_handler
         import main_localization_translation_json_bundle_handler.translation_json_bundle_handler.main_localization_translation_json_bundle_handler_system
         self.main_localization_translation_json_bundle_handler = main_localization_translation_json_bundle_handler.translation_json_bundle_handler.main_localization_translation_json_bundle_handler_system.MainLocalizationTranslationJsonBundleHandler(self)
 
     def end_load_plugin(self):
-        colony.plugins.plugin_system.Plugin.end_load_plugin(self)
+        colony.base.plugin_system.Plugin.end_load_plugin(self)
 
     def unload_plugin(self):
-        colony.plugins.plugin_system.Plugin.unload_plugin(self)
+        colony.base.plugin_system.Plugin.unload_plugin(self)
 
     def end_unload_plugin(self):
-        colony.plugins.plugin_system.Plugin.end_unload_plugin(self)
+        colony.base.plugin_system.Plugin.end_unload_plugin(self)
 
     def load_allowed(self, plugin, capability):
-        colony.plugins.plugin_system.Plugin.load_allowed(self, plugin, capability)
+        colony.base.plugin_system.Plugin.load_allowed(self, plugin, capability)
 
     def unload_allowed(self, plugin, capability):
-        colony.plugins.plugin_system.Plugin.unload_allowed(self, plugin, capability)
+        colony.base.plugin_system.Plugin.unload_allowed(self, plugin, capability)
 
-    @colony.plugins.decorators.inject_dependencies("pt.hive.colony.plugins.main.localization.localization_translation_json_bundle_handler", "1.0.0")
+    @colony.base.decorators.inject_dependencies("pt.hive.colony.plugins.main.localization.localization_translation_json_bundle_handler", "1.0.0")
     def dependency_injected(self, plugin):
-        colony.plugins.plugin_system.Plugin.dependency_injected(self, plugin)
+        colony.base.plugin_system.Plugin.dependency_injected(self, plugin)
 
     def get_handler_name(self):
         return self.main_localization_translation_json_bundle_handler.get_handler_name()
@@ -100,6 +100,6 @@ class MainLocalizationTranslationJsonBundleHandlerPlugin(colony.plugins.plugin_s
     def get_json_plugin(self):
         return self.json_plugin
 
-    @colony.plugins.decorators.plugin_inject("pt.hive.colony.plugins.misc.json")
+    @colony.base.decorators.plugin_inject("pt.hive.colony.plugins.misc.json")
     def set_json_plugin(self, json_plugin):
         self.json_plugin = json_plugin

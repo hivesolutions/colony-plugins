@@ -37,10 +37,10 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-import colony.plugins.plugin_system
+import colony.base.plugin_system
 
 #@todo: comment this class
-class BotManagerPlugin(colony.plugins.plugin_system.Plugin):
+class BotManagerPlugin(colony.base.plugin_system.Plugin):
     """
     The main class for the Bot Manager plugin.
     """
@@ -51,8 +51,8 @@ class BotManagerPlugin(colony.plugins.plugin_system.Plugin):
     description = "Bot Manager Plugin"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
-    loading_type = colony.plugins.plugin_system.EAGER_LOADING_TYPE
-    platforms = [colony.plugins.plugin_system.CPYTHON_ENVIRONMENT]
+    loading_type = colony.base.plugin_system.EAGER_LOADING_TYPE
+    platforms = [colony.base.plugin_system.CPYTHON_ENVIRONMENT]
     attributes = {"build_automation_file_path" : "$base{plugin_directory}/misc/bot_manager/resources/baf.xml"}
     capabilities = ["console_command_extension", "build_automation_item"]
     capabilities_allowed = ["bot_engine", "bot_input", "bot_output"]
@@ -66,43 +66,43 @@ class BotManagerPlugin(colony.plugins.plugin_system.Plugin):
     bot_engine_plugins = {}
 
     def load_plugin(self):
-        colony.plugins.plugin_system.Plugin.load_plugin(self)
+        colony.base.plugin_system.Plugin.load_plugin(self)
         global misc
         import misc.bot_manager.bot_manager_system
         self.bot_engine_plugins = {}
         self.bot_manager = misc.bot_manager.bot_manager_system.BotManager(self)
 
     def end_load_plugin(self):
-        colony.plugins.plugin_system.Plugin.end_load_plugin(self)
+        colony.base.plugin_system.Plugin.end_load_plugin(self)
 
     def unload_plugin(self):
-        colony.plugins.plugin_system.Plugin.unload_plugin(self)
+        colony.base.plugin_system.Plugin.unload_plugin(self)
         self.bot_engine_plugins = None
         self.bot_manager = None
 
     def end_unload_plugin(self):
-        colony.plugins.plugin_system.Plugin.end_unload_plugin(self)
+        colony.base.plugin_system.Plugin.end_unload_plugin(self)
 
     def load_allowed(self, plugin, capability):
-        colony.plugins.plugin_system.Plugin.load_allowed(self, plugin, capability)
-        if colony.plugins.plugin_system.is_capability_or_sub_capability_in_list("bot_engine", plugin.capabilities):
+        colony.base.plugin_system.Plugin.load_allowed(self, plugin, capability)
+        if colony.base.plugin_system.is_capability_or_sub_capability_in_list("bot_engine", plugin.capabilities):
             self.bot_engine_plugins[plugin.id] = plugin
-        if colony.plugins.plugin_system.is_capability_or_sub_capability_in_list("bot_input", plugin.capabilities):
+        if colony.base.plugin_system.is_capability_or_sub_capability_in_list("bot_input", plugin.capabilities):
             self.bot_input_plugins[plugin.id] = plugin
-        if colony.plugins.plugin_system.is_capability_or_sub_capability_in_list("bot_output", plugin.capabilities):
+        if colony.base.plugin_system.is_capability_or_sub_capability_in_list("bot_output", plugin.capabilities):
             self.bot_output_plugins[plugin.id] = plugin
 
     def unload_allowed(self, plugin, capability):
-        colony.plugins.plugin_system.Plugin.unload_allowed(self, plugin, capability)
-        if colony.plugins.plugin_system.is_capability_or_sub_capability_in_list("bot_engine", plugin.capabilities):
+        colony.base.plugin_system.Plugin.unload_allowed(self, plugin, capability)
+        if colony.base.plugin_system.is_capability_or_sub_capability_in_list("bot_engine", plugin.capabilities):
             del self.bot_engine_plugins[plugin.id]
-        if colony.plugins.plugin_system.is_capability_or_sub_capability_in_list("bot_input", plugin.capabilities):
+        if colony.base.plugin_system.is_capability_or_sub_capability_in_list("bot_input", plugin.capabilities):
             del self.bot_input_plugins[plugin.id]
-        if colony.plugins.plugin_system.is_capability_or_sub_capability_in_list("bot_output", plugin.capabilities):
+        if colony.base.plugin_system.is_capability_or_sub_capability_in_list("bot_output", plugin.capabilities):
             del self.bot_output_plugins[plugin.id]
 
     def dependency_injected(self, plugin):
-        colony.plugins.plugin_system.Plugin.dependency_injected(self, plugin)
+        colony.base.plugin_system.Plugin.dependency_injected(self, plugin)
 
     def get_console_extension_name(self):
         return self.bot_manager.get_console_extension_name()

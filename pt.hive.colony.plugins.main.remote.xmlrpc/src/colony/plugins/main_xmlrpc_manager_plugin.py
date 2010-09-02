@@ -37,10 +37,10 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-import colony.plugins.plugin_system
-import colony.plugins.decorators
+import colony.base.plugin_system
+import colony.base.decorators
 
-class MainXmlrpcManagerPlugin(colony.plugins.plugin_system.Plugin):
+class MainXmlrpcManagerPlugin(colony.base.plugin_system.Plugin):
     """
     The main class for the Xmlrpc Manager Main plugin.
     """
@@ -51,8 +51,8 @@ class MainXmlrpcManagerPlugin(colony.plugins.plugin_system.Plugin):
     description = "Xmlrpc Manager Main Plugin"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
-    loading_type = colony.plugins.plugin_system.EAGER_LOADING_TYPE
-    platforms = [colony.plugins.plugin_system.CPYTHON_ENVIRONMENT]
+    loading_type = colony.base.plugin_system.EAGER_LOADING_TYPE
+    platforms = [colony.base.plugin_system.CPYTHON_ENVIRONMENT]
     attributes = {"build_automation_file_path" : "$base{plugin_directory}/main_remote_xmlrpc/manager/resources/baf.xml"}
     capabilities = ["xmlrpc_manager", "http_python_handler", "rpc_handler", "build_automation_item"]
     capabilities_allowed = ["rpc_service"]
@@ -66,30 +66,30 @@ class MainXmlrpcManagerPlugin(colony.plugins.plugin_system.Plugin):
     rpc_service_plugins = []
 
     def load_plugin(self):
-        colony.plugins.plugin_system.Plugin.load_plugin(self)
+        colony.base.plugin_system.Plugin.load_plugin(self)
         global main_remote_xmlrpc
         import main_remote_xmlrpc.manager.main_xmlrpc_manager_system
         self.main_xmlrpc_manager = main_remote_xmlrpc.manager.main_xmlrpc_manager_system.MainXmlrpcManager(self)
 
     def end_load_plugin(self):
-        colony.plugins.plugin_system.Plugin.end_load_plugin(self)
+        colony.base.plugin_system.Plugin.end_load_plugin(self)
 
     def unload_plugin(self):
-        colony.plugins.plugin_system.Plugin.unload_plugin(self)
+        colony.base.plugin_system.Plugin.unload_plugin(self)
 
     def end_unload_plugin(self):
-        colony.plugins.plugin_system.Plugin.end_unload_plugin(self)
+        colony.base.plugin_system.Plugin.end_unload_plugin(self)
 
-    @colony.plugins.decorators.load_allowed("pt.hive.colony.plugins.main.remote.xmlrpc.manager", "1.0.0")
+    @colony.base.decorators.load_allowed("pt.hive.colony.plugins.main.remote.xmlrpc.manager", "1.0.0")
     def load_allowed(self, plugin, capability):
-        colony.plugins.plugin_system.Plugin.load_allowed(self, plugin, capability)
+        colony.base.plugin_system.Plugin.load_allowed(self, plugin, capability)
 
-    @colony.plugins.decorators.unload_allowed("pt.hive.colony.plugins.main.remote.xmlrpc.manager", "1.0.0")
+    @colony.base.decorators.unload_allowed("pt.hive.colony.plugins.main.remote.xmlrpc.manager", "1.0.0")
     def unload_allowed(self, plugin, capability):
-        colony.plugins.plugin_system.Plugin.unload_allowed(self, plugin, capability)
+        colony.base.plugin_system.Plugin.unload_allowed(self, plugin, capability)
 
     def dependency_injected(self, plugin):
-        colony.plugins.plugin_system.Plugin.dependency_injected(self, plugin)
+        colony.base.plugin_system.Plugin.dependency_injected(self, plugin)
 
     def get_handler_filename(self):
         return self.main_xmlrpc_manager.get_handler_filename()
@@ -140,12 +140,12 @@ class MainXmlrpcManagerPlugin(colony.plugins.plugin_system.Plugin):
 
         return self.main_xmlrpc_manager.get_handler_properties()
 
-    @colony.plugins.decorators.load_allowed_capability("rpc_service")
+    @colony.base.decorators.load_allowed_capability("rpc_service")
     def rpc_service_capability_load_allowed(self, plugin, capability):
         self.rpc_service_plugins.append(plugin)
         self.main_xmlrpc_manager.update_service_methods(plugin)
 
-    @colony.plugins.decorators.unload_allowed_capability("rpc_service")
+    @colony.base.decorators.unload_allowed_capability("rpc_service")
     def rpc_servicer_capability_unload_allowed(self, plugin, capability):
         self.rpc_service_plugins.remove(plugin)
         self.main_xmlrpc_manager.update_service_methods()

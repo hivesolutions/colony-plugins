@@ -37,9 +37,9 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-import colony.plugins.plugin_system
+import colony.base.plugin_system
 
-class MainRestEncoderXmlPlugin(colony.plugins.plugin_system.Plugin):
+class MainRestEncoderXmlPlugin(colony.base.plugin_system.Plugin):
     """
     The main class for the Rest Encoder Xml Main plugin.
     """
@@ -50,8 +50,8 @@ class MainRestEncoderXmlPlugin(colony.plugins.plugin_system.Plugin):
     description = "Rest Encoder Xml Main Plugin"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
-    loading_type = colony.plugins.plugin_system.EAGER_LOADING_TYPE
-    platforms = [colony.plugins.plugin_system.CPYTHON_ENVIRONMENT]
+    loading_type = colony.base.plugin_system.EAGER_LOADING_TYPE
+    platforms = [colony.base.plugin_system.CPYTHON_ENVIRONMENT]
     attributes = {"build_automation_file_path" : "$base{plugin_directory}/main_remote_rest_encoder/xml/resources/baf.xml"}
     capabilities = ["rest_encoder", "build_automation_item"]
     capabilities_allowed = []
@@ -63,28 +63,28 @@ class MainRestEncoderXmlPlugin(colony.plugins.plugin_system.Plugin):
     main_rest_encoder_xml = None
 
     def load_plugin(self):
-        colony.plugins.plugin_system.Plugin.load_plugin(self)
+        colony.base.plugin_system.Plugin.load_plugin(self)
         global rest_encoder_xml
         import main_remote_rest_encoder.xml.main_rest_encoder_xml_system
         self.main_rest_encoder_xml = main_remote_rest_encoder.xml.main_rest_encoder_xml_system.MainRestEncoderXml(self)
 
     def end_load_plugin(self):
-        colony.plugins.plugin_system.Plugin.end_load_plugin(self)
+        colony.base.plugin_system.Plugin.end_load_plugin(self)
 
     def unload_plugin(self):
-        colony.plugins.plugin_system.Plugin.unload_plugin(self)
+        colony.base.plugin_system.Plugin.unload_plugin(self)
 
     def end_unload_plugin(self):
-        colony.plugins.plugin_system.Plugin.end_unload_plugin(self)
+        colony.base.plugin_system.Plugin.end_unload_plugin(self)
 
     def load_allowed(self, plugin, capability):
-        colony.plugins.plugin_system.Plugin.load_allowed(self, plugin, capability)
+        colony.base.plugin_system.Plugin.load_allowed(self, plugin, capability)
 
     def unload_allowed(self, plugin, capability):
-        colony.plugins.plugin_system.Plugin.unload_allowed(self, plugin, capability)
+        colony.base.plugin_system.Plugin.unload_allowed(self, plugin, capability)
 
     def dependency_injected(self, plugin):
-        colony.plugins.plugin_system.Plugin.dependency_injected(self, plugin)
+        colony.base.plugin_system.Plugin.dependency_injected(self, plugin)
 
     def get_encoder_name(self):
         """

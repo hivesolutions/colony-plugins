@@ -37,10 +37,10 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-import colony.plugins.plugin_system
-import colony.plugins.decorators
+import colony.base.plugin_system
+import colony.base.decorators
 
-class BusinessSessionSerializerPlugin(colony.plugins.plugin_system.Plugin):
+class BusinessSessionSerializerPlugin(colony.base.plugin_system.Plugin):
     """
     The main class for the Business Session Serializer plugin.
     """
@@ -51,8 +51,8 @@ class BusinessSessionSerializerPlugin(colony.plugins.plugin_system.Plugin):
     description = "Business Session Serializer Plugin"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
-    loading_type = colony.plugins.plugin_system.EAGER_LOADING_TYPE
-    platforms = [colony.plugins.plugin_system.CPYTHON_ENVIRONMENT]
+    loading_type = colony.base.plugin_system.EAGER_LOADING_TYPE
+    platforms = [colony.base.plugin_system.CPYTHON_ENVIRONMENT]
     attributes = {"build_automation_file_path" : "$base{plugin_directory}/business/session_serializer/resources/baf.xml"}
     capabilities = ["business_session_serializer", "rpc_service", "build_automation_item"]
     capabilities_allowed = []
@@ -63,71 +63,71 @@ class BusinessSessionSerializerPlugin(colony.plugins.plugin_system.Plugin):
 
     business_session_serializer = None
 
-    @colony.plugins.decorators.load_plugin("pt.hive.colony.plugins.business.session_serializer", "1.0.0")
+    @colony.base.decorators.load_plugin("pt.hive.colony.plugins.business.session_serializer", "1.0.0")
     def load_plugin(self):
-        colony.plugins.plugin_system.Plugin.load_plugin(self)
+        colony.base.plugin_system.Plugin.load_plugin(self)
         global business
         import business.session_serializer.business_session_serializer_system
         self.business_session_serializer = business.session_serializer.business_session_serializer_system.BusinessSessionSerializer(self)
 
     def end_load_plugin(self):
-        colony.plugins.plugin_system.Plugin.end_load_plugin(self)
+        colony.base.plugin_system.Plugin.end_load_plugin(self)
 
     def unload_plugin(self):
-        colony.plugins.plugin_system.Plugin.unload_plugin(self)
+        colony.base.plugin_system.Plugin.unload_plugin(self)
 
     def end_unload_plugin(self):
-        colony.plugins.plugin_system.Plugin.end_unload_plugin(self)
+        colony.base.plugin_system.Plugin.end_unload_plugin(self)
 
     def load_allowed(self, plugin, capability):
-        colony.plugins.plugin_system.Plugin.load_allowed(self, plugin, capability)
+        colony.base.plugin_system.Plugin.load_allowed(self, plugin, capability)
 
     def unload_allowed(self, plugin, capability):
-        colony.plugins.plugin_system.Plugin.unload_allowed(self, plugin, capability)
+        colony.base.plugin_system.Plugin.unload_allowed(self, plugin, capability)
 
     def dependency_injected(self, plugin):
-        colony.plugins.plugin_system.Plugin.dependency_injected(self, plugin)
+        colony.base.plugin_system.Plugin.dependency_injected(self, plugin)
 
-    @colony.plugins.decorators.plugin_call(True)
+    @colony.base.decorators.plugin_call(True)
     def add_session_proxy(self, session_proxy, replace_proxy):
         self.business_session_serializer.add_session_proxy(session_proxy, replace_proxy)
 
-    @colony.plugins.decorators.plugin_call(True)
+    @colony.base.decorators.plugin_call(True)
     def remove_session_proxy(self, session_proxy):
         self.business_session_serializer.remove_session_proxy(session_proxy)
 
-    @colony.plugins.decorators.plugin_call(True)
+    @colony.base.decorators.plugin_call(True)
     def get_service_id(self):
         return self.business_session_serializer.get_service_id()
 
-    @colony.plugins.decorators.plugin_call(True)
+    @colony.base.decorators.plugin_call(True)
     def get_service_alias(self):
         return self.business_session_serializer.get_service_alias()
 
-    @colony.plugins.decorators.plugin_call(True)
+    @colony.base.decorators.plugin_call(True)
     def get_available_rpc_methods(self):
         return self.business_session_serializer.get_available_rpc_methods()
 
-    @colony.plugins.decorators.plugin_call(True)
+    @colony.base.decorators.plugin_call(True)
     def get_rpc_methods_alias(self):
         return self.business_session_serializer.get_rpc_methods_alias()
 
-    @colony.plugins.decorators.plugin_meta_information("rpc_method", {"alias" : []})
+    @colony.base.decorators.plugin_meta_information("rpc_method", {"alias" : []})
     def create_persistent_session(self, session_information):
         return self.business_session_serializer.create_persistent_session(session_information)
 
-    @colony.plugins.decorators.plugin_meta_information("rpc_method", {"alias" : []})
+    @colony.base.decorators.plugin_meta_information("rpc_method", {"alias" : []})
     def get_session_methods(self, session_information):
         return self.business_session_serializer.get_session_methods(session_information)
 
-    @colony.plugins.decorators.plugin_meta_information("rpc_method", {"alias" : []})
+    @colony.base.decorators.plugin_meta_information("rpc_method", {"alias" : []})
     def update_session_information(self, session_information):
         return self.business_session_serializer.update_session_information(session_information)
 
-    @colony.plugins.decorators.plugin_meta_information("rpc_method", {"alias" : []})
+    @colony.base.decorators.plugin_meta_information("rpc_method", {"alias" : []})
     def flush_session_information(self, session_information):
         return self.business_session_serializer.flush_session_information(session_information)
 
-    @colony.plugins.decorators.plugin_meta_information("rpc_method", {"alias" : []})
+    @colony.base.decorators.plugin_meta_information("rpc_method", {"alias" : []})
     def call_session_method(self, session_information, session_entity, session_method, session_method_arguments, session_method_arguments_map):
         return self.business_session_serializer.call_session_method(session_information, session_entity, session_method, session_method_arguments, session_method_arguments_map)

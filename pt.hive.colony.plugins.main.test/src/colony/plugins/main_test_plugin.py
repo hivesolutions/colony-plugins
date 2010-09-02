@@ -37,10 +37,10 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-import colony.plugins.plugin_system
-import colony.plugins.decorators
+import colony.base.plugin_system
+import colony.base.decorators
 
-class MainTestPlugin(colony.plugins.plugin_system.Plugin):
+class MainTestPlugin(colony.base.plugin_system.Plugin):
     """
     The main class for the Test Main plugin
     """
@@ -51,12 +51,12 @@ class MainTestPlugin(colony.plugins.plugin_system.Plugin):
     description = "Test Main Plugin"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
-    loading_type = colony.plugins.plugin_system.EAGER_LOADING_TYPE
-    platforms = [colony.plugins.plugin_system.CPYTHON_ENVIRONMENT]
+    loading_type = colony.base.plugin_system.EAGER_LOADING_TYPE
+    platforms = [colony.base.plugin_system.CPYTHON_ENVIRONMENT]
     attributes = {"build_automation_file_path" : "$base{plugin_directory}/main_test/test/resources/baf.xml"}
     capabilities = ["test", "console_command_extension", "build_automation_item"]
     capabilities_allowed = ["test_manager", "test_case", "test_case_bundle", "plugin_test_case", "plugin_test_case_bundle"]
-    dependencies = [colony.plugins.plugin_system.PluginDependency(
+    dependencies = [colony.base.plugin_system.PluginDependency(
                     "pt.hive.colony.plugins.misc.code_coverage", "1.0.0")]
     events_handled = []
     events_registrable = []
@@ -72,7 +72,7 @@ class MainTestPlugin(colony.plugins.plugin_system.Plugin):
     code_coverage_plugin = None
 
     def load_plugin(self):
-        colony.plugins.plugin_system.Plugin.load_plugin(self)
+        colony.base.plugin_system.Plugin.load_plugin(self)
         global main_test
         import main_test.test.main_test_system
         import main_test.test.console_test
@@ -80,25 +80,25 @@ class MainTestPlugin(colony.plugins.plugin_system.Plugin):
         self.console_test = main_test.test.console_test.ConsoleTest(self)
 
     def end_load_plugin(self):
-        colony.plugins.plugin_system.Plugin.end_load_plugin(self)
+        colony.base.plugin_system.Plugin.end_load_plugin(self)
 
     def unload_plugin(self):
-        colony.plugins.plugin_system.Plugin.unload_plugin(self)
+        colony.base.plugin_system.Plugin.unload_plugin(self)
 
     def end_unload_plugin(self):
-        colony.plugins.plugin_system.Plugin.end_unload_plugin(self)
+        colony.base.plugin_system.Plugin.end_unload_plugin(self)
 
-    @colony.plugins.decorators.load_allowed("pt.hive.colony.plugins.main.test", "1.0.0")
+    @colony.base.decorators.load_allowed("pt.hive.colony.plugins.main.test", "1.0.0")
     def load_allowed(self, plugin, capability):
-        colony.plugins.plugin_system.Plugin.load_allowed(self, plugin, capability)
+        colony.base.plugin_system.Plugin.load_allowed(self, plugin, capability)
 
-    @colony.plugins.decorators.unload_allowed("pt.hive.colony.plugins.main.test", "1.0.0")
+    @colony.base.decorators.unload_allowed("pt.hive.colony.plugins.main.test", "1.0.0")
     def unload_allowed(self, plugin, capability):
-        colony.plugins.plugin_system.Plugin.unload_allowed(self, plugin, capability)
+        colony.base.plugin_system.Plugin.unload_allowed(self, plugin, capability)
 
-    @colony.plugins.decorators.inject_dependencies("pt.hive.colony.plugins.main.test", "1.0.0")
+    @colony.base.decorators.inject_dependencies("pt.hive.colony.plugins.main.test", "1.0.0")
     def dependency_injected(self, plugin):
-        colony.plugins.plugin_system.Plugin.dependency_injected(self, plugin)
+        colony.base.plugin_system.Plugin.dependency_injected(self, plugin)
 
     def get_console_extension_name(self):
         return self.console_test.get_console_extension_name()
@@ -124,50 +124,50 @@ class MainTestPlugin(colony.plugins.plugin_system.Plugin):
     def start_test(self, test_cases_list):
         return self.main_test.start_test(test_cases_list)
 
-    @colony.plugins.decorators.load_allowed_capability("test_manager")
+    @colony.base.decorators.load_allowed_capability("test_manager")
     def test_manager_capability_load_allowed(self, plugin, capability):
         pass
 
-    @colony.plugins.decorators.load_allowed_capability("test_case")
+    @colony.base.decorators.load_allowed_capability("test_case")
     def test_case_capability_load_allowed(self, plugin, capability):
         self.test_case_plugins.append(plugin)
         self.main_test.load_test_case_plugin(plugin)
 
-    @colony.plugins.decorators.load_allowed_capability("test_case_bundle")
+    @colony.base.decorators.load_allowed_capability("test_case_bundle")
     def test_case_bundle_capability_load_allowed(self, plugin, capability):
         self.test_case_bundle_plugins.append(plugin)
         self.main_test.load_test_case_bundle_plugin(plugin)
 
-    @colony.plugins.decorators.load_allowed_capability("plugin_test_case")
+    @colony.base.decorators.load_allowed_capability("plugin_test_case")
     def plugin_test_case_capability_load_allowed(self, plugin, capability):
         self.plugin_test_case_plugins.append(plugin)
         self.main_test.load_plugin_test_case_plugin(plugin)
 
-    @colony.plugins.decorators.load_allowed_capability("plugin_test_case_bundle")
+    @colony.base.decorators.load_allowed_capability("plugin_test_case_bundle")
     def plugin_test_case_bundle_capability_load_allowed(self, plugin, capability):
         self.plugin_test_case_bundle_plugins.append(plugin)
         self.main_test.load_plugin_test_case_bundle_plugin(plugin)
 
-    @colony.plugins.decorators.unload_allowed_capability("test_manager")
+    @colony.base.decorators.unload_allowed_capability("test_manager")
     def test_manager_capability_unload_allowed(self, plugin, capability):
         pass
 
-    @colony.plugins.decorators.unload_allowed_capability("test_case")
+    @colony.base.decorators.unload_allowed_capability("test_case")
     def test_case_capability_unload_allowed(self, plugin, capability):
         self.test_case_plugins.remove(plugin)
         self.main_test.unload_test_case_plugin(plugin)
 
-    @colony.plugins.decorators.unload_allowed_capability("test_case_bundle")
+    @colony.base.decorators.unload_allowed_capability("test_case_bundle")
     def test_case_bundle_capability_unload_allowed(self, plugin, capability):
         self.test_case_bundle_plugins.remove(plugin)
         self.main_test.unload_test_case_bundle_plugin(plugin)
 
-    @colony.plugins.decorators.unload_allowed_capability("plugin_test_case")
+    @colony.base.decorators.unload_allowed_capability("plugin_test_case")
     def plugin_test_case_capability_unload_allowed(self, plugin, capability):
         self.plugin_test_case_plugins.remove(plugin)
         self.main_test.unload_plugin_test_case_plugin(plugin)
 
-    @colony.plugins.decorators.unload_allowed_capability("plugin_test_case_bundle")
+    @colony.base.decorators.unload_allowed_capability("plugin_test_case_bundle")
     def plugin_test_case_bundle_capability_unload_allowed(self, plugin, capability):
         self.plugin_test_case_bundle_plugins.remove(plugin)
         self.main_test.unload_plugin_test_case_bundle_plugin(plugin)
@@ -175,6 +175,6 @@ class MainTestPlugin(colony.plugins.plugin_system.Plugin):
     def get_code_coverage_plugin(self):
         return self.code_coverage_plugin
 
-    @colony.plugins.decorators.plugin_inject("pt.hive.colony.plugins.misc.code_coverage")
+    @colony.base.decorators.plugin_inject("pt.hive.colony.plugins.misc.code_coverage")
     def set_code_coverage_plugin(self, code_coverage_plugin):
         self.code_coverage_plugin = code_coverage_plugin

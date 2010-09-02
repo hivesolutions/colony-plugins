@@ -37,10 +37,10 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-import colony.plugins.decorators
-import colony.plugins.plugin_system
+import colony.base.decorators
+import colony.base.plugin_system
 
-class SearchQueryEvaluatorPlugin(colony.plugins.plugin_system.Plugin):
+class SearchQueryEvaluatorPlugin(colony.base.plugin_system.Plugin):
     """
     The main class for the Search Query Evaluator plugin.
     """
@@ -51,8 +51,8 @@ class SearchQueryEvaluatorPlugin(colony.plugins.plugin_system.Plugin):
     description = "Plugin that provides query evaluation services, using an available index"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
-    loading_type = colony.plugins.plugin_system.EAGER_LOADING_TYPE
-    platforms = [colony.plugins.plugin_system.CPYTHON_ENVIRONMENT]
+    loading_type = colony.base.plugin_system.EAGER_LOADING_TYPE
+    platforms = [colony.base.plugin_system.CPYTHON_ENVIRONMENT]
     attributes = {"build_automation_file_path" : "$base{plugin_directory}/search_query_evaluator/query_evaluator/resources/baf.xml"}
     capabilities = ["search_query_evaluator", "build_automation_item"]
     capabilities_allowed = ["search_query_evaluator_adapter"]
@@ -65,30 +65,30 @@ class SearchQueryEvaluatorPlugin(colony.plugins.plugin_system.Plugin):
     search_query_evaluator_adapter_plugins = []
 
     def load_plugin(self):
-        colony.plugins.plugin_system.Plugin.load_plugin(self)
+        colony.base.plugin_system.Plugin.load_plugin(self)
         global search_query_evaluator
         import search_query_evaluator.query_evaluator.search_query_evaluator_system
         self.search_query_evaluator = search_query_evaluator.query_evaluator.search_query_evaluator_system.SearchQueryEvaluator(self)
 
     def end_load_plugin(self):
-        colony.plugins.plugin_system.Plugin.end_load_plugin(self)
+        colony.base.plugin_system.Plugin.end_load_plugin(self)
 
     def unload_plugin(self):
-        colony.plugins.plugin_system.Plugin.unload_plugin(self)
+        colony.base.plugin_system.Plugin.unload_plugin(self)
 
     def end_unload_plugin(self):
-        colony.plugins.plugin_system.Plugin.end_unload_plugin(self)
+        colony.base.plugin_system.Plugin.end_unload_plugin(self)
 
-    @colony.plugins.decorators.load_allowed("pt.hive.colony.plugins.search.query_evaluator", "1.0.0")
+    @colony.base.decorators.load_allowed("pt.hive.colony.plugins.search.query_evaluator", "1.0.0")
     def load_allowed(self, plugin, capability):
-        colony.plugins.plugin_system.Plugin.load_allowed(self, plugin, capability)
+        colony.base.plugin_system.Plugin.load_allowed(self, plugin, capability)
 
-    @colony.plugins.decorators.unload_allowed("pt.hive.colony.plugins.search.query_evaluator", "1.0.0")
+    @colony.base.decorators.unload_allowed("pt.hive.colony.plugins.search.query_evaluator", "1.0.0")
     def unload_allowed(self, plugin, capability):
-        colony.plugins.plugin_system.Plugin.unload_allowed(self, plugin, capability)
+        colony.base.plugin_system.Plugin.unload_allowed(self, plugin, capability)
 
     def dependency_injected(self, plugin):
-        colony.plugins.plugin_system.Plugin.dependency_injected(self, plugin)
+        colony.base.plugin_system.Plugin.dependency_injected(self, plugin)
 
     def evaluate_query(self, search_index, query, properties):
         return self.search_query_evaluator.evaluate_query(search_index, query, properties)
@@ -96,12 +96,12 @@ class SearchQueryEvaluatorPlugin(colony.plugins.plugin_system.Plugin):
     def get_search_query_evaluator_adapter_types(self):
         return self.search_query_evaluator.get_search_query_evaluator_adapter_types()
 
-    @colony.plugins.decorators.load_allowed_capability("search_query_evaluator_adapter")
+    @colony.base.decorators.load_allowed_capability("search_query_evaluator_adapter")
     def search_query_evaluator_adapter_load_allowed(self, plugin, capability):
         self.search_query_evaluator_adapter_plugins.append(plugin)
         self.search_query_evaluator.add_search_query_evaluator_adapter_plugin(plugin)
 
-    @colony.plugins.decorators.unload_allowed_capability("search_query_evaluator_adapter")
+    @colony.base.decorators.unload_allowed_capability("search_query_evaluator_adapter")
     def search_query_evaluator_adapter_unload_allowed(self, plugin, capability):
         self.search_query_evaluator_adapter_plugins.remove(plugin)
         self.search_query_evaluator.remove_search_query_evaluator_adapter_plugin(plugin)

@@ -37,10 +37,10 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-import colony.plugins.plugin_system
-import colony.plugins.decorators
+import colony.base.plugin_system
+import colony.base.decorators
 
-class SpecificationGeneratorPlugin(colony.plugins.plugin_system.Plugin):
+class SpecificationGeneratorPlugin(colony.base.plugin_system.Plugin):
     """
     The main class for the Specification Generator plugin.
     """
@@ -51,8 +51,8 @@ class SpecificationGeneratorPlugin(colony.plugins.plugin_system.Plugin):
     description = "Plugin used to generate specification files from the source plugin files"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
-    loading_type = colony.plugins.plugin_system.EAGER_LOADING_TYPE
-    platforms = [colony.plugins.plugin_system.CPYTHON_ENVIRONMENT]
+    loading_type = colony.base.plugin_system.EAGER_LOADING_TYPE
+    platforms = [colony.base.plugin_system.CPYTHON_ENVIRONMENT]
     attributes = {"build_automation_file_path" : "$base{plugin_directory}/specifications/specification_generator/resources/baf.xml"}
     capabilities = ["specification_generator", "build_automation_item"]
     capabilities_allowed = ["specification_generator_handler"]
@@ -66,30 +66,30 @@ class SpecificationGeneratorPlugin(colony.plugins.plugin_system.Plugin):
     specification_generator_handler_plugins = []
 
     def load_plugin(self):
-        colony.plugins.plugin_system.Plugin.load_plugin(self)
+        colony.base.plugin_system.Plugin.load_plugin(self)
         global specifications
         import specifications.specification_generator.specification_generator_system
         self.specification_generator = specifications.specification_generator.specification_generator_system.SepecificationGenerator(self)
 
     def end_load_plugin(self):
-        colony.plugins.plugin_system.Plugin.end_load_plugin(self)
+        colony.base.plugin_system.Plugin.end_load_plugin(self)
 
     def unload_plugin(self):
-        colony.plugins.plugin_system.Plugin.unload_plugin(self)
+        colony.base.plugin_system.Plugin.unload_plugin(self)
 
     def end_unload_plugin(self):
-        colony.plugins.plugin_system.Plugin.end_unload_plugin(self)
+        colony.base.plugin_system.Plugin.end_unload_plugin(self)
 
-    @colony.plugins.decorators.load_allowed("pt.hive.colony.plugins.specifications.specification_generator", "1.0.0")
+    @colony.base.decorators.load_allowed("pt.hive.colony.plugins.specifications.specification_generator", "1.0.0")
     def load_allowed(self, plugin, capability):
-        colony.plugins.plugin_system.Plugin.load_allowed(self, plugin, capability)
+        colony.base.plugin_system.Plugin.load_allowed(self, plugin, capability)
 
-    @colony.plugins.decorators.unload_allowed("pt.hive.colony.plugins.specifications.specification_generator", "1.0.0")
+    @colony.base.decorators.unload_allowed("pt.hive.colony.plugins.specifications.specification_generator", "1.0.0")
     def unload_allowed(self, plugin, capability):
-        colony.plugins.plugin_system.Plugin.unload_allowed(self, plugin, capability)
+        colony.base.plugin_system.Plugin.unload_allowed(self, plugin, capability)
 
     def dependency_injected(self, plugin):
-        colony.plugins.plugin_system.Plugin.dependency_injected(self, plugin)
+        colony.base.plugin_system.Plugin.dependency_injected(self, plugin)
 
     def generate_plugin_specification(self, plugin_id, plugin_version, properties, file_path):
         """
@@ -133,12 +133,12 @@ class SpecificationGeneratorPlugin(colony.plugins.plugin_system.Plugin):
 
         return self.specification_generator.generate_plugin_specification_file_buffer(plugin_id, plugin_version, properties)
 
-    @colony.plugins.decorators.load_allowed_capability("specification_generator_handler")
+    @colony.base.decorators.load_allowed_capability("specification_generator_handler")
     def specification_generator_handler_capability_load_allowed(self, plugin, capability):
         self.specification_generator_handler_plugins.append(plugin)
         self.specification_generator.specification_generator_handler_load(plugin)
 
-    @colony.plugins.decorators.unload_allowed_capability("specification_generator_handler")
+    @colony.base.decorators.unload_allowed_capability("specification_generator_handler")
     def specification_generator_handler_capability_unload_allowed(self, plugin, capability):
         self.specification_generator_handler_plugins.remove(plugin)
         self.specification_generator.specification_generator_handler_unload(plugin)

@@ -37,10 +37,10 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-import colony.plugins.plugin_system
-import colony.plugins.decorators
+import colony.base.plugin_system
+import colony.base.decorators
 
-class DataConverterIoAdapterDbasePlugin(colony.plugins.plugin_system.Plugin):
+class DataConverterIoAdapterDbasePlugin(colony.base.plugin_system.Plugin):
     """
     Provides a means to load and save intermediate structures to and from the dbase database format.
     """
@@ -51,18 +51,18 @@ class DataConverterIoAdapterDbasePlugin(colony.plugins.plugin_system.Plugin):
     description = "Provides a means to load and save intermediate structures to and from the dbase database format"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
-    loading_type = colony.plugins.plugin_system.EAGER_LOADING_TYPE
-    platforms = [colony.plugins.plugin_system.CPYTHON_ENVIRONMENT]
+    loading_type = colony.base.plugin_system.EAGER_LOADING_TYPE
+    platforms = [colony.base.plugin_system.CPYTHON_ENVIRONMENT]
     attributes = {"build_automation_file_path" : "$base{plugin_directory}/data_converter_io_adapter_dbase/io_adapter_dbase/resources/baf.xml"}
     capabilities = ["data_converter_io_adapter.dbase", "build_automation_item"]
     capabilities_allowed = []
-    dependencies = [colony.plugins.plugin_system.PluginDependency(
+    dependencies = [colony.base.plugin_system.PluginDependency(
                     "pt.hive.colony.plugins.main.log", "1.0.0"),
-                    colony.plugins.plugin_system.PackageDependency(
+                    colony.base.plugin_system.PackageDependency(
                     "Win32 Extensions for Python", "dbi", "b202", "http://starship.python.net/crew/mhammond/win32"),
-                    colony.plugins.plugin_system.PackageDependency(
+                    colony.base.plugin_system.PackageDependency(
                     "Win32 Extensions for Python", "odbc", "b202", "http://starship.python.net/crew/mhammond/win32"),
-                    colony.plugins.plugin_system.PackageDependency(
+                    colony.base.plugin_system.PackageDependency(
                     "DBFpy", "dbfpy", "2.2.3", "http://sourceforge.net/projects/dbfpy")]
     events_handled = []
     events_registrable = []
@@ -77,10 +77,10 @@ class DataConverterIoAdapterDbasePlugin(colony.plugins.plugin_system.Plugin):
     """ Logger plugin """
 
     def __init__(self, manager):
-        colony.plugins.plugin_system.Plugin.__init__(self, manager)
+        colony.base.plugin_system.Plugin.__init__(self, manager)
 
     def load_plugin(self):
-        colony.plugins.plugin_system.Plugin.load_plugin(self)
+        colony.base.plugin_system.Plugin.load_plugin(self)
         global data_converter_io_adapter_dbase
         import data_converter_io_adapter_dbase.io_adapter_dbase.io_adapter_dbase_system
         import data_converter_io_adapter_dbase.io_adapter_dbase.dbfpy_extensions
@@ -89,28 +89,28 @@ class DataConverterIoAdapterDbasePlugin(colony.plugins.plugin_system.Plugin):
         self.dbfpy_extensions.register_extensions()
 
     def end_load_plugin(self):
-        colony.plugins.plugin_system.Plugin.end_load_plugin(self)
+        colony.base.plugin_system.Plugin.end_load_plugin(self)
 
     def unload_plugin(self):
-        colony.plugins.plugin_system.Plugin.unload_plugin(self)
+        colony.base.plugin_system.Plugin.unload_plugin(self)
         self.io_adapter_dbase = None
         self.dbfpy_extensions = None
         self.logger_plugin = None
 
     def end_unload_plugin(self):
-        colony.plugins.plugin_system.Plugin.end_unload_plugin(self)
+        colony.base.plugin_system.Plugin.end_unload_plugin(self)
 
-    @colony.plugins.decorators.load_allowed("pt.hive.colony.plugins.data_converter.io_adapter.dbase", "1.0.0")
+    @colony.base.decorators.load_allowed("pt.hive.colony.plugins.data_converter.io_adapter.dbase", "1.0.0")
     def load_allowed(self, plugin, capability):
-        colony.plugins.plugin_system.Plugin.load_allowed(self, plugin, capability)
+        colony.base.plugin_system.Plugin.load_allowed(self, plugin, capability)
 
-    @colony.plugins.decorators.unload_allowed("pt.hive.colony.plugins.data_converter.io_adapter.dbase", "1.0.0")
+    @colony.base.decorators.unload_allowed("pt.hive.colony.plugins.data_converter.io_adapter.dbase", "1.0.0")
     def unload_allowed(self, plugin, capability):
-        colony.plugins.plugin_system.Plugin.unload_allowed(self, plugin, capability)
+        colony.base.plugin_system.Plugin.unload_allowed(self, plugin, capability)
 
-    @colony.plugins.decorators.inject_dependencies("pt.hive.colony.plugins.data_converter.io_adapter.dbase", "1.0.0")
+    @colony.base.decorators.inject_dependencies("pt.hive.colony.plugins.data_converter.io_adapter.dbase", "1.0.0")
     def dependency_injected(self, plugin):
-        colony.plugins.plugin_system.Plugin.dependency_injected(self, plugin)
+        colony.base.plugin_system.Plugin.dependency_injected(self, plugin)
 
     def load_intermediate_structure(self, configuration, intermediate_structure, options):
         """
@@ -148,6 +148,6 @@ class DataConverterIoAdapterDbasePlugin(colony.plugins.plugin_system.Plugin):
     def get_logger_plugin(self):
         return self.logger_plugin
 
-    @colony.plugins.decorators.plugin_inject("pt.hive.colony.plugins.main.log")
+    @colony.base.decorators.plugin_inject("pt.hive.colony.plugins.main.log")
     def set_logger_plugin(self, logger_plugin):
         self.logger_plugin = logger_plugin

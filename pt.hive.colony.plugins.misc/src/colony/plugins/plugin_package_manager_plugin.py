@@ -37,9 +37,9 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-import colony.plugins.plugin_system
+import colony.base.plugin_system
 
-class PluginPackageManagerPlugin(colony.plugins.plugin_system.Plugin):
+class PluginPackageManagerPlugin(colony.base.plugin_system.Plugin):
     """
     The main class for the Plugin Package Manager plugin.
     """
@@ -50,8 +50,8 @@ class PluginPackageManagerPlugin(colony.plugins.plugin_system.Plugin):
     description = "A plugin to manage the plugin packages for deployment"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
-    loading_type = colony.plugins.plugin_system.EAGER_LOADING_TYPE
-    platforms = [colony.plugins.plugin_system.CPYTHON_ENVIRONMENT]
+    loading_type = colony.base.plugin_system.EAGER_LOADING_TYPE
+    platforms = [colony.base.plugin_system.CPYTHON_ENVIRONMENT]
     attributes = {"build_automation_file_path" : "$base{plugin_directory}/misc/plugin_package_manager/resources/baf.xml"}
     capabilities = ["console_command_extension", "build_automation_item"]
     capabilities_allowed = []
@@ -63,7 +63,7 @@ class PluginPackageManagerPlugin(colony.plugins.plugin_system.Plugin):
     console_plugin_package_manager = None
 
     def load_plugin(self):
-        colony.plugins.plugin_system.Plugin.load_plugin(self)
+        colony.base.plugin_system.Plugin.load_plugin(self)
         global misc
         import misc.plugin_package_manager.plugin_package_managing_system
         import misc.plugin_package_manager.console_plugin_package_manager
@@ -71,22 +71,22 @@ class PluginPackageManagerPlugin(colony.plugins.plugin_system.Plugin):
         self.console_plugin_package_manager = misc.plugin_package_manager.console_plugin_package_manager.ConsolePluginPackageManager(self)
 
     def end_load_plugin(self):
-        colony.plugins.plugin_system.Plugin.end_load_plugin(self)
+        colony.base.plugin_system.Plugin.end_load_plugin(self)
 
     def unload_plugin(self):
-        colony.plugins.plugin_system.Plugin.unload_plugin(self)
+        colony.base.plugin_system.Plugin.unload_plugin(self)
 
     def end_unload_plugin(self):
-        colony.plugins.plugin_system.Plugin.end_unload_plugin(self)
+        colony.base.plugin_system.Plugin.end_unload_plugin(self)
 
     def load_allowed(self, plugin, capability):
-        colony.plugins.plugin_system.Plugin.load_allowed(self, plugin, capability)
+        colony.base.plugin_system.Plugin.load_allowed(self, plugin, capability)
 
     def unload_allowed(self, plugin, capability):
-        colony.plugins.plugin_system.Plugin.unload_allowed(self, plugin, capability)
+        colony.base.plugin_system.Plugin.unload_allowed(self, plugin, capability)
 
     def dependency_injected(self, plugin):
-        colony.plugins.plugin_system.Plugin.dependency_injected(self, plugin)
+        colony.base.plugin_system.Plugin.dependency_injected(self, plugin)
 
     def get_console_extension_name(self):
         return self.console_plugin_package_manager.get_console_extension_name()

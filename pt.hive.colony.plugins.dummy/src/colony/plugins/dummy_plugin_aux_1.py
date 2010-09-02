@@ -39,12 +39,12 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 import time
 
-import colony.plugins.plugin_system
-import colony.plugins.decorators
+import colony.base.plugin_system
+import colony.base.decorators
 
 TIMEOUT = 0.5
 
-class DummyPluginAux1(colony.plugins.plugin_system.Plugin):
+class DummyPluginAux1(colony.base.plugin_system.Plugin):
     """
     The main class for the Dummy Aux 1 plugin.
     """
@@ -55,14 +55,14 @@ class DummyPluginAux1(colony.plugins.plugin_system.Plugin):
     description = "Dummy Aux 1 Plugin"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
-    loading_type = colony.plugins.plugin_system.EAGER_LOADING_TYPE
-    platforms = [colony.plugins.plugin_system.CPYTHON_ENVIRONMENT,
-                 colony.plugins.plugin_system.JYTHON_ENVIRONMENT,
-                 colony.plugins.plugin_system.IRON_PYTHON_ENVIRONMENT]
+    loading_type = colony.base.plugin_system.EAGER_LOADING_TYPE
+    platforms = [colony.base.plugin_system.CPYTHON_ENVIRONMENT,
+                 colony.base.plugin_system.JYTHON_ENVIRONMENT,
+                 colony.base.plugin_system.IRON_PYTHON_ENVIRONMENT]
     attributes = {"build_automation_file_path" : "$base{plugin_directory}/dummy/aux_1/resources/baf.xml"}
     capabilities = ["dummy_aux1_capability", "build_automation_item"]
-    capabilities_allowed = [("dummy_aux2_capability", colony.plugins.plugin_system.NEW_DIFFUSION_SCOPE), ("dummy_aux3_capability", colony.plugins.plugin_system.NEW_DIFFUSION_SCOPE)]
-    dependencies = [colony.plugins.plugin_system.PluginDependency(
+    capabilities_allowed = [("dummy_aux2_capability", colony.base.plugin_system.NEW_DIFFUSION_SCOPE), ("dummy_aux3_capability", colony.base.plugin_system.NEW_DIFFUSION_SCOPE)]
+    dependencies = [colony.base.plugin_system.PluginDependency(
                     "pt.hive.colony.plugins.main.threads.thread_pool_manager", "1.0.0")]
     events_handled = ["dummy_aux1_event"]
     events_registrable = ["plugin_manager.end_load_plugin"]
@@ -70,11 +70,11 @@ class DummyPluginAux1(colony.plugins.plugin_system.Plugin):
     thread_pool_manager_plugin = None
 
     def load_plugin(self):
-        colony.plugins.plugin_system.Plugin.load_plugin(self)
+        colony.base.plugin_system.Plugin.load_plugin(self)
         print "loading dummy aux 1..."
 
     def end_load_plugin(self):
-        colony.plugins.plugin_system.Plugin.end_load_plugin(self)
+        colony.base.plugin_system.Plugin.end_load_plugin(self)
         self.test_pool = self.thread_pool_manager_plugin.create_new_thread_pool("test pool", "test pool description", 5, 1, 5)
         self.test_pool.start_pool()
 
@@ -93,58 +93,58 @@ class DummyPluginAux1(colony.plugins.plugin_system.Plugin):
             self.test_pool.insert_task(self.task_descriptor)
 
     def unload_plugin(self):
-        colony.plugins.plugin_system.Plugin.unload_plugin(self)
+        colony.base.plugin_system.Plugin.unload_plugin(self)
         print "unloading dummy aux 1..."
         self.test_pool.remove_task(self.task_descriptor)
 
     def end_unload_plugin(self):
-        colony.plugins.plugin_system.Plugin.end_unload_plugin(self)
+        colony.base.plugin_system.Plugin.end_unload_plugin(self)
 
-    @colony.plugins.decorators.load_allowed("pt.hive.colony.plugins.dummy.aux1", "1.0.0")
+    @colony.base.decorators.load_allowed("pt.hive.colony.plugins.dummy.aux1", "1.0.0")
     def load_allowed(self, plugin, capability):
-        colony.plugins.plugin_system.Plugin.load_allowed(self, plugin, capability)
+        colony.base.plugin_system.Plugin.load_allowed(self, plugin, capability)
         print "loading dummy aux 1 allowed..."
 
-    @colony.plugins.decorators.unload_allowed("pt.hive.colony.plugins.dummy.aux1", "1.0.0")
+    @colony.base.decorators.unload_allowed("pt.hive.colony.plugins.dummy.aux1", "1.0.0")
     def unload_allowed(self, plugin, capability):
-        colony.plugins.plugin_system.Plugin.unload_allowed(self, plugin, capability)
+        colony.base.plugin_system.Plugin.unload_allowed(self, plugin, capability)
         print "unloading dummy aux 1 allowed..."
 
-    @colony.plugins.decorators.inject_dependencies("pt.hive.colony.plugins.dummy.aux1", "1.0.0")
+    @colony.base.decorators.inject_dependencies("pt.hive.colony.plugins.dummy.aux1", "1.0.0")
     def dependency_injected(self, plugin):
-        colony.plugins.plugin_system.Plugin.dependency_injected(self, plugin)
+        colony.base.plugin_system.Plugin.dependency_injected(self, plugin)
 
-    @colony.plugins.decorators.event_handler("pt.hive.colony.plugins.dummy.aux1", "1.0.0")
+    @colony.base.decorators.event_handler("pt.hive.colony.plugins.dummy.aux1", "1.0.0")
     def event_handler(self, event_name, *event_args):
         try:
-            colony.plugins.plugin_system.Plugin.event_handler(self, event_name, *event_args)
+            colony.base.plugin_system.Plugin.event_handler(self, event_name, *event_args)
         except Exception, exception:
-            colony.plugins.plugin_system.Plugin.treat_exception(self, exception)
+            colony.base.plugin_system.Plugin.treat_exception(self, exception)
 
-    @colony.plugins.decorators.load_allowed_capability("dummy_aux2_capability")
+    @colony.base.decorators.load_allowed_capability("dummy_aux2_capability")
     def dummy_aux2_capability_load_allowed(self, plugin, capability):
         print "dummy aux 1 loaded allowed dummy_aux2_capability plugin " + plugin.id + " with version " + plugin.version
 
-    @colony.plugins.decorators.load_allowed_capability("dummy_aux3_capability")
+    @colony.base.decorators.load_allowed_capability("dummy_aux3_capability")
     def dummy_aux3_capability_load_allowed(self, plugin, capability):
         print "dummy aux 1 loaded allowed dummy_aux3_capability plugin " + plugin.id + " with version " + plugin.version
 
-    @colony.plugins.decorators.unload_allowed_capability("dummy_aux2_capability")
+    @colony.base.decorators.unload_allowed_capability("dummy_aux2_capability")
     def dummy_aux2_capability_unload_allowed(self, plugin, capability):
         print "dummy aux 1 unloaded allowed dummy_aux2_capability plugin " + plugin.id + " with version " + plugin.version
 
-    @colony.plugins.decorators.unload_allowed_capability("dummy_aux3_capability")
+    @colony.base.decorators.unload_allowed_capability("dummy_aux3_capability")
     def dummy_aux3_capability_unload_allowed(self, plugin, capability):
         print "dummy aux 1 unloaded allowed dummy_aux3_capability plugin " + plugin.id + " with version " + plugin.version
 
     def get_thread_pool_manager_plugin(self):
         return self.thread_pool_manager_plugin
 
-    @colony.plugins.decorators.plugin_inject("pt.hive.colony.plugins.main.threads.thread_pool_manager")
+    @colony.base.decorators.plugin_inject("pt.hive.colony.plugins.main.threads.thread_pool_manager")
     def set_thread_pool_manager_plugin(self, thread_pool_manager_plugin):
         self.thread_pool_manager_plugin = thread_pool_manager_plugin
 
-    @colony.plugins.decorators.event_handler_method("plugin_manager.end_load_plugin")
+    @colony.base.decorators.event_handler_method("plugin_manager.end_load_plugin")
     def end_load_plugin_handler(self, event_name, plugin_id, plugin_version, plugin, *event_args):
         print "dummy aux 1 detected the end of loading of " + plugin_id + " with version " + plugin_version
 
