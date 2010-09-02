@@ -40,12 +40,12 @@
         <description>The Colony Base Build Automation Item Plugin automation file (baf)</description>
         <url>http://www.hive.pt</url>
     </artifact>
-    <modules>
+    <!--<modules>
         <module>
             <id>pt.hive.colony.plugins.*</id>
             <version>.*</version>
         </module>
-    </modules>
+    </modules>-->
     <build>
         <default_stage>build</default_stage>
         <plugins>
@@ -57,13 +57,146 @@
                     <specification_file>$base{plugin_directory}/colony_base_build_automation_item_plugin.json</specification_file>
                 </configuration>
             </plugin>
-            <plugin>
+            <!--<plugin>
                 <id>pt.hive.colony.plugins.build.automation.extensions.izpack</id>
                 <version>1.0.0</version>
                 <stage>build</stage>
                 <configuration>
                     <base_directory>$base{plugin_directory}</base_directory>
                     <install_file>$base{plugin_directory}/build_automation_items/colony_base/resources/installer/install.xml</install_file>
+                </configuration>
+            </plugin>-->
+            <plugin>
+                <id>pt.hive.colony.plugins.build.automation.extensions.installation</id>
+                <version>1.0.0</version>
+                <stage>build</stage>
+                <configuration>
+                    <formats>deb</formats>
+                    <base_name>colony</base_name>
+                    <package>
+                        <package_name>colony</package_name>
+                        <package_version>${build_automation.artifact.version}</package_version>
+                        <package_section>devel</package_section>
+                        <package_priority>optional</package_priority>
+                        <package_architecture>all</package_architecture>
+                        <package_essential>no</package_essential>
+                        <package_dependencies>python</package_dependencies>
+                        <package_pre_dependencies>bash</package_pre_dependencies>
+                        <package_installed_size>0</package_installed_size>
+                        <package_maintainer><![CDATA[Hive Solutions Lda. <development@hive.pt>]]></package_maintainer>
+                        <package_provides>colony</package_provides>
+                        <package_description>A framework for a simpler aproach to modularity.\n Colony Framework is an open-source modularity framework, that makes it possible for regular people to build future proof software.\n</package_description>
+                    </package>
+                    <contents>
+                        <file>
+                            <path>$base{plugin_system_directory}/main.py</path>
+                             <owner>0</owner>
+                               <group>0</group>
+                            <mode>755</mode>
+                            <parameters>
+                                <deb><target>usr/lib/colony/main.py</target></deb>
+                            </parameters>
+                        </file>
+                        <file>
+                            <path>$base{plugin_system_directory}/script.py</path>
+                            <owner>0</owner>
+                               <group>0</group>
+                            <mode>755</mode>
+                            <parameters>
+                                <deb><target>usr/lib/colony/script.py</target></deb>
+                            </parameters>
+                        </file>
+                        <directory>
+                            <owner>0</owner>
+                               <group>0</group>
+                            <mode>755</mode>
+                            <parameters>
+                                <deb><target>usr/lib/colony</target></deb>
+                            </parameters>
+                        </directory>
+                        <directory>
+                            <path>$base{plugin_system_directory}/colony</path>
+                            <owner>0</owner>
+                               <group>0</group>
+                            <mode>755</mode>
+                            <parameters>
+                                <deb><target>usr/lib/colony/colony</target></deb>
+                            </parameters>
+                        </directory>
+                        <directory>
+                            <path>$base{plugin_system_directory}/config</path>
+                            <owner>0</owner>
+                               <group>0</group>
+                            <mode>755</mode>
+                            <parameters>
+                                <deb><target>usr/lib/colony/config</target></deb>
+                            </parameters>
+                        </directory>
+                        <directory>
+                            <path>$base{plugin_system_directory}/scripts</path>
+                            <owner>0</owner>
+                               <group>0</group>
+                            <mode>755</mode>
+                            <parameters>
+                                <deb><target>usr/lib/colony/scripts</target></deb>
+                            </parameters>
+                        </directory>
+                        <directory>
+                            <owner>0</owner>
+                               <group>0</group>
+                            <mode>777</mode>
+                            <parameters>
+                                <deb><target>usr/lib/colony/log</target></deb>
+                            </parameters>
+                        </directory>
+                        <directory>
+                            <owner>0</owner>
+                               <group>0</group>
+                            <mode>777</mode>
+                            <parameters>
+                                <deb><target>usr/lib/colony/meta</target></deb>
+                            </parameters>
+                        </directory>
+                        <directory>
+                            <owner>0</owner>
+                               <group>0</group>
+                            <mode>777</mode>
+                            <parameters>
+                                <deb><target>usr/lib/colony/tmp</target></deb>
+                            </parameters>
+                        </directory>
+                        <directory>
+                            <path>$base{plugin_system_directory}/config</path>
+                            <owner>0</owner>
+                               <group>0</group>
+                            <mode>777</mode>
+                            <parameters>
+                                <deb><target>etc/colony</target></deb>
+                            </parameters>
+                        </directory>
+                        <link>
+                            <owner>0</owner>
+                               <group>0</group>
+                            <mode>755</mode>
+                            <parameters>
+                                <deb>
+                                    <source>usr/bin/colony</source>
+                                    <target>/usr/lib/colony/scripts/unix/colony.sh</target>
+                                </deb>
+                            </parameters>
+                        </link>
+                        <link>
+                            <owner>0</owner>
+                               <group>0</group>
+                            <mode>755</mode>
+                            <parameters>
+                                <deb>
+                                    <source>usr/bin/colony_daemon</source>
+                                    <target>/usr/lib/colony/scripts/unix/colony_daemon.sh</target>
+                                </deb>
+                            </parameters>
+                        </link>
+                    </contents>
                 </configuration>
             </plugin>
         </plugins>
