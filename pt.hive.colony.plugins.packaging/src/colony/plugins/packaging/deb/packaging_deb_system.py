@@ -290,11 +290,11 @@ class DebFile:
         file_properties = parameters.get(FILE_PROPERTIES_VALUE, {})
 
         # sets the file properties values
-        file_properties["modification_timestamp"] = modification_timestamp
-        file_properties["owner_id"] = owner_id
-        file_properties["group_id"] = group_id
-        file_properties["mode"] = mode
-        file_properties["size"] = size
+        file_properties["modification_timestamp"] = file_properties.get("modification_timestamp", modification_timestamp)
+        file_properties["owner_id"] = file_properties.get("owner_id", owner_id)
+        file_properties["group_id"] = file_properties.get("group_id", group_id)
+        file_properties["mode"] = file_properties.get("mode", mode)
+        file_properties["size"] = file_properties.get("size", size)
 
         # sets the file properties in the parameters
         parameters[FILE_PROPERTIES_VALUE] = file_properties
