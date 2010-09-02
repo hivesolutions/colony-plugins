@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 #
 # colony        This starts and stops colony
 #
