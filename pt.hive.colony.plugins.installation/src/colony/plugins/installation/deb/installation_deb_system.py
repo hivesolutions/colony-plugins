@@ -141,6 +141,7 @@ class InstallationDeb:
         deb_file.open("wb+")
 
         try:
+            # processes the contents for the deb file
             self._process_contents(deb_file, parameters)
         finally:
             # closes the deb file
@@ -153,6 +154,7 @@ class InstallationDeb:
         # retrieves the contents map from the parameters
         contents = parameters["contents"]
 
+        # retrieves the content references
         directories = contents.get("directory", [])
         files = contents.get("file", [])
         links = contents.get("link", [])

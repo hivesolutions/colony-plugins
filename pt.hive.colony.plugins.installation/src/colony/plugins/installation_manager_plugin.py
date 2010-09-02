@@ -37,10 +37,10 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-import colony.plugins.plugin_system
+import colony.base.plugin_system
 import colony.plugins.decorators
 
-class InstallationManagerPlugin(colony.plugins.plugin_system.Plugin):
+class InstallationManagerPlugin(colony.base.plugin_system.Plugin):
     """
     The main class for the Installation Manager plugin.
     """
@@ -51,8 +51,8 @@ class InstallationManagerPlugin(colony.plugins.plugin_system.Plugin):
     description = "A plugin to manage the installation generation of the packages"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
-    loading_type = colony.plugins.plugin_system.EAGER_LOADING_TYPE
-    platforms = [colony.plugins.plugin_system.CPYTHON_ENVIRONMENT]
+    loading_type = colony.base.plugin_system.EAGER_LOADING_TYPE
+    platforms = [colony.base.plugin_system.CPYTHON_ENVIRONMENT]
     attributes = {"build_automation_file_path" : "$base{plugin_directory}/installation/manager/resources/baf.xml"}
     capabilities = ["installation.manager"]
     capabilities_allowed = ["installation.adapter"]
@@ -66,30 +66,30 @@ class InstallationManagerPlugin(colony.plugins.plugin_system.Plugin):
     installation_adapter_plugins = []
 
     def load_plugin(self):
-        colony.plugins.plugin_system.Plugin.load_plugin(self)
+        colony.base.plugin_system.Plugin.load_plugin(self)
         global installation
         import installation.manager.installation_manager_system
         self.installation_manager = installation.manager.installation_manager_system.InstallationManager(self)
 
     def end_load_plugin(self):
-        colony.plugins.plugin_system.Plugin.end_load_plugin(self)
+        colony.base.plugin_system.Plugin.end_load_plugin(self)
 
     def unload_plugin(self):
-        colony.plugins.plugin_system.Plugin.unload_plugin(self)
+        colony.base.plugin_system.Plugin.unload_plugin(self)
 
     def end_unload_plugin(self):
-        colony.plugins.plugin_system.Plugin.end_unload_plugin(self)
+        colony.base.plugin_system.Plugin.end_unload_plugin(self)
 
     @colony.plugins.decorators.load_allowed("pt.hive.colony.plugins.installation.manager", "1.0.0")
     def load_allowed(self, plugin, capability):
-        colony.plugins.plugin_system.Plugin.load_allowed(self, plugin, capability)
+        colony.base.plugin_system.Plugin.load_allowed(self, plugin, capability)
 
     @colony.plugins.decorators.unload_allowed("pt.hive.colony.plugins.installation.manager", "1.0.0")
     def unload_allowed(self, plugin, capability):
-        colony.plugins.plugin_system.Plugin.unload_allowed(self, plugin, capability)
+        colony.base.plugin_system.Plugin.unload_allowed(self, plugin, capability)
 
     def dependency_injected(self, plugin):
-        colony.plugins.plugin_system.Plugin.dependency_injected(self, plugin)
+        colony.base.plugin_system.Plugin.dependency_injected(self, plugin)
 
     def generate_installation_file(self, parameters):
         """
