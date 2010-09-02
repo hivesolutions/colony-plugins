@@ -352,6 +352,13 @@ class DebFile:
         # writes the file to the current file
         self._write_file(string_buffer, archive_path, parameters)
 
+    def write_register_value(self, archive_path, parameters = {}):
+        # creates the string buffer to hold the string value
+        string_buffer = colony.libs.string_buffer_util.StringBuffer(False)
+
+        # writes the file to the current file
+        self._write_file(string_buffer, archive_path, parameters)
+
     def read(self, archive_path, parameters = {}):
         pass
 
