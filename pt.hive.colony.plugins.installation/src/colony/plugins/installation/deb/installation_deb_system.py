@@ -168,11 +168,20 @@ class InstallationDeb:
             # retrieves the directory recursive value
             directory_recursive = directory.get("recursive", True)
 
+            # retrieves the directory owner value
+            directory_owner = int(directory.get("owner", "0"))
+
+            # retrieves the directory group value
+            directory_group = int(directory.get("group", "0"))
+
+            # retrieves the directory mode value
+            directory_mode = int(directory.get("mode", "0"), 8)
+
             # retrieves the file target
             directory_target = directory["parameters"]["deb"]["target"]
 
             # writes the file to the deb file
-            self._process_directory_contents(deb_file, directory_path, directory_target, directory_recursive)
+            self._process_directory_contents(deb_file, directory_path, directory_target, directory_recursive, directory_owner, directory_group, directory_mode)
 
         # iterates over all the (simple) files
         # to write them into the deb file
@@ -180,28 +189,54 @@ class InstallationDeb:
             # retrieves the file path
             file_path = file["path"]
 
+            # retrieves the file owner value
+            file_owner = int(file.get("owner", "0"))
+
+            # retrieves the file group value
+            file_group = int(file.get("group", "0"))
+
+            # retrieves the file mode value
+            file_mode = int(file.get("mode", "0"), 8)
+
             # retrieves the file target
             file_target = file["parameters"]["deb"]["target"]
 
             # writes the file to the deb file
-            deb_file.write(file_path, file_target)
+            deb_file.write(file_path, file_target, {"file_properties" : {"owner" : file_owner,
+                                                                         "group" : file_group,
+                                                                         "mode" : file_mode}})
 
         # iterates over all the links
         # to put them into the deb file
         for link in links:
+            # retrieves the link owner value
+            link_owner = int(link.get("owner", "0"))
+
+            # retrieves the link group value
+            link_group = int(link.get("group", "0"))
+
+            # retrieves the link mode value
+            link_mode = int(link.get("mode", "0"), 8)
+
             # retrieves the link source
             link_source = link["parameters"]["deb"]["source"]
 
             # retrieves the link source
             link_target = link["parameters"]["deb"]["target"]
 
-            # writes the file to the deb file
-            deb_file.write_string_value("", link_source, {"file_properties" : {"type" : "link",
-                                                                               "link_name" : link_target}})
+            # writes the link to the deb file
+            deb_file.write_register_value(link_source, {"file_properties" : {"type" : "link",
+                                                                          "link_name" : link_target,
+                                                                          "owner" : link_owner,
+                                                                          "group" : link_group,
+                                                                          "mode" : link_mode}})
 
-    def _process_directory_contents(self, deb_file, directory_path, directory_target, recursive = True):
-        # writes the directory registry in the deb file
-        deb_file.write_string_value("", directory_target, {"file_properties" : {"type" : "directory"}})
+    def _process_directory_contents(self, deb_file, directory_path, directory_target, recursive = True, directory_owner = 0, directory_group = 0, directory_mode = 0):
+        # writes the directory register in the deb file
+        deb_file.write_register_value(directory_target, {"file_properties" : {"type" : "directory",
+                                                                           "owner" : directory_owner,
+                                                                            "group" : directory_group,
+                                                                            "mode" : directory_mode}})
 
         # in case no directory path is defined
         if not directory_path:
@@ -218,20 +253,27 @@ class InstallationDeb:
 
         # iterates over the directory contents
         for directory_item in directory_contents:
+            # in case the directory item matches the exclusion regular
+            # expression (it's invalid)
             if exclusion_regex.match(directory_item):
+                # continues the loop
                 continue
 
+            # creates the directory item path (using the directory path)
             directory_item_path = directory_path + "/" + directory_item
 
+            # creates the directory item target (using the directory target)
             directory_item_target = directory_target + "/" + directory_item
 
             # in case the directory item is a directory
             if os.path.isdir(directory_item_path):
                 # in case the recursive flag is active processes the inner directory
-                recursive and self._process_directory_contents(deb_file, directory_item_path, directory_item_target, recursive)
+                recursive and self._process_directory_contents(deb_file, directory_item_path, directory_item_target, recursive, directory_owner, directory_group, directory_mode)
             else:
                 # writes the directory item (file) to the deb file
-                deb_file.write(directory_item_path, directory_item_target)
+                deb_file.write(directory_item_path, directory_item_target, {"file_properties" : {"owner" : directory_owner,
+                                                                                                 "group" : directory_group,
+                                                                                                 "mode" : directory_mode}})
 
     def _write_file_contents(self, temporary_path, file_name, file_contents):
         # create the complete file path by append the file name
