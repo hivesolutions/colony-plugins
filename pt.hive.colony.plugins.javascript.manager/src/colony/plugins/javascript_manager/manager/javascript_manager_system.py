@@ -65,9 +65,6 @@ class JavascriptManager:
     javascript_manager_plugin = None
     """ The javascript manager plugin """
 
-    workspace_base_path = None
-    """ The workspace base path """
-
     plugin_search_directories_lock = None
     """ The plugin search directories lock """
 
@@ -118,12 +115,6 @@ class JavascriptManager:
         # retrieves the resource manager plugin
         resource_manager_plugin = self.javascript_manager_plugin.resource_manager_plugin
 
-        # retrieves the workspace home path resource
-        workspace_home_path_resource = resource_manager_plugin.get_resource("system.path.workspace_home")
-
-        # retrieves the workspace home path value
-        workspace_home_path = workspace_home_path_resource.data
-
         # retrieves the colony web path resource
         colony_web_path_resource = resource_manager_plugin.get_resource("system.path.colony_web")
 
@@ -159,9 +150,6 @@ class JavascriptManager:
 
         # retrieves the colony demo real path value
         colony_demo_real_path = os.path.realpath(colony_demo_path)
-
-        # sets the workspace base path
-        self.workspace_base_path = workspace_home_path
 
         # sets the plugin search directories list
         self.plugin_search_directories_list = [colony_demo_real_path + "/pt.hive.colony.demo.web.plugins.todo_list/plugins",
