@@ -38,11 +38,13 @@ __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
 import os
+import re
 
 import installation_deb_exceptions
 
-import colony.libs.path_util
 import colony.libs.map_util
+import colony.libs.path_util
+import colony.libs.string_buffer_util
 
 ADAPTER_NAME = "deb"
 """ The adapter name """
@@ -154,10 +156,17 @@ class InstallationDeb:
         # retrieves the contents map from the parameters
         contents = parameters["contents"]
 
+        # retrieves the exclusions list
+        exclusions = contents.get("exclusions", {})
+        exclusions_list = exclusions.get("exclusion", [])
+
         # retrieves the content references
         directories = contents.get("directory", [])
         files = contents.get("file", [])
         links = contents.get("link", [])
+
+        # processes the exclusion regex from the exclusions list
+        exclusion_regex = self._process_exclusion_regex(exclusions_list)
 
         # iterates over all the directories
         # to write their contents into the deb files
@@ -181,7 +190,7 @@ class InstallationDeb:
             directory_target = directory["parameters"]["deb"]["target"]
 
             # writes the file to the deb file
-            self._process_directory_contents(deb_file, directory_path, directory_target, directory_recursive, directory_owner, directory_group, directory_mode)
+            self._process_directory_contents(deb_file, directory_path, directory_target, directory_recursive, directory_owner, directory_group, directory_mode, exclusion_regex)
 
         # iterates over all the (simple) files
         # to write them into the deb file
@@ -231,12 +240,12 @@ class InstallationDeb:
                                                                           "group" : link_group,
                                                                           "mode" : link_mode}})
 
-    def _process_directory_contents(self, deb_file, directory_path, directory_target, recursive = True, directory_owner = 0, directory_group = 0, directory_mode = 0):
+    def _process_directory_contents(self, deb_file, directory_path, directory_target, recursive = True, directory_owner = 0, directory_group = 0, directory_mode = 0, exclusion_regex = None):
         # writes the directory register in the deb file
         deb_file.write_register_value(directory_target, {"file_properties" : {"type" : "directory",
-                                                                           "owner" : directory_owner,
-                                                                            "group" : directory_group,
-                                                                            "mode" : directory_mode}})
+                                                                              "owner" : directory_owner,
+                                                                              "group" : directory_group,
+                                                                              "mode" : directory_mode}})
 
         # in case no directory path is defined
         if not directory_path:
@@ -245,11 +254,6 @@ class InstallationDeb:
 
         # retrieves the directory contents
         directory_contents = os.listdir(directory_path)
-
-        import re
-
-        # @todo: GENERALIZE THESE CONTENTS
-        exclusion_regex = re.compile("(.*.svn$)|(.*.pyc$)")
 
         # iterates over the directory contents
         for directory_item in directory_contents:
@@ -268,7 +272,7 @@ class InstallationDeb:
             # in case the directory item is a directory
             if os.path.isdir(directory_item_path):
                 # in case the recursive flag is active processes the inner directory
-                recursive and self._process_directory_contents(deb_file, directory_item_path, directory_item_target, recursive, directory_owner, directory_group, directory_mode)
+                recursive and self._process_directory_contents(deb_file, directory_item_path, directory_item_target, recursive, directory_owner, directory_group, directory_mode, exclusion_regex)
             else:
                 # writes the directory item (file) to the deb file
                 deb_file.write(directory_item_path, directory_item_target, {"file_properties" : {"owner" : directory_owner,
@@ -373,3 +377,33 @@ class InstallationDeb:
 
         # returns the processed template file decoded
         return processed_template_file_decoded
+
+    def _process_exclusion_regex(self, exclusions_list):
+        # creates the exclusion regex buffer
+        exclusion_regex_buffer = colony.libs.string_buffer_util.StringBuffer()
+
+        # sets the is first flag
+        is_first = True
+
+        # iterates over all the exclusion items in the
+        # exclusions list
+        for exclusion_item in exclusions_list:
+            # in case the is first flag is set
+            if is_first:
+                # unsets the is first flag
+                is_first = False
+            else:
+                # adds the or operand to the exclusions regex buffer
+                exclusion_regex_buffer.write("|")
+
+            # adds the exclusion item to the exclusion regex buffer
+            exclusion_regex_buffer.write("(" + exclusion_item + ")")
+
+        # retrieves the exclusion regex value
+        exclusion_regex_value = exclusion_regex_buffer.get_value()
+
+        # compiles the exclusion regex value, retrieving the exclusion regex
+        exclusion_regex = re.compile(exclusion_regex_value)
+
+        # returns the exclusion regex
+        return exclusion_regex
