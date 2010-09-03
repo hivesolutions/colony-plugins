@@ -90,8 +90,8 @@
                     <contents>
                         <file>
                             <path>$base{plugin_system_directory}/main.py</path>
-                             <owner>0</owner>
-                               <group>0</group>
+                            <owner>0</owner>
+                            <group>0</group>
                             <mode>755</mode>
                             <parameters>
                                 <deb><target>usr/lib/colony/main.py</target></deb>
@@ -100,7 +100,7 @@
                         <file>
                             <path>$base{plugin_system_directory}/script.py</path>
                             <owner>0</owner>
-                               <group>0</group>
+                            <group>0</group>
                             <mode>755</mode>
                             <parameters>
                                 <deb><target>usr/lib/colony/script.py</target></deb>
@@ -108,7 +108,7 @@
                         </file>
                         <directory>
                             <owner>0</owner>
-                               <group>0</group>
+                            <group>0</group>
                             <mode>755</mode>
                             <parameters>
                                 <deb><target>usr/lib/colony</target></deb>
@@ -117,7 +117,7 @@
                         <directory>
                             <path>$base{plugin_system_directory}/colony</path>
                             <owner>0</owner>
-                               <group>0</group>
+                            <group>0</group>
                             <mode>755</mode>
                             <parameters>
                                 <deb><target>usr/lib/colony/colony</target></deb>
@@ -126,7 +126,7 @@
                         <directory>
                             <path>$base{plugin_system_directory}/config</path>
                             <owner>0</owner>
-                               <group>0</group>
+                            <group>0</group>
                             <mode>755</mode>
                             <parameters>
                                 <deb><target>usr/lib/colony/config</target></deb>
@@ -135,7 +135,7 @@
                         <directory>
                             <path>$base{plugin_system_directory}/scripts</path>
                             <owner>0</owner>
-                               <group>0</group>
+                            <group>0</group>
                             <mode>755</mode>
                             <parameters>
                                 <deb><target>usr/lib/colony/scripts</target></deb>
@@ -143,7 +143,7 @@
                         </directory>
                         <directory>
                             <owner>0</owner>
-                               <group>0</group>
+                            <group>0</group>
                             <mode>777</mode>
                             <parameters>
                                 <deb><target>usr/lib/colony/log</target></deb>
@@ -151,7 +151,7 @@
                         </directory>
                         <directory>
                             <owner>0</owner>
-                               <group>0</group>
+                            <group>0</group>
                             <mode>777</mode>
                             <parameters>
                                 <deb><target>usr/lib/colony/meta</target></deb>
@@ -159,7 +159,15 @@
                         </directory>
                         <directory>
                             <owner>0</owner>
-                               <group>0</group>
+                            <group>0</group>
+                            <mode>755</mode>
+                            <parameters>
+                                <deb><target>usr/lib/colony/plugins</target></deb>
+                            </parameters>
+                        </directory>
+                        <directory>
+                            <owner>0</owner>
+                            <group>0</group>
                             <mode>777</mode>
                             <parameters>
                                 <deb><target>usr/lib/colony/tmp</target></deb>
@@ -168,7 +176,7 @@
                         <directory>
                             <path>$base{plugin_system_directory}/config</path>
                             <owner>0</owner>
-                               <group>0</group>
+                            <group>0</group>
                             <mode>777</mode>
                             <parameters>
                                 <deb><target>etc/colony</target></deb>
@@ -176,7 +184,7 @@
                         </directory>
                         <link>
                             <owner>0</owner>
-                               <group>0</group>
+                            <group>0</group>
                             <mode>755</mode>
                             <parameters>
                                 <deb>
@@ -187,12 +195,23 @@
                         </link>
                         <link>
                             <owner>0</owner>
-                               <group>0</group>
+                            <group>0</group>
                             <mode>755</mode>
                             <parameters>
                                 <deb>
                                     <source>usr/bin/colony_daemon</source>
                                     <target>/usr/lib/colony/scripts/unix/colony_daemon.sh</target>
+                                </deb>
+                            </parameters>
+                        </link>
+                        <link>
+                            <owner>0</owner>
+                            <group>0</group>
+                            <mode>755</mode>
+                            <parameters>
+                                <deb>
+                                    <source>usr/bin/colony_deploy</source>
+                                    <target>/usr/lib/colony/scripts/unix/colony_deploy.sh</target>
                                 </deb>
                             </parameters>
                         </link>
