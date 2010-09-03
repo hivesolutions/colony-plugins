@@ -173,15 +173,6 @@
                                 <deb><target>usr/lib/colony/tmp</target></deb>
                             </parameters>
                         </directory>
-                        <directory>
-                            <path>$base{plugin_system_directory}/config</path>
-                            <owner>0</owner>
-                            <group>0</group>
-                            <mode>777</mode>
-                            <parameters>
-                                <deb><target>etc/colony</target></deb>
-                            </parameters>
-                        </directory>
                         <link>
                             <owner>0</owner>
                             <group>0</group>
@@ -212,6 +203,17 @@
                                 <deb>
                                     <source>usr/bin/colony_deploy</source>
                                     <target>/usr/lib/colony/scripts/unix/colony_deploy.sh</target>
+                                </deb>
+                            </parameters>
+                        </link>
+                        <link>
+                            <owner>0</owner>
+                            <group>0</group>
+                            <mode>755</mode>
+                            <parameters>
+                                <deb>
+                                    <source>etc/colony</source>
+                                    <target>/usr/lib/colony/config</target>
                                 </deb>
                             </parameters>
                         </link>
