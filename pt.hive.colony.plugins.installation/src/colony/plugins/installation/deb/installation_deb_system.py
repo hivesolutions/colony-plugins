@@ -55,6 +55,9 @@ FILE_PATH_VALUE = "file_path"
 RESOURCES_PATH = "installation/deb/resources"
 """ The resources path """
 
+EMPTY_REGEX_VALUE = "$"
+""" The empty regex value """
+
 class InstallationDeb:
     """
     The installation deb class.
@@ -401,6 +404,10 @@ class InstallationDeb:
 
         # retrieves the exclusion regex value
         exclusion_regex_value = exclusion_regex_buffer.get_value()
+
+        # creates the (real) exclusion regex value using the empty
+        # regex value as fall-back
+        exclusion_regex_value = exclusion_regex_value or EMPTY_REGEX_VALUE
 
         # compiles the exclusion regex value, retrieving the exclusion regex
         exclusion_regex = re.compile(exclusion_regex_value)
