@@ -556,8 +556,14 @@ class BuildAutomation:
             elif configuration_item_type == types.ListType:
                 # iterates over the configuration item (retrieving the various configuration items)
                 for configuration_single_item in configuration_item:
-                    # sets the configuration composite value
-                    self._set_configuration_composite_value(base_map, configuration_name, configuration_single_item, build_automation_structure)
+                    # in case the current configuration single item is a generic element
+                    # the configuration item is treated as a composite one
+                    if type(configuration_single_item) == types.InstanceType and configuration_single_item.__class__ == build_automation_parser.GenericElement:
+                        # sets the configuration composite value
+                        self._set_configuration_composite_value(base_map, configuration_name, configuration_single_item, build_automation_structure)
+                    else:
+                        # adds the configuration single item value to the base map for the current configuration name
+                        self._set_base_map(base_map, configuration_name, configuration_single_item)
             elif configuration_item_type == types.InstanceType and configuration_item.__class__ == build_automation_parser.GenericElement:
                 # sets the configuration composite value
                 self._set_configuration_composite_value(base_map, configuration_name, configuration_item, build_automation_structure)
