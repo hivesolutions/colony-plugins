@@ -88,6 +88,10 @@
                         <package_description>A framework for a simpler aproach to modularity.\n Colony Framework is an open-source modularity framework, that makes it possible for regular people to build future proof software.\n</package_description>
                     </package>
                     <contents>
+                        <exclusions>
+                            <exclusion>.*.svn$</exclusion>
+                            <exclusion>.*.pyc$</exclusion>
+                        </exclusions>
                         <file>
                             <path>$base{plugin_system_directory}/main.py</path>
                             <owner>0</owner>
@@ -112,33 +116,6 @@
                             <mode>755</mode>
                             <parameters>
                                 <deb><target>usr/lib/colony</target></deb>
-                            </parameters>
-                        </directory>
-                        <directory>
-                            <path>$base{plugin_system_directory}/colony</path>
-                            <owner>0</owner>
-                            <group>0</group>
-                            <mode>755</mode>
-                            <parameters>
-                                <deb><target>usr/lib/colony/colony</target></deb>
-                            </parameters>
-                        </directory>
-                        <directory>
-                            <path>$base{plugin_system_directory}/config</path>
-                            <owner>0</owner>
-                            <group>0</group>
-                            <mode>755</mode>
-                            <parameters>
-                                <deb><target>usr/lib/colony/config</target></deb>
-                            </parameters>
-                        </directory>
-                        <directory>
-                            <path>$base{plugin_system_directory}/scripts</path>
-                            <owner>0</owner>
-                            <group>0</group>
-                            <mode>755</mode>
-                            <parameters>
-                                <deb><target>usr/lib/colony/scripts</target></deb>
                             </parameters>
                         </directory>
                         <directory>
@@ -171,6 +148,33 @@
                             <mode>777</mode>
                             <parameters>
                                 <deb><target>usr/lib/colony/tmp</target></deb>
+                            </parameters>
+                        </directory>
+                        <directory>
+                            <path>$base{plugin_system_directory}/colony</path>
+                            <owner>0</owner>
+                            <group>0</group>
+                            <mode>755</mode>
+                            <parameters>
+                                <deb><target>usr/lib/colony/colony</target></deb>
+                            </parameters>
+                        </directory>
+                        <directory>
+                            <path>$base{plugin_system_directory}/config</path>
+                            <owner>0</owner>
+                            <group>0</group>
+                            <mode>755</mode>
+                            <parameters>
+                                <deb><target>usr/lib/colony/config</target></deb>
+                            </parameters>
+                        </directory>
+                        <directory>
+                            <path>$base{plugin_system_directory}/scripts</path>
+                            <owner>0</owner>
+                            <group>0</group>
+                            <mode>755</mode>
+                            <parameters>
+                                <deb><target>usr/lib/colony/scripts</target></deb>
                             </parameters>
                         </directory>
                         <link>
