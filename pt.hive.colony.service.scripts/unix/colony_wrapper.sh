@@ -28,7 +28,7 @@
 
 # the initial variables
 NAME=colony_wrapper
-COLONY_EXECUTABLE=colony
+COLONY_EXECUTABLE=colony_daemon
 COLONY_DAEMON_TEST_EXECUTABLE=colony_daemon_test
 COLONY_PATH=/usr/bin/$COLONY_EXECUTABLE
 COLONY_DAEMON_TEST_PATH=/usr/bin/$COLONY_DAEMON_TEST_EXECUTABLE
@@ -39,17 +39,17 @@ LOG_FILE_STDERR=/var/log/colony_wrapper.stderr.log
 COLONY_DAEMON_FILE=/var/colony/colony.daemon
 COLONY_DAEMON_CHECK_TIMEOUT=120
 
-# exports the colony home variable
-export COLONY_HOME
+# saves the pid parent value
+PID_PARENT_VALUE=$$
 
 # launches the colony and redirects the standard output and error
-setsid $COLONY_PATH --configuration_file=$COLONY_CONFIGURATION 1> $LOG_FILE_STDOUT 2> $LOG_FILE_STDERR &
+setsid $COLONY_PATH --configuration_file=$COLONY_CONFIGURATION --daemon_pid=$PID_PARENT_VALUE 1> $LOG_FILE_STDOUT 2> $LOG_FILE_STDERR &
 
 # saves the pid value
 PID_VALUE=$!
 
-# checks the colony daemon sanity for the current pid value
-$COLONY_DAEMON_TEST_PATH $COLONY_DAEMON_FILE $PID_VALUE $COLONY_DAEMON_CHECK_TIMEOUT 1> $LOG_FILE_STDOUT 2> $LOG_FILE_STDERR
+# checks the colony daemon sanity for the current pid parent value
+$COLONY_DAEMON_TEST_PATH $COLONY_DAEMON_FILE $PID_PARENT_VALUE $COLONY_DAEMON_CHECK_TIMEOUT 1> $LOG_FILE_STDOUT 2> $LOG_FILE_STDERR
 
 # saves the daemon test return value
 DAEMON_TEST_RETURN_VALUE=$?
