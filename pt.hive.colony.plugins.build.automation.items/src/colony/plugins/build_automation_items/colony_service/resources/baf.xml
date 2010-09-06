@@ -83,15 +83,13 @@
                             <mode>755</mode>
                             <parameters>
                                 <deb>
-                                    <!--<path>${path_pata_o_pt_hive_colony_service_scripts}/unix/debian/colony.sh</path>-->
-                                    <path>C:/Users/joamag/workspace/pt.hive.colony.service.scripts/unix/debian/colony.sh</path>
+                                    <path>$resource{system.path.colony}/pt.hive.colony.service.scripts/unix/debian/colony.sh</path>
                                     <target>etc/init.d/colony</target>
                                 </deb>
                             </parameters>
                         </file>
                         <file>
-                            <!--<path>${path_pata_o_pt_hive_colony_service_scripts}/unix/debian/colony_wrapper.sh</path>-->
-                            <path>C:/Users/joamag/workspace/pt.hive.colony.service.scripts/unix/colony_wrapper.sh</path>
+                            <path>$resource{system.path.colony}/pt.hive.colony.service.scripts/unix/colony_wrapper.sh</path>
                             <owner>0</owner>
                             <group>0</group>
                             <mode>755</mode>
