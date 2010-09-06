@@ -69,7 +69,7 @@
                         <package_pre_dependencies>bash</package_pre_dependencies>
                         <package_installed_size>0</package_installed_size>
                         <package_maintainer><![CDATA[Hive Solutions Lda. <development@hive.pt>]]></package_maintainer>
-                        <package_provides>colony</package_provides>
+                        <package_provides>colony-service</package_provides>
                         <package_description>Service Support for the Colony Framework</package_description>
                     </package>
                     <contents>
