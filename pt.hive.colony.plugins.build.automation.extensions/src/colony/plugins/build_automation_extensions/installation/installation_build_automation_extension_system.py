@@ -68,11 +68,14 @@ class InstallationBuildAutomationExtension:
         # retrieves the formats list
         formats = parameters["formats"].split(",")
 
+        # creates bthe (base) file path from the target directory and the base name
+        file_path = build_properties[TARGET_DIRECTORY_VALUE] + "/" + parameters["base_name"]
+
         # iterates over all the formats to generate the installation files
         for format in formats:
             # creates the installation parameters map
             installation_parameters = {"installation_adapter" : format,
-                                       "file_path" : build_properties[TARGET_DIRECTORY_VALUE] + "/" + parameters["base_name"] + "." + format,
+                                       "file_path" : file_path,
                                        "package" : parameters["package"],
                                        "contents" : parameters["contents"]}
 
