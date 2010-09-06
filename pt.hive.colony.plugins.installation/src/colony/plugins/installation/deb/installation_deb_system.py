@@ -49,8 +49,23 @@ import colony.libs.string_buffer_util
 ADAPTER_NAME = "deb"
 """ The adapter name """
 
+FILE_EXTENSION_VALUE = ".deb"
+""" The file extension value """
+
+PACKAGE_VALUE = "package"
+""" The package value """
+
 FILE_PATH_VALUE = "file_path"
 """ The file path value """
+
+PACKAGE_VERSION_VALUE = "package_version"
+""" The package name value """
+
+PACKAGE_ARCHITECTURE_VALUE = "package_architecture"
+""" The package architecture value """
+
+NAME_SEPARATION_TOKEN = "_"
+""" The name separation token """
 
 RESOURCES_PATH = "installation/deb/resources"
 """ The resources path """
@@ -105,8 +120,11 @@ class InstallationDeb:
             # raises the missing parameter exception
             raise installation_deb_exceptions.MissingParameter(FILE_PATH_VALUE)
 
+        # retrieves the package from the parameters
+        package = parameters[PACKAGE_VALUE]
+
         # retrieves the file path from the parameters
-        file_path = parameters[FILE_PATH_VALUE]
+        file_path = parameters[FILE_PATH_VALUE] + NAME_SEPARATION_TOKEN + package[PACKAGE_VERSION_VALUE] + NAME_SEPARATION_TOKEN + package[PACKAGE_ARCHITECTURE_VALUE] + FILE_EXTENSION_VALUE
 
         # retrieves the temporary plugin generated path
         temporary_plugin_generated_path = plugin_manager.get_temporary_plugin_generated_path_by_id(self.installation_deb_plugin.id)
