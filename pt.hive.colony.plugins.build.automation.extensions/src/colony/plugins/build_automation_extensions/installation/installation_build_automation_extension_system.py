@@ -40,6 +40,12 @@ __license__ = "GNU General Public License (GPL), Version 3"
 TARGET_DIRECTORY_VALUE = "target_directory"
 """ The target directory value """
 
+FORMATS_VALUE = "formats"
+""" The formats value """
+
+BASE_NAME_VALUE = "base_name"
+""" The base name value """
+
 class InstallationBuildAutomationExtension:
     """
     The installation build automation extension class.
@@ -66,10 +72,16 @@ class InstallationBuildAutomationExtension:
         build_properties = build_automation_structure.get_all_build_properties()
 
         # retrieves the formats list
-        formats = parameters["formats"].split(",")
+        formats = parameters[FORMATS_VALUE].split(",")
 
-        # creates bthe (base) file path from the target directory and the base name
-        file_path = build_properties[TARGET_DIRECTORY_VALUE] + "/" + parameters["base_name"]
+        # retrieves the base name
+        base_name = parameters[BASE_NAME_VALUE]
+
+        # retrieves the target directory
+        target_directory = build_properties[TARGET_DIRECTORY_VALUE]
+
+        # creates the (base) file path from the target directory and the base name
+        file_path = target_directory + "/" + base_name
 
         # iterates over all the formats to generate the installation files
         for format in formats:
