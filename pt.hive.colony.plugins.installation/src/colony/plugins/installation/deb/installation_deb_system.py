@@ -192,8 +192,14 @@ class InstallationDeb:
         # iterates over all the directories
         # to write their contents into the deb files
         for directory in directories:
+            # retrieves the parameters
+            directory_parameters = directory.get("parameters", {})
+
+            # retrieves the parameters deb
+            directory_parameters_deb = directory_parameters.get("deb", {})
+
             # retrieves the file path
-            directory_path = directory.get("path", None)
+            directory_path = directory.get("path", directory_parameters_deb.get("path", None))
 
             # retrieves the directory recursive value
             directory_recursive = directory.get("recursive", True)
@@ -208,7 +214,7 @@ class InstallationDeb:
             directory_mode = int(directory.get("mode", "0"), 8)
 
             # retrieves the file target
-            directory_target = directory["parameters"]["deb"]["target"]
+            directory_target = directory_parameters_deb["target"]
 
             # writes the file to the deb file
             self._process_directory_contents(deb_file, directory_path, directory_target, directory_recursive, directory_owner, directory_group, directory_mode, exclusion_regex)
@@ -216,8 +222,14 @@ class InstallationDeb:
         # iterates over all the (simple) files
         # to write them into the deb file
         for file in files:
+            # retrieves the parameters
+            file_parameters = file.get("parameters", {})
+
+            # retrieves the parameters deb
+            file_parameters_deb = file_parameters.get("deb", {})
+
             # retrieves the file path
-            file_path = file["path"]
+            file_path = file.get("path", file_parameters_deb.get("path", None))
 
             # retrieves the file owner value
             file_owner = int(file.get("owner", "0"))
@@ -229,7 +241,7 @@ class InstallationDeb:
             file_mode = int(file.get("mode", "0"), 8)
 
             # retrieves the file target
-            file_target = file["parameters"]["deb"]["target"]
+            file_target = file_parameters_deb["target"]
 
             # writes the file to the deb file
             deb_file.write(file_path, file_target, {"file_properties" : {"owner" : file_owner,
