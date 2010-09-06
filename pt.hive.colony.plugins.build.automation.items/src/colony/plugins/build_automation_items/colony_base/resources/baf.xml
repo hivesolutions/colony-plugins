@@ -202,6 +202,17 @@
                             <mode>755</mode>
                             <parameters>
                                 <deb>
+                                    <source>usr/bin/colony_script</source>
+                                    <target>/usr/lib/colony/scripts/unix/colony_script.sh</target>
+                                </deb>
+                            </parameters>
+                        </link>
+                        <link>
+                            <owner>0</owner>
+                            <group>0</group>
+                            <mode>755</mode>
+                            <parameters>
+                                <deb>
                                     <source>usr/bin/colony_daemon</source>
                                     <target>/usr/lib/colony/scripts/unix/colony_daemon.sh</target>
                                 </deb>
