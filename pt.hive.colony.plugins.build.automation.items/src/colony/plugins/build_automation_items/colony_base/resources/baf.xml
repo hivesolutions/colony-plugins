@@ -150,6 +150,14 @@
                                 <deb><target>usr/lib/colony/tmp</target></deb>
                             </parameters>
                         </directory>
+                       <directory>
+                            <owner>0</owner>
+                            <group>0</group>
+                            <mode>755</mode>
+                            <parameters>
+                                <deb><target>var/log/colony</target></deb>
+                            </parameters>
+                        </directory>
                         <directory>
                             <path>$base{plugin_system_directory}/colony</path>
                             <owner>0</owner>
