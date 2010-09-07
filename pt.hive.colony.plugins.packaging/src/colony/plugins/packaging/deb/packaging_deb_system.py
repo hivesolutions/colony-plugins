@@ -237,6 +237,14 @@ class DebFile:
         # opens the file with the current mode
         self.file.open(mode)
 
+        # in case the current mode is read
+        if self.mode == READ_MODE:
+            # reads the debian binary
+            self._read_debian_binary()
+
+            # reads the control
+            self._read_control()
+
     def close(self):
         """
         Closes the current file, being used.
@@ -601,6 +609,36 @@ class DebFile:
         # adds the file to the compressed file using the
         # given file info
         compressed_file.addfile(file_info, file)
+
+    def _read_debian_binary(self):
+        # reads the debian binary value from the base file
+        print self.file.read("debian-binary")
+
+    def _read_control(self):
+        """
+        Reads the control file from the
+        current file.
+        """
+
+        # retrieves the control contents
+        control_contents = self.file.read("control.tar.gz")
+
+        # creates the control contents buffer to hold the control contents value
+        control_contents_buffer = colony.libs.string_buffer_util.StringBuffer(False)
+
+        # writes the control contents to the control contents buffer
+        control_contents_buffer.write(control_contents)
+
+        # rewinds the control contents buffer to the initial position
+        control_contents_buffer.seek(0, os.SEEK_SET)
+
+        # reads the control value from the base file
+        file = tarfile.open(None, "r:gz", control_contents_buffer)
+
+        ficheiro = file.extractfile("control")
+        contents = ficheiro.read()
+
+        print contents
 
     def _generate_md5_sums_file(self):
         """
