@@ -63,6 +63,27 @@ DEB_FILE_ARGUMENTS_VALUE = "deb_file_arguments"
 CONTROL_VALUE = "control"
 """ The control value """
 
+CONFFILES_VALUE = "conffiles"
+""" The conffiles value """
+
+CONFIG_VALUE = "config"
+""" The config value """
+
+POSTINST_VALUE = "postinst"
+""" The postinst value """
+
+POSTRM_VALUE = "postrm"
+""" The postrm value """
+
+PRERM_VALUE = "prerm"
+""" The prerm value """
+
+SHLIBS_VALUE = "shlibs"
+""" The shlibs value """
+
+MD5SUMS_VALUE = "md5sums"
+""" The md5sums value """
+
 READ_MODE = "rb"
 """ The read mode """
 
@@ -185,6 +206,9 @@ class DebFile:
     file = None
     """ The file currently being used """
 
+    debian_binary = None
+    """ The debian binary value """
+
     pending_files = []
     """ The list of pending files to be flushed """
 
@@ -193,6 +217,9 @@ class DebFile:
 
     md5_map = {}
     """ The map associating the archive path with the md5 value """
+
+    control_map = {}
+    """ The map containing the control file contents """
 
     def __init__(self, packing_deb, file_path, file_format, deb_file_arguments):
         """
@@ -216,6 +243,7 @@ class DebFile:
         self.pending_files = []
         self.index_map = {}
         self.md5_map = {}
+        self.control_map = {}
 
     def open(self, mode = DEFAULT_MODE):
         """
@@ -389,6 +417,26 @@ class DebFile:
         # returns the index map keys
         return index_map_keys
 
+    def get_debian_binary(self):
+        """
+        Retrieves the debian binary.
+
+        @rtype: String
+        @return: The debian binary.
+        """
+
+        return self.debian_binary
+
+    def get_control_map(self):
+        """
+        Retrieves the control map.
+
+        @rtype: Dictionary
+        @return: The control map.
+        """
+
+        return self.control_map
+
     def _write_file(self, file, archive_path, parameters = {}):
         """
         Writes the given file object to the current file, using the given
@@ -449,12 +497,12 @@ class DebFile:
         # the string can be a path or a file object with the
         # contents of the control file
         control = self.deb_file_arguments[CONTROL_VALUE]
-        conffiles = self.deb_file_arguments.get("conffiles", empty_string_buffer)
-        config = self.deb_file_arguments.get("config", empty_string_buffer)
-        postinst = self.deb_file_arguments.get("postinst", empty_string_buffer)
-        postrm = self.deb_file_arguments.get("postrm", empty_string_buffer)
-        prerm = self.deb_file_arguments.get("prerm", empty_string_buffer)
-        shlibs = self.deb_file_arguments.get("shlibs", empty_string_buffer)
+        conffiles = self.deb_file_arguments.get(CONFFILES_VALUE, empty_string_buffer)
+        config = self.deb_file_arguments.get(CONFIG_VALUE, empty_string_buffer)
+        postinst = self.deb_file_arguments.get(POSTINST_VALUE, empty_string_buffer)
+        postrm = self.deb_file_arguments.get(POSTRM_VALUE, empty_string_buffer)
+        prerm = self.deb_file_arguments.get(PRERM_VALUE, empty_string_buffer)
+        shlibs = self.deb_file_arguments.get(SHLIBS_VALUE, empty_string_buffer)
 
         # retrieves the control files from the control string
         control_file = self._get_file(control)
@@ -475,14 +523,14 @@ class DebFile:
             compressed_file = tarfile.open(None, CONTROL_FILE_MODE, control_string_buffer)
 
             # writes the various control files
-            self._write_control_file(compressed_file, control_file, "control")
-            self._write_control_file(compressed_file, conffiles_file, "conffiles")
-            self._write_control_file(compressed_file, config_file, "config")
-            self._write_control_file(compressed_file, postinst_file, "postinst")
-            self._write_control_file(compressed_file, postrm_file, "postrm")
-            self._write_control_file(compressed_file, prerm_file, "prerm")
-            self._write_control_file(compressed_file, shlibs_file, "shlibs")
-            self._write_control_file(compressed_file, md5sums_file, "md5sums")
+            self._write_control_file(compressed_file, control_file, CONTROL_VALUE)
+            self._write_control_file(compressed_file, conffiles_file, CONFFILES_VALUE)
+            self._write_control_file(compressed_file, config_file, CONFIG_VALUE)
+            self._write_control_file(compressed_file, postinst_file, POSTINST_VALUE)
+            self._write_control_file(compressed_file, postrm_file, POSTRM_VALUE)
+            self._write_control_file(compressed_file, prerm_file, PRERM_VALUE)
+            self._write_control_file(compressed_file, shlibs_file, SHLIBS_VALUE)
+            self._write_control_file(compressed_file, md5sums_file, MD5SUMS_VALUE)
 
             # closes the compressed file
             compressed_file.close()
@@ -611,8 +659,13 @@ class DebFile:
         compressed_file.addfile(file_info, file)
 
     def _read_debian_binary(self):
+        """
+        Reads the debian binary from the
+        current file.
+        """
+
         # reads the debian binary value from the base file
-        print self.file.read("debian-binary")
+        self.debian_binary = self.file.read("debian-binary")
 
     def _read_control(self):
         """
@@ -635,10 +688,28 @@ class DebFile:
         # reads the control value from the base file
         file = tarfile.open(None, "r:gz", control_contents_buffer)
 
-        ficheiro = file.extractfile("control")
-        contents = ficheiro.read()
+        # retrieves the names in the file
+        names = file.getnames()
 
-        print contents
+        # extracts the various control files
+        control_file_contents = CONTROL_VALUE in names and file.extractfile(CONTROL_VALUE).read() or ""
+        conffiles_file_contents = CONFFILES_VALUE in names and file.extractfile(CONFFILES_VALUE).read() or ""
+        config_file_contents = CONFIG_VALUE in names and file.extractfile(CONFIG_VALUE).read() or ""
+        postinst_file_contents = POSTINST_VALUE in names and file.extractfile(POSTINST_VALUE).read() or ""
+        postrm_file_contents = POSTRM_VALUE in names and file.extractfile(POSTRM_VALUE).read() or ""
+        prerm_file_contents = PRERM_VALUE in names and file.extractfile(PRERM_VALUE).read() or ""
+        shlibs_file_contents = SHLIBS_VALUE in names and file.extractfile(SHLIBS_VALUE).read() or ""
+        md5sums_file_contents = MD5SUMS_VALUE in names and file.extractfile(MD5SUMS_VALUE).read() or ""
+
+        # sets the control file contents in the control map
+        self.control_map[CONTROL_VALUE] = control_file_contents
+        self.control_map[CONFFILES_VALUE] = conffiles_file_contents
+        self.control_map[CONFIG_VALUE] = config_file_contents
+        self.control_map[POSTINST_VALUE] = postinst_file_contents
+        self.control_map[POSTRM_VALUE] = postrm_file_contents
+        self.control_map[PRERM_VALUE] = prerm_file_contents
+        self.control_map[SHLIBS_VALUE] = shlibs_file_contents
+        self.control_map[MD5SUMS_VALUE] = md5sums_file_contents
 
     def _generate_md5_sums_file(self):
         """
