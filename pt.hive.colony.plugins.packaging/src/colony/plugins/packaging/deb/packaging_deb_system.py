@@ -120,6 +120,9 @@ FILE_EXTENSIONS_MAP = {TAR_FILE_FORMAT : ".tar",
 CONTROL_FILE_MODE = "w:gz"
 """ The control file mode """
 
+CONTROL_FILE_READ_MODE = "r:gz"
+""" The control file read mode """
+
 BUFFER_SIZE = 1024
 """ The size of the buffer """
 
@@ -686,7 +689,7 @@ class DebFile:
         control_contents_buffer.seek(0, os.SEEK_SET)
 
         # reads the control value from the base file
-        file = tarfile.open(None, "r:gz", control_contents_buffer)
+        file = tarfile.open(None, CONTROL_FILE_READ_MODE, control_contents_buffer)
 
         # retrieves the names in the file
         names = file.getnames()
