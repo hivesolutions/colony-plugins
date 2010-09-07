@@ -54,6 +54,21 @@ CONTENTS_VALUE = "contents"
 FILE_VALUE = "file"
 """ The file value """
 
+NAME_VALUE = "name"
+""" The name value """
+
+VERSION_VALUE = "version"
+""" The version value """
+
+ARCHITECTURE_VALUE = "architecture"
+""" The architecture value """
+
+NAME_SEPARATION_TOKEN = "_"
+""" The name separation token """
+
+FILE_EXTENSION_VALUE = ".deb"
+""" The file extension value """
+
 class RepositoryGeneratorApt:
     """
     The repository generator apt class.
@@ -90,6 +105,9 @@ class RepositoryGeneratorApt:
         @param parameters: The parameters for the repository generation.
         """
 
+        # retrieves the packaging deb plugin
+        packaging_deb_plugin = self.repository_generator_apt_plugin.packaging_deb_plugin
+
         # retrieves the source from the parameters
         source = parameters[SOURCE_VALUE]
 
@@ -109,12 +127,24 @@ class RepositoryGeneratorApt:
 
         # iterates over all the files to process them
         for file in files:
-            file_name = file["name"]
-            file_version = file.get("version", "1.0.0")
-            file_architecture = file.get("architecture", "all")
+            # retrieves the file attributes
+            file_name = file[NAME_VALUE]
+            file_version = file.get(VERSION_VALUE, "1.0.0")
+            file_architecture = file.get(ARCHITECTURE_VALUE, "all")
 
-            complete_file_name = file_name + "_" + file_version + "_" + file_architecture + ".deb"
+            complete_file_name = file_name + NAME_SEPARATION_TOKEN + file_version + NAME_SEPARATION_TOKEN + file_architecture + FILE_EXTENSION_VALUE
 
             complete_file_path = source + "/" + complete_file_name
 
-            print complete_file_path
+            # creates the deb file parameters map
+            deb_file_parameters = {"file_path" : complete_file_path,
+                                   "file_format" : "tar_gz"}
+
+            # creates the deb file
+            deb_file = packaging_deb_plugin.create_file(deb_file_parameters)
+
+            # opens the deb file
+            deb_file.open("rb")
+
+            # closes the deb file
+            deb_file.close()

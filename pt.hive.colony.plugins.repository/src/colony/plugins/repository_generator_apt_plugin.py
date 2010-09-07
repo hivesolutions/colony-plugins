@@ -56,7 +56,8 @@ class RepositoryGeneratorAptPlugin(colony.base.plugin_system.Plugin):
     attributes = {"build_automation_file_path" : "$base{plugin_directory}/repository/generator_apt/resources/baf.xml"}
     capabilities = ["repository.generator.adapter", "build_automation_item"]
     capabilities_allowed = []
-    dependencies = []
+    dependencies = [colony.base.plugin_system.PluginDependency(
+                    "pt.hive.colony.plugins.packaging.deb", "1.0.0")]
     events_handled = []
     events_registrable = []
     main_modules = ["repository.generator_apt.repository_generator_apt_system"]
