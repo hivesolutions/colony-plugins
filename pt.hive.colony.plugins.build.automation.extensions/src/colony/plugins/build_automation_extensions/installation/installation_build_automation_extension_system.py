@@ -46,6 +46,12 @@ FORMATS_VALUE = "formats"
 BASE_NAME_VALUE = "base_name"
 """ The base name value """
 
+PACKAGE_VALUE = "package"
+""" The package value """
+
+CONTENTS_VALUE = "contents"
+""" The contents value """
+
 class InstallationBuildAutomationExtension:
     """
     The installation build automation extension class.
@@ -71,14 +77,20 @@ class InstallationBuildAutomationExtension:
         # retrieves the build properties
         build_properties = build_automation_structure.get_all_build_properties()
 
+        # retrieves the target directory
+        target_directory = build_properties[TARGET_DIRECTORY_VALUE]
+
         # retrieves the formats list
         formats = parameters[FORMATS_VALUE].split(",")
 
         # retrieves the base name
         base_name = parameters[BASE_NAME_VALUE]
 
-        # retrieves the target directory
-        target_directory = build_properties[TARGET_DIRECTORY_VALUE]
+        # retrieves the package
+        package = parameters[PACKAGE_VALUE]
+
+        # retrieves the contents
+        contents = parameters[CONTENTS_VALUE]
 
         # creates the (base) file path from the target directory and the base name
         file_path = target_directory + "/" + base_name
@@ -88,8 +100,8 @@ class InstallationBuildAutomationExtension:
             # creates the installation parameters map
             installation_parameters = {"installation_adapter" : format,
                                        "file_path" : file_path,
-                                       "package" : parameters["package"],
-                                       "contents" : parameters["contents"]}
+                                       "package" : package,
+                                       "contents" : contents}
 
             # generates the installation file
             installation_manager_plugin.generate_installation_file(installation_parameters)

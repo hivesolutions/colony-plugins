@@ -37,8 +37,17 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
+TARGET_DIRECTORY_VALUE = "target_directory"
+""" The target directory value """
+
 FORMATS_VALUE = "formats"
 """ The formats value """
+
+TARGET_VALUE = "target"
+""" The target value """
+
+CONTENTS_VALUE = "contents"
+""" The contents value """
 
 class RepositoryGeneratorBuildAutomationExtension:
     """
@@ -65,22 +74,24 @@ class RepositoryGeneratorBuildAutomationExtension:
         # retrieves the build properties
         build_properties = build_automation_structure.get_all_build_properties()
 
+        # retrieves the target directory
+        target_directory = build_properties[TARGET_DIRECTORY_VALUE]
+
         # retrieves the formats list
         formats = parameters[FORMATS_VALUE].split(",")
 
-        # retrieves the base name
-        #base_name = parameters[BASE_NAME_VALUE]
+        # retrieves the target
+        target = parameters.get(TARGET_VALUE, target_directory)
 
-        # retrieves the target directory
-        #target_directory = build_properties[TARGET_DIRECTORY_VALUE]
-
-        # creates the (base) file path from the target directory and the base name
-        #file_path = target_directory + "/" + base_name
+        # retrieves the contents
+        contents = parameters[CONTENTS_VALUE]
 
         # iterates over all the formats to generate the installation files
         for format in formats:
             # creates the repository generation parameters map
-            repository_generation_parameters = {"repository_generator_adapter" : format}
+            repository_generation_parameters = {"repository_generator_adapter" : format,
+                                                "target" : target,
+                                                "contents" : contents}
 
             # generates the repository
             repository_generator_manager_plugin.generate_repository(repository_generation_parameters)
