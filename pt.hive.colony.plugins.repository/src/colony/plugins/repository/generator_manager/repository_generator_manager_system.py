@@ -45,6 +45,9 @@ class RepositoryGeneratorManager:
     repository_generator_manager_plugin = None
     """ The repository generator manager plugin """
 
+    repository_generator_adapter_plugins_map = {}
+    """ The repository generator adapter plugins map """
+
     def __init__(self, repository_generator_manager_plugin):
         """
         Constructor of the class.
@@ -55,6 +58,8 @@ class RepositoryGeneratorManager:
 
         self.repository_generator_manager_plugin = repository_generator_manager_plugin
 
+        self.repository_generator_adapter_plugins_map = {}
+
     def generate_repository(self, parameters):
         """
         Generates a repository for the given parameters.
@@ -64,3 +69,15 @@ class RepositoryGeneratorManager:
         """
 
         pass
+
+    def repository_generator_adapter_load(self, repository_generator_adapter_plugin):
+        # retrieves the plugin adapter name
+        adapter_name = repository_generator_adapter_plugin.get_adapter_name()
+
+        self.repository_generator_adapter_plugins_map[adapter_name] = repository_generator_adapter_plugin
+
+    def repository_generator_adapter_unload(self, repository_generator_adapter_plugin):
+        # retrieves the plugin adapter name
+        adapter_name = repository_generator_adapter_plugin.get_adapter_name()
+
+        del self.repository_generator_adapter_plugins_map[adapter_name]

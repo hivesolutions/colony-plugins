@@ -38,6 +38,7 @@ __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
 import colony.base.plugin_system
+import colony.base.decorators
 
 class RepositoryGeneratorManagerPlugin(colony.base.plugin_system.Plugin):
     """
@@ -62,6 +63,8 @@ class RepositoryGeneratorManagerPlugin(colony.base.plugin_system.Plugin):
 
     repository_generator_manager = None
 
+    repository_generator_adapter_plugins = []
+
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
         global repository
@@ -77,9 +80,11 @@ class RepositoryGeneratorManagerPlugin(colony.base.plugin_system.Plugin):
     def end_unload_plugin(self):
         colony.base.plugin_system.Plugin.end_unload_plugin(self)
 
+    @colony.base.decorators.load_allowed("pt.hive.colony.plugins.repository.generator.manager", "1.0.0")
     def load_allowed(self, plugin, capability):
         colony.base.plugin_system.Plugin.load_allowed(self, plugin, capability)
 
+    @colony.base.decorators.unload_allowed("pt.hive.colony.plugins.repository.generator.manager", "1.0.0")
     def unload_allowed(self, plugin, capability):
         colony.base.plugin_system.Plugin.unload_allowed(self, plugin, capability)
 
@@ -95,3 +100,13 @@ class RepositoryGeneratorManagerPlugin(colony.base.plugin_system.Plugin):
         """
 
         return self.repository_generator_manager.generate_repository(parameters)
+
+    @colony.base.decorators.load_allowed_capability("repository.generator.adapter")
+    def repository_generator_adapter_load_allowed(self, plugin, capability):
+        self.repository_generator_adapter_plugins.append(plugin)
+        self.repository_generator_manager.repository_generator_adapter_load(plugin)
+
+    @colony.base.decorators.unload_allowed_capability("repository.generator.adapter")
+    def repository_generator_adapter_unload_allowed(self, plugin, capability):
+        self.repository_generator_adapter_plugins.remove(plugin)
+        self.repository_generator_manager.repository_generator_adapter_unload(plugin)
