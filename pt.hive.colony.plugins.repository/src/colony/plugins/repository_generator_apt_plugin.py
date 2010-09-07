@@ -52,21 +52,21 @@ class RepositoryAptGeneratorPlugin(colony.base.plugin_system.Plugin):
     author = "Hive Solutions Lda. <development@hive.pt>"
     loading_type = colony.base.plugin_system.EAGER_LOADING_TYPE
     platforms = [colony.base.plugin_system.CPYTHON_ENVIRONMENT]
-    attributes = {"build_automation_file_path" : "$base{plugin_directory}/packaging/deb/resources/baf.xml"}
+    attributes = {"build_automation_file_path" : "$base{plugin_directory}/repository/generator_apt/resources/baf.xml"}
     capabilities = ["repository.generator", "build_automation_item"]
     capabilities_allowed = []
     dependencies = []
     events_handled = []
     events_registrable = []
-    main_modules = ["packaging.deb.packaging_deb_exceptions", "packaging.deb.packaging_deb_system"]
+    main_modules = ["repository.generator_apt.repository_generator_apt_system"]
 
-    repository_apt_generator = None
+    repository_generator_apt = None
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
         global repository
-        import repository.apt_generator.repository_apt_generator_system
-        self.repository_apt_generator = repository.apt_generator.repository_apt_generator_system.RepositoryAptGenerator(self)
+        import repository.generator_apt.repository_generator_apt_system
+        self.repository_generator_apt = repository.generator_apt.repository_generator_apt_system.RepositoryGeneratorApt(self)
 
     def end_load_plugin(self):
         colony.base.plugin_system.Plugin.end_load_plugin(self)
@@ -94,4 +94,4 @@ class RepositoryAptGeneratorPlugin(colony.base.plugin_system.Plugin):
         @param parameters: The parameters for the repository generation.
         """
 
-        return self.repository_apt_generator.generate_repository(parameters)
+        return self.repository_generator_apt.generate_repository(parameters)

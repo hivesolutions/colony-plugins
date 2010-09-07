@@ -1,3 +1,9 @@
+#!/usr/bin/python
+# -*- coding: Cp1252 -*-
+
+# Hive Colony Framework
+# Copyright (C) 2008 Hive Solutions Lda.
+#
 # This file is part of Hive Colony Framework.
 #
 # Hive Colony Framework is free software: you can redistribute it and/or modify
@@ -19,10 +25,10 @@ __author__ = "João Magalhães <joamag@hive.pt>"
 __version__ = "1.0.0"
 """ The version of the module """
 
-__revision__ = "$LastChangedRevision: 72 $"
+__revision__ = "$LastChangedRevision: 8461 $"
 """ The revision number of the module """
 
-__date__ = "$LastChangedDate: 2008-10-21 23:29:54 +0100 (Ter, 21 Out 2008) $"
+__date__ = "$LastChangedDate: 2010-05-12 06:45:34 +0100 (qua, 12 Mai 2010) $"
 """ The last change date of the module """
 
 __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
@@ -31,23 +37,23 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-class RepositoryAptGenerator:
+class RepositoryGeneratorApt:
     """
-    The repository apt generator class.
+    The repository generator apt class.
     """
 
-    repository_apt_generator_plugin = None
-    """ The repository apt generator plugin """
+    repository_generator_apt_plugin = None
+    """ The repository generator apt plugin """
 
-    def __init__(self, repository_apt_generator_plugin):
+    def __init__(self, repository_generator_apt_plugin):
         """
         Constructor of the class.
 
-        @type repository_apt_generator_plugin: RepositoryAptGeneratorPlugin
-        @param repository_apt_generator_plugin: The repository apt generator plugin.
+        @type repository_generator_apt_plugin: RepositoryGeneratorAptPlugin
+        @param repository_generator_apt_plugin: The repository generator apt plugin.
         """
 
-        self.repository_apt_generator_plugin = repository_apt_generator_plugin
+        self.repository_generator_apt_plugin = repository_generator_apt_plugin
 
     def generate_repository(self, parameters):
         """
