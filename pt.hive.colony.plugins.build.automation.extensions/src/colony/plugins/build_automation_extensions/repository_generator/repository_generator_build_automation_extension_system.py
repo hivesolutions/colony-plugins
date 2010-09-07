@@ -43,6 +43,9 @@ TARGET_DIRECTORY_VALUE = "target_directory"
 FORMATS_VALUE = "formats"
 """ The formats value """
 
+SOURCE_VALUE = "source"
+""" The source value """
+
 TARGET_VALUE = "target"
 """ The target value """
 
@@ -80,6 +83,9 @@ class RepositoryGeneratorBuildAutomationExtension:
         # retrieves the formats list
         formats = parameters[FORMATS_VALUE].split(",")
 
+        # retrieves the source
+        source = parameters.get(SOURCE_VALUE, target_directory)
+
         # retrieves the target
         target = parameters.get(TARGET_VALUE, target_directory)
 
@@ -90,6 +96,7 @@ class RepositoryGeneratorBuildAutomationExtension:
         for format in formats:
             # creates the repository generation parameters map
             repository_generation_parameters = {"repository_generator_adapter" : format,
+                                                "source" : source,
                                                 "target" : target,
                                                 "contents" : contents}
 
