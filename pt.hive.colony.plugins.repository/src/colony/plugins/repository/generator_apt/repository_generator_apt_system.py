@@ -37,23 +37,23 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-class RepositoryGeneratorManager:
+class RepositoryGeneratorApt:
     """
-    The repository generator manager class.
+    The repository generator apt class.
     """
 
-    repository_generator_manager_plugin = None
-    """ The repository generator manager plugin """
+    repository_generator_apt_plugin = None
+    """ The repository generator apt plugin """
 
-    def __init__(self, repository_generator_manager_plugin):
+    def __init__(self, repository_generator_apt_plugin):
         """
         Constructor of the class.
 
-        @type repository_generator_manager_plugin: RepositoryGeneratorManagerPlugin
-        @param repository_generator_manager_plugin: The repository generator manager plugin.
+        @type repository_generator_apt_plugin: RepositoryGeneratorAptPlugin
+        @param repository_generator_apt_plugin: The repository generator apt plugin.
         """
 
-        self.repository_generator_manager_plugin = repository_generator_manager_plugin
+        self.repository_generator_apt_plugin = repository_generator_apt_plugin
 
     def generate_repository(self, parameters):
         """

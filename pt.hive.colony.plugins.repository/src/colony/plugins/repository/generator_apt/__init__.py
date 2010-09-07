@@ -19,16 +19,13 @@
 # You should have received a copy of the GNU General Public License
 # along with Hive Colony Framework. If not, see <http://www.gnu.org/licenses/>.
 
-__author__ = "João Magalhães <joamag@hive.pt>"
-""" The author(s) of the module """
-
 __version__ = "1.0.0"
 """ The version of the module """
 
-__revision__ = "$LastChangedRevision: 8461 $"
+__revision__ = "$LastChangedRevision: 72 $"
 """ The revision number of the module """
 
-__date__ = "$LastChangedDate: 2010-05-12 06:45:34 +0100 (qua, 12 Mai 2010) $"
+__date__ = "$LastChangedDate: 2008-10-21 23:29:54 +0100 (Tue, 21 Oct 2008) $"
 """ The last change date of the module """
 
 __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
@@ -36,31 +33,3 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
-
-class RepositoryGeneratorManager:
-    """
-    The repository generator manager class.
-    """
-
-    repository_generator_manager_plugin = None
-    """ The repository generator manager plugin """
-
-    def __init__(self, repository_generator_manager_plugin):
-        """
-        Constructor of the class.
-
-        @type repository_generator_manager_plugin: RepositoryGeneratorManagerPlugin
-        @param repository_generator_manager_plugin: The repository generator manager plugin.
-        """
-
-        self.repository_generator_manager_plugin = repository_generator_manager_plugin
-
-    def generate_repository(self, parameters):
-        """
-        Generates a repository for the given parameters.
-
-        @type parameters: Dictionary
-        @param parameters: The parameters for the repository generation.
-        """
-
-        pass

@@ -39,34 +39,34 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 import colony.base.plugin_system
 
-class RepositoryGeneratorManagerPlugin(colony.base.plugin_system.Plugin):
+class RepositoryGeneratorAptPlugin(colony.base.plugin_system.Plugin):
     """
-    The main class for the Repository Generator Manager plugin.
+    The main class for the Repository Generator Apt plugin.
     """
 
-    id = "pt.hive.colony.plugins.repository.generator.manager"
-    name = "Repository Generator Manager Plugin"
-    short_name = "Repository Generator Manager"
-    description = "A plugin to manager the generation of repositories"
+    id = "pt.hive.colony.plugins.repository.generator.apt"
+    name = "Repository Generator Apt Plugin"
+    short_name = "Repository Generator Apt"
+    description = "A plugin to generate apt repositories"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     loading_type = colony.base.plugin_system.EAGER_LOADING_TYPE
     platforms = [colony.base.plugin_system.CPYTHON_ENVIRONMENT]
-    attributes = {"build_automation_file_path" : "$base{plugin_directory}/repository/generator_manager/resources/baf.xml"}
-    capabilities = ["repository.generator.manager", "build_automation_item"]
-    capabilities_allowed = ["repository.generator.adapter"]
+    attributes = {"build_automation_file_path" : "$base{plugin_directory}/repository/generator_apt/resources/baf.xml"}
+    capabilities = ["repository.generator.adapter", "build_automation_item"]
+    capabilities_allowed = []
     dependencies = []
     events_handled = []
     events_registrable = []
-    main_modules = ["repository.generator_manager.repository_generator_manager_system"]
+    main_modules = ["repository.generator_apt.repository_generator_apt_system"]
 
-    repository_generator_manager = None
+    repository_generator_apt = None
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
         global repository
-        import repository.generator_manager.repository_generator_manager_system
-        self.repository_generator_manager = repository.generator_manager.repository_generator_manager_system.RepositoryGeneratorManager(self)
+        import repository.generator_apt.repository_generator_apt_system
+        self.repository_generator_apt = repository.generator_apt.repository_generator_apt_system.RepositoryGeneratorApt(self)
 
     def end_load_plugin(self):
         colony.base.plugin_system.Plugin.end_load_plugin(self)
@@ -94,4 +94,4 @@ class RepositoryGeneratorManagerPlugin(colony.base.plugin_system.Plugin):
         @param parameters: The parameters for the repository generation.
         """
 
-        return self.repository_generator_manager.generate_repository(parameters)
+        return self.repository_generator_apt.generate_repository(parameters)
