@@ -86,6 +86,16 @@ class RepositoryGeneratorAptPlugin(colony.base.plugin_system.Plugin):
     def dependency_injected(self, plugin):
         colony.base.plugin_system.Plugin.dependency_injected(self, plugin)
 
+    def get_adapter_name(self):
+        """
+        Retrieves the adapter name.
+
+        @rtype: String
+        @return: The adapter name.
+        """
+
+        return self.repository_generator_apt.get_adapter_name()
+
     def generate_repository(self, parameters):
         """
         Generates a repository for the given parameters.

@@ -37,6 +37,9 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
+ADAPTER_NAME = "apt"
+""" The adapter name """
+
 class RepositoryGeneratorApt:
     """
     The repository generator apt class.
@@ -54,6 +57,16 @@ class RepositoryGeneratorApt:
         """
 
         self.repository_generator_apt_plugin = repository_generator_apt_plugin
+
+    def get_adapter_name(self):
+        """
+        Retrieves the adapter name.
+
+        @rtype: String
+        @return: The adapter name.
+        """
+
+        return ADAPTER_NAME
 
     def generate_repository(self, parameters):
         """
