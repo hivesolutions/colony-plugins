@@ -38,6 +38,7 @@ __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
 import colony.base.plugin_system
+import colony.base.decorators
 
 class RepositoryGeneratorAptPlugin(colony.base.plugin_system.Plugin):
     """
@@ -62,6 +63,8 @@ class RepositoryGeneratorAptPlugin(colony.base.plugin_system.Plugin):
 
     repository_generator_apt = None
 
+    packaging_deb_plugin = None
+
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
         global repository
@@ -83,6 +86,7 @@ class RepositoryGeneratorAptPlugin(colony.base.plugin_system.Plugin):
     def unload_allowed(self, plugin, capability):
         colony.base.plugin_system.Plugin.unload_allowed(self, plugin, capability)
 
+    @colony.base.decorators.inject_dependencies("pt.hive.colony.plugins.repository.generator.apt", "1.0.0")
     def dependency_injected(self, plugin):
         colony.base.plugin_system.Plugin.dependency_injected(self, plugin)
 
@@ -105,3 +109,10 @@ class RepositoryGeneratorAptPlugin(colony.base.plugin_system.Plugin):
         """
 
         return self.repository_generator_apt.generate_repository(parameters)
+
+    def get_packaging_deb_plugin(self):
+        return self.packaging_deb_plugin
+
+    @colony.base.decorators.plugin_inject("pt.hive.colony.plugins.packaging.deb")
+    def set_packaging_deb_plugin(self, packaging_deb_plugin):
+        self.packaging_deb_plugin = packaging_deb_plugin

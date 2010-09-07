@@ -37,8 +37,22 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
+import os
+
 ADAPTER_NAME = "apt"
 """ The adapter name """
+
+SOURCE_VALUE = "source"
+""" The source value """
+
+TARGET_VALUE = "target"
+""" The target value """
+
+CONTENTS_VALUE = "contents"
+""" The contents value """
+
+FILE_VALUE = "file"
+""" The file value """
 
 class RepositoryGeneratorApt:
     """
@@ -76,4 +90,31 @@ class RepositoryGeneratorApt:
         @param parameters: The parameters for the repository generation.
         """
 
-        print "ola"
+        # retrieves the source from the parameters
+        source = parameters[SOURCE_VALUE]
+
+        # retrieves the target from the parameters
+        target = parameters[TARGET_VALUE]
+
+        # in case the target path does not exist
+        if not os.path.exists(target):
+            # creates the target directories
+            os.makedirs(target)
+
+        # retrieves the contents from the parameters
+        contents = parameters[CONTENTS_VALUE]
+
+        # retrieves the file from the parameters
+        files = contents.get(FILE_VALUE, [])
+
+        # iterates over all the files to process them
+        for file in files:
+            file_name = file["name"]
+            file_version = file.get("version", "1.0.0")
+            file_architecture = file.get("architecture", "all")
+
+            complete_file_name = file_name + "_" + file_version + "_" + file_architecture + ".deb"
+
+            complete_file_path = source + "/" + complete_file_name
+
+            print complete_file_path
