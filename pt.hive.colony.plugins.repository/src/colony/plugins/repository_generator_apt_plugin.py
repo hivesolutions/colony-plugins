@@ -44,7 +44,7 @@ class RepositoryAptGeneratorPlugin(colony.base.plugin_system.Plugin):
     The main class for the Repository Apt Generator plugin.
     """
 
-    id = "pt.hive.colony.plugins.repository.apt_generator"
+    id = "pt.hive.colony.plugins.repository.generator.apt"
     name = "Repository Apt Generator Plugin"
     short_name = "Repository Apt Generator"
     description = "A plugin to generate apt repositories"
