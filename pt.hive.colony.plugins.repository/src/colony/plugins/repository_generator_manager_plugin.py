@@ -39,26 +39,26 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 import colony.base.plugin_system
 
-class RepositoryAptGeneratorPlugin(colony.base.plugin_system.Plugin):
+class RepositoryGeneratorManagerPlugin(colony.base.plugin_system.Plugin):
     """
-    The main class for the Repository Apt Generator plugin.
+    The main class for the Repository Generator Manager plugin.
     """
 
-    id = "pt.hive.colony.plugins.repository.generator.apt"
-    name = "Repository Apt Generator Plugin"
-    short_name = "Repository Apt Generator"
-    description = "A plugin to generate apt repositories"
+    id = "pt.hive.colony.plugins.repository.generator.manager"
+    name = "Repository Generator Manager Plugin"
+    short_name = "Repository Generator Manager"
+    description = "A plugin to manager the generation of repositories"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     loading_type = colony.base.plugin_system.EAGER_LOADING_TYPE
     platforms = [colony.base.plugin_system.CPYTHON_ENVIRONMENT]
-    attributes = {"build_automation_file_path" : "$base{plugin_directory}/repository/generator_apt/resources/baf.xml"}
-    capabilities = ["repository.generator", "build_automation_item"]
-    capabilities_allowed = []
+    attributes = {"build_automation_file_path" : "$base{plugin_directory}/repository/generator_manager/resources/baf.xml"}
+    capabilities = ["repository.generator.manager", "build_automation_item"]
+    capabilities_allowed = ["repository.generator.adapter"]
     dependencies = []
     events_handled = []
     events_registrable = []
-    main_modules = ["repository.generator_apt.repository_generator_apt_system"]
+    main_modules = ["repository.generator_manager.repository_generator_manager_system"]
 
     repository_generator_apt = None
 
