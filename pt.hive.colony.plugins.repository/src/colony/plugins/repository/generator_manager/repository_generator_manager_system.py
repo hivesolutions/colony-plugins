@@ -37,6 +37,11 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
+import repository_generator_manager_exceptions
+
+REPOSITORY_GENERATOR_ADAPTER_VALUE = "repository_generator_adapter"
+""" The repository generator adapter value """
+
 class RepositoryGeneratorManager:
     """
     The repository generator manager class.
@@ -68,7 +73,24 @@ class RepositoryGeneratorManager:
         @param parameters: The parameters for the repository generation.
         """
 
-        pass
+        # in case the repository generator adapter is not in the parameters map
+        if not REPOSITORY_GENERATOR_ADAPTER_VALUE in parameters:
+            # raises the missing parameter exception
+            raise repository_generator_manager_exceptions.MissingParameter(REPOSITORY_GENERATOR_ADAPTER_VALUE)
+
+        # retrieves the repository generator adapter name from the parameters
+        repository_generator_adapter_name = parameters[REPOSITORY_GENERATOR_ADAPTER_VALUE]
+
+        # in case the adapter is not found in the adapter plugins map
+        if not repository_generator_adapter_name in self.repository_generator_adapter_plugins_map:
+            # raises an repository generator adapter not found exception
+            raise repository_generator_manager_exceptions.RepositoryGeneratorHandlerNotFoundException("no adapter found for current request: " + repository_generator_adapter_name)
+
+        # retrieves the repository generator adapter from the repository generator adapter plugins map
+        repository_generator_adapter = self.repository_generator_adapter_plugins_map[repository_generator_adapter_name]
+
+        # generates the repository using the repository generator adapter
+        repository_generator_adapter.generate_repository(parameters)
 
     def repository_generator_adapter_load(self, repository_generator_adapter_plugin):
         # retrieves the plugin adapter name
