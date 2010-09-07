@@ -132,8 +132,10 @@ class RepositoryGeneratorApt:
             file_version = file.get(VERSION_VALUE, "1.0.0")
             file_architecture = file.get(ARCHITECTURE_VALUE, "all")
 
+            # creates the complete file name, according to the deb specification
             complete_file_name = file_name + NAME_SEPARATION_TOKEN + file_version + NAME_SEPARATION_TOKEN + file_architecture + FILE_EXTENSION_VALUE
 
+            # creates the complete file path prepending the source path
             complete_file_path = source + "/" + complete_file_name
 
             # creates the deb file parameters map
@@ -145,6 +147,14 @@ class RepositoryGeneratorApt:
 
             # opens the deb file
             deb_file.open("rb")
+
+            # retrieves the control map
+            control_map = deb_file.get_control_map()
+
+            # retrieves the control contents from the control map
+            control_contents = control_map.get("control", "")
+
+            print control_contents
 
             # closes the deb file
             deb_file.close()
