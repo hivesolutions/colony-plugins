@@ -84,7 +84,7 @@ class InstallationManager:
         # in case the adapter is not found in the adapter plugins map
         if not installation_adapter_name in self.installation_adapter_plugins_map:
             # raises an installation adapter not found exception
-            raise installation_manager_exceptions.IsntallationHandlerNotFoundException("no adapter found for current request: " + installation_adapter_name)
+            raise installation_manager_exceptions.InstallationHandlerNotFoundException("no adapter found for current request: " + installation_adapter_name)
 
         # retrieves the installation adapter from the installation adapter plugins map
         installation_adapter = self.installation_adapter_plugins_map[installation_adapter_name]

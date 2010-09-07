@@ -99,7 +99,7 @@ class InstallationRuntimeException(InstallationManagerException):
 
         return "Installation runtime exception: %s" % self.message
 
-class IsntallationHandlerNotFoundException(InstallationManagerException):
+class InstallationHandlerNotFoundException(InstallationRuntimeException):
     """
     The installation handler not found exception.
     """
@@ -112,7 +112,7 @@ class IsntallationHandlerNotFoundException(InstallationManagerException):
         @param message: The message to be printed.
         """
 
-        InstallationManagerException.__init__(self, message)
+        InstallationRuntimeException.__init__(self, message)
 
     def __str__(self):
         """
