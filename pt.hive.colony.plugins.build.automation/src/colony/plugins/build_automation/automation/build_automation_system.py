@@ -60,6 +60,9 @@ CALL_REGEX = "\$call\{(\$\{[^\}]*\}|[^\}])*\}"
 RESOURCE_REGEX = "\$resource\{(\$\{[^\}]*\}|[^\}])*\}"
 """ The regular expression for the resource """
 
+CONTENTS_REGEX = "\$contents\{(\$\{[^\}]*\}|[^\}])*\}"
+""" The regular expression for the contents """
+
 EXCLUSION_LIST = ("__doc__", "__init__", "__module__")
 """ The exclusion list """
 
@@ -107,6 +110,9 @@ class BuildAutomation:
     resource_pattern = None
     """ The resource pattern used for regular expression match """
 
+    contents_pattern = None
+    """ The contents pattern used for regular expression match """
+
     base_build_automation_structure = None
     """ the base build automation structure """
 
@@ -138,6 +144,9 @@ class BuildAutomation:
 
         # compiles the resource regular expression generating the pattern
         self.resource_pattern = re.compile(RESOURCE_REGEX)
+
+        # compiles the contents regular expression generating the pattern
+        self.contents_pattern = re.compile(CONTENTS_REGEX)
 
     def load_build_automation_item_plugin(self, build_automation_item_plugin):
         # adds the build automation item plugin to the list of build automation item plugins
@@ -744,7 +753,7 @@ class BuildAutomation:
             # retrieves the match group
             group = resource_match.group()
 
-            # retrieves the call value
+            # retrieves the resource value
             resource_value = group[10:-1]
 
             # retrieves the real resource value
@@ -752,6 +761,23 @@ class BuildAutomation:
 
             # replaces the value in the string
             string = string.replace(group, real_resource_value)
+
+        # retrieves the contents match iterator
+        contents_match_iterator = self.contents_pattern.finditer(string)
+
+        # iterates using the contents match iterator
+        for contents_match in contents_match_iterator:
+            # retrieves the match group
+            group = contents_match.group()
+
+            # retrieves the contents value
+            contents_value = group[10:-1]
+
+            # retrieves the real contents value
+            real_contents_value = self.get_contents_value(contents_value)
+
+            # replaces the value in the string
+            string = string.replace(group, real_contents_value)
 
         # returns the string value
         return string
@@ -885,6 +911,32 @@ class BuildAutomation:
         else:
             # returns invalid
             return None
+
+    def get_contents_value(self, contents_value, build_automation_structure):
+        """
+        Retrieves the real "contents" value by retrieving the contents value
+        from the contents file.
+
+        @type contents_value: String
+        @param contents_value: The contents value in string mode representing the contents.
+        @type build_automation_structure: BuildAutomationStructure
+        @param build_automation_structure: The build automation structure to be used in the retrieving of the contents.
+        @rtype: Object
+        @return: The real value of the contents.
+        """
+
+        # opens the file for reading (in binary mode)
+        file = open(contents_value, "rb")
+
+        try:
+            # reads the file contents
+            contents = file.read()
+        finally:
+            # closes the file
+            file.close()
+
+        # returns the contents
+        return contents
 
     def _set_configuration_composite_value(self, base_map, configuration_name, configuration_item, build_automation_structure):
         # creates a new map
