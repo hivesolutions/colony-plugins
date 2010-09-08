@@ -49,6 +49,10 @@
             <id>pt.hive.colony.plugins.build.automation.items.colony_service</id>
             <version>.*</version>
         </module>
+        <module>
+            <id>pt.hive.colony.plugins.build.automation.items.colony_base_plugins</id>
+            <version>.*</version>
+        </module>
     </modules>
     <build>
         <default_stage>build</default_stage>
@@ -76,6 +80,11 @@
                         </file>
                         <file>
                             <name>colony-service</name>
+                            <version>1.0.0</version>
+                            <architecture>all</architecture>
+                        </file>
+                        <file>
+                            <name>colony-base-plugins</name>
                             <version>1.0.0</version>
                             <architecture>all</architecture>
                         </file>
