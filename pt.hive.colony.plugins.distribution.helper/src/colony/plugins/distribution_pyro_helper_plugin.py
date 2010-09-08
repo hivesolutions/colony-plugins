@@ -60,6 +60,7 @@ class DistributionPyroHelperPlugin(colony.base.plugin_system.Plugin):
                     "pt.hive.colony.plugins.main.remote.client.pyro", "1.0.0")]
     events_handled = []
     events_registrable = []
+    main_modules = ["distribution_helper.pyro.distribution_pyro_helper_system"]
 
     distribution_pyro_helper = None
 

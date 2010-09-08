@@ -60,6 +60,7 @@ class DistributionXmlrpcHelperPlugin(colony.base.plugin_system.Plugin):
                     "pt.hive.colony.plugins.main.remote.client.xmlrpc", "1.0.0")]
     events_handled = []
     events_registrable = []
+    main_modules = ["distribution_helper.xmlrpc.distribution_xmlrpc_helper_system"]
 
     distribution_xmlrpc_helper = None
 
