@@ -39,7 +39,7 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 import unittest
 
-import main_console
+import main_console_system
 
 class MainConsoleTestCase(unittest.TestCase):
     """
@@ -47,7 +47,7 @@ class MainConsoleTestCase(unittest.TestCase):
     """
 
     def setUp(self):
-        self.main_console = main_console.MainConsole(MainConsoleTestCase.plugin)
+        self.main_console = main_console_system.MainConsole(MainConsoleTestCase.plugin)
 
     def test_process_command_line(self):
         """
@@ -57,7 +57,7 @@ class MainConsoleTestCase(unittest.TestCase):
         import sys
 
         # processes the html command to the standard output
-        return_value = self.main_console.process_command_line("help", sys.stdout.write)
+        return_value = self.main_console_system.process_command_line("help", sys.stdout.write)
 
         # assets the return value
         self.assertEqual(return_value, True)

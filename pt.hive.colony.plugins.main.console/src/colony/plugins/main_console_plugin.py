@@ -61,7 +61,7 @@ class MainConsolePlugin(colony.base.plugin_system.Plugin):
     dependencies = []
     events_handled = []
     events_registrable = []
-    main_modules = ["main_console.console.main_console", "main_console.console.main_console_test"]
+    main_modules = ["main_console.console.main_console_system", "main_console.console.main_console_test"]
 
     console = None
     console_test_case_class = None
@@ -72,9 +72,9 @@ class MainConsolePlugin(colony.base.plugin_system.Plugin):
         colony.base.plugin_system.Plugin.load_plugin(self)
         self.console_command_plugins = []
         global main_console
-        import main_console.console.main_console
+        import main_console.console.main_console_system
         import main_console.console.main_console_test
-        self.console = main_console.console.main_console.MainConsole(self)
+        self.console = main_console.console.main_console_system.MainConsole(self)
         self.console_test_case_class = main_console.console.main_console_test.MainConsoleTestCase
 
     def end_load_plugin(self):

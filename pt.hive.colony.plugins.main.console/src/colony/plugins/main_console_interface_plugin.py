@@ -62,7 +62,7 @@ class MainConsoleInterfacePlugin(colony.base.plugin_system.Plugin):
                     "pt.hive.colony.plugins.main.console", "1.0.0")]
     events_handled = []
     events_registrable = []
-    main_modules = ["main_console.interface.main_console_interface"]
+    main_modules = ["main_console.interface.main_console_interface_system"]
 
     console_interface = None
 
@@ -72,8 +72,8 @@ class MainConsoleInterfacePlugin(colony.base.plugin_system.Plugin):
         colony.base.plugin_system.Plugin.load_plugin(self)
         self.console_command_plugins = []
         global main_console
-        import main_console.interface.main_console_interface
-        self.console_interface = main_console.interface.main_console_interface.MainConsoleInterface(self)
+        import main_console.interface.main_console_interface_system
+        self.console_interface = main_console.interface.main_console_interface_system.MainConsoleInterface(self)
 
         # notifies the ready semaphore
         self.release_ready_semaphore()
