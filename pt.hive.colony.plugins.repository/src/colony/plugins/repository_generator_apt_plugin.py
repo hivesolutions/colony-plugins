@@ -57,7 +57,9 @@ class RepositoryGeneratorAptPlugin(colony.base.plugin_system.Plugin):
     capabilities = ["repository.generator.adapter", "build_automation_item"]
     capabilities_allowed = []
     dependencies = [colony.base.plugin_system.PluginDependency(
-                    "pt.hive.colony.plugins.packaging.deb", "1.0.0")]
+                    "pt.hive.colony.plugins.packaging.deb", "1.0.0"),
+                    colony.base.plugin_system.PluginDependency(
+                    "pt.hive.colony.plugins.template_engine.manager", "1.0.0")]
     events_handled = []
     events_registrable = []
     main_modules = ["repository.generator_apt.repository_generator_apt_system"]
@@ -65,6 +67,7 @@ class RepositoryGeneratorAptPlugin(colony.base.plugin_system.Plugin):
     repository_generator_apt = None
 
     packaging_deb_plugin = None
+    template_engine_manager_plugin = None
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
@@ -117,3 +120,10 @@ class RepositoryGeneratorAptPlugin(colony.base.plugin_system.Plugin):
     @colony.base.decorators.plugin_inject("pt.hive.colony.plugins.packaging.deb")
     def set_packaging_deb_plugin(self, packaging_deb_plugin):
         self.packaging_deb_plugin = packaging_deb_plugin
+
+    def get_template_engine_manager_plugin(self):
+        return self.template_engine_manager_plugin
+
+    @colony.base.decorators.plugin_inject("pt.hive.colony.plugins.template_engine.manager")
+    def set_template_engine_manager_plugin(self, template_engine_manager_plugin):
+        self.template_engine_manager_plugin = template_engine_manager_plugin

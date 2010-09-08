@@ -38,6 +38,14 @@ __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
 import os
+import gzip
+import hashlib
+
+import colony.libs.path_util
+import colony.libs.string_buffer_util
+
+BUFFER_SIZE = 4096
+""" The buffer size """
 
 ADAPTER_NAME = "apt"
 """ The adapter name """
@@ -68,6 +76,9 @@ NAME_SEPARATION_TOKEN = "_"
 
 FILE_EXTENSION_VALUE = ".deb"
 """ The file extension value """
+
+RESOURCES_PATH = "repository/generator_apt/resources"
+""" The resources path """
 
 class RepositoryGeneratorApt:
     """
@@ -114,16 +125,21 @@ class RepositoryGeneratorApt:
         # retrieves the target from the parameters
         target = parameters[TARGET_VALUE]
 
-        # in case the target path does not exist
-        if not os.path.exists(target):
-            # creates the target directories
-            os.makedirs(target)
+        # creates the target (apt) directory
+        target_apt = target + "/apt"
+
+        # in case the target (apt) path does not exist
+        if not os.path.exists(target_apt):
+            # creates the target (apt) directories
+            os.makedirs(target_apt)
 
         # retrieves the contents from the parameters
         contents = parameters[CONTENTS_VALUE]
 
         # retrieves the file from the parameters
         files = contents.get(FILE_VALUE, [])
+
+        packages_list = []
 
         # iterates over all the files to process them
         for file in files:
@@ -138,6 +154,12 @@ class RepositoryGeneratorApt:
             # creates the complete file path prepending the source path
             complete_file_path = source + "/" + complete_file_name
 
+            complete_target_file_name = "apt/" + complete_file_name
+
+            complete_target_file_path = target_apt + "/" + complete_file_name
+
+            colony.libs.path_util.copy_file(complete_file_path, complete_target_file_path)
+
             # creates the deb file parameters map
             deb_file_parameters = {"file_path" : complete_file_path,
                                    "file_format" : "tar_gz"}
@@ -148,13 +170,162 @@ class RepositoryGeneratorApt:
             # opens the deb file
             deb_file.open("rb")
 
-            # retrieves the control map
-            control_map = deb_file.get_control_map()
+            try:
+                # retrieves the control map
+                control_map = deb_file.get_control_map()
+            finally:
+                # closes the deb file
+                deb_file.close()
 
             # retrieves the control contents from the control map
             control_contents = control_map.get("control", "")
 
-            print control_contents
+            control_contents = control_contents.decode("utf-8")
 
-            # closes the deb file
-            deb_file.close()
+            lines = [value.strip() for value in control_contents.split("\n")]
+
+            # creates the control values map
+            control_values_map = {}
+
+            # iterates over all the lines
+            for line in lines:
+                # in case the line is not valid
+                if not line:
+                    # continues the loop
+                    continue
+
+                # splits the line around the divisor
+                key, value = line.split(":")
+
+                # strips the key and value
+                key = key.strip()
+                value = value.strip()
+
+                # sets the value in the control values map
+                control_values_map[key] = value
+
+            # opes the deb file
+            deb_file = open(complete_file_path, "rb")
+
+            try:
+                # seeks the deb file to the final position
+                deb_file.seek(0, os.SEEK_END)
+
+                # retrieves the deb file size
+                deb_file_size = deb_file.tell()
+
+                # returns the deb file to the initial position
+                deb_file.seek(0, os.SEEK_SET)
+
+                # creates the has objects
+                deb_file_md5 = hashlib.md5()
+                deb_file_sha1 = hashlib.sha1()
+                deb_file_sha256 = hashlib.sha256()
+
+                # iterates continuously
+                while True:
+                    # reads contents from the deb file
+                    deb_file_contents = deb_file.read(BUFFER_SIZE)
+
+                    # in case no deb file contents are
+                    # read
+                    if not deb_file_contents:
+                        # breaks the cycle
+                        break
+
+                    # updates the hash values
+                    deb_file_md5.update(deb_file_contents)
+                    deb_file_sha1.update(deb_file_contents)
+                    deb_file_sha256.update(deb_file_contents)
+            finally:
+                # closes the deb file
+                deb_file.close()
+
+            # retrieves the hash hexadecimal digest values
+            deb_file_md5_digest = deb_file_md5.hexdigest()
+            deb_file_sha1_digest = deb_file_sha1.hexdigest()
+            deb_file_sha256_digest = deb_file_sha256.hexdigest()
+
+            # creates tje package map
+            package_map = {"name" : control_values_map.get("Package", ""),
+                           "version" : control_values_map.get("Version", "1.0.0"),
+                           "architecture" : control_values_map.get("Architecture", "all"),
+                           "essential" : control_values_map.get("Essential", "no"),
+                           "maintainer" : control_values_map.get("Maintainer", ""),
+                           "installed_size" : control_values_map.get("Installed-Size", "0"),
+                           "pre_dependencies" : control_values_map.get("Pre-Depends", ""),
+                           "dependencies" : control_values_map.get("Depends", ""),
+                           "provides" : control_values_map.get("Provides", ""),
+                           "filename" : complete_target_file_name,
+                           "size" : deb_file_size,
+                           "md5" : deb_file_md5_digest,
+                           "sha1" : deb_file_sha1_digest,
+                           "sha256" : deb_file_sha256_digest,
+                           "sha256" : deb_file_sha256_digest,
+                           "provides" : control_values_map.get("Provides", ""),
+                           "replaces" : control_values_map.get("Replaces", ""),
+                           "description" : control_values_map.get("Description", "")}
+
+            # adds the packages map to the packages list
+            packages_list.append(package_map)
+
+        packages_contents = self._process_template_file("packages.tpl", {"packages" : packages_list})
+
+        # creates the buffer to hold the package contents compressed
+        packages_contents_compressed_buffer = colony.libs.string_buffer_util.StringBuffer()
+
+        # opens the packages file compressed
+        packages_file_compressed = gzip.GzipFile("Packages", "wb", 1, packages_contents_compressed_buffer)
+
+        try:
+            # writes the packages contents to the packages
+            # file compressed
+            packages_file_compressed.write(packages_contents)
+        finally:
+            # closes the packages file
+            packages_file_compressed.close()
+
+        # retrieves the value from the buffer (compressed)
+        packages_contents_compressed = packages_contents_compressed_buffer.get_value()
+
+        # opens the packages file
+        packages_file = open(target_apt + "/Packages.gz", "wb")
+
+        try:
+            # writes the packages contents compressed to the
+            # packages file
+            packages_file.write(packages_contents_compressed)
+        finally:
+            # closes the packages file
+            packages_file.close()
+
+    def _process_template_file(self, template_file_name, parameters_map):
+        # retrieves the plugin manager
+        plugin_manager = self.repository_generator_apt_plugin.manager
+
+        # retrieves the template engine manager plugin
+        template_engine_manager_plugin = self.repository_generator_apt_plugin.template_engine_manager_plugin
+
+        # retrieves the repository generator apt plugin path
+        repository_generator_apt_plugin_path = plugin_manager.get_plugin_path_by_id(self.repository_generator_apt_plugin.id)
+
+        # creates the full template file path
+        template_file_path = repository_generator_apt_plugin_path + "/" + RESOURCES_PATH + "/repository_templates/" + template_file_name
+
+        # parses the template file path
+        template_file = template_engine_manager_plugin.parse_file_path(template_file_path)
+
+        # iterates over all the parameters in the parameters map to
+        # assign them to the template
+        for parameter_name, parameter_value in parameters_map.items():
+            # assigns the parameter to the template file
+            template_file.assign(parameter_name, parameter_value)
+
+        # processes the template file
+        processed_template_file = template_file.process()
+
+        # decodes the processed template file into a unicode object
+        processed_template_file_decoded = processed_template_file.decode("Cp1252")
+
+        # returns the processed template file decoded
+        return processed_template_file_decoded
