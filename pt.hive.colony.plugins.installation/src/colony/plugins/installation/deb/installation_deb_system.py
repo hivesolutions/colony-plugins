@@ -398,6 +398,8 @@ class InstallationDeb:
         # parses the template file path
         template_file = template_engine_manager_plugin.parse_file_path(template_file_path)
 
+        # iterates over all the parameters in the parameters map to
+        # assign them to the template
         for parameter_name, parameter_value in parameters_map.items():
             # assigns the parameter to the template file
             template_file.assign(parameter_name, parameter_value)
