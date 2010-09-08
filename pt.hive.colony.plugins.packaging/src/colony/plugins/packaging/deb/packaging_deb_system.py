@@ -302,7 +302,7 @@ class DebFile:
         # in case the path does not exist
         if not os.path.exists(file_path):
             # raises the file not found exception
-            raise packaging_deb_exceptions.FileNotFound("the file paths does not exist: " + file_path)
+            raise packaging_deb_exceptions.FileNotFound("the file path does not exist: " + file_path)
 
         # in case the archive path is not defined
         if not archive_path:
@@ -784,7 +784,7 @@ class DebFile:
             # in case the path does not exist
             if not os.path.exists(file_value):
                 # raises the file not found exception
-                raise packaging_deb_exceptions.FileNotFound("the file paths does not exist: " + file_value)
+                raise packaging_deb_exceptions.FileNotFound("the file path does not exist: " + file_value)
 
             # opens the file
             file = open(file_value, DEFAULT_MODE)
