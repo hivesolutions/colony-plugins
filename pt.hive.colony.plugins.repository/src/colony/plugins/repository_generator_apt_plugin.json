@@ -7,9 +7,15 @@
     "description" : "A plugin to generate apt repositories",
     "version" : "1.0.0",
     "author" : "Hive Solutions Lda. <development@hive.pt>",
-    "capabilities" : [],
+    "capabilities" : ["repository.generator.adapter", "build_automation_item"],
     "capabilities_allowed" : [],
-    "dependencies" : [],
+    "dependencies" : [{
+                "id" : "pt.hive.colony.plugins.packaging.deb",
+                "version" : "1.0.0"
+            }, {
+                "id" : "pt.hive.colony.plugins.template_engine.manager",
+                "version" : "1.0.0"
+            }],
     "main_file" : "repository_generator_apt_plugin.py",
     "resources" : ["repository_generator_apt_plugin.py",
             "repository/__init__.py", "repository/generator_apt/__init__.py",

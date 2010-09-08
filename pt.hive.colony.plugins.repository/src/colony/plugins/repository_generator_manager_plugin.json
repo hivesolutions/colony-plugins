@@ -7,8 +7,8 @@
     "description" : "A plugin to manager the generation of repositories",
     "version" : "1.0.0",
     "author" : "Hive Solutions Lda. <development@hive.pt>",
-    "capabilities" : [],
-    "capabilities_allowed" : [],
+    "capabilities" : ["repository.generator.manager", "build_automation_item"],
+    "capabilities_allowed" : ["repository.generator.adapter"],
     "dependencies" : [],
     "main_file" : "repository_generator_manager_plugin.py",
     "resources" : [
