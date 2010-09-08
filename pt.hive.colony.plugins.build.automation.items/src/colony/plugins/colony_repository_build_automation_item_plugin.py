@@ -60,6 +60,7 @@ class ColonyRepositoryBuildAutomationItemPlugin(colony.base.plugin_system.Plugin
     dependencies = []
     events_handled = []
     events_registrable = []
+    main_modules = ["build_automation_items.colony_repository.colony_repository_build_automation_item_system"]
 
     colony_repository_build_automation_item = None
 
