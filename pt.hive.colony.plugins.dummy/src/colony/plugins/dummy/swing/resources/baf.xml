@@ -36,8 +36,8 @@
         <id>pt.hive.colony.plugins.dummy.swing</id>
         <version>1.0.0</version>
         <type>colony</type>
-        <name>Dummy Plugin Swing</name>
-        <description>Dummy Plugin Swing</description>
+        <name>Dummy Swing Plugin</name>
+        <description>Dummy Swing Plugin</description>
         <url>http://www.hive.pt</url>
     </artifact>
     <build>
@@ -48,7 +48,7 @@
                 <version>1.0.0</version>
                 <stage>build</stage>
                 <configuration>
-                    <specification_file>$base{plugin_directory}/dummy_plugin_swing.json</specification_file>
+                    <specification_file>$base{plugin_directory}/dummy_swing_plugin.json</specification_file>
                 </configuration>
             </plugin>
         </plugins>

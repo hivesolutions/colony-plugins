@@ -10,8 +10,8 @@
     "capabilities" : ["dummy_swing", "build_automation_item"],
     "capabilities_allowed" : [],
     "dependencies" : [],
-    "main_file" : "dummy_plugin_swing.py",
-    "resources" : ["dummy_plugin_swing.py", "dummy/__init__.py",
+    "main_file" : "dummy_swing_plugin.py",
+    "resources" : ["dummy_swing_plugin.py", "dummy/__init__.py",
             "dummy/swing/__init__.py", "dummy/swing/dummy_swing_system.py",
             "dummy/swing/resources/baf.xml"]
 }

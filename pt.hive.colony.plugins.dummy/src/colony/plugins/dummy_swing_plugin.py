@@ -45,7 +45,7 @@ class DummyPluginSwing(colony.base.plugin_system.Plugin):
     """
 
     id = "pt.hive.colony.plugins.dummy.swing"
-    name = "Dummy Plugin Swing"
+    name = "Dummy Swing Plugin"
     short_name = "Dummy Swing"
     description = "Dummy Swing Plugin"
     version = "1.0.0"

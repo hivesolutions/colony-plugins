@@ -36,7 +36,7 @@
         <id>pt.hive.colony.plugins.dummy.windows_forms_label</id>
         <version>1.0.0</version>
         <type>colony</type>
-        <name>Dummy Plugin Windows Forms Label</name>
+        <name>Dummy Windows Forms Label Plugin</name>
         <description>Dummy Plugin Windows Forms Label</description>
         <url>http://www.hive.pt</url>
     </artifact>
@@ -48,7 +48,7 @@
                 <version>1.0.0</version>
                 <stage>build</stage>
                 <configuration>
-                    <specification_file>$base{plugin_directory}/dummy_plugin_windows_forms_label.json</specification_file>
+                    <specification_file>$base{plugin_directory}/dummy_windows_forms_label_plugin.json</specification_file>
                 </configuration>
             </plugin>
         </plugins>

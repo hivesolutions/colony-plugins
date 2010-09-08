@@ -10,9 +10,9 @@
     "capabilities" : ["dummy_windows_forms_label", "build_automation_item"],
     "capabilities_allowed" : [],
     "dependencies" : [],
-    "main_file" : "dummy_plugin_windows_forms_label_1.py",
+    "main_file" : "dummy_windows_forms_label_1_plugin.py",
     "resources" : [
-            "dummy_plugin_windows_forms_label_1.py",
+            "dummy_windows_forms_label_1_plugin.py",
             "dummy/__init__.py",
             "dummy/windows_forms_label_1/__init__.py",
             "dummy/windows_forms_label_1/dummy_windows_forms_label_1_system.py",

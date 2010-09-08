@@ -10,7 +10,7 @@
     "capabilities" : ["dummy_aux3_capability", "build_automation_item"],
     "capabilities_allowed" : [],
     "dependencies" : [],
-    "main_file" : "dummy_plugin_aux_3.py",
-    "resources" : ["dummy_plugin_aux_3.py", "dummy/__init__.py",
+    "main_file" : "dummy_aux_3_plugin.py",
+    "resources" : ["dummy_aux_3_plugin.py", "dummy/__init__.py",
             "dummy/aux_3/__init__.py", "dummy/aux_3/resources/baf.xml"]
 }

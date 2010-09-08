@@ -14,7 +14,7 @@
                 "id" : "pt.hive.colony.plugins.main.tasks.task_manager",
                 "version" : "1.0.0"
             }],
-    "main_file" : "dummy_plugin_aux_4.py",
-    "resources" : ["dummy_plugin_aux_4.py", "dummy/__init__.py",
-            "dummy/aux_1/__init__.py", "dummy/aux_1/resources/baf.xml"]
+    "main_file" : "dummy_aux_4_plugin.py",
+    "resources" : ["dummy_aux_4_plugin.py", "dummy/__init__.py",
+            "dummy/aux_4/__init__.py", "dummy/aux_4/resources/baf.xml"]
 }

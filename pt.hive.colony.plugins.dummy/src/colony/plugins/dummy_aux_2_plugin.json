@@ -13,7 +13,7 @@
                 "id" : "pt.hive.colony.plugins.dummy",
                 "version" : "1.0.0"
             }],
-    "main_file" : "dummy_plugin_aux_2.py",
-    "resources" : ["dummy_plugin_aux_2.py", "dummy/__init__.py",
+    "main_file" : "dummy_aux_2_plugin.py",
+    "resources" : ["dummy_aux_2_plugin.py", "dummy/__init__.py",
             "dummy/aux_2/__init__.py", "dummy/aux_2/resources/baf.xml"]
 }

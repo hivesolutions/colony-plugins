@@ -48,7 +48,7 @@
                 <version>1.0.0</version>
                 <stage>build</stage>
                 <configuration>
-                    <specification_file>$base{plugin_directory}/dummy_plugin_rpc_service.json</specification_file>
+                    <specification_file>$base{plugin_directory}/dummy_rpc_service_plugin.json</specification_file>
                 </configuration>
             </plugin>
         </plugins>

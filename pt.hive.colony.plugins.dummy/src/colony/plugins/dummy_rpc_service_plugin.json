@@ -10,8 +10,8 @@
     "capabilities" : ["rpc_service", "build_automation_item"],
     "capabilities_allowed" : [],
     "dependencies" : [],
-    "main_file" : "dummy_plugin_rpc_service.py",
-    "resources" : ["dummy_plugin_rpc_service.py", "dummy/__init__.py",
+    "main_file" : "dummy_rpc_service_plugin.py",
+    "resources" : ["dummy_rpc_service_plugin.py", "dummy/__init__.py",
             "dummy/rpc_service/__init__.py",
             "dummy/rpc_service/resources/baf.xml"]
 }
