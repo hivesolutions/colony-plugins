@@ -43,6 +43,7 @@ configuration = {
                  "default_handler" : "file",
                  "default_encoding" : None,
                  "default_content_type_charset" : "utf-8",
+                 "preferred_error_handlers" : ["template", "default"],
                  "allowed_hosts" : {"127.0.0.1" : True,
                                     "localhost" : True},
                  "redirections" : {

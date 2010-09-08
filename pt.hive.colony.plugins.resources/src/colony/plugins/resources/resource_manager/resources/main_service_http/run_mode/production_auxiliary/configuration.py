@@ -42,6 +42,7 @@ configuration = {
                  "default_port" : 444,
                  "default_handler" : "file",
                  "default_encoding" : None,
+                 "preferred_error_handlers" : ["template", "default"],
                  "default_content_type_charset" : "utf-8",
                  "allowed_hosts" : {"127.0.0.1" : True,
                                     "localhost" : True},
