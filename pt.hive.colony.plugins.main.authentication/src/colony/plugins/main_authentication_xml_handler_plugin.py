@@ -58,6 +58,7 @@ class MainAuthenticationXmlHandlerPlugin(colony.base.plugin_system.Plugin):
     dependencies = []
     events_handled = []
     events_registrable = []
+    main_modules = ["main_authentication_xml_handler.xml_handler.main_authentication_xml_handler_system"]
 
     main_authentication_xml_handler = None
 

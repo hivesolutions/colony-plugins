@@ -58,6 +58,8 @@ class MainAuthenticationEntityManagerHandlerPlugin(colony.base.plugin_system.Plu
     dependencies = []
     events_handled = []
     events_registrable = []
+    main_modules = ["main_authentication_entity_manager_handler.entity_manager_handler.main_authentication_entity_manager_handler_exceptions",
+                    "main_authentication_entity_manager_handler.entity_manager_handler.main_authentication_entity_manager_handler_system"]
 
     main_authentication_entity_manager_handler = None
 

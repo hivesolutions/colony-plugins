@@ -59,6 +59,7 @@ class MainAuthenticationPlugin(colony.base.plugin_system.Plugin):
     dependencies = []
     events_handled = []
     events_registrable = []
+    main_modules = ["main_authentication.authentication.main_authentication_system"]
 
     main_authentication = None
 

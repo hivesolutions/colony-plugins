@@ -61,6 +61,9 @@ class MainAuthenticationPythonHandlerPlugin(colony.base.plugin_system.Plugin):
     dependencies = []
     events_handled = []
     events_registrable = []
+    main_modules = ["main_authentication_python_handler.python_handler.configuration.authentication_configuration",
+                    "main_authentication_python_handler.python_handler.main_authentication_python_handler_exceptions",
+                    "main_authentication_python_handler.python_handler.main_authentication_python_handler_system"]
 
     main_authentication_python_handler = None
 

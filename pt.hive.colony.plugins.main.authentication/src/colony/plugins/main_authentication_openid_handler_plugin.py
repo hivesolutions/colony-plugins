@@ -58,6 +58,7 @@ class MainAuthenticationOpenidHandlerPlugin(colony.base.plugin_system.Plugin):
     dependencies = []
     events_handled = []
     events_registrable = []
+    main_modules = ["main_authentication_openid_handler.openid_handler.main_authentication_openid_handler_system"]
 
     main_authentication_openid_handler = None
 
