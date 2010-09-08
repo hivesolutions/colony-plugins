@@ -58,6 +58,7 @@ class DistributionRegistryClientPlugin(colony.base.plugin_system.Plugin):
     dependencies = []
     events_handled = []
     events_registrable = []
+    main_modules = ["distribution.registry_client.distribution_registry_client_system"]
 
     distribution_registry_client = None
 

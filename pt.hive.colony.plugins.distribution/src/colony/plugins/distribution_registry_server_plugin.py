@@ -62,6 +62,7 @@ class DistributionRegistryServerPlugin(colony.base.plugin_system.Plugin):
                     "pt.hive.colony.plugins.main.remote.manager", "1.0.0")]
     events_handled = []
     events_registrable = []
+    main_modules = ["distribution.registry_server.distribution_registry_server_system"]
 
     distribution_registry_server = None
 

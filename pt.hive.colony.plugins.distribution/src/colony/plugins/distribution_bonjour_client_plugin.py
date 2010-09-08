@@ -59,6 +59,7 @@ class DistributionBonjourClientPlugin(colony.base.plugin_system.Plugin):
                     "pt.hive.colony.plugins.misc.bonjour", "1.0.0")]
     events_handled = []
     events_registrable = []
+    main_modules = ["distribution.bonjour_client.distribution_bonjour_client_system"]
 
     distribution_bonjour_client = None
 

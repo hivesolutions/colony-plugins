@@ -60,6 +60,7 @@ class DistributionClientPlugin(colony.base.plugin_system.Plugin):
                     "pt.hive.colony.plugins.resources.resource_manager", "1.0.0")]
     events_handled = []
     events_registrable = []
+    main_modules = ["distribution.client.distribution_client_system"]
 
     distribution_client = None
 

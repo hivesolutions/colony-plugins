@@ -62,6 +62,7 @@ class DistributionBonjourServerPlugin(colony.base.plugin_system.Plugin):
                     "pt.hive.colony.plugins.main.remote.manager", "1.0.0")]
     events_handled = []
     events_registrable = []
+    main_modules = ["distribution.bonjour_server.distribution_bonjour_server_system"]
 
     distribution_bonjour_server = None
 
