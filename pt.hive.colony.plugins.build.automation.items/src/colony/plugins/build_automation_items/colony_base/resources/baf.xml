@@ -123,6 +123,14 @@
                             <group>0</group>
                             <mode>777</mode>
                             <parameters>
+                                <deb><target>usr/lib/colony/deploy</target></deb>
+                            </parameters>
+                        </directory>
+                        <directory>
+                            <owner>0</owner>
+                            <group>0</group>
+                            <mode>777</mode>
+                            <parameters>
                                 <deb><target>usr/lib/colony/log</target></deb>
                             </parameters>
                         </directory>
