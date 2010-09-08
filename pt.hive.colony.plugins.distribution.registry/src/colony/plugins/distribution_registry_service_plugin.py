@@ -60,6 +60,7 @@ class DistributionRegistryServicePlugin(colony.base.plugin_system.Plugin):
                     "pt.hive.colony.plugins.distribution.registry", "1.0.0")]
     events_handled = []
     events_registrable = []
+    main_modules = ["distribution_registry.service.distribution_registry_service_system"]
 
     distribution_registry_service = None
 
