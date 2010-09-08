@@ -39,11 +39,11 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 import re
 
-import colony.libs.string_buffer_util
-
 import web_mvc_exceptions
 import web_mvc_file_handler
 import web_mvc_communication_handler
+
+import colony.libs.string_buffer_util
 
 REGEX_COMPILATION_LIMIT = 99
 """ The regex compilation limit """
