@@ -19,5 +19,5 @@
             "build_automation_extensions/__init__.py",
             "build_automation_extensions/installation/__init__.py",
             "build_automation_extensions/installation/installation_build_automation_extension_system.py",
-            "build_automation_extensions/installation/resources/baf.xml]
+            "build_automation_extensions/installation/resources/baf.xml"]
 }
