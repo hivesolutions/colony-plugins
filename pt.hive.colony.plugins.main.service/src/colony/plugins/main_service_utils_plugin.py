@@ -55,7 +55,7 @@ class MainServiceUtilsPlugin(colony.base.plugin_system.Plugin):
                  colony.base.plugin_system.JYTHON_ENVIRONMENT,
                  colony.base.plugin_system.IRON_PYTHON_ENVIRONMENT]
     attributes = {"build_automation_file_path" : "$base{plugin_directory}/main_service_utils/utils/resources/baf.xml"}
-    capabilities = []
+    capabilities = ["build_automation_item"]
     capabilities_allowed = ["socket_provider", "socket_upgrader"]
     dependencies = [colony.base.plugin_system.PluginDependency(
                     "pt.hive.colony.plugins.main.work.work_pool_manager", "1.0.0")]
