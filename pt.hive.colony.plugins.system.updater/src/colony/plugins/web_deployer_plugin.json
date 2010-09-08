@@ -19,8 +19,8 @@
     "main_file" : "web_deployer_plugin.py",
     "resources" : ["web_deployer_plugin.py", "system_updater/__init__.py",
             "system_updater/web_deployer/__init__.py",
-            "system_updater/web_deployer/web_deployment_parser.py",
-            "system_updater/web_deployer/web_deployment_system.py",
+            "system_updater/web_deployer/web_deployer_parser.py",
+            "system_updater/web_deployer/web_deployer_system.py",
             "system_updater/web_deployer/resources/baf.xml",
             "system_updater/web_deployer/resources/web_deployer_configuration.xml"]
 }

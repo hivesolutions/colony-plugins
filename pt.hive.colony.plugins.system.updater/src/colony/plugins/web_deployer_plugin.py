@@ -75,8 +75,8 @@ class WebDeployerPlugin(colony.base.plugin_system.Plugin):
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
         global system_updater
-        import system_updater.web_deployer.web_deployment_system
-        self.web_deployer = system_updater.web_deployer.web_deployment_system.WebDeployer(self)
+        import system_updater.web_deployer.web_deployer_system
+        self.web_deployer = system_updater.web_deployer.web_deployer_system.WebDeployer(self)
 
     def end_load_plugin(self):
         colony.base.plugin_system.Plugin.end_load_plugin(self)

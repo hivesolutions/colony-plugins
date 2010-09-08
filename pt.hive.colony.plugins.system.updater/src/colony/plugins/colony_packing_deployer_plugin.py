@@ -60,7 +60,7 @@ class ColonyPackingDeployerPlugin(colony.base.plugin_system.Plugin):
                     "pt.hive.colony.plugins.main.packing.manager", "1.0.0")]
     events_handled = []
     events_registrable = []
-    main_modules = ["system_updater.colony_packing.colony_packing_deployment_system"]
+    main_modules = ["system_updater.colony_packing.colony_packing_deployer_system"]
 
     colony_packing_deployer = None
 
@@ -70,8 +70,8 @@ class ColonyPackingDeployerPlugin(colony.base.plugin_system.Plugin):
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
         global system_updater
-        import system_updater.colony_packing.colony_packing_deployment_system
-        self.colony_packing_deployer = system_updater.colony_packing.colony_packing_deployment_system.ColonyPackingDeployer(self)
+        import system_updater.colony_packing.colony_packing_deployer_system
+        self.colony_packing_deployer = system_updater.colony_packing.colony_packing_deployer_system.ColonyPackingDeployer(self)
 
     def end_load_plugin(self):
         colony.base.plugin_system.Plugin.end_load_plugin(self)

@@ -17,6 +17,6 @@
     "resources" : ["colony_packing_deployer_plugin.py",
             "system_updater/__init__.py",
             "system_updater/colony_deployer/__init__.py",
-            "system_updater/colony_deployer/colony_deployment_system.py",
+            "system_updater/colony_deployer/colony_deployer_system.py",
             "system_updater/colony_deployer/resources/baf.xml"]
 }

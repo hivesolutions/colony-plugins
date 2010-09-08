@@ -60,8 +60,10 @@ class SystemUpdaterPlugin(colony.base.plugin_system.Plugin):
                     "pt.hive.colony.plugins.misc.downloader", "1.0.0")]
     events_handled = []
     events_registrable = []
-    main_modules = ["system_updater.updater.console_system_updater", "system_updater.updater.system_updating_parser",
-                    "system_updater.updater.system_updating_system"]
+    main_modules = ["system_updater.exceptions.system_updater_exceptions",
+                    "system_updater.updater.console_system_updater",
+                    "system_updater.updater.system_updater_parser",
+                    "system_updater.updater.system_updater_system"]
 
     system_updater = None
     console_system_updater = None
@@ -72,9 +74,9 @@ class SystemUpdaterPlugin(colony.base.plugin_system.Plugin):
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
         global system_updater
-        import system_updater.updater.system_updating_system
+        import system_updater.updater.system_updater_system
         import system_updater.updater.console_system_updater
-        self.system_updater = system_updater.updater.system_updating_system.SystemUpdater(self)
+        self.system_updater = system_updater.updater.system_updater_system.SystemUpdater(self)
         self.console_system_updater = system_updater.updater.console_system_updater.ConsoleSystemUpdater(self)
         self.system_updater.load_system_updater()
 

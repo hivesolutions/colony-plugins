@@ -15,10 +15,18 @@
                 "version" : "1.0.0"
             }],
     "main_file" : "system_updater_plugin.py",
-    "resources" : ["system_updater_plugin.py", "system_updater/__init__.py",
+    "resources" : [
+            "system_updater_plugin.py",
+            "system_updater/__init__.py",
             "system_updater/updater/__init__.py",
             "system_updater/updater/console_system_updater.py",
-            "system_updater/updater/system_updating_parser.py",
-            "system_updater/updater/system_updating_system.py",
-            "system_updater/updater/resources/baf.xml"]
+            "system_updater/updater/system_updater_parser.py",
+            "system_updater/updater/system_updater_system.py",
+            "system_updater/updater/exceptions/__init__.py",
+            "system_updater/updater/exceptions/system_updater_exceptions.py",
+            "system_updater/updater/resources/baf.xml",
+            "system_updater/updater/resources/repositories.xml",
+            "system_updater/updater/resources/schema/repository_descriptor.xml",
+            "system_updater/updater/resources/xsd/repositories.xsd",
+            "system_updater/updater/resources/xsd/repository_descriptor.xsd"]
 }
