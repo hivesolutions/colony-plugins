@@ -39,8 +39,8 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 import os
 
-import system_updating_parser
-import exceptions.system_updating_exceptions
+import system_updater_parser
+import exceptions.system_updater_exceptions
 
 TEMP_DIRECTORY = "colony/tmp"
 REPOSITORIES_FILE_PATH = "resources/repositories.xml"
@@ -77,7 +77,7 @@ class SystemUpdater:
         """
 
         repositories_file_path = os.path.join(os.path.dirname(__file__), REPOSITORIES_FILE_PATH)
-        repositories_file_parser = system_updating_parser.RepositoriesFileParser(repositories_file_path)
+        repositories_file_parser = system_updater_parser.RepositoriesFileParser(repositories_file_path)
         repositories_file_parser.parse()
         self.repository_list = repositories_file_parser.get_value()
 
@@ -171,7 +171,7 @@ class SystemUpdater:
 
         repository_descriptor_file = self.get_repository_descriptor_file(repository.addresses)
         if repository_descriptor_file:
-            repository_descriptor_file_parser = system_updating_parser.RepositoryDescriptorFileParser(repository_descriptor_file)
+            repository_descriptor_file_parser = system_updater_parser.RepositoryDescriptorFileParser(repository_descriptor_file)
             repository_descriptor_file_parser.parse()
             return repository_descriptor_file_parser.get_value()
 
@@ -217,7 +217,7 @@ class SystemUpdater:
 
         # in case the plugin was not found
         if not plugin_descriptor:
-            raise exceptions.system_updating_exceptions.InvalidPluginException("Plugin %s v%s not found" % (plugin_id, plugin_version))
+            raise exceptions.system_updater_exceptions.InvalidPluginException("Plugin %s v%s not found" % (plugin_id, plugin_version))
 
         # installs the plugin dependencies
         if not self.install_plugin_dependencies(plugin_descriptor):

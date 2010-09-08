@@ -39,7 +39,7 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 import os
 
-import web_deployment_parser
+import web_deployer_parser
 
 DEPLOYER_TYPE = "web"
 
@@ -70,7 +70,7 @@ class WebDeployer:
         full_web_configuration_path = os.path.join(os.path.dirname(__file__), web_configuration_path)
 
         # creates a new parser for the web configuration file
-        web_configuration_file_parser = web_deployment_parser.WebDeployerConfigurationFileParser(full_web_configuration_path)
+        web_configuration_file_parser = web_deployer_parser.WebDeployerConfigurationFileParser(full_web_configuration_path)
 
         # parsers the web configuration file
         web_configuration_file_parser.parse()
