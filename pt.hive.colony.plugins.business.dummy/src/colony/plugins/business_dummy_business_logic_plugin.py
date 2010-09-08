@@ -61,6 +61,7 @@ class BusinessDummyEntityBundlePlugin(colony.base.plugin_system.Plugin):
                     "pt.hive.colony.plugins.business.helper", "1.0.0")]
     events_handled = []
     events_registrable = []
+    main_modules = ["business_dummy.dummy_business_logic.business_dummy_business_logic_class", "business_dummy.dummy_business_logic.business_dummy_business_logic_system"]
 
     business_dummy_business_logic = None
 
