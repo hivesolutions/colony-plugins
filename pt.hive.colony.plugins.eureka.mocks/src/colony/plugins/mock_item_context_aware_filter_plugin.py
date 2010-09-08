@@ -58,6 +58,7 @@ class MockItemContextAwareFilterPlugin(colony.base.plugin_system.Plugin):
     dependencies = []
     events_handled = []
     events_registrable = []
+    main_modules = []
 
     mock_item_context_aware_filter = None
 

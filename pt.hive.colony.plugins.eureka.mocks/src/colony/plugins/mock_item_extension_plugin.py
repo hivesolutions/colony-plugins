@@ -58,6 +58,10 @@ class MockItemExtensionPlugin(colony.base.plugin_system.Plugin):
     dependencies = []
     events_handled = []
     events_registrable = []
+    main_modules = ["eureka_mocks_mock_item_extension.mock_item_extension.mock_entity_item",
+                    "eureka_mocks_mock_item_extension.mock_item_extension.mock_operation_item",
+                    "eureka_mocks_mock_item_extension.mock_item_extension.mock_procedure_item",
+                    "eureka_mocks_mock_item_extension.mock_item_extension.mock_text_parameter_item"]
 
     all_items = []
 
