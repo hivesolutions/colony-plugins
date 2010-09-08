@@ -1,3 +1,3 @@
 #!/bin/sh
 
-${out value=postinst /}
+${out_none value=postinst /}

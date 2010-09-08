@@ -333,7 +333,19 @@ class InstallationDeb:
         return self._process_template_file("config.tpl", {})
 
     def _generate_prerm_file(self, parameters):
-        return self._process_template_file("prerm.tpl", {})
+        # retrieves the package parameters from the parameters
+        package_parameters = parameters.get("package", {})
+
+        # retrieves the package parameters from the package parameters
+        package_parameters_parameters = package_parameters.get("parameters", {})
+
+        # retrieves the package parameters deb from the package parameters
+        package_parameters_deb_parameters = package_parameters_parameters.get("deb", {})
+
+        # retrieves the prerm value
+        postinst = package_parameters_deb_parameters.get("prerm", "")
+
+        return self._process_template_file("prerm.tpl", {"prerm" : postinst})
 
     def _generate_postrm_file(self, parameters):
         return self._process_template_file("postrm.tpl", {})
