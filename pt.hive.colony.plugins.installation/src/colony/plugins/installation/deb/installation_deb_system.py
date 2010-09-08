@@ -360,7 +360,7 @@ class InstallationDeb:
         package_dependencies = package_parameters.get("package_dependencies", "")
         package_pre_dependencies = package_parameters.get("package_pre_dependencies", "bash")
         package_installed_size = package_parameters.get("package_installed_size", "0")
-        package_maintainer = package_parameters.get("package_maintainer", "Hive Solutions <development@hive.pt>")
+        package_maintainer = package_parameters.get("package_maintainer", "")
         package_provides = package_parameters.get("package_provides", package_name)
         package_replaces = package_parameters.get("package_replaces", "")
         package_description = package_parameters.get("package_description", "")
@@ -389,7 +389,7 @@ class InstallationDeb:
         # retrieves the template engine manager plugin
         template_engine_manager_plugin = self.installation_deb_plugin.template_engine_manager_plugin
 
-        # retrieves the installation plugin path
+        # retrieves the installation deb plugin path
         installation_deb_plugin_path = plugin_manager.get_plugin_path_by_id(self.installation_deb_plugin.id)
 
         # creates the full template file path
