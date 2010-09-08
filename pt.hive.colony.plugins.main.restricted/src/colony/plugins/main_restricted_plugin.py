@@ -60,6 +60,7 @@ class MainRestrictedPlugin(colony.base.plugin_system.PluginManagerPlugin):
     dependencies = []
     events_handled = []
     events_registrable = []
+    main_modules = ["main_restricted.restricted.main_restricted_system"]
     valid = True
 
     main_restricted = None
