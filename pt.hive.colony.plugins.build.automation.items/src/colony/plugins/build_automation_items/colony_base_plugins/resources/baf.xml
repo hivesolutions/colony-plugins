@@ -110,6 +110,10 @@
             <version>.*</version>
         </module>
         <module>
+            <id>pt.hive.colony.plugins.misc.downloader</id>
+            <version>.*</version>
+        </module>
+        <module>
             <id>pt.hive.colony.plugins.misc.json</id>
             <version>.*</version>
         </module>
@@ -192,6 +196,10 @@
         </module>
         <module>
             <id>pt.hive.colony.plugins.web.mvc.resources.ui</id>
+            <version>.*</version>
+        </module>
+        <module>
+            <id>pt.hive.colony.plugins.resources.python_resource_parser</id>
             <version>.*</version>
         </module>
         <module>
@@ -400,6 +408,17 @@
                             <parameters>
                                 <deb>
                                     <target>usr/lib/colony/deploy/pt.hive.colony.plugins.main.work.work_pool_manager_1.0.0.cpx</target>
+                                </deb>
+                            </parameters>
+                        </file>
+                        <file>
+                            <path>${build_automation.build.target_directory}/pt.hive.colony.plugins.misc.downloader_1.0.0.cpx</path>
+                            <owner>0</owner>
+                            <group>0</group>
+                            <mode>755</mode>
+                            <parameters>
+                                <deb>
+                                    <target>usr/lib/colony/deploy/pt.hive.colony.plugins.misc.downloader_1.0.0.cpx</target>
                                 </deb>
                             </parameters>
                         </file>
@@ -620,6 +639,17 @@
                             <parameters>
                                 <deb>
                                     <target>usr/lib/colony/deploy/pt.hive.colony.plugins.web.mvc.resources.ui_1.0.0.cpx</target>
+                                </deb>
+                            </parameters>
+                        </file>
+                        <file>
+                            <path>${build_automation.build.target_directory}/pt.hive.colony.plugins.resources.python_resource_parser_1.0.0.cpx</path>
+                            <owner>0</owner>
+                            <group>0</group>
+                            <mode>755</mode>
+                            <parameters>
+                                <deb>
+                                    <target>usr/lib/colony/deploy/pt.hive.colony.plugins.resources.python_resource_parser_1.0.0.cpx</target>
                                 </deb>
                             </parameters>
                         </file>
