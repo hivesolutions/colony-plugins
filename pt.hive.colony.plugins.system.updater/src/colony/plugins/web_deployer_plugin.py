@@ -62,7 +62,7 @@ class WebDeployerPlugin(colony.base.plugin_system.Plugin):
                     "pt.hive.colony.plugins.resources.resource_manager", "1.0.0")]
     events_handled = []
     events_registrable = []
-    main_modules = ["system_updater.web_deployer.web_deployer_parser", "system_updater.web_deployer.web_deployment_system"]
+    main_modules = ["system_updater.web_deployer.web_deployer_parser", "system_updater.web_deployer.web_deployer_system"]
 
     web_deployer = None
 
