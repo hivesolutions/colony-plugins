@@ -75,7 +75,9 @@ configuration = {
                      }
                  },
                  "redirections" : {
-                     "resolution_order" : ["/blog", "/take_the_bill", "/"],
+                     "resolution_order" : ["/blog",
+                                           "/take_the_bill",
+                                           "/"],
                      "/blog" : {
                          "target" : "/colony_mod_python/rest/mvc/hive_blog/",
                          "recursive_redirection" : True
@@ -90,8 +92,17 @@ configuration = {
                      }
                  },
                  "contexts" : {
-                     "resolution_order" : ["/colony_web/plugins", "/colony_web", "/colony_manager", "/colony_mod_python", "/template_error_handler",
-                                           "/eclipse", "/cgi-bin", "/fastcgi-bin", "/web_administration", "/websession_test", "/websession"],
+                     "resolution_order" : ["/colony_web/plugins",
+                                           "/colony_web",
+                                           "/colony_manager",
+                                           "/colony_mod_python",
+                                           "/template_error_handler",
+                                           "/eclipse",
+                                           "/cgi-bin",
+                                           "/fastcgi-bin",
+                                           "/web_administration",
+                                           "/websession_test",
+                                           "/websession"],
                      "/colony_web" : {
                          "handler" : "file",
                          "allow_redirection" : False,

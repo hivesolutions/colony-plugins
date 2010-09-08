@@ -62,7 +62,14 @@ configuration = {
                      }
                  },
                  "redirections" : {
-                     "resolution_order" : ["/push", "/wiki", "/manager", "/blog", "/colony_site", "/take_the_bill", "/a_la_carte", "/"],
+                     "resolution_order" : ["/push",
+                                           "/wiki",
+                                           "/manager",
+                                           "/blog",
+                                           "/colony_site",
+                                           "/take_the_bill",
+                                           "/a_la_carte",
+                                           "/"],
                      "/push" : {
                          "target" : "/colony_mod_python/rest/mvc/web_mvc_communication_push/",
                          "recursive_redirection" : True
@@ -97,9 +104,21 @@ configuration = {
                      }
                  },
                  "contexts" : {
-                     "resolution_order" : ["/colony_web/plugins", "/colony_web", "/colony_manager", "/colony_mod_python",
-                                           "/template_error_handler", "/eclipse", "/cgi-bin", "/fastcgi-bin",
-                                           "/web_administration", "/websession_test", "/websession", "/colony/repository", "/socket_bridge"],
+                     "resolution_order" : ["/colony_web/plugins",
+                                           "/colony_web",
+                                           "/colony_manager",
+                                           "/colony_mod_python",
+                                           "/template_error_handler",
+                                           "/eclipse",
+                                           "/repository/ubuntu",
+                                           "/repository/debian",
+                                           "/cgi-bin",
+                                           "/fastcgi-bin",
+                                           "/web_administration",
+                                           "/websession_test",
+                                           "/websession",
+                                           "/colony/repository",
+                                           "/socket_bridge"],
                      "/colony_web" : {
                          "handler" : "file",
                          "allow_redirection" : False,
@@ -138,6 +157,20 @@ configuration = {
                          "request_properties" : {
                              "base_path" : "$resource{system.path.base}/pt.hive.eclipse.plugins.site",
                              "default_page" : "site.xml"
+                         }
+                     },
+                     "/repository/ubuntu" : {
+                         "handler" : "file",
+                         "allow_redirection" : False,
+                         "request_properties" : {
+                             "base_path" : "$resource{colony.manager_path}/tmp/target/repository",
+                         }
+                     },
+                     "/repository/debian" : {
+                         "handler" : "file",
+                         "allow_redirection" : False,
+                         "request_properties" : {
+                             "base_path" : "$resource{colony.manager_path}/tmp/target/repository",
                          }
                      },
                      "/cgi-bin" : {
