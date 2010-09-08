@@ -58,6 +58,7 @@ class MainAccessControlPlugin(colony.base.plugin_system.Plugin):
     dependencies = []
     events_handled = []
     events_registrable = []
+    main_modules = ["main_access_control.access_control.main_access_control_system"]
 
     main_access_control = None
 
