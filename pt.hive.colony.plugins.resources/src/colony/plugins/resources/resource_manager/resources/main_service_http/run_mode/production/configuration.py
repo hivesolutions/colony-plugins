@@ -55,7 +55,8 @@ configuration = {
                  },
                  "contexts" : {
                      "resolution_order" : ["/colony_web/plugins",
-                                           "/colony_web"],
+                                           "/colony_web",
+                                           "/colony_mod_python"],
                      "/colony_web" : {
                          "handler" : "file",
                          "allow_redirection" : False,
@@ -70,6 +71,11 @@ configuration = {
                          "request_properties" : {
                              "plugin_handler" : "pt.hive.colony.plugins.javascript.file_handler"
                          }
+                     },
+                     "/colony_mod_python" : {
+                         "handler" : "colony",
+                         "allow_redirection" : False,
+                         "request_properties" : {}
                      }
                  }
              }
