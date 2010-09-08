@@ -71,6 +71,12 @@
                         <package_maintainer><![CDATA[Hive Solutions Lda. <development@hive.pt>]]></package_maintainer>
                         <package_provides>colony-service</package_provides>
                         <package_description>Service Support for the Colony Framework</package_description>
+                        <parameters>
+                            <deb>
+                                <postinst>$contents{$base{plugin_directory}/build_automation_items/colony_service/resources/control_files/postinst.sh}</postinst>
+                                <prerm>$contents{$base{plugin_directory}/build_automation_items/colony_service/resources/control_files/prerm.sh}</prerm>
+                            </deb>
+                        </parameters>
                     </package>
                     <contents>
                         <exclusions>

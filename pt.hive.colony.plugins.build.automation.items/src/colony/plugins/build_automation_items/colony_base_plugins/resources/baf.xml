@@ -252,7 +252,7 @@
                         <package_description>Base Plugins for the Colony Framework</package_description>
                         <parameters>
                             <deb>
-                                <postinst>$contents{$base{plugin_directory}/build_automation_items/colony_base_plugins/resources/postinst.sh}</postinst>
+                                <postinst>$contents{$base{plugin_directory}/build_automation_items/colony_base_plugins/resources/control_files/postinst.sh}</postinst>
                             </deb>
                         </parameters>
                     </package>
