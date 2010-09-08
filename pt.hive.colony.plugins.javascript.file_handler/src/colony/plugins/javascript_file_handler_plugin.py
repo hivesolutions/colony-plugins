@@ -61,6 +61,7 @@ class JavascriptFileHandlerPlugin(colony.base.plugin_system.Plugin):
                     "pt.hive.colony.plugins.javascript.manager", "1.0.0")]
     events_handled = []
     events_registrable = []
+    main_modules = ["javascript_file_handler.file_handler.javascript_file_handler_system"]
 
     javascript_file_handler = None
 
