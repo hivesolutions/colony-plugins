@@ -774,7 +774,7 @@ class BuildAutomation:
             contents_value = group[10:-1]
 
             # retrieves the real contents value
-            real_contents_value = self.get_contents_value(contents_value)
+            real_contents_value = self.get_contents_value(contents_value, build_automation_structure)
 
             # replaces the value in the string
             string = string.replace(group, real_contents_value)
