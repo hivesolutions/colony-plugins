@@ -339,7 +339,19 @@ class InstallationDeb:
         return self._process_template_file("postrm.tpl", {})
 
     def _generate_postinst_file(self, parameters):
-        return self._process_template_file("postinst.tpl", {})
+        # retrieves the package parameters from the parameters
+        package_parameters = parameters.get("package", {})
+
+        # retrieves the package parameters from the package parameters
+        package_parameters_parameters = package_parameters.get("parameters", {})
+
+        # retrieves the package parameters deb from the package parameters
+        package_parameters_deb_parameters = package_parameters_parameters.get("deb", {})
+
+        # retrieves the postinst value
+        postinst = package_parameters_deb_parameters.get("postinst", "")
+
+        return self._process_template_file("postinst.tpl", {"postinst" : postinst})
 
     def _generate_control_file(self, parameters):
         # retrieves the package parameters from the parameters
