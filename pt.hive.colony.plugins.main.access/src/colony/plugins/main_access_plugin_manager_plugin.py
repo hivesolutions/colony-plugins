@@ -58,6 +58,7 @@ class MainAccessPluginManagerPlugin(colony.base.plugin_system.Plugin):
     dependencies = []
     events_handled = []
     events_registrable = []
+    main_modules = ["main_access.plugin_manager.main_access_plugin_manager_system"]
 
     main_access_plugin_manager = None
 
