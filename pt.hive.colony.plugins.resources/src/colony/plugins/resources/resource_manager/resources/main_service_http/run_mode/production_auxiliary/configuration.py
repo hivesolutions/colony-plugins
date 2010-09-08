@@ -43,9 +43,21 @@ configuration = {
                  "default_handler" : "file",
                  "default_encoding" : None,
                  "default_content_type_charset" : "utf-8",
+                 "allowed_hosts" : {"127.0.0.1" : True,
+                                    "localhost" : True},
+                 "redirections" : {
+                     "resolution_order" : ["/manager"],
+                     "/manager" : {
+                         "target" : "/colony_mod_python/rest/mvc/web_mvc_manager/",
+                         "recursive_redirection" : True
+                     }
+                 },
                  "contexts" : {
+                     "resolution_order" : ["/colony_web/plugins",
+                                           "/colony_web"],
                      "/colony_web" : {
                          "handler" : "file",
+                         "allow_redirection" : False,
                          "request_properties" : {
                              "base_path" : "$resource{system.path.colony_web}/pt.hive.colony.web",
                              "default_page" : "index.html"
@@ -53,23 +65,9 @@ configuration = {
                      },
                      "/colony_web/plugins" : {
                          "handler" : "colony",
+                         "allow_redirection" : False,
                          "request_properties" : {
                              "plugin_handler" : "pt.hive.colony.plugins.javascript.file_handler"
-                         }
-                     },
-                     "/colony_manager" : {
-                         "handler" : "colony",
-                         "request_properties" : {}
-                     },
-                     "/colony_mod_python" : {
-                         "handler" : "colony",
-                         "request_properties" : {}
-                     },
-                     "/eclipse" : {
-                         "handler" : "file",
-                         "request_properties" : {
-                             "base_path" : "$resource{system.path.colony}/pt.hive.eclipse.plugins.site",
-                             "default_page" : "site.xml"
                          }
                      }
                  }
