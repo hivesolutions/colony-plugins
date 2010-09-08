@@ -80,6 +80,9 @@ FILE_EXTENSION_VALUE = ".deb"
 RESOURCES_PATH = "repository/generator_apt/resources"
 """ The resources path """
 
+DEFAULT_FILE_FORMAT = "tar_gz"
+""" The default file format """
+
 class RepositoryGeneratorApt:
     """
     The repository generator apt class.
@@ -126,7 +129,7 @@ class RepositoryGeneratorApt:
         target = parameters[TARGET_VALUE]
 
         # creates the target (apt) directory
-        target_apt = target + "/apt"
+        target_apt = target + "/" + ADAPTER_NAME
 
         # in case the target (apt) path does not exist
         if not os.path.exists(target_apt):
@@ -139,6 +142,7 @@ class RepositoryGeneratorApt:
         # retrieves the file from the parameters
         files = contents.get(FILE_VALUE, [])
 
+        # creates the list to hold the various package maps
         packages_list = []
 
         # iterates over all the files to process them
@@ -154,15 +158,18 @@ class RepositoryGeneratorApt:
             # creates the complete file path prepending the source path
             complete_file_path = source + "/" + complete_file_name
 
-            complete_target_file_name = "apt/" + complete_file_name
+            # creates the complete target file name according to the adapter name directory
+            complete_target_file_name = ADAPTER_NAME + "/" + complete_file_name
 
+            # creates the complete target file path
             complete_target_file_path = target_apt + "/" + complete_file_name
 
+            # copies the file to the complete target path
             colony.libs.path_util.copy_file(complete_file_path, complete_target_file_path)
 
             # creates the deb file parameters map
             deb_file_parameters = {"file_path" : complete_file_path,
-                                   "file_format" : "tar_gz"}
+                                   "file_format" : DEFAULT_FILE_FORMAT}
 
             # creates the deb file
             deb_file = packaging_deb_plugin.create_file(deb_file_parameters)
@@ -204,7 +211,7 @@ class RepositoryGeneratorApt:
                 # sets the value in the control values map
                 control_values_map[key] = value
 
-            # opes the deb file
+            # opens the deb file
             deb_file = open(complete_file_path, "rb")
 
             try:
@@ -246,7 +253,7 @@ class RepositoryGeneratorApt:
             deb_file_sha1_digest = deb_file_sha1.hexdigest()
             deb_file_sha256_digest = deb_file_sha256.hexdigest()
 
-            # creates tje package map
+            # creates the package map
             package_map = {"name" : control_values_map.get("Package", ""),
                            "version" : control_values_map.get("Version", "1.0.0"),
                            "architecture" : control_values_map.get("Architecture", "all"),
@@ -269,6 +276,7 @@ class RepositoryGeneratorApt:
             # adds the packages map to the packages list
             packages_list.append(package_map)
 
+        # processes the template file, retrieving the packages contents
         packages_contents = self._process_template_file("packages.tpl", {"packages" : packages_list})
 
         # creates the buffer to hold the package contents compressed
