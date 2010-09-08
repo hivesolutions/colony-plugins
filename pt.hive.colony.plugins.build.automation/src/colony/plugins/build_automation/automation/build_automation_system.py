@@ -240,6 +240,9 @@ class BuildAutomation:
                     # with the plugin path directory
                     build_automation_file_path = build_automation_file_path.replace(plugin_directory_value, plugin_path)
 
+                # prints a debug message
+                self.build_automation_plugin.debug("Parsing build automation file (baf): '%s'" % build_automation_file_path)
+
                 # creates the build automation file parser
                 build_automation_file_parser = build_automation_parser.BuildAutomationFileParser(build_automation_file_path)
 
