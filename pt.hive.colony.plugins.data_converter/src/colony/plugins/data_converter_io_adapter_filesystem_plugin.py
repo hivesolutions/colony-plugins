@@ -60,6 +60,8 @@ class DataConverterIoAdapterFilesystemPlugin(colony.base.plugin_system.Plugin):
                     "pt.hive.colony.plugins.main.log", "1.0.0")]
     events_handled = []
     events_registrable = []
+    main_modules = ["data_converter_io_adapter_filesystem.io_adapter_filesystem.io_adapter_filesystem_exceptions",
+                    "data_converter_io_adapter_filesystem.io_adapter_filesystem.io_adapter_filesystem_system"]
 
     io_adapter_filesystem = None
     """ The intermediate structure filesystem input output adapter """

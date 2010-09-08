@@ -60,6 +60,8 @@ class DataConverterIoAdapterXmlPlugin(colony.base.plugin_system.Plugin):
                     "pt.hive.colony.plugins.main.log", "1.0.0")]
     events_handled = []
     events_registrable = []
+    main_modules = ["data_converter_io_adapter_xml.io_adapter_xml.io_adapter_xml_exceptions",
+                    "data_converter_io_adapter_xml.io_adapter_xml.io_adapter_xml_system"]
 
     io_adapter_xml = None
     """ The intermediate structure xml input output adapter """

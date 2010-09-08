@@ -63,6 +63,8 @@ class DataConverterIoAdapterEntityManagerPlugin(colony.base.plugin_system.Plugin
                     "pt.hive.colony.plugins.main.log", "1.0.0")]
     events_handled = []
     events_registrable = []
+    main_modules = ["data_converter_io_adapter_entity_manager.io_adapter_entity_manager.io_adapter_entity_manager_exceptions",
+                    "data_converter_io_adapter_entity_manager.io_adapter_entity_manager.io_adapter_entity_manager_system"]
 
     io_adapter_entity_manager = None
     """ The intermediate structure entity manager input output adapter """

@@ -60,6 +60,8 @@ class DataConverterIoAdapterSqlitePlugin(colony.base.plugin_system.Plugin):
                     "pt.hive.colony.plugins.main.log", "1.0.0")]
     events_handled = []
     events_registrable = []
+    main_modules = ["data_converter_io_adapter_sqlite.io_adapter_sqlite.io_adapter_sqlite_exceptions",
+                    "data_converter_io_adapter_sqlite.io_adapter_sqlite.io_adapter_sqlite_system"]
 
     io_adapter_sqlite = None
     """ The intermediate structure sqlite input output adapter """

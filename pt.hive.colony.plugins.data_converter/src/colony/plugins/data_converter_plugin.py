@@ -63,6 +63,20 @@ class DataConverterPlugin(colony.base.plugin_system.Plugin):
                     "pt.hive.colony.plugins.resources.resource_manager", "1.0.0")]
     events_handled = []
     events_registrable = []
+    main_modules = ["data_converter.data_converter.console_data_converter",
+                    "data_converter.data_converter.data_converter_configuration",
+                    "data_converter.data_converter.data_converter_exceptions",
+                    "data_converter.data_converter.data_converter_system",
+                    "data_converter.data_converter.generic_attribute_handlers",
+                    "data_converter.data_converter.generic_attribute_validators",
+                    "data_converter.data_converter.generic_connectors",
+                    "data_converter.data_converter.generic_entity_handlers",
+                    "data_converter.data_converter.generic_entity_validators",
+                    "data_converter.data_converter.generic_input_entity_indexers",
+                    "data_converter.data_converter.generic_output_entity_indexers",
+                    "data_converter.data_converter.generic_post_attribute_mapping_handlers",
+                    "data_converter.data_converter.generic_post_conversion_handlers",
+                    "data_converter.data_converter.intermediate_structure"]
 
     data_converter = None
     """ Data converter backend """
