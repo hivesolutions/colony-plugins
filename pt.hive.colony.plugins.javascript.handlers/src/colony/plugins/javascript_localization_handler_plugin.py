@@ -59,6 +59,7 @@ class JavascriptLocalizationHandlerPlugin(colony.base.plugin_system.Plugin):
     dependencies = []
     events_handled = []
     events_registrable = []
+    main_modules = ["javascript_localization.localization_handler.javascript_localization_handler_system"]
 
     javascript_localization_handler = None
 
