@@ -59,6 +59,7 @@ class EurekaEnginePlugin(colony.base.plugin_system.Plugin):
     dependencies = []
     events_handled = []
     events_registrable = []
+    main_modules = ["eureka.eureka_engine_system", "eureka.eureka_engine_test", "eureka.eureka_item"]
 
     eureka_engine = None
     eureka_engine_test = None
