@@ -78,6 +78,14 @@
             <version>.*</version>
         </module>
         <module>
+            <id>pt.hive.colony.plugins.main.service.normal_socket_provider</id>
+            <version>.*</version>
+        </module>
+        <module>
+            <id>pt.hive.colony.plugins.main.service.ssl_socket_provider</id>
+            <version>.*</version>
+        </module>
+        <module>
             <id>pt.hive.colony.plugins.main.service.utils</id>
             <version>.*</version>
         </module>
@@ -304,6 +312,28 @@
                             <parameters>
                                 <deb>
                                     <target>usr/lib/colony/deploy/pt.hive.colony.plugins.main.remote.rest.manager_1.0.0.cpx</target>
+                                </deb>
+                            </parameters>
+                        </file>
+                        <file>
+                            <path>${build_automation.build.target_directory}/pt.hive.colony.plugins.main.service.normal_socket_provider_1.0.0.cpx</path>
+                            <owner>0</owner>
+                            <group>0</group>
+                            <mode>755</mode>
+                            <parameters>
+                                <deb>
+                                    <target>usr/lib/colony/deploy/pt.hive.colony.plugins.main.service.normal_socket_provider_1.0.0.cpx</target>
+                                </deb>
+                            </parameters>
+                        </file>
+                        <file>
+                            <path>${build_automation.build.target_directory}/pt.hive.colony.plugins.main.service.ssl_socket_provider_1.0.0.cpx</path>
+                            <owner>0</owner>
+                            <group>0</group>
+                            <mode>755</mode>
+                            <parameters>
+                                <deb>
+                                    <target>usr/lib/colony/deploy/pt.hive.colony.plugins.main.service.ssl_socket_provider_1.0.0.cpx</target>
                                 </deb>
                             </parameters>
                         </file>
