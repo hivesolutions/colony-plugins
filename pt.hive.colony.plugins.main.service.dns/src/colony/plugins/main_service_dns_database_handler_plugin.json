@@ -14,7 +14,7 @@
     "resources" : [
             "main_service_dns_database_handler_plugin.py",
             "main_service_dns_database_handler/__init__.py",
-            "main_service_dns_database_handler/database_handler/__init__.py"
+            "main_service_dns_database_handler/database_handler/__init__.py",
             "main_service_dns_database_handler/database_handler/main_service_dns_database_handler_system.py",
             "main_service_dns_database_handler/database_handler/resources/baf.xml"]
 }
