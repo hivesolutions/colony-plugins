@@ -61,6 +61,7 @@ class DummyPluginAux2(colony.base.plugin_system.Plugin):
                     "pt.hive.colony.plugins.dummy", "1.0.0")]
     events_handled = []
     events_registrable = []
+    main_modules = []
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)

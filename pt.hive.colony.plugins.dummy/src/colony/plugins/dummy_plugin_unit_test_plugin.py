@@ -58,6 +58,7 @@ class DummyPluginUnitTestPlugin(colony.base.plugin_system.Plugin):
     dependencies = []
     events_handled = []
     events_registrable = []
+    main_modules = ["dummy.plugin_unit_test.dummy_plugin_unit_test_system"]
 
     dummy_plugin_unit_test = None
 

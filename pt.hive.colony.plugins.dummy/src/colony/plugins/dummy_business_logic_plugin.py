@@ -60,6 +60,7 @@ class DummyBusinessLogicPlugin(colony.base.plugin_system.Plugin):
                     "pt.hive.colony.plugins.dummy.database_access", "1.0.0")]
     events_handled = []
     events_registrable = []
+    main_modules = ["dummy.business_logic.dummy_business_logic_system"]
 
     dummy_business_logic = None
 

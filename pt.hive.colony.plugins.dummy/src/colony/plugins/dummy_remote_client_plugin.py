@@ -60,6 +60,7 @@ class DummyRemoteClientPlugin(colony.base.plugin_system.Plugin):
                     "pt.hive.colony.plugins.main.remote.client.manager", "1.0.0")]
     events_handled = []
     events_registrable = []
+    main_modules = ["dummy.remote_client.dummy_remote_client_system"]
 
     dummy_remote_client = None
 

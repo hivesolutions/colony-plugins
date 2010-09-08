@@ -59,6 +59,7 @@ class DummyDatabaseAccessPlugin(colony.base.plugin_system.Plugin):
                     "SQL Alchemy O/R mapper", "sqlalchemy", "0.4.x", "http://www.sqlalchemy.org")]
     events_handled = []
     events_registrable = []
+    main_modules = ["dummy.database_access.dummy_database_access_system"]
 
     dummy_database_access = None
 

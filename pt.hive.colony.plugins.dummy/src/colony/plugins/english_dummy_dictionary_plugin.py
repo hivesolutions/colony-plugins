@@ -60,6 +60,7 @@ class EnglishDummyDictionary(colony.base.plugin_system.Plugin):
     dependencies = []
     events_handled = []
     events_registrable = []
+    main_modules = []
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)

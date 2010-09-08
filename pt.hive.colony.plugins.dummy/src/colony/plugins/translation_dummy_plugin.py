@@ -64,6 +64,7 @@ class TranslationDummyPlugin(colony.base.plugin_system.Plugin):
     dependencies = []
     events_handled = []
     events_registrable = []
+    main_modules = []
 
     translation_engine_plugins = []
 

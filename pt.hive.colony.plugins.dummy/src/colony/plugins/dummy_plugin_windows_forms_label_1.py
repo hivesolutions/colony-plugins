@@ -59,6 +59,7 @@ class DummyPluginWindowsFormsLabel1(colony.base.plugin_system.Plugin):
     dependencies = []
     events_handled = []
     events_registrable = []
+    main_modules = ["dummy.windows_forms_label_1.dummy_windows_forms_label_1_system"]
 
     dummy_windows_forms_label_1 = None
 

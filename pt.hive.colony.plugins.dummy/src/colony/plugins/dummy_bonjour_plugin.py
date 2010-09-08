@@ -60,6 +60,7 @@ class DummyBonjourPlugin(colony.base.plugin_system.Plugin):
                     "pt.hive.colony.plugins.misc.bonjour", "1.0.0")]
     events_handled = []
     events_registrable = []
+    main_modules = ["dummy.bonjour.dummy_bonjour_system"]
 
     dummy_bonjour = None
 

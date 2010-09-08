@@ -70,6 +70,7 @@ class DummyPluginAux4(colony.base.plugin_system.Plugin):
                     "pt.hive.colony.plugins.main.tasks.task_manager", "1.0.0")]
     events_handled = ["task_information_changed"]
     events_registrable = []
+    main_modules = []
 
     task_manager_plugin = None
 

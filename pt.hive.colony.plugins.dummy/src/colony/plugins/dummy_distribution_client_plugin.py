@@ -60,6 +60,7 @@ class DummyDistributionClientPlugin(colony.base.plugin_system.Plugin):
                     "pt.hive.colony.plugins.distribution.client", "1.0.0")]
     events_handled = []
     events_registrable = []
+    main_modules = ["dummy.distribution_client.dummy_distribution_client_system"]
 
     dummy_distribution_client = None
 

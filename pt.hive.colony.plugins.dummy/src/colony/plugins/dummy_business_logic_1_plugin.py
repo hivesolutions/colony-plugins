@@ -62,6 +62,7 @@ class DummyBusinessLogic1Plugin(colony.base.plugin_system.Plugin):
                     "pt.hive.colony.plugins.business.session_manager", "1.0.0")]
     events_handled = []
     events_registrable = []
+    main_modules = ["dummy.business_logic_1.dummy_business_logic_1_system"]
 
     dummy_business_logic_1 = None
 

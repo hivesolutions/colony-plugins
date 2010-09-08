@@ -64,6 +64,7 @@ class DummyEntityManagerPlugin(colony.base.plugin_system.Plugin):
                     "pt.hive.colony.plugins.business.dummy.entity", "1.0.0")]
     events_handled = []
     events_registrable = []
+    main_modules = ["dummy.entity_manager.dummy_entity_manager_system"]
 
     dummy_entity_manager = None
 

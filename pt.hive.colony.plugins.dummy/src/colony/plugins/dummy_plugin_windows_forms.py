@@ -59,6 +59,7 @@ class DummyPluginWindowsForms(colony.base.plugin_system.Plugin):
     dependencies = []
     events_handled = []
     events_registrable = []
+    main_modules = ["dummy.windows_forms.dummy_windows_forms_system"]
 
     dummy_windows_forms = None
 
