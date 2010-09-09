@@ -7,7 +7,7 @@
     "description" : "Plugin used to generate specification files from the source plugin files",
     "version" : "1.0.0",
     "author" : "Hive Solutions Lda. <development@hive.pt>",
-    "capabilities" : ["startup", "specification_generator", "build_automation_item"],
+    "capabilities" : ["specification_generator", "build_automation_item"],
     "capabilities_allowed" : ["specification_generator_handler"],
     "dependencies" : [],
     "main_file" : "specification_generator_plugin.py",
