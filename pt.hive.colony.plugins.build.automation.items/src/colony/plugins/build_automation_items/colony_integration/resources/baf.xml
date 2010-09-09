@@ -40,12 +40,6 @@
         <description>The Colony Integration Build Automation Item Plugin automation file (baf)</description>
         <url>http://www.hive.pt</url>
     </artifact>
-    <modules>
-        <module>
-            <id>pt.hive.colony.plugins.build.automation.items.colony_repository</id>
-            <version>.*</version>
-        </module>
-    </modules>
     <build>
         <default_stage>build</default_stage>
         <plugins>
@@ -58,10 +52,14 @@
                 </configuration>
             </plugin>
             <plugin>
-                <id>pt.hive.colony.plugins.build.automation.extensions.integration.generator</id>
+                <id>pt.hive.colony.plugins.build.automation.extensions.command_execution</id>
                 <version>1.0.0</version>
                 <stage>build</stage>
                 <configuration>
+                    <command>colony</command>
+                    <arguments>
+                        <argument>--debug</argument>
+                    </arguments>
                 </configuration>
             </plugin>
         </plugins>
