@@ -7,7 +7,7 @@
     "description" : "The plugin that offers the web mvc panel item did you know",
     "version" : "1.0.0",
     "author" : "Hive Solutions Lda. <development@hive.pt>",
-    "capabilities" : ["web.mvc_service.panel_item", "build_automation_item"],
+    "capabilities" : ["web.mvc.panel_item", "build_automation_item"],
     "capabilities_allowed" : [],
     "dependencies" : [{
                 "id" : "pt.hive.colony.plugins.web.mvc.utils",

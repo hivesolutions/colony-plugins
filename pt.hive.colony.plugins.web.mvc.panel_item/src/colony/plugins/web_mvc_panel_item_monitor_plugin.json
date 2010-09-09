@@ -7,8 +7,8 @@
     "description" : "The plugin that offers the web mvc panel item monitor",
     "version" : "1.0.0",
     "author" : "Hive Solutions Lda. <development@hive.pt>",
-    "capabilities" : ["web.mvc_service.panel_item", "build_automation_item"],
-    "capabilities_allowed" : [],
+    "capabilities" : ["web.mvc.panel_item", "build_automation_item"],
+    "capabilities_allowed" : ["web.mvc.monitor_item"],
     "dependencies" : [{
                 "id" : "pt.hive.colony.plugins.web.mvc.utils",
                 "version" : "1.0.0"
