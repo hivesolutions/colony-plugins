@@ -61,7 +61,7 @@ class MainServiceSmtpMainAuthenticationHandlerPlugin(colony.base.plugin_system.P
                     "pt.hive.colony.plugins.main.authentication", "1.0.0")]
     events_handled = []
     events_registrable = []
-    main_modules = ["main_service_smtp_main_authentication_handler.main_authentication_handler.main_service_smtp_main_authentication_handler_exceptions"
+    main_modules = ["main_service_smtp_main_authentication_handler.main_authentication_handler.main_service_smtp_main_authentication_handler_exceptions",
                     "main_service_smtp_main_authentication_handler.main_authentication_handler.main_service_smtp_main_authentication_handler_system"]
 
     main_service_smtp_main_authentication_handler = None
