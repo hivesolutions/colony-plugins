@@ -9,7 +9,10 @@
     "author" : "Hive Solutions Lda. <development@hive.pt>",
     "capabilities" : ["packing_service", "build_automation_item"],
     "capabilities_allowed" : [],
-    "dependencies" : [],
+    "dependencies" : [{
+                "id" : "pt.hive.colony.plugins.specifications.specification_manager",
+                "version" : "1.0.0"
+            }],
     "main_file" : "main_packing_colony_service_plugin.py",
     "resources" : [
             "main_packing_colony_service_plugin.py",
