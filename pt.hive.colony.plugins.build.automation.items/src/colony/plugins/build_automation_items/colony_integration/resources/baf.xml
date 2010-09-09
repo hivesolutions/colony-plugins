@@ -52,14 +52,27 @@
                 </configuration>
             </plugin>
             <plugin>
+                <id>pt.hive.colony.plugins.build.automation.extensions.revision_control</id>
+                <version>1.0.0</version>
+                <stage>build</stage>
+                <configuration>
+                    <adapter>svn</adapter>
+                    <path>http://svn.hive.pt/hive-main/pt.hive.colony/trunk</path>
+                    <target_path>$base{plugin_system_directory}/tmp/checkout/pt.hive.colony</target_path>
+                </configuration>
+            </plugin>
+            <plugin>
                 <id>pt.hive.colony.plugins.build.automation.extensions.command_execution</id>
                 <version>1.0.0</version>
                 <stage>build</stage>
                 <configuration>
-                    <command>colony</command>
+                    <command>python</command>
                     <arguments>
-                        <argument>--debug</argument>
+                        <argument>$base{plugin_system_directory}/tmp/checkout/pt.hive.colony/pt.hive.colony/src/script.py</argument>
+                        <argument>pt.hive.colony.plugins.main.console:execute_command_line</argument>
+                        <argument>run_automation pt.hive.colony.plugins.build.automation.items.colony_repository</argument>
                     </arguments>
+                    <timeout>900</timeout>
                 </configuration>
             </plugin>
         </plugins>
