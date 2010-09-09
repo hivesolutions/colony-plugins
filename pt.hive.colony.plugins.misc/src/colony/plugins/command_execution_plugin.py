@@ -88,10 +88,65 @@ class CommandExecutionPlugin(colony.base.plugin_system.Plugin):
         colony.base.plugin_system.Plugin.dependency_injected(self, plugin)
 
     def execute_command(self, command, arguments):
+        """
+        Executes the command in the default shell execution environment
+        using the given arguments.
+        The returned value is an object that can be used to control the
+        resulting process.
+
+        @type command: String
+        @param command: The command name to be executed.
+        @type arguments: List
+        @param arguments: The list of argument to be sent to the command.
+        @rtype: Process
+        @return: An object representing the created process.
+        """
+
         return self.command_execution.execute_command(command, arguments)
 
     def execute_command_logger(self, command, arguments, logger):
+        """
+        Executes the command in the default shell execution environment
+        using the given arguments.
+        The logger object represents the logger that will hold the
+        standard output and error information.
+        The returned value is an object that can be used to control the
+        resulting process.
+
+        @type command: String
+        @param command: The command name to be executed.
+        @type arguments: List
+        @param arguments: The list of argument to be sent to the command.
+        @type logger: Logger
+        @param logger: The logger object to hold the standard output
+        and error information.
+        @rtype: Process
+        @return: An object representing the created process.
+        """
+
         return self.command_execution.execute_command_logger(command, arguments, logger)
 
     def execute_command_logger_execution_directory(self, command, arguments, logger, execution_directory):
+        """
+        Executes the command in the default shell execution environment
+        using the given arguments.
+        The logger object represents the logger that will hold the
+        standard output and error information.
+        The returned value is an object that can be used to control the
+        resulting process.
+
+        @type command: String
+        @param command: The command name to be executed.
+        @type arguments: List
+        @param arguments: The list of argument to be sent to the command.
+        @type logger: Logger
+        @param logger: The logger object to hold the standard output
+        and error information.
+        @type execution_directory: String
+        @param execution_directory:  The directory in wich the command is going
+        to be executed.
+        @rtype: Process
+        @return: An object representing the created process.
+        """
+
         return self.command_execution.execute_command_logger_execution_directory(command, arguments, logger, execution_directory)
