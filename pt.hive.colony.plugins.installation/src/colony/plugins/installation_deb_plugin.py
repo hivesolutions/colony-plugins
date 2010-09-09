@@ -54,7 +54,7 @@ class InstallationDebPlugin(colony.base.plugin_system.Plugin):
     loading_type = colony.base.plugin_system.EAGER_LOADING_TYPE
     platforms = [colony.base.plugin_system.CPYTHON_ENVIRONMENT]
     attributes = {"build_automation_file_path" : "$base{plugin_directory}/installation/deb/resources/baf.xml"}
-    capabilities = ["installation.adapter"]
+    capabilities = ["installation.adapter", "build_automation_item"]
     capabilities_allowed = []
     dependencies = [colony.base.plugin_system.PluginDependency(
                     "pt.hive.colony.plugins.packaging.deb", "1.0.0"),

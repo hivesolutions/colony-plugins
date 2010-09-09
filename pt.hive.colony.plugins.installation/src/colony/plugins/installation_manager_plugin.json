@@ -7,7 +7,7 @@
     "description" : "A plugin to manage the installation generation of the packages",
     "version" : "1.0.0",
     "author" : "Hive Solutions Lda. <development@hive.pt>",
-    "capabilities" : ["installation.manager"],
+    "capabilities" : ["installation.manager", "build_automation_item"],
     "capabilities_allowed" : ["installation.adapter"],
     "dependencies" : [],
     "main_file" : "installation_manager_plugin.py",

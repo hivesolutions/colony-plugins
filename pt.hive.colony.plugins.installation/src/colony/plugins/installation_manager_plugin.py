@@ -54,7 +54,7 @@ class InstallationManagerPlugin(colony.base.plugin_system.Plugin):
     loading_type = colony.base.plugin_system.EAGER_LOADING_TYPE
     platforms = [colony.base.plugin_system.CPYTHON_ENVIRONMENT]
     attributes = {"build_automation_file_path" : "$base{plugin_directory}/installation/manager/resources/baf.xml"}
-    capabilities = ["installation.manager"]
+    capabilities = ["installation.manager", "build_automation_item"]
     capabilities_allowed = ["installation.adapter"]
     dependencies = []
     events_handled = []
