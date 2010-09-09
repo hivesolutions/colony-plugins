@@ -37,6 +37,18 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
+ADAPTER_VALUE = "adapter"
+""" The adapter value """
+
+PATH_VALUE = "path"
+""" The path value """
+
+TARGET_PATH_VALUE = "target_path"
+""" The target path value """
+
+REPOSITORY_PATH_VALUE = "repository_path_value"
+""" the repository path value """
+
 class RevisionControlBuildAutomationExtension:
     """
     The revision control build automation extension class.
@@ -56,4 +68,25 @@ class RevisionControlBuildAutomationExtension:
         self.revision_control_build_automation_extension_plugin = revision_control_build_automation_extension_plugin
 
     def run_automation(self, plugin, stage, parameters, build_automation_structure):
-        pass
+        # retrieves the revision control manager plugin
+        revision_control_manager_plugin = self.revision_control_build_automation_extension_plugin.revision_control_manager_plugin
+
+        # retrieves the required parameters
+        adapter = parameters[ADAPTER_VALUE]
+        path = parameters[PATH_VALUE]
+        target_path = parameters[TARGET_PATH_VALUE]
+
+        # creates the revision control parameters
+        revision_control_parameters = {REPOSITORY_PATH_VALUE : target_path}
+
+        # loads a new revision control manager for the specified adapter name
+        revision_control_manager = revision_control_manager_plugin.load_revision_control_manager(adapter, revision_control_parameters)
+
+        # checks out the repository to the target path
+        revision_control_manager.checkout(path, target_path)
+
+        # uses the revision control manager to perform the commit
+        #commit_revision = revision_control_manager.commit([complete_file_path], summary)
+
+        # sets the result for the rest request
+        #rest_request.set_result_translated("revision: " + str(commit_revision.get_number()))
