@@ -1,6 +1,6 @@
 {
     "platform" : "python",
-    "sub_platforms" : ["cpython", "jython"],
+    "sub_platforms" : ["cpython", "jython", "iron_python"],
     "id" : "pt.hive.colony.plugins.main.client.utils",
     "name" : "Client Main Utils Plugin",
     "short_name" : "Client Main Utils",
