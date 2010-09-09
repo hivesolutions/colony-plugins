@@ -40,7 +40,7 @@ __license__ = "GNU General Public License (GPL), Version 3"
 import os
 import re
 
-import io_adapter_filesystem_exceptions
+import data_converter_io_adapter_filesystem_exceptions
 
 DIRECTORY_PATHS_VALUE = "directory_paths"
 
@@ -163,7 +163,7 @@ class IoAdapterFilesystem:
         structure into filesystem format.
         """
 
-        raise io_adapter_filesystem_exceptions.IoAdapterFilesystemMethodNotImplemented()
+        raise data_converter_io_adapter_filesystem_exceptions.IoAdapterFilesystemMethodNotImplemented()
 
     def index_files(self, directory_paths):
         """

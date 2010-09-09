@@ -67,8 +67,8 @@ class DataConverterIoAdapterDbasePlugin(colony.base.plugin_system.Plugin):
     events_handled = []
     events_registrable = []
     main_modules = ["data_converter_io_adapter_dbase.io_adapter_dbase.dbfpy_extensions",
-                    "data_converter_io_adapter_dbase.io_adapter_dbase.io_adapter_dbase_exceptions",
-                    "data_converter_io_adapter_dbase.io_adapter_dbase.io_adapter_dbase_system"]
+                    "data_converter_io_adapter_dbase.io_adapter_dbase.data_converter_io_adapter_dbase_exceptions",
+                    "data_converter_io_adapter_dbase.io_adapter_dbase.data_converter_io_adapter_dbase_system"]
 
     io_adapter_dbase = None
     """ The intermediate structure dbase input output adapter """
@@ -85,9 +85,9 @@ class DataConverterIoAdapterDbasePlugin(colony.base.plugin_system.Plugin):
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
         global data_converter_io_adapter_dbase
-        import data_converter_io_adapter_dbase.io_adapter_dbase.io_adapter_dbase_system
+        import data_converter_io_adapter_dbase.io_adapter_dbase.data_converter_io_adapter_dbase_system
         import data_converter_io_adapter_dbase.io_adapter_dbase.dbfpy_extensions
-        self.io_adapter_dbase = data_converter_io_adapter_dbase.io_adapter_dbase.io_adapter_dbase_system.IoAdapterDbase(self)
+        self.io_adapter_dbase = data_converter_io_adapter_dbase.io_adapter_dbase.data_converter_io_adapter_dbase_system.IoAdapterDbase(self)
         self.dbfpy_extensions = data_converter_io_adapter_dbase.io_adapter_dbase.dbfpy_extensions.DbfpyExtensions(self)
         self.dbfpy_extensions.register_extensions()
 

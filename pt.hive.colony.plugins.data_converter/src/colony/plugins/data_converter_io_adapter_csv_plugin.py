@@ -60,8 +60,8 @@ class DataConverterIoAdapterCsvPlugin(colony.base.plugin_system.Plugin):
                     "pt.hive.colony.plugins.main.log", "1.0.0")]
     events_handled = []
     events_registrable = []
-    main_modules = ["data_converter_io_adapter_csv.io_adapter_csv.io_adapter_csv_exceptions",
-                    "data_converter_io_adapter_csv.io_adapter_csv.io_adapter_csv_system"]
+    main_modules = ["data_converter_io_adapter_csv.io_adapter_csv.data_converter_io_adapter_csv_exceptions",
+                    "data_converter_io_adapter_csv.io_adapter_csv.data_converter_io_adapter_csv_system"]
 
     io_adapter_csv = None
     """ The intermediate structure csv input output adapter """
@@ -75,8 +75,8 @@ class DataConverterIoAdapterCsvPlugin(colony.base.plugin_system.Plugin):
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
         global data_converter_io_adapter_csv
-        import data_converter_io_adapter_csv.io_adapter_csv.io_adapter_csv_system
-        self.io_adapter_csv = data_converter_io_adapter_csv.io_adapter_csv.io_adapter_csv_system.IoAdapterCsv(self)
+        import data_converter_io_adapter_csv.io_adapter_csv.data_converter_io_adapter_csv_system
+        self.io_adapter_csv = data_converter_io_adapter_csv.io_adapter_csv.data_converter_io_adapter_csv_system.IoAdapterCsv(self)
 
     def end_load_plugin(self):
         colony.base.plugin_system.Plugin.end_load_plugin(self)

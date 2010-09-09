@@ -61,8 +61,8 @@ class DataConverterIoAdapterPicklePlugin(colony.base.plugin_system.Plugin):
                     "pt.hive.colony.plugins.main.log", "1.0.0")]
     events_handled = []
     events_registrable = []
-    main_modules = ["data_converter_io_adapter_pickle.io_adapter_pickle.io_adapter_pickle_exceptions",
-                    "data_converter_io_adapter_pickle.io_adapter_pickle.io_adapter_pickle_system"]
+    main_modules = ["data_converter_io_adapter_pickle.io_adapter_pickle.data_converter_io_adapter_pickle_exceptions",
+                    "data_converter_io_adapter_pickle.io_adapter_pickle.data_converter_io_adapter_pickle_system"]
 
     io_adapter_pickle = None
     """ The intermediate structure pickle input output adapter """
@@ -76,8 +76,8 @@ class DataConverterIoAdapterPicklePlugin(colony.base.plugin_system.Plugin):
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
         global data_converter_io_adapter_pickle
-        import data_converter_io_adapter_pickle.io_adapter_pickle.io_adapter_pickle_system
-        self.io_adapter_pickle = data_converter_io_adapter_pickle.io_adapter_pickle.io_adapter_pickle_system.IoAdapterPickle(self)
+        import data_converter_io_adapter_pickle.io_adapter_pickle.data_converter_io_adapter_pickle_system
+        self.io_adapter_pickle = data_converter_io_adapter_pickle.io_adapter_pickle.data_converter_io_adapter_pickle_system.IoAdapterPickle(self)
 
     def end_load_plugin(self):
         colony.base.plugin_system.Plugin.end_load_plugin(self)

@@ -40,7 +40,7 @@ __license__ = "GNU General Public License (GPL), Version 3"
 import os
 import cPickle
 
-import io_adapter_pickle_exceptions
+import data_converter_io_adapter_pickle_exceptions
 
 FILE_PATH_VALUE = "file_path"
 
@@ -79,7 +79,7 @@ class IoAdapterPickle:
 
         # raises and exception in case the specified file does not exist
         if not os.path.exists(file_path):
-            raise io_adapter_pickle_exceptions.IoAdapterPickleFileNotFound(file_path)
+            raise data_converter_io_adapter_pickle_exceptions.IoAdapterPickleFileNotFound(file_path)
 
         # loads intermediate structure from the specified file
         storage_file = open(file_path, "r")

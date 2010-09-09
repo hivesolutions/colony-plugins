@@ -60,8 +60,8 @@ class DataConverterIoAdapterFilesystemPlugin(colony.base.plugin_system.Plugin):
                     "pt.hive.colony.plugins.main.log", "1.0.0")]
     events_handled = []
     events_registrable = []
-    main_modules = ["data_converter_io_adapter_filesystem.io_adapter_filesystem.io_adapter_filesystem_exceptions",
-                    "data_converter_io_adapter_filesystem.io_adapter_filesystem.io_adapter_filesystem_system"]
+    main_modules = ["data_converter_io_adapter_filesystem.io_adapter_filesystem.data_converter_io_adapter_filesystem_exceptions",
+                    "data_converter_io_adapter_filesystem.io_adapter_filesystem.data_converter_io_adapter_filesystem_system"]
 
     io_adapter_filesystem = None
     """ The intermediate structure filesystem input output adapter """
@@ -75,8 +75,8 @@ class DataConverterIoAdapterFilesystemPlugin(colony.base.plugin_system.Plugin):
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
         global data_converter_io_adapter_filesystem
-        import data_converter_io_adapter_filesystem.io_adapter_filesystem.io_adapter_filesystem_system
-        self.io_adapter_filesystem = data_converter_io_adapter_filesystem.io_adapter_filesystem.io_adapter_filesystem_system.IoAdapterFilesystem(self)
+        import data_converter_io_adapter_filesystem.io_adapter_filesystem.data_converter_io_adapter_filesystem_system
+        self.io_adapter_filesystem = data_converter_io_adapter_filesystem.io_adapter_filesystem.data_converter_io_adapter_filesystem_system.IoAdapterFilesystem(self)
 
     def end_load_plugin(self):
         colony.base.plugin_system.Plugin.end_load_plugin(self)

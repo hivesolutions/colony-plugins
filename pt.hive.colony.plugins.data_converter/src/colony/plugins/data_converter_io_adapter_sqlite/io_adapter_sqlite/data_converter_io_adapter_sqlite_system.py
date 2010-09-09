@@ -41,7 +41,7 @@ import os
 import types
 import sqlite3
 
-import io_adapter_sqlite_exceptions
+import data_converter_io_adapter_sqlite_exceptions
 
 ENTITY_OBJECT_ID_VALUE = "entity_object_id"
 
@@ -135,7 +135,7 @@ class IoAdapterSqlite:
 
         # raises and exception in case the specified file does not exist
         if not os.path.exists(file_path):
-            raise io_adapter_sqlite_exceptions.IoAdapterSqliteFileNotFound(file_path)
+            raise data_converter_io_adapter_sqlite_exceptions.IoAdapterSqliteFileNotFound(file_path)
 
         # creates the sqlite connection
         connection = sqlite3.connect(file_path)
@@ -482,7 +482,7 @@ class IoAdapterSqlite:
 
             # raises an exception in case the related entity is not found
             if not related_entity:
-                raise io_adapter_sqlite_exceptions.IoAdapterSqliteEntityClassNotFound(entity_name)
+                raise data_converter_io_adapter_sqlite_exceptions.IoAdapterSqliteEntityClassNotFound(entity_name)
 
             # creates a relation table in case it doesn't exist yet
             relation_table_name = entity_name + RELATION_TABLE_NAME_SEPARATOR + relation_attribute_name + RELATION_TABLE_NAME_SEPARATOR + related_entity_name + RELATION_TABLE_NAME_SEPARATOR + RELATION_VALUE

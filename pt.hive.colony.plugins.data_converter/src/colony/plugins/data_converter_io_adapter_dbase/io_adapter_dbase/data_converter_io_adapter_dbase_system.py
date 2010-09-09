@@ -45,7 +45,7 @@ import datetime
 
 import dbfpy.dbf
 
-import io_adapter_dbase_exceptions
+import data_converter_io_adapter_dbase_exceptions
 
 ENTITY_NAME_VALUE = "entity_name"
 
@@ -109,7 +109,7 @@ class IoAdapterDbase:
 
         # raises an exception in case the specified directory does not exist
         if not os.path.exists(directory_path):
-            raise io_adapter_dbase_exceptions.IoAdapterDbaseDirectoryNotFound(directory_path)
+            raise data_converter_io_adapter_dbase_exceptions.IoAdapterDbaseDirectoryNotFound(directory_path)
 
         # indexes the dbase table names to their location
         table_name_path_map = self.index_dbase_tables(directory_path)
@@ -257,7 +257,7 @@ class IoAdapterDbase:
         into dbase format.
         """
 
-        raise io_adapter_dbase_exceptions.IoAdapterDbaseMethodNotImplemented()
+        raise data_converter_io_adapter_dbase_exceptions.IoAdapterDbaseMethodNotImplemented()
 
     def index_dbase_tables(self, directory_path):
         """

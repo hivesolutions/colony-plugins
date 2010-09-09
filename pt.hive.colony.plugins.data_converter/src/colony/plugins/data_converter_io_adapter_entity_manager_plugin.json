@@ -23,7 +23,7 @@
             "data_converter/__init__.py",
             "data_converter_io_adapter_entity_manager/__init__.py",
             "data_converter_io_adapter_entity_manager/io_adapter_entity_manager/__init__.py",
-            "data_converter_io_adapter_entity_manager/io_adapter_entity_manager/io_adapter_entity_manager_exceptions.py",
-            "data_converter_io_adapter_entity_manager/io_adapter_entity_manager/io_adapter_entity_manager_system.py",
+            "data_converter_io_adapter_entity_manager/io_adapter_entity_manager/data_converter_io_adapter_entity_manager_exceptions.py",
+            "data_converter_io_adapter_entity_manager/io_adapter_entity_manager/data_converter_io_adapter_entity_manager_system.py",
             "data_converter_io_adapter_entity_manager/io_adapter_entity_manager/resources/baf.xml"]
 }

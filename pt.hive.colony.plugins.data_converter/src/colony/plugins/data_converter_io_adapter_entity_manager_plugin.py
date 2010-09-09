@@ -63,8 +63,8 @@ class DataConverterIoAdapterEntityManagerPlugin(colony.base.plugin_system.Plugin
                     "pt.hive.colony.plugins.main.log", "1.0.0")]
     events_handled = []
     events_registrable = []
-    main_modules = ["data_converter_io_adapter_entity_manager.io_adapter_entity_manager.io_adapter_entity_manager_exceptions",
-                    "data_converter_io_adapter_entity_manager.io_adapter_entity_manager.io_adapter_entity_manager_system"]
+    main_modules = ["data_converter_io_adapter_entity_manager.io_adapter_entity_manager.data_converter_io_adapter_entity_manager_exceptions",
+                    "data_converter_io_adapter_entity_manager.io_adapter_entity_manager.data_converter_io_adapter_entity_manager_system"]
 
     io_adapter_entity_manager = None
     """ The intermediate structure entity manager input output adapter """
@@ -81,8 +81,8 @@ class DataConverterIoAdapterEntityManagerPlugin(colony.base.plugin_system.Plugin
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
         global data_converter_io_adapter_entity_manager
-        import data_converter_io_adapter_entity_manager.io_adapter_entity_manager.io_adapter_entity_manager_system
-        self.io_adapter_entity_manager = data_converter_io_adapter_entity_manager.io_adapter_entity_manager.io_adapter_entity_manager_system.IoAdapterEntityManager(self)
+        import data_converter_io_adapter_entity_manager.io_adapter_entity_manager.data_converter_io_adapter_entity_manager_system
+        self.io_adapter_entity_manager = data_converter_io_adapter_entity_manager.io_adapter_entity_manager.data_converter_io_adapter_entity_manager_system.IoAdapterEntityManager(self)
 
     def end_load_plugin(self):
         colony.base.plugin_system.Plugin.end_load_plugin(self)

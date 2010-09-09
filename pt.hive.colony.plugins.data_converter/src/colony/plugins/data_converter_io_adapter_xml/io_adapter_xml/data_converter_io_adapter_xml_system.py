@@ -39,7 +39,7 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 import types
 
-import io_adapter_xml_exceptions
+import data_converter_io_adapter_xml_exceptions
 
 BEAUTIFY_VALUE = "beautify"
 
@@ -118,7 +118,7 @@ class IoAdapterXml:
         provided intermediate structure.
         """
 
-        raise io_adapter_xml_exceptions.IoAdapterXmlMethodNotImplemented()
+        raise data_converter_io_adapter_xml_exceptions.IoAdapterXmlMethodNotImplemented()
 
     def save_intermediate_structure(self, configuration, intermediate_structure, options):
         """
@@ -152,7 +152,7 @@ class IoAdapterXml:
         # throws an exception in case more than one
         # root entity was retrieved
         if len(entities) > 1:
-            raise io_adapter_xml_exceptions.IoAdapterXmlUnexpectedNumberRootEntities()
+            raise data_converter_io_adapter_xml_exceptions.IoAdapterXmlUnexpectedNumberRootEntities()
 
         # retrieves the root entity from the list
         # of retrieved entities

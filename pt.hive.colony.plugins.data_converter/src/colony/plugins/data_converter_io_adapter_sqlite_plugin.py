@@ -60,8 +60,8 @@ class DataConverterIoAdapterSqlitePlugin(colony.base.plugin_system.Plugin):
                     "pt.hive.colony.plugins.main.log", "1.0.0")]
     events_handled = []
     events_registrable = []
-    main_modules = ["data_converter_io_adapter_sqlite.io_adapter_sqlite.io_adapter_sqlite_exceptions",
-                    "data_converter_io_adapter_sqlite.io_adapter_sqlite.io_adapter_sqlite_system"]
+    main_modules = ["data_converter_io_adapter_sqlite.io_adapter_sqlite.data_converter_io_adapter_sqlite_exceptions",
+                    "data_converter_io_adapter_sqlite.io_adapter_sqlite.data_converter_io_adapter_sqlite_system"]
 
     io_adapter_sqlite = None
     """ The intermediate structure sqlite input output adapter """
@@ -75,8 +75,8 @@ class DataConverterIoAdapterSqlitePlugin(colony.base.plugin_system.Plugin):
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
         global data_converter_io_adapter_sqlite
-        import data_converter_io_adapter_sqlite.io_adapter_sqlite.io_adapter_sqlite_system
-        self.io_adapter_sqlite = data_converter_io_adapter_sqlite.io_adapter_sqlite.io_adapter_sqlite_system.IoAdapterSqlite(self)
+        import data_converter_io_adapter_sqlite.io_adapter_sqlite.data_converter_io_adapter_sqlite_system
+        self.io_adapter_sqlite = data_converter_io_adapter_sqlite.io_adapter_sqlite.data_converter_io_adapter_sqlite_system.IoAdapterSqlite(self)
 
     def end_load_plugin(self):
         colony.base.plugin_system.Plugin.end_load_plugin(self)

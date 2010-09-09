@@ -40,7 +40,7 @@ __license__ = "GNU General Public License (GPL), Version 3"
 import os
 import types
 
-import io_adapter_entity_manager_exceptions
+import data_converter_io_adapter_entity_manager_exceptions
 
 AUTOCOMMIT_VALUE = "autocommit"
 
@@ -116,7 +116,7 @@ class IoAdapterEntityManager:
 
             # raises and exception in case the specified file does not exist
             if not os.path.exists(file_path):
-                raise io_adapter_entity_manager_exceptions.IoAdapterEntityManagerFileNotFound(file_path)
+                raise data_converter_io_adapter_entity_manager_exceptions.IoAdapterEntityManagerFileNotFound(file_path)
 
             # retrieves the entity manager plugin
             entity_manager_plugin = self.io_adapter_entity_manager_plugin.entity_manager_plugin
@@ -288,7 +288,7 @@ class IoAdapterEntityManager:
             # raises an exception in case more than one entity was
             # found at the specified index
             if len(intermediate_entities) > 1:
-                raise io_adapter_entity_manager_exceptions.IoAdapterEntityManagerUnexpectedNumberIntermediateEntities()
+                raise data_converter_io_adapter_entity_manager_exceptions.IoAdapterEntityManagerUnexpectedNumberIntermediateEntities()
 
             # retrieves the associated intermediate entity
             intermediate_entity = intermediate_entities[0]

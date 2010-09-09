@@ -40,7 +40,7 @@ __license__ = "GNU General Public License (GPL), Version 3"
 import re
 import os
 
-import io_adapter_csv_exceptions
+import data_converter_io_adapter_csv_exceptions
 
 DIRECTORY_PATHS_VALUE = "directory_paths"
 
@@ -121,7 +121,7 @@ class IoAdapterCsv:
 
             # raises an exception in case the specified file does not exist
             if not os.path.exists(file_path):
-                raise io_adapter_csv_exceptions.IoAdapterCsvFileNotFound(file_path)
+                raise data_converter_io_adapter_csv_exceptions.IoAdapterCsvFileNotFound(file_path)
 
             # opens the csv file
             csv_file = open(file_path, FILE_READ_MODE)
@@ -192,7 +192,7 @@ class IoAdapterCsv:
         structure into csv format.
         """
 
-        raise io_adapter_csv_exceptions.IoAdapterCsvMethodNotImplemented()
+        raise data_converter_io_adapter_csv_exceptions.IoAdapterCsvMethodNotImplemented()
 
     # @todo: comment this
     def tokenize_csv_data(self, csv_data, token_separator, text_delimiter):
