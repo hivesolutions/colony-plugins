@@ -492,7 +492,7 @@ class BuildAutomation:
             build_automation_dependency_version = build_automation_dependency.version
 
             # prints a debug message
-            self.build_automation_plugin.debug("Processing dependency '%s' v%s", (build_automation_dependency_id, build_automation_dependency_version))
+            self.build_automation_plugin.debug("Processing dependency '%s' v%s" % (build_automation_dependency_id, build_automation_dependency_version))
 
         # retrieves the list of build automation plugins
         build_automation_plugins = build.plugins
