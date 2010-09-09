@@ -46,7 +46,7 @@ class DummyPluginWindowsForms(colony.base.plugin_system.Plugin):
     """
 
     id = "pt.hive.colony.plugins.dummy.windows_forms"
-    name = "Dummy Plugin Windows Forms"
+    name = "Dummy Windows Forms Plugin"
     short_name = "Dummy Windows Forms"
     description = "Dummy Windows Forms Plugin"
     version = "1.0.0"

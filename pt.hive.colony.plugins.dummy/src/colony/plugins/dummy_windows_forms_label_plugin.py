@@ -46,7 +46,7 @@ class DummyPluginWindowsFormsLabel(colony.base.plugin_system.Plugin):
     """
 
     id = "pt.hive.colony.plugins.dummy.windows_forms_label"
-    name = "Dummy Plugin Windows Forms Label"
+    name = "Dummy Windows Forms Label Plugin"
     short_name = "Dummy Windows Forms Label"
     description = "Dummy Windows Forms Label Plugin"
     version = "1.0.0"
