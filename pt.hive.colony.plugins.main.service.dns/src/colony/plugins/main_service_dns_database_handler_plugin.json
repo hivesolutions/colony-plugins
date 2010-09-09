@@ -9,7 +9,10 @@
     "author" : "Hive Solutions Lda. <development@hive.pt>",
     "capabilities" : ["dns_service_handler", "build_automation_item"],
     "capabilities_allowed" : [],
-    "dependencies" : [],
+    "dependencies" : [{
+                "id" : "pt.hive.colony.plugins.dns.storage.database",
+                "version" : "1.0.0"
+            }],
     "main_file" : "main_service_dns_database_handler_plugin.py",
     "resources" : [
             "main_service_dns_database_handler_plugin.py",
