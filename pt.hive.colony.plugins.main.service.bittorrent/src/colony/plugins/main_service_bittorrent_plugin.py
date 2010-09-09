@@ -53,7 +53,7 @@ class MainServiceBittorrentPlugin(colony.base.plugin_system.Plugin):
     author = "Hive Solutions Lda. <development@hive.pt>"
     loading_type = colony.base.plugin_system.EAGER_LOADING_TYPE
     platforms = [colony.base.plugin_system.CPYTHON_ENVIRONMENT]
-    capabilities = ["service.bittorrent"]
+    capabilities = ["service.bittorrent", "build_automation_item"]
     capabilities_allowed = ["bittorrent_service_handler"]
     dependencies = [colony.base.plugin_system.PluginDependency(
                     "pt.hive.colony.plugins.main.service.utils", "1.0.0"),
