@@ -7,7 +7,7 @@
     "description" : "The plugin that offers the web mvc manager page item code execution",
     "version" : "1.0.0",
     "author" : "Hive Solutions Lda. <development@hive.pt>",
-    "capabilities" : ["web.mvc.manager.panel_item"],
+    "capabilities" : ["web.mvc.manager.page_item_bundle", "build_automation_item"],
     "capabilities_allowed" : [],
     "dependencies" : [{
                 "id" : "pt.hive.colony.plugins.web.mvc.utils",
