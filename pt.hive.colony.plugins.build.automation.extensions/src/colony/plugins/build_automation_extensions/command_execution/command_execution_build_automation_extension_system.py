@@ -65,7 +65,7 @@ class CommandExecutionBuildAutomationExtension:
         command = parameters["command"]
 
         arguments = parameters.get("arguments", {})
-        _arguments = parameters.get("argument", [])
+        _arguments = arguments.get("argument", [])
 
         process = command_execution_plugin.execute_command(command, _arguments)
         process.wait()
