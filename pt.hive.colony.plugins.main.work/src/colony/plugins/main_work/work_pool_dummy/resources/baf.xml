@@ -33,11 +33,11 @@
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://www.hive.pt xsd/baf.xsd">
     <artifact>
-        <id>pt.hive.colony.plugins.repository.generator.manager</id>
+        <id>pt.hive.colony.plugins.main.work.work_pool_dummy</id>
         <version>1.0.0</version>
         <type>colony</type>
-        <name>Repository Generator Manager Plugin</name>
-        <description>A plugin to manager the generation of repositories</description>
+        <name>Work Pool Dummy Plugin</name>
+        <description>Work Pool Dummy</description>
         <url>http://www.hive.pt</url>
     </artifact>
     <build>
@@ -48,7 +48,7 @@
                 <version>1.0.0</version>
                 <stage>build</stage>
                 <configuration>
-                    <specification_file>$base{plugin_directory}/repository_generator_manager_plugin.json</specification_file>
+                    <specification_file>$base{plugin_directory}/work_pool_dummy_plugin.json</specification_file>
                 </configuration>
             </plugin>
         </plugins>
