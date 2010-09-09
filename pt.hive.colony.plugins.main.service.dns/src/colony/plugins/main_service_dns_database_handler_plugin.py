@@ -62,7 +62,7 @@ class MainServiceDnsDatabaseHandlerPlugin(colony.base.plugin_system.Plugin):
                     "pt.hive.colony.plugins.dns.storage.database", "1.0.0")]
     events_handled = []
     events_registrable = []
-    main_modules = ["main_service_dns_database_handler.database_handler.main_service_dns_database_handler_exceptions", "main_service_dns_database_handler.database_handler.main_service_dns_database_handler_system"]
+    main_modules = ["main_service_dns_database_handler.database_handler.main_service_dns_database_handler_system"]
 
     main_service_dns_database_handler = None
 
