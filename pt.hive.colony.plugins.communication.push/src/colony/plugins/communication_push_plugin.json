@@ -7,7 +7,7 @@
     "description" : "A plugin to manager the push notifications communication",
     "version" : "1.0.0",
     "author" : "Hive Solutions Lda. <development@hive.pt>",
-    "capabilities" : ["communication.push", "build_automation_item"],
+    "capabilities" : ["communication.push", "diagnostics", "build_automation_item"],
     "capabilities_allowed" : [],
     "dependencies" : [{
                 "id" : "pt.hive.colony.plugins.main.work.work_pool_manager",
