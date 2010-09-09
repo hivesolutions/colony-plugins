@@ -17,11 +17,11 @@
             "template_handler/handler/template_handler_exceptions.py",
             "template_handler/handler/template_handler_system.py",
             "template_handler/handler/resources/baf.xml",
-            "template_handler/handler/resources/js_libs/jquery.contextmenu.js",
-            "template_handler/handler/resources/js_libs/jquery.jgrowl.js",
-            "template_handler/handler/resources/js_libs/jquery.js",
-            "template_handler/handler/resources/js_libs/jquery.min.js",
-            "template_handler/handler/resources/js_libs/jquery.tablesorter.js",
-            "template_handler/handler/resources/js_libs/jquery.ui.all.js",
-            "template_handler/handler/resources/js_libs/jquery.ui.min.js"]
+            "template_handler/handler/resources/libs/jquery/jquery-1.3.2-dev.js",
+            "template_handler/handler/resources/libs/jquery/jquery-1.3.2-dev-tweaked.js",
+            "template_handler/handler/resources/libs/jquery/jquery-1.3.2-min.js",
+            "template_handler/handler/resources/libs/jquery/jquery-1.3.2-min-tweaked.js",
+            "template_handler/handler/resources/libs/jquery/jquery-1.4.2-dev.js",
+            "template_handler/handler/resources/libs/jquery/jquery-1.4.2-min.js",
+            "template_handler/handler/resources/libs/jquery/jquery-ui-1.7.1-dev.js"]
 }
