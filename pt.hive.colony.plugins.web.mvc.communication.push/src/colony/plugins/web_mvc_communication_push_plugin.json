@@ -15,6 +15,9 @@
             }, {
                 "id" : "pt.hive.colony.plugins.communication.push",
                 "version" : "1.0.0"
+            }, {
+                "id" : "pt.hive.colony.plugins.main.client.http",
+                "version" : "1.0.0"
             }],
     "main_file" : "web_mvc_communication_push_plugin.py",
     "resources" : [
