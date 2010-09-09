@@ -14,7 +14,7 @@
     "resources" : [
             "command_execution_build_automation_extension_plugin.py",
             "build_automation_extensions/__init__.py",
-            "build_automation_extensions/command_execution/__init__.py"
+            "build_automation_extensions/command_execution/__init__.py",
             "build_automation_extensions/command_execution/command_execution_build_automation_extension_system.py",
             "build_automation_extensions/command_execution/resources/baf.xml"]
 }
