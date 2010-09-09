@@ -55,8 +55,8 @@ class WorkPoolDummyPlugin(colony.base.plugin_system.Plugin):
     platforms = [colony.base.plugin_system.CPYTHON_ENVIRONMENT,
                  colony.base.plugin_system.JYTHON_ENVIRONMENT,
                  colony.base.plugin_system.IRON_PYTHON_ENVIRONMENT]
-    attributes = {}
-    capabilities = ["startup"]
+    attributes = {"build_automation_file_path" : "$base{plugin_directory}/main_work/work_pool_dummy/resources/baf.xml"}
+    capabilities = ["startup", "build_automation_item"]
     capabilities_allowed = []
     dependencies = [colony.base.plugin_system.PluginDependency(
                     "pt.hive.colony.plugins.main.work.work_pool_manager", "1.0.0")]

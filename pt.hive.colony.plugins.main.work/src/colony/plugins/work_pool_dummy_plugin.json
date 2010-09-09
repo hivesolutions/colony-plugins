@@ -1,13 +1,13 @@
 {
     "platform" : "python",
-    "sub_platforms" : ["cpython"],
+    "sub_platforms" : ["cpython", "jython", "iron_python"],
     "id" : "pt.hive.colony.plugins.main.work.work_pool_dummy",
     "name" : "Work Pool Dummy Plugin",
     "short_name" : "Work Pool Dummy",
     "description" : "Work Pool Dummy Plugin",
     "version" : "1.0.0",
     "author" : "Hive Solutions Lda. <development@hive.pt>",
-    "capabilities" : ["startup"],
+    "capabilities" : ["startup", "build_automation_item"],
     "capabilities_allowed" : [],
     "dependencies" : [{
                 "id" : "pt.hive.colony.plugins.main.work.work_pool_manager",
