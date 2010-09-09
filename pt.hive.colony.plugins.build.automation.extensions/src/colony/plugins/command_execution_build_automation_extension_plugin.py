@@ -38,6 +38,7 @@ __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
 import colony.base.plugin_system
+import colony.base.decorators
 
 class CommandExecutionBuildAutomationExtensionPlugin(colony.base.plugin_system.Plugin):
     """
@@ -55,12 +56,15 @@ class CommandExecutionBuildAutomationExtensionPlugin(colony.base.plugin_system.P
     attributes = {"build_automation_file_path" : "$base{plugin_directory}/build_automation_extensions/command_execution/resources/baf.xml"}
     capabilities = ["build_automation_extension", "build_automation_item"]
     capabilities_allowed = []
-    dependencies = []
+    dependencies = [colony.base.plugin_system.PluginDependency(
+                    "pt.hive.colony.plugins.misc.command_execution", "1.0.0")]
     events_handled = []
     events_registrable = []
     main_modules = ["build_automation_extensions.command_execution.command_execution_build_automation_extension_system"]
 
     command_execution_build_automation_extension = None
+
+    command_execution_plugin = None
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
@@ -83,8 +87,16 @@ class CommandExecutionBuildAutomationExtensionPlugin(colony.base.plugin_system.P
     def unload_allowed(self, plugin, capability):
         colony.base.plugin_system.Plugin.unload_allowed(self, plugin, capability)
 
+    @colony.base.decorators.inject_dependencies("pt.hive.colony.plugins.build.automation.extensions.command_execution", "1.0.0")
     def dependency_injected(self, plugin):
         colony.base.plugin_system.Plugin.dependency_injected(self, plugin)
 
     def run_automation(self, plugin, stage, parameters, build_automation_structure):
         self.command_execution_build_automation_extension.run_automation(plugin, stage, parameters, build_automation_structure)
+
+    def get_command_execution_plugin(self):
+        return self.command_execution_plugin
+
+    @colony.base.decorators.plugin_inject("pt.hive.colony.plugins.misc.command_execution")
+    def set_command_execution_plugin(self, command_execution_plugin):
+        self.command_execution_plugin = command_execution_plugin

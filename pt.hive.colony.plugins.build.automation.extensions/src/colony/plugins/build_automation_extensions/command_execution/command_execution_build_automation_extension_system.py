@@ -57,3 +57,24 @@ class CommandExecutionBuildAutomationExtension:
 
     def run_automation(self, plugin, stage, parameters, build_automation_structure):
         pass
+
+        # retrieves the command execution plugin
+        command_execution_plugin = self.command_execution_build_automation_extension_plugin.command_execution_plugin
+
+        # retrieves the command
+        command = parameters["command"]
+
+        arguments = parameters.get("arguments", {})
+        _arguments = parameters.get("argument", [])
+
+        process = command_execution_plugin.execute_command(command, _arguments)
+        process.wait()
+
+        print process.returncode
+
+
+        # tenho de sacar aki o comando
+        # depois saco os argumentos
+        # depois faço a chamada, em caso de erro mando exception
+        # tenho de ter especial cuidado com exceptions do tipo build automation
+        # essas exceptions sao tratadas da melhor forma
