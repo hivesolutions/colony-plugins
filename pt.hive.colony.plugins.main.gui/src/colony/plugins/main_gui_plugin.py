@@ -55,7 +55,7 @@ class MainGuiManagerPlugin(colony.base.plugin_system.Plugin):
     platforms = [colony.base.plugin_system.CPYTHON_ENVIRONMENT]
     attributes = {"build_automation_file_path" : "$base{plugin_directory}/main_gui/gui/resources/baf.xml"}
     capabilities = ["main", "build_automation_item"]
-    capabilities_allowed = ["gui_manager", "gui_panel", "gui_progress_information"]
+    capabilities_allowed = ["gui_manager", "gui_panel", "gui_progress_information", "build_automation_item"]
     dependencies = [colony.base.plugin_system.PluginDependency(
                     "pt.hive.colony.plugins.main.log", "1.0.0"),
                     colony.base.plugin_system.PluginDependency(
