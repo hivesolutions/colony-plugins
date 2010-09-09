@@ -69,8 +69,14 @@ class CommandExecution:
         # creates the call list
         call_list = self.create_call_list(command, arguments)
 
-        # executes the command
-        subprocess.Popen(call_list)
+        # retrieves the startup info
+        startup_info = self.get_startup_info()
+
+        # executes the command and retrieves the process object
+        process = subprocess.Popen(call_list, startupinfo = startup_info)
+
+        # returns the process object
+        return process
 
     def execute_command_logger(self, command, arguments, logger):
         # creates the call list
@@ -82,8 +88,11 @@ class CommandExecution:
         # retrieves the startup info
         startup_info = self.get_startup_info()
 
-        # opens the subprocess
-        subprocess.Popen(call_list, stdin = logger_file, stdout = logger_file, stderr = logger_file, env = self.normalized_environament_map, startupinfo = startup_info)
+        # opens the subprocess and retrieves the process object
+        process = subprocess.Popen(call_list, stdin = logger_file, stdout = logger_file, stderr = logger_file, env = self.normalized_environament_map, startupinfo = startup_info)
+
+        # returns the process object
+        return process
 
     def execute_command_logger_execution_directory(self, command, arguments, logger, execution_directory):
         # creates the call list
@@ -95,8 +104,11 @@ class CommandExecution:
         # retrieves the startup info
         startup_info = self.get_startup_info()
 
-        # opens the subprocess
-        subprocess.Popen(call_list, stdin = logger_file, stdout = logger_file, stderr = logger_file, cwd = execution_directory, env = self.normalized_environament_map, startupinfo = startup_info)
+        # opens the subprocess and retrieves the process object
+        process = subprocess.Popen(call_list, stdin = logger_file, stdout = logger_file, stderr = logger_file, cwd = execution_directory, env = self.normalized_environament_map, startupinfo = startup_info)
+
+        # returns the process object
+        return process
 
     def create_call_list(self, command, arguments):
         # constructs the call list
@@ -111,6 +123,18 @@ class CommandExecution:
         return call_list
 
     def get_logger_file(self, logger):
+        """
+        Retrieves the file (stream) for the given logger
+        object.
+
+        @type logger: Logger
+        @param logger: The logger object to retrieve the file
+        (stream).
+        @rtype: File
+        @return: The file (stream) for the given logger
+        object.
+        """
+
         # sets the default logger file
         logger_file = sys.stdout
 
@@ -131,6 +155,15 @@ class CommandExecution:
         return logger_file
 
     def get_startup_info(self):
+        """
+        Retrieves the startup info for the current
+        environment.
+
+        @rtype: StartupInfo
+        @return: The startup info for the current
+        environment.
+        """
+
         # in case the current os is windows
         if os.name == "nt":
             import win32con
@@ -138,8 +171,10 @@ class CommandExecution:
             startup_info.dwFlags |= subprocess.STARTF_USESHOWWINDOW
             startup_info.wShowWindow = win32con.SW_HIDE
         else:
+            # sets the startup info to none
             startup_info = None
 
+        # returns the startup info
         return startup_info
 
     def _normalize_environment_map(self):

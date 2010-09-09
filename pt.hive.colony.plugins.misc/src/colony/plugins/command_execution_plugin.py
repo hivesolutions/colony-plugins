@@ -88,10 +88,10 @@ class CommandExecutionPlugin(colony.base.plugin_system.Plugin):
         colony.base.plugin_system.Plugin.dependency_injected(self, plugin)
 
     def execute_command(self, command, arguments):
-        self.command_execution.execute_command(command, arguments)
+        return self.command_execution.execute_command(command, arguments)
 
     def execute_command_logger(self, command, arguments, logger):
-        self.command_execution.execute_command_logger(command, arguments, logger)
+        return self.command_execution.execute_command_logger(command, arguments, logger)
 
     def execute_command_logger_execution_directory(self, command, arguments, logger, execution_directory):
-        self.command_execution.execute_command_logger_execution_directory(command, arguments, logger, execution_directory)
+        return self.command_execution.execute_command_logger_execution_directory(command, arguments, logger, execution_directory)
