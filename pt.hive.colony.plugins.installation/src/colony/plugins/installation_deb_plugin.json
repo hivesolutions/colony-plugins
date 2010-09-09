@@ -9,10 +9,15 @@
     "author" : "Hive Solutions Lda. <development@hive.pt>",
     "capabilities" : ["installation.adapter"],
     "capabilities_allowed" : [],
-    "dependencies" : [],
+    "dependencies" : [{
+                "id" : "pt.hive.colony.plugins.packaging.deb",
+                "version" : "1.0.0"
+            }, {
+                "id" : "pt.hive.colony.plugins.template_engine.manager",
+                "version" : "1.0.0"
+            }],
     "main_file" : "installation_deb_plugin.py",
-    "resources" : ["installation_deb_plugin.py",
-            "installation/__init__.py",
+    "resources" : ["installation_deb_plugin.py", "installation/__init__.py",
             "installation/deb/__init__.py",
             "installation/deb/installation_deb_exceptions.py",
             "installation/deb/installation_deb_system.py",
