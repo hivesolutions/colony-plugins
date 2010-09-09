@@ -225,9 +225,6 @@ class BuildAutomation:
                 # retrieves the build automation item plugin id
                 build_automation_item_plugin_id = build_automation_item_plugin.id
 
-                # retrieves the build automation item plugin version
-                build_automation_item_plugin_version = build_automation_item_plugin.version
-
                 # tries to retrieve the build automation file
                 build_automation_file_path = build_automation_item_plugin.get_attribute("build_automation_file_path")
 
@@ -493,6 +490,9 @@ class BuildAutomation:
 
             # retrieves the build automation dependency version
             build_automation_dependency_version = build_automation_dependency.version
+
+            # prints a debug message
+            self.build_automation_plugin.debug("Processing dependency '%s' v%s", (build_automation_dependency_id, build_automation_dependency_version))
 
         # retrieves the list of build automation plugins
         build_automation_plugins = build.plugins

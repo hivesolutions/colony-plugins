@@ -648,6 +648,10 @@ class Configuration:
     """
 
     def __init__(self):
+        """
+        Constructor of the class.
+        """
+
         pass
 
 class Profile:
@@ -656,10 +660,26 @@ class Profile:
     """
 
     id = "none"
+    """ The profile id """
+
     activation = None
+    """ The profile activation """
+
     build = None
+    """ The associated build """
 
     def __init__(self, id = "none", activation = None, build = None):
+        """
+        Constructor of the class.
+
+        @type id: String
+        @param id: The profile id.
+        @type activation: Activation
+        @param activation: The profile activation.
+        @type build: Build
+        @param build: The associated build.
+        """
+
         self.id = id
         self.activation = activation
         self.build = build
@@ -670,8 +690,16 @@ class Activation:
     """
 
     property = None
+    """ The property for activation """
 
     def __init__(self, property = None):
+        """
+        Constructor of the class.
+
+        @type property: Property
+        @param property: The property for activation.
+        """
+
         self.property = property
 
 class Property:
@@ -680,9 +708,21 @@ class Property:
     """
 
     name = "none"
+    """ The name of the property """
+
     value = "none"
+    """ The value of the property """
 
     def __init__(self, name = "none", value = "none"):
+        """
+        Constructor of the class.
+
+        @type name: String
+        @param name: The name of the property.
+        @type value: Object
+        @param value: The value of the property.
+        """
+
         self.name = name
         self.value = value
 
@@ -696,7 +736,11 @@ def valid_node(node):
     @return: The valid or not valid value.
     """
 
+    # in case the node is of type element
     if node.nodeType == xml.dom.minidom.Node.ELEMENT_NODE:
+        # returns true (valid)
         return True
+    # otherwise
     else:
+        # returns false (invalid)
         return False
