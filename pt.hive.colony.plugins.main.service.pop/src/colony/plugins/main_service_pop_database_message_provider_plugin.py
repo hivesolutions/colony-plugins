@@ -60,8 +60,7 @@ class MainServicePopDatabaseMessageProviderPlugin(colony.base.plugin_system.Plug
                     "pt.hive.colony.plugins.mail.storage.database", "1.0.0")]
     events_handled = []
     events_registrable = []
-    main_modules = ["main_service_pop_database_message_provider.database_message_provider.main_service_pop_database_message_provider_exceptions",
-                    "main_service_pop_database_message_provider.database_message_provider.main_service_pop_database_message_provider_system"]
+    main_modules = ["main_service_pop_database_message_provider.database_message_provider.main_service_pop_database_message_provider_system"]
 
     main_service_pop_database_message_provider = None
 
