@@ -1,6 +1,6 @@
 {
     "platform" : "python",
-    "sub_platforms" : ["cpython"],
+    "sub_platforms" : ["cpython", "jython"],
     "id" : "pt.hive.colony.plugins.main.storage.buffer_manager",
     "name" : "Buffer Manager Storage Main Plugin",
     "short_name" : "Buffer Manager Storage Main",
