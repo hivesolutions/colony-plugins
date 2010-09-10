@@ -58,6 +58,7 @@ class SearchInterpreterCapitalsAdapterPlugin(colony.base.plugin_system.Plugin):
     dependencies = []
     events_handled = []
     events_registrable = []
+    main_modules = ["search_interpreter.capitals_adapter.search_interpreter_capitals_adapter_system"]
 
     search_interpreter_capitals_adapter = None
 

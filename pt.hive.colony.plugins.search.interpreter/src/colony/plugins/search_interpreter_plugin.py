@@ -59,6 +59,7 @@ class SearchInterpreterPlugin(colony.base.plugin_system.Plugin):
     dependencies = []
     events_handled = []
     events_registrable = []
+    main_modules = ["search_interpreter.interpreter.search_interpreter_system"]
 
     search_intepreter = None
 
