@@ -12,6 +12,6 @@
     "dependencies" : [],
     "main_file" : "main_log_plugin.py",
     "resources" : ["main_log_plugin.py", "main_log/__init__.py",
-            "main_log/log/__init__.py", "main_log/log/logging_system.py",
+            "main_log/log/__init__.py", "main_log/log/main_log_system.py",
             "main_log/log/resources/baf.xml"]
 }

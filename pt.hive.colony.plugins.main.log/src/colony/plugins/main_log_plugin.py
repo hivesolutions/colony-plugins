@@ -58,23 +58,24 @@ class MainLogManagerPlugin(colony.base.plugin_system.Plugin):
     dependencies = []
     events_handled = []
     events_registrable = []
+    main_modules = ["main_log.log.main_log_system"]
 
     loggers_map = {}
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
         global main_log
-        import main_log.log.logging_system
+        import main_log.log.main_log_system
 
     def get_logger(self, logger_name):
         if not logger_name in self.loggers_map:
-            logger = main_log.log.logging_system.DefaultLogger(logger_name)
+            logger = main_log.log.main_log_system.DefaultLogger(logger_name)
             self.loggers_map[logger_name] = logger
 
         return self.loggers_map[logger_name]
 
     def get_default_handler(self):
-        return main_log.log.logging_system.DefaultHandler()
+        return main_log.log.main_log_system.DefaultHandler()
 
     def get_composite_handler(self):
-        return main_log.log.logging_system.CompositeHandler()
+        return main_log.log.main_log_system.CompositeHandler()
