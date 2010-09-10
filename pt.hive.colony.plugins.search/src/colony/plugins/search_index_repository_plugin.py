@@ -58,6 +58,8 @@ class SearchIndexRepositoryPlugin(colony.base.plugin_system.Plugin):
     dependencies = []
     events_handled = []
     events_registrable = []
+    main_modules = ["search.index_repository.search_index_repository_exceptions",
+                    "search.index_repository.search_index_repository_system"]
 
     search_index_repository = None
 
