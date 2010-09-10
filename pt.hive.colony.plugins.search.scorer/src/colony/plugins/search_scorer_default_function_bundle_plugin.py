@@ -59,6 +59,7 @@ class SearchScorerDefaultFunctionBundlePlugin(colony.base.plugin_system.Plugin):
                     "pt.hive.colony.plugins.search.scorer.function_repository", "1.0.0")]
     events_handled = []
     events_registrable = []
+    main_modules = ["search_scorer.default_function_bundle.search_scorer_default_function_bundle_system"]
 
     search_scorer_default_function_bundle = None
 
