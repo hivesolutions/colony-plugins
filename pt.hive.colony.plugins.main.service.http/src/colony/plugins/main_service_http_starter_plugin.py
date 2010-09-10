@@ -62,6 +62,7 @@ class MainServiceHttpStarterPlugin(colony.base.plugin_system.Plugin):
                     "pt.hive.colony.plugins.main.service.http", "1.0.0")]
     events_handled = []
     events_registrable = []
+    main_modules = ["main_service_http_starter.starter.main_service_http_starter_system"]
 
     main_service_http_plugin = None
 
