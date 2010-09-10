@@ -15,5 +15,6 @@
             }],
     "main_file" : "dummy_aux_2_plugin.py",
     "resources" : ["dummy_aux_2_plugin.py", "dummy/__init__.py",
-            "dummy/aux_2/__init__.py", "dummy/aux_2/resources/baf.xml"]
+            "dummy/aux_2/__init__.py", "dummy/aux_2/dummy_aux_2_system.py",
+            "dummy/aux_2/resources/baf.xml"]
 }

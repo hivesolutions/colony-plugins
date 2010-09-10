@@ -12,5 +12,6 @@
     "dependencies" : [],
     "main_file" : "dummy_plugin.py",
     "resources" : ["dummy_plugin.py", "dummy/__init__.py",
-            "dummy/dummy/__init__.py", "dummy/dummy/resources/baf.xml"]
+            "dummy/dummy/__init__.py", "dummy/dummy/dummy_system.py",
+            "dummy/dummy/resources/baf.xml"]
 }

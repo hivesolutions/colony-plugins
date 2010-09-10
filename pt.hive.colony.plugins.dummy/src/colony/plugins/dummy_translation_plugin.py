@@ -43,14 +43,14 @@ HELP_TEXT = "### TRANSLATION DUMMY PLUGIN HELP ###\n\
 get_translation_engines            - lists all the available translation engines\n\
 translate <dictionary-name> <word> - translates a word for the given dictionary name"
 
-class TranslationDummyPlugin(colony.base.plugin_system.Plugin):
+class DummyTranslationPlugin(colony.base.plugin_system.Plugin):
     """
-    The main class for the Translation Dummy plugin.
+    The main class for the Dummy Translation plugin.
     """
 
     id = "pt.hive.colony.plugins.dummy.translation"
-    name = "Translation Dummy Plugin"
-    short_name = "Translation Dummy"
+    name = "Dummy Translation Plugin"
+    short_name = "Dummy Translation"
     description = "This is the main plugin for the translation's stuff"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
@@ -64,7 +64,7 @@ class TranslationDummyPlugin(colony.base.plugin_system.Plugin):
     dependencies = []
     events_handled = []
     events_registrable = []
-    main_modules = []
+    main_modules = ["dummy.translation.dummy_translation_system"]
 
     translation_engine_plugins = []
 

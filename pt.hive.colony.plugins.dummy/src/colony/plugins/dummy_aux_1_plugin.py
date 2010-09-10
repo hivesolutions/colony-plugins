@@ -66,7 +66,7 @@ class DummyPluginAux1(colony.base.plugin_system.Plugin):
                     "pt.hive.colony.plugins.main.threads.thread_pool_manager", "1.0.0")]
     events_handled = ["dummy_aux1_event"]
     events_registrable = ["plugin_manager.end_load_plugin"]
-    main_modules = []
+    main_modules = ["dummy.aux_1.dummy_aux_1_system"]
 
     thread_pool_manager_plugin = None
 

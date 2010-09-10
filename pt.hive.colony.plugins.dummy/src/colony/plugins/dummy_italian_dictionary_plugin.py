@@ -39,14 +39,14 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 import colony.base.plugin_system
 
-class ItalianDummyDictionary(colony.base.plugin_system.Plugin):
+class DummyItalianDictionary(colony.base.plugin_system.Plugin):
     """
-    The main class for the Italian Dummy plugin.
+    The main class for the Dummy Italian plugin.
     """
 
     id = "pt.hive.colony.plugins.dummy.italian"
-    name = "Italian Dummy Plugin"
-    short_name = "Italian Dummy"
+    name = "Dummy Italian Plugin"
+    short_name = "Dummy Italian"
     description = "This is the main plugin for the italian dictionary's stuff"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
@@ -60,7 +60,7 @@ class ItalianDummyDictionary(colony.base.plugin_system.Plugin):
     dependencies = []
     events_handled = []
     events_registrable = []
-    main_modules = []
+    main_modules = ["dummy.italian_dictionary.dummy_italian_dictionary_system"]
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)

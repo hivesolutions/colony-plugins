@@ -59,7 +59,7 @@ class DummyPluginRpcService(colony.base.plugin_system.Plugin):
     dependencies = []
     events_handled = []
     events_registrable = []
-    main_modules = []
+    main_modules = ["dummy.rpc_service.dummy_rpc_service_system"]
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)

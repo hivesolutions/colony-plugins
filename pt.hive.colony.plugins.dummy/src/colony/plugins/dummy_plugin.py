@@ -60,6 +60,7 @@ class DummyPlugin(colony.base.plugin_system.Plugin):
     dependencies = []
     events_handled = ["dummy_event"]
     events_registrable = ["dummy_aux1_event"]
+    main_modules = ["dummy.dummy.dummy_system"]
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
