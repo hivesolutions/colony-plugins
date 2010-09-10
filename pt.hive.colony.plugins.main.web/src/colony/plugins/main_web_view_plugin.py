@@ -59,7 +59,8 @@ class MainWebViewPlugin(colony.base.plugin_system.Plugin):
                     "PyQt 4.5", "PyQt4", "4.5.x", "http://www.riverbankcomputing.co.uk")]
     events_handled = []
     events_registrable = []
-    main_modules = ["main_web.web_view.main_web_view_system"]
+    main_modules = ["main_web.web_view.main_web_view_exceptions",
+                    "main_web.web_view.main_web_view_system"]
 
     main_web_view = None
 
