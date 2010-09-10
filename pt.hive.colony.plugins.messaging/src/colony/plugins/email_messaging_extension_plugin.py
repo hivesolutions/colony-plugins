@@ -60,6 +60,7 @@ class EmailMessagingExtensionPlugin(colony.base.plugin_system.Plugin):
                     "pt.hive.colony.plugins.misc.email", "1.0.0")]
     events_handled = []
     events_registrable = []
+    main_modules = ["messaging_extensions.email.email_messaging_extension_system"]
 
     email_messaging_extension = None
 

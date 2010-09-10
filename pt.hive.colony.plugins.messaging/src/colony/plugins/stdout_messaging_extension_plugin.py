@@ -58,6 +58,7 @@ class StdoutMessagingExtensionPlugin(colony.base.plugin_system.Plugin):
     dependencies = []
     events_handled = []
     events_registrable = []
+    main_modules = ["messaging_extensions.stdout.stdout_messaging_extension_system"]
 
     stdout_messaging_extension = None
 
