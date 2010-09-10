@@ -61,6 +61,9 @@ class ResourceManagerPlugin(colony.base.plugin_system.Plugin):
     dependencies = []
     events_handled = []
     events_registrable = ["plugin_manager.init_load_plugin"]
+    main_modules = ["resources.resource_manager.resource_manager_parser",
+                    "resources.resource_manager.resource_manager_system",
+                    "resources.resource_manager.resource_manager_tests"]
 
     resource_manager = None
 

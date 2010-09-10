@@ -60,6 +60,7 @@ class PythonResourceParserPlugin(colony.base.plugin_system.Plugin):
     dependencies = []
     events_handled = []
     events_registrable = []
+    main_modules = ["resources.python_resource_parser.python_resource_parser_system"]
 
     python_resource_parser = None
 

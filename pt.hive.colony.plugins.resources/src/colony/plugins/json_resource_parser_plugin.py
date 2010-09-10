@@ -60,6 +60,7 @@ class JsonResourceParserPlugin(colony.base.plugin_system.Plugin):
                     "pt.hive.colony.plugins.misc.json", "1.0.0")]
     events_handled = []
     events_registrable = []
+    main_modules = ["resources.json_resource_parser.json_resource_parser_system"]
 
     json_resource_parser = None
 
