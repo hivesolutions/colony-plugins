@@ -60,6 +60,7 @@ class MainDistributionServicePlugin(colony.base.plugin_system.Plugin):
                     "pt.hive.colony.plugins.distribution.main.plugin_system", "1.0.0")]
     events_handled = []
     events_registrable = []
+    main_modules = ["main_distribution.service.main_distribution_service_system"]
 
     main_distribution_service = None
 

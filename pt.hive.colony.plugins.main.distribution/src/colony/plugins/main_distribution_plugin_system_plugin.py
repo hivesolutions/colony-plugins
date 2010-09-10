@@ -59,6 +59,7 @@ class MainDistributionPluginSystemPlugin(colony.base.plugin_system.Plugin):
     dependencies = []
     events_handled = []
     events_registrable = []
+    main_modules = ["main_distribution.plugin_system.main_distribution_plugin_system_system"]
 
     main_distribution_plugin_system = None
 
