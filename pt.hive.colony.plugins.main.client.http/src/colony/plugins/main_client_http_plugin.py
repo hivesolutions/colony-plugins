@@ -40,7 +40,7 @@ __license__ = "GNU General Public License (GPL), Version 3"
 import colony.base.plugin_system
 import colony.base.decorators
 
-class MainClienthttpPlugin(colony.base.plugin_system.Plugin):
+class MainClientHttpPlugin(colony.base.plugin_system.Plugin):
     """
     The main class for the Http Client Main plugin.
     """
