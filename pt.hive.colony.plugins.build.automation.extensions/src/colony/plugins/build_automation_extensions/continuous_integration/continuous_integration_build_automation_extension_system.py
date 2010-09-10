@@ -86,7 +86,8 @@ class ContinuousIntegrationBuildAutomationExtension:
         # retrieves the target directory
         target_directory = build_properties[TARGET_DIRECTORY_VALUE]
 
-        colony.libs.path_util.copy_directories(target_directory, deployment_version_path)
+        # copies the target directory to the deployment version path (directory)
+        colony.libs.path_util.copy_directory(target_directory, deployment_version_path)
 
     def _get_version(self, version_file_path):
         # opens the version file
