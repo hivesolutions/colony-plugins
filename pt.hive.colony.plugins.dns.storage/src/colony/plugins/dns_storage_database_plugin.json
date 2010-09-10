@@ -19,5 +19,6 @@
             "dns_storage_database/database/__init__.py",
             "dns_storage_database/database/dns_storage_database_entities.py",
             "dns_storage_database/database/dns_storage_database_exceptions.py",
+            "dns_storage_database/database/dns_storage_database_system.py",
             "dns_storage_database/database/resources/baf.xml"]
 }
