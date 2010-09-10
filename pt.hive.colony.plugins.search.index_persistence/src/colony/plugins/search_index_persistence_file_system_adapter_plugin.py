@@ -58,6 +58,8 @@ class SearchIndexPersistenceFileSystemAdapterPlugin(colony.base.plugin_system.Pl
     dependencies = []
     events_handled = []
     events_registrable = []
+    main_modules = ["search_index_persistence.file_system_adapter.search_index_persistence_file_system_adapter_exceptions",
+                    "search_index_persistence.file_system_adapter.search_index_persistence_file_system_adapter_system"]
 
     search_index_persistence_file_system_adapter = None
 
