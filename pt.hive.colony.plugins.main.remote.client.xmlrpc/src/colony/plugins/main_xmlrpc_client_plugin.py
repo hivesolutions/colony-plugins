@@ -58,7 +58,7 @@ class MainXmlrpcClientPlugin(colony.base.plugin_system.Plugin):
     dependencies = []
     events_handled = []
     events_registrable = []
-    main_modules = ["main_remote_client_xmlrpc.main_xmlrpc_client_system"]
+    main_modules = ["main_remote_client_xmlrpc.client.main_xmlrpc_client_system"]
 
     main_xmlrpc_client = None
 
