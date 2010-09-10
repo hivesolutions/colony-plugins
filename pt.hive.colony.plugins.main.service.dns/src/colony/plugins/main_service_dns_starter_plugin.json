@@ -18,5 +18,6 @@
             "main_service_dns_starter_plugin.py",
             "main_service_dns_starter/__init__.py",
             "main_service_dns_starter/starter/__init__.py",
+            "main_service_dns_starter/starter/main_service_dns_starter_system.py",
             "main_service_dns_starter/starter/resources/baf.xml"]
 }

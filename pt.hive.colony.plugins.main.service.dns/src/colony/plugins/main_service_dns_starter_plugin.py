@@ -60,6 +60,7 @@ class MainServiceDnsStarterPlugin(colony.base.plugin_system.Plugin):
                     "pt.hive.colony.plugins.main.service.dns", "1.0.0")]
     events_handled = []
     events_registrable = []
+    main_modules = ["main_service_dns_starter.starter.main_service_dns_starter_system"]
 
     main_service_dns_plugin = None
 
