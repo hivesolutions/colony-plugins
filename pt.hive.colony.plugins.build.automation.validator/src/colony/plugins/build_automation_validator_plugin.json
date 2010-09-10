@@ -1,0 +1,19 @@
+{
+    "platform" : "python",
+    "sub_platforms" : ["cpython", "jython", "iron_python"],
+    "id" : "pt.hive.colony.plugins.build.automation.validator",
+    "name" : "Build Automation Validator Plugin",
+    "short_name" : "Build Automation Validator",
+    "description" : "A plugin used to validate that all resources are valid for build automation",
+    "version" : "1.0.0",
+    "author" : "Hive Solutions Lda. <development@hive.pt>",
+    "capabilities" : ["console_command_extension", "build_automation_item"],
+    "capabilities_allowed" : [],
+    "dependencies" : [],
+    "main_file" : "build_automation_validator_plugin.py",
+    "resources" : ["build_automation_validator_plugin.py",
+            "build_automation_validator/__init__.py",
+            "build_automation_validator/console_build_automation_validator.py",
+            "build_automation_validator/build_automation_validator_system.py",
+            "build_automation_validator/resources/baf.xml"]
+}
