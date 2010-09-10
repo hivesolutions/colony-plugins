@@ -58,6 +58,8 @@ class SearchIndexerPlugin(colony.base.plugin_system.Plugin):
     dependencies = []
     events_handled = []
     events_registrable = []
+    main_modules = ["search_indexer.indexer.search_indexer_exceptions",
+                    "search_indexer.indexer.search_indexer_system"]
 
     search_indexer = None
 
