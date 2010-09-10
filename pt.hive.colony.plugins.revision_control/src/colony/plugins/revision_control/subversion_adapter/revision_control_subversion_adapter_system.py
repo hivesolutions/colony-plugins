@@ -93,9 +93,10 @@ class RevisionControlSubversionAdapter:
         # retrieves the first of the returned revisions
         update_subversion_revision = update_subversion_revisions[0]
 
-        # retrieves the revision identifier
-        update_revision = str(update_subversion_revision.number)
+        # creates the subversion revision resulting from the update
+        update_revision = self.create_revision(update_subversion_revision)
 
+        # returns the update revision
         return update_revision
 
     def commit(self, revision_control_reference, resource_identifiers, commit_message):
