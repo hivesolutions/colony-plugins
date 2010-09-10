@@ -13,7 +13,7 @@
                 "id" : "pt.hive.colony.plugins.data.entity_manager",
                 "version" : "1.0.0"
             }, {
-                "id" : "pt.hive.colony.plugins.search",
+                "id" : "pt.hive.colony.plugins.search.manager",
                 "version" : "1.0.0"
             }],
     "main_file" : "web_mvc_search_plugin.py",

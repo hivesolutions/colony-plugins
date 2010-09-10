@@ -10,7 +10,7 @@
     "capabilities" : ["rpc_service", "build_automation_item"],
     "capabilities_allowed" : [],
     "dependencies" : [{
-                "id" : "pt.hive.colony.plugins.search",
+                "id" : "pt.hive.colony.plugins.search.manager",
                 "version" : "1.0.0"
             }, {
                 "id" : "pt.hive.colony.plugins.main.tasks.task_manager",

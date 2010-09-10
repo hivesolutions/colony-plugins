@@ -59,7 +59,7 @@ class WebMvcSearchPlugin(colony.base.plugin_system.Plugin):
     dependencies = [colony.base.plugin_system.PluginDependency(
                     "pt.hive.colony.plugins.data.entity_manager", "1.0.0"),
                     colony.base.plugin_system.PluginDependency(
-                    "pt.hive.colony.plugins.search", "1.0.0")]
+                    "pt.hive.colony.plugins.search.manager", "1.0.0")]
     events_handled = []
     events_registrable = []
     main_modules = ["web_mvc_search.mvc_search.web_mvc_search_system"]
@@ -67,7 +67,7 @@ class WebMvcSearchPlugin(colony.base.plugin_system.Plugin):
     web_mvc_search = None
 
     entity_manager_plugin = None
-    search_plugin = None
+    search_manager_plugin = None
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
@@ -116,9 +116,9 @@ class WebMvcSearchPlugin(colony.base.plugin_system.Plugin):
     def set_entity_manager_plugin(self, entity_manager_plugin):
         self.entity_manager_plugin = entity_manager_plugin
 
-    def get_search_plugin(self):
-        return self.search_plugin
+    def get_search_manager_plugin(self):
+        return self.search_manager_plugin
 
-    @colony.base.decorators.plugin_inject("pt.hive.colony.plugins.search")
-    def set_search_plugin(self, search_plugin):
-        self.search_plugin = search_plugin
+    @colony.base.decorators.plugin_inject("pt.hive.colony.plugins.search.manager")
+    def set_search_manager_plugin(self, search_manager_plugin):
+        self.search_manager_plugin = search_manager_plugin
