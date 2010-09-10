@@ -62,6 +62,7 @@ class SearchRemoteServicePlugin(colony.base.plugin_system.Plugin):
                     "pt.hive.colony.plugins.main.tasks.task_manager", "1.0.0"),]
     events_handled = []
     events_registrable = []
+    main_modules = ["search_remote_service.remote_service.search_remote_service_system"]
 
     search_remote_service = None
 
