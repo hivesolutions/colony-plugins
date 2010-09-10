@@ -59,6 +59,8 @@ class SearchCrawlerPlugin(colony.base.plugin_system.Plugin):
     dependencies = []
     events_handled = []
     events_registrable = []
+    main_modules = ["search_crawler.crawler.search_crawler_exceptions",
+                    "search_crawler.crawler.search_crawler_system"]
 
     search_crawler = None
 
