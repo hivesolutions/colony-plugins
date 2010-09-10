@@ -59,6 +59,8 @@ class SearchQueryEvaluatorPlugin(colony.base.plugin_system.Plugin):
     dependencies = []
     events_handled = []
     events_registrable = []
+    main_modules = ["search_query_evaluator.query_evaluator.search_query_evaluator_exceptions",
+                    "search_query_evaluator.query_evaluator.search_query_evaluator_system"]
 
     search_query_evaluator = None
 

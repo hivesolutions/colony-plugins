@@ -60,6 +60,9 @@ class SearchQueryEvaluatorVisitorAdapterPlugin(colony.base.plugin_system.Plugin)
                     "pt.hive.colony.plugins.search.query_interpreter", "1.0.0")]
     events_handled = []
     events_registrable = []
+    main_modules = ["search_query_evaluator.visitor_adapter.search_query_evaluator_exceptions",
+                    "search_query_evaluator.visitor_adapter.search_query_evaluator_visitor_adapter_system",
+                    "search_query_evaluator.visitor_adapter.search_query_evaluator_visitor"]
 
     search_query_evaluator_visitor_adapter = None
 
