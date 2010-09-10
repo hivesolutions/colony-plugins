@@ -40,13 +40,13 @@ __license__ = "GNU General Public License (GPL), Version 3"
 import colony.base.plugin_system
 import colony.base.decorators
 
-class DummyPluginWindowsFormsLabel1(colony.base.plugin_system.Plugin):
+class DummyWindowsFormsLabel1Plugin(colony.base.plugin_system.Plugin):
     """
     The main class for the Dummy Windows Forms Label 1 plugin.
     """
 
-    id = "pt.hive.colony.plugins.dummy.windows_forms_label1"
-    name = "Dummy Plugin Windows Forms Label 1"
+    id = "pt.hive.colony.plugins.dummy.windows_forms_label_1"
+    name = "Dummy Windows Forms Label 1 Plugin"
     short_name = "Dummy Windows Forms Label 1"
     description = "Dummy Windows Forms Label 1 Plugin"
     version = "1.0.0"

@@ -2,7 +2,7 @@
     "platform" : "python",
     "sub_platforms" : ["cpython", "jython", "iron_python"],
     "id" : "pt.hive.colony.plugins.dummy.aux2",
-    "name" : "Dummy Plugin Aux 2",
+    "name" : "Dummy Aux 2 Plugin",
     "short_name" : "Dummy Aux 2",
     "description" : "Dummy Aux 2 Plugin",
     "version" : "1.0.0",

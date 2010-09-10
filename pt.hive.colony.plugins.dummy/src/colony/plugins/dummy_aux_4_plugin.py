@@ -48,13 +48,13 @@ STATUS_TASK_STOPPED = 4
 
 TIMEOUT = 0.5
 
-class DummyPluginAux4(colony.base.plugin_system.Plugin):
+class DummyAux4Plugin(colony.base.plugin_system.Plugin):
     """
     The main class for the Dummy Aux 4 plugin.
     """
 
     id = "pt.hive.colony.plugins.dummy.aux4"
-    name = "Dummy Plugin Aux 4"
+    name = "Dummy Aux 4 Plugin"
     short_name = "Dummy Aux 4"
     description = "Dummy Aux 4 Plugin"
     version = "1.0.0"

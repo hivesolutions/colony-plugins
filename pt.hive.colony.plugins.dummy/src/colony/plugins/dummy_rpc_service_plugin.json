@@ -2,7 +2,7 @@
     "platform" : "python",
     "sub_platforms" : ["cpython"],
     "id" : "pt.hive.colony.plugins.dummy.rpc_service",
-    "name" : "Dummy Plugin Rpc Service",
+    "name" : "Dummy Rpc Service Plugin",
     "short_name" : "Dummy Rpc Service",
     "description" : "Dummy Rpc Service Plugin",
     "version" : "1.0.0",

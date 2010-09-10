@@ -44,13 +44,13 @@ import colony.base.decorators
 
 TIMEOUT = 0.5
 
-class DummyPluginAux1(colony.base.plugin_system.Plugin):
+class DummyAux1Plugin(colony.base.plugin_system.Plugin):
     """
     The main class for the Dummy Aux 1 plugin.
     """
 
     id = "pt.hive.colony.plugins.dummy.aux1"
-    name = "Dummy Plugin Aux 1"
+    name = "Dummy Aux 1 Plugin"
     short_name = "Dummy Aux 1"
     description = "Dummy Aux 1 Plugin"
     version = "1.0.0"

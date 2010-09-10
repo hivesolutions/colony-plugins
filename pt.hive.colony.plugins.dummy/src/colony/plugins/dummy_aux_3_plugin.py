@@ -39,13 +39,13 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 import colony.base.plugin_system
 
-class DummyPluginAux3(colony.base.plugin_system.Plugin):
+class DummyAux3Plugin(colony.base.plugin_system.Plugin):
     """
     The main class for the Dummy Aux 3 plugin.
     """
 
     id = "pt.hive.colony.plugins.dummy.aux3"
-    name = "Dummy Plugin Aux 3"
+    name = "Dummy Aux 3 Plugin"
     short_name = "Dummy Aux 3"
     description = "Dummy Aux 3 Plugin"
     version = "1.0.0"

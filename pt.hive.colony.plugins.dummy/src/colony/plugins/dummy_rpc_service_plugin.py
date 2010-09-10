@@ -40,13 +40,13 @@ __license__ = "GNU General Public License (GPL), Version 3"
 import colony.base.plugin_system
 import colony.base.decorators
 
-class DummyPluginRpcService(colony.base.plugin_system.Plugin):
+class DummyRpcServicePlugin(colony.base.plugin_system.Plugin):
     """
     The main class for the Dummy Rpc Service plugin.
     """
 
     id = "pt.hive.colony.plugins.dummy.rpc_service"
-    name = "Dummy Plugin Rpc Service"
+    name = "Dummy Rpc Service Plugin"
     short_name = "Dummy Rpc Service"
     description = "Dummy Rpc Service Plugin"
     version = "1.0.0"

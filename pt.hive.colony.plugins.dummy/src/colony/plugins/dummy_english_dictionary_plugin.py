@@ -39,14 +39,14 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 import colony.base.plugin_system
 
-class DummyEnglishDictionary(colony.base.plugin_system.Plugin):
+class DummyEnglishDictionaryPlugin(colony.base.plugin_system.Plugin):
     """
-    The main class for the Dummy English plugin.
+    The main class for the Dummy English Dictionary plugin.
     """
 
     id = "pt.hive.colony.plugins.dummy.english"
-    name = "Dummy English Plugin"
-    short_name = "Dummy English"
+    name = "Dummy English Dictionary Plugin"
+    short_name = "Dummy English Dictionary"
     description = "This is the main plugin for the english dictionary's stuff"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"

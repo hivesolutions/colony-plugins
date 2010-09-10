@@ -46,12 +46,12 @@ LABEL_TEXT = "Dummy Plugin Windows Forms Label 1"
 
 class DummyWindowsFormsLabel1:
 
-    dummy_plugin_windows_forms_label1 = None
+    dummy_plugin_windows_forms_label_1 = None
 
     label = None
 
-    def __init__(self, dummy_plugin_windows_forms_label1):
-        self.dummy_plugin_windows_forms_label1 = dummy_plugin_windows_forms_label1
+    def __init__(self, dummy_plugin_windows_forms_label_1):
+        self.dummy_plugin_windows_forms_label_1 = dummy_plugin_windows_forms_label_1
 
         self.label = System.Windows.Forms.Label(Text = LABEL_TEXT, Height = 15, Width = 250)
 

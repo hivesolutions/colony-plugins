@@ -1,8 +1,8 @@
 {
     "platform" : "python",
     "sub_platforms" : ["iron_python"],
-    "id" : "pt.hive.colony.plugins.dummy.windows_forms_label1",
-    "name" : "Dummy Plugin Windows Forms Label 1",
+    "id" : "pt.hive.colony.plugins.dummy.windows_forms_label_1",
+    "name" : "Dummy Windows Forms Label 1 Plugin",
     "short_name" : "Dummy Windows Forms Label 1",
     "description" : "Dummy Windows Forms Label 1 Plugin",
     "version" : "1.0.0",
