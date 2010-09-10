@@ -59,6 +59,8 @@ class TemplateHandlerPlugin(colony.base.plugin_system.Plugin):
     dependencies = []
     events_handled = []
     events_registrable = []
+    main_modules = ["template_handler.handler.template_handler_exceptions",
+                    "template_handler.handler.template_handler_system"]
 
     template_handler = None
 
