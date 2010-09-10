@@ -59,6 +59,8 @@ class SearchCrawlerFileSystemAdapterPlugin(colony.base.plugin_system.Plugin):
     dependencies = []
     events_handled = []
     events_registrable = []
+    main_modules = ["search_crawler.file_system_adapter.search_crawler_file_system_adapter_exceptions",
+                    "search_crawler.file_system_adapter.search_crawler_file_system_adapter_system"]
 
     search_crawler_file_system_adapter = None
 
