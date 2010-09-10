@@ -61,6 +61,7 @@ class MainServiceXmppStarterPlugin(colony.base.plugin_system.Plugin):
                     "pt.hive.colony.plugins.main.service.xmpp", "1.0.0")]
     events_handled = []
     events_registrable = []
+    main_modules = ["main_service_xmpp_starter.starter.main_service_xmpp_starter_system"]
 
     main_service_xmpp_plugin = None
 

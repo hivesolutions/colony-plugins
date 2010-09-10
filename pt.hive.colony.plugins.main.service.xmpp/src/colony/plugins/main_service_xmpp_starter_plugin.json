@@ -17,5 +17,6 @@
     "resources" : ["main_service_xmpp_starter_plugin.py",
             "main_service_xmpp_starter/__init__.py",
             "main_service_xmpp_starter/starter/__init__.py",
+            "main_service_xmpp_starter/starter/main_service_xmpp_starter_system.py",
             "main_service_xmpp_starter/starter/resources/baf.xml"]
 }
