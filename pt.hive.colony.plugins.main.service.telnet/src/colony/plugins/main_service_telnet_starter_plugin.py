@@ -61,6 +61,7 @@ class MainServiceTelnetStarterPlugin(colony.base.plugin_system.Plugin):
                     "pt.hive.colony.plugins.main.service.telnet", "1.0.0")]
     events_handled = []
     events_registrable = []
+    main_modules = ["main_service_telnet_starter.starter.main_service_telnet_starter_system"]
 
     main_service_telnet_plugin = None
 
