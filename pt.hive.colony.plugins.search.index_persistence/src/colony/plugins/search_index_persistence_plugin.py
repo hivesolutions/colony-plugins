@@ -58,6 +58,8 @@ class SearchIndexPersistencePlugin(colony.base.plugin_system.Plugin):
     dependencies = []
     events_handled = []
     events_registrable = []
+    main_modules = ["search_index_persistence.index_persistence.search_index_persistence_exceptions",
+                    "search_index_persistence.index_persistence.search_index_persistence_system"]
 
     search_index_persistence = None
 
