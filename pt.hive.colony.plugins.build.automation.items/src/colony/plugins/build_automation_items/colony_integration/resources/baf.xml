@@ -59,6 +59,7 @@
                     <adapter>svn</adapter>
                     <path>http://svn.hive.pt/hive-main/pt.hive.colony/trunk</path>
                     <target_path>$base{plugin_system_directory}/tmp/checkout/pt.hive.colony</target_path>
+                    <version_file_path>${build_automation.build.target_directory}/version</version_file_path>
                 </configuration>
             </plugin>
             <plugin>
@@ -74,6 +75,15 @@
                         <argument>--execution_command=pt.hive.colony.plugins.build.automation:run_automation pt.hive.colony.plugins.build.automation.items.colony_repository$1.0.0$build</argument>
                     </arguments>
                     <timeout>900</timeout>
+                </configuration>
+            </plugin>
+            <plugin>
+                <id>pt.hive.colony.plugins.build.automation.extensions.continuous_integration</id>
+                <version>1.0.0</version>
+                <stage>build</stage>
+                <configuration>
+                    <deployment_path>C:/matias</deployment_path>
+                    <version>$contents{${build_automation.build.target_directory}/version}</version>
                 </configuration>
             </plugin>
         </plugins>
