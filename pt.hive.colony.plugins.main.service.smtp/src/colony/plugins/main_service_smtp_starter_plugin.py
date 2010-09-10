@@ -61,6 +61,7 @@ class MainServiceSmtpStarterPlugin(colony.base.plugin_system.Plugin):
                     "pt.hive.colony.plugins.main.service.smtp", "1.0.0")]
     events_handled = []
     events_registrable = []
+    main_modules = ["main_service_smtp_starter.starter.main_service_smtp_starter_system"]
 
     main_service_smtp_plugin = None
 
