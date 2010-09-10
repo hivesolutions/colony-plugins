@@ -61,6 +61,7 @@ class MainServicePopStarterPlugin(colony.base.plugin_system.Plugin):
                     "pt.hive.colony.plugins.main.service.pop", "1.0.0")]
     events_handled = []
     events_registrable = []
+    main_modules = ["main_service_pop_starter.main_service_pop_starter_system"]
 
     main_service_pop_plugin = None
 
