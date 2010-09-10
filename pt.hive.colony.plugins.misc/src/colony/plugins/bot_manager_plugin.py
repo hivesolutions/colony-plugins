@@ -59,6 +59,7 @@ class BotManagerPlugin(colony.base.plugin_system.Plugin):
     dependencies = []
     events_handled = []
     events_registrable = []
+    main_modules = ["misc.bot_manager.bot_manager_system"]
 
     bot_manager = None
     bot_input_plugins =  {}

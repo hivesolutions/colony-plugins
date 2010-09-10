@@ -60,6 +60,7 @@ class BotEngineAimlPlugin(colony.base.plugin_system.Plugin):
                     "PyAIML", "aiml", "0.8.x", "http://pyaiml.sourceforge.net")]
     events_handled = []
     events_registrable = []
+    main_modules = ["misc.bot_engine_aiml.bot_engine_aiml_system"]
 
     bot_engine_aiml = None
 

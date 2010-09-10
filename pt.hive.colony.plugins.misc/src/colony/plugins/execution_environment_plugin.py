@@ -58,6 +58,7 @@ class ExecutionEnvironmentPlugin(colony.base.plugin_system.Plugin):
     dependencies = []
     events_handled = []
     events_registrable = []
+    main_modules = ["misc.execution_environment.execution_environment_system"]
 
     execution_environment = None
 

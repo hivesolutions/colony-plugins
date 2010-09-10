@@ -58,6 +58,7 @@ class CodeCoveragePlugin(colony.base.plugin_system.Plugin):
     dependencies = []
     events_handled = []
     events_registrable = []
+    main_modules = ["misc.code_coverage.code_coverage_system"]
 
     code_coverage = None
 

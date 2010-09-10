@@ -59,6 +59,7 @@ class BotEngineConsolePlugin(colony.base.plugin_system.Plugin):
                     "pt.hive.colony.plugins.main.console", "1.0.0")]
     events_handled = []
     events_registrable = []
+    main_modules = ["misc.bot_engine_console.bot_engine_console_system"]
 
     console_plugin = None
 

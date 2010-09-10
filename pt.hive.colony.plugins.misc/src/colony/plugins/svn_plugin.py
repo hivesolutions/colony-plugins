@@ -59,6 +59,7 @@ class SvnPlugin(colony.base.plugin_system.Plugin):
                     "PySvn", "pysvn", "1.6.2.x", "http://pysvn.tigris.org")]
     events_handled = []
     events_registrable = []
+    main_modules = ["misc.svn.svn_system"]
 
     svn = None
 

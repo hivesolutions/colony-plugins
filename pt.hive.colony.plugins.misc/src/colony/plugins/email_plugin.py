@@ -58,6 +58,7 @@ class EmailPlugin(colony.base.plugin_system.Plugin):
     dependencies = []
     events_handled = []
     events_registrable = []
+    main_modules = ["misc.email.console_email", "misc.email.email_system"]
 
     email = None
     console_email = None

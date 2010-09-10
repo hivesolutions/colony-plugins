@@ -58,6 +58,7 @@ class DependenciesCalculationPlugin(colony.base.plugin_system.Plugin):
     dependencies = []
     events_handled = []
     events_registrable = []
+    main_modules = ["misc.dependencies_calculator.dependencies_calculator_system"]
 
     dependencies_calculator = None
 

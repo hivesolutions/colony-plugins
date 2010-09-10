@@ -59,6 +59,7 @@ class GoogleDataClientPlugin(colony.base.plugin_system.Plugin):
                     "Google Data API Python Client Library", ["gdata", "gdata.docs", "gdata.youtube"], "1.1.x", "http://code.google.com/p/gdata-python-client")]
     events_handled = []
     events_registrable = []
+    main_modules = ["misc.google_data_client.console_google_data_client", "misc.google_data_client.google_data_client_system"]
 
     google_data_client = None
     console_google_data_client = None

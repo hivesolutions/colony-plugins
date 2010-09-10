@@ -58,6 +58,7 @@ class RandomPlugin(colony.base.plugin_system.Plugin):
     dependencies = []
     events_handled = []
     events_registrable = []
+    main_modules = ["misc.random.random_system"]
 
     random = None
 

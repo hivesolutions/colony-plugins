@@ -58,6 +58,7 @@ class GuidPlugin(colony.base.plugin_system.Plugin):
     dependencies = []
     events_handled = []
     events_registrable = []
+    main_modules = ["misc.guid.guid_system"]
 
     guid = None
 

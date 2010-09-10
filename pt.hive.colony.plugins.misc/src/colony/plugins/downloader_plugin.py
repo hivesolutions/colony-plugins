@@ -58,6 +58,8 @@ class DownloaderPlugin(colony.base.plugin_system.Plugin):
     dependencies = []
     events_handled = []
     events_registrable = []
+    main_modules = ["misc.downloader.console_downloader",
+                    "misc.downloader.downloading_system"]
 
     downloader = None
     console_downloader = None

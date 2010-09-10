@@ -62,6 +62,8 @@ class BonjourPlugin(colony.base.plugin_system.Plugin):
                     "Bonjour", "bonjour", "0.2.x", "http://www.apple.com")]
     events_handled = []
     events_registrable = []
+    main_modules = ["misc.bonjour.bonjour_exceptions",
+                    "misc.bonjour.bonjour_system"]
 
     bonjour = None
 

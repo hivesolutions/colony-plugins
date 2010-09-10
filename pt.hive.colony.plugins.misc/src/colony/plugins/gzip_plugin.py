@@ -59,6 +59,7 @@ class GzipPlugin(colony.base.plugin_system.Plugin):
     dependencies = []
     events_handled = []
     events_registrable = []
+    main_modules = ["misc.gzip.gzip_system"]
 
     gzip_system = None
 

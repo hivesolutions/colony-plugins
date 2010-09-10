@@ -60,6 +60,7 @@ class CommandExecutionPlugin(colony.base.plugin_system.Plugin):
                     conditions_list = [colony.base.plugin_system.OperativeSystemCondition("windows")])]
     events_handled = []
     events_registrable = []
+    main_modules = ["misc.command_execution.command_execution_system"]
 
     command_execution = None
 
