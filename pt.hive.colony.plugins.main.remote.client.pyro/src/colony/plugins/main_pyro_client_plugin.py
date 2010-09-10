@@ -59,6 +59,7 @@ class MainPyroClientPlugin(colony.base.plugin_system.Plugin):
                     "Pyro", "Pyro", "3.8.x", "http://pyro.sourceforge.net")]
     events_handled = []
     events_registrable = []
+    main_modules = ["main_remote_client_pyro.client.main_pyro_client_system"]
 
     main_pyro_client = None
 
