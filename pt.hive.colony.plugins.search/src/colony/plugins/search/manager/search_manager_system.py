@@ -40,7 +40,7 @@ __license__ = "GNU General Public License (GPL), Version 3"
 import gc
 import time
 
-import search_exceptions
+import search_manager_exceptions
 
 SEARCH_CRAWLER_TYPE_VALUE = "search_crawler_type"
 """ The type value """
@@ -75,23 +75,23 @@ SEARCH_STATISTICS_VALUE = "search_statistics"
 COUNT_VALUE = "count"
 """ The flag to determine if the search query is to be only a count """
 
-class Search:
+class SearchManager:
     """
     The search class.
     """
 
-    search_plugin = None
-    """ The search plugin """
+    search_manager_plugin = None
+    """ The search manager plugin """
 
-    def __init__(self, search_plugin):
+    def __init__(self, search_manager_plugin):
         """
         Constructor of the class.
 
-        @type search_plugin: SearchPlugin
-        @param search_plugin: The search plugin.
+        @type search_manager_plugin: SearchManagerPlugin
+        @param search_manager_plugin: The search manager plugin.
         """
 
-        self.search_plugin = search_plugin
+        self.search_manager_plugin = search_manager_plugin
 
     def create_index(self, properties):
         """
@@ -110,13 +110,13 @@ class Search:
             properties[SEARCH_CRAWLER_TYPE_VALUE] = DEFAULT_INDEX_TYPE
 
         # retrieves the search crawler plugins
-        search_crawler_plugin = self.search_plugin.search_crawler_plugin
+        search_crawler_plugin = self.search_manager_plugin.search_crawler_plugin
 
         # retrieves the search interpreter plugin
-        search_interpreter_plugin = self.search_plugin.search_interpreter_plugin
+        search_interpreter_plugin = self.search_manager_plugin.search_interpreter_plugin
 
         # retrieves the search indexer plugin
-        search_indexer_plugin = self.search_plugin.search_indexer_plugin
+        search_indexer_plugin = self.search_manager_plugin.search_indexer_plugin
 
         # starts timing the crawl
         crawling_start_time = time.time()
@@ -126,7 +126,7 @@ class Search:
 
         crawling_end_time = time.time()
         crawling_duration = crawling_end_time - crawling_start_time
-        self.search_plugin.debug("Crawling finished in %f s" % crawling_duration)
+        self.search_manager_plugin.debug("Crawling finished in %f s" % crawling_duration)
 
         tokens_processing_start_time = time.time()
 
@@ -135,7 +135,7 @@ class Search:
 
         tokens_processing_end_time = time.time()
         tokens_processing_duration = tokens_processing_end_time - tokens_processing_start_time
-        self.search_plugin.debug("Processing tokens finished in %f s" % tokens_processing_duration)
+        self.search_manager_plugin.debug("Processing tokens finished in %f s" % tokens_processing_duration)
 
         indexing_start_time = time.time()
 
@@ -144,7 +144,7 @@ class Search:
 
         indexing_end_time = time.time()
         indexing_duration = indexing_end_time - indexing_start_time
-        self.search_plugin.debug("Build index finished in %f s" % indexing_duration)
+        self.search_manager_plugin.debug("Build index finished in %f s" % indexing_duration)
 
         end_time = time.time()
         index_creation_duration = end_time - start_time
@@ -159,7 +159,7 @@ class Search:
         return search_index
 
     def create_index_with_identifier(self, search_index_identifier, properties):
-        search_index_repository_plugin = self.search_plugin.search_index_repository_plugin
+        search_index_repository_plugin = self.search_manager_plugin.search_index_repository_plugin
 
         search_index = self.create_index(properties)
 
@@ -177,7 +177,7 @@ class Search:
         @param properties: The properties to configure the removal operation.
         """
 
-        search_index_repository_plugin = self.search_plugin.search_index_repository_plugin
+        search_index_repository_plugin = self.search_manager_plugin.search_index_repository_plugin
 
         search_index_repository_plugin.remove_index(search_index_identifier)
 
@@ -195,10 +195,10 @@ class Search:
 
         # in case the persistence type value is not defined in the properties
         if not SEARCH_PERSISTENCE_TYPE_VALUE in properties:
-            raise search_exceptions.MissingProperty(SEARCH_PERSISTENCE_TYPE_VALUE)
+            raise search_manager_exceptions.MissingProperty(SEARCH_PERSISTENCE_TYPE_VALUE)
 
         # retrieves the search index persistence plugin
-        search_index_persistence_plugin = self.search_plugin.search_index_persistence_plugin
+        search_index_persistence_plugin = self.search_manager_plugin.search_index_persistence_plugin
 
         # persists the index
         persistence_success = search_index_persistence_plugin.persist_index(search_index, properties)
@@ -220,7 +220,7 @@ class Search:
         """
 
         # retrieves the reference for the index repository
-        search_index_repository_plugin = self.search_plugin.search_index_repository_plugin
+        search_index_repository_plugin = self.search_manager_plugin.search_index_repository_plugin
 
         # retrieves the search index from the repository
         search_index = search_index_repository_plugin.get_index(search_index_identifier)
@@ -243,10 +243,10 @@ class Search:
 
         # in case the persistence type value is not defined in the properties
         if not SEARCH_PERSISTENCE_TYPE_VALUE in properties:
-            raise search_exceptions.MissingProperty(SEARCH_PERSISTENCE_TYPE_VALUE)
+            raise search_manager_exceptions.MissingProperty(SEARCH_PERSISTENCE_TYPE_VALUE)
 
         # retrieves the search index persistence plugins
-        search_index_persistence_plugin = self.search_plugin.search_index_persistence_plugin
+        search_index_persistence_plugin = self.search_manager_plugin.search_index_persistence_plugin
 
         # loads the index
         search_index = search_index_persistence_plugin.load_index(properties)
@@ -266,7 +266,7 @@ class Search:
         """
 
         # retrieves the search index repository plugin
-        search_index_repository_plugin = self.search_plugin.search_index_repository_plugin
+        search_index_repository_plugin = self.search_manager_plugin.search_index_repository_plugin
 
         # loads the index using the persistence type specified in the properties
         search_index = self.load_index(properties)
@@ -296,7 +296,7 @@ class Search:
             properties[SEARCH_QUERY_EVALUATOR_TYPE_VALUE] = DEFAULT_QUERY_EVALUATOR_TYPE
 
         # retrieves the query evaluator plugin
-        search_query_evaluator_plugin = self.search_plugin.search_query_evaluator_plugin
+        search_query_evaluator_plugin = self.search_manager_plugin.search_query_evaluator_plugin
 
         # evaluates the query and retrieves the results using the available query evaluator plugin
         search_results = search_query_evaluator_plugin.evaluate_query(search_index, search_query, properties)
@@ -309,7 +309,7 @@ class Search:
         """
 
         # retrieves the reference for the index repository
-        search_index_repository_plugin = self.search_plugin.search_index_repository_plugin
+        search_index_repository_plugin = self.search_manager_plugin.search_index_repository_plugin
 
         # retrieves the search index from the repository
         search_index = search_index_repository_plugin.get_index(search_index_identifier)
@@ -340,7 +340,7 @@ class Search:
         """
 
         # retrieves the search scorer plugin
-        search_scorer_plugin = self.search_plugin.search_scorer_plugin
+        search_scorer_plugin = self.search_manager_plugin.search_scorer_plugin
 
         # initializes the search statistics map
         search_statistics = {}
@@ -354,7 +354,7 @@ class Search:
 
         # if the specified scorer function is not available
         if not search_scorer_function_identifier in search_scorer_plugin.get_function_identifiers():
-            raise search_exceptions.InvalidFunctionRequested(search_scorer_function_identifier)
+            raise search_manager_exceptions.InvalidFunctionRequested(search_scorer_function_identifier)
 
         # retrieves the count property
         count = properties.get(COUNT_VALUE, False)
@@ -411,7 +411,7 @@ class Search:
         """
 
         # retrieves the reference for the index repository
-        search_index_repository_plugin = self.search_plugin.search_index_repository_plugin
+        search_index_repository_plugin = self.search_manager_plugin.search_index_repository_plugin
 
         # retrieves the search index from the repository
         search_index = search_index_repository_plugin.get_index(search_index_identifier)
@@ -429,7 +429,7 @@ class Search:
         """
 
         # retrieves the reference for the index repository
-        search_index_repository_plugin = self.search_plugin.search_index_repository_plugin
+        search_index_repository_plugin = self.search_manager_plugin.search_index_repository_plugin
 
         # retrieves the index from the repository
         return search_index_repository_plugin.get_index(search_index_identifier)
@@ -440,7 +440,7 @@ class Search:
         """
 
         # retrieves the reference to the index repository
-        search_index_repository_plugin = self.search_plugin.search_index_repository_plugin
+        search_index_repository_plugin = self.search_manager_plugin.search_index_repository_plugin
 
         # retrieves all the identifiers
         index_identifiers = search_index_repository_plugin.get_index_identifiers()
@@ -453,7 +453,7 @@ class Search:
         """
 
         # retrieves the reference to the index repository
-        search_index_repository_plugin = self.search_plugin.search_index_repository_plugin
+        search_index_repository_plugin = self.search_manager_plugin.search_index_repository_plugin
 
         # retrieves the index metadata
         index_metadata = search_index_repository_plugin.get_index_metadata(search_index_identifier)
@@ -466,7 +466,7 @@ class Search:
         """
 
         # retrieves the reference to the index repository
-        search_index_repository_plugin = self.search_plugin.search_index_repository_plugin
+        search_index_repository_plugin = self.search_manager_plugin.search_index_repository_plugin
 
         # retrieves all the index metadata
         indexes_metadata = search_index_repository_plugin.get_indexes_metadata()
@@ -479,7 +479,7 @@ class Search:
         """
 
         # retrieves the reference to the index repository
-        search_index_repository_plugin = self.search_plugin.search_index_repository_plugin
+        search_index_repository_plugin = self.search_manager_plugin.search_index_repository_plugin
 
         # determines if the index exists
         has_index = search_index_repository_plugin.has_index(search_index_identifier)
@@ -492,7 +492,7 @@ class Search:
         """
 
         # retrieves the reference for the search crawler plugin
-        search_crawler_plugin = self.search_plugin.search_crawler_plugin
+        search_crawler_plugin = self.search_manager_plugin.search_crawler_plugin
 
         # retrieves all the crawler types
         crawler_types = search_crawler_plugin.get_search_crawler_adapter_types()
@@ -505,7 +505,7 @@ class Search:
         """
 
         # retrieves the reference for the search persistence plugin
-        search_index_persistence_plugin = self.search_plugin.search_index_persistence_plugin
+        search_index_persistence_plugin = self.search_manager_plugin.search_index_persistence_plugin
 
         # retrieves all the search persistence adapter types
         search_index_persistence_adapter_types = search_index_persistence_plugin.get_search_index_persistence_adapter_types()
@@ -530,7 +530,7 @@ class Search:
         querying_duration = time.time() - start_time
 
         # logs the querying duration
-        self.search_plugin.debug("Querying index finished in %f s" % querying_duration)
+        self.search_manager_plugin.debug("Querying index finished in %f s" % querying_duration)
 
         # stores the querying duration statistic in the statistics map
         search_statistics["querying_duration"] = querying_duration
@@ -542,7 +542,7 @@ class Search:
         start_time = time.time()
 
         # retrieves the search scorer plugin
-        search_scorer_plugin = self.search_plugin.search_scorer_plugin
+        search_scorer_plugin = self.search_manager_plugin.search_scorer_plugin
 
         # scores the results using the plugin
         scored_search_results = search_scorer_plugin.score_results(search_results, search_index, properties)
@@ -551,7 +551,7 @@ class Search:
         scoring_duration = time.time() - start_time
 
         # logs the scoring duration
-        self.search_plugin.debug("Scoring results finished in %f s" % scoring_duration)
+        self.search_manager_plugin.debug("Scoring results finished in %f s" % scoring_duration)
 
         # stores the scoring duration statistic in the statistics map
         search_statistics["scoring_duration"] = scoring_duration
@@ -563,7 +563,7 @@ class Search:
         start_time = time.time()
 
         # retrieves the search sorter plugin
-        search_sorter_plugin = self.search_plugin.search_sorter_plugin
+        search_sorter_plugin = self.search_manager_plugin.search_sorter_plugin
 
         # sorts the already scored search results
         sorted_search_results = search_sorter_plugin.sort_results(scored_search_results, properties)
@@ -572,7 +572,7 @@ class Search:
         sorting_duration = time.time() - start_time
 
         # logs the sorting duration
-        self.search_plugin.debug("Sorting results finished in %f s" % sorting_duration)
+        self.search_manager_plugin.debug("Sorting results finished in %f s" % sorting_duration)
 
         # stores the sorting duration statistic in the statistics map
         search_statistics["sorting_duration"] = sorting_duration
@@ -602,7 +602,7 @@ class Search:
         limiting_duration = time.time() - start_time
 
         # logs the elapsed limiting time
-        self.search_plugin.debug("Limiting results finished in %f s" % limiting_duration)
+        self.search_manager_plugin.debug("Limiting results finished in %f s" % limiting_duration)
 
         # stores the limiting duration statistic in the statistics map
         search_statistics["limiting_duration"] = limiting_duration
@@ -614,7 +614,7 @@ class Search:
         start_time = time.time()
 
         # retrieves the search processor plugin
-        search_processor_plugin = self.search_plugin.search_processor_plugin
+        search_processor_plugin = self.search_manager_plugin.search_processor_plugin
 
         # processes the results using the plugin
         processed_search_results = search_processor_plugin.process_results(limited_search_results, properties)
@@ -623,7 +623,7 @@ class Search:
         processing_duration = time.time() - start_time
 
         # logs the elapsed processing time
-        self.search_plugin.debug("Processing results finished in %f s" % processing_duration)
+        self.search_manager_plugin.debug("Processing results finished in %f s" % processing_duration)
 
         # stores the limiting duration statistic in the statistics map
         search_statistics["processing_duration"] = processing_duration

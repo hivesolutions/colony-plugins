@@ -40,21 +40,21 @@ __license__ = "GNU General Public License (GPL), Version 3"
 import colony.base.plugin_system
 import colony.base.decorators
 
-class SearchPlugin(colony.base.plugin_system.Plugin):
+class SearchManagerPlugin(colony.base.plugin_system.Plugin):
     """
-    The main class for the Search plugin.
+    The main class for the Search Manager plugin.
     """
 
-    id = "pt.hive.colony.plugins.search"
-    name = "Search Plugin"
-    short_name = "Search"
-    description = "Search Plugin"
+    id = "pt.hive.colony.plugins.search.manager"
+    name = "Search Manager Plugin"
+    short_name = "Search Manager"
+    description = "Search Manager Plugin"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     loading_type = colony.base.plugin_system.EAGER_LOADING_TYPE
     platforms = [colony.base.plugin_system.CPYTHON_ENVIRONMENT]
-    attributes = {"build_automation_file_path" : "$base{plugin_directory}/search/resources/baf.xml"}
-    capabilities = ["search", "build_automation_item"]
+    attributes = {"build_automation_file_path" : "$base{plugin_directory}/search/manager/resources/baf.xml"}
+    capabilities = ["search_manager", "build_automation_item"]
     capabilities_allowed = []
     dependencies = [colony.base.plugin_system.PluginDependency(
                     "pt.hive.colony.plugins.search.crawler", "1.0.0"),
@@ -79,9 +79,9 @@ class SearchPlugin(colony.base.plugin_system.Plugin):
 
     events_handled = []
     events_registrable = []
-    main_modules = ["search.search_system", "search.search_exceptions"]
+    main_modules = ["search.manager.search_manager_exceptions", "search.manager.search_manager_system"]
 
-    search = None
+    search_manager = None
 
     search_crawler_plugin = None
     search_interpreter_plugin = None
@@ -97,8 +97,8 @@ class SearchPlugin(colony.base.plugin_system.Plugin):
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
         global search
-        import search.search_system
-        self.search = search.search_system.Search(self)
+        import search.manager.search_manager_system
+        self.search_manager = search.manager.search_manager_system.SearchManager(self)
 
     def end_load_plugin(self):
         colony.base.plugin_system.Plugin.end_load_plugin(self)
@@ -115,63 +115,63 @@ class SearchPlugin(colony.base.plugin_system.Plugin):
     def unload_allowed(self, plugin, capability):
         colony.base.plugin_system.Plugin.unload_allowed(self, plugin, capability)
 
-    @colony.base.decorators.inject_dependencies("pt.hive.colony.plugins.search", "1.0.0")
+    @colony.base.decorators.inject_dependencies("pt.hive.colony.plugins.search.manager", "1.0.0")
     def dependency_injected(self, plugin):
         colony.base.plugin_system.Plugin.dependency_injected(self, plugin)
 
     def create_index(self, properties):
-        return self.search.create_index(properties)
+        return self.search_manager.create_index(properties)
 
     def create_index_with_identifier(self, search_index_identifier, properties):
-        return self.search.create_index_with_identifier(search_index_identifier, properties)
+        return self.search_manager.create_index_with_identifier(search_index_identifier, properties)
 
     def remove_index_with_identifier(self, search_index_identifier, properties):
-        return self.search.remove_index_with_identifier(search_index_identifier, properties)
+        return self.search_manager.remove_index_with_identifier(search_index_identifier, properties)
 
     def persist_index(self, search_index, properties):
-        return self.search.persist_index(search_index, properties)
+        return self.search_manager.persist_index(search_index, properties)
 
     def persist_index_with_identifier(self, search_index_identifier, properties):
-        return self.search.persist_index_with_identifier(search_index_identifier, properties)
+        return self.search_manager.persist_index_with_identifier(search_index_identifier, properties)
 
     def load_index(self, properties):
-        return self.search.load_index(properties)
+        return self.search_manager.load_index(properties)
 
     def load_index_with_identifier(self, search_index_identifier, properties):
-        return self.search.load_index_with_identifier(search_index_identifier, properties)
+        return self.search_manager.load_index_with_identifier(search_index_identifier, properties)
 
     def query_index(self, search_index, search_query, properties):
-        return self.search.query_index(search_index, search_query, properties)
+        return self.search_manager.query_index(search_index, search_query, properties)
 
     def query_index_by_identifier(self, search_index_identifier, search_query, properties):
         return self.query_index_by_identifier(search_index_identifier, search_query, properties)
 
     def search_index(self, search_index, search_query, properties):
-        return self.search.search_index(search_index, search_query, properties)
+        return self.search_manager.search_index(search_index, search_query, properties)
 
     def search_index_by_identifier(self, search_index_identifier, search_query, properties):
-        return self.search.search_index_by_identifier(search_index_identifier, search_query, properties)
+        return self.search_manager.search_index_by_identifier(search_index_identifier, search_query, properties)
 
     def get_index_by_identifier(self, search_index_identifier):
-        return self.search.get_index_by_identifier(search_index_identifier)
+        return self.search_manager.get_index_by_identifier(search_index_identifier)
 
     def get_index_identifiers(self):
-        return self.search.get_index_identifiers()
+        return self.search_manager.get_index_identifiers()
 
     def get_index_metadata(self, search_index_identifier):
-        return self.search.get_index_metadata(search_index_identifier)
+        return self.search_manager.get_index_metadata(search_index_identifier)
 
     def get_indexes_metadata(self):
-        return self.search.get_indexes_metadata()
+        return self.search_manager.get_indexes_metadata()
 
     def has_index(self, index_identifier):
-        return self.search.has_index(index_identifier)
+        return self.search_manager.has_index(index_identifier)
 
     def get_search_crawler_adapter_types(self):
-        return self.search.get_search_crawler_adapter_types()
+        return self.search_manager.get_search_crawler_adapter_types()
 
     def get_search_index_persistence_adapter_types(self):
-        return self.search.get_search_index_persistence_adapter_types()
+        return self.search_manager.get_search_index_persistence_adapter_types()
 
     def get_search_crawler_plugin(self):
         return self.search_crawler_plugin

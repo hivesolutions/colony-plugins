@@ -1,13 +1,13 @@
 {
     "platform" : "python",
     "sub_platforms" : ["cpython"],
-    "id" : "pt.hive.colony.plugins.search",
-    "name" : "Search Plugin",
-    "short_name" : "Search",
-    "description" : "Search Plugin",
+    "id" : "pt.hive.colony.plugins.search.manager",
+    "name" : "Search Manager Plugin",
+    "short_name" : "Search Manager",
+    "description" : "Search Manager Plugin",
     "version" : "1.0.0",
     "author" : "Hive Solutions Lda. <development@hive.pt>",
-    "capabilities" : ["search", "build_automation_item"],
+    "capabilities" : ["search_manager", "build_automation_item"],
     "capabilities_allowed" : [],
     "dependencies" : [{
                 "id" : "pt.hive.colony.plugins.search.crawler",
@@ -40,8 +40,10 @@
                 "id" : "pt.hive.colony.plugins.search.processor",
                 "version" : "1.0.0"
             }],
-    "main_file" : "search_plugin.py",
-    "resources" : ["search_plugin.py", "search/__init__.py",
-            "search/search_exceptions.py", "search/search_system.py",
-            "search/resources/baf.xml"]
+    "main_file" : "search_manager_plugin.py",
+    "resources" : ["search_manager_plugin.py", "search/__init__.py",
+            "search/manager/__init__.py",
+            "search/manager/search_manager_exceptions.py",
+            "search/manager/search_manager_system.py",
+            "search/manager/resources/baf.xml"]
 }
