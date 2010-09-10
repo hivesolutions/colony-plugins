@@ -39,7 +39,7 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 import colony.base.plugin_system
 
-class SearchIndexSerializerCpicklePlugin(colony.base.plugin_system.Plugin):
+class SearchIndexSerializerShelvePlugin(colony.base.plugin_system.Plugin):
     """
     The main class for the Search Index Serializer Shelve plugin.
     """
