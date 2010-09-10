@@ -58,7 +58,7 @@ class MainJsonrpcClientPlugin(colony.base.plugin_system.Plugin):
     dependencies = []
     events_handled = []
     events_registrable = []
-    main_modules = ["main_remote_client_jsonrpc.main_jsonrpc_client_system"]
+    main_modules = ["main_remote_client_jsonrpc.client.main_jsonrpc_client_system"]
 
     main_jsonrpc_client = None
 
