@@ -58,6 +58,7 @@ class MainModPythonPlugin(colony.base.plugin_system.Plugin):
     dependencies = []
     events_handled = []
     events_registrable = []
+    main_modules = ["main_mod_python.mod_python.main_mod_python_system"]
 
     main_mod_python = None
 
