@@ -151,3 +151,18 @@ class CommandExecutionPlugin(colony.base.plugin_system.Plugin):
         """
 
         return self.command_execution.execute_command_logger_execution_directory(command, arguments, logger, execution_directory)
+
+    def execute_command_parameters(self, parameters):
+        """
+        Executes the command in the default shell execution environment
+        using the given parameters.
+        The returned value is an object that can be used to control the
+        resulting process.
+
+        @type parameters: Dictionary
+        @param parameters: The parameters for command execution.
+        @rtype: Process
+        @return: An object representing the created process.
+        """
+
+        return self.command_execution.execute_command_parameters(parameters)

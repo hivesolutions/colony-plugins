@@ -165,6 +165,45 @@ class CommandExecution:
         # returns the process object
         return process
 
+    def execute_command_parameters(self, parameters):
+        """
+        Executes the command in the default shell execution environment
+        using the given parameters.
+        The returned value is an object that can be used to control the
+        resulting process.
+
+        @type parameters: Dictionary
+        @param parameters: The parameters for command execution.
+        @rtype: Process
+        @return: An object representing the created process.
+        """
+
+        # retrieves the various parameters values
+        command = parameters.get("command", "")
+        arguments = parameters.get("arguments", [])
+        bufsize = parameters.get("bufsize", 0)
+        executable = parameters.get("executable", None)
+        stdin = parameters.get("stdin", None)
+        stdout = parameters.get("stdout", None)
+        stderr = parameters.get("stderr", None)
+        preexec_fn = parameters.get("preexec_fn", None)
+        close_fds = parameters.get("close_fds", False)
+        shell = parameters.get("shell", False)
+        cwd = parameters.get("cwd", None)
+        env = parameters.get("env", None)
+        universal_newlines = parameters.get("universal_newlines", False)
+        startupinfo = parameters.get("startupinfo", self.get_startup_info())
+        creationflags = parameters.get("creationflags", 0)
+
+        # creates the call list
+        call_list = self.create_call_list(command, arguments)
+
+        # opens the subprocess and retrieves the process object
+        process = subprocess.Popen(call_list, bufsize, executable, stdin, stdout, stderr, preexec_fn, close_fds, shell, cwd, env, universal_newlines, startupinfo, creationflags)
+
+        # returns the process object
+        return process
+
     def create_call_list(self, command, arguments):
         """
         Creates the call list for the given command and
