@@ -59,6 +59,7 @@ class TaskManagerPlugin(colony.base.plugin_system.Plugin):
                     "pt.hive.colony.plugins.main.threads.thread_pool_manager", "1.0.0")]
     events_handled = ["task_information_changed"]
     events_registrable = []
+    main_modules = ["main_tasks.task_manager.task_manager_system"]
 
     task_manager = None
 
