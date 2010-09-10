@@ -37,6 +37,8 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
+import os
+
 ADAPTER_VALUE = "adapter"
 """ The adapter value """
 
@@ -82,11 +84,10 @@ class RevisionControlBuildAutomationExtension:
         # loads a new revision control manager for the specified adapter name
         revision_control_manager = revision_control_manager_plugin.load_revision_control_manager(adapter, revision_control_parameters)
 
-        # checks out the repository to the target path
-        revision_control_manager.checkout(path, target_path)
-
-        # uses the revision control manager to perform the commit
-        #commit_revision = revision_control_manager.commit([complete_file_path], summary)
-
-        # sets the result for the rest request
-        #rest_request.set_result_translated("revision: " + str(commit_revision.get_number()))
+        # in case the target path already exists
+        if os.path.exists(target_path):
+            # updates the repository to the current head revision
+            revision_control_manager.update([target_path], None)
+        else:
+            # checks out the repository to the target path
+            revision_control_manager.checkout(path, target_path)
