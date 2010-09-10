@@ -58,6 +58,8 @@ class SearchIndexSerializerCpicklePlugin(colony.base.plugin_system.Plugin):
     dependencies = []
     events_handled = []
     events_registrable = []
+    main_modules = ["search_index_serializer.shelve.search_index_serializer_shelve_exceptions",
+                    "search_index_serializer.shelve.search_index_serializer_shelve_system"]
 
     search_index_serializer_shelve = None
 
