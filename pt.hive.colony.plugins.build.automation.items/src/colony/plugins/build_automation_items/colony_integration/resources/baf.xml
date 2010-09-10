@@ -83,7 +83,7 @@
                 <stage>build</stage>
                 <configuration>
                     <deployment_path>C:/matias</deployment_path>
-                    <version>$contents{${build_automation.build.target_directory}/version}</version>
+                    <version_file_path>${build_automation.build.target_directory}/version</version_file_path>
                 </configuration>
             </plugin>
         </plugins>
