@@ -51,7 +51,7 @@ TARGET_PATH_VALUE = "target_path"
 REPOSITORY_PATH_VALUE = "repository_path_value"
 """ The repository path value """
 
-VERSION_FILE_PATH_VALUE = "version_file_path_value"
+VERSION_FILE_PATH_VALUE = "version_file_path"
 """ The version file path value """
 
 class RevisionControlBuildAutomationExtension:
