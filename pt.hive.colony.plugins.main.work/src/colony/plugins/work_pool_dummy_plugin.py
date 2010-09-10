@@ -62,7 +62,7 @@ class WorkPoolDummyPlugin(colony.base.plugin_system.Plugin):
                     "pt.hive.colony.plugins.main.work.work_pool_manager", "1.0.0")]
     events_handled = []
     events_registrable = []
-    main_modules = []
+    main_modules = ["main_work.work_pool_dummy.work_pool_dummy_system"]
 
     work_pool_manager_plugin = None
 

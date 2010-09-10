@@ -1,4 +1,6 @@
-#Thu Sep 09 09:58:03 WEST 2010
+#Fri Sep 10 12:31:34 WEST 2010
 eclipse.preferences.version=1
+encoding//src/colony/plugins/main_work/work_pool_dummy/__init__.py=Cp1252
+encoding//src/colony/plugins/main_work/work_pool_dummy/work_pool_dummy_system.py=Cp1252
 encoding//src/colony/plugins/work_pool_dummy_plugin.py=Cp1252
 encoding//src/colony/plugins/work_pool_manager_plugin.py=Cp1252
