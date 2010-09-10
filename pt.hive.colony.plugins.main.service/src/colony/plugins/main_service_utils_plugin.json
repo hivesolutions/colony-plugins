@@ -18,5 +18,6 @@
             "main_service_utils/__init__.py",
             "main_service_utils/utils/__init__.py",
             "main_service_utils/utils/main_service_utils_exceptions.py",
-            "main_service_utils/utils/main_service_utils_system.py"]
+            "main_service_utils/utils/main_service_utils_system.py",
+            "main_service_utils/utils/resources/baf.xml"]
 }
