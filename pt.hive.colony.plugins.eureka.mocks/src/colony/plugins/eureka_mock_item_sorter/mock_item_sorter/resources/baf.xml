@@ -36,8 +36,8 @@
         <id>pt.hive.colony.plugins.eureka.mock_item_sorter_plugin</id>
         <version>1.0.0</version>
         <type>colony</type>
-        <name>Mock Item Sorter Plugin</name>
-        <description>Mock Item Sorter Plugin</description>
+        <name>Eureka Mock Item Sorter Plugin</name>
+        <description>Eureka Mock Item Sorter Plugin</description>
         <url>http://www.hive.pt</url>
     </artifact>
     <build>
@@ -48,7 +48,7 @@
                 <version>1.0.0</version>
                 <stage>build</stage>
                 <configuration>
-                    <specification_file>$base{plugin_directory}/mock_item_sorter_plugin.json</specification_file>
+                    <specification_file>$base{plugin_directory}/eureka_mock_item_sorter_plugin.json</specification_file>
                 </configuration>
             </plugin>
         </plugins>
