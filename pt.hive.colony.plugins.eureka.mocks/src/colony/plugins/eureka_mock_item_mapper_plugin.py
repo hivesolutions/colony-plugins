@@ -39,26 +39,26 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 import colony.base.plugin_system
 
-class MockItemMapperPlugin(colony.base.plugin_system.Plugin):
+class EurekaMockItemMapperPlugin(colony.base.plugin_system.Plugin):
     """
     The main class for the sample Mock Item Mapper plugin.
     """
 
     id = "pt.hive.colony.plugins.eureka.mock_item_mapper_plugin"
-    name = "Mock Item Mapper Plugin"
-    short_name = "Mock Item Mapper"
-    description = "Mock Item Mapper plugin to illustrate and test the eureka_item_Mapper capability."
+    name = "Eureka Mock Item Mapper Plugin"
+    short_name = "Eureka Mock Item Mapper"
+    description = "Eureka Mock Item Mapper plugin to illustrate and test the eureka_item_Mapper capability."
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     loading_type = colony.base.plugin_system.EAGER_LOADING_TYPE
     platforms = [colony.base.plugin_system.CPYTHON_ENVIRONMENT]
-    attributes = {"build_automation_file_path" : "$base{plugin_directory}/eureka_mocks_mock_item_mapper/mock_item_mapper/resources/baf.xml"}
+    attributes = {"build_automation_file_path" : "$base{plugin_directory}/eureka_mock_item_mapper/mock_item_mapper/resources/baf.xml"}
     capabilities = ["eureka_item_processer.mapper", "build_automation_item"]
     capabilities_allowed = []
     dependencies = []
     events_handled = []
     events_registrable = []
-    main_modules = []
+    main_modules = ["eureka_mock_item_mapper.mock_item_mapper.eureka_mock_item_mapper_system"]
 
     mock_item_mapper = None
 

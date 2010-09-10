@@ -39,26 +39,26 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 import colony.base.plugin_system
 
-class MockItemSorterPlugin(colony.base.plugin_system.Plugin):
+class EurekaMockItemFilterPlugin(colony.base.plugin_system.Plugin):
     """
-    The main class for the sample Mock Item Sorter plugin.
+    The main class for the sample Mock Item Filter plugin.
     """
 
-    id = "pt.hive.colony.plugins.eureka.mock_item_sorter_plugin"
-    name = "Mock Item Sorter Plugin"
-    short_name = "Mock Item Sorter"
-    description = "Mock Item Sorter plugin to illustrate and test the eureka_item_processer.sorter capability"
+    id = "pt.hive.colony.plugins.eureka.mock_item_filter_plugin"
+    name = "Eureka Mock Item Filter Plugin"
+    short_name = "Eureka Mock Item Filter"
+    description = "Eureka Mock Item Filter plugin to illustrate and test the eureka_item_filter capability"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     loading_type = colony.base.plugin_system.EAGER_LOADING_TYPE
     platforms = [colony.base.plugin_system.CPYTHON_ENVIRONMENT]
-    attributes = {"build_automation_file_path" : "$base{plugin_directory}/eureka_mocks_mock_item_sorter/mock_item_sorter/resources/baf.xml"}
-    capabilities = ["eureka_item_processer.sorter", "build_automation_item"]
+    attributes = {"build_automation_file_path" : "$base{plugin_directory}/eureka_mock_item_filter/mock_item_filter/resources/baf.xml"}
+    capabilities = ["eureka_item_processer.filter", "build_automation_item"]
     capabilities_allowed = []
     dependencies = []
     events_handled = []
     events_registrable = []
-    main_modules = []
+    main_modules = ["eureka_mock_item_filter.mock_item_filter.eureka_mock_item_filter_system"]
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
@@ -84,7 +84,7 @@ class MockItemSorterPlugin(colony.base.plugin_system.Plugin):
     def process_items_for_string(self, items, search_string, max_items):
         return self.process_items_for_string_with_context(items, search_string, None, max_items)
 
-    def process_items_for_string_with_context(self, items, search_string = None, context = None, max_items = None):
+    def process_items_for_string_with_context(self, items, search_string, context, max_items):
         """
         Returns a raw list with all the items matching the search_string.
 
@@ -93,25 +93,13 @@ class MockItemSorterPlugin(colony.base.plugin_system.Plugin):
         """
 
         search_string_list = search_string.split()
+        filtered_items = []
 
-        # scores each of the items in the list using the above scorer function
-        sorted_items = self.sort_by_attribute(items, "score")
-        sorted_items.reverse()
+        for item in items:
+            # finds which words in the input string belong to the item's keywords
+            keywords_found = [word for word in search_string_list if word in item.keywords]
+            # includes the item if there are any keywords found
+            if keywords_found:
+                filtered_items.append(item)
 
-        return sorted_items[0:max_items]
-
-    def sort_by_attribute(self, sequence, attribute):
-        """
-        Sorts the sequence items based on the values of the given attribute.
-
-        @type sequence: List
-        @param sequence: The list of EurekaItems to be sorted.
-        @type attribute: String
-        @param attribute: The name of the attribute to be used as sorter.
-        @rtype: List
-        @return: The ordered sequence of values.
-        """
-
-        intermed = [(getattr(sequence[index], attribute), index, sequence[index]) for index in xrange(len(sequence))]
-        intermed.sort()
-        return [tuple[-1] for tuple in intermed]
+        return filtered_items[0:max_items]

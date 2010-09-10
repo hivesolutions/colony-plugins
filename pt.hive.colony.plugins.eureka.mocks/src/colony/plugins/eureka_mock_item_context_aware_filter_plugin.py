@@ -39,29 +39,33 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 import colony.base.plugin_system
 
-class MockItemFilterPlugin(colony.base.plugin_system.Plugin):
+class EurekaMockItemContextAwareFilterPlugin(colony.base.plugin_system.Plugin):
     """
-    The main class for the sample Mock Item Filter plugin.
+    The main class for the sample Mock Item Context Aware Filter plugin.
     """
 
-    id = "pt.hive.colony.plugins.eureka.mock_item_filter_plugin"
-    name = "Mock Item Filter Plugin"
-    short_name = "Mock Item Filter"
-    description = "Mock Item Filter plugin to illustrate and test the eureka_item_filter capability"
+    id = "pt.hive.colony.plugins.eureka.mock_item_context_aware_filter_plugin"
+    name = "Eureka Mock Item Context Aware Filter Plugin"
+    short_name = "Eureka Mock Item Context Aware Filter"
+    description = "Eureka Mock Item Context Aware Filter plugin to illustrate and test the eureka_item_filter capability"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     loading_type = colony.base.plugin_system.EAGER_LOADING_TYPE
     platforms = [colony.base.plugin_system.CPYTHON_ENVIRONMENT]
-    attributes = {"build_automation_file_path" : "$base{plugin_directory}/eureka_mocks_mock_item_filter/mock_item_filter/resources/baf.xml"}
+    attributes = {"build_automation_file_path" : "$base{plugin_directory}/eureka_mock_item_context_aware_filter/mock_item_context_aware_filter/resources/baf.xml"}
     capabilities = ["eureka_item_processer.filter", "build_automation_item"]
     capabilities_allowed = []
     dependencies = []
     events_handled = []
     events_registrable = []
-    main_modules = []
+    main_modules = ["eureka_mock_item_context_aware_filter.mock_item_context_aware_filter.eureka_mock_item_context_aware_filter_system"]
+
+    mock_item_context_aware_filter = None
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
+
+        self.mock_item_context_aware_filter = MockItemContextAwareFilter()
 
     def end_load_plugin(self):
         colony.base.plugin_system.Plugin.end_load_plugin(self)
@@ -85,21 +89,33 @@ class MockItemFilterPlugin(colony.base.plugin_system.Plugin):
         return self.process_items_for_string_with_context(items, search_string, None, max_items)
 
     def process_items_for_string_with_context(self, items, search_string, context, max_items):
+        return self.mock_item_context_aware_filter.process(items, search_string, context, max_items)
+
+class MockItemContextAwareFilter:
+    def process(self, items, input_string = None, context = None, max_items = None):
         """
-        Returns a raw list with all the items matching the search_string.
+        Returns a raw list with all the items matching the input_string.
 
         @type input_list: List
         @param input_list: Processed list of EurekaItems.
         """
 
-        search_string_list = search_string.split()
-        filtered_items = []
+        input_string_list = input_string.split()
 
-        for item in items:
-            # finds which words in the input string belong to the item's keywords
-            keywords_found = [word for word in search_string_list if word in item.keywords]
-            # includes the item if there are any keywords found
-            if keywords_found:
-                filtered_items.append(item)
+        # by default items will not be filtered
+        filtered_items = items
+
+        # look at the the top item in stack, and filter only the items with type in the allowed_items
+        if not context == None:
+            last_item = context[-1]
+
+            if last_item.types_allowed:
+                # since there is a context and the last_item has specific types_allowed
+                # filtering will take place
+                # reset the filtered_items
+                filtered_items = []
+                for item in items:
+                    if item.type in last_item.types_allowed:
+                        filtered_items.append(item)
 
         return filtered_items[0:max_items]

@@ -39,29 +39,30 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 import colony.base.plugin_system
 
-class MockItemExtensionPlugin(colony.base.plugin_system.Plugin):
+class EurekaMockItemExtensionPlugin(colony.base.plugin_system.Plugin):
     """
     The main class for the Eureka Engine plugin.
     """
 
     id = "pt.hive.colony.plugins.eureka.mock_item_extension_plugin"
-    name = "Mock Item Extension Plugin"
-    short_name = "Mock Item Extension"
-    description = "Mock Item Extension plugin to illustrate and test the eureka_item_extension capability"
+    name = "Eureka Mock Item Extension Plugin"
+    short_name = "Eureka Mock Item Extension"
+    description = "Eureka Mock Item Extension plugin to illustrate and test the eureka_item_extension capability"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     loading_type = colony.base.plugin_system.EAGER_LOADING_TYPE
     platforms = [colony.base.plugin_system.CPYTHON_ENVIRONMENT]
-    attributes = {"build_automation_file_path" : "$base{plugin_directory}/eureka_mocks_mock_item_extension/mock_item_extension/resources/baf.xml"}
+    attributes = {"build_automation_file_path" : "$base{plugin_directory}/eureka_mock_item_extension/mock_item_extension/resources/baf.xml"}
     capabilities = ["eureka_item_extension", "build_automation_item"]
     capabilities_allowed = ["eureka_item_processer.filter", "eureka_item_processer.mapper", "eureka_item_processer.sorter"]
     dependencies = []
     events_handled = []
     events_registrable = []
-    main_modules = ["eureka_mocks_mock_item_extension.mock_item_extension.mock_entity_item",
-                    "eureka_mocks_mock_item_extension.mock_item_extension.mock_operation_item",
-                    "eureka_mocks_mock_item_extension.mock_item_extension.mock_procedure_item",
-                    "eureka_mocks_mock_item_extension.mock_item_extension.mock_text_parameter_item"]
+    main_modules = ["eureka_mock_item_extension.mock_item_extension.mock_entity_item",
+                    "eureka_mock_item_extension.mock_item_extension.mock_operation_item",
+                    "eureka_mock_item_extension.mock_item_extension.mock_procedure_item",
+                    "eureka_mock_item_extension.mock_item_extension.mock_text_parameter_item",
+                    "eureka_mock_item_extension.mock_item_extension.eureka_mock_item_extension_system"]
 
     all_items = []
 
@@ -72,19 +73,19 @@ class MockItemExtensionPlugin(colony.base.plugin_system.Plugin):
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
         global eureka
-        global eureka_mocks_mock_item_extension
+        global eureka_mock_item_extension
         import eureka.eureka_item
-        import eureka_mocks_mock_item_extension.mock_item_extension.mock_entity_item
-        import eureka_mocks_mock_item_extension.mock_item_extension.mock_operation_item
-        import eureka_mocks_mock_item_extension.mock_item_extension.mock_procedure_item
-        import eureka_mocks_mock_item_extension.mock_item_extension.mock_text_parameter_item
+        import eureka_mock_item_extension.mock_item_extension.mock_entity_item
+        import eureka_mock_item_extension.mock_item_extension.mock_operation_item
+        import eureka_mock_item_extension.mock_item_extension.mock_procedure_item
+        import eureka_mock_item_extension.mock_item_extension.mock_text_parameter_item
 
         # initializes the item list.
         # this step should usually depend on loading an XML file, or using a factory for dynamic items (such as entities)
-        entity_item = eureka_mocks_mock_item_extension.mock_item_extension.mock_entity_item.MockEntityItem()
-        operation_item = eureka_mocks_mock_item_extension.mock_item_extension.mock_operation_item.MockOperationItem()
-        procedure_item = eureka_mocks_mock_item_extension.mock_item_extension.mock_procedure_item.MockProcedureItem()
-        text_parameter_item = eureka_mocks_mock_item_extension.mock_item_extension.mock_text_parameter_item.MockTextParameterItem()
+        entity_item = eureka_mock_item_extension.mock_item_extension.mock_entity_item.MockEntityItem()
+        operation_item = eureka_mock_item_extension.mock_item_extension.mock_operation_item.MockOperationItem()
+        procedure_item = eureka_mock_item_extension.mock_item_extension.mock_procedure_item.MockProcedureItem()
+        text_parameter_item = eureka_mock_item_extension.mock_item_extension.mock_text_parameter_item.MockTextParameterItem()
 
         self.all_items = [entity_item, operation_item, procedure_item, text_parameter_item]
 
