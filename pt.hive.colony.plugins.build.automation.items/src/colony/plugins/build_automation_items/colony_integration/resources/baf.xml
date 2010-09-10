@@ -68,9 +68,10 @@
                 <configuration>
                     <command>python</command>
                     <arguments>
-                        <argument>$base{plugin_system_directory}/tmp/checkout/pt.hive.colony/pt.hive.colony/src/script.py</argument>
-                        <argument>pt.hive.colony.plugins.main.console:execute_command_line</argument>
-                        <argument>run_automation pt.hive.colony.plugins.build.automation.items.colony_repository</argument>
+                        <argument>$base{plugin_system_directory}/tmp/checkout/pt.hive.colony/pt.hive.colony/src/main.py</argument>
+                        <argument>--configuration_file=config/configuration_integration.py</argument>
+                        <argument>--manager_dir=$base{plugin_system_directory}/tmp/checkout/pt.hive.colony/pt.hive.colony/src</argument>
+                        <argument>--execution_command=pt.hive.colony.plugins.build.automation:run_automation pt.hive.colony.plugins.build.automation.items.colony_repository$1.0.0$build</argument>
                     </arguments>
                     <timeout>900</timeout>
                 </configuration>
