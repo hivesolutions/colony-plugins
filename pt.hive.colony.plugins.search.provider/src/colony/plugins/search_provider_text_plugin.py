@@ -58,6 +58,8 @@ class SearchProviderTextPlugin(colony.base.plugin_system.Plugin):
     dependencies = []
     events_handled = []
     events_registrable = []
+    main_modules = ["search_provider.text.search_provider_text_exceptions",
+                    "search_provider.text.search_provider_text_system"]
 
     search_provider_text = None
 
