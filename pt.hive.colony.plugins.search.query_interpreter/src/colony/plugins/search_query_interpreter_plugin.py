@@ -60,6 +60,10 @@ class SearchQueryInterpreterPlugin(colony.base.plugin_system.Plugin):
                     "PLY", "ply", "2.5.x", "http://www.dabeaz.com/ply")]
     events_handled = []
     events_registrable = []
+    main_modules = ["search_query_interpreter.query_interpreter.search_query_interpreter_ast",
+                    "search_query_interpreter.query_interpreter.search_query_interpreter_lexer",
+                    "search_query_interpreter.query_interpreter.search_query_interpreter_parser",
+                    "search_query_interpreter.query_interpreter.search_query_interpreter_system"]
 
     search_query_interpreter = None
 
