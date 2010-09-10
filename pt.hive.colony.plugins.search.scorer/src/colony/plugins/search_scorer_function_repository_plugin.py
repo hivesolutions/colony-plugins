@@ -58,6 +58,8 @@ class SearchScorerFunctionRepositoryPlugin(colony.base.plugin_system.Plugin):
     dependencies = []
     events_handled = []
     events_registrable = []
+    main_modules = ["search_scorer.function_repository.search_scorer_function_repository_exceptions",
+                    "search_scorer.function_repository.search_scorer_function_repository_system"]
 
     search_scorer_function_repository = None
 

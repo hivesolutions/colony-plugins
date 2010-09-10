@@ -61,8 +61,8 @@ class SearchScorerPlugin(colony.base.plugin_system.Plugin):
                     "pt.hive.colony.plugins.search.scorer.metric_repository", "1.0.0")]
     events_handled = []
     events_registrable = []
-
-    search_scorer = None
+    main_modules = ["search_scorer.scorer.search_scorer_exceptions",
+                    "search_scorer.scorer.search_scorer_system"]
 
     search_scorer_function_repository_plugin = None
     search_scorer_metric_repository_plugin = None

@@ -59,6 +59,8 @@ class SearchSorterPlugin(colony.base.plugin_system.Plugin):
                     "pt.hive.colony.plugins.search.scorer", "1.0.0")]
     events_handled = []
     events_registrable = []
+    main_modules = ["search_sorter.sorter.search_sorter_exceptions",
+                    "search_sorter.sorter.search_sorter_system"]
 
     search_sorter = None
 

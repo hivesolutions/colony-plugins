@@ -58,6 +58,8 @@ class SearchScorerMetricRepositoryPlugin(colony.base.plugin_system.Plugin):
     dependencies = []
     events_handled = []
     events_registrable = []
+    main_modules = ["search_scorer.metric_repository.search_scorer_metric_repository_exceptions",
+                    "search_scorer.metric_repository.search_scorer_metric_repository_system"]
 
     search_scorer_metric_repository = None
 
