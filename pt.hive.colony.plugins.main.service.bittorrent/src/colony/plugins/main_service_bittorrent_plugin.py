@@ -62,7 +62,9 @@ class MainServiceBittorrentPlugin(colony.base.plugin_system.Plugin):
                     "pt.hive.colony.plugins.misc.bencode", "1.0.0")]
     events_handled = []
     events_registrable = []
-    main_modules = ["main_service_bittorrent.bittorrent.main_service_bittorrent_exceptions", "main_service_bittorrent.bittorrent.main_service_bittorrent_system"]
+    main_modules = ["main_service_bittorrent.bittorrent.main_service_bittorrent_exceptions",
+                    "main_service_bittorrent.bittorrent.main_service_bittorrent_parser",
+                    "main_service_bittorrent.bittorrent.main_service_bittorrent_system"]
 
     main_service_bittorrent = None
 
