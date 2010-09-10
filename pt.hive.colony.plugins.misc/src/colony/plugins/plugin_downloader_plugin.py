@@ -63,6 +63,8 @@ class PluginDownloaderPlugin(colony.base.plugin_system.Plugin):
                     "pt.hive.colony.plugins.misc.dependencies_calculator", "1.0.0", False)]
     events_handled = []
     events_registrable = []
+    main_modules = ["misc.plugin_downloader.console_plugin_downloader",
+                    "misc.plugin_downloader.plugin_downloader_system"]
 
     plugin_downloader = None
     console_plugin_downloader = None
@@ -79,9 +81,9 @@ class PluginDownloaderPlugin(colony.base.plugin_system.Plugin):
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
         global misc
-        import misc.plugin_downloader.plugin_downloading_system
+        import misc.plugin_downloader.plugin_downloader_system
         import misc.plugin_downloader.console_plugin_downloader
-        self.plugin_downloader = misc.plugin_downloader.plugin_downloading_system.PluginDownloader(self)
+        self.plugin_downloader = misc.plugin_downloader.plugin_downloader_system.PluginDownloader(self)
         self.console_plugin_downloader = misc.plugin_downloader.console_plugin_downloader.ConsolePluginDownloader(self)
         self.plugin_downloader.load_plugin_downloader()
 

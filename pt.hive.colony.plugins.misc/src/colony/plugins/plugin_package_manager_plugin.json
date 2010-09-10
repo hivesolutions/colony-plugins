@@ -14,6 +14,6 @@
     "resources" : ["plugin_package_manager_plugin.py", "misc/__init__.py",
             "misc/plugin_package_manager/__init__.py",
             "misc/plugin_package_manager/console_plugin_package_manager.py",
-            "misc/plugin_package_manager/plugin_package_managing_system.py",
+            "misc/plugin_package_manager/plugin_package_manager_system.py",
             "misc/plugin_package_manager/resources/baf.xml"]
 }

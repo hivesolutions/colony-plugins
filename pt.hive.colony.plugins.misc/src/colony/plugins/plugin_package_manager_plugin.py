@@ -58,6 +58,8 @@ class PluginPackageManagerPlugin(colony.base.plugin_system.Plugin):
     dependencies = []
     events_handled = []
     events_registrable = []
+    main_modules = ["misc.plugin_package_manager.console_plugin_package_manager",
+                    "misc.plugin_package_manager.plugin_package_manager_system"]
 
     plugin_package_manager = None
     console_plugin_package_manager = None
@@ -65,9 +67,9 @@ class PluginPackageManagerPlugin(colony.base.plugin_system.Plugin):
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
         global misc
-        import misc.plugin_package_manager.plugin_package_managing_system
+        import misc.plugin_package_manager.plugin_package_manager_system
         import misc.plugin_package_manager.console_plugin_package_manager
-        self.plugin_package_manager = misc.plugin_package_manager.plugin_package_managing_system.PluginPackageManager(self)
+        self.plugin_package_manager = misc.plugin_package_manager.plugin_package_manager_system.PluginPackageManager(self)
         self.console_plugin_package_manager = misc.plugin_package_manager.console_plugin_package_manager.ConsolePluginPackageManager(self)
 
     def end_load_plugin(self):

@@ -58,6 +58,8 @@ class GarbageCollectorPlugin(colony.base.plugin_system.Plugin):
     dependencies = []
     events_handled = []
     events_registrable = []
+    main_modules = ["misc.garbage_collector.console_garbage_collector",
+                    "misc.garbage_collector.garbage_collector_system"]
 
     garbage_collector = None
     console_garbage_collector = None
@@ -65,9 +67,9 @@ class GarbageCollectorPlugin(colony.base.plugin_system.Plugin):
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
         global misc
-        import misc.garbage_collector.garbage_collecting_system
+        import misc.garbage_collector.garbage_collector_system
         import misc.garbage_collector.console_garbage_collector
-        self.garbage_collector = misc.garbage_collector.garbage_collecting_system.GarbageCollector(self)
+        self.garbage_collector = misc.garbage_collector.garbage_collector_system.GarbageCollector(self)
         self.console_garbage_collector = misc.garbage_collector.console_garbage_collector.ConsoleGarbageCollector(self)
 
     def end_load_plugin(self):

@@ -59,7 +59,7 @@ class DownloaderPlugin(colony.base.plugin_system.Plugin):
     events_handled = []
     events_registrable = []
     main_modules = ["misc.downloader.console_downloader",
-                    "misc.downloader.downloading_system"]
+                    "misc.downloader.downloader_system"]
 
     downloader = None
     console_downloader = None
@@ -67,9 +67,9 @@ class DownloaderPlugin(colony.base.plugin_system.Plugin):
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
         global misc
-        import misc.downloader.downloading_system
+        import misc.downloader.downloader_system
         import misc.downloader.console_downloader
-        self.downloader = misc.downloader.downloading_system.Downloader(self)
+        self.downloader = misc.downloader.downloader_system.Downloader(self)
         self.console_downloader = misc.downloader.console_downloader.ConsoleDownloader(self)
 
     def end_load_plugin(self):

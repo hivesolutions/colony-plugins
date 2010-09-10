@@ -58,14 +58,15 @@ class TimerPlugin(colony.base.plugin_system.Plugin):
     dependencies = []
     events_handled = []
     events_registrable = []
+    main_modules = ["misc.timer.timer_system"]
 
     codebase = None
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
         global misc
-        import misc.timer.timer
-        self.codebase = misc.timer.timer.Timer(self)
+        import misc.timer.timer_system
+        self.codebase = misc.timer.timer_system.Timer(self)
 
     def end_load_plugin(self):
         colony.base.plugin_system.Plugin.end_load_plugin(self)

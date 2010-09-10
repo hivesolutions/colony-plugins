@@ -13,6 +13,6 @@
     "main_file" : "bitmap_loader_plugin.py",
     "resources" : ["bitmap_loader_plugin.py", "misc/__init__.py",
             "misc/bitmap_loader/__init__.py",
-            "misc/bitmap_loader/bitmap_loading_system.py",
+            "misc/bitmap_loader/bitmap_loader_system.py",
             "misc/bitmap_loader/resources/baf.xml"]
 }

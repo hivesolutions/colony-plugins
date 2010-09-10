@@ -59,6 +59,7 @@ class ImageTreatmentPlugin(colony.base.plugin_system.Plugin):
                     "Python Imaging Library (PIL)", "PIL", "1.1.x", "http://www.pythonware.com/products/pil")]
     events_handled = []
     events_registrable = []
+    main_modules = ["misc.image_treatment.image_treatment_system"]
 
     image_treatment = None
 

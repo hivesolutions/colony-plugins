@@ -59,14 +59,15 @@ class BitmapLoaderPlugin(colony.base.plugin_system.Plugin):
                     "Wx Python", "wx", "2.8.7.x", "http://wxpython.org")]
     events_handled = []
     events_registrable = []
+    main_modules = ["misc.bitmap_loader.bitmap_loader_system"]
 
     bitmap_loader = None
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
         global misc
-        import misc.bitmap_loader.bitmap_loading_system
-        self.bitmap_loader = misc.bitmap_loader.bitmap_loading_system.BitmapLoader(self)
+        import misc.bitmap_loader.bitmap_loader_system
+        self.bitmap_loader = misc.bitmap_loader.bitmap_loader_system.BitmapLoader(self)
 
     def end_load_plugin(self):
         colony.base.plugin_system.Plugin.end_load_plugin(self)

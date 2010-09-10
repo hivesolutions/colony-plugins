@@ -25,7 +25,7 @@
             "misc/__init__.py",
             "misc/plugin_downloader/__init__.py",
             "misc/plugin_downloader/console_plugin_downloader.py",
-            "misc/plugin_downloader/plugin_downloading_system.py",
+            "misc/plugin_downloader/plugin_downloader_system.py",
             "misc/plugin_downloader/resources/baf.xml",
             "misc/plugin_downloader/resources/repositories.xml",
             "misc/plugin_downloader/resources/schema/repository_descriptor.xml",
