@@ -58,6 +58,7 @@ class MainRemoteManagerPlugin(colony.base.plugin_system.Plugin):
     dependencies = []
     events_handled = []
     events_registrable = []
+    main_modules = ["main_remote.manager.main_remote_manager_system"]
 
     main_remote_manager = None
 
