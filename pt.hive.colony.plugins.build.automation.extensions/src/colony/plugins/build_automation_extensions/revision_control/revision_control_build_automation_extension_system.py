@@ -49,7 +49,10 @@ TARGET_PATH_VALUE = "target_path"
 """ The target path value """
 
 REPOSITORY_PATH_VALUE = "repository_path_value"
-""" the repository path value """
+""" The repository path value """
+
+VERSION_FILE_PATH_VALUE = "version_file_path_value"
+""" The version file path value """
 
 class RevisionControlBuildAutomationExtension:
     """
@@ -77,6 +80,7 @@ class RevisionControlBuildAutomationExtension:
         adapter = parameters[ADAPTER_VALUE]
         path = parameters[PATH_VALUE]
         target_path = parameters[TARGET_PATH_VALUE]
+        version_file_path = parameters.get(VERSION_FILE_PATH_VALUE, None)
 
         # creates the revision control parameters
         revision_control_parameters = {REPOSITORY_PATH_VALUE : target_path}
@@ -87,7 +91,27 @@ class RevisionControlBuildAutomationExtension:
         # in case the target path already exists
         if os.path.exists(target_path):
             # updates the repository to the current head revision
-            revision_control_manager.update([target_path], None)
+            revision = revision_control_manager.update([target_path], None)
         else:
             # checks out the repository to the target path
-            revision_control_manager.checkout(path, target_path)
+            revision = revision_control_manager.checkout(path, target_path)
+
+        # writes the version number in case it is defined
+        version_file_path and self._write_version_number(version_file_path, revision)
+
+    def _write_version_number(self, version_file_path, revision):
+        # retrieves the revision number
+        revision_number = revision.get_number()
+
+        # converts the revision number to a string
+        revision_number_string = str(revision_number)
+
+        # opens the version file
+        version_file = open(version_file_path, "wb")
+
+        try:
+            # writes the revision number string value
+            version_file.write(revision_number_string)
+        finally:
+            # closes the version file
+            version_file.close()
