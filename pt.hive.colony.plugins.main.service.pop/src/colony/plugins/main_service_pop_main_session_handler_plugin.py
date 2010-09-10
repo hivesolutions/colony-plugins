@@ -59,7 +59,8 @@ class MainServicePopMainSessionHandlerPlugin(colony.base.plugin_system.Plugin):
     dependencies = []
     events_handled = []
     events_registrable = []
-    main_modules = ["main_service_pop_main_session_handler.main_session_handler.main_service_pop_main_session_handler_system"]
+    main_modules = ["main_service_pop_main_session_handler.main_session_handler.main_service_pop_main_session_handler_exceptions",
+                    "main_service_pop_main_session_handler.main_session_handler.main_service_pop_main_session_handler_system"]
 
     main_service_pop_main_session_handler = None
 
