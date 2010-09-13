@@ -44,6 +44,15 @@ import colony.libs.path_util
 TARGET_DIRECTORY_VALUE = "target_directory"
 """ The target directory value """
 
+LATEST_FILE_NAME = "LATEST"
+""" The latest file name """
+
+CURRENT_DIRECTORY_NAME = "current"
+""" The latest file name """
+
+NT_PLATFORM_VALUE = "nt"
+""" The nt platform value """
+
 class ContinuousIntegrationBuildAutomationExtension:
     """
     The continuous integration build automation extension class.
@@ -75,10 +84,20 @@ class ContinuousIntegrationBuildAutomationExtension:
         # converts the version to string
         version_string = str(version)
 
+        # creates the deployment version path, representing the
+        # path to the directory to the current version
         deployment_version_path = deployment_path + "/" + version_string
 
+        # in case the deployment version path does not exist
         if not os.path.exists(deployment_version_path):
+            # creates the directories for the deployment version path
             os.makedirs(deployment_version_path)
+
+        # creates the latest version path
+        latest_version_path = deployment_path + "/" + LATEST_FILE_NAME
+
+        # writes the version number
+        self._write_version_number(latest_version_path, version)
 
         # retrieves the build properties
         build_properties = build_automation_structure.get_all_build_properties()
@@ -88,6 +107,27 @@ class ContinuousIntegrationBuildAutomationExtension:
 
         # copies the target directory to the deployment version path (directory)
         colony.libs.path_util.copy_directory(target_directory, deployment_version_path)
+
+        # creates the current version path
+        current_version_path = deployment_path + "/" + CURRENT_DIRECTORY_NAME
+
+        # creates a symbolic link between the deployment version path and the current
+        # version path
+        os.symlink(deployment_version_path, current_version_path) #@UndefinedVariable
+
+    def _write_version_number(self, version_file_path, version_number):
+        # converts the version number to a string
+        version_number_string = str(version_number)
+
+        # opens the version file
+        version_file = open(version_file_path, "wb")
+
+        try:
+            # writes the version number string value
+            version_file.write(version_number_string)
+        finally:
+            # closes the version file
+            version_file.close()
 
     def _get_version(self, version_file_path):
         # opens the version file
@@ -108,3 +148,28 @@ class ContinuousIntegrationBuildAutomationExtension:
 
         # returns the revision number
         return revision_number
+
+def copylink(target_path, link_path):
+    """
+    Copies the target path into the path defined
+    in the link path.
+    This function acts as a stub for the symlink function.
+
+    @type target_path: String
+    @param target_path: The target path to the link.
+    @type link_path: String
+    @param link_path: The path to the "link".
+    """
+
+    # in case the directory exists
+    if os.path.exists(link_path):
+        # removes the directory in the link path
+        colony.libs.path_util.remove_directory(link_path)
+
+    # copies the directory in the target path to the link path
+    colony.libs.path_util.copy_directory(target_path, link_path)
+
+# in case the current platform is windows
+if os.name == NT_PLATFORM_VALUE:
+    # sets the symlink function as the copy link
+    os.symlink = copylink
