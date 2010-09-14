@@ -44,10 +44,10 @@ import colony.libs.path_util
 TARGET_DIRECTORY_VALUE = "target_directory"
 """ The target directory value """
 
-LATEST_FILE_NAME = "LATEST"
+LATEST_FILE_NAME = "LATEST.version"
 """ The latest file name """
 
-CURRENT_DIRECTORY_NAME = "current"
+LATEST_DIRECTORY_NAME = "LATEST"
 """ The latest file name """
 
 NT_PLATFORM_VALUE = "nt"
@@ -108,12 +108,12 @@ class ContinuousIntegrationBuildAutomationExtension:
         # copies the target directory to the deployment version path (directory)
         colony.libs.path_util.copy_directory(target_directory, deployment_version_path)
 
-        # creates the current version path
-        current_version_path = deployment_path + "/" + CURRENT_DIRECTORY_NAME
+        # creates the latest version path
+        latest_version_path = deployment_path + "/" + LATEST_DIRECTORY_NAME
 
-        # creates a symbolic link between the deployment version path and the current
+        # creates a symbolic link between the deployment version path and the latest
         # version path
-        os.symlink(deployment_version_path, current_version_path) #@UndefinedVariable
+        os.symlink(deployment_version_path, latest_version_path) #@UndefinedVariable
 
     def _write_version_number(self, version_file_path, version_number):
         # converts the version number to a string
