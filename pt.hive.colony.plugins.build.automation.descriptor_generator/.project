@@ -3,6 +3,7 @@
 	<name>pt.hive.colony.plugins.build.automation.descriptor_generator</name>
 	<comment></comment>
 	<projects>
+		<project>pt.hive.colony</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>
