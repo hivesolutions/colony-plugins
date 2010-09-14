@@ -139,35 +139,63 @@ class BuildAutomationValidator:
 
         # validates all plugins
         for plugin in plugins:
-            # retrieves the plugin path
-            plugin_path = self.build_automation_validator_plugin.manager.get_plugin_path_by_id(plugin.id)
+            self._validate_build_automation_plugin(plugin)
 
-            # retrieves the plugin module name
-            plugin_module_name = self.build_automation_validator_plugin.manager.get_plugin_module_name_by_id(plugin.id)
+    def validate_build_automation_plugin(self, plugin_id):
+        # retrieves the plugin
+        plugin = self.build_automation_validator_plugin.manager.get_plugin_by_id(plugin_id)
 
-            # retrieves the plugin file path map for the plugin's path
-            plugin_file_path_map = self.get_file_path_map(plugin_path)
+        # validates the plugin
+        valid = self._validate_build_automation_plugin(plugin)
 
-            # validates the plugin
-            self._validate_plugin(plugin, plugin_path, plugin_module_name, plugin_file_path_map)
+        # returns the plugin's validity
+        return valid
 
-            # validates the plugin descriptor file
-            self._validate_plugin_descriptor_file(plugin, plugin_path, plugin_module_name, plugin_file_path_map)
+    def _validate_build_automation_plugin(self, plugin):
+        # retrieves the plugin path
+        plugin_path = self.build_automation_validator_plugin.manager.get_plugin_path_by_id(plugin.id)
 
-            # validates the build automation file
-            self._validate_build_automation_file(plugin, plugin_path)
+        # retrieves the plugin module name
+        plugin_module_name = self.build_automation_validator_plugin.manager.get_plugin_module_name_by_id(plugin.id)
+
+        # retrieves the plugin file path map for the plugin's path
+        plugin_file_path_map = self.get_file_path_map(plugin_path)
+
+        # initializes the valid flag
+        valid = True
+
+        # validates the plugin
+        valid = valid & self._validate_plugin(plugin, plugin_path, plugin_module_name, plugin_file_path_map)
+
+        # validates the plugin descriptor file
+        valid = valid & self._validate_plugin_descriptor_file(plugin, plugin_path, plugin_module_name, plugin_file_path_map)
+
+        # validates the build automation file
+        valid = valid & self._validate_build_automation_file(plugin, plugin_path)
+
+        # returns the validity
+        return valid
 
     def _validate_plugin(self, plugin, plugin_path, plugin_module_name, plugin_file_path_map):
+        # initializes the valid flag
+        valid = True
+
         # validates the plugin's capabilities
-        self.__validate_plugin_capabilities(plugin)
+        valid = valid & self.__validate_plugin_capabilities(plugin)
 
         # validates the plugin's main modules
-        self.__validate_plugin_main_modules(plugin, plugin_path, plugin_module_name, plugin_file_path_map)
+        valid = valid & self.__validate_plugin_main_modules(plugin, plugin_path, plugin_module_name, plugin_file_path_map)
 
         # validates the plugin's file path
-        self.__validate_plugin_file_path(plugin, plugin_path, plugin_module_name)
+        valid = valid & self.__validate_plugin_file_path(plugin, plugin_path, plugin_module_name)
+
+        # returns the validity
+        return valid
 
     def __validate_plugin_file_path(self, plugin, plugin_path, plugin_module_name):
+        # initializes the valid flag
+        valid = True
+
         # tokenizes the plugin module name
         plugin_module_name_tokens = plugin_module_name.split("_")
 
@@ -176,6 +204,7 @@ class BuildAutomationValidator:
 
         # checks if the plugin class name matches the plugin module name
         if not plugin_class_name == plugin.__class__.__name__:
+            valid = False
             print "'%s' has a class name that does not match its file name" % (plugin.id)
 
         # defines the plugin file name
@@ -186,24 +215,40 @@ class BuildAutomationValidator:
 
         # checks that the plugin file exists
         if not os.path.exists(plugin_file_path):
+            valid = False
             print "'%s' is missing file '%s'" % (plugin.id, plugin_file_name)
 
+        # returns the validity
+        return valid
+
     def __validate_plugin_capabilities(self, plugin):
+        # initializes the valid flag
+        valid = True
+
         # checks for duplicate capabilities in the plugin
         if not len(plugin.capabilities) == len(list(set(plugin.capabilities))):
+            valid = False
             print "'%s' has duplicate capabilities" % (plugin.id)
 
         # returns in case the plugin is in the build automation item capability exclusion list
         if plugin.id in BUILD_AUTOMATION_ITEM_CAPABILITY_PLUGIN_EXCLUSION_LIST:
-            return
+            return False
 
         # checks if the plugin has a build automation item capability
         if not BUILD_AUTOMATION_ITEM_CAPABILITY in plugin.capabilities:
+            valid = False
             print "'%s' is missing 'build_automation_item' capability" % (plugin.id)
 
+        # returns the validity flag
+        return valid
+
     def __validate_plugin_main_modules(self, plugin, plugin_path, plugin_module_name, plugin_file_path_map):
+        # initializes the valid flag
+        valid = True
+
         # checks for duplicate main modules in the plugin
         if not len(plugin.main_modules) == len(list(set(plugin.main_modules))):
+            valid = False
             print "'%s' has duplicate main modules" % (plugin.id)
 
         # checks that plugin's main modules exist
@@ -219,6 +264,7 @@ class BuildAutomationValidator:
 
             # checks if the main module exists
             if not os.path.exists(main_module_path):
+                valid = False
                 print "'%s' is missing main module '%s'" % (plugin.id, main_module)
 
         # retrieves the plugin system file name
@@ -229,7 +275,7 @@ class BuildAutomationValidator:
             print "'%s' is missing system file" % (plugin.id)
 
             # returns since nothing else can be tested
-            return
+            return False
 
         # retrieves the plugin system file path
         plugin_system_file_path = plugin_file_path_map[plugin_system_file_name]
@@ -263,9 +309,16 @@ class BuildAutomationValidator:
 
             # checks if the main module exists in the plugin
             if not main_module in plugin.main_modules:
+                valid = False
                 print "'%s' is missing main module declaration for file '%s'" % (plugin.id, main_module_file_name)
 
+        # returns the validity
+        return valid
+
     def _validate_plugin_descriptor_file(self, plugin, plugin_path, plugin_module_name, plugin_file_path_map):
+        # initializes the valid flag
+        valid = True
+
         # defines the plugin descriptor file name
         plugin_descriptor_file_name = plugin_module_name + JSON_FILE_EXTENSION
 
@@ -277,30 +330,39 @@ class BuildAutomationValidator:
             print "'%s' is missing file '%s'" % (plugin.id, plugin_descriptor_file_name)
 
             # returns since no more validations can be performed
-            return
+            return False
 
         try:
             # retrieves the plugin descriptor data
             plugin_descriptor_data = self.get_json_data(plugin_descriptor_file_path)
         except Exception:
             print "'%s' descriptor file has invalid syntax" % (plugin.id)
+
+            # returns since no more validations can be performed
+            return False
         else:
             # validates the plugin descriptor file attributes
-            self.__validate_plugin_descriptor_file_attributes(plugin, plugin_descriptor_data)
+            valid = valid & self.__validate_plugin_descriptor_file_attributes(plugin, plugin_descriptor_data)
 
             # validates the plugin descriptor file capabilities
-            self.__validate_plugin_descriptor_file_capabilities(plugin, plugin_descriptor_data)
+            valid = valid & self.__validate_plugin_descriptor_file_capabilities(plugin, plugin_descriptor_data)
 
             # validates the plugin descriptor file capabilities allowed
-            self.__validate_plugin_descriptor_file_capabilities_allowed(plugin, plugin_descriptor_data)
+            valid = valid & self.__validate_plugin_descriptor_file_capabilities_allowed(plugin, plugin_descriptor_data)
 
             # validates the plugin descriptor file dependencies
-            self.__validate_plugin_descriptor_file_dependencies(plugin, plugin_descriptor_data)
+            valid = valid & self.__validate_plugin_descriptor_file_dependencies(plugin, plugin_descriptor_data)
 
             # validates the plugin descriptor file resources
-            self.__validate_plugin_descriptor_file_resources(plugin, plugin_path, plugin_module_name, plugin_file_path_map, plugin_descriptor_data)
+            valid = valid & self.__validate_plugin_descriptor_file_resources(plugin, plugin_path, plugin_module_name, plugin_file_path_map, plugin_descriptor_data)
+
+        # returns the validity
+        return valid
 
     def __validate_plugin_descriptor_file_attributes(self, plugin, plugin_descriptor_data):
+        # initializes the valid flag
+        valid = True
+
         # searches for plugin descriptor attributes with invalid content
         for plugin_descriptor_attribute_name, plugin_attribute_name in PLUGIN_DESCRIPTOR_ATTRIBUTES_MAP.items():
             # retrieves the plugin descriptor data attribute
@@ -317,26 +379,42 @@ class BuildAutomationValidator:
 
             # checks if the attributes are the same
             if not plugin_descriptor_data_attribute_unicode == plugin_attribute_unicode:
+                valid = False
                 print "'%s' descriptor file has invalid attribute '%s'" % (plugin.id, plugin_descriptor_attribute_name)
 
+        # returns the validity
+        return valid
+
     def __validate_plugin_descriptor_file_capabilities(self, plugin, plugin_descriptor_data):
+        # initializes the valid flag
+        valid = True
+
         # retrieves the plugin descriptor data capabilities
         plugin_descriptor_data_capabilities = plugin_descriptor_data[CAPABILITIES_VALUE]
 
         # checks for duplicate capabilities
         if not len(plugin_descriptor_data_capabilities) == len(list(set(plugin_descriptor_data_capabilities))):
+            valid = False
             print "'%s' descriptor file has duplicate capabilities" % (plugin.id)
 
+        # returns the validity
+        return valid
+
     def __validate_plugin_descriptor_file_capabilities_allowed(self, plugin, plugin_descriptor_data):
+        # initializes the valid flag
+        valid = True
+
         # retrieves the plugin descriptor data capabilities allowed
         plugin_descriptor_data_capabilities_allowed = plugin_descriptor_data[CAPABILITIES_ALLOWED_VALUE]
 
         # checks for duplicate capabilities allowed
         if not len(plugin_descriptor_data_capabilities_allowed) == len(list(set(plugin_descriptor_data_capabilities_allowed))):
+            valid = False
             print "'%s' descriptor file has duplicate capabilities allowed" % (plugin.id)
 
         # checks if the number of capabilities allowed is the same as in the plugin
         if not len(plugin_descriptor_data_capabilities_allowed) == len(plugin.capabilities_allowed):
+            valid = False
             print "'%s' descriptor file doesn't have as many capabilities allowed has the plugin" % (plugin.id)
 
         # checks that the capabilites allowed are the same
@@ -359,9 +437,15 @@ class BuildAutomationValidator:
                 print "'%s' descriptor file has invalid attribute 'capabilities_allowed'" % (plugin.id)
 
                 # returns now that the attribute has been considered invalid
-                return
+                return False
+
+        # returns the validity
+        return valid
 
     def __validate_plugin_descriptor_file_dependencies(self, plugin, plugin_descriptor_data):
+        # initializes the valid flag
+        valid = True
+
         # retrieves the plugin's dependencies
         plugin_dependencies = plugin.get_all_plugin_dependencies()
 
@@ -373,7 +457,7 @@ class BuildAutomationValidator:
             print "'%s' descriptor file doesn't have as many dependencies has the plugin" % (plugin.id)
 
             # returns since no more validations can be performed
-            return
+            return False
 
         # checks that the dependencies in the plugin descriptor file match the plugin's and are in the same order
         for plugin_dependency_index in range(len(plugin_dependencies)):
@@ -388,6 +472,7 @@ class BuildAutomationValidator:
 
             # checks if the dependency ids match
             if not plugin_descriptor_data_dependency_id == plugin_dependency.plugin_id:
+                valid = False
                 print "'%s' descriptor file dependency '%s' doesn't exist or is not in correct order" % (plugin.id, plugin_descriptor_data_dependency_id)
 
             # retrieves the plugin descriptor data dependency version
@@ -395,14 +480,22 @@ class BuildAutomationValidator:
 
             # checks if the dependency versions match
             if not plugin_descriptor_data_dependency_version == plugin_dependency.plugin_version:
+                valid = False
                 print "'%s' descriptor file dependency '%s' doesn't have the same version has the plugin" % (plugin.id)
 
+        # returns the validity
+        return valid
+
     def __validate_plugin_descriptor_file_resources(self, plugin, plugin_path, plugin_module_name, plugin_file_path_map, plugin_descriptor_data):
+        # initializes the valid flag
+        valid = True
+
         # retrieves the plugin descriptor data resources
         plugin_descriptor_data_resources = plugin_descriptor_data[RESOURCES_VALUE]
 
         # checks for duplicate resource paths
         if not len(plugin_descriptor_data_resources) == len(list(set(plugin_descriptor_data_resources))):
+            valid = False
             print "'%s' descriptor file has duplicate resource paths" % (plugin.id)
 
         # retrieves the plugin system file name
@@ -410,7 +503,7 @@ class BuildAutomationValidator:
 
         # returns in case the system file doesn't exist
         if not plugin_system_file_name in plugin_file_path_map:
-            return
+            return False
 
         # retrieves the plugin system file path
         plugin_system_file_path = plugin_file_path_map[plugin_system_file_name]
@@ -426,7 +519,7 @@ class BuildAutomationValidator:
             print "'%s' descriptor file doesn't have as many resources has the plugin" % (plugin.id)
 
             # returns since nothing else can be tested
-            return
+            return False
 
         # retrieves the plugin root directory path
         plugin_root_directory_path = self.get_plugin_root_directory_path(plugin_system_file_path)
@@ -436,6 +529,7 @@ class BuildAutomationValidator:
 
         # checks if there's a resource declaration for the root init resource file
         if not plugin_root_init_file_path in plugin_descriptor_data_resources:
+            valid = False
             print "'%s' descriptor file is missing resource declaration for file '%s'" % (plugin.id, plugin_root_init_file_path)
 
         # looks for resource declarations in the descriptor for each of the discovered resource files
@@ -451,15 +545,22 @@ class BuildAutomationValidator:
 
             # checks if there's a resource declaration for the resource file
             if not base_resource_file_path in plugin_descriptor_data_resources:
+                valid = False
                 print "'%s' descriptor file is missing resource declaration for file '%s'" % (plugin.id, resource_file_name)
 
+        # returns the validity
+        return valid
+
     def _validate_build_automation_file(self, plugin, plugin_path):
+        # initializes the valid flag
+        valid = True
+
         # checks if the build automation file path is specified in the plugin attributes
         if not BUILD_AUTOMATION_FILE_PATH_ATTRIBUTE in plugin.attributes:
             print "'%s' is missing the 'build_automation_file_path' attribute" % (plugin.id)
 
             # returns in case no build automation file path has been specified
-            return
+            return False
 
         # retrieves the base build automation file path
         base_build_automation_file_path = plugin.attributes[BUILD_AUTOMATION_FILE_PATH_VALUE]
@@ -469,7 +570,11 @@ class BuildAutomationValidator:
 
         # checks for the existence of the build automation file
         if not build_automation_file_path or not os.path.exists(build_automation_file_path):
+            valid = False
             print "'%s' is missing the referenced build automation file" % (plugin.id)
+
+        # returns the validity
+        return valid
 
     def get_json_data(self, json_file_path):
         # reads the json file

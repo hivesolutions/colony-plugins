@@ -113,3 +113,6 @@ class BuildAutomationValidatorPlugin(colony.base.plugin_system.Plugin):
 
     def validate_build_automation(self):
         self.build_automation_validator.validate_build_automation()
+
+    def validate_build_automation_plugin(self, plugin_id):
+        return self.build_automation_validator.validate_build_automation_plugin(plugin_id)
