@@ -21,7 +21,8 @@
                 "version" : "1.0.0"
             }],
     "main_file" : "main_service_abecula_communication_push_handler_plugin.py",
-    "resources" : ["main_service_abecula_communication_push_handler_plugin.py",
+    "resources" : [
+            "main_service_abecula_communication_push_handler_plugin.py",
             "main_service_abecula_communication_push_handler/__init__.py",
             "main_service_abecula_communication_push_handler/communication_push_handler/__init__.py",
             "main_service_abecula_communication_push_handler/communication_push_handler/main_service_abecula_communication_push_handler_exceptions.py",
