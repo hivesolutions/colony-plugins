@@ -17,6 +17,6 @@
             "main_localization_translation_bundle_en_us/__init__.py",
             "main_localization_translation_bundle_en_us/en_us/__init__.py",
             "main_localization_translation_bundle_en_us/en_us/main_localization_translation_bundle_en_us_system.py",
-            "main_localization_translation_bundle_en_us/en_us/resources/localization_bundle_en_us.json",
-            "main_localization_translation_bundle_en_us/en_us/resources/baf.xml"]
+            "main_localization_translation_bundle_en_us/en_us/resources/baf.xml",
+            "main_localization_translation_bundle_en_us/en_us/resources/localization_bundle_en_us.json"]
 }
