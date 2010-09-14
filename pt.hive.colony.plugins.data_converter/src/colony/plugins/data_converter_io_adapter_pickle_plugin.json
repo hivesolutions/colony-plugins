@@ -17,7 +17,6 @@
     "main_file" : "data_converter_io_adapter_pickle_plugin.py",
     "resources" : [
             "data_converter_io_adapter_pickle_plugin.py",
-            "data_converter/__init__.py",
             "data_converter_io_adapter_pickle/__init__.py",
             "data_converter_io_adapter_pickle/io_adapter_pickle/__init__.py",
             "data_converter_io_adapter_pickle/io_adapter_pickle/data_converter_io_adapter_pickle_exceptions.py",
