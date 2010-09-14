@@ -41,7 +41,7 @@
         <url>http://www.hive.pt</url>
     </artifact>
     <build>
-        <default_stage>build</default_stage>
+        <default_stage>install</default_stage>
         <clean_target_directory>true</clean_target_directory>
         <plugins>
             <plugin>
@@ -55,7 +55,7 @@
             <plugin>
                 <id>pt.hive.colony.plugins.build.automation.extensions.revision_control</id>
                 <version>1.0.0</version>
-                <stage>build</stage>
+                <stage>install</stage>
                 <configuration>
                     <adapter>svn</adapter>
                     <path>http://svn.hive.pt/hive-main/pt.hive.colony/trunk</path>
@@ -66,7 +66,7 @@
             <plugin>
                 <id>pt.hive.colony.plugins.build.automation.extensions.command_execution</id>
                 <version>1.0.0</version>
-                <stage>build</stage>
+                <stage>install</stage>
                 <configuration>
                     <command>python</command>
                     <arguments>
@@ -82,7 +82,7 @@
             <plugin>
                 <id>pt.hive.colony.plugins.build.automation.extensions.continuous_integration</id>
                 <version>1.0.0</version>
-                <stage>build</stage>
+                <stage>install</stage>
                 <configuration>
                     <deployment_path>C:/matias</deployment_path>
                     <version_file_path>${build_automation.build.target_directory}/version</version_file_path>
