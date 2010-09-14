@@ -80,6 +80,9 @@ COLONY_ARTIFACT_VALUE = "colony"
 DEFAULT_STAGE_VALUE = "default_stage"
 """ The default stage value """
 
+BUILD_AUTOMATION_STAGES = ("compile", "test", "package", "install", "deploy", "clean", "site", "site-deploy")
+""" The build automation stages """
+
 class BuildAutomation:
     """
     The build automation class.
@@ -117,9 +120,6 @@ class BuildAutomation:
 
     base_build_automation_structure = None
     """ the base build automation structure """
-
-    stages = ["compile", "test", "package", "install", "deploy", "clean", "site", "site-deploy"]
-    """ The build automation stages """
 
     def __init__(self, build_automation_plugin):
         """

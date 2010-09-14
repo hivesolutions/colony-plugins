@@ -8,25 +8,8 @@
     "version" : "1.0.0",
     "author" : "Hive Solutions Lda. <development@hive.pt>",
     "capabilities" : ["build_automation", "console_command_extension"],
-    "capabilities_allowed" : ["build_automation_extension",
-            "build_automation_item"],
-    "dependencies" : [{
-                "id" : "pt.hive.colony.plugins.resources.resource_manager",
-                "version" : "1.0.0"
-            }, {
-                "id" : "pt.hive.colony.plugins.build.automation.extensions.test",
-                "version" : "1.0.0"
-            }],
+    "capabilities_allowed" : ["build_automation_extension", "build_automation_item"],
+    "dependencies" : [{"id" : "pt.hive.colony.plugins.resources.resource_manager", "version" : "1.0.0"}, {"id" : "pt.hive.colony.plugins.build.automation.extensions.test", "version" : "1.0.0"}],
     "main_file" : "build_automation_plugin.py",
-    "resources" : ["build_automation_plugin.py",
-            "build_automation/__init__.py",
-            "build_automation/automation/__init__.py",
-            "build_automation/automation/build_automation_exceptions.py",
-            "build_automation/automation/build_automation_parser.py",
-            "build_automation/automation/build_automation_system.py",
-            "build_automation/automation/console_build_automation.py",
-            "build_automation/automation/resources/baf.xml",
-            "build_automation/automation/resources/base_baf.xml",
-            "build_automation/automation/resources/example_baf.xml",
-            "build_automation/automation/resources/xsd/baf.xsd"]
+    "resources" : ["build_automation_plugin.py", "build_automation/__init__.py", "build_automation/automation/build_automation_exceptions.py", "build_automation/automation/build_automation_parser.py", "build_automation/automation/build_automation_system.py", "build_automation/automation/console_build_automation.py", "build_automation/automation/__init__.py", "build_automation/automation/resources/baf.xml", "build_automation/automation/resources/base_baf.xml", "build_automation/automation/resources/example_baf.xml", "build_automation/automation/resources/xsd/baf.xsd"]
 }

@@ -46,8 +46,8 @@ INVALID_NUMBER_ARGUMENTS_MESSAGE = "invalid number of arguments"
 """ The invalid number of arguments message """
 
 HELP_TEXT = "### BUILD AUTOMATION HELP ###\n\
-run_automation <plugin-id> [stage] [plugin-version] - runs the build automation for the stage in the plugin with the given id and version\n\
-show_all_automation                                 - shows all the build automations"
+run_automation <plugin-id> [recursive_level] [stage] [plugin-version] - runs the build automation for the stage and recursive level in the plugin with the given id and version\n\
+show_all_automation                                                   - shows all the build automations"
 """ The help text """
 
 TABLE_TOP_TEXT = "ID      BUILD AUTOMATION ID"
@@ -106,15 +106,23 @@ class ConsoleBuildAutomation:
         # retrieves the real
         real_plugin_id = self.get_plugin_id(plugin_id)
 
-        if len(args) == 1:
-            # runs the automation for the plugin
-            self.build_automation_plugin.build_automation.run_automation(real_plugin_id)
-        elif len(args) == 2:
-            # retrieves the stage
-            stage = args[1]
+        # sets the default parameter values
+        plugin_version = None
+        stage = None
+        recursive_level = 1
 
-            # runs the automation for the plugin
-            self.build_automation_plugin.build_automation.run_automation(real_plugin_id, None, stage)
+        if len(args) == 2:
+            # retrieves the recursive level
+            recursive_level = int(args[1])
+        elif len(args) == 3:
+            # retrieves the stage
+            stage = args[2]
+        elif len(args) == 4:
+            # retrieves the plugin version
+            plugin_version = args[3]
+
+        # runs the automation for the plugin
+        self.build_automation_plugin.build_automation.run_automation(real_plugin_id, plugin_version, stage, recursive_level)
 
     def process_show_all_automation(self, args, output_method):
         # prints the table top text
