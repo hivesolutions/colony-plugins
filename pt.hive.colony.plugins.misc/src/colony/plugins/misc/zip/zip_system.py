@@ -244,7 +244,7 @@ class Zip:
             self.create_directories(zip_file_path, output_directory)
             self.create_files(zip_file_path, output_directory)
 
-def get_file_paths(path, returned_path_list = []):
+def get_file_paths(path, returned_path_list = None):
     """
     Returns a list with full paths to all files contained within the specified directory.
 
@@ -256,6 +256,9 @@ def get_file_paths(path, returned_path_list = []):
     @return: A list of absolute file paths.
     """
 
+    # retrieves the default returned path list
+    returned_path_list = returned_path_list or []
+
     dir_list = os.listdir(path)
     for fname in dir_list:
         full_path = os.path.join(path, fname)
@@ -264,4 +267,6 @@ def get_file_paths(path, returned_path_list = []):
             returned_path_list.append(full_path)
         else:
             get_file_paths(full_path, returned_path_list)
+
+    # returns the returned path list
     return returned_path_list
