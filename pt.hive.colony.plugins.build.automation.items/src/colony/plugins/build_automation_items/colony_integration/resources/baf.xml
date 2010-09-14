@@ -60,7 +60,7 @@
                     <adapter>svn</adapter>
                     <path>http://svn.hive.pt/hive-main/pt.hive.colony/trunk</path>
                     <target_path>$base{plugin_system_directory}/tmp/checkout/pt.hive.colony</target_path>
-                    <version_file_path>${build_automation.build.target_directory}/version</version_file_path>
+                    <version_file_path>${build_automation.build.resources_directory}/version</version_file_path>
                 </configuration>
             </plugin>
             <plugin>
@@ -85,7 +85,7 @@
                 <stage>install</stage>
                 <configuration>
                     <deployment_path>c:/matias</deployment_path>
-                    <version_file_path>${build_automation.build.target_directory}/version</version_file_path>
+                    <version_file_path>${build_automation.build.resources_directory}/version</version_file_path>
                 </configuration>
             </plugin>
         </plugins>
