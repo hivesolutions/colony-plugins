@@ -259,14 +259,24 @@ def get_file_paths(path, returned_path_list = None):
     # retrieves the default returned path list
     returned_path_list = returned_path_list or []
 
+    # retrieves the directory list for the path
     dir_list = os.listdir(path)
-    for fname in dir_list:
-        full_path = os.path.join(path, fname)
+
+    # iterates over all the file in the directory
+    for file_name in dir_list:
+        # creates the full path by joining the path and the file name
+        full_path = os.path.join(path, file_name)
+
+        # retrieves the mode from the path
         mode = os.stat(full_path)[stat.ST_MODE]
-        if not stat.S_ISDIR(mode):
-            returned_path_list.append(full_path)
-        else:
+
+        # in case the path is a directory
+        if stat.S_ISDIR(mode):
+            # retrieves the file paths for the directory path
             get_file_paths(full_path, returned_path_list)
+        else:
+            # adds the full path to the returned path
+            returned_path_list.append(full_path)
 
     # returns the returned path list
     return returned_path_list
