@@ -596,7 +596,7 @@ class BuildAutomationValidator:
         file_path_map = {}
 
         # crawls the specified path indexing file paths by their file name
-        for root, dirs, files in os.walk(path):
+        for root, _directories, files in os.walk(path):
             for file in files:
                 # indexes the file path by the file name
                 file_path_map[file] = root
@@ -618,7 +618,7 @@ class BuildAutomationValidator:
 
     def get_file_extension(self, file_path):
         # splits the file into base name and extension
-        basename, extension = os.path.splitext(file_path)
+        _base_name, extension = os.path.splitext(file_path)
 
         # returns the extension
         return extension
