@@ -16,7 +16,6 @@
     "main_file" : "main_service_pop_database_message_provider_plugin.py",
     "resources" : [
             "main_service_pop_database_message_provider_plugin.py",
-            "main_service_pop/__init__.py",
             "main_service_pop_database_message_provider/__init__.py",
             "main_service_pop_database_message_provider/database_message_provider/__init__.py",
             "main_service_pop_database_message_provider/database_message_provider/main_service_pop_database_message_provider_system.py",

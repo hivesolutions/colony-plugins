@@ -17,7 +17,6 @@
     "main_file" : "main_service_pop_main_authentication_handler_plugin.py",
     "resources" : [
             "main_service_pop_main_authentication_handler_plugin.py",
-            "main_service_pop/__init__.py",
             "main_service_pop_main_authentication_handler/__init__.py",
             "main_service_pop_main_authentication_handler/main_authentication_handler/__init__.py",
             "main_service_pop_main_authentication_handler/main_authentication_handler/main_service_pop_main_authentication_handler_exceptions.py",

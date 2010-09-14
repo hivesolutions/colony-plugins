@@ -13,7 +13,6 @@
     "main_file" : "main_service_pop_stream_handler_plugin.py",
     "resources" : [
             "main_service_pop_stream_handler_plugin.py",
-            "main_service_pop/__init__.py",
             "main_service_pop_stream_handler/__init__.py",
             "main_service_pop_stream_handler/stream_handler/__init__.py",
             "main_service_pop_stream_handler/stream_handler/main_service_pop_stream_handler_exceptions.py",
