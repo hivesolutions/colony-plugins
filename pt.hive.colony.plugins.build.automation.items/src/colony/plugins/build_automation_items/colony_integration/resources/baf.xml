@@ -42,6 +42,7 @@
     </artifact>
     <build>
         <default_stage>build</default_stage>
+        <clean_target_directory>true</clean_target_directory>
         <plugins>
             <plugin>
                 <id>pt.hive.colony.plugins.build.automation.extensions.packing</id>
