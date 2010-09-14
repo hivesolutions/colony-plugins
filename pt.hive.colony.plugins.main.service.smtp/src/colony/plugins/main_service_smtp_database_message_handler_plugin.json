@@ -16,7 +16,6 @@
     "main_file" : "main_service_smtp_database_message_handler_plugin.py",
     "resources" : [
             "main_service_smtp_database_message_handler_plugin.py",
-            "main_service_smtp/__init__.py",
             "main_service_smtp_database_message_handler/__init__.py",
             "main_service_smtp_database_message_handler/database_message_handler/__init__.py",
             "main_service_smtp_database_message_handler/database_message_handler/main_service_smtp_database_message_handler_exceptions.py",
