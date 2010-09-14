@@ -37,8 +37,8 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-TARGET_DIRECTORY_VALUE = "target_directory"
-""" The target directory value """
+RESOURCES_DIRECTORY_VALUE = "resources_directory"
+""" The resources directory value """
 
 REPOSITORY_DIRECTORY_VALUE = "repository_directory"
 """ The repository directory value """
@@ -80,8 +80,8 @@ class RepositoryGeneratorBuildAutomationExtension:
         # retrieves the build properties
         build_properties = build_automation_structure.get_all_build_properties()
 
-        # retrieves the target directory
-        target_directory = build_properties[TARGET_DIRECTORY_VALUE]
+        # retrieves the resources directory
+        resources_directory = build_properties[RESOURCES_DIRECTORY_VALUE]
 
         # retrieves the repository directory
         repository_directory = build_properties[REPOSITORY_DIRECTORY_VALUE]
@@ -90,7 +90,7 @@ class RepositoryGeneratorBuildAutomationExtension:
         formats = parameters[FORMATS_VALUE].split(",")
 
         # retrieves the source
-        source = parameters.get(SOURCE_VALUE, target_directory)
+        source = parameters.get(SOURCE_VALUE, resources_directory)
 
         # retrieves the target
         target = parameters.get(TARGET_VALUE, repository_directory)
