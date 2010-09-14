@@ -44,8 +44,7 @@ INVALID_NUMBER_ARGUMENTS_MESSAGE = "invalid number of arguments"
 """ The invalid number of arguments message """
 
 HELP_TEXT = "### BUILD AUTOMATION DESCRIPTOR GENERATOR HELP ###\n\
-generate_plugin_descriptor <plugin_id> - generates a plugin descriptor file for a specific plugin\
-generate_plugin_descriptors - generates a plugin descriptor files for all plugins"
+generate_plugin_descriptor [plugin_id] - generates a plugin descriptor file for a specific plugin"
 """ The help text """
 
 class ConsoleBuildAutomationDescriptorGenerator:
@@ -86,8 +85,13 @@ class ConsoleBuildAutomationDescriptorGenerator:
 
     def process_generate_plugin_descriptor(self, args, output_method):
         # returns in case the not enough arguments were provided
-        if len(args) < 1:
+        if len(args) > 1:
             output_method(INVALID_NUMBER_ARGUMENTS_MESSAGE)
+            return
+
+        # generates the descriptors for all plugins in case no argument was specified
+        if len(args) == 0:
+            self.build_automation_descriptor_generator_plugin.generate_plugin_descriptors()
             return
 
         # retrieves the plugin's id

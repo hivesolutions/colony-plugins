@@ -143,7 +143,7 @@ class BuildAutomationValidator:
 
     def validate_build_automation_plugin(self, plugin_id):
         # retrieves the plugin
-        plugin = self.build_automation_validator_plugin.manager.get_plugin_by_id(plugin_id)
+        plugin = self.build_automation_validator_plugin.manager._get_plugin_by_id(plugin_id)
 
         # validates the plugin
         valid = self._validate_build_automation_plugin(plugin)
