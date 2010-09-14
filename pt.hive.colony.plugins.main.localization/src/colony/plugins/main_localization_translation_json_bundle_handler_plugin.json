@@ -17,9 +17,6 @@
     "main_file" : "main_localization_translation_json_bundle_handler_plugin.py",
     "resources" : [
             "main_localization_translation_json_bundle_handler_plugin.py",
-            "main_localization_manager/__init__.py",
-            "main_localization_manager/manager/__init__.py",
-            "main_localization_manager/manager/main_localization_manager_system.py",
             "main_localization_translation_json_bundle_handler/__init__.py",
             "main_localization_translation_json_bundle_handler/translation_json_bundle_handler/__init__.py",
             "main_localization_translation_json_bundle_handler/translation_json_bundle_handler/main_localization_translation_json_bundle_handler_system.py",

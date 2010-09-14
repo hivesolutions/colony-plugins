@@ -14,7 +14,6 @@
     "main_file" : "main_localization_translation_manager_plugin.py",
     "resources" : [
             "main_localization_translation_manager_plugin.py",
-            "main_localization_manager/__init__.py",
             "main_localization_translation_manager/__init__.py",
             "main_localization_translation_manager/translation_manager/__init__.py",
             "main_localization_translation_manager/translation_manager/main_localization_translation_manager_system.py",
