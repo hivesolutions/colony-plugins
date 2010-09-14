@@ -75,7 +75,7 @@
                         <argument>--manager_dir=$base{plugin_system_directory}/tmp/checkout/pt.hive.colony/pt.hive.colony/src</argument>
                         <argument>--execution_command=pt.hive.colony.plugins.build.automation:run_automation pt.hive.colony.plugins.build.automation.items.colony_repository$1.0.0$build</argument>
                     </arguments>
-                    <shell>false</shell>
+                    <shell>true</shell>
                     <timeout>900</timeout>
                 </configuration>
             </plugin>
