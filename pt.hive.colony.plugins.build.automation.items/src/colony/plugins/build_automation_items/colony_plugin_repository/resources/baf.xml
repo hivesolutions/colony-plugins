@@ -44,6 +44,7 @@
         <module>
             <id>pt.hive.colony.plugins.*</id>
             <version>.*</version>
+            <stage>build</stage>
         </module>
     </modules>
     <build>

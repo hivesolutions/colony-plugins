@@ -44,14 +44,17 @@
         <module>
             <id>pt.hive.colony.plugins.build.automation.items.colony_base</id>
             <version>.*</version>
+            <stage>build</stage>
         </module>
         <module>
             <id>pt.hive.colony.plugins.build.automation.items.colony_service</id>
             <version>.*</version>
+            <stage>build</stage>
         </module>
         <module>
             <id>pt.hive.colony.plugins.build.automation.items.colony_base_plugins</id>
             <version>.*</version>
+            <stage>build</stage>
         </module>
     </modules>
     <build>
