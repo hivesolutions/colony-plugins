@@ -66,9 +66,13 @@ class CommandExecutionBuildAutomationExtension:
         arguments = parameters.get("arguments", {})
         _arguments = arguments.get("argument", [])
 
+        # retrieves the shell value from the parameters
+        shell = parameters.get("shell", False) == "true"
+
+        # creates the parameters map for the execution command
         parameters = {"command" : command,
                       "arguments" : _arguments,
-                      "shell" : False}
+                      "shell" : shell}
 
         # executes the command, retrieving the process object
         process = command_execution_plugin.execute_command_parameters(parameters)
