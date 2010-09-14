@@ -112,8 +112,8 @@ class ContinuousIntegrationBuildAutomationExtension:
         zip_plugin = self.continuous_integration_build_automation_extension_plugin.zip_plugin
 
         # creates the plugin file (@todo this should be re-created !!!)
-        zip_plugin.zip(latest_version_path + "/plugins.zip", latest_version_path + "/plugins")
-        zip_plugin.zip(latest_version_path + "/repository.zip", latest_version_path + "/repository")
+        zip_plugin.zip(deployment_version_path + "/plugins.zip", deployment_version_path + "/plugins")
+        zip_plugin.zip(deployment_version_path + "/repository.zip", deployment_version_path + "/repository")
 
         # creates the latest version path
         latest_version_path = deployment_path + "/" + LATEST_DIRECTORY_NAME
