@@ -299,7 +299,7 @@ class BuildAutomationDescriptorGenerator:
         resource_file_paths.append(plugin_file_name)
 
         # retrieves the root init file path
-        plugin_root_init_file_path = os.path.join(plugin_root_directory_path, INIT_FILE_NAME)
+        plugin_root_init_file_path = plugin_root_directory_path + UNIX_DIRECTORY_SEPARATOR + INIT_FILE_NAME
 
         # adds the root init file path to the resource file paths
         resource_file_paths.append(plugin_root_init_file_path)
@@ -315,7 +315,7 @@ class BuildAutomationDescriptorGenerator:
                 base_resource_path = root.replace(plugin_path, "")
 
                 # retrieves the base resource file path
-                base_resource_file_path = os.path.join(base_resource_path, file)
+                base_resource_file_path = base_resource_path + UNIX_DIRECTORY_SEPARATOR + file
 
                 # removes the first slash from the base resource file path
                 base_resource_file_path = base_resource_file_path[1:]
@@ -379,10 +379,10 @@ class BuildAutomationDescriptorGenerator:
         build_automation_descriptor_generator_plugin_path = self.build_automation_descriptor_generator_plugin.manager.get_plugin_path_by_id(self.build_automation_descriptor_generator_plugin.id)
 
         # retrieves the template path
-        template_path = os.path.join(build_automation_descriptor_generator_plugin_path, TEMPLATES_PATH)
+        template_path = build_automation_descriptor_generator_plugin_path + UNIX_DIRECTORY_SEPARATOR + TEMPLATES_PATH
 
         # retrieves the template file path
-        template_file_path = os.path.join(template_path, PLUGIN_DESCRIPTOR_TEMPLATE_FILE_NAME)
+        template_file_path = template_path + UNIX_DIRECTORY_SEPARATOR + PLUGIN_DESCRIPTOR_TEMPLATE_FILE_NAME
 
         return template_file_path
 
@@ -403,7 +403,7 @@ class BuildAutomationDescriptorGenerator:
         plugin_descriptor_file_name = plugin_module_name + JSON_FILE_EXTENSION
 
         # defines the plugin descriptor file path
-        plugin_descriptor_file_path = os.path.join(plugin_path, plugin_descriptor_file_name)
+        plugin_descriptor_file_path = plugin_path + UNIX_DIRECTORY_SEPARATOR + plugin_descriptor_file_name
 
         # opens the plugin descriptor file
         file = open(plugin_descriptor_file_path, "w")

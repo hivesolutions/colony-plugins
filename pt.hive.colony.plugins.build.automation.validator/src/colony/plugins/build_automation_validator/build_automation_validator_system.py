@@ -211,7 +211,7 @@ class BuildAutomationValidator:
         plugin_file_name = plugin_module_name + PYTHON_FILE_EXTENSION
 
         # defines the plugin file path
-        plugin_file_path = os.path.join(plugin_path, plugin_file_name)
+        plugin_file_path = plugin_path + UNIX_DIRECTORY_SEPARATOR + plugin_file_name
 
         # checks that the plugin file exists
         if not os.path.exists(plugin_file_path):
@@ -260,7 +260,7 @@ class BuildAutomationValidator:
             base_main_module_path = os.path.normpath(base_main_module_path)
 
             # retrieves the full main module path
-            main_module_path = os.path.join(plugin_path, base_main_module_path)
+            main_module_path = plugin_path + UNIX_DIRECTORY_SEPARATOR + base_main_module_path
 
             # checks if the main module exists
             if not os.path.exists(main_module_path):
@@ -296,7 +296,7 @@ class BuildAutomationValidator:
                 continue
 
             # retrieves the main module file path
-            base_main_module_file_path = os.path.join(base_main_module_path, main_module_file_name)
+            base_main_module_file_path = base_main_module_path + UNIX_DIRECTORY_SEPARATOR + main_module_file_name
 
             # retrieves the main module from the base main module file path
             main_module = base_main_module_file_path.replace(UNIX_DIRECTORY_SEPARATOR, MAIN_MODULE_SEPARATOR)
@@ -323,7 +323,7 @@ class BuildAutomationValidator:
         plugin_descriptor_file_name = plugin_module_name + JSON_FILE_EXTENSION
 
         # defines the plugin descriptor file path
-        plugin_descriptor_file_path = os.path.join(plugin_path, plugin_descriptor_file_name)
+        plugin_descriptor_file_path = plugin_path + UNIX_DIRECTORY_SEPARATOR + plugin_descriptor_file_name
 
         # checks that the plugin descriptor file exists
         if not os.path.exists(plugin_descriptor_file_path):
@@ -525,7 +525,7 @@ class BuildAutomationValidator:
         plugin_root_directory_path = self.get_plugin_root_directory_path(plugin_system_file_path)
 
         # retrieves the root init file path
-        plugin_root_init_file_path = os.path.join(plugin_root_directory_path, INIT_FILE_NAME)
+        plugin_root_init_file_path = plugin_root_directory_path + UNIX_DIRECTORY_SEPARATOR + INIT_FILE_NAME
 
         # checks if there's a resource declaration for the root init resource file
         if not plugin_root_init_file_path in plugin_descriptor_data_resources:
@@ -538,7 +538,7 @@ class BuildAutomationValidator:
             base_resource_path = resource_path.replace(plugin_path, "")
 
             # retrieves the main module file path
-            base_resource_file_path = os.path.join(base_resource_path, resource_file_name)
+            base_resource_file_path = base_resource_path + UNIX_DIRECTORY_SEPARATOR + resource_file_name
 
             # removes the first slash from the base resource file path
             base_resource_file_path = base_resource_file_path[1:]
