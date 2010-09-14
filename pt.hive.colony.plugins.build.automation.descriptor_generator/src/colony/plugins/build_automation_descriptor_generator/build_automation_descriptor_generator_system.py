@@ -305,7 +305,7 @@ class BuildAutomationDescriptorGenerator:
         resource_file_paths.append(plugin_root_init_file_path)
 
         # crawls the specified path indexing file paths by their file name
-        for root, dirs, files in os.walk(plugin_system_file_path):
+        for root, _directories, files in os.walk(plugin_system_file_path):
             for file in files:
                 # skips in case the file is in the exclusion list or has a file extension in the exclusion list
                 if file in RESOURCE_FILE_NAME_EXCLUSION_LIST or self.get_file_extension(file) in RESOURCE_FILE_EXTENSION_EXCLUSION_LIST:
@@ -362,14 +362,14 @@ class BuildAutomationDescriptorGenerator:
         plugin_system_file_name = plugin_module_name[:-1 * len(PLUGIN_MODULE_NAME_ENDING)] + SYSTEM_FILE_NAME_ENDING
 
         # searches for the directory where the plugin system file is contained
-        for root, dirs, files in os.walk(plugin_path):
+        for root, _directories, files in os.walk(plugin_path):
             for file in files:
                 if file == plugin_system_file_name:
                     return root
 
     def get_file_extension(self, file_path):
         # splits the file into base name and extension
-        basename, extension = os.path.splitext(file_path)
+        _base_name, extension = os.path.splitext(file_path)
 
         # returns the extension
         return extension
