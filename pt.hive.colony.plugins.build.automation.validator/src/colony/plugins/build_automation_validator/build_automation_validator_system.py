@@ -501,6 +501,14 @@ class BuildAutomationValidator:
             valid = False
             self.build_automation_validator_plugin.logger.info("'%s' descriptor file has duplicate resource paths" % plugin_module_name)
 
+        # retrieves the plugin file name
+        plugin_file_name = plugin_module_name + PYTHON_FILE_EXTENSION
+
+        # returns in case the system file doesn't exist
+        if not plugin_file_name in plugin_descriptor_data_resources:
+            valid = False
+            self.build_automation_validator_plugin.logger.info("'%s' descriptor file is missing resource declaration for file '%s'" % (plugin_module_name, plugin_file_name))
+
         # retrieves the plugin system file name
         plugin_system_file_name = plugin_module_name[:-1 * len(PLUGIN_MODULE_NAME_ENDING)] + SYSTEM_FILE_NAME_ENDING
 
