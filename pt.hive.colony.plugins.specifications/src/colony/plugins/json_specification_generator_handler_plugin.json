@@ -20,6 +20,6 @@
             "specifications/__init__.py",
             "specifications/json_specification_generator_handler/__init__.py",
             "specifications/json_specification_generator_handler/json_specification_generator_handler_system.py",
-            "specifications/json_specification_generator_handler/resources/plugin_specification.json.tpl",
-            "specifications/json_specification_generator_handler/resources/baf.xml"]
+            "specifications/json_specification_generator_handler/resources/baf.xml",
+            "specifications/json_specification_generator_handler/resources/plugin_specification.json.tpl"]
 }
