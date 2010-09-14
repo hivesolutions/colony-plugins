@@ -43,15 +43,22 @@ import os.path
 
 BUILD_AUTOMATION_FILE_PATH_VALUE = "build_automation_file_path"
 
+CAPABILITIES_VALUE = "capabilities"
+
 CAPABILITIES_ALLOWED_VALUE = "capabilities_allowed"
 
 DEPENDENCIES_VALUE = "dependencies"
 
 ID_VALUE = "id"
 
+PLUGINS_VALUE = "plugins"
+
 RESOURCES_VALUE = "resources"
 
 VERSION_VALUE = "version"
+
+INIT_FILE_NAME = "__init__.py"
+""" The init file name """
 
 MAIN_MODULE_SEPARATOR = "."
 """ The main module separator """
@@ -89,10 +96,10 @@ BUILD_AUTOMATION_ITEM_CAPABILITY = "build_automation_item"
 BUILD_AUTOMATION_FILE_PATH_ATTRIBUTE = "build_automation_file_path"
 """ The build automation file path attribute """
 
-RESOURCE_FILE_NAME_EXCLUSION_LIST = ("entries", "all-wcprops", "dir-prop-base")
+RESOURCE_FILE_NAME_EXCLUSION_LIST = (".svn", "entries", "all-wcprops", "dir-prop-base")
 """ The resource file name exclusion list """
 
-RESOURCE_FILE_EXTENSION_EXCLUSION_LIST = (".svn-base", ".class", ".pyc", ".tmp")
+RESOURCE_FILE_EXTENSION_EXCLUSION_LIST = (".svn", ".svn-base", ".class", ".pyc", ".tmp")
 """ The resource file extension exclusion list """
 
 BUILD_AUTOMATION_ITEM_CAPABILITY_PLUGIN_EXCLUSION_LIST = ("pt.hive.colony.plugins.build.automation")
@@ -182,6 +189,10 @@ class BuildAutomationValidator:
             print "'%s' is missing file '%s'"  % (plugin.id, plugin_file_name)
 
     def __validate_plugin_capabilities(self, plugin):
+        # checks for duplicate capabilities in the plugin
+        if not len(plugin.capabilities) == len(list(set(plugin.capabilities))):
+            print "'%s' has duplicate capabilities" % (plugin.id)
+
         # returns in case the plugin is in the build automation item capability exclusion list
         if plugin.id in BUILD_AUTOMATION_ITEM_CAPABILITY_PLUGIN_EXCLUSION_LIST:
             return
@@ -191,6 +202,10 @@ class BuildAutomationValidator:
             print "'%s' is missing 'build_automation_item' capability" % (plugin.id)
 
     def __validate_plugin_main_modules(self, plugin, plugin_path, plugin_module_name, plugin_file_path_map):
+        # checks for duplicate main modules in the plugin
+        if not len(plugin.main_modules) == len(list(set(plugin.main_modules))):
+            print "'%s' has duplicate main modules" % (plugin.id)
+
         # checks that plugin's main modules exist
         for main_module in plugin.main_modules:
             # retrieves the base main module path
@@ -270,6 +285,9 @@ class BuildAutomationValidator:
         # validates the plugin descriptor file attributes
         self.__validate_plugin_descriptor_file_attributes(plugin, plugin_descriptor_data)
 
+        # validates the plugin descriptor file capabilities
+        self.__validate_plugin_descriptor_file_capabilities(plugin, plugin_descriptor_data)
+
         # validates the plugin descriptor file capabilities allowed
         self.__validate_plugin_descriptor_file_capabilities_allowed(plugin, plugin_descriptor_data)
 
@@ -298,9 +316,21 @@ class BuildAutomationValidator:
             if not plugin_descriptor_data_attribute_unicode == plugin_attribute_unicode:
                 print "'%s' descriptor file has invalid attribute '%s'" % (plugin.id, plugin_descriptor_attribute_name)
 
+    def __validate_plugin_descriptor_file_capabilities(self, plugin, plugin_descriptor_data):
+        # retrieves the plugin descriptor data capabilities
+        plugin_descriptor_data_capabilities = plugin_descriptor_data[CAPABILITIES_VALUE]
+
+        # checks for duplicate capabilities
+        if not len(plugin_descriptor_data_capabilities) == len(list(set(plugin_descriptor_data_capabilities))):
+            print "'%s' descriptor file has duplicate capabilities" % (plugin.id)
+
     def __validate_plugin_descriptor_file_capabilities_allowed(self, plugin, plugin_descriptor_data):
         # retrieves the plugin descriptor data capabilities allowed
         plugin_descriptor_data_capabilities_allowed = plugin_descriptor_data[CAPABILITIES_ALLOWED_VALUE]
+
+        # checks for duplicate capabilities allowed
+        if not len(plugin_descriptor_data_capabilities_allowed) == len(list(set(plugin_descriptor_data_capabilities_allowed))):
+            print "'%s' descriptor file has duplicate capabilities allowed" % (plugin.id)
 
         # checks if the number of capabilities allowed is the same as in the plugin
         if not len(plugin_descriptor_data_capabilities_allowed) == len(plugin.capabilities_allowed):
@@ -368,6 +398,10 @@ class BuildAutomationValidator:
         # retrieves the plugin descriptor data resources
         plugin_descriptor_data_resources = plugin_descriptor_data[RESOURCES_VALUE]
 
+        # checks for duplicate resource paths
+        if not len(plugin_descriptor_data_resources) == len(list(set(plugin_descriptor_data_resources))):
+            print "'%s' descriptor file has duplicate resource paths" % (plugin.id)
+
         # retrieves the plugin system file name
         plugin_system_file_name = plugin_module_name[:-1 * len(PLUGIN_MODULE_NAME_ENDING)] + SYSTEM_FILE_NAME_ENDING
 
@@ -390,6 +424,16 @@ class BuildAutomationValidator:
 
             # returns since nothing else can be tested
             return
+
+        # retrieves the plugin root directory path
+        plugin_root_directory_path = self.get_plugin_root_directory_path(plugin_system_file_path)
+
+        # retrieves the root init file path
+        plugin_root_init_file_path = os.path.join(plugin_root_directory_path, INIT_FILE_NAME)
+
+        # checks if there's a resource declaration for the root init resource file
+        if not plugin_root_init_file_path in plugin_descriptor_data_resources:
+            print "'%s' descriptor file is missing resource declaration for file '%s'"  % (plugin.id, plugin_root_init_file_path)
 
         # looks for resource declarations in the descriptor for each of the discovered resource files
         for resource_file_name, resource_path in plugin_resource_path_map.items():
@@ -450,6 +494,19 @@ class BuildAutomationValidator:
                 file_path_map[file] = root
 
         return file_path_map
+
+    def get_plugin_root_directory_path(self, plugin_system_file_path):
+        # tokenizes the plugin system file path with the unix directory separator
+        plugin_system_file_path_tokens = plugin_system_file_path.split(UNIX_DIRECTORY_SEPARATOR)
+
+        # tokenizes the plugin system file path with the windows directory separator
+        if len(plugin_system_file_path_tokens) == 1:
+            plugin_system_file_path_tokens = plugin_system_file_path.split(WINDOWS_DIRECTORY_SEPARATOR)
+
+        # retrieves the plugin directory root path
+        plugin_directory_root_path = plugin_system_file_path_tokens[plugin_system_file_path_tokens.index(PLUGINS_VALUE) + 1]
+
+        return plugin_directory_root_path
 
     def get_file_extension(self, file_path):
         # splits the file into base name and extension
