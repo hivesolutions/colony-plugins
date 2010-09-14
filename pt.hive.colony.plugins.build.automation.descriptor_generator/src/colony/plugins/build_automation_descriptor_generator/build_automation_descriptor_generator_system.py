@@ -167,8 +167,7 @@ class BuildAutomationDescriptorGenerator:
         # retrieves the plugin module name
         plugin_module_name = self.build_automation_descriptor_generator_plugin.manager.get_plugin_module_name_by_id(plugin.id)
 
-        # converts the plugin path separators from the windows mode
-        # to unix mode
+        # converts the plugin path separators from the windows mode to unix mode
         plugin_path = plugin_path.replace(WINDOWS_DIRECTORY_SEPARATOR, UNIX_DIRECTORY_SEPARATOR)
 
         # retrieves the plugin system file path
@@ -311,8 +310,7 @@ class BuildAutomationDescriptorGenerator:
         # crawls the specified path indexing file paths by their file name
         for root, _directories, files in os.walk(plugin_system_file_path):
             for file in files:
-                # converts the root path separators from the windows mode
-                # to unix mode
+                # converts the root path separators from the windows mode to unix mode
                 root = root.replace(WINDOWS_DIRECTORY_SEPARATOR, UNIX_DIRECTORY_SEPARATOR)
 
                 # skips in case the file is in the exclusion list or has a file extension in the exclusion list
@@ -373,10 +371,10 @@ class BuildAutomationDescriptorGenerator:
         for root, _directories, files in os.walk(plugin_path):
             for file in files:
                 if file == plugin_system_file_name:
-                    # converts the root path separators from the windows mode
-                    # to unix mode
+                    # converts the root path separators from the windows mode to unix mode
                     root = root.replace(WINDOWS_DIRECTORY_SEPARATOR, UNIX_DIRECTORY_SEPARATOR)
 
+                    # returns the plugin system file path
                     return root
 
     def get_file_extension(self, file_path):
