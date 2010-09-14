@@ -39,6 +39,8 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 import os
 
+import colony.libs.path_util
+
 TARGET_DIRECTORY_VALUE = "target_directory"
 """ The target directory value """
 
@@ -64,7 +66,10 @@ class PluginRepositoryGeneratorBuildAutomationExtension:
         self.plugin_repository_generator_build_automation_extension_plugin = plugin_repository_generator_build_automation_extension_plugin
 
     def run_automation(self, plugin, stage, parameters, build_automation_structure):
-        # retrieves the repository des plugin
+        # retrieves the plugin manager
+        plugin_manager = self.plugin_repository_generator_build_automation_extension_plugin.manager
+
+        # retrieves the repository descriptor generator plugin
         repository_descriptor_generator_plugin = self.plugin_repository_generator_build_automation_extension_plugin.repository_descriptor_generator_plugin
 
         # retrieves the build properties
@@ -82,6 +87,9 @@ class PluginRepositoryGeneratorBuildAutomationExtension:
         # retrieves the repository layout
         repository_layout = parameters["repository_layout"]
 
+        plugins = parameters.get("plugins", {})
+        _plugins = plugins.get("plugin", [{"id" : value.id, "version" : value.version} for value in plugin_manager.get_all_loaded_plugins()])
+
         # retrieves the target
         target = parameters.get(TARGET_VALUE, target_directory)
 
@@ -89,11 +97,33 @@ class PluginRepositoryGeneratorBuildAutomationExtension:
         # suffix value
         full_target_directory = target + "/colony_plugins"
 
+        # creates the full plugins directory
+        full_plugins_directory = full_target_directory + "/plugins"
+
         if not os.path.exists(full_target_directory):
             os.makedirs(full_target_directory)
+
+        if not os.path.exists(full_plugins_directory):
+            os.makedirs(full_plugins_directory)
 
         # creates the repository descriptor file path
         repository_descriptor_file_path = full_target_directory + "/repository_descriptor.xml"
 
         # generates the repository descriptor file
         repository_descriptor_generator_plugin.generate_repository_descriptor_file(repository_descriptor_file_path, repository_name, repository_description, repository_layout)
+
+        # iterates over all the plugins to copy the files
+        for plugin in _plugins:
+            # retrieves the plugin id and version
+            plugin_id = plugin["id"]
+            plugin_version = plugin["version"]
+
+            # creates the plugin file name from the plugin id and version
+            plugin_file_name = plugin_id + "_" + plugin_version + ".cpx"
+
+            # in case the source plugin path does not exists
+            if not os.path.exists(target_directory + "/" + plugin_file_name):
+                # continues the loop
+                continue
+
+            colony.libs.path_util.copy_file(target_directory + "/" + plugin_file_name, full_plugins_directory + "/" + plugin_file_name)

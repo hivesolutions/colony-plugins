@@ -37,8 +37,8 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-TARGET_DIRECTORY_VALUE = "target_directory"
-""" The target directory value """
+RESOURCES_DIRECTORY_VALUE = "resources_directory"
+""" The resources directory value """
 
 FORMATS_VALUE = "formats"
 """ The formats value """
@@ -77,8 +77,8 @@ class InstallationBuildAutomationExtension:
         # retrieves the build properties
         build_properties = build_automation_structure.get_all_build_properties()
 
-        # retrieves the target directory
-        target_directory = build_properties[TARGET_DIRECTORY_VALUE]
+        # retrieves the resources directory
+        resources_directory = build_properties[RESOURCES_DIRECTORY_VALUE]
 
         # retrieves the formats list
         formats = parameters[FORMATS_VALUE].split(",")
@@ -92,8 +92,8 @@ class InstallationBuildAutomationExtension:
         # retrieves the contents
         contents = parameters[CONTENTS_VALUE]
 
-        # creates the (base) file path from the target directory and the base name
-        file_path = target_directory + "/" + base_name
+        # creates the (base) file path from the resources directory and the base name
+        file_path = resources_directory + "/" + base_name
 
         # iterates over all the formats to generate the installation files
         for format in formats:

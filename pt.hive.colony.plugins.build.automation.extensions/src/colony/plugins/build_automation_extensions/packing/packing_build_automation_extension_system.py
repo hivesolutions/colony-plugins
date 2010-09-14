@@ -37,8 +37,10 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-TARGET_DIRECTORY_VALUE = "target_directory"
-""" The target directory value """
+import os
+
+PLUGINS_DIRECTORY_VALUE = "plugins_directory"
+""" The plugins directory value """
 
 TARGET_PATH_VALUE = "target_path"
 """ The target path value """
@@ -74,8 +76,8 @@ class PackingBuildAutomationExtension:
         # retrieves the build properties
         build_properties = build_automation_structure.get_all_build_properties()
 
-        # retrieves the target directory
-        target_directory = build_properties[TARGET_DIRECTORY_VALUE]
+        # retrieves the plugins directory
+        plugins_directory = build_properties[PLUGINS_DIRECTORY_VALUE]
 
         # retrieves the specification file
         specification_file = parameters[SPECIFICATION_FILE_VALUE]
@@ -84,7 +86,7 @@ class PackingBuildAutomationExtension:
         file_paths_list = [specification_file]
 
         # creates the properties map for the directory packing
-        properties = {TARGET_PATH_VALUE : target_directory}
+        properties = {TARGET_PATH_VALUE : plugins_directory}
 
         # packs the directory
         main_packing_manager_plugin.pack_files(file_paths_list, properties, COLONY_VALUE)

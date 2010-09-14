@@ -40,6 +40,9 @@ __license__ = "GNU General Public License (GPL), Version 3"
 TARGET_DIRECTORY_VALUE = "target_directory"
 """ The target directory value """
 
+REPOSITORY_DIRECTORY_VALUE = "repository_directory"
+""" The repository directory value """
+
 FORMATS_VALUE = "formats"
 """ The formats value """
 
@@ -80,6 +83,9 @@ class RepositoryGeneratorBuildAutomationExtension:
         # retrieves the target directory
         target_directory = build_properties[TARGET_DIRECTORY_VALUE]
 
+        # retrieves the repository directory
+        repository_directory = build_properties[REPOSITORY_DIRECTORY_VALUE]
+
         # retrieves the formats list
         formats = parameters[FORMATS_VALUE].split(",")
 
@@ -87,7 +93,7 @@ class RepositoryGeneratorBuildAutomationExtension:
         source = parameters.get(SOURCE_VALUE, target_directory)
 
         # retrieves the target
-        target = parameters.get(TARGET_VALUE, target_directory)
+        target = parameters.get(TARGET_VALUE, repository_directory)
 
         # retrieves the contents
         contents = parameters[CONTENTS_VALUE]
