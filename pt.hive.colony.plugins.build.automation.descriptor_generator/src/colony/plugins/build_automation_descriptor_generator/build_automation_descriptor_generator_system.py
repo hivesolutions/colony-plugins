@@ -37,7 +37,10 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
+import json
 import os.path
+
+import colony.base.plugin_system
 
 AUTHOR_VALUE = "author"
 
@@ -142,7 +145,11 @@ class BuildAutomationDescriptorGenerator:
 
         # validates all plugins
         for plugin in plugins:
+            print plugin.id
+
             self._generate_plugin_descriptor(plugin, template_file_path)
+
+            return
 
     def generate_plugin_descriptor(self, plugin_id):
         # retrieves the specified plugin
@@ -160,6 +167,10 @@ class BuildAutomationDescriptorGenerator:
 
         # retrieves the plugin module name
         plugin_module_name = self.build_automation_descriptor_generator_plugin.manager.get_plugin_module_name_by_id(plugin.id)
+
+        # returns in case the existing plugin descriptor is already valid
+        if self.is_plugin_descriptor_valid(plugin, plugin_path, plugin_module_name):
+            return
 
         # retrieves the plugin system file path
         plugin_system_file_path = self.get_plugin_system_file_path(plugin_path, plugin_module_name)
@@ -242,13 +253,13 @@ class BuildAutomationDescriptorGenerator:
         plugin_descriptor_capabilities_allowed_string = plugin_descriptor_capabilities_allowed_string.replace(", '", ", \"")
 
         # fixes tuple quotes
-        plugin_descriptor_capabilities_allowed_string = plugin_descriptor_capabilities_allowed_string.replace("\", " + colony.base.plugin_system.SINGLETON_DIFFUSION_SCOPE, "', " + colony.base.plugin_system.SINGLETON_DIFFUSION_SCOPE)
+        plugin_descriptor_capabilities_allowed_string = plugin_descriptor_capabilities_allowed_string.replace("\", %d" % colony.base.plugin_system.SINGLETON_DIFFUSION_SCOPE, "', %d" % colony.base.plugin_system.SINGLETON_DIFFUSION_SCOPE)
 
         # fixes tuple quotes
-        plugin_descriptor_capabilities_allowed_string = plugin_descriptor_capabilities_allowed_string.replace("\", " + colony.base.plugin_system.SAME_DIFFUSION_SCOPE, "', " + colony.base.plugin_system.SAME_DIFFUSION_SCOPE)
+        plugin_descriptor_capabilities_allowed_string = plugin_descriptor_capabilities_allowed_string.replace("\", %d" % colony.base.plugin_system.SAME_DIFFUSION_SCOPE, "', %d" % colony.base.plugin_system.SAME_DIFFUSION_SCOPE)
 
         # fixes tuple quotes
-        plugin_descriptor_capabilities_allowed_string = plugin_descriptor_capabilities_allowed_string.replace("\", " + colony.base.plugin_system.NEW_DIFFUSION_SCOPE, "', " + colony.base.plugin_system.NEW_DIFFUSION_SCOPE)
+        plugin_descriptor_capabilities_allowed_string = plugin_descriptor_capabilities_allowed_string.replace("\", %d" % colony.base.plugin_system.NEW_DIFFUSION_SCOPE, "', %d" % colony.base.plugin_system.NEW_DIFFUSION_SCOPE)
 
         return plugin_descriptor_capabilities_allowed_string
 
@@ -323,6 +334,66 @@ class BuildAutomationDescriptorGenerator:
 
         return resource_file_paths
 
+    def is_plugin_descriptor_valid(self, plugin, plugin_path, plugin_module_name):
+        # defines the plugin descriptor file name
+        plugin_descriptor_file_name = plugin_module_name + JSON_FILE_EXTENSION
+
+        # defines the plugin descriptor file path
+        plugin_descriptor_file_path = os.path.join(plugin_path, plugin_descriptor_file_name)
+
+        # returns false in case the plugin descriptor file doesn't exist
+        if not os.path.exists(plugin_descriptor_file_path):
+            return False
+
+        # reads the current plugin descriptor
+        plugin_descriptor_data = self.get_json_data(plugin_descriptor_file_path)
+
+        # returns false in case the platform is incorrect
+        if not plugin_descriptor_data[PLATFORM_VALUE] == PYTHON_VALUE:
+            return False
+
+        # returns false in case the sub platforms are incorrect
+        if not plugin_descriptor_data[SUB_PLATFORMS_VALUE] == plugin.platforms:
+            return False
+
+        # returns false in case the id is incorrect
+        if not plugin_descriptor_data[ID_VALUE] == plugin.id:
+            return False
+
+        # returns false in case the name is incorrect
+        if not plugin_descriptor_data[NAME_VALUE] == plugin.name:
+            return False
+
+        # returns false in case the short name is incorrect
+        if not plugin_descriptor_data[SHORT_NAME_VALUE] == plugin.short_name:
+            return False
+
+        # returns false in case the description is incorrect
+        if not plugin_descriptor_data[DESCRIPTION_VALUE] == plugin.description:
+            return False
+
+        # returns false in case the version is incorrect
+        if not plugin_descriptor_data[VERSION_VALUE] == plugin.version:
+            return False
+
+        # returns false in case the author is incorrect
+        if not plugin_descriptor_data[AUTHOR_VALUE] == plugin.author:
+            return False
+
+        # returns false in case the capabilities are incorrect
+        if not plugin_descriptor_data[CAPABILITIES_VALUE] == plugin.capabilities:
+            return False
+
+        # retrieves the plugin file name
+        plugin_file_name = plugin_module_name + PYTHON_FILE_EXTENSION
+
+        # returns false in case the main file is incorrect
+        if not plugin_descriptor_data[MAIN_FILE_VALUE] == plugin_file_name:
+            return False
+
+        # returns true indicating that the current plugin descriptor is valid
+        return True
+
     def stringify_attribute(self, attribute_value):
         # creates a string version of the attribute
         attribute_value_string = unicode(attribute_value)
@@ -360,6 +431,21 @@ class BuildAutomationDescriptorGenerator:
             for file in files:
                 if file == plugin_system_file_name:
                     return root
+
+    def get_json_data(self, json_file_path):
+        # reads the json file
+        json_file = open(json_file_path, "r")
+
+        # reads the data from the json file
+        json_file_data = json_file.read()
+
+        # closes the json file
+        json_file.close()
+
+        # loads the json data from the json file
+        json_data = json.loads(json_file_data)
+
+        return json_data
 
     def get_file_extension(self, file_path):
         # splits the file into base name and extension
