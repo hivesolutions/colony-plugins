@@ -522,7 +522,7 @@ class BuildAutomationValidator:
         # retrieves the plugin's resources
         plugin_resource_path_map = self.get_file_path_map(plugin_system_file_path)
 
-        # filters the plugin resource path map to leave only main module files
+        # filters the plugin resource path map to leave only the allowed files
         plugin_resource_path_map = dict([(resource_file_name, resource_path) for resource_file_name, resource_path in plugin_resource_path_map.items() if not resource_file_name in RESOURCE_FILE_NAME_EXCLUSION_LIST and not self.get_file_extension(resource_file_name) in RESOURCE_FILE_EXTENSION_EXCLUSION_LIST])
 
         # checks if the list of resources if of the same size
@@ -557,7 +557,7 @@ class BuildAutomationValidator:
             # checks if there's a resource declaration for the resource file
             if not base_resource_file_path in plugin_descriptor_data_resources:
                 valid = False
-                self.build_automation_validator_plugin.logger.info("'%s' descriptor file is missing resource declaration for file '%s'" % (plugin_module_name, resource_file_name))
+                self.build_automation_validator_plugin.logger.info("'%s' descriptor file is missing resource declaration for file '%s'" % (plugin_module_name, base_resource_file_path))
 
         # returns the validity
         return valid
