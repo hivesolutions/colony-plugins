@@ -43,7 +43,7 @@ import zipfile
 
 import colony.libs.string_buffer_util
 
-BUFFER_LENGTH = 1024
+BUFFER_LENGTH = 4096
 """ The length for the zip operation buffer """
 
 class Zip:
@@ -257,7 +257,7 @@ def get_file_paths(path, returned_path_list = None):
     """
 
     # retrieves the default returned path list
-    returned_path_list = returned_path_list or []
+    returned_path_list = not returned_path_list == None and returned_path_list or []
 
     # retrieves the directory list for the path
     dir_list = os.listdir(path)
