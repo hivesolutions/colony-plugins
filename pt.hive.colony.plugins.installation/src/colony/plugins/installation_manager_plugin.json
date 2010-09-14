@@ -12,8 +12,7 @@
     "dependencies" : [],
     "main_file" : "installation_manager_plugin.py",
     "resources" : ["installation_manager_plugin.py",
-            "installation/__init__.py",
-            "installation/manager/__init__.py",
+            "installation/__init__.py", "installation/manager/__init__.py",
             "installation/manager/installation_manager_exceptions.py",
             "installation/manager/installation_manager_system.py",
             "installation/manager/resources/baf.xml"]
