@@ -176,7 +176,7 @@ class BuildAutomationValidator:
 
         # checks if the plugin class name matches the plugin module name
         if not plugin_class_name == plugin.__class__.__name__:
-            print "'%s' has a class name that does not match its file name"  % (plugin.id)
+            print "'%s' has a class name that does not match its file name" % (plugin.id)
 
         # defines the plugin file name
         plugin_file_name = plugin_module_name + PYTHON_FILE_EXTENSION
@@ -186,7 +186,7 @@ class BuildAutomationValidator:
 
         # checks that the plugin file exists
         if not os.path.exists(plugin_file_path):
-            print "'%s' is missing file '%s'"  % (plugin.id, plugin_file_name)
+            print "'%s' is missing file '%s'" % (plugin.id, plugin_file_name)
 
     def __validate_plugin_capabilities(self, plugin):
         # checks for duplicate capabilities in the plugin
@@ -263,7 +263,7 @@ class BuildAutomationValidator:
 
             # checks if the main module exists in the plugin
             if not main_module in plugin.main_modules:
-                print "'%s' is missing main module declaration for file '%s'"  % (plugin.id, main_module_file_name)
+                print "'%s' is missing main module declaration for file '%s'" % (plugin.id, main_module_file_name)
 
     def _validate_plugin_descriptor_file(self, plugin, plugin_path, plugin_module_name, plugin_file_path_map):
         # defines the plugin descriptor file name
@@ -274,28 +274,31 @@ class BuildAutomationValidator:
 
         # checks that the plugin descriptor file exists
         if not os.path.exists(plugin_descriptor_file_path):
-            print "'%s' is missing file '%s'"  % (plugin.id, plugin_descriptor_file_name)
+            print "'%s' is missing file '%s'" % (plugin.id, plugin_descriptor_file_name)
 
             # returns since no more validations can be performed
             return
 
-        # retrieves the plugin descriptor data
-        plugin_descriptor_data = self.get_json_data(plugin_descriptor_file_path)
+        try:
+            # retrieves the plugin descriptor data
+            plugin_descriptor_data = self.get_json_data(plugin_descriptor_file_path)
+        except Exception:
+            print "'%s' descriptor file has invalid syntax" % (plugin.id)
+        else:
+            # validates the plugin descriptor file attributes
+            self.__validate_plugin_descriptor_file_attributes(plugin, plugin_descriptor_data)
 
-        # validates the plugin descriptor file attributes
-        self.__validate_plugin_descriptor_file_attributes(plugin, plugin_descriptor_data)
+            # validates the plugin descriptor file capabilities
+            self.__validate_plugin_descriptor_file_capabilities(plugin, plugin_descriptor_data)
 
-        # validates the plugin descriptor file capabilities
-        self.__validate_plugin_descriptor_file_capabilities(plugin, plugin_descriptor_data)
+            # validates the plugin descriptor file capabilities allowed
+            self.__validate_plugin_descriptor_file_capabilities_allowed(plugin, plugin_descriptor_data)
 
-        # validates the plugin descriptor file capabilities allowed
-        self.__validate_plugin_descriptor_file_capabilities_allowed(plugin, plugin_descriptor_data)
+            # validates the plugin descriptor file dependencies
+            self.__validate_plugin_descriptor_file_dependencies(plugin, plugin_descriptor_data)
 
-        # validates the plugin descriptor file dependencies
-        self.__validate_plugin_descriptor_file_dependencies(plugin, plugin_descriptor_data)
-
-        # validates the plugin descriptor file resources
-        self.__validate_plugin_descriptor_file_resources(plugin, plugin_path, plugin_module_name, plugin_file_path_map, plugin_descriptor_data)
+            # validates the plugin descriptor file resources
+            self.__validate_plugin_descriptor_file_resources(plugin, plugin_path, plugin_module_name, plugin_file_path_map, plugin_descriptor_data)
 
     def __validate_plugin_descriptor_file_attributes(self, plugin, plugin_descriptor_data):
         # searches for plugin descriptor attributes with invalid content
@@ -391,7 +394,7 @@ class BuildAutomationValidator:
             plugin_descriptor_data_dependency_version = plugin_descriptor_data_dependency[VERSION_VALUE]
 
             # checks if the dependency versions match
-            if not plugin_descriptor_data_dependency_version  == plugin_dependency.plugin_version:
+            if not plugin_descriptor_data_dependency_version == plugin_dependency.plugin_version:
                 print "'%s' descriptor file dependency '%s' doesn't have the same version has the plugin" % (plugin.id)
 
     def __validate_plugin_descriptor_file_resources(self, plugin, plugin_path, plugin_module_name, plugin_file_path_map, plugin_descriptor_data):
@@ -433,7 +436,7 @@ class BuildAutomationValidator:
 
         # checks if there's a resource declaration for the root init resource file
         if not plugin_root_init_file_path in plugin_descriptor_data_resources:
-            print "'%s' descriptor file is missing resource declaration for file '%s'"  % (plugin.id, plugin_root_init_file_path)
+            print "'%s' descriptor file is missing resource declaration for file '%s'" % (plugin.id, plugin_root_init_file_path)
 
         # looks for resource declarations in the descriptor for each of the discovered resource files
         for resource_file_name, resource_path in plugin_resource_path_map.items():
@@ -448,7 +451,7 @@ class BuildAutomationValidator:
 
             # checks if there's a resource declaration for the resource file
             if not base_resource_file_path in plugin_descriptor_data_resources:
-                print "'%s' descriptor file is missing resource declaration for file '%s'"  % (plugin.id, resource_file_name)
+                print "'%s' descriptor file is missing resource declaration for file '%s'" % (plugin.id, resource_file_name)
 
     def _validate_build_automation_file(self, plugin, plugin_path):
         # checks if the build automation file path is specified in the plugin attributes
