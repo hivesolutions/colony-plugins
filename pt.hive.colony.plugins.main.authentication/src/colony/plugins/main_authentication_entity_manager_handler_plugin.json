@@ -13,7 +13,6 @@
     "main_file" : "main_authentication_entity_manager_handler_plugin.py",
     "resources" : [
             "main_authentication_entity_manager_handler_plugin.py",
-            "main_authentication/__init__.py",
             "main_authentication_entity_manager_handler/__init__.py",
             "main_authentication_entity_manager_handler/entity_manager_handler/__init__.py",
             "main_authentication_entity_manager_handler/entity_manager_handler/main_authentication_entity_manager_handler_exceptions.py",

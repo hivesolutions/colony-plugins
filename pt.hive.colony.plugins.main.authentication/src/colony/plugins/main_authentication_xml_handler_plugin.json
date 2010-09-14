@@ -13,7 +13,6 @@
     "main_file" : "main_authentication_xml_handler_plugin.py",
     "resources" : [
             "main_authentication_xml_handler_plugin.py",
-            "main_authentication/__init__.py",
             "main_authentication_xml_handler/__init__.py",
             "main_authentication_xml_handler/xml_handler/__init__.py",
             "main_authentication_xml_handler/xml_handler/main_authentication_xml_handler_system.py",
