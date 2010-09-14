@@ -54,18 +54,6 @@
             <version>.*</version>
         </module>
         <module>
-            <id>pt.hive.colony.plugins.business.helper</id>
-            <version>.*</version>
-        </module>
-        <module>
-            <id>pt.hive.colony.plugins.data.entity_manager</id>
-            <version>.*</version>
-        </module>
-        <module>
-            <id>pt.hive.colony.plugins.main.console.interface</id>
-            <version>.*</version>
-        </module>
-        <module>
             <id>pt.hive.colony.plugins.main.console</id>
             <version>.*</version>
         </module>
@@ -258,7 +246,7 @@
                     </package>
                     <contents>
                         <file>
-                            <path>${build_automation.build.target_directory}/pt.hive.colony.plugins.business.helper_1.0.0.cpx</path>
+                            <path>${build_automation.build.plugins_directory}/pt.hive.colony.plugins.business.helper_1.0.0.cpx</path>
                             <owner>0</owner>
                             <group>0</group>
                             <mode>755</mode>
@@ -269,7 +257,7 @@
                             </parameters>
                         </file>
                         <file>
-                            <path>${build_automation.build.target_directory}/pt.hive.colony.plugins.data.entity_manager_1.0.0.cpx</path>
+                            <path>${build_automation.build.plugins_directory}/pt.hive.colony.plugins.data.entity_manager_1.0.0.cpx</path>
                             <owner>0</owner>
                             <group>0</group>
                             <mode>755</mode>
@@ -280,7 +268,7 @@
                             </parameters>
                         </file>
                         <file>
-                            <path>${build_automation.build.target_directory}/pt.hive.colony.plugins.main.console.interface_1.0.0.cpx</path>
+                            <path>${build_automation.build.plugins_directory}/pt.hive.colony.plugins.main.console.interface_1.0.0.cpx</path>
                             <owner>0</owner>
                             <group>0</group>
                             <mode>755</mode>
@@ -291,7 +279,7 @@
                             </parameters>
                         </file>
                         <file>
-                            <path>${build_automation.build.target_directory}/pt.hive.colony.plugins.main.console_1.0.0.cpx</path>
+                            <path>${build_automation.build.plugins_directory}/pt.hive.colony.plugins.main.console_1.0.0.cpx</path>
                             <owner>0</owner>
                             <group>0</group>
                             <mode>755</mode>
@@ -302,7 +290,7 @@
                             </parameters>
                         </file>
                         <file>
-                            <path>${build_automation.build.target_directory}/pt.hive.colony.plugins.main.packing.manager_1.0.0.cpx</path>
+                            <path>${build_automation.build.plugins_directory}/pt.hive.colony.plugins.main.packing.manager_1.0.0.cpx</path>
                             <owner>0</owner>
                             <group>0</group>
                             <mode>755</mode>
@@ -313,7 +301,7 @@
                             </parameters>
                         </file>
                         <file>
-                            <path>${build_automation.build.target_directory}/pt.hive.colony.plugins.main.remote.rest.manager_1.0.0.cpx</path>
+                            <path>${build_automation.build.plugins_directory}/pt.hive.colony.plugins.main.remote.rest.manager_1.0.0.cpx</path>
                             <owner>0</owner>
                             <group>0</group>
                             <mode>755</mode>
@@ -324,7 +312,7 @@
                             </parameters>
                         </file>
                         <file>
-                            <path>${build_automation.build.target_directory}/pt.hive.colony.plugins.main.service.normal_socket_provider_1.0.0.cpx</path>
+                            <path>${build_automation.build.plugins_directory}/pt.hive.colony.plugins.main.service.normal_socket_provider_1.0.0.cpx</path>
                             <owner>0</owner>
                             <group>0</group>
                             <mode>755</mode>
@@ -335,7 +323,7 @@
                             </parameters>
                         </file>
                         <file>
-                            <path>${build_automation.build.target_directory}/pt.hive.colony.plugins.main.service.ssl_socket_provider_1.0.0.cpx</path>
+                            <path>${build_automation.build.plugins_directory}/pt.hive.colony.plugins.main.service.ssl_socket_provider_1.0.0.cpx</path>
                             <owner>0</owner>
                             <group>0</group>
                             <mode>755</mode>
@@ -346,7 +334,7 @@
                             </parameters>
                         </file>
                         <file>
-                            <path>${build_automation.build.target_directory}/pt.hive.colony.plugins.main.service.utils_1.0.0.cpx</path>
+                            <path>${build_automation.build.plugins_directory}/pt.hive.colony.plugins.main.service.utils_1.0.0.cpx</path>
                             <owner>0</owner>
                             <group>0</group>
                             <mode>755</mode>
@@ -357,7 +345,7 @@
                             </parameters>
                         </file>
                         <file>
-                            <path>${build_automation.build.target_directory}/pt.hive.colony.plugins.main.service.http.colony_handler_1.0.0.cpx</path>
+                            <path>${build_automation.build.plugins_directory}/pt.hive.colony.plugins.main.service.http.colony_handler_1.0.0.cpx</path>
                             <owner>0</owner>
                             <group>0</group>
                             <mode>755</mode>
@@ -368,7 +356,7 @@
                             </parameters>
                         </file>
                         <file>
-                            <path>${build_automation.build.target_directory}/pt.hive.colony.plugins.main.service.http_1.0.0.cpx</path>
+                            <path>${build_automation.build.plugins_directory}/pt.hive.colony.plugins.main.service.http_1.0.0.cpx</path>
                             <owner>0</owner>
                             <group>0</group>
                             <mode>755</mode>
@@ -379,7 +367,7 @@
                             </parameters>
                         </file>
                         <file>
-                            <path>${build_automation.build.target_directory}/pt.hive.colony.plugins.main.service.http.starter_1.0.0.cpx</path>
+                            <path>${build_automation.build.plugins_directory}/pt.hive.colony.plugins.main.service.http.starter_1.0.0.cpx</path>
                             <owner>0</owner>
                             <group>0</group>
                             <mode>755</mode>
@@ -390,7 +378,7 @@
                             </parameters>
                         </file>
                         <file>
-                            <path>${build_automation.build.target_directory}/pt.hive.colony.plugins.main.threads.thread_pool_manager_1.0.0.cpx</path>
+                            <path>${build_automation.build.plugins_directory}/pt.hive.colony.plugins.main.threads.thread_pool_manager_1.0.0.cpx</path>
                             <owner>0</owner>
                             <group>0</group>
                             <mode>755</mode>
@@ -401,7 +389,7 @@
                             </parameters>
                         </file>
                         <file>
-                            <path>${build_automation.build.target_directory}/pt.hive.colony.plugins.main.work.work_pool_manager_1.0.0.cpx</path>
+                            <path>${build_automation.build.plugins_directory}/pt.hive.colony.plugins.main.work.work_pool_manager_1.0.0.cpx</path>
                             <owner>0</owner>
                             <group>0</group>
                             <mode>755</mode>
@@ -412,7 +400,7 @@
                             </parameters>
                         </file>
                         <file>
-                            <path>${build_automation.build.target_directory}/pt.hive.colony.plugins.misc.downloader_1.0.0.cpx</path>
+                            <path>${build_automation.build.plugins_directory}/pt.hive.colony.plugins.misc.downloader_1.0.0.cpx</path>
                             <owner>0</owner>
                             <group>0</group>
                             <mode>755</mode>
@@ -423,7 +411,7 @@
                             </parameters>
                         </file>
                         <file>
-                            <path>${build_automation.build.target_directory}/pt.hive.colony.plugins.misc.json_1.0.0.cpx</path>
+                            <path>${build_automation.build.plugins_directory}/pt.hive.colony.plugins.misc.json_1.0.0.cpx</path>
                             <owner>0</owner>
                             <group>0</group>
                             <mode>755</mode>
@@ -434,7 +422,7 @@
                             </parameters>
                         </file>
                         <file>
-                            <path>${build_automation.build.target_directory}/pt.hive.colony.plugins.misc.random_1.0.0.cpx</path>
+                            <path>${build_automation.build.plugins_directory}/pt.hive.colony.plugins.misc.random_1.0.0.cpx</path>
                             <owner>0</owner>
                             <group>0</group>
                             <mode>755</mode>
@@ -445,7 +433,7 @@
                             </parameters>
                         </file>
                         <file>
-                            <path>${build_automation.build.target_directory}/pt.hive.colony.plugins.search.manager_1.0.0.cpx</path>
+                            <path>${build_automation.build.plugins_directory}/pt.hive.colony.plugins.search.manager_1.0.0.cpx</path>
                             <owner>0</owner>
                             <group>0</group>
                             <mode>755</mode>
@@ -456,7 +444,7 @@
                             </parameters>
                         </file>
                         <file>
-                            <path>${build_automation.build.target_directory}/pt.hive.colony.plugins.search.crawler_1.0.0.cpx</path>
+                            <path>${build_automation.build.plugins_directory}/pt.hive.colony.plugins.search.crawler_1.0.0.cpx</path>
                             <owner>0</owner>
                             <group>0</group>
                             <mode>755</mode>
@@ -467,7 +455,7 @@
                             </parameters>
                         </file>
                         <file>
-                            <path>${build_automation.build.target_directory}/pt.hive.colony.plugins.search.index_persistence_1.0.0.cpx</path>
+                            <path>${build_automation.build.plugins_directory}/pt.hive.colony.plugins.search.index_persistence_1.0.0.cpx</path>
                             <owner>0</owner>
                             <group>0</group>
                             <mode>755</mode>
@@ -478,7 +466,7 @@
                             </parameters>
                         </file>
                         <file>
-                            <path>${build_automation.build.target_directory}/pt.hive.colony.plugins.search.indexer_1.0.0.cpx</path>
+                            <path>${build_automation.build.plugins_directory}/pt.hive.colony.plugins.search.indexer_1.0.0.cpx</path>
                             <owner>0</owner>
                             <group>0</group>
                             <mode>755</mode>
@@ -489,7 +477,7 @@
                             </parameters>
                         </file>
                         <file>
-                            <path>${build_automation.build.target_directory}/pt.hive.colony.plugins.search.interpreter_1.0.0.cpx</path>
+                            <path>${build_automation.build.plugins_directory}/pt.hive.colony.plugins.search.interpreter_1.0.0.cpx</path>
                             <owner>0</owner>
                             <group>0</group>
                             <mode>755</mode>
@@ -500,7 +488,7 @@
                             </parameters>
                         </file>
                         <file>
-                            <path>${build_automation.build.target_directory}/pt.hive.colony.plugins.search.processor_1.0.0.cpx</path>
+                            <path>${build_automation.build.plugins_directory}/pt.hive.colony.plugins.search.processor_1.0.0.cpx</path>
                             <owner>0</owner>
                             <group>0</group>
                             <mode>755</mode>
@@ -511,7 +499,7 @@
                             </parameters>
                         </file>
                         <file>
-                            <path>${build_automation.build.target_directory}/pt.hive.colony.plugins.search.query_evaluator_1.0.0.cpx</path>
+                            <path>${build_automation.build.plugins_directory}/pt.hive.colony.plugins.search.query_evaluator_1.0.0.cpx</path>
                             <owner>0</owner>
                             <group>0</group>
                             <mode>755</mode>
@@ -522,7 +510,7 @@
                             </parameters>
                         </file>
                         <file>
-                            <path>${build_automation.build.target_directory}/pt.hive.colony.plugins.search.scorer.function_repository_1.0.0.cpx</path>
+                            <path>${build_automation.build.plugins_directory}/pt.hive.colony.plugins.search.scorer.function_repository_1.0.0.cpx</path>
                             <owner>0</owner>
                             <group>0</group>
                             <mode>755</mode>
@@ -533,7 +521,7 @@
                             </parameters>
                         </file>
                         <file>
-                            <path>${build_automation.build.target_directory}/pt.hive.colony.plugins.search.scorer.metric_repository_1.0.0.cpx</path>
+                            <path>${build_automation.build.plugins_directory}/pt.hive.colony.plugins.search.scorer.metric_repository_1.0.0.cpx</path>
                             <owner>0</owner>
                             <group>0</group>
                             <mode>755</mode>
@@ -544,7 +532,7 @@
                             </parameters>
                         </file>
                         <file>
-                            <path>${build_automation.build.target_directory}/pt.hive.colony.plugins.search.scorer_1.0.0.cpx</path>
+                            <path>${build_automation.build.plugins_directory}/pt.hive.colony.plugins.search.scorer_1.0.0.cpx</path>
                             <owner>0</owner>
                             <group>0</group>
                             <mode>755</mode>
@@ -555,7 +543,7 @@
                             </parameters>
                         </file>
                         <file>
-                            <path>${build_automation.build.target_directory}/pt.hive.colony.plugins.search.sorter_1.0.0.cpx</path>
+                            <path>${build_automation.build.plugins_directory}/pt.hive.colony.plugins.search.sorter_1.0.0.cpx</path>
                             <owner>0</owner>
                             <group>0</group>
                             <mode>755</mode>
@@ -566,7 +554,7 @@
                             </parameters>
                         </file>
                         <file>
-                            <path>${build_automation.build.target_directory}/pt.hive.colony.plugins.template_engine.manager_1.0.0.cpx</path>
+                            <path>${build_automation.build.plugins_directory}/pt.hive.colony.plugins.template_engine.manager_1.0.0.cpx</path>
                             <owner>0</owner>
                             <group>0</group>
                             <mode>755</mode>
@@ -577,7 +565,7 @@
                             </parameters>
                         </file>
                         <file>
-                            <path>${build_automation.build.target_directory}/pt.hive.colony.plugins.web.mvc_1.0.0.cpx</path>
+                            <path>${build_automation.build.plugins_directory}/pt.hive.colony.plugins.web.mvc_1.0.0.cpx</path>
                             <owner>0</owner>
                             <group>0</group>
                             <mode>755</mode>
@@ -588,7 +576,7 @@
                             </parameters>
                         </file>
                         <file>
-                            <path>${build_automation.build.target_directory}/pt.hive.colony.plugins.web.mvc.search_1.0.0.cpx</path>
+                            <path>${build_automation.build.plugins_directory}/pt.hive.colony.plugins.web.mvc.search_1.0.0.cpx</path>
                             <owner>0</owner>
                             <group>0</group>
                             <mode>755</mode>
@@ -599,7 +587,7 @@
                             </parameters>
                         </file>
                         <file>
-                            <path>${build_automation.build.target_directory}/pt.hive.colony.plugins.web.mvc.utils_1.0.0.cpx</path>
+                            <path>${build_automation.build.plugins_directory}/pt.hive.colony.plugins.web.mvc.utils_1.0.0.cpx</path>
                             <owner>0</owner>
                             <group>0</group>
                             <mode>755</mode>
@@ -610,7 +598,7 @@
                             </parameters>
                         </file>
                         <file>
-                            <path>${build_automation.build.target_directory}/pt.hive.colony.plugins.web.mvc.manager_1.0.0.cpx</path>
+                            <path>${build_automation.build.plugins_directory}/pt.hive.colony.plugins.web.mvc.manager_1.0.0.cpx</path>
                             <owner>0</owner>
                             <group>0</group>
                             <mode>755</mode>
@@ -621,7 +609,7 @@
                             </parameters>
                         </file>
                         <file>
-                            <path>${build_automation.build.target_directory}/pt.hive.colony.plugins.web.mvc.resources.base_1.0.0.cpx</path>
+                            <path>${build_automation.build.plugins_directory}/pt.hive.colony.plugins.web.mvc.resources.base_1.0.0.cpx</path>
                             <owner>0</owner>
                             <group>0</group>
                             <mode>755</mode>
@@ -632,7 +620,7 @@
                             </parameters>
                         </file>
                         <file>
-                            <path>${build_automation.build.target_directory}/pt.hive.colony.plugins.web.mvc.resources.ui_1.0.0.cpx</path>
+                            <path>${build_automation.build.plugins_directory}/pt.hive.colony.plugins.web.mvc.resources.ui_1.0.0.cpx</path>
                             <owner>0</owner>
                             <group>0</group>
                             <mode>755</mode>
@@ -643,7 +631,7 @@
                             </parameters>
                         </file>
                         <file>
-                            <path>${build_automation.build.target_directory}/pt.hive.colony.plugins.resources.python_resource_parser_1.0.0.cpx</path>
+                            <path>${build_automation.build.plugins_directory}/pt.hive.colony.plugins.resources.python_resource_parser_1.0.0.cpx</path>
                             <owner>0</owner>
                             <group>0</group>
                             <mode>755</mode>
@@ -654,7 +642,7 @@
                             </parameters>
                         </file>
                         <file>
-                            <path>${build_automation.build.target_directory}/pt.hive.colony.plugins.resources.resource_manager_1.0.0.cpx</path>
+                            <path>${build_automation.build.plugins_directory}/pt.hive.colony.plugins.resources.resource_manager_1.0.0.cpx</path>
                             <owner>0</owner>
                             <group>0</group>
                             <mode>755</mode>
@@ -665,7 +653,7 @@
                             </parameters>
                         </file>
                         <file>
-                            <path>${build_automation.build.target_directory}/pt.hive.colony.plugins.search.index_repository_1.0.0.cpx</path>
+                            <path>${build_automation.build.plugins_directory}/pt.hive.colony.plugins.search.index_repository_1.0.0.cpx</path>
                             <owner>0</owner>
                             <group>0</group>
                             <mode>755</mode>
@@ -676,7 +664,7 @@
                             </parameters>
                         </file>
                         <file>
-                            <path>${build_automation.build.target_directory}/pt.hive.colony.plugins.system.updater_1.0.0.cpx</path>
+                            <path>${build_automation.build.plugins_directory}/pt.hive.colony.plugins.system.updater_1.0.0.cpx</path>
                             <owner>0</owner>
                             <group>0</group>
                             <mode>755</mode>
@@ -687,7 +675,7 @@
                             </parameters>
                         </file>
                         <file>
-                            <path>${build_automation.build.target_directory}/pt.hive.colony.plugins.web.mvc.manager.page_item.repository_1.0.0.cpx</path>
+                            <path>${build_automation.build.plugins_directory}/pt.hive.colony.plugins.web.mvc.manager.page_item.repository_1.0.0.cpx</path>
                             <owner>0</owner>
                             <group>0</group>
                             <mode>755</mode>

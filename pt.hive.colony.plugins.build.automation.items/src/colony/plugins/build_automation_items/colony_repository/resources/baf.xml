@@ -71,7 +71,7 @@
                 <stage>build</stage>
                 <configuration>
                     <formats>apt</formats>
-                    <target>${build_automation.build.target_directory}/repository</target>
+                    <target>${build_automation.build.repository_directory}</target>
                     <contents>
                         <file>
                             <name>colony</name>
