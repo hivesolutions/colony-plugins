@@ -291,7 +291,7 @@ class BuildAutomation:
         # returns the loaded build automation item plugins
         return self.loaded_build_automation_item_plugins_list
 
-    def run_automation(self, plugin_id, plugin_version = None, stage = None, recursive_level = 1):
+    def run_automation(self, plugin_id, plugin_version = None, stage = None, recursive_level = 1, is_first = True):
         """
         Runs all the automation plugins for the given plugin id and version.
 
@@ -303,6 +303,8 @@ class BuildAutomation:
         @param stage: The stage to be run in the automation.
         @type recursive_level: int
         @param recursive_level: The current level of recursion.
+        @type is_first: bool
+        @param is_first: If this is the first run (useful for module inclusion).
         """
 
         # retrieves the build automation structure
@@ -312,8 +314,8 @@ class BuildAutomation:
         if not build_automation_structure:
             return
 
-        # creates the build automation directories (if they don't exist)
-        self.create_build_automation_directories(build_automation_structure)
+        # creates the build automation directories (if they don't exist and is first run)
+        is_first and self.create_build_automation_directories(build_automation_structure)
 
         # in case the stage is not defined, it's is going
         # to find the default one
@@ -324,32 +326,47 @@ class BuildAutomation:
             # retrieves the default stage as the stage to be used
             stage = build_properties[DEFAULT_STAGE_VALUE]
 
+        # in case the stage is not present in the build automation stages
+        if not stage in BUILD_AUTOMATION_STAGES:
+            # raises the invalid stage exception
+            raise build_automation_exceptions.InvalidStageException(stage)
+
         # in case the recursive level is greater than zero
         if recursive_level > 0:
             # iterates over all the module plugins to execute them (composition)
-            for module_plugin in build_automation_structure.module_plugins:
+            for module_plugin, module_plugin_stage in build_automation_structure.module_plugins:
+                # retrieves the module values
+                module_id = module_plugin.id
+                module_version = module_plugin.version
+                module_stage = module_plugin_stage or stage
+
                 # runs the module plugin for the same stage
-                self.run_automation(module_plugin.id, module_plugin.version, stage, recursive_level - 1)
+                self.run_automation(module_id, module_version, module_stage, recursive_level - 1, False)
 
-        # retrieves the automation plugins for the stage
-        all_automation_plugins = build_automation_structure.get_all_automation_plugins_by_stage(stage)
+        # retrieves the valid automation stages for the current stage
+        valid_automation_stages = BUILD_AUTOMATION_STAGES[:BUILD_AUTOMATION_STAGES.index(stage) + 1]
 
-        # iterates over all of the automation plugins
-        for automation_plugin in all_automation_plugins:
-            # retrieves the automation plugin id
-            automation_plugin_id = automation_plugin.id
+        # iterates over all the valid automation stages to run the automation plugins
+        for valid_automation_stage in valid_automation_stages:
+            # retrieves the automation plugins for the stage
+            all_automation_plugins = build_automation_structure.get_all_automation_plugins_by_stage(valid_automation_stage)
 
-            # retrieves the automation plugin version
-            automation_plugin_version = automation_plugin.version
+            # iterates over all of the automation plugins
+            for automation_plugin in all_automation_plugins:
+                # retrieves the automation plugin id
+                automation_plugin_id = automation_plugin.id
 
-            # creates the automation plugin tuple
-            automation_plugin_tuple = (automation_plugin_id, automation_plugin_version)
+                # retrieves the automation plugin version
+                automation_plugin_version = automation_plugin.version
 
-            # retrieves the automation plugin configurations
-            automation_plugin_configurations = build_automation_structure.get_all_automation_plugin_configurations(automation_plugin_tuple)
+                # creates the automation plugin tuple
+                automation_plugin_tuple = (automation_plugin_id, automation_plugin_version)
 
-            # runs the automation for the current stage
-            automation_plugin.run_automation(build_automation_structure.associated_plugin, stage, automation_plugin_configurations, build_automation_structure)
+                # retrieves the automation plugin configurations
+                automation_plugin_configurations = build_automation_structure.get_all_automation_plugin_configurations(automation_plugin_tuple)
+
+                # runs the automation for the current stage
+                automation_plugin.run_automation(build_automation_structure.associated_plugin, stage, automation_plugin_configurations, build_automation_structure)
 
     def generate_build_automation_structure(self, build_automation_parsing_structure):
         """
@@ -441,6 +458,9 @@ class BuildAutomation:
             # creates the plugin version regex
             plugin_version_regex = re.compile(module.version)
 
+            # retrieves the plugin stage
+            plugin_stage = module.stage
+
             # retrieves the build automation module plugins (the ones that match the regex)
             build_automation_module_plugins = self.get_build_automation_item_plugins_regex(plugin_id_regex, plugin_version_regex)
 
@@ -449,8 +469,12 @@ class BuildAutomation:
                 # removes the associated plugin from the build automation module plugins
                 build_automation_module_plugins.remove(build_automation_structure.associated_plugin)
 
-            # extends the module plugins list with the new ones
-            build_automation_structure.module_plugins.extend(build_automation_module_plugins)
+            # creates the build automation module plugin tuples from the original build automation
+            # module plugins and the plugin stage
+            build_automation_module_plugin_tuples = [(value, plugin_stage) for value in build_automation_module_plugins]
+
+            # extends the module plugins list with the new ones (tuples)
+            build_automation_structure.module_plugins.extend(build_automation_module_plugin_tuples)
 
     def generate_build_automation_build_structure(self, build_automation_parsing_structure, build_automation_structure):
         # retrieves the build parsing value

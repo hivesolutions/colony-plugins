@@ -228,6 +228,8 @@ class BuildAutomationFileParser(Parser):
             module.id = self.parse_build_automation_module_id(build_automation_module_element)
         elif node_name == "version":
             module.version = self.parse_build_automation_module_version(build_automation_module_element)
+        elif node_name == "stage":
+            module.stage = self.parse_build_automation_module_stage(build_automation_module_element)
 
     def parse_build_automation_module_id(self, module_id):
         build_automation_module_id = module_id.firstChild.data.strip()
@@ -236,6 +238,10 @@ class BuildAutomationFileParser(Parser):
     def parse_build_automation_module_version(self, module_version):
         build_automation_module_version = module_version.firstChild.data.strip()
         return build_automation_module_version
+
+    def parse_build_automation_module_stage(self, module_stage):
+        build_automation_module_stage = module_stage.firstChild.data.strip()
+        return build_automation_module_stage
 
     def parse_build_automation_build(self, build_automation_build):
         build = Build()
@@ -613,10 +619,12 @@ class Module:
 
     id = "none"
     version = "none"
+    stage = None
 
-    def __init__(self, id = "none", version = "none"):
+    def __init__(self, id = "none", version = "none", stage = None):
         self.id = id
         self.version = version
+        self.stage = stage
 
 class Build:
     """
