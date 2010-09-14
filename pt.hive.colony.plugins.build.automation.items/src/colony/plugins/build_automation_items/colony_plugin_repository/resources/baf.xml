@@ -40,6 +40,12 @@
         <description>The Colony Plugin Repository Build Automation Item Plugin automation file (baf)</description>
         <url>http://www.hive.pt</url>
     </artifact>
+    <modules>
+        <module>
+            <id>pt.hive.colony.plugins.*</id>
+            <version>.*</version>
+        </module>
+    </modules>
     <build>
         <default_stage>build</default_stage>
         <plugins>
