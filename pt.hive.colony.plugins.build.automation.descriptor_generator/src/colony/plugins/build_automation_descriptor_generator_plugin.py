@@ -59,6 +59,8 @@ class BuildAutomationDescriptorGeneratorPlugin(colony.base.plugin_system.Plugin)
     capabilities = ["console_command_extension", "build_automation_item"]
     capabilities_allowed = []
     dependencies = [colony.base.plugin_system.PluginDependency(
+                    "pt.hive.colony.plugins.build.automation.validator", "1.0.0"),
+                    colony.base.plugin_system.PluginDependency(
                     "pt.hive.colony.plugins.template_engine.manager", "1.0.0")]
     events_handled = []
     events_registrable = []
@@ -70,6 +72,9 @@ class BuildAutomationDescriptorGeneratorPlugin(colony.base.plugin_system.Plugin)
 
     console_build_automation_descriptor_generator = None
     """ The console build automation descriptor generator """
+
+    build_automation_validator_plugin = None
+    """ The build automation validator plugin """
 
     template_engine_manager_plugin = None
     """ The template engine manager plugin """
@@ -122,6 +127,13 @@ class BuildAutomationDescriptorGeneratorPlugin(colony.base.plugin_system.Plugin)
     def generate_plugin_descriptors(self):
         # generates plugin descriptors for all plugins
         self.build_automation_descriptor_generator.generate_plugin_descriptors()
+
+    def get_build_automation_validator_plugin(self):
+        return self.build_automation_validator_plugin
+
+    @colony.base.decorators.plugin_inject("pt.hive.colony.plugins.build.automation.validator")
+    def set_build_automation_validator_plugin(self, build_automation_validator_plugin):
+        self.build_automation_validator_plugin = build_automation_validator_plugin
 
     def get_template_engine_manager_plugin(self):
         return self.template_engine_manager_plugin
