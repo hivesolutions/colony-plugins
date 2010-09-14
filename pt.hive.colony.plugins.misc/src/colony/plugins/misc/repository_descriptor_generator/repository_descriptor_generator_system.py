@@ -195,6 +195,8 @@ class RepositoryDescriptorGenerator:
 
             plugin_plugin_dependencies = plugin.get_all_plugin_dependencies()
 
+            # iterates over all the plugin dependencies to
+            # write the dependencies values
             for plugin_dependency in plugin_plugin_dependencies:
                 repository_plugin_plugin_dependency_node = xml_document.createElement("plugin_dependency")
                 repository_plugin_dependencies_node.appendChild(repository_plugin_plugin_dependency_node)

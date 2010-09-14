@@ -89,6 +89,12 @@ class RepositoryDescriptorGeneratorPlugin(colony.base.plugin_system.Plugin):
     def dependency_injected(self, plugin):
         colony.base.plugin_system.Plugin.dependency_injected(self, plugin)
 
+    def generate_repository_descriptor_file(self, file_path, repository_name, repository_description, repository_layout):
+        return self.repository_descriptor_generator.generate_repository_descriptor_file(file_path, repository_name, repository_description, repository_layout)
+
+    def generate_repository_descriptor(self, repository_name, repository_description, repository_layout):
+        return self.repository_descriptor_generator.generate_repository_descriptor(repository_name, repository_description, repository_layout)
+
     def get_console_extension_name(self):
         return self.console_repository_descriptor_generator.get_console_extension_name()
 
