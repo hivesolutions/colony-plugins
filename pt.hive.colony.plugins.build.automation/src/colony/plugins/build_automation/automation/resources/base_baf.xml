@@ -44,7 +44,11 @@
         <default_stage>build</default_stage>
         <execution_directory>.</execution_directory>
         <target_directory>target</target_directory>
-        <output_directory>target/classes</output_directory>
+        <classes_directory>target/classes</classes_directory>
+        <plugins_directory>target/plugins</plugins_directory>
+        <documentation_directory>target/documentation</documentation_directory>
+        <repository_directory>target/repository</repository_directory>
+        <resources_directory>target/resources</resources_directory>
         <source_directory>src</source_directory>
         <final_name>${build_automation.artifact.id}-${build_automation.artifact.version}</final_name>
         <clean_target_directory>false</clean_target_directory>

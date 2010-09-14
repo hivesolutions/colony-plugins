@@ -256,8 +256,16 @@ class BuildAutomationFileParser(Parser):
             build.execution_directory = self.parse_build_automation_build_execution_directory(build_automation_build_element)
         elif node_name == "target_directory":
             build.target_directory = self.parse_build_automation_build_target_directory(build_automation_build_element)
-        elif node_name == "output_directory":
-            build.output_directory = self.parse_build_automation_build_output_directory(build_automation_build_element)
+        elif node_name == "classes_directory":
+            build.classes_directory = self.parse_build_automation_build_classes_directory(build_automation_build_element)
+        elif node_name == "plugins_directory":
+            build.plugins_directory = self.parse_build_automation_build_plugins_directory(build_automation_build_element)
+        elif node_name == "documentation_directory":
+            build.documentation_directory = self.parse_build_automation_build_documentation_directory(build_automation_build_element)
+        elif node_name == "repository_directory":
+            build.repository_directory = self.parse_build_automation_build_repository_directory(build_automation_build_element)
+        elif node_name == "resources_directory":
+            build.resources_directory = self.parse_build_automation_build_resources_directory(build_automation_build_element)
         elif node_name == "source_directory":
             build.source_directory = self.parse_build_automation_build_source_directory(build_automation_build_element)
         elif node_name == "final_name":
@@ -281,9 +289,25 @@ class BuildAutomationFileParser(Parser):
         build_automation_build_target_directory = build_target_directory.firstChild.data.strip()
         return build_automation_build_target_directory
 
-    def parse_build_automation_build_output_directory(self, build_output_directory):
-        build_automation_build_output_directory = build_output_directory.firstChild.data.strip()
-        return build_automation_build_output_directory
+    def parse_build_automation_build_classes_directory(self, build_classes_directory):
+        build_automation_build_classes_directory = build_classes_directory.firstChild.data.strip()
+        return build_automation_build_classes_directory
+
+    def parse_build_automation_build_plugins_directory(self, build_plugins_directory):
+        build_automation_build_plugins_directory = build_plugins_directory.firstChild.data.strip()
+        return build_automation_build_plugins_directory
+
+    def parse_build_automation_build_documentation_directory(self, build_documentation_directory):
+        build_automation_build_documentation_directory = build_documentation_directory.firstChild.data.strip()
+        return build_automation_build_documentation_directory
+
+    def parse_build_automation_build_repository_directory(self, build_repository_directory):
+        build_automation_build_repository_directory = build_repository_directory.firstChild.data.strip()
+        return build_automation_build_repository_directory
+
+    def parse_build_automation_build_resources_directory(self, build_resources_directory):
+        build_automation_build_resources_directory = build_resources_directory.firstChild.data.strip()
+        return build_automation_build_resources_directory
 
     def parse_build_automation_build_source_directory(self, build_source_directory):
         build_automation_build_source_directory = build_source_directory.firstChild.data.strip()
@@ -602,18 +626,26 @@ class Build:
     default_stage = "none"
     execution_directory = "none"
     target_directory = "none"
-    output_directory = "none"
+    classes_directory = "none"
+    plugins_directory = "none"
+    documentation_directory = "none"
+    repository_directory = "none"
+    resources_directory = "none"
     source_directory = "none"
     final_name = "none"
     clean_target_directory = "none"
     dependencies = []
     plugins = []
 
-    def __init__(self, default_stage = "none", execution_directory = "none", target_directory = "none", output_directory = "none", source_directory = "none", final_name = "none", clean_target_directory = "none"):
+    def __init__(self, default_stage = "none", execution_directory = "none", target_directory = "none", classes_directory = "none", plugins_directory = "none", documentation_directory = "none", repository_directory = "none", resources_directory = "none", source_directory = "none", final_name = "none", clean_target_directory = "none"):
         self.default_stage = default_stage
         self.execution_directory = execution_directory
         self.target_directory = target_directory
-        self.output_directory = output_directory
+        self.classes_directory = classes_directory
+        self.plugins_directory = plugins_directory
+        self.documentation_directory = documentation_directory
+        self.repository_directory = repository_directory
+        self.resources_directory = resources_directory
         self.source_directory = source_directory
         self.final_name = final_name
         self.clean_target_directory = clean_target_directory

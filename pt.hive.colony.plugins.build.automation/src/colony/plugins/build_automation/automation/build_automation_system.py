@@ -291,7 +291,7 @@ class BuildAutomation:
         # returns the loaded build automation item plugins
         return self.loaded_build_automation_item_plugins_list
 
-    def run_automation(self, plugin_id, plugin_version = None, stage = None):
+    def run_automation(self, plugin_id, plugin_version = None, stage = None, recursive_level = 1):
         """
         Runs all the automation plugins for the given plugin id and version.
 
@@ -301,6 +301,8 @@ class BuildAutomation:
         @param plugin_version: The version of the plugin to run the automation plugins.
         @type stage: String
         @param stage: The stage to be run in the automation.
+        @type recursive_level: int
+        @param recursive_level: The current level of recursion.
         """
 
         # retrieves the build automation structure
@@ -322,10 +324,12 @@ class BuildAutomation:
             # retrieves the default stage as the stage to be used
             stage = build_properties[DEFAULT_STAGE_VALUE]
 
-        # iterates over all the module plugins to execute them (composition)
-        for module_plugin in build_automation_structure.module_plugins:
-            # runs the module plugin for the same stage
-            self.run_automation(module_plugin.id, module_plugin.version, stage)
+        # in case the recursive level is greater than zero
+        if recursive_level > 0:
+            # iterates over all the module plugins to execute them (composition)
+            for module_plugin in build_automation_structure.module_plugins:
+                # runs the module plugin for the same stage
+                self.run_automation(module_plugin.id, module_plugin.version, stage, recursive_level - 1)
 
         # retrieves the automation plugins for the stage
         all_automation_plugins = build_automation_structure.get_all_automation_plugins_by_stage(stage)
@@ -467,10 +471,30 @@ class BuildAutomation:
             build_automation_target_directory = self.parse_string(build.target_directory, build_automation_structure)
             build_automation_structure.build_properties["target_directory"] = build_automation_target_directory
 
-        if build.output_directory:
-            # retrieves the build output directory
-            build_automation_output_directory = self.parse_string(build.output_directory, build_automation_structure)
-            build_automation_structure.build_properties["output_directory"] = build_automation_output_directory
+        if build.classes_directory:
+            # retrieves the build classes directory
+            build_automation_classes_directory = self.parse_string(build.classes_directory, build_automation_structure)
+            build_automation_structure.build_properties["classes_directory"] = build_automation_classes_directory
+
+        if build.plugins_directory:
+            # retrieves the build plugins directory
+            build_automation_plugins_directory = self.parse_string(build.plugins_directory, build_automation_structure)
+            build_automation_structure.build_properties["plugins_directory"] = build_automation_plugins_directory
+
+        if build.documentation_directory:
+            # retrieves the build documentation directory
+            build_automation_documentation_directory = self.parse_string(build.documentation_directory, build_automation_structure)
+            build_automation_structure.build_properties["documentation_directory"] = build_automation_documentation_directory
+
+        if build.repository_directory:
+            # retrieves the build repository directory
+            build_automation_repository_directory = self.parse_string(build.repository_directory, build_automation_structure)
+            build_automation_structure.build_properties["repository_directory"] = build_automation_repository_directory
+
+        if build.resources_directory:
+            # retrieves the build resources directory
+            build_automation_resources_directory = self.parse_string(build.resources_directory, build_automation_structure)
+            build_automation_structure.build_properties["resources_directory"] = build_automation_resources_directory
 
         if build.source_directory:
             # retrieves the build source directory
@@ -601,8 +625,20 @@ class BuildAutomation:
         # retrieves the target directory path value
         target_directory_path = build_properties["target_directory"]
 
-        # retrieves the output directory path value
-        output_directory_path = build_properties["output_directory"]
+        # retrieves the classes directory path value
+        classes_directory_path = build_properties["classes_directory"]
+
+        # retrieves the plugins directory path value
+        plugins_directory_path = build_properties["plugins_directory"]
+
+        # retrieves the documentation directory path value
+        documentation_directory_path = build_properties["documentation_directory"]
+
+        # retrieves the repository directory path value
+        repository_directory_path = build_properties["repository_directory"]
+
+        # retrieves the resources directory path value
+        resources_directory_path = build_properties["resources_directory"]
 
         # retrieves the clean target directory value
         clean_target_directory = build_properties["clean_target_directory"] == "true"
@@ -610,8 +646,20 @@ class BuildAutomation:
         # creates the complete target directory path
         complete_target_directory_path = execution_directory_path + "/" + target_directory_path
 
-        # creates the complete output directory path
-        complete_output_directory_path = execution_directory_path + "/" + output_directory_path
+        # creates the complete classes directory path
+        complete_classes_directory_path = execution_directory_path + "/" + classes_directory_path
+
+        # creates the complete plugins directory path
+        complete_plugins_directory_path = execution_directory_path + "/" + plugins_directory_path
+
+        # creates the complete documentation directory path
+        complete_documentation_directory_path = execution_directory_path + "/" + documentation_directory_path
+
+        # creates the complete repository directory path
+        complete_repository_directory_path = execution_directory_path + "/" + repository_directory_path
+
+        # creates the complete resources directory path
+        complete_resources_directory_path = execution_directory_path + "/" + resources_directory_path
 
         # removes (cleans) the target directory
         clean_target_directory and colony.libs.path_util.remove_directory(complete_target_directory_path)
@@ -626,10 +674,30 @@ class BuildAutomation:
             # creates the target directory
             os.mkdir(complete_target_directory_path)
 
-        # in case the output directory does not exist
-        if not os.path.isdir(complete_output_directory_path):
-            # creates the target directory
-            os.mkdir(complete_output_directory_path)
+        # in case the classes directory does not exist
+        if not os.path.isdir(complete_classes_directory_path):
+            # creates the classes directory
+            os.mkdir(complete_classes_directory_path)
+
+        # in case the plugins directory does not exist
+        if not os.path.isdir(complete_plugins_directory_path):
+            # creates the plugins directory
+            os.mkdir(complete_plugins_directory_path)
+
+        # in case the documentation directory does not exist
+        if not os.path.isdir(complete_documentation_directory_path):
+            # creates the documentation directory
+            os.mkdir(complete_documentation_directory_path)
+
+        # in case the repository directory does not exist
+        if not os.path.isdir(complete_repository_directory_path):
+            # creates the repository directory
+            os.mkdir(complete_repository_directory_path)
+
+        # in case the resources directory does not exist
+        if not os.path.isdir(complete_resources_directory_path):
+            # creates the resources directory
+            os.mkdir(complete_resources_directory_path)
 
     def get_build_automation_extension_plugin(self, plugin_id, plugin_version = None):
         """
