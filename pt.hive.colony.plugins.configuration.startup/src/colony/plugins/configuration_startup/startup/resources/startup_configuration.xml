@@ -164,18 +164,6 @@
             <load>false</load>
         </plugin>
         <plugin>
-            <name>Dummy Database Access plugin</name>
-            <id>pt.hive.colony.plugins.dummy.database_access</id>
-            <version>1.0.0</version>
-            <load>false</load>
-        </plugin>
-        <plugin>
-            <name>Dummy Business Logic plugin</name>
-            <id>pt.hive.colony.plugins.dummy.business_logic</id>
-            <version>1.0.0</version>
-            <load>false</load>
-        </plugin>
-        <plugin>
             <name>Dummy Business Logic 1 plugin</name>
             <id>pt.hive.colony.plugins.dummy.business_logic_1</id>
             <version>1.0.0</version>
