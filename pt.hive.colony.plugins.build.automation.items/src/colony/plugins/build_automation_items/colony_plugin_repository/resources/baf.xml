@@ -40,21 +40,18 @@
         <description>The Colony Plugin Repository Build Automation Item Plugin automation file (baf)</description>
         <url>http://www.hive.pt</url>
     </artifact>
-    <modules>
-        <module>
-            <id>pt.hive.colony.plugins.*</id>
-            <version>.*</version>
-        </module>
-    </modules>
     <build>
         <default_stage>build</default_stage>
         <plugins>
             <plugin>
-                <id>pt.hive.colony.plugins.build.automation.extensions.packing</id>
+                <id>pt.hive.colony.plugins.build.automation.extensions.plugin_repository.generator</id>
                 <version>1.0.0</version>
                 <stage>build</stage>
                 <configuration>
-                    <specification_file>$base{plugin_directory}/colony_plugin_repository_build_automation_item_plugin.json</specification_file>
+                    <target>${build_automation.build.target_directory}/repository</target>
+                    <repository_name>Hive Production repository</repository_name>
+                    <repository_description>Hive Production repository</repository_description>
+                    <repository_layout>simple</repository_layout>
                 </configuration>
             </plugin>
         </plugins>
