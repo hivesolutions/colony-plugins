@@ -13,7 +13,6 @@
     "main_file" : "main_service_xmpp_helper_plugin.py",
     "resources" : [
             "main_service_xmpp_helper_plugin.py",
-            "main_service_xmpp/__init__.py",
             "main_service_xmpp_helper/__init__.py",
             "main_service_xmpp_helper/xmpp_helper/__init__.py",
             "main_service_xmpp_helper/xmpp_helper/main_service_xmpp_helper_exceptions.py",
