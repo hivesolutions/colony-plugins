@@ -158,6 +158,10 @@ class BuildAutomationValidator:
         # retrieves the plugin module name
         plugin_module_name = self.build_automation_validator_plugin.manager.get_plugin_module_name_by_id(plugin.id)
 
+        # converts the plugin path separators from the windows mode
+        # to unix mode
+        plugin_path = plugin_path.replace(WINDOWS_DIRECTORY_SEPARATOR, UNIX_DIRECTORY_SEPARATOR)
+
         # retrieves the plugin file path map for the plugin's path
         plugin_file_path_map = self.get_file_path_map(plugin_path)
 
@@ -598,6 +602,10 @@ class BuildAutomationValidator:
         # crawls the specified path indexing file paths by their file name
         for root, _directories, files in os.walk(path):
             for file in files:
+                # converts the root path separators from the windows mode
+                # to unix mode
+                root = root.replace(WINDOWS_DIRECTORY_SEPARATOR, UNIX_DIRECTORY_SEPARATOR)
+
                 # indexes the file path by the file name
                 file_path_map[file] = root
 
