@@ -44,6 +44,9 @@ import colony.libs.path_util
 TARGET_DIRECTORY_VALUE = "target_directory"
 """ The target directory value """
 
+PLUGINS_DIRECTORY_VALUE = "plugins_directory"
+""" The plugins directory value """
+
 TARGET_VALUE = "target"
 """ The target value """
 
@@ -77,6 +80,9 @@ class PluginRepositoryGeneratorBuildAutomationExtension:
 
         # retrieves the target directory
         target_directory = build_properties[TARGET_DIRECTORY_VALUE]
+
+        # retrieves the plugins directory
+        plugins_directory = build_properties[PLUGINS_DIRECTORY_VALUE]
 
         # retrieves the repository name
         repository_name = parameters["repository_name"]
@@ -122,8 +128,8 @@ class PluginRepositoryGeneratorBuildAutomationExtension:
             plugin_file_name = plugin_id + "_" + plugin_version + ".cpx"
 
             # in case the source plugin path does not exists
-            if not os.path.exists(target_directory + "/" + plugin_file_name):
+            if not os.path.exists(plugins_directory + "/" + plugin_file_name):
                 # continues the loop
                 continue
 
-            colony.libs.path_util.copy_file(target_directory + "/" + plugin_file_name, full_plugins_directory + "/" + plugin_file_name)
+            colony.libs.path_util.copy_file(plugins_directory + "/" + plugin_file_name, full_plugins_directory + "/" + plugin_file_name)
