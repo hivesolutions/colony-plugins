@@ -84,7 +84,7 @@
                 <version>1.0.0</version>
                 <stage>install</stage>
                 <configuration>
-                    <deployment_path>$base{plugin_system_directory}/tmp/matias</deployment_path>
+                    <deployment_path>c:/matias</deployment_path>
                     <version_file_path>${build_automation.build.target_directory}/version</version_file_path>
                 </configuration>
             </plugin>
