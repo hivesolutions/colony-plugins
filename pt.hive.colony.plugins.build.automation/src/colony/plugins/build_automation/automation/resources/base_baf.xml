@@ -47,6 +47,7 @@
         <output_directory>target/classes</output_directory>
         <source_directory>src</source_directory>
         <final_name>${build_automation.artifact.id}-${build_automation.artifact.version}</final_name>
+        <clean_target_directory>false</clean_target_directory>
         <dependencies>
             <dependency>
                 <id>pt.hive.colony.plugins.build.automation</id>

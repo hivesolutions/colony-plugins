@@ -262,6 +262,8 @@ class BuildAutomationFileParser(Parser):
             build.source_directory = self.parse_build_automation_build_source_directory(build_automation_build_element)
         elif node_name == "final_name":
             build.final_name = self.parse_build_automation_build_final_name(build_automation_build_element)
+        elif node_name == "clean_target_directory":
+            build.clean_target_directory = self.parse_build_automation_build_clean_target_directory(build_automation_build_element)
         elif node_name == "dependencies":
             build.dependencies = self.parse_build_automation_build_dependencies(build_automation_build_element)
         elif node_name == "plugins":
@@ -290,6 +292,10 @@ class BuildAutomationFileParser(Parser):
     def parse_build_automation_build_final_name(self, build_final_name):
         build_automation_build_final_name = build_final_name.firstChild.data.strip()
         return build_automation_build_final_name
+
+    def parse_build_automation_build_clean_target_directory(self, build_final_name):
+        build_automation_build_clean_target_directory = build_final_name.firstChild.data.strip()
+        return build_automation_build_clean_target_directory
 
     def parse_build_automation_build_dependencies(self, build_dependencies):
         build_automation_build_dependencies_list = []
@@ -599,16 +605,18 @@ class Build:
     output_directory = "none"
     source_directory = "none"
     final_name = "none"
+    clean_target_directory = "none"
     dependencies = []
     plugins = []
 
-    def __init__(self, default_stage = "none", execution_directory = "none", target_directory = "none", output_directory = "none", source_directory = "none", final_name = "none"):
+    def __init__(self, default_stage = "none", execution_directory = "none", target_directory = "none", output_directory = "none", source_directory = "none", final_name = "none", clean_target_directory = "none"):
         self.default_stage = default_stage
         self.execution_directory = execution_directory
         self.target_directory = target_directory
         self.output_directory = output_directory
         self.source_directory = source_directory
         self.final_name = final_name
+        self.clean_target_directory = clean_target_directory
         self.dependencies = []
         self.plugins = []
 

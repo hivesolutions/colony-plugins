@@ -482,6 +482,11 @@ class BuildAutomation:
             build_automation_final_name = self.parse_string(build.final_name, build_automation_structure)
             build_automation_structure.build_properties["final_name"] = build_automation_final_name
 
+        if build.clean_target_directory:
+            # retrieves the build clean target directory
+            build_automation_clean_target_directory = self.parse_string(build.clean_target_directory, build_automation_structure)
+            build_automation_structure.build_properties["clean_target_directory"] = build_automation_clean_target_directory
+
         # retrieves the list of build automation dependencies
         build_automation_dependencies = build.dependencies
 
@@ -599,6 +604,9 @@ class BuildAutomation:
         # retrieves the output directory path value
         output_directory_path = build_properties["output_directory"]
 
+        # retrieves the clean target directory value
+        clean_target_directory = build_properties["clean_target_directory"] == "true"
+
         # creates the complete target directory path
         complete_target_directory_path = execution_directory_path + "/" + target_directory_path
 
@@ -606,7 +614,7 @@ class BuildAutomation:
         complete_output_directory_path = execution_directory_path + "/" + output_directory_path
 
         # removes (cleans) the target directory
-        colony.libs.path_util.remove_directory(complete_target_directory_path)
+        clean_target_directory and colony.libs.path_util.remove_directory(complete_target_directory_path)
 
         # in case the execution directory does not exist
         if not os.path.isdir(execution_directory_path):
