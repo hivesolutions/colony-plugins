@@ -17,6 +17,7 @@
     "resources" : [
             "main_service_irc_starter_plugin.py",
             "main_service_irc_starter/__init__.py",
+            "main_service_irc_starter/irc_starter/__init__.py",
             "main_service_irc_starter/irc_starter/main_service_irc_starter_system.py",
             "main_service_irc_starter/irc_starter/resources/baf.xml"]
 }
