@@ -11,7 +11,8 @@
     "capabilities_allowed" : [],
     "dependencies" : [],
     "main_file" : "eureka_mock_item_filter_plugin.py",
-    "resources" : ["eureka_mock_item_filter_plugin.py",
+    "resources" : [
+            "eureka_mock_item_filter_plugin.py",
             "eureka_mock_item_filter/__init__.py",
             "eureka_mock_item_filter/mock_item_filter/__init__.py",
             "eureka_mock_item_filter/mock_item_filter/eureka_mock_item_filter_system.py",

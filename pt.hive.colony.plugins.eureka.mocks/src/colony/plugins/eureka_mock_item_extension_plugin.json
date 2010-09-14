@@ -12,7 +12,8 @@
             "eureka_item_processer.mapper", "eureka_item_processer.sorter"],
     "dependencies" : [],
     "main_file" : "eureka_mock_item_extension_plugin.py",
-    "resources" : ["eureka_mock_item_extension_plugin.py",
+    "resources" : [
+            "eureka_mock_item_extension_plugin.py",
             "eureka_mock_item_extension/__init__.py",
             "eureka_mock_item_extension/mock_item_extension/__init__.py",
             "eureka_mock_item_extension/mock_item_extension/eureka_mock_item_extension_system.py",
