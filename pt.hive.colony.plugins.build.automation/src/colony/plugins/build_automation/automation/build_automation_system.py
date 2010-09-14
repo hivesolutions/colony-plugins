@@ -42,6 +42,8 @@ import re
 import copy
 import types
 
+import colony.libs.path_util
+
 import build_automation_exceptions
 import build_automation_parser
 
@@ -602,6 +604,9 @@ class BuildAutomation:
 
         # creates the complete output directory path
         complete_output_directory_path = execution_directory_path + "/" + output_directory_path
+
+        # removes (cleans) the target directory
+        colony.libs.path_util.remove_directory(complete_target_directory_path)
 
         # in case the execution directory does not exist
         if not os.path.isdir(execution_directory_path):
