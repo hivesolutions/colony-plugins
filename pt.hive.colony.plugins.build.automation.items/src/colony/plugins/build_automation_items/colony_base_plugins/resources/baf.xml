@@ -122,7 +122,7 @@
             <version>.*</version>
         </module>
         <module>
-            <id>pt.hive.colony.plugins.search</id>
+            <id>pt.hive.colony.plugins.search.manager</id>
             <version>.*</version>
         </module>
         <module>
@@ -445,13 +445,13 @@
                             </parameters>
                         </file>
                         <file>
-                            <path>${build_automation.build.target_directory}/pt.hive.colony.plugins.search_1.0.0.cpx</path>
+                            <path>${build_automation.build.target_directory}/pt.hive.colony.plugins.search.manager_1.0.0.cpx</path>
                             <owner>0</owner>
                             <group>0</group>
                             <mode>755</mode>
                             <parameters>
                                 <deb>
-                                    <target>usr/lib/colony/deploy/pt.hive.colony.plugins.search_1.0.0.cpx</target>
+                                    <target>usr/lib/colony/deploy/pt.hive.colony.plugins.search.manager_1.0.0.cpx</target>
                                 </deb>
                             </parameters>
                         </file>
