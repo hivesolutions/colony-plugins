@@ -235,6 +235,49 @@ class MainServiceHttpFileHandler:
         # sets the etag in the request
         request.set_etag(etag_value)
 
+        # in case the complete path is a directory
+        if os.path.isdir(complete_path):
+            # processes the path as a directory
+            self._process_directory(request, complete_path)
+        # otherwise
+        else:
+            # processes the path as a file
+            self._process_file(request, complete_path)
+
+    def _process_directory(self, request, complete_path):
+        """
+        Processes a directory request for the given complete
+        path and request.
+
+        @type request: HttpRequest
+        @param request: The http request to be handled.
+        @type complete_path: String
+        @param complete_path: The complete path to the directory.
+        """
+
+        # retrieves the directory names for the complete path
+        directory_names = os.listdir(complete_path)
+
+        # iterates over all the directory names
+        for directory_name in directory_names:
+            request.write("<div><a href=\"" + directory_name + "\">", 0, True)
+
+            # writes the file contents
+            request.write(directory_name, 0, True)
+
+            request.write("</a></div>", 0, True)
+
+    def _process_file(self, request, complete_path):
+        """
+        Processes a file request for the given complete
+        path and request.
+
+        @type request: HttpRequest
+        @param request: The http request to be handled.
+        @type complete_path: String
+        @param complete_path: The complete path to the file.
+        """
+
         # opens the requested file
         file = open(complete_path, "rb")
 
