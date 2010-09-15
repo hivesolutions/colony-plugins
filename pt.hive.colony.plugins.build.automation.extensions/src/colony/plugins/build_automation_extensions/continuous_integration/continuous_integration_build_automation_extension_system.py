@@ -44,6 +44,15 @@ import colony.libs.path_util
 TARGET_DIRECTORY_VALUE = "target_directory"
 """ The target directory value """
 
+DEPLOYMENT_PATH_VALUE = "deployment_path"
+""" The deployment path value """
+
+VERSION_FILE_PATH_VALUE = "version_file_path"
+""" The version file path value """
+
+ZIP_VALUE = "zip"
+""" The zip value """
+
 LATEST_FILE_NAME = "LATEST.version"
 """ The latest file name """
 
@@ -52,6 +61,9 @@ LATEST_DIRECTORY_NAME = "LATEST"
 
 NT_PLATFORM_VALUE = "nt"
 """ The nt platform value """
+
+ZIP_EXTENSION = ".zip"
+""" The zip extension value """
 
 class ContinuousIntegrationBuildAutomationExtension:
     """
@@ -73,10 +85,13 @@ class ContinuousIntegrationBuildAutomationExtension:
 
     def run_automation(self, plugin, stage, parameters, build_automation_structure):
         # retrieves the deployment path
-        deployment_path = parameters["deployment_path"]
+        deployment_path = parameters[DEPLOYMENT_PATH_VALUE]
 
         # retrieves the version file path
-        version_file_path = parameters["version_file_path"]
+        version_file_path = parameters[VERSION_FILE_PATH_VALUE]
+
+        # retrieves the zip values
+        zips = parameters[ZIP_VALUE]
 
         # retrieves the version from the version file path
         version = self._get_version(version_file_path)
@@ -111,9 +126,10 @@ class ContinuousIntegrationBuildAutomationExtension:
         # retrieves the zip plugin
         zip_plugin = self.continuous_integration_build_automation_extension_plugin.zip_plugin
 
-        # creates the plugin file (@todo this should be re-created !!!)
-        zip_plugin.zip(deployment_version_path + "/plugins.zip", deployment_version_path + "/plugins")
-        zip_plugin.zip(deployment_version_path + "/repository.zip", deployment_version_path + "/repository")
+        # iterates over all the zip to create the zip file
+        for zip in zips:
+            # creates the zip file for the zip directory
+            zip_plugin.zip(deployment_version_path + "/" + zip + ZIP_EXTENSION, deployment_version_path + "/" + zip)
 
         # creates the latest version path
         latest_version_path = deployment_path + "/" + LATEST_DIRECTORY_NAME
