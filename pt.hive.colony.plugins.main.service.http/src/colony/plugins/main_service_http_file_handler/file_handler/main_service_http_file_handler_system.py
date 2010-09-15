@@ -276,6 +276,9 @@ class MainServiceHttpFileHandler:
         # retrieves the directory names for the complete path
         directory_names = os.listdir(complete_path)
 
+        # adds the upper directory symbol
+        directory_names.insert(0, "..")
+
         # iterates over all the directory names
         for directory_name in directory_names:
             request.write("<div><a href=\"" + directory_name + "\">", 0, True)
