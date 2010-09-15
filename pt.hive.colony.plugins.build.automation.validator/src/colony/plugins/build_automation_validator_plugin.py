@@ -58,7 +58,8 @@ class BuildAutomationValidatorPlugin(colony.base.plugin_system.Plugin):
     attributes = {"build_automation_file_path" : "$base{plugin_directory}/build_automation_validator/resources/baf.xml"}
     capabilities = ["console_command_extension", "build_automation_item"]
     capabilities_allowed = []
-    dependencies = []
+    dependencies = [colony.base.plugin_system.PluginDependency(
+                    "pt.hive.colony.plugins.misc.json", "1.0.0")]
     events_handled = []
     events_registrable = []
     main_modules = ["build_automation_validator.build_automation_validator_system",
@@ -69,6 +70,9 @@ class BuildAutomationValidatorPlugin(colony.base.plugin_system.Plugin):
 
     console_build_automation_validator = None
     """ The console build automation validator """
+
+    json_plugin = None
+    """ The json plugin """
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
@@ -116,3 +120,10 @@ class BuildAutomationValidatorPlugin(colony.base.plugin_system.Plugin):
 
     def validate_build_automation_plugin(self, plugin_id):
         return self.build_automation_validator.validate_build_automation_plugin(plugin_id)
+
+    def get_json_plugin(self):
+        return self.json_plugin
+
+    @colony.base.decorators.plugin_inject("pt.hive.colony.plugins.misc.json")
+    def set_json_plugin(self, json_plugin):
+        self.json_plugin = json_plugin

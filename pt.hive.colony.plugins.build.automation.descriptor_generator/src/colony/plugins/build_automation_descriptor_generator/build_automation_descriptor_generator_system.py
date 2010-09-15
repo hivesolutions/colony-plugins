@@ -42,38 +42,55 @@ import os.path
 import colony.base.plugin_system
 
 AUTHOR_VALUE = "author"
+""" The author value """
 
 BUILD_AUTOMATION_FILE_PATH_VALUE = "build_automation_file_path"
+""" The build automation file path value """
 
 CAPABILITIES_VALUE = "capabilities"
+""" The capabilities value """
 
 CAPABILITIES_ALLOWED_VALUE = "capabilities_allowed"
+""" The capabilities allowed value """
 
 DEPENDENCIES_VALUE = "dependencies"
+""" The dependencies value """
 
 DESCRIPTION_VALUE = "description"
+""" The description value """
 
 ID_VALUE = "id"
+""" The id value """
 
 MAIN_FILE_VALUE = "main_file"
+""" The main file value """
 
 NAME_VALUE = "name"
+""" The name value """
 
 PLATFORM_VALUE = "platform"
+""" The platform value """
 
 PLUGIN_DESCRIPTOR_VALUE = "plugin_descriptor"
+""" The plugin descriptor value """
 
 PLUGINS_VALUE = "plugins"
+""" The plugins value """
 
 PYTHON_VALUE = "python"
+""" The python value """
 
 RESOURCES_VALUE = "resources"
+""" The resources value """
 
 SHORT_NAME_VALUE = "short_name"
+""" The short name value """
 
 SUB_PLATFORMS_VALUE = "sub_platforms"
+""" The sub platforms value """
 
 VERSION_VALUE = "version"
+""" The version value """
 
 DEFAULT_ENCODING = "utf-8"
 """ The default encoding """

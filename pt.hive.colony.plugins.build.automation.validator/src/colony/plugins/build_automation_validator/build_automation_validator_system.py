@@ -37,25 +37,32 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-import json
 import types
 import os.path
 
 BUILD_AUTOMATION_FILE_PATH_VALUE = "build_automation_file_path"
+""" The build automation file path value """
 
 CAPABILITIES_VALUE = "capabilities"
+""" The capabilities value """
 
 CAPABILITIES_ALLOWED_VALUE = "capabilities_allowed"
+""" The capabilities allowed value """
 
 DEPENDENCIES_VALUE = "dependencies"
+""" The dependencies value """
 
 ID_VALUE = "id"
+""" The id value """
 
 PLUGINS_VALUE = "plugins"
+""" The plugins value """
 
 RESOURCES_VALUE = "resources"
+""" The resources value """
 
 VERSION_VALUE = "version"
+""" The version value """
 
 INIT_FILE_NAME = "__init__.py"
 """ The init file name """
@@ -598,7 +605,7 @@ class BuildAutomationValidator:
         json_file.close()
 
         # loads the json data from the json file
-        json_data = json.loads(json_file_data)
+        json_data = self.build_automation_validator_plugin.json_plugin.loads(json_file_data)
 
         return json_data
 
