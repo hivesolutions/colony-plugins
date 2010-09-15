@@ -14,7 +14,8 @@
                 "version" : "1.0.0"
             }],
     "main_file" : "build_automation_validator_plugin.py",
-    "resources" : ["build_automation_validator_plugin.py",
+    "resources" : [
+            "build_automation_validator_plugin.py",
             "build_automation_validator/__init__.py",
             "build_automation_validator/build_automation_validator_system.py",
             "build_automation_validator/console_build_automation_validator.py",
