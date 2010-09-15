@@ -61,8 +61,41 @@ MAIN_FILE_VALUE = "main_file"
 PLATFORM_VALUE = "platform"
 """ The platform value """
 
+PLUGIN_VALUE = "plugin"
+""" The plugin value """
+
+PLUGIN_DESCRIPTOR_FILE_PATH_VALUE = "plugin_descriptor_file_path"
+""" The plugin descriptor file path value """
+
+PLUGIN_FILE_NAME_VALUE = "plugin_file_name"
+""" The plugin file name value """
+
+PLUGIN_FILE_PATH_VALUE = "plugin_file_path"
+""" The plugin file path value """
+
+PLUGIN_FILE_PATHS_VALUE = "plugin_file_paths"
+""" The plugin file paths value """
+
+PLUGIN_MODULE_NAME_VALUE = "plugin_module_name"
+""" The plugin module name value """
+
+PLUGIN_PATH_VALUE = "plugin_path"
+""" The plugin path value """
+
 PLUGINS_VALUE = "plugins"
 """ The plugins value """
+
+PLUGIN_SYSTEM_DIRECTORY_PATH_VALUE = "plugin_system_directory_path"
+""" The plugin system directory path value """
+
+PLUGIN_SYSTEM_FILE_NAME_VALUE = "plugin_system_file_name"
+""" The plugin system file name value """
+
+PLUGIN_SYSTEM_FILE_PATH_VALUE = "plugin_system_file_path"
+""" The plugin system file path value """
+
+PLUGIN_RESOURCE_PATHS_VALUE = "plugin_resource_paths"
+""" The plugin resource paths value """
 
 PYTHON_VALUE = "python"
 """ The python value """
@@ -115,7 +148,7 @@ BUILD_AUTOMATION_FILE_PATH_ATTRIBUTE = "build_automation_file_path"
 RESOURCE_FILE_NAME_EXCLUSION_LIST = (".svn", "entries", "all-wcprops", "dir-prop-base")
 """ The resource file name exclusion list """
 
-RESOURCE_FILE_EXTENSION_EXCLUSION_LIST = (".svn", ".svn-base", ".class", ".pyc", ".tmp")
+RESOURCE_FILE_EXTENSION_EXCLUSION_LIST = (".svn", ".svn-base", ".svn-revert", ".class", ".pyc", ".tmp")
 """ The resource file extension exclusion list """
 
 BUILD_AUTOMATION_ITEM_CAPABILITY_PLUGIN_EXCLUSION_LIST = ("pt.hive.colony.plugins.build.automation")
@@ -177,43 +210,103 @@ class BuildAutomationValidator:
         # converts the plugin path separators from the windows mode to unix mode
         plugin_path = self.normalize_path(plugin_path)
 
+        # retrieves the plugin file name
+        plugin_file_name = self.get_plugin_file_name(plugin_module_name)
+
+        # retrieves the plugin file path
+        plugin_file_path = self.get_plugin_file_path(plugin_path, plugin_module_name)
+
         # retrieves the plugin file paths for the plugin's path
         plugin_file_paths = self.get_file_paths(plugin_path)
+
+        # retrieves the plugin system file name
+        plugin_system_file_name = self.get_plugin_system_file_name(plugin_module_name)
+
+        # retrieves the plugin system file path
+        plugin_system_file_path = self._get_file_path(plugin_system_file_name, plugin_file_paths)
+
+        # splits the plugin system file path into plugin system directory path and plugin system file name
+        plugin_system_directory_path, plugin_system_file_name = os.path.split(plugin_system_file_path)
+
+        # checks if the plugin system file exists
+        if not plugin_system_file_path:
+            self.build_automation_validator_plugin.logger.info("'%s' is missing system file" % plugin_module_name)
+
+            # returns since nothing else can be tested
+            return False
+
+        # defines the plugin descriptor file path
+        plugin_descriptor_file_path = self.get_plugin_descriptor_file_path(plugin_path, plugin_module_name)
+
+        # checks that if the plugin descriptor file exists
+        if not os.path.exists(plugin_descriptor_file_path):
+            self.build_automation_validator_plugin.logger.info("'%s' is missing file '%s'" % (plugin_module_name, plugin_descriptor_file_path))
+
+            # returns since no more validations can be performed
+            return False
+
+        # retrieves the plugin's resources
+        plugin_resource_paths = self.get_file_paths(plugin_system_directory_path)
+
+        # normalizes the plugin resource paths
+        plugin_resource_paths = [self.normalize_plugin_resource_path(plugin_resource_path, plugin_path) for plugin_resource_path in plugin_resource_paths if self.is_valid_plugin_resource_path(plugin_resource_path)]
+
+        # defines the plugin map
+        plugin_map = {PLUGIN_VALUE : plugin,
+                      PLUGIN_MODULE_NAME_VALUE : plugin_module_name,
+                      PLUGIN_PATH_VALUE : plugin_path,
+                      PLUGIN_FILE_NAME_VALUE : plugin_file_name,
+                      PLUGIN_FILE_PATH_VALUE : plugin_file_path,
+                      PLUGIN_FILE_PATHS_VALUE : plugin_file_paths,
+                      PLUGIN_DESCRIPTOR_FILE_PATH_VALUE : plugin_descriptor_file_path,
+                      PLUGIN_SYSTEM_DIRECTORY_PATH_VALUE : plugin_system_directory_path,
+                      PLUGIN_SYSTEM_FILE_NAME_VALUE : plugin_system_file_name,
+                      PLUGIN_SYSTEM_FILE_PATH_VALUE : plugin_system_file_path,
+                      PLUGIN_RESOURCE_PATHS_VALUE : plugin_resource_paths}
 
         # initializes the valid flag
         valid = True
 
         # validates the plugin
-        valid = valid and self._validate_plugin(plugin, plugin_path, plugin_module_name, plugin_file_paths)
+        valid = valid and self._validate_plugin(plugin_map)
 
         # validates the plugin descriptor file
-        valid = valid and self._validate_plugin_descriptor_file(plugin, plugin_path, plugin_module_name, plugin_file_paths)
+        valid = valid and self._validate_plugin_descriptor_file(plugin_map)
 
         # validates the build automation file
-        valid = valid and self._validate_build_automation_file(plugin, plugin_module_name, plugin_path)
+        valid = valid and self._validate_build_automation_file(plugin_map)
 
         # returns the validity
         return valid
 
-    def _validate_plugin(self, plugin, plugin_path, plugin_module_name, plugin_file_paths):
+    def _validate_plugin(self, plugin_map):
         # initializes the valid flag
         valid = True
 
         # validates the plugin's capabilities
-        valid = valid and self.__validate_plugin_capabilities(plugin, plugin_module_name)
+        valid = valid and self.__validate_plugin_capabilities(plugin_map)
 
         # validates the plugin's main modules
-        valid = valid and self.__validate_plugin_main_modules(plugin, plugin_path, plugin_module_name, plugin_file_paths)
+        valid = valid and self.__validate_plugin_main_modules(plugin_map)
 
         # validates the plugin's file path
-        valid = valid and self.__validate_plugin_file_path(plugin, plugin_path, plugin_module_name)
+        valid = valid and self.__validate_plugin_file_path(plugin_map)
 
         # returns the validity
         return valid
 
-    def __validate_plugin_file_path(self, plugin, plugin_path, plugin_module_name):
+    def __validate_plugin_file_path(self, plugin_map):
         # initializes the valid flag
         valid = True
+
+        # retrieves the plugin
+        plugin = plugin_map[PLUGIN_VALUE]
+
+        # retrieves the plugin module name
+        plugin_module_name = plugin_map[PLUGIN_MODULE_NAME_VALUE]
+
+        # retrieves the plugin file path
+        plugin_file_path = plugin_map[PLUGIN_FILE_PATH_VALUE]
 
         # retrieves the plugin class name from the plugin module name
         plugin_class_name = self.get_plugin_class_name(plugin_module_name)
@@ -223,9 +316,6 @@ class BuildAutomationValidator:
             valid = False
             self.build_automation_validator_plugin.logger.info("'%s' has a class name that does not match its file name" % plugin_module_name)
 
-        # defines the plugin file path
-        plugin_file_path = self.get_plugin_file_path(plugin_path, plugin_module_name)
-
         # checks that the plugin file exists
         if not os.path.exists(plugin_file_path):
             valid = False
@@ -234,7 +324,13 @@ class BuildAutomationValidator:
         # returns the validity
         return valid
 
-    def __validate_plugin_capabilities(self, plugin, plugin_module_name):
+    def __validate_plugin_capabilities(self, plugin_map):
+        # retrieves the plugin
+        plugin = plugin_map[PLUGIN_VALUE]
+
+        # retrieves the plugin module name
+        plugin_module_name = plugin_map[PLUGIN_MODULE_NAME_VALUE]
+
         # initializes the valid flag
         valid = True
 
@@ -255,7 +351,19 @@ class BuildAutomationValidator:
         # returns the validity flag
         return valid
 
-    def __validate_plugin_main_modules(self, plugin, plugin_path, plugin_module_name, plugin_file_paths):
+    def __validate_plugin_main_modules(self, plugin_map):
+        # retrieves the plugin
+        plugin = plugin_map[PLUGIN_VALUE]
+
+        # retrieves the plugin path
+        plugin_path = plugin_map[PLUGIN_PATH_VALUE]
+
+        # retrieves the plugin module name
+        plugin_module_name = plugin_map[PLUGIN_MODULE_NAME_VALUE]
+
+        # retrieves the plugin resource paths
+        plugin_resource_paths = plugin_map[PLUGIN_RESOURCE_PATHS_VALUE]
+
         # initializes the valid flag
         valid = True
 
@@ -274,24 +382,8 @@ class BuildAutomationValidator:
                 valid = False
                 self.build_automation_validator_plugin.logger.info("'%s' is missing main module '%s'" % (plugin_module_name, main_module))
 
-        # retrieves the plugin system file name
-        plugin_system_file_name = self.get_plugin_system_file_name(plugin_module_name)
-
-        # retrieves the plugin system file path
-        plugin_system_file_path = self._get_file_path(plugin_system_file_name, plugin_file_paths)
-
-        # checks if the plugin system file exists
-        if not plugin_system_file_path:
-            self.build_automation_validator_plugin.logger.info("'%s' is missing system file" % plugin_module_name)
-
-            # returns since nothing else can be tested
-            return False
-
-        # retrieves the plugin's resources
-        plugin_resource_paths = self.get_file_paths(plugin_system_file_path)
-
         # filters out the invalid main module paths
-        main_module_paths = [plugin_resource_path for plugin_resource_path in plugin_resource_paths if self.is_valid_main_module_path(main_module_path, plugin_path)]
+        main_module_paths = [plugin_resource_path for plugin_resource_path in plugin_resource_paths if self.is_valid_main_module_path(plugin_resource_path, plugin_path)]
 
         # looks for main module entries for each file
         for main_module_path in main_module_paths:
@@ -301,24 +393,17 @@ class BuildAutomationValidator:
             # checks if the main module exists in the plugin
             if not main_module in plugin.main_modules:
                 valid = False
-                self.build_automation_validator_plugin.logger.info("'%s' is missing main module declaration for file '%s'" % (plugin_module_name, main_module_file_name))
+                self.build_automation_validator_plugin.logger.info("'%s' is missing main module declaration for file '%s'" % (plugin_module_name, main_module_path))
 
         # returns the validity
         return valid
 
-    def _validate_plugin_descriptor_file(self, plugin, plugin_path, plugin_module_name, plugin_file_paths):
+    def _validate_plugin_descriptor_file(self, plugin_map):
         # initializes the valid flag
         valid = True
 
-        # defines the plugin descriptor file path
-        plugin_descriptor_file_path = self.get_plugin_descriptor_file_path(plugin_path, plugin_module_name)
-
-        # checks that the plugin descriptor file exists
-        if not os.path.exists(plugin_descriptor_file_path):
-            self.build_automation_validator_plugin.logger.info("'%s' is missing file '%s'" % (plugin_module_name, plugin_descriptor_file_path))
-
-            # returns since no more validations can be performed
-            return False
+        # retrieves the plugin descriptor file path value
+        plugin_descriptor_file_path = plugin_map[PLUGIN_DESCRIPTOR_FILE_PATH_VALUE]
 
         try:
             # retrieves the plugin descriptor data
@@ -330,24 +415,33 @@ class BuildAutomationValidator:
             return False
         else:
             # validates the plugin descriptor file attributes
-            valid = valid and self.__validate_plugin_descriptor_file_attributes(plugin, plugin_module_name, plugin_descriptor_data)
+            valid = valid and self.__validate_plugin_descriptor_file_attributes(plugin_map, plugin_descriptor_data)
 
             # validates the plugin descriptor file capabilities
-            valid = valid and self.__validate_plugin_descriptor_file_capabilities(plugin, plugin_module_name, plugin_descriptor_data)
+            valid = valid and self.__validate_plugin_descriptor_file_capabilities(plugin_map, plugin_descriptor_data)
 
             # validates the plugin descriptor file capabilities allowed
-            valid = valid and self.__validate_plugin_descriptor_file_capabilities_allowed(plugin, plugin_module_name, plugin_descriptor_data)
+            valid = valid and self.__validate_plugin_descriptor_file_capabilities_allowed(plugin_map, plugin_descriptor_data)
 
             # validates the plugin descriptor file dependencies
-            valid = valid and self.__validate_plugin_descriptor_file_dependencies(plugin, plugin_module_name, plugin_descriptor_data)
+            valid = valid and self.__validate_plugin_descriptor_file_dependencies(plugin_map, plugin_descriptor_data)
 
             # validates the plugin descriptor file resources
-            valid = valid and self.__validate_plugin_descriptor_file_resources(plugin, plugin_path, plugin_module_name, plugin_file_paths, plugin_descriptor_data)
+            valid = valid and self.__validate_plugin_descriptor_file_resources(plugin_map, plugin_descriptor_data)
 
         # returns the validity
         return valid
 
-    def __validate_plugin_descriptor_file_attributes(self, plugin, plugin_module_name, plugin_descriptor_data):
+    def __validate_plugin_descriptor_file_attributes(self, plugin_map, plugin_descriptor_data):
+        # retrieves the plugin
+        plugin = plugin_map[PLUGIN_VALUE]
+
+        # retrieves the plugin module name
+        plugin_module_name = plugin_map[PLUGIN_MODULE_NAME_VALUE]
+
+        # retrieves the plugin file name
+        plugin_file_name = plugin_map[PLUGIN_FILE_NAME_VALUE]
+
         # initializes the valid flag
         valid = True
 
@@ -375,9 +469,6 @@ class BuildAutomationValidator:
                 valid = False
                 self.build_automation_validator_plugin.logger.info("'%s' descriptor file has invalid attribute '%s'" % (plugin_module_name, plugin_descriptor_attribute_name))
 
-        # determines the plugin file name
-        plugin_file_name = self.get_plugin_file_name(plugin_module_name)
-
         # checks that the main file value is correct
         if not plugin_descriptor_data[MAIN_FILE_VALUE] == plugin_file_name:
             valid = False
@@ -386,7 +477,10 @@ class BuildAutomationValidator:
         # returns the validity
         return valid
 
-    def __validate_plugin_descriptor_file_capabilities(self, plugin, plugin_module_name, plugin_descriptor_data):
+    def __validate_plugin_descriptor_file_capabilities(self, plugin_map, plugin_descriptor_data):
+        # retrieves the plugin module name
+        plugin_module_name = plugin_map[PLUGIN_MODULE_NAME_VALUE]
+
         # initializes the valid flag
         valid = True
 
@@ -401,7 +495,13 @@ class BuildAutomationValidator:
         # returns the validity
         return valid
 
-    def __validate_plugin_descriptor_file_capabilities_allowed(self, plugin, plugin_module_name, plugin_descriptor_data):
+    def __validate_plugin_descriptor_file_capabilities_allowed(self, plugin_map, plugin_descriptor_data):
+        # retrieves the plugin
+        plugin = plugin_map[PLUGIN_VALUE]
+
+        # retrieves the plugin module name
+        plugin_module_name = plugin_map[PLUGIN_MODULE_NAME_VALUE]
+
         # initializes the valid flag
         valid = True
 
@@ -443,7 +543,13 @@ class BuildAutomationValidator:
         # returns the validity
         return valid
 
-    def __validate_plugin_descriptor_file_dependencies(self, plugin, plugin_module_name, plugin_descriptor_data):
+    def __validate_plugin_descriptor_file_dependencies(self, plugin_map, plugin_descriptor_data):
+        # retrieves the plugin
+        plugin = plugin_map[PLUGIN_VALUE]
+
+        # retrieves the plugin module name
+        plugin_module_name = plugin_map[PLUGIN_MODULE_NAME_VALUE]
+
         # initializes the valid flag
         valid = True
 
@@ -487,7 +593,19 @@ class BuildAutomationValidator:
         # returns the validity
         return valid
 
-    def __validate_plugin_descriptor_file_resources(self, plugin, plugin_path, plugin_module_name, plugin_file_paths, plugin_descriptor_data):
+    def __validate_plugin_descriptor_file_resources(self, plugin_map, plugin_descriptor_data):
+        # retrieves the plugin module name
+        plugin_module_name = plugin_map[PLUGIN_MODULE_NAME_VALUE]
+
+        # retrieves the plugin file name
+        plugin_file_name = plugin_map[PLUGIN_FILE_NAME_VALUE]
+
+        # retrieves the plugin system directory path
+        plugin_system_directory_path = plugin_map[PLUGIN_SYSTEM_DIRECTORY_PATH_VALUE]
+
+        # retrieves the plugin resource paths
+        plugin_resource_paths = plugin_map[PLUGIN_RESOURCE_PATHS_VALUE]
+
         # initializes the valid flag
         valid = True
 
@@ -499,30 +617,8 @@ class BuildAutomationValidator:
             valid = False
             self.build_automation_validator_plugin.logger.info("'%s' descriptor file has duplicate resource paths" % plugin_module_name)
 
-        # retrieves the plugin file name
-        plugin_file_name = self.get_plugin_file_name(plugin_module_name)
-
-        # retrieves the plugin system file name
-        plugin_system_file_name = self.get_plugin_system_file_name(plugin_module_name)
-
-        # retrieves the plugin system file path
-        plugin_system_file_path = self._get_file_path(plugin_system_file_name, plugin_file_paths)
-
-        # returns in case the system file doesn't exist
-        if not plugin_system_file_path:
-            return False
-
-        # splits the plugin system file path into plugin system directory path and plugin system file name
-        plugin_system_directory_path, plugin_system_file_name = os.path.split(plugin_system_file_path)
-
         # retrieves the plugin root init file path
         plugin_root_init_file_path = self.get_plugin_root_init_file_path(plugin_system_directory_path)
-
-        # retrieves the plugin's resources
-        plugin_resource_paths = self.get_file_paths(plugin_system_directory_path)
-
-        # normalizes the plugin resource paths
-        plugin_resource_paths = [self.normalize_plugin_resource_path(plugin_resource_path, plugin_path) for plugin_resource_path in plugin_resource_paths if self.is_valid_plugin_resource_path(plugin_resource_path)]
 
         # adds the undetectable plugin resource paths
         if plugin_root_init_file_path in plugin_resource_paths:
@@ -555,7 +651,16 @@ class BuildAutomationValidator:
         # returns the validity
         return valid
 
-    def _validate_build_automation_file(self, plugin, plugin_module_name, plugin_path):
+    def _validate_build_automation_file(self, plugin_map):
+        # retrieves the plugin
+        plugin = plugin_map[PLUGIN_VALUE]
+
+        # retrieves the plugin module name
+        plugin_module_name = plugin_map[PLUGIN_MODULE_NAME_VALUE]
+
+        # retrieves the plugin path
+        plugin_path = plugin_map[PLUGIN_PATH_VALUE]
+
         # initializes the valid flag
         valid = True
 
@@ -750,19 +855,19 @@ class BuildAutomationValidator:
         base_main_module_path, main_module_file_name = os.path.split(main_module_path)
 
         # removes the plugin path from the base module path
-        base_main_module_path = main_module_path.replace(plugin_path, "")
+        base_main_module_path = base_main_module_path.replace(plugin_path, "")
+
+        # splits the main module file name into file name and extension
+        base_main_module_file_name, _main_module_file_extension = os.path.splitext(main_module_file_name)
 
         # retrieves the main module file path
-        base_main_module_file_path = base_main_module_path + UNIX_DIRECTORY_SEPARATOR + main_module_file_name
+        base_main_module_file_path = base_main_module_path + UNIX_DIRECTORY_SEPARATOR + base_main_module_file_name
 
         # retrieves the main module from the base main module file path
         main_module = base_main_module_file_path.replace(UNIX_DIRECTORY_SEPARATOR, MAIN_MODULE_SEPARATOR)
 
         # replaces windows directory separators with main module separators
         main_module = main_module.replace(WINDOWS_DIRECTORY_SEPARATOR, MAIN_MODULE_SEPARATOR)
-
-        # removes the file extension and the first dot from the main module
-        main_module = main_module[1:-3]
 
         return main_module
 
