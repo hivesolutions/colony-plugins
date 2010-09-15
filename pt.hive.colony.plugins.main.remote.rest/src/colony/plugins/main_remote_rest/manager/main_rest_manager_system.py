@@ -106,6 +106,9 @@ LOCALHOST_VALUES = ("localhost", "127.0.0.1")
 HOST_VALUE = "Host"
 """ The host value """
 
+LOCATION_VALUE = "Location"
+""" The location value """
+
 DATE_FORMAT = "%a, %d %b %Y %H:%M:%S GMT"
 """ The date format """
 
@@ -1028,7 +1031,7 @@ class RestRequest:
         self.request.status_code = 302
 
         # sets the location header
-        self.request.set_header("Location", target_path)
+        self.request.set_header(LOCATION_VALUE, target_path)
 
     def get_attributes_list(self):
         """
