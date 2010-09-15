@@ -128,8 +128,14 @@ class ContinuousIntegrationBuildAutomationExtension:
 
         # iterates over all the zip to create the zip file
         for zip in zips:
+            # creates the zip file path
+            zip_file_path = deployment_version_path + "/" + zip + ZIP_EXTENSION
+
+            # creates the zip directory path
+            zip_directory_path = deployment_version_path + "/" + zip
+
             # creates the zip file for the zip directory
-            zip_plugin.zip(deployment_version_path + "/" + zip + ZIP_EXTENSION, deployment_version_path + "/" + zip)
+            zip_plugin.zip(zip_file_path, zip_directory_path)
 
         # creates the latest version path
         latest_version_path = deployment_path + "/" + LATEST_DIRECTORY_NAME
