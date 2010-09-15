@@ -77,6 +77,9 @@ ACCEPT_RANGES_VALUE = "Accept-Ranges"
 CONTENT_RANGE_VALUE = "Content-Range"
 """ The content range value """
 
+LOCATION_VALUE = "Location"
+""" The location value """
+
 RANGE_VALUE = "Range"
 """ The range value """
 
@@ -255,6 +258,21 @@ class MainServiceHttpFileHandler:
         @param complete_path: The complete path to the directory.
         """
 
+        # retrieves the requested resource path
+        resource_path = request.get_resource_path()
+
+        # in case the resources path does not end with a slash
+        if not resource_path.endswith("/"):
+            # adds the extra slash to the resource path
+            # in order to avoid file redirection problems
+            resource_path = resource_path + "/"
+
+            # redirects the request to the resource path
+            self._redirect(request, resource_path)
+
+            # returns immediately
+            return
+
         # retrieves the directory names for the complete path
         directory_names = os.listdir(complete_path)
 
@@ -310,6 +328,22 @@ class MainServiceHttpFileHandler:
 
             # writes the file contents
             request.write(file_contents, 1, False)
+
+    def _redirect(self, request, target_path):
+        """
+        Redirects the given request to the target path.
+
+        @type request: HttpRequest
+        @param request: The http request to be handled.
+        @type target_path: String
+        @param target_path: The target path of the redirection.
+        """
+
+        # sets the status code as permanent redirect
+        request.status_code = 301
+
+        # sets the location header
+        request.set_header(LOCATION_VALUE, target_path)
 
     def _process_ranges(self, request, file_size):
         """
