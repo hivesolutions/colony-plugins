@@ -314,9 +314,6 @@ class BuildAutomation:
         if not build_automation_structure:
             return
 
-        # sets the recursive level value (checking for string values)
-        recursive_level = type(recursive_level) == types.IntType and recursive_level or int(recursive_level)
-
         # creates the build automation directories (if they don't exist and is first run)
         is_first and self.create_build_automation_directories(build_automation_structure)
 
