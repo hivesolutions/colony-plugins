@@ -79,8 +79,6 @@ class BotEngineAiml:
 
         self.bot_engine_aiml_plugin = bot_engine_aiml_plugin
         self.aiml_engine = aiml.Kernel()
-        brain_file_path = os.path.join(os.path.dirname(__file__), BRAIN_FILE_PATH)
-        self.load_brain(brain_file_path)
 
     def load_brain(self, brain_path):
         self.aiml_engine.loadBrain(brain_path)
