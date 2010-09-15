@@ -175,7 +175,7 @@ class BuildAutomationValidator:
         plugin_module_name = self.build_automation_validator_plugin.manager.get_plugin_module_name_by_id(plugin.id)
 
         # converts the plugin path separators from the windows mode to unix mode
-        plugin_path = plugin_path.replace(WINDOWS_DIRECTORY_SEPARATOR, UNIX_DIRECTORY_SEPARATOR)
+        plugin_path = self.normalize_path(plugin_path)
 
         # retrieves the plugin file paths for the plugin's path
         plugin_file_paths = self.get_file_paths(plugin_path)
@@ -215,27 +215,21 @@ class BuildAutomationValidator:
         # initializes the valid flag
         valid = True
 
-        # tokenizes the plugin module name
-        plugin_module_name_tokens = plugin_module_name.split("_")
-
         # retrieves the plugin class name from the plugin module name
-        plugin_class_name = "".join([plugin_module_name_token.capitalize() for plugin_module_name_token in plugin_module_name_tokens])
+        plugin_class_name = self.get_plugin_class_name(plugin_module_name)
 
         # checks if the plugin class name matches the plugin module name
         if not plugin_class_name == plugin.__class__.__name__:
             valid = False
             self.build_automation_validator_plugin.logger.info("'%s' has a class name that does not match its file name" % plugin_module_name)
 
-        # defines the plugin file name
-        plugin_file_name = plugin_module_name + PYTHON_FILE_EXTENSION
-
         # defines the plugin file path
-        plugin_file_path = plugin_path + UNIX_DIRECTORY_SEPARATOR + plugin_file_name
+        plugin_file_path = self.get_plugin_file_path(plugin_path, plugin_module_name)
 
         # checks that the plugin file exists
         if not os.path.exists(plugin_file_path):
             valid = False
-            self.build_automation_validator_plugin.logger.info("'%s' is missing file '%s'" % (plugin.id, plugin_file_name))
+            self.build_automation_validator_plugin.logger.info("'%s' is missing file '%s'" % (plugin.id, plugin_file_path))
 
         # returns the validity
         return valid
@@ -410,7 +404,7 @@ class BuildAutomationValidator:
                 self.build_automation_validator_plugin.logger.info("'%s' descriptor file has invalid attribute '%s'" % (plugin_module_name, plugin_descriptor_attribute_name))
 
         # determines the plugin file name
-        plugin_file_name = plugin_module_name + PYTHON_FILE_EXTENSION
+        plugin_file_name = self.get_plugin_file_name(plugin_module_name)
 
         # checks that the main file value is correct
         if not plugin_descriptor_data[MAIN_FILE_VALUE] == plugin_file_name:
@@ -534,7 +528,7 @@ class BuildAutomationValidator:
             self.build_automation_validator_plugin.logger.info("'%s' descriptor file has duplicate resource paths" % plugin_module_name)
 
         # retrieves the plugin file name
-        plugin_file_name = plugin_module_name + PYTHON_FILE_EXTENSION
+        plugin_file_name = self.get_plugin_file_name(plugin_module_name)
 
         # retrieves the plugin system file name
         plugin_system_file_name = plugin_module_name[:-1 * len(PLUGIN_MODULE_NAME_ENDING)] + SYSTEM_FILE_NAME_ENDING
@@ -640,7 +634,7 @@ class BuildAutomationValidator:
         for root, _directories, files in os.walk(path):
             for file in files:
                 # converts the root path separators from the windows mode to unix mode
-                root = root.replace(WINDOWS_DIRECTORY_SEPARATOR, UNIX_DIRECTORY_SEPARATOR)
+                root = self.normalize_path(root)
 
                 # retrieves the file path
                 file_path = root + UNIX_DIRECTORY_SEPARATOR + file
@@ -677,6 +671,12 @@ class BuildAutomationValidator:
         # returns true since this is a valid plugin resource path
         return True
 
+    def normalize_path(self, path):
+        # replaces windows directory separators with unix directory separators
+        path = path.replace(WINDOWS_DIRECTORY_SEPARATOR, UNIX_DIRECTORY_SEPARATOR)
+
+        return path
+
     def normalize_plugin_resource_path(self, plugin_resource_path, plugin_path):
         # removes the plugin path from the plugin resource path
         plugin_resource_path = plugin_resource_path.replace(plugin_path, "")
@@ -686,6 +686,27 @@ class BuildAutomationValidator:
             plugin_resource_path = plugin_resource_path[1:]
 
         return plugin_resource_path
+
+    def get_plugin_file_name(self, plugin_module_name):
+        # defines the plugin file name
+        plugin_file_name = plugin_module_name + PYTHON_FILE_EXTENSION
+
+        return plugin_file_name
+
+    def get_plugin_file_path(self, plugin_path, plugin_module_name):
+        # defines the plugin file path
+        plugin_file_path = plugin_path + UNIX_DIRECTORY_SEPARATOR + plugin_module_name + PYTHON_FILE_EXTENSION
+
+        return plugin_file_path
+
+    def get_plugin_class_name(self, plugin_module_name):
+        # tokenizes the plugin module name
+        plugin_module_name_tokens = plugin_module_name.split("_")
+
+        # retrieves the plugin class name from the plugin module name
+        plugin_class_name = "".join([plugin_module_name_token.capitalize() for plugin_module_name_token in plugin_module_name_tokens])
+
+        return plugin_class_name
 
     def get_plugin_root_directory_path(self, plugin_system_file_path):
         # tokenizes the plugin system file path with the unix file separator
