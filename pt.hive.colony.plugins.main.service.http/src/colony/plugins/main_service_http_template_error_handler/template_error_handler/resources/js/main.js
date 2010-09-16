@@ -22,29 +22,3 @@
 // __date__      = $LastChangedDate: 2008-10-26 20:43:25 +0000 (dom, 26 Out 2008) $
 // __copyright__ = Copyright (c) 2008 Hive Solutions Lda.
 // __license__   = General Public License (GPL), Version 3
-
-/**
- * Switches the menu state.
- */
-switchMenu = function() {
-    // retrieves the index element
-    var indexElement = document.getElementById("index");
-
-    // retrieves the index element style
-    var indexElementStyle = indexElement.style;
-
-    // in case the opacity of the index element is zero
-    if (indexElementStyle.opacity == "0") {
-        // sets the opacity of the index element
-        indexElementStyle.opacity = "0.98";
-
-        // sets the visibility of the index element
-        indexElementStyle.visibility = "visible";
-    } else {
-        // sets the opacity of the index element
-        indexElementStyle.opacity = "0";
-
-        // sets the visibility of the index element
-        indexElementStyle.visibility = "hidden";
-    }
-}
