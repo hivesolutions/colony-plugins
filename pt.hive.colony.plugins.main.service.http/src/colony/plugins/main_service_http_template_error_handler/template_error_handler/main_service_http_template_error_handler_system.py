@@ -50,7 +50,7 @@ HTML_MIME_TYPE = "text/html"
 TEMPLATE_ERROR_HANDLER_RESOURCES_PATH = "main_service_http_template_error_handler/template_error_handler/resources"
 """ The template error handler resources path """
 
-HTTP_SERVICE_ERROR_HTML_TEMPLATE_FILE_NAME = "http_service_error.html"
+HTTP_SERVICE_ERROR_HTML_TEMPLATE_FILE_NAME = "http_service_error.html.tpl"
 """ The http service error html template file name """
 
 STATUS_CODE_VALUES = {200 : "OK", 207 : "Multi-Status",
