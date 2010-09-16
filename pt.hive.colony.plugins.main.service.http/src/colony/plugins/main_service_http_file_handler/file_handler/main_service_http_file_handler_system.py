@@ -58,6 +58,12 @@ CHUNK_SIZE = 1024
 EXPIRATION_DELTA_TIMESTAMP = 31536000
 """ The expiration delta timestamp """
 
+TEMPLATE_FILE_HANDLER_RESOURCES_PATH = "main_service_http_file_handler/file_handler/resources"
+""" The template file handler resources path """
+
+HTTP_SERVICE_DIRECTORY_LIST_HTML_TEMPLATE_FILE_NAME = "http_service_directory_list.html.tpl"
+""" The http service directory list html template file name """
+
 FILE_MIME_TYPE_MAPPING = {"html" : "text/html", "txt" : "text/plain", "js" : "text/javascript",
                           "css" : "text/css", "jpg" : "image/jpg", "png" : "image/png"}
 """ The map that relates the file extension and the associated mime type """
@@ -280,13 +286,46 @@ class MainServiceHttpFileHandler:
         directory_names.insert(0, "..")
 
         # iterates over all the directory names
-        for directory_name in directory_names:
-            request.write("<div><a href=\"" + directory_name + "\">", 0, True)
+        #for directory_name in directory_names:
+        #    request.write("<div><a href=\"" + directory_name + "\">", 0, True)
 
             # writes the file contents
-            request.write(directory_name, 0, True)
+        #    request.write(directory_name, 0, True)
 
-            request.write("</a></div>", 0, True)
+        #    request.write("</a></div>", 0, True)
+
+        HTML_MIME_TYPE = "text/html"
+        """ The html mime type """
+
+        # sets the request content type
+        request.content_type = HTML_MIME_TYPE
+
+        # retrieves the plugin manager
+        plugin_manager = self.main_service_http_file_handler_plugin.manager
+
+        # retrieves the template engine manager plugin
+        template_engine_manager_plugin = self.main_service_http_file_handler_plugin.template_engine_manager_plugin
+
+        # retrieves the main service http file handler plugin path
+        main_service_http_file_handler_plugin_path = plugin_manager.get_plugin_path_by_id(self.main_service_http_file_handler_plugin.id)
+
+        # creates the template file path
+        template_file_path = main_service_http_file_handler_plugin_path + "/" + TEMPLATE_FILE_HANDLER_RESOURCES_PATH + "/" + HTTP_SERVICE_DIRECTORY_LIST_HTML_TEMPLATE_FILE_NAME
+
+        # parses the template file path
+        template_file = template_engine_manager_plugin.parse_file_path(template_file_path)
+
+        # assigns the error code to the template file
+        template_file.assign("names", directory_names)
+
+        # processes the template file
+        processed_template_file = template_file.process()
+
+        # decodes the processed template file into a unicode object
+        processed_template_file_decoded = processed_template_file.decode("utf-8")
+
+        # writes the processed template file encoded to the request
+        request.write(processed_template_file_decoded)
 
     def _process_file(self, request, complete_path):
         """
