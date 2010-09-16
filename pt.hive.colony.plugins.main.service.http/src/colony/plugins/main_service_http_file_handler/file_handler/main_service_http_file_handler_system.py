@@ -322,10 +322,17 @@ class MainServiceHttpFileHandler:
             else:
                 file_type = "unknown"
 
+            if file_type == "file":
+                file_size = self._round_size_unit(file_size)
+            else:
+                file_size = "-"
+
             # creates the file entry
             file_entry = {}
+
+            # sets the file entry values
             file_entry["name"] = directory_name
-            file_entry["size"] = self._round_size_unit(file_size)
+            file_entry["size"] = file_size
             file_entry["modified_date"] = file_modified_date
             file_entry["type"] = file_type
 
