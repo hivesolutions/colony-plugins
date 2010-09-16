@@ -51,6 +51,48 @@ import template_engine_exceptions
 FUNCTION_TYPES = (types.MethodType, types.FunctionType, types.BuiltinMethodType, types.BuiltinFunctionType)
 """ The function types """
 
+VALUE_VALUE = "value"
+""" The value value """
+
+TYPE_VALUE = "type"
+""" The type value """
+
+FORMAT_VALUE = "format"
+""" The format value """
+
+VARIABLE_VALUE = "variable"
+""" The variable value """
+
+LITERAL_VALUE = "literal"
+""" The literal value """
+
+FILE_VALUE = "file"
+""" The file value """
+
+FILE_VALUE_VALUE = "file_value"
+""" The file value value """
+
+ITEM_VALUE = "item"
+""" The item value """
+
+OPERATOR_VALUE = "operator"
+""" The operator value """
+
+FROM_VALUE = "from"
+""" The from value """
+
+INDEX_VALUE = "index"
+""" The index value """
+
+KEY_VALUE = "key"
+""" The key value """
+
+START_INDEX_VALUE = "start_index"
+""" The start index value """
+
+XML_ESCAPE_VALUE = "xml_escape"
+""" The xml escape value """
+
 def _visit(ast_node_class):
     """
     Decorator for the visit of an ast node.
@@ -393,16 +435,16 @@ class Visitor:
         """
 
         attributes_map = node.get_attributes_map()
-        attribute_value = attributes_map["value"]
+        attribute_value = attributes_map[VALUE_VALUE]
         attribute_value_value = self.get_value(attribute_value)
 
-        if "format" in attributes_map:
-            format_string = attributes_map["format"]
+        if FORMAT_VALUE in attributes_map:
+            format_string = attributes_map[FORMAT_VALUE]
             format_string_value = self.get_value(format_string)
             attribute_value_value = format_string_value % attribute_value_value
 
-        if "xml_escape" in attributes_map:
-            attribute_xml_escape = attributes_map["xml_escape"]
+        if XML_ESCAPE_VALUE in attributes_map:
+            attribute_xml_escape = attributes_map[XML_ESCAPE_VALUE]
             attribute_xml_escape_value = self.get_boolean_value(attribute_xml_escape)
         else:
             attribute_xml_escape_value = False
@@ -430,16 +472,16 @@ class Visitor:
         """
 
         attributes_map = node.get_attributes_map()
-        attribute_value = attributes_map["value"]
+        attribute_value = attributes_map[VALUE_VALUE]
         attribute_value_value = self.get_value(attribute_value)
 
-        if "format" in attributes_map:
-            format_string = attributes_map["format"]
+        if FORMAT_VALUE in attributes_map:
+            format_string = attributes_map[FORMAT_VALUE]
             format_string_value = self.get_value(format_string)
             attribute_value_value = format_string_value % attribute_value_value
 
-        if "xml_escape" in attributes_map:
-            attribute_xml_escape = attributes_map["xml_escape"]
+        if XML_ESCAPE_VALUE in attributes_map:
+            attribute_xml_escape = attributes_map[XML_ESCAPE_VALUE]
             attribute_xml_escape_value = self.get_boolean_value(attribute_xml_escape)
         else:
             attribute_xml_escape_value = False
@@ -467,9 +509,9 @@ class Visitor:
         """
 
         attributes_map = node.get_attributes_map()
-        attribute_item = attributes_map["item"]
+        attribute_item = attributes_map[ITEM_VALUE]
         attribute_item_literal_value = self.get_literal_value(attribute_item)
-        attribute_value = attributes_map["value"]
+        attribute_value = attributes_map[VALUE_VALUE]
         attribute_value_value = self.get_value(attribute_value)
 
         self.global_map[attribute_item_literal_value] = attribute_value_value
@@ -483,25 +525,25 @@ class Visitor:
         """
 
         attributes_map = node.get_attributes_map()
-        attribute_from = attributes_map["from"]
+        attribute_from = attributes_map[FROM_VALUE]
         attribute_from_value = self.get_value(attribute_from)
-        attribute_item = attributes_map["item"]
+        attribute_item = attributes_map[ITEM_VALUE]
         attribute_item_literal_value = self.get_literal_value(attribute_item)
 
-        if "index" in attributes_map:
-            attribute_index = attributes_map["index"]
+        if INDEX_VALUE in attributes_map:
+            attribute_index = attributes_map[INDEX_VALUE]
             attribute_index_literal_value = self.get_literal_value(attribute_index)
         else:
             attribute_index_literal_value = None
 
-        if "key" in attributes_map:
-            attribute_key = attributes_map["key"]
+        if KEY_VALUE in attributes_map:
+            attribute_key = attributes_map[KEY_VALUE]
             attribute_key_literal_value = self.get_literal_value(attribute_key)
         else:
             attribute_key_literal_value = None
 
-        if "start_index" in attributes_map:
-            attribute_start_index = attributes_map["start_index"]
+        if START_INDEX_VALUE in attributes_map:
+            attribute_start_index = attributes_map[START_INDEX_VALUE]
             attribute_start_index_literal_value = self.get_literal_value(attribute_start_index)
 
             # sets the initial index
@@ -514,7 +556,7 @@ class Visitor:
         # it's not iterable
         if not hasattr(attribute_from_value, "__iter__"):
             # retrieves the attribute from value
-            attribute_from_value = attribute_from["value"]
+            attribute_from_value = attribute_from[VALUE_VALUE]
 
             # raises the variable not iterable exception
             raise template_engine_exceptions.VariableNotIterable("value not iterable: " + attribute_from_value)
@@ -561,11 +603,11 @@ class Visitor:
         """
 
         attributes_map = node.get_attributes_map()
-        attribute_item = attributes_map["item"]
+        attribute_item = attributes_map[ITEM_VALUE]
         attribute_item_value = self.get_value(attribute_item)
-        attribute_value = attributes_map["value"]
+        attribute_value = attributes_map[VALUE_VALUE]
         attribute_value_value = self.get_value(attribute_value)
-        attribute_operator = attributes_map["operator"]
+        attribute_operator = attributes_map[OPERATOR_VALUE]
         attribute_operator_literal_value = self.get_literal_value(attribute_operator)
 
         if attribute_operator_literal_value == "eq":
@@ -606,7 +648,7 @@ class Visitor:
         """
 
         attributes_map = node.get_attributes_map()
-        attribute_value = attributes_map["value"]
+        attribute_value = attributes_map[VALUE_VALUE]
         attribute_value_value = self.get_value(attribute_value)
 
         # retrieves the attribute value value length and sets it
@@ -634,12 +676,12 @@ class Visitor:
 
         attributes_map = node.get_attributes_map()
 
-        if "file" in attributes_map:
-            attribute_file = attributes_map["file"]
+        if FILE_VALUE in attributes_map:
+            attribute_file = attributes_map[FILE_VALUE]
             attribute_file_literal_value = self.get_literal_value(attribute_file)
 
-        if "file_value" in attributes_map:
-            attribute_file_value = attributes_map["file_value"]
+        if FILE_VALUE_VALUE in attributes_map:
+            attribute_file_value = attributes_map[FILE_VALUE_VALUE]
             attribute_file_literal_value = self.get_value(attribute_file_value)
 
         # in case the attribute file literal value is not valid
@@ -704,8 +746,8 @@ class Visitor:
 
         attributes_map = node.get_attributes_map()
 
-        if "format" in attributes_map:
-            attribute_format = attributes_map["format"]
+        if FORMAT_VALUE in attributes_map:
+            attribute_format = attributes_map[FORMAT_VALUE]
             attribute_format_literal_value = self.get_literal_value(attribute_format)
 
             # converts the attribute format literal value to string, in order
@@ -733,8 +775,8 @@ class Visitor:
 
         attributes_map = node.get_attributes_map()
 
-        if "format" in attributes_map:
-            attribute_format = attributes_map["format"]
+        if FORMAT_VALUE in attributes_map:
+            attribute_format = attributes_map[FORMAT_VALUE]
             attribute_format_literal_value = self.get_literal_value(attribute_format)
 
             # converts the attribute format literal value to string, in order
@@ -755,8 +797,8 @@ class Visitor:
     def process_datetime(self, node):
         attributes_map = node.get_attributes_map()
 
-        if "format" in attributes_map:
-            attribute_format = attributes_map["format"]
+        if FORMAT_VALUE in attributes_map:
+            attribute_format = attributes_map[FORMAT_VALUE]
             attribute_format_literal_value = self.get_literal_value(attribute_format)
 
             # converts the attribute format literal value to string, in order
@@ -777,17 +819,19 @@ class Visitor:
     def process_format_datetime(self, node):
         attributes_map = node.get_attributes_map()
 
-        attribute_value = attributes_map["value"]
+        attribute_value = attributes_map[VALUE_VALUE]
         attribute_value_value = self.get_value(attribute_value)
-        attribute_format = attributes_map["format"]
+        attribute_format = attributes_map[FORMAT_VALUE]
         attribute_format_literal_value = self.get_literal_value(attribute_format)
 
         # converts the attribute format literal value to string, in order
         # to avoid possible problems with string formatting
         attribute_format_literal_value = str(attribute_format_literal_value)
 
+        import time
+
         # date formats the attribute value (datetime)
-        attribute_value_formatted = attribute_value_value.strftime(attribute_format_literal_value)
+        attribute_value_formatted = time.strftime(attribute_format_literal_value, attribute_value_value)
 
         # writes the attribute value formatted
         self.string_buffer.write(attribute_value_formatted)
@@ -806,9 +850,9 @@ class Visitor:
         """
 
         # in case the attribute value is of type variable
-        if attribute_value["type"] == "variable":
+        if attribute_value[TYPE_VALUE] == VARIABLE_VALUE:
             # retrieves the variable name
-            variable_name = attribute_value["value"]
+            variable_name = attribute_value[VALUE_VALUE]
 
             # in case the variable name is none
             if variable_name == "None":
@@ -878,9 +922,9 @@ class Visitor:
                 # sets the value as the current variable value
                 value = current_variable
         # in case the attribute value is of type literal
-        elif attribute_value["type"] == "literal":
+        elif attribute_value[TYPE_VALUE] == LITERAL_VALUE:
             # retrieves the literal value
-            literal_value = attribute_value["value"]
+            literal_value = attribute_value[VALUE_VALUE]
 
             # sets the value as the literal value
             value = literal_value
@@ -890,14 +934,14 @@ class Visitor:
 
     def get_literal_value(self, attribute_value):
         # retrieves the literal value
-        literal_value = attribute_value["value"]
+        literal_value = attribute_value[VALUE_VALUE]
 
         # returns the literal value
         return literal_value
 
     def get_boolean_value(self, attribute_value):
         # retrieves the literal value
-        literal_value = attribute_value["value"]
+        literal_value = attribute_value[VALUE_VALUE]
 
         # retrieves the literal value type
         literal_value_type = type(literal_value)
