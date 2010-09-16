@@ -109,6 +109,7 @@ configuration = {
                                            "/colony_manager",
                                            "/colony_mod_python",
                                            "/template_error_handler",
+                                           "/template_directory_list_handler",
                                            "/eclipse",
                                            "/repository/ubuntu",
                                            "/repository/debian",
@@ -118,7 +119,8 @@ configuration = {
                                            "/websession_test",
                                            "/websession",
                                            "/colony/repository",
-                                           "/socket_bridge"],
+                                           "/socket_bridge",
+                                           "/system"],
                      "/colony_web" : {
                          "handler" : "file",
                          "allow_redirection" : False,
@@ -149,6 +151,13 @@ configuration = {
                          "allow_redirection" : False,
                          "request_properties" : {
                              "base_path" : "$resource{system.path.colony}/pt.hive.colony.plugins.main.service.http/src/colony/plugins/main_service_http_template_error_handler/template_error_handler/resources"
+                         }
+                     },
+                     "/template_directory_list_handler" : {
+                         "handler" : "file",
+                         "allow_redirection" : False,
+                         "request_properties" : {
+                             "base_path" : "$resource{system.path.colony}/pt.hive.colony.plugins.main.service.http/src/colony/plugins/main_service_http_file_handler/file_handler/resources"
                          }
                      },
                      "/eclipse" : {
@@ -224,6 +233,13 @@ configuration = {
                          "allow_redirection" : False,
                          "request_properties" : {
                              "base_path" : "$resource{system.path.colony}/hive_colony_socket_bridge"
+                         }
+                     },
+                     "/system" : {
+                         "handler" : "file",
+                         "allow_redirection" : False,
+                         "request_properties" : {
+                             "base_path" : "C:/"
                          }
                      }
                  }

@@ -56,7 +56,8 @@ configuration = {
                  "contexts" : {
                      "resolution_order" : ["/colony_web/plugins",
                                            "/colony_web",
-                                           "/colony_mod_python"],
+                                           "/colony_mod_python",
+                                           "/"],
                      "/colony_web" : {
                          "handler" : "file",
                          "allow_redirection" : False,
@@ -76,6 +77,14 @@ configuration = {
                          "handler" : "colony",
                          "allow_redirection" : False,
                          "request_properties" : {}
+                     },
+                     "/" : {
+                         "handler" : "file",
+                         "allow_redirection" : False,
+                         "request_properties" : {
+                             "base_path" : "$resource{system.path.colony_web}/pt.hive.colony.web",
+                             "default_page" : "redirect.html"
+                         }
                      }
                  }
              }
