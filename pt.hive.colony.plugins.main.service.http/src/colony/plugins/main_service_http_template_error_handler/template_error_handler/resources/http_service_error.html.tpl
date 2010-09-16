@@ -18,7 +18,7 @@
             <p></p>
             <div class="highlight">
                 <img class="error-image" src="/template_error_handler/images/${out_none value=error_image xml_escape=True /}.png"/>
-                <div class="error-text" tyle="float: left; margin-left: 18px;">
+                <div class="error-text">
                     <b>There was a problem in colony web server...</b>
                     <p>Error ${out_none value=error_code xml_escape=True /} - ${out_none value=error_description xml_escape=True /}</p>
                 </div>

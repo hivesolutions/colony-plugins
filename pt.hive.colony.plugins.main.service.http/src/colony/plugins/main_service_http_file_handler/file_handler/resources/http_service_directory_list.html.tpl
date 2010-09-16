@@ -3,78 +3,60 @@
 <html>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-        <link rel="stylesheet" type="text/css" href="/template_error_handler/css/main.css" />
-        <script type="text/javascript" src="/template_error_handler/js/main.js"></script>
+        <link rel="stylesheet" type="text/css" href="/template_directory_list_handler/css/main.css" />
+        <script type="text/javascript" src="/template_directory_list_handler/js/main.js"></script>
     </head>
     <body>
         <div id="wiki-header">
             <div class="wiki-header-contents">
                 <div class="logo-image">
-                    <img src="/template_error_handler/images/colony_logo.png"/>
+                    <img src="/template_directory_list_handler/images/colony_logo.png"/>
                 </div>
             </div>
         </div>
         <div id="wiki-contents">
             <p></p>
             <div class="highlight">
-                <img class="error-image" src="/template_error_handler/images/${out_none value=error_image xml_escape=True /}.png"/>
-                <div class="error-text" tyle="float: left; margin-left: 18px;">
-                    <b>There was a problem in colony web server...</b>
-                    <p>Error ${out_none value=error_code xml_escape=True /} - ${out_none value=error_description xml_escape=True /}</p>
-                </div>
+            	<img class="error-image" src="/template_directory_list_handler/images/logo_folder.png"/>
+				<div class="error-text">
+					<b>Directory listing</b>
+					<p>
+					${foreach item=directory_item from=directory_list}
+					<a href="${out_none value=directory_item.link xml_escape=True /}">${out_none value=directory_item.name xml_escape=True /}</a> / 
+					${/foreach}
+					${out_none value=directory_final_item xml_escape=True /}
+					</p>
+				</div>
             </div>
             <p></p>
 			<div class="directory-listing">		
-					<div class="table-view">
-						<table cellspacing="0">
-							<thead>
-								<tr>
-									<th class="column name">Name</th>
-									<th class="column date">Last Modified</th>
-									<th class="column size">Size</th>
-								</tr>
-							</thead>
-							<tbody>
-								<tr>
-									<td class="name folder-small"><a href="#">Folder</a></td>
-									<td class="date">31 Dec 2009</td>
-									<td class="size">18K</td>
-								</tr>
-								<tr>
-									<td class="name folder-small"><a href="#">Folder</a></td>
-									<td class="date">31 Dec 2009</td>
-									<td class="size">18K</td>
-								</tr>
-								<tr>
-									<td class="name folder-small"><a href="#">Folder</a></td>
-									<td class="date">31 Dec 2009</td>
-									<td class="size">18K</td>
-								</tr>
-								<tr>
-									<td class="name folder-small"><a href="#">Folder</a></td>
-									<td class="date">31 Dec 2009</td>
-									<td class="size">18K</td>
-								</tr>
-								<tr>
-									<td class="name folder-small"><a href="#">Folder</a></td>
-									<td class="date">31 Dec 2009</td>
-									<td class="size">18K</td>
-								</tr>
-								<tr>
-									<td class="name file-small"><a href="#">text-file.txt</a></td>
-									<td class="date">05 Oct 2009</td>
-									<td class="size">35K</td>
-								</tr>
-							</tbody>
-							<tfoot></tfoot>
-						</table>
-					</div>
-					<div class="view-modes">
-						<a href="#" class="active">Table</a>
-						<a href="#">Mosaic</a>
-						<a href="#">Thumbnail</a>
-					</div>
+				<div class="table-view">
+					<table cellspacing="0">
+						<thead>
+							<tr>
+								<th class="column name">Name</th>
+								<th class="column date">Last Modified</th>
+								<th class="column size">Size</th>
+							</tr>
+						</thead>
+						<tbody>
+							${foreach item=directory_entry from=directory_entries}
+							<tr>
+								<td class="name ${out_none value=directory_entry.type xml_escape=True /}-small"><a href="${out_none value=directory_entry.name xml_escape=True /}">${out_none value=directory_entry.name xml_escape=True /}</a></td>
+								<td class="date">${format_datetime value=directory_entry.modified_date format="%d/%m/%y %H:%M:%S" xml_escape=True /}</td>
+								<td class="size">${out_none value=directory_entry.size xml_escape=True /}</td>
+							</tr>
+                			${/foreach}
+						</tbody>
+						<tfoot></tfoot>
+					</table>
 				</div>
+				<div class="view-modes">
+					<a href="#" class="active">Table</a>
+					<a href="#">Mosaic</a>
+					<a href="#">Thumbnail</a>
+				</div>
+			</div>
         </div>
         <div id="wiki-footer">
             <div class="wiki-footer-contents">

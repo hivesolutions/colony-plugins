@@ -40,6 +40,7 @@ __license__ = "GNU General Public License (GPL), Version 3"
 import os
 import re
 import stat
+import time
 import hashlib
 
 import colony.libs.string_buffer_util
@@ -49,7 +50,7 @@ import main_service_http_file_handler_exceptions
 HANDLER_NAME = "file"
 """ The handler name """
 
-CHUNK_FILE_SIZE_LIMIT = 3072
+CHUNK_FILE_SIZE_LIMIT = 4096
 """ The chunk file size limit """
 
 CHUNK_SIZE = 1024
@@ -57,6 +58,12 @@ CHUNK_SIZE = 1024
 
 EXPIRATION_DELTA_TIMESTAMP = 31536000
 """ The expiration delta timestamp """
+
+SIZE_UNIT_COEFFICIENT = 1024
+""" The size unit coefficient """
+
+DEFAULT_MINIMUM = 1000
+""" The default minimum value """
 
 TEMPLATE_FILE_HANDLER_RESOURCES_PATH = "main_service_http_file_handler/file_handler/resources"
 """ The template file handler resources path """
@@ -91,6 +98,9 @@ RANGE_VALUE = "Range"
 
 BYTES_VALUE = "bytes"
 """ The bytes value """
+
+SIZE_UNITS_LIST = ("B", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB")
+""" The size units list """
 
 class MainServiceHttpFileHandler:
     """
@@ -196,6 +206,9 @@ class MainServiceHttpFileHandler:
         else:
             mime_type = None
 
+        # strips the path value from the initial and final slash
+        path = path.strip("/")
+
         # creates the complete path
         complete_path = real_base_directory + "/" + path
 
@@ -285,14 +298,45 @@ class MainServiceHttpFileHandler:
         # adds the upper directory symbol
         directory_names.insert(0, "..")
 
+        directory_entries = []
+
         # iterates over all the directory names
-        #for directory_name in directory_names:
-        #    request.write("<div><a href=\"" + directory_name + "\">", 0, True)
+        for directory_name in directory_names:
+            # creates the complete file path
+            file_path = complete_path + "/" + directory_name
+
+            # retrieves the file stat
+            file_stat = os.stat(file_path)
+
+            # retrieves the file properties
+            file_size = file_stat[stat.ST_SIZE]
+            file_modified_date = time.localtime(file_stat[stat.ST_MTIME])
+
+            # retrieves the file mode
+            file_mode = file_stat[stat.ST_MODE]
+
+            if stat.S_ISDIR(file_mode) or stat.S_ISLNK(file_mode):
+                file_type = "folder"
+            elif stat.S_ISREG(file_mode):
+                file_type = "file"
+            else:
+                file_type = "unknown"
+
+            # creates the file entry
+            file_entry = {}
+            file_entry["name"] = directory_name
+            file_entry["size"] = self._round_size_unit(file_size)
+            file_entry["modified_date"] = file_modified_date
+            file_entry["type"] = file_type
+
+            directory_entries.append(file_entry)
+
+            #request.write("<div><a href=\"" + directory_name + "\">", 0, True)
 
             # writes the file contents
-        #    request.write(directory_name, 0, True)
+            #request.write(directory_name, 0, True)
 
-        #    request.write("</a></div>", 0, True)
+            #request.write("</a></div>", 0, True)
 
         HTML_MIME_TYPE = "text/html"
         """ The html mime type """
@@ -315,8 +359,28 @@ class MainServiceHttpFileHandler:
         # parses the template file path
         template_file = template_engine_manager_plugin.parse_file_path(template_file_path)
 
-        # assigns the error code to the template file
-        template_file.assign("names", directory_names)
+        a = resource_path.strip("/").split("/")
+
+        b = []
+
+        index = len(a[:-1])
+
+        for i in a[:-1]:
+            item = {}
+            item["name"] = i
+            item["link"] = "../" * index
+
+            index -= 1
+
+            b.append(item)
+
+        # assigns the directory list to the template file
+        template_file.assign("directory_list", b)
+
+        template_file.assign("directory_final_item", a[-1])
+
+        # assigns the directory entries to the template file
+        template_file.assign("directory_entries", directory_entries)
 
         # processes the template file
         processed_template_file = template_file.process()
@@ -554,6 +618,50 @@ class MainServiceHttpFileHandler:
 
         # returns the range string value
         return range_string_value
+
+    def _round_size_unit(self, size_value, minimum = DEFAULT_MINIMUM, depth = 0):
+        """
+        Rounds the size unit, returning a string representation
+        of the value with a good rounding precision.
+
+        @type size_value: int
+        @param size_value: The current size value.
+        @type minimum: int
+        @param minimum: The minimum value to be used.
+        @type depth: int
+        @param depth: The current iteration depth value.
+        @rtype: String
+        @return: The string representation of the value in
+        a simplified manner.
+        """
+
+        # in case the current size value is
+        # acceptable (less than the minimum)
+        if size_value < minimum:
+            # rounds the size value
+            rounded_size_value = int(size_value)
+
+            # converts the rounded size value to string
+            rounded_size_value_string = str(rounded_size_value)
+
+            # retrieves the size unit (string mode)
+            size_unit = SIZE_UNITS_LIST[depth]
+
+            # creates the size value string appending the rounded
+            # size value string and the size unit
+            size_value_string = rounded_size_value_string + size_unit
+
+            # returns the size value string
+            return size_value_string
+        else:
+            # re-calculates the new size value
+            new_size_value = size_value / SIZE_UNIT_COEFFICIENT
+
+            # increments the depth
+            new_depth = depth + 1
+
+            # runs the round size unit again with the new values
+            return self._round_size_unit(new_size_value, minimum, new_depth)
 
 class ChunkHandler:
     """
