@@ -1096,8 +1096,6 @@ class AbstractServiceConnectionHandler:
             # returns an empty list
             return []
 
-        print self.service_connection_sockets_list
-
         # runs the select in the connection socket, with timeout
         selected_values = select.select(self.service_connection_sockets_list, [], [], poll_timeout)
 
