@@ -572,9 +572,9 @@ class AbstractService:
                 selected_values = select.select([self.service_socket], [], [], self.client_connection_timeout)
 
             return True
-        except:
+        except BaseException, exception:
             # prints info message about connection
-            self.main_service_utils_plugin.info("The socket is not valid for selection of the pool")
+            self.main_service_utils_plugin.info("The socket is not valid for selection of the pool: " + unicode(exception))
 
             return False
 
