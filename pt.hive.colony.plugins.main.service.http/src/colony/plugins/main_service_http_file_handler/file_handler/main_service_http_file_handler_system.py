@@ -211,6 +211,8 @@ class MainServiceHttpFileHandler:
         # creates the complete path
         complete_path = real_base_directory + "/" + path
 
+        print complete_path
+
         # in case the paths does not exist
         if not os.path.exists(complete_path):
             # raises file not found exception with 404 http error code
