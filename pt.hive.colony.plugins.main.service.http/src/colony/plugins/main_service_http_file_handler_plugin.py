@@ -120,10 +120,12 @@ class MainServiceHttpFileHandlerPlugin(colony.base.plugin_system.Plugin):
     @colony.base.decorators.load_allowed_capability("http_service_directory_list_handler")
     def http_service_directory_list_handler_load_allowed(self, plugin, capability):
         self.http_service_directory_list_handler_plugins.append(plugin)
+        self.main_service_http_file_handler.http_service_directory_list_handler_load(plugin)
 
     @colony.base.decorators.unload_allowed_capability("http_service_directory_list_handler")
     def http_service_directory_list_handler_unload_allowed(self, plugin, capability):
         self.http_service_directory_list_handler_plugins.remove(plugin)
+        self.main_service_http_file_handler.http_service_directory_list_handler_unload(plugin)
 
     def get_resource_manager_plugin(self):
         return self.resource_manager_plugin

@@ -87,6 +87,9 @@ RANGE_VALUE = "Range"
 BYTES_VALUE = "bytes"
 """ The bytes value """
 
+DEFAULT_VALUE = "default"
+""" The default value """
+
 FOLDER_TYPE = "folder"
 """ The folder type """
 
@@ -104,6 +107,9 @@ class MainServiceHttpFileHandler:
     main_service_http_file_handler_plugin = None
     """ The main service http file handler plugin """
 
+    http_service_directory_list_handler_plugins_map = {}
+    """ The http service directory list handler plugins map """
+
     def __init__(self, main_service_http_file_handler_plugin):
         """
         Constructor of the class.
@@ -113,6 +119,8 @@ class MainServiceHttpFileHandler:
         """
 
         self.main_service_http_file_handler_plugin = main_service_http_file_handler_plugin
+
+        self.http_service_directory_list_handler_plugins_map = {}
 
     def get_handler_name(self):
         """
@@ -134,9 +142,6 @@ class MainServiceHttpFileHandler:
 
         # retrieves the resource manager plugin
         resource_manager_plugin = self.main_service_http_file_handler_plugin.resource_manager_plugin
-
-        # retrieves the handler configuration
-        handler_configuration = self.main_service_http_file_handler_plugin.get_configuration_property("handler_configuration").get_data()
 
         # retrieves the handler configuration property
         handler_configuration_property = self.main_service_http_file_handler_plugin.get_configuration_property("handler_configuration")
@@ -260,6 +265,52 @@ class MainServiceHttpFileHandler:
             # processes the path as a file
             self._process_file(request, complete_path)
 
+    def http_service_directory_list_handler_load(self, http_service_directory_list_handler_plugin):
+        # retrieves the plugin directory list handler name
+        directory_list_handler_name = http_service_directory_list_handler_plugin.get_directory_list_handler_name()
+
+        self.http_service_directory_list_handler_plugins_map[directory_list_handler_name] = http_service_directory_list_handler_plugin
+
+    def http_service_directory_list_handler_unload(self, http_service_directory_list_handler_plugin):
+        # retrieves the plugin directory list handler name
+        directory_list_handler_name = http_service_directory_list_handler_plugin.get_directory_list_handler_name()
+
+        del self.http_service_directory_list_handler_plugins_map[directory_list_handler_name]
+
+    def default_directory_list_handler(self, request, directory_list):
+        """
+        The default directory list handler for exception sending.
+
+        @type request: HttpRequest
+        @param request: The request to send the directory list.
+        @type directory_list: List
+        @param directory_list: The list of directory entries.
+        """
+
+        # sets the request content type
+        request.content_type = "text/plain"
+
+        # retrieves the resource path
+        resource_path = request.get_resource_path()
+
+        # strips the resource path
+        resource_path = resource_path.strip("/")
+
+        # writes the header message in the message
+        request.write("directory listing - " + resource_path + "\n")
+
+        # retrieves the directory entries
+        directory_entries = directory_list["entries"]
+
+        # iterates over all the directory entries in the directory
+        # entries (list) to write their values in the request
+        for directory_entry in directory_entries:
+            # retrieves the directory entry name
+            directory_entry_name = directory_entry["name"]
+
+            # writes the directory entry name
+            request.write(directory_entry_name + "\n")
+
     def _process_directory(self, request, complete_path):
         """
         Processes a directory request for the given complete
@@ -338,44 +389,19 @@ class MainServiceHttpFileHandler:
         # sets the entries in the directory list structure
         directory_list["entries"] = directory_entries
 
-        self.main_service_http_file_handler_plugin.http_service_directory_list_handler_plugins[0].handle_directory_list(request, directory_list)
+        # retrieves the handler configuration property
+        handler_configuration_property = self.main_service_http_file_handler_plugin.get_configuration_property("handler_configuration")
 
-        # handles the directory list with the default handler
-        #self.default_directory_list_handler(request, directory_list)
+        # in case the handler configuration property is defined
+        if handler_configuration_property:
+            # retrieves the handler configuration
+            handler_configuration = handler_configuration_property.get_data()
+        else:
+            # sets the handler configuration as an empty map
+            handler_configuration = {}
 
-    def default_directory_list_handler(self, request, directory_list):
-        """
-        The default error handler for exception sending.
-
-        @type request: HttpRequest
-        @param request: The request to send the error.
-        @type directory_list: List
-        @param directory_list: The list of directory entries.
-        """
-
-        # sets the request content type
-        request.content_type = "text/plain"
-
-        # retrieves the resource path
-        resource_path = request.get_resource_path()
-
-        # strips the resource path
-        resource_path = resource_path.strip("/")
-
-        # writes the header message in the message
-        request.write("directory listing - " + resource_path + "\n")
-
-        # retrieves the directory entries
-        directory_entries = directory_list["entries"]
-
-        # iterates over all the directory entries in the directory
-        # entries (list) to write their values in the request
-        for directory_entry in directory_entries:
-            # retrieves the directory entry name
-            directory_entry_name = directory_entry["name"]
-
-            # writes the directory entry name
-            request.write(directory_entry_name + "\n")
+        # handles the directory list
+        self._handle_directory_list(handler_configuration, request, directory_list)
 
     def _process_file(self, request, complete_path):
         """
@@ -420,6 +446,35 @@ class MainServiceHttpFileHandler:
 
             # writes the file contents
             request.write(file_contents, 1, False)
+
+    def _handle_directory_list(self, handler_configuration, request, directory_list):
+        # retrieves the preferred directory list handlers list
+        preferred_directory_list_handlers_list = handler_configuration.get("preferred_directory_list_handlers", (DEFAULT_VALUE,))
+
+        # retrieves the http service directory list handler plugins map
+        http_service_directory_list_handler_plugins_map = self.http_service_directory_list_handler_plugins_map
+
+        # iterates over all the preferred directory list handlers
+        for preferred_directory_list_handler in preferred_directory_list_handlers_list:
+            # in case the preferred directory list handler is the default one
+            if preferred_directory_list_handler == DEFAULT_VALUE:
+                # handles the directory list with the default directory list handler
+                self.default_directory_list_handler(request, directory_list)
+
+                # breaks the loop
+                break
+            else:
+                # in case the preferred directory list handler exist in the http service
+                # directory list handler plugins map
+                if preferred_directory_list_handler in http_service_directory_list_handler_plugins_map:
+                    # retrieves the http service directory list handler plugin
+                    http_service_directory_list_handler_plugin = http_service_directory_list_handler_plugins_map[preferred_directory_list_handler]
+
+                    # calls the handle directory list in the http service directory list handler plugin
+                    http_service_directory_list_handler_plugin.handle_directory_list(request, directory_list)
+
+                    # breaks the loop
+                    break
 
     def _redirect(self, request, target_path):
         """
