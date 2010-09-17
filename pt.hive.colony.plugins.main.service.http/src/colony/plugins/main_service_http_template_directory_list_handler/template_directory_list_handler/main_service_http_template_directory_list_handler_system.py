@@ -119,9 +119,8 @@ class MainServiceHttpTemplateDirectoryListHandler:
             # sets the directory entry size string value
             directory_entry["size_string"] = directory_entry_size_string
 
-
         # retrieves the requested resource path
-        resource_path = request.get_resource_path()
+        resource_path = request.get_resource_path_decoded()
 
         a = resource_path.strip("/").split("/")
 

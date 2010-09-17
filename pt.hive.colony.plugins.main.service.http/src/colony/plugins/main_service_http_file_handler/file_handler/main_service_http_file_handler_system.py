@@ -50,6 +50,9 @@ import main_service_http_file_handler_exceptions
 HANDLER_NAME = "file"
 """ The handler name """
 
+DEFAULT_CHARSET = "utf-8"
+""" The default charset """
+
 CHUNK_FILE_SIZE_LIMIT = 4096
 """ The chunk file size limit """
 
@@ -173,7 +176,7 @@ class MainServiceHttpFileHandler:
         relative_paths = request.properties.get("relative_paths", relative_paths)
 
         # retrieves the requested resource path
-        resource_path = request.get_resource_path()
+        resource_path = request.get_resource_path_decoded()
 
         # retrieves the handler path
         handler_path = request.get_handler_path()
@@ -291,7 +294,7 @@ class MainServiceHttpFileHandler:
         request.content_type = "text/plain"
 
         # retrieves the resource path
-        resource_path = request.get_resource_path()
+        resource_path = request.get_resource_path_decoded()
 
         # strips the resource path
         resource_path = resource_path.strip("/")
@@ -323,13 +326,13 @@ class MainServiceHttpFileHandler:
         """
 
         # retrieves the requested resource path
-        resource_path = request.get_resource_path()
+        resource_path = request.get_resource_path_decoded()
 
         # in case the resources path does not end with a slash
         if not resource_path.endswith("/"):
             # adds the extra slash to the resource path
             # in order to avoid file redirection problems
-            resource_path = resource_path + "/"
+            resource_path = resource_path.encode(DEFAULT_CHARSET) + "/"
 
             # redirects the request to the resource path
             self._redirect(request, resource_path)

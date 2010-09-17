@@ -2052,6 +2052,9 @@ class HttpRequest:
         self.operation_type = operation_type
 
     def set_path(self, path):
+        # "unquotes" the path value
+        path = self._unquote_plus(path)
+
         # retrieves the resource path of the path
         resource_path = path.split("?")[0]
 
@@ -2079,6 +2082,19 @@ class HttpRequest:
         """
 
         return self.resource_path
+
+    def get_resource_path_decoded(self):
+        """
+        Retrieves the resource path in decoded format.
+
+        @rtype: String
+        @return: The resource path in decoded format.
+        """
+
+        # decodes the resources path
+        resource_path_decoded = self.resource_path.decode(DEFAULT_CHARSET)
+
+        return resource_path_decoded
 
     def get_handler_path(self):
         """
