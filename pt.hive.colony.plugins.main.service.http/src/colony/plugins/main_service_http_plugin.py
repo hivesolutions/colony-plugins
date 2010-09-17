@@ -113,6 +113,7 @@ class MainServiceHttpPlugin(colony.base.plugin_system.Plugin):
     @colony.base.decorators.load_allowed_capability("http_service_encoding")
     def http_service_encoding_load_allowed(self, plugin, capability):
         self.http_service_encoding_plugins.append(plugin)
+        self.main_service_http.http_service_encoding_load(plugin)
 
     @colony.base.decorators.load_allowed_capability("http_service_error_handler")
     def http_service_error_handler_load_allowed(self, plugin, capability):
@@ -127,6 +128,7 @@ class MainServiceHttpPlugin(colony.base.plugin_system.Plugin):
     @colony.base.decorators.unload_allowed_capability("http_service_encoding")
     def http_service_encoding_unload_allowed(self, plugin, capability):
         self.http_service_encoding_plugins.remove(plugin)
+        self.main_service_http.http_service_encoding_unload(plugin)
 
     @colony.base.decorators.unload_allowed_capability("http_service_error_handler")
     def http_service_error_handler_unload_allowed(self, plugin, capability):

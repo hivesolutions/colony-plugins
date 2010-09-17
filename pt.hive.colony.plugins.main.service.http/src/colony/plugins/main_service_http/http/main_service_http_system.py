@@ -218,6 +218,9 @@ class MainServiceHttp:
     http_service_handler_plugins_map = {}
     """ The http service handler plugins map """
 
+    http_service_encoding_plugins_map = {}
+    """ The http service encoding plugins map """
+
     http_service_error_handler_plugins_map = {}
     """ The http service error handler plugins map """
 
@@ -235,6 +238,7 @@ class MainServiceHttp:
         self.main_service_http_plugin = main_service_http_plugin
 
         self.http_service_handler_plugin_map = {}
+        self.http_service_encoding_plugins_map = {}
         self.http_service_error_handler_plugins_map = {}
 
     def start_service(self, parameters):
@@ -280,6 +284,18 @@ class MainServiceHttp:
 
         del self.http_service_handler_plugins_map[handler_name]
 
+    def http_service_encoding_load(self, http_service_encoding_plugin):
+        # retrieves the plugin encoding name
+        encoding_name = http_service_encoding_plugin.get_encoding_name()
+
+        self.http_service_encoding_plugins_map[encoding_name] = http_service_encoding_plugin
+
+    def http_service_encoding_unload(self, http_service_encoding_plugin):
+        # retrieves the plugin encoding name
+        encoding_name = http_service_encoding_plugin.get_encoding_name()
+
+        del self.http_service_encoding_plugins_map[encoding_name]
+
     def http_service_error_handler_load(self, http_service_error_handler_plugin):
         # retrieves the plugin error handler name
         error_handler_name = http_service_error_handler_plugin.get_error_handler_name()
@@ -312,25 +328,20 @@ class MainServiceHttp:
             # returns none
             return None
 
-        # retrieves the http service encoding plugins
-        http_service_encoding_plugins = self.main_service_http_plugin.http_service_encoding_plugins
-
-        # iterates over all the http service encoding plugins
-        for http_service_encoding_plugin in http_service_encoding_plugins:
-            # retrieves the encoding name from the http service encoding plugin
-            http_service_encoding_plugin_encoding_name = http_service_encoding_plugin.get_encoding_name()
-
-            # in case the names are the same
-            if http_service_encoding_plugin_encoding_name == encoding:
-                # retrieves the encode contents method as the encoding handler
-                encoding_handler = http_service_encoding_plugin.encode_contents
-
-                # returns the encoding handler
-                return encoding_handler
-
-        # in case there is no encoding handler found
-        if not encoding_handler:
+        # in case the encoding is not found in the http service
+        # encoding handler plugins map
+        if not encoding in self.http_service_encoding_plugins_map:
+            # raises the encoding not found exception
             raise main_service_http_exceptions.EncodingNotFound("encoding %s not found" % encoding)
+
+        # retrieves the http service encoding handler plugin
+        http_service_encoding_plugin = self.http_service_encoding_plugins_map[encoding]
+
+        # retrieves the encode contents method as the encoding handler
+        encoding_handler = http_service_encoding_plugin.encode_contents
+
+        # returns the encoding handler
+        return encoding_handler
 
     def _generate_service_parameters(self, parameters):
         """
