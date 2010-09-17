@@ -99,6 +99,15 @@ RANGE_VALUE = "Range"
 BYTES_VALUE = "bytes"
 """ The bytes value """
 
+FOLDER_TYPE = "folder"
+""" The folder type """
+
+FILE_TYPE = "file"
+""" The file type """
+
+UNKNOWN_TYPE = "unknown"
+""" The unknown type """
+
 SIZE_UNITS_LIST = ("B", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB")
 """ The size units list """
 
@@ -298,6 +307,7 @@ class MainServiceHttpFileHandler:
         # adds the upper directory symbol
         directory_names.insert(0, "..")
 
+        # creates a list for the directory entries
         directory_entries = []
 
         # iterates over all the directory names
@@ -316,13 +326,14 @@ class MainServiceHttpFileHandler:
             file_mode = file_stat[stat.ST_MODE]
 
             if stat.S_ISDIR(file_mode) or stat.S_ISLNK(file_mode):
-                file_type = "folder"
+                file_type = FOLDER_TYPE
             elif stat.S_ISREG(file_mode):
-                file_type = "file"
+                file_type = FILE_TYPE
             else:
-                file_type = "unknown"
+                file_type = UNKNOWN_TYPE
 
-            if file_type == "file":
+            # in case the file type is file
+            if file_type == FILE_TYPE:
                 file_size = self._round_size_unit(file_size)
             else:
                 file_size = "-"
