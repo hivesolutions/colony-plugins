@@ -57,19 +57,18 @@ class MainServiceHttpFileHandlerPlugin(colony.base.plugin_system.Plugin):
                  colony.base.plugin_system.IRON_PYTHON_ENVIRONMENT]
     attributes = {"build_automation_file_path" : "$base{plugin_directory}/main_service_http_file_handler/file_handler/resources/baf.xml"}
     capabilities = ["http_service_handler", "build_automation_item"]
-    capabilities_allowed = []
+    capabilities_allowed = ["http_service_directory_list_handler"]
     dependencies = [colony.base.plugin_system.PluginDependency(
-                    "pt.hive.colony.plugins.resources.resource_manager", "1.0.0"),
-                    colony.base.plugin_system.PluginDependency(
-                    "pt.hive.colony.plugins.template_engine.manager", "1.0.0")]
+                    "pt.hive.colony.plugins.resources.resource_manager", "1.0.0")]
     events_handled = []
     events_registrable = []
     main_modules = ["main_service_http_file_handler.file_handler.main_service_http_file_handler_exceptions", "main_service_http_file_handler.file_handler.main_service_http_file_handler_system"]
 
     main_service_http_file_handler = None
 
+    http_service_directory_list_handler_plugins = []
+
     resource_manager_plugin = None
-    template_engine_manager_plugin = None
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
@@ -86,9 +85,11 @@ class MainServiceHttpFileHandlerPlugin(colony.base.plugin_system.Plugin):
     def end_unload_plugin(self):
         colony.base.plugin_system.Plugin.end_unload_plugin(self)
 
+    @colony.base.decorators.load_allowed("pt.hive.colony.plugins.main.service.http.file_handler", "1.0.0")
     def load_allowed(self, plugin, capability):
         colony.base.plugin_system.Plugin.load_allowed(self, plugin, capability)
 
+    @colony.base.decorators.unload_allowed("pt.hive.colony.plugins.main.service.http.file_handler", "1.0.0")
     def unload_allowed(self, plugin, capability):
         colony.base.plugin_system.Plugin.unload_allowed(self, plugin, capability)
 
@@ -116,16 +117,17 @@ class MainServiceHttpFileHandlerPlugin(colony.base.plugin_system.Plugin):
 
         return self.main_service_http_file_handler.handle_request(request)
 
+    @colony.base.decorators.load_allowed_capability("http_service_directory_list_handler")
+    def http_service_directory_list_handler_load_allowed(self, plugin, capability):
+        self.http_service_directory_list_handler_plugins.append(plugin)
+
+    @colony.base.decorators.unload_allowed_capability("http_service_directory_list_handler")
+    def http_service_directory_list_handler_unload_allowed(self, plugin, capability):
+        self.http_service_directory_list_handler_plugins.remove(plugin)
+
     def get_resource_manager_plugin(self):
         return self.resource_manager_plugin
 
     @colony.base.decorators.plugin_inject("pt.hive.colony.plugins.resources.resource_manager")
     def set_resource_manager_plugin(self, resource_manager_plugin):
         self.resource_manager_plugin = resource_manager_plugin
-
-    def get_template_engine_manager_plugin(self):
-        return self.template_engine_manager_plugin
-
-    @colony.base.decorators.plugin_inject("pt.hive.colony.plugins.template_engine.manager")
-    def set_template_engine_manager_plugin(self, template_engine_manager_plugin):
-        self.template_engine_manager_plugin = template_engine_manager_plugin

@@ -59,18 +59,6 @@ CHUNK_SIZE = 1024
 EXPIRATION_DELTA_TIMESTAMP = 31536000
 """ The expiration delta timestamp """
 
-SIZE_UNIT_COEFFICIENT = 1024
-""" The size unit coefficient """
-
-DEFAULT_MINIMUM = 1000
-""" The default minimum value """
-
-TEMPLATE_FILE_HANDLER_RESOURCES_PATH = "main_service_http_file_handler/file_handler/resources"
-""" The template file handler resources path """
-
-HTTP_SERVICE_DIRECTORY_LIST_HTML_TEMPLATE_FILE_NAME = "http_service_directory_list.html.tpl"
-""" The http service directory list html template file name """
-
 FILE_MIME_TYPE_MAPPING = {"html" : "text/html", "txt" : "text/plain", "js" : "text/javascript",
                           "css" : "text/css", "jpg" : "image/jpg", "png" : "image/png"}
 """ The map that relates the file extension and the associated mime type """
@@ -107,9 +95,6 @@ FILE_TYPE = "file"
 
 UNKNOWN_TYPE = "unknown"
 """ The unknown type """
-
-SIZE_UNITS_LIST = ("B", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB")
-""" The size units list """
 
 class MainServiceHttpFileHandler:
     """
@@ -325,18 +310,15 @@ class MainServiceHttpFileHandler:
             # retrieves the file mode
             file_mode = file_stat[stat.ST_MODE]
 
+            # in case the file is of type directory or link
             if stat.S_ISDIR(file_mode) or stat.S_ISLNK(file_mode):
                 file_type = FOLDER_TYPE
+            # in case the file is of type register
             elif stat.S_ISREG(file_mode):
                 file_type = FILE_TYPE
+            # otherwise
             else:
                 file_type = UNKNOWN_TYPE
-
-            # in case the file type is file
-            if file_type == FILE_TYPE:
-                file_size = self._round_size_unit(file_size)
-            else:
-                file_size = "-"
 
             # creates the file entry
             file_entry = {}
@@ -347,67 +329,53 @@ class MainServiceHttpFileHandler:
             file_entry["modified_date"] = file_modified_date
             file_entry["type"] = file_type
 
+            # adds the file entry to the directory entries
             directory_entries.append(file_entry)
 
-            #request.write("<div><a href=\"" + directory_name + "\">", 0, True)
+        # creates the directory list structure
+        directory_list = {}
 
-            # writes the file contents
-            #request.write(directory_name, 0, True)
+        # sets the entries in the directory list structure
+        directory_list["entries"] = directory_entries
 
-            #request.write("</a></div>", 0, True)
+        self.main_service_http_file_handler_plugin.http_service_directory_list_handler_plugins[0].handle_directory_list(request, directory_list)
 
-        HTML_MIME_TYPE = "text/html"
-        """ The html mime type """
+        # handles the directory list with the default handler
+        #self.default_directory_list_handler(request, directory_list)
+
+    def default_directory_list_handler(self, request, directory_list):
+        """
+        The default error handler for exception sending.
+
+        @type request: HttpRequest
+        @param request: The request to send the error.
+        @type directory_list: List
+        @param directory_list: The list of directory entries.
+        """
 
         # sets the request content type
-        request.content_type = HTML_MIME_TYPE
+        request.content_type = "text/plain"
 
-        # retrieves the plugin manager
-        plugin_manager = self.main_service_http_file_handler_plugin.manager
+        # retrieves the resource path
+        resource_path = request.get_resource_path()
 
-        # retrieves the template engine manager plugin
-        template_engine_manager_plugin = self.main_service_http_file_handler_plugin.template_engine_manager_plugin
+        # strips the resource path
+        resource_path = resource_path.strip("/")
 
-        # retrieves the main service http file handler plugin path
-        main_service_http_file_handler_plugin_path = plugin_manager.get_plugin_path_by_id(self.main_service_http_file_handler_plugin.id)
+        # writes the header message in the message
+        request.write("directory listing - " + resource_path + "\n")
 
-        # creates the template file path
-        template_file_path = main_service_http_file_handler_plugin_path + "/" + TEMPLATE_FILE_HANDLER_RESOURCES_PATH + "/" + HTTP_SERVICE_DIRECTORY_LIST_HTML_TEMPLATE_FILE_NAME
+        # retrieves the directory entries
+        directory_entries = directory_list["entries"]
 
-        # parses the template file path
-        template_file = template_engine_manager_plugin.parse_file_path(template_file_path)
+        # iterates over all the directory entries in the directory
+        # entries (list) to write their values in the request
+        for directory_entry in directory_entries:
+            # retrieves the directory entry name
+            directory_entry_name = directory_entry["name"]
 
-        a = resource_path.strip("/").split("/")
-
-        b = []
-
-        index = len(a[:-1])
-
-        for i in a[:-1]:
-            item = {}
-            item["name"] = i
-            item["link"] = "../" * index
-
-            index -= 1
-
-            b.append(item)
-
-        # assigns the directory list to the template file
-        template_file.assign("directory_list", b)
-
-        template_file.assign("directory_final_item", a[-1])
-
-        # assigns the directory entries to the template file
-        template_file.assign("directory_entries", directory_entries)
-
-        # processes the template file
-        processed_template_file = template_file.process()
-
-        # decodes the processed template file into a unicode object
-        processed_template_file_decoded = processed_template_file.decode("utf-8")
-
-        # writes the processed template file encoded to the request
-        request.write(processed_template_file_decoded)
+            # writes the directory entry name
+            request.write(directory_entry_name + "\n")
 
     def _process_file(self, request, complete_path):
         """
@@ -636,50 +604,6 @@ class MainServiceHttpFileHandler:
 
         # returns the range string value
         return range_string_value
-
-    def _round_size_unit(self, size_value, minimum = DEFAULT_MINIMUM, depth = 0):
-        """
-        Rounds the size unit, returning a string representation
-        of the value with a good rounding precision.
-
-        @type size_value: int
-        @param size_value: The current size value.
-        @type minimum: int
-        @param minimum: The minimum value to be used.
-        @type depth: int
-        @param depth: The current iteration depth value.
-        @rtype: String
-        @return: The string representation of the value in
-        a simplified manner.
-        """
-
-        # in case the current size value is
-        # acceptable (less than the minimum)
-        if size_value < minimum:
-            # rounds the size value
-            rounded_size_value = int(size_value)
-
-            # converts the rounded size value to string
-            rounded_size_value_string = str(rounded_size_value)
-
-            # retrieves the size unit (string mode)
-            size_unit = SIZE_UNITS_LIST[depth]
-
-            # creates the size value string appending the rounded
-            # size value string and the size unit
-            size_value_string = rounded_size_value_string + size_unit
-
-            # returns the size value string
-            return size_value_string
-        else:
-            # re-calculates the new size value
-            new_size_value = size_value / SIZE_UNIT_COEFFICIENT
-
-            # increments the depth
-            new_depth = depth + 1
-
-            # runs the round size unit again with the new values
-            return self._round_size_unit(new_size_value, minimum, new_depth)
 
 class ChunkHandler:
     """

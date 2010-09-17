@@ -67,7 +67,7 @@ STATUS_CODE_IMAGES = {200 : "none", 207 : "none",
 
 class MainServiceHttpTemplateErrorHandler:
     """
-    The main service http gzip encoding class.
+    The main service http template error handler class.
     """
 
     main_service_http_template_error_handler_plugin = None
