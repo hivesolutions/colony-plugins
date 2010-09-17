@@ -80,6 +80,9 @@ POLL_TIMEOUT = 1
 REQUEST_TIMEOUT = 100
 """ The request timeout """
 
+RESPONSE_TIMEOUT = 10
+""" The response timeout """
+
 CONNECTION_TIMEOUT = 600
 """ The connection timeout """
 
@@ -556,9 +559,6 @@ class AbstractService:
         """
 
         try:
-            # sets the socket to non blocking mode
-            self.service_socket.setblocking(0)
-
             # starts the select values
             selected_values = ([], [], [])
 
@@ -570,9 +570,6 @@ class AbstractService:
 
                 # selects the values
                 selected_values = select.select([self.service_socket], [], [], self.client_connection_timeout)
-
-            # sets the socket to blocking mode
-            self.service_socket.setblocking(1)
 
             return True
         except:
@@ -590,6 +587,9 @@ class AbstractService:
         try:
             # accepts the connection retrieving the service connection object and the address
             service_connection, service_address = self.service_socket.accept()
+
+            # sets the service connection to non blocking mode
+            service_connection.setblocking(0)
 
             # inserts the connection and address into the pool
             self._insert_connection_pool(service_connection, service_address)
@@ -1533,14 +1533,8 @@ class ServiceConnection:
         chunk_size = chunk_size and chunk_size or self.connection_chunk_size
 
         try:
-            # sets the socket to non blocking mode
-            self.connection_socket.setblocking(0)
-
             # runs the select in the connection socket, with timeout
             selected_values = select.select([self.connection_socket], [], [], request_timeout)
-
-            # sets the socket to blocking mode
-            self.connection_socket.setblocking(1)
         except:
             # raises the request closed exception
             raise main_service_utils_exceptions.RequestClosed("invalid socket")
@@ -1561,15 +1555,54 @@ class ServiceConnection:
         # returns the data
         return data
 
-    def send(self, message):
+    def send(self, message, response_timeout = RESPONSE_TIMEOUT):
         """
         Sends the given message to the socket.
+        Raises an exception in case there is a problem sending
+        the message.
 
         @type message: String
         @param message: The message to be sent.
+        @type request_timeout: float
+        @param request_timeout: The timeout to be used in data sending.
         """
 
-        return self.connection_socket.sendall(message)
+        # retrieves the number of bytes in the message
+        number_bytes = len(message)
+
+        # iterates continuously
+        while True:
+            try:
+                # runs the select in the connection socket, with timeout
+                selected_values = select.select([], [self.connection_socket], [], response_timeout)
+            except:
+                # raises the request closed exception
+                raise main_service_utils_exceptions.RequestClosed("invalid socket")
+
+            if selected_values == ([], [], []):
+                # closes the connection socket
+                self.connection_socket.close()
+
+                # raises the server response timeout exception
+                raise main_service_utils_exceptions.ClientResponseTimeout("%is timeout" % response_timeout)
+            try:
+                # sends the data in chunks
+                number_bytes_sent = self.connection_socket.send(message)
+            except:
+                # raises the client response timeout exception
+                raise main_service_utils_exceptions.ServerResponseTimeout("timeout")
+
+            # decrements the number of bytes sent
+            number_bytes -= number_bytes_sent
+
+            # in case the number of bytes (pending)
+            # is zero (the transfer is complete)
+            if number_bytes == 0:
+                # breaks the cycle
+                break
+            else:
+                # creates the new message
+                message = message[number_bytes * -1:]
 
     def get_connection_property(self, property_name):
         """
