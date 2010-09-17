@@ -120,7 +120,8 @@ configuration = {
                                            "/websession",
                                            "/colony/repository",
                                            "/socket_bridge",
-                                           "/system"],
+                                           "/system",
+                                           "/system_unix"],
                      "/colony_web" : {
                          "handler" : "file",
                          "allow_redirection" : False,
@@ -240,6 +241,13 @@ configuration = {
                          "allow_redirection" : False,
                          "request_properties" : {
                              "base_path" : "C:/"
+                         }
+                     },
+                     "/system_unix" : {
+                         "handler" : "file",
+                         "allow_redirection" : False,
+                         "request_properties" : {
+                             "base_path" : "/"
                          }
                      }
                  }
