@@ -507,6 +507,9 @@ class AbstractService:
                 # creates a new service socket with the socket provider plugin
                 self.service_socket = socket_provider_plugin.provide_socket_parameters(parameters)
 
+                # sets the service socket to non blocking
+                self.service_socket.setblocking(0)
+
                 # returns immediately
                 return
             else:
@@ -1092,6 +1095,8 @@ class AbstractServiceConnectionHandler:
         if not self.service_connection_sockets_list:
             # returns an empty list
             return []
+
+        print self.service_connection_sockets_list
 
         # runs the select in the connection socket, with timeout
         selected_values = select.select(self.service_connection_sockets_list, [], [], poll_timeout)
