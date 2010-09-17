@@ -120,8 +120,8 @@ configuration = {
                                            "/websession",
                                            "/colony/repository",
                                            "/socket_bridge",
-                                           "/system",
-                                           "/system_unix"],
+                                           "/system_unix",
+                                           "/system"],
                      "/colony_web" : {
                          "handler" : "file",
                          "allow_redirection" : False,
@@ -236,18 +236,18 @@ configuration = {
                              "base_path" : "$resource{system.path.colony}/hive_colony_socket_bridge"
                          }
                      },
-                     "/system" : {
-                         "handler" : "file",
-                         "allow_redirection" : False,
-                         "request_properties" : {
-                             "base_path" : "C:/"
-                         }
-                     },
                      "/system_unix" : {
                          "handler" : "file",
                          "allow_redirection" : False,
                          "request_properties" : {
                              "base_path" : "/"
+                         }
+                     },
+                     "/system" : {
+                         "handler" : "file",
+                         "allow_redirection" : False,
+                         "request_properties" : {
+                             "base_path" : "C:/"
                          }
                      }
                  }
