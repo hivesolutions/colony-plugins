@@ -294,8 +294,15 @@ class TelnetClientServiceHandler:
             # handles the request by the request handler
             self.service_plugin.telnet_service_handler_plugins[0].handle_request(request)
 
-            # sends the request to the client (response)
-            self.send_request(service_connection, request)
+            try:
+                # sends the request to the client (response)
+                self.send_request(service_connection, request)
+            except main_service_telnet_exceptions.MainServiceTelnetException:
+                # prints a debug message
+                self.service_plugin.debug("Connection: %s by peer, while sending request" % str(service_connection))
+
+                # returns false (connection closed)
+                return False
 
             # prints a debug message
             self.service_plugin.debug("Connection: %s kept alive for %ss" % (str(service_connection), str(request_timeout)))
@@ -303,8 +310,15 @@ class TelnetClientServiceHandler:
             # prints info message about exception
             self.service_plugin.info("There was an exception handling the request: " + unicode(exception))
 
-            # sends the exception
-            self.send_exception(service_connection, request, exception)
+            try:
+                # sends the exception
+                self.send_exception(service_connection, request, exception)
+            except main_service_telnet_exceptions.MainServiceTelnetException:
+                # prints a debug message
+                self.service_plugin.debug("Connection: %s by peer, while sending exception" % str(service_connection))
+
+                # returns false (connection closed)
+                return False
 
         # returns true (connection remains open)
         return True
@@ -398,8 +412,15 @@ class TelnetClientServiceHandler:
         # retrieves the result from the request
         result = request.get_result()
 
-        # sends the result to the service connection
-        service_connection.send(result)
+        try:
+            # sends the result to the service connection
+            service_connection.send(result)
+        except self.service_utils_exception_class, exception:
+            # error in the client side
+            self.service_plugin.error("Problem sending request: " + unicode(exception))
+
+            # raises the telnet data sending exception
+            raise main_service_telnet_exceptions.TelnetDataSendingException("problem sending data")
 
     def _get_service_configuration(self, request):
         """
