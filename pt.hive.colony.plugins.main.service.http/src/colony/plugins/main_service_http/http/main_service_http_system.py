@@ -509,13 +509,20 @@ class HttpClientServiceHandler:
             # handles the request by the request handler
             http_service_handler_plugin.handle_request(request)
 
-            # sends the request to the client (response)
-            self.send_request(service_connection, request)
+            try:
+                # sends the request to the client (response)
+                self.send_request(service_connection, request)
+            except main_service_http_exceptions.MainServiceHttpException:
+                # prints a debug message
+                self.service_plugin.debug("Connection: %s by peer, while sending request" % str(service_connection))
+
+                # returns false (connection closed)
+                return False
 
             # in case the connection is not meant to be kept alive
             if not self.keep_alive(request):
                 # prints a debug message
-                self.service_plugin.debug("Connection: %s closed" % str(service_connection))
+                self.service_plugin.debug("Connection: %s closed, not meant to be kept alive" % str(service_connection))
 
                 # returns false (connection closed)
                 return False
@@ -526,8 +533,15 @@ class HttpClientServiceHandler:
             # prints info message about exception
             self.service_plugin.info("There was an exception handling the request: " + unicode(exception))
 
-            # sends the exception
-            self.send_exception(service_connection, request, exception)
+            try:
+                # sends the exception
+                self.send_exception(service_connection, request, exception)
+            except main_service_http_exceptions.MainServiceHttpException:
+                # prints a debug message
+                self.service_plugin.debug("Connection: %s by peer, while sending exception" % str(service_connection))
+
+                # returns false (connection closed)
+                return False
 
         # returns true (connection remains open)
         return True
@@ -860,7 +874,7 @@ class HttpClientServiceHandler:
             # sets the encoding name
             request.set_encoding_name(self.encoding)
 
-        # in case the reques is mediated
+        # in case the request is mediated
         if request.is_mediated():
             self.send_request_mediated(service_connection, request)
         elif request.is_chunked_encoded():
@@ -875,12 +889,12 @@ class HttpClientServiceHandler:
         try:
             # sends the result value to the client
             service_connection.send(result_value)
-        except:
+        except self.service_utils_exception_class, exception:
             # error in the client side
-            self.service_plugin.error("Problem sending request simple")
+            self.service_plugin.error("Problem sending request simple: " + unicode(exception))
 
-            # returns immediately
-            return
+            # raises the http data sending exception
+            raise main_service_http_exceptions.HttpDataSendingException("problem sending data")
 
     def send_request_mediated(self, service_connection, request):
         # retrieves the result value
@@ -889,12 +903,12 @@ class HttpClientServiceHandler:
         try:
             # sends the result value to the client
             service_connection.send(result_value)
-        except:
+        except self.service_utils_exception_class, exception:
             # error in the client side
-            self.service_plugin.error("Problem sending request mediated")
+            self.service_plugin.error("Problem sending request mediated: " + unicode(exception))
 
-            # returns immediately
-            return
+            # raises the http data sending exception
+            raise main_service_http_exceptions.HttpDataSendingException("problem sending data")
 
         # continuous loop
         while True:
@@ -903,21 +917,24 @@ class HttpClientServiceHandler:
 
             # in case the read is complete
             if not mediated_value:
+                # prints a debug message
+                self.service_plugin.debug("Completed transfer of request mediated")
+
                 # closes the mediated file
                 request.mediated_handler.close_file()
 
-                # returns immediately
-                return
+                # breaks the cycle
+                break
 
             try:
                 # sends the mediated value to the client
                 service_connection.send(mediated_value)
-            except:
+            except self.service_utils_exception_class, exception:
                 # error in the client side
-                self.service_plugin.error("Problem sending request mediated")
+                self.service_plugin.error("Problem sending request mediated: " + unicode(exception))
 
-                # returns immediately
-                return
+                # raises the http data sending exception
+                raise main_service_http_exceptions.HttpDataSendingException("problem sending data")
 
     def send_request_chunked(self, service_connection, request):
         # retrieves the result value
@@ -926,12 +943,12 @@ class HttpClientServiceHandler:
         try:
             # sends the result value to the client
             service_connection.send(result_value)
-        except:
+        except self.service_utils_exception_class, exception:
             # error in the client side
-            self.service_plugin.error("Problem sending request chunked")
+            self.service_plugin.error("Problem sending request chunked: " + unicode(exception))
 
-            # returns immediately
-            return
+            # raises the http data sending exception
+            raise main_service_http_exceptions.HttpDataSendingException("problem sending data")
 
         # continuous loop
         while True:
@@ -940,11 +957,18 @@ class HttpClientServiceHandler:
 
             # in case the read is complete
             if not chunk_value:
-                # sends the final empty chunk
-                service_connection.send("0\r\n\r\n")
+                try:
+                    # sends the final empty chunk
+                    service_connection.send("0\r\n\r\n")
+                except self.service_utils_exception_class, exception:
+                    # error in the client side
+                    self.service_plugin.error("Problem sending request chunked (final chunk): " + unicode(exception))
 
-                # returns immediately
-                return
+                    # raises the http data sending exception
+                    raise main_service_http_exceptions.HttpDataSendingException("problem sending data")
+
+                # breaks the cycle
+                break
 
             try:
                 # retrieves the length of the chunk value
@@ -958,12 +982,12 @@ class HttpClientServiceHandler:
 
                 # sends the message value to the client
                 service_connection.send(message_value)
-            except:
+            except self.service_utils_exception_class, exception:
                 # error in the client side
-                self.service_plugin.error("Problem sending request chunked")
+                self.service_plugin.error("Problem sending request chunked: " + unicode(exception))
 
-                # returns immediately
-                return
+                # raises the http data sending exception
+                raise main_service_http_exceptions.HttpDataSendingException("problem sending data")
 
     def keep_alive(self, request):
         """
