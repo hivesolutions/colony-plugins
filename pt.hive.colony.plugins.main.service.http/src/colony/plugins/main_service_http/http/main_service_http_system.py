@@ -218,6 +218,9 @@ class MainServiceHttp:
     http_service_handler_plugins_map = {}
     """ The http service handler plugins map """
 
+    http_service_error_handler_plugins_map = {}
+    """ The http service error handler plugins map """
+
     http_service = None
     """ The http service reference """
 
@@ -232,6 +235,7 @@ class MainServiceHttp:
         self.main_service_http_plugin = main_service_http_plugin
 
         self.http_service_handler_plugin_map = {}
+        self.http_service_error_handler_plugins_map = {}
 
     def start_service(self, parameters):
         """
@@ -275,6 +279,18 @@ class MainServiceHttp:
         handler_name = http_service_handler_plugin.get_handler_name()
 
         del self.http_service_handler_plugins_map[handler_name]
+
+    def http_service_error_handler_load(self, http_service_error_handler_plugin):
+        # retrieves the plugin error handler name
+        error_handler_name = http_service_error_handler_plugin.get_error_handler_name()
+
+        self.http_service_error_handler_plugins_map[error_handler_name] = http_service_error_handler_plugin
+
+    def http_service_error_handler_unload(self, http_service_error_handler_plugin):
+        # retrieves the plugin error handler name
+        error_handler_name = http_service_error_handler_plugin.get_error_handler_name()
+
+        del self.http_service_error_handler_plugins_map[error_handler_name]
 
     def _get_service_configuration(self):
         # retrieves the service configuration property
@@ -822,8 +838,8 @@ class HttpClientServiceHandler:
         # retrieves the preferred error handlers list
         preferred_error_handlers_list = self.service_configuration.get("preferred_error_handlers", (DEFAULT_VALUE,))
 
-        # retrieves the http service error handler plugins
-        http_service_error_handler_plugins = self.service_plugin.http_service_error_handler_plugins
+        # retrieves the http service error handler plugins map
+        http_service_error_handler_plugins_map = self.service_plugin.main_service_http.http_service_error_handler_plugins_map
 
         # iterates over all the preferred error handlers
         for preferred_error_handler in preferred_error_handlers_list:
@@ -835,27 +851,15 @@ class HttpClientServiceHandler:
                 # breaks the loop
                 break
             else:
-                # unsets the valid flag
-                valid = False
+                # in case the preferred error handler exist in the http service
+                # error handler plugins map
+                if preferred_error_handler in http_service_error_handler_plugins_map:
+                    # retrieves the http service error handler plugin
+                    http_service_error_handler_plugin = http_service_error_handler_plugins_map[preferred_error_handler]
 
-                # iterates over all the http service error handler plugins
-                for http_service_error_handler_plugin in http_service_error_handler_plugins:
-                    # retrieves the http service error handler plugin error handler name
-                    http_service_error_handler_plugin_error_handler_name = http_service_error_handler_plugin.get_error_handler_name()
+                    # calls the handle error in the http service error handler plugin
+                    http_service_error_handler_plugin.handle_error(request, exception)
 
-                    # checks if the plugin is the same as the preferred error handler
-                    if http_service_error_handler_plugin_error_handler_name == preferred_error_handler:
-                        # calls the handle error in the http service error handler plugin
-                        http_service_error_handler_plugin.handle_error(request, exception)
-
-                        # sets the valid flag
-                        valid = True
-
-                        # breaks the loop
-                        break
-
-                # in case the valid flag is set
-                if valid:
                     # breaks the loop
                     break
 

@@ -117,6 +117,7 @@ class MainServiceHttpPlugin(colony.base.plugin_system.Plugin):
     @colony.base.decorators.load_allowed_capability("http_service_error_handler")
     def http_service_error_handler_load_allowed(self, plugin, capability):
         self.http_service_error_handler_plugins.append(plugin)
+        self.main_service_http.http_service_error_handler_load(plugin)
 
     @colony.base.decorators.unload_allowed_capability("http_service_handler")
     def http_service_handler_unload_allowed(self, plugin, capability):
@@ -130,6 +131,7 @@ class MainServiceHttpPlugin(colony.base.plugin_system.Plugin):
     @colony.base.decorators.unload_allowed_capability("http_service_error_handler")
     def http_service_error_handler_unload_allowed(self, plugin, capability):
         self.http_service_error_handler_plugins.remove(plugin)
+        self.main_service_http.http_service_error_handler_unload(plugin)
 
     def get_main_service_utils_plugin(self):
         return self.main_service_utils_plugin
