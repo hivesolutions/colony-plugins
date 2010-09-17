@@ -158,7 +158,7 @@ configuration = {
                          "handler" : "file",
                          "allow_redirection" : False,
                          "request_properties" : {
-                             "base_path" : "$resource{system.path.colony}/pt.hive.colony.plugins.main.service.http/src/colony/plugins/main_service_http_file_handler/file_handler/resources"
+                             "base_path" : "$resource{system.path.colony}/pt.hive.colony.plugins.main.service.http/src/colony/plugins/main_service_http_template_directory_list_handler/template_directory_list_handler/resources"
                          }
                      },
                      "/eclipse" : {
