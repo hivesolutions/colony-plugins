@@ -455,8 +455,15 @@ class PopClientServiceHandler:
         # retrieves the result from the request
         result = request.get_result()
 
-        # sends the result to the service connection
-        service_connection.send(result)
+        try:
+            # sends the result to the service connection
+            service_connection.send(result)
+        except self.service_utils_exception_class, exception:
+            # error in the client side
+            self.service_plugin.error("Problem sending request: " + unicode(exception))
+
+            # raises the pop data sending exception
+            raise main_service_pop_exceptions.PopDataSendingException("problem sending data")
 
     def _handle_start_session_request(self, session, service_connection, request_timeout = REQUEST_TIMEOUT):
         # retrieves the pop service authentication handler plugins map
@@ -542,8 +549,15 @@ class PopClientServiceHandler:
             # handles the initial request by the request handler
             pop_service_handler_plugin.handle_initial_request(request)
 
-            # sends the initial request to the client (initial response)
-            self.send_request(service_connection, request)
+            try:
+                # sends the initial request to the client (initial response)
+                self.send_request(service_connection, request)
+            except main_service_pop_exceptions.MainServicePopException:
+                # prints a debug message
+                self.service_plugin.debug("Connection: %s by peer, while sending request" % str(service_connection))
+
+                # returns false (connection closed)
+                return False
 
             # sets the session as started
             session.set_started(True)
@@ -551,8 +565,15 @@ class PopClientServiceHandler:
             # prints info message about exception
             self.service_plugin.info("There was an exception handling the request: " + unicode(exception))
 
-            # sends the exception
-            self.send_exception(service_connection, request, exception)
+            try:
+                # sends the exception
+                self.send_exception(service_connection, request, exception)
+            except main_service_pop_exceptions.MainServicePopException:
+                # prints a debug message
+                self.service_plugin.debug("Connection: %s by peer, while sending exception" % str(service_connection))
+
+                # returns false (connection closed)
+                return False
 
         # returns true (connection remains open)
         return True
@@ -598,8 +619,15 @@ class PopClientServiceHandler:
             # handles the request by the request handler
             pop_service_handler_plugin.handle_request(request)
 
-            # sends the request to the client (response)
-            self.send_request(service_connection, request)
+            try:
+                # sends the request to the client (response)
+                self.send_request(service_connection, request)
+            except main_service_pop_exceptions.MainServicePopException:
+                # prints a debug message
+                self.service_plugin.debug("Connection: %s by peer, while sending request" % str(service_connection))
+
+                # returns false (connection closed)
+                return False
 
             # retrieves the value of the upgrade flag
             upgrade = session.get_upgrade()
@@ -626,8 +654,15 @@ class PopClientServiceHandler:
             # prints info message about exception
             self.service_plugin.info("There was an exception handling the request: " + unicode(exception))
 
-            # sends the exception
-            self.send_exception(service_connection, request, exception)
+            try:
+                # sends the exception
+                self.send_exception(service_connection, request, exception)
+            except main_service_pop_exceptions.MainServicePopException:
+                # prints a debug message
+                self.service_plugin.debug("Connection: %s by peer, while sending exception" % str(service_connection))
+
+                # returns false (connection closed)
+                return False
 
         # returns true (connection remains open)
         return True

@@ -172,3 +172,28 @@ class PopDataRetrievalException(PopRuntimeException):
         """
 
         return "Pop data retrieval exception: %s" % self.message
+
+class PopDataSendingException(PopRuntimeException):
+    """
+    The pop data sending exception.
+    """
+
+    def __init__(self, message):
+        """
+        Constructor of the class.
+
+        @type message: String
+        @param message: The message to be printed.
+        """
+
+        PopRuntimeException.__init__(self, message)
+
+    def __str__(self):
+        """
+        Returns the string representation of the class.
+
+        @rtype: String
+        @return: The string representation of the class.
+        """
+
+        return "Pop data sending exception: %s" % self.message
