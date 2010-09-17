@@ -2053,7 +2053,7 @@ class HttpRequest:
 
     def set_path(self, path):
         # "unquotes" the path value
-        path = self._unquote_plus(path)
+        path = self._unquote(path)
 
         # retrieves the resource path of the path
         resource_path = path.split("?")[0]
