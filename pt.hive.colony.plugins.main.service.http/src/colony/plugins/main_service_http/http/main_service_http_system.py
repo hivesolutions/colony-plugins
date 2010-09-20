@@ -96,7 +96,7 @@ MAXIMUM_NUMBER_THREADS = 30
 SCHEDULING_ALGORITHM = 2
 """ The scheduling algorithm """
 
-MAXIMUM_NUMBER_WORKS_THREAD = 5
+MAXIMUM_NUMBER_WORKS_THREAD = 3
 """ The maximum number of works per thread """
 
 WORK_SCHEDULING_ALGORITHM = 1
