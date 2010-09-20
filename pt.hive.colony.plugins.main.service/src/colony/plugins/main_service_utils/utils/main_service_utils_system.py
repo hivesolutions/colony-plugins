@@ -1551,9 +1551,9 @@ class ServiceConnection:
         try:
             # receives the data in chunks
             data = self.connection_socket.recv(chunk_size)
-        except:
+        except BaseException, exception:
             # raises the client request timeout exception
-            raise main_service_utils_exceptions.ClientRequestTimeout("timeout")
+            raise main_service_utils_exceptions.ClientRequestTimeout("problem sending data: " + unicode(exception))
 
         # returns the data
         return data
@@ -1591,9 +1591,9 @@ class ServiceConnection:
             try:
                 # sends the data in chunks
                 number_bytes_sent = self.connection_socket.send(message)
-            except:
+            except BaseException, exception:
                 # raises the client response timeout exception
-                raise main_service_utils_exceptions.ServerResponseTimeout("timeout")
+                raise main_service_utils_exceptions.ServerResponseTimeout("problem sending data: " + unicode(exception))
 
             # decrements the number of bytes sent
             number_bytes -= number_bytes_sent
