@@ -300,32 +300,78 @@ h5:hover > a.headerlink {
     font-weight: bold;
 }
 
-.warning {
-    background: #fff9D8 url(../images/warning_note.gif) no-repeat scroll 0px 0px;
+.directory-list {
+    background: #fbebd3 url(../images/listing_note.gif) no-repeat scroll 0px 0px;
     padding: 18px 52px 18px 52px;
-    line-height: 1.6em;
+    line-height: 1.5em;
 }
 
-.error {
-    background: #f9d9d8 url(../images/error_note.gif) no-repeat scroll 0px 0px;
-    padding: 18px 52px 18px 52px;
-    line-height: 1.6em;
+.directory-list .table-view table {
+    width: 100%;
+    margin-bottom: 20px;
 }
 
-.error .description-header {
-    margin-top: 0.0em;
+.directory-list .table-view table th {
+    height: 36px;
+    border-bottom: 1px solid #b2b2b2;
 }
 
-.error .traceback-header {
-    margin-top: 1.6em;
+.directory-list .table-view table tr {
+    height: 36px;
 }
 
-.error .description {
-    font-family: monospace;
+.directory-list .table-view table .column.name {
+    text-align: left;
 }
 
-.error .traceback {
-    font-family: monospace;
+.directory-list .table-view table .column.date {
+    width: 240px;
+    text-align: right;
+}
+
+.directory-list .table-view table .column.size {
+    width: 60px;
+    text-align: right;
+}
+
+.directory-list .table-view table .name {
+    padding-left: 30px;
+    background-position: 0px 4px;
+}
+
+.directory-list .table-view table .date , .size {
+    text-align: right;
+}
+
+.directory-list .mosaic-view .item {
+    float: left;
+    height: 60px;
+    width: 250px;
+    margin-bottom: 20px;
+}
+
+.directory-list .mosaic-view .item p {
+    margin: 0px 0px 0px 58px;
+}
+
+.directory-list .mosaic-view .item .name {
+}
+
+.directory-list .mosaic-view .item .description {
+    font-size: 8pt;
+    color: #666666;
+}
+
+.directory-list .thumbnail-view .item {
+    float: left;
+    height: 100px;
+    width: 150px;
+    background-position: top center;
+}
+
+.directory-list .thumbnail-view .item .name {
+    padding-top: 40px;
+    text-align: center;
 }
 
 .monospace {
@@ -333,91 +379,6 @@ h5:hover > a.headerlink {
     font-size: 110%;
     font-weight: bold;
 }
-
-
-/* directory listing */
-.directory-listing {
-    background: #f9d9d8 url(../images/listing_note.gif) no-repeat scroll 0px 0px;
-    padding: 18px 52px 18px 52px;
-    line-height: 1.5em;
-    background-color: #fbebd3;
-}
-
-/* directory listing table view */
-.directory-listing .table-view table {
-    width: 100%;
-    margin-bottom: 20px;
-}
-
-.directory-listing .table-view table th {
-    height: 36px;
-    border-bottom: 1px solid #b2b2b2;
-}
-
-.directory-listing .table-view table tr {
-    height: 36px;
-}
-
-.directory-listing .table-view table .column.name {
-    text-align: left;
-}
-
-.directory-listing .table-view table .column.date {
-    width: 240px;
-    text-align: right;
-}
-
-.directory-listing .table-view table .column.size {
-    width: 60px;
-    text-align: right;
-}
-
-.directory-listing .table-view table .name {
-    padding-left: 30px;
-    background-position: 0px 4px;
-}
-
-.directory-listing .table-view table .date , .size {
-    text-align: right;
-}
-
-/* directory listing mosaic view */
-.directory-listing .mosaic-view .item {
-    float: left;
-    height: 60px;
-    width: 250px;
-    margin-bottom: 20px;
-}
-
-.directory-listing .mosaic-view .item p {
-    margin: 0px 0px 0px 58px;
-}
-
-.directory-listing .mosaic-view .item .name {
-}
-
-.directory-listing .mosaic-view .item .description {
-    font-size: 8pt;
-    color: #666666;
-}
-
-
-
-
-.directory-listing .thumbnail-view .item {
-    float: left;
-    height: 100px;
-    width: 150px;
-    background-position: top center;
-}
-
-.directory-listing .thumbnail-view .item .name {
-    padding-top: 40px;
-    text-align: center;
-}
-
-
-
 
 .folder-small {
     background: url(../images/icon-folder-small.png) no-repeat;
