@@ -29,7 +29,7 @@
 				</div>
             </div>
             <p></p>
-			<div class="directory-listing">		
+			<div class="directory-list">		
 				<div class="table-view">
 					<table cellspacing="0">
 						<thead>
