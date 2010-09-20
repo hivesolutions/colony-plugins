@@ -163,11 +163,17 @@ SERVER_VALUE = "Server"
 CONNECTION_VALUE = "Connection"
 """ The connection value """
 
+AUTHORIZATION_VALUE = "Authorization"
+""" The authorization value """
+
 IF_MODIFIED_SINCE_VALUE = "If-Modified-Since"
 """ The if modified since value """
 
 IF_NONE_MATCH_VALUE = "If-None-Match"
 """ The if none match value """
+
+WWW_AUTHENTICATE_VALUE = "WWW-Authenticate"
+""" The www authenticate value """
 
 CHUNKED_VALUE = "chunked"
 """ The chunked value """
@@ -1362,12 +1368,12 @@ class HttpClientServiceHandler:
         authentication_realm = authentication_properties.get("authentication_realm", "default")
 
         # retrieves the authorization from the request headers
-        authorization = request.headers_map.get("Authorization", None)
+        authorization = request.headers_map.get(AUTHORIZATION_VALUE, None)
 
         # in case no authorization is defined
         if not authorization:
             # sets the location header
-            request.set_header("WWW-Authenticate", "Basic realm=\"" + authentication_realm + "\"")
+            request.set_header(WWW_AUTHENTICATE_VALUE, "Basic realm=\"" + authentication_realm + "\"")
 
             # raises the unauthorized exception
             raise main_service_http_exceptions.UnauthorizedException("authentication required", 401)
@@ -1399,7 +1405,7 @@ class HttpClientServiceHandler:
         # in case the authentication is not valid
         if not authentication_result:
             # sets the location header
-            request.set_header("WWW-Authenticate", "Basic realm=\"Secure Area\"")
+            request.set_header(WWW_AUTHENTICATE_VALUE, "Basic realm=\"Secure Area\"")
 
             # raises the unauthorized exception
             raise main_service_http_exceptions.UnauthorizedException("user is not permitted: " + username, 401)
