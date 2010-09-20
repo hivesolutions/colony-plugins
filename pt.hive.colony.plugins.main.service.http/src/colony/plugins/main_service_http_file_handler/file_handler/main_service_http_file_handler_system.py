@@ -102,6 +102,11 @@ FILE_TYPE = "file"
 UNKNOWN_TYPE = "unknown"
 """ The unknown type """
 
+ITEM_SORT_MAP = {FOLDER_TYPE : 1,
+                 FILE_TYPE : 2,
+                 UNKNOWN_TYPE : 3}
+""" Map used for list sorting """
+
 class MainServiceHttpFileHandler:
     """
     The main service http file handler class.
@@ -343,9 +348,6 @@ class MainServiceHttpFileHandler:
         # retrieves the directory names for the complete path
         directory_names = os.listdir(complete_path)
 
-        # adds the upper directory symbol
-        directory_names.insert(0, "..")
-
         # creates a list for the directory entries
         directory_entries = []
 
@@ -367,6 +369,7 @@ class MainServiceHttpFileHandler:
             # in case the file is of type directory or link
             if stat.S_ISDIR(file_mode) or stat.S_ISLNK(file_mode):
                 file_type = FOLDER_TYPE
+                file_size = 0
             # in case the file is of type register
             elif stat.S_ISREG(file_mode):
                 file_type = FILE_TYPE
@@ -386,11 +389,22 @@ class MainServiceHttpFileHandler:
             # adds the file entry to the directory entries
             directory_entries.append(file_entry)
 
+        # retrieves the comparator attribute from the request
+        comparator = request.get_attribute("comparator") or "name"
+
+        # generates a new comparator method using the comparator string
+        comparator_method = self.generate_comparator(comparator)
+
+        # sorts the directory entries
+        directory_entries.sort(comparator_method)
+        directory_entries.sort(self.type_comparator)
+
         # creates the directory list structure
         directory_list = {}
 
         # sets the entries in the directory list structure
         directory_list["entries"] = directory_entries
+        directory_list["comparator"] = comparator
 
         # retrieves the handler configuration property
         handler_configuration_property = self.main_service_http_file_handler_plugin.get_configuration_property("handler_configuration")
@@ -662,6 +676,57 @@ class MainServiceHttpFileHandler:
 
         # returns the range string value
         return range_string_value
+
+    def type_comparator(self, first_item, second_item):
+        """
+        Comparator based on the type of the items.
+
+        @type first_item: Object
+        @param first_item: The first item to be compared.
+        @type second_item: Object
+        @param second_item: The second item to be compared.
+        @rtype: int
+        @return: The result of the comparison.
+        """
+
+        # retrieves the item types
+        first_item_type = first_item["type"]
+        second_item_type = second_item["type"]
+
+        # retrieves the difference between the item values
+        return ITEM_SORT_MAP[first_item_type] - ITEM_SORT_MAP[second_item_type]
+
+    def generate_comparator(self, reference):
+        """
+        Generates a method that can be used as a comparator.
+
+        @type reference: String
+        @param reference: The refernce value to the comparison.
+        """
+
+        def comparator(first_item, second_item):
+            """
+            Comparator function to that returns the result
+            of the comparison between two item.
+
+            @type first_item: Object
+            @param first_item: The first item to be compared.
+            @type second_item: Object
+            @param second_item: The second item to be compared.
+            @rtype: int
+            @return: The result of the comparison.
+            """
+
+            # retrieves the item values
+            first_item_value = first_item[reference]
+            second_item_value = second_item[reference]
+
+            # returns the result of the comparison of the
+            # first and second item values
+            return cmp(first_item_value, second_item_value)
+
+        # returns the comparator method
+        return comparator
 
 class ChunkHandler:
     """

@@ -29,32 +29,12 @@
 				</div>
             </div>
             <p></p>
-			<div class="directory-list">		
-				<div class="table-view">
-					<table cellspacing="0">
-						<thead>
-							<tr>
-								<th class="column name">Name</th>
-								<th class="column date">Last Modified</th>
-								<th class="column size">Size</th>
-							</tr>
-						</thead>
-						<tbody>
-							${foreach item=directory_entry from=directory_entries}
-							<tr>
-								<td class="name ${out_none value=directory_entry.type xml_escape=True /}-small"><a href="${out_none value=directory_entry.name xml_escape=True /}">${out_none value=directory_entry.name xml_escape=True /}</a></td>
-								<td class="date">${format_datetime value=directory_entry.modified_date format="%d/%m/%y %H:%M:%S" xml_escape=True /}</td>
-								<td class="size">${out_none value=directory_entry.size_string xml_escape=True /}</td>
-							</tr>
-                			${/foreach}
-						</tbody>
-						<tfoot></tfoot>
-					</table>
-				</div>
+			<div class="directory-list">
+        		${include file_value=format_file /}
 				<div class="view-modes">
-					<a href="#" class="active">Table</a>
-					<a href="#">Mosaic</a>
-					<a href="#">Thumbnail</a>
+					<a href="?format=table" class="${out_none value=formats_map.table xml_escape=True /}">Table</a>
+					<a href="?format=mosaic" class="${out_none value=formats_map.mosaic xml_escape=True /}">Mosaic</a>
+					<a href="?format=thumbnail" class="${out_none value=formats_map.thumbnail xml_escape=True /}">Thumbnail</a>
 				</div>
 			</div>
         </div>

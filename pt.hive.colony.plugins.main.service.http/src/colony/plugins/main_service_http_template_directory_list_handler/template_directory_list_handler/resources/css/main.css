@@ -265,7 +265,7 @@ h5:hover > a.headerlink {
 
 .highlight P {
     font-size: 13pt;
-    margin-top: 0.6em;
+    margin: 0.6em 0.0em 0.2em 0.0em;
 }
 
 .highlight ul {
@@ -287,8 +287,8 @@ h5:hover > a.headerlink {
 }
 
 .highlight .directory-list-text {
-    float: left;
-    margin-left: 18px;
+    margin-left: 82px;
+    word-wrap: break-word;
 }
 
 .command {
@@ -355,6 +355,7 @@ h5:hover > a.headerlink {
 }
 
 .directory-list .mosaic-view .item .name {
+    word-wrap: break-word;
 }
 
 .directory-list .mosaic-view .item .description {
@@ -372,6 +373,7 @@ h5:hover > a.headerlink {
 .directory-list .thumbnail-view .item .name {
     padding-top: 40px;
     text-align: center;
+    word-wrap: break-word;
 }
 
 .monospace {

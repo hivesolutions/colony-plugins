@@ -37,6 +37,8 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
+import copy
+
 DIRECTORY_LIST_HANDLER_NAME = "template"
 """ The error handler name """
 
@@ -57,6 +59,11 @@ SIZE_UNIT_COEFFICIENT = 1024
 
 DEFAULT_MINIMUM = 1000
 """ The default minimum value """
+
+FORMATS_MAP = {"table" : "",
+               "mosaic" : "",
+               "thumbnail" : ""}
+""" The formats map """
 
 class MainServiceHttpTemplateDirectoryListHandler:
     """
@@ -122,28 +129,65 @@ class MainServiceHttpTemplateDirectoryListHandler:
         # retrieves the requested resource path
         resource_path = request.get_resource_path_decoded()
 
-        a = resource_path.strip("/").split("/")
+        # splits the resource path into various values
+        resource_path_values = resource_path.strip("/").split("/")
 
-        b = []
+        # retrieves the prefix resource path values
+        prefix_resource_path_values = resource_path_values[:-1]
 
-        index = len(a[:-1])
+        # retrieves the suffix resource path value
+        suffix_resouces_path_value = resource_path_values[-1]
 
-        for i in a[:-1]:
-            item = {}
-            item["name"] = i
-            item["link"] = "../" * index
+        # creates the directory list
+        directory_list = []
 
+        # starts the index value with the length of the
+        # prefix resource path values
+        index = len(prefix_resource_path_values)
+
+        for prefix_resource_path_value in prefix_resource_path_values:
+            # creates the resource item
+            resource_item = {}
+
+            # sets the resource item value
+            resource_item["name"] = prefix_resource_path_value
+            resource_item["link"] = "../" * index
+
+            # decrements the index value
             index -= 1
 
-            b.append(item)
+            # adds the resources item to the directory list
+            directory_list.append(resource_item)
+
+        # retrieves the format attribute from the request
+        format = request.get_attribute("format") or "table"
+
+        # creates the format file path
+        format_file = "formats/" + format + ".html.tpl"
+
+        # creates a new formats map from the original one
+        formats_map = copy.copy(FORMATS_MAP)
+
+        # sets the current format as active
+        formats_map[format] = "active"
 
         # assigns the directory list to the template file
-        template_file.assign("directory_list", b)
+        template_file.assign("directory_list", directory_list)
 
-        template_file.assign("directory_final_item", a[-1])
+        # assigns the directory final item to the template file
+        template_file.assign("directory_final_item", suffix_resouces_path_value)
 
         # assigns the directory entries to the template file
         template_file.assign("directory_entries", directory_entries)
+
+        # assigns the format to the template file
+        template_file.assign("format", format)
+
+        # assigns the format file to the template file
+        template_file.assign("format_file", format_file)
+
+        # assigns the formats map to the template file
+        template_file.assign("formats_map", formats_map)
 
         # processes the template file
         processed_template_file = template_file.process()
