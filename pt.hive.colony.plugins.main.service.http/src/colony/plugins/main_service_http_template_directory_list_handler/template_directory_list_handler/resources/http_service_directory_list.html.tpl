@@ -17,8 +17,8 @@
         <div id="wiki-contents">
             <p></p>
             <div class="highlight">
-            	<img class="error-image" src="/template_directory_list_handler/images/logo_folder.png"/>
-				<div class="error-text">
+            	<img class="directory-list-image" src="/template_directory_list_handler/images/logo_folder.png"/>
+				<div class="directory-list-text">
 					<b>Directory listing</b>
 					<p>
 					${foreach item=directory_item from=directory_list}
@@ -62,11 +62,11 @@
             <div class="wiki-footer-contents">
                 <div class="logo-image">
                     <a href="http://getcolony.com">
-                        <img src="/template_error_handler/images/powered_by_colony.png"/>
+                        <img src="/template_directory_list_handler/images/powered_by_colony.png"/>
                     </a>
                 </div>
                 <div class="separator">
-                    <img src="/template_error_handler/images/separator.png"/>
+                    <img src="/template_directory_list_handler/images/separator.png"/>
                 </div>
                 <div class="text-contents">Document provided by colony framework in ${out_none value=delta_time xml_escape=True /} seconds
                     <br/>Copyright

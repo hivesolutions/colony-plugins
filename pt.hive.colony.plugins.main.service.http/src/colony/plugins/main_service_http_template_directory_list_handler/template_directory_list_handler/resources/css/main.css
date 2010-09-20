@@ -282,11 +282,11 @@ h5:hover > a.headerlink {
     font-size: 11pt;
 }
 
-.highlight .error-image {
+.highlight .directory-list-image {
     float: left;
 }
 
-.highlight .error-text {
+.highlight .directory-list-text {
     float: left;
     margin-left: 18px;
 }
