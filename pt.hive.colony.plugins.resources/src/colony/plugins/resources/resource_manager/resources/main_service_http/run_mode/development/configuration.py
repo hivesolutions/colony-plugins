@@ -238,16 +238,28 @@ configuration = {
                      },
                      "/system_unix" : {
                          "handler" : "file",
+                         "authentication_handler" : "main",
                          "allow_redirection" : False,
                          "request_properties" : {
                              "base_path" : "/"
+                         },
+                         "authentication_properties" : {
+                             "authentication_handler" : "python",
+                             "authentication_realm" : "system",
+                             "arguments" : {"file_path" : "%configuration:pt.hive.colony.plugins.main.authentication.python_handler%/authentication.py"}
                          }
                      },
                      "/system" : {
                          "handler" : "file",
+                         "authentication_handler" : "main",
                          "allow_redirection" : False,
                          "request_properties" : {
                              "base_path" : "C:/"
+                         },
+                         "authentication_properties" : {
+                             "authentication_handler" : "python",
+                             "authentication_realm" : "system",
+                             "arguments" : {"file_path" : "%configuration:pt.hive.colony.plugins.main.authentication.python_handler%/authentication.py"}
                          }
                      }
                  }
