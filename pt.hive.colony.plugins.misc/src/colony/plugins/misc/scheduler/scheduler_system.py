@@ -87,6 +87,7 @@ class Scheduler:
         # creates the new scheduler object to control the scheduling
         self.scheduler = sched.scheduler(time.time, time.sleep)
 
+        # starts the scheduler items list
         self.scheduler_items = []
 
     def load_scheduler(self):
@@ -96,12 +97,17 @@ class Scheduler:
         # acquires the lock object
         self.scheduler_lock.acquire()
 
+        # loads the startup items
+        self._load_startup_items()
+
+        # iterates continuously
         while True:
             # acquires the lock object
             self.scheduler_lock.acquire()
 
             # in case the continue flag is disabled
             if not self.continue_flag:
+                # breaks the cycle
                 break
 
             # runs the scheduler
@@ -323,6 +329,54 @@ class Scheduler:
 
         # returns the absolute timestamp
         return absolute_timestamp
+
+    def _load_startup_items(self):
+        """
+        Loads the startup items.
+        These items are registered in the plugin's configuration.
+        """
+
+        # retrieves the startup items property
+        startup_items_property = self.scheduler_plugin.get_configuration_property("startup_items")
+
+        # in case the startup items property is defined
+        if startup_items_property:
+            # retrieves the startup items
+            startup_items = startup_items_property.get_data()
+        else:
+            # sets the startup items property as an empty map
+            startup_items = {}
+
+        # retrieves the startup tasks from the startup items map
+        startup_tasks = startup_items.get("tasks", [])
+
+        # retrieves the current time
+        current_time = time.time()
+
+        # iterates over all the startup tasks
+        # to register them
+        for startup_task in startup_tasks:
+            # retrieves the plugin manager
+            plugin_manager = self.scheduler_plugin.manager
+
+            # retrieves the various startup task attributes
+            plugin_id = startup_task["plugin_id"]
+            plugin_version = startup_task.get("plugin_version", None)
+            method = startup_task["method"]
+            arguments = startup_task["arguments"]
+            recursion_list = startup_task["recursion_list"]
+
+            # retrieves the plugin
+            plugin = plugin_manager.get_plugin_by_id_and_version(plugin_id, plugin_version)
+
+            # retrieves the plugin method
+            plugin_method = getattr(plugin, method)
+
+            # creates the scheduler item from the plugin method and the arguments
+            scheduler_item = self.create_scheduler_item(plugin_method, arguments, current_time, recursion_list)
+
+            # adds the scheduler item
+            self.add_scheduler_item(scheduler_item)
 
 class SchedulerTask:
     """
