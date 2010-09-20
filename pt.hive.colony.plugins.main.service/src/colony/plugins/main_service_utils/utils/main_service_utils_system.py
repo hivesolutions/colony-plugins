@@ -506,18 +506,15 @@ class AbstractService:
 
                 # creates a new service socket with the socket provider plugin
                 self.service_socket = socket_provider_plugin.provide_socket_parameters(parameters)
-
-                # sets the service socket to non blocking
-                self.service_socket.setblocking(0)
-
-                # returns immediately
-                return
             else:
                 # raises the socket provider not found exception
                 raise main_service_utils_exceptions.SocketProviderNotFound("socket provider %s not found" % self.socket_provider)
         else:
             # creates the service socket
             self.service_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+
+        # sets the service socket to non blocking
+        self.service_socket.setblocking(0)
 
     def _loop_connection(self):
         # loops while the service connection is active
@@ -796,6 +793,9 @@ class AbstractServiceConnectionHandler:
 
         # sets the socket to be able to reuse the socket
         self.wake_file.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+
+        # sets the socket to non blocking mode
+        self.wake_file.setblocking(0)
 
         # binds to the current host
         self.wake_file.bind((LOCAL_HOST, self.wake_file_port))
