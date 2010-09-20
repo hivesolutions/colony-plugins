@@ -53,16 +53,25 @@ TEMPLATE_ERROR_HANDLER_RESOURCES_PATH = "main_service_http_template_error_handle
 HTTP_SERVICE_ERROR_HTML_TEMPLATE_FILE_NAME = "http_service_error.html.tpl"
 """ The http service error html template file name """
 
-STATUS_CODE_VALUES = {200 : "OK", 207 : "Multi-Status",
-                      301 : "Moved permanently", 302 : "Found", 303 : "See Other",
-                      403 : "Forbidden", 404 : "Not Found",
-                      500 : "Internal Server Error"}
+STATUS_CODE_VALUES = {100 : "Continue", 101 : "Switching Protocols",
+                      200 : "OK", 201 : "Created", 202 : "Accepted", 203 : "Non-Authoritative Information",
+                      204 : "No Content", 205 : "Reset Content", 206 : "Partial Content", 207 : "Multi-Status",
+                      301 : "Moved permanently", 302 : "Found", 303 : "See Other", 304 : "Not Modified",
+                      305 : "Use Proxy", 306 : "(Unused)", 307 : "Temporary Redirect",
+                      400 : "Bad Request", 401 : "Unauthorized", 402 : "Payment Required", 403 : "Forbidden", 404 : "Not Found",
+                      500 : "Internal Server Error", 501 : "Not Implemented", 502 : "Bad Gateway",
+                      503 : "Service Unavailable", 504 : "Gateway Timeout", 505 : "HTTP Version Not Supported"}
 """ The status code values map """
 
-STATUS_CODE_IMAGES = {200 : "none", 207 : "none",
-                      301 : "none", 302 : "none", 303 : "none",
+STATUS_CODE_IMAGES = {100 : "none", 101 : "none",
+                      200 : "none", 201 : "none", 202 : "none", 203 : "none",
+                      204 : "none", 205 : "none", 206 : "none", 207 : "none",
+                      301 : "none", 302 : "none", 303 : "none", 304 : "none",
+                      305 : "none", 306 : "none", 307 : "none",
+                      400 : "logo_question_mark", 401 : "logo_question_mark", 402 : "logo_question_mark",
                       403 : "logo_question_mark", 404 : "logo_question_mark",
-                      500 : "logo_thunder"}
+                      500 : "logo_thunder", 501 : "logo_thunder", 502 : "logo_thunder",
+                      503 : "logo_thunder", 504 : "logo_thunder", 505 : "logo_thunder"}
 """ The status code images map """
 
 class MainServiceHttpTemplateErrorHandler:

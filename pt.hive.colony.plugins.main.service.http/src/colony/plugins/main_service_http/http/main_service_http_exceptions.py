@@ -329,4 +329,4 @@ class UnauthorizedException(HttpRuntimeException):
         @return: The string representation of the class.
         """
 
-        return "Unauthorized %s" % self.message
+        return "Unauthorized: %s" % self.message

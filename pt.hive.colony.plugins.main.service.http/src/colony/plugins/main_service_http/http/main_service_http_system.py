@@ -113,7 +113,8 @@ DEFAULT_VALUE = "default"
 """ The default value """
 
 STATUS_CODE_VALUES = {100 : "Continue", 101 : "Switching Protocols",
-                      200 : "OK", 206 : "Partial Content", 207 : "Multi-Status",
+                      200 : "OK", 201 : "Created", 202 : "Accepted", 203 : "Non-Authoritative Information",
+                      204 : "No Content", 205 : "Reset Content", 206 : "Partial Content", 207 : "Multi-Status",
                       301 : "Moved permanently", 302 : "Found", 303 : "See Other", 304 : "Not Modified",
                       305 : "Use Proxy", 306 : "(Unused)", 307 : "Temporary Redirect",
                       400 : "Bad Request", 401 : "Unauthorized", 402 : "Payment Required", 403 : "Forbidden", 404 : "Not Found",
