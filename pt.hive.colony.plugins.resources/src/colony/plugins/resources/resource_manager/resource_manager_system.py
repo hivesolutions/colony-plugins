@@ -73,8 +73,23 @@ COLONY_VALUE = "colony"
 MANAGER_PATH_VALUE = "manager_path"
 """ The manager path value """
 
-STRING_VALUE = "string"
-""" The string value """
+STRING_TYPE = "string"
+""" The string type """
+
+BOOLEAN_TYPE = "boolean"
+""" The boolean type """
+
+INTEGER_TYPE = "integer"
+""" The integer type """
+
+FLOAT_TYPE = "float"
+""" The float type """
+
+TRUE_VALUE = "true"
+""" The true value """
+
+FALSE_VALUE = "false"
+""" The false value """
 
 class ResourceManager:
     """
@@ -169,7 +184,7 @@ class ResourceManager:
         manager_path = plugin_manager.get_manager_path()
 
         # registers the internal resources
-        self.register_resource(COLONY_VALUE, MANAGER_PATH_VALUE, STRING_VALUE, manager_path)
+        self.register_resource(COLONY_VALUE, MANAGER_PATH_VALUE, STRING_TYPE, manager_path)
 
     def load_base_resources(self):
         """
@@ -205,7 +220,7 @@ class ResourceManager:
         validation_list = [value for value in resource_list if value.__class__ == resource_manager_parser.Validation]
 
         # iterates over all the validation in the validation
-        # list
+        # list (to process the validation)
         for validation in validation_list:
             # processes the validation
             return_value = self.process_validation(validation)
@@ -263,6 +278,7 @@ class ResourceManager:
 
         # in case the plugin id is not defined in the plugin id configuration resource map
         if not plugin_id in self.plugin_id_configuration_resources_list_map:
+            # returns immediately
             return
 
         # retrieves the plugin configuration resources list
@@ -305,23 +321,23 @@ class ResourceManager:
         # sets the resource data as the real string value
         resource.data = self.get_real_string_value(resource.data)
 
+        # in case the resource type is string
+        if resource_type == STRING_TYPE:
+            resource.data = unicode(resource.data)
         # in case the resource type is boolean
-        if resource_type == "boolean":
-            if resource.data == "true":
+        elif resource_type == BOOLEAN_TYPE:
+            if resource.data == TRUE_VALUE:
                 resource.data = True
-            elif resource.data == "false":
+            elif resource.data == FALSE_VALUE:
                 resource.data = False
             else:
                 resource.data = None
         # in case the resource type is integer
-        elif resource_type == "integer":
+        elif resource_type == INTEGER_TYPE:
             resource.data = int(resource.data)
         # in case the resource type is float
-        elif resource_type == "float":
+        elif resource_type == FLOAT_TYPE:
             resource.data = float(resource.data)
-        # in case the resource type is string
-        elif resource_type == "string":
-            resource.data = unicode(resource.data)
         # in case the resource type exists in the
         # map of resource parser plugins
         elif resource_type in self.resource_parser_plugins_map:
