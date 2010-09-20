@@ -57,7 +57,7 @@ class MainServiceHttpPlugin(colony.base.plugin_system.Plugin):
                  colony.base.plugin_system.IRON_PYTHON_ENVIRONMENT]
     attributes = {"build_automation_file_path" : "$base{plugin_directory}/main_service_http/http/resources/baf.xml"}
     capabilities = ["service.http", "build_automation_item"]
-    capabilities_allowed = ["http_service_handler", "http_service_encoding", "http_service_error_handler"]
+    capabilities_allowed = ["http_service_handler", "http_service_encoding", "http_service_authentication_handler", "http_service_error_handler"]
     dependencies = [colony.base.plugin_system.PluginDependency(
                     "pt.hive.colony.plugins.main.service.utils", "1.0.0")]
     events_handled = []
@@ -68,6 +68,7 @@ class MainServiceHttpPlugin(colony.base.plugin_system.Plugin):
 
     http_service_handler_plugins = []
     http_service_encoding_plugins = []
+    http_service_authentication_handler_plugins = []
     http_service_error_handler_plugins = []
 
     main_service_utils_plugin = None
@@ -115,6 +116,11 @@ class MainServiceHttpPlugin(colony.base.plugin_system.Plugin):
         self.http_service_encoding_plugins.append(plugin)
         self.main_service_http.http_service_encoding_load(plugin)
 
+    @colony.base.decorators.load_allowed_capability("http_service_authentication_handler")
+    def http_service_authentication_handler_load_allowed(self, plugin, capability):
+        self.http_service_authentication_handler_plugins.append(plugin)
+        self.main_service_http.http_service_authentication_handler_load(plugin)
+
     @colony.base.decorators.load_allowed_capability("http_service_error_handler")
     def http_service_error_handler_load_allowed(self, plugin, capability):
         self.http_service_error_handler_plugins.append(plugin)
@@ -129,6 +135,11 @@ class MainServiceHttpPlugin(colony.base.plugin_system.Plugin):
     def http_service_encoding_unload_allowed(self, plugin, capability):
         self.http_service_encoding_plugins.remove(plugin)
         self.main_service_http.http_service_encoding_unload(plugin)
+
+    @colony.base.decorators.unload_allowed_capability("http_service_authentication_handler")
+    def http_service_authentication_handler_unload_allowed(self, plugin, capability):
+        self.http_service_authentication_handler_plugins.remove(plugin)
+        self.main_service_http.http_service_authentication_handler_unload(plugin)
 
     @colony.base.decorators.unload_allowed_capability("http_service_error_handler")
     def http_service_error_handler_unload_allowed(self, plugin, capability):

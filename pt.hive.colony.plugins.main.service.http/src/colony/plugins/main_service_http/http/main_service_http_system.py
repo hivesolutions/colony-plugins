@@ -41,6 +41,7 @@ import sys
 import time
 import copy
 import types
+import base64
 import datetime
 import traceback
 
@@ -221,6 +222,9 @@ class MainServiceHttp:
     http_service_encoding_plugins_map = {}
     """ The http service encoding plugins map """
 
+    http_service_authentication_handler_plugins_map = {}
+    """ The http service authentication handler plugins map """
+
     http_service_error_handler_plugins_map = {}
     """ The http service error handler plugins map """
 
@@ -239,6 +243,7 @@ class MainServiceHttp:
 
         self.http_service_handler_plugin_map = {}
         self.http_service_encoding_plugins_map = {}
+        self.http_service_authentication_handler_plugins_map = {}
         self.http_service_error_handler_plugins_map = {}
 
     def start_service(self, parameters):
@@ -295,6 +300,18 @@ class MainServiceHttp:
         encoding_name = http_service_encoding_plugin.get_encoding_name()
 
         del self.http_service_encoding_plugins_map[encoding_name]
+
+    def http_service_authentication_handler_load(self, http_service_authentication_handler_plugin):
+        # retrieves the plugin handler name
+        handler_name = http_service_authentication_handler_plugin.get_handler_name()
+
+        self.http_service_authentication_handler_plugins_map[handler_name] = http_service_authentication_handler_plugin
+
+    def http_service_authentication_handler_unload(self, http_service_authentication_handler_plugin):
+        # retrieves the plugin handler name
+        handler_name = http_service_authentication_handler_plugin.get_handler_name()
+
+        del self.http_service_authentication_handler_plugins_map[handler_name]
 
     def http_service_error_handler_load(self, http_service_error_handler_plugin):
         # retrieves the plugin error handler name
@@ -504,6 +521,9 @@ class HttpClientServiceHandler:
             # retrieves the real service configuration,
             # taking the request information into account
             service_configuration = self._get_service_configuration(request)
+
+            # processes the authentication for the request
+            self._process_authentication(request, service_configuration)
 
             # processes the redirection information in the request
             self._process_redirection(request, service_configuration)
@@ -1196,23 +1216,7 @@ class HttpClientServiceHandler:
                 # breaks the loop
                 break
 
-    def _process_handler(self, request, service_configuration):
-        """
-        Processes the handler stage of the http request.
-        Processing handler implies matching the path against the
-        various handler rules defined to retrieve the valid handler.
-
-        @type request: HttpRequest
-        @param request: The request to be processed.
-        @type service_configuration: Dictionary
-        @param service_configuration: The service configuration map.
-        @rtype: String
-        @return: The processed handler name.
-        """
-
-        # sets the default handler name
-        handler_name = None
-
+    def _get_request_service_configuration_context(self, request, service_configuration):
         # retrieves the service configuration contexts
         service_configuration_contexts = service_configuration.get("contexts", {})
 
@@ -1230,43 +1234,102 @@ class HttpClientServiceHandler:
             # path
             request_path = request.path
 
-        # iterates over the service configuration context names
-        for service_configuration_context_name in service_configuration_contexts_resolution_order:
-            # in case the path is found in the request path
-            if request_path.find(service_configuration_context_name) == 0:
-                # retrieves the service configuration context
-                service_configuration_context = service_configuration_contexts[service_configuration_context_name]
+        # sets the default service configuration context
+        service_configuration_context = {}
 
-                # retrieves the allow redirection property
-                allow_redirection = service_configuration_context.get("allow_redirection", True)
+        # sets the default service configuration context name
+        service_configuration_context_name = None
 
-                # in case the request is pending redirection validation
-                if request.redirection_validation:
-                    # in case it does not allow redirection
-                    if not allow_redirection:
-                        # changes the path to the base path
-                        request.set_path(request.base_path)
 
-                        # unsets the redirected flag in the request
-                        request.redirected = False
 
-                    # unsets the redirection validation flag in the request
-                    request.redirection_validation = False
+        # ----- INIT DO REGEX -----
 
-                    # re-processes the request (to process the real handler)
-                    return self._process_handler(request, service_configuration)
+        # creates the regex buffer
+        regex_buffer = colony.libs.string_buffer_util.StringBuffer()
 
-                # sets the request properties
-                request.properties = service_configuration_context.get("request_properties", {})
+        # sets the is first flag
+        is_first = True
 
-                # sets the handler path
-                request.handler_path = service_configuration_context_name
+        for i in service_configuration_contexts_resolution_order:
+            if is_first:
+                is_first = False
+            else:
+                regex_buffer.write("|")
 
-                # retrieves the handler name
-                handler_name = service_configuration_context.get("handler", None)
+            regex_buffer.write("(" + i + ")")
 
-                # breaks the loop
-                break
+        # retrieves the regex value
+        regex_value = regex_buffer.get_value()
+
+        import re
+
+        # compiles teh regex value
+        regex = re.compile(regex_value)
+
+        # ----- END DO REGEX -----
+
+
+        # tries to match the request path with the regex
+        request_path_match = regex.match(request_path)
+
+        # in case there is a valid request path match
+        if request_path_match:
+            # retrieves the group index from the request path match
+            group_index = request_path_match.lastindex
+
+            # retrieves the service configuration context name
+            service_configuration_context_name = service_configuration_contexts_resolution_order[group_index - 1]
+
+            # retrieves the service configuration context
+            service_configuration_context = service_configuration_contexts[service_configuration_context_name]
+
+        # returns the service configuration context name and value
+        return service_configuration_context_name, service_configuration_context
+
+    def _process_handler(self, request, service_configuration):
+        """
+        Processes the handler stage of the http request.
+        Processing handler implies matching the path against the
+        various handler rules defined to retrieve the valid handler.
+
+        @type request: HttpRequest
+        @param request: The request to be processed.
+        @type service_configuration: Dictionary
+        @param service_configuration: The service configuration map.
+        @rtype: String
+        @return: The processed handler name.
+        """
+
+        # retrieves the service configuration context name and value from the request and the service configuration
+        service_configuration_context_name, service_configuration_context = self._get_request_service_configuration_context(request, service_configuration)
+
+        # retrieves the allow redirection property
+        allow_redirection = service_configuration_context.get("allow_redirection", True)
+
+        # in case the request is pending redirection validation
+        if request.redirection_validation:
+            # in case it does not allow redirection
+            if not allow_redirection:
+                # changes the path to the base path
+                request.set_path(request.base_path)
+
+                # unsets the redirected flag in the request
+                request.redirected = False
+
+            # unsets the redirection validation flag in the request
+            request.redirection_validation = False
+
+            # re-processes the request (to process the real handler)
+            return self._process_handler(request, service_configuration)
+
+        # sets the request properties
+        request.properties = service_configuration_context.get("request_properties", {})
+
+        # sets the handler path
+        request.handler_path = service_configuration_context_name
+
+        # retrieves the handler name
+        handler_name = service_configuration_context.get("handler", None)
 
         # in case the request is pending redirection validation
         if request.redirection_validation:
@@ -1278,6 +1341,68 @@ class HttpClientServiceHandler:
 
         # returns the handler name
         return handler_name
+
+    def _process_authentication(self, request, service_configuration):
+        # retrieves the service configuration context name and value from the request and the service configuration
+        _service_configuration_context_name, service_configuration_context = self._get_request_service_configuration_context(request, service_configuration)
+
+        # retrieves the authentication handler
+        authentication_handler = service_configuration_context.get("authentication_handler", None)
+
+        # in case no authentication handler is defined (no
+        # authentication is required)
+        if not authentication_handler:
+            # returns immediately
+            return
+
+        # retrieves the authentication properties
+        authentication_properties = service_configuration_context.get("authentication_properties", {})
+
+        # retrieves the authentication realm
+        authentication_realm = authentication_properties.get("authentication_realm", "default")
+
+        # retrieves the authorization from the request headers
+        authorization = request.headers_map.get("Authorization", None)
+
+        # in case no authorization is defined
+        if not authorization:
+            # sets the location header
+            request.set_header("WWW-Authenticate", "Basic realm=\"" + authentication_realm + "\"")
+
+            # raises the unauthorized exception
+            raise main_service_http_exceptions.UnauthorizedException("authentication required", 401)
+
+        # retrieves the authorization type and value
+        _authorization_type, authorization_value = authorization.split(" ", 1)
+
+        # decodes the authorization value
+        authorization_value_decoded = base64.b64decode(authorization_value)
+
+        # split the authorization value retrieving the username and password
+        username, password = authorization_value_decoded.split(":", 1)
+
+        # retrieves the http service authentication handler plugins map
+        http_service_authentication_handler_plugins_map = self.service_plugin.main_service_http.http_service_authentication_handler_plugins_map
+
+        # in case the authentication handler is not found in the http service authentication
+        # handler plugins map
+        if not authentication_handler in http_service_authentication_handler_plugins_map:
+            # raises the http authentication handler not found exception
+            raise main_service_http_exceptions.HttpAuthenticationHandlerNotFoundException("no authentication handler found for current request: " + authentication_handler)
+
+        # retrieves the http service authentication handler plugin
+        http_service_authentication_handler_plugin = http_service_authentication_handler_plugins_map[authentication_handler]
+
+        # uses the authentication handler to try to authenticate
+        authentication_result = http_service_authentication_handler_plugin.handle_authentication(username, password, authentication_properties)
+
+        # in case the authentication is not valid
+        if not authentication_result:
+            # sets the location header
+            request.set_header("WWW-Authenticate", "Basic realm=\"Secure Area\"")
+
+            # raises the unauthorized exception
+            raise main_service_http_exceptions.UnauthorizedException("user is not permitted: " + username, 401)
 
     def _verify_request_information(self, request):
         """
