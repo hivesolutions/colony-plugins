@@ -40,6 +40,8 @@ __license__ = "GNU General Public License (GPL), Version 3"
 import os
 import pysvn
 
+import colony.libs.path_util
+
 ADAPTER_NAME = "svn"
 """ The name for the subversion revision control adapter """
 
@@ -207,17 +209,15 @@ class RevisionControlSubversionAdapter:
             status_list = revision_control_reference.status(resource_identifier)
 
             # for each status in the status list
-            for status_object in status_list:
-                # in case the resource is unversioned
-                if not status_object.is_versioned:
-                    try:
-                        # retrieves the resource path
-                        unversioned_resource_path = status_object.path
+            # looks for unversioned resources
+            for status in status_list:
+                # in case the resource is versioned
+                if not status.is_versioned:
+                    # retrieves the resource path
+                    unversioned_resource_path = status.path
 
-                        # removes the resource
-                        os.remove(unversioned_resource_path)
-                    except:
-                        pass
+                    # removes the unversioned resource
+                    self.remove_resource_path(unversioned_resource_path)
 
     def get_resources_revision(self, revision_control_reference, resource_identifiers, revision):
         # the revision in which to end the log
@@ -278,6 +278,15 @@ class RevisionControlSubversionAdapter:
 
         # returns the revision object
         return revision
+
+    def remove_resource_path(self, resource_path):
+        # in the case the current node is of directory kind
+        if os.path.isdir(resource_path):
+            # removes the whole directory tree
+            colony.libs.path_util.remove_directory(resource_path)
+        else:
+            # removes the resource
+            os.remove(resource_path)
 
 class SubversionRevision:
     """
