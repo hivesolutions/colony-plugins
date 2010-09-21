@@ -57,7 +57,7 @@ class MainConsoleTestCase(unittest.TestCase):
         import sys
 
         # processes the html command to the standard output
-        return_value = self.main_console_system.process_command_line("help", sys.stdout.write)
+        return_value = self.main_console.process_command_line("help", sys.stdout.write)
 
         # assets the return value
         self.assertEqual(return_value, True)
