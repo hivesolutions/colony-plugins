@@ -325,30 +325,32 @@ class BuildAutomationDescriptorGenerator:
         resource_file_paths.append(plugin_root_init_file_path)
 
         # crawls the specified path indexing file paths by their file name
-        for root, _directories, files in os.walk(plugin_system_file_path):
-            for file in files:
-                # converts the root path separators from the windows mode to unix mode
-                root = root.replace(WINDOWS_DIRECTORY_SEPARATOR, UNIX_DIRECTORY_SEPARATOR)
+        for file_path in self.get_file_paths(plugin_system_file_path):
+            # splits the file path
+            root, file = os.path.split(file_path)
 
-                # skips in case the file is in the exclusion list or has a file extension in the exclusion list
-                if file in RESOURCE_FILE_NAME_EXCLUSION_LIST or self.get_file_extension(file) in RESOURCE_FILE_EXTENSION_EXCLUSION_LIST:
-                    continue
+            # converts the root path separators from the windows mode to unix mode
+            root = root.replace(WINDOWS_DIRECTORY_SEPARATOR, UNIX_DIRECTORY_SEPARATOR)
 
-                # retrieves the base main module path
-                base_resource_path = root.replace(plugin_path, "")
+            # skips in case the file is in the exclusion list or has a file extension in the exclusion list
+            if file in RESOURCE_FILE_NAME_EXCLUSION_LIST or self.get_file_extension(file) in RESOURCE_FILE_EXTENSION_EXCLUSION_LIST:
+                continue
 
-                # retrieves the base resource file path
-                base_resource_file_path = base_resource_path + UNIX_DIRECTORY_SEPARATOR + file
+            # retrieves the base main module path
+            base_resource_path = root.replace(plugin_path, "")
 
-                # removes the first slash from the base resource file path
-                base_resource_file_path = base_resource_file_path[1:]
+            # retrieves the base resource file path
+            base_resource_file_path = base_resource_path + UNIX_DIRECTORY_SEPARATOR + file
 
-                # skips in case the resource file path is already in the list
-                if base_resource_file_path in resource_file_paths:
-                    continue
+            # removes the first slash from the base resource file path
+            base_resource_file_path = base_resource_file_path[1:]
 
-                # adds the resource file path to the resource file paths
-                resource_file_paths.append(base_resource_file_path)
+            # skips in case the resource file path is already in the list
+            if base_resource_file_path in resource_file_paths:
+                continue
+
+            # adds the resource file path to the resource file paths
+            resource_file_paths.append(base_resource_file_path)
 
         return resource_file_paths
 
@@ -366,6 +368,52 @@ class BuildAutomationDescriptorGenerator:
         attribute_value_string = attribute_value_string.replace("'", "\"")
 
         return attribute_value_string
+
+    def get_file_paths(self, path):
+        # retrieves the file paths within the specified path
+        file_paths = self._get_file_paths(path, [])
+
+        return file_paths
+
+    def _get_file_paths(self, path, file_paths):
+        # retrieves the listdir entries for the specified path
+        listdir_entries = os.listdir(path)
+
+        # sorts the listdir entries
+        listdir_entries.sort()
+
+        # initializes the directory paths list
+        directory_paths = []
+
+        # collects file paths and directory paths
+        for listdir_entry in listdir_entries:
+            # skips in case this entry is in the exclusion list
+            if listdir_entry in RESOURCE_FILE_NAME_EXCLUSION_LIST:
+                continue
+
+            # defines the listdir entry path
+            listdir_entry_path = path + UNIX_DIRECTORY_SEPARATOR + listdir_entry
+
+            # collects a directory path and skips this iteration
+            if os.path.isdir(listdir_entry_path):
+                directory_paths.append(listdir_entry_path)
+                continue
+
+            # retrieves the listdir entry extension
+            _base_listdir_entry, extension = os.path.splitext(listdir_entry)
+
+            # skips in case the extension is in the exclusion list
+            if extension in RESOURCE_FILE_EXTENSION_EXCLUSION_LIST:
+                continue
+
+            # collects the file path
+            file_paths.append(listdir_entry_path)
+
+        # retrieves the file paths for the collected directories
+        for directory_path in directory_paths:
+            file_paths = self._get_file_paths(directory_path, file_paths)
+
+        return file_paths
 
     def get_plugin_root_directory_path(self, plugin_system_file_path):
         # tokenizes the plugin system file path with the unix directory separator
@@ -385,14 +433,16 @@ class BuildAutomationDescriptorGenerator:
         plugin_system_file_name = plugin_module_name[:-1 * len(PLUGIN_MODULE_NAME_ENDING)] + SYSTEM_FILE_NAME_ENDING
 
         # searches for the directory where the plugin system file is contained
-        for root, _directories, files in os.walk(plugin_path):
-            for file in files:
-                if file == plugin_system_file_name:
-                    # converts the root path separators from the windows mode to unix mode
-                    root = root.replace(WINDOWS_DIRECTORY_SEPARATOR, UNIX_DIRECTORY_SEPARATOR)
+        for file_path in self.get_file_paths(plugin_path):
+            # splits the file path
+            root, file = os.path.split(file_path)
 
-                    # returns the plugin system file path
-                    return root
+            if file == plugin_system_file_name:
+                # converts the root path separators from the windows mode to unix mode
+                root = root.replace(WINDOWS_DIRECTORY_SEPARATOR, UNIX_DIRECTORY_SEPARATOR)
+
+                # returns the plugin system file path
+                return root
 
     def get_file_extension(self, file_path):
         # splits the file into base name and extension
