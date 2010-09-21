@@ -42,6 +42,9 @@ import sys
 import subprocess
 import logging
 
+NT_PLATFORM_VALUE = "nt"
+""" The nt platform value """
+
 class CommandExecution:
     """
     The command execution class.
@@ -194,6 +197,9 @@ class CommandExecution:
         universal_newlines = parameters.get("universal_newlines", False)
         startupinfo = parameters.get("startupinfo", self.get_startup_info())
         creationflags = parameters.get("creationflags", 0)
+
+        # sets the shell mode only in windows
+        shell = shell and os.name == NT_PLATFORM_VALUE
 
         # creates the call list
         call_list = self.create_call_list(command, arguments)
