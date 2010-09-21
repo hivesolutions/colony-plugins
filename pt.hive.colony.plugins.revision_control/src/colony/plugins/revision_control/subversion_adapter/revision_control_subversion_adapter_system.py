@@ -37,6 +37,7 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
+import os
 import pysvn
 
 ADAPTER_NAME = "svn"
@@ -198,6 +199,25 @@ class RevisionControlSubversionAdapter:
         for resource_identifier in resource_identifiers:
             # cleans up any locks at the specified resource
             revision_control_reference.cleanup(resource_identifier)
+
+    def remove_unversioned(self, revision_control_reference, resource_identifiers):
+        # for all the specified resources
+        for resource_identifier in resource_identifiers:
+            # retrieves the status for the current resource
+            status_list = revision_control_reference.status(resource_identifier)
+
+            # for each status in the status list
+            for status_object in status_list:
+                # in case the resource is unversioned
+                if not status_object.is_versioned:
+                    try:
+                        # retrieves the resource path
+                        unversioned_resource_path = status_object.path
+
+                        # removes the resource
+                        os.remove(unversioned_resource_path)
+                    except:
+                        pass
 
     def get_resources_revision(self, revision_control_reference, resource_identifiers, revision):
         # the revision in which to end the log

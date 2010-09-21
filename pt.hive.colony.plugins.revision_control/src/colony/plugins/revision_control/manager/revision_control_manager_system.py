@@ -199,7 +199,15 @@ class RevisionControlAdapter:
         Cleans up any locks in the working copy at path.
         Typically these locks result from a failed or interrupted operation.
         """
+
         return self.revision_control_adapter_plugin.cleanup(self._revision_control_reference, resource_identifiers)
+
+    def remove_unversioned(self, resource_identifiers):
+        """
+        Removes unversioned files from the specified resources.
+        """
+
+        return self.revision_control_adapter_plugin.remove_unversioned(self._revision_control_reference, resource_identifiers)
 
     def get_resources_revision(self, resource_identifiers, revision):
         """
