@@ -136,24 +136,51 @@ class MainConsole:
 
         # in case the line is not empty
         if len(line_split) != 0:
+            # retrieves the command value
             command = line_split[0]
+
+            # retrieves the arguments
             arguments = line_split[1:]
+
+            # unsets the valid flag
             valid = False
+
+            # in case the command is defined in the native commands
             if command in self.commands:
+                # creates the command method name
                 method_name = "process_" + command
+
+                # retrieves the command attribute
                 attribute = getattr(self, method_name)
                 try:
+                    # runs the command attribute with the arguments
+                    # and the output method
                     attribute(arguments, output_method)
                 except Exception, exception:
+                    # prints the exception message
                     output_method(COMMAND_EXCEPTION_MESSAGE + ": " + unicode(exception))
+
+                    # logs the stack trace value
                     self.main_console_plugin.log_stack_trace()
+
+                    # returns false (invalid)
                     return False
+
+                # sets the valid flag
                 valid = True
             elif self.main_console_plugin.console_command_plugins:
                 for console_command_plugin in self.main_console_plugin.console_command_plugins:
-                    if command in console_command_plugin.get_all_commands():
+                    # retrieves the plugin commands
+                    plugin_commands = console_command_plugin.get_all_commands()
+
+                    # iterates over all the plugin commands
+                    if command in plugin_commands:
+                        # retrieves the command attribute
                         attribute = console_command_plugin.get_handler_command(command)
+
                         try:
+                            # runs the command attribute with the arguments
+                            # and the output method
                             attribute(arguments, output_method)
                         except Exception, exception:
                             # prints the exception message
