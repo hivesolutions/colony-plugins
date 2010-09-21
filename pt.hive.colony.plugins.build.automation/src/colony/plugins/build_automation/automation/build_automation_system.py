@@ -722,8 +722,8 @@ class BuildAutomation:
         # creates the complete resources directory path
         complete_resources_directory_path = execution_directory_path + "/" + resources_directory_path
 
-        # removes (cleans) the target directory
-        clean_target_directory and colony.libs.path_util.remove_directory(complete_target_directory_path)
+        # removes (cleans) the target directory (in case it exists)
+        clean_target_directory and os.path.isdir(complete_target_directory_path) and colony.libs.path_util.remove_directory(complete_target_directory_path)
 
         # in case the execution directory does not exist
         if not os.path.isdir(execution_directory_path):
