@@ -51,7 +51,7 @@ DEFAULT_LOGGER = "default_messages"
 DEFAULT_LOGGING_LEVEL = logging.WARN
 """ The default logging level """
 
-DEFAULT_LOGGING_FORMAT = "%(asctime)s %(levelname)s %(message)s"
+DEFAULT_LOGGING_FORMAT = "%(asctime)s [%(levelname)s] %(message)s"
 """ The default logging format """
 
 class Extension(object):
