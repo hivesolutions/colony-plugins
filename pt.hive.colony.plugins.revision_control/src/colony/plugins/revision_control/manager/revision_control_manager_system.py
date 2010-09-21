@@ -198,9 +198,24 @@ class RevisionControlAdapter:
         """
         Cleans up any locks in the working copy at path.
         Typically these locks result from a failed or interrupted operation.
+
+        @type resource_identifiers: List
+        @param resource_identifiers: The list of resource identifiers.
         """
 
         return self.revision_control_adapter_plugin.cleanup(self._revision_control_reference, resource_identifiers)
+
+    def revert(self, resource_identifiers):
+        """
+        Cleans up any locks in the working copy at path.
+        Typically these locks result from a failed or interrupted operation.
+
+
+        @type resource_identifiers: List
+        @param resource_identifiers: The list of resource identifiers.
+        """
+
+        return self.revision_control_adapter_plugin.revert(self._revision_control_reference, resource_identifiers)
 
     def remove_unversioned(self, resource_identifiers):
         """

@@ -202,6 +202,13 @@ class RevisionControlSubversionAdapter:
             # cleans up any locks at the specified resource
             revision_control_reference.cleanup(resource_identifier)
 
+    def revert(self, revision_control_reference, resource_identifiers):
+        # reverts pending changes
+        revision_control_reference.revert(resource_identifiers, recurse = True)
+
+        # removes unversioned files
+        self.remove_unversioned(revision_control_reference, resource_identifiers)
+
     def remove_unversioned(self, revision_control_reference, resource_identifiers):
         # for all the specified resources
         for resource_identifier in resource_identifiers:
@@ -212,7 +219,7 @@ class RevisionControlSubversionAdapter:
             # looks for unversioned resources
             for status in status_list:
                 # in case the resource is versioned
-                if not status.is_versioned:
+                if not status.is_versioned or status.text_status == pysvn.wc_status_kind.ignored:
                     # retrieves the resource path
                     unversioned_resource_path = status.path
 

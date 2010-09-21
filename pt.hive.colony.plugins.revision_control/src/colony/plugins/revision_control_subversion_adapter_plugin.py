@@ -108,6 +108,9 @@ class RevisionControlSubversionAdapterPlugin(colony.base.plugin_system.Plugin):
     def cleanup(self, revision_control_reference, resource_identifiers):
         return self.revision_control_subversion_adapter.cleanup(revision_control_reference, resource_identifiers)
 
+    def revert(self, revision_control_reference, resource_identifiers):
+        return self.revision_control_subversion_adapter.revert(revision_control_reference, resource_identifiers)
+
     def remove_unversioned(self, revision_control_reference, resource_identifiers):
         return self.revision_control_subversion_adapter.remove_unversioned(revision_control_reference, resource_identifiers)
 
