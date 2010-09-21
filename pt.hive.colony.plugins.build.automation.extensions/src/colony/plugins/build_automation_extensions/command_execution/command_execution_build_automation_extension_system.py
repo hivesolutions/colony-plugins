@@ -82,7 +82,7 @@ class CommandExecutionBuildAutomationExtension:
                       "shell" : shell}
 
         # prints an info message
-        logger.info("Running command %s with arguments %s in shell" % (command, str(_arguments)))
+        logger.info("Running command '%s' with arguments %s in shell" % (command, str(_arguments)))
 
         # executes the command, retrieving the process object
         process = command_execution_plugin.execute_command_parameters(parameters)
