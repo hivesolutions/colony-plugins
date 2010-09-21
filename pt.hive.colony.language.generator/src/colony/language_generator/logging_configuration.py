@@ -42,7 +42,7 @@ import logging
 DEFAULT_LOGGING_FILENAME = None
 """ The default logging file name """
 
-DEFAULT_LOGGING_FORMAT = "%(asctime)s %(levelname)s %(message)s"
+DEFAULT_LOGGING_FORMAT = "%(asctime)s [%(levelname)s] %(message)s"
 """ The default logging format """
 
 DEFAULT_LOGGING_LEVEL = logging.WARNING
