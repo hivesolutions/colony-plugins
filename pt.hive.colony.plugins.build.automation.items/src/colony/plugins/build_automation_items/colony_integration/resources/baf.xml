@@ -73,7 +73,7 @@
                         <argument>c:/checkout/pt.hive.colony/pt.hive.colony/src/main.py</argument>
                         <argument>--configuration_file=config/configuration_integration_run.py</argument>
                         <argument>--manager_dir=c:/checkout/pt.hive.colony/pt.hive.colony/src</argument>
-                        <argument>--execution_command=pt.hive.colony.plugins.build.automation:run_automation pt.hive.colony.plugins.build.automation.items.colony_repository$1.0.0$build$2%int</argument>
+                        <argument>--execution_command=pt.hive.colony.plugins.build.automation:run_automation pt.hive.colony.plugins.build.automation.items.colony_bundle$1.0.0$build$3%int</argument>
                     </arguments>
                     <shell>true</shell>
                     <timeout>900</timeout>
