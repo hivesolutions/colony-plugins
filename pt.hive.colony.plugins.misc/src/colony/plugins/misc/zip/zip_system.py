@@ -225,7 +225,7 @@ class Zip:
             for file_path in file_path_list:
                 file_path = os.path.join(input_directory, file_path)
                 output_file_path = file_path[len(input_directory):len(file_path)]
-                zip_file.write(file_path, output_file_path)
+                zip_file.write(file_path, output_file_path.encode("utf-8"))
             zip_file.close()
 
     def unzip(self, zip_file_path, output_directory):
