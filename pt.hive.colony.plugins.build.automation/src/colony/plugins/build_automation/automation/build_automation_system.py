@@ -651,14 +651,9 @@ class BuildAutomation:
             # retrieves the configuration item type
             configuration_item_type = type(configuration_item)
 
-            print "item: " + str(configuration_item)
-            print "type: " + str(configuration_item_type)
-
             if configuration_item_type in types.StringTypes:
                 # parses the string value
                 parsed_configuration_item = self.parse_string(configuration_item, build_automation_structure)
-
-                print "parsa: " + str(parsed_configuration_item)
 
                 # adds the parsed configuration item value to the base map for the current configuration name
                 self._set_base_map(base_map, configuration_name, parsed_configuration_item)
@@ -668,13 +663,9 @@ class BuildAutomation:
                     # in case the current configuration single item is a generic element
                     # the configuration item is treated as a composite one
                     if type(configuration_single_item) == types.InstanceType and configuration_single_item.__class__ == build_automation_parser.GenericElement:
-                        print "foi para este types"
-
                         # sets the configuration composite value
                         self._set_configuration_composite_value(base_map, configuration_name, configuration_single_item, build_automation_structure)
                     else:
-                        print "foi para o outro"
-
                         # parses the string value
                         parsed_configuration_single_item = self.parse_string(configuration_single_item, build_automation_structure)
 
@@ -868,9 +859,6 @@ class BuildAutomation:
         # retrieves the base match iterator
         base_match_iterator = self.base_pattern.finditer(string)
 
-        print "base: " + string
-        print "iterator: " + str(base_match_iterator)
-
         # iterates using the base match iterator
         for base_match in base_match_iterator:
             # retrieves the match group
@@ -881,8 +869,6 @@ class BuildAutomation:
 
             # retrieves the real base value
             real_base_value = self.get_base_value(base_value, build_automation_structure)
-
-            print real_base_value
 
             # replaces the value in the string
             string = string.replace(group, real_base_value)
