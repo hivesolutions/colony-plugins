@@ -40,6 +40,9 @@ __license__ = "GNU General Public License (GPL), Version 3"
 RESOURCE_PARSER_NAME = "json"
 """ The resource parser name """
 
+JSON_FILE_ENCODING = "Cp1252"
+""" The json file encoding """
+
 class JsonResourceParser:
     """
     The json resource parser class.
@@ -78,7 +81,7 @@ class JsonResourceParser:
         json_file = open(full_json_file_path, "rb")
 
         # parses the json contents into the resource data
-        resource.data = json_plugin.load_file(json_file)
+        resource.data = json_plugin.load_file(json_file, JSON_FILE_ENCODING)
 
         # closes the json file
         json_file.close()
