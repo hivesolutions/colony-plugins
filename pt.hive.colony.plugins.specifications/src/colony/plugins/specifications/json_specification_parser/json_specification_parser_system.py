@@ -44,6 +44,9 @@ import json_specification_parser_exceptions
 SPECIFICATION_PARSER_NAME = "json"
 """ The specification parser name """
 
+JSON_FILE_ENCODING = "Cp1252"
+""" The json file encoding """
+
 class JsonSpecificationParser:
     """
     The json specification parser class.
@@ -95,7 +98,7 @@ class JsonSpecificationParser:
             json_file = open(file_path, "rb")
 
             # parses the json contents retrieving the json data
-            json_data = json_plugin.load_file(json_file)
+            json_data = json_plugin.load_file_encoding(json_file, JSON_FILE_ENCODING)
 
             # closes the json file
             json_file.close()
