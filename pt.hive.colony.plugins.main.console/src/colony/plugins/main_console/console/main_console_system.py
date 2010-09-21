@@ -156,14 +156,24 @@ class MainConsole:
                         try:
                             attribute(arguments, output_method)
                         except Exception, exception:
+                            # prints the exception message
                             output_method(COMMAND_EXCEPTION_MESSAGE + ": " + unicode(exception))
+
+                            # logs the stack trace value
                             self.main_console_plugin.log_stack_trace()
+
+                            # returns false (invalid)
                             return False
+
+                        # sets the valid flag
                         valid = True
 
+            # in case the command is not valid
             if not valid:
+                # print the invalid command message
                 output_method(INVALID_COMMAND_MESSAGE)
 
+            # returns the valid value
             return valid
 
     def get_default_output_method(self):
