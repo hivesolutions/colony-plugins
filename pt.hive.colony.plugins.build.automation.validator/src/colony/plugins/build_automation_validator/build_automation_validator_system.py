@@ -201,6 +201,9 @@ class BuildAutomationValidator:
         return valid
 
     def _validate_build_automation_plugin(self, plugin):
+        if plugin.id  == "pt.hive.colony.plugins.build.automation":
+            pass
+
         # retrieves the plugin path
         plugin_path = self.build_automation_validator_plugin.manager.get_plugin_path_by_id(plugin.id)
 
@@ -341,7 +344,7 @@ class BuildAutomationValidator:
 
         # returns in case the plugin is in the build automation item capability exclusion list
         if plugin.id in BUILD_AUTOMATION_ITEM_CAPABILITY_PLUGIN_EXCLUSION_LIST:
-            return False
+            return True
 
         # checks if the plugin has a build automation item capability
         if not BUILD_AUTOMATION_ITEM_CAPABILITY in plugin.capabilities:
