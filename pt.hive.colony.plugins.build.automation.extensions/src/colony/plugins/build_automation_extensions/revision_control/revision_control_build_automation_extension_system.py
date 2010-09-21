@@ -115,8 +115,13 @@ class RevisionControlBuildAutomationExtension:
             # checks out the repository to the target path
             revision = revision_control_manager.checkout(path, target_path)
 
-        # writes the version number in case it is defined
-        version_file_path and self._write_version_number(version_file_path, revision)
+        # in case the version file path is defined
+        if version_file_path:
+            # print and info message
+            logger.info("Writing version number to file " % version_file_path)
+
+            # writes the version number to the file
+            self._write_version_number(version_file_path, revision)
 
     def _write_version_number(self, version_file_path, revision):
         # retrieves the revision number
