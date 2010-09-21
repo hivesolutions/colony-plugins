@@ -278,7 +278,7 @@ class CommandExecution:
         """
 
         # in case the current os is windows
-        if os.name == "nt":
+        if os.name == NT_PLATFORM_VALUE:
             import win32con
             startup_info = subprocess.STARTUPINFO()
             startup_info.dwFlags |= subprocess.STARTF_USESHOWWINDOW
