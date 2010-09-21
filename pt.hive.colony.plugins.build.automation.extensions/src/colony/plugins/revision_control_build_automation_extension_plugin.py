@@ -91,8 +91,8 @@ class RevisionControlBuildAutomationExtensionPlugin(colony.base.plugin_system.Pl
     def dependency_injected(self, plugin):
         colony.base.plugin_system.Plugin.dependency_injected(self, plugin)
 
-    def run_automation(self, plugin, stage, parameters, build_automation_structure):
-        self.revision_control_build_automation_extension.run_automation(plugin, stage, parameters, build_automation_structure)
+    def run_automation(self, plugin, stage, parameters, build_automation_structure, logger):
+        self.revision_control_build_automation_extension.run_automation(plugin, stage, parameters, build_automation_structure, logger)
 
     def get_revision_control_manager_plugin(self):
         return self.revision_control_manager_plugin

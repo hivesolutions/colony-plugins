@@ -72,7 +72,7 @@ class RevisionControlBuildAutomationExtension:
 
         self.revision_control_build_automation_extension_plugin = revision_control_build_automation_extension_plugin
 
-    def run_automation(self, plugin, stage, parameters, build_automation_structure):
+    def run_automation(self, plugin, stage, parameters, build_automation_structure, logger):
         # retrieves the revision control manager plugin
         revision_control_manager_plugin = self.revision_control_build_automation_extension_plugin.revision_control_manager_plugin
 
@@ -93,11 +93,12 @@ class RevisionControlBuildAutomationExtension:
             # cleans the repository from locks
             revision_control_manager.cleanup([target_path])
 
+            # reverts the repository to the previous version
+            # and removes unnecessary files
+            revision_control_manager.revert([target_path])
+
             # updates the repository to the current head revision
             revision = revision_control_manager.update([target_path], None)
-
-            # removes the non versioned files (in order to avoid possible problems)
-            revision_control_manager.remove_unversioned([target_path])
         else:
             # checks out the repository to the target path
             revision = revision_control_manager.checkout(path, target_path)

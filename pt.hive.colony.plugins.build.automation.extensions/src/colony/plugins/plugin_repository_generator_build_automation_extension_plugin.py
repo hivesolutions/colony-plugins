@@ -91,8 +91,8 @@ class PluginRepositoryGeneratorBuildAutomationExtensionPlugin(colony.base.plugin
     def dependency_injected(self, plugin):
         colony.base.plugin_system.Plugin.dependency_injected(self, plugin)
 
-    def run_automation(self, plugin, stage, parameters, build_automation_structure):
-        self.plugin_repository_generator_build_automation_extension.run_automation(plugin, stage, parameters, build_automation_structure)
+    def run_automation(self, plugin, stage, parameters, build_automation_structure, logger):
+        self.plugin_repository_generator_build_automation_extension.run_automation(plugin, stage, parameters, build_automation_structure, logger)
 
     def get_repository_descriptor_generator_plugin(self):
         return self.repository_descriptor_generator_plugin

@@ -91,8 +91,8 @@ class ContinuousIntegrationBuildAutomationExtensionPlugin(colony.base.plugin_sys
     def dependency_injected(self, plugin):
         colony.base.plugin_system.Plugin.dependency_injected(self, plugin)
 
-    def run_automation(self, plugin, stage, parameters, build_automation_structure):
-        self.continuous_integration_build_automation_extension.run_automation(plugin, stage, parameters, build_automation_structure)
+    def run_automation(self, plugin, stage, parameters, build_automation_structure, logger):
+        self.continuous_integration_build_automation_extension.run_automation(plugin, stage, parameters, build_automation_structure, logger)
 
     def get_zip_plugin(self):
         return self.zip_plugin

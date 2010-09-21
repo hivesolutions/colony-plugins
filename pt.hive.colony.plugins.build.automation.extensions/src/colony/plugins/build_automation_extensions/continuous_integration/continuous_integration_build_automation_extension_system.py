@@ -83,7 +83,7 @@ class ContinuousIntegrationBuildAutomationExtension:
 
         self.continuous_integration_build_automation_extension_plugin = continuous_integration_build_automation_extension_plugin
 
-    def run_automation(self, plugin, stage, parameters, build_automation_structure):
+    def run_automation(self, plugin, stage, parameters, build_automation_structure, logger):
         # retrieves the deployment path
         deployment_path = parameters[DEPLOYMENT_PATH_VALUE]
 

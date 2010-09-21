@@ -55,7 +55,10 @@ class TestBuildAutomationExtension:
 
         self.test_build_automation_extension_plugin = test_build_automation_extension_plugin
 
-    def run_automation(self, plugin, stage, parameters, build_automation_structure):
+    def run_automation(self, plugin, stage, parameters, build_automation_structure, logger):
+        # prints an info message
+        logger.info("Running test build automation plugin")
+
         # retrieves the main test plugin
         main_test_plugin = self.test_build_automation_extension_plugin.main_test_plugin
 

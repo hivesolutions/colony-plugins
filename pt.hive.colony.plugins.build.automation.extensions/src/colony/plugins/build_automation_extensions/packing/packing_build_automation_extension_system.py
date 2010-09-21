@@ -67,7 +67,7 @@ class PackingBuildAutomationExtension:
 
         self.packing_build_automation_extension_plugin = packing_build_automation_extension_plugin
 
-    def run_automation(self, plugin, stage, parameters, build_automation_structure):
+    def run_automation(self, plugin, stage, parameters, build_automation_structure, logger):
         # retrieves the main packing manager plugin
         main_packing_manager_plugin = self.packing_build_automation_extension_plugin.main_packing_manager_plugin
 

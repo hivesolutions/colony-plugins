@@ -70,7 +70,7 @@ class InstallationBuildAutomationExtension:
 
         self.installation_build_automation_extension_plugin = installation_build_automation_extension_plugin
 
-    def run_automation(self, plugin, stage, parameters, build_automation_structure):
+    def run_automation(self, plugin, stage, parameters, build_automation_structure, logger):
         # retrieves the installation manager plugin
         installation_manager_plugin = self.installation_build_automation_extension_plugin.installation_manager_plugin
 

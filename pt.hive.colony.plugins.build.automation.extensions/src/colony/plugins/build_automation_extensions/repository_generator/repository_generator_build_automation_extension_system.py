@@ -73,7 +73,7 @@ class RepositoryGeneratorBuildAutomationExtension:
 
         self.repository_generator_build_automation_extension_plugin = repository_generator_build_automation_extension_plugin
 
-    def run_automation(self, plugin, stage, parameters, build_automation_structure):
+    def run_automation(self, plugin, stage, parameters, build_automation_structure, logger):
         # retrieves the repository generator manager plugin
         repository_generator_manager_plugin = self.repository_generator_build_automation_extension_plugin.repository_generator_manager_plugin
 

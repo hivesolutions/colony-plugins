@@ -37,6 +37,8 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
+import subprocess
+
 import command_execution_build_automation_extension_exceptions
 
 class CommandExecutionBuildAutomationExtension:
@@ -57,7 +59,7 @@ class CommandExecutionBuildAutomationExtension:
 
         self.command_execution_build_automation_extension_plugin = command_execution_build_automation_extension_plugin
 
-    def run_automation(self, plugin, stage, parameters, build_automation_structure):
+    def run_automation(self, plugin, stage, parameters, build_automation_structure, logger):
         # retrieves the command execution plugin
         command_execution_plugin = self.command_execution_build_automation_extension_plugin.command_execution_plugin
 
@@ -74,13 +76,24 @@ class CommandExecutionBuildAutomationExtension:
         # creates the parameters map for the execution command
         parameters = {"command" : command,
                       "arguments" : _arguments,
+                      "stdin" : subprocess.PIPE,
+                      "stdout" : subprocess.PIPE,
+                      "stderr" : subprocess.PIPE,
                       "shell" : shell}
 
         # executes the command, retrieving the process object
         process = command_execution_plugin.execute_command_parameters(parameters)
 
         # waits for the process to terminate
-        process.wait()
+        stdout_data, stderr_data = process.communicate()
+
+        # prints the standard output information
+        logger.info("Process standard output (stdout)")
+        logger.info(stdout_data)
+
+        # prints the standard error information
+        logger.info("Process standard error (stderr)")
+        logger.info(stderr_data)
 
         # retrieves the process return code
         process_return_code = process.returncode
