@@ -856,6 +856,9 @@ class BuildAutomation:
         # retrieves the base match iterator
         base_match_iterator = self.base_pattern.finditer(string)
 
+        print "base: " + string
+        print "iterator: " + str(base_match_iterator)
+
         # iterates using the base match iterator
         for base_match in base_match_iterator:
             # retrieves the match group
@@ -866,6 +869,8 @@ class BuildAutomation:
 
             # retrieves the real base value
             real_base_value = self.get_base_value(base_value, build_automation_structure)
+
+            print real_base_value
 
             # replaces the value in the string
             string = string.replace(group, real_base_value)
