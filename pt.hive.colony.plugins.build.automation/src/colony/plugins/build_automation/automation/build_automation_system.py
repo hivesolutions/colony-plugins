@@ -651,12 +651,14 @@ class BuildAutomation:
             # retrieves the configuration item type
             configuration_item_type = type(configuration_item)
 
-            print "item: " + configuration_item
+            print "item: " + str(configuration_item)
             print "type: " + str(configuration_item_type)
 
             if configuration_item_type in types.StringTypes:
                 # parses the string value
                 parsed_configuration_item = self.parse_string(configuration_item, build_automation_structure)
+
+                print "parsa: " + str(parsed_configuration_item)
 
                 # adds the parsed configuration item value to the base map for the current configuration name
                 self._set_base_map(base_map, configuration_name, parsed_configuration_item)
