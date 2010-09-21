@@ -40,6 +40,7 @@ __license__ = "GNU General Public License (GPL), Version 3"
 import os
 import re
 import stat
+import types
 import zipfile
 import tarfile
 
@@ -104,6 +105,9 @@ DEFAULT_TAR_COMPRESSION_FORMAT = "bz2"
 
 DEFAULT_SPECIFICATION_FILE_PATH = "specification.json"
 """ The default specification file path """
+
+DEFAULT_ENCODING = "utf-8"
+""" The default encoding """
 
 class MainPackingColonyService:
     """
@@ -422,9 +426,17 @@ class ColonyPluginCompressedFile:
                     if stat.S_ISDIR(mode):
                         self.add(full_file_path, full_target_file_path)
                     else:
-                        self.file.write(full_file_path, full_target_file_path)
+                        # normalizes the full target file path
+                        full_target_file_path_normalized = self._normalize_file_path(full_target_file_path)
+
+                        # writes the file to the compressed file
+                        self.file.write(full_file_path, full_target_file_path_normalized)
             else:
-                self.file.write(file_path, target_file_path.encode("Cp1252"))
+                # normalizes the target file path
+                target_file_path_normalized = self._normalize_file_path(target_file_path)
+
+                # writes the file to the compressed file
+                self.file.write(file_path, target_file_path_normalized)
         elif self.mode == TAR_FILE_MODE:
             self.file.add(file_path, target_file_path)
 
@@ -499,3 +511,28 @@ class ColonyPluginCompressedFile:
         for member_path in member_paths:
             # extracts the member path to the target path
             self._extract_zip(member_path, target_path)
+
+    def _normalize_file_path(self, file_path):
+        """
+        Normalizes the given file path using (if required)
+        the default encoding.
+
+        @type file_path: String
+        @param file_path: The file path to be normalized.
+        @rtype: String
+        @return: The normalized file path.
+        """
+
+        # retrieves the file path type
+        file_path_type = type(file_path)
+
+        # in case the file path type is unicode
+        if file_path_type == types.UnicodeType:
+            # encodes the file path with the default encoding
+            file_path_normalized = file_path_type.encode(DEFAULT_ENCODING)
+        else:
+            # the normalized file path is the file path itself
+            file_path_normalized = file_path
+
+        # returns the file path normalized
+        return file_path_normalized
