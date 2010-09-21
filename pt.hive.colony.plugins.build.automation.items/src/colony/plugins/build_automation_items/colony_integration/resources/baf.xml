@@ -68,7 +68,7 @@
                 <version>1.0.0</version>
                 <stage>install</stage>
                 <configuration>
-                    <command>python</command>
+                    <command>/usr/bin/python</command>
                     <arguments>
                         <argument>$base{plugin_system_directory}/tmp/checkout/pt.hive.colony/pt.hive.colony/src/main.py</argument>
                         <argument>--configuration_file=config/configuration_integration_run.py</argument>
