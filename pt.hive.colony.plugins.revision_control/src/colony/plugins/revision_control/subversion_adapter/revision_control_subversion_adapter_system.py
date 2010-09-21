@@ -73,7 +73,13 @@ class RevisionControlSubversionAdapter:
 
     def checkout(self, revision_control_reference, source, destination):
         # performs the svn checkout
-        print repr(revision_control_reference.checkout(source, destination))
+        update_subversion_revision = revision_control_reference.checkout(source, destination)
+
+        # creates the subversion revision resulting from the update
+        update_revision = self.create_revision(update_subversion_revision)
+
+        # returns the update revision
+        return update_revision
 
     def update(self, revision_control_reference, resource_identifiers, revision):
         # retrieves the first resource identifier
