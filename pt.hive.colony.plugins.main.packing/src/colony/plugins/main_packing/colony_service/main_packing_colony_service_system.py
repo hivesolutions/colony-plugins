@@ -424,7 +424,7 @@ class ColonyPluginCompressedFile:
                     else:
                         self.file.write(full_file_path, full_target_file_path)
             else:
-                self.file.write(file_path, target_file_path)
+                self.file.write(file_path, target_file_path.encode("Cp1252"))
         elif self.mode == TAR_FILE_MODE:
             self.file.add(file_path, target_file_path)
 
