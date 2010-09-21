@@ -26,6 +26,7 @@
             "resources/resource_manager/resources/base/layout_mode/repository_svn/resources.xml",
             "resources/resource_manager/resources/base/run_mode/development/resources.xml",
             "resources/resource_manager/resources/base/run_mode/hive_site/resources.xml",
+            "resources/resource_manager/resources/base/run_mode/integration/resources.xml",
             "resources/resource_manager/resources/base/run_mode/production/resources.xml",
             "resources/resource_manager/resources/base/run_mode/production_auxiliary/resources.xml",
             "resources/resource_manager/resources/base/run_mode/test/resources.xml",
@@ -52,5 +53,7 @@
             "resources/resource_manager/resources/main_service_pop/run_mode/development/resources.xml",
             "resources/resource_manager/resources/main_service_smtp/run_mode/development/configuration.py",
             "resources/resource_manager/resources/main_service_smtp/run_mode/development/resources.xml",
+            "resources/resource_manager/resources/scheduler/run_mode/integration/configuration.py",
+            "resources/resource_manager/resources/scheduler/run_mode/integration/resources.xml",
             "resources/resource_manager/resources/xsd/resources.xsd"]
 }
