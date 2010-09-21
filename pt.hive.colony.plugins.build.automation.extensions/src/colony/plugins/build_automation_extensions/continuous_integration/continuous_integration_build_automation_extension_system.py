@@ -140,6 +140,14 @@ class ContinuousIntegrationBuildAutomationExtension:
         # creates the latest version path
         latest_version_path = deployment_path + "/" + LATEST_DIRECTORY_NAME
 
+        # in case there is an existent directory in the latest path
+        if os.path.isdir(latest_version_path):
+            # removes the latest version path (directory)
+            colony.libs.path_util.remove_directory(latest_version_path)
+        elif os.path.exists(latest_version_path):
+            # removes the latest version path
+            os.remove(latest_version_path)
+
         # creates a symbolic link between the deployment version path and the latest
         # version path
         os.symlink(deployment_version_path, latest_version_path) #@UndefinedVariable
