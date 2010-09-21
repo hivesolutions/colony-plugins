@@ -8,7 +8,7 @@
     "version" : "1.0.0",
     "author" : "Hive Solutions Lda. <development@hive.pt>",
     "capabilities" : ["http_service_handler", "build_automation_item"],
-    "capabilities_allowed" : [],
+    "capabilities_allowed" : ["http_service_directory_list_handler"],
     "dependencies" : [{
                 "id" : "pt.hive.colony.plugins.resources.resource_manager",
                 "version" : "1.0.0"
