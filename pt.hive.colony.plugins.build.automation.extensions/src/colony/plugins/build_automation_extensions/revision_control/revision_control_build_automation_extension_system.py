@@ -90,8 +90,14 @@ class RevisionControlBuildAutomationExtension:
 
         # in case the target path already exists
         if os.path.exists(target_path):
+            # cleans the repository from locks
+            revision_control_manager.cleanup([target_path])
+
             # updates the repository to the current head revision
             revision = revision_control_manager.update([target_path], None)
+
+            # removes the non versioned files (in order to avoid possible problems)
+            revision_control_manager.remove_unversioned([target_path])
         else:
             # checks out the repository to the target path
             revision = revision_control_manager.checkout(path, target_path)
