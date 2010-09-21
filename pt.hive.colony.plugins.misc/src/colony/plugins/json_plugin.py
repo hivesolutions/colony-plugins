@@ -94,3 +94,6 @@ class JsonPlugin(colony.base.plugin_system.Plugin):
 
     def load_file(self, json_file):
         return self.json_system.load_file(json_file)
+
+    def load_file_encoding(self, json_file, encoding):
+        return self.json_system.load_file(json_file, encoding)

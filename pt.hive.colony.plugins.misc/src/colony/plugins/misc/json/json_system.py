@@ -39,8 +39,8 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 import json_serializer
 
-DEFAULT_ENCODER = "utf-8"
-""" The default encoder """
+DEFAULT_ENCODING = "utf-8"
+""" The default encoding """
 
 class Json:
     """
@@ -66,12 +66,12 @@ class Json:
     def loads(self, json_string):
         return json_serializer.loads(json_string)
 
-    def load_file(self, json_file):
+    def load_file(self, json_file, encoding = DEFAULT_ENCODING):
         # reads the json file
         json_file_contents = json_file.read()
 
         # decodes the json file contents using the default encoder
-        json_file_contents_encoded = json_file_contents.decode(DEFAULT_ENCODER)
+        json_file_contents_decoded = json_file_contents.decode(encoding)
 
         # loads the json file contents
-        return self.loads(json_file_contents_encoded)
+        return self.loads(json_file_contents_decoded)
