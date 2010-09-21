@@ -651,6 +651,9 @@ class BuildAutomation:
             # retrieves the configuration item type
             configuration_item_type = type(configuration_item)
 
+            print "item: " + configuration_item
+            print "type: " + str(configuration_item_type)
+
             if configuration_item_type in types.StringTypes:
                 # parses the string value
                 parsed_configuration_item = self.parse_string(configuration_item, build_automation_structure)
