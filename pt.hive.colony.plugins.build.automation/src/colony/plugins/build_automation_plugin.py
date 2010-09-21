@@ -132,6 +132,9 @@ class BuildAutomationPlugin(colony.base.plugin_system.Plugin):
     def run_automation(self, plugin_id, plugin_version, stage, recursive_level):
         self.build_automation.run_automation(plugin_id, plugin_version, stage, recursive_level)
 
+    def run_automation_logger(self, plugin_id, plugin_version, stage, recursive_level, logger):
+        self.build_automation.run_automation(plugin_id, plugin_version, stage, recursive_level, logger)
+
     @colony.base.decorators.load_allowed_capability("build_automation_extension")
     def build_automation_extension_load_allowed(self, plugin, capability):
         self.build_automation_extension_plugins.append(plugin)

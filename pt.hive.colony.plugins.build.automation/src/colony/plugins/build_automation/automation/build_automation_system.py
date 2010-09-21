@@ -41,6 +41,8 @@ import os
 import re
 import copy
 import types
+import logging
+import datetime
 
 import colony.libs.path_util
 
@@ -49,6 +51,12 @@ import build_automation_parser
 
 BASE_AUTOMATION_ID = "pt.hive.colony.plugins.build.automation.base"
 """ The build automation id """
+
+DEFAULT_LOGGER = "default_build_automation"
+""" The default logger name """
+
+DEFAULT_LOGGING_FORMAT = "[%(levelname)s] %(message)s"
+""" The default logging format """
 
 VARIABLE_REGEX = "\$\{[^\}]*\}"
 """ The regular expression for the variable """
@@ -291,7 +299,7 @@ class BuildAutomation:
         # returns the loaded build automation item plugins
         return self.loaded_build_automation_item_plugins_list
 
-    def run_automation(self, plugin_id, plugin_version = None, stage = None, recursive_level = 1, is_first = True):
+    def run_automation(self, plugin_id, plugin_version = None, stage = None, recursive_level = 1, logger = None, is_first = True):
         """
         Runs all the automation plugins for the given plugin id and version.
 
@@ -303,15 +311,26 @@ class BuildAutomation:
         @param stage: The stage to be run in the automation.
         @type recursive_level: int
         @param recursive_level: The current level of recursion.
+        @type logger: Logger
+        @param logger: The build automation logger to be used.
         @type is_first: bool
         @param is_first: If this is the first run (useful for module inclusion).
         """
+
+        # retrieves the initial date time value
+        initial_date_time = datetime.datetime.now()
+
+        # in case no logger is defined
+        if not logger:
+            # creates a new logger
+            logger = self._start_logger()
 
         # retrieves the build automation structure
         build_automation_structure = self.get_build_automation_structure(plugin_id, plugin_version)
 
         # in case the retrieval of the build automation structure was unsuccessful
         if not build_automation_structure:
+            # returns immediately
             return
 
         # creates the build automation directories (if they don't exist and is first run)
@@ -341,7 +360,7 @@ class BuildAutomation:
                 module_stage = module_plugin_stage or stage
 
                 # runs the module plugin for the same stage
-                self.run_automation(module_id, module_version, module_stage, recursive_level - 1, False)
+                self.run_automation(module_id, module_version, module_stage, recursive_level - 1, logger, False)
 
         # retrieves the valid automation stages for the current stage
         valid_automation_stages = BUILD_AUTOMATION_STAGES[:BUILD_AUTOMATION_STAGES.index(stage) + 1]
@@ -365,8 +384,26 @@ class BuildAutomation:
                 # retrieves the automation plugin configurations
                 automation_plugin_configurations = build_automation_structure.get_all_automation_plugin_configurations(automation_plugin_tuple)
 
+                # prints logging information
+                logger.info("------------------------------------------------------------------------")
+                logger.info("Running build automation plugin '%s' v%s" % (automation_plugin_id, automation_plugin_version))
+                logger.info("For stage [%s] of build automation" % stage)
+                logger.info("------------------------------------------------------------------------")
+
                 # runs the automation for the current stage
-                automation_plugin.run_automation(build_automation_structure.associated_plugin, stage, automation_plugin_configurations, build_automation_structure)
+                automation_plugin.run_automation(build_automation_structure.associated_plugin, stage, automation_plugin_configurations, build_automation_structure, logger)
+
+        # retrieves the final date time value
+        final_date_time = datetime.datetime.now()
+
+        # calculates the delta date time from the final and the initial values
+        delta_date_time = final_date_time - initial_date_time
+
+        # prints the final logging information
+        logger.info("------------------------------------------------------------------------")
+        logger.info("Total time for build automation %s" % str(delta_date_time))
+        logger.info("Finished build automation at %s" % final_date_time.strftime("%d/%m/%y %H:%M:%S"))
+        logger.info("------------------------------------------------------------------------")
 
     def generate_build_automation_structure(self, build_automation_parsing_structure):
         """
@@ -1042,6 +1079,38 @@ class BuildAutomation:
 
         # returns the contents
         return contents
+
+    def _start_logger(self):
+        """
+        Starts the logger initializing its internal structure.
+
+        @rtype: Logger
+        @return: The created logger.
+        """
+
+        # retrieves the logger
+        logger = logging.getLogger(DEFAULT_LOGGER)
+
+        # sets the logger propagation to avoid propagation
+        logger.propagate = 0
+
+        # sets the logger level to the initial log level
+        logger.setLevel(logging.INFO)
+
+        # creates the stream handler
+        stream_handler = logging.StreamHandler()
+
+        # creates the logging formatter
+        formatter = logging.Formatter(DEFAULT_LOGGING_FORMAT)
+
+        # sets the formatter in the stream handler
+        stream_handler.setFormatter(formatter)
+
+        # adds the stream handler to the logger
+        logger.addHandler(stream_handler)
+
+        # returns the logger
+        return logger
 
     def _set_configuration_composite_value(self, base_map, configuration_name, configuration_item, build_automation_structure):
         # creates a new map
