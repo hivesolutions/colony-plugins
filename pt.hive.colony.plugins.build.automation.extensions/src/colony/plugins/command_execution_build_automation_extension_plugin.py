@@ -60,7 +60,8 @@ class CommandExecutionBuildAutomationExtensionPlugin(colony.base.plugin_system.P
                     "pt.hive.colony.plugins.misc.command_execution", "1.0.0")]
     events_handled = []
     events_registrable = []
-    main_modules = ["build_automation_extensions.command_execution.command_execution_build_automation_extension_system"]
+    main_modules = ["build_automation_extensions.command_execution.command_execution_build_automation_extension_exceptions",
+                    "build_automation_extensions.command_execution.command_execution_build_automation_extension_system"]
 
     command_execution_build_automation_extension = None
 

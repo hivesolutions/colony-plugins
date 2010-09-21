@@ -37,6 +37,8 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
+import command_execution_build_automation_extension_exceptions
+
 class CommandExecutionBuildAutomationExtension:
     """
     The command execution build automation extension class.
@@ -80,5 +82,10 @@ class CommandExecutionBuildAutomationExtension:
         # waits for the process to terminate
         process.wait()
 
-        # prints the process return code
-        print process.returncode
+        # retrieves the process return code
+        process_return_code = process.returncode
+
+        # in case the return code is not valid
+        if process_return_code:
+            # raises the command execution build automation extension exception
+            raise command_execution_build_automation_extension_exceptions.CommandExecutionBuildAutomationExtensionException("Process returned error code: %i" % process_return_code)
