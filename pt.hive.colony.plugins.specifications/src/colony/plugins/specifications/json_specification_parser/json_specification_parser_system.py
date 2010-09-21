@@ -37,6 +37,8 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
+import os
+
 import json_specification_parser_exceptions
 
 SPECIFICATION_PARSER_NAME = "json"
@@ -86,6 +88,9 @@ class JsonSpecificationParser:
             json_data = json_plugin.loads(file_buffer)
         # in case the file path is defined
         elif file_path:
+            # verifies the file path
+            self._verify_file_path(file_path)
+
             # opens the json file
             json_file = open(file_path, "rb")
 
@@ -105,3 +110,16 @@ class JsonSpecificationParser:
             # sets the json key and value as a property in
             # the specification structure
             specification.set_property(json_key, json_value)
+
+    def _verify_file_path(self, file_path):
+        """
+        Verifies the given file path, testing if the file exits.
+
+        @type file_path: String
+        @param file_path: The file path to be verified.
+        """
+
+        # in case the file path does not exist
+        if not os.path.exists(file_path):
+            # raises the invalid specification file exception
+            raise json_specification_parser_exceptions.InvalidSpecificationFile("file not found: " + file_path)
