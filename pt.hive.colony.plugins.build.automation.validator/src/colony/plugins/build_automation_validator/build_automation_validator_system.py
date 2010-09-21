@@ -703,20 +703,48 @@ class BuildAutomationValidator:
         return json_data
 
     def get_file_paths(self, path):
-        # defines the file paths list
-        file_paths = []
+        # retrieves the file paths within the specified path
+        file_paths = self._get_file_paths(path, [])
 
-        # crawls the specified path indexing file paths by their file name
-        for root, _directories, files in os.walk(path):
-            for file in files:
-                # converts the root path separators from the windows mode to unix mode
-                root = self.normalize_path(root)
+        return file_paths
 
-                # retrieves the file path
-                file_path = root + UNIX_DIRECTORY_SEPARATOR + file
+    def _get_file_paths(self, path, file_paths):
+        # retrieves the listdir entries for the specified path
+        listdir_entries = os.listdir(path)
 
-                # adds the file path to the file paths list
-                file_paths.append(file_path)
+        # sorts the listdir entries
+        listdir_entries.sort()
+
+        # initializes the directory paths list
+        directory_paths = []
+
+        # collects file paths and directory paths
+        for listdir_entry in listdir_entries:
+            # skips in case this entry is in the exclusion list
+            if listdir_entry in RESOURCE_FILE_NAME_EXCLUSION_LIST:
+                continue
+
+            # defines the listdir entry path
+            listdir_entry_path = path + UNIX_DIRECTORY_SEPARATOR + listdir_entry
+
+            # collects a directory path and skips this iteration
+            if os.path.isdir(listdir_entry_path):
+                directory_paths.append(listdir_entry_path)
+                continue
+
+            # retrieves the listdir entry extension
+            _base_listdir_entry, extension = os.path.splitext(listdir_entry)
+
+            # skips in case the extension is in the exclusion list
+            if extension in RESOURCE_FILE_EXTENSION_EXCLUSION_LIST:
+                continue
+
+            # collects the file path
+            file_paths.append(listdir_entry_path)
+
+        # retrieves the file paths for the collected directories
+        for directory_path in directory_paths:
+            file_paths = self._get_file_paths(directory_path, file_paths)
 
         return file_paths
 
