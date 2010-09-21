@@ -40,6 +40,9 @@ __license__ = "GNU General Public License (GPL), Version 3"
 HANDLER_NAME = "json"
 """ The handler name """
 
+JSON_FILE_ENCODING = "Cp1252"
+""" The json file encoding """
+
 class MainLocalizationTranslationJsonBundleHandler:
     """
     The main localization translation json bundle handler class.
@@ -72,7 +75,7 @@ class MainLocalizationTranslationJsonBundleHandler:
         bundle_file = open(bundle_path, "rb")
 
         # parses the json bundle file contents
-        bundle_contents = json_plugin.load_file(bundle_file)
+        bundle_contents = json_plugin.load_file_encoding(bundle_file, JSON_FILE_ENCODING)
 
         # closes the bundle file
         bundle_file.close()
