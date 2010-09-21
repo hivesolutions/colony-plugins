@@ -88,7 +88,7 @@ COLONY_ARTIFACT_VALUE = "colony"
 DEFAULT_STAGE_VALUE = "default_stage"
 """ The default stage value """
 
-BUILD_AUTOMATION_STAGES = ("compile", "test", "build", "install", "deploy", "clean", "site", "site-deploy")
+BUILD_AUTOMATION_STAGES = ["compile", "test", "build", "install", "deploy", "clean", "site", "site-deploy"]
 """ The build automation stages """
 
 class BuildAutomation:
