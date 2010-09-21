@@ -90,35 +90,35 @@ class RevisionControlBuildAutomationExtension:
 
         # in case the target path already exists
         if os.path.exists(target_path):
-            # print and info message
+            # print an info message
             logger.info("Running cleanup in %s" % target_path)
 
             # cleans the repository from locks
             revision_control_manager.cleanup([target_path])
 
-            # print and info message
+            # print an info message
             logger.info("Running revert in %s" % target_path)
 
             # reverts the repository to the previous version
             # and removes unnecessary files
             revision_control_manager.revert([target_path])
 
-            # print and info message
+            # print an info message
             logger.info("Running update in %s" % target_path)
 
             # updates the repository to the current head revision
             revision = revision_control_manager.update([target_path], None)
         else:
-            # print and info message
-            logger.info("Checking repository %s out into %s" % (path, target_path))
+            # print an info message
+            logger.info("Checking out repository %s out into %s" % (path, target_path))
 
             # checks out the repository to the target path
             revision = revision_control_manager.checkout(path, target_path)
 
         # in case the version file path is defined
         if version_file_path:
-            # print and info message
-            logger.info("Writing version number to file " % version_file_path)
+            # print an info message
+            logger.info("Writing version number to file %s" % version_file_path)
 
             # writes the version number to the file
             self._write_version_number(version_file_path, revision)
