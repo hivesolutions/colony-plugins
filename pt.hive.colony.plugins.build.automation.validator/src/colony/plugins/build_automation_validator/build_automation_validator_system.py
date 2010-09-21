@@ -508,15 +508,17 @@ class BuildAutomationValidator:
         # retrieves the plugin descriptor data capabilities allowed
         plugin_descriptor_data_capabilities_allowed = plugin_descriptor_data[CAPABILITIES_ALLOWED_VALUE]
 
+        # checks if the number of capabilities allowed is the same as in the plugin
+        if not len(plugin_descriptor_data_capabilities_allowed) == len(plugin.capabilities_allowed):
+            self.build_automation_validator_plugin.logger.info("'%s' descriptor file doesn't have the same number of capabilities allowed as its plugin" % plugin_module_name)
+
+            # returns false since nothing else can be tested
+            return False
+
         # checks for duplicate capabilities allowed
         if not len(plugin_descriptor_data_capabilities_allowed) == len(list(set(plugin_descriptor_data_capabilities_allowed))):
             valid = False
             self.build_automation_validator_plugin.logger.info("'%s' descriptor file has duplicate capabilities allowed" % plugin_module_name)
-
-        # checks if the number of capabilities allowed is the same as in the plugin
-        if not len(plugin_descriptor_data_capabilities_allowed) == len(plugin.capabilities_allowed):
-            valid = False
-            self.build_automation_validator_plugin.logger.info("'%s' descriptor file doesn't have the same number of capabilities allowed as its plugin" % plugin_module_name)
 
         # checks that the capabilites allowed are the same
         for capability_allowed_index in range(len(plugin.capabilities_allowed)):
