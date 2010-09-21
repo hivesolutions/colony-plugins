@@ -81,7 +81,7 @@ class JsonResourceParser:
         json_file = open(full_json_file_path, "rb")
 
         # parses the json contents into the resource data
-        resource.data = json_plugin.load_file(json_file, JSON_FILE_ENCODING)
+        resource.data = json_plugin.load_file_encoding(json_file, JSON_FILE_ENCODING)
 
         # closes the json file
         json_file.close()
