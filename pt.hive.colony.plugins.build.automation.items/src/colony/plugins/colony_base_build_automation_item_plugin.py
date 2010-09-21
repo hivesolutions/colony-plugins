@@ -41,7 +41,7 @@ import colony.base.plugin_system
 
 class ColonyBaseBuildAutomationItemPlugin(colony.base.plugin_system.Plugin):
     """
-    The main class for the Colony Base Build Automation Item plugin
+    The main class for the Colony Base Build Automation Item plugin.
     """
 
     id = "pt.hive.colony.plugins.build.automation.items.colony_base"

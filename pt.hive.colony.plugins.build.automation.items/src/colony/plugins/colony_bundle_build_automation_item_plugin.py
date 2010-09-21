@@ -39,36 +39,36 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 import colony.base.plugin_system
 
-class ColonyRepositoryBuildAutomationItemPlugin(colony.base.plugin_system.Plugin):
+class ColonyBundleBuildAutomationItemPlugin(colony.base.plugin_system.Plugin):
     """
-    The main class for the Colony Repository Build Automation Item plugin.
+    The main class for the Colony Bundle Build Automation Item plugin.
     """
 
-    id = "pt.hive.colony.plugins.build.automation.items.colony_repository"
-    name = "Colony Repository Build Automation Item Plugin"
-    short_name = "Colony Repository Build Automation Item"
-    description = "The build automation item for the repository of the colony framework"
+    id = "pt.hive.colony.plugins.build.automation.items.colony_bundle"
+    name = "Colony Bundle Build Automation Item Plugin"
+    short_name = "Colony Bundle Build Automation Item"
+    description = "The build automation item for the bundle of the colony framework"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     loading_type = colony.base.plugin_system.EAGER_LOADING_TYPE
     platforms = [colony.base.plugin_system.CPYTHON_ENVIRONMENT,
                  colony.base.plugin_system.JYTHON_ENVIRONMENT,
                  colony.base.plugin_system.IRON_PYTHON_ENVIRONMENT]
-    attributes = {"build_automation_file_path" : "$base{plugin_directory}/build_automation_items/colony_repository/resources/baf.xml"}
+    attributes = {"build_automation_file_path" : "$base{plugin_directory}/build_automation_items/colony_bundle/resources/baf.xml"}
     capabilities = ["build_automation_item"]
     capabilities_allowed = []
     dependencies = []
     events_handled = []
     events_registrable = []
-    main_modules = ["build_automation_items.colony_repository.colony_repository_build_automation_item_system"]
+    main_modules = ["build_automation_items.colony_bundle.colony_bundle_build_automation_item_system"]
 
-    colony_repository_build_automation_item = None
+    colony_bundle_build_automation_item = None
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
         global build_automation_items
-        import build_automation_items.colony_repository.colony_repository_build_automation_item_system
-        self.colony_repository_build_automation_item = build_automation_items.colony_repository.colony_repository_build_automation_item_system.ColonyRepositoryBuildAutomationItem(self)
+        import build_automation_items.colony_bundle.colony_bundle_build_automation_item_system
+        self.colony_bundle_build_automation_item = build_automation_items.colony_bundle.colony_bundle_build_automation_item_system.ColonyBundleBuildAutomationItem(self)
 
     def end_load_plugin(self):
         colony.base.plugin_system.Plugin.end_load_plugin(self)
