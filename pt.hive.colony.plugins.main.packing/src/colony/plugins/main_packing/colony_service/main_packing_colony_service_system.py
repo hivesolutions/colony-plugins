@@ -529,7 +529,7 @@ class ColonyPluginCompressedFile:
         # in case the file path type is unicode
         if file_path_type == types.UnicodeType:
             # encodes the file path with the default encoding
-            file_path_normalized = file_path_type.encode(DEFAULT_ENCODING)
+            file_path_normalized = file_path.encode(DEFAULT_ENCODING)
         else:
             # the normalized file path is the file path itself
             file_path_normalized = file_path
