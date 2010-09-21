@@ -53,6 +53,7 @@ commit <adapter_name> <resource_identifier> <commit_message>                    
 log <adapter_name> <resource_identifier> [start_revision=0] [end_revision=#HEAD] - lists the change sets for the specified resource identifier between the specified revisions\n\
 status <adapter_name> <resource_identifier>                                      - lists the pending changes in the current revision\n\
 diff <adapter_name> <resource_identifier> [start_revision=#HEAD.parent] [end_revision=#HEAD] - compares the contents of the specified revisions\n\
+cleanup <adapter_name> <resource_identifier>                                     - cleans up existing locks at the specified location\n\
 get_resource_revision <adapter_name> <resource_identifier> [revision]            - retrieves the content of the resource in the specified revision\n\
 log_date <adapter_name> <resource_identifier> [date]                             - lists all the change sets for the specified resource identifier matching the date specification"
 """ The help text """
@@ -82,6 +83,7 @@ class ConsoleRevisionControlManager:
                 "log_name",
                 "status",
                 "diff",
+                "cleanup",
                 "get_resource_revision"]
     """ The commands list """
 
@@ -330,6 +332,27 @@ class ConsoleRevisionControlManager:
         except Exception, exception:
             # outputs the result
             output_method("problem computing diff: " + unicode(exception))
+
+    def process_cleanup(self, args, output_method):
+        # returns in case an invalid number of arguments was provided
+        if len(args) < 2:
+            output_method(INVALID_NUMBER_ARGUMENTS_MESSAGE)
+            return
+
+        # retrieves the adapter name
+        adapter_name = args[0]
+
+        # retrieves the resource identifier
+        resource_identifier = args[1]
+
+        # creates the resource identifiers list
+        resource_identifiers = [resource_identifier]
+
+        # creates a revision control manager to use on the resource
+        revision_control_manager = self.load_revision_control_manager(adapter_name, resource_identifier)
+
+        # invokes the cleanup command
+        revision_control_manager.cleanup(resource_identifiers)
 
     def process_get_resource_revision(self, args, output_method):
         # returns in case an invalid number of arguments was provided

@@ -73,13 +73,16 @@ class RevisionControlSubversionAdapter:
 
     def checkout(self, revision_control_reference, source, destination):
         # performs the svn checkout
-        update_subversion_revision = revision_control_reference.checkout(source, destination)
+        revision_control_reference.checkout(source, destination)
 
-        # creates the subversion revision resulting from the update
-        update_revision = self.create_revision(update_subversion_revision)
+        # creates the template for the working copy revision
+        head_subversion_revision = pysvn.Revision(pysvn.opt_revision_kind.head)
+
+        # determines the current revision by retrieving the property list for the head revision
+        checkout_revision, _prop_dict = revision_control_reference.revproplist(source, head_subversion_revision)
 
         # returns the update revision
-        return update_revision
+        return checkout_revision
 
     def update(self, revision_control_reference, resource_identifiers, revision):
         # retrieves the first resource identifier
@@ -190,6 +193,11 @@ class RevisionControlSubversionAdapter:
 
         # returns the computed diff
         return diffs
+
+    def cleanup(self, revision_control_reference, resource_identifiers):
+        for resource_identifier in resource_identifiers:
+            # cleans up any locks at the specified resource
+            revision_control_reference.cleanup(resource_identifier)
 
     def get_resources_revision(self, revision_control_reference, resource_identifiers, revision):
         # the revision in which to end the log

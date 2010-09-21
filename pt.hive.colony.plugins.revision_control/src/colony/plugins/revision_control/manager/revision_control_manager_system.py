@@ -194,6 +194,13 @@ class RevisionControlAdapter:
 
         return self.revision_control_adapter_plugin.diff(self._revision_control_reference, resource_identifiers, revision_1, revision_2)
 
+    def cleanup(self, resource_identifiers):
+        """
+        Cleans up any locks in the working copy at path.
+        Typically these locks result from a failed or interrupted operation.
+        """
+        return self.revision_control_adapter_plugin.cleanup(self._revision_control_reference, resource_identifiers)
+
     def get_resources_revision(self, resource_identifiers, revision):
         """
         Retrieves the content of the specified resources in the specified revision.
