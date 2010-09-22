@@ -54,6 +54,27 @@ REPOSITORY_PATH_VALUE = "repository_path_value"
 VERSION_FILE_PATH_VALUE = "version_file_path"
 """ The version file path value """
 
+PREVIOUS_VERSION_FILE_PATH_VALUE = "previous_version_file_path"
+""" The previous version file path value """
+
+CHANGELOG_FILE_PATH_VALUE = "changelog_file_path"
+""" The changelog file path value """
+
+NUMBER_VALUE = "number"
+""" The number value """
+
+IDENTIFIER_VALUE = "identifier"
+""" The identifier value """
+
+DATE_VALUE = "date"
+""" The date value """
+
+AUTHOR_VALUE = "author"
+""" The author value """
+
+MESSAGE_VALUE = "message"
+""" The message value """
+
 class RevisionControlBuildAutomationExtension:
     """
     The revision control build automation extension class.
@@ -81,6 +102,8 @@ class RevisionControlBuildAutomationExtension:
         path = parameters[PATH_VALUE]
         target_path = parameters[TARGET_PATH_VALUE]
         version_file_path = parameters.get(VERSION_FILE_PATH_VALUE, None)
+        previous_version_file_path = parameters.get(PREVIOUS_VERSION_FILE_PATH_VALUE, None)
+        changelog_file_path = parameters.get(CHANGELOG_FILE_PATH_VALUE, None)
 
         # creates the revision control parameters
         revision_control_parameters = {REPOSITORY_PATH_VALUE : target_path}
@@ -123,6 +146,59 @@ class RevisionControlBuildAutomationExtension:
             # writes the version number to the file
             self._write_version_number(version_file_path, revision)
 
+        # in case previous version file path and the changelog file path are defined
+        if previous_version_file_path and changelog_file_path:
+            # print an info message
+            logger.info("Writing changelog to file %s" % changelog_file_path)
+
+            # retrieves the current revision number
+            current_revision_number = revision.get_number()
+
+            # reads the previous revision number from the
+            previous_revision_number = self._read_version_number(previous_version_file_path)
+
+            # in case the previous revision number is defined
+            if previous_revision_number:
+                # sets the base revision number as the previous revision
+                # number plus one in case it's less than the current version
+                # otherwise the base version is the current version
+                base_revision_number = previous_revision_number < current_revision_number and previous_revision_number + 1 or current_revision_number
+            # otherwise
+            else:
+                # sets the base revision number as invalid (start from zero)
+                base_revision_number = None
+
+            # retrieves the log of revision in the revision
+            revision_list = revision_control_manager.log([target_path], base_revision_number, current_revision_number)
+
+            # writes the changelog for the given file path and revision list
+            self._write_changelog(changelog_file_path, revision_list)
+
+    def _read_version_number(self, version_file_path):
+        # in case the version file path does not exist
+        if not os.path.exists(version_file_path):
+            # returns invalid
+            return None
+
+        # opens the version file
+        version_file = open(version_file_path, "rb")
+
+        try:
+            # reads the revision number string value
+            revision_number_string = version_file.read()
+
+            # strips the revision number string
+            revision_number_string = revision_number_string.strip()
+
+            # converts the revision number string to integer
+            revision_number = int(revision_number_string)
+        finally:
+            # closes the version file
+            version_file.close()
+
+        # returns the revision number
+        return revision_number
+
     def _write_version_number(self, version_file_path, revision):
         # retrieves the revision number
         revision_number = revision.get_number()
@@ -139,3 +215,44 @@ class RevisionControlBuildAutomationExtension:
         finally:
             # closes the version file
             version_file.close()
+
+    def _write_changelog(self, changelog_file_path, revision_list):
+        # retrieves the json plugin
+        json_plugin = self.revision_control_build_automation_extension_plugin.json_plugin
+
+        # creates the list to hold the changelog elements
+        changelog_elements_list = []
+
+        # iterates over all the revision items in the revision
+        # list to create the changelog elements
+        for revision_item in revision_list:
+            # retrieves the revision item attributes
+            revision_item_number = revision_item.get_number()
+            revision_item_identifier = revision_item.get_identifier()
+            revision_item_date = revision_item.get_date()
+            revision_item_author = revision_item.get_author()
+            revision_item_message = revision_item.get_message()
+
+            # creates the changelog element using the attributes
+            changelog_element = {}
+            changelog_element[NUMBER_VALUE] = revision_item_number
+            changelog_element[IDENTIFIER_VALUE] = revision_item_identifier
+            changelog_element[DATE_VALUE] = revision_item_date
+            changelog_element[AUTHOR_VALUE] = revision_item_author
+            changelog_element[MESSAGE_VALUE] = revision_item_message
+
+            # adds the changelog element to the changelog elements list
+            changelog_elements_list.append(changelog_element)
+
+        # dumps the changelog elements list using the json plugin
+        changelog_json = json_plugin.dumps(changelog_elements_list)
+
+        # opens the changelog file
+        changelog_file = open(changelog_file_path, "wb")
+
+        try:
+            # writes the changelog json
+            changelog_file.write(changelog_json)
+        finally:
+            # closes the changelog file
+            changelog_file.close()
