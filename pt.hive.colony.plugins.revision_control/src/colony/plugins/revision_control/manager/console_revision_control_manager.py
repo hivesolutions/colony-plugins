@@ -471,10 +471,10 @@ class ConsoleRevisionControlManager:
             output_method("")
 
             # outputs the log entry information
-            output_method("changeset:   " + log_entry_revision)
-            output_method("author:      " + log_entry_author)
-            output_method("date:        " + date_time_string)
-            output_method("summary:     " + log_entry_message)
+            output_method("changeset: " + log_entry_revision)
+            output_method("author:    " + log_entry_author)
+            output_method("date:      " + date_time_string)
+            output_method("summary:   " + log_entry_message)
 
     def output_status(self, status, output_method):
         # retrieves the status length
