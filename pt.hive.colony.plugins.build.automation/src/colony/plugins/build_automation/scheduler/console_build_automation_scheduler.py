@@ -118,7 +118,7 @@ class ConsoleBuildAutomationScheduler:
         # retrieves the date time
         date_time = args[1]
 
-        # retrieves the recursionj list
+        # retrieves the recursion list
         recursion = args[2]
 
         if len(args) > 3:
