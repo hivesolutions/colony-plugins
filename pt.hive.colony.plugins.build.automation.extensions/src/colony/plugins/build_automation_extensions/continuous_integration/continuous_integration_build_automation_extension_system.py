@@ -151,6 +151,17 @@ class ContinuousIntegrationBuildAutomationExtension:
         colony.libs.path_util.link(deployment_version_path, latest_version_path)
 
     def _write_version_number(self, version_file_path, version_number):
+        """
+        Writes the given version number into the file in the given
+        path.
+
+        @type version_file_path: String
+        @param version_file_path: The path to the file that will
+        hold the version number.
+        @type version_number: int
+        @param version_number: The version number to be written.
+        """
+
         # converts the version number to a string
         version_number_string = str(version_number)
 
@@ -165,6 +176,17 @@ class ContinuousIntegrationBuildAutomationExtension:
             version_file.close()
 
     def _get_version(self, version_file_path):
+        """
+        Retrieves the current version using the given
+        version file path.
+
+        @type version_file_path: String
+        @param version_file_path: The file path to the
+        version file.
+        @rtype: int
+        @return: The version (revision) number.
+        """
+
         # opens the version file
         version_file = open(version_file_path, "rb")
 
