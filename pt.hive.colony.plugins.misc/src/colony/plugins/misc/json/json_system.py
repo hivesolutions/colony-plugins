@@ -63,6 +63,9 @@ class Json:
     def dumps(self, object):
         return json_serializer.dumps(object)
 
+    def dumps_pretty(self, object):
+        return json_serializer.dumps_pretty(object)
+
     def loads(self, json_string):
         return json_serializer.loads(json_string)
 
