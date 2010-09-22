@@ -99,6 +99,16 @@ def escape_char(match):
             return character
 
 def dumps_buffer(object):
+    """
+    Dumps (converts to json) the given object using the "buffered"
+    approach.
+
+    @type object: Object
+    @param object: The object to be dumped.
+    @rtype: String
+    @return: The dumped json string.
+    """
+
     # creates the string buffer
     string_buffer = colony.libs.string_buffer_util.StringBuffer()
 
@@ -112,6 +122,16 @@ def dumps_buffer(object):
     return string_value
 
 def dumps(object):
+    """
+    Dumps (converts to json) the given object using the "normal"
+    approach.
+
+    @type object: Object
+    @param object: The object to be dumped.
+    @rtype: String
+    @return: The dumped json string.
+    """
+
     return "".join([part for part in dump_parts(object)])
 
 def dump_parts_buffer(object, string_buffer):
@@ -126,7 +146,7 @@ def dump_parts_buffer(object, string_buffer):
     elif object_type is types.FunctionType:
         # writes the function value
         string_buffer.write("\"function\"")
-    # in case the object is module
+    # in case the object is a module
     elif object_type is types.ModuleType:
         # writes the module value
         string_buffer.write("\"module\"")
@@ -254,78 +274,148 @@ def dump_parts_buffer(object, string_buffer):
         # raises a json encode exception
         raise json_exceptions.JsonEncodeException(object)
 
-def dump_parts(object, indentation = 0):
+def dump_parts(object):
+    # retrieves the object type
     object_type = type(object)
 
+    # in case the object is none
     if object == None:
+        # yields the null value
         yield "null"
+    # in case the object is a function
     elif object_type is types.FunctionType:
+        # yields the function value
         yield "\"function\""
+    # in case the object is a module
     elif object_type is types.ModuleType:
+        # yields the module value
         yield "\"module\""
+    # in case the object is a method
     elif object_type is types.MethodType:
+        # yields the method value
         yield "\"method\""
+    # in case the object is a boolean
     elif object_type is types.BooleanType:
+        # in case the object is valid (true)
         if object:
+            # yields the true value
             yield "true"
+        # otherwise
         else:
+            # yields the false value
             yield "false"
+    # in case the object is a dictionary
     elif object_type is types.DictionaryType:
+        # yields the dictionary initial value
         yield "{"
+
+        # sets the is first flag
         is_first = True
+
+        # iterates over all the object items
         for key, value in object.items():
+            # in case the is first flag is set
             if is_first:
+                # unsets the is first flag
                 is_first = False
             else:
+                # yields the comma separator
                 yield ","
 
-            yield "\n"
-            for _index in range(indentation + 1):
-                yield "    "
-
+            # iterates over all the parts of the key
             for part in dump_parts(key):
-                yield part + " : "
+                # yields the part
+                yield part
 
-            for part in dump_parts(value, indentation + 1):
+            # yields the separator
+            yield ":"
+
+            # iterates over all the parts of the value
+            for part in dump_parts(value):
+                # yields the part
                 yield part
-        yield "\n"
-        for _index in range(indentation):
-            yield "    "
+
+        # yields the dictionary final value
         yield "}"
+    # in case the object is a string
     elif object_type in types.StringTypes:
+        # yields the string value
         yield "\"" + string_escape_re.sub(escape_char, object) + "\""
+    # in case the object is a squence
     elif object_type in SEQUENCE_TYPES:
+        # yields the list initial value
         yield "["
+
+        # sets the is first flag
         is_first = True
+
+        # iterates over all the item in the object
         for item in object:
+            # in case the is first flag is set
             if is_first:
+                # unsets the is first flag
                 is_first = False
+            # otherwise
             else:
-                yield ", "
-            for part in dump_parts(item, indentation):
+                # yields the comma value
+                yield ","
+
+            # iterates over all the parts of the item
+            for part in dump_parts(item):
+                # yields the part
                 yield part
+
+        # yields the list final value
         yield "]"
+    # in case the object is a number
     elif object_type in NUMBER_TYPES:
+        # yields the number unicode value
         yield unicode(object)
+    # in case the object is a date time
     elif object_type == datetime.datetime:
+        # converts the object (date time) to a time tuple
         object_time_tuple = object.utctimetuple()
+
+        # converts the object time tuple into a timestamp
         date_time_timestamp = calendar.timegm(object_time_tuple)
+
+        # yields the timestamp unicode value
         yield unicode(date_time_timestamp)
+    # in case the object is an instance
     elif object_type is types.InstanceType or hasattr(object, "__class__"):
+        # yields the dictionary initial value
         yield "{"
+
+        # sets the is first value
         is_first = True
+
+        # retrieves the object items from the object, taking into
+        # account the exclusion map and the value type
         object_items = [value for value in dir(object) if not value.startswith("_") and not value in EXCLUSION_MAP and not type(getattr(object, value)) in EXCLUSION_TYPES]
+
+        # iterates over all the object items
         for object_item in object_items:
+            # retieves the object value from the object
             object_value = getattr(object, object_item)
+
+            # in case the is first value is set
             if is_first:
+                # unsets the is first value
                 is_first = False
-                yield "\"" + object_item + "\"" + ":"
             else:
-                yield ",\"" + object_item + "\"" + ":"
+                # yields the comma value
+                yield ","
+
+            yield "\"" + object_item + "\"" + ":"
+
             for part in dump_parts(object_value):
                 yield part
+
+        # yields the dictionary final value
         yield "}"
+    # in case a different type is set
     else:
+        # raises the json encode exception
         raise json_exceptions.JsonEncodeException(object)
 
 def loads(string):
