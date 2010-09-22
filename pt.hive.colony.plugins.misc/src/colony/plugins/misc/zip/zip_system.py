@@ -78,24 +78,72 @@ class Zip:
         @return: List of directory paths.
         """
 
-        def length_sorter(string1, string2):
-            return [-1, 1][len(string1) > len(string2)]
+        def length_sorter(first_string, second_string):
+            """
+            Sorter function that takes into account the
+            length of the string.
 
+            @type first_string: String
+            @param first_string: The first string to be compared.
+            @type second_string: String
+            @param second_string: The second string to be compared.
+            @rtype: int
+            @return: The result of the comparison.
+            """
+
+            # returns the result of the comparison of string
+            # lengths (bigger or smaller)
+            return [-1, 1][len(first_string) > len(second_string)]
+
+        # creates the zip file from the file path
         zip_file = zipfile.ZipFile(file_path)
+
+        # retrieves the name list from the zip file
         name_list = zip_file.namelist()
+
+        # creates the directories list
         directories_list = []
+
+        # iterates over the names in the
+        # name list
         for name in name_list:
+            # retrieves the
             tokens_list = name.split("/")
+
+            # creates the paths list
             paths_list = []
-            for token in tokens_list[0:-1]:
+
+            # iterates over all the token in the tokens
+            # sublist (all except the last token)
+            for token in tokens_list[:-1]:
+                # sets the previous path
                 previous_path = ""
+
+                # in case the paths list is not empty
                 if len(paths_list) > 0:
+                    # sets the previous paths as the last
+                    # element of the paths list
                     previous_path = paths_list[-1]
+
+                # in case the token is not empty
                 if not token == "":
+                    # adds the complete path (previous path and the token)
+                    # to the paths list
                     paths_list.append(previous_path + "/" + token)
+
+            # extends the directories list with the
+            # paths list
             directories_list.extend(paths_list)
+
+        # creates a dictionary from the keys
+        # and retrieves the keys (directories list)
         directories_list = dict.fromkeys(directories_list).keys()
+
+        # sorts the directories list according to
+        # the length sorter
         directories_list.sort(length_sorter)
+
+        # returns the directories list
         return directories_list
 
     def is_file_path(self, path):
