@@ -108,6 +108,17 @@ class ContinuousIntegrationBuildAutomationExtension:
         # creates the latest version path
         latest_version_path = deployment_path + "/" + LATEST_FILE_NAME
 
+        # retrieves the current version (to check for changes)
+        current_version = self._get_version(latest_version_path)
+
+        # in case the current version is the same (no changes in repository)
+        if version == current_version:
+            # prints an info message
+            logger.info("Skipping continuous integration, no changes in repository")
+
+            # returns immediately
+            return
+
         # writes the version number
         self._write_version_number(latest_version_path, version)
 
