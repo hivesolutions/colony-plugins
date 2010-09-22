@@ -189,7 +189,7 @@ class SearchManager:
         @param search_index: The search index to be persisted.
         @type properties: Dictionary
         @param properties: The properties to create the search index.
-        @rtype: boolean
+        @rtype: bool
         @return: The success of the persistence operation.
         """
 
