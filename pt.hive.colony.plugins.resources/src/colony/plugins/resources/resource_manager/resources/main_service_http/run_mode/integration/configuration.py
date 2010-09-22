@@ -54,12 +54,20 @@ configuration = {
                  },
                  "contexts" : {
                      "resolution_order" : ["/colony_mod_python",
+                                           "/template_error_handler",
                                            "/template_directory_list_handler",
-                                           "/automation"],
+                                           "/integration"],
                      "/colony_mod_python" : {
                          "handler" : "colony",
                          "allow_redirection" : False,
                          "request_properties" : {}
+                     },
+                     "/template_error_handler" : {
+                         "handler" : "file",
+                         "allow_redirection" : False,
+                         "request_properties" : {
+                             "base_path" : "$resource{system.path.colony}/pt.hive.colony.plugins.main.service.http/src/colony/plugins/main_service_http_template_error_handler/template_error_handler/resources"
+                         }
                      },
                      "/template_directory_list_handler" : {
                          "handler" : "file",
@@ -68,12 +76,12 @@ configuration = {
                              "base_path" : "$resource{system.path.colony}/pt.hive.colony.plugins.main.service.http/src/colony/plugins/main_service_http_template_directory_list_handler/template_directory_list_handler/resources"
                          }
                      },
-                     "/automation" : {
+                     "/integration" : {
                          "handler" : "file",
                          "authentication_handler" : "main",
                          "allow_redirection" : False,
                          "request_properties" : {
-                             "base_path" : "/var/colony/automation"
+                             "base_path" : "$resource{system.path.integration}"
                          },
                          "authentication_properties" : {
                              "authentication_handler" : "python",
