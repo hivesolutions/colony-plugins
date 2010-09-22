@@ -329,11 +329,8 @@ class SubversionRevision:
         return str(self._subversion_revision.number)
 
     def get_identifier(self):
-        # retrieves the revision identifier from the subversion revision's string representation
-        revision_identifier = str(self._subversion_revision)
-
-        # returns the retrieved revision identifier
-        return revision_identifier
+        # returns the revision number
+        return self._subversion_revision.number
 
     def get_number(self):
         return self._subversion_revision.number
