@@ -52,12 +52,16 @@ import json_exceptions
 EXCLUSION_MAP = {"__class__" : True, "__delattr__" : True, "__dict__" : True, "__doc__" : True, "__getattribute__" : True, "__hash__" : True,
                  "__init__" : True, "__module__" : True, "__new__" : True, "__reduce__" : True, "__reduce_ex__" : True, "__repr__" : True,
                  "__setattr__" : True, "__str__" : True, "__weakref__" : True, "__format__" : True, "__sizeof__" : True, "__subclasshook__" : True}
+""" The map used to exclude invalid values from an object """
 
 EXCLUSION_TYPES = {types.MethodType : True, types.FunctionType : True}
+""" The map used to exclude invalid types from an object """
 
 NUMBER_TYPES = {types.IntType : True, types.LongType: True, types.FloatType : True}
+""" The map used to check number types """
 
 SEQUENCE_TYPES = {types.TupleType : True, types.ListType : True, types.GeneratorType : True}
+""" The map used to check sequence types """
 
 char_replacements = {
         "\t" : "\\t",
@@ -111,68 +115,148 @@ def dumps(object):
     return "".join([part for part in dump_parts(object)])
 
 def dump_parts_buffer(object, string_buffer):
+    # retrieves the object type
     object_type = type(object)
+
+    # in case the object is none
     if object == None:
+        # writes the null value
         string_buffer.write("null")
+    # in case the object is a function
     elif object_type is types.FunctionType:
+        # writes the function value
         string_buffer.write("\"function\"")
+    # in case the object is module
     elif object_type is types.ModuleType:
+        # writes the module value
         string_buffer.write("\"module\"")
+    # in case the object is a method
     elif object_type is types.MethodType:
+        # writes the method value
         string_buffer.write("\"method\"")
+    # in case the object is a boolean
     elif object_type is types.BooleanType:
+        # in case the object is valid (true)
         if object:
+            # writes the true value
             string_buffer.write("true")
+        # otherwise
         else:
+            # writes the false value
             string_buffer.write("false")
+    # in case the object is a dictionary
     elif object_type is types.DictionaryType:
+        # writes the dictionary initial value
         string_buffer.write("{")
+
+        # sets the is first flag
         is_first = True
+
+        # iterates over the object items, retrieving the
+        # key and the value
         for key, value in object.items():
+            # in case the is first flag is set
             if is_first:
+                # unsets the is first flag
                 is_first = False
             else:
+                # writes the comma separator
                 string_buffer.write(",")
+
+            # dumps the key parts
             dump_parts_buffer(key, string_buffer)
+
+            # writes the separator
             string_buffer.write(":")
+
+            # dumps the value parts
             dump_parts_buffer(value, string_buffer)
+
+        # writes the dictionary final value
         string_buffer.write("}")
+    # in case the object is a string
     elif object_type in types.StringTypes:
+        # writes the escaped string value
         string_buffer.write("\"" + string_escape_re.sub(escape_char, object) + "\"")
+    # in case the object is a sequence
     elif object_type in SEQUENCE_TYPES:
+        # writes the list initial value
         string_buffer.write("[")
+
+        # sets the is first flag
         is_first = True
+
+        # iterates over all the items in the object
         for item in object:
+            # in case the is first flag is set
             if is_first:
+                # unsets the is first flag
                 is_first = False
             else:
+                # writes the comma separator
                 string_buffer.write(",")
+
+            # dumps the item parts
             dump_parts_buffer(item, string_buffer)
+
+        # writes the list final value
         string_buffer.write("]")
+    # in case the object is a number
     elif object_type in NUMBER_TYPES:
+        # writes the number string value
         string_buffer.write(str(object))
+    # in case the object is a date time
     elif object_type == datetime.datetime:
-        obj_time_tuple = object.utctimetuple()
-        date_time_timestamp = calendar.timegm(obj_time_tuple)
+        # converts the object (date time) to a time tuple
+        object_time_tuple = object.utctimetuple()
+
+        # converts the object time tuple into a timestamp
+        date_time_timestamp = calendar.timegm(object_time_tuple)
+
+        # writes the timestamp string value
         string_buffer.write(str(date_time_timestamp))
+    # in case the object is an instance
     elif object_type is types.InstanceType or hasattr(object, "__class__"):
+        # writes the dictionary initial value
         string_buffer.write("{")
+
+        # sets the is first flag
         is_first = True
-        obj_items = [value for value in dir(object) if not value.startswith("_") and not value in EXCLUSION_MAP and not type(getattr(object, value)) in EXCLUSION_TYPES]
-        for obj_item in obj_items:
-            obj_value = getattr(object, obj_item)
+
+        # retrieves the object items from the object, taking into
+        # account the exclusion map and the value type
+        object_items = [value for value in dir(object) if not value.startswith("_") and not value in EXCLUSION_MAP and not type(getattr(object, value)) in EXCLUSION_TYPES]
+
+        # iterates over all the object items
+        for object_item in object_items:
+            # retrieves the object value from the object
+            object_value = getattr(object, object_item)
+
+            # in case the is first flag is set
             if is_first:
+                # unsets the is first flag
                 is_first = False
-                string_buffer.write("\"" + obj_item + "\"" + ":")
+            # otherwise
             else:
-                string_buffer.write(",\"" + obj_item + "\"" + ":")
-            dump_parts_buffer(obj_value, string_buffer)
+                # writes the comma separator
+                string_buffer.write(",")
+
+            # writes the object item
+            string_buffer.write("\"" + object_item + "\"" + ":")
+
+            # dumps the object value parts
+            dump_parts_buffer(object_value, string_buffer)
+
+        # writes the dictionary final value
         string_buffer.write("}")
+    # in case a different type is set
     else:
+        # raises a json encode exception
         raise json_exceptions.JsonEncodeException(object)
 
-def dump_parts(object):
+def dump_parts(object, indentation = 0):
     object_type = type(object)
+
     if object == None:
         yield "null"
     elif object_type is types.FunctionType:
@@ -192,13 +276,21 @@ def dump_parts(object):
         for key, value in object.items():
             if is_first:
                 is_first = False
-                for part in dump_parts(key):
-                    yield part + ":"
             else:
-                for part in dump_parts(key):
-                    yield "," + part + ":"
-            for part in dump_parts(value):
+                yield ","
+
+            yield "\n"
+            for _index in range(indentation + 1):
+                yield "    "
+
+            for part in dump_parts(key):
+                yield part + " : "
+
+            for part in dump_parts(value, indentation + 1):
                 yield part
+        yield "\n"
+        for _index in range(indentation):
+            yield "    "
         yield "}"
     elif object_type in types.StringTypes:
         yield "\"" + string_escape_re.sub(escape_char, object) + "\""
@@ -209,28 +301,28 @@ def dump_parts(object):
             if is_first:
                 is_first = False
             else:
-                yield ","
-            for part in dump_parts(item):
+                yield ", "
+            for part in dump_parts(item, indentation):
                 yield part
         yield "]"
     elif object_type in NUMBER_TYPES:
         yield unicode(object)
     elif object_type == datetime.datetime:
-        obj_time_tuple = object.utctimetuple()
-        date_time_timestamp = calendar.timegm(obj_time_tuple)
+        object_time_tuple = object.utctimetuple()
+        date_time_timestamp = calendar.timegm(object_time_tuple)
         yield unicode(date_time_timestamp)
     elif object_type is types.InstanceType or hasattr(object, "__class__"):
         yield "{"
         is_first = True
-        obj_items = [value for value in dir(object) if not value.startswith("_") and not value in EXCLUSION_MAP and not type(getattr(object, value)) in EXCLUSION_TYPES]
-        for obj_item in obj_items:
-            obj_value = getattr(object, obj_item)
+        object_items = [value for value in dir(object) if not value.startswith("_") and not value in EXCLUSION_MAP and not type(getattr(object, value)) in EXCLUSION_TYPES]
+        for object_item in object_items:
+            object_value = getattr(object, object_item)
             if is_first:
                 is_first = False
-                yield "\"" + obj_item + "\"" + ":"
+                yield "\"" + object_item + "\"" + ":"
             else:
-                yield ",\"" + obj_item + "\"" + ":"
-            for part in dump_parts(obj_value):
+                yield ",\"" + object_item + "\"" + ":"
+            for part in dump_parts(object_value):
                 yield part
         yield "}"
     else:
