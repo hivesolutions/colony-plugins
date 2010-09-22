@@ -89,6 +89,9 @@ COLONY_ARTIFACT_VALUE = "colony"
 DEFAULT_STAGE_VALUE = "default_stage"
 """ The default stage value """
 
+DEFAULT_LOG_LEVEL = logging.INFO
+""" The default log level """
+
 BUILD_AUTOMATION_STAGES = ["compile", "test", "build", "install", "deploy", "clean", "site", "site-deploy"]
 """ The build automation stages """
 
@@ -128,7 +131,13 @@ class BuildAutomation:
     """ The contents pattern used for regular expression match """
 
     base_build_automation_structure = None
-    """ the base build automation structure """
+    """ The base build automation structure """
+
+    logger = None
+    """ The logger used in the build automation process """
+
+    logger_handlers = []
+    """ The logger handlers used in the build automation process """
 
     def __init__(self, build_automation_plugin):
         """
@@ -143,6 +152,7 @@ class BuildAutomation:
         self.loaded_build_automation_item_plugins_list = []
         self.build_automation_item_plugin_id_map = {}
         self.id_build_automation_item_plugin_map = {}
+        self.logger_handlers = []
 
         # compiles the variable regular expression generating the pattern
         self.variable_pattern = re.compile(VARIABLE_REGEX)
@@ -158,6 +168,14 @@ class BuildAutomation:
 
         # compiles the contents regular expression generating the pattern
         self.contents_pattern = re.compile(CONTENTS_REGEX)
+
+    def load_build_automation(self):
+        # starts the logger
+        self._start_logger()
+
+    def unload_build_automation(self):
+        # stops the logger
+        self._stop_logger()
 
     def load_build_automation_item_plugin(self, build_automation_item_plugin):
         # adds the build automation item plugin to the list of build automation item plugins
@@ -323,8 +341,8 @@ class BuildAutomation:
 
         # in case no logger is defined
         if not logger:
-            # creates a new logger
-            logger = self._start_logger()
+            # sets the current logger as the logger
+            logger = self.logger
 
         # retrieves the build automation structure
         build_automation_structure = self.get_build_automation_structure(plugin_id, plugin_version)
@@ -1084,22 +1102,22 @@ class BuildAutomation:
         # returns the contents
         return contents
 
-    def _start_logger(self):
+    def _start_logger(self, log_level = DEFAULT_LOG_LEVEL):
         """
         Starts the logger initializing its internal structure.
 
-        @rtype: Logger
-        @return: The created logger.
+        @type log_level: int
+        @param log_level: The level to be used by the logger.
         """
 
         # retrieves the logger
-        logger = logging.getLogger(DEFAULT_LOGGER)
+        self.logger = logging.getLogger(DEFAULT_LOGGER)
 
         # sets the logger propagation to avoid propagation
-        logger.propagate = 0
+        self.logger.propagate = 0
 
         # sets the logger level to the initial log level
-        logger.setLevel(logging.INFO)
+        self.logger.setLevel(log_level)
 
         # creates the stream handler
         stream_handler = logging.StreamHandler()
@@ -1111,10 +1129,23 @@ class BuildAutomation:
         stream_handler.setFormatter(formatter)
 
         # adds the stream handler to the logger
-        logger.addHandler(stream_handler)
+        self.logger.addHandler(stream_handler)
 
-        # returns the logger
-        return logger
+        # adds the stream handler to the logger handlers
+        self.logger_handlers.append(stream_handler)
+
+    def _stop_logger(self):
+        """
+        Stops the logger returning it to the initial state.
+        """
+
+        # retrieves the logger
+        self.logger = logging.getLogger(DEFAULT_LOGGER)
+
+        # iterates over all the logger handlers
+        for logger_handler in self.logger_handlers:
+            # removes the logger handler from the logger
+            self.logger.removeHandler(logger_handler)
 
     def _set_configuration_composite_value(self, base_map, configuration_name, configuration_item, build_automation_structure):
         # creates a new map
