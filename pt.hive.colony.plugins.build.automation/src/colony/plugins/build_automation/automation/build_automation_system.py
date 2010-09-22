@@ -44,6 +44,7 @@ import types
 import logging
 import datetime
 
+import colony.libs.map_util
 import colony.libs.path_util
 
 import build_automation_exceptions
@@ -1233,7 +1234,7 @@ class BuildAutomationStructure:
             build_properties_parent = self.parent.get_all_build_properties()
 
             # copies the contains of the build properties from the parent to the build properties
-            copy_map(build_properties_parent, build_properties)
+            colony.libs.map_util.map_copy(build_properties_parent, build_properties)
 
         # returns the build properties
         return build_properties
@@ -1312,7 +1313,7 @@ class BuildAutomationStructure:
             automation_plugins_configurations_parent = self.parent.get_all_automation_plugin_configurations(automation_plugin_tuple)
 
             # copies the contains of the automation plugins configurations from the parent to the automation plugins configurations
-            copy_map(automation_plugins_configurations_parent, automation_plugins_configurations)
+            colony.libs.map_util.map_copy(automation_plugins_configurations_parent, automation_plugins_configurations)
 
         # returns the automation plugins configurations
         return automation_plugins_configurations
@@ -1359,23 +1360,3 @@ class ColonyBuildAutomationStructure(BuildAutomationStructure):
 
         # returns the associated plugin path
         return associated_plugin_path
-
-def copy_map(source_map, destiny_map):
-    """
-    Copies the contains of the source map to the destiny map.
-
-    @type source_map: Dictionary
-    @param source_map: The source map of the copy.
-    @type destiny_map: Dictionary
-    @param destiny_map: The destiny map of the copy.
-    """
-
-    # iterates over all the source map keys
-    for source_map_key in source_map:
-        # retrieves the source map value
-        source_map_value = source_map[source_map_key]
-
-        # in case the key is not present in the destiny map
-        if not source_map_key in destiny_map or destiny_map[source_map_key] == None or destiny_map[source_map_key] == "none":
-            # adds the value to the destiny map
-            destiny_map[source_map_key] = source_map_value
