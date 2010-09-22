@@ -63,15 +63,18 @@ NUMBER_TYPES = {types.IntType : True, types.LongType: True, types.FloatType : Tr
 SEQUENCE_TYPES = {types.TupleType : True, types.ListType : True, types.GeneratorType : True}
 """ The map used to check sequence types """
 
-char_replacements = {
-        "\t" : "\\t",
-        "\b" : "\\b",
-        "\f" : "\\f",
-        "\n" : "\\n",
-        "\r" : "\\r",
-        "\\" : "\\\\",
-        "/" : "\\/",
-        "\"" : "\\\""}
+INDENTATION_VALUE = "    "
+""" The indentation value """
+
+character_replacements = {
+                    "\t" : "\\t",
+                    "\b" : "\\b",
+                    "\f" : "\\f",
+                    "\n" : "\\n",
+                    "\r" : "\\r",
+                    "\\" : "\\\\",
+                    "/" : "\\/",
+                    "\"" : "\\\""}
 
 escape_char_to_char = {
         "t": "\t",
@@ -86,16 +89,38 @@ escape_char_to_char = {
 string_escape_re = re.compile(r"[\x00-\x19\\\"/\b\f\n\r\t]")
 digits_list = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"]
 
-def escape_char(match):
+def escape_character(match):
+    """
+    Escapes the character based in the given
+    match object.
+
+    @type match: MatchObject
+    @param match: The math object to retrieve the character.
+    @rtype: String
+    @return: The escaped character.
+    """
+
+    # retrieves the first group from the match
     character = match.group(0)
+
     try:
-        replacement = char_replacements[character]
+        # retrieves the replacement from the char replacement
+        replacement = character_replacements[character]
+
+        # returns the replacement character
         return replacement
     except KeyError:
-        d = ord(character)
-        if d < 32:
-            return "\\u%04x" % d
+        # retrieves the ordinal (number)
+        # of the character
+        digit = ord(character)
+
+        # in case the digit is less than thirty
+        # two (special characters)
+        if digit < 32:
+            return "\\u%04x" % digit
+        # otherwise
         else:
+            # returns the character
             return character
 
 def dumps_buffer(object):
@@ -134,7 +159,31 @@ def dumps(object):
 
     return "".join([part for part in dump_parts(object)])
 
+def dumps_pretty(object):
+    """
+    Dumps (converts to json) the given object using the "normal"
+    approach.
+    This dumps method prints the json in "pretty" mode
+
+    @type object: Object
+    @param object: The object to be dumped.
+    @rtype: String
+    @return: The dumped json string (pretty).
+    """
+
+    return "".join([part for part in dump_parts_pretty(object)])
+
 def dump_parts_buffer(object, string_buffer):
+    """
+    Dumps (converts to json) the given object parts using the "buffered"
+    approach.
+
+    @type object: Object
+    @param object: The object to have the parts dumped.
+    @rtype: String
+    @return: The dumped json string.
+    """
+
     # retrieves the object type
     object_type = type(object)
 
@@ -197,7 +246,7 @@ def dump_parts_buffer(object, string_buffer):
     # in case the object is a string
     elif object_type in types.StringTypes:
         # writes the escaped string value
-        string_buffer.write("\"" + string_escape_re.sub(escape_char, object) + "\"")
+        string_buffer.write("\"" + string_escape_re.sub(escape_character, object) + "\"")
     # in case the object is a sequence
     elif object_type in SEQUENCE_TYPES:
         # writes the list initial value
@@ -275,6 +324,16 @@ def dump_parts_buffer(object, string_buffer):
         raise json_exceptions.JsonEncodeException(object)
 
 def dump_parts(object):
+    """
+    Dumps (converts to json) the given object parts using the "normal"
+    approach.
+
+    @type object: Object
+    @param object: The object to have the parts dumped.
+    @rtype: String
+    @return: The dumped json string.
+    """
+
     # retrieves the object type
     object_type = type(object)
 
@@ -340,8 +399,8 @@ def dump_parts(object):
     # in case the object is a string
     elif object_type in types.StringTypes:
         # yields the string value
-        yield "\"" + string_escape_re.sub(escape_char, object) + "\""
-    # in case the object is a squence
+        yield "\"" + string_escape_re.sub(escape_character, object) + "\""
+    # in case the object is a sequence
     elif object_type in SEQUENCE_TYPES:
         # yields the list initial value
         yield "["
@@ -395,7 +454,7 @@ def dump_parts(object):
 
         # iterates over all the object items
         for object_item in object_items:
-            # retieves the object value from the object
+            # retrieves the object value from the object
             object_value = getattr(object, object_item)
 
             # in case the is first value is set
@@ -406,10 +465,204 @@ def dump_parts(object):
                 # yields the comma value
                 yield ","
 
+            # yields the object item
             yield "\"" + object_item + "\"" + ":"
 
+            # iterates over the object value parts
             for part in dump_parts(object_value):
+                # yields the part
                 yield part
+
+        # yields the dictionary final value
+        yield "}"
+    # in case a different type is set
+    else:
+        # raises the json encode exception
+        raise json_exceptions.JsonEncodeException(object)
+
+def dump_parts_pretty(object, indentation = 0):
+    """
+    Dumps (converts to json) the given object parts using the "normal"
+    approach.
+
+    @type object: Object
+    @param object: The object to have the parts dumped.
+    @type indentation: int
+    @param indentation: The current indentation value.
+    @rtype: String
+    @return: The dumped json string.
+    """
+
+    # retrieves the object type
+    object_type = type(object)
+
+    # in case the object is none
+    if object == None:
+        # yields the null value
+        yield "null"
+    # in case the object is a function
+    elif object_type is types.FunctionType:
+        # yields the function value
+        yield "\"function\""
+    # in case the object is a module
+    elif object_type is types.ModuleType:
+        # yields the module value
+        yield "\"module\""
+    # in case the object is a method
+    elif object_type is types.MethodType:
+        # yields the method value
+        yield "\"method\""
+    # in case the object is a boolean
+    elif object_type is types.BooleanType:
+        # in case the object is valid (true)
+        if object:
+            # yields the true value
+            yield "true"
+        # otherwise
+        else:
+            # yields the false value
+            yield "false"
+    # in case the object is a dictionary
+    elif object_type is types.DictionaryType:
+        # yields the dictionary initial value
+        yield "{"
+
+        # sets the is first flag
+        is_first = True
+
+        # iterates over all the object items
+        for key, value in object.items():
+            # in case the is first flag is set
+            if is_first:
+                # unsets the is first flag
+                is_first = False
+            else:
+                # yields the comma separator
+                yield ","
+
+            # yields the newline value
+            yield "\n"
+
+            # iterates over the indentation range (plus one)
+            for _index in range(indentation + 1):
+                # yields the indentation value
+                yield INDENTATION_VALUE
+
+            # iterates over all the parts of the key
+            for part in dump_parts_pretty(key, indentation):
+                # yields the part
+                yield part
+
+            # yields the separator
+            yield " : "
+
+            # iterates over all the parts of the value
+            for part in dump_parts_pretty(value, indentation + 1):
+                # yields the part
+                yield part
+
+        # yields the newline value
+        yield "\n"
+
+        # iterates over the indentation range
+        for _index in range(indentation):
+            # yields the indentation value
+            yield INDENTATION_VALUE
+
+        # yields the dictionary final value
+        yield "}"
+    # in case the object is a string
+    elif object_type in types.StringTypes:
+        # yields the string value
+        yield "\"" + string_escape_re.sub(escape_character, object) + "\""
+    # in case the object is a sequence
+    elif object_type in SEQUENCE_TYPES:
+        # yields the list initial value
+        yield "["
+
+        # sets the is first flag
+        is_first = True
+
+        # iterates over all the item in the object
+        for item in object:
+            # in case the is first flag is set
+            if is_first:
+                # unsets the is first flag
+                is_first = False
+            # otherwise
+            else:
+                # yields the comma value
+                yield ", "
+
+            # iterates over all the parts of the item
+            for part in dump_parts_pretty(item, indentation):
+                # yields the part
+                yield part
+
+        # yields the list final value
+        yield "]"
+    # in case the object is a number
+    elif object_type in NUMBER_TYPES:
+        # yields the number unicode value
+        yield unicode(object)
+    # in case the object is a date time
+    elif object_type == datetime.datetime:
+        # converts the object (date time) to a time tuple
+        object_time_tuple = object.utctimetuple()
+
+        # converts the object time tuple into a timestamp
+        date_time_timestamp = calendar.timegm(object_time_tuple)
+
+        # yields the timestamp unicode value
+        yield unicode(date_time_timestamp)
+    # in case the object is an instance
+    elif object_type is types.InstanceType or hasattr(object, "__class__"):
+        # yields the dictionary initial value
+        yield "{"
+
+        # sets the is first value
+        is_first = True
+
+        # retrieves the object items from the object, taking into
+        # account the exclusion map and the value type
+        object_items = [value for value in dir(object) if not value.startswith("_") and not value in EXCLUSION_MAP and not type(getattr(object, value)) in EXCLUSION_TYPES]
+
+        # iterates over all the object items
+        for object_item in object_items:
+            # retrieves the object value from the object
+            object_value = getattr(object, object_item)
+
+            # in case the is first value is set
+            if is_first:
+                # unsets the is first value
+                is_first = False
+            else:
+                # yields the comma value
+                yield ","
+
+            # yields the newline value
+            yield "\n"
+
+            # iterates over the indentation range (plus one)
+            for _index in range(indentation + 1):
+                # yields the indentation value
+                yield INDENTATION_VALUE
+
+            # yields the object item
+            yield "\"" + object_item + "\"" + " : "
+
+            # iterates over the object value parts
+            for part in dump_parts_pretty(object_value, indentation + 1):
+                # yields the part
+                yield part
+
+        # yields the newline value
+        yield "\n"
+
+        # iterates over the indentation range
+        for _index in range(indentation):
+            # yields the indentation value
+            yield INDENTATION_VALUE
 
         # yields the dictionary final value
         yield "}"
