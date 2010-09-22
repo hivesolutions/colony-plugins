@@ -57,7 +57,8 @@ class MainJsonrpcManagerPlugin(colony.base.plugin_system.Plugin):
     attributes = {"build_automation_file_path" : "$base{plugin_directory}/main_remote_jsonrpc/manager/resources/baf.xml"}
     capabilities = ["jsonrpc_manager", "http_python_handler", "rpc_handler", "build_automation_item"]
     capabilities_allowed = ["rpc_service"]
-    dependencies = []
+    dependencies = [colony.base.plugin_system.PluginDependency(
+                    "pt.hive.colony.plugins.misc.json", "1.0.0")]
     events_handled = []
     events_registrable = []
     main_modules = ["main_remote_jsonrpc.manager.main_jsonrpc_manager_exceptions", "main_remote_jsonrpc.manager.main_jsonrpc_manager_serializer",
@@ -66,6 +67,8 @@ class MainJsonrpcManagerPlugin(colony.base.plugin_system.Plugin):
     main_jsonrpc_manager = None
 
     rpc_service_plugins = []
+
+    json_plugin = None
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
@@ -90,6 +93,7 @@ class MainJsonrpcManagerPlugin(colony.base.plugin_system.Plugin):
     def unload_allowed(self, plugin, capability):
         colony.base.plugin_system.Plugin.unload_allowed(self, plugin, capability)
 
+    @colony.base.decorators.inject_dependencies("pt.hive.colony.plugins.main.remote.jsonrpc.manager", "1.0.0")
     def dependency_injected(self, plugin):
         colony.base.plugin_system.Plugin.dependency_injected(self, plugin)
 
@@ -151,3 +155,10 @@ class MainJsonrpcManagerPlugin(colony.base.plugin_system.Plugin):
     def rpc_servicer_capability_unload_allowed(self, plugin, capability):
         self.rpc_service_plugins.remove(plugin)
         self.main_jsonrpc_manager.update_service_methods()
+
+    def get_json_plugin(self):
+        return self.json_plugin
+
+    @colony.base.decorators.plugin_inject("pt.hive.colony.plugins.misc.json")
+    def set_json_plugin(self, json_plugin):
+        self.json_plugin = json_plugin

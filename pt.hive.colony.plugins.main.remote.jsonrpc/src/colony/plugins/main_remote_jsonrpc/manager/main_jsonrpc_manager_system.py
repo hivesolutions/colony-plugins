@@ -42,7 +42,6 @@ import traceback
 
 import colony.libs.string_buffer_util
 
-import main_jsonrpc_manager_serializer
 import main_jsonrpc_manager_exceptions
 
 HANDLER_FILENAME = "jsonrpc.py"
@@ -362,9 +361,14 @@ class MainJsonrpcManager:
         @return: The translated python request.
         """
 
+        # retrieves the json plugin
+        json_plugin = self.main_jsonrpc_manager_plugin.json_plugin
+
         try:
-            request = main_jsonrpc_manager_serializer.loads(data)
+            # loads the date retrieving the request
+            request = json_plugin.loads(data)
         except:
+            # raises the service request not translatable
             raise main_jsonrpc_manager_exceptions.ServiceRequestNotTranslatable(data)
 
         # returns the translated request
@@ -384,17 +388,20 @@ class MainJsonrpcManager:
         @return: The translated json data.
         """
 
+        # retrieves the json plugin
+        json_plugin = self.main_jsonrpc_manager_plugin.json_plugin
+
         # in case there is an error
         if not error == None:
             error = {"code" : INTERNAL_ERROR_CODE_VALUE, "message" : str(error), "data" : {"traceback" : error.traceback, "name" : error.__class__.__name__}}
-            data = main_jsonrpc_manager_serializer.dumps({"result" : None, "id" : id_, "error" : error})
+            data = json_plugin.dumps({"result" : None, "id" : id_, "error" : error})
             return data
 
         try:
-            data = main_jsonrpc_manager_serializer.dumps({"result" : result, "id" : id_, "error" : error})
-        except main_jsonrpc_manager_exceptions.JsonEncodeException:
+            data = json_plugin.dumps({"result" : result, "id" : id_, "error" : error})
+        except Exception:
             error = {"code" : INTERNAL_ERROR_CODE_VALUE, "message" : "Result Object Not Serializable", "data" : {"name" : "JsonEncodeException"}}
-            data = main_jsonrpc_manager_serializer.dumps({"result" : None, "id" : id_, "error" : error})
+            data = json_plugin.dumps({"result" : None, "id" : id_, "error" : error})
 
         # returns the json data
         return data
