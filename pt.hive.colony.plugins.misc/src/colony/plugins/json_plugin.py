@@ -92,6 +92,9 @@ class JsonPlugin(colony.base.plugin_system.Plugin):
     def dumps_pretty(self, object):
         return self.json_system.dumps_pretty(object)
 
+    def dumps_buffer(self, object):
+        return self.json_system.dumps_buffer(object)
+
     def loads(self, json_string):
         return self.json_system.loads(json_string)
 

@@ -123,29 +123,6 @@ def escape_character(match):
             # returns the character
             return character
 
-def dumps_buffer(object):
-    """
-    Dumps (converts to json) the given object using the "buffered"
-    approach.
-
-    @type object: Object
-    @param object: The object to be dumped.
-    @rtype: String
-    @return: The dumped json string.
-    """
-
-    # creates the string buffer
-    string_buffer = colony.libs.string_buffer_util.StringBuffer()
-
-    # dumps the object parts to the string buffer
-    dump_parts_buffer(object, string_buffer)
-
-    # retrieves the string value
-    string_value = string_buffer.get_value()
-
-    # returns the string value
-    return string_value
-
 def dumps(object):
     """
     Dumps (converts to json) the given object using the "normal"
@@ -173,155 +150,28 @@ def dumps_pretty(object):
 
     return "".join([part for part in dump_parts_pretty(object)])
 
-def dump_parts_buffer(object, string_buffer):
+def dumps_buffer(object):
     """
-    Dumps (converts to json) the given object parts using the "buffered"
+    Dumps (converts to json) the given object using the "buffered"
     approach.
 
     @type object: Object
-    @param object: The object to have the parts dumped.
+    @param object: The object to be dumped.
     @rtype: String
     @return: The dumped json string.
     """
 
-    # retrieves the object type
-    object_type = type(object)
+    # creates the string buffer
+    string_buffer = colony.libs.string_buffer_util.StringBuffer()
 
-    # in case the object is none
-    if object == None:
-        # writes the null value
-        string_buffer.write("null")
-    # in case the object is a function
-    elif object_type is types.FunctionType:
-        # writes the function value
-        string_buffer.write("\"function\"")
-    # in case the object is a module
-    elif object_type is types.ModuleType:
-        # writes the module value
-        string_buffer.write("\"module\"")
-    # in case the object is a method
-    elif object_type is types.MethodType:
-        # writes the method value
-        string_buffer.write("\"method\"")
-    # in case the object is a boolean
-    elif object_type is types.BooleanType:
-        # in case the object is valid (true)
-        if object:
-            # writes the true value
-            string_buffer.write("true")
-        # otherwise
-        else:
-            # writes the false value
-            string_buffer.write("false")
-    # in case the object is a dictionary
-    elif object_type is types.DictionaryType:
-        # writes the dictionary initial value
-        string_buffer.write("{")
+    # dumps the object parts to the string buffer
+    dump_parts_buffer(object, string_buffer)
 
-        # sets the is first flag
-        is_first = True
+    # retrieves the string value
+    string_value = string_buffer.get_value()
 
-        # iterates over the object items, retrieving the
-        # key and the value
-        for key, value in object.items():
-            # in case the is first flag is set
-            if is_first:
-                # unsets the is first flag
-                is_first = False
-            else:
-                # writes the comma separator
-                string_buffer.write(",")
-
-            # dumps the key parts
-            dump_parts_buffer(key, string_buffer)
-
-            # writes the separator
-            string_buffer.write(":")
-
-            # dumps the value parts
-            dump_parts_buffer(value, string_buffer)
-
-        # writes the dictionary final value
-        string_buffer.write("}")
-    # in case the object is a string
-    elif object_type in types.StringTypes:
-        # writes the escaped string value
-        string_buffer.write("\"" + string_escape_re.sub(escape_character, object) + "\"")
-    # in case the object is a sequence
-    elif object_type in SEQUENCE_TYPES:
-        # writes the list initial value
-        string_buffer.write("[")
-
-        # sets the is first flag
-        is_first = True
-
-        # iterates over all the items in the object
-        for item in object:
-            # in case the is first flag is set
-            if is_first:
-                # unsets the is first flag
-                is_first = False
-            else:
-                # writes the comma separator
-                string_buffer.write(",")
-
-            # dumps the item parts
-            dump_parts_buffer(item, string_buffer)
-
-        # writes the list final value
-        string_buffer.write("]")
-    # in case the object is a number
-    elif object_type in NUMBER_TYPES:
-        # writes the number string value
-        string_buffer.write(str(object))
-    # in case the object is a date time
-    elif object_type == datetime.datetime:
-        # converts the object (date time) to a time tuple
-        object_time_tuple = object.utctimetuple()
-
-        # converts the object time tuple into a timestamp
-        date_time_timestamp = calendar.timegm(object_time_tuple)
-
-        # writes the timestamp string value
-        string_buffer.write(str(date_time_timestamp))
-    # in case the object is an instance
-    elif object_type is types.InstanceType or hasattr(object, "__class__"):
-        # writes the dictionary initial value
-        string_buffer.write("{")
-
-        # sets the is first flag
-        is_first = True
-
-        # retrieves the object items from the object, taking into
-        # account the exclusion map and the value type
-        object_items = [value for value in dir(object) if not value.startswith("_") and not value in EXCLUSION_MAP and not type(getattr(object, value)) in EXCLUSION_TYPES]
-
-        # iterates over all the object items
-        for object_item in object_items:
-            # retrieves the object value from the object
-            object_value = getattr(object, object_item)
-
-            # in case the is first flag is set
-            if is_first:
-                # unsets the is first flag
-                is_first = False
-            # otherwise
-            else:
-                # writes the comma separator
-                string_buffer.write(",")
-
-            # writes the object item
-            string_buffer.write("\"" + object_item + "\"" + ":")
-
-            # dumps the object value parts
-            dump_parts_buffer(object_value, string_buffer)
-
-        # writes the dictionary final value
-        string_buffer.write("}")
-    # in case a different type is set
-    else:
-        # raises a json encode exception
-        raise json_exceptions.JsonEncodeException(object)
+    # returns the string value
+    return string_value
 
 def dump_parts(object):
     """
@@ -669,6 +519,156 @@ def dump_parts_pretty(object, indentation = 0):
     # in case a different type is set
     else:
         # raises the json encode exception
+        raise json_exceptions.JsonEncodeException(object)
+
+def dump_parts_buffer(object, string_buffer):
+    """
+    Dumps (converts to json) the given object parts using the "buffered"
+    approach.
+
+    @type object: Object
+    @param object: The object to have the parts dumped.
+    @rtype: String
+    @return: The dumped json string.
+    """
+
+    # retrieves the object type
+    object_type = type(object)
+
+    # in case the object is none
+    if object == None:
+        # writes the null value
+        string_buffer.write("null")
+    # in case the object is a function
+    elif object_type is types.FunctionType:
+        # writes the function value
+        string_buffer.write("\"function\"")
+    # in case the object is a module
+    elif object_type is types.ModuleType:
+        # writes the module value
+        string_buffer.write("\"module\"")
+    # in case the object is a method
+    elif object_type is types.MethodType:
+        # writes the method value
+        string_buffer.write("\"method\"")
+    # in case the object is a boolean
+    elif object_type is types.BooleanType:
+        # in case the object is valid (true)
+        if object:
+            # writes the true value
+            string_buffer.write("true")
+        # otherwise
+        else:
+            # writes the false value
+            string_buffer.write("false")
+    # in case the object is a dictionary
+    elif object_type is types.DictionaryType:
+        # writes the dictionary initial value
+        string_buffer.write("{")
+
+        # sets the is first flag
+        is_first = True
+
+        # iterates over the object items, retrieving the
+        # key and the value
+        for key, value in object.items():
+            # in case the is first flag is set
+            if is_first:
+                # unsets the is first flag
+                is_first = False
+            else:
+                # writes the comma separator
+                string_buffer.write(",")
+
+            # dumps the key parts
+            dump_parts_buffer(key, string_buffer)
+
+            # writes the separator
+            string_buffer.write(":")
+
+            # dumps the value parts
+            dump_parts_buffer(value, string_buffer)
+
+        # writes the dictionary final value
+        string_buffer.write("}")
+    # in case the object is a string
+    elif object_type in types.StringTypes:
+        # writes the escaped string value
+        string_buffer.write("\"" + string_escape_re.sub(escape_character, object) + "\"")
+    # in case the object is a sequence
+    elif object_type in SEQUENCE_TYPES:
+        # writes the list initial value
+        string_buffer.write("[")
+
+        # sets the is first flag
+        is_first = True
+
+        # iterates over all the items in the object
+        for item in object:
+            # in case the is first flag is set
+            if is_first:
+                # unsets the is first flag
+                is_first = False
+            else:
+                # writes the comma separator
+                string_buffer.write(",")
+
+            # dumps the item parts
+            dump_parts_buffer(item, string_buffer)
+
+        # writes the list final value
+        string_buffer.write("]")
+    # in case the object is a number
+    elif object_type in NUMBER_TYPES:
+        # writes the number string value
+        string_buffer.write(str(object))
+    # in case the object is a date time
+    elif object_type == datetime.datetime:
+        # converts the object (date time) to a time tuple
+        object_time_tuple = object.utctimetuple()
+
+        # converts the object time tuple into a timestamp
+        date_time_timestamp = calendar.timegm(object_time_tuple)
+
+        # writes the timestamp string value
+        string_buffer.write(str(date_time_timestamp))
+    # in case the object is an instance
+    elif object_type is types.InstanceType or hasattr(object, "__class__"):
+        # writes the dictionary initial value
+        string_buffer.write("{")
+
+        # sets the is first flag
+        is_first = True
+
+        # retrieves the object items from the object, taking into
+        # account the exclusion map and the value type
+        object_items = [value for value in dir(object) if not value.startswith("_") and not value in EXCLUSION_MAP and not type(getattr(object, value)) in EXCLUSION_TYPES]
+
+        # iterates over all the object items
+        for object_item in object_items:
+            # retrieves the object value from the object
+            object_value = getattr(object, object_item)
+
+            # in case the is first flag is set
+            if is_first:
+                # unsets the is first flag
+                is_first = False
+            # otherwise
+            else:
+                # writes the comma separator
+                string_buffer.write(",")
+
+            # writes the object item
+            string_buffer.write("\"" + object_item + "\"" + ":")
+
+            # dumps the object value parts
+            dump_parts_buffer(object_value, string_buffer)
+
+        # writes the dictionary final value
+        string_buffer.write("}")
+    # in case a different type is set
+    else:
+        # raises a json encode exception
         raise json_exceptions.JsonEncodeException(object)
 
 def loads(string):
