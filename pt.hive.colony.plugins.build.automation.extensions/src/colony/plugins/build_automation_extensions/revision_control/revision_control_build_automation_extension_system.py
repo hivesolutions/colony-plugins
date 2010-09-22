@@ -244,8 +244,8 @@ class RevisionControlBuildAutomationExtension:
             # adds the changelog element to the changelog elements list
             changelog_elements_list.append(changelog_element)
 
-        # dumps the changelog elements list using the json plugin
-        changelog_json = json_plugin.dumps(changelog_elements_list)
+        # dumps (pretty) the changelog elements list using the json plugin
+        changelog_json = json_plugin.dumps_pretty(changelog_elements_list)
 
         # opens the changelog file
         changelog_file = open(changelog_file_path, "wb")
