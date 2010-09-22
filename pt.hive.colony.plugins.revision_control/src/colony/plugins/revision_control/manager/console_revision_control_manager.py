@@ -461,11 +461,8 @@ class ConsoleRevisionControlManager:
             log_entry_message = log_entry.get_message()
             log_entry_revision = str(log_entry)
 
-            # creates a date time
-            date_time = self.get_date_time_from_timestamp(log_entry_date)
-
             # gets a date time string
-            date_time_string = self.get_date_time_string(date_time)
+            date_time_string = self.get_date_time_string(log_entry_date)
 
             # clears a line of input
             output_method("")
@@ -495,12 +492,6 @@ class ConsoleRevisionControlManager:
     def output_diffs(self, diffs, output_method):
         for diff in diffs:
             output_method(diff)
-
-    def get_date_time_from_timestamp(self, timestamp):
-        # creates a datetime object from the timestamp with no associated tzinfo
-        date_time = datetime.datetime.fromtimestamp(timestamp)
-
-        return date_time
 
     def get_date_time_string(self, date_time):
         # converts the datetime to a string representation with the date and time

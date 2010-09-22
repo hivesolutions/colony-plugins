@@ -39,6 +39,7 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 import os
 import pysvn
+import datetime
 
 import colony.libs.path_util
 
@@ -271,7 +272,7 @@ class RevisionControlSubversionAdapter:
         revision.set_author(author)
 
         # sets the date in the revision
-        revision.set_date(date)
+        revision.set_date_utc_timestamp(date)
 
         # sets the message in the revision
         revision.set_message(message)
@@ -304,7 +305,7 @@ class SubversionRevision:
     """ The adapted subversion revision """
 
     date = None
-    """ The revision date """
+    """ The revision datetime.datetime date """
 
     author = "none"
     """ The revision author """
@@ -342,6 +343,9 @@ class SubversionRevision:
 
     def set_date(self, date):
         self.date = date
+
+    def set_date_utc_timestamp(self, date_utc_timestamp):
+        self.date = datetime.datetime.utcfromtimestamp(date_utc_timestamp)
 
     def get_author(self):
         return self.author

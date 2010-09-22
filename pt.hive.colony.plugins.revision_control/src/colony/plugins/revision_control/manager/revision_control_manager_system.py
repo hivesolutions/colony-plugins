@@ -242,6 +242,15 @@ class Revision:
     identifier = None
     """ The identifier of the revision """
 
+    date = None
+    """ The revision datetime.datetime date """
+
+    author = "none"
+    """ The revision author """
+
+    message = None
+    """ The revision message """
+
     def __init__(self):
         """
         Constructor of the class.
@@ -288,3 +297,63 @@ class Revision:
         """
 
         self.identifier = identifier
+
+    def get_date(self):
+        """
+        Retrieves the date.
+
+        @rtype: datetime.datetime
+        @return: The revision date.
+        """
+
+        return self.date
+
+    def set_date(self, date):
+        """
+        Sets the date.
+
+        @type date: datetime.datetime
+        @param date: The date.
+        """
+
+        self.date = date
+
+    def get_author(self):
+        """
+        Retrieves the author.
+
+        @rtype: String
+        @return: The author.
+        """
+
+        return self.author
+
+    def set_author(self, author):
+        """
+        Sets the author.
+
+        @type author: String
+        @param author: The author.
+        """
+
+        self.author = author
+
+    def get_message(self):
+        """
+        Retrieves the message.
+
+        @rtype: String
+        @return: The message.
+        """
+
+        return self.message
+
+    def set_message(self, message):
+        """
+        Sets the message.
+
+        @type message: String
+        @param message: The message.
+        """
+
+        self.message = message
