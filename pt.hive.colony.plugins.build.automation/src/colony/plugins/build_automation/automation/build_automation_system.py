@@ -381,8 +381,12 @@ class BuildAutomation:
                 # runs the module plugin for the same stage
                 self.run_automation(module_id, module_version, module_stage, recursive_level - 1, logger, False)
 
-        # retrieves the valid automation stages for the current stage
-        valid_automation_stages = BUILD_AUTOMATION_STAGES[:BUILD_AUTOMATION_STAGES.index(stage) + 1]
+        # retrieves the index of the state in the build automation stages list
+        build_automation_stage_index = BUILD_AUTOMATION_STAGES.index(stage)
+
+        # retrieves the valid automation stages for the current stage (all the
+        # stages that have a priority inferior or equal to the one selected)
+        valid_automation_stages = BUILD_AUTOMATION_STAGES[:build_automation_stage_index + 1]
 
         # iterates over all the valid automation stages to run the automation plugins
         for valid_automation_stage in valid_automation_stages:
@@ -406,11 +410,11 @@ class BuildAutomation:
                 # prints logging information
                 logger.info("------------------------------------------------------------------------")
                 logger.info("Running build automation plugin '%s' v%s" % (automation_plugin_id, automation_plugin_version))
-                logger.info("For stage [%s] of build automation" % stage)
+                logger.info("For stage [%s] of build automation" % valid_automation_stage)
                 logger.info("------------------------------------------------------------------------")
 
                 # runs the automation for the current stage
-                automation_plugin.run_automation(build_automation_structure.associated_plugin, stage, automation_plugin_configurations, build_automation_structure, logger)
+                automation_plugin.run_automation(build_automation_structure.associated_plugin, valid_automation_stage, automation_plugin_configurations, build_automation_structure, logger)
 
         # retrieves the final date time value
         final_date_time = datetime.datetime.now()
