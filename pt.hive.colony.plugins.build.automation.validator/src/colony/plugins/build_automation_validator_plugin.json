@@ -17,6 +17,7 @@
     "resources" : [
             "build_automation_validator_plugin.py",
             "build_automation_validator/__init__.py",
+            "build_automation_validator/build_automation_validator_exceptions.py",
             "build_automation_validator/build_automation_validator_system.py",
             "build_automation_validator/console_build_automation_validator.py",
             "build_automation_validator/resources/baf.xml"]

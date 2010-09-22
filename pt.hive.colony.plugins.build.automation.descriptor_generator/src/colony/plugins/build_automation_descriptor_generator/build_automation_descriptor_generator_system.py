@@ -174,27 +174,27 @@ class BuildAutomationDescriptorGenerator:
         self._generate_plugin_descriptor(plugin, template_file_path)
 
     def _generate_plugin_descriptor(self, plugin, template_file_path):
-        # returns in case the plugin is already valid
-        if self.build_automation_descriptor_generator_plugin.build_automation_validator_plugin.validate_build_automation_plugin(plugin.id):
-            return
+        # generates the plugin descriptor in case the validation fails
+        try:
+            self.build_automation_descriptor_generator_plugin.build_automation_validator_plugin.validate_build_automation_plugin(plugin.id)
+        except:
+            # retrieves the plugin path
+            plugin_path = self.build_automation_descriptor_generator_plugin.manager.get_plugin_path_by_id(plugin.id)
 
-        # retrieves the plugin path
-        plugin_path = self.build_automation_descriptor_generator_plugin.manager.get_plugin_path_by_id(plugin.id)
+            # retrieves the plugin module name
+            plugin_module_name = self.build_automation_descriptor_generator_plugin.manager.get_plugin_module_name_by_id(plugin.id)
 
-        # retrieves the plugin module name
-        plugin_module_name = self.build_automation_descriptor_generator_plugin.manager.get_plugin_module_name_by_id(plugin.id)
+            # converts the plugin path separators from the windows mode to unix mode
+            plugin_path = plugin_path.replace(WINDOWS_DIRECTORY_SEPARATOR, UNIX_DIRECTORY_SEPARATOR)
 
-        # converts the plugin path separators from the windows mode to unix mode
-        plugin_path = plugin_path.replace(WINDOWS_DIRECTORY_SEPARATOR, UNIX_DIRECTORY_SEPARATOR)
+            # retrieves the plugin system file path
+            plugin_system_file_path = self.get_plugin_system_file_path(plugin_path, plugin_module_name)
 
-        # retrieves the plugin system file path
-        plugin_system_file_path = self.get_plugin_system_file_path(plugin_path, plugin_module_name)
+            # retrieves the plugin root directory path
+            plugin_root_directory_path = self.get_plugin_root_directory_path(plugin_system_file_path)
 
-        # retrieves the plugin root directory path
-        plugin_root_directory_path = self.get_plugin_root_directory_path(plugin_system_file_path)
-
-        # validates the plugin descriptor file
-        self._generate_plugin_descriptor_file(plugin, plugin_path, plugin_module_name, template_file_path, plugin_system_file_path, plugin_root_directory_path)
+            # validates the plugin descriptor file
+            self._generate_plugin_descriptor_file(plugin, plugin_path, plugin_module_name, template_file_path, plugin_system_file_path, plugin_root_directory_path)
 
     def _generate_plugin_descriptor_file(self, plugin, plugin_path, plugin_module_name, template_file_path, plugin_system_file_path, plugin_root_directory_path):
         # initializes the plugin descriptor map

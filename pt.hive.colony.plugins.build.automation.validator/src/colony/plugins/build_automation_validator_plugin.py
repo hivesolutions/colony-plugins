@@ -62,7 +62,8 @@ class BuildAutomationValidatorPlugin(colony.base.plugin_system.Plugin):
                     "pt.hive.colony.plugins.misc.json", "1.0.0")]
     events_handled = []
     events_registrable = []
-    main_modules = ["build_automation_validator.build_automation_validator_system",
+    main_modules = ["build_automation_validator.build_automation_validator_exceptions",
+                    "build_automation_validator.build_automation_validator_system",
                     "build_automation_validator.console_build_automation_validator"]
 
     build_automation_validator = None
@@ -119,7 +120,7 @@ class BuildAutomationValidatorPlugin(colony.base.plugin_system.Plugin):
         self.build_automation_validator.validate_build_automation_plugins()
 
     def validate_build_automation_plugin(self, plugin_id):
-        return self.build_automation_validator.validate_build_automation_plugin(plugin_id)
+        self.build_automation_validator.validate_build_automation_plugin(plugin_id)
 
     def get_json_plugin(self):
         return self.json_plugin
