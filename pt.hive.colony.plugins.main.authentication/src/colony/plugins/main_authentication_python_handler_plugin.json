@@ -1,6 +1,6 @@
 {
     "platform" : "python",
-    "sub_platforms" : ["cpython"],
+    "sub_platforms" : ["cpython", "jython"],
     "id" : "pt.hive.colony.plugins.main.authentication.python_handler",
     "name" : "Authentication Python Handler Main Plugin",
     "short_name" : "Authentication Python Handler Main",
