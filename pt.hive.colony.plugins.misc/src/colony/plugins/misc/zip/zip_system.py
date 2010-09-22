@@ -103,12 +103,15 @@ class Zip:
         Indicates if the path is pointing to a file.
 
         @type path: String
-        @param path: Filesystem path.
-        @rtype: String
+        @param path: File system path.
+        @rtype: bool
         @return: Boolean indicating if the path is pointing to a file.
         """
 
+        # splits the path over the slash token
         tokens_list = path.split("/")
+
+        # returns if the last token is empty
         return not tokens_list[-1] == ""
 
     def get_file_paths(self, file_path):
@@ -145,14 +148,29 @@ class Zip:
         @param root_directory_path: Full path to the place where the directory structure will be created.
         """
 
+        # retrieves the directory paths list from the file path
         directory_paths_list = self.get_directory_paths(file_path)
+
+        # in case the root directory path does not exist
         if not os.path.isdir(root_directory_path):
+            # creates the root directory path
             os.mkdir(root_directory_path)
+
+        # iterates over the the directories in the directory
+        # paths list
         for directories in directory_paths_list:
+            # splits the directories in the slash token
             directories = directories.split("/")
+
+            # starts the prefix value
             prefix = ""
+
+            # iterates over the directories
             for directory in directories:
+                # retrieves the directory name joining the prefix and
+                # the directory name
                 directory_name = os.path.join(prefix, directory)
+
                 directory_path = os.path.join(root_directory_path, directory_name)
                 if directory and not os.path.isdir(directory_path):
                     os.mkdir(directory_path)
