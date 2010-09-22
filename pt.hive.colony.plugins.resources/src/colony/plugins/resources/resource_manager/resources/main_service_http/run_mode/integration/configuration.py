@@ -54,11 +54,19 @@ configuration = {
                  },
                  "contexts" : {
                      "resolution_order" : ["/colony_mod_python",
+                                           "/template_directory_list_handler",
                                            "/automation"],
                      "/colony_mod_python" : {
                          "handler" : "colony",
                          "allow_redirection" : False,
                          "request_properties" : {}
+                     },
+                     "/template_directory_list_handler" : {
+                         "handler" : "file",
+                         "allow_redirection" : False,
+                         "request_properties" : {
+                             "base_path" : "$resource{system.path.colony}/pt.hive.colony.plugins.main.service.http/src/colony/plugins/main_service_http_template_directory_list_handler/template_directory_list_handler/resources"
+                         }
                      },
                      "/automation" : {
                          "handler" : "file",
