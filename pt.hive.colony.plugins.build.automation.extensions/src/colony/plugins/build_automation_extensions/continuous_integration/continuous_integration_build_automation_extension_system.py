@@ -59,9 +59,6 @@ LATEST_FILE_NAME = "LATEST.version"
 LATEST_DIRECTORY_NAME = "LATEST"
 """ The latest file name """
 
-NT_PLATFORM_VALUE = "nt"
-""" The nt platform value """
-
 ZIP_EXTENSION = ".zip"
 """ The zip extension value """
 
@@ -151,7 +148,7 @@ class ContinuousIntegrationBuildAutomationExtension:
 
         # creates a symbolic link between the deployment version path and the latest
         # version path
-        os.symlink(deployment_version_path, latest_version_path) #@UndefinedVariable
+        colony.libs.path_util.link(deployment_version_path, latest_version_path)
 
     def _write_version_number(self, version_file_path, version_number):
         # converts the version number to a string
@@ -186,28 +183,3 @@ class ContinuousIntegrationBuildAutomationExtension:
 
         # returns the revision number
         return revision_number
-
-def copylink(target_path, link_path):
-    """
-    Copies the target path into the path defined
-    in the link path.
-    This function acts as a stub for the symlink function.
-
-    @type target_path: String
-    @param target_path: The target path to the link.
-    @type link_path: String
-    @param link_path: The path to the "link".
-    """
-
-    # in case the directory exists
-    if os.path.exists(link_path):
-        # removes the directory in the link path
-        colony.libs.path_util.remove_directory(link_path)
-
-    # copies the directory in the target path to the link path
-    colony.libs.path_util.copy_directory(target_path, link_path)
-
-# in case the current platform is windows
-if os.name == NT_PLATFORM_VALUE:
-    # sets the symlink function as the copy link
-    os.symlink = copylink
