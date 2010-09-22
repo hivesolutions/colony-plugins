@@ -124,18 +124,51 @@ class Zip:
         @return: List of file paths.
         """
 
-        def length_sorter(string1, string2):
-            return [-1, 1][len(string1) > len(string2)]
+        def length_sorter(first_string, second_string):
+            """
+            Sorter function that takes into account the
+            length of the string.
 
+            @type first_string: String
+            @param first_string: The first string to be compared.
+            @type second_string: String
+            @param second_string: The second string to be compared.
+            @rtype: int
+            @return: The result of the comparison.
+            """
+
+            # returns the result of the comparison of string
+            # lengths (bigger or smaller)
+            return [-1, 1][len(first_string) > len(second_string)]
+
+        # creates the zip file from the file path
         zip_file = zipfile.ZipFile(file_path)
+
+        # retrieves the name list from the zip file
         name_list = zip_file.namelist()
+
+        # creates the files list
         files_list = []
+
+        # iterates over all the names in the names list
         for name in name_list:
+            # creates the file name in case it is a file
             file_name = [None, name][self.is_file_path(name)]
+
+            # in case the file name is defined
             if file_name:
+                # adds the file name to the files list
                 files_list.append(file_name)
+
+        # creates a dictionary from the keys
+        # and retrieves the keys (files list)
         files_list = dict.fromkeys(files_list).keys()
+
+        # sorts the files list according to
+        # the length sorter
         files_list.sort(length_sorter)
+
+        # returns the files list
         return files_list
 
     def create_directories(self, file_path, root_directory_path):
@@ -171,9 +204,17 @@ class Zip:
                 # the directory name
                 directory_name = os.path.join(prefix, directory)
 
+                # joins the directory name with the root directory path
+                # to creates the current directory path
                 directory_path = os.path.join(root_directory_path, directory_name)
+
+                # in case the directory is defined and the path does not
+                # exist
                 if directory and not os.path.isdir(directory_path):
+                    # creates the directory for the directory path
                     os.mkdir(directory_path)
+
+                # sets the prefix as the directory name
                 prefix = directory_name
 
     def create_files(self, file_path, root_directory_path):
@@ -238,12 +279,24 @@ class Zip:
         @param file_path_list: Optional list of paths to the files one wants to zip.
         """
 
+        # retrieves the absolute paths for both
+        # zip file and the input directory
         zip_file_path = os.path.abspath(zip_file_path)
         input_directory = os.path.abspath(input_directory)
+
+        # in case the input directory is valid and is a directory
         if input_directory and os.path.isdir(input_directory):
+            # creates a  new zip file for writing in deflated mode
             zip_file = zipfile.ZipFile(zip_file_path, "w", compression = zipfile.ZIP_DEFLATED)
+
+            # in case the file paths list does not exit
             if not file_path_list:
+                # retrieves the fule paths from the input directory
+                # as the file path list
                 file_path_list = get_file_paths(input_directory)
+
+            # iterates over all the file paths
+            # in the file path list
             for file_path in file_path_list:
                 # retrieves the file path by joining the path
                 file_path = os.path.join(input_directory, file_path)
