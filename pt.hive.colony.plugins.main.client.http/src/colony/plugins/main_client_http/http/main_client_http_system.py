@@ -168,7 +168,7 @@ class MainClientHttp:
         """
         Constructor of the class.
 
-        @type main_client_http_plugin: MainClientHttp
+        @type main_client_http_plugin: MainClientHttpPlugin
         @param main_client_http_plugin: The main client http plugin.
         """
 
