@@ -1942,6 +1942,7 @@ class HttpRequest:
 
             # in case the end index is invalid (end of multipart)
             if end_index == -1:
+                # breaks the cycle
                 break
 
             # parses the multipart part retrieving the headers map and the contents
