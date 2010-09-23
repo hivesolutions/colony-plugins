@@ -34,7 +34,7 @@
     xsi:schemaLocation="http://www.hive.pt xsd/resources.xsd">
 
     <plugin_configuration>
-        <plugin_id>pt.hive.colony.plugins.misc.email</plugin_id>
+        <plugin_id>pt.hive.colony.plugins.format.mime</plugin_id>
         <resource>
             <name>configuration</name>
             <type>python</type>
