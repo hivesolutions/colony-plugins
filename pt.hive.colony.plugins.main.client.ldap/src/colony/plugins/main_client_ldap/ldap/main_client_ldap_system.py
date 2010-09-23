@@ -61,7 +61,7 @@ class MainClientLdap:
         """
         Constructor of the class.
 
-        @type main_service_ldap_plugin: MainClientLdap
+        @type main_service_ldap_plugin: MainClientLdapPlugin
         @param main_service_ldap_plugin: The main client ldap plugin.
         """
 
