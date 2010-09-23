@@ -107,6 +107,20 @@ class FormatMime:
         # returns the mime type
         return mime_type
 
+    def set_configuration_property(self, configuration_propery):
+        # retrieves the configuration
+        configuration = configuration_propery.get_data()
+
+        # retrieves the extension map
+        extension_map = configuration["extension"]
+
+        # sets the extension map
+        self.extension_map = extension_map
+
+    def unset_configuration_property(self, configuration_propery):
+        # sets the extension map
+        self.extension_map = {}
+
 class MimeMessage:
     """
     Class representing a mime message.

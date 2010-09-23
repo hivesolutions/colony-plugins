@@ -38,6 +38,7 @@ __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
 import colony.base.plugin_system
+import colony.base.decorators
 
 class FormatsMimePlugin(colony.base.plugin_system.Plugin):
     """
@@ -87,17 +88,11 @@ class FormatsMimePlugin(colony.base.plugin_system.Plugin):
     def dependency_injected(self, plugin):
         colony.base.plugin_system.Plugin.dependency_injected(self, plugin)
 
+    @colony.base.decorators.set_configuration_property("pt.hive.colony.plugins.format.mime", "1.0.0")
     def set_configuration_property(self, property_name, property):
         colony.base.plugin_system.Plugin.set_configuration_property(self, property_name, property)
 
-        # retrieves the configuration
-        configuration = property.get_data()
-
-        # retrieves the extension map
-        extension_map = configuration["extension"]
-
-        self.format_mime.extension_map = extension_map
-
+    @colony.base.decorators.unset_configuration_property("pt.hive.colony.plugins.format.mime", "1.0.0")
     def unset_configuration_property(self, property_name):
         colony.base.plugin_system.Plugin.unset_configuration_property(self, property_name)
 
@@ -109,3 +104,11 @@ class FormatsMimePlugin(colony.base.plugin_system.Plugin):
 
     def get_mime_type_file_name(self, file_name):
         return self.format_mime.get_mime_type_file_name(file_name)
+
+    @colony.base.decorators.set_configuration_property_method("configuration")
+    def extension_set_configuration_property(self, property_name, property):
+        self.format_mime.set_configuration_property(property)
+
+    @colony.base.decorators.unset_configuration_property_method("configuration")
+    def extension_unset_configuration_property(self, property_name, property):
+        self.format_mime.unset_configuration_property(property)
