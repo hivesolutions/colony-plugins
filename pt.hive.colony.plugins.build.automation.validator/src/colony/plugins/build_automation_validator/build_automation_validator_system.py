@@ -37,6 +37,7 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
+import re
 import types
 import os.path
 
@@ -122,6 +123,9 @@ RESOURCE_FILE_EXTENSION_EXCLUSION_LIST = (".svn", ".svn-base", ".svn-revert", ".
 
 BUILD_AUTOMATION_ITEM_CAPABILITY_PLUGIN_EXCLUSION_LIST = ("pt.hive.colony.plugins.build.automation")
 """ The list of plugins that are allowed not to have the build automation item capability """
+
+BUILD_AUTOMATION_FILE_SPECIFICATION_FILE_REGEX = re.compile("<specification_file>(.*?)</specification_file>")
+""" The build automation file specification file regex """
 
 PLUGIN_DESCRIPTOR_ATTRIBUTES_MAP = {"id" : "original_id",
                                     "sub_platforms" : "platforms",
@@ -569,6 +573,31 @@ class BuildAutomationValidator:
         if not build_automation_file_path or not os.path.exists(build_automation_file_path):
             # logs the validation error
             self.log_validation_error(plugin_information, "'%s' is missing the referenced build automation file '%s'" % (plugin_module_name, build_automation_file_path))
+
+            # returns since nothing else can be tested
+            return
+
+        # opens the build automation file
+        build_automation_file = open(build_automation_file_path)
+
+        # reads the build automation file's data
+        build_automation_file_data = build_automation_file.read()
+
+        # closes the build automation file
+        build_automation_file.close()
+
+        # retrieves the specification file paths
+        specification_file_paths = BUILD_AUTOMATION_FILE_SPECIFICATION_FILE_REGEX.findall(build_automation_file_data)
+
+        # checks if the defined specification file paths exist
+        for specification_file_path in specification_file_paths:
+            # sets the plugin path in the specification file path
+            specification_file_path = specification_file_path.replace(BASE_PLUGIN_DIRECTORY_VARIABLE, plugin_path)
+
+            # checks if the specification file exists
+            if not os.path.exists(specification_file_path):
+                # logs the validation error
+                self.log_validation_error(plugin_information, "'%s' build automation file '%s' references missing specification file '%s'" % (plugin_module_name, build_automation_file_path, specification_file_path))
 
     def log_validation_error(self, plugin_information, validation_error_message):
         # defines the validation error map
