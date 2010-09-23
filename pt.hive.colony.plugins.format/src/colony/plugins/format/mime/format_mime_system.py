@@ -38,16 +38,23 @@ __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
 import os
+import types
 import base64
 import random
 
 import colony.libs.string_buffer_util
 
-USER_AGENT_VALUE = "User-Agent"
-""" The user agent value """
+MIME_VERSION_VALUE = "MIME-Version"
+""" The mime version value """
 
 CONTENT_TYPE_VALUE = "Content-Type"
 """ The content type value """
+
+DEFAULT_PROTOCOL_VERSION = "1.0"
+""" The default protocol version """
+
+DEFAULT_CHARSET = "utf-8"
+""" The default charset """
 
 MULTI_PART_MESSAGE = "This is a multi-part message in MIME format"
 """ The multi part message """
@@ -303,8 +310,11 @@ class MimeMessage:
     boundary = None
     """ The boundary value for multi part encoding """
 
-    user_agent = None
-    """ The associated user agent """
+    protocol_version = DEFAULT_PROTOCOL_VERSION
+    """ The version of the "protocol" """
+
+    content_type_charset = DEFAULT_CHARSET
+    """ The content type charset """
 
     part_list = []
     """ The list of parts to be included in the multi part message """
@@ -329,9 +339,9 @@ class MimeMessage:
         message_type = type(message)
 
         # in case the message type is unicode
-        #if message_type == types.UnicodeType and encode:
+        if message_type == types.UnicodeType and encode:
             # encodes the message with the defined content type charset
-        #    message = message.encode(self.content_type_charset)
+            message = message.encode(self.content_type_charset)
 
         # writes the message to the message stream
         self.message_stream.write(message)
@@ -348,6 +358,49 @@ class MimeMessage:
 
     def remove_part(self, part):
         self.part_list.remove(part)
+
+    def get_value(self):
+        # retrieves the result stream
+        result = colony.libs.string_buffer_util.StringBuffer()
+
+        # in case this is multi part message
+        if self.multi_part:
+            # in case this message is not a part
+            if not self.part:
+                # writes the multi part format message
+                self.message_stream.write(MULTI_PART_MESSAGE)
+
+            # encodes the multi part message
+            self._encode_multi_part()
+
+        # retrieves the result string value
+        message = self.message_stream.get_value()
+
+        # in case this is multi part message
+        if self.multi_part:
+            result.write(CONTENT_TYPE_VALUE + ": " + "multipart/" + self.multi_part + ";" + "boundary=\"" + self.boundary + "\"\r\n")
+
+        # in case this message is not a part, writes the
+        # main headers
+        if not self.part:
+            # writes the mime version
+            result.write(MIME_VERSION_VALUE + ": " + self.protocol_version + "\r\n")
+
+        # iterates over all the "extra" header values to be sent
+        for header_name, header_value in self.headers_map.items():
+            # writes the extra header value in the result
+            result.write(header_name + ": " + header_value + "\r\n")
+
+        # writes the end of the headers and the message
+        # values into the result
+        result.write("\r\n")
+        result.write(message)
+
+        # retrieves the value from the result buffer
+        result_value = result.get_value()
+
+        # returns the result value
+        return result_value
 
     def get_header(self, header_name):
         """
@@ -416,71 +469,45 @@ class MimeMessage:
 
         self.boundary = boundary
 
-    def get_user_agent(self):
+    def get_user_protocol_verion(self):
         """
-        Retrieves the user agent.
+        Retrieves the protocol version.
 
         @rtype: String
-        @return: The user agent.
+        @return: The protocol version.
         """
 
-        return self.user_agent
+        return self.protocol_version
 
-    def set_user_agent(self, user_agent):
+    def set_protocol_version(self, protocol_version):
         """
-        Sets the user agent.
+        Sets the protocol version.
 
-        @type multi_part: String
-        @param multi_part: The user agent.
+        @type protocol_version: String
+        @param protocol_version: The protocol version.
         """
 
-        self.user_agent = user_agent
+        self.protocol_version = protocol_version
 
-    def get_value(self):
-        # retrieves the result stream
-        result = colony.libs.string_buffer_util.StringBuffer()
+    def get_content_type_charset(self):
+        """
+        Retrieves the content type charset.
 
-        # in case this is multi part message
-        if self.multi_part:
-            # in case this message is not a part
-            if not self.part:
-                # writes the multi part format message
-                self.message_stream.write(MULTI_PART_MESSAGE)
+        @rtype: String
+        @return: The content type charset.
+        """
 
-            # encodes the multi part message
-            self._encode_multi_part()
+        return self.content_type_charset
 
-        # retrieves the result string value
-        message = self.message_stream.get_value()
+    def set_content_type_charset(self, content_type_charset):
+        """
+        Sets the content type charset.
 
-        # in case this is multi part message
-        if self.multi_part:
-            result.write(CONTENT_TYPE_VALUE + ": " + "multipart/" + self.multi_part + ";" + "boundary=\"" + self.boundary + "\"\r\n")
+        @type content_type_charset: String
+        @param content_type_charset: The content type charset.
+        """
 
-        # in case this message is not a part, writes the
-        # main headers
-        if not self.part and self.user_agent:
-            # in case the user agent is defined
-            if self.user_agent:
-                result.write(USER_AGENT_VALUE + ": " + self.user_agent + "\r\n")
-
-            result.write("MIME-Version" + ": " + "1.0" + "\r\n")
-
-        # iterates over all the "extra" header values to be sent
-        for header_name, header_value in self.headers_map.items():
-            # writes the extra header value in the result
-            result.write(header_name + ": " + header_value + "\r\n")
-
-        # writes the end of the headers and the message
-        # values into the result
-        result.write("\r\n")
-        result.write(message)
-
-        # retrieves the value from the result buffer
-        result_value = result.get_value()
-
-        # returns the result value
-        return result_value
+        self.content_type_charset = content_type_charset
 
     def _encode_multi_part(self):
         """
