@@ -50,7 +50,7 @@
     <plugin_configuration>
         <plugin_id>pt.hive.colony.plugins.main.service.dns</plugin_id>
         <resource>
-            <name>server_configuration</name>
+            <name>service_configuration</name>
             <type>python</type>
             <data>configuration.py</data>
         </resource>
