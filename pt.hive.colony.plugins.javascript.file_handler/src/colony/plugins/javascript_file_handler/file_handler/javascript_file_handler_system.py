@@ -46,10 +46,6 @@ import colony.libs.path_util
 HANDLER_FILENAME = "none"
 """ The handler filename """
 
-FILE_MIME_TYPE_MAPPING = {"html" : "text/html", "txt" : "text/plain", "css" : "text/css",
-                          "jpg" : "image/jpg", "png" : "image/png"}
-""" The map that relates the file extension and the associated mime type """
-
 EXPIRATION_DELTA_TIMESTAMP = 31536000
 """ The expiration delta timestamp """
 
@@ -96,6 +92,9 @@ class JavascriptFileHandler:
         # retrieves the javascript manager plugin
         javascript_manager_plugin = self.javascript_file_handler_plugin.javascript_manager_plugin
 
+        # retrieves the format mime plugin
+        format_mime_plugin = self.javascript_file_handler_plugin.format_mime_plugin
+
         # splits the uri using the "/" character
         uri_splited = request.uri.split("/")
 
@@ -119,7 +118,7 @@ class JavascriptFileHandler:
         file_extension = full_path.split(".")[-1]
 
         # retrieves the mime type for the given file
-        mime_type = FILE_MIME_TYPE_MAPPING.get(file_extension, DEFAULT_MIME_TYPE)
+        mime_type = format_mime_plugin.get_mime_type_file_name(full_path) or DEFAULT_MIME_TYPE
 
         # retrieves the file stat
         file_stat = os.stat(full_path)
