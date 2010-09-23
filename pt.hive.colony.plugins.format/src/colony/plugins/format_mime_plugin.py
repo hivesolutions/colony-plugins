@@ -87,6 +87,20 @@ class FormatsMimePlugin(colony.base.plugin_system.Plugin):
     def dependency_injected(self, plugin):
         colony.base.plugin_system.Plugin.dependency_injected(self, plugin)
 
+    def set_configuration_property(self, property_name, property):
+        colony.base.plugin_system.Plugin.set_configuration_property(self, property_name, property)
+
+        # retrieves the configuration
+        configuration = property.get_data()
+
+        # retrieves the extension map
+        extension_map = configuration["extension"]
+
+        self.format_mime.extension_map = extension_map
+
+    def unset_configuration_property(self, property_name):
+        colony.base.plugin_system.Plugin.unset_configuration_property(self, property_name)
+
     def create_message(self, parameters):
         return self.format_mime.create_message(parameters)
 
