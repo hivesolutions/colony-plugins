@@ -62,10 +62,6 @@ CHUNK_SIZE = 1024
 EXPIRATION_DELTA_TIMESTAMP = 31536000
 """ The expiration delta timestamp """
 
-FILE_MIME_TYPE_MAPPING = {"html" : "text/html", "txt" : "text/plain", "js" : "text/javascript",
-                          "css" : "text/css", "jpg" : "image/jpg", "png" : "image/png"}
-""" The map that relates the file extension and the associated mime type """
-
 INVALID_EXPIRATION_STRING_VALUE = "-1"
 """ The invalid expiration string value """
 
@@ -148,6 +144,9 @@ class MainServiceHttpFileHandler:
         @param request: The http request to be handled.
         """
 
+        # retrieves the format mime plugin
+        format_mime_plugin = self.main_service_http_file_handler_plugin.format_mime_plugin
+
         # retrieves the resource manager plugin
         resource_manager_plugin = self.main_service_http_file_handler_plugin.resource_manager_plugin
 
@@ -204,14 +203,8 @@ class MainServiceHttpFileHandler:
         if path == "/" or path == "":
             path = "/" + default_page
 
-        # retrieves the extension of the file
-        extension = path.split(".")[-1]
-
-        # retrieves the associated mime type
-        if extension in FILE_MIME_TYPE_MAPPING:
-            mime_type = FILE_MIME_TYPE_MAPPING[extension]
-        else:
-            mime_type = None
+        # retrieves the mime type for the path
+        mime_type = format_mime_plugin.get_mime_type_file_name(path)
 
         # strips the path value from the initial and final slash
         path = path.strip("/")

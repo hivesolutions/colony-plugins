@@ -59,6 +59,8 @@ class MainServiceHttpFileHandlerPlugin(colony.base.plugin_system.Plugin):
     capabilities = ["http_service_handler", "build_automation_item"]
     capabilities_allowed = ["http_service_directory_list_handler"]
     dependencies = [colony.base.plugin_system.PluginDependency(
+                    "pt.hive.colony.plugins.format.mime", "1.0.0"),
+                    colony.base.plugin_system.PluginDependency(
                     "pt.hive.colony.plugins.resources.resource_manager", "1.0.0")]
     events_handled = []
     events_registrable = []
@@ -68,6 +70,7 @@ class MainServiceHttpFileHandlerPlugin(colony.base.plugin_system.Plugin):
 
     http_service_directory_list_handler_plugins = []
 
+    format_mime_plugin = None
     resource_manager_plugin = None
 
     def load_plugin(self):
@@ -126,6 +129,13 @@ class MainServiceHttpFileHandlerPlugin(colony.base.plugin_system.Plugin):
     def http_service_directory_list_handler_unload_allowed(self, plugin, capability):
         self.http_service_directory_list_handler_plugins.remove(plugin)
         self.main_service_http_file_handler.http_service_directory_list_handler_unload(plugin)
+
+    def get_format_mime_plugin(self):
+        return self.format_mime_plugin
+
+    @colony.base.decorators.plugin_inject("pt.hive.colony.plugins.format.mime")
+    def set_format_mime_plugin(self, format_mime_plugin):
+        self.format_mime_plugin = format_mime_plugin
 
     def get_resource_manager_plugin(self):
         return self.resource_manager_plugin
