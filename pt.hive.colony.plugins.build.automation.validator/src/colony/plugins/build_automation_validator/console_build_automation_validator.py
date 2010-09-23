@@ -44,7 +44,7 @@ INVALID_NUMBER_ARGUMENTS_MESSAGE = "invalid number of arguments"
 """ The invalid number of arguments message """
 
 HELP_TEXT = "### BUILD AUTOMATION VALIDATOR HELP ###\n\
-validate_build_automation_plugins - validates that all plugins are valid for build automation"
+validate_build_automation_plugin [plugin_id] - validates plugins"
 """ The help text """
 
 class ConsoleBuildAutomationValidator:
@@ -55,7 +55,7 @@ class ConsoleBuildAutomationValidator:
     build_automation_validator_plugin = None
     """ The build automation validator plugin """
 
-    commands = ["validate_build_automation_plugins"]
+    commands = ["validate_build_automation_plugin"]
     """ The commands list """
 
     def __init__(self, build_automation_validator_plugin):
@@ -83,5 +83,19 @@ class ConsoleBuildAutomationValidator:
     def get_help(self):
         return HELP_TEXT
 
-    def process_validate_build_automation_plugins(self, args, output_method):
-        self.build_automation_validator_plugin.validate_build_automation_plugins()
+    def process_validate_build_automation_plugin(self, args, output_method):
+        # returns in case the not enough arguments were provided
+        if len(args) > 1:
+            output_method(INVALID_NUMBER_ARGUMENTS_MESSAGE)
+            return
+
+        # validates all build automatin plugins in case no argument was provided
+        if len(args) == 0:
+            self.build_automation_validator_plugin.validate_build_automation_plugins()
+            return
+
+        # retrieves the plugin's id
+        plugin_id = args[0]
+
+        # validates the specified build automation plugin
+        self.build_automation_validator_plugin.validate_build_automation_plugin(plugin_id)

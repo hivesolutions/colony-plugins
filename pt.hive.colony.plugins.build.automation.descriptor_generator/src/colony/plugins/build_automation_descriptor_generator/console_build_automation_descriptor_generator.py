@@ -44,7 +44,7 @@ INVALID_NUMBER_ARGUMENTS_MESSAGE = "invalid number of arguments"
 """ The invalid number of arguments message """
 
 HELP_TEXT = "### BUILD AUTOMATION DESCRIPTOR GENERATOR HELP ###\n\
-generate_plugin_descriptor [plugin_id] - generates a plugin descriptor file for a specific plugin"
+generate_plugin_descriptor [plugin_id] - generates plugin descriptors"
 """ The help text """
 
 class ConsoleBuildAutomationDescriptorGenerator:
@@ -55,7 +55,7 @@ class ConsoleBuildAutomationDescriptorGenerator:
     build_automation_descriptor_generator_plugin = None
     """ The build automation descriptor generator plugin """
 
-    commands = ["generate_plugin_descriptor", "generate_plugin_descriptors"]
+    commands = ["generate_plugin_descriptor"]
     """ The commands list """
 
     def __init__(self, build_automation_descriptor_generator_plugin):
@@ -99,7 +99,3 @@ class ConsoleBuildAutomationDescriptorGenerator:
 
         # generates a plugin descriptor for the specified plugin
         self.build_automation_descriptor_generator_plugin.generate_plugin_descriptor(plugin_id)
-
-    def process_generate_plugin_descriptors(self, args, output_method):
-        # generates the descriptors for all plugins
-        self.build_automation_descriptor_generator_plugin.generate_plugin_descriptors()

@@ -182,7 +182,7 @@ class BuildAutomationValidator:
 
         # raises an exception in case there were validation errors
         if self.validation_errors:
-            raise build_automation_validation_exceptions.BuildAutomationValidationFailed(self.validation_errors)
+            raise build_automation_validator_exceptions.BuildAutomationValidationFailed(self.validation_errors)
 
     def _validate_build_automation_plugin(self, plugin):
         # retrieves the plugin information
