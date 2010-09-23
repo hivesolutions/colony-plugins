@@ -127,26 +127,26 @@ class Email:
         # retrieves the format mime plugin
         format_mime_plugin = self.email_plugin.format_mime_plugin
 
-        # retrieves the service configuration
-        service_configuration = self.email_plugin.get_configuration_property("server_configuration").get_data()
+        # retrieves the configuration
+        configuration = self.email_plugin.get_configuration_property("configuration").get_data()
 
         # creates a new smtp client, using the main client smtp plugin
         smtp_client = main_client_smtp_plugin.create_client({})
 
         # tries to retrieve the smtp hostnmae value
-        smtp_hostname = service_configuration.get("hostname", DEFAULT_SMTP_HOSTNAME)
+        smtp_hostname = configuration.get("hostname", DEFAULT_SMTP_HOSTNAME)
 
         # tries to retrieve the smtp port value
-        smtp_port = service_configuration.get("port", DEFAULT_SMTP_PORT)
+        smtp_port = configuration.get("port", DEFAULT_SMTP_PORT)
 
         # tries to retrieve the smtp username value
-        smtp_username = service_configuration.get("username", None)
+        smtp_username = configuration.get("username", None)
 
         # tries to retrieve the smtp password value
-        smtp_password = service_configuration.get("password", None)
+        smtp_password = configuration.get("password", None)
 
         # tries to retrieve the tls value
-        smtp_tls = service_configuration.get("tls", False)
+        smtp_tls = configuration.get("tls", False)
 
         # creates the parameters map
         parameters = {}
