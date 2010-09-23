@@ -117,7 +117,7 @@ class FormatMime:
         # sets the extension map
         self.extension_map = extension_map
 
-    def unset_configuration_property(self, configuration_propery):
+    def unset_configuration_property(self):
         # sets the extension map
         self.extension_map = {}
 

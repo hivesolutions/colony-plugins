@@ -111,4 +111,4 @@ class FormatsMimePlugin(colony.base.plugin_system.Plugin):
 
     @colony.base.decorators.unset_configuration_property_method("configuration")
     def configuration_unset_configuration_property(self, property_name):
-        self.format_mime.unset_configuration_property(property)
+        self.format_mime.unset_configuration_property()
