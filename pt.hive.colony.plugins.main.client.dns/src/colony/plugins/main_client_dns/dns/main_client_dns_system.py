@@ -92,7 +92,7 @@ class MainClientDns:
         """
         Constructor of the class.
 
-        @type main_client_dns_plugin: MainClientDns
+        @type main_client_dns_plugin: MainClientDnsPlugin
         @param main_client_dns_plugin: The main client dns plugin.
         """
 
