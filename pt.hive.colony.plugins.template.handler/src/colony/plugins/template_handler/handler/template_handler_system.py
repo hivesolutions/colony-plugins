@@ -61,10 +61,6 @@ JAVASCRIPT_TAG_START = "<script type=\"text/javascript\">"
 JAVASCRIPT_TAG_END = "</script>"
 """ The javascript end tag """
 
-FILE_MIME_TYPE_MAPPING = {"html" : "text/html", "txt" : "text/plain", "css" : "text/css",
-                          "jpg" : "image/jpg", "png" : "image/png"}
-""" The map that relates the file extension and the associated mime type """
-
 DEFAULT_MIME_TYPE = "text/plain"
 """ The default mime type """
 
@@ -129,6 +125,9 @@ class TemplateHandler:
         # retrieves the template handler extension plugins
         template_handler_extension_plugins = self.template_handler_plugin.template_handler_extension_plugins
 
+        # retrieves the format mime plugin
+        format_mime_plugin = self.template_handler_plugin.format_mime_plugin
+
         # sets the default base directory
         base_directory = ""
 
@@ -181,7 +180,7 @@ class TemplateHandler:
                     break
                 else:
                     # retrieves the mime type for the given file name extension
-                    mime_type = FILE_MIME_TYPE_MAPPING.get(file_name_extension, DEFAULT_MIME_TYPE)
+                    mime_type = format_mime_plugin.get_mime_type_file_name(request.uri) or DEFAULT_MIME_TYPE
 
                     # sets the empty content type
                     request.content_type = mime_type

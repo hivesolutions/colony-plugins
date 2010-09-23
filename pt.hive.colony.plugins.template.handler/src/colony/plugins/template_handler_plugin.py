@@ -56,7 +56,8 @@ class TemplateHandlerPlugin(colony.base.plugin_system.Plugin):
     attributes = {"build_automation_file_path" : "$base{plugin_directory}/template_handler/handler/resources/baf.xml"}
     capabilities = ["http_python_handler", "build_automation_item"]
     capabilities_allowed = ["template_handler_extension"]
-    dependencies = []
+    dependencies = [colony.base.plugin_system.PluginDependency(
+                    "pt.hive.colony.plugins.format.mime", "1.0.0")]
     events_handled = []
     events_registrable = []
     main_modules = ["template_handler.handler.template_handler_exceptions",
@@ -65,6 +66,8 @@ class TemplateHandlerPlugin(colony.base.plugin_system.Plugin):
     template_handler = None
 
     template_handler_extension_plugins = []
+
+    format_mime_plugin = None
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
@@ -89,6 +92,7 @@ class TemplateHandlerPlugin(colony.base.plugin_system.Plugin):
     def unload_allowed(self, plugin, capability):
         colony.base.plugin_system.Plugin.unload_allowed(self, plugin, capability)
 
+    @colony.base.decorators.inject_dependencies("pt.hive.colony.plugins.template.handler", "1.0.0")
     def dependency_injected(self, plugin):
         colony.base.plugin_system.Plugin.dependency_injected(self, plugin)
 
@@ -108,3 +112,10 @@ class TemplateHandlerPlugin(colony.base.plugin_system.Plugin):
     @colony.base.decorators.unload_allowed_capability("template_handler_extension")
     def template_handler_extension_unload_allowed(self, plugin, capability):
         self.template_handler_extension_plugins.remove(plugin)
+
+    def get_format_mime_plugin(self):
+        return self.format_mime_plugin
+
+    @colony.base.decorators.plugin_inject("pt.hive.colony.plugins.format.mime")
+    def set_format_mime_plugin(self, format_mime_plugin):
+        self.format_mime_plugin = format_mime_plugin
