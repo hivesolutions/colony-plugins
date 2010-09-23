@@ -148,7 +148,7 @@ class MainServiceTelnet:
 
     def _get_service_configuration(self):
         # retrieves the service configuration property
-        service_configuration_property = self.main_service_telnet_plugin.get_configuration_property("server_configuration")
+        service_configuration_property = self.main_service_telnet_plugin.get_configuration_property("service_configuration")
 
         # in case the service configuration property is defined
         if service_configuration_property:
