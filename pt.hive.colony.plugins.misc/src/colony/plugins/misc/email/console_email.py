@@ -44,8 +44,19 @@ INVALID_NUMBER_ARGUMENTS_MESSAGE = "invalid number of arguments"
 """ The invalid number of arguments message """
 
 HELP_TEXT = "### EMAIL HELP ###\n\
-send_email <destiny-address> - sends an email with the given contains to the defined destiny"
+send_email <destiny-address> - sends an email with the given contains to the defined destiny address\n\
+send_test_email <destiny-address> - sends a test email to the defined destiny address"
 """ The help text """
+
+TEST_SUBJECT = "Colony Framework [getcolony.com] ping message"
+""" The test subject contents """
+
+TEST_MESSAGE = "You've just been pinged by Colony Framework [getcolony.com]"
+""" The test message contents """
+
+#TEST_EMAIL_SENDER = "no-reply@getcolony.com"
+TEST_EMAIL_SENDER = "joamag@hive.pt"
+""" The test email sender """
 
 class ConsoleEmail:
     """
@@ -55,7 +66,7 @@ class ConsoleEmail:
     email_plugin = None
     """ The email plugin """
 
-    commands = ["send_email"]
+    commands = ["send_email", "send_test_email"]
     """ The commands list """
 
     def __init__(self, email_plugin):
@@ -85,3 +96,14 @@ class ConsoleEmail:
 
     def process_send_email(self, args, output_method):
         pass
+
+    def process_send_test_email(self, args, output_method):
+        if len(args) < 1:
+            output_method(INVALID_NUMBER_ARGUMENTS_MESSAGE)
+            return
+
+        # retrieves the destiny address
+        destiny_address = args[0]
+
+        # sends the test email to the destiny address
+        self.email_plugin.email.send_email(TEST_EMAIL_SENDER, destiny_address, None, None, TEST_SUBJECT, TEST_MESSAGE)

@@ -37,16 +37,53 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-import base64
-import smtplib
+import sys
+import datetime
 
-DEFAULT_SMTP_SERVER = "smtp_server"
-""" The default smtp server """
+DEFAULT_SMTP_HOSTNAME = "example.com"
+""" The default smtp hostname """
 
-HEADER_TEMPLATE = "From: (%s) %s\n\
-To: (%s) %s\n\
-Subject: %s\n"
-""" The header template to be used in email messages """
+DEFAULT_SMTP_PORT = 25
+""" The default smtp port """
+
+USERNAME_VALUE = "username"
+""" The username value """
+
+PASSWORD_VALUE = "password"
+""" The password value """
+
+TLS_VALUE = "tls"
+""" The tls value """
+
+FROM_VALUE = "From"
+""" The from value """
+
+TO_VALUE = "To"
+""" The to value """
+
+SUBJECT_VALUE = "Subject"
+""" The subject value """
+
+DATE_VALUE = "Date"
+""" The date value """
+
+USER_AGENT_VALUE = "User-Agent"
+""" The user agent value """
+
+USER_AGENT_NAME = "Hive-Colony-Email-Client"
+""" The user agent name """
+
+USER_AGENT_VERSION = "1.0.0"
+""" The user agent version """
+
+ENVIRONMENT_VERSION = str(sys.version_info[0]) + "." + str(sys.version_info[1]) + "." + str(sys.version_info[2]) + "-" + str(sys.version_info[3])
+""" The environment version """
+
+USER_AGENT_IDENTIFIER = USER_AGENT_NAME + "/" + USER_AGENT_VERSION + " (Python/" + sys.platform + "/" + ENVIRONMENT_VERSION + ")"
+""" The user agent identifier """
+
+DATE_TIME_FORMAT = "%a, %d %b %Y %H:%M:%S +0000 (UTC)"
+""" The format for the displayed date times """
 
 class Email:
     """
@@ -66,7 +103,7 @@ class Email:
 
         self.email_plugin = email_plugin
 
-    def send_email(self, email_sender = "none", email_receiver = "none", name_sender = "none", name_receiver = "none", subject = "none", contents = "none", smtp_server = "none", smtp_login = "none", smtp_password = "none"):
+    def send_email(self, email_sender = None, email_receiver = None, name_sender = None, name_receiver = None, subject = None, contents = None):
         """
         Sends an email for the given configuration.
 
@@ -82,47 +119,80 @@ class Email:
         @param subject: The subject of the email.
         @type contents: String
         @param contents: The contents of the email.
-        @type smtp_server: String
-        @param smtp_server: The smtp server to be used when sending the email.
-        @type smtp_login: String
-        @param smtp_login: The login to be used in the server authentication.
-        @type smtp_password: String
-        @param smtp_password: The password to be used in the server authentication.
         """
+
+        # retrieves the main client smtp plugin
+        main_client_smtp_plugin = self.email_plugin.main_client_smtp_plugin
+
+        # retrieves the format mime plugin
+        format_mime_plugin = self.email_plugin.format_mime_plugin
 
         # retrieves the service configuration
         service_configuration = self.email_plugin.get_configuration_property("server_configuration").get_data()
 
-        # in case the smtp server is not defined
-        if not smtp_server:
-            # retrieves the smtp server from configuration
-            smtp_server = service_configuration.get("smtp_server", DEFAULT_SMTP_SERVER)
+        # creates a new smtp client, using the main client smtp plugin
+        smtp_client = main_client_smtp_plugin.create_client({})
 
-        # establishes the connection with the smtp server
-        server = smtplib.SMTP(smtp_server)
+        # tries to retrieve the smtp hostnmae value
+        smtp_hostname = service_configuration.get("hostname", DEFAULT_SMTP_HOSTNAME)
 
-        # in case there is a login and a password defined
-        if not smtp_login == "none" and not smtp_password == "none":
-            # creates the passphrase using the given login and the password
-            passphrase = "\0%s\0%s" % (smtp_login, smtp_password)
+        # tries to retrieve the smtp port value
+        smtp_port = service_configuration.get("port", DEFAULT_SMTP_PORT)
 
-            # encodes the passphrase into base 64
-            base64_passphrase = base64.b64encode(passphrase)
+        # tries to retrieve the smtp username value
+        smtp_username = service_configuration.get("username", None)
 
-            # sets the authentication method
-            server.docmd("AUTH PLAIN")
+        # tries to retrieve the smtp password value
+        smtp_password = service_configuration.get("password", None)
 
-            # sets the passphrase
-            server.docmd(base64_passphrase)
+        # tries to retrieve the tls value
+        smtp_tls = service_configuration.get("tls", False)
 
-        # creates the header from the header template
-        header = HEADER_TEMPLATE % (name_sender, email_sender, name_receiver, email_receiver, subject)
+        # creates the parameters map
+        parameters = {}
 
-        # creates the final contents
-        final_contents = header + contents
+        # sets the authentication parameters
+        parameters[USERNAME_VALUE] = smtp_username
+        parameters[PASSWORD_VALUE] = smtp_password
+        parameters[TLS_VALUE] = smtp_tls
 
-        # sends the mail
-        server.sendmail(email_sender, email_receiver, final_contents)
+        # creates the mime message
+        mime_message = format_mime_plugin.create_message({})
 
-        # quits the server
-        server.quit()
+        # in case the name of the sender is defined
+        if name_sender:
+            # creates the sender line with the name and email
+            sender_line = name_sender + "<" + email_sender + ">"
+        # otherwise
+        else:
+            # creates the sender line with the email
+            sender_line = "<" + email_sender + ">"
+
+        # in case the name of the receiver is defined
+        if name_receiver:
+            # creates the receiver line with the name and email
+            receiver_line = name_receiver + "<" + email_receiver + ">"
+        else:
+            # creates the receiver line with the email
+            receiver_line = "<" + email_receiver + ">"
+
+        # retrieves the current date time, and formats
+        # it according to the "standard" format
+        current_date_time = datetime.datetime.utcnow()
+        current_date_time_formated = current_date_time.strftime(DATE_TIME_FORMAT)
+
+        # sets the basic mime message headers
+        mime_message.set_header(FROM_VALUE, sender_line)
+        mime_message.set_header(TO_VALUE, receiver_line)
+        mime_message.set_header(SUBJECT_VALUE, subject)
+        mime_message.set_header(DATE_VALUE, current_date_time_formated)
+        mime_message.set_header(USER_AGENT_VALUE, USER_AGENT_IDENTIFIER)
+
+        # writes the contents to the mime message
+        mime_message.write(contents)
+
+        # retrieves the mime message value
+        mime_message_value = mime_message.get_value()
+
+        # send the email using the defined values
+        smtp_client.send_mail(smtp_hostname, smtp_port, email_sender, [email_receiver], mime_message_value, parameters)
