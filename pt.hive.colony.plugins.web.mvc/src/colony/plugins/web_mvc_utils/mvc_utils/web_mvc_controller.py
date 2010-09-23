@@ -488,6 +488,19 @@ def get_attribute_decoded(self, rest_request, attribute_name, encoding = DEFAULT
                 # adds the attribute value item to the attribute
                 # value decoded
                 attribute_value_decoded.append(attribute_value_item_decoded)
+        # in case the attribute is a map
+        elif attribute_value_type == types.DictType:
+            # starts the attribute value decoded as map
+            attribute_value_decoded = {}
+
+            # iterates over all the attribute value
+            # items in the attribute value
+            for attribute_value_key, attribute_value_value in attribute_value.items():
+                # decodes the attribute value value
+                attribute_value_value_decoded = attribute_value_value.decode(encoding)
+
+                # sets the attribute value value in the attribute value decoded map
+                attribute_value_decoded[attribute_value_key] = attribute_value_value_decoded
         # otherwise it must be a string
         else:
             # decodes the attribute value
