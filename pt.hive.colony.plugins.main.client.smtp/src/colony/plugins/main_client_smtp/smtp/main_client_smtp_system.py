@@ -81,7 +81,7 @@ class MainClientSmtp:
         """
         Constructor of the class.
 
-        @type main_client_smtp_plugin: MainClientSmtp
+        @type main_client_smtp_plugin: MainClientSmtpPlugin
         @param main_client_smtp_plugin: The main client smtp plugin.
         """
 
@@ -543,7 +543,7 @@ class SmtpClient:
 
     def authenticate_plain(self, session, parameters, username, password):
         # creates the authentication string for the username and password
-        authentication_string = "\x00%s\x00%s\x00" % (username, password)
+        authentication_string = "\x00%s\x00%s" % (username, password)
 
         # converts the authentication string to base64
         authentication_string_base64 = base64.b64encode(authentication_string)
