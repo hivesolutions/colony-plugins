@@ -33,11 +33,11 @@
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://www.hive.pt xsd/baf.xsd">
     <artifact>
-        <id>pt.hive.colony.plugins.main.service.abecula</id>
+        <id>pt.hive.colony.plugins.main.service.bittorrent</id>
         <version>1.0.0</version>
         <type>colony</type>
-        <name>Abecula Service Main Plugin</name>
-        <description>Abecula Service Main Plugin</description>
+        <name>Bittorrent Service Main Plugin</name>
+        <description>The plugin that offers the bittorrent service</description>
         <url>http://www.hive.pt</url>
     </artifact>
     <build>
@@ -48,7 +48,7 @@
                 <version>1.0.0</version>
                 <stage>build</stage>
                 <configuration>
-                    <specification_file>$base{plugin_directory}/main_service_abecula_plugin.json</specification_file>
+                    <specification_file>$base{plugin_directory}/main_service_bittorrent_plugin.json</specification_file>
                 </configuration>
             </plugin>
         </plugins>
