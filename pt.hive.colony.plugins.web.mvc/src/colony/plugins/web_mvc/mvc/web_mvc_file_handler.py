@@ -46,7 +46,7 @@ import colony.libs.string_buffer_util
 
 import web_mvc_exceptions
 
-CHUNK_FILE_SIZE_LIMIT = 3072
+CHUNK_FILE_SIZE_LIMIT = 4096
 """ The chunk file size limit """
 
 CHUNK_SIZE = 1024
@@ -54,10 +54,6 @@ CHUNK_SIZE = 1024
 
 EXPIRATION_DELTA_TIMESTAMP = 31536000
 """ The expiration delta timestamp """
-
-FILE_MIME_TYPE_MAPPING = {"html" : "text/html", "txt" : "text/plain", "js" : "text/javascript",
-                          "css" : "text/css", "jpg" : "image/jpg", "png" : "image/png"}
-""" The map that relates the file extension and the associated mime type """
 
 INVALID_EXPIRATION_STRING_VALUE = "-1"
 """ The invalid expiration string value """
@@ -96,14 +92,11 @@ class WebMvcFileHandler:
         @return: The result of the handling.
         """
 
-        # retrieves the extension of the file
-        extension = file_path.split(".")[-1]
+        # retrieves the format mime plugin
+        format_mime_plugin = self.web_mvc_plugin.format_mime_plugin
 
         # retrieves the associated mime type
-        if extension in FILE_MIME_TYPE_MAPPING:
-            mime_type = FILE_MIME_TYPE_MAPPING[extension]
-        else:
-            mime_type = None
+        mime_type = format_mime_plugin.get_mime_type_file_name(file_path)
 
         # in case the file path does not exist
         if not os.path.exists(file_path):

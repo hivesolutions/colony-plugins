@@ -56,6 +56,8 @@ class WebMvcPlugin(colony.base.plugin_system.Plugin):
     capabilities = ["web.mvc", "rest_service", "build_automation_item"]
     capabilities_allowed = ["web.mvc_service"]
     dependencies = [colony.base.plugin_system.PluginDependency(
+                    "pt.hive.colony.plugins.format.mime", "1.0.0"),
+                    colony.base.plugin_system.PluginDependency(
                     "pt.hive.colony.plugins.misc.random", "1.0.0"),
                     colony.base.plugin_system.PluginDependency(
                     "pt.hive.colony.plugins.misc.json", "1.0.0")]
@@ -68,6 +70,7 @@ class WebMvcPlugin(colony.base.plugin_system.Plugin):
 
     web_mvc_service_plugins = []
 
+    format_mime_plugin = None
     random_plugin = None
     json_plugin = None
 
@@ -135,6 +138,13 @@ class WebMvcPlugin(colony.base.plugin_system.Plugin):
     def web_mvc_service_extension_unload_allowed(self, plugin, capability):
         self.web_mvc_service_plugins.remove(plugin)
         self.web_mvc.unload_web_mvc_service_plugin(plugin)
+
+    def get_format_mime_plugin(self):
+        return self.format_mime_plugin
+
+    @colony.base.decorators.plugin_inject("pt.hive.colony.plugins.format.mime")
+    def set_format_mime_plugin(self, format_mime_plugin):
+        self.format_mime_plugin = format_mime_plugin
 
     def get_random_plugin(self):
         return self.random_plugin
