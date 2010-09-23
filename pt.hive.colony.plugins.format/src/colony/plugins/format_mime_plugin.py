@@ -106,9 +106,9 @@ class FormatsMimePlugin(colony.base.plugin_system.Plugin):
         return self.format_mime.get_mime_type_file_name(file_name)
 
     @colony.base.decorators.set_configuration_property_method("configuration")
-    def extension_set_configuration_property(self, property_name, property):
+    def configuration_set_configuration_property(self, property_name, property):
         self.format_mime.set_configuration_property(property)
 
     @colony.base.decorators.unset_configuration_property_method("configuration")
-    def extension_unset_configuration_property(self, property_name, property):
+    def configuration_unset_configuration_property(self, property_name, property):
         self.format_mime.unset_configuration_property(property)
