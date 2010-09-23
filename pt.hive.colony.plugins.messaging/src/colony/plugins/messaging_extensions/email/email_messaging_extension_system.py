@@ -38,6 +38,7 @@ __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
 MESSAGING_SERVICE_ID = "email"
+""" The messaging service id """
 
 class EmailMessagingExtension:
     """
@@ -58,9 +59,24 @@ class EmailMessagingExtension:
         self.email_messaging_extension_plugin = email_messaging_extension_plugin
 
     def get_messaging_service_id(self):
+        """
+        Retrieves the messaging service id.
+
+        @rtype: String
+        @return: The messaging service id.
+        """
+
         return MESSAGING_SERVICE_ID
 
     def send_message(self, message_attributes):
+        """
+        Sends a message using the given message attributes.
+
+        @type message_attributes: Dictionary
+        @param message_attributes: The attributes of the message to
+        be sent.
+        """
+
         # retrieves the email plugin
         email_plugin = self.email_messaging_extension_plugin.email_plugin
 

@@ -90,9 +90,24 @@ class EmailMessagingExtensionPlugin(colony.base.plugin_system.Plugin):
         colony.base.plugin_system.Plugin.dependency_injected(self, plugin)
 
     def get_messaging_service_id(self):
+        """
+        Retrieves the messaging service id.
+
+        @rtype: String
+        @return: The messaging service id.
+        """
+
         return self.email_messaging_extension.get_messaging_service_id()
 
     def send_message(self, message_attributes):
+        """
+        Sends a message using the given message attributes.
+
+        @type message_attributes: Dictionary
+        @param message_attributes: The attributes of the message to
+        be sent.
+        """
+
         self.email_messaging_extension.send_message(message_attributes)
 
     def get_email_plugin(self):

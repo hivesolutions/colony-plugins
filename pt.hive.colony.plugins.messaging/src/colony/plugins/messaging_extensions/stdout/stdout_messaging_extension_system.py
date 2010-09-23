@@ -38,6 +38,7 @@ __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
 MESSAGING_SERVICE_ID = "stdout"
+""" The messaging service id """
 
 class StdoutMessagingExtension:
     """
@@ -58,9 +59,23 @@ class StdoutMessagingExtension:
         self.stdout_messaging_extension_plugin = stdout_messaging_extension_plugin
 
     def get_messaging_service_id(self):
+        """
+        Retrieves the messaging service id.
+
+        @rtype: String
+        @return: The messaging service id.
+        """
+
         return MESSAGING_SERVICE_ID
 
     def send_message(self, message_attributes):
+        """
+        Retrieves the messaging service id.
+
+        @rtype: String
+        @return: The messaging service id.
+        """
+
         # retrieves the text part of the message
         message_text = message_attributes["text"]
 
