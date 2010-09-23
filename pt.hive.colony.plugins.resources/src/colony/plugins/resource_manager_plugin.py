@@ -60,7 +60,7 @@ class ResourceManagerPlugin(colony.base.plugin_system.Plugin):
     capabilities_allowed = ["resource_parser"]
     dependencies = []
     events_handled = []
-    events_registrable = ["plugin_manager.init_load_plugin"]
+    events_registrable = ["plugin_manager.end_load_plugin", "plugin_manager.unload_plugin"]
     main_modules = ["resources.resource_manager.resource_manager_parser",
                     "resources.resource_manager.resource_manager_system",
                     "resources.resource_manager.resource_manager_tests"]
@@ -133,6 +133,10 @@ class ResourceManagerPlugin(colony.base.plugin_system.Plugin):
         self.resource_parser_plugins.remove(plugin)
         self.resource_manager.unload_resource_parser_plugin(plugin)
 
-    @colony.base.decorators.event_handler_method("plugin_manager.init_load_plugin")
-    def init_load_plugin_handler(self, event_name, plugin_id, plugin_version, plugin, *event_args):
+    @colony.base.decorators.event_handler_method("plugin_manager.end_load_plugin")
+    def end_load_plugin_handler(self, event_name, plugin_id, plugin_version, plugin, *event_args):
         self.resource_manager.register_plugin_resources(plugin)
+
+    @colony.base.decorators.event_handler_method("plugin_manager.unload_plugin")
+    def unload_plugin_handler(self, event_name, plugin_id, plugin_version, plugin, *event_args):
+        self.resource_manager.unregister_plugin_resources(plugin)

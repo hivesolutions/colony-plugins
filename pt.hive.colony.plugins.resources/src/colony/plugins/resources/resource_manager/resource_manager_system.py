@@ -292,6 +292,33 @@ class ResourceManager:
             # sets the plugin configuration resource as configuration property in the plugin
             plugin.set_configuration_property(plugin_configuration_resource_name, plugin_configuration_resource)
 
+    def unregister_plugin_resources(self, plugin):
+        """
+        Unregisters the plugin resources in the plugin.
+
+        @type plugin: Plugin
+        @param plugin: The plugin to have the resources unregistered.
+        """
+
+        # retrieves the plugin id
+        plugin_id = plugin.id
+
+        # in case the plugin id is not defined in the plugin id configuration resource map
+        if not plugin_id in self.plugin_id_configuration_resources_list_map:
+            # returns immediately
+            return
+
+        # retrieves the plugin configuration resources list
+        plugin_configuration_resources_list = self.plugin_id_configuration_resources_list_map[plugin_id]
+
+        # iterates over all the plugin configuration resources
+        for plugin_configuration_resource in plugin_configuration_resources_list:
+            # retrieves the plugin configuration resource name
+            plugin_configuration_resource_name = plugin_configuration_resource.name
+
+            # unsets the plugin configuration resource as configuration property in the plugin
+            plugin.unset_configuration_property(plugin_configuration_resource_name)
+
     def process_resource(self, resource, full_resources_path):
         """
         Processes a resource.
