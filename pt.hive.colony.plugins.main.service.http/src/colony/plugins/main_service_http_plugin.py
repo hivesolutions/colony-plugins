@@ -163,8 +163,8 @@ class MainServiceHttpPlugin(colony.base.plugin_system.Plugin):
 
     @colony.base.decorators.set_configuration_property_method("service_configuration")
     def service_configuration_set_configuration_property(self, property_name, property):
-        pass
+        self.main_service_http.set_service_configuration_property(property)
 
     @colony.base.decorators.unset_configuration_property_method("service_configuration")
     def service_configuration_unset_configuration_property(self, property_name):
-        pass
+        self.main_service_http.unset_service_configuration_property()

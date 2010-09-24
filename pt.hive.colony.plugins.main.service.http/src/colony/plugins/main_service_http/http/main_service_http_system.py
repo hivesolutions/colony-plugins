@@ -37,6 +37,7 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
+import re
 import sys
 import time
 import copy
@@ -238,6 +239,9 @@ class MainServiceHttp:
     http_service = None
     """ The http service reference """
 
+    http_service_configuration = {}
+    """ The http service configuration """
+
     def __init__(self, main_service_http_plugin):
         """
         Constructor of the class.
@@ -252,6 +256,7 @@ class MainServiceHttp:
         self.http_service_encoding_plugins_map = {}
         self.http_service_authentication_handler_plugins_map = {}
         self.http_service_error_handler_plugins_map = {}
+        self.http_service_configuration = {}
 
     def start_service(self, parameters):
         """
@@ -331,6 +336,48 @@ class MainServiceHttp:
         error_handler_name = http_service_error_handler_plugin.get_error_handler_name()
 
         del self.http_service_error_handler_plugins_map[error_handler_name]
+
+    def set_service_configuration_property(self, service_configuration_property):
+        # retrieves the service configuration
+        service_configuration = service_configuration_property.get_data()
+
+        RESOLUTION_ORDER_ITEMS = ("virtual_servers", "redirections", "contexts")
+
+        for resolution_order_item in RESOLUTION_ORDER_ITEMS:
+            resolution_order_item_value = service_configuration.get(resolution_order_item, None)
+
+            if not resolution_order_item_value:
+                continue
+
+            resolution_order = resolution_order_item_value.get("resolution_order", resolution_order_item_value.keys())
+
+            # creates the regex buffer
+            regex_buffer = colony.libs.string_buffer_util.StringBuffer()
+
+            # sets the is first flag
+            is_first = True
+
+            for i in resolution_order:
+                if is_first:
+                    is_first = False
+                else:
+                    regex_buffer.write("|")
+
+                regex_buffer.write("(" + i + ")")
+
+            # retrieves the regex value
+            regex_value = regex_buffer.get_value()
+
+            # compiles the regex value
+            regex = re.compile(regex_value)
+
+            resolution_order_item_value["resolution_order_regex"] = regex
+
+        # sets the http service configuration
+        self.http_service_configuration = service_configuration
+
+    def unset_service_configuration_property(self, service_configuration_property):
+        pass
 
     def _get_service_configuration(self):
         # retrieves the service configuration property
@@ -1230,6 +1277,9 @@ class HttpClientServiceHandler:
         # retrieves the service configuration contexts resolution order
         service_configuration_contexts_resolution_order = service_configuration_contexts.get("resolution_order", service_configuration_contexts.keys())
 
+        # retrieves the service configuration contexts resolution order regex
+        service_configuration_contexts_resolution_order_regex = service_configuration_contexts.get("resolution_order_regex", service_configuration_contexts.keys())
+
         # in case the request is pending redirection validation
         if request.redirection_validation:
             # the request base path is used as the request path
@@ -1247,37 +1297,8 @@ class HttpClientServiceHandler:
         # sets the default service configuration context name
         service_configuration_context_name = None
 
-
-
-        # ----- INIT DO REGEX -----
-
-        # creates the regex buffer
-        regex_buffer = colony.libs.string_buffer_util.StringBuffer()
-
-        # sets the is first flag
-        is_first = True
-
-        for i in service_configuration_contexts_resolution_order:
-            if is_first:
-                is_first = False
-            else:
-                regex_buffer.write("|")
-
-            regex_buffer.write("(" + i + ")")
-
-        # retrieves the regex value
-        regex_value = regex_buffer.get_value()
-
-        import re
-
-        # compiles teh regex value
-        regex = re.compile(regex_value)
-
-        # ----- END DO REGEX -----
-
-
         # tries to match the request path with the regex
-        request_path_match = regex.match(request_path)
+        request_path_match = service_configuration_contexts_resolution_order_regex.match(request_path)
 
         # in case there is a valid request path match
         if request_path_match:
