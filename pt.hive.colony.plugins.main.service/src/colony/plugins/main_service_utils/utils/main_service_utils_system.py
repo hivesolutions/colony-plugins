@@ -310,8 +310,11 @@ class AbstractService:
     main_service_utils_plugin = None
     """ The main service utils plugin """
 
-    service_socket = None
-    """ The service socket """
+    service_sockets = []
+    """ The service sockets """
+
+    service_socket_end_point_map = {}
+    """ The service socket end point map """
 
     service_connection_active = False
     """ The service connection active flag """
@@ -333,6 +336,9 @@ class AbstractService:
 
     service_handling_task_class = None
     """ The service handling task class """
+
+    end_points = None
+    """ The end points """
 
     socket_provider = None
     """ The socket provider """
@@ -379,6 +385,7 @@ class AbstractService:
         self.service_type = parameters.get("type", DEFAULT_TYPE)
         self.service_plugin = parameters.get("service_plugin", None)
         self.service_handling_task_class = parameters.get("service_handling_task_class", None)
+        self.end_points = parameters.get("end_points", [])
         self.socket_provider = parameters.get("socket_provider", None)
         self.bind_host = parameters.get("bind_host", BIND_HOST)
         self.port = parameters.get("port", PORT)
@@ -389,8 +396,15 @@ class AbstractService:
         self.client_connection_timeout = parameters.get("client_connection_timeout", CLIENT_CONNECTION_TIMEOUT)
         self.connection_timeout = parameters.get("connection_timeout", CONNECTION_TIMEOUT)
 
+        self.service_sockets = []
+        self.service_socket_end_point_map = {}
         self.service_connection_close_event = threading.Event()
         self.service_connection_close_end_event = threading.Event()
+
+        # in case no end points are defined and there is a socket provider
+        # a default end point is creates with those values
+        if not self.end_points and self.socket_provider:
+            self.end_points.append((self.socket_provider, self.bind_host, self.port))
 
     def start_service(self):
         """
@@ -401,11 +415,11 @@ class AbstractService:
             # creates the work pool
             self._create_pool()
 
-            # creates and sets the service socket
-            self._create_service_socket()
+            # creates and sets the service sockets
+            self._create_service_sockets()
 
-            # activates and listens the service socket
-            self._activate_service_socket()
+            # activates and listens the service sockets
+            self._activate_service_sockets()
 
             # in case the service type is connection
             if self.service_type == CONNECTION_TYPE_VALUE:
@@ -419,8 +433,8 @@ class AbstractService:
             # sets the service connection active flag as false
             self.service_connection_active = False
         finally:
-            # disables the service socket
-            self._disable_service_socket()
+            # disables the service sockets
+            self._disable_service_sockets()
 
             # clears the service connection close event
             self.service_connection_close_event.clear()
@@ -484,78 +498,93 @@ class AbstractService:
         # sets the service connection active flag as true
         self.service_connection_active = True
 
-    def _create_service_socket(self):
+    def _create_service_sockets(self):
         """
-        Creates the service socket according to the
+        Creates the service sockets according to the
         service configuration.
         """
 
-        # in case the socket provider is defined
-        if self.socket_provider:
-            # retrieves the socket provider plugins map
-            socket_provider_plugins_map = self.main_service_utils.socket_provider_plugins_map
+        # iterates over all the endpoints
+        for end_point in self.end_points:
+            # unpacks the end point
+            socket_provider, _bind_host, _port = end_point
 
-            # in case the socket provider is available in the socket
-            # provider plugins map
-            if self.socket_provider in socket_provider_plugins_map:
-                # retrieves the socket provider plugin from the socket provider plugins map
-                socket_provider_plugin = socket_provider_plugins_map[self.socket_provider]
+            # in case the socket provider is defined
+            if socket_provider:
+                # retrieves the socket provider plugins map
+                socket_provider_plugins_map = self.main_service_utils.socket_provider_plugins_map
 
-                # the parameters for the socket provider
-                parameters = {SERVER_SIDE_VALUE : True, DO_HANDSHAKE_ON_CONNECT_VALUE : False}
+                # in case the socket provider is available in the socket
+                # provider plugins map
+                if socket_provider in socket_provider_plugins_map:
+                    # retrieves the socket provider plugin from the socket provider plugins map
+                    socket_provider_plugin = socket_provider_plugins_map[socket_provider]
 
-                # creates a new service socket with the socket provider plugin
-                self.service_socket = socket_provider_plugin.provide_socket_parameters(parameters)
+                    # the parameters for the socket provider
+                    parameters = {SERVER_SIDE_VALUE : True, DO_HANDSHAKE_ON_CONNECT_VALUE : False}
+
+                    # creates a new service socket with the socket provider plugin
+                    service_socket = socket_provider_plugin.provide_socket_parameters(parameters)
+                else:
+                    # raises the socket provider not found exception
+                    raise main_service_utils_exceptions.SocketProviderNotFound("socket provider %s not found" % socket_provider)
             else:
-                # raises the socket provider not found exception
-                raise main_service_utils_exceptions.SocketProviderNotFound("socket provider %s not found" % self.socket_provider)
-        else:
-            # creates the service socket
-            self.service_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+                # creates the service socket
+                service_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
-        # sets the service socket to non blocking
-        self.service_socket.setblocking(0)
+            # sets the service socket to non blocking
+            service_socket.setblocking(0)
+
+            # adds the service socket to the service sockets
+            self.service_sockets.append(service_socket)
+
+            # sets the end point in the service socket end point map
+            self.service_socket_end_point_map[service_socket] = end_point
 
     def _loop_connection(self):
         # loops while the service connection is active
         while not self.service_connection_close_event.isSet():
-            # polls the service socket to check if there
+            # polls the service sockets to check if there
             # is a new connection available
-            poll_return_value = self._poll_service_socket()
+            selected_values = self._poll_service_sockets()
 
-            # in case the poll return value is not valid or
-            # the connection is closed
-            if not poll_return_value or self.service_connection_close_event.isSet():
+            # in case the selected values are not valid or
+            # the connections are closed
+            if not selected_values or self.service_connection_close_event.isSet():
                 # breaks the cycle
                 break
 
-            # accepts the new client connection
-            self._accept_service_socket()
+            # iterates over the selected values
+            for selected_value in selected_values:
+                # accepts the new client connection
+                self._accept_service_socket(selected_value)
 
     def _loop_connectionless(self):
         # loops while the service connection is active
         while not self.service_connection_close_event.isSet():
-            # polls the service socket to check if there
+            # polls the service sockets to check if there
             # is a new connection available
-            poll_return_value = self._poll_service_socket()
+            selected_values = self._poll_service_sockets()
 
-            # in case the poll return value is not valid or
-            # the connection is closed
-            if not poll_return_value or self.service_connection_close_event.isSet():
+            # in case the selected values are not valid or
+            # the connections are closed
+            if not selected_values or self.service_connection_close_event.isSet():
                 # breaks the cycle
                 break
 
-            # reads from the service socket and creates
-            # the client connection
-            self._read_service_socket()
+            # iterates over the selected values
+            for selected_value in selected_values:
+                # reads from the service socket and creates
+                # the client connection
+                self._read_service_socket(selected_value)
 
-    def _poll_service_socket(self):
+    def _poll_service_sockets(self):
         """
-        Polls the service socket for changes
-        and returns the resulting value (if successful).
+        Polls the service sockets for changes
+        and returns the selected values (if successful).
 
-        @rtype: bool
-        @return: If the pool was successful.
+        @rtype: List
+        @return: The selected values.
         """
 
         try:
@@ -566,78 +595,109 @@ class AbstractService:
             while selected_values == ([], [], []):
                 # in case the connection is closed
                 if self.service_connection_close_event.isSet():
-                    return False
+                    # returns invalid
+                    return None
 
                 # selects the values
-                selected_values = select.select([self.service_socket], [], [], self.client_connection_timeout)
+                selected_values = select.select(self.service_sockets, [], [], self.client_connection_timeout)
 
-            return True
+            # retrieves the selected values read
+            selected_values_read = selected_values[0]
+
+            # returns the selected values read
+            return selected_values_read
         except BaseException, exception:
             # prints info message about connection
             self.main_service_utils_plugin.info("The socket is not valid for selection of the pool: " + unicode(exception))
 
-            return False
+            # returns invalid
+            return None
 
-    def _accept_service_socket(self):
+    def _accept_service_socket(self, service_socket):
         """
         Accepts the client connection in
         the service socket.
+
+        @type service_socket: Socket
+        @param service_socket: The service socket to be accepted.
         """
 
         try:
+            # retrieves the end point for the service socket
+            end_point = self.service_socket_end_point_map[service_socket]
+
+            # unpacks the end point
+            _socket_provider, _bind_host, port = end_point
+
             # accepts the connection retrieving the service connection object and the address
-            service_connection, service_address = self.service_socket.accept()
+            service_connection, service_address = service_socket.accept()
 
             # sets the service connection to non blocking mode
             service_connection.setblocking(0)
 
             # inserts the connection and address into the pool
-            self._insert_connection_pool(service_connection, service_address)
+            self._insert_connection_pool(service_connection, service_address, port)
         except Exception, exception:
             # prints an error message about the problem accepting the socket
             self.main_service_utils_plugin.error("Error accepting socket: " + unicode(exception))
 
-    def _read_service_socket(self):
+    def _read_service_socket(self, service_socket):
         """
         Reads data from the client connection
         in the service socket.
+
+        @type service_socket: Socket
+        @param service_socket: The service socket to read from.
         """
 
         try:
-            # reads some data from the service socket
-            service_data, service_address = self.service_socket.recvfrom(self.chunk_size)
+            # retrieves the end point for the service socket
+            end_point = self.service_socket_end_point_map[service_socket]
 
-            # inserts the data and address into the pool
-            self._insert_data_pool(service_data, service_address)
+            # unpacks the end point
+            _socket_provider, _bind_host, port = end_point
+
+            # reads some data from the service socket
+            service_data, service_address = service_socket.recvfrom(self.chunk_size)
+
+            # inserts the data, socket and address into the pool
+            self._insert_data_pool(service_data, service_socket, service_address, port)
         except Exception, exception:
             # prints an error message about the problem reading from socket
             self.main_service_utils_plugin.error("Error reading from socket: " + unicode(exception))
 
-    def _activate_service_socket(self):
+    def _activate_service_sockets(self):
         """
         Activates the service socket.
         """
 
-        # sets the socket to be able to reuse the socket
-        self.service_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+        # iterates over the service sockets and the end points
+        for service_socket, end_point in zip(self.service_sockets, self.end_points):
+            # unpacks the end point
+            _socket_provider, bind_host, port = end_point
 
-        # binds the service socket
-        self.service_socket.bind((self.bind_host, self.port))
+            # sets the socket to be able to reuse the socket
+            service_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
 
-        # in case the service type is connection
-        if self.service_type == CONNECTION_TYPE_VALUE:
-            # start listening in the service socket
-            self.service_socket.listen(5)
+            # binds the service socket
+            service_socket.bind((bind_host, port))
 
-    def _disable_service_socket(self):
+            # in case the service type is connection
+            if self.service_type == CONNECTION_TYPE_VALUE:
+                # start listening in the service socket
+                service_socket.listen(5)
+
+    def _disable_service_sockets(self):
         """
-        Disables the service socket.
+        Disables the service sockets.
         """
 
-        # closes the service socket
-        self.service_socket.close()
+        # iterates over all the service sockets
+        for service_socket in self.service_sockets:
+            # closes the service socket
+            service_socket.close()
 
-    def _insert_connection_pool(self, service_connection, service_address):
+    def _insert_connection_pool(self, service_connection, service_address, port):
         """
         Inserts the given service connection into the connection pool.
         This process takes into account the pool usage and the current
@@ -648,15 +708,17 @@ class AbstractService:
         @type service_address: Tuple
         @param service_address: A tuple containing the address information
         of the connection.
+        @type port: int
+        @param port: The associated port.
         """
 
         # creates the work reference tuple
-        work_reference = (service_connection, service_address, self.port)
+        work_reference = (service_connection, service_address, port)
 
         # inserts the work into the service client pool
         self.service_client_pool.insert_work(work_reference)
 
-    def _insert_data_pool(self, service_data, service_address):
+    def _insert_data_pool(self, service_data, service_socket, service_address, port):
         """
         Inserts the given data in to the connection pool.
         This process takes into account the pool usage and the current
@@ -664,13 +726,17 @@ class AbstractService:
 
         @type service_data: String
         @param service_data: The data to be inserted.
+        @type service_socket: Socket
+        @param service_socket: The associated service socket.
         @type service_address: Tuple
         @param service_address: A tuple containing the address information
         of the connection.
+        @type port: int
+        @param port: The associated port.
         """
 
         # creates the work reference tuple
-        work_reference = (service_data, self.service_socket, service_address, self.port)
+        work_reference = (service_data, service_socket, service_address, port)
 
         # inserts the work into the service client pool
         self.service_client_pool.insert_work(work_reference)
