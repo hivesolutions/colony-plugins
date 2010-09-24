@@ -426,6 +426,9 @@ class MainServiceHttp:
         @return: The final service parameters map.
         """
 
+        # retrieves the end points value
+        end_points = parameters.get("end_points", None)
+
         # retrieves the socket provider value
         socket_provider = parameters.get("socket_provider", None)
 
@@ -437,6 +440,9 @@ class MainServiceHttp:
 
         # retrieves the service configuration
         service_configuration = self._get_service_configuration()
+
+        # retrieves the end points configuration value
+        end_points = service_configuration.get("default_end_points", end_points)
 
         # retrieves the socket provider configuration value
         socket_provider = service_configuration.get("default_socket_provider", socket_provider)
@@ -467,6 +473,7 @@ class MainServiceHttp:
         parameters = {"type" : CONNECTION_TYPE,
                       "service_plugin" : self.main_service_http_plugin,
                       "service_handling_task_class" : HttpClientServiceHandler,
+                      "end_points" : end_points,
                       "socket_provider" : socket_provider,
                       "bind_host" : BIND_HOST,
                       "port" : port,
