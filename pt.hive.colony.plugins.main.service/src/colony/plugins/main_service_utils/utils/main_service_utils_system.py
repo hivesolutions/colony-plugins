@@ -44,6 +44,8 @@ import threading
 
 import main_service_utils_exceptions
 
+import colony.libs.map_util
+
 BIND_HOST = ""
 """ The bind host """
 
@@ -349,6 +351,9 @@ class AbstractService:
     port = PORT
     """ The service port """
 
+    socket_parameters = {}
+    """ The socket parameters """
+
     chunk_size = CHUNK_SIZE
     """ The chunk size """
 
@@ -389,6 +394,7 @@ class AbstractService:
         self.socket_provider = parameters.get("socket_provider", None)
         self.bind_host = parameters.get("bind_host", BIND_HOST)
         self.port = parameters.get("port", PORT)
+        self.socket_parameters = parameters.get("socket_parameters", {})
         self.chunk_size = parameters.get("chunk_size", CHUNK_SIZE)
         self.service_configuration = parameters.get("service_configuration", {})
         self.extra_parameters = parameters.get("extra_parameters", {})
@@ -404,7 +410,7 @@ class AbstractService:
         # in case no end points are defined and there is a socket provider
         # a default end point is creates with those values
         if not self.end_points and self.socket_provider:
-            self.end_points.append((self.socket_provider, self.bind_host, self.port))
+            self.end_points.append((self.socket_provider, self.bind_host, self.port, self.socket_parameters))
 
     def start_service(self):
         """
@@ -504,10 +510,10 @@ class AbstractService:
         service configuration.
         """
 
-        # iterates over all the endpoints
+        # iterates over all the end points
         for end_point in self.end_points:
             # unpacks the end point
-            socket_provider, _bind_host, _port = end_point
+            socket_provider, _bind_host, _port, socket_parameters = end_point
 
             # in case the socket provider is defined
             if socket_provider:
@@ -522,6 +528,9 @@ class AbstractService:
 
                     # the parameters for the socket provider
                     parameters = {SERVER_SIDE_VALUE : True, DO_HANDSHAKE_ON_CONNECT_VALUE : False}
+
+                    # copies the socket parameters to the parameters map
+                    colony.libs.map_util.map_copy(socket_parameters, parameters)
 
                     # creates a new service socket with the socket provider plugin
                     service_socket = socket_provider_plugin.provide_socket_parameters(parameters)
@@ -627,7 +636,7 @@ class AbstractService:
             end_point = self.service_socket_end_point_map[service_socket]
 
             # unpacks the end point
-            _socket_provider, _bind_host, port = end_point
+            _socket_provider, _bind_host, port, _socket_parameters = end_point
 
             # accepts the connection retrieving the service connection object and the address
             service_connection, service_address = service_socket.accept()
@@ -655,7 +664,7 @@ class AbstractService:
             end_point = self.service_socket_end_point_map[service_socket]
 
             # unpacks the end point
-            _socket_provider, _bind_host, port = end_point
+            _socket_provider, _bind_host, port, _socket_parameters = end_point
 
             # reads some data from the service socket
             service_data, service_address = service_socket.recvfrom(self.chunk_size)
@@ -674,7 +683,7 @@ class AbstractService:
         # iterates over the service sockets and the end points
         for service_socket, end_point in zip(self.service_sockets, self.end_points):
             # unpacks the end point
-            _socket_provider, bind_host, port = end_point
+            _socket_provider, bind_host, port, _socket_parameters = end_point
 
             # sets the socket to be able to reuse the socket
             service_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
