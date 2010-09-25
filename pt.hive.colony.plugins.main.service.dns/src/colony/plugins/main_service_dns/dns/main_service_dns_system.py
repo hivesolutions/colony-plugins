@@ -216,20 +216,32 @@ class MainServiceDns:
         @return: The final service parameters map.
         """
 
+        # retrieves the end points value
+        end_points = parameters.get("end_points", [])
+
         # retrieves the socket provider value
         socket_provider = parameters.get("socket_provider", None)
 
         # retrieves the port value
         port = parameters.get("port", DEFAULT_PORT)
 
+        # retrieves the socket parameters value
+        socket_parameters = parameters.get("socket_parameters", {})
+
         # retrieves the service configuration
         service_configuration = self._get_service_configuration()
+
+        # retrieves the end points configuration value
+        end_points = service_configuration.get("default_end_points", end_points)
 
         # retrieves the socket provider configuration value
         socket_provider = service_configuration.get("default_socket_provider", socket_provider)
 
         # retrieves the port configuration value
         port = service_configuration.get("default_port", port)
+
+        # retrieves the socket parameters configuration value
+        socket_parameters = service_configuration.get("default_socket_parameters", socket_parameters)
 
         # creates the pool configuration map
         pool_configuration = {"name" : "dns pool",
@@ -247,9 +259,11 @@ class MainServiceDns:
         parameters = {"type" : CONNECTION_TYPE,
                       "service_plugin" : self.main_service_dns_plugin,
                       "service_handling_task_class" : DnsClientServiceHandler,
+                      "end_points" : end_points,
                       "socket_provider" : socket_provider,
                       "bind_host" : BIND_HOST,
                       "port" : port,
+                      "socket_parameters" : socket_parameters,
                       "chunk_size" : MESSAGE_MAXIMUM_SIZE,
                       "service_configuration" : service_configuration,
                       "extra_parameters" :  extra_parameters,

@@ -427,7 +427,7 @@ class MainServiceHttp:
         """
 
         # retrieves the end points value
-        end_points = parameters.get("end_points", None)
+        end_points = parameters.get("end_points", [])
 
         # retrieves the socket provider value
         socket_provider = parameters.get("socket_provider", None)
@@ -437,6 +437,9 @@ class MainServiceHttp:
 
         # retrieves the encoding value
         encoding = parameters.get("encoding", None)
+
+        # retrieves the socket parameters value
+        socket_parameters = parameters.get("socket_parameters", {})
 
         # retrieves the service configuration
         service_configuration = self._get_service_configuration()
@@ -452,6 +455,9 @@ class MainServiceHttp:
 
         # retrieves the encoding configuration value
         encoding = service_configuration.get("default_encoding", encoding)
+
+        # retrieves the socket parameters configuration value
+        socket_parameters = service_configuration.get("default_socket_parameters", socket_parameters)
 
         # retrieves the encoding handler for the given encoding
         encoding_handler = self._get_encoding_handler(encoding)
@@ -477,6 +483,7 @@ class MainServiceHttp:
                       "socket_provider" : socket_provider,
                       "bind_host" : BIND_HOST,
                       "port" : port,
+                      "socket_parameters" : socket_parameters,
                       "chunk_size" : CHUNK_SIZE,
                       "service_configuration" : service_configuration,
                       "extra_parameters" :  extra_parameters,
