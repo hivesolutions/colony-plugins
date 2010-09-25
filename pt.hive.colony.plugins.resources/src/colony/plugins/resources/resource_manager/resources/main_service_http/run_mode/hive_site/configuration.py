@@ -38,8 +38,7 @@ __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
 configuration = {
-                 "default_socket_provider" : "normal",
-                 "default_port" : 8080,
+                 "default_end_points" : [("normal", "", 8080, {}), ("ssl", "", 443, {})],
                  "default_handler" : "file",
                  "default_encoding" : None,
                  "default_content_type_charset" : "utf-8",
@@ -51,10 +50,6 @@ configuration = {
                                     "blog.hive.pt" : True,
                                     "takethebill.com" : True,
                                     "www.takethebill.com" : True},
-                 "connectors" : [
-                     {"default_port" : 8181,
-                      "default_handler" : "file"}
-                 ],
                  "virtual_servers" : {
                      "resolution_order" : ["blog.hive.pt", "takethebill.com"],
                      "blog.hive.pt" : {

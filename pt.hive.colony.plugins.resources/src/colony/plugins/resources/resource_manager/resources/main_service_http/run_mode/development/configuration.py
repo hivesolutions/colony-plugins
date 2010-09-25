@@ -38,16 +38,17 @@ __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
 configuration = {
-                 "default_socket_provider" : "normal",
-                 "default_port" : 8080,
+                 "default_end_points" : [("normal", "", 8080, {})],
                  "default_handler" : "file",
                  "default_encoding" : None,
                  "default_content_type_charset" : "utf-8",
                  "preferred_error_handlers" : ["template", "default"],
                  "verify_request" : False,
                  "connectors" : [
-                     {"default_port" : 8181,
-                      "default_handler" : "file"}
+                     {
+                         "default_end_points" : [("normal", "", 8181, {})],
+                         "default_handler" : "file"
+                     }
                  ],
                  "virtual_servers" : {
                      "resolution_order" : ["127.0.0.1"],

@@ -38,8 +38,7 @@ __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
 configuration = {
-                 "default_socket_provider" : "ssl",
-                 "default_port" : 444,
+                 "default_end_points" : [("ssl", "", 444, {})],
                  "default_handler" : "file",
                  "default_encoding" : None,
                  "preferred_error_handlers" : ["template", "default"],

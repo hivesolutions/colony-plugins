@@ -38,8 +38,7 @@ __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
 configuration = {
-                 "default_socket_provider" : "datagram",
-                 "default_port" : 53,
+                 "default_end_points" : [("datagram", "", 53, {})],
                  "default_handler" : "database",
                  "handler_properties" : {
                      "arguments" : {"entity_manager_arguments" : {"connection_parameters" : {"file_path" : "%configuration:pt.hive.colony.plugins.dns.storage%/zones.db",
