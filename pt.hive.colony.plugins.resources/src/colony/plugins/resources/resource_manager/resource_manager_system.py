@@ -653,16 +653,42 @@ class ResourceManager:
 
         # in case the resource id exist in the resource id resource map
         if resource_id in self.resource_id_resource_map:
+            # retrieves the "old" resource from the resource id
+            # resource map (backup)
             old_resource = self.resource_id_resource_map[resource_id]
+
+            # deletes the resource reference
             del self.resource_id_resource_map[resource_id]
-            self.resource_name_resources_list_map[old_resource.get_name()].remove(old_resource)
-            self.resource_type_resources_list_map[old_resource.get_type()].remove(old_resource)
-            namespace_values_list = old_resource.get_namespace().get_list_value()
+
+            # retrieves the "old" resource attributes
+            old_resource_name = old_resource.get_name()
+            old_resource_namespace = old_resource.get_namespace()
+            old_resource_type = old_resource.get_type()
+
+            # removes the "old" resource from the name and type resource list maps
+            self.resource_name_resources_list_map[old_resource_name].remove(old_resource)
+            self.resource_type_resources_list_map[old_resource_type].remove(old_resource)
+
+            # retrieves the "old" resource namespace list value
+            namespace_values_list = old_resource_namespace.get_list_value()
+
+            # starts the current namespace with an empty string
             current_namespace = ""
-            for namespace in namespace_values_list:
+
+            # iterates over all the namespace value in the namespace
+            # values list
+            for namespace_value in namespace_values_list:
+                # in case the current namespace is
+                # not the first
                 if not current_namespace == "":
+                    # adds the separator token to the
+                    # current namespace
                     current_namespace += "."
-                current_namespace += namespace
+
+                # adds the namespace value to the current namespace
+                current_namespace += namespace_value
+
+                # removes from the "old" resource from the namespace resource list map
                 self.resource_namespace_resources_list_map[current_namespace].remove(old_resource)
 
         # invalidates the real string value cache
@@ -745,7 +771,7 @@ class ResourceManager:
             if resource_namespace == None and resource_type == None:
                 # returns the resources for the name
                 return self.resource_name_resources_list_map.get(resource_name, None)
-            # name, type
+            # in case the type is defined
             if resource_namespace == None and not resource_type == None:
                 resources_list = []
                 return_list = []
