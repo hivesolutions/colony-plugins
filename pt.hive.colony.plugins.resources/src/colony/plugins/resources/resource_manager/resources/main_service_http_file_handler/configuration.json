@@ -1,4 +1,6 @@
 {
     "default_path" : ".",
-    "default_page" : "index.html"
+    "default_page" : ""
+    "preferred_directory_list_handlers" : ["template", "default"],
+    "relative_paths" : false
 }
