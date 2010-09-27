@@ -2,8 +2,16 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
 <html>
     <head>
-        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    	<title>Colony Framework</title>
+    	
+    	<!-- css inclusion -->
         <link rel="stylesheet" type="text/css" href="/template_error_handler/css/main.css" />
+        
+        <!-- favicon inclusion --> 
+        <link rel="icon" href="/template_error_handler/images/favicon.ico" type="image/x-icon" />
+        
+        <!-- javascript inclusion --> 
         <script type="text/javascript" src="/template_error_handler/js/main.js"></script>
     </head>
     <body>

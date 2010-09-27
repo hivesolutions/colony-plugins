@@ -383,19 +383,19 @@ h5:hover > a.headerlink {
 }
 
 .folder-small {
-    background: url(../images/icon-folder-small.png) no-repeat;
+    background: url(../images/folder-small.png) no-repeat;
 }
 
 .file-small {
-    background: url(../images/icon-file-small.png) no-repeat;
+    background: url(../images/file-small.png) no-repeat;
 }
 
 .folder-large {
-    background: url(../images/icon-folder-large.png) no-repeat;
+    background: url(../images/folder-large.png) no-repeat;
 }
 
 .file-large {
-    background: url(../images/icon-file-large.png) no-repeat;
+    background: url(../images/file-large.png) no-repeat;
 }
 
 .view-modes {
