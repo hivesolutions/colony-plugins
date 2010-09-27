@@ -99,6 +99,14 @@ class MainServiceAbeculaCommunicationPushHandlerPlugin(colony.base.plugin_system
     def dependency_injected(self, plugin):
         colony.base.plugin_system.Plugin.dependency_injected(self, plugin)
 
+    @colony.base.decorators.set_configuration_property("pt.hive.colony.plugins.main.service.abecula.communication_push_handler", "1.0.0")
+    def set_configuration_property(self, property_name, property):
+        colony.base.plugin_system.Plugin.set_configuration_property(self, property_name, property)
+
+    @colony.base.decorators.unset_configuration_property("pt.hive.colony.plugins.main.service.abecula.communication_push_handler", "1.0.0")
+    def unset_configuration_property(self, property_name):
+        colony.base.plugin_system.Plugin.unset_configuration_property(self, property_name)
+
     def get_handler_name(self):
         """
         Retrieves the handler name.
@@ -146,3 +154,11 @@ class MainServiceAbeculaCommunicationPushHandlerPlugin(colony.base.plugin_system
     @colony.base.decorators.plugin_inject("pt.hive.colony.plugins.misc.json")
     def set_json_plugin(self, json_plugin):
         self.json_plugin = json_plugin
+
+    @colony.base.decorators.set_configuration_property_method("handler_configuration")
+    def handler_configuration_set_configuration_property(self, property_name, property):
+        self.main_service_abecula_communication_push_handler.set_handler_configuration_property(property)
+
+    @colony.base.decorators.unset_configuration_property_method("handler_configuration")
+    def handler_configuration_unset_configuration_property(self, property_name):
+        self.main_service_abecula_communication_push_handler.unset_handler_configuration_property()

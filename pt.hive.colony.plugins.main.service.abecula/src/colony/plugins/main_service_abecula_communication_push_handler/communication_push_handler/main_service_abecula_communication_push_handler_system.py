@@ -41,6 +41,8 @@ import types
 import base64
 import threading
 
+import colony.libs.map_util
+
 import main_service_abecula_communication_push_handler_exceptions
 
 HANDLER_NAME = "communication_push"
@@ -169,11 +171,10 @@ class MainServiceAbeculaCommunicationPushHandler:
         self.service_connection_name_communication_handler_map = {}
         self.service_connection_profile_name_communication_handler_map = {}
         self.service_connection_communication_client_id_map = {}
+        self.handler_configuration = {}
 
         self.operation_id_lock = threading.RLock()
         self.communication_client_id_lock = threading.RLock()
-
-        self.handler_configuration = self._get_handler_configuration()
 
     def get_handler_name(self):
         """
@@ -234,6 +235,20 @@ class MainServiceAbeculaCommunicationPushHandler:
         print "service_connection_name_communication_handler_map:" + str(self.service_connection_name_communication_handler_map)
         print "service_connection_profile_name_communication_handler_map:" + str(self.service_connection_profile_name_communication_handler_map)
         print "service_connection_communication_client_id_map:" + str(self.service_connection_communication_client_id_map)
+
+    def set_handler_configuration_property(self, handler_configuration_property):
+        # retrieves the handler configuration
+        handler_configuration = handler_configuration_property.get_data()
+
+        # cleans the handler configuration
+        colony.libs.map_util.map_clean(self.handler_configuration)
+
+        # copies the handler configuration to the handler configuration
+        colony.libs.map_util.map_copy(handler_configuration, self.handler_configuration)
+
+    def unset_handler_configuration_property(self, handler_configuration):
+        # cleans the handler configuration
+        colony.libs.map_util.map_clean(self.handler_configuration)
 
     def handle_connect(self, request, communication_push_plugin):
         """
@@ -1081,25 +1096,3 @@ class MainServiceAbeculaCommunicationPushHandler:
 
         # returns the decoded value
         return decoded_value
-
-    def _get_handler_configuration(self):
-        """
-        Retrieves the currently set handler configuration.
-
-        @rtype: Dictionary
-        @return: The currently set handler configuration.
-        """
-
-        # retrieves the handler configuration property
-        handler_configuration_property = self.main_service_abecula_communication_push_handler_plugin.get_configuration_property("handler_configuration")
-
-        # in case the handler configuration property is defined
-        if handler_configuration_property:
-            # retrieves the handler configuration
-            handler_configuration = handler_configuration_property.get_data()
-        else:
-            # sets the handler configuration as an empty map
-            handler_configuration = {}
-
-        # returns the handler configuration
-        return handler_configuration
