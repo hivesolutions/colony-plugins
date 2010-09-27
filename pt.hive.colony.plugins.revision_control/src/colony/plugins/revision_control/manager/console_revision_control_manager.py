@@ -37,8 +37,6 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-import datetime
-
 CONSOLE_EXTENSION_NAME = "revision_control_manager"
 """ The console extension name """
 
