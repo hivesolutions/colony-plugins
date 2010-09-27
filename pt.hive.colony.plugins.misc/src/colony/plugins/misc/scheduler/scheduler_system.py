@@ -42,6 +42,8 @@ import sched
 import datetime
 import threading
 
+import colony.libs.map_util
+
 METHOD_CALL_TYPE = "method_call"
 """ The method call type """
 
@@ -68,6 +70,9 @@ class Scheduler:
     scheduler_items = []
     """ The list of scheduler items """
 
+    startup_items = {}
+    """ The startup items """
+
     def __init__(self, scheduler_plugin):
         """
         Constructor of the class.
@@ -89,6 +94,9 @@ class Scheduler:
 
         # starts the scheduler items list
         self.scheduler_items = []
+
+        # starts the startup items
+        self.startup_items = {}
 
     def load_scheduler(self):
         # notifies the ready semaphore
@@ -219,6 +227,20 @@ class Scheduler:
     def get_task_class(self):
         return SchedulerTask
 
+    def set_startup_items_property(self, startup_items_property):
+        # retrieves the startup items
+        startup_items = startup_items_property.get_data()
+
+        # cleans the startup items
+        colony.libs.map_util.map_clean(self.startup_items)
+
+        # copies the startup items to the startup items
+        colony.libs.map_util.map_copy(startup_items, self.startup_items)
+
+    def unset_startup_items_property(self, startup_items):
+        # cleans the startup items
+        colony.libs.map_util.map_clean(self.startup_items)
+
     def create_scheduler_item(self, task_method, task_method_arguments, absolute_time, recursion_list):
         # retrieves the guid plugin
         guid_plugin = self.scheduler_plugin.guid_plugin
@@ -336,19 +358,8 @@ class Scheduler:
         These items are registered in the plugin's configuration.
         """
 
-        # retrieves the startup items property
-        startup_items_property = self.scheduler_plugin.get_configuration_property("startup_items")
-
-        # in case the startup items property is defined
-        if startup_items_property:
-            # retrieves the startup items
-            startup_items = startup_items_property.get_data()
-        else:
-            # sets the startup items property as an empty map
-            startup_items = {}
-
         # retrieves the startup tasks from the startup items map
-        startup_tasks = startup_items.get("tasks", [])
+        startup_tasks = self.startup_items.get("tasks", [])
 
         # retrieves the current time
         current_time = time.time()
