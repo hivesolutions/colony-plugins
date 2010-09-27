@@ -678,10 +678,9 @@ class ResourceManager:
         @return: The existence (or not) of a resource with the given id.
         """
 
-        if resource_id in self.resource_id_resource_map:
-            return True
-        else:
-            return False
+        # returns if the resource id exists in the resource
+        # id resource map
+        return resource_id in self.resource_id_resource_map
 
     def get_resource(self, resource_id):
         """
@@ -693,8 +692,9 @@ class ResourceManager:
         @return: The resource with the given id.
         """
 
-        if resource_id in self.resource_id_resource_map:
-            return self.resource_id_resource_map[resource_id]
+        # returns the resource if for the given resource id, or none
+        # in case the resource does not exist in the resource id resource map
+        return self.resource_id_resource_map.get(resource_id, None)
 
     def get_resources(self, resource_namespace = None, resource_name = None, resource_type = None):
         """
