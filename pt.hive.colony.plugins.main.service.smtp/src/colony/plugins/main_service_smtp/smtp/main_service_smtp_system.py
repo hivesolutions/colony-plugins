@@ -106,6 +106,9 @@ class MainServiceSmtp:
     smtp_service = None
     """ The smtp service reference """
 
+    smtp_service_configuration = {}
+    """ The smtp service configuration """
+
     def __init__(self, main_service_smtp_plugin):
         """
         Constructor of the class.
@@ -119,6 +122,7 @@ class MainServiceSmtp:
         self.smtp_service_handler_plugins_map = {}
         self.smtp_service_authentication_handler_plugins_map = {}
         self.smtp_service_session_handler_plugins_map = {}
+        self.smtp_service_configuration = {}
 
     def start_service(self, parameters):
         """
@@ -187,19 +191,29 @@ class MainServiceSmtp:
 
         del self.smtp_service_session_handler_plugins_map[session_handler_name]
 
+    def set_service_configuration_property(self, service_configuration_property):
+        # retrieves the service configuration
+        service_configuration = service_configuration_property.get_data()
+
+        # cleans the smtp service configuration
+        colony.libs.map_util.map_clean(self.smtp_service_configuration)
+
+        # copies the service configuration to the smtp service configuration
+        colony.libs.map_util.map_copy(service_configuration, self.smtp_service_configuration)
+
+    def unset_service_configuration_property(self, service_configuration_property):
+        # cleans the http service configuration
+        colony.libs.map_util.map_clean(self.smtp_service_configuration)
+
     def _get_service_configuration(self):
-        # retrieves the service configuration property
-        service_configuration_property = self.main_service_smtp_plugin.get_configuration_property("service_configuration")
+        """
+        Retrieves the service configuration map.
 
-        # in case the service configuration property is defined
-        if service_configuration_property:
-            # retrieves the service configuration
-            service_configuration = service_configuration_property.get_data()
-        else:
-            # sets the service configuration as an empty map
-            service_configuration = {}
+        @rtype: Dictionary
+        @return: The service configuration map.
+        """
 
-        return service_configuration
+        return self.smtp_service_configuration
 
     def _generate_service_parameters(self, parameters):
         """
