@@ -51,6 +51,9 @@ import colony.libs.string_buffer_util
 
 import main_service_http_exceptions
 
+RESOLUTION_ORDER_ITEMS = ("virtual_servers", "redirections", "contexts")
+""" The items to be used in the resolution order """
+
 GET_METHOD_VALUE = "GET"
 """ The get method value """
 
@@ -205,6 +208,12 @@ ENCODING_VALUE = "encoding"
 ENCODING_HANDLER_VALUE = "encoding_handler"
 """ The encoding handler value """
 
+RESOLUTION_ORDER_VALUE = "resolution_order"
+""" The resolution order value """
+
+RESOLUTION_ORDER_REGEX_VALUE = "resolution_order_regex"
+""" The resolution order regex value """
+
 DEFAULT_CONTENT_TYPE_CHARSET_VALUE = "default_content_type_charset"
 """ The default content type charset value """
 
@@ -342,15 +351,19 @@ class MainServiceHttp:
         # retrieves the service configuration
         service_configuration = service_configuration_property.get_data()
 
-        RESOLUTION_ORDER_ITEMS = ("virtual_servers", "redirections", "contexts")
-
+        # iterates over all the resolution order items (the ones
+        # that contain a resolution order field)
         for resolution_order_item in RESOLUTION_ORDER_ITEMS:
+            # retrieves the resolution order item value
             resolution_order_item_value = service_configuration.get(resolution_order_item, None)
 
+            # in case the resolution order item value is not set
             if not resolution_order_item_value:
+                # continues the loop
                 continue
 
-            resolution_order = resolution_order_item_value.get("resolution_order", resolution_order_item_value.keys())
+            # retrieves the resolution order values
+            resolution_order = resolution_order_item_value.get(RESOLUTION_ORDER_VALUE, resolution_order_item_value.keys())
 
             # creates the regex buffer
             regex_buffer = colony.libs.string_buffer_util.StringBuffer()
@@ -358,13 +371,20 @@ class MainServiceHttp:
             # sets the is first flag
             is_first = True
 
-            for i in resolution_order:
+            # iterates over all the resolution order items
+            for resolution_order_item in resolution_order:
+                # in case the is first flag
+                # is set
                 if is_first:
+                    # unsets the is first flag
                     is_first = False
+                # otherwise
                 else:
+                    # writes the or separator token
                     regex_buffer.write("|")
 
-                regex_buffer.write("(" + i + ")")
+                # writes the resolution order item value
+                regex_buffer.write("(" + resolution_order_item + ")")
 
             # retrieves the regex value
             regex_value = regex_buffer.get_value()
@@ -372,7 +392,9 @@ class MainServiceHttp:
             # compiles the regex value
             regex = re.compile(regex_value)
 
-            resolution_order_item_value["resolution_order_regex"] = regex
+            # sets the resolution order regex value in the resolution order item
+            # value map
+            resolution_order_item_value[RESOLUTION_ORDER_REGEX_VALUE] = regex
 
         # cleans the http service configuration
         colony.libs.map_util.map_clean(self.http_service_configuration)
@@ -1239,7 +1261,7 @@ class HttpClientServiceHandler:
         service_configuration_redirections = service_configuration.get("redirections", {})
 
         # retrieves the service configuration redirections resolution order
-        service_configuration_redirections_resolution_order = service_configuration_redirections.get("resolution_order", service_configuration_redirections.keys())
+        service_configuration_redirections_resolution_order = service_configuration_redirections.get(RESOLUTION_ORDER_VALUE, service_configuration_redirections.keys())
 
         # iterates over the service configuration redirection names
         for service_configuration_redirection_name in service_configuration_redirections_resolution_order:
@@ -1289,10 +1311,10 @@ class HttpClientServiceHandler:
         service_configuration_contexts = service_configuration.get("contexts", {})
 
         # retrieves the service configuration contexts resolution order
-        service_configuration_contexts_resolution_order = service_configuration_contexts.get("resolution_order", service_configuration_contexts.keys())
+        service_configuration_contexts_resolution_order = service_configuration_contexts.get(RESOLUTION_ORDER_VALUE, service_configuration_contexts.keys())
 
         # retrieves the service configuration contexts resolution order regex
-        service_configuration_contexts_resolution_order_regex = service_configuration_contexts.get("resolution_order_regex", service_configuration_contexts.keys())
+        service_configuration_contexts_resolution_order_regex = service_configuration_contexts.get(RESOLUTION_ORDER_REGEX_VALUE, service_configuration_contexts.keys())
 
         # in case the request is pending redirection validation
         if request.redirection_validation:
@@ -1508,7 +1530,7 @@ class HttpClientServiceHandler:
             service_configuration_virtual_servers = service_configuration.get("virtual_servers", {})
 
             # retrieves the service configuration virtual servers resolution order
-            service_configuration_virtual_servers_resolution_order = service_configuration_virtual_servers.get("resolution_order", service_configuration_virtual_servers.keys())
+            service_configuration_virtual_servers_resolution_order = service_configuration_virtual_servers.get(RESOLUTION_ORDER_VALUE, service_configuration_virtual_servers.keys())
 
             # splits the host value (to try
             # to retrieve hostname and port)
