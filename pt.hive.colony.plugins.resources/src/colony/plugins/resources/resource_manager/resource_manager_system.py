@@ -158,12 +158,28 @@ class ResourceManager:
         # compiles the local variable regular expression
         self.local_variable_regex = re.compile(LOCAL_VARIABLE_REGEX)
 
+    def load_resource_file(self, file_path):
+        """
+        Loads the resource file in the given path.
+
+        @type file_path: String
+        @param file_path: The path to the resource file to be
+        loaded.
+        """
+
+        # splits the file path, retrieving the directory path
+        # and the file name
+        directory_path, _file_name = os.path.split(file_path)
+
+        # parses the resource file
+        self.parse_file(file_path, directory_path)
+
     def load_system(self):
         """
         Loads the system internals, loading the base system resources.
         """
 
-        # loads the internal resourcs
+        # loads the internal resources
         self.load_internal_resources()
 
         # loads the base resources
@@ -207,6 +223,20 @@ class ResourceManager:
         self._load_base_resources_directory(full_resources_path)
 
     def parse_file(self, file_path, full_resources_path):
+        """
+        Parses the file in the given file path, using the full
+        resources path as the base for the parsing.
+
+        @type file_path: String
+        @param file_path: The path to the file to be parsed.
+        @type full_resources_path: String
+        @param full_resources_path: The full path to the
+        resources path.
+        """
+
+        # retrieves the plugin manager
+        plugin_manager = self.resource_manager_plugin.manager
+
         # creates the resources file parser
         resources_file_parser = resource_manager_parser.ResourcesFileParser(file_path)
 
@@ -259,6 +289,22 @@ class ResourceManager:
 
             # sets the plugin configuration resources list in the plugin id configuration resources list map
             self.plugin_id_configuration_resources_list_map[plugin_configuration_plugin_id] = plugin_configuration_resources_list
+
+            # tries to retrieve the configuration plugin using the plugin id
+            configuration_plugin = plugin_manager._get_plugin_by_id(plugin_configuration_plugin_id)
+
+            # in case the configuration plugin is not loaded
+            if not configuration_plugin or not configuration_plugin.is_loaded():
+                # continues the loop
+                continue
+
+            # iterates over all the plugin configuration resources
+            for plugin_configuration_resource in plugin_configuration_resources_list:
+                # retrieves the plugin configuration resource name
+                plugin_configuration_resource_name = plugin_configuration_resource.name
+
+                # sets the plugin configuration resource as configuration property in the configuration plugin
+                configuration_plugin.set_configuration_property(plugin_configuration_resource_name, plugin_configuration_resource)
 
         # iterates over all the resources in the base resource list
         for resource in base_resource_list:
@@ -374,8 +420,13 @@ class ResourceManager:
 
             # parses the resource with the resource parser plugin
             resource_parser_plugin.parse_resource(resource)
+
+            # sets the parse resource data method reference
+            # to none (no need to parse the resource data in lazy mode)
+            resource.parse_resource_data = None
         else:
-            # sets the parse resource data handler
+            # sets the parse resource data handler, this technique
+            # allows a lazy loading of the resource parser plugins
             resource.parse_resource_data = self.parse_resource_data
 
             # returns in failure

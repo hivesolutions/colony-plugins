@@ -117,6 +117,9 @@ class ResourceManagerPlugin(colony.base.plugin_system.Plugin):
     def get_resources(self, resource_namespace = None, resource_name = None, resource_type = None):
         return self.resource_manager.get_resources(resource_namespace, resource_name, resource_type)
 
+    def load_resource_file(self, file_path):
+        return self.resource_manager.load_resource_file(file_path)
+
     def get_real_string_value(self, string_value):
         return self.resource_manager.get_real_string_value(string_value)
 
