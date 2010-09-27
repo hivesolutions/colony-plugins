@@ -237,7 +237,7 @@ class Scheduler:
         # copies the startup items to the startup items
         colony.libs.map_util.map_copy(startup_items, self.startup_items)
 
-    def unset_startup_items_property(self, startup_items):
+    def unset_startup_items_property(self):
         # cleans the startup items
         colony.libs.map_util.map_clean(self.startup_items)
 
