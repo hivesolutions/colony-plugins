@@ -205,7 +205,7 @@ class MainServiceDns:
         # copies the service configuration to the dns service configuration
         colony.libs.map_util.map_copy(service_configuration, self.dns_service_configuration)
 
-    def unset_service_configuration_property(self, service_configuration_property):
+    def unset_service_configuration_property(self):
         # cleans the dns service configuration
         colony.libs.map_util.map_clean(self.dns_service_configuration)
 

@@ -203,7 +203,7 @@ class MainServiceAbecula:
         # copies the service configuration to the abecula service configuration
         colony.libs.map_util.map_copy(service_configuration, self.abecula_service_configuration)
 
-    def unset_service_configuration_property(self, service_configuration_property):
+    def unset_service_configuration_property(self):
         # cleans the abecula service configuration
         colony.libs.map_util.map_clean(self.abecula_service_configuration)
 

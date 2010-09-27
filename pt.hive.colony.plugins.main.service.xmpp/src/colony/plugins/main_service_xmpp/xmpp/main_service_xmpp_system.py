@@ -180,7 +180,7 @@ class MainServiceXmpp:
         # copies the service configuration to the xmpp service configuration
         colony.libs.map_util.map_copy(service_configuration, self.xmpp_service_configuration)
 
-    def unset_service_configuration_property(self, service_configuration_property):
+    def unset_service_configuration_property(self):
         # cleans the http service configuration
         colony.libs.map_util.map_clean(self.xmpp_service_configuration)
 

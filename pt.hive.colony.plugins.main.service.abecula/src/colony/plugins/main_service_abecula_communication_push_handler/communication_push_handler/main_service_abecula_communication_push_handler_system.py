@@ -246,7 +246,7 @@ class MainServiceAbeculaCommunicationPushHandler:
         # copies the handler configuration to the handler configuration
         colony.libs.map_util.map_copy(handler_configuration, self.handler_configuration)
 
-    def unset_handler_configuration_property(self, handler_configuration):
+    def unset_handler_configuration_property(self):
         # cleans the handler configuration
         colony.libs.map_util.map_clean(self.handler_configuration)
 

@@ -158,7 +158,7 @@ class MainServiceIrc:
         # copies the service configuration to the irc service configuration
         colony.libs.map_util.map_copy(service_configuration, self.irc_service_configuration)
 
-    def unset_service_configuration_property(self, service_configuration_property):
+    def unset_service_configuration_property(self):
         # cleans the irc service configuration
         colony.libs.map_util.map_clean(self.irc_service_configuration)
 

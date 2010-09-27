@@ -116,7 +116,7 @@ class MainServiceBittorrent:
         # copies the service configuration to the bittorrent service configuration
         colony.libs.map_util.map_copy(service_configuration, self.bittorrent_service_configuration)
 
-    def unset_service_configuration_property(self, service_configuration_property):
+    def unset_service_configuration_property(self):
         # cleans the bittorrent service configuration
         colony.libs.map_util.map_clean(self.bittorrent_service_configuration)
 

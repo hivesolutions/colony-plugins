@@ -202,7 +202,7 @@ class MainServiceSmtp:
         # copies the service configuration to the smtp service configuration
         colony.libs.map_util.map_copy(service_configuration, self.smtp_service_configuration)
 
-    def unset_service_configuration_property(self, service_configuration_property):
+    def unset_service_configuration_property(self):
         # cleans the http service configuration
         colony.libs.map_util.map_clean(self.smtp_service_configuration)
 

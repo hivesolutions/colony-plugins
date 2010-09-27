@@ -170,7 +170,7 @@ class MainServicePolicy:
         # copies the service configuration to the policy service configuration
         colony.libs.map_util.map_copy(service_configuration, self.policy_service_configuration)
 
-    def unset_service_configuration_property(self, service_configuration_property):
+    def unset_service_configuration_property(self):
         # cleans the policy service configuration
         colony.libs.map_util.map_clean(self.policy_service_configuration)
 

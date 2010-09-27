@@ -202,7 +202,7 @@ class MainServicePop:
         # copies the service configuration to the pop service configuration
         colony.libs.map_util.map_copy(service_configuration, self.pop_service_configuration)
 
-    def unset_service_configuration_property(self, service_configuration_property):
+    def unset_service_configuration_property(self):
         # cleans the pop service configuration
         colony.libs.map_util.map_clean(self.pop_service_configuration)
 
