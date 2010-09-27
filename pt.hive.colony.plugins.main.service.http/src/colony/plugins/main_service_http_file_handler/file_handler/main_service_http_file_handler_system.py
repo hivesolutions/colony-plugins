@@ -43,6 +43,7 @@ import stat
 import time
 import hashlib
 
+import colony.libs.map_util
 import colony.libs.string_buffer_util
 
 import main_service_http_file_handler_exceptions
@@ -114,6 +115,9 @@ class MainServiceHttpFileHandler:
     http_service_directory_list_handler_plugins_map = {}
     """ The http service directory list handler plugins map """
 
+    handler_configuration = {}
+    """ The handler configuration """
+
     def __init__(self, main_service_http_file_handler_plugin):
         """
         Constructor of the class.
@@ -125,6 +129,7 @@ class MainServiceHttpFileHandler:
         self.main_service_http_file_handler_plugin = main_service_http_file_handler_plugin
 
         self.http_service_directory_list_handler_plugins_map = {}
+        self.handler_configuration = {}
 
     def get_handler_name(self):
         """
@@ -150,25 +155,14 @@ class MainServiceHttpFileHandler:
         # retrieves the resource manager plugin
         resource_manager_plugin = self.main_service_http_file_handler_plugin.resource_manager_plugin
 
-        # retrieves the handler configuration property
-        handler_configuration_property = self.main_service_http_file_handler_plugin.get_configuration_property("handler_configuration")
-
-        # in case the handler configuration property is defined
-        if handler_configuration_property:
-            # retrieves the handler configuration
-            handler_configuration = handler_configuration_property.get_data()
-        else:
-            # sets the handler configuration as an empty map
-            handler_configuration = {}
-
         # retrieves the default path
-        default_path = handler_configuration.get("default_path", "/")
+        default_path = self.handler_configuration.get("default_path", "/")
 
         # retrieves the default page
-        default_page = handler_configuration.get("default_page", "index.html")
+        default_page = self.handler_configuration.get("default_page", "index.html")
 
         # retrieves the default relative paths
-        relative_paths = handler_configuration.get("relative_paths", False)
+        relative_paths = self.handler_configuration.get("relative_paths", False)
 
         # sets the base directory for file search
         base_directory = request.properties.get("base_path", default_path)
@@ -277,6 +271,20 @@ class MainServiceHttpFileHandler:
         directory_list_handler_name = http_service_directory_list_handler_plugin.get_directory_list_handler_name()
 
         del self.http_service_directory_list_handler_plugins_map[directory_list_handler_name]
+
+    def set_handler_configuration_property(self, handler_configuration_property):
+        # retrieves the handler configuration
+        handler_configuration = handler_configuration_property.get_data()
+
+        # cleans the handler configuration
+        colony.libs.map_util.map_clean(self.handler_configuration)
+
+        # copies the handler configuration to the handler configuration
+        colony.libs.map_util.map_copy(handler_configuration, self.handler_configuration)
+
+    def unset_handler_configuration_property(self, handler_configuration):
+        # cleans the handler configuration
+        colony.libs.map_util.map_clean(self.handler_configuration)
 
     def default_directory_list_handler(self, request, directory_list):
         """
@@ -399,19 +407,8 @@ class MainServiceHttpFileHandler:
         directory_list["entries"] = directory_entries
         directory_list["comparator"] = comparator
 
-        # retrieves the handler configuration property
-        handler_configuration_property = self.main_service_http_file_handler_plugin.get_configuration_property("handler_configuration")
-
-        # in case the handler configuration property is defined
-        if handler_configuration_property:
-            # retrieves the handler configuration
-            handler_configuration = handler_configuration_property.get_data()
-        else:
-            # sets the handler configuration as an empty map
-            handler_configuration = {}
-
         # handles the directory list
-        self._handle_directory_list(handler_configuration, request, directory_list)
+        self._handle_directory_list(self.handler_configuration, request, directory_list)
 
     def _process_file(self, request, complete_path):
         """

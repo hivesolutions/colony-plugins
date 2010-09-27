@@ -100,6 +100,14 @@ class MainServiceHttpFileHandlerPlugin(colony.base.plugin_system.Plugin):
     def dependency_injected(self, plugin):
         colony.base.plugin_system.Plugin.dependency_injected(self, plugin)
 
+    @colony.base.decorators.set_configuration_property("pt.hive.colony.plugins.main.service.http.file_handler", "1.0.0")
+    def set_configuration_property(self, property_name, property):
+        colony.base.plugin_system.Plugin.set_configuration_property(self, property_name, property)
+
+    @colony.base.decorators.unset_configuration_property("pt.hive.colony.plugins.main.service.http.file_handler", "1.0.0")
+    def unset_configuration_property(self, property_name):
+        colony.base.plugin_system.Plugin.unset_configuration_property(self, property_name)
+
     def get_handler_name(self):
         """
         Retrieves the handler name.
@@ -143,3 +151,11 @@ class MainServiceHttpFileHandlerPlugin(colony.base.plugin_system.Plugin):
     @colony.base.decorators.plugin_inject("pt.hive.colony.plugins.resources.resource_manager")
     def set_resource_manager_plugin(self, resource_manager_plugin):
         self.resource_manager_plugin = resource_manager_plugin
+
+    @colony.base.decorators.set_configuration_property_method("handler_configuration")
+    def handler_configuration_set_configuration_property(self, property_name, property):
+        self.main_service_http_file_handler.set_handler_configuration_property(property)
+
+    @colony.base.decorators.unset_configuration_property_method("handler_configuration")
+    def handler_configuration_unset_configuration_property(self, property_name):
+        self.main_service_http_file_handler.unset_handler_configuration_property()
