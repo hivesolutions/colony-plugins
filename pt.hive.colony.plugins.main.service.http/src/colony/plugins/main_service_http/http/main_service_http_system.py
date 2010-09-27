@@ -403,7 +403,8 @@ class MainServiceHttp:
         colony.libs.map_util.map_copy(service_configuration, self.http_service_configuration)
 
     def unset_service_configuration_property(self, service_configuration_property):
-        pass
+        # cleans the http service configuration
+        colony.libs.map_util.map_clean(self.http_service_configuration)
 
     def _get_service_configuration(self):
         """
