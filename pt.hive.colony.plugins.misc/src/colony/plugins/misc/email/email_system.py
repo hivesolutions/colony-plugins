@@ -120,7 +120,7 @@ class Email:
         # copies the configuration to the email configuration
         colony.libs.map_util.map_copy(configuration, self.email_configuration)
 
-    def unset_configuration_property(self, email_configuration):
+    def unset_configuration_property(self):
         # cleans the email configuration
         colony.libs.map_util.map_clean(self.email_configuration)
 
