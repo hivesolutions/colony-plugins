@@ -68,7 +68,7 @@ STATUS_CODE_IMAGES = {100 : "none", 101 : "none",
                       204 : "none", 205 : "none", 206 : "none", 207 : "none",
                       301 : "none", 302 : "none", 303 : "none", 304 : "none",
                       305 : "none", 306 : "none", 307 : "none",
-                      400 : "logo_question_mark", 401 : "logo_question_mark", 402 : "logo_question_mark",
+                      400 : "logo_question_mark", 401 : "logo_lock", 402 : "logo_question_mark",
                       403 : "logo_question_mark", 404 : "logo_question_mark",
                       500 : "logo_thunder", 501 : "logo_thunder", 502 : "logo_thunder",
                       503 : "logo_thunder", 504 : "logo_thunder", 505 : "logo_thunder"}
