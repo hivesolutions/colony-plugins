@@ -46,6 +46,7 @@ import base64
 import datetime
 import traceback
 
+import colony.libs.map_util
 import colony.libs.string_buffer_util
 
 import main_service_http_exceptions
@@ -373,25 +374,24 @@ class MainServiceHttp:
 
             resolution_order_item_value["resolution_order_regex"] = regex
 
-        # sets the http service configuration
-        self.http_service_configuration = service_configuration
+        # cleans the http service configuration
+        colony.libs.map_util.map_clean(self.http_service_configuration)
+
+        # copies the service configuration to the http service configuration
+        colony.libs.map_util.map_copy(service_configuration, self.http_service_configuration)
 
     def unset_service_configuration_property(self, service_configuration_property):
         pass
 
     def _get_service_configuration(self):
-        # retrieves the service configuration property
-        service_configuration_property = self.main_service_http_plugin.get_configuration_property("service_configuration")
+        """
+        Retrieves the service configuration map.
 
-        # in case the service configuration property is defined
-        if service_configuration_property:
-            # retrieves the service configuration
-            service_configuration = service_configuration_property.get_data()
-        else:
-            # sets the service configuration as an empty map
-            service_configuration = {}
+        @rtype: Dictionary
+        @return: The service configuration map.
+        """
 
-        return service_configuration
+        return self.http_service_configuration
 
     def _get_encoding_handler(self, encoding):
         # in case no encoding is defined
