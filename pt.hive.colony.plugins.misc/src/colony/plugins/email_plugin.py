@@ -97,6 +97,14 @@ class EmailPlugin(colony.base.plugin_system.Plugin):
     def dependency_injected(self, plugin):
         colony.base.plugin_system.Plugin.dependency_injected(self, plugin)
 
+    @colony.base.decorators.set_configuration_property("pt.hive.colony.plugins.misc.email", "1.0.0")
+    def set_configuration_property(self, property_name, property):
+        colony.base.plugin_system.Plugin.set_configuration_property(self, property_name, property)
+
+    @colony.base.decorators.unset_configuration_property("pt.hive.colony.plugins.misc.email", "1.0.0")
+    def unset_configuration_property(self, property_name):
+        colony.base.plugin_system.Plugin.unset_configuration_property(self, property_name)
+
     def get_console_extension_name(self):
         return self.console_email.get_console_extension_name()
 
@@ -142,3 +150,11 @@ class EmailPlugin(colony.base.plugin_system.Plugin):
     @colony.base.decorators.plugin_inject("pt.hive.colony.plugins.format.mime")
     def set_format_mime_plugin(self, format_mime_plugin):
         self.format_mime_plugin = format_mime_plugin
+
+    @colony.base.decorators.set_configuration_property_method("configuration")
+    def configuration_set_configuration_property(self, property_name, property):
+        self.email.set_configuration_property(property)
+
+    @colony.base.decorators.unset_configuration_property_method("configuration")
+    def configuration_unset_configuration_property(self, property_name):
+        self.email.unset_configuration_property()

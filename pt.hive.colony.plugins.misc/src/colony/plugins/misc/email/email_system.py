@@ -40,6 +40,8 @@ __license__ = "GNU General Public License (GPL), Version 3"
 import sys
 import datetime
 
+import colony.libs.map_util
+
 DEFAULT_SMTP_HOSTNAME = "example.com"
 """ The default smtp hostname """
 
@@ -93,6 +95,9 @@ class Email:
     email_plugin = None
     """ The email plugin """
 
+    email_configuration = {}
+    """ The email configuration """
+
     def __init__(self, email_plugin):
         """
         Constructor of the class.
@@ -102,6 +107,22 @@ class Email:
         """
 
         self.email_plugin = email_plugin
+
+        self.email_configuration = {}
+
+    def set_configuration_property(self, configuration_property):
+        # retrieves the configuration
+        configuration = configuration_property.get_data()
+
+        # cleans the email configuration
+        colony.libs.map_util.map_clean(self.email_configuration)
+
+        # copies the configuration to the email configuration
+        colony.libs.map_util.map_copy(configuration, self.email_configuration)
+
+    def unset_configuration_property(self, email_configuration):
+        # cleans the email configuration
+        colony.libs.map_util.map_clean(self.email_configuration)
 
     def send_email(self, email_sender = None, email_receiver = None, name_sender = None, name_receiver = None, subject = None, contents = None):
         """
@@ -127,26 +148,23 @@ class Email:
         # retrieves the format mime plugin
         format_mime_plugin = self.email_plugin.format_mime_plugin
 
-        # retrieves the configuration
-        configuration = self.email_plugin.get_configuration_property("configuration").get_data()
-
         # creates a new smtp client, using the main client smtp plugin
         smtp_client = main_client_smtp_plugin.create_client({})
 
         # tries to retrieve the smtp hostnmae value
-        smtp_hostname = configuration.get("hostname", DEFAULT_SMTP_HOSTNAME)
+        smtp_hostname = self.email_configuration.get("hostname", DEFAULT_SMTP_HOSTNAME)
 
         # tries to retrieve the smtp port value
-        smtp_port = configuration.get("port", DEFAULT_SMTP_PORT)
+        smtp_port = self.email_configuration.get("port", DEFAULT_SMTP_PORT)
 
         # tries to retrieve the smtp username value
-        smtp_username = configuration.get("username", None)
+        smtp_username = self.email_configuration.get("username", None)
 
         # tries to retrieve the smtp password value
-        smtp_password = configuration.get("password", None)
+        smtp_password = self.email_configuration.get("password", None)
 
         # tries to retrieve the tls value
-        smtp_tls = configuration.get("tls", False)
+        smtp_tls = self.email_configuration.get("tls", False)
 
         # creates the parameters map
         parameters = {}
