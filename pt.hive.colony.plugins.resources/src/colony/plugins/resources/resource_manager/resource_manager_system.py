@@ -709,47 +709,63 @@ class ResourceManager:
         @param resource_type: The type of the resource to be retrieved.
         """
 
-        # none
+        # in case none of the filters are defined
         if resource_namespace == None and resource_name == None and resource_type == None:
+            # returns all the values in the reource id resource map
             return self.resource_id_resource_map.values()
-        # namespace, name
+        # in case the namespace and the name are defined
         elif not resource_namespace == None and not resource_name == None:
-            return self.get_resource(resource_namespace + "." + resource_name)
+            # creates the resource complete name
+            resource_complete_name = resource_namespace + "." + resource_name
+
+            # returns the resource for the complete name
+            return self.get_resource(resource_complete_name)
+        # in case the namespace is defined
         elif not resource_namespace == None:
-            # namespace
+            # in case only the namespace is defined
             if resource_type == None and resource_name == None:
-                if resource_namespace in self.resource_namespace_resources_list_map:
-                    return self.resource_namespace_resources_list_map[resource_namespace]
-            # namespace, type
+                # returns the resources for the namespace
+                return self.resource_namespace_resources_list_map.get(resource_namespace, None)
+            # in case the type is defined
             elif not resource_type == None and resource_name == None:
                 resources_list = []
                 return_list = []
+
                 if resource_namespace in self.resource_namespace_resources_list_map:
                     resources_list = self.resource_namespace_resources_list_map[resource_namespace]
+
                 for resource in resources_list:
                     if resource.get_type() == resource_type:
                         return_list.append(resource)
+
                 return return_list
+        # in case the name is defined
         elif not resource_name == None:
-            # name
+            # in case only the name is defined
             if resource_namespace == None and resource_type == None:
-                if resource_name in self.resource_name_resources_list_map:
-                    return self.resource_name_resources_list_map[resource_name]
+                # returns the resources for the name
+                return self.resource_name_resources_list_map.get(resource_name, None)
             # name, type
             if resource_namespace == None and not resource_type == None:
                 resources_list = []
                 return_list = []
+
                 if resource_type in self.resource_type_resources_list_map:
                     resources_list = self.resource_type_resources_list_map[resource_type]
+
                 for resource in resources_list:
                     if resource.get_name() == resource_name:
                         return_list.append(resource)
+
                 return return_list
+        # in case the type is defined
         elif not resource_type == None:
-            # type
+            # in case only the type is defined
             if resource_namespace == None and resource_name == None:
-                if resource_type in self.resource_type_resources_list_map:
-                    return self.resource_type_resources_list_map[resource_type]
+                # returns the resources for the type
+                return self.resource_type_resources_list_map.get(resource_type, None)
+
+        # returns an empty list by default
         return []
 
     def load_resource_parser_plugin(self, resource_parser_plugin):
