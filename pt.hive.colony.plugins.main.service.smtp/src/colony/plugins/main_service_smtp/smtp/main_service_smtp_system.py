@@ -40,6 +40,7 @@ __license__ = "GNU General Public License (GPL), Version 3"
 import sys
 import traceback
 
+import colony.libs.map_util
 import colony.libs.string_buffer_util
 
 import main_service_smtp_exceptions

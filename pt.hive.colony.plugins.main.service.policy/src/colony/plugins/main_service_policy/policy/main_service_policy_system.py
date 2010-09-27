@@ -37,6 +37,7 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
+import colony.libs.map_util
 import colony.libs.string_buffer_util
 
 import main_service_policy_exceptions
@@ -100,6 +101,9 @@ class MainServicePolicy:
     policy_service = None
     """ The policy service reference """
 
+    policy_service_configuration = {}
+    """ The policy service configuration """
+
     def __init__(self, main_service_policy_plugin):
         """
         Constructor of the class.
@@ -111,6 +115,7 @@ class MainServicePolicy:
         self.main_service_policy_plugin = main_service_policy_plugin
 
         self.policy_service_handler_plugin_map = {}
+        self.policy_service_configuration = {}
 
     def start_service(self, parameters):
         """
@@ -155,19 +160,29 @@ class MainServicePolicy:
 
         del self.policy_service_handler_plugins_map[handler_name]
 
+    def set_service_configuration_property(self, service_configuration_property):
+        # retrieves the service configuration
+        service_configuration = service_configuration_property.get_data()
+
+        # cleans the policy service configuration
+        colony.libs.map_util.map_clean(self.policy_service_configuration)
+
+        # copies the service configuration to the policy service configuration
+        colony.libs.map_util.map_copy(service_configuration, self.policy_service_configuration)
+
+    def unset_service_configuration_property(self, service_configuration_property):
+        # cleans the policy service configuration
+        colony.libs.map_util.map_clean(self.policy_service_configuration)
+
     def _get_service_configuration(self):
-        # retrieves the service configuration property
-        service_configuration_property = self.main_service_policy_plugin.get_configuration_property("service_configuration")
+        """
+        Retrieves the service configuration map.
 
-        # in case the service configuration property is defined
-        if service_configuration_property:
-            # retrieves the service configuration
-            service_configuration = service_configuration_property.get_data()
-        else:
-            # sets the service configuration as an empty map
-            service_configuration = {}
+        @rtype: Dictionary
+        @return: The service configuration map.
+        """
 
-        return service_configuration
+        return self.policy_service_configuration
 
     def _generate_service_parameters(self, parameters):
         """

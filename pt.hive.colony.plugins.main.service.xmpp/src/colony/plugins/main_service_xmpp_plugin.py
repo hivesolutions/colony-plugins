@@ -99,6 +99,14 @@ class MainServiceXmppPlugin(colony.base.plugin_system.Plugin):
     def dependency_injected(self, plugin):
         colony.base.plugin_system.Plugin.dependency_injected(self, plugin)
 
+    @colony.base.decorators.set_configuration_property("pt.hive.colony.plugins.main.service.xmpp", "1.0.0")
+    def set_configuration_property(self, property_name, property):
+        colony.base.plugin_system.Plugin.set_configuration_property(self, property_name, property)
+
+    @colony.base.decorators.unset_configuration_property("pt.hive.colony.plugins.main.service.xmpp", "1.0.0")
+    def unset_configuration_property(self, property_name):
+        colony.base.plugin_system.Plugin.unset_configuration_property(self, property_name)
+
     def start_service(self, parameters):
         self.main_service_xmpp.start_service(parameters)
 
@@ -126,3 +134,11 @@ class MainServiceXmppPlugin(colony.base.plugin_system.Plugin):
     @colony.base.decorators.plugin_inject("pt.hive.colony.plugins.main.service.xmpp_helper")
     def set_main_service_xmpp_helper_plugin(self, main_service_xmpp_helper_plugin):
         self.main_service_xmpp_helper_plugin = main_service_xmpp_helper_plugin
+
+    @colony.base.decorators.set_configuration_property_method("service_configuration")
+    def service_configuration_set_configuration_property(self, property_name, property):
+        self.main_service_xmpp.set_service_configuration_property(property)
+
+    @colony.base.decorators.unset_configuration_property_method("service_configuration")
+    def service_configuration_unset_configuration_property(self, property_name):
+        self.main_service_xmpp.unset_service_configuration_property()

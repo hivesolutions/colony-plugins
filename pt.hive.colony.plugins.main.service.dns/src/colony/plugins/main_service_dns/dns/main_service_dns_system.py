@@ -39,6 +39,7 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 import struct
 
+import colony.libs.map_util
 import colony.libs.string_buffer_util
 
 import main_service_dns_exceptions
@@ -135,6 +136,9 @@ class MainServiceDns:
     dns_service = None
     """ The dns service reference """
 
+    dns_service_configuration = {}
+    """ The dns service configuration """
+
     def __init__(self, main_service_dns_plugin):
         """
         Constructor of the class.
@@ -146,6 +150,7 @@ class MainServiceDns:
         self.main_service_dns_plugin = main_service_dns_plugin
 
         self.dns_service_handler_plugin_map = {}
+        self.dns_service_configuration = {}
 
     def start_service(self, parameters):
         """
@@ -190,19 +195,29 @@ class MainServiceDns:
 
         del self.dns_service_handler_plugins_map[handler_name]
 
+    def set_service_configuration_property(self, service_configuration_property):
+        # retrieves the service configuration
+        service_configuration = service_configuration_property.get_data()
+
+        # cleans the dns service configuration
+        colony.libs.map_util.map_clean(self.dns_service_configuration)
+
+        # copies the service configuration to the dns service configuration
+        colony.libs.map_util.map_copy(service_configuration, self.dns_service_configuration)
+
+    def unset_service_configuration_property(self, service_configuration_property):
+        # cleans the dns service configuration
+        colony.libs.map_util.map_clean(self.dns_service_configuration)
+
     def _get_service_configuration(self):
-        # retrieves the service configuration property
-        service_configuration_property = self.main_service_dns_plugin.get_configuration_property("service_configuration")
+        """
+        Retrieves the service configuration map.
 
-        # in case the service configuration property is defined
-        if service_configuration_property:
-            # retrieves the service configuration
-            service_configuration = service_configuration_property.get_data()
-        else:
-            # sets the service configuration as an empty map
-            service_configuration = {}
+        @rtype: Dictionary
+        @return: The service configuration map.
+        """
 
-        return service_configuration
+        return self.dns_service_configuration
 
     def _generate_service_parameters(self, parameters):
         """

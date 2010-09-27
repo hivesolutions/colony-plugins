@@ -43,6 +43,8 @@ import urllib
 import urllib2
 import hashlib
 
+import colony.libs.map_util
+
 import main_service_bittorrent_parser
 
 GET_METHOD_VALUE = "GET"
@@ -68,6 +70,9 @@ class MainServiceBittorrent:
     bittorrent_connection_active = False
     """ The bittorrent connection active flag """
 
+    bittorrent_service_configuration = {}
+    """ The bittorrent service configuration """
+
     def __init__(self, main_service_bittorrent_plugin):
         """
         Constructor of the class.
@@ -79,6 +84,7 @@ class MainServiceBittorrent:
         self.main_service_bittorrent_plugin = main_service_bittorrent_plugin
 
         self.bittorrent_service_handler_plugin_map = {}
+        self.bittorrent_service_configuration = {}
 
     def start_service(self, parameters):
         """
@@ -99,6 +105,30 @@ class MainServiceBittorrent:
         """
 
         self.stop_server()
+
+    def set_service_configuration_property(self, service_configuration_property):
+        # retrieves the service configuration
+        service_configuration = service_configuration_property.get_data()
+
+        # cleans the bittorrent service configuration
+        colony.libs.map_util.map_clean(self.bittorrent_service_configuration)
+
+        # copies the service configuration to the bittorrent service configuration
+        colony.libs.map_util.map_copy(service_configuration, self.bittorrent_service_configuration)
+
+    def unset_service_configuration_property(self, service_configuration_property):
+        # cleans the bittorrent service configuration
+        colony.libs.map_util.map_clean(self.bittorrent_service_configuration)
+
+    def _get_service_configuration(self):
+        """
+        Retrieves the service configuration map.
+
+        @rtype: Dictionary
+        @return: The service configuration map.
+        """
+
+        return self.bittorrent_service_configuration
 
     def start_torrent(self, parameters):
         # interpreto o ficheri vejo se tem erros

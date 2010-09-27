@@ -40,6 +40,7 @@ __license__ = "GNU General Public License (GPL), Version 3"
 import sys
 import traceback
 
+import colony.libs.map_util
 import colony.libs.string_buffer_util
 
 import main_service_pop_exceptions
@@ -106,6 +107,9 @@ class MainServicePop:
     pop_service = None
     """ The pop service reference """
 
+    pop_service_configuration = {}
+    """ The pop service configuration """
+
     def __init__(self, main_service_pop_plugin):
         """
         Constructor of the class.
@@ -119,6 +123,7 @@ class MainServicePop:
         self.pop_service_handler_plugins_map = {}
         self.pop_service_authentication_handler_plugins_map = {}
         self.pop_service_session_handler_plugins_map = {}
+        self.pop_service_configuration = {}
 
     def start_service(self, parameters):
         """
@@ -187,19 +192,29 @@ class MainServicePop:
 
         del self.pop_service_session_handler_plugins_map[session_handler_name]
 
+    def set_service_configuration_property(self, service_configuration_property):
+        # retrieves the service configuration
+        service_configuration = service_configuration_property.get_data()
+
+        # cleans the pop service configuration
+        colony.libs.map_util.map_clean(self.pop_service_configuration)
+
+        # copies the service configuration to the pop service configuration
+        colony.libs.map_util.map_copy(service_configuration, self.pop_service_configuration)
+
+    def unset_service_configuration_property(self, service_configuration_property):
+        # cleans the pop service configuration
+        colony.libs.map_util.map_clean(self.pop_service_configuration)
+
     def _get_service_configuration(self):
-        # retrieves the service configuration property
-        service_configuration_property = self.main_service_pop_plugin.get_configuration_property("service_configuration")
+        """
+        Retrieves the service configuration map.
 
-        # in case the service configuration property is defined
-        if service_configuration_property:
-            # retrieves the service configuration
-            service_configuration = service_configuration_property.get_data()
-        else:
-            # sets the service configuration as an empty map
-            service_configuration = {}
+        @rtype: Dictionary
+        @return: The service configuration map.
+        """
 
-        return service_configuration
+        return self.pop_service_configuration
 
     def _generate_service_parameters(self, parameters):
         """

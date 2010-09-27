@@ -41,6 +41,7 @@ import sys
 import types
 import traceback
 
+import colony.libs.map_util
 import colony.libs.string_buffer_util
 
 import main_service_abecula_exceptions

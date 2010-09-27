@@ -40,6 +40,7 @@ __license__ = "GNU General Public License (GPL), Version 3"
 import sys
 import traceback
 
+import colony.libs.map_util
 import colony.libs.string_buffer_util
 
 import main_service_telnet_exceptions
@@ -91,6 +92,9 @@ class MainServiceTelnet:
     telnet_service = None
     """ The telnet service reference """
 
+    telnet_service_configuration = {}
+    """ The telnet service configuration """
+
     def __init__(self, main_service_telnet_plugin):
         """
         Constructor of the class.
@@ -102,6 +106,7 @@ class MainServiceTelnet:
         self.main_service_telnet_plugin = main_service_telnet_plugin
 
         self.telnet_service_handler_plugin_map = {}
+        self.telnet_service_configuration = {}
 
     def start_service(self, parameters):
         """
@@ -146,19 +151,29 @@ class MainServiceTelnet:
 
         del self.telnet_service_handler_plugins_map[handler_name]
 
+    def set_service_configuration_property(self, service_configuration_property):
+        # retrieves the service configuration
+        service_configuration = service_configuration_property.get_data()
+
+        # cleans the telnet service configuration
+        colony.libs.map_util.map_clean(self.telnet_service_configuration)
+
+        # copies the service configuration to the telnet service configuration
+        colony.libs.map_util.map_copy(service_configuration, self.telnet_service_configuration)
+
+    def unset_service_configuration_property(self, service_configuration_property):
+        # cleans the http service configuration
+        colony.libs.map_util.map_clean(self.telnet_service_configuration)
+
     def _get_service_configuration(self):
-        # retrieves the service configuration property
-        service_configuration_property = self.main_service_telnet_plugin.get_configuration_property("service_configuration")
+        """
+        Retrieves the service configuration map.
 
-        # in case the service configuration property is defined
-        if service_configuration_property:
-            # retrieves the service configuration
-            service_configuration = service_configuration_property.get_data()
-        else:
-            # sets the service configuration as an empty map
-            service_configuration = {}
+        @rtype: Dictionary
+        @return: The service configuration map.
+        """
 
-        return service_configuration
+        return self.telnet_service_configuration
 
     def _generate_service_parameters(self, parameters):
         """
