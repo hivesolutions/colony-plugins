@@ -52,6 +52,9 @@ COMMUNICATION_HANDLER_COUNT_VALUE = "communication_handler_count"
 COMMUNICATION_HANDLER_NAMES_VALUE = "communication_handler_names"
 """ The communication handler names value """
 
+COMMUNICATION_HANDLER_TUPLES_VALUE = "communication_handler_tuples"
+""" The communication handler tuples value """
+
 PROPERTIES_VALUE = "properties"
 """ The properties value """
 
@@ -407,6 +410,36 @@ class CommunicationPush:
 
         # returns the communication handler information
         return communication_handler_information
+
+    def get_communication_profile_information(self, communication_profile_name):
+        """
+        Retrieves an information structure on the communication
+        profile with the given name.
+
+        @type communication_profile_name: String
+        @param communication_profile_name: The name of the communication
+        profile to retrieve the information structure.
+        @rtype: Dictionary
+        @return: The information structure on the communication
+        profile.
+        """
+
+        # retrieves the communication names list for the communication profile name
+        communication_names_list = self.communication_profile_name_communication_names_map.get(communication_profile_name, [])
+
+        # retrieves the communication handler tuples list for the communication profile name
+        communication_handler_tuples_list = self.communication_profile_name_communication_handler_tuples_map.get(communication_profile_name, [])
+
+        # retrieves the communication handler tuples list length
+        communication_handler_tuples_list_length = len(communication_handler_tuples_list)
+
+        # creates the communication profile information
+        communication_profile_information = {COMMUNICATION_NAMES_VALUE : communication_names_list,
+                                             COMMUNICATION_HANDLER_COUNT_VALUE : communication_handler_tuples_list_length,
+                                             COMMUNICATION_HANDLER_TUPLES_VALUE : communication_handler_tuples_list}
+
+        # returns the communication profile information
+        return communication_profile_information
 
     def get_communication_handler_property(self, communication_handler_name, property_name):
         """

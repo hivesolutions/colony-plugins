@@ -180,6 +180,21 @@ class CommunicationPushPlugin(colony.base.plugin_system.Plugin):
 
         return self.communication_push.get_communication_handler_information(communication_handler_name)
 
+    def get_communication_profile_information(self, communication_profile_name):
+        """
+        Retrieves an information structure on the communication
+        profile with the given name.
+
+        @type communication_profile_name: String
+        @param communication_profile_name: The name of the communication
+        profile to retrieve the information structure.
+        @rtype: Dictionary
+        @return: The information structure on the communication
+        profile.
+        """
+
+        return self.communication_push.get_communication_profile_information(communication_profile_name)
+
     def get_communication_handler_property(self, communication_handler_name, property_name):
         """
         Retrieves a communication handler property for the
