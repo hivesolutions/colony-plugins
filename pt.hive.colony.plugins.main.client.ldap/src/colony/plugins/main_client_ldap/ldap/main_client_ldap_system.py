@@ -47,8 +47,6 @@ LDAP_RESPONSE_TYPE_MAP = {"bind" : 0x61, "search_result_enttry" : 0x64,
                           "search_result_reference" : 0x73, "search_result_done" : 0x65,
                           "modify" : 0x67, "add" : 0x69, "delete" : 0x6b}
 
-import main_client_ldap_exceptions
-
 class MainClientLdap:
     """
     The main client ldap class.
