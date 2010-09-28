@@ -101,6 +101,12 @@ class MainServiceSmtpRelayMessageHandler:
         # creates a new dns client, using the main client dns plugin
         dns_client = main_client_dns_plugin.create_client({})
 
+        # opens the smtp client
+        smtp_client.open({})
+
+        # opens the dns client
+        dns_client.open({})
+
         # retrieves the message contents
         message_contents = message.get_contents()
 
@@ -135,6 +141,12 @@ class MainServiceSmtpRelayMessageHandler:
 
             # send the email to the host
             smtp_client.send_mail(hostname, SMTP_PORT, message_sender, recipients_list, message_contents, {})
+
+        # closes the dns client
+        dns_client.close({})
+
+        # closes the smtp client
+        smtp_client.close({})
 
     def _get_domain_recipients_map(self, recipients_list):
         """
