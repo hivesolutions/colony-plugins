@@ -218,16 +218,19 @@ class BuildAutomationValidator:
         self._validate_build_automation_file(plugin_information)
 
     def _validate_plugin(self, plugin_information):
+        # validates the plugin's class name
+        self.__validate_plugin_class_name(plugin_information)
+
         # validates the plugin's capabilities
         self.__validate_plugin_capabilities(plugin_information)
+
+        # validates the plugin's init files
+        self.__validate_plugin_init_files(plugin_information)
 
         # validates the plugin's main modules
         self.__validate_plugin_main_modules(plugin_information)
 
-        # validates the plugin's file path
-        self.__validate_plugin_file_path(plugin_information)
-
-    def __validate_plugin_file_path(self, plugin_information):
+    def __validate_plugin_class_name(self, plugin_information):
         # retrieves the plugin
         plugin = plugin_information.plugin
 
@@ -243,7 +246,7 @@ class BuildAutomationValidator:
         # checks if the plugin class name matches the one computed from its module name
         if not plugin_class_name == plugin.__class__.__name__:
             # logs the validation error
-            self.log_validation_error(plugin_information, "'%s' has a class name '%s' that does not match its file name '%s'" % (plugin_module_name, plugin_class_name, plugin_file_path))
+            self.log_validation_error(plugin_information, "'%s' has a class name '%s' that does not match its file name '%s'" % (plugin_module_name, plugin.__class__.__name__, plugin_file_path))
 
     def __validate_plugin_capabilities(self, plugin_information):
         # retrieves the plugin
@@ -274,6 +277,16 @@ class BuildAutomationValidator:
         if not BUILD_AUTOMATION_ITEM_CAPABILITY in plugin.capabilities:
             # logs the validation error
             self.log_validation_error(plugin_information, "'%s' is missing 'build_automation_item' capability" % plugin_module_name)
+
+    def __validate_plugin_init_files(self, plugin_information):
+        # retrieves the plugin module name
+        plugin_module_name = plugin_information.plugin_module_name
+
+        # checks that all plugin init files exist
+        for plugin_resource_main_module_init_file_path in plugin_information.plugin_resource_main_module_init_file_paths:
+            if not os.path.exists(plugin_resource_main_module_init_file_path):
+                # logs the validation error
+                self.log_validation_error(plugin_information, "'%s' is missing an init file '%s'" % (plugin_module_name, plugin_resource_main_module_init_file_path))
 
     def __validate_plugin_main_modules(self, plugin_information):
         # retrieves the plugin
@@ -730,6 +743,7 @@ class PluginInformation:
         self.plugin_resource_file_paths = []
         self.plugin_main_module_file_paths = []
         self.plugin_resource_main_module_file_paths = []
+        self.plugin_resource_main_module_init_file_paths = []
         self.plugin_resource_main_modules = []
 
         # loads the plugin information
@@ -804,11 +818,14 @@ class PluginInformation:
         # loads the plugin resource file paths
         self.__load_plugin_resource_file_paths()
 
-        # loads the plugin main module paths
-        self.__load_plugin_main_module_paths()
+        # loads the plugin main module file paths
+        self.__load_plugin_main_module_file_paths()
 
-        # loads the plugin resource main module paths
-        self.__load_plugin_resource_main_module_paths()
+        # loads the plugin resource main module file paths
+        self.__load_plugin_resource_main_module_file_paths()
+
+        # loads the plugin resource main module init file paths
+        self.__load_plugin_resource_main_module_init_file_paths()
 
         # loads the pluguin resource main modules
         self.__load_plugin_resource_main_modules()
@@ -829,7 +846,7 @@ class PluginInformation:
         # sets the plugin resource file paths
         self.plugin_resource_file_paths = plugin_resource_file_paths
 
-    def __load_plugin_main_module_paths(self):
+    def __load_plugin_main_module_file_paths(self):
         # loads the main module paths
         for main_module in self.plugin.main_modules:
             # retrieves the base main module file path
@@ -844,9 +861,36 @@ class PluginInformation:
             # adds the main module file path to the plugin main module file paths
             self.plugin_main_module_file_paths.append(main_module_file_path)
 
-    def __load_plugin_resource_main_module_paths(self):
+    def __load_plugin_resource_main_module_file_paths(self):
         # sets the plugin resource main module file paths
         self.plugin_resource_main_module_file_paths = [plugin_resource_file_path for plugin_resource_file_path in self.plugin_resource_file_paths if self.is_valid_main_module_file_path(plugin_resource_file_path, self.plugin_path)]
+
+    def __load_plugin_resource_main_module_init_file_paths(self):
+        # collects init paths from the plugin resource main module file paths
+        for plugin_resource_main_module_file_path in self.plugin_resource_main_module_file_paths:
+            # splits the plugin resource main module file path into directory and file name
+            plugin_resource_main_module_directory_path, _main_module_file_name = os.path.split(plugin_resource_main_module_file_path)
+
+            # tokenizes the plugin resource main module directory path
+            plugin_resource_main_module_directory_path_tokens = plugin_resource_main_module_directory_path.split(UNIX_DIRECTORY_SEPARATOR)
+
+            # initializes the directory path
+            directory_path = None
+
+            # crawls the main module path directories collecting init file paths
+            for plugin_resource_main_module_directory_path_token in plugin_resource_main_module_directory_path_tokens:
+                # concatenates the token to the directory path
+                if not directory_path:
+                    directory_path = plugin_resource_main_module_directory_path_token
+                else:
+                    directory_path += UNIX_DIRECTORY_SEPARATOR + plugin_resource_main_module_directory_path_token
+
+                # creates the plugin resource main module init file path
+                plugin_resource_main_module_init_file_path = self.plugin_path + UNIX_DIRECTORY_SEPARATOR + directory_path + UNIX_DIRECTORY_SEPARATOR + INIT_FILE_NAME
+
+                # adds the plugin resource main module init file path to the list in case it isn't in it yet
+                if not plugin_resource_main_module_init_file_path in self.plugin_resource_main_module_init_file_paths:
+                    self.plugin_resource_main_module_init_file_paths.append(plugin_resource_main_module_init_file_path)
 
     def __load_plugin_resource_main_modules(self):
         # collects the main module declarations for the discovered resource main module file paths
