@@ -42,6 +42,8 @@ import time
 import random
 import hashlib
 
+import colony.libs.quote_util
+
 import service_twitter_exceptions
 
 TWITTER_API_REALM_VALUE = "Twitter API"
@@ -977,11 +979,8 @@ class TwitterClient:
         @return: the given url text in a valid http get request string.
         """
 
-        # retrieves the http client
-        http_client = self._get_http_client()
-
         # returns the quoted version of the url text
-        return http_client.quote_plus(str(url_text), "")
+        return colony.libs.quote_util.quote_plus(str(url_text), "")
 
     def _check_twitter_errors(self, data):
         """
