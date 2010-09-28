@@ -256,8 +256,7 @@ class MainServiceBittorrent:
         # retrieves the http client
         http_client = self._get_http_client()
 
-        # fetches the url retrieving the http response with the charset in invalid mode
-        # in order to avoid encoding problem
+        # fetches the url retrieving the http response
         http_response = http_client.fetch_url(url, method, parameters)
 
         # closes the http client
@@ -289,8 +288,7 @@ class MainServiceBittorrent:
         # retrieves the main client http plugin
         main_client_http_plugin = self.main_service_bittorrent_plugin.main_client_http_plugin
 
-        # creates the http client with the charset in invalid mode
-        # in order to avoid decoding problem
+        # creates the http client
         http_client = main_client_http_plugin.create_client({})
 
         # opens the http client
