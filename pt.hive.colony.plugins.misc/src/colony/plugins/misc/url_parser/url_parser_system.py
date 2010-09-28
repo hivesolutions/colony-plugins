@@ -41,7 +41,7 @@ import re
 
 import url_parser_exceptions
 
-URL_REGEX_VALUE = "(?P<protocol>\w+\:\/\/)?(?P<base_name>[^\:\/\?#]+)(?P<port>\:\d+)?(?P<resource_reference>(\/[^\?#]+)*)\/?(\?(?P<options>([^#])*))?(?P<location>#(.*))?"
+URL_REGEX_VALUE = "(?P<protocol>\w+\:\/\/)?(?P<base_name>[^\:\/\?#]+)(\:(?P<port>\d+))?(?P<resource_reference>(\/[^\?#]+)*)\/?(\?(?P<options>([^#])*))?(?P<location>#(.*))?"
 """ The url regex value """
 
 URL_REGEX = re.compile(URL_REGEX_VALUE)
@@ -81,33 +81,14 @@ class UrlParser:
         @return: The url object representing the url
         """
 
-        # matches the url against the url regex
-        url_match = URL_REGEX.match(url)
-
-        # in case there was no match
-        if not url_match:
-            raise url_parser_exceptions.UrlParserException("invalid url value: %s" % url)
-
-        # retrieves the protocol
-        protocol = url_match.group("protocol")
-
-        # retrieves the base name
-        base_name = url_match.group("base_name")
-
-        # retrieves the port
-        port = url_match.group("port")
-
-        # retrieves the resource reference
-        resource_reference = url_match.group("resource_reference")
-
-        # retrieves the options
-        options = url_match.group("options")
-
-        # retrieves the location
-        location = url_match.group("location")
+        # saves the url reference
+        url_reference = url
 
         # creates the url object
-        url = Url(protocol, base_name, port, resource_reference, options, location)
+        url = Url()
+
+        # parses the url (reference)
+        url.parse_url(url_reference)
 
         # generates the resource reference list
         url._generate_resource_reference_list()

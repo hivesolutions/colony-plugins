@@ -54,6 +54,9 @@ EXCLUSION_MAP = {"__class__" : True, "__delattr__" : True, "__dict__" : True, "_
 EXCLUSION_TYPES = {types.MethodType : True, types.FunctionType : True}
 """ The map of types to be excluded from object serialization """
 
+INT_TYPES = {types.IntType : True, types.LongType : True}
+""" The map of int types """
+
 LIST_TYPES = {types.ListType : True, types.TupleType : True}
 """ The map of list types """
 
@@ -81,7 +84,7 @@ def _chunk(chunk, string_buffer):
     # retrieves the chunk type
     chunk_type = type(chunk)
 
-    if chunk_type == types.IntType:
+    if chunk_type in INT_TYPES:
         # writes the integer chunk into the string buffer
         string_buffer.write("i" + str(chunk) + "e")
     elif chunk_type in types.StringTypes:
