@@ -82,7 +82,7 @@ ENVIRONMENT_VERSION = str(sys.version_info[0]) + "." + str(sys.version_info[1]) 
 USER_AGENT_IDENTIFIER = USER_AGENT_NAME + "/" + USER_AGENT_VERSION + " (Python/" + sys.platform + "/" + ENVIRONMENT_VERSION + ")"
 """ The user agent identifier """
 
-DEFAULT_CHARSET = "utf-8"
+DEFAULT_CHARSET = None
 """ The default charset """
 
 STATUS_CODE_VALUES = {100 : "Continue", 101 : "Switching Protocols",
