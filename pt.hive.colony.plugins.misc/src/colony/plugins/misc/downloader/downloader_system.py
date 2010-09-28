@@ -39,9 +39,6 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 import os
 
-PLUGIN_DIRECTORY = "colony/plugins"
-""" The plugin directory """
-
 class Downloader:
     """
     The downloader class.
@@ -60,7 +57,7 @@ class Downloader:
 
         self.downloader_plugin = downloader_plugin
 
-    def download_package(self, address, target_directory = PLUGIN_DIRECTORY):
+    def download_package(self, address, target_directory = None):
         """
         Downloads a package from the given url address to a target directory.
 
@@ -73,6 +70,9 @@ class Downloader:
         """
 
         try:
+            # sets the target directory
+            target_directory = target_directory or self._get_default_target_directory()
+
             # retrieves the main client http plugin
             main_client_http_plugin = self.downloader_plugin.main_client_http_plugin
 
@@ -85,8 +85,11 @@ class Downloader:
             # opens the http client
             http_client.open({})
 
-            # fetches the url retrieving the file contents
-            file_contents = http_client.fetch_url(address,)
+            # fetches the url retrieving the http response
+            http_response = http_client.fetch_url(address)
+
+            # retrieves the file contents from the http response
+            file_contents = http_response.received_message
 
             # closes the http client
             http_client.close({})
@@ -142,8 +145,11 @@ class Downloader:
             # opens the http client
             http_client.open({})
 
-            # fetches the url retrieving the file contents
-            file_contents = http_client.fetch_url(address,)
+            # fetches the url retrieving the http response
+            http_response = http_client.fetch_url(address)
+
+            # retrieves the file contents from the http response
+            file_contents = http_response.received_message
 
             # closes the http client
             http_client.close({})
@@ -171,3 +177,25 @@ class Downloader:
             return url_split[-2]
         else:
             return url_split[-1]
+
+    def _get_default_target_directory(self):
+        """
+        Retrieves the default target directory.
+        The default target directory is the configuration
+        path of the downloader plugin
+
+        @rtype: String
+        @return: The default target directory.
+        """
+
+        # retrieves the plugin manager
+        plugin_manager = self.downloader_plugin.manager
+
+        # retrieves the configuration path for the downloader plugin
+        configuration_path, _workspace_path = plugin_manager.get_plugin_configuration_paths_by_id(self.downloader_plugin.id)
+
+        # sets the target path as the configuration path
+        target_path = configuration_path
+
+        # returns the target path
+        return target_path
