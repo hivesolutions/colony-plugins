@@ -128,6 +128,9 @@ class DnsClient:
     current_transaction_id = 0x0000
     """ The current transaction id """
 
+    client_connection = None
+    """ The current client connection """
+
     _dns_client = None
     """ The dns client object used to provide connections """
 
@@ -162,7 +165,7 @@ class DnsClient:
 
     def resolve_queries(self, host, port, queries, parameters = {}, socket_name = DEFAULT_SOCKET_NAME):
         # retrieves the corresponding (dns) client connection
-        client_connection = self._dns_client.get_client_connection((host, port, socket_name))
+        self.client_connection = self._dns_client.get_client_connection((host, port, socket_name))
 
         # acquires the dns client lock
         self._dns_client_lock.acquire()
@@ -170,10 +173,10 @@ class DnsClient:
         try:
             # sends the request for the given client connection, queries and
             # parameters, and retrieves the request
-            request = self.send_request(client_connection, queries, parameters)
+            request = self.send_request(queries, parameters)
 
             # retrieves the response, using the client connection
-            response = self.retrieve_response(client_connection, request)
+            response = self.retrieve_response(request)
         finally:
             # releases the dns client lock
             self._dns_client_lock.release()
@@ -181,12 +184,10 @@ class DnsClient:
         # returns the response
         return response
 
-    def send_request(self, client_connection, queries, parameters):
+    def send_request(self, queries, parameters):
         """
         Sends the request for the given parameters.
 
-        @type client_connection: ClientConnection
-        @param client_connection: The client connection to be used.
         @type queries: List
         @param queries: The list of queries to be sent.
         @type parameters: Dictionary
@@ -206,17 +207,15 @@ class DnsClient:
         result_value = request.get_result()
 
         # sends the result value
-        client_connection.send(result_value)
+        self.client_connection.send(result_value)
 
         # returns the request
         return request
 
-    def retrieve_response(self, client_connection, request, response_timeout = RESPONSE_TIMEOUT):
+    def retrieve_response(self, request, response_timeout = RESPONSE_TIMEOUT):
         """
         Retrieves the response from the sent request.
 
-        @type client_connection: ClientConnection
-        @param client_connection: The client connection to be used.
         @rtype: DnsRequest
         @return: The request that originated the response.
         @type response_timeout: int
@@ -229,7 +228,7 @@ class DnsClient:
         response = DnsResponse(request)
 
         # retrieves the data
-        data = client_connection.retrieve_data(response_timeout)
+        data = self.client_connection.retrieve_data(response_timeout)
 
         # processes the data
         response.process_data(data)
