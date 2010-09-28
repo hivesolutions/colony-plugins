@@ -38,7 +38,6 @@ __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
 import sys
-import socket
 import base64
 import threading
 
@@ -776,33 +775,6 @@ class HttpClient:
 
         # returns the parameters
         return parameters
-
-    def _get_socket(self, socket_name = "normal"):
-        """
-        Retrieves the socket for the given socket name
-        using the socket provider plugins.
-
-        @type socket_name: String
-        @param socket_name: The name of the socket to be retrieved.
-        @rtype: Socket
-        @return: The socket for the given socket name.
-        """
-
-        # retrieves the socket provider plugins
-        socket_provider_plugins = self.main_client_http.main_client_http_plugin.socket_provider_plugins
-
-        # iterates over all the socket provider plugins
-        for socket_provider_plugin in socket_provider_plugins:
-            # retrieves the provider name from the socket provider plugin
-            socket_provider_plugin_provider_name = socket_provider_plugin.get_provider_name()
-
-            # in case the names are the same
-            if socket_provider_plugin_provider_name == socket_name:
-                # creates a new socket with the socket provider plugin
-                socket = socket_provider_plugin.provide_socket()
-
-                # returns the socket
-                return socket
 
     def _parse_url(self, url):
         """

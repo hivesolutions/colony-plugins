@@ -56,7 +56,7 @@ class MainClientHttpPlugin(colony.base.plugin_system.Plugin):
                  colony.base.plugin_system.JYTHON_ENVIRONMENT]
     attributes = {"build_automation_file_path" : "$base{plugin_directory}/main_client_http/http/resources/baf.xml"}
     capabilities = ["client.http", "build_automation_item"]
-    capabilities_allowed = ["socket_provider"]
+    capabilities_allowed = []
     dependencies = [colony.base.plugin_system.PluginDependency(
                     "pt.hive.colony.plugins.main.client.utils", "1.0.0"),
                     colony.base.plugin_system.PluginDependency(
@@ -66,8 +66,6 @@ class MainClientHttpPlugin(colony.base.plugin_system.Plugin):
     main_modules = ["main_client_http.http.main_client_http_exceptions", "main_client_http.http.main_client_http_system"]
 
     main_client_http = None
-
-    socket_provider_plugins = []
 
     main_client_utils_plugin = None
     url_parser_plugin = None
@@ -87,11 +85,9 @@ class MainClientHttpPlugin(colony.base.plugin_system.Plugin):
     def end_unload_plugin(self):
         colony.base.plugin_system.Plugin.end_unload_plugin(self)
 
-    @colony.base.decorators.load_allowed("pt.hive.colony.plugins.main.client.http", "1.0.0")
     def load_allowed(self, plugin, capability):
         colony.base.plugin_system.Plugin.load_allowed(self, plugin, capability)
 
-    @colony.base.decorators.unload_allowed("pt.hive.colony.plugins.main.client.http", "1.0.0")
     def unload_allowed(self, plugin, capability):
         colony.base.plugin_system.Plugin.unload_allowed(self, plugin, capability)
 
@@ -104,14 +100,6 @@ class MainClientHttpPlugin(colony.base.plugin_system.Plugin):
 
     def create_request(self, parameters):
         return self.main_client_http.create_request(parameters)
-
-    @colony.base.decorators.load_allowed_capability("socket_provider")
-    def socket_provider_load_allowed(self, plugin, capability):
-        self.socket_provider_plugins.append(plugin)
-
-    @colony.base.decorators.unload_allowed_capability("socket_provider")
-    def socket_provider_unload_allowed(self, plugin, capability):
-        self.socket_provider_plugins.remove(plugin)
 
     def get_main_client_utils_plugin(self):
         return self.main_client_utils_plugin
