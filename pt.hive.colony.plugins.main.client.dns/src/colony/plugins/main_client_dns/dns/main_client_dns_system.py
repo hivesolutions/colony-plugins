@@ -171,11 +171,11 @@ class DnsClient:
         self._dns_client_lock.acquire()
 
         try:
-            # sends the request for the given client connection, queries and
+            # sends the request for the given queries and
             # parameters, and retrieves the request
             request = self.send_request(queries, parameters)
 
-            # retrieves the response, using the client connection
+            # retrieves the response
             response = self.retrieve_response(request)
         finally:
             # releases the dns client lock
