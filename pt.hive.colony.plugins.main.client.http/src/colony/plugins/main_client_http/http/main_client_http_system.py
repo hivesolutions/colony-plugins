@@ -42,6 +42,7 @@ import socket
 import base64
 import threading
 
+import colony.libs.quote_util
 import colony.libs.string_buffer_util
 
 import main_client_http_exceptions
@@ -138,6 +139,12 @@ LOCATION_VALUE = "Location"
 BASIC_VALUE = "Basic"
 """ The basic value """
 
+PROTOCOL_VERSION_VALUE = "protocol_version"
+""" The protocol version value """
+
+CONTENT_TYPE_CHARSET_VALUE = "content_type_charset"
+""" The content type charset value """
+
 DEFAULT_PORTS = (80, 443)
 """ The tuple of default ports """
 
@@ -149,12 +156,6 @@ PROTOCOL_DEFAULT_PORT_MAP = {HTTP_PREFIX_VALUE : 80, HTTPS_PREFIX_VALUE : 443}
 
 DATE_FORMAT = "%a, %d %b %Y %H:%M:%S GMT"
 """ The date format """
-
-QUOTE_SAFE_CHAR = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789' '_.-"
-""" The string containing all the safe characters to be quoted """
-
-QUOTE_SAFE_MAPS = {}
-""" The map of cached (buffered) safe lists to be quoted """
 
 class MainClientHttp:
     """
@@ -185,11 +186,14 @@ class MainClientHttp:
         @return: The created client object.
         """
 
-        # retrieves the version
-        version = parameters.get("version", None)
+        # retrieves the protovol version
+        protocol_version = parameters.get(PROTOCOL_VERSION_VALUE, None)
+
+        # retrieves the content type charset
+        content_type_charset = parameters.get(CONTENT_TYPE_CHARSET_VALUE, DEFAULT_CHARSET)
 
         # creates the http client
-        http_client = HttpClient(self, version)
+        http_client = HttpClient(self, protocol_version, content_type_charset)
 
         # returns the http client
         return http_client
@@ -723,19 +727,20 @@ class HttpClient:
         @param response: The response to be decoded.
         """
 
-        # start the valid charset flag
-        valid_charset = False
-
-        # in case there is no valid charset defined
-        if not valid_charset:
-            # sets the default content type charset
-            content_type_charset = DEFAULT_CHARSET
+        # in case the content type charset is not defined
+        # (no decoding should take place)
+        if not self.content_type_charset:
+            # returns immediately
+            return
 
         # retrieves the received message value
         received_message_value = response.received_message
 
         # decodes the message value into unicode using the given charset
-        response.received_message = received_message_value.decode(content_type_charset)
+        received_message_value_decoded = received_message_value.decode(self.content_type_charset)
+
+        # sets the decoded message value in the received message field
+        response.received_message = received_message_value_decoded
 
     def set_authentication(self, username, password):
         """
@@ -753,79 +758,6 @@ class HttpClient:
         # sets the authentication values
         self.username = username
         self.password = password
-
-    def quote(self, string_value, safe = "/"):
-        """
-        Quotes the given string value according to
-        the url encoding specification.
-        The implementation is based on the python base library.
-
-        @type string_value: String
-        @param string_value: The string value to be quoted.
-        @rtype: String
-        @return: The quoted string value.
-        """
-
-        # creates the cache key tuple
-        cache_key = (safe, QUOTE_SAFE_CHAR)
-
-        try:
-            # in case the cache key is not defined
-            # in the quote sage maps creates a new entry
-            safe_map = QUOTE_SAFE_MAPS[cache_key]
-        except KeyError:
-            # adds the "base" quote safe characters to the
-            # "safe list"
-            safe += QUOTE_SAFE_CHAR
-
-            # starts the safe map
-            safe_map = {}
-
-            # iterates over all the ascii values
-            for index in range(256):
-                # retrieves the character for the
-                # given index
-                character = chr(index)
-
-                # adds the "valid" character ot the safe mao entry
-                safe_map[character] = (character in safe) and character or ("%%%02X" % index)
-
-            # sets the safe map in the cache quote safe maps
-            QUOTE_SAFE_MAPS[cache_key] = safe_map
-
-        # maps the getitem method of the map to all the string
-        # value to retrieve the valid items
-        resolution_list = map(safe_map.__getitem__, string_value)
-
-        # joins the resolution list to retrieve the quoted value
-        return "".join(resolution_list)
-
-    def quote_plus(self, string_value, safe = ""):
-        """
-        Quotes the given string value according to
-        the url encoding specification. This kind of quote
-        takes into account the plus and the space relation.
-        The implementation is based on the python base library.
-
-        @type string_value: String
-        @param string_value: The string value to be quoted.
-        @rtype: String
-        @return: The quoted string value.
-        """
-
-        # in case there is at least one white
-        # space in the string value
-        if " " in string_value:
-            # quotes the string value adding the white space
-            # to the "safe list"
-            string_value = self.quote(string_value, safe + " ")
-
-            # replaces the white spaces with plus signs and
-            # returns the result
-            return string_value.replace(" ", "+")
-
-        # returns the quoted string value
-        return self.quote(string_value, safe)
 
     def _generate_client_parameters(self, parameters):
         """
@@ -1136,85 +1068,12 @@ class HttpRequest:
             # returns only the host
             return self.host
 
-    def _quote(self, string_value, safe = "/"):
-        """
-        Quotes the given string value according to
-        the url encoding specification.
-        The implementation is based on the python base library.
-
-        @type string_value: String
-        @param string_value: The string value to be quoted.
-        @rtype: String
-        @return: The quoted string value.
-        """
-
-        # creates the cache key tuple
-        cache_key = (safe, QUOTE_SAFE_CHAR)
-
-        try:
-            # in case the cache key is not defined
-            # in the quote sage maps creates a new entry
-            safe_map = QUOTE_SAFE_MAPS[cache_key]
-        except KeyError:
-            # adds the "base" quote safe characters to the
-            # "safe list"
-            safe += QUOTE_SAFE_CHAR
-
-            # starts the safe map
-            safe_map = {}
-
-            # iterates over all the ascii values
-            for index in range(256):
-                # retrieves the character for the
-                # given index
-                character = chr(index)
-
-                # adds the "valid" character ot the safe mao entry
-                safe_map[character] = (character in safe) and character or ("%%%02X" % index)
-
-            # sets the safe map in the cache quote safe maps
-            QUOTE_SAFE_MAPS[cache_key] = safe_map
-
-        # maps the getitem method of the map to all the string
-        # value to retrieve the valid items
-        resolution_list = map(safe_map.__getitem__, string_value)
-
-        # joins the resolution list to retrieve the quoted value
-        return "".join(resolution_list)
-
-    def _quote_plus(self, string_value, safe = ""):
-        """
-        Quotes the given string value according to
-        the url encoding specification. This kind of quote
-        takes into account the plus and the space relation.
-        The implementation is based on the python base library.
-
-        @type string_value: String
-        @param string_value: The string value to be quoted.
-        @rtype: String
-        @return: The quoted string value.
-        """
-
-        # in case there is at least one white
-        # space in the string value
-        if " " in string_value:
-            # quotes the string value adding the white space
-            # to the "safe list"
-            string_value = self._quote(string_value, safe + " ")
-
-            # replaces the white spaces with plus signs and
-            # returns the result
-            return string_value.replace(" ", "+")
-
-        # returns the quoted string value
-        return self._quote(string_value, safe)
-
     def _encode_attributes(self):
         """
         Encodes the current attributes into url encoding.
 
         @rtype: String
-        @return: The encoded parameters.
+        @return: The encoded attributes string.
         """
 
         # creates a string buffer to hold the encoded attribute values
@@ -1230,8 +1089,8 @@ class HttpRequest:
             attribte_value_encoded = self._encode(attribute_value)
 
             # quotes both the attribute key and value
-            attribute_key_quoted = self._quote_plus(attribte_key_encoded)
-            attribute_value_quoted = self._quote_plus(attribte_value_encoded)
+            attribute_key_quoted = colony.libs.quote_util.quote_plus(attribte_key_encoded)
+            attribute_value_quoted = colony.libs.quote_util.quote_plus(attribte_value_encoded)
 
             # in case it's is the first iteration
             if is_first:
@@ -1263,7 +1122,21 @@ class HttpRequest:
         @return: The given string value encoded in the current encoding.
         """
 
-        return unicode(string_value).encode(self.content_type_charset)
+        # in case the content type charset is not defined
+        # (no encoding should take place)
+        if not self.content_type_charset:
+            # returns the string value
+            # (without encoding)
+            return string_value
+
+        # converts the string value to unicode
+        unicode_value = unicode(string_value)
+
+        # encodes the unicode value
+        unicode_value_encoded =  unicode_value.encode(self.content_type_charset)
+
+        # returns the encoded unicode value
+        return unicode_value_encoded
 
 class HttpResponse:
     """
