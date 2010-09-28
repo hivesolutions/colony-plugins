@@ -224,6 +224,9 @@ class HttpClient:
     password = "none"
     """ The password to be used in authentication """
 
+    client_connection = None
+    """ The current client connection """
+
     _http_client = None
     """ The http client object used to provide connections """
 
@@ -288,19 +291,19 @@ class HttpClient:
         socket_name = PROTOCOL_SOCKET_NAME_MAP.get(protocol, None)
 
         # retrieves the corresponding (http) client connection
-        client_connection = self._http_client.get_client_connection((host, port, socket_name))
+        self.client_connection = self._http_client.get_client_connection((host, port, socket_name))
 
         # acquires the http client lock
         self._http_client_lock.acquire()
 
         try:
-            # sends the request for the client connection, host, port, path,
+            # sends the request for the host, port, path,
             # parameters, method, protocol version and content type
             # charset and retrieves the request
-            request = self.send_request(client_connection, host, port, path, parameters, method, protocol_version, content_type_charset)
+            request = self.send_request(host, port, path, parameters, method, protocol_version, content_type_charset)
 
-            # retrieves the response, using the client connection
-            response = self.retrieve_response(client_connection, request)
+            # retrieves the response
+            response = self.retrieve_response(request)
         finally:
             # releases the http client lock
             self._http_client_lock.release()
@@ -359,12 +362,10 @@ class HttpClient:
         # return the built url
         return url
 
-    def send_request(self, client_connection, host, port, path, parameters, operation_type, protocol_version, content_type_charset):
+    def send_request(self, host, port, path, parameters, operation_type, protocol_version, content_type_charset):
         """
         Sends the request for the given parameters.
 
-        @type client_connection: ClientConnection
-        @param client_connection: The client connection to be used.
         @type host: String
         @param host: The host to be used by the request.
         @type port: int
@@ -396,17 +397,15 @@ class HttpClient:
         result_value = request.get_result()
 
         # sends the result value
-        client_connection.send(result_value)
+        self.client_connection.send(result_value)
 
         # returns the request
         return request
 
-    def retrieve_response(self, client_connection, request, response_timeout = RESPONSE_TIMEOUT):
+    def retrieve_response(self, request, response_timeout = RESPONSE_TIMEOUT):
         """
         Retrieves the response from the sent request.
 
-        @type client_connection: ClientConnection
-        @param client_connection: The client connection to be used.
         @rtype: HttpRequest
         @return: The request that originated the response.
         @type response_timeout: int
@@ -443,7 +442,7 @@ class HttpClient:
         # continuous loop
         while True:
             # retrieves the data
-            data = client_connection.retrieve_data(response_timeout)
+            data = self.client_connection.retrieve_data(response_timeout)
 
             # retrieves the data length
             data_length = len(data)
@@ -568,7 +567,7 @@ class HttpClient:
                         start_message_value = message_value[start_message_index:]
 
                         # retrieves the response in chunked mode
-                        self.retrieve_response_chunked(client_connection, response, start_message_value, response_timeout)
+                        self.retrieve_response_chunked(response, start_message_value, response_timeout)
 
                         # returns the response
                         return response
@@ -599,7 +598,7 @@ class HttpClient:
                     # returns the response
                     return response
 
-    def retrieve_response_chunked(self, client_connection, response, message_value, response_timeout = RESPONSE_TIMEOUT):
+    def retrieve_response_chunked(self, response, message_value, response_timeout = RESPONSE_TIMEOUT):
         # creates the message string buffer
         message = colony.libs.string_buffer_util.StringBuffer()
 
@@ -617,7 +616,7 @@ class HttpClient:
             # iterates while the end of octets part is not found
             while octet_end_index == -1:
                 # retrieves the data
-                data = client_connection.retrieve_data(response_timeout)
+                data = self.client_connection.retrieve_data(response_timeout)
 
                 # retrieves the data length
                 data_length = len(data)
@@ -670,7 +669,7 @@ class HttpClient:
             # than the octet size plus the extra end of chunk characters
             while message_size < octet_end:
                 # retrieves the data
-                data = client_connection.retrieve_data(response_timeout)
+                data = self.client_connection.retrieve_data(response_timeout)
 
                 # retrieves the data length
                 data_length = len(data)
