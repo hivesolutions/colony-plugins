@@ -39,9 +39,9 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 import re
 import time
-import urllib
 import datetime
 
+import colony.libs.quote_util
 import colony.libs.string_buffer_util
 
 import main_rest_manager_exceptions
@@ -368,7 +368,7 @@ class MainRestManager:
                     variable_value = request.attributes_map[variable_name]
 
                     # unquotes the variable value
-                    variable_value = urllib.unquote(variable_value)
+                    variable_value = colony.libs.quote_util.unquote(variable_value)
 
                     # sets the variable value in the arguments map
                     arguments_map[variable_name] = variable_value
