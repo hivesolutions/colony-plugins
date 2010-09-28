@@ -46,6 +46,15 @@ import colony.libs.quote_util
 
 import service_twitter_exceptions
 
+DEFAULT_CHARSET = "utf-8"
+""" The default charset """
+
+DEFAULT_ENCODING = "utf-8"
+""" The default encoding """
+
+CONTENT_TYPE_CHARSET_VALUE = "content_type_charset"
+""" The content type charset value """
+
 TWITTER_API_REALM_VALUE = "Twitter API"
 """ The twitter api realm value """
 
@@ -90,9 +99,6 @@ BASE_REST_URL = "http://twitter.com/"
 
 BASE_REST_SECURE_URL = "https://twitter.com/"
 """ The base rest secure url to be used """
-
-DEFAULT_ENCODING = "utf-8"
-""" The default encoding """
 
 class ServiceTwitter:
     """
@@ -888,7 +894,7 @@ class TwitterClient:
             self._build_oauth_arguments(url, parameters, method)
 
         # fetches the url retrieving the http response
-        http_response = http_client.fetch_url(url, method, parameters)
+        http_response = http_client.fetch_url(url, method, parameters, content_type_charset = DEFAULT_CHARSET)
 
         # retrieves the contents from the http response
         contents = http_response.received_message
@@ -1071,7 +1077,7 @@ class TwitterClient:
         # in case no http client exists
         if not self.http_client:
             # creates the http client
-            self.http_client = self.main_client_http_plugin.create_client({})
+            self.http_client = self.main_client_http_plugin.create_client({CONTENT_TYPE_CHARSET_VALUE : DEFAULT_CHARSET})
 
             # opens the http client
             self.http_client.open({})

@@ -39,11 +39,17 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 import service_yadis_parser
 
+DEFAULT_CHARSET = "utf-8"
+""" The default charset """
+
 GET_METHOD_VALUE = "GET"
 """ The get method value """
 
 POST_METHOD_VALUE = "POST"
 """ The post method value """
+
+CONTENT_TYPE_CHARSET_VALUE = "content_type_charset"
+""" The content type charset value """
 
 class ServiceYadis:
     """
@@ -252,7 +258,7 @@ class YadisClient:
         http_client = self._get_http_client()
 
         # fetches the url retrieving the http response
-        http_response = http_client.fetch_url(url, method, parameters)
+        http_response = http_client.fetch_url(url, method, parameters, content_type_charset = DEFAULT_CHARSET)
 
         # retrieves the contents from the http response
         contents = http_response.received_message
@@ -272,7 +278,7 @@ class YadisClient:
         # in case no http client exists
         if not self.http_client:
             # creates the http client
-            self.http_client = self.main_client_http_plugin.create_client({})
+            self.http_client = self.main_client_http_plugin.create_client({CONTENT_TYPE_CHARSET_VALUE : DEFAULT_CHARSET})
 
             # opens the http client
             self.http_client.open({})
