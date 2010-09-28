@@ -51,9 +51,6 @@ GET_METHOD_VALUE = "GET"
 POST_METHOD_VALUE = "POST"
 """ The post method value """
 
-CONTENT_TYPE_CHARSET_VALUE = "content_type_charset"
-""" The content type charset value """
-
 class MainServiceBittorrent:
     """
     The main service bittorrent class.
@@ -259,8 +256,9 @@ class MainServiceBittorrent:
         # retrieves the http client
         http_client = self._get_http_client()
 
-        # fetches the url retrieving the http response
-        http_response = http_client.fetch_url(url, method, parameters, "HTTP/1.1", None)
+        # fetches the url retrieving the http response with the charset in invalid mode
+        # in order to avoid encoding problem
+        http_response = http_client.fetch_url(url, method, parameters)
 
         # closes the http client
         http_client.close({})
@@ -292,8 +290,8 @@ class MainServiceBittorrent:
         main_client_http_plugin = self.main_service_bittorrent_plugin.main_client_http_plugin
 
         # creates the http client with the charset in invalid mode
-        # in order to avoid decoding and encoding
-        http_client = main_client_http_plugin.create_client({CONTENT_TYPE_CHARSET_VALUE : None})
+        # in order to avoid decoding problem
+        http_client = main_client_http_plugin.create_client({})
 
         # opens the http client
         http_client.open({})
