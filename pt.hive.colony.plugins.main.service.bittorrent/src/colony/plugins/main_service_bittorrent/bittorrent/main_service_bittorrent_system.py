@@ -263,7 +263,7 @@ class MainServiceBittorrent:
         http_response = http_client.fetch_url(url, method, parameters, "HTTP/1.1", None)
 
         # closes the http client
-        http_client.open({})
+        http_client.close({})
 
         # retrieves the contents from the http response
         contents = http_response.received_message
