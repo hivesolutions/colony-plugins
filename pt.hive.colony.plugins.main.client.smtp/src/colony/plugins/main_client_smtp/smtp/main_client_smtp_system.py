@@ -37,9 +37,8 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-import socket
-import select
 import base64
+import threading
 
 import colony.libs.string_buffer_util
 
@@ -116,6 +115,15 @@ class SmtpClient:
     main_client_smtp = None
     """ The main client smtp object """
 
+    client_connection = None
+    """ The current client connection """
+
+    _smtp_client = None
+    """ The smtp client object used to provide connections """
+
+    _smtp_client_lock = None
+    """ Lock to control the fetching of the queries """
+
     def __init__(self, main_client_smtp):
         """
         Constructor of the class.
@@ -131,63 +139,83 @@ class SmtpClient:
 
         self.main_client_smtp = main_client_smtp
 
+        self._smtp_client_lock = threading.RLock()
+
+    def open(self, parameters):
+        # generates the parameters
+        client_parameters = self._generate_client_parameters(parameters)
+
+        # creates the smtp client, generating the internal structures
+        self._smtp_client = self.main_client_smtp.main_client_smtp_plugin.main_client_utils_plugin.generate_client(client_parameters)
+
+        # starts the smtp client
+        self._smtp_client.start_client()
+
+    def close(self, parameters):
+        # stops the smtp client
+        self._smtp_client.stop_client()
+
     def send_mail(self, host, port, sender, recipients_list, message, parameters = {}, socket_name = DEFAULT_SOCKET_NAME):
-        # retrieves (generates a socket)
-        self.smtp_connection = self._get_socket(socket_name)
+        # retrieves the corresponding (smtp) client connection
+        self.client_connection = self._smtp_client.get_client_connection((host, port, socket_name))
 
-        # connects to the socket
-        self.smtp_connection.connect((host, port))
+        # acquires the smtp client lock
+        self._smtp_client_lock.acquire()
 
-        # creates the session object
-        session = SmtpSession()
+        try:
+            # creates the session object
+            session = SmtpSession()
 
-        # runs the initial login
-        self.login(session, parameters)
+            # runs the initial login
+            self.login(session, parameters)
 
-        # runs the ehlo command
-        self.ehlo(session, parameters)
-
-        # retrieves the use tls flag
-        tls = parameters.get("tls", False)
-
-        # in case the tls flag is active
-        if tls:
-            # tries to start tls
-            self.starttls(session, parameters)
-
-            # runs the ehlo command (again, because of tls)
+            # runs the ehlo command
             self.ehlo(session, parameters)
 
-        # retrieves the verify user flag
-        verify_user = parameters.get("verify_user", False)
+            # retrieves the use tls flag
+            tls = parameters.get("tls", False)
 
-        # in case the verify user flag is active
-        if verify_user:
-            # runs the vrfy command
-            self.vrfy(session, parameters)
+            # in case the tls flag is active
+            if tls:
+                # tries to start tls
+                self.starttls(session, parameters)
 
-        # tries to retrieve the username from the parameters
-        username = parameters.get("username", "")
+                # runs the ehlo command (again, because of tls)
+                self.ehlo(session, parameters)
 
-        # in case a username is defined
-        if username:
-            # tries to retrieve the password from the parameters
-            password = parameters.get("password", "")
+            # retrieves the verify user flag
+            verify_user = parameters.get("verify_user", False)
 
-            # runs the auth command (starting the authentication process)
-            self.auth(session, username, password, parameters)
+            # in case the verify user flag is active
+            if verify_user:
+                # runs the vrfy command
+                self.vrfy(session, parameters)
 
-        # runs the main command (starting the mail sending)
-        self.mail(session, sender, parameters)
+            # tries to retrieve the username from the parameters
+            username = parameters.get("username", "")
 
-        # runs the rcpt command
-        self.rcpt(session, recipients_list, parameters)
+            # in case a username is defined
+            if username:
+                # tries to retrieve the password from the parameters
+                password = parameters.get("password", "")
 
-        # runs the data command and sends the raw data (message)
-        self.data(session, message, parameters)
+                # runs the auth command (starting the authentication process)
+                self.auth(session, username, password, parameters)
 
-        # runs the quit command
-        self.quit(session, parameters)
+            # runs the main command (starting the mail sending)
+            self.mail(session, sender, parameters)
+
+            # runs the rcpt command
+            self.rcpt(session, recipients_list, parameters)
+
+            # runs the data command and sends the raw data (message)
+            self.data(session, message, parameters)
+
+            # runs the quit command
+            self.quit(session, parameters)
+        finally:
+            # releases the smtp client lock
+            self._smtp_client_lock.release()
 
     def send_request(self, command, message, session, parameters):
         """
@@ -221,7 +249,7 @@ class SmtpClient:
         result_value = request.get_result()
 
         # sends the result value
-        self.smtp_connection.sendall(result_value)
+        self.client_connection.send(result_value)
 
         # returns the request
         return request
@@ -250,7 +278,7 @@ class SmtpClient:
         result_value = request.get_result()
 
         # sends the result value
-        self.smtp_connection.sendall(result_value)
+        self.client_connection.send(result_value)
 
         # returns the request
         return request
@@ -278,7 +306,7 @@ class SmtpClient:
         # continuous loop
         while True:
             # retrieves the data
-            data = self.retrieve_data(response_timeout)
+            data = self.client_connection.retrieve_data(response_timeout)
 
             # in case no valid data was received
             if data == "":
@@ -381,31 +409,6 @@ class SmtpClient:
                 # returns the response
                 return response
 
-    def retrieve_data(self, response_timeout = RESPONSE_TIMEOUT, chunk_size = CHUNK_SIZE):
-        try:
-            # sets the connection to non blocking mode
-            self.smtp_connection.setblocking(0)
-
-            # runs the select in the smtp connection, with timeout
-            selected_values = select.select([self.smtp_connection], [], [], response_timeout)
-
-            # sets the connection to blocking mode
-            self.smtp_connection.setblocking(1)
-        except:
-            raise main_client_smtp_exceptions.ResponseClosed("invalid socket")
-
-        if selected_values == ([], [], []):
-            self.smtp_connection.close()
-            raise main_client_smtp_exceptions.ClientResponseTimeout("%is timeout" % response_timeout)
-        try:
-            # receives the data in chunks
-            data = self.smtp_connection.recv(chunk_size)
-        except:
-            raise main_client_smtp_exceptions.ServerResponseTimeout("timeout")
-
-        # returns the data
-        return data
-
     def login(self, session, parameters = {}):
         # retrieves the initial response value
         response = self.retrieve_response(None, session)
@@ -433,8 +436,8 @@ class SmtpClient:
         # checks the response for errors
         self._check_response_error(response, (220,), "problem starting tls: ")
 
-        # upgrades the smtp connection to use ssl (tls)
-        self.smtp_connection = self._upgrade_socket(self.smtp_connection, "ssl")
+        # upgrades the client connection to use ssl (tls)
+        self.client_connection.upgrade("ssl", {})
 
     def vrfy(self, session, parameters = {}):
         # retrieves the verification user
@@ -634,61 +637,23 @@ class SmtpClient:
             # raises the smtp response error
             raise main_client_smtp_exceptions.SmtpResponseError(message + str(response))
 
-    def _get_socket(self, socket_name = "normal"):
+    def _generate_client_parameters(self, parameters):
         """
-        Retrieves the socket for the given socket name
-        using the socket provider plugins.
+        Retrieves the client parameters map from the base parameters
+        map.
 
-        @type socket_name: String
-        @param socket_name: The name of the socket to be retrieved.
-        @rtype: Socket
-        @return: The socket for the given socket name.
-        """
-
-        # retrieves the socket provider plugins
-        socket_provider_plugins = self.main_client_smtp.main_client_smtp_plugin.socket_provider_plugins
-
-        # iterates over all the socket provider plugins
-        for socket_provider_plugin in socket_provider_plugins:
-            # retrieves the provider name from the socket provider plugin
-            socket_provider_plugin_provider_name = socket_provider_plugin.get_provider_name()
-
-            # in case the names are the same
-            if socket_provider_plugin_provider_name == socket_name:
-                # creates a new socket with the socket provider plugin
-                socket = socket_provider_plugin.provide_socket()
-
-                # returns the socket
-                return socket
-
-    def _upgrade_socket(self, socket, socket_name = "normal"):
-        """
-        Upgrades the socket for the given socket name
-        using the socket upgrader plugins.
-
-        @type socket: Socket
-        @param socket: The socket to be upgraded.
-        @type socket_name: String
-        @param socket_name: The name of the socket to be retrieved for upgrading.
-        @rtype: Socket
-        @return: The upgraded socket for the given socket name.
+        @type parameters: Dictionary
+        @param parameters: The base parameters map to be used to build
+        the final client parameters map.
+        @rtype: Dictionary
+        @return: The client service parameters map.
         """
 
-        # retrieves the socket upgrader plugins
-        socket_upgrader_plugins = self.main_client_smtp.main_client_smtp_plugin.socket_upgrader_plugins
+        # creates the parameters map
+        parameters = {"client_plugin" : self.main_client_smtp.main_client_smtp_plugin}
 
-        # iterates over all the socket upgrader plugins
-        for socket_upgrader_plugin in socket_upgrader_plugins:
-            # retrieves the upgrader name from the socket upgrader plugin
-            socket_upgrader_plugin_upgrader_name = socket_upgrader_plugin.get_upgrader_name()
-
-            # in case the names are the same
-            if socket_upgrader_plugin_upgrader_name == socket_name:
-                # creates a new socket with the socket upgrader plugin
-                socket = socket_upgrader_plugin.upgrade_socket(socket)
-
-                # returns the socket
-                return socket
+        # returns the parameters
+        return parameters
 
 class SmtpRequest:
     """
