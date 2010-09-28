@@ -96,6 +96,9 @@ COMMUNICATION_VALUE = "communication"
 COMMUNICATION_HANDLER_VALUE = "communication_handler"
 """ The communication handler value """
 
+COMMUNICATION_PROFILE_VALUE = "communication_profile"
+""" The communication profile value """
+
 PROPERTY_NAME_VALUE = "property_name"
 """ The property name value """
 
@@ -456,6 +459,10 @@ class MainServiceAbeculaCommunicationPushHandler:
         elif information_item == COMMUNICATION_HANDLER_VALUE:
             # sets the information method as the communication handler information retriever
             information_method = communication_push_plugin.get_communication_handler_information
+        # in case the requested information is of type communication profile
+        elif information_item == COMMUNICATION_PROFILE_VALUE:
+            # sets the information method as the communication profile information retriever
+            information_method = communication_push_plugin.get_communication_profile_information
         # in case the requested information is not valid
         else:
             # raises the invalid information item exception
