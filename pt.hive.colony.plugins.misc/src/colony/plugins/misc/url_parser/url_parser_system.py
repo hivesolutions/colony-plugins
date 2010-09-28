@@ -50,7 +50,7 @@ URL_REGEX = re.compile(URL_REGEX_VALUE)
 DEFAULT_PROTOCOL_VALUE = "http://"
 """ The default protocol value """
 
-DEFAULT_PORT_VALUE = 80
+DEFAULT_PORT_VALUE = None
 """ The default port value """
 
 class UrlParser:
