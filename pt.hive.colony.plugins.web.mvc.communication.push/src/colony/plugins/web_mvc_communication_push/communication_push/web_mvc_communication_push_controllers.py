@@ -37,6 +37,8 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
+import web_mvc_communication_push_exceptions
+
 DEFAULT_ENCODING = "utf-8"
 """ The default encoding value """
 
@@ -58,6 +60,12 @@ MESSAGE_VALUE = "message"
 MESSAGE_CONTENTS_VALUE = "message_contents"
 """ The message contents value """
 
+INFORMATION_ITEM_VALUE = "information_item"
+""" The information item value """
+
+INFORMATION_KEYS_VALUE = "information_keys"
+""" The information keys value """
+
 GUID_VALUE = "guid"
 """ The guid value """
 
@@ -66,6 +74,15 @@ RETURN_URL_VALUE = "return_url"
 
 METHOD_VALUE = "method"
 """ The method value """
+
+COMMUNICATION_VALUE = "communication"
+""" The communication value """
+
+COMMUNICATION_HANDLER_VALUE = "communication_handler"
+""" The communication handler value """
+
+COMMUNICATION_PROFILE_VALUE = "communication_profile"
+""" The communication profile value """
 
 class WebMvcCommunicationPushController:
     """
@@ -175,6 +192,37 @@ class WebMvcCommunicationPushController:
 
         # sends the message for the given request
         self._message(rest_request)
+
+        # returns true
+        return True
+
+    def handle_stat(self, rest_request, parameters = {}):
+        """
+        Handles the given message rest request.
+
+        @type rest_request: RestRequest
+        @param rest_request: The header rest request
+        to be handled.
+        @type parameters: Dictionary
+        @param parameters: The handler parameters.
+        @rtype: bool
+        @return: The result of the handling.
+        """
+
+        # retrieves the json plugin
+        json_plugin = self.web_mvc_communication_push_plugin.json_plugin
+
+        # sends the message for the given request
+        information_values_list = self._stat(rest_request)
+
+        # serializes the information values list
+        information_values_list_serialized = json_plugin.dumps(information_values_list)
+
+        # sets the result for the rest request
+        rest_request.set_result_translated(information_values_list_serialized)
+
+        # flushes the rest request
+        rest_request.flush()
 
         # returns true
         return True
@@ -377,6 +425,51 @@ class WebMvcCommunicationPushController:
         # sends the broadcast notification, for the communication name
         # and notification
         communication_push_plugin.send_broadcast_notification(communication_name, notification)
+
+    def _stat(self, rest_request):
+        # retrieves the communication push plugin
+        communication_push_plugin = self.web_mvc_communication_push_plugin.communication_push_plugin
+
+        # processes the form data
+        form_data_map = self.process_form_data(rest_request, DEFAULT_ENCODING)
+
+        # retrieves the form data attributes
+        information_item = form_data_map[INFORMATION_ITEM_VALUE]
+        information_keys = form_data_map[INFORMATION_KEYS_VALUE]
+
+        # in case the requested information is of type communication
+        if information_item == COMMUNICATION_VALUE:
+            # sets the information method as the communication information retriever
+            information_method = communication_push_plugin.get_communication_information
+        # in case the requested information is of type communication handler
+        elif information_item == COMMUNICATION_HANDLER_VALUE:
+            # sets the information method as the communication handler information retriever
+            information_method = communication_push_plugin.get_communication_handler_information
+        # in case the requested information is of type communication profile
+        elif information_item == COMMUNICATION_PROFILE_VALUE:
+            # sets the information method as the communication profile information retriever
+            information_method = communication_push_plugin.get_communication_profile_information
+        # in case the requested information is not valid
+        else:
+            # raises the invalid information item exception
+            raise web_mvc_communication_push_exceptions.InvalidInformationItem(information_item)
+
+        # creates the list to hold the information values
+        information_values_list = []
+
+        # iterates over all the information keys to retrieve
+        # the various information values
+        for information_key in information_keys:
+            # retrieves the information value for the information key
+            # using the selected information method
+            information_value = information_method(information_key)
+
+            # adds the information value to the information values list
+            information_values_list.append(information_value)
+
+        # returns the information values list, containing
+        # the set of information for the request items
+        return information_values_list
 
     def _load_profile(self, rest_request):
         # retrieves the communication push plugin

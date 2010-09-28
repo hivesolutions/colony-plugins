@@ -61,7 +61,9 @@ class WebMvcCommunicationPushPlugin(colony.base.plugin_system.Plugin):
                     colony.base.plugin_system.PluginDependency(
                     "pt.hive.colony.plugins.communication.push", "1.0.0"),
                     colony.base.plugin_system.PluginDependency(
-                    "pt.hive.colony.plugins.main.client.http", "1.0.0")]
+                    "pt.hive.colony.plugins.main.client.http", "1.0.0"),
+                    colony.base.plugin_system.PluginDependency(
+                    "pt.hive.colony.plugins.misc.json", "1.0.0")]
     events_handled = []
     events_registrable = []
     main_modules = ["web_mvc_communication_push.communication_push.web_mvc_communication_push_controllers", "web_mvc_communication_push.communication_push.web_mvc_communication_push_system"]
@@ -71,6 +73,7 @@ class WebMvcCommunicationPushPlugin(colony.base.plugin_system.Plugin):
     web_mvc_utils_plugin = None
     communication_push_plugin = None
     main_client_http_plugin = None
+    json_plugin = None
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
@@ -158,3 +161,10 @@ class WebMvcCommunicationPushPlugin(colony.base.plugin_system.Plugin):
     @colony.base.decorators.plugin_inject("pt.hive.colony.plugins.main.client.http")
     def set_main_client_http_plugin(self, main_client_http_plugin):
         self.main_client_http_plugin = main_client_http_plugin
+
+    def get_json_plugin(self):
+        return self.json_plugin
+
+    @colony.base.decorators.plugin_inject("pt.hive.colony.plugins.misc.json")
+    def set_json_plugin(self, json_plugin):
+        self.json_plugin = json_plugin
