@@ -38,11 +38,9 @@ __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
 import struct
-import select
+import threading
 
 import colony.libs.string_buffer_util
-
-import main_client_dns_exceptions
 
 DEFAULT_PORT = 53
 """ The default port """
@@ -130,6 +128,12 @@ class DnsClient:
     current_transaction_id = 0x0000
     """ The current transaction id """
 
+    _dns_client = None
+    """ The dns client object used to provide connections """
+
+    _dns_client_lock = None
+    """ Lock to control the fetching of the queries """
+
     def __init__(self, main_client_dns):
         """
         Constructor of the class.
@@ -140,27 +144,49 @@ class DnsClient:
 
         self.main_client_dns = main_client_dns
 
+        self._dns_client_lock = threading.RLock()
+
+    def open(self, parameters):
+        # generates the parameters
+        client_parameters = self._generate_client_parameters(parameters)
+
+        # creates the dns client, generating the internal structures
+        self._dns_client = self.main_client_dns.main_client_dns_plugin.main_client_utils_plugin.generate_client(client_parameters)
+
+        # starts the dns client
+        self._dns_client.start_client()
+
+    def close(self, parameters):
+        # stops the dns client
+        self._dns_client.stop_client()
+
     def resolve_queries(self, host, port, queries, parameters = {}, socket_name = DEFAULT_SOCKET_NAME):
-        # retrieves (generates a socket)
-        self.dns_connection = self._get_socket(socket_name)
+        # retrieves the corresponding (dns) client connection
+        client_connection = self._dns_client.get_client_connection((host, port, socket_name))
 
-        # connects to the socket
-        self.dns_connection.connect((host, port))
+        # acquires the dns client lock
+        self._dns_client_lock.acquire()
 
-        # sends the request for the given queries and
-        # parameters, and retrieves the request
-        request = self.send_request(queries, parameters)
+        try:
+            # sends the request for the given client connection, queries and
+            # parameters, and retrieves the request
+            request = self.send_request(client_connection, queries, parameters)
 
-        # retrieves the response
-        response = self.retrieve_response(request)
+            # retrieves the response, using the client connection
+            response = self.retrieve_response(client_connection, request)
+        finally:
+            # releases the dns client lock
+            self._dns_client_lock.release()
 
         # returns the response
         return response
 
-    def send_request(self, queries, parameters):
+    def send_request(self, client_connection, queries, parameters):
         """
         Sends the request for the given parameters.
 
+        @type client_connection: ClientConnection
+        @param client_connection: The client connection to be used.
         @type queries: List
         @param queries: The list of queries to be sent.
         @type parameters: Dictionary
@@ -180,15 +206,17 @@ class DnsClient:
         result_value = request.get_result()
 
         # sends the result value
-        self.dns_connection.sendall(result_value)
+        client_connection.send(result_value)
 
         # returns the request
         return request
 
-    def retrieve_response(self, request, response_timeout = RESPONSE_TIMEOUT):
+    def retrieve_response(self, client_connection, request, response_timeout = RESPONSE_TIMEOUT):
         """
         Retrieves the response from the sent request.
 
+        @type client_connection: ClientConnection
+        @param client_connection: The client connection to be used.
         @rtype: DnsRequest
         @return: The request that originated the response.
         @type response_timeout: int
@@ -200,39 +228,14 @@ class DnsClient:
         # creates a response object
         response = DnsResponse(request)
 
-        # receives the data
-        data = self.retrieve_data()
+        # retrieves the data
+        data = client_connection.retrieve_data(response_timeout)
 
         # processes the data
         response.process_data(data)
 
         # returns the response
         return response
-
-    def retrieve_data(self, response_timeout = RESPONSE_TIMEOUT, data_size = MESSAGE_MAXIMUM_SIZE):
-        try:
-            # sets the connection to non blocking mode
-            self.dns_connection.setblocking(0)
-
-            # runs the select in the dns connection, with timeout
-            selected_values = select.select([self.dns_connection], [], [], response_timeout)
-
-            # sets the connection to blocking mode
-            self.dns_connection.setblocking(1)
-        except:
-            raise main_client_dns_exceptions.ResponseClosed("invalid socket")
-
-        if selected_values == ([], [], []):
-            self.dns_connection.close()
-            raise main_client_dns_exceptions.ClientResponseTimeout("%is timeout" % response_timeout)
-        try:
-            # receives the data in chunks
-            data = self.dns_connection.recv(data_size)
-        except:
-            raise main_client_dns_exceptions.ServerResponseTimeout("timeout")
-
-        # returns the data
-        return data
 
     def _get_transaction_id(self):
         """
@@ -254,32 +257,23 @@ class DnsClient:
         # returns the current transaction id
         return self.current_transaction_id
 
-    def _get_socket(self, socket_name = "normal"):
+    def _generate_client_parameters(self, parameters):
         """
-        Retrieves the socket for the given socket name
-        using the socket provider plugins.
+        Retrieves the client parameters map from the base parameters
+        map.
 
-        @type socket_name: String
-        @param socket_name: The name of the socket to be retrieved.
-        @rtype: Socket
-        @return: The socket for the given socket name.
+        @type parameters: Dictionary
+        @param parameters: The base parameters map to be used to build
+        the final client parameters map.
+        @rtype: Dictionary
+        @return: The client service parameters map.
         """
 
-        # retrieves the socket provider plugins
-        socket_provider_plugins = self.main_client_dns.main_client_dns_plugin.socket_provider_plugins
+        # creates the parameters map
+        parameters = {"client_plugin" : self.main_client_dns.main_client_dns_plugin}
 
-        # iterates over all the socket provider plugins
-        for socket_provider_plugin in socket_provider_plugins:
-            # retrieves the provider name from the socket provider plugin
-            socket_provider_plugin_provider_name = socket_provider_plugin.get_provider_name()
-
-            # in case the names are the same
-            if socket_provider_plugin_provider_name == socket_name:
-                # creates a new socket with the socket provider plugin
-                socket = socket_provider_plugin.provide_socket()
-
-                # returns the socket
-                return socket
+        # returns the parameters
+        return parameters
 
 class DnsRequest:
     """
