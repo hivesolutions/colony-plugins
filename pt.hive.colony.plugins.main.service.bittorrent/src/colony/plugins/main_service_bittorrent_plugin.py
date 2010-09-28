@@ -59,7 +59,9 @@ class MainServiceBittorrentPlugin(colony.base.plugin_system.Plugin):
     dependencies = [colony.base.plugin_system.PluginDependency(
                     "pt.hive.colony.plugins.main.service.utils", "1.0.0"),
                     colony.base.plugin_system.PluginDependency(
-                    "pt.hive.colony.plugins.misc.bencode", "1.0.0")]
+                    "pt.hive.colony.plugins.misc.bencode", "1.0.0"),
+                    colony.base.plugin_system.PluginDependency(
+                    "pt.hive.colony.plugins.main.client.http", "1.0.0")]
     events_handled = []
     events_registrable = []
     main_modules = ["main_service_bittorrent.bittorrent.main_service_bittorrent_exceptions",
@@ -72,6 +74,7 @@ class MainServiceBittorrentPlugin(colony.base.plugin_system.Plugin):
 
     main_service_utils_plugin = None
     bencode_plugin = None
+    main_client_http_plugin = None
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
@@ -144,6 +147,13 @@ class MainServiceBittorrentPlugin(colony.base.plugin_system.Plugin):
     @colony.base.decorators.plugin_inject("pt.hive.colony.plugins.misc.bencode")
     def set_bencode_plugin(self, bencode_plugin):
         self.bencode_plugin = bencode_plugin
+
+    def get_main_client_http_plugin(self):
+        return self.main_client_http_plugin
+
+    @colony.base.decorators.plugin_inject("pt.hive.colony.plugins.main.client.http")
+    def set_main_client_http_plugin(self, main_client_http_plugin):
+        self.main_client_http_plugin = main_client_http_plugin
 
     @colony.base.decorators.set_configuration_property_method("service_configuration")
     def service_configuration_set_configuration_property(self, property_name, property):

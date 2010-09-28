@@ -39,8 +39,6 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 import struct
 import socket
-import urllib
-import urllib2
 import hashlib
 
 import colony.libs.map_util
@@ -52,6 +50,9 @@ GET_METHOD_VALUE = "GET"
 
 POST_METHOD_VALUE = "POST"
 """ The post method value """
+
+CONTENT_TYPE_CHARSET_VALUE = "content_type_charset"
+""" The content type charset value """
 
 class MainServiceBittorrent:
     """
@@ -72,6 +73,9 @@ class MainServiceBittorrent:
 
     bittorrent_service_configuration = {}
     """ The bittorrent service configuration """
+
+    http_client = None
+    """ The http client to be used """
 
     def __init__(self, main_service_bittorrent_plugin):
         """
@@ -231,32 +235,14 @@ class MainServiceBittorrent:
 
         pass
 
-    def _get_opener(self, url):
+    def _fetch_url(self, url, parameters = None, method = GET_METHOD_VALUE, headers = False):
         """
-        Retrieves the opener to the connection.
-
-        @type url: String
-        @param url: The url to create the opener.
-        @rtype: Opener
-        @return: The opener to the connection.
-        """
-
-        # builds the opener
-        opener = urllib2.build_opener()
-
-        # returns the opener
-        return opener
-
-    def _fetch_url(self, url, parameters = None, post_data = None, method = GET_METHOD_VALUE, headers = False):
-        """
-        Fetches the given url for the given parameters, post data and using the given method.
+        Fetches the given url for the given parameters and using the given method.
 
         @type url: String
         @param url: The url to be fetched.
         @type parameters: Dictionary
         @param parameters: The parameters to be used the fetch.
-        @type post_data: Dictionary
-        @param post_data: The post data to be used the fetch.
         @type method: String
         @param method: The method to be used in the fetch.
         @type headers: bool
@@ -270,110 +256,47 @@ class MainServiceBittorrent:
             # creates a new parameters map
             parameters = {}
 
-        # in case post data is not defined
-        if not post_data:
-            # creates a new post data map
-            post_data = {}
+        # retrieves the http client
+        http_client = self._get_http_client()
 
-        if method == GET_METHOD_VALUE:
-            pass
-        elif method == POST_METHOD_VALUE:
-            post_data = parameters
+        # fetches the url retrieving the http response
+        http_response = http_client.fetch_url(url, method, parameters, "HTTP/1.1", None)
 
-        # builds the url
-        url = self._build_url(url, parameters)
+        # closes the http client
+        http_client.open({})
 
-        # encodes the post data
-        encoded_post_data = self._encode_post_data(post_data)
+        # retrieves the contents from the http response
+        contents = http_response.received_message
 
-        # retrieves the opener for the given url
-        opener = self._get_opener(url)
-
-        # opens the url with the given encoded post data
-        url_structure = opener.open(url, encoded_post_data)
-
-        # reads the contents from the url structure
-        contents = url_structure.read()
+        # retrieves the headers map from the http response
+        headers_map = http_response.headers_map
 
         # in case the headers flag is set
         if headers:
-            # creates the headers map
-            headers_map = dict(url_structure.info().items())
-
             # returns the contents and the headers map
             return contents, headers_map
         else:
             # returns the contents
             return contents
 
-    def _build_url(self, url, parameters):
+    def _get_http_client(self):
         """
-        Builds the url for the given url and parameters.
+        Retrieves the http client currently in use (in case it's created)
+        if not created creates the http client.
 
-        @type url: String
-        @param url: The base url to be used.
-        @type parameters: Dictionary
-        @param parameters: The parameters to be used for url construction.
-        @rtype: String
-        @return: The built url for the given parameters.
+        @rtype: HttpClient
+        @return: The retrieved http client.
         """
 
-        # in case the parameters are valid and the length
-        # of them is greater than zero
-        if parameters and len(parameters) > 0:
-            # retrieves the extra query
-            extra_query = self._encode_parameters(parameters)
+        # retrieves the main client http plugin
+        main_client_http_plugin = self.main_service_bittorrent_plugin.main_client_http_plugin
 
-            # adds it to the url
-            url += "?" + extra_query
+        # creates the http client with the charset in invalid mode
+        # in order to avoid decoding and encoding
+        http_client = main_client_http_plugin.create_client({CONTENT_TYPE_CHARSET_VALUE : None})
 
-        # returns the url
-        return url
+        # opens the http client
+        http_client.open({})
 
-    def _encode_parameters(self, parameters):
-        """
-        Encodes the given parameters into url encoding.
-
-        @type parameters: Dictionary
-        @param parameters: The parameters map to be encoded.
-        @rtype: String
-        @return: The encoded parameters.
-        """
-
-        # in case the parameters are defined
-        if parameters:
-            # returns the encoded parameters
-            return urllib.urlencode(dict([(parameter_key, self._encode(parameter_value)) for parameter_key, parameter_value in parameters.items() if parameter_value is not None]))
-        else:
-            # returns none
-            return None
-
-    def _encode_post_data(self, post_data):
-        """
-        Encodes the post data into url encoding.
-
-        @type post_data: Dictionary
-        @param post_data: The post data map to be encoded.
-        @rtype: String
-        @return: The encoded post data.
-        """
-
-        # in case the post data is defined
-        if post_data:
-            # returns the encoded post data
-            return urllib.urlencode(dict([(post_data_key, self._encode(post_data_value)) for post_data_key, post_data_value in post_data.items()]))
-        else:
-            # returns none
-            return None
-
-    def _encode(self, string_value):
-        """
-        Encodes the given string value to the current encoding.
-
-        @type string_value: String
-        @param string_value: The string value to be encoded.
-        @rtype: String
-        @return: The given string value encoded in the current encoding.
-        """
-
-        return str(string_value)
+        # returns the http client
+        return http_client
