@@ -403,6 +403,9 @@ class ClientConnection:
         # connects the connection socket to the connection address
         self.connection_socket.connect(self.connection_address)
 
+        # sets the socket to non blocking mode
+        self.connection_socket.setblocking(0)
+
         # prints debug message about connection
         self.client_plugin.debug("Connected to: %s" % str(self.connection_address))
 
@@ -494,14 +497,8 @@ class ClientConnection:
             return data_buffer_value
 
         try:
-            # sets the socket to non blocking mode
-            self.connection_socket.setblocking(0)
-
             # runs the select in the connection socket, with timeout
             selected_values = select.select([self.connection_socket], [], [], request_timeout)
-
-            # sets the socket to blocking mode
-            self.connection_socket.setblocking(1)
         except:
             # raises the request closed exception
             raise main_client_utils_exceptions.RequestClosed("invalid socket")
@@ -549,45 +546,54 @@ class ClientConnection:
         @param message: The message to be sent.
         """
 
-        try:
-            # sets the socket to non blocking mode
-            self.connection_socket.setblocking(0)
+        # retrieves the number of bytes in the message
+        number_bytes = len(message)
 
-            # runs the select in the connection socket, with timeout
-            selected_values = select.select([self.connection_socket], [self.connection_socket], [self.connection_socket], 1)
+        # iterates continuously
+        while True:
+            try:
+                # runs the select in the connection socket, with timeout
+                selected_values = select.select([self.connection_socket], [self.connection_socket], [self.connection_socket], 1)
+            except:
+                # raises the request closed exception
+                raise main_client_utils_exceptions.RequestClosed("invalid socket")
 
-            # sets the socket to blocking mode
-            self.connection_socket.setblocking(1)
-        except:
-            # raises the request closed exception
-            raise main_client_utils_exceptions.RequestClosed("invalid socket")
+            if not selected_values[0] == []:
+                # receives the data from the socket
+                data = self.connection_socket.recv(1024)
 
-        if not selected_values[0] == []:
-            # receives the data from the socket
-            data = self.connection_socket.recv(1024)
+                # in case the data is empty
+                if not len(data):
+                    # reconnects the connection socket
+                    self._reconnect_connection_socket()
+                else:
+                    # returns the data back into the queue
+                    self.return_data(data)
+            elif selected_values == ([], [], []):
+                # closes the connection socket
+                self.connection_socket.close()
 
-            # in case the data is empty
-            if not len(data):
-                # reconnects the connection socket
-                self._reconnect_connection_socket()
+                # raises the server request timeout exception
+                raise main_client_utils_exceptions.ClientRequestTimeout("%is timeout" % 1)
             else:
-                # returns the data back into the queue
-                self.return_data(data)
+                try:
+                    # sends the data in chunks
+                    number_bytes_sent = self.connection_socket.send(message)
+                except:
+                    # raises the client request timeout exception
+                    raise main_client_utils_exceptions.ServerRequestTimeout("timeout")
 
-        if selected_values == ([], [], []):
-            # closes the connection socket
-            self.connection_socket.close()
+                # decrements the number of bytes sent
+                number_bytes -= number_bytes_sent
 
-            # raises the server request timeout exception
-            raise main_client_utils_exceptions.ClientRequestTimeout("%is timeout" % 1)
-        try:
-            # sends the message using the connection socket
-            send_result = self.connection_socket.sendall(message)
-        except:
-            # raises the client request timeout exception
-            raise main_client_utils_exceptions.ServerRequestTimeout("timeout")
-
-        return send_result
+                # in case the number of bytes (pending)
+                # is zero (the transfer is complete)
+                if number_bytes == 0:
+                    # breaks the cycle
+                    break
+                else:
+                    # creates the new message
+                    message = message[number_bytes * -1:]
 
     def get_connection_property(self, property_name):
         """
@@ -678,8 +684,14 @@ class ClientConnection:
         # the given socket name
         self.connection_socket = self.client._get_socket(self.connection_socket_name)
 
+        # sets the socket to blocking mode
+        self.connection_socket.setblocking(1)
+
         # reconnects the socket to the connection address
         self.connection_socket.connect(self.connection_address)
+
+        # sets the socket to non blocking mode
+        self.connection_socket.setblocking(0)
 
         # prints debug message about reconnection
         self.client_plugin.debug("Reconnected to: %s" % str(self.connection_address))
