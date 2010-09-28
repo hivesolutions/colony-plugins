@@ -38,7 +38,6 @@ __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
 import os
-import urllib2
 
 PLUGIN_DIRECTORY = "colony/plugins"
 """ The plugin directory """
@@ -74,14 +73,23 @@ class Downloader:
         """
 
         try:
+            # retrieves the main client http plugin
+            main_client_http_plugin = self.downloader_plugin.main_client_http_plugin
+
             # retrieves the file name from the url path
             file_name = self.get_file_name_url(address)
 
-            # opens the url
-            url = urllib2.urlopen(address)
+            # creates the http client
+            http_client = main_client_http_plugin.create_client({})
 
-            # reads the contents from the url
-            file_contents = url.read()
+            # opens the http client
+            http_client.open({})
+
+            # fetches the url retrieving the file contents
+            file_contents = http_client.fetch_url(address,)
+
+            # closes the http client
+            http_client.close({})
 
             # in case there is no directory
             if not os.path.isdir(target_directory):
@@ -96,13 +104,11 @@ class Downloader:
 
             # closes the file
             file.close()
+
+            # returns true (valid)
             return True
-        except urllib2.HTTPError, error:
-            self.downloader_plugin.error("Error downloading file: " + address + ", server error: " + str(error.code))
-            return False
-        except urllib2.URLError, error:
-            self.downloader_plugin.error("Error downloading file: " + address + ", server not available")
-            return False
+        except Exception, exception:
+            self.downloader_plugin.error("Problem while downloading file: " + address + ", error: " + unicode(exception))
 
     def test_package(self, address):
         """
@@ -127,21 +133,25 @@ class Downloader:
         """
 
         try:
-            # retrieves the file name from the address
-            file_name = self.get_file_name_url(address)
+            # retrieves the main client http plugin
+            main_client_http_plugin = self.downloader_plugin.main_client_http_plugin
 
-            # opens the address retrieving the url
-            url = urllib2.urlopen(address)
+            # creates the http client
+            http_client = main_client_http_plugin.create_client({})
 
-            # reads the package contents from the url
-            file_contents = url.read()
+            # opens the http client
+            http_client.open({})
+
+            # fetches the url retrieving the file contents
+            file_contents = http_client.fetch_url(address,)
+
+            # closes the http client
+            http_client.close({})
 
             # returns the file contents
             return file_contents
-        except urllib2.HTTPError, error:
-            self.downloader_plugin.error("Error downloading file: " + address + ", server error: " + str(error.code))
-        except urllib2.URLError, error:
-            self.downloader_plugin.error("Error downloading file: " + address + ", server not available")
+        except Exception, exception:
+            self.downloader_plugin.error("Problem while downloading file: " + address + ", error: " + unicode(exception))
 
     def get_file_name_url(self, url):
         """

@@ -38,6 +38,7 @@ __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
 import colony.base.plugin_system
+import colony.base.decorators
 
 class DownloaderPlugin(colony.base.plugin_system.Plugin):
     """
@@ -55,7 +56,8 @@ class DownloaderPlugin(colony.base.plugin_system.Plugin):
     attributes = {"build_automation_file_path" : "$base{plugin_directory}/misc/downloader/resources/baf.xml"}
     capabilities = ["download", "console_command_extension", "build_automation_item"]
     capabilities_allowed = []
-    dependencies = []
+    dependencies = [colony.base.plugin_system.PluginDependency(
+                    "pt.hive.colony.plugins.main.client.http", "1.0.0")]
     events_handled = []
     events_registrable = []
     main_modules = ["misc.downloader.console_downloader",
@@ -63,6 +65,8 @@ class DownloaderPlugin(colony.base.plugin_system.Plugin):
 
     downloader = None
     console_downloader = None
+
+    main_client_http_plugin = None
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
@@ -87,6 +91,7 @@ class DownloaderPlugin(colony.base.plugin_system.Plugin):
     def unload_allowed(self, plugin, capability):
         colony.base.plugin_system.Plugin.unload_allowed(self, plugin, capability)
 
+    @colony.base.decorators.inject_dependencies("pt.hive.colony.plugins.misc.downloader", "1.0.0")
     def dependency_injected(self, plugin):
         colony.base.plugin_system.Plugin.dependency_injected(self, plugin)
 
@@ -110,3 +115,10 @@ class DownloaderPlugin(colony.base.plugin_system.Plugin):
 
     def get_help(self):
         return self.console_downloader.get_help()
+
+    def get_main_client_http_plugin(self):
+        return self.main_client_http_plugin
+
+    @colony.base.decorators.plugin_inject("pt.hive.colony.plugins.main.client.http")
+    def set_main_client_http_plugin(self, main_client_http_plugin):
+        self.main_client_http_plugin = main_client_http_plugin
