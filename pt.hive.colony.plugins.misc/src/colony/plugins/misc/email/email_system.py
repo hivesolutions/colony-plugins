@@ -151,6 +151,9 @@ class Email:
         # creates a new smtp client, using the main client smtp plugin
         smtp_client = main_client_smtp_plugin.create_client({})
 
+        # opens the smtp client
+        smtp_client.open({})
+
         # tries to retrieve the smtp hostnmae value
         smtp_hostname = self.email_configuration.get("hostname", DEFAULT_SMTP_HOSTNAME)
 
@@ -214,3 +217,6 @@ class Email:
 
         # send the email using the defined values
         smtp_client.send_mail(smtp_hostname, smtp_port, email_sender, [email_receiver], mime_message_value, parameters)
+
+        # closes the smtp client
+        smtp_client.close({})
