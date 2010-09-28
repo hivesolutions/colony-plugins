@@ -39,11 +39,17 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 import web_mvc_communication_push_exceptions
 
+DEFAULT_CHARSET = "utf-8"
+""" The default charset """
+
 DEFAULT_ENCODING = "utf-8"
 """ The default encoding value """
 
 GET_METHOD_VALUE = "GET"
 """ The get method value """
+
+CONTENT_TYPE_CHARSET_VALUE = "content_type_charset"
+""" The content type charset value """
 
 COMMUNICATION_NAME_VALUE = "communication_name"
 """ The communication name value """
@@ -333,7 +339,7 @@ class WebMvcCommunicationPushController:
             main_client_http_plugin = self.web_mvc_communication_push_plugin.main_client_http_plugin
 
             # creates the http client
-            http_client = main_client_http_plugin.create_client({})
+            http_client = main_client_http_plugin.create_client({CONTENT_TYPE_CHARSET_VALUE : DEFAULT_CHARSET})
 
             # opens the http client
             http_client.open({})
@@ -350,7 +356,7 @@ class WebMvcCommunicationPushController:
                           MESSAGE_CONTENTS_VALUE : message}
 
             # fetches the url, retrieving the contents
-            http_client.fetch_url(return_url, method, parameters)
+            http_client.fetch_url(return_url, method, parameters, content_type_charset = DEFAULT_CHARSET)
 
             # closes the http client
             http_client.close({})
