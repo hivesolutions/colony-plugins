@@ -228,7 +228,7 @@ class DnsClient:
         response = DnsResponse(request)
 
         # retrieves the data
-        data = self.client_connection.retrieve_data(response_timeout)
+        data = self.client_connection.retrieve_data(response_timeout, MESSAGE_MAXIMUM_SIZE)
 
         # processes the data
         response.process_data(data)
