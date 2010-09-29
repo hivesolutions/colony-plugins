@@ -67,6 +67,7 @@ configuration = {
                                            "/wiki",
                                            "/manager",
                                            "/blog",
+                                           "/openid",
                                            "/colony_site",
                                            "/take_the_bill",
                                            "/a_la_carte",
@@ -85,6 +86,10 @@ configuration = {
                      },
                      "/blog" : {
                          "target" : "/colony_mod_python/rest/mvc/hive_blog/",
+                         "recursive_redirection" : True
+                     },
+                     "/openid" : {
+                         "target" : "/colony_mod_python/rest/mvc/hive_openid/",
                          "recursive_redirection" : True
                      },
                      "/colony_site" : {
