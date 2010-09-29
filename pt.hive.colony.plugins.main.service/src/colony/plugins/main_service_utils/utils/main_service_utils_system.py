@@ -88,7 +88,7 @@ RESPONSE_TIMEOUT = 10
 CONNECTION_TIMEOUT = 600
 """ The connection timeout """
 
-CHUNK_SIZE = 1024
+CHUNK_SIZE = 4096
 """ The chunk size """
 
 SERVER_SIDE_VALUE = "server_side"
@@ -1594,6 +1594,9 @@ class ServiceConnection:
         # upgrades the current connection socket using the socket upgrader plugin
         self.connection_socket = socket_upgrader_plugin.upgrade_socket_parameters(self.connection_socket, parameters)
 
+        # sets the socket to non blocking mode
+        self.connection_socket.setblocking(0)
+
     def retrieve_data(self, request_timeout = REQUEST_TIMEOUT, chunk_size = None):
         """
         Retrieves the data from the current connection socket, with the
@@ -1628,7 +1631,7 @@ class ServiceConnection:
             data = self.connection_socket.recv(chunk_size)
         except BaseException, exception:
             # raises the client request timeout exception
-            raise main_service_utils_exceptions.ClientRequestTimeout("problem sending data: " + unicode(exception))
+            raise main_service_utils_exceptions.ClientRequestTimeout("problem receiving data: " + unicode(exception))
 
         # returns the data
         return data
