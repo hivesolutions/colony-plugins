@@ -1033,6 +1033,33 @@ class RestRequest:
         # sets the location header
         self.request.set_header(LOCATION_VALUE, target_path)
 
+    def get_header(self, header_name):
+        """
+        Retrieves an header value of the request,
+        or none if no header is defined for the given
+        header name.
+
+        @type header_name: String
+        @param header_name: The name of the header to be retrieved.
+        @rtype: Object
+        @return: The value of the request header.
+        """
+
+        return self.request.get_header(header_name)
+
+    def set_header(self, header_name, header_value):
+        """
+        Set a response header value on the request.
+
+        @type header_name: String
+        @param header_name: The name of the header to be set.
+        @type header_value: Object
+        @param header_value: The value of the header to be sent
+        in the response.
+        """
+
+        self.request.set_header(header_name, header_value)
+
     def get_attributes_list(self):
         """
         Retrieves the list of available attribute names.
