@@ -9,7 +9,10 @@
     "author" : "Hive Solutions Lda. <development@hive.pt>",
     "capabilities" : ["http_python_handler", "build_automation_item"],
     "capabilities_allowed" : ["template_handler_extension"],
-    "dependencies" : [],
+    "dependencies" : [{
+                "id" : "pt.hive.colony.plugins.format.mime",
+                "version" : "1.0.0"
+            }],
     "main_file" : "template_handler_plugin.py",
     "resources" : [
             "template_handler_plugin.py",

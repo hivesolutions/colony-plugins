@@ -10,6 +10,9 @@
     "capabilities" : ["http_service_handler", "build_automation_item"],
     "capabilities_allowed" : ["http_service_directory_list_handler"],
     "dependencies" : [{
+                "id" : "pt.hive.colony.plugins.format.mime",
+                "version" : "1.0.0"
+            }, {
                 "id" : "pt.hive.colony.plugins.resources.resource_manager",
                 "version" : "1.0.0"
             }],

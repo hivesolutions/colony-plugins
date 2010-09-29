@@ -8,8 +8,11 @@
     "version" : "1.0.0",
     "author" : "Hive Solutions Lda. <development@hive.pt>",
     "capabilities" : ["client.smtp", "build_automation_item"],
-    "capabilities_allowed" : ["socket_provider", "socket_upgrader"],
-    "dependencies" : [],
+    "capabilities_allowed" : [],
+    "dependencies" : [{
+                "id" : "pt.hive.colony.plugins.main.client.utils",
+                "version" : "1.0.0"
+            }],
     "main_file" : "main_client_smtp_plugin.py",
     "resources" : ["main_client_smtp_plugin.py",
             "main_client_smtp/__init__.py",

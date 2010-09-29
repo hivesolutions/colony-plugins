@@ -10,7 +10,13 @@
     "capabilities" : ["email", "console_command_extension",
             "build_automation_item"],
     "capabilities_allowed" : [],
-    "dependencies" : [],
+    "dependencies" : [{
+                "id" : "pt.hive.colony.plugins.main.client.smtp",
+                "version" : "1.0.0"
+            }, {
+                "id" : "pt.hive.colony.plugins.format.mime",
+                "version" : "1.0.0"
+            }],
     "main_file" : "email_plugin.py",
     "resources" : ["email_plugin.py", "misc/__init__.py",
             "misc/email/__init__.py", "misc/email/console_email.py",

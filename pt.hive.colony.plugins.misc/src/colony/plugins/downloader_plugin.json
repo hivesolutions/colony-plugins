@@ -10,7 +10,10 @@
     "capabilities" : ["download", "console_command_extension",
             "build_automation_item"],
     "capabilities_allowed" : [],
-    "dependencies" : [],
+    "dependencies" : [{
+                "id" : "pt.hive.colony.plugins.main.client.http",
+                "version" : "1.0.0"
+            }],
     "main_file" : "downloader_plugin.py",
     "resources" : ["downloader_plugin.py", "misc/__init__.py",
             "misc/downloader/__init__.py",

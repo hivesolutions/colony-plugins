@@ -13,6 +13,9 @@
     "dependencies" : [{
                 "id" : "pt.hive.colony.plugins.javascript.manager",
                 "version" : "1.0.0"
+            }, {
+                "id" : "pt.hive.colony.plugins.format.mime",
+                "version" : "1.0.0"
             }],
     "main_file" : "javascript_file_handler_plugin.py",
     "resources" : [

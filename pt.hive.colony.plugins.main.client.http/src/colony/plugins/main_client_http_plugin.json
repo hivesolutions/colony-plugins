@@ -8,7 +8,7 @@
     "version" : "1.0.0",
     "author" : "Hive Solutions Lda. <development@hive.pt>",
     "capabilities" : ["client.http", "build_automation_item"],
-    "capabilities_allowed" : ["socket_provider"],
+    "capabilities_allowed" : [],
     "dependencies" : [{
                 "id" : "pt.hive.colony.plugins.main.client.utils",
                 "version" : "1.0.0"

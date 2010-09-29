@@ -15,6 +15,9 @@
             }, {
                 "id" : "pt.hive.colony.plugins.misc.bencode",
                 "version" : "1.0.0"
+            }, {
+                "id" : "pt.hive.colony.plugins.main.client.http",
+                "version" : "1.0.0"
             }],
     "main_file" : "main_service_bittorrent_plugin.py",
     "resources" : [

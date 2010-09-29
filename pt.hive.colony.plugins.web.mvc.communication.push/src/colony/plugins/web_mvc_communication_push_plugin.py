@@ -66,7 +66,9 @@ class WebMvcCommunicationPushPlugin(colony.base.plugin_system.Plugin):
                     "pt.hive.colony.plugins.misc.json", "1.0.0")]
     events_handled = []
     events_registrable = []
-    main_modules = ["web_mvc_communication_push.communication_push.web_mvc_communication_push_controllers", "web_mvc_communication_push.communication_push.web_mvc_communication_push_system"]
+    main_modules = ["web_mvc_communication_push.communication_push.web_mvc_communication_push_controllers",
+                    "web_mvc_communication_push.communication_push.web_mvc_communication_push_exceptions",
+                    "web_mvc_communication_push.communication_push.web_mvc_communication_push_system"]
 
     web_mvc_communication_push = None
 
