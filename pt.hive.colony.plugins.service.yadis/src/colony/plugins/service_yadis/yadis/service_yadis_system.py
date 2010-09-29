@@ -126,14 +126,14 @@ class YadisClient:
 
     def open(self):
         """
-        Opens the twitter client.
+        Opens the yadis client.
         """
 
         pass
 
     def close(self):
         """
-        Closes the twitter client.
+        Closes the yadis client.
         """
 
         # in case an http client is defined
