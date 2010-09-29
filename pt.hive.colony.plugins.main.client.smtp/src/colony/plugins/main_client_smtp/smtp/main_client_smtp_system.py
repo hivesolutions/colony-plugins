@@ -306,7 +306,7 @@ class SmtpClient:
         # continuous loop
         while True:
             # retrieves the data
-            data = self.client_connection.retrieve_data(response_timeout)
+            data = self.client_connection.retrieve_data(response_timeout, CHUNK_SIZE)
 
             # in case no valid data was received
             if data == "":
