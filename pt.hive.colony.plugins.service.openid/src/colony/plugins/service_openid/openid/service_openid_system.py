@@ -250,12 +250,74 @@ class OpenidServer:
     The class that represents an openid server connection.
     """
 
-    def __init__(self):
+    service_openid_plugin = None
+    """ The service openid plugin """
+
+    random_plugin = None
+    """ The random plugin """
+
+    service_openid = None
+    """ The service openid """
+
+    openid_structure = None
+    """ The openid structure """
+
+    def __init__(self, service_openid_plugin = None, random_plugin = None, service_openid = None, openid_structure = None):
         """
         Constructor of the class.
+
+        @type service_openid_plugin: ServiceOpenidPlugin
+        @param service_openid_plugin: The service openid plugin.
+        @type random_plugin: RandomPlugin
+        @param random_plugin: The random plugin.
+        @type service_openid: ServiceOpenid
+        @param service_openid: The service openid.
+        @type openid_structure: OpenidStructure
+        @param openid_structure: The openid structure.
+        """
+
+        self.service_openid_plugin = service_openid_plugin
+        self.random_plugin = random_plugin
+        self.service_openid = service_openid
+        self.openid_structure = openid_structure
+
+    def open(self):
+        """
+        Opens the openid server.
         """
 
         pass
+
+    def close(self):
+        """
+        Closes the openid server.
+        """
+
+        pass
+
+    def openid_associate(self):
+        """
+        Requests an association (associate mode) according to the
+        openid specification.
+
+        @rtype: OpenidStructure
+        @return: The current openid structure.
+        """
+
+        # returns the openid structure
+        return self.openid_structure
+
+    def _generate_mac_key(self):
+        pass
+
+        # tenho de implemnetar o
+
+        #160 bits (20 bytes) for DH-SHA1 or 256 bits (32 bytes)
+        #generate_random_md5_string
+
+        #self.openid_structur
+
+        #return generate_mac_key
 
 class OpenidClient:
     """
@@ -307,14 +369,14 @@ class OpenidClient:
 
     def open(self):
         """
-        Opens the twitter client.
+        Opens the openid client.
         """
 
         pass
 
     def close(self):
         """
-        Closes the twitter client.
+        Closes the openid client.
         """
 
         # in case an http client is defined

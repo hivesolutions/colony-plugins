@@ -58,7 +58,9 @@ class ServiceOpenidPlugin(colony.base.plugin_system.Plugin):
     dependencies = [colony.base.plugin_system.PluginDependency(
                     "pt.hive.colony.plugins.main.client.http", "1.0.0"),
                     colony.base.plugin_system.PluginDependency(
-                    "pt.hive.colony.plugins.service.yadis", "1.0.0")]
+                    "pt.hive.colony.plugins.service.yadis", "1.0.0"),
+                    colony.base.plugin_system.PluginDependency(
+                    "pt.hive.colony.plugins.misc.random", "1.0.0")]
     events_handled = []
     events_registrable = []
     main_modules = ["service_openid.openid.service_openid_exceptions", "service_openid.openid.service_openid_parser",
@@ -68,6 +70,7 @@ class ServiceOpenidPlugin(colony.base.plugin_system.Plugin):
 
     main_client_http_plugin = None
     service_yadis_plugin = None
+    random_plugin = None
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
@@ -119,3 +122,10 @@ class ServiceOpenidPlugin(colony.base.plugin_system.Plugin):
     @colony.base.decorators.plugin_inject("pt.hive.colony.plugins.service.yadis")
     def set_service_yadis_plugin(self, service_yadis_plugin):
         self.service_yadis_plugin = service_yadis_plugin
+
+    def get_random_plugin(self):
+        return self.random_plugin
+
+    @colony.base.decorators.plugin_inject("pt.hive.colony.plugins.misc.random")
+    def set_random_plugin(self, random_plugin):
+        self.random_plugin = random_plugin
