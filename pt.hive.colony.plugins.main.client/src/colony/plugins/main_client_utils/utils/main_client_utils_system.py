@@ -560,7 +560,7 @@ class ClientConnection:
 
             if not selected_values[0] == []:
                 # receives the data from the socket
-                data = self.connection_socket.recv(1024)
+                data = self.connection_socket.recv(CHUNK_SIZE)
 
                 # in case the data is empty
                 if not len(data):
