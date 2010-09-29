@@ -78,6 +78,7 @@ SEQUENCE_TYPE_VALUE = "sequence"
 
 MAP_TYPE_VALUE = "map"
 """ The map type value """
+
 HOST_VALUE = "Host"
 """ The host value """
 
