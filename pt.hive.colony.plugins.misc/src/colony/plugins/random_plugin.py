@@ -94,3 +94,15 @@ class RandomPlugin(colony.base.plugin_system.Plugin):
 
     def generate_random_md5_string(self):
         return self.random.generate_random_md5_string()
+
+    def generate_random_sha1(self):
+        return self.random.generate_random_sha1()
+
+    def generate_random_sha1_string(self):
+        return self.random.generate_random_sha1_string()
+
+    def generate_random_sha256(self):
+        return self.random.generate_random_sha256()
+
+    def generate_random_sha256_string(self):
+        return self.random.generate_random_sha256_string()

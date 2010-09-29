@@ -103,6 +103,48 @@ class Random:
         # of the random value
         return random_md5_string
 
+    def generate_random_sha1(self):
+        # generates a random value
+        random = self.generate_random()
+
+        # generates an sha1 hash of the random value
+        random_sha1 = hashlib.sha1(random)
+
+        # returns the sha1 hash of the random value
+        return random_sha1
+
+    def generate_random_sha1_string(self):
+        # generates the sha1 hash of a random value
+        random_sha1 = self.generate_random_sha1()
+
+        # converts the sha1 hash into string
+        random_sha1_string = random_sha1.hexdigest()
+
+        # returns the string value of the sha1 hash
+        # of the random value
+        return random_sha1_string
+
+    def generate_random_sha256(self):
+        # generates a random value
+        random = self.generate_random()
+
+        # generates an sha256 hash of the random value
+        random_sha256 = hashlib.sha256(random)
+
+        # returns the sha256 hash of the random value
+        return random_sha256
+
+    def generate_random_sha256_string(self):
+        # generates the sha256 hash of a random value
+        random_sha256 = self.generate_random_sha256()
+
+        # converts the sha256 hash into string
+        random_sha256_string = random_sha256.hexdigest()
+
+        # returns the string value of the sha256 hash
+        # of the random value
+        return random_sha256_string
+
     def process_randrange(self):
         if hasattr(random, "SystemRandom"):
             self.randrange = random.SystemRandom().randrange
