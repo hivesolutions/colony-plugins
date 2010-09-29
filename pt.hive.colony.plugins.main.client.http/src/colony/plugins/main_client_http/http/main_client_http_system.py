@@ -442,7 +442,7 @@ class HttpClient:
         # continuous loop
         while True:
             # retrieves the data
-            data = self.client_connection.retrieve_data(response_timeout)
+            data = self.client_connection.retrieve_data(response_timeout, CHUNK_SIZE)
 
             # retrieves the data length
             data_length = len(data)
@@ -616,7 +616,7 @@ class HttpClient:
             # iterates while the end of octets part is not found
             while octet_end_index == -1:
                 # retrieves the data
-                data = self.client_connection.retrieve_data(response_timeout)
+                data = self.client_connection.retrieve_data(response_timeout, CHUNK_SIZE)
 
                 # retrieves the data length
                 data_length = len(data)
