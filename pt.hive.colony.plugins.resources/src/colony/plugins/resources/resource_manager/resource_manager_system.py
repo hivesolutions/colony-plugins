@@ -802,7 +802,7 @@ class ResourceManager:
             # in case only the namespace is defined
             if resource_type == None and resource_name == None:
                 # returns the resources for the namespace
-                return self.resource_namespace_resources_list_map.get(resource_namespace, None)
+                return self.resource_namespace_resources_list_map.get(resource_namespace, [])
             # in case the type is defined
             elif not resource_type == None and resource_name == None:
                 resources_list = []
@@ -821,7 +821,7 @@ class ResourceManager:
             # in case only the name is defined
             if resource_namespace == None and resource_type == None:
                 # returns the resources for the name
-                return self.resource_name_resources_list_map.get(resource_name, None)
+                return self.resource_name_resources_list_map.get(resource_name, [])
             # in case the type is defined
             if resource_namespace == None and not resource_type == None:
                 resources_list = []
@@ -840,7 +840,7 @@ class ResourceManager:
             # in case only the type is defined
             if resource_namespace == None and resource_name == None:
                 # returns the resources for the type
-                return self.resource_type_resources_list_map.get(resource_type, None)
+                return self.resource_type_resources_list_map.get(resource_type, [])
 
         # returns an empty list by default
         return []
