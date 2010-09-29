@@ -51,10 +51,13 @@ CLIENT_CONNECTION_TIMEOUT = 1
 REQUEST_TIMEOUT = 100
 """ The request timeout """
 
+RESPONSE_TIMEOUT = 100
+""" The response timeout """
+
 CONNECTION_TIMEOUT = 600
 """ The connection timeout """
 
-CHUNK_SIZE = 1024
+CHUNK_SIZE = 4096
 """ The chunk size """
 
 CONNECTION_TYPE_VALUE = "connection"
@@ -466,6 +469,9 @@ class ClientConnection:
         # upgrades the current connection socket using the socket upgrader plugin
         self.connection_socket = socket_upgrader_plugin.upgrade_socket_parameters(self.connection_socket, parameters)
 
+        # sets the socket to non blocking mode
+        self.connection_socket.setblocking(0)
+
     def retrieve_data(self, request_timeout = REQUEST_TIMEOUT, chunk_size = None):
         """
         Retrieves the data from the current connection socket, with the
@@ -512,9 +518,9 @@ class ClientConnection:
         try:
             # receives the data in chunks
             data = self.connection_socket.recv(chunk_size)
-        except:
-            # raises the client request timeout exception
-            raise main_client_utils_exceptions.ServerRequestTimeout("timeout")
+        except Exception, exception:
+            # raises the server request timeout exception
+            raise main_client_utils_exceptions.ServerRequestTimeout("problem receiving data: " + unicode(exception))
 
         # returns the data
         return data
@@ -538,10 +544,12 @@ class ClientConnection:
         # returns the buffer to the previous position
         self._returned_data_buffer.seek(data_length * -1, os.SEEK_CUR)
 
-    def send(self, message):
+    def send(self, message, response_timeout = RESPONSE_TIMEOUT):
         """
         Sends the given message to the socket.
 
+        @type response_timeout: float
+        @param response_timeout: The timeout to be used in data sending.
         @type message: String
         @param message: The message to be sent.
         """
@@ -573,15 +581,15 @@ class ClientConnection:
                 # closes the connection socket
                 self.connection_socket.close()
 
-                # raises the server request timeout exception
-                raise main_client_utils_exceptions.ClientRequestTimeout("%is timeout" % 1)
+                # raises the server response timeout exception
+                raise main_client_utils_exceptions.ServerResponseTimeout("%is timeout" % response_timeout)
             else:
                 try:
                     # sends the data in chunks
                     number_bytes_sent = self.connection_socket.send(message)
-                except:
-                    # raises the client request timeout exception
-                    raise main_client_utils_exceptions.ServerRequestTimeout("timeout")
+                except Exception, exception:
+                    # raises the client response timeout exception
+                    raise main_client_utils_exceptions.ClientResponseTimeout("problem sending data: " + unicode(exception))
 
                 # decrements the number of bytes sent
                 number_bytes -= number_bytes_sent

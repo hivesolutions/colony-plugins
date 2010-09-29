@@ -151,6 +151,58 @@ class ServerRequestTimeout(MainClientUtilsException):
 
         return "Server request timeout: %s" % self.message
 
+class ClientResponseTimeout(MainClientUtilsException):
+    """
+    The client response timeout class.
+    """
+
+    def __init__(self, message):
+        """
+        Constructor of the class.
+
+        @type message: String
+        @param message: The message to be printed.
+        """
+
+        MainClientUtilsException.__init__(self)
+        self.message = message
+
+    def __str__(self):
+        """
+        Returns the string representation of the class.
+
+        @rtype: String
+        @return: The string representation of the class.
+        """
+
+        return "Client response timeout: %s" % self.message
+
+class ServerResponseTimeout(MainClientUtilsException):
+    """
+    The server response timeout class.
+    """
+
+    def __init__(self, message):
+        """
+        Constructor of the class.
+
+        @type message: String
+        @param message: The message to be printed.
+        """
+
+        MainClientUtilsException.__init__(self)
+        self.message = message
+
+    def __str__(self):
+        """
+        Returns the string representation of the class.
+
+        @rtype: String
+        @return: The string representation of the class.
+        """
+
+        return "Server response timeout: %s" % self.message
+
 class RequestClosed(MainClientUtilsException):
     """
     The request closed class.
