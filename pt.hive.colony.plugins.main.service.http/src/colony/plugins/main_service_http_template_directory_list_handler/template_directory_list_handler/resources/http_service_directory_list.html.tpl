@@ -2,16 +2,16 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
 <html>
     <head>
-    	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    	<title>Colony Framework</title>
-        
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+        <title>Colony Framework</title>
+
         <!-- css inclusion -->
         <link rel="stylesheet" type="text/css" href="/template_directory_list_handler/css/main.css" />
-        
-        <!-- favicon inclusion --> 
+
+        <!-- favicon inclusion -->
         <link rel="icon" href="/template_directory_list_handler/images/favicon.ico" type="image/x-icon" />
-        
-        <!-- javascript inclusion --> 
+
+        <!-- javascript inclusion -->
         <script type="text/javascript" src="/template_directory_list_handler/js/main.js"></script>
     </head>
     <body>
@@ -25,26 +25,26 @@
         <div id="wiki-contents">
             <p></p>
             <div class="highlight">
-            	<img class="directory-list-image" src="/template_directory_list_handler/images/logo_folder.png"/>
-				<div class="directory-list-text">
-					<b>Directory listing</b>
-					<p>
-					${foreach item=directory_item from=directory_list}
-					<a href="${out_none value=directory_item.link xml_escape=True /}">${out_none value=directory_item.name xml_escape=True /}</a> / 
-					${/foreach}
-					${out_none value=directory_final_item xml_escape=True /}
-					</p>
-				</div>
+                <img class="directory-list-image" src="/template_directory_list_handler/images/logo_folder.png"/>
+                <div class="directory-list-text">
+                    <b>Directory listing</b>
+                    <p>
+                    ${foreach item=directory_item from=directory_list}
+                    <a href="${out_none value=directory_item.link xml_escape=True /}">${out_none value=directory_item.name xml_escape=True /}</a> /
+                    ${/foreach}
+                    ${out_none value=directory_final_item xml_escape=True /}
+                    </p>
+                </div>
             </div>
             <p></p>
-			<div class="directory-list">
-        		${include file_value=format_file /}
-				<div class="view-modes">
-					<a href="?format=table" class="${out_none value=formats_map.table xml_escape=True /}">Table</a>
-					<a href="?format=mosaic" class="${out_none value=formats_map.mosaic xml_escape=True /}">Mosaic</a>
-					<a href="?format=thumbnail" class="${out_none value=formats_map.thumbnail xml_escape=True /}">Thumbnail</a>
-				</div>
-			</div>
+            <div class="directory-list">
+                ${include file_value=format_file /}
+                <div class="view-modes">
+                    <a href="?format=table" class="${out_none value=formats_map.table xml_escape=True /}">Table</a>
+                    <a href="?format=mosaic" class="${out_none value=formats_map.mosaic xml_escape=True /}">Mosaic</a>
+                    <a href="?format=thumbnail" class="${out_none value=formats_map.thumbnail xml_escape=True /}">Thumbnail</a>
+                </div>
+            </div>
         </div>
         <div id="wiki-footer">
             <div class="wiki-footer-contents">
