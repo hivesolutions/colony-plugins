@@ -38,6 +38,7 @@ __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
 import hmac
+import base64
 import hashlib
 
 import colony.libs.string_buffer_util
@@ -396,7 +397,7 @@ class OpenidServer:
         random_sha1_value = random_sha1.digest()
 
         # encodes the random sha1 value into base64
-        association_handle = random_sha1_value.encode("base64")
+        association_handle = base64.b64encode(random_sha1_value)
 
         # returns the association handle
         return association_handle
@@ -415,7 +416,7 @@ class OpenidServer:
         mac_key_value = mac_key.digest()
 
         # encodes the mac key into base64
-        mac_key_value_encoded = mac_key_value.encode("base64")
+        mac_key_value_encoded = base64.b64encode(mac_key_value)
 
         # returns the encoded mac key value
         return mac_key_value_encoded
@@ -703,7 +704,7 @@ class OpenidClient:
         message = message_string_buffer.get_value()
 
         # decodes the signature mac key from base64
-        signature_mac_key = self.openid_structure.mac_key.decode("base64")
+        signature_mac_key = base64.b64decode(self.openid_structure.mac_key)
 
         # retrieves the hash module from the hmac hash modules map
         hash_module = HMAC_HASH_MODULES_MAP.get(self.openid_structure.association_type, None)
@@ -713,11 +714,14 @@ class OpenidClient:
             # raises the invalid hash function exception
             raise service_openid_exceptions.InvalidHashFunction("the hash functionn is not available: " + self.openid_structure.association_type)
 
-        # calculates the signature value and encode it into base64
-        signature = hmac.new(signature_mac_key, message, hash_module).digest().encode("base64")
+        # calculates the signature value and retrieves the digest
+        signature = hmac.new(signature_mac_key, message, hash_module).digest()
+
+        # encodes the signature into base64
+        signature = base64.b64encode(signature)
 
         # in case there is a signature mismatch
-        if return_openid_structure.signature == signature:
+        if not return_openid_structure.signature == signature:
             # raises a verification failed exception
             raise service_openid_exceptions.VerificationFailed("invalid message signature")
 
