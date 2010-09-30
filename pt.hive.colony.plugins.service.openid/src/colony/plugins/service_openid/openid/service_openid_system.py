@@ -48,6 +48,9 @@ import service_openid_exceptions
 DEFAULT_CHARSET = "utf-8"
 """ The default charset """
 
+DEFAULT_EXPIRES_IN = "1000"
+""" The default expires in """
+
 GET_METHOD_VALUE = "GET"
 """ The get method value """
 
@@ -135,6 +138,34 @@ class ServiceOpenid:
 
         self.nonce_values_map = {}
 
+    def create_remote_server(self, service_attributes, open_server = True):
+        """
+        Creates a remote server, with the given service attributes.
+
+        @type service_attributes: Dictionary
+        @param service_attributes: The service attributes to be used.
+        @type open_server: bool
+        @param open_server: If the server should be opened.
+        @rtype: OpenidServer
+        @return: The created remote server.
+        """
+
+        # retrieves the random plugin
+        random_plugin = self.service_openid_plugin.random_plugin
+
+        # retrieves the openid structure (if available)
+        openid_structure = service_attributes.get("openid_structure", None)
+
+        # creates the openid server
+        openid_server = OpenidServer(self.service_openid_plugin, random_plugin, self, openid_structure)
+
+        # in case the server is meant to be open
+        # opens the server
+        open_server and openid_server.open()
+
+        # returns the openid server
+        return openid_server
+
     def create_remote_client(self, service_attributes, open_client = True):
         """
         Creates a remote client, with the given service attributes.
@@ -160,7 +191,7 @@ class ServiceOpenid:
         openid_client = OpenidClient(self.service_openid_plugin, main_client_http_plugin, service_yadis_plugin, self, openid_structure)
 
         # in case the client is meant to be open
-        # open the client
+        # opens the client
         open_client and openid_client.open()
 
         # returns the openid client
@@ -295,6 +326,18 @@ class OpenidServer:
 
         pass
 
+    def generate_openid_structure(self, association_type, session_type, set_structure = True):
+        # creates a new openid structure
+        openid_structure = OpenidStructure(association_type = association_type, session_type = session_type)
+
+        # in case the structure is meant to be set
+        if set_structure:
+            # sets the openid structure
+            self.set_openid_structure(openid_structure)
+
+        # returns the openid structure
+        return openid_structure
+
     def openid_associate(self):
         """
         Requests an association (associate mode) according to the
@@ -304,20 +347,78 @@ class OpenidServer:
         @return: The current openid structure.
         """
 
+        # generates an association handle
+        association_handle = self._generate_association_handle()
+
+        # retrieves the association type as the key type
+        key_type = self.openid_structure.get_association_type()
+
+        # generates the mac key
+        mac_key = self._generate_mac_key(key_type)
+
+        # sets the association handle in the openid structure
+        self.openid_structure.association_handle = association_handle
+
+        # sets the expires in in the openid structure
+        self.openid_structure.expires_in = DEFAULT_EXPIRES_IN
+
+        # sets the mac key in the openid structure
+        self.openid_structure.mac_key = mac_key
+
         # returns the openid structure
         return self.openid_structure
 
-    def _generate_mac_key(self):
-        pass
+    def get_openid_structure(self):
+        """
+        Retrieves the openid structure.
 
-        # tenho de implemnetar o
+        @rtype: OpenidStructure
+        @return: The openid structure.
+        """
 
-        #160 bits (20 bytes) for DH-SHA1 or 256 bits (32 bytes)
-        #generate_random_md5_string
+        return self.openid_structure
 
-        #self.openid_structur
+    def set_openid_structure(self, openid_structure):
+        """
+        Sets the openid structure.
 
-        #return generate_mac_key
+        @type openid_structure: OpenidStructure
+        @param openid_structure: The openid structure.
+        """
+
+        self.openid_structure = openid_structure
+
+    def _generate_association_handle(self, key_type = HMAC_SHA1_VALUE):
+        # generates a random sha1
+        random_sha1 = self.random_plugin.generate_random_sha1()
+
+        # retrieves the random sha1 value
+        random_sha1_value = random_sha1.digest()
+
+        # encodes the random sha1 value into base64
+        association_handle = random_sha1_value.encode("base64")
+
+        # returns the association handle
+        return association_handle
+
+    def _generate_mac_key(self, key_type = HMAC_SHA1_VALUE):
+        # in case the key type is sha1
+        if key_type == HMAC_SHA1_VALUE:
+            # generates a mac key with the sha1 random value
+            mac_key = self.random_plugin.generate_random_sha1()
+        # in case the key type is sha256
+        elif key_type == HMAC_SHA256_VALUE:
+            # generates a mac key with the sha256 random value
+            mac_key = self.random_plugin.generate_random_sha256()
+
+        # retrieves the mac key value
+        mac_key_value = mac_key.digest()
+
+        # encodes the mac key into base64
+        mac_key_value_encoded = mac_key_value.encode("base64")
+
+        # returns the encoded mac key value
+        return mac_key_value_encoded
 
 class OpenidClient:
     """
@@ -553,7 +654,7 @@ class OpenidClient:
         # returns the openid structure
         return self.openid_structure
 
-    def open_id_verify(self, return_openid_structure, strict = True):
+    def openid_verify(self, return_openid_structure, strict = True):
         """
         Verifies the given return openid structure (verification)
         according to the openid specification.
@@ -931,7 +1032,7 @@ class OpenidStructure:
     types_list = []
     """ the list of extension types accepted by the provider """
 
-    def __init__(self, provider_url, claimed_id, identity, return_to, realm, association_type = DEFAULT_OPENID_ASSOCIATE_TYPE, session_type = DEFAULT_OPENID_SESSION_TYPE):
+    def __init__(self, provider_url = None, claimed_id = None, identity = None, return_to = None, realm = None, association_type = DEFAULT_OPENID_ASSOCIATE_TYPE, session_type = DEFAULT_OPENID_SESSION_TYPE):
         """
         Constructor of the class.
 

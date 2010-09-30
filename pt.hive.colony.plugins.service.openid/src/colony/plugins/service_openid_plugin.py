@@ -97,6 +97,18 @@ class ServiceOpenidPlugin(colony.base.plugin_system.Plugin):
     def dependency_injected(self, plugin):
         colony.base.plugin_system.Plugin.dependency_injected(self, plugin)
 
+    def create_remote_server(self, service_attributes):
+        """
+        Creates a remote server, with the given service attributes.
+
+        @type service_attributes: Dictionary
+        @param service_attributes: The service attributes to be used.
+        @rtype: OpenidServer
+        @return: The created remote server.
+        """
+
+        return self.service_openid.create_remote_server(service_attributes)
+
     def create_remote_client(self, service_attributes):
         """
         Creates a remote client, with the given service attributes.
