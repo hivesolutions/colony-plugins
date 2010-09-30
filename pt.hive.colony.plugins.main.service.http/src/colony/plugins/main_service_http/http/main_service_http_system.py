@@ -671,10 +671,13 @@ class HttpClientServiceHandler:
                 self.send_exception(service_connection, request, exception)
             except main_service_http_exceptions.MainServiceHttpException:
                 # prints a debug message
-                self.service_plugin.debug("Connection: %s by peer, while sending exception" % str(service_connection))
+                self.service_plugin.debug("Connection: %s closed by peer, while sending exception" % str(service_connection))
 
                 # returns false (connection closed)
                 return False
+            except Exception, exception:
+                # prints an error message
+                self.service_plugin.debug("There was an exception handling the exception: " + unicode(exception))
 
         # returns true (connection remains open)
         return True
