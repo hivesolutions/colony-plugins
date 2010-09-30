@@ -253,7 +253,7 @@ h5:hover > a.headerlink {
 }
 
 .highlight {
-    background: #d5e9f6 url(../images/colony_watermark.png) no-repeat scroll bottom right;
+    background: #d5e9f6 url(../images/colony_watermark.png) no-repeat scroll right bottom;
     min-height: 64px;
     padding: 18px 22px 14px 22px;
     color: #444444;
