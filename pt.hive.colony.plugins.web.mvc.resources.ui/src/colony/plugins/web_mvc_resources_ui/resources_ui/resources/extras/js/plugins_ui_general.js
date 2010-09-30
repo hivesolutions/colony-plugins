@@ -62,7 +62,7 @@
             historyLoad = historyLoad != null ? historyLoad : true;
 
             // retrieves the base path
-            var basePath = getBasePath();
+            var basePath = _getBasePath();
 
             // creates the menu bar in the menu bar component
             $("#menu-bar", matchedObject).menubar();
@@ -96,7 +96,7 @@
             var headerPath = options["headerPath"];
 
             // retrieves the base path
-            var basePath = getBasePath();
+            var basePath = _getBasePath();
 
             // creates the full target path by prepending the
             // base path to the header path
@@ -138,6 +138,15 @@
             // creates the menu bar in the menu bar component
             $("#menu-bar", matchedObject).menubar();
         };
+
+        /**
+         * Retrieves the base path for the current environment.
+         *
+         * @return {String} The base path for the current environment.
+         */
+        var _getBasePath = function() {
+            return typeof(getBasePath) == undefined ? getBasePath() : "";
+        }
 
         // switches over the method
         switch (method) {
@@ -278,7 +287,7 @@
         var _reloadContents = function(matchedObject, options) {
             // retrieves the base path to be used
             // in the creation of the full action
-            var basePath = getBasePath();
+            var basePath = _getBasePath();
 
             // starts the overlay component
             $("#overlay").overlay();
@@ -332,7 +341,7 @@
             $("form div.cancel", matchedObject).bind("click", __formReset);
 
             // in case ajax submission is enabled
-            if (getAjaxSubmit() != "false") {
+            if (_getAjaxSubmit() != "false") {
                 // binds the submit event of the forms to the form
                 // submit function
                 $("form", matchedObject).bind("submit", function(event) {
@@ -612,7 +621,7 @@
             $("#loading-message").loadingmessage("show", messageOptions);
 
             // retrieves the base path
-            var basePath = getBasePath();
+            var basePath = _getBasePath();
 
             // retrieves the real target
             var realTarget = target.split("&", 1)[0];
@@ -734,7 +743,7 @@
             __formSubmitStart(parentForm);
 
             // in case ajax submission is disabled
-            if (getAjaxSubmit() == "false") {
+            if (_getAjaxSubmit() == "false") {
                 // submits the form normally
                 parentForm.submit();
             } else {
@@ -865,7 +874,7 @@
             var head = $("head");
 
             // retrieves the base path
-            var basePath = getBasePath();
+            var basePath = _getBasePath();
 
             // iterates over all the javascript file references
             javascriptFiles.each(function(index, element) {
@@ -937,7 +946,7 @@
                     });
 
             // retrieves the base path
-            var basePath = getBasePath();
+            var basePath = _getBasePath();
 
             // iterates over all the side panel file references
             sidePanels.each(function(index, element) {
@@ -1040,6 +1049,24 @@
                         $.historyLoad(targetRequest);
                     });
         };
+
+        /**
+         * Retrieves the base path for the current environment.
+         *
+         * @return {String} The base path for the current environment.
+         */
+        var _getBasePath = function() {
+            return typeof(getBasePath) == undefined ? getBasePath() : "";
+        }
+
+        /**
+         * Retrieves the submit form for the current environment.
+         *
+         * @return {Boolean} The submit form for the current environment.
+         */
+        var _getAjaxSubmit = function() {
+            return typeof(getAjaxSubmit) == undefined ? getAjaxSubmit() : false;
+        }
 
         // switches over the method
         switch (method) {
