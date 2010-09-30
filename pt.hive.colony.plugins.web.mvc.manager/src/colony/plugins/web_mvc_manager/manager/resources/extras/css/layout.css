@@ -27,5 +27,5 @@
 */
 
 #header #logo {
-    background: url(../images/logo/logo-omni.png) no-repeat;
+    background: transparent url(../images/logo/logo-omni.png) no-repeat;
 }
