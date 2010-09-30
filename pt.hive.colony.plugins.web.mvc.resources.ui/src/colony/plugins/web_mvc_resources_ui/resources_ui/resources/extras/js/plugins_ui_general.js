@@ -145,7 +145,7 @@
          * @return {String} The base path for the current environment.
          */
         var _getBasePath = function() {
-            return typeof(getBasePath) == undefined ? getBasePath() : "";
+            return typeof(getBasePath) === "undefined" ? "" : getBasePath();
         }
 
         // switches over the method
@@ -1056,7 +1056,7 @@
          * @return {String} The base path for the current environment.
          */
         var _getBasePath = function() {
-            return typeof(getBasePath) == undefined ? getBasePath() : "";
+            return typeof(getBasePath) === "undefined" ? "" : getBasePath();
         }
 
         /**
@@ -1065,7 +1065,7 @@
          * @return {Boolean} The submit form for the current environment.
          */
         var _getAjaxSubmit = function() {
-            return typeof(getAjaxSubmit) == undefined ? getAjaxSubmit() : false;
+            return typeof(getAjaxSubmit) === "undefined" ? "false" : getAjaxSubmit();
         }
 
         // switches over the method
