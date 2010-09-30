@@ -52,7 +52,7 @@
 }
 
 .autocomplete-container > ul.autocomplete-items > li.highlighted {
-    background: url(../images/autocomplete-highlight-background.png) #5d97c0 left top repeat-x;
+    background: #5d97c0 url(../images/autocomplete-highlight-background.png) repeat-x left top;
     color: #ffffff;
 }
 
@@ -77,7 +77,7 @@
 
 .autocomplete-container > ul.autocomplete-items > li.autocomplete-footer {
     text-align: center;
-    background: url(../images/separator-dotted-horizontal.png) #eef4f9 left top repeat-x;
+    background: #eef4f9 url(../images/separator-dotted-horizontal.png) repeat-x left top;
     font-size: 8pt;
     font-weight: bold;
     height: 32px;
@@ -87,5 +87,5 @@
 
 .autocomplete-container > ul.autocomplete-items > li.autocomplete-footer.highlighted {
     color: #ffffff;
-    background: url(../images/autocomplete-highlight-background.png) #5d97c0 left top repeat-x;
+    background: #5d97c0 url(../images/autocomplete-highlight-background.png) repeat-x left top;
 }

@@ -42,7 +42,7 @@
 }
 
 body {
-    background: url(../images/general/body/body-background.png);
+    background: transparent url(../images/general/body/body-background.png);
     margin: 10px 0px 0px 0px;
     font-family: Tahoma, Arial;
     font-size: 8pt;
@@ -62,7 +62,7 @@ ul li {
 }
 
 hr {
-    background: url(../images/general/separator/separator-dotted-horizontal.png) left top repeat-x;
+    background: transparent url(../images/general/separator/separator-dotted-horizontal.png) repeat-x left top;
     height: 1px;
     border: none;
     margin-bottom: 16px;
@@ -156,7 +156,7 @@ h2 {
 
 /* Header */
 #header {
-    background: url(../images/general/header/header-background.png);
+    background: transparent url(../images/general/header/header-background.png);
     height: 74px;
     width: 1000px;
     margin: 0px auto 0px auto;
@@ -189,7 +189,7 @@ h2 {
 }
 
 #account-area-container ul li {
-    background: url(../images/general/separator/separator-vertical.png) center right no-repeat;
+    background: transparent url(../images/general/separator/separator-vertical.png) no-repeat center right;
     float: left;
     height: 16px;
     padding: 0px 6px 0px 6px;
@@ -197,7 +197,7 @@ h2 {
 
 /* Menu Area */
 .menu-area-container {
-    background: url(../images/general/menu_area/menu-area-container-background.png) bottom left repeat-x;
+    background: transparent url(../images/general/menu_area/menu-area-container-background.png) repeat-x bottom left;
     height: 31px;
     width: 100%;
 }
@@ -230,7 +230,7 @@ h2 {
 }
 
 .menu-area-container > ul li {
-    background: url(../images/general/separator/separator-vertical.png) center right no-repeat;
+    background: transparent url(../images/general/separator/separator-vertical.png) no-repeat center right;
     float: left;
     padding: 0px 3px 0px 2px;
     max-width: 150px;
@@ -265,7 +265,7 @@ h2 {
 }
 
 .drop-menu hr {
-    background: url(../images/general/separator/separator-horizontal.png) center center repeat-x;
+    background: transparent url(../images/general/separator/separator-horizontal.png) repeat-x center center;
     height: 2px;
     margin: 6px 10px 6px 10px;
 }
@@ -281,7 +281,7 @@ h2 {
 }
 
 .drop-menu a:hover {
-     background: url(../images/general/drop_menu/drop-menu-hover-background.png) bottom left repeat-x;
+     background: transparent url(../images/general/drop_menu/drop-menu-hover-background.png) repeat-x bottom left;
 }
 
 /* Float Panel */
@@ -291,7 +291,7 @@ h2 {
 }
 
 .float-panel .float-panel-arrow {
-    background: url(../images/general/float_panel/float-panel-arrow-blue.png) center bottom no-repeat;
+    background: transparent url(../images/general/float_panel/float-panel-arrow-blue.png) no-repeat center bottom;
     float: left;
     position: relative;
     height: 10px;
@@ -352,7 +352,7 @@ h2 {
 
 /* Loading Animations */
 .loading-animation {
-    background: url(../images/general/loading/loading-icon-square.gif) top left no-repeat;
+    background: transparent url(../images/general/loading/loading-icon-square.gif) no-repeat top left;
     float: right;
     display: none;
     height: 32px;
@@ -379,7 +379,7 @@ h2 {
 }
 
 #icon-bar {
-    background: url(../images/general/container/main-container-background.png) top right repeat-y;
+    background: transparent url(../images/general/container/main-container-background.png) repeat-y top right;
     float: left;
     height: 100%;
     width: 32px;
@@ -444,7 +444,7 @@ h2 {
     float: left;
     height: 32px;
     width: 32px;
-    background: url(../images/general/container/content-icon-background.png) top right no-repeat;
+    background: transparent url(../images/general/container/content-icon-background.png) no-repeat top right;
 }
 
 .blue #content-icon {
@@ -503,11 +503,11 @@ h2 {
     float: left;
     height: 100%;
     width: 200px;
-    background: url(../images/general/left_column/left-column-background.png) #eaeff2 right top repeat-y;
+    background: #eaeff2 url(../images/general/left_column/left-column-background.png) repeat-y right top;
 }
 
 #left-column h1 {
-    background: url(../images/general/separator/separator-horizontal.png) center bottom repeat-x;
+    background: transparent url(../images/general/separator/separator-horizontal.png) repeat-x center bottom;
     height: 24px;
     margin: 12px 0px 8px 0px;
     padding: 0px 0px 0px 12px;
@@ -519,7 +519,7 @@ h2 {
 }
 
 #left-column h1.active {
-    background: url(../images/general/separator/separator-horizontal.png) center bottom repeat-x;
+    background: transparent url(../images/general/separator/separator-horizontal.png) repeat-x center bottom;
     color: #333333;
 }
 
@@ -549,7 +549,7 @@ h2 {
 }
 
 #left-column ul li.active span {
-    background: url(../images/general/left_column/left-column-arrow-right-yellow.png) right center no-repeat;
+    background: transparent url(../images/general/left_column/left-column-arrow-right-yellow.png) no-repeat right center;
     display: block;
     width: 182px;
     margin-right: -10px;
@@ -637,7 +637,7 @@ h2 {
 }
 
 .dashboard-panel-plus-button-big {
-    background: url(../images/components/button_plus/button-plus-big-normal.png) center center no-repeat;
+    background: transparent url(../images/components/button_plus/button-plus-big-normal.png) no-repeat center center;
     float: right;
     height: 24px;
     width: 24px;
@@ -646,11 +646,11 @@ h2 {
 }
 
 .dashboard-panel-plus-button-big:hover {
-    background: url(../images/components/button_plus/button-plus-big-hover.png) center center no-repeat;
+    background: transparent url(../images/components/button_plus/button-plus-big-hover.png) no-repeat center center;
 }
 
 .dashboard-panel-plus-button-small {
-    background: url(../images/components/button_plus/button-plus-small-normal.png) center 0px no-repeat;
+    background: transparent url(../images/components/button_plus/button-plus-small-normal.png) no-repeat center top;
     float: right;
     height: 24px;
     width: 24px;
