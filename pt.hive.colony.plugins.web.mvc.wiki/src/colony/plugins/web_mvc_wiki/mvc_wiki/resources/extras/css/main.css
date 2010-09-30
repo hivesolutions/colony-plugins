@@ -105,7 +105,7 @@
     height: 18px;
     margin-right: 6px;
     margin-top: -25px;
-    background: transparent url(../images/wiki-page-search-background.png) top right no-repeat;
+    background: transparent url(../images/wiki-page-search-background.png) no-repeat top right;
 }
 
 #wiki-page-edit-buttons {
@@ -174,7 +174,7 @@
     float: left;
     width: 120px;
     height: 23px;
-    background: transparent 0px 0px repeat-x;
+    background: transparent none repeat-x 0px 0px;
     padding-top: 7px;
     vertical-align: middle;
     color: #ffffff;
