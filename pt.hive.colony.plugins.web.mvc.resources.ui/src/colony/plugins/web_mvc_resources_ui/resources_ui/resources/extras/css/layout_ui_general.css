@@ -197,7 +197,7 @@ h2 {
 
 /* Menu Area */
 .menu-area-container {
-    background: transparent url(../images/general/menu_area/menu-area-container-background.png) repeat-x bottom left;
+    background: transparent url(../images/general/menu_area/menu-area-container-background.png) repeat-x left bottom;
     height: 31px;
     width: 100%;
 }
@@ -281,7 +281,7 @@ h2 {
 }
 
 .drop-menu a:hover {
-     background: transparent url(../images/general/drop_menu/drop-menu-hover-background.png) repeat-x bottom left;
+     background: transparent url(../images/general/drop_menu/drop-menu-hover-background.png) repeat-x left bottom;
 }
 
 /* Float Panel */
@@ -352,7 +352,7 @@ h2 {
 
 /* Loading Animations */
 .loading-animation {
-    background: transparent url(../images/general/loading/loading-icon-square.gif) no-repeat top left;
+    background: transparent url(../images/general/loading/loading-icon-square.gif) no-repeat left top;
     float: right;
     display: none;
     height: 32px;
@@ -379,7 +379,7 @@ h2 {
 }
 
 #icon-bar {
-    background: transparent url(../images/general/container/main-container-background.png) repeat-y top right;
+    background: transparent url(../images/general/container/main-container-background.png) repeat-y right top;
     float: left;
     height: 100%;
     width: 32px;
@@ -444,7 +444,7 @@ h2 {
     float: left;
     height: 32px;
     width: 32px;
-    background: transparent url(../images/general/container/content-icon-background.png) no-repeat top right;
+    background: transparent url(../images/general/container/content-icon-background.png) no-repeat right top;
 }
 
 .blue #content-icon {

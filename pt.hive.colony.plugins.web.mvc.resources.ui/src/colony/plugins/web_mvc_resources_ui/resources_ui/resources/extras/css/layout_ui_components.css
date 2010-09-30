@@ -410,7 +410,7 @@ table .date-field  {
 }
 
 .date-field-button {
-    background: transparent url(../images/components/date_field/date-field-button-normal.png) no-repeat top left;
+    background: transparent url(../images/components/date_field/date-field-button-normal.png) no-repeat left top;
     float: right;
     height: 24px;
     width: 30px;
@@ -585,7 +585,7 @@ table .dropbox {
 .dropbox-container {
     height: 22px;
     padding: 0px 0px 0px 0px;
-    background: transparent url(../images/components/dropbox/dropbox-left-background.png) no-repeat top left;
+    background: transparent url(../images/components/dropbox/dropbox-left-background.png) no-repeat left top;
 }
 
 .dropbox-left-corners {
@@ -595,7 +595,7 @@ table .dropbox {
 }
 
 .dropbox-text-field {
-    background: transparent url(../images/components/dropbox/dropbox-center-background.png) repeat-x top left;
+    background: transparent url(../images/components/dropbox/dropbox-center-background.png) repeat-x left top;
     float: left;
     height: 19px;
     width: 100%;
@@ -606,7 +606,7 @@ table .dropbox {
 }
 
 .dropbox-button {
-    background: transparent url(../images/components/dropbox/dropbox-button-normal.png) no-repeat top left;
+    background: transparent url(../images/components/dropbox/dropbox-button-normal.png) no-repeat left top;
     float: right;
     height: 22px;
     width: 22px;
@@ -645,7 +645,7 @@ table .dropbox {
 }
 
 .dropbox ul li:hover, .dropbox ul li.selected {
-    background: transparent url(../images/components/dropbox/dropbox-highlight-background.png) repeat-x top left;
+    background: transparent url(../images/components/dropbox/dropbox-highlight-background.png) repeat-x left top;
     color: #ffffff;
 }
 
@@ -695,15 +695,15 @@ table .dropbox {
 }
 
 .error .message-icon {
-    background: transparent url(../images/components/message/message-icon-exclamation.png) no-repeat top left;
+    background: transparent url(../images/components/message/message-icon-exclamation.png) no-repeat left top;
 }
 
 .success .message-icon {
-    background: transparent url(../images/components/message/message-icon-success.png) no-repeat top left;
+    background: transparent url(../images/components/message/message-icon-success.png) no-repeat left top;
 }
 
 .information .message-icon {
-    background: transparent url(../images/components/message/message-icon-information.png) no-repeat top left;
+    background: transparent url(../images/components/message/message-icon-information.png) no-repeat left top;
 }
 
 .message-contents {
