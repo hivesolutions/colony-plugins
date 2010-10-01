@@ -121,6 +121,7 @@ configuration = {
                                            "/repository/debian",
                                            "/cgi-bin",
                                            "/fastcgi-bin",
+                                           "/wsgi-bin",
                                            "/web_administration",
                                            "/websession_test",
                                            "/websession",
@@ -193,7 +194,7 @@ configuration = {
                          "handler" : "cgi",
                          "allow_redirection" : False,
                          "request_properties" : {
-                             "base_path" : "${HOME}",
+                             "base_path" : "${HOME}/cgi-bin",
                          }
                      },
                      "/fastcgi-bin" : {
@@ -201,9 +202,16 @@ configuration = {
                          "allow_redirection" : False,
                          "request_properties" : {
                              "handler_type" : "local",
-                             "base_path" : "${HOME}",
+                             "base_path" : "${HOME}/fcgi-bin",
                              "connection_type" : 1,
                              "connection_arguments" : ("localhost", 9010)
+                         }
+                     },
+                     "/wsgi-bin" : {
+                         "handler" : "wsgi",
+                         "allow_redirection" : False,
+                         "request_properties" : {
+                             "base_path" : "${HOME}/wsgi-bin"
                          }
                      },
                      "/web_administration" : {
