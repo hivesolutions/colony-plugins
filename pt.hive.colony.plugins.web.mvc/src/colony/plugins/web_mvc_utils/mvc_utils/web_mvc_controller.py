@@ -404,7 +404,7 @@ def assign_session_template_file(self, rest_request, template_file, variable_pre
         # assigns the session attribute to the template file
         template_file.assign(variable_prefix + session_attribute_name_replaced, session_attribute)
 
-def get_session_attribute(self, rest_request, session_attribute_name):
+def get_session_attribute(self, rest_request, session_attribute_name, namespace_name = None):
     # tries to retrieve the rest request session
     rest_request_session = rest_request.get_session()
 
@@ -414,13 +414,16 @@ def get_session_attribute(self, rest_request, session_attribute_name):
         # returns none (invalid)
         return None
 
+    # resolves the complete session attribute name
+    session_attribute_name = _get_complete_session_attribute_name(session_attribute_name, namespace_name)
+
     # retrieves the attribute from the session
     session_attribute = rest_request_session.get_attribute(session_attribute_name)
 
     # returns the session attribute
     return session_attribute
 
-def set_session_attribute(self, rest_request, session_attribute_name, session_attribute_value):
+def set_session_attribute(self, rest_request, session_attribute_name, session_attribute_value, namespace_name = None):
     # tries to retrieve the rest request session
     rest_request_session = rest_request.get_session()
 
@@ -433,10 +436,13 @@ def set_session_attribute(self, rest_request, session_attribute_name, session_at
         # retrieves the rest request session
         rest_request_session = rest_request.get_session()
 
+    # resolves the complete session attribute name
+    session_attribute_name = _get_complete_session_attribute_name(session_attribute_name, namespace_name)
+
     # sets the attribute in the session
     rest_request_session.set_attribute(session_attribute_name, session_attribute_value)
 
-def unset_session_attribute(self, rest_request, session_attribute_name):
+def unset_session_attribute(self, rest_request, session_attribute_name, namespace_name = None):
     # tries to retrieve the rest request session
     rest_request_session = rest_request.get_session()
 
@@ -445,6 +451,9 @@ def unset_session_attribute(self, rest_request, session_attribute_name):
     if not rest_request_session:
         # returns none (invalid)
         return None
+
+    # resolves the complete session attribute name
+    session_attribute_name = _get_complete_session_attribute_name(session_attribute_name, namespace_name)
 
     # unsets the attribute from the session
     rest_request_session.unset_attribute(session_attribute_name)
@@ -941,3 +950,29 @@ def _process_form_attribute(self, parent_structure, current_attribute_name, attr
         # the remaining attribute name as the new current attribute name and the attribute value
         # continues with the same value
         self._process_form_attribute(current_attribute_value, remaining_attribute_name, attribute_value, index)
+
+def _get_complete_session_attribute_name(session_attribute_name, namespace_name):
+    """
+    Retrieves the complete session attribute name from the session
+    attribute name and the namespace name.
+
+    @type session_attribute_name: String
+    @param session_attribute_name: The session attribute name.
+    @type namespace_name: String
+    @param namespace_name: The namespace name
+    @rtype: String
+    @return: The complete session attribute name.
+    """
+
+    # in case the namespace name is not set
+    if not namespace_name:
+        # returns the "original" session attribute name
+        # as the complete session attribute name
+        return session_attribute_name
+
+    # creates the complete session attribute name by prepending the namespace
+    # name to the session attribute name
+    complete_session_attribute_name = namespace_name + "." + session_attribute_name
+
+    # returns the complete session attribute name
+    return complete_session_attribute_name
