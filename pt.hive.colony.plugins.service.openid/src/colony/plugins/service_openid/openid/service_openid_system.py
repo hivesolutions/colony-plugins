@@ -52,6 +52,12 @@ DEFAULT_CHARSET = "utf-8"
 DEFAULT_EXPIRES_IN = "1000"
 """ The default expires in """
 
+DEFAULT_SIGNED_NAMES = ("op_endpoint", "return_to", "response_nonce", "assoc_handle", "claimed_id", "identity")
+""" The default signed names """
+
+DEFAULT_SIGNED_ITEMS = ("provider_url", "return_to", "response_nonce", "association_handle", "claimed_id", "identity")
+""" The default signed items """
+
 GET_METHOD_VALUE = "GET"
 """ The get method value """
 
@@ -90,6 +96,9 @@ CHECKID_SETUP_VALUE = "checkid_setup"
 
 CHECKID_IMMEDIATE_VALUE = "checkid_immediate"
 """ The checkid immediate value """
+
+ID_RES_VALUE = "id_res"
+""" The id res value """
 
 HMAC_SHA1_VALUE = "HMAC-SHA1"
 """ The hmac sha1 value """
@@ -369,6 +378,74 @@ class OpenidServer:
         # returns the openid structure
         return self.openid_structure
 
+    def openid_request(self):
+        # sets the mode in the openid structure
+        self.openid_structure.mode = ID_RES_VALUE
+
+        # sets the provider url in the openid structure
+        self.openid_structure.provider_url = "http://localhost:8080/openid/"
+
+        # sets the invalidate handle in the openid structure
+        self.openid_structure.invalidate_handle = "123123123123"
+
+        # sets the response nonce in the openid structure
+        self.openid_structure.response_nonce = "2005-05-15T17:11:51ZUNIQUE123123123123" + self._generate_association_handle()
+
+        # sets the signed in the openid structure
+        self.openid_structure.signed = ",".join(DEFAULT_SIGNED_NAMES)
+
+        # generates the signature
+        signature = self._generate_signature()
+
+        # sets the signature in the openid structure
+        self.openid_structure.signature = signature
+
+    def get_return_url(self):
+        # sets the retrieval url
+        retrieval_url = self.openid_structure.return_to
+
+        # start the parameters map
+        parameters = {}
+
+        # sets the namespace
+        parameters["openid.ns"] = self.openid_structure.ns
+
+        # sets the mode
+        parameters["openid.mode"] = self.openid_structure.mode
+
+        # sets the provider url
+        parameters["openid.op_endpoint"] = self.openid_structure.provider_url
+
+        # sets the claimed id
+        parameters["openid.claimed_id"] = self.openid_structure.claimed_id
+
+        # sets the identity
+        parameters["openid.identity"] = self.openid_structure.identity
+
+        # sets the return to
+        parameters["openid.return_to"] = self.openid_structure.return_to
+
+        # sets the response nonce
+        parameters["openid.response_nonce"] = self.openid_structure.response_nonce
+
+        # sets the invalidate handle
+        parameters["openid.invalidate_handle"] = self.openid_structure.invalidate_handle
+
+        # sets the association handle
+        parameters["openid.assoc_handle"] = self.openid_structure.association_handle
+
+        # sets the signed
+        parameters["openid.signed"] = self.openid_structure.signed
+
+        # sets the signature
+        parameters["openid.sig"] = self.openid_structure.signature
+
+        # creates the request (get) url from the parameters
+        request_url = self._build_get_url(retrieval_url, parameters)
+
+        # returns the request url
+        return request_url
+
     def get_openid_structure(self):
         """
         Retrieves the openid structure.
@@ -388,6 +465,56 @@ class OpenidServer:
         """
 
         self.openid_structure = openid_structure
+
+    def _generate_signature(self):
+        # sets the signature items list
+        signed_items_list = DEFAULT_SIGNED_ITEMS
+
+        # sets the signature names list
+        signed_names_list = DEFAULT_SIGNED_NAMES
+
+        # creates the string buffer for the message
+        message_string_buffer = colony.libs.string_buffer_util.StringBuffer()
+
+        # starts the index counter
+        index = 0
+
+        # iterates over all the signed items
+        for signed_item_name in signed_items_list:
+            # retrieves the signed item value from the return openid structure
+            signed_item_value = getattr(self.openid_structure, signed_item_name)
+
+            # retrieves the signed item real name
+            signed_item_real_name = signed_names_list[index]
+
+            # adds the key value pair to the message string buffer
+            message_string_buffer.write(signed_item_real_name.encode(DEFAULT_CHARSET) + ":" + signed_item_value.encode(DEFAULT_CHARSET) + "\n")
+
+            # increments the index
+            index += 1
+
+        # retrieves the value from the message string buffer
+        message = message_string_buffer.get_value()
+
+        # decodes the signature mac key from base64
+        signature_mac_key = base64.b64decode(self.openid_structure.mac_key)
+
+        # retrieves the hash module from the hmac hash modules map
+        hash_module = HMAC_HASH_MODULES_MAP.get(self.openid_structure.association_type, None)
+
+        # in case no hash module is set
+        if not hash_module:
+            # raises the invalid hash function exception
+            raise service_openid_exceptions.InvalidHashFunction("the hash function is not available: " + self.openid_structure.association_type)
+
+        # calculates the signature value and retrieves the digest
+        signature = hmac.new(signature_mac_key, message, hash_module).digest()
+
+        # encodes the signature into base64
+        signature = base64.b64encode(signature)
+
+        # returns the signature
+        return signature
 
     def _generate_association_handle(self, key_type = HMAC_SHA1_VALUE):
         # generates a random sha1
@@ -420,6 +547,29 @@ class OpenidServer:
 
         # returns the encoded mac key value
         return mac_key_value_encoded
+
+    def _build_get_url(self, base_url, parameters):
+        """
+        Builds the url for the given url and parameters.
+        The url is valid only for a get request.
+
+        @type base_url: String
+        @param base_url: The base url to be used.
+        @type parameters: Dictionary
+        @param parameters: The parameters to be used for url construction.
+        @rtype: String
+        @return: The built url for the given parameters.
+        """
+
+        # encodes the parameters with the url encode
+        parameters_encoded = colony.libs.quote_util.url_encode(parameters)
+
+        # creates the url value by appending the base url with
+        # the parameters encoded
+        url = base_url + "?" + parameters_encoded
+
+        # returns the built url
+        return url
 
 class OpenidClient:
     """
@@ -698,7 +848,7 @@ class OpenidClient:
             signed_item_value = getattr(return_openid_structure, signed_item_name)
 
             # adds the key value pair to the message string buffer
-            message_string_buffer.write(signed_item_name.encode("utf-8") + ":" + signed_item_value.encode("utf-8") + "\n")
+            message_string_buffer.write(signed_item_name.encode(DEFAULT_CHARSET) + ":" + signed_item_value.encode(DEFAULT_CHARSET) + "\n")
 
         # retrieves the value from the message string buffer
         message = message_string_buffer.get_value()
@@ -712,7 +862,7 @@ class OpenidClient:
         # in case no hash module is set
         if not hash_module:
             # raises the invalid hash function exception
-            raise service_openid_exceptions.InvalidHashFunction("the hash functionn is not available: " + self.openid_structure.association_type)
+            raise service_openid_exceptions.InvalidHashFunction("the hash function is not available: " + self.openid_structure.association_type)
 
         # calculates the signature value and retrieves the digest
         signature = hmac.new(signature_mac_key, message, hash_module).digest()
@@ -1012,11 +1162,17 @@ class OpenidStructure:
     ns = OPENID_NAMESPACE_VALUE
     """ The namespace """
 
+    mode = None
+    """ The mode """
+
     expires_in = None
     """ The expires in """
 
     association_handle = None
     """ The association handle """
+
+    invalidate_handle = None
+    """ The invalidate handle """
 
     mac_key = None
     """ The mac key """
@@ -1140,7 +1296,7 @@ class OpenidStructure:
 
     def set_identity(self, identity):
         """
-        Retrieves the identity.
+        Sets the identity.
 
         @type identity: String
         @param identity: The identity.
@@ -1160,7 +1316,7 @@ class OpenidStructure:
 
     def set_return_to(self, return_to):
         """
-        Retrieves the return to.
+        Sets the return to.
 
         @type return_to: String
         @param return_to: The return to.
@@ -1180,7 +1336,7 @@ class OpenidStructure:
 
     def set_realm(self, realm):
         """
-        Retrieves the realm.
+        Sets the realm.
 
         @type realm: String
         @param realm: The realm.
@@ -1200,7 +1356,7 @@ class OpenidStructure:
 
     def set_association_type(self, association_type):
         """
-        Retrieves the association type.
+        Sets the association type.
 
         @type association_type: String
         @param association_type: The association type.
@@ -1220,7 +1376,7 @@ class OpenidStructure:
 
     def set_session_type(self, session_type):
         """
-        Retrieves the session type.
+        Sets the session type.
 
         @type session_type: String
         @param session_type: The session type.
@@ -1240,13 +1396,33 @@ class OpenidStructure:
 
     def set_ns(self, ns):
         """
-        Retrieves the namespace.
+        Sets the namespace.
 
         @type ns: String
         @param ns: The namespace.
         """
 
         self.ns = ns
+
+    def get_mode(self):
+        """
+        Retrieves the mode.
+
+        @rtype: String
+        @return: The mode.
+        """
+
+        return self.mode
+
+    def set_mode(self, mode):
+        """
+        Sets the mode.
+
+        @type mode: String
+        @param mode: The mode.
+        """
+
+        self.mode = mode
 
     def get_expires_in(self):
         """
@@ -1260,7 +1436,7 @@ class OpenidStructure:
 
     def set_expires_in(self, expires_in):
         """
-        Retrieves the expires in.
+        Sets the expires in.
 
         @type expires_in: String
         @param expires_in: The expires in.
@@ -1280,13 +1456,33 @@ class OpenidStructure:
 
     def set_association_handle(self, association_handle):
         """
-        Retrieves the association handle.
+        Sets the association handle.
 
         @type association_handle: String
         @param association_handle: The association handle.
         """
 
         self.association_handle = association_handle
+
+    def get_invalidate_handle(self):
+        """
+        Retrieves the invalidate handle.
+
+        @rtype: String
+        @return: The invalidate handle.
+        """
+
+        return self.invalidate_handle
+
+    def set_invalidate_handle(self, invalidate_handle):
+        """
+        Sets the invalidate handle.
+
+        @type invalidate_handle: String
+        @param invalidate_handle: The invalidate handle.
+        """
+
+        self.invalidate_handle = invalidate_handle
 
     def get_mac_key(self):
         """
@@ -1300,7 +1496,7 @@ class OpenidStructure:
 
     def set_mac_key(self, mac_key):
         """
-        Retrieves the mac key.
+        Sets the mac key.
 
         @type mac_key: String
         @param mac_key: The mac key.
@@ -1320,7 +1516,7 @@ class OpenidStructure:
 
     def set_signed(self, signed):
         """
-        Retrieves the signed.
+        Sets the signed.
 
         @type signed: String
         @param signed: The signed.
@@ -1340,7 +1536,7 @@ class OpenidStructure:
 
     def set_signature(self, signature):
         """
-        Retrieves the signature.
+        Sets the signature.
 
         @type signed: String
         @param signed: The signature.
@@ -1360,7 +1556,7 @@ class OpenidStructure:
 
     def set_response_nonce(self, response_nonce):
         """
-        Retrieves the response nonce.
+        Sets the response nonce.
 
         @type signed: String
         @param signed: The response nonce.
@@ -1380,7 +1576,7 @@ class OpenidStructure:
 
     def set_local_id(self, local_id):
         """
-        Retrieves the local id.
+        Sets the local id.
 
         @type local_id: String
         @param local_id: The local id.
@@ -1400,7 +1596,7 @@ class OpenidStructure:
 
     def set_types_list(self, types_list):
         """
-        Retrieves the types list.
+        Sets the types list.
 
         @type types_list: List
         @param types_list: The types list.
