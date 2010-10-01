@@ -38,7 +38,6 @@ __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
 import os
-import sys
 import types
 import subprocess
 
@@ -116,18 +115,6 @@ DEFAULT_PATH = "~/cgi-bin"
 WINDOWS_CONTENT_HANDLERS_MAP = {"py" : "python.exe"}
 """ The windows content handlers map """
 
-SERVER_NAME = "Hive-Colony-Web"
-""" The server name """
-
-SERVER_VERSION = "1.0.0"
-""" The server version """
-
-ENVIRONMENT_VERSION = str(sys.version_info[0]) + "." + str(sys.version_info[1]) + "." + str(sys.version_info[2]) + "-" + str(sys.version_info[3])
-""" The environment version """
-
-SERVER_IDENTIFIER = SERVER_NAME + "/" + SERVER_VERSION + " (Python/" + sys.platform + "/" + ENVIRONMENT_VERSION + ")"
-""" The server identifier """
-
 class MainServiceHttpCgiHandler:
     """
     The main service http cgi handler class.
@@ -172,6 +159,9 @@ class MainServiceHttpCgiHandler:
 
         # retrieves the request resource path
         request_resource_path = request.get_resource_path_decoded()
+
+        # retrieves the request server identifier protocol version
+        request_server_identifier = request.get_server_identifier()
 
         # retrieves the request handler path
         request_handler_path = request.handler_path
@@ -238,7 +228,7 @@ class MainServiceHttpCgiHandler:
             environment_map = os.environ
 
             # sets the cgi properties in the environment map
-            environment_map[SERVER_SOFTWARE_VALUE] = SERVER_IDENTIFIER
+            environment_map[SERVER_SOFTWARE_VALUE] = request_server_identifier
             environment_map[SERVER_NAME_VALUE] = ""
             environment_map[GATEWAY_INTERFACE_VALUE] = GATEWAY_INTERFACE
             environment_map[SERVER_PROTOCOL_VALUE] = request_protocol_version

@@ -37,7 +37,6 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-import sys
 import struct
 import socket
 import threading
@@ -181,18 +180,6 @@ FCGI_UNKNOWN_TYPE_BODY_STRUCT = "!B7x"
 FCGI_PARAMS_LENGTH_STRUCT = "!II"
 """ The fcgi params length struct """
 
-SERVER_NAME = "Hive-Colony-Web"
-""" The server name """
-
-SERVER_VERSION = "1.0.0"
-""" The server version """
-
-ENVIRONMENT_VERSION = str(sys.version_info[0]) + "." + str(sys.version_info[1]) + "." + str(sys.version_info[2]) + "-" + str(sys.version_info[3])
-""" The environment version """
-
-SERVER_IDENTIFIER = SERVER_NAME + "/" + SERVER_VERSION + " (Python/" + sys.platform + "/" + ENVIRONMENT_VERSION + ")"
-""" The server identifier """
-
 INTERNET_CONNECTION_TYPE = 1
 """ The internet connection type """
 
@@ -257,6 +244,9 @@ class MainServiceHttpFastCgiHandler:
         # retrieves the request contents length
         request_contents_length = len(request_contents)
 
+        # retrieves the request server identifier protocol version
+        request_server_identifier = request.get_server_identifier()
+
         # retrieves the request file name
         request_filename = request.filename
 
@@ -310,7 +300,7 @@ class MainServiceHttpFastCgiHandler:
         environment_map = {}
 
         # sets the cgi properties in the environment map
-        environment_map[SERVER_SOFTWARE_VALUE] = SERVER_IDENTIFIER
+        environment_map[SERVER_SOFTWARE_VALUE] = request_server_identifier
         environment_map[SERVER_NAME_VALUE] = ""
         environment_map[GATEWAY_INTERFACE_VALUE] = GATEWAY_INTERFACE
         environment_map[SERVER_PROTOCOL_VALUE] = request_protocol_version

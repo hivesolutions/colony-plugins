@@ -2193,6 +2193,16 @@ class HttpRequest:
         # returns the result value
         return result_value
 
+    def get_server_identifier(self):
+        """
+        Retrieves a string describing the server.
+
+        @rtype: String
+        @return: A string describing the server.
+        """
+
+        return SERVER_IDENTIFIER
+
     def get_service_connection(self):
         """
         Returns a the service connection object, that
