@@ -15,6 +15,9 @@
             }, {
                 "id" : "pt.hive.colony.plugins.service.yadis",
                 "version" : "1.0.0"
+            }, {
+                "id" : "pt.hive.colony.plugins.misc.random",
+                "version" : "1.0.0"
             }],
     "main_file" : "service_openid_plugin.py",
     "resources" : ["service_openid_plugin.py", "service_openid/__init__.py",
