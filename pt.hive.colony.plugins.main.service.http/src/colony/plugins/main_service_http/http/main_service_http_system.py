@@ -1679,6 +1679,9 @@ class HttpRequest:
     path = "none"
     """ The path """
 
+    original_path = "none"
+    """ The original path (without unquoting) """
+
     base_path = "none"
     """ The base path """
 
@@ -1856,8 +1859,8 @@ class HttpRequest:
             self.attributes_map[attribute_name] = attribute_value
 
     def __parse_get_attributes__(self):
-        # splits the path to get the attributes path of the request
-        path_splitted = self.path.split("?")
+        # splits the (original) path to get the attributes path of the request
+        path_splitted = self.original_path.split("?")
 
         # retrieves the size of the split
         path_splitted_length = len(path_splitted)
@@ -2242,8 +2245,12 @@ class HttpRequest:
         self.operation_type = operation_type
 
     def set_path(self, path):
+        # "saves" the original path value
+        # without unquoting
+        self.original_path = path
+
         # "unquotes" the path value
-        path = colony.libs.quote_util.unquote(path)
+        path = colony.libs.quote_util.unquote_plus(path)
 
         # retrieves the resource path of the path
         resource_path = path.split("?")[0]
