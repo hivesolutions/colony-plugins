@@ -49,6 +49,9 @@ HANDLER_NAME = "cgi"
 CONTENT_TYPE_HEADER_VALUE = "Content-type"
 """ The content type value """
 
+CONTENT_LENGTH_HEADER_VALUE = "Content-Length"
+""" The content length value """
+
 STATUS_VALUE = "Status"
 """ The status value """
 
@@ -100,11 +103,14 @@ CONTENT_LENGTH_VALUE = "CONTENT_LENGTH"
 PYTHONPATH_VALUE = "PYTHONPATH"
 """ The pythonpath value """
 
+DEFAULT_CONTENT_TYPE = "text/plain"
+""" The default content type """
+
 DEFAULT_APPLICATION_CONTENT_TYPE = "application/x-www-form-urlencoded"
 """ The default application content type """
 
-DEFAULT_CONTENT_TYPE = "text/plain"
-""" The default content type """
+DEFAULT_CONTENT_LENGTH = "0"
+""" The default content length """
 
 DEFAULT_STATUS = 200
 """ The default status """
@@ -154,9 +160,6 @@ class MainServiceHttpCgiHandler:
         # reads the request contents
         request_contents = request.read()
 
-        # retrieves the request contents length
-        request_contents_length = len(request_contents)
-
         # retrieves the request resource path
         request_resource_path = request.get_resource_path_decoded()
 
@@ -186,6 +189,12 @@ class MainServiceHttpCgiHandler:
 
         # retrieves the request connection port
         request_connection_port = request_service_connection.connection_port
+
+        # retrieves the request content type
+        request_content_type = request.get_header(CONTENT_TYPE_HEADER_VALUE) or DEFAULT_APPLICATION_CONTENT_TYPE
+
+        # retrieves the request content length
+        request_content_length = request.get_header(CONTENT_LENGTH_HEADER_VALUE) or DEFAULT_CONTENT_LENGTH
 
         # retrieves the client hostname and port
         client_http_address, _client_http_port = request_connection_address
@@ -240,8 +249,8 @@ class MainServiceHttpCgiHandler:
             environment_map[QUERY_STRING_VALUE] = request_query_string
             environment_map[REMOTE_HOST_VALUE] = client_http_address
             environment_map[REMOTE_ADDR_VALUE] = client_http_address
-            environment_map[CONTENT_TYPE_VALUE] = DEFAULT_APPLICATION_CONTENT_TYPE
-            environment_map[CONTENT_LENGTH_VALUE] = str(request_contents_length)
+            environment_map[CONTENT_TYPE_VALUE] = request_content_type
+            environment_map[CONTENT_LENGTH_VALUE] = request_content_length
 
             # resets the python path to avoid collisions
             environment_map[PYTHONPATH_VALUE] = ""
