@@ -247,9 +247,6 @@ class MainServiceHttpFastCgiHandler:
         # reads the request contents
         request_contents = request.read()
 
-        # retrieves the request contents length
-        request_contents_length = len(request_contents)
-
         # retrieves the request server identifier protocol version
         request_server_identifier = request.get_server_identifier()
 
