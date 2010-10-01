@@ -368,7 +368,7 @@ class MainRestManager:
                     variable_value = request.attributes_map[variable_name]
 
                     # unquotes the variable value
-                    variable_value = colony.libs.quote_util.unquote(variable_value)
+                    variable_value = colony.libs.quote_util.unquote_plus(variable_value)
 
                     # sets the variable value in the arguments map
                     arguments_map[variable_name] = variable_value
