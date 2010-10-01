@@ -170,6 +170,12 @@ class MainServiceHttpCgiHandler:
         # retrieves the request contents length
         request_contents_length = len(request_contents)
 
+        # retrieves the request resource path
+        request_resource_path = request.get_resource_path_decoded()
+
+        # retrieves the request handler path
+        request_handler_path = request.handler_path
+
         # retrieves the request file name
         request_filename = request.filename
 
@@ -208,6 +214,12 @@ class MainServiceHttpCgiHandler:
             # sets the empty handler (default)
             handler = ""
 
+        # in case there is a valid handler path
+        if request_handler_path:
+            request_path = request_resource_path.replace(request_handler_path, "", 1)
+        else:
+            request_path = request_resource_path
+
         # sets the base directory for file search
         base_directory = request.properties.get("base_path", DEFAULT_PATH)
 
@@ -215,7 +227,7 @@ class MainServiceHttpCgiHandler:
         real_base_directory = self.main_service_http_cgi_handler_plugin.resource_manager_plugin.get_real_string_value(base_directory)
 
         # constructs the complete path
-        complete_path = real_base_directory + "/" + request_filename
+        complete_path = real_base_directory + "/" + request_path
 
         # creates the complete command
         complete_command = handler + " " + complete_path
