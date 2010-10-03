@@ -48,7 +48,19 @@ import main_service_http_fast_cgi_handler_exceptions
 HANDLER_NAME = "fast_cgi"
 """ The handler name """
 
-CONTENT_TYPE_HEADER_VALUE = "Content-type"
+HANDLER_TYPE_VALUE = "handler_type"
+""" The handler type value """
+
+BASE_PATH_VALUE = "base_path"
+""" The base path value """
+
+CONNECTION_TYPE_VALUE = "connection_type"
+""" The connection type value """
+
+CONNECTION_ARGUMENTS_VALUE = "connection_arguments"
+""" The connection arguments value """
+
+CONTENT_TYPE_HEADER_VALUE = "Content-Type"
 """ The content type value """
 
 CONTENT_LENGTH_HEADER_VALUE = "Content-Length"
@@ -281,16 +293,16 @@ class MainServiceHttpFastCgiHandler:
         client_http_address, _client_http_port = request_connection_address
 
         # sets the handler type
-        handler_type = request.properties.get("handler_type", DEFAULT_HANDLER_TYPE)
+        handler_type = request.properties.get(HANDLER_TYPE_VALUE, DEFAULT_HANDLER_TYPE)
 
         # sets the base path
-        base_path = request.properties.get("base_path", DEFAULT_PATH)
+        base_path = request.properties.get(BASE_PATH_VALUE, DEFAULT_PATH)
 
         # retrieves the connection type
-        connection_type = request.properties.get("connection_type", DEFAULT_CONNECTION_TYPE)
+        connection_type = request.properties.get(CONNECTION_TYPE_VALUE, DEFAULT_CONNECTION_TYPE)
 
         # retrieves the connection arguments
-        connection_arguments = request.properties.get("connection_arguments", DEFAULT_CONNECTION_ARGUMENTS)
+        connection_arguments = request.properties.get(CONNECTION_ARGUMENTS_VALUE, DEFAULT_CONNECTION_ARGUMENTS)
 
         # retrieves the connection
         connection = self._get_connection(connection_type, connection_arguments)

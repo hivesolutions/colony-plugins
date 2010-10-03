@@ -46,7 +46,10 @@ import main_service_http_cgi_handler_exceptions
 HANDLER_NAME = "cgi"
 """ The handler name """
 
-CONTENT_TYPE_HEADER_VALUE = "Content-type"
+BASE_PATH_VALUE = "base_path"
+""" The base path value """
+
+CONTENT_TYPE_HEADER_VALUE = "Content-Type"
 """ The content type value """
 
 CONTENT_LENGTH_HEADER_VALUE = "Content-Length"
@@ -220,7 +223,7 @@ class MainServiceHttpCgiHandler:
             request_path = request_resource_path
 
         # sets the base directory for file search
-        base_directory = request.properties.get("base_path", DEFAULT_PATH)
+        base_directory = request.properties.get(BASE_PATH_VALUE, DEFAULT_PATH)
 
         # retrieves the real base directory
         real_base_directory = self.main_service_http_cgi_handler_plugin.resource_manager_plugin.get_real_string_value(base_directory)

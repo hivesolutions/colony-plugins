@@ -42,11 +42,29 @@ import os
 HANDLER_NAME = "wsgi"
 """ The handler name """
 
-CONTENT_TYPE_HEADER_VALUE = "Content-type"
+CONTENT_TYPE_HEADER_VALUE = "Content-Type"
 """ The content type value """
 
 CONTENT_LENGTH_HEADER_VALUE = "Content-Length"
 """ The content length value """
+
+WSGI_INPUT_VALUE = "wsgi.input"
+""" The wsgi input value """
+
+WSGI_ERRORS_VALUE = "wsgi.errors"
+""" The wsgi errors value """
+
+WSGI_VERSION_VALUE = "wsgi.version"
+""" The wsgi version value """
+
+WSGI_MULTITHREAD_VALUE = "wsgi.multithread"
+""" The wsgi multithread value """
+
+WSGI_MULTIPROCESS_VALUE = "wsgi.multiprocess"
+""" The wsgi multiprocess value """
+
+WSGI_RUN_ONCE_VALUE = "wsgi.run_once"
+""" The wsgi run once value """
 
 SERVER_SOFTWARE_VALUE = "SERVER_SOFTWARE"
 """ The server software value """
@@ -96,19 +114,30 @@ DEFAULT_APPLICATION_CONTENT_TYPE = "application/x-www-form-urlencoded"
 DEFAULT_CONTENT_LENGTH = "0"
 """ The default content length """
 
-def simple_app(environment_map, start_response):
+def hello_application(environment_map, start_response):
     """
-    Simplest possible application object.
+    A simple hello world application object.
+
+    @type environment_map: Dictionary
+    @param environment_map: The map of environment settings.
+    @type start_response: Method
+    @param start_response: The start response function, to be called upon
+    the start of the response.
+    @rtype: List
+    @return: The list of return values to be read.
     """
 
     # sets the status value
     status = "200 OK"
 
-    response_headers = [("Content-type", "text/plain")]
+    # creates the response headers list
+    response_headers = [(CONTENT_TYPE_HEADER_VALUE, DEFAULT_CONTENT_TYPE)]
 
+    # starts the response
     start_response(status, response_headers)
 
-    return ["Brock you fuckers!\n" + str(environment_map)]
+    # returns the return values
+    return ["Hello World"]
 
 class MainServiceHttpWsgiHandler:
     """
@@ -179,16 +208,19 @@ class MainServiceHttpWsgiHandler:
         # retrieves the client hostname and port
         client_http_address, _client_http_port = request_connection_address
 
+        # sets the current environment items as the initial
+        # environment map
         environment_map = dict(os.environ.items())
-        environment_map["wsgi.input"] = request
-        environment_map["wsgi.errors"] = request
-        environment_map["wsgi.version"] = (1, 0)
-        environment_map["wsgi.multithread"] = False
-        environment_map["wsgi.multiprocess"] = True
-        environment_map["wsgi.run_once"] = True
-        environment_map["wsgi.multithread"] = 1
-        environment_map["wsgi.multiprocess"] = 0
-        environment_map["wsgi.run_once"] = 0
+
+        # sets the wsgi attributes in the environment map
+        environment_map[WSGI_INPUT_VALUE] = request
+        environment_map[WSGI_ERRORS_VALUE] = request
+        environment_map[WSGI_VERSION_VALUE] = (1, 0)
+        environment_map[WSGI_MULTITHREAD_VALUE] = False
+        environment_map[WSGI_MULTIPROCESS_VALUE] = True
+        environment_map[WSGI_RUN_ONCE_VALUE] = True
+
+        # sets the cgi attributes in the environment map
         environment_map[SERVER_SOFTWARE_VALUE] = request_server_identifier
         environment_map[SERVER_NAME_VALUE] = ""
         environment_map[SERVER_PROTOCOL_VALUE] = request_protocol_version
@@ -241,8 +273,8 @@ class MainServiceHttpWsgiHandler:
             # returns the default write method
             return request.write
 
-
-        result = simple_app(environment_map, start_response)
+        # calls the hello application retrieving the results
+        result = hello_application(environment_map, start_response)
 
         # iterates over all the data in the result
         # to write it to the request
