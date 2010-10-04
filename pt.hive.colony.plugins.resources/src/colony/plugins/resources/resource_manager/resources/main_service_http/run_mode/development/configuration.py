@@ -211,7 +211,9 @@ configuration = {
                          "handler" : "wsgi",
                          "allow_redirection" : False,
                          "request_properties" : {
-                             "base_path" : "${HOME}/wsgi-bin"
+                             "base_path" : "${HOME}/wsgi-bin",
+                             "script_name" : "server",
+                             "application_name" : "application"
                          }
                      },
                      "/web_administration" : {
