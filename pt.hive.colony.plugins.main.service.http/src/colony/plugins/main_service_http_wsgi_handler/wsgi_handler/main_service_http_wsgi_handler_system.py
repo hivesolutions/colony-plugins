@@ -38,9 +38,19 @@ __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
 import os
+import sys
 
 HANDLER_NAME = "wsgi"
 """ The handler name """
+
+BASE_PATH_VALUE = "base_path"
+""" The base path value """
+
+SCRIPT_NAME_VALUE = "script_name"
+""" The script name value """
+
+APPLICATION_NAME_VALUE = "application_name"
+""" The application name value """
 
 CONTENT_TYPE_HEADER_VALUE = "Content-Type"
 """ The content type value """
@@ -114,30 +124,14 @@ DEFAULT_APPLICATION_CONTENT_TYPE = "application/x-www-form-urlencoded"
 DEFAULT_CONTENT_LENGTH = "0"
 """ The default content length """
 
-def hello_application(environment_map, start_response):
-    """
-    A simple hello world application object.
+DEFAULT_PATH = "~/wsgi-bin"
+""" The default path """
 
-    @type environment_map: Dictionary
-    @param environment_map: The map of environment settings.
-    @type start_response: Method
-    @param start_response: The start response function, to be called upon
-    the start of the response.
-    @rtype: List
-    @return: The list of return values to be read.
-    """
+DEFAULT_SCRIPT_NAME = "server.py"
+""" The default script name """
 
-    # sets the status value
-    status = "200 OK"
-
-    # creates the response headers list
-    response_headers = [(CONTENT_TYPE_HEADER_VALUE, DEFAULT_CONTENT_TYPE)]
-
-    # starts the response
-    start_response(status, response_headers)
-
-    # returns the return values
-    return ["Hello World"]
+DEFAULT_APPLICATION_NAME = "server"
+""" The default application name """
 
 class MainServiceHttpWsgiHandler:
     """
@@ -175,6 +169,59 @@ class MainServiceHttpWsgiHandler:
         @param request: The http request to be handled.
         """
 
+        def start_response(status, response_headers, exception_info = None):
+            """
+            Method used to start the response value.
+
+            @type status: String
+            @param status: The status string value, containing the code and the
+            status message.
+            @type response_headers: List
+            @param response_headers: A list containing tuples for the header
+            values.
+            @type exception_info: ExceptionInfo
+            @param exception_info: Map containing the information about the
+            exception thrown.
+            @rtype: Method
+            @return: The method for the writing.
+            """
+
+            # in case the exception info is set
+            if exception_info:
+                try:
+                    # re-raises original exception
+                    raise exception_info[0], exception_info[1], exception_info[2]
+                finally:
+                    # unsets the exception info
+                    exception_info = None
+
+            # retrieves the status code string and the status message
+            # splitting the status value
+            status_code_string, _status_message = status.split(" ", 1)
+
+            # converts the status code string to integer
+            status_code = int(status_code_string)
+
+            # sets the request status code
+            request.status_code = status_code
+
+            # converts the response headers map
+            response_headers_map = dict(response_headers)
+
+            # iterates over all the response
+            for response_header_name, response_header_value in response_headers:
+                # sets the header in the request
+                request.set_header(response_header_name, response_header_value)
+
+            # retrieves the content type
+            content_type = response_headers_map.get(CONTENT_TYPE_HEADER_VALUE, DEFAULT_CONTENT_TYPE)
+
+            # sets the request content type
+            request.content_type = content_type
+
+            # returns the default write method
+            return request.write
+
         # retrieves the request server identifier protocol version
         request_server_identifier = request.get_server_identifier()
 
@@ -208,6 +255,27 @@ class MainServiceHttpWsgiHandler:
         # retrieves the client hostname and port
         client_http_address, _client_http_port = request_connection_address
 
+        # retrieves the base directory for file search
+        base_directory = request.properties.get(BASE_PATH_VALUE, DEFAULT_PATH)
+
+        # retrieves the real base directory
+        real_base_directory = self.main_service_http_wsgi_handler_plugin.resource_manager_plugin.get_real_string_value(base_directory)
+
+        # processes the base directory path
+        self._process_base_directory_path(real_base_directory)
+
+        # retrieves the script name
+        script_name = request.properties.get(SCRIPT_NAME_VALUE, DEFAULT_SCRIPT_NAME)
+
+        # retrieves the application name
+        application_name = request.properties.get(APPLICATION_NAME_VALUE, DEFAULT_APPLICATION_NAME)
+
+        # imports the script module
+        script_module = __import__(script_name)
+
+        # retrieves the application method from the script module
+        application_method = getattr(script_module, application_name)
+
         # sets the current environment items as the initial
         # environment map
         environment_map = dict(os.environ.items())
@@ -235,49 +303,25 @@ class MainServiceHttpWsgiHandler:
         environment_map[CONTENT_TYPE_VALUE] = request_content_type
         environment_map[CONTENT_LENGTH_VALUE] = request_content_length
 
-        def start_response(status, response_headers, exc_info = None):
-            #if exc_info:
-            #    try:
-            #        if headers_sent:
-                        # Re-raise original exception if headers sent
-            #            raise exc_info[0], exc_info[1], exc_info[2]
-            #    finally:
-            #        exc_info = None     # avoid dangling circular ref
-            #elif headers_set:
-            #    raise AssertionError("Headers already set!")
-
-            # retrieves the status code string and the status message
-            # splitting the status value
-            status_code_string, _status_message = status.split(" ", 1)
-
-            # converts the status code string to integer
-            status_code = int(status_code_string)
-
-            # sets the request status code
-            request.status_code = status_code
-
-            # converts the response headers map
-            response_headers_map = dict(response_headers)
-
-            # iterates over all the response
-            for response_header_name, response_header_value in response_headers:
-                # sets the header in the request
-                request.set_header(response_header_name, response_header_value)
-
-            # retrieves the content type
-            content_type = response_headers_map.get(CONTENT_TYPE_HEADER_VALUE, DEFAULT_CONTENT_TYPE)
-
-            # sets the request content type
-            request.content_type = content_type
-
-            # returns the default write method
-            return request.write
-
-        # calls the hello application retrieving the results
-        result = hello_application(environment_map, start_response)
+        # calls the application method retrieving the results
+        result = application_method(environment_map, start_response)
 
         # iterates over all the data in the result
         # to write it to the request
         for data in result:
             # writes the data to the request
             request.write(data)
+
+    def _process_base_directory_path(self, base_directory):
+        """
+        Processes the base directory path.
+
+        @type base_directory: String
+        @param base_directory: The base directory path to be processed.
+        """
+
+        # in case the base directory path does not exist
+        # in the system path
+        if not base_directory in sys.path:
+            # insets the base path into the system path
+            sys.path.insert(0, base_directory)

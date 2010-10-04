@@ -164,10 +164,10 @@ class MainServiceHttpFileHandler:
         # retrieves the default relative paths
         relative_paths = self.handler_configuration.get("relative_paths", False)
 
-        # sets the base directory for file search
+        # retrieves the base directory for file search
         base_directory = request.properties.get("base_path", default_path)
 
-        # sets the default page
+        # retrieves the default page
         default_page = request.properties.get("default_page", default_page)
 
         # retrieves the relative paths

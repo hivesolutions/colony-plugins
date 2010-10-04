@@ -222,7 +222,7 @@ class MainServiceHttpCgiHandler:
         else:
             request_path = request_resource_path
 
-        # sets the base directory for file search
+        # retrieves the base directory for file search
         base_directory = request.properties.get(BASE_PATH_VALUE, DEFAULT_PATH)
 
         # retrieves the real base directory
