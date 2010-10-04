@@ -212,7 +212,7 @@ configuration = {
                          "allow_redirection" : False,
                          "request_properties" : {
                              "base_path" : "${HOME}/wsgi-bin",
-                             "script_name" : "server",
+                             "module_name" : "server",
                              "application_name" : "application"
                          }
                      },
