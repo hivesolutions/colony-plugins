@@ -42,6 +42,7 @@ import base64
 import hashlib
 import datetime
 
+import colony.libs.string_util
 import colony.libs.string_buffer_util
 
 import service_openid_parser
@@ -50,7 +51,7 @@ import service_openid_exceptions
 DEFAULT_CHARSET = "utf-8"
 """ The default charset """
 
-DEFAULT_EXPIRES_IN = "1000"
+DEFAULT_EXPIRES_IN = "3600"
 """ The default expires in """
 
 DEFAULT_SIGNED_NAMES = ("op_endpoint", "return_to", "response_nonce", "assoc_handle", "claimed_id", "identity")
@@ -107,6 +108,12 @@ HMAC_SHA1_VALUE = "HMAC-SHA1"
 HMAC_SHA256_VALUE = "HMAC-SHA256"
 """ The hmac sha256 value """
 
+DH_SHA1_VALUE = "DH-SHA1"
+""" The dh sha1 value """
+
+DH_SHA256_VALUE = "DH-SHA256"
+""" The dh sha256 value """
+
 XRDS_LOCATION_VALUE = "X-XRDS-Location"
 """ The xrds location value """
 
@@ -119,15 +126,94 @@ DEFAULT_OPENID_ASSOCIATE_TYPE = HMAC_SHA256_VALUE
 DEFAULT_OPENID_SESSION_TYPE = "no-encryption"
 """ The default openid session type """
 
-NONCE_TIME_FORMAT = "%Y-%m-%dT%H:%M:%SUNIQUE"
+NONCE_TIME_FORMAT = "%Y-%m-%dT%H:%M:%SZUNIQUE"
 """ The nonce time format """
 
 MAXIMUM_NONCE_VALUES_LIST_SIZE = 1000
 """ The maximum nonce values list size """
 
 HMAC_HASH_MODULES_MAP = {HMAC_SHA1_VALUE : hashlib.sha1,
-                         HMAC_SHA256_VALUE : hashlib.sha256}
+                         HMAC_SHA256_VALUE : hashlib.sha256,
+                         DH_SHA1_VALUE : hashlib.sha1,
+                         DH_SHA256_VALUE : hashlib.sha1}
 """ The map associating the hmac values with the hashlib hash function modules """
+
+DEFAULT_PRIME_VALUE = 155172898181473697471232257763715539915724801966915404479707795314057629378541917580651227423698188993727816152646631438561595825688188889951272158842675419950341258706556549803580104870537681476726513255747040765857479291291572334510643245094715007229621094194349783925984760375594985848253359305585439638443L
+""" The default prime value to be used in diffie hellman """
+
+DEFAULT_BASE_VALUE = 2
+""" The default base value to be used in diffie hellman """
+
+DIFFIE_HELLMAN_ASSOCIATION_TYPES = (DH_SHA1_VALUE, DH_SHA256_VALUE)
+""" The diffie hellman association types """
+
+class DiffieHellman:
+    """
+    Class representing the diffie hellman,
+    cryptographic protocol.
+    """
+
+    a_value = None
+    """ The "a" value """
+
+    b_value = None
+    """ The "b" value """
+
+    p_value = None
+    """ The "p" (prime number) value """
+
+    g_value = None
+    """ The "g" (base) value """
+
+    def __init__(self, p_value = None, g_value = None):
+        """
+        Constructor of the class.
+        """
+
+        self.p_value = p_value
+        self.g_value = g_value
+
+    def generate_A(self):
+        """
+        Generates the "A" value to be sent to the "second"
+        party of the communication.
+
+        @rtype: int
+        @return: The generated "A" value.
+        """
+
+        return pow(self.g_value, self.a_value, self.p_value)
+
+    def generate_B(self):
+        """
+        Generates the "B" value to be sent to the "first"
+        party of the communication.
+
+        @rtype: int
+        @return: The generated "B" value.
+        """
+
+        return pow(self.g_value, self.b_value, self.p_value)
+
+    def calculate_Ka(self):
+        """
+        Calculates the secret "K" value for the first party.
+
+        @rtype: int
+        @return: The calculated secret "K" value.
+        """
+
+        return pow(self.B_value, self.a_value, self.p_value)
+
+    def calculate_Kb(self):
+        """
+        Calculates the secret "K" value for the second party.
+
+        @rtype: int
+        @return: The calculated secret "K" value.
+        """
+
+        return pow(self.A_value, self.b_value, self.p_value)
 
 class ServiceOpenid:
     """
@@ -307,7 +393,10 @@ class OpenidServer:
     openid_structure = None
     """ The openid structure """
 
-    def __init__(self, service_openid_plugin = None, random_plugin = None, service_openid = None, openid_structure = None):
+    diffie_hellman = None
+    """ the diffie hellman management structure """
+
+    def __init__(self, service_openid_plugin = None, random_plugin = None, service_openid = None, openid_structure = None, diffie_hellman = None):
         """
         Constructor of the class.
 
@@ -319,12 +408,15 @@ class OpenidServer:
         @param service_openid: The service openid.
         @type openid_structure: OpenidStructure
         @param openid_structure: The openid structure.
+        @type diffie_hellman: DiffieHellman
+        @param diffie_hellman: The diffie hellman management structure.
         """
 
         self.service_openid_plugin = service_openid_plugin
         self.random_plugin = random_plugin
         self.service_openid = service_openid
         self.openid_structure = openid_structure
+        self.diffie_hellman = diffie_hellman
 
     def open(self):
         """
@@ -340,7 +432,47 @@ class OpenidServer:
 
         pass
 
-    def generate_openid_structure(self, association_type, session_type, set_structure = True):
+    def btwoc(self, value):
+        """
+        Given some kind of integer (generally a long), this function
+        returns the big-endian two's complement as a binary string.
+
+        @type value: int
+        @param value: The value to be converted.
+        @rtype: String
+        @return: The big-endian two's complement as a binary string.
+        """
+
+        import pickle
+
+        l = list(pickle.encode_long(value))
+        l.reverse()
+        result = "".join(l)
+
+        # returns the result
+        return result
+
+    def mklong(self, btwoc):
+        """
+        Given a big-endian two's complement string, return the
+        long int it represents.
+
+        @type btwoc: String
+        @param btwoc: A big-endian two's complement string
+        @rtype: int
+        @return: The decoded int value.
+        """
+
+        import pickle
+
+        l = list(btwoc)
+        l.reverse()
+        result = pickle.decode_long("".join(l))
+
+        # returns the result
+        return result
+
+    def generate_openid_structure(self, association_type = HMAC_SHA256_VALUE, session_type = None, prime_value = None, base_value = None, consumer_public = None, set_structure = True):
         # creates a new openid structure
         openid_structure = OpenidStructure(association_type = association_type, session_type = session_type)
 
@@ -348,6 +480,22 @@ class OpenidServer:
         if set_structure:
             # sets the openid structure
             self.set_openid_structure(openid_structure)
+
+        prime_value = prime_value and self.mklong(base64.b64decode(prime_value)) or  None
+
+        base_value = base_value and self.mklong(base64.b64decode(base_value)) or None
+
+        consumer_public = consumer_public and self.mklong(base64.b64decode(consumer_public)) or None
+
+        prime_value = prime_value or DEFAULT_PRIME_VALUE
+
+        base_value = base_value or DEFAULT_BASE_VALUE
+
+        # creates the diffie hellman management structure with the prime
+        # and base values given
+        self.diffie_hellman = DiffieHellman(prime_value, base_value)
+
+        self.diffie_hellman.A_value = consumer_public
 
         # returns the openid structure
         return openid_structure
@@ -379,12 +527,20 @@ class OpenidServer:
         # sets the mac key in the openid structure
         self.openid_structure.mac_key = mac_key
 
+        # in case the current session type is of type diffie hellman
+        if self.openid_structure.session_type in DIFFIE_HELLMAN_ASSOCIATION_TYPES:
+            # generates a private key for the diffie hellman "b" value
+            private_key = self._generate_private_key()
+
+            # sets the "b" value in the diffie hellman management structure
+            self.diffie_hellman.b_value = private_key
+
         # returns the openid structure
         return self.openid_structure
 
     def openid_request(self):
-        # generates an invalidate handle
-        invalidate_handle = self._generate_handle()
+        # generates an invalidate handle if necessary
+        invalidate_handle = self.openid_structure.invalidate_handle or self._generate_handle()
 
         # retrieves the current date time
         current_date_time = datetime.datetime.utcnow()
@@ -403,7 +559,7 @@ class OpenidServer:
         self.openid_structure.mode = ID_RES_VALUE
 
         # sets the provider url in the openid structure
-        self.openid_structure.provider_url = "http://localhost:8080/openid/"
+        self.openid_structure.provider_url = "http://hivesolutions.dyndns.org:8080/openid/server"
 
         # sets the invalidate handle in the openid structure
         self.openid_structure.invalidate_handle = invalidate_handle
@@ -419,6 +575,70 @@ class OpenidServer:
 
         # sets the signature in the openid structure
         self.openid_structure.signature = signature
+
+    def get_response_parameters(self):
+        # start the parameters map
+        parameters = {}
+
+        # sets the namespace
+        parameters["ns"] = self.openid_structure.ns
+
+        # sets the association handle
+        parameters["assoc_handle"] = self.openid_structure.association_handle
+
+        # sets the session type
+        parameters["session_type"] = self.openid_structure.session_type
+
+        # sets the association type
+        parameters["assoc_type"] = self.openid_structure.association_type
+
+        # sets the expires in
+        parameters["expires_in"] = self.openid_structure.expires_in
+
+        # in case the current session type is of type diffie hellman
+        if self.openid_structure.session_type in DIFFIE_HELLMAN_ASSOCIATION_TYPES:
+            # generates the "B" value
+            B_value = self.diffie_hellman.generate_B()
+
+            # calculates the shared key value
+            key_value = self.diffie_hellman.calculate_Kb()
+
+            # decodes the mac key using base64
+            decoded_mac_key = base64.b64decode(self.openid_structure.mac_key)
+
+            # retrieves the hash module from the hmac hash modules map
+            hash_module = HMAC_HASH_MODULES_MAP.get(self.openid_structure.session_type, None)
+
+            # encodes the key value in order to be used in the xor operation
+            encoded_key_value = hash_module(self.btwoc(key_value)).digest()
+
+            # calculates the encoded mac key value and retrieves the digest
+            encoded_mac_key = colony.libs.string_util.xor_string_value(decoded_mac_key, encoded_key_value)
+
+            # encodes the encoded mac key into base64
+            encoded_mac_key = base64.b64encode(encoded_mac_key)
+
+            # sets the dh server public
+            parameters["dh_server_public"] = base64.b64encode(self.btwoc(B_value))
+
+            # sets the encoded mac key
+            parameters["enc_mac_key"] = encoded_mac_key
+        else:
+            # sets the mac key
+            parameters["mac_key"] = self.openid_structure.mac_key
+
+        # returns the parameters
+        return parameters
+
+    def get_encoded_response_parameters(self):
+        # retrieves the response parameters
+        response_parameters = self.get_response_parameters()
+
+        # encodes the response parameters
+        encoded_response_parameters = self._encode_key_value(response_parameters)
+
+        # returns the encoded response parameters
+        return encoded_response_parameters
 
     def get_return_url(self):
         # sets the retrieval url
@@ -568,6 +788,15 @@ class OpenidServer:
         # returns the encoded mac key value
         return mac_key_value_encoded
 
+    def _generate_private_key(self):
+        import random
+
+        # generates the private key
+        private_key_value = int(random.random() * self.diffie_hellman.p_value - 1)
+
+        # returns the private key value
+        return private_key_value
+
     def _build_get_url(self, base_url, parameters):
         """
         Builds the url for the given url and parameters.
@@ -584,12 +813,33 @@ class OpenidServer:
         # encodes the parameters with the url encode
         parameters_encoded = colony.libs.quote_util.url_encode(parameters)
 
-        # creates the url value by appending the base url with
-        # the parameters encoded
-        url = base_url + "?" + parameters_encoded
+        # in case the base url does not contain any parameters
+        if base_url.find("?") == -1:
+            # creates the url value by appending the base url with
+            # the parameters encoded (new parameters)
+            url = base_url + "?" + parameters_encoded
+        # otherwise
+        else:
+            # creates the url value by appending the base url with
+            # the parameters encoded (existing parameters)
+            url = base_url + "&" + parameters_encoded
 
         # returns the built url
         return url
+
+    def _encode_key_value(self, values_map):
+        """
+        Encodes the given values map into the key value
+        encoding.
+
+        @type values_map: Dictionary
+        @param values_map: The map containing the values to be
+        encoded.
+        @rtype: String
+        @return: The key value encoded string.
+        """
+
+        return "\n".join([key + ":" + value for key, value in values_map.items()])
 
 class OpenidClient:
     """
