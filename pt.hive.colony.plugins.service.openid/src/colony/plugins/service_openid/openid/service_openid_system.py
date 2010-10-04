@@ -40,6 +40,7 @@ __license__ = "GNU General Public License (GPL), Version 3"
 import hmac
 import base64
 import hashlib
+import datetime
 
 import colony.libs.string_buffer_util
 
@@ -117,6 +118,9 @@ DEFAULT_OPENID_ASSOCIATE_TYPE = HMAC_SHA256_VALUE
 
 DEFAULT_OPENID_SESSION_TYPE = "no-encryption"
 """ The default openid session type """
+
+NONCE_TIME_FORMAT = "%Y-%m-%dT%H:%M:%SUNIQUE"
+""" The nonce time format """
 
 MAXIMUM_NONCE_VALUES_LIST_SIZE = 1000
 """ The maximum nonce values list size """
@@ -358,7 +362,7 @@ class OpenidServer:
         """
 
         # generates an association handle
-        association_handle = self._generate_association_handle()
+        association_handle = self._generate_handle()
 
         # retrieves the association type as the key type
         key_type = self.openid_structure.get_association_type()
@@ -379,6 +383,22 @@ class OpenidServer:
         return self.openid_structure
 
     def openid_request(self):
+        # generates an invalidate handle
+        invalidate_handle = self._generate_handle()
+
+        # retrieves the current date time
+        current_date_time = datetime.datetime.utcnow()
+
+        # converts the current date time to string
+        current_date_time_string = current_date_time.strftime(NONCE_TIME_FORMAT)
+
+        # generates a random handle
+        random_handle = self._generate_handle()
+
+        # creates the response nonce appending the current date time string
+        # to the random handle
+        response_nonce = current_date_time_string + random_handle
+
         # sets the mode in the openid structure
         self.openid_structure.mode = ID_RES_VALUE
 
@@ -386,10 +406,10 @@ class OpenidServer:
         self.openid_structure.provider_url = "http://localhost:8080/openid/"
 
         # sets the invalidate handle in the openid structure
-        self.openid_structure.invalidate_handle = "123123123123"
+        self.openid_structure.invalidate_handle = invalidate_handle
 
         # sets the response nonce in the openid structure
-        self.openid_structure.response_nonce = "2005-05-15T17:11:51ZUNIQUE123123123123" + self._generate_association_handle()
+        self.openid_structure.response_nonce = response_nonce
 
         # sets the signed in the openid structure
         self.openid_structure.signed = ",".join(DEFAULT_SIGNED_NAMES)
@@ -516,7 +536,7 @@ class OpenidServer:
         # returns the signature
         return signature
 
-    def _generate_association_handle(self, key_type = HMAC_SHA1_VALUE):
+    def _generate_handle(self):
         # generates a random sha1
         random_sha1 = self.random_plugin.generate_random_sha1()
 
@@ -524,10 +544,10 @@ class OpenidServer:
         random_sha1_value = random_sha1.digest()
 
         # encodes the random sha1 value into base64
-        association_handle = base64.b64encode(random_sha1_value)
+        handle = base64.b64encode(random_sha1_value)
 
-        # returns the association handle
-        return association_handle
+        # returns the handle
+        return handle
 
     def _generate_mac_key(self, key_type = HMAC_SHA1_VALUE):
         # in case the key type is sha1
