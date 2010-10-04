@@ -46,8 +46,8 @@ HANDLER_NAME = "wsgi"
 BASE_PATH_VALUE = "base_path"
 """ The base path value """
 
-SCRIPT_NAME_VALUE = "script_name"
-""" The script name value """
+MODULE_NAME_VALUE = "module_name"
+""" The module name value """
 
 APPLICATION_NAME_VALUE = "application_name"
 """ The application name value """
@@ -127,10 +127,10 @@ DEFAULT_CONTENT_LENGTH = "0"
 DEFAULT_PATH = "~/wsgi-bin"
 """ The default path """
 
-DEFAULT_SCRIPT_NAME = "server.py"
-""" The default script name """
+DEFAULT_MODULE_NAME = "server"
+""" The default module name """
 
-DEFAULT_APPLICATION_NAME = "server"
+DEFAULT_APPLICATION_NAME = "application"
 """ The default application name """
 
 class MainServiceHttpWsgiHandler:
@@ -264,14 +264,14 @@ class MainServiceHttpWsgiHandler:
         # processes the base directory path
         self._process_base_directory_path(real_base_directory)
 
-        # retrieves the script name
-        script_name = request.properties.get(SCRIPT_NAME_VALUE, DEFAULT_SCRIPT_NAME)
+        # retrieves the module name
+        module_name = request.properties.get(MODULE_NAME_VALUE, DEFAULT_MODULE_NAME)
 
         # retrieves the application name
         application_name = request.properties.get(APPLICATION_NAME_VALUE, DEFAULT_APPLICATION_NAME)
 
         # imports the script module
-        script_module = __import__(script_name)
+        script_module = __import__(module_name)
 
         # retrieves the application method from the script module
         application_method = getattr(script_module, application_name)
