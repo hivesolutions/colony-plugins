@@ -326,8 +326,8 @@ class ServiceOpenid:
         @return: The big-endian two's complement as a binary string.
         """
 
-        # encodes the long value
-        long_value_encoded = colony.libs.encode_util.encode_long(long_value)
+        # encodes the long value into string value
+        long_value_encoded = colony.libs.encode_util.encode_two_complement_string(long_value)
 
         # converts the long value to a list value
         list_value = list(long_value_encoded)
@@ -361,8 +361,8 @@ class ServiceOpenid:
         # joins the list value to retrieve the string value
         string_value = "".join(list_value)
 
-        # decodes the long
-        result = colony.libs.encode_util.decode_long(string_value)
+        # decodes the string value into long
+        result = colony.libs.encode_util.decode_two_complement_string(string_value)
 
         # returns the result
         return result
