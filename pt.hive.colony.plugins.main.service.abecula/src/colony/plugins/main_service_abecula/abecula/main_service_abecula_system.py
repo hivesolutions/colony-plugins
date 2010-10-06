@@ -924,7 +924,7 @@ class AbeculaRequest:
     response_headers_map = {}
     """ The response headers map """
 
-    received_message = "none"
+    received_message = None
     """ The received message """
 
     message_stream = None
