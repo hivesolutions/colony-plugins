@@ -42,6 +42,7 @@ import base64
 import hashlib
 import datetime
 
+import colony.libs.encode_util
 import colony.libs.string_util
 import colony.libs.string_buffer_util
 
@@ -311,6 +312,60 @@ class ServiceOpenid:
         nonce_values_list.insert(0, nonce_value)
         nonce_values_map[nonce_value] = True
 
+    def _btwoc(self, long_value):
+        """
+        Given some kind of integer (generally a long), this function
+        returns the big-endian two's complement as a binary string.
+
+        @type value: int
+        @param value: The value to be converted.
+        @rtype: String
+        @return: The big-endian two's complement as a binary string.
+        """
+
+        # encodes the long value
+        long_value_encoded = colony.libs.encode_util.encode_long(long_value)
+
+        # converts the long value to a list value
+        list_value = list(long_value_encoded)
+
+        # reverses the list
+        list_value.reverse()
+
+        # joins the list to retrieve the result
+        result = "".join(list_value)
+
+        # returns the result
+        return result
+
+    def _mklong(self, btwoc):
+        """
+        Given a big-endian two's complement string, return the
+        long int it represents.
+
+        @type btwoc: String
+        @param btwoc: A big-endian two's complement string
+        @rtype: int
+        @return: The decoded int value.
+        """
+
+        # converts the string value to string
+        list_value = list(btwoc)
+
+        # reverses the string value
+        list_value.reverse()
+
+        # joins the list value to retrieve the string value
+        string_value = "".join(list_value)
+
+        # decodes the long
+        result = colony.libs.encode_util.decode_long(string_value)
+
+        print "PASSOU AKKI !!!!!!!!"
+
+        # returns the result
+        return result
+
 class OpenidServer:
     """
     The class that represents an openid server connection.
@@ -373,55 +428,6 @@ class OpenidServer:
 
         pass
 
-    def btwoc(self, value):
-        """
-        Given some kind of integer (generally a long), this function
-        returns the big-endian two's complement as a binary string.
-
-        @type value: int
-        @param value: The value to be converted.
-        @rtype: String
-        @return: The big-endian two's complement as a binary string.
-        """
-
-        import pickle
-
-        list_value = list(pickle.encode_long(value))
-
-        # reverses the list
-        list_value.reverse()
-
-        # joins the list to retrieve the result
-        result = "".join(list_value)
-
-        # returns the result
-        return result
-
-    def mklong(self, btwoc):
-        """
-        Given a big-endian two's complement string, return the
-        long int it represents.
-
-        @type btwoc: String
-        @param btwoc: A big-endian two's complement string
-        @rtype: int
-        @return: The decoded int value.
-        """
-
-        import pickle
-
-        # converts the string value to string
-        list_value = list(btwoc)
-
-        # reverses the string value
-        list_value.reverse()
-
-        # decodes the long
-        result = pickle.decode_long("".join(list_value))
-
-        # returns the result
-        return result
-
     def generate_openid_structure(self, association_type = HMAC_SHA256_VALUE, session_type = None, prime_value = None, base_value = None, consumer_public = None, set_structure = True):
         # creates a new openid structure
         openid_structure = OpenidStructure(association_type = association_type, session_type = session_type)
@@ -432,9 +438,9 @@ class OpenidServer:
             self.set_openid_structure(openid_structure)
 
         # decodes the diffie hellman values in case they exist
-        prime_value = prime_value and self.mklong(base64.b64decode(prime_value)) or  None
-        base_value = base_value and self.mklong(base64.b64decode(base_value)) or None
-        consumer_public = consumer_public and self.mklong(base64.b64decode(consumer_public)) or None
+        prime_value = prime_value and self.service_openid.mklong(base64.b64decode(prime_value)) or  None
+        base_value = base_value and self.service_openid.mklong(base64.b64decode(base_value)) or None
+        consumer_public = consumer_public and self.service_openid.mklong(base64.b64decode(consumer_public)) or None
 
         # sets the default diffie hellman values
         prime_value = prime_value or DEFAULT_PRIME_VALUE
@@ -565,7 +571,7 @@ class OpenidServer:
             hash_module = HMAC_HASH_MODULES_MAP.get(self.openid_structure.session_type, None)
 
             # encodes the key value in order to be used in the xor operation
-            encoded_key_value = hash_module(self.btwoc(key_value)).digest()
+            encoded_key_value = hash_module(self.service_openid.btwoc(key_value)).digest()
 
             # calculates the encoded mac key value and retrieves the digest
             encoded_mac_key = colony.libs.string_util.xor_string_value(decoded_mac_key, encoded_key_value)
@@ -574,7 +580,7 @@ class OpenidServer:
             encoded_mac_key = base64.b64encode(encoded_mac_key)
 
             # sets the dh server public
-            parameters["dh_server_public"] = base64.b64encode(self.btwoc(B_value))
+            parameters["dh_server_public"] = base64.b64encode(self.service_openid.btwoc(B_value))
 
             # sets the encoded mac key
             parameters["enc_mac_key"] = encoded_mac_key
