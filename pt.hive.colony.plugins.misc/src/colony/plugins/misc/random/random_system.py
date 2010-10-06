@@ -42,6 +42,9 @@ import time
 import random
 import hashlib
 
+TIME_FACTOR = 1000
+""" The time factor """
+
 MAXIMUM_SESSION_KEY = 18446744073709551616L
 """ The maximum session key"""
 
@@ -76,11 +79,37 @@ class Random:
         # retrieves the current time
         current_time = time.time()
 
+        # converts the current time to integer
+        current_time_integer = int(current_time * TIME_FACTOR)
+
         # creates the random value
-        random = "%s%s%s%s"  % ((self.randrange(0, MAXIMUM_SESSION_KEY), process_id, current_time, SECRET_KEY))
+        random = "%s%s%s%s"  % ((self.randrange(0, MAXIMUM_SESSION_KEY), process_id, current_time_integer, SECRET_KEY))
 
         # returns the random value
         return random
+
+    def generate_random_int(self):
+        # generates a random value
+        random = self.generate_random()
+
+        # converts the random to int value
+        random_int = int(random)
+
+        # returns the random int value
+        return random_int
+
+    def generate_random_value(self):
+        # generates a random int value
+        random_int = self.generate_random_int()
+
+        # sets the current seed in random
+        random.seed(random_int)
+
+        # generates a random value
+        random_value = random.random()
+
+        # returns the random value
+        return random_value
 
     def generate_random_md5(self):
         # generates a random value

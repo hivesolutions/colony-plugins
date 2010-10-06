@@ -89,6 +89,12 @@ class RandomPlugin(colony.base.plugin_system.Plugin):
     def generate_random(self):
         return self.random.generate_random()
 
+    def generate_random_int(self):
+        return self.random.generate_random_int()
+
+    def generate_random_value(self):
+        return self.random.generate_random_value()
+
     def generate_random_md5(self):
         return self.random.generate_random_md5()
 
