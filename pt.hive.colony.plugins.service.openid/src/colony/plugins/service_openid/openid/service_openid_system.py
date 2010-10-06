@@ -115,6 +115,9 @@ DH_SHA1_VALUE = "DH-SHA1"
 DH_SHA256_VALUE = "DH-SHA256"
 """ The dh sha256 value """
 
+NO_ENCRYPTION_VALUE = "no-encryption"
+""" The no encryption value """
+
 XRDS_LOCATION_VALUE = "X-XRDS-Location"
 """ The xrds location value """
 
@@ -361,8 +364,6 @@ class ServiceOpenid:
         # decodes the long
         result = colony.libs.encode_util.decode_long(string_value)
 
-        print "PASSOU AKKI !!!!!!!!"
-
         # returns the result
         return result
 
@@ -428,7 +429,7 @@ class OpenidServer:
 
         pass
 
-    def generate_openid_structure(self, association_type = HMAC_SHA256_VALUE, session_type = None, prime_value = None, base_value = None, consumer_public = None, set_structure = True):
+    def generate_openid_structure(self, association_type = HMAC_SHA256_VALUE, session_type = NO_ENCRYPTION_VALUE, prime_value = None, base_value = None, consumer_public = None, set_structure = True):
         # creates a new openid structure
         openid_structure = OpenidStructure(association_type = association_type, session_type = session_type)
 
@@ -438,9 +439,9 @@ class OpenidServer:
             self.set_openid_structure(openid_structure)
 
         # decodes the diffie hellman values in case they exist
-        prime_value = prime_value and self.service_openid.mklong(base64.b64decode(prime_value)) or  None
-        base_value = base_value and self.service_openid.mklong(base64.b64decode(base_value)) or None
-        consumer_public = consumer_public and self.service_openid.mklong(base64.b64decode(consumer_public)) or None
+        prime_value = prime_value and self.service_openid._mklong(base64.b64decode(prime_value)) or  None
+        base_value = base_value and self.service_openid._mklong(base64.b64decode(base_value)) or None
+        consumer_public = consumer_public and self.service_openid._mklong(base64.b64decode(consumer_public)) or None
 
         # sets the default diffie hellman values
         prime_value = prime_value or DEFAULT_PRIME_VALUE
@@ -473,11 +474,11 @@ class OpenidServer:
         # generates an association handle
         association_handle = self._generate_handle()
 
-        # retrieves the association type as the key type
-        key_type = self.openid_structure.get_association_type()
+        # retrieves the mac key type to be used
+        mac_key_type = self._get_mac_key_type()
 
         # generates the mac key
-        mac_key = self._generate_mac_key(key_type)
+        mac_key = self._generate_mac_key(mac_key_type)
 
         # sets the association handle in the openid structure
         self.openid_structure.association_handle = association_handle
@@ -520,7 +521,7 @@ class OpenidServer:
         self.openid_structure.mode = ID_RES_VALUE
 
         # sets the provider url in the openid structure
-        self.openid_structure.provider_url = "http://hivesolutions.dyndns.org:8080/openid/server"
+        self.openid_structure.provider_url = "http://hivesolutions.dyndns.org:8484/openid/server"
 
         # sets the invalidate handle in the openid structure
         self.openid_structure.invalidate_handle = invalidate_handle
@@ -558,6 +559,9 @@ class OpenidServer:
 
         # in case the current session type is of type diffie hellman
         if self.openid_structure.session_type in DIFFIE_HELLMAN_ASSOCIATION_TYPES:
+            # retrieves the mac key type to be used
+            mac_key_type = self._get_mac_key_type()
+
             # generates the "B" value
             B_value = self.diffie_hellman.generate_B()
 
@@ -568,10 +572,10 @@ class OpenidServer:
             decoded_mac_key = base64.b64decode(self.openid_structure.mac_key)
 
             # retrieves the hash module from the hmac hash modules map
-            hash_module = HMAC_HASH_MODULES_MAP.get(self.openid_structure.session_type, None)
+            hash_module = HMAC_HASH_MODULES_MAP.get(mac_key_type, None)
 
             # encodes the key value in order to be used in the xor operation
-            encoded_key_value = hash_module(self.service_openid.btwoc(key_value)).digest()
+            encoded_key_value = hash_module(self.service_openid._btwoc(key_value)).digest()
 
             # calculates the encoded mac key value and retrieves the digest
             encoded_mac_key = colony.libs.string_util.xor_string_value(decoded_mac_key, encoded_key_value)
@@ -580,7 +584,7 @@ class OpenidServer:
             encoded_mac_key = base64.b64encode(encoded_mac_key)
 
             # sets the dh server public
-            parameters["dh_server_public"] = base64.b64encode(self.service_openid.btwoc(B_value))
+            parameters["dh_server_public"] = base64.b64encode(self.service_openid._btwoc(B_value))
 
             # sets the encoded mac key
             parameters["enc_mac_key"] = encoded_mac_key
@@ -667,6 +671,28 @@ class OpenidServer:
 
         self.openid_structure = openid_structure
 
+    def _get_mac_key_type(self):
+        """
+        Retrieves the type of hashing to be used in the
+        mac key.
+
+        @rtype: String
+        @return: The type of hashing to be used in the mac key.
+        """
+
+        # in case the current session is of type no encryption
+        if self.openid_structure.session_type == NO_ENCRYPTION_VALUE:
+            # returns the current association type
+            return self.openid_structure.association_type
+        # in case the current session is of type dh sha1
+        elif self.openid_structure.session_type == DH_SHA1_VALUE:
+            # returns the hmac sha1 value
+            return HMAC_SHA1_VALUE
+        # in case the current session is of type dh sha256
+        elif self.openid_structure.session_type == DH_SHA256_VALUE:
+            # returns the hmac sha256 value
+            return HMAC_SHA256_VALUE
+
     def _generate_signature(self):
         # sets the signature items list
         signed_items_list = DEFAULT_SIGNED_ITEMS
@@ -730,13 +756,13 @@ class OpenidServer:
         # returns the handle
         return handle
 
-    def _generate_mac_key(self, key_type = HMAC_SHA1_VALUE):
+    def _generate_mac_key(self, mac_key_type = HMAC_SHA1_VALUE):
         # in case the key type is sha1
-        if key_type == HMAC_SHA1_VALUE:
+        if mac_key_type == HMAC_SHA1_VALUE:
             # generates a mac key with the sha1 random value
             mac_key = self.random_plugin.generate_random_sha1()
         # in case the key type is sha256
-        elif key_type == HMAC_SHA256_VALUE:
+        elif mac_key_type == HMAC_SHA256_VALUE:
             # generates a mac key with the sha256 random value
             mac_key = self.random_plugin.generate_random_sha256()
 
@@ -750,10 +776,19 @@ class OpenidServer:
         return mac_key_value_encoded
 
     def _generate_private_key(self):
-        import random
+        """
+        Generates a private key long number, based in the current
+        diffie hellman "p" value.
+        """
 
-        # generates the private key
-        private_key_value = int(random.random() * self.diffie_hellman.p_value - 1)
+        # retrieves the diffie hellman "p" value
+        diffie_hellman_p_value = self.diffie_hellman.get_p_value()
+
+        # generates a "pure" random value
+        random_value = self.random_plugin.generate_random_value()
+
+        # normalizes the random value, creating the private key value
+        private_key_value = int(random_value * diffie_hellman_p_value - 1)
 
         # returns the private key value
         return private_key_value
