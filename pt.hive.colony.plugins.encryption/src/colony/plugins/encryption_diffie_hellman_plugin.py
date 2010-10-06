@@ -87,5 +87,5 @@ class EncryptionDiffieHellmanPlugin(colony.base.plugin_system.Plugin):
     def dependency_injected(self, plugin):
         colony.base.plugin_system.Plugin.dependency_injected(self, plugin)
 
-    def create_client(self, parameters):
-        return self.format_mime.create_client(parameters)
+    def create_structure(self, parameters):
+        return self.encryption_diffie_hellman.create_client(parameters)
