@@ -1724,7 +1724,7 @@ class HttpRequest:
     headers_out = {}
     """ The headers out value (deprecated) """
 
-    received_message = "none"
+    received_message = None
     """ The received message """
 
     content_type = None
