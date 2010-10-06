@@ -521,7 +521,7 @@ class OpenidServer:
         self.openid_structure.mode = ID_RES_VALUE
 
         # sets the provider url in the openid structure
-        self.openid_structure.provider_url = "http://hivesolutions.dyndns.org:8484/openid/server"
+        self.openid_structure.provider_url = "http://hivesolutions.dyndns.org:8080/openid/server"
 
         # sets the invalidate handle in the openid structure
         self.openid_structure.invalidate_handle = invalidate_handle
