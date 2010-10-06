@@ -138,82 +138,14 @@ HMAC_HASH_MODULES_MAP = {HMAC_SHA1_VALUE : hashlib.sha1,
                          DH_SHA256_VALUE : hashlib.sha1}
 """ The map associating the hmac values with the hashlib hash function modules """
 
+DIFFIE_HELLMAN_ASSOCIATION_TYPES = (DH_SHA1_VALUE, DH_SHA256_VALUE)
+""" The diffie hellman association types """
+
 DEFAULT_PRIME_VALUE = 155172898181473697471232257763715539915724801966915404479707795314057629378541917580651227423698188993727816152646631438561595825688188889951272158842675419950341258706556549803580104870537681476726513255747040765857479291291572334510643245094715007229621094194349783925984760375594985848253359305585439638443L
 """ The default prime value to be used in diffie hellman """
 
 DEFAULT_BASE_VALUE = 2
 """ The default base value to be used in diffie hellman """
-
-DIFFIE_HELLMAN_ASSOCIATION_TYPES = (DH_SHA1_VALUE, DH_SHA256_VALUE)
-""" The diffie hellman association types """
-
-class DiffieHellman:
-    """
-    Class representing the diffie hellman,
-    cryptographic protocol.
-    """
-
-    a_value = None
-    """ The "a" value """
-
-    b_value = None
-    """ The "b" value """
-
-    p_value = None
-    """ The "p" (prime number) value """
-
-    g_value = None
-    """ The "g" (base) value """
-
-    def __init__(self, p_value = None, g_value = None):
-        """
-        Constructor of the class.
-        """
-
-        self.p_value = p_value
-        self.g_value = g_value
-
-    def generate_A(self):
-        """
-        Generates the "A" value to be sent to the "second"
-        party of the communication.
-
-        @rtype: int
-        @return: The generated "A" value.
-        """
-
-        return pow(self.g_value, self.a_value, self.p_value)
-
-    def generate_B(self):
-        """
-        Generates the "B" value to be sent to the "first"
-        party of the communication.
-
-        @rtype: int
-        @return: The generated "B" value.
-        """
-
-        return pow(self.g_value, self.b_value, self.p_value)
-
-    def calculate_Ka(self):
-        """
-        Calculates the secret "K" value for the first party.
-
-        @rtype: int
-        @return: The calculated secret "K" value.
-        """
-
-        return pow(self.B_value, self.a_value, self.p_value)
-
-    def calculate_Kb(self):
-        """
-        Calculates the secret "K" value for the second party.
-
-        @rtype: int
-        @return: The calculated secret "K" value.
-        """
-
-        return pow(self.A_value, self.b_value, self.p_value)
 
 class ServiceOpenid:
     """
@@ -250,6 +182,9 @@ class ServiceOpenid:
         @return: The created remote server.
         """
 
+        # retrieves the encryption diffie hellman plugin
+        encryption_diffie_hellman_plugin = self.service_openid_plugin.encryption_diffie_hellman_plugin
+
         # retrieves the random plugin
         random_plugin = self.service_openid_plugin.random_plugin
 
@@ -257,7 +192,7 @@ class ServiceOpenid:
         openid_structure = service_attributes.get("openid_structure", None)
 
         # creates the openid server
-        openid_server = OpenidServer(self.service_openid_plugin, random_plugin, self, openid_structure)
+        openid_server = OpenidServer(self.service_openid_plugin, encryption_diffie_hellman_plugin, random_plugin, self, openid_structure)
 
         # in case the server is meant to be open
         # opens the server
@@ -384,6 +319,9 @@ class OpenidServer:
     service_openid_plugin = None
     """ The service openid plugin """
 
+    encryption_diffie_hellman_plugin = None
+    """ The encryption diffie hellman plugin """
+
     random_plugin = None
     """ The random plugin """
 
@@ -396,12 +334,14 @@ class OpenidServer:
     diffie_hellman = None
     """ the diffie hellman management structure """
 
-    def __init__(self, service_openid_plugin = None, random_plugin = None, service_openid = None, openid_structure = None, diffie_hellman = None):
+    def __init__(self, service_openid_plugin = None, encryption_diffie_hellman_plugin = None, random_plugin = None, service_openid = None, openid_structure = None, diffie_hellman = None):
         """
         Constructor of the class.
 
         @type service_openid_plugin: ServiceOpenidPlugin
         @param service_openid_plugin: The service openid plugin.
+        @type encryption_diffie_hellman_plugin: EncryptionDiffieHellmanPlugin
+        @param encryption_diffie_hellman_plugin: The encryption diffie hellman plugin.
         @type random_plugin: RandomPlugin
         @param random_plugin: The random plugin.
         @type service_openid: ServiceOpenid
@@ -413,6 +353,7 @@ class OpenidServer:
         """
 
         self.service_openid_plugin = service_openid_plugin
+        self.encryption_diffie_hellman_plugin = encryption_diffie_hellman_plugin
         self.random_plugin = random_plugin
         self.service_openid = service_openid
         self.openid_structure = openid_structure
@@ -445,9 +386,13 @@ class OpenidServer:
 
         import pickle
 
-        l = list(pickle.encode_long(value))
-        l.reverse()
-        result = "".join(l)
+        list_value = list(pickle.encode_long(value))
+
+        # reverses the list
+        list_value.reverse()
+
+        # joins the list to retrieve the result
+        result = "".join(list_value)
 
         # returns the result
         return result
@@ -465,9 +410,14 @@ class OpenidServer:
 
         import pickle
 
-        l = list(btwoc)
-        l.reverse()
-        result = pickle.decode_long("".join(l))
+        # converts the string value to string
+        list_value = list(btwoc)
+
+        # reverses the string value
+        list_value.reverse()
+
+        # decodes the long
+        result = pickle.decode_long("".join(list_value))
 
         # returns the result
         return result
@@ -481,21 +431,26 @@ class OpenidServer:
             # sets the openid structure
             self.set_openid_structure(openid_structure)
 
+        # decodes the diffie hellman values in case they exist
         prime_value = prime_value and self.mklong(base64.b64decode(prime_value)) or  None
-
         base_value = base_value and self.mklong(base64.b64decode(base_value)) or None
-
         consumer_public = consumer_public and self.mklong(base64.b64decode(consumer_public)) or None
 
+        # sets the default diffie hellman values
         prime_value = prime_value or DEFAULT_PRIME_VALUE
-
         base_value = base_value or DEFAULT_BASE_VALUE
+
+        # creates the parameters to send to be used in the diffie hellman
+        # structure creation
+        parameters = {"prime_value" : prime_value,
+                      "base_value" : base_value}
 
         # creates the diffie hellman management structure with the prime
         # and base values given
-        self.diffie_hellman = DiffieHellman(prime_value, base_value)
+        self.diffie_hellman = self.encryption_diffie_hellman_plugin.create_structure(parameters)
 
-        self.diffie_hellman.A_value = consumer_public
+        # sets the a value in the diffie hellman structure
+        self.diffie_hellman.set_A_value(consumer_public)
 
         # returns the openid structure
         return openid_structure
@@ -533,7 +488,7 @@ class OpenidServer:
             private_key = self._generate_private_key()
 
             # sets the "b" value in the diffie hellman management structure
-            self.diffie_hellman.b_value = private_key
+            self.diffie_hellman.set_b_value(private_key)
 
         # returns the openid structure
         return self.openid_structure

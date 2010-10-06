@@ -60,6 +60,8 @@ class ServiceOpenidPlugin(colony.base.plugin_system.Plugin):
                     colony.base.plugin_system.PluginDependency(
                     "pt.hive.colony.plugins.service.yadis", "1.0.0"),
                     colony.base.plugin_system.PluginDependency(
+                    "pt.hive.colony.plugins.encryption.diffie_hellman", "1.0.0"),
+                    colony.base.plugin_system.PluginDependency(
                     "pt.hive.colony.plugins.misc.random", "1.0.0")]
     events_handled = []
     events_registrable = []
@@ -70,6 +72,7 @@ class ServiceOpenidPlugin(colony.base.plugin_system.Plugin):
 
     main_client_http_plugin = None
     service_yadis_plugin = None
+    encryption_diffie_hellman_plugin = None
     random_plugin = None
 
     def load_plugin(self):
@@ -134,6 +137,13 @@ class ServiceOpenidPlugin(colony.base.plugin_system.Plugin):
     @colony.base.decorators.plugin_inject("pt.hive.colony.plugins.service.yadis")
     def set_service_yadis_plugin(self, service_yadis_plugin):
         self.service_yadis_plugin = service_yadis_plugin
+
+    def get_encryption_diffie_hellman_plugin(self):
+        return self.encryption_diffie_hellman_plugin
+
+    @colony.base.decorators.plugin_inject("pt.hive.colony.plugins.encryption.diffie_hellman")
+    def set_encryption_diffie_hellman_plugin(self, encryption_diffie_hellman_plugin):
+        self.encryption_diffie_hellman_plugin = encryption_diffie_hellman_plugin
 
     def get_random_plugin(self):
         return self.random_plugin
