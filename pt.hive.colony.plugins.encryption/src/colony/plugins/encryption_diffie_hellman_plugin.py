@@ -59,15 +59,15 @@ class EncryptionDiffieHellmanPlugin(colony.base.plugin_system.Plugin):
     dependencies = []
     events_handled = []
     events_registrable = []
-    main_modules = ["encryption.diffie_hellman.encryption_mime_exceptions", "encryption.diffie_hellman.encryption_mime_system"]
+    main_modules = ["encryption.diffie_hellman.encryption_diffie_hellman_exceptions", "encryption.diffie_hellman.encryption_diffie_hellman_system"]
 
     encryption_diffie_hellman = None
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
         global encryption
-        import encryption.diffie_hellman.encryption_mime_system
-        self.encryption_diffie_hellman = encryption.diffie_hellman.encryption_mime_system.EncryptionDiffieHellman(self)
+        import encryption.diffie_hellman.encryption_diffie_hellman_system
+        self.encryption_diffie_hellman = encryption.diffie_hellman.encryption_diffie_hellman_system.EncryptionDiffieHellman(self)
 
     def end_load_plugin(self):
         colony.base.plugin_system.Plugin.end_load_plugin(self)
@@ -88,4 +88,4 @@ class EncryptionDiffieHellmanPlugin(colony.base.plugin_system.Plugin):
         colony.base.plugin_system.Plugin.dependency_injected(self, plugin)
 
     def create_structure(self, parameters):
-        return self.encryption_diffie_hellman.create_client(parameters)
+        return self.encryption_diffie_hellman.create_structure(parameters)
