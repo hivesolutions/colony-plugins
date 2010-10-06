@@ -42,7 +42,7 @@ import colony.base.decorators
 
 class FormatMimePlugin(colony.base.plugin_system.Plugin):
     """
-    The main class for the Formats Mime plugin.
+    The main class for the Mime Format plugin.
     """
 
     id = "pt.hive.colony.plugins.format.mime"
