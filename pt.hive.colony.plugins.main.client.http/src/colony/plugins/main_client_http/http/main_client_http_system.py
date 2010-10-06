@@ -1123,7 +1123,7 @@ class HttpResponse:
     headers_map = {}
     """ The headers map """
 
-    received_message = "none"
+    received_message = None
     """ The received message """
 
     status_code = None
