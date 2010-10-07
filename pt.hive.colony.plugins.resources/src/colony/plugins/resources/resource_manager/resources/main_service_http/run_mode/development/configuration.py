@@ -130,7 +130,8 @@ configuration = {
                                            "/colony/repository",
                                            "/socket_bridge",
                                            "/system_unix",
-                                           "/system"],
+                                           "/system",
+                                           "/proxy"],
                      "/colony_web" : {
                          "handler" : "file",
                          "allow_redirection" : False,
@@ -209,24 +210,6 @@ configuration = {
                              "connection_arguments" : ("localhost", 9010)
                          }
                      },
-                     "/wsgi-bin/diamante_service" : {
-                         "handler" : "wsgi",
-                         "allow_redirection" : False,
-                         "request_properties" : {
-                             "base_path" : "${HOME}/wsgi-bin",
-                             "module_name" : "diamante_service",
-                             "application_name" : "application"
-                         }
-                     },
-                     "/wsgi-bin/simple_business_logic" : {
-                         "handler" : "wsgi",
-                         "allow_redirection" : False,
-                         "request_properties" : {
-                             "base_path" : "${HOME}/wsgi-bin/simple_business_logic",
-                             "module_name" : "simple_business_logic",
-                             "application_name" : "application"
-                         }
-                     },
                      "/wsgi-bin" : {
                          "handler" : "wsgi",
                          "allow_redirection" : False,
@@ -297,6 +280,10 @@ configuration = {
                              "authentication_realm" : "system",
                              "arguments" : {"file_path" : "%configuration:pt.hive.colony.plugins.main.authentication.python_handler%/authentication.py"}
                          }
+                     },
+                     "/proxy" : {
+                         "handler" : "proxy",
+                         "allow_redirection" : False
                      }
                  }
              }
