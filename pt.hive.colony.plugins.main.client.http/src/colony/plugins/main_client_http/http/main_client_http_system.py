@@ -266,7 +266,7 @@ class HttpClient:
         # stops the http client
         self._http_client.stop_client()
 
-    def fetch_url(self, url, method = GET_METHOD_VALUE, parameters = {}, protocol_version = HTTP_1_1_VERSION, content_type_charset = DEFAULT_CHARSET):
+    def fetch_url(self, url, method = GET_METHOD_VALUE, parameters = {}, protocol_version = HTTP_1_1_VERSION, content_type_charset = DEFAULT_CHARSET, contents = None):
         """
         Fetches the url for the given url, method and (http) parameters.
 
@@ -280,6 +280,8 @@ class HttpClient:
         @param protocol_version: The version of the protocol to be used.
         @type content_type_charset: String
         @param content_type_charset: The content type charset to be used.
+        @type contents: String
+        @param contents: The contents of the message to be sent.
         @rtype: String
         @return: The retrieved fetched url contents.
         """
@@ -298,9 +300,9 @@ class HttpClient:
 
         try:
             # sends the request for the host, port, path,
-            # parameters, method, protocol version and content type
-            # charset and retrieves the request
-            request = self.send_request(host, port, path, parameters, method, protocol_version, content_type_charset)
+            # parameters, method, protocol version, content type
+            # charset and contents and retrieves the request
+            request = self.send_request(host, port, path, parameters, method, protocol_version, content_type_charset, contents)
 
             # retrieves the response
             response = self.retrieve_response(request)
@@ -362,7 +364,7 @@ class HttpClient:
         # return the built url
         return url
 
-    def send_request(self, host, port, path, parameters, operation_type, protocol_version, content_type_charset):
+    def send_request(self, host, port, path, parameters, operation_type, protocol_version, content_type_charset, contents):
         """
         Sends the request for the given parameters.
 
@@ -380,6 +382,8 @@ class HttpClient:
         @param protocol_version: The protocol version of the request.
         @type content_type_charset: String
         @param content_type_charset: The content type charset.
+        @type contents: String
+        @param contents: The contents of the message to be sent.
         @rtype: HttpRequest
         @return: The sent request for the given parameters.
         """
@@ -387,6 +391,11 @@ class HttpClient:
         # creates the http request with the host, the port, the path, the parameters,
         # operation type, the protocol version and the content type charset
         request = HttpRequest(host, port, path, parameters, operation_type, protocol_version, content_type_charset)
+
+        # in case the contents are defined
+        if contents:
+            # writes the contents to the request
+            request.write(contents)
 
         # in case authentication is set
         if self.authentication:
