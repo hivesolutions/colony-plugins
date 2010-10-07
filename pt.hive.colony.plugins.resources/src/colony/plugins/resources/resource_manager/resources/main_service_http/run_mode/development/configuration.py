@@ -283,7 +283,10 @@ configuration = {
                      },
                      "/proxy" : {
                          "handler" : "proxy",
-                         "allow_redirection" : False
+                         "allow_redirection" : False,
+                         "request_properties" : {
+                             "proxy_target" : "http://www.hive.pt"
+                         }
                      }
                  }
              }
