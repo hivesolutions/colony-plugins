@@ -833,8 +833,8 @@ class HttpClientServiceHandler:
 
                         # returns the request
                         return request
-                    # in case the operation type is post
-                    elif request.operation_type == POST_METHOD_VALUE:
+                    # in case the operation type is not get
+                    else:
                         # in case the content length is defined in the headers map
                         if CONTENT_LENGTH_VALUE in request.headers_map:
                             # retrieves the message size

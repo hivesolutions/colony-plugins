@@ -95,13 +95,37 @@ class MainServiceHttpProxyHandler:
         # opens the http client
         http_client.open({})
 
+        print "---------"
+        print proxy_target
+        print request.base_path
+        print request.handler_path
+
         # calculates the real path difference
         path = request.base_path.replace(request.handler_path, "", 1)
 
+        print path
+
+        # reads the request contents
+        contents = request.read()
+
+        CONTENT_TYPE_VALUE = "Content-Type"
+        """ The content type value """
+
+        content_type = request.get_header(CONTENT_TYPE_VALUE) or "utf-8"
+
+        # PRECISO DE ALTERAR O CLIENTE DE HTTP PARA TER SUPORE PARA MANDAR
+        # e receber headers
+
         #http_client.fetch_url("http://www.sapo.pt", method = GET_METHOD_VALUE, parameters = {}, protocol_version = HTTP_1_1_VERSION, content_type = DEFAULT_CONTENT_TYPE, content_type_charset = DEFAULT_CHARSET, contents = None)
 
+        # o problema tlx esteja no redirect :)
+
+        a = proxy_target + path
+
+        print "vai fazer fetch a '%s'" % a
+
         # fetches the contents from the url
-        http_response = http_client.fetch_url(proxy_target + path, method = request.operation_type)
+        http_response = http_client.fetch_url(proxy_target + path, method = request.operation_type, content_type = content_type, contents = contents)
 
         # retrieves the status code form the http response
         status_code = http_response.status_code
@@ -125,26 +149,3 @@ class MainServiceHttpProxyHandler:
 
         # closes the http client
         http_client.close({})
-
-#
-#<VirtualHost www.hive.pt:80>
-#ServerAdmin root@hive.pt
-#DocumentRoot /var/www/html/hive-welcome
-#ServerName www.hive.pt
-#ServerAlias hive.pt
-##Alias /roundcubemail "/var/www/html/roundcubemail"
-#Alias /trac "/var/www/html/trac"
-##Alias /maven2 "/var/www/html/maven2"
-#Alias /phpldapadmin "/var/www/html/phpldapadmin"
-#Alias /phpMyAdmin "/var/www/html/phpMyAdmin "
-#
-#ProxyRequests On
-#ProxyVia On
-#
-#<Proxy *>
-#Order deny,allow
-#Allow from all
-#</Proxy>
-#
-#ProxyPass / http://hive.pt:8080/
-#</VirtualHost>
