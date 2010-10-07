@@ -61,6 +61,12 @@ DEFAULT_SIGNED_NAMES = ("op_endpoint", "return_to", "response_nonce", "assoc_han
 DEFAULT_SIGNED_ITEMS = ("provider_url", "return_to", "response_nonce", "association_handle", "claimed_id", "identity")
 """ The default signed items """
 
+TRUE_VALUE = "true"
+""" The true value """
+
+FALSE_VALUE = "false"
+""" The false value """
+
 GET_METHOD_VALUE = "GET"
 """ The get method value """
 
@@ -538,6 +544,35 @@ class OpenidServer:
         # sets the signature in the openid structure
         self.openid_structure.signature = signature
 
+    def openid_check_authentication(self, return_openid_structure, strict = True):
+        """
+        Verifies the given return openid structure (verification)
+        according to the openid specification.
+
+        @type return_openid_structure: OpenidStructure
+        @param return_openid_structure: The return openid structure
+        to be verified.
+        @type strict: bool
+        @param strict: Flag to control if the verification should be strict.
+        @rtype: OpenidStructure
+        @return: The current openid structure.
+        """
+
+        # in case the verification is strict and any of the base information items mismatches
+        if strict and not (self.openid_structure.return_to == return_openid_structure.return_to and\
+                           self.openid_structure.claimed_id == return_openid_structure.claimed_id and\
+                           self.openid_structure.identity == return_openid_structure.identity and\
+                           self.openid_structure.provider_url == return_openid_structure.provider_url and\
+                           self.openid_structure.response_nonce == return_openid_structure.response_nonce and\
+                           self.openid_structure.signed == return_openid_structure.signed and\
+                           self.openid_structure.signature == return_openid_structure.signature and\
+                           return_openid_structure.ns == OPENID_NAMESPACE_VALUE):
+            # raises a verification failed exception
+            raise service_openid_exceptions.VerificationFailed("invalid discovered information")
+
+        # returns the openid structure
+        return self.openid_structure
+
     def get_response_parameters(self):
         # start the parameters map
         parameters = {}
@@ -604,6 +639,32 @@ class OpenidServer:
 
         # returns the encoded response parameters
         return encoded_response_parameters
+
+    def get_check_authentication_parameters(self):
+        # start the parameters map
+        parameters = {}
+
+        # sets the namespace
+        parameters["ns"] = self.openid_structure.ns
+
+        # sets the is valid
+        parameters["is_valid"] = TRUE_VALUE
+
+        # sets the invalidate handle
+        parameters["invalidate_handle"] = self.openid_structure.association_handle
+
+        # returns the parameters
+        return parameters
+
+    def get_encoded_check_authentication_parameters(self):
+        # retrieves the check authentication parameters
+        check_authentication_parameters = self.get_check_authentication_parameters()
+
+        # encodes the check authentication parameters
+        encoded_check_authentication_parameters = self._encode_key_value(check_authentication_parameters)
+
+        # returns the encoded check authentication parameters
+        return encoded_check_authentication_parameters
 
     def get_return_url(self):
         # sets the retrieval url
@@ -1143,6 +1204,9 @@ class OpenidClient:
 
         # updates the nonce value
         self.service_openid._update_nonce(return_openid_structure.response_nonce, return_openid_structure.provider_url)
+
+        # returns the openid structure
+        return self.openid_structure
 
     def get_request_url(self):
         """
