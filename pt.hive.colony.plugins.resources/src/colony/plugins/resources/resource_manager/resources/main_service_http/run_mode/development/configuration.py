@@ -121,6 +121,7 @@ configuration = {
                                            "/repository/debian",
                                            "/cgi-bin",
                                            "/fastcgi-bin",
+                                           "/wsgi-bin/diamante_service",
                                            "/wsgi-bin/simple_business_logic",
                                            "/wsgi-bin",
                                            "/web_administration",
@@ -206,6 +207,15 @@ configuration = {
                              "base_path" : "${HOME}/fcgi-bin",
                              "connection_type" : 1,
                              "connection_arguments" : ("localhost", 9010)
+                         }
+                     },
+                     "/wsgi-bin/diamante_service" : {
+                         "handler" : "wsgi",
+                         "allow_redirection" : False,
+                         "request_properties" : {
+                             "base_path" : "${HOME}/wsgi-bin",
+                             "module_name" : "diamante_service",
+                             "application_name" : "application"
                          }
                      },
                      "/wsgi-bin/simple_business_logic" : {
