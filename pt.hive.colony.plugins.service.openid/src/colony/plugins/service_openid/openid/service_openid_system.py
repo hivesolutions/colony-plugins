@@ -435,9 +435,9 @@ class OpenidServer:
 
         pass
 
-    def generate_openid_structure(self, association_type = HMAC_SHA256_VALUE, session_type = NO_ENCRYPTION_VALUE, prime_value = None, base_value = None, consumer_public = None, set_structure = True):
+    def generate_openid_structure(self, provider_url = None, association_type = HMAC_SHA256_VALUE, session_type = NO_ENCRYPTION_VALUE, prime_value = None, base_value = None, consumer_public = None, set_structure = True):
         # creates a new openid structure
-        openid_structure = OpenidStructure(association_type = association_type, session_type = session_type)
+        openid_structure = OpenidStructure(provider_url, association_type = association_type, session_type = session_type)
 
         # in case the structure is meant to be set
         if set_structure:
@@ -525,9 +525,6 @@ class OpenidServer:
 
         # sets the mode in the openid structure
         self.openid_structure.mode = ID_RES_VALUE
-
-        # sets the provider url in the openid structure
-        self.openid_structure.provider_url = "http://hivesolutions.dyndns.org:8080/openid/server"
 
         # sets the invalidate handle in the openid structure
         self.openid_structure.invalidate_handle = invalidate_handle
