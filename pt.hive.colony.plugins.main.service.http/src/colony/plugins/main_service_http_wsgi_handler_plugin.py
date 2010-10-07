@@ -62,7 +62,7 @@ class MainServiceHttpWsgiHandlerPlugin(colony.base.plugin_system.Plugin):
                     "pt.hive.colony.plugins.resources.resource_manager", "1.0.0")]
     events_handled = []
     events_registrable = []
-    main_modules = ["main_service_http_wsgi_handler.wsgi_handler.main_service_http_wsgi_handler_exceptions", "main_service_http_wsgi_handler.wsgi_handler.main_service_http_wsgi_handler_system"]
+    main_modules = ["main_service_http_wsgi_handler.wsgi_handler.main_service_http_wsgi_handler_system"]
 
     main_service_http_wsgi_handler = None
 
