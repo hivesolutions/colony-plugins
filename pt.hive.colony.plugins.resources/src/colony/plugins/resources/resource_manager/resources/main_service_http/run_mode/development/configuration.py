@@ -121,6 +121,7 @@ configuration = {
                                            "/repository/debian",
                                            "/cgi-bin",
                                            "/fastcgi-bin",
+                                           "/wsgi-bin/simple_business_logic",
                                            "/wsgi-bin",
                                            "/web_administration",
                                            "/websession_test",
@@ -205,6 +206,15 @@ configuration = {
                              "base_path" : "${HOME}/fcgi-bin",
                              "connection_type" : 1,
                              "connection_arguments" : ("localhost", 9010)
+                         }
+                     },
+                     "/wsgi-bin/simple_business_logic" : {
+                         "handler" : "wsgi",
+                         "allow_redirection" : False,
+                         "request_properties" : {
+                             "base_path" : "${HOME}/wsgi-bin/simple_business_logic",
+                             "module_name" : "simple_business_logic",
+                             "application_name" : "application"
                          }
                      },
                      "/wsgi-bin" : {
