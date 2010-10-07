@@ -38,6 +38,7 @@ __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
 import sys
+import types
 import base64
 import threading
 
@@ -928,6 +929,21 @@ class HttpRequest:
 
         self.headers_map = {}
         self.message_stream = colony.libs.string_buffer_util.StringBuffer()
+
+    def write(self, message, flush = 1, encode = True):
+        # retrieves the message type
+        message_type = type(message)
+
+        # in case the message type is unicode
+        if message_type == types.UnicodeType and encode:
+            # encodes the message with the defined content type charset
+            message = message.encode(self.content_type_charset)
+
+        # writes the message to the message stream
+        self.message_stream.write(message)
+
+    def flush(self):
+        pass
 
     def get_result(self):
         # retrieves the result stream
