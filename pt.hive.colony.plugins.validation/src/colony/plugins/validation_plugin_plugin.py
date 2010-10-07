@@ -63,7 +63,6 @@ class ValidationPluginPlugin(colony.base.plugin_system.Plugin):
     events_handled = []
     events_registrable = []
     main_modules = ["validation_plugin.plugin.console_validation_plugin",
-                    "validation_plugin.plugin.validation_plugin_exceptions",
                     "validation_plugin.plugin.validation_plugin_system"]
 
     validation_plugin = None
@@ -117,10 +116,10 @@ class ValidationPluginPlugin(colony.base.plugin_system.Plugin):
         return self.console_validation_plugin.get_help()
 
     def validate_plugins(self):
-        self.validation_plugin.validate_plugins()
+        return self.validation_plugin.validate_plugins()
 
     def validate_plugin(self, plugin_id):
-        self.validation_plugin.validate_plugin(plugin_id)
+        return self.validation_plugin.validate_plugin(plugin_id)
 
     def get_json_plugin(self):
         return self.json_plugin

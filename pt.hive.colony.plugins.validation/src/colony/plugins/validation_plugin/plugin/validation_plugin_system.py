@@ -41,8 +41,6 @@ import re
 import types
 import os.path
 
-import validation_plugin_exceptions
-
 BUILD_AUTOMATION_FILE_PATH_VALUE = "build_automation_file_path"
 """ The build automation file path value """
 
@@ -170,9 +168,8 @@ class ValidationPlugin:
         for plugin in plugins:
             self._validate_plugin(plugin)
 
-        # raises an exception in case there were validation errors
-        if self.validation_errors:
-            raise validation_plugin_exceptions.PluginValidationFailed(self.validation_errors)
+        # returns the validation errors
+        return self.validation_errors
 
     def validate_plugin(self, plugin_id):
         # resets the validation errors list
@@ -184,9 +181,8 @@ class ValidationPlugin:
         # validates the plugin
         self._validate_plugin(plugin)
 
-        # raises an exception in case there were validation errors
-        if self.validation_errors:
-            raise validation_plugin_exceptions.PluginValidationFailed(self.validation_errors)
+        # returns the validation errors
+        return self.validation_errors
 
     def _validate_plugin(self, plugin):
         # retrieves the plugin information

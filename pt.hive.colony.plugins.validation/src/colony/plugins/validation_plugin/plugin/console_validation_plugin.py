@@ -91,20 +91,18 @@ class ConsoleValidationPlugin:
 
         # validates all plugins
         if len(args) == 0:
-            import validation_plugin_exceptions
+            validation_errors = self.validation_plugin_plugin.validate_plugins()
+        else:
+            # retrieves the plugin's id
+            plugin_id = args[0]
 
-            try:
-                self.validation_plugin_plugin.validate_plugins()
-            except validation_plugin_exceptions.PluginValidationFailed, exception:
-                for validation_error in exception.validation_errors:
-                    print validation_error["plugin_id"]
-                    print validation_error["message"]
-                    print "------------------------"
+            # validates the specified plugin
+            validation_errors = self.validation_plugin_plugin.validate_plugin(plugin_id)
 
-            return
+        # outputs the validation errors
+        for validation_error in validation_errors:
+            # creates a validation error message
+            validation_error_message = "[%s] %s" % (validation_error["plugin_id"], validation_error["message"])
 
-        # retrieves the plugin's id
-        plugin_id = args[0]
-
-        # validates the specified plugin
-        self.validation_plugin_plugin.validate_plugin(plugin_id)
+            # prints the validation error message
+            output_method(validation_error_message)
