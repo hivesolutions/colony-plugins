@@ -80,6 +80,9 @@ class MainServiceHttpProxyHandler:
         @param request: The http request to be handled.
         """
 
+        # retrieves the proxy target
+        proxy_target = request.properties.get("proxy_target", "http://www.google.com")
+
         # retrieves the main client http plugin
         main_client_http_plugin = self.main_service_http_proxy_handler_plugin.main_client_http_plugin
 
@@ -89,10 +92,19 @@ class MainServiceHttpProxyHandler:
         # opens the http client
         http_client.open({})
 
+        #PARA OBTER O DIFF DE PATH
+        #base_path - handler_path
+        # original:
+#        # in case there is a valid handler path
+#        if request_handler_path:
+#            request_path = request_resource_path.replace(request_handler_path, "", 1)
+#        else:
+#            request_path = request_resource_path
+
         #http_client.fetch_url("http://www.sapo.pt", method = GET_METHOD_VALUE, parameters = {}, protocol_version = HTTP_1_1_VERSION, content_type = DEFAULT_CONTENT_TYPE, content_type_charset = DEFAULT_CHARSET, contents = None)
 
         # fetches the contents from the url
-        http_response = http_client.fetch_url("http://www.sapo.pt")
+        http_response = http_client.fetch_url(proxy_target)
 
         # retrieves the data from the http response
         data = http_response.received_message
