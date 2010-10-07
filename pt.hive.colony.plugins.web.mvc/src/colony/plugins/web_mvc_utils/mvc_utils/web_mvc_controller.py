@@ -624,6 +624,9 @@ def _get_host_path(self, rest_request, suffix_path = "", prefix_path = HTTP_PREF
     # retrieves the path
     path = self._get_path(rest_request)
 
+    # removes the arguments part of the path
+    path = path.split("?")[0]
+
     # creates the host path with the prefix path the host the first part
     # of the host split and the suffix path
     host_path = prefix_path + host + path.rsplit("/", 1)[0] + suffix_path
