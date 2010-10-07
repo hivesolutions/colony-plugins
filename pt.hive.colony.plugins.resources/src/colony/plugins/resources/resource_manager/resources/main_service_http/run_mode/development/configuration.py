@@ -131,6 +131,7 @@ configuration = {
                                            "/socket_bridge",
                                            "/system_unix",
                                            "/system",
+                                           "/proxy_svn",
                                            "/proxy"],
                      "/colony_web" : {
                          "handler" : "file",
@@ -279,6 +280,13 @@ configuration = {
                              "authentication_handler" : "python",
                              "authentication_realm" : "system",
                              "arguments" : {"file_path" : "%configuration:pt.hive.colony.plugins.main.authentication.python_handler%/authentication.py"}
+                         }
+                     },
+                     "/proxy_svn" : {
+                         "handler" : "proxy",
+                         "allow_redirection" : False,
+                         "request_properties" : {
+                             "proxy_target" : "http://svn.hive.pt"
                          }
                      },
                      "/proxy" : {
