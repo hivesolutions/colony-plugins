@@ -13,5 +13,6 @@
     "main_file" : "encryption_diffie_hellman_plugin.py",
     "resources" : ["encryption_diffie_hellman_plugin.py",
             "encryption/__init__.py", "encryption/diffie_hellman/__init__.py",
-            "encryption/diffie_hellman/encryption_diffie_hellman_system.py"]
+            "encryption/diffie_hellman/encryption_diffie_hellman_system.py",
+            "encryption/diffie_hellman/resources/baf.xml"]
 }
