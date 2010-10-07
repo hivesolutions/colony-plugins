@@ -39,9 +39,9 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 import colony.base.plugin_system_exceptions
 
-class BuildAutomationValidatorException(colony.base.plugin_system_exceptions.ColonyException):
+class ValidationPluginException(colony.base.plugin_system_exceptions.ColonyException):
     """
-    The build automation validator exception class.
+    The validation plugin exception class.
     """
 
     message = None
@@ -66,11 +66,11 @@ class BuildAutomationValidatorException(colony.base.plugin_system_exceptions.Col
         @return: The string representation of the class.
         """
 
-        return "Build automation validator exception: %s" % self.message
+        return "Plugin validation exception: %s" % self.message
 
-class BuildAutomationValidationFailed(BuildAutomationValidatorException):
+class PluginValidationFailed(ValidationPluginException):
     """
-    The build automation validation failed class.
+    The plugin validation failed class.
     """
 
     validation_errors = []
@@ -84,7 +84,7 @@ class BuildAutomationValidationFailed(BuildAutomationValidatorException):
         @param validation_errors: The list of validation errors.
         """
 
-        BuildAutomationValidatorException.__init__(self, str(validation_errors))
+        ValidationPluginException.__init__(self, str(validation_errors))
         self.validation_errors = validation_errors
 
     def __str__(self):
@@ -95,4 +95,4 @@ class BuildAutomationValidationFailed(BuildAutomationValidatorException):
         @return: The string representation of the class.
         """
 
-        return "The build automation validation failed: %s" % self.message
+        return "Plugin validation failed: %s" % self.message

@@ -41,7 +41,7 @@ import re
 import types
 import os.path
 
-import build_automation_validator_exceptions
+import validation_plugin_exceptions
 
 BUILD_AUTOMATION_FILE_PATH_VALUE = "build_automation_file_path"
 """ The build automation file path value """
@@ -137,26 +137,26 @@ PLUGIN_DESCRIPTOR_ATTRIBUTES_MAP = {"id" : "original_id",
                                     "capabilities" : "capabilities"}
 """ Defines the association between attributes in the plugin descriptor file and the plugin itself """
 
-class BuildAutomationValidator:
+class ValidationPlugin:
     """
-    The build automation validator class.
+    The validation plugin class.
     """
 
-    build_automation_validator_plugin = None
-    """ The build automation validator plugin """
+    validation_plugin_plugin = None
+    """ The validation plugin plugin """
 
     validation_errors = []
     """ List of validation error messages """
 
-    def __init__(self, build_automation_validator_plugin):
+    def __init__(self, validation_plugin_plugin):
         """
         Constructor of the class.
 
-        @type build_automation_validator_plugin: BuildAutomationValidatorPlugin
-        @param build_automation_validator_plugin: The build automation validator plugin
+        @type validation_plugin_plugin: BuildAutomationValidatorPlugin
+        @param validation_plugin_plugin: The validation plugin plugin.
         """
 
-        self.build_automation_validator_plugin = build_automation_validator_plugin
+        self.validation_plugin_plugin = validation_plugin_plugin
         self.validation_errors = []
 
     def validate_plugins(self):
@@ -164,31 +164,31 @@ class BuildAutomationValidator:
         self.validation_errors = []
 
         # retrieves all plugins
-        plugins = self.build_automation_validator_plugin.manager.get_all_plugins()
+        plugins = self.validation_plugin_plugin.manager.get_all_plugins()
 
         # validates all plugins
         for plugin in plugins:
-            self._validate_build_automation_plugin(plugin)
+            self._validate_plugin(plugin)
 
         # raises an exception in case there were validation errors
         if self.validation_errors:
-            raise build_automation_validator_exceptions.BuildAutomationValidationFailed(self.validation_errors)
+            raise validation_plugin_exceptions.PluginValidationFailed(self.validation_errors)
 
     def validate_plugin(self, plugin_id):
         # resets the validation errors list
         self.validation_errors = []
 
         # retrieves the plugin
-        plugin = self.build_automation_validator_plugin.manager._get_plugin_by_id(plugin_id)
+        plugin = self.validation_plugin_plugin.manager._get_plugin_by_id(plugin_id)
 
         # validates the plugin
-        self._validate_build_automation_plugin(plugin)
+        self._validate_plugin(plugin)
 
         # raises an exception in case there were validation errors
         if self.validation_errors:
-            raise build_automation_validator_exceptions.BuildAutomationValidationFailed(self.validation_errors)
+            raise validation_plugin_exceptions.PluginValidationFailed(self.validation_errors)
 
-    def _validate_build_automation_plugin(self, plugin):
+    def _validate_plugin(self, plugin):
         # retrieves the plugin information
         plugin_information = PluginInformation(plugin)
 
@@ -200,8 +200,8 @@ class BuildAutomationValidator:
             # returns since nothing else can be tested
             return
 
-        # validates the plugin
-        self._validate_plugin(plugin_information)
+        # validates the plugin file
+        self._validate_plugin_file(plugin_information)
 
         # checks that if the plugin descriptor file exists
         if not os.path.exists(plugin_information.plugin_descriptor_file_path):
@@ -217,7 +217,7 @@ class BuildAutomationValidator:
         # validates the build automation file
         self._validate_build_automation_file(plugin_information)
 
-    def _validate_plugin(self, plugin_information):
+    def _validate_plugin_file(self, plugin_information):
         # validates the plugin's class name
         self.__validate_plugin_class_name(plugin_information)
 
@@ -632,7 +632,7 @@ class BuildAutomationValidator:
         json_file.close()
 
         # loads the json data from the json file
-        json_data = self.build_automation_validator_plugin.json_plugin.loads(json_file_data)
+        json_data = self.validation_plugin_plugin.json_plugin.loads(json_file_data)
 
         return json_data
 

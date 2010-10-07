@@ -40,14 +40,14 @@ __license__ = "GNU General Public License (GPL), Version 3"
 import colony.base.plugin_system
 import colony.base.decorators
 
-class BuildAutomationValidatorPlugin(colony.base.plugin_system.Plugin):
+class ValidationPluginPlugin(colony.base.plugin_system.Plugin):
     """
-    The main class for the Plugin Validation plugin
+    The main class for the Validation Plugin Plugin
     """
 
     id = "pt.hive.colony.plugins.validation.plugin"
     name = "Plugin Validation Plugin"
-    short_name = "Build Automation Validator"
+    short_name = "Plugin Validation"
     description = "A plugin used to check that all plugins are valid in terms of integrity"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
@@ -83,8 +83,8 @@ class BuildAutomationValidatorPlugin(colony.base.plugin_system.Plugin):
         global validation_plugin
         import validation_plugin.plugin.validation_plugin_system
         import validation_plugin.plugin.console_validation_plugin
-        self.validation_plugin = validation_plugin.plugin.validation_plugin_system.BuildAutomationValidator(self)
-        self.console_validation_plugin = validation_plugin.plugin.console_validation_plugin.ConsoleBuildAutomationValidator(self)
+        self.validation_plugin = validation_plugin.plugin.validation_plugin_system.ValidationPlugin(self)
+        self.console_validation_plugin = validation_plugin.plugin.console_validation_plugin.ConsoleValidationPlugin(self)
 
     def unload_plugin(self):
         colony.base.plugin_system.Plugin.unload_plugin(self)
@@ -92,15 +92,15 @@ class BuildAutomationValidatorPlugin(colony.base.plugin_system.Plugin):
     def end_unload_plugin(self):
         colony.base.plugin_system.Plugin.end_unload_plugin(self)
 
-    @colony.base.decorators.load_allowed("pt.hive.colony.plugins.build.automation.validator", "1.0.0")
+    @colony.base.decorators.load_allowed("pt.hive.colony.plugins.validation.plugin", "1.0.0")
     def load_allowed(self, plugin, capability):
         colony.base.plugin_system.Plugin.load_allowed(self, plugin, capability)
 
-    @colony.base.decorators.unload_allowed("pt.hive.colony.plugins.build.automation.validator", "1.0.0")
+    @colony.base.decorators.unload_allowed("pt.hive.colony.plugins.validation.plugin", "1.0.0")
     def unload_allowed(self, plugin, capability):
         colony.base.plugin_system.Plugin.unload_allowed(self, plugin, capability)
 
-    @colony.base.decorators.inject_dependencies("pt.hive.colony.plugins.build.automation.validator", "1.0.0")
+    @colony.base.decorators.inject_dependencies("pt.hive.colony.plugins.validation.plugin", "1.0.0")
     def dependency_injected(self, plugin):
         colony.base.plugin_system.Plugin.dependency_injected(self, plugin)
 

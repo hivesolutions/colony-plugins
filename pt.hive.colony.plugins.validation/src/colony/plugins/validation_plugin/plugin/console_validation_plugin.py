@@ -37,7 +37,7 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-CONSOLE_EXTENSION_NAME = "build_automation_validator"
+CONSOLE_EXTENSION_NAME = "validation_plugin"
 """ The console extension name """
 
 INVALID_NUMBER_ARGUMENTS_MESSAGE = "invalid number of arguments"
@@ -47,26 +47,26 @@ HELP_TEXT = "### PLUGIN VALIDATION HELP ###\n\
 validate_plugin [plugin_id] - validates plugin(s)"
 """ The help text """
 
-class ConsoleBuildAutomationValidator:
+class ConsoleValidationPlugin:
     """
-    The console build automation validator class.
+    The console validation plugin class.
     """
 
-    build_automation_validator_plugin = None
-    """ The build automation validator plugin """
+    validation_plugin_plugin = None
+    """ The validation plugin plugin """
 
     commands = ["validate_plugin"]
     """ The commands list """
 
-    def __init__(self, build_automation_validator_plugin):
+    def __init__(self, validation_plugin_plugin):
         """
         Constructor of the class.
 
-        @type build_automation_validator_plugin: BuildAutomationValidatorPlugin
-        @param build_automation_validator_plugin: The build automation validator plugin.
+        @type validation_plugin_plugin: ValidationPluginPlugin
+        @param validation_plugin_plugin: The validation plugin plugin.
         """
 
-        self.build_automation_validator_plugin = build_automation_validator_plugin
+        self.validation_plugin_plugin = validation_plugin_plugin
 
     def get_console_extension_name(self):
         return CONSOLE_EXTENSION_NAME
@@ -89,13 +89,13 @@ class ConsoleBuildAutomationValidator:
             output_method(INVALID_NUMBER_ARGUMENTS_MESSAGE)
             return
 
-        # validates all build automatin plugins in case no argument was provided
+        # validates all plugins
         if len(args) == 0:
-            import build_automation_validator_exceptions
+            import validation_plugin_exceptions
 
             try:
-                self.build_automation_validator_plugin.validate_build_automation_plugins()
-            except build_automation_validator_exceptions.BuildAutomationValidationFailed, exception:
+                self.validation_plugin_plugin.validate_plugins()
+            except validation_plugin_exceptions.PluginValidationFailed, exception:
                 for validation_error in exception.validation_errors:
                     print validation_error["plugin_id"]
                     print validation_error["message"]
@@ -106,5 +106,5 @@ class ConsoleBuildAutomationValidator:
         # retrieves the plugin's id
         plugin_id = args[0]
 
-        # validates the specified build automation plugin
-        self.build_automation_validator_plugin.validate_build_automation_plugin(plugin_id)
+        # validates the specified plugin
+        self.validation_plugin_plugin.validate_plugin(plugin_id)

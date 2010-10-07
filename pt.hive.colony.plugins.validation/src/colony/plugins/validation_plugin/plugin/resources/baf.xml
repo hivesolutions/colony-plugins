@@ -33,11 +33,11 @@
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://www.hive.pt xsd/baf.xsd">
     <artifact>
-        <id>pt.hive.colony.plugins.build.automation.validator</id>
+        <id>pt.hive.colony.plugins.validation.plugin</id>
         <version>1.0.0</version>
         <type>colony</type>
-        <name>Build Automation Validator Plugin</name>
-        <description>Build Automation Validator</description>
+        <name>Plugin Validation Plugin</name>
+        <description>Plugin Validation</description>
         <url>http://www.hive.pt</url>
     </artifact>
     <build>
@@ -48,7 +48,7 @@
                 <version>1.0.0</version>
                 <stage>build</stage>
                 <configuration>
-                    <specification_file>$base{plugin_directory}/build_automation_validator_plugin.json</specification_file>
+                    <specification_file>$base{plugin_directory}/validation_plugin_plugin.json</specification_file>
                 </configuration>
             </plugin>
         </plugins>
