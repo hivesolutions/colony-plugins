@@ -37,7 +37,7 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-CONSOLE_EXTENSION_NAME = "build_automation_descriptor_generator"
+CONSOLE_EXTENSION_NAME = "descriptor_generator"
 """ The console extension name """
 
 INVALID_NUMBER_ARGUMENTS_MESSAGE = "invalid number of arguments"
@@ -47,26 +47,26 @@ HELP_TEXT = "### DESCRIPTOR GENERATOR HELP ###\n\
 generate_descriptor [plugin_id] - generates plugin descriptors"
 """ The help text """
 
-class ConsoleBuildAutomationDescriptorGenerator:
+class ConsoleDescriptorGenerator:
     """
-    The console build automation descriptor generator class.
+    The console descriptor generator class.
     """
 
-    build_automation_descriptor_generator_plugin = None
-    """ The build automation descriptor generator plugin """
+    descriptor_generator_plugin = None
+    """ The descriptor generator plugin """
 
     commands = ["generate_descriptor"]
     """ The commands list """
 
-    def __init__(self, build_automation_descriptor_generator_plugin):
+    def __init__(self, descriptor_generator_plugin):
         """
         Constructor of the class.
 
-        @type build_automation_descriptor_generator_plugin: BuildAutomationDescriptorGeneratorPlugin
-        @param build_automation_descriptor_generator_plugin: The build automation descriptor generator plugin.
+        @type descriptor_generator_plugin: DescriptorGeneratorPlugin
+        @param descriptor_generator_plugin: The descriptor generator plugin.
         """
 
-        self.build_automation_descriptor_generator_plugin = build_automation_descriptor_generator_plugin
+        self.descriptor_generator_plugin = descriptor_generator_plugin
 
     def get_console_extension_name(self):
         return CONSOLE_EXTENSION_NAME
@@ -91,11 +91,11 @@ class ConsoleBuildAutomationDescriptorGenerator:
 
         # generates the descriptors for all plugins in case no argument was specified
         if len(args) == 0:
-            self.build_automation_descriptor_generator_plugin.generate_plugin_descriptors()
+            self.descriptor_generator_plugin.generate_plugin_descriptors()
             return
 
         # retrieves the plugin's id
         plugin_id = args[0]
 
         # generates a plugin descriptor for the specified plugin
-        self.build_automation_descriptor_generator_plugin.generate_plugin_descriptor(plugin_id)
+        self.descriptor_generator_plugin.generate_plugin_descriptor(plugin_id)

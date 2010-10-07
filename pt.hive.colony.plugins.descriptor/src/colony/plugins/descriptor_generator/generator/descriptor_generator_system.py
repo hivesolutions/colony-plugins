@@ -101,7 +101,7 @@ UNIX_DIRECTORY_SEPARATOR = "/"
 WINDOWS_DIRECTORY_SEPARATOR = "\\"
 """ The windows directory separator """
 
-TEMPLATES_PATH = "build_automation_descriptor_generator/resources/templates"
+TEMPLATES_PATH = "descriptor_generator/generator/resources/templates"
 """ The templates path """
 
 PLUGIN_DESCRIPTOR_TEMPLATE_FILE_NAME = "plugin_descriptor_template.tpl"
@@ -134,27 +134,27 @@ RESOURCE_FILE_NAME_EXCLUSION_LIST = (".svn", "entries", "all-wcprops", "dir-prop
 RESOURCE_FILE_EXTENSION_EXCLUSION_LIST = (".svn-base", ".class", ".pyc", ".tmp")
 """ The resource file extension exclusion list """
 
-class BuildAutomationDescriptorGenerator:
+class DescriptorGenerator:
     """
-    The build automation descriptor generator class.
+    The descriptor generator class.
     """
 
-    build_automation_descriptor_generator_plugin = None
-    """ The build automation descriptor generator plugin """
+    descriptor_generator_plugin = None
+    """ The descriptor generator plugin """
 
-    def __init__(self, build_automation_descriptor_generator_plugin):
+    def __init__(self, descriptor_generator_plugin):
         """
         Constructor of the class.
 
-        @type build_automation_descriptor_generator_plugin: BuildAutomationValidatorPlugin
-        @param build_automation_descriptor_generator_plugin: The build automation descriptor generator plugin
+        @type descriptor_generator_plugin: DescriptorGeneratorPlugin
+        @param descriptor_generator_plugin: The descriptor generator plugin.
         """
 
-        self.build_automation_descriptor_generator_plugin = build_automation_descriptor_generator_plugin
+        self.descriptor_generator_plugin = descriptor_generator_plugin
 
     def generate_plugin_descriptors(self):
         # retrieves all plugins
-        plugins = self.build_automation_descriptor_generator_plugin.manager.get_all_plugins()
+        plugins = self.descriptor_generator_plugin.manager.get_all_plugins()
 
         # retrieves the template file path
         template_file_path = self.get_template_file_path()
@@ -165,7 +165,7 @@ class BuildAutomationDescriptorGenerator:
 
     def generate_plugin_descriptor(self, plugin_id):
         # retrieves the specified plugin
-        plugin = self.build_automation_descriptor_generator_plugin.manager._get_plugin_by_id(plugin_id)
+        plugin = self.descriptor_generator_plugin.manager._get_plugin_by_id(plugin_id)
 
         # retrieves the template file path
         template_file_path = self.get_template_file_path()
@@ -174,27 +174,30 @@ class BuildAutomationDescriptorGenerator:
         self._generate_plugin_descriptor(plugin, template_file_path)
 
     def _generate_plugin_descriptor(self, plugin, template_file_path):
-        # generates the plugin descriptor in case the validation fails
-        try:
-            self.build_automation_descriptor_generator_plugin.build_automation_validator_plugin.validate_build_automation_plugin(plugin.id)
-        except:
-            # retrieves the plugin path
-            plugin_path = self.build_automation_descriptor_generator_plugin.manager.get_plugin_path_by_id(plugin.id)
+        # validate the plugin
+        validation_errors = self.descriptor_generator_plugin.validation_plugin_plugin.validate_plugin(plugin.id)
 
-            # retrieves the plugin module name
-            plugin_module_name = self.build_automation_descriptor_generator_plugin.manager.get_plugin_module_name_by_id(plugin.id)
+        # returns in case there aren't any validation errors
+        if not validation_errors:
+            return
 
-            # converts the plugin path separators from the windows mode to unix mode
-            plugin_path = plugin_path.replace(WINDOWS_DIRECTORY_SEPARATOR, UNIX_DIRECTORY_SEPARATOR)
+        # retrieves the plugin path
+        plugin_path = self.descriptor_generator_plugin.manager.get_plugin_path_by_id(plugin.id)
 
-            # retrieves the plugin system file path
-            plugin_system_file_path = self.get_plugin_system_file_path(plugin_path, plugin_module_name)
+        # retrieves the plugin module name
+        plugin_module_name = self.descriptor_generator_plugin.manager.get_plugin_module_name_by_id(plugin.id)
 
-            # retrieves the plugin root directory path
-            plugin_root_directory_path = self.get_plugin_root_directory_path(plugin_system_file_path)
+        # converts the plugin path separators from the windows mode to unix mode
+        plugin_path = plugin_path.replace(WINDOWS_DIRECTORY_SEPARATOR, UNIX_DIRECTORY_SEPARATOR)
 
-            # validates the plugin descriptor file
-            self._generate_plugin_descriptor_file(plugin, plugin_path, plugin_module_name, template_file_path, plugin_system_file_path, plugin_root_directory_path)
+        # retrieves the plugin system file path
+        plugin_system_file_path = self.get_plugin_system_file_path(plugin_path, plugin_module_name)
+
+        # retrieves the plugin root directory path
+        plugin_root_directory_path = self.get_plugin_root_directory_path(plugin_system_file_path)
+
+        # validates the plugin descriptor file
+        self._generate_plugin_descriptor_file(plugin, plugin_path, plugin_module_name, template_file_path, plugin_system_file_path, plugin_root_directory_path)
 
     def _generate_plugin_descriptor_file(self, plugin, plugin_path, plugin_module_name, template_file_path, plugin_system_file_path, plugin_root_directory_path):
         # initializes the plugin descriptor map
@@ -452,11 +455,11 @@ class BuildAutomationDescriptorGenerator:
         return extension
 
     def get_template_file_path(self):
-        # retrieves the build automation descriptor generator plugin's path
-        build_automation_descriptor_generator_plugin_path = self.build_automation_descriptor_generator_plugin.manager.get_plugin_path_by_id(self.build_automation_descriptor_generator_plugin.id)
+        # retrieves the descriptor generator plugin's path
+        descriptor_generator_plugin_path = self.descriptor_generator_plugin.manager.get_plugin_path_by_id(self.descriptor_generator_plugin.id)
 
         # retrieves the template path
-        template_path = build_automation_descriptor_generator_plugin_path + UNIX_DIRECTORY_SEPARATOR + TEMPLATES_PATH
+        template_path = descriptor_generator_plugin_path + UNIX_DIRECTORY_SEPARATOR + TEMPLATES_PATH
 
         # retrieves the template file path
         template_file_path = template_path + UNIX_DIRECTORY_SEPARATOR + PLUGIN_DESCRIPTOR_TEMPLATE_FILE_NAME
@@ -465,7 +468,7 @@ class BuildAutomationDescriptorGenerator:
 
     def save_plugin_descriptor_file(self, plugin_path, plugin_module_name, plugin_descriptor_map, template_file_path):
         # parses the template file path
-        template_file = self.build_automation_descriptor_generator_plugin.template_engine_manager_plugin.parse_file_path(template_file_path)
+        template_file = self.descriptor_generator_plugin.template_engine_manager_plugin.parse_file_path(template_file_path)
 
         # assigns an entity to the parsed template file
         template_file.assign(PLUGIN_DESCRIPTOR_VALUE, plugin_descriptor_map)

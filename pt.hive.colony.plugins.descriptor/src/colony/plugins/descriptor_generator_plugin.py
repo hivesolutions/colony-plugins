@@ -40,14 +40,14 @@ __license__ = "GNU General Public License (GPL), Version 3"
 import colony.base.plugin_system
 import colony.base.decorators
 
-class BuildAutomationDescriptorGeneratorPlugin(colony.base.plugin_system.Plugin):
+class DescriptorGeneratorPlugin(colony.base.plugin_system.Plugin):
     """
-    The main class for the Build Automation Descriptor Generator plugin
+    The main class for the Descriptor Generator plugin
     """
 
-    id = "pt.hive.colony.plugins.build.automation.descriptor_generator"
-    name = "Build Automation Descriptor Generator Plugin"
-    short_name = "Build Automation Descriptor Generator"
+    id = "pt.hive.colony.plugins.descriptor_generator"
+    name = "Descriptor Generator Plugin"
+    short_name = "Descriptor Generator"
     description = "A plugin used to generate plugin descriptor files"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
@@ -55,26 +55,26 @@ class BuildAutomationDescriptorGeneratorPlugin(colony.base.plugin_system.Plugin)
     platforms = [colony.base.plugin_system.CPYTHON_ENVIRONMENT,
                  colony.base.plugin_system.JYTHON_ENVIRONMENT,
                  colony.base.plugin_system.IRON_PYTHON_ENVIRONMENT]
-    attributes = {"build_automation_file_path" : "$base{plugin_directory}/build_automation_descriptor_generator/resources/baf.xml"}
-    capabilities = ["console_command_extension", "build_automation_item"]
+    attributes = {"file_path" : "$base{plugin_directory}/descriptor_generator/generator/resources/baf.xml"}
+    capabilities = ["console_command_extension", "item"]
     capabilities_allowed = []
     dependencies = [colony.base.plugin_system.PluginDependency(
-                    "pt.hive.colony.plugins.build.automation.validator", "1.0.0"),
+                    "pt.hive.colony.plugins.validation.plugin", "1.0.0"),
                     colony.base.plugin_system.PluginDependency(
                     "pt.hive.colony.plugins.template_engine.manager", "1.0.0")]
     events_handled = []
     events_registrable = []
-    main_modules = ["build_automation_descriptor_generator.build_automation_descriptor_generator_system",
-                    "build_automation_descriptor_generator.console_build_automation_descriptor_generator"]
+    main_modules = ["descriptor_generator.generator.descriptor_generator_system",
+                    "descriptor_generator.generator.console_descriptor_generator"]
 
-    build_automation_descriptor_generator = None
-    """ The build automation descriptor generator """
+    descriptor_generator = None
+    """ The descriptor generator """
 
-    console_build_automation_descriptor_generator = None
-    """ The console build automation descriptor generator """
+    console_descriptor_generator = None
+    """ The console descriptor generator """
 
-    build_automation_validator_plugin = None
-    """ The build automation validator plugin """
+    validation_plugin_plugin = None
+    """ The validation plugin plugin """
 
     template_engine_manager_plugin = None
     """ The template engine manager plugin """
@@ -84,11 +84,11 @@ class BuildAutomationDescriptorGeneratorPlugin(colony.base.plugin_system.Plugin)
 
     def end_load_plugin(self):
         colony.base.plugin_system.Plugin.end_load_plugin(self)
-        global build_automation_descriptor_generator
-        import build_automation_descriptor_generator.build_automation_descriptor_generator_system
-        import build_automation_descriptor_generator.console_build_automation_descriptor_generator
-        self.build_automation_descriptor_generator = build_automation_descriptor_generator.build_automation_descriptor_generator_system.BuildAutomationDescriptorGenerator(self)
-        self.console_build_automation_descriptor_generator = build_automation_descriptor_generator.console_build_automation_descriptor_generator.ConsoleBuildAutomationDescriptorGenerator(self)
+        global descriptor_generator
+        import descriptor_generator.generator.descriptor_generator_system
+        import descriptor_generator.generator.console_descriptor_generator
+        self.descriptor_generator = descriptor_generator.generator.descriptor_generator_system.DescriptorGenerator(self)
+        self.console_descriptor_generator = descriptor_generator.generator.console_descriptor_generator.ConsoleDescriptorGenerator(self)
 
     def unload_plugin(self):
         colony.base.plugin_system.Plugin.unload_plugin(self)
@@ -96,44 +96,44 @@ class BuildAutomationDescriptorGeneratorPlugin(colony.base.plugin_system.Plugin)
     def end_unload_plugin(self):
         colony.base.plugin_system.Plugin.end_unload_plugin(self)
 
-    @colony.base.decorators.load_allowed("pt.hive.colony.plugins.build.automation.descriptor_generator", "1.0.0")
+    @colony.base.decorators.load_allowed("pt.hive.colony.plugins.descriptor_generator", "1.0.0")
     def load_allowed(self, plugin, capability):
         colony.base.plugin_system.Plugin.load_allowed(self, plugin, capability)
 
-    @colony.base.decorators.unload_allowed("pt.hive.colony.plugins.build.automation.descriptor_generator", "1.0.0")
+    @colony.base.decorators.unload_allowed("pt.hive.colony.plugins.descriptor_generator", "1.0.0")
     def unload_allowed(self, plugin, capability):
         colony.base.plugin_system.Plugin.unload_allowed(self, plugin, capability)
 
-    @colony.base.decorators.inject_dependencies("pt.hive.colony.plugins.build.automation.descriptor_generator", "1.0.0")
+    @colony.base.decorators.inject_dependencies("pt.hive.colony.plugins.descriptor_generator", "1.0.0")
     def dependency_injected(self, plugin):
         colony.base.plugin_system.Plugin.dependency_injected(self, plugin)
 
     def get_console_extension_name(self):
-        return self.console_build_automation_descriptor_generator.get_console_extension_name()
+        return self.console_descriptor_generator.get_console_extension_name()
 
     def get_all_commands(self):
-        return self.console_build_automation_descriptor_generator.get_all_commands()
+        return self.console_descriptor_generator.get_all_commands()
 
     def get_handler_command(self, command):
-        return self.console_build_automation_descriptor_generator.get_handler_command(command)
+        return self.console_descriptor_generator.get_handler_command(command)
 
     def get_help(self):
-        return self.console_build_automation_descriptor_generator.get_help()
+        return self.console_descriptor_generator.get_help()
 
     def generate_plugin_descriptor(self, plugin_id):
         # generates a plugin descriptor for the specified plugin
-        self.build_automation_descriptor_generator.generate_plugin_descriptor(plugin_id)
+        self.descriptor_generator.generate_plugin_descriptor(plugin_id)
 
     def generate_plugin_descriptors(self):
         # generates plugin descriptors for all plugins
-        self.build_automation_descriptor_generator.generate_plugin_descriptors()
+        self.descriptor_generator.generate_plugin_descriptors()
 
-    def get_build_automation_validator_plugin(self):
-        return self.build_automation_validator_plugin
+    def get_validation_plugin_plugin(self):
+        return self.validation_plugin_plugin
 
-    @colony.base.decorators.plugin_inject("pt.hive.colony.plugins.build.automation.validator")
-    def set_build_automation_validator_plugin(self, build_automation_validator_plugin):
-        self.build_automation_validator_plugin = build_automation_validator_plugin
+    @colony.base.decorators.plugin_inject("pt.hive.colony.plugins.validation.plugin")
+    def set_validation_plugin_plugin(self, validation_plugin_plugin):
+        self.validation_plugin_plugin = validation_plugin_plugin
 
     def get_template_engine_manager_plugin(self):
         return self.template_engine_manager_plugin
