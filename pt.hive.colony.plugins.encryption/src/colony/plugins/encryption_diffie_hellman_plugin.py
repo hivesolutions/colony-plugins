@@ -59,7 +59,7 @@ class EncryptionDiffieHellmanPlugin(colony.base.plugin_system.Plugin):
     dependencies = []
     events_handled = []
     events_registrable = []
-    main_modules = ["encryption.diffie_hellman.encryption_diffie_hellman_exceptions", "encryption.diffie_hellman.encryption_diffie_hellman_system"]
+    main_modules = ["encryption.diffie_hellman.encryption_diffie_hellman_system"]
 
     encryption_diffie_hellman = None
 
