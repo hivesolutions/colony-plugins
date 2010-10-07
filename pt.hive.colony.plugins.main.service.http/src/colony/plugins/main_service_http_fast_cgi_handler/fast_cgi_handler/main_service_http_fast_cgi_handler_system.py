@@ -204,6 +204,9 @@ INTERNET_CONNECTION_TYPE = 1
 UNIX_CONNECTION_TYPE = 2
 """ The unix connection type """
 
+META_HEADER_NAME_PREFIX = "HTTP_"
+""" The meta header name prefix """
+
 DEFAULT_HANDLER_TYPE = "local"
 """ The default handler type """
 
@@ -335,6 +338,19 @@ class MainServiceHttpFastCgiHandler:
         environment_map[REMOTE_ADDR_VALUE] = client_http_address
         environment_map[CONTENT_TYPE_VALUE] = request_content_type
         environment_map[CONTENT_LENGTH_VALUE] = request_content_length
+
+        # iterates over all the request headers
+        for header_name, header_value in request.headers_map.items():
+            # normalizes the header name to be in accordance with
+            # the specification
+            normalized_header_name = header_name.upper().replace("-", "_")
+
+            # creates the complete header name prepending the meta
+            # header name prefix to it
+            complete_header_name = META_HEADER_NAME_PREFIX + normalized_header_name
+
+            # sets the header value in the environment map
+            environment_map[complete_header_name] = header_value
 
         # initializes the params record data buffer
         params_record_data_buffer = colony.libs.string_buffer_util.StringBuffer()

@@ -106,6 +106,9 @@ CONTENT_LENGTH_VALUE = "CONTENT_LENGTH"
 PYTHONPATH_VALUE = "PYTHONPATH"
 """ The pythonpath value """
 
+META_HEADER_NAME_PREFIX = "HTTP_"
+""" The meta header name prefix """
+
 DEFAULT_CONTENT_TYPE = "text/plain"
 """ The default content type """
 
@@ -257,6 +260,19 @@ class MainServiceHttpCgiHandler:
 
             # resets the python path to avoid collisions
             environment_map[PYTHONPATH_VALUE] = ""
+
+            # iterates over all the request headers
+            for header_name, header_value in request.headers_map.items():
+                # normalizes the header name to be in accordance with
+                # the specification
+                normalized_header_name = header_name.upper().replace("-", "_")
+
+                # creates the complete header name prepending the meta
+                # header name prefix to it
+                complete_header_name = META_HEADER_NAME_PREFIX + normalized_header_name
+
+                # sets the header value in the environment map
+                environment_map[complete_header_name] = header_value
 
             # iterates over all the environment values and keys
             for environment_key, environment_value in environment_map.items():

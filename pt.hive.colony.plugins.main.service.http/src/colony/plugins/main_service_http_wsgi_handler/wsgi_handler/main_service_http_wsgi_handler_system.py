@@ -115,6 +115,9 @@ CONTENT_TYPE_VALUE = "CONTENT_TYPE"
 CONTENT_LENGTH_VALUE = "CONTENT_LENGTH"
 """ The content length value """
 
+META_HEADER_NAME_PREFIX = "HTTP_"
+""" The meta header name prefix """
+
 DEFAULT_CONTENT_TYPE = "text/plain"
 """ The default content type """
 
@@ -303,6 +306,19 @@ class MainServiceHttpWsgiHandler:
         environment_map[CONTENT_TYPE_VALUE] = request_content_type
         environment_map[CONTENT_LENGTH_VALUE] = request_content_length
 
+        # iterates over all the request headers
+        for header_name, header_value in request.headers_map.items():
+            # normalizes the header name to be in accordance with
+            # the specification
+            normalized_header_name = header_name.upper().replace("-", "_")
+
+            # creates the complete header name prepending the meta
+            # header name prefix to it
+            complete_header_name = META_HEADER_NAME_PREFIX + normalized_header_name
+
+            # sets the header value in the environment map
+            environment_map[complete_header_name] = header_value
+
         # calls the application method retrieving the results
         result = application_method(environment_map, start_response)
 
@@ -323,5 +339,5 @@ class MainServiceHttpWsgiHandler:
         # in case the base directory path does not exist
         # in the system path
         if not base_directory in sys.path:
-            # insets the base path into the system path
-            sys.path.insert(0, base_directory)
+            # adds the base path into the system path
+            sys.path.append(base_directory)
