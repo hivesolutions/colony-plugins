@@ -104,11 +104,11 @@ WINDOWS_DIRECTORY_SEPARATOR = "\\"
 TEMPLATES_PATH = "build_automation_descriptor_generator/resources/templates"
 """ The templates path """
 
-PLUGIN_DESCRIPTOR_DEPENDENCY_FORMAT = "{\"id\" : \"%s\", \"version\" : \"%s\"}"
-""" The plugin descriptor dependency format """
-
 PLUGIN_DESCRIPTOR_TEMPLATE_FILE_NAME = "plugin_descriptor_template.tpl"
 """ The plugin descriptor template file name """
+
+PLUGIN_DESCRIPTOR_DEPENDENCY_FORMAT = "{\"id\" : \"%s\", \"version\" : \"%s\"}"
+""" The plugin descriptor dependency format """
 
 INIT_FILE_NAME = "__init__.py"
 """ The init file name """
