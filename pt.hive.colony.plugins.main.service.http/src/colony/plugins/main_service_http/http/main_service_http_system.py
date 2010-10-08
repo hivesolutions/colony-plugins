@@ -1783,10 +1783,10 @@ class HttpRequest:
     """ The etag """
 
     expiration_timestamp = None
-    """ The expiration timestatmp """
+    """ The expiration timestamp """
 
     last_modified_timestamp = None
-    """ The last modified timestatmp """
+    """ The last modified timestamp """
 
     contains_message = True
     """ The contains message flag """

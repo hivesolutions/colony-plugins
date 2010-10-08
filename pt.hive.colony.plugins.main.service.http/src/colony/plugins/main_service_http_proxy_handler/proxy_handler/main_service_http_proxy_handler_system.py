@@ -116,7 +116,7 @@ class MainServiceHttpProxyHandler:
         complete_path = proxy_target + path
 
         # fetches the contents from the url
-        http_response = http_client.fetch_url(complete_path, method = request.operation_type, headers = request_headers, contents = request_contents)
+        http_response = http_client.fetch_url(complete_path, method = request.operation_type, headers = request_headers, content_type_charset = DEFAULT_CHARSET, contents = request_contents)
 
         # retrieves the status code form the http response
         status_code = http_response.status_code
