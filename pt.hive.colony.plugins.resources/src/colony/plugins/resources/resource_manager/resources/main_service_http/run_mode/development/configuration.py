@@ -131,9 +131,6 @@ configuration = {
                                            "/socket_bridge",
                                            "/system_unix",
                                            "/system",
-                                           "/proxy_google",
-                                           "/proxy_yahoo",
-                                           "/proxy_svn",
                                            "/proxy"],
                      "/colony_web" : {
                          "handler" : "file",
@@ -282,27 +279,6 @@ configuration = {
                              "authentication_handler" : "python",
                              "authentication_realm" : "system",
                              "arguments" : {"file_path" : "%configuration:pt.hive.colony.plugins.main.authentication.python_handler%/authentication.py"}
-                         }
-                     },
-                     "/proxy_google" : {
-                         "handler" : "proxy",
-                         "allow_redirection" : False,
-                         "request_properties" : {
-                             "proxy_target" : "http://www.google.com"
-                         }
-                     },
-                     "/proxy_yahoo" : {
-                         "handler" : "proxy",
-                         "allow_redirection" : False,
-                         "request_properties" : {
-                             "proxy_target" : "http://www.yahoo.com"
-                         }
-                     },
-                     "/proxy_svn" : {
-                         "handler" : "proxy",
-                         "allow_redirection" : False,
-                         "request_properties" : {
-                             "proxy_target" : "http://svn.hive.pt"
                          }
                      },
                      "/proxy" : {

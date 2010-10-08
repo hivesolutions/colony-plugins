@@ -38,7 +38,7 @@ __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
 configuration = {
-                 "default_end_points" : [("normal", "", 8080, {}), ("ssl", "", 443, {})],
+                 "default_end_points" : [("normal", "", 80, {}), ("ssl", "", 443, {})],
                  "default_handler" : "file",
                  "default_encoding" : None,
                  "default_content_type_charset" : "utf-8",
@@ -49,9 +49,11 @@ configuration = {
                                     "www.hive.pt" : True,
                                     "blog.hive.pt" : True,
                                     "takethebill.com" : True,
-                                    "www.takethebill.com" : True},
+                                    "www.takethebill.com" : True,
+                                    "svn.hive.pt" : True,
+                                    "trac.hive.pt" : True},
                  "virtual_servers" : {
-                     "resolution_order" : ["blog.hive.pt", "takethebill.com"],
+                     "resolution_order" : ["blog.hive.pt", "takethebill.com", "svn.hive.pt", "trac.hive.pt"],
                      "blog.hive.pt" : {
                          "redirections" : {
                              "resolution_order" : ["/"],
@@ -66,6 +68,24 @@ configuration = {
                              "resolution_order" : ["/"],
                              "/" : {
                                  "target" : "/colony_mod_python/rest/mvc/take_the_bill/",
+                                 "recursive_redirection" : True
+                             }
+                         }
+                     },
+                     "svn.hive.pt" : {
+                         "redirections" : {
+                             "resolution_order" : ["/"],
+                             "/" : {
+                                 "target" : "/proxy_svn/",
+                                 "recursive_redirection" : True
+                             }
+                         }
+                     },
+                     "trac.hive.pt" : {
+                         "redirections" : {
+                             "resolution_order" : ["/"],
+                             "/" : {
+                                 "target" : "/proxy_trac/",
                                  "recursive_redirection" : True
                              }
                          }
@@ -99,7 +119,9 @@ configuration = {
                                            "/fastcgi-bin",
                                            "/web_administration",
                                            "/websession_test",
-                                           "/websession"],
+                                           "/websession",
+                                           "/proxy_svn",
+                                           "/proxy_trac"],
                      "/colony_web" : {
                          "handler" : "file",
                          "allow_redirection" : False,
@@ -177,6 +199,20 @@ configuration = {
                          "allow_redirection" : False,
                          "request_properties" : {
                              "protocol" : "default"
+                         }
+                     },
+                     "/proxy_svn" : {
+                         "handler" : "proxy",
+                         "allow_redirection" : False,
+                         "request_properties" : {
+                             "proxy_target" : "http://svn.hive.pt:8080"
+                         }
+                     },
+                     "/proxy_trac" : {
+                         "handler" : "proxy",
+                         "allow_redirection" : False,
+                         "request_properties" : {
+                             "proxy_target" : "http://trac.hive.pt:8080"
                          }
                      }
                  }
