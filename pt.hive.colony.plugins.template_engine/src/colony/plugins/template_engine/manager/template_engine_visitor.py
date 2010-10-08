@@ -828,10 +828,8 @@ class Visitor:
         # to avoid possible problems with string formatting
         attribute_format_literal_value = str(attribute_format_literal_value)
 
-        import time
-
         # date formats the attribute value (datetime)
-        attribute_value_formatted = time.strftime(attribute_format_literal_value, attribute_value_value)
+        attribute_value_formatted = attribute_value_value.strftime(attribute_format_literal_value)
 
         # writes the attribute value formatted
         self.string_buffer.write(attribute_value_formatted)
