@@ -152,6 +152,9 @@ CONTENT_TYPE_CHARSET_VALUE = "content_type_charset"
 DEFAULT_PORTS = (80, 443)
 """ The tuple of default ports """
 
+REDIRECT_STATUS_CODES = (301, 307)
+""" The status codes for redirection """
+
 PROTOCOL_SOCKET_NAME_MAP = {HTTP_PREFIX_VALUE : "normal", HTTPS_PREFIX_VALUE : "ssl"}
 """ The map associating the http protocol prefixed with the name of the socket """
 
@@ -444,6 +447,9 @@ class HttpClient:
         @return: The response from the sent request.
         """
 
+        # retrieves the main client http plugin
+        main_client_http_plugin = self.main_client_http.main_client_http_plugin
+
         # creates the string buffer for the message
         message = colony.libs.string_buffer_util.StringBuffer()
 
@@ -579,6 +585,9 @@ class HttpClient:
                         # retrieves the location
                         location = response.headers_map[LOCATION_VALUE]
 
+                        # retrieves the status code
+                        status_code = response.status_code
+
                         # in case the location does not start with the http prefix
                         # it's not an absolute path but a relative one
                         if not location.startswith(HTTP_PREFIX_VALUE) and not location.startswith(HTTPS_PREFIX_VALUE):
@@ -591,8 +600,17 @@ class HttpClient:
                             # creates the absolute location value
                             location = base_url + "/" + location
 
-                        # returns the "new" fetched url (redirection)
-                        return self.fetch_url(location, GET_METHOD_VALUE, headers = request.headers_map)
+                        # in case the location is not the same and the status code is
+                        # of type redirect
+                        if not location == request.url and status_code in REDIRECT_STATUS_CODES:
+                            # prints a debug message
+                            main_client_http_plugin.debug("Redirecting request to '%s'" % location)
+
+                            # retrieves the request headers
+                            request_headers = request.headers_map
+
+                            # returns the "new" fetched url (redirection)
+                            return self.fetch_url(location, GET_METHOD_VALUE, headers = request_headers)
 
                     # retrieves the message size
                     message_size = int(response.headers_map.get(CONTENT_LENGTH_VALUE, 0))
