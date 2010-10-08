@@ -835,13 +835,19 @@ class AbeculaResponse:
         # writes the abecula command in the string buffer (operation id, operation type, target and protocol version)
         result.write(self.operation_id + " " + self.operation_type + " " + self.target + " " + self.protocol_version + "\r\n")
 
-        # writes the main headers
-        result.write(SERVER_VALUE + ": " + SERVER_IDENTIFIER + "\r\n")
-        result.write(CONTENT_LENGTH_VALUE + ": " + str(content_length) + "\r\n")
+        # creates the ordered map to hold the header values
+        headers_ordered_map = colony.libs.structures_util.OrderedMap()
 
-        # iterates over all the "extra" header values to be sent
-        for header_name, header_value in self.headers_map.items():
-            # writes the extra header value in the result
+        # sets the base request header values
+        headers_ordered_map[SERVER_VALUE] = SERVER_IDENTIFIER
+        headers_ordered_map[CONTENT_LENGTH_VALUE] = str(content_length)
+
+        # extends the headers ordered map with the headers map
+        headers_ordered_map.extend(self.headers_map)
+
+        # iterates over all the header values to be sent
+        for header_name, header_value in headers_ordered_map.items():
+            # writes the header value in the result
             result.write(header_name + ": " + header_value + "\r\n")
 
         # writes the end of the headers and the message
@@ -1004,13 +1010,19 @@ class AbeculaRequest:
         # writes the abecula command in the string buffer (version, status code and status value)
         result.write(self.protocol_version + " " + self.operation_id + " " + str(self.status_code) + " " + status_code_value + "\r\n")
 
-        # writes the main headers
-        result.write(SERVER_VALUE + ": " + SERVER_IDENTIFIER + "\r\n")
-        result.write(CONTENT_LENGTH_VALUE + ": " + str(content_length) + "\r\n")
+        # creates the ordered map to hold the header values
+        headers_ordered_map = colony.libs.structures_util.OrderedMap()
 
-        # iterates over all the "extra" header values to be sent
-        for header_name, header_value in self.response_headers_map.items():
-            # writes the extra header value in the result
+        # sets the base request header values
+        headers_ordered_map[SERVER_VALUE] = SERVER_IDENTIFIER
+        headers_ordered_map[CONTENT_LENGTH_VALUE] = str(content_length)
+
+        # extends the headers ordered map with the response headers map
+        headers_ordered_map.extend(self.response_headers_map)
+
+        # iterates over all the header values to be sent
+        for header_name, header_value in headers_ordered_map.items():
+            # writes the header value in the result
             result.write(header_name + ": " + header_value + "\r\n")
 
         # writes the end of the headers and the message
