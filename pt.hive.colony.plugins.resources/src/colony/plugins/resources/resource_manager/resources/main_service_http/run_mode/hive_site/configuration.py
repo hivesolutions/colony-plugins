@@ -48,17 +48,27 @@ configuration = {
                                     "hive.pt" : True,
                                     "www.hive.pt" : True,
                                     "blog.hive.pt" : True,
+                                    "openid.hive.pt" : True,
                                     "takethebill.com" : True,
                                     "www.takethebill.com" : True,
                                     "svn.hive.pt" : True,
                                     "trac.hive.pt" : True},
                  "virtual_servers" : {
-                     "resolution_order" : ["blog.hive.pt", "takethebill.com", "svn.hive.pt", "trac.hive.pt"],
+                     "resolution_order" : ["blog.hive.pt", "openid.hive.pt", "takethebill.com", "svn.hive.pt", "trac.hive.pt"],
                      "blog.hive.pt" : {
                          "redirections" : {
                              "resolution_order" : ["/"],
                              "/" : {
                                  "target" : "/colony_mod_python/rest/mvc/hive_blog/",
+                                 "recursive_redirection" : True
+                             }
+                         }
+                     },
+                     "openid.hive.pt" : {
+                         "redirections" : {
+                             "resolution_order" : ["/"],
+                             "/" : {
+                                 "target" : "/colony_mod_python/rest/mvc/hive_openid/",
                                  "recursive_redirection" : True
                              }
                          }
@@ -92,11 +102,21 @@ configuration = {
                      }
                  },
                  "redirections" : {
-                     "resolution_order" : ["/blog",
+                     "resolution_order" : ["/manager",
+                                           "/blog",
+                                           "/openid",
                                            "/take_the_bill",
                                            "/"],
+                     "/manager" : {
+                         "target" : "/colony_mod_python/rest/mvc/web_mvc_manager/",
+                         "recursive_redirection" : True
+                     },
                      "/blog" : {
                          "target" : "/colony_mod_python/rest/mvc/hive_blog/",
+                         "recursive_redirection" : True
+                     },
+                     "/openid" : {
+                         "target" : "/colony_mod_python/rest/mvc/hive_openid/",
                          "recursive_redirection" : True
                      },
                      "/take_the_bill" : {
