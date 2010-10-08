@@ -270,7 +270,7 @@ class HttpClient:
         # stops the http client
         self._http_client.stop_client()
 
-    def fetch_url(self, url, method = GET_METHOD_VALUE, parameters = {}, protocol_version = HTTP_1_1_VERSION, content_type = DEFAULT_CONTENT_TYPE, content_type_charset = DEFAULT_CHARSET, contents = None):
+    def fetch_url(self, url, method = GET_METHOD_VALUE, parameters = {}, protocol_version = HTTP_1_1_VERSION, headers = {}, content_type = DEFAULT_CONTENT_TYPE, content_type_charset = DEFAULT_CHARSET, contents = None):
         """
         Fetches the url for the given url, method and (http) parameters.
 
@@ -282,6 +282,8 @@ class HttpClient:
         @param parameters: The (http) parameters to be used in the fetching.
         @type protocol_version: String
         @param protocol_version: The version of the protocol to be used.
+        @type headers: Dictionary
+        @param headers: The (http) headers to be used in the fetching.
         @type content_type: String
         @param content_type: The content type of the message.
         @type content_type_charset: String
@@ -306,9 +308,9 @@ class HttpClient:
 
         try:
             # sends the request for the host, port, path,
-            # parameters, method, protocol version, content type,
+            # parameters, method, headers, protocol version, content type,
             # content type charset and contents and retrieves the request
-            request = self.send_request(host, port, path, parameters, method, protocol_version, content_type, content_type_charset, contents)
+            request = self.send_request(host, port, path, parameters, method, headers, protocol_version, content_type, content_type_charset, contents)
 
             # retrieves the response
             response = self.retrieve_response(request)
@@ -370,7 +372,7 @@ class HttpClient:
         # return the built url
         return url
 
-    def send_request(self, host, port, path, parameters, operation_type, protocol_version, content_type, content_type_charset, contents):
+    def send_request(self, host, port, path, parameters, operation_type, headers, protocol_version, content_type, content_type_charset, contents):
         """
         Sends the request for the given parameters.
 
@@ -384,6 +386,8 @@ class HttpClient:
         @param parameters: The parameters to the request.
         @type operation_type: String
         @param operation_type: The operation type for the request.
+        @type headers: Dictionary
+        @param headers: The headers to the request.
         @type protocol_version: String
         @param protocol_version: The protocol version of the request.
         @type content_type: String
@@ -396,9 +400,9 @@ class HttpClient:
         @return: The sent request for the given parameters.
         """
 
-        # creates the http request with the host, the port, the path, the parameters,
-        # operation type, the protocol version, the content type and the content type charset
-        request = HttpRequest(host, port, path, parameters, operation_type, protocol_version, content_type, content_type_charset)
+        # creates the http request with the host, the port, the path, the parameters, operation type,
+        # the headers, the protocol version, the content type and the content type charset
+        request = HttpRequest(host, port, path, parameters, operation_type, headers, protocol_version, content_type, content_type_charset)
 
         # in case the contents are defined
         if contents:
@@ -906,7 +910,7 @@ class HttpRequest:
     content_type_charset = None
     """ The content type charset """
 
-    def __init__(self, host = "none", port = None, path = "none", attributes_map = {}, operation_type = GET_METHOD_VALUE, protocol_version = HTTP_1_1_VERSION, content_type = DEFAULT_CONTENT_TYPE, content_type_charset = DEFAULT_CHARSET):
+    def __init__(self, host = "none", port = None, path = "none", attributes_map = {}, operation_type = GET_METHOD_VALUE, headers_map = {}, protocol_version = HTTP_1_1_VERSION, content_type = DEFAULT_CONTENT_TYPE, content_type_charset = DEFAULT_CHARSET):
         """
         Constructor of the class.
 
@@ -920,6 +924,8 @@ class HttpRequest:
         @param attributes_map: The attributes map.
         @type operation_type: String
         @param operation_type: The operation type.
+        @type headers_map: Dictionary
+        @param headers_map: The headers map.
         @type protocol_version: String
         @param protocol_version: The protocol version.
         @type content_type: String
@@ -933,11 +939,11 @@ class HttpRequest:
         self.path = path
         self.attributes_map = attributes_map
         self.operation_type = operation_type
+        self.headers_map = headers_map
         self.protocol_version = protocol_version
         self.content_type = content_type
         self.content_type_charset = content_type_charset
 
-        self.headers_map = {}
         self.message_stream = colony.libs.string_buffer_util.StringBuffer()
 
     def write(self, message, flush = 1, encode = True):
