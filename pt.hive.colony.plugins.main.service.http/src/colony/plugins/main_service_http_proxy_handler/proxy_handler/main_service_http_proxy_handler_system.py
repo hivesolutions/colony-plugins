@@ -37,6 +37,7 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
+import colony.libs.map_util
 
 HANDLER_NAME = "proxy"
 """ The handler name """
@@ -95,37 +96,27 @@ class MainServiceHttpProxyHandler:
         # opens the http client
         http_client.open({})
 
-        print "---------"
-        print proxy_target
-        print request.base_path
-        print request.handler_path
-
         # calculates the real path difference
         path = request.base_path.replace(request.handler_path, "", 1)
 
-        print path
+        # creates a new map for the request headers
+        request_headers = {}
+
+        # copies the original request headers to the request headers
+        colony.libs.map_util.map_copy(request.headers_map, request_headers)
+
+        # @todo: Temporary hack
+        del request_headers["Host"]
 
         # reads the request contents
-        contents = request.read()
+        request_contents = request.read()
 
-        CONTENT_TYPE_VALUE = "Content-Type"
-        """ The content type value """
-
-        content_type = request.get_header(CONTENT_TYPE_VALUE) or "utf-8"
-
-        # PRECISO DE ALTERAR O CLIENTE DE HTTP PARA TER SUPORE PARA MANDAR
-        # e receber headers
-
-        #http_client.fetch_url("http://www.sapo.pt", method = GET_METHOD_VALUE, parameters = {}, protocol_version = HTTP_1_1_VERSION, content_type = DEFAULT_CONTENT_TYPE, content_type_charset = DEFAULT_CHARSET, contents = None)
-
-        # o problema tlx esteja no redirect :)
-
-        a = proxy_target + path
-
-        print "vai fazer fetch a '%s'" % a
+        # creates the complete path from the proxy
+        # target and the path
+        complete_path = proxy_target + path
 
         # fetches the contents from the url
-        http_response = http_client.fetch_url(proxy_target + path, method = request.operation_type, content_type = content_type, contents = contents)
+        http_response = http_client.fetch_url(complete_path, method = request.operation_type, headers = request_headers, contents = request_contents)
 
         # retrieves the status code form the http response
         status_code = http_response.status_code
@@ -133,8 +124,16 @@ class MainServiceHttpProxyHandler:
         # retrieves the status message from the http response
         status_message = http_response.status_message
 
+        # retrieves the headers map from the http response
+        headers_map = http_response.headers_map
+
         # retrieves the data from the http response
         data = http_response.received_message
+
+        # @todo temporary hacking to avoid possible problems
+        # with chucked encoding
+        if "Transfer-Encoding" in headers_map:
+            del headers_map["Transfer-Encoding"]
 
         # sets the request status code
         request.status_code = status_code
@@ -142,10 +141,11 @@ class MainServiceHttpProxyHandler:
         # sets the request status message
         request.status_message = status_message
 
+        # sets the response headers map
+        request.response_headers_map = headers_map
+
         # writes the (received) data to the request
         request.write(data)
-
-        # TENHO TB DE ESCREVER OS HEADERS CERTOS
 
         # closes the http client
         http_client.close({})

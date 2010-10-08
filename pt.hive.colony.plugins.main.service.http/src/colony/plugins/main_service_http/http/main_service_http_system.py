@@ -48,6 +48,7 @@ import traceback
 
 import colony.libs.map_util
 import colony.libs.quote_util
+import colony.libs.structures_util
 import colony.libs.string_buffer_util
 
 import main_service_http_exceptions
@@ -767,7 +768,7 @@ class HttpClientServiceHandler:
                     # retrieves the start line splitted length
                     start_line_splitted_length = len(start_line_splitted)
 
-                    # in case the length of the splitted line is not three
+                    # in case the length of the splitted line is not valid
                     if not start_line_splitted_length == 3:
                         # raises the http invalid data exception
                         raise main_service_http_exceptions.HttpInvalidDataException("invalid data received: " + start_line)
@@ -2144,18 +2145,21 @@ class HttpRequest:
         # formats the current date time according to the http specification
         current_date_time_formatted = current_date_time.strftime(DATE_FORMAT)
 
+        # creates the ordered map to hold the header values
+        headers_ordered_map = colony.libs.structures_util.OrderedMap()
+
         if self.content_type:
-            result.write(CONTENT_TYPE_VALUE + ": " + self.content_type + "\r\n")
+            headers_ordered_map[CONTENT_TYPE_VALUE] = self.content_type
         if self.encoded:
-            result.write(CONTENT_ENCODING_VALUE + ": " + self.encoding_name + "\r\n")
+            headers_ordered_map[CONTENT_ENCODING_VALUE] = self.encoding_name
         if self.chunked_encoding:
-            result.write(TRANSFER_ENCODING_VALUE + ": " + CHUNKED_VALUE + "\r\n")
+            headers_ordered_map[TRANSFER_ENCODING_VALUE] = CHUNKED_VALUE
         if not self.chunked_encoding and self.contains_message:
-            result.write(CONTENT_LENGTH_VALUE + ": " + str(content_length) + "\r\n")
+            headers_ordered_map[CONTENT_LENGTH_VALUE] = str(content_length)
         if self.upgrade_mode:
-            result.write(UPGRADE_VALUE + ": " + self.upgrade_mode + "\r\n")
+            headers_ordered_map[UPGRADE_VALUE] = self.upgrade_mode
         if self.etag:
-            result.write(ETAG_VALUE + ": " + self.etag + "\r\n")
+            headers_ordered_map[ETAG_VALUE] = self.etag
         if self.expiration_timestamp:
             # converts the expiration timestamp to date time
             expiration_date_time = datetime.datetime.fromtimestamp(self.expiration_timestamp)
@@ -2163,7 +2167,7 @@ class HttpRequest:
             # formats the expiration date time according to the http specification
             expiration_date_time_formatted = expiration_date_time.strftime(DATE_FORMAT)
 
-            result.write(EXPIRES_VALUE + ": " + expiration_date_time_formatted + "\r\n")
+            headers_ordered_map[EXPIRES_VALUE] = expiration_date_time_formatted
         if self.last_modified_timestamp:
             # converts the last modified timestamp to date time
             last_modified_date_time = datetime.datetime.fromtimestamp(self.last_modified_timestamp)
@@ -2171,15 +2175,20 @@ class HttpRequest:
             # formats the last modified date time according to the http specification
             last_modified_date_time_formatted = last_modified_date_time.strftime(DATE_FORMAT)
 
-            result.write(LAST_MODIFIED_VALUE + ": " + last_modified_date_time_formatted + "\r\n")
-        result.write(CONNECTION_VALUE + ": " + self.connection_mode + "\r\n")
-        result.write(DATE_VALUE + ": " + current_date_time_formatted + "\r\n")
-        result.write(CACHE_CONTROL_VALUE + ": " + DEFAULT_CACHE_CONTROL_VALUE + "\r\n")
-        result.write(SERVER_VALUE + ": " + SERVER_IDENTIFIER + "\r\n")
+            headers_ordered_map[LAST_MODIFIED_VALUE] = last_modified_date_time_formatted
 
-        # iterates over all the "extra" header values to be sent
-        for header_name, header_value in self.response_headers_map.items():
-            # writes the extra header value in the result
+        # sets the base response header values
+        headers_ordered_map[CONNECTION_VALUE] = self.connection_mode
+        headers_ordered_map[DATE_VALUE] = current_date_time_formatted
+        headers_ordered_map[CACHE_CONTROL_VALUE] = DEFAULT_CACHE_CONTROL_VALUE
+        headers_ordered_map[SERVER_VALUE] = SERVER_IDENTIFIER
+
+        # extends the headers ordered map with the response headers map
+        headers_ordered_map.extend(self.response_headers_map)
+
+        # iterates over all the header values to be sent
+        for header_name, header_value in headers_ordered_map.items():
+            # writes the header value in the result
             result.write(header_name + ": " + header_value + "\r\n")
 
         # writes the end of the headers and the message
