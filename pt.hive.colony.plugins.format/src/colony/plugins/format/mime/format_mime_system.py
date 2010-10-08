@@ -201,19 +201,26 @@ class MimeMessage:
         # retrieves the result string value
         message = self.message_stream.get_value()
 
+        # creates the ordered map to hold the header values
+        headers_ordered_map = colony.libs.structures_util.OrderedMap()
+
         # in case this is multi part message
         if self.multi_part:
-            result.write(CONTENT_TYPE_VALUE + ": " + "multipart/" + self.multi_part + ";" + "boundary=\"" + self.boundary + "\"\r\n")
+            # sets the content type
+            headers_ordered_map[CONTENT_TYPE_VALUE] = "multipart/" + self.multi_part + ";" + "boundary=\"" + self.boundary + "\""
 
         # in case this message is not a part, writes the
         # main headers
         if not self.part:
-            # writes the mime version
-            result.write(MIME_VERSION_VALUE + ": " + self.protocol_version + "\r\n")
+            # sets the mime version
+            headers_ordered_map[MIME_VERSION_VALUE] = self.protocol_version
 
-        # iterates over all the "extra" header values to be sent
-        for header_name, header_value in self.headers_map.items():
-            # writes the extra header value in the result
+        # extends the headers ordered map with the headers map
+        headers_ordered_map.extend(self.headers_map)
+
+        # iterates over all the header values to be sent
+        for header_name, header_value in headers_ordered_map.items():
+            # writes the header value in the result
             result.write(header_name + ": " + header_value + "\r\n")
 
         # writes the end of the headers and the message
