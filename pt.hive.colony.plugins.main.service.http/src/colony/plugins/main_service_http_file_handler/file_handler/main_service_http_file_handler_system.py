@@ -40,8 +40,8 @@ __license__ = "GNU General Public License (GPL), Version 3"
 import os
 import re
 import stat
-import time
 import hashlib
+import datetime
 
 import colony.libs.map_util
 import colony.libs.string_buffer_util
@@ -362,7 +362,7 @@ class MainServiceHttpFileHandler:
 
             # retrieves the file properties
             file_size = file_stat[stat.ST_SIZE]
-            file_modified_date = time.localtime(file_stat[stat.ST_MTIME])
+            file_modified_date = datetime.datetime.fromtimestamp(file_stat[stat.ST_MTIME])
 
             # retrieves the file mode
             file_mode = file_stat[stat.ST_MODE]
