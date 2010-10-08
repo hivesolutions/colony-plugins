@@ -43,6 +43,7 @@ import base64
 import threading
 
 import colony.libs.quote_util
+import colony.libs.structures_util
 import colony.libs.string_buffer_util
 
 import main_client_http_exceptions
@@ -294,6 +295,12 @@ class HttpClient:
         @return: The retrieved fetched url contents.
         """
 
+        # retrieves the main client http plugin
+        main_client_http_plugin = self.main_client_http.main_client_http_plugin
+
+        # print a debug message
+        main_client_http_plugin.debug("Fetching url '%s' with '%s' method" % (url, method))
+
         # parses the url retrieving the protocol the host the port and the path
         protocol, host, port, path = self._parse_url(url)
 
@@ -310,7 +317,7 @@ class HttpClient:
             # sends the request for the host, port, path,
             # parameters, method, headers, protocol version, content type,
             # content type charset and contents and retrieves the request
-            request = self.send_request(host, port, path, parameters, method, headers, protocol_version, content_type, content_type_charset, contents)
+            request = self.send_request(host, port, path, parameters, method, headers, protocol_version, content_type, content_type_charset, contents, url)
 
             # retrieves the response
             response = self.retrieve_response(request)
@@ -372,7 +379,7 @@ class HttpClient:
         # return the built url
         return url
 
-    def send_request(self, host, port, path, parameters, operation_type, headers, protocol_version, content_type, content_type_charset, contents):
+    def send_request(self, host, port, path, parameters, operation_type, headers, protocol_version, content_type, content_type_charset, contents, url):
         """
         Sends the request for the given parameters.
 
@@ -396,13 +403,15 @@ class HttpClient:
         @param content_type_charset: The content type charset.
         @type contents: String
         @param contents: The contents of the message to be sent.
+        @type url: String
+        @param url: The complete url of the request.
         @rtype: HttpRequest
         @return: The sent request for the given parameters.
         """
 
         # creates the http request with the host, the port, the path, the parameters, operation type,
         # the headers, the protocol version, the content type and the content type charset
-        request = HttpRequest(host, port, path, parameters, operation_type, headers, protocol_version, content_type, content_type_charset)
+        request = HttpRequest(host, port, path, parameters, operation_type, headers, protocol_version, content_type, content_type_charset, url)
 
         # in case the contents are defined
         if contents:
@@ -499,13 +508,13 @@ class HttpClient:
                     start_line = message_value[:start_line_index]
 
                     # splits the start line in spaces
-                    start_line_splitted = start_line.split(" ")
+                    start_line_splitted = start_line.split(" ", 2)
 
                     # retrieves the start line splitted length
                     start_line_splitted_length = len(start_line_splitted)
 
-                    # in case the length of the splitted line is not three
-                    if not start_line_splitted_length == 3:
+                    # in case the length of the splitted line is not valid
+                    if start_line_splitted_length < 3:
                         # raises the http invalid data exception
                         raise main_client_http_exceptions.HttpInvalidDataException("invalid data received: " + start_line)
 
@@ -570,8 +579,20 @@ class HttpClient:
                         # retrieves the location
                         location = response.headers_map[LOCATION_VALUE]
 
-                        # returns the "new" fetched url
-                        return self.fetch_url(location, request.operation_type, request.attributes_map)
+                        # in case the location does not start with the http prefix
+                        # it's not an absolute path but a relative one
+                        if not location.startswith(HTTP_PREFIX_VALUE) and not location.startswith(HTTPS_PREFIX_VALUE):
+                            # retrieves the url of the request
+                            request_url = request.url
+
+                            # retrieves the base url (without the last token)
+                            base_url = request_url.rsplit("/", 1)[0]
+
+                            # creates the absolute location value
+                            location = base_url + "/" + location
+
+                        # returns the "new" fetched url (redirection)
+                        return self.fetch_url(location, GET_METHOD_VALUE, headers = request.headers_map)
 
                     # retrieves the message size
                     message_size = int(response.headers_map.get(CONTENT_LENGTH_VALUE, 0))
@@ -910,7 +931,10 @@ class HttpRequest:
     content_type_charset = None
     """ The content type charset """
 
-    def __init__(self, host = "none", port = None, path = "none", attributes_map = {}, operation_type = GET_METHOD_VALUE, headers_map = {}, protocol_version = HTTP_1_1_VERSION, content_type = DEFAULT_CONTENT_TYPE, content_type_charset = DEFAULT_CHARSET):
+    url = None
+    """ The complete url """
+
+    def __init__(self, host = "none", port = None, path = "none", attributes_map = {}, operation_type = GET_METHOD_VALUE, headers_map = {}, protocol_version = HTTP_1_1_VERSION, content_type = DEFAULT_CONTENT_TYPE, content_type_charset = DEFAULT_CHARSET, url = None):
         """
         Constructor of the class.
 
@@ -932,6 +956,8 @@ class HttpRequest:
         @param content_type: The content type.
         @type content_type_charset: String
         @param content_type_charset: The content type charset.
+        @type url: String
+        @param url: The complete url.
         """
 
         self.host = host
@@ -943,6 +969,7 @@ class HttpRequest:
         self.protocol_version = protocol_version
         self.content_type = content_type
         self.content_type_charset = content_type_charset
+        self.url = url
 
         self.message_stream = colony.libs.string_buffer_util.StringBuffer()
 
@@ -1003,30 +1030,37 @@ class HttpRequest:
         # writes the http command in the string buffer (version, status code and status value)
         result.write(self.operation_type + " " + path + " " + self.protocol_version + "\r\n")
 
+        # creates the ordered map to hold the header values
+        headers_ordered_map = colony.libs.structures_util.OrderedMap()
+
         # in case there is a content type defined
         if self.content_type:
-            result.write(CONTENT_TYPE_VALUE + ": " + self.content_type + "\r\n")
+            headers_ordered_map[CONTENT_TYPE_VALUE] = self.content_type
 
         # in case the content length is valid
         if content_length > 0:
-            result.write(CONTENT_LENGTH_VALUE + ": " + str(content_length) + "\r\n")
+            headers_ordered_map[CONTENT_LENGTH_VALUE] = str(content_length)
 
         # in case authentication is set
         if self.authentication:
-            result.write(AUTHORIZATION_VALUE + ": " + self.authentication_token + "\r\n")
+            headers_ordered_map[AUTHORIZATION_VALUE] = self.authentication_token
 
-        result.write(HOST_VALUE + ": " + real_host + "\r\n")
-        result.write(USER_AGENT_VALUE + ": " + USER_AGENT_IDENTIFIER + "\r\n")
-        result.write(ACCEPT_VALUE + ": " + "text/html,application/xhtml+xml,application/xml;q=0.7,*;q=0.7" + "\r\n")
-        result.write(ACCEPT_LANGUAGE_VALUE + ": " + "en-us,en;q=0.5" + "\r\n")
-        result.write(ACCEPT_CHARSET_VALUE + ": " + "iso-8859-1,utf-8;q=0.7,*;q=0.7" + "\r\n")
-        result.write(KEEP_ALIVE_VALUE + ": " + "115" + "\r\n")
-        result.write(CONNECITON_VALUE + ": " + "keep-alive" + "\r\n")
-        result.write(CACHE_CONTROL_VALUE + ": " + "max-age=0" + "\r\n")
+        # sets the base request header values
+        headers_ordered_map[HOST_VALUE] = real_host
+        headers_ordered_map[USER_AGENT_VALUE] = USER_AGENT_IDENTIFIER
+        headers_ordered_map[ACCEPT_VALUE] = "text/html,application/xhtml+xml,application/xml;q=0.7,*;q=0.7"
+        headers_ordered_map[ACCEPT_LANGUAGE_VALUE] = "en-us,en;q=0.5"
+        headers_ordered_map[ACCEPT_CHARSET_VALUE] = "iso-8859-1,utf-8;q=0.7,*;q=0.7"
+        headers_ordered_map[KEEP_ALIVE_VALUE] = "115"
+        headers_ordered_map[CONNECITON_VALUE] = "keep-alive"
+        headers_ordered_map[CACHE_CONTROL_VALUE] = "max-age=0"
+
+        # extends the headers ordered map with the headers map
+        headers_ordered_map.extend(self.headers_map)
 
         # iterates over all the header values to be sent
-        for header_name, header_value in self.headers_map.items():
-            # writes the extra header value in the result
+        for header_name, header_value in headers_ordered_map.items():
+            # writes the header value in the result
             result.write(header_name + ": " + header_value + "\r\n")
 
         # writes the end of the headers and the message
