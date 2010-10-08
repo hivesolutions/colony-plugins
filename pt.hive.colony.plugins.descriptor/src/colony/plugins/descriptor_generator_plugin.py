@@ -55,7 +55,7 @@ class DescriptorGeneratorPlugin(colony.base.plugin_system.Plugin):
     platforms = [colony.base.plugin_system.CPYTHON_ENVIRONMENT,
                  colony.base.plugin_system.JYTHON_ENVIRONMENT,
                  colony.base.plugin_system.IRON_PYTHON_ENVIRONMENT]
-    attributes = {"file_path" : "$base{plugin_directory}/descriptor_generator/generator/resources/baf.xml"}
+    attributes = {"build_automation_file_path" : "$base{plugin_directory}/descriptor_generator/generator/resources/baf.xml"}
     capabilities = ["console_command_extension", "item"]
     capabilities_allowed = []
     dependencies = [colony.base.plugin_system.PluginDependency(
