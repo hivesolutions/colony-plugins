@@ -62,7 +62,7 @@ class MainServiceHttpProxyHandlerPlugin(colony.base.plugin_system.Plugin):
                     "pt.hive.colony.plugins.main.client.http", "1.0.0")]
     events_handled = []
     events_registrable = []
-    main_modules = ["main_service_http_proxy_handler.proxy_handler.main_service_http_proxy_handler_exceptions", "main_service_http_proxy_handler.proxy_handler.main_service_http_proxy_handler_system"]
+    main_modules = ["main_service_http_proxy_handler.proxy_handler.main_service_http_proxy_handler_system"]
 
     main_service_http_proxy_handler = None
 
