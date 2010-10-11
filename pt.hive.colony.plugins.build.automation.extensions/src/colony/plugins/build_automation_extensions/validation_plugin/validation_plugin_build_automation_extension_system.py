@@ -63,4 +63,18 @@ class ValidationPlugintBuildAutomationExtension:
         validation_plugin_plugin = self.validation_plugin_build_automation_extension_plugin.validation_plugin_plugin
 
         # validates the given plugin
-        validation_plugin_plugin.validate_plugin(plugin.id)
+        validation_errors = validation_plugin_plugin.validate_plugin(plugin.id)
+
+        # retrieves the validation errors length
+        validation_errors_length = len(validation_errors)
+
+        # iterates over all the validation error
+        for validation_error in validation_errors:
+            # prints an error message
+            logger.error("Error validating plugin '%s': %s" % (validation_error["plugin_id"], validation_error["message"]))
+
+        # retrieves the build automation success
+        build_automation_success = validation_errors_length == 0
+
+        # returns the build automation success
+        return build_automation_success

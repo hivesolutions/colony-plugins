@@ -133,3 +133,6 @@ class PluginRepositoryGeneratorBuildAutomationExtension:
                 continue
 
             colony.libs.path_util.copy_file(plugins_directory + "/" + plugin_file_name, full_plugins_directory + "/" + plugin_file_name)
+
+        # returns true (success)
+        return True

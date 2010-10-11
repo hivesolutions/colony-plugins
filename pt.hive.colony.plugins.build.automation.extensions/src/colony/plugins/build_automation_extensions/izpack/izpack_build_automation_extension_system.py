@@ -125,3 +125,6 @@ class IzpackBuildAutomationExtension:
 
         # executes the compilation command
         command_execution_plugin.execute_command_logger_execution_directory(izpack_execution_command, [install_file_path, "-o", output_file_full_absolute_path], logger, base_directory_path)
+
+        # returns true (success)
+        return True

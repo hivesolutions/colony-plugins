@@ -91,3 +91,6 @@ class PackingBuildAutomationExtension:
 
         # packs the directory
         main_packing_manager_plugin.pack_files(file_paths_list, properties, COLONY_VALUE)
+
+        # returns true (success)
+        return True

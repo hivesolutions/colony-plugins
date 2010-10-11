@@ -93,7 +93,7 @@ class CommandExecutionBuildAutomationExtensionPlugin(colony.base.plugin_system.P
         colony.base.plugin_system.Plugin.dependency_injected(self, plugin)
 
     def run_automation(self, plugin, stage, parameters, build_automation_structure, logger):
-        self.command_execution_build_automation_extension.run_automation(plugin, stage, parameters, build_automation_structure, logger)
+        return self.command_execution_build_automation_extension.run_automation(plugin, stage, parameters, build_automation_structure, logger)
 
     def get_command_execution_plugin(self):
         return self.command_execution_plugin

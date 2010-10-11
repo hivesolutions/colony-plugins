@@ -105,3 +105,6 @@ class InstallationBuildAutomationExtension:
 
             # generates the installation file
             installation_manager_plugin.generate_installation_file(installation_parameters)
+
+        # returns true (success)
+        return True

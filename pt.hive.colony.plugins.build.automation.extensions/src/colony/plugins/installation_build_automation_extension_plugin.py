@@ -92,7 +92,7 @@ class InstallationBuildAutomationExtensionPlugin(colony.base.plugin_system.Plugi
         colony.base.plugin_system.Plugin.dependency_injected(self, plugin)
 
     def run_automation(self, plugin, stage, parameters, build_automation_structure, logger):
-        self.installation_build_automation_extension.run_automation(plugin, stage, parameters, build_automation_structure, logger)
+        return self.installation_build_automation_extension.run_automation(plugin, stage, parameters, build_automation_structure, logger)
 
     def get_installation_manager_plugin(self):
         return self.installation_manager_plugin

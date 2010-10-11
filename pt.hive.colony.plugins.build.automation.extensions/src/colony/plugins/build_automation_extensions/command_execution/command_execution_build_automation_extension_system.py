@@ -105,3 +105,6 @@ class CommandExecutionBuildAutomationExtension:
         if process_return_code:
             # raises the command execution build automation extension exception
             raise command_execution_build_automation_extension_exceptions.CommandExecutionBuildAutomationExtensionException("Process returned error code: %i" % process_return_code)
+
+        # returns true (success)
+        return True

@@ -161,6 +161,9 @@ class ContinuousIntegrationBuildAutomationExtension:
         # version path
         colony.libs.path_util.link(deployment_version_path, latest_version_path)
 
+        # returns true (success)
+        return True
+
     def _write_version_number(self, version_file_path, version_number):
         """
         Writes the given version number into the file in the given

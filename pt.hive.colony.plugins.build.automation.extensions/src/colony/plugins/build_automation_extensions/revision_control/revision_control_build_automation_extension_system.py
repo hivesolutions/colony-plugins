@@ -174,6 +174,9 @@ class RevisionControlBuildAutomationExtension:
             # writes the changelog for the given file path and revision list
             self._write_changelog(changelog_file_path, revision_list)
 
+        # returns true (success)
+        return True
+
     def _read_version_number(self, version_file_path):
         # in case the version file path does not exist
         if not os.path.exists(version_file_path):

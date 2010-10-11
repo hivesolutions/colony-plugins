@@ -108,3 +108,6 @@ class RepositoryGeneratorBuildAutomationExtension:
 
             # generates the repository
             repository_generator_manager_plugin.generate_repository(repository_generation_parameters)
+
+        # returns true (success)
+        return True
