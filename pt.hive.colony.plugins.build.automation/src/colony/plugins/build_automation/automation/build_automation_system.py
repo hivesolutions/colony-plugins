@@ -357,7 +357,7 @@ class BuildAutomation:
             # returns immediately
             return False
 
-        # resets (clears) the logging buffer (in order to avoid duplicate)
+        # resets (clears) the logging buffer (in order to avoid duplicates)
         self.logging_buffer.reset()
 
         # retrieves the initial date time value
