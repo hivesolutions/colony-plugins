@@ -95,6 +95,22 @@ DEFAULT_LOG_LEVEL = logging.INFO
 BUILD_AUTOMATION_STAGES = ["compile", "test", "build", "install", "deploy", "clean", "site", "site-deploy"]
 """ The build automation stages """
 
+POST_BUILD_AUTOMATION_STAGES = ["post-build"]
+""" The post build automation stages """
+
+class RuntimeInformation:
+
+    build_automation_success = False
+
+    logging_buffer = None
+
+    initial_date_time = None
+
+    def __init__(self, build_automation_success = False, logging_buffer = None, initial_date_time = None):
+        self.build_automation_success = build_automation_success
+        self.logging_buffer = logging_buffer
+        self.initial_date_time = initial_date_time
+
 class BuildAutomation:
     """
     The build automation class.
@@ -338,8 +354,6 @@ class BuildAutomation:
         @return: If the  build automation for the stage was successful.
         """
 
-        # retrieves the initial date time value
-        initial_date_time = datetime.datetime.now()
 
         # in case no logger is defined
         if not logger:
@@ -352,13 +366,15 @@ class BuildAutomation:
         # in case the retrieval of the build automation structure was unsuccessful
         if not build_automation_structure:
             # returns immediately
-            return
+            return False
 
-        # sets the build automation success flag
-        build_automation_success = True
-
-        # creates the build automation directories (if they don't exist and is first run)
-        is_first and self.create_build_automation_directories(build_automation_structure)
+        #-------------------------------
+        # @TODO GRANDE HARDCODE BADALHOCO
+        # retrieves the initial date time value
+        initial_date_time = datetime.datetime.now()
+        build_automation_structure.runtime = RuntimeInformation(True, self.string_buffer, initial_date_time)
+        build_automation_structure_runtime = build_automation_structure.runtime
+        #-------------------------------
 
         # in case the stage is not defined, it's is going
         # to find the default one
@@ -369,6 +385,12 @@ class BuildAutomation:
             # retrieves the default stage as the stage to be used
             stage = build_properties[DEFAULT_STAGE_VALUE]
 
+        # prints the start information
+        self.print_start_information(plugin_id, plugin_version, stage, logger)
+
+        # creates the build automation directories (if they don't exist and is first run)
+        is_first and self.create_build_automation_directories(build_automation_structure)
+
         # in case the stage is not present in the build automation stages
         if not stage in BUILD_AUTOMATION_STAGES:
             # raises the invalid stage exception
@@ -376,11 +398,14 @@ class BuildAutomation:
 
         # in case the recursive level is greater than zero
         if recursive_level > 0:
+            # prints an info message
+            logger.info("Building modules...")
+
             # iterates over all the module plugins to execute them (composition)
             for module_plugin, module_plugin_stage in build_automation_structure.module_plugins:
                 # in case the build automation does not
                 # succeed
-                if not build_automation_success:
+                if not build_automation_structure_runtime.build_automation_success:
                     # breaks the loop
                     break
 
@@ -390,7 +415,10 @@ class BuildAutomation:
                 module_stage = module_plugin_stage or stage
 
                 # runs the module plugin for the same stage
-                build_automation_success = self.run_automation(module_id, module_version, module_stage, recursive_level - 1, logger, False)
+                build_automation_structure_runtime.build_automation_success = self.run_automation(module_id, module_version, module_stage, recursive_level - 1, logger, False)
+        else:
+            # prints an info message
+            logger.info("Not building modules no recursion level available...")
 
         # retrieves the index of the state in the build automation stages list
         build_automation_stage_index = BUILD_AUTOMATION_STAGES.index(stage)
@@ -403,18 +431,23 @@ class BuildAutomation:
         for valid_automation_stage in valid_automation_stages:
             # in case the build automation does not
             # succeed
-            if not build_automation_success:
+            if not build_automation_structure_runtime.build_automation_success:
                 # breaks the loop
                 break
 
             # run the automation stage (tasks)
-            build_automation_success = self.run_automation_stage(valid_automation_stage, build_automation_structure, logger)
+            build_automation_structure_runtime.build_automation_success = self.run_automation_stage(valid_automation_stage, build_automation_structure, logger)
+
+        # iterates over all the valid post automation stages to run the automation plugins
+        for post_build_automation_stage in POST_BUILD_AUTOMATION_STAGES:
+            # run the post automation stage (tasks)
+            self.run_automation_stage(post_build_automation_stage, build_automation_structure, logger)
 
         # prints the end information
-        self.print_end_information(build_automation_success, initial_date_time, logger)
+        self.print_end_information(build_automation_structure, logger)
 
         # returns the build automation success
-        return build_automation_success
+        return build_automation_structure_runtime.build_automation_success
 
     def run_automation_stage(self, automation_stage, build_automation_structure, logger):
         """
@@ -475,7 +508,25 @@ class BuildAutomation:
         # returns true (valid)
         return True
 
-    def print_end_information(self, build_automation_success, initial_date_time, logger):
+    def print_start_information(self, plugin_id, plugin_version, stage, logger):
+        # prints logging information
+        logger.info("------------------------------------------------------------------------")
+        logger.info("BUILD STARTED")
+        logger.info("------------------------------------------------------------------------")
+        logger.info("Building '%s'" %(plugin_id))
+        logger.info("Using stage [%s] of build automation" % stage)
+        logger.info("------------------------------------------------------------------------")
+
+    def print_end_information(self, build_automation_structure, logger):
+        # retrieves the built automation structure runtime
+        build_automation_structure_runtime = build_automation_structure.runtime
+
+        # retrieves the build automation success
+        build_automation_success = build_automation_structure_runtime.build_automation_success
+
+        # retrieves the intial date time
+        initial_date_time = build_automation_structure_runtime.initial_date_time
+
         # retrieves the final date time value
         final_date_time = datetime.datetime.now()
 
@@ -1194,6 +1245,7 @@ class BuildAutomation:
         # sets the logger level to the initial log level
         self.logger.setLevel(log_level)
 
+
         # creates the stream handler
         stream_handler = logging.StreamHandler()
 
@@ -1205,6 +1257,26 @@ class BuildAutomation:
 
         # adds the stream handler to the logger
         self.logger.addHandler(stream_handler)
+
+        import cStringIO
+
+        self.string_buffer = cStringIO.StringIO()
+
+
+
+        # creates the stream handler
+        stream_handler = logging.StreamHandler(self.string_buffer)
+
+        # creates the logging formatter
+        formatter = logging.Formatter(DEFAULT_LOGGING_FORMAT)
+
+        # sets the formatter in the stream handler
+        stream_handler.setFormatter(formatter)
+
+        # adds the stream handler to the logger
+        self.logger.addHandler(stream_handler)
+
+
 
         # adds the stream handler to the logger handlers
         self.logger_handlers.append(stream_handler)

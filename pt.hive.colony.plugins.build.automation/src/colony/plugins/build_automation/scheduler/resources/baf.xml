@@ -33,11 +33,11 @@
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://www.hive.pt xsd/baf.xsd">
     <artifact>
-        <id>pt.hive.colony.plugins.build.automation</id>
+        <id>pt.hive.colony.plugins.build.automation.scheduler</id>
         <version>1.0.0</version>
         <type>colony</type>
-        <name>Build Automation Plugin</name>
-        <description>A plugin to manage complete build automation</description>
+        <name>Build Automation Scheduler Plugin</name>
+        <description>A plugin to manage the build automation scheduling</description>
         <url>http://www.hive.pt</url>
     </artifact>
     <build>
@@ -48,7 +48,7 @@
                 <version>1.0.0</version>
                 <stage>build</stage>
                 <configuration>
-                    <specification_file>$base{plugin_directory}/build_automation_plugin.json</specification_file>
+                    <specification_file>$base{plugin_directory}/build_automation_scheduler_plugin.json</specification_file>
                 </configuration>
             </plugin>
         </plugins>
