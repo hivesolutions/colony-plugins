@@ -508,7 +508,20 @@ class BuildAutomation:
         return True
 
     def print_start_information(self, plugin_id, plugin_version, stage, logger):
-        # prints logging information
+        """
+        Prints the start information for the given information.
+
+        @type plugin_id: String
+        @param plugin_id: The current plugin id.
+        @type plugin_version: String
+        @param plugin_version: The current plugin version.
+        @type stage: String
+        @param stage: The current stage.
+        @type logger: Logger
+        @param logger: The current logger.
+        """
+
+        # prints the initial logging information
         logger.info("------------------------------------------------------------------------")
         logger.info("BUILD STARTED")
         logger.info("------------------------------------------------------------------------")
@@ -517,6 +530,15 @@ class BuildAutomation:
         logger.info("------------------------------------------------------------------------")
 
     def print_end_information(self, build_automation_structure, logger):
+        """
+        Prints the end information for the given information.
+
+        @type build_automation_structure: BuildAutomationStructure
+        @param build_automation_structure: The current build automation structure.
+        @type logger: Logger
+        @param logger: The current logger.
+        """
+
         # retrieves the built automation structure runtime
         build_automation_structure_runtime = build_automation_structure.runtime
 
@@ -539,6 +561,7 @@ class BuildAutomation:
         if build_automation_success:
             # prints the success info
             logger.info("BUILD SUCCEEDED")
+        # otherwise
         else:
             # prints the failure info
             logger.info("BUILD FAILED")
