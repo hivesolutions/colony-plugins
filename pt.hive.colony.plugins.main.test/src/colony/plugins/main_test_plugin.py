@@ -122,8 +122,8 @@ class MainTestPlugin(colony.base.plugin_system.Plugin):
     def start_all_test(self):
         return self.main_test.start_all_test()
 
-    def start_test(self, test_cases_list):
-        return self.main_test.start_test(test_cases_list)
+    def start_test(self, test_cases_list, code_coverage, logger):
+        return self.main_test.start_test(test_cases_list, code_coverage, logger)
 
     @colony.base.decorators.load_allowed_capability("test_manager")
     def test_manager_capability_load_allowed(self, plugin, capability):

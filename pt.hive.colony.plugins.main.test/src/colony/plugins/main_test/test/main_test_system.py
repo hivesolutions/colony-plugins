@@ -39,6 +39,8 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 import unittest
 
+import colony.base.dummy_logging
+
 COVERAGE_FILE_PATH = "coverage.figleaf"
 """ The coverage file path """
 
@@ -459,7 +461,7 @@ class MainTest:
 
         self.start_test(self.loaded_test_cases_list, code_coverage)
 
-    def start_test(self, test_cases_list, code_coverage = False):
+    def start_test(self, test_cases_list, code_coverage = False, logger = None):
         """
         Starts the given test cases.
 
@@ -467,6 +469,8 @@ class MainTest:
         @param test_cases_list: The list with the test cases to be started.
         @type code_coverage: bool
         @param code_coverage: If a code coverage should be started.
+        @type logger: Logger
+        @param logger: The logger to be used.
         """
 
         # retrieves the code coverage plugin
@@ -500,8 +504,8 @@ class MainTest:
             # adds the test suite to the global test suite
             global_test_suite.addTest(test_suite)
 
-        # creates a new text test runner
-        runner = unittest.TextTestRunner()
+        # creates a new logger test runner
+        runner = LoggerTestRunner(logger)
 
         # runs the text test runner
         runner.run(global_test_suite)
@@ -513,3 +517,77 @@ class MainTest:
 
             # writes the code coverage result to the coverage file
             code_coverage_plugin.write_code_coverage(COVERAGE_FILE_PATH)
+
+class LoggerTestResult(unittest.TestResult):
+    """
+    Class representing a test result, that support
+    the logging to a custom logger.
+    """
+
+    logger = None
+    """ The logger to be used """
+
+    def __init__(self, logger):
+        unittest.TestResult.__init__(self)
+
+        if logger:
+            self.logger = logger
+        else:
+            self.logger = colony.base.dummy_logging.DummyLogger("dummy")
+
+    def startTest(self, test):
+        unittest.TestResult.startTest(self, test)
+
+        # retrieves the test id
+        test_id = test.id()
+
+        # prints an info message
+        self.logger.info("Starting test '%s'" % test_id)
+
+    def stopTest(self, test):
+        unittest.TestResult.stopTest(self, test)
+
+        # retrieves the test id
+        test_id = test.id()
+
+        # prints an info message
+        self.logger.info("Stopping test '%s'" % test_id)
+
+class LoggerTestRunner:
+    """
+    Class that controls the execution of
+    the test for a logger environment.
+    """
+
+    logger = None
+    """ The logger to be used """
+
+    def __init__(self, logger = None):
+        """
+        Constructor of the class.
+
+        @type logger: Logger
+        @param logger: The logger to be used during the
+        test run.
+        """
+
+        self.logger = logger
+
+    def run(self, test_suite):
+        """
+        Runs the given test suite in the current
+        environment.
+
+        @type test_suite: TestSuite
+        @param test_suite: The test suite to run in the
+        current environment.
+        """
+
+        # creates a new logger test result object
+        result = LoggerTestResult(self.logger)
+
+        # runs the test suite
+        test_suite(result)
+
+        # returns the result (object)
+        return result
