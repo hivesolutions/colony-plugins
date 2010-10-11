@@ -408,7 +408,7 @@ class BuildAutomation:
                 module_stage = module_plugin_stage or stage
 
                 # runs the module plugin for the same stage
-                build_automation_structure_runtime.build_automation_success = self.run_automation(module_id, module_version, module_stage, recursive_level - 1, logger, False)
+                build_automation_structure_runtime.build_automation_success = self.run_automation(module_id, module_version, module_stage, recursive_level - 1, logger, raise_exception, False)
         else:
             # prints an info message
             logger.info("Not building modules no recursion level available...")
