@@ -37,6 +37,7 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
+import os
 import pysvn
 
 class Svn:
@@ -67,14 +68,19 @@ class Svn:
         # retrieves the plugin manager
         manager = self.svn_plugin.manager
 
-        # retrieves the svn plugin base path
-        svn_plugin_path = manager.get_plugin_path_by_id(self.svn_plugin.id)
+        # retrieves the svn plugin temporary path
+        svn_plugin_temporary_path = manager.get_temporary_plugin_path_by_id(self.svn_plugin.id, "svn_client")
 
-        # sets the svn plugin resources path
-        svn_plugin_resources_path = svn_plugin_path + "/misc/svn/resources/svn_client"
+        # sets the svn client path path
+        svn_client_path = svn_plugin_temporary_path
+
+        # in case the svn client path does not exists
+        if not os.path.exists(svn_client_path):
+            # creates the directories to the svn client  path
+            os.makedirs(svn_client_path)
 
         # creates the svn client
-        self.svn_client = self.create_svn_client(svn_plugin_resources_path)
+        self.svn_client = self.create_svn_client(svn_client_path)
 
     def create_svn_client(self, svn_client_path):
         # creates a new svn client instance
