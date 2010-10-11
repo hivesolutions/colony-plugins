@@ -357,16 +357,17 @@ class BuildAutomation:
             # returns immediately
             return False
 
-        #-------------------------------
-        # @TODO GRANDE HARDCODE BADALHOCO
+        # resets (clears) the logging buffer (in order to avoid duplicate)
+        self.logging_buffer.reset()
+
         # retrieves the initial date time value
         initial_date_time = datetime.datetime.now()
-        build_automation_structure.runtime = RuntimeInformationStructure(True, self.logging_buffer, initial_date_time)
-        build_automation_structure_runtime = build_automation_structure.runtime
 
-        # resets (clears) the logging buffer
-        build_automation_structure_runtime.logging_buffer.reset()
-        #-------------------------------
+        # creates the build automation structure runtime information
+        build_automation_structure.runtime = RuntimeInformationStructure(True, self.logging_buffer, initial_date_time)
+
+        # retrieves the build automation structure runtime
+        build_automation_structure_runtime = build_automation_structure.runtime
 
         # in case the stage is not defined, it's is going
         # to find the default one
