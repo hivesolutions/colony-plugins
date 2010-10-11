@@ -322,7 +322,7 @@ class BuildAutomation:
         # returns the loaded build automation item plugins
         return self.loaded_build_automation_item_plugins_list
 
-    def run_automation(self, plugin_id, plugin_version = None, stage = None, recursive_level = 1, logger = None, is_first = True):
+    def run_automation(self, plugin_id, plugin_version = None, stage = None, recursive_level = 1, logger = None, raise_exception = False, is_first = True):
         """
         Runs all the automation plugins for the given plugin id and version.
 
@@ -336,12 +336,13 @@ class BuildAutomation:
         @param recursive_level: The current level of recursion.
         @type logger: Logger
         @param logger: The build automation logger to be used.
+        @type raise_exception: bool
+        @param raise_exception: If an exception should be raised in case of error.
         @type is_first: bool
         @param is_first: If this is the first run (useful for module inclusion).
         @rtype: bool
         @return: If the  build automation for the stage was successful.
         """
-
 
         # in case no logger is defined
         if not logger:
@@ -436,6 +437,12 @@ class BuildAutomation:
 
         # prints the end information
         self.print_end_information(build_automation_structure, logger)
+
+        # in case the build automation failed, this is the first run and the raise
+        # exception flag is active an exception should be raised
+        if not build_automation_structure_runtime.build_automation_success and is_first and raise_exception:
+            # raises the build automation failed exception
+            raise build_automation_exceptions.BuildAutomationFailedException("no success")
 
         # returns the build automation success
         return build_automation_structure_runtime.build_automation_success

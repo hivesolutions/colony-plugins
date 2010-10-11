@@ -117,3 +117,28 @@ class InvalidStageException(BuildAutomationException):
         """
 
         return "The requested stage is invalid: %s" % self.message
+
+class BuildAutomationFailedException(BuildAutomationException):
+    """
+    The build automation failed exception class.
+    """
+
+    def __init__(self, message):
+        """
+        Constructor of the class.
+
+        @type message: String
+        @param message: The message to be printed.
+        """
+
+        BuildAutomationException.__init__(self, message)
+
+    def __str__(self):
+        """
+        Returns the string representation of the class.
+
+        @rtype: String
+        @return: The string representation of the class.
+        """
+
+        return "Build automation failed: %s" % self.message
