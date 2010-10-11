@@ -58,7 +58,8 @@ class EurekaEngineTest:
         self.eureka_engine_plugin = eureka_engine_plugin
 
     def get_plugin_test_case_bundle(self):
-        return [EurekaEnginePluginTestCase]
+        #return [EurekaEnginePluginTestCase]
+        return []
 
 class EurekaEngineTestCase(unittest.TestCase):
     """
