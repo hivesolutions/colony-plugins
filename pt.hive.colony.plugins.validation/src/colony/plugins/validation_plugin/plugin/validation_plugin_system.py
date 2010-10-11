@@ -62,8 +62,17 @@ ID_VALUE = "id"
 MAIN_FILE_VALUE = "main_file"
 """ The main file value """
 
+MESSAGE_VALUE = "message"
+""" The message value """
+
 PLATFORM_VALUE = "platform"
 """ The platform value """
+
+PLUGIN_ID_VALUE = "plugin_id"
+""" The plugin id value """
+
+PLUGIN_PATH_VALUE = "plugin_path"
+""" The plugin path value """
 
 PLUGINS_VALUE = "plugins"
 """ The plugins value """
@@ -76,6 +85,12 @@ RESOURCES_VALUE = "resources"
 
 VERSION_VALUE = "version"
 """ The version value """
+
+DEFAULT_BAF_ENCODING = "Cp1252"
+""" The default baf encoding """
+
+DEFAULT_JSON_ENCODING = "Cp1252"
+""" The default json encoding """
 
 INIT_FILE_NAME = "__init__.py"
 """ The init file name """
@@ -146,90 +161,86 @@ class ValidationPlugin:
     validation_plugin_plugin = None
     """ The validation plugin plugin """
 
-    validation_errors = []
-    """ List of validation error messages """
-
     def __init__(self, validation_plugin_plugin):
         """
         Constructor of the class.
 
-        @type validation_plugin_plugin: BuildAutomationValidatorPlugin
+        @type validation_plugin_plugin: ValidationPluginPlugin
         @param validation_plugin_plugin: The validation plugin plugin.
         """
 
         self.validation_plugin_plugin = validation_plugin_plugin
-        self.validation_errors = []
 
     def validate_plugins(self):
-        # resets the validation errors list
-        self.validation_errors = []
+        # initializes the validation errors list
+        validation_errors = []
 
         # retrieves all plugins
         plugins = self.validation_plugin_plugin.manager.get_all_plugins()
 
         # validates all plugins
         for plugin in plugins:
-            self._validate_plugin(plugin)
+            self._validate_plugin(validation_errors, plugin)
 
         # returns the validation errors
-        return self.validation_errors
+        return validation_errors
 
     def validate_plugin(self, plugin_id):
-        # resets the validation errors list
-        self.validation_errors = []
+        # initializes the validation errors list
+        validation_errors = []
 
         # retrieves the plugin
         plugin = self.validation_plugin_plugin.manager._get_plugin_by_id(plugin_id)
 
         # validates the plugin
-        self._validate_plugin(plugin)
+        self._validate_plugin(validation_errors, plugin)
 
         # returns the validation errors
-        return self.validation_errors
+        return validation_errors
 
-    def _validate_plugin(self, plugin):
+    def _validate_plugin(self, validation_errors, plugin):
         # retrieves the plugin information
         plugin_information = PluginInformation(plugin)
 
         # checks if the plugin system file exists
         if not plugin_information.plugin_system_file_path:
             # logs the validation error
-            self.log_validation_error(plugin_information, "'%s' is missing its system file" % plugin_information.plugin_module_name)
+            self.log_validation_error(validation_errors, plugin_information, "'%s' is missing its system file" % plugin_information.plugin_module_name)
 
             # returns since nothing else can be tested
             return
 
         # validates the plugin file
-        self._validate_plugin_file(plugin_information)
+        self._validate_plugin_file(validation_errors, plugin_information)
 
         # checks that if the plugin descriptor file exists
         if not os.path.exists(plugin_information.plugin_descriptor_file_path):
             # logs the validation error
-            self.log_validation_error(plugin_information, "'%s' is missing file '%s'" % (plugin_information.plugin_module_name, plugin_information.plugin_descriptor_file_path))
+            self.log_validation_error(validation_errors, plugin_information, "'%s' is missing file '%s'" % (plugin_information.plugin_module_name, plugin_information.plugin_descriptor_file_path))
 
             # returns since no more validations can be performed
             return
 
         # validates the plugin descriptor file
-        self._validate_plugin_descriptor_file(plugin_information)
+        self._validate_plugin_descriptor_file(validation_errors, plugin_information)
 
         # validates the build automation file
-        self._validate_build_automation_file(plugin_information)
+        self._validate_build_automation_file(validation_errors, plugin_information)
 
-    def _validate_plugin_file(self, plugin_information):
+    def _validate_plugin_file(self, validation_errors, plugin_information):
         # validates the plugin's class name
-        self.__validate_plugin_class_name(plugin_information)
+        self.__validate_plugin_class_name(validation_errors, plugin_information)
 
         # validates the plugin's capabilities
-        self.__validate_plugin_capabilities(plugin_information)
+        self.__validate_plugin_capabilities(validation_errors, plugin_information)
 
         # validates the plugin's init files
-        self.__validate_plugin_init_files(plugin_information)
+        self.__validate_plugin_init_files(validation_errors, plugin_information)
 
         # validates the plugin's main modules
-        self.__validate_plugin_main_modules(plugin_information)
+        self.__validate_plugin_main_modules(validation_errors, plugin_information)
 
-    def __validate_plugin_class_name(self, plugin_information):
+    def __validate_plugin_class_name(self, validation_errors, plugin_information):
         # retrieves the plugin
         plugin = plugin_information.plugin
 
@@ -245,9 +256,9 @@ class ValidationPlugin:
         # checks if the plugin class name matches the one computed from its module name
         if not plugin_class_name == plugin.__class__.__name__:
             # logs the validation error
-            self.log_validation_error(plugin_information, "'%s' has a class name '%s' that does not match its file name '%s'" % (plugin_module_name, plugin.__class__.__name__, plugin_file_path))
+            self.log_validation_error(validation_errors, plugin_information, "'%s' has a class name '%s' that does not match its file name '%s'" % (plugin_module_name, plugin.__class__.__name__, plugin_file_path))
 
-    def __validate_plugin_capabilities(self, plugin_information):
+    def __validate_plugin_capabilities(self, validation_errors, plugin_information):
         # retrieves the plugin
         plugin = plugin_information.plugin
 
@@ -266,7 +277,7 @@ class ValidationPlugin:
         # checks for duplicate capabilities in the plugin
         if not len(plugin.capabilities) == number_unique_plugin_capabilities:
             # logs the validation error
-            self.log_validation_error(plugin_information, "'%s' has duplicate capabilities" % plugin_module_name)
+            self.log_validation_error(validation_errors, plugin_information, "'%s' has duplicate capabilities" % plugin_module_name)
 
         # returns in case the plugin is in the build automation item capability exclusion list
         if plugin.id in BUILD_AUTOMATION_ITEM_CAPABILITY_PLUGIN_EXCLUSION_LIST:
@@ -275,9 +286,9 @@ class ValidationPlugin:
         # checks if the plugin has a build automation item capability
         if not BUILD_AUTOMATION_ITEM_CAPABILITY in plugin.capabilities:
             # logs the validation error
-            self.log_validation_error(plugin_information, "'%s' is missing 'build_automation_item' capability" % plugin_module_name)
+            self.log_validation_error(validation_errors, plugin_information, "'%s' is missing 'build_automation_item' capability" % plugin_module_name)
 
-    def __validate_plugin_init_files(self, plugin_information):
+    def __validate_plugin_init_files(self, validation_errors, plugin_information):
         # retrieves the plugin module name
         plugin_module_name = plugin_information.plugin_module_name
 
@@ -285,9 +296,9 @@ class ValidationPlugin:
         for plugin_resource_main_module_init_file_path in plugin_information.plugin_resource_main_module_init_file_paths:
             if not os.path.exists(plugin_resource_main_module_init_file_path):
                 # logs the validation error
-                self.log_validation_error(plugin_information, "'%s' is missing an init file '%s'" % (plugin_module_name, plugin_resource_main_module_init_file_path))
+                self.log_validation_error(validation_errors, plugin_information, "'%s' is missing an init file '%s'" % (plugin_module_name, plugin_resource_main_module_init_file_path))
 
-    def __validate_plugin_main_modules(self, plugin_information):
+    def __validate_plugin_main_modules(self, validation_errors, plugin_information):
         # retrieves the plugin
         plugin = plugin_information.plugin
 
@@ -312,21 +323,21 @@ class ValidationPlugin:
         # checks for duplicate main modules in the plugin
         if not len(plugin.main_modules) == number_unique_plugin_main_modules:
             # logs the validation error
-            self.log_validation_error(plugin_information, "'%s' has duplicate main modules" % plugin_module_name)
+            self.log_validation_error(validation_errors, plugin_information, "'%s' has duplicate main modules" % plugin_module_name)
 
         # checks that plugin's main module file paths exist
         for plugin_main_module_file_path in plugin_main_module_file_paths:
             if not os.path.exists(plugin_main_module_file_path):
                 # logs the validation error
-                self.log_validation_error(plugin_information, "'%s' is missing main module file '%s'" % (plugin_module_name, plugin_main_module_file_path))
+                self.log_validation_error(validation_errors, plugin_information, "'%s' is missing main module file '%s'" % (plugin_module_name, plugin_main_module_file_path))
 
         # checks that the plugin has declarations for all main modules found in the plugin's resources
         for plugin_resource_main_module in plugin_resource_main_modules:
             if not plugin_resource_main_module in plugin.main_modules:
                 # logs the validation error
-                self.log_validation_error(plugin_information, "'%s' is missing main module declaration '%s'" % (plugin_module_name, plugin_resource_main_module))
+                self.log_validation_error(validation_errors, plugin_information, "'%s' is missing main module declaration '%s'" % (plugin_module_name, plugin_resource_main_module))
 
-    def _validate_plugin_descriptor_file(self, plugin_information):
+    def _validate_plugin_descriptor_file(self, validation_errors, plugin_information):
         # retrieves the plugin descriptor file path value
         plugin_descriptor_file_path = plugin_information.plugin_descriptor_file_path
 
@@ -335,24 +346,24 @@ class ValidationPlugin:
             plugin_descriptor_data = self.get_json_data(plugin_descriptor_file_path)
         except:
             # logs the validation error
-            self.log_validation_error(plugin_information, "'%s' has invalid syntax" % plugin_descriptor_file_path)
+            self.log_validation_error(validation_errors, plugin_information, "'%s' has invalid syntax" % plugin_descriptor_file_path)
         else:
             # validates the plugin descriptor file attributes
-            self.__validate_plugin_descriptor_file_attributes(plugin_information, plugin_descriptor_data)
+            self.__validate_plugin_descriptor_file_attributes(validation_errors, plugin_information, plugin_descriptor_data)
 
             # validates the plugin descriptor file capabilities
-            self.__validate_plugin_descriptor_file_capabilities(plugin_information, plugin_descriptor_data)
+            self.__validate_plugin_descriptor_file_capabilities(validation_errors, plugin_information, plugin_descriptor_data)
 
             # validates the plugin descriptor file capabilities allowed
-            self.__validate_plugin_descriptor_file_capabilities_allowed(plugin_information, plugin_descriptor_data)
+            self.__validate_plugin_descriptor_file_capabilities_allowed(validation_errors, plugin_information, plugin_descriptor_data)
 
             # validates the plugin descriptor file dependencies
-            self.__validate_plugin_descriptor_file_dependencies(plugin_information, plugin_descriptor_data)
+            self.__validate_plugin_descriptor_file_dependencies(validation_errors, plugin_information, plugin_descriptor_data)
 
             # validates the plugin descriptor file resources
-            self.__validate_plugin_descriptor_file_resources(plugin_information, plugin_descriptor_data)
+            self.__validate_plugin_descriptor_file_resources(validation_errors, plugin_information, plugin_descriptor_data)
 
-    def __validate_plugin_descriptor_file_attributes(self, plugin_information, plugin_descriptor_data):
+    def __validate_plugin_descriptor_file_attributes(self, validation_errors, plugin_information, plugin_descriptor_data):
         # retrieves the plugin
         plugin = plugin_information.plugin
 
@@ -365,33 +376,27 @@ class ValidationPlugin:
         # checks that the platform value is correct
         if not plugin_descriptor_data[PLATFORM_VALUE] == PYTHON_VALUE:
             # logs the validation error
-            self.log_validation_error(plugin_information, "'%s' json descriptor file has invalid attribute 'platform'" % plugin_module_name)
+            self.log_validation_error(validation_errors, plugin_information, "'%s' json descriptor file has invalid attribute 'platform'" % plugin_module_name)
 
         # searches for plugin descriptor attributes with invalid content
         for plugin_descriptor_attribute_name, plugin_attribute_name in PLUGIN_DESCRIPTOR_ATTRIBUTES_MAP.items():
             # retrieves the plugin descriptor data attribute
             plugin_descriptor_data_attribute = plugin_descriptor_data[plugin_descriptor_attribute_name]
 
-            # converts the plugin descriptor data attribute to unicode
-            plugin_descriptor_data_attribute_unicode = self.convert_attribute_unicode(plugin_descriptor_data_attribute)
-
             # retrieves the plugin attribute
             plugin_attribute = getattr(plugin, plugin_attribute_name)
 
-            # converts the plugin attribute to unicode
-            plugin_attribute_unicode = self.convert_attribute_unicode(plugin_attribute)
-
             # checks if the attributes are the same
-            if not plugin_descriptor_data_attribute_unicode == plugin_attribute_unicode:
+            if not plugin_descriptor_data_attribute == plugin_attribute:
                 # logs the validation error
-                self.log_validation_error(plugin_information, "'%s' json descriptor file has invalid attribute '%s'" % (plugin_module_name, plugin_descriptor_attribute_name))
+                self.log_validation_error(validation_errors, plugin_information, "'%s' json descriptor file has invalid attribute '%s'" % (plugin_module_name, plugin_descriptor_attribute_name))
 
         # checks that the main file value is correct
         if not plugin_descriptor_data[MAIN_FILE_VALUE] == plugin_file_name:
             # logs the validation error
-            self.log_validation_error(plugin_information, "'%s' json descriptor file has invalid attribute 'main_file'" % plugin_module_name)
+            self.log_validation_error(validation_errors, plugin_information, "'%s' json descriptor file has invalid attribute 'main_file'" % plugin_module_name)
 
-    def __validate_plugin_descriptor_file_capabilities(self, plugin_information, plugin_descriptor_data):
+    def __validate_plugin_descriptor_file_capabilities(self, validation_errors, plugin_information, plugin_descriptor_data):
         # retrieves the plugin module name
         plugin_module_name = plugin_information.plugin_module_name
 
@@ -410,9 +415,9 @@ class ValidationPlugin:
         # checks for duplicate capabilities
         if not len(plugin_descriptor_data_capabilities) == number_unique_plugin_descriptor_data_capabilities:
             # logs the validation error
-            self.log_validation_error(plugin_information, "'%s' json descriptor file has duplicate capabilities" % plugin_module_name)
+            self.log_validation_error(validation_errors, plugin_information, "'%s' json descriptor file has duplicate capabilities" % plugin_module_name)
 
-    def __validate_plugin_descriptor_file_capabilities_allowed(self, plugin_information, plugin_descriptor_data):
+    def __validate_plugin_descriptor_file_capabilities_allowed(self, validation_errors, plugin_information, plugin_descriptor_data):
         # retrieves the plugin
         plugin = plugin_information.plugin
 
@@ -434,12 +439,12 @@ class ValidationPlugin:
         # checks for duplicate capabilities allowed
         if not len(plugin_descriptor_data_capabilities_allowed) == number_unique_plugin_descriptor_data_capabilities_allowed:
             # logs the validation error
-            self.log_validation_error(plugin_information, "'%s' json descriptor file has duplicate capabilities allowed" % plugin_module_name)
+            self.log_validation_error(validation_errors, plugin_information, "'%s' json descriptor file has duplicate capabilities allowed" % plugin_module_name)
 
         # checks if the number of capabilities allowed is the same as in the plugin
         if not len(plugin_descriptor_data_capabilities_allowed) == len(plugin.capabilities_allowed):
             # logs the validation error
-            self.log_validation_error(plugin_information, "'%s' json descriptor file doesn't have the same number of capabilities allowed as its plugin" % plugin_module_name)
+            self.log_validation_error(validation_errors, plugin_information, "'%s' json descriptor file doesn't have the same number of capabilities allowed as its plugin" % plugin_module_name)
 
             # returns since nothing else can be tested
             return
@@ -452,9 +457,6 @@ class ValidationPlugin:
             # retrieves the plugin descriptor data capability allowed
             plugin_descriptor_data_capability_allowed = plugin_descriptor_data_capabilities_allowed[capability_allowed_index]
 
-            # converts the allowed capability to unicode
-            capability_allowed = self.convert_attribute_unicode(capability_allowed)
-
             # converts the capability allowed to a tuple in case it is one
             if plugin_descriptor_data_capability_allowed.startswith("(") and plugin_descriptor_data_capability_allowed.endswith(")"):
                 plugin_descriptor_data_capability_allowed = eval(plugin_descriptor_data_capability_allowed)
@@ -462,12 +464,12 @@ class ValidationPlugin:
             # checks if the capability allowed is the same as in the plugin
             if not plugin_descriptor_data_capability_allowed == capability_allowed:
                 # logs the validation error
-                self.log_validation_error(plugin_information, "'%s' json descriptor file has invalid attribute 'capabilities_allowed'" % plugin_module_name)
+                self.log_validation_error(validation_errors, plugin_information, "'%s' json descriptor file has invalid attribute 'capabilities_allowed'" % plugin_module_name)
 
                 # returns now that the attribute has been considered invalid
                 return
 
-    def __validate_plugin_descriptor_file_dependencies(self, plugin_information, plugin_descriptor_data):
+    def __validate_plugin_descriptor_file_dependencies(self, validation_errors, plugin_information, plugin_descriptor_data):
         # retrieves the plugin
         plugin = plugin_information.plugin
 
@@ -483,7 +485,7 @@ class ValidationPlugin:
         # checks if the number of plugin dependencies is the same as in the plugin descriptor file
         if not len(plugin_dependencies) == len(plugin_descriptor_data_dependencies):
             # logs the validation error
-            self.log_validation_error(plugin_information, "'%s' json descriptor file doesn't have the same number of dependencies as its plugin" % plugin_module_name)
+            self.log_validation_error(validation_errors, plugin_information, "'%s' json descriptor file doesn't have the same number of dependencies as its plugin" % plugin_module_name)
 
             # returns since no more validations can be performed
             return
@@ -502,7 +504,7 @@ class ValidationPlugin:
             # checks if the dependency ids match
             if not plugin_descriptor_data_dependency_id == plugin_dependency.plugin_id:
                 # logs the validation error
-                self.log_validation_error(plugin_information, "'%s' json descriptor file dependency '%s' doesn't exist or is not in correct order" % (plugin_module_name, plugin_descriptor_data_dependency_id))
+                self.log_validation_error(validation_errors, plugin_information, "'%s' json descriptor file dependency '%s' doesn't exist or is not in correct order" % (plugin_module_name, plugin_descriptor_data_dependency_id))
 
             # retrieves the plugin descriptor data dependency version
             plugin_descriptor_data_dependency_version = plugin_descriptor_data_dependency[VERSION_VALUE]
@@ -510,9 +512,9 @@ class ValidationPlugin:
             # checks if the dependency versions match
             if not plugin_descriptor_data_dependency_version == plugin_dependency.plugin_version:
                 # logs the validation error
-                self.log_validation_error(plugin_information, "'%s' json descriptor file dependency '%s' doesn't have the same version as its plugin" % (plugin_module_name, plugin_descriptor_data_dependency_id))
+                self.log_validation_error(validation_errors, plugin_information, "'%s' json descriptor file dependency '%s' doesn't have the same version as its plugin" % (plugin_module_name, plugin_descriptor_data_dependency_id))
 
-    def __validate_plugin_descriptor_file_resources(self, plugin_information, plugin_descriptor_data):
+    def __validate_plugin_descriptor_file_resources(self, validation_errors, plugin_information, plugin_descriptor_data):
         # retrieves the plugin module name
         plugin_module_name = plugin_information.plugin_module_name
 
@@ -534,12 +536,12 @@ class ValidationPlugin:
         # checks for duplicate resource paths
         if not len(plugin_descriptor_data_resources) == number_unique_plugin_descriptor_data_resources:
             # logs the validation error
-            self.log_validation_error(plugin_information, "'%s' json descriptor file has duplicate resource paths" % plugin_module_name)
+            self.log_validation_error(validation_errors, plugin_information, "'%s' json descriptor file has duplicate resource paths" % plugin_module_name)
 
         # checks if the list of resources if of the same size
         if not len(plugin_resource_file_paths) == len(plugin_descriptor_data_resources):
             # logs the validation error
-            self.log_validation_error(plugin_information, "'%s' json descriptor file doesn't have the same number of resources as its plugin" % plugin_module_name)
+            self.log_validation_error(validation_errors, plugin_information, "'%s' json descriptor file doesn't have the same number of resources as its plugin" % plugin_module_name)
 
             # returns since nothing else can be tested
             return
@@ -553,11 +555,11 @@ class ValidationPlugin:
             if not plugin_resource_file_path == plugin_descriptor_data_resources[plugin_resource_file_path_index]:
                 # logs the appropriate message depending on whether the declaration is missing or is out of order
                 if plugin_resource_file_path in plugin_descriptor_data_resources:
-                    self.log_validation_error(plugin_information, "'%s' json descriptor file has misordered resource declaration for file '%s'" % (plugin_module_name, plugin_resource_file_path))
+                    self.log_validation_error(validation_errors, plugin_information, "'%s' json descriptor file has misordered resource declaration for file '%s'" % (plugin_module_name, plugin_resource_file_path))
                 else:
-                    self.log_validation_error(plugin_information, "'%s' json descriptor file is missing resource declaration for file '%s'" % (plugin_module_name, plugin_resource_file_path))
+                    self.log_validation_error(validation_errors, plugin_information, "'%s' json descriptor file is missing resource declaration for file '%s'" % (plugin_module_name, plugin_resource_file_path))
 
-    def _validate_build_automation_file(self, plugin_information):
+    def _validate_build_automation_file(self, validation_errors, plugin_information):
         # retrieves the plugin
         plugin = plugin_information.plugin
 
@@ -570,7 +572,7 @@ class ValidationPlugin:
         # checks if the build automation file path is specified in the plugin attributes
         if not BUILD_AUTOMATION_FILE_PATH_ATTRIBUTE in plugin.attributes:
             # logs the validation error
-            self.log_validation_error(plugin_information, "'%s' is missing the 'build_automation_file_path' attribute" % plugin_module_name)
+            self.log_validation_error(validation_errors, plugin_information, "'%s' is missing the 'build_automation_file_path' attribute" % plugin_module_name)
 
             # returns since nothing else can be tested
             return
@@ -584,16 +586,19 @@ class ValidationPlugin:
         # checks for the existence of the build automation file
         if not build_automation_file_path or not os.path.exists(build_automation_file_path):
             # logs the validation error
-            self.log_validation_error(plugin_information, "'%s' is missing the referenced build automation file '%s'" % (plugin_module_name, build_automation_file_path))
+            self.log_validation_error(validation_errors, plugin_information, "'%s' is missing the referenced build automation file '%s'" % (plugin_module_name, build_automation_file_path))
 
             # returns since nothing else can be tested
             return
 
         # opens the build automation file
-        build_automation_file = open(build_automation_file_path)
+        build_automation_file = open(build_automation_file_path, "rb")
 
         # reads the build automation file's data
         build_automation_file_data = build_automation_file.read()
+
+        # decodes the build automation file data
+        build_automation_file_data = build_automation_file_data.decode(DEFAULT_BAF_ENCODING)
 
         # closes the build automation file
         build_automation_file.close()
@@ -609,16 +614,16 @@ class ValidationPlugin:
             # checks if the specification file exists
             if not os.path.exists(specification_file_path):
                 # logs the validation error
-                self.log_validation_error(plugin_information, "'%s' build automation file '%s' references missing specification file '%s'" % (plugin_module_name, build_automation_file_path, specification_file_path))
+                self.log_validation_error(validation_errors, plugin_information, "'%s' build automation file '%s' references missing specification file '%s'" % (plugin_module_name, build_automation_file_path, specification_file_path))
 
-    def log_validation_error(self, plugin_information, validation_error_message):
+    def log_validation_error(self, validation_errors, plugin_information, validation_error_message):
         # defines the validation error map
-        validation_error_map = {"plugin_id" : plugin_information.plugin.id,
-                                "plugin_path" : plugin_information.plugin_file_path,
-                                "message" : validation_error_message}
+        validation_error_map = {PLUGIN_ID_VALUE : plugin_information.plugin.id,
+                                PLUGIN_PATH_VALUE : plugin_information.plugin_file_path,
+                                MESSAGE_VALUE : validation_error_message}
 
         # adds the validation error map to the validation errors list
-        self.validation_errors.append(validation_error_map)
+        validation_errors.append(validation_error_map)
 
     def get_json_data(self, json_file_path):
         # reads the json file
@@ -637,42 +642,6 @@ class ValidationPlugin:
         json_data = self.validation_plugin_plugin.json_plugin.loads(json_file_data)
 
         return json_data
-
-    def convert_attribute_unicode(self, attribute_value):
-        # determines the attribute value's type
-        attribute_value_type = type(attribute_value)
-
-        # returns the unicode version of the attribute in case it's a string
-        if attribute_value_type == types.StringType:
-            return unicode(attribute_value)
-
-        # returns in case the attribute is not a list
-        if not attribute_value_type in (types.ListType, types.TupleType):
-            return attribute_value
-
-        # converts into a list in case it's a tuple
-        attribute_value_list = list(attribute_value)
-
-        # converts each item in the list
-        for attribute_value_index in range(len(attribute_value_list)):
-            # retrieves the attribute value item
-            attribute_value_item = attribute_value_list[attribute_value_index]
-
-            # determines the attribute value item type
-            attribute_value_item_type = type(attribute_value_item)
-
-            # skips in case the attribute value is not a string
-            if not attribute_value_item_type == types.StringType:
-                continue
-
-            # stores the unicode version of the string
-            attribute_value_list[attribute_value_index] = unicode(attribute_value_item)
-
-        # converts the list back to a tuple in case it was originally so
-        if attribute_value_type == types.TupleType:
-            attribute_value_list = tuple(attribute_value_list)
-
-        return attribute_value_list
 
 class PluginInformation:
 
