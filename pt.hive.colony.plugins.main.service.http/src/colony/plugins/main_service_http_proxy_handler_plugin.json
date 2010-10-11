@@ -12,6 +12,9 @@
     "dependencies" : [{
                 "id" : "pt.hive.colony.plugins.main.client.http",
                 "version" : "1.0.0"
+            }, {
+                "id" : "pt.hive.colony.plugins.main.pool.element_pool_manager",
+                "version" : "1.0.0"
             }],
     "main_file" : "main_service_http_proxy_handler_plugin.py",
     "resources" : [
