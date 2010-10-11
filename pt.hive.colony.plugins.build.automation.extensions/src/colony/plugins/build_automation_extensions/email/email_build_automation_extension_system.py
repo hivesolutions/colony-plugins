@@ -157,6 +157,7 @@ class EmailBuildAutomationExtension:
         # creates the receiver line with the email
         receiver_line = ""
 
+        # creates the list to hold the receiver emails
         receiver_emails = []
 
         is_first = True
@@ -185,14 +186,12 @@ class EmailBuildAutomationExtension:
         mime_message.set_header(DATE_VALUE, current_date_time_formated)
         mime_message.set_header(USER_AGENT_VALUE, USER_AGENT_IDENTIFIER)
 
-        import os
+        build_automation_structure_runtime = build_automation_structure.runtime
 
-        build_automation_structure.runtime.logging_buffer.seek(0, os.SEEK_SET)
-
-        contents = build_automation_structure.runtime.logging_buffer.read()
+        logging_contents = build_automation_structure_runtime.logging_buffer.get_value()
 
         # writes the contents to the mime message
-        mime_message.write(contents)
+        mime_message.write(logging_contents)
 
         # retrieves the mime message value
         mime_message_value = mime_message.get_value()
