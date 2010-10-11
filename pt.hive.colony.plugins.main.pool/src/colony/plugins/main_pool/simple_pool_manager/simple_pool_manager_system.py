@@ -66,7 +66,7 @@ class SimplePoolManager:
         """
         Constructor of the class
 
-        @type simple_pool_manager_plugin: Plugin
+        @type simple_pool_manager_plugin: SimplePoolManagerPlugin
         @param simple_pool_manager_plugin: The simple pool manager plugin.
         """
 
