@@ -19,9 +19,6 @@
 # You should have received a copy of the GNU General Public License
 # along with Hive Colony Framework. If not, see <http://www.gnu.org/licenses/>.
 
-__author__ = "João Magalhães <joamag@hive.pt>"
-""" The author(s) of the module """
-
 __version__ = "1.0.0"
 """ The version of the module """
 
@@ -36,34 +33,3 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
-
-class TestBuildAutomationExtension:
-    """
-    The test build automation extension class.
-    """
-
-    test_build_automation_extension_plugin = None
-    """ The test build automation extension plugin """
-
-    def __init__(self, test_build_automation_extension_plugin):
-        """
-        Constructor of the class.
-
-        @type test_build_automation_extension_plugin: TestBuildAutomationExtensionPlugin
-        @param test_build_automation_extension_plugin: The test build automation extension plugin.
-        """
-
-        self.test_build_automation_extension_plugin = test_build_automation_extension_plugin
-
-    def run_automation(self, plugin, stage, parameters, build_automation_structure, logger):
-        # prints an info message
-        logger.info("Running test build automation plugin")
-
-        # retrieves the main test plugin
-        main_test_plugin = self.test_build_automation_extension_plugin.main_test_plugin
-
-        # retrieves all the test cases for the given plugin
-        plugin_test_cases = main_test_plugin.get_all_test_cases_plugin(plugin.id, plugin.version)
-
-        # starts the test cases
-        main_test_plugin.start_test(plugin_test_cases, False, logger)

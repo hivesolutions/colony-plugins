@@ -37,33 +37,30 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-class TestBuildAutomationExtension:
+class ValidationPlugintBuildAutomationExtension:
     """
-    The test build automation extension class.
+    The validation plugin build automation extension class.
     """
 
-    test_build_automation_extension_plugin = None
-    """ The test build automation extension plugin """
+    validation_plugin_build_automation_extension_plugin = None
+    """ The validation plugin build automation extension plugin """
 
-    def __init__(self, test_build_automation_extension_plugin):
+    def __init__(self, validation_plugin_build_automation_extension_plugin):
         """
         Constructor of the class.
 
-        @type test_build_automation_extension_plugin: TestBuildAutomationExtensionPlugin
-        @param test_build_automation_extension_plugin: The test build automation extension plugin.
+        @type validation_plugin_build_automation_extension_plugin: ValidationPluginBuildAutomationExtensionPlugin
+        @param validation_plugin_build_automation_extension_plugin: The validation plugin build automation extension plugin.
         """
 
-        self.test_build_automation_extension_plugin = test_build_automation_extension_plugin
+        self.validation_plugin_build_automation_extension_plugin = validation_plugin_build_automation_extension_plugin
 
     def run_automation(self, plugin, stage, parameters, build_automation_structure, logger):
         # prints an info message
-        logger.info("Running test build automation plugin")
+        logger.info("Running validation plugin build automation plugin")
 
-        # retrieves the main test plugin
-        main_test_plugin = self.test_build_automation_extension_plugin.main_test_plugin
+        # retrieves the validation plugin plugin
+        validation_plugin_plugin = self.validation_plugin_build_automation_extension_plugin.validation_plugin_plugin
 
-        # retrieves all the test cases for the given plugin
-        plugin_test_cases = main_test_plugin.get_all_test_cases_plugin(plugin.id, plugin.version)
-
-        # starts the test cases
-        main_test_plugin.start_test(plugin_test_cases, False, logger)
+        # validates the given plugin
+        validation_plugin_plugin.validate_plugin(plugin.id)
