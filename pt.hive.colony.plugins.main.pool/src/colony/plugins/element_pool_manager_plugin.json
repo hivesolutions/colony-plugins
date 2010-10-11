@@ -16,5 +16,6 @@
             "main_pool/__init__.py",
             "main_pool/element_pool_manager/__init__.py",
             "main_pool/element_pool_manager/element_pool_manager_exceptions.py",
-            "main_pool/element_pool_manager/element_pool_manager_system.py"]
+            "main_pool/element_pool_manager/element_pool_manager_system.py",
+            "main_pool/element_pool_manager/resources/baf.xml"]
 }
