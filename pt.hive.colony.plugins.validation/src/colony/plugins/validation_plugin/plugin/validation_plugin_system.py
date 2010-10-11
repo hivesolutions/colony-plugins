@@ -38,8 +38,11 @@ __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
 import re
+import os
 import types
-import os.path
+
+DEFAULT_JSON_ENCODING = "Cp1252"
+""" The default json encoding """
 
 BUILD_AUTOMATION_FILE_PATH_VALUE = "build_automation_file_path"
 """ The build automation file path value """
@@ -619,7 +622,7 @@ class ValidationPlugin:
 
     def get_json_data(self, json_file_path):
         # reads the json file
-        json_file = open(json_file_path, "r")
+        json_file = open(json_file_path, "rb")
 
         # reads the data from the json file
         json_file_data = json_file.read()
@@ -627,18 +630,21 @@ class ValidationPlugin:
         # closes the json file
         json_file.close()
 
+        # decodes the json file data
+        json_file_data = json_file_data.decode(DEFAULT_JSON_ENCODING)
+
         # loads the json data from the json file
         json_data = self.validation_plugin_plugin.json_plugin.loads(json_file_data)
 
         return json_data
 
     def convert_attribute_unicode(self, attribute_value):
-        # returns the unicode version of the attribute in case it's a string
-        if type(attribute_value) == types.StringType:
-            return unicode(attribute_value)
-
         # determines the attribute value's type
         attribute_value_type = type(attribute_value)
+
+        # returns the unicode version of the attribute in case it's a string
+        if attribute_value_type == types.StringType:
+            return unicode(attribute_value)
 
         # returns in case the attribute is not a list
         if not attribute_value_type in (types.ListType, types.TupleType):
@@ -652,8 +658,11 @@ class ValidationPlugin:
             # retrieves the attribute value item
             attribute_value_item = attribute_value_list[attribute_value_index]
 
+            # determines the attribute value item type
+            attribute_value_item_type = type(attribute_value_item)
+
             # skips in case the attribute value is not a string
-            if not type(attribute_value_item) == types.StringType:
+            if not attribute_value_item_type == types.StringType:
                 continue
 
             # stores the unicode version of the string
