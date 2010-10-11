@@ -408,30 +408,10 @@ class BuildAutomation:
                 break
 
             # run the automation stage (tasks)
-            build_automation_success = self._run_automation_stage(valid_automation_stage, build_automation_structure, logger)
+            build_automation_success = self.run_automation_stage(valid_automation_stage, build_automation_structure, logger)
 
-        # retrieves the final date time value
-        final_date_time = datetime.datetime.now()
-
-        # calculates the delta date time from the final and the initial values
-        delta_date_time = final_date_time - initial_date_time
-
-        # prints the final build automation result
-        logger.info("------------------------------------------------------------------------")
-
-        # in case the build automation succeeded
-        if build_automation_success:
-            # prints the success info
-            logger.info("BUILD SUCCEEDED")
-        else:
-            # prints the failure info
-            logger.info("BUILD FAILED")
-
-        # prints the final logging information
-        logger.info("------------------------------------------------------------------------")
-        logger.info("Total time for build automation %s" % str(delta_date_time))
-        logger.info("Finished build automation at %s" % final_date_time.strftime("%d/%m/%y %H:%M:%S"))
-        logger.info("------------------------------------------------------------------------")
+        # prints the end information
+        self.print_end_information(build_automation_success, initial_date_time, logger)
 
         # returns the build automation success
         return build_automation_success
@@ -494,6 +474,30 @@ class BuildAutomation:
 
         # returns true (valid)
         return True
+
+    def print_end_information(self, build_automation_success, initial_date_time, logger):
+        # retrieves the final date time value
+        final_date_time = datetime.datetime.now()
+
+        # calculates the delta date time from the final and the initial values
+        delta_date_time = final_date_time - initial_date_time
+
+        # prints the final build automation result
+        logger.info("------------------------------------------------------------------------")
+
+        # in case the build automation succeeded
+        if build_automation_success:
+            # prints the success info
+            logger.info("BUILD SUCCEEDED")
+        else:
+            # prints the failure info
+            logger.info("BUILD FAILED")
+
+        # prints the final logging information
+        logger.info("------------------------------------------------------------------------")
+        logger.info("Total time for build automation %s" % str(delta_date_time))
+        logger.info("Finished build automation at %s" % final_date_time.strftime("%d/%m/%y %H:%M:%S"))
+        logger.info("------------------------------------------------------------------------")
 
     def generate_build_automation_structure(self, build_automation_parsing_structure):
         """
