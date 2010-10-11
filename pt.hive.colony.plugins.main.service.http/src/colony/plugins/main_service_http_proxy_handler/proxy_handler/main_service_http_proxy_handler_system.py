@@ -49,13 +49,22 @@ DEFAULT_PROXY_TARGET = ""
 """ The default proxy target """
 
 DEFAULT_ELEMENT_POOL_SIZE = 10
-""" the default element pool size """
+""" The default element pool size """
+
+DEFAULT_HOST_VALUE = "unknown"
+""" The default host value """
+
+VIA_VALUE = "Via"
+""" The via value """
 
 HOST_VALUE = "Host"
 """ The host value """
 
 TRANSFER_ENCODING_VALUE = "Transfer-Encoding"
 """ The transer encoding value """
+
+HTTP_PROTOCOL_PREFIX_VALUE = "HTTP/"
+""" The http protocol prefix value """
 
 REMOVAL_HEADERS = (HOST_VALUE,)
 """ The removal headers list """
@@ -168,7 +177,7 @@ class MainServiceHttpProxyHandler:
         data = http_response.received_message
 
         # creates the headers map from the http response
-        headers_map = self._create_headers_map(http_response)
+        headers_map = self._create_headers_map(request, http_response)
 
         # sets the request status code
         request.status_code = status_code
@@ -203,7 +212,7 @@ class MainServiceHttpProxyHandler:
         # returns the request headers
         return request_headers
 
-    def _create_headers_map(self, http_response):
+    def _create_headers_map(self, request, http_response):
         # creates a new map for the headers map
         headers_map = {}
 
@@ -220,6 +229,19 @@ class MainServiceHttpProxyHandler:
 
             # removes the response header from the headers map
             del headers_map[removal_response_header]
+
+        # retrieves the protocol version number from the protocol
+        # version string
+        protocol_version_number = request.protocol_version.strip(HTTP_PROTOCOL_PREFIX_VALUE)
+
+        # retrieves the host value from the request
+        host = request.headers_map.get(HOST_VALUE, DEFAULT_HOST_VALUE)
+
+        # retrieves the server identifier
+        server_identifier = request.get_server_identifier()
+
+        # sets the via header in the headers map
+        headers_map[VIA_VALUE] = protocol_version_number  + " " + host + " (" +  server_identifier + ")"
 
         # returns the headers map
         return headers_map
