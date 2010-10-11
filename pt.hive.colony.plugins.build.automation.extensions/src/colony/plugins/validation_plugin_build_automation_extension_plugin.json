@@ -18,5 +18,6 @@
             "validation_plugin_build_automation_extension_plugin.py",
             "build_automation_extensions/__init__.py",
             "build_automation_extensions/validation_plugin/__init__.py",
-            "build_automation_extensions/validation_plugin/validation_plugin_build_automation_extension_system.py"]
+            "build_automation_extensions/validation_plugin/validation_plugin_build_automation_extension_system.py",
+            "build_automation_extensions/validation_plugin/resources/baf.xml"]
 }
