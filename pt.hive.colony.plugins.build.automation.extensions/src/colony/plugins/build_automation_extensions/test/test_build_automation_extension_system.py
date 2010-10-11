@@ -66,10 +66,15 @@ class TestBuildAutomationExtension:
         plugin_test_cases = main_test_plugin.get_all_test_cases_plugin(plugin.id, plugin.version)
 
         # starts the test cases
-        result = main_test_plugin.start_test(plugin_test_cases, False, logger)
+        result = main_test_plugin.start_test(plugin_test_cases, logger)
 
-        # retrieves the build automation success
-        build_automation_success = len(result.failures) == 0 and len(result.errors) == 0
+        # retrieves the length of failures and errors
+        failures_length = len(result.failures)
+        errors_length = len(result.errors)
+
+        # retrieves the build automation success (success if no
+        # failures and errors exist)
+        build_automation_success = failures_length == 0 and errors_length == 0
 
         # returns the build automation success
         return build_automation_success

@@ -1,0 +1,207 @@
+#!/usr/bin/python
+# -*- coding: Cp1252 -*-
+
+# Hive Colony Framework
+# Copyright (C) 2008 Hive Solutions Lda.
+#
+# This file is part of Hive Colony Framework.
+#
+# Hive Colony Framework is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# Hive Colony Framework is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with Hive Colony Framework. If not, see <http://www.gnu.org/licenses/>.
+
+__author__ = "João Magalhães <joamag@hive.pt>"
+""" The author(s) of the module """
+
+__version__ = "1.0.0"
+""" The version of the module """
+
+__revision__ = "$LastChangedRevision: 72 $"
+""" The revision number of the module """
+
+__date__ = "$LastChangedDate: 2008-10-21 23:29:54 +0100 (Ter, 21 Out 2008) $"
+""" The last change date of the module """
+
+__copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
+""" The copyright for the module """
+
+__license__ = "GNU General Public License (GPL), Version 3"
+""" The license for the module """
+
+import sys
+import datetime
+
+DEFAULT_SMTP_HOSTNAME = "localhost"
+""" The default smtp hostname """
+
+DEFAULT_SMTP_PORT = 25
+""" The default smtp port """
+
+USERNAME_VALUE = "username"
+""" The username value """
+
+PASSWORD_VALUE = "password"
+""" The password value """
+
+TLS_VALUE = "tls"
+""" The tls value """
+
+FROM_VALUE = "From"
+""" The from value """
+
+TO_VALUE = "To"
+""" The to value """
+
+SUBJECT_VALUE = "Subject"
+""" The subject value """
+
+DATE_VALUE = "Date"
+""" The date value """
+
+USER_AGENT_VALUE = "User-Agent"
+""" The user agent value """
+
+USER_AGENT_NAME = "Hive-Colony-Email-Client"
+""" The user agent name """
+
+USER_AGENT_VERSION = "1.0.0"
+""" The user agent version """
+
+ENVIRONMENT_VERSION = str(sys.version_info[0]) + "." + str(sys.version_info[1]) + "." + str(sys.version_info[2]) + "-" + str(sys.version_info[3])
+""" The environment version """
+
+USER_AGENT_IDENTIFIER = USER_AGENT_NAME + "/" + USER_AGENT_VERSION + " (Python/" + sys.platform + "/" + ENVIRONMENT_VERSION + ")"
+""" The user agent identifier """
+
+DATE_TIME_FORMAT = "%a, %d %b %Y %H:%M:%S +0000 (UTC)"
+""" The format for the displayed date times """
+
+class EmailBuildAutomationExtension:
+    """
+    The email build automation extension class.
+    """
+
+    email_build_automation_extension_plugin = None
+    """ The email build automation extension plugin """
+
+    def __init__(self, email_build_automation_extension_plugin):
+        """
+        Constructor of the class.
+
+        @type email_build_automation_extension_plugin: EmailBuildAutomationExtensionPlugin
+        @param email_build_automation_extension_plugin: The email build automation extension plugin.
+        """
+
+        self.email_build_automation_extension_plugin = email_build_automation_extension_plugin
+
+    def run_automation(self, plugin, stage, parameters, build_automation_structure, logger):
+        # prints an info message
+        logger.info("Running email build automation plugin")
+
+        # retrieves the main client smtp plugin
+        main_client_smtp_plugin = self.email_build_automation_extension_plugin.main_client_smtp_plugin
+
+        # retrieves the format mime plugin
+        format_mime_plugin = self.email_build_automation_extension_plugin.format_mime_plugin
+
+        # creates a new smtp client, using the main client smtp plugin
+        smtp_client = main_client_smtp_plugin.create_client({})
+
+        # opens the smtp client
+        smtp_client.open({})
+
+        # retrieves the sender parameters from the parameters map
+        sender_name = parameters.get("sender_name", "Colony Build Automation")
+        sender_email = parameters.get("sender_email", "automation@hive.pt")
+
+        # retrieves the smtp parameters from the parameters map
+        smtp_hostname = parameters.get("smtp_hostname", DEFAULT_SMTP_HOSTNAME)
+        smtp_port = parameters.get("smtp_port", DEFAULT_SMTP_PORT)
+        smtp_username = parameters.get("smtp_username", None)
+        smtp_password = parameters.get("smtp_password", None)
+        smtp_tls = parameters.get("smtp_tls", False)
+
+        # creates the smtp parameters map
+        smtp_parameters = {}
+
+        # sets the authentication parameters
+        smtp_parameters[USERNAME_VALUE] = smtp_username
+        smtp_parameters[PASSWORD_VALUE] = smtp_password
+        smtp_parameters[TLS_VALUE] = smtp_tls
+
+        # creates the mime message
+        mime_message = format_mime_plugin.create_message({})
+
+        # creates the sender line
+        sender_line = sender_name + " " + "<" + sender_email + ">"
+
+        success_receivers = (("João Magalhães", "joamag@hive.pt"),)
+        failure_receivers = (("João Magalhães", "joamag@hive.pt"), ("Tiago Silva", "tsilva@hive.pt"), ("Luis Martinho", "lmartinho@hive.pt"))
+
+        if build_automation_structure.runtime.build_automation_success:
+            subject = "BUILD SUCCESS"
+            receivers = success_receivers
+        else:
+            subject = "BUILD FAILURE"
+            receivers = failure_receivers
+
+        # creates the receiver line with the email
+        receiver_line = ""
+
+        receiver_emails = []
+
+        is_first = True
+
+        for receiver in receivers:
+            if is_first:
+                is_first = False
+            else:
+                receiver_line += ", "
+
+            receiver_name, receiver_email = receiver
+
+            receiver_line += receiver_name + " " + "<" + receiver_email + ">"
+
+            receiver_emails.append(receiver_email)
+
+        # retrieves the current date time, and formats
+        # it according to the "standard" format
+        current_date_time = datetime.datetime.utcnow()
+        current_date_time_formated = current_date_time.strftime(DATE_TIME_FORMAT)
+
+        # sets the basic mime message headers
+        mime_message.set_header(FROM_VALUE, sender_line)
+        mime_message.set_header(TO_VALUE, receiver_line)
+        mime_message.set_header(SUBJECT_VALUE, subject)
+        mime_message.set_header(DATE_VALUE, current_date_time_formated)
+        mime_message.set_header(USER_AGENT_VALUE, USER_AGENT_IDENTIFIER)
+
+        import os
+
+        build_automation_structure.runtime.logging_buffer.seek(0, os.SEEK_SET)
+
+        contents = build_automation_structure.runtime.logging_buffer.read()
+
+        # writes the contents to the mime message
+        mime_message.write(contents)
+
+        # retrieves the mime message value
+        mime_message_value = mime_message.get_value()
+
+        # send the email using the defined values
+        smtp_client.send_mail(smtp_hostname, smtp_port, sender_email, receiver_emails, mime_message_value, parameters)
+
+        # closes the smtp client
+        smtp_client.close({})
+
+        # returns true (success)
+        return True

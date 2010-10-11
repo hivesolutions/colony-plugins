@@ -116,8 +116,8 @@ class ContinuousIntegrationBuildAutomationExtension:
             # prints an info message
             logger.info("Skipping continuous integration, no changes in repository")
 
-            # returns immediately
-            return
+            # returns true (success)
+            return True
 
         # writes the version number
         self._write_version_number(latest_version_path, version)
