@@ -413,8 +413,15 @@ class BuildAutomation:
                 logger.info("For stage [%s] of build automation" % valid_automation_stage)
                 logger.info("------------------------------------------------------------------------")
 
-                # runs the automation for the current stage
-                automation_plugin.run_automation(build_automation_structure.associated_plugin, valid_automation_stage, automation_plugin_configurations, build_automation_structure, logger)
+                try:
+                    # runs the automation for the current stage
+                    automation_plugin.run_automation(build_automation_structure.associated_plugin, valid_automation_stage, automation_plugin_configurations, build_automation_structure, logger)
+                except Exception, exception:
+                    # prints an error message
+                    logger.error("Problem while executing build automation '%s'" % unicode(exception))
+
+                    # breaks the loop
+                    break
 
         # retrieves the final date time value
         final_date_time = datetime.datetime.now()
