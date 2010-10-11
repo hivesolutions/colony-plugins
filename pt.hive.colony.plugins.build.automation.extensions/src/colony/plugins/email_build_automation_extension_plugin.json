@@ -1,0 +1,24 @@
+{
+    "platform" : "python",
+    "sub_platforms" : ["cpython"],
+    "id" : "pt.hive.colony.plugins.build.automation.extensions.email",
+    "name" : "Email Build Automation Extension Plugin",
+    "short_name" : "Email Build Automation Extension",
+    "description" : "A plugin to manage the email build automation tasks",
+    "version" : "1.0.0",
+    "author" : "Hive Solutions Lda. <development@hive.pt>",
+    "capabilities" : ["build_automation_extension", "build_automation_item"],
+    "capabilities_allowed" : [],
+    "dependencies" : [{
+                "id" : "pt.hive.colony.plugins.main.client.smtp",
+                "version" : "1.0.0"
+            }, {
+                "id" : "pt.hive.colony.plugins.format.mime",
+                "version" : "1.0.0"
+            }],
+    "main_file" : "email_build_automation_extension_plugin.py",
+    "resources" : ["email_build_automation_extension_plugin.py",
+            "build_automation_extensions/__init__.py",
+            "build_automation_extensions/email/__init__.py",
+            "build_automation_extensions/email/email_build_automation_extension_system.py"]
+}
