@@ -46,6 +46,7 @@ import datetime
 
 import colony.libs.map_util
 import colony.libs.path_util
+import colony.libs.string_buffer_util
 
 import build_automation_exceptions
 import build_automation_parser
@@ -97,19 +98,6 @@ BUILD_AUTOMATION_STAGES = ["compile", "test", "build", "install", "deploy", "cle
 
 POST_BUILD_AUTOMATION_STAGES = ["post-build"]
 """ The post build automation stages """
-
-class RuntimeInformation:
-
-    build_automation_success = False
-
-    logging_buffer = None
-
-    initial_date_time = None
-
-    def __init__(self, build_automation_success = False, logging_buffer = None, initial_date_time = None):
-        self.build_automation_success = build_automation_success
-        self.logging_buffer = logging_buffer
-        self.initial_date_time = initial_date_time
 
 class BuildAutomation:
     """
@@ -372,7 +360,7 @@ class BuildAutomation:
         # @TODO GRANDE HARDCODE BADALHOCO
         # retrieves the initial date time value
         initial_date_time = datetime.datetime.now()
-        build_automation_structure.runtime = RuntimeInformation(True, self.string_buffer, initial_date_time)
+        build_automation_structure.runtime = RuntimeInformationStructure(True, self.logging_buffer, initial_date_time)
         build_automation_structure_runtime = build_automation_structure.runtime
         #-------------------------------
 
@@ -1258,14 +1246,14 @@ class BuildAutomation:
         # adds the stream handler to the logger
         self.logger.addHandler(stream_handler)
 
-        import cStringIO
+        # adds the stream handler to the logger handlers
+        self.logger_handlers.append(stream_handler)
 
-        self.string_buffer = cStringIO.StringIO()
-
-
+        # creates the string buffer that will hold the stream handler
+        self.logging_buffer = colony.libs.string_buffer_util.StringBuffer(False)
 
         # creates the stream handler
-        stream_handler = logging.StreamHandler(self.string_buffer)
+        stream_handler = logging.StreamHandler(self.logging_buffer)
 
         # creates the logging formatter
         formatter = logging.Formatter(DEFAULT_LOGGING_FORMAT)
@@ -1275,8 +1263,6 @@ class BuildAutomation:
 
         # adds the stream handler to the logger
         self.logger.addHandler(stream_handler)
-
-
 
         # adds the stream handler to the logger handlers
         self.logger_handlers.append(stream_handler)
@@ -1538,3 +1524,34 @@ class ColonyBuildAutomationStructure(BuildAutomationStructure):
 
         # returns the associated plugin path
         return associated_plugin_path
+
+class RuntimeInformationStructure:
+    """
+    The class representing the runtime structures
+    for the build automation.
+    """
+
+    build_automation_success = False
+    """ Flag controlling the success of the current build automation """
+
+    logging_buffer = None
+    """ Buffer to the logging """
+
+    initial_date_time = None
+    """ The date time structure of the beginning of the run """
+
+    def __init__(self, build_automation_success = False, logging_buffer = None, initial_date_time = None):
+        """
+        Constructor of the class.
+
+        @type build_automation_success: bool
+        @param build_automation_success: Flag controlling the success of the current build automation.
+        @type logging_buffer: StringBuffer
+        @param logging_buffer: The date time structure of the beginning of the run.
+        @type initial_date_time: DateTime
+        @param initial_date_time: The date time structure of the beginning of the run.
+        """
+
+        self.build_automation_success = build_automation_success
+        self.logging_buffer = logging_buffer
+        self.initial_date_time = initial_date_time
