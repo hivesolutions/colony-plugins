@@ -77,7 +77,7 @@ class TestBuildAutomationExtension:
         errors_length = len(result_errors)
 
         # prints an info message
-        logger.info("['%d'] Failures found..." % errors_length)
+        logger.info("[%d] Failures found..." % errors_length)
 
         # iterates over all the result failures
         for failure, failure_traceback in result_failures:
@@ -89,7 +89,7 @@ class TestBuildAutomationExtension:
             logger.error("Traceback: " + failure_traceback)
 
         # prints an info message
-        logger.info("['%d'] Errors found..." % errors_length)
+        logger.info("[%d] Errors found..." % errors_length)
 
         # iterates over all the result errors
         for error, error_traceback in result_errors:
