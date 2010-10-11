@@ -76,9 +76,11 @@ class MainServiceHttpProxyHandlerPlugin(colony.base.plugin_system.Plugin):
 
     def end_load_plugin(self):
         colony.base.plugin_system.Plugin.end_load_plugin(self)
+        self.main_service_http_proxy_handler.load_handler()
 
     def unload_plugin(self):
         colony.base.plugin_system.Plugin.unload_plugin(self)
+        self.main_service_http_proxy_handler.unload_handler()
 
     def end_unload_plugin(self):
         colony.base.plugin_system.Plugin.end_unload_plugin(self)
