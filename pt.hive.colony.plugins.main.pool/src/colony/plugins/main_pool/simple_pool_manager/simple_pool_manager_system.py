@@ -173,7 +173,7 @@ class SimplePoolImplementation:
         """
 
         # iterates over the pool size range
-        for index in range(self.pool_size):
+        for _index in range(self.pool_size):
             # creates and adds a pool item
             self._create_add_pool_item()
 
@@ -233,7 +233,7 @@ class SimplePoolImplementation:
         """
 
         # iterates in the size range
-        for index in range(size):
+        for _index in range(size):
             # creates the pool item and adds
             # it to the pool
             self._create_add_pool_item()
