@@ -73,9 +73,6 @@
                 <id>pt.hive.colony.plugins.build.automation.extensions.validation_plugin</id>
                 <version>1.0.0</version>
                 <stage>test</stage>
-                <configuration>
-                    <default_test>true</default_test>
-                </configuration>
             </plugin>
         </plugins>
     </build>
