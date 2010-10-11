@@ -59,7 +59,9 @@ class MainServiceHttpProxyHandlerPlugin(colony.base.plugin_system.Plugin):
     capabilities = ["http_service_handler", "build_automation_item"]
     capabilities_allowed = ["http_service_directory_list_handler"]
     dependencies = [colony.base.plugin_system.PluginDependency(
-                    "pt.hive.colony.plugins.main.client.http", "1.0.0")]
+                    "pt.hive.colony.plugins.main.client.http", "1.0.0"),
+                    colony.base.plugin_system.PluginDependency(
+                    "pt.hive.colony.plugins.main.pool.element_pool_manager", "1.0.0")]
     events_handled = []
     events_registrable = []
     main_modules = ["main_service_http_proxy_handler.proxy_handler.main_service_http_proxy_handler_system"]
@@ -67,6 +69,7 @@ class MainServiceHttpProxyHandlerPlugin(colony.base.plugin_system.Plugin):
     main_service_http_proxy_handler = None
 
     main_client_http_plugin = None
+    element_pool_manager_plugin = None
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
@@ -121,3 +124,10 @@ class MainServiceHttpProxyHandlerPlugin(colony.base.plugin_system.Plugin):
     @colony.base.decorators.plugin_inject("pt.hive.colony.plugins.main.client.http")
     def set_main_client_http_plugin(self, main_client_http_plugin):
         self.main_client_http_plugin = main_client_http_plugin
+
+    def get_element_pool_manager_plugin(self):
+        return self.element_pool_manager_plugin
+
+    @colony.base.decorators.plugin_inject("pt.hive.colony.plugins.main.pool.element_pool_manager")
+    def set_element_pool_manager_plugin(self, element_pool_manager_plugin):
+        self.element_pool_manager_plugin = element_pool_manager_plugin

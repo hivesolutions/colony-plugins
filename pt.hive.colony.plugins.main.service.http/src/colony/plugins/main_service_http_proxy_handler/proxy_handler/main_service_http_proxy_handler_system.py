@@ -48,6 +48,9 @@ DEFAULT_CHARSET = "utf-8"
 DEFAULT_PROXY_TARGET = ""
 """ The default proxy target """
 
+DEFAULT_ELEMENT_POOL_SIZE = 10
+""" the default element pool size """
+
 HOST_VALUE = "Host"
 """ The host value """
 
@@ -68,8 +71,8 @@ class MainServiceHttpProxyHandler:
     main_service_http_proxy_handler_plugin = None
     """ The main service http proxy handler plugin """
 
-    http_client = None
-    """ The http client to be used """
+    http_clients_pool = None
+    """ The the pool http clients to be used """
 
     def __init__(self, main_service_http_proxy_handler_plugin):
         """
@@ -82,18 +85,35 @@ class MainServiceHttpProxyHandler:
         self.main_service_http_proxy_handler_plugin = main_service_http_proxy_handler_plugin
 
     def load_handler(self):
+        # retrieves the element pool manager plugin
+        element_pool_manager_plugin = self.main_service_http_proxy_handler_plugin.element_pool_manager_plugin
+
+        # creates a new http clients pool
+        self.http_clients_pool = element_pool_manager_plugin.create_new_element_pool(self.create_method, self.destroy_method, DEFAULT_ELEMENT_POOL_SIZE)
+
+        # starts the http clients pool
+        self.http_clients_pool.start({})
+
+    def unload_handler(self):
+        # stops the http clients pool
+        self.http_clients_pool.stop({})
+
+    def create_method(self, arguments):
         # retrieves the main client http plugin
         main_client_http_plugin = self.main_service_http_proxy_handler_plugin.main_client_http_plugin
 
         # creates the http client
-        self.http_client = main_client_http_plugin.create_client({})
+        http_client = main_client_http_plugin.create_client({})
 
         # opens the http client
-        self.http_client.open({})
+        http_client.open(arguments)
 
-    def unload_handler(self):
+        # returns the http client
+        return http_client
+
+    def destroy_method(self, http_client, arguments):
         # closes the http client
-        self.http_client.close({})
+        http_client.close(arguments)
 
     def get_handler_name(self):
         """
@@ -129,8 +149,14 @@ class MainServiceHttpProxyHandler:
         # target and the path
         complete_path = proxy_target + path
 
+        # retrieves the http client from the http clients pool
+        http_client = self.http_clients_pool.pop()
+
         # fetches the contents from the url
-        http_response = self.http_client.fetch_url(complete_path, method = request.operation_type, headers = request_headers, content_type_charset = DEFAULT_CHARSET, contents = request_contents)
+        http_response = http_client.fetch_url(complete_path, method = request.operation_type, headers = request_headers, content_type_charset = DEFAULT_CHARSET, contents = request_contents)
+
+        # puts the http client back into the http clients pool
+        self.http_clients_pool.put(http_client)
 
         # retrieves the status code form the http response
         status_code = http_response.status_code
