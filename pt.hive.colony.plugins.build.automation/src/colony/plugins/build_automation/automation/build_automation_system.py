@@ -334,6 +334,8 @@ class BuildAutomation:
         @param logger: The build automation logger to be used.
         @type is_first: bool
         @param is_first: If this is the first run (useful for module inclusion).
+        @rtype: bool
+        @return: If the  build automation for the stage was successful.
         """
 
         # retrieves the initial date time value
@@ -351,6 +353,9 @@ class BuildAutomation:
         if not build_automation_structure:
             # returns immediately
             return
+
+        # sets the build automation success flag
+        build_automation_success = True
 
         # creates the build automation directories (if they don't exist and is first run)
         is_first and self.create_build_automation_directories(build_automation_structure)
@@ -373,13 +378,19 @@ class BuildAutomation:
         if recursive_level > 0:
             # iterates over all the module plugins to execute them (composition)
             for module_plugin, module_plugin_stage in build_automation_structure.module_plugins:
+                # in case the build automation does not
+                # succeed
+                if not build_automation_success:
+                    # breaks the loop
+                    break
+
                 # retrieves the module values
                 module_id = module_plugin.id
                 module_version = module_plugin.version
                 module_stage = module_plugin_stage or stage
 
                 # runs the module plugin for the same stage
-                self.run_automation(module_id, module_version, module_stage, recursive_level - 1, logger, False)
+                build_automation_success = self.run_automation(module_id, module_version, module_stage, recursive_level - 1, logger, False)
 
         # retrieves the index of the state in the build automation stages list
         build_automation_stage_index = BUILD_AUTOMATION_STAGES.index(stage)
@@ -390,38 +401,14 @@ class BuildAutomation:
 
         # iterates over all the valid automation stages to run the automation plugins
         for valid_automation_stage in valid_automation_stages:
-            # retrieves the automation plugins for the stage
-            all_automation_plugins = build_automation_structure.get_all_automation_plugins_by_stage(valid_automation_stage)
+            # in case the build automation does not
+            # succeed
+            if not build_automation_success:
+                # breaks the loop
+                break
 
-            # iterates over all of the automation plugins
-            for automation_plugin in all_automation_plugins:
-                # retrieves the automation plugin id
-                automation_plugin_id = automation_plugin.id
-
-                # retrieves the automation plugin version
-                automation_plugin_version = automation_plugin.version
-
-                # creates the automation plugin tuple
-                automation_plugin_tuple = (automation_plugin_id, automation_plugin_version)
-
-                # retrieves the automation plugin configurations
-                automation_plugin_configurations = build_automation_structure.get_all_automation_plugin_configurations(automation_plugin_tuple)
-
-                # prints logging information
-                logger.info("------------------------------------------------------------------------")
-                logger.info("Running build automation plugin '%s' v%s" % (automation_plugin_id, automation_plugin_version))
-                logger.info("For stage [%s] of build automation" % valid_automation_stage)
-                logger.info("------------------------------------------------------------------------")
-
-                try:
-                    # runs the automation for the current stage
-                    automation_plugin.run_automation(build_automation_structure.associated_plugin, valid_automation_stage, automation_plugin_configurations, build_automation_structure, logger)
-                except Exception, exception:
-                    # prints an error message
-                    logger.error("Problem while executing build automation '%s'" % unicode(exception))
-
-                    # breaks the loop
-                    break
+            # run the automation stage (tasks)
+            build_automation_success = self._run_automation_stage(valid_automation_stage, build_automation_structure, logger)
 
         # retrieves the final date time value
         final_date_time = datetime.datetime.now()
@@ -429,11 +416,84 @@ class BuildAutomation:
         # calculates the delta date time from the final and the initial values
         delta_date_time = final_date_time - initial_date_time
 
+        # prints the final build automation result
+        logger.info("------------------------------------------------------------------------")
+
+        # in case the build automation succeeded
+        if build_automation_success:
+            # prints the success info
+            logger.info("BUILD SUCCEEDED")
+        else:
+            # prints the failure info
+            logger.info("BUILD FAILED")
+
         # prints the final logging information
         logger.info("------------------------------------------------------------------------")
         logger.info("Total time for build automation %s" % str(delta_date_time))
         logger.info("Finished build automation at %s" % final_date_time.strftime("%d/%m/%y %H:%M:%S"))
         logger.info("------------------------------------------------------------------------")
+
+        # returns the build automation success
+        return build_automation_success
+
+    def run_automation_stage(self, automation_stage, build_automation_structure, logger):
+        """
+        Runs the automation tasks for the given automation stage, using
+        the given build automation structure and the given logger.
+
+        @type automation_stage: String
+        @param automation_stage: The automation stage to be run.
+        @type build_automation_structure: BuildAutomationStructure
+        @param build_automation_structure: The build automation structure used.
+        @type logger: Logger
+        @param logger: The logger to be used.
+        @rtype: bool
+        @return: If the automation for the stage was successful.
+        """
+
+        # retrieves the automation plugins for the stage
+        all_automation_plugins = build_automation_structure.get_all_automation_plugins_by_stage(automation_stage)
+
+        # iterates over all of the automation plugins
+        for automation_plugin in all_automation_plugins:
+            # retrieves the automation plugin id
+            automation_plugin_id = automation_plugin.id
+
+            # retrieves the automation plugin version
+            automation_plugin_version = automation_plugin.version
+
+            # creates the automation plugin tuple
+            automation_plugin_tuple = (automation_plugin_id, automation_plugin_version)
+
+            # retrieves the automation plugin configurations
+            automation_plugin_configurations = build_automation_structure.get_all_automation_plugin_configurations(automation_plugin_tuple)
+
+            # prints logging information
+            logger.info("------------------------------------------------------------------------")
+            logger.info("Running build automation plugin '%s' v%s" % (automation_plugin_id, automation_plugin_version))
+            logger.info("For stage [%s] of build automation" % automation_stage)
+            logger.info("------------------------------------------------------------------------")
+
+            try:
+                # runs the automation for the current stage
+                return_value = automation_plugin.run_automation(build_automation_structure.associated_plugin, automation_stage, automation_plugin_configurations, build_automation_structure, logger)
+
+                # in case the return value is invalid
+                if not return_value:
+                    # prints an error message
+                    logger.error("Error while executing build automation plugin '%s' v%s" % (automation_plugin_id, automation_plugin_version))
+
+                    # returns false (invalid)
+                    return False
+            except Exception, exception:
+                # prints an error message
+                logger.error("Problem while executing build automation '%s'" % unicode(exception))
+
+                # returns false (invalid)
+                return False
+
+        # returns true (valid)
+        return True
 
     def generate_build_automation_structure(self, build_automation_parsing_structure):
         """
