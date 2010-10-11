@@ -11,10 +11,7 @@
             "build_automation_item"],
     "capabilities_allowed" : ["test_manager", "test_case", "test_case_bundle",
             "plugin_test_case", "plugin_test_case_bundle"],
-    "dependencies" : [{
-                "id" : "pt.hive.colony.plugins.misc.code_coverage",
-                "version" : "1.0.0"
-            }],
+    "dependencies" : [],
     "main_file" : "main_test_plugin.py",
     "resources" : ["main_test_plugin.py", "main_test/__init__.py",
             "main_test/test/__init__.py", "main_test/test/console_test.py",

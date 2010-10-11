@@ -56,8 +56,7 @@ class MainTestPlugin(colony.base.plugin_system.Plugin):
     attributes = {"build_automation_file_path" : "$base{plugin_directory}/main_test/test/resources/baf.xml"}
     capabilities = ["test", "console_command_extension", "build_automation_item"]
     capabilities_allowed = ["test_manager", "test_case", "test_case_bundle", "plugin_test_case", "plugin_test_case_bundle"]
-    dependencies = [colony.base.plugin_system.PluginDependency(
-                    "pt.hive.colony.plugins.misc.code_coverage", "1.0.0")]
+    dependencies = []
     events_handled = []
     events_registrable = []
     main_modules = ["main_test.test.console_test", "main_test.test.main_test_system"]
@@ -69,8 +68,6 @@ class MainTestPlugin(colony.base.plugin_system.Plugin):
     test_case_bundle_plugins = []
     plugin_test_case_plugins = []
     plugin_test_case_bundle_plugins = []
-
-    code_coverage_plugin = None
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
@@ -122,8 +119,8 @@ class MainTestPlugin(colony.base.plugin_system.Plugin):
     def start_all_test(self):
         return self.main_test.start_all_test()
 
-    def start_test(self, test_cases_list, code_coverage, logger):
-        return self.main_test.start_test(test_cases_list, code_coverage, logger)
+    def start_test(self, test_cases_list, logger):
+        return self.main_test.start_test(test_cases_list, logger)
 
     @colony.base.decorators.load_allowed_capability("test_manager")
     def test_manager_capability_load_allowed(self, plugin, capability):
@@ -172,10 +169,3 @@ class MainTestPlugin(colony.base.plugin_system.Plugin):
     def plugin_test_case_bundle_capability_unload_allowed(self, plugin, capability):
         self.plugin_test_case_bundle_plugins.remove(plugin)
         self.main_test.unload_plugin_test_case_bundle_plugin(plugin)
-
-    def get_code_coverage_plugin(self):
-        return self.code_coverage_plugin
-
-    @colony.base.decorators.plugin_inject("pt.hive.colony.plugins.misc.code_coverage")
-    def set_code_coverage_plugin(self, code_coverage_plugin):
-        self.code_coverage_plugin = code_coverage_plugin

@@ -39,10 +39,7 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 import unittest
 
-import colony.base.dummy_logging
-
-COVERAGE_FILE_PATH = "coverage.figleaf"
-""" The coverage file path """
+import colony.libs.logging_util
 
 TEST_METHOD_PREFIX = "test_"
 """ The test method prefix """
@@ -451,35 +448,22 @@ class MainTest:
 
         return plugin_test_cases
 
-    def start_all_test(self, code_coverage = False):
+    def start_all_test(self):
         """
         Starts all the available tests.
-
-        @type code_coverage: bool
-        @param code_coverage: If a code coverage should be started.
         """
 
-        self.start_test(self.loaded_test_cases_list, code_coverage)
+        self.start_test(self.loaded_test_cases_list)
 
-    def start_test(self, test_cases_list, code_coverage = False, logger = None):
+    def start_test(self, test_cases_list, logger = None):
         """
         Starts the given test cases.
 
         @type test_cases_list: List
         @param test_cases_list: The list with the test cases to be started.
-        @type code_coverage: bool
-        @param code_coverage: If a code coverage should be started.
         @type logger: Logger
         @param logger: The logger to be used.
         """
-
-        # retrieves the code coverage plugin
-        code_coverage_plugin = self.main_test_plugin.code_coverage_plugin
-
-        # in case code coverage is activated
-        if code_coverage:
-            # starts the code coverage process
-            code_coverage_plugin.start_code_coverage()
 
         # retrieves the unit test test loader
         test_loader = unittest.TestLoader()
@@ -507,16 +491,11 @@ class MainTest:
         # creates a new logger test runner
         runner = LoggerTestRunner(logger)
 
-        # runs the text test runner
-        runner.run(global_test_suite)
+        # runs the text test runner, retrieving the result
+        test_result = runner.run(global_test_suite)
 
-        # in case code coverage is activated
-        if code_coverage:
-            # stops the code coverage process
-            code_coverage_plugin.stop_code_coverage()
-
-            # writes the code coverage result to the coverage file
-            code_coverage_plugin.write_code_coverage(COVERAGE_FILE_PATH)
+        # returns the test result
+        return test_result
 
 class LoggerTestResult(unittest.TestResult):
     """
@@ -533,7 +512,7 @@ class LoggerTestResult(unittest.TestResult):
         if logger:
             self.logger = logger
         else:
-            self.logger = colony.base.dummy_logging.DummyLogger("dummy")
+            self.logger = colony.libs.logging_util.DummyLogger("dummy")
 
     def startTest(self, test):
         unittest.TestResult.startTest(self, test)
