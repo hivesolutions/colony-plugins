@@ -68,9 +68,37 @@ class TestBuildAutomationExtension:
         # starts the test cases
         result = main_test_plugin.start_test(plugin_test_cases, logger)
 
+        # retrieves the failures and errors
+        result_failures = result.failures
+        result_errors = result.errors
+
         # retrieves the length of failures and errors
-        failures_length = len(result.failures)
-        errors_length = len(result.errors)
+        failures_length = len(result_failures)
+        errors_length = len(result_errors)
+
+        # prints an info message
+        logger.info("['%d'] Failures found..." % errors_length)
+
+        # iterates over all the result failures
+        for failure, failure_traceback in result_failures:
+            # retrieves the failure id
+            failure_id = failure.id()
+
+            # prints the failure description
+            logger.error("Name: " + failure_id)
+            logger.error("Traceback: " + failure_traceback)
+
+        # prints an info message
+        logger.info("['%d'] Errors found..." % errors_length)
+
+        # iterates over all the result errors
+        for error, error_traceback in result_errors:
+            # retrieves the error id
+            error_id = error.id()
+
+            # prints the error description
+            logger.error("Name: " + error_id)
+            logger.error("Traceback: " + error_traceback)
 
         # retrieves the build automation success (success if no
         # failures and errors exist)
