@@ -93,6 +93,11 @@
                     <zip>resources</zip>
                 </configuration>
             </plugin>
+            <plugin>
+                <id>pt.hive.colony.plugins.build.automation.extensions.email</id>
+                <version>1.0.0</version>
+                <stage>post-build</stage>
+            </plugin>
         </plugins>
     </build>
 </build_automation>
