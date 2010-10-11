@@ -39,7 +39,6 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 import re
 import os
-import types
 
 DEFAULT_JSON_ENCODING = "Cp1252"
 """ The default json encoding """
