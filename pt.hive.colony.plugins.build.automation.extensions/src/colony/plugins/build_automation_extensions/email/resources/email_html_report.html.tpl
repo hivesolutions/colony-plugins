@@ -39,11 +39,11 @@
                         </p>
                         <font face="Rockwell, Arial" size="3" color="#808080"><strong>Code Changes</strong></font>
                         <br />
-                        ${foreach item=revision from=revision_list}
+                        ${foreach item=change from=changelog_list}
                         <p>
                             <font face="Arial" size="2" color="#333333">
-                                <font face="Rockwell, Arial" size="3" color="#214c8f"><b><a href="#">r   ${out_none value=revision.number xml_escape=True /}  </a> - João Magalhães (${out_none value=revision.author xml_escape=True /})</b></font><br />
-                                ${out_none value=revision.message xml_escape=True /}
+                                <font face="Rockwell, Arial" size="3" color="#214c8f"><b><a href="#">r${out_none value=change.number xml_escape=True /}</a> - João Magalhães (${out_none value=change.author xml_escape=True /})</b></font><br />
+                                ${out_none value=change.message xml_escape=True /}
                             </font>
                         </p>
                         ${/foreach}

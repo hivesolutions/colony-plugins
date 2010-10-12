@@ -67,8 +67,8 @@ DEFAULT_SENDER_EMAIL = "integration@getcolony.com"
 VERSION_VALUE = "version"
 """ The version value """
 
-REVISION_LIST_VALUE = "revision_list"
-""" The revision list value """
+CHANGELOG_LIST_VALUE = "changelog_list"
+""" The changelog list value """
 
 USERNAME_VALUE = "username"
 """ The username value """
@@ -198,8 +198,8 @@ class EmailBuildAutomationExtension:
         # retrieves the build automation version (revision)
         build_automation_version = build_automation_structure_runtime.properties.get(VERSION_VALUE, -1)
 
-        # retrieves the build automation revision list
-        build_automation_revision_list = build_automation_structure_runtime.properties.get(REVISION_LIST_VALUE, [])
+        # retrieves the build automation changelog list
+        build_automation_changelog_list = build_automation_structure_runtime.properties.get(CHANGELOG_LIST_VALUE, [])
 
         # creates the build automation log file name
         build_automation_log_file_name = "build_automation_r" + str(build_automation_version) + ".log"
@@ -300,8 +300,8 @@ class EmailBuildAutomationExtension:
         # assigns the version to the parsed template file
         template_file.assign("version", build_automation_version)
 
-        # assigns the revision list to the parsed template file
-        template_file.assign("revision_list", build_automation_revision_list)
+        # assigns the changelog list to the parsed template file
+        template_file.assign("changelog_list", build_automation_changelog_list)
 
         # assigns the log file name to the parsed template file
         template_file.assign("log_file_name", build_automation_log_file_name)

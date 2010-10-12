@@ -78,8 +78,8 @@ MESSAGE_VALUE = "message"
 VERSION_VALUE = "version"
 """ The version value """
 
-REVISION_LIST_VALUE = "revision_list"
-""" The revision list value """
+CHANGELOG_LIST_VALUE = "changelog_list"
+""" The changelog list value """
 
 class RevisionControlBuildAutomationExtension:
     """
@@ -180,12 +180,15 @@ class RevisionControlBuildAutomationExtension:
             # retrieves the log of revision in the revision
             revision_list = revision_control_manager.log([target_path], base_revision_number, current_revision_number)
 
-            # writes the changelog for the given file path and revision list
-            self._write_changelog(changelog_file_path, revision_list)
+            # converts the revision list into a changelog list
+            changelog_list = self._convert_revision_list_changelog(revision_list)
+
+            # writes the changelog for the given file path and changelog list
+            self._write_changelog(changelog_file_path, changelog_list)
 
         # sets the build automation structure runtime properties
         build_automation_structure_runtime.properties[VERSION_VALUE] = current_revision_number
-        build_automation_structure_runtime.properties[REVISION_LIST_VALUE] = revision_list
+        build_automation_structure_runtime.properties[CHANGELOG_LIST_VALUE] = changelog_list
 
         # returns true (success)
         return True
@@ -232,12 +235,26 @@ class RevisionControlBuildAutomationExtension:
             # closes the version file
             version_file.close()
 
-    def _write_changelog(self, changelog_file_path, revision_list):
+    def _write_changelog(self, changelog_file_path, changelog_list):
         # retrieves the json plugin
         json_plugin = self.revision_control_build_automation_extension_plugin.json_plugin
 
+        # dumps (pretty) the changelog list using the json plugin
+        changelog_json = json_plugin.dumps_pretty(changelog_list)
+
+        # opens the changelog file
+        changelog_file = open(changelog_file_path, "wb")
+
+        try:
+            # writes the changelog json
+            changelog_file.write(changelog_json)
+        finally:
+            # closes the changelog file
+            changelog_file.close()
+
+    def _convert_revision_list_changelog(self, revision_list):
         # creates the list to hold the changelog elements
-        changelog_elements_list = []
+        changelog_list = []
 
         # iterates over all the revision items in the revision
         # list to create the changelog elements
@@ -257,18 +274,8 @@ class RevisionControlBuildAutomationExtension:
             changelog_element[AUTHOR_VALUE] = revision_item_author
             changelog_element[MESSAGE_VALUE] = revision_item_message
 
-            # adds the changelog element to the changelog elements list
-            changelog_elements_list.append(changelog_element)
+            # adds the changelog element to the changelog list
+            changelog_list.append(changelog_element)
 
-        # dumps (pretty) the changelog elements list using the json plugin
-        changelog_json = json_plugin.dumps_pretty(changelog_elements_list)
-
-        # opens the changelog file
-        changelog_file = open(changelog_file_path, "wb")
-
-        try:
-            # writes the changelog json
-            changelog_file.write(changelog_json)
-        finally:
-            # closes the changelog file
-            changelog_file.close()
+        # returns the changelog list
+        return changelog_list
