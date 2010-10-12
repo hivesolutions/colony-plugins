@@ -73,7 +73,7 @@
                             <font face="Arial" size="2" color="#333333">
                                 <a href="#">View Online</a> -
                                 <a href="#">Add Comment</a> -
-                                <a href="#">View Artifacts</a> -
+                                <a href="http://servidor3.hive:8080/integration/${out_none value=version xml_escape=True /}">View Artifacts</a> -
                                 <a href="cid:${out_none value=log_file_name xml_escape=True /}">Download Log</a>
                             </font>
                         </p>
