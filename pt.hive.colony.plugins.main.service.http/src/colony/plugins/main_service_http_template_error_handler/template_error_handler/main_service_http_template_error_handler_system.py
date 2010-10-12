@@ -41,6 +41,9 @@ import sys
 import time
 import traceback
 
+DEFAULT_ENCODING = "utf-8"
+""" The default encoding """
+
 ERROR_HANDLER_NAME = "template"
 """ The error handler name """
 
@@ -182,7 +185,7 @@ class MainServiceHttpTemplateErrorHandler:
         processed_template_file = template_file.process()
 
         # decodes the processed template file into a unicode object
-        processed_template_file_decoded = processed_template_file.decode("utf-8")
+        processed_template_file_decoded = processed_template_file.decode(DEFAULT_ENCODING)
 
         # sets the status code in the request
         request.status_code = error_code
