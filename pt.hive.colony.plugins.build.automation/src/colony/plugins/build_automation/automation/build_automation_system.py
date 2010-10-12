@@ -527,6 +527,9 @@ class BuildAutomation:
             # raises the build automation failed exception
             raise build_automation_exceptions.BuildAutomationFailedException("no success")
 
+        # prints an info message
+        logger.info("Finished post build tasks...")
+
     def print_start_information(self, plugin_id, plugin_version, stage, logger):
         """
         Prints the start information for the given information.
