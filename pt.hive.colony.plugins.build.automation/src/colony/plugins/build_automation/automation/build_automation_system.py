@@ -396,9 +396,8 @@ class BuildAutomation:
 
             # iterates over all the module plugins to execute them (composition)
             for module_plugin, module_plugin_stage in build_automation_structure.module_plugins:
-                # in case the build automation does not
-                # succeed
-                if not build_automation_structure_runtime.build_automation_success:
+                # in case the build automation does not succeed
+                if not build_automation_structure_runtime.success:
                     # breaks the loop
                     break
 
@@ -408,7 +407,7 @@ class BuildAutomation:
                 module_stage = module_plugin_stage or stage
 
                 # runs the module plugin for the same stage
-                build_automation_structure_runtime.build_automation_success = self.run_automation(module_id, module_version, module_stage, recursive_level - 1, logger, raise_exception, False)
+                build_automation_structure_runtime.success = self.run_automation(module_id, module_version, module_stage, recursive_level - 1, logger, raise_exception, False)
         else:
             # prints an info message
             logger.info("Not building modules no recursion level available...")
@@ -422,23 +421,22 @@ class BuildAutomation:
 
         # iterates over all the valid automation stages to run the automation plugins
         for valid_automation_stage in valid_automation_stages:
-            # in case the build automation does not
-            # succeed
-            if not build_automation_structure_runtime.build_automation_success:
+            # in case the build automation does not succeed
+            if not build_automation_structure_runtime.success:
                 # breaks the loop
                 break
 
             # run the automation stage (tasks)
-            build_automation_structure_runtime.build_automation_success = self.run_automation_stage(valid_automation_stage, build_automation_structure, logger)
+            build_automation_structure_runtime.success = self.run_automation_stage(valid_automation_stage, build_automation_structure, logger)
 
         # prints the end information
         self.print_end_information(build_automation_structure, logger)
 
-        # in case it's the first run, runs the post build tasks
-        is_first and self.run_post_build(build_automation_structure, logger, raise_exception)
+        # in case it's the first run and the build automation is not skipped, runs the post build tasks
+        is_first and not build_automation_structure_runtime.skipped and self.run_post_build(build_automation_structure, logger, raise_exception)
 
         # returns the build automation success
-        return build_automation_structure_runtime.build_automation_success
+        return build_automation_structure_runtime.success
 
     def run_automation_stage(self, automation_stage, build_automation_structure, logger):
         """
@@ -512,6 +510,9 @@ class BuildAutomation:
         @param raise_exception: If an exception should be raised upon build failure.
         """
 
+        # prints an info message
+        logger.info("Running post build tasks...")
+
         # retrieves the build automation structure runtime
         build_automation_structure_runtime = build_automation_structure.runtime
 
@@ -522,7 +523,7 @@ class BuildAutomation:
 
         # in case the build automation failed, this is the first run and the raise
         # exception flag is active an exception should be raised
-        if not build_automation_structure_runtime.build_automation_success and raise_exception:
+        if not build_automation_structure_runtime.success and raise_exception:
             # raises the build automation failed exception
             raise build_automation_exceptions.BuildAutomationFailedException("no success")
 
@@ -562,7 +563,7 @@ class BuildAutomation:
         build_automation_structure_runtime = build_automation_structure.runtime
 
         # retrieves the build automation success
-        build_automation_success = build_automation_structure_runtime.build_automation_success
+        build_automation_success = build_automation_structure_runtime.success
 
         # retrieves the intial date time
         initial_date_time = build_automation_structure_runtime.initial_date_time
@@ -1584,7 +1585,7 @@ class RuntimeInformationStructure:
     for the build automation.
     """
 
-    build_automation_success = False
+    success = False
     """ Flag controlling the success of the current build automation """
 
     logging_buffer = None
@@ -1593,18 +1594,26 @@ class RuntimeInformationStructure:
     initial_date_time = None
     """ The date time structure of the beginning of the run """
 
-    def __init__(self, build_automation_success = False, logging_buffer = None, initial_date_time = None):
+    skipped = False
+    """ Flag controlling if the build automation was skipped """
+
+    properties = {}
+    """ Map containing various properties of the build automation runtime """
+
+    def __init__(self, success = False, logging_buffer = None, initial_date_time = None):
         """
         Constructor of the class.
 
-        @type build_automation_success: bool
-        @param build_automation_success: Flag controlling the success of the current build automation.
+        @type success: bool
+        @param success: Flag controlling the success of the current build automation.
         @type logging_buffer: StringBuffer
         @param logging_buffer: The date time structure of the beginning of the run.
         @type initial_date_time: DateTime
         @param initial_date_time: The date time structure of the beginning of the run.
         """
 
-        self.build_automation_success = build_automation_success
+        self.success = success
         self.logging_buffer = logging_buffer
         self.initial_date_time = initial_date_time
+
+        self.properties = {}
