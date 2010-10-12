@@ -42,7 +42,7 @@ import colony.base.decorators
 
 class FormatMimeUtilsPlugin(colony.base.plugin_system.Plugin):
     """
-    The main class for the Mime Utils Format plugin.
+    The main class for the Mime Format Utils plugin.
     """
 
     id = "pt.hive.colony.plugins.format.mime.utils"
@@ -54,7 +54,7 @@ class FormatMimeUtilsPlugin(colony.base.plugin_system.Plugin):
     loading_type = colony.base.plugin_system.EAGER_LOADING_TYPE
     platforms = [colony.base.plugin_system.CPYTHON_ENVIRONMENT,
                  colony.base.plugin_system.JYTHON_ENVIRONMENT]
-    attributes = {"build_automation_file_path" : "$base{plugin_directory}/format/mime/resources/baf.xml"}
+    attributes = {"build_automation_file_path" : "$base{plugin_directory}/format/mime_utils/resources/baf.xml"}
     capabilities = ["format.mime.utils", "build_automation_item"]
     capabilities_allowed = []
     dependencies = [colony.base.plugin_system.PluginDependency(
