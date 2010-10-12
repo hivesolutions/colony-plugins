@@ -87,7 +87,7 @@
                                 <td>
                                     <font face="Rockwell, Arial" size="3" color="#808080"><strong>Colony Continuous Integration</strong></font><br />
                                     <font face="Rockwell, Arial" size="2" color="#808080">Automation the easy way</font><br />
-                                    <font face="Rockwell, Arial" size="2"><a href="#">integration@getcolony.com</a></font><br />
+                                    <font face="Rockwell, Arial" size="2">integration@getcolony.com</font><br />
                                 </td>
                             </tr>
                         </table>
