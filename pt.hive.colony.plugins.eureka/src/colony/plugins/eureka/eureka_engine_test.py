@@ -58,8 +58,7 @@ class EurekaEngineTest:
         self.eureka_engine_plugin = eureka_engine_plugin
 
     def get_plugin_test_case_bundle(self):
-        #return [EurekaEnginePluginTestCase]
-        return []
+        return [EurekaEnginePluginTestCase]
 
 class EurekaEngineTestCase(unittest.TestCase):
     """
@@ -137,8 +136,8 @@ class EurekaEngineTestCase(unittest.TestCase):
         self.assertEqual(test_items[0].key, "mock_text_parameter")
 
         # testing context awareness
-        import eureka_mocks.mock_operation_item
-        operation_item = eureka_mocks.mock_operation_item.MockOperationItem()
+        import eureka_mock_item_extension.mock_item_extension.mock_operation_item
+        operation_item = eureka_mock_item_extension.mock_item_extension.mock_operation_item.MockOperationItem()
         context = [operation_item]
         test_items = self.plugin.get_items_for_string_with_context("mock", context, max_items = None)
         self.assertEqual(test_items[0].key, "mock_entity")
