@@ -30,7 +30,7 @@
                         </h1>
                         <p>
                             <font face="Arial" size="2" color="#333333">
-                                Code has been updated to <b>r${out_none value=version xml_escape=True /}</b> by João Magalhães (joamag@hive.pt), Tiago Silva (tsilva@hive.pt).
+                                Code has been updated to <b color="#214c8f">r${out_none value=version xml_escape=True /}</b> by João Magalhães (joamag@hive.pt), Tiago Silva (tsilva@hive.pt).
                                 3 tests ran in total.
                             </font>
                         </p>
@@ -62,7 +62,7 @@
                         <p>
                             <font face="Arial" size="2" color="#333333">
                                 <font face="Rockwell, Arial" size="3" color="#214c8f"><b><a href="#">Bug 245</a> - Fix text alignment</b></font><br />
-                                The text alignment is strange it shoulb be fixed byt the operators that have created it. If not built on time
+                                The text alignment is strange it should be fixed byt the operators that have created it. If not built on time
                                 this bug can start to be a real big problem.
                             </font>
                         </p>
