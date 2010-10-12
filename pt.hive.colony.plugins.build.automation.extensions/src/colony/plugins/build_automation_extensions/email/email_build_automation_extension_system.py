@@ -192,6 +192,9 @@ class EmailBuildAutomationExtension:
         # retrieves the build automation version (revision)
         build_automation_version = build_automation_structure_runtime.properties.get("version", -1)
 
+        # creates the build automation log file name
+        build_automation_log_file_name = "build_automation_" + str(build_automation_version) + ".log"
+
         # writes the initial subject line
         subject = "[b%i] %s " % (build_automation_version, build_automation_plugin_name)
 
@@ -285,6 +288,9 @@ class EmailBuildAutomationExtension:
         # assigns the plugin name to the parsed template file
         template_file.assign("plugin_name", build_automation_plugin_name)
 
+        # assigns the log file name to the parsed template file
+        template_file.assign("log_file_name", build_automation_log_file_name)
+
         # processes the template file
         processed_template_file = template_file.process()
 
@@ -310,7 +316,8 @@ class EmailBuildAutomationExtension:
         # adds the message packer part to the mime message
         mime_message.add_part(mime_message_packer_part)
 
-        format_mime_utils_plugin.add_mime_message_attachment_contents(mime_message, logging_contents, "build_automation.log")
+        # adds the mime message log attachment to the mime message
+        format_mime_utils_plugin.add_mime_message_attachment_contents(mime_message, logging_contents, build_automation_log_file_name)
 
         # adds the mime message contents (images) to the mime message
         format_mime_utils_plugin.add_mime_message_contents(mime_message, email_html_report_images_file_path, ("gif",))

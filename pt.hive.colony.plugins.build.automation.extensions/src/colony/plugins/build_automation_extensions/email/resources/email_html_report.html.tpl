@@ -78,7 +78,7 @@
                                 <a href="#">View Online</a> -
                                 <a href="#">Add Comment</a> -
                                 <a href="#">View Artifacts</a> -
-                                <a href="cid:build_automation.log">Download Log</a>
+                                <a href="cid:${out_none value=log_file_name xml_escape=True /}">Download Log</a>
                             </font>
                         </p>
                         <br />
