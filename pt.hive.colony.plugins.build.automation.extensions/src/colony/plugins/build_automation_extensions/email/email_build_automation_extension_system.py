@@ -297,6 +297,9 @@ class EmailBuildAutomationExtension:
         # assigns the plugin name to the parsed template file
         template_file.assign("plugin_name", build_automation_plugin_name)
 
+        # assigns the version to the parsed template file
+        template_file.assign("version", build_automation_version)
+
         # assigns the revision list to the parsed template file
         template_file.assign("revision_list", build_automation_revision_list)
 
