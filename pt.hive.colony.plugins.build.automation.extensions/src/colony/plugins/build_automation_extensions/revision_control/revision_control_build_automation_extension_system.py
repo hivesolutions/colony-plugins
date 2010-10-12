@@ -181,7 +181,7 @@ class RevisionControlBuildAutomationExtension:
             self._write_changelog(changelog_file_path, revision_list)
 
         # sets the build automation structure runtime properties
-        build_automation_structure_runtime.properties[VERSION_VALUE] = base_revision_number
+        build_automation_structure_runtime.properties[VERSION_VALUE] = current_revision_number
 
         # returns true (success)
         return True
