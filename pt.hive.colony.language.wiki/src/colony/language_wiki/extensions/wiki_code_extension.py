@@ -204,7 +204,7 @@ class WikiCodeExtension(language_wiki.wiki_extension_system.WikiExtension):
                 # in case the line delta is bigger than zero
                 if line_delta > 0:
                     for _index in range(line_delta):
-                        string_buffer.write("<br/>")
+                        string_buffer.write("<br />")
 
                 for _index in range(position_delta):
                     string_buffer.write("&nbsp;")
