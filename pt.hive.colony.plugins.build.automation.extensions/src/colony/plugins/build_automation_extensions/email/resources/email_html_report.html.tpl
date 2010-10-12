@@ -30,7 +30,8 @@
                         </h1>
                         <p>
                             <font face="Arial" size="2" color="#333333">
-                                Code has been updated to <b color="#214c8f">r${out_none value=version xml_escape=True /}</b> by João Magalhães (joamag@hive.pt), Tiago Silva (tsilva@hive.pt).
+                                Code has been updated to <font face="Rockwell, Arial" size="2" color="#214c8f"><b>r${out_none value=version xml_escape=True /}</b></font>
+                                by João Magalhães (joamag@hive.pt), Tiago Silva (tsilva@hive.pt).
                                 3 tests ran in total.
                             </font>
                         </p>
