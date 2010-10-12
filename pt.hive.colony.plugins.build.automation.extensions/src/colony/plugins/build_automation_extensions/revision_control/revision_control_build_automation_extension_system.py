@@ -75,6 +75,9 @@ AUTHOR_VALUE = "author"
 MESSAGE_VALUE = "message"
 """ The message value """
 
+VERSION_VALUE = "version"
+""" The version value """
+
 class RevisionControlBuildAutomationExtension:
     """
     The revision control build automation extension class.
@@ -96,6 +99,9 @@ class RevisionControlBuildAutomationExtension:
     def run_automation(self, plugin, stage, parameters, build_automation_structure, logger):
         # retrieves the revision control manager plugin
         revision_control_manager_plugin = self.revision_control_build_automation_extension_plugin.revision_control_manager_plugin
+
+        # retrieves the build automation structure runtime
+        build_automation_structure_runtime = build_automation_structure.runtime
 
         # retrieves the required parameters
         adapter = parameters[ADAPTER_VALUE]
@@ -173,6 +179,9 @@ class RevisionControlBuildAutomationExtension:
 
             # writes the changelog for the given file path and revision list
             self._write_changelog(changelog_file_path, revision_list)
+
+        # sets the build automation structure runtime properties
+        build_automation_structure_runtime.properties[VERSION_VALUE] = base_revision_number
 
         # returns true (success)
         return True
