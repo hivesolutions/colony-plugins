@@ -147,7 +147,7 @@ class EmailBuildAutomationExtension:
         success_receivers = (("João Magalhães", "joamag@hive.pt"),)
         failure_receivers = (("João Magalhães", "joamag@hive.pt"), ("Tiago Silva", "tsilva@hive.pt"), ("Luis Martinho", "lmartinho@hive.pt"))
 
-        if build_automation_structure.runtime.build_automation_success:
+        if build_automation_structure.runtime.success:
             subject = "BUILD SUCCESS"
             receivers = success_receivers
         else:
