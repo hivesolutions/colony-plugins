@@ -42,7 +42,7 @@
                         ${foreach item=revision from=revision_list}
                         <p>
                             <font face="Arial" size="2" color="#333333">
-                                <font face="Rockwell, Arial" size="3" color="#214c8f"><b><a href="#">r${out_none value=revision.number xml_escape=True /}</a> - João Magalhães (${out_none value=revision.author xml_escape=True /})</b></font><br />
+                                <font face="Rockwell, Arial" size="3" color="#214c8f"><b><a href="#">r   ${out_none value=revision.number xml_escape=True /}  </a> - João Magalhães (${out_none value=revision.author xml_escape=True /})</b></font><br />
                                 ${out_none value=revision.message xml_escape=True /}
                             </font>
                         </p>
