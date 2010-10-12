@@ -93,10 +93,10 @@ DEFAULT_STAGE_VALUE = "default_stage"
 DEFAULT_LOG_LEVEL = logging.INFO
 """ The default log level """
 
-BUILD_AUTOMATION_STAGES = ("compile", "test", "build", "install", "deploy", "clean", "site", "site-deploy")
+BUILD_AUTOMATION_STAGES = ["compile", "test", "build", "install", "deploy", "clean", "site", "site-deploy"]
 """ The build automation stages """
 
-POST_BUILD_AUTOMATION_STAGES = ("post-build",)
+POST_BUILD_AUTOMATION_STAGES = ["post-build"]
 """ The post build automation stages """
 
 class BuildAutomation:
