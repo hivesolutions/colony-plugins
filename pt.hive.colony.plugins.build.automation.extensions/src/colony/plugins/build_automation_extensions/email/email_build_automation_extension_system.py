@@ -159,14 +159,14 @@ class EmailBuildAutomationExtension:
         success_receivers = (("João Magalhães", "joamag@hive.pt"),)
         failure_receivers = (("João Magalhães", "joamag@hive.pt"), ("Tiago Silva", "tsilva@hive.pt"), ("Luis Martinho", "lmartinho@hive.pt"))
 
-        # retrieves the build automation plugin id
-        build_automation_plugin_id = build_automation_structure_associated_plugin.id
+        # retrieves the build automation plugin name
+        build_automation_plugin_name = build_automation_structure_associated_plugin.name
 
         # retrieves the build automation version (revision)
         build_automation_version = build_automation_structure_runtime.properties.get("version", -1)
 
         # writes the initial subject line
-        subject = "[b%i] %s " % (build_automation_version, build_automation_plugin_id)
+        subject = "[b%i] %s " % (build_automation_version, build_automation_plugin_name)
 
         # in case the build automation was successful
         if build_automation_structure_runtime.success:
