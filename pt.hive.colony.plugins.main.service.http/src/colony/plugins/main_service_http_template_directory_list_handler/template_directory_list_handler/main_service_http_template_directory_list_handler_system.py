@@ -39,6 +39,9 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 import copy
 
+DEFAULT_ENCODING = "utf-8"
+""" The default encoding """
+
 DIRECTORY_LIST_HANDLER_NAME = "template"
 """ The error handler name """
 
@@ -193,7 +196,7 @@ class MainServiceHttpTemplateDirectoryListHandler:
         processed_template_file = template_file.process()
 
         # decodes the processed template file into a unicode object
-        processed_template_file_decoded = processed_template_file.decode("utf-8")
+        processed_template_file_decoded = processed_template_file.decode(DEFAULT_ENCODING)
 
         # writes the processed template file encoded to the request
         request.write(processed_template_file_decoded)
