@@ -93,10 +93,10 @@ DEFAULT_STAGE_VALUE = "default_stage"
 DEFAULT_LOG_LEVEL = logging.INFO
 """ The default log level """
 
-BUILD_AUTOMATION_STAGES = ["compile", "test", "build", "install", "deploy", "clean", "site", "site-deploy"]
+BUILD_AUTOMATION_STAGES = ("compile", "test", "build", "install", "deploy", "clean", "site", "site-deploy")
 """ The build automation stages """
 
-POST_BUILD_AUTOMATION_STAGES = ["post-build"]
+POST_BUILD_AUTOMATION_STAGES = ("post-build",)
 """ The post build automation stages """
 
 class BuildAutomation:
@@ -378,16 +378,16 @@ class BuildAutomation:
             # retrieves the default stage as the stage to be used
             stage = build_properties[DEFAULT_STAGE_VALUE]
 
+        # in case the stage is not present in the build automation stages
+        if not stage in BUILD_AUTOMATION_STAGES:
+            # raises the invalid stage exception
+            raise build_automation_exceptions.InvalidStageException(stage)
+
         # prints the start information
         self.print_start_information(plugin_id, plugin_version, stage, logger)
 
         # creates the build automation directories (if they don't exist and is first run)
         is_first and self.create_build_automation_directories(build_automation_structure)
-
-        # in case the stage is not present in the build automation stages
-        if not stage in BUILD_AUTOMATION_STAGES:
-            # raises the invalid stage exception
-            raise build_automation_exceptions.InvalidStageException(stage)
 
         # in case the recursive level is greater than zero
         if recursive_level > 0:
@@ -431,19 +431,11 @@ class BuildAutomation:
             # run the automation stage (tasks)
             build_automation_structure_runtime.build_automation_success = self.run_automation_stage(valid_automation_stage, build_automation_structure, logger)
 
-        # iterates over all the valid post automation stages to run the automation plugins
-        for post_build_automation_stage in POST_BUILD_AUTOMATION_STAGES:
-            # run the post automation stage (tasks)
-            self.run_automation_stage(post_build_automation_stage, build_automation_structure, logger)
-
         # prints the end information
         self.print_end_information(build_automation_structure, logger)
 
-        # in case the build automation failed, this is the first run and the raise
-        # exception flag is active an exception should be raised
-        if not build_automation_structure_runtime.build_automation_success and is_first and raise_exception:
-            # raises the build automation failed exception
-            raise build_automation_exceptions.BuildAutomationFailedException("no success")
+        # in case it's the first run, runs the post build tasks
+        is_first and self.run_post_build(build_automation_structure, logger, raise_exception)
 
         # returns the build automation success
         return build_automation_structure_runtime.build_automation_success
@@ -506,6 +498,33 @@ class BuildAutomation:
 
         # returns true (valid)
         return True
+
+    def run_post_build(self, build_automation_structure, logger, raise_exception):
+        """
+        Runs the post build tasks associated with the given build automation
+        structure.
+
+        @type build_automation_structure: BuildAutomationStructure
+        @param build_automation_structure: The build automation structure used.
+        @type logger: Logger
+        @param logger: The logger to be used.
+        @type raise_exception: bool
+        @param raise_exception: If an exception should be raised upon build failure.
+        """
+
+        # retrieves the build automation structure runtime
+        build_automation_structure_runtime = build_automation_structure.runtime
+
+        # iterates over all the valid post automation stages to run the automation plugins
+        for post_build_automation_stage in POST_BUILD_AUTOMATION_STAGES:
+            # run the post automation stage (tasks)
+            self.run_automation_stage(post_build_automation_stage, build_automation_structure, logger)
+
+        # in case the build automation failed, this is the first run and the raise
+        # exception flag is active an exception should be raised
+        if not build_automation_structure_runtime.build_automation_success and raise_exception:
+            # raises the build automation failed exception
+            raise build_automation_exceptions.BuildAutomationFailedException("no success")
 
     def print_start_information(self, plugin_id, plugin_version, stage, logger):
         """
