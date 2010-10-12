@@ -282,28 +282,35 @@ class EmailBuildAutomationExtension:
         # assigns the success capitals to the parsed template file
         template_file.assign("success_capitals", success_capitals)
 
+        # assigns the plugin name to the parsed template file
+        template_file.assign("plugin_name", build_automation_plugin_name)
+
         # processes the template file
         processed_template_file = template_file.process()
 
         # decodes the processed template file into a unicode object
         processed_template_file_decoded = processed_template_file.decode(DEFAULT_ENCODING)
 
-        mime_message_text = format_mime_plugin.create_message_part({})
-        mime_message_text.write(logging_contents)
-        mime_message_text.set_header(CONTENT_TYPE_VALUE, "text/plain")
+        mime_message_text_part = format_mime_plugin.create_message_part({})
+        mime_message_text_part.write(logging_contents)
+        mime_message_text_part.set_header(CONTENT_TYPE_VALUE, "text/plain")
 
-        mime_message_html = format_mime_plugin.create_message_part({})
-        mime_message_html.write(processed_template_file_decoded)
-        mime_message_html.set_header(CONTENT_TYPE_VALUE, "text/html")
+        mime_message_html_part = format_mime_plugin.create_message_part({})
+        mime_message_html_part.write(processed_template_file_decoded)
+        mime_message_html_part.set_header(CONTENT_TYPE_VALUE, "text/html")
 
-        mime_message_packer = format_mime_plugin.create_message_part({})
-        mime_message_packer.set_multi_part("alternative")
-        mime_message_packer.add_part(mime_message_text)
-        mime_message_packer.add_part(mime_message_html)
+        mime_message_packer_part = format_mime_plugin.create_message_part({})
+        mime_message_packer_part.set_multi_part("alternative")
+        mime_message_packer_part.add_part(mime_message_text_part)
+        mime_message_packer_part.add_part(mime_message_html_part)
 
         # sets the mime message as multipart mixed
         mime_message.set_multi_part("mixed")
-        mime_message.add_part(mime_message_packer)
+
+        # adds the message packer part to the mime message
+        mime_message.add_part(mime_message_packer_part)
+
+        format_mime_utils_plugin.add_mime_message_attachment_contents(mime_message, logging_contents, "build_automation.log")
 
         # adds the mime message contents (images) to the mime message
         format_mime_utils_plugin.add_mime_message_contents(mime_message, email_html_report_images_file_path, ("gif",))
