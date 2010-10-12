@@ -166,19 +166,19 @@ class EmailBuildAutomationExtension:
         build_automation_version = build_automation_structure_runtime.properties.get("version", -1)
 
         # writes the initial subject line
-        subject = "[r%i] %s " % (build_automation_plugin_id, build_automation_version)
+        subject = "[r%i] %s " % (build_automation_version, build_automation_plugin_id)
 
         # in case the build automation was successful
         if build_automation_structure_runtime.success:
             # adds the successful part to the subject
-            subject += " was SUCCESSFUL"
+            subject += "was SUCCESSFUL"
 
             # sets the receivers as the success receivers
             receivers = success_receivers
         # otherwise
         else:
             # adds the failed part to the subject
-            subject += " as FAILED"
+            subject += "as FAILED"
 
             # sets the receivers as the failure receivers
             receivers = failure_receivers
