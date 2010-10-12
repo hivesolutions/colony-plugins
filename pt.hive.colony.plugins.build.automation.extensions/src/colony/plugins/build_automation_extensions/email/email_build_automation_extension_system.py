@@ -166,7 +166,7 @@ class EmailBuildAutomationExtension:
         build_automation_version = build_automation_structure_runtime.properties.get("version", -1)
 
         # writes the initial subject line
-        subject = "[r%i] %s " % (build_automation_version, build_automation_plugin_id)
+        subject = "[b%i] %s " % (build_automation_version, build_automation_plugin_id)
 
         # in case the build automation was successful
         if build_automation_structure_runtime.success:
