@@ -40,6 +40,15 @@ __license__ = "GNU General Public License (GPL), Version 3"
 import sys
 import datetime
 
+BUILD_AUTOMATION_EXTENSIONS_EMAIL_PATH = "build_automation_extensions/email/resources"
+""" The build automation extensions email resources path """
+
+EMAIL_TEXT_REPORT_TEMPLATE_FILE_NAME = "email_text_report.txt.tpl"
+""" The email text report template file name """
+
+EMAIL_HTML_REPORT_TEMPLATE_FILE_NAME = "email_html_report.html.tpl"
+""" The email html report template file name """
+
 DEFAULT_ENCODING = "Cp1252"
 """ The default encoding """
 
@@ -121,6 +130,9 @@ class EmailBuildAutomationExtension:
     def run_automation(self, plugin, stage, parameters, build_automation_structure, logger):
         # prints an info message
         logger.info("Running email build automation plugin")
+
+        # retrieves the plugin manager
+        plugin_manager = self.email_build_automation_extension_plugin.manager
 
         # retrieves the main client smtp plugin
         main_client_smtp_plugin = self.email_build_automation_extension_plugin.main_client_smtp_plugin
@@ -246,18 +258,32 @@ class EmailBuildAutomationExtension:
         # retrieves the logging contents from the logging buffer
         logging_contents = logging_buffer.get_value()
 
-        # parses the template file path
-        template_file = template_engine_manager_plugin.parse_file_path("C:/Users/joamag/workspace/pt.hive.colony.plugins.build.automation.extensions/src/colony/plugins/build_automation_extensions/email/resources/email_html_report.html.tpl")
+        # retrieves the email build automation extension plugin path
+        email_build_automation_extension_plugin_path = plugin_manager.get_plugin_path_by_id(self.email_build_automation_extension_plugin.id)
 
+        # creates the email html report template file path
+        email_html_report_template_file_path = email_build_automation_extension_plugin_path + "/" + BUILD_AUTOMATION_EXTENSIONS_EMAIL_PATH + "/" + EMAIL_HTML_REPORT_TEMPLATE_FILE_NAME
+
+        # creates the email html report images file path
+        email_html_report_images_file_path = email_build_automation_extension_plugin_path + "/" + BUILD_AUTOMATION_EXTENSIONS_EMAIL_PATH + "/" + "images"
+
+        # parses the template file path
+        template_file = template_engine_manager_plugin.parse_file_path(email_html_report_template_file_path)
+
+        # retrieves the success in normal format
+        success = build_automation_structure_runtime.success
+
+        # retrieves the success in capitals format
         success_capitals = SUCCESS_CAPITALS_MAP[build_automation_structure_runtime.success]
+
+        # assigns the success to the parsed template file
+        template_file.assign("success", success)
 
         # assigns the success capitals to the parsed template file
         template_file.assign("success_capitals", success_capitals)
 
         # processes the template file
         processed_template_file = template_file.process()
-
-
 
         # decodes the processed template file into a unicode object
         processed_template_file_decoded = processed_template_file.decode(DEFAULT_ENCODING)
@@ -275,27 +301,12 @@ class EmailBuildAutomationExtension:
         mime_message_packer.add_part(mime_message_text)
         mime_message_packer.add_part(mime_message_html)
 
-
-
-
-
-
-
-
-
-
-
-
-
         # sets the mime message as multipart mixed
         mime_message.set_multi_part("mixed")
         mime_message.add_part(mime_message_packer)
-        #mime_message.add_part(mime_message_image)
 
-
-        format_mime_utils_plugin.add_mime_message_contents(mime_message, "C:/Users/joamag/workspace/pt.hive.colony.plugins.build.automation.extensions/src/colony/plugins/build_automation_extensions/email/resources/images", ("gif",))
-
-
+        # adds the mime message contents (images) to the mime message
+        format_mime_utils_plugin.add_mime_message_contents(mime_message, email_html_report_images_file_path, ("gif",))
 
         # retrieves the mime message value
         mime_message_value = mime_message.get_value()
