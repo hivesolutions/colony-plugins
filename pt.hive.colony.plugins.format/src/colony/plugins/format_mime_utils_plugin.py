@@ -92,6 +92,12 @@ class FormatMimeUtilsPlugin(colony.base.plugin_system.Plugin):
     def dependency_injected(self, plugin):
         colony.base.plugin_system.Plugin.dependency_injected(self, plugin)
 
+    def add_mime_message_attachment_contents(self, mime_message, contents, file_name):
+        return self.format_mime_utils.add_mime_message_attachment_contents(mime_message, contents, file_name)
+
+    def add_mime_message_attachment_contents_mime_type(self, mime_message, contents, file_name, mime_type):
+        return self.format_mime_utils.add_mime_message_attachment_contents(mime_message, contents, file_name, mime_type)
+
     def add_mime_message_contents(self, mime_message, contents_path, content_extensions):
         return self.format_mime_utils.add_mime_message_contents(mime_message, contents_path, content_extensions)
 

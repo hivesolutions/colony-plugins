@@ -51,6 +51,9 @@ CONTENT_ID_VALUE = "Content-ID"
 BASE64_VALUE = "base64"
 """ The base64 value """
 
+DEFAULT_MIME_TYPE = "application/octet-stream"
+""" The default mime type """
+
 class FormatMimeUtils:
     """
     The format mime utils class.
@@ -68,6 +71,31 @@ class FormatMimeUtils:
         """
 
         self.format_mime_utils_plugin = format_mime_utils_plugin
+
+    def add_mime_message_attachment_contents(self, mime_message, contents, file_name, mime_type = None):
+        # retrieves the format mime plugin
+        format_mime_plugin = self.format_mime_utils_plugin.format_mime_plugin
+
+        # creates the mime message part for the attachment
+        mime_message_attachment_part = format_mime_plugin.create_message_part({})
+
+        # creates the content id from the file name
+        content_id = "<" + file_name + ">"
+
+        # retrieves the mime type
+        mime_type = mime_type or DEFAULT_MIME_TYPE
+
+        # creates the content type from the mime type and the file name
+        content_type = mime_type + ";name=\"" + file_name + "\""
+
+        # sets the mime message attachment part headers
+        mime_message_attachment_part.write_base_64(contents)
+        mime_message_attachment_part.set_header(CONTENT_TYPE_VALUE, content_type)
+        mime_message_attachment_part.set_header(CONTENT_TRANSFER_ENCODING_VALUE, BASE64_VALUE)
+        mime_message_attachment_part.set_header(CONTENT_ID_VALUE, content_id)
+
+        # adds the mime message attachment part to the mime message
+        mime_message.add_part(mime_message_attachment_part)
 
     def add_mime_message_contents(self, mime_message, contents_path, content_extensions):
         # lists the directory, retrieving the directory entries
@@ -116,9 +144,6 @@ class FormatMimeUtils:
 
             # creates the content id from the base name
             content_id = "<" + base_name + ">"
-
-            print content_type
-            print content_id
 
             # sets the mime message content part headers
             mime_message_content_part.set_header(CONTENT_TYPE_VALUE, content_type)
