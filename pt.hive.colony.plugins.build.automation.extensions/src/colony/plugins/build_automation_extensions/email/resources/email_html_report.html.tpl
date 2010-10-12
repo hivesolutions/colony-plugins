@@ -39,18 +39,14 @@
                         </p>
                         <font face="Rockwell, Arial" size="3" color="#808080"><strong>Code Changes</strong></font>
                         <br />
+                        ${foreach item=revision from=revision_list}
                         <p>
                             <font face="Arial" size="2" color="#333333">
-                                <font face="Rockwell, Arial" size="3" color="#214c8f"><b><a href="#">r16026</a> - João Magalhães (joamag@hive.pt)</b></font><br />
-                                <a href="#">#ticket-123</a> First log message.
+                                <font face="Rockwell, Arial" size="3" color="#214c8f"><b><a href="#">r${out_none value=revision.number xml_escape=True /}</a> - João Magalhães (${out_none value=revision.author xml_escape=True /})</b></font><br />
+                                ${out_none value=revision.message xml_escape=True /}
                             </font>
                         </p>
-                        <p>
-                            <font face="Arial" size="2" color="#333333">
-                                <font face="Rockwell, Arial" size="3" color="#214c8f"><b><a href="#">r16027</a> - Tiago Silva (tsilva@hive.pt)</b></font><br />
-                                <a href="#">#bug-245</a> Second log message.
-                            </font>
-                        </p>
+                        ${/foreach}
                         <img src="cid:line.gif" width="400" height="1" alt="separator" />
                         <p align="right">
                             <font face="Arial" size="2" color="#333333"><a href="#">code changes details ></a></font>

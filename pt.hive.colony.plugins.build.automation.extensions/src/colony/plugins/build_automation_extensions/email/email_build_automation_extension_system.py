@@ -64,6 +64,12 @@ DEFAULT_SENDER_NAME = "Colony Integration"
 DEFAULT_SENDER_EMAIL = "integration@getcolony.com"
 """ The default sender email """
 
+VERSION_VALUE = "version"
+""" The version value """
+
+REVISION_LIST_VALUE = "revision_list"
+""" The revision list value """
+
 USERNAME_VALUE = "username"
 """ The username value """
 
@@ -190,10 +196,13 @@ class EmailBuildAutomationExtension:
         build_automation_plugin_name = build_automation_structure_associated_plugin.name
 
         # retrieves the build automation version (revision)
-        build_automation_version = build_automation_structure_runtime.properties.get("version", -1)
+        build_automation_version = build_automation_structure_runtime.properties.get(VERSION_VALUE, -1)
+
+        # retrieves the build automation revision list
+        build_automation_revision_list = build_automation_structure_runtime.properties.get(REVISION_LIST_VALUE, [])
 
         # creates the build automation log file name
-        build_automation_log_file_name = "build_automation_" + str(build_automation_version) + ".log"
+        build_automation_log_file_name = "build_automation_r" + str(build_automation_version) + ".log"
 
         # writes the initial subject line
         subject = "[b%i] %s " % (build_automation_version, build_automation_plugin_name)
@@ -287,6 +296,9 @@ class EmailBuildAutomationExtension:
 
         # assigns the plugin name to the parsed template file
         template_file.assign("plugin_name", build_automation_plugin_name)
+
+        # assigns the revision list to the parsed template file
+        template_file.assign("revision_list", build_automation_revision_list)
 
         # assigns the log file name to the parsed template file
         template_file.assign("log_file_name", build_automation_log_file_name)

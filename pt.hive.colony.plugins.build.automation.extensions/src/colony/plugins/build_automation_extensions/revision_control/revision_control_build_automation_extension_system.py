@@ -78,6 +78,9 @@ MESSAGE_VALUE = "message"
 VERSION_VALUE = "version"
 """ The version value """
 
+REVISION_LIST_VALUE = "revision_list"
+""" The revision list value """
+
 class RevisionControlBuildAutomationExtension:
     """
     The revision control build automation extension class.
@@ -182,6 +185,7 @@ class RevisionControlBuildAutomationExtension:
 
         # sets the build automation structure runtime properties
         build_automation_structure_runtime.properties[VERSION_VALUE] = current_revision_number
+        build_automation_structure_runtime.properties[REVISION_LIST_VALUE] = revision_list
 
         # returns true (success)
         return True
