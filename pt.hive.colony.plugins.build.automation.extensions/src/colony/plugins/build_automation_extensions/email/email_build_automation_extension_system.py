@@ -166,26 +166,22 @@ class EmailBuildAutomationExtension:
         build_automation_version = build_automation_structure_runtime.properties.get("version", -1)
 
         # writes the initial subject line
-        subject = "[COLONY_INTEGRATION] %s [r%i]" % (build_automation_plugin_id, build_automation_version)
+        subject = "[r%i] %s " % (build_automation_plugin_id, build_automation_version)
 
-        if build_automation_structure.runtime.success:
-            subject += " build SUCCESSFUL"
+        # in case the build automation was successful
+        if build_automation_structure_runtime.success:
+            # adds the successful part to the subject
+            subject += " was SUCCESSFUL"
+
+            # sets the receivers as the success receivers
             receivers = success_receivers
+        # otherwise
         else:
-            subject += " build FAILED"
+            # adds the failed part to the subject
+            subject += " as FAILED"
+
+            # sets the receivers as the failure receivers
             receivers = failure_receivers
-
-        # retrieves the initial date time
-        initial_date_time = build_automation_structure_runtime.initial_date_time
-
-        # retrieves the final date time value
-        final_date_time = datetime.datetime.now()
-
-        # calculates the delta date time from the final and the initial values
-        delta_date_time = final_date_time - initial_date_time
-
-        # adds the last part of the subject
-        subject += " in %s" % str(delta_date_time)
 
         # creates the receiver line with the email
         receiver_line = ""
@@ -205,11 +201,13 @@ class EmailBuildAutomationExtension:
                 is_first = False
             # otherwise
             else:
-
+                # adds the separator to the receiver line
                 receiver_line += ", "
 
+            # retrieves the receiver name and email
             receiver_name, receiver_email = receiver
 
+            # adds the receiver name and email to the receiver line
             receiver_line += receiver_name + " " + "<" + receiver_email + ">"
 
             # adds the receiver email to the list of receiver emails
