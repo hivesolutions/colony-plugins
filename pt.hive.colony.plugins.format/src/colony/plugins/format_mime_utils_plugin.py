@@ -61,7 +61,7 @@ class FormatMimeUtilsPlugin(colony.base.plugin_system.Plugin):
                     "pt.hive.colony.plugins.format.mime", "1.0.0")]
     events_handled = []
     events_registrable = []
-    main_modules = ["format.mime_utils.format_mime_utils_exceptions", "format.mime_utils.format_mime_utils_system"]
+    main_modules = ["format.mime_utils.format_mime_utils_system"]
 
     format_mime_utils = None
 
