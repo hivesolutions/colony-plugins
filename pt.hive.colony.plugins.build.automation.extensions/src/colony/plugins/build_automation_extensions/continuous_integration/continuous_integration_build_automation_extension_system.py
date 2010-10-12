@@ -50,6 +50,9 @@ DEPLOYMENT_PATH_VALUE = "deployment_path"
 VERSION_FILE_PATH_VALUE = "version_file_path"
 """ The version file path value """
 
+VERSION_VALUE = "version"
+""" The version value """
+
 ZIP_VALUE = "zip"
 """ The zip value """
 
@@ -81,6 +84,9 @@ class ContinuousIntegrationBuildAutomationExtension:
         self.continuous_integration_build_automation_extension_plugin = continuous_integration_build_automation_extension_plugin
 
     def run_automation(self, plugin, stage, parameters, build_automation_structure, logger):
+        # retrieves the build automation structure runtime
+        build_automation_structure_runtime = build_automation_structure.runtime
+
         # retrieves the deployment path
         deployment_path = parameters[DEPLOYMENT_PATH_VALUE]
 
@@ -115,6 +121,9 @@ class ContinuousIntegrationBuildAutomationExtension:
         if version == current_version:
             # prints an info message
             logger.info("Skipping continuous integration, no changes in repository")
+
+            # sets the skipped flag in the build automation structure runtime
+            build_automation_structure_runtime.skipped = True
 
             # returns true (success)
             return True
@@ -160,6 +169,9 @@ class ContinuousIntegrationBuildAutomationExtension:
         # creates a symbolic link between the deployment version path and the latest
         # version path
         colony.libs.path_util.link(deployment_version_path, latest_version_path)
+
+        # sets the build automation structure runtime properties
+        build_automation_structure_runtime.properties[VERSION_VALUE] = version
 
         # returns true (success)
         return True
