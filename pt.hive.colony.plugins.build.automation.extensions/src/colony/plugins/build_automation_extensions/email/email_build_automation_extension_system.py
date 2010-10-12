@@ -46,6 +46,12 @@ DEFAULT_SMTP_HOSTNAME = "localhost"
 DEFAULT_SMTP_PORT = 25
 """ The default smtp port """
 
+DEFAULT_SENDER_NAME = "Colony Integration"
+""" The default sender name """
+
+DEFAULT_SENDER_EMAIL = "integration@getcolony.com"
+""" The default sender email """
+
 USERNAME_VALUE = "username"
 """ The username value """
 
@@ -113,6 +119,12 @@ class EmailBuildAutomationExtension:
         # retrieves the format mime plugin
         format_mime_plugin = self.email_build_automation_extension_plugin.format_mime_plugin
 
+        # retrieves the build automation structure associated plugin
+        build_automation_structure_associated_plugin = build_automation_structure.associated_plugin
+
+        # retrieves the build automation structure runtime
+        build_automation_structure_runtime = build_automation_structure.runtime
+
         # creates a new smtp client, using the main client smtp plugin
         smtp_client = main_client_smtp_plugin.create_client({})
 
@@ -120,8 +132,8 @@ class EmailBuildAutomationExtension:
         smtp_client.open({})
 
         # retrieves the sender parameters from the parameters map
-        sender_name = parameters.get("sender_name", "Colony Build Automation")
-        sender_email = parameters.get("sender_email", "automation@hive.pt")
+        sender_name = parameters.get("sender_name", DEFAULT_SENDER_NAME)
+        sender_email = parameters.get("sender_email", DEFAULT_SENDER_EMAIL)
 
         # retrieves the smtp parameters from the parameters map
         smtp_hostname = parameters.get("smtp_hostname", DEFAULT_SMTP_HOSTNAME)
@@ -147,14 +159,33 @@ class EmailBuildAutomationExtension:
         success_receivers = (("João Magalhães", "joamag@hive.pt"),)
         failure_receivers = (("João Magalhães", "joamag@hive.pt"), ("Tiago Silva", "tsilva@hive.pt"), ("Luis Martinho", "lmartinho@hive.pt"))
 
-        subject = "[CI] r" + str(build_automation_structure.runtime.properties.get("version", "undefined"))
+        # retrieves the build automation plugin id
+        build_automation_plugin_id = build_automation_structure_associated_plugin.id
+
+        # retrieves the build automation version (revision)
+        build_automation_version = build_automation_structure_runtime.properties.get("version", -1)
+
+        # writes the initial subject line
+        subject = "[COLONY_INTEGRATION] %s [r%i]" % (build_automation_plugin_id, build_automation_version)
 
         if build_automation_structure.runtime.success:
-            subject += " build successful"
+            subject += " build SUCCESSFUL"
             receivers = success_receivers
         else:
-            subject += " build failed"
+            subject += " build FAILED"
             receivers = failure_receivers
+
+        # retrieves the initial date time
+        initial_date_time = build_automation_structure_runtime.initial_date_time
+
+        # retrieves the final date time value
+        final_date_time = datetime.datetime.now()
+
+        # calculates the delta date time from the final and the initial values
+        delta_date_time = final_date_time - initial_date_time
+
+        # adds the last part of the subject
+        subject += " in %s" % str(delta_date_time)
 
         # creates the receiver line with the email
         receiver_line = ""
@@ -162,18 +193,26 @@ class EmailBuildAutomationExtension:
         # creates the list to hold the receiver emails
         receiver_emails = []
 
+        # sets the is first flag
         is_first = True
 
+        # iterates over all the receivers
+        # to creates the receiver line
         for receiver in receivers:
+            # in case it's the first iteration
             if is_first:
+                # unsets the is first flag
                 is_first = False
+            # otherwise
             else:
+
                 receiver_line += ", "
 
             receiver_name, receiver_email = receiver
 
             receiver_line += receiver_name + " " + "<" + receiver_email + ">"
 
+            # adds the receiver email to the list of receiver emails
             receiver_emails.append(receiver_email)
 
         # retrieves the current date time, and formats
@@ -188,9 +227,11 @@ class EmailBuildAutomationExtension:
         mime_message.set_header(DATE_VALUE, current_date_time_formated)
         mime_message.set_header(USER_AGENT_VALUE, USER_AGENT_IDENTIFIER)
 
-        build_automation_structure_runtime = build_automation_structure.runtime
+        # retrieves the logging buffer
+        logging_buffer = build_automation_structure_runtime.logging_buffer
 
-        logging_contents = build_automation_structure_runtime.logging_buffer.get_value()
+        # retrieves the logging contents from the logging buffer
+        logging_contents = logging_buffer.get_value()
 
         # writes the contents to the mime message
         mime_message.write(logging_contents)
