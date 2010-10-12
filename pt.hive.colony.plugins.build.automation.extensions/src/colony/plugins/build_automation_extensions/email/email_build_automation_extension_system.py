@@ -205,7 +205,7 @@ class EmailBuildAutomationExtension:
         build_automation_log_file_name = "build_automation_r" + str(build_automation_version) + ".log"
 
         # writes the initial subject line
-        subject = "[b%i] %s " % (build_automation_version, build_automation_plugin_name)
+        subject = "b%i - %s " % (build_automation_version, build_automation_plugin_name)
 
         # in case the build automation was successful
         if build_automation_structure_runtime.success:
