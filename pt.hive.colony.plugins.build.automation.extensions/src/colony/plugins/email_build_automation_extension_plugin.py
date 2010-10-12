@@ -59,7 +59,11 @@ class EmailBuildAutomationExtensionPlugin(colony.base.plugin_system.Plugin):
     dependencies = [colony.base.plugin_system.PluginDependency(
                     "pt.hive.colony.plugins.main.client.smtp", "1.0.0"),
                     colony.base.plugin_system.PluginDependency(
-                    "pt.hive.colony.plugins.format.mime", "1.0.0")]
+                    "pt.hive.colony.plugins.format.mime", "1.0.0"),
+                    colony.base.plugin_system.PluginDependency(
+                    "pt.hive.colony.plugins.format.mime.utils", "1.0.0"),
+                    colony.base.plugin_system.PluginDependency(
+                    "pt.hive.colony.plugins.template_engine.manager", "1.0.0")]
     events_handled = []
     events_registrable = []
     main_modules = ["build_automation_extensions.email.email_build_automation_extension_system"]
@@ -68,6 +72,8 @@ class EmailBuildAutomationExtensionPlugin(colony.base.plugin_system.Plugin):
 
     main_client_smtp_plugin = None
     format_mime_plugin = None
+    format_mime_utils_plugin = None
+    template_engine_manager_plugin = None
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
@@ -110,3 +116,17 @@ class EmailBuildAutomationExtensionPlugin(colony.base.plugin_system.Plugin):
     @colony.base.decorators.plugin_inject("pt.hive.colony.plugins.format.mime")
     def set_format_mime_plugin(self, format_mime_plugin):
         self.format_mime_plugin = format_mime_plugin
+
+    def get_format_mime_utils_plugin(self):
+        return self.format_mime_utils_plugin
+
+    @colony.base.decorators.plugin_inject("pt.hive.colony.plugins.format.mime.utils")
+    def set_format_mime_utils_plugin(self, format_mime_utils_plugin):
+        self.format_mime_utils_plugin = format_mime_utils_plugin
+
+    def get_template_engine_manager_plugin(self):
+        return self.template_engine_manager_plugin
+
+    @colony.base.decorators.plugin_inject("pt.hive.colony.plugins.template_engine.manager")
+    def set_template_engine_manager_plugin(self, template_engine_manager_plugin):
+        self.template_engine_manager_plugin = template_engine_manager_plugin

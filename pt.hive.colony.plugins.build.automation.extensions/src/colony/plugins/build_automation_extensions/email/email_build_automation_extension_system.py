@@ -40,6 +40,9 @@ __license__ = "GNU General Public License (GPL), Version 3"
 import sys
 import datetime
 
+DEFAULT_ENCODING = "Cp1252"
+""" The default encoding """
+
 DEFAULT_SMTP_HOSTNAME = "localhost"
 """ The default smtp hostname """
 
@@ -73,6 +76,9 @@ SUBJECT_VALUE = "Subject"
 DATE_VALUE = "Date"
 """ The date value """
 
+CONTENT_TYPE_VALUE = "Content-Type"
+""" The content type value """
+
 USER_AGENT_VALUE = "User-Agent"
 """ The user agent value """
 
@@ -90,6 +96,9 @@ USER_AGENT_IDENTIFIER = USER_AGENT_NAME + "/" + USER_AGENT_VERSION + " (Python/"
 
 DATE_TIME_FORMAT = "%a, %d %b %Y %H:%M:%S +0000 (UTC)"
 """ The format for the displayed date times """
+
+SUCCESS_CAPITALS_MAP = {True : "SUCCESS", False : "FAILED"}
+""" The success capitals map """
 
 class EmailBuildAutomationExtension:
     """
@@ -118,6 +127,12 @@ class EmailBuildAutomationExtension:
 
         # retrieves the format mime plugin
         format_mime_plugin = self.email_build_automation_extension_plugin.format_mime_plugin
+
+        # retrieves the format mime utils plugin
+        format_mime_utils_plugin = self.email_build_automation_extension_plugin.format_mime_utils_plugin
+
+        # retrieves the template engine manager plugin
+        template_engine_manager_plugin = self.email_build_automation_extension_plugin.template_engine_manager_plugin
 
         # retrieves the build automation structure associated plugin
         build_automation_structure_associated_plugin = build_automation_structure.associated_plugin
@@ -231,8 +246,56 @@ class EmailBuildAutomationExtension:
         # retrieves the logging contents from the logging buffer
         logging_contents = logging_buffer.get_value()
 
-        # writes the contents to the mime message
-        mime_message.write(logging_contents)
+        # parses the template file path
+        template_file = template_engine_manager_plugin.parse_file_path("C:/Users/joamag/workspace/pt.hive.colony.plugins.build.automation.extensions/src/colony/plugins/build_automation_extensions/email/resources/email_html_report.html.tpl")
+
+        success_capitals = SUCCESS_CAPITALS_MAP[build_automation_structure_runtime.success]
+
+        # assigns the success capitals to the parsed template file
+        template_file.assign("success_capitals", success_capitals)
+
+        # processes the template file
+        processed_template_file = template_file.process()
+
+
+
+        # decodes the processed template file into a unicode object
+        processed_template_file_decoded = processed_template_file.decode(DEFAULT_ENCODING)
+
+        mime_message_text = format_mime_plugin.create_message_part({})
+        mime_message_text.write(logging_contents)
+        mime_message_text.set_header(CONTENT_TYPE_VALUE, "text/plain")
+
+        mime_message_html = format_mime_plugin.create_message_part({})
+        mime_message_html.write(processed_template_file_decoded)
+        mime_message_html.set_header(CONTENT_TYPE_VALUE, "text/html")
+
+        mime_message_packer = format_mime_plugin.create_message_part({})
+        mime_message_packer.set_multi_part("alternative")
+        mime_message_packer.add_part(mime_message_text)
+        mime_message_packer.add_part(mime_message_html)
+
+
+
+
+
+
+
+
+
+
+
+
+
+        # sets the mime message as multipart mixed
+        mime_message.set_multi_part("mixed")
+        mime_message.add_part(mime_message_packer)
+        #mime_message.add_part(mime_message_image)
+
+
+        format_mime_utils_plugin.add_mime_message_contents(mime_message, "C:/Users/joamag/workspace/pt.hive.colony.plugins.build.automation.extensions/src/colony/plugins/build_automation_extensions/email/resources/images", ("gif",))
+
+
 
         # retrieves the mime message value
         mime_message_value = mime_message.get_value()
