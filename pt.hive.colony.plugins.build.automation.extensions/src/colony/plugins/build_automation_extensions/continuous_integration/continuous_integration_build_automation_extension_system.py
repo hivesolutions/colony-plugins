@@ -50,8 +50,8 @@ DEPLOYMENT_PATH_VALUE = "deployment_path"
 VERSION_FILE_PATH_VALUE = "version_file_path"
 """ The version file path value """
 
-VERSION_VALUE = "version"
-""" The version value """
+INTEGRATION_VERSION_VALUE = "integration_version"
+""" The integration version value """
 
 ZIP_VALUE = "zip"
 """ The zip value """
@@ -171,7 +171,7 @@ class ContinuousIntegrationBuildAutomationExtension:
         colony.libs.path_util.link(deployment_version_path, latest_version_path)
 
         # sets the build automation structure runtime properties
-        build_automation_structure_runtime.properties[VERSION_VALUE] = version
+        build_automation_structure_runtime.properties[INTEGRATION_VERSION_VALUE] = version
 
         # returns true (success)
         return True
