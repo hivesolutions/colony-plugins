@@ -106,7 +106,7 @@
             <br />
             <p id="policy">
                 <font face="verdana" size="1" color="#dddddd">
-                    This email was sent to you with your consent via integration@getcolony.com .<br />
+                    This email was sent to you with your consent via integration@getcolony.com.<br />
                     To ensure that you continue receiving our emails,<br />
                     please add us to your address book or safe list.<br />
                     View this email on the web here. You can also forward to a friend.<br />
