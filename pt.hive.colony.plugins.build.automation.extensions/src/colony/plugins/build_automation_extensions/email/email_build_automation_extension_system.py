@@ -52,6 +52,9 @@ EMAIL_HTML_REPORT_TEMPLATE_FILE_NAME = "email_html_report.html.tpl"
 DEFAULT_ENCODING = "Cp1252"
 """ The default encoding """
 
+DEFAULT_TARGET_ENCODING = "utf-8"
+""" The default target encoding """
+
 DEFAULT_SMTP_HOSTNAME = "localhost"
 """ The default smtp hostname """
 
@@ -288,6 +291,9 @@ class EmailBuildAutomationExtension:
         # parses the template file path
         template_file = template_engine_manager_plugin.parse_file_path(email_html_report_template_file_path)
 
+        # sets the variable encoding
+        template_file.set_variable_encoding(DEFAULT_ENCODING)
+
         # retrieves the success in normal format
         success = build_automation_structure_runtime.success
 
@@ -327,13 +333,16 @@ class EmailBuildAutomationExtension:
         # decodes the processed template file into a unicode object
         processed_template_file_decoded = processed_template_file.decode(DEFAULT_ENCODING)
 
+        # encodes the processed template file
+        processed_template_file_encoded = processed_template_file_decoded.encode(DEFAULT_TARGET_ENCODING)
+
         mime_message_text_part = format_mime_plugin.create_message_part({})
         mime_message_text_part.write("text mode contents")
         mime_message_text_part.set_header(CONTENT_TYPE_VALUE, "text/plain")
 
         mime_message_html_part = format_mime_plugin.create_message_part({})
-        mime_message_html_part.write(processed_template_file_decoded)
-        mime_message_html_part.set_header(CONTENT_TYPE_VALUE, "text/html")
+        mime_message_html_part.write(processed_template_file_encoded)
+        mime_message_html_part.set_header(CONTENT_TYPE_VALUE, "text/html;charset=" + DEFAULT_TARGET_ENCODING)
 
         mime_message_packer_part = format_mime_plugin.create_message_part({})
         mime_message_packer_part.set_multi_part("alternative")
