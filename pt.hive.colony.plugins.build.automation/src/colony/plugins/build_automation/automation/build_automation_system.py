@@ -455,11 +455,19 @@ class BuildAutomation:
         @return: If the automation for the stage was successful.
         """
 
+        # retrieves the build automation structure runtime
+        build_automation_structure_runtime = build_automation_structure.runtime
+
         # retrieves the automation plugins for the stage
         all_automation_plugins = build_automation_structure.get_all_automation_plugins_by_stage(automation_stage, base_stage)
 
         # iterates over all of the automation plugins
         for automation_plugin in all_automation_plugins:
+            # in case the build automation is skipped
+            if build_automation_structure_runtime.skipped:
+                # breaks the loop
+                break
+
             # retrieves the automation plugin id
             automation_plugin_id = automation_plugin.id
 
@@ -522,11 +530,6 @@ class BuildAutomation:
 
         # iterates over all the valid post automation stages to run the automation plugins
         for post_build_automation_stage in POST_BUILD_AUTOMATION_STAGES:
-            # in case the build automation is skipped
-            if build_automation_structure_runtime.skipped:
-                # breaks the loop
-                break
-
             # run the post automation stage (tasks)
             self.run_automation_stage(post_build_automation_stage, base_stage, build_automation_structure, logger)
 
