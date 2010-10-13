@@ -201,8 +201,8 @@ class EmailBuildAutomationExtension:
         # retrieves the build automation changelog list
         build_automation_changelog_list = build_automation_structure_runtime.properties.get(CHANGELOG_LIST_VALUE, [])
 
-        # creates the build automation log file name
-        build_automation_log_file_name = "build_automation_r" + str(build_automation_version) + ".log"
+        # creates the build automation log file path
+        build_automation_log_file_path = "log/build_automation.log"
 
         # writes the initial subject line
         subject = "b%i - %s " % (build_automation_version, build_automation_plugin_name)
@@ -264,12 +264,6 @@ class EmailBuildAutomationExtension:
         mime_message.set_header(DATE_VALUE, current_date_time_formated)
         mime_message.set_header(USER_AGENT_VALUE, USER_AGENT_IDENTIFIER)
 
-        # retrieves the logging buffer
-        logging_buffer = build_automation_structure_runtime.logging_buffer
-
-        # retrieves the logging contents from the logging buffer
-        logging_contents = logging_buffer.get_value()
-
         # retrieves the email build automation extension plugin path
         email_build_automation_extension_plugin_path = plugin_manager.get_plugin_path_by_id(self.email_build_automation_extension_plugin.id)
 
@@ -303,8 +297,8 @@ class EmailBuildAutomationExtension:
         # assigns the changelog list to the parsed template file
         template_file.assign("changelog_list", build_automation_changelog_list)
 
-        # assigns the log file name to the parsed template file
-        template_file.assign("log_file_name", build_automation_log_file_name)
+        # assigns the log file path to the parsed template file
+        template_file.assign("log_file_path", build_automation_log_file_path)
 
         # processes the template file
         processed_template_file = template_file.process()
@@ -313,7 +307,7 @@ class EmailBuildAutomationExtension:
         processed_template_file_decoded = processed_template_file.decode(DEFAULT_ENCODING)
 
         mime_message_text_part = format_mime_plugin.create_message_part({})
-        mime_message_text_part.write(logging_contents)
+        mime_message_text_part.write("text mode contents")
         mime_message_text_part.set_header(CONTENT_TYPE_VALUE, "text/plain")
 
         mime_message_html_part = format_mime_plugin.create_message_part({})
@@ -330,9 +324,6 @@ class EmailBuildAutomationExtension:
 
         # adds the message packer part to the mime message
         mime_message.add_part(mime_message_packer_part)
-
-        # adds the mime message log attachment to the mime message
-        format_mime_utils_plugin.add_mime_message_attachment_contents(mime_message, logging_contents, build_automation_log_file_name)
 
         # adds the mime message contents (images) to the mime message
         format_mime_utils_plugin.add_mime_message_contents(mime_message, email_html_report_images_file_path, ("gif",))
