@@ -96,14 +96,8 @@ class InformationUserPlugin(colony.base.plugin_system.Plugin):
     def unset_configuration_property(self, property_name):
         colony.base.plugin_system.Plugin.unset_configuration_property(self, property_name)
 
-    def create_message(self, parameters):
-        return self.information_user.create_message(parameters)
-
-    def create_message_part(self, parameters):
-        return self.information_user.create_message_part(parameters)
-
-    def get_user_type_file_name(self, file_name):
-        return self.information_user.get_user_type_file_name(file_name)
+    def get_user_information_user_key(self, user_key):
+        return self.information_user.get_user_information_user_key(user_key)
 
     @colony.base.decorators.set_configuration_property_method("configuration")
     def configuration_set_configuration_property(self, property_name, property):
