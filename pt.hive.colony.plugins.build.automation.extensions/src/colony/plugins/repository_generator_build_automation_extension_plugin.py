@@ -57,9 +57,7 @@ class RepositoryGeneratorBuildAutomationExtensionPlugin(colony.base.plugin_syste
     capabilities = ["build_automation_extension", "build_automation_item"]
     capabilities_allowed = []
     dependencies = [colony.base.plugin_system.PluginDependency(
-                    "pt.hive.colony.plugins.repository.generator.manager", "1.0.0"),
-                    colony.base.plugin_system.PluginDependency(
-                    "pt.hive.colony.plugins.information.user", "1.0.0")]
+                    "pt.hive.colony.plugins.repository.generator.manager", "1.0.0")]
     events_handled = []
     events_registrable = []
     main_modules = ["build_automation_extensions.repository_generator.repository_generator_build_automation_extension_system"]
@@ -67,7 +65,6 @@ class RepositoryGeneratorBuildAutomationExtensionPlugin(colony.base.plugin_syste
     repository_generator_build_automation_extension = None
 
     repository_generator_manager_plugin = None
-    information_user_plugin = None
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
@@ -103,10 +100,3 @@ class RepositoryGeneratorBuildAutomationExtensionPlugin(colony.base.plugin_syste
     @colony.base.decorators.plugin_inject("pt.hive.colony.plugins.repository.generator.manager")
     def set_repository_generator_manager_plugin(self, repository_generator_manager_plugin):
         self.repository_generator_manager_plugin = repository_generator_manager_plugin
-
-    def get_information_user_plugin(self):
-        return self.information_user_plugin
-
-    @colony.base.decorators.plugin_inject("pt.hive.colony.plugins.information.user")
-    def set_information_user_plugin(self, information_user_plugin):
-        self.information_user_plugin = information_user_plugin

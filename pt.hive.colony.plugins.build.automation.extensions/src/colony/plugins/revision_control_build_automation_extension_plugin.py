@@ -59,6 +59,8 @@ class RevisionControlBuildAutomationExtensionPlugin(colony.base.plugin_system.Pl
     dependencies = [colony.base.plugin_system.PluginDependency(
                     "pt.hive.colony.plugins.revision_control.manager", "1.0.0"),
                     colony.base.plugin_system.PluginDependency(
+                    "pt.hive.colony.plugins.information.user", "1.0.0"),
+                    colony.base.plugin_system.PluginDependency(
                     "pt.hive.colony.plugins.misc.json", "1.0.0")]
     events_handled = []
     events_registrable = []
@@ -67,6 +69,7 @@ class RevisionControlBuildAutomationExtensionPlugin(colony.base.plugin_system.Pl
     revision_control_build_automation_extension = None
 
     revision_control_manager_plugin = None
+    information_user_plugin = None
     json_plugin = None
 
     def load_plugin(self):
@@ -103,6 +106,13 @@ class RevisionControlBuildAutomationExtensionPlugin(colony.base.plugin_system.Pl
     @colony.base.decorators.plugin_inject("pt.hive.colony.plugins.revision_control.manager")
     def set_revision_control_manager_plugin(self, revision_control_manager_plugin):
         self.revision_control_manager_plugin = revision_control_manager_plugin
+
+    def get_information_user_plugin(self):
+        return self.information_user_plugin
+
+    @colony.base.decorators.plugin_inject("pt.hive.colony.plugins.information.user")
+    def set_information_user_plugin(self, information_user_plugin):
+        self.information_user_plugin = information_user_plugin
 
     def get_json_plugin(self):
         return self.json_plugin
