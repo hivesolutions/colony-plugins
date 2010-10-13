@@ -261,8 +261,6 @@ class RevisionControlBuildAutomationExtension:
         # retrieves the json plugin
         json_plugin = self.revision_control_build_automation_extension_plugin.json_plugin
 
-        self.revision_control_build_automation_extension_plugin.info("going to do the dump")
-
         # dumps (pretty) the changelog list using the json plugin
         changelog_json = json_plugin.dumps_pretty(changelog_list)
 

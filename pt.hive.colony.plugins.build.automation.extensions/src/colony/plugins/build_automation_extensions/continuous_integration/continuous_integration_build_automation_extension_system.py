@@ -245,6 +245,11 @@ class ContinuousIntegrationBuildAutomationExtension:
         @return: The version (revision) number.
         """
 
+        # in case the version file path does not exist
+        if not os.path.exists(version_file_path):
+            # returns invalid
+            return None
+
         # opens the version file
         version_file = open(version_file_path, "rb")
 
