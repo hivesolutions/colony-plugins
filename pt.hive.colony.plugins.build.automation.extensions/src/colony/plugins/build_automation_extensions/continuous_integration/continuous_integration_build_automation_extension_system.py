@@ -59,14 +59,14 @@ ZIP_VALUE = "zip"
 LATEST_FILE_NAME = "LATEST.version"
 """ The latest file name """
 
-LATEST_SUCCESSFUL_FILE_NAME = "LATEST_SUCCESSFUL.version"
-""" The latest successful file name """
+LATEST_SUCCESS_FILE_NAME = "LATEST_SUCCESS.version"
+""" The latest success file name """
 
 LATEST_DIRECTORY_NAME = "LATEST"
 """ The latest directory name """
 
-LATEST_SUCCESSFUL_DIRECTORY_NAME = "LATEST_SUCCESSFUL"
-""" The latest successful directory name """
+LATEST_SUCCESS_DIRECTORY_NAME = "LATEST_SUCCESS"
+""" The latest success directory name """
 
 ZIP_EXTENSION = ".zip"
 """ The zip extension value """
@@ -120,8 +120,8 @@ class ContinuousIntegrationBuildAutomationExtension:
         # creates the latest version path
         latest_version_path = deployment_path + "/" + LATEST_FILE_NAME
 
-        # creates the latest successful version path
-        latest_successful_version_path = deployment_path + "/" + LATEST_SUCCESSFUL_FILE_NAME
+        # creates the latest success version path
+        latest_success_version_path = deployment_path + "/" + LATEST_SUCCESS_FILE_NAME
 
         # retrieves the current version (to check for changes)
         current_version = self._get_version(latest_version_path)
@@ -140,8 +140,8 @@ class ContinuousIntegrationBuildAutomationExtension:
         # writes the version number
         self._write_version_number(latest_version_path, version)
 
-        # in case the build is successful, writes the version number to the successful file
-        build_automation_structure_runtime.success and  self._write_version_number(latest_successful_version_path, version)
+        # in case the build is successful, writes the version number to the success file
+        build_automation_structure_runtime.success and  self._write_version_number(latest_success_version_path, version)
 
         # retrieves the build properties
         build_properties = build_automation_structure.get_all_build_properties()
@@ -169,14 +169,14 @@ class ContinuousIntegrationBuildAutomationExtension:
         # creates the latest version path
         latest_version_path = deployment_path + "/" + LATEST_DIRECTORY_NAME
 
-        # creates the latest successful version path
-        latest_successful_version_path = deployment_path + "/" + LATEST_SUCCESSFUL_DIRECTORY_NAME
+        # creates the latest success version path
+        latest_success_version_path = deployment_path + "/" + LATEST_SUCCESS_DIRECTORY_NAME
 
         # updates the latest version path (link)
         self._update_link(deployment_version_path, latest_version_path)
 
-        # in case the build is successful, updates the latest successful version path (link)
-        build_automation_structure_runtime.success and self._update_link(deployment_version_path, latest_successful_version_path)
+        # in case the build is successful, updates the latest success version path (link)
+        build_automation_structure_runtime.success and self._update_link(deployment_version_path, latest_success_version_path)
 
         # sets the build automation structure runtime properties
         build_automation_structure_runtime.properties[INTEGRATION_VERSION_VALUE] = version

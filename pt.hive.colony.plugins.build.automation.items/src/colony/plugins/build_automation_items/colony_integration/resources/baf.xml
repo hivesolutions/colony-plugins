@@ -61,7 +61,7 @@
                     <path>http://svn.hive.pt/hive-main/pt.hive.colony/trunk</path>
                     <target_path>$base{plugin_system_directory}/tmp/checkout/pt.hive.colony</target_path>
                     <version_file_path>${build_automation.build.resources_directory}/version</version_file_path>
-                    <previous_version_file_path>$resource{system.path.integration}/LATEST_SUCCESSFUL.version</previous_version_file_path>
+                    <previous_version_file_path>$resource{system.path.integration}/LATEST_SUCCESS.version</previous_version_file_path>
                     <changelog_file_path>${build_automation.build.resources_directory}/changelog</changelog_file_path>
                 </configuration>
             </plugin>
