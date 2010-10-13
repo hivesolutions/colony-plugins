@@ -235,7 +235,7 @@ class TemplateEngineManager:
 
             # in case the current match orderer value start is not the same
             # as the previous end plus one
-            if not match_orderer_match_start == previous_end + 1:
+            if not match_orderer_match_start == previous_end:
                 # calculates the literal match start
                 literal_match_start = previous_end
 
