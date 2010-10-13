@@ -522,6 +522,11 @@ class BuildAutomation:
 
         # iterates over all the valid post automation stages to run the automation plugins
         for post_build_automation_stage in POST_BUILD_AUTOMATION_STAGES:
+            # in case the build automation does not skips
+            if not build_automation_structure_runtime.skipped:
+                # breaks the loop
+                break
+
             # run the post automation stage (tasks)
             self.run_automation_stage(post_build_automation_stage, base_stage, build_automation_structure, logger)
 
