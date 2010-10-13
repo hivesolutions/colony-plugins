@@ -331,7 +331,7 @@ def process_template_file(self, template_file, variable_encoding = None):
     """
 
     # sets the template file variable encoding
-    template_file.set_variable_encoding(None)
+    template_file.set_variable_encoding(variable_encoding)
 
     # processes the template file
     processed_template_file = template_file.process()
