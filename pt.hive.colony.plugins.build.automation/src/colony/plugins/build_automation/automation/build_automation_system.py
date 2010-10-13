@@ -747,6 +747,11 @@ class BuildAutomation:
             build_automation_resources_directory = self.parse_string(build.resources_directory, build_automation_structure)
             build_automation_structure.build_properties["resources_directory"] = build_automation_resources_directory
 
+        if build.log_directory:
+            # retrieves the build log directory
+            build_automation_log_directory = self.parse_string(build.log_directory, build_automation_structure)
+            build_automation_structure.build_properties["log_directory"] = build_automation_log_directory
+
         if build.source_directory:
             # retrieves the build source directory
             build_automation_source_directory = self.parse_string(build.source_directory, build_automation_structure)
@@ -894,6 +899,9 @@ class BuildAutomation:
         # retrieves the resources directory path value
         resources_directory_path = build_properties["resources_directory"]
 
+        # retrieves the log directory path value
+        log_directory_path = build_properties["log_directory"]
+
         # retrieves the clean target directory value
         clean_target_directory = build_properties["clean_target_directory"] == "true"
 
@@ -914,6 +922,9 @@ class BuildAutomation:
 
         # creates the complete resources directory path
         complete_resources_directory_path = execution_directory_path + "/" + resources_directory_path
+
+        # creates the complete log directory path
+        complete_log_directory_path = execution_directory_path + "/" + log_directory_path
 
         # removes (cleans) the target directory (in case it exists)
         clean_target_directory and os.path.isdir(complete_target_directory_path) and colony.libs.path_util.remove_directory(complete_target_directory_path)
@@ -952,6 +963,11 @@ class BuildAutomation:
         if not os.path.isdir(complete_resources_directory_path):
             # creates the resources directory
             os.mkdir(complete_resources_directory_path)
+
+        # in case the log directory does not exist
+        if not os.path.isdir(complete_log_directory_path):
+            # creates the log directory
+            os.mkdir(complete_log_directory_path)
 
     def get_build_automation_extension_plugin(self, plugin_id, plugin_version = None):
         """

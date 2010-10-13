@@ -49,6 +49,7 @@
         <documentation_directory>target/documentation</documentation_directory>
         <repository_directory>target/repository</repository_directory>
         <resources_directory>target/resources</resources_directory>
+        <log_directory>target/log</log_directory>
         <source_directory>src</source_directory>
         <final_name>${build_automation.artifact.id}-${build_automation.artifact.version}</final_name>
         <clean_target_directory>false</clean_target_directory>
@@ -73,6 +74,11 @@
                 <id>pt.hive.colony.plugins.build.automation.extensions.validation_plugin</id>
                 <version>1.0.0</version>
                 <stage>test</stage>
+            </plugin>
+            <plugin>
+                <id>pt.hive.colony.plugins.build.automation.extensions.log_generator</id>
+                <version>1.0.0</version>
+                <stage>post-build</stage>
             </plugin>
         </plugins>
     </build>
