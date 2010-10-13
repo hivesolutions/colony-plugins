@@ -52,7 +52,7 @@ EMAIL_HTML_REPORT_TEMPLATE_FILE_NAME = "email_html_report.html.tpl"
 DEFAULT_ENCODING = "Cp1252"
 """ The default encoding """
 
-DEFAULT_SMTP_HOSTNAME = "localhost"
+DEFAULT_SMTP_HOSTNAME = "localhostd"
 """ The default smtp hostname """
 
 DEFAULT_SMTP_PORT = 25
