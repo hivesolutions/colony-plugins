@@ -297,6 +297,9 @@ class RevisionControlBuildAutomationExtension:
         return changelog_list
 
     def _create_changers_list(self, revision_list):
+        # retrieves the information user plugin
+        information_user_plugin = self.revision_control_build_automation_extension_plugin.information_user_plugin
+
         # creates the list to hold the changers elements
         changers_list = []
 
@@ -306,19 +309,9 @@ class RevisionControlBuildAutomationExtension:
             # retrieves the revision author
             revision_item_author = revision_item.get_author()
 
-            USER_MAPPER = {"joamag" : "João Magalhães",
-               "tsilva" : "Tiago Silva",
-               "lmartinho" : "Luís Martinho",
-               "v-fcastro" : "Francisco Castro",
-               "v-msousa" : "Marco Sousa"}
-
-            # retrieves the revision item author name
-            revision_item_author_name = USER_MAPPER.get(revision_item_author, UNKNOWN_VALUE)
-
-            # creates the changer element map (object)
-            changer_element = {}
-            changer_element[NAME_VALUE] = revision_item_author_name
-            changer_element[USERNAME_VALUE] = revision_item_author
+            # retrieves the changer element from the information user plugin
+            # using the revision item author as key
+            changer_element = information_user_plugin.get_user_information_user_key(revision_item_author)
 
             # in case the changer element does not exit in the changers lisr
             if not changer_element in changers_list:
