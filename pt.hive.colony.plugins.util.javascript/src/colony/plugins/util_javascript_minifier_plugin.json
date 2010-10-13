@@ -15,5 +15,6 @@
             "util_javascript_minifier_plugin.py",
             "util_javascript_minifier/__init__.py",
             "util_javascript_minifier/javascript_minifier/__init__.py",
-            "util_javascript_minifier/javascript_minifier/util_javascript_minifier_system.py"]
+            "util_javascript_minifier/javascript_minifier/util_javascript_minifier_system.py",
+            "util_javascript_minifier/javascript_minifier/resources/baf.xml"]
 }
