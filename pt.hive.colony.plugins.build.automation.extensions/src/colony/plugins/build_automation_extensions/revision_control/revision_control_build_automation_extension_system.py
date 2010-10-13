@@ -75,7 +75,7 @@ AUTHOR_VALUE = "author"
 MESSAGE_VALUE = "message"
 """ The message value """
 
-USER_VALUE = "message"
+USER_VALUE = "user"
 """ The user value """
 
 VERSION_VALUE = "version"
