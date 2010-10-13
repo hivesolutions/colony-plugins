@@ -84,7 +84,8 @@
             <plugin>
                 <id>pt.hive.colony.plugins.build.automation.extensions.continuous_integration</id>
                 <version>1.0.0</version>
-                <stage>install</stage>
+                <stage>post-build</stage>
+                <stage_dependency>install</stage_dependency>
                 <configuration>
                     <deployment_path>$resource{system.path.integration}</deployment_path>
                     <version_file_path>${build_automation.build.resources_directory}/version</version_file_path>
