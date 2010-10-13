@@ -59,8 +59,14 @@ ZIP_VALUE = "zip"
 LATEST_FILE_NAME = "LATEST.version"
 """ The latest file name """
 
+LATEST_SUCCESSFUL_FILE_NAME = "LATEST_SUCCESSFUL.version"
+""" The latest successful file name """
+
 LATEST_DIRECTORY_NAME = "LATEST"
-""" The latest file name """
+""" The latest directory name """
+
+LATEST_SUCCESSFUL_DIRECTORY_NAME = "LATEST_SUCCESSFUL"
+""" The latest successful directory name """
 
 ZIP_EXTENSION = ".zip"
 """ The zip extension value """
@@ -114,6 +120,9 @@ class ContinuousIntegrationBuildAutomationExtension:
         # creates the latest version path
         latest_version_path = deployment_path + "/" + LATEST_FILE_NAME
 
+        # creates the latest successful version path
+        latest_successful_version_path = deployment_path + "/" + LATEST_SUCCESSFUL_FILE_NAME
+
         # retrieves the current version (to check for changes)
         current_version = self._get_version(latest_version_path)
 
@@ -130,6 +139,9 @@ class ContinuousIntegrationBuildAutomationExtension:
 
         # writes the version number
         self._write_version_number(latest_version_path, version)
+
+        # in case the build is successful, writes the version number to the successful file
+        build_automation_structure_runtime.success and  self._write_version_number(latest_successful_version_path, version)
 
         # retrieves the build properties
         build_properties = build_automation_structure.get_all_build_properties()
@@ -157,24 +169,44 @@ class ContinuousIntegrationBuildAutomationExtension:
         # creates the latest version path
         latest_version_path = deployment_path + "/" + LATEST_DIRECTORY_NAME
 
-        # in case there is an existent link in the latest path
-        if os.path.islink(latest_version_path):
-            # removes the latest version path
-            os.remove(latest_version_path)
-        # in case there is an existent directory in the latest path
-        elif os.path.isdir(latest_version_path):
-            # removes the latest version path (directory)
-            colony.libs.path_util.remove_directory(latest_version_path)
+        # creates the latest successful version path
+        latest_successful_version_path = deployment_path + "/" + LATEST_SUCCESSFUL_DIRECTORY_NAME
 
-        # creates a symbolic link between the deployment version path and the latest
-        # version path
-        colony.libs.path_util.link(deployment_version_path, latest_version_path)
+        # updates the latest version path (link)
+        self.update_link(deployment_version_path, latest_version_path)
+
+        # in case the build is successful, updates the latest successful version path (link)
+        build_automation_structure_runtime.sucess and self.update_link(deployment_version_path, latest_successful_version_path)
 
         # sets the build automation structure runtime properties
         build_automation_structure_runtime.properties[INTEGRATION_VERSION_VALUE] = version
 
         # returns true (success)
         return True
+
+    def _update_link(self, target_path, link_path):
+        """
+        Updates the given link values.
+        Testing for link and directory mode.
+
+        @type target_path: String
+        @param target_path: The target path to the link.
+        @type link_path: String
+        @param link_path: The path to the link.
+        """
+
+        # in case there is an existent link in the link path
+        if os.path.islink(link_path):
+            # removes the link path
+            os.remove(link_path)
+        # in case there is an existent directory in the link path
+        elif os.path.isdir(link_path):
+            # removes the link path (directory)
+            colony.libs.path_util.remove_directory(link_path)
+
+        # creates a symbolic link between the target
+        # path and the link path
+        colony.libs.path_util.link(target_path, link_path)
 
     def _write_version_number(self, version_file_path, version_number):
         """
