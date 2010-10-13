@@ -15,6 +15,12 @@
             }, {
                 "id" : "pt.hive.colony.plugins.format.mime",
                 "version" : "1.0.0"
+            }, {
+                "id" : "pt.hive.colony.plugins.format.mime.utils",
+                "version" : "1.0.0"
+            }, {
+                "id" : "pt.hive.colony.plugins.template_engine.manager",
+                "version" : "1.0.0"
             }],
     "main_file" : "email_build_automation_extension_plugin.py",
     "resources" : [
@@ -22,5 +28,10 @@
             "build_automation_extensions/__init__.py",
             "build_automation_extensions/email/__init__.py",
             "build_automation_extensions/email/email_build_automation_extension_system.py",
-            "build_automation_extensions/email/resources/baf.xml"]
+            "build_automation_extensions/email/resources/baf.xml",
+            "build_automation_extensions/email/resources/email_html_report.html.tpl",
+            "build_automation_extensions/email/resources/email_text_report.txt.tpl",
+            "build_automation_extensions/email/resources/images/character_l.gif",
+            "build_automation_extensions/email/resources/images/email_header.gif",
+            "build_automation_extensions/email/resources/images/line.gif"]
 }
