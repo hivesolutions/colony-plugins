@@ -75,6 +75,9 @@ AUTHOR_VALUE = "author"
 MESSAGE_VALUE = "message"
 """ The message value """
 
+USER_VALUE = "message"
+""" The user value """
+
 VERSION_VALUE = "version"
 """ The version value """
 
@@ -269,6 +272,9 @@ class RevisionControlBuildAutomationExtension:
             changelog_file.close()
 
     def _convert_revision_list_changelog(self, revision_list):
+        # retrieves the information user plugin
+        information_user_plugin = self.revision_control_build_automation_extension_plugin.information_user_plugin
+
         # creates the list to hold the changelog elements
         changelog_list = []
 
@@ -282,6 +288,10 @@ class RevisionControlBuildAutomationExtension:
             revision_item_author = revision_item.get_author()
             revision_item_message = revision_item.get_message()
 
+            # retrieves the user from the information user plugin
+            # using the revision item author as key
+            revision_item_user = information_user_plugin.get_user_information_user_key(revision_item_author)
+
             # creates the changelog element using the attributes
             changelog_element = {}
             changelog_element[NUMBER_VALUE] = revision_item_number
@@ -289,6 +299,7 @@ class RevisionControlBuildAutomationExtension:
             changelog_element[DATE_VALUE] = revision_item_date
             changelog_element[AUTHOR_VALUE] = revision_item_author
             changelog_element[MESSAGE_VALUE] = revision_item_message
+            changelog_element[USER_VALUE] = revision_item_user
 
             # adds the changelog element to the changelog list
             changelog_list.append(changelog_element)
