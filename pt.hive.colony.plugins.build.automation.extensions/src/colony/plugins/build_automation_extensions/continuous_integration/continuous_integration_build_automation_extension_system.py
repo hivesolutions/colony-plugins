@@ -176,7 +176,7 @@ class ContinuousIntegrationBuildAutomationExtension:
         self._update_link(deployment_version_path, latest_version_path)
 
         # in case the build is successful, updates the latest successful version path (link)
-        build_automation_structure_runtime.sucess and self._update_link(deployment_version_path, latest_successful_version_path)
+        build_automation_structure_runtime.success and self._update_link(deployment_version_path, latest_successful_version_path)
 
         # sets the build automation structure runtime properties
         build_automation_structure_runtime.properties[INTEGRATION_VERSION_VALUE] = version
