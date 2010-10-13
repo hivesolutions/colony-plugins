@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
-<html>
+<html lang="en">
     <head>
         <title>Hive Solutions</title>
     </head>
@@ -72,10 +72,10 @@
                         <br />
                         <p align="center">
                             <font face="Arial" size="2" color="#333333">
-                                <a href="#">View Online</a> -
-                                <a href="#">Add Comment</a> -
-                                <a href="http://servidor3.hive:8080/integration/${out_none value=version xml_escape=True /}">View Artifacts</a> -
-                                <a href="http://servidor3.hive:8080/integration/${out_none value=log_file_path xml_escape=True /}">Download Log</a>
+                                <a href="#">View Report</a> -
+                                <a href="#">Post Comment</a> -
+                                <a href="${out_none value=base_repository_path xml_escape=True /}">View Artifacts</a> -
+                                <a href="${out_none value=base_repository_path xml_escape=True /}/${out_none value=log_file_path xml_escape=True /}">Download Log</a>
                             </font>
                         </p>
                         <br />

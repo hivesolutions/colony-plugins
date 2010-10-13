@@ -297,6 +297,9 @@ class EmailBuildAutomationExtension:
         # assigns the changelog list to the parsed template file
         template_file.assign("changelog_list", build_automation_changelog_list)
 
+        # assigns the base repository path to the parsed template file
+        template_file.assign("base_repository_path", "http://servidor3.hive:8080/integration/" + str(build_automation_version))
+
         # assigns the log file path to the parsed template file
         template_file.assign("log_file_path", build_automation_log_file_path)
 
