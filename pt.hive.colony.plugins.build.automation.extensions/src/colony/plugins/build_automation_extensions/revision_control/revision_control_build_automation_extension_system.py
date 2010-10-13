@@ -78,8 +78,20 @@ MESSAGE_VALUE = "message"
 VERSION_VALUE = "version"
 """ The version value """
 
+NAME_VALUE = "name"
+""" The name list value """
+
+USERNAME_VALUE = "username"
+""" The username list value """
+
 CHANGELOG_LIST_VALUE = "changelog_list"
 """ The changelog list value """
+
+CHANGERS_LIST_VALUE = "changers_list"
+""" The changers list value """
+
+UNKNOWN_VALUE = "Unknown"
+""" The unknown value """
 
 class RevisionControlBuildAutomationExtension:
     """
@@ -183,12 +195,16 @@ class RevisionControlBuildAutomationExtension:
             # converts the revision list into a changelog list
             changelog_list = self._convert_revision_list_changelog(revision_list)
 
+            # creates the changers list from the the revision list
+            changers_list = self._create_changers_list(revision_list)
+
             # writes the changelog for the given file path and changelog list
             self._write_changelog(changelog_file_path, changelog_list)
 
         # sets the build automation structure runtime properties
         build_automation_structure_runtime.properties[VERSION_VALUE] = current_revision_number
         build_automation_structure_runtime.properties[CHANGELOG_LIST_VALUE] = changelog_list
+        build_automation_structure_runtime.properties[CHANGERS_LIST_VALUE] = changers_list
 
         # returns true (success)
         return True
@@ -279,3 +295,35 @@ class RevisionControlBuildAutomationExtension:
 
         # returns the changelog list
         return changelog_list
+
+    def _create_changers_list(self, revision_list):
+        # creates the list to hold the changers elements
+        changers_list = []
+
+        # iterates over all the revision items in the revision
+        # list to create the changer elements
+        for revision_item in revision_list:
+            # retrieves the revision author
+            revision_item_author = revision_item.get_author()
+
+            USER_MAPPER = {"joamag" : "João Magalhães",
+               "tsilva" : "Tiago Silva",
+               "lmartinho" : "Luís Martinho",
+               "v-fcastro" : "Francisco Castro",
+               "v-msousa" : "Marco Sousa"}
+
+            # retrieves the revision item author name
+            revision_item_author_name = USER_MAPPER.get(revision_item_author, UNKNOWN_VALUE)
+
+            # creates the changer element map (object)
+            changer_element = {}
+            changer_element[NAME_VALUE] = revision_item_author_name
+            changer_element[USERNAME_VALUE] = revision_item_author
+
+            # in case the changer element does not exit in the changers lisr
+            if not changer_element in changers_list:
+                # adds the changer element to the changers list
+                changers_list.append(changer_element)
+
+        # returns the changers list
+        return changers_list
