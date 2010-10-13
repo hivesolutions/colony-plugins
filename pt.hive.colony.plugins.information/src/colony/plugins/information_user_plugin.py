@@ -60,7 +60,7 @@ class InformationUserPlugin(colony.base.plugin_system.Plugin):
     dependencies = []
     events_handled = []
     events_registrable = []
-    main_modules = ["information.user.information_user_exceptions", "information.user.information_user_system"]
+    main_modules = ["information.user.information_user_system"]
 
     information_user = None
 
