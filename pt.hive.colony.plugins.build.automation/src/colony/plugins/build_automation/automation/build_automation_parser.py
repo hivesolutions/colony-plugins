@@ -406,6 +406,8 @@ class BuildAutomationFileParser(Parser):
             plugin.version = self.parse_build_automation_plugin_version(build_automation_plugin_element)
         elif node_name == "stage":
             plugin.stage = self.parse_build_automation_plugin_stage(build_automation_plugin_element)
+        elif node_name == "stage_dependency":
+            plugin.stage_dependency = self.parse_build_automation_plugin_stage_dependency(build_automation_plugin_element)
         elif node_name == "configuration":
             plugin.configuration = self.parse_build_automation_plugin_configuration(build_automation_plugin_element)
 
@@ -420,6 +422,10 @@ class BuildAutomationFileParser(Parser):
     def parse_build_automation_plugin_stage(self, plugin_stage):
         build_automation_plugin_stage = plugin_stage.firstChild.data.strip()
         return build_automation_plugin_stage
+
+    def parse_build_automation_plugin_stage_dependency(self, plugin_stage_dependency):
+        build_automation_plugin_stage_dependency = plugin_stage_dependency.firstChild.data.strip()
+        return build_automation_plugin_stage_dependency
 
     def parse_build_automation_plugin_configuration(self, plugin_configuration):
         configuration = Configuration()
@@ -567,6 +573,7 @@ class GenericElement:
     """
 
     element_name = "none"
+    """ The name of the element """
 
     def __init__(self, element_name = "none"):
         self.element_name = element_name
@@ -577,10 +584,19 @@ class BuildAutomation:
     """
 
     parent = None
+    """ The parent build automation structure """
+
     artifact = None
+    """ The associated artifact structure """
+
     modules = []
+    """ The list of modules """
+
     build = None
+    """ The associated build structure """
+
     profiles = []
+    """ The list of profiles """
 
     def __init__(self, parent = None, artifact = None, build = None):
         self.parent = parent
@@ -594,7 +610,10 @@ class Parent:
     """
 
     id = "none"
+    """ The id of the parent """
+
     version = "none"
+    """ The version of the parent """
 
     def __init__(self, id = "none", version = "none"):
         self.id = id
@@ -606,10 +625,19 @@ class Artifact:
     """
 
     id = "none"
+    """ The id of the artifact """
+
     version = "none"
+    """ The version of the artifact """
+
     type = "none"
+    """ The type of the artifact """
+
     name = "none"
+    """ The name of the artifact """
+
     description = "none"
+    """ The description of the artifact """
 
     def __init__(self, id = "none", version = "none", type = "none", name = "none", description = "none"):
         self.id = id
@@ -638,19 +666,46 @@ class Build:
     """
 
     default_stage = "none"
+    """ The default stage for the build """
+
     execution_directory = "none"
+    """ The directory to be used for execution """
+
     target_directory = "none"
+    """ The target directory """
+
     classes_directory = "none"
+    """ The classes directory """
+
     plugins_directory = "none"
+    """ The plugins directory """
+
     documentation_directory = "none"
+    """ The documentation directory """
+
     repository_directory = "none"
+    """ The repository directory """
+
     resources_directory = "none"
+    """ The resources directory """
+
     log_directory = "none"
+    """ The log directory """
+
     source_directory = "none"
+    """ The source directory """
+
     final_name = "none"
+    """ The final name of the build """
+
     clean_target_directory = "none"
+    """ The clean target directory """
+
     dependencies = []
+    """ The list of dependencies """
+
     plugins = []
+    """ The list of plugins """
 
     def __init__(self, default_stage = "none", execution_directory = "none", target_directory = "none", classes_directory = "none", plugins_directory = "none", documentation_directory = "none", repository_directory = "none", resources_directory = "none", log_directory = "none", source_directory = "none", final_name = "none", clean_target_directory = "none"):
         self.default_stage = default_stage
@@ -674,8 +729,13 @@ class Dependency:
     """
 
     id = "none"
+    """ The id of the dependency """
+
     version = "none"
+    """ The version of the dependency """
+
     scope = "none"
+    """ The scope of the dependency """
 
     def __init__(self, id = "none", version = "none", scope = "none"):
         self.id = id
@@ -688,14 +748,25 @@ class Plugin:
     """
 
     id = "none"
-    version = "none"
-    stage = "none"
-    configuration = None
+    """ The id of the plugin """
 
-    def __init__(self, id = "None", version = "none", stage = "none", configuration = None):
+    version = "none"
+    """ The version of the plugin """
+
+    stage = "none"
+    """ The minimum stage to "activate" the plugin operation """
+
+    stage_dependency = "none"
+    """ The stages that this plugin requires as minimum (only valid to post-build stage) """
+
+    configuration = None
+    """ The plugin configuration """
+
+    def __init__(self, id = "None", version = "none", stage = "none", stage_dependency = "none", configuration = None):
         self.id = id
         self.version = version
         self.stage = stage
+        self.stage_dependency = stage_dependency
         self.configuration = configuration
 
 class Configuration:
