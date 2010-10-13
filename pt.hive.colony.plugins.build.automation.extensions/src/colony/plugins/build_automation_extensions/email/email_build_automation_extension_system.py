@@ -192,7 +192,7 @@ class EmailBuildAutomationExtension:
         # creates the sender line
         sender_line = sender_name + " " + "<" + sender_email + ">"
 
-        success_receivers = (("João Magalhães", "joamag@hive.pt"),)
+        success_receivers = (("João Magalhães", "joamag@hive.pt"), ("Tiago Silva", "tsilva@hive.pt"), ("Luis Martinho", "lmartinho@hive.pt"))
         failure_receivers = (("João Magalhães", "joamag@hive.pt"), ("Tiago Silva", "tsilva@hive.pt"), ("Luis Martinho", "lmartinho@hive.pt"))
 
         # retrieves the build automation plugin name
@@ -223,7 +223,7 @@ class EmailBuildAutomationExtension:
         # otherwise
         else:
             # adds the failed part to the subject
-            subject += "as FAILED"
+            subject += "has FAILED"
 
             # sets the receivers as the failure receivers
             receivers = failure_receivers
