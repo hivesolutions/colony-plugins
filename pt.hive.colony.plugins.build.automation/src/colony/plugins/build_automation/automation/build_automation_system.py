@@ -433,18 +433,20 @@ class BuildAutomation:
         self.print_end_information(build_automation_structure, logger)
 
         # in case it's the first run and the build automation is not skipped, runs the post build tasks
-        is_first and not build_automation_structure_runtime.skipped and self.run_post_build(build_automation_structure, logger, raise_exception)
+        is_first and not build_automation_structure_runtime.skipped and self.run_post_build(build_automation_structure, stage, logger, raise_exception)
 
         # returns the build automation success
         return build_automation_structure_runtime.success
 
-    def run_automation_stage(self, automation_stage, build_automation_structure, logger):
+    def run_automation_stage(self, automation_stage, base_stage, build_automation_structure, logger):
         """
         Runs the automation tasks for the given automation stage, using
         the given build automation structure and the given logger.
 
         @type automation_stage: String
         @param automation_stage: The automation stage to be run.
+        @type base_stage: String
+        @param base_stage: The base stage (upper stage) to be run.
         @type build_automation_structure: BuildAutomationStructure
         @param build_automation_structure: The build automation structure used.
         @type logger: Logger
@@ -454,7 +456,7 @@ class BuildAutomation:
         """
 
         # retrieves the automation plugins for the stage
-        all_automation_plugins = build_automation_structure.get_all_automation_plugins_by_stage(automation_stage)
+        all_automation_plugins = build_automation_structure.get_all_automation_plugins_by_stage(automation_stage, base_stage)
 
         # iterates over all of the automation plugins
         for automation_plugin in all_automation_plugins:
@@ -497,13 +499,15 @@ class BuildAutomation:
         # returns true (valid)
         return True
 
-    def run_post_build(self, build_automation_structure, logger, raise_exception):
+    def run_post_build(self, build_automation_structure, base_stage, logger, raise_exception):
         """
         Runs the post build tasks associated with the given build automation
         structure.
 
         @type build_automation_structure: BuildAutomationStructure
         @param build_automation_structure: The build automation structure used.
+        @type base_stage: String
+        @param base_stage: The base (original) stage for dependency checking.
         @type logger: Logger
         @param logger: The logger to be used.
         @type raise_exception: bool
@@ -519,7 +523,7 @@ class BuildAutomation:
         # iterates over all the valid post automation stages to run the automation plugins
         for post_build_automation_stage in POST_BUILD_AUTOMATION_STAGES:
             # run the post automation stage (tasks)
-            self.run_automation_stage(post_build_automation_stage, build_automation_structure, logger)
+            self.run_automation_stage(post_build_automation_stage, base_stage, build_automation_structure, logger)
 
         # in case the build automation failed, this is the first run and the raise
         # exception flag is active an exception should be raised
@@ -818,6 +822,12 @@ class BuildAutomation:
 
             # adds the build automation plugin instance to the build automation plugin stage list
             build_automation_plugin_stage_list.append(build_automation_plugin_instance)
+
+            # retrieves the build automation stage dependency
+            build_automation_plugin_stage_dependency = build_automation_plugin.stage_dependency
+
+            # sets the build automation plugin stage dependency in the automation plugins stage dependencies map
+            build_automation_structure.automation_plugins_stage_dependencies[build_automation_plugin_instance] = build_automation_plugin_stage_dependency
 
             # retrieves the build automation plugin configuration
             build_automation_plugin_configuration = build_automation_plugin.configuration
@@ -1422,6 +1432,9 @@ class BuildAutomationStructure:
     automation_plugins_stages = {}
     """ The map associating the plugin tuple with the stage """
 
+    automation_plugins_stage_dependencies = {}
+    """ The map associating the plugin tuple (or instance) with the stage dependency """
+
     automation_plugins_configurations = {}
     """ The map associating the plugin tuple with the configuration """
 
@@ -1449,6 +1462,7 @@ class BuildAutomationStructure:
         self.dependecy_plugins = []
         self.automation_plugins = []
         self.automation_plugins_stages = {}
+        self.automation_plugins_stage_dependencies = {}
         self.automation_plugins_configurations = {}
         self.stages_automation_plugins = {}
 
@@ -1498,27 +1512,41 @@ class BuildAutomationStructure:
         # returns the automation plugins
         return automation_plugins
 
-    def get_all_automation_plugins_by_stage(self, stage):
+    def get_all_automation_plugins_by_stage(self, stage, base_stage):
         """
         Retrieves all the automation plugins for the given stage,
         using a recursive approach.
 
         @type stage: String
         @param stage: The stage to retrieve the plugins.
+        @type base_stage: String
+        @param base_stage: The base (original) stage for dependency checking.
         @rtype: List
         @return: A list containing all the automation plugins fot the given stage.
         """
 
+        # creates the list to hold the automation plugins
+        automation_plugins = []
+
         # retrieves the automation plugins for the stage
         automation_plugins_stage = self.stages_automation_plugins.get(stage, [])
 
-        # creates a copy of the automation plugins list
-        automation_plugins = copy.copy(automation_plugins_stage)
+        # iterates over all the automation plugins of the stage
+        # to validate them agains the dependencies if existent
+        for automation_plugin_stage in automation_plugins_stage:
+            # retrieves the automation plugin stage dependency
+            automation_plugin_stage_dependency = self.automation_plugins_stage_dependencies[automation_plugin_stage]
+
+            # compares the base stage with the automation plugin stage dependency to
+            # check if the dependency is met
+            if self._compare_stages(automation_plugin_stage_dependency, base_stage) <= 0:
+                # adds the automation plugin to the list of automation plugins
+                automation_plugins.append(automation_plugin_stage)
 
         # in case it contains a parent
         if self.parent:
             # retrieves all of the automation plugins for the stage from the parent
-            automation_plugins_stage_parent = self.parent.get_all_automation_plugins_by_stage(stage)
+            automation_plugins_stage_parent = self.parent.get_all_automation_plugins_by_stage(stage, base_stage)
 
             # appends all of the automation plugins from the parent to itself
             automation_plugins.extend(automation_plugins_stage_parent)
@@ -1554,6 +1582,26 @@ class BuildAutomationStructure:
 
         # returns the automation plugins configurations
         return automation_plugins_configurations
+
+    def _compare_stages(self, first_stage, second_stage):
+        # retrieves the first index for the first stage
+        first_index = self._get_list_index(BUILD_AUTOMATION_STAGES, first_stage)
+
+        # retrieves the second index for the second stage
+        second_index = self._get_list_index(BUILD_AUTOMATION_STAGES, second_stage)
+
+        # returns the result of comparing both indexes
+        return cmp(first_index, second_index)
+
+    def _get_list_index(self, list, value):
+        # in case the value exists in the list
+        if value in list:
+            # returns the list index
+            return list.index(value)
+        # otherwise
+        else:
+            # returns invalid index
+            return -1
 
 class ColonyBuildAutomationStructure(BuildAutomationStructure):
     """
