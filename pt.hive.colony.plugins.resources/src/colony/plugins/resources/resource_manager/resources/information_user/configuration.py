@@ -39,10 +39,10 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 configuration = {
                  "user_information" : {
-                     "joamag" : {"name" : "João Magalhães", "email" : "joamag@hive.pt", "username" : "joamag"},
-                     "tsilva" : {"name" : "Tiago Silva", "email" : "tsilva@hive.pt", "username" : "tsilva"},
-                     "lmartinho" : {"name" : "Luis Martinho", "email" : "lmartinho@hive.pt", "username" : "lmartinho"},
-                     "v-fcastro" : {"name" : "Francisco Castro", "email" : "v-fcastro@hive.pt", "username" : "v-fcastro"},
-                     "v-msousa" : {"name" : "Marco Sousa", "email" : "v-msousa@hive.pt", "username" : "v-msousa"}
+                     "joamag" : {"name" : u"João Magalhães", "email" : u"joamag@hive.pt", "username" : u"joamag"},
+                     "tsilva" : {"name" : u"Tiago Silva", "email" : u"tsilva@hive.pt", "username" : u"tsilva"},
+                     "lmartinho" : {"name" : u"Luis Martinho", "email" : u"lmartinho@hive.pt", "username" : u"lmartinho"},
+                     "v-fcastro" : {"name" : u"Francisco Castro", "email" : u"v-fcastro@hive.pt", "username" : u"v-fcastro"},
+                     "v-msousa" : {"name" : u"Marco Sousa", "email" : u"v-msousa@hive.pt", "username" : u"v-msousa"}
                  }
              }
