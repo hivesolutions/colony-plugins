@@ -70,6 +70,9 @@ VERSION_VALUE = "version"
 CHANGELOG_LIST_VALUE = "changelog_list"
 """ The changelog list value """
 
+ISSUES_LIST_VALUE = "issues_list"
+""" The issues list value """
+
 USERNAME_VALUE = "username"
 """ The username value """
 
@@ -201,6 +204,9 @@ class EmailBuildAutomationExtension:
         # retrieves the build automation changelog list
         build_automation_changelog_list = build_automation_structure_runtime.properties.get(CHANGELOG_LIST_VALUE, [])
 
+        # retrieves the build automation issues list
+        build_automation_issues_list = build_automation_structure_runtime.properties.get(ISSUES_LIST_VALUE, [])
+
         # creates the build automation log file path
         build_automation_log_file_path = "log/build_automation.log"
 
@@ -296,6 +302,9 @@ class EmailBuildAutomationExtension:
 
         # assigns the changelog list to the parsed template file
         template_file.assign("changelog_list", build_automation_changelog_list)
+
+        # assigns the issues list to the parsed template file
+        template_file.assign("issues_list", build_automation_issues_list)
 
         # assigns the base repository path to the parsed template file
         template_file.assign("base_repository_path", "http://servidor3.hive:8080/integration/" + str(build_automation_version))

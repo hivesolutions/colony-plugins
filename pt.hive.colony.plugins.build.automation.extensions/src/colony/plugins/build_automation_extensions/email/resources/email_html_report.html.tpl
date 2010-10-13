@@ -54,19 +54,14 @@
                         </p>
                         <font face="Rockwell, Arial" size="3" color="#808080"><strong>Issues</strong></font>
                         <br />
+                        ${foreach item=issue from=issues_list}
                         <p>
                             <font face="Arial" size="2" color="#333333">
-                                <font face="Rockwell, Arial" size="3" color="#214c8f"><b><a href="#">Ticket 123</a> - Build a meta prototype</b></font><br />
-                                The meta prototypwe should contain everything specified in the specification #4134.
+                                <font face="Rockwell, Arial" size="3" color="#214c8f"><b><a href="#">r${out_none value=issue.number xml_escape=True /}</a> - ${out_none value=change.title xml_escape=True /}</b></font><br />
+                                ${out_none value=issue.description xml_escape=True /}
                             </font>
                         </p>
-                        <p>
-                            <font face="Arial" size="2" color="#333333">
-                                <font face="Rockwell, Arial" size="3" color="#214c8f"><b><a href="#">Bug 245</a> - Fix text alignment</b></font><br />
-                                The text alignment is strange it should be fixed byt the operators that have created it. If not built on time
-                                this bug can start to be a real big problem.
-                            </font>
-                        </p>
+                        ${/foreach}
                         <img src="cid:line.gif" width="400" height="1" alt="separator" />
                         <p align="right"><font face="Arial" size="2" color="#333333"><a href="#">issues details ></a></font></p>
                         <br />
