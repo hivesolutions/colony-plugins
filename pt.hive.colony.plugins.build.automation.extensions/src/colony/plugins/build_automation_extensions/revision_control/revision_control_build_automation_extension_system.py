@@ -39,6 +39,9 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 import os
 
+DEFAULT_ENCODING = "utf-8"
+""" The default encoding """
+
 ADAPTER_VALUE = "adapter"
 """ The adapter value """
 
@@ -263,14 +266,15 @@ class RevisionControlBuildAutomationExtension:
         # dumps (pretty) the changelog list using the json plugin
         changelog_json = json_plugin.dumps_pretty(changelog_list)
 
-        self.revision_control_build_automation_extension_plugin.info("going to write the file")
+        # encodes the changelog json using the default encoding
+        changelog_json_encoded = changelog_json.encode(DEFAULT_ENCODING)
 
         # opens the changelog file
         changelog_file = open(changelog_file_path, "wb")
 
         try:
-            # writes the changelog json
-            changelog_file.write(changelog_json)
+            # writes the encoded changelog json
+            changelog_file.write(changelog_json_encoded)
         finally:
             # closes the changelog file
             changelog_file.close()
