@@ -1506,8 +1506,8 @@ class BuildAutomationStructure:
             # retrieves all of the automation plugins from the parent
             automation_plugins_parent = self.parent.get_all_automation_plugins()
 
-            # appends all of the automation plugins from the parent to itself
-            automation_plugins.extend(automation_plugins_parent)
+            # prepends all of the automation plugins from the parent to itself
+            automation_plugins = automation_plugins_parent + automation_plugins
 
         # returns the automation plugins
         return automation_plugins
@@ -1548,8 +1548,8 @@ class BuildAutomationStructure:
             # retrieves all of the automation plugins for the stage from the parent
             automation_plugins_stage_parent = self.parent.get_all_automation_plugins_by_stage(stage, base_stage)
 
-            # appends all of the automation plugins from the parent to itself
-            automation_plugins.extend(automation_plugins_stage_parent)
+            # prepends all of the automation plugins from the parent to itself
+            automation_plugins = automation_plugins_stage_parent + automation_plugins
 
         # returns the automation plugins
         return automation_plugins
