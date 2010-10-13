@@ -59,7 +59,7 @@
                 <configuration>
                     <adapter>svn</adapter>
                     <path>http://svn.hive.pt/hive-main/pt.hive.colony/trunk</path>
-                    <target_path>c:/checkout/pt.hive.colony</target_path>
+                    <target_path>$base{plugin_system_directory}/tmp/checkout/pt.hive.colony</target_path>
                     <version_file_path>${build_automation.build.resources_directory}/version</version_file_path>
                     <previous_version_file_path>$resource{system.path.integration}/LATEST.version</previous_version_file_path>
                     <changelog_file_path>${build_automation.build.resources_directory}/changelog</changelog_file_path>
@@ -72,9 +72,9 @@
                 <configuration>
                     <command>python</command>
                     <arguments>
-                        <argument>c:/checkout/pt.hive.colony/pt.hive.colony/src/main.py</argument>
+                        <argument>$base{plugin_system_directory}/tmp/checkout/pt.hive.colony/pt.hive.colony/src/main.py</argument>
                         <argument>--configuration_file=config/configuration_integration_run.py</argument>
-                        <argument>--manager_dir=c:/checkout/pt.hive.colony/pt.hive.colony/src</argument>
+                        <argument>--manager_dir=$base{plugin_system_directory}/tmp/checkout/pt.hive.colony/pt.hive.colony/src</argument>
                         <argument>--execution_command=pt.hive.colony.plugins.build.automation:run_automation_raise_exception pt.hive.colony.plugins.build.automation.items.colony_bundle$1.0.0$build$3%int$0%null$1%bool</argument>
                     </arguments>
                     <shell>true</shell>
@@ -87,7 +87,7 @@
                 <stage>post-build</stage>
                 <stage_dependency>install</stage_dependency>
                 <configuration>
-                    <deployment_path>C:\matias</deployment_path>
+                    <deployment_path>$resource{system.path.integration}</deployment_path>
                     <version_file_path>${build_automation.build.resources_directory}/version</version_file_path>
                     <zip>plugins</zip>
                     <zip>repository</zip>
