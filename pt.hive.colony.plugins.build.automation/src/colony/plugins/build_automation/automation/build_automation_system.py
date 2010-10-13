@@ -427,7 +427,7 @@ class BuildAutomation:
                 break
 
             # run the automation stage (tasks)
-            build_automation_structure_runtime.success = self.run_automation_stage(valid_automation_stage, build_automation_structure, logger)
+            build_automation_structure_runtime.success = self.run_automation_stage(valid_automation_stage, stage, build_automation_structure, logger)
 
         # prints the end information
         self.print_end_information(build_automation_structure, logger)
