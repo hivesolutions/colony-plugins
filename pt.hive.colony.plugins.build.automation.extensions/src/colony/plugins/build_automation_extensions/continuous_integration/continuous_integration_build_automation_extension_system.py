@@ -102,8 +102,18 @@ class ContinuousIntegrationBuildAutomationExtension:
         # retrieves the zip values
         zips = parameters[ZIP_VALUE]
 
-        # retrieves the version from the version file path
-        version = self._get_version(version_file_path)
+        try:
+            # retrieves the version from the version file path
+            version = self._get_version(version_file_path)
+        except:
+            # prints an info message
+            logger.info("Skipping continuous integration, invalid version file")
+
+            # sets the skipped flag in the build automation structure runtime
+            build_automation_structure_runtime.skipped = True
+
+            # returns true (success)
+            return True
 
         # converts the version to string
         version_string = str(version)
