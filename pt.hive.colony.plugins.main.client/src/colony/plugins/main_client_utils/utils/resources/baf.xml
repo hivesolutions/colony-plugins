@@ -37,7 +37,7 @@
         <version>1.0.0</version>
         <type>colony</type>
         <name>Client Main Utils Plugin</name>
-        <description>Client Main Utils</description>
+        <description>The plugin that offers a utils for clients</description>
         <url>http://www.hive.pt</url>
     </artifact>
     <build>
