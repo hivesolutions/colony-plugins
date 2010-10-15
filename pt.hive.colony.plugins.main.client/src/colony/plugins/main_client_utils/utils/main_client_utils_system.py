@@ -567,16 +567,20 @@ class ClientConnection:
                 raise main_client_utils_exceptions.RequestClosed("invalid socket")
 
             if not selected_values[0] == []:
-                # receives the data from the socket
-                data = self.connection_socket.recv(CHUNK_SIZE)
+                try:
+                    # receives the data from the socket
+                    data = self.connection_socket.recv(CHUNK_SIZE)
 
-                # in case the data is empty
-                if not len(data):
+                    # in case the data is empty
+                    if not len(data):
+                        # reconnects the connection socket
+                        self._reconnect_connection_socket()
+                    else:
+                        # returns the data back into the queue
+                        self.return_data(data)
+                except:
                     # reconnects the connection socket
                     self._reconnect_connection_socket()
-                else:
-                    # returns the data back into the queue
-                    self.return_data(data)
             elif selected_values == ([], [], []):
                 # closes the connection socket
                 self.connection_socket.close()
