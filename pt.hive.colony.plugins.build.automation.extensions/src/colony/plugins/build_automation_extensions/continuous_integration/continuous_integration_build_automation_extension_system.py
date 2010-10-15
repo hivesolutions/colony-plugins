@@ -106,6 +106,11 @@ class ContinuousIntegrationBuildAutomationExtension:
             # retrieves the version from the version file path
             version = self._get_version(version_file_path)
         except:
+            # invalidates the version
+            version = None
+
+        # in case the version is invalid
+        if not version:
             # prints an info message
             logger.info("Skipping continuous integration, invalid version file")
 
