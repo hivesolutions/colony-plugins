@@ -37,7 +37,7 @@
         <version>1.0.0</version>
         <type>colony</type>
         <name>Access Control Main Plugin</name>
-        <description>Access Control Main Plugin</description>
+        <description>Plugin that provides the mechanisms for acl access control</description>
         <url>http://www.hive.pt</url>
     </artifact>
     <build>
