@@ -4,7 +4,7 @@
     "id" : "pt.hive.colony.plugins.main.authentication.openid_handler",
     "name" : "Authentication Openid Handler Main Plugin",
     "short_name" : "Authentication Openid Handler Main",
-    "description" : "Authentication Openid Handler Plugin",
+    "description" : "Authentication Openid Handler Main Plugin",
     "version" : "1.0.0",
     "author" : "Hive Solutions Lda. <development@hive.pt>",
     "capabilities" : ["authentication_handler", "build_automation_item"],

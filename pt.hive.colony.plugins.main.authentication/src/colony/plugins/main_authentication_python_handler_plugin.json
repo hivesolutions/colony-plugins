@@ -4,7 +4,7 @@
     "id" : "pt.hive.colony.plugins.main.authentication.python_handler",
     "name" : "Authentication Python Handler Main Plugin",
     "short_name" : "Authentication Python Handler Main",
-    "description" : "Authentication Python Handler Plugin",
+    "description" : "Authentication Python Handler Main Plugin",
     "version" : "1.0.0",
     "author" : "Hive Solutions Lda. <development@hive.pt>",
     "capabilities" : ["authentication_handler", "configuration_model_provider", "build_automation_item"],

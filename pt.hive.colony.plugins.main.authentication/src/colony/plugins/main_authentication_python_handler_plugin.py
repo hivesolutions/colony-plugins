@@ -47,7 +47,7 @@ class MainAuthenticationPythonHandlerPlugin(colony.base.plugin_system.Plugin):
     id = "pt.hive.colony.plugins.main.authentication.python_handler"
     name = "Authentication Python Handler Main Plugin"
     short_name = "Authentication Python Handler Main"
-    description = "Authentication Python Handler Plugin"
+    description = "Authentication Python Handler Main Plugin"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     loading_type = colony.base.plugin_system.EAGER_LOADING_TYPE

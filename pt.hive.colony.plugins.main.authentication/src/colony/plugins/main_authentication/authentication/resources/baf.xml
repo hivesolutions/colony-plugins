@@ -37,7 +37,7 @@
         <version>1.0.0</version>
         <type>colony</type>
         <name>Authentication Main Plugin</name>
-        <description>Authentication Main Plugin</description>
+        <description>Plugin that provides the authentication front-end mechanisms</description>
         <url>http://www.hive.pt</url>
     </artifact>
     <build>

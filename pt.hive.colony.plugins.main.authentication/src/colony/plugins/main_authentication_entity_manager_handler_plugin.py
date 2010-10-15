@@ -47,7 +47,7 @@ class MainAuthenticationEntityManagerHandlerPlugin(colony.base.plugin_system.Plu
     id = "pt.hive.colony.plugins.main.authentication.entity_manager"
     name = "Authentication Entity Manager Handler Main Plugin"
     short_name = "Authentication Entity Manager Handler Main"
-    description = "Authentication Entity Manager Handler Plugin"
+    description = "Authentication Entity Manager Handler Main Plugin"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     loading_type = colony.base.plugin_system.EAGER_LOADING_TYPE
