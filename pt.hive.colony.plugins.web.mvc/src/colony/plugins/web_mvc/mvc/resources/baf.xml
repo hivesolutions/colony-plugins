@@ -37,7 +37,7 @@
         <version>1.0.0</version>
         <type>colony</type>
         <name>Web Mvc Plugin</name>
-        <description>Web Mvc Plugin</description>
+        <description>The plugin that offers a web strategy abstraction for mvc management</description>
         <url>http://www.hive.pt</url>
     </artifact>
     <build>

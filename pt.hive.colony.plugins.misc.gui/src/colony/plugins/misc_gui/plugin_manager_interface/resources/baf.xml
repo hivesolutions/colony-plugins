@@ -37,7 +37,7 @@
         <version>1.0.0</version>
         <type>colony</type>
         <name>Plugin Manager Interface Plugin</name>
-        <description>Plugin Manager Interface Plugin</description>
+        <description>Lorem ipsum</description>
         <url>http://www.hive.pt</url>
     </artifact>
     <build>

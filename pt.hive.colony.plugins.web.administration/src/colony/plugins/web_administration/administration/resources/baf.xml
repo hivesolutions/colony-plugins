@@ -37,7 +37,7 @@
         <version>1.0.0</version>
         <type>colony</type>
         <name>Web Administration Plugin</name>
-        <description>Web Administration Plugin</description>
+        <description>The plugin that offers a web interface for colony administration</description>
         <url>http://www.hive.pt</url>
     </artifact>
     <build>

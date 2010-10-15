@@ -37,7 +37,7 @@
         <version>1.0.0</version>
         <type>colony</type>
         <name>Plugin Manager Logic plugin</name>
-        <description>Plugin Manager Logic plugin</description>
+        <description>Plugin Manager Logic Plugin</description>
         <url>http://www.hive.pt</url>
     </artifact>
     <build>

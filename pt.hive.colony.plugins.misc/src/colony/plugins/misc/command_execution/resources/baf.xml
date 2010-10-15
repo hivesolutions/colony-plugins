@@ -37,7 +37,7 @@
         <version>1.0.0</version>
         <type>colony</type>
         <name>Command Execution Plugin</name>
-        <description>Command Execution Plugin</description>
+        <description>A plugin to manage the command execution</description>
         <url>http://www.hive.pt</url>
     </artifact>
     <build>

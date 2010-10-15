@@ -37,7 +37,7 @@
         <version>1.0.0</version>
         <type>colony</type>
         <name>Web Mvc Utils Plugin</name>
-        <description>Web Mvc Utils Plugin</description>
+        <description>The plugin that offers the top-level abstractions for mvc processing</description>
         <url>http://www.hive.pt</url>
     </artifact>
     <build>

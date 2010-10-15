@@ -37,7 +37,7 @@
         <version>1.0.0</version>
         <type>colony</type>
         <name>Console Main Plugin</name>
-        <description>The main console plugin that controls the console interface</description>
+        <description>The main console plugin that controls the console</description>
         <url>http://www.hive.pt</url>
     </artifact>
     <build>

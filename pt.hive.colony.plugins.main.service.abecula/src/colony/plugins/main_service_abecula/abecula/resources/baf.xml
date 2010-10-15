@@ -37,7 +37,7 @@
         <version>1.0.0</version>
         <type>colony</type>
         <name>Abecula Service Main Plugin</name>
-        <description>Abecula Service Main Plugin</description>
+        <description>The plugin that offers the abecula service</description>
         <url>http://www.hive.pt</url>
     </artifact>
     <build>

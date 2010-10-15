@@ -37,7 +37,7 @@
         <version>1.0.0</version>
         <type>colony</type>
         <name>Url Parser Plugin</name>
-        <description>Url Parser Plugin</description>
+        <description>A plugin to parse url for agile interpretation</description>
         <url>http://www.hive.pt</url>
     </artifact>
     <build>

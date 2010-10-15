@@ -37,7 +37,7 @@
         <version>1.0.0</version>
         <type>colony</type>
         <name>Stdout Messaging Extension Plugin</name>
-        <description>Stdout Messaging Extension Plugin</description>
+        <description>A plugin to manage stdout messaging extension</description>
         <url>http://www.hive.pt</url>
     </artifact>
     <build>

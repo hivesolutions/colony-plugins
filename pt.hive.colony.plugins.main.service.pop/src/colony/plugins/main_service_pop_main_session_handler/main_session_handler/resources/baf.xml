@@ -37,7 +37,7 @@
         <version>1.0.0</version>
         <type>colony</type>
         <name>Pop Service Main Main Session Handler Plugin</name>
-        <description>Pop Service Main Main Session Handler Plugin</description>
+        <description>The plugin that offers the pop service session main handler</description>
         <url>http://www.hive.pt</url>
     </artifact>
     <build>

@@ -37,7 +37,7 @@
         <version>1.0.0</version>
         <type>colony</type>
         <name>Search Scorer Metric Repository Plugin</name>
-        <description>Search Scorer Metric Repository Plugin</description>
+        <description>Plugin that provides directory services to discover available metric types for scoring purposes</description>
         <url>http://www.hive.pt</url>
     </artifact>
     <build>

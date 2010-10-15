@@ -37,7 +37,7 @@
         <version>1.0.0</version>
         <type>colony</type>
         <name>Http Service Main Template Directory List Handler Plugin</name>
-        <description>Http Service Main Template Directory List Handler Plugin</description>
+        <description>The plugin that offers the http service template directory list handler</description>
         <url>http://www.hive.pt</url>
     </artifact>
     <build>

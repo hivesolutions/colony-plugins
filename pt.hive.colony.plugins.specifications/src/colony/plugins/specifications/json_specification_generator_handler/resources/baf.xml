@@ -37,7 +37,7 @@
         <version>1.0.0</version>
         <type>colony</type>
         <name>Json Specification Generator Handler Plugin</name>
-        <description>Json Specification Generator Handler Plugin</description>
+        <description>A plugin to generate json specification files</description>
         <url>http://www.hive.pt</url>
     </artifact>
     <build>

@@ -37,7 +37,7 @@
         <version>1.0.0</version>
         <type>colony</type>
         <name>Smtp Service Main Relay Message Handler Plugin</name>
-        <description>Smtp Service Main Relay Message Handler Plugin</description>
+        <description>The plugin that offers the smtp service relay message handler</description>
         <url>http://www.hive.pt</url>
     </artifact>
     <build>

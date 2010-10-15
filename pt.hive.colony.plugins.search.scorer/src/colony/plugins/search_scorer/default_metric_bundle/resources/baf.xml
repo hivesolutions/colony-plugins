@@ -37,7 +37,7 @@
         <version>1.0.0</version>
         <type>colony</type>
         <name>Search Scorer Default Metric Bundle Plugin</name>
-        <description>Search Scorer Default Metric Bundle Plugin</description>
+        <description>Plugin that provides a default set of scorer metrics</description>
         <url>http://www.hive.pt</url>
     </artifact>
     <build>

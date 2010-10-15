@@ -37,7 +37,7 @@
         <version>1.0.0</version>
         <type>colony</type>
         <name>Web Mvc Panel Item Did You Know Plugin</name>
-        <description>Web Mvc Panel Item Did You Know Plugin</description>
+        <description>The plugin that offers the web mvc panel item did you know</description>
         <url>http://www.hive.pt</url>
     </artifact>
     <build>

@@ -37,7 +37,7 @@
         <version>1.0.0</version>
         <type>colony</type>
         <name>Http Service Main Proxy Handler Plugin</name>
-        <description>Http Service Main Proxy Handler</description>
+        <description>The plugin that offers the http service proxy handler</description>
         <url>http://www.hive.pt</url>
     </artifact>
     <build>

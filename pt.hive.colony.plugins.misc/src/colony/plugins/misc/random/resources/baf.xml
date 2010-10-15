@@ -37,7 +37,7 @@
         <version>1.0.0</version>
         <type>colony</type>
         <name>Random Plugin</name>
-        <description>Random Plugin</description>
+        <description>A plugin to generate ramdom numbers</description>
         <url>http://www.hive.pt</url>
     </artifact>
     <build>

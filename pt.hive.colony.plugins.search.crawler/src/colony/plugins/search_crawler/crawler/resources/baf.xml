@@ -37,7 +37,7 @@
         <version>1.0.0</version>
         <type>colony</type>
         <name>Search Crawler Plugin</name>
-        <description>Search Crawler Plugin</description>
+        <description>Plugin that provides the interface with crawler adapters for the main search plugin</description>
         <url>http://www.hive.pt</url>
     </artifact>
     <build>

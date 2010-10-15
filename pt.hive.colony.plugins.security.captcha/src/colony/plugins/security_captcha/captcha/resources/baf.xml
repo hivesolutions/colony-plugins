@@ -37,7 +37,7 @@
         <version>1.0.0</version>
         <type>colony</type>
         <name>Security Captcha Plugin</name>
-        <description>Security Captcha Plugin</description>
+        <description>A plugin to generate captcha values</description>
         <url>http://www.hive.pt</url>
     </artifact>
     <build>

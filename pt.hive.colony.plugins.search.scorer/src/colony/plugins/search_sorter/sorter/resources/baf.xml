@@ -37,7 +37,7 @@
         <version>1.0.0</version>
         <type>colony</type>
         <name>Search Sorter Plugin</name>
-        <description>Search Sorter Plugin</description>
+        <description>Plugin that provides sorting services, for result sets</description>
         <url>http://www.hive.pt</url>
     </artifact>
     <build>

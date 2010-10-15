@@ -37,7 +37,7 @@
         <version>1.0.0</version>
         <type>colony</type>
         <name>Plugin Downloader Plugin</name>
-        <description>Plugin Downloader Plugin</description>
+        <description>A plugin to automatically download plugins and dependencies</description>
         <url>http://www.hive.pt</url>
     </artifact>
     <build>

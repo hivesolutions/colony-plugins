@@ -37,7 +37,7 @@
         <version>1.0.0</version>
         <type>colony</type>
         <name>Search Query Evaluator Plugin</name>
-        <description>Search Query Evaluator Plugin</description>
+        <description>Plugin that provides query evaluation services, using an available index</description>
         <url>http://www.hive.pt</url>
     </artifact>
     <build>

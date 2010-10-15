@@ -37,7 +37,7 @@
         <version>1.0.0</version>
         <type>colony</type>
         <name>Search Index Serializer Shelve plugin</name>
-        <description>Search Index Serializer Shelve plugin</description>
+        <description>Search Index Serializer Shelve Plugin</description>
         <url>http://www.hive.pt</url>
     </artifact>
     <build>

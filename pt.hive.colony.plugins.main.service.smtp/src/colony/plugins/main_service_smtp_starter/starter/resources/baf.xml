@@ -37,7 +37,7 @@
         <version>1.0.0</version>
         <type>colony</type>
         <name>Smtp Service Main Starter Plugin</name>
-        <description>Smtp Service Main Starter Plugin</description>
+        <description>The plugin that starts the smtp service</description>
         <url>http://www.hive.pt</url>
     </artifact>
     <build>

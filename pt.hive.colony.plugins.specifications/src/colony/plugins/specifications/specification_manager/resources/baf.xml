@@ -37,7 +37,7 @@
         <version>1.0.0</version>
         <type>colony</type>
         <name>Specification Manager Plugin</name>
-        <description>Specification Manager Plugin</description>
+        <description>Plugin used to retrieve specification from plugin description file</description>
         <url>http://www.hive.pt</url>
     </artifact>
     <build>

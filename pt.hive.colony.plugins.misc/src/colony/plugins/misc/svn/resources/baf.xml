@@ -37,7 +37,7 @@
         <version>1.0.0</version>
         <type>colony</type>
         <name>Svn Plugin</name>
-        <description>Svn Plugin</description>
+        <description>A plugin to manage svn repositories</description>
         <url>http://www.hive.pt</url>
     </artifact>
     <build>

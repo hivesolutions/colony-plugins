@@ -37,7 +37,7 @@
         <version>1.0.0</version>
         <type>colony</type>
         <name>Bonjour Plugin</name>
-        <description>Bonjour Plugin</description>
+        <description>A plugin to manage the bonjour API</description>
         <url>http://www.hive.pt</url>
     </artifact>
     <build>

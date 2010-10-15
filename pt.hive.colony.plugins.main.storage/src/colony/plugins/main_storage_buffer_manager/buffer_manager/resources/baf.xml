@@ -37,7 +37,7 @@
         <version>1.0.0</version>
         <type>colony</type>
         <name>Buffer Manager Storage Main Plugin</name>
-        <description>Buffer Manager Storage Main</description>
+        <description>The plugin that offers the buffer manager for storage support</description>
         <url>http://www.hive.pt</url>
     </artifact>
     <build>

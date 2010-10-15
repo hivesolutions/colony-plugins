@@ -36,7 +36,7 @@
         <id>pt.hive.colony.plugins.dummy.rpc_service</id>
         <version>1.0.0</version>
         <type>colony</type>
-        <name>Dummy Plugin Rpc Service</name>
+        <name>Dummy Rpc Service Plugin</name>
         <description>Dummy Rpc Service Plugin</description>
         <url>http://www.hive.pt</url>
     </artifact>

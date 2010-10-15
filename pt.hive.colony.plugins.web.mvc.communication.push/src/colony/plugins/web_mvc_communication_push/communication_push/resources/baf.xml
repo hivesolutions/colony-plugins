@@ -37,7 +37,7 @@
         <version>1.0.0</version>
         <type>colony</type>
         <name>Web Mvc Communication Push Plugin</name>
-        <description>Web Mvc Communication Push Plugin</description>
+        <description>The plugin that offers the web mvc communication push base infrastructure</description>
         <url>http://www.hive.pt</url>
     </artifact>
     <build>

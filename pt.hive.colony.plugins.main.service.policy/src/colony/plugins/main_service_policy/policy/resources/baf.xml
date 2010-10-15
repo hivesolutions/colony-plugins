@@ -37,7 +37,7 @@
         <version>1.0.0</version>
         <type>colony</type>
         <name>Policy Service Main Plugin</name>
-        <description>Policy Service Main Plugin</description>
+        <description>The plugin that offers the policy service</description>
         <url>http://www.hive.pt</url>
     </artifact>
     <build>

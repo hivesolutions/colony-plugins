@@ -37,7 +37,7 @@
         <version>1.0.0</version>
         <type>colony</type>
         <name>Plugin Package Manager Plugin</name>
-        <description>Plugin Package Manager Plugin</description>
+        <description>A plugin to manage the plugin packages for deployment</description>
         <url>http://www.hive.pt</url>
     </artifact>
     <build>

@@ -33,11 +33,11 @@
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://www.hive.pt xsd/baf.xsd">
     <artifact>
-        <id>pt.hive.colony.plugins.dummy.windows_forms_label1</id>
+        <id>pt.hive.colony.plugins.dummy.windows_forms_label_1</id>
         <version>1.0.0</version>
         <type>colony</type>
         <name>Dummy Windows Forms Label 1 Plugin</name>
-        <description>Dummy Plugin Windows Forms Label 1 Plugin</description>
+        <description>Dummy Windows Forms Label 1 Plugin</description>
         <url>http://www.hive.pt</url>
     </artifact>
     <build>

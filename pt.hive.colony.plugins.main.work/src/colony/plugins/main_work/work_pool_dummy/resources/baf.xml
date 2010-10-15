@@ -37,7 +37,7 @@
         <version>1.0.0</version>
         <type>colony</type>
         <name>Work Pool Dummy Plugin</name>
-        <description>Work Pool Dummy</description>
+        <description>Work Pool Dummy Plugin</description>
         <url>http://www.hive.pt</url>
     </artifact>
     <build>

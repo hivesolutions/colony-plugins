@@ -37,7 +37,7 @@
         <version>1.0.0</version>
         <type>colony</type>
         <name>Bitmap Loader Plugin</name>
-        <description>Bitmap Loader Plugin</description>
+        <description>A plugin to manage the loading of bitmap files</description>
         <url>http://www.hive.pt</url>
     </artifact>
     <build>

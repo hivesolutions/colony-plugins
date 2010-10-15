@@ -37,7 +37,7 @@
         <version>1.0.0</version>
         <type>colony</type>
         <name>Search Processor Plugin</name>
-        <description>Search Processor Plugin</description>
+        <description>Plugin that provides the interface with processor adapters for the main search plugin</description>
         <url>http://www.hive.pt</url>
     </artifact>
     <build>

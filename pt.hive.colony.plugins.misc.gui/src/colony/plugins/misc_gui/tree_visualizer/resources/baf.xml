@@ -37,7 +37,7 @@
         <version>1.0.0</version>
         <type>colony</type>
         <name>Tree Visualizer Plugin</name>
-        <description>Tree Visualizer Plugin</description>
+        <description>Provides a tree interface where to display and interact with appropriate data structures.</description>
         <url>http://www.hive.pt</url>
     </artifact>
     <build>

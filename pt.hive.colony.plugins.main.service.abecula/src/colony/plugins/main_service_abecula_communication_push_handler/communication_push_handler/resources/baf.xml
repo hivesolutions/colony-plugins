@@ -37,7 +37,7 @@
         <version>1.0.0</version>
         <type>colony</type>
         <name>Abecula Service Main Communication Push Handler Plugin</name>
-        <description>Abecula Service Main Communication Push Handler</description>
+        <description>The plugin that offers the abecula service communication push handler</description>
         <url>http://www.hive.pt</url>
     </artifact>
     <build>

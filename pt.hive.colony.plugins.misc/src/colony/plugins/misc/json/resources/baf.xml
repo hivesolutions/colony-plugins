@@ -37,7 +37,7 @@
         <version>1.0.0</version>
         <type>colony</type>
         <name>Json Plugin</name>
-        <description>Json Plugin</description>
+        <description>A plugin to serialize and unserialize json files</description>
         <url>http://www.hive.pt</url>
     </artifact>
     <build>

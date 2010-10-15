@@ -37,7 +37,7 @@
         <version>1.0.0</version>
         <type>colony</type>
         <name>Search Index Persistence File System Adapter plugin</name>
-        <description>Search Index Persistence File System Adapter plugin</description>
+        <description>Search Index Persistence File System Adapter Plugin</description>
         <url>http://www.hive.pt</url>
     </artifact>
     <build>

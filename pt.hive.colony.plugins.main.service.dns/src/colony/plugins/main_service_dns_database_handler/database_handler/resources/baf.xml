@@ -37,7 +37,7 @@
         <version>1.0.0</version>
         <type>colony</type>
         <name>Dns Service Main Database Handler Plugin</name>
-        <description>Dns Service Main Database Handler Plugin</description>
+        <description>The plugin that offers the dns service database handler</description>
         <url>http://www.hive.pt</url>
     </artifact>
     <build>

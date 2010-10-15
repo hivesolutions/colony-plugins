@@ -37,7 +37,7 @@
         <version>1.0.0</version>
         <type>colony</type>
         <name>Timer Plugin</name>
-        <description>Timer Plugin</description>
+        <description>Provides time monitoring features (start, stop, time elapsed, etc..)</description>
         <url>http://www.hive.pt</url>
     </artifact>
     <build>

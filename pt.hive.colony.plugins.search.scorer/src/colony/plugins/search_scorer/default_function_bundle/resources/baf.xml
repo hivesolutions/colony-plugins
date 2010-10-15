@@ -37,7 +37,7 @@
         <version>1.0.0</version>
         <type>colony</type>
         <name>Search Scorer Default Function Bundle Plugin</name>
-        <description>Search Scorer Default Function Bundle Plugin</description>
+        <description>Plugin that provides a default set of scorer functions</description>
         <url>http://www.hive.pt</url>
     </artifact>
     <build>

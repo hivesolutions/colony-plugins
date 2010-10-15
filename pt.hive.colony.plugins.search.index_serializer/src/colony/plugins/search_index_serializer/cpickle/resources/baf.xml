@@ -37,7 +37,7 @@
         <version>1.0.0</version>
         <type>colony</type>
         <name>Search Index Serializer Cpickle plugin</name>
-        <description>Search Index Serializer Cpickle plugin</description>
+        <description>Search Index Serializer Cpickle Plugin</description>
         <url>http://www.hive.pt</url>
     </artifact>
     <build>

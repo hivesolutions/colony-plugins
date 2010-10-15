@@ -37,7 +37,7 @@
         <version>1.0.0</version>
         <type>colony</type>
         <name>Web Mvc Resources Base Plugin</name>
-        <description>Web Mvc Resources Base Plugin</description>
+        <description>The plugin that offers the web mvc resources base infrastructure</description>
         <url>http://www.hive.pt</url>
     </artifact>
     <build>

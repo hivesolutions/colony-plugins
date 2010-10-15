@@ -37,7 +37,7 @@
         <version>1.0.0</version>
         <type>colony</type>
         <name>Web Mvc Manager Page Item Repository Plugin</name>
-        <description>Web Mvc Manager Page Item Repository Plugin</description>
+        <description>The plugin that offers the web mvc manager page item repository</description>
         <url>http://www.hive.pt</url>
     </artifact>
     <build>

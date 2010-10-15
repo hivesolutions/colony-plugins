@@ -36,7 +36,7 @@
         <id>pt.hive.colony.plugins.dummy.english</id>
         <version>1.0.0</version>
         <type>colony</type>
-        <name>English Dummy Plugin</name>
+        <name>Dummy English Dictionary Plugin</name>
         <description>This is the main plugin for the english dictionary's stuff</description>
         <url>http://www.hive.pt</url>
     </artifact>

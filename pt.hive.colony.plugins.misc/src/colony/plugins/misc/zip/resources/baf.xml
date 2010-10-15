@@ -37,7 +37,7 @@
         <version>1.0.0</version>
         <type>colony</type>
         <name>Zip Plugin</name>
-        <description>Zip Plugin</description>
+        <description>A plugin to manage zip files</description>
         <url>http://www.hive.pt</url>
     </artifact>
     <build>

@@ -37,7 +37,7 @@
         <version>1.0.0</version>
         <type>colony</type>
         <name>Xmpp Service Main Helper Plugin</name>
-        <description>Xmpp Service Main Helper Plugin</description>
+        <description>The plugin that offers the xmpp service</description>
         <url>http://www.hive.pt</url>
     </artifact>
     <build>

@@ -37,7 +37,7 @@
         <version>1.0.0</version>
         <type>colony</type>
         <name>Http Service Main Starter Plugin</name>
-        <description>Http Service Main Starter Plugin</description>
+        <description>The plugin that starts the http service</description>
         <url>http://www.hive.pt</url>
     </artifact>
     <build>
