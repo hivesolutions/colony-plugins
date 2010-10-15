@@ -53,13 +53,13 @@ class EurekaEnginePlugin(colony.base.plugin_system.Plugin):
     author = "Hive Solutions Lda. <development@hive.pt>"
     loading_type = colony.base.plugin_system.EAGER_LOADING_TYPE
     platforms = [colony.base.plugin_system.CPYTHON_ENVIRONMENT]
-    attributes = {"build_automation_file_path" : "$base{plugin_directory}/eureka/resources/baf.xml"}
+    attributes = {"build_automation_file_path" : "$base{plugin_directory}/eureka_engine/engine/resources/baf.xml"}
     capabilities = ["eureka_engine", "plugin_test_case_bundle", "build_automation_item"]
     capabilities_allowed = ["eureka_item_extension", "eureka_engine_item_processer.filter", "eureka_engine_item_processer.mapper", "eureka_engine_item_processer.sorter"]
     dependencies = []
     events_handled = []
     events_registrable = []
-    main_modules = ["eureka.eureka_engine_system", "eureka.eureka_engine_test", "eureka.eureka_item"]
+    main_modules = ["eureka_engine.engine.eureka_engine_system", "eureka_engine.engine.eureka_engine_test", "eureka_engine.engine.eureka_item"]
 
     eureka_engine = None
     eureka_engine_test = None
@@ -72,10 +72,10 @@ class EurekaEnginePlugin(colony.base.plugin_system.Plugin):
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
         global eureka
-        import eureka.eureka_engine_system
-        import eureka.eureka_engine_test
-        self.eureka_engine = eureka.eureka_engine_system.EurekaEngine(self)
-        self.eureka_engine_test = eureka.eureka_engine_test.EurekaEngineTest(self)
+        import eureka_engine.engine.eureka_engine_system
+        import eureka_engine.engine.eureka_engine_test
+        self.eureka_engine = eureka_engine.engine.eureka_engine_system.EurekaEngine(self)
+        self.eureka_engine_test = eureka_engine.engine.eureka_engine_test.EurekaEngineTest(self)
 
     def end_load_plugin(self):
         colony.base.plugin_system.Plugin.end_load_plugin(self)

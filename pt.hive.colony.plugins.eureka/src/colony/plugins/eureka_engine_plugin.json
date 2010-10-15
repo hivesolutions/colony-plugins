@@ -15,7 +15,10 @@
             "eureka_engine_item_processer.sorter"],
     "dependencies" : [],
     "main_file" : "eureka_engine_plugin.py",
-    "resources" : ["eureka_engine_plugin.py", "eureka/__init__.py",
-            "eureka/eureka_engine_system.py", "eureka/eureka_engine_test.py",
-            "eureka/eureka_item.py", "eureka/resources/baf.xml"]
+    "resources" : ["eureka_engine_plugin.py", "eureka_engine/__init__.py",
+            "eureka_engine/engine/__init__.py",
+            "eureka_engine/engine/eureka_engine_system.py",
+            "eureka_engine/engine/eureka_engine_test.py",
+            "eureka_engine/engine/eureka_item.py",
+            "eureka_engine/engine/resources/baf.xml"]
 }
