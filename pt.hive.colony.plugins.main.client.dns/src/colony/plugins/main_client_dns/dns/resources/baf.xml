@@ -37,7 +37,7 @@
         <version>1.0.0</version>
         <type>colony</type>
         <name>Dns Client Main Plugin</name>
-        <description>Dns Client Main Plugin</description>
+        <description>The plugin that offers the dns client</description>
         <url>http://www.hive.pt</url>
     </artifact>
     <build>
