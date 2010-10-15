@@ -40,12 +40,12 @@
                         </h1>
                         <p>
                             <font face="Arial" size="2" color="#333333">
-                                Code has been updated to <font face="Rockwell, Arial" size="2" color="#214c8f"><b>r${out_none value=version xml_escape=True /}</b></font>
-                                by:
+                                Code has been updated to <font face="Rockwell, Arial" size="2" color="#214c8f"><b>r${out_none value=version xml_escape=True /}</b></font>.<br />
+                                The updating of the code involved:
                                 ${foreach item=changer from=changers_list}
                                 <font face="Rockwell, Arial" size="2" color="#214c8f"><b>${out_none value=changer.name xml_escape=True /} (${out_none value=changer.username xml_escape=True /})</b></font>,
-                                ${/foreach}
-                                3 tests ran in total.
+                                ${/foreach}.<br />
+                                The total time for the build automation run was <font face="Rockwell, Arial" size="2" color="#214c8f"><b>2 minutes</b></font>.
                             </font>
                         </p>
                         <p>
