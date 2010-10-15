@@ -37,7 +37,7 @@
         <version>1.0.0</version>
         <type>colony</type>
         <name>Plugin Validation Plugin</name>
-        <description>Plugin Validation</description>
+        <description>A plugin used to check that all plugins are valid in terms of integrity</description>
         <url>http://www.hive.pt</url>
     </artifact>
     <build>
