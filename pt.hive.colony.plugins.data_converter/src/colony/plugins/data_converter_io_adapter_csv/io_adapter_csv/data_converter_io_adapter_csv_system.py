@@ -263,7 +263,7 @@ class IoAdapterCsv:
         entity_name_path_map = {}
 
         for directory_path in directory_paths:
-            for root_path, directories, files in os.walk(directory_path, topdown = True):
+            for root_path, _directories, files in os.walk(directory_path, topdown = True):
                 for file_name in files:
                     extension_name = file_name[len(file_name) - 4:]
                     if extension_name == CSV_FILE_EXTENSION:

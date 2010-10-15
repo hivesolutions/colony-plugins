@@ -181,7 +181,7 @@ class IoAdapterFilesystem:
 
         # crawls the specified directory paths indexing the discovered files
         for directory_path in directory_paths:
-            for root_path, directories, files in os.walk(directory_path, topdown = True):
+            for root_path, _directories, files in os.walk(directory_path, topdown = True):
                 for file_name in files:
                     file_name_directory_path_map[file_name] = root_path
 
