@@ -37,7 +37,7 @@
         <version>1.0.0</version>
         <type>colony</type>
         <name>Data Converter plugin</name>
-        <description>Data Converter plugin</description>
+        <description>Provides plugin to convert data from one medium and schema to another</description>
         <url>http://www.hive.pt</url>
     </artifact>
     <build>

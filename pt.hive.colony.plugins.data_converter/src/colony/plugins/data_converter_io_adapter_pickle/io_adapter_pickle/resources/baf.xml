@@ -37,7 +37,7 @@
         <version>1.0.0</version>
         <type>colony</type>
         <name>Data Converter Input Output Adapter Pickle plugin</name>
-        <description>Data Converter Input Output Adapter Pickle plugin</description>
+        <description>Provides a means to load and save intermediate structures to and from pickle binary format</description>
         <url>http://www.hive.pt</url>
     </artifact>
     <build>

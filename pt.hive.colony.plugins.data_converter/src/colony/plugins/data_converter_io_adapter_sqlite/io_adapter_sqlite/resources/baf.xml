@@ -37,7 +37,7 @@
         <version>1.0.0</version>
         <type>colony</type>
         <name>Data Converter Input Output Adapter Sqlite plugin</name>
-        <description>Data Converter Input Output Adapter Sqlite plugin</description>
+        <description>Provides a means to load and save intermediate structures to and from the sqlite database format</description>
         <url>http://www.hive.pt</url>
     </artifact>
     <build>
