@@ -37,7 +37,7 @@
         <version>1.0.0</version>
         <type>colony</type>
         <name>Entity Manager Plugin</name>
-        <description>Entity Manager Plugin</description>
+        <description>The plugin that manages the entity manager orm system</description>
         <url>http://www.hive.pt</url>
     </artifact>
     <build>
