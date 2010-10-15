@@ -37,7 +37,7 @@
         <version>1.0.0</version>
         <type>colony</type>
         <name>Dummy Distribution Client Plugin</name>
-        <description>Dummy Distribution Client Plugin</description>
+        <description>Just another dummy distribution client plugin</description>
         <url>http://www.hive.pt</url>
     </artifact>
     <build>

@@ -37,7 +37,7 @@
         <version>1.0.0</version>
         <type>colony</type>
         <name>Dummy Remote Client Plugin</name>
-        <description>Dummy Remote Client Plugin</description>
+        <description>Just another dummy remote client plugin</description>
         <url>http://www.hive.pt</url>
     </artifact>
     <build>

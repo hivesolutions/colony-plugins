@@ -37,7 +37,7 @@
         <version>1.0.0</version>
         <type>colony</type>
         <name>Italian Dummy Plugin</name>
-        <description>Italian Dummy Plugin</description>
+        <description>This is the main plugin for the italian dictionary's stuff</description>
         <url>http://www.hive.pt</url>
     </artifact>
     <build>

@@ -36,8 +36,8 @@
         <id>pt.hive.colony.plugins.dummy.aux1</id>
         <version>1.0.0</version>
         <type>colony</type>
-        <name>Dummy Plugin Aux 1</name>
-        <description>Dummy Plugin Aux 1</description>
+        <name>Dummy Aux 1 Plugin</name>
+        <description>Dummy Aux 1 Plugin</description>
         <url>http://www.hive.pt</url>
     </artifact>
     <build>

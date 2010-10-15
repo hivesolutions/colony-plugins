@@ -37,7 +37,7 @@
         <version>1.0.0</version>
         <type>colony</type>
         <name>Dummy Business Logic 1 Plugin</name>
-        <description>Dummy Business Logic 1 Plugin</description>
+        <description>Just another dummy business logic plugin</description>
         <url>http://www.hive.pt</url>
     </artifact>
     <build>
