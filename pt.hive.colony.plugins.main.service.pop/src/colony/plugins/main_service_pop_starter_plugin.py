@@ -54,14 +54,14 @@ class MainServicePopStarterPlugin(colony.base.plugin_system.Plugin):
     loading_type = colony.base.plugin_system.EAGER_LOADING_TYPE
     platforms = [colony.base.plugin_system.CPYTHON_ENVIRONMENT,
                  colony.base.plugin_system.JYTHON_ENVIRONMENT]
-    attributes = {"build_automation_file_path" : "$base{plugin_directory}/main_service_pop_starter/resources/baf.xml"}
+    attributes = {"build_automation_file_path" : "$base{plugin_directory}/main_service_pop_starter/main_pop_starter/resources/baf.xml"}
     capabilities = ["main", "build_automation_item"]
     capabilities_allowed = []
     dependencies = [colony.base.plugin_system.PluginDependency(
                     "pt.hive.colony.plugins.main.service.pop", "1.0.0")]
     events_handled = []
     events_registrable = []
-    main_modules = ["main_service_pop_starter.main_service_pop_starter_system"]
+    main_modules = ["main_service_pop_starter.main_pop_starter.main_service_pop_starter_system"]
 
     main_service_pop_plugin = None
 

@@ -14,8 +14,10 @@
                 "version" : "1.0.0"
             }],
     "main_file" : "main_service_pop_starter_plugin.py",
-    "resources" : ["main_service_pop_starter_plugin.py",
+    "resources" : [
+            "main_service_pop_starter_plugin.py",
             "main_service_pop_starter/__init__.py",
-            "main_service_pop_starter/main_service_pop_starter_system.py",
-            "main_service_pop_starter/resources/baf.xml"]
+            "main_service_pop_starter/main_pop_starter/__init__.py",
+            "main_service_pop_starter/main_pop_starter/main_service_pop_starter_system.py",
+            "main_service_pop_starter/main_pop_starter/resources/baf.xml"]
 }
