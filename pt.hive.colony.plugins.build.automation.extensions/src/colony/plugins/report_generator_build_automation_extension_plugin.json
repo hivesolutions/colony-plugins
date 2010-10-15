@@ -1,0 +1,19 @@
+{
+    "platform" : "python",
+    "sub_platforms" : ["cpython"],
+    "id" : "pt.hive.colony.plugins.build.automation.extensions.report_generator",
+    "name" : "Report Generator Build Automation Extension Plugin",
+    "short_name" : "Report Generator Build Automation Extension",
+    "description" : "A plugin to manage the report generator build automation tasks",
+    "version" : "1.0.0",
+    "author" : "Hive Solutions Lda. <development@hive.pt>",
+    "capabilities" : ["build_automation_extension", "build_automation_item"],
+    "capabilities_allowed" : [],
+    "dependencies" : [],
+    "main_file" : "report_generator_build_automation_extension_plugin.py",
+    "resources" : [
+            "report_generator_build_automation_extension_plugin.py",
+            "build_automation_extensions/__init__.py",
+            "build_automation_extensions/report_generator/__init__.py",
+            "build_automation_extensions/report_generator/report_generator_build_automation_extension_system.py"]
+}
