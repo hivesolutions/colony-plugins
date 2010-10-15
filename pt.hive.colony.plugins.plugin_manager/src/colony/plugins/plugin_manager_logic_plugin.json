@@ -13,6 +13,7 @@
     "main_file" : "plugin_manager_logic_plugin.py",
     "resources" : ["plugin_manager_logic_plugin.py",
             "plugin_manager_logic/__init__.py",
-            "plugin_manager_logic/plugin_manager_logic_system.py",
-            "plugin_manager_logic/resources/baf.xml"]
+            "plugin_manager_logic/logic/__init__.py",
+            "plugin_manager_logic/logic/plugin_manager_logic_system.py",
+            "plugin_manager_logic/logic/resources/baf.xml"]
 }

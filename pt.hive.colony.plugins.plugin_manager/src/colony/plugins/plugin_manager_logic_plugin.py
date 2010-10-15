@@ -54,21 +54,21 @@ class PluginManagerLogicPlugin(colony.base.plugin_system.Plugin):
     loading_type = colony.base.plugin_system.EAGER_LOADING_TYPE
     platforms = [colony.base.plugin_system.CPYTHON_ENVIRONMENT,
                  colony.base.plugin_system.JYTHON_ENVIRONMENT]
-    attributes = {"build_automation_file_path" : "$base{plugin_directory}/plugin_manager_logic/resources/baf.xml"}
+    attributes = {"build_automation_file_path" : "$base{plugin_directory}/plugin_manager_logic/logic/resources/baf.xml"}
     capabilities = ["business_logic_bundle", "build_automation_item"]
     capabilities_allowed = []
     dependencies = []
     events_handled = []
     events_registrable = []
-    main_modules = ["plugin_manager_logic.plugin_manager_logic_system"]
+    main_modules = ["plugin_manager_logic.logic.plugin_manager_logic_system"]
 
     plugin_manager_logic = None
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
         global plugin_manager_logic
-        import plugin_manager_logic.plugin_manager_logic_system
-        self.plugin_manager_logic = plugin_manager_logic.plugin_manager_logic_system.PluginManagerLogic(self)
+        import plugin_manager_logic.logic.plugin_manager_logic_system
+        self.plugin_manager_logic = plugin_manager_logic.logic.plugin_manager_logic_system.PluginManagerLogic(self)
 
     def end_load_plugin(self):
         colony.base.plugin_system.Plugin.end_load_plugin(self)
