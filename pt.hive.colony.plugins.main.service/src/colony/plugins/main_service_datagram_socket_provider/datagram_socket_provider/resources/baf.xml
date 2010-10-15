@@ -37,7 +37,7 @@
         <version>1.0.0</version>
         <type>colony</type>
         <name>Service Main Datagram Socket Provider Plugin</name>
-        <description>Service Main Datagram Socket Provider Plugin</description>
+        <description>The plugin that offers the Datagram socket provider</description>
         <url>http://www.hive.pt</url>
     </artifact>
     <build>
