@@ -37,7 +37,7 @@
         <version>1.0.0</version>
         <type>colony</type>
         <name>Document Pdf Plugin</name>
-        <description>Document Pdf Plugin</description>
+        <description>The that control the pdf document generation and loading</description>
         <url>http://www.hive.pt</url>
     </artifact>
     <build>
