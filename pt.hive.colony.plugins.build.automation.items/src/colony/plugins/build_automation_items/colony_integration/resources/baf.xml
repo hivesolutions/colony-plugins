@@ -37,7 +37,7 @@
         <version>1.0.0</version>
         <type>colony</type>
         <name>Colony Integration Build Automation Item Plugin</name>
-        <description>The Colony Integration Build Automation Item Plugin automation file (baf)</description>
+        <description>The build automation item for the integration of the colony framework</description>
         <url>http://www.hive.pt</url>
     </artifact>
     <build>
