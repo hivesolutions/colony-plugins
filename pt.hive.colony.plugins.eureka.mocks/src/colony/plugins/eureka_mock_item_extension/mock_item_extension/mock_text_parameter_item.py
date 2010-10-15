@@ -37,9 +37,9 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-import eureka.eureka_item
+import eureka_engine.engine.eureka_item
 
-class MockTextParameterItem(eureka.eureka_item.EurekaItem):
+class MockTextParameterItem(eureka_engine.engine.eureka_item.EurekaItem):
     """
     This class is a sample Eureka item of the text parameter type.
     """

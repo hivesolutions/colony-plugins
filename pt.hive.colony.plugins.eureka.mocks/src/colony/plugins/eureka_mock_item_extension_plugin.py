@@ -74,7 +74,6 @@ class EurekaMockItemExtensionPlugin(colony.base.plugin_system.Plugin):
         colony.base.plugin_system.Plugin.load_plugin(self)
         global eureka
         global eureka_mock_item_extension
-        import eureka.eureka_item
         import eureka_mock_item_extension.mock_item_extension.mock_entity_item
         import eureka_mock_item_extension.mock_item_extension.mock_operation_item
         import eureka_mock_item_extension.mock_item_extension.mock_procedure_item
