@@ -37,7 +37,7 @@
         <version>1.0.0</version>
         <type>colony</type>
         <name>Gui Main Plugin</name>
-        <description>Gui Main Plugin</description>
+        <description>Gui Main Plugin for wx bindings</description>
         <url>http://www.hive.pt</url>
     </artifact>
     <build>
