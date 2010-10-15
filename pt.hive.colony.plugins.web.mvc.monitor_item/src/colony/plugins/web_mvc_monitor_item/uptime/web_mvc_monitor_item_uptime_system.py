@@ -39,6 +39,8 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 import time
 
+import colony.libs.time_util
+
 WEB_MVC_MONITOR_ITEM_UPTIME_RESOURCES_PATH = "web_mvc_monitor_item/uptime/resources"
 """ The web monitor item uptime resources path """
 
@@ -157,7 +159,7 @@ class WebMvcMonitorItemUptimeMainController:
         uptime = current_time - plugin_manager.plugin_manager_timestamp
 
         # creates the uptime string
-        uptime_string = str(int(uptime)) + "s"
+        uptime_string = colony.libs.time_util.format_seconds_smart(uptime, "basic", ("day", "hour", "minute"))
 
         # assigns the uptime to the template
         template_file.assign("uptime", uptime_string)
