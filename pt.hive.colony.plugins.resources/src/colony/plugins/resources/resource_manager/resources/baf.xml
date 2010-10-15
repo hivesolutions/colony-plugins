@@ -37,7 +37,7 @@
         <version>1.0.0</version>
         <type>colony</type>
         <name>Resource Manager Plugin</name>
-        <description>Resource Manager Plugin</description>
+        <description>A plugin to manage the resources contained in the plugins</description>
         <url>http://www.hive.pt</url>
     </artifact>
     <build>

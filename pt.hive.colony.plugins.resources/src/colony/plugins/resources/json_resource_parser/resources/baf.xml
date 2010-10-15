@@ -37,7 +37,7 @@
         <version>1.0.0</version>
         <type>colony</type>
         <name>Json Resource Parser Plugin</name>
-        <description>Json Resource Parser Plugin</description>
+        <description>A plugin to parse json resources</description>
         <url>http://www.hive.pt</url>
     </artifact>
     <build>

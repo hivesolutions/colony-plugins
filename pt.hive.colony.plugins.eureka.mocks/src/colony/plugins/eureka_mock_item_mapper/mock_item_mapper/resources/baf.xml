@@ -37,7 +37,7 @@
         <version>1.0.0</version>
         <type>colony</type>
         <name>Eureka Mock Item Mapper Plugin</name>
-        <description>Eureka Mock Item Mapper plugin to illustrate and test the eureka_item_Mapper capability</description>
+        <description>Eureka Mock Item Mapper plugin to illustrate and test the eureka_item_mapper capability</description>
         <url>http://www.hive.pt</url>
     </artifact>
     <build>

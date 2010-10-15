@@ -37,7 +37,7 @@
         <version>1.0.0</version>
         <type>colony</type>
         <name>Web Mvc Monitor Item Resources Plugin</name>
-        <description>Web Mvc Monitor Item Resources Plugin</description>
+        <description>The plugin that offers the web mvc monitor item resources</description>
         <url>http://www.hive.pt</url>
     </artifact>
     <build>
