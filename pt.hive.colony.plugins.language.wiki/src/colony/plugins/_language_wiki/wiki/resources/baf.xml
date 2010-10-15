@@ -37,7 +37,7 @@
         <version>1.0.0</version>
         <type>colony</type>
         <name>Language Wiki Plugin</name>
-        <description>Language Wiki Plugin</description>
+        <description>The plugin that offers the wiki language parsing and generation capabilities</description>
         <url>http://www.hive.pt</url>
     </artifact>
     <build>
