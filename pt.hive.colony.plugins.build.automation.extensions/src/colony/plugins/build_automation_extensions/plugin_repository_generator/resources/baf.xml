@@ -33,11 +33,11 @@
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://www.hive.pt xsd/baf.xsd">
     <artifact>
-        <id>pt.hive.colony.plugins.build.automation.extensions.repository.generator</id>
+        <id>pt.hive.colony.plugins.build.automation.extensions.plugin_repository.generator</id>
         <version>1.0.0</version>
         <type>colony</type>
-        <name>Repository Generator Build Automation Extension Plugin</name>
-        <description>Repository Generator Build Automation Extension Plugin</description>
+        <name>Plugin Repository Generator Build Automation Extension Plugin</name>
+        <description>A plugin to manage the plugin repository generator build automation tasks</description>
         <url>http://www.hive.pt</url>
     </artifact>
     <build>

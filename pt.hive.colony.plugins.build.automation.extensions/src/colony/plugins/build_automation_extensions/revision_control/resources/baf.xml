@@ -37,7 +37,7 @@
         <version>1.0.0</version>
         <type>colony</type>
         <name>Revision Control Build Automation Extension Plugin</name>
-        <description>Revision Control Build Automation Extension Plugin</description>
+        <description>A plugin to manage the revision control build automation tasks</description>
         <url>http://www.hive.pt</url>
     </artifact>
     <build>
