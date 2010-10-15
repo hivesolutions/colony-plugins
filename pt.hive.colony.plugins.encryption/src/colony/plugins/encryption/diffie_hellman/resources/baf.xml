@@ -37,7 +37,7 @@
         <version>1.0.0</version>
         <type>colony</type>
         <name>Diffie Hellman Encryption Plugin</name>
-        <description>Diffie Hellman Encryption Plugin</description>
+        <description>The plugin that offers the diffie hellman encryption support</description>
         <url>http://www.hive.pt</url>
     </artifact>
     <build>
