@@ -37,7 +37,7 @@
         <version>1.0.0</version>
         <type>colony</type>
         <name>Descriptor Generator Plugin</name>
-        <description>Descriptor Generator</description>
+        <description>A plugin used to generate plugin descriptor files</description>
         <url>http://www.hive.pt</url>
     </artifact>
     <build>
