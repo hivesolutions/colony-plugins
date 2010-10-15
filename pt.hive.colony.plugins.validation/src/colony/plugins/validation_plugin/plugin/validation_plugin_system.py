@@ -142,9 +142,6 @@ RESOURCE_FILE_EXTENSION_EXCLUSION_LIST = (".svn", ".svn-base", ".svn-revert", ".
 BUILD_AUTOMATION_ITEM_CAPABILITY_PLUGIN_EXCLUSION_LIST = ("pt.hive.colony.plugins.build.automation")
 """ The list of plugins that are allowed not to have the build automation item capability """
 
-BUILD_AUTOMATION_FILE_SPECIFICATION_FILE_REGEX = re.compile("<specification_file>(.*?)</specification_file>")
-""" The build automation file specification file regex """
-
 PLUGIN_DESCRIPTOR_ATTRIBUTES_MAP = {"id" : "original_id",
                                     "sub_platforms" : "platforms",
                                     "name" : "name",
@@ -610,31 +607,6 @@ class ValidationPlugin:
 
             # returns since nothing else can be tested
             return
-
-        # opens the build automation file
-        build_automation_file = open(build_automation_file_path, "rb")
-
-        # reads the build automation file's data
-        build_automation_file_data = build_automation_file.read()
-
-        # decodes the build automation file data
-        build_automation_file_data = build_automation_file_data.decode(DEFAULT_BAF_ENCODING)
-
-        # closes the build automation file
-        build_automation_file.close()
-
-        # retrieves the specification file paths
-        specification_file_paths = BUILD_AUTOMATION_FILE_SPECIFICATION_FILE_REGEX.findall(build_automation_file_data)
-
-        # checks if the defined specification file paths exist
-        for specification_file_path in specification_file_paths:
-            # sets the plugin path in the specification file path
-            specification_file_path = specification_file_path.replace(BASE_PLUGIN_DIRECTORY_VARIABLE, plugin_path)
-
-            # checks if the specification file exists
-            if not os.path.exists(specification_file_path):
-                # logs the validation error
-                self.add_validation_error(validation_errors, plugin_information, "'%s' build automation file '%s' references missing specification file '%s'" % (plugin_module_name, build_automation_file_path, specification_file_path))
 
     def add_validation_error(self, validation_errors, plugin_information, validation_error_message):
         # defines the validation error map
