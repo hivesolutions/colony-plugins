@@ -256,34 +256,60 @@ class AbstractClient:
         @return: The retrieved client connection.
         """
 
-        # retrieve the host, the port and the socket name
-        # from the connection tuple
-        host, port, socket_name = connection_tuple
+        # tries to retrieve the current client connection
+        client_connection = self.client_connections_map.get(connection_tuple, None)
 
         # in case the connection tuple is not present in the
-        # client connections map
-        if not connection_tuple in self.client_connections_map:
-            # creates the address tuple
-            address = (host, port)
-
-            # creates a socket for the client with
-            # the given socket name
-            client_connection_socket = self._get_socket(socket_name)
-
-            # retrieves the client connection
-            client_connection = ClientConnection(self.client_plugin, self, client_connection_socket, address, socket_name, self.chunk_size)
+        # client connections map or the current client connection
+        # is not open
+        if not client_connection or not client_connection.is_open():
+            # creates the a new client connection for the given connection
+            # tuple and with the open connection option
+            client_connection = self._create_client_connection(connection_tuple, open_connection)
 
             # sets the client connection in the client connections map
             self.client_connections_map[connection_tuple] = client_connection
 
-            # in case the connection should be opened
-            if open_connection:
-                # opens the client connection
-                client_connection.open()
-
         # retrieves the client connection for the client
         # connections map
         client_connection = self.client_connections_map[connection_tuple]
+
+        # returns the client connection
+        return client_connection
+
+    def _create_client_connection(self, connection_tuple, open_connection = True):
+        """
+        Creates the client connection for the given
+        connection tuple.
+
+        @type connection_tuple: Tuple
+        @param connection_tuple: The tuple containing
+        the connection reference.
+        @type open_connection: bool
+        @param open_connection: If the connection should be opened
+        in case the connection is going to be created.
+        @rtype: ClientConnection
+        @return: The created client connection.
+        """
+
+        # retrieves the host, the port and the socket name
+        # from the connection tuple
+        host, port, socket_name = connection_tuple
+
+        # creates the address tuple
+        address = (host, port)
+
+        # creates a socket for the client with
+        # the given socket name
+        client_connection_socket = self._get_socket(socket_name)
+
+        # retrieves the client connection
+        client_connection = ClientConnection(self.client_plugin, self, client_connection_socket, address, socket_name, self.chunk_size)
+
+        # in case the connection should be opened
+        if open_connection:
+            # opens the client connection
+            client_connection.open()
 
         # returns the client connection
         return client_connection
@@ -353,6 +379,9 @@ class ClientConnection:
     connection_properties = {}
     """ The connection properties map """
 
+    connection_status = False
+    """ The connection status flag """
+
     cancel_time = None
     """ The cancel time """
 
@@ -415,10 +444,16 @@ class ClientConnection:
         # calls the connection opened handlers
         self._call_connection_opened_handlers()
 
+        # sets the connection status flag
+        self.connection_status = True
+
     def close(self):
         """
         Closes the connection.
         """
+
+        # unsets the connection status flag
+        self.connection_status = False
 
         # closes the connection socket
         self.connection_socket.close()
@@ -510,8 +545,8 @@ class ClientConnection:
             raise main_client_utils_exceptions.RequestClosed("invalid socket")
 
         if selected_values == ([], [], []):
-            # closes the connection socket
-            self.connection_socket.close()
+            # closes the connection
+            self.close()
 
             # raises the server request timeout exception
             raise main_client_utils_exceptions.ClientRequestTimeout("%is timeout" % request_timeout)
@@ -582,8 +617,8 @@ class ClientConnection:
                     # reconnects the connection socket
                     self._reconnect_connection_socket()
             elif selected_values == ([], [], []):
-                # closes the connection socket
-                self.connection_socket.close()
+                # closes the connection
+                self.close()
 
                 # raises the server response timeout exception
                 raise main_client_utils_exceptions.ServerResponseTimeout("%is timeout" % response_timeout)
@@ -592,6 +627,9 @@ class ClientConnection:
                     # sends the data in chunks
                     number_bytes_sent = self.connection_socket.send(message)
                 except Exception, exception:
+                    # closes the connection
+                    self.close()
+
                     # raises the client response timeout exception
                     raise main_client_utils_exceptions.ClientResponseTimeout("problem sending data: " + unicode(exception))
 
@@ -606,6 +644,16 @@ class ClientConnection:
                 else:
                     # creates the new message
                     message = message[number_bytes * -1:]
+
+    def is_open(self):
+        """
+        Retrieves if the current connection is open.
+
+        @rtype: bool
+        @return: If the current connection is open.
+        """
+
+        return self.connection_status
 
     def get_connection_property(self, property_name):
         """
