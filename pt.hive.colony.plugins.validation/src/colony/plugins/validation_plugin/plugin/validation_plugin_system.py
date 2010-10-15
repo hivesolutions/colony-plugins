@@ -142,6 +142,18 @@ RESOURCE_FILE_EXTENSION_EXCLUSION_LIST = (".svn", ".svn-base", ".svn-revert", ".
 BUILD_AUTOMATION_ITEM_CAPABILITY_PLUGIN_EXCLUSION_LIST = ("pt.hive.colony.plugins.build.automation")
 """ The list of plugins that are allowed not to have the build automation item capability """
 
+BUILD_AUTOMATION_FILE_ARTIFACT_ID_REGEX = re.compile("<id>(.*?)</id>")
+""" The build automation file artifact id regex """
+
+BUILD_AUTOMATION_FILE_ARTIFACT_VERSION_REGEX = re.compile("<version>(.*?)</version>")
+""" The build automation file artifact version regex """
+
+BUILD_AUTOMATION_FILE_ARTIFACT_NAME_REGEX = re.compile("<name>(.*?)</name>")
+""" The build automation file artifact name regex """
+
+BUILD_AUTOMATION_FILE_ARTIFACT_DESCRIPTION_REGEX = re.compile("<description>(.*?)</description>")
+""" The build automation file artifact description regex """
+
 BUILD_AUTOMATION_FILE_SPECIFICATION_FILE_REGEX = re.compile("<specification_file>(.*?)</specification_file>")
 """ The build automation file specification file regex """
 
@@ -611,6 +623,19 @@ class ValidationPlugin:
             # returns since nothing else can be tested
             return
 
+        # validates the build automation file attributes
+        self._validate_build_automation_file_attributes(plugin_information, build_automation_file_path, validation_errors)
+
+    def _validate_build_automation_file_attributes(self, plugin_information, build_automation_file_path, validation_errors):
+        # retrieves the plugin
+        plugin = plugin_information.plugin
+
+        # retrieves the plugin module name
+        plugin_module_name = plugin_information.plugin_module_name
+
+        # retrieves the plugin path
+        plugin_path = plugin_information.plugin_path
+
         # opens the build automation file
         build_automation_file = open(build_automation_file_path, "rb")
 
@@ -622,6 +647,38 @@ class ValidationPlugin:
 
         # closes the build automation file
         build_automation_file.close()
+
+        # retrieves the build automation file artifact id
+        build_automation_file_artifact_id = BUILD_AUTOMATION_FILE_ARTIFACT_ID_REGEX.findall(build_automation_file_data)[0]
+
+        # checks that the build automation artifact id is valid
+        if not plugin.id == build_automation_file_artifact_id:
+            # logs the validation error
+            self.add_validation_error(validation_errors, plugin_information, "'%s' build automation file '%s' has invalid artifact attribute 'id'" % (plugin_module_name, build_automation_file_path))
+
+        # retrieves the build automation file artifact version
+        build_automation_file_artifact_version = BUILD_AUTOMATION_FILE_ARTIFACT_VERSION_REGEX.findall(build_automation_file_data)[0]
+
+        # checks that the build automation artifact version is valid
+        if not plugin.version == build_automation_file_artifact_version:
+            # logs the validation error
+            self.add_validation_error(validation_errors, plugin_information, "'%s' build automation file '%s' has invalid artifact attribute 'version'" % (plugin_module_name, build_automation_file_path))
+
+        # retrieves the build automation file artifact name
+        build_automation_file_artifact_name = BUILD_AUTOMATION_FILE_ARTIFACT_NAME_REGEX.findall(build_automation_file_data)[0]
+
+        # checks that the build automation artifact name is valid
+        if not plugin.name == build_automation_file_artifact_name:
+            # logs the validation error
+            self.add_validation_error(validation_errors, plugin_information, "'%s' build automation file '%s' has invalid artifact attribute 'name'" % (plugin_module_name, build_automation_file_path))
+
+        # retrieves the build automation file artifact description
+        build_automation_file_artifact_description = BUILD_AUTOMATION_FILE_ARTIFACT_DESCRIPTION_REGEX.findall(build_automation_file_data)[0]
+
+        # checks that the build automation artifact description is valid
+        if not plugin.description == build_automation_file_artifact_description:
+            # logs the validation error
+            self.add_validation_error(validation_errors, plugin_information, "'%s' build automation file '%s' has invalid artifact attribute 'description'" % (plugin_module_name, build_automation_file_path))
 
         # retrieves the specification file paths
         specification_file_paths = BUILD_AUTOMATION_FILE_SPECIFICATION_FILE_REGEX.findall(build_automation_file_data)
