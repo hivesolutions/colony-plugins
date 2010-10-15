@@ -37,7 +37,7 @@
         <version>1.0.0</version>
         <type>colony</type>
         <name>Communication Push Plugin</name>
-        <description>Communication Push Plugin</description>
+        <description>A plugin to manager the push notifications communication</description>
         <url>http://www.hive.pt</url>
     </artifact>
     <build>
