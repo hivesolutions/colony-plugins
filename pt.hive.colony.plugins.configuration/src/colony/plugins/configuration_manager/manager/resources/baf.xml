@@ -37,7 +37,7 @@
         <version>1.0.0</version>
         <type>colony</type>
         <name>Configuration Manager Plugin</name>
-        <description>Configuration Manager Plugin</description>
+        <description>The plugin that controls the deployment and retrieval of configurations</description>
         <url>http://www.hive.pt</url>
     </artifact>
     <build>
