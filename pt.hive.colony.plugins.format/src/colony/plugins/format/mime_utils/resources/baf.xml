@@ -37,7 +37,7 @@
         <version>1.0.0</version>
         <type>colony</type>
         <name>Mime Format Utils Plugin</name>
-        <description>Mime Format Utils Plugin</description>
+        <description>The plugin that offers the mime format utils support</description>
         <url>http://www.hive.pt</url>
     </artifact>
     <build>
