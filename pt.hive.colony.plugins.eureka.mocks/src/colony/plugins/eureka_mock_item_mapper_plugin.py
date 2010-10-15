@@ -47,7 +47,7 @@ class EurekaMockItemMapperPlugin(colony.base.plugin_system.Plugin):
     id = "pt.hive.colony.plugins.eureka.mock_item_mapper_plugin"
     name = "Eureka Mock Item Mapper Plugin"
     short_name = "Eureka Mock Item Mapper"
-    description = "Eureka Mock Item Mapper plugin to illustrate and test the eureka_item_Mapper capability."
+    description = "Eureka Mock Item Mapper plugin to illustrate and test the eureka_item_mapper capability"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     loading_type = colony.base.plugin_system.EAGER_LOADING_TYPE
