@@ -67,6 +67,9 @@ DEFAULT_SENDER_EMAIL = "integration@getcolony.com"
 VERSION_VALUE = "version"
 """ The version value """
 
+TOTAL_TIME_FORMATED_VALUE = "total_time_formated"
+""" The total time formated """
+
 CHANGELOG_LIST_VALUE = "changelog_list"
 """ The changelog list value """
 
@@ -204,6 +207,9 @@ class EmailBuildAutomationExtension:
         # retrieves the build automation version (revision)
         build_automation_version = build_automation_structure_runtime.properties.get(VERSION_VALUE, -1)
 
+        # retrieves the build automation total time formated
+        build_automation_total_time_formated = build_automation_structure_runtime.properties.get(TOTAL_TIME_FORMATED_VALUE, "")
+
         # retrieves the build automation changelog list
         build_automation_changelog_list = build_automation_structure_runtime.properties.get(CHANGELOG_LIST_VALUE, [])
 
@@ -305,6 +311,9 @@ class EmailBuildAutomationExtension:
 
         # assigns the version to the parsed template file
         template_file.assign("version", build_automation_version)
+
+        # assigns the total time formated to the parsed template file
+        template_file.assign("total_time_formated", build_automation_total_time_formated)
 
         # assigns the changelog list to the parsed template file
         template_file.assign("changelog_list", build_automation_changelog_list)

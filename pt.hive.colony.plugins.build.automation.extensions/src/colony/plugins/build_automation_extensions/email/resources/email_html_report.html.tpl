@@ -14,14 +14,32 @@
                     </td>
                 </tr>
                 <tr>
-                    <td colspan="3" align="right" cellpadding="0" cellspacing="0" height="60">
-                        <table width="130">
-                            <tr height="36" >
-                                <td align="right">
-                                    <font face="Rockwell, Arial" size="4" color="#214c8f">build</font>
+                    <td colspan="3" align="right" cellpadding="0" cellspacing="0" height="70" background="cid:build_line.gif">
+                        <table width="160">
+                            <tr height="18">
+                                <td align="center">
+                                    <font face="Rockwell, Arial" size="5" color="#214c8f">build</font>
                                     <font face="Rockwell, Arial" size="5" color="#214c8f"><b>${out_none value=version xml_escape=True /}</b></font>
                                 </td>
-                                <td width="4"></td>
+                            </tr>
+                            ${if item=success value=True operator=eq}
+                                <tr height="10" background="cid:build_line_green.gif">
+                                    <td></td>
+                                </tr>
+                                <tr height="0" background="cid:build_line_red.gif">
+                                    <td></td>
+                                </tr>
+                            ${/if}
+                            ${if item=success value=False operator=eq}
+                                <tr height="10" background="cid:build_line_red.gif">
+                                    <td></td>
+                                </tr>
+                                <tr height="0" background="cid:build_line_green.gif">
+                                    <td></td>
+                                </tr>
+                            ${/if}
+                            <tr height="10">
+                                <td></td>
                             </tr>
                         </table>
                     </td>
@@ -45,7 +63,7 @@
                                 ${foreach item=changer from=changers_list}
                                 <font face="Rockwell, Arial" size="2" color="#214c8f"><b>${out_none value=changer.name xml_escape=True /} (${out_none value=changer.username xml_escape=True /})</b></font>,
                                 ${/foreach}.<br />
-                                The total time for the build automation run was <font face="Rockwell, Arial" size="2" color="#214c8f"><b>2 minutes</b></font>.
+                                The total time for the build automation run was <font face="Rockwell, Arial" size="2" color="#214c8f"><b>${out_none value=total_time_formated xml_escape=True /}</b></font>.
                             </font>
                         </p>
                         <p>
@@ -56,7 +74,7 @@
                         ${foreach item=change from=changelog_list}
                         <p>
                             <font face="Arial" size="2" color="#333333">
-                                <font face="Rockwell, Arial" size="3" color="#214c8f"><b><a href="#">r${out_none value=change.number xml_escape=True /}</a> - ${out_none value=change.user.name xml_escape=True /} (${out_none value=change.user.email xml_escape=True /})</b></font><br />
+                                <font face="Rockwell, Arial" size="3" color="#214c8f"><b><a href="#">r${out_none value=change.number xml_escape=True /}</a> - ${out_none value=change.user.name xml_escape=True /} (${out_none value=change.user.username xml_escape=True /})</b></font><br />
                                 ${out_none value=change.message xml_escape=True /}
                             </font>
                         </p>
