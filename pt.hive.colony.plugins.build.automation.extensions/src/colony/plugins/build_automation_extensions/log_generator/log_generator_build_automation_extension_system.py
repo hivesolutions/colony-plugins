@@ -42,9 +42,6 @@ import os
 LOG_DIRECTORY_VALUE = "log_directory"
 """ The log directory value """
 
-LOG_DIRECTORY_NAME = "log"
-""" The log directory name """
-
 FULL_LOG_NAME = "build_automation.log"
 """ The full log name """
 
