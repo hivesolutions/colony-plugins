@@ -85,6 +85,9 @@ RESOURCES_VALUE = "resources"
 VERSION_VALUE = "version"
 """ The version value """
 
+SYSTEM_FILE_DIRECTORY_DEPTH = 2
+""" The directory depth at which system files should be located """
+
 DEFAULT_BAF_ENCODING = "Cp1252"
 """ The default baf encoding """
 
@@ -209,6 +212,9 @@ class ValidationPlugin:
             # returns since nothing else can be tested
             return
 
+        # validates the plugin directory structure
+        self._validate_plugin_directory_structure(plugin_information, validation_errors)
+
         # validates the plugin file
         self._validate_plugin_file(plugin_information, validation_errors)
 
@@ -225,6 +231,21 @@ class ValidationPlugin:
 
         # validates the build automation file
         self._validate_build_automation_file(plugin_information, validation_errors)
+
+    def _validate_plugin_directory_structure(self, plugin_information, validation_errors):
+        # retrieves the base plugin system directory path
+        base_plugin_system_directory_path = plugin_information.plugin_system_directory_path.replace(plugin_information.plugin_path, "")
+
+        # removes the trailing slash from the beginning of the path
+        base_plugin_system_directory_path = base_plugin_system_directory_path[1:]
+
+        # splits the base plugin system directory path
+        base_plugin_system_directory_path_tokens = base_plugin_system_directory_path.split(UNIX_DIRECTORY_SEPARATOR)
+
+        # checks that the system directory path has the appropriate depth
+        if not len(base_plugin_system_directory_path_tokens) == SYSTEM_FILE_DIRECTORY_DEPTH:
+            # logs the validation error
+            self.add_validation_error(validation_errors, plugin_information, "'%s' doesn't have a valid directory structure leading to the system file" % plugin_information.plugin_module_name)
 
     def _validate_plugin_file(self, plugin_information, validation_errors):
         # validates the plugin's class name
