@@ -13,8 +13,18 @@
                         <img src="cid:email_header.gif" height="44" width="600" alt="Hive Solutions" />
                     </td>
                 </tr>
-                <tr height="80">
-                    <td colspan="3"></td>
+                <tr>
+                    <td colspan="3" align="right" cellpadding="0" cellspacing="0" height="60">
+                        <table width="130">
+                            <tr height="36" >
+                                <td align="right">
+                                    <font face="Rockwell, Arial" size="4" color="#214c8f">build</font>
+                                    <font face="Rockwell, Arial" size="5" color="#214c8f"><b>${out_none value=version xml_escape=True /}</b></font>
+                                </td>
+                                <td width="4"></td>
+                            </tr>
+                        </table>
+                    </td>
                 </tr>
                 <tr>
                     <td width="100"></td>
@@ -81,7 +91,7 @@
                         <br />
                         <table id="footer">
                             <tr>
-                                <td width="70" align="left"><img src="cid:character_l.gif" height="100" width="50" /></td>
+                                <td width="70" align="left"><img src="cid:robot.gif" height="100" width="50" /></td>
                                 <td>
                                     <font face="Rockwell, Arial" size="3" color="#808080"><strong>Colony Continuous Integration</strong></font><br />
                                     <font face="Rockwell, Arial" size="2" color="#808080">Automation the easy way</font><br />
