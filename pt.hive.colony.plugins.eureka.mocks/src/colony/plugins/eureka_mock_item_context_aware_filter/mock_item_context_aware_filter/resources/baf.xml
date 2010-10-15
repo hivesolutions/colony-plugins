@@ -37,7 +37,7 @@
         <version>1.0.0</version>
         <type>colony</type>
         <name>Eureka Mock Item Context Aware Filter Plugin</name>
-        <description>Eureka Mock Item Context Aware Filter Plugin</description>
+        <description>Eureka Mock Item Context Aware Filter plugin to illustrate and test the eureka_item_filter capability</description>
         <url>http://www.hive.pt</url>
     </artifact>
     <build>

@@ -37,7 +37,7 @@
         <version>1.0.0</version>
         <type>colony</type>
         <name>Eureka Mock Item Extension Plugin</name>
-        <description>Eureka Mock Item Extension Plugin</description>
+        <description>Eureka Mock Item Extension plugin to illustrate and test the eureka_item_extension capability</description>
         <url>http://www.hive.pt</url>
     </artifact>
     <build>

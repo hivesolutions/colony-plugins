@@ -37,7 +37,7 @@
         <version>1.0.0</version>
         <type>colony</type>
         <name>Eureka Mock Item Sorter Plugin</name>
-        <description>Eureka Mock Item Sorter Plugin</description>
+        <description>Eureka Mock Item Sorter plugin to illustrate and test the eureka_item_processer.sorter capability</description>
         <url>http://www.hive.pt</url>
     </artifact>
     <build>

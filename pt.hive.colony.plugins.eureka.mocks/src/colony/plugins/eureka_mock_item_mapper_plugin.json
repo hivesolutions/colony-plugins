@@ -4,7 +4,7 @@
     "id" : "pt.hive.colony.plugins.eureka.mock_item_mapper_plugin",
     "name" : "Eureka Mock Item Mapper Plugin",
     "short_name" : "Eureka Mock Item Mapper",
-    "description" : "Eureka Mock Item Mapper plugin to illustrate and test the eureka_item_Mapper capability.",
+    "description" : "Eureka Mock Item Mapper plugin to illustrate and test the eureka_item_Mapper capability",
     "version" : "1.0.0",
     "author" : "Hive Solutions Lda. <development@hive.pt>",
     "capabilities" : ["eureka_item_processer.mapper", "build_automation_item"],
