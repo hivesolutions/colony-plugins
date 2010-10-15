@@ -47,7 +47,7 @@ class MainAuthenticationOpenidHandlerPlugin(colony.base.plugin_system.Plugin):
     id = "pt.hive.colony.plugins.main.authentication.openid_handler"
     name = "Authentication Openid Handler Main Plugin"
     short_name = "Authentication Openid Handler Main"
-    description = "Authentication Openid Handler Plugin"
+    description = "Authentication Openid Handler Main Plugin"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     loading_type = colony.base.plugin_system.EAGER_LOADING_TYPE
