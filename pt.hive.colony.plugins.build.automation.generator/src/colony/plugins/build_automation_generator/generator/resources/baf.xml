@@ -37,7 +37,7 @@
         <version>1.0.0</version>
         <type>colony</type>
         <name>Build Automation Generator Plugin</name>
-        <description>Build Automation Generator Plugin</description>
+        <description>Plugin used to generate build automation files from the source plugin files</description>
         <url>http://www.hive.pt</url>
     </artifact>
     <build>
