@@ -1489,6 +1489,9 @@ class ServiceConnection:
     connection_properties = {}
     """ The connection properties map """
 
+    connection_status = False
+    """ The connection status flag """
+
     cancel_time = None
     """ The cancel time """
 
@@ -1540,10 +1543,16 @@ class ServiceConnection:
         # calls the connection opened handlers
         self._call_connection_opened_handlers()
 
+        # sets the connection status flag
+        self.connection_status = True
+
     def close(self):
         """
         Closes the connection.
         """
+
+        # unsets the connection status flag
+        self.connection_status = False
 
         # closes the connection socket
         self.connection_socket.close()
@@ -1621,8 +1630,8 @@ class ServiceConnection:
             raise main_service_utils_exceptions.RequestClosed("invalid socket")
 
         if selected_values == ([], [], []):
-            # closes the connection socket
-            self.connection_socket.close()
+            # closes the connection
+            self.close()
 
             # raises the server request timeout exception
             raise main_service_utils_exceptions.ServerRequestTimeout("%is timeout" % request_timeout)
@@ -1661,8 +1670,8 @@ class ServiceConnection:
                 raise main_service_utils_exceptions.RequestClosed("invalid socket")
 
             if selected_values == ([], [], []):
-                # closes the connection socket
-                self.connection_socket.close()
+                # closes the connection
+                self.close()
 
                 # raises the server response timeout exception
                 raise main_service_utils_exceptions.ClientResponseTimeout("%is timeout" % response_timeout)
@@ -1684,6 +1693,16 @@ class ServiceConnection:
             else:
                 # creates the new message
                 message = message[number_bytes * -1:]
+
+    def is_open(self):
+        """
+        Retrieves if the current connection is open.
+
+        @rtype: bool
+        @return: If the current connection is open.
+        """
+
+        return self.connection_status
 
     def get_connection_property(self, property_name):
         """
