@@ -46,6 +46,7 @@ import datetime
 
 import colony.libs.map_util
 import colony.libs.path_util
+import colony.libs.time_util
 import colony.libs.string_buffer_util
 
 import build_automation_exceptions
@@ -589,6 +590,12 @@ class BuildAutomation:
         # calculates the delta date time from the final and the initial values
         delta_date_time = final_date_time - initial_date_time
 
+        # retrieves the delta date time in seconds
+        delta_date_time_seconds = delta_date_time.seconds
+
+        # formats the date time into the required format
+        delta_date_time_formated = colony.libs.time_util.format_seconds_smart(delta_date_time_seconds, "extended")
+
         # prints the final build automation result
         logger.info("------------------------------------------------------------------------")
 
@@ -603,7 +610,7 @@ class BuildAutomation:
 
         # prints the final logging information
         logger.info("------------------------------------------------------------------------")
-        logger.info("Total time for build automation %s" % str(delta_date_time))
+        logger.info("Total time for build automation %s" % delta_date_time_formated)
         logger.info("Finished build automation at %s" % final_date_time.strftime("%d/%m/%y %H:%M:%S"))
         logger.info("------------------------------------------------------------------------")
 
