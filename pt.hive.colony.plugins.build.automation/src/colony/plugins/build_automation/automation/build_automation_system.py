@@ -88,6 +88,12 @@ PLUGIN_DIRECTORY_VALUE = "plugin_directory"
 COLONY_ARTIFACT_VALUE = "colony"
 """ The colony artifact value """
 
+TOTAL_TIME_VALUE = "total_time"
+""" The total time value """
+
+TOTAL_TIME_FORMATED_VALUE = "total_time_formated"
+""" The total time formated value """
+
 DEFAULT_STAGE_VALUE = "default_stage"
 """ The default stage value """
 
@@ -613,6 +619,10 @@ class BuildAutomation:
         logger.info("Total time for build automation %s" % delta_date_time_formated)
         logger.info("Finished build automation at %s" % final_date_time.strftime("%d/%m/%y %H:%M:%S"))
         logger.info("------------------------------------------------------------------------")
+
+        # sets the build automation structure runtime properties
+        build_automation_structure_runtime.properties[TOTAL_TIME_VALUE] = delta_date_time_seconds
+        build_automation_structure_runtime.properties[TOTAL_TIME_FORMATED_VALUE] = delta_date_time_formated
 
     def generate_build_automation_structure(self, build_automation_parsing_structure):
         """
