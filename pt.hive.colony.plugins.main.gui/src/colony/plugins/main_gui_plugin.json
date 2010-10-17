@@ -9,7 +9,7 @@
     "author" : "Hive Solutions Lda. <development@hive.pt>",
     "capabilities" : ["main", "build_automation_item"],
     "capabilities_allowed" : ["gui_manager", "gui_panel",
-            "gui_progress_information", "build_automation_item"],
+            "gui_progress_information"],
     "dependencies" : [{
                 "id" : "pt.hive.colony.plugins.main.log",
                 "version" : "1.0.0"
