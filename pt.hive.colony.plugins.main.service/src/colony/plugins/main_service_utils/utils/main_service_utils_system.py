@@ -1630,8 +1630,8 @@ class ServiceConnection:
             raise main_service_utils_exceptions.RequestClosed("invalid socket")
 
         if selected_values == ([], [], []):
-            # closes the connection
-            self.close()
+            # closes the connection socket
+            self.connection_socket.close()
 
             # raises the server request timeout exception
             raise main_service_utils_exceptions.ServerRequestTimeout("%is timeout" % request_timeout)
@@ -1670,8 +1670,8 @@ class ServiceConnection:
                 raise main_service_utils_exceptions.RequestClosed("invalid socket")
 
             if selected_values == ([], [], []):
-                # closes the connection
-                self.close()
+                # closes the connection socket
+                self.connection_socket.close()
 
                 # raises the server response timeout exception
                 raise main_service_utils_exceptions.ClientResponseTimeout("%is timeout" % response_timeout)
