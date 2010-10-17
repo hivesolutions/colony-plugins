@@ -936,9 +936,19 @@ class AbstractServiceConnectionHandler:
             # that is ready for reading
             ready_service_connection = self.service_connections_map[ready_socket]
 
-            # handles the current request if it returns true
-            # the connection is meant to remain open
-            if self.client_service.handle_request(ready_service_connection):
+            try:
+                # handles the current request, retrieving the return value
+                return_value = self.client_service.handle_request(ready_service_connection)
+            except BaseException, exception:
+                # prints an error message about the problem handling the request
+                self.service_plugin.error("Problem while handling the request: " + unicode(exception))
+
+                # sets the return value to false, to close the connection
+                return_value = False
+
+            # if the request handling returned true the connection
+            # is meant to remain open
+            if return_value:
                 # sets the new cancel timeout
                 ready_service_connection.cancel(self.connection_timeout)
             # otherwise the connection is meant to be closed
@@ -1328,8 +1338,12 @@ class AbstractServiceConnectionlessHandler:
         # iterates over all the available service
         # connections
         for service_connection in self.service_connections_list:
-            # handles the current request
-            self.client_service.handle_request(service_connection)
+            try:
+                # handles the current request
+                self.client_service.handle_request(service_connection)
+            except BaseException, exception:
+                # prints an error message about the problem handling the request
+                self.service_plugin.error("Problem while handling the request: " + unicode(exception))
 
             # retrieves the connection tuple
             connection_tuple = service_connection.get_connection_tuple()
