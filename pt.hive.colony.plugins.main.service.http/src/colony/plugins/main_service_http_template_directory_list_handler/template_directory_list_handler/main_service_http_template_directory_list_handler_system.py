@@ -38,6 +38,7 @@ __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
 import copy
+import time
 
 DEFAULT_ENCODING = "utf-8"
 """ The default encoding """
@@ -171,6 +172,18 @@ class MainServiceHttpTemplateDirectoryListHandler:
         # creates a new formats map from the original one
         formats_map = copy.copy(FORMATS_MAP)
 
+        # retrieves the initial time
+        start_time = request.request_time
+
+        # retrieves the end time
+        end_time = time.time()
+
+        # calculates the delta time
+        delta_time = end_time - start_time
+
+        # rounds the delta time
+        delta_time_rounded = round(delta_time, 2)
+
         # sets the current format as active
         formats_map[format] = "active"
 
@@ -191,6 +204,9 @@ class MainServiceHttpTemplateDirectoryListHandler:
 
         # assigns the formats map to the template file
         template_file.assign("formats_map", formats_map)
+
+        # assigns the delta time to the template file
+        template_file.assign("delta_time", delta_time_rounded)
 
         # processes the template file
         processed_template_file = template_file.process()
