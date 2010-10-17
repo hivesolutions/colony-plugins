@@ -54,7 +54,7 @@ class BuildAutomationPlugin(colony.base.plugin_system.Plugin):
     loading_type = colony.base.plugin_system.EAGER_LOADING_TYPE
     platforms = [colony.base.plugin_system.CPYTHON_ENVIRONMENT]
     attributes = {"build_automation_file_path" : "$base{plugin_directory}/build_automation/automation/resources/baf.xml"}
-    capabilities = ["build_automation", "console_command_extension"]
+    capabilities = ["build_automation", "console_command_extension", "build_automation_item"]
     capabilities_allowed = ["build_automation_extension", "build_automation_item"]
     dependencies = [colony.base.plugin_system.PluginDependency(
                     "pt.hive.colony.plugins.resources.resource_manager", "1.0.0"),
