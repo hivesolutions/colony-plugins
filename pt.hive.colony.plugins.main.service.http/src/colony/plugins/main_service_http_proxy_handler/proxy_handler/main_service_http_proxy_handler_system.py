@@ -161,11 +161,12 @@ class MainServiceHttpProxyHandler:
         # retrieves the http client from the http clients pool
         http_client = self.http_clients_pool.pop()
 
-        # fetches the contents from the url
-        http_response = http_client.fetch_url(complete_path, method = request.operation_type, headers = request_headers, content_type_charset = DEFAULT_CHARSET, contents = request_contents)
-
-        # puts the http client back into the http clients pool
-        self.http_clients_pool.put(http_client)
+        try:
+            # fetches the contents from the url
+            http_response = http_client.fetch_url(complete_path, method = request.operation_type, headers = request_headers, content_type_charset = DEFAULT_CHARSET, contents = request_contents)
+        finally:
+            # puts the http client back into the http clients pool
+            self.http_clients_pool.put(http_client)
 
         # retrieves the status code form the http response
         status_code = http_response.status_code
