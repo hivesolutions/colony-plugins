@@ -9,7 +9,7 @@
     "author" : "Hive Solutions Lda. <development@hive.pt>",
     "capabilities" : ["communication.push", "diagnostics",
             "build_automation_item"],
-    "capabilities_allowed" : [],
+    "capabilities_allowed" : ["communication.push_persistence"],
     "dependencies" : [{
                 "id" : "pt.hive.colony.plugins.main.work.work_pool_manager",
                 "version" : "1.0.0"

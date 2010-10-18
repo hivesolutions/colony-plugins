@@ -93,6 +93,9 @@ class CommunicationPush:
     comnunication_push_plugin = None
     """ The communication push plugin """
 
+    communication_push_persistence_plugins_map = {}
+    """ The communication push persistence plugins map """
+
     communication_name_push_notifications_map = {}
     """ The map associating a communication with the list of push notifications (notification buffer) """
 
@@ -136,6 +139,7 @@ class CommunicationPush:
 
         self.comnunication_push_plugin = comnunication_push_plugin
 
+        self.communication_push_persistence_plugins_map = {}
         self.communication_name_push_notifications_map = {}
         self.communication_name_communication_handlers_map = {}
         self.communication_handler_communication_names_map = {}
@@ -809,6 +813,18 @@ class CommunicationPush:
         print "communication_profile_name_communication_handler_tuples_map:" + str(self.communication_profile_name_communication_handler_tuples_map)
         print "communication_profile_name_communication_names_map:" + str(self.communication_profile_name_communication_names_map)
         print "communication_handler_profile_communication_handler_method:" + str(self.communication_handler_profile_communication_handler_method)
+
+    def communication_push_persistence_load(self, communication_push_persistence_plugin):
+        # retrieves the plugin persistence name
+        persistence_name = communication_push_persistence_plugin.get_persistence_name()
+
+        self.communication_push_persistence_plugins_map[persistence_name] = communication_push_persistence_plugin
+
+    def communication_push_persistence_unload(self, communication_push_persistence_plugin):
+        # retrieves the plugin persistence name
+        persistence_name = communication_push_persistence_plugin.get_persistence_name()
+
+        del self.communication_push_persistence_plugins_map[persistence_name]
 
     def _get_communication_handler_properties(self, communication_handler_name):
         """

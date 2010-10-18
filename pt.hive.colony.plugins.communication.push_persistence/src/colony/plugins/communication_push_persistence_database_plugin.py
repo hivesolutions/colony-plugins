@@ -93,7 +93,27 @@ class CommunicationPushPersistenceDatabasePlugin(colony.base.plugin_system.Plugi
     def dependency_injected(self, plugin):
         colony.base.plugin_system.Plugin.dependency_injected(self, plugin)
 
+    def get_persistence_name(self):
+        """
+        Retrieves the persistence name.
+
+        @rtype: String
+        @return: The persistence name.
+        """
+
+        return self.communication_push_persistence_database.get_persistence_name()
+
     def create_client(self, parameters):
+        """
+        Creates a client object for the given parameters.
+
+        @type parameters: Dictionary
+        @param parameters: The parameters to be used in creating
+        the client object.
+        @rtype: CommunicationPushPersistenceDatabaseClient
+        @return: The created client object.
+        """
+
         return self.communication_push_persistence_database.create_client(parameters)
 
     def get_entity_manager_helper_plugin(self):

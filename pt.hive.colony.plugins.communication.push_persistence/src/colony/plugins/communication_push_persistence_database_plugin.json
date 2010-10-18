@@ -1,0 +1,23 @@
+{
+    "platform" : "python",
+    "sub_platforms" : ["cpython", "jython", "iron_python"],
+    "id" : "pt.hive.colony.plugins.communication.push_persistence",
+    "name" : "Communication Push Persistence Database Plugin",
+    "short_name" : "Communication Push Persistence Database",
+    "description" : "A plugin to manager the push notifications communication persistence using a database",
+    "version" : "1.0.0",
+    "author" : "Hive Solutions Lda. <development@hive.pt>",
+    "capabilities" : ["communication.push_persistence", "build_automation_item"],
+    "capabilities_allowed" : [],
+    "dependencies" : [{
+                "id" : "pt.hive.colony.plugins.data.entity_manager_helper",
+                "version" : "1.0.0"
+            }],
+    "main_file" : "communication_push_persistence_database_plugin.py",
+    "resources" : [
+            "communication_push_persistence_database_plugin.py",
+            "communication_push_persistence_database/__init__.py",
+            "communication_push_persistence_database/database/__init__.py",
+            "communication_push_persistence_database/database/communication_push_persistence_database_system.py",
+            "communication_push_persistence_database/database/resources/baf.xml"]
+}

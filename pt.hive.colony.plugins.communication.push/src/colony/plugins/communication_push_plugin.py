@@ -57,7 +57,7 @@ class CommunicationPushPlugin(colony.base.plugin_system.Plugin):
                  colony.base.plugin_system.IRON_PYTHON_ENVIRONMENT]
     attributes = {"build_automation_file_path" : "$base{plugin_directory}/communication_push/push/resources/baf.xml"}
     capabilities = ["communication.push", "diagnostics", "build_automation_item"]
-    capabilities_allowed = []
+    capabilities_allowed = ["communication.push_persistence"]
     dependencies = [colony.base.plugin_system.PluginDependency(
                     "pt.hive.colony.plugins.main.work.work_pool_manager", "1.0.0"),
                     colony.base.plugin_system.PluginDependency(
@@ -67,6 +67,8 @@ class CommunicationPushPlugin(colony.base.plugin_system.Plugin):
     main_modules = ["communication_push.push.communication_push_system"]
 
     communication_push = None
+
+    communication_push_persistence_plugins = []
 
     work_pool_manager_plugin = None
     guid_plugin = None
@@ -88,9 +90,11 @@ class CommunicationPushPlugin(colony.base.plugin_system.Plugin):
     def end_unload_plugin(self):
         colony.base.plugin_system.Plugin.end_unload_plugin(self)
 
+    @colony.base.decorators.load_allowed("pt.hive.colony.plugins.communication.push", "1.0.0")
     def load_allowed(self, plugin, capability):
         colony.base.plugin_system.Plugin.load_allowed(self, plugin, capability)
 
+    @colony.base.decorators.unload_allowed("pt.hive.colony.plugins.communication.push", "1.0.0")
     def unload_allowed(self, plugin, capability):
         colony.base.plugin_system.Plugin.unload_allowed(self, plugin, capability)
 
@@ -381,6 +385,16 @@ class CommunicationPushPlugin(colony.base.plugin_system.Plugin):
         """
 
         return self.communication_push.print_diagnostics()
+
+    @colony.base.decorators.load_allowed_capability("communication.push_persistence")
+    def communication_push_persistence_load_allowed(self, plugin, capability):
+        self.communication_push_persistence_plugins.append(plugin)
+        self.communication_push.communication_push_persistence_load(plugin)
+
+    @colony.base.decorators.unload_allowed_capability("communication.push_persistence")
+    def communication_push_persistence_unload_allowed(self, plugin, capability):
+        self.communication_push_persistence_plugins.remove(plugin)
+        self.communication_push.communication_push_persistence_unload(plugin)
 
     def get_work_pool_manager_plugin(self):
         return self.work_pool_manager_plugin

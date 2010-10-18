@@ -39,6 +39,9 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 import os
 
+PERSISTENCE_NAME = "database"
+""" The persistence name """
+
 ENTITIES_MODULE_NAME = "communication_push_persistence_database_entities"
 """ The entities module name """
 
@@ -59,6 +62,16 @@ class CommunicationPushPersistenceDatabase:
         """
 
         self.comnunication_push_persistence_database_plugin = comnunication_push_persistence_database_plugin
+
+    def get_persistence_name(self):
+        """
+        Retrieves the persistence name.
+
+        @rtype: String
+        @return: The persistence name.
+        """
+
+        return PERSISTENCE_NAME
 
     def create_client(self, parameters):
         """
