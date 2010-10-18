@@ -39,8 +39,13 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 import os
 
-DEFAULT_JSON_ENCODING = "Cp1252"
-""" The default json encoding """
+import xml.dom.minidom
+
+ARTIFACT_VALUE = "artifact"
+""" The artifact value """
+
+BUILD_VALUE = "build"
+""" The build value """
 
 BUILD_AUTOMATION_FILE_PATH_VALUE = "build_automation_file_path"
 """ The build automation file path value """
@@ -50,6 +55,12 @@ CAPABILITIES_VALUE = "capabilities"
 
 CAPABILITIES_ALLOWED_VALUE = "capabilities_allowed"
 """ The capabilities allowed value """
+
+COLONY_VALUE = "colony"
+""" The colony value """
+
+CONFIGURATION_VALUE = "configuration"
+""" The configuration value """
 
 DEPENDENCIES_VALUE = "dependencies"
 """ The dependencies value """
@@ -75,11 +86,20 @@ PLUGIN_PATH_VALUE = "plugin_path"
 PLUGINS_VALUE = "plugins"
 """ The plugins value """
 
+PLUGIN_VALUE = "plugin"
+""" The plugin value """
+
 PYTHON_VALUE = "python"
 """ The python value """
 
 RESOURCES_VALUE = "resources"
 """ The resources value """
+
+SPECIFICATION_FILE_VALUE = "specification_file"
+""" The specification file value """
+
+TYPE_VALUE = "type"
+""" The type value """
 
 VERSION_VALUE = "version"
 """ The version value """
@@ -141,6 +161,9 @@ RESOURCE_FILE_EXTENSION_EXCLUSION_LIST = (".svn", ".svn-base", ".svn-revert", ".
 BUILD_AUTOMATION_ITEM_CAPABILITY_PLUGIN_EXCLUSION_LIST = ("pt.hive.colony.plugins.build.automation")
 """ The list of plugins that are allowed not to have the build automation item capability """
 
+BUILD_AUTOMATION_EXTENSIONS_PACKING_PLUGIN_ID = "pt.hive.colony.plugins.build.automation.extensions.packing"
+""" The build automation extensions packing plugin id """
+
 PLUGIN_DESCRIPTOR_ATTRIBUTES_MAP = {"id" : "original_id",
                                     "sub_platforms" : "platforms",
                                     "name" : "name",
@@ -150,6 +173,12 @@ PLUGIN_DESCRIPTOR_ATTRIBUTES_MAP = {"id" : "original_id",
                                     "author" : "author",
                                     "capabilities" : "capabilities"}
 """ Defines the association between attributes in the plugin descriptor file and the plugin itself """
+
+BUILD_AUTOMATION_FILE_ARTIFACT_ATTRIBUTES_MAP = {"id" : "id",
+                                                 "version" : "version",
+                                                 "name" : "name",
+                                                 "description" : "description"}
+""" Defines the association between attributes in the plugin build automation file and the plugin itself """
 
 class ValidationPlugin:
     """
@@ -607,6 +636,188 @@ class ValidationPlugin:
             # returns since nothing else can be tested
             return
 
+        # validates the build automation file attributes
+        self._validate_build_automation_file_attributes(plugin_information, build_automation_file_path, validation_errors)
+
+    def _validate_build_automation_file_attributes(self, plugin_information, build_automation_file_path, validation_errors):
+        # retrieves the plugin
+        plugin = plugin_information.plugin
+
+        # retrieves the plugin module name
+        plugin_module_name = plugin_information.plugin_module_name
+
+        # opens the build automation file
+        build_automation_file = open(build_automation_file_path, "rb")
+
+        # reads the build automation file's data
+        build_automation_file_data = build_automation_file.read()
+
+        # decodes the build automation file data
+        build_automation_file_data = build_automation_file_data.decode(DEFAULT_BAF_ENCODING)
+
+        # closes the build automation file
+        build_automation_file.close()
+
+        # parses the build automation file
+        build_automation_file_document = xml.dom.minidom.parseString(build_automation_file_data)
+
+        # retrieves the artifact tags
+        artifact_tags = build_automation_file_document.getElementsByTagName(ARTIFACT_VALUE)
+
+        # retrieves the artifact tag
+        artifact_tag = artifact_tags[0]
+
+        # retrieves the artifact type tag
+        artifact_type_tags = artifact_tag.getElementsByTagName(TYPE_VALUE)
+
+        # checks if the artifact type attribute is correct
+        if artifact_type_tags:
+            # retrieves the artifact type tag
+            artifact_type_tag = artifact_type_tags[0]
+
+            # retrieves the artifact type value
+            artifact_type_value = self.get_xml_node_text(artifact_type_tag)
+
+            # checks that the build automation artifact id is valid
+            if not artifact_type_value == COLONY_VALUE:
+                # logs the validation error
+                self.add_validation_error(validation_errors, plugin_information, "'%s' build automation file '%s' has invalid artifact attribute 'type'" % (plugin_module_name, build_automation_file_path))
+        else:
+            # logs the validation error
+            self.add_validation_error(validation_errors, plugin_information, "'%s' build automation file '%s' is missing artifact attribute 'type'" % (plugin_module_name, build_automation_file_path))
+
+        # checks that the build automation file artifact attributes match the plugin
+        for artifact_attribute_name in BUILD_AUTOMATION_FILE_ARTIFACT_ATTRIBUTES_MAP:
+            # retrieves the artifact attribute tags
+            artifact_attribute_tags = artifact_tag.getElementsByTagName(artifact_attribute_name)
+
+            # checks if the attribute exists
+            if not artifact_attribute_tags:
+                # logs the validation error
+                self.add_validation_error(validation_errors, plugin_information, "'%s' build automation file '%s' is missing artifact attribute '%s'" % (plugin_module_name, build_automation_file_path, artifact_attribute_name))
+
+                # skips the attribute
+                continue
+
+            # retrieves the artifact attibute tag
+            artifact_attribute_tag = artifact_attribute_tags[0]
+
+            # retrieves the artifact attribute value
+            artifact_attribute_value = self.get_xml_node_text(artifact_attribute_tag)
+
+            # retrieves the plugin attribute name
+            plugin_attribute_name = BUILD_AUTOMATION_FILE_ARTIFACT_ATTRIBUTES_MAP[artifact_attribute_name]
+
+            # retrieves the plugin attribute value
+            plugin_attribute_value = getattr(plugin, plugin_attribute_name)
+
+            # checks that the build automation artifact id is valid
+            if not plugin_attribute_value == artifact_attribute_value:
+                # logs the validation error
+                self.add_validation_error(validation_errors, plugin_information, "'%s' build automation file '%s' has invalid artifact attribute '%s'" % (plugin_module_name, build_automation_file_path, artifact_attribute_name))
+
+        # retrieves the build tags
+        build_tags = build_automation_file_document.getElementsByTagName(BUILD_VALUE)
+
+        # returns in case no build tags were found
+        if not build_tags:
+            # logs the validation error
+            self.add_validation_error(validation_errors, plugin_information, "'%s' build automation file '%s' is missing attribute 'build'" % (plugin_module_name, build_automation_file_path))
+
+            # returns
+            return
+
+        # retrieves the build tag
+        build_tag = build_tags[0]
+
+        # retrieves the plugins tags
+        plugins_tags = build_tag.getElementsByTagName(PLUGINS_VALUE)
+
+        # returns in case no plugins tags were found
+        if not plugins_tags:
+            # logs the validation error
+            self.add_validation_error(validation_errors, plugin_information, "'%s' build automation file '%s' is missing attribute 'plugins'" % (plugin_module_name, build_automation_file_path))
+
+            # returns
+            return
+
+        # retrieves the plugin tag
+        plugins_tag = plugins_tags[0]
+
+        # retrieves the plugin tags
+        plugin_tags = plugins_tag.getElementsByTagName(PLUGIN_VALUE)
+
+        # checks for specification files in all plugin tags
+        for plugin_tag in plugin_tags:
+            self.__validate_build_automation_file_attributes_plugin_tag(plugin_information, build_automation_file_path, plugin_tag, validation_errors)
+
+    def __validate_build_automation_file_attributes_plugin_tag(self, plugin_information, build_automation_file_path, plugin_tag, validation_errors):
+        # retrieves the plugin path
+        plugin_path = plugin_information.plugin_path
+
+        # retrieves the plugin module name
+        plugin_module_name = plugin_information.plugin_module_name
+
+        # retrieves the id tags
+        id_tags = plugin_tag.getElementsByTagName(ID_VALUE)
+
+        # skips in case no id tags were found
+        if not id_tags:
+            # logs the validation error
+            self.add_validation_error(validation_errors, plugin_information, "'%s' build automation file '%s' is missing build plugin attribute 'id'" % (plugin_module_name, build_automation_file_path))
+
+            # returns
+            return
+
+        # retrieves the id tag
+        id_tag = id_tags[0]
+
+        # retrieves the id value
+        id_value = self.get_xml_node_text(id_tag)
+
+        # returns in case this is not the build automatin extensions packing plugin entry
+        if not id_value == BUILD_AUTOMATION_EXTENSIONS_PACKING_PLUGIN_ID:
+            return
+
+        # retrieves the configuration tags
+        configuration_tags = plugin_tag.getElementsByTagName(CONFIGURATION_VALUE)
+
+        # skips in case no configuration tags were found
+        if not configuration_tags:
+            # logs the validation error
+            self.add_validation_error(validation_errors, plugin_information, "'%s' build automation file '%s' is missing build plugin attribute 'configuration'" % (plugin_module_name, build_automation_file_path))
+
+            # returns
+            return
+
+        # retrieves the configuration tag
+        configuration_tag = configuration_tags[0]
+
+        # retrieves the specification file tags
+        specification_file_tags = configuration_tag.getElementsByTagName(SPECIFICATION_FILE_VALUE)
+
+        # skips in case no specification file tags were found
+        if not specification_file_tags:
+            # logs the validation error
+            self.add_validation_error(validation_errors, plugin_information, "'%s' build automation file '%s' is missing build plugin attribute 'specification_file'" % (plugin_module_name, build_automation_file_path))
+
+            # returns
+            return
+
+        # retrieves the specification file tag
+        specification_file_tag = specification_file_tags[0]
+
+        # retrieves the specification file path
+        specification_file_path = self.get_xml_node_text(specification_file_tag)
+
+        # sets the plugin path in the specification file path
+        specification_file_path = specification_file_path.replace(BASE_PLUGIN_DIRECTORY_VARIABLE, plugin_path)
+
+        # checks if the specification file exists
+        if not os.path.exists(specification_file_path):
+            # logs the validation error
+            self.add_validation_error(validation_errors, plugin_information, "'%s' build automation file '%s' references missing specification file '%s'" % (plugin_module_name, build_automation_file_path, specification_file_path))
+
     def add_validation_error(self, validation_errors, plugin_information, validation_error_message):
         # defines the validation error map
         validation_error_map = {PLUGIN_ID_VALUE : plugin_information.plugin.id,
@@ -633,6 +844,18 @@ class ValidationPlugin:
         json_data = self.validation_plugin_plugin.json_plugin.loads(json_file_data)
 
         return json_data
+
+    def get_xml_node_text(self, xml_node):
+        # retrieves the child nodes
+        child_nodes = xml_node.childNodes
+
+        # collects the child text nodes
+        child_node_data_list = [child_node.data for child_node in child_nodes if child_node.nodeType == child_node.TEXT_NODE]
+
+        # converts the child text nodes to a string
+        xml_node_text = "".join(child_node_data_list)
+
+        return xml_node_text
 
 class PluginInformation:
 
