@@ -60,6 +60,15 @@ SEQUENCE_TYPE = 0x30
 APPLICATION_TYPE = 0x60
 """ The application (base) type """
 
+TYPE_VALUE = "type"
+""" The type value """
+
+VALUE_VALUE = "value"
+""" The value value """
+
+EXTRA_TYPE_VALUE = "extra_type"
+""" The extra type value """
+
 class FormatBer:
     """
     The format ber class.
@@ -89,6 +98,9 @@ class BerStructure:
     buffer = None
     """ The buffer to be used """
 
+    methods_map = None
+    """ The map containing the references to the methods """
+
     def __init__(self):
         """
         Constructor of the class.
@@ -96,42 +108,75 @@ class BerStructure:
 
         self.buffer = colony.libs.string_buffer_util.StringBuffer()
 
+        # creates the methods map reference
+        self.methods_map = {INTEGER_TYPE : self.pack_integer,
+                            OCTET_STRING_TYPE : self.pack_octet_string,
+                            SEQUENCE_TYPE : self.pack_sequence}
+
     def to_hex(self, string_value):
         for i in string_value:
             print "0x%02x" % ord(i),
 
+    def pack(self, value):
+        # retrieves the type for the value
+        type = self._get_type(value)
+
+        # retrieves the pack method for the type
+        pack_method = self._get_pack_method(type)
+
+        # packs the value
+        packed_value = pack_method(value)
+
+        # returns the packed value
+        return packed_value
+
     def pack_integer(self, integer):
+        # retrieves the integer type
+        integer_type = self._get_extra_type(integer, INTEGER_TYPE)
+
+        # retrieves the integer value
+        integer_value = self._get_value(integer)
+
         # packs the integer value
-        packed_integer = self._pack_integer(integer)
+        packed_integer = self._pack_integer(integer_value)
 
         # packs the integer as a base value
-        packed_integer = self.pack_basic_value(packed_integer, INTEGER_TYPE)
+        packed_integer = self.pack_basic_value(packed_integer, integer_type)
 
         # returns the packed integer
         return packed_integer
 
+    def pack_octet_string(self, octet_string):
+        # retrieves the octet string type
+        octet_string_type = self._get_extra_type(octet_string, OCTET_STRING_TYPE)
+
+        # retrieves the octet string value
+        octet_sting_value = self._get_value(octet_string)
+
+        # packs the octet string value
+        packed_octet_string = self._pack_octet_string(octet_sting_value)
+
+        # packs the octet string as a base value
+        packed_octet_string = self.pack_basic_value(packed_octet_string, octet_string_type)
+
+        # returns the packed octet string
+        return packed_octet_string
+
     def pack_sequence(self, sequence):
+        # retrieves the sequence type
+        sequence_type = self._get_extra_type(sequence, SEQUENCE_TYPE)
+
+        # retrieves the sequence value
+        sequence_value = self._get_value(sequence)
+
         # packs the sequence value
-        packed_sequence = self._pack_sequence(sequence)
+        packed_sequence = self._pack_sequence(sequence_value)
 
         # packs the sequence as a base value
-        packed_sequence = self.pack_basic_value(packed_sequence, SEQUENCE_TYPE)
+        packed_sequence = self.pack_basic_value(packed_sequence, sequence_type)
 
         # returns the packed sequence
         return packed_sequence
-
-    def pack_choice(self, choice):
-        # packs the choice value
-        packed_choice = self._pack_choice(choice)
-
-        # retrieves the choice type
-        choice_type = self._get_type(choice)
-
-        # packs the choice as a base value
-        packed_choice = self.pack_basic_value(packed_choice, choice_type)
-
-        # returns the packed choice
-        return packed_choice
 
     def pack_basic_value(self, packed_base_value, type = EOC_TYPE):
         # calculates the packed base value length
@@ -148,9 +193,6 @@ class BerStructure:
         return packed_basic_value
 
     def _pack_length(self, length):
-        #if not defMode and self.supportIndefLenMode:
-        #    return "\x80"
-
         if length < 0x80:
             return chr(length)
         else:
@@ -210,6 +252,13 @@ class BerStructure:
         # returns the octets string
         return octets_string
 
+    def _pack_octet_string(self, value):
+        # sets the octets string as the value
+        octets_string = value
+
+        # returns the octets string
+        return octets_string
+
     def _pack_sequence(self, value):
         # saves the value as values list
         values_list = value
@@ -220,17 +269,8 @@ class BerStructure:
         # iterates over all the values in
         # the values list
         for value in values_list:
-            # retrieves the type for the value
-            type = self._get_type(value)
-
-            # retrieves the real for the value
-            real_value = self._get_type(value)
-
-            # retrieves the pack method for the type
-            pack_method = self.get_pack_method(type)
-
             # packs the value
-            packed_value = pack_method(real_value)
+            packed_value = self.pack(value)
 
             # writes the packed value in the sequence buffer
             sequence_list.append(packed_value)
@@ -242,13 +282,13 @@ class BerStructure:
         return octets_string
 
     def _get_type(self, value):
-        return value[0]
+        return value[TYPE_VALUE]
 
     def _get_value(self, value):
-        return value[1]
+        return value[VALUE_VALUE]
 
-    def get_pack_method(self, type):
-        a = {0x02 : self.pack_integer,
-             0x30 : self.pack_sequence}
+    def _get_extra_type(self, value, base_type = EOC_TYPE):
+        return value.get(EXTRA_TYPE_VALUE, base_type)
 
-        return a[type]
+    def _get_pack_method(self, type):
+        return self.methods_map[type]
