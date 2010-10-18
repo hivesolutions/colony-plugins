@@ -1,0 +1,17 @@
+{
+    "platform" : "python",
+    "sub_platforms" : ["cpython", "jython"],
+    "id" : "pt.hive.colony.plugins.format.ber",
+    "name" : "Ber Format Plugin",
+    "short_name" : "Ber Format",
+    "description" : "The plugin that offers the ber (basic encoding rules) format support",
+    "version" : "1.0.0",
+    "author" : "Hive Solutions Lda. <development@hive.pt>",
+    "capabilities" : ["format.ber", "build_automation_item"],
+    "capabilities_allowed" : [],
+    "dependencies" : [],
+    "main_file" : "format_ber_plugin.py",
+    "resources" : ["format_ber_plugin.py", "format/__init__.py",
+            "format/ber/__init__.py", "format/ber/format_ber_exceptions.py",
+            "format/ber/format_ber_system.py", "format/ber/resources/baf.xml"]
+}
