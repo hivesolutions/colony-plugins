@@ -57,14 +57,18 @@ class MainClientLdapPlugin(colony.base.plugin_system.Plugin):
     attributes = {"build_automation_file_path" : "$base{plugin_directory}/main_client_ldap/ldap/resources/baf.xml"}
     capabilities = ["client.ldap", "build_automation_item"]
     capabilities_allowed = ["socket_provider"]
-    dependencies = []
+    dependencies = [colony.base.plugin_system.PluginDependency(
+                    "pt.hive.colony.plugins.main.client.utils", "1.0.0"),
+                    colony.base.plugin_system.PluginDependency(
+                    "pt.hive.colony.plugins.format.ber", "1.0.0")]
     events_handled = []
     events_registrable = []
     main_modules = ["main_client_ldap.ldap.main_client_ldap_exceptions", "main_client_ldap.ldap.main_client_ldap_system"]
 
     main_client_ldap = None
 
-    socket_provider_plugins = []
+    main_client_utils_plugin = None
+    format_ber_plugin = None
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
@@ -81,27 +85,32 @@ class MainClientLdapPlugin(colony.base.plugin_system.Plugin):
     def end_unload_plugin(self):
         colony.base.plugin_system.Plugin.end_unload_plugin(self)
 
-    @colony.base.decorators.load_allowed("pt.hive.colony.plugins.main.client.ldap", "1.0.0")
     def load_allowed(self, plugin, capability):
         colony.base.plugin_system.Plugin.load_allowed(self, plugin, capability)
 
-    @colony.base.decorators.unload_allowed("pt.hive.colony.plugins.main.client.ldap", "1.0.0")
     def unload_allowed(self, plugin, capability):
         colony.base.plugin_system.Plugin.unload_allowed(self, plugin, capability)
 
+    @colony.base.decorators.inject_dependencies("pt.hive.colony.plugins.main.client.ldap", "1.0.0")
     def dependency_injected(self, plugin):
         colony.base.plugin_system.Plugin.dependency_injected(self, plugin)
 
     def create_client(self, parameters):
-        return self.main_service_http.create_client(parameters)
+        return self.main_client_ldap.create_client(parameters)
 
     def create_request(self, parameters):
-        return self.main_service_http.create_request(parameters)
+        return self.main_client_ldap.create_request(parameters)
 
-    @colony.base.decorators.load_allowed_capability("socket_provider")
-    def socket_provider_load_allowed(self, plugin, capability):
-        self.socket_provider_plugins.append(plugin)
+    def get_main_client_utils_plugin(self):
+        return self.main_client_utils_plugin
 
-    @colony.base.decorators.unload_allowed_capability("socket_provider")
-    def socket_provider_unload_allowed(self, plugin, capability):
-        self.socket_provider_plugins.remove(plugin)
+    @colony.base.decorators.plugin_inject("pt.hive.colony.plugins.main.client.utils")
+    def set_main_client_utils_plugin(self, main_client_utils_plugin):
+        self.main_client_utils_plugin = main_client_utils_plugin
+
+    def get_format_ber_plugin(self):
+        return self.format_ber_plugin
+
+    @colony.base.decorators.plugin_inject("pt.hive.colony.plugins.format.ber")
+    def set_format_ber_plugin(self, format_ber_plugin):
+        self.format_ber_plugin = format_ber_plugin
