@@ -58,10 +58,10 @@ DEFAULT_SMTP_HOSTNAME = "localhost"
 DEFAULT_SMTP_PORT = 25
 """ The default smtp port """
 
-DEFAULT_SENDER_NAME = "Colony Integration"
+DEFAULT_SENDER_NAME = "Colony Automation"
 """ The default sender name """
 
-DEFAULT_SENDER_EMAIL = "integration@getcolony.com"
+DEFAULT_SENDER_EMAIL = "automation@getcolony.com"
 """ The default sender email """
 
 VERSION_VALUE = "version"

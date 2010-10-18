@@ -111,9 +111,9 @@
                             <tr>
                                 <td width="70" align="left"><img src="cid:robot.gif" height="100" width="50" /></td>
                                 <td>
-                                    <font face="Rockwell, Arial" size="3" color="#808080"><strong>Colony Continuous Integration</strong></font><br />
+                                    <font face="Rockwell, Arial" size="3" color="#808080"><strong>Colony Build Automation</strong></font><br />
                                     <font face="Rockwell, Arial" size="2" color="#808080">Automation the easy way</font><br />
-                                    <font face="Rockwell, Arial" size="2">integration@getcolony.com</font><br />
+                                    <font face="Rockwell, Arial" size="2">automation@getcolony.com</font><br />
                                 </td>
                             </tr>
                         </table>
@@ -129,7 +129,7 @@
             <br />
             <p id="policy">
                 <font face="verdana" size="1" color="#dddddd">
-                    This email was sent to you with your consent via integration@getcolony.com.<br />
+                    This email was sent to you with your consent via automation@getcolony.com.<br />
                     To ensure that you continue receiving our emails,<br />
                     please add us to your address book or safe list.<br />
                     View this email on the web here. You can also forward to a friend.<br />
