@@ -55,7 +55,7 @@ class CommunicationPushPersistenceDatabasePlugin(colony.base.plugin_system.Plugi
     platforms = [colony.base.plugin_system.CPYTHON_ENVIRONMENT,
                  colony.base.plugin_system.JYTHON_ENVIRONMENT,
                  colony.base.plugin_system.IRON_PYTHON_ENVIRONMENT]
-    attributes = {"build_automation_file_path" : "$base{plugin_directory}/communication_push_persistence/database/resources/baf.xml"}
+    attributes = {"build_automation_file_path" : "$base{plugin_directory}/communication_push_persistence_database/database/resources/baf.xml"}
     capabilities = ["communication.push_persistence", "build_automation_item"]
     capabilities_allowed = []
     dependencies = [colony.base.plugin_system.PluginDependency(
