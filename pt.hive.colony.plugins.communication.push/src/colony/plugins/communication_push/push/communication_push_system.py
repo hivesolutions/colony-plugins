@@ -1090,6 +1090,16 @@ class CommunicationPushProcessingTask:
 
         pass
 
+    def busy(self):
+        """
+        Retrieves the current busy status.
+
+        @rtype: bool
+        @return: The current busy status.
+        """
+
+        return False
+
     def work_added(self, work_reference):
         """
         Adds a work to the work list.
