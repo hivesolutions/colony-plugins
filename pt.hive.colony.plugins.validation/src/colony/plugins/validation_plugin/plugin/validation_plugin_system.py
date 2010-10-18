@@ -107,9 +107,6 @@ VERSION_VALUE = "version"
 SYSTEM_FILE_DIRECTORY_DEPTH = 2
 """ The directory depth at which system files should be located """
 
-DEFAULT_BAF_ENCODING = "Cp1252"
-""" The default baf encoding """
-
 DEFAULT_JSON_ENCODING = "Cp1252"
 """ The default json encoding """
 
@@ -651,9 +648,6 @@ class ValidationPlugin:
 
         # reads the build automation file's data
         build_automation_file_data = build_automation_file.read()
-
-        # decodes the build automation file data
-        build_automation_file_data = build_automation_file_data.decode(DEFAULT_BAF_ENCODING)
 
         # closes the build automation file
         build_automation_file.close()
