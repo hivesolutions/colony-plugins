@@ -37,7 +37,7 @@
         <version>1.0.0</version>
         <type>colony</type>
         <name>Report Generator Build Automation Extension Plugin</name>
-        <description>Report Generator Build Automation Extension Plugin</description>
+        <description>A plugin to manage the report generator build automation tasks</description>
         <url>http://www.hive.pt</url>
     </artifact>
     <build>
