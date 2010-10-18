@@ -342,10 +342,15 @@ class WorkPoolImplementation:
         @return: The result of the verification.
         """
 
+        # in case the work task is currently busy
+        if work_task.busy():
+            # returns false (invalid)
+            return False
+
         # in case the current number of works is equal or greater
         # than the maximum number of works per thread
         if work_task.work_counter >= self.maximum_number_works_thread:
-            # return false (invalid)
+            # returns false (invalid)
             return False
 
         # returns true (valid)
@@ -468,6 +473,23 @@ class WorkTask:
 
         # wakes the work processing task
         self.work_processing_task.wake()
+
+    def busy(self):
+        """
+        Retrieves the current busy status.
+
+        @rtype: bool
+        @return: The current busy status.
+        """
+
+        # in case there is no work to
+        # be processed
+        if not self.work_counter:
+            # returns false (not busy)
+            return False
+
+        # returns the current busy status
+        return self.work_processing_task.busy()
 
     def get_work_processing_task(self):
         """

@@ -128,6 +128,9 @@ class ProcessingClass:
     def wake(self):
         pass
 
+    def busy(self):
+        return False
+
     def work_added(self, work_reference):
         self.work_list.append(work_reference)
 
