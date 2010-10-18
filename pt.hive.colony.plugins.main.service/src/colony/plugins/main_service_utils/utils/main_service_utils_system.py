@@ -814,6 +814,9 @@ class AbstractServiceConnectionHandler:
     wake_file_port = None
     """ The wake file port """
 
+    busy_status = False
+    """ The busy status of the handler """
+
     def __init__(self, service, service_plugin, service_configuration, connection_timeout, chunk_size, client_service_class, extra_parameters):
         """
         Constructor of the class.
@@ -930,34 +933,15 @@ class AbstractServiceConnectionHandler:
         # polls the system to check for new connections
         ready_sockets = self.poll_connections(POLL_TIMEOUT)
 
-        # iterates over all the ready sockets
-        for ready_socket in ready_sockets:
-            # retrieves the service connection
-            # that is ready for reading
-            ready_service_connection = self.service_connections_map[ready_socket]
+        # sets the busy status
+        self.busy_status = True
 
-            try:
-                # handles the current request, retrieving the return value
-                return_value = self.client_service.handle_request(ready_service_connection)
-            except BaseException, exception:
-                # prints an error message about the problem handling the request
-                self.service_plugin.error("Problem while handling the request: " + unicode(exception))
-
-                # sets the return value to false, to close the connection
-                return_value = False
-
-            # if the request handling returned true the connection
-            # is meant to remain open
-            if return_value:
-                # sets the new cancel timeout
-                ready_service_connection.cancel(self.connection_timeout)
-            # otherwise the connection is meant to be closed
-            else:
-                # retrieves the connection tuple
-                connection_tuple = ready_service_connection.get_connection_tuple()
-
-                # removes the ready service connection (via remove work)
-                self.remove_work(connection_tuple)
+        try:
+            # handles the ready sockets
+            self.handle_ready_sockets(ready_sockets)
+        finally:
+            # unsets the busy status
+            self.busy_status = False
 
     def wake(self):
         """
@@ -966,6 +950,16 @@ class AbstractServiceConnectionHandler:
         """
 
         self.__wake_base()
+
+    def busy(self):
+        """
+        Retrieves the current busy status.
+
+        @rtype: bool
+        @return: The current busy status.
+        """
+
+        return self.busy_status
 
     def work_added(self, work_reference):
         """
@@ -1149,6 +1143,45 @@ class AbstractServiceConnectionHandler:
             return self.__poll_connections_epoll(poll_timeout)
         else:
             return self.__poll_connections_base(poll_timeout)
+
+    def handle_ready_sockets(self, ready_sockets):
+        """
+        Handles the sockets that are ready to be handled.
+        The handling is done via the service plugin.
+
+        @type ready_sockets: List
+        @param ready_sockets: The list of sockets ready
+        to be handled.
+        """
+
+        # iterates over all the ready sockets
+        for ready_socket in ready_sockets:
+            # retrieves the service connection
+            # that is ready for reading
+            ready_service_connection = self.service_connections_map[ready_socket]
+
+            try:
+                # handles the current request, retrieving the return value
+                return_value = self.client_service.handle_request(ready_service_connection)
+            except BaseException, exception:
+                # prints an error message about the problem handling the request
+                self.service_plugin.error("Problem while handling the request: " + unicode(exception))
+
+                # sets the return value to false, to close the connection
+                return_value = False
+
+            # if the request handling returned true the connection
+            # is meant to remain open
+            if return_value:
+                # sets the new cancel timeout
+                ready_service_connection.cancel(self.connection_timeout)
+            # otherwise the connection is meant to be closed
+            else:
+                # retrieves the connection tuple
+                connection_tuple = ready_service_connection.get_connection_tuple()
+
+                # removes the ready service connection (via remove work)
+                self.remove_work(connection_tuple)
 
     def __wake_base(self):
         """
