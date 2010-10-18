@@ -9,7 +9,13 @@
     "author" : "Hive Solutions Lda. <development@hive.pt>",
     "capabilities" : ["client.ldap", "build_automation_item"],
     "capabilities_allowed" : ["socket_provider"],
-    "dependencies" : [],
+    "dependencies" : [{
+                "id" : "pt.hive.colony.plugins.main.client.utils",
+                "version" : "1.0.0"
+            }, {
+                "id" : "pt.hive.colony.plugins.format.ber",
+                "version" : "1.0.0"
+            }],
     "main_file" : "main_client_ldap_plugin.py",
     "resources" : ["main_client_ldap_plugin.py",
             "main_client_ldap/__init__.py",
