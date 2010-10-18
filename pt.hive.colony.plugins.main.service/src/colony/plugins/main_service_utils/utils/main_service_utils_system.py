@@ -1368,21 +1368,14 @@ class AbstractServiceConnectionlessHandler:
         available data.
         """
 
-        # iterates over all the available service
-        # connections
-        for service_connection in self.service_connections_list:
-            try:
-                # handles the current request
-                self.client_service.handle_request(service_connection)
-            except BaseException, exception:
-                # prints an error message about the problem handling the request
-                self.service_plugin.error("Problem while handling the request: " + unicode(exception))
+        # sets the busy status
+        self.busy_status = True
 
-            # retrieves the connection tuple
-            connection_tuple = service_connection.get_connection_tuple()
+        # handles the currently available service connections
+        self.handle_service_connections(self.service_connections_list)
 
-            # removes the ready service connection (via remove work)
-            self.remove_work(connection_tuple)
+        # unsets the busy status
+        self.busy_status = False
 
     def wake(self):
         """
@@ -1502,6 +1495,32 @@ class AbstractServiceConnectionlessHandler:
 
         # removes the connection for the given service connection
         self.remove_connection(service_connection)
+
+    def handle_service_connections(self, service_connections):
+        """
+        Handles the service connections that are ready to be handled.
+        The handling is done via the service plugin.
+
+        @type service_connections: List
+        @param service_connections: The list of service connections
+        ready to be handled.
+        """
+
+        # iterates over all the available service
+        # connections
+        for service_connection in service_connections:
+            try:
+                # handles the current request
+                self.client_service.handle_request(service_connection)
+            except BaseException, exception:
+                # prints an error message about the problem handling the request
+                self.service_plugin.error("Problem while handling the request: " + unicode(exception))
+
+            # retrieves the connection tuple
+            connection_tuple = service_connection.get_connection_tuple()
+
+            # removes the ready service connection (via remove work)
+            self.remove_work(connection_tuple)
 
 class ServiceConnection:
     """
