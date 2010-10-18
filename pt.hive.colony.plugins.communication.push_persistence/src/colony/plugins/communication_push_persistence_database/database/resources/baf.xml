@@ -37,7 +37,7 @@
         <version>1.0.0</version>
         <type>colony</type>
         <name>Communication Push Persistence Database Plugin</name>
-        <description>Communication Push Persistence Database Plugin</description>
+        <description>A plugin to manager the push notifications communication persistence using a database</description>
         <url>http://www.hive.pt</url>
     </artifact>
     <build>
