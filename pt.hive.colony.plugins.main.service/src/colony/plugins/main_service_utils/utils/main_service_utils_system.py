@@ -1371,11 +1371,12 @@ class AbstractServiceConnectionlessHandler:
         # sets the busy status
         self.busy_status = True
 
-        # handles the currently available service connections
-        self.handle_service_connections(self.service_connections_list)
-
-        # unsets the busy status
-        self.busy_status = False
+        try:
+            # handles the currently available service connections
+            self.handle_service_connections(self.service_connections_list)
+        finally:
+            # unsets the busy status
+            self.busy_status = False
 
     def wake(self):
         """
