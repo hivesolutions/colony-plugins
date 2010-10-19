@@ -230,7 +230,7 @@ class SmtpClient:
         @type parameters: Dictionary
         @param parameters: The parameters to the request.
         @rtype: SmtpRequest
-        @return: The sent request for the given parameters..
+        @return: The sent request for the given parameters.
         """
 
         # creates the smtp request
