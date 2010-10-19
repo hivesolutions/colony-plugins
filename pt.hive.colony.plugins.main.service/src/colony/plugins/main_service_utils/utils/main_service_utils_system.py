@@ -82,7 +82,7 @@ POLL_TIMEOUT = 1
 REQUEST_TIMEOUT = 100
 """ The request timeout """
 
-RESPONSE_TIMEOUT = 1
+RESPONSE_TIMEOUT = 10
 """ The response timeout """
 
 CONNECTION_TIMEOUT = 600
