@@ -37,6 +37,8 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
+import format_ber_exceptions
+
 import colony.libs.string_buffer_util
 
 EOC_TYPE = 0x00
@@ -352,8 +354,13 @@ class BerStructure:
                 # to the right
                 length = length >> 8
 
-            if len(substrate) > 126:
-                raise Exception("Length octets overflow (%d)" % len(substrate))
+            # retrieves the substrate length
+            substrate_length = len(substrate)
+
+            # in case the length of the substrate is too big (overflow)
+            if substrate_length > 126:
+                # raises the packing error
+                raise format_ber_exceptions.PackingError("length octets overflow: %d" % substrate_length)
 
             return chr(0x80 | len(substrate)) + substrate
 
@@ -373,6 +380,16 @@ class BerStructure:
         else:
             # retrieves the size of the length string
             size = first_octet & 0x7F
+
+            # retrieves the substrate length
+            substrate_length = len(substrate)
+
+            # in case the size is bigger than the
+            # substrate length without one value, there is no
+            # space for the length value in the substrate
+            if size > substrate_length - 1:
+                # raises the unpacking error
+                raise format_ber_exceptions.UnpackingError("invalid substrate value invalid size: %d" % substrate_length)
 
             # encoded in length bytes
             length = 0

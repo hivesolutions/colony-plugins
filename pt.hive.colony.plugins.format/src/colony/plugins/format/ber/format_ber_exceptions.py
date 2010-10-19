@@ -36,3 +36,65 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
+
+import colony.base.plugin_system_exceptions
+
+class FormatBerException(colony.base.plugin_system_exceptions.ColonyException):
+    """
+    The format ber exception class.
+    """
+
+    message = None
+    """ The exception's message """
+
+class PackingError(FormatBerException):
+    """
+    The packing error class.
+    """
+
+    def __init__(self, message):
+        """
+        Constructor of the class.
+
+        @type message: String
+        @param message: The message to be printed.
+        """
+
+        FormatBerException.__init__(self)
+        self.message = message
+
+    def __str__(self):
+        """
+        Returns the string representation of the class.
+
+        @rtype: String
+        @return: The string representation of the class.
+        """
+
+        return "Packing error: %s" % self.message
+
+class UnpackingError(FormatBerException):
+    """
+    The unpacking error class.
+    """
+
+    def __init__(self, message):
+        """
+        Constructor of the class.
+
+        @type message: String
+        @param message: The message to be printed.
+        """
+
+        FormatBerException.__init__(self)
+        self.message = message
+
+    def __str__(self):
+        """
+        Returns the string representation of the class.
+
+        @rtype: String
+        @return: The string representation of the class.
+        """
+
+        return "Unpacking error: %s" % self.message
