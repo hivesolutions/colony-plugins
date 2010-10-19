@@ -74,22 +74,41 @@ APPLICATION_TYPE = 0x60
 """ The application (base) type """
 
 LDAP_REQUEST_TYPE_MAP = {BIND_VALUE : 0x00, "unbind" : 0x02,
-                         "search" : 0x63, "modify" : 0x66,
-                         "add" : 0x68, "delete" : 0x6a,
+                         "search" : 0x03, "modify" : 0x06,
+                         "add" : 0x08, "delete" : 0x0a,
                          "modify_dn" : 0x00, "compare" : 0x00,
                          "abandon" : 0x00, "extended" : 0x00}
 """ The map of ldap request types """
 
-LDAP_RESPONSE_TYPE_MAP = {"bind" : 0x61, "search_result_enttry" : 0x64,
-                          "search_result_reference" : 0x73, "search_result_done" : 0x65,
-                          "modify" : 0x67, "add" : 0x69, "delete" : 0x6b}
+LDAP_RESPONSE_TYPE_MAP = {BIND_VALUE : 0x01, "search_result_enttry" : 0x04,
+                          "search_result_reference" : 0x13, "search_result_done" : 0x05,
+                          "modify" : 0x07, "add" : 0x09, "delete" : 0x0b}
 """ The map of ldap response types """
 
 class ProtocolOperation:
+
     def __init__(self):
         pass
 
+    def process_value(self, value):
+        # retrieves the protocol operation extra type
+        protocol_operation_extra_type = value[EXTRA_TYPE_VALUE]
+
+        # retrieves the protocol operation class for the protocol
+        # operation extra type
+        protocol_operation_class = TYPE_CLASS_MAP[protocol_operation_extra_type]
+
+        # creates a new protocol operation structure
+        protocol_operation_structure = protocol_operation_class()
+
+        # processes the value using the value, retrieving the protocol operation
+        protocol_operation = protocol_operation_structure.process_value(value)
+
+        # returns the protocol operation
+        return protocol_operation
+
 class LdapResult(ProtocolOperation):
+
     result_code = None
 
     matched_dn = None
@@ -124,6 +143,9 @@ class LdapResult(ProtocolOperation):
         self.result_code = result_code_value
         self.matched_dn = matched_dn_value
         self.error_message = error_message_value
+
+        # returns the self value
+        return self
 
 class BindResponse(LdapResult):
     pass
@@ -185,3 +207,7 @@ class SimpleAuthentication(Authentication):
 
         # returns the authentication (value)
         return authentication
+
+TYPE_CLASS_MAP = {APPLICATION_TYPE + LDAP_REQUEST_TYPE_MAP[BIND_VALUE] : BindRequest,
+                  APPLICATION_TYPE + LDAP_RESPONSE_TYPE_MAP[BIND_VALUE] : BindResponse}
+""" The map associating a type with a class map """
