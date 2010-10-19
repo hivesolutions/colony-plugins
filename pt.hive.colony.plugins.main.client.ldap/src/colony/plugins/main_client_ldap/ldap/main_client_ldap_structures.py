@@ -64,6 +64,9 @@ BIT_STRING_TYPE = 0x03
 OCTET_STRING_TYPE = 0x04
 """ The octet string type """
 
+ENUMERATED_TYPE = 0x0a
+""" The enumerated type """
+
 SEQUENCE_TYPE = 0x30
 """ The sequence type """
 
@@ -83,9 +86,49 @@ LDAP_RESPONSE_TYPE_MAP = {"bind" : 0x61, "search_result_enttry" : 0x64,
 """ The map of ldap response types """
 
 class ProtocolOperation:
+    def __init__(self):
+        pass
+
+class LdapResult(ProtocolOperation):
+    result_code = None
+
+    matched_dn = None
+
+    error_message = None
+
+    referral = None
+
+    def __init__(self, result_code = None, matched_dn = None, error_message = None, referral = None):
+        ProtocolOperation.__init__(self)
+        self.result_code = result_code
+        self.error_message = error_message
+        self.referral = referral
+
+    def process_value(self, value):
+        # retrieves the ldap result value
+        ldap_result_value = value[VALUE_VALUE]
+
+        # retrieves the result code and the result code value
+        result_code = ldap_result_value[0]
+        result_code_value = result_code[VALUE_VALUE]
+
+        # retrieves the matched dn and the matched dn value
+        matched_dn = ldap_result_value[1]
+        matched_dn_value = matched_dn[VALUE_VALUE]
+
+        # retrieves the error message and the error message value
+        error_message = ldap_result_value[2]
+        error_message_value = error_message[VALUE_VALUE]
+
+        # sets the current values
+        self.result_code = result_code_value
+        self.matched_dn = matched_dn_value
+        self.error_message = error_message_value
+
+class BindResponse(LdapResult):
     pass
 
-class BindOperation(ProtocolOperation):
+class BindRequest(ProtocolOperation):
 
     version = None
 
@@ -93,7 +136,8 @@ class BindOperation(ProtocolOperation):
 
     authentication = None
 
-    def __init__(self, version, name, authentication):
+    def __init__(self, version = None, name = None, authentication = None):
+        ProtocolOperation.__init__(self)
         self.version = version
         self.name = name
         self.authentication = authentication
@@ -122,13 +166,16 @@ class BindOperation(ProtocolOperation):
         return bind_operation
 
 class Authentication:
-    pass
+
+    def __init__(self):
+        pass
 
 class SimpleAuthentication(Authentication):
 
     value = None
 
     def __init__(self, value):
+        Authentication.__init__(self)
         self.value = value
 
     def get_value(self):

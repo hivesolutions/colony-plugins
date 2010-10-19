@@ -68,6 +68,9 @@ BIT_STRING_TYPE = 0x03
 OCTET_STRING_TYPE = 0x04
 """ The octet string type """
 
+ENUMERATED_TYPE = 0x0a
+""" The enumerated type """
+
 SEQUENCE_TYPE = 0x30
 """ The sequence type """
 
@@ -177,9 +180,9 @@ class LdapClient:
 
         simple_authentication = main_client_ldap_structures.SimpleAuthentication("ek41Xuyw")
 
-        bind_operation = main_client_ldap_structures.BindOperation(3, "cn=root,dc=hive", simple_authentication)
+        bind_request = main_client_ldap_structures.BindRequest(3, "cn=root,dc=hive", simple_authentication)
 
-        request = LdapRequest(1, bind_operation)
+        request = LdapRequest(1, bind_request)
 
         result = request.get_result(ber_structure)
 
@@ -194,10 +197,6 @@ class LdapClient:
         response = LdapResponse(request)
 
         response.process_data(data, ber_structure)
-
-        print ber_structure.to_hex(data)
-
-        print "---------------------"
 
     def _generate_client_parameters(self, parameters):
         """
@@ -305,4 +304,26 @@ class LdapResponse:
         self.request = request
 
     def process_data(self, data, ber_structure):
-        pass
+        # unpacks the data
+        ldap_message = ber_structure.unpack(data)
+
+        # retrieves the ldap message value
+        ldap_message_value = ldap_message[VALUE_VALUE]
+
+        # retrieves the message id and the message id value
+        message_id = ldap_message_value[0]
+        message_id_value = message_id[VALUE_VALUE]
+
+        # retrieve the protocol operation and the protocol operation
+        # value
+        protocol_operation = ldap_message_value[1]
+
+        # creates the protocol operation structure
+        protocol_operation_structure = main_client_ldap_structures.LdapResult()
+
+        # processes the protocol operation
+        protocol_operation_structure.process_value(protocol_operation)
+
+        # sets the current values
+        self.message_id = message_id_value
+        self.protocol_operation = protocol_operation_structure
