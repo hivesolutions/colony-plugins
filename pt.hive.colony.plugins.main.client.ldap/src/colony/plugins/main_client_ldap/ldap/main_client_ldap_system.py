@@ -71,6 +71,19 @@ OCTET_STRING_TYPE = 0x04
 SEQUENCE_TYPE = 0x30
 """ The sequence type """
 
+APPLICATION_TYPE = 0x60
+""" The application type """
+
+PRIVATE_TYPE = 0x80
+""" The private type """
+
+LDAP_TYPE_ALIAS_MAP = {APPLICATION_TYPE + 0 : 0x30,
+                       APPLICATION_TYPE + 1 : 0x30,
+                       APPLICATION_TYPE + 2 : 0x30,
+                       PRIVATE_TYPE + 0: 0x04,
+                       PRIVATE_TYPE + 3: 0x30}
+""" The map of ldap type alias """
+
 class MainClientLdap:
     """
     The main client ldap class.
@@ -158,6 +171,9 @@ class LdapClient:
 
         # creates a "new" ber structure
         ber_structure = format_ber_plugin.create_structure({})
+
+        # sets the ldap type alias map in the ber structure
+        ber_structure.set_type_alias_map(LDAP_TYPE_ALIAS_MAP)
 
         simple_authentication = main_client_ldap_structures.SimpleAuthentication("ek41Xuyw")
 
