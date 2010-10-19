@@ -429,6 +429,9 @@ class DnsResponse:
     def __init__(self, request):
         """
         Constructor of the class.
+
+        @type request: DnsRequest
+        @param request: The request.
         """
 
         self.request = request
