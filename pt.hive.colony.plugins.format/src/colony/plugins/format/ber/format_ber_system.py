@@ -98,8 +98,11 @@ class BerStructure:
     buffer = None
     """ The buffer to be used """
 
-    methods_map = None
+    methods_map = {}
     """ The map containing the references to the methods """
+
+    type_alias_map = {}
+    """ The type alias map """
 
     def __init__(self):
         """
@@ -107,15 +110,36 @@ class BerStructure:
         """
 
         self.buffer = colony.libs.string_buffer_util.StringBuffer()
+        self.type_alias_map = {}
 
         # creates the methods map reference
         self.methods_map = {INTEGER_TYPE : self.pack_integer,
                             OCTET_STRING_TYPE : self.pack_octet_string,
                             SEQUENCE_TYPE : self.pack_sequence}
 
+    def get_type_alias_map(self):
+        """
+        Retrieves the type alias map.
+
+        @rtype: Dictionary
+        @return: The type alias map.
+        """
+
+        return self.type_alias_map
+
+    def set_type_alias_map(self, type_alias_map):
+        """
+        Sets the type alias map.
+
+        @type type_alias_map: Dictionary
+        @param type_alias_map: The type alias map.
+        """
+
+        self.type_alias_map = type_alias_map
+
     def to_hex(self, string_value):
-        for i in string_value:
-            print "0x%02x" % ord(i),
+        for index in string_value:
+            print "0x%02x" % ord(index),
 
     def pack(self, value):
         # retrieves the type for the value
