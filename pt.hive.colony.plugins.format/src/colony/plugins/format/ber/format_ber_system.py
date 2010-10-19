@@ -54,6 +54,9 @@ BIT_STRING_TYPE = 0x03
 OCTET_STRING_TYPE = 0x04
 """ The octet string type """
 
+ENUMERATED_TYPE = 0x0a
+""" The enumerated type """
+
 SEQUENCE_TYPE = 0x30
 """ The sequence type """
 
@@ -118,11 +121,13 @@ class BerStructure:
         # creates the pack methods map reference
         self.pack_methods_map = {INTEGER_TYPE : self.pack_integer,
                                  OCTET_STRING_TYPE : self.pack_octet_string,
+                                 ENUMERATED_TYPE : self.pack_enumerated,
                                  SEQUENCE_TYPE : self.pack_sequence}
 
         # creates the unpack methods map reference
         self.unpack_methods_map = {INTEGER_TYPE : self.unpack_integer,
                                    OCTET_STRING_TYPE : self.unpack_octet_string,
+                                   ENUMERATED_TYPE : self.unpack_enumerated,
                                    SEQUENCE_TYPE : self.unpack_sequence}
 
     def to_hex(self, string_value):
@@ -187,6 +192,22 @@ class BerStructure:
         # returns the packed octet string
         return packed_octet_string
 
+    def pack_enumerated(self, enumerated):
+        # retrieves the enumerated type
+        enumerated_type = self._get_extra_type(enumerated, ENUMERATED_TYPE)
+
+        # retrieves the enumerated value
+        enumerated_value = self._get_value(enumerated)
+
+        # packs the enumerated value (as integer)
+        packed_enumerated = self._pack_integer(enumerated_value)
+
+        # packs the enumerated as a base value
+        packed_enumerated = self.pack_base_value(packed_enumerated, enumerated_type)
+
+        # returns the packed enumerated
+        return packed_enumerated
+
     def pack_sequence(self, sequence):
         # retrieves the sequence type
         sequence_type = self._get_extra_type(sequence, SEQUENCE_TYPE)
@@ -248,6 +269,22 @@ class BerStructure:
 
         # returns the octet string
         return octet_string
+
+    def unpack_enumerated(self, packed_enumerated):
+        # retrieves the packed enumerated extra type
+        packed_enumerated_extra_type = self._get_packed_extra_type(packed_enumerated, ENUMERATED_TYPE)
+
+        # retrieves the packed enumerated value
+        packed_enumerated_value = self._get_packed_value(packed_enumerated)
+
+        # unpacks the packed enumerated value (as integer)
+        upacked_enumerated_value = self._unpack_integer(packed_enumerated_value)
+
+        # unpacks the enumerated as a base value
+        enumerated = self.unpack_base_value(upacked_enumerated_value, ENUMERATED_TYPE, packed_enumerated_extra_type)
+
+        # returns the enumerated
+        return enumerated
 
     def unpack_sequence(self, packed_sequence):
         # retrieves the packed sequence extra type
