@@ -130,6 +130,9 @@ class LdapClient:
     protocol_version = "none"
     """ The version of the ldap protocol """
 
+    ber_structure = None
+    """ The structure to ber encoding """
+
     _ldap_client = None
     """ The ldap client object used to provide connections """
 
@@ -161,6 +164,12 @@ class LdapClient:
         # creates the ldap client, generating the internal structures
         self._ldap_client = self.main_client_ldap.main_client_ldap_plugin.main_client_utils_plugin.generate_client(client_parameters)
 
+        # generates the ber structure
+        ber_structure = self._generate_ber_structure()
+
+        # sets the ber structure
+        self.ber_structure = ber_structure
+
         # starts the ldap client
         self._ldap_client.start_client()
 
@@ -169,22 +178,17 @@ class LdapClient:
         self._ldap_client.stop_client()
 
     def bind(self):
-        # retrieves the format ber plugin
-        format_ber_plugin = self.main_client_ldap.main_client_ldap_plugin.format_ber_plugin
-
-        # creates a "new" ber structure
-        ber_structure = format_ber_plugin.create_structure({})
-
-        # sets the ldap type alias map in the ber structure
-        ber_structure.set_type_alias_map(LDAP_TYPE_ALIAS_MAP)
-
+        # creates the simple authentication
         simple_authentication = main_client_ldap_structures.SimpleAuthentication("ek41Xuyw")
 
+        # creates the bind request
         bind_request = main_client_ldap_structures.BindRequest(3, "cn=root,dc=hive", simple_authentication)
 
+        # creates the ldap request
         request = LdapRequest(1, bind_request)
 
-        result = request.get_result(ber_structure)
+        # retrieves the result for the ber structure
+        result = request.get_result(self.ber_structure)
 
         # retrieves the corresponding (ldap) client connection
         self.client_connection = self._ldap_client.get_client_connection(("servidor1.hive", 389, "normal"))
@@ -196,7 +200,7 @@ class LdapClient:
 
         response = LdapResponse(request)
 
-        response.process_data(data, ber_structure)
+        response.process_data(data, self.ber_structure)
 
     def _generate_client_parameters(self, parameters):
         """
@@ -215,6 +219,28 @@ class LdapClient:
 
         # returns the parameters
         return parameters
+
+    def _generate_ber_structure(self):
+        """
+        Generates a ber structure for the current instance.
+        The generates ber structure is set with the
+        ldap type alias map.
+
+        @rtype: BerStructure
+        @return: The generated ber structure.
+        """
+
+        # retrieves the format ber plugin
+        format_ber_plugin = self.main_client_ldap.main_client_ldap_plugin.format_ber_plugin
+
+        # creates a "new" ber structure
+        ber_structure = format_ber_plugin.create_structure({})
+
+        # sets the ldap type alias map in the ber structure
+        ber_structure.set_type_alias_map(LDAP_TYPE_ALIAS_MAP)
+
+        # returns the generated ber structure
+        return ber_structure
 
 class LdapRequest:
     """
