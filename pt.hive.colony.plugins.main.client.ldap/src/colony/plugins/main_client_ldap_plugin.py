@@ -63,7 +63,8 @@ class MainClientLdapPlugin(colony.base.plugin_system.Plugin):
                     "pt.hive.colony.plugins.format.ber", "1.0.0")]
     events_handled = []
     events_registrable = []
-    main_modules = ["main_client_ldap.ldap.main_client_ldap_exceptions", "main_client_ldap.ldap.main_client_ldap_system"]
+    main_modules = ["main_client_ldap.ldap.main_client_ldap_exceptions", "main_client_ldap.ldap.main_client_ldap_structures",
+                    "main_client_ldap.ldap.main_client_ldap_system"]
 
     main_client_ldap = None
 
