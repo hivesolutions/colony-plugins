@@ -15,8 +15,8 @@
                 </tr>
                 <tr>
                     <td colspan="3" align="right" cellpadding="0" cellspacing="0" height="70" background="cid:build_line.gif">
-                        <table width="160">
-                            <tr height="18">
+                        <table width="160" cellpadding="0">
+                            <tr height="20">
                                 <td align="center">
                                     <font face="Rockwell, Arial" size="5" color="#214c8f">build</font>
                                     <font face="Rockwell, Arial" size="5" color="#214c8f"><b>${out_none value=version xml_escape=True /}</b></font>
