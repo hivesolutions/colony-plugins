@@ -21,6 +21,7 @@
             "main_client_ldap/__init__.py",
             "main_client_ldap/ldap/__init__.py",
             "main_client_ldap/ldap/main_client_ldap_exceptions.py",
+            "main_client_ldap/ldap/main_client_ldap_structures.py",
             "main_client_ldap/ldap/main_client_ldap_system.py",
             "main_client_ldap/ldap/resources/baf.xml"]
 }
