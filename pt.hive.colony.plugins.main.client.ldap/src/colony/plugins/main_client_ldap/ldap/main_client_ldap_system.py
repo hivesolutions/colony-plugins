@@ -39,20 +39,37 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 import threading
 
-LDAP_REQUEST_TYPE_MAP = {"bind" : 0x60, "unbind" : 0x62,
-                         "search" : 0x63, "modify" : 0x66,
-                         "add" : 0x68, "delete" : 0x6a,
-                         "modify_dn" : 0x00, "compare" : 0x00,
-                         "abandon" : 0x00, "extended" : 0x00}
-""" The map of ldap request types """
+import main_client_ldap_structures
 
-LDAP_RESPONSE_TYPE_MAP = {"bind" : 0x61, "search_result_enttry" : 0x64,
-                          "search_result_reference" : 0x73, "search_result_done" : 0x65,
-                          "modify" : 0x67, "add" : 0x69, "delete" : 0x6b}
-""" The map of ldap response types """
+TYPE_VALUE = "type"
+""" The type value """
+
+VALUE_VALUE = "value"
+""" The value value """
+
+EXTRA_TYPE_VALUE = "extra_type"
+""" The extra type value """
 
 PROTOCOL_VERSION_VALUE = "protocol_version"
 """ The protocol version value """
+
+EOC_TYPE = 0x00
+""" The eoc (end of content) type """
+
+BOOLEAN_TYPE = 0x01
+""" The boolean type """
+
+INTEGER_TYPE = 0x02
+""" The integer type """
+
+BIT_STRING_TYPE = 0x03
+""" The bit string type """
+
+OCTET_STRING_TYPE = 0x04
+""" The octet string type """
+
+SEQUENCE_TYPE = 0x30
+""" The sequence type """
 
 class MainClientLdap:
     """
@@ -139,77 +156,28 @@ class LdapClient:
         # retrieves the format ber plugin
         format_ber_plugin = self.main_client_ldap.main_client_ldap_plugin.format_ber_plugin
 
-        # ---------------- ZONA DE REQUEST ---------------
-
-        EOC_TYPE = 0x00
-        """ The eoc (end of content) type """
-
-        BOOLEAN_TYPE = 0x01
-        """ The boolean type """
-
-        INTEGER_TYPE = 0x02
-        """ The integer type """
-
-        BIT_STRING_TYPE = 0x03
-        """ The bit string type """
-
-        OCTET_STRING_TYPE = 0x04
-        """ The octet string type """
-
-        SEQUENCE_TYPE = 0x30
-        """ The sequence type """
-
-        APPLICATION_TYPE = 0x60
-        """ The application (base) type """
-
-        BIND_REQUEST_TYPE = 0x60
-
-        TYPE_VALUE = "type"
-        """ The type value """
-
-        VALUE_VALUE = "value"
-        """ The value value """
-
-        EXTRA_TYPE_VALUE = "extra_type"
-        """ The extra type value """
-
-        version = {TYPE_VALUE: INTEGER_TYPE, VALUE_VALUE : 3}
-
-        name = {TYPE_VALUE: OCTET_STRING_TYPE, VALUE_VALUE : "cn=root,dc=hive"}
-
-        authentication = {TYPE_VALUE: OCTET_STRING_TYPE, VALUE_VALUE : "123123123",
-                          EXTRA_TYPE_VALUE : 0x80}
-
-        protocol_operation_contents = [version, name, authentication]
-
-        message_id = {TYPE_VALUE: INTEGER_TYPE, VALUE_VALUE : 1}
-
-        protocol_operation = {TYPE_VALUE: SEQUENCE_TYPE, VALUE_VALUE : protocol_operation_contents,
-                              EXTRA_TYPE_VALUE : BIND_REQUEST_TYPE}
-
-        ldap_message_contents = [message_id, protocol_operation]
-
-        ldap_message = {TYPE_VALUE : SEQUENCE_TYPE, VALUE_VALUE : ldap_message_contents}
-
         # creates a "new" ber structure
         ber_structure = format_ber_plugin.create_structure({})
 
-        # packs the ldap message
-        packed_ldap_message = ber_structure.pack(ldap_message)
+        simple_authentication = main_client_ldap_structures.SimpleAuthentication("ek41Xuyw")
 
-        # --- END ZONA DE REQUEST -------------
+        bind_operation = main_client_ldap_structures.BindOperation(3, "cn=root,dc=hive", simple_authentication)
+
+        request = LdapRequest(1, bind_operation)
+
+        result = request.get_result(ber_structure)
 
         # retrieves the corresponding (ldap) client connection
         self.client_connection = self._ldap_client.get_client_connection(("servidor1.hive", 389, "normal"))
 
-        self.client_connection.send(packed_ldap_message)
-
-        # --- ZONA DE RESPONSE -----------
+        self.client_connection.send(result)
 
         # retrieves the data
         data = self.client_connection.retrieve_data(120, 1024)
 
-        # --- END ZONA DE RESPONSE
+        response = LdapResponse(request)
+
+        response.process_data(data, ber_structure)
 
         print ber_structure.to_hex(data)
 
@@ -238,4 +206,87 @@ class LdapRequest:
     The ldap request class.
     """
 
-    pass
+    message_id = None
+    """ The message id, identifying this unique request """
+
+    protocol_operation = None
+    """ The protocol operation of the request """
+
+    controls = []
+    """ The list of controls for the request """
+
+    def __init__(self, message_id, protocol_operation, controls = []):
+        """
+        Constructor of the class.
+
+        @type message_id: int
+        @param message_id: The message id.
+        @type protocol_operation: ProtocolOperation
+        @param protocol_operation: The protocol operation.
+        @type controls: List
+        @param controls: The controls list
+        """
+
+        self.message_id = message_id
+        self.protocol_operation = protocol_operation
+        self.controls = controls
+
+    def get_result(self, ber_structure):
+        """
+        Retrieves the result string (serialized) value of
+        the request.
+
+        @type ber_structure: BerStructure
+        @param ber_structure: The ber structure to be used.
+        @rtype: String
+        @return: The result string (serialized) value of
+        the request.
+        """
+
+        # creates the message id integer value
+        message_id = {TYPE_VALUE: INTEGER_TYPE, VALUE_VALUE : self.message_id}
+
+        # retrieves the protocol operation value
+        protocol_operation = self.protocol_operation.get_value()
+
+        # creates the ldap message contents (list)
+        ldap_message_contents = [message_id, protocol_operation]
+
+        # creates the ldap message sequence value
+        ldap_message = {TYPE_VALUE : SEQUENCE_TYPE, VALUE_VALUE : ldap_message_contents}
+
+        # packs the ldap message
+        packed_ldap_message = ber_structure.pack(ldap_message)
+
+        # returns the packed ldap message as the result
+        return packed_ldap_message
+
+class LdapResponse:
+    """
+    The ldap response class.
+    """
+
+    request = None
+    """ The request that originated the response """
+
+    message_id = None
+    """ The message id, identifying this unique request """
+
+    protocol_operation = None
+    """ The protocol operation of the request """
+
+    controls = []
+    """ The list of controls for the request """
+
+    def __init__(self, request):
+        """
+        Constructor of the class.
+
+        @type request: LdapRequest
+        @param request: The request.
+        """
+
+        self.request = request
+
+    def process_data(self, data, ber_structure):
+        pass
