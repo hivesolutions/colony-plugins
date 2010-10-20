@@ -91,6 +91,12 @@ CONNECTION_TIMEOUT = 600
 CHUNK_SIZE = 4096
 """ The chunk size """
 
+DEFAULT_NUMBER_TRIES = 3
+""" The default number of tries to register or unregister """
+
+DEFAULT_TRY_SLEEP = 1
+""" The default sleep time between tries """
+
 SERVER_SIDE_VALUE = "server_side"
 """ The server side value """
 
@@ -128,7 +134,7 @@ if EPOLL_SUPPORT:
     NEW_VALUE_MASK = select.EPOLLIN | select.EPOLLPRI | select.EPOLLHUP #@UndefinedVariable
     """ The new value received mask value """
 
-    REGISTER_MASK = NEW_VALUE_MASK | select.EPOLLET #@UndefinedVariable
+    REGISTER_MASK = NEW_VALUE_MASK #@UndefinedVariable
     """ The register mask value """
 
 class MainServiceUtils:
@@ -1025,7 +1031,7 @@ class AbstractServiceConnectionHandler:
         # adds the service connection to the service connections list
         self.service_connections_list.append(service_connection)
 
-        # adds the connection socket to the service connection socket list
+        # adds the connection socket to the service connection sockets list
         self.service_connection_sockets_list.append(connection_socket)
 
         # sets the service connection in the service connections map
@@ -1191,12 +1197,46 @@ class AbstractServiceConnectionHandler:
         # sends a "dummy" message to the wake "file" (via communication channel)
         self.wake_file.sendto(DUMMY_MESSAGE_VALUE, (LOCAL_HOST, self.wake_file_port))
 
+    def execute_tries(self, callable, number_tries = DEFAULT_NUMBER_TRIES, try_sleep = DEFAULT_TRY_SLEEP):
+        # iterates over the range of the number tries
+        for _index in range(number_tries):
+            try:
+                # calls the callable object
+                callable()
+            except BaseException, exception:
+                # sleeps a while to avoid problems
+                time.sleep(try_sleep)
+
+                # sets (saves) the current exception as
+                # the last exception
+                last_exception = exception
+
+                # continues the loop
+                continue
+
+            # sets the last exception as invalid
+            last_exception = None
+
+            # if no exception occurs
+            break
+
+        # returns the last exception
+        return last_exception
+
     def __add_connection_epoll(self, connection_socket, connection_address, connection_port):
         # retrieves the connection socket file descriptor
         connection_socket_file_descriptor = self.__get_connection_socket_file_descriptor(connection_socket)
 
-        # registers the connection socket in the epoll
-        self.epoll.register(connection_socket_file_descriptor, REGISTER_MASK)
+        # creates the lambda function that registers the connection socket in the epoll
+        callable = lambda: self.epoll.register(connection_socket_file_descriptor, REGISTER_MASK)
+
+        # executes the callable with try support
+        last_exception = self.execute_tries(callable)
+
+        # in case a last exception is defined
+        if last_exception:
+            # raises the connection change failure exception
+            raise main_service_utils_exceptions.ConnectionChangeFailure("problem adding epoll connection: " + unicode(last_exception))
 
     def __remove_connection_epoll(self, service_connection):
         # retrieves the connection socket
@@ -1205,8 +1245,16 @@ class AbstractServiceConnectionHandler:
         # retrieves the connection socket file descriptor
         connection_socket_file_descriptor = self.__get_connection_socket_file_descriptor(connection_socket)
 
-        # unregisters the connection socket from the epoll
-        self.epoll.unregister(connection_socket_file_descriptor)
+        # creates the lambda function that unregisters the connection socket from the epoll
+        callable = lambda: self.epoll.unregister(connection_socket_file_descriptor)
+
+        # executes the callable with try support
+        last_exception = self.execute_tries(callable)
+
+        # in case a last exception is defined
+        if last_exception:
+            # raises the connection change failure exception
+            raise main_service_utils_exceptions.ConnectionChangeFailure("problem removing epoll connection: " + unicode(last_exception))
 
     def __poll_connections_base(self, poll_timeout):
         # in case no service connection sockets exist

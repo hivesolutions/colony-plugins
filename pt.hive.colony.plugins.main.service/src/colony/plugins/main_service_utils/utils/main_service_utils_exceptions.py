@@ -254,3 +254,29 @@ class PortStarvationReached(MainServiceUtilsException):
         """
 
         return "Port starvation reached: %s" % self.message
+
+class ConnectionChangeFailure(MainServiceUtilsException):
+    """
+    The connection change failure class.
+    """
+
+    def __init__(self, message):
+        """
+        Constructor of the class.
+
+        @type message: String
+        @param message: The message to be printed.
+        """
+
+        MainServiceUtilsException.__init__(self)
+        self.message = message
+
+    def __str__(self):
+        """
+        Returns the string representation of the class.
+
+        @rtype: String
+        @return: The string representation of the class.
+        """
+
+        return "Connection change failure: %s" % self.message
