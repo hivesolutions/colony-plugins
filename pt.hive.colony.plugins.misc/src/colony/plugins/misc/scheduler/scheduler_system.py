@@ -108,11 +108,11 @@ class Scheduler:
         # acquires the lock object
         self.scheduler_lock.acquire()
 
-        # loads the wake item
-        self._load_wake_item()
-
         # loads the startup tasks
         self._load_startup_tasks()
+
+        # loads the wake item
+        self._load_wake_item()
 
         # iterates continuously
         while True:
