@@ -89,20 +89,26 @@ OCTET_STRING_TYPE = 0x04
 ENUMERATED_TYPE = 0x0a
 """ The enumerated type """
 
-SEQUENCE_TYPE = 0x30
+SEQUENCE_TYPE = 0x10
 """ The sequence type """
 
-APPLICATION_TYPE = 0x60
+APPLICATION_TYPE = 0x00
 """ The application type """
+
+
+
 
 PRIVATE_TYPE = 0x80
 """ The private type """
 
-LDAP_TYPE_ALIAS_MAP = {APPLICATION_TYPE + 0 : 0x30,
-                       APPLICATION_TYPE + 1 : 0x30,
-                       APPLICATION_TYPE + 2 : 0x30,
+
+
+
+LDAP_TYPE_ALIAS_MAP = {APPLICATION_TYPE + 0 : 0x10,
+                       APPLICATION_TYPE + 1 : 0x10,
+                       APPLICATION_TYPE + 2 : 0x10,
                        PRIVATE_TYPE + 0: 0x04,
-                       PRIVATE_TYPE + 3: 0x30}
+                       PRIVATE_TYPE + 3: 0x10}
 """ The map of ldap type alias """
 
 class MainClientLdap:
