@@ -108,11 +108,11 @@ class Scheduler:
         # acquires the lock object
         self.scheduler_lock.acquire()
 
-        # loads the startup tasks
-        self._load_startup_tasks()
-
         # loads the wake item
         self._load_wake_item()
+
+        # loads the startup tasks
+        self._load_startup_tasks()
 
         # iterates continuously
         while True:
@@ -391,7 +391,7 @@ class Scheduler:
         wake_function_arguments = []
 
         # retrieves the current time
-        current_time = time.time()
+        current_time = time.time() + WAKE_TIME
 
         # creates the recursion list
         recursion_list = [0, 0, 0, WAKE_TIME, 0]
@@ -414,7 +414,7 @@ class Scheduler:
         startup_tasks = self.startup_configuration.get("tasks", [])
 
         # retrieves the current time
-        current_time = time.time()
+        current_time = time.time() + 10
 
         # iterates over all the startup tasks
         # to register them
