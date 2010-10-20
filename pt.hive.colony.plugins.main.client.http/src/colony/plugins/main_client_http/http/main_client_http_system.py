@@ -480,13 +480,13 @@ class HttpClient:
             # retrieves the data
             data = self.client_connection.retrieve_data(response_timeout, CHUNK_SIZE)
 
-            # retrieves the data length
-            data_length = len(data)
-
             # in case no valid data was received
-            if data_length == 0:
+            if data == "":
                 # raises the http invalid data exception
                 raise main_client_http_exceptions.HttpInvalidDataException("empty data received")
+
+            # retrieves the data length
+            data_length = len(data)
 
             # increments the received data size (counter)
             received_data_size += data_length
@@ -678,13 +678,13 @@ class HttpClient:
                 # retrieves the data
                 data = self.client_connection.retrieve_data(response_timeout, CHUNK_SIZE)
 
-                # retrieves the data length
-                data_length = len(data)
-
                 # in case no valid data was received
-                if data_length == 0:
+                if data == "":
                     # raises the http invalid data exception
                     raise main_client_http_exceptions.HttpInvalidDataException("empty data received")
+
+                # retrieves the data length
+                data_length = len(data)
 
                 # writes the data to the message
                 message.write(data)
@@ -731,13 +731,13 @@ class HttpClient:
                 # retrieves the data
                 data = self.client_connection.retrieve_data(response_timeout)
 
-                # retrieves the data length
-                data_length = len(data)
-
                 # in case no valid data was received
-                if data_length == 0:
+                if data == "":
                     # raises the http invalid data exception
                     raise main_client_http_exceptions.HttpInvalidDataException("empty data received")
+
+                # retrieves the data length
+                data_length = len(data)
 
                 # writes the data to the message
                 message.write(data)
