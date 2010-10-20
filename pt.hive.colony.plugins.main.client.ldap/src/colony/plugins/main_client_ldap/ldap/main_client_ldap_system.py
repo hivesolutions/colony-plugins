@@ -39,15 +39,19 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 import threading
 
-import main_client_ldap_structures
-
 import colony.libs.string_buffer_util
+
+import main_client_ldap_structures
+import main_client_ldap_exceptions
 
 DEFAULT_PORT = 389
 """ The default port """
 
 DEFAULT_SOCKET_NAME = "normal"
 """ The default socket name """
+
+DEFAULT_PROTOCOL_VERSION = 3
+""" The default protocol version """
 
 RESPONSE_TIMEOUT = 10
 """ The response timeout """
@@ -144,6 +148,9 @@ class LdapClient:
     protocol_version = "none"
     """ The version of the ldap protocol """
 
+    client_connection = None
+    """ The current client connection """
+
     ber_structure = None
     """ The structure to ber encoding """
 
@@ -194,6 +201,20 @@ class LdapClient:
         # stops the ldap client
         self._ldap_client.stop_client()
 
+    def connect(self, host, port = DEFAULT_PORT, socket_name = DEFAULT_SOCKET_NAME, name = "", password = ""):
+        # retrieves the corresponding (ldap) client connection
+        self.client_connection = self._ldap_client.get_client_connection((host, port, socket_name))
+
+        # acquires the ldap client lock
+        self._ldap_client_lock.acquire()
+
+        try:
+            # binds the connection
+            self.bind(name, password)
+        finally:
+            # releases the ldap client lock
+            self._ldap_client_lock.release()
+
     def send_request(self, protocol_operation, controls = []):
         """
         Sends the request for the given parameters.
@@ -233,165 +254,127 @@ class LdapClient:
         @return: The response from the sent request.
         """
 
-        pass
+        # creates the string buffer for the message
+        message = colony.libs.string_buffer_util.StringBuffer()
 
-        # TENHO DE IR RECEBENDO O MATERIAL QUANDO NAO DER UMA EXCEPCAO
-        # a SACAR O TAMANHO DO CENAS JA TENHO O TAMANHO PARA PODER
-        # ir sacando o resto
-
-        # TENHO DE IR APANHANDO AS EXCEPCOES
-
-
-#        # creates the string buffer for the message
-#        message = colony.libs.string_buffer_util.StringBuffer()
-#
-#        # creates a response object
-#        response = LdapResponse(request)
-#
-#        message_size = None
-#
-#        # continuous loop
-#        while True:
-#            # retrieves the data
-#            data = self.client_connection.retrieve_data(response_timeout, CHUNK_SIZE)
-#
-#            # in case no valid data was received
-#            if data == "":
-#                raise main_client_smtp_exceptions.SmtpInvalidDataException("empty data received")
-#
-#            # writes the data to the string buffer
-#            message.write(data)
-#
-#            # retrieves the message value from the string buffer
-#            message_value = message.get_value()
-#
-#            # in case the message size is not set
-#            if not message_size:
-#                if len(message_value) >= 2:
-#
-#
-#            # retrieves the message value length
-#            message_value_length = len(message_value)
-#
-#            # finds the first end token value
-#            end_token_index = message_value.rfind(END_TOKEN_VALUE)
-
-            # calculates the last end token index, using the message
-#            # value length as reference
-#            last_end_token_index = message_value_length - 2
-#
-#            # in case the end token is found in the last position
-#            # of the message
-#            if end_token_index == last_end_token_index:
-#                # tries to find a previous value of the newline
-#                # in order to check if it is the "last newline"
-#                value = message_value.rfind(END_TOKEN_VALUE, 0, last_end_token_index)
-#
-#                # in case no previous newline is found
-#                if value == -1:
-#                    # sets the base value as zero (string initial)
-#                    base_value = 0
-#                else:
-#                    # sets the base value as the index of the find
-#                    # plus two indexes (the length of the end token value)
-#                    base_value = value + 2
-#
-#                # retrieves the comparison character (the character that
-#                # indicates if it is the final line)
-#                comparison_character = message_value[base_value + 3]
-#
-#                # in case the comparison character is a dash (not the final line)
-#                if comparison_character == "-":
-#                    continue
-#                elif not comparison_character == " ":
-#                    raise main_client_smtp_exceptions.SmtpInvalidDataException("invalid comparison character")
-#
-#                # retrieves the smtp message
-#                smtp_message = message_value[:end_token_index]
-#
-#                # splits the smtp message in lines
-#                smtp_message_lines = smtp_message.split("\r\n")
-#
-#                # retrieves the number of smtp message lines
-#                smtp_message_lines_length = len(smtp_message_lines)
-#
-#                # starts the index counter
-#                index = 1
-#
-#                # iterates over all the smtp message lines
-#                for smtp_message_line in smtp_message_lines:
-#                    # in case it's the last line
-#                    if index == smtp_message_lines_length:
-#                        # splits the smtp message line
-#                        smtp_message_line_splitted = smtp_message_line.split(" ", 1)
-#
-#                        # retrieves the smtp code
-#                        smtp_code = int(smtp_message_line_splitted[0])
-#
-#                        # retrieves the smtp message
-#                        smtp_message = smtp_message_line_splitted[1]
-#
-#                        # sets the smtp code in the response
-#                        response.set_code(smtp_code)
-#
-#                        # sets the smtp message in the response
-#                        response.set_message(smtp_message)
-#
-#                        # adds the smtp message to the list of
-#                        # messages in response
-#                        response.add_message(smtp_message)
-#                    # in case it's not the last line
-#                    else:
-#                        # splits the smtp message line
-#                        smtp_message_line_splitted = smtp_message_line.split("-", 1)
-#
-#                        # retrieves the smtp message
-#                        smtp_message = smtp_message_line_splitted[1]
-#
-#                        # adds the smtp message to the list of
-#                        # messages in response
-#                        response.add_message(smtp_message)
-#
-#                    # increments the index counter
-#                    index += 1
-#
-#                # sets the session object in the response
-#                response.set_session(session)
-#
-#                # returns the response
-#                return response
-
-    def bind(self):
-
-        # TENHO DE RETIRAR ISTO
-
-
-        # retrieves the corresponding (ldap) client connection
-        self.client_connection = self._ldap_client.get_client_connection(("servidor1.hive", DEFAULT_PORT, DEFAULT_SOCKET_NAME))
-
-        # END RETIRAR
-
-
-        # creates the simple authentication
-        simple_authentication = main_client_ldap_structures.SimpleAuthentication("ek41Xuyw")
-
-        # creates the bind request
-        bind_request = main_client_ldap_structures.BindRequest(3, "cn=root,dc=hive", simple_authentication)
-
-        # sends the request
-        request = self.send_request(bind_request, [])
-
-
-        # ----- a mudar para response
-
-        # retrieves the data
-        data = self.client_connection.retrieve_data(120, 1024)
-
+        # creates a response object
         response = LdapResponse(request)
 
-        response.process_data(data, self.ber_structure)
+        # creates the message size object
+        message_size = None
 
-        # -----
+        # creates the received data size (counter)
+        received_data_size = 0
+
+        # continuous loop
+        while True:
+            # retrieves the data
+            data = self.client_connection.retrieve_data(response_timeout, CHUNK_SIZE)
+
+            # in case no valid data was received
+            if data == "":
+                raise main_client_ldap_exceptions.LdapInvalidDataException("empty data received")
+
+            # retrieves the data length
+            data_length = len(data)
+
+            # increments the received data size (counter)
+            received_data_size += data_length
+
+            # writes the data to the string buffer
+            message.write(data)
+
+            # in case the message size is not set
+            if not message_size:
+                # retrieves the message value from the string buffer
+                message_value = message.get_value()
+
+                # retrieves the message value length
+                message_value_length = len(message_value)
+
+                # in case the message length is greater
+                # than one
+                if message_value_length > 1:
+                    try:
+                        # tries to retrieve the message size unpacking the message value
+                        message_size, message_size_length = self.ber_structure._get_packed_length(message_value)
+                    except:
+                        # continues the loop, because it is
+                        # not possible to "decode" the message size
+                        continue
+                else:
+                    # continues the loop, because there's not enough
+                    # bytes available
+                    continue
+
+            # retrieves the message value from the string buffer
+            message_value = message.get_value()
+
+            # retrieves the message value length
+            message_value_length = len(message_value)
+
+            # in case the message value length is the same
+            # as the message size plus the message size length
+            # plus the identification byte
+            if message_value_length == message_size + message_size_length + 1:
+                # process the message value data in the response
+                response.process_data(message_value, self.ber_structure)
+
+                # returns the response
+                return response
+
+    def bind(self, name, password):
+        # retrieves the protocol version
+        protocol_version = self.protocol_version or DEFAULT_PROTOCOL_VERSION
+
+        # creates the simple authentication
+        simple_authentication = main_client_ldap_structures.SimpleAuthentication(password)
+
+        # creates the bind request
+        bind_request = main_client_ldap_structures.BindRequest(protocol_version, name, simple_authentication)
+
+        # sends the request for the bind and controls
+        request = self.send_request(bind_request, [])
+
+        # retrieves the response
+        response = self.retrieve_response(request)
+
+        # validates the response
+        self._validate_response(response)
+
+    def _validate_response(self, response):
+        """
+        Validates the given ldap response according
+        to the ldap specification.
+
+        @type response: LdapResponse
+        @param response: The ldap response to be validated.
+        """
+
+        # retrieves the request for the response
+        request = response.request
+
+        # retrieves the response message id
+        response_message_id = response.message_id
+
+        # retrieves the request message id
+        request_message_id = request.message_id
+
+        # in case the request and response message id's do not match
+        if not request_message_id == response_message_id:
+            # raises a ldap validation exception
+            raise main_client_ldap_exceptions.LdapValidationException("invalid response message id '%i' for request message id '%i'" % (response_message_id, request_message_id))
+
+        # retrieves the response protocol operation
+        response_protocol_operation = response.protocol_operation
+
+        # retrieves the response result code
+        response_result_code = response_protocol_operation.result_code
+
+        # in case the response result code is not valid
+        if not response_result_code == 0:
+            # raises a ldap validation exception
+            raise main_client_ldap_exceptions.LdapValidationException("invalid response code: " + str(response_result_code))
 
     def _get_message_id(self):
         """

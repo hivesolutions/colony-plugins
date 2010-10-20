@@ -46,3 +46,79 @@ class MainClientLdapException(colony.base.plugin_system_exceptions.ColonyExcepti
 
     message = None
     """ The exception's message """
+
+class LdapRuntimeException(MainClientLdapException):
+    """
+    The ldap runtime exception class.
+    """
+
+    def __init__(self, message):
+        """
+        Constructor of the class.
+
+        @type message: String
+        @param message: The message to be printed.
+        """
+
+        MainClientLdapException.__init__(self)
+        self.message = message
+
+    def __str__(self):
+        """
+        Returns the string representation of the class.
+
+        @rtype: String
+        @return: The string representation of the class.
+        """
+
+        return "ldap runtime exception: %s" % self.message
+
+class LdapInvalidDataException(LdapRuntimeException):
+    """
+    The ldap invalid data exception class.
+    """
+
+    def __init__(self, message):
+        """
+        Constructor of the class.
+
+        @type message: String
+        @param message: The message to be printed.
+        """
+
+        LdapRuntimeException.__init__(self, message)
+
+    def __str__(self):
+        """
+        Returns the string representation of the class.
+
+        @rtype: String
+        @return: The string representation of the class.
+        """
+
+        return "Ldap invalid data exception: %s" % self.message
+
+class LdapValidationException(LdapRuntimeException):
+    """
+    The ldap validation exception class.
+    """
+
+    def __init__(self, message):
+        """
+        Constructor of the class.
+
+        @type message: String
+        @param message: The message to be printed.
+        """
+
+        LdapRuntimeException.__init__(self, message)
+
+    def __str__(self):
+        """
+        Returns the string representation of the class.
+
+        @rtype: String
+        @return: The string representation of the class.
+        """
+
+        return "Ldap validation exception: %s" % self.message
