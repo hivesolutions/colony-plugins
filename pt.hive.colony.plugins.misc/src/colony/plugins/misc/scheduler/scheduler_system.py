@@ -126,8 +126,6 @@ class Scheduler:
 
             # in case the continue flag is disabled
             if not self.continue_flag:
-                print "VAI PARAR POR CAUSA DA CONTINUE FLAG"
-
                 # breaks the cycle
                 break
 
@@ -135,22 +133,16 @@ class Scheduler:
             self.scheduler.run()
 
     def unload_scheduler(self):
-        print "VAI COMECAR O UNLOADING do scheduler"
-
         # removes all the active scheduler items
         self.remove_all_active_scheduler_items()
 
         # sets the continue flag to false
         self.continue_flag = False
 
-        print "VAI TESTAR O LOCK"
-
         # in case the scheduler lock is locked
         if self.scheduler_lock.locked():
             # releases the lock
             self.scheduler_lock.release()
-
-        print "VAI ACABAR O UNLOADING do scheduler"
 
     def register_task(self, task, time):
         # calculates the absolute time
@@ -301,8 +293,6 @@ class Scheduler:
             # retrieves the current event
             current_event = scheduler_item.current_event
 
-            print "VAI CANCELAR O ELEMENTO"
-
             # cancels the current event
             self.scheduler.cancel(current_event)
 
@@ -313,14 +303,10 @@ class Scheduler:
         self.remove_scheduler_item(scheduler_item)
 
     def remove_all_active_scheduler_items(self):
-        print "VAI remover OS scheduler items"
-
         # iterates over all the scheduler items
         for scheduler_item in self.scheduler_items:
             # removes the scheduler item
             self.remove_active_scheduler_item(scheduler_item)
-
-        print "Acabou de remover os scheduler items"
 
     def get_all_scheduler_items(self):
         return self.scheduler_items
