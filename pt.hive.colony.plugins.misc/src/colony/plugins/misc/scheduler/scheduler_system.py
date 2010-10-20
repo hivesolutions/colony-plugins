@@ -292,8 +292,14 @@ class Scheduler:
         self.remove_scheduler_item(scheduler_item)
 
     def remove_all_active_scheduler_items(self):
+        print "VAI remover OS scheduler items"
+
+        # iterates over all the scheduler items
         for scheduler_item in self.scheduler_items:
+            # removes the scheduler item
             self.remove_active_scheduler_item(scheduler_item)
+
+        print "Acabou de remover os scheduler items"
 
     def get_all_scheduler_items(self):
         return self.scheduler_items
