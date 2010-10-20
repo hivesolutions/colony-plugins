@@ -122,7 +122,7 @@ class Scheduler:
             self.scheduler.run()
 
     def unload_scheduler(self):
-        print "VAI COMEÇAR O UNLOADING do scheduler"
+        print "VAI COMECAR O UNLOADING do scheduler"
 
         # removes all the active scheduler items
         self.remove_all_active_scheduler_items()
@@ -134,6 +134,8 @@ class Scheduler:
         if self.scheduler_lock.locked():
             # releases the lock
             self.scheduler_lock.release()
+
+        print "VAI ACABAR O UNLOADING do scheduler"
 
     def register_task(self, task, time):
         # calculates the absolute time
