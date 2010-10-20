@@ -436,7 +436,7 @@ class Scheduler:
 
         # calculates the number of iteration to be used
         # from the sleep step
-        iterations = sleep_time / self.sleep_step
+        iterations = int(sleep_time / self.sleep_step)
 
         # calculates the extra sleep time from the sleep
         # step modulus
