@@ -392,13 +392,13 @@ class PolicyClientServiceHandler:
                 # raises the policy data retrieval exception
                 raise main_service_policy_exceptions.PolicyDataRetrievalException("problem retrieving data")
 
-            # retrieves the data length
-            data_length = len(data)
-
             # in case no valid data was received
-            if data_length == 0:
+            if data == "":
                 # raises the policy invalid data exception
                 raise main_service_policy_exceptions.PolicyInvalidDataException("empty data received")
+
+            # retrieves the data length
+            data_length = len(data)
 
             # increments the received data size (counter)
             received_data_size += data_length
