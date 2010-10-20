@@ -130,6 +130,8 @@ class Scheduler:
         # sets the continue flag to false
         self.continue_flag = False
 
+        print "VAI TESTAR O LOCK"
+
         # in case the scheduler lock is locked
         if self.scheduler_lock.locked():
             # releases the lock
