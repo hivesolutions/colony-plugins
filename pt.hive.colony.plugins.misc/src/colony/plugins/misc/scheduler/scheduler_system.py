@@ -402,6 +402,8 @@ class Scheduler:
         # adds the wake scheduler item
         self.add_scheduler_item(wake_scheduler_item)
 
+        print "ADICIONOU WAKE FILE"
+
     def _load_startup_tasks(self):
         """
         Loads the startup tasks.
