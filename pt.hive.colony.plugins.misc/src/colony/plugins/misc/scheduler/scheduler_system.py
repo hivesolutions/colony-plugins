@@ -50,6 +50,9 @@ METHOD_CALL_TYPE = "method_call"
 CONSOLE_COMMAND_TYPE = "console_command"
 """ The console command type """
 
+WAKE_TIME = 1
+""" The wake time """
+
 class Scheduler:
     """
     The scheduler class.
@@ -70,8 +73,8 @@ class Scheduler:
     scheduler_items = []
     """ The list of scheduler items """
 
-    startup_items = {}
-    """ The startup items """
+    startup_configuration = {}
+    """ The startup configuration """
 
     def __init__(self, scheduler_plugin):
         """
@@ -95,8 +98,8 @@ class Scheduler:
         # starts the scheduler items list
         self.scheduler_items = []
 
-        # starts the startup items
-        self.startup_items = {}
+        # starts the startup configuration
+        self.startup_configuration = {}
 
     def load_scheduler(self):
         # notifies the ready semaphore
@@ -105,10 +108,11 @@ class Scheduler:
         # acquires the lock object
         self.scheduler_lock.acquire()
 
-        # loads the startup items
-        self._load_startup_items()
+        # loads the wake item
+        self._load_wake_item()
 
-        self._load_dummy_item()
+        # loads the startup tasks
+        self._load_startup_tasks()
 
         # iterates continuously
         while True:
@@ -124,19 +128,6 @@ class Scheduler:
 
             # runs the scheduler
             self.scheduler.run()
-
-    def _load_dummy_item(self):
-        dummy = lambda: True
-
-        current_time = time.time()
-
-        recursion_list = [0, 0, 0, 1, 0]
-
-        # creates the scheduler item from the plugin method and the arguments
-        scheduler_item = self.create_scheduler_item(dummy, [], current_time, recursion_list)
-
-        # adds the scheduler item
-        self.add_scheduler_item(scheduler_item)
 
     def unload_scheduler(self):
         print "VAI COMECAR O UNLOADING do scheduler"
@@ -250,19 +241,19 @@ class Scheduler:
     def get_task_class(self):
         return SchedulerTask
 
-    def set_startup_items_property(self, startup_items_property):
-        # retrieves the startup items
-        startup_items = startup_items_property.get_data()
+    def set_startup_configuration_property(self, startup_configuration_property):
+        # retrieves the startup configuration
+        startup_configuration = startup_configuration_property.get_data()
 
-        # cleans the startup items
-        colony.libs.map_util.map_clean(self.startup_items)
+        # cleans the startup configuration
+        colony.libs.map_util.map_clean(self.startup_configuration)
 
-        # copies the startup items to the startup items
-        colony.libs.map_util.map_copy(startup_items, self.startup_items)
+        # copies the startup configuration to the startup configuration
+        colony.libs.map_util.map_copy(startup_configuration, self.startup_configuration)
 
-    def unset_startup_items_property(self):
-        # cleans the startup items
-        colony.libs.map_util.map_clean(self.startup_items)
+    def unset_startup_configuration_property(self):
+        # cleans the startup configuration
+        colony.libs.map_util.map_clean(self.startup_configuration)
 
     def create_scheduler_item(self, task_method, task_method_arguments, absolute_time, recursion_list):
         # retrieves the guid plugin
@@ -384,14 +375,41 @@ class Scheduler:
         # returns the absolute timestamp
         return absolute_timestamp
 
-    def _load_startup_items(self):
+    def _load_wake_item(self):
+        # retrieves the wake item flag from the startup configuration map
+        wake_item = self.startup_configuration.get("wake_item", False)
+
+        # in case the wake item flag is not set
+        if not wake_item:
+            # returns immediately
+            return
+
+        # creates the wake function
+        wake_function = lambda: True
+
+        # creates the wake function arguments list
+        wake_function_arguments = []
+
+        # retrieves the current time
+        current_time = time.time()
+
+        # creates the recursion list
+        recursion_list = [0, 0, 0, WAKE_TIME, 0]
+
+        # creates the wake scheduler item from the plugin method and the arguments
+        wake_scheduler_item = self.create_scheduler_item(wake_function, wake_function_arguments, current_time, recursion_list)
+
+        # adds the wake scheduler item
+        self.add_scheduler_item(wake_scheduler_item)
+
+    def _load_startup_tasks(self):
         """
-        Loads the startup items.
+        Loads the startup tasks.
         These items are registered in the plugin's configuration.
         """
 
-        # retrieves the startup tasks from the startup items map
-        startup_tasks = self.startup_items.get("tasks", [])
+        # retrieves the startup tasks from the startup configuration map
+        startup_tasks = self.startup_configuration.get("tasks", [])
 
         # retrieves the current time
         current_time = time.time()

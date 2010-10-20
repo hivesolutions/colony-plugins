@@ -175,10 +175,10 @@ class SchedulerPlugin(colony.base.plugin_system.Plugin):
     def set_main_console_plugin(self, main_console_plugin):
         self.main_console_plugin = main_console_plugin
 
-    @colony.base.decorators.set_configuration_property_method("startup_items")
-    def startup_items_set_configuration_property(self, property_name, property):
-        self.scheduler.set_startup_items_property(property)
+    @colony.base.decorators.set_configuration_property_method("startup_configuration")
+    def startup_configuration_set_configuration_property(self, property_name, property):
+        self.scheduler.set_startup_configuration_property(property)
 
-    @colony.base.decorators.unset_configuration_property_method("startup_items")
-    def startup_items_unset_configuration_property(self, property_name):
-        self.scheduler.unset_startup_items_property()
+    @colony.base.decorators.unset_configuration_property_method("startup_configuration")
+    def startup_configuration_unset_configuration_property(self, property_name):
+        self.scheduler.unset_startup_configuration_property()
