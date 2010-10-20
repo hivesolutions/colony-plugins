@@ -97,8 +97,12 @@ class SchedulerPlugin(colony.base.plugin_system.Plugin):
     def end_unload_plugin(self):
         colony.base.plugin_system.Plugin.end_unload_plugin(self)
 
+        print "FOI PARA O END UNLOAD DO scheduler"
+
         # notifies the ready semaphore
         self.release_ready_semaphore()
+
+        print "FEX RELEASE DO SEMAFORO"
 
     def load_allowed(self, plugin, capability):
         colony.base.plugin_system.Plugin.load_allowed(self, plugin, capability)

@@ -115,6 +115,8 @@ class Scheduler:
 
             # in case the continue flag is disabled
             if not self.continue_flag:
+                print "VAI PARAR POR CAUSA DA CONTINUE FLAG"
+
                 # breaks the cycle
                 break
 
@@ -131,6 +133,12 @@ class Scheduler:
         self.continue_flag = False
 
         print "VAI TESTAR O LOCK"
+
+        current_time = time.time() +1
+
+        dummy = lambda: True
+
+        self.scheduler.enterabs(current_time, 1, dummy, [])
 
         # in case the scheduler lock is locked
         if self.scheduler_lock.locked():
@@ -311,6 +319,7 @@ class Scheduler:
         return self.scheduler_items
 
     def task_hander(self, scheduler_item):
+        # retrieves the scheduler item attributes
         item_task_method = scheduler_item.task_method
         task_method_arguments = scheduler_item.task_method_arguments
 
