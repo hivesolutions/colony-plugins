@@ -38,6 +38,7 @@ __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
 configuration = {
+                 "wake_item" : True,
                  "tasks" : [{
                              "type" : "plugin",
                              "plugin_id" : "pt.hive.colony.plugins.build.automation",

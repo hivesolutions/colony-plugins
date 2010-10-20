@@ -50,7 +50,7 @@
     <plugin_configuration>
         <plugin_id>pt.hive.colony.plugins.misc.scheduler</plugin_id>
         <resource>
-            <name>startup_items</name>
+            <name>startup_configuration</name>
             <type>python</type>
             <data>configuration.py</data>
         </resource>
