@@ -50,8 +50,8 @@ METHOD_CALL_TYPE = "method_call"
 CONSOLE_COMMAND_TYPE = "console_command"
 """ The console command type """
 
-WAKE_TIME = 1
-""" The wake time """
+DEFAULT_SLEEP_STEP = 1.0
+""" The default sleep step value used in sleep function """
 
 class Scheduler:
     """
@@ -66,6 +66,9 @@ class Scheduler:
 
     continue_flag = True
     """ The scheduler continue flag """
+
+    sleep_step = DEFAULT_SLEEP_STEP
+    """ The sleep step to be used in custom sleep function """
 
     scheduler = None
     """ The scheduler object """
@@ -93,7 +96,9 @@ class Scheduler:
         self.continue_flag = True
 
         # creates the new scheduler object to control the scheduling
-        self.scheduler = sched.scheduler(time.time, time.sleep)
+        # the scheduling is creating with the custom sleep function
+        # to avoid extra waiting times
+        self.scheduler = sched.scheduler(time.time, self._sleep)
 
         # starts the scheduler items list
         self.scheduler_items = []
@@ -108,8 +113,8 @@ class Scheduler:
         # acquires the lock object
         self.scheduler_lock.acquire()
 
-        # loads the wake item
-        self._load_wake_item()
+        # loads the (base) configuration
+        self._load_configuration()
 
         # loads the startup tasks
         self._load_startup_tasks()
@@ -375,34 +380,13 @@ class Scheduler:
         # returns the absolute timestamp
         return absolute_timestamp
 
-    def _load_wake_item(self):
-        # retrieves the wake item flag from the startup configuration map
-        wake_item = self.startup_configuration.get("wake_item", False)
+    def _load_configuration(self):
+        """
+        Loads the base configuration.
+        """
 
-        # in case the wake item flag is not set
-        if not wake_item:
-            # returns immediately
-            return
-
-        # creates the wake function
-        wake_function = lambda: True
-
-        # creates the wake function arguments list
-        wake_function_arguments = []
-
-        # retrieves the current time
-        current_time = time.time() + WAKE_TIME
-
-        # creates the recursion list
-        recursion_list = [0, 0, 0, WAKE_TIME, 0]
-
-        # creates the wake scheduler item from the plugin method and the arguments
-        wake_scheduler_item = self.create_scheduler_item(wake_function, wake_function_arguments, current_time, recursion_list)
-
-        # adds the wake scheduler item
-        self.add_scheduler_item(wake_scheduler_item)
-
-        print "ADICIONOU WAKE FILE"
+        # retrieves the sleep step from the startup configuration map
+        self.sleep_step = self.startup_configuration.get("sleep_step", DEFAULT_SLEEP_STEP)
 
     def _load_startup_tasks(self):
         """
@@ -414,7 +398,7 @@ class Scheduler:
         startup_tasks = self.startup_configuration.get("tasks", [])
 
         # retrieves the current time
-        current_time = time.time() + 10
+        current_time = time.time()
 
         # iterates over all the startup tasks
         # to register them
@@ -440,6 +424,36 @@ class Scheduler:
 
             # adds the scheduler item
             self.add_scheduler_item(scheduler_item)
+
+    def _sleep(self, sleep_time):
+        """
+        Custom sleep function used to be able to cancel
+        the scheduler.
+
+        @type sleep_time: int
+        @param sleep_time: The amount of time to sleep.
+        """
+
+        # calculates the number of iteration to be used
+        # from the sleep step
+        iterations = sleep_time / self.sleep_step
+
+        # calculates the extra sleep time from the sleep
+        # step modulus
+        extra_sleep_time = sleep_time % self.sleep_step
+
+        # iterates over the range of iterations
+        for _index in range(iterations):
+            # sleep the sleep step
+            time.sleep(self.sleep_step)
+
+            # in case the continue flag is not set
+            if not self.continue_flag:
+                # returns immediately
+                return
+
+        # sleeps the extra sleep time
+        time.sleep(extra_sleep_time)
 
 class SchedulerTask:
     """
