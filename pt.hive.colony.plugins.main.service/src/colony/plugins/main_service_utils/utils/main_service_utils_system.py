@@ -993,12 +993,12 @@ class AbstractServiceConnectionHandler:
         # address and port
         connection_socket, _connection_address, _connection_port = work_reference
 
-        #try:
-        # removes the connection using the socket as reference
-        self.remove_connection_socket(connection_socket)
-        #except Exception, exception:
+        try:
+            # removes the connection using the socket as reference
+            self.remove_connection_socket(connection_socket)
+        except Exception, exception:
             # prints an error for not being able to remove connection
-        #    self.service.main_service_utils_plugin.error("Problem while removing connection from service connection handler: %s" % unicode(exception))
+            self.service.main_service_utils_plugin.error("Problem while removing connection from service connection handler: %s" % unicode(exception))
 
     def add_connection(self, connection_socket, connection_address, connection_port):
         """
