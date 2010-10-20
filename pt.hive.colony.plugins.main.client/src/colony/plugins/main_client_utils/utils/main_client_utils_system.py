@@ -541,6 +541,9 @@ class ClientConnection:
             # runs the select in the connection socket, with timeout
             selected_values = select.select([self.connection_socket], [], [], request_timeout)
         except:
+            # closes the connection
+            self.close()
+
             # raises the request closed exception
             raise main_client_utils_exceptions.RequestClosed("invalid socket")
 
@@ -554,6 +557,9 @@ class ClientConnection:
             # receives the data in chunks
             data = self.connection_socket.recv(chunk_size)
         except Exception, exception:
+            # closes the connection
+            self.close()
+
             # raises the server request timeout exception
             raise main_client_utils_exceptions.ServerRequestTimeout("problem receiving data: " + unicode(exception))
 
@@ -598,6 +604,9 @@ class ClientConnection:
                 # runs the select in the connection socket, with timeout
                 selected_values = select.select([self.connection_socket], [self.connection_socket], [self.connection_socket], 1)
             except:
+                # closes the connection
+                self.close()
+
                 # raises the request closed exception
                 raise main_client_utils_exceptions.RequestClosed("invalid socket")
 
