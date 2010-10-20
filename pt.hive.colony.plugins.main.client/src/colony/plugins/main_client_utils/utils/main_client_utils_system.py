@@ -48,10 +48,10 @@ import main_client_utils_exceptions
 CLIENT_CONNECTION_TIMEOUT = 1
 """ The client connection timeout """
 
-REQUEST_TIMEOUT = 100
+REQUEST_TIMEOUT = 120
 """ The request timeout """
 
-RESPONSE_TIMEOUT = 100
+RESPONSE_TIMEOUT = 120
 """ The response timeout """
 
 CONNECTION_TIMEOUT = 600

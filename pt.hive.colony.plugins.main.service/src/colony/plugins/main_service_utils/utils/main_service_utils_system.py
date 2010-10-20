@@ -80,10 +80,10 @@ WORK_SCHEDULING_ALGORITHM = 1
 POLL_TIMEOUT = 1
 """ The poll timeout """
 
-REQUEST_TIMEOUT = 100
+REQUEST_TIMEOUT = 120
 """ The request timeout """
 
-RESPONSE_TIMEOUT = 10
+RESPONSE_TIMEOUT = 30
 """ The response timeout """
 
 CONNECTION_TIMEOUT = 600
