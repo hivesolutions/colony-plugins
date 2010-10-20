@@ -122,6 +122,8 @@ class Scheduler:
             self.scheduler.run()
 
     def unload_scheduler(self):
+        print "VAI COMEÇAR O UNLOADING do scheduler"
+
         # removes all the active scheduler items
         self.remove_all_active_scheduler_items()
 
