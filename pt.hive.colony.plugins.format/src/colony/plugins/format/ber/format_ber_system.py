@@ -59,7 +59,7 @@ OCTET_STRING_TYPE = 0x04
 ENUMERATED_TYPE = 0x0a
 """ The enumerated type """
 
-SEQUENCE_TYPE = 0x30
+SEQUENCE_TYPE = 0x10
 """ The sequence type """
 
 APPLICATION_TYPE = 0x60
@@ -73,6 +73,14 @@ VALUE_VALUE = "value"
 
 EXTRA_TYPE_VALUE = "extra_type"
 """ The extra type value """
+
+DEFAULT_PRIMITIVE_CONSTRUCTED = {EOC_TYPE : 0x00,
+                                 EOC_TYPE : 0x00,
+                                 INTEGER_TYPE : 0x00,
+                                 BIT_STRING_TYPE : 0x00,
+                                 OCTET_STRING_TYPE : 0x00,
+                                 ENUMERATED_TYPE : 0x20}
+""" The map setting the default primitive or constructed values """
 
 class FormatBer:
     """
