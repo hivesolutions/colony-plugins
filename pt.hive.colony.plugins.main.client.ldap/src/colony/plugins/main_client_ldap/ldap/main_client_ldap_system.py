@@ -215,6 +215,9 @@ class LdapClient:
             # releases the ldap client lock
             self._ldap_client_lock.release()
 
+    def disconnect(self):
+        pass
+
     def send_request(self, protocol_operation, controls = []):
         """
         Sends the request for the given parameters.
@@ -307,16 +310,13 @@ class LdapClient:
                     # bytes available
                     continue
 
-            # retrieves the message value from the string buffer
-            message_value = message.get_value()
-
-            # retrieves the message value length
-            message_value_length = len(message_value)
-
-            # in case the message value length is the same
+            # in case the message data size is the same
             # as the message size plus the message size length
             # plus the identification byte
-            if message_value_length == message_size + message_size_length + 1:
+            if received_data_size == message_size + message_size_length + 1:
+                # retrieves the message value from the string buffer
+                message_value = message.get_value()
+
                 # process the message value data in the response
                 response.process_data(message_value, self.ber_structure)
 
