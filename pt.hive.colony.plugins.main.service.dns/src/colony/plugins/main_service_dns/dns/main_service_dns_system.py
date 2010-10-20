@@ -386,7 +386,7 @@ class DnsClientServiceHandler:
                 self.send_request(service_connection, request)
             except main_service_dns_exceptions.MainServiceDnsException:
                 # prints a debug message
-                self.service_plugin.debug("Connection: %s by peer, while sending request" % str(service_connection))
+                self.service_plugin.debug("Connection: %s closed by peer, while sending request" % str(service_connection))
 
                 # returns false (connection closed)
                 return False
@@ -400,7 +400,7 @@ class DnsClientServiceHandler:
                 self.send_exception(service_connection, request, exception)
             except main_service_dns_exceptions.MainServiceDnsException:
                 # prints a debug message
-                self.service_plugin.debug("Connection: %s by peer, while sending exception" % str(service_connection))
+                self.service_plugin.debug("Connection: %s closed by peer, while sending exception" % str(service_connection))
 
                 # returns false (connection closed)
                 return False
