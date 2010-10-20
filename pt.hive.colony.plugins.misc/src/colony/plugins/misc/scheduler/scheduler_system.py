@@ -125,7 +125,7 @@ class Scheduler:
             # runs the scheduler
             self.scheduler.run()
 
-    def load_dummy_item(self):
+    def _load_dummy_item(self):
         dummy = lambda: True
 
         current_time = time.time()
