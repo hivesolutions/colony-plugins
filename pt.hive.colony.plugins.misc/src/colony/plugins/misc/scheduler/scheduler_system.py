@@ -108,6 +108,8 @@ class Scheduler:
         # loads the startup items
         self._load_startup_items()
 
+        self._load_dummy_item()
+
         # iterates continuously
         while True:
             # acquires the lock object
@@ -123,6 +125,19 @@ class Scheduler:
             # runs the scheduler
             self.scheduler.run()
 
+    def load_dummy_item(self):
+        dummy = lambda: True
+
+        current_time = time.time()
+
+        recursion_list = [0, 0, 0, 1, 0]
+
+        # creates the scheduler item from the plugin method and the arguments
+        scheduler_item = self.create_scheduler_item(dummy, [], current_time, recursion_list)
+
+        # adds the scheduler item
+        self.add_scheduler_item(scheduler_item)
+
     def unload_scheduler(self):
         print "VAI COMECAR O UNLOADING do scheduler"
 
@@ -133,12 +148,6 @@ class Scheduler:
         self.continue_flag = False
 
         print "VAI TESTAR O LOCK"
-
-        current_time = time.time() +1
-
-        dummy = lambda: True
-
-        self.scheduler.enterabs(current_time, 1, dummy, [])
 
         # in case the scheduler lock is locked
         if self.scheduler_lock.locked():
@@ -295,6 +304,8 @@ class Scheduler:
         if scheduler_item.is_active():
             # retrieves the current event
             current_event = scheduler_item.current_event
+
+            print "VAI CANCELAR O ELEMENTO"
 
             # cancels the current event
             self.scheduler.cancel(current_event)
