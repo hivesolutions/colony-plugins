@@ -1014,6 +1014,12 @@ class AbstractServiceConnectionHandler:
         @return: The created service connection.
         """
 
+        # in case the connection socket already exists in
+        # the service connections map
+        if connection_socket in self.service_connections_map:
+            # raises the connection change failure exception
+            raise main_service_utils_exceptions.ConnectionChangeFailure("trying to add duplicate socket: " + unicode(connection_socket))
+
         # creates the new service connection
         service_connection = ServiceConnection(self.service_plugin, self, connection_socket, connection_address, connection_port, self.chunk_size)
 
@@ -1062,6 +1068,12 @@ class AbstractServiceConnectionHandler:
 
         # retrieves the connection socket
         connection_socket = service_connection.get_base_connection_socket()
+
+        # in case the connection socket does not exist in
+        # the service connections map
+        if not connection_socket in self.service_connections_map:
+            # raises the connection change failure exception
+            raise main_service_utils_exceptions.ConnectionChangeFailure("trying to remove inexistent scoket: " + unicode(connection_socket))
 
         # retrieves the connection socket file descriptor
         connection_socket_file_descriptor = self.__get_connection_socket_file_descriptor(connection_socket)
