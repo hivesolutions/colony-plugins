@@ -42,7 +42,7 @@
             </first_operand>
             <second_operand>
                 <type>string</type>
-                <data>integration</data>
+                <data>development</data>
             </second_operand>
         </equals_expression>
     </validation>
