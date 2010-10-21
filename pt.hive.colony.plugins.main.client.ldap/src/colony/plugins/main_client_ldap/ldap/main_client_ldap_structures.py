@@ -143,6 +143,47 @@ class ProtocolOperation:
         # returns the protocol operation
         return protocol_operation
 
+class SearchResultEntry(ProtocolOperation):
+    object_name = None
+
+    attributes = None
+
+    def __init__(self, object_name = None, attributes = None):
+        self.object_name = object_name
+        self.attributes = attributes
+
+    def process_value(self, value):
+        pass
+
+class PartialAttribute:
+
+    type = None
+
+    values = None
+
+    def __init__(self, type = None, values = None):
+        self.type = type
+        self.values = values
+
+    def process_value(self, value):
+        # retrieves the attribute value
+        attribute_value = value[VALUE_VALUE]
+
+        # retrieves the type and the type value
+        type = attribute_value[0]
+        type_value = type[VALUE_VALUE]
+
+        # retrieves the values and the values value
+        values = attribute_value[1]
+        values_value = values[VALUE_VALUE]
+
+        # sets the current values
+        self.type = type_value
+        self.values = values_value
+
+        # returns the self value
+        return self
+
 class LdapResult(ProtocolOperation):
 
     result_code = None
