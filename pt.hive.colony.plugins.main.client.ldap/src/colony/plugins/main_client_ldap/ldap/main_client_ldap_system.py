@@ -68,6 +68,15 @@ VALUE_VALUE = "value"
 EXTRA_TYPE_VALUE = "extra_type"
 """ The extra type value """
 
+TYPE_NUMBER_VALUE = "type_number"
+""" The type number value """
+
+TYPE_CONSTRUCTED_VALUE = "type_constructed"
+""" The type constructed value """
+
+TYPE_CLASS_VALUE = "type_class"
+""" The type class value """
+
 PROTOCOL_VERSION_VALUE = "protocol_version"
 """ The protocol version value """
 
@@ -92,23 +101,31 @@ ENUMERATED_TYPE = 0x0a
 SEQUENCE_TYPE = 0x10
 """ The sequence type """
 
-APPLICATION_TYPE = 0x00
-""" The application type """
+PRIMITIVE_MODE = 0x00
+""" The primitive mode """
 
+CONSTRUCTED_MODE = 0x01
+""" The constructed mode """
 
+UNIVERSAL_CLASS = 0x00
+""" The universal class """
 
+APPLICATION_CLASS = 0x01
+""" The application class """
 
-PRIVATE_TYPE = 0x80
-""" The private type """
+CONTEXT_SPECIFIC_CLASS = 0x02
+""" The context specific class """
 
+PRIVATE_CLASS = 0x03
+""" The private class """
 
-
-
-LDAP_TYPE_ALIAS_MAP = {APPLICATION_TYPE + 0 : 0x10,
-                       APPLICATION_TYPE + 1 : 0x10,
-                       APPLICATION_TYPE + 2 : 0x10,
-                       PRIVATE_TYPE + 0: 0x04,
-                       PRIVATE_TYPE + 3: 0x10}
+LDAP_TYPE_ALIAS_MAP = {UNIVERSAL_CLASS : {},
+                       APPLICATION_CLASS : {0x00 : 0x10,
+                                            0x01 : 0x10,
+                                            0x02 : 0x10},
+                       CONTEXT_SPECIFIC_CLASS : {},
+                       PRIVATE_CLASS: {0x00 : 0x04,
+                                       0x03 : 0x10}}
 """ The map of ldap type alias """
 
 class MainClientLdap:

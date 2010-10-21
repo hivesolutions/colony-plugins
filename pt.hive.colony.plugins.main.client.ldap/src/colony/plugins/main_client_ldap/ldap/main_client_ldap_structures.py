@@ -46,6 +46,15 @@ VALUE_VALUE = "value"
 EXTRA_TYPE_VALUE = "extra_type"
 """ The extra type value """
 
+TYPE_NUMBER_VALUE = "type_number"
+""" The type number value """
+
+TYPE_CONSTRUCTED_VALUE = "type_constructed"
+""" The type constructed value """
+
+TYPE_CLASS_VALUE = "type_class"
+""" The type class value """
+
 BIND_VALUE = "bind"
 """ The bind value """
 
@@ -67,11 +76,26 @@ OCTET_STRING_TYPE = 0x04
 ENUMERATED_TYPE = 0x0a
 """ The enumerated type """
 
-SEQUENCE_TYPE = 0x30
+SEQUENCE_TYPE = 0x10
 """ The sequence type """
 
-APPLICATION_TYPE = 0x60
-""" The application (base) type """
+PRIMITIVE_MODE = 0x00
+""" The primitive mode """
+
+CONSTRUCTED_MODE = 0x01
+""" The constructed mode """
+
+UNIVERSAL_CLASS = 0x00
+""" The universal class """
+
+APPLICATION_CLASS = 0x01
+""" The application class """
+
+CONTEXT_SPECIFIC_CLASS = 0x02
+""" The context specific class """
+
+PRIVATE_CLASS = 0x03
+""" The private class """
 
 LDAP_REQUEST_TYPE_MAP = {BIND_VALUE : 0x00, "unbind" : 0x02,
                          "search" : 0x03, "modify" : 0x06,
@@ -94,9 +118,12 @@ class ProtocolOperation:
         # retrieves the protocol operation extra type
         protocol_operation_extra_type = value[EXTRA_TYPE_VALUE]
 
-        # retrieves the protocol operation class for the protocol
-        # operation extra type
-        protocol_operation_class = TYPE_CLASS_MAP[protocol_operation_extra_type]
+        # retrieves the protocol operation extra type number
+        protocol_operation_extra_type_number = protocol_operation_extra_type[TYPE_CLASS_VALUE]
+
+        # retrieves the protocol operation class from the type
+        # class map using the protocol operation extra type number
+        protocol_operation_class = TYPE_CLASS_MAP[protocol_operation_extra_type_number]
 
         # creates a new protocol operation structure
         protocol_operation_structure = protocol_operation_class()
@@ -166,7 +193,7 @@ class BindRequest(ProtocolOperation):
 
     def get_value(self):
         # retrieves the bind request type
-        bind_request_type = APPLICATION_TYPE + LDAP_REQUEST_TYPE_MAP[BIND_VALUE]
+        bind_request_type = LDAP_REQUEST_TYPE_MAP[BIND_VALUE]
 
         # creates the version integer value
         version = {TYPE_VALUE: INTEGER_TYPE, VALUE_VALUE : self.version}
@@ -182,7 +209,9 @@ class BindRequest(ProtocolOperation):
 
         # creates the bind operation sequence value
         bind_operation = {TYPE_VALUE: SEQUENCE_TYPE, VALUE_VALUE : protocol_operation_contents,
-                          EXTRA_TYPE_VALUE : bind_request_type}
+                          EXTRA_TYPE_VALUE : {TYPE_NUMBER_VALUE : bind_request_type,
+                                              TYPE_CONSTRUCTED_VALUE : CONSTRUCTED_MODE,
+                                              TYPE_CLASS_VALUE : APPLICATION_CLASS}}
 
         # returns the bind operation (value)
         return bind_operation
@@ -203,11 +232,12 @@ class SimpleAuthentication(Authentication):
     def get_value(self):
         # creates the authentication octet string value
         authentication = {TYPE_VALUE: OCTET_STRING_TYPE, VALUE_VALUE : self.value,
-                          EXTRA_TYPE_VALUE : 0x80}
+                          EXTRA_TYPE_VALUE : {TYPE_NUMBER_VALUE : 0,
+                                              TYPE_CLASS_VALUE : CONTEXT_SPECIFIC_CLASS}}
 
         # returns the authentication (value)
         return authentication
 
-TYPE_CLASS_MAP = {APPLICATION_TYPE + LDAP_REQUEST_TYPE_MAP[BIND_VALUE] : BindRequest,
-                  APPLICATION_TYPE + LDAP_RESPONSE_TYPE_MAP[BIND_VALUE] : BindResponse}
+TYPE_CLASS_MAP = {LDAP_REQUEST_TYPE_MAP[BIND_VALUE] : BindRequest,
+                  LDAP_RESPONSE_TYPE_MAP[BIND_VALUE] : BindResponse}
 """ The map associating a type with a class map """
