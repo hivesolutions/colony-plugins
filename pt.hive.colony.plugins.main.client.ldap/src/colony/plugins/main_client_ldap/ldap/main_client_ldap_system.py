@@ -239,7 +239,15 @@ class LdapClient:
             self._ldap_client_lock.release()
 
     def disconnect(self):
-        pass
+        # acquires the ldap client lock
+        self._ldap_client_lock.acquire()
+
+        try:
+            # unbinds the connection
+            self.unbind()
+        finally:
+            # releases the ldap client lock
+            self._ldap_client_lock.release()
 
     def send_request(self, protocol_operation, controls = []):
         """
@@ -364,6 +372,13 @@ class LdapClient:
 
         # validates the response
         self._validate_response(response)
+
+    def unbind(self):
+        # creates the unbind request
+        unbind_request = main_client_ldap_structures.UnbindRequest()
+
+        # sends the request for the unbind and controls
+        self.send_request(unbind_request, [])
 
     def _validate_response(self, response):
         """

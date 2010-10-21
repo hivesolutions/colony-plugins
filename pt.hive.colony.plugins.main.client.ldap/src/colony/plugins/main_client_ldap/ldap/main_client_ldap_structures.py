@@ -58,6 +58,9 @@ TYPE_CLASS_VALUE = "type_class"
 BIND_VALUE = "bind"
 """ The bind value """
 
+UNBIND_VALUE = "unbind"
+""" The unbind value """
+
 EOC_TYPE = 0x00
 """ The eoc (end of content) type """
 
@@ -97,7 +100,7 @@ CONTEXT_SPECIFIC_CLASS = 0x02
 PRIVATE_CLASS = 0x03
 """ The private class """
 
-LDAP_REQUEST_TYPE_MAP = {BIND_VALUE : 0x00, "unbind" : 0x02,
+LDAP_REQUEST_TYPE_MAP = {BIND_VALUE : 0x00, UNBIND_VALUE : 0x02,
                          "search" : 0x03, "modify" : 0x06,
                          "add" : 0x08, "delete" : 0x0a,
                          "modify_dn" : 0x00, "compare" : 0x00,
@@ -216,6 +219,26 @@ class BindRequest(ProtocolOperation):
         # returns the bind operation (value)
         return bind_operation
 
+class UnbindRequest(ProtocolOperation):
+
+    def __init__(self):
+        ProtocolOperation.__init__(self)
+
+    def get_value(self):
+        # retrieves the unbind request type
+        unbind_request_type = LDAP_REQUEST_TYPE_MAP[UNBIND_VALUE]
+
+        # creates the protocol operation contents (list)
+        protocol_operation_contents = []
+
+        # creates the unbind operation sequence value
+        unbind_operation = {TYPE_VALUE: SEQUENCE_TYPE, VALUE_VALUE : protocol_operation_contents,
+                            EXTRA_TYPE_VALUE : {TYPE_NUMBER_VALUE : unbind_request_type,
+                                                TYPE_CLASS_VALUE : APPLICATION_CLASS}}
+
+        # returns the unbind operation (value)
+        return unbind_operation
+
 class Authentication:
 
     def __init__(self):
@@ -239,5 +262,6 @@ class SimpleAuthentication(Authentication):
         return authentication
 
 TYPE_CLASS_MAP = {LDAP_REQUEST_TYPE_MAP[BIND_VALUE] : BindRequest,
-                  LDAP_RESPONSE_TYPE_MAP[BIND_VALUE] : BindResponse}
+                  LDAP_RESPONSE_TYPE_MAP[BIND_VALUE] : BindResponse,
+                  LDAP_REQUEST_TYPE_MAP[UNBIND_VALUE] : UnbindRequest}
 """ The map associating a type with a class map """
