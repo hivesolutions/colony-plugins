@@ -64,6 +64,9 @@ ENUMERATED_TYPE = 0x0a
 SEQUENCE_TYPE = 0x10
 """ The sequence type """
 
+SET_TYPE = 0x11
+""" The set type """
+
 PRIMITIVE_MODE = 0x00
 """ The primitive mode """
 
@@ -106,7 +109,8 @@ DEFAULT_TYPE_CONSTRUCTED = {EOC_TYPE : 0x00,
                             BIT_STRING_TYPE : 0x00,
                             OCTET_STRING_TYPE : 0x00,
                             ENUMERATED_TYPE : 0x00,
-                            SEQUENCE_TYPE : 0x01}
+                            SEQUENCE_TYPE : 0x01,
+                            SET_TYPE : 0x01}
 """ The map containing the default constructed values for the types """
 
 DEFAULT_CLASS = 0x00
@@ -159,16 +163,20 @@ class BerStructure:
         self.type_alias_map = {}
 
         # creates the pack methods map reference
-        self.pack_methods_map = {INTEGER_TYPE : self.pack_integer,
+        self.pack_methods_map = {BOOLEAN_TYPE : self.pack_boolean,
+                                 INTEGER_TYPE : self.pack_integer,
                                  OCTET_STRING_TYPE : self.pack_octet_string,
                                  ENUMERATED_TYPE : self.pack_enumerated,
-                                 SEQUENCE_TYPE : self.pack_sequence}
+                                 SEQUENCE_TYPE : self.pack_sequence,
+                                 SET_TYPE : self.pack_set}
 
         # creates the unpack methods map reference
-        self.unpack_methods_map = {INTEGER_TYPE : self.unpack_integer,
+        self.unpack_methods_map = {BOOLEAN_TYPE : self.unpack_boolean,
+                                   INTEGER_TYPE : self.unpack_integer,
                                    OCTET_STRING_TYPE : self.unpack_octet_string,
                                    ENUMERATED_TYPE : self.unpack_enumerated,
-                                   SEQUENCE_TYPE : self.unpack_sequence}
+                                   SEQUENCE_TYPE : self.unpack_sequence,
+                                   SET_TYPE : self.unpack_set}
 
     def to_hex(self, string_value):
         for index in string_value:
@@ -199,6 +207,28 @@ class BerStructure:
 
         # returns the value
         return value
+
+    def pack_boolean(self, boolean):
+        # resolves the boolean type
+        boolean_type = self._get_type(boolean)
+
+        # retrieves the boolean type
+        boolean_type = self._get_extra_type(boolean, boolean_type)
+
+        # retrieves the boolean value
+        boolean_value = self._get_value(boolean)
+
+        # converts the boolean value to integer
+        boolean_value = boolean_value and 1 or 0
+
+        # packs the boolean value
+        packed_boolean = self._pack_integer(boolean_value)
+
+        # packs the boolean as a base value
+        packed_boolean = self.pack_base_value(packed_boolean, boolean_type)
+
+        # returns the packed boolean
+        return packed_boolean
 
     def pack_integer(self, integer):
         # resolves the integer type
@@ -276,6 +306,25 @@ class BerStructure:
         # returns the packed sequence
         return packed_sequence
 
+    def pack_set(self, set):
+        # resolves the set type
+        set_type = self._get_type(set)
+
+        # retrieves the set type
+        set_type = self._get_extra_type(set, set_type)
+
+        # retrieves the set value
+        set_value = self._get_value(set)
+
+        # packs the set value
+        packed_set = self._pack_sequence(set_value)
+
+        # packs the set as a base value
+        packed_set = self.pack_base_value(packed_set, set_type)
+
+        # returns the packed set
+        return packed_set
+
     def pack_base_value(self, packed_base_value, type = EOC_TYPE):
         # calculates the packed base value length
         packed_base_value_length = len(packed_base_value)
@@ -289,6 +338,28 @@ class BerStructure:
 
         # returns the packed base value
         return packed_base_value
+
+    def unpack_boolean(self, packed_boolean):
+        # resolves the boolean type
+        boolean_type = self._resolve_base_type(BOOLEAN_TYPE)
+
+        # retrieves the packed boolean extra type
+        packed_boolean_extra_type = self._get_packed_extra_type(packed_boolean, boolean_type)
+
+        # retrieves the packed boolean value
+        packed_boolean_value = self._get_packed_value(packed_boolean)
+
+        # unpacks the packed boolean value
+        upacked_boolean_value = self._unpack_integer(packed_boolean_value)
+
+        # converts the unpacked boolean value to integer
+        upacked_boolean_value = upacked_boolean_value == 1 and True or False
+
+        # unpacks the boolean as a base value
+        boolean = self.unpack_base_value(upacked_boolean_value, boolean_type, packed_boolean_extra_type)
+
+        # returns the boolean
+        return boolean
 
     def unpack_integer(self, packed_integer):
         # resolves the integer type
@@ -365,6 +436,25 @@ class BerStructure:
 
         # returns the sequence
         return sequence
+
+    def unpack_set(self, packed_set):
+        # resolves the set type
+        set_type = self._resolve_base_type(SET_TYPE)
+
+        # retrieves the packed set extra type
+        packed_set_extra_type = self._get_packed_extra_type(packed_set, set_type)
+
+        # retrieves the packed set value
+        packed_set_value = self._get_packed_value(packed_set)
+
+        # unpacks the packed set value
+        upacked_set_value = self._unpack_sequence(packed_set_value)
+
+        # unpacks the set as a base value
+        set = self.unpack_base_value(upacked_set_value, set_type, packed_set_extra_type)
+
+        # returns the set
+        return set
 
     def unpack_base_value(self, unpacked_base_value, type = EOC_TYPE, extra_type = None):
         # retrieves the type tuple for the given type
