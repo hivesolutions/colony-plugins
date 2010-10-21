@@ -37,6 +37,8 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
+import types
+
 import format_ber_exceptions
 
 import colony.libs.string_buffer_util
@@ -62,8 +64,23 @@ ENUMERATED_TYPE = 0x0a
 SEQUENCE_TYPE = 0x10
 """ The sequence type """
 
-APPLICATION_TYPE = 0x60
-""" The application (base) type """
+PRIMITIVE_MODE = 0x00
+""" The primitive mode """
+
+CONSTRUCTED_MODE = 0x01
+""" The constructed mode """
+
+UNIVERSAL_CLASS = 0x00
+""" The universal class """
+
+APPLICATION_CLASS = 0x01
+""" The application class """
+
+CONTEXT_SPECIFIC_CLASS = 0x02
+""" The context specific class """
+
+PRIVATE_CLASS = 0x03
+""" The private class """
 
 TYPE_VALUE = "type"
 """ The type value """
@@ -74,13 +91,26 @@ VALUE_VALUE = "value"
 EXTRA_TYPE_VALUE = "extra_type"
 """ The extra type value """
 
-DEFAULT_PRIMITIVE_CONSTRUCTED = {EOC_TYPE : 0x00,
-                                 EOC_TYPE : 0x00,
-                                 INTEGER_TYPE : 0x00,
-                                 BIT_STRING_TYPE : 0x00,
-                                 OCTET_STRING_TYPE : 0x00,
-                                 ENUMERATED_TYPE : 0x20}
-""" The map setting the default primitive or constructed values """
+TYPE_NUMBER_VALUE = "type_number"
+""" The type number value """
+
+TYPE_CONSTRUCTED_VALUE = "type_constructed"
+""" The type constructed value """
+
+TYPE_CLASS_VALUE = "type_class"
+""" The type class value """
+
+DEFAULT_TYPE_CONSTRUCTED = {EOC_TYPE : 0x00,
+                            BOOLEAN_TYPE : 0x00,
+                            INTEGER_TYPE : 0x00,
+                            BIT_STRING_TYPE : 0x00,
+                            OCTET_STRING_TYPE : 0x00,
+                            ENUMERATED_TYPE : 0x00,
+                            SEQUENCE_TYPE : 0x01}
+""" The map containing the default constructed values for the types """
+
+DEFAULT_CLASS = 0x00
+""" The default class to be used """
 
 class FormatBer:
     """
@@ -145,11 +175,11 @@ class BerStructure:
             print "0x%02x" % ord(index),
 
     def pack(self, value):
-        # retrieves the type for the value
-        type = self._get_type(value)
+        # retrieves the type number for the value
+        type_number = self._get_type_number(value)
 
-        # retrieves the pack method for the type
-        pack_method = self._get_pack_method(type)
+        # retrieves the pack method for the type number
+        pack_method = self._get_pack_method(type_number)
 
         # packs the value
         packed_value = pack_method(value)
@@ -158,11 +188,11 @@ class BerStructure:
         return packed_value
 
     def unpack(self, packed_value):
-        # retrieves the type for the packed value
-        type = self._get_packed_type(packed_value)
+        # retrieves the type for the packed number value
+        type_number = self._get_packed_type_number(packed_value)
 
-        # retrieves the unpack method for the type
-        unpack_method = self._get_unpack_method(type)
+        # retrieves the unpack method for the type number
+        unpack_method = self._get_unpack_method(type_number)
 
         # unpacks the packed value
         value = unpack_method(packed_value)
@@ -171,8 +201,11 @@ class BerStructure:
         return value
 
     def pack_integer(self, integer):
+        # resolves the integer type
+        integer_type = self._get_type(integer)
+
         # retrieves the integer type
-        integer_type = self._get_extra_type(integer, INTEGER_TYPE)
+        integer_type = self._get_extra_type(integer, integer_type)
 
         # retrieves the integer value
         integer_value = self._get_value(integer)
@@ -187,8 +220,11 @@ class BerStructure:
         return packed_integer
 
     def pack_octet_string(self, octet_string):
+        # resolves the octet string type
+        octet_string_type = self._get_type(octet_string)
+
         # retrieves the octet string type
-        octet_string_type = self._get_extra_type(octet_string, OCTET_STRING_TYPE)
+        octet_string_type = self._get_extra_type(octet_string, octet_string_type)
 
         # retrieves the octet string value
         octet_sting_value = self._get_value(octet_string)
@@ -203,8 +239,11 @@ class BerStructure:
         return packed_octet_string
 
     def pack_enumerated(self, enumerated):
+        # resolves the enumerated type
+        enumerated_type = self._get_type(enumerated)
+
         # retrieves the enumerated type
-        enumerated_type = self._get_extra_type(enumerated, ENUMERATED_TYPE)
+        enumerated_type = self._get_extra_type(enumerated, enumerated_type)
 
         # retrieves the enumerated value
         enumerated_value = self._get_value(enumerated)
@@ -219,8 +258,11 @@ class BerStructure:
         return packed_enumerated
 
     def pack_sequence(self, sequence):
+        # resolves the sequence type
+        sequence_type = self._get_type(sequence)
+
         # retrieves the sequence type
-        sequence_type = self._get_extra_type(sequence, SEQUENCE_TYPE)
+        sequence_type = self._get_extra_type(sequence, sequence_type)
 
         # retrieves the sequence value
         sequence_value = self._get_value(sequence)
@@ -249,8 +291,11 @@ class BerStructure:
         return packed_base_value
 
     def unpack_integer(self, packed_integer):
+        # resolves the integer type
+        integer_type = self._resolve_base_type(INTEGER_TYPE)
+
         # retrieves the packed integer extra type
-        packed_integer_extra_type = self._get_packed_extra_type(packed_integer, INTEGER_TYPE)
+        packed_integer_extra_type = self._get_packed_extra_type(packed_integer, integer_type)
 
         # retrieves the packed integer value
         packed_integer_value = self._get_packed_value(packed_integer)
@@ -259,14 +304,17 @@ class BerStructure:
         upacked_integer_value = self._unpack_integer(packed_integer_value)
 
         # unpacks the integer as a base value
-        integer = self.unpack_base_value(upacked_integer_value, INTEGER_TYPE, packed_integer_extra_type)
+        integer = self.unpack_base_value(upacked_integer_value, integer_type, packed_integer_extra_type)
 
         # returns the integer
         return integer
 
     def unpack_octet_string(self, packed_octet_string):
+        # resolves the octet string type
+        octet_string_type = self._resolve_base_type(OCTET_STRING_TYPE)
+
         # retrieves the packed octet string extra type
-        packed_octet_string_extra_type = self._get_packed_extra_type(packed_octet_string, OCTET_STRING_TYPE)
+        packed_octet_string_extra_type = self._get_packed_extra_type(packed_octet_string, octet_string_type)
 
         # retrieves the packed octet string value
         packed_octet_string_value = self._get_packed_value(packed_octet_string)
@@ -275,14 +323,17 @@ class BerStructure:
         upacked_octet_string_value = self._unpack_octet_string(packed_octet_string_value)
 
         # unpacks the octet string as a base value
-        octet_string = self.unpack_base_value(upacked_octet_string_value, OCTET_STRING_TYPE, packed_octet_string_extra_type)
+        octet_string = self.unpack_base_value(upacked_octet_string_value, octet_string_type, packed_octet_string_extra_type)
 
         # returns the octet string
         return octet_string
 
     def unpack_enumerated(self, packed_enumerated):
+        # resolves the enumerated type
+        enumerated_type = self._resolve_base_type(ENUMERATED_TYPE)
+
         # retrieves the packed enumerated extra type
-        packed_enumerated_extra_type = self._get_packed_extra_type(packed_enumerated, ENUMERATED_TYPE)
+        packed_enumerated_extra_type = self._get_packed_extra_type(packed_enumerated, enumerated_type)
 
         # retrieves the packed enumerated value
         packed_enumerated_value = self._get_packed_value(packed_enumerated)
@@ -291,14 +342,17 @@ class BerStructure:
         upacked_enumerated_value = self._unpack_integer(packed_enumerated_value)
 
         # unpacks the enumerated as a base value
-        enumerated = self.unpack_base_value(upacked_enumerated_value, ENUMERATED_TYPE, packed_enumerated_extra_type)
+        enumerated = self.unpack_base_value(upacked_enumerated_value, enumerated_type, packed_enumerated_extra_type)
 
         # returns the enumerated
         return enumerated
 
     def unpack_sequence(self, packed_sequence):
+        # resolves the sequence type
+        sequence_type = self._resolve_base_type(SEQUENCE_TYPE)
+
         # retrieves the packed sequence extra type
-        packed_sequence_extra_type = self._get_packed_extra_type(packed_sequence, SEQUENCE_TYPE)
+        packed_sequence_extra_type = self._get_packed_extra_type(packed_sequence, sequence_type)
 
         # retrieves the packed sequence value
         packed_sequence_value = self._get_packed_value(packed_sequence)
@@ -307,19 +361,35 @@ class BerStructure:
         upacked_sequence_value = self._unpack_sequence(packed_sequence_value)
 
         # unpacks the sequence as a base value
-        sequence = self.unpack_base_value(upacked_sequence_value, SEQUENCE_TYPE, packed_sequence_extra_type)
+        sequence = self.unpack_base_value(upacked_sequence_value, sequence_type, packed_sequence_extra_type)
 
         # returns the sequence
         return sequence
 
     def unpack_base_value(self, unpacked_base_value, type = EOC_TYPE, extra_type = None):
+        # retrieves the type tuple for the given type
+        type_number, type_constructed, type_class = self._get_type_tuple(None, type)
+
+        # creates the type map (to set as type value)
+        type_map = {TYPE_NUMBER_VALUE : type_number,
+                    TYPE_CONSTRUCTED_VALUE : type_constructed,
+                    TYPE_CLASS_VALUE : type_class}
+
         # creates the unpacked base value
-        unpaked_base_value = {TYPE_VALUE : type, VALUE_VALUE : unpacked_base_value}
+        unpaked_base_value = {TYPE_VALUE : type_map, VALUE_VALUE : unpacked_base_value}
 
         # in case the extra type is defined
         if not extra_type == None:
-            # sets the extra type in the unpacked base value
-            unpaked_base_value[EXTRA_TYPE_VALUE] = extra_type
+            # retrieves the extra type tuple for the given extra type
+            extra_type_number, extra_type_constructed, extra_type_class = self._get_type_tuple(None, extra_type)
+
+            # creates the extra type map (to set as extra type value)
+            extra_type_map = {TYPE_NUMBER_VALUE : extra_type_number,
+                              TYPE_CONSTRUCTED_VALUE : extra_type_constructed,
+                              TYPE_CLASS_VALUE : extra_type_class}
+
+            # sets the extra type (map) in the unpacked base value
+            unpaked_base_value[EXTRA_TYPE_VALUE] = extra_type_map
 
         # returns the unpacked base value
         return unpaked_base_value
@@ -548,24 +618,140 @@ class BerStructure:
         # returns the sequence
         return sequence
 
-    def _get_type(self, value):
-        return value[TYPE_VALUE]
+    def _resolve_base_type(self, value):
+        type_value = {}
+
+        type_value[TYPE_NUMBER_VALUE] = value
+
+        type = self._resolve_type(type_value)
+
+        return type
+
+    def _resolve_type(self, type_value):
+        # retrieves the type of the type value
+        type_value_type = type(type_value)
+
+        # in case the type is described
+        # as a direct integer value
+        if type_value_type == types.IntType:
+            # sets the type number as the type value
+            type_number = type_value
+
+            # sets the type value as an empty map
+            type_value = {}
+        # otherwise it must be a dictionary
+        else:
+            # retrieves the type number from the type value
+            type_number = type_value[TYPE_NUMBER_VALUE]
+
+        # retrieves the default type constructed
+        default_type_constructed = DEFAULT_TYPE_CONSTRUCTED.get(type_number, PRIMITIVE_MODE)
+
+        # retrieves the type constructed from the type value
+        type_constructed = type_value.get(TYPE_CONSTRUCTED_VALUE, default_type_constructed)
+
+        # retrieves the type class from the type value
+        type_class = type_value.get(TYPE_CLASS_VALUE, DEFAULT_CLASS)
+
+        # starts the type value from the type number
+        _type = type_number
+
+        # adds the type constructed to the type
+        _type |= type_constructed << 5
+
+        # adds the type class to the type
+        _type |= type_class << 6
+
+        # returns the type
+        return _type
+
+    def _get_type(self, value, base_index = TYPE_VALUE):
+        # in case the base index does not exist
+        # in the value
+        if not base_index in value:
+            # returns invalid
+            return None
+
+        # retrieves the type value from the value
+        type_value = value[base_index]
+
+        # resolves the type
+        type = self._resolve_type(type_value)
+
+        # returns the type
+        return type
+
+    def _get_type_tuple(self, value, type = None):
+        # retrieves the type for the value
+        type = type or self._get_type(value)
+
+        # retrieves the type number
+        type_number = self._get_type_number(value, type)
+
+        # retrieves the type constructed
+        type_constructed = self._get_type_constructed(value, type)
+
+        # retrieves the type class
+        type_class = self._get_type_class(value, type)
+
+        # creates the type tuple from the
+        # number, constructed and class
+        type_tuple = (type_number, type_constructed, type_class)
+
+        # returns the type tuple
+        return type_tuple
+
+    def _get_type_number(self, value, type = None):
+        # retrieves the type for the value
+        type = type or self._get_type(value)
+
+        # retrieves the type number from the type
+        type_number = type & 0x1f
+
+        # returns the type number
+        return type_number
+
+    def _get_type_constructed(self, value, type = None):
+        # retrieves the type for the value
+        type = type or self._get_type(value)
+
+        # retrieves the type constructed from the type
+        type_constructed = (type & 0x20) >> 5
+
+        # returns the type constructed
+        return type_constructed
+
+    def _get_type_class(self, value, type = None):
+        # retrieves the type for the value
+        type = type or self._get_type(value)
+
+        # retrieves the type class from the type
+        type_class = (type & 0xc0) >> 6
+
+        # returns the type class
+        return type_class
 
     def _get_value(self, value):
         return value[VALUE_VALUE]
 
     def _get_extra_type(self, value, base_type = EOC_TYPE):
-        return value.get(EXTRA_TYPE_VALUE, base_type)
+        return self._get_type(value, EXTRA_TYPE_VALUE) or base_type
 
-    def _get_packed_type(self, packed_value):
+    def _get_packed_type_number(self, packed_value):
         # retrieves the extra type for the packed value
         extra_type = self._get_packed_extra_type(packed_value)
 
-        # retrieves the type for the extra type
-        type = self.type_alias_map.get(extra_type, extra_type)
+        # retrieves the type tuple from the extra type
+        type_number, _type_constructed, type_class = self._get_type_tuple(None, extra_type)
 
-        # returns the type
-        return type
+        # retrieves the type alias map for the type class
+        type_alias_map = self.type_alias_map.get(type_class, {})
+
+        # retrieves the type for the extra type
+        type_number = type_alias_map.get(type_number, type_number)
+
+        # returns the type number
+        return type_number
 
     def _get_packed_extra_type(self, packed_value, base_type = EOC_TYPE):
         # retrieves the extra type octet (character)
@@ -607,8 +793,16 @@ class BerStructure:
         # returns the packed value
         return packed_value
 
-    def _get_pack_method(self, type):
-        return self.pack_methods_map[type]
+    def _get_pack_method(self, type_number):
+        # retrieves the pack method for the type number
+        pack_method = self.pack_methods_map[type_number]
 
-    def _get_unpack_method(self, type):
-        return self.unpack_methods_map[type]
+        # returns the pack method
+        return pack_method
+
+    def _get_unpack_method(self, type_number):
+        # retrieves the unpack method for the type number
+        unpack_method = self.unpack_methods_map[type_number]
+
+        # returns the unpack method
+        return unpack_method
