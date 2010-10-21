@@ -38,18 +38,17 @@ __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
 configuration = {
-                 "default_end_points" : [("ssl", "", 444, {})],
+                 "default_end_points" : [("ssl", "", 443, {})],
                  "default_handler" : "file",
                  "default_encoding" : None,
                  "default_content_type_charset" : "utf-8",
                  "preferred_error_handlers" : ["default"],
                  "allowed_hosts" : {"127.0.0.1" : True,
-                                    "localhost" : True,
-                                    "erp.startomni.com" : True},
+                                    "localhost" : True},
                  "redirections" : {},
                  "contexts" : {
-                     "resolution_order" : ["/wsgi-bin/omni_service"],
-                     "/wsgi-bin/omni_service" : {
+                     "resolution_order" : ["/wsgi-bin/remote_sql_sqlite_service"],
+                     "/wsgi-bin/remote_sql_sqlite_service" : {
                          "handler" : "wsgi",
                          "authentication_handler" : "main",
                          "allow_redirection" : False,
