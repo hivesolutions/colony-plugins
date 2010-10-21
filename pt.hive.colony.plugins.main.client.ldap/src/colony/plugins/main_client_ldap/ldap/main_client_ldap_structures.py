@@ -61,6 +61,9 @@ BIND_VALUE = "bind"
 UNBIND_VALUE = "unbind"
 """ The unbind value """
 
+SEARCH_VALUE = "search"
+""" The search value """
+
 EOC_TYPE = 0x00
 """ The eoc (end of content) type """
 
@@ -82,6 +85,9 @@ ENUMERATED_TYPE = 0x0a
 SEQUENCE_TYPE = 0x10
 """ The sequence type """
 
+SET_TYPE = 0x11
+""" The set type """
+
 PRIMITIVE_MODE = 0x00
 """ The primitive mode """
 
@@ -101,7 +107,7 @@ PRIVATE_CLASS = 0x03
 """ The private class """
 
 LDAP_REQUEST_TYPE_MAP = {BIND_VALUE : 0x00, UNBIND_VALUE : 0x02,
-                         "search" : 0x03, "modify" : 0x06,
+                         SEARCH_VALUE : 0x03, "modify" : 0x06,
                          "add" : 0x08, "delete" : 0x0a,
                          "modify_dn" : 0x00, "compare" : 0x00,
                          "abandon" : 0x00, "extended" : 0x00}
@@ -239,6 +245,123 @@ class UnbindRequest(ProtocolOperation):
         # returns the unbind operation (value)
         return unbind_operation
 
+class SearchRequest(ProtocolOperation):
+    base_object = None
+
+    scope = None
+
+    deref_aliases = None
+
+    size_limit = None
+
+    time_limit = None
+
+    types_only = None
+
+    filter = None
+
+    attributes = None
+
+    def __init__(self, base_object = None, scope = None, deref_aliases = None, size_limit = None, time_limit = None, types_only = None, filter = None, attributes = None):
+        self.base_object = base_object
+        self.scope = scope
+        self.deref_aliases = deref_aliases
+        self.size_limit = size_limit
+        self.time_limit = time_limit
+        self.types_only = types_only
+        self.filter = filter
+        self.attributes = attributes
+
+    def get_value(self):
+        # retrieves the search request type
+        search_request_type = LDAP_REQUEST_TYPE_MAP[SEARCH_VALUE]
+
+        # creates the base object octet string value
+        base_object = {TYPE_VALUE: OCTET_STRING_TYPE, VALUE_VALUE : self.base_object}
+
+        # creates the scope enumerated value
+        scope = {TYPE_VALUE: ENUMERATED_TYPE, VALUE_VALUE : self.scope}
+
+        # creates the dref aliases enumerated value
+        dref_aliases = {TYPE_VALUE: ENUMERATED_TYPE, VALUE_VALUE : self.deref_aliases}
+
+        # creates the size limit integer value
+        size_limit = {TYPE_VALUE: INTEGER_TYPE, VALUE_VALUE : self.size_limit}
+
+        # creates the time limit integer value
+        time_limit = {TYPE_VALUE: INTEGER_TYPE, VALUE_VALUE : self.time_limit}
+
+        # creates the types only boolean value
+        types_only = {TYPE_VALUE: BOOLEAN_TYPE, VALUE_VALUE : self.types_only}
+
+        # retrieves the filter value
+        filter = self.filter.get_value()
+
+        # retrieves the attributes value
+        attributes = self.attributes.get_value()
+
+        # creates the protocol operation contents (list)
+        protocol_operation_contents = [base_object, scope, dref_aliases, size_limit, time_limit, types_only, filter, attributes]
+
+        # creates the search operation sequence value
+        search_operation = {TYPE_VALUE: SEQUENCE_TYPE, VALUE_VALUE : protocol_operation_contents,
+                            EXTRA_TYPE_VALUE : {TYPE_NUMBER_VALUE : search_request_type,
+                                                TYPE_CONSTRUCTED_VALUE : CONSTRUCTED_MODE,
+                                                TYPE_CLASS_VALUE : APPLICATION_CLASS}}
+
+        # returns the search operation (value)
+        return search_operation
+
+class Filter:
+
+    def __init__(self):
+        pass
+
+class AndFilter(Filter):
+
+    filters = None
+
+    def __init__(self, filters = None):
+        Filter.__init__(self)
+        self.filters = filters
+
+    def get_value(self):
+        # creates the filters list
+        filters = []
+
+        # iterates over all the filters
+        for filter in self.filters:
+            # retrieves the filter value
+            filter = filter.get_value()
+
+            # adds the filter to the list of filters
+            filters.append(filter)
+
+        # creates the and filter set value
+        and_filter = {TYPE_VALUE: SET_TYPE, VALUE_VALUE : filters,
+                      EXTRA_TYPE_VALUE : {TYPE_NUMBER_VALUE : 0,
+                                          TYPE_CLASS_VALUE : CONTEXT_SPECIFIC_CLASS}}
+
+        # returns the and filter (value)
+        return and_filter
+
+class PresentFilter(Filter):
+
+    present = None
+
+    def __init__(self, present = None):
+        Filter.__init__(self)
+        self.present = present
+
+    def get_value(self):
+        # creates the present filter octet string value
+        present_filter = {TYPE_VALUE: OCTET_STRING_TYPE, VALUE_VALUE : self.present,
+                          EXTRA_TYPE_VALUE : {TYPE_NUMBER_VALUE : 7,
+                                              TYPE_CLASS_VALUE : CONTEXT_SPECIFIC_CLASS}}
+
+        # returns the present filter (value)
+        return present_filter
+
 class Authentication:
 
     def __init__(self):
@@ -261,7 +384,33 @@ class SimpleAuthentication(Authentication):
         # returns the authentication (value)
         return authentication
 
+class Attributes:
+
+    attributes = None
+
+    def __init__(self, attributes = None):
+        self.attributes = attributes
+
+    def get_value(self):
+        # creates the attributes contents list
+        attributes_contents = []
+
+        # iterates over all the attributes
+        for attribute in self.attributes:
+            # creates the attribute octet string value
+            attribute = {TYPE_VALUE: OCTET_STRING_TYPE, VALUE_VALUE : attribute}
+
+            # adds the attribute to the list of attributes contents
+            attributes_contents.append(attribute)
+
+        # creates the attributes sequence value
+        attributes = {TYPE_VALUE: SEQUENCE_TYPE, VALUE_VALUE : attributes_contents}
+
+        # returns the attributes
+        return attributes
+
 TYPE_CLASS_MAP = {LDAP_REQUEST_TYPE_MAP[BIND_VALUE] : BindRequest,
                   LDAP_RESPONSE_TYPE_MAP[BIND_VALUE] : BindResponse,
-                  LDAP_REQUEST_TYPE_MAP[UNBIND_VALUE] : UnbindRequest}
+                  LDAP_REQUEST_TYPE_MAP[UNBIND_VALUE] : UnbindRequest,
+                  LDAP_REQUEST_TYPE_MAP[SEARCH_VALUE] : SearchRequest}
 """ The map associating a type with a class map """

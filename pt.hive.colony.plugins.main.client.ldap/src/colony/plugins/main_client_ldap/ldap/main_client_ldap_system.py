@@ -101,6 +101,9 @@ ENUMERATED_TYPE = 0x0a
 SEQUENCE_TYPE = 0x10
 """ The sequence type """
 
+SET_TYPE = 0x11
+""" The set type """
+
 PRIMITIVE_MODE = 0x00
 """ The primitive mode """
 
@@ -379,6 +382,17 @@ class LdapClient:
 
         # sends the request for the unbind and controls
         self.send_request(unbind_request, [])
+
+    def search(self):
+        filter = main_client_ldap_structures.PresentFilter("objectclass")
+
+        attributes = main_client_ldap_structures.Attributes(["+", "*"])
+
+        # creates the search request
+        search_request = main_client_ldap_structures.SearchRequest("dc=hive", 0, 0, 0, 0, False, filter, attributes)
+
+        # sends the request for the search and controls
+        self.send_request(search_request, [])
 
     def _validate_response(self, response):
         """
