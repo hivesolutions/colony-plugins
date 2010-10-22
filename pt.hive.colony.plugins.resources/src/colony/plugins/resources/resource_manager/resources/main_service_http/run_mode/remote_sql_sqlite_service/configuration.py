@@ -53,8 +53,8 @@ configuration = {
                          "authentication_handler" : "main",
                          "allow_redirection" : False,
                          "request_properties" : {
-                             "base_path" : "C:/Users/lmartinho/workspace/pt.hive.ldj.invoice_spreadsheet.logic/src/simple_business_logic",
-                             "module_name" : "omni_service",
+                             "base_path" : "$resource{system.path.toolbox}/pt.hive.toolbox.remote_sql_service/src/toolbox/remote_sql_service_sqlite/sqlite",
+                             "module_name" : "remote_sql_service_sqlite",
                              "application_name" : "application"
                          },
                          "authentication_properties" : {
