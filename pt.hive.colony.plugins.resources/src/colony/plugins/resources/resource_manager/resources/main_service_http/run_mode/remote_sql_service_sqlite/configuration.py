@@ -47,8 +47,8 @@ configuration = {
                                     "localhost" : True},
                  "redirections" : {},
                  "contexts" : {
-                     "resolution_order" : ["/wsgi-bin/remote_sql_sqlite_service"],
-                     "/wsgi-bin/remote_sql_sqlite_service" : {
+                     "resolution_order" : ["/wsgi-bin/remote_sql_service_sqlite"],
+                     "/wsgi-bin/remote_sql_service_sqlite" : {
                          "handler" : "wsgi",
                          "authentication_handler" : "main",
                          "allow_redirection" : False,
