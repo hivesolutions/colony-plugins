@@ -42,7 +42,7 @@
             </first_operand>
             <second_operand>
                 <type>string</type>
-                <data>remote_sql_sqlite_service</data>
+                <data>remote_sql_service_sqlite</data>
             </second_operand>
         </equals_expression>
     </validation>
