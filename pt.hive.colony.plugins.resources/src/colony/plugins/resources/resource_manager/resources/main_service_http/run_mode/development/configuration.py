@@ -38,10 +38,14 @@ __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
 configuration = {
-                 "default_end_points" : [("ssl", "", 444, {})],
+                 "default_end_points" : [("normal", "", 8080, {})],
                  "default_handler" : "file",
                  "default_encoding" : None,
                  "default_content_type_charset" : "utf-8",
+                 "default_client_connection_timeout" : 3,
+                 "default_connection_timeout" : 30,
+                 "default_request_timeout" : 30,
+                 "default_response_timeout" : 30,
                  "preferred_error_handlers" : ["template", "default"],
                  "verify_request" : False,
                  "connectors" : [
