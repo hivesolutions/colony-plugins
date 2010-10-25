@@ -47,7 +47,9 @@ configuration = {
                                     "localhost" : True},
                  "redirections" : {},
                  "contexts" : {
-                     "resolution_order" : ["/wsgi-bin/simple_business_logic", "/wsgi-bin/remote_sql_service_foxpro", "/wsgi-bin/remote_sql_service_sqlite"],
+                     "resolution_order" : ["/wsgi-bin/simple_business_logic",
+                                           "/wsgi-bin/remote_sql_service_foxpro",
+                                           "/wsgi-bin/remote_sql_service_sqlite"],
                      "/wsgi-bin/simple_business_logic" : {
                          "handler" : "wsgi",
                          "authentication_handler" : "main",
