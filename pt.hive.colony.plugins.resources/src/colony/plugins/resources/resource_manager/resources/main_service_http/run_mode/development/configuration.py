@@ -121,8 +121,9 @@ configuration = {
                                            "/repository/debian",
                                            "/cgi-bin",
                                            "/fastcgi-bin",
-                                           "/wsgi-bin/diamante_service",
                                            "/wsgi-bin/simple_business_logic",
+                                           "/wsgi-bin/remote_sql_service_foxpro",
+                                           "/wsgi-bin/remote_sql_service_sqlite",
                                            "/wsgi-bin",
                                            "/web_administration",
                                            "/websession_test",
@@ -208,6 +209,51 @@ configuration = {
                              "base_path" : "${HOME}/fcgi-bin",
                              "connection_type" : 1,
                              "connection_arguments" : ("localhost", 9010)
+                         }
+                     },
+                     "/wsgi-bin/simple_business_logic" : {
+                         "handler" : "wsgi",
+                         "authentication_handler" : "main",
+                         "allow_redirection" : False,
+                         "request_properties" : {
+                             "base_path" : "$resource{system.path.toolbox}/pt.hive.toolbox.simple_business_logic/src/toolbox/simple_business_logic_service/service",
+                             "module_name" : "simple_business_logic_service",
+                             "application_name" : "application"
+                         },
+                         "authentication_properties" : {
+                             "authentication_handler" : "python",
+                             "authentication_realm" : "system",
+                             "arguments" : {"file_path" : "%configuration:pt.hive.colony.plugins.main.authentication.python_handler%/authentication.py"}
+                         }
+                     },
+                     "/wsgi-bin/remote_sql_service_foxpro" : {
+                         "handler" : "wsgi",
+                         "authentication_handler" : "main",
+                         "allow_redirection" : False,
+                         "request_properties" : {
+                             "base_path" : "$resource{system.path.toolbox}/pt.hive.toolbox.remote_sql_service/src/toolbox/remote_sql_service_foxpro/foxpro",
+                             "module_name" : "remote_sql_service_foxpro",
+                             "application_name" : "application"
+                         },
+                         "authentication_properties" : {
+                             "authentication_handler" : "python",
+                             "authentication_realm" : "system",
+                             "arguments" : {"file_path" : "%configuration:pt.hive.colony.plugins.main.authentication.python_handler%/authentication.py"}
+                         }
+                     },
+                     "/wsgi-bin/remote_sql_service_sqlite" : {
+                         "handler" : "wsgi",
+                         "authentication_handler" : "main",
+                         "allow_redirection" : False,
+                         "request_properties" : {
+                             "base_path" : "$resource{system.path.toolbox}/pt.hive.toolbox.remote_sql_service/src/toolbox/remote_sql_service_sqlite/sqlite",
+                             "module_name" : "remote_sql_service_sqlite",
+                             "application_name" : "application"
+                         },
+                         "authentication_properties" : {
+                             "authentication_handler" : "python",
+                             "authentication_realm" : "system",
+                             "arguments" : {"file_path" : "%configuration:pt.hive.colony.plugins.main.authentication.python_handler%/authentication.py"}
                          }
                      },
                      "/wsgi-bin" : {
