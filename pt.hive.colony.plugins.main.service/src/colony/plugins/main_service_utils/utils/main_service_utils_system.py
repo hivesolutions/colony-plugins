@@ -373,6 +373,12 @@ class AbstractService:
     connection_timeout = CONNECTION_TIMEOUT
     """ The connection timeout """
 
+    request_timeout = REQUEST_TIMEOUT
+    """ The request timeout """
+
+    response_timeout = RESPONSE_TIMEOUT
+    """ The response timeout """
+
     def __init__(self, main_service_utils, main_service_utils_plugin, parameters = {}):
         """
         Constructor of the class.
@@ -402,6 +408,8 @@ class AbstractService:
         self.pool_configuration = parameters.get("pool_configuration", {})
         self.client_connection_timeout = parameters.get("client_connection_timeout", CLIENT_CONNECTION_TIMEOUT)
         self.connection_timeout = parameters.get("connection_timeout", CONNECTION_TIMEOUT)
+        self.request_timeout = parameters.get("request_timeout", REQUEST_TIMEOUT)
+        self.response_timeout = parameters.get("response", RESPONSE_TIMEOUT)
 
         self.service_sockets = []
         self.service_socket_end_point_map = {}
@@ -494,7 +502,7 @@ class AbstractService:
         service_handler_class = self._get_service_handler_class()
 
         # creates the service connection handler arguments
-        service_connection_handler_arguments = (self, self.service_plugin, self.service_configuration, self.connection_timeout, self.chunk_size, self.service_handling_task_class, self.extra_parameters)
+        service_connection_handler_arguments = (self, self.service_plugin, self.service_configuration, self.connection_timeout, self.request_timeout, self.response_timeout, self.chunk_size, self.service_handling_task_class, self.extra_parameters)
 
         # creates the service client pool
         self.service_client_pool = work_pool_manager_plugin.create_new_work_pool(pool_name, pool_description, service_handler_class, service_connection_handler_arguments, number_threads, scheduling_algorithm, maximum_number_threads, maximum_number_works_thread, work_scheduling_algorithm)
@@ -803,6 +811,12 @@ class AbstractServiceConnectionHandler:
     connection_timeout = CONNECTION_TIMEOUT
     """ The connection timeout """
 
+    request_timeout = REQUEST_TIMEOUT
+    """ The request timeout """
+
+    response_timeout = RESPONSE_TIMEOUT
+    """ The response timeout """
+
     chunk_size = CHUNK_SIZE
     """ The chunk size """
 
@@ -818,7 +832,7 @@ class AbstractServiceConnectionHandler:
     busy_status = False
     """ The busy status of the handler """
 
-    def __init__(self, service, service_plugin, service_configuration, connection_timeout, chunk_size, client_service_class, extra_parameters):
+    def __init__(self, service, service_plugin, service_configuration, connection_timeout, request_timeout, response_timeout, chunk_size, client_service_class, extra_parameters):
         """
         Constructor of the class.
 
@@ -830,6 +844,10 @@ class AbstractServiceConnectionHandler:
         @param service_configuration: The service configuration.
         @type connection_timeout: float
         @param connection_timeout: The connection timeout.
+        @type request_timeout: float
+        @param request_timeout: The request timeout.
+        @type response_timeout: float
+        @param response_timeout: The response timeout.
         @type chunk_size: int
         @param chunk_size: The chunk size.
         @type client_service_class: Class
@@ -842,6 +860,8 @@ class AbstractServiceConnectionHandler:
         self.service_plugin = service_plugin
         self.service_configuration = service_configuration
         self.connection_timeout = connection_timeout
+        self.request_timeout = request_timeout
+        self.response_timeout = response_timeout
         self.chunk_size = chunk_size
 
         self.service_connections_list = []
@@ -1021,7 +1041,7 @@ class AbstractServiceConnectionHandler:
             raise main_service_utils_exceptions.ConnectionChangeFailure("trying to add duplicate socket: " + unicode(connection_socket))
 
         # creates the new service connection
-        service_connection = ServiceConnection(self.service_plugin, self, connection_socket, connection_address, connection_port, self.chunk_size)
+        service_connection = ServiceConnection(self.service_plugin, self, connection_socket, connection_address, connection_port, self.request_timeout, self.response_timeout, self.chunk_size)
 
         # opens the service connection
         service_connection.open()
@@ -1344,13 +1364,19 @@ class AbstractServiceConnectionlessHandler:
     connection_timeout = CONNECTION_TIMEOUT
     """ The connection timeout """
 
+    request_timeout = REQUEST_TIMEOUT
+    """ The request timeout """
+
+    response_timeout = RESPONSE_TIMEOUT
+    """ The response timeout """
+
     chunk_size = CHUNK_SIZE
     """ The connection chunk size """
 
     client_service = None
     """ The client service reference """
 
-    def __init__(self, service, service_plugin, service_configuration, connection_timeout, chunk_size, client_service_class, extra_parameters):
+    def __init__(self, service, service_plugin, service_configuration, connection_timeout, request_timeout, response_timeout, chunk_size, client_service_class, extra_parameters):
         """
         Constructor of the class.
 
@@ -1362,6 +1388,10 @@ class AbstractServiceConnectionlessHandler:
         @param service_configuration: The service configuration.
         @type connection_timeout: float
         @param connection_timeout: The connection timeout.
+        @type request_timeout: float
+        @param request_timeout: The request timeout.
+        @type response_timeout: float
+        @param response_timeout: The response timeout.
         @type chunk_size: int
         @param chunk_size: The chunk size.
         @type client_service_class: Class
@@ -1374,6 +1404,8 @@ class AbstractServiceConnectionlessHandler:
         self.service_plugin = service_plugin
         self.service_configuration = service_configuration
         self.connection_timeout = connection_timeout
+        self.request_timeout = request_timeout
+        self.response_timeout = response_timeout
         self.chunk_size = chunk_size
 
         self.service_data_list = []
@@ -1460,7 +1492,7 @@ class AbstractServiceConnectionlessHandler:
         """
 
         # creates the new service connection
-        service_connection = ServiceConnectionless(self.service_plugin, self, connection_socket, connection_address, connection_port, connection_data, self.chunk_size)
+        service_connection = ServiceConnectionless(self.service_plugin, self, connection_socket, connection_address, connection_port, connection_data, self.request_timeout, self.response_timeout, self.chunk_size)
 
         # creates the connection tuple
         connection_tuple = (connection_socket, connection_address)
@@ -1571,6 +1603,12 @@ class ServiceConnection:
     connection_port = None
     """ The connection port """
 
+    connection_request_timeout = None
+    """ The connection request timeout """
+
+    connection_response_timeout = None
+    """ The connection response timeout """
+
     connection_chunk_size = None
     """ The connection chunk size """
 
@@ -1592,7 +1630,7 @@ class ServiceConnection:
     _connection_socket = None
     """ The original connection socket """
 
-    def __init__(self, service_plugin, service_connection_handler, connection_socket, connection_address, connection_port, connection_chunk_size):
+    def __init__(self, service_plugin, service_connection_handler, connection_socket, connection_address, connection_port, connection_request_timeout, connection_response_timeout, connection_chunk_size):
         """
         Constructor of the class.
 
@@ -1606,6 +1644,10 @@ class ServiceConnection:
         @param connection_address: The connection address.
         @type connection_port: int
         @param connection_port: The connection port.
+        @type connection_request_timeout: float
+        @param connection_request_timeout: The connection request timeout.
+        @type connection_response_timeout: float
+        @param connection_response_timeout: The connection response timeout.
         @type connection_chunk_size: int
         @param connection_chunk_size: The connection chunk size.
         """
@@ -1615,6 +1657,8 @@ class ServiceConnection:
         self.connection_socket = connection_socket
         self.connection_address = connection_address
         self.connection_port = connection_port
+        self.connection_request_timeout = connection_request_timeout
+        self.connection_response_timeout = connection_response_timeout
         self.connection_chunk_size = connection_chunk_size
 
         self._connection_socket = connection_socket
@@ -1700,7 +1744,7 @@ class ServiceConnection:
         # sets the socket to non blocking mode
         self.connection_socket.setblocking(0)
 
-    def retrieve_data(self, request_timeout = REQUEST_TIMEOUT, chunk_size = None):
+    def retrieve_data(self, request_timeout = None, chunk_size = None):
         """
         Retrieves the data from the current connection socket, with the
         given timeout and with a maximum size given by the chunk size.
@@ -1712,6 +1756,9 @@ class ServiceConnection:
         @rtype: String
         @return: The retrieved data.
         """
+
+        # retrieves the request timeout
+        request_timeout = request_timeout and request_timeout or self.connection_request_timeout
 
         # retrieves the chunk size
         chunk_size = chunk_size and chunk_size or self.connection_chunk_size
@@ -1736,7 +1783,7 @@ class ServiceConnection:
         # returns the data
         return data
 
-    def send(self, message, response_timeout = RESPONSE_TIMEOUT):
+    def send(self, message, response_timeout = None):
         """
         Sends the given message to the socket.
         Raises an exception in case there is a problem sending
@@ -1747,6 +1794,9 @@ class ServiceConnection:
         @type request_timeout: float
         @param request_timeout: The timeout to be used in data sending.
         """
+
+        # retrieves the response timeout
+        response_timeout = response_timeout and response_timeout or self.connection_response_timeout
 
         # retrieves the number of bytes in the message
         number_bytes = len(message)
@@ -1898,7 +1948,7 @@ class ServiceConnectionless(ServiceConnection):
     connection_data = None
     """ The connection data """
 
-    def __init__(self, service_plugin, service_connection_handler, connection_socket, connection_address, connection_port, connection_data, connection_chunk_size):
+    def __init__(self, service_plugin, service_connection_handler, connection_socket, connection_address, connection_port, connection_data, connection_request_timeout, connection_response_timeout, connection_chunk_size):
         """
         Constructor of the class.
 
@@ -1914,20 +1964,22 @@ class ServiceConnectionless(ServiceConnection):
         @param connection_port: The connection port.
         @type connection_data: String
         @param connection_data: The connection data.
+        @type connection_request_timeout: float
+        @param connection_request_timeout: The connection request timeout.
+        @type connection_response_timeout: float
+        @param connection_response_timeout: The connection response timeout.
         @type connection_chunk_size: int
         @param connection_chunk_size: The connection chunk size.
         """
 
-        ServiceConnection.__init__(self, service_connection_handler, service_plugin, connection_socket, connection_address, connection_port, connection_chunk_size)
+        ServiceConnection.__init__(self, service_connection_handler, service_plugin, connection_socket, connection_address, connection_port, connection_request_timeout, connection_response_timeout, connection_chunk_size)
 
         self.connection_data = connection_data
 
-    def retrieve_data(self, request_timeout = REQUEST_TIMEOUT):
+    def retrieve_data(self):
         """
         Retrieves the data from the current connection socket.
 
-        @type request_timeout: float
-        @param request_timeout: The timeout to be used in data retrieval.
         @rtype: String
         @return: The retrieved data.
         """
