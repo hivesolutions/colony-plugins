@@ -233,14 +233,29 @@ class MainServiceXmpp:
         # retrieves the socket parameters configuration value
         socket_parameters = service_configuration.get("default_socket_parameters", socket_parameters)
 
+        # retrieves the number threads configuration value
+        number_threads = service_configuration.get("default_number_threads", NUMBER_THREADS)
+
+        # retrieves the scheduling algorithm configuration value
+        scheduling_algorithm = service_configuration.get("default_scheduling_algorithm", SCHEDULING_ALGORITHM)
+
+        # retrieves the maximum number threads configuration value
+        maximum_number_threads = service_configuration.get("default_maximum_number_threads", MAXIMUM_NUMBER_THREADS)
+
+        # retrieves the maximum number work threads configuration value
+        maximum_number_work_threads = service_configuration.get("default_maximum_number_work_threads", MAXIMUM_NUMBER_WORKS_THREAD)
+
+        # retrieves the work scheduling algorithm configuration value
+        work_scheduling_algorithm = service_configuration.get("default_work_scheduling_algorithm", WORK_SCHEDULING_ALGORITHM)
+
         # creates the pool configuration map
         pool_configuration = {"name" : "xmpp pool",
                               "description" : "pool to support xmpp client connections",
-                              "number_threads" : NUMBER_THREADS,
-                              "scheduling_algorithm" : SCHEDULING_ALGORITHM,
-                              "maximum_number_threads" : MAXIMUM_NUMBER_THREADS,
-                              "maximum_number_works_thread" : MAXIMUM_NUMBER_WORKS_THREAD,
-                              "work_scheduling_algorithm" : WORK_SCHEDULING_ALGORITHM}
+                              "number_threads" : number_threads,
+                              "scheduling_algorithm" : scheduling_algorithm,
+                              "maximum_number_threads" : maximum_number_threads,
+                              "maximum_number_works_thread" : maximum_number_work_threads,
+                              "work_scheduling_algorithm" : work_scheduling_algorithm}
 
         # creates the extra parameters map
         extra_parameters = {}
