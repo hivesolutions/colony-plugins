@@ -197,6 +197,12 @@ class AbstractClient:
     connection_timeout = CONNECTION_TIMEOUT
     """ The connection timeout """
 
+    request_timeout = REQUEST_TIMEOUT
+    """ The request timeout """
+
+    response_timeout = RESPONSE_TIMEOUT
+    """ The response timeout """
+
     client_connections_map = {}
     """ The map containing the client connections """
 
@@ -221,6 +227,8 @@ class AbstractClient:
         self.client_configuration = parameters.get("client_configuration", {})
         self.client_connection_timeout = parameters.get("client_connection_timeout", CLIENT_CONNECTION_TIMEOUT)
         self.connection_timeout = parameters.get("connection_timeout", CONNECTION_TIMEOUT)
+        self.request_timeout = parameters.get("request_timeout", REQUEST_TIMEOUT)
+        self.response_timeout = parameters.get("response_timeout", RESPONSE_TIMEOUT)
 
         self.client_connections_map = {}
 
@@ -304,7 +312,7 @@ class AbstractClient:
         client_connection_socket = self._get_socket(socket_name)
 
         # retrieves the client connection
-        client_connection = ClientConnection(self.client_plugin, self, client_connection_socket, address, socket_name, self.chunk_size)
+        client_connection = ClientConnection(self.client_plugin, self, client_connection_socket, address, socket_name, self.request_timeout, self.response_timeout, self.chunk_size)
 
         # in case the connection should be opened
         if open_connection:
@@ -367,6 +375,12 @@ class ClientConnection:
     connection_socket_name = None
     """ The connection socket name """
 
+    connection_request_timeout = None
+    """ The connection request timeout """
+
+    connection_response_timeout = None
+    """ The connection response timeout """
+
     connection_chunk_size = None
     """ The connection chunk size """
 
@@ -391,7 +405,7 @@ class ClientConnection:
     _returned_data_buffer = None
     """ The buffer of returned data """
 
-    def __init__(self, client_plugin, client, connection_socket, connection_address, connection_socket_name, connection_chunk_size):
+    def __init__(self, client_plugin, client, connection_socket, connection_address, connection_socket_name, connection_request_timeout, connection_response_timeout, connection_chunk_size):
         """
         Constructor of the class.
 
@@ -405,6 +419,10 @@ class ClientConnection:
         @param connection_address: The connection address.
         @type connection_socket_name: String
         @param connection_socket_name: The connection socket name.
+        @type connection_request_timeout: float
+        @param connection_request_timeout: The connection request timeout.
+        @type connection_response_timeout: float
+        @param connection_response_timeout: The connection response timeout.
         @type connection_chunk_size: int
         @param connection_chunk_size: The connection chunk size.
         """
@@ -414,6 +432,8 @@ class ClientConnection:
         self.connection_socket = connection_socket
         self.connection_address = connection_address
         self.connection_socket_name = connection_socket_name
+        self.connection_request_timeout = connection_request_timeout
+        self.connection_response_timeout = connection_response_timeout
         self.connection_chunk_size = connection_chunk_size
 
         self._connection_socket = connection_socket
@@ -507,7 +527,7 @@ class ClientConnection:
         # sets the socket to non blocking mode
         self.connection_socket.setblocking(0)
 
-    def retrieve_data(self, request_timeout = REQUEST_TIMEOUT, chunk_size = None):
+    def retrieve_data(self, request_timeout = None, chunk_size = None):
         """
         Retrieves the data from the current connection socket, with the
         given timeout and with a maximum size given by the chunk size.
@@ -519,6 +539,9 @@ class ClientConnection:
         @rtype: String
         @return: The retrieved data.
         """
+
+        # retrieves the request timeout
+        request_timeout = request_timeout and request_timeout or self.connection_request_timeout
 
         # retrieves the chunk size
         chunk_size = chunk_size and chunk_size or self.connection_chunk_size
@@ -585,7 +608,7 @@ class ClientConnection:
         # returns the buffer to the previous position
         self._returned_data_buffer.seek(data_length * -1, os.SEEK_CUR)
 
-    def send(self, message, response_timeout = RESPONSE_TIMEOUT):
+    def send(self, message, response_timeout = None):
         """
         Sends the given message to the socket.
 
@@ -594,6 +617,9 @@ class ClientConnection:
         @type message: String
         @param message: The message to be sent.
         """
+
+        # retrieves the response timeout
+        response_timeout = response_timeout and response_timeout or self.connection_response_timeout
 
         # retrieves the number of bytes in the message
         number_bytes = len(message)
@@ -784,69 +810,3 @@ class ClientConnection:
         for connection_closed_handler in self.connection_closed_handlers:
             # calls the connection closed handler
             connection_closed_handler(self)
-
-class ClientConnectionless(ClientConnection):
-    """
-    The client connection for information
-    flow based in connectionless mechanisms.
-    """
-
-    connection_data = None
-    """ The connection data """
-
-    def __init__(self, client_plugin, client, connection_socket, connection_address, connection_port, connection_data, connection_chunk_size):
-        """
-        Constructor of the class.
-
-        @type client_plugin: Plugin
-        @param client_plugin: The client plugin.
-        @type client: AbstractClient
-        @param client: The client.
-        @type connection_socket: Socket
-        @param connection_socket: The connection socket.
-        @type connection_address: Tuple
-        @param connection_address: The connection address.
-        @type connection_port: int
-        @param connection_port: The connection port.
-        @type connection_data: String
-        @param connection_data: The connection data.
-        @type connection_chunk_size: int
-        @param connection_chunk_size: The connection chunk size.
-        """
-
-        ClientConnection.__init__(self, client, client_plugin, connection_socket, connection_address, connection_port, connection_chunk_size)
-
-        self.connection_data = connection_data
-
-    def retrieve_data(self, request_timeout = REQUEST_TIMEOUT):
-        """
-        Retrieves the data from the current connection socket.
-
-        @type request_timeout: float
-        @param request_timeout: The timeout to be used in data retrieval.
-        @rtype: String
-        @return: The retrieved data.
-        """
-
-        # returns the connection data
-        return self.connection_data
-
-    def send(self, message):
-        """
-        Sends the given message to the socket.
-
-        @type message: String
-        @param message: The message to be sent.
-        """
-
-        return self.connection_socket.sendto(message, self.connection_address)
-
-    def get_connection_tuple(self):
-        """
-        Returns a tuple representing the connection.
-
-        @rtype: Tuple
-        @return: A tuple representing the connection.
-        """
-
-        return (self.connection_data, self.connection_socket, self.connection_address, self.connection_port)
