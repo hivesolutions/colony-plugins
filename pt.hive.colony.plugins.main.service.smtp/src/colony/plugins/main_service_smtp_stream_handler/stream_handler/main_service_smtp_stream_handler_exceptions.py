@@ -49,7 +49,7 @@ class MainServiceSmtpStreamHandlerException(colony.base.plugin_system_exceptions
 
 class InvalidSmtpCommand(MainServiceSmtpStreamHandlerException):
     """
-    The server request timeout class.
+    The invalid smtp command class.
     """
 
     def __init__(self, message):

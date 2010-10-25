@@ -57,6 +57,9 @@ CLIENT_CONNECTION_TIMEOUT = 1
 REQUEST_TIMEOUT = 60
 """ The request timeout """
 
+RESPONSE_TIMEOUT = 60
+""" The response timeout """
+
 CHUNK_SIZE = 4096
 """ The chunk size """
 
@@ -295,7 +298,10 @@ class MainServiceSmtp:
                       "service_configuration" : service_configuration,
                       "extra_parameters" :  extra_parameters,
                       "pool_configuration" : pool_configuration,
-                      "client_connection_timeout" : CLIENT_CONNECTION_TIMEOUT}
+                      "client_connection_timeout" : CLIENT_CONNECTION_TIMEOUT,
+                      "connection_timeout" : REQUEST_TIMEOUT,
+                      "request_timeout" : REQUEST_TIMEOUT,
+                      "response_timeout" : RESPONSE_TIMEOUT}
 
         # returns the parameters
         return parameters
@@ -344,19 +350,19 @@ class SmtpClientServiceHandler:
         session = self._get_session(service_connection)
 
         # handles the request as a start session request
-        self._handle_start_session_request(session, service_connection, REQUEST_TIMEOUT)
+        self._handle_start_session_request(session, service_connection)
 
     def handle_closed(self, service_connection):
         pass
 
-    def handle_request(self, service_connection, request_timeout = REQUEST_TIMEOUT):
+    def handle_request(self, service_connection):
         # retrieves the service connection session
         session = self._get_session(service_connection)
 
         # handles the request as a normal session request
-        return self._handle_normal_session_request(session, service_connection, request_timeout)
+        return self._handle_normal_session_request(session, service_connection)
 
-    def retrieve_initial_request(self, session, service_connection, request_timeout = REQUEST_TIMEOUT):
+    def retrieve_initial_request(self, session, service_connection):
         """
         Retrieves the initial request from the received message.
 
@@ -364,8 +370,6 @@ class SmtpClientServiceHandler:
         @param session: The current smtp session.
         @type service_connection: ServiceConnection
         @param service_connection: The service connection to be used.
-        @type request_timeout: int
-        @param request_timeout: The timeout for the request retrieval.
         @rtype: SmtpRequest
         @return: The request from the received message.
         """
@@ -379,7 +383,7 @@ class SmtpClientServiceHandler:
         # returns the initial request
         return request
 
-    def retrieve_request(self, session, service_connection, request_timeout = REQUEST_TIMEOUT):
+    def retrieve_request(self, session, service_connection):
         """
         Retrieves the request from the received message.
 
@@ -387,8 +391,6 @@ class SmtpClientServiceHandler:
         @param session: The current smtp session.
         @type service_connection: ServiceConnection
         @param service_connection: The service connection to be used.
-        @type request_timeout: int
-        @param request_timeout: The timeout for the request retrieval.
         @rtype: SmtpRequest
         @return: The request from the received message.
         """
@@ -406,7 +408,7 @@ class SmtpClientServiceHandler:
         while True:
             try:
                 # retrieves the data
-                data = service_connection.retrieve_data(request_timeout)
+                data = service_connection.retrieve_data()
             except self.service_utils_exception_class:
                 # raises the smtp data retrieval exception
                 raise main_service_smtp_exceptions.SmtpDataRetrievalException("problem retrieving data")
@@ -514,7 +516,7 @@ class SmtpClientServiceHandler:
             # raises the smtp data sending exception
             raise main_service_smtp_exceptions.SmtpDataSendingException("problem sending data")
 
-    def _handle_start_session_request(self, session, service_connection, request_timeout = REQUEST_TIMEOUT):
+    def _handle_start_session_request(self, session, service_connection):
         # retrieves the smtp service authentication handler plugins map
         smtp_service_authentication_handler_plugins_map = self.service_plugin.main_service_smtp.smtp_service_authentication_handler_plugins_map
 
@@ -526,7 +528,7 @@ class SmtpClientServiceHandler:
 
         try:
             # retrieves the initial request
-            request = self.retrieve_initial_request(session, service_connection, request_timeout)
+            request = self.retrieve_initial_request(session, service_connection)
         except main_service_smtp_exceptions.MainServiceSmtpException:
             # prints a debug message about the connection closing
             self.service_plugin.debug("Connection: %s closed by peer, timeout or invalid request" % str(service_connection))
@@ -627,13 +629,13 @@ class SmtpClientServiceHandler:
         # returns true (connection remains open)
         return True
 
-    def _handle_normal_session_request(self, session, service_connection, request_timeout = REQUEST_TIMEOUT):
+    def _handle_normal_session_request(self, session, service_connection):
         # retrieves the smtp service handler plugins map
         smtp_service_handler_plugins_map = self.service_plugin.main_service_smtp.smtp_service_handler_plugins_map
 
         try:
             # retrieves the request
-            request = self.retrieve_request(session, service_connection, request_timeout)
+            request = self.retrieve_request(session, service_connection)
         except main_service_smtp_exceptions.MainServiceSmtpException:
             # prints a debug message about the connection closing
             self.service_plugin.debug("Connection: %s closed by peer, timeout or invalid request" % str(service_connection))
@@ -698,7 +700,7 @@ class SmtpClientServiceHandler:
                 return False
 
             # prints a debug message
-            self.service_plugin.debug("Connection: %s kept alive for %ss" % (str(service_connection), str(request_timeout)))
+            self.service_plugin.debug("Connection: %s kept alive for %ss" % (str(service_connection), str(self.service_connection_handler.request_timeout)))
         except Exception, exception:
             # prints info message about exception
             self.service_plugin.info("There was an exception handling the request: " + unicode(exception))
