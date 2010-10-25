@@ -66,6 +66,9 @@ HTTP_1_1_VERSION = "HTTP/1.1"
 WWW_FORM_URLENCODED_VALUE = "application/x-www-form-urlencoded"
 """ The www form urlencoded value """
 
+REQUEST_TIMEOUT = 10
+""" The request timeout """
+
 RESPONSE_TIMEOUT = 10
 """ The response timeout """
 
@@ -435,7 +438,7 @@ class HttpClient:
         # returns the request
         return request
 
-    def retrieve_response(self, request, response_timeout = RESPONSE_TIMEOUT):
+    def retrieve_response(self, request, response_timeout = None):
         """
         Retrieves the response from the sent request.
 
@@ -658,7 +661,7 @@ class HttpClient:
                     # returns the response
                     return response
 
-    def retrieve_response_chunked(self, response, message_value, response_timeout = RESPONSE_TIMEOUT):
+    def retrieve_response_chunked(self, response, message_value, response_timeout = None):
         # creates the message string buffer
         message = colony.libs.string_buffer_util.StringBuffer()
 
@@ -830,7 +833,9 @@ class HttpClient:
         """
 
         # creates the parameters map
-        parameters = {"client_plugin" : self.main_client_http.main_client_http_plugin}
+        parameters = {"client_plugin" : self.main_client_http.main_client_http_plugin,
+                      "request_timeout" : REQUEST_TIMEOUT,
+                      "response_timeout" : RESPONSE_TIMEOUT}
 
         # returns the parameters
         return parameters
