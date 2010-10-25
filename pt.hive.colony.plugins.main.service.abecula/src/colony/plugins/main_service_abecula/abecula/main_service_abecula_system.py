@@ -58,6 +58,9 @@ CLIENT_CONNECTION_TIMEOUT = 1
 REQUEST_TIMEOUT = 100
 """ The request timeout """
 
+RESPONSE_TIMEOUT = 100
+""" The response timeout """
+
 CHUNK_SIZE = 4096
 """ The chunk size """
 
@@ -296,7 +299,10 @@ class MainServiceAbecula:
                       "service_configuration" : service_configuration,
                       "extra_parameters" :  extra_parameters,
                       "pool_configuration" : pool_configuration,
-                      "client_connection_timeout" : CLIENT_CONNECTION_TIMEOUT}
+                      "client_connection_timeout" : CLIENT_CONNECTION_TIMEOUT,
+                      "connection_timeout" : REQUEST_TIMEOUT,
+                      "request_timeout" : REQUEST_TIMEOUT,
+                      "response_timeout" : RESPONSE_TIMEOUT}
 
         # returns the parameters
         return parameters
@@ -346,13 +352,13 @@ class AbeculaClientServiceHandler:
     def handle_closed(self, service_connection):
         pass
 
-    def handle_request(self, service_connection, request_timeout = REQUEST_TIMEOUT):
+    def handle_request(self, service_connection):
         # retrieves the abecula service handler plugins map
         abecula_service_handler_plugins_map = self.service_plugin.main_service_abecula.abecula_service_handler_plugins_map
 
         try:
             # retrieves the request
-            request = self.retrieve_request(service_connection, request_timeout)
+            request = self.retrieve_request(service_connection)
         except main_service_abecula_exceptions.MainServiceAbeculaException:
             # prints a debug message about the connection closing
             self.service_plugin.debug("Connection: %s closed by peer, timeout or invalid request" % unicode(service_connection))
@@ -422,14 +428,12 @@ class AbeculaClientServiceHandler:
         # returns true (connection remains open)
         return True
 
-    def retrieve_request(self, service_connection, request_timeout = REQUEST_TIMEOUT):
+    def retrieve_request(self, service_connection):
         """
         Retrieves the request from the received message.
 
         @type service_connection: ServiceConnection
         @param service_connection: The service connection to be used.
-        @type request_timeout: int
-        @param request_timeout: The timeout for the request retrieval.
         @rtype: AbeculaRequest
         @return: The request from the received message.
         """
@@ -464,7 +468,7 @@ class AbeculaClientServiceHandler:
         while True:
             try:
                 # retrieves the data
-                data = service_connection.retrieve_data(request_timeout)
+                data = service_connection.retrieve_data()
             except self.service_utils_exception_class:
                 # raises the abecula data retrieval exception
                 raise main_service_abecula_exceptions.AbeculaDataRetrievalException("problem retrieving data")
