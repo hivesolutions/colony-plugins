@@ -261,6 +261,18 @@ class MainServicePop:
         # retrieves the socket parameters configuration value
         socket_parameters = service_configuration.get("default_socket_parameters", socket_parameters)
 
+        # retrieves the client connection timeout parameters configuration value
+        client_connection_timeout = service_configuration.get("default_client_connection_timeout", CLIENT_CONNECTION_TIMEOUT)
+
+        # retrieves the connection timeout parameters configuration value
+        connection_timeout = service_configuration.get("default_connection_timeout", REQUEST_TIMEOUT)
+
+        # retrieves the request timeout parameters configuration value
+        request_timeout = service_configuration.get("default_request_timeout", REQUEST_TIMEOUT)
+
+        # retrieves the response timeout parameters configuration value
+        response_timeout = service_configuration.get("default_response_timeout", RESPONSE_TIMEOUT)
+
         # retrieves the number threads configuration value
         number_threads = service_configuration.get("default_number_threads", NUMBER_THREADS)
 
@@ -301,10 +313,10 @@ class MainServicePop:
                       "service_configuration" : service_configuration,
                       "extra_parameters" :  extra_parameters,
                       "pool_configuration" : pool_configuration,
-                      "client_connection_timeout" : CLIENT_CONNECTION_TIMEOUT,
-                      "connection_timeout" : REQUEST_TIMEOUT,
-                      "request_timeout" : REQUEST_TIMEOUT,
-                      "response_timeout" : RESPONSE_TIMEOUT}
+                      "client_connection_timeout" : client_connection_timeout,
+                      "connection_timeout" : connection_timeout,
+                      "request_timeout" : request_timeout,
+                      "response_timeout" : response_timeout}
 
         # returns the parameters
         return parameters
@@ -698,7 +710,7 @@ class PopClientServiceHandler:
                 return False
 
             # retrieves the request timeout from the service connection
-            service_connection_request_timeout = service_connection.request_timeout
+            service_connection_request_timeout = service_connection.connection_request_timeout
 
             # prints a debug message
             self.service_plugin.debug("Connection: %s kept alive for %ss" % (str(service_connection), str(service_connection_request_timeout)))
