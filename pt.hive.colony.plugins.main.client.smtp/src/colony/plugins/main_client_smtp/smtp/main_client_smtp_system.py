@@ -53,6 +53,9 @@ DEFAULT_SOCKET_NAME = "normal"
 DEFAULT_AUTHENTICATION_METHOD = "plain"
 """ The default authentication method """
 
+REQUEST_TIMEOUT = 60
+""" The request timeout """
+
 RESPONSE_TIMEOUT = 60
 """ The response timeout """
 
@@ -283,7 +286,7 @@ class SmtpClient:
         # returns the request
         return request
 
-    def retrieve_response(self, request, session, response_timeout = RESPONSE_TIMEOUT):
+    def retrieve_response(self, request, session, response_timeout = None):
         """
         Retrieves the response from the sent request.
 
@@ -650,7 +653,9 @@ class SmtpClient:
         """
 
         # creates the parameters map
-        parameters = {"client_plugin" : self.main_client_smtp.main_client_smtp_plugin}
+        parameters = {"client_plugin" : self.main_client_smtp.main_client_smtp_plugin,
+                      "request_timeout" : REQUEST_TIMEOUT,
+                      "response_timeout" : RESPONSE_TIMEOUT}
 
         # returns the parameters
         return parameters
