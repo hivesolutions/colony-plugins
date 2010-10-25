@@ -56,6 +56,9 @@ CLIENT_CONNECTION_TIMEOUT = 1
 REQUEST_TIMEOUT = 10
 """ The request timeout """
 
+RESPONSE_TIMEOUT = 10
+""" The response timeout """
+
 MESSAGE_MAXIMUM_SIZE = 512
 """ The message maximum size """
 
@@ -299,7 +302,9 @@ class MainServiceDns:
                       "extra_parameters" :  extra_parameters,
                       "pool_configuration" : pool_configuration,
                       "client_connection_timeout" : CLIENT_CONNECTION_TIMEOUT,
-                      "connection_timeout" : REQUEST_TIMEOUT}
+                      "connection_timeout" : REQUEST_TIMEOUT,
+                      "request_timeout" : REQUEST_TIMEOUT,
+                      "response_timeout" : RESPONSE_TIMEOUT}
 
         # returns the parameters
         return parameters
@@ -349,13 +354,13 @@ class DnsClientServiceHandler:
     def handle_closed(self, service_connection):
         pass
 
-    def handle_request(self, service_connection, request_timeout = REQUEST_TIMEOUT):
+    def handle_request(self, service_connection):
         # retrieves the dns service handler plugins map
         dns_service_handler_plugins_map = self.service_plugin.main_service_dns.dns_service_handler_plugins_map
 
         try:
             # retrieves the request
-            request = self.retrieve_request(service_connection, request_timeout)
+            request = self.retrieve_request(service_connection)
         except main_service_dns_exceptions.MainServiceDnsException:
             # prints a debug message about the connection closing
             self.service_plugin.debug("Connection: %s closed by peer, timeout or invalid request" % str(service_connection))
@@ -423,20 +428,18 @@ class DnsClientServiceHandler:
         # returns true (connection remains open)
         return True
 
-    def retrieve_request(self, service_connection, request_timeout = REQUEST_TIMEOUT):
+    def retrieve_request(self, service_connection):
         """
         Retrieves the request from the received message.
 
         @type service_connection: ServiceConnection
         @param service_connection: The service connection to be used.
-        @type request_timeout: int
-        @param request_timeout: The timeout for the request retrieval.
         @rtype: AbeculaRequest
         @return: The request from the received message.
         """
 
         # retrieves the data
-        data = service_connection.retrieve_data(request_timeout)
+        data = service_connection.retrieve_data()
 
         # retrieves the data length
         data_length = len(data)
