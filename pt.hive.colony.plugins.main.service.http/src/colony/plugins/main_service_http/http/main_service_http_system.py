@@ -80,6 +80,9 @@ CLIENT_CONNECTION_TIMEOUT = 1
 REQUEST_TIMEOUT = 3
 """ The request timeout """
 
+RESPONSE_TIMEOUT = 3
+""" The response timeout """
+
 CHUNK_SIZE = 4096
 """ The chunk size """
 
@@ -523,7 +526,9 @@ class MainServiceHttp:
                       "extra_parameters" :  extra_parameters,
                       "pool_configuration" : pool_configuration,
                       "client_connection_timeout" : CLIENT_CONNECTION_TIMEOUT,
-                      "connection_timeout" : REQUEST_TIMEOUT}
+                      "connection_timeout" : REQUEST_TIMEOUT,
+                      "request_timeout" : REQUEST_TIMEOUT,
+                      "response_timeout" : RESPONSE_TIMEOUT}
 
         # returns the parameters
         return parameters
@@ -591,20 +596,20 @@ class HttpClientServiceHandler:
     def handle_closed(self, service_connection):
         pass
 
-    def handle_request(self, service_connection, request_timeout = REQUEST_TIMEOUT):
+    def handle_request(self, service_connection):
         # retrieves the request handler using the service connection request handler map
         request_handler = self.service_connection_request_handler_map.get(service_connection, self.default_request_handler)
 
         # handles the service connection with the request handler
-        return request_handler(service_connection, request_timeout)
+        return request_handler(service_connection)
 
-    def default_request_handler(self, service_connection, request_timeout = REQUEST_TIMEOUT):
+    def default_request_handler(self, service_connection):
         # retrieves the http service handler plugins map
         http_service_handler_plugins_map = self.service_plugin.main_service_http.http_service_handler_plugins_map
 
         try:
             # retrieves the request
-            request = self.retrieve_request(service_connection, request_timeout)
+            request = self.retrieve_request(service_connection)
         except main_service_http_exceptions.MainServiceHttpException:
             # prints a debug message about the connection closing
             self.service_plugin.debug("Connection: %s closed by peer, timeout or invalid request" % str(service_connection))
@@ -677,7 +682,7 @@ class HttpClientServiceHandler:
                 return False
 
             # prints a debug message
-            self.service_plugin.debug("Connection: %s kept alive for %ss" % (str(service_connection), str(request_timeout)))
+            self.service_plugin.debug("Connection: %s kept alive for %ss" % (str(service_connection), self.service_connection_handler.request_timeout))
         except Exception, exception:
             # prints info message about exception
             self.service_plugin.info("There was an exception handling the request: " + unicode(exception))
@@ -698,14 +703,12 @@ class HttpClientServiceHandler:
         # returns true (connection remains open)
         return True
 
-    def retrieve_request(self, service_connection, request_timeout = REQUEST_TIMEOUT):
+    def retrieve_request(self, service_connection):
         """
         Retrieves the request from the received message.
 
         @type service_connection: ServiceConnection
         @param service_connection: The service connection to be used.
-        @type request_timeout: int
-        @param request_timeout: The timeout for the request retrieval.
         @rtype: HttpRequest
         @return: The request from the received message.
         """
@@ -739,7 +742,7 @@ class HttpClientServiceHandler:
         while True:
             try:
                 # retrieves the data
-                data = service_connection.retrieve_data(request_timeout)
+                data = service_connection.retrieve_data()
             except self.service_utils_exception_class:
                 # raises the http data retrieval exception
                 raise main_service_http_exceptions.HttpDataRetrievalException("problem retrieving data")
