@@ -48,6 +48,9 @@ DEFAULT_PORT = 53
 DEFAULT_SOCKET_NAME = "datagram"
 """ The default socket name """
 
+REQUEST_TIMEOUT = 10
+""" The request timeout """
+
 RESPONSE_TIMEOUT = 10
 """ The response timeout """
 
@@ -212,7 +215,7 @@ class DnsClient:
         # returns the request
         return request
 
-    def retrieve_response(self, request, response_timeout = RESPONSE_TIMEOUT):
+    def retrieve_response(self, request, response_timeout = None):
         """
         Retrieves the response from the sent request.
 
@@ -269,7 +272,9 @@ class DnsClient:
         """
 
         # creates the parameters map
-        parameters = {"client_plugin" : self.main_client_dns.main_client_dns_plugin}
+        parameters = {"client_plugin" : self.main_client_dns.main_client_dns_plugin,
+                      "request_timeout" : REQUEST_TIMEOUT,
+                      "response_timeout" : RESPONSE_TIMEOUT}
 
         # returns the parameters
         return parameters
