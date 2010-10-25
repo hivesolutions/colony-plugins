@@ -53,6 +53,9 @@ DEFAULT_SOCKET_NAME = "normal"
 DEFAULT_PROTOCOL_VERSION = 3
 """ The default protocol version """
 
+REQUEST_TIMEOUT = 10
+""" The request timeout """
+
 RESPONSE_TIMEOUT = 10
 """ The response timeout """
 
@@ -279,7 +282,7 @@ class LdapClient:
         # returns the request
         return request
 
-    def retrieve_response(self, request, response_timeout = RESPONSE_TIMEOUT):
+    def retrieve_response(self, request, response_timeout = None):
         """
         Retrieves the response from the sent request.
 
@@ -456,7 +459,9 @@ class LdapClient:
         """
 
         # creates the parameters map
-        parameters = {"client_plugin" : self.main_client_ldap.main_client_ldap_plugin}
+        parameters = {"client_plugin" : self.main_client_ldap.main_client_ldap_plugin,
+                      "request_timeout" : REQUEST_TIMEOUT,
+                      "response_timeout" : RESPONSE_TIMEOUT}
 
         # returns the parameters
         return parameters
