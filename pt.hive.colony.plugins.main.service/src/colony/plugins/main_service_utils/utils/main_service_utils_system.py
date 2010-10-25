@@ -409,7 +409,7 @@ class AbstractService:
         self.client_connection_timeout = parameters.get("client_connection_timeout", CLIENT_CONNECTION_TIMEOUT)
         self.connection_timeout = parameters.get("connection_timeout", CONNECTION_TIMEOUT)
         self.request_timeout = parameters.get("request_timeout", REQUEST_TIMEOUT)
-        self.response_timeout = parameters.get("response", RESPONSE_TIMEOUT)
+        self.response_timeout = parameters.get("response_timeout", RESPONSE_TIMEOUT)
 
         self.service_sockets = []
         self.service_socket_end_point_map = {}
