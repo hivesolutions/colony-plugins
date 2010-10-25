@@ -1065,6 +1065,9 @@ class PopSession:
     upgrade = False
     """ The upgrade flag """
 
+    started = False
+    """ The started flag """
+
     closed = False
     """ The closed flag """
 
@@ -1308,6 +1311,26 @@ class PopSession:
         """
 
         self.upgrade = upgrade
+
+    def get_started(self):
+        """
+        Retrieves the started.
+
+        @rtype: bool
+        @return: The started.
+        """
+
+        return self.started
+
+    def set_started(self, started):
+        """
+        Sets the closed.
+
+        @type started: bool
+        @param started: The started.
+        """
+
+        self.started = started
 
     def get_closed(self):
         """
