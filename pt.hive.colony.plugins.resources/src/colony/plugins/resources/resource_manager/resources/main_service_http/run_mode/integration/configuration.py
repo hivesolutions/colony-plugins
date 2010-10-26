@@ -42,6 +42,10 @@ configuration = {
                  "default_handler" : "file",
                  "default_encoding" : None,
                  "default_content_type_charset" : "utf-8",
+                 "default_client_connection_timeout" : 3,
+                 "default_connection_timeout" : 30,
+                 "default_request_timeout" : 30,
+                 "default_response_timeout" : 30,
                  "preferred_error_handlers" : ["template", "default"],
                  "verify_request" : False,
                  "redirections" : {
