@@ -78,7 +78,7 @@
                         <argument>--execution_command=pt.hive.colony.plugins.build.automation:run_automation_raise_exception pt.hive.colony.plugins.build.automation.items.colony_bundle$1.0.0$build$3%int$0%null$1%bool</argument>
                     </arguments>
                     <shell>true</shell>
-                    <timeout>600</timeout>
+                    <timeout>620</timeout>
                 </configuration>
             </plugin>
             <plugin>
