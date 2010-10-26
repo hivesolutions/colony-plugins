@@ -38,6 +38,7 @@ __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
 import copy
+import base64
 
 DEFAULT_ENCODING = "utf-8"
 """ The default encoding value """
@@ -493,11 +494,14 @@ class PluginController:
         # retrieves the request contents
         contents = rest_request.request.read()
 
+        # decodes the contents from base64
+        contents_decoded = base64.b64decode(contents)
+
         # opens the temporary cpx file
         temp_file = open("c:/temp.cpx", "wb")
 
-        # writes the contents to the file
-        temp_file.write(contents)
+        # writes the contents (decoded) to the file
+        temp_file.write(contents_decoded)
 
         # closes the temporary file
         temp_file.close()

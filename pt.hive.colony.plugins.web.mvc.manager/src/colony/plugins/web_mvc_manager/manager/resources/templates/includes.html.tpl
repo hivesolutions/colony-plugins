@@ -13,6 +13,7 @@
 <script type="text/javascript" src="${out_none value=base_path /}resources_base/libs/jquery_util/form/js/form.js"></script>
 <script type="text/javascript" src="${out_none value=base_path /}resources_base/libs/jquery_util/history/js/history.js"></script>
 <script type="text/javascript" src="${out_none value=base_path /}resources_base/libs/jquery_util/scroll_to/js/scroll_to.js"></script>
+<script type="text/javascript" src="${out_none value=base_path /}resources_base/libs/util/base64.js"></script>
 <script type="text/javascript" src="${out_none value=base_path /}resources_base/libs/util/browser.js"></script>
 <script type="text/javascript" src="${out_none value=base_path /}resources_base/libs/util/string_buffer.js"></script>
 <script type="text/javascript" src="${out_none value=base_path /}resources_ui/libs/autocomplete/js/autocomplete.js"></script>

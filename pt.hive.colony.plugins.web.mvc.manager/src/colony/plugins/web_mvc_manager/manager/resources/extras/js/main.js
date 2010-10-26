@@ -162,69 +162,92 @@ $(document).ready(function() {
         // retrieves the first file
         var file = files[0];
 
-        // creates a new cml http request
-        var xhr = new XMLHttpRequest();
+        // creates a new file reader, to read
+        // the file contents (ad binary data)
+        var fileReader = new FileReader();
+        fileReader.readAsBinaryString(file);
 
-        // retrieves the upload element
-        var uploadElement = $(xhr.upload);
+        fileReader.onload = function() {
+            // retrieves the file contents from
+            // the file reader
+            var fileContents = fileReader.result;
 
-        uploadElement.bind("progress", function(event) {
-            if (event.lengthComputable) {
-                // calculates the percentage of loading
-                var percentage = Math.round((event.loaded * 100) / event.total);
+            // encodes the file contents into base64
+            var fileContentsBase64 = Base64.encode(fileContents);
 
+            // creates a new cml http request
+            var xmlHttpRequest = new XMLHttpRequest();
+
+            // retrieves the upload element
+            var uploadElement = $(xmlHttpRequest.upload);
+
+            uploadElement.bind("progress", function(event) {
+                if (event.lengthComputable) {
+                    // calculates the percentage of loading
+                    var percentage = Math.round((event.loaded * 100)
+                            / event.total);
+
+                    // sets the progress indicator percentage
+                    $(".message-message .progress-indicator", "body").progressindicator(
+                            "change", {
+                                percentage : percentage
+                            });
+                }
+            });
+
+            uploadElement.bind("load", function(event) {
                 // sets the progress indicator percentage
                 $(".message-message .progress-indicator", "body").progressindicator(
                         "change", {
-                            percentage : percentage
+                            percentage : 100
                         });
-            }
-        });
 
-        uploadElement.bind("load", function(event) {
-            // sets the progress indicator percentage
-            $(".message-message .progress-indicator", "body").progressindicator(
-                    "change", {
-                        percentage : 100
+                // sets a timeout to close the message window
+                setTimeout(function() {
+                    // closes the message window
+                    $("body").messagewindow("close");
+
+                    if (xmlHttpRequest.status == 200) {
+                        $("#notification-area-contents").notificationwindow(
+                                "default", {
+                                    "title" : "<span class=\"green\">Plugin Installed</span>",
+                                    "subTitle" : "",
+                                    "message" : "Plugin installed successfully",
+                                    "timeout" : 5000
+                                });
+                    } else {
+                        $("body").dialogwindow("default", {
+                            "title" : "Warning",
+                            "subTitle" : "Problem Installing Plugin",
+                            "message" : "There was a problem installing plugin, this indicates a problem in the server or a problem in the sent file.",
+                            "buttonMessage" : "Do you want to continue ?"
+                        });
+                    }
+                }, 500);
+            });
+
+            // opens the xml http request
+            xmlHttpRequest.open("post", "plugins/new");
+
+            // sets the content type header
+            xmlHttpRequest.setRequestHeader("Content-Type",
+                    "application/octet-stream")
+
+            // sends the file contents (in base64)
+            xmlHttpRequest.send(fileContentsBase64);
+
+            // creates a message windows with for the progress of
+            // the installation
+            $("body").messagewindow("default", {
+                        "title" : "Installing new plugin",
+                        "subTitle" : "The systems is installing the new plugin",
+                        "message" : "<div class=\"progress-indicator\"></div>",
+                        "icon" : "resources/images/icon/icon-plugin-install.png"
                     });
 
-            // sets a timeout to close the message window
-            setTimeout(function() {
-                // closes the message window
-                $("body").messagewindow("close");
-
-                if (xhr.status == 200) {
-                    $("#notification-area-contents").notificationwindow(
-                            "default", {
-                                "title" : "<span class=\"green\">Plugin Installed</span>",
-                                "subTitle" : "",
-                                "message" : "Plugin installed successfully",
-                                "timeout" : 5000
-                            });
-                } else {
-                    $("body").dialogwindow("default", {
-                        "title" : "Warning",
-                        "subTitle" : "Problem Installing Plugin",
-                        "message" : "There was a problem installing plugin, this indicates a problem in the server or a problem in the sent file.",
-                        "buttonMessage" : "Do you want to continue ?"
-                    });
-                }
-            }, 500);
-        });
-
-        xhr.open("post", "plugins/new");
-        xhr.overrideMimeType("text/plain;charset=utf-8");
-        xhr.sendAsBinary(file.getAsBinary());
-
-        $("body").messagewindow("default", {
-                    "title" : "Installing new plugin",
-                    "subTitle" : "The systems is installing the new plugin",
-                    "message" : "<div class=\"progress-indicator\"></div>",
-                    "icon" : "resources/images/icon/icon-plugin-install.png"
-                });
-
-        // starts the progress indicator
-        $(".message-message .progress-indicator", "body").progressindicator();
+            // starts the progress indicator
+            $(".message-message .progress-indicator", "body").progressindicator();
+        };
     });
 
     $("#overlay").bind("dragover", function(event) {
