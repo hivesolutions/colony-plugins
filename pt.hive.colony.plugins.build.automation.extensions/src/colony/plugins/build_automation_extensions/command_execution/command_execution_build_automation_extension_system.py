@@ -37,7 +37,10 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
+import threading
 import subprocess
+
+import colony.libs.os_util
 
 import command_execution_build_automation_extension_exceptions
 
@@ -73,6 +76,9 @@ class CommandExecutionBuildAutomationExtension:
         # retrieves the shell value from the parameters
         shell = parameters.get("shell", False) == "true"
 
+        # retrieves the timeout value from the parameters
+        timeout = int(parameters.get("timeout", "0"))
+
         # creates the parameters map for the execution command
         parameters = {"command" : command,
                       "arguments" : _arguments,
@@ -86,6 +92,9 @@ class CommandExecutionBuildAutomationExtension:
 
         # executes the command, retrieving the process object
         process = command_execution_plugin.execute_command_parameters(parameters)
+
+        # starts the cancel timer for the given process
+        self._start_cancel_timer(process, timeout)
 
         # waits for the process to terminate
         stdout_data, stderr_data = process.communicate()
@@ -108,3 +117,28 @@ class CommandExecutionBuildAutomationExtension:
 
         # returns true (success)
         return True
+
+    def _start_cancel_timer(self, process, timeout):
+        """
+        Starts the cancel timer for the given process and
+        using the given timeout.
+
+        @type process: Process
+        @param process: The process to start the cancel timer.
+        @type timeout: float
+        @param timeout: The timeout value to be used.
+        """
+
+        # in case the timeout is invalid
+        if timeout == 0:
+            # returns immediately
+            return
+
+        # creates the cancel process lambda function
+        cancel_process = lambda: process.returncode == None and colony.libs.os_util.kill_process(process.pid)
+
+        # creates the new timer to cancel the connection
+        cancel_timer = threading.Timer(timeout, cancel_process)
+
+        # starts the timer
+        cancel_timer.start()
