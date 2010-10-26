@@ -37,9 +37,6 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-import os
-import stat
-import wx
 import wx.aui
 import wx._core
 import wx.lib.wordwrap
@@ -80,9 +77,9 @@ ICONS_10X10_PATH = ICONS_PATH + "/" + "10x10"
 ICONS_16X16_PATH = ICONS_PATH + "/" + "16x16"
 ICONS_32X32_PATH = ICONS_PATH + "/" + "32x32"
 
-SPLASH_IMAGE_FILE_NAME = "logo_omni_animation.gif"
+SPLASH_IMAGE_FILE_NAME = "hive_logo.png"
 
-MENU_TITLE = "Hive Colony Manager"
+MENU_TITLE = "Colony Framework Manager"
 TREE_PANEL_TITLE = "Tree Pane"
 LOG_PANEL_TITLE = "Log Pane"
 H_SIZE = 1024
@@ -150,7 +147,7 @@ class MainFrame(wx.Frame):
         self.gui_panel_plugins = []
         self.plugin_path = self.main_gui_plugin.manager.get_plugin_path_by_id(self.main_gui_plugin.id)
 
-        # loads the icons
+        # loads the icons using the bitmap loader plugin
         self.main_gui_plugin.bitmap_loader_plugin.load_icons(self.plugin_path + ICONS_10X10_PATH, self.bitmaps_10x10_map, self.icons_10x10_map)
         self.main_gui_plugin.bitmap_loader_plugin.load_icons(self.plugin_path + ICONS_16X16_PATH, self.bitmaps_16x16_map, self.icons_16x16_map)
         self.main_gui_plugin.bitmap_loader_plugin.load_icons(self.plugin_path + ICONS_32X32_PATH, self.bitmaps_32x32_map, self.icons_32x32_map)
