@@ -41,6 +41,12 @@ import os
 import wx
 import stat
 
+EXTENSIONS_MAP = {".png" : wx.BITMAP_TYPE_PNG,
+                  ".gif" : wx.BITMAP_TYPE_GIF,
+                  ".jpg" : wx.BITMAP_TYPE_JPEG,
+                  ".ico" : wx.BITMAP_TYPE_ICO}
+""" The map of extensions and types """
+
 class BitmapLoader:
     """
     Bitmap loader class.
@@ -59,16 +65,36 @@ class BitmapLoader:
 
         self.bitmap_loader_plugin = bitmap_loader_plugin
 
-    def load_icons(self, path, bitmaps_dic, icons_dic):
-        dir_list = os.listdir(path)
-        for file_name in dir_list:
-            full_path = path + "/" + file_name
+    def load_icons(self, path, bitmaps_map, icons_map):
+        # retrieves the list of file from the path
+        directory_entries = os.listdir(path)
+
+        # iterates over all the directory entries
+        for directory_entry in directory_entries:
+            # creates the full directory entry path
+            full_path = path + "/" + directory_entry
+
+            # retrieves the mode from teh full path
             mode = os.stat(full_path)[stat.ST_MODE]
+
+            # in case the file is not a directory
             if not stat.S_ISDIR(mode):
-                split = os.path.splitext(file_name)
-                if split[-1] == ".png":
-                    bitmap = wx.Bitmap(full_path, wx.BITMAP_TYPE_PNG)
+                # splits the directory entry path, to
+                # retrieve the extension
+                base_path, extension = os.path.splitext(directory_entry)
+
+                # in case the extension is valid
+                if extension in EXTENSIONS_MAP:
+                    # retrieves the type of the extension
+                    extension_type = EXTENSIONS_MAP[extension]
+
+                    # creates the bitmap from the extension type
+                    # and the full path
+                    bitmap = wx.Bitmap(full_path, extension_type)
+
+                    # creates an icon from the bitmap
                     icon = wx.IconFromBitmap(bitmap)
-                    name = split[0]
-                    bitmaps_dic[name] = bitmap
-                    icons_dic[name] = icon
+
+                    # sets the icon properties in the maps
+                    bitmaps_map[base_path] = bitmap
+                    icons_map[base_path] = icon

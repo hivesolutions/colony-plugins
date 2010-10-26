@@ -87,5 +87,5 @@ class BitmapLoaderPlugin(colony.base.plugin_system.Plugin):
     def dependency_injected(self, plugin):
         colony.base.plugin_system.Plugin.dependency_injected(self, plugin)
 
-    def load_icons(self, path, bitmaps_dic, icons_dic):
-        self.bitmap_loader.load_icons(path, bitmaps_dic, icons_dic)
+    def load_icons(self, path, bitmaps_map, icons_map):
+        self.bitmap_loader.load_icons(path, bitmaps_map, icons_map)
