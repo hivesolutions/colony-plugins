@@ -71,6 +71,7 @@ configuration = {
                                            "/wiki",
                                            "/manager",
                                            "/blog",
+                                           "/task_registry",
                                            "/openid",
                                            "/colony_site",
                                            "/take_the_bill",
@@ -90,6 +91,10 @@ configuration = {
                      },
                      "/blog" : {
                          "target" : "/colony_mod_python/rest/mvc/hive_blog/",
+                         "recursive_redirection" : True
+                     },
+                     "/task_registry" : {
+                         "target" : "/colony_mod_python/rest/mvc/task_registry/",
                          "recursive_redirection" : True
                      },
                      "/openid" : {
