@@ -104,6 +104,12 @@
     </resource>
     <resource>
         <namespace>system.path</namespace>
+        <name>hive_development</name>
+        <type>string</type>
+        <data>$resource{colony.manager_path}/../../</data>
+    </resource>
+    <resource>
+        <namespace>system.path</namespace>
         <name>hive_openid</name>
         <type>string</type>
         <data>$resource{colony.manager_path}/../../</data>
