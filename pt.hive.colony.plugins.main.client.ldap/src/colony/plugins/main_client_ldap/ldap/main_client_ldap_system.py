@@ -387,15 +387,23 @@ class LdapClient:
         self.send_request(unbind_request, [])
 
     def search(self):
+        # creates the filter
         filter = main_client_ldap_structures.PresentFilter("objectclass")
 
+        # creates the attributes
         attributes = main_client_ldap_structures.Attributes(["+", "*"])
 
         # creates the search request
         search_request = main_client_ldap_structures.SearchRequest("dc=hive", 0, 0, 0, 0, False, filter, attributes)
 
         # sends the request for the search and controls
-        self.send_request(search_request, [])
+        request = self.send_request(search_request, [])
+
+        # retrieves the response
+        response = self.retrieve_response(request)
+
+        # validates the response
+        self._validate_response(response)
 
     def _validate_response(self, response):
         """
