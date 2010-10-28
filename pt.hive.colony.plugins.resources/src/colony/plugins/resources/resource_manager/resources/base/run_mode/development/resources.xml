@@ -58,12 +58,12 @@
         <namespace>system.database</namespace>
         <name>file_name</name>
         <type>string</type>
-        <data>colony_development_database.db</data>
+        <data>development_database.db</data>
     </resource>
     <resource>
         <namespace>system.database.test</namespace>
         <name>file_name</name>
         <type>string</type>
-        <data>colony_development_test_database.db</data>
+        <data>development_test_database.db</data>
     </resource>
 </resources>

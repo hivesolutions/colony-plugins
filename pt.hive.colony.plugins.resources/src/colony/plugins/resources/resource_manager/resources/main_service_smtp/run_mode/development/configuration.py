@@ -48,7 +48,7 @@ configuration = {
                  },
                  "session_properties" : {
                      "local_domains" : ("127.0.0.1", "localhost"),
-                     "arguments" : {"entity_manager_arguments" : {"connection_parameters" : {"file_path" : "%configuration:pt.hive.colony.plugins.mail.storage%/messages.db",
+                     "arguments" : {"entity_manager_arguments" : {"connection_parameters" : {"file_path" : "%configuration:pt.hive.colony.plugins.mail.storage%/messages_database.db",
                                                                                              "autocommit" : False}}}
                  }
              }
