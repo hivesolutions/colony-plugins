@@ -78,14 +78,14 @@ class DummyBusinessLogic2:
         # retrieves the database file name
         database_file_name = database_file_name_resource.data
 
-        # creates the dummy session master
-        dummy_session_master = business_session_manager_plugin.load_session_manager_master_entity_manager("dummy_session_2", "sqlite")
+        # creates the dummy session manager master
+        dummy_session_manager_master = business_session_manager_plugin.load_session_manager_master_entity_manager("dummy_session_2", "sqlite")
 
         # constructs the session manager pool
-        dummy_session_master.construct_session_manager_pool()
+        dummy_session_manager_master.construct_session_manager_pool()
 
         # retrieves the entity manager
-        entity_manager = dummy_session_master.entity_manager
+        entity_manager = dummy_session_manager_master.entity_manager
 
         # sets the connection parameters for the entity manager
         entity_manager.set_connection_parameters({"file_path" : user_home_path + "/" + database_file_name, "autocommit" : False})
@@ -94,13 +94,13 @@ class DummyBusinessLogic2:
         entity_manager.load_entity_manager()
 
         # starts the session manager
-        dummy_session_master.start_session()
+        dummy_session_manager_master.start_session()
 
         # creates a session proxy
-        dummy_session_master.create_session_proxy()
+        dummy_session_manager_master.create_session_proxy()
 
         # registers the session proxy
-        dummy_session_master.register_session_proxy(True)
+        dummy_session_manager_master.register_session_proxy(True)
 
         # creates a persistent connection
-        dummy_session_master.create_persistent_session()
+        dummy_session_manager_master.create_persistent_session()
