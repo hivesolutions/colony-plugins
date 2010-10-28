@@ -167,6 +167,10 @@ class SimplePoolImplementation:
         self.maximum_pool_size = maximum_pool_size
         self.logger = logger
 
+        self.pool_items_list = []
+        self.free_pool_items_list = []
+        self.busy_pool_items_list = []
+
     def construct_pool(self):
         """
         Constructs the pool.
