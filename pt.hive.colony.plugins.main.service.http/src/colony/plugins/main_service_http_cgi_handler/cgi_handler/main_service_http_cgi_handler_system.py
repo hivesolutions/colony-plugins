@@ -124,7 +124,8 @@ DEFAULT_STATUS = 200
 DEFAULT_PATH = "~/cgi-bin"
 """ The default path """
 
-WINDOWS_CONTENT_HANDLERS_MAP = {"py" : "python.exe"}
+WINDOWS_CONTENT_HANDLERS_MAP = {"py" : "python.exe",
+                                "py.sh" : "python.exe"}
 """ The windows content handlers map """
 
 class MainServiceHttpCgiHandler:
@@ -210,8 +211,11 @@ class MainServiceHttpCgiHandler:
 
         # in case the operative system is windows
         if os_name == "nt" or os_name == "dos":
+            # retrieves the request filename base value
+            request_filename_base = os.path.basename(request_filename)
+
             # retrieves the request file extension
-            request_file_extension = request_filename.split(".")[-1]
+            request_file_extension = request_filename_base.split(".", 1)[-1]
 
             # sets the windows content handler
             handler = WINDOWS_CONTENT_HANDLERS_MAP.get(request_file_extension, "")
