@@ -79,7 +79,7 @@ class DummyBusinessLogic1:
         database_file_name = database_file_name_resource.data
 
         # creates the dummy session
-        dummy_session = business_session_manager_plugin.load_session_manager_entity_manager("dummy_session", "sqlite")
+        dummy_session = business_session_manager_plugin.load_session_manager_entity_manager("dummy_session", "sqlite", {})
 
         # retrieves the entity manager
         entity_manager = dummy_session.entity_manager
