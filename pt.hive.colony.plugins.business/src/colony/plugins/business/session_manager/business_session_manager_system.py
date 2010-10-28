@@ -300,13 +300,13 @@ class SessionManager:
     def inject_entity_manager(self):
         """
         Injects the entity manager in all the business
-        logic classes.
+        logic instances.
         """
 
-        # iterates over all the business logic classes
-        for business_logic_class in self.business_logic_classes_list:
-            # sets the entity manager in the business logic class
-            business_logic_class.entity_manager = self.entity_manager
+        # iterates over all the business logic instances
+        for business_logic_instance in self.business_logic_instances_list:
+            # sets the entity manager in the business logic instance
+            business_logic_instance.entity_manager = self.entity_manager
 
     def inject_plugin_manager(self):
         """
@@ -451,6 +451,9 @@ class SessionManagerMaster(SessionManager):
 
         self.business_session_serializer_plugins = business_session_serializer_plugins
         self.simple_pool_manager_plugin = simple_pool_manager_plugin
+
+        self.entity_manager_pool = []
+        self.session_manager_pool = []
 
     def create_session_proxy(self):
         """
