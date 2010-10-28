@@ -108,11 +108,11 @@ class BusinessHelperPlugin(colony.base.plugin_system.Plugin):
     def get_entity_class(self):
         return self.business_helper.get_entity_class()
 
-    def get_entity_classes_namespace(self, namespace):
-        return self.business_helper.get_entity_classes_namespace(namespace)
+    def get_entity_classes_namespaces(self, namespaces):
+        return self.business_helper.get_entity_classes_namespaces(namespaces)
 
-    def get_business_logic_classes_namespace(self, namespace):
-        return self.business_helper.get_business_logic_classes_namespace(namespace)
+    def get_business_logic_classes_namespaces(self, namespaces):
+        return self.business_helper.get_business_logic_classes_namespaces(namespaces)
 
     @colony.base.decorators.load_allowed_capability("entity")
     def entity_load_allowed(self, plugin, capability):

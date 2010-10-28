@@ -152,11 +152,39 @@ class BusinessHelper:
     def get_entity_class(self):
         return EntityClass
 
-    def get_entity_classes_namespace(self, namespace):
-        return self.namespace_entity_classes_map.get(namespace, [])
+    def get_entity_classes_namespaces(self, namespaces):
+        # creates the list to hold the entity classes
+        # for the namespaces
+        entity_classes_namespaces = []
 
-    def get_business_logic_classes_namespace(self, namespace):
-        return self.namespace_business_logic_classes_map.get(namespace, [])
+        # iterates over all the namespaces
+        for namespace in namespaces:
+            # retrieves the list of entity classes for the namespace
+            entity_classes_namespace = self.namespace_entity_classes_map.get(namespace, [])
+
+            # extends the list of entity classes for the namespaces
+            # with the entity classes for the namespace
+            entity_classes_namespaces.extend(entity_classes_namespace)
+
+        # returns the list of entity classes for the namespaces
+        return entity_classes_namespaces
+
+    def get_business_logic_classes_namespaces(self, namespaces):
+        # creates the list to hold the business logic classes
+        # for the namespaces
+        business_logic_classes_namespaces = []
+
+        # iterates over all the namespaces
+        for namespace in namespaces:
+            # retrieves the list of business logic classes for the namespace
+            business_logic_classes_namespace = self.namespace_business_logic_classes_map.get(namespace, [])
+
+            # extends the list of business logic classes for the namespaces
+            # with the business logic classes for the namespace
+            business_logic_classes_namespaces.extend(business_logic_classes_namespace)
+
+        # returns the list of business logic classes for the namespaces
+        return business_logic_classes_namespaces
 
     def entity_load(self, entity_plugin):
         # tries to retrieve the data namespaces value
