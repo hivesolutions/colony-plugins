@@ -77,7 +77,7 @@ class DummyBusinessLogic2Plugin(colony.base.plugin_system.Plugin):
 
     def end_load_plugin(self):
         colony.base.plugin_system.Plugin.end_load_plugin(self)
-        self.create_dummy_session()
+        self.dummy_business_logic_2.create_dummy_session()
 
     def unload_plugin(self):
         colony.base.plugin_system.Plugin.unload_plugin(self)
