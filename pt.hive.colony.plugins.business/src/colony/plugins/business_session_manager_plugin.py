@@ -107,11 +107,17 @@ class BusinessSessionManagerPlugin(colony.base.plugin_system.Plugin):
     def load_session_manager_master(self, session_name, entity_manager):
         return self.business_session_manager.load_session_manager_master(session_name, entity_manager)
 
-    def load_session_manager_entity_manager(self, session_name, engine_name):
-        return self.business_session_manager.load_session_manager_entity_manager(session_name, engine_name)
+    def load_session_manager_entity_manager(self, session_name, engine_name, entity_manager_properties):
+        return self.business_session_manager.load_session_manager_entity_manager(session_name, engine_name, entity_manager_properties)
 
-    def load_session_manager_master_entity_manager(self, session_name, engine_name):
-        return self.business_session_manager.load_session_manager_master_entity_manager(session_name, engine_name)
+    def load_session_manager_master_entity_manager(self, session_name, engine_name, entity_manager_properties):
+        return self.business_session_manager.load_session_manager_master_entity_manager(session_name, engine_name, entity_manager_properties)
+
+    def load_session_manager_entity_manager_business_logic(self, session_name, engine_name, entity_manager_properties, business_logic_classes_list, business_logic_classes_map):
+        return self.business_session_manager.load_session_manager_entity_manager_business_logic(session_name, engine_name, entity_manager_properties, business_logic_classes_list, business_logic_classes_map)
+
+    def load_session_manager_master_entity_manager_business_logic(self, session_name, engine_name, entity_manager_properties, business_logic_classes_list, business_logic_classes_map):
+        return self.business_session_manager.load_session_manager_master_entity_manager_business_logic(session_name, engine_name, entity_manager_properties, business_logic_classes_list, business_logic_classes_map)
 
     def get_transaction_decorator(self):
         return self.entity_manager_plugin.get_transaction_decorator()

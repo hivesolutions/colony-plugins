@@ -140,15 +140,18 @@ class BusinessSessionManager:
         for business_logic_class in business_logic_bundle:
             self.unload_business_logic_class(business_logic_class)
 
-    def load_session_manager(self, session_name, entity_manager = None):
+    def load_session_manager(self, session_name, entity_manager = None, business_logic_classes_list = None, business_logic_classes_map = None):
         # retrieves the plugin manager
         plugin_manager = self.business_session_manager_plugin.manager
 
         # retrieves the random plugin
         random_plugin = self.business_session_manager_plugin.random_plugin
 
+        # processes the business logic values
+        business_logic_classes_list, business_logic_classes_map, self._process_business_logic(business_logic_classes_list, business_logic_classes_map)
+
         # creates the session manager
-        session_manager = SessionManager(session_name, self.loaded_business_logic_classes_list, self.loaded_business_logic_classes_map, plugin_manager, entity_manager, random_plugin)
+        session_manager = SessionManager(session_name, business_logic_classes_list, business_logic_classes_map, plugin_manager, entity_manager, random_plugin)
 
         # adds the created session manager to the list of active session managers
         self.active_session_manager_list.append(session_manager)
@@ -156,12 +159,15 @@ class BusinessSessionManager:
         # returns the created session manager
         return session_manager
 
-    def load_session_manager_master(self, session_name, entity_manager = None):
+    def load_session_manager_master(self, session_name, entity_manager = None, business_logic_classes_list = None, business_logic_classes_map = None):
         # retrieves the plugin manager
         plugin_manager = self.business_session_manager_plugin.manager
 
         # retrieves the random plugin
         random_plugin = self.business_session_manager_plugin.random_plugin
+
+        # processes the business logic values
+        business_logic_classes_list, business_logic_classes_map = self._process_business_logic(business_logic_classes_list, business_logic_classes_map)
 
         # retrieves the business session serializer plugins
         business_session_serializer_plugins = self.business_session_manager_plugin.business_session_serializer_plugins
@@ -170,7 +176,7 @@ class BusinessSessionManager:
         simple_pool_manager_plugin = self.business_session_manager_plugin.simple_pool_manager_plugin
 
         # creates the session manager master
-        session_manager_master = SessionManagerMaster(session_name, self.loaded_business_logic_classes_list, self.loaded_business_logic_classes_map, plugin_manager, entity_manager, random_plugin, business_session_serializer_plugins, simple_pool_manager_plugin)
+        session_manager_master = SessionManagerMaster(session_name, business_logic_classes_list, business_logic_classes_map, plugin_manager, entity_manager, random_plugin, business_session_serializer_plugins, simple_pool_manager_plugin)
 
         # adds the created session manager master to the list of active session managers
         self.active_session_manager_list.append(session_manager_master)
@@ -178,25 +184,41 @@ class BusinessSessionManager:
         # returns the created session manager master
         return session_manager_master
 
-    def load_session_manager_entity_manager(self, session_name, engine_name):
+    def load_session_manager_entity_manager(self, session_name, engine_name, entity_manager_properties):
+        return self.load_session_manager_entity_manager_business_logic(session_name, engine_name, entity_manager_properties, None, None)
+
+    def load_session_manager_master_entity_manager(self, session_name, engine_name, entity_manager_properties):
+        return self.load_session_manager_master_entity_manager_business_logic(session_name, engine_name, entity_manager_properties, None, None)
+
+    def load_session_manager_entity_manager_business_logic(self, session_name, engine_name, entity_manager_properties, business_logic_classes_list, business_logic_classes_map):
         # retrieves the entity manager plugin
         entity_manager_plugin = self.business_session_manager_plugin.entity_manager_plugin
 
         # creates the entity manager
-        entity_manager = entity_manager_plugin.load_entity_manager(engine_name)
+        entity_manager = entity_manager_plugin.load_entity_manager_properties(engine_name, entity_manager_properties)
 
         # creates the session manager and returns it
-        return self.load_session_manager(session_name, entity_manager)
+        return self.load_session_manager(session_name, entity_manager, business_logic_classes_list, business_logic_classes_map)
 
-    def load_session_manager_master_entity_manager(self, session_name, engine_name):
+    def load_session_manager_master_entity_manager_business_logic(self, session_name, engine_name, entity_manager_properties, business_logic_classes_list, business_logic_classes_map):
         # retrieves the entity manager plugin
         entity_manager_plugin = self.business_session_manager_plugin.entity_manager_plugin
 
         # creates the entity manager
-        entity_manager = entity_manager_plugin.load_entity_manager(engine_name)
+        entity_manager = entity_manager_plugin.load_entity_manager_properties(engine_name, entity_manager_properties)
 
         # creates the session manager master and returns it
-        return self.load_session_manager_master(session_name, entity_manager)
+        return self.load_session_manager_master(session_name, entity_manager, business_logic_classes_list, business_logic_classes_map)
+
+    def _process_business_logic(self, business_logic_classes_list, business_logic_classes_map):
+        # retrieves the business logic classes list
+        business_logic_classes_list = business_logic_classes_list == None and self.loaded_business_logic_classes_list or business_logic_classes_list
+
+        # retrieves the business logic classes map
+        business_logic_classes_map = business_logic_classes_map == None and self.loaded_business_logic_classes_map or business_logic_classes_map
+
+        # returns a tuple containing the business logic values
+        return (business_logic_classes_list, business_logic_classes_map)
 
 class SessionManager:
     """

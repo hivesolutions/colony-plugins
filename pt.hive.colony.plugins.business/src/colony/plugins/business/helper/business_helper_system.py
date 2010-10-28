@@ -59,6 +59,12 @@ class BusinessHelper:
     business_helper_plugin = None
     """ The business helper plugin """
 
+    namespace_entity_classes_map = {}
+    """ The map associating the namespace with the entity classes """
+
+    namespace_business_logic_classes_map = {}
+    """ The map associating the namespace with the business logic classes """
+
     def __init__(self, business_helper_plugin):
         """
         Constructor of the class.
@@ -145,6 +151,224 @@ class BusinessHelper:
 
     def get_entity_class(self):
         return EntityClass
+
+    def get_entity_classes_namespace(self, namespace):
+        return self.namespace_entity_classes_map.get(namespace, [])
+
+    def get_business_logic_classes_namespace(self, namespace):
+        return self.namespace_business_logic_classes_map.get(namespace, [])
+
+    def entity_load(self, entity_plugin):
+        # tries to retrieve the data namespaces value
+        data_namespaces = entity_plugin.get_attribute("data_namespaces")
+
+        # in case no data namespaces are found
+        if not data_namespaces:
+            # returns immediately
+            return
+
+        # retrieves the entity class from the entity plugin
+        entity_class = entity_plugin.get_entity_class()
+
+        # iterates over all the data namespaces
+        for data_namespace in data_namespaces:
+            # loads the entity class for the namespace
+            self._load_entity_class_namespace(data_namespace, entity_class)
+
+    def entity_unload(self, entity_plugin):
+        # tries to retrieve the data namespaces value
+        data_namespaces = entity_plugin.get_attribute("data_namespaces")
+
+        # in case no data namespaces are found
+        if not data_namespaces:
+            # returns immediately
+            return
+
+        # retrieves the entity class from the entity plugin
+        entity_class = entity_plugin.get_entity_class()
+
+        # iterates over all the data namespaces
+        for data_namespace in data_namespaces:
+            # unloads the entity class from the namespace
+            self._unload_entity_class_namespace(data_namespace, entity_class)
+
+    def entity_bundle_load(self, entity_bundle_plugin):
+        # tries to retrieve the data namespaces value
+        data_namespaces = entity_bundle_plugin.get_attribute("data_namespaces")
+
+        # in case no data namespaces are found
+        if not data_namespaces:
+            # returns immediately
+            return
+
+        # retrieves the entity bundle from the entity bundle plugin
+        entity_bundle = entity_bundle_plugin.get_entity_bundle()
+
+        # iterates over all the data namespaces
+        for data_namespace in data_namespaces:
+            # iterates over all the entity classes in the
+            # entity bundle
+            for entity_class in entity_bundle:
+                # loads the entity class for the namespace
+                self._load_entity_class_namespace(data_namespace, entity_class)
+
+    def entity_bundle_unload(self, entity_bundle_plugin):
+        # tries to retrieve the data namespaces value
+        data_namespaces = entity_bundle_plugin.get_attribute("data_namespaces")
+
+        # in case no data namespaces are found
+        if not data_namespaces:
+            # returns immediately
+            return
+
+        # retrieves the entity bundle from the entity bundle plugin
+        entity_bundle = entity_bundle_plugin.get_entity_bundle()
+
+        # iterates over all the data namespaces
+        for data_namespace in data_namespaces:
+            # iterates over all the entity classes in the
+            # entity bundle
+            for entity_class in entity_bundle:
+                # unloads the entity class from the namespace
+                self._unload_entity_class_namespace(data_namespace, entity_class)
+
+    def business_logic_load(self, business_logic_plugin):
+        # tries to retrieve the data namespaces value
+        business_logic_namespaces = business_logic_plugin.get_attribute("business_logic_namespaces")
+
+        # in case no business logic namespaces are found
+        if not business_logic_namespaces:
+            # returns immediately
+            return
+
+        # retrieves the business logic class from the business logic plugin
+        business_logic_class = business_logic_plugin.get_business_logic_class()
+
+        # iterates over all the business logic namespaces
+        for business_logic_namespace in business_logic_namespaces:
+            # loads the business logic class for the namespace
+            self._load_business_logic_class_namespace(business_logic_namespace, business_logic_class)
+
+    def business_logic_unload(self, business_logic_plugin):
+        # tries to retrieve the data namespaces value
+        business_logic_namespaces = business_logic_plugin.get_attribute("business_logic_namespaces")
+
+        # in case no business logic namespaces are found
+        if not business_logic_namespaces:
+            # returns immediately
+            return
+
+        # retrieves the business logic class from the business logic plugin
+        business_logic_class = business_logic_plugin.get_business_logic_class()
+
+        # iterates over all the business logic namespaces
+        for business_logic_namespace in business_logic_namespaces:
+            # unloads the business logic class from the namespace
+            self._unload_business_logic_class_namespace(business_logic_namespace, business_logic_class)
+
+    def business_logic_bundle_load(self, business_logic_bundle_plugin):
+        # tries to retrieve the business logic namespaces value
+        business_logic_namespaces = business_logic_bundle_plugin.get_attribute("business_logic_namespaces")
+
+        # in case no business logic namespaces are found
+        if not business_logic_namespaces:
+            # returns immediately
+            return
+
+        # retrieves the business logic bundle from the business logic bundle plugin
+        business_logic_bundle = business_logic_bundle_plugin.get_business_logic_bundle()
+
+        # iterates over all the business logic namespaces
+        for business_logic_namespace in business_logic_namespaces:
+            # iterates over all the business logic classes in the
+            # business logic bundle
+            for business_logic_class in business_logic_bundle:
+                # loads the business logic class for the namespace
+                self._load_business_logic_class_namespace(business_logic_namespace, business_logic_class)
+
+    def business_logic_bundle_unload(self, business_logic_bundle_plugin):
+        # tries to retrieve the business logic namespaces value
+        business_logic_namespaces = business_logic_bundle_plugin.get_attribute("business_logic_namespaces")
+
+        # in case no business logic namespaces are found
+        if not business_logic_namespaces:
+            # returns immediately
+            return
+
+        # retrieves the business logic bundle from the business logic bundle plugin
+        business_logic_bundle = business_logic_bundle_plugin.get_business_logic_bundle()
+
+        # iterates over all the business logic namespaces
+        for business_logic_namespace in business_logic_namespaces:
+            # iterates over all the business logic classes in the
+            # business logic bundle
+            for business_logic_class in business_logic_bundle:
+                # unloads the business logic class from the namespace
+                self._unload_business_logic_class_namespace(business_logic_namespace, business_logic_class)
+
+    def _load_entity_class_namespace(self, namespace, entity_class):
+        # in case the namespace does not exist in the namespace
+        # entity classes map
+        if not namespace in self.namespace_entity_classes_map:
+            # creates a new list for the namespace entity classes map
+            self.namespace_entity_classes_map[namespace] = []
+
+        # retrieves the entity classes list
+        entity_classes_list = self.namespace_entity_classes_map[namespace]
+
+        # adds the entity class to the entity classes list
+        entity_classes_list.append(entity_class)
+
+    def _unload_entity_class_namespace(self, namespace, entity_class):
+        # in case the namespace does not exist in the namespace
+        # entity classes map
+        if not namespace in self.namespace_entity_classes_map:
+            # returns immediately
+            return
+
+        # retrieves the entity classes list
+        entity_classes_list = self.namespace_entity_classes_map[namespace]
+
+        # in case the entity class does not
+        # exist in the entity classes list
+        if not entity_class in entity_classes_list:
+            # returns immediately
+            return
+
+        # removes the entity class from the entity classes list
+        entity_classes_list.remove(entity_class)
+
+    def _load_business_logic_class_namespace(self, namespace, business_logic_class):
+        # in case the namespace does not exist in the namespace
+        # business logic classes map
+        if not namespace in self.namespace_business_logic_classes_map:
+            # creates a new list for the namespace business logic classes map
+            self.namespace_business_logic_classes_map[namespace] = []
+
+        # retrieves the business logic classes list
+        business_logic_classes_list = self.namespace_business_logic_classes_map[namespace]
+
+        # adds the business logic class to the business logic classes list
+        business_logic_classes_list.append(business_logic_class)
+
+    def _unload_business_logic_class_namespace(self, namespace, business_logic_class):
+        # in case the namespace does not exist in the namespace
+        # business logic classes map
+        if not namespace in self.namespace_business_logic_classes_map:
+            # returns immediately
+            return
+
+        # retrieves the business logic classes list
+        business_logic_classes_list = self.namespace_business_logic_classes_map[namespace]
+
+        # in case the business logic class does not
+        # exist in the business logic classes list
+        if not business_logic_class in business_logic_classes_list:
+            # returns immediately
+            return
+
+        # removes the business logic class from the business logic classes list
+        business_logic_classes_list.remove(business_logic_class)
 
     def _get_target_module(self, target_module_name, globals):
         # tries to retrieve the target module
