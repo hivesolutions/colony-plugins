@@ -54,7 +54,8 @@ class PluginManagerLogicPlugin(colony.base.plugin_system.Plugin):
     loading_type = colony.base.plugin_system.EAGER_LOADING_TYPE
     platforms = [colony.base.plugin_system.CPYTHON_ENVIRONMENT,
                  colony.base.plugin_system.JYTHON_ENVIRONMENT]
-    attributes = {"build_automation_file_path" : "$base{plugin_directory}/plugin_manager_logic/logic/resources/baf.xml"}
+    attributes = {"build_automation_file_path" : "$base{plugin_directory}/plugin_manager_logic/logic/resources/baf.xml",
+                  "business_logic_namespaces" : ("pt.colony.plugin_manager_logic",)}
     capabilities = ["business_logic_bundle", "build_automation_item"]
     capabilities_allowed = []
     dependencies = []

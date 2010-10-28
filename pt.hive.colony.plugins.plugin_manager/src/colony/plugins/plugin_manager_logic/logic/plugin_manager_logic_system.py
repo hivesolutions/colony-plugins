@@ -70,9 +70,6 @@ class PluginManagerLogic:
         self.business_logic_bundle_map = {}
 
     def generate_classes(self):
-        # retrieves the base directory name
-        base_directory_name = self.get_path_directory_name()
-
         # sets the business logic bundle
         self.business_logic_bundle = [PluginManagerBaseLogic]
 
