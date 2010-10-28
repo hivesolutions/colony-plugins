@@ -55,6 +55,9 @@ ENTITY_CLASSES_LIST_VALUE = "entity_classes_list"
 ENTITY_CLASSES_MAP_VALUE = "entity_classes_map"
 """ The entity classes map value """
 
+FILE_PATH_VALUE = "file_path"
+""" The file path value """
+
 DEFAULT_ENGINE = "sqlite"
 """ The default engine """
 
@@ -139,6 +142,9 @@ class WebMvcUtils:
         # the default connection parameters
         connection_parameters = entity_manager_arguments.get(CONNECTION_PARAMETERS_VALUE, DEFAULT_CONNECTION_PARAMETERS)
 
+        # resolves the connection parameters
+        self._resolve_connection_parameters(connection_parameters)
+
         # creates the entity manager properties
         entity_manager_properties = {ENTITY_CLASSES_LIST_VALUE : base_entity_models, ENTITY_CLASSES_MAP_VALUE : base_entity_models_map}
 
@@ -181,6 +187,21 @@ class WebMvcUtils:
 
         # returns the created search index controller
         return search_index_controller
+
+    def _resolve_connection_parameters(self, connection_parameters):
+        """
+        Resolves the given connection parameters map, substituting
+        the values with the resolved ones.
+
+        @type connection_parameters: Dictionary
+        @param connection_parameters: The connection parameters to be resolved.
+        """
+
+        # retrieves the plugin manager
+        plugin_manager = self.web_mvc_utils_plugin.manager
+
+        # resolves the file path
+        connection_parameters[FILE_PATH_VALUE] = plugin_manager.resolve_file_path(connection_parameters[FILE_PATH_VALUE], True, True)
 
     def _get_entity_classes(self, module, entity_class):
         """
