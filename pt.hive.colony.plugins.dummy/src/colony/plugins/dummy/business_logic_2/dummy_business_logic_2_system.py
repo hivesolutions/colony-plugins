@@ -37,6 +37,27 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
+ENTITY_CLASSES_LIST_VALUE = "entity_classes_list"
+""" The entity classes list value """
+
+ENTITY_CLASSES_MAP_VALUE = "entity_classes_map"
+""" The entity classes map value """
+
+FILE_PATH_VALUE = "file_path"
+""" The file path value """
+
+DEFAULT_DATABASE_SUFFIX = "database.db"
+""" The default database suffix """
+
+DEFAULT_DATABASE_PREFIX = "dummy_business_logic_2_"
+""" The default database prefix """
+
+ENTITY_CLASSES_NAMESPACES = ("pt.hive.colony.business.dummy",)
+""" The entity classes namespaces """
+
+BUSINESS_LOGIC_CLASSES_NAMESPACES = ("pt.hive.colony.business.dummy",)
+""" The business logic classes namespaces """
+
 class DummyBusinessLogic2:
     """
     The dummy business logic 2 class.
@@ -63,23 +84,28 @@ class DummyBusinessLogic2:
         # retrieves the business session manager plugin
         business_session_manager_plugin = self.dummy_business_logic_2_plugin.business_session_manager_plugin
 
-        # retrieves the resource manager plugin
-        resource_manager_plugin = self.dummy_business_logic_2_plugin.resource_manager_plugin
+        # retrieves the business helper plugin
+        business_helper_plugin = self.dummy_business_logic_2_plugin.business_helper_plugin
 
-        # retrieves the user home path resource
-        user_home_path_resource = resource_manager_plugin.get_resource("system.path.user_home")
+        # retrieves the entity classes for the omni base data namespaces
+        entity_classes = business_helper_plugin.get_entity_classes_namespaces(ENTITY_CLASSES_NAMESPACES)
 
-        # retrieves the user home path value
-        user_home_path = user_home_path_resource.data
+        # retrieves the business logic classes for the omni base logic namespaces
+        business_logic_classes = business_helper_plugin.get_business_logic_classes_namespaces(BUSINESS_LOGIC_CLASSES_NAMESPACES)
 
-        # retrieves the database file name resource
-        database_file_name_resource = resource_manager_plugin.get_resource("system.database.file_name")
+        # generates the entity classes map from the entity classes list
+        # creating the map associating the class names with the classes
+        entity_classes_map = business_helper_plugin.generate_bundle_map(entity_classes)
 
-        # retrieves the database file name
-        database_file_name = database_file_name_resource.data
+        # generates the business logic classes map from the business logic classes list
+        # creating the map associating the class names with the classes
+        business_logic_classes_map = business_helper_plugin.generate_bundle_map(business_logic_classes)
+
+        # creates the entity manager properties
+        entity_manager_properties = {ENTITY_CLASSES_LIST_VALUE : entity_classes, ENTITY_CLASSES_MAP_VALUE : entity_classes_map}
 
         # creates the dummy session manager master
-        dummy_session_manager_master = business_session_manager_plugin.load_session_manager_master_entity_manager("dummy_session_2", "sqlite", {})
+        dummy_session_manager_master = business_session_manager_plugin.load_session_manager_master_entity_manager_business_logic("dummy_session_2", "sqlite", entity_manager_properties, business_logic_classes, business_logic_classes_map)
 
         # constructs the session manager pool
         dummy_session_manager_master.construct_session_manager_pool()
@@ -87,8 +113,11 @@ class DummyBusinessLogic2:
         # retrieves the entity manager
         entity_manager = dummy_session_manager_master.entity_manager
 
+        # retrieves the entity manager connection parameters
+        connection_parameters = self._get_connection_parameters()
+
         # sets the connection parameters for the entity manager
-        entity_manager.set_connection_parameters({"file_path" : user_home_path + "/" + database_file_name, "autocommit" : False})
+        entity_manager.set_connection_parameters(connection_parameters)
 
         # loads the entity manager
         entity_manager.load_entity_manager()
@@ -104,3 +133,63 @@ class DummyBusinessLogic2:
 
         # creates a persistent connection
         dummy_session_manager_master.create_persistent_session()
+
+    def _get_connection_parameters(self):
+        """
+        Retrieves the entity manager connection parameters.
+
+        @rtype: Dictionary
+        @return: The entity manager connection parameters.
+        """
+
+        # retrieves the resource manager plugin
+        resource_manager_plugin = self.dummy_business_logic_2_plugin.resource_manager_plugin
+
+        # creates the entity manager connection parameters
+        connection_parameters = {"autocommit" : False}
+
+        # retrieves the system database file name resource
+        system_database_filename_resource = resource_manager_plugin.get_resource("system.database.file_name")
+
+        # in case the system database filename resource
+        # is defined
+        if system_database_filename_resource:
+            # retrieves the system database filename suffix
+            system_database_filename_suffix = system_database_filename_resource.data
+        # otherwise
+        else:
+            # sets the system database filename suffix as the default one
+            system_database_filename_suffix = DEFAULT_DATABASE_SUFFIX
+
+        # creates the system database file name value using the prefix and suffix values
+        system_database_filename = DEFAULT_DATABASE_PREFIX + system_database_filename_suffix
+
+        # retrieves the dummy business logic 2 plugin id
+        dummy_business_logic_2_plugin_id = self.dummy_business_logic_2_plugin.id
+
+        # creates the database file path using the plugin id and the system database filename
+        database_file_path = "%configuration:" + dummy_business_logic_2_plugin_id + "%/" + system_database_filename
+
+        # sets the file path in the entity manager connection parameters
+        connection_parameters[FILE_PATH_VALUE] = database_file_path
+
+        # resolves the connection parameters
+        self._resolve_connection_parameters(connection_parameters)
+
+        # returns the entity manager connection parameters
+        return connection_parameters
+
+    def _resolve_connection_parameters(self, connection_parameters):
+        """
+        Resolves the given connection parameters map, substituting
+        the values with the resolved ones.
+
+        @type connection_parameters: Dictionary
+        @param connection_parameters: The connection parameters to be resolved.
+        """
+
+        # retrieves the plugin manager
+        plugin_manager = self.dummy_business_logic_2_plugin.manager
+
+        # resolves the file path
+        connection_parameters[FILE_PATH_VALUE] = plugin_manager.resolve_file_path(connection_parameters[FILE_PATH_VALUE], True, True)
