@@ -37,8 +37,17 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
+FILE_PATH_VALUE = "file_path"
+""" The file path value """
+
 DEFAULT_NUMBER_RECORDS = 30
 """ The default number records """
+
+DEFAULT_DATABASE_SUFFIX = "database.db"
+""" The default database suffix """
+
+DEFAULT_DATABASE_PREFIX = "web_entity_manager_administration_"
+""" The default database prefix """
 
 class WebEntityManagerAdministration:
     """
@@ -194,29 +203,17 @@ class WebEntityManagerAdministration:
 
         # in case the entity manager is not defined
         if not self.entity_manager:
-            # retrieves the resource manager plugin
-            resource_manager_plugin = self.web_entity_manager_administration_plugin.resource_manager_plugin
-
             # retrieves the entity manager plugin
             entity_manager_plugin = self.web_entity_manager_administration_plugin.entity_manager_plugin
 
-            # retrieves the user home path resource
-            user_home_path_resource = resource_manager_plugin.get_resource("system.path.user_home")
-
-            # retrieves the user home path value
-            user_home_path = user_home_path_resource.data
-
-            # retrieves the database file name resource
-            database_file_name_resource = resource_manager_plugin.get_resource("system.database.file_name")
-
-            # retrieves the database file name
-            database_file_name = database_file_name_resource.data
+            # retrieves the entity manager connection parameters
+            connection_parameters = self._get_connection_parameters()
 
             # creates a new entity manager with the sqlite engine
             self.entity_manager = entity_manager_plugin.load_entity_manager("sqlite")
 
             # sets the connection parameters for the entity manager
-            self.entity_manager.set_connection_parameters({"file_path" : user_home_path + "/" + database_file_name, "autocommit" : False})
+            self.entity_manager.set_connection_parameters(connection_parameters)
 
             # loads the entity manager
             self.entity_manager.load_entity_manager()
@@ -256,3 +253,63 @@ class WebEntityManagerAdministration:
 
         # returns the entity name treated
         return entity_name_treated
+
+    def _get_connection_parameters(self):
+        """
+        Retrieves the entity manager connection parameters.
+
+        @rtype: Dictionary
+        @return: The entity manager connection parameters.
+        """
+
+        # retrieves the resource manager plugin
+        resource_manager_plugin = self.web_entity_manager_administration_plugin.resource_manager_plugin
+
+        # creates the entity manager connection parameters
+        connection_parameters = {"autocommit" : False}
+
+        # retrieves the system database file name resource
+        system_database_filename_resource = resource_manager_plugin.get_resource("system.database.file_name")
+
+        # in case the system database filename resource
+        # is defined
+        if system_database_filename_resource:
+            # retrieves the system database filename suffix
+            system_database_filename_suffix = system_database_filename_resource.data
+        # otherwise
+        else:
+            # sets the system database filename suffix as the default one
+            system_database_filename_suffix = DEFAULT_DATABASE_SUFFIX
+
+        # creates the system database file name value using the prefix and suffix values
+        system_database_filename = DEFAULT_DATABASE_PREFIX + system_database_filename_suffix
+
+        # retrieves the web entity manager administration plugin id
+        web_entity_manager_administration_plugin_id = self.web_entity_manager_administration_plugin.id
+
+        # creates the database file path using the plugin id and the system database filename
+        database_file_path = "%configuration:" + web_entity_manager_administration_plugin_id + "%/" + system_database_filename
+
+        # sets the file path in the entity manager connection parameters
+        connection_parameters[FILE_PATH_VALUE] = database_file_path
+
+        # resolves the connection parameters
+        self._resolve_connection_parameters(connection_parameters)
+
+        # returns the entity manager connection parameters
+        return connection_parameters
+
+    def _resolve_connection_parameters(self, connection_parameters):
+        """
+        Resolves the given connection parameters map, substituting
+        the values with the resolved ones.
+
+        @type connection_parameters: Dictionary
+        @param connection_parameters: The connection parameters to be resolved.
+        """
+
+        # retrieves the plugin manager
+        plugin_manager = self.web_entity_manager_administration_plugin.manager
+
+        # resolves the file path
+        connection_parameters[FILE_PATH_VALUE] = plugin_manager.resolve_file_path(connection_parameters[FILE_PATH_VALUE], True, True)
