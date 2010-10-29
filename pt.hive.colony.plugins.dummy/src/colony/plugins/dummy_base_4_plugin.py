@@ -37,16 +37,8 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-import time
-
 import colony.base.plugin_system
-
-STATUS_TASK_CREATED = 1
-STATUS_TASK_RUNNING = 2
-STATUS_TASK_PAUSED = 3
-STATUS_TASK_STOPPED = 4
-
-TIMEOUT = 0.5
+import colony.base.decorators
 
 class DummyBase4Plugin(colony.base.plugin_system.Plugin):
     """
@@ -72,10 +64,15 @@ class DummyBase4Plugin(colony.base.plugin_system.Plugin):
     events_registrable = []
     main_modules = ["dummy.base_4.dummy_base_4_system"]
 
+    dummy_base_4 = None
+
     task_manager_plugin = None
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
+        global dummy
+        import dummy.base_4.dummy_base_4_system
+        self.dummy_base_4 = dummy.base_4.dummy_base_4_system.DummyBase4(self)
 
     def end_load_plugin(self):
         colony.base.plugin_system.Plugin.end_load_plugin(self)
@@ -92,66 +89,28 @@ class DummyBase4Plugin(colony.base.plugin_system.Plugin):
     def unload_allowed(self, plugin, capability):
         colony.base.plugin_system.Plugin.unload_allowed(self, plugin, capability)
 
+    @colony.base.decorators.inject_dependencies("pt.hive.colony.plugins.dummy.base_4", "1.0.0")
     def dependency_injected(self, plugin):
         colony.base.plugin_system.Plugin.dependency_injected(self, plugin)
-        if colony.base.plugin_system.is_capability_or_sub_capability_in_list("task_manager", plugin.capabilities):
-            self.task_manager_plugin = plugin
 
-    def test_create_task(self):
-        self.task1 = self.task_manager_plugin.create_new_task("hello_task", "hello_description", self.task_handler)
-        self.task1.set_task_pause_handler(self.pause_task_handler)
-        self.task1.set_task_resume_handler(self.resume_task_handler)
-        self.task1.set_task_stop_handler(self.stop_task_handler)
-        self.task1.start([])
+    def create_test_task(self):
+        self.dummy_base_4.create_test_task()
 
-    def test_pause_task(self):
-        self.task1.pause([])
+    def pause_test_task(self):
+        self.dummy_base_4.pause_test_task()
 
-    def test_resume_task(self):
-        self.task1.resume([])
+    def resume_test_task(self):
+        self.dummy_base_4.resume_test_task()
 
-    def test_stop_task(self):
-        self.task1.stop([])
+    def stop_test_task(self):
+        self.dummy_base_4.stop_test_task()
 
-    def task_handler(self, task, args):
-        # starts the counter value
-        counter = 0
+    def generate_test_event(self):
+        self.dummy_base_4.generate_test_event()
 
-        # iterates while the status is not stopped and the
-        # counter limit is not reached
-        while not task.status == STATUS_TASK_STOPPED and counter <= 100:
-            # prints a debug message
-            self.debug("Hello World")
+    def get_task_manager_plugin(self):
+        return self.task_manager_plugin
 
-            # in case the current task status is paused
-            if task.status == STATUS_TASK_PAUSED:
-                # confirms the pause
-                task.confirm_pause()
-                while task.status == STATUS_TASK_PAUSED:
-                    time.sleep(TIMEOUT)
-                # confirms the resume
-                task.confirm_resume()
-
-            # sleeps for the given timeout
-            time.sleep(TIMEOUT)
-
-            # sets the task percentage complete
-            task.set_percentage_complete(counter)
-
-            # increments the counter value
-            counter += 1
-
-        # confirms the stop
-        task.confirm_stop(True)
-
-    def pause_task_handler(self, args):
-        self.debug("Task paused")
-
-    def resume_task_handler(self, args):
-        self.debug("Task resumed")
-
-    def stop_task_handler(self, args):
-        self.debug("Task stopped")
-
-    def test_generate_event(self):
-        self.generate_event("task_information_changed.new_task", [])
+    @colony.base.decorators.plugin_inject("pt.hive.colony.plugins.main.tasks.task_manager")
+    def set_task_manager_plugin(self, task_manager_plugin):
+        self.task_manager_plugin = task_manager_plugin

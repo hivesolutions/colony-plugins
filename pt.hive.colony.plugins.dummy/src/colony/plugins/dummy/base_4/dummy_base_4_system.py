@@ -37,6 +37,23 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
+import time
+
+STATUS_TASK_CREATED = 1
+""" The status task created value """
+
+STATUS_TASK_RUNNING = 2
+""" The status task running value """
+
+STATUS_TASK_PAUSED = 3
+""" The status task paused value """
+
+STATUS_TASK_STOPPED = 4
+""" The status task stopped value """
+
+TIMEOUT = 0.5
+""" The timeout for thread pool """
+
 class DummyBase4:
     """
     The dummy base 4.
@@ -44,6 +61,9 @@ class DummyBase4:
 
     dummy_base_4_plugin = None
     """ The dummy base 4 plugin """
+
+    test_task = None
+    """ The test task """
 
     def __init__(self, dummy_base_4_plugin):
         """
@@ -54,3 +74,77 @@ class DummyBase4:
         """
 
         self.dummy_base_4_plugin = dummy_base_4_plugin
+
+    def create_test_task(self):
+        # retrieves the task manager plugin
+        task_manager_plugin = self.task_manager_plugin
+
+        # creates the test task
+        self.test_task = task_manager_plugin.create_new_task("hello_task", "hello_description", self.task_handler)
+
+        # sets the task operation handlers
+        self.test_task.set_task_pause_handler(self.pause_task_handler)
+        self.test_task.set_task_resume_handler(self.resume_task_handler)
+        self.test_task.set_task_stop_handler(self.stop_task_handler)
+
+        # starts the test task
+        self.test_task.start([])
+
+    def pause_test_task(self):
+        # pauses the test task
+        self.test_task.pause([])
+
+    def resume_test_task(self):
+        # resumes the test task
+        self.test_task.resume([])
+
+    def stop_test_task(self):
+        # stops the test task
+        self.test_task.stop([])
+
+    def generate_test_event(self):
+        self.dummy_base_4_plugin.generate_event("task_information_changed.new_task", [])
+
+    def task_handler(self, task, args):
+        # starts the counter value
+        counter = 0
+
+        # iterates while the status is not stopped and the
+        # counter limit is not reached
+        while not task.status == STATUS_TASK_STOPPED and counter <= 100:
+            # prints a debug message
+            self.dummy_base_4_plugin.debug("Hello World")
+
+            # in case the current task status is paused
+            if task.status == STATUS_TASK_PAUSED:
+                # confirms the pause
+                task.confirm_pause()
+
+                # while the task is paused
+                while task.status == STATUS_TASK_PAUSED:
+                    # sleeps for the timeout
+                    time.sleep(TIMEOUT)
+
+                # confirms the resume
+                task.confirm_resume()
+
+            # sleeps for the given timeout
+            time.sleep(TIMEOUT)
+
+            # sets the task percentage complete
+            task.set_percentage_complete(counter)
+
+            # increments the counter value
+            counter += 1
+
+        # confirms the stop
+        task.confirm_stop(True)
+
+    def pause_task_handler(self, args):
+        self.dummy_base_4_plugin.debug("Task paused")
+
+    def resume_task_handler(self, args):
+        self.dummy_base_4_plugin.debug("Task resumed")
+
+    def stop_task_handler(self, args):
+        self.dummy_base_4_plugin.debug("Task stopped")

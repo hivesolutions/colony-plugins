@@ -63,8 +63,13 @@ class DummyBase2Plugin(colony.base.plugin_system.Plugin):
     events_registrable = []
     main_modules = ["dummy.base_2.dummy_base_2_system"]
 
+    dummy_base_2 = None
+
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
+        global dummy
+        import dummy.base_2.dummy_base_2_system
+        self.dummy_base_2 = dummy.base_2.dummy_base_2_system.DummyBase2(self)
 
     def end_load_plugin(self):
         colony.base.plugin_system.Plugin.end_load_plugin(self)
