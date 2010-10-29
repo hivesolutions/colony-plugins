@@ -38,16 +38,15 @@ __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
 import clr
-clr.AddReference("System.Windows.Forms")
 clr.AddReference("System.Drawing")
+clr.AddReference("System.Windows.Forms")
 
-import System
+import System.Drawing.Font
+import System.Drawing.Point
 
-import System.Windows.Forms.Application
 import System.Windows.Forms.Form
 import System.Windows.Forms.Label
-import System.Drawing.Point
-import System.Drawing.Font
+import System.Windows.Forms.Application
 
 FORM_TITLE_TEXT = "Dummy Plugin Windows Forms"
 
