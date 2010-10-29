@@ -1,20 +1,20 @@
 {
     "platform" : "python",
     "sub_platforms" : ["cpython", "jython", "iron_python"],
-    "id" : "pt.hive.colony.plugins.dummy.aux2",
+    "id" : "pt.hive.colony.plugins.dummy.base_2",
     "name" : "Dummy Aux 2 Plugin",
     "short_name" : "Dummy Aux 2",
     "description" : "Dummy Aux 2 Plugin",
     "version" : "1.0.0",
     "author" : "Hive Solutions Lda. <development@hive.pt>",
-    "capabilities" : ["dummy_aux2_capability", "build_automation_item"],
+    "capabilities" : ["dummy_base_2_capability", "build_automation_item"],
     "capabilities_allowed" : ["dummy_aux3_capability"],
     "dependencies" : [{
                 "id" : "pt.hive.colony.plugins.dummy",
                 "version" : "1.0.0"
             }],
-    "main_file" : "dummy_aux_2_plugin.py",
-    "resources" : ["dummy_aux_2_plugin.py", "dummy/__init__.py",
-            "dummy/aux_2/__init__.py", "dummy/aux_2/dummy_aux_2_system.py",
-            "dummy/aux_2/resources/baf.xml"]
+    "main_file" : "dummy_base_2_plugin.py",
+    "resources" : ["dummy_base_2_plugin.py", "dummy/__init__.py",
+            "dummy/base_2/__init__.py", "dummy/base_2/dummy_base_2_system.py",
+            "dummy/base_2/resources/baf.xml"]
 }

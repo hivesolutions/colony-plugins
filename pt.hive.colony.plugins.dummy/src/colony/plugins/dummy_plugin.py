@@ -56,7 +56,7 @@ class DummyPlugin(colony.base.plugin_system.Plugin):
                  colony.base.plugin_system.IRON_PYTHON_ENVIRONMENT]
     attributes = {"build_automation_file_path" : "$base{plugin_directory}/dummy/dummy/resources/baf.xml"}
     capabilities = ["dummy_capability", "build_automation_item"]
-    capabilities_allowed = ["dummy_base_1_capability", "dummy_aux2_capability"]
+    capabilities_allowed = ["dummy_base_1_capability", "dummy_base_2_capability"]
     dependencies = []
     events_handled = ["dummy_event"]
     events_registrable = ["dummy_base_1_event"]

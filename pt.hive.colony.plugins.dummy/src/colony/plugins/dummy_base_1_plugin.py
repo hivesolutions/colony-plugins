@@ -62,7 +62,7 @@ class DummyBase1Plugin(colony.base.plugin_system.Plugin):
                  colony.base.plugin_system.IRON_PYTHON_ENVIRONMENT]
     attributes = {"build_automation_file_path" : "$base{plugin_directory}/dummy/base_1/resources/baf.xml"}
     capabilities = ["dummy_base_1_capability", "build_automation_item"]
-    capabilities_allowed = [("dummy_aux2_capability", colony.base.plugin_system.NEW_DIFFUSION_SCOPE), ("dummy_aux3_capability", colony.base.plugin_system.NEW_DIFFUSION_SCOPE)]
+    capabilities_allowed = [("dummy_base_2_capability", colony.base.plugin_system.NEW_DIFFUSION_SCOPE), ("dummy_aux3_capability", colony.base.plugin_system.NEW_DIFFUSION_SCOPE)]
     dependencies = [colony.base.plugin_system.PluginDependency(
                     "pt.hive.colony.plugins.main.threads.thread_pool_manager", "1.0.0")]
     events_handled = ["dummy_base_1_event"]
@@ -119,17 +119,17 @@ class DummyBase1Plugin(colony.base.plugin_system.Plugin):
         except Exception, exception:
             colony.base.plugin_system.Plugin.treat_exception(self, exception)
 
-    @colony.base.decorators.load_allowed_capability("dummy_aux2_capability")
-    def dummy_aux2_capability_load_allowed(self, plugin, capability):
-        self.debug("dummy aux 1 loaded allowed dummy_aux2_capability plugin '%s' with version '%s'" % (plugin.id, plugin.version))
+    @colony.base.decorators.load_allowed_capability("dummy_base_2_capability")
+    def dummy_base_2_capability_load_allowed(self, plugin, capability):
+        self.debug("dummy aux 1 loaded allowed dummy_base_2_capability plugin '%s' with version '%s'" % (plugin.id, plugin.version))
 
     @colony.base.decorators.load_allowed_capability("dummy_aux3_capability")
     def dummy_aux3_capability_load_allowed(self, plugin, capability):
         self.debug("dummy aux 1 loaded allowed dummy_aux3_capability plugin '%s' with version '%s'" % (plugin.id, plugin.version))
 
-    @colony.base.decorators.unload_allowed_capability("dummy_aux2_capability")
-    def dummy_aux2_capability_unload_allowed(self, plugin, capability):
-        self.debug("dummy aux 1 unloaded allowed dummy_aux2_capability plugin '%s' with version '%s'" % (plugin.id, plugin.version))
+    @colony.base.decorators.unload_allowed_capability("dummy_base_2_capability")
+    def dummy_base_2_capability_unload_allowed(self, plugin, capability):
+        self.debug("dummy aux 1 unloaded allowed dummy_base_2_capability plugin '%s' with version '%s'" % (plugin.id, plugin.version))
 
     @colony.base.decorators.unload_allowed_capability("dummy_aux3_capability")
     def dummy_aux3_capability_unload_allowed(self, plugin, capability):
