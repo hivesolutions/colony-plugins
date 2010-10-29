@@ -37,8 +37,11 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-import sys
 import re
+import sys
+import time
+
+import colony.libs.time_util
 
 COMMAND_EXCEPTION_MESSAGE = "there was an exception"
 """ The command exception message """
@@ -59,6 +62,7 @@ HELP_TEXT = "### PLUGIN SYSTEM HELP ###\n\
 help [extension-id] - shows this message or the referred console extension help message\n\
 helpall             - shows the help message of all the loaded console extensions\n\
 extensions          - shows the list of loaded console extensions\n\
+status              - shows the current status of the system\n\
 show <plugin-id>    - shows the status of the plugin with the defined id\n\
 showall             - shows the status of all the loaded plugins\n\
 info <plugin-id>    - shows information about the plugin with the defined id\n\
@@ -97,7 +101,7 @@ class MainConsole:
     main_console_plugin = None
     """ The main console plugin """
 
-    commands = ["help", "helpall", "extensions", "show", "showall", "info", "infoall", "add", "remove", "load", "unload", "exec", "exit"]
+    commands = ["help", "helpall", "extensions", "status", "show", "showall", "info", "infoall", "add", "remove", "load", "unload", "exec", "exit"]
     """ The commands list """
 
     manager = None
@@ -325,6 +329,51 @@ class MainConsole:
 
             output_method(console_command_plugin.id + "\n", False)
 
+    def process_status(self, args, output_method):
+        """
+        Processes the status command, with the given
+        arguments and output method.
+
+        @type args: List
+        @param args: The arguments for the processing.
+        @type output_method: Method
+        @param output_method: The output method to be used in the processing.
+        """
+
+        # retrieves the plugin manager
+        plugin_manager = self.main_console_plugin.manager
+
+        # retrieves the plugin amnager uid
+        plugin_manager_uid = plugin_manager.uid
+
+        # retrieves the plugin manager version
+        plugin_manager_version = plugin_manager.get_version()
+
+        # retrieves the current time
+        current_time = time.time()
+
+        # retrieves the plugin manager timestamp
+        plugin_manager_timestamp = plugin_manager.plugin_manager_timestamp
+
+        # calculates the uptime
+        uptime = current_time - plugin_manager_timestamp
+
+        # creates the uptime string
+        uptime_string = colony.libs.time_util.format_seconds_smart(uptime, "basic", ("day", "hour", "minute", "second"))
+
+        # retrieves the plugin manager instances
+        plugin_manager_instances = plugin_manager.plugin_instances
+
+        # retrieves the plugin strings from the plugin manager instances
+        plugins_string, replicas_string, instances_string = self.get_plugin_strings(plugin_manager_instances)
+
+        output_method("uid:      " + plugin_manager_uid)
+        output_method("version:  " + plugin_manager_version)
+        output_method("uptime:   " + uptime_string)
+        output_method("plugins:  " + plugins_string)
+        output_method("replicas:  " + replicas_string)
+        output_method("instances: " + instances_string)
+
     def process_show(self, args, output_method):
         """
         Processes the show command, with the given
@@ -439,6 +488,11 @@ class MainConsole:
             return
 
         plugin_id = self.get_plugin_id(args[0])
+
+        if plugin_id in self.manager.plugin_instances_map:
+            output_method(INVALID_PLUGIN_ID_MESSAGE)
+        else:
+            pass
 
     def process_remove(self, args, output_method):
         """
@@ -608,3 +662,67 @@ class MainConsole:
 
         # returns the plugin id
         return plugin_id
+
+    def get_plugin_strings(self, plugin_manager_instances):
+        """
+        Constructs the various plugin strings from the
+        given plugin manager instances.
+
+        @type plugin_manager_instances: List
+        @param plugin_manager_instances: The list of plugin manager instances.
+        @rtype: Tuple
+        @return: A tuple containing the plugin strings.
+        """
+
+        # creates the plugin counters
+        plugins_loaded = 0
+        plugins_total = 0
+        replicas_loaded = 0
+        replicas_total = 0
+        instances_loaded = 0
+        instances_total = 0
+
+        # iterates over all the plugin manager instances to
+        # construct the plugin values
+        for plugin_manager_instance in plugin_manager_instances:
+            # in case it is a replica
+            if plugin_manager_instance.is_replica():
+                # in case the plugin manager instance is loaded
+                if plugin_manager_instance.is_loaded():
+                    # increments the replicas loaded
+                    replicas_loaded += 1
+
+                # increments the replicas total
+                replicas_total += 1
+            else:
+                # in case the plugin manager instance is loaded
+                if plugin_manager_instance.is_loaded():
+                    # increments the plugins loaded
+                    plugins_loaded += 1
+
+                # increments the plugins total
+                plugins_total += 1
+
+            # in case the plugin manager instance is loaded
+            if plugin_manager_instance.is_loaded():
+                # increments the instances loaded
+                instances_loaded += 1
+
+            # increments the instances total
+            instances_total += 1
+
+        # creates the plugins string
+        plugins_string = str(plugins_loaded) + "/" + str(plugins_total)
+
+        # creates the replicas string
+        replicas_string = str(replicas_loaded) + "/" + str(replicas_total)
+
+        # creates the instances string
+        instances_string = str(instances_loaded) + "/" + str(instances_total)
+
+        # creates the plugins tuple from the plugins string, the replicas
+        # string and the instances string
+        plugins_tuple = (plugins_string, replicas_string, instances_string)
+
+        # returns the plugins tuple
+        return plugins_tuple
