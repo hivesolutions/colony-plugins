@@ -38,7 +38,7 @@ __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
 import os
-import wx
+
 import wx.stc
 
 CARET = ">>>"
@@ -282,7 +282,7 @@ class ConsoleWindow(wx.stc.StyledTextCtrl):
         if key in [wx.WXK_RETURN, wx.WXK_NUMPAD_ENTER] :
             if self.can_edit():
                 # retrieves the current line and position
-                (current_line, position) = self.GetCurLine()
+                current_line, _position = self.GetCurLine()
 
                 # moves the caret to the last position of the text
                 self.SetCurrentPos(current_end_position)

@@ -37,10 +37,18 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
+import sys
+
 import console_window
 
-INTRO_MESSAGE = "Welcome to the plugin system console"
-""" The intro message to be printed at the beginning of the console """
+BRANDING_TEXT = "Hive Colony %s (Hive Solutions Lda. r1:%s)"
+""" The branding text value """
+
+VERSION_PRE_TEXT = "Python "
+""" The version pre text value """
+
+HELP_TEXT = "Type \"help\" for more information."
+""" The help text value """
 
 class ConsoleInterface:
     """
@@ -61,8 +69,11 @@ class ConsoleInterface:
         self.console_interface_plugin = console_interface_plugin
 
     def do_panel(self, parent):
+        # generates the information
+        information = self.generate_information()
+
         # creates the console window from the given intro message
-        console_panel = console_window.ConsoleWindow(parent, intro_message = INTRO_MESSAGE)
+        console_panel = console_window.ConsoleWindow(parent, intro_message = information)
 
         # sets the display of line numbers in the console panel
         console_panel.set_display_line_numbers(True)
@@ -72,3 +83,35 @@ class ConsoleInterface:
 
         # returns the control panel
         return console_panel
+
+    def generate_information(self):
+        """
+        Generates the system information to be used as into message.
+
+        @rtype: String
+        @return: The system information to be used as into message.
+        """
+
+        # retrieves the plugin manager
+        plugin_manager = self.console_interface_plugin.manager
+
+        # retrieves the plugin manager version
+        plugin_manager_version = plugin_manager.get_version()
+
+        # retrieves the plugin manager release date
+        plugin_manager_release_date = plugin_manager.get_release_date()
+
+        # creates the information string
+        information = str()
+
+        # adds the branding information text
+        information += BRANDING_TEXT % (plugin_manager_version, plugin_manager_release_date) + "\n"
+
+        # adds the python information
+        information += VERSION_PRE_TEXT + sys.version + "\n"
+
+        # adds the help text
+        information += HELP_TEXT
+
+        # returns the information
+        return information
