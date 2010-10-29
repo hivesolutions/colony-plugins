@@ -37,13 +37,24 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-class DummyBase1System:
+import time
+
+NUMBER_TASKS = 1
+""" The number of tasks """
+
+TIMEOUT = 0.5
+""" The timeout value to be used """
+
+class DummyBase1:
     """
-    The dummy base 1 system.
+    The dummy base 1.
     """
 
     dummy_base_1_plugin = None
     """ The dummy base 1 plugin """
+
+    test_pool = None
+    """ The test pool """
 
     def __init__(self, dummy_base_1_plugin):
         """
@@ -54,3 +65,58 @@ class DummyBase1System:
         """
 
         self.dummy_base_1_plugin = dummy_base_1_plugin
+
+    def start_pool(self):
+        self.test_pool = self.thread_pool_manager_plugin.create_new_thread_pool("test pool", "test pool description", 5, 1, 5)
+        self.test_pool.start_pool()
+
+        # the control flags
+        self.valid = True
+        self.paused = False
+
+        # retrieves the task descriptor class
+        task_descriptor_class = self.thread_pool_manager_plugin.get_thread_task_descriptor_class()
+
+        # iterates over the range of task to be created
+        for _index in range(NUMBER_TASKS):
+            # creates the task descriptor for the task
+            self.task_descriptor = task_descriptor_class(start_method = self.start_print_running_thread_pool,
+                                                         stop_method = self.stop_print_running_thread_pool,
+                                                         pause_method = self.pause_print_running_thread_pool,
+                                                         resume_method = self.resume_print_running_thread_pool)
+
+            # insets the task into the test pool
+            self.test_pool.insert_task(self.task_descriptor)
+
+    def stop_pool(self):
+        # removes the task from the test pool
+        self.test_pool.remove_task(self.task_descriptor)
+
+    def start_print_running_thread_pool(self):
+        # starts the index value
+        index = 0
+
+        # iterates while it's valid
+        while self.valid:
+            # in case the paused flag is not valid
+            if not self.paused:
+                # prints a debug message
+                self.debug("Running in thread pool")
+
+            # sleeps for the given time
+            time.sleep(TIMEOUT)
+
+            # increments the index value
+            index += 1
+
+    def stop_print_running_thread_pool(self):
+        # unsets the valid flag
+        self.valid = False
+
+    def pause_print_running_thread_pool(self):
+        # sets the paused flag
+        self.paused = True
+
+    def resume_print_running_thread_pool(self):
+        # unsets the paused flag
+        self.paused = False

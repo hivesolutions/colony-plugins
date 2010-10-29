@@ -37,9 +37,9 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-class DummyBase3System:
+class DummyBase3:
     """
-    The dummy base 3 system.
+    The dummy base 3.
     """
 
     dummy_base_3_plugin = None

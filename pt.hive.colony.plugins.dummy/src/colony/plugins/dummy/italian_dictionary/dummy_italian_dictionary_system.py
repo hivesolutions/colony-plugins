@@ -37,9 +37,9 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-class DummyItalianDictionarySystem:
+class DummyItalianDictionary:
     """
-    The dummy italian dictionary system.
+    The dummy italian dictionary.
     """
 
     dummy_italian_dictionary_plugin = None

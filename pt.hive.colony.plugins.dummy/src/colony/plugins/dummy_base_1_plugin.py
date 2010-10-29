@@ -37,13 +37,8 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-import time
-
 import colony.base.plugin_system
 import colony.base.decorators
-
-TIMEOUT = 0.5
-""" The timeout value to be used """
 
 class DummyBase1Plugin(colony.base.plugin_system.Plugin):
     """
@@ -69,33 +64,23 @@ class DummyBase1Plugin(colony.base.plugin_system.Plugin):
     events_registrable = ["plugin_manager.end_load_plugin"]
     main_modules = ["dummy.base_1.dummy_base_1_system"]
 
+    dummy_base_1 = None
+
     thread_pool_manager_plugin = None
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
+        global dummy
+        import dummy.base_1.dummy_base_1_system
+        self.dummy_base_1 = dummy.base_1.dummy_base_1_system.DummyBase1(self)
 
     def end_load_plugin(self):
         colony.base.plugin_system.Plugin.end_load_plugin(self)
-        self.test_pool = self.thread_pool_manager_plugin.create_new_thread_pool("test pool", "test pool description", 5, 1, 5)
-        self.test_pool.start_pool()
-
-        # the control flags
-        self.valid = True
-        self.paused = False
-
-        # retrieves the task descriptor class
-        task_descriptor_class = self.thread_pool_manager_plugin.get_thread_task_descriptor_class()
-
-        for _index in range(1):
-            self.task_descriptor = task_descriptor_class(start_method = self.start_print_running_thread_pool,
-                                                         stop_method = self.stop_print_running_thread_pool,
-                                                         pause_method = self.pause_print_running_thread_pool,
-                                                         resume_method = self.resume_print_running_thread_pool)
-            self.test_pool.insert_task(self.task_descriptor)
+        self.dummy_base_1.start_pool()
 
     def unload_plugin(self):
         colony.base.plugin_system.Plugin.unload_plugin(self)
-        self.test_pool.remove_task(self.task_descriptor)
+        self.dummy_base_1.stop_pool()
 
     def end_unload_plugin(self):
         colony.base.plugin_system.Plugin.end_unload_plugin(self)
@@ -145,32 +130,3 @@ class DummyBase1Plugin(colony.base.plugin_system.Plugin):
     @colony.base.decorators.event_handler_method("plugin_manager.end_load_plugin")
     def end_load_plugin_handler(self, event_name, plugin_id, plugin_version, plugin, *event_args):
         self.debug("dummy base 1 detected the end of loading of '%s with version '%s'" % (plugin_id, plugin_version))
-
-    def start_print_running_thread_pool(self):
-        # starts the index value
-        index = 0
-
-        # iterates while it's valid
-        while self.valid:
-            # in case the paused flag is not valid
-            if not self.paused:
-                # prints a debug message
-                self.debug("Running in thread pool")
-
-            # sleeps for the given time
-            time.sleep(TIMEOUT)
-
-            # increments the index value
-            index += 1
-
-    def stop_print_running_thread_pool(self):
-        # unsets the valid flag
-        self.valid = False
-
-    def pause_print_running_thread_pool(self):
-        # sets the paused flag
-        self.paused = True
-
-    def resume_print_running_thread_pool(self):
-        # unsets the paused flag
-        self.paused = False

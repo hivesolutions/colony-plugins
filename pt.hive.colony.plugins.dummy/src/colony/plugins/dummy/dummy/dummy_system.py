@@ -37,13 +37,13 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-class DummySystem:
+class Dummy:
     """
     The dummy system.
     """
 
     dummy_plugin = None
-    """ The dummy plugin """
+    """ The dummy """
 
     def __init__(self, dummy_plugin):
         """
