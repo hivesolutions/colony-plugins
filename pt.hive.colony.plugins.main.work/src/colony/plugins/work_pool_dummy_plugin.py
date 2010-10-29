@@ -64,24 +64,23 @@ class WorkPoolDummyPlugin(colony.base.plugin_system.Plugin):
     events_registrable = []
     main_modules = ["main_work.work_pool_dummy.work_pool_dummy_system"]
 
+    work_pool_dummy = None
+
     work_pool_manager_plugin = None
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
+        global main_work
+        import main_work.work_pool_dummy.work_pool_dummy_system
+        self.work_pool_dummy = main_work.work_pool_dummy.work_pool_dummy_system.WorkPoolDummy(self)
 
     def end_load_plugin(self):
         colony.base.plugin_system.Plugin.end_load_plugin(self)
-
-        self.work_pool = self.work_pool_manager_plugin.create_new_work_pool("dummy work pool", "dummy work pool", ProcessingClass, [], 3, 1, 5, 10, 1)
-        self.work_pool.start_pool()
-
-        for _index in range(100):
-            self.work_pool.insert_work(_index)
+        self.work_pool_dummy.start_pool()
 
     def unload_plugin(self):
         colony.base.plugin_system.Plugin.unload_plugin(self)
-        self.work_pool.stop_pool_tasks()
-        self.work_pool.stop_pool()
+        self.work_pool_dummy.stop_pool()
 
     def end_unload_plugin(self):
         colony.base.plugin_system.Plugin.end_unload_plugin(self)
@@ -102,37 +101,3 @@ class WorkPoolDummyPlugin(colony.base.plugin_system.Plugin):
     @colony.base.decorators.plugin_inject("pt.hive.colony.plugins.main.work.work_pool_manager")
     def set_work_pool_manager_plugin(self, work_pool_manager_plugin):
         self.work_pool_manager_plugin = work_pool_manager_plugin
-
-class ProcessingClass:
-
-    def __init__(self):
-        self.work_list = []
-
-    def start(self):
-        pass
-
-    def stop(self):
-        pass
-
-    def process(self):
-        for work in self.work_list:
-            import thread
-
-            thread_id = thread.get_ident()
-
-            print str(work) + " " + str(thread_id)
-
-            # removes the work
-            self.remove_work(work)
-
-    def wake(self):
-        pass
-
-    def busy(self):
-        return False
-
-    def work_added(self, work_reference):
-        self.work_list.append(work_reference)
-
-    def work_removed(self, work_reference):
-        self.work_list.remove(work_reference)
