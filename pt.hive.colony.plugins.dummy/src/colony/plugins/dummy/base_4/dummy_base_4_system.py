@@ -77,7 +77,7 @@ class DummyBase4:
 
     def create_test_task(self):
         # retrieves the task manager plugin
-        task_manager_plugin = self.task_manager_plugin
+        task_manager_plugin = self.dummy_base_4_plugin.task_manager_plugin
 
         # creates the test task
         self.test_task = task_manager_plugin.create_new_task("hello_task", "hello_description", self.task_handler)

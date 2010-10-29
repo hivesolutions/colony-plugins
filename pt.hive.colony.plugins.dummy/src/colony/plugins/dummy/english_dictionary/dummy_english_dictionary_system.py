@@ -54,3 +54,10 @@ class DummyEnglishDictionary:
         """
 
         self.dummy_english_dictionary_plugin = dummy_english_dictionary_plugin
+
+    def get_dictionary_name(self):
+        return "english"
+
+    def translate_word(self, word):
+        if word == "ola":
+            return "hello"

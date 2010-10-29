@@ -62,8 +62,13 @@ class DummyPlugin(colony.base.plugin_system.Plugin):
     events_registrable = ["dummy_base_1_event"]
     main_modules = ["dummy.dummy.dummy_system"]
 
+    dummy = None
+
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
+        global dummy
+        import dummy.dummy.dummy_system
+        self.dummy = dummy.dummy.dummy_system.Dummy(self)
 
     def end_load_plugin(self):
         colony.base.plugin_system.Plugin.end_load_plugin(self)
@@ -85,7 +90,7 @@ class DummyPlugin(colony.base.plugin_system.Plugin):
         Prints a dummy message in the screen.
         """
 
-        print "dummy"
+        self.dummy.print_dummy()
 
     def get_dummy(self):
         """
@@ -95,4 +100,4 @@ class DummyPlugin(colony.base.plugin_system.Plugin):
         @return: The dummy string value.
         """
 
-        return "dummy"
+        return self.dummy.get_dummy()

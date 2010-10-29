@@ -61,8 +61,13 @@ class DummyRpcServicePlugin(colony.base.plugin_system.Plugin):
     events_registrable = []
     main_modules = ["dummy.rpc_service.dummy_rpc_service_system"]
 
+    dummy_rpc_service = None
+
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
+        global dummy
+        import dummy.rpc_service.dummy_rpc_service_system
+        self.dummy_rpc_service = dummy.rpc_service.dummy_rpc_service_system.DummyRpcService(self)
 
     def end_load_plugin(self):
         colony.base.plugin_system.Plugin.end_load_plugin(self)
@@ -84,19 +89,19 @@ class DummyRpcServicePlugin(colony.base.plugin_system.Plugin):
 
     @colony.base.decorators.plugin_call(True)
     def get_service_id(self):
-        return "dummy_service"
+        return self.dummy_rpc_service.get_service_id()
 
     @colony.base.decorators.plugin_call(True)
     def get_service_alias(self):
-        return []
+        return self.dummy_rpc_service.get_service_alias()
 
     @colony.base.decorators.plugin_call(True)
     def get_available_rpc_methods(self):
-        return [self.echo]
+        return self.dummy_rpc_service.get_available_rpc_methods()
 
     @colony.base.decorators.plugin_call(True)
     def get_rpc_methods_alias(self):
-        return {self.echo : []}
+        return self.dummy_rpc_service.get_rpc_methods_alias()
 
     def echo(self, value):
-        return "echo: " + value
+        return self.dummy_rpc_service.echo(value)

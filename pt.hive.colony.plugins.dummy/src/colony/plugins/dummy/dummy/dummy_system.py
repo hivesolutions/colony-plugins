@@ -54,3 +54,20 @@ class Dummy:
         """
 
         self.dummy_plugin = dummy_plugin
+
+    def print_dummy(self):
+        """
+        Prints a dummy message in the screen.
+        """
+
+        print "dummy"
+
+    def get_dummy(self):
+        """
+        Retrieves a dummy string value.
+
+        @rtype: String
+        @return: The dummy string value.
+        """
+
+        return "dummy"

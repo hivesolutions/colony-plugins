@@ -38,10 +38,7 @@ __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
 import colony.base.plugin_system
-
-HELP_TEXT = "### TRANSLATION DUMMY PLUGIN HELP ###\n\
-get_translation_engines            - lists all the available translation engines\n\
-translate <dictionary-name> <word> - translates a word for the given dictionary name"
+import colony.base.decorators
 
 class DummyTranslationPlugin(colony.base.plugin_system.Plugin):
     """
@@ -66,10 +63,15 @@ class DummyTranslationPlugin(colony.base.plugin_system.Plugin):
     events_registrable = []
     main_modules = ["dummy.translation.dummy_translation_system"]
 
+    dummy_translation = None
+
     translation_engine_plugins = []
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
+        global dummy
+        import dummy.translation.dummy_translation_system
+        self.dummy_translation = dummy.translation.dummy_translation_system.DummyTranslation(self)
 
     def end_load_plugin(self):
         colony.base.plugin_system.Plugin.end_load_plugin(self)
@@ -80,49 +82,39 @@ class DummyTranslationPlugin(colony.base.plugin_system.Plugin):
     def end_unload_plugin(self):
         colony.base.plugin_system.Plugin.end_unload_plugin(self)
 
+    @colony.base.decorators.load_allowed("pt.hive.colony.plugins.dummy.translation", "1.0.0")
     def load_allowed(self, plugin, capability):
         colony.base.plugin_system.Plugin.load_allowed(self, plugin, capability)
 
-        if capability == "translation_engine":
-            self.translation_engine_plugins.append(plugin)
-
+    @colony.base.decorators.unload_allowed("pt.hive.colony.plugins.dummy.translation", "1.0.0")
     def unload_allowed(self, plugin, capability):
         colony.base.plugin_system.Plugin.unload_allowed(self, plugin, capability)
-
-        if capability == "translation_engine":
-            self.translation_engine_plugins.remove(plugin)
 
     def dependency_injected(self, plugin):
         colony.base.plugin_system.Plugin.dependency_injected(self, plugin)
 
     def get_console_extension_name(self):
-        return "translation_dummy"
+        return self.dummy_translation.get_console_extension_name()
 
     def get_all_commands(self):
-        return ["get_translation_engines", "translate"]
+        return self.dummy_translation.get_all_commands()
 
     def get_handler_command(self, command):
-        if command == "get_translation_engines":
-            return self.handler_get_translation_engines
-        elif command == "translate":
-            return self.handler_translate
+        return self.dummy_translation.get_handler_command(command)
 
     def get_help(self):
-        return HELP_TEXT
+        return self.dummy_translation.get_help()
 
     def handler_get_translation_engines(self, args, output_method):
-        # iterates over all the translation engine plugins
-        for translation_engine_plugin in self.translation_engine_plugins:
-            # retrieves the dictionary name
-            dictionary_name = translation_engine_plugin.get_dictionary_name()
-
-            # prints the dictionary name
-            output_method(dictionary_name)
+        self.dummy_translation.handler_get_translation_engines(args, output_method)
 
     def handler_translate(self, args, output_method):
-        dictionary, word = args
+        self.dummy_translation.handler_translate(args, output_method)
 
-        for translation_engine_plugin in self.translation_engine_plugins:
-            dictionary_name = translation_engine_plugin.get_dictionary_name()
-            if dictionary_name == dictionary:
-                output_method(translation_engine_plugin.translate_word(word))
+    @colony.base.decorators.load_allowed_capability("translation_engine")
+    def translation_engine_load_allowed(self, plugin, capability):
+        self.translation_engine_plugins.append(plugin)
+
+    @colony.base.decorators.unload_allowed_capability("translation_engine")
+    def translation_engine_unload_allowed(self, plugin, capability):
+        self.translation_engine_plugins.remove(plugin)

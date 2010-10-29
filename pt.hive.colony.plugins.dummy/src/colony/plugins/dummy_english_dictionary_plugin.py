@@ -62,8 +62,13 @@ class DummyEnglishDictionaryPlugin(colony.base.plugin_system.Plugin):
     events_registrable = []
     main_modules = ["dummy.english_dictionary.dummy_english_dictionary_system"]
 
+    dummy_english_dictionary = None
+
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
+        global dummy
+        import dummy.english_dictionary.dummy_english_dictionary_system
+        self.dummy_english_dictionary = dummy.english_dictionary.dummy_english_dictionary_system.DummyEnglishDictionary(self)
 
     def end_load_plugin(self):
         colony.base.plugin_system.Plugin.end_load_plugin(self)
@@ -84,8 +89,7 @@ class DummyEnglishDictionaryPlugin(colony.base.plugin_system.Plugin):
         colony.base.plugin_system.Plugin.dependency_injected(self, plugin)
 
     def get_dictionary_name(self):
-        return "english"
+        return self.dummy_english_dictionary.get_dictionary_name()
 
     def translate_word(self, word):
-        if word == "ola":
-            return "hello"
+        return self.dummy_english_dictionary.translate_word(word)

@@ -54,3 +54,18 @@ class DummyRpcService:
         """
 
         self.dummy_rpc_service_plugin = dummy_rpc_service_plugin
+
+    def get_service_id(self):
+        return "dummy_service"
+
+    def get_service_alias(self):
+        return []
+
+    def get_available_rpc_methods(self):
+        return [self.echo]
+
+    def get_rpc_methods_alias(self):
+        return {self.echo : []}
+
+    def echo(self, value):
+        return "echo: " + value

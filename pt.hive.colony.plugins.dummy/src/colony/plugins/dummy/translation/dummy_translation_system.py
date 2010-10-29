@@ -37,6 +37,10 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
+HELP_TEXT = "### TRANSLATION DUMMY PLUGIN HELP ###\n\
+get_translation_engines            - lists all the available translation engines\n\
+translate <dictionary-name> <word> - translates a word for the given dictionary name"
+
 class DummyTranslation:
     """
     The dummy translation.
@@ -54,3 +58,48 @@ class DummyTranslation:
         """
 
         self.dummy_translation_plugin = dummy_translation_plugin
+
+    def get_console_extension_name(self):
+        return "translation_dummy"
+
+    def get_all_commands(self):
+        return ["get_translation_engines", "translate"]
+
+    def get_handler_command(self, command):
+        if command == "get_translation_engines":
+            return self.handler_get_translation_engines
+        elif command == "translate":
+            return self.handler_translate
+
+    def get_help(self):
+        return HELP_TEXT
+
+    def handler_get_translation_engines(self, args, output_method):
+        # retrieves the translation engine plugins
+        translation_engine_plugins = self.dummy_translation_plugin.translation_engine_plugins
+
+        # iterates over all the translation engine plugins
+        for translation_engine_plugin in translation_engine_plugins:
+            # retrieves the dictionary name
+            dictionary_name = translation_engine_plugin.get_dictionary_name()
+
+            # prints the dictionary name
+            output_method(dictionary_name)
+
+    def handler_translate(self, args, output_method):
+        # retrieves the translation engine plugins
+        translation_engine_plugins = self.dummy_translation_plugin.translation_engine_plugins
+
+        # retrieves the translate arguments
+        dictionary, word = args
+
+        # iterates over all the translation engine plugins
+        for translation_engine_plugin in translation_engine_plugins:
+            # retrieves the dictionary name
+            dictionary_name = translation_engine_plugin.get_dictionary_name()
+
+            # in case the dictionary name is the same
+            # as the requested dictionary
+            if dictionary_name == dictionary:
+                # translates the work and puts the result in the output
+                output_method(translation_engine_plugin.translate_word(word))
