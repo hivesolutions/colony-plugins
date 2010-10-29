@@ -67,7 +67,13 @@ class DummyBase1:
         self.dummy_base_1_plugin = dummy_base_1_plugin
 
     def start_pool(self):
-        self.test_pool = self.thread_pool_manager_plugin.create_new_thread_pool("test pool", "test pool description", 5, 1, 5)
+        # retrieves the thread pool manager plugin
+        thread_pool_manager_plugin = self.dummy_base_1_plugin.thread_pool_manager_plugin
+
+        # creates the test pool
+        self.test_pool = thread_pool_manager_plugin.create_new_thread_pool("test pool", "test pool description", 5, 1, 5)
+
+        # starts the test pool
         self.test_pool.start_pool()
 
         # the control flags
@@ -75,7 +81,7 @@ class DummyBase1:
         self.paused = False
 
         # retrieves the task descriptor class
-        task_descriptor_class = self.thread_pool_manager_plugin.get_thread_task_descriptor_class()
+        task_descriptor_class = thread_pool_manager_plugin.get_thread_task_descriptor_class()
 
         # iterates over the range of task to be created
         for _index in range(NUMBER_TASKS):
