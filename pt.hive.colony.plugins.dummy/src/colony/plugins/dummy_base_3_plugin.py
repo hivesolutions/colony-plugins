@@ -39,12 +39,12 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 import colony.base.plugin_system
 
-class DummyAux3Plugin(colony.base.plugin_system.Plugin):
+class DummyBase3Plugin(colony.base.plugin_system.Plugin):
     """
     The main class for the Dummy Aux 3 plugin.
     """
 
-    id = "pt.hive.colony.plugins.dummy.aux3"
+    id = "pt.hive.colony.plugins.dummy.base_3"
     name = "Dummy Aux 3 Plugin"
     short_name = "Dummy Aux 3"
     description = "Dummy Aux 3 Plugin"
@@ -54,13 +54,13 @@ class DummyAux3Plugin(colony.base.plugin_system.Plugin):
     platforms = [colony.base.plugin_system.CPYTHON_ENVIRONMENT,
                  colony.base.plugin_system.JYTHON_ENVIRONMENT,
                  colony.base.plugin_system.IRON_PYTHON_ENVIRONMENT]
-    attributes = {"build_automation_file_path" : "$base{plugin_directory}/dummy/aux_3/resources/baf.xml"}
-    capabilities = ["dummy_aux3_capability", "build_automation_item"]
+    attributes = {"build_automation_file_path" : "$base{plugin_directory}/dummy/base_3/resources/baf.xml"}
+    capabilities = ["dummy_base_3_capability", "build_automation_item"]
     capabilities_allowed = []
     dependencies = []
     events_handled = []
     events_registrable = []
-    main_modules = ["dummy.aux_3.dummy_aux_3_system"]
+    main_modules = ["dummy.base_3.dummy_base_3_system"]
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)

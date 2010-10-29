@@ -9,7 +9,7 @@
     "author" : "Hive Solutions Lda. <development@hive.pt>",
     "capabilities" : ["dummy_base_1_capability", "build_automation_item"],
     "capabilities_allowed" : ["('dummy_base_2_capability', 3)",
-            "('dummy_aux3_capability', 3)"],
+            "('dummy_base_3_capability', 3)"],
     "dependencies" : [{
                 "id" : "pt.hive.colony.plugins.main.threads.thread_pool_manager",
                 "version" : "1.0.0"

@@ -33,7 +33,7 @@
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://www.hive.pt xsd/baf.xsd">
     <artifact>
-        <id>pt.hive.colony.plugins.dummy.aux3</id>
+        <id>pt.hive.colony.plugins.dummy.base_3</id>
         <version>1.0.0</version>
         <type>colony</type>
         <name>Dummy Aux 3 Plugin</name>
@@ -48,7 +48,7 @@
                 <version>1.0.0</version>
                 <stage>build</stage>
                 <configuration>
-                    <specification_file>$base{plugin_directory}/dummy_aux_3_plugin.json</specification_file>
+                    <specification_file>$base{plugin_directory}/dummy_base_3_plugin.json</specification_file>
                 </configuration>
             </plugin>
         </plugins>
