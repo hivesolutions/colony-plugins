@@ -15,6 +15,9 @@
             }, {
                 "id" : "pt.hive.colony.plugins.business.session_manager",
                 "version" : "1.0.0"
+            }, {
+                "id" : "pt.hive.colony.plugins.business.helper",
+                "version" : "1.0.0"
             }],
     "main_file" : "dummy_business_logic_2_plugin.py",
     "resources" : ["dummy_business_logic_2_plugin.py", "dummy/__init__.py",
