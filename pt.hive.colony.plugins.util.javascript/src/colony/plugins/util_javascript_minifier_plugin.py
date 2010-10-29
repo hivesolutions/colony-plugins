@@ -44,7 +44,7 @@ class UtilJavascriptMinifierPlugin(colony.base.plugin_system.Plugin):
     The main class for the Javascript Minifier Util plugin.
     """
 
-    id = "pt.hive.colony.base.util.javascript.minifier"
+    id = "pt.hive.colony.util.javascript.minifier"
     name = "Javascript Minifier Util plugin"
     short_name = "Javascript Minifier Util"
     description = "The plugin that offers minification support for javascript"
