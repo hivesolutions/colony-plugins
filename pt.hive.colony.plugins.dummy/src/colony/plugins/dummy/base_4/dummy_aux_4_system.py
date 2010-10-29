@@ -37,20 +37,20 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-class DummyAux4System:
+class DummyBase4System:
     """
     The dummy aux 4 system.
     """
 
-    dummy_aux_4_plugin = None
+    dummy_base_4_plugin = None
     """ The dummy aux 4 plugin """
 
-    def __init__(self, dummy_aux_4_plugin):
+    def __init__(self, dummy_base_4_plugin):
         """
         Constructor of the class.
 
-        @type dummy_aux_4_plugin: DummyAux4Plugin
-        @param dummy_aux_4_plugin: The dummy aux 4 plugin.
+        @type dummy_base_4_plugin: DummyBase4Plugin
+        @param dummy_base_4_plugin: The dummy aux 4 plugin.
         """
 
-        self.dummy_aux_4_plugin = dummy_aux_4_plugin
+        self.dummy_base_4_plugin = dummy_base_4_plugin

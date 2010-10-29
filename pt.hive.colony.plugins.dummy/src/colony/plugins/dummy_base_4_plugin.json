@@ -1,21 +1,21 @@
 {
     "platform" : "python",
     "sub_platforms" : ["cpython", "jython", "iron_python"],
-    "id" : "pt.hive.colony.plugins.dummy.aux4",
+    "id" : "pt.hive.colony.plugins.dummy.base_4",
     "name" : "Dummy Aux 4 Plugin",
     "short_name" : "Dummy Aux 4",
     "description" : "Dummy Aux 4 Plugin",
     "version" : "1.0.0",
     "author" : "Hive Solutions Lda. <development@hive.pt>",
-    "capabilities" : ["dummy_aux4_capability", "task_information",
+    "capabilities" : ["dummy_base_4_capability", "task_information",
             "build_automation_item"],
     "capabilities_allowed" : [],
     "dependencies" : [{
                 "id" : "pt.hive.colony.plugins.main.tasks.task_manager",
                 "version" : "1.0.0"
             }],
-    "main_file" : "dummy_aux_4_plugin.py",
-    "resources" : ["dummy_aux_4_plugin.py", "dummy/__init__.py",
-            "dummy/aux_4/__init__.py", "dummy/aux_4/dummy_aux_4_system.py",
-            "dummy/aux_4/resources/baf.xml"]
+    "main_file" : "dummy_base_4_plugin.py",
+    "resources" : ["dummy_base_4_plugin.py", "dummy/__init__.py",
+            "dummy/base_4/__init__.py", "dummy/base_4/dummy_base_4_system.py",
+            "dummy/base_4/resources/baf.xml"]
 }

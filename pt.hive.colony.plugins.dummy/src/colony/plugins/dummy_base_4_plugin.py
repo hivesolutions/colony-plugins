@@ -48,12 +48,12 @@ STATUS_TASK_STOPPED = 4
 
 TIMEOUT = 0.5
 
-class DummyAux4Plugin(colony.base.plugin_system.Plugin):
+class DummyBase4Plugin(colony.base.plugin_system.Plugin):
     """
     The main class for the Dummy Aux 4 plugin.
     """
 
-    id = "pt.hive.colony.plugins.dummy.aux4"
+    id = "pt.hive.colony.plugins.dummy.base_4"
     name = "Dummy Aux 4 Plugin"
     short_name = "Dummy Aux 4"
     description = "Dummy Aux 4 Plugin"
@@ -63,14 +63,14 @@ class DummyAux4Plugin(colony.base.plugin_system.Plugin):
     platforms = [colony.base.plugin_system.CPYTHON_ENVIRONMENT,
                  colony.base.plugin_system.JYTHON_ENVIRONMENT,
                  colony.base.plugin_system.IRON_PYTHON_ENVIRONMENT]
-    attributes = {"build_automation_file_path" : "$base{plugin_directory}/dummy/aux_4/resources/baf.xml"}
-    capabilities = ["dummy_aux4_capability", "task_information", "build_automation_item"]
+    attributes = {"build_automation_file_path" : "$base{plugin_directory}/dummy/base_4/resources/baf.xml"}
+    capabilities = ["dummy_base_4_capability", "task_information", "build_automation_item"]
     capabilities_allowed = []
     dependencies = [colony.base.plugin_system.PluginDependency(
                     "pt.hive.colony.plugins.main.tasks.task_manager", "1.0.0")]
     events_handled = ["task_information_changed"]
     events_registrable = []
-    main_modules = ["dummy.aux_4.dummy_aux_4_system"]
+    main_modules = ["dummy.base_4.dummy_base_4_system"]
 
     task_manager_plugin = None
 
