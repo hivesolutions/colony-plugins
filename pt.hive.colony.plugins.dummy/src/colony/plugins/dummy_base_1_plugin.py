@@ -47,13 +47,13 @@ TIMEOUT = 0.5
 
 class DummyBase1Plugin(colony.base.plugin_system.Plugin):
     """
-    The main class for the Dummy Aux 1 plugin.
+    The main class for the Dummy Base 1 plugin.
     """
 
     id = "pt.hive.colony.plugins.dummy.base_1"
-    name = "Dummy Aux 1 Plugin"
-    short_name = "Dummy Aux 1"
-    description = "Dummy Aux 1 Plugin"
+    name = "Dummy Base 1 Plugin"
+    short_name = "Dummy Base 1"
+    description = "Dummy Base 1 Plugin"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     loading_type = colony.base.plugin_system.EAGER_LOADING_TYPE
@@ -121,19 +121,19 @@ class DummyBase1Plugin(colony.base.plugin_system.Plugin):
 
     @colony.base.decorators.load_allowed_capability("dummy_base_2_capability")
     def dummy_base_2_capability_load_allowed(self, plugin, capability):
-        self.debug("dummy aux 1 loaded allowed dummy_base_2_capability plugin '%s' with version '%s'" % (plugin.id, plugin.version))
+        self.debug("dummy base 1 loaded allowed dummy_base_2_capability plugin '%s' with version '%s'" % (plugin.id, plugin.version))
 
     @colony.base.decorators.load_allowed_capability("dummy_base_3_capability")
     def dummy_base_3_capability_load_allowed(self, plugin, capability):
-        self.debug("dummy aux 1 loaded allowed dummy_base_3_capability plugin '%s' with version '%s'" % (plugin.id, plugin.version))
+        self.debug("dummy base 1 loaded allowed dummy_base_3_capability plugin '%s' with version '%s'" % (plugin.id, plugin.version))
 
     @colony.base.decorators.unload_allowed_capability("dummy_base_2_capability")
     def dummy_base_2_capability_unload_allowed(self, plugin, capability):
-        self.debug("dummy aux 1 unloaded allowed dummy_base_2_capability plugin '%s' with version '%s'" % (plugin.id, plugin.version))
+        self.debug("dummy base 1 unloaded allowed dummy_base_2_capability plugin '%s' with version '%s'" % (plugin.id, plugin.version))
 
     @colony.base.decorators.unload_allowed_capability("dummy_base_3_capability")
     def dummy_base_3_capability_unload_allowed(self, plugin, capability):
-        self.debug("dummy aux 1 unloaded allowed dummy_base_3_capability plugin '%s' with version '%s'" % (plugin.id, plugin.version))
+        self.debug("dummy base 1 unloaded allowed dummy_base_3_capability plugin '%s' with version '%s'" % (plugin.id, plugin.version))
 
     def get_thread_pool_manager_plugin(self):
         return self.thread_pool_manager_plugin
@@ -144,7 +144,7 @@ class DummyBase1Plugin(colony.base.plugin_system.Plugin):
 
     @colony.base.decorators.event_handler_method("plugin_manager.end_load_plugin")
     def end_load_plugin_handler(self, event_name, plugin_id, plugin_version, plugin, *event_args):
-        self.debug("dummy aux 1 detected the end of loading of '%s with version '%s'" % (plugin_id, plugin_version))
+        self.debug("dummy base 1 detected the end of loading of '%s with version '%s'" % (plugin_id, plugin_version))
 
     def start_print_running_thread_pool(self):
         # starts the index value
