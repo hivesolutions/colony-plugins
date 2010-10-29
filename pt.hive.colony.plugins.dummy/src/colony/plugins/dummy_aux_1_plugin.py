@@ -43,6 +43,7 @@ import colony.base.plugin_system
 import colony.base.decorators
 
 TIMEOUT = 0.5
+""" The timeout value to be used """
 
 class DummyAux1Plugin(colony.base.plugin_system.Plugin):
     """
@@ -72,7 +73,6 @@ class DummyAux1Plugin(colony.base.plugin_system.Plugin):
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
-        print "loading dummy aux 1..."
 
     def end_load_plugin(self):
         colony.base.plugin_system.Plugin.end_load_plugin(self)
@@ -95,7 +95,6 @@ class DummyAux1Plugin(colony.base.plugin_system.Plugin):
 
     def unload_plugin(self):
         colony.base.plugin_system.Plugin.unload_plugin(self)
-        print "unloading dummy aux 1..."
         self.test_pool.remove_task(self.task_descriptor)
 
     def end_unload_plugin(self):
@@ -104,12 +103,10 @@ class DummyAux1Plugin(colony.base.plugin_system.Plugin):
     @colony.base.decorators.load_allowed("pt.hive.colony.plugins.dummy.aux1", "1.0.0")
     def load_allowed(self, plugin, capability):
         colony.base.plugin_system.Plugin.load_allowed(self, plugin, capability)
-        print "loading dummy aux 1 allowed..."
 
     @colony.base.decorators.unload_allowed("pt.hive.colony.plugins.dummy.aux1", "1.0.0")
     def unload_allowed(self, plugin, capability):
         colony.base.plugin_system.Plugin.unload_allowed(self, plugin, capability)
-        print "unloading dummy aux 1 allowed..."
 
     @colony.base.decorators.inject_dependencies("pt.hive.colony.plugins.dummy.aux1", "1.0.0")
     def dependency_injected(self, plugin):
@@ -124,19 +121,19 @@ class DummyAux1Plugin(colony.base.plugin_system.Plugin):
 
     @colony.base.decorators.load_allowed_capability("dummy_aux2_capability")
     def dummy_aux2_capability_load_allowed(self, plugin, capability):
-        print "dummy aux 1 loaded allowed dummy_aux2_capability plugin " + plugin.id + " with version " + plugin.version
+        self.debug("dummy aux 1 loaded allowed dummy_aux2_capability plugin '%s' with version '%s'" % (plugin.id, plugin.version))
 
     @colony.base.decorators.load_allowed_capability("dummy_aux3_capability")
     def dummy_aux3_capability_load_allowed(self, plugin, capability):
-        print "dummy aux 1 loaded allowed dummy_aux3_capability plugin " + plugin.id + " with version " + plugin.version
+        self.debug("dummy aux 1 loaded allowed dummy_aux3_capability plugin '%s' with version '%s'" % (plugin.id, plugin.version))
 
     @colony.base.decorators.unload_allowed_capability("dummy_aux2_capability")
     def dummy_aux2_capability_unload_allowed(self, plugin, capability):
-        print "dummy aux 1 unloaded allowed dummy_aux2_capability plugin " + plugin.id + " with version " + plugin.version
+        self.debug("dummy aux 1 unloaded allowed dummy_aux2_capability plugin '%s' with version '%s'" % (plugin.id, plugin.version))
 
     @colony.base.decorators.unload_allowed_capability("dummy_aux3_capability")
     def dummy_aux3_capability_unload_allowed(self, plugin, capability):
-        print "dummy aux 1 unloaded allowed dummy_aux3_capability plugin " + plugin.id + " with version " + plugin.version
+        self.debug("dummy aux 1 unloaded allowed dummy_aux3_capability plugin '%s' with version '%s'" % (plugin.id, plugin.version))
 
     def get_thread_pool_manager_plugin(self):
         return self.thread_pool_manager_plugin
@@ -147,19 +144,33 @@ class DummyAux1Plugin(colony.base.plugin_system.Plugin):
 
     @colony.base.decorators.event_handler_method("plugin_manager.end_load_plugin")
     def end_load_plugin_handler(self, event_name, plugin_id, plugin_version, plugin, *event_args):
-        print "dummy aux 1 detected the end of loading of " + plugin_id + " with version " + plugin_version
+        self.debug("dummy aux 1 detected the end of loading of '%s with version '%s'" % (plugin_id, plugin_version))
 
     def start_print_running_thread_pool(self):
+        # starts the index value
+        index = 0
+
+        # iterates while it's valid
         while self.valid:
+            # in case the paused flag is not valid
             if not self.paused:
-                print "running in thread pool"
+                # prints a debug message
+                self.debug("Running in thread pool")
+
+            # sleeps for the given time
             time.sleep(TIMEOUT)
 
+            # increments the index value
+            index += 1
+
     def stop_print_running_thread_pool(self):
+        # unsets the valid flag
         self.valid = False
 
     def pause_print_running_thread_pool(self):
+        # sets the paused flag
         self.paused = True
 
     def resume_print_running_thread_pool(self):
+        # unsets the paused flag
         self.paused = False

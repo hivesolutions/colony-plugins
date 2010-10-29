@@ -59,7 +59,9 @@ class DummyBusinessLogic1Plugin(colony.base.plugin_system.Plugin):
     dependencies = [colony.base.plugin_system.PluginDependency(
                     "pt.hive.colony.plugins.resources.resource_manager", "1.0.0"),
                     colony.base.plugin_system.PluginDependency(
-                    "pt.hive.colony.plugins.business.session_manager", "1.0.0")]
+                    "pt.hive.colony.plugins.business.session_manager", "1.0.0"),
+                    colony.base.plugin_system.PluginDependency(
+                    "pt.hive.colony.plugins.business.helper", "1.0.0")]
     events_handled = []
     events_registrable = []
     main_modules = ["dummy.business_logic_1.dummy_business_logic_1_system"]
@@ -68,6 +70,7 @@ class DummyBusinessLogic1Plugin(colony.base.plugin_system.Plugin):
 
     resource_manager_plugin = None
     business_session_manager_plugin = None
+    business_helper_plugin = None
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
@@ -77,7 +80,7 @@ class DummyBusinessLogic1Plugin(colony.base.plugin_system.Plugin):
 
     def end_load_plugin(self):
         colony.base.plugin_system.Plugin.end_load_plugin(self)
-        self.create_dummy_session()
+        self.dummy_business_logic_1.create_dummy_session()
 
     def unload_plugin(self):
         colony.base.plugin_system.Plugin.unload_plugin(self)
@@ -111,3 +114,10 @@ class DummyBusinessLogic1Plugin(colony.base.plugin_system.Plugin):
     @colony.base.decorators.plugin_inject("pt.hive.colony.plugins.business.session_manager")
     def set_business_session_manager_plugin(self, business_session_manager_plugin):
         self.business_session_manager_plugin = business_session_manager_plugin
+
+    def get_business_helper_plugin(self):
+        return self.business_helper_plugin
+
+    @colony.base.decorators.plugin_inject("pt.hive.colony.plugins.business.helper")
+    def set_business_helper_plugin(self, business_helper_plugin):
+        self.business_helper_plugin = business_helper_plugin

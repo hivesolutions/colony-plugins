@@ -65,7 +65,6 @@ class DummyWindowsFormsPlugin(colony.base.plugin_system.Plugin):
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
-        print "loading dummy windows forms..."
 
         # notifies the ready semaphore
         self.release_ready_semaphore()
@@ -79,7 +78,6 @@ class DummyWindowsFormsPlugin(colony.base.plugin_system.Plugin):
 
     def unload_plugin(self):
         colony.base.plugin_system.Plugin.unload_plugin(self)
-        print "unloading dummy windows forms..."
         self.dummy_windows_forms.stop()
 
         # notifies the ready semaphore
@@ -94,12 +92,10 @@ class DummyWindowsFormsPlugin(colony.base.plugin_system.Plugin):
     @colony.base.decorators.load_allowed("pt.hive.colony.plugins.dummy.windows_forms", "1.0.0")
     def load_allowed(self, plugin, capability):
         colony.base.plugin_system.Plugin.load_allowed(self, plugin, capability)
-        print "loading dummy windows forms allowed..."
 
     @colony.base.decorators.unload_allowed("pt.hive.colony.plugins.dummy.windows_forms", "1.0.0")
     def unload_allowed(self, plugin, capability):
         colony.base.plugin_system.Plugin.unload_allowed(self, plugin, capability)
-        print "unloading dummy windows forms allowed..."
 
     def dependency_injected(self, plugin):
         colony.base.plugin_system.Plugin.dependency_injected(self, plugin)

@@ -64,28 +64,35 @@ class DummyPlugin(colony.base.plugin_system.Plugin):
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
-        print "loading dummy..."
 
     def end_load_plugin(self):
         colony.base.plugin_system.Plugin.end_load_plugin(self)
 
     def unload_plugin(self):
         colony.base.plugin_system.Plugin.unload_plugin(self)
-        print "unloading dummy..."
 
     def end_unload_plugin(self):
         colony.base.plugin_system.Plugin.end_unload_plugin(self)
 
     def load_allowed(self, plugin, capability):
         colony.base.plugin_system.Plugin.load_allowed(self, plugin, capability)
-        print "loading dummy allowed..."
 
     def unload_allowed(self, plugin, capability):
         colony.base.plugin_system.Plugin.unload_allowed(self, plugin, capability)
-        print "unloading dummy allowed..."
 
     def print_dummy(self):
+        """
+        Prints a dummy message in the screen.
+        """
+
         print "dummy"
 
     def get_dummy(self):
+        """
+        Retrieves a dummy string value.
+
+        @rtype: String
+        @return: The dummy string value.
+        """
+
         return "dummy"

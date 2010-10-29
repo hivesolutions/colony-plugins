@@ -63,7 +63,8 @@ class DummyUnitTest:
 class DummyTest1(unittest.TestCase):
 
     def setUp(self):
-        print "Setting up dummy test 1..."
+        # prints a debug message
+        self.plugin.info("Setting up dummy test 1...")
 
     def test_dummy_method1(self):
         self.assertEqual(True, True)
@@ -74,7 +75,8 @@ class DummyTest1(unittest.TestCase):
 class DummyTest2(unittest.TestCase):
 
     def setUp(self):
-        print "Setting up dummy test 2..."
+        # prints a debug message
+        self.plugin.info("Setting up dummy test 2...")
 
     def test_dummy_method1(self):
         self.assertEqual(1, 1)

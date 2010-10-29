@@ -41,7 +41,7 @@ import unittest
 
 class DummyPluginUnitTest:
     """
-    The dummy plugin unit test class
+    The dummy plugin unit test class.
     """
 
     dummy_plugin_unit_test_plugin = None
@@ -52,7 +52,7 @@ class DummyPluginUnitTest:
         Constructor of the class
 
         @type dummy_plugin_unit_test_plugin: DummyPluginUnitTestPlugin
-        @param dummy_plugin_unit_test_plugin: The dummy plugin unit test plugin
+        @param dummy_plugin_unit_test_plugin: The dummy plugin unit test plugin.
         """
 
         self.dummy_plugin_unit_test_plugin = dummy_plugin_unit_test_plugin
@@ -63,7 +63,8 @@ class DummyPluginUnitTest:
 class DummyTest(unittest.TestCase):
 
     def setUp(self):
-        print "Setting up dummy test 1..."
+        # prints a debug message
+        self.dummy_entity_manager_plugin.info("Setting up dummy test 1...")
 
     def test_dummy_method1(self):
         self.assertEqual(True, True)

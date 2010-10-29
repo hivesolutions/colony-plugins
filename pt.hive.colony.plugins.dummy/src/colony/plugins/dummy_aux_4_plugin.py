@@ -76,25 +76,21 @@ class DummyAux4Plugin(colony.base.plugin_system.Plugin):
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
-        print "loading dummy aux 4..."
 
     def end_load_plugin(self):
         colony.base.plugin_system.Plugin.end_load_plugin(self)
 
     def unload_plugin(self):
         colony.base.plugin_system.Plugin.unload_plugin(self)
-        print "unloading dummy aux 4..."
 
     def end_unload_plugin(self):
         colony.base.plugin_system.Plugin.end_unload_plugin(self)
 
     def load_allowed(self, plugin, capability):
         colony.base.plugin_system.Plugin.load_allowed(self, plugin, capability)
-        print "loading dummy aux 4 allowed..."
 
     def unload_allowed(self, plugin, capability):
         colony.base.plugin_system.Plugin.unload_allowed(self, plugin, capability)
-        print "unloading dummy aux 4 allowed..."
 
     def dependency_injected(self, plugin):
         colony.base.plugin_system.Plugin.dependency_injected(self, plugin)
@@ -118,9 +114,16 @@ class DummyAux4Plugin(colony.base.plugin_system.Plugin):
         self.task1.stop([])
 
     def task_handler(self, task, args):
+        # starts the counter value
         counter = 0
+
+        # iterates while the status is not stopped and the
+        # counter limit is not reached
         while not task.status == STATUS_TASK_STOPPED and counter <= 100:
-            print "hello world"
+            # prints a debug message
+            self.debug("Hello World")
+
+            # in case the current task status is paused
             if task.status == STATUS_TASK_PAUSED:
                 # confirms the pause
                 task.confirm_pause()
@@ -128,22 +131,27 @@ class DummyAux4Plugin(colony.base.plugin_system.Plugin):
                     time.sleep(TIMEOUT)
                 # confirms the resume
                 task.confirm_resume()
+
+            # sleeps for the given timeout
             time.sleep(TIMEOUT)
 
+            # sets the task percentage complete
             task.set_percentage_complete(counter)
+
+            # increments the counter value
             counter += 1
 
         # confirms the stop
         task.confirm_stop(True)
 
     def pause_task_handler(self, args):
-        print "task paused"
+        self.debug("Task paused")
 
     def resume_task_handler(self, args):
-        print "task resumed"
+        self.debug("Task resumed")
 
     def stop_task_handler(self, args):
-        print "task stopped"
+        self.debug("Task stopped")
 
     def test_generate_event(self):
         self.generate_event("task_information_changed.new_task", [])

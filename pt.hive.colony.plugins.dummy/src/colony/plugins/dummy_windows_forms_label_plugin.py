@@ -65,8 +65,6 @@ class DummyWindowsFormsLabelPlugin(colony.base.plugin_system.Plugin):
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
-        print "loading dummy windows forms label..."
-
         global dummy
         import dummy.windows_forms_label.dummy_windows_forms_label_system
         self.dummy_windows_forms_label = dummy.windows_forms_label.dummy_windows_forms_label_system.DummyWindowsFormsLabel(self)
@@ -76,18 +74,15 @@ class DummyWindowsFormsLabelPlugin(colony.base.plugin_system.Plugin):
 
     def unload_plugin(self):
         colony.base.plugin_system.Plugin.unload_plugin(self)
-        print "unloading dummy windows forms label..."
 
     def end_unload_plugin(self):
         colony.base.plugin_system.Plugin.end_unload_plugin(self)
 
     def load_allowed(self, plugin, capability):
         colony.base.plugin_system.Plugin.load_allowed(self, plugin, capability)
-        print "loading dummy windows forms label allowed..."
 
     def unload_allowed(self, plugin, capability):
         colony.base.plugin_system.Plugin.unload_allowed(self, plugin, capability)
-        print "unloading dummy windows forms label allowed..."
 
     def dependency_injected(self, plugin):
         colony.base.plugin_system.Plugin.dependency_injected(self, plugin)

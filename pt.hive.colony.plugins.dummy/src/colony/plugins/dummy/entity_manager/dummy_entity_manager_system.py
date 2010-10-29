@@ -50,7 +50,7 @@ class DummyEntityManager:
         Constructor of the class
 
         @type dummy_entity_manager_plugin: DummyEntityManagerPlugin
-        @param dummy_entity_manager_plugin: The dummy entity manager plugin
+        @param dummy_entity_manager_plugin: The dummy entity manager plugin.
         """
 
         self.dummy_entity_manager_plugin = dummy_entity_manager_plugin
@@ -58,7 +58,7 @@ class DummyEntityManager:
     def test_entity_manager(self):
         """
         Tests the entity manager creating some booting the manager
-        and persisting some entities
+        and persisting some entities.
         """
 
         # retrieves the resource manager plugin
@@ -108,16 +108,17 @@ class DummyEntityManager:
             # persists the entity in the entity manager
             entity_manager.save(dummy_entity)
         except Exception, exception:
-            print "error saving: " + unicode(exception)
+            # prints an info message
+            self.dummy_entity_manager_plugin.info("Error saving: " + unicode(exception))
 
         # finds the entity
-        entity_find = entity_manager.find(dummy_entity_class, "dummy")
+        entity_manager.find(dummy_entity_class, "dummy")
 
         # removes the entity from the database
         entity_manager.remove(dummy_entity)
 
         # retrieves the entity class from the entity manager
-        entity_value = entity_manager.get_entity_class("DummyEntity")
+        entity_manager.get_entity_class("DummyEntity")
 
         # retrieves the dummy entity bundle class from the entity manager
         dummy_entity_bundle_class = entity_manager.get_entity_class("DummyEntityBundle")
@@ -137,7 +138,8 @@ class DummyEntityManager:
             # persists the entity in the entity manager
             entity_manager.save(dummy_entity_bundle_association)
         except Exception, exception:
-            print "error saving: " + unicode(exception)
+            # prints an info message
+            self.dummy_entity_manager_plugin.info("Error saving: " + unicode(exception))
 
         # creates a new entity bundle instance
         dummy_entity_bundle = dummy_entity_bundle_class()
@@ -152,7 +154,8 @@ class DummyEntityManager:
             # persists the entity in the entity manager
             entity_manager.save(dummy_entity_bundle)
         except Exception, exception:
-            print "error saving: " + unicode(exception)
+            # prints an info message
+            self.dummy_entity_manager_plugin.info("Error saving: " + unicode(exception))
 
         # retrieves the dummy entity bundle class with test_name key
         entity_manager.find(dummy_entity_bundle_class, "test_name")
