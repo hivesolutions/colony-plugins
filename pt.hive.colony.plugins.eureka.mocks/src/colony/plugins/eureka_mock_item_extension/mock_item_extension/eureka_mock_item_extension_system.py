@@ -34,12 +34,12 @@ __date__ = "$LastChangedDate: 2008-11-20 18:42:55 +0000 (Qui, 20 Nov 2008) $"
 __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 """ The copyright for the module """
 
-__license__ = "GNU General Public License (GPL), Version 3"
+__license__ = "GNU General Public L icense (GPL), Version 3"
 """ The license for the module """
 
-class EurekaMockItemExtensionSystem:
+class EurekaMockItemExtension:
     """
-    The eureka mock item extension system.
+    The eureka mock item extension.
     """
 
     eureka_mock_item_extension_plugin = None

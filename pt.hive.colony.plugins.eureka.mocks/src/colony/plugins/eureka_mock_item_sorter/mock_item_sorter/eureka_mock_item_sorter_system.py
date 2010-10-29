@@ -37,9 +37,9 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-class EurekaMockItemSorterSystem:
+class EurekaMockItemSorter:
     """
-    The eureka mock item sorter system.
+    The eureka mock item sorter.
     """
 
     eureka_mock_item_sorter_plugin = None

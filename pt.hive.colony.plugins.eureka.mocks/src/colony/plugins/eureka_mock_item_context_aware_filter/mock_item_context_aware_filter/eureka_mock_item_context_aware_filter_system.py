@@ -37,9 +37,9 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-class EurekaMockItemContextAwareFilterSystem:
+class EurekaMockItemContextAwareFilter:
     """
-    The eureka mock item context aware filter system.
+    The eureka mock item context aware filter.
     """
 
     eureka_mock_item_context_aware_filter_plugin = None
