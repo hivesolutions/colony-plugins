@@ -39,18 +39,18 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 class DummyBase3System:
     """
-    The dummy aux 3 system.
+    The dummy base 3 system.
     """
 
     dummy_base_3_plugin = None
-    """ The dummy aux 3 plugin """
+    """ The dummy base 3 plugin """
 
     def __init__(self, dummy_base_3_plugin):
         """
         Constructor of the class.
 
         @type dummy_base_3_plugin: DummyBase3Plugin
-        @param dummy_base_3_plugin: The dummy aux 3 plugin.
+        @param dummy_base_3_plugin: The dummy base 3 plugin.
         """
 
         self.dummy_base_3_plugin = dummy_base_3_plugin

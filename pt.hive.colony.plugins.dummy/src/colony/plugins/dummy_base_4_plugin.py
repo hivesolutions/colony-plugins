@@ -50,13 +50,13 @@ TIMEOUT = 0.5
 
 class DummyBase4Plugin(colony.base.plugin_system.Plugin):
     """
-    The main class for the Dummy Aux 4 plugin.
+    The main class for the Dummy Base 4 plugin.
     """
 
     id = "pt.hive.colony.plugins.dummy.base_4"
-    name = "Dummy Aux 4 Plugin"
-    short_name = "Dummy Aux 4"
-    description = "Dummy Aux 4 Plugin"
+    name = "Dummy Base 4 Plugin"
+    short_name = "Dummy Base 4"
+    description = "Dummy Base 4 Plugin"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     loading_type = colony.base.plugin_system.EAGER_LOADING_TYPE
