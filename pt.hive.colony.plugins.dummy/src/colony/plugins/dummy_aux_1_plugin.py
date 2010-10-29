@@ -60,14 +60,14 @@ class DummyAux1Plugin(colony.base.plugin_system.Plugin):
     platforms = [colony.base.plugin_system.CPYTHON_ENVIRONMENT,
                  colony.base.plugin_system.JYTHON_ENVIRONMENT,
                  colony.base.plugin_system.IRON_PYTHON_ENVIRONMENT]
-    attributes = {"build_automation_file_path" : "$base{plugin_directory}/dummy/aux_1/resources/baf.xml"}
+    attributes = {"build_automation_file_path" : "$base{plugin_directory}/dummy/base_1/resources/baf.xml"}
     capabilities = ["dummy_aux1_capability", "build_automation_item"]
     capabilities_allowed = [("dummy_aux2_capability", colony.base.plugin_system.NEW_DIFFUSION_SCOPE), ("dummy_aux3_capability", colony.base.plugin_system.NEW_DIFFUSION_SCOPE)]
     dependencies = [colony.base.plugin_system.PluginDependency(
                     "pt.hive.colony.plugins.main.threads.thread_pool_manager", "1.0.0")]
     events_handled = ["dummy_aux1_event"]
     events_registrable = ["plugin_manager.end_load_plugin"]
-    main_modules = ["dummy.aux_1.dummy_aux_1_system"]
+    main_modules = ["dummy.base_1.dummy_base_1_system"]
 
     thread_pool_manager_plugin = None
 

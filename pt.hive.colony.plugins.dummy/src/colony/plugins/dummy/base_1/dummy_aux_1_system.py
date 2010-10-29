@@ -42,15 +42,15 @@ class DummyAux1System:
     The dummy aux 1 system.
     """
 
-    dummy_aux_1_plugin = None
+    dummy_base_1_plugin = None
     """ The dummy aux 1 plugin """
 
-    def __init__(self, dummy_aux_1_plugin):
+    def __init__(self, dummy_base_1_plugin):
         """
         Constructor of the class.
 
-        @type dummy_aux_1_plugin: DummyAux1Plugin
-        @param dummy_aux_1_plugin: The dummy aux 1 plugin.
+        @type dummy_base_1_plugin: DummyAux1Plugin
+        @param dummy_base_1_plugin: The dummy aux 1 plugin.
         """
 
-        self.dummy_aux_1_plugin = dummy_aux_1_plugin
+        self.dummy_base_1_plugin = dummy_base_1_plugin

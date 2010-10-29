@@ -48,7 +48,7 @@
                 <version>1.0.0</version>
                 <stage>build</stage>
                 <configuration>
-                    <specification_file>$base{plugin_directory}/dummy_aux_1_plugin.json</specification_file>
+                    <specification_file>$base{plugin_directory}/dummy_base_1_plugin.json</specification_file>
                 </configuration>
             </plugin>
         </plugins>

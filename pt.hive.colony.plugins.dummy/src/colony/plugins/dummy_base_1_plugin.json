@@ -14,8 +14,8 @@
                 "id" : "pt.hive.colony.plugins.main.threads.thread_pool_manager",
                 "version" : "1.0.0"
             }],
-    "main_file" : "dummy_aux_1_plugin.py",
-    "resources" : ["dummy_aux_1_plugin.py", "dummy/__init__.py",
-            "dummy/aux_1/__init__.py", "dummy/aux_1/dummy_aux_1_system.py",
-            "dummy/aux_1/resources/baf.xml"]
+    "main_file" : "dummy_base_1_plugin.py",
+    "resources" : ["dummy_base_1_plugin.py", "dummy/__init__.py",
+            "dummy/base_1/__init__.py", "dummy/base_1/dummy_base_1_system.py",
+            "dummy/base_1/resources/baf.xml"]
 }
