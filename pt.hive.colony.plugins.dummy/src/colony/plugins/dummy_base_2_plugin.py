@@ -41,13 +41,13 @@ import colony.base.plugin_system
 
 class DummyBase2Plugin(colony.base.plugin_system.Plugin):
     """
-    The main class for the Dummy Aux 2 plugin.
+    The main class for the Dummy base 2 plugin.
     """
 
     id = "pt.hive.colony.plugins.dummy.base_2"
-    name = "Dummy Aux 2 Plugin"
-    short_name = "Dummy Aux 2"
-    description = "Dummy Aux 2 Plugin"
+    name = "Dummy base 2 Plugin"
+    short_name = "Dummy base 2"
+    description = "Dummy base 2 Plugin"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     loading_type = colony.base.plugin_system.EAGER_LOADING_TYPE
