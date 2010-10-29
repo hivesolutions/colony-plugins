@@ -45,12 +45,12 @@ import colony.base.decorators
 TIMEOUT = 0.5
 """ The timeout value to be used """
 
-class DummyAux1Plugin(colony.base.plugin_system.Plugin):
+class DummyBase1Plugin(colony.base.plugin_system.Plugin):
     """
     The main class for the Dummy Aux 1 plugin.
     """
 
-    id = "pt.hive.colony.plugins.dummy.aux1"
+    id = "pt.hive.colony.plugins.dummy.base_1"
     name = "Dummy Aux 1 Plugin"
     short_name = "Dummy Aux 1"
     description = "Dummy Aux 1 Plugin"
@@ -61,11 +61,11 @@ class DummyAux1Plugin(colony.base.plugin_system.Plugin):
                  colony.base.plugin_system.JYTHON_ENVIRONMENT,
                  colony.base.plugin_system.IRON_PYTHON_ENVIRONMENT]
     attributes = {"build_automation_file_path" : "$base{plugin_directory}/dummy/base_1/resources/baf.xml"}
-    capabilities = ["dummy_aux1_capability", "build_automation_item"]
+    capabilities = ["dummy_base_1_capability", "build_automation_item"]
     capabilities_allowed = [("dummy_aux2_capability", colony.base.plugin_system.NEW_DIFFUSION_SCOPE), ("dummy_aux3_capability", colony.base.plugin_system.NEW_DIFFUSION_SCOPE)]
     dependencies = [colony.base.plugin_system.PluginDependency(
                     "pt.hive.colony.plugins.main.threads.thread_pool_manager", "1.0.0")]
-    events_handled = ["dummy_aux1_event"]
+    events_handled = ["dummy_base_1_event"]
     events_registrable = ["plugin_manager.end_load_plugin"]
     main_modules = ["dummy.base_1.dummy_base_1_system"]
 
@@ -100,19 +100,19 @@ class DummyAux1Plugin(colony.base.plugin_system.Plugin):
     def end_unload_plugin(self):
         colony.base.plugin_system.Plugin.end_unload_plugin(self)
 
-    @colony.base.decorators.load_allowed("pt.hive.colony.plugins.dummy.aux1", "1.0.0")
+    @colony.base.decorators.load_allowed("pt.hive.colony.plugins.dummy.base_1", "1.0.0")
     def load_allowed(self, plugin, capability):
         colony.base.plugin_system.Plugin.load_allowed(self, plugin, capability)
 
-    @colony.base.decorators.unload_allowed("pt.hive.colony.plugins.dummy.aux1", "1.0.0")
+    @colony.base.decorators.unload_allowed("pt.hive.colony.plugins.dummy.base_1", "1.0.0")
     def unload_allowed(self, plugin, capability):
         colony.base.plugin_system.Plugin.unload_allowed(self, plugin, capability)
 
-    @colony.base.decorators.inject_dependencies("pt.hive.colony.plugins.dummy.aux1", "1.0.0")
+    @colony.base.decorators.inject_dependencies("pt.hive.colony.plugins.dummy.base_1", "1.0.0")
     def dependency_injected(self, plugin):
         colony.base.plugin_system.Plugin.dependency_injected(self, plugin)
 
-    @colony.base.decorators.event_handler("pt.hive.colony.plugins.dummy.aux1", "1.0.0")
+    @colony.base.decorators.event_handler("pt.hive.colony.plugins.dummy.base_1", "1.0.0")
     def event_handler(self, event_name, *event_args):
         try:
             colony.base.plugin_system.Plugin.event_handler(self, event_name, *event_args)

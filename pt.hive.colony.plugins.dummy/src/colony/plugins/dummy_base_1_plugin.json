@@ -1,13 +1,13 @@
 {
     "platform" : "python",
     "sub_platforms" : ["cpython", "jython", "iron_python"],
-    "id" : "pt.hive.colony.plugins.dummy.aux1",
+    "id" : "pt.hive.colony.plugins.dummy.base_1",
     "name" : "Dummy Aux 1 Plugin",
     "short_name" : "Dummy Aux 1",
     "description" : "Dummy Aux 1 Plugin",
     "version" : "1.0.0",
     "author" : "Hive Solutions Lda. <development@hive.pt>",
-    "capabilities" : ["dummy_aux1_capability", "build_automation_item"],
+    "capabilities" : ["dummy_base_1_capability", "build_automation_item"],
     "capabilities_allowed" : ["('dummy_aux2_capability', 3)",
             "('dummy_aux3_capability', 3)"],
     "dependencies" : [{

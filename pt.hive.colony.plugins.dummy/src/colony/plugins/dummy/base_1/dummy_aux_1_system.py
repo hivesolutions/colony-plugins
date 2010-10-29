@@ -37,7 +37,7 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-class DummyAux1System:
+class DummyBase1System:
     """
     The dummy aux 1 system.
     """
@@ -49,7 +49,7 @@ class DummyAux1System:
         """
         Constructor of the class.
 
-        @type dummy_base_1_plugin: DummyAux1Plugin
+        @type dummy_base_1_plugin: DummyBase1Plugin
         @param dummy_base_1_plugin: The dummy aux 1 plugin.
         """
 
