@@ -45,7 +45,7 @@ class WebMvcCommunicationPush:
     """
 
     web_mvc_communication_push_plugin = None
-    """ The web mvc manager plugin """
+    """ The web mvc communication push plugin """
 
     web_mvc_communication_push_controller = None
     """ The web mvc communication push controller """
