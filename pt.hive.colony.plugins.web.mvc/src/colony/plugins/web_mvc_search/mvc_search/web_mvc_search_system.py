@@ -87,6 +87,12 @@ QUERY_OPTIONS_VALUE = "query_options"
 ENTITY_MANAGER_ARGUMENTS_VALUE = "entity_manager_arguments"
 """ The entity manager arguments value """
 
+FILE_PATH_VALUE = "file_path"
+""" The file path value """
+
+CONNECTION_PARAMETERS_VALUE = "connection_parameters"
+""" The connection parameters value """
+
 class WebMvcSearch:
     """
     The entity manager search class.
@@ -106,8 +112,8 @@ class WebMvcSearch:
         self.web_mvc_search_plugin = web_mvc_search_plugin
 
     def update_index(self, index_identifier, index_configuration_map):
-        # retrieves the search plugin
-        search_plugin = self.web_mvc_search_plugin.search_plugin
+        # retrieves the search manager plugin
+        search_manager_plugin = self.web_mvc_search_plugin.search_manager_plugin
 
         # retrieves the index creation options
         index_creation_options = index_configuration_map[CREATION_OPTIONS_VALUE]
@@ -116,7 +122,7 @@ class WebMvcSearch:
         prefixed_index_identifier = self._get_prefixed_index_identifier(index_identifier)
 
         # creates the index for the provided identifier
-        search_plugin.create_index_with_identifier(prefixed_index_identifier, index_creation_options)
+        search_manager_plugin.create_index_with_identifier(prefixed_index_identifier, index_creation_options)
 
     def replace_arguments(self, configuration_map, arguments_map):
         # initializes the index configuration
@@ -167,14 +173,14 @@ class WebMvcSearch:
         return self.search_index_options(index_identifier, query_string, EMPTY_SEARCH_OPTIONS_MAP)
 
     def search_index_options(self, index_identifier, query_string, options):
-        # retrieves the search plugin
-        search_plugin = self.web_mvc_search_plugin.search_plugin
+        # retrieves the search manager plugin
+        search_manager_plugin = self.web_mvc_search_plugin.search_manager_plugin
 
         # retrieves the prefixed index identifier
         prefixed_index_identifier = self._get_prefixed_index_identifier(index_identifier)
 
         # performs the search
-        return search_plugin.search_index_by_identifier(prefixed_index_identifier, query_string, options)
+        return search_manager_plugin.search_index_by_identifier(prefixed_index_identifier, query_string, options)
 
     def create_search_index_controller(self, search_index_identifier, search_index_configuration_map, entity_models_modules):
         # creates a new search index controller object
@@ -187,12 +193,13 @@ class WebMvcSearch:
         return search_index_controller
 
     def has_index(self, search_index_identifier):
-        search_plugin = self.web_mvc_search_plugin.search_plugin
+        # retrieves the search manager plugin
+        search_manager_plugin = self.web_mvc_search_plugin.search_manager_plugin
 
         # retrieves the prefixed index identifier
         prefixed_index_identifier = self._get_prefixed_index_identifier(search_index_identifier)
 
-        return search_plugin.has_index(prefixed_index_identifier)
+        return search_manager_plugin.has_index(prefixed_index_identifier)
 
     def _get_prefixed_index_identifier(self, index_identifier):
         return INDEX_IDENTIFIER_PREFIX + index_identifier
@@ -332,6 +339,15 @@ class SearchIndexController:
             # stores the entity manager process options in the search options map
             search_processor_options[QUERY_OPTIONS_VALUE] = crawl_options
 
+        # retrieves the entity manager arguments from the search processor options
+        entity_manager_arguments = search_processor_options.get(ENTITY_MANAGER_ARGUMENTS_VALUE, {})
+
+        # retrieve the connection parameters
+        connection_parameters = entity_manager_arguments.get(CONNECTION_PARAMETERS_VALUE, {})
+
+        # resolves the connection parameters
+        self._resolve_connection_parameters(connection_parameters)
+
         # stores the concrete index configuration in the controller
         self.search_index_configuration_map = index_configuration_map
 
@@ -402,3 +418,21 @@ class SearchIndexController:
 
         # returns the entity classes
         return entity_classes
+
+    def _resolve_connection_parameters(self, connection_parameters):
+        """
+        Resolves the given connection parameters map, substituting
+        the values with the resolved ones.
+
+        @type connection_parameters: Dictionary
+        @param connection_parameters: The connection parameters to be resolved.
+        """
+
+        # retrieves the web mvc search plugin
+        web_mvc_search_plugin = self.web_mvc_search.web_mvc_search_plugin
+
+        # retrieves the plugin manager
+        plugin_manager = web_mvc_search_plugin.manager
+
+        # resolves the file path
+        connection_parameters[FILE_PATH_VALUE] = plugin_manager.resolve_file_path(connection_parameters[FILE_PATH_VALUE], True, True)
