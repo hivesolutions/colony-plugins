@@ -191,61 +191,6 @@ class WebMvcCommunicationPushAppleController:
         # returns true
         return True
 
-#    def generate_handler(self, return_url, method):
-#        """
-#        Generates a communication handler for the
-#        given request.
-#
-#        @type return_url: String
-#        @param return_url: The url to be used in the returning
-#        of the generated handler.
-#        @type method: String
-#        @param method: The http method to be used to retrieve
-#        the return url.
-#        @rtype: Function
-#        @return: The generated communication handler
-#        """
-#
-#        def communication_handler(notification, communication_name):
-#            """
-#            The "base" communication handler function.
-#            to be used in the generation of the communication handler.
-#
-#            @type notification: PushNotification
-#            @param notification: The push notification to be sent.
-#            @type communication_name: String
-#            @param communication_name: The name of the communication to be used.
-#            """
-#
-#            # retrieves the main client http plugin
-#            main_client_http_plugin = self.web_mvc_communication_push_plugin.main_client_http_plugin
-#
-#            # creates the http client
-#            http_client = main_client_http_plugin.create_client({CONTENT_TYPE_CHARSET_VALUE : DEFAULT_CHARSET})
-#
-#            # opens the http client
-#            http_client.open({})
-#
-#            # retrieves the notification attributes
-#            message = notification.get_message()
-#            sender_id = notification.get_sender_id()
-#            guid = notification.get_guid()
-#
-#            # creates the parameters map
-#            parameters = {COMMUNICATION_NAME_VALUE : communication_name,
-#                          COMMUNICATION_HANDLER_NAME_VALUE : sender_id,
-#                          GUID_VALUE : guid,
-#                          MESSAGE_CONTENTS_VALUE : message}
-#
-#            # fetches the url, retrieving the contents
-#            http_client.fetch_url(return_url, method, parameters, content_type_charset = DEFAULT_CHARSET)
-#
-#            # closes the http client
-#            http_client.close({})
-#
-#        # returns the communication handler
-#        return communication_handler
-
     def generate_handler(self, device_id):
         """
         Generates a communication handler for the
@@ -269,7 +214,7 @@ class WebMvcCommunicationPushAppleController:
             """
 
             # retrieves the json plugin
-            json_plugin = self.web_mvc_communication_push_apple_plugin.json_plugin()
+            json_plugin = self.web_mvc_communication_push_apple_plugin.json_plugin
 
             # retrieves the notification attributes
             message = notification.get_message()
@@ -298,11 +243,14 @@ class WebMvcCommunicationPushAppleController:
             # serializes the payload into json
             payload_serialized = json_plugin.dumps(payload)
 
+            # encodes the payload serialized using the default encoding
+            payload_serialized_encoded = payload_serialized.encode(DEFAULT_ENCODING)
+
             # creates a new apple push notification service client
             _apple_push_notification_service_client = apple_push_notification_service_client.ApplePushNotificationServiceClient()
 
             # sends the payload
-            _apple_push_notification_service_client.send_payload(device_id, payload_serialized)
+            _apple_push_notification_service_client.send_payload(device_id, payload_serialized_encoded)
 
             # retrieves the feedback
             _apple_push_notification_service_client.get_feedback()
@@ -328,7 +276,7 @@ class WebMvcCommunicationPushAppleController:
 
     def _register(self, rest_request):
         # retrieves the communication push plugin
-        communication_push_plugin = self.web_mvc_communication_push_plugin.communication_push_plugin
+        communication_push_plugin = self.web_mvc_communication_push_apple_plugin.communication_push_plugin
 
         # processes the form data
         form_data_map = self.process_form_data(rest_request, DEFAULT_ENCODING)
@@ -352,7 +300,7 @@ class WebMvcCommunicationPushAppleController:
 
     def _load_profile(self, rest_request):
         # retrieves the communication push plugin
-        communication_push_plugin = self.web_mvc_communication_push_plugin.communication_push_plugin
+        communication_push_plugin = self.web_mvc_communication_push_apple_plugin.communication_push_plugin
 
         # processes the form data
         form_data_map = self.process_form_data(rest_request, DEFAULT_ENCODING)
@@ -376,7 +324,7 @@ class WebMvcCommunicationPushAppleController:
 
     def _unload_profile(self, rest_request):
         # retrieves the communication push plugin
-        communication_push_plugin = self.web_mvc_communication_push_plugin.communication_push_plugin
+        communication_push_plugin = self.web_mvc_communication_push_apple_plugin.communication_push_plugin
 
         # processes the form data
         form_data_map = self.process_form_data(rest_request, DEFAULT_ENCODING)

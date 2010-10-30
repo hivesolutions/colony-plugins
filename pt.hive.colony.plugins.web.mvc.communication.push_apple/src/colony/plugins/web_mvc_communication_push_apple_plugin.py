@@ -64,9 +64,9 @@ class WebMvcCommunicationPushApplePlugin(colony.base.plugin_system.Plugin):
                     "pt.hive.colony.plugins.misc.json", "1.0.0")]
     events_handled = []
     events_registrable = []
-    main_modules = ["web_mvc_communication_push.communication_push.web_mvc_communication_push_controllers",
-                    "web_mvc_communication_push.communication_push.web_mvc_communication_push_exceptions",
-                    "web_mvc_communication_push.communication_push.web_mvc_communication_push_system"]
+    main_modules = ["web_mvc_communication_push_apple.communication_push_apple.web_mvc_communication_push_apple_controllers",
+                    "web_mvc_communication_push_apple.communication_push_apple.web_mvc_communication_push_apple_exceptions",
+                    "web_mvc_communication_push_apple.communication_push_apple.web_mvc_communication_push_apple_system"]
 
     web_mvc_communication_push_apple = None
 
@@ -76,13 +76,13 @@ class WebMvcCommunicationPushApplePlugin(colony.base.plugin_system.Plugin):
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
-        global web_mvc_communication_push
-        import web_mvc_communication_push.communication_push.web_mvc_communication_push_system
-        self.web_mvc_communication_push = web_mvc_communication_push.communication_push.web_mvc_communication_push_system.WebMvcCommunicationPush(self)
+        global web_mvc_communication_push_apple
+        import web_mvc_communication_push_apple.communication_push_apple.web_mvc_communication_push_apple_system
+        self.web_mvc_communication_push_apple = web_mvc_communication_push_apple.communication_push_apple.web_mvc_communication_push_apple_system.WebMvcCommunicationPushApple(self)
 
     def end_load_plugin(self):
         colony.base.plugin_system.Plugin.end_load_plugin(self)
-        self.web_mvc_communication_push.load_components()
+        self.web_mvc_communication_push_apple.load_components()
 
     def unload_plugin(self):
         colony.base.plugin_system.Plugin.unload_plugin(self)
@@ -96,7 +96,7 @@ class WebMvcCommunicationPushApplePlugin(colony.base.plugin_system.Plugin):
     def unload_allowed(self, plugin, capability):
         colony.base.plugin_system.Plugin.unload_allowed(self, plugin, capability)
 
-    @colony.base.decorators.inject_dependencies("pt.hive.colony.plugins.web.mvc.communication.push", "1.0.0")
+    @colony.base.decorators.inject_dependencies("pt.hive.colony.plugins.web.mvc.communication.push_apple", "1.0.0")
     def dependency_injected(self, plugin):
         colony.base.plugin_system.Plugin.dependency_injected(self, plugin)
 
@@ -111,7 +111,7 @@ class WebMvcCommunicationPushApplePlugin(colony.base.plugin_system.Plugin):
         to the web mvc service.
         """
 
-        return self.web_mvc_communication_push.get_patterns()
+        return self.web_mvc_communication_push_apple.get_patterns()
 
     def get_communication_patterns(self):
         """
@@ -125,7 +125,7 @@ class WebMvcCommunicationPushApplePlugin(colony.base.plugin_system.Plugin):
         to the web mvc service.
         """
 
-        return self.web_mvc_communication_push.get_communication_patterns()
+        return self.web_mvc_communication_push_apple.get_communication_patterns()
 
     def get_resource_patterns(self):
         """
@@ -138,7 +138,7 @@ class WebMvcCommunicationPushApplePlugin(colony.base.plugin_system.Plugin):
         to the web mvc service.
         """
 
-        return self.web_mvc_communication_push.get_resource_patterns()
+        return self.web_mvc_communication_push_apple.get_resource_patterns()
 
     def get_web_mvc_utils_plugin(self):
         return self.web_mvc_utils_plugin
