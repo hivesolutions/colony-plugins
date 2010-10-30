@@ -129,7 +129,6 @@ class EurekaMockItemExtensionPlugin(colony.base.plugin_system.Plugin):
         Returns a raw list with all the items matching the search_string.
         """
 
-        search_string_list = search_string.split()
         items = self.all_items
 
         return items[0:max_items]
@@ -142,7 +141,6 @@ class EurekaMockItemExtensionPlugin(colony.base.plugin_system.Plugin):
         Returns a processed list, going through the plugin chain (filter, mappers and sorters).
         """
 
-        search_string_list = search_string.split()
         items = self.all_items
 
         for filter_plugin in self.eureka_item_filter_plugins:

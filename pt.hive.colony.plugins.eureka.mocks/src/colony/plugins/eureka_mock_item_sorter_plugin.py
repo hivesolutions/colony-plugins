@@ -92,8 +92,6 @@ class EurekaMockItemSorterPlugin(colony.base.plugin_system.Plugin):
         @param input_list: Processed list of EurekaItems.
         """
 
-        search_string_list = search_string.split()
-
         # scores each of the items in the list using the above scorer function
         sorted_items = self.sort_by_attribute(items, "score")
         sorted_items.reverse()

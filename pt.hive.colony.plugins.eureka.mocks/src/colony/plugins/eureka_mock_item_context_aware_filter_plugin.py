@@ -92,6 +92,10 @@ class EurekaMockItemContextAwareFilterPlugin(colony.base.plugin_system.Plugin):
         return self.mock_item_context_aware_filter.process(items, search_string, context, max_items)
 
 class MockItemContextAwareFilter:
+    """
+    The mock item context aware filter class.
+    """
+
     def process(self, items, input_string = None, context = None, max_items = None):
         """
         Returns a raw list with all the items matching the input_string.
@@ -99,8 +103,6 @@ class MockItemContextAwareFilter:
         @type input_list: List
         @param input_list: Processed list of EurekaItems.
         """
-
-        input_string_list = input_string.split()
 
         # by default items will not be filtered
         filtered_items = items
