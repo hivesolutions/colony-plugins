@@ -367,10 +367,10 @@ class MainConsole:
         # retrieves the plugin strings from the plugin manager instances
         plugins_string, replicas_string, instances_string = self.get_plugin_strings(plugin_manager_instances)
 
-        output_method("uid:      " + plugin_manager_uid)
-        output_method("version:  " + plugin_manager_version)
-        output_method("uptime:   " + uptime_string)
-        output_method("plugins:  " + plugins_string)
+        output_method("uid:       " + plugin_manager_uid)
+        output_method("version:   " + plugin_manager_version)
+        output_method("uptime:    " + uptime_string)
+        output_method("plugins:   " + plugins_string)
         output_method("replicas:  " + replicas_string)
         output_method("instances: " + instances_string)
 
