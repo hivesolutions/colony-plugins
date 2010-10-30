@@ -1,0 +1,34 @@
+{
+    "platform" : "python",
+    "sub_platforms" : ["cpython"],
+    "id" : "pt.hive.colony.plugins.web.mvc.communication.push",
+    "name" : "Web Mvc Communication Push Plugin",
+    "short_name" : "Web Mvc Communication Push",
+    "description" : "The plugin that offers the web mvc communication push base infrastructure",
+    "version" : "1.0.0",
+    "author" : "Hive Solutions Lda. <development@hive.pt>",
+    "capabilities" : ["web.mvc_service", "build_automation_item"],
+    "capabilities_allowed" : [],
+    "dependencies" : [{
+                "id" : "pt.hive.colony.plugins.web.mvc.utils",
+                "version" : "1.0.0"
+            }, {
+                "id" : "pt.hive.colony.plugins.communication.push",
+                "version" : "1.0.0"
+            }, {
+                "id" : "pt.hive.colony.plugins.main.client.http",
+                "version" : "1.0.0"
+            }, {
+                "id" : "pt.hive.colony.plugins.misc.json",
+                "version" : "1.0.0"
+            }],
+    "main_file" : "web_mvc_communication_push_plugin.py",
+    "resources" : [
+            "web_mvc_communication_push_plugin.py",
+            "web_mvc_communication_push/__init__.py",
+            "web_mvc_communication_push/communication_push/__init__.py",
+            "web_mvc_communication_push/communication_push/web_mvc_communication_push_controllers.py",
+            "web_mvc_communication_push/communication_push/web_mvc_communication_push_exceptions.py",
+            "web_mvc_communication_push/communication_push/web_mvc_communication_push_system.py",
+            "web_mvc_communication_push/communication_push/resources/baf.xml"]
+}
