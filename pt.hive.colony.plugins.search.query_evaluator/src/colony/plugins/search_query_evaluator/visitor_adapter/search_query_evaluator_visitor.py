@@ -403,6 +403,7 @@ class IndexSearchVisitor:
         if word_information_map:
             # get the hits for the current word from the index
             index_word_hits = word_information_map[HITS_VALUE]
+
             # create a copy of the hits map for the current word
             word_hits = copy.deepcopy(index_word_hits)
 
