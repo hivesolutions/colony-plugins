@@ -107,7 +107,7 @@ class DummyBase1:
             # in case the paused flag is not valid
             if not self.paused:
                 # prints a debug message
-                self.debug("Running in thread pool")
+                self.dummy_base_1_plugin.debug("Running in thread pool")
 
             # sleeps for the given time
             time.sleep(TIMEOUT)
