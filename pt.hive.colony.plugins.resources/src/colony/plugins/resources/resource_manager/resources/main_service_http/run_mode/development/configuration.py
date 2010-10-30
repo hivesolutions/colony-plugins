@@ -68,6 +68,7 @@ configuration = {
                  },
                  "redirections" : {
                      "resolution_order" : ["/push",
+                                           "/push_apple",
                                            "/wiki",
                                            "/manager",
                                            "/blog",
@@ -79,6 +80,10 @@ configuration = {
                                            "/"],
                      "/push" : {
                          "target" : "/colony_mod_python/rest/mvc/web_mvc_communication_push/",
+                         "recursive_redirection" : True
+                     },
+                     "/push_apple" : {
+                         "target" : "/colony_mod_python/rest/mvc/web_mvc_communication_push_apple/",
                          "recursive_redirection" : True
                      },
                      "/wiki" : {
