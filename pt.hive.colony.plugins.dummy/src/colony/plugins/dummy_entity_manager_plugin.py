@@ -61,6 +61,8 @@ class DummyEntityManagerPlugin(colony.base.plugin_system.Plugin):
                     colony.base.plugin_system.PluginDependency(
                     "pt.hive.colony.plugins.data.entity_manager", "1.0.0"),
                     colony.base.plugin_system.PluginDependency(
+                    "pt.hive.colony.plugins.business.helper", "1.0.0"),
+                    colony.base.plugin_system.PluginDependency(
                     "pt.hive.colony.plugins.business.dummy.entity", "1.0.0")]
     events_handled = []
     events_registrable = []
@@ -68,7 +70,9 @@ class DummyEntityManagerPlugin(colony.base.plugin_system.Plugin):
 
     dummy_entity_manager = None
 
+    resource_manager_plugin = None
     entity_manager_plugin = None
+    business_helper_plugin = None
     business_dummy_entity_plugin = None
 
     def load_plugin(self):
@@ -110,6 +114,13 @@ class DummyEntityManagerPlugin(colony.base.plugin_system.Plugin):
     @colony.base.decorators.plugin_inject("pt.hive.colony.plugins.data.entity_manager")
     def set_entity_manager_plugin(self, entity_manager_plugin):
         self.entity_manager_plugin = entity_manager_plugin
+
+    def get_business_helper_plugin(self):
+        return self.business_helper_plugin
+
+    @colony.base.decorators.plugin_inject("pt.hive.colony.plugins.business.helper")
+    def set_business_helper_plugin(self, business_helper_plugin):
+        self.business_helper_plugin = business_helper_plugin
 
     def get_business_dummy_entity_plugin(self):
         return self.business_dummy_entity_plugin
