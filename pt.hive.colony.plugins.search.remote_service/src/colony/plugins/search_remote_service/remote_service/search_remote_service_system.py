@@ -93,39 +93,46 @@ class SearchRemoteService:
         return True
 
     def remove_index_with_identifier(self, search_index_identifier, properties):
-        search_plugin = self.search_remote_service_plugin.search_plugin
+        # retrieves the search manager plugin
+        search_manager_plugin = self.search_remote_service_plugin.search_manager_plugin
 
-        return search_plugin.remove_index_with_identifier(search_index_identifier, properties)
+        return search_manager_plugin.remove_index_with_identifier(search_index_identifier, properties)
 
     def search_index_by_identifier(self, search_index_identifier, search_query, properties):
-        search_plugin = self.search_remote_service_plugin.search_plugin
+        # retrieves the search manager plugin
+        search_manager_plugin = self.search_remote_service_plugin.search_manager_plugin
 
-        return search_plugin.search_index_by_identifier(search_index_identifier, search_query, properties)
+        return search_manager_plugin.search_index_by_identifier(search_index_identifier, search_query, properties)
 
     def get_index_identifiers(self):
-        search_plugin = self.search_remote_service_plugin.search_plugin
+        # retrieves the search manager plugin
+        search_manager_plugin = self.search_remote_service_plugin.search_manager_plugin
 
-        return search_plugin.get_index_identifiers()
+        return search_manager_plugin.get_index_identifiers()
 
     def get_index_metadata(self, search_index_identifier):
-        search_plugin = self.search_remote_service_plugin.search_plugin
+        # retrieves the search manager plugin
+        search_manager_plugin = self.search_remote_service_plugin.search_manager_plugin
 
-        return search_plugin.get_index_metadata(search_index_identifier)
+        return search_manager_plugin.get_index_metadata(search_index_identifier)
 
     def get_indexes_metadata(self):
-        search_plugin = self.search_remote_service_plugin.search_plugin
+        # retrieves the search manager plugin
+        search_manager_plugin = self.search_remote_service_plugin.search_manager_plugin
 
-        return search_plugin.get_indexes_metadata()
+        return search_manager_plugin.get_indexes_metadata()
 
     def get_search_crawler_adapter_types(self):
-        search_plugin = self.search_remote_service_plugin.search_plugin
+        # retrieves the search manager plugin
+        search_manager_plugin = self.search_remote_service_plugin.search_manager_plugin
 
-        return search_plugin.get_search_crawler_adapter_types()
+        return search_manager_plugin.get_search_crawler_adapter_types()
 
     def get_search_index_persistence_adapter_types(self):
-        search_plugin = self.search_remote_service_plugin.search_plugin
+        # retrieves the search manager plugin
+        search_manager_plugin = self.search_remote_service_plugin.search_manager_plugin
 
-        return search_plugin.get_search_index_persistence_adapter_types()
+        return search_manager_plugin.get_search_index_persistence_adapter_types()
 
     def persist_index_with_identifier(self, search_index_identifier, properties):
         # the task options map
@@ -168,9 +175,10 @@ class SearchRemoteService:
         # retrieves the creation properties for the creation operation
         properties = options[PROPERTIES_VALUE]
 
-        search_plugin = self.search_remote_service_plugin.search_plugin
+        # retrieves the search manager plugin
+        search_manager_plugin = self.search_remote_service_plugin.search_manager_plugin
 
-        search_plugin.create_index_with_identifier(search_index_identifier, properties)
+        search_manager_plugin.create_index_with_identifier(search_index_identifier, properties)
 
         task.confirm_stop(True)
 
@@ -187,9 +195,10 @@ class SearchRemoteService:
         # retrieves the persistence properties for the persistence operation
         properties = options[PROPERTIES_VALUE]
 
-        search_plugin = self.search_remote_service_plugin.search_plugin
+        # retrieves the search manager plugin
+        search_manager_plugin = self.search_remote_service_plugin.search_manager_plugin
 
-        search_plugin.persist_index_with_identifier(search_index_identifier, properties)
+        search_manager_plugin.persist_index_with_identifier(search_index_identifier, properties)
 
         task.confirm_stop(True)
 
@@ -206,9 +215,10 @@ class SearchRemoteService:
         # retrieves the load properties for the load operation
         properties = options[PROPERTIES_VALUE]
 
-        search_plugin = self.search_remote_service_plugin.search_plugin
+        # retrieves the search manager plugin
+        search_manager_plugin = self.search_remote_service_plugin.search_manager_plugin
 
-        search_plugin.load_index_with_identifier(search_index_identifier, properties)
+        search_manager_plugin.load_index_with_identifier(search_index_identifier, properties)
 
         task.confirm_stop(True)
 
@@ -218,6 +228,7 @@ class SearchRemoteService:
 
         @param options: Task options.
         """
+
         pass
 
     def resume_handler(self, options):
@@ -226,6 +237,7 @@ class SearchRemoteService:
 
         @param options: Task options.
         """
+
         pass
 
     def stop_handler(self, options):
@@ -234,4 +246,5 @@ class SearchRemoteService:
 
         @param options: Task options.
         """
+
         pass
