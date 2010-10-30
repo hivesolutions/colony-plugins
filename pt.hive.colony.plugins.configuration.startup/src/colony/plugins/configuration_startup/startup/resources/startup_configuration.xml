@@ -49,5 +49,11 @@
             <version>1.0.0</version>
             <load>true</load>
         </plugin>
+        <plugin>
+            <name>Document Pdf Plugin</name>
+            <id>pt.hive.colony.plugins.document.pdf</id>
+            <version>1.0.0</version>
+            <load>false</load>
+        </plugin>
     </plugins>
 </startup_configuration>
