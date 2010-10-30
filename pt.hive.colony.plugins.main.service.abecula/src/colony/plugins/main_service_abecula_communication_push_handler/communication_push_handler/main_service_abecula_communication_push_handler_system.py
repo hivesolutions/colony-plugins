@@ -875,7 +875,7 @@ class MainServiceAbeculaCommunicationPushHandler:
         """
         Generates a new communication client id.
 
-        @rtype: int
+        @rtype: String
         @return: The generated communication client id.
         """
 
@@ -885,14 +885,17 @@ class MainServiceAbeculaCommunicationPushHandler:
         # retrieves the current communication client id
         communication_client_id = self.communication_client_id
 
+        # converts the communication client id to string
+        communication_client_id_string = str(communication_client_id)
+
         # increment the communication client id
         self.communication_client_id += 1
 
         # releases the communication client id lock
         self.communication_client_id_lock.release()
 
-        # returns the communication client id
-        return communication_client_id
+        # returns the communication client id string
+        return communication_client_id_string
 
     def _get_decoded_request_contents(self, request):
         """
