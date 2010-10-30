@@ -81,6 +81,12 @@ RETURN_URL_VALUE = "return_url"
 METHOD_VALUE = "method"
 """ The method value """
 
+PROPERTY_NAME_VALUE = "property_name"
+""" The property name value """
+
+PROPERTY_VALUE_VALUE = "property_value"
+""" The property value value """
+
 COMMUNICATION_VALUE = "communication"
 """ The communication value """
 
@@ -198,6 +204,25 @@ class WebMvcCommunicationPushController:
 
         # sends the message for the given request
         self._message(rest_request)
+
+        # returns true
+        return True
+
+    def handle_set_property(self, rest_request, parameters = {}):
+        """
+        Handles the given set property rest request.
+
+        @type rest_request: RestRequest
+        @param rest_request: The header rest request
+        to be handled.
+        @type parameters: Dictionary
+        @param parameters: The handler parameters.
+        @rtype: bool
+        @return: The result of the handling.
+        """
+
+        # sets the property for the given request
+        self._set_property(rest_request)
 
         # returns true
         return True
@@ -431,6 +456,21 @@ class WebMvcCommunicationPushController:
         # sends the broadcast notification, for the communication name
         # and notification
         communication_push_plugin.send_broadcast_notification(communication_name, notification)
+
+    def _set_property(self, rest_request):
+        # retrieves the communication push plugin
+        communication_push_plugin = self.web_mvc_communication_push_plugin.communication_push_plugin
+
+        # processes the form data
+        form_data_map = self.process_form_data(rest_request, DEFAULT_ENCODING)
+
+        # retrieves the form data attributes
+        communication_handler_name = form_data_map[COMMUNICATION_HANDLER_NAME_VALUE]
+        property_name = form_data_map[PROPERTY_NAME_VALUE]
+        property_value = form_data_map[PROPERTY_VALUE_VALUE]
+
+        # sets the communication handler property
+        communication_push_plugin.set_communication_handler_property(communication_handler_name, property_name, property_value)
 
     def _stat(self, rest_request):
         # retrieves the communication push plugin
