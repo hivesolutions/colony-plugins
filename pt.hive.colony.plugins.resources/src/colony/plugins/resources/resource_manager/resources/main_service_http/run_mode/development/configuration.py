@@ -67,8 +67,8 @@ configuration = {
                      }
                  },
                  "redirections" : {
-                     "resolution_order" : ["/push",
-                                           "/push_apple",
+                     "resolution_order" : ["/push_apple",
+                                           "/push",
                                            "/wiki",
                                            "/manager",
                                            "/blog",
@@ -78,12 +78,12 @@ configuration = {
                                            "/take_the_bill",
                                            "/a_la_carte",
                                            "/"],
-                     "/push" : {
-                         "target" : "/colony_mod_python/rest/mvc/web_mvc_communication_push/",
-                         "recursive_redirection" : True
-                     },
                      "/push_apple" : {
                          "target" : "/colony_mod_python/rest/mvc/web_mvc_communication_push_apple/",
+                         "recursive_redirection" : True
+                     },
+                     "/push" : {
+                         "target" : "/colony_mod_python/rest/mvc/web_mvc_communication_push/",
                          "recursive_redirection" : True
                      },
                      "/wiki" : {
