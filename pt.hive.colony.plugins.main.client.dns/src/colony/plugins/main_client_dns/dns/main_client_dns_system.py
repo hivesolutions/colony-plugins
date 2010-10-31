@@ -196,7 +196,7 @@ class DnsClient:
         @type parameters: Dictionary
         @param parameters: The parameters to the request.
         @rtype: DnsRequest
-        @return: The sent request for the given parameters..
+        @return: The sent request for the given parameters.
         """
 
         # generates and retrieves a new transaction id
