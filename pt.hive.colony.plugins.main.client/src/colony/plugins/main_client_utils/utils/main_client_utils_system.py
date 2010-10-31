@@ -362,7 +362,7 @@ class AbstractClient:
             return socket
         else:
             # raises the socket provider not found exception
-            raise main_client_utils_exceptions.SocketProviderNotFound("socket provider %s not found" % self.socket_provider)
+            raise main_client_utils_exceptions.SocketProviderNotFound("socket provider %s not found" % socket_name)
 
     def _generate_connection_tuple_hashable(self, connection_tuple):
         """
