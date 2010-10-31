@@ -37,7 +37,7 @@
         <version>1.0.0</version>
         <type>colony</type>
         <name>Javascript Minifier Util plugin</name>
-        <description>Javascript Minifier Util plugin</description>
+        <description>The plugin that offers minification support for javascript</description>
         <url>http://www.hive.pt</url>
     </artifact>
     <build>
