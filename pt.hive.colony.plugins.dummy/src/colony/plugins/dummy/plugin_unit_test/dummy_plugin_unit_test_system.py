@@ -64,7 +64,7 @@ class DummyTest(unittest.TestCase):
 
     def setUp(self):
         # prints a debug message
-        self.dummy_entity_manager_plugin.info("Setting up dummy test 1...")
+        self.plugin.info("Setting up dummy test 1...")
 
     def test_dummy_method1(self):
         self.assertEqual(True, True)
