@@ -50,6 +50,9 @@ DEFAULT_PORT = 25
 DEFAULT_SOCKET_NAME = "normal"
 """ The default socket name """
 
+DEFAULT_SOCKET_PARAMETERS = {}
+""" The default socket parameters """
+
 DEFAULT_AUTHENTICATION_METHOD = "plain"
 """ The default authentication method """
 
@@ -158,9 +161,9 @@ class SmtpClient:
         # stops the smtp client
         self._smtp_client.stop_client()
 
-    def send_mail(self, host, port, sender, recipients_list, message, parameters = {}, socket_name = DEFAULT_SOCKET_NAME):
+    def send_mail(self, host, port, sender, recipients_list, message, parameters = {}, socket_name = DEFAULT_SOCKET_NAME, socket_parameters = DEFAULT_SOCKET_PARAMETERS):
         # retrieves the corresponding (smtp) client connection
-        self.client_connection = self._smtp_client.get_client_connection((host, port, socket_name))
+        self.client_connection = self._smtp_client.get_client_connection((host, port, socket_name, socket_parameters))
 
         # acquires the smtp client lock
         self._smtp_client_lock.acquire()
