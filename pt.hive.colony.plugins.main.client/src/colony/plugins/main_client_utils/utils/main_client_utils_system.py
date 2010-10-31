@@ -41,6 +41,7 @@ import os
 import time
 import select
 
+import colony.libs.map_util
 import colony.libs.string_buffer_util
 
 import main_client_utils_exceptions
@@ -264,8 +265,12 @@ class AbstractClient:
         @return: The retrieved client connection.
         """
 
+        # generates an hashable connection tuple from the original
+        # connection tuple
+        connection_tuple_hashable = self._generate_connection_tuple_hashable(connection_tuple)
+
         # tries to retrieve the current client connection
-        client_connection = self.client_connections_map.get(connection_tuple, None)
+        client_connection = self.client_connections_map.get(connection_tuple_hashable, None)
 
         # in case the connection tuple is not present in the
         # client connections map or the current client connection
@@ -276,11 +281,11 @@ class AbstractClient:
             client_connection = self._create_client_connection(connection_tuple, open_connection)
 
             # sets the client connection in the client connections map
-            self.client_connections_map[connection_tuple] = client_connection
+            self.client_connections_map[connection_tuple_hashable] = client_connection
 
         # retrieves the client connection for the client
         # connections map
-        client_connection = self.client_connections_map[connection_tuple]
+        client_connection = self.client_connections_map[connection_tuple_hashable]
 
         # returns the client connection
         return client_connection
@@ -300,19 +305,19 @@ class AbstractClient:
         @return: The created client connection.
         """
 
-        # retrieves the host, the port and the socket name
-        # from the connection tuple
-        host, port, socket_name = connection_tuple
+        # retrieves the host, the port, the socket name and
+        # the socket parameters from the connection tuple
+        host, port, socket_name, socket_parameters = connection_tuple
 
         # creates the address tuple
         address = (host, port)
 
         # creates a socket for the client with
         # the given socket name
-        client_connection_socket = self._get_socket(socket_name)
+        client_connection_socket = self._get_socket(socket_name, socket_parameters)
 
         # retrieves the client connection
-        client_connection = ClientConnection(self.client_plugin, self, client_connection_socket, address, socket_name, self.request_timeout, self.response_timeout, self.chunk_size)
+        client_connection = ClientConnection(self.client_plugin, self, client_connection_socket, address, socket_name, socket_parameters, self.request_timeout, self.response_timeout, self.chunk_size)
 
         # in case the connection should be opened
         if open_connection:
@@ -322,13 +327,15 @@ class AbstractClient:
         # returns the client connection
         return client_connection
 
-    def _get_socket(self, socket_name = "normal"):
+    def _get_socket(self, socket_name = "normal", socket_parameters = {}):
         """
         Retrieves the socket for the given socket name
         using the socket provider plugins.
 
         @type socket_name: String
         @param socket_name: The name of the socket to be retrieved.
+        @type socket_parameters: Dictionary
+        @param socket_parameters: The parameters of the socket to be retrieved.
         @rtype: Socket
         @return: The socket for the given socket name.
         """
@@ -345,6 +352,9 @@ class AbstractClient:
             # the parameters for the socket provider
             parameters = {}
 
+            # copies the socket parameters to the parameters map
+            colony.libs.map_util.map_copy(socket_parameters, parameters)
+
             # creates a new socket with the socket provider plugin
             socket = socket_provider_plugin.provide_socket_parameters(parameters)
 
@@ -353,6 +363,32 @@ class AbstractClient:
         else:
             # raises the socket provider not found exception
             raise main_client_utils_exceptions.SocketProviderNotFound("socket provider %s not found" % self.socket_provider)
+
+    def _generate_connection_tuple_hashable(self, connection_tuple):
+        """
+        Generates an hashable connection tuple from
+        the original connection tuple.
+
+        @type connection_tuple: Tuple
+        @param connection_tuple: The connection tuple to be converted
+        to hashable.
+        @rtype: Tuple
+        @return: The hashable connection tuple.
+        """
+
+        # copies the connection tuple as the connection tuple hashable
+        connection_tuple_hashable = list(connection_tuple)
+
+        # sets the last element of the connection tuple hashable as the
+        # items tuple instead of the dictionary in order to avoid unhashable problems
+        connection_tuple_hashable[3] = tuple(connection_tuple_hashable[3].items())
+
+        # converts the connection tuple hashable into a tuple
+        # in order to hashable
+        connection_tuple_hashable = tuple(connection_tuple_hashable)
+
+        # returns the connection tuple hashable
+        return connection_tuple_hashable
 
 class ClientConnection:
     """
@@ -374,6 +410,9 @@ class ClientConnection:
 
     connection_socket_name = None
     """ The connection socket name """
+
+    connection_socket_parameters = None
+    """ The connection socket parameters """
 
     connection_request_timeout = None
     """ The connection request timeout """
@@ -405,7 +444,7 @@ class ClientConnection:
     _returned_data_buffer = None
     """ The buffer of returned data """
 
-    def __init__(self, client_plugin, client, connection_socket, connection_address, connection_socket_name, connection_request_timeout, connection_response_timeout, connection_chunk_size):
+    def __init__(self, client_plugin, client, connection_socket, connection_address, connection_socket_name, connection_socket_parameters, connection_request_timeout, connection_response_timeout, connection_chunk_size):
         """
         Constructor of the class.
 
@@ -419,6 +458,8 @@ class ClientConnection:
         @param connection_address: The connection address.
         @type connection_socket_name: String
         @param connection_socket_name: The connection socket name.
+        @type connection_socket_parameters: String
+        @param connection_socket_parameters: The connection socket parameters.
         @type connection_request_timeout: float
         @param connection_request_timeout: The connection request timeout.
         @type connection_response_timeout: float
@@ -432,6 +473,7 @@ class ClientConnection:
         self.connection_socket = connection_socket
         self.connection_address = connection_address
         self.connection_socket_name = connection_socket_name
+        self.connection_socket_parameters = connection_socket_parameters
         self.connection_request_timeout = connection_request_timeout
         self.connection_response_timeout = connection_response_timeout
         self.connection_chunk_size = connection_chunk_size
@@ -776,8 +818,8 @@ class ClientConnection:
         self.connection_socket.close()
 
         # creates a socket for the client with
-        # the given socket name
-        self.connection_socket = self.client._get_socket(self.connection_socket_name)
+        # the given socket name and parameters
+        self.connection_socket = self.client._get_socket(self.connection_socket_name, self.connection_socket_parameters)
 
         # sets the socket to blocking mode
         self.connection_socket.setblocking(1)
