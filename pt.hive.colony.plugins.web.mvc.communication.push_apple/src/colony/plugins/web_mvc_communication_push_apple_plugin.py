@@ -61,6 +61,8 @@ class WebMvcCommunicationPushApplePlugin(colony.base.plugin_system.Plugin):
                     colony.base.plugin_system.PluginDependency(
                     "pt.hive.colony.plugins.communication.push", "1.0.0"),
                     colony.base.plugin_system.PluginDependency(
+                    "pt.hive.colony.plugins.main.client.apple_push", "1.0.0"),
+                    colony.base.plugin_system.PluginDependency(
                     "pt.hive.colony.plugins.misc.json", "1.0.0")]
     events_handled = []
     events_registrable = []
@@ -72,6 +74,7 @@ class WebMvcCommunicationPushApplePlugin(colony.base.plugin_system.Plugin):
 
     web_mvc_utils_plugin = None
     communication_push_plugin = None
+    main_client_apple_push_plugin = None
     json_plugin = None
 
     def load_plugin(self):
@@ -153,6 +156,14 @@ class WebMvcCommunicationPushApplePlugin(colony.base.plugin_system.Plugin):
     @colony.base.decorators.plugin_inject("pt.hive.colony.plugins.communication.push")
     def set_communication_push_plugin(self, communication_push_plugin):
         self.communication_push_plugin = communication_push_plugin
+
+    def get_main_client_apple_push_plugin(self):
+        return self.main_client_apple_push_plugin
+
+    @colony.base.decorators.plugin_inject("pt.hive.colony.plugins.main.client.apple_push")
+    def set_main_client_apple_push_plugin(self, main_client_apple_push_plugin):
+        self.main_client_apple_push_plugin = main_client_apple_push_plugin
+
 
     def get_json_plugin(self):
         return self.json_plugin

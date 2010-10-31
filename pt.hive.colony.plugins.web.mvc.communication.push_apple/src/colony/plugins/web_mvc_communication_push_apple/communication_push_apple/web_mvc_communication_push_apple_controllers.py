@@ -37,8 +37,6 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-import apple_push_notification_service_client
-
 DEFAULT_ENCODING = "utf-8"
 """ The default encoding value """
 
@@ -213,6 +211,9 @@ class WebMvcCommunicationPushAppleController:
             @param communication_name: The name of the communication to be used.
             """
 
+            # retrieves the main client apple push plugin
+            main_client_apple_push_plugin = self.web_mvc_communication_push_apple_plugin.main_client_apple_push_plugin
+
             # retrieves the json plugin
             json_plugin = self.web_mvc_communication_push_apple_plugin.json_plugin
 
@@ -246,14 +247,25 @@ class WebMvcCommunicationPushAppleController:
             # encodes the payload serialized using the default encoding
             payload_serialized_encoded = payload_serialized.encode(DEFAULT_ENCODING)
 
-            # creates a new apple push notification service client
-            _apple_push_notification_service_client = apple_push_notification_service_client.ApplePushNotificationServiceClient()
+            # creates the apple push client
+            apple_push_client = main_client_apple_push_plugin.create_client({})
 
-            # sends the payload
-            _apple_push_notification_service_client.send_payload(device_id, payload_serialized_encoded)
+            # opens the apple push client
+            apple_push_client.open({})
 
-            # retrieves the feedback
-            _apple_push_notification_service_client.get_feedback()
+            APNS_SERVER_HOSTNAME = "gateway.sandbox.push.apple.com"
+            APNS_SERVER_PORT = 2195
+
+            APNS_SSL_COMBINED_KEY_CERTIFICATE_FILE = "c:/apple_development_push_services_lmartinho.pem"
+
+            socket_parameters = {"key_file_path" : None,
+                                 "certificate_file_path" : APNS_SSL_COMBINED_KEY_CERTIFICATE_FILE}
+
+            try:
+                apple_push_client.notify_device(APNS_SERVER_HOSTNAME, APNS_SERVER_PORT, device_id, payload_serialized_encoded, socket_parameters = socket_parameters)
+            finally:
+                # closes the apple push client
+                apple_push_client.close({})
 
         def escolinhas_handler(notification):
             # retrieves the notification message
