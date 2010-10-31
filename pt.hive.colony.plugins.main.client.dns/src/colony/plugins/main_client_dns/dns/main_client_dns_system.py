@@ -48,6 +48,9 @@ DEFAULT_PORT = 53
 DEFAULT_SOCKET_NAME = "datagram"
 """ The default socket name """
 
+DEFAULT_SOCKET_PARAMETERS = {}
+""" The default socket parameters """
+
 REQUEST_TIMEOUT = 10
 """ The request timeout """
 
@@ -166,9 +169,9 @@ class DnsClient:
         # stops the dns client
         self._dns_client.stop_client()
 
-    def resolve_queries(self, host, port, queries, parameters = {}, socket_name = DEFAULT_SOCKET_NAME):
+    def resolve_queries(self, host, port, queries, parameters = {}, socket_name = DEFAULT_SOCKET_NAME, socket_parameters = DEFAULT_SOCKET_PARAMETERS):
         # retrieves the corresponding (dns) client connection
-        self.client_connection = self._dns_client.get_client_connection((host, port, socket_name))
+        self.client_connection = self._dns_client.get_client_connection((host, port, socket_name, socket_parameters))
 
         # acquires the dns client lock
         self._dns_client_lock.acquire()
