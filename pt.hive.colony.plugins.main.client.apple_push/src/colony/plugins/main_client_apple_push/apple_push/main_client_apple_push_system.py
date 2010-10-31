@@ -284,33 +284,41 @@ class ApplePushRequest:
     The apple push request class.
     """
 
-    transaction_id = None
-    """ The transaction id, identifying a unique apple push request """
+    command = None
+    """ The request command """
 
-    queries = []
-    """ The list of queries """
+    device_token = None
+    """ The device token identifier """
 
-    parameters = {}
-    """ The parameters to the apple push request """
+    payload = None
+    """ The payload (contents of the request) """
 
-    flags = NORMAL_REQUEST_VALUE
-    """ The flags byte """
+    identifier = None
+    """ The request (notification) identifier """
 
-    def __init__(self, transaction_id, queries, parameters):
+    expiry = None
+    """ The epoch time for expiration """
+
+    def __init__(self, command, device_token, payload, identifier = None, expiry = None):
         """
         Constructor of the class.
 
-        @type transaction_id: int
-        @param transaction_id: The transaction id.
-        @type queries: List
-        @param queries: The queries list.
-        @type parameters: Dictionary
-        @param parameters: The request parameters.
+        @type command: int
+        @param command: The request command.
+        @type device_token: String
+        @param device_token: The The device token identifier.
+        @type payload: String
+        @param payload: The payload (contents of the request).
+        @type identifier: int
+        @param identifier: The request (notification) identifier.
+        @type expiry: int
+        @param expiry: The epoch time for expiration.
         """
 
-        self.transaction_id = transaction_id
-        self.queries = queries
-        self.parameters = parameters
+        self.command = command
+        self.device_token = device_token
+        self.payload = payload
+        self.identifier = identifier
 
     def get_result(self):
         """
@@ -322,85 +330,65 @@ class ApplePushRequest:
         the request.
         """
 
-        # retrieves the result stream
-        result = colony.libs.string_buffer_util.StringBuffer()
+        SIMPLE_NOTIFICATION_FORMAT_COMMAND = 0
+        ENHANCED_NOTIFICATION_FORMAT_COMMAND = 1
 
-        # retrieves the number of queries
-        number_queries = len(self.queries)
+        if self.command == SIMPLE_NOTIFICATION_FORMAT_COMMAND:
+            return self._serialize_simple_message()
+        elif self.command == ENHANCED_NOTIFICATION_FORMAT_COMMAND:
+            return self._serialize_enhanced_message()
 
-        # generates the query header
-        query_header = struct.pack("!HHHHHH", self.transaction_id, self.flags, number_queries, 0, 0, 0)
-
-        # writes the query header to the result stream
-        result.write(query_header)
-
-        # iterates over all the queries
-        for query in self.queries:
-            # serializes the query
-            query_serialized = self._serialize_query(query)
-
-            # writes the serialized query to the result stream
-            result.write(query_serialized)
-
-        # retrieves the value from the result buffer
-        result_value = result.get_value()
-
-        # returns the result value
-        return result_value
-
-    def _serialize_query(self, query):
+    def _serialize_simple_message(self):
         """
-        Serializes the given query into the apple push binary format.
+        Serializes the current request using the simple
+        message format
 
-        @type query: Tuple
-        @param query: A tuple with the query information.
         @rtype: String
-        @return: The string containing the resource record.
+        @return: The string containing the serialized enhanced message.
         """
 
-        # unpacks the query tuple, retrieving the name,
-        # type and class
-        query_name, query_type, query_class = query
+        SIMPLE_NOTIFICATION_FORMAT_COMMAND = 0
+        SIMPLE_NOTIFICATION_FORMAT_TEMPLATE = "!BH32sH%ds"
 
-        # converts the query type to integer
-        query_type_integer = TYPES_MAP[query_type]
+        DEVICE_TOKEN_LENGTH = 32
 
-        # converts the query class to integer
-        query_class_integer = CLASSES_MAP[query_class]
+        # retrieves the payload length
+        payload_length = len(self.payload)
 
-        # creates the string buffer to hold the stream
-        string_buffer = colony.libs.string_buffer_util.StringBuffer()
+        # creates the format for the message using the payload simple format template
+        simple_notification_format = SIMPLE_NOTIFICATION_FORMAT_TEMPLATE % payload_length
 
-        # splits the query name to retrieve the query name items
-        query_name_items = query_name.split(".")
+        # creates the simple format message
+        simple_format_message = struct.pack(simple_notification_format, SIMPLE_NOTIFICATION_FORMAT_COMMAND, DEVICE_TOKEN_LENGTH, self.device_token, payload_length, self.payload)
 
-        # iterates over all the query name items
-        for query_name_item in query_name_items:
-            # retrieves the query name item length
-            query_name_item_length = len(query_name_item)
+        # returns the simple format message
+        return simple_format_message
 
-            # retrieves the query name item length in binary value
-            query_name_item_length_character = chr(query_name_item_length)
+    def _serialize_enhanced_message(self):
+        """
+        Serializes the current request using the enhanced
+        message format
 
-            # writes the size of the query name item (in binary value) and
-            # the query name itself
-            string_buffer.write(query_name_item_length_character)
-            string_buffer.write(query_name_item)
+        @rtype: String
+        @return: The string containing the serialized simple message.
+        """
 
-        # writes the end of string in the string buffer
-        string_buffer.write("\0")
+        ENHANCED_NOTIFICATION_FORMAT_COMMAND = 1
+        ENHANCED_NOTIFICATION_FORMAT_TEMPLATE = "!BiiH32sH%ds"
 
-        # creates the query data from the query type and class
-        query_data = struct.pack("!HH", query_type_integer, query_class_integer)
+        DEVICE_TOKEN_LENGTH = 32
 
-        # writes the query data to the string buffer
-        string_buffer.write(query_data)
+        # retrieves the payload length
+        payload_length = len(self.payload)
 
-        # retrieves the serialized query value from the string buffer
-        query_serialized = string_buffer.get_value()
+        # creates the format for the message using the payload enhanced format template
+        enhanced_notification_format = ENHANCED_NOTIFICATION_FORMAT_TEMPLATE % payload_length
 
-        # returns the serialized query
-        return query_serialized
+        # creates the enhanced format message
+        enhanced_format_message = struct.pack(enhanced_notification_format, ENHANCED_NOTIFICATION_FORMAT_COMMAND, self.identifier, self.expiry, DEVICE_TOKEN_LENGTH, self.device_token, payload_length, self.payload)
+
+        # returns the enhanced format message
+        return enhanced_format_message
 
 class ApplePushResponse:
     """
