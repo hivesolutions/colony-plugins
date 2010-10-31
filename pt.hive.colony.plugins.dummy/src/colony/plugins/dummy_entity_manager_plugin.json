@@ -16,6 +16,9 @@
                 "id" : "pt.hive.colony.plugins.data.entity_manager",
                 "version" : "1.0.0"
             }, {
+                "id" : "pt.hive.colony.plugins.business.helper",
+                "version" : "1.0.0"
+            }, {
                 "id" : "pt.hive.colony.plugins.business.dummy.entity",
                 "version" : "1.0.0"
             }],
