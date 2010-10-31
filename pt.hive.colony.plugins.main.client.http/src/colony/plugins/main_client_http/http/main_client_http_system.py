@@ -158,7 +158,7 @@ DEFAULT_PORTS = (80, 443)
 DEFAULT_SOCKET_PARAMETERS = {}
 """ The default socket parameters """
 
-REDIRECT_STATUS_CODES = (301, 307)
+REDIRECT_STATUS_CODES = (301, 302, 307)
 """ The status codes for redirection """
 
 PROTOCOL_SOCKET_NAME_MAP = {HTTP_PREFIX_VALUE : "normal", HTTPS_PREFIX_VALUE : "ssl"}
