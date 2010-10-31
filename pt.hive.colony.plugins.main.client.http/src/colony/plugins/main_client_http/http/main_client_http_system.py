@@ -155,6 +155,9 @@ CONTENT_TYPE_CHARSET_VALUE = "content_type_charset"
 DEFAULT_PORTS = (80, 443)
 """ The tuple of default ports """
 
+DEFAULT_SOCKET_PARAMETERS = {}
+""" The default socket parameters """
+
 REDIRECT_STATUS_CODES = (301, 307)
 """ The status codes for redirection """
 
@@ -313,8 +316,11 @@ class HttpClient:
         # retrieves the socket name from the protocol socket map
         socket_name = PROTOCOL_SOCKET_NAME_MAP.get(protocol, None)
 
+        # retrieves the socket parameters (default)
+        socket_parameters = DEFAULT_SOCKET_PARAMETERS
+
         # retrieves the corresponding (http) client connection
-        self.client_connection = self._http_client.get_client_connection((host, port, socket_name))
+        self.client_connection = self._http_client.get_client_connection((host, port, socket_name, socket_parameters))
 
         # acquires the http client lock
         self._http_client_lock.acquire()
