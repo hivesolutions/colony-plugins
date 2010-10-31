@@ -76,16 +76,8 @@ class DummyBase4:
         self.dummy_base_4_plugin = dummy_base_4_plugin
 
     def create_test_task(self):
-        # retrieves the task manager plugin
-        task_manager_plugin = self.dummy_base_4_plugin.task_manager_plugin
-
-        # creates the test task
-        self.test_task = task_manager_plugin.create_new_task("hello_task", "hello_description", self.task_handler)
-
-        # sets the task operation handlers
-        self.test_task.set_task_pause_handler(self.pause_task_handler)
-        self.test_task.set_task_resume_handler(self.resume_task_handler)
-        self.test_task.set_task_stop_handler(self.stop_task_handler)
+        # generates the test task
+        self.test_task = self._generate_test_task()
 
         # starts the test task
         self.test_task.start([])
@@ -103,7 +95,11 @@ class DummyBase4:
         self.test_task.stop([])
 
     def generate_test_event(self):
-        self.dummy_base_4_plugin.generate_event("task_information_changed.new_task", [])
+        # creates the test (dummy) task
+        test_dummy_task = DummyTask(-1, "test_dummy_task", "test_dummy_task_description")
+
+        # generates the event to start the test task
+        self.dummy_base_4_plugin.generate_event("task_information_changed.new_task", [test_dummy_task])
 
     def task_handler(self, task, args):
         # starts the counter value
@@ -148,3 +144,48 @@ class DummyBase4:
 
     def stop_task_handler(self, args):
         self.dummy_base_4_plugin.debug("Task stopped")
+
+    def _generate_test_task(self):
+        # retrieves the task manager plugin
+        task_manager_plugin = self.dummy_base_4_plugin.task_manager_plugin
+
+        # creates the test task
+        test_task = task_manager_plugin.create_new_task("test_task", "test_task_description", self.task_handler)
+
+        # sets the task operation handlers
+        test_task.set_task_pause_handler(self.pause_task_handler)
+        test_task.set_task_resume_handler(self.resume_task_handler)
+        test_task.set_task_stop_handler(self.stop_task_handler)
+
+        # returns the test task
+        return test_task
+
+class DummyTask:
+    """
+    The dummy task class.
+    """
+
+    id = None
+    """ The id of the task """
+
+    name = None
+    """ The name of the task """
+
+    description = None
+    """ The description of the task """
+
+    def __init__(self, id, name, description):
+        """
+        Constructor of the class.
+
+        @type id: int
+        @param id: The id of the task.
+        @type name: String
+        @param name: The name of the task.
+        @type name: description
+        @param name: The description of the task.
+        """
+
+        self.id = id
+        self.name = name
+        self.description = description
