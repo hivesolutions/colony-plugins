@@ -290,7 +290,7 @@ class SmtpClient:
         """
         Retrieves the response from the sent request.
 
-        @rtype: SmtpRequest
+        @type: SmtpRequest
         @return: The request that originated the response.
         @type session: SmtpSession
         @param session: The current smtp session.

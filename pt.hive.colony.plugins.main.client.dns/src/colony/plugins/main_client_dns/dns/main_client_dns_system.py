@@ -219,7 +219,7 @@ class DnsClient:
         """
         Retrieves the response from the sent request.
 
-        @rtype: DnsRequest
+        @type: DnsRequest
         @return: The request that originated the response.
         @type response_timeout: int
         @param response_timeout: The timeout for the response retrieval.
