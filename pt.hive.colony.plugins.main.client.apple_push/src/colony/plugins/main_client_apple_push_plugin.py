@@ -54,14 +54,14 @@ class MainClientApplePushPlugin(colony.base.plugin_system.Plugin):
     loading_type = colony.base.plugin_system.EAGER_LOADING_TYPE
     platforms = [colony.base.plugin_system.CPYTHON_ENVIRONMENT,
                  colony.base.plugin_system.JYTHON_ENVIRONMENT]
-    attributes = {"build_automation_file_path" : "$base{plugin_directory}/main_client_apple_push/apple_pusg/resources/baf.xml"}
+    attributes = {"build_automation_file_path" : "$base{plugin_directory}/main_client_apple_push/apple_push/resources/baf.xml"}
     capabilities = ["client.apple_push", "build_automation_item"]
     capabilities_allowed = []
     dependencies = [colony.base.plugin_system.PluginDependency(
                     "pt.hive.colony.plugins.main.client.utils", "1.0.0")]
     events_handled = []
     events_registrable = []
-    main_modules = ["main_client_apple_push.apple_push.main_client_apple_push_exceptions", "main_client_apple_push.apple_push.main_client_apple_push_system"]
+    main_modules = ["main_client_apple_push.apple_push.main_client_apple_push_structures", "main_client_apple_push.apple_push.main_client_apple_push_system"]
 
     main_client_apple_push = None
 
