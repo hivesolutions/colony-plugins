@@ -37,7 +37,7 @@
         <version>1.0.0</version>
         <type>colony</type>
         <name>Apple Push Client Main Plugin</name>
-        <description>Apple Push Client Main Plugin</description>
+        <description>The plugin that offers the apple push client</description>
         <url>http://www.hive.pt</url>
     </artifact>
     <build>
