@@ -253,16 +253,20 @@ class WebMvcCommunicationPushAppleController:
             # opens the apple push client
             apple_push_client.open({})
 
-            APNS_SERVER_HOSTNAME = "gateway.sandbox.push.apple.com"
-            APNS_SERVER_PORT = 2195
+            # retrieves the apple push configuration map
+            apple_push_configuration_map = self.web_mvc_communication_push_apple.apple_push_configuration_map
 
-            APNS_SSL_COMBINED_KEY_CERTIFICATE_FILE = "c:/apple_development_push_services_lmartinho.pem"
+            # retrieves the apple push configuration values
+            hostname = apple_push_configuration_map.get("hostname")
+            port = apple_push_configuration_map.get("port")
+            certificate_file_path = apple_push_configuration_map.get("certificate_file_path")
 
+            # creates the socket parameters map
             socket_parameters = {"key_file_path" : None,
-                                 "certificate_file_path" : APNS_SSL_COMBINED_KEY_CERTIFICATE_FILE}
+                                 "certificate_file_path" : certificate_file_path}
 
             try:
-                apple_push_client.notify_device(APNS_SERVER_HOSTNAME, APNS_SERVER_PORT, device_id, payload_serialized_encoded, socket_parameters = socket_parameters)
+                apple_push_client.notify_device(hostname, port, device_id, payload_serialized_encoded, socket_parameters = socket_parameters)
             finally:
                 # closes the apple push client
                 apple_push_client.close({})

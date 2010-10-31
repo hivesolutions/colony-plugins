@@ -50,6 +50,9 @@ class WebMvcCommunicationPushApple:
     web_mvc_communication_push_apple_controller = None
     """ The web mvc communication push apple controller """
 
+    apple_push_configuration_map = {}
+    """ The apple push configuration map """
+
     def __init__(self, web_mvc_communication_push_apple_plugin):
         """
         Constructor of the class.
@@ -59,6 +62,8 @@ class WebMvcCommunicationPushApple:
         """
 
         self.web_mvc_communication_push_apple_plugin = web_mvc_communication_push_apple_plugin
+
+        self.apple_push_configuration_map = {}
 
     def load_components(self):
         """
@@ -115,3 +120,17 @@ class WebMvcCommunicationPushApple:
         """
 
         return ()
+
+    def set_configuration_property(self, configuration_propery):
+        # retrieves the configuration
+        configuration = configuration_propery.get_data()
+
+        # retrieves the apple push configuration map
+        apple_push_configuration_map = configuration["apple_push_configuration"]
+
+        # sets the apple push configuration map
+        self.apple_push_configuration_map = apple_push_configuration_map
+
+    def unset_configuration_property(self):
+        # sets the apple push configuration map
+        self.apple_push_configuration_map = {}

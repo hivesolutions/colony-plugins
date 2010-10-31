@@ -103,6 +103,10 @@ class WebMvcCommunicationPushApplePlugin(colony.base.plugin_system.Plugin):
     def dependency_injected(self, plugin):
         colony.base.plugin_system.Plugin.dependency_injected(self, plugin)
 
+    @colony.base.decorators.set_configuration_property("pt.hive.colony.plugins.web.mvc.communication.push_apple", "1.0.0")
+    def set_configuration_property(self, property_name, property):
+        colony.base.plugin_system.Plugin.set_configuration_property(self, property_name, property)
+
     def get_patterns(self):
         """
         Retrieves the tuple of regular expressions to be used as patterns,
@@ -164,10 +168,17 @@ class WebMvcCommunicationPushApplePlugin(colony.base.plugin_system.Plugin):
     def set_main_client_apple_push_plugin(self, main_client_apple_push_plugin):
         self.main_client_apple_push_plugin = main_client_apple_push_plugin
 
-
     def get_json_plugin(self):
         return self.json_plugin
 
     @colony.base.decorators.plugin_inject("pt.hive.colony.plugins.misc.json")
     def set_json_plugin(self, json_plugin):
         self.json_plugin = json_plugin
+
+    @colony.base.decorators.set_configuration_property_method("configuration")
+    def configuration_set_configuration_property(self, property_name, property):
+        self.web_mvc_communication_push_apple.set_configuration_property(property)
+
+    @colony.base.decorators.unset_configuration_property_method("configuration")
+    def configuration_unset_configuration_property(self, property_name):
+        self.web_mvc_communication_push_apple.unset_configuration_property()
