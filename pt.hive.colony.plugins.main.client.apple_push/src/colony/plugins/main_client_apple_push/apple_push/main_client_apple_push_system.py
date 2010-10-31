@@ -37,15 +37,14 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-import struct
 import threading
 
-import colony.libs.string_buffer_util
+import main_client_apple_push_structures
 
-DEFAULT_PORT = 53
+DEFAULT_PORT = 2196
 """ The default port """
 
-DEFAULT_SOCKET_NAME = "datagram"
+DEFAULT_SOCKET_NAME = "ssl"
 """ The default socket name """
 
 REQUEST_TIMEOUT = 10
@@ -54,32 +53,8 @@ REQUEST_TIMEOUT = 10
 RESPONSE_TIMEOUT = 10
 """ The response timeout """
 
-MESSAGE_MAXIMUM_SIZE = 512
+MESSAGE_MAXIMUM_SIZE = 6
 """ The message maximum size """
-
-MESSAGE_HEADER_SIZE = 12
-""" The size of the apple push message header (in bytes) """
-
-NORMAL_REQUEST_VALUE = 0x0100
-""" The normal request value """
-
-TYPES_MAP = {"A" : 0x01, "NS" : 0x02, "MD" : 0x03, "MF" : 0x04, "CNAME" : 0x05,
-             "SOA" : 0x06, "MB" : 0x07, "MG" : 0x08, "MR" : 0x09, "NULL" : 0x0a,
-             "WKS" : 0x0b, "PTR" : 0x0c, "HINFO" : 0x0d, "MINFO" : 0x0e, "MX" : 0x0f,
-             "TXT" : 0x10}
-""" The map associating the type string with the integer value """
-
-TYPES_REVERSE_MAP = {0x01 : "A", 0x02 : "NS", 0x03 : "MD", 0x04 : "MF", 0x05 : "CNAME",
-                     0x06 : "SOA", 0x07 : "MB", 0x08 : "MG", 0x09 : "MR", 0x0a : "NULL",
-                     0x0b : "WKS", 0x0c : "PTR", 0x0d : "HINFO", 0x0e : "MINFO", 0x0f : "MX",
-                     0x10 : "TXT"}
-""" The map associating the type integer with the string value """
-
-CLASSES_MAP = {"IN" : 0x01, "CS" : 0x02, "CH" : 0x03, "HS" : 0x04}
-""" The map associating the class string with the integer value """
-
-CLASSES_REVERSE_MAP = {0x01 : "IN", 0x02 : "CS", 0x03 : "CH", 0x04 : "HS"}
-""" The map associating the class integer with the string value """
 
 class MainClientApplePush:
     """
@@ -128,9 +103,6 @@ class ApplePushClient:
     main_client_apple_push = None
     """ The main client apple push object """
 
-    current_transaction_id = 0x0000
-    """ The current transaction id """
-
     client_connection = None
     """ The current client connection """
 
@@ -166,45 +138,35 @@ class ApplePushClient:
         # stops the apple push client
         self._apple_push_client.stop_client()
 
-    def resolve_queries(self, host, port, queries, parameters = {}, socket_name = DEFAULT_SOCKET_NAME):
-        # retrieves the corresponding (apple push) client connection
-        self.client_connection = self._apple_push_client.get_client_connection((host, port, socket_name))
+    def notify_device(self, device_token, payload, identifier = None, expiry = None):
+        # in case both the identifier and the expiry
+        # values are defined the type of message is enhanced
+        if identifier and expiry:
+            # creates the enhanced notification message
+            notification_message = main_client_apple_push_structures.EnhancedNotificationMessage(device_token, payload, identifier, expiry)
+        # otherwise it must be simple
+        else:
+            # creates the simple notification message
+            notification_message = main_client_apple_push_structures.SimpleNotificationMessage(device_token, payload)
 
-        # acquires the apple push client lock
-        self._apple_push_client_lock.acquire()
+        # sends the request for the notification message
+        self.send_request(notification_message)
 
-        try:
-            # sends the request for the given queries and
-            # parameters, and retrieves the request
-            request = self.send_request(queries, parameters)
+    def obtain_feedback(self, device_token):
+        pass
 
-            # retrieves the response
-            response = self.retrieve_response(request)
-        finally:
-            # releases the apple push client lock
-            self._apple_push_client_lock.release()
-
-        # returns the response
-        return response
-
-    def send_request(self, queries, parameters):
+    def send_request(self, notification_message):
         """
         Sends the request for the given parameters.
 
-        @type queries: List
-        @param queries: The list of queries to be sent.
-        @type parameters: Dictionary
-        @param parameters: The parameters to the request.
+        @type notification_message: NotificationMessage
+        @param notification_message: The notification message to be sent.
         @rtype: ApplePushRequest
-        @return: The sent request for the given parameters..
+        @return: The sent request for the given parameters.
         """
 
-        # generates and retrieves a new transaction id
-        transaction_id = self._get_transaction_id()
-
-        # creates the apple push request with the the transaction id,
-        # the queries and the parameters
-        request = ApplePushRequest(transaction_id, queries, parameters)
+        # creates the apple push request with the the notification message
+        request = ApplePushRequest(notification_message)
 
         # retrieves the result value from the request
         result_value = request.get_result()
@@ -239,26 +201,6 @@ class ApplePushClient:
         # returns the response
         return response
 
-    def _get_transaction_id(self):
-        """
-        Retrieves the transaction id, incrementing the
-        current transaction id counter.
-
-        @rtype: int
-        @return: The newly generated transaction id.
-        """
-
-        # in case the limit is reached
-        if self.current_transaction_id == 0xffff:
-            # resets the current transaction id
-            self.current_transaction_id = 0x0000
-
-        # increments the current transaction id
-        self.current_transaction_id += 1
-
-        # returns the current transaction id
-        return self.current_transaction_id
-
     def _generate_client_parameters(self, parameters):
         """
         Retrieves the client parameters map from the base parameters
@@ -284,41 +226,18 @@ class ApplePushRequest:
     The apple push request class.
     """
 
-    command = None
-    """ The request command """
+    notification_message = None
+    """ The notification message for the request """
 
-    device_token = None
-    """ The device token identifier """
-
-    payload = None
-    """ The payload (contents of the request) """
-
-    identifier = None
-    """ The request (notification) identifier """
-
-    expiry = None
-    """ The epoch time for expiration """
-
-    def __init__(self, command, device_token, payload, identifier = None, expiry = None):
+    def __init__(self, notification_message):
         """
         Constructor of the class.
 
-        @type command: int
-        @param command: The request command.
-        @type device_token: String
-        @param device_token: The The device token identifier.
-        @type payload: String
-        @param payload: The payload (contents of the request).
-        @type identifier: int
-        @param identifier: The request (notification) identifier.
-        @type expiry: int
-        @param expiry: The epoch time for expiration.
+        @type notification_message: int
+        @param notification_message: The notification message for the request.
         """
 
-        self.command = command
-        self.device_token = device_token
-        self.payload = payload
-        self.identifier = identifier
+        self.notification_message = notification_message
 
     def get_result(self):
         """
@@ -330,65 +249,7 @@ class ApplePushRequest:
         the request.
         """
 
-        SIMPLE_NOTIFICATION_FORMAT_COMMAND = 0
-        ENHANCED_NOTIFICATION_FORMAT_COMMAND = 1
-
-        if self.command == SIMPLE_NOTIFICATION_FORMAT_COMMAND:
-            return self._serialize_simple_message()
-        elif self.command == ENHANCED_NOTIFICATION_FORMAT_COMMAND:
-            return self._serialize_enhanced_message()
-
-    def _serialize_simple_message(self):
-        """
-        Serializes the current request using the simple
-        message format
-
-        @rtype: String
-        @return: The string containing the serialized enhanced message.
-        """
-
-        SIMPLE_NOTIFICATION_FORMAT_COMMAND = 0
-        SIMPLE_NOTIFICATION_FORMAT_TEMPLATE = "!BH32sH%ds"
-
-        DEVICE_TOKEN_LENGTH = 32
-
-        # retrieves the payload length
-        payload_length = len(self.payload)
-
-        # creates the format for the message using the payload simple format template
-        simple_notification_format = SIMPLE_NOTIFICATION_FORMAT_TEMPLATE % payload_length
-
-        # creates the simple format message
-        simple_format_message = struct.pack(simple_notification_format, SIMPLE_NOTIFICATION_FORMAT_COMMAND, DEVICE_TOKEN_LENGTH, self.device_token, payload_length, self.payload)
-
-        # returns the simple format message
-        return simple_format_message
-
-    def _serialize_enhanced_message(self):
-        """
-        Serializes the current request using the enhanced
-        message format
-
-        @rtype: String
-        @return: The string containing the serialized simple message.
-        """
-
-        ENHANCED_NOTIFICATION_FORMAT_COMMAND = 1
-        ENHANCED_NOTIFICATION_FORMAT_TEMPLATE = "!BiiH32sH%ds"
-
-        DEVICE_TOKEN_LENGTH = 32
-
-        # retrieves the payload length
-        payload_length = len(self.payload)
-
-        # creates the format for the message using the payload enhanced format template
-        enhanced_notification_format = ENHANCED_NOTIFICATION_FORMAT_TEMPLATE % payload_length
-
-        # creates the enhanced format message
-        enhanced_format_message = struct.pack(enhanced_notification_format, ENHANCED_NOTIFICATION_FORMAT_COMMAND, self.identifier, self.expiry, DEVICE_TOKEN_LENGTH, self.device_token, payload_length, self.payload)
-
-        # returns the enhanced format message
-        return enhanced_format_message
+        return self.notification_message.get_value()
 
 class ApplePushResponse:
     """
@@ -436,242 +297,4 @@ class ApplePushResponse:
         self.parameters = {}
 
     def process_data(self, data):
-        # retrieves the message header from the data
-        message_header = struct.unpack_from("!HHHHHH", data)
-
-        # unpacks the message header retrieving the transaction id, the flags, the number of queries
-        # the number of authority resource records and the number of additional resource records
-        transaction_id, flags, queries, answers, authority_resource_records, additional_resource_records = message_header
-
-        # sets the transaction id and the flags
-        self.transaction_id = transaction_id
-        self.flags = flags
-
-        # sets the current index as the
-        # message header size (offset)
-        current_index = MESSAGE_HEADER_SIZE
-
-        # iterates over the number of queries
-        for _index in range(queries):
-            # retrieves the query and the current index
-            query, current_index = self._get_query(data, current_index)
-
-            # adds the query to the list of queries
-            self.queries.append(query)
-
-        # iterates over the number of answers
-        for _index in range(answers):
-            # retrieves the answer and the current index
-            answer, current_index = self._get_answer(data, current_index)
-
-            # adds the answer to the list of answers
-            self.answers.append(answer)
-
-        # iterates over the number of authority resource records
-        for _index in range(authority_resource_records):
-            # retrieves the authority resource record and the current index
-            authority_resource_record, current_index = self._get_answer(data, current_index)
-
-            # adds the authority resource record to the list of authority resource records
-            self.authority_resource_records.append(authority_resource_record)
-
-        # iterates over the number of additional resource records
-        for _index in range(additional_resource_records):
-            # retrieves the additional resource record and the current index
-            additional_resource_record, current_index = self._get_answer(data, current_index)
-
-            # adds the additional resource record to the list of additional resource records
-            self.additional_resource_records.append(additional_resource_record)
-
-    def _get_query(self, data, current_index):
-        # retrieves the name for the data and current index
-        name_list, current_index = self._get_name(data, current_index)
-
-        # creates the query name by joining the name list
-        query_name = ".".join(name_list)
-
-        # retrieves the query type and the query class integer values
-        query_type_integer, query_class_integer = struct.unpack_from("!HH", data, current_index)
-
-        # increments the current index with four bytes
-        current_index += 4
-
-        # retrieves the query type (string value)
-        query_type = TYPES_REVERSE_MAP[query_type_integer]
-
-        # retrieves the query class (string value)
-        query_class = CLASSES_REVERSE_MAP[query_class_integer]
-
-        # creates the query tuple with the name, type and class of the query
-        query = (query_name, query_type, query_class)
-
-        return (query, current_index)
-
-    def _get_answer(self, data, current_index):
-        # retrieves the name for the data and current index
-        answer_name, current_index = self._get_name_joined(data, current_index)
-
-        # retrieves the answer type, answer class, time to live
-        # and data length integer values
-        answer_type_integer, answer_class_integer, answer_time_to_live, answer_data_length = struct.unpack_from("!HHIH", data, current_index)
-
-        # increments the current index with ten bytes
-        current_index += 10
-
-        # processes the answer data from the answer type and the answer length
-        answer_data = self._process_answer_data(data, current_index, answer_type_integer, answer_data_length)
-
-        # increments the current index with the answer data length
-        current_index += answer_data_length
-
-        # retrieves the answer type (string value)
-        answer_type = TYPES_REVERSE_MAP[answer_type_integer]
-
-        # retrieves the answer class (string value)
-        answer_class = CLASSES_REVERSE_MAP[answer_class_integer]
-
-        # creates the answer tuple with the name, type, class,
-        # time to live and data of the answer
-        answer = (answer_name, answer_type, answer_class, answer_time_to_live, answer_data)
-
-        return (answer, current_index)
-
-    def _process_answer_data(self, data, current_index, answer_type_integer, answer_data_length):
-        """
-        Processes the answer data according to the apple push protocol
-        specification.
-        The answer data is processed converting it into the most
-        appropriate python representation.
-
-        @type data: String
-        @param data: The data buffer to be used.
-        @type current_index: int
-        @param current_index: The index to be used as base index.
-        @type answer_type_integer: int
-        @param answer_type_integer: The answer type in integer mode.
-        @type answer_data_length: int
-        @param answer_data_length: The length of the answer data.
-        @rtype: Object
-        @return: The "processed" answer data.
-        """
-
-        # in case the answer is of type ns or cname
-        if answer_type_integer in (0x02, 0x05):
-            # retrieves the answer data as a joined name
-            answer_data, _current_index = self._get_name_joined(data, current_index)
-        # in case the answer is of type mx
-        elif answer_type_integer in (0x0f,):
-            # retrieves the answer data preference
-            answer_data_preference, = struct.unpack_from("!H", data, current_index)
-
-            # retrieves the answer data name as a joined name
-            answer_data_name, _current_index = self._get_name_joined(data, current_index + 2)
-
-            # sets the answer data tuple
-            answer_data = (answer_data_preference, answer_data_name)
-        else:
-            # in case the is ipv4 (four bytes)
-            if answer_data_length == 4:
-                raw_answer_data_bytes = struct.unpack_from("!" + str(answer_data_length) + "B", data, current_index)
-                raw_answer_data_string = [str(value) for value in raw_answer_data_bytes]
-                answer_data = ".".join(raw_answer_data_string)
-            # in case the is ipv6 (sixteen bytes)
-            elif answer_data_length == 16:
-                raw_answer_data_shorts = struct.unpack_from("!" + str(answer_data_length / 2) + "H", data, current_index)
-                raw_answer_data_string = ["%h" % value for value in raw_answer_data_shorts]
-                answer_data = ":".join(raw_answer_data_string)
-            else:
-                # sets the answer data as the raw answer data
-                answer_data = data[current_index:current_index + answer_data_length]
-
-        # returns the answer data
-        return answer_data
-
-    def _get_name_joined(self, data, current_index):
-        """
-        Retrieves the name "encoded" according to the apple push
-        specification in the given index.
-        This method joins the resulting list in a string
-        separated with dots.
-
-        @type data: String
-        @param data: The data buffer to be used.
-        @type current_index: int
-        @param current_index: The index to be used as base index.
-        @rtype: Tuple
-        @return: The "decoded" name (joined in with dots) in the given index
-        and the current index encoded in a tuple.
-        """
-
-        # retrieves the name list and the "new" current index
-        name_list, current_index = self._get_name(data, current_index)
-
-        # joins the name with dots
-        name_joined = ".".join(name_list)
-
-        return (name_joined, current_index)
-
-    def _get_name(self, data, current_index):
-        """
-        Retrieves the name "encoded" according to the apple_pushle push
-        specification in the given index.
-
-        @type data: String
-        @param data: The data buffer to be used.
-        @type current_index: int
-        @param current_index: The index to be used as base index.
-        @rtype: Tuple
-        @return: The "decoded" name (in list) in the given index
-        and the current index encoded in a tuple.
-        """
-
-        # creates the name items list
-        name_items = []
-
-        # iterates while the current data item is
-        # not end of string
-        while not data[current_index] == "\0":
-            # retrieves the length of the partial name name
-            partial_name_length, = struct.unpack_from("!B", data, current_index)
-
-            # checks if the name already exists (according to the message compression)
-            existing_resource = partial_name_length & 0xc0 == 0xc0
-
-            # in case the resource exists
-            if existing_resource:
-                # sets the partial name length as the
-                # first offset byte
-                first_offset_byte = partial_name_length
-
-                # unpacks the second offset byte from the data
-                second_offset_byte, = struct.unpack_from("!B", data, current_index + 1)
-
-                # calculates the offset index
-                offset_index = ((first_offset_byte & 0x3f) << 8) + second_offset_byte
-
-                # updates the current index with the two bytes
-                current_index += 2
-
-                # returns the previous (cached) name items list
-                extra_name_items, _current_index = self._get_name(data, offset_index)
-
-                # extends the current name items with the previous (cached) name items
-                name_items.extend(extra_name_items)
-
-                return (name_items, current_index)
-            else:
-                # retrieves the partial name from the data
-                partial_name = data[current_index + 1:current_index + partial_name_length + 1]
-
-                # adds the partial name to the name items list
-                name_items.append(partial_name)
-
-                # updates the current index with the partial name length plus one
-                current_index += partial_name_length + 1
-
-        # increments the current index with the
-        # end string byte
-        current_index += 1
-
-        # returns the name items list
-        return (name_items, current_index)
+        pass
