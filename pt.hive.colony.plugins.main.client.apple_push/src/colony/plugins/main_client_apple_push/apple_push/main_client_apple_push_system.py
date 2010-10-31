@@ -41,11 +41,11 @@ import threading
 
 import main_client_apple_push_structures
 
-DEFAULT_PORT = 2196
-""" The default port """
-
 DEFAULT_SOCKET_NAME = "ssl"
 """ The default socket name """
+
+DEFAULT_SOCKET_PARAMETERS = {}
+""" The default socket parameters """
 
 REQUEST_TIMEOUT = 10
 """ The request timeout """
@@ -138,36 +138,56 @@ class ApplePushClient:
         # stops the apple push client
         self._apple_push_client.stop_client()
 
-    def notify_device(self, device_token, payload, identifier = None, expiry = None):
-        # in case both the identifier and the expiry
-        # values are defined the type of message is enhanced
-        if identifier and expiry:
-            # creates the enhanced notification message
-            notification_message = main_client_apple_push_structures.EnhancedNotificationMessage(device_token, payload, identifier, expiry)
-        # otherwise it must be simple
-        else:
-            # creates the simple notification message
-            notification_message = main_client_apple_push_structures.SimpleNotificationMessage(device_token, payload)
+    def notify_device(self, host, port, device_token, payload, identifier = None, expiry = None, socket_name = DEFAULT_SOCKET_NAME, socket_parameters = DEFAULT_SOCKET_PARAMETERS):
+        # retrieves the corresponding (apple push) client connection
+        self.client_connection = self._apple_push_client.get_client_connection((host, port, socket_name, socket_parameters))
 
-        # sends the request for the notification message
-        request = self.send_request(notification_message)
+        # acquires the apple push client lock
+        self._apple_push_client_lock.acquire()
 
-        # creates the error notification response
-        notification_response = main_client_apple_push_structures.ErrorNotificationResponse(device_token)
+        try:
+            # in case both the identifier and the expiry
+            # values are defined the type of message is enhanced
+            if identifier and expiry:
+                # creates the enhanced notification message
+                notification_message = main_client_apple_push_structures.EnhancedNotificationMessage(device_token, payload, identifier, expiry)
+            # otherwise it must be simple
+            else:
+                # creates the simple notification message
+                notification_message = main_client_apple_push_structures.SimpleNotificationMessage(device_token, payload)
 
-        # retrieves the response for the given request, notification
-        # response and size
-        response = self.retrieve_response(request, notification_response, 6)
+            # sends the request for the notification message
+            request = self.send_request(notification_message)
+
+            # creates the error notification response
+            notification_response = main_client_apple_push_structures.ErrorNotificationResponse(device_token)
+
+            # retrieves the response for the given request, notification
+            # response and size
+            response = self.retrieve_response(request, notification_response, 6)
+        finally:
+            # releases the apple push client lock
+            self._apple_push_client_lock.release()
 
         # returns the response
         return response
 
-    def obtain_feedback(self, device_token):
-        # creates the error notification response
-        notification_response = main_client_apple_push_structures.ErrorNotificationResponse(device_token)
+    def obtain_feedback(self, host, port, device_token, socket_name = DEFAULT_SOCKET_NAME, socket_parameters = DEFAULT_SOCKET_PARAMETERS):
+        # retrieves the corresponding (apple push) client connection
+        self.client_connection = self._apple_push_client.get_client_connection((host, port, socket_name, socket_parameters))
 
-        # retrieves the response for the given notification response and size
-        response = self.retrieve_response(None, notification_response, 38)
+        # acquires the apple push client lock
+        self._apple_push_client_lock.acquire()
+
+        try:
+            # creates the error notification response
+            notification_response = main_client_apple_push_structures.ErrorNotificationResponse(device_token)
+
+            # retrieves the response for the given notification response and size
+            response = self.retrieve_response(None, notification_response, 38)
+        finally:
+            # releases the apple push client lock
+            self._apple_push_client_lock.release()
 
         # returns the response
         return response
