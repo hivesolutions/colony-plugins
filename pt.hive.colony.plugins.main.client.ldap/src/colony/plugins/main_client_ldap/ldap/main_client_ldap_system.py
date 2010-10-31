@@ -50,6 +50,9 @@ DEFAULT_PORT = 389
 DEFAULT_SOCKET_NAME = "normal"
 """ The default socket name """
 
+DEFAULT_SOCKET_PARAMETERS = {}
+""" The default socket parameters """
+
 DEFAULT_PROTOCOL_VERSION = 3
 """ The default protocol version """
 
@@ -230,9 +233,9 @@ class LdapClient:
         # stops the ldap client
         self._ldap_client.stop_client()
 
-    def connect(self, host, port = DEFAULT_PORT, socket_name = DEFAULT_SOCKET_NAME, name = "", password = ""):
+    def connect(self, host, port = DEFAULT_PORT, socket_name = DEFAULT_SOCKET_NAME, socket_parameters = DEFAULT_SOCKET_PARAMETERS, name = "", password = ""):
         # retrieves the corresponding (ldap) client connection
-        self.client_connection = self._ldap_client.get_client_connection((host, port, socket_name))
+        self.client_connection = self._ldap_client.get_client_connection((host, port, socket_name, socket_parameters))
 
         # acquires the ldap client lock
         self._ldap_client_lock.acquire()
