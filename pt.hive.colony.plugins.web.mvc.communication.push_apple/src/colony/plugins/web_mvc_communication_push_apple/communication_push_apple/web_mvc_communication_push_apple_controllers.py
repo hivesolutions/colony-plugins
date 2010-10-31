@@ -360,7 +360,7 @@ class WebMvcCommunicationPushAppleController:
 
     def _unregister(self, rest_request):
         # retrieves the communication push plugin
-        communication_push_plugin = self.web_mvc_communication_push_plugin.communication_push_plugin
+        communication_push_plugin = self.web_mvc_communication_push_apple_plugin.communication_push_plugin
 
         # processes the form data
         form_data_map = self.process_form_data(rest_request, DEFAULT_ENCODING)
