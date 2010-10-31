@@ -53,7 +53,7 @@ REQUEST_TIMEOUT = 10
 RESPONSE_TIMEOUT = 10
 """ The response timeout """
 
-MESSAGE_MAXIMUM_SIZE = 6
+MESSAGE_MAXIMUM_SIZE = 38
 """ The message maximum size """
 
 class MainClientApplePush:
@@ -150,10 +150,27 @@ class ApplePushClient:
             notification_message = main_client_apple_push_structures.SimpleNotificationMessage(device_token, payload)
 
         # sends the request for the notification message
-        self.send_request(notification_message)
+        request = self.send_request(notification_message)
+
+        # creates the error notification response
+        notification_response = main_client_apple_push_structures.ErrorNotificationResponse(device_token)
+
+        # retrieves the response for the given request, notification
+        # response and size
+        response = self.retrieve_response(request, notification_response, 6)
+
+        # returns the response
+        return response
 
     def obtain_feedback(self, device_token):
-        pass
+        # creates the error notification response
+        notification_response = main_client_apple_push_structures.ErrorNotificationResponse(device_token)
+
+        # retrieves the response for the given notification response and size
+        response = self.retrieve_response(None, notification_response, 38)
+
+        # returns the response
+        return response
 
     def send_request(self, notification_message):
         """
@@ -177,12 +194,16 @@ class ApplePushClient:
         # returns the request
         return request
 
-    def retrieve_response(self, request, response_timeout = None):
+    def retrieve_response(self, request, notification_response, response_size = MESSAGE_MAXIMUM_SIZE, response_timeout = None):
         """
         Retrieves the response from the sent request.
 
-        @rtype: ApplePushRequest
+        @type: ApplePushRequest
         @return: The request that originated the response.
+        @type notification_response: NotificationMessage
+        @param notification_response: The notification response to be used.
+        @type response_size: int
+        @param response_size: The size of the response.
         @type response_timeout: int
         @param response_timeout: The timeout for the response retrieval.
         @rtype: ApplePushResponse
@@ -190,10 +211,10 @@ class ApplePushClient:
         """
 
         # creates a response object
-        response = ApplePushResponse(request)
+        response = ApplePushResponse(request, notification_response)
 
         # retrieves the data
-        data = self.client_connection.retrieve_data(response_timeout, MESSAGE_MAXIMUM_SIZE)
+        data = self.client_connection.retrieve_data(response_timeout, response_size)
 
         # processes the data
         response.process_data(data)
@@ -259,42 +280,22 @@ class ApplePushResponse:
     request = None
     """ The request that originated the response """
 
-    transaction_id = None
-    """ The transaction id, identifying a unique apple push request """
+    notification_response = None
+    """ The retrieved notification response """
 
-    queries = []
-    """ The list of queries """
-
-    answers = []
-    """ The list of answers """
-
-    authority_resource_records = []
-    """ The list of authority resource records """
-
-    additional_resource_records = []
-    """ The list of additional resource records """
-
-    parameters = {}
-    """ The parameters to the apple push request """
-
-    flags = None
-    """ The flags byte """
-
-    def __init__(self, request):
+    def __init__(self, request, notification_response = None):
         """
         Constructor of the class.
 
         @type request: ApplePushRequest
         @param request: The request.
+        @type notification_response: NotificationResponse
+        @param notification_response: The retrieved notification response
         """
 
         self.request = request
-
-        self.queries = []
-        self.answers = []
-        self.authority_resource_records = []
-        self.additional_resource_records = []
-        self.parameters = {}
+        self.notification_response = notification_response
 
     def process_data(self, data):
-        pass
+        # process the value using the notification response
+        self.notification_response.process_value(data)

@@ -115,7 +115,12 @@ class EnhancedNotificationMessage:
         # returns the enhanced format message
         return enhanced_format_message
 
-class ErrorResponse:
+class NotificationResponse:
+
+    def __init__(self):
+        pass
+
+class ErrorNotificationResponse(NotificationResponse):
 
     command = None
 
@@ -124,7 +129,7 @@ class ErrorResponse:
     identifier = None
 
     def __init__(self):
-        pass
+        NotificationResponse.__init__(self)
 
     def process_value(self, value):
         # creates the error response format
@@ -141,14 +146,14 @@ class ErrorResponse:
         # returns the self value
         return self
 
-class FeedbackResponse:
+class FeedbackNotificationResponse(NotificationResponse):
 
     timestamp = None
 
     device_token = None
 
     def __init__(self):
-        pass
+        NotificationResponse.__init__(self)
 
     def process_value(self, value):
         # creates the feedback response format
