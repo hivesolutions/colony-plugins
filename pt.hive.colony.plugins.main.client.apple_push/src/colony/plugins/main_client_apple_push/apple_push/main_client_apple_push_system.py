@@ -39,6 +39,8 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 import threading
 
+import colony.libs.string_buffer_util
+
 import main_client_apple_push_structures
 
 DEFAULT_SOCKET_NAME = "ssl"
@@ -157,6 +159,30 @@ class ApplePushClient:
                 notification_message = main_client_apple_push_structures.SimpleNotificationMessage(device_token, payload)
 
             # sends the request for the notification message
+            self.send_request(notification_message)
+        finally:
+            # releases the apple push client lock
+            self._apple_push_client_lock.release()
+
+    def notify_device_error(self, host, port, device_token, payload, identifier = None, expiry = None, socket_name = DEFAULT_SOCKET_NAME, socket_parameters = DEFAULT_SOCKET_PARAMETERS):
+        # retrieves the corresponding (apple push) client connection
+        self.client_connection = self._apple_push_client.get_client_connection((host, port, socket_name, socket_parameters))
+
+        # acquires the apple push client lock
+        self._apple_push_client_lock.acquire()
+
+        try:
+            # in case both the identifier and the expiry
+            # values are defined the type of message is enhanced
+            if identifier and expiry:
+                # creates the enhanced notification message
+                notification_message = main_client_apple_push_structures.EnhancedNotificationMessage(device_token, payload, identifier, expiry)
+            # otherwise it must be simple
+            else:
+                # creates the simple notification message
+                notification_message = main_client_apple_push_structures.SimpleNotificationMessage(device_token, payload)
+
+            # sends the request for the notification message
             request = self.send_request(notification_message)
 
             # creates the error notification response
@@ -172,7 +198,7 @@ class ApplePushClient:
         # returns the response
         return response
 
-    def obtain_feedback(self, host, port, device_token, socket_name = DEFAULT_SOCKET_NAME, socket_parameters = DEFAULT_SOCKET_PARAMETERS):
+    def obtain_feedback(self, host, port, socket_name = DEFAULT_SOCKET_NAME, socket_parameters = DEFAULT_SOCKET_PARAMETERS):
         # retrieves the corresponding (apple push) client connection
         self.client_connection = self._apple_push_client.get_client_connection((host, port, socket_name, socket_parameters))
 
@@ -181,10 +207,10 @@ class ApplePushClient:
 
         try:
             # creates the error notification response
-            notification_response = main_client_apple_push_structures.ErrorNotificationResponse(device_token)
+            notification_response = main_client_apple_push_structures.FeedbackNotificationResponse()
 
             # retrieves the response for the given notification response and size
-            response = self.retrieve_response(None, notification_response, 38)
+            response = self.retrieve_response(None, notification_response, -1)
         finally:
             # releases the apple push client lock
             self._apple_push_client_lock.release()
@@ -233,11 +259,25 @@ class ApplePushClient:
         # creates a response object
         response = ApplePushResponse(request, notification_response)
 
-        # retrieves the data
-        data = self.client_connection.retrieve_data(response_timeout, response_size)
+        # creates a string buffer to hold the data
+        data_buffer = colony.libs.string_buffer_util.StringBuffer()
 
-        # processes the data
-        response.process_data(data)
+        try:
+            # retrieves the data
+            data = self.client_connection.retrieve_data(response_timeout, response_size)
+
+            # writes the data to the data buffer
+            data_buffer.write(data)
+        except:
+            # avoids the exception because we should be aware
+            # of timeouts in the processing of the data
+            pass
+
+        # retrieves the complete data from the data buffer
+        complete_data = data_buffer.get_value()
+
+        # processes the (complete) data
+        response.process_data(complete_data)
 
         # returns the response
         return response

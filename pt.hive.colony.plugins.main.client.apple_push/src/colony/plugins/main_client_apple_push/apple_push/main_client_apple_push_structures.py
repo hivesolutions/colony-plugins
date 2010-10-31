@@ -62,24 +62,62 @@ FEEDBACK_RESPONSE_FORMAT_TEMPLATE = "!IH32s"
 """ The feedback response format template """
 
 class NotificationMessage:
+    """
+    The notification message class.
+    """
 
     command = None
+    """ The command """
 
     device_token = None
+    """ The device token """
 
     payload = None
+    """ The payload """
 
     def __init__(self, command, device_token, payload):
+        """
+        Constructor of the class.
+
+        @type command: int
+        @param command: The command.
+        @type device_token: String
+        @param device_token: The device token.
+        @type payload: String
+        @param payload: The payload.
+        """
+
         self.command = command
         self.device_token = device_token
         self.payload = payload
 
 class SimpleNotificationMessage(NotificationMessage):
+    """
+    The simple notification message class.
+    """
 
     def __init__(self, device_token, payload):
+        """
+        Constructor of the class.
+
+        @type device_token: String
+        @param device_token: The device token.
+        @type payload: String
+        @param payload: The payload.
+        """
+
         NotificationMessage.__init__(self, SIMPLE_NOTIFICATION_FORMAT_COMMAND, device_token, payload)
 
     def get_value(self):
+        """
+        Retrieves the value representing the structure
+        in the target protocol.
+
+        @rtype: String
+        @return: The value representing the structure in
+        the target protocol.
+        """
+
         # retrieves the payload length
         payload_length = len(self.payload)
 
@@ -96,17 +134,44 @@ class SimpleNotificationMessage(NotificationMessage):
         return simple_format_message
 
 class EnhancedNotificationMessage:
+    """
+    The enhanced notification message class.
+    """
 
     identifier = None
+    """ The identifier """
 
     expiry = None
+    """ The expiry """
 
     def __init__(self, device_token, payload, identifier, expiry):
+        """
+        Constructor of the class.
+
+        @type device_token: String
+        @param device_token: The device token.
+        @type payload: String
+        @param payload: The payload.
+        @type identifier: int
+        @param identifier: The identifier.
+        @type expiry: int
+        @param expiry: The expirty.
+        """
+
         NotificationMessage.__init__(self, SIMPLE_NOTIFICATION_FORMAT_COMMAND, device_token, payload)
         self.identifier = identifier
         self.expiry = expiry
 
     def get_value(self):
+        """
+        Retrieves the value representing the structure
+        in the target protocol.
+
+        @rtype: String
+        @return: The value representing the structure in
+        the target protocol.
+        """
+
         # retrieves the payload length
         payload_length = len(self.payload)
 
@@ -123,22 +188,47 @@ class EnhancedNotificationMessage:
         return enhanced_format_message
 
 class NotificationResponse:
+    """
+    The notification response class.
+    """
 
     def __init__(self):
+        """
+        Constructor of the class.
+        """
+
         pass
 
 class ErrorNotificationResponse(NotificationResponse):
+    """
+    The error notification response class.
+    """
 
     command = None
+    """ The command """
 
     status = None
+    """ The status """
 
     identifier = None
+    """ The identifier """
 
     def __init__(self):
+        """
+        Constructor of the class.
+        """
+
         NotificationResponse.__init__(self)
 
     def process_value(self, value):
+        """
+        Processes the value in the target protocol, converting it
+        and populating the current structure.
+
+        @type value: String
+        @param value: The value in the target protocol to be converted.
+        """
+
         # creates the error response format
         error_response_format = ERROR_RESPONSE_FORMAT_TEMPLATE
 
@@ -154,27 +244,63 @@ class ErrorNotificationResponse(NotificationResponse):
         return self
 
 class FeedbackNotificationResponse(NotificationResponse):
+    """
+    The feedback notification response class.
+    """
 
-    timestamp = None
-
-    device_token = None
+    feedback_tuples = []
+    """ The feedback tuples """
 
     def __init__(self):
+        """
+        Constructor of the class.
+        """
+
         NotificationResponse.__init__(self)
 
+        self.feedback_tuples = []
+
     def process_value(self, value):
+        """
+        Processes the value in the target protocol, converting it
+        and populating the current structure.
+
+        @type value: String
+        @param value: The value in the target protocol to be converted.
+        """
+
         # creates the feedback response format
         feedback_response_format = FEEDBACK_RESPONSE_FORMAT_TEMPLATE
 
-        # retrieves the feedback data
-        timestamp, _token_length, device_token = struct.unpack(feedback_response_format, value)
+        # retrieves the value length
+        value_length = len(value)
 
-        # converts the device token into string value
-        device_token = binascii.hexlify(device_token)
+        # sets the initial start and end indexes
+        start_index = 0
+        end_index = 38
 
-        # sets the current values
-        self.timestamp = timestamp
-        self.device_token = device_token
+        # iterates continuously
+        while True:
+            # in case the end index is bigger
+            # than the value length
+            if end_index > value_length:
+                # breaks the cycle
+                break
+
+            # retrieves the tuple value from the
+            tuple_value = value[start_index:end_index]
+
+            # retrieves the feedback data
+            timestamp, _token_length, device_token = struct.unpack(feedback_response_format, tuple_value)
+
+            # converts the device token into string value
+            device_token = binascii.hexlify(device_token)
+
+            # sets the current value in the feedback tuple
+            feedback_tuple = (timestamp, device_token)
+
+            # adds the feedback tuple to the feedback tuples
+            self.feedback_tuples.append(feedback_tuple)
 
         # returns the self value
         return self
