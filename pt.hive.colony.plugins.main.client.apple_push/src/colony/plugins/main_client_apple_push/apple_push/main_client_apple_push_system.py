@@ -160,7 +160,7 @@ class ApplePushClient:
             request = self.send_request(notification_message)
 
             # creates the error notification response
-            notification_response = main_client_apple_push_structures.ErrorNotificationResponse(device_token)
+            notification_response = main_client_apple_push_structures.ErrorNotificationResponse()
 
             # retrieves the response for the given request, notification
             # response and size

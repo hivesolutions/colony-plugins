@@ -38,6 +38,7 @@ __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
 import struct
+import binascii
 
 DEVICE_TOKEN_LENGTH = 32
 """ The device token length """
@@ -82,11 +83,14 @@ class SimpleNotificationMessage(NotificationMessage):
         # retrieves the payload length
         payload_length = len(self.payload)
 
+        # converts the device token to hexadecimal value
+        device_token = binascii.unhexlify(self.device_token)
+
         # creates the format for the message using the payload simple format template
         simple_notification_format = SIMPLE_NOTIFICATION_FORMAT_TEMPLATE % payload_length
 
         # creates the simple format message
-        simple_format_message = struct.pack(simple_notification_format, self.command, DEVICE_TOKEN_LENGTH, self.device_token, payload_length, self.payload)
+        simple_format_message = struct.pack(simple_notification_format, self.command, DEVICE_TOKEN_LENGTH, device_token, payload_length, self.payload)
 
         # returns the simple format message
         return simple_format_message
@@ -106,11 +110,14 @@ class EnhancedNotificationMessage:
         # retrieves the payload length
         payload_length = len(self.payload)
 
+        # converts the device token to hexadecimal value
+        device_token = binascii.unhexlify(self.device_token)
+
         # creates the format for the message using the payload enhanced format template
         enhanced_notification_format = ENHANCED_NOTIFICATION_FORMAT_TEMPLATE % payload_length
 
         # creates the enhanced format message
-        enhanced_format_message = struct.pack(enhanced_notification_format, self.command, self.identifier, self.expiry, DEVICE_TOKEN_LENGTH, self.device_token, payload_length, self.payload)
+        enhanced_format_message = struct.pack(enhanced_notification_format, self.command, self.identifier, self.expiry, DEVICE_TOKEN_LENGTH, device_token, payload_length, self.payload)
 
         # returns the enhanced format message
         return enhanced_format_message
@@ -161,6 +168,9 @@ class FeedbackNotificationResponse(NotificationResponse):
 
         # retrieves the feedback data
         timestamp, _token_length, device_token = struct.unpack(feedback_response_format, value)
+
+        # converts the device token into string value
+        device_token = binascii.hexlify(device_token)
 
         # sets the current values
         self.timestamp = timestamp
