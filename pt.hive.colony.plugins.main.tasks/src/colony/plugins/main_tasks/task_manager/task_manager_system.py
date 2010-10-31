@@ -169,9 +169,6 @@ class TaskManager:
             # starts the thread
             task.task_thread.start()
         else:
-            # retrieves the task descriptor class
-            task_descriptor_class = self.task_manager_plugin.thread_pool_manager_plugin.get_thread_task_descriptor_class()
-
             # creates a task descriptor to the task
             task_descriptor = self.task_descriptor_class(start_method = task.task_creation_handler)
 
@@ -403,7 +400,8 @@ class Task:
         if not self.status == self.STATUS_TASK_PAUSED and not force:
             return
 
-        self.status == self.STATUS_TASK_PAUSED
+        # sets the status of the task as paused
+        self.status = self.STATUS_TASK_PAUSED
 
         # confirms the status
         self.status_confirmed = True
@@ -422,6 +420,7 @@ class Task:
         if not self.status == self.STATUS_TASK_RUNNING and not force:
             return
 
+        # sets the new task status (running)
         self.status = self.STATUS_TASK_RUNNING
 
         # confirms the status
@@ -441,6 +440,7 @@ class Task:
         if not self.status == self.STATUS_TASK_STOPPED and not force:
             return
 
+        # sets the new task status (stopped)
         self.status = self.STATUS_TASK_STOPPED
 
         # confirms the status
