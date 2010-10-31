@@ -45,6 +45,9 @@ NUMBER_TASKS = 1
 TIMEOUT = 0.5
 """ The timeout value to be used """
 
+ITERATIONS_PRINT = 120
+""" The number of iterations until printing """
+
 class DummyBase1:
     """
     The dummy base 1.
@@ -106,8 +109,9 @@ class DummyBase1:
         while self.valid:
             # in case the paused flag is not valid
             if not self.paused:
-                # prints a debug message
-                self.dummy_base_1_plugin.debug("Running in thread pool")
+                # prints a debug message in case the number of iterations
+                # required for printing have been reached
+                not index % ITERATIONS_PRINT and self.dummy_base_1_plugin.debug("Running in thread pool")
 
             # sleeps for the given time
             time.sleep(TIMEOUT)

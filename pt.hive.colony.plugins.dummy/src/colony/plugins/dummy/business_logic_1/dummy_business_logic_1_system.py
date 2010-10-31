@@ -125,15 +125,6 @@ class DummyBusinessLogic1:
         # calls the echo dummy method in the dummy business logic entity
         dummy_session.DummyBusinessLogic.echo_dummy()
 
-        # calls the save entity method in the dummy business logic entity
-        dummy_session.DummyBusinessLogic.save_entity()
-
-        # calls the update entity method in the dummy business logic entity
-        dummy_session.DummyBusinessLogic.update_entity()
-
-        # calls the remove entity method in the dummy business logic entity
-        dummy_session.DummyBusinessLogic.remove_entity()
-
         # calls the save remove entity method in the dummy business logic entity
         dummy_session.DummyBusinessLogic.save_remove_entity()
 
