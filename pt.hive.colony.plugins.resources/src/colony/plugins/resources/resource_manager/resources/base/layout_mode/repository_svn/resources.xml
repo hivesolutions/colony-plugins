@@ -132,4 +132,10 @@
         <type>string</type>
         <data>$resource{colony.manager_path}/../../../../pt.hive.toolbox/trunk</data>
     </resource>
+    <resource>
+        <namespace>system.path</namespace>
+        <name>escolinhas</name>
+        <type>string</type>
+        <data>$resource{colony.manager_path}/../../../../pt.escolinhas/trunk</data>
+    </resource>
 </resources>
