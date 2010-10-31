@@ -37,6 +37,8 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
+import web_mvc_communication_push_apple_exceptions
+
 DEFAULT_ENCODING = "utf-8"
 """ The default encoding value """
 
@@ -279,12 +281,8 @@ class WebMvcCommunicationPushAppleController:
                           GUID_VALUE : guid,
                           MESSAGE_CONTENTS_VALUE : message}
 
-            # in case the notification handler name is defined
-            if notification_handler_name:
-                pass
-            else:
-                # sets the notification handler as the default one
-                notification_handler = self.default_notification_handler
+            # retrieves the notification handler for the notification handler name
+            notification_handler = self._get_notification_handler(notification_handler_name)
 
             # retrieves the aps values
             alert, badge, sound = notification_handler(notification)
@@ -430,3 +428,28 @@ class WebMvcCommunicationPushAppleController:
 
         # removes the service connection profile name from the service connection profile name communication handler map
         del self.service_connection_profile_name_communication_handler_map[service_connection_profile_name_tuple]
+
+    def _get_notification_handler(self, notification_handler_name):
+        # in case the notification handler name is defined
+        if notification_handler_name:
+            # retrieves the notification handler apple push plugins map
+            notification_handler_apple_push_plugins_map = self.web_mvc_communication_push_apple.notification_handler_apple_push_plugins_map
+
+            # in case the notification handler is not found in the notification handler
+            # apple push plugins map
+            if not notification_handler_name in notification_handler_apple_push_plugins_map:
+                # raises the notification handler not found exception
+                raise web_mvc_communication_push_apple_exceptions.NotificationHandlerNotFoundException("no handler found for current notification: " + notification_handler_name)
+
+            # retrieves the notification handler plugin
+            notification_handler_plugin = notification_handler_apple_push_plugins_map[notification_handler_name]
+
+            # sets the notification handler as the handle notification
+            # method of the notification handler plugin
+            notification_handler = notification_handler_plugin.handle_notification
+        else:
+            # sets the notification handler as the default one
+            notification_handler = self.default_notification_handler
+
+        # returns the notification handler
+        return notification_handler

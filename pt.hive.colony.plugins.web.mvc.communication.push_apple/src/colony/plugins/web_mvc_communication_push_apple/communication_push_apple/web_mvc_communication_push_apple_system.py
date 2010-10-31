@@ -50,6 +50,9 @@ class WebMvcCommunicationPushApple:
     web_mvc_communication_push_apple_controller = None
     """ The web mvc communication push apple controller """
 
+    notification_handler_apple_push_plugins_map = {}
+    """ The notification handler apple push plugins map """
+
     apple_push_configuration_map = {}
     """ The apple push configuration map """
 
@@ -63,6 +66,7 @@ class WebMvcCommunicationPushApple:
 
         self.web_mvc_communication_push_apple_plugin = web_mvc_communication_push_apple_plugin
 
+        self.notification_handler_apple_push_plugins_map = {}
         self.apple_push_configuration_map = {}
 
     def load_components(self):
@@ -120,6 +124,18 @@ class WebMvcCommunicationPushApple:
         """
 
         return ()
+
+    def notification_handler_apple_push_load(self, notification_handler_apple_push_plugin):
+        # retrieves the plugin handler name
+        handler_name = notification_handler_apple_push_plugin.get_handler_name()
+
+        self.notification_handler_apple_push_plugins_map[handler_name] = notification_handler_apple_push_plugin
+
+    def notification_handler_apple_push_unload(self, notification_handler_apple_push_plugin):
+        # retrieves the plugin handler name
+        handler_name = notification_handler_apple_push_plugin.get_handler_name()
+
+        del self.notification_handler_apple_push_plugins_map[handler_name]
 
     def set_configuration_property(self, configuration_propery):
         # retrieves the configuration

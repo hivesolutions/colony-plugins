@@ -46,3 +46,29 @@ class WebMvcCommunicationPushAppleException(colony.base.plugin_system_exceptions
 
     message = None
     """ The exception's message """
+
+class NotificationHandlerNotFoundException(WebMvcCommunicationPushAppleException):
+    """
+    The notification handler not found exception.
+    """
+
+    def __init__(self, message):
+        """
+        Constructor of the class.
+
+        @type message: String
+        @param message: The message to be printed.
+        """
+
+        WebMvcCommunicationPushAppleException.__init__(self, message)
+        self.message = message
+
+    def __str__(self):
+        """
+        Returns the string representation of the class.
+
+        @rtype: String
+        @return: The string representation of the class.
+        """
+
+        return "Notification handler not found exception: %s" % self.message

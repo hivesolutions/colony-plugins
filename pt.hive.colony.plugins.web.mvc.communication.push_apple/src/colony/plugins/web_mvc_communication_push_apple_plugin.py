@@ -55,7 +55,7 @@ class WebMvcCommunicationPushApplePlugin(colony.base.plugin_system.Plugin):
     platforms = [colony.base.plugin_system.CPYTHON_ENVIRONMENT]
     attributes = {"build_automation_file_path" : "$base{plugin_directory}/web_mvc_communication_push_apple/communication_push_apple/resources/baf.xml"}
     capabilities = ["web.mvc_service", "build_automation_item"]
-    capabilities_allowed = []
+    capabilities_allowed = ["notification_handler.apple_push"]
     dependencies = [colony.base.plugin_system.PluginDependency(
                     "pt.hive.colony.plugins.web.mvc.utils", "1.0.0"),
                     colony.base.plugin_system.PluginDependency(
@@ -71,6 +71,8 @@ class WebMvcCommunicationPushApplePlugin(colony.base.plugin_system.Plugin):
                     "web_mvc_communication_push_apple.communication_push_apple.web_mvc_communication_push_apple_system"]
 
     web_mvc_communication_push_apple = None
+
+    notification_handler_apple_push_plugins = []
 
     web_mvc_utils_plugin = None
     communication_push_plugin = None
@@ -93,9 +95,11 @@ class WebMvcCommunicationPushApplePlugin(colony.base.plugin_system.Plugin):
     def end_unload_plugin(self):
         colony.base.plugin_system.Plugin.end_unload_plugin(self)
 
+    @colony.base.decorators.load_allowed("pt.hive.colony.plugins.web.mvc.communication.push_apple", "1.0.0")
     def load_allowed(self, plugin, capability):
         colony.base.plugin_system.Plugin.load_allowed(self, plugin, capability)
 
+    @colony.base.decorators.unload_allowed("pt.hive.colony.plugins.web.mvc.communication.push_apple", "1.0.0")
     def unload_allowed(self, plugin, capability):
         colony.base.plugin_system.Plugin.unload_allowed(self, plugin, capability)
 
@@ -146,6 +150,16 @@ class WebMvcCommunicationPushApplePlugin(colony.base.plugin_system.Plugin):
         """
 
         return self.web_mvc_communication_push_apple.get_resource_patterns()
+
+    @colony.base.decorators.load_allowed_capability("notification_handler.apple_push")
+    def notification_handler_apple_push_load_allowed(self, plugin, capability):
+        self.notification_handler_apple_push_plugins.append(plugin)
+        self.web_mvc_communication_push_apple.notification_handler_apple_push_load(plugin)
+
+    @colony.base.decorators.unload_allowed_capability("notification_handler.apple_push")
+    def notification_handler_apple_push_unload_allowed(self, plugin, capability):
+        self.notification_handler_apple_push_plugins.append(plugin)
+        self.web_mvc_communication_push_apple.notification_handler_apple_push_unload(plugin)
 
     def get_web_mvc_utils_plugin(self):
         return self.web_mvc_utils_plugin
