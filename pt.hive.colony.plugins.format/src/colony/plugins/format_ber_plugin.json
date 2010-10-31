@@ -1,6 +1,6 @@
 {
     "platform" : "python",
-    "sub_platforms" : ["cpython", "jython"],
+    "sub_platforms" : ["cpython", "jython", "iron_python"],
     "id" : "pt.hive.colony.plugins.format.ber",
     "name" : "Ber Format Plugin",
     "short_name" : "Ber Format",

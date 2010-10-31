@@ -53,7 +53,8 @@ class FormatMimeUtilsPlugin(colony.base.plugin_system.Plugin):
     author = "Hive Solutions Lda. <development@hive.pt>"
     loading_type = colony.base.plugin_system.EAGER_LOADING_TYPE
     platforms = [colony.base.plugin_system.CPYTHON_ENVIRONMENT,
-                 colony.base.plugin_system.JYTHON_ENVIRONMENT]
+                 colony.base.plugin_system.JYTHON_ENVIRONMENT,
+                 colony.base.plugin_system.IRON_PYTHON_ENVIRONMENT]
     attributes = {"build_automation_file_path" : "$base{plugin_directory}/format/mime_utils/resources/baf.xml"}
     capabilities = ["format.mime.utils", "build_automation_item"]
     capabilities_allowed = []
