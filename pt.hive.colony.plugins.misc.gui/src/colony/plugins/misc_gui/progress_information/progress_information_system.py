@@ -125,7 +125,7 @@ class ProgressInformation:
             task = event_args[0]
 
             # creates the new task
-            task_progress_information_item = self.progress_information_plugin.progress_information.add_task_progress_information_item(task, task.id, task.name, task.description, "status por fazer", 0, None)
+            task_progress_information_item = self.progress_information_plugin.progress_information.add_task_progress_information_item(task, task.id, task.name, task.description, "statuso todo", 0, None)
 
             # in case the progress information panel is not shown
             if not self.progress_information_panel.GetParent().IsShown():
