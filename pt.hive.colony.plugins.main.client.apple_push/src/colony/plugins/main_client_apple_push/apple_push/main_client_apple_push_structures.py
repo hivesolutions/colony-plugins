@@ -133,7 +133,7 @@ class SimpleNotificationMessage(NotificationMessage):
         # returns the simple format message
         return simple_format_message
 
-class EnhancedNotificationMessage:
+class EnhancedNotificationMessage(NotificationMessage):
     """
     The enhanced notification message class.
     """
@@ -158,7 +158,7 @@ class EnhancedNotificationMessage:
         @param expiry: The expirty.
         """
 
-        NotificationMessage.__init__(self, SIMPLE_NOTIFICATION_FORMAT_COMMAND, device_token, payload)
+        NotificationMessage.__init__(self, ENHANCED_NOTIFICATION_FORMAT_COMMAND, device_token, payload)
         self.identifier = identifier
         self.expiry = expiry
 
