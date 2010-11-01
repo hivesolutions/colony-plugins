@@ -300,36 +300,61 @@ h5:hover > a.headerlink {
     font-weight: bold;
 }
 
-.warning {
-    background: #fff9D8 url(../images/warning_note.gif) no-repeat scroll 0px 0px;
-    padding: 18px 52px 18px 52px;
-    line-height: 1.6em;
-}
-
-.error {
-    background: #f9d9d8 url(../images/error_note.gif) no-repeat scroll 0px 0px;
-    padding: 18px 52px 18px 52px;
-    line-height: 1.6em;
-}
-
-.error .description-header {
-    margin-top: 0.0em;
-}
-
-.error .traceback-header {
-    margin-top: 1.6em;
-}
-
-.error .description {
-    font-family: monospace;
-}
-
-.error .traceback {
-    font-family: monospace;
-}
-
 .monospace {
     color: #20435c;
+    font-family: monospace;
     font-size: 110%;
     font-weight: bold;
+}
+
+.welcome {
+    background: #fbfbfb url(../images/colony_watermark.png) no-repeat scroll right bottom;
+    width: 90%;
+    text-align: center;
+    margin: 20px auto 20px auto;
+    padding: 60px 0px 40px 0px;
+}
+
+.welcome h1, .welcome h2, .welcome h3 {
+    background-color: transparent;
+    border-bottom: none;
+    padding: 6px 0px 3px 5px;
+    color: #214c8f;
+    font-family: Verdana;
+}
+
+.welcome p {
+    margin: 2px 0px 2px 0px;
+}
+
+.welcome img {
+    margin: 0px 0px 12px 0px;
+}
+
+.welcome .geek {
+    color: #90a5c7;
+}
+
+.welcome .welcome-message {
+    padding: 8px 0px 8px 0px;
+}
+
+.welcome .separator {
+    width: 70%;
+    height: 1px;
+    margin: 28px auto 0px auto;
+    border-top: 1px solid #e5eaf2;
+}
+
+.welcome .links {
+    margin: 0px auto 28px auto;
+    padding: 22px 0px 0px 0px;
+}
+
+.welcome .links .link {
+    color: #214c8f;
+    font-family: monospace;
+    font-size: 150%;
+    font-weight: bold;
+    margin: 0px 24px 0px 24px;
 }

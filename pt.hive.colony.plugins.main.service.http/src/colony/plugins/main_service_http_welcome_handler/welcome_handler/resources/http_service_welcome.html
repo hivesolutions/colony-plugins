@@ -6,56 +6,48 @@
         <title>Colony Framework</title>
 
         <!-- css inclusion -->
-        <link rel="stylesheet" type="text/css" href="/template_error_handler/css/main.css" />
+        <link rel="stylesheet" type="text/css" href="/welcome_handler/css/main.css" />
 
         <!-- favicon inclusion -->
-        <link rel="icon" href="/template_error_handler/images/favicon.ico" type="image/x-icon" />
+        <link rel="icon" href="/welcome_handler/images/favicon.ico" type="image/x-icon" />
 
         <!-- javascript inclusion -->
-        <script type="text/javascript" src="/template_error_handler/js/main.js"></script>
+        <script type="text/javascript" src="/welcome_handler/js/main.js"></script>
     </head>
     <body>
         <div id="wiki-header">
             <div class="wiki-header-contents">
                 <div class="logo-image">
-                    <img src="/template_error_handler/images/colony_logo.png"/>
+                    <img src="/welcome_handler/images/colony_logo.png"/>
                 </div>
             </div>
         </div>
         <div id="wiki-contents">
-            <p></p>
-            <div class="highlight">
-                <img class="error-image" src="/template_error_handler/images/${out_none value=error_image xml_escape=True /}.png"/>
-                <div class="error-text">
-                    <b>There was a problem in colony web server...</b>
-                    <p>Error ${out_none value=error_code xml_escape=True /} - ${out_none value=error_description xml_escape=True /}</p>
+            <div class="welcome">
+                <img src="/welcome_handler/images/colony_logo_big.png"></img>
+                <h1>Hello <a href="http://en.wikipedia.org/wiki/Geek" class="geek">Mr. Geek</a> you're running colony !</h1>
+                <div class="welcome-message">
+                    <p class="monospace">Now it's time to start enjoying the framework !</p>
+                    <p class="monospace">Just follow the white rabbit in <a href="#">/var/colony</a> or check you <a href=environment>environment</a>.</p>
                 </div>
-            </div>
-            <p></p>
-            <div class="error">
-                <p class="description-header">
-                    <b>Description</b>
-                </p>
-                <p class="description">
-                    ${out_none value=error xml_escape=True /}
-                </p>
-                <p class="traceback-header">
-                    <b>Traceback</b>
-                </p>
-                ${foreach item=traceback_line from=traceback}
-                <p class="traceback">${out_none value=traceback_line xml_escape=True /}</p>
-                ${/foreach}
+                <div class="separator"></div>
+                <div class="links">
+                    <a href="#" class="link">1. Develop</a>
+                    <a href="manager/plugins" class="link">2. Manage</a>
+                    <a href="#" class="link">3. Learn</a>
+                    <a href="http://hive.pt" class="link">4. Check us out!</a>
+                </div>
             </div>
         </div>
         <div id="wiki-footer">
             <div class="wiki-footer-contents">
                 <div class="logo-image">
                     <a href="http://getcolony.com">
-                        <img src="/template_error_handler/images/powered_by_colony.png"/>
+                        <img src="/welcome_handler/images/powered_by_colony.png"/>
                     </a>
                 </div>
                 <div class="separator">
-                    <img src="/template_error_handler/images/separator.png"/>
+                    <img src="/welcome_handler/images/separator.png"/>
                 </div>
                 <div class="text-contents">Document provided by colony framework
                     <br />Copyright
