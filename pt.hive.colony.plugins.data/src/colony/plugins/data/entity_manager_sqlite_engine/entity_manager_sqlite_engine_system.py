@@ -50,7 +50,7 @@ import entity_manager_sqlite_engine_exceptions
 ENGINE_NAME = "sqlite"
 """ The engine name """
 
-DEFAULT_TIMEOUT_VALUE = 30
+DEFAULT_TIMEOUT_VALUE = 300
 """ The default timeout value """
 
 DATA_TYPE_MAP = {"text" : "text",
