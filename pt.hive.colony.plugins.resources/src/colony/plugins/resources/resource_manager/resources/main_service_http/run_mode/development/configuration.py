@@ -75,7 +75,6 @@ configuration = {
                                            "/blog",
                                            "/task_registry",
                                            "/openid",
-                                           "/colony_site",
                                            "/take_the_bill",
                                            "/a_la_carte",
                                            "/"],
@@ -96,7 +95,7 @@ configuration = {
                          "recursive_redirection" : True
                      },
                      "/hive" : {
-                         "target" : "/colony_mod_python/rest/mvc/hive/",
+                         "target" : "/colony_mod_python/rest/mvc/hive_site/",
                          "recursive_redirection" : True
                      },
                      "/blog" : {
@@ -109,10 +108,6 @@ configuration = {
                      },
                      "/openid" : {
                          "target" : "/colony_mod_python/rest/mvc/hive_openid/",
-                         "recursive_redirection" : True
-                     },
-                     "/colony_site" : {
-                         "target" : "/colony_mod_python/rest/mvc/colony_site/",
                          "recursive_redirection" : True
                      },
                      "/take_the_bill" : {
