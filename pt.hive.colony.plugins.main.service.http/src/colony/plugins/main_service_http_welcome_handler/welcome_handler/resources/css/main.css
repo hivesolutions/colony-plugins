@@ -312,7 +312,7 @@ h5:hover > a.headerlink {
     width: 90%;
     text-align: center;
     margin: 20px auto 20px auto;
-    padding: 60px 0px 40px 0px;
+    padding: 40px 0px 40px 0px;
 }
 
 .welcome h1, .welcome h2, .welcome h3 {
@@ -328,9 +328,10 @@ h5:hover > a.headerlink {
 }
 
 .welcome .welcome-logo {
+    display: block;
     width: 690px;
     height: 190px;
-    margin: 0px 0px 0px 0px;
+    margin: 0px auto 0px auto;
 }
 
 .welcome .welcome-title {

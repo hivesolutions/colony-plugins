@@ -22,3 +22,32 @@
 // __date__      = $LastChangedDate: 2008-10-26 20:43:25 +0000 (dom, 26 Out 2008) $
 // __copyright__ = Copyright (c) 2008 Hive Solutions Lda.
 // __license__   = General Public License (GPL), Version 3
+
+/**
+ * Thw welcome logo images list.
+ *
+ * @type List
+ */
+WELCOME_LOGO_IMAGES = ["/welcome_handler/images/colony_welcome_screen_1.png",
+        "/welcome_handler/images/colony_welcome_screen_2.png",
+        "/welcome_handler/images/colony_welcome_screen_3.png"]
+
+/**
+ * Function called uppon loading of the document (window).
+ */
+function onLoad() {
+    // retrieves the welcome logo images length
+    var welcomeLogoImagesLenght = WELCOME_LOGO_IMAGES.length;
+
+    // retrieves the random welcome logo images index
+    var welcomeLogoImagesIndex = parseInt(Math.random() * 3);
+
+    // retrieves the welcome logo image (source path)
+    var welcomeLogoImage = WELCOME_LOGO_IMAGES[welcomeLogoImagesIndex];
+
+    // retrieves the welcome logo element
+    var welcomeLogo = document.getElementById("welcome-logo");
+
+    // sets the welcome logo image in the welcome logo element
+    welcomeLogo.src = welcomeLogoImage;
+}
