@@ -33,8 +33,8 @@
  * @date April 15, 2010
  * @category jQuery plugin
  * @copyright Copyright (c) 2008 Hive Solutions Lda.
- * @license Hive Solutions Confidential Usage License (HSCUL) -
- *          http://www.hive.pt/licenses/
+ * @license GNU General Public License (GPL), Version 3 -
+ *          http://www.gnu.org/licenses/
  */
 (function($) {
     $.fn.autocomplete = function(options) {
