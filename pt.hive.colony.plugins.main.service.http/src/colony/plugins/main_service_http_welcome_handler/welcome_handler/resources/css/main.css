@@ -343,7 +343,18 @@ h5:hover > a.headerlink {
 }
 
 .welcome .welcome-message {
+    background-color: #ffffff;
+    width: 70%;
+    margin: 0px auto 0px auto;
     padding: 8px 0px 8px 0px;
+}
+
+.welcome .welcome-message a {
+    color: #90a5c7;
+}
+
+.welcome .welcome-message .monospace {
+    color: #214c8f;
 }
 
 .welcome .separator {
@@ -354,7 +365,7 @@ h5:hover > a.headerlink {
 }
 
 .welcome .links {
-    margin: 0px auto 28px auto;
+    margin: 0px auto 8px auto;
     padding: 22px 0px 0px 0px;
 }
 
@@ -364,4 +375,9 @@ h5:hover > a.headerlink {
     font-size: 150%;
     font-weight: bold;
     margin: 0px 24px 0px 24px;
+}
+
+.welcome .links-footer {
+    width: 690px;
+    height: 48px;
 }
