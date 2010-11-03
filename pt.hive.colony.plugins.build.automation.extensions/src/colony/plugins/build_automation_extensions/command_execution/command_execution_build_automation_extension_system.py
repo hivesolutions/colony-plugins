@@ -41,6 +41,7 @@ import threading
 import subprocess
 
 import colony.libs.os_util
+import colony.libs.map_util
 
 import command_execution_build_automation_extension_exceptions
 
@@ -71,7 +72,7 @@ class CommandExecutionBuildAutomationExtension:
 
         # retrieves the arguments from the parameters
         arguments = parameters.get("arguments", {})
-        _arguments = arguments.get("argument", [])
+        _arguments = colony.libs.map_util.map_get_values(arguments, "argument")
 
         # retrieves the shell value from the parameters
         shell = parameters.get("shell", False) == "true"

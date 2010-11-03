@@ -40,6 +40,8 @@ __license__ = "GNU General Public License (GPL), Version 3"
 import sys
 import datetime
 
+import colony.libs.map_util
+
 BUILD_AUTOMATION_EXTENSIONS_EMAIL_PATH = "build_automation_extensions/email/resources"
 """ The build automation extensions email resources path """
 
@@ -184,6 +186,18 @@ class EmailBuildAutomationExtension:
         smtp_password = parameters.get("smtp_password", None)
         smtp_tls = parameters.get("smtp_tls", False)
 
+        # retrieves the receivers from the parameters map
+        receivers = parameters.get("receivers", {})
+        _receivers = colony.libs.map_util.map_get_values(receivers, "receiver")
+
+        # retrieves the success receivers from the parameters map
+        success_receivers = parameters.get("success_receivers", {})
+        _success_receivers = colony.libs.map_util.map_get_values(success_receivers, "receiver")
+
+        # retrieves the failure receivers from the parameters map
+        failure_receivers = parameters.get("failure_receivers", {})
+        _failure_receivers = colony.libs.map_util.map_get_values(failure_receivers, "receiver")
+
         # creates the smtp parameters map
         smtp_parameters = {}
 
@@ -197,9 +211,6 @@ class EmailBuildAutomationExtension:
 
         # creates the sender line
         sender_line = sender_name + " " + "<" + sender_email + ">"
-
-        success_receivers = (("João Magalhães", "joamag@hive.pt"), ("Tiago Silva", "tsilva@hive.pt"), ("Luis Martinho", "lmartinho@hive.pt"))
-        failure_receivers = (("João Magalhães", "joamag@hive.pt"), ("Tiago Silva", "tsilva@hive.pt"), ("Luis Martinho", "lmartinho@hive.pt"))
 
         # retrieves the build automation plugin name
         build_automation_plugin_name = build_automation_structure_associated_plugin.name
@@ -231,14 +242,14 @@ class EmailBuildAutomationExtension:
             subject += "was SUCCESSFUL"
 
             # sets the receivers as the success receivers
-            receivers = success_receivers
+            receivers_list = _receivers + _success_receivers
         # otherwise
         else:
             # adds the failed part to the subject
             subject += "has FAILED"
 
             # sets the receivers as the failure receivers
-            receivers = failure_receivers
+            receivers_list = _receivers + _failure_receivers
 
         # creates the receiver line with the email
         receiver_line = ""
@@ -251,7 +262,7 @@ class EmailBuildAutomationExtension:
 
         # iterates over all the receivers
         # to creates the receiver line
-        for receiver in receivers:
+        for receiver in receivers_list:
             # in case it's the first iteration
             if is_first:
                 # unsets the is first flag
@@ -262,7 +273,8 @@ class EmailBuildAutomationExtension:
                 receiver_line += ", "
 
             # retrieves the receiver name and email
-            receiver_name, receiver_email = receiver
+            receiver_name = receiver["name"]
+            receiver_email = receiver["email"]
 
             # adds the receiver name and email to the receiver line
             receiver_line += receiver_name + " " + "<" + receiver_email + ">"

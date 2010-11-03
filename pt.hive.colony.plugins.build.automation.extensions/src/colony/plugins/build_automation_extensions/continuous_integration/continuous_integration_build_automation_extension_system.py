@@ -39,6 +39,7 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 import os
 
+import colony.libs.map_util
 import colony.libs.path_util
 
 TARGET_DIRECTORY_VALUE = "target_directory"
@@ -100,7 +101,7 @@ class ContinuousIntegrationBuildAutomationExtension:
         version_file_path = parameters[VERSION_FILE_PATH_VALUE]
 
         # retrieves the zip values
-        zips = parameters[ZIP_VALUE]
+        zips = colony.libs.map_util.map_get_values(parameters, ZIP_VALUE)
 
         try:
             # retrieves the version from the version file path

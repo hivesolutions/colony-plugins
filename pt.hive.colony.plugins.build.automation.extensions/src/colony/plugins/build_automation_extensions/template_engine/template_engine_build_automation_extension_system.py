@@ -37,6 +37,8 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
+import colony.libs.map_util
+
 class TemplateEngineBuildAutomationExtension:
     """
     The template engine build automation extension class.
@@ -56,4 +58,6 @@ class TemplateEngineBuildAutomationExtension:
         self.template_engine_build_automation_extension_plugin = template_engine_build_automation_extension_plugin
 
     def run_automation(self, plugin, stage, parameters, build_automation_structure, logger):
-        pass
+        contents = parameters.get("contents", {})
+        files = colony.libs.map_util.map_get_values(contents, "file")
+        print files
