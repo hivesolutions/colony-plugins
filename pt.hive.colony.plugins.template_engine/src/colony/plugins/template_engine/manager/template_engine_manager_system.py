@@ -501,6 +501,8 @@ class TemplateFile:
         # retrieves the visitor string buffer
         visitor_string_buffer = self.visitor.string_buffer
 
+        print "o valor e: " + str(visitor_string_buffer.string_list)
+
         # retrieves the visitor string buffer value
         visitor_string_buffer_value = visitor_string_buffer.get_value()
 

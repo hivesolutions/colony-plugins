@@ -350,8 +350,6 @@ class EmailBuildAutomationExtension:
         # assigns the log file path to the parsed template file
         template_file.assign("log_file_path", build_automation_log_file_path)
 
-        print "O VALOR E" + str(template_file.visitor.string_buffer.string_list)
-
         # processes the template file
         processed_template_file = template_file.process()
 
