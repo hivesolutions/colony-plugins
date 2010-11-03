@@ -54,6 +54,9 @@ EMAIL_HTML_REPORT_TEMPLATE_FILE_NAME = "email_html_report.html.tpl"
 DEFAULT_ENCODING = "utf-8"
 """ The default encoding """
 
+DEFAULT_TEMPLATE_ENCODING = "Cp1252"
+""" The default template encoding """
+
 DEFAULT_SMTP_HOSTNAME = "localhost"
 """ The default smtp hostname """
 
@@ -304,7 +307,7 @@ class EmailBuildAutomationExtension:
         email_html_report_images_file_path = email_build_automation_extension_plugin_path + "/" + BUILD_AUTOMATION_EXTENSIONS_EMAIL_PATH + "/" + "images"
 
         # parses the template file path
-        template_file = template_engine_manager_plugin.parse_file_path_encoding(email_html_report_template_file_path, DEFAULT_ENCODING)
+        template_file = template_engine_manager_plugin.parse_file_path_encoding(email_html_report_template_file_path, DEFAULT_TEMPLATE_ENCODING)
 
         # retrieves the success in normal format
         success = build_automation_structure_runtime.success
