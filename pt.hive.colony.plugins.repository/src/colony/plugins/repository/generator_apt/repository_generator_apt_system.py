@@ -41,6 +41,7 @@ import os
 import gzip
 import hashlib
 
+import colony.libs.map_util
 import colony.libs.path_util
 import colony.libs.string_buffer_util
 
@@ -140,7 +141,7 @@ class RepositoryGeneratorApt:
         contents = parameters[CONTENTS_VALUE]
 
         # retrieves the file from the parameters
-        files = contents.get(FILE_VALUE, [])
+        files = colony.libs.map_util.map_get_values(contents, FILE_VALUE)
 
         # creates the list to hold the various package maps
         packages_list = []
