@@ -58,6 +58,9 @@ CONTENT_TYPE_HEADER_VALUE = "Content-Type"
 CONTENT_LENGTH_HEADER_VALUE = "Content-Length"
 """ The content length value """
 
+COLONY_PLUGIN_MANAGER_VALUE = "colony.plugin_manager"
+""" The colony plugin manager value """
+
 WSGI_INPUT_VALUE = "wsgi.input"
 """ The wsgi input value """
 
@@ -225,6 +228,9 @@ class MainServiceHttpWsgiHandler:
             # returns the default write method
             return request.write
 
+        # retrieves the plugin manager
+        plugin_manager = self.main_service_http_wsgi_handler_plugin.manager
+
         # retrieves the request server identifier protocol version
         request_server_identifier = request.get_server_identifier()
 
@@ -282,6 +288,9 @@ class MainServiceHttpWsgiHandler:
         # sets the current environment items as the initial
         # environment map
         environment_map = dict(os.environ.items())
+
+        # sets the colony attributes in the environment map
+        environment_map[COLONY_PLUGIN_MANAGER_VALUE] = plugin_manager
 
         # sets the wsgi attributes in the environment map
         environment_map[WSGI_INPUT_VALUE] = request
