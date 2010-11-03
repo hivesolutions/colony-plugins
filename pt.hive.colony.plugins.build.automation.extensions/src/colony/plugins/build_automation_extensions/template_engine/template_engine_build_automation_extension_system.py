@@ -95,8 +95,8 @@ class TemplateEngineBuildAutomationExtension:
             # retrieves the file encoding from the file
             file_encoding = file.get("encoding", DEFAULT_ENCODING)
 
-            # parses the template file path
-            template_file = template_engine_manager_plugin.parse_file_path(file_path)
+            # parses the template file path using the file encoding
+            template_file = template_engine_manager_plugin.parse_file_path_encoding(file_path, file_encoding)
 
             # assigns the values to the template file using the build
             # automation structure runtime
