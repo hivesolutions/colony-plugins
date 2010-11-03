@@ -331,13 +331,16 @@ class EmailBuildAutomationExtension:
         template_file.assign("total_time_formated", build_automation_total_time_formated)
 
         # assigns the changelog list to the parsed template file
-        template_file.assign("changelog_list", build_automation_changelog_list)
+        #template_file.assign("changelog_list", build_automation_changelog_list)
+        template_file.assign("changelog_list", [])
 
         # assigns the issues list to the parsed template file
-        template_file.assign("issues_list", build_automation_issues_list)
+        #template_file.assign("issues_list", build_automation_issues_list)
+        template_file.assign("issues_list", [])
 
         # assigns the changers list to the parsed template file
         #template_file.assign("changers_list", build_automation_changers_list)
+        template_file.assign("changers_list", [])
 
         # assigns the base repository path to the parsed template file
         template_file.assign("base_repository_path", "http://servidor3.hive:8080/integration/" + str(build_automation_version))
