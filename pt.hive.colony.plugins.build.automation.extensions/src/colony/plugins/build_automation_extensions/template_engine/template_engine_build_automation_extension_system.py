@@ -60,4 +60,7 @@ class TemplateEngineBuildAutomationExtension:
     def run_automation(self, plugin, stage, parameters, build_automation_structure, logger):
         contents = parameters.get("contents", {})
         files = colony.libs.map_util.map_get_values(contents, "file")
+
         print files
+
+        return True;
