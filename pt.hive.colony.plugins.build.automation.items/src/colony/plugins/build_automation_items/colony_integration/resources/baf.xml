@@ -99,6 +99,22 @@
                 <version>1.0.0</version>
                 <stage>post-build</stage>
                 <stage_dependency>install</stage_dependency>
+                <receivers>
+                    <receiver>
+                        <name>João Magalhães</name>
+                        <email>joamag@hive.pt</email>
+                    </receiver>
+                </receivers>
+                <failure_receivers>
+                    <receiver>
+                        <name>Tiago Silva</name>
+                        <email>tsilva@hive.pt</email>
+                    </receiver>
+                    <receiver>
+                        <name>Luís Martinho</name>
+                        <email>lmartinho@hive.pt</email>
+                    </receiver>
+                </failure_receivers>
             </plugin>
         </plugins>
     </build>

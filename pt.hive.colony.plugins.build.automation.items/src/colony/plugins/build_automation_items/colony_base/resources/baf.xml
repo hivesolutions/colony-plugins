@@ -67,6 +67,16 @@
                 </configuration>
             </plugin>-->
             <plugin>
+                <id>pt.hive.colony.plugins.build.automation.extensions.template_engine</id>
+                <version>1.0.0</version>
+                <stage>build</stage>
+                <configuration>
+                    <contents>
+                        <file>$base{plugin_system_directory}/colony/base/plugin_system_information.py</file>
+                    </contents>
+                </configuration>
+            </plugin>
+            <plugin>
                 <id>pt.hive.colony.plugins.build.automation.extensions.installation</id>
                 <version>1.0.0</version>
                 <stage>build</stage>
