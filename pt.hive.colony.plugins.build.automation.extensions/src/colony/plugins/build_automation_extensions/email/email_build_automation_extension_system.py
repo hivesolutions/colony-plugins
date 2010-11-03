@@ -337,7 +337,7 @@ class EmailBuildAutomationExtension:
         template_file.assign("issues_list", build_automation_issues_list)
 
         # assigns the changers list to the parsed template file
-        template_file.assign("changers_list", build_automation_changers_list)
+        #template_file.assign("changers_list", build_automation_changers_list)
 
         # assigns the base repository path to the parsed template file
         template_file.assign("base_repository_path", "http://servidor3.hive:8080/integration/" + str(build_automation_version))
@@ -351,14 +351,17 @@ class EmailBuildAutomationExtension:
         # encodes the processed template file
         processed_template_file_encoded = processed_template_file.encode(DEFAULT_ENCODING)
 
+        # creates the mime message text part
         mime_message_text_part = format_mime_plugin.create_message_part({})
         mime_message_text_part.write("text mode contents")
         mime_message_text_part.set_header(CONTENT_TYPE_VALUE, "text/plain")
 
+        # creates the mime message html part
         mime_message_html_part = format_mime_plugin.create_message_part({})
         mime_message_html_part.write(processed_template_file_encoded)
         mime_message_html_part.set_header(CONTENT_TYPE_VALUE, "text/html;charset=" + DEFAULT_ENCODING)
 
+        # creates the mime message packer part
         mime_message_packer_part = format_mime_plugin.create_message_part({})
         mime_message_packer_part.set_multi_part("alternative")
         mime_message_packer_part.add_part(mime_message_text_part)
