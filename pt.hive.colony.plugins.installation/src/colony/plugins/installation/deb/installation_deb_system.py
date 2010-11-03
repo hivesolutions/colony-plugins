@@ -268,10 +268,10 @@ class InstallationDeb:
 
             # writes the link to the deb file
             deb_file.write_register_value(link_source, {"file_properties" : {"type" : "link",
-                                                                          "link_name" : link_target,
-                                                                          "owner" : link_owner,
-                                                                          "group" : link_group,
-                                                                          "mode" : link_mode}})
+                                                                             "link_name" : link_target,
+                                                                             "owner" : link_owner,
+                                                                             "group" : link_group,
+                                                                             "mode" : link_mode}})
 
     def _process_directory_contents(self, deb_file, directory_path, directory_target, recursive = True, directory_owner = 0, directory_group = 0, directory_mode = 0, exclusion_regex = None):
         # writes the directory register in the deb file
@@ -330,7 +330,7 @@ class InstallationDeb:
             file.close()
 
     def _generate_config_file(self, parameters):
-        return self._process_template_file("config.tpl", {})
+        return self._process_template_file("config.tpl.sh", {})
 
     def _generate_prerm_file(self, parameters):
         # retrieves the package parameters from the parameters
@@ -345,10 +345,10 @@ class InstallationDeb:
         # retrieves the prerm value
         postinst = package_parameters_deb_parameters.get("prerm", "")
 
-        return self._process_template_file("prerm.tpl", {"prerm" : postinst})
+        return self._process_template_file("prerm.tpl.sh", {"prerm" : postinst})
 
     def _generate_postrm_file(self, parameters):
-        return self._process_template_file("postrm.tpl", {})
+        return self._process_template_file("postrm.tpl.sh", {})
 
     def _generate_postinst_file(self, parameters):
         # retrieves the package parameters from the parameters
@@ -363,7 +363,7 @@ class InstallationDeb:
         # retrieves the postinst value
         postinst = package_parameters_deb_parameters.get("postinst", "")
 
-        return self._process_template_file("postinst.tpl", {"postinst" : postinst})
+        return self._process_template_file("postinst.tpl.sh", {"postinst" : postinst})
 
     def _generate_control_file(self, parameters):
         # retrieves the package parameters from the parameters
@@ -404,7 +404,7 @@ class InstallationDeb:
                                        "replaces" : package_replaces,
                                        "description" : package_description}}
 
-        return self._process_template_file("control.tpl", parameters_map)
+        return self._process_template_file("control.tpl.sh", parameters_map)
 
     def _process_template_file(self, template_file_name, parameters_map):
         # retrieves the plugin manager
