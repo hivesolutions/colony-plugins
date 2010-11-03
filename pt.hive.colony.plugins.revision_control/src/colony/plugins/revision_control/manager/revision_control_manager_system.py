@@ -37,6 +37,8 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
+import revision_control_manager_exceptions
+
 class RevisionControlManager:
     """
     The revision control manager class.
@@ -44,6 +46,9 @@ class RevisionControlManager:
 
     revision_control_manager_plugin = None
     """ The revision control manager plugin """
+
+    revision_control_adapter_plugins_map = {}
+    """ The revision control adapter plugins map """
 
     def __init__(self, revision_control_manager_plugin):
         """
@@ -54,6 +59,8 @@ class RevisionControlManager:
         """
 
         self.revision_control_manager_plugin = revision_control_manager_plugin
+
+        self.revision_control_adapter_plugins_map = {}
 
     def load_revision_control_manager(self, adapter_name, revision_control_parameters):
         """
@@ -77,16 +84,30 @@ class RevisionControlManager:
         # returns the create revision control adapter
         return revision_control_adapter
 
-    def get_revision_control_adapter_plugin(self, adapter_name):
-        # retrieve the first revision control manager adapter for the specified adapter name
-        for revision_control_adapter_plugin in self.revision_control_manager_plugin.revision_control_adapter_plugins:
-            # retrieves the adapter name for the current plugin
-            revision_control_adapter_plugin_adapter_name = revision_control_adapter_plugin.get_adapter_name()
+    def revision_control_adapter_load(self, revision_control_adapter_plugin):
+        # retrieves the plugin adapter name
+        adapter_name = revision_control_adapter_plugin.get_adapter_name()
 
-            # in case the adapter plugin has the specified adapter name
-            if revision_control_adapter_plugin_adapter_name == adapter_name:
-                # uses the adapter plugin as the relevant copy
-                return revision_control_adapter_plugin
+        self.revision_control_adapter_plugins_map[adapter_name] = revision_control_adapter_plugin
+
+    def revision_control_adapter_unload(self, revision_control_adapter_plugin):
+        # retrieves the plugin adapter name
+        adapter_name = revision_control_adapter_plugin.get_adapter_name()
+
+        del self.revision_control_adapter_plugins_map[adapter_name]
+
+    def get_revision_control_adapter_plugin(self, adapter_name):
+        # tries to retrieve the adapter plugin
+        adapter_plugin = self.revision_control_adapter_plugins_map.get(adapter_name, None)
+
+        # in case the adapter name is not found in the revision control adapter
+        # plugins map
+        if not adapter_plugin:
+            # raises the revision control adapter not found exception
+            raise revision_control_manager_exceptions.RevisionControlAdapterNotFoundException("no revision control adapter for adapter name: " + adapter_name)
+
+        # returns the adapter plugin
+        return adapter_plugin
 
 class RevisionControlAdapter:
 

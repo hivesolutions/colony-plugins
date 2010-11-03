@@ -16,6 +16,7 @@
             "revision_control/__init__.py",
             "revision_control/manager/__init__.py",
             "revision_control/manager/console_revision_control_manager.py",
+            "revision_control/manager/revision_control_manager_exceptions.py",
             "revision_control/manager/revision_control_manager_system.py",
             "revision_control/manager/resources/baf.xml"]
 }

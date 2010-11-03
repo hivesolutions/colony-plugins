@@ -58,7 +58,8 @@ class RevisionControlManagerPlugin(colony.base.plugin_system.Plugin):
     dependencies = []
     events_handled = []
     events_registrable = []
-    main_modules = ["revision_control.manager.revision_control_manager_system", "revision_control.manager.console_revision_control_manager"]
+    main_modules = ["revision_control.manager.console_revision_control_manager", "revision_control.manager.revision_control_manager_exceptions",
+                    "revision_control.manager.revision_control_manager_system"]
 
     revision_control_manager = None
     console_revision_control_manager = None
@@ -111,7 +112,9 @@ class RevisionControlManagerPlugin(colony.base.plugin_system.Plugin):
     @colony.base.decorators.load_allowed_capability("revision_control.adapter")
     def revision_control_manager_adapter_load_allowed(self, plugin, capability):
         self.revision_control_adapter_plugins.append(plugin)
+        self.revision_control_manager.revision_control_adapter_load(plugin)
 
     @colony.base.decorators.unload_allowed_capability("revision_control.adapter")
     def revision_control_manager_adapter_unload_allowed(self, plugin, capability):
         self.revision_control_adapter_plugins.remove(plugin)
+        self.revision_control_manager.revision_control_adapter_unload(plugin)
