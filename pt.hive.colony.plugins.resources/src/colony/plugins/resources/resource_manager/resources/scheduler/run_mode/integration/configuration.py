@@ -45,6 +45,6 @@ configuration = {
                              "plugin_version" : "1.0.0",
                              "method" : "run_automation",
                              "arguments" : ["pt.hive.colony.plugins.build.automation.items.colony_integration", "1.0.0", "install", 1],
-                             "recursion_list" : [0, 0, 0, 30, 0]
+                             "recursion_list" : [0, 0, 2, 0, 0]
                              }]
              }
