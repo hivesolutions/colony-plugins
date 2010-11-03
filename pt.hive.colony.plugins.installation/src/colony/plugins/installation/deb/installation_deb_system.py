@@ -179,12 +179,12 @@ class InstallationDeb:
 
         # retrieves the exclusions list
         exclusions = contents.get("exclusions", {})
-        exclusions_list = exclusions.get("exclusion", [])
+        exclusions_list = colony.libs.map_util.map_get_values(exclusions, "exclusion")
 
         # retrieves the content references
-        directories = contents.get("directory", [])
-        files = contents.get("file", [])
-        links = contents.get("link", [])
+        directories = colony.libs.map_util.map_get_values(contents, "directory")
+        files = colony.libs.map_util.map_get_values(contents, "file")
+        links = colony.libs.map_util.map_get_values(contents, "link")
 
         # processes the exclusion regex from the exclusions list
         exclusion_regex = self._process_exclusion_regex(exclusions_list)
