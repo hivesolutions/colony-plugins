@@ -58,6 +58,10 @@
             <version>.*</version>
         </module>
         <module>
+            <id>pt.hive.colony.plugins.main.client.utils</id>
+            <version>.*</version>
+        </module>
+        <module>
             <id>pt.hive.colony.plugins.main.console.interface</id>
             <version>.*</version>
         </module>
@@ -115,6 +119,10 @@
         </module>
         <module>
             <id>pt.hive.colony.plugins.misc.random</id>
+            <version>.*</version>
+        </module>
+        <module>
+            <id>pt.hive.colony.plugins.misc.url_parser</id>
             <version>.*</version>
         </module>
         <module>
@@ -297,6 +305,17 @@
                             </parameters>
                         </file>
                         <file>
+                            <path>${build_automation.build.plugins_directory}/pt.hive.colony.plugins.main.client.utils_1.0.0.cpx</path>
+                            <owner>0</owner>
+                            <group>0</group>
+                            <mode>755</mode>
+                            <parameters>
+                                <deb>
+                                    <target>usr/lib/colony/deploy/pt.hive.colony.plugins.main.client.utils_1.0.0.cpx</target>
+                                </deb>
+                            </parameters>
+                        </file>
+                        <file>
                             <path>${build_automation.build.plugins_directory}/pt.hive.colony.plugins.main.console.interface_1.0.0.cpx</path>
                             <owner>0</owner>
                             <group>0</group>
@@ -458,6 +477,17 @@
                             <parameters>
                                 <deb>
                                     <target>usr/lib/colony/deploy/pt.hive.colony.plugins.misc.random_1.0.0.cpx</target>
+                                </deb>
+                            </parameters>
+                        </file>
+                        <file>
+                            <path>${build_automation.build.plugins_directory}/pt.hive.colony.plugins.misc.url_parser_1.0.0.cpx</path>
+                            <owner>0</owner>
+                            <group>0</group>
+                            <mode>755</mode>
+                            <parameters>
+                                <deb>
+                                    <target>usr/lib/colony/deploy/pt.hive.colony.plugins.misc.url_parser_1.0.0.cpx</target>
                                 </deb>
                             </parameters>
                         </file>
