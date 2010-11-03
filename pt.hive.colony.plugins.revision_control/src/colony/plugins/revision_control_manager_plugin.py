@@ -87,6 +87,7 @@ class RevisionControlManagerPlugin(colony.base.plugin_system.Plugin):
     @colony.base.decorators.load_allowed("pt.hive.colony.plugins.revision_control.manager", "1.0.0")
     def load_allowed(self, plugin, capability):
         colony.base.plugin_system.Plugin.load_allowed(self, plugin, capability)
+        print "carregou lload allowe"
 
     @colony.base.decorators.unload_allowed("pt.hive.colony.plugins.revision_control.manager", "1.0.0")
     def unload_allowed(self, plugin, capability):
@@ -112,6 +113,8 @@ class RevisionControlManagerPlugin(colony.base.plugin_system.Plugin):
 
     @colony.base.decorators.load_allowed_capability("revision_control.adapter")
     def revision_control_manager_adapter_load_allowed(self, plugin, capability):
+        print "carregou load allowed 2"
+
         self.revision_control_adapter_plugins.append(plugin)
 
     @colony.base.decorators.unload_allowed_capability("revision_control.adapter")
