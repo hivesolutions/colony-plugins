@@ -98,10 +98,8 @@ class BuildAutomationFileParser(Parser):
         return self.build_automation
 
     def load_build_automation_file(self, file):
-        print "vai fazer parse"
         # creates the xml doument DOM object
         xml_document = xml.dom.minidom.parse(file)
-        print "acabou de fazer parse"
         child_nodes = xml_document.childNodes
 
         for child_node in child_nodes:
