@@ -134,7 +134,7 @@ class TemplateEngineManager:
 
         try:
             # parses the file, retrieving the template file
-            template_file = self.parse_file(file, file_path, DEFAULT_ENCODING_VALUE)
+            template_file = self.parse_file(file, file_path, encoding)
         finally:
             # closes the file
             file.close()
