@@ -370,6 +370,9 @@ class EmailBuildAutomationExtension:
         # retrieves the mime message value
         mime_message_value = mime_message.get_value()
 
+        # prints an info message
+        logger.info("Sending email using host '%s:%i' and sender address: %s" % (smtp_hostname, smtp_port, sender_email))
+
         # send the email using the defined values
         smtp_client.send_mail(smtp_hostname, smtp_port, sender_email, receiver_emails, mime_message_value, parameters)
 
