@@ -41,7 +41,7 @@ import sys
 
 import console_window
 
-BRANDING_TEXT = "Hive Colony %s (Hive Solutions Lda. r1:%s)"
+BRANDING_TEXT = "Hive Colony %s (Hive Solutions Lda. r%s:%s)"
 """ The branding text value """
 
 VERSION_PRE_TEXT = "Python "
@@ -98,6 +98,9 @@ class ConsoleInterface:
         # retrieves the plugin manager version
         plugin_manager_version = plugin_manager.get_version()
 
+        # retrieves the plugin manager release
+        plugin_manager_release = plugin_manager.get_release()
+
         # retrieves the plugin manager release date
         plugin_manager_release_date = plugin_manager.get_release_date()
 
@@ -105,7 +108,7 @@ class ConsoleInterface:
         information = str()
 
         # adds the branding information text
-        information += BRANDING_TEXT % (plugin_manager_version, plugin_manager_release_date) + "\n"
+        information += BRANDING_TEXT % (plugin_manager_version, plugin_manager_release, plugin_manager_release_date) + "\n"
 
         # adds the python information
         information += VERSION_PRE_TEXT + sys.version + "\n"
