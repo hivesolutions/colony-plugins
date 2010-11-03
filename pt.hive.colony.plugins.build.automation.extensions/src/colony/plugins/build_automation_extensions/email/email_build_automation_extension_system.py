@@ -277,8 +277,10 @@ class EmailBuildAutomationExtension:
                 receiver_line += ", "
 
             # retrieves the receiver name and email
-            receiver_name = receiver["name"]
-            receiver_email = receiver["email"]
+            #receiver_name = receiver["name"]
+            #receiver_email = receiver["email"]
+
+            receiver_name, receiver_email = receiver
 
             # adds the receiver name and email to the receiver line
             receiver_line += receiver_name + " " + "<" + receiver_email + ">"
