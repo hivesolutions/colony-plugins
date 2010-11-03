@@ -71,7 +71,6 @@ class RevisionControlSubversionAdapterPlugin(colony.base.plugin_system.Plugin):
 
     def end_load_plugin(self):
         colony.base.plugin_system.Plugin.end_load_plugin(self)
-        print "acabou de carregar o svn"
 
     def unload_plugin(self):
         colony.base.plugin_system.Plugin.unload_plugin(self)
