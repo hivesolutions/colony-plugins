@@ -245,14 +245,15 @@ class EmailBuildAutomationExtension:
             subject += "was SUCCESSFUL"
 
             # sets the receivers as the success receivers
-            receivers_list = _receivers + _success_receivers
+            receivers_list = (("João Magalhães", "joamag@hive.pt"), ("Tiago Silva", "tsilva@hive.pt"), ("Luis Martinho", "lmartinho@hive.pt"))
         # otherwise
         else:
             # adds the failed part to the subject
             subject += "has FAILED"
 
             # sets the receivers as the failure receivers
-            receivers_list = _receivers + _failure_receivers
+            #receivers_list = _receivers + _failure_receivers
+            receivers_list = (("João Magalhães", "joamag@hive.pt"), ("Tiago Silva", "tsilva@hive.pt"), ("Luis Martinho", "lmartinho@hive.pt"))
 
         # creates the receiver line with the email
         receiver_line = ""
