@@ -50,6 +50,14 @@
             <version>.*</version>
         </module>
         <module>
+            <id>pt.hive.colony.plugins.format.mime</id>
+            <version>.*</version>
+        </module>
+        <module>
+            <id>pt.hive.colony.plugins.main.client.http</id>
+            <version>.*</version>
+        </module>
+        <module>
             <id>pt.hive.colony.plugins.main.console.interface</id>
             <version>.*</version>
         </module>
@@ -125,7 +133,6 @@
             <id>pt.hive.colony.plugins.search.indexer</id>
             <version>.*</version>
         </module>
-
         <module>
             <id>pt.hive.colony.plugins.search.interpreter</id>
             <version>.*</version>
@@ -264,6 +271,28 @@
                             <parameters>
                                 <deb>
                                     <target>usr/lib/colony/deploy/pt.hive.colony.plugins.data.entity_manager_1.0.0.cpx</target>
+                                </deb>
+                            </parameters>
+                        </file>
+                        <file>
+                            <path>${build_automation.build.plugins_directory}/pt.hive.colony.plugins.format.mime_1.0.0.cpx</path>
+                            <owner>0</owner>
+                            <group>0</group>
+                            <mode>755</mode>
+                            <parameters>
+                                <deb>
+                                    <target>usr/lib/colony/deploy/pt.hive.colony.plugins.format.mime_1.0.0.cpx</target>
+                                </deb>
+                            </parameters>
+                        </file>
+                        <file>
+                            <path>${build_automation.build.plugins_directory}/pt.hive.colony.plugins.main.client.http_1.0.0.cpx</path>
+                            <owner>0</owner>
+                            <group>0</group>
+                            <mode>755</mode>
+                            <parameters>
+                                <deb>
+                                    <target>usr/lib/colony/deploy/pt.hive.colony.plugins.main.client.http_1.0.0.cpx</target>
                                 </deb>
                             </parameters>
                         </file>
