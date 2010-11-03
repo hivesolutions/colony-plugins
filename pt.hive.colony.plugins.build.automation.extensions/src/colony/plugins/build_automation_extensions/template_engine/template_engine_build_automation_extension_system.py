@@ -39,6 +39,9 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 import colony.libs.map_util
 
+DEFAULT_ENCODING = "Cp1252"
+""" The default encoding """
+
 class TemplateEngineBuildAutomationExtension:
     """
     The template engine build automation extension class.
@@ -58,9 +61,37 @@ class TemplateEngineBuildAutomationExtension:
         self.template_engine_build_automation_extension_plugin = template_engine_build_automation_extension_plugin
 
     def run_automation(self, plugin, stage, parameters, build_automation_structure, logger):
+        # retrieves the template engine manager plugin
+        template_engine_manager_plugin = self.template_engine_build_automation_extension_plugin.template_engine_manager_plugin
+
+        # retrieves the contents from the parameters
         contents = parameters.get("contents", {})
+
+        # retrieves the files from the parameters
         files = colony.libs.map_util.map_get_values(contents, "file")
 
-        print files
+        # iterates over all the files
+        for file in files:
+            # retrieves the file path from the file
+            file_path = file["path"]
 
+            # retrieves the file encoding from the file
+            file_encoding = file.get("encoding", DEFAULT_ENCODING)
+
+            # parses the template file path
+            template_file = template_engine_manager_plugin.parse_file_path(file_path)
+
+            # assigns the release version to the template file
+            template_file.assign("release_version", "asdas")
+
+            # assigns the date to the template file
+            template_file.assign("release_version", "23 Dec")
+
+            # processes the template file
+            processed_template_file = template_file.process()
+
+            # decodes the processed template file into a unicode object
+            processed_template_file_decoded = processed_template_file.decode(file_encoding)
+
+        # returns true (success)
         return True;
