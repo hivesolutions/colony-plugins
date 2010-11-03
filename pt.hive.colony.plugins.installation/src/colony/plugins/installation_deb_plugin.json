@@ -17,18 +17,20 @@
                 "version" : "1.0.0"
             }],
     "main_file" : "installation_deb_plugin.py",
-    "resources" : ["installation_deb_plugin.py", "installation/__init__.py",
+    "resources" : [
+            "installation_deb_plugin.py",
+            "installation/__init__.py",
             "installation/deb/__init__.py",
             "installation/deb/installation_deb_exceptions.py",
             "installation/deb/installation_deb_system.py",
             "installation/deb/resources/baf.xml",
-            "installation/deb/resources/control_file_templates/changelog.tpl",
-            "installation/deb/resources/control_file_templates/conffiles.tpl",
-            "installation/deb/resources/control_file_templates/config.tpl",
-            "installation/deb/resources/control_file_templates/control.tpl",
-            "installation/deb/resources/control_file_templates/copyright.tpl",
-            "installation/deb/resources/control_file_templates/postinst.tpl",
-            "installation/deb/resources/control_file_templates/postrm.tpl",
-            "installation/deb/resources/control_file_templates/preinst.tpl",
-            "installation/deb/resources/control_file_templates/prerm.tpl"]
+            "installation/deb/resources/control_file_templates/changelog.tpl.sh",
+            "installation/deb/resources/control_file_templates/conffiles.tpl.sh",
+            "installation/deb/resources/control_file_templates/config.tpl.sh",
+            "installation/deb/resources/control_file_templates/control.tpl.sh",
+            "installation/deb/resources/control_file_templates/copyright.tpl.sh",
+            "installation/deb/resources/control_file_templates/postinst.tpl.sh",
+            "installation/deb/resources/control_file_templates/postrm.tpl.sh",
+            "installation/deb/resources/control_file_templates/preinst.tpl.sh",
+            "installation/deb/resources/control_file_templates/prerm.tpl.sh"]
 }
