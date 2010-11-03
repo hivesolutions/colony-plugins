@@ -345,12 +345,15 @@ class EmailBuildAutomationExtension:
         # processes the template file
         processed_template_file = template_file.process()
 
+        # encodes the processed template file
+        processed_template_file_encoded = processed_template_file.encode(DEFAULT_ENCODING)
+
         mime_message_text_part = format_mime_plugin.create_message_part({})
         mime_message_text_part.write("text mode contents")
         mime_message_text_part.set_header(CONTENT_TYPE_VALUE, "text/plain")
 
         mime_message_html_part = format_mime_plugin.create_message_part({})
-        mime_message_html_part.write(processed_template_file)
+        mime_message_html_part.write(processed_template_file_encoded)
         mime_message_html_part.set_header(CONTENT_TYPE_VALUE, "text/html;charset=" + DEFAULT_ENCODING)
 
         mime_message_packer_part = format_mime_plugin.create_message_part({})
