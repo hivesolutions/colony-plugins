@@ -128,7 +128,7 @@ class TemplateEngineManager:
 
         self.template_engine_manager_plugin = template_engine_manager_plugin
 
-    def parse_file_path(self, file_path, encoding = DEFAULT_ENCODING_VALUE, variable_encoding = None):
+    def parse_file_path(self, file_path, encoding = DEFAULT_ENCODING_VALUE, variable_encoding = DEFAULT_ENCODING_VALUE):
         # opens the file for reading
         file = open(file_path, "r")
 
@@ -146,7 +146,7 @@ class TemplateEngineManager:
         # returns the template file
         return template_file
 
-    def parse_file(self, file, file_path = None, encoding = None):
+    def parse_file(self, file, file_path = None, encoding = DEFAULT_ENCODING_VALUE):
         # reads the file contents
         file_contents = file.read()
 
