@@ -37,10 +37,24 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
+import datetime
+
 import colony.libs.map_util
 
 DEFAULT_ENCODING = "Cp1252"
 """ The default encoding """
+
+DATE_FORMAT = "%b %d %Y"
+""" The format used to convert dates to strings """
+
+VERSION_VALUE = "version"
+""" The version value """
+
+RELEASE_VERSION_VALUE = "release_version"
+""" the release version value """
+
+DATE_VALUE = "date"
+""" the date value """
 
 class TemplateEngineBuildAutomationExtension:
     """
@@ -64,6 +78,9 @@ class TemplateEngineBuildAutomationExtension:
         # retrieves the template engine manager plugin
         template_engine_manager_plugin = self.template_engine_build_automation_extension_plugin.template_engine_manager_plugin
 
+        # retrieves the build automation structure runtime
+        build_automation_structure_runtime = build_automation_structure.runtime
+
         # retrieves the contents from the parameters
         contents = parameters.get("contents", {})
 
@@ -81,11 +98,9 @@ class TemplateEngineBuildAutomationExtension:
             # parses the template file path
             template_file = template_engine_manager_plugin.parse_file_path(file_path)
 
-            # assigns the release version to the template file
-            template_file.assign("release_version", "asdas")
-
-            # assigns the date to the template file
-            template_file.assign("release_version", "23 Dec")
+            # assigns the values to the template file using the build
+            # automation structure runtime
+            self._assign_template_file(template_file, build_automation_structure_runtime)
 
             # processes the template file
             processed_template_file = template_file.process()
@@ -93,5 +108,32 @@ class TemplateEngineBuildAutomationExtension:
             # decodes the processed template file into a unicode object
             processed_template_file_decoded = processed_template_file.decode(file_encoding)
 
+            # open the file
+            _file = open(file_path, "wb")
+
+            try:
+                # writes the processed template file decoded to the
+                # file (as the final result)
+                _file.write(processed_template_file_decoded)
+            finally:
+                # closes the file
+                _file.close()
+
         # returns true (success)
-        return True;
+        return True
+
+    def _assign_template_file(self, template_file, build_automation_structure_runtime):
+        # retrieves the current datetime
+        current_datetime = datetime.datetime.utcnow()
+
+        # formats the current datetime to string
+        current_date_string = current_datetime.strftime(DATE_FORMAT)
+
+        # retrieves the current version value
+        version_value = build_automation_structure_runtime.properties.get(VERSION_VALUE, -1)
+
+        # assigns the release version to the template file
+        template_file.assign(RELEASE_VERSION_VALUE, "b" + str(version_value))
+
+        # assigns the date to the template file
+        template_file.assign(DATE_VALUE, current_date_string)
