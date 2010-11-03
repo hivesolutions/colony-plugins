@@ -245,15 +245,14 @@ class EmailBuildAutomationExtension:
             subject += "was SUCCESSFUL"
 
             # sets the receivers as the success receivers
-            receivers_list = (("João Magalhães", "joamag@hive.pt"), ("Tiago Silva", "tsilva@hive.pt"), ("Luis Martinho", "lmartinho@hive.pt"))
+            receivers_list = _receivers + _success_receivers
         # otherwise
         else:
             # adds the failed part to the subject
             subject += "has FAILED"
 
             # sets the receivers as the failure receivers
-            #receivers_list = _receivers + _failure_receivers
-            receivers_list = (("João Magalhães", "joamag@hive.pt"), ("Tiago Silva", "tsilva@hive.pt"), ("Luis Martinho", "lmartinho@hive.pt"))
+            receivers_list = _receivers + _failure_receivers
 
         # creates the receiver line with the email
         receiver_line = ""
@@ -277,10 +276,8 @@ class EmailBuildAutomationExtension:
                 receiver_line += ", "
 
             # retrieves the receiver name and email
-            #receiver_name = receiver["name"]
-            #receiver_email = receiver["email"]
-
-            receiver_name, receiver_email = receiver
+            receiver_name = receiver["name"]
+            receiver_email = receiver["email"]
 
             # adds the receiver name and email to the receiver line
             receiver_line += receiver_name + " " + "<" + receiver_email + ">"
@@ -293,10 +290,15 @@ class EmailBuildAutomationExtension:
         current_date_time = datetime.datetime.utcnow()
         current_date_time_formated = current_date_time.strftime(DATE_TIME_FORMAT)
 
+        # encodes the values
+        sender_line_encoded = sender_line.encode(DEFAULT_ENCODING)
+        receiver_line_encoded = receiver_line.encode(DEFAULT_ENCODING)
+        subject_encoded = subject.encode(DEFAULT_ENCODING)
+
         # sets the basic mime message headers
-        mime_message.set_header(FROM_VALUE, sender_line)
-        mime_message.set_header(TO_VALUE, receiver_line)
-        mime_message.set_header(SUBJECT_VALUE, subject)
+        mime_message.set_header(FROM_VALUE, sender_line_encoded)
+        mime_message.set_header(TO_VALUE, receiver_line_encoded)
+        mime_message.set_header(SUBJECT_VALUE, subject_encoded)
         mime_message.set_header(DATE_VALUE, current_date_time_formated)
         mime_message.set_header(USER_AGENT_VALUE, USER_AGENT_IDENTIFIER)
 
@@ -334,16 +336,13 @@ class EmailBuildAutomationExtension:
         template_file.assign("total_time_formated", build_automation_total_time_formated)
 
         # assigns the changelog list to the parsed template file
-        #template_file.assign("changelog_list", build_automation_changelog_list)
-        template_file.assign("changelog_list", [])
+        template_file.assign("changelog_list", build_automation_changelog_list)
 
         # assigns the issues list to the parsed template file
-        #template_file.assign("issues_list", build_automation_issues_list)
-        template_file.assign("issues_list", [])
+        template_file.assign("issues_list", build_automation_issues_list)
 
         # assigns the changers list to the parsed template file
-        #template_file.assign("changers_list", build_automation_changers_list)
-        template_file.assign("changers_list", [])
+        template_file.assign("changers_list", build_automation_changers_list)
 
         # assigns the base repository path to the parsed template file
         template_file.assign("base_repository_path", "http://servidor3.hive:8080/integration/" + str(build_automation_version))
