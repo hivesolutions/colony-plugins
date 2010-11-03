@@ -105,16 +105,16 @@ class TemplateEngineBuildAutomationExtension:
             # processes the template file
             processed_template_file = template_file.process()
 
-            # decodes the processed template file into a unicode object
-            processed_template_file_decoded = processed_template_file.decode(file_encoding)
+            # encodes the processed template using the file encoding
+            processed_template_file_encoded = processed_template_file.encode(file_encoding)
 
             # open the file
             _file = open(file_path, "wb")
 
             try:
-                # writes the processed template file decoded to the
+                # writes the processed template file encoded to the
                 # file (as the final result)
-                _file.write(processed_template_file_decoded)
+                _file.write(processed_template_file_encoded)
             finally:
                 # closes the file
                 _file.close()
