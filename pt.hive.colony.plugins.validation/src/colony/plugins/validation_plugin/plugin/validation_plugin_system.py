@@ -367,6 +367,17 @@ class ValidationPlugin:
             # logs the validation error
             self.add_validation_error(validation_errors, plugin_information, "'%s' has duplicate main modules" % plugin_module_name)
 
+        # copies the main modules list
+        plugin_main_modules_sorted = list(plugin.main_modules)
+
+        # sorts the main modules list
+        plugin_main_modules_sorted.sort()
+
+        # checks if the main modules list is ordered
+        if not plugin.main_modules == plugin_main_modules_sorted:
+            # logs the validation error
+            self.add_validation_error(validation_errors, plugin_information, "'%s' has unordered main modules" % plugin_module_name)
+
         # checks that plugin's main module file paths exist
         for plugin_main_module_file_path in plugin_main_module_file_paths:
             if not os.path.exists(plugin_main_module_file_path):
