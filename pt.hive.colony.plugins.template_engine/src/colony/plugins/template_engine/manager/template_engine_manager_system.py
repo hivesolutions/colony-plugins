@@ -143,9 +143,9 @@ class TemplateEngineManager:
         return template_file
 
     def parse_file_path_variable_encoding(self, file_path, encoding = DEFAULT_ENCODING_VALUE, variable_encoding = DEFAULT_ENCODING_VALUE):
-        # parses the file for the given file path
-        # retrieving the template_file
-        template_file = self.parse_file_path(file_path)
+        # parses the file for the given file path with the
+        # given encoding retrieving the template_file
+        template_file = self.parse_file_path(file_path, encoding)
 
         # sets the variable encoding in the template file
         template_file.set_variable_encoding(variable_encoding)
