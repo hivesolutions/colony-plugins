@@ -352,6 +352,9 @@ class MainConsole:
         # retrieves the plugin manager release
         plugin_manager_release = plugin_manager.get_release()
 
+        # retrieves the plugin manager build
+        plugin_manager_build = plugin_manager.get_build()
+
         # retrieves the plugin manager release date
         plugin_manager_release_date = plugin_manager.get_release_date()
 
@@ -379,6 +382,7 @@ class MainConsole:
         output_method("uid:          " + plugin_manager_uid)
         output_method("version:      " + plugin_manager_version)
         output_method("release:      " + plugin_manager_release)
+        output_method("build:        " + plugin_manager_build)
         output_method("release date: " + plugin_manager_release_date)
         output_method("environment:  " + plugin_manager_environment)
         output_method("uptime:       " + uptime_string)
