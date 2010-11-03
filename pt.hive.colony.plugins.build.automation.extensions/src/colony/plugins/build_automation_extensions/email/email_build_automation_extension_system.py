@@ -291,9 +291,9 @@ class EmailBuildAutomationExtension:
         current_date_time_formated = current_date_time.strftime(DATE_TIME_FORMAT)
 
         # encodes the values
-        sender_line_encoded = sender_line.encode(DEFAULT_ENCODING)
-        receiver_line_encoded = receiver_line.encode(DEFAULT_ENCODING)
-        subject_encoded = subject.encode(DEFAULT_ENCODING)
+        sender_line_encoded = sender_line.encode(DEFAULT_TEMPLATE_ENCODING)
+        receiver_line_encoded = receiver_line.encode(DEFAULT_TEMPLATE_ENCODING)
+        subject_encoded = subject.encode(DEFAULT_TEMPLATE_ENCODING)
 
         # sets the basic mime message headers
         mime_message.set_header(FROM_VALUE, sender_line_encoded)
@@ -384,8 +384,8 @@ class EmailBuildAutomationExtension:
         # retrieves the mime message value
         mime_message_value = mime_message.get_value()
 
-        # prints an info message
-        logger.info("Sending email using host '%s:%i' and sender address: '%s'" % (smtp_hostname, smtp_port, sender_email))
+        # prints a debug message
+        logger.debug("Sending email using host '%s:%i' and sender address: '%s'" % (smtp_hostname, smtp_port, sender_email))
 
         # send the email using the defined values
         smtp_client.send_mail(smtp_hostname, smtp_port, sender_email, receiver_emails, mime_message_value, parameters)
