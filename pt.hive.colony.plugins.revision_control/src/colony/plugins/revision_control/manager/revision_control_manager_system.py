@@ -88,6 +88,8 @@ class RevisionControlManager:
         # retrieves the plugin adapter name
         adapter_name = revision_control_adapter_plugin.get_adapter_name()
 
+        print "carregou adaptador: " + adapter_name
+
         self.revision_control_adapter_plugins_map[adapter_name] = revision_control_adapter_plugin
 
     def revision_control_adapter_unload(self, revision_control_adapter_plugin):
