@@ -95,7 +95,7 @@ SERVER_VERSION = "1.0.0"
 ENVIRONMENT_VERSION = str(sys.version_info[0]) + "." + str(sys.version_info[1]) + "." + str(sys.version_info[2]) + "-" + str(sys.version_info[3])
 """ The environment version """
 
-SERVER_IDENTIFIER = SERVER_NAME + "/" + SERVER_VERSION + " (Python/" + sys.platform + "/" + ENVIRONMENT_VERSION + ")"
+SERVER_IDENTIFIER = SERVER_NAME + "/" + SERVER_VERSION + " (python/" + sys.platform + "/" + ENVIRONMENT_VERSION + ")"
 """ The server identifier """
 
 NUMBER_THREADS = 15
