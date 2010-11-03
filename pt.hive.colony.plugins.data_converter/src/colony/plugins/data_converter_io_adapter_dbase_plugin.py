@@ -66,9 +66,9 @@ class DataConverterIoAdapterDbasePlugin(colony.base.plugin_system.Plugin):
                     "DBFpy", "dbfpy", "2.2.3", "http://sourceforge.net/projects/dbfpy")]
     events_handled = []
     events_registrable = []
-    main_modules = ["data_converter_io_adapter_dbase.io_adapter_dbase.dbfpy_extensions",
-                    "data_converter_io_adapter_dbase.io_adapter_dbase.data_converter_io_adapter_dbase_exceptions",
-                    "data_converter_io_adapter_dbase.io_adapter_dbase.data_converter_io_adapter_dbase_system"]
+    main_modules = ["data_converter_io_adapter_dbase.io_adapter_dbase.data_converter_io_adapter_dbase_exceptions",
+                    "data_converter_io_adapter_dbase.io_adapter_dbase.data_converter_io_adapter_dbase_system",
+                    "data_converter_io_adapter_dbase.io_adapter_dbase.dbfpy_extensions"]
 
     io_adapter_dbase = None
     """ The intermediate structure dbase input output adapter """

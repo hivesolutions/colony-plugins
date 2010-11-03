@@ -61,7 +61,9 @@ class JavascriptManagerPlugin(colony.base.plugin_system.Plugin):
                     "pt.hive.colony.plugins.resources.resource_manager", "1.0.0")]
     events_handled = []
     events_registrable = []
-    main_modules = ["javascript_manager.manager.javascript_manager_system", "javascript_manager.manager.javascript_manager_parser", "javascript_manager.manager.javascript_manager_exceptions"]
+    main_modules = ["javascript_manager.manager.javascript_manager_exceptions",
+                    "javascript_manager.manager.javascript_manager_parser",
+                    "javascript_manager.manager.javascript_manager_system"]
 
     javascript_manager = None
 

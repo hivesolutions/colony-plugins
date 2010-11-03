@@ -62,7 +62,8 @@ class MainRestManagerPlugin(colony.base.plugin_system.Plugin):
                     "pt.hive.colony.plugins.misc.random", "1.0.0")]
     events_handled = []
     events_registrable = []
-    main_modules = ["main_remote_rest.manager.main_rest_manager_system", "main_remote_rest.manager.main_rest_manager_exceptions"]
+    main_modules = ["main_remote_rest.manager.main_rest_manager_exceptions",
+                    "main_remote_rest.manager.main_rest_manager_system"]
 
     main_rest_manager = None
 

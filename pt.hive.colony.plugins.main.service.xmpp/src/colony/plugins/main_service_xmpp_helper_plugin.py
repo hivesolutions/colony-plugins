@@ -60,7 +60,8 @@ class MainServiceXmppHelperPlugin(colony.base.plugin_system.Plugin):
     dependencies = []
     events_handled = []
     events_registrable = []
-    main_modules = ["main_service_xmpp_helper.xmpp_helper.main_service_xmpp_helper_system", "main_service_xmpp_helper.xmpp_helper.main_service_xmpp_helper_exceptions"]
+    main_modules = ["main_service_xmpp_helper.xmpp_helper.main_service_xmpp_helper_exceptions",
+                    "main_service_xmpp_helper.xmpp_helper.main_service_xmpp_helper_system"]
 
     main_service_xmpp_helper = None
 

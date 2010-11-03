@@ -59,7 +59,8 @@ class MainXmlrpcManagerPlugin(colony.base.plugin_system.Plugin):
     dependencies = []
     events_handled = []
     events_registrable = []
-    main_modules = ["main_remote_xmlrpc.manager.main_xmlrpc_manager_system", "main_remote_xmlrpc.manager.main_xmlrpc_manager_exceptions"]
+    main_modules = ["main_remote_xmlrpc.manager.main_xmlrpc_manager_exceptions",
+                    "main_remote_xmlrpc.manager.main_xmlrpc_manager_system"]
 
     main_xmlrpc_manager = None
 

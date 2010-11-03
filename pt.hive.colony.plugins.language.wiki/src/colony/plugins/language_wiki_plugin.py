@@ -59,7 +59,8 @@ class LanguageWikiPlugin(colony.base.plugin_system.Plugin):
                     "Colony Language Wiki", "language_wiki.wiki_generator", "1.0.x", "http://www.hive.pt")]
     events_handled = []
     events_registrable = []
-    main_modules = ["_language_wiki.wiki.language_wiki_system", "_language_wiki.wiki.language_wiki_exceptions"]
+    main_modules = ["_language_wiki.wiki.language_wiki_exceptions",
+                    "_language_wiki.wiki.language_wiki_system"]
 
     language_wiki = None
 

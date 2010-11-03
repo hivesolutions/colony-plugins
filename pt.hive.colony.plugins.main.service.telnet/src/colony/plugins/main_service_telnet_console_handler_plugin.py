@@ -61,7 +61,8 @@ class MainServiceTelnetConsoleHandlerPlugin(colony.base.plugin_system.Plugin):
                     "pt.hive.colony.plugins.main.console", "1.0.0")]
     events_handled = []
     events_registrable = []
-    main_modules = ["main_service_telnet_console_handler.console_handler.main_service_telnet_console_handler_system", "main_service_telnet_console_handler.console_handler.main_service_telnet_console_handler_exceptions"]
+    main_modules = ["main_service_telnet_console_handler.console_handler.main_service_telnet_console_handler_exceptions",
+                    "main_service_telnet_console_handler.console_handler.main_service_telnet_console_handler_system"]
 
     main_service_telnet_console_handler = None
 

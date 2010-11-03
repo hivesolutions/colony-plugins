@@ -64,8 +64,8 @@ class DescriptorGeneratorPlugin(colony.base.plugin_system.Plugin):
                     "pt.hive.colony.plugins.template_engine.manager", "1.0.0")]
     events_handled = []
     events_registrable = []
-    main_modules = ["descriptor_generator.generator.descriptor_generator_system",
-                    "descriptor_generator.generator.console_descriptor_generator"]
+    main_modules = ["descriptor_generator.generator.console_descriptor_generator",
+                    "descriptor_generator.generator.descriptor_generator_system"]
 
     descriptor_generator = None
     """ The descriptor generator """

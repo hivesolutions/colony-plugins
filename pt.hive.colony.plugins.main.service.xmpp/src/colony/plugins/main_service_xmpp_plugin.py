@@ -63,7 +63,8 @@ class MainServiceXmppPlugin(colony.base.plugin_system.Plugin):
                     "pt.hive.colony.plugins.main.service.xmpp_helper", "1.0.0")]
     events_handled = []
     events_registrable = []
-    main_modules = ["main_service_xmpp.xmpp.main_service_xmpp_system", "main_service_xmpp.xmpp.main_service_xmpp_exceptions"]
+    main_modules = ["main_service_xmpp.xmpp.main_service_xmpp_exceptions",
+                    "main_service_xmpp.xmpp.main_service_xmpp_system"]
 
     main_service_xmpp = None
 

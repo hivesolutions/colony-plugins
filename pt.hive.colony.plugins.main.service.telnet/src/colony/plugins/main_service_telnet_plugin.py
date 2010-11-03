@@ -61,7 +61,8 @@ class MainServiceTelnetPlugin(colony.base.plugin_system.Plugin):
                     "pt.hive.colony.plugins.main.service.utils", "1.0.0")]
     events_handled = []
     events_registrable = []
-    main_modules = ["main_service_telnet.telnet.main_service_telnet_system", "main_service_telnet.telnet.main_service_telnet_exceptions"]
+    main_modules = ["main_service_telnet.telnet.main_service_telnet_exceptions",
+                    "main_service_telnet.telnet.main_service_telnet_system"]
 
     main_service_telnet = None
 

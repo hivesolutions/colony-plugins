@@ -59,7 +59,8 @@ class MainMockPlugin(colony.base.plugin_system.Plugin):
     dependencies = []
     events_handled = []
     events_registrable = []
-    main_modules = ["main_mock.mock.main_mock_system", "main_mock.mock.main_mock_exceptions"]
+    main_modules = ["main_mock.mock.main_mock_exceptions",
+                    "main_mock.mock.main_mock_system"]
 
     main_mock = None
 
