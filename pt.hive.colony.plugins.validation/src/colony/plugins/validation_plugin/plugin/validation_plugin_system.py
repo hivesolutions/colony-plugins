@@ -171,7 +171,7 @@ PLUGIN_DESCRIPTOR_ATTRIBUTES_MAP = {"id" : "original_id",
                                     "capabilities" : "capabilities"}
 """ Defines the association between attributes in the plugin descriptor file and the plugin itself """
 
-BUILD_AUTOMATION_FILE_ARTIFACT_ATTRIBUTES_MAP = {"id" : "id",
+BUILD_AUTOMATION_FILE_ARTIFACT_ATTRIBUTES_MAP = {"id" : "original_id",
                                                  "version" : "version",
                                                  "name" : "name",
                                                  "description" : "description"}
