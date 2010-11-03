@@ -72,7 +72,10 @@
                 <stage>build</stage>
                 <configuration>
                     <contents>
-                        <file>$base{plugin_system_directory}/colony/base/plugin_system_information.py</file>
+                        <file>
+                            <path>$base{plugin_system_directory}/colony/base/plugin_system_information.py</path>
+                            <encoding>Cp1252</encoding>
+                        </file>
                     </contents>
                 </configuration>
             </plugin>
