@@ -58,6 +58,7 @@
                             <br />
                             <font face="Rockwell, Arial" size="3" color="#214c8f"><b>You are a <font face="Rockwell, Arial" size="3" color="#dc1c28">SUSPECT</font>, make sure you're innocent.</b></font>
                         </h1>
+                        <br />
                         <p>
                             <font face="Arial" size="2" color="#333333">
                                 Code has been updated to <font face="Rockwell, Arial" size="2" color="#214c8f"><b>r${out_none value=build_automation.version xml_escape=True /}</b></font>.<br />
