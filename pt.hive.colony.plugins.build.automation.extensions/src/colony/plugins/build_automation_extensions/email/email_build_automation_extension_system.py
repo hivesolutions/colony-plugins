@@ -106,6 +106,9 @@ FROM_VALUE = "From"
 TO_VALUE = "To"
 """ The to value """
 
+BCC_VALUE = "Bcc"
+""" The bcc value """
+
 SUBJECT_VALUE = "Subject"
 """ The subject value """
 
@@ -291,7 +294,8 @@ class EmailBuildAutomationExtension:
 
         # sets the basic mime message headers
         mime_message.set_header(FROM_VALUE, sender_line_encoded)
-        mime_message.set_header(TO_VALUE, receiver_line_encoded)
+        mime_message.set_header(TO_VALUE, sender_line_encoded)
+        mime_message.set_header(BCC_VALUE, receiver_line_encoded)
         mime_message.set_header(SUBJECT_VALUE, subject_encoded)
         mime_message.set_header(DATE_VALUE, current_date_time_formated)
         mime_message.set_header(USER_AGENT_VALUE, USER_AGENT_IDENTIFIER)
