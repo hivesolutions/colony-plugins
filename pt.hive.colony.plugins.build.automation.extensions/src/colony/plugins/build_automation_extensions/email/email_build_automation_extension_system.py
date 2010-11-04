@@ -312,7 +312,7 @@ class EmailBuildAutomationExtension:
         email_html_report_images_file_path = email_build_automation_extension_plugin_path + "/" + BUILD_AUTOMATION_EXTENSIONS_EMAIL_PATH + "/" + "images"
 
         # parses the template file path
-        template_file = template_engine_manager_plugin.parse_file_path_variable_encoding(email_html_report_template_file_path, DEFAULT_TEMPLATE_ENCODING, None)
+        template_file = template_engine_manager_plugin.parse_file_path_encoding(email_html_report_template_file_path, DEFAULT_TEMPLATE_ENCODING)
 
         # retrieves the success in normal format
         success = build_automation_structure_runtime.success
