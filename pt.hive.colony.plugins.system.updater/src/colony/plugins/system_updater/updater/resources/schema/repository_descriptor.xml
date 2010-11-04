@@ -34,6 +34,7 @@
     xsi:schemaLocation="http://www.hive.pt ../xsd/repository_descriptor.xsd">
     <name>Main Repository</name>
     <description>Description</description>
+    <layout>simple</layout>
     <packages>
         <package>
             <name></name>
@@ -57,7 +58,7 @@
             <main_module></main_module>
             <main_class></main_class>
             <file_name></file_name>
-            <zip_file></zip_file>
+            <contents_file></contents_file>
         </plugin>
     </plugins>
 </repository>
