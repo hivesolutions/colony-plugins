@@ -44,7 +44,7 @@ import colony.libs.map_util
 DEFAULT_ENCODING = "Cp1252"
 """ The default encoding """
 
-DATE_FORMAT = "%b %d %Y"
+DATE_FORMAT = "%b %d %Y %H:%M:%S"
 """ The format used to convert dates to strings """
 
 VERSION_VALUE = "version"
