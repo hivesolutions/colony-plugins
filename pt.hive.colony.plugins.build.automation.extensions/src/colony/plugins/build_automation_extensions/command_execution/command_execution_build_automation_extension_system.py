@@ -95,10 +95,13 @@ class CommandExecutionBuildAutomationExtension:
         process = command_execution_plugin.execute_command_parameters(parameters)
 
         # starts the cancel timer for the given process
-        self._start_cancel_timer(process, timeout)
+        cancel_timer = self._start_cancel_timer(process, timeout)
 
         # waits for the process to terminate
         stdout_data, stderr_data = process.communicate()
+
+        # cancels the cancel timer
+        cancel_timer.cancel()
 
         # prints the standard output information
         logger.info("Process standard output (stdout)")
@@ -128,6 +131,8 @@ class CommandExecutionBuildAutomationExtension:
         @param process: The process to start the cancel timer.
         @type timeout: float
         @param timeout: The timeout value to be used.
+        @rtype: Time
+        @return: The created cancel timer.
         """
 
         # in case the timeout is invalid
@@ -143,3 +148,6 @@ class CommandExecutionBuildAutomationExtension:
 
         # starts the timer
         cancel_timer.start()
+
+        # returns the created cancel time
+        return cancel_timer
