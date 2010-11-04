@@ -170,10 +170,6 @@
             <version>.*</version>
         </module>
         <module>
-            <id>pt.hive.colony.plugins.search.sorter</id>
-            <version>.*</version>
-        </module>
-        <module>
             <id>pt.hive.colony.plugins.template_engine.manager</id>
             <version>.*</version>
         </module>
@@ -598,17 +594,6 @@
                             <parameters>
                                 <deb>
                                     <target>usr/lib/colony/deploy/pt.hive.colony.plugins.search.scorer_1.0.0.cpx</target>
-                                </deb>
-                            </parameters>
-                        </file>
-                        <file>
-                            <path>${build_automation.build.plugins_directory}/pt.hive.colony.plugins.search.sorter_1.0.0.cpx</path>
-                            <owner>0</owner>
-                            <group>0</group>
-                            <mode>755</mode>
-                            <parameters>
-                                <deb>
-                                    <target>usr/lib/colony/deploy/pt.hive.colony.plugins.search.sorter_1.0.0.cpx</target>
                                 </deb>
                             </parameters>
                         </file>
