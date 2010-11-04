@@ -121,12 +121,8 @@ class Scheduler:
 
         # iterates continuously
         while True:
-            print "vai tentar fazer acquire"
-
             # acquires the lock object
             self.scheduler_lock.acquire()
-
-            print "fez acquire"
 
             # in case the continue flag is disabled
             if not self.continue_flag:
@@ -136,28 +132,17 @@ class Scheduler:
             # runs the scheduler
             self.scheduler.run()
 
-        print "saiu do load scheduler"
-
     def unload_scheduler(self):
-        print "vai fazer unload 1"
-
         # removes all the active scheduler items
         self.remove_all_active_scheduler_items()
-
-        print "vai fazer unload 2"
 
         # sets the continue flag to false
         self.continue_flag = False
 
-        print "vai fazer unload 3"
-
         # in case the scheduler lock is locked
         if self.scheduler_lock.locked():
-            print "vai fazer unload 3.5"
-
             # releases the lock
             self.scheduler_lock.release()
-        print "vai fazer unload 6"
 
     def register_task(self, task, time):
         # calculates the absolute time
@@ -298,6 +283,7 @@ class Scheduler:
             self.scheduler_lock.release()
 
     def remove_scheduler_item(self, scheduler_item):
+        # iterates over all the scheduler items
         if scheduler_item in self.scheduler_items:
             # removes the scheduler item from the list of scheduler items
             self.scheduler_items.remove(scheduler_item)
