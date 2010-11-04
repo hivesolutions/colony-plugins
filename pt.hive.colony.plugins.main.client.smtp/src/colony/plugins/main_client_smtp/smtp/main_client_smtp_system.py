@@ -223,6 +223,9 @@ class SmtpClient:
             # releases the smtp client lock
             self._smtp_client_lock.release()
 
+            # closes the client connection explicitly
+            self.client_connection.close()
+
     def send_request(self, command, message, session, parameters):
         """
         Sends the request for the given parameters.
