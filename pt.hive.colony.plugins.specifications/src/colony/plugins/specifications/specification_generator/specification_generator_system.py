@@ -41,6 +41,9 @@ import specification_generator_exceptions
 
 import colony.libs.string_buffer_util
 
+DEFAULT_ENCODING = "Cp1252"
+""" The default encoding """
+
 SPECIFICATION_GENERATOR_VALUE = "specification_generator"
 """ The specification generator value """
 
@@ -92,12 +95,15 @@ class SepecificationGenerator:
         # retrieves the plugin specification string
         plugin_specification_string = self._get_plugin_specification_string(plugin_id, plugin_version, properties)
 
+        # encodes the plugin specification string
+        plugin_specification_string_encoded = plugin_specification_string.encode(DEFAULT_ENCODING)
+
         # opens the file
         file = open(file_path, "wb")
 
         try:
-            # writes the plugin specification string to the file
-            file.write(plugin_specification_string)
+            # writes the plugin specification string encoded to the file
+            file.write(plugin_specification_string_encoded)
         finally:
             # closes the file
             file.close()
@@ -124,11 +130,14 @@ class SepecificationGenerator:
         # retrieves the plugin specification string
         plugin_specification_string = self._get_plugin_specification_string(plugin_id, plugin_version, properties)
 
+        # encodes the plugin specification string
+        plugin_specification_string_encoded = plugin_specification_string.encode(DEFAULT_ENCODING)
+
         # initializes the string buffer
         string_buffer = colony.libs.string_buffer_util.StringBuffer()
 
-        # writes the plugin specification string
-        string_buffer.write(plugin_specification_string)
+        # writes the plugin specification string encoded
+        string_buffer.write(plugin_specification_string_encoded)
 
         # returns the string buffer
         return string_buffer

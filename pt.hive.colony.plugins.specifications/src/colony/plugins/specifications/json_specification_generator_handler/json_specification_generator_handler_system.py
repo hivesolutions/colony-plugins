@@ -42,6 +42,9 @@ import os
 import colony.base.plugin_system
 import colony.libs.string_buffer_util
 
+DEFAULT_ENCODING = "Cp1252"
+""" The default encoding """
+
 SPECIFICATION_GENERATOR_HANDLER_NAME = "json"
 """ The specification generator handler name """
 
@@ -95,7 +98,7 @@ class JsonSepecificationGeneratorHandler:
         template_file_path = json_specification_generator_handler_plugin_path + "/" + TEMPLATE_FILE_PATH
 
         # parses the template file path
-        template_file = template_engine_manager_plugin.parse_file_path(template_file_path)
+        template_file = template_engine_manager_plugin.parse_file_path_variable_encoding(template_file_path, DEFAULT_ENCODING, None)
 
         # generates the specification map for the plugin
         specification_map = self._generate_specification_map(plugin)
@@ -106,11 +109,8 @@ class JsonSepecificationGeneratorHandler:
         # processes the template file
         processed_template_file = template_file.process()
 
-        # decodes the processed template file into a unicode object
-        processed_template_file_decoded = processed_template_file.decode("Cp1252")
-
-        # returns the processed template file decoded (plugin specification)
-        return processed_template_file_decoded
+        # returns the processed template file (plugin specification)
+        return processed_template_file
 
     def _generate_specification_map(self, plugin):
         """
