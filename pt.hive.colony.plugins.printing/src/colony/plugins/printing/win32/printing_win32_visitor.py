@@ -58,7 +58,7 @@ IMAGE_SCALE_FACTOR = 10
 EXCLUSION_LIST = ["__class__", "__delattr__", "__dict__", "__doc__", "__getattribute__", "__hash__", "__init__", "__module__", "__new__", "__reduce__", "__reduce_ex__", "__repr__", "__setattr__", "__str__", "__weakref__", "__format__", "__sizeof__", "__subclasshook__", "accept", "accept_double", "accept_post_order", "add_child_node", "remove_child_node", "set_indent", "set_value", "indent", "value", "child_nodes"]
 """ The exclusion list """
 
-DEFAULT_ENCODER = "utf-8"
+DEFAULT_ENCODER = "Cp1252"
 """ The default encoder """
 
 NORMAL_TEXT_WEIGHT = 400
@@ -416,8 +416,8 @@ class Visitor:
             self.add_context_information(node)
 
             # retrieves the text and encodes it using
-            # the default encoder
-            text_encoded = node.text.encode(DEFAULT_ENCODER)
+            # the default encoder and ignoring possible errors
+            text_encoded = node.text.encode(DEFAULT_ENCODER, "ignore")
 
             # retrieves the font name
             font_name = str(self.get_context_information("font"))
@@ -492,6 +492,7 @@ class Visitor:
             elif text_align == CENTER_TEXT_ALIGN_VALUE:
                 text_x += int(clip_box_right / 2) - int(text_width / 2)
 
+            # sets the text y as the current position context y
             text_y = current_position_context_y
 
             # outputs the text to the handler device context
