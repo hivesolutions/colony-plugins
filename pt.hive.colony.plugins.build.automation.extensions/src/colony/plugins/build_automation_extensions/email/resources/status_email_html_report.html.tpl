@@ -56,9 +56,13 @@
                                 <font face="Rockwell, Arial" size="3" color="#dc1c28">${out_none value=build_automation.success_capitals xml_escape=True /}</font>
                             ${/if}
                         </h1>
-                        <p>
-                            <img src="cid:line.gif" width="500" height="1" alt="separator" />
-                        </p>
+                        <table height="0" width="100%" cellpadding="0" cellspacing="0">
+                            <tr>
+                                <td valign="middle">
+                                    <img src="line.gif" width="100%" height="1"/>
+                                </td>
+                            </tr>
+                        </table>
                         <p>
                             <font face="Arial" size="2" color="#333333">
                                 Code has been updated to <font face="Rockwell, Arial" size="2" color="#214c8f"><b>r${out_none value=build_automation.version xml_escape=True /}</b></font>.<br />
@@ -69,9 +73,13 @@
                                 The total time for the build automation run was <font face="Rockwell, Arial" size="2" color="#214c8f"><b>${out_none value=build_automation.total_time_formated xml_escape=True /}</b></font>.
                             </font>
                         </p>
-                        <p>
-                            <img src="cid:line.gif" width="500" height="1" alt="separator" />
-                        </p>
+                        <table height="20" width="100%" cellpadding="0" cellspacing="0">
+                            <tr>
+                                <td valign="middle">
+                                    <img src="line.gif" width="100%" height="1"/>
+                                </td>
+                            </tr>
+                        </table>
                         <font face="Rockwell, Arial" size="3" color="#808080"><strong>Code Changes</strong></font>
                         <br />
                         ${foreach item=change from=build_automation.changelog_list}
@@ -107,9 +115,13 @@
                                 <a href="${out_none value=build_automation.repository_url xml_escape=True /}/${out_none value=build_automation.log_file_path xml_escape=True /}">Download Log</a>
                             </font>
                         </p>
-                        <br />
-                        <img src="cid:line.gif" width="500" height="1" alt="separator" />
-                        <br />
+                        <table height="20" width="100%" cellpadding="0" cellspacing="0">
+                            <tr>
+                                <td valign="middle">
+                                    <img src="line.gif" width="100%" height="1"/>
+                                </td>
+                            </tr>
+                        </table>
                         <table id="footer">
                             <tr>
                                 <td width="70" align="left"><img src="cid:robot.gif" height="100" width="50" /></td>
