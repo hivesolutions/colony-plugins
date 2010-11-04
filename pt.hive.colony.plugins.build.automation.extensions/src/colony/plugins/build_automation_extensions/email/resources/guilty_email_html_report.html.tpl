@@ -59,13 +59,6 @@
                         <h1>
                             <font face="Rockwell, Arial" size="3" color="#214c8f"><b>You are a <font face="Rockwell, Arial" size="3" color="#dc1c28">SUSPECT</font>, make sure you're innocent.</b></font>
                         </h1>
-                        <table height="0" width="100%" cellpadding="0" cellspacing="0">
-                            <tr>
-                                <td valign="middle" style="line-height:0em;font-size:0px;">
-                                    <img src="cid:line.gif" width="100%" height="1" />
-                                </td>
-                            </tr>
-                        </table>
                         <p>
                             <font face="Arial" size="2" color="#333333">
                                 Code has been updated to <font face="Rockwell, Arial" size="2" color="#214c8f"><b>r${out_none value=build_automation.version xml_escape=True /}</b></font>.<br />
