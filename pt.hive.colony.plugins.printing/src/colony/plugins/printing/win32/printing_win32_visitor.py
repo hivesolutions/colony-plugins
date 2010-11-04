@@ -58,7 +58,7 @@ IMAGE_SCALE_FACTOR = 10
 EXCLUSION_LIST = ["__class__", "__delattr__", "__dict__", "__doc__", "__getattribute__", "__hash__", "__init__", "__module__", "__new__", "__reduce__", "__reduce_ex__", "__repr__", "__setattr__", "__str__", "__weakref__", "__format__", "__sizeof__", "__subclasshook__", "accept", "accept_double", "accept_post_order", "add_child_node", "remove_child_node", "set_indent", "set_value", "indent", "value", "child_nodes"]
 """ The exclusion list """
 
-DEFAULT_ENCODER = "Cp1252"
+DEFAULT_ENCODER = "utf-8"
 """ The default encoder """
 
 NORMAL_TEXT_WEIGHT = 400
@@ -320,6 +320,7 @@ class Visitor:
 
     @_visit(printing.manager.printing_language_ast.PrintingDocument)
     def visit_printing_document(self, node):
+        # unpacks the printer handler information
         handler_device_context, _printable_area, _printer_size, _printer_margins = self.printer_handler
 
         # in case it's the first visit
@@ -408,9 +409,15 @@ class Visitor:
     @_visit(printing.manager.printing_language_ast.Text)
     def visit_text(self, node):
         if self.visit_index == 0:
+            # unpacks the printer handler information
             handler_device_context, _printable_area, _printer_size, _printer_margins = self.printer_handler
 
+            # adds the node as the context information
             self.add_context_information(node)
+
+            # retrieves the text and encodes it using
+            # the default encoder
+            text_encoded = node.text.encode(DEFAULT_ENCODER)
 
             # retrieves the font name
             font_name = str(self.get_context_information("font"))
@@ -467,7 +474,7 @@ class Visitor:
             _current_position_context_x, current_position_context_y = self.current_position
 
             # retrieves the text width and height
-            text_width, text_height = handler_device_context.GetTextExtent(node.text.encode(DEFAULT_ENCODER))
+            text_width, text_height = handler_device_context.GetTextExtent(text_encoded)
 
             # retrieves the current clip box values
             _clip_box_left, _clip_box_top, clip_box_right, _clip_box_bottom = handler_device_context.GetClipBox()
@@ -488,7 +495,7 @@ class Visitor:
             text_y = current_position_context_y
 
             # outputs the text to the handler device context
-            handler_device_context.TextOut(text_x, text_y, node.text.encode(DEFAULT_ENCODER))
+            handler_device_context.TextOut(text_x, text_y, text_encoded)
 
             # in case the current text height is bigger than the current
             # context biggest height, updates the information
@@ -504,8 +511,10 @@ class Visitor:
     @_visit(printing.manager.printing_language_ast.Image)
     def visit_image(self, node):
         if self.visit_index == 0:
+            # unpacks the printer handler information
             handler_device_context, _printable_area, _printer_size, _printer_margins = self.printer_handler
 
+            # adds the node as the context information
             self.add_context_information(node)
 
             # sets the image path object
