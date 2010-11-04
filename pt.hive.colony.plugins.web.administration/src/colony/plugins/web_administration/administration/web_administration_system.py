@@ -114,7 +114,7 @@ class WebAdministration:
         template_file_path = web_administration_plugin_path + "/" + WEB_ADMINISTRATION_RESOURCES_PATH + "/" + "web_administrator_login.xhtml"
 
         # parses the template file path
-        template_file = template_engine_manager_plugin.parse_file_path_variable_encoding(template_file_path, DEFAULT_TEMPLATE_ENCODING, None)
+        template_file = template_engine_manager_plugin.parse_file_path_encoding(template_file_path, DEFAULT_TEMPLATE_ENCODING)
 
         # processes the template file
         processed_template_file = template_file.process()
