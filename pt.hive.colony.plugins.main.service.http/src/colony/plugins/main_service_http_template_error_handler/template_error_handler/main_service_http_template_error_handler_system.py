@@ -44,6 +44,9 @@ import traceback
 DEFAULT_ENCODING = "utf-8"
 """ The default encoding """
 
+DEFAULT_TEMPLATE_ENCODING = "Cp1252"
+""" The default template encoding """
+
 ERROR_HANDLER_NAME = "template"
 """ The error handler name """
 
@@ -161,7 +164,7 @@ class MainServiceHttpTemplateErrorHandler:
         template_file_path = main_service_http_template_error_handler_plugin_path + "/" + TEMPLATE_ERROR_HANDLER_RESOURCES_PATH + "/" + HTTP_SERVICE_ERROR_HTML_TEMPLATE_FILE_NAME
 
         # parses the template file path
-        template_file = template_engine_manager_plugin.parse_file_path(template_file_path)
+        template_file = template_engine_manager_plugin.parse_file_path_variable_encoding(template_file_path, DEFAULT_TEMPLATE_ENCODING, None)
 
         # assigns the error code to the template file
         template_file.assign("error_code", error_code)
@@ -184,11 +187,11 @@ class MainServiceHttpTemplateErrorHandler:
         # processes the template file
         processed_template_file = template_file.process()
 
-        # decodes the processed template file into a unicode object
-        processed_template_file_decoded = processed_template_file.decode(DEFAULT_ENCODING)
+        # encodes the processed template file using the default encoding
+        processed_template_file_encoded = processed_template_file.encode(DEFAULT_ENCODING)
 
         # sets the status code in the request
         request.status_code = error_code
 
         # writes the processed template file encoded to the request
-        request.write(processed_template_file_decoded)
+        request.write(processed_template_file_encoded)
