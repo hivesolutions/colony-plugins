@@ -1,4 +1,32 @@
-<?xml version="1.0" encoding="utf-8"?>
+<!--
+ Hive Colony Framework
+ Copyright (C) 2008 Hive Solutions Lda.
+
+ This file is part of Hive Colony Framework.
+
+ Hive Colony Framework is free software: you can redistribute it and/or modify
+ it under the terms of the GNU General Public License as published by
+ the Free Software Foundation, either version 3 of the License, or
+ (at your option) any later version.
+
+ Hive Colony Framework is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ GNU General Public License for more details.
+
+ You should have received a copy of the GNU General Public License
+ along with Hive Colony Framework. If not, see <http://www.gnu.org/licenses/>.
+-->
+
+<!--
+ __author__    = João Magalhães <joamag@hive.pt>
+ __version__   = 1.0.0
+ __revision__  = $LastChangedRevision: 9251 $
+ __date__      = $LastChangedDate: 2010-07-09 23:19:45 +0100 (sex, 09 Jul 2010) $
+ __copyright__ = Copyright (c) 2008 Hive Solutions Lda.
+ __license__   = GNU General Public License (GPL), Version 3
+-->
+
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
 <html lang="en">
     <head>
@@ -47,8 +75,8 @@
                 <tr>
                     <td width="100"></td>
                     <td width="500" align="left" style="line-height:1.8em;margin-bottom:20px;margin-top:0;">
-                        <h1>
-                            <font face="Rockwell, Arial" size="3" color="#214c8f">${out_none value=build_automation.plugin_name xml_escape=True /} - </font>
+                        <h1 style="margin-bottom:1.2em;">
+                            <font face="Rockwell, Arial" size="3" color="#214c8f">${out_none value=build_automation.plugin_name xml_escape=True /} has </font>
                             ${if item=build_automation.success value=True operator=eq}
                                 <font face="Rockwell, Arial" size="3" color="#4d9341">${out_none value=build_automation.success_capitals xml_escape=True /}</font>
                             ${/if}
@@ -56,7 +84,7 @@
                                 <font face="Rockwell, Arial" size="3" color="#dc1c28">${out_none value=build_automation.success_capitals xml_escape=True /}</font>
                             ${/if}
                             <br />
-                            <font face="Rockwell, Arial" size="3" color="#214c8f"><b>You are a <font face="Rockwell, Arial" size="3" color="#dc1c28">SUSPECT</font>, make sure you're innocent.</b></font>
+                            <font face="Rockwell, Arial" size="2" color="#214c8f"><b>You are a <font face="Rockwell, Arial" size="2" color="#dc1c28">SUSPECT</font>, make sure you're innocent</b></font>
                         </h1>
                         <br />
                         <p>
@@ -125,7 +153,7 @@
                 </tr>
                 <tr height="86">
                     <td colspan="3" valign="bottom" align="left" id="copyright">
-                        <font face="verdana" size="1" color="#dddddd">© Copyright 2010 Hive Solutions Lda - All rights reseved</font>
+                        <font face="verdana" size="1" color="#dddddd">© Copyright ${year /} Hive Solutions Lda. - All rights reseved</font>
                     </td>
                 </tr>
             </table>
