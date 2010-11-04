@@ -7,10 +7,10 @@
     <body>
         <center>
             <br />
-            <table width="600" cellpadding="0" cellspacing="0">
+            <table width="700" cellpadding="0" cellspacing="0">
                 <tr>
                     <td colspan="3">
-                        <img src="cid:email_header.gif" height="44" width="600" alt="Hive Solutions" />
+                        <img src="cid:email_header.gif" height="44" width="700" alt="Hive Solutions" />
                     </td>
                 </tr>
                 <tr>
