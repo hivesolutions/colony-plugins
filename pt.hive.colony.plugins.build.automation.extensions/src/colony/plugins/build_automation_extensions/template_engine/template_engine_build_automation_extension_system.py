@@ -44,17 +44,23 @@ import colony.libs.map_util
 DEFAULT_ENCODING = "Cp1252"
 """ The default encoding """
 
-DATE_FORMAT = "%b %d %Y %H:%M:%S"
+DATE_FORMAT = "%b %d %Y"
 """ The format used to convert dates to strings """
+
+DATE_TIME_FORMAT = "%b %d %Y %H:%M:%S"
+""" The format used to convert date times to strings """
 
 VERSION_VALUE = "version"
 """ The version value """
 
 RELEASE_VERSION_VALUE = "release_version"
-""" the release version value """
+""" The release version value """
 
 DATE_VALUE = "date"
-""" the date value """
+""" The date value """
+
+DATE_TIME_VALUE = "date_time"
+""" The date time value """
 
 class TemplateEngineBuildAutomationExtension:
     """
@@ -126,8 +132,11 @@ class TemplateEngineBuildAutomationExtension:
         # retrieves the current datetime
         current_datetime = datetime.datetime.utcnow()
 
-        # formats the current datetime to string
+        # formats the current datetime to date string
         current_date_string = current_datetime.strftime(DATE_FORMAT)
+
+        # formats the current datetime to date time string
+        current_date_time_string = current_datetime.strftime(DATE_TIME_FORMAT)
 
         # retrieves the current version value
         version_value = build_automation_structure_runtime.properties.get(VERSION_VALUE, -1)
@@ -137,3 +146,6 @@ class TemplateEngineBuildAutomationExtension:
 
         # assigns the date to the template file
         template_file.assign(DATE_VALUE, current_date_string)
+
+        # assigns the date time to the template file
+        template_file.assign(DATE_TIME_VALUE, current_date_time_string)
