@@ -40,6 +40,9 @@ __license__ = "GNU General Public License (GPL), Version 3"
 import colony.base.plugin_system
 import colony.libs.string_buffer_util
 
+DEFAULT_ENCODING = "Cp1252"
+""" The default encoding """
+
 BUILD_AUTOMATION_GENERATOR_HANDLER_NAME = "packing"
 """ The build automation generator handler name """
 
@@ -93,7 +96,7 @@ class BuildAutomationPackingGeneratorHandler:
         template_file_path = build_automation_packing_generator_handler_plugin_path + "/" + TEMPLATE_FILE_PATH
 
         # parses the template file path
-        template_file = template_engine_manager_plugin.parse_file_path(template_file_path)
+        template_file = template_engine_manager_plugin.parse_file_path_variable_encoding(template_file_path, DEFAULT_ENCODING, None)
 
         # generates the build automation map for the plugin
         build_automation_map = self._generate_build_automation_map(plugin)
@@ -104,11 +107,8 @@ class BuildAutomationPackingGeneratorHandler:
         # processes the template file
         processed_template_file = template_file.process()
 
-        # decodes the processed template file into a unicode object
-        processed_template_file_decoded = processed_template_file.decode("Cp1252")
-
-        # returns the processed template file decoded (plugin build automation)
-        return processed_template_file_decoded
+        # returns the processed template file
+        return processed_template_file
 
     def _generate_build_automation_map(self, plugin):
         """
