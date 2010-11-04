@@ -468,7 +468,7 @@ class DescriptorGenerator:
 
     def save_plugin_descriptor_file(self, plugin_path, plugin_module_name, plugin_descriptor_map, template_file_path):
         # parses the template file path
-        template_file = self.descriptor_generator_plugin.template_engine_manager_plugin.parse_file_path_variable_encoding(template_file_path, DEFAULT_ENCODING, None)
+        template_file = self.descriptor_generator_plugin.template_engine_manager_plugin.parse_file_path_encoding(template_file_path, DEFAULT_ENCODING)
 
         # assigns an entity to the parsed template file
         template_file.assign(PLUGIN_DESCRIPTOR_VALUE, plugin_descriptor_map)
