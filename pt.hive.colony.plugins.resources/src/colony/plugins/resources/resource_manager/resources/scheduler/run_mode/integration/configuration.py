@@ -41,10 +41,10 @@ configuration = {
                  "sleep_step" : 0.5,
                  "tasks" : [{
                              "type" : "plugin",
-                             "plugin_id" : "pt.hive.colony.plugins.dummy",
+                             "plugin_id" : "pt.hive.colony.plugins.build.automation",
                              "plugin_version" : "1.0.0",
-                             "method" : "print_dummy",
-                             "arguments" : [],
-                             "recursion_list" : [0, 0, 0, 10, 0]
+                             "method" : "run_automation",
+                             "arguments" : ["pt.hive.colony.plugins.build.automation.items.colony_integration", "1.0.0", "install", 1],
+                             "recursion_list" : [0, 0, 2, 0, 0]
                              }]
              }
