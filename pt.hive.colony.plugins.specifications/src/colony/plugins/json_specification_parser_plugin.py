@@ -60,7 +60,8 @@ class JsonSpecificationParserPlugin(colony.base.plugin_system.Plugin):
                     "pt.hive.colony.plugins.misc.json", "1.0.0")]
     events_handled = []
     events_registrable = []
-    main_modules = ["specifications.json_specification_parser.json_specification_parser_exceptions", "specifications.json_specification_parser.json_specification_parser_system"]
+    main_modules = ["specifications.json_specification_parser.json_specification_parser_exceptions",
+                    "specifications.json_specification_parser.json_specification_parser_system"]
 
     json_specification_parser = None
 
