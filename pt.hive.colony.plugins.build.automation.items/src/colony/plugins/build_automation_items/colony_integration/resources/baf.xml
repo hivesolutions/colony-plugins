@@ -66,6 +66,22 @@
                 </configuration>
             </plugin>
             <plugin>
+                <id>pt.hive.colony.plugins.build.automation.extensions.command_execution</id>
+                <version>1.0.0</version>
+                <stage>install</stage>
+                <configuration>
+                    <command>python</command>
+                    <arguments>
+                        <argument>$base{plugin_system_directory}/tmp/checkout/pt.hive.colony/pt.hive.colony/src/main.py</argument>
+                        <argument>--configuration_file=config/configuration_integration_run.py</argument>
+                        <argument>--manager_dir=$base{plugin_system_directory}/tmp/checkout/pt.hive.colony/pt.hive.colony/src</argument>
+                        <argument>--execution_command=pt.hive.colony.plugins.build.automation:run_automation_raise_exception pt.hive.colony.plugins.build.automation.items.colony_bundle$1.0.0$build$3%int$0%null$1%bool</argument>
+                    </arguments>
+                    <shell>true</shell>
+                    <timeout>600</timeout>
+                </configuration>
+            </plugin>
+            <plugin>
                 <id>pt.hive.colony.plugins.build.automation.extensions.continuous_integration</id>
                 <version>1.0.0</version>
                 <stage>post-build</stage>
