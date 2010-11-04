@@ -131,8 +131,8 @@ class CommandExecutionBuildAutomationExtension:
         @param process: The process to start the cancel timer.
         @type timeout: float
         @param timeout: The timeout value to be used.
-        @rtype: Time
-        @return: The created cancel timer.
+        @rtype: Timer
+        @return: The started cancel timer.
         """
 
         # in case the timeout is invalid
