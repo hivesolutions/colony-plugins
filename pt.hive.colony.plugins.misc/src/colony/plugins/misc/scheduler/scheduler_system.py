@@ -133,16 +133,25 @@ class Scheduler:
             self.scheduler.run()
 
     def unload_scheduler(self):
+        print "vai fazer unload 1"
+
         # removes all the active scheduler items
         self.remove_all_active_scheduler_items()
+
+        print "vai fazer unload 2"
 
         # sets the continue flag to false
         self.continue_flag = False
 
+        print "vai fazer unload 3"
+
         # in case the scheduler lock is locked
         if self.scheduler_lock.locked():
+            print "vai fazer unload 3.5"
+
             # releases the lock
             self.scheduler_lock.release()
+        print "vai fazer unload 6"
 
     def register_task(self, task, time):
         # calculates the absolute time
@@ -322,6 +331,7 @@ class Scheduler:
         # retrieves the is recursive value
         is_recursive = scheduler_item.is_recursive()
 
+        # in case it's recursive
         if is_recursive:
             # retrieves the recursion list
             recursion_list = scheduler_item.recursion_list
@@ -344,6 +354,7 @@ class Scheduler:
             # ads the new scheduler item to the scheduler
             self.add_scheduler_item(scheduler_item)
         else:
+            # removes the scheduler item from the scheduler
             self.remove_scheduler_item(scheduler_item)
 
     def date_time_to_timestamp(self, date_time):
