@@ -705,7 +705,7 @@ class Visitor:
             file_path = file_directory + "/" + attribute_file_literal_value
 
         # parses the file retrieving the template file
-        template_file = self.template_engine_manager.parse_file_path_encoding(file_path, self.encoding)
+        template_file = self.template_engine_manager.parse_file_path(file_path, self.encoding)
 
         # sets the global map in template file
         template_file.set_global_map(self.global_map)
