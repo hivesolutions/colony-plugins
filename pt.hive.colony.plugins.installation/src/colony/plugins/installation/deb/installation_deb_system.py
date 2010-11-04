@@ -46,6 +46,9 @@ import colony.libs.map_util
 import colony.libs.path_util
 import colony.libs.string_buffer_util
 
+DEFAULT_ENCODING = "Cp1252"
+""" The default encoding """
+
 ADAPTER_NAME = "deb"
 """ The adapter name """
 
@@ -420,7 +423,7 @@ class InstallationDeb:
         template_file_path = installation_deb_plugin_path + "/" + RESOURCES_PATH + "/control_file_templates/" + template_file_name
 
         # parses the template file path
-        template_file = template_engine_manager_plugin.parse_file_path(template_file_path)
+        template_file = template_engine_manager_plugin.parse_file_path_variable_encoding(template_file_path, DEFAULT_ENCODING, None)
 
         # iterates over all the parameters in the parameters map to
         # assign them to the template
@@ -431,11 +434,11 @@ class InstallationDeb:
         # processes the template file
         processed_template_file = template_file.process()
 
-        # decodes the processed template file into a unicode object
-        processed_template_file_decoded = processed_template_file.decode("Cp1252")
+        # encodes the processed template file using the default encoding
+        processed_template_file_encoded = processed_template_file.decode(DEFAULT_ENCODING)
 
-        # returns the processed template file decoded
-        return processed_template_file_decoded
+        # returns the processed template file encoded
+        return processed_template_file_encoded
 
     def _process_exclusion_regex(self, exclusions_list):
         # creates the exclusion regex buffer
