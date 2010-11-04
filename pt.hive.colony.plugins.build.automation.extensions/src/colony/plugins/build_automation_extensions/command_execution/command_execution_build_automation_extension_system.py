@@ -97,11 +97,12 @@ class CommandExecutionBuildAutomationExtension:
         # starts the cancel timer for the given process
         cancel_timer = self._start_cancel_timer(process, timeout)
 
-        # waits for the process to terminate
-        stdout_data, stderr_data = process.communicate()
-
-        # cancels the cancel timer
-        cancel_timer.cancel()
+        try:
+            # waits for the process to terminate
+            stdout_data, stderr_data = process.communicate()
+        finally:
+            # cancels the cancel timer
+            cancel_timer.cancel()
 
         # prints the standard output information
         logger.info("Process standard output (stdout)")
