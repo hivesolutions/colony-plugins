@@ -62,13 +62,10 @@
                         <table height="0" width="100%" cellpadding="0" cellspacing="0">
                             <tr>
                                 <td valign="middle">
-                                    <img src="line.gif" width="100%" height="1"/>
+                                    <img src="cid:line.gif" width="100%" height="1" />
                                 </td>
                             </tr>
                         </table>
-                        <p>
-                            <img src="cid:line.gif" width="500" height="1" alt="separator" />
-                        </p>
                         <p>
                             <font face="Arial" size="2" color="#333333">
                                 Code has been updated to <font face="Rockwell, Arial" size="2" color="#214c8f"><b>r${out_none value=build_automation.version xml_escape=True /}</b></font>.<br />
@@ -82,7 +79,7 @@
                         <table height="20" width="100%" cellpadding="0" cellspacing="0">
                             <tr>
                                 <td valign="middle">
-                                    <img src="line.gif" width="100%" height="1"/>
+                                    <img src="cid:line.gif" width="100%" height="1"/>
                                 </td>
                             </tr>
                         </table>
@@ -124,7 +121,7 @@
                         <table height="20" width="100%" cellpadding="0" cellspacing="0">
                             <tr>
                                 <td valign="middle">
-                                    <img src="line.gif" width="100%" height="1"/>
+                                    <img src="cid:line.gif" width="100%" height="1"/>
                                 </td>
                             </tr>
                         </table>

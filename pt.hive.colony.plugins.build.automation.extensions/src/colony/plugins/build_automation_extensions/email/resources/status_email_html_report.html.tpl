@@ -59,7 +59,7 @@
                         <table height="0" width="100%" cellpadding="0" cellspacing="0">
                             <tr>
                                 <td valign="middle">
-                                    <img src="line.gif" width="100%" height="1"/>
+                                    <img src="cid:line.gif" width="100%" height="1"/>
                                 </td>
                             </tr>
                         </table>
@@ -76,7 +76,7 @@
                         <table height="20" width="100%" cellpadding="0" cellspacing="0">
                             <tr>
                                 <td valign="middle">
-                                    <img src="line.gif" width="100%" height="1"/>
+                                    <img src="cid:line.gif" width="100%" height="1"/>
                                 </td>
                             </tr>
                         </table>
@@ -118,7 +118,7 @@
                         <table height="20" width="100%" cellpadding="0" cellspacing="0">
                             <tr>
                                 <td valign="middle">
-                                    <img src="line.gif" width="100%" height="1"/>
+                                    <img src="cid:line.gif" width="100%" height="1"/>
                                 </td>
                             </tr>
                         </table>
