@@ -52,6 +52,12 @@ STATUS_EMAIL_TEXT_REPORT_TEMPLATE_FILE_NAME = "status_email_text_report.txt.tpl"
 STATUS_EMAIL_HTML_REPORT_TEMPLATE_FILE_NAME = "status_email_html_report.html.tpl"
 """ The status email html report template file name """
 
+GUILTY_EMAIL_TEXT_REPORT_TEMPLATE_FILE_NAME = "guilty_email_text_report.txt.tpl"
+""" The guilty email text report template file name """
+
+GUILTY_EMAIL_HTML_REPORT_TEMPLATE_FILE_NAME = "guilty_email_html_report.html.tpl"
+""" The guilty email html report template file name """
+
 DEFAULT_ENCODING = "utf-8"
 """ The default encoding """
 
@@ -155,6 +161,9 @@ class EmailBuildAutomationExtension:
         # retrieves the main client smtp plugin
         main_client_smtp_plugin = self.email_build_automation_extension_plugin.main_client_smtp_plugin
 
+        # retrieves the build automation structure runtime
+        build_automation_structure_runtime = build_automation_structure.runtime
+
         # retrieves the smtp parameters from the parameters map
         smtp_hostname = parameters.get("smtp_hostname", DEFAULT_SMTP_HOSTNAME)
         smtp_port = parameters.get("smtp_port", DEFAULT_SMTP_PORT)
@@ -186,15 +195,17 @@ class EmailBuildAutomationExtension:
         # send the status email using the defined values
         smtp_client.send_mail(smtp_hostname, smtp_port, sender_email, receiver_emails, mime_message_value, parameters)
 
-        # creates the guilty email, retrieving the sender email the
-        # receiver email and the mime message value
-        sender_email, receiver_emails, mime_message_value = self._create_guilty_email(parameters, build_automation_structure)
+        # in case the build was not successful, sends the guilty email
+        if not build_automation_structure_runtime.success:
+            # creates the guilty email, retrieving the sender email the
+            # receiver email and the mime message value
+            sender_email, receiver_emails, mime_message_value = self._create_guilty_email(parameters, build_automation_structure)
 
-        # prints a debug message
-        logger.debug("Sending guilty email using host '%s:%i' and sender address: '%s'" % (smtp_hostname, smtp_port, sender_email))
+            # prints a debug message
+            logger.debug("Sending guilty email using host '%s:%i' and sender address: '%s'" % (smtp_hostname, smtp_port, sender_email))
 
-        # send the email using the defined values
-        smtp_client.send_mail(smtp_hostname, smtp_port, sender_email, receiver_emails, mime_message_value, parameters)
+            # send the email using the defined values
+            smtp_client.send_mail(smtp_hostname, smtp_port, sender_email, receiver_emails, mime_message_value, parameters)
 
         # closes the smtp client
         smtp_client.close({})
@@ -215,11 +226,14 @@ class EmailBuildAutomationExtension:
         # retrieves the template engine manager plugin
         template_engine_manager_plugin = self.email_build_automation_extension_plugin.template_engine_manager_plugin
 
-        # retrieves the build automation structure associated plugin
-        build_automation_structure_associated_plugin = build_automation_structure.associated_plugin
+        # converts the build automation structure retrieving it
+        # as build automation
+        build_automation = self._convert_build_automation_structure(build_automation_structure)
 
-        # retrieves the build automation structure runtime
-        build_automation_structure_runtime = build_automation_structure.runtime
+        # retrieves the build automation properties
+        build_automation_success = build_automation["success"]
+        build_automation_plugin_name = build_automation["plugin_name"]
+        build_automation_version = build_automation["version"]
 
         # retrieves the sender parameters from the parameters map
         sender_name = parameters.get("sender_name", DEFAULT_SENDER_NAME)
@@ -243,32 +257,11 @@ class EmailBuildAutomationExtension:
         # creates the sender line
         sender_line = sender_name + " " + "<" + sender_email + ">"
 
-        # retrieves the build automation plugin name
-        build_automation_plugin_name = build_automation_structure_associated_plugin.name
-
-        # retrieves the build automation version (revision)
-        build_automation_version = build_automation_structure_runtime.properties.get(VERSION_VALUE, -1)
-
-        # retrieves the build automation total time formated
-        build_automation_total_time_formated = build_automation_structure_runtime.properties.get(TOTAL_TIME_FORMATED_VALUE, "")
-
-        # retrieves the build automation changelog list
-        build_automation_changelog_list = build_automation_structure_runtime.properties.get(CHANGELOG_LIST_VALUE, [])
-
-        # retrieves the build automation issues list
-        build_automation_issues_list = build_automation_structure_runtime.properties.get(ISSUES_LIST_VALUE, [])
-
-        # retrieves the build automation changers list
-        build_automation_changers_list = build_automation_structure_runtime.properties.get(CHANGERS_LIST_VALUE, [])
-
-        # creates the build automation log file path
-        build_automation_log_file_path = "log/build_automation.log"
-
         # writes the initial subject line
         subject = "b%i - %s " % (build_automation_version, build_automation_plugin_name)
 
         # in case the build automation was successful
-        if build_automation_structure_runtime.success:
+        if build_automation_success:
             # adds the successful part to the subject
             subject += "was SUCCESSFUL"
 
@@ -307,7 +300,7 @@ class EmailBuildAutomationExtension:
         email_build_automation_extension_plugin_path = plugin_manager.get_plugin_path_by_id(self.email_build_automation_extension_plugin.id)
 
         # creates the email html report template file path
-        email_html_report_template_file_path = email_build_automation_extension_plugin_path + "/" + BUILD_AUTOMATION_EXTENSIONS_EMAIL_PATH + "/" + STATUS_EMAIL_TEXT_REPORT_TEMPLATE_FILE_NAME
+        email_html_report_template_file_path = email_build_automation_extension_plugin_path + "/" + BUILD_AUTOMATION_EXTENSIONS_EMAIL_PATH + "/" + STATUS_EMAIL_HTML_REPORT_TEMPLATE_FILE_NAME
 
         # creates the email html report images file path
         email_html_report_images_file_path = email_build_automation_extension_plugin_path + "/" + BUILD_AUTOMATION_EXTENSIONS_EMAIL_PATH + "/" + "status_email_html/images"
@@ -315,41 +308,8 @@ class EmailBuildAutomationExtension:
         # parses the template file path
         template_file = template_engine_manager_plugin.parse_file_path_encoding(email_html_report_template_file_path, DEFAULT_TEMPLATE_ENCODING)
 
-        # retrieves the success in normal format
-        success = build_automation_structure_runtime.success
-
-        # retrieves the success in capitals format
-        success_capitals = SUCCESS_CAPITALS_MAP[build_automation_structure_runtime.success]
-
-        # assigns the success to the parsed template file
-        template_file.assign("success", success)
-
-        # assigns the success capitals to the parsed template file
-        template_file.assign("success_capitals", success_capitals)
-
-        # assigns the plugin name to the parsed template file
-        template_file.assign("plugin_name", build_automation_plugin_name)
-
-        # assigns the version to the parsed template file
-        template_file.assign("version", build_automation_version)
-
-        # assigns the total time formated to the parsed template file
-        template_file.assign("total_time_formated", build_automation_total_time_formated)
-
-        # assigns the changelog list to the parsed template file
-        template_file.assign("changelog_list", build_automation_changelog_list)
-
-        # assigns the issues list to the parsed template file
-        template_file.assign("issues_list", build_automation_issues_list)
-
-        # assigns the changers list to the parsed template file
-        template_file.assign("changers_list", build_automation_changers_list)
-
-        # assigns the base repository path to the parsed template file
-        template_file.assign("base_repository_path", "http://servidor3.hive:8080/integration/" + str(build_automation_version))
-
-        # assigns the log file path to the parsed template file
-        template_file.assign("log_file_path", build_automation_log_file_path)
+        # assigns the build automation to the parsed template file
+        template_file.assign("build_automation", build_automation)
 
         # processes the template file
         processed_template_file = template_file.process()
@@ -405,11 +365,14 @@ class EmailBuildAutomationExtension:
         # retrieves the template engine manager plugin
         template_engine_manager_plugin = self.email_build_automation_extension_plugin.template_engine_manager_plugin
 
-        # retrieves the build automation structure associated plugin
-        build_automation_structure_associated_plugin = build_automation_structure.associated_plugin
+        # converts the build automation structure retrieving it
+        # as build automation
+        build_automation = self._convert_build_automation_structure(build_automation_structure)
 
-        # retrieves the build automation structure runtime
-        build_automation_structure_runtime = build_automation_structure.runtime
+        # retrieves the build automation properties
+        build_automation_plugin_name = build_automation["plugin_name"]
+        build_automation_version = build_automation["version"]
+        build_automation_changers_list = build_automation["changers_list"]
 
         # retrieves the sender parameters from the parameters map
         sender_name = parameters.get("sender_name", DEFAULT_SENDER_NAME)
@@ -420,27 +383,6 @@ class EmailBuildAutomationExtension:
 
         # creates the sender line
         sender_line = sender_name + " " + "<" + sender_email + ">"
-
-        # retrieves the build automation plugin name
-        build_automation_plugin_name = build_automation_structure_associated_plugin.name
-
-        # retrieves the build automation version (revision)
-        build_automation_version = build_automation_structure_runtime.properties.get(VERSION_VALUE, -1)
-
-        # retrieves the build automation total time formated
-        build_automation_total_time_formated = build_automation_structure_runtime.properties.get(TOTAL_TIME_FORMATED_VALUE, "")
-
-        # retrieves the build automation changelog list
-        build_automation_changelog_list = build_automation_structure_runtime.properties.get(CHANGELOG_LIST_VALUE, [])
-
-        # retrieves the build automation issues list
-        build_automation_issues_list = build_automation_structure_runtime.properties.get(ISSUES_LIST_VALUE, [])
-
-        # retrieves the build automation changers list
-        build_automation_changers_list = build_automation_structure_runtime.properties.get(CHANGERS_LIST_VALUE, [])
-
-        # creates the build automation log file path
-        build_automation_log_file_path = "log/build_automation.log"
 
         # writes the initial subject line
         subject = "b%i - %s you're GUILTY" % (build_automation_version, build_automation_plugin_name)
@@ -470,7 +412,7 @@ class EmailBuildAutomationExtension:
         email_build_automation_extension_plugin_path = plugin_manager.get_plugin_path_by_id(self.email_build_automation_extension_plugin.id)
 
         # creates the email html report template file path
-        email_html_report_template_file_path = email_build_automation_extension_plugin_path + "/" + BUILD_AUTOMATION_EXTENSIONS_EMAIL_PATH + "/" + STATUS_EMAIL_TEXT_REPORT_TEMPLATE_FILE_NAME
+        email_html_report_template_file_path = email_build_automation_extension_plugin_path + "/" + BUILD_AUTOMATION_EXTENSIONS_EMAIL_PATH + "/" + GUILTY_EMAIL_HTML_REPORT_TEMPLATE_FILE_NAME
 
         # creates the email html report images file path
         email_html_report_images_file_path = email_build_automation_extension_plugin_path + "/" + BUILD_AUTOMATION_EXTENSIONS_EMAIL_PATH + "/" + "guilty_email_html/images"
@@ -478,41 +420,8 @@ class EmailBuildAutomationExtension:
         # parses the template file path
         template_file = template_engine_manager_plugin.parse_file_path_encoding(email_html_report_template_file_path, DEFAULT_TEMPLATE_ENCODING)
 
-        # retrieves the success in normal format
-        success = build_automation_structure_runtime.success
-
-        # retrieves the success in capitals format
-        success_capitals = SUCCESS_CAPITALS_MAP[build_automation_structure_runtime.success]
-
-        # assigns the success to the parsed template file
-        template_file.assign("success", success)
-
-        # assigns the success capitals to the parsed template file
-        template_file.assign("success_capitals", success_capitals)
-
-        # assigns the plugin name to the parsed template file
-        template_file.assign("plugin_name", build_automation_plugin_name)
-
-        # assigns the version to the parsed template file
-        template_file.assign("version", build_automation_version)
-
-        # assigns the total time formated to the parsed template file
-        template_file.assign("total_time_formated", build_automation_total_time_formated)
-
-        # assigns the changelog list to the parsed template file
-        template_file.assign("changelog_list", build_automation_changelog_list)
-
-        # assigns the issues list to the parsed template file
-        template_file.assign("issues_list", build_automation_issues_list)
-
-        # assigns the changers list to the parsed template file
-        template_file.assign("changers_list", build_automation_changers_list)
-
-        # assigns the base repository path to the parsed template file
-        template_file.assign("base_repository_path", "http://servidor3.hive:8080/integration/" + str(build_automation_version))
-
-        # assigns the log file path to the parsed template file
-        template_file.assign("log_file_path", build_automation_log_file_path)
+        # assigns the build automation to the parsed template file
+        template_file.assign("build_automation", build_automation)
 
         # processes the template file
         processed_template_file = template_file.process()
@@ -554,6 +463,55 @@ class EmailBuildAutomationExtension:
 
         # returns the email tuple
         return email_tuple
+
+    def _convert_build_automation_structure(self, build_automation_structure):
+        # retrieves the build automation structure associated plugin
+        build_automation_structure_associated_plugin = build_automation_structure.associated_plugin
+
+        # retrieves the build automation structure runtime
+        build_automation_structure_runtime = build_automation_structure.runtime
+
+        # retrieves the build automation plugin name
+        build_automation_plugin_name = build_automation_structure_associated_plugin.name
+
+        # retrieves the build automation success
+        build_automation_success = build_automation_structure_runtime.success
+
+        # retrieves the build automation version (revision)
+        build_automation_version = build_automation_structure_runtime.properties.get(VERSION_VALUE, -1)
+
+        # retrieves the build automation total time formated
+        build_automation_total_time_formated = build_automation_structure_runtime.properties.get(TOTAL_TIME_FORMATED_VALUE, "")
+
+        # retrieves the build automation changelog list
+        build_automation_changelog_list = build_automation_structure_runtime.properties.get(CHANGELOG_LIST_VALUE, [])
+
+        # retrieves the build automation issues list
+        build_automation_issues_list = build_automation_structure_runtime.properties.get(ISSUES_LIST_VALUE, [])
+
+        # retrieves the build automation changers list
+        build_automation_changers_list = build_automation_structure_runtime.properties.get(CHANGERS_LIST_VALUE, [])
+
+        # retrieves the build automation success in capitals format
+        build_automation_success_capitals = SUCCESS_CAPITALS_MAP[build_automation_success]
+
+        # creates the build automation structure converted
+        build_automation_structure_converted = {}
+
+        # populates the build automation structure converted
+        build_automation_structure_converted["success"] = build_automation_success
+        build_automation_structure_converted["success_capitals"] = build_automation_success_capitals
+        build_automation_structure_converted["plugin_name"] = build_automation_plugin_name
+        build_automation_structure_converted["version"] = build_automation_version
+        build_automation_structure_converted["total_time_formated"] = build_automation_total_time_formated
+        build_automation_structure_converted["changelog_list"] = build_automation_changelog_list
+        build_automation_structure_converted["issues_list"] = build_automation_issues_list
+        build_automation_structure_converted["changers_list"] = build_automation_changers_list
+        build_automation_structure_converted["repository_url"] = "http://servidor3.hive:8080/integration/" + str(build_automation_version)
+        build_automation_structure_converted["log_file_path"] = "log/build_automation.log"
+
+        # returns the build automation structure converted
+        return build_automation_structure_converted
 
     def _process_contacts(self, contacts_list):
         """

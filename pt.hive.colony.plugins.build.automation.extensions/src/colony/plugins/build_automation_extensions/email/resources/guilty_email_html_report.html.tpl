@@ -19,10 +19,10 @@
                             <tr height="20">
                                 <td align="center">
                                     <font face="Rockwell, Arial" size="5" color="#214c8f">build</font>
-                                    <font face="Rockwell, Arial" size="5" color="#214c8f"><b>${out_none value=version xml_escape=True /}</b></font>
+                                    <font face="Rockwell, Arial" size="5" color="#214c8f"><b>${out_none value=build_automation.version xml_escape=True /}</b></font>
                                 </td>
                             </tr>
-                            ${if item=success value=True operator=eq}
+                            ${if item=build_automation.success value=True operator=eq}
                                 <tr height="10" background="cid:build_line_green.gif">
                                     <td></td>
                                 </tr>
@@ -30,7 +30,7 @@
                                     <td></td>
                                 </tr>
                             ${/if}
-                            ${if item=success value=False operator=eq}
+                            ${if item=build_automation.success value=False operator=eq}
                                 <tr height="10" background="cid:build_line_red.gif">
                                     <td></td>
                                 </tr>
@@ -48,22 +48,22 @@
                     <td width="100"></td>
                     <td width="400" align="left" style="line-height:1.8em;margin-bottom:20px;margin-top:0;">
                         <h1>
-                            <font face="Rockwell, Arial" size="3" color="#214c8f">${out_none value=plugin_name xml_escape=True /} - </font>
-                            ${if item=success value=True operator=eq}
-                                <font face="Rockwell, Arial" size="3" color="#4d9341">${out_none value=success_capitals xml_escape=True /}</font>
+                            <font face="Rockwell, Arial" size="3" color="#214c8f">${out_none value=build_automation.plugin_name xml_escape=True /} - </font>
+                            ${if item=build_automation.success value=True operator=eq}
+                                <font face="Rockwell, Arial" size="3" color="#4d9341">${out_none value=build_automation.success_capitals xml_escape=True /}</font>
                             ${/if}
-                            ${if item=success value=False operator=eq}
-                                <font face="Rockwell, Arial" size="3" color="#dc1c28">${out_none value=success_capitals xml_escape=True /}</font>
+                            ${if item=build_automation.success value=False operator=eq}
+                                <font face="Rockwell, Arial" size="3" color="#dc1c28">${out_none value=build_automation.success_capitals xml_escape=True /}</font>
                             ${/if}
                         </h1>
                         <p>
                             <font face="Arial" size="2" color="#333333">
-                                Code has been updated to <font face="Rockwell, Arial" size="2" color="#214c8f"><b>r${out_none value=version xml_escape=True /}</b></font>.<br />
+                                Code has been updated to <font face="Rockwell, Arial" size="2" color="#214c8f"><b>r${out_none value=build_automation.version xml_escape=True /}</b></font>.<br />
                                 The updating of the code involved:
-                                ${foreach item=changer from=changers_list}
+                                ${foreach item=changer from=build_automation.changers_list}
                                 <font face="Rockwell, Arial" size="2" color="#214c8f"><b>${out_none value=changer.name xml_escape=True /} (${out_none value=changer.username xml_escape=True /})</b></font>,
                                 ${/foreach}.<br />
-                                The total time for the build automation run was <font face="Rockwell, Arial" size="2" color="#214c8f"><b>${out_none value=total_time_formated xml_escape=True /}</b></font>.
+                                The total time for the build automation run was <font face="Rockwell, Arial" size="2" color="#214c8f"><b>${out_none value=build_automation.total_time_formated xml_escape=True /}</b></font>.
                                 <font face="Rockwell, Arial" size="2" color="#dc1c28">The build is broken and you're a suspect, if you don't want to fix it, at least make sure you're innocent.</font>
                             </font>
                         </p>
@@ -72,7 +72,7 @@
                         </p>
                         <font face="Rockwell, Arial" size="3" color="#808080"><strong>Code Changes</strong></font>
                         <br />
-                        ${foreach item=change from=changelog_list}
+                        ${foreach item=change from=build_automation.changelog_list}
                         <p>
                             <font face="Arial" size="2" color="#333333">
                                 <font face="Rockwell, Arial" size="3" color="#214c8f"><b><a href="#">r${out_none value=change.number xml_escape=True /}</a> - ${out_none value=change.user.name xml_escape=True /} (${out_none value=change.user.username xml_escape=True /})</b></font><br />
@@ -86,10 +86,10 @@
                         </p>
                         <font face="Rockwell, Arial" size="3" color="#808080"><strong>Issues</strong></font>
                         <br />
-                        ${foreach item=issue from=issues_list}
+                        ${foreach item=issue from=build_automation.issues_list}
                         <p>
                             <font face="Arial" size="2" color="#333333">
-                                <font face="Rockwell, Arial" size="3" color="#214c8f"><b><a href="#">r${out_none value=issue.number xml_escape=True /}</a> - ${out_none value=change.title xml_escape=True /}</b></font><br />
+                                <font face="Rockwell, Arial" size="3" color="#214c8f"><b><a href="#">r${out_none value=issue.number xml_escape=True /}</a> - ${out_none value=issue.title xml_escape=True /}</b></font><br />
                                 ${out_none value=issue.description xml_escape=True /}
                             </font>
                         </p>
@@ -101,8 +101,8 @@
                             <font face="Arial" size="2" color="#333333">
                                 <a href="#">View Report</a> -
                                 <a href="#">Post Comment</a> -
-                                <a href="${out_none value=base_repository_path xml_escape=True /}">View Artifacts</a> -
-                                <a href="${out_none value=base_repository_path xml_escape=True /}/${out_none value=log_file_path xml_escape=True /}">Download Log</a>
+                                <a href="${out_none value=build_automation.repository_url xml_escape=True /}">View Artifacts</a> -
+                                <a href="${out_none value=build_automation.repository_url xml_escape=True /}/${out_none value=build_automation.log_file_path xml_escape=True /}">Download Log</a>
                             </font>
                         </p>
                         <br />
