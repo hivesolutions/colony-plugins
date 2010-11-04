@@ -61,7 +61,7 @@
                         </h1>
                         <table height="0" width="100%" cellpadding="0" cellspacing="0">
                             <tr>
-                                <td valign="middle">
+                                <td valign="middle" style="line-height:0em;font-size:0px;">
                                     <img src="cid:line.gif" width="100%" height="1" />
                                 </td>
                             </tr>
@@ -76,13 +76,9 @@
                                 The total time for the build automation run was <font face="Rockwell, Arial" size="2" color="#214c8f"><b>${out_none value=build_automation.total_time_formated xml_escape=True /}</b></font>.
                             </font>
                         </p>
-                        <table height="20" width="100%" cellpadding="0" cellspacing="0">
-                            <tr>
-                                <td valign="middle">
-                                    <img src="cid:line.gif" width="100%" height="1"/>
-                                </td>
-                            </tr>
-                        </table>
+                        <p>
+                            <img src="cid:line.gif" width="100%" height="1" alt="separator" />
+                        </p>
                         <font face="Rockwell, Arial" size="3" color="#808080"><strong>Code Changes</strong></font>
                         <br />
                         ${foreach item=change from=build_automation.changelog_list}
@@ -93,7 +89,7 @@
                             </font>
                         </p>
                         ${/foreach}
-                        <img src="cid:line.gif" width="500" height="1" alt="separator" />
+                        <img src="cid:line.gif" width="100%" height="1" alt="separator" />
                         <p align="right">
                             <font face="Arial" size="2" color="#333333"><a href="#">code changes details ></a></font>
                         </p>
@@ -107,7 +103,7 @@
                             </font>
                         </p>
                         ${/foreach}
-                        <img src="cid:line.gif" width="500" height="1" alt="separator" />
+                        <img src="cid:line.gif" width="100%" height="1" alt="separator" />
                         <p align="right"><font face="Arial" size="2" color="#333333"><a href="#">issues details ></a></font></p>
                         <br />
                         <p align="center">
@@ -118,13 +114,9 @@
                                 <a href="${out_none value=build_automation.repository_url xml_escape=True /}/${out_none value=build_automation.log_file_path xml_escape=True /}">Download Log</a>
                             </font>
                         </p>
-                        <table height="20" width="100%" cellpadding="0" cellspacing="0">
-                            <tr>
-                                <td valign="middle">
-                                    <img src="cid:line.gif" width="100%" height="1"/>
-                                </td>
-                            </tr>
-                        </table>
+                        <p>
+                            <img src="cid:line.gif" width="100%" height="1" alt="separator" />
+                        </p>
                         <table id="footer">
                             <tr>
                                 <td width="70" align="left"><img src="cid:angry_stickman.gif" height="100" width="50" /></td>
