@@ -287,10 +287,13 @@ class AbstractClient:
         # connections map
         client_connection = self.client_connections_map[connection_tuple_hashable]
 
+        # in case the connection should be opened, opens the client connection
+        open_connection and client_connection.open()
+
         # returns the client connection
         return client_connection
 
-    def _create_client_connection(self, connection_tuple, open_connection = True):
+    def _create_client_connection(self, connection_tuple):
         """
         Creates the client connection for the given
         connection tuple.
@@ -298,9 +301,6 @@ class AbstractClient:
         @type connection_tuple: Tuple
         @param connection_tuple: The tuple containing
         the connection reference.
-        @type open_connection: bool
-        @param open_connection: If the connection should be opened
-        in case the connection is going to be created.
         @rtype: ClientConnection
         @return: The created client connection.
         """
@@ -318,11 +318,6 @@ class AbstractClient:
 
         # retrieves the client connection
         client_connection = ClientConnection(self.client_plugin, self, client_connection_socket, address, socket_name, socket_parameters, self.request_timeout, self.response_timeout, self.chunk_size)
-
-        # in case the connection should be opened
-        if open_connection:
-            # opens the client connection
-            client_connection.open()
 
         # returns the client connection
         return client_connection
