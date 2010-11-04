@@ -55,8 +55,7 @@
                             ${if item=build_automation.success value=False operator=eq}
                                 <font face="Rockwell, Arial" size="3" color="#dc1c28">${out_none value=build_automation.success_capitals xml_escape=True /}</font>
                             ${/if}
-                        </h1>
-                        <h1>
+                            <br />
                             <font face="Rockwell, Arial" size="3" color="#214c8f"><b>You are a <font face="Rockwell, Arial" size="3" color="#dc1c28">SUSPECT</font>, make sure you're innocent.</b></font>
                         </h1>
                         <p>
