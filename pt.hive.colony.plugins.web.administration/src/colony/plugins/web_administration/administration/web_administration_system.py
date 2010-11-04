@@ -37,6 +37,12 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
+DEFAULT_ENCODING = "utf-8"
+""" The default encoding """
+
+DEFAULT_TEMPLATE_ENCODING = "Cp1252"
+""" The default template encoding """
+
 XHTML_MIME_TYPE = "application/xhtml+xml"
 """ The xhtml mime type """
 
@@ -83,10 +89,6 @@ class WebAdministration:
         @return: The result of the handling.
         """
 
-        # 1º preciso de ver se ja estou autenticado senao estiver tenho de redirecionar
-        # tenho de ver se consigo controlar isso
-        # 2º preciso de ver em que passou estou
-
         # retrieves the request
         request = rest_request.get_request()
 
@@ -112,19 +114,19 @@ class WebAdministration:
         template_file_path = web_administration_plugin_path + "/" + WEB_ADMINISTRATION_RESOURCES_PATH + "/" + "web_administrator_login.xhtml"
 
         # parses the template file path
-        template_file = template_engine_manager_plugin.parse_file_path(template_file_path)
+        template_file = template_engine_manager_plugin.parse_file_path_variable_encoding(template_file_path, DEFAULT_TEMPLATE_ENCODING, None)
 
         # processes the template file
         processed_template_file = template_file.process()
 
-        # decodes the processed template file into a unicode object
-        processed_template_file_decoded = processed_template_file.decode("utf-8")
+        # encodes the processed template file using the default encoding
+        processed_template_file_encoded = processed_template_file.encode(DEFAULT_ENCODING)
 
         # sets the content type for the rest request
         rest_request.set_content_type(XHTML_MIME_TYPE)
 
         # sets the result for the rest request
-        rest_request.set_result_translated(processed_template_file_decoded)
+        rest_request.set_result_translated(processed_template_file_encoded)
 
         # flushes the rest request
         rest_request.flush()
