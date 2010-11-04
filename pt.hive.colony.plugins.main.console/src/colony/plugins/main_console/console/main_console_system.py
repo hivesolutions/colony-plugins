@@ -355,8 +355,8 @@ class MainConsole:
         # retrieves the plugin manager build
         plugin_manager_build = plugin_manager.get_build()
 
-        # retrieves the plugin manager release date
-        plugin_manager_release_date = plugin_manager.get_release_date()
+        # retrieves the plugin manager release date time
+        plugin_manager_release_date_time = plugin_manager.get_release_date_time()
 
         # retrieves the plugin manager layout mode
         plugin_manager_layout_mode = plugin_manager.get_layout_mode()
@@ -389,7 +389,7 @@ class MainConsole:
         output_method("version:      " + plugin_manager_version)
         output_method("release:      " + plugin_manager_release)
         output_method("build:        " + plugin_manager_build)
-        output_method("release date: " + plugin_manager_release_date)
+        output_method("release date: " + plugin_manager_release_date_time)
         output_method("environment:  " + plugin_manager_environment)
         output_method("layout mode:  " + plugin_manager_layout_mode)
         output_method("run mode:     " + plugin_manager_run_mode)

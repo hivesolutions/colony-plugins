@@ -37,6 +37,7 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
+import sys
 import unittest
 
 import main_console_system
@@ -54,10 +55,8 @@ class MainConsoleTestCase(unittest.TestCase):
         Tests the process command line using one of the commands.
         """
 
-        import sys
-
         # processes the html command to the standard output
-        return_value = self.main_console.process_command_line("help", sys.stdout.write)
+        return_value = self.main_console.process_command_line("status", sys.stdout.write)
 
         # assets the return value
         self.assertEqual(return_value, True)
