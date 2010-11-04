@@ -276,9 +276,8 @@ class AbstractClient:
         # client connections map or the current client connection
         # is not open
         if not client_connection or not client_connection.is_open():
-            # creates the a new client connection for the given connection
-            # tuple and with the open connection option
-            client_connection = self._create_client_connection(connection_tuple, open_connection)
+            # creates the a new client connection for the given connection tuple
+            client_connection = self._create_client_connection(connection_tuple)
 
             # sets the client connection in the client connections map
             self.client_connections_map[connection_tuple_hashable] = client_connection
