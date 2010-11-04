@@ -102,7 +102,7 @@ class BuildAutomationGenerator:
         file = open(file_path, "wb")
 
         try:
-            # writes the plugin build automation string to the file
+            # writes the plugin build automation string encoded to the file
             file.write(plugin_build_automation_string_encoded)
         finally:
             # closes the file
@@ -130,11 +130,14 @@ class BuildAutomationGenerator:
         # retrieves the plugin build automation string
         plugin_build_automation_string = self._get_plugin_build_automation_string(plugin_id, plugin_version, properties)
 
+        # encodes the plugin build automation string
+        plugin_build_automation_string_encoded = plugin_build_automation_string.encode(DEFAULT_ENCODING)
+
         # initializes the string buffer
         string_buffer = colony.libs.string_buffer_util.StringBuffer()
 
-        # writes the plugin build automation string
-        string_buffer.write(plugin_build_automation_string)
+        # writes the plugin build automation string encoded
+        string_buffer.write(plugin_build_automation_string_encoded)
 
         # returns the string buffer
         return string_buffer
