@@ -87,7 +87,7 @@ LITERAL_VALUE = "literal"
 DEFAULT_ENCODING_VALUE = None
 """ The default encoding value """
 
-DEFAULT_VARIABLE_ENCODING = "utf-8"
+DEFAULT_VARIABLE_ENCODING = None
 """ The default variable encoding """
 
 START_TAG_REGEX = re.compile(START_TAG_REGEX_VALUE)
