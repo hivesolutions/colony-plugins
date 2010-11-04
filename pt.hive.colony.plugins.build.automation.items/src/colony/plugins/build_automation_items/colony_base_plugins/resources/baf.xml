@@ -62,11 +62,11 @@
             <version>.*</version>
         </module>
         <module>
-            <id>pt.hive.colony.plugins.main.console.interface</id>
+            <id>pt.hive.colony.plugins.main.console</id>
             <version>.*</version>
         </module>
         <module>
-            <id>pt.hive.colony.plugins.main.console</id>
+            <id>pt.hive.colony.plugins.main.console.interface</id>
             <version>.*</version>
         </module>
         <module>
@@ -75,6 +75,18 @@
         </module>
         <module>
             <id>pt.hive.colony.plugins.main.remote.rest.manager</id>
+            <version>.*</version>
+        </module>
+        <module>
+            <id>pt.hive.colony.plugins.main.service.http</id>
+            <version>.*</version>
+        </module>
+        <module>
+            <id>pt.hive.colony.plugins.main.service.http.colony_handler</id>
+            <version>.*</version>
+        </module>
+        <module>
+            <id>pt.hive.colony.plugins.main.service.http.starter</id>
             <version>.*</version>
         </module>
         <module>
@@ -87,18 +99,6 @@
         </module>
         <module>
             <id>pt.hive.colony.plugins.main.service.utils</id>
-            <version>.*</version>
-        </module>
-        <module>
-            <id>pt.hive.colony.plugins.main.service.http.colony_handler</id>
-            <version>.*</version>
-        </module>
-        <module>
-            <id>pt.hive.colony.plugins.main.service.http</id>
-            <version>.*</version>
-        </module>
-        <module>
-            <id>pt.hive.colony.plugins.main.service.http.starter</id>
             <version>.*</version>
         </module>
         <module>
@@ -126,7 +126,11 @@
             <version>.*</version>
         </module>
         <module>
-            <id>pt.hive.colony.plugins.search.manager</id>
+            <id>pt.hive.colony.plugins.resources.python_resource_parser</id>
+            <version>.*</version>
+        </module>
+        <module>
+            <id>pt.hive.colony.plugins.resources.resource_manager</id>
             <version>.*</version>
         </module>
         <module>
@@ -138,11 +142,19 @@
             <version>.*</version>
         </module>
         <module>
+            <id>pt.hive.colony.plugins.search.index_repository</id>
+            <version>.*</version>
+        </module>
+        <module>
             <id>pt.hive.colony.plugins.search.indexer</id>
             <version>.*</version>
         </module>
         <module>
             <id>pt.hive.colony.plugins.search.interpreter</id>
+            <version>.*</version>
+        </module>
+        <module>
+            <id>pt.hive.colony.plugins.search.manager</id>
             <version>.*</version>
         </module>
         <module>
@@ -154,6 +166,10 @@
             <version>.*</version>
         </module>
         <module>
+            <id>pt.hive.colony.plugins.search.scorer</id>
+            <version>.*</version>
+        </module>
+        <module>
             <id>pt.hive.colony.plugins.search.scorer.function_repository</id>
             <version>.*</version>
         </module>
@@ -162,11 +178,11 @@
             <version>.*</version>
         </module>
         <module>
-            <id>pt.hive.colony.plugins.search.scorer</id>
+            <id>pt.hive.colony.plugins.search.sorter</id>
             <version>.*</version>
         </module>
         <module>
-            <id>pt.hive.colony.plugins.search.sorter</id>
+            <id>pt.hive.colony.plugins.system.updater</id>
             <version>.*</version>
         </module>
         <module>
@@ -178,15 +194,11 @@
             <version>.*</version>
         </module>
         <module>
-            <id>pt.hive.colony.plugins.web.mvc.search</id>
-            <version>.*</version>
-        </module>
-        <module>
-            <id>pt.hive.colony.plugins.web.mvc.utils</id>
-            <version>.*</version>
-        </module>
-        <module>
             <id>pt.hive.colony.plugins.web.mvc.manager</id>
+            <version>.*</version>
+        </module>
+        <module>
+            <id>pt.hive.colony.plugins.web.mvc.manager.page_item.repository</id>
             <version>.*</version>
         </module>
         <module>
@@ -198,23 +210,11 @@
             <version>.*</version>
         </module>
         <module>
-            <id>pt.hive.colony.plugins.resources.python_resource_parser</id>
+            <id>pt.hive.colony.plugins.web.mvc.search</id>
             <version>.*</version>
         </module>
         <module>
-            <id>pt.hive.colony.plugins.resources.resource_manager</id>
-            <version>.*</version>
-        </module>
-        <module>
-            <id>pt.hive.colony.plugins.search.index_repository</id>
-            <version>.*</version>
-        </module>
-        <module>
-            <id>pt.hive.colony.plugins.system.updater</id>
-            <version>.*</version>
-        </module>
-        <module>
-            <id>pt.hive.colony.plugins.web.mvc.manager.page_item.repository</id>
+            <id>pt.hive.colony.plugins.web.mvc.utils</id>
             <version>.*</version>
         </module>
     </modules>
@@ -312,17 +312,6 @@
                             </parameters>
                         </file>
                         <file>
-                            <path>${build_automation.build.plugins_directory}/pt.hive.colony.plugins.main.console.interface_1.0.0.cpx</path>
-                            <owner>0</owner>
-                            <group>0</group>
-                            <mode>755</mode>
-                            <parameters>
-                                <deb>
-                                    <target>usr/lib/colony/deploy/pt.hive.colony.plugins.main.console.interface_1.0.0.cpx</target>
-                                </deb>
-                            </parameters>
-                        </file>
-                        <file>
                             <path>${build_automation.build.plugins_directory}/pt.hive.colony.plugins.main.console_1.0.0.cpx</path>
                             <owner>0</owner>
                             <group>0</group>
@@ -330,6 +319,17 @@
                             <parameters>
                                 <deb>
                                     <target>usr/lib/colony/deploy/pt.hive.colony.plugins.main.console_1.0.0.cpx</target>
+                                </deb>
+                            </parameters>
+                        </file>
+                        <file>
+                            <path>${build_automation.build.plugins_directory}/pt.hive.colony.plugins.main.console.interface_1.0.0.cpx</path>
+                            <owner>0</owner>
+                            <group>0</group>
+                            <mode>755</mode>
+                            <parameters>
+                                <deb>
+                                    <target>usr/lib/colony/deploy/pt.hive.colony.plugins.main.console.interface_1.0.0.cpx</target>
                                 </deb>
                             </parameters>
                         </file>
@@ -352,6 +352,39 @@
                             <parameters>
                                 <deb>
                                     <target>usr/lib/colony/deploy/pt.hive.colony.plugins.main.remote.rest.manager_1.0.0.cpx</target>
+                                </deb>
+                            </parameters>
+                        </file>
+                        <file>
+                            <path>${build_automation.build.plugins_directory}/pt.hive.colony.plugins.main.service.http_1.0.0.cpx</path>
+                            <owner>0</owner>
+                            <group>0</group>
+                            <mode>755</mode>
+                            <parameters>
+                                <deb>
+                                    <target>usr/lib/colony/deploy/pt.hive.colony.plugins.main.service.http_1.0.0.cpx</target>
+                                </deb>
+                            </parameters>
+                        </file>
+                        <file>
+                            <path>${build_automation.build.plugins_directory}/pt.hive.colony.plugins.main.service.http.colony_handler_1.0.0.cpx</path>
+                            <owner>0</owner>
+                            <group>0</group>
+                            <mode>755</mode>
+                            <parameters>
+                                <deb>
+                                    <target>usr/lib/colony/deploy/pt.hive.colony.plugins.main.service.http.colony_handler_1.0.0.cpx</target>
+                                </deb>
+                            </parameters>
+                        </file>
+                        <file>
+                            <path>${build_automation.build.plugins_directory}/pt.hive.colony.plugins.main.service.http.starter_1.0.0.cpx</path>
+                            <owner>0</owner>
+                            <group>0</group>
+                            <mode>755</mode>
+                            <parameters>
+                                <deb>
+                                    <target>usr/lib/colony/deploy/pt.hive.colony.plugins.main.service.http.starter_1.0.0.cpx</target>
                                 </deb>
                             </parameters>
                         </file>
@@ -385,39 +418,6 @@
                             <parameters>
                                 <deb>
                                     <target>usr/lib/colony/deploy/pt.hive.colony.plugins.main.service.utils_1.0.0.cpx</target>
-                                </deb>
-                            </parameters>
-                        </file>
-                        <file>
-                            <path>${build_automation.build.plugins_directory}/pt.hive.colony.plugins.main.service.http.colony_handler_1.0.0.cpx</path>
-                            <owner>0</owner>
-                            <group>0</group>
-                            <mode>755</mode>
-                            <parameters>
-                                <deb>
-                                    <target>usr/lib/colony/deploy/pt.hive.colony.plugins.main.service.http.colony_handler_1.0.0.cpx</target>
-                                </deb>
-                            </parameters>
-                        </file>
-                        <file>
-                            <path>${build_automation.build.plugins_directory}/pt.hive.colony.plugins.main.service.http_1.0.0.cpx</path>
-                            <owner>0</owner>
-                            <group>0</group>
-                            <mode>755</mode>
-                            <parameters>
-                                <deb>
-                                    <target>usr/lib/colony/deploy/pt.hive.colony.plugins.main.service.http_1.0.0.cpx</target>
-                                </deb>
-                            </parameters>
-                        </file>
-                        <file>
-                            <path>${build_automation.build.plugins_directory}/pt.hive.colony.plugins.main.service.http.starter_1.0.0.cpx</path>
-                            <owner>0</owner>
-                            <group>0</group>
-                            <mode>755</mode>
-                            <parameters>
-                                <deb>
-                                    <target>usr/lib/colony/deploy/pt.hive.colony.plugins.main.service.http.starter_1.0.0.cpx</target>
                                 </deb>
                             </parameters>
                         </file>
@@ -488,13 +488,24 @@
                             </parameters>
                         </file>
                         <file>
-                            <path>${build_automation.build.plugins_directory}/pt.hive.colony.plugins.search.manager_1.0.0.cpx</path>
+                            <path>${build_automation.build.plugins_directory}/pt.hive.colony.plugins.resources.python_resource_parser_1.0.0.cpx</path>
                             <owner>0</owner>
                             <group>0</group>
                             <mode>755</mode>
                             <parameters>
                                 <deb>
-                                    <target>usr/lib/colony/deploy/pt.hive.colony.plugins.search.manager_1.0.0.cpx</target>
+                                    <target>usr/lib/colony/deploy/pt.hive.colony.plugins.resources.python_resource_parser_1.0.0.cpx</target>
+                                </deb>
+                            </parameters>
+                        </file>
+                        <file>
+                            <path>${build_automation.build.plugins_directory}/pt.hive.colony.plugins.resources.resource_manager_1.0.0.cpx</path>
+                            <owner>0</owner>
+                            <group>0</group>
+                            <mode>755</mode>
+                            <parameters>
+                                <deb>
+                                    <target>usr/lib/colony/deploy/pt.hive.colony.plugins.resources.resource_manager_1.0.0.cpx</target>
                                 </deb>
                             </parameters>
                         </file>
@@ -521,6 +532,17 @@
                             </parameters>
                         </file>
                         <file>
+                            <path>${build_automation.build.plugins_directory}/pt.hive.colony.plugins.search.index_repository_1.0.0.cpx</path>
+                            <owner>0</owner>
+                            <group>0</group>
+                            <mode>755</mode>
+                            <parameters>
+                                <deb>
+                                    <target>usr/lib/colony/deploy/pt.hive.colony.plugins.search.index_repository_1.0.0.cpx</target>
+                                </deb>
+                            </parameters>
+                        </file>
+                        <file>
                             <path>${build_automation.build.plugins_directory}/pt.hive.colony.plugins.search.indexer_1.0.0.cpx</path>
                             <owner>0</owner>
                             <group>0</group>
@@ -539,6 +561,17 @@
                             <parameters>
                                 <deb>
                                     <target>usr/lib/colony/deploy/pt.hive.colony.plugins.search.interpreter_1.0.0.cpx</target>
+                                </deb>
+                            </parameters>
+                        </file>
+                        <file>
+                            <path>${build_automation.build.plugins_directory}/pt.hive.colony.plugins.search.manager_1.0.0.cpx</path>
+                            <owner>0</owner>
+                            <group>0</group>
+                            <mode>755</mode>
+                            <parameters>
+                                <deb>
+                                    <target>usr/lib/colony/deploy/pt.hive.colony.plugins.search.manager_1.0.0.cpx</target>
                                 </deb>
                             </parameters>
                         </file>
@@ -565,6 +598,17 @@
                             </parameters>
                         </file>
                         <file>
+                            <path>${build_automation.build.plugins_directory}/pt.hive.colony.plugins.search.scorer_1.0.0.cpx</path>
+                            <owner>0</owner>
+                            <group>0</group>
+                            <mode>755</mode>
+                            <parameters>
+                                <deb>
+                                    <target>usr/lib/colony/deploy/pt.hive.colony.plugins.search.scorer_1.0.0.cpx</target>
+                                </deb>
+                            </parameters>
+                        </file>
+                        <file>
                             <path>${build_automation.build.plugins_directory}/pt.hive.colony.plugins.search.scorer.function_repository_1.0.0.cpx</path>
                             <owner>0</owner>
                             <group>0</group>
@@ -587,13 +631,24 @@
                             </parameters>
                         </file>
                         <file>
-                            <path>${build_automation.build.plugins_directory}/pt.hive.colony.plugins.search.scorer_1.0.0.cpx</path>
+                            <path>${build_automation.build.plugins_directory}/pt.hive.colony.plugins.search.sorter_1.0.0.cpx</path>
                             <owner>0</owner>
                             <group>0</group>
                             <mode>755</mode>
                             <parameters>
                                 <deb>
-                                    <target>usr/lib/colony/deploy/pt.hive.colony.plugins.search.scorer_1.0.0.cpx</target>
+                                    <target>usr/lib/colony/deploy/pt.hive.colony.plugins.search.sorter_1.0.0.cpx</target>
+                                </deb>
+                            </parameters>
+                        </file>
+                        <file>
+                            <path>${build_automation.build.plugins_directory}/pt.hive.colony.plugins.system.updater_1.0.0.cpx</path>
+                            <owner>0</owner>
+                            <group>0</group>
+                            <mode>755</mode>
+                            <parameters>
+                                <deb>
+                                    <target>usr/lib/colony/deploy/pt.hive.colony.plugins.system.updater_1.0.0.cpx</target>
                                 </deb>
                             </parameters>
                         </file>
@@ -620,28 +675,6 @@
                             </parameters>
                         </file>
                         <file>
-                            <path>${build_automation.build.plugins_directory}/pt.hive.colony.plugins.web.mvc.search_1.0.0.cpx</path>
-                            <owner>0</owner>
-                            <group>0</group>
-                            <mode>755</mode>
-                            <parameters>
-                                <deb>
-                                    <target>usr/lib/colony/deploy/pt.hive.colony.plugins.web.mvc.search_1.0.0.cpx</target>
-                                </deb>
-                            </parameters>
-                        </file>
-                        <file>
-                            <path>${build_automation.build.plugins_directory}/pt.hive.colony.plugins.web.mvc.utils_1.0.0.cpx</path>
-                            <owner>0</owner>
-                            <group>0</group>
-                            <mode>755</mode>
-                            <parameters>
-                                <deb>
-                                    <target>usr/lib/colony/deploy/pt.hive.colony.plugins.web.mvc.utils_1.0.0.cpx</target>
-                                </deb>
-                            </parameters>
-                        </file>
-                        <file>
                             <path>${build_automation.build.plugins_directory}/pt.hive.colony.plugins.web.mvc.manager_1.0.0.cpx</path>
                             <owner>0</owner>
                             <group>0</group>
@@ -649,6 +682,17 @@
                             <parameters>
                                 <deb>
                                     <target>usr/lib/colony/deploy/pt.hive.colony.plugins.web.mvc.manager_1.0.0.cpx</target>
+                                </deb>
+                            </parameters>
+                        </file>
+                        <file>
+                            <path>${build_automation.build.plugins_directory}/pt.hive.colony.plugins.web.mvc.manager.page_item.repository_1.0.0.cpx</path>
+                            <owner>0</owner>
+                            <group>0</group>
+                            <mode>755</mode>
+                            <parameters>
+                                <deb>
+                                    <target>usr/lib/colony/deploy/pt.hive.colony.plugins.web.mvc.manager.page_item.repository_1.0.0.cpx</target>
                                 </deb>
                             </parameters>
                         </file>
@@ -675,57 +719,24 @@
                             </parameters>
                         </file>
                         <file>
-                            <path>${build_automation.build.plugins_directory}/pt.hive.colony.plugins.resources.python_resource_parser_1.0.0.cpx</path>
+                            <path>${build_automation.build.plugins_directory}/pt.hive.colony.plugins.web.mvc.search_1.0.0.cpx</path>
                             <owner>0</owner>
                             <group>0</group>
                             <mode>755</mode>
                             <parameters>
                                 <deb>
-                                    <target>usr/lib/colony/deploy/pt.hive.colony.plugins.resources.python_resource_parser_1.0.0.cpx</target>
+                                    <target>usr/lib/colony/deploy/pt.hive.colony.plugins.web.mvc.search_1.0.0.cpx</target>
                                 </deb>
                             </parameters>
                         </file>
                         <file>
-                            <path>${build_automation.build.plugins_directory}/pt.hive.colony.plugins.resources.resource_manager_1.0.0.cpx</path>
+                            <path>${build_automation.build.plugins_directory}/pt.hive.colony.plugins.web.mvc.utils_1.0.0.cpx</path>
                             <owner>0</owner>
                             <group>0</group>
                             <mode>755</mode>
                             <parameters>
                                 <deb>
-                                    <target>usr/lib/colony/deploy/pt.hive.colony.plugins.resources.resource_manager_1.0.0.cpx</target>
-                                </deb>
-                            </parameters>
-                        </file>
-                        <file>
-                            <path>${build_automation.build.plugins_directory}/pt.hive.colony.plugins.search.index_repository_1.0.0.cpx</path>
-                            <owner>0</owner>
-                            <group>0</group>
-                            <mode>755</mode>
-                            <parameters>
-                                <deb>
-                                    <target>usr/lib/colony/deploy/pt.hive.colony.plugins.search.index_repository_1.0.0.cpx</target>
-                                </deb>
-                            </parameters>
-                        </file>
-                        <file>
-                            <path>${build_automation.build.plugins_directory}/pt.hive.colony.plugins.system.updater_1.0.0.cpx</path>
-                            <owner>0</owner>
-                            <group>0</group>
-                            <mode>755</mode>
-                            <parameters>
-                                <deb>
-                                    <target>usr/lib/colony/deploy/pt.hive.colony.plugins.system.updater_1.0.0.cpx</target>
-                                </deb>
-                            </parameters>
-                        </file>
-                        <file>
-                            <path>${build_automation.build.plugins_directory}/pt.hive.colony.plugins.web.mvc.manager.page_item.repository_1.0.0.cpx</path>
-                            <owner>0</owner>
-                            <group>0</group>
-                            <mode>755</mode>
-                            <parameters>
-                                <deb>
-                                    <target>usr/lib/colony/deploy/pt.hive.colony.plugins.web.mvc.manager.page_item.repository_1.0.0.cpx</target>
+                                    <target>usr/lib/colony/deploy/pt.hive.colony.plugins.web.mvc.utils_1.0.0.cpx</target>
                                 </deb>
                             </parameters>
                         </file>
