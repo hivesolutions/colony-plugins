@@ -374,6 +374,7 @@ class EmailBuildAutomationExtension:
         build_automation = self._convert_build_automation_structure(build_automation_structure)
 
         # retrieves the build automation properties
+        build_automation_success = build_automation["success"]
         build_automation_plugin_name = build_automation["plugin_name"]
         build_automation_version = build_automation["version"]
         build_automation_changers_list = build_automation["changers_list"]
@@ -389,7 +390,19 @@ class EmailBuildAutomationExtension:
         sender_line = sender_name + " " + "<" + sender_email + ">"
 
         # writes the initial subject line
-        subject = "b%i - %s you're GUILTY" % (build_automation_version, build_automation_plugin_name)
+        subject = "b%i - %s " % (build_automation_version, build_automation_plugin_name)
+
+        # in case the build automation was successful
+        if build_automation_success:
+            # adds the successful part to the subject
+            subject += "was SUCCESSFUL "
+        # otherwise
+        else:
+            # adds the failed part to the subject
+            subject += "has FAILED "
+
+        # adds the suspect part of the subject
+        subject += "and you're a SUSPECT"
 
         # processes the build automation changers list, retrieving the receiver line
         # and the receiver emails
