@@ -96,7 +96,7 @@ class BuildAutomationPackingGeneratorHandler:
         template_file_path = build_automation_packing_generator_handler_plugin_path + "/" + TEMPLATE_FILE_PATH
 
         # parses the template file path
-        template_file = template_engine_manager_plugin.parse_file_path_variable_encoding(template_file_path, DEFAULT_ENCODING, None)
+        template_file = template_engine_manager_plugin.parse_file_path_encoding(template_file_path, DEFAULT_ENCODING)
 
         # generates the build automation map for the plugin
         build_automation_map = self._generate_build_automation_map(plugin)
