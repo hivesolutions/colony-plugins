@@ -63,8 +63,8 @@
                                 ${foreach item=changer from=build_automation.changers_list}
                                 <font face="Rockwell, Arial" size="2" color="#214c8f"><b>${out_none value=changer.name xml_escape=True /} (${out_none value=changer.username xml_escape=True /})</b></font>,
                                 ${/foreach}.<br />
-                                The total time for the build automation run was <font face="Rockwell, Arial" size="2" color="#214c8f"><b>${out_none value=build_automation.total_time_formated xml_escape=True /}</b></font>.
-                                <font face="Rockwell, Arial" size="2" color="#dc1c28">The build is broken and you're a suspect, if you don't want to fix it, at least make sure you're innocent.</font>
+                                The total time for the build automation run was <font face="Rockwell, Arial" size="2" color="#214c8f"><b>${out_none value=build_automation.total_time_formated xml_escape=True /}</b></font>.<br />
+                                <font face="Rockwell, Arial" size="2" color="#dc1c28"><b>The build is broken and you're a suspect, if you don't want to fix it, at least make sure you're innocent.</b></font>
                             </font>
                         </p>
                         <p>
