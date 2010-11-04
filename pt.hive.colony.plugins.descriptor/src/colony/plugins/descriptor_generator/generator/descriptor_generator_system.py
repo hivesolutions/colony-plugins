@@ -92,7 +92,7 @@ SUB_PLATFORMS_VALUE = "sub_platforms"
 VERSION_VALUE = "version"
 """ The version value """
 
-DEFAULT_ENCODING = "utf-8"
+DEFAULT_ENCODING = "Cp1252"
 """ The default encoding """
 
 UNIX_DIRECTORY_SEPARATOR = "/"
@@ -468,7 +468,7 @@ class DescriptorGenerator:
 
     def save_plugin_descriptor_file(self, plugin_path, plugin_module_name, plugin_descriptor_map, template_file_path):
         # parses the template file path
-        template_file = self.descriptor_generator_plugin.template_engine_manager_plugin.parse_file_path(template_file_path)
+        template_file = self.descriptor_generator_plugin.template_engine_manager_plugin.parse_file_path_variable_encoding(template_file_path, DEFAULT_ENCODING, None)
 
         # assigns an entity to the parsed template file
         template_file.assign(PLUGIN_DESCRIPTOR_VALUE, plugin_descriptor_map)
@@ -476,8 +476,8 @@ class DescriptorGenerator:
         # processes the template file
         processed_template_file = template_file.process()
 
-        # decodes the processed template file into a unicode object
-        processed_template_file_decoded = processed_template_file.decode(DEFAULT_ENCODING)
+        # encodes the processed template using the default encoding
+        processed_template_file_encoded = processed_template_file.encode(DEFAULT_ENCODING)
 
         # defines the plugin descriptor file name
         plugin_descriptor_file_name = plugin_module_name + JSON_FILE_EXTENSION
@@ -488,8 +488,9 @@ class DescriptorGenerator:
         # opens the plugin descriptor file
         file = open(plugin_descriptor_file_path, "w")
 
-        # writes the plugin descriptor template to the file
-        file.write(processed_template_file_decoded)
-
-        # closes the plugin descriptor file
-        file.close()
+        try:
+            # writes the plugin descriptor template to the file
+            file.write(processed_template_file_encoded)
+        finally:
+            # closes the plugin descriptor file
+            file.close()
