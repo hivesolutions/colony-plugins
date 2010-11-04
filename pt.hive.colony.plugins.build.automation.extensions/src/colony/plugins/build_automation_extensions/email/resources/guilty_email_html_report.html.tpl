@@ -7,10 +7,10 @@
     <body>
         <center>
             <br />
-            <table width="600" cellpadding="0" cellspacing="0">
+            <table width="700" cellpadding="0" cellspacing="0">
                 <tr>
                     <td colspan="3">
-                        <img src="cid:email_header.gif" height="44" width="600" alt="Hive Solutions" />
+                        <img src="cid:email_header.gif" height="44" width="700" alt="Hive Solutions" />
                     </td>
                 </tr>
                 <tr>
@@ -46,7 +46,7 @@
                 </tr>
                 <tr>
                     <td width="100"></td>
-                    <td width="400" align="left" style="line-height:1.8em;margin-bottom:20px;margin-top:0;">
+                    <td width="500" align="left" style="line-height:1.8em;margin-bottom:20px;margin-top:0;">
                         <h1>
                             <font face="Rockwell, Arial" size="3" color="#214c8f">${out_none value=build_automation.plugin_name xml_escape=True /} - </font>
                             ${if item=build_automation.success value=True operator=eq}
@@ -57,7 +57,13 @@
                             ${/if}
                         </h1>
                         <p>
+                            <img src="cid:line.gif" width="500" height="1" alt="separator" />
+                        </p>
+                        <p>
                             <font face="Rockwell, Arial" size="3" color="#214c8f"><b>The build is broken and you're a <font face="Rockwell, Arial" size="3" color="#dc1c28">suspect</font>, make sure you're innocent.</b></font>
+                        </p>
+                        <p>
+                            <img src="cid:line.gif" width="500" height="1" alt="separator" />
                         </p>
                         <p>
                             <font face="Arial" size="2" color="#333333">
@@ -70,7 +76,7 @@
                             </font>
                         </p>
                         <p>
-                            <img src="cid:line.gif" width="400" height="1" alt="separator" />
+                            <img src="cid:line.gif" width="500" height="1" alt="separator" />
                         </p>
                         <font face="Rockwell, Arial" size="3" color="#808080"><strong>Code Changes</strong></font>
                         <br />
@@ -82,7 +88,7 @@
                             </font>
                         </p>
                         ${/foreach}
-                        <img src="cid:line.gif" width="400" height="1" alt="separator" />
+                        <img src="cid:line.gif" width="500" height="1" alt="separator" />
                         <p align="right">
                             <font face="Arial" size="2" color="#333333"><a href="#">code changes details ></a></font>
                         </p>
@@ -96,7 +102,7 @@
                             </font>
                         </p>
                         ${/foreach}
-                        <img src="cid:line.gif" width="400" height="1" alt="separator" />
+                        <img src="cid:line.gif" width="500" height="1" alt="separator" />
                         <p align="right"><font face="Arial" size="2" color="#333333"><a href="#">issues details ></a></font></p>
                         <br />
                         <p align="center">
@@ -108,7 +114,7 @@
                             </font>
                         </p>
                         <br />
-                        <img src="cid:line.gif" width="400" height="1" alt="separator" />
+                        <img src="cid:line.gif" width="500" height="1" alt="separator" />
                         <br />
                         <table id="footer">
                             <tr>
