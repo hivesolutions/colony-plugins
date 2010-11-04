@@ -57,7 +57,7 @@
                             ${/if}
                         </h1>
                         <h1>
-                            <font face="Rockwell, Arial" size="3" color="#214c8f"><b>The build is broken and you're a <font face="Rockwell, Arial" size="3" color="#dc1c28">suspect</font>, make sure you're innocent.</b></font>
+                            <font face="Rockwell, Arial" size="3" color="#214c8f"><b>You are a <font face="Rockwell, Arial" size="3" color="#dc1c28">SUSPECT</font>, make sure you're innocent.</b></font>
                         </h1>
                         <table height="0" width="100%" cellpadding="0" cellspacing="0">
                             <tr>
