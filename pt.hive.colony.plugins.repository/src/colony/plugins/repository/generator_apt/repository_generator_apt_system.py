@@ -325,7 +325,7 @@ class RepositoryGeneratorApt:
         template_file_path = repository_generator_apt_plugin_path + "/" + RESOURCES_PATH + "/repository_templates/" + template_file_name
 
         # parses the template file path
-        template_file = template_engine_manager_plugin.parse_file_path_variable_encoding(template_file_path, DEFAULT_ENCODING, None)
+        template_file = template_engine_manager_plugin.parse_file_path_encoding(template_file_path, DEFAULT_ENCODING)
 
         # iterates over all the parameters in the parameters map to
         # assign them to the template
