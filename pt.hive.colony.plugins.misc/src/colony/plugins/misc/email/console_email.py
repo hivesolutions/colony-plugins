@@ -44,7 +44,7 @@ INVALID_NUMBER_ARGUMENTS_MESSAGE = "invalid number of arguments"
 """ The invalid number of arguments message """
 
 HELP_TEXT = "### EMAIL HELP ###\n\
-send_email <destiny-address> - sends an email with the given contains to the defined destiny address\n\
+send_email <destiny-address>      - sends an email with the given contains to the defined destiny address\n\
 send_test_email <destiny-address> - sends a test email to the defined destiny address"
 """ The help text """
 
