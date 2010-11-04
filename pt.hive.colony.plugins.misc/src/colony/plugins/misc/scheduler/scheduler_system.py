@@ -121,8 +121,12 @@ class Scheduler:
 
         # iterates continuously
         while True:
+            print "vai tentar fazer acquire"
+
             # acquires the lock object
             self.scheduler_lock.acquire()
+
+            print "fez acquire"
 
             # in case the continue flag is disabled
             if not self.continue_flag:
