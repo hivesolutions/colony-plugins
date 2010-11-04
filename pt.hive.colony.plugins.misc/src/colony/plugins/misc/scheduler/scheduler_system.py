@@ -132,6 +132,8 @@ class Scheduler:
             # runs the scheduler
             self.scheduler.run()
 
+        print "saiu do load scheduler"
+
     def unload_scheduler(self):
         print "vai fazer unload 1"
 
