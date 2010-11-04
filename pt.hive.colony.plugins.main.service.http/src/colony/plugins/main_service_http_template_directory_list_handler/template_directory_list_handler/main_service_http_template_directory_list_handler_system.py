@@ -110,7 +110,7 @@ class MainServiceHttpTemplateDirectoryListHandler:
         template_file_path = main_service_http_template_directory_list_handler_plugin_path + "/" + TEMPLATE_DIRECTORY_LIST_HANDLER_RESOURCES_PATH + "/" + HTTP_SERVICE_DIRECTORY_LIST_HTML_TEMPLATE_FILE_NAME
 
         # parses the template file path
-        template_file = template_engine_manager_plugin.parse_file_path_variable_encoding(template_file_path, DEFAULT_TEMPLATE_ENCODING, None)
+        template_file = template_engine_manager_plugin.parse_file_path_encoding(template_file_path, DEFAULT_TEMPLATE_ENCODING)
 
         # retrieves the directory entries
         directory_entries = directory_list["entries"]

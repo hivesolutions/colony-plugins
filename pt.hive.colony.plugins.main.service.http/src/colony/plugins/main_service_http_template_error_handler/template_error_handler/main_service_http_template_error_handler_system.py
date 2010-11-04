@@ -164,7 +164,7 @@ class MainServiceHttpTemplateErrorHandler:
         template_file_path = main_service_http_template_error_handler_plugin_path + "/" + TEMPLATE_ERROR_HANDLER_RESOURCES_PATH + "/" + HTTP_SERVICE_ERROR_HTML_TEMPLATE_FILE_NAME
 
         # parses the template file path
-        template_file = template_engine_manager_plugin.parse_file_path_variable_encoding(template_file_path, DEFAULT_TEMPLATE_ENCODING, None)
+        template_file = template_engine_manager_plugin.parse_file_path_encoding(template_file_path, DEFAULT_TEMPLATE_ENCODING)
 
         # assigns the error code to the template file
         template_file.assign("error_code", error_code)
