@@ -286,8 +286,9 @@ class AbstractClient:
         # connections map
         client_connection = self.client_connections_map[connection_tuple_hashable]
 
-        # in case the connection should be opened, opens the client connection
-        open_connection and client_connection.open()
+        # in case the connection should be opened and the client
+        # connection is not open, opens the client connection
+        open_connection and not client_connection.is_open() and client_connection.open()
 
         # returns the client connection
         return client_connection
