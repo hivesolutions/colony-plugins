@@ -76,12 +76,12 @@
                     <td width="100"></td>
                     <td width="500" align="left" style="line-height:1.8em;margin-bottom:20px;margin-top:0;">
                         <h1 style="margin-bottom:1.2em;">
-                            <font face="Rockwell, Arial" size="3" color="#214c8f">${out_none value=build_automation.plugin_name xml_escape=True /} has </font>
+                            <font face="Rockwell, Arial" size="3" color="#214c8f">${out_none value=build_automation.plugin_name xml_escape=True /}</font>
                             ${if item=build_automation.success value=True operator=eq}
-                                <font face="Rockwell, Arial" size="3" color="#4d9341">${out_none value=build_automation.success_capitals xml_escape=True /}</font>
+                                had <font face="Rockwell, Arial" size="3" color="#4d9341">${out_none value=build_automation.success_capitals xml_escape=True /}</font>
                             ${/if}
                             ${if item=build_automation.success value=False operator=eq}
-                                <font face="Rockwell, Arial" size="3" color="#dc1c28">${out_none value=build_automation.success_capitals xml_escape=True /}</font>
+                                has <font face="Rockwell, Arial" size="3" color="#dc1c28">${out_none value=build_automation.success_capitals xml_escape=True /}</font>
                             ${/if}
                             <br />
                             <font face="Rockwell, Arial" size="2" color="#214c8f"><b>You are a <font face="Rockwell, Arial" size="2" color="#dc1c28">SUSPECT</font>, make sure you're innocent</b></font>
