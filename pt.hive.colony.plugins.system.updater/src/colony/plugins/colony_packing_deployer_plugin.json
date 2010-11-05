@@ -14,9 +14,11 @@
                 "version" : "1.0.0"
             }],
     "main_file" : "colony_packing_deployer_plugin.py",
-    "resources" : ["colony_packing_deployer_plugin.py",
+    "resources" : [
+            "colony_packing_deployer_plugin.py",
             "system_updater/__init__.py",
             "system_updater/colony_packing/__init__.py",
+            "system_updater/colony_packing/colony_packing_deployer_exceptions.py",
             "system_updater/colony_packing/colony_packing_deployer_system.py",
             "system_updater/colony_packing/resources/baf.xml"]
 }

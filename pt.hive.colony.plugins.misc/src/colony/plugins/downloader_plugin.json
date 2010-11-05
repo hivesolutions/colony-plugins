@@ -18,6 +18,7 @@
     "resources" : ["downloader_plugin.py", "misc/__init__.py",
             "misc/downloader/__init__.py",
             "misc/downloader/console_downloader.py",
+            "misc/downloader/downloader_exceptions.py",
             "misc/downloader/downloader_system.py",
             "misc/downloader/resources/baf.xml"]
 }

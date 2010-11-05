@@ -16,6 +16,7 @@
     "main_file" : "colony_deployer_plugin.py",
     "resources" : ["colony_deployer_plugin.py", "system_updater/__init__.py",
             "system_updater/colony_deployer/__init__.py",
+            "system_updater/colony_deployer/colony_deployer_exceptions.py",
             "system_updater/colony_deployer/colony_deployer_system.py",
             "system_updater/colony_deployer/resources/baf.xml"]
 }

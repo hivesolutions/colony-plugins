@@ -60,7 +60,8 @@ class ColonyPackingDeployerPlugin(colony.base.plugin_system.Plugin):
                     "pt.hive.colony.plugins.main.packing.manager", "1.0.0")]
     events_handled = []
     events_registrable = []
-    main_modules = ["system_updater.colony_packing.colony_packing_deployer_system"]
+    main_modules = ["system_updater.colony_packing.colony_packing_deployer_exceptions",
+                    "system_updater.colony_packing.colony_packing_deployer_system"]
 
     colony_packing_deployer = None
 

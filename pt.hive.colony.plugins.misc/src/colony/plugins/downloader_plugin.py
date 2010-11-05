@@ -60,7 +60,8 @@ class DownloaderPlugin(colony.base.plugin_system.Plugin):
                     "pt.hive.colony.plugins.main.client.http", "1.0.0")]
     events_handled = []
     events_registrable = []
-    main_modules = ["misc.downloader.console_downloader",
+    main_modules = ["misc.downloader.downloader_exceptions",
+                    "misc.downloader.console_downloader",
                     "misc.downloader.downloader_system"]
 
     downloader = None
