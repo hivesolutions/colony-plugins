@@ -94,35 +94,26 @@ class MainServiceHttpProxyHandler:
         self.main_service_http_proxy_handler_plugin = main_service_http_proxy_handler_plugin
 
     def load_handler(self):
+        """
+        Handler called uppon load.
+        """
+
         # retrieves the element pool manager plugin
         element_pool_manager_plugin = self.main_service_http_proxy_handler_plugin.element_pool_manager_plugin
 
         # creates a new http clients pool
-        self.http_clients_pool = element_pool_manager_plugin.create_new_element_pool(self.create_method, self.destroy_method, DEFAULT_ELEMENT_POOL_SIZE)
+        self.http_clients_pool = element_pool_manager_plugin.create_new_element_pool(self._create_http_client, self._destroy_http_client, DEFAULT_ELEMENT_POOL_SIZE)
 
         # starts the http clients pool
         self.http_clients_pool.start({})
 
     def unload_handler(self):
+        """
+        Handler called uppon unload.
+        """
+
         # stops the http clients pool
         self.http_clients_pool.stop({})
-
-    def create_method(self, arguments):
-        # retrieves the main client http plugin
-        main_client_http_plugin = self.main_service_http_proxy_handler_plugin.main_client_http_plugin
-
-        # creates the http client
-        http_client = main_client_http_plugin.create_client({})
-
-        # opens the http client
-        http_client.open(arguments)
-
-        # returns the http client
-        return http_client
-
-    def destroy_method(self, http_client, arguments):
-        # closes the http client
-        http_client.close(arguments)
 
     def get_handler_name(self):
         """
@@ -191,6 +182,23 @@ class MainServiceHttpProxyHandler:
 
         # writes the (received) data to the request
         request.write(data)
+
+    def _create_http_client(self, arguments):
+        # retrieves the main client http plugin
+        main_client_http_plugin = self.main_service_http_proxy_handler_plugin.main_client_http_plugin
+
+        # creates the http client
+        http_client = main_client_http_plugin.create_client({})
+
+        # opens the http client
+        http_client.open(arguments)
+
+        # returns the http client
+        return http_client
+
+    def _destroy_http_client(self, http_client, arguments):
+        # closes the http client
+        http_client.close(arguments)
 
     def _create_request_headers(self, request):
         # creates a new map for the request headers
