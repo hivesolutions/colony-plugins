@@ -55,12 +55,6 @@ START_TAG_VALUE = "<\?colony"
 END_TAG_VALUE = "\?>"
 """ The end tag value """
 
-JAVASCRIPT_TAG_START = "<script type=\"text/javascript\">"
-""" The javascript start tag """
-
-JAVASCRIPT_TAG_END = "</script>"
-""" The javascript end tag """
-
 DEFAULT_MIME_TYPE = "text/plain"
 """ The default mime type """
 
@@ -351,44 +345,6 @@ class TemplateHandler:
 
         # writes the final words in the stdout
         sys.stdout.write(final_words)
-
-    def import_js_library(self, library_name):
-        """
-        Imports the javascript library with the given name.
-
-        @type library_name: String
-        @param library_name: The name of the library to be imported.
-        """
-
-        # retrieves the plugin manager
-        manager = self.template_handler_plugin.manager
-
-        # retrieves the plugin path
-        plugin_path = manager.get_plugin_path_by_id(self.template_handler_plugin.id)
-
-        # creates the library file name
-        library_file_name = library_name + ".js"
-
-        # retrieves the full library path
-        library_path = plugin_path + "/template_handler/handler/resources/js_libs/" + library_file_name
-
-        # opens the library file
-        library_file = open(library_path, "r")
-
-        # reads the library file contents
-        library_file_contents = library_file.read()
-
-        # prints the javascript start tag
-        print JAVASCRIPT_TAG_START
-
-        # prints the library file contents
-        print library_file_contents
-
-        # prints the javascript end tag
-        print JAVASCRIPT_TAG_END
-
-        # closes the library file
-        library_file.close()
 
     def parse_request_attributes(self, request):
         """
