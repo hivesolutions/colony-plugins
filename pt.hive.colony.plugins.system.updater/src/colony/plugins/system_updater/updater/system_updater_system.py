@@ -48,8 +48,8 @@ TEMP_DIRECTORY = "colony/tmp"
 RESOURCES_PATH = "system_updater/updater/resources"
 """ The resources path """
 
-REPOSITORIES_FILE_PATH = "resources/repositories.xml"
-""" The repositories file path """
+REPOSITORIES_FILE_NAME = "repositories.xml"
+""" The repositories file name """
 
 REPOSITORY_DESCRIPTOR_FILE = "repository_descriptor.xml"
 """ The repository descriptor file """
@@ -80,6 +80,9 @@ class SystemUpdater:
     repository_descriptor_repository_map = {}
     """ The map associating the repository descriptor with the repository """
 
+    deployer_plugins_map = {}
+    """ The deployer plugins map """
+
     def __init__(self, system_updater_plugin):
         """
         Constructor of the class.
@@ -89,6 +92,12 @@ class SystemUpdater:
         """
 
         self.system_updater_plugin = system_updater_plugin
+
+        self.repository_list = []
+        self.repository_descriptor_list = []
+        self.repository_repository_descriptor_map = {}
+        self.repository_descriptor_repository_map = {}
+        self.deployer_plugins_map = {}
 
     def load_system_updater(self):
         """
@@ -116,7 +125,7 @@ class SystemUpdater:
 
         # creates the repositories file path from the repositories file
         # path relative path
-        repositories_file_path = os.path.join(resources_path, REPOSITORIES_FILE_PATH)
+        repositories_file_path = os.path.join(resources_path, REPOSITORIES_FILE_NAME)
 
         # creates the repositories file parser for the
         repositories_file_parser = system_updater_parser.RepositoriesFileParser(repositories_file_path)
@@ -188,7 +197,9 @@ class SystemUpdater:
 
         # iterates over the repository list
         for repository in self.repository_list:
+            # in case the repository name matches
             if repository.name == repository_name:
+                # retrieves the repository information for the repository
                 return self.get_repository_information(repository)
 
     def get_package_information_list_by_repository_name(self, repository_name):
@@ -307,18 +318,13 @@ class SystemUpdater:
             raise system_updater_exceptions.InvalidPluginException("plugin %s v%s not found" % (plugin_id, plugin_version))
 
         # installs the plugin dependencies
-        self.install_plugin_dependencies(plugin_descriptor)
+        self._install_plugin_dependencies(plugin_descriptor)
 
         # retrieves the plugin type
         plugin_type = plugin_descriptor.plugin_type
 
         # retrieves a deployer for the given plugin type
-        plugin_deployer = self.system_updater_plugin.get_deployer_by_deployer_type(plugin_type)
-
-        # in case there is no deployer for the given plugin type
-        if not plugin_deployer:
-            # raises the missing deployer exception
-            raise system_updater_exceptions.MissingDeployer(plugin_type)
+        plugin_deployer = self._get_deployer_by_deployer_type(plugin_type)
 
         # retrieves the repository descriptor from the plugin descriptor
         repository_descriptor = self.get_repository_descriptor_plugin_descriptor(plugin_descriptor)
@@ -327,36 +333,26 @@ class SystemUpdater:
         repository = self.repository_descriptor_repository_map[repository_descriptor]
 
         # retrieves the contents file
-        contents_file = self.get_contents_file(repository.name, plugin_descriptor.name, plugin_descriptor.version, plugin_descriptor.contents_file)
+        contents_file = self._get_contents_file(repository.name, plugin_descriptor.name, plugin_descriptor.version, plugin_descriptor.contents_file)
 
         # sends the contents file (plugin) to the plugin type deployer
         # to allow it to be deployed
         plugin_deployer.deploy_plugin(plugin_descriptor.id, plugin_descriptor.version, contents_file)
 
         # deletes the contents file
-        self.delete_contents_file(contents_file)
+        self._delete_contents_file(contents_file)
 
-    def install_plugin_dependencies(self, plugin_descriptor):
-        """
-        Install the plugin dependencies for the given plugin
-        descriptor.
+    def deployer_load(self, deployer_plugin):
+        # retrieves the plugin deployer type
+        deployer_type = deployer_plugin.get_deployer_type()
 
-        @type plugin_descriptor: PluginDescriptor
-        @param plugin_id: The plugin descriptor of the plugin to
-        install the dependencies.
-        """
+        self.deployer_plugins_map[deployer_type] = deployer_plugin
 
-        # retrieves the plugin dependencies
-        plugin_dependencies = plugin_descriptor.dependencies
+    def deployer_unload(self, deployer_plugin):
+        # retrieves the plugin deployer type
+        deployer_type = deployer_plugin.get_deployer_type()
 
-        # iterates over the plugin dependencies
-        for plugin_dependency in plugin_dependencies:
-            try:
-                # installs the plugin dependency
-                self.install_plugin(plugin_dependency.id, plugin_dependency.version)
-            except Exception, exception:
-                # raises the dependency installation exception
-                raise system_updater_exceptions.DependencyInstallationException("problem installing plugin depdency %s v%s: %s", ((plugin_dependency.id, plugin_dependency.version, unicode(exception))))
+        del self.deployer_plugins_map[deployer_type]
 
     def get_repositories_list(self):
         """
@@ -442,7 +438,52 @@ class SystemUpdater:
             if plugin_descriptor in repository_descriptor.plugins:
                 return repository_descriptor
 
-    def get_contents_file(self, repository_name, plugin_name, plugin_version, contents_file):
+    def _get_deployer_plugin_by_deployer_type(self, deployer_type):
+        """
+        Retrieves a deployer plugin for the given deployer type.
+
+        @type deployer_type : String
+        @param deployer_type: The type of the deployer to retrieve.
+        @rtype: Plugin
+        @return: The deployer plugin for the given deployer type.
+        """
+
+        # in case the deployer type does not exist in the deployer
+        # plugins map
+        if not deployer_type in self.deployer_plugins_map:
+            # raises the missing deployer exception
+            raise system_updater_exceptions.MissingDeployer(deployer_type)
+
+        # retrieves the deployer plugin from the deployer plugins map
+        deployer_plugin = self.deployer_plugins_map[deployer_type]
+
+        # returns the deployer plugin
+        return deployer_plugin
+
+    def _install_plugin_dependencies(self, plugin_descriptor):
+        """
+        Install the plugin dependencies for the given plugin
+        descriptor.
+
+        @type plugin_descriptor: PluginDescriptor
+        @param plugin_id: The plugin descriptor of the plugin to
+        install the dependencies.
+        """
+
+        # retrieves the plugin dependencies
+        plugin_dependencies = plugin_descriptor.dependencies
+
+        # iterates over the plugin dependencies
+        for plugin_dependency in plugin_dependencies:
+            try:
+                # installs the plugin dependency
+                self.install_plugin(plugin_dependency.id, plugin_dependency.version)
+            except Exception, exception:
+                # raises the dependency installation exception
+                raise system_updater_exceptions.DependencyInstallationException("problem installing plugin depdency %s v%s: %s", ((plugin_dependency.id, plugin_dependency.version, unicode(exception))))
+
+
+    def _get_contents_file(self, repository_name, plugin_name, plugin_version, contents_file):
         """
         Retrieves the plugin contents file for the given repository name,
         plugin name, plugin version and contents file name.
@@ -469,7 +510,7 @@ class SystemUpdater:
         repository_layout = repository.layout
 
         # downloads the contents file
-        self.download_contents_file(repository_addresses, plugin_name, plugin_version, contents_file, repository_layout, TEMP_DIRECTORY)
+        self._download_contents_file(repository_addresses, plugin_name, plugin_version, contents_file, repository_layout, TEMP_DIRECTORY)
 
         # the created contents file path
         contents_file_path = TEMP_DIRECTORY + "/" + contents_file
@@ -538,7 +579,15 @@ class SystemUpdater:
         # raises the file not found exception
         raise system_updater_exceptions.FileNotFoundException("contents file not found for plugin '%s' v%s" %(plugin_name, plugin_version))
 
-    def delete_contents_file(self, contents_file):
+    def _delete_contents_file(self, contents_file):
+        """
+        Deletes the given contents file.
+
+        @type contents_file: File
+        @param contents_file: The contents file to be
+        deleted.
+        """
+
         # closes the contents file
         contents_file.close()
 

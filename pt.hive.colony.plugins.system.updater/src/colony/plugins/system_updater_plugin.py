@@ -79,12 +79,10 @@ class SystemUpdaterPlugin(colony.base.plugin_system.Plugin):
         import system_updater.updater.console_system_updater
         self.system_updater = system_updater.updater.system_updater_system.SystemUpdater(self)
         self.console_system_updater = system_updater.updater.console_system_updater.ConsoleSystemUpdater(self)
-        self.system_updater.load_system_updater()
-
-        self.deployer_plugins = []
 
     def end_load_plugin(self):
         colony.base.plugin_system.Plugin.end_load_plugin(self)
+        self.system_updater.load_system_updater()
 
     def unload_plugin(self):
         colony.base.plugin_system.Plugin.unload_plugin(self)
@@ -92,12 +90,11 @@ class SystemUpdaterPlugin(colony.base.plugin_system.Plugin):
     def end_unload_plugin(self):
         colony.base.plugin_system.Plugin.end_unload_plugin(self)
 
+    @colony.base.decorators.load_allowed("pt.hive.colony.plugins.system.updater", "1.0.0")
     def load_allowed(self, plugin, capability):
         colony.base.plugin_system.Plugin.load_allowed(self, plugin, capability)
 
-        if capability == "deployer":
-            self.deployer_plugins.append(plugin)
-
+    @colony.base.decorators.unload_allowed("pt.hive.colony.plugins.system.updater", "1.0.0")
     def unload_allowed(self, plugin, capability):
         colony.base.plugin_system.Plugin.unload_allowed(self, plugin, capability)
 
@@ -105,31 +102,20 @@ class SystemUpdaterPlugin(colony.base.plugin_system.Plugin):
     def dependency_injected(self, plugin):
         colony.base.plugin_system.Plugin.dependency_injected(self, plugin)
 
-    def get_deployer_by_deployer_type(self, deployer_type):
-        """
-        Retrieves a deployer for the given deployer type
-
-        @type deployer_type : String
-        @param deployer_type: The type of the deployer to retrieve
-        @rtype: Plugin
-        @return: The plugin for the given deployer type
-        """
-
-        for deployer_plugin in self.deployer_plugins:
-            if deployer_plugin.get_deployer_type() == deployer_type:
-                return deployer_plugin
-
     def get_repositories(self):
         return self.system_updater.get_repositories()
 
     def get_repository_information_by_repository_name(self, repository_name):
         return self.system_updater.get_repository_information_by_repository_name(repository_name)
 
-    def install_plugin(self, plugin_id, plugin_version):
-        return self.system_updater.install_plugin(plugin_id, plugin_version)
-
     def install_package(self, package_id, package_version):
         return self.system_updater.install_package(package_id, package_version)
+
+    def install_bundle(self, bundle_id, bundle_version):
+        return self.system_updater.install_bundle(bundle_id, bundle_version)
+
+    def install_plugin(self, plugin_id, plugin_version):
+        return self.system_updater.install_plugin(plugin_id, plugin_version)
 
     def get_console_extension_name(self):
         return self.console_system_updater.get_console_extension_name()
@@ -142,6 +128,16 @@ class SystemUpdaterPlugin(colony.base.plugin_system.Plugin):
 
     def get_help(self):
         return self.console_system_updater.get_help()
+
+    @colony.base.decorators.load_allowed_capability("deployer")
+    def deployer_load_allowed(self, plugin, capability):
+        self.deployer_plugins.append(plugin)
+        self.system_updater.deployer_load(plugin)
+
+    @colony.base.decorators.unload_allowed_capability("deployer")
+    def deployer_unload_allowed(self, plugin, capability):
+        self.deployer_plugins.remove(plugin)
+        self.system_updater.deployer_unload(plugin)
 
     def get_downloader_plugin(self):
         return self.downloader_plugin

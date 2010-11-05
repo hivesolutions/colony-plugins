@@ -165,10 +165,53 @@ class RepositoriesFileParser(Parser):
 
     def parse_address(self, address):
         address_structure = Address()
+        child_nodes = address.childNodes
         address_structure.name = address.getAttribute("name")
         address_structure.value = address.firstChild.data.strip()
 
+        for child_node in child_nodes:
+            if valid_node(child_node):
+                self.parse_address_element(child_node, address_structure)
+
         return address_structure
+
+    def parse_address_element(self, address_element, address):
+        node_name = address_element.nodeName
+
+        if node_name == "authentication":
+            address.authentication = self.parse_repository_descriptor_name(address_element)
+
+    def parse_authentication(self, authentication):
+        authentication_structure = Authentication()
+        child_nodes = authentication.childNodes
+
+        for child_node in child_nodes:
+            if valid_node(child_node):
+                self.parse_authentication_element(child_node, authentication_structure)
+
+        return authentication_structure
+
+    def parse_authentication_element(self, authentication_element, authentication):
+        node_name = authentication_element.nodeName
+
+        if node_name == "username":
+            authentication.username = self.parse_authentication_username(authentication_element)
+        elif node_name == "password":
+            authentication.password = self.parse_authentication_password(authentication_element)
+        elif node_name == "method":
+            authentication.method = self.parse_authentication_method(authentication_element)
+
+    def parse_authentication_username(self, authentication_username):
+        authentication_username_value = authentication_username.firstChild.data.strip()
+        return authentication_username_value
+
+    def parse_authentication_password(self, authentication_password):
+        authentication_password_value = authentication_password.firstChild.data.strip()
+        return authentication_password_value
+
+    def parse_authentication_method(self, authentication_method):
+        authentication_method_value = authentication_method.firstChild.data.strip()
+        return authentication_method_value
 
 class RepositoryDescriptorFileParser(Parser):
     """
@@ -598,7 +641,10 @@ class Address:
     value = "none"
     """ The value of the address """
 
-    def __init__(self, name = "none", description = "none", value = "none"):
+    authentication = None
+    """ The authentication of the address """
+
+    def __init__(self, name = "none", description = "none", value = "none", authentication = None):
         """
         Constructor of the class.
 
@@ -608,16 +654,57 @@ class Address:
         @param description: The description of the address.
         @type value: String
         @param value: The value of the address.
+        @type authentication: Authentication
+        @param authentication: The authentication of the address.
         """
 
         self.name = name
         self.description = description
         self.value = value
+        self.authentication = authentication
 
     def __repr__(self):
         return "<%s, %s>" % (
             self.__class__.__name__,
             self.value
+        )
+
+class Authentication:
+    """
+    The authentication class.
+    """
+
+    username = "none"
+    """ The username of the authentication """
+
+    password = "none"
+    """ The password of the authentication """
+
+    method = "none"
+    """ The method of the authentication """
+
+    def __init__(self, username = "none", password = "none", method = "none"):
+        """
+        Constructor of the class.
+
+        @type username: String
+        @param username: The username of the authentication.
+        @type password: String
+        @param password: The password of the authentication.
+        @type method: String
+        @param method: The method of the authentication.
+        """
+
+        self.username = username
+        self.password = password
+        self.method = method
+
+    def __repr__(self):
+        return "<%s, %s, %s, %s>" % (
+            self.__class__.__name__,
+            self.username,
+            self.password,
+            self.method
         )
 
 class RepositoryDescriptor:
