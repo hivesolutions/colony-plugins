@@ -56,9 +56,7 @@ class DataConverterIoAdapterDbasePlugin(colony.base.plugin_system.Plugin):
     attributes = {"build_automation_file_path" : "$base{plugin_directory}/data_converter_io_adapter_dbase/io_adapter_dbase/resources/baf.xml"}
     capabilities = ["data_converter_io_adapter.dbase", "build_automation_item"]
     capabilities_allowed = []
-    dependencies = [colony.base.plugin_system.PluginDependency(
-                    "pt.hive.colony.plugins.main.log", "1.0.0"),
-                    colony.base.plugin_system.PackageDependency(
+    dependencies = [colony.base.plugin_system.PackageDependency(
                     "Win32 Extensions for Python", "dbi", "b202", "http://starship.python.net/crew/mhammond/win32"),
                     colony.base.plugin_system.PackageDependency(
                     "Win32 Extensions for Python", "odbc", "b202", "http://starship.python.net/crew/mhammond/win32"),
@@ -75,9 +73,6 @@ class DataConverterIoAdapterDbasePlugin(colony.base.plugin_system.Plugin):
 
     dbfpy_extensions = None
     """ Extensions to the datatypes supported by the dbfpy module """
-
-    logger_plugin = None
-    """ Logger plugin """
 
     def __init__(self, manager):
         colony.base.plugin_system.Plugin.__init__(self, manager)
@@ -98,7 +93,6 @@ class DataConverterIoAdapterDbasePlugin(colony.base.plugin_system.Plugin):
         colony.base.plugin_system.Plugin.unload_plugin(self)
         self.io_adapter_dbase = None
         self.dbfpy_extensions = None
-        self.logger_plugin = None
 
     def end_unload_plugin(self):
         colony.base.plugin_system.Plugin.end_unload_plugin(self)
@@ -147,10 +141,3 @@ class DataConverterIoAdapterDbasePlugin(colony.base.plugin_system.Plugin):
         """
 
         return self.io_adapter_dbase.save_intermediate_structure(configuration, intermediate_structure, options)
-
-    def get_logger_plugin(self):
-        return self.logger_plugin
-
-    @colony.base.decorators.plugin_inject("pt.hive.colony.plugins.main.log")
-    def set_logger_plugin(self, logger_plugin):
-        self.logger_plugin = logger_plugin

@@ -11,9 +11,6 @@
     "capabilities_allowed" : ["data_converter_io_adapter",
             "data_converter_configuration"],
     "dependencies" : [{
-                "id" : "pt.hive.colony.plugins.main.log",
-                "version" : "1.0.0"
-            }, {
                 "id" : "pt.hive.colony.plugins.resources.resource_manager",
                 "version" : "1.0.0"
             }],

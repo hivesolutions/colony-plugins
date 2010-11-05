@@ -9,10 +9,7 @@
     "author" : "Hive Solutions Lda. <development@hive.pt>",
     "capabilities" : ["data_converter_io_adapter.csv", "build_automation_item"],
     "capabilities_allowed" : [],
-    "dependencies" : [{
-                "id" : "pt.hive.colony.plugins.main.log",
-                "version" : "1.0.0"
-            }],
+    "dependencies" : [],
     "main_file" : "data_converter_io_adapter_csv_plugin.py",
     "resources" : [
             "data_converter_io_adapter_csv_plugin.py",

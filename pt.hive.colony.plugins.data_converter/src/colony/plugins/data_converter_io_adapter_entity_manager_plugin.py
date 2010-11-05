@@ -58,9 +58,7 @@ class DataConverterIoAdapterEntityManagerPlugin(colony.base.plugin_system.Plugin
     capabilities = ["data_converter_io_adapter.entity_manager", "build_automation_item"]
     capabilities_allowed = []
     dependencies = [colony.base.plugin_system.PluginDependency(
-                    "pt.hive.colony.plugins.data.entity_manager", "1.0.0"),
-                    colony.base.plugin_system.PluginDependency(
-                    "pt.hive.colony.plugins.main.log", "1.0.0")]
+                    "pt.hive.colony.plugins.data.entity_manager", "1.0.0")]
     events_handled = []
     events_registrable = []
     main_modules = ["data_converter_io_adapter_entity_manager.io_adapter_entity_manager.data_converter_io_adapter_entity_manager_exceptions",
@@ -71,9 +69,6 @@ class DataConverterIoAdapterEntityManagerPlugin(colony.base.plugin_system.Plugin
 
     entity_manager_plugin = None
     """ The entity manager plugin """
-
-    logger_plugin = None
-    """ The logger plugin """
 
     def __init__(self, manager):
         colony.base.plugin_system.Plugin.__init__(self, manager)
@@ -91,7 +86,6 @@ class DataConverterIoAdapterEntityManagerPlugin(colony.base.plugin_system.Plugin
         colony.base.plugin_system.Plugin.unload_plugin(self)
         self.io_adapter_entity_manager = None
         self.entity_manager_plugin = None
-        self.logger_plugin = None
 
     def end_unload_plugin(self):
         colony.base.plugin_system.Plugin.end_unload_plugin(self)
@@ -147,10 +141,3 @@ class DataConverterIoAdapterEntityManagerPlugin(colony.base.plugin_system.Plugin
     @colony.base.decorators.plugin_inject("pt.hive.colony.plugins.data.entity_manager")
     def set_entity_manager_plugin(self, entity_manager_plugin):
         self.entity_manager_plugin = entity_manager_plugin
-
-    def get_logger_plugin(self):
-        return self.logger_plugin
-
-    @colony.base.decorators.plugin_inject("pt.hive.colony.plugins.main.log")
-    def set_logger_plugin(self, logger_plugin):
-        self.logger_plugin = logger_plugin

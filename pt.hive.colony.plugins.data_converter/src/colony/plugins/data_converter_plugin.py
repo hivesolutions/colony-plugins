@@ -58,8 +58,6 @@ class DataConverterPlugin(colony.base.plugin_system.Plugin):
     capabilities_allowed = ["data_converter_io_adapter",
                             "data_converter_configuration"]
     dependencies = [colony.base.plugin_system.PluginDependency(
-                    "pt.hive.colony.plugins.main.log", "1.0.0"),
-                    colony.base.plugin_system.PluginDependency(
                     "pt.hive.colony.plugins.resources.resource_manager", "1.0.0")]
     events_handled = []
     events_registrable = []
@@ -90,9 +88,6 @@ class DataConverterPlugin(colony.base.plugin_system.Plugin):
     configuration_plugins = []
     """ Data converter configuration plugins """
 
-    logger_plugin = None
-    """ Logger plugin """
-
     resource_manager_plugin = None
     """ Resource manager plugin """
 
@@ -116,7 +111,6 @@ class DataConverterPlugin(colony.base.plugin_system.Plugin):
         self.data_converter = None
         self.io_adapter_plugins = []
         self.configuration_plugins = []
-        self.logger_plugin = None
         self.resource_manager_plugin = None
 
     def end_unload_plugin(self):
@@ -295,13 +289,6 @@ class DataConverterPlugin(colony.base.plugin_system.Plugin):
     def data_converter_configuration_unload_allowed(self, plugin, capability):
         self.configuration_plugins.remove(plugin)
         self.data_converter.remove_configuration_plugin(plugin)
-
-    def get_logger_plugin(self):
-        return self.logger_plugin
-
-    @colony.base.decorators.plugin_inject("pt.hive.colony.plugins.main.log")
-    def set_logger_plugin(self, logger_plugin):
-        self.logger_plugin = logger_plugin
 
     def get_resource_manager_plugin(self):
         return self.resource_manager_plugin

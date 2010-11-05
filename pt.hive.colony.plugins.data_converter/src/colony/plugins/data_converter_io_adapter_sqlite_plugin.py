@@ -56,8 +56,7 @@ class DataConverterIoAdapterSqlitePlugin(colony.base.plugin_system.Plugin):
     attributes = {"build_automation_file_path" : "$base{plugin_directory}/data_converter_io_adapter_sqlite/io_adapter_sqlite/resources/baf.xml"}
     capabilities = ["data_converter_io_adapter.sqlite", "build_automation_item"]
     capabilities_allowed = []
-    dependencies = [colony.base.plugin_system.PluginDependency(
-                    "pt.hive.colony.plugins.main.log", "1.0.0")]
+    dependencies = []
     events_handled = []
     events_registrable = []
     main_modules = ["data_converter_io_adapter_sqlite.io_adapter_sqlite.data_converter_io_adapter_sqlite_exceptions",
@@ -65,9 +64,6 @@ class DataConverterIoAdapterSqlitePlugin(colony.base.plugin_system.Plugin):
 
     io_adapter_sqlite = None
     """ The intermediate structure sqlite input output adapter """
-
-    logger_plugin = None
-    """ Logger plugin """
 
     def __init__(self, manager):
         colony.base.plugin_system.Plugin.__init__(self, manager)
@@ -84,7 +80,6 @@ class DataConverterIoAdapterSqlitePlugin(colony.base.plugin_system.Plugin):
     def unload_plugin(self):
         colony.base.plugin_system.Plugin.unload_plugin(self)
         self.io_adapter_sqlite = None
-        self.logger_plugin = None
 
     def end_unload_plugin(self):
         colony.base.plugin_system.Plugin.end_unload_plugin(self)
@@ -133,10 +128,3 @@ class DataConverterIoAdapterSqlitePlugin(colony.base.plugin_system.Plugin):
         """
 
         return self.io_adapter_sqlite.save_intermediate_structure(configuration, intermediate_structure, options)
-
-    def get_logger_plugin(self):
-        return self.logger_plugin
-
-    @colony.base.decorators.plugin_inject("pt.hive.colony.plugins.main.log")
-    def set_logger_plugin(self, logger_plugin):
-        self.logger_plugin = logger_plugin

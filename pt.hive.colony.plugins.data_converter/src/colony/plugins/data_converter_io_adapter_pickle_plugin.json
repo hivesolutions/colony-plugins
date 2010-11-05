@@ -10,10 +10,7 @@
     "capabilities" : ["data_converter_io_adapter.pickle",
             "build_automation_item"],
     "capabilities_allowed" : [],
-    "dependencies" : [{
-                "id" : "pt.hive.colony.plugins.main.log",
-                "version" : "1.0.0"
-            }],
+    "dependencies" : [],
     "main_file" : "data_converter_io_adapter_pickle_plugin.py",
     "resources" : [
             "data_converter_io_adapter_pickle_plugin.py",
