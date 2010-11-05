@@ -65,8 +65,6 @@ class Downloader:
         @param address: The url address of the package to download.
         @type target_directory: String
         @param target_directory: The target directory of the download.
-        @rtype: bool
-        @return: The result of the download (if successful or not).
         """
 
         try:
@@ -107,9 +105,6 @@ class Downloader:
 
             # closes the file
             file.close()
-
-            # returns true (valid)
-            return True
         except Exception, exception:
             self.downloader_plugin.error("Problem while downloading file: " + address + ", error: " + unicode(exception))
 
