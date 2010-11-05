@@ -83,14 +83,15 @@ class Downloader:
             # opens the http client
             http_client.open({})
 
-            # fetches the url retrieving the http response
-            http_response = http_client.fetch_url(address)
+            try:
+                # fetches the url retrieving the http response
+                http_response = http_client.fetch_url(address)
 
-            # retrieves the file contents from the http response
-            file_contents = http_response.received_message
-
-            # closes the http client
-            http_client.close({})
+                # retrieves the file contents from the http response
+                file_contents = http_response.received_message
+            finally:
+                # closes the http client
+                http_client.close({})
 
             # in case there is no directory
             if not os.path.isdir(target_directory):
@@ -100,11 +101,12 @@ class Downloader:
             # opens a new file and creates it if necessary
             file = open(target_directory + "/" + file_name, "wb")
 
-            # writes the contents to the file
-            file.write(file_contents)
-
-            # closes the file
-            file.close()
+            try:
+                # writes the contents to the file
+                file.write(file_contents)
+            finally:
+                # closes the file
+                file.close()
         except Exception, exception:
             self.downloader_plugin.error("Problem while downloading file: " + address + ", error: " + unicode(exception))
 
@@ -140,14 +142,15 @@ class Downloader:
             # opens the http client
             http_client.open({})
 
-            # fetches the url retrieving the http response
-            http_response = http_client.fetch_url(address)
+            try:
+                # fetches the url retrieving the http response
+                http_response = http_client.fetch_url(address)
 
-            # retrieves the file contents from the http response
-            file_contents = http_response.received_message
-
-            # closes the http client
-            http_client.close({})
+                # retrieves the file contents from the http response
+                file_contents = http_response.received_message
+            finally:
+                # closes the http client
+                http_client.close({})
 
             # returns the file contents
             return file_contents
