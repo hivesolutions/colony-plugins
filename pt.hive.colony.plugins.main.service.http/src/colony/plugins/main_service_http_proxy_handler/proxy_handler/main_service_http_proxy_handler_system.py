@@ -95,7 +95,7 @@ class MainServiceHttpProxyHandler:
 
     def load_handler(self):
         """
-        Handler called uppon load.
+        Handler called upon load.
         """
 
         # retrieves the element pool manager plugin
@@ -109,7 +109,7 @@ class MainServiceHttpProxyHandler:
 
     def unload_handler(self):
         """
-        Handler called uppon unload.
+        Handler called upon unload.
         """
 
         # stops the http clients pool
