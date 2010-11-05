@@ -145,37 +145,52 @@ class Email:
         # retrieves the main client smtp plugin
         main_client_smtp_plugin = self.email_plugin.main_client_smtp_plugin
 
-        # retrieves the format mime plugin
-        format_mime_plugin = self.email_plugin.format_mime_plugin
-
         # creates a new smtp client, using the main client smtp plugin
         smtp_client = main_client_smtp_plugin.create_client({})
 
         # opens the smtp client
         smtp_client.open({})
 
-        # tries to retrieve the smtp hostnmae value
-        smtp_hostname = self.email_configuration.get("hostname", DEFAULT_SMTP_HOSTNAME)
+        try:
+            # tries to retrieve the smtp hostnmae value
+            smtp_hostname = self.email_configuration.get("hostname", DEFAULT_SMTP_HOSTNAME)
 
-        # tries to retrieve the smtp port value
-        smtp_port = self.email_configuration.get("port", DEFAULT_SMTP_PORT)
+            # tries to retrieve the smtp port value
+            smtp_port = self.email_configuration.get("port", DEFAULT_SMTP_PORT)
 
-        # tries to retrieve the smtp username value
-        smtp_username = self.email_configuration.get("username", None)
+            # tries to retrieve the smtp username value
+            smtp_username = self.email_configuration.get("username", None)
 
-        # tries to retrieve the smtp password value
-        smtp_password = self.email_configuration.get("password", None)
+            # tries to retrieve the smtp password value
+            smtp_password = self.email_configuration.get("password", None)
 
-        # tries to retrieve the tls value
-        smtp_tls = self.email_configuration.get("tls", False)
+            # tries to retrieve the tls value
+            smtp_tls = self.email_configuration.get("tls", False)
 
-        # creates the parameters map
-        parameters = {}
+            # creates the parameters map
+            parameters = {}
 
-        # sets the authentication parameters
-        parameters[USERNAME_VALUE] = smtp_username
-        parameters[PASSWORD_VALUE] = smtp_password
-        parameters[TLS_VALUE] = smtp_tls
+            # sets the authentication parameters
+            parameters[USERNAME_VALUE] = smtp_username
+            parameters[PASSWORD_VALUE] = smtp_password
+            parameters[TLS_VALUE] = smtp_tls
+
+            # creates the mime message for the given email sender, email receiver, name
+            # sender, name receiver, subject and contents
+            mime_message = self._crete_mime_message(email_sender, email_receiver, name_sender, name_receiver, subject, contents)
+
+            # retrieves the mime message value
+            mime_message_value = mime_message.get_value()
+
+            # send the email using the defined values
+            smtp_client.send_mail(smtp_hostname, smtp_port, email_sender, [email_receiver], mime_message_value, parameters)
+        finally:
+            # closes the smtp client
+            smtp_client.close({})
+
+    def _crete_mime_message(self, email_sender, email_receiver, name_sender, name_receiver, subject, contents):
+        # retrieves the format mime plugin
+        format_mime_plugin = self.email_plugin.format_mime_plugin
 
         # creates the mime message
         mime_message = format_mime_plugin.create_message({})
@@ -212,11 +227,5 @@ class Email:
         # writes the contents to the mime message
         mime_message.write(contents)
 
-        # retrieves the mime message value
-        mime_message_value = mime_message.get_value()
-
-        # send the email using the defined values
-        smtp_client.send_mail(smtp_hostname, smtp_port, email_sender, [email_receiver], mime_message_value, parameters)
-
-        # closes the smtp client
-        smtp_client.close({})
+        # returns the mime message
+        return mime_message
