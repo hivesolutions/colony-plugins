@@ -311,8 +311,8 @@ class HttpClient:
         main_client_http_plugin.debug("Fetching url '%s' with '%s' method" % (url, method))
 
         # parses the url retrieving the protocol the host, the username,
-        # the password, the port and the path
-        protocol, username, password, host, port, path = self._parse_url(url)
+        # the password, the port, the path and the base url
+        protocol, username, password, host, port, path, base_url = self._parse_url(url)
 
         # retrieves the socket name from the protocol socket map
         socket_name = PROTOCOL_SOCKET_NAME_MAP.get(protocol, None)
@@ -346,8 +346,8 @@ class HttpClient:
         try:
             # sends the request for the host, port, path,
             # parameters, method, headers, protocol version, content type,
-            # content type charset and contents and retrieves the request
-            request = self.send_request(host, port, path, parameters, method, headers, protocol_version, content_type, content_type_charset, contents, url)
+            # content type charset, contents, url and base url and retrieves the request
+            request = self.send_request(host, port, path, parameters, method, headers, protocol_version, content_type, content_type_charset, contents, url, base_url)
 
             # retrieves the response
             response = self.retrieve_response(request)
@@ -417,7 +417,7 @@ class HttpClient:
         # return the built url
         return url
 
-    def send_request(self, host, port, path, parameters, operation_type, headers, protocol_version, content_type, content_type_charset, contents, url):
+    def send_request(self, host, port, path, parameters, operation_type, headers, protocol_version, content_type, content_type_charset, contents, url, base_url):
         """
         Sends the request for the given parameters.
 
@@ -443,13 +443,15 @@ class HttpClient:
         @param contents: The contents of the message to be sent.
         @type url: String
         @param url: The complete url of the request.
+        @type base_url: String
+        @param base_url: The base url of the request.
         @rtype: HttpRequest
         @return: The sent request for the given parameters.
         """
 
         # creates the http request with the host, the port, the path, the parameters, operation type,
-        # the headers, the protocol version, the content type and the content type charset
-        request = HttpRequest(host, port, path, parameters, operation_type, headers, protocol_version, content_type, content_type_charset, url)
+        # the headers, the protocol version, the content type, the content type charset, the url and the base url
+        request = HttpRequest(host, port, path, parameters, operation_type, headers, protocol_version, content_type, content_type_charset, url, base_url)
 
         # in case the contents are defined
         if contents:
@@ -626,14 +628,24 @@ class HttpClient:
                         # in case the location does not start with the http prefix
                         # it's not an absolute path but a relative one
                         if not location.startswith(HTTP_PREFIX_VALUE) and not location.startswith(HTTPS_PREFIX_VALUE):
-                            # retrieves the url of the request
-                            request_url = request.url
+                            # in case the location starts with the slash value
+                            # the address refers to a base address
+                            if location.startswith("/"):
+                                # retrieves the base url of the request
+                                request_base_url = request.base_url
 
-                            # retrieves the base url (without the last token)
-                            base_url = request_url.rsplit("/", 1)[0]
+                                # creates the "absolute" location value
+                                location = request_base_url + location
+                            # the address is relative to the current one
+                            else:
+                                # retrieves the url of the request
+                                request_url = request.url
 
-                            # creates the absolute location value
-                            location = base_url + "/" + location
+                                # retrieves the request base url (without the last token)
+                                request_url = request_url.rsplit("/", 1)[0]
+
+                                # sets the "relative" location value
+                                location = request_url + "/" + location
 
                         # in case the location is not the same and the status code is
                         # of type redirect
@@ -875,14 +887,14 @@ class HttpClient:
     def _parse_url(self, url):
         """
         Parses the url, retrieving a tuple structure containing
-        the protocol, the username, the password, the host, the port
-        and the path for the given url.
+        the protocol, the username, the password, the host, the port,
+        the path and the base url for the given url.
 
         @type url: String
         @param url: The url to be parsed.
         @rtype: Tuple
         @return: A tuple containing the protocol, the username, the password
-        the host, the port and the path.
+        the host, the port, the path and the base url.
         """
 
         # retrieves the url parser plugin
@@ -947,9 +959,17 @@ class HttpClient:
             # adds the location to the path
             path += "#" + url_structure.location
 
+        # in case the url structure contains the base url
+        if url_structure.base_url:
+            # retrieves the base url
+            base_url = url_structure.base_url
+        else:
+            # sets the base url as invalid
+            base_url = None
+
         # returns the tuple containing the protocol, the username,
-        # the password, the host, the port and the path
-        return (protocol, username, password, host, port, path)
+        # the password, the host, the port, the path and the base url
+        return (protocol, username, password, host, port, path, base_url)
 
 class HttpRequest:
     """
@@ -1004,7 +1024,10 @@ class HttpRequest:
     url = None
     """ The complete url """
 
-    def __init__(self, host = "none", port = None, path = "none", attributes_map = {}, operation_type = GET_METHOD_VALUE, headers_map = {}, protocol_version = HTTP_1_1_VERSION, content_type = DEFAULT_CONTENT_TYPE, content_type_charset = DEFAULT_CHARSET, url = None):
+    base_url = None
+    """ The base url """
+
+    def __init__(self, host = "none", port = None, path = "none", attributes_map = {}, operation_type = GET_METHOD_VALUE, headers_map = {}, protocol_version = HTTP_1_1_VERSION, content_type = DEFAULT_CONTENT_TYPE, content_type_charset = DEFAULT_CHARSET, url = None, base_url = None):
         """
         Constructor of the class.
 
@@ -1028,6 +1051,8 @@ class HttpRequest:
         @param content_type_charset: The content type charset.
         @type url: String
         @param url: The complete url.
+        @type base_url: String
+        @param base_url: The base url.
         """
 
         self.host = host
@@ -1040,6 +1065,7 @@ class HttpRequest:
         self.content_type = content_type
         self.content_type_charset = content_type_charset
         self.url = url
+        self.base_url = base_url
 
         self.message_stream = colony.libs.string_buffer_util.StringBuffer()
 
