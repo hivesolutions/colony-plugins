@@ -310,8 +310,9 @@ class HttpClient:
         # print a debug message
         main_client_http_plugin.debug("Fetching url '%s' with '%s' method" % (url, method))
 
-        # parses the url retrieving the protocol the host the port and the path
-        protocol, host, port, path = self._parse_url(url)
+        # parses the url retrieving the protocol the host, the username,
+        # the password, the port and the path
+        protocol, username, password, host, port, path = self._parse_url(url)
 
         # retrieves the socket name from the protocol socket map
         socket_name = PROTOCOL_SOCKET_NAME_MAP.get(protocol, None)
@@ -325,6 +326,23 @@ class HttpClient:
         # acquires the http client lock
         self._http_client_lock.acquire()
 
+        # saves the old authentication
+        # values for later restore
+        _authentication = self.authentication
+        _username = self.username
+        _password = self.password
+
+        # in case the username and password are
+        # set using the url
+        if username and password:
+            # sets the authentication flag
+            self.authentication = True
+
+            # sets the username and password
+            # in the current client
+            self.username = username
+            self.password = password
+
         try:
             # sends the request for the host, port, path,
             # parameters, method, headers, protocol version, content type,
@@ -334,6 +352,14 @@ class HttpClient:
             # retrieves the response
             response = self.retrieve_response(request)
         finally:
+            # sets the authentication flag
+            self.authentication = _authentication
+
+            # sets the username and password
+            # in the current client
+            self.username = _username
+            self.password = _password
+
             # releases the http client lock
             self._http_client_lock.release()
 
@@ -849,13 +875,14 @@ class HttpClient:
     def _parse_url(self, url):
         """
         Parses the url, retrieving a tuple structure containing
-        the protocol, the host, the port an the path for the given url.
+        the protocol, the username, the password, the host, the port
+        and the path for the given url.
 
         @type url: String
         @param url: The url to be parsed.
         @rtype: Tuple
-        @return: A tuple containing the protocol, the host, the port
-        and the path.
+        @return: A tuple containing the protocol, the username, the password
+        the host, the port and the path.
         """
 
         # retrieves the url parser plugin
@@ -866,11 +893,25 @@ class HttpClient:
 
         # in case the url structure contains the protocol
         if url_structure.protocol:
-            # convert the protocol to lower case
+            # converts the protocol to lower case
             protocol = url_structure.protocol.lower()
         else:
             # raises the http invalid url data exception
             raise main_client_http_exceptions.HttpInvalidUrlData("missing protocol information: " + url)
+
+        # in case the url structure contains the protocol
+        if url_structure.username and url_structure.password:
+            # retrieves the username
+            username = url_structure.username
+
+            # retrieves the password
+            password = url_structure.password
+        else:
+            # sets the username as invalid (not set)
+            username = None
+
+            # sets the password as invalid (not set)
+            password = None
 
         # in case the url structure contains the base name
         if url_structure.base_name:
@@ -906,9 +947,9 @@ class HttpClient:
             # adds the location to the path
             path += "#" + url_structure.location
 
-        # returns the tuple containing the protocol, the host, the port
-        # and the path
-        return (protocol, host, port, path)
+        # returns the tuple containing the protocol, the username,
+        # the password, the host, the port and the path
+        return (protocol, username, password, host, port, path)
 
 class HttpRequest:
     """
