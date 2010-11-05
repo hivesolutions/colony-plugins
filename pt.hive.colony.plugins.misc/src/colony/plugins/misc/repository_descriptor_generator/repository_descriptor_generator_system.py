@@ -127,6 +127,10 @@ class RepositoryDescriptorGenerator:
         repository_packages_node = xml_document.createElement("packages")
         repository_node.appendChild(repository_packages_node)
 
+        # creates the repository bundles element
+        repository_bundles_node = xml_document.createElement("bundles")
+        repository_node.appendChild(repository_bundles_node)
+
         # creates the repository plugins element
         repository_plugins_node = xml_document.createElement("plugins")
         repository_node.appendChild(repository_plugins_node)
