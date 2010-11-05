@@ -39,6 +39,11 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 import os
 
+import downloader_exceptions
+
+VALID_STATUS_CODES = (200,)
+""" The valid status codes """
+
 class Downloader:
     """
     The downloader class.
@@ -86,6 +91,14 @@ class Downloader:
             try:
                 # fetches the url retrieving the http response
                 http_response = http_client.fetch_url(address)
+
+                # retrieves the status code from the http response
+                status_code = http_response.status_code
+
+                # in case the status code is not valid
+                if not status_code in VALID_STATUS_CODES:
+                    # raises the invalid status code exception
+                    raise downloader_exceptions.InvalidStatusCodeException(status_code)
 
                 # retrieves the file contents from the http response
                 file_contents = http_response.received_message
