@@ -56,6 +56,12 @@
             <id></id>
             <version></version>
             <contents_file></contents_file>
+            <dependencies>
+                <bundle_dependency>
+                    <id></id>
+                    <version></version>
+                </bundle_dependency>
+            </dependencies>
         </bundle>
     </bundles>
     <plugins>
@@ -68,6 +74,12 @@
             <main_class></main_class>
             <file_name></file_name>
             <contents_file></contents_file>
+            <dependencies>
+                <plugin_dependency>
+                    <id></id>
+                    <version></version>
+                </plugin_dependency>
+            </dependencies>
         </plugin>
     </plugins>
 </repository>

@@ -44,11 +44,14 @@ INVALID_NUMBER_ARGUMENTS_MESSAGE = "invalid number of arguments"
 """ The invalid number of arguments message """
 
 HELP_TEXT = "### SYSTEM UPDATER HELP ###\n\
-list_repositories                               - lists the current available repositories\n\
-list_repository_packages <repository-name>      - lists the packages for the given repository\n\
-list_repository_plugins <repository-name>       - lists the plugins for the given repository\n\
-install_package <package-id> [package-version]  - installs the package with the given id and version\n\
-install_plugin <plugin-id> [plugin-version]     - installs the plugin with the given id and version"
+list_repositories                              - lists the current available repositories\n\
+list_repository_packages <repository-name>     - lists the packages for the given repository\n\
+list_repository_bundles <repository-name>      - lists the bundles for the given repository\n\
+list_repository_plugins <repository-name>      - lists the plugins for the given repository\n\
+install <id> [version]                         - installs the package, bundle or plugin with the given id and version\n\
+install_package <package-id> [package-version] - installs the package with the given id and version\n\
+install_bundle <bundle-id> [bundle-version]    - installs the bundle with the given id and version\n\
+install_plugin <plugin-id> [plugin-version]    - installs the plugin with the given id and version"
 """ The help text """
 
 class ConsoleSystemUpdater:

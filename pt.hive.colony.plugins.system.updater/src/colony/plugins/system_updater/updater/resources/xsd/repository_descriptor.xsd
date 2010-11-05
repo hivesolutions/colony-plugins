@@ -33,6 +33,17 @@
     elementFormDefault="qualified"
     xmlns:xsd="http://www.w3.org/2001/XMLSchema"
     xmlns="http://www.hive.pt">
+    <xsd:complexType name="plugin_dependency">
+        <xsd:all>
+            <xsd:element name="id" type="xsd:string" maxOccurs="1" minOccurs="1" />
+            <xsd:element name="version" type="xsd:string" maxOccurs="1" minOccurs="1" />
+        </xsd:all>
+    </xsd:complexType>
+    <xsd:complexType name="plugin_dependencies">
+        <xsd:sequence>
+            <xsd:element name="plugin_dependency" type="plugin_dependency" maxOccurs="unbounded" minOccurs="1" />
+        </xsd:sequence>
+    </xsd:complexType>
     <xsd:complexType name="plugin">
         <xsd:all>
             <xsd:element name="name" type="xsd:string" maxOccurs="1" minOccurs="1" />
@@ -43,7 +54,34 @@
             <xsd:element name="main_class" type="xsd:string" maxOccurs="1" minOccurs="0" />
             <xsd:element name="file_name" type="xsd:string" maxOccurs="1" minOccurs="0" />
             <xsd:element name="contents_file" type="xsd:string" maxOccurs="1" minOccurs="0" />
+            <xsd:element name="dependencies" type="plugin_dependencies" maxOccurs="1" minOccurs="0" />
         </xsd:all>
+    </xsd:complexType>
+    <xsd:complexType name="bundle_dependency">
+        <xsd:all>
+            <xsd:element name="id" type="xsd:string" maxOccurs="1" minOccurs="1" />
+            <xsd:element name="version" type="xsd:string" maxOccurs="1" minOccurs="1" />
+        </xsd:all>
+    </xsd:complexType>
+    <xsd:complexType name="bundle_dependencies">
+        <xsd:sequence>
+            <xsd:element name="bundle_dependency" type="bundle_dependency" maxOccurs="unbounded" minOccurs="1" />
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:complexType name="bundle">
+        <xsd:all>
+            <xsd:element name="name" type="xsd:string" maxOccurs="1" minOccurs="1" />
+            <xsd:element name="type" type="xsd:string" maxOccurs="1" minOccurs="1" />
+            <xsd:element name="id" type="xsd:string" maxOccurs="1" minOccurs="1" />
+            <xsd:element name="version" type="xsd:string" maxOccurs="1" minOccurs="1" />
+            <xsd:element name="contents_file" type="xsd:string" maxOccurs="1" minOccurs="0" />
+            <xsd:element name="dependencies" type="bundle_dependencies" maxOccurs="1" minOccurs="0" />
+        </xsd:all>
+    </xsd:complexType>
+    <xsd:complexType name="bundles">
+        <xsd:sequence>
+            <xsd:element name="bundle" type="bundle" maxOccurs="unbounded" minOccurs="1" />
+        </xsd:sequence>
     </xsd:complexType>
     <xsd:complexType name="plugins">
         <xsd:sequence>
@@ -59,20 +97,6 @@
     <xsd:complexType name="plugins_package">
         <xsd:sequence>
             <xsd:element name="plugin" type="plugin_package" maxOccurs="unbounded" minOccurs="1" />
-        </xsd:sequence>
-    </xsd:complexType>
-    <xsd:complexType name="bundle">
-        <xsd:all>
-            <xsd:element name="name" type="xsd:string" maxOccurs="1" minOccurs="1" />
-            <xsd:element name="type" type="xsd:string" maxOccurs="1" minOccurs="1" />
-            <xsd:element name="id" type="xsd:string" maxOccurs="1" minOccurs="1" />
-            <xsd:element name="version" type="xsd:string" maxOccurs="1" minOccurs="1" />
-            <xsd:element name="contents_file" type="xsd:string" maxOccurs="1" minOccurs="0" />
-        </xsd:all>
-    </xsd:complexType>
-    <xsd:complexType name="bundles">
-        <xsd:sequence>
-            <xsd:element name="bundle" type="bundle" maxOccurs="unbounded" minOccurs="1" />
         </xsd:sequence>
     </xsd:complexType>
     <xsd:complexType name="package">

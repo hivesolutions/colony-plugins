@@ -69,12 +69,24 @@ class Parser:
         pass
 
 class RepositoriesFileParser(Parser):
+    """
+    The repositories file parser class.
+    """
 
     file_path = None
+    """ The file path """
 
     repository_list = []
+    """ The repository list """
 
     def __init__(self, file_path = None):
+        """
+        Constructor of the class.
+
+        @type file_path: String
+        @param file_path: The file path.
+        """
+
         Parser.__init__(self)
         self.file_path = file_path
 
@@ -159,12 +171,24 @@ class RepositoriesFileParser(Parser):
         return address_structure
 
 class RepositoryDescriptorFileParser(Parser):
+    """
+    The repository descriptor file parser class.
+    """
 
     file = None
+    """ The file """
 
     repository_descriptor = None
+    """ The repository descriptor """
 
     def __init__(self, file = None):
+        """
+        Constructor of the class.
+
+        @type file: File
+        @param file: The file.
+        """
+
         Parser.__init__(self)
         self.file = file
 
@@ -207,6 +231,8 @@ class RepositoryDescriptorFileParser(Parser):
             repository_descriptor.layout = self.parse_repository_descriptor_layout(repository_descriptor_element)
         elif node_name == "packages":
             repository_descriptor.packages = self.parse_repository_descriptor_packages(repository_descriptor_element)
+        elif node_name == "bundles":
+            repository_descriptor.bundles = self.parse_repository_descriptor_bundles(repository_descriptor_element)
         elif node_name == "plugins":
             repository_descriptor.plugins = self.parse_repository_descriptor_plugins(repository_descriptor_element)
 
@@ -309,6 +335,100 @@ class RepositoryDescriptorFileParser(Parser):
     def parse_repository_descriptor_package_plugin_version(self, descriptor_package_plugin_version):
         repository_descriptor_package_plugin_version = descriptor_package_plugin_version.firstChild.data.strip()
         return repository_descriptor_package_plugin_version
+
+    def parse_repository_descriptor_bundles(self, descriptor_bundles):
+        repository_descriptor_bundles_list = []
+        child_nodes = descriptor_bundles.childNodes
+
+        for child_node in child_nodes:
+            if valid_node(child_node):
+                repository_descriptor_bundle = self.parse_repository_descriptor_bundle(child_node)
+                repository_descriptor_bundles_list.append(repository_descriptor_bundle)
+
+        return repository_descriptor_bundles_list
+
+    def parse_repository_descriptor_bundle(self, descriptor_bundle):
+        bundle_descriptor = BundleDescriptor()
+        child_nodes = descriptor_bundle.childNodes
+
+        for child_node in child_nodes:
+            if valid_node(child_node):
+                self.parse_repository_descriptor_bundle_element(child_node, bundle_descriptor)
+
+        return bundle_descriptor
+
+    def parse_repository_descriptor_bundle_element(self, repository_descriptor_bundle_element, bundle_descriptor):
+        node_name = repository_descriptor_bundle_element.nodeName
+
+        if node_name == "name":
+            bundle_descriptor.name = self.parse_repository_descriptor_bundle_name(repository_descriptor_bundle_element)
+        elif node_name == "type":
+            bundle_descriptor.bundle_type = self.parse_repository_descriptor_bundle_type(repository_descriptor_bundle_element)
+        elif node_name == "id":
+            bundle_descriptor.id = self.parse_repository_descriptor_bundle_id(repository_descriptor_bundle_element)
+        elif node_name == "version":
+            bundle_descriptor.version = self.parse_repository_descriptor_bundle_version(repository_descriptor_bundle_element)
+        elif node_name == "contents_file":
+            bundle_descriptor.contents_file = self.parse_repository_descriptor_bundle_contents_file(repository_descriptor_bundle_element)
+        elif node_name == "dependencies":
+            bundle_descriptor.dependencies = self.parse_repository_descriptor_bundle_dependencies(repository_descriptor_bundle_element)
+
+    def parse_repository_descriptor_bundle_name(self, descriptor_bundle_name):
+        repository_descriptor_bundle_name = descriptor_bundle_name.firstChild.data.strip()
+        return repository_descriptor_bundle_name
+
+    def parse_repository_descriptor_bundle_type(self, descriptor_bundle_type):
+        repository_descriptor_bundle_type = descriptor_bundle_type.firstChild.data.strip()
+        return repository_descriptor_bundle_type
+
+    def parse_repository_descriptor_bundle_id(self, descriptor_bundle_id):
+        repository_descriptor_bundle_id = descriptor_bundle_id.firstChild.data.strip()
+        return repository_descriptor_bundle_id
+
+    def parse_repository_descriptor_bundle_version(self, descriptor_bundle_version):
+        repository_descriptor_bundle_version = descriptor_bundle_version.firstChild.data.strip()
+        return repository_descriptor_bundle_version
+
+    def parse_repository_descriptor_bundle_contents_file(self, descriptor_bundle_contents_file):
+        repository_descriptor_bundle_contents_file = descriptor_bundle_contents_file.firstChild.data.strip()
+        return repository_descriptor_bundle_contents_file
+
+    def parse_repository_descriptor_bundle_dependencies(self, descriptor_bundle_dependencies):
+        repository_descriptor_bundle_dependencies_list = []
+        child_nodes = descriptor_bundle_dependencies.childNodes
+
+        for child_node in child_nodes:
+            if valid_node(child_node):
+                repository_descriptor_bundle_dependency = self.parse_repository_descriptor_bundle_dependency(child_node)
+                repository_descriptor_bundle_dependencies_list.append(repository_descriptor_bundle_dependency)
+
+        return repository_descriptor_bundle_dependencies_list
+
+    def parse_repository_descriptor_bundle_dependency(self, dependency_bundle):
+        bundle_dependency = BundleDependency()
+        child_nodes = dependency_bundle.childNodes
+
+        for child_node in child_nodes:
+            if valid_node(child_node):
+                self.parse_repository_descriptor_bundle_dependency_element(child_node, bundle_dependency)
+
+        return bundle_dependency
+
+    def parse_repository_descriptor_bundle_dependency_element(self, repository_descriptor_bundle_dependency_element, bundle_dependency):
+        node_name = repository_descriptor_bundle_dependency_element.nodeName
+
+        if node_name == "id":
+            bundle_dependency.id = self.parse_repository_descriptor_bundle_dependency_id(repository_descriptor_bundle_dependency_element)
+        elif node_name == "version":
+            bundle_dependency.version = self.parse_repository_descriptor_bundle_dependency_version(repository_descriptor_bundle_dependency_element)
+
+    def parse_repository_descriptor_bundle_dependency_id(self, bundle_dependency_id):
+        repository_descriptor_bundle_dependency_id = bundle_dependency_id.firstChild.data.strip()
+        return repository_descriptor_bundle_dependency_id
+
+    def parse_repository_descriptor_bundle_dependency_version(self, bundle_dependency_version):
+        repository_descriptor_bundle_dependency_version = bundle_dependency_version.firstChild.data.strip()
+        return repository_descriptor_bundle_dependency_version
 
     def parse_repository_descriptor_plugins(self, descriptor_plugins):
         repository_descriptor_plugins_list = []
@@ -428,13 +548,34 @@ class Repository:
     """
 
     name = "none"
+    """ The name of the repository """
+
     description = "none"
+    """ The description of the repository """
+
     layout = "none"
+    """ The layout of the repository """
+
     addresses = []
+    """ The addresses of the repository """
 
     def __init__(self, name = "none", description = "none", layout = "none"):
+        """
+        Constructor of the class.
+
+        @type name: String
+        @param name: The name of the repository.
+        @type description: String
+        @param description: The description of the repository.
+        @type layout: String
+        @param layout: The layout of the repository.
+        @type addresses: List
+        @param addresses: The addresses of the repository.
+        """
+
         self.name = name
         self.description = description
+
         self.addresses = []
 
     def __repr__(self):
@@ -449,10 +590,26 @@ class Address:
     """
 
     name = "none"
+    """ The name of the address """
+
     description = "none"
+    """ The description of the address """
+
     value = "none"
+    """ The value of the address """
 
     def __init__(self, name = "none", description = "none", value = "none"):
+        """
+        Constructor of the class.
+
+        @type name: String
+        @param name: The name of the address.
+        @type description: String
+        @param description: The description of the address.
+        @type value: String
+        @param value: The value of the address.
+        """
+
         self.name = name
         self.description = description
         self.value = value
@@ -469,14 +626,35 @@ class RepositoryDescriptor:
     """
 
     name = "none"
+    """ The name of the repository descriptor """
+
     description = "none"
+    """ The description of the repository descriptor """
+
     layout = "none"
+    """ The layout of the repository descriptor """
+
     packages = []
+    """ The packages of the repository descriptor """
+
     plugins = []
+    """ The plugins of the repository descriptor """
 
     def __init__(self, name = "none", description = "none", layout = "none"):
+        """
+        Constructor of the class.
+
+        @type name: String
+        @param name: The name of the repository descriptor.
+        @type description: String
+        @param description: The description of the repository descriptor.
+        @type layout: String
+        @param layout: The layout of the repository descriptor.
+        """
+
         self.name = name
         self.description = description
+
         self.packages = []
         self.plugins = []
 
@@ -516,16 +694,39 @@ class PackageDescriptor:
     """
 
     name = "none"
+    """ The name of the package descriptor """
+
     package_type = "none"
+    """ The package type of the package descriptor """
+
     id = "none"
+    """ The id of the package descriptor """
+
     version = "none"
+    """ The version of the package descriptor """
+
     plugins = []
+    """ The plugins of the package descriptor """
 
     def __init__(self, name = "none", package_type = "none", id = "none", version = "none"):
+        """
+        Constructor of the class.
+
+        @type name: String
+        @param name: The name of the package descriptor.
+        @type package_type: String
+        @param package_type: The package type of the package descriptor.
+        @type id: String
+        @param id: The id of the package descriptor.
+        @type version: String
+        @param version: The version of the package descriptor.
+        """
+
         self.name = name
         self.package_type = package_type
         self.id = id
         self.version = version
+
         self.plugins = []
 
     def __repr__(self):
@@ -541,9 +742,100 @@ class PackagePluginDescriptor:
     """
 
     id = "none"
+    """ The id of the package plugin descriptor """
+
     version = "none"
+    """ The version of the package plugin descriptor """
 
     def __init__(self, id = "none", version = "none"):
+        """
+        Constructor of the class.
+
+        @type id: String
+        @param id: The id of the package plugin descriptor.
+        @type version: String
+        @param version: The version of the package plugin descriptor.
+        """
+
+        self.id = id
+        self.version = version
+
+    def __repr__(self):
+        return "<%s, %s, %s>" % (
+            self.__class__.__name__,
+            self.id,
+            self.version
+        )
+
+class BundleDescriptor:
+    """
+    The bundle descriptor class.
+    """
+
+    name = "none"
+    """ The name of the bundle descriptor """
+
+    bundle_type = "none"
+    """ The bundle type of the bundle descriptor """
+
+    id = "none"
+    """ The id of the bundle descriptor """
+
+    version = "none"
+    """ The version of the bundle descriptor """
+
+    dependencies = []
+    """ The dependencies of the bundle descriptor """
+
+    def __init__(self, name = "none", bundle_type = "none", id = "none", version = "none"):
+        """
+        Constructor of the class.
+
+        @type name: String
+        @param name: The name of the bundle descriptor.
+        @type bundle_type: String
+        @param bundle_type: The bundle type of the bundle descriptor.
+        @type id: String
+        @param id: The id of the bundle descriptor.
+        @type version: String
+        @param version: The version of the bundle descriptor.
+        """
+
+        self.name = name
+        self.bundle_type = bundle_type
+        self.id = id
+        self.version = version
+
+        self.dependencies = []
+
+    def __repr__(self):
+        return "<%s, %s, %s>" % (
+            self.__class__.__name__,
+            self.name,
+            self.version
+        )
+
+class BundleDependency:
+    """
+    The bundle dependency class.
+    """
+
+    id = "none"
+    """ The id of the bundle dependency """
+
+    version = "none"
+    """ The version of the bundle dependency """
+
+    def __init__(self, id = "none", version = "none"):
+        """
+        Constructor of the class.
+
+        @type id: String
+        @param id: The id of the bundle dependency.
+        @type version: String
+        @param version: The version of the bundle dependency.
+        """
+
         self.id = id
         self.version = version
 
@@ -560,15 +852,49 @@ class PluginDescriptor:
     """
 
     name = "none"
+    """ The name of the plugin descriptor """
+
     plugin_type = "none"
+    """ The plugin type of the plugin descriptor """
+
     id = "none"
+    """ The id of the plugin descriptor """
+
     version = "none"
+    """ The version of the plugin descriptor """
+
     main_class = "none"
+    """ The main class of the plugin descriptor """
+
     file_name = "none"
+    """ The file class of the plugin descriptor """
+
     contents_file = "none"
+    """ The contents file of the plugin descriptor """
+
     dependencies = []
+    """ The dependencies of the plugin descriptor """
 
     def __init__(self, name = "none", plugin_type = "none", id = "none", version = "none", main_class = "none", file_name = "none", contents_file = "none"):
+        """
+        Constructor of the class.
+
+        @type name: String
+        @param name: The name of the plugin descriptor.
+        @type plugin_type: String
+        @param plugin_type: The plugin type of the plugin descriptor.
+        @type id: String
+        @param id: The id of the plugin descriptor.
+        @type version: String
+        @param version: The version of the plugin descriptor.
+        @type main_class: String
+        @param main_class: The main class of the plugin descriptor.
+        @type file_name: String
+        @param file_name: The file name of the plugin descriptor.
+        @type contents_file: String
+        @param contents_file: The contents file of the plugin descriptor.
+        """
+
         self.name = name
         self.plugin_type = plugin_type
         self.id = id
@@ -576,6 +902,7 @@ class PluginDescriptor:
         self.main_class = main_class
         self.file_name = file_name
         self.contents_file = contents_file
+
         self.dependencies = []
 
     def __repr__(self):
@@ -597,6 +924,15 @@ class PluginDependency:
     """ The version of the plugin dependency """
 
     def __init__(self, id = "none", version = "none"):
+        """
+        Constructor of the class.
+
+        @type id: String
+        @param id: The id of the plugin dependency.
+        @type version: String
+        @param version: The version of the plugin dependency.
+        """
+
         self.id = id
         self.version = version
 
@@ -617,7 +953,11 @@ def valid_node(node):
     @return: The valid or not valid value.
     """
 
+    # in case the node is of type element
     if node.nodeType == xml.dom.minidom.Node.ELEMENT_NODE:
+        # returns true (valid)
         return True
+    # otherwise
     else:
+        # returns false (invalid)
         return False
