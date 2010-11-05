@@ -44,14 +44,14 @@ import colony_packing_deployer_exceptions
 DEPLOYER_TYPE = "colony_packing"
 """ The deployer type """
 
-PLUGINS_DIRECTORY = "plugins"
-""" The plugins directory value """
-
 COLONY_VALUE = "colony"
 """ The colony value """
 
 TARGET_PATH_VALUE = "target_path"
 """ The target path value """
+
+DEFAULT_PLUGIN_PATH = "plugins"
+""" The default plugin path """
 
 class ColonyPackingDeployer:
     """
@@ -128,11 +128,26 @@ class ColonyPackingDeployer:
         # retrieves the manager path
         manager_path = plugin_manager.get_manager_path()
 
-        # creates the plugins path joining the manager path and the plugins directory
-        plugins_path = os.path.join(manager_path, PLUGINS_DIRECTORY)
+        # retrieves the plugin paths
+        plugin_paths = plugin_manager.get_plugin_paths()
+
+        # in case the list of plugin paths is
+        # valid (contains paths)
+        if plugin_paths:
+            # retrieves the main plugin path as the first
+            # path in the plugin paths
+            main_plugin_path = plugin_paths[0]
+        else:
+            # retrieves the main plugin path
+            # as the default plugin path
+            main_plugin_path = DEFAULT_PLUGIN_PATH
+
+        # creates the plugin path joining the manager path and the
+        # main plugin path
+        plugin_path = os.path.join(manager_path, main_plugin_path)
 
         # creates the properties map for the file unpacking packing
-        properties = {TARGET_PATH_VALUE : plugins_path}
+        properties = {TARGET_PATH_VALUE : plugin_path}
 
         # unpacks the files using the colony service
         packing_manager_plugin.unpack_files([contents_file.name], properties, COLONY_VALUE)
