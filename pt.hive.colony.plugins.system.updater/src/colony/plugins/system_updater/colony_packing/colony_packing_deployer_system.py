@@ -37,11 +37,19 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
+import colony_packing_deployer_exceptions
+
 DEPLOYER_TYPE = "colony_packing"
 """ The deployer type """
 
 PLUGINS_DIRECTORY = "colony/plugins"
 """ The plugins directory value """
+
+COLONY_VALUE = "colony"
+""" The colony value """
+
+TARGET_PATH_VALUE = "target_path"
+""" The target path value """
 
 class ColonyPackingDeployer:
     """
@@ -62,17 +70,11 @@ class ColonyPackingDeployer:
         self.colony_packing_deployer_plugin = colony_packing_deployer_plugin
 
     def load_deployer(self):
+        """
+        Method called upon load of the deployer.
+        """
+
         self.colony_packing_deployer_plugin.info("Loading colony packing deployer")
-
-    def deploy_package(self, contents_file, plugin_id, plugin_version):
-        # retrieves the packing manager plugin
-        packing_manager_plugin = self.colony_packing_deployer_plugin.packing_manager_plugin
-
-        # creates the properties map for the file unpacking packing
-        properties = {"target_path" : PLUGINS_DIRECTORY}
-
-        # unpacks the files using the colony service
-        packing_manager_plugin.unpack_files([contents_file.name], properties, "colony")
 
     def get_deployer_type(self):
         """
@@ -83,3 +85,43 @@ class ColonyPackingDeployer:
         """
 
         return DEPLOYER_TYPE
+
+    def deploy_bundle(self, bundle_id, bundle_version, contents_file):
+        """
+        Method called upon deployment of the bundle with
+        the given id, version and contents file.
+
+        @type bundle_id: String
+        @param bundle_id: The id of the bundle to be deployed.
+        @type bundle_version: String
+        @param bundle_version: The version of the bundle to be deployed.
+        @type contents_file: ContentsFile
+        @param contents_file: The contents file of the bundle to
+        be deployed.
+        """
+
+        # raises an operation not implemented exception
+        raise colony_packing_deployer_exceptions.OperationNotSupported("not possible to deploy colony bundles")
+
+    def deploy_plugin(self, plugin_id, plugin_version, contents_file):
+        """
+        Method called upon deployment of the plugin with
+        the given id, version and contents file.
+
+        @type plugin_id: String
+        @param plugin_id: The id of the plugin to be deployed.
+        @type plugin_version: String
+        @param plugin_version: The version of the plugin to be deployed.
+        @type contents_file: ContentsFile
+        @param contents_file: The contents file of the plugin to
+        be deployed.
+        """
+
+        # retrieves the packing manager plugin
+        packing_manager_plugin = self.colony_packing_deployer_plugin.packing_manager_plugin
+
+        # creates the properties map for the file unpacking packing
+        properties = {TARGET_PATH_VALUE : PLUGINS_DIRECTORY}
+
+        # unpacks the files using the colony service
+        packing_manager_plugin.unpack_files([contents_file.name], properties, COLONY_VALUE)

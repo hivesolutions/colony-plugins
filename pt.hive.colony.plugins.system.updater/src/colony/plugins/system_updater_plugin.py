@@ -68,8 +68,9 @@ class SystemUpdaterPlugin(colony.base.plugin_system.Plugin):
     system_updater = None
     console_system_updater = None
 
-    downloader_plugin = None
     deployer_plugins = []
+
+    downloader_plugin = None
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)

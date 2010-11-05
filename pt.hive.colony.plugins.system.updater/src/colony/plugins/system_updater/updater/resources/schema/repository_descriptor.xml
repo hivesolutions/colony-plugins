@@ -32,9 +32,9 @@
 <repository xmlns="http://www.hive.pt"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://www.hive.pt ../xsd/repository_descriptor.xsd">
-    <name>Main Repository</name>
-    <description>Description</description>
-    <layout>simple</layout>
+    <name></name>
+    <description></description>
+    <layout></layout>
     <packages>
         <package>
             <name></name>
@@ -49,6 +49,15 @@
             </plugins>
         </package>
     </packages>
+    <bundles>
+        <bundle>
+            <name></name>
+            <type></type>
+            <id></id>
+            <version></version>
+            <contents_file></contents_file>
+        </bundle>
+    </bundles>
     <plugins>
         <plugin>
             <name></name>

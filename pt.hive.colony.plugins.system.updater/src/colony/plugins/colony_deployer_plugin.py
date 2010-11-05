@@ -75,7 +75,6 @@ class ColonyDeployerPlugin(colony.base.plugin_system.Plugin):
 
     def end_load_plugin(self):
         colony.base.plugin_system.Plugin.end_load_plugin(self)
-        self.colony_deployer.load_deployer()
 
     def unload_plugin(self):
         colony.base.plugin_system.Plugin.unload_plugin(self)
@@ -93,11 +92,47 @@ class ColonyDeployerPlugin(colony.base.plugin_system.Plugin):
     def dependency_injected(self, plugin):
         colony.base.plugin_system.Plugin.dependency_injected(self, plugin)
 
-    def deploy_package(self, contents_file, plugin_id, plugin_version):
-        self.colony_deployer.deploy_package(contents_file, plugin_id, plugin_version)
-
     def get_deployer_type(self):
+        """
+        Retrieves the type of deployer.
+
+        @rtype: String
+        @return: The type of deployer.
+        """
+
         return self.colony_deployer.get_deployer_type()
+
+    def deploy_bundle(self, bundle_id, bundle_version, contents_file):
+        """
+        Method called upon deployment of the bundle with
+        the given id, version and contents file.
+
+        @type bundle_id: String
+        @param bundle_id: The id of the bundle to be deployed.
+        @type bundle_version: String
+        @param bundle_version: The version of the bundle to be deployed.
+        @type contents_file: ContentsFile
+        @param contents_file: The contents file of the bundle to
+        be deployed.
+        """
+
+        self.colony_deployer.deploy_bundle(bundle_id, bundle_version, contents_file)
+
+    def deploy_plugin(self, plugin_id, plugin_version, contents_file):
+        """
+        Method called upon deployment of the plugin with
+        the given id, version and contents file.
+
+        @type plugin_id: String
+        @param plugin_id: The id of the plugin to be deployed.
+        @type plugin_version: String
+        @param plugin_version: The version of the plugin to be deployed.
+        @type contents_file: ContentsFile
+        @param contents_file: The contents file of the plugin to
+        be deployed.
+        """
+
+        self.colony_deployer.deploy_plugin(plugin_id, plugin_version, contents_file)
 
     def get_zip_plugin(self):
         return self.zip_plugin

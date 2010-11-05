@@ -39,11 +39,62 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 import colony.base.plugin_system_exceptions
 
-class InvalidPluginException(colony.base.plugin_system_exceptions.ColonyException):
+class SystemUpdaterException(colony.base.plugin_system_exceptions.ColonyException):
+    """
+    The system updater exception class.
+    """
 
     message = None
     """ The exception's message """
 
+class InvalidPluginException(SystemUpdaterException):
+    """
+    The operation not supported class.
+    """
+
     def __init__(self, message):
-        Exception.__init__(self, message)
+        """
+        Constructor of the class.
+
+        @type message: String
+        @param message: The message to be printed.
+        """
+
+        SystemUpdaterException.__init__(self)
         self.message = message
+
+    def __str__(self):
+        """
+        Returns the string representation of the class.
+
+        @rtype: String
+        @return: The string representation of the class.
+        """
+
+        return "Invalid plugin: %s" % self.message
+
+class DependenciesInstallationProblem(SystemUpdaterException):
+    """
+    The dependencies installation problem class.
+    """
+
+    def __init__(self, message):
+        """
+        Constructor of the class.
+
+        @type message: String
+        @param message: The message to be printed.
+        """
+
+        SystemUpdaterException.__init__(self)
+        self.message = message
+
+    def __str__(self):
+        """
+        Returns the string representation of the class.
+
+        @rtype: String
+        @return: The string representation of the class.
+        """
+
+        return "Dependencies installation problem: %s" % self.message

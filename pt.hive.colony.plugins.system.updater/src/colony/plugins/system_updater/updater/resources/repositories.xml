@@ -33,12 +33,12 @@
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://www.hive.pt xsd/repositories.xsd">
     <repository>
-        <name>Main Repository</name>
-        <description>Contains most of the main plugins</description>
+        <name>Colony Repository</name>
+        <description>Contains most of colony's main plugins</description>
         <layout>simple</layout>
         <addresses>
             <address name="Local Address">
-                http://localhost:8080/colony/repository
+                http://servidor3.hive:8080/integration/LATEST_SUCCESS/repository/colony_plugins
             </address>
         </addresses>
     </repository>

@@ -40,11 +40,16 @@ __license__ = "GNU General Public License (GPL), Version 3"
 import os
 
 import system_updater_parser
-import exceptions.system_updater_exceptions
+import system_updater_exceptions
 
 TEMP_DIRECTORY = "colony/tmp"
+""" The temporary directory """
+
 REPOSITORIES_FILE_PATH = "resources/repositories.xml"
+""" The repositories file path """
+
 REPOSITORY_DESCRIPTOR_FILE = "repository_descriptor.xml"
+""" The repository descriptor file """
 
 SIMPLE_REPOSITORY_LAYOUT_VALUE = "simple"
 """ The simple repository layout value """
@@ -53,15 +58,33 @@ EXTENDED_REPOSITORY_LAYOUT_VALUE = "extended"
 """ The extended repository layout value """
 
 class SystemUpdater:
+    """
+    The system updater class.
+    """
 
     system_updater_plugin = None
+    """ The system updater plugin """
 
     repository_list = []
+    """ The list of repositories """
+
     repository_descriptor_list = []
+    """ The list of repository descriptors """
+
     repository_repository_descriptor_map = {}
+    """ The map associating the repository with the repository descriptor """
+
     repository_descriptor_repository_map = {}
+    """ The map associating the repository descriptor with the repository """
 
     def __init__(self, system_updater_plugin):
+        """
+        Constructor of the class.
+
+        @type system_updater_plugin: SystemUpdaterPlugin
+        @param system_updater_plugin: The system updater plugin.
+        """
+
         self.system_updater_plugin = system_updater_plugin
 
     def load_system_updater(self):
@@ -185,16 +208,27 @@ class SystemUpdater:
         @return: The stream containing the repository descriptor for the given repository addresses
         """
 
+        # retrieves the downloader plugin
         downloader_plugin = self.system_updater_plugin.downloader_plugin
 
         # iterates over all the repositories
         for repository_address in repository_addresses:
+            # prints an info message
             self.system_updater_plugin.info("Trying address %s (%s)" % (repository_address.name, repository_address.value))
+
+            # retrieves the repository address value
             repository_address_value = repository_address.value
-            file_address = repository_address_value + "/" + REPOSITORY_DESCRIPTOR_FILE
-            file_buffer = downloader_plugin.get_download_package_stream(file_address)
+
+            # creates the repository file address, using the repository
+            # address value
+            repository_file_address = repository_address_value + "/" + REPOSITORY_DESCRIPTOR_FILE
+
+            # retrieves the file buffer using the downloader plugin
+            file_buffer = downloader_plugin.get_download_package_stream(repository_file_address)
+
             # in case the download was successful
             if file_buffer:
+                # returns the file buffer
                 return file_buffer
 
     def install_plugin(self, plugin_id, plugin_version = None):
@@ -217,11 +251,13 @@ class SystemUpdater:
 
         # in case the plugin was not found
         if not plugin_descriptor:
-            raise exceptions.system_updater_exceptions.InvalidPluginException("Plugin %s v%s not found" % (plugin_id, plugin_version))
+            # raises the invalid plugin exception
+            raise system_updater_exceptions.InvalidPluginException("plugin %s v%s not found" % (plugin_id, plugin_version))
 
         # installs the plugin dependencies
         if not self.install_plugin_dependencies(plugin_descriptor):
-            return False
+            # raises the dependencies installation problem exception
+            raise system_updater_exceptions.DependenciesInstallationProblem("in plugin %s v%s" % (plugin_id, plugin_version))
 
         # retrieves the plugin type
         plugin_type = plugin_descriptor.plugin_type
@@ -267,9 +303,11 @@ class SystemUpdater:
         for plugin_dependency in plugin_dependencies:
             # in case the install has not been sucessfull
             if not self.install_plugin(plugin_dependency.id, plugin_dependency.version):
+                # returns false (invalid)
                 return False
 
-        # in case all the dependencies have been correctly installed
+        # returns true (all the dependencies have
+        # been correctly installed)
         return True
 
     def install_package(self, package_id, package_version = None):
@@ -284,9 +322,11 @@ class SystemUpdater:
 
         # iterates over all the plugins in the plugin descriptor
         for plugin in package_plugins:
+            # retrieves the plugin id and version
             plugin_id = plugin.id
             plugin_version = plugin.version
 
+            # installs the plugin
             self.install_plugin(plugin_id, plugin_version)
 
     def get_repositories_list(self):
@@ -430,6 +470,7 @@ class SystemUpdater:
         @return: The result of the download (if successful or not)
         """
 
+        # retrieves the downloader plugin
         downloader_plugin = self.system_updater_plugin.downloader_plugin
 
         # iterates over all the repository addresses
@@ -447,11 +488,15 @@ class SystemUpdater:
             elif EXTENDED_REPOSITORY_LAYOUT_VALUE:
                 file_address = repository_address_value + "/plugins" + plugin_name + "/" + plugin_version + "/" + contents_file
 
+            # downloads the package for the given file address and target directory
             result = downloader_plugin.download_package(file_address, target_directory)
 
             # in case the download was successful
             if result:
+                # returns true (valid)
                 return True
+
+        # returns false (invalid)
         return False
 
     def delete_contents_file(self, contents_file):

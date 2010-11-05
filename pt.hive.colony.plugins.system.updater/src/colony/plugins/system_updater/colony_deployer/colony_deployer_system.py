@@ -37,36 +37,38 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
+import colony_deployer_exceptions
+
 DEPLOYER_TYPE = "colony"
+""" The deployer type """
 
 PLUGINS_DIRECTORY = "colony/plugins"
+""" The plugins directory """
 
 class ColonyDeployer:
+    """
+    The colony deployer class.
+    """
 
     colony_deployer_plugin = None
+    """ The colony deployer plugin """
 
     def __init__(self, colony_deployer_plugin):
+        """
+        Constructor of the class.
+
+        @type colony_deployer_plugin: ColonyDeployerPlugin
+        @param colony_deployer_plugin: The colony deployer plugin.
+        """
+
         self.colony_deployer_plugin = colony_deployer_plugin
 
     def load_deployer(self):
+        """
+        Method called upon load of the deployer.
+        """
+
         self.colony_deployer_plugin.info("Loading colony deployer")
-
-    def deploy_package(self, contents_file, plugin_id, plugin_version):
-        # retrieves the plugin manager
-        plugin_manager = self.colony_deployer_plugin.manager
-
-        # in case the plugin already exist in the plugin manager
-        if plugin_manager._get_plugin_by_id_and_version(plugin_id, plugin_version):
-            return
-
-        # retrieves the zip file names
-        zip_file_name = contents_file.name
-
-        # prints some logging information
-        self.colony_deployer_plugin.info("Deploying zip file: " + zip_file_name + " using colony deployer")
-
-        # uncompresses the zip file
-        self.uncompress_zip_file(contents_file)
 
     def get_deployer_type(self):
         """
@@ -78,7 +80,55 @@ class ColonyDeployer:
 
         return DEPLOYER_TYPE
 
-    def uncompress_zip_file(self, file):
+    def deploy_bundle(self, bundle_id, bundle_version, contents_file):
+        """
+        Method called upon deployment of the bundle with
+        the given id, version and contents file.
+
+        @type bundle_id: String
+        @param bundle_id: The id of the bundle to be deployed.
+        @type bundle_version: String
+        @param bundle_version: The version of the bundle to be deployed.
+        @type contents_file: ContentsFile
+        @param contents_file: The contents file of the bundle to
+        be deployed.
+        """
+
+        # raises an operation not implemented exception
+        raise colony_deployer_exceptions.OperationNotSupported("not possible to deploy colony bundles")
+
+    def deploy_plugin(self, plugin_id, plugin_version, contents_file):
+        """
+        Method called upon deployment of the plugin with
+        the given id, version and contents file.
+
+        @type plugin_id: String
+        @param plugin_id: The id of the plugin to be deployed.
+        @type plugin_version: String
+        @param plugin_version: The version of the plugin to be deployed.
+        @type contents_file: ContentsFile
+        @param contents_file: The contents file of the plugin to
+        be deployed.
+        """
+
+        # retrieves the plugin manager
+        plugin_manager = self.colony_deployer_plugin.manager
+
+        # in case the plugin already exist in the plugin manager
+        if plugin_manager._get_plugin_by_id_and_version(plugin_id, plugin_version):
+            # returns immediately
+            return
+
+        # retrieves the zip file name
+        contents_file_name = contents_file.name
+
+        # prints some logging information
+        self.colony_deployer_plugin.info("Deploying contents file: " + contents_file_name + " using colony deployer")
+
+        # uncompresses the zip file
+        self._uncompress_zip_file(contents_file)
+
+    def _uncompress_zip_file(self, file):
         """
         Uncompresses a zip file into the plugins directory.
 
