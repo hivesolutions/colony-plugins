@@ -37,8 +37,6 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-import os
-
 import colony_packing_deployer_exceptions
 
 DEPLOYER_TYPE = "colony_packing"
@@ -125,26 +123,9 @@ class ColonyPackingDeployer:
         # retrieves the packing manager plugin
         packing_manager_plugin = self.colony_packing_deployer_plugin.packing_manager_plugin
 
-        # retrieves the manager path
-        manager_path = plugin_manager.get_manager_path()
-
-        # retrieves the plugin paths
-        plugin_paths = plugin_manager.get_plugin_paths()
-
-        # in case the list of plugin paths is
-        # valid (contains paths)
-        if plugin_paths:
-            # retrieves the main plugin path as the first
-            # path in the plugin paths
-            main_plugin_path = plugin_paths[0]
-        else:
-            # retrieves the main plugin path
-            # as the default plugin path
-            main_plugin_path = DEFAULT_PLUGIN_PATH
-
-        # creates the plugin path joining the manager path and the
-        # main plugin path
-        plugin_path = os.path.join(manager_path, main_plugin_path)
+        # retrieves the main plugin path as the plugin path
+        # for deployment
+        plugin_path = plugin_manager.get_main_plugin_path()
 
         # creates the properties map for the file unpacking packing
         properties = {TARGET_PATH_VALUE : plugin_path}
