@@ -41,7 +41,7 @@ import re
 
 import url_parser_exceptions
 
-URL_REGEX_VALUE = "(?P<protocol>\w+\:\/\/)?(?P<base_name>[^\:\/\?#]+)(\:(?P<port>\d+))?(?P<resource_reference>(\/[^\?#]+)*)\/?(\?(?P<options>([^#])*))?(?P<location>#(.*))?"
+URL_REGEX_VALUE = "(?P<protocol>\w+\:\/\/)?((?P<authentication>\w+\:\w+)@)?(?P<base_name>[^\:\/\?#]+)(\:(?P<port>\d+))?(?P<resource_reference>(\/[^\?#]+)*)\/?(\?(?P<options>([^#])*))?(?P<location>#(.*))?"
 """ The url regex value """
 
 URL_REGEX = re.compile(URL_REGEX_VALUE)
@@ -107,6 +107,12 @@ class Url:
     protocol = DEFAULT_PROTOCOL_VALUE
     """ The protocol """
 
+    username = None
+    """ The username """
+
+    password = None
+    """ The password """
+
     base_name = None
     """ The base name """
 
@@ -128,12 +134,16 @@ class Url:
     location = None
     """ The location """
 
-    def __init__(self, protocol = DEFAULT_PROTOCOL_VALUE, base_name = None, port = DEFAULT_PORT_VALUE, resource_reference = None, options = None, location = None):
+    def __init__(self, protocol = DEFAULT_PROTOCOL_VALUE, username = None, password = None, base_name = None, port = DEFAULT_PORT_VALUE, resource_reference = None, options = None, location = None):
         """
         Constructor of the class.
 
         @type protocol: String
         @param protocol: The protocol.
+        @type username: String
+        @param username: The username.
+        @type password: String
+        @param password: The password.
         @type base_name: String
         @param base_name: The base name.
         @type port: int
@@ -147,6 +157,8 @@ class Url:
         """
 
         self.protocol = protocol
+        self.username = username
+        self.password = password
         self.base_name = base_name
         self.port = port
         self.resource_reference = resource_reference
@@ -197,10 +209,14 @@ class Url:
 
         # in case there was no match
         if not url_match:
+            # raises the url parser exception
             raise url_parser_exceptions.UrlParserException("invalid url value: %s" % url)
 
         # retrieves the protocol
         protocol = url_match.group("protocol")
+
+        # retrieves the authentication
+        authentication = url_match.group("authentication")
 
         # retrieves the base name
         base_name = url_match.group("base_name")
@@ -221,6 +237,18 @@ class Url:
         if protocol:
             # sets the protocol
             self.protocol = protocol
+
+        # in case the protocol is valid
+        if authentication:
+            # retrieves the username and password from the
+            # authentication token
+            username, password = authentication.split(":", 1)
+
+            # sets the username
+            self.username = username
+
+            # sets the password
+            self.password = password
 
         # in case the base name is valid
         if base_name:
