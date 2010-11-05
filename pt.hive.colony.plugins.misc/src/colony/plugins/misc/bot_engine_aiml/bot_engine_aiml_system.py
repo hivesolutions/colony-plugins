@@ -98,31 +98,57 @@ class BotEngineAiml:
         return self.commands
 
     def get_handler_command(self, command):
-        if command in self.commands:
-            method_name = "process_" + command
-            attribute = getattr(self, method_name)
-            return attribute
+        # returns in case the command is not in the commands list
+        if not command in self.commands:
+            return
+
+        # retrieves the method name
+        method_name = "process_" + command
+
+        # retrieves the handler
+        handler = getattr(self, method_name)
+
+        # returns the handler
+        return handler
 
     def get_help(self):
         return HELP_TEXT
 
     def process_bot_engine_aiml_load_brain(self, args, output_method):
-        if len(args) >= 1:
-            brain_path = args[0]
-            self.load_brain(brain_path)
-        else:
+        # returns in case an invalid number of arguments was specified
+        if len(args) == 0:
             output_method(INVALID_NUMBER_ARGUMENTS_MESSAGE)
+            return
+
+        # retrieves the brain path
+        brain_path = args[0]
+
+        # loads the brain
+        self.load_brain(brain_path)
 
     def process_bot_engine_aiml_teach_brain(self, args, output_method):
-        if len(args) >= 1:
-            aiml_path = args[0]
-            self.teach_brain(aiml_path)
-        else:
+        # returns in case an invalid number of arguments was specified
+        if len(args) == 0:
             output_method(INVALID_NUMBER_ARGUMENTS_MESSAGE)
+            return
+
+        # retrieves the aiml path
+        aiml_path = args[0]
+
+        # teaches the brain
+        self.teach_brain(aiml_path)
 
     def process_bot_engine_aiml_send(self, args, output_method):
-        if len(args) >= 1:
-            message = args[0]
-            output_method(self.respond(message))
-        else:
+        # returns in case an invalid number of arguments was specified
+        if len(args) == 0:
             output_method(INVALID_NUMBER_ARGUMENTS_MESSAGE)
+            return
+
+        # retrieves the message
+        message = args[0]
+
+        # retrieves the brain response
+        response = self.respond(message)
+
+        # outputs the response
+        output_method(response)

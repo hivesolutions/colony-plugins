@@ -38,6 +38,7 @@ __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
 import colony.base.plugin_system
+import colony.base.decorators
 
 class ProgressInformationPlugin(colony.base.plugin_system.Plugin):
     """
@@ -64,8 +65,10 @@ class ProgressInformationPlugin(colony.base.plugin_system.Plugin):
     main_modules = ["misc_gui.progress_information.progress_information_logic", "misc_gui.progress_information.progress_information_system"]
 
     progress_information = None
+    """ The progress information """
 
     bitmap_loader_plugin = None
+    """ The bitmap loader plugin """
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
@@ -88,10 +91,9 @@ class ProgressInformationPlugin(colony.base.plugin_system.Plugin):
     def unload_allowed(self, plugin, capability):
         colony.base.plugin_system.Plugin.unload_allowed(self, plugin, capability)
 
+    @colony.base.decorators.inject_dependencies("pt.hive.colony.plugins.misc.gui.progress_information", "1.0.0")
     def dependency_injected(self, plugin):
         colony.base.plugin_system.Plugin.dependency_injected(self, plugin)
-        if colony.base.plugin_system.is_capability_or_sub_capability_in_list("bitmap_load", plugin.capabilities):
-            self.bitmap_loader_plugin = plugin
 
     @colony.base.decorators.event_handler("pt.hive.colony.plugins.misc.gui.progress_information", "1.0.0")
     def event_handler(self, event_name, *event_args):
@@ -109,3 +111,10 @@ class ProgressInformationPlugin(colony.base.plugin_system.Plugin):
     @colony.base.decorators.event_handler_method("task_information_changed")
     def task_information_changed_handler(self, event_name, *event_args):
         self.progress_information.process_task_information_changed_event(event_name, event_args)
+
+    def get_bitmap_loader_plugin(self):
+        return self.bitmap_loader_plugin
+
+    @colony.base.decorators.plugin_inject("pt.hive.colony.plugins.misc.bitmap_loader")
+    def set_bitmap_loader_plugin(self, bitmap_loader_plugin):
+        self.bitmap_loader_plugin = bitmap_loader_plugin

@@ -66,6 +66,15 @@ class BotManager:
     bots_map = {}
     """ The bots map """
 
+    bot_input_map = {}
+    """ The bot input map """
+
+    bot_output_map = {}
+    """ The bot output map """
+
+    bot_engine_map = {}
+    """ The bot engine map """
+
     def __init__(self, bot_manager_plugin):
         """
         Constructor of the class.
@@ -76,6 +85,9 @@ class BotManager:
 
         self.bot_manager_plugin = bot_manager_plugin
         self.bots_map = {}
+        self.bot_input_map = {}
+        self.bot_output_map = {}
+        self.bot_engine_map = {}
 
     def get_console_extension_name(self):
         return CONSOLE_EXTENSION_NAME
@@ -84,57 +96,126 @@ class BotManager:
         return self.commands
 
     def get_handler_command(self, command):
-        if command in self.commands:
-            method_name = "process_" + command
-            attribute = getattr(self, method_name)
-            return attribute
+        # returns in case the command was not found
+        if not command in self.commands:
+            return
+
+        # retrieves the method name
+        method_name = "process_" + command
+
+        # retrieves the handler
+        handler = getattr(self, method_name)
+
+        # returns the handler
+        return handler
 
     def get_help(self):
         return HELP_TEXT
 
     def process_bot_manager_start_bot(self, args, output_method):
-        if len(args) >= 4:
-            bot_id = args[0]
-            bot_engine_id = args[1]
-            bot_input_id = args[2]
-            bot_output_id = args[3]
-            condition = bot_engine_id in self.bot_manager_plugin.bot_engine_plugins
-            condition = condition and bot_input_id in self.bot_manager_plugin.bot_input_plugins
-            condition = condition and bot_output_id in self.bot_manager_plugin.bot_output_plugins
-            condition = condition and not bot_id in self.bots_map
-            if condition:
-                bot_engine_plugin = self.bot_manager_plugin.bot_engine_plugins[bot_engine_id]
-                bot_input_plugin = self.bot_manager_plugin.bot_input_plugins[bot_input_id]
-                bot_output_plugin = self.bot_manager_plugin.bot_output_plugins[bot_output_id]
-                self.bots_map[bot_id] = Bot(bot_id, bot_engine_plugin, bot_input_plugin, bot_output_plugin)
-        else:
+        # returns in case a invalid number of arguments was specified
+        if len(args) < 4:
             output_method(INVALID_NUMBER_ARGUMENTS_MESSAGE)
+            return
+
+        # retrieves the bot id
+        bot_id = args[0]
+
+        # returns in case the bot id is not in the bot map
+        if not bot_id in self.bots_map:
+            return
+
+        # retrieves the bot engine id
+        bot_engine_id = args[1]
+
+        # returns in case the bot engine id is not in the bot engine map
+        if not bot_engine_id in self.bot_engine_map:
+            return
+
+        # retrieves the bot engine plugin
+        bot_engine_plugin = self.bot_engine_map[bot_engine_id]
+
+        # retrieves the bot input id
+        bot_input_id = args[2]
+
+        # returns in case the bot input id is not in the bot input map
+        if not bot_input_id in self.bot_input_map:
+            return
+
+        # retrieves the bot input plugin
+        bot_input_plugin = self.bot_input_map[bot_input_id]
+
+        # retrieves the bot output id
+        bot_output_id = args[3]
+
+        # returns in case the bot output id is not in the bot output map
+        if not bot_output_id in self.bot_output_map:
+            return
+
+        # retrieves the bot output plugin
+        bot_output_plugin = self.bot_manager_map[bot_output_id]
+
+        # sets the bot in the bot map
+        self.bots_map[bot_id] = Bot(bot_id, bot_engine_plugin, bot_input_plugin, bot_output_plugin)
 
     def process_bot_manager_stop_bot(self, args, output_method):
-        if len(args) >= 1:
-            bot_id = args[0]
-            if bot_id in self.bots_map:
-                self.bots_map[bot_id].stop()
-                del self.bots_map[bot_id]
-        else:
+        # returns in case an invalid number of arguments was specified
+        if len(args) == 0:
             output_method(INVALID_NUMBER_ARGUMENTS_MESSAGE)
+            return
+
+        # retrieves the bot id
+        bot_id = args[0]
+
+        # returns in case the bot id is not in the bot map
+        if not bot_id in self.bots_map:
+            return
+
+        # retrieves the bot
+        bot = self.bots_map[bot_id]
+
+        # stops the bot
+        bot.stop()
+
+        # removes the bot from the bot map
+        del self.bots_map[bot_id]
 
     def process_bot_manager_list_bots(self, args, output_method):
         output_method("List of running bots:")
+
+        # outpus the bot ids
         for bot_id in self.bots_map:
             output_method("* " + bot_id)
 
     def process_bot_manager_list_inputs(self, args, output_method):
-        for bot_input_plugin in self.bot_manager_plugin.bot_input_plugins:
+        for bot_input_plugin in self.bot_input_map:
             output_method(bot_input_plugin)
 
     def process_bot_manager_list_engines(self, args, output_method):
-        for bot_engine_plugin in self.bot_manager_plugin.bot_engine_plugins:
+        for bot_engine_plugin in self.bot_engine_map:
             output_method(bot_engine_plugin)
 
     def process_bot_manager_list_outputs(self, args, output_method):
-        for bot_output_plugin in self.bot_manager_plugin.bot_output_plugins:
+        for bot_output_plugin in self.bot_output_map:
             output_method(bot_output_plugin)
+
+    def load_bot_input_plugin(self, bot_input_plugin):
+        self.bot_input_map[bot_input_plugin.id] = bot_input_plugin
+
+    def unload_bot_input_plugin(self, bot_input_plugin):
+        del self.bot_input_map[bot_input_plugin.id]
+
+    def load_bot_output_plugin(self, bot_output_plugin):
+        self.bot_output_map[bot_output_plugin.id] = bot_output_plugin
+
+    def unload_bot_output_plugin(self, bot_output_plugin):
+        del self.bot_output_map[bot_output_plugin.id]
+
+    def load_bot_engine_plugin(self, bot_engine_plugin):
+        self.bot_engine_map[bot_engine_plugin.id] = bot_engine_plugin
+
+    def unload_bot_engine_plugin(self, bot_engine_plugin):
+        del self.bot_engine_map[bot_engine_plugin.id]
 
 class Bot:
     """
@@ -177,10 +258,11 @@ class Bot:
         self.bot_input_plugin.register_message_handler(self.bot_id, self.handle_incoming_message)
 
     def stop(self):
-        print "Stop called for " + self.bot_id
         self.bot_input_plugin.register_message_handler(self.bot_id, None)
 
     def handle_incoming_message(self, sender_id, message):
+        # retrieves the bot engine response
         response_message = self.bot_engine_plugin.respond(message)
-        print response_message
+
+        # outputs the bot engine response
         self.bot_output_plugin.send(self.bot_id, sender_id, response_message)

@@ -39,7 +39,6 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 import colony.base.plugin_system
 
-#@todo: comment this class
 class BotManagerPlugin(colony.base.plugin_system.Plugin):
     """
     The main class for the Bot Manager plugin.
@@ -62,15 +61,12 @@ class BotManagerPlugin(colony.base.plugin_system.Plugin):
     main_modules = ["misc.bot_manager.bot_manager_system"]
 
     bot_manager = None
-    bot_input_plugins =  {}
-    bot_output_plugins = {}
-    bot_engine_plugins = {}
+    """ The bot manager """
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
         global misc
         import misc.bot_manager.bot_manager_system
-        self.bot_engine_plugins = {}
         self.bot_manager = misc.bot_manager.bot_manager_system.BotManager(self)
 
     def end_load_plugin(self):
@@ -78,29 +74,17 @@ class BotManagerPlugin(colony.base.plugin_system.Plugin):
 
     def unload_plugin(self):
         colony.base.plugin_system.Plugin.unload_plugin(self)
-        self.bot_engine_plugins = None
-        self.bot_manager = None
 
     def end_unload_plugin(self):
         colony.base.plugin_system.Plugin.end_unload_plugin(self)
 
+    @colony.base.decorators.load_allowed("pt.hive.colony.plugins.misc.bot_manager", "1.0.0")
     def load_allowed(self, plugin, capability):
         colony.base.plugin_system.Plugin.load_allowed(self, plugin, capability)
-        if colony.base.plugin_system.is_capability_or_sub_capability_in_list("bot_engine", plugin.capabilities):
-            self.bot_engine_plugins[plugin.id] = plugin
-        if colony.base.plugin_system.is_capability_or_sub_capability_in_list("bot_input", plugin.capabilities):
-            self.bot_input_plugins[plugin.id] = plugin
-        if colony.base.plugin_system.is_capability_or_sub_capability_in_list("bot_output", plugin.capabilities):
-            self.bot_output_plugins[plugin.id] = plugin
 
+    @colony.base.decorators.unload_allowed("pt.hive.colony.plugins.misc.bot_manager", "1.0.0")
     def unload_allowed(self, plugin, capability):
         colony.base.plugin_system.Plugin.unload_allowed(self, plugin, capability)
-        if colony.base.plugin_system.is_capability_or_sub_capability_in_list("bot_engine", plugin.capabilities):
-            del self.bot_engine_plugins[plugin.id]
-        if colony.base.plugin_system.is_capability_or_sub_capability_in_list("bot_input", plugin.capabilities):
-            del self.bot_input_plugins[plugin.id]
-        if colony.base.plugin_system.is_capability_or_sub_capability_in_list("bot_output", plugin.capabilities):
-            del self.bot_output_plugins[plugin.id]
 
     def dependency_injected(self, plugin):
         colony.base.plugin_system.Plugin.dependency_injected(self, plugin)
@@ -116,3 +100,27 @@ class BotManagerPlugin(colony.base.plugin_system.Plugin):
 
     def get_help(self):
         return self.bot_manager.get_help()
+
+    @colony.base.decorators.load_allowed_capability("bot_engine")
+    def bot_engine_load_allowed(self, plugin, capability):
+        self.bot_manager.load_bot_engine_plugin(plugin)
+
+    @colony.base.decorators.unload_allowed_capability("bot_engine")
+    def bot_engine_unload_allowed(self, plugin, capability):
+        self.bot_manager.unload_bot_engine_plugin(plugin)
+
+    @colony.base.decorators.load_allowed_capability("bot_input")
+    def bot_input_load_allowed(self, plugin, capability):
+        self.bot_manager.load_bot_input_plugin(plugin)
+
+    @colony.base.decorators.unload_allowed_capability("bot_input")
+    def bot_input_unload_allowed(self, plugin, capability):
+        self.bot_manager.unload_bot_input_plugin(plugin)
+
+    @colony.base.decorators.load_allowed_capability("bot_output")
+    def bot_output_load_allowed(self, plugin, capability):
+        self.bot_manager.load_bot_output_plugin(plugin)
+
+    @colony.base.decorators.unload_allowed_capability("bot_output")
+    def bot_output_unload_allowed(self, plugin, capability):
+        self.bot_manager.unload_bot_output_plugin(plugin)

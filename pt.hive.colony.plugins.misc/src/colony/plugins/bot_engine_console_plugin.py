@@ -38,6 +38,7 @@ __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
 import colony.base.plugin_system
+import colony.base.decorators
 
 class BotEngineConsolePlugin(colony.base.plugin_system.Plugin):
     """
@@ -61,9 +62,11 @@ class BotEngineConsolePlugin(colony.base.plugin_system.Plugin):
     events_registrable = []
     main_modules = ["misc.bot_engine_console.bot_engine_console_system"]
 
-    console_plugin = None
-
     bot_engine_console = None
+    """ The bot engine console """
+
+    console_plugin = None
+    """ The console plugin """
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
@@ -86,10 +89,16 @@ class BotEngineConsolePlugin(colony.base.plugin_system.Plugin):
     def unload_allowed(self, plugin, capability):
         colony.base.plugin_system.Plugin.unload_allowed(self, plugin, capability)
 
+    @colony.base.decorators.inject_dependencies("pt.hive.colony.plugins.misc.bot_engine_console", "1.0.0")
     def dependency_injected(self, plugin):
         colony.base.plugin_system.Plugin.dependency_injected(self, plugin)
-        if colony.base.plugin_system.is_capability_or_sub_capability_in_list("main_console", plugin.capabilities):
-            self.console_plugin = plugin
 
     def respond(self, message):
         return self.bot_engine_console.respond(message)
+
+    def get_console_plugin(self):
+        return self.console_plugin
+
+    @colony.base.decorators.plugin_inject("pt.hive.colony.plugins.main.console")
+    def set_console_plugin(self, console_plugin):
+        self.console_plugin = console_plugin

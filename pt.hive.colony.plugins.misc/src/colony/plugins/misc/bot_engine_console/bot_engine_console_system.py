@@ -59,11 +59,19 @@ class BotEngineConsole:
         self.bot_engine_console_plugin = bot_engine_console_plugin
 
     def respond(self, message):
+        # initializes the message buffer
         self.message_buffer = ""
+
+        # processes the command line
         self.bot_engine_console_plugin.console_plugin.process_command_line(message, self.output_method)
+
+        # returns the message buffer
         return self.message_buffer
 
     def output_method(self, text, new_line = True):
+        # adds to the message buffer
         self.message_buffer += text
+
+        # adds a new line to the message buffer
         if new_line:
             self.message_buffer += "\n"

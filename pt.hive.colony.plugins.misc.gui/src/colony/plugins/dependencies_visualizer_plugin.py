@@ -38,6 +38,7 @@ __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
 import colony.base.plugin_system
+import colony.base.decorators
 
 class DependenciesVisualizerPlugin(colony.base.plugin_system.Plugin):
     """
@@ -88,10 +89,16 @@ class DependenciesVisualizerPlugin(colony.base.plugin_system.Plugin):
     def unload_allowed(self, plugin, capability):
         colony.base.plugin_system.Plugin.unload_allowed(self, plugin, capability)
 
+    @colony.base.decorators.inject_dependencies("pt.hive.colony.plugins.misc.gui.dependencies_visualizer", "1.0.0")
     def dependency_injected(self, plugin):
         colony.base.plugin_system.Plugin.dependency_injected(self, plugin)
-        if colony.base.plugin_system.is_capability_or_sub_capability_in_list("dependencies_calculator", plugin.capabilities):
-            self.dependencies_calculator_plugin = plugin
 
     def do_panel(self, parent):
         return self.dependencies_visualizer.do_panel(parent)
+
+    def get_dependencies_calculator_plugin(self):
+        return self.dependencies_calculator_plugin
+
+    @colony.base.decorators.plugin_inject("pt.hive.colony.plugins.misc.dependencies_calculator")
+    def set_dependencies_calculator_plugin(self, dependencies_calculator_plugin):
+        self.dependencies_calculator_plugin = dependencies_calculator_plugin
