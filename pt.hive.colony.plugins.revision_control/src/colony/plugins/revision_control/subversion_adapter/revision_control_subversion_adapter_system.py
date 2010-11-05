@@ -172,7 +172,12 @@ class RevisionControlSubversionAdapter:
         return revisions
 
     def diff(self, revision_control_reference, resource_identifiers, revision_1, revision_2):
-        tmp_path = "/tmp"
+        # retrieves the plugin manager
+        plugin_manager = self.revision_control_subversion_adapter_plugin.manager
+
+        # retrieves the temporary path
+        temporary_path = plugin_manager.get_temporary_path()
+
         url_or_path = resource_identifiers[0]
         url_or_path_2 = url_or_path
 
@@ -189,7 +194,7 @@ class RevisionControlSubversionAdapter:
             subversion_revision_2 = pysvn.Revision(pysvn.opt_revision_kind.working)
 
         # processes the diff
-        diff_string = revision_control_reference.diff(tmp_path, url_or_path, subversion_revision_1, url_or_path_2, subversion_revision_2)
+        diff_string = revision_control_reference.diff(temporary_path, url_or_path, subversion_revision_1, url_or_path_2, subversion_revision_2)
 
         # splits the diffs in the single diff string
         # @todo: split in a smarter fashion
