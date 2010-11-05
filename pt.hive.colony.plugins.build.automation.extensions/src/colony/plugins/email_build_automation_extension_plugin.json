@@ -26,6 +26,7 @@
     "resources" : [
             "email_build_automation_extension_plugin.py",
             "build_automation_extensions/__init__.py",
+            "build_automation_extensions/email/__init__.py",
             "build_automation_extensions/email/email_build_automation_extension_system.py",
             "build_automation_extensions/email/resources/baf.xml",
             "build_automation_extensions/email/resources/guilty_email_html_report.html.tpl",
