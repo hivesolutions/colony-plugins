@@ -526,6 +526,7 @@ class EmailBuildAutomationExtension:
         build_automation_structure_converted["issues_list"] = build_automation_issues_list
         build_automation_structure_converted["changers_list"] = build_automation_changers_list
         build_automation_structure_converted["repository_url"] = "http://servidor3.hive:8080/integration/" + str(build_automation_version)
+        build_automation_structure_converted["changelog_url"] = "http://trac.hive.pt:8080/changeset"
         build_automation_structure_converted["log_file_path"] = "log/build_automation.log"
 
         # returns the build automation structure converted
