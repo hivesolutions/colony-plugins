@@ -134,7 +134,10 @@ class Url:
     location = None
     """ The location """
 
-    def __init__(self, protocol = DEFAULT_PROTOCOL_VALUE, username = None, password = None, base_name = None, port = DEFAULT_PORT_VALUE, resource_reference = None, options = None, location = None):
+    base_url = None
+    """ The base url """
+
+    def __init__(self, protocol = DEFAULT_PROTOCOL_VALUE, username = None, password = None, base_name = None, port = DEFAULT_PORT_VALUE, resource_reference = None, options = None, location = None, base_url = None):
         """
         Constructor of the class.
 
@@ -154,6 +157,8 @@ class Url:
         @param options: The options.
         @type location: String
         @param location: The location.
+        @type base_url: String
+        @param base_url: The base url.
         """
 
         self.protocol = protocol
@@ -164,6 +169,7 @@ class Url:
         self.resource_reference = resource_reference
         self.options = options
         self.location = location
+        self.base_url = base_url
 
         self.resource_reference_list = []
         self.options_map = {}
@@ -280,6 +286,9 @@ class Url:
         if location:
             # sets the location
             self.location = location
+
+        # creates the base url from the protocol, authentication, base name and port
+        self.base_url = (protocol or "") + (authentication and authentication + "@" or "") + (base_name or "") + (port and ":" + port or "")
 
     def add_resource_reference_item(self, resource_reference_item):
         """
