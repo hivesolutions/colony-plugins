@@ -38,13 +38,8 @@
         <layout>simple</layout>
         <addresses>
             <address name="Local Address">
-                http://servidor3.hive:8080/integration/LATEST_SUCCESS/repository/colony_plugins
+                http://admin:admin@servidor3.hive:8080/integration/LATEST_SUCCESS/repository/colony_plugins
             </address>
-            <authentication>
-                <username>admin</username>
-                <password>admin</password>
-                <method>basic</method>
-            </authentication>
         </addresses>
     </repository>
 </repositories>

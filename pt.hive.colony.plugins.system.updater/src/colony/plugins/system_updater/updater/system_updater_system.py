@@ -212,7 +212,10 @@ class SystemUpdater:
         @return: The list of package information for the given repository name.
         """
 
+        # retrieves the repository information for the repository name
         repository_information = self.get_repository_information_by_repository_name(repository_name)
+
+        # returns the repository packages
         return repository_information.packages
 
     def get_plugin_information_list_by_repository_name(self, repository_name):
@@ -225,7 +228,10 @@ class SystemUpdater:
         @return: The list of plugin information for the given repository name.
         """
 
+        # retrieves the repository information for the repository name
         repository_information = self.get_repository_information_by_repository_name(repository_name)
+
+        # returns the repository plugins
         return repository_information.plugins
 
     def get_repository_information(self, repository):
@@ -239,6 +245,7 @@ class SystemUpdater:
         """
 
         repository_descriptor_file = self.get_repository_descriptor_file(repository.addresses)
+
         if repository_descriptor_file:
             repository_descriptor_file_parser = system_updater_parser.RepositoryDescriptorFileParser(repository_descriptor_file)
             repository_descriptor_file_parser.parse()
@@ -324,7 +331,7 @@ class SystemUpdater:
         plugin_type = plugin_descriptor.plugin_type
 
         # retrieves a deployer for the given plugin type
-        plugin_deployer = self._get_deployer_by_deployer_type(plugin_type)
+        plugin_deployer = self._get_deployer_plugin_by_deployer_type(plugin_type)
 
         # retrieves the repository descriptor from the plugin descriptor
         repository_descriptor = self.get_repository_descriptor_plugin_descriptor(plugin_descriptor)
@@ -482,7 +489,6 @@ class SystemUpdater:
                 # raises the dependency installation exception
                 raise system_updater_exceptions.DependencyInstallationException("problem installing plugin depdency %s v%s: %s", ((plugin_dependency.id, plugin_dependency.version, unicode(exception))))
 
-
     def _get_contents_file(self, repository_name, plugin_name, plugin_version, contents_file):
         """
         Retrieves the plugin contents file for the given repository name,
@@ -521,7 +527,7 @@ class SystemUpdater:
         # returns teh contents file
         return contents_file
 
-    def download_contents_file(self, repository_addresses, plugin_name, plugin_version, contents_file, repository_layout = SIMPLE_REPOSITORY_LAYOUT_VALUE, target_directory = TEMP_DIRECTORY):
+    def _download_contents_file(self, repository_addresses, plugin_name, plugin_version, contents_file, repository_layout = SIMPLE_REPOSITORY_LAYOUT_VALUE, target_directory = TEMP_DIRECTORY):
         """
         Downloads the plugin contents file for the given repository name, plugin name,
         plugin version and contents file name.
