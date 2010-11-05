@@ -232,7 +232,11 @@ def valid_node(node):
     @return: The valid or not valid value.
     """
 
+    # in case the node is of type element
     if node.nodeType == xml.dom.minidom.Node.ELEMENT_NODE:
+        # returns true (valid)
         return True
+    # otherwise
     else:
+        # returns false (invalid)
         return False
