@@ -42,7 +42,7 @@ import os
 import system_updater_parser
 import system_updater_exceptions
 
-TEMP_DIRECTORY = "colony/tmp"
+TEMP_DIRECTORY = "system_updater_tmp"
 """ The temporary directory """
 
 RESOURCES_PATH = "system_updater/updater/resources"
@@ -506,6 +506,9 @@ class SystemUpdater:
         @return: The retrieved plugin contents file stream.
         """
 
+        # retrieves the plugin manager
+        plugin_manager = self.system_updater_plugin.manager
+
         # retrieves the repository structure for the given repository name
         repository = self.get_repository_by_repository_name(repository_name)
 
@@ -515,11 +518,14 @@ class SystemUpdater:
         # retrieves the repository layout
         repository_layout = repository.layout
 
+        # retrieves the temporary path
+        temporary_path = plugin_manager.get_temporary_path()
+
         # downloads the contents file
-        self._download_contents_file(repository_addresses, plugin_name, plugin_version, contents_file, repository_layout, TEMP_DIRECTORY)
+        self._download_contents_file(repository_addresses, plugin_name, plugin_version, contents_file, repository_layout, temporary_path)
 
         # the created contents file path
-        contents_file_path = TEMP_DIRECTORY + "/" + contents_file
+        contents_file_path = temporary_path + "/" + contents_file
 
         # the created contents file
         contents_file = open(contents_file_path, "r")
