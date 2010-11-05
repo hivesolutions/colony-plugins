@@ -405,15 +405,19 @@ class EqualsExpression(BinaryExpression):
 
 def valid_node(node):
     """
-    Gets if a node is valid or not for parsing
+    Gets if a node is valid or not for parsing.
 
     @type node: Node
-    @param node: The Xml node to be validated
+    @param node: The Xml node to be validated.
     @rtype: bool
-    @return: The valid or not valid value
+    @return: The valid or not valid value.
     """
 
+    # in case the node is of type element
     if node.nodeType == xml.dom.minidom.Node.ELEMENT_NODE:
+        # returns true (valid)
         return True
+    # otherwise
     else:
+        # returns false (invalid)
         return False
