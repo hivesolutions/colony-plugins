@@ -238,6 +238,9 @@ class HttpClient:
     password = "none"
     """ The password to be used in authentication """
 
+    redirect = True
+    """ The value controlling the "auto" redirection """
+
     client_connection = None
     """ The current client connection """
 
@@ -647,9 +650,9 @@ class HttpClient:
                                 # sets the "relative" location value
                                 location = request_url + "/" + location
 
-                        # in case the location is not the same and the status code is
-                        # of type redirect
-                        if not location == request.url and status_code in REDIRECT_STATUS_CODES:
+                        # in case the location is not the same, the status code is
+                        # of type redirect and the redirect flag is set
+                        if not location == request.url and status_code in REDIRECT_STATUS_CODES and self.redirect:
                             # prints a debug message
                             main_client_http_plugin.debug("Redirecting request to '%s'" % location)
 
@@ -863,6 +866,19 @@ class HttpClient:
         # sets the authentication values
         self.username = username
         self.password = password
+
+    def set_redirect(self, redirect):
+        """
+        Sets the value controlling the "auto" redirection to be
+        used in the request.
+
+        @type redirect: bool
+        @param redirect: The value controlling the "auto" redirection to be
+        used in the request.
+        """
+
+        # sets the redirect flag
+        self.redirect = redirect
 
     def _generate_client_parameters(self, parameters):
         """
@@ -1088,11 +1104,11 @@ class HttpRequest:
         # retrieves the result stream
         result = colony.libs.string_buffer_util.StringBuffer()
 
+        # encodes the path
+        path = self._encode_path()
+
         # encodes the attributes
         encoded_attributes = self._encode_attributes()
-
-        # sets the initial path
-        path = self.path
 
         # in case the encoded attributes string
         # is valid and not empty
@@ -1102,9 +1118,9 @@ class HttpRequest:
                 # in case no exclamation mark exists in
                 # the path
                 if self.path.find("?") == -1:
-                    path = self.path + "?" + encoded_attributes
+                    path = path + "?" + encoded_attributes
                 else:
-                    path = self.path + "&" + encoded_attributes
+                    path = path + "&" + encoded_attributes
             # in case the operation is of type post
             elif self.operation_type == POST_METHOD_VALUE:
                 # writes the encoded attributes into the message stream
@@ -1209,6 +1225,20 @@ class HttpRequest:
         else:
             # returns only the host
             return self.host
+
+    def _encode_path(self):
+        """
+        Encodes the current path into the current encoding.
+
+        @rtype: String
+        @return: The encoded path string.
+        """
+
+        # encodes the path
+        path_encoded = self._encode(self.path)
+
+        # returns the quoted path
+        return path_encoded
 
     def _encode_attributes(self):
         """
