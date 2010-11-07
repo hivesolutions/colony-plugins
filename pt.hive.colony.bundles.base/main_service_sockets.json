@@ -1,0 +1,24 @@
+{
+    "type" : "bundle",
+    "platform" : "python",
+    "id" : "pt.hive.colony.bundles.main.service.sockets",
+    "version" : "1.0.0",
+    "author" : "Hive Solutions Lda. <development@hive.pt>",
+    "plugins" : [{
+                "id" : "pt.hive.colony.plugins.main.service.datagram_socket_provider",
+                "version" : "1.0.0"
+            }, {
+                "id" : "pt.hive.colony.plugins.main.service.normal_socket_provider",
+                "version" : "1.0.0"
+            }, {
+                "id" : "pt.hive.colony.plugins.main.service.raw_socket_provider",
+                "version" : "1.0.0"
+            }, {
+                "id" : "pt.hive.colony.plugins.main.service.ssl_socket_provider",
+                "version" : "1.0.0"
+            }, {
+                "id" : "pt.hive.colony.plugins.main.service.datagram_socket_upgrader",
+                "version" : "1.0.0"
+            }],
+    "dependencies" : []
+}
