@@ -271,17 +271,17 @@ class MainServiceHttpProxyHandler:
             # retrieves the proxy target
             proxy_target = request.properties.get(PROXY_TARGET_VALUE, DEFAULT_PROXY_TARGET)
 
+            # creates the handler path from the handler base path
+            # or from the handler path (depending on the valid one)
+            handler_path = request.handler_base_path or request.handler_path
+
             # in case the location starts with the http prefix or
             # with the https prefix (absolute path)
             if location.startswith(HTTP_PREFIX_VALUE) or location.startswith(HTTPS_PREFIX_VALUE):
-                # replaces the proxy target for the request handler path
-                location = location.replace(proxy_target, request.handler_path)
+                # replaces the proxy target for the handler path
+                location = location.replace(proxy_target, handler_path)
             # in case the location starts with a slash (relative to host path)
             elif location.startswith("/"):
-                # creates the handler path from the handler base path
-                # or from the handler path
-                handler_path = request.handler_base_path or request.handler_path
-
                 # parses the url retrieving the url structure
                 url_structure = url_parser_plugin.parse_url(proxy_target)
 
