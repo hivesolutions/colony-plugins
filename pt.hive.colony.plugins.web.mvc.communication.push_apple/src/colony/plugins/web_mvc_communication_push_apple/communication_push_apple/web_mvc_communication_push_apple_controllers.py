@@ -93,6 +93,9 @@ KEY_FILE_PATH_VALUE = "key_file_path"
 CERTIFICATE_FILE_PATH_VALUE = "certificate_file_path"
 """ The certificate file path value """
 
+MAXIMUM_PAYLOAD_SIZE = 256
+""" The maximum size for a notification payload """
+
 class WebMvcCommunicationPushAppleController:
     """
     The web mvc communication push apple controller.
@@ -299,6 +302,14 @@ class WebMvcCommunicationPushAppleController:
 
             # serializes the payload into json
             payload_serialized = json_plugin.dumps(payload)
+
+            # in case the payload exceeds the maximum allowed size
+            if len(payload_serialized) > MAXIMUM_PAYLOAD_SIZE:
+                # removes the parameters value from the payload
+                del payload[PARAMETERS_VALUE]
+
+                # serializes the payload again
+                payload_serialized = json_plugin.dumps(payload)
 
             # encodes the payload serialized using the default encoding
             payload_serialized_encoded = payload_serialized.encode(DEFAULT_ENCODING)
