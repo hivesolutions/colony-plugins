@@ -61,7 +61,9 @@ class MainServiceHttpProxyHandlerPlugin(colony.base.plugin_system.Plugin):
     dependencies = [colony.base.plugin_system.PluginDependency(
                     "pt.hive.colony.plugins.main.client.http", "1.0.0"),
                     colony.base.plugin_system.PluginDependency(
-                    "pt.hive.colony.plugins.main.pool.element_pool_manager", "1.0.0")]
+                    "pt.hive.colony.plugins.main.pool.element_pool_manager", "1.0.0"),
+                    colony.base.plugin_system.PluginDependency(
+                    "pt.hive.colony.plugins.misc.url_parser", "1.0.0")]
     events_handled = []
     events_registrable = []
     main_modules = ["main_service_http_proxy_handler.proxy_handler.main_service_http_proxy_handler_system"]
@@ -70,6 +72,7 @@ class MainServiceHttpProxyHandlerPlugin(colony.base.plugin_system.Plugin):
 
     main_client_http_plugin = None
     element_pool_manager_plugin = None
+    url_parser_plugin = None
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
@@ -131,3 +134,10 @@ class MainServiceHttpProxyHandlerPlugin(colony.base.plugin_system.Plugin):
     @colony.base.decorators.plugin_inject("pt.hive.colony.plugins.main.pool.element_pool_manager")
     def set_element_pool_manager_plugin(self, element_pool_manager_plugin):
         self.element_pool_manager_plugin = element_pool_manager_plugin
+
+    def get_url_parser_plugin(self):
+        return self.url_parser_plugin
+
+    @colony.base.decorators.plugin_inject("pt.hive.colony.plugins.misc.url_parser")
+    def set_url_parser_plugin(self, url_parser_plugin):
+        self.url_parser_plugin = url_parser_plugin

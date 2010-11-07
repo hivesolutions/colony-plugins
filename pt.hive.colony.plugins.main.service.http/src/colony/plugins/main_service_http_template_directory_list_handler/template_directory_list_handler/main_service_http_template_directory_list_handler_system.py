@@ -133,11 +133,11 @@ class MainServiceHttpTemplateDirectoryListHandler:
             # sets the directory entry size string value
             directory_entry["size_string"] = directory_entry_size_string
 
-        # retrieves the requested resource path
-        resource_path = request.get_resource_path_decoded()
+        # retrieves the requested resource base path
+        resource_base_path = request.get_resource_base_path_decoded()
 
-        # splits the resource path into various values
-        resource_path_values = resource_path.strip("/").split("/")
+        # splits the resource base path into various values
+        resource_path_values = resource_base_path.strip("/").split("/")
 
         # retrieves the prefix resource path values
         prefix_resource_path_values = resource_path_values[:-1]

@@ -51,14 +51,26 @@ DEFAULT_PROXY_TARGET = ""
 DEFAULT_ELEMENT_POOL_SIZE = 10
 """ The default element pool size """
 
+HTTP_PREFIX_VALUE = "http://"
+""" The http prefix value """
+
+HTTPS_PREFIX_VALUE = "https://"
+""" The https prefix value """
+
 DEFAULT_HOST_VALUE = "unknown"
 """ The default host value """
+
+PROXY_TARGET_VALUE = "proxy_target"
+""" The proxy target value """
 
 VIA_VALUE = "Via"
 """ The via value """
 
 HOST_VALUE = "Host"
 """ The host value """
+
+LOCATION_VALUE = "Location"
+""" The location value """
 
 TRANSFER_ENCODING_VALUE = "Transfer-Encoding"
 """ The transer encoding value """
@@ -134,10 +146,13 @@ class MainServiceHttpProxyHandler:
         """
 
         # retrieves the proxy target
-        proxy_target = request.properties.get("proxy_target", DEFAULT_PROXY_TARGET)
+        proxy_target = request.properties.get(PROXY_TARGET_VALUE, DEFAULT_PROXY_TARGET)
+
+        # retrieves the resource base path
+        resource_base_path = request.get_resource_path_decoded()
 
         # calculates the real path difference
-        path = request.base_path.replace(request.handler_path, "", 1)
+        path = resource_base_path.replace(request.handler_path, "", 1)
 
         # creates the request headers from the request
         request_headers = self._create_request_headers(request)
@@ -193,6 +208,9 @@ class MainServiceHttpProxyHandler:
         # opens the http client
         http_client.open(arguments)
 
+        # disables the "auto" redirect in the http client
+        http_client.set_redirect(False)
+
         # returns the http client
         return http_client
 
@@ -222,6 +240,9 @@ class MainServiceHttpProxyHandler:
         return request_headers
 
     def _create_headers_map(self, request, http_response):
+        # retrieves the url parser plugin
+        url_parser_plugin = self.main_service_http_proxy_handler_plugin.url_parser_plugin
+
         # creates a new map for the headers map
         headers_map = {}
 
@@ -238,6 +259,40 @@ class MainServiceHttpProxyHandler:
 
             # removes the response header from the headers map
             del headers_map[removal_response_header]
+
+        # in case the location value exists in the headers map
+        if LOCATION_VALUE in headers_map:
+            # retrieves the location from the headers map
+            location = headers_map[LOCATION_VALUE]
+
+            # retrieves the proxy target
+            proxy_target = request.properties.get(PROXY_TARGET_VALUE, DEFAULT_PROXY_TARGET)
+
+            # in case the location starts with the http prefix or
+            # with the https prefix (absolute path)
+            if location.startswith(HTTP_PREFIX_VALUE) or location.startswith(HTTPS_PREFIX_VALUE):
+                # replaces the proxy target for the request handler path
+                location = location.replace(proxy_target, request.handler_path)
+            # in case the location starts with a slash (relative to host path)
+            elif location.startswith("/"):
+                # creates the handler path from the handler base path
+                # or from the handler path
+                handler_path = request.handler_base_path or request.handler_path
+
+                # parses the url retrieving the url structure
+                url_structure = url_parser_plugin.parse_url(proxy_target)
+
+                # retrieves the resource reference from the url structure
+                resource_reference = url_structure.resource_reference
+
+                # removes the resource reference from the location
+                location = location.replace(resource_reference, "")
+
+                # creates the location with the handler path and the original location
+                location = handler_path + location
+
+            # sets the location in the headers map
+            headers_map[LOCATION_VALUE] = location
 
         # retrieves the protocol version number from the protocol
         # version string

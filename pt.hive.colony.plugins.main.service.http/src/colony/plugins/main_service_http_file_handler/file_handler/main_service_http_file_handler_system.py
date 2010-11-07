@@ -206,6 +206,12 @@ class MainServiceHttpFileHandler:
         # creates the complete path
         complete_path = real_base_directory + "/" + path
 
+        # normalizes the complete path
+        complete_path = os.path.normpath(complete_path)
+
+        # prints a debug message
+        self.main_service_http_file_handler_plugin.debug("Trying to retrieve system file '%s'" % complete_path)
+
         # in case the paths does not exist
         if not os.path.exists(complete_path):
             # raises file not found exception with 404 http error code
@@ -299,14 +305,14 @@ class MainServiceHttpFileHandler:
         # sets the request content type
         request.content_type = "text/plain"
 
-        # retrieves the resource path
-        resource_path = request.get_resource_path_decoded()
+        # retrieves the resource base path
+        resource_base_path = request.get_resource_base_path_decoded()
 
-        # strips the resource path
-        resource_path = resource_path.strip("/")
+        # strips the resource base path
+        resource_base_path = resource_base_path.strip("/")
 
         # writes the header message in the message
-        request.write("directory listing - " + resource_path + "\n")
+        request.write("directory listing - " + resource_base_path + "\n")
 
         # retrieves the directory entries
         directory_entries = directory_list["entries"]
@@ -331,14 +337,14 @@ class MainServiceHttpFileHandler:
         @param complete_path: The complete path to the directory.
         """
 
-        # retrieves the requested resource path
-        resource_path = request.get_resource_path_decoded()
+        # retrieves the requested resource base path
+        resource_base_path = request.get_resource_base_path_decoded()
 
-        # in case the resources path does not end with a slash
-        if not resource_path.endswith("/"):
-            # adds the extra slash to the resource path
+        # in case the resource base path does not end with a slash
+        if not resource_base_path.endswith("/"):
+            # adds the extra slash to the resource base path
             # in order to avoid file redirection problems
-            resource_path = resource_path.encode(DEFAULT_CHARSET) + "/"
+            resource_path = resource_base_path.encode(DEFAULT_CHARSET) + "/"
 
             # redirects the request to the resource path
             self._redirect(request, resource_path)

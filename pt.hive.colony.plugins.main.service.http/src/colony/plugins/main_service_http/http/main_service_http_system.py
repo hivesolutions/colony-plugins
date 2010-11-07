@@ -1296,10 +1296,19 @@ class HttpClientServiceHandler:
         # retrieves the service configuration redirections resolution order
         service_configuration_redirections_resolution_order = service_configuration_redirections.get(RESOLUTION_ORDER_VALUE, service_configuration_redirections.keys())
 
+        # (saves) the old path as the base path
+        request.set_base_path(request.path)
+
+        # unsets the request handler base path
+        request.handler_base_path = None
+
         # iterates over the service configuration redirection names
         for service_configuration_redirection_name in service_configuration_redirections_resolution_order:
             # in case the path is found in the request path
             if request.path.find(service_configuration_redirection_name) == 0:
+                # sets the handler base path
+                request.handler_base_path = service_configuration_redirection_name
+
                 # retrieves the service configuration redirection
                 service_configuration_redirection = service_configuration_redirections[service_configuration_redirection_name]
 
@@ -1319,9 +1328,6 @@ class HttpClientServiceHandler:
                     # breaks the loop because the request is not meant to be recursively redirected
                     # and it contains a sub-directory
                     break
-
-                # (saves) the old path as the base path
-                request.base_path = request.path
 
                 # retrieves the new (redirected) path in the request
                 # strips both parts of the path to avoid problems with duplicated slashes
@@ -1409,6 +1415,9 @@ class HttpClientServiceHandler:
             if not allow_redirection:
                 # changes the path to the base path
                 request.set_path(request.base_path)
+
+                # unsets the request handler base path
+                request.handler_base_path = None
 
                 # unsets the redirected flag in the request
                 request.redirected = False
@@ -1717,13 +1726,19 @@ class HttpRequest:
     """ The original path (without unquoting) """
 
     base_path = "none"
-    """ The base path """
+    """ The base path (before redirection) """
 
     resource_path = "none"
     """ The resource path """
 
+    resource_base_path = "none"
+    """ The resource base path (before redirection) """
+
     handler_path = "none"
     """ The handler path """
+
+    handler_base_path = "none"
+    """ The handler base path (before redirection) """
 
     filename = "none"
     """ The filename """
@@ -2297,6 +2312,15 @@ class HttpRequest:
         self.operation_type = operation_type
 
     def set_path(self, path):
+        """
+        Sets the path in the request.
+        The paths is set by processing it, creating
+        the resources path.
+
+        @type path: String
+        @param path: The path to be set in the request.
+        """
+
         # "saves" the original path value
         # without unquoting
         self.original_path = path
@@ -2311,6 +2335,25 @@ class HttpRequest:
         self.resource_path = resource_path
         self.filename = resource_path
         self.uri = resource_path
+
+    def set_base_path(self, base_path):
+        """
+        Sets the base path in the request.
+        The base paths is set by processing it, creating
+        the resources path.
+
+        @type path: String
+        @param path: The base path to be set in the request.
+        """
+
+        # "unquotes" the base path value
+        base_path = colony.libs.quote_util.unquote_plus(base_path)
+
+        # retrieves the resource path of the base path
+        resource_base_path = base_path.split("?")[0]
+
+        self.base_path = base_path
+        self.resource_base_path = resource_base_path
 
     def set_protocol_version(self, protocol_version):
         """
@@ -2344,6 +2387,19 @@ class HttpRequest:
         resource_path_decoded = self.resource_path.decode(DEFAULT_CHARSET)
 
         return resource_path_decoded
+
+    def get_resource_base_path_decoded(self):
+        """
+        Retrieves the resource base path in decoded format.
+
+        @rtype: String
+        @return: The resource base path in decoded format.
+        """
+
+        # decodes the resources base path
+        resource_base_path_decoded = self.resource_base_path.decode(DEFAULT_CHARSET)
+
+        return resource_base_path_decoded
 
     def get_handler_path(self):
         """
