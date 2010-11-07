@@ -154,6 +154,9 @@ class MainServiceHttpProxyHandler:
         # calculates the real path difference
         path = resource_base_path.replace(request.handler_path, "", 1)
 
+        # retrieves the request attributes map
+        request_attributes_map = request.attributes_map
+
         # creates the request headers from the request
         request_headers = self._create_request_headers(request)
 
@@ -169,7 +172,7 @@ class MainServiceHttpProxyHandler:
 
         try:
             # fetches the contents from the url
-            http_response = http_client.fetch_url(complete_path, method = request.operation_type, headers = request_headers, content_type_charset = DEFAULT_CHARSET, contents = request_contents)
+            http_response = http_client.fetch_url(complete_path, method = request.operation_type, parameters = request_attributes_map, headers = request_headers, content_type_charset = DEFAULT_CHARSET, contents = request_contents)
         finally:
             # puts the http client back into the http clients pool
             self.http_clients_pool.put(http_client)
