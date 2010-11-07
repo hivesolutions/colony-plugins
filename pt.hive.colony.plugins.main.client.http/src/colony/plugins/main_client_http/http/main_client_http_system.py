@@ -1219,12 +1219,18 @@ class HttpRequest:
         # in case the port is defined and
         # is not a default port
         if self.port and self.port not in DEFAULT_PORTS:
-            # returns the host appended with the port value
-            return self.host + ":" + str(self.port)
+            # sets the host appended with the port value
+            host = self.host + ":" + str(self.port)
         # in case the port is not defined
         else:
-            # returns only the host
-            return self.host
+            # sets only the host
+            host = self.host
+
+        # encodes the host value
+        host_encoded = self._encode(host)
+
+        # returns the host encoded
+        return host_encoded
 
     def _encode_path(self):
         """
