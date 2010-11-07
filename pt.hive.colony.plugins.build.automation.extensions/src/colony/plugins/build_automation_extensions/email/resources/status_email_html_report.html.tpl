@@ -78,10 +78,10 @@
                         <h1 style="margin-bottom:1.2em;">
                             <font face="Rockwell, Arial" size="3" color="#214c8f">${out_none value=build_automation.plugin_name xml_escape=True /}</font>
                             ${if item=build_automation.success value=True operator=eq}
-                                had <font face="Rockwell, Arial" size="3" color="#4d9341">${out_none value=build_automation.success_capitals xml_escape=True /}</font>
+                                <font face="Rockwell, Arial" size="3" color="#214c8f">had</font> <font face="Rockwell, Arial" size="3" color="#4d9341">${out_none value=build_automation.success_capitals xml_escape=True /}</font>
                             ${/if}
                             ${if item=build_automation.success value=False operator=eq}
-                                has <font face="Rockwell, Arial" size="3" color="#dc1c28">${out_none value=build_automation.success_capitals xml_escape=True /}</font>
+                                <font face="Rockwell, Arial" size="3" color="#214c8f">has</font> <font face="Rockwell, Arial" size="3" color="#dc1c28">${out_none value=build_automation.success_capitals xml_escape=True /}</font>
                             ${/if}
                         </h1>
                         <p>
