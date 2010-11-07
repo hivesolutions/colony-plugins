@@ -1237,8 +1237,11 @@ class HttpRequest:
         # encodes the path
         path_encoded = self._encode(self.path)
 
+        # quotes the path
+        path_quoted = colony.libs.quote_util.quote_plus(path_encoded, "/")
+
         # returns the quoted path
-        return path_encoded
+        return path_quoted
 
     def _encode_attributes(self):
         """
