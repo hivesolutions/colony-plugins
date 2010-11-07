@@ -275,11 +275,8 @@ class MainServiceHttpProxyHandler:
             # or from the handler path (depending on the valid one)
             handler_path = request.handler_base_path or request.handler_path
 
-            # strips the extra slashes (in the beginning of the handler path)
-            handler_path = handler_path.lstrip("/")
-
-            # adds the initial relative slash to the handler path
-            handler_path = "/" + handler_path
+            # sets the valid handler path based on the length of the path
+            handler_path = not handler_path == "/" and handler_path or ""
 
             # in case the location starts with the http prefix or
             # with the https prefix (absolute path)
