@@ -41,7 +41,7 @@ import colony.base.plugin_system
 
 class BusinessDummyBusinessLogicPlugin(colony.base.plugin_system.Plugin):
     """
-    The main class for the Business Dummy Business Logic plugin
+    The main class for the Business Dummy Business Logic plugin.
     """
 
     id = "pt.hive.colony.plugins.business.dummy.business_logic"

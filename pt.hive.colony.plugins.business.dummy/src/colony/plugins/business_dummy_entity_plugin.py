@@ -42,7 +42,7 @@ import colony.base.decorators
 
 class BusinessDummyEntityPlugin(colony.base.plugin_system.Plugin):
     """
-    The main class for the Business Dummy Entity plugin
+    The main class for the Business Dummy Entity plugin.
     """
 
     id = "pt.hive.colony.plugins.business.dummy.entity"
