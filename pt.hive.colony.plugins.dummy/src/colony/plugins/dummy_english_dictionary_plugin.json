@@ -1,4 +1,5 @@
 {
+    "type" : "plugin",
     "platform" : "python",
     "sub_platforms" : ["cpython", "jython", "iron_python"],
     "id" : "pt.hive.colony.plugins.dummy.english",

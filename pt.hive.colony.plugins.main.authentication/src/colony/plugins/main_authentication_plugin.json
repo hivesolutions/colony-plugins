@@ -1,5 +1,6 @@
 {
     "type" : "plugin",
+    "type" : "plugin",
     "platform" : "python",
     "sub_platforms" : ["cpython", "jython"],
     "id" : "pt.hive.colony.plugins.main.authentication",
