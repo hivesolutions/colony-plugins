@@ -553,23 +553,32 @@ class MainPackingColonyService:
 
             # iterates over all the plugin resources
             for plugin_resource in plugin_resources:
-                # in case the resource is not the main file
+                # in case the resource is the main file
                 # (because it should be extracted at the end)
-                if not plugin_resource == main_file:
-                    # creates the plugin resource path
-                    plugin_resource_path = RESOURCES_BASE_PATH + "/" + plugin_resource
+                if plugin_resource == main_file:
+                    # continues the loop
+                    continue
 
-                    # creates the plugin resource target path
-                    plugin_resource_target_path = target_path + "/" + plugin_resource
+                # creates the plugin resource path
+                plugin_resource_path = RESOURCES_BASE_PATH + "/" + plugin_resource
 
-                    # prints a debug message
-                    self.main_packing_colony_service_plugin.debug("Extracting resource '%s'" % plugin_resource)
+                # creates the plugin resource target path
+                plugin_resource_target_path = target_path + "/" + plugin_resource
 
-                    # extracts the resource
-                    compressed_file.extract(plugin_resource_path, plugin_resource_target_path, False)
+                # prints a debug message
+                self.main_packing_colony_service_plugin.debug("Extracting resource '%s'" % plugin_resource)
+
+                # extracts the resource
+                compressed_file.extract(plugin_resource_path, plugin_resource_target_path, False)
+
+            # creates the plugin main file path
+            plugin_main_file_path = RESOURCES_BASE_PATH + "/" + main_file
+
+            # creates the plugin main file target path
+            plugin_main_file_target_path = target_path + "/" + main_file
 
             # the main file is extracted at the end to avoid any problem
-            compressed_file.extract(RESOURCES_BASE_PATH + "/" + main_file, target_path + "/" + main_file, False)
+            compressed_file.extract(plugin_main_file_path, plugin_main_file_target_path, False)
         finally:
             # closes the compressed file
             compressed_file.close()
