@@ -69,8 +69,14 @@ SPECIFICATION_VALUE = "specification"
 RECURSIVE_VALUE = "recursive"
 """ The recursive value """
 
+BUNDLE_REGEX_VALUE = "bundle_regex"
+""" The bundle regex value """
+
 PLUGIN_REGEX_VALUE = "plugin_regex"
 """ The plugin regex value """
+
+LIBRARY_REGEX_VALUE = "library_regex"
+""" The library regex value """
 
 TARGET_PATH_VALUE = "target_path"
 """ The target path value """
@@ -259,8 +265,21 @@ class MainPackingColonyService:
         # iterates over all the file path in the
         # file paths list
         for file_path in file_paths_list:
-            # (un)processes the plugin file using he given specification file path
-            self._unprocess_plugin_file(file_path, target_path, specification_file_path)
+            # splits the file path into base name and extension
+            _file_base_name, file_extension = os.path.splitext(file_path)
+
+            # in case it's a bundle extension
+            if file_extension == DEFAULT_COLONY_BUNDLE_FILE_EXTENSION:
+                #(un)processes the bundle file using the given specification file path
+                self._unprocess_bundle_file(file_path, target_path, specification_file_path)
+            # in case it's a plugin extension
+            elif file_extension == DEFAULT_COLONY_PLUGIN_FILE_EXTENSION:
+                #(un)processes the plugin file using the given specification file path
+                self._unprocess_plugin_file(file_path, target_path, specification_file_path)
+            # in case it's a library extension
+            elif file_extension == DEFAULT_COLONY_LIBRARY_FILE_EXTENSION:
+                #(un)processes the library file using the given specification file path
+                self._unprocess_plugin_library(file_path, target_path, specification_file_path)
 
     def _pack_directory(self, arguments, directory_path, directory_file_list):
         """
@@ -276,22 +295,36 @@ class MainPackingColonyService:
         @param directory_file_list: The list of files in the current directory.
         """
 
+        # retrieves the bundle regex attribute
+        bundle_regex = arguments[BUNDLE_REGEX_VALUE]
+
         # retrieves the plugin regex attribute
         plugin_regex = arguments[PLUGIN_REGEX_VALUE]
+
+        # retrieves the library regex attribute
+        library_regex = arguments[PLUGIN_REGEX_VALUE]
 
         # retrieves the target path attribute
         target_path = arguments.get(TARGET_PATH_VALUE, DEFAULT_TARGET_PATH)
 
         # iterates over all the directory file name
         for directory_file_name in directory_file_list:
-            # in case there is a match in the directory file name
-            if plugin_regex.match(directory_file_name):
-                # creates the full file path as the directory path and
-                # the directory file name
-                full_file_path = directory_path + "/" + directory_file_name
+            # creates the full file path as the directory path and
+            # the directory file name
+            full_file_path = directory_path + "/" + directory_file_name
 
+            # in case there is a bundle match in the directory file name
+            if bundle_regex.match(directory_file_name):
+                # processes the bundle file
+                self._process_bundle_file(full_file_path, target_path)
+            # in case there is a plugin match in the directory file name
+            elif plugin_regex.match(directory_file_name):
                 # processes the plugin file
                 self._process_plugin_file(full_file_path, target_path)
+            # in case there is a library match in the directory file name
+            elif library_regex.match(directory_file_name):
+                # processes the library file
+                self._process_library_file(full_file_path, target_path)
 
     def _process_bundle_file(self, file_path, target_path, plugins_path):
         """
@@ -411,6 +444,64 @@ class MainPackingColonyService:
             # closes the compressed file
             compressed_file.close()
 
+    def _unprocess_bundle_file(self, file_path, target_path, specification_file_path):
+        """
+        (Un)processes the bundle file in the given file path, putting
+        the results in the target path.
+
+        @type file_path: String
+        @param file_path: The path to the bundle file to be (un)processed.
+        @type target_path: String
+        @param target_path: The target path to be used in the results.
+        @type specification_file_path: String
+        @param specification_file_path: The specification file path in the bundle file.
+        """
+
+        # prints a debug message
+        self.main_packing_colony_service_plugin.debug("Unpacking bundle file '%s' into '%s'" % (file_path, target_path))
+
+        # retrieves the specification manager plugin
+        specification_manager_plugin = self.main_packing_colony_service_plugin.specification_manager_plugin
+
+        # creates a new compressed file
+        compressed_file = ColonyCompressedFile()
+
+        # opens the compressed file
+        compressed_file.open(file_path, "r")
+
+        try:
+            # reads the specification file from the compressed file
+            specification_file_buffer = compressed_file.read(specification_file_path)
+
+            # retrieves the bundle specification for the given file
+            bundle_specification = specification_manager_plugin.get_specification_file_buffer(specification_file_buffer, {})
+
+            # retrieves the bundle resources
+            bundle_plugins = bundle_specification.get_property("plugins")
+
+            # iterates over all the bundle resources
+            for bundle_plugin in bundle_plugins:
+                # retrieves the bundle plugin id
+                bundle_plugin_id = bundle_plugin[ID_VALUE]
+
+                # retrieves the bundle plugin version
+                bundle_plugin_version = bundle_plugin[VERSION_VALUE]
+
+                # creates the bundle plugin name
+                bundle_plugin_name = bundle_plugin_id + "_" + bundle_plugin_version + DEFAULT_COLONY_PLUGIN_FILE_EXTENSION
+
+                # prints a debug message
+                self.main_packing_colony_service_plugin.debug("Extracting plugin '%s'" % bundle_plugin_name)
+
+                # extracts the plugin
+                compressed_file.extract(PLUGINS_BASE_PATH + "/" + bundle_plugin_name, target_path, None)
+
+                # (un)processes the plugin file
+                self._unprocess_plugin_file(target_path + "/" + bundle_plugin_name, target_path, specification_file_path)
+        finally:
+            # closes the compressed file
+            compressed_file.close()
+
     def _unprocess_plugin_file(self, file_path, target_path, specification_file_path):
         """
         (Un)processes the plugin file in the given file path, putting
@@ -424,6 +515,9 @@ class MainPackingColonyService:
         @param specification_file_path: The specification file path in the plugin file.
         """
 
+        # prints a debug message
+        self.main_packing_colony_service_plugin.debug("Unpacking plugin file '%s' into '%s'" % (file_path, target_path))
+
         # retrieves the specification manager plugin
         specification_manager_plugin = self.main_packing_colony_service_plugin.specification_manager_plugin
 
@@ -433,30 +527,40 @@ class MainPackingColonyService:
         # opens the compressed file
         compressed_file.open(file_path, "r")
 
-        # reads the specification file from the compressed file
-        specification_file_buffer = compressed_file.read(specification_file_path)
+        try:
+            # reads the specification file from the compressed file
+            specification_file_buffer = compressed_file.read(specification_file_path)
 
-        # retrieves the plugin specification for the given file
-        plugin_specification = specification_manager_plugin.get_specification_file_buffer(specification_file_buffer, {})
+            # retrieves the plugin specification for the given file
+            plugin_specification = specification_manager_plugin.get_specification_file_buffer(specification_file_buffer, {})
 
-        # retrieves the plugin main file
-        main_file = plugin_specification.get_property(MAIN_FILE_VALUE)
+            # retrieves the plugin main file
+            main_file = plugin_specification.get_property(MAIN_FILE_VALUE)
 
-        # retrieves the plugin resources
-        plugin_resources = plugin_specification.get_property(RESOURCES_VALUE)
+            # retrieves the plugin resources
+            plugin_resources = plugin_specification.get_property(RESOURCES_VALUE)
 
-        # in case the plugin contains resources
-        if plugin_resources:
+            # in case the plugin contains no resources
+            if not plugin_resources:
+                # raises the plugin (un)processing exception
+                raise main_packing_colony_service_exceptions.PluginUnprocessingException("no plugin resources found")
+
             # iterates over all the plugin resources
             for plugin_resource in plugin_resources:
                 # in case the resource is not the main file
                 # (because it should be extracted at the end)
                 if not plugin_resource == main_file:
+                    # prints a debug message
+                    self.main_packing_colony_service_plugin.debug("Extracting resource '%s'" % plugin_resource)
+
                     # extracts the resource
-                    compressed_file.extract(RESOURCES_BASE_PATH + "/" + plugin_resource, target_path)
+                    compressed_file.extract(RESOURCES_BASE_PATH + "/" + plugin_resource, target_path + "/" + plugin_resource, False)
 
             # the main file is extracted at the end to avoid any problem
-            compressed_file.extract(main_file, target_path)
+            compressed_file.extract(RESOURCES_BASE_PATH + "/" + main_file, target_path + "/" + main_file, False)
+        finally:
+            # closes the compressed file
+            compressed_file.close()
 
 class ColonyCompressedFile:
     """
@@ -554,21 +658,15 @@ class ColonyCompressedFile:
         elif self.mode == TAR_FILE_MODE:
             self.file.add(file_path, target_file_path)
 
-    def extract(self, file_path, target_path = ""):
+    def extract(self, file_path, target_path = "", proccess_relative = True):
         if self.mode == ZIP_FILE_MODE:
-            if hasattr(self.file, EXTRACT_VALUE):
-                self.file.extract(file_path, target_path)
-            else:
-                self._extract_zip(file_path, target_path)
+            self._extract_zip(file_path, target_path, proccess_relative)
         elif self.mode == TAR_FILE_MODE:
             self.file.extract(file_path, target_path)
 
     def extract_all(self, target_path = ""):
         if self.mode == ZIP_FILE_MODE:
-            if hasattr(self.file, EXTRACTALL_VALUE):
-                self.file.extractall(target_path)
-            else:
-                self._extract_all_zip(target_path)
+            self._extract_all_zip(target_path)
         elif self.mode == TAR_FILE_MODE:
             self.file.extractall(target_path)
 
@@ -588,10 +686,15 @@ class ColonyCompressedFile:
         # returns the file contents
         return file_contents
 
-    def _extract_zip(self, file_path, target_path):
-        # creates the complete target path by appending the
-        # file path to the target path
-        complete_target_path = target_path + "/" + file_path
+    def _extract_zip(self, file_path, target_path, proccess_relative = True):
+        # in case the process relative flag is set
+        if proccess_relative:
+            # creates the complete target path by appending the
+            # file path to the target path
+            complete_target_path = target_path + "/" + file_path
+        else:
+            # sets the complete target path as the target path
+            complete_target_path = target_path
 
         # normalizes the target path
         target_path_normalized = colony.libs.path_util.normalize_path(complete_target_path)
@@ -610,12 +713,13 @@ class ColonyCompressedFile:
         # opens the target file for writing
         target_file = open(complete_target_path, "wb")
 
-        # writes the zip file contents into
-        # the target file
-        target_file.write(zip_file_contents)
-
-        # closes the target file
-        target_file.close()
+        try:
+            # writes the zip file contents into
+            # the target file
+            target_file.write(zip_file_contents)
+        finally:
+            # closes the target file
+            target_file.close()
 
     def _extract_all_zip(self, target_path):
         # retrieves the member paths from the zip file
