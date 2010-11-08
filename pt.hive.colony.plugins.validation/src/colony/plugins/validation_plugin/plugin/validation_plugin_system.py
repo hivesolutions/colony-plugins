@@ -426,6 +426,11 @@ class ValidationPlugin:
         # retrieves the plugin file name
         plugin_file_name = plugin_information.plugin_file_name
 
+        # checks that the type value is correct
+        if not plugin_descriptor_data[TYPE_VALUE] == PLUGIN_VALUE:
+            # logs the validation error
+            self.add_validation_error(validation_errors, plugin_information, "'%s' json descriptor file has invalid attribute 'type'" % plugin_module_name)
+
         # checks that the platform value is correct
         if not plugin_descriptor_data[PLATFORM_VALUE] == PYTHON_VALUE:
             # logs the validation error
