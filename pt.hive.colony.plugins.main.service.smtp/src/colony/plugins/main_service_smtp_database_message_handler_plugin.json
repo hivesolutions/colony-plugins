@@ -1,4 +1,5 @@
 {
+    "type" : "plugin",
     "platform" : "python",
     "sub_platforms" : ["cpython", "jython"],
     "id" : "pt.hive.colony.plugins.main.service.smtp.database_message_handler",
