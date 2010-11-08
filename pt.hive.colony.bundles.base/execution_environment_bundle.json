@@ -1,0 +1,12 @@
+{
+    "type" : "bundle",
+    "platform" : "python",
+    "id" : "pt.hive.colony.bundles.execution_environment",
+    "version" : "1.0.0",
+    "author" : "Hive Solutions Lda. <development@hive.pt>",
+    "plugins" : [{
+                "id" : "pt.hive.colony.plugins.misc.execution_environment",
+                "version" : "1.0.0"
+            }],
+    "dependencies" : []
+}
