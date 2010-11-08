@@ -1,4 +1,5 @@
 {
+    "type" : "plugin",
     "platform" : "python",
     "sub_platforms" : ["cpython"],
     "id" : "pt.hive.colony.plugins.misc.gui.shell_interface",
