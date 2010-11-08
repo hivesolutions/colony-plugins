@@ -508,11 +508,6 @@ class BuildAutomation:
                 # prints an error message
                 logger.error("Problem while executing build automation '%s'" % unicode(exception))
 
-                import traceback
-                import sys
-
-                traceback.print_exc(file=sys.stdout)
-
                 # returns false (invalid)
                 return False
 
