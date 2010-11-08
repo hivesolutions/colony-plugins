@@ -264,8 +264,12 @@ class BuildAutomationFileParser(Parser):
             build.target_directory = self.parse_build_automation_build_target_directory(build_automation_build_element)
         elif node_name == "classes_directory":
             build.classes_directory = self.parse_build_automation_build_classes_directory(build_automation_build_element)
+        elif node_name == "bundles_directory":
+            build.bundles_directory = self.parse_build_automation_build_bundles_directory(build_automation_build_element)
         elif node_name == "plugins_directory":
             build.plugins_directory = self.parse_build_automation_build_plugins_directory(build_automation_build_element)
+        elif node_name == "libraries_directory":
+            build.libraries_directory = self.parse_build_automation_build_libraries_directory(build_automation_build_element)
         elif node_name == "documentation_directory":
             build.documentation_directory = self.parse_build_automation_build_documentation_directory(build_automation_build_element)
         elif node_name == "repository_directory":
@@ -301,9 +305,17 @@ class BuildAutomationFileParser(Parser):
         build_automation_build_classes_directory = build_classes_directory.firstChild.data.strip()
         return build_automation_build_classes_directory
 
+    def parse_build_automation_build_bundles_directory(self, build_bundles_directory):
+        build_automation_build_bundles_directory = build_bundles_directory.firstChild.data.strip()
+        return build_automation_build_bundles_directory
+
     def parse_build_automation_build_plugins_directory(self, build_plugins_directory):
         build_automation_build_plugins_directory = build_plugins_directory.firstChild.data.strip()
         return build_automation_build_plugins_directory
+
+    def parse_build_automation_build_libraries_directory(self, build_libraries_directory):
+        build_automation_build_libraries_directory = build_libraries_directory.firstChild.data.strip()
+        return build_automation_build_libraries_directory
 
     def parse_build_automation_build_documentation_directory(self, build_documentation_directory):
         build_automation_build_documentation_directory = build_documentation_directory.firstChild.data.strip()
@@ -677,8 +689,14 @@ class Build:
     classes_directory = "none"
     """ The classes directory """
 
+    bundles_directory = "none"
+    """ The bundles directory """
+
     plugins_directory = "none"
     """ The plugins directory """
+
+    libraries_directory = "none"
+    """ The libraries directory """
 
     documentation_directory = "none"
     """ The documentation directory """
@@ -707,12 +725,14 @@ class Build:
     plugins = []
     """ The list of plugins """
 
-    def __init__(self, default_stage = "none", execution_directory = "none", target_directory = "none", classes_directory = "none", plugins_directory = "none", documentation_directory = "none", repository_directory = "none", resources_directory = "none", log_directory = "none", source_directory = "none", final_name = "none", clean_target_directory = "none"):
+    def __init__(self, default_stage = "none", execution_directory = "none", target_directory = "none", classes_directory = "none", bundles_directory = "none", plugins_directory = "none", libraries_directory = "none", documentation_directory = "none", repository_directory = "none", resources_directory = "none", log_directory = "none", source_directory = "none", final_name = "none", clean_target_directory = "none"):
         self.default_stage = default_stage
         self.execution_directory = execution_directory
         self.target_directory = target_directory
         self.classes_directory = classes_directory
+        self.bundles_directory = bundles_directory
         self.plugins_directory = plugins_directory
+        self.libraries_directory = libraries_directory
         self.documentation_directory = documentation_directory
         self.repository_directory = repository_directory
         self.resources_directory = resources_directory

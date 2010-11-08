@@ -45,7 +45,9 @@
         <execution_directory>.</execution_directory>
         <target_directory>target</target_directory>
         <classes_directory>target/classes</classes_directory>
+        <bundles_directory>target/bundles</bundles_directory>
         <plugins_directory>target/plugins</plugins_directory>
+        <libraries_directory>target/libraries</libraries_directory>
         <documentation_directory>target/documentation</documentation_directory>
         <repository_directory>target/repository</repository_directory>
         <resources_directory>target/resources</resources_directory>

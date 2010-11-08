@@ -756,10 +756,20 @@ class BuildAutomation:
             build_automation_classes_directory = self.parse_string(build.classes_directory, build_automation_structure)
             build_automation_structure.build_properties["classes_directory"] = build_automation_classes_directory
 
+        if build.bundles_directory:
+            # retrieves the build bundles directory
+            build_automation_bundles_directory = self.parse_string(build.bundles_directory, build_automation_structure)
+            build_automation_structure.build_properties["bundles_directory"] = build_automation_bundles_directory
+
         if build.plugins_directory:
             # retrieves the build plugins directory
             build_automation_plugins_directory = self.parse_string(build.plugins_directory, build_automation_structure)
             build_automation_structure.build_properties["plugins_directory"] = build_automation_plugins_directory
+
+        if build.libraries_directory:
+            # retrieves the build libraries directory
+            build_automation_libraries_directory = self.parse_string(build.libraries_directory, build_automation_structure)
+            build_automation_structure.build_properties["libraries_directory"] = build_automation_libraries_directory
 
         if build.documentation_directory:
             # retrieves the build documentation directory
@@ -922,8 +932,14 @@ class BuildAutomation:
         # retrieves the classes directory path value
         classes_directory_path = build_properties["classes_directory"]
 
+        # retrieves the bundles directory path value
+        bundles_directory_path = build_properties["bundles_directory"]
+
         # retrieves the plugins directory path value
         plugins_directory_path = build_properties["plugins_directory"]
+
+        # retrieves the libraries directory path value
+        libraries_directory_path = build_properties["libraries_directory"]
 
         # retrieves the documentation directory path value
         documentation_directory_path = build_properties["documentation_directory"]
@@ -946,8 +962,14 @@ class BuildAutomation:
         # creates the complete classes directory path
         complete_classes_directory_path = execution_directory_path + "/" + classes_directory_path
 
+        # creates the complete bundles directory path
+        complete_bundles_directory_path = execution_directory_path + "/" + bundles_directory_path
+
         # creates the complete plugins directory path
         complete_plugins_directory_path = execution_directory_path + "/" + plugins_directory_path
+
+        # creates the complete libraries directory path
+        complete_libraries_directory_path = execution_directory_path + "/" + libraries_directory_path
 
         # creates the complete documentation directory path
         complete_documentation_directory_path = execution_directory_path + "/" + documentation_directory_path
@@ -979,10 +1001,20 @@ class BuildAutomation:
             # creates the classes directory
             os.mkdir(complete_classes_directory_path)
 
+        # in case the bundles directory does not exist
+        if not os.path.isdir(complete_bundles_directory_path):
+            # creates the bundles directory
+            os.mkdir(complete_bundles_directory_path)
+
         # in case the plugins directory does not exist
         if not os.path.isdir(complete_plugins_directory_path):
             # creates the plugins directory
             os.mkdir(complete_plugins_directory_path)
+
+        # in case the libraries directory does not exist
+        if not os.path.isdir(complete_libraries_directory_path):
+            # creates the libraries directory
+            os.mkdir(complete_libraries_directory_path)
 
         # in case the documentation directory does not exist
         if not os.path.isdir(complete_documentation_directory_path):
