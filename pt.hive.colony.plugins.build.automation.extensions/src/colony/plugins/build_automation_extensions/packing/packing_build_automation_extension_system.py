@@ -37,17 +37,29 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
+BUNDLES_DIRECTORY_VALUE = "bundles_directory"
+""" The bundles directory value """
+
 PLUGINS_DIRECTORY_VALUE = "plugins_directory"
 """ The plugins directory value """
 
 TARGET_PATH_VALUE = "target_path"
 """ The target path value """
 
+PLUGINS_PATH_VALUE = "plugins_path"
+""" The plugins path value """
+
 COLONY_VALUE = "colony"
 """ The colony value """
 
 SPECIFICATION_FILE_VALUE = "specification_file"
 """ The specification file value """
+
+TYPE_VALUE = "type"
+""" The type value """
+
+PLUGIN_VALUE = "plugin"
+""" The plugin value """
 
 class PackingBuildAutomationExtension:
     """
@@ -74,17 +86,24 @@ class PackingBuildAutomationExtension:
         # retrieves the build properties
         build_properties = build_automation_structure.get_all_build_properties()
 
+        # retrieves the bundles directory
+        bundles_directory = build_properties[BUNDLES_DIRECTORY_VALUE]
+
         # retrieves the plugins directory
         plugins_directory = build_properties[PLUGINS_DIRECTORY_VALUE]
 
         # retrieves the specification file
         specification_file = parameters[SPECIFICATION_FILE_VALUE]
 
+        # retrieves the type
+        type = parameters.get(TYPE_VALUE, PLUGIN_VALUE)
+
         # creates the file paths list
         file_paths_list = [specification_file]
 
         # creates the properties map for the directory packing
-        properties = {TARGET_PATH_VALUE : plugins_directory}
+        properties = {TARGET_PATH_VALUE : plugins_directory,
+                      PLUGINS_PATH_VALUE : plugins_directory}
 
         # print an info message
         logger.info("Packing files using specification file %s into %s" % (specification_file, plugins_directory))
