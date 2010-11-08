@@ -46,6 +46,8 @@ import tarfile
 
 import colony.libs.path_util
 
+import main_packing_colony_service_exceptions
+
 SERVICE_NAME = "colony"
 """ The service name """
 
@@ -57,6 +59,9 @@ VERSION_VALUE = "version"
 
 RESOURCES_VALUE = "resources"
 """ The resources value """
+
+PLUGINS_VALUE = "plugins"
+""" The plugins value """
 
 SPECIFICATION_VALUE = "specification"
 """ The specification value """
@@ -70,6 +75,9 @@ PLUGIN_REGEX_VALUE = "plugin_regex"
 TARGET_PATH_VALUE = "target_path"
 """ The target path value """
 
+PLUGINS_PATH_VALUE = "plugins_path"
+""" The plugins path value """
+
 MAIN_FILE_VALUE = "main_file"
 """ The main file value """
 
@@ -82,8 +90,14 @@ EXTRACTALL_VALUE = "extractall"
 SPECIFICATION_FILE_PATH_VALUE = "specification_file_path"
 """ The specification file path value """
 
+JSON_BUNDLE_REGEX = ".+bundle.json$"
+""" The json bundle regex """
+
 JSON_PLUGIN_REGEX = ".+plugin.json$"
 """ The json plugin regex """
+
+JSON_LIBRARY_REGEX = ".+library.json$"
+""" The json library regex """
 
 ZIP_FILE_MODE = 1
 """ The zip file mode """
@@ -91,13 +105,25 @@ ZIP_FILE_MODE = 1
 TAR_FILE_MODE = 2
 """ The tar file mode """
 
-DEFAULT_COLONY_PLUGIN_FILE_MODE = ZIP_FILE_MODE
-""" The default colony plugin file mode """
+RESOURCES_BASE_PATH = "resources"
+""" The resources base path """
+
+PLUGINS_BASE_PATH = "plugins"
+""" The plugins base path """
+
+DEFAULT_COLONY_COMPRESSED_FILE_MODE = ZIP_FILE_MODE
+""" The default colony compressed file mode """
+
+DEFAULT_COLONY_BUNDLE_FILE_EXTENSION = ".cbx"
+""" The default colony bundle file extension """
 
 DEFAULT_COLONY_PLUGIN_FILE_EXTENSION = ".cpx"
 """ The default colony plugin file extension """
 
-DEFAULT_TARGET_PATH = "colony"
+DEFAULT_COLONY_LIBRARY_FILE_EXTENSION = ".clx"
+""" The default colony library file extension """
+
+DEFAULT_TARGET_PATH = "."
 """ The default target path """
 
 DEFAULT_TAR_COMPRESSION_FORMAT = "bz2"
@@ -117,6 +143,15 @@ class MainPackingColonyService:
     main_packing_colony_service_plugin = None
     """ The main packing colony service plugin """
 
+    bundle_regex = None
+    """ The bundle regex """
+
+    plugin_regex = None
+    """ The plugin regex """
+
+    library_regex = None
+    """ The library regex """
+
     def __init__(self, main_packing_colony_service_plugin):
         """
         Constructor of the class.
@@ -126,6 +161,11 @@ class MainPackingColonyService:
         """
 
         self.main_packing_colony_service_plugin = main_packing_colony_service_plugin
+
+        # compiles the regex values
+        self.bundle_regex = re.compile(JSON_BUNDLE_REGEX)
+        self.plugin_regex = re.compile(JSON_PLUGIN_REGEX)
+        self.library_regex = re.compile(JSON_LIBRARY_REGEX)
 
     def get_service_name(self):
         """
@@ -151,11 +191,8 @@ class MainPackingColonyService:
         # retrieves the recursive property
         recursive = properties.get(RECURSIVE_VALUE, False)
 
-        # compiles the plugin regex
-        plugin_regex = re.compile(JSON_PLUGIN_REGEX)
-
         # sets the plugin regex in the properties
-        properties[PLUGIN_REGEX_VALUE] = plugin_regex
+        properties[PLUGIN_REGEX_VALUE] = self.plugin_regex
 
         # in case the recursion is activated
         if recursive:
@@ -178,19 +215,30 @@ class MainPackingColonyService:
         @param properties: The properties for the packing.
         """
 
-        # compiles the plugin regex
-        plugin_regex = re.compile(JSON_PLUGIN_REGEX)
-
         # retrieves the target path property
         target_path = properties.get(TARGET_PATH_VALUE, DEFAULT_TARGET_PATH)
+
+        # retrieves the plugins path property
+        plugins_path = properties.get(PLUGINS_PATH_VALUE, DEFAULT_TARGET_PATH)
 
         # iterates over all the file path in the
         # file paths list
         for file_path in file_paths_list:
-            # in case there is a match in the directory file name
-            if plugin_regex.match(file_path):
+            # in case there is a bundle match in
+            # the directory file name
+            if self.bundle_regex.match(file_path):
+                # processes the bundle file
+                self._process_bundle_file(file_path, target_path, plugins_path)
+            # in case there is a plugin match in
+            # the directory file name
+            elif self.plugin_regex.match(file_path):
                 # processes the plugin file
                 self._process_plugin_file(file_path, target_path)
+            # in case there is a library match in
+            # the directory file name
+            elif self.library_regex.match(file_path):
+                # processes the library file
+                self._process_library_file(file_path, target_path)
 
     def unpack_files(self, file_paths_list, properties):
         """
@@ -245,6 +293,68 @@ class MainPackingColonyService:
                 # processes the plugin file
                 self._process_plugin_file(full_file_path, target_path)
 
+    def _process_bundle_file(self, file_path, target_path, plugins_path):
+        """
+        Processes the bundle file in the given file path, putting
+        the results in the target path.
+
+        @type file_path: String
+        @param file_path: The path to the bundle file to be processed.
+        @type target_path: String
+        @param target_path: The target path to be used in the results.
+        @type plugins_path: String
+        @param plugins_path: The plugins path to be used in the retrieval
+        of plugin files.
+        """
+
+        # retrieves the specification manager plugin
+        specification_manager_plugin = self.main_packing_colony_service_plugin.specification_manager_plugin
+
+        # retrieves the bundle specification for the given file
+        bundle_specification = specification_manager_plugin.get_specification(file_path, {})
+
+        # retrieves the bundle id
+        bundle_id = bundle_specification.get_property(ID_VALUE)
+
+        # retrieves the bundle version
+        bundle_version = bundle_specification.get_property(VERSION_VALUE)
+
+        # retrieves the bundle plugins
+        bundle_plugins = bundle_specification.get_property(PLUGINS_VALUE)
+
+        # retrieves the base path and extension from the file path
+        _file_base_path, file_extension = os.path.splitext(file_path)
+
+        # creates a new compressed file
+        compressed_file = ColonyCompressedFile()
+
+        # opens the compressed file
+        compressed_file.open(target_path + "/" + bundle_id + "_" + bundle_version + DEFAULT_COLONY_BUNDLE_FILE_EXTENSION, "w")
+
+        try:
+            # iterates over all the bundle plugins
+            for bundle_plugin in bundle_plugins:
+                # retrieves the bundle plugin id
+                bundle_plugin_id = bundle_plugin[ID_VALUE]
+
+                # retrieves the bundle plugin version
+                bundle_plugin_version = bundle_plugin[VERSION_VALUE]
+
+                # creates the bundle plugin name
+                bundle_plugin_name = bundle_plugin_id + "_" + bundle_plugin_version + DEFAULT_COLONY_PLUGIN_FILE_EXTENSION
+
+                # creates the bundle plugin path
+                bundle_plugin_path = plugins_path + "/" + bundle_plugin_name
+
+                # adds the bundle plugin file to the compressed file
+                compressed_file.add(bundle_plugin_path, PLUGINS_BASE_PATH + "/" + bundle_plugin_name)
+
+            # adds the specification file to the compressed file
+            compressed_file.add(file_path, SPECIFICATION_VALUE + file_extension)
+        finally:
+            # closes the compressed file
+            compressed_file.close()
+
     def _process_plugin_file(self, file_path, target_path):
         """
         Processes the plugin file in the given file path, putting
@@ -260,7 +370,7 @@ class MainPackingColonyService:
         specification_manager_plugin = self.main_packing_colony_service_plugin.specification_manager_plugin
 
         # retrieves the plugin specification for the given file
-        plugin_specification = specification_manager_plugin.get_plugin_specification(file_path, {})
+        plugin_specification = specification_manager_plugin.get_specification(file_path, {})
 
         # retrieves the plugin id
         plugin_id = plugin_specification.get_property(ID_VALUE)
@@ -271,29 +381,33 @@ class MainPackingColonyService:
         # retrieves the plugin resources
         plugin_resources = plugin_specification.get_property(RESOURCES_VALUE)
 
-        # in case the plugin contains resources
-        if plugin_resources:
-            # retrieves the base directory
-            base_directory = os.path.dirname(file_path)
+        # in case the plugin contains no resources
+        if not plugin_resources:
+            # raises the plugin processing exception
+            raise main_packing_colony_service_exceptions.PluginProcessingException("no plugin resources found")
 
-            # retrieves the base path and extension from the file path
-            _file_base_path, file_extension = os.path.splitext(file_path)
+        # retrieves the base directory
+        base_directory = os.path.dirname(file_path)
 
-            # creates a new compressed file
-            compressed_file = ColonyPluginCompressedFile()
+        # retrieves the base path and extension from the file path
+        _file_base_path, file_extension = os.path.splitext(file_path)
 
-            # opens the compressed file
-            compressed_file.open(target_path + "/" + plugin_id + "_" + plugin_version + DEFAULT_COLONY_PLUGIN_FILE_EXTENSION, "w")
+        # creates a new compressed file
+        compressed_file = ColonyCompressedFile()
 
+        # opens the compressed file
+        compressed_file.open(target_path + "/" + plugin_id + "_" + plugin_version + DEFAULT_COLONY_PLUGIN_FILE_EXTENSION, "w")
+
+        try:
             # iterates over all the plugin resources
             for plugin_resource in plugin_resources:
                 # adds the plugin resource to the compressed file, using
                 # the correct relative paths
-                compressed_file.add(base_directory + "/" + plugin_resource, plugin_resource)
+                compressed_file.add(base_directory + "/" + plugin_resource, RESOURCES_BASE_PATH + "/" + plugin_resource)
 
             # adds the specification file to the compressed file
             compressed_file.add(file_path, SPECIFICATION_VALUE + file_extension)
-
+        finally:
             # closes the compressed file
             compressed_file.close()
 
@@ -314,7 +428,7 @@ class MainPackingColonyService:
         specification_manager_plugin = self.main_packing_colony_service_plugin.specification_manager_plugin
 
         # creates a new compressed file
-        compressed_file = ColonyPluginCompressedFile()
+        compressed_file = ColonyCompressedFile()
 
         # opens the compressed file
         compressed_file.open(file_path, "r")
@@ -323,7 +437,7 @@ class MainPackingColonyService:
         specification_file_buffer = compressed_file.read(specification_file_path)
 
         # retrieves the plugin specification for the given file
-        plugin_specification = specification_manager_plugin.get_plugin_specification_file_buffer(specification_file_buffer, {})
+        plugin_specification = specification_manager_plugin.get_specification_file_buffer(specification_file_buffer, {})
 
         # retrieves the plugin main file
         main_file = plugin_specification.get_property(MAIN_FILE_VALUE)
@@ -339,24 +453,24 @@ class MainPackingColonyService:
                 # (because it should be extracted at the end)
                 if not plugin_resource == main_file:
                     # extracts the resource
-                    compressed_file.extract(plugin_resource, target_path)
+                    compressed_file.extract(RESOURCES_BASE_PATH + "/" + plugin_resource, target_path)
 
             # the main file is extracted at the end to avoid any problem
             compressed_file.extract(main_file, target_path)
 
-class ColonyPluginCompressedFile:
+class ColonyCompressedFile:
     """
-    The colony plugin compressed file class, that
-    abstracts the creation of the colony plugin file.
+    The colony compressed file class, that abstracts
+    the creation of the colony compressed file.
     """
 
-    mode = DEFAULT_COLONY_PLUGIN_FILE_MODE
-    """ The file mode to be used to organize the plugin file """
+    mode = DEFAULT_COLONY_COMPRESSED_FILE_MODE
+    """ The file mode to be used to organize the compressed file """
 
     file = None
     """ The file reference to be used in writing """
 
-    def __init__(self, mode = DEFAULT_COLONY_PLUGIN_FILE_MODE):
+    def __init__(self, mode = DEFAULT_COLONY_COMPRESSED_FILE_MODE):
         """
         Constructor of the class.
 
