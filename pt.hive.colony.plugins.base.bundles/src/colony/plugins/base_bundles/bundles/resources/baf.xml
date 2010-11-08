@@ -33,11 +33,11 @@
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://www.hive.pt xsd/baf.xsd">
     <artifact>
-        <id>pt.hive.colony.plugins.business.session_manager</id>
+        <id>pt.hive.colony.plugins.base.bundles</id>
         <version>1.0.0</version>
         <type>colony</type>
-        <name>Business Session Manager Plugin</name>
-        <description>Business Session Manager Plugin</description>
+        <name>Base Bundles Plugin</name>
+        <description>Base Bundles Plugin</description>
         <url>http://www.hive.pt</url>
     </artifact>
     <build>
@@ -48,7 +48,15 @@
                 <version>1.0.0</version>
                 <stage>build</stage>
                 <configuration>
-                    <specification_file>$base{plugin_directory}/business_session_manager_plugin.json</specification_file>
+                    <specification_file>$base{plugin_directory}/base_bundles_plugin.json</specification_file>
+                </configuration>
+            </plugin>
+            <plugin>
+                <id>pt.hive.colony.plugins.build.automation.extensions.packing</id>
+                <version>1.0.0</version>
+                <stage>build</stage>
+                <configuration>
+                    <specification_file>$base{plugin_directory}/base_bundles/bundles/autoloader_bundle.json</specification_file>
                 </configuration>
             </plugin>
         </plugins>
