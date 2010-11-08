@@ -1,0 +1,24 @@
+{
+    "type" : "bundle",
+    "platform" : "python",
+    "id" : "pt.hive.colony.bundles.main.localization",
+    "version" : "1.0.0",
+    "author" : "Hive Solutions Lda. <development@hive.pt>",
+    "plugins" : [{
+                "id" : "pt.hive.colony.plugins.main.localization.localization_manager",
+                "version" : "1.0.0"
+            }, {
+                "id" : "pt.hive.colony.plugins.main.localization.localization_translation_json_bundle_handler",
+                "version" : "1.0.0"
+            }, {
+                "id" : "pt.hive.colony.plugins.main.localization.translation_bundle.en_us",
+                "version" : "1.0.0"
+            }, {
+                "id" : "pt.hive.colony.plugins.main.localization.translation_bundle.pt_pt",
+                "version" : "1.0.0"
+            }],
+    "dependencies" : [{
+                "id" : "pt.hive.colony.bundles.json",
+                "version" : "1.0.0"
+            }]
+}
