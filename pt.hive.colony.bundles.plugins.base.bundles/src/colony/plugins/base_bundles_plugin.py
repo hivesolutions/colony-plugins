@@ -44,7 +44,7 @@ class BaseBundlesPlugin(colony.base.plugin_system.Plugin):
     The main class for the Base Bundles plugin.
     """
 
-    id = "pt.hive.colony.plugins.base.bundles"
+    id = "pt.hive.colony.bundles.plugins.base.bundles"
     name = "Base Bundles Plugin"
     short_name = "Base Bundles"
     description = "Base Bundles Plugin"
