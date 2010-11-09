@@ -1,7 +1,7 @@
 {
     "type" : "bundle",
     "platform" : "python",
-    "id" : "dummy",
+    "id" : "pt.hive.colony.bundles.dummy",
     "version" : "1.0.0",
     "author" : "Hive Solutions Lda. <development@hive.pt>",
     "plugins" : [{

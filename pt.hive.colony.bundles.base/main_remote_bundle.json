@@ -11,9 +11,6 @@
                 "id" : "pt.hive.colony.plugins.main.remote.client.manager",
                 "version" : "1.0.0"
             }, {
-                "id" : "pt.hive.colony.plugins.main.remote.client.pyro",
-                "version" : "1.0.0"
-            }, {
                 "id" : "pt.hive.colony.plugins.main.remote.client.xmlrpc",
                 "version" : "1.0.0"
             }, {
@@ -21,9 +18,6 @@
                 "version" : "1.0.0"
             }, {
                 "id" : "pt.hive.colony.plugins.main.remote.manager",
-                "version" : "1.0.0"
-            }, {
-                "id" : "pt.hive.colony.plugins.main.remote.pyro.manager",
                 "version" : "1.0.0"
             }, {
                 "id" : "pt.hive.colony.plugins.main.remote.rest.encoder.json",

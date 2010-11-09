@@ -1,7 +1,7 @@
 {
     "type" : "bundle",
     "platform" : "python",
-    "id" : "web manager",
+    "id" : "pt.hive.colony.bundles.web.mvc.manager",
     "version" : "1.0.0",
     "author" : "Hive Solutions Lda. <development@hive.pt>",
     "plugins" : [{

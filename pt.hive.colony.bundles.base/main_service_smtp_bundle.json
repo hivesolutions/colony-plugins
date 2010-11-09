@@ -27,7 +27,7 @@
                 "version" : "1.0.0"
             }],
     "dependencies" : [{
-                "id" : "pt.hive.colony.bundles.email",
+                "id" : "pt.hive.colony.bundles.mail",
                 "version" : "1.0.0"
             }, {
                 "id" : "pt.hive.colony.bundles.main.client.dns",
