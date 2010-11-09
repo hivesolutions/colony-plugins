@@ -354,6 +354,7 @@ configuration = {
                          "handler" : "proxy",
                          "allow_redirection" : False,
                          "request_properties" : {
+                             "proxy_type" : "reverse",
                              "proxy_target" : "http://www.hive.pt"
                          }
                      }
