@@ -41,7 +41,7 @@ import colony.base.plugin_system
 
 class MainLogPlugin(colony.base.plugin_system.Plugin):
     """
-    The main class for the Log Main plugin
+    The main class for the Log Main plugin.
     """
 
     id = "pt.hive.colony.plugins.main.log"
@@ -60,22 +60,38 @@ class MainLogPlugin(colony.base.plugin_system.Plugin):
     events_registrable = []
     main_modules = ["main_log.log.main_log_system"]
 
-    loggers_map = {}
+    main_log = None
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
         global main_log
         import main_log.log.main_log_system
 
-    def get_logger(self, logger_name):
-        if not logger_name in self.loggers_map:
-            logger = main_log.log.main_log_system.DefaultLogger(logger_name)
-            self.loggers_map[logger_name] = logger
+        self.main_log = main_log.log.main_log_system.MainLog(self)
 
-        return self.loggers_map[logger_name]
+    def end_load_plugin(self):
+        colony.base.plugin_system.Plugin.end_load_plugin(self)
+
+    def unload_plugin(self):
+        colony.base.plugin_system.Plugin.unload_plugin(self)
+
+    def end_unload_plugin(self):
+        colony.base.plugin_system.Plugin.end_unload_plugin(self)
+
+    def load_allowed(self, plugin, capability):
+        colony.base.plugin_system.Plugin.load_allowed(self, plugin, capability)
+
+    def unload_allowed(self, plugin, capability):
+        colony.base.plugin_system.Plugin.unload_allowed(self, plugin, capability)
+
+    def dependency_injected(self, plugin):
+        colony.base.plugin_system.Plugin.dependency_injected(self, plugin)
+
+    def get_logger(self, logger_name):
+        return self.main_log.get_logger(logger_name)
 
     def get_default_handler(self):
-        return main_log.log.main_log_system.DefaultHandler()
+        return self.main_log.get_default_handler()
 
     def get_composite_handler(self):
-        return main_log.log.main_log_system.CompositeHandler()
+        return self.main_log.get_composite_handler()

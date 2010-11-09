@@ -39,8 +39,53 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 import logging
 
-#@todo: review and comment this file
+class MainLog:
+    """
+    The main log class.
+    """
+
+    main_log_plugin = None
+    """ The main log plugin """
+
+    loggers_map = {}
+    """ The loggers map """
+
+    def __init__(self, main_log_plugin):
+        """
+        Constructor of the class.
+
+        @type main_log_plugin: MainLogPlugin
+        @param main_log_plugin: The main log plugin
+        """
+
+        self.main_log_plugin = main_log_plugin
+
+    def get_logger(self, logger_name):
+        # in case the logger name does not exist in the
+        # loggers map
+        if not logger_name in self.loggers_map:
+            # creates the logger with the logger name
+            logger = DefaultLogger(logger_name)
+
+            # sets the logger in the loggers map
+            self.loggers_map[logger_name] = logger
+
+        # retrieves the logger from the loggers map
+        logger = self.loggers_map[logger_name]
+
+        # return the logger
+        return logger
+
+    def get_default_handler(self):
+        return DefaultHandler()
+
+    def get_composite_handler(self):
+        return CompositeHandler()
+
 class Logger:
+    """
+    The logger class.
+    """
 
     name = "none"
     handler = None
