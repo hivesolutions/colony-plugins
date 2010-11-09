@@ -56,7 +56,17 @@
                 <version>1.0.0</version>
                 <stage>build</stage>
                 <configuration>
-                    <specification_file>$base{plugin_directory}/base_bundles/bundles/autoloader_bundle.json</specification_file>
+                    <type>bundle</type>
+                    <specification_file>$base{plugin_directory}/base_bundles/bundles/specifications/autoloader_bundle.json</specification_file>
+                </configuration>
+            </plugin>
+            <plugin>
+                <id>pt.hive.colony.plugins.build.automation.extensions.packing</id>
+                <version>1.0.0</version>
+                <stage>build</stage>
+                <configuration>
+                    <type>bundle</type>
+                    <specification_file>$base{plugin_directory}/base_bundles/bundles/specifications/bencode_bundle.json</specification_file>
                 </configuration>
             </plugin>
         </plugins>
