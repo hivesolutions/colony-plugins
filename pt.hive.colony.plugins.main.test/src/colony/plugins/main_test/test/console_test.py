@@ -49,9 +49,9 @@ INVALID_TEST_ID_MESSAGE = "invalid test id"
 """ The invalid test id message """
 
 HELP_TEXT = "### UNIT TESTING HELP ###\n\
-start_test <unit-testid>  - starts a unit test\n\
-start_all_test            - starts all the unit tests\n\
-show_all_test             - shows all the unit tests"
+start_test <unit-testid> - starts a unit test\n\
+start_all_test           - starts all the unit tests\n\
+show_all_test            - shows all the unit tests"
 """ The help text """
 
 TABLE_TOP_TEXT = "ID      TEST CASE NAME                PLUGIN ID"
