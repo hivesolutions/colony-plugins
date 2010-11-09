@@ -59,7 +59,8 @@ class MainPackingColonyServicePlugin(colony.base.plugin_system.Plugin):
                     "pt.hive.colony.plugins.specifications.specification_manager", "1.0.0")]
     events_handled = []
     events_registrable = []
-    main_modules = ["main_packing.colony_service.main_packing_colony_service_system"]
+    main_modules = ["main_packing.colony_service.main_packing_colony_service_exceptions",
+                    "main_packing.colony_service.main_packing_colony_service_system"]
 
     main_packing_colony_service = None
 

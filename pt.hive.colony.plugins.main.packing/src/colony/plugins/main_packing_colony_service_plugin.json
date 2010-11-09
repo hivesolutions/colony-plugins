@@ -1,5 +1,4 @@
 {
-    "type" : "plugin",
     "platform" : "python",
     "sub_platforms" : ["cpython"],
     "id" : "pt.hive.colony.plugins.main.packing.colony_service",
@@ -19,6 +18,7 @@
             "main_packing_colony_service_plugin.py",
             "main_packing/__init__.py",
             "main_packing/colony_service/__init__.py",
+            "main_packing/colony_service/main_packing_colony_service_exceptions.py",
             "main_packing/colony_service/main_packing_colony_service_system.py",
             "main_packing/colony_service/resources/baf.xml"]
 }

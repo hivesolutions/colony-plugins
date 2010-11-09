@@ -1,5 +1,4 @@
 {
-    "type" : "plugin",
     "platform" : "python",
     "sub_platforms" : ["cpython", "jython", "iron_python"],
     "id" : "pt.hive.colony.plugins.resources.resource_manager",
@@ -51,6 +50,8 @@
             "resources/resource_manager/resources/main_service_http/run_mode/production/resources.xml",
             "resources/resource_manager/resources/main_service_http/run_mode/production_auxiliary/configuration.py",
             "resources/resource_manager/resources/main_service_http/run_mode/production_auxiliary/resources.xml",
+            "resources/resource_manager/resources/main_service_http/run_mode/proxy/configuration.py",
+            "resources/resource_manager/resources/main_service_http/run_mode/proxy/resources.xml",
             "resources/resource_manager/resources/main_service_http/run_mode/remote_sql_service_foxpro/configuration.py",
             "resources/resource_manager/resources/main_service_http/run_mode/remote_sql_service_foxpro/resources.xml",
             "resources/resource_manager/resources/main_service_http/run_mode/remote_sql_service_sqlite/configuration.py",

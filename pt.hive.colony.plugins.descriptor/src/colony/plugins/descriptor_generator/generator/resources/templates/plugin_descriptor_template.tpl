@@ -1,4 +1,5 @@
 {
+    "type" : "plugin",
     "platform" : "${out value=plugin_descriptor.platform /}",
     "sub_platforms" : ${out value=plugin_descriptor.sub_platforms /},
     "id" : "${out value=plugin_descriptor.id /}",

@@ -1,5 +1,4 @@
 {
-    "type" : "plugin",
     "platform" : "python",
     "sub_platforms" : ["cpython"],
     "id" : "pt.hive.colony.plugins.main.gui",
@@ -42,5 +41,5 @@
             "main_gui/gui/resources/icons/16x16/refresh.png",
             "main_gui/gui/resources/icons/16x16/yes.png",
             "main_gui/gui/resources/icons/32x32/omni.png",
-            "main_gui/gui/resources/images/hive_logo.png"]
+            "main_gui/gui/resources/images/hive_splash.png"]
 }

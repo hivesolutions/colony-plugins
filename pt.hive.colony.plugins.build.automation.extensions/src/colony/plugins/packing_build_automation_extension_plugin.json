@@ -1,5 +1,4 @@
 {
-    "type" : "plugin",
     "platform" : "python",
     "sub_platforms" : ["cpython"],
     "id" : "pt.hive.colony.plugins.build.automation.extensions.packing",
@@ -19,6 +18,7 @@
             "packing_build_automation_extension_plugin.py",
             "build_automation_extensions/__init__.py",
             "build_automation_extensions/packing/__init__.py",
+            "build_automation_extensions/packing/packing_build_automation_extension_exceptions.py",
             "build_automation_extensions/packing/packing_build_automation_extension_system.py",
             "build_automation_extensions/packing/resources/baf.xml"]
 }
