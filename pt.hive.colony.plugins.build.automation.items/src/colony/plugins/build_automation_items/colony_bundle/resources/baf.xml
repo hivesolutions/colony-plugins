@@ -58,6 +58,7 @@
                 <version>1.0.0</version>
                 <stage>build</stage>
                 <configuration>
+                    <type>plugin</type>
                     <specification_file>$base{plugin_directory}/colony_bundle_build_automation_item_plugin.json</specification_file>
                 </configuration>
             </plugin>
