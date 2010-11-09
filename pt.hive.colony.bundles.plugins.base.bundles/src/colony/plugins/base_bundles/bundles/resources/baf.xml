@@ -53,6 +53,10 @@
                     <resource_specifications>
                         <specification>
                             <type>bundle</type>
+                            <specification_file>$base{plugin_directory}/base_bundles/bundles/specifications/autoloader_bundle.json</specification_file>
+                        </specification>
+                        <specification>
+                            <type>bundle</type>
                             <specification_file>$base{plugin_directory}/base_bundles/bundles/specifications/bencode_bundle.json</specification_file>
                         </specification>
                     </resource_specifications>
