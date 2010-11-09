@@ -47,18 +47,18 @@ INVALID_ADDRESS_MESSAGE = "invalid address"
 """ The invalid address message """
 
 HELP_TEXT = "### DATA CONVERTER HELP ###\n\
-list_configurations - lists the data converter configurations\n\
-list_loaded_configurations - lists the currently loaded configurations\n\
-load_configuration <configuration_plugin_id> - loads a conversion configuration from a plugin\n\
-unload_configuration <configuration_id> - unloads a conversion configuration\n\
-set_configuration_option <configuration_id> <option_name> <option_value> - sets an option in the conversion configuration\n\
-list_configuration_items <configuration_id> - lists all configuration items that are available in the current configuration\n\
+list_configurations                                                           - lists the data converter configurations\n\
+list_loaded_configurations                                                    - lists the currently loaded configurations\n\
+load_configuration <configuration_plugin_id>                                  - loads a conversion configuration from a plugin\n\
+unload_configuration <configuration_id>                                       - unloads a conversion configuration\n\
+set_configuration_option <configuration_id> <option_name> <option_value>      - sets an option in the conversion configuration\n\
+list_configuration_items <configuration_id>                                   - lists all configuration items that are available in the current configuration\n\
 list_dependent_configuration_items <configuration_id> <configuration_item_id> - lists all configuration items that depend on the specified one\n\
-enable_configuration_item <configuration_id> <configuration_item_id> - enables the conversion of a certain configuration item\n\
-enable_all_configuration_items <configuration_id> - enables all data converter configuration items\n\
-disable_configuration_item <configuration_id> <configuration_item_id> - disables the conversion of a certain configuration item\n\
-disable_all_configuration_items <configuration_id> - disables all data converter configuration items\n\
-convert_data <configuration_id> - migrates data from one medium and schema to another"
+enable_configuration_item <configuration_id> <configuration_item_id>          - enables the conversion of a certain configuration item\n\
+enable_all_configuration_items <configuration_id>                             - enables all data converter configuration items\n\
+disable_configuration_item <configuration_id> <configuration_item_id>         - disables the conversion of a certain configuration item\n\
+disable_all_configuration_items <configuration_id>                            - disables all data converter configuration items\n\
+convert_data <configuration_id>                                               - migrates data from one medium and schema to another"
 """ The help text """
 
 COLUMN_SPACING = 4
