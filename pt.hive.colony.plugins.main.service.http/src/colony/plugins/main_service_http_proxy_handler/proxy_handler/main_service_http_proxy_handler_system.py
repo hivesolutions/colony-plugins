@@ -60,8 +60,17 @@ HTTPS_PREFIX_VALUE = "https://"
 DEFAULT_HOST_VALUE = "unknown"
 """ The default host value """
 
+PROXY_TYPE_VALUE = "proxy_type"
+""" The proxy type value """
+
 PROXY_TARGET_VALUE = "proxy_target"
 """ The proxy target value """
+
+FORWARD_VALUE = "forward"
+""" The forward value """
+
+REVERSE_VALUE = "reverse"
+""" The reverse value """
 
 VIA_VALUE = "Via"
 """ The via value """
@@ -92,6 +101,9 @@ class MainServiceHttpProxyHandler:
     main_service_http_proxy_handler_plugin = None
     """ The main service http proxy handler plugin """
 
+    request_handler_methods_map = {}
+    """ The request handler method map """
+
     http_clients_pool = None
     """ The the pool http clients to be used """
 
@@ -104,6 +116,9 @@ class MainServiceHttpProxyHandler:
         """
 
         self.main_service_http_proxy_handler_plugin = main_service_http_proxy_handler_plugin
+
+        self.request_handler_methods_map = {FORWARD_VALUE : self.handle_forward_request,
+                                            REVERSE_VALUE : self.handle_reverse_request}
 
     def load_handler(self):
         """
@@ -145,6 +160,69 @@ class MainServiceHttpProxyHandler:
         @param request: The http request to be handled.
         """
 
+        # retrieves the proxy type
+        proxy_type = request.properties.get(PROXY_TYPE_VALUE, FORWARD_VALUE)
+
+        # retrieves the request handler method
+        request_handler_method = self.request_handler_methods_map[proxy_type]
+
+        # calls the request handler method
+        request_handler_method(request)
+
+    def handle_forward_request(self, request):
+        # retrieves the resource base path
+        resource_base_path = request.get_resource_path_decoded()
+
+        # calculates the real path difference
+        path = resource_base_path
+
+        # retrieves the request attributes map
+        request_attributes_map = request.attributes_map
+
+        # creates the request headers from the request
+        request_headers = self._create_request_headers(request)
+
+        # reads the request contents
+        request_contents = request.read()
+
+        # creates the complete path from the proxy path
+        complete_path = path
+
+        # retrieves the http client from the http clients pool
+        http_client = self.http_clients_pool.pop()
+
+        try:
+            # fetches the contents from the url
+            http_response = http_client.fetch_url(complete_path, method = request.operation_type, parameters = request_attributes_map, headers = request_headers, content_type_charset = DEFAULT_CHARSET, contents = request_contents)
+        finally:
+            # puts the http client back into the http clients pool
+            self.http_clients_pool.put(http_client)
+
+        # retrieves the status code form the http response
+        status_code = http_response.status_code
+
+        # retrieves the status message from the http response
+        status_message = http_response.status_message
+
+        # retrieves the data from the http response
+        data = http_response.received_message
+
+        # retrieves the headers map from the http response
+        headers_map = http_response.headers_map
+
+        # sets the request status code
+        request.status_code = status_code
+
+        # sets the request status message
+        request.status_message = status_message
+
+        # sets the response headers map
+        request.response_headers_map = headers_map
+
+        # writes the (received) data to the request
+        request.write(data)
+
+    def handle_reverse_request(self, request):
         # retrieves the proxy target
         proxy_target = request.properties.get(PROXY_TARGET_VALUE, DEFAULT_PROXY_TARGET)
 

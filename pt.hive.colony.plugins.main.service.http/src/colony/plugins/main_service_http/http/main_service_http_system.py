@@ -1353,7 +1353,7 @@ class HttpClientServiceHandler:
         service_configuration_contexts_resolution_order = service_configuration_contexts.get(RESOLUTION_ORDER_VALUE, service_configuration_contexts.keys())
 
         # retrieves the service configuration contexts resolution order regex
-        service_configuration_contexts_resolution_order_regex = service_configuration_contexts.get(RESOLUTION_ORDER_REGEX_VALUE, service_configuration_contexts.keys())
+        service_configuration_contexts_resolution_order_regex = service_configuration_contexts.get(RESOLUTION_ORDER_REGEX_VALUE, None)
 
         # in case the request is pending redirection validation
         if request.redirection_validation:
@@ -1372,8 +1372,14 @@ class HttpClientServiceHandler:
         # sets the default service configuration context name
         service_configuration_context_name = None
 
-        # tries to match the request path with the regex
-        request_path_match = service_configuration_contexts_resolution_order_regex.match(request_path)
+        # in case the service configuration contexts resolution order regex
+        # is defined and valid
+        if service_configuration_contexts_resolution_order_regex:
+            # tries to match the request path with the regex
+            request_path_match = service_configuration_contexts_resolution_order_regex.match(request_path)
+        else:
+            # sets the request path match ad invalid
+            request_path_match = None
 
         # in case there is a valid request path match
         if request_path_match:
