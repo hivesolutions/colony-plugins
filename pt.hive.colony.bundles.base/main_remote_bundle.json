@@ -1,0 +1,51 @@
+{
+    "type" : "bundle",
+    "platform" : "python",
+    "id" : "pt.hive.colony.bundles.main.remote",
+    "version" : "1.0.0",
+    "author" : "Hive Solutions Lda. <development@hive.pt>",
+    "plugins" : [{
+                "id" : "pt.hive.colony.plugins.main.remote.client.jsonrpc",
+                "version" : "1.0.0"
+            }, {
+                "id" : "pt.hive.colony.plugins.main.remote.client.manager",
+                "version" : "1.0.0"
+            }, {
+                "id" : "pt.hive.colony.plugins.main.remote.client.pyro",
+                "version" : "1.0.0"
+            }, {
+                "id" : "pt.hive.colony.plugins.main.remote.client.xmlrpc",
+                "version" : "1.0.0"
+            }, {
+                "id" : "pt.hive.colony.plugins.main.remote.jsonrpc.manager",
+                "version" : "1.0.0"
+            }, {
+                "id" : "pt.hive.colony.plugins.main.remote.manager",
+                "version" : "1.0.0"
+            }, {
+                "id" : "pt.hive.colony.plugins.main.remote.pyro.manager",
+                "version" : "1.0.0"
+            }, {
+                "id" : "pt.hive.colony.plugins.main.remote.rest.encoder.json",
+                "version" : "1.0.0"
+            }, {
+                "id" : "pt.hive.colony.plugins.main.remote.rest.encoder.xml",
+                "version" : "1.0.0"
+            }, {
+                "id" : "pt.hive.colony.plugins.main.remote.rest.manager",
+                "version" : "1.0.0"
+            }, {
+                "id" : "pt.hive.colony.plugins.main.remote.xmlrpc.manager",
+                "version" : "1.0.0"
+            }],
+    "dependencies" : [{
+                "id" : "pt.hive.colony.bundles.random",
+                "version" : "1.0.0"
+            }, {
+                "id" : "pt.hive.colony.bundles.resources",
+                "version" : "1.0.0"
+            }, {
+                "id" : "pt.hive.colony.bundles.json",
+                "version" : "1.0.0"
+            }]
+}

@@ -1,0 +1,30 @@
+{
+    "type" : "bundle",
+    "platform" : "python",
+    "id" : "pt.hive.colony.bundles.main.service.abecula",
+    "version" : "1.0.0",
+    "author" : "Hive Solutions Lda. <development@hive.pt>",
+    "plugins" : [{
+                "id" : "pt.hive.colony.plugins.main.service.abecula",
+                "version" : "1.0.0"
+            }, {
+                "id" : "pt.hive.colony.plugins.main.service.abecula.communication_push_handler",
+                "version" : "1.0.0"
+            }, {
+                "id" : "pt.hive.colony.plugins.main.service.abecula.starter",
+                "version" : "1.0.0"
+            }],
+    "dependencies" : [{
+                "id" : "pt.hive.colony.bundles.communication",
+                "version" : "1.0.0"
+            }, {
+                "id" : "pt.hive.colony.bundles.json",
+                "version" : "1.0.0"
+            }, {
+                "id" : "pt.hive.colony.bundles.main.service",
+                "version" : "1.0.0"
+            }, {
+                "id" : "pt.hive.colony.bundles.main.authentication",
+                "version" : "1.0.0"
+            }]
+}

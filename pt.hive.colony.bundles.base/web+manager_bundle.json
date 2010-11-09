@@ -1,0 +1,51 @@
+{
+    "type" : "bundle",
+    "platform" : "python",
+    "id" : "web manager",
+    "version" : "1.0.0",
+    "author" : "Hive Solutions Lda. <development@hive.pt>",
+    "plugins" : [{
+                "id" : "pt.hive.colony.plugins.web.mvc.manager",
+                "version" : "1.0.0"
+            }, {
+                "id" : "pt.hive.colony.plugins.web.mvc.manager.page_item.code_execution",
+                "version" : "1.0.0"
+            }, {
+                "id" : "pt.hive.colony.plugins.web.mvc.manager.page_item.dns",
+                "version" : "1.0.0"
+            }, {
+                "id" : "pt.hive.colony.plugins.web.mvc.manager.page_item.repository",
+                "version" : "1.0.0"
+            }, {
+                "id" : "pt.hive.colony.plugins.web.mvc.monitor_item.colony",
+                "version" : "1.0.0"
+            }, {
+                "id" : "pt.hive.colony.plugins.web.mvc.monitor_item.resources",
+                "version" : "1.0.0"
+            }, {
+                "id" : "pt.hive.colony.plugins.web.mvc.monitor_item.uptime",
+                "version" : "1.0.0"
+            }, {
+                "id" : "pt.hive.colony.plugins.web.mvc.panel_item.did_you_know",
+                "version" : "1.0.0"
+            }, {
+                "id" : "pt.hive.colony.plugins.web.mvc.panel_item.monitor",
+                "version" : "1.0.0"
+            }],
+    "dependencies" : [{
+                "id" : "pt.hive.colony.bundles.json",
+                "version" : "1.0.0"
+            }, {
+                "id" : "pt.hive.colony.bundles.main.packing",
+                "version" : "1.0.0"
+            }, {
+                "id" : "pt.hive.colony.bundles.system.updater",
+                "version" : "1.0.0"
+            }, {
+                "id" : "pt.hive.colony.bundles.web.mvc",
+                "version" : "1.0.0"
+            }, {
+                "id" : "pt.hive.colony.bundles.dns.storage",
+                "version" : "1.0.0"
+            }]
+}

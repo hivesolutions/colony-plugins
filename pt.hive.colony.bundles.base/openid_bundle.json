@@ -1,0 +1,24 @@
+{
+    "type" : "bundle",
+    "platform" : "python",
+    "id" : "pt.hive.colony.bundles.openid",
+    "version" : "1.0.0",
+    "author" : "Hive Solutions Lda. <development@hive.pt>",
+    "plugins" : [{
+                "id" : "pt.hive.colony.plugins.service.openid",
+                "version" : "1.0.0"
+            }],
+    "dependencies" : [{
+                "id" : "pt.hive.colony.bundles.main.client.http",
+                "version" : "1.0.0"
+            }, {
+                "id" : "pt.hive.colony.bundles.random",
+                "version" : "1.0.0"
+            }, {
+                "id" : "pt.hive.colony.bundles.yadis",
+                "version" : "1.0.0"
+            }, {
+                "id" : "pt.hive.colony.bundles.encryption",
+                "version" : "1.0.0"
+            }]
+}

@@ -7,9 +7,75 @@
     "plugins" : [{
                 "id" : "pt.hive.colony.plugins.main.service.http",
                 "version" : "1.0.0"
+            }, {
+                "id" : "pt.hive.colony.plugins.main.service.http.cgi_handler",
+                "version" : "1.0.0"
+            }, {
+                "id" : "pt.hive.colony.plugins.main.service.http.colony_handler",
+                "version" : "1.0.0"
+            }, {
+                "id" : "pt.hive.colony.plugins.main.service.http.fast_cgi_handler",
+                "version" : "1.0.0"
+            }, {
+                "id" : "pt.hive.colony.plugins.main.service.http.file_handler",
+                "version" : "1.0.0"
+            }, {
+                "id" : "pt.hive.colony.plugins.main.service.http.gzip_encoding",
+                "version" : "1.0.0"
+            }, {
+                "id" : "pt.hive.colony.plugins.main.service.http.main_authentication_handler",
+                "version" : "1.0.0"
+            }, {
+                "id" : "pt.hive.colony.plugins.main.service.http.proxy_handler",
+                "version" : "1.0.0"
+            }, {
+                "id" : "pt.hive.colony.plugins.main.service.http.starter",
+                "version" : "1.0.0"
+            }, {
+                "id" : "pt.hive.colony.plugins.main.service.http.template_directory_list_handler",
+                "version" : "1.0.0"
+            }, {
+                "id" : "pt.hive.colony.plugins.main.service.http.template_error_handler",
+                "version" : "1.0.0"
+            }, {
+                "id" : "pt.hive.colony.plugins.main.service.http.webdav_handler",
+                "version" : "1.0.0"
+            }, {
+                "id" : "pt.hive.colony.plugins.main.service.http.websocket_handler",
+                "version" : "1.0.0"
+            }, {
+                "id" : "pt.hive.colony.plugins.main.service.http.welcome_handler",
+                "version" : "1.0.0"
+            }, {
+                "id" : "pt.hive.colony.plugins.main.service.http.wsgi_handler",
+                "version" : "1.0.0"
             }],
     "dependencies" : [{
-                "id" : "pt.hive.colony.plugins.main.service.utils",
+                "id" : "pt.hive.colony.bundles.compression",
+                "version" : "1.0.0"
+            }, {
+                "id" : "pt.hive.colony.bundles.format",
+                "version" : "1.0.0"
+            }, {
+                "id" : "pt.hive.colony.bundles.http_utils",
+                "version" : "1.0.0"
+            }, {
+                "id" : "pt.hive.colony.bundles.main.client.http",
+                "version" : "1.0.0"
+            }, {
+                "id" : "pt.hive.colony.bundles.main.pool",
+                "version" : "1.0.0"
+            }, {
+                "id" : "pt.hive.colony.bundles.main.service",
+                "version" : "1.0.0"
+            }, {
+                "id" : "pt.hive.colony.bundles.resources",
+                "version" : "1.0.0"
+            }, {
+                "id" : "pt.hive.colony.bundles.template_engine",
+                "version" : "1.0.0"
+            }, {
+                "id" : "pt.hive.colony.bundles.main.authentication",
                 "version" : "1.0.0"
             }]
 }

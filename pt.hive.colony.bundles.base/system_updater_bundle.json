@@ -1,0 +1,27 @@
+{
+    "type" : "bundle",
+    "platform" : "python",
+    "id" : "pt.hive.colony.bundles.system.updater",
+    "version" : "1.0.0",
+    "author" : "Hive Solutions Lda. <development@hive.pt>",
+    "plugins" : [{
+                "id" : "pt.hive.colony.plugins.system.updater",
+                "version" : "1.0.0"
+            }, {
+                "id" : "pt.hive.colony.plugins.system.updater.colony_deployer",
+                "version" : "1.0.0"
+            }, {
+                "id" : "pt.hive.colony.plugins.system.updater.colony_packing_deployer",
+                "version" : "1.0.0"
+            }],
+    "dependencies" : [{
+                "id" : "pt.hive.colony.bundles.downloader",
+                "version" : "1.0.0"
+            }, {
+                "id" : "pt.hive.colony.bundles.main.packing",
+                "version" : "1.0.0"
+            }, {
+                "id" : "pt.hive.colony.bundles.compression",
+                "version" : "1.0.0"
+            }]
+}

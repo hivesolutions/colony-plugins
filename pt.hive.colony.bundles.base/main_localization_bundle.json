@@ -11,6 +11,9 @@
                 "id" : "pt.hive.colony.plugins.main.localization.localization_translation_json_bundle_handler",
                 "version" : "1.0.0"
             }, {
+                "id" : "pt.hive.colony.plugins.main.localization.localization_translation_manager",
+                "version" : "1.0.0"
+            }, {
                 "id" : "pt.hive.colony.plugins.main.localization.translation_bundle.en_us",
                 "version" : "1.0.0"
             }, {

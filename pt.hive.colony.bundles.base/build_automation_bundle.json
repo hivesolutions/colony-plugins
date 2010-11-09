@@ -1,0 +1,66 @@
+{
+    "type" : "bundle",
+    "platform" : "python",
+    "id" : "pt.hive.colony.bundles.build.automation",
+    "version" : "1.0.0",
+    "author" : "Hive Solutions Lda. <development@hive.pt>",
+    "plugins" : [],
+    "dependencies" : [{
+                "id" : "pt.hive.colony.bundles.compression",
+                "version" : "1.0.0"
+            }, {
+                "id" : "pt.hive.colony.bundles.execution_environment",
+                "version" : "1.0.0"
+            }, {
+                "id" : "pt.hive.colony.bundles.format",
+                "version" : "1.0.0"
+            }, {
+                "id" : "pt.hive.colony.bundles.guid",
+                "version" : "1.0.0"
+            }, {
+                "id" : "pt.hive.colony.bundles.information",
+                "version" : "1.0.0"
+            }, {
+                "id" : "pt.hive.colony.bundles.installation",
+                "version" : "1.0.0"
+            }, {
+                "id" : "pt.hive.colony.bundles.json",
+                "version" : "1.0.0"
+            }, {
+                "id" : "pt.hive.colony.bundles.main.client.smtp",
+                "version" : "1.0.0"
+            }, {
+                "id" : "pt.hive.colony.bundles.main.packing",
+                "version" : "1.0.0"
+            }, {
+                "id" : "pt.hive.colony.bundles.main.test",
+                "version" : "1.0.0"
+            }, {
+                "id" : "pt.hive.colony.bundles.messaging",
+                "version" : "1.0.0"
+            }, {
+                "id" : "pt.hive.colony.bundles.repository.generator",
+                "version" : "1.0.0"
+            }, {
+                "id" : "pt.hive.colony.bundles.repository_descriptor_generator",
+                "version" : "1.0.0"
+            }, {
+                "id" : "pt.hive.colony.bundles.resources",
+                "version" : "1.0.0"
+            }, {
+                "id" : "pt.hive.colony.bundles.revision_control",
+                "version" : "1.0.0"
+            }, {
+                "id" : "pt.hive.colony.bundles.scheduler",
+                "version" : "1.0.0"
+            }, {
+                "id" : "pt.hive.colony.bundles.template_engine",
+                "version" : "1.0.0"
+            }, {
+                "id" : "pt.hive.colony.bundles.validation",
+                "version" : "1.0.0"
+            }, {
+                "id" : "pt.hive.colony.bundles.command_execution",
+                "version" : "1.0.0"
+            }]
+}

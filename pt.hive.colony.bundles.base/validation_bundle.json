@@ -1,15 +1,15 @@
-F{
+{
     "type" : "bundle",
     "platform" : "python",
-    "id" : "pt.hive.colony.bundles.main.service.utils",
+    "id" : "pt.hive.colony.bundles.validation",
     "version" : "1.0.0",
     "author" : "Hive Solutions Lda. <development@hive.pt>",
     "plugins" : [{
-                "id" : "pt.hive.colony.plugins.main.service.utils",
+                "id" : "pt.hive.colony.plugins.validation.plugin",
                 "version" : "1.0.0"
             }],
     "dependencies" : [{
-                "id" : "pt.hive.colony.plugins.main.service.sockets",
+                "id" : "pt.hive.colony.bundles.json",
                 "version" : "1.0.0"
             }]
 }

@@ -17,7 +17,7 @@
                 "id" : "pt.hive.colony.plugins.main.service.ssl_socket_provider",
                 "version" : "1.0.0"
             }, {
-                "id" : "pt.hive.colony.plugins.main.service.datagram_socket_upgrader",
+                "id" : "pt.hive.colony.plugins.main.service.ssl_socket_upgrader",
                 "version" : "1.0.0"
             }],
     "dependencies" : []

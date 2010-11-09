@@ -7,7 +7,7 @@
     "plugins" : [{
                 "id" : "pt.hive.colony.plugins.main.pool.element_pool_manager",
                 "version" : "1.0.0"
-            },{
+            }, {
                 "id" : "pt.hive.colony.plugins.main.pool.simple_pool_manager",
                 "version" : "1.0.0"
             }],

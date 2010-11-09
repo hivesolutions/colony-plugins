@@ -1,14 +1,11 @@
 {
     "type" : "bundle",
     "platform" : "python",
-    "id" : "pt.hive.colony.bundles.compression",
+    "id" : "pt.hive.colony.bundles.template_engine",
     "version" : "1.0.0",
     "author" : "Hive Solutions Lda. <development@hive.pt>",
     "plugins" : [{
-                "id" : "pt.hive.colony.plugins.misc.gzip",
-                "version" : "1.0.0"
-            }, {
-                "id" : "pt.hive.colony.plugins.misc.zip",
+                "id" : "pt.hive.colony.plugins.template_engine.manager",
                 "version" : "1.0.0"
             }],
     "dependencies" : []

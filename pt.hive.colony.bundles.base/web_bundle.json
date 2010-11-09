@@ -1,0 +1,24 @@
+{
+    "type" : "bundle",
+    "platform" : "python",
+    "id" : "pt.hive.colony.bundles.web",
+    "version" : "1.0.0",
+    "author" : "Hive Solutions Lda. <development@hive.pt>",
+    "plugins" : [{
+                "id" : "pt.hive.colony.plugins.web.administration",
+                "version" : "1.0.0"
+            }, {
+                "id" : "pt.hive.colony.plugins.web.entity_manager_administration",
+                "version" : "1.0.0"
+            }],
+    "dependencies" : [{
+                "id" : "pt.hive.colony.bundles.resources",
+                "version" : "1.0.0"
+            }, {
+                "id" : "pt.hive.colony.bundles.template_engine",
+                "version" : "1.0.0"
+            }, {
+                "id" : "pt.hive.colony.bundles.data",
+                "version" : "1.0.0"
+            }]
+}

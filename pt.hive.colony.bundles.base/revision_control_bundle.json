@@ -7,13 +7,13 @@
     "plugins" : [{
                 "id" : "pt.hive.colony.plugins.revision_control.bazaar_adapter",
                 "version" : "1.0.0"
-            },{
+            }, {
                 "id" : "pt.hive.colony.plugins.revision_control.manager",
                 "version" : "1.0.0"
-            },{
+            }, {
                 "id" : "pt.hive.colony.plugins.revision_control.mercurial_adapter",
                 "version" : "1.0.0"
-            },{
+            }, {
                 "id" : "pt.hive.colony.plugins.revision_control.subversion_adapter",
                 "version" : "1.0.0"
             }],
