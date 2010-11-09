@@ -48,6 +48,7 @@
                 <version>1.0.0</version>
                 <stage>build</stage>
                 <configuration>
+                    <type>plugin</type>
                     <specification_file>$base{plugin_directory}/service_twitter_plugin.json</specification_file>
                 </configuration>
             </plugin>
