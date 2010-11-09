@@ -37,6 +37,8 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
+import colony.libs.map_util
+
 import packing_build_automation_extension_exceptions
 
 BUNDLES_DIRECTORY_VALUE = "bundles_directory"
@@ -59,6 +61,12 @@ COLONY_VALUE = "colony"
 
 SPECIFICATION_FILE_VALUE = "specification_file"
 """ The specification file value """
+
+SPECIFICATION_VALUE = "specification"
+""" The specification value """
+
+RESOURCES_SPECIFICATIONS_VALUE = "resource_specifications"
+""" The resource specifications value """
 
 TYPE_VALUE = "type"
 """ The type value """
@@ -91,9 +99,6 @@ class PackingBuildAutomationExtension:
         self.packing_build_automation_extension_plugin = packing_build_automation_extension_plugin
 
     def run_automation(self, plugin, stage, parameters, build_automation_structure, logger):
-        # retrieves the main packing manager plugin
-        main_packing_manager_plugin = self.packing_build_automation_extension_plugin.main_packing_manager_plugin
-
         # retrieves the build properties
         build_properties = build_automation_structure.get_all_build_properties()
 
@@ -111,6 +116,36 @@ class PackingBuildAutomationExtension:
 
         # retrieves the specification file
         specification_file = parameters[SPECIFICATION_FILE_VALUE]
+
+        # creates the "main" specification
+        specification = {TYPE_VALUE : type, SPECIFICATION_FILE_VALUE : specification_file}
+
+        # retrieves the resource specifications
+        resource_specifications = parameters.get(RESOURCES_SPECIFICATIONS_VALUE, {})
+
+        # retrieves the resource specifications
+        specifications = colony.libs.map_util.map_get_values(resource_specifications, SPECIFICATION_VALUE)
+
+        # packs the main specification
+        self._pack_specification(specification, bundles_directory, plugins_directory, libraries_directory, logger)
+
+        # iterates over all the specifications
+        for specification in specifications:
+            # packs the (resource) specification
+            self._pack_specification(specification, bundles_directory, plugins_directory, libraries_directory, logger)
+
+        # returns true (success)
+        return True
+
+    def _pack_specification(self, specification, bundles_directory, plugins_directory, libraries_directory, logger):
+        # retrieves the main packing manager plugin
+        main_packing_manager_plugin = self.packing_build_automation_extension_plugin.main_packing_manager_plugin
+
+        # retrieves the specification type
+        type = specification[TYPE_VALUE]
+
+        # retrieves the specification specification file
+        specification_file = specification[SPECIFICATION_FILE_VALUE]
 
         # creates the file paths list
         file_paths_list = [specification_file]
@@ -136,6 +171,3 @@ class PackingBuildAutomationExtension:
 
         # packs the directory
         main_packing_manager_plugin.pack_files(file_paths_list, properties, COLONY_VALUE)
-
-        # returns true (success)
-        return True
