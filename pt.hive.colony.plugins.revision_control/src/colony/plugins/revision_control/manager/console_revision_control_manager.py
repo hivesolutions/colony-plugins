@@ -44,18 +44,18 @@ INVALID_NUMBER_ARGUMENTS_MESSAGE = "invalid number of arguments"
 """ The invalid number of arguments message """
 
 HELP_TEXT = "### REVISION CONTROL MANAGER HELP ###\n\
-list_revision_control_adapters                                                   - lists the names of the revision control adapters available\n\
-checkout <adapter_name> <source> <destination>                                   - checks out the <source> to the <destination>\n\
-update <adapter_name>  <resource_identifier> <revision>                          - updates a resource to a specified revision\n\
-commit <adapter_name> <resource_identifier> <commit_message>                     - commits the changes in the resource with the specified message\n\
-log <adapter_name> <resource_identifier> [start_revision=0] [end_revision=#HEAD] - lists the change sets for the specified resource identifier between the specified revisions\n\
-status <adapter_name> <resource_identifier>                                      - lists the pending changes in the current revision\n\
+list_revision_control_adapters                                                               - lists the names of the revision control adapters available\n\
+checkout <adapter_name> <source> <destination>                                               - checks out the <source> to the <destination>\n\
+update <adapter_name>  <resource_identifier> <revision>                                      - updates a resource to a specified revision\n\
+commit <adapter_name> <resource_identifier> <commit_message>                                 - commits the changes in the resource with the specified message\n\
+log <adapter_name> <resource_identifier> [start_revision=0] [end_revision=#HEAD]             - lists the change sets for the specified resource identifier between the specified revisions\n\
+status <adapter_name> <resource_identifier>                                                  - lists the pending changes in the current revision\n\
 diff <adapter_name> <resource_identifier> [start_revision=#HEAD.parent] [end_revision=#HEAD] - compares the contents of the specified revisions\n\
-cleanup <adapter_name> <resource_identifier>                                     - cleans up existing locks at the specified location\n\
-revert <adapter_name> <resource_identifier>                                      - restores the working copy to its original state\n\n\
-remove_unversioned <adapter_name> <resource_identifier>                          - removes all unversioned files from the specified location\n\
-get_resource_revision <adapter_name> <resource_identifier> [revision]            - retrieves the content of the resource in the specified revision\n\
-log_date <adapter_name> <resource_identifier> [date]                             - lists all the change sets for the specified resource identifier matching the date specification"
+cleanup <adapter_name> <resource_identifier>                                                 - cleans up existing locks at the specified location\n\
+revert <adapter_name> <resource_identifier>                                                  - restores the working copy to its original state\n\n\
+remove_unversioned <adapter_name> <resource_identifier>                                      - removes all unversioned files from the specified location\n\
+get_resource_revision <adapter_name> <resource_identifier> [revision]                        - retrieves the content of the resource in the specified revision\n\
+log_date <adapter_name> <resource_identifier> [date]                                         - lists all the change sets for the specified resource identifier matching the date specification"
 """ The help text """
 
 DATE_FORMAT = "%Y/%m/%d"
