@@ -106,11 +106,11 @@ class PackingBuildAutomationExtension:
         # retrieves the libraries directory
         libraries_directory = build_properties[LIBRARIES_DIRECTORY_VALUE]
 
-        # retrieves the specification file
-        specification_file = parameters[SPECIFICATION_FILE_VALUE]
-
         # retrieves the type
         type = parameters.get(TYPE_VALUE, PLUGIN_VALUE)
+
+        # retrieves the specification file
+        specification_file = parameters[SPECIFICATION_FILE_VALUE]
 
         # creates the file paths list
         file_paths_list = [specification_file]
