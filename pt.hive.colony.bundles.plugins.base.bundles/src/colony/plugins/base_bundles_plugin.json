@@ -86,7 +86,6 @@
             "base_bundles/bundles/specifications/main_service_smtp_bundle.json",
             "base_bundles/bundles/specifications/main_service_sockets_bundle.json",
             "base_bundles/bundles/specifications/main_service_telnet_bundle.json",
-            "base_bundles/bundles/specifications/main_service_utils_bundle.json",
             "base_bundles/bundles/specifications/main_service_xmpp_bundle.json",
             "base_bundles/bundles/specifications/main_storage_bundle.json",
             "base_bundles/bundles/specifications/main_tasks_bundle.json",
