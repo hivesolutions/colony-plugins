@@ -1,4 +1,4 @@
-F{
+{
     "type" : "bundle",
     "platform" : "python",
     "id" : "pt.hive.colony.bundles.main.service.utils",
