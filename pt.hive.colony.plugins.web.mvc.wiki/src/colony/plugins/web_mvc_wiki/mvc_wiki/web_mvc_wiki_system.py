@@ -111,8 +111,9 @@ class WebMvcWiki:
         to the web mvc service.
         """
 
-        return ((r"^wiki/page/edit/[a-zA-Z0-9_\.]+$", self.web_mvc_wiki_page_controller.handle_edit),
-                (r"^wiki/[a-zA-Z0-9_\.]*$", self.web_mvc_wiki_controller.handle_wiki),
+        return ((r"^wiki/pages/new$", self.web_mvc_wiki_page_controller.handle_new),
+                (r"^wiki/pages/edit/[a-zA-Z0-9_:\.]+$", self.web_mvc_wiki_page_controller.handle_edit),
+                (r"^wiki/[a-zA-Z0-9_:\.]*$", self.web_mvc_wiki_controller.handle_wiki),
                 (r"^wiki/(?:js|images|css)/.*$", self.web_mvc_wiki_controller.handle_resources))
 
     def get_communication_patterns(self):
@@ -188,6 +189,33 @@ class WebMvcWikiPageController:
 
         # sets the templates path
         self.set_templates_path(templates_path)
+
+    def handle_new(self, rest_request, parameters):
+        """
+        Handles the given page rest request.
+
+        @type rest_request: RestRequest
+        @param rest_request: The page rest request to be handled.
+        @rtype: bool
+        @return: The result of the handling.
+        """
+
+        # retrieves the template file
+        template_file = self.retrieve_template_file("general_action.html.tpl")
+
+        # sets the page to be included
+        template_file.assign("page_include", "new_contents.html.tpl")
+
+        # sets the page name in the template file
+        template_file.assign("page_name", "new_page")
+
+        # applies the base path to the template file
+        self.apply_base_path_template_file(rest_request, template_file)
+
+        # processes the template file and sets the request contents
+        self.process_set_contents(rest_request, template_file)
+
+        return True
 
     def handle_edit(self, rest_request, parameters):
         """
@@ -366,6 +394,25 @@ class WebMvcWikiController:
         if not rest_request.encoder_name or rest_request.encoder_name in ("html", "ajx", "prt"):
             # creates the wiki file path
             wiki_file_path = base_file_path + "/" + file_path + ".wiki"
+
+            # in case the wiki file does not exist
+            if not os.path.exists(wiki_file_path):
+                # retrieves the template file
+                template_file = self.retrieve_template_file("general_action.html.tpl")
+
+                # sets the page to be included
+                template_file.assign("page_include", "new_contents.html.tpl")
+
+                # sets the page name in the template file
+                template_file.assign("page_name", "new page")
+
+                # applies the base path to the template file
+                self.apply_base_path_template_file(rest_request, template_file)
+
+                # processes the template file and sets the request contents
+                self.process_set_contents(rest_request, template_file)
+
+                return True
 
             # creates the structure that will hold the information
             # about the output of the wiki generation

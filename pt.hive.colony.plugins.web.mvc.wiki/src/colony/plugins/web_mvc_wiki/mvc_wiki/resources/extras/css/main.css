@@ -29,7 +29,10 @@
  __license__   = GNU General Public License (GPL), Version 3
 */
 
-/* general */
+#environment-variables {
+    display: none;
+}
+
 .wiki-float-left {
     float: left;
 }
@@ -80,8 +83,8 @@
     clear: both;
     width: 60%;
     min-width: 320px;
-    height: 460px;
-    padding: 24px 48px 24px 48px;
+    height: 480px;
+    padding: 18px 20px 24px 20px;
     border: 1px solid #4b6ea4;
     border-radius: 0px 0px 6px 6px;
     -moz-border-radius: 0px 0px 6px 6px;
@@ -108,16 +111,43 @@
     background: transparent url(../images/wiki-page-search-background.png) no-repeat right top;
 }
 
-#wiki-page-edit-buttons {
+#wiki-page-new-buttons {
+    height: 34px;
+}
+
+#wiki-page-new-buttons .wiki-button-container {
     float: right;
+}
+
+#wiki-page-edit-buttons {
+    height: 34px;
+}
+
+#wiki-page-edit-buttons .wiki-button-container {
+    float: right;
+}
+
+.wiki-page-new-area {
+    margin-bottom: 24px;
 }
 
 .wiki-page-edit-area {
     margin-bottom: 24px;
 }
 
+.wiki-page-new-line {
+    margin-bottom: 12px;
+}
+
 .wiki-page-edit-line {
     margin-bottom: 12px;
+}
+
+.wiki-page-new-label {
+    color: #20435c;
+    font-size: 100%;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
 }
 
 .wiki-page-edit-label {
@@ -132,7 +162,7 @@
 }
 
 #wiki-page-contents-text-area {
-    height: 272px;
+    height: 360px;
     margin: 0px 0px 0px 0px;
     font-family: monospace;
     font-size: 120%;
@@ -147,7 +177,6 @@
     font-size: 160%;
 }
 
-/* components */
 .wiki-button-container {
     float: left;
     width: 122px;
@@ -252,7 +281,7 @@
     border-color: #f3ba0a;
 }
 
-#wiki-page-edit-body-controls {
+#wiki-controls {
     width: 100%;
     height: 32px;
     margin: 0px 0px 0px 0px;
@@ -262,7 +291,7 @@
     border-right: 1px solid #214c8f;
 }
 
-#wiki-page-edit-body-controls-icons {
+#wiki-controls-icons {
     padding-top: 6px;
     padding-left: 6px;
 }

@@ -23,21 +23,21 @@
 // __copyright__ = Copyright (c) 2008 Hive Solutions Lda.
 // __license__   = GNU General Public License (GPL), Version 3
 
-function txtGetSelection(token, endToken, space) {
+function textGetSelection(token, endToken, space) {
     var spaceValue = space ? " " : "";
 
-    var txt = document.getElementById("wiki-page-contents-text-area");
+    var text = document.getElementById("wiki-page-contents-text-area");
 
-    var delta = txt.selectionEnd - txt.selectionStart;
+    var delta = text.selectionEnd - text.selectionStart;
 
-    var first = txt.value.slice(0, txt.selectionStart);
-    var second = txt.value.slice(txt.selectionStart, txt.selectionEnd);
-    var third = txt.value.slice(txt.selectionEnd, txt.value.length);
+    var first = text.value.slice(0, text.selectionStart);
+    var second = text.value.slice(text.selectionStart, text.selectionEnd);
+    var third = text.value.slice(text.selectionEnd, text.value.length);
 
-    var valor_final = first + token + spaceValue + second + spaceValue
+    var finalValue = first + token + spaceValue + second + spaceValue
             + endToken + third;
 
-    txt.value = valor_final;
+    text.value = finalValue;
 }
 
 $(document).ready(function() {
@@ -62,7 +62,6 @@ $(document).ready(function() {
 
                     if (classValue != "wiki-button") {
                         elemento.addClass(classValue);
-
                     }
                 }
             });
@@ -86,6 +85,7 @@ $(document).ready(function() {
                     $("#wiki-page-edit").fadeIn(300);
                 }
 
+                // stops the event propagation
                 event.stopPropagation();
             });
 
@@ -115,15 +115,15 @@ $(document).ready(function() {
             });
 
     $(".wiki-control-icon-bold").click(function() {
-                txtGetSelection("**", "**", false);
+                textGetSelection("**", "**", false);
             });
 
     $(".wiki-control-icon-italic").click(function() {
-                txtGetSelection("//", "//", false);
+                textGetSelection("//", "//", false);
             });
 
     $(".wiki-control-icon-quote").click(function() {
-                txtGetSelection("<quote author=\"...\">", "</quote>", false);
+                textGetSelection("<quote author=\"...\">", "</quote>", false);
             });
 
     $("#wiki-publish-button").click(function() {
@@ -137,7 +137,7 @@ $(document).ready(function() {
                 var wikiPage = $("#wiki-page-title").html();
 
                 // creates the complete url
-                var completeUrl = "page/edit/" + wikiPage;
+                var completeUrl = "pages/edit/" + wikiPage;
 
                 // calls the edit resource
                 $.ajax({

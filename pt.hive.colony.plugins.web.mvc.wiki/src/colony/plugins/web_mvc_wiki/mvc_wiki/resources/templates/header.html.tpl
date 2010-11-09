@@ -1,7 +1,7 @@
 <div id="wiki-header">
     <div class="wiki-header-contents">
         <div class="logo-image">
-            <a href="${out_none value=base_path /}index"><img src="images/colony_logo.png"/></a>
+            <a href="${out_none value=base_path /}index"><img src="${out_none value=base_path /}images/colony_logo.png"/></a>
         </div>
         <div class="menu-contents">
             <ul>
@@ -32,20 +32,12 @@
 </div>
 <div id="wiki-page-edit-container">
     <div id="wiki-page-edit">
-        <div class="wiki-page-edit-area">
-            <div class="wiki-page-edit-line">
-                <label class="wiki-page-edit-label">Summary</label>
-            </div>
-            <div class="wiki-page-edit-line">
-                <input id="wiki-summary-input" name="wiki-summary-input" class="wiki-input" type="text" value="Describe your wiki modification" current_status="" original_value="Describe your wiki modification" />
-            </div>
+        <div class="wiki-page-edit-line">
+            <input id="wiki-summary-input" name="wiki-summary-input" class="wiki-input" type="text" value="Describe your wiki modification" current_status="" original_value="Describe your wiki modification" />
         </div>
         <div class="wiki-page-edit-line">
-            <label class="wiki-page-edit-label">Body</label>
-        </div>
-        <div class="wiki-page-edit-line">
-            <div id="wiki-page-edit-body-controls">
-                <div id="wiki-page-edit-body-controls-icons">
+            <div id="wiki-controls">
+                <div id="wiki-controls-icons">
                     <div class="wiki-control-icon wiki-control-icon-bold"></div>
                     <div class="wiki-control-icon wiki-control-icon-italic"></div>
                     <div class="wiki-control-icon wiki-control-icon-quote"></div>
@@ -54,8 +46,8 @@
             <textarea id="wiki-page-contents-text-area" class="wiki-text-area">${out_none value=page_source /}</textarea>
         </div>
         <div id="wiki-page-edit-buttons" class="wiki-page-edit-line">
-            <div class="wiki-button wiki-button-blue disabled">Preview</div>
             <div id="wiki-publish-button" class="wiki-button wiki-button-blue">Publish</div>
+            <div class="wiki-button wiki-button-blue disabled">Preview</div>
         </div>
     </div>
 </div>
