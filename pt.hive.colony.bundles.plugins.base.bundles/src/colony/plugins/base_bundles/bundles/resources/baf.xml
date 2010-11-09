@@ -33,7 +33,7 @@
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://www.hive.pt xsd/baf.xsd">
     <artifact>
-        <id>pt.hive.colony.plugins.base.bundles</id>
+        <id>pt.hive.colony.bundles.plugins.base.bundles</id>
         <version>1.0.0</version>
         <type>colony</type>
         <name>Base Bundles Plugin</name>
