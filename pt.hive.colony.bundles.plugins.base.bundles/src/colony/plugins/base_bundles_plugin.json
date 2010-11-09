@@ -119,7 +119,7 @@
             "base_bundles/bundles/specifications/template_handler_bundle.json",
             "base_bundles/bundles/specifications/timer_bundle.json",
             "base_bundles/bundles/specifications/validation_bundle.json",
-            "base_bundles/bundles/specifications/web+manager_bundle.json",
+            "base_bundles/bundles/specifications/web_manager_bundle.json",
             "base_bundles/bundles/specifications/web_bundle.json",
             "base_bundles/bundles/specifications/web_communication_push_bundle.json",
             "base_bundles/bundles/specifications/web_mvc_bundle.json",
