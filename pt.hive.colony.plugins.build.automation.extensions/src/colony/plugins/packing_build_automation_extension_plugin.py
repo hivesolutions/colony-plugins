@@ -60,7 +60,8 @@ class PackingBuildAutomationExtensionPlugin(colony.base.plugin_system.Plugin):
                     "pt.hive.colony.plugins.main.packing.manager", "1.0.0")]
     events_handled = []
     events_registrable = []
-    main_modules = ["build_automation_extensions.packing.packing_build_automation_extension_system"]
+    main_modules = ["build_automation_extensions.packing.packing_build_automation_extension_exceptions",
+                    "build_automation_extensions.packing.packing_build_automation_extension_system"]
 
     packing_build_automation_extension = None
 

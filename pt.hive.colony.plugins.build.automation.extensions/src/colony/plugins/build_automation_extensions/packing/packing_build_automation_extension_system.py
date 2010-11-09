@@ -37,11 +37,16 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
+import packing_build_automation_extension_exceptions
+
 BUNDLES_DIRECTORY_VALUE = "bundles_directory"
 """ The bundles directory value """
 
 PLUGINS_DIRECTORY_VALUE = "plugins_directory"
 """ The plugins directory value """
+
+LIBRARIES_DIRECTORY_VALUE = "libraries_directory"
+""" The libraries directory value """
 
 TARGET_PATH_VALUE = "target_path"
 """ The target path value """
@@ -58,8 +63,14 @@ SPECIFICATION_FILE_VALUE = "specification_file"
 TYPE_VALUE = "type"
 """ The type value """
 
+BUNDLE_VALUE = "bundle"
+""" The bundle value """
+
 PLUGIN_VALUE = "plugin"
 """ The plugin value """
+
+LIBRARY_VALUE = "library"
+""" The library value """
 
 class PackingBuildAutomationExtension:
     """
@@ -92,6 +103,9 @@ class PackingBuildAutomationExtension:
         # retrieves the plugins directory
         plugins_directory = build_properties[PLUGINS_DIRECTORY_VALUE]
 
+        # retrieves the libraries directory
+        libraries_directory = build_properties[LIBRARIES_DIRECTORY_VALUE]
+
         # retrieves the specification file
         specification_file = parameters[SPECIFICATION_FILE_VALUE]
 
@@ -101,8 +115,20 @@ class PackingBuildAutomationExtension:
         # creates the file paths list
         file_paths_list = [specification_file]
 
+        # in case the packing type is bundle
+        if type == BUNDLE_VALUE:
+            target_path = bundles_directory
+        # in case the packing type is plugin
+        elif type == PLUGIN_VALUE:
+            target_path = plugins_directory
+        elif type == LIBRARY_VALUE:
+            target_path = libraries_directory
+        else:
+            # raises the invalid packing type exception
+            raise packing_build_automation_extension_exceptions.InvalidPackingTypeException(type)
+
         # creates the properties map for the directory packing
-        properties = {TARGET_PATH_VALUE : plugins_directory,
+        properties = {TARGET_PATH_VALUE : target_path,
                       PLUGINS_PATH_VALUE : plugins_directory}
 
         # print an info message
