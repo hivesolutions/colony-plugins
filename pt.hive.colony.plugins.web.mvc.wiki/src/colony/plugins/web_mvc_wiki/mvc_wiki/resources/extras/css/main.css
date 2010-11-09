@@ -157,11 +157,22 @@
     text-transform: uppercase;
 }
 
-#wiki-summary-input {
+#wiki-page-new-summary-input {
     width: 100%;
 }
 
-#wiki-page-contents-text-area {
+#wiki-page-edit-summary-input {
+    width: 100%;
+}
+
+#wiki-page-new-contents-text-area {
+    height: 360px;
+    margin: 0px 0px 0px 0px;
+    font-family: monospace;
+    font-size: 120%;
+}
+
+#wiki-page-edit-contents-text-area {
     height: 360px;
     margin: 0px 0px 0px 0px;
     font-family: monospace;

@@ -126,12 +126,16 @@ $(document).ready(function() {
                 textGetSelection("<quote author=\"...\">", "</quote>", false);
             });
 
-    $("#wiki-publish-button").click(function() {
+    $("#wiki-page-new-publish-button").click(function() {
+                $(this).parents("form").submit();
+            });
+
+    $("#wiki-page-edit-publish-button").click(function() {
                 // retrieves the contents value
-                var contents = $("#wiki-page-contents-text-area").attr("value");
+                var contents = $("#wiki-page-edit-contents-text-area").attr("value");
 
                 // retrieves the symmary value
-                var summary = $("#wiki-summary-input").attr("value");
+                var summary = $("#wiki-page-edit-summary-input").attr("value");
 
                 // retrieves the wiki page value
                 var wikiPage = $("#wiki-page-title").html();
@@ -144,8 +148,8 @@ $(document).ready(function() {
                             type : "post",
                             url : completeUrl,
                             data : {
-                                contents : contents,
-                                summary : summary
+                                wiki_page_edit_contents : contents,
+                                wiki_page_edit_summary : summary
                             },
                             success : function(data) {
                                 $.ajax({

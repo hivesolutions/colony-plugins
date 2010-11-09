@@ -111,7 +111,7 @@ class WebMvcWiki:
         to the web mvc service.
         """
 
-        return ((r"^wiki/pages/new$", self.web_mvc_wiki_page_controller.handle_new),
+        return ((r"^wiki/pages/new/[a-zA-Z0-9_:\.]+$", self.web_mvc_wiki_page_controller.handle_new),
                 (r"^wiki/pages/edit/[a-zA-Z0-9_:\.]+$", self.web_mvc_wiki_page_controller.handle_edit),
                 (r"^wiki/[a-zA-Z0-9_:\.]*$", self.web_mvc_wiki_controller.handle_wiki),
                 (r"^wiki/(?:js|images|css)/.*$", self.web_mvc_wiki_controller.handle_resources))
@@ -200,20 +200,49 @@ class WebMvcWikiPageController:
         @return: The result of the handling.
         """
 
-        # retrieves the template file
-        template_file = self.retrieve_template_file("general_action.html.tpl")
+        # retrieves the revision control manager plugin
+        revision_control_manager_plugin = self.web_mvc_wiki_plugin.revision_control_manager_plugin
 
-        # sets the page to be included
-        template_file.assign("page_include", "new_contents.html.tpl")
+        # processes the form data
+        form_data_map = self.process_form_data(rest_request, DEFAULT_ENCODING)
 
-        # sets the page name in the template file
-        template_file.assign("page_name", "new_page")
+        # retrieves the summary and the contents
+        summary = form_data_map.get("wiki_page_new_summary", DEFAULT_SUMMARY)
+        contents = form_data_map["wiki_page_new_contents"]
 
-        # applies the base path to the template file
-        self.apply_base_path_template_file(rest_request, template_file)
+        # normalizes the contents
+        normalized_contents = self._normalize_contents(contents)
 
-        # processes the template file and sets the request contents
-        self.process_set_contents(rest_request, template_file)
+        base_file_path = "c:/Users/joamag/workspace/pt.hive.colony.documentation.technical"
+
+        # creates the complete file path for the wiki file
+        complete_file_path = base_file_path + "/" + rest_request.path_list[-1] + ".wiki"
+
+        # writes the normalized contents to the wiki file (in the complete file path)
+        self._write_file(complete_file_path, normalized_contents)
+
+        print "vai criar o ficheiro %s" % (complete_file_path)
+
+        # retrieves the base path from the rest request
+        base_path = self.get_base_path(rest_request)
+
+        # redirects the request
+        rest_request.redirect(base_path + rest_request.path_list[-1])
+
+#        # creates the revision control parameters
+#        revision_control_parameters = {"repository_path" : base_file_path}
+#
+#        # loads a new revision control manager for the specified adapter name
+#        revision_control_manager = revision_control_manager_plugin.load_revision_control_manager("svn", revision_control_parameters)
+#
+#        # uses the revision control manager to perform the commit
+#        commit_revision = revision_control_manager.commit([complete_file_path], summary)
+#
+#        # sets the result for the rest request
+#        rest_request.set_result_translated("revision: " + str(commit_revision.get_number()))
+#
+#        # flushes the rest request
+#        rest_request.flush()
 
         return True
 
@@ -234,8 +263,8 @@ class WebMvcWikiPageController:
         form_data_map = self.process_form_data(rest_request, DEFAULT_ENCODING)
 
         # retrieves the summary and the contents
-        summary = form_data_map.get("summary", DEFAULT_SUMMARY)
-        contents =  form_data_map["contents"]
+        summary = form_data_map.get("wiki_page_edit_summary", DEFAULT_SUMMARY)
+        contents = form_data_map["wiki_page_edit_contents"]
 
         # normalizes the contents
         normalized_contents = self._normalize_contents(contents)
@@ -383,13 +412,11 @@ class WebMvcWikiController:
 
         file_path = file_path.rstrip("/")
 
-        if not file_path:
-            file_path = "index"
+        # retrieves the file path
+        file_path = file_path and file_path or "index"
 
-        if rest_request.encoder_name:
-            encoder_name = rest_request.encoder_name
-        else:
-            encoder_name = "html"
+        # retrieves the encoder name
+        encoder_name = rest_request.encoder_name and rest_request.encoder_name or "html"
 
         if not rest_request.encoder_name or rest_request.encoder_name in ("html", "ajx", "prt"):
             # creates the wiki file path
@@ -404,7 +431,7 @@ class WebMvcWikiController:
                 template_file.assign("page_include", "new_contents.html.tpl")
 
                 # sets the page name in the template file
-                template_file.assign("page_name", "new page")
+                template_file.assign("page_name", file_path)
 
                 # applies the base path to the template file
                 self.apply_base_path_template_file(rest_request, template_file)
@@ -453,10 +480,13 @@ class WebMvcWikiController:
             target_file_contents = target_file_contents.decode(TARGET_FILE_ENCODING)
 
         if not rest_request.encoder_name or rest_request.encoder_name in ("html", "prt"):
-
+            # in case there is no encoder name defined or the encoder name is html
             if not rest_request.encoder_name or rest_request.encoder_name == "html":
+                # retrieves the general template file
                 template_file_name = "general.html.tpl"
+            # in case the encoder name is print
             elif rest_request.encoder_name == "prt":
+                # retrieves the general print template file
                 template_file_name = "general_print.html.tpl"
 
             # retrieves the template file

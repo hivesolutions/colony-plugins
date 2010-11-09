@@ -33,7 +33,7 @@
 <div id="wiki-page-edit-container">
     <div id="wiki-page-edit">
         <div class="wiki-page-edit-line">
-            <input id="wiki-summary-input" name="wiki-summary-input" class="wiki-input" type="text" value="Describe your wiki modification" current_status="" original_value="Describe your wiki modification" />
+            <input id="wiki-page-edit-summary-input" name="wiki_page_edit_summary" class="wiki-input" type="text" value="Describe your wiki modification" current_status="" original_value="Describe your wiki modification" />
         </div>
         <div class="wiki-page-edit-line">
             <div id="wiki-controls">
@@ -43,10 +43,10 @@
                     <div class="wiki-control-icon wiki-control-icon-quote"></div>
                 </div>
             </div>
-            <textarea id="wiki-page-contents-text-area" class="wiki-text-area">${out_none value=page_source /}</textarea>
+            <textarea id="wiki-page-edit-contents-text-area" name="wiki_page_edit_contents" class="wiki-text-area">${out_none value=page_source /}</textarea>
         </div>
         <div id="wiki-page-edit-buttons" class="wiki-page-edit-line">
-            <div id="wiki-publish-button" class="wiki-button wiki-button-blue">Publish</div>
+            <div id="wiki-page-edit-publish-button" class="wiki-button wiki-button-blue">Publish</div>
             <div class="wiki-button wiki-button-blue disabled">Preview</div>
         </div>
     </div>
