@@ -47,8 +47,8 @@ INVALID_NUMBER_ARGUMENTS_MESSAGE = "invalid number of arguments"
 """ The invalid number of arguments message """
 
 HELP_TEXT = "### PRINTING HELP ###\n\
-print_test - prints a test page\n\
-print_test_image - prints a test page with an image\n\
+print_test                          - prints a test page\n\
+print_test_image                    - prints a test page with an image\n\
 print_printing_language <file-path> - prints the page described in the file of the given file path"
 """ The help text """
 
