@@ -426,20 +426,26 @@ class ValidationPlugin:
         # retrieves the plugin file name
         plugin_file_name = plugin_information.plugin_file_name
 
-        # checks that the type value is correct
-        if not plugin_descriptor_data[TYPE_VALUE] == PLUGIN_VALUE:
+        # retrieves the plugin descriptor type
+        plugin_descriptor_type = plugin_descriptor_data.get(TYPE_VALUE, None)
+
+        # checks that the plugin descriptor type is correct
+        if not plugin_descriptor_type == PLUGIN_VALUE:
             # logs the validation error
             self.add_validation_error(validation_errors, plugin_information, "'%s' json descriptor file has invalid attribute 'type'" % plugin_module_name)
 
-        # checks that the platform value is correct
-        if not plugin_descriptor_data[PLATFORM_VALUE] == PYTHON_VALUE:
+        # retrieves the plugin descriptor platform
+        plugin_descriptor_platform = plugin_descriptor_data.get(PLATFORM_VALUE, None)
+
+        # checks that the plugin descriptor platform is correct
+        if not plugin_descriptor_platform == PYTHON_VALUE:
             # logs the validation error
             self.add_validation_error(validation_errors, plugin_information, "'%s' json descriptor file has invalid attribute 'platform'" % plugin_module_name)
 
         # searches for plugin descriptor attributes with invalid content
         for plugin_descriptor_attribute_name, plugin_attribute_name in PLUGIN_DESCRIPTOR_ATTRIBUTES_MAP.items():
             # retrieves the plugin descriptor data attribute
-            plugin_descriptor_data_attribute = plugin_descriptor_data[plugin_descriptor_attribute_name]
+            plugin_descriptor_data_attribute = plugin_descriptor_data.get(plugin_descriptor_attribute_name, None)
 
             # retrieves the plugin attribute
             plugin_attribute = getattr(plugin, plugin_attribute_name)
@@ -449,14 +455,25 @@ class ValidationPlugin:
                 # logs the validation error
                 self.add_validation_error(validation_errors, plugin_information, "'%s' json descriptor file has invalid attribute '%s'" % (plugin_module_name, plugin_descriptor_attribute_name))
 
-        # checks that the main file value is correct
-        if not plugin_descriptor_data[MAIN_FILE_VALUE] == plugin_file_name:
+        # retrieves the plugin descriptor platform
+        plugin_descriptor_main_file = plugin_descriptor_data.get(MAIN_FILE_VALUE, None)
+
+        # checks that the plugin descriptor main file is correct
+        if not plugin_descriptor_main_file == plugin_file_name:
             # logs the validation error
             self.add_validation_error(validation_errors, plugin_information, "'%s' json descriptor file has invalid attribute 'main_file'" % plugin_module_name)
 
     def __validate_plugin_descriptor_file_capabilities(self, plugin_information, plugin_descriptor_data, validation_errors):
         # retrieves the plugin module name
         plugin_module_name = plugin_information.plugin_module_name
+
+        # checks that the capabilities attribute exists
+        if not CAPABILITIES_VALUE in plugin_descriptor_data:
+            # logs the validation error
+            self.add_validation_error(validation_errors, plugin_information, "'%s' json descriptor file is missing attribute 'capabilities'" % plugin_module_name)
+
+            # returns since nothing else can be tested
+            return
 
         # retrieves the plugin descriptor data capabilities
         plugin_descriptor_data_capabilities = plugin_descriptor_data[CAPABILITIES_VALUE]
@@ -481,6 +498,14 @@ class ValidationPlugin:
 
         # retrieves the plugin module name
         plugin_module_name = plugin_information.plugin_module_name
+
+        # checks that the capabilities allowed attribute exists
+        if not CAPABILITIES_ALLOWED_VALUE in plugin_descriptor_data:
+            # logs the validation error
+            self.add_validation_error(validation_errors, plugin_information, "'%s' json descriptor file is missing attribute 'capabilities_allowed'" % plugin_module_name)
+
+            # returns since nothing else can be tested
+            return
 
         # retrieves the plugin descriptor data capabilities allowed
         plugin_descriptor_data_capabilities_allowed = plugin_descriptor_data[CAPABILITIES_ALLOWED_VALUE]
@@ -537,6 +562,14 @@ class ValidationPlugin:
         # retrieves the plugin's dependencies
         plugin_dependencies = plugin.get_all_plugin_dependencies()
 
+        # checks that the dependencies attribute exists
+        if not DEPENDENCIES_VALUE in plugin_descriptor_data:
+            # logs the validation error
+            self.add_validation_error(validation_errors, plugin_information, "'%s' json descriptor file is missing attribute 'dependencies'" % plugin_module_name)
+
+            # returns since nothing else can be tested
+            return
+
         # retrieves the plugin descriptor data dependencies
         plugin_descriptor_data_dependencies = plugin_descriptor_data[DEPENDENCIES_VALUE]
 
@@ -578,6 +611,14 @@ class ValidationPlugin:
 
         # retrieves the plugin resource file paths
         plugin_resource_file_paths = plugin_information.plugin_resource_file_paths
+
+        # checks that the resources attribute exists
+        if not RESOURCES_VALUE in plugin_descriptor_data:
+            # logs the validation error
+            self.add_validation_error(validation_errors, plugin_information, "'%s' json descriptor file is missing attribute 'resources'" % plugin_module_name)
+
+            # returns since nothing else can be tested
+            return
 
         # retrieves the plugin descriptor data resources
         plugin_descriptor_data_resources = plugin_descriptor_data[RESOURCES_VALUE]
