@@ -85,5 +85,8 @@ class SearchSorterPlugin(colony.base.plugin_system.Plugin):
     def unload_allowed(self, plugin, capability):
         colony.base.plugin_system.Plugin.unload_allowed(self, plugin, capability)
 
+    def dependency_injected(self, plugin):
+        colony.base.plugin_system.Plugin.dependency_injected(self, plugin)
+
     def sort_results(self, search_results, properties):
         return self.search_sorter.sort_results(search_results, properties)
