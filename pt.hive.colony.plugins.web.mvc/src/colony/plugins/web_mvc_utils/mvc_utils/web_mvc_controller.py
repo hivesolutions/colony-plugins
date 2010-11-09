@@ -859,13 +859,13 @@ def _process_form_attribute(self, parent_structure, current_attribute_name, attr
         # retrieves the next match value in order to make
         next_match_result = ATTRIBUTE_PARSING_REGEX.match(current_attribute_name, match_result_end)
 
-        # retrieves the next match result name
-        next_match_result_name = next_match_result.lastgroup
-
         # in case there is no next match result
         if not next_match_result:
             # raises the invalid attribute name exception
             raise web_mvc_utils_exceptions.InvalidAttributeName("invalid next match value: " + current_attribute_name)
+
+        # retrieves the next match result name
+        next_match_result_name = next_match_result.lastgroup
 
         # retrieves the next match result value
         next_match_result_value = next_match_result.group()
