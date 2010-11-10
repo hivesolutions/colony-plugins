@@ -174,8 +174,8 @@ class ColonyRepositoryGeneratorBuildAutomationExtension:
         # creates the repository descriptor file path
         repository_descriptor_file_path = full_target_directory + "/" + DEFAULT_REPOSITORY_DESCRIPTOR_NAME
 
-        # generates the repository descriptor file
-        repository_descriptor_generator_plugin.generate_repository_descriptor_file(repository_descriptor_file_path, repository_name, repository_description, repository_layout)
+        # generates the repository descriptor file using the given artifacts
+        repository_descriptor_generator_plugin.generate_repository_descriptor_file_artifacts(repository_descriptor_file_path, repository_name, repository_description, repository_layout, packed_bundles, packed_plugins, packed_libraries)
 
         # processes the bundles copying them to the repository directory
         self._process_bundles(packed_bundles, bundles_directory, full_target_directory)

@@ -89,6 +89,9 @@ ID_VALUE = "id"
 VERSION_VALUE = "version"
 """ The version value """
 
+DEPENDENCIES_VALUE = "dependencies"
+""" The dependencies value """
+
 PACKED_BUNDLES_VALUE = "packed_bundles"
 """ The packed bundles value """
 
@@ -222,9 +225,13 @@ class PackingBuildAutomationExtension:
         # retrieves the specification id and version
         specification_id = specification[ID_VALUE]
         specification_version = specification[VERSION_VALUE]
+        specification_dependencies = specification[DEPENDENCIES_VALUE]
 
-        # creates the packed item from the specification id and version
-        packed_item = {ID_VALUE : specification_id, VERSION_VALUE : specification_version}
+        # creates the packed item from the specification id, version
+        # and dependencies
+        packed_item = {ID_VALUE : specification_id,
+                       VERSION_VALUE : specification_version,
+                       DEPENDENCIES_VALUE : specification_dependencies}
 
         # adds the packed item to the packed items list
         packed_items_list.append(packed_item)
