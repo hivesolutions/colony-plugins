@@ -329,7 +329,7 @@ class BuildAutomation:
         # returns the loaded build automation item plugins
         return self.loaded_build_automation_item_plugins_list
 
-    def run_automation(self, plugin_id, plugin_version = None, stage = None, recursive_level = 1, logger = None, raise_exception = False, properties = None, is_first = True):
+    def run_automation(self, plugin_id, plugin_version = None, stage = None, recursive_level = 1, logger = None, raise_exception = False, global_properties = None, is_first = True):
         """
         Runs all the automation plugins for the given plugin id and version.
 
@@ -345,8 +345,8 @@ class BuildAutomation:
         @param logger: The build automation logger to be used.
         @type raise_exception: bool
         @param raise_exception: If an exception should be raised in case of error.
-        @type properties: Dictionary
-        @param properties: Map containing the runtime automation information.
+        @type global_properties: Dictionary
+        @param global_properties: Map containing various properties of the build automation runtime (global context).
         @type is_first: bool
         @param is_first: If this is the first run (useful for module inclusion).
         @rtype: bool
@@ -359,9 +359,9 @@ class BuildAutomation:
             logger = self.logger
 
         # in case no properties are defined
-        if properties == None:
-            # creates a new properties map
-            properties = {}
+        if global_properties == None:
+            # creates a new global properties map
+            global_properties = {}
 
         # retrieves the build automation structure
         build_automation_structure = self.get_build_automation_structure(plugin_id, plugin_version)
@@ -378,8 +378,8 @@ class BuildAutomation:
         initial_date_time = datetime.datetime.now()
 
         # creates the build automation structure runtime information, with the current properties
-        # the properties are shared among the build automation global run that includes the modules
-        build_automation_structure.runtime = RuntimeInformationStructure(True, self.logging_buffer, initial_date_time, False, properties)
+        # the global properties are shared among the build automation global run that includes the modules
+        build_automation_structure.runtime = RuntimeInformationStructure(True, self.logging_buffer, initial_date_time, False, global_properties)
 
         # retrieves the build automation structure runtime
         build_automation_structure_runtime = build_automation_structure.runtime
@@ -422,7 +422,7 @@ class BuildAutomation:
                 module_stage = module_plugin_stage or stage
 
                 # runs the module plugin for the same stage
-                build_automation_structure_runtime.success = self.run_automation(module_id, module_version, module_stage, recursive_level - 1, logger, raise_exception, properties, False)
+                build_automation_structure_runtime.success = self.run_automation(module_id, module_version, module_stage, recursive_level - 1, logger, raise_exception, global_properties, False)
         else:
             # prints an info message
             logger.info("Not building modules no recursion level available...")
@@ -629,8 +629,8 @@ class BuildAutomation:
         logger.info("------------------------------------------------------------------------")
 
         # sets the build automation structure runtime properties
-        build_automation_structure_runtime.properties[TOTAL_TIME_VALUE] = delta_date_time_seconds
-        build_automation_structure_runtime.properties[TOTAL_TIME_FORMATED_VALUE] = delta_date_time_formated
+        build_automation_structure_runtime.local_properties[TOTAL_TIME_VALUE] = delta_date_time_seconds
+        build_automation_structure_runtime.local_properties[TOTAL_TIME_FORMATED_VALUE] = delta_date_time_formated
 
     def generate_build_automation_structure(self, build_automation_parsing_structure):
         """
@@ -1729,10 +1729,13 @@ class RuntimeInformationStructure:
     skipped = False
     """ Flag controlling if the build automation was skipped """
 
-    properties = None
-    """ Object containing various properties of the build automation runtime """
+    global_properties = None
+    """ Map containing various properties of the build automation runtime (global context) """
 
-    def __init__(self, success = False, logging_buffer = None, initial_date_time = None, skipped = False, properties = None):
+    local_properties = None
+    """ Map containing various properties of the build automation runtime (local context) """
+
+    def __init__(self, success = False, logging_buffer = None, initial_date_time = None, skipped = False, global_properties = None):
         """
         Constructor of the class.
 
@@ -1744,12 +1747,14 @@ class RuntimeInformationStructure:
         @param initial_date_time: The date time structure of the beginning of the run.
         @type skipped: bool
         @param skipped: Flag controlling if the build automation was skipped.
-        @type properties: Object
-        @param properties: Object containing various properties of the build automation runtime.
+        @type global_properties: Dictionary
+        @param global_properties: Map containing various properties of the build automation runtime (global context).
         """
 
         self.success = success
         self.logging_buffer = logging_buffer
         self.initial_date_time = initial_date_time
         self.skipped = skipped
-        self.properties = properties
+        self.global_properties = global_properties
+
+        self.local_properties = {}
