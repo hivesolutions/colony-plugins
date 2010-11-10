@@ -110,7 +110,7 @@ class DataConverterIoAdapterCsvPlugin(colony.base.plugin_system.Plugin):
         provided intermediate structure.
         """
 
-        self.io_adapter_csv.load_intermediate_structure(configuration, intermediate_structure, options)
+        return self.io_adapter_csv.load_intermediate_structure(configuration, intermediate_structure, options)
 
     def save_intermediate_structure(self, configuration, intermediate_structure, options):
         """
@@ -126,4 +126,4 @@ class DataConverterIoAdapterCsvPlugin(colony.base.plugin_system.Plugin):
         structure into csv format.
         """
 
-        self.io_adapter_csv.save_intermediate_structure(configuration, intermediate_structure, options)
+        return self.io_adapter_csv.save_intermediate_structure(configuration, intermediate_structure, options)

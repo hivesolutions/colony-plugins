@@ -106,10 +106,10 @@ class MainServiceTelnetPlugin(colony.base.plugin_system.Plugin):
         colony.base.plugin_system.Plugin.unset_configuration_property(self, property_name)
 
     def start_service(self, parameters):
-        self.main_service_telnet.start_service(parameters)
+        return self.main_service_telnet.start_service(parameters)
 
     def stop_service(self, parameters):
-        self.main_service_telnet.stop_service(parameters)
+        return self.main_service_telnet.stop_service(parameters)
 
     @colony.base.decorators.load_allowed_capability("telnet_service_handler")
     def telnet_service_handler_load_allowed(self, plugin, capability):

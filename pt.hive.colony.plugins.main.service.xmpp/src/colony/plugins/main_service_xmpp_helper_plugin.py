@@ -90,4 +90,4 @@ class MainServiceXmppHelperPlugin(colony.base.plugin_system.Plugin):
         colony.base.plugin_system.Plugin.dependency_injected(self, plugin)
 
     def parse_request(self, request):
-        self.main_service_xmpp_helper.parse_request(request)
+        return self.main_service_xmpp_helper.parse_request(request)

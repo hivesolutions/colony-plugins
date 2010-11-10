@@ -106,10 +106,10 @@ class DummyTranslationPlugin(colony.base.plugin_system.Plugin):
         return self.dummy_translation.get_help()
 
     def handler_get_translation_engines(self, args, output_method):
-        self.dummy_translation.handler_get_translation_engines(args, output_method)
+        return self.dummy_translation.handler_get_translation_engines(args, output_method)
 
     def handler_translate(self, args, output_method):
-        self.dummy_translation.handler_translate(args, output_method)
+        return self.dummy_translation.handler_translate(args, output_method)
 
     @colony.base.decorators.load_allowed_capability("translation_engine")
     def translation_engine_load_allowed(self, plugin, capability):

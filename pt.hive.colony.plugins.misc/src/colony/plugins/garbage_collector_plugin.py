@@ -91,16 +91,16 @@ class GarbageCollectorPlugin(colony.base.plugin_system.Plugin):
         colony.base.plugin_system.Plugin.dependency_injected(self, plugin)
 
     def run_garbage_collector(self):
-        self.garbage_collector.run_garbage_collector()
+        return self.garbage_collector.run_garbage_collector()
 
     def enable(self):
-        self.garbage_collector.enable()
+        return self.garbage_collector.enable()
 
     def disable(self):
-        self.garbage_collector.disable()
+        return self.garbage_collector.disable()
 
     def set_debug(self, flags):
-        self.garbage_collector.set_debug(flags)
+        return self.garbage_collector.set_debug(flags)
 
     def is_enabled(self):
         return self.garbage_collector.is_enabled()

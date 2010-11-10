@@ -136,7 +136,7 @@ class EmailPlugin(colony.base.plugin_system.Plugin):
         @param contents: The contents of the email.
         """
 
-        self.email.send_email(email_sender, email_receiver, name_sender, name_receiver, subject, contents)
+        return self.email.send_email(email_sender, email_receiver, name_sender, name_receiver, subject, contents)
 
     def get_main_client_smtp_plugin(self):
         return self.main_client_smtp_plugin

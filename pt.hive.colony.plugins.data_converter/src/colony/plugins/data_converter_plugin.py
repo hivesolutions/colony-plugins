@@ -188,7 +188,7 @@ class DataConverterPlugin(colony.base.plugin_system.Plugin):
         one wants to unload.
         """
 
-        self.data_converter.unload_configuration(configuration_id)
+        return self.data_converter.unload_configuration(configuration_id)
 
     def set_configuration_option(self, configuration_id, option_name, option_value):
         """
@@ -203,7 +203,7 @@ class DataConverterPlugin(colony.base.plugin_system.Plugin):
         @param option_value: Value for the option one wants to set in the configuration.
         """
 
-        self.data_converter.set_configuration_option(configuration_id, option_name, option_value)
+        return self.data_converter.set_configuration_option(configuration_id, option_name, option_value)
 
     def create_intermediate_structure(self, configuration_map):
         """

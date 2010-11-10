@@ -112,7 +112,7 @@ class MainServicePopMainSessionHandlerPlugin(colony.base.plugin_system.Plugin):
         @param properties: The properties for the session handling.
         """
 
-        self.main_service_pop_main_session_handler.handle_session(session, properties)
+        return self.main_service_pop_main_session_handler.handle_session(session, properties)
 
     @colony.base.decorators.load_allowed_capability("pop_service_message_provider")
     def pop_service_message_provider_load_allowed(self, plugin, capability):

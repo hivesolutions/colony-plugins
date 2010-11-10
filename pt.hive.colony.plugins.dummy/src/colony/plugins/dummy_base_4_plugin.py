@@ -94,19 +94,19 @@ class DummyBase4Plugin(colony.base.plugin_system.Plugin):
         colony.base.plugin_system.Plugin.dependency_injected(self, plugin)
 
     def create_test_task(self):
-        self.dummy_base_4.create_test_task()
+        return self.dummy_base_4.create_test_task()
 
     def pause_test_task(self):
-        self.dummy_base_4.pause_test_task()
+        return self.dummy_base_4.pause_test_task()
 
     def resume_test_task(self):
-        self.dummy_base_4.resume_test_task()
+        return self.dummy_base_4.resume_test_task()
 
     def stop_test_task(self):
-        self.dummy_base_4.stop_test_task()
+        return self.dummy_base_4.stop_test_task()
 
     def generate_test_event(self):
-        self.dummy_base_4.generate_test_event()
+        return self.dummy_base_4.generate_test_event()
 
     def get_task_manager_plugin(self):
         return self.task_manager_plugin

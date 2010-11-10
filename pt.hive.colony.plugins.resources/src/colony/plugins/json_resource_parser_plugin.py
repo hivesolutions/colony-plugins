@@ -95,7 +95,7 @@ class JsonResourceParserPlugin(colony.base.plugin_system.Plugin):
         return self.json_resource_parser.get_resource_parser_name()
 
     def parse_resource(self, resource):
-        self.json_resource_parser.parse_resource(resource)
+        return self.json_resource_parser.parse_resource(resource)
 
     def get_json_plugin(self):
         return self.json_plugin

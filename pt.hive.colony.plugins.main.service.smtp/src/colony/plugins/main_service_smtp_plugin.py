@@ -108,10 +108,10 @@ class MainServiceSmtpPlugin(colony.base.plugin_system.Plugin):
         colony.base.plugin_system.Plugin.unset_configuration_property(self, property_name)
 
     def start_service(self, parameters):
-        self.main_service_smtp.start_service(parameters)
+        return self.main_service_smtp.start_service(parameters)
 
     def stop_service(self, parameters):
-        self.main_service_smtp.stop_service(parameters)
+        return self.main_service_smtp.stop_service(parameters)
 
     @colony.base.decorators.load_allowed_capability("smtp_service_handler")
     def smtp_service_handler_load_allowed(self, plugin, capability):

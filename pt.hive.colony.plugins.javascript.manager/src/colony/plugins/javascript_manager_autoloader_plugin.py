@@ -111,7 +111,7 @@ class JavascriptManagerAutoloaderPlugin(colony.base.plugin_system.Plugin):
                 self.get_status_plugins : ["getStatusPlugins"]}
 
     def update_plugin_manager(self):
-        self.javascript_manager_autoloader.update_plugin_manager()
+        return self.javascript_manager_autoloader.update_plugin_manager()
 
     def get_status_plugins(self, timestamp):
         return self.javascript_manager_autoloader.get_status_plugins(timestamp)

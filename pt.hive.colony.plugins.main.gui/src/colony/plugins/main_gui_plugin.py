@@ -119,7 +119,7 @@ class MainGuiPlugin(colony.base.plugin_system.Plugin):
         colony.base.plugin_system.Plugin.dependency_injected(self, plugin)
 
     def init_complete(self):
-        self.application.show_main_frame()
+        return self.application.show_main_frame()
 
     @colony.base.decorators.event_handler("pt.hive.colony.plugins.main.gui", "1.0.0")
     def event_handler(self, event_name, *event_args):

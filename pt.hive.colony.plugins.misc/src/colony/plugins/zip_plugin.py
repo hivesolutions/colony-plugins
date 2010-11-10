@@ -99,7 +99,7 @@ class ZipPlugin(colony.base.plugin_system.Plugin):
         @param file_path_list: List of relative file paths.
         """
 
-        self.zip_system.zip(zip_file_path, input_directory, file_path_list)
+        return self.zip_system.zip(zip_file_path, input_directory, file_path_list)
 
     def unzip(self, zip_file_path, output_directory):
         """
@@ -111,7 +111,7 @@ class ZipPlugin(colony.base.plugin_system.Plugin):
         @param output_directory: Full path to the directory where one wants to extract the zip file to.
         """
 
-        self.zip_system.unzip(zip_file_path, output_directory)
+        return self.zip_system.unzip(zip_file_path, output_directory)
 
     def get_file_paths(self, file_path):
         """

@@ -103,10 +103,10 @@ class PrintingWin32Plugin(colony.base.plugin_system.Plugin):
         return self.printing_win32.get_printing_name()
 
     def print_test(self, printing_options):
-        self.printing_win32.print_test(printing_options)
+        return self.printing_win32.print_test(printing_options)
 
     def print_test_image(self, image_path, printing_options):
-        self.printing_win32.print_test_image(image_path, printing_options)
+        return self.printing_win32.print_test_image(image_path, printing_options)
 
     def print_printing_language(self, printing_document, printing_options):
-        self.printing_win32.print_printing_language(printing_document, printing_options)
+        return self.printing_win32.print_printing_language(printing_document, printing_options)

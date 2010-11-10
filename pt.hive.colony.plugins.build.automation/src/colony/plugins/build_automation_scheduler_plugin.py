@@ -120,10 +120,10 @@ class BuildAutomationSchedulerPlugin(colony.base.plugin_system.Plugin):
         return self.build_automation_plugin
 
     def register_build_automation_plugin_id(self, plugin_id, date_time, recursion_list):
-        self.build_automation_scheduler.register_build_automation_plugin_id(plugin_id, date_time, recursion_list)
+        return self.build_automation_scheduler.register_build_automation_plugin_id(plugin_id, date_time, recursion_list)
 
     def register_build_automation_plugin_id_version(self, plugin_id, plugin_version, date_time, recursion_list):
-        self.build_automation_scheduler.register_build_automation_plugin_id(plugin_id, plugin_version, date_time, recursion_list)
+        return self.build_automation_scheduler.register_build_automation_plugin_id(plugin_id, plugin_version, date_time, recursion_list)
 
     @colony.base.decorators.plugin_inject("pt.hive.colony.plugins.build.automation")
     def set_build_automation_plugin(self, build_automation_plugin):

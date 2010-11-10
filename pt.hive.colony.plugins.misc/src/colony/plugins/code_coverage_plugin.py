@@ -87,13 +87,13 @@ class CodeCoveragePlugin(colony.base.plugin_system.Plugin):
         colony.base.plugin_system.Plugin.dependency_injected(self, plugin)
 
     def start_code_coverage(self):
-        self.code_coverage.start_code_coverage()
+        return self.code_coverage.start_code_coverage()
 
     def stop_code_coverage(self):
-        self.code_coverage.stop_code_coverage()
+        return self.code_coverage.stop_code_coverage()
 
     def write_code_coverage(self, code_coverage_file_path):
-        self.code_coverage.write_code_coverage(code_coverage_file_path)
+        return self.code_coverage.write_code_coverage(code_coverage_file_path)
 
     def get_code_coverage(self):
         return self.code_coverage.get_code_coverage()

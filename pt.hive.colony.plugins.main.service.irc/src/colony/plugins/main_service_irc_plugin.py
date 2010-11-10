@@ -104,10 +104,10 @@ class MainServiceIrcPlugin(colony.base.plugin_system.Plugin):
         colony.base.plugin_system.Plugin.unset_configuration_property(self, property_name)
 
     def start_service(self, parameters):
-        self.main_service_irc.start_service(parameters)
+        return self.main_service_irc.start_service(parameters)
 
     def stop_service(self, parameters):
-        self.main_service_irc.stop_service(parameters)
+        return self.main_service_irc.stop_service(parameters)
 
     @colony.base.decorators.load_allowed_capability("socket_provider")
     def socket_provider_load_allowed(self, plugin, capability):

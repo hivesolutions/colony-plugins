@@ -93,7 +93,7 @@ class DummyPlugin(colony.base.plugin_system.Plugin):
         Prints a dummy message in the screen.
         """
 
-        self.dummy.print_dummy()
+        return self.dummy.print_dummy()
 
     def get_dummy(self):
         """

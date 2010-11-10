@@ -112,7 +112,7 @@ class MainServiceSmtpMainSessionHandlerPlugin(colony.base.plugin_system.Plugin):
         @param properties: The properties for the session handling.
         """
 
-        self.main_service_smtp_main_session_handler.handle_session(session, properties)
+        return self.main_service_smtp_main_session_handler.handle_session(session, properties)
 
     @colony.base.decorators.load_allowed_capability("smtp_service_message_handler")
     def smtp_service_message_handler_load_allowed(self, plugin, capability):

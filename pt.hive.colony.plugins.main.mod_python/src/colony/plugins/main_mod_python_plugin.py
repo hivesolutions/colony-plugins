@@ -91,7 +91,7 @@ class MainModPythonPlugin(colony.base.plugin_system.Plugin):
         colony.base.plugin_system.Plugin.dependency_injected(self, plugin)
 
     def handle_request(self, request, plugin_handler_id):
-        self.main_mod_python.handle_request(request, plugin_handler_id)
+        return self.main_mod_python.handle_request(request, plugin_handler_id)
 
     @colony.base.decorators.load_allowed_capability("http_python_handler")
     def http_python_handler_capability_load_allowed(self, plugin, capability):

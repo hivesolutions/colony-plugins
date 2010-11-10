@@ -108,7 +108,7 @@ class ColonyPackingDeployerPlugin(colony.base.plugin_system.Plugin):
         be deployed.
         """
 
-        self.colony_packing_deployer.deploy_plugin(plugin_id, plugin_version, contents_file)
+        return self.colony_packing_deployer.deploy_plugin(plugin_id, plugin_version, contents_file)
 
     def get_deployer_type(self):
         return self.colony_packing_deployer.get_deployer_type()

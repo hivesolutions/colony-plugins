@@ -113,16 +113,16 @@ class MainServiceBittorrentPlugin(colony.base.plugin_system.Plugin):
         colony.base.plugin_system.Plugin.unset_configuration_property(self, property_name)
 
     def start_service(self, parameters):
-        self.main_service_bittorrent.start_service(parameters)
+        return self.main_service_bittorrent.start_service(parameters)
 
     def stop_service(self, parameters):
-        self.main_service_bittorrent.stop_service(parameters)
+        return self.main_service_bittorrent.stop_service(parameters)
 
     def start_torrent(self, parameters):
-        self.main_service_bittorrent.start_torrent(parameters)
+        return self.main_service_bittorrent.start_torrent(parameters)
 
     def stop_torrent(self, parameters):
-        self.main_service_bittorrent.start_torrent(parameters)
+        return self.main_service_bittorrent.start_torrent(parameters)
 
     @colony.base.decorators.load_allowed_capability("bittorrent_service_handler")
     def bittorrent_service_handler_load_allowed(self, plugin, capability):

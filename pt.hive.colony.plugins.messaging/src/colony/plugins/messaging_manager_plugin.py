@@ -93,7 +93,7 @@ class MessagingManagerPlugin(colony.base.plugin_system.Plugin):
         colony.base.plugin_system.Plugin.dependency_injected(self, plugin)
 
     def send_message(self, messaging_service_id, message_attributes):
-        self.messaging_manager.send_message(messaging_service_id, message_attributes)
+        return self.messaging_manager.send_message(messaging_service_id, message_attributes)
 
     @colony.base.decorators.load_allowed_capability("messaging_extension")
     def messaging_extension_load_allowed(self, plugin, capability):

@@ -87,13 +87,13 @@ class DistributionRegistryPlugin(colony.base.plugin_system.Plugin):
         colony.base.plugin_system.Plugin.dependency_injected(self, plugin)
 
     def load_registry(self, properties):
-        self.distribution_registry.load_registry(properties)
+        return self.distribution_registry.load_registry(properties)
 
     def register_entry(self, hostname, name, type, endpoints, metadata):
-        self.distribution_registry.register_entry(hostname, name, type, endpoints, metadata)
+        return self.distribution_registry.register_entry(hostname, name, type, endpoints, metadata)
 
     def unregister_entry(self, hostname, name):
-        self.distribution_registry.unregister_entry(hostname, name)
+        return self.distribution_registry.unregister_entry(hostname, name)
 
     def get_all_registry_entries(self):
         return self.distribution_registry.get_all_registry_entries()

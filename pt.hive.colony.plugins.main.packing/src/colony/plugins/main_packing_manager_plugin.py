@@ -105,7 +105,7 @@ class MainPackingManagerPlugin(colony.base.plugin_system.Plugin):
         @param service_name: The name of the service to be used for packing.
         """
 
-        self.main_packing_manager.pack_directory(directory_path, properties, service_name)
+        return self.main_packing_manager.pack_directory(directory_path, properties, service_name)
 
     def pack_files(self, file_paths_list, properties, service_name):
         """
@@ -119,7 +119,7 @@ class MainPackingManagerPlugin(colony.base.plugin_system.Plugin):
         @param service_name: The name of the service to be used for packing.
         """
 
-        self.main_packing_manager.pack_files(file_paths_list, properties, service_name)
+        return self.main_packing_manager.pack_files(file_paths_list, properties, service_name)
 
     def unpack_files(self, file_paths_list, properties, service_name):
         """
@@ -133,7 +133,7 @@ class MainPackingManagerPlugin(colony.base.plugin_system.Plugin):
         @param service_name: The name of the service to be used for unpacking.
         """
 
-        self.main_packing_manager.unpack_files(file_paths_list, properties, service_name)
+        return self.main_packing_manager.unpack_files(file_paths_list, properties, service_name)
 
     @colony.base.decorators.load_allowed_capability("packing_service")
     def packing_service_capability_load_allowed(self, plugin, capability):

@@ -107,10 +107,10 @@ class MainServicePolicyPlugin(colony.base.plugin_system.Plugin):
         colony.base.plugin_system.Plugin.unset_configuration_property(self, property_name)
 
     def start_service(self, parameters):
-        self.main_service_policy.start_service(parameters)
+        return self.main_service_policy.start_service(parameters)
 
     def stop_service(self, parameters):
-        self.main_service_policy.stop_service(parameters)
+        return self.main_service_policy.stop_service(parameters)
 
     @colony.base.decorators.load_allowed_capability("policy_service_handler")
     def policy_service_handler_load_allowed(self, plugin, capability):

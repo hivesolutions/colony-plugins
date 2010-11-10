@@ -110,7 +110,7 @@ class DataConverterIoAdapterFilesystemPlugin(colony.base.plugin_system.Plugin):
         provided intermediate structure.
         """
 
-        self.io_adapter_filesystem.load_intermediate_structure(configuration, intermediate_structure, options)
+        return self.io_adapter_filesystem.load_intermediate_structure(configuration, intermediate_structure, options)
 
     def save_intermediate_structure(self, configuration, intermediate_structure, options):
         """
@@ -126,4 +126,4 @@ class DataConverterIoAdapterFilesystemPlugin(colony.base.plugin_system.Plugin):
         structure into filesystem format.
         """
 
-        self.io_adapter_filesystem.save_intermediate_structure(configuration, intermediate_structure, options)
+        return self.io_adapter_filesystem.save_intermediate_structure(configuration, intermediate_structure, options)

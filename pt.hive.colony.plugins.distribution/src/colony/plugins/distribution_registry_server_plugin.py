@@ -102,10 +102,10 @@ class DistributionRegistryServerPlugin(colony.base.plugin_system.Plugin):
         return self.distribution_registry_server.get_distribution_server_type()
 
     def activate_server(self, properties):
-        self.distribution_registry_server.activate_server(properties)
+        return self.distribution_registry_server.activate_server(properties)
 
     def deactivate_server(self, properties):
-        self.distribution_registry_server.deactivate_server(properties)
+        return self.distribution_registry_server.deactivate_server(properties)
 
     @colony.base.decorators.load_allowed_capability("distribution_helper")
     def distribution_helper_load_allowed(self, plugin, capability):

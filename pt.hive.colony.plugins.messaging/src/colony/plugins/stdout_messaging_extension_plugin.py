@@ -105,4 +105,4 @@ class StdoutMessagingExtensionPlugin(colony.base.plugin_system.Plugin):
         be sent.
         """
 
-        self.stdout_messaging_extension.send_message(message_attributes)
+        return self.stdout_messaging_extension.send_message(message_attributes)

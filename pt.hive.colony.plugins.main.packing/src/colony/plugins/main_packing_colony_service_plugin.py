@@ -112,7 +112,7 @@ class MainPackingColonyServicePlugin(colony.base.plugin_system.Plugin):
         @param properties: The properties for the packing.
         """
 
-        self.main_packing_colony_service.pack_directory(directory_path, properties)
+        return self.main_packing_colony_service.pack_directory(directory_path, properties)
 
     def pack_files(self, file_paths_list, properties):
         """
@@ -124,7 +124,7 @@ class MainPackingColonyServicePlugin(colony.base.plugin_system.Plugin):
         @param properties: The properties for the packing.
         """
 
-        self.main_packing_colony_service.pack_files(file_paths_list, properties)
+        return self.main_packing_colony_service.pack_files(file_paths_list, properties)
 
     def unpack_files(self, file_paths_list, properties):
         """
@@ -136,7 +136,7 @@ class MainPackingColonyServicePlugin(colony.base.plugin_system.Plugin):
         @param properties: The properties for the unpacking.
         """
 
-        self.main_packing_colony_service.unpack_files(file_paths_list, properties)
+        return self.main_packing_colony_service.unpack_files(file_paths_list, properties)
 
     def get_specification_manager_plugin(self):
         return self.specification_manager_plugin

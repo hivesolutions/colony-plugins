@@ -107,10 +107,10 @@ class MainServiceAbeculaPlugin(colony.base.plugin_system.Plugin):
         colony.base.plugin_system.Plugin.unset_configuration_property(self, property_name)
 
     def start_service(self, parameters):
-        self.main_service_abecula.start_service(parameters)
+        return self.main_service_abecula.start_service(parameters)
 
     def stop_service(self, parameters):
-        self.main_service_abecula.stop_service(parameters)
+        return self.main_service_abecula.stop_service(parameters)
 
     @colony.base.decorators.load_allowed_capability("abecula_service_handler")
     def abecula_service_handler_load_allowed(self, plugin, capability):

@@ -112,7 +112,7 @@ class MainServiceSmtpDatabaseMessageHandlerPlugin(colony.base.plugin_system.Plug
         @param arguments: The arguments to the message handling.
         """
 
-        self.main_service_smtp_database_message_handler.handle_message(message, arguments)
+        return self.main_service_smtp_database_message_handler.handle_message(message, arguments)
 
     def get_mail_storage_database_plugin(self):
         return self.mail_storage_database_plugin

@@ -95,13 +95,13 @@ class WebMvcSearchPlugin(colony.base.plugin_system.Plugin):
         colony.base.plugin_system.Plugin.dependency_injected(self, plugin)
 
     def load_index_configuration_map(self, index_configuration_map):
-        self.web_mvc_search.load_index_configuration_map(index_configuration_map)
+        return self.web_mvc_search.load_index_configuration_map(index_configuration_map)
 
     def create_search_index_controller(self, search_index_identifier, search_index_configuration_map, entity_models_modules):
         return self.web_mvc_search.create_search_index_controller(search_index_identifier, search_index_configuration_map, entity_models_modules)
 
     def update_index(self, index_identifier):
-        self.web_mvc_search.update_index(index_identifier)
+        return self.web_mvc_search.update_index(index_identifier)
 
     def search_index(self, index_identifier, query_string):
         return self.web_mvc_search.search_index(index_identifier, query_string)

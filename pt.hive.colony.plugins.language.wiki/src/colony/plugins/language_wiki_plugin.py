@@ -100,4 +100,4 @@ class LanguageWikiPlugin(colony.base.plugin_system.Plugin):
         during the engine processing.
         """
 
-        self.language_wiki.generate(engine_name, engine_properties)
+        return self.language_wiki.generate(engine_name, engine_properties)

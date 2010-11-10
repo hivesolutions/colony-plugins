@@ -92,7 +92,7 @@ class MainServiceSmtpStreamHandlerPlugin(colony.base.plugin_system.Plugin):
         return self.main_service_smtp_stream_handler.get_handler_name()
 
     def handle_request(self, request):
-        self.main_service_smtp_stream_handler.handle_request(request)
+        return self.main_service_smtp_stream_handler.handle_request(request)
 
     def handle_initial_request(self, request):
-        self.main_service_smtp_stream_handler.handle_initial_request(request)
+        return self.main_service_smtp_stream_handler.handle_initial_request(request)

@@ -103,7 +103,7 @@ class JsonSpecificationParserPlugin(colony.base.plugin_system.Plugin):
         return self.json_specification_parser.get_specification_parser_name()
 
     def parse_specification(self, specification):
-        self.json_specification_parser.parse_specification(specification)
+        return self.json_specification_parser.parse_specification(specification)
 
     def get_json_plugin(self):
         return self.json_plugin

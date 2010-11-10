@@ -105,10 +105,10 @@ class MainServiceDnsPlugin(colony.base.plugin_system.Plugin):
         colony.base.plugin_system.Plugin.unset_configuration_property(self, property_name)
 
     def start_service(self, parameters):
-        self.main_service_dns.start_service(parameters)
+        return self.main_service_dns.start_service(parameters)
 
     def stop_service(self, parameters):
-        self.main_service_dns.stop_service(parameters)
+        return self.main_service_dns.stop_service(parameters)
 
     @colony.base.decorators.load_allowed_capability("dns_service_handler")
     def dns_service_handler_load_allowed(self, plugin, capability):

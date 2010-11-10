@@ -106,13 +106,13 @@ class PrintingPdfPlugin(colony.base.plugin_system.Plugin):
         return self.printing_pdf.get_printing_name()
 
     def print_test(self, printing_options):
-        self.printing_pdf.print_test(printing_options)
+        return self.printing_pdf.print_test(printing_options)
 
     def print_test_image(self, image_path, printing_options):
-        self.printing_pdf.print_test_image(image_path, printing_options)
+        return self.printing_pdf.print_test_image(image_path, printing_options)
 
     def print_printing_language(self, printing_document, printing_options):
-        self.printing_pdf.print_printing_language(printing_document, printing_options)
+        return self.printing_pdf.print_printing_language(printing_document, printing_options)
 
     def get_document_pdf_plugin(self):
         return self.document_pdf_plugin

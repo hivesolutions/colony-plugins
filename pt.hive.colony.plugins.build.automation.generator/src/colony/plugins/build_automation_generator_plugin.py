@@ -111,7 +111,7 @@ class BuildAutomationGeneratorPlugin(colony.base.plugin_system.Plugin):
         @param file_path: The path to store the file being generated.
         """
 
-        self.build_automation_generator.generate_plugin_build_automation(plugin_id, plugin_version, properties, file_path)
+        return self.build_automation_generator.generate_plugin_build_automation(plugin_id, plugin_version, properties, file_path)
 
     def generate_plugin_build_automation_file_buffer(self, plugin_id, plugin_version, properties):
         """

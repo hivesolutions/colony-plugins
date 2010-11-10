@@ -116,7 +116,7 @@ class MainServiceSmtpRelayMessageHandlerPlugin(colony.base.plugin_system.Plugin)
         @param arguments: The arguments to the message handling.
         """
 
-        self.main_service_smtp_relay_session_handler.handle_message(message, arguments)
+        return self.main_service_smtp_relay_session_handler.handle_message(message, arguments)
 
     def get_main_client_smtp_plugin(self):
         return self.main_client_smtp_plugin

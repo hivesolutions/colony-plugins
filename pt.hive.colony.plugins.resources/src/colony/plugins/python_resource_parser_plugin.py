@@ -92,4 +92,4 @@ class PythonResourceParserPlugin(colony.base.plugin_system.Plugin):
         return self.python_resource_parser.get_resource_parser_name()
 
     def parse_resource(self, resource):
-        self.python_resource_parser.parse_resource(resource)
+        return self.python_resource_parser.parse_resource(resource)

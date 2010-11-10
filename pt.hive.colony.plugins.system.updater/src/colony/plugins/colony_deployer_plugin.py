@@ -117,7 +117,7 @@ class ColonyDeployerPlugin(colony.base.plugin_system.Plugin):
         be deployed.
         """
 
-        self.colony_deployer.deploy_bundle(bundle_id, bundle_version, contents_file)
+        return self.colony_deployer.deploy_bundle(bundle_id, bundle_version, contents_file)
 
     def deploy_plugin(self, plugin_id, plugin_version, contents_file):
         """
@@ -133,7 +133,7 @@ class ColonyDeployerPlugin(colony.base.plugin_system.Plugin):
         be deployed.
         """
 
-        self.colony_deployer.deploy_plugin(plugin_id, plugin_version, contents_file)
+        return self.colony_deployer.deploy_plugin(plugin_id, plugin_version, contents_file)
 
     def get_zip_plugin(self):
         return self.zip_plugin

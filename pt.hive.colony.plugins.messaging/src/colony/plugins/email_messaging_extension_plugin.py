@@ -108,7 +108,7 @@ class EmailMessagingExtensionPlugin(colony.base.plugin_system.Plugin):
         be sent.
         """
 
-        self.email_messaging_extension.send_message(message_attributes)
+        return self.email_messaging_extension.send_message(message_attributes)
 
     def get_email_plugin(self):
         return self.email_plugin

@@ -111,10 +111,10 @@ class BonjourPlugin(colony.base.plugin_system.Plugin):
         colony.base.plugin_system.Plugin.dependency_injected(self, plugin)
 
     def add_service_for_browsing(self, registration_type, domain):
-        self.bonjour.add_service_for_browsing(registration_type, domain)
+        return self.bonjour.add_service_for_browsing(registration_type, domain)
 
     def remove_service_for_browsing(self, registration_type, domain):
-        self.bonjour.remove_service_for_browsing(registration_type, domain)
+        return self.bonjour.remove_service_for_browsing(registration_type, domain)
 
     def register_bonjour_service(self, service_name, registration_type, domain, host, port):
         return self.bonjour.register_bonjour_service(service_name, registration_type, domain, host, port)

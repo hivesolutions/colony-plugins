@@ -122,11 +122,11 @@ class DescriptorGeneratorPlugin(colony.base.plugin_system.Plugin):
 
     def generate_plugin_descriptor(self, plugin_id):
         # generates a plugin descriptor for the specified plugin
-        self.descriptor_generator.generate_plugin_descriptor(plugin_id)
+        return self.descriptor_generator.generate_plugin_descriptor(plugin_id)
 
     def generate_plugin_descriptors(self):
         # generates plugin descriptors for all plugins
-        self.descriptor_generator.generate_plugin_descriptors()
+        return self.descriptor_generator.generate_plugin_descriptors()
 
     def get_validation_plugin_plugin(self):
         return self.validation_plugin_plugin

@@ -103,13 +103,13 @@ class ResourceManagerPlugin(colony.base.plugin_system.Plugin):
         colony.base.plugin_system.Plugin.event_handler(self, event_name, *event_args)
 
     def register_resource(self, resource_namespace, resource_name, resource_type, resource_data):
-        self.resource_manager.register_resource(resource_namespace, resource_name, resource_type, resource_data)
+        return self.resource_manager.register_resource(resource_namespace, resource_name, resource_type, resource_data)
 
     def is_resource_registered(self, resource_id):
         return self.resource_manager.is_resource_registered(resource_id)
 
     def unregister_resource(self, resource_id):
-        self.resource_manager.unregister_resource(resource_id)
+        return self.resource_manager.unregister_resource(resource_id)
 
     def get_resource(self, resource_id):
         return self.resource_manager.get_resource(resource_id)

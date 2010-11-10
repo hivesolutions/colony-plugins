@@ -147,7 +147,7 @@ class SchedulerPlugin(colony.base.plugin_system.Plugin):
         return self.scheduler.register_task_recursive(task, time, recursion_list)
 
     def register_task_absolute_recursive(self, task, absolute_time, recursion_list):
-        self.scheduler.register_task_absolute_recursive(task, absolute_time, recursion_list)
+        return self.scheduler.register_task_absolute_recursive(task, absolute_time, recursion_list)
 
     def register_task_date_time_recursive(self, task, date_time, recursion_list):
         return self.scheduler.register_task_date_time_recursive(task, date_time, recursion_list)
