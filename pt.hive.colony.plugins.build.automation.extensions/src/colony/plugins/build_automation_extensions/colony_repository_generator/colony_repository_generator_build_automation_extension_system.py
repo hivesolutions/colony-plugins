@@ -83,23 +83,44 @@ PLUGIN_EXTENSION_VALUE = ".cpx"
 LIBRARY_EXTENSION_VALUE = ".clx"
 """ The library extension value """
 
-class PluginRepositoryGeneratorBuildAutomationExtension:
+COLONY_VALUE = "colony"
+""" The colony value """
+
+BUNDLES_VALUE = "bundles"
+""" The bundles value """
+
+PLUGINS_VALUE = "plugins"
+""" The plugins value """
+
+LIBRARIES_VALUE = "libraries"
+""" The libraries value """
+
+ID_VALUE = "id"
+""" The id value """
+
+VERSION_VALUE = "version"
+""" The version value """
+
+DEFAULT_REPOSITORY_DESCRIPTOR_NAME = "repository_descriptor.xml"
+""" The default repository descriptor name """
+
+class ColonyRepositoryGeneratorBuildAutomationExtension:
     """
-    The plugin repository generator build automation extension class.
+    The colony repository generator build automation extension class.
     """
 
-    plugin_repository_generator_build_automation_extension_plugin = None
-    """ The plugin repository generator build automation extension plugin """
+    colony_repository_generator_build_automation_extension_plugin = None
+    """ The colony repository generator build automation extension plugin """
 
-    def __init__(self, plugin_repository_generator_build_automation_extension_plugin):
+    def __init__(self, colony_repository_generator_build_automation_extension_plugin):
         """
         Constructor of the class.
 
-        @type plugin_repository_generator_build_automation_extension_plugin: PluginRepositoryGeneratorBuildAutomationExtensionPlugin
-        @param plugin_repository_generator_build_automation_extension_plugin: The plugin repository generator build automation extension plugin.
+        @type colony_repository_generator_build_automation_extension_plugin: ColonyRepositoryGeneratorBuildAutomationExtensionPlugin
+        @param colony_repository_generator_build_automation_extension_plugin: The colony repository generator build automation extension plugin.
         """
 
-        self.plugin_repository_generator_build_automation_extension_plugin = plugin_repository_generator_build_automation_extension_plugin
+        self.colony_repository_generator_build_automation_extension_plugin = colony_repository_generator_build_automation_extension_plugin
 
     def run_automation(self, plugin, stage, parameters, build_automation_structure, logger):
         # retrieves the repository descriptor generator plugin
@@ -143,7 +164,7 @@ class PluginRepositoryGeneratorBuildAutomationExtension:
 
         # creates the full target directory appending the colony plugins
         # suffix value
-        full_target_directory = target + "/colony"
+        full_target_directory = target + "/" + COLONY_VALUE
 
         # in case the full target directory does not exist
         if not os.path.exists(full_target_directory):
@@ -151,7 +172,7 @@ class PluginRepositoryGeneratorBuildAutomationExtension:
             os.makedirs(full_target_directory)
 
         # creates the repository descriptor file path
-        repository_descriptor_file_path = full_target_directory + "/repository_descriptor.xml"
+        repository_descriptor_file_path = full_target_directory + "/" + DEFAULT_REPOSITORY_DESCRIPTOR_NAME
 
         # generates the repository descriptor file
         repository_descriptor_generator_plugin.generate_repository_descriptor_file(repository_descriptor_file_path, repository_name, repository_description, repository_layout)
@@ -170,7 +191,7 @@ class PluginRepositoryGeneratorBuildAutomationExtension:
 
     def _process_bundles(self, packed_bundles, bundles_directory, full_target_directory):
         # creates the full bundles directory
-        full_bundles_directory = full_target_directory + "/bundles"
+        full_bundles_directory = full_target_directory + "/" + BUNDLES_VALUE
 
         # in case the full bundles directory does not exist
         if not os.path.exists(full_bundles_directory):
@@ -184,7 +205,7 @@ class PluginRepositoryGeneratorBuildAutomationExtension:
 
     def _process_plugins(self, packed_plugins, plugins_directory, full_target_directory):
         # creates the full plugins directory
-        full_plugins_directory = full_target_directory + "/plugins"
+        full_plugins_directory = full_target_directory + "/" + PLUGINS_VALUE
 
         # in case the full plugins directory does not exist
         if not os.path.exists(full_plugins_directory):
@@ -198,7 +219,7 @@ class PluginRepositoryGeneratorBuildAutomationExtension:
 
     def _process_libraries(self, packed_libraries, libraries_directory, full_target_directory):
         # creates the full libraries directory
-        full_libraries_directory = full_target_directory + "/libraries"
+        full_libraries_directory = full_target_directory + "/" + LIBRARIES_VALUE
 
         # in case the full libraries directory does not exist
         if not os.path.exists(full_libraries_directory):
@@ -212,8 +233,8 @@ class PluginRepositoryGeneratorBuildAutomationExtension:
 
     def _deploy_packed_item(self, packed_item, packed_item_extension, packed_item_directoy, full_packed_item_directory):
         # retrieves the packed item id and version
-        packed_item_id = packed_item["id"]
-        packed_item_version = packed_item["version"]
+        packed_item_id = packed_item[ID_VALUE]
+        packed_item_version = packed_item[VERSION_VALUE]
 
         # creates the packed item file name from the packed item id and version
         packed_item_file_name = packed_item_id + "_" + packed_item_version + packed_item_extension
