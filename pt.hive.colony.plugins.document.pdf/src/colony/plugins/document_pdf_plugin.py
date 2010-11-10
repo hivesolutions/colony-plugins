@@ -58,7 +58,8 @@ class DocumentPdfPlugin(colony.base.plugin_system.Plugin):
     dependencies = []
     events_handled = []
     events_registrable = []
-    main_modules = ["document_pdf.pdf.document_pdf_exceptions", "document_pdf.pdf.document_pdf_filters",
+    main_modules = ["document_pdf.pdf.document_pdf_exceptions",
+                    "document_pdf.pdf.document_pdf_filters",
                     "document_pdf.pdf.document_pdf_system"]
 
     document_pdf = None
