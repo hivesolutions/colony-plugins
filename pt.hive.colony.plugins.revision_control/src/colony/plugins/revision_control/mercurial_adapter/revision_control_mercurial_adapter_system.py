@@ -186,6 +186,9 @@ class RevisionControlMercurialAdapter:
         # retrieves the computed diffs
         return diffs
 
+    def remove(self, revision_control_reference, resource_identifiers):
+        raise Exception("method not implemented")
+
     def get_resources_revision(self, revision_control_reference, resource_identifier, revision):
         # an omitted second index defaults to the size of the repository being sliced.
         if not revision == None:

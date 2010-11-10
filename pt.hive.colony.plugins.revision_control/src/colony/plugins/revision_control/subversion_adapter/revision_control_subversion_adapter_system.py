@@ -212,6 +212,10 @@ class RevisionControlSubversionAdapter:
             # cleans up any locks at the specified resource
             revision_control_reference.cleanup(resource_identifier)
 
+    def remove(self, revision_control_reference, resource_identifiers):
+        # performs the svn remove
+        revision_control_reference.remove(resource_identifiers)
+
     def revert(self, revision_control_reference, resource_identifiers):
         # reverts pending changes
         revision_control_reference.revert(resource_identifiers, recurse = True)

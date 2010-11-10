@@ -238,6 +238,16 @@ class RevisionControlAdapter:
 
         return self.revision_control_adapter_plugin.cleanup(self._revision_control_reference, resource_identifiers)
 
+    def remove(self, resource_identifiers):
+        """
+        Schedules a set of resources for removal from the repository.
+
+        @type resource_identifiers: List
+        @param resource_identifiers: The list of resource identifiers.
+        """
+
+        return self.revision_control_adapter_plugin.remove(self._revision_control_reference, resource_identifiers)
+
     def revert(self, resource_identifiers):
         """
         Cleans up any locks in the working copy at path.

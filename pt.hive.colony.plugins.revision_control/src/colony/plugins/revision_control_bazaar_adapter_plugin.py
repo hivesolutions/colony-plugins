@@ -91,7 +91,7 @@ class RevisionControlBazaarAdapterPlugin(colony.base.plugin_system.Plugin):
         return self.revision_control_bazaar_adapter.create_revision_control_reference(revision_control_parameters)
 
     def add(self, revision_control_reference, resource_identifiers, recurse):
-        return self.revision_control_subversion_adapter.add(revision_control_reference, resource_identifiers, recurse)
+        return self.revision_control_bazaar_adapter.add(revision_control_reference, resource_identifiers, recurse)
 
     def update(self, revision_control_reference, resource_identifiers, revision):
         return self.revision_control_bazaar_adapter.update(revision_control_reference, resource_identifiers, revision)
@@ -101,6 +101,9 @@ class RevisionControlBazaarAdapterPlugin(colony.base.plugin_system.Plugin):
 
     def diff(self, revision_control_reference, resource_identifiers, revision_1, revision_2):
         return self.revision_control_bazaar_adapter.diff(revision_control_reference, resource_identifiers, revision_1, revision_2)
+
+    def remove(self, revision_control_reference, resource_identifiers):
+        return self.revision_control_bazaar_adapter.remove(revision_control_reference, resource_identifiers)
 
     def get_resources_revision(self, revision_control_reference, resource_identifiers, revision):
         return self.revision_control_bazaar_adapter.get_resources_revision(revision_control_reference, resource_identifiers, revision)

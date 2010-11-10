@@ -45,7 +45,7 @@ INVALID_NUMBER_ARGUMENTS_MESSAGE = "invalid number of arguments"
 
 HELP_TEXT = "### REVISION CONTROL MANAGER HELP ###\n\
 revision_list_adapters                                                             - lists the names of the revision control adapters available\n\
-revision_add <adapter_name> <resource_identifier> [recurse]                        - add <resource_identifier> to be checked in to the repository\n\
+revision_add <adapter_name> <resource_identifier> [recurse]                        - schedules <resource_identifier> to be added to the repository\n\
 revision_checkout <adapter_name> <source> <destination>                            - checks out the <source> to the <destination>\n\
 revision_update <adapter_name>  <resource_identifier> <revision>                   - updates a resource to a specified revision\n\
 revision_commit <adapter_name> <resource_identifier> <commit_message>              - commits the changes in the resource with the specified message\n\
@@ -53,6 +53,7 @@ revision_log <adapter_name> <resource_identifier> [start_revision] [end_revision
 revision_status <adapter_name> <resource_identifier>                               - lists the pending changes in the current revision\n\
 revision_diff <adapter_name> <resource_identifier> [start_revision] [end_revision] - compares the contents of the specified revisions\n\
 revision_cleanup <adapter_name> <resource_identifier>                              - cleans up existing locks at the specified location\n\
+revision_remove <adapter_name> <resource_identifier>                               - schedules <resource_identifier> to be removed from the repository\n\
 revision_revert <adapter_name> <resource_identifier>                               - restores the working copy to its original state\n\n\
 revision_remove_unversioned <adapter_name> <resource_identifier>                   - removes all unversioned files from the specified location\n\
 revision_get_resource_revision <adapter_name> <resource_identifier> [revision]     - retrieves the content of the resource in the specified revision\n\
@@ -86,6 +87,7 @@ class ConsoleRevisionControlManager:
                 "revision_status",
                 "revision_diff",
                 "revision_cleanup",
+                "revision_remove",
                 "revision_revert",
                 "revision_remove_unversioned",
                 "revision_get_resource_revision"]
@@ -159,6 +161,7 @@ class ConsoleRevisionControlManager:
 
         # creates a revision control manager to use on the resource
         revision_control_manager = self.load_revision_control_manager(adapter_name)
+
         try:
             # uses the revision control manager to perform the checkout
             revision_control_manager.add(resource_identifiers, recurse)
@@ -397,6 +400,34 @@ class ConsoleRevisionControlManager:
 
         # invokes the cleanup command
         revision_control_manager.cleanup(resource_identifiers)
+
+    def process_revision_remove(self, args, output_method):
+        # returns in case an invalid number of arguments was provided
+        if len(args) < 2:
+            output_method(INVALID_NUMBER_ARGUMENTS_MESSAGE)
+            return
+
+        # retrieves the adapter name
+        adapter_name = args[0]
+
+        # retrieves the source
+        resource_identifier = args[1]
+
+        # builds the resource identifier list
+        resource_identifiers = [resource_identifier]
+
+        # creates a revision control manager to use on the resource
+        revision_control_manager = self.load_revision_control_manager(adapter_name)
+
+        try:
+            # uses the revision control manager to perform the checkout
+            revision_control_manager.remove(resource_identifiers)
+
+            # outputs the result
+            output_method("successfully removed " + unicode(resource_identifier))
+        except Exception, exception:
+            # outputs the result
+            output_method("problem removing " + unicode(resource_identifier) + ": " + unicode(exception))
 
     def process_revision_revert(self, args, output_method):
         # returns in case an invalid number of arguments was provided

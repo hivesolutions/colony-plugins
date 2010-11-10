@@ -154,6 +154,9 @@ class RevisionControlBazaarAdapter:
         # returns the computed diffs
         return diffs
 
+    def remove(self, revision_control_reference, resource_identifiers):
+        raise Exception("method not implemented")
+
     def get_resources_revision(self, revision_control_reference, resource_identifiers, revision):
         # retrieves the first revision spec
         if not revision == None:
