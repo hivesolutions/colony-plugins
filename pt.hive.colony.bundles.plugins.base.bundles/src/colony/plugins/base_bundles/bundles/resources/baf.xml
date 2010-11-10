@@ -61,14 +61,6 @@
                         </specification>
                         <specification>
                             <type>bundle</type>
-                            <specification_file>$base{plugin_directory}/base_bundles/bundles/specifications/bitmap_loader_bundle.json</specification_file>
-                        </specification>
-                        <specification>
-                            <type>bundle</type>
-                            <specification_file>$base{plugin_directory}/base_bundles/bundles/specifications/bonjour_bundle.json</specification_file>
-                        </specification>
-                        <specification>
-                            <type>bundle</type>
                             <specification_file>$base{plugin_directory}/base_bundles/bundles/specifications/build_automation_bundle.json</specification_file>
                         </specification>
                         <specification>
@@ -110,10 +102,6 @@
                         <specification>
                             <type>bundle</type>
                             <specification_file>$base{plugin_directory}/base_bundles/bundles/specifications/data_bundle.json</specification_file>
-                        </specification>
-                        <specification>
-                            <type>bundle</type>
-                            <specification_file>$base{plugin_directory}/base_bundles/bundles/specifications/data_converter_bundle.json</specification_file>
                         </specification>
                         <specification>
                             <type>bundle</type>
@@ -241,10 +229,6 @@
                         </specification>
                         <specification>
                             <type>bundle</type>
-                            <specification_file>$base{plugin_directory}/base_bundles/bundles/specifications/main_gui_bundle.json</specification_file>
-                        </specification>
-                        <specification>
-                            <type>bundle</type>
                             <specification_file>$base{plugin_directory}/base_bundles/bundles/specifications/main_localization_bundle.json</specification_file>
                         </specification>
                         <specification>
@@ -358,10 +342,6 @@
                         <specification>
                             <type>bundle</type>
                             <specification_file>$base{plugin_directory}/base_bundles/bundles/specifications/plugin_manager_logic_bundle.json</specification_file>
-                        </specification>
-                        <specification>
-                            <type>bundle</type>
-                            <specification_file>$base{plugin_directory}/base_bundles/bundles/specifications/printing_bundle.json</specification_file>
                         </specification>
                         <specification>
                             <type>bundle</type>
