@@ -1752,4 +1752,4 @@ class RuntimeInformationStructure:
         self.logging_buffer = logging_buffer
         self.initial_date_time = initial_date_time
         self.skipped = skipped
-        self.properties = self.properties
+        self.properties = properties
