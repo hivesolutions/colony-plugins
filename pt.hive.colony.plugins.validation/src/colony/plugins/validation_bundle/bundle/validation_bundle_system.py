@@ -81,14 +81,14 @@ VERSION_VALUE = "version"
 BUNDLE_FILE_NAME_ENDING = "_bundle.json"
 """ The bundle file name ending """
 
-DEFAULT_JSON_ENCODING = "Cp1252"
-""" The default json encoding """
-
 COLONY_BUNDLE_NAMESPACE = "pt.hive.colony.bundles."
 """ The colony bundle namespace """
 
 COLONY_PLUGIN_NAMESPACE = "pt.hive.colony.plugins."
 """ The colony plugin namespace """
+
+DEFAULT_JSON_ENCODING = "Cp1252"
+""" The default json encoding """
 
 MANDATORY_BUNDLE_ATTRIBUTE_NAMES = ("type", "platform", "id", "version", "author", "plugins", "dependencies")
 """ The mandatory bundle attribute names """
