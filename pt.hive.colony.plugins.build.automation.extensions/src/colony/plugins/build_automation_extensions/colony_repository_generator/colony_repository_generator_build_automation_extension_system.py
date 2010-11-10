@@ -124,7 +124,7 @@ class ColonyRepositoryGeneratorBuildAutomationExtension:
 
     def run_automation(self, plugin, stage, parameters, build_automation_structure, logger):
         # retrieves the repository descriptor generator plugin
-        repository_descriptor_generator_plugin = self.plugin_repository_generator_build_automation_extension_plugin.repository_descriptor_generator_plugin
+        repository_descriptor_generator_plugin = self.colony_repository_generator_build_automation_extension_plugin.repository_descriptor_generator_plugin
 
         # retrieves the build automation structure runtime
         build_automation_structure_runtime = build_automation_structure.runtime
