@@ -163,7 +163,7 @@ class ConsoleRevisionControlManager:
         revision_control_manager = self.load_revision_control_manager(adapter_name)
 
         try:
-            # uses the revision control manager to perform the checkout
+            # uses the revision control manager to perform the add
             revision_control_manager.add(resource_identifiers, recurse)
 
             # outputs the result
@@ -191,7 +191,10 @@ class ConsoleRevisionControlManager:
         revision_control_manager = self.load_revision_control_manager(adapter_name)
 
         # uses the revision control manager to perform the checkout
-        revision_control_manager.checkout(source, destination)
+        checkout_revision = revision_control_manager.checkout(source, destination)
+
+        # outputs the result
+        output_method("successfully checked out revision " + str(checkout_revision))
 
     def process_revision_update(self, args, output_method):
         # returns in case an invalid number of arguments was provided
@@ -420,7 +423,7 @@ class ConsoleRevisionControlManager:
         revision_control_manager = self.load_revision_control_manager(adapter_name)
 
         try:
-            # uses the revision control manager to perform the checkout
+            # uses the revision control manager to perform the remove
             revision_control_manager.remove(resource_identifiers)
 
             # outputs the result
