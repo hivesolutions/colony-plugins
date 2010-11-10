@@ -63,21 +63,22 @@ class RepositoryDescriptorGenerator:
 
         self.repository_descriptor_generator_plugin = repository_descriptor_generator_plugin
 
-    def generate_repository_descriptor_file(self, file_path, repository_name = "none", repository_description = "none", repository_layout = DEFAULT_REPOSITORY_LAYOUT):
+    def generate_repository_descriptor_file(self, file_path, repository_name = "none", repository_description = "none", repository_layout = DEFAULT_REPOSITORY_LAYOUT, bundles = [], plugins = [], libraries = []):
         # retrieves the repository descriptor string from the repository descriptor generator
         repository_descriptor_string = self.generate_repository_descriptor(repository_name, repository_description, repository_layout)
 
         # opens the file (to write the repository descriptor)
         file = open(file_path, "wb")
 
-        # writes the repository descriptor to string
-        # to the file
-        file.write(repository_descriptor_string)
+        try:
+            # writes the repository descriptor to string
+            # to the file
+            file.write(repository_descriptor_string)
+        finally:
+            # closes the file
+            file.close()
 
-        # closes the file
-        file.close()
-
-    def generate_repository_descriptor(self, repository_name = "none", repository_description = "none", repository_layout = DEFAULT_REPOSITORY_LAYOUT):
+    def generate_repository_descriptor(self, repository_name = "none", repository_description = "none", repository_layout = DEFAULT_REPOSITORY_LAYOUT, bundles = [], plugins = [], libraries = []):
         """
         Generates a repository descriptor file (xml) using the current loaded plugins.
         The generated repository is named after the sent argument and description.
@@ -89,6 +90,12 @@ class RepositoryDescriptorGenerator:
         @param repository_description: The description to be used by the repository.
         @type repository_layout: String
         @param repository_layout: The layout to be used by the repository.
+        @type bundles: List
+        @param bundles: The list of bundle descriptors to generate the bundles.
+        @type plugins: List
+        @param plugins: The list of plugin descriptors to generate the plugins.
+        @type libraries: List
+        @param libraries: The list of library descriptors to generate the libraries.
         @rtype: String
         @return: The string containing the repository descriptor.
         """
@@ -135,11 +142,8 @@ class RepositoryDescriptorGenerator:
         repository_plugins_node = xml_document.createElement("plugins")
         repository_node.appendChild(repository_plugins_node)
 
-        # retrieves the plugin manager
-        plugin_manager = self.repository_descriptor_generator_plugin.manager
-
-        # retrieves the plugins list
-        plugins_list = plugin_manager.get_all_plugins()
+        # retrieves the plugin list for the plugin descriptors
+        plugins_list = [self._get_plugin(value) for value in plugins]
 
         # iterates over all the plugins
         for plugin in plugins_list:
@@ -222,3 +226,19 @@ class RepositoryDescriptorGenerator:
 
         # returns the repository descriptor string
         return repository_descriptor_string
+
+    def _get_plugin(self, plugin_descriptor):
+        # retrieves the plugin manager
+        plugin_manager = self.repository_descriptor_generator_plugin.manager
+
+        # retrieves the plugin descriptor id
+        plugin_descriptor_id = plugin_descriptor["id"]
+
+        # retrieves the plugin descriptor version
+        plugin_descriptor_version = plugin_descriptor["version"]
+
+        # retrieves the plugin for the given id and version
+        plugin = plugin_manager._get_plugin_by_id_and_version(plugin_descriptor_id, plugin_descriptor_version)
+
+        # returns the plugin
+        return plugin
