@@ -132,28 +132,28 @@ class SchedulerPlugin(colony.base.plugin_system.Plugin):
         return self.console_scheduler.get_help()
 
     def register_task(self, task, time):
-        self.scheduler.register_task(task, time)
+        return self.scheduler.register_task(task, time)
 
     def register_task_absolute(self, task, absolute_time):
-        self.scheduler.register_task_absolute(task, absolute_time)
+        return self.scheduler.register_task_absolute(task, absolute_time)
 
     def register_task_date_time(self, task, date_time):
-        self.scheduler.register_task_date_time(task, date_time)
+        return self.scheduler.register_task_date_time(task, date_time)
 
     def register_task_date_time_absolute(self, task, absolute_date_time):
-        self.scheduler.register_task_date_time_absolute(task, absolute_date_time)
+        return self.scheduler.register_task_date_time_absolute(task, absolute_date_time)
 
     def register_task_recursive(self, task, time, recursion_list):
-        self.scheduler.register_task_recursive(task, time, recursion_list)
+        return self.scheduler.register_task_recursive(task, time, recursion_list)
 
     def register_task_absolute_recursive(self, task, absolute_time, recursion_list):
         self.scheduler.register_task_absolute_recursive(task, absolute_time, recursion_list)
 
     def register_task_date_time_recursive(self, task, date_time, recursion_list):
-        self.scheduler.register_task_date_time_recursive(task, date_time, recursion_list)
+        return self.scheduler.register_task_date_time_recursive(task, date_time, recursion_list)
 
     def register_task_date_time_absolute_recursive(self, task, absolute_date_time, recursion_list):
-        self.scheduler.register_task_date_time_absolute_recursive(task, absolute_date_time, recursion_list)
+        return self.scheduler.register_task_date_time_absolute_recursive(task, absolute_date_time, recursion_list)
 
     def get_task_class(self):
         return self.scheduler.get_task_class()

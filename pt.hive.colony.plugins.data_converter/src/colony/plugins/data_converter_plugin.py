@@ -252,9 +252,11 @@ class DataConverterPlugin(colony.base.plugin_system.Plugin):
         plugin one wants to use to save intermediate structure.
         @type options: Dictionary
         @param options: Options used to determine how to save the intermediate structure.
+        @rtype: IntermediateStructure
+        @return: The saved intermediate structure.
         """
 
-        self.data_converter.save_intermediate_structure(configuration, intermediate_structure, io_adapter_plugin_id, options)
+        return self.data_converter.save_intermediate_structure(configuration, intermediate_structure, io_adapter_plugin_id, options)
 
     def convert_data(self, configuration_id):
         """
@@ -296,6 +298,3 @@ class DataConverterPlugin(colony.base.plugin_system.Plugin):
     @colony.base.decorators.plugin_inject("pt.hive.colony.plugins.resources.resource_manager")
     def set_resource_manager_plugin(self, resource_manager_plugin):
         self.resource_manager_plugin = resource_manager_plugin
-
-    def get_data_converter_configuration_tokens(self):
-        return self.data_converter.get_data_converter_configuration_tokens()

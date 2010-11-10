@@ -99,7 +99,7 @@ class MainConsolePlugin(colony.base.plugin_system.Plugin):
         colony.base.plugin_system.Plugin.dependency_injected(self, plugin)
 
     def execute_command_line(self, command_line):
-        self.console.process_command_line(command_line, None)
+        return self.console.process_command_line(command_line, None)
 
     def process_command_line(self, command_line, output_method):
         """
@@ -113,7 +113,7 @@ class MainConsolePlugin(colony.base.plugin_system.Plugin):
         @return: If the processing of the command line was successful.
         """
 
-        self.console.process_command_line(command_line, output_method)
+        return self.console.process_command_line(command_line, output_method)
 
     def get_default_output_method(self):
         """

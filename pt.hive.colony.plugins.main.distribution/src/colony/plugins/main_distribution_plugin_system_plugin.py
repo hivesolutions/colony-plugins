@@ -88,7 +88,7 @@ class MainDistributionPluginSystemPlugin(colony.base.plugin_system.Plugin):
         colony.base.plugin_system.Plugin.dependency_injected(self, plugin)
 
     def create_plugin_proxy(self, plugin):
-        self.main_distribution_plugin_system.create_plugin_proxy(plugin)
+        return self.main_distribution_plugin_system.create_plugin_proxy(plugin)
 
     def create_plugin_proxy_by_id(self, plugin_id):
         return self.main_distribution_plugin_system.create_plugin_proxy_by_id(plugin_id)
