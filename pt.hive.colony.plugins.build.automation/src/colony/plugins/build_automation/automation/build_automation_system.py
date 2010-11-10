@@ -354,12 +354,12 @@ class BuildAutomation:
         """
 
         # in case no logger is defined
-        if not logger:
+        if logger == None:
             # sets the current logger as the logger
             logger = self.logger
 
         # in case no properties are defined
-        if not properties:
+        if properties == None:
             # creates a new properties map
             properties = {}
 
