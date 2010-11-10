@@ -240,7 +240,7 @@ class PackingBuildAutomationExtension:
             specification_file_contents = specification_file_contents.decode(DEFAULT_ENCODING)
         finally:
             # closes the specification file
-            file.close()
+            specification_file.close()
 
         # retrieves the specification from the specification file contents
         specification = json_plugin.loads(specification_file_contents)
