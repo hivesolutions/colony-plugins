@@ -209,10 +209,15 @@ class PackingBuildAutomationExtension:
         elif type == LIBRARY_VALUE:
             packed_items_key = PACKED_LIBRARIES_VALUE
 
+        # in case the packed items key does not exist in the build automation
+        # structure runtime properties a packed items list must be created
         if not packed_items_key in build_automation_structure_runtime.properties:
+            # sets the initial list for the packed items list
             build_automation_structure_runtime.properties[packed_items_key] = []
 
-            packed_items_list = build_automation_structure_runtime.properties[packed_items_key]
+        # retrieves the packed items list from the build automation structure
+        # runtime properties
+        packed_items_list = build_automation_structure_runtime.properties[packed_items_key]
 
         # retrieves the specification id and version
         specification_id = specification[ID_VALUE]
