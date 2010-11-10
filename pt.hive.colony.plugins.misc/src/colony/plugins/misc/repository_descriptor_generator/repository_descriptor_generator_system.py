@@ -65,7 +65,7 @@ class RepositoryDescriptorGenerator:
 
     def generate_repository_descriptor_file(self, file_path, repository_name = "none", repository_description = "none", repository_layout = DEFAULT_REPOSITORY_LAYOUT, bundles = [], plugins = [], libraries = []):
         # retrieves the repository descriptor string from the repository descriptor generator
-        repository_descriptor_string = self.generate_repository_descriptor(repository_name, repository_description, repository_layout)
+        repository_descriptor_string = self.generate_repository_descriptor(repository_name, repository_description, repository_layout, bundles, plugins, libraries)
 
         # opens the file (to write the repository descriptor)
         file = open(file_path, "wb")
@@ -138,22 +138,95 @@ class RepositoryDescriptorGenerator:
         repository_bundles_node = xml_document.createElement("bundles")
         repository_node.appendChild(repository_bundles_node)
 
+        # iterates over all the bundles
+        for bundle in bundles:
+            # retrieves the bundle id, version and dependencies
+            bundle_id = bundle["id"]
+            bundle_version = bundle["version"]
+            bundle_dependencies = bundle["dependencies"]
+
+            # creates the bundle contents file
+            bundle_contents_file = bundle_id + "_" + bundle_version + ".cbx"
+
+            repository_bundle_node = xml_document.createElement("bundle")
+            repository_bundles_node.appendChild(repository_bundle_node)
+
+            repository_bundle_name_node = xml_document.createElement("name")
+            repository_bundle_node.appendChild(repository_bundle_name_node)
+
+            repository_bundle_name_value_node = xml_document.createTextNode(bundle_id)
+            repository_bundle_name_node.appendChild(repository_bundle_name_value_node)
+
+            repository_bundle_type_node = xml_document.createElement("type")
+            repository_bundle_node.appendChild(repository_bundle_type_node)
+
+            repository_bundle_type_value_node = xml_document.createTextNode(COLONY_PACKING_TYPE)
+            repository_bundle_type_node.appendChild(repository_bundle_type_value_node)
+
+            repository_bundle_id_node = xml_document.createElement("id")
+            repository_bundle_node.appendChild(repository_bundle_id_node)
+
+            repository_bundle_id_value_node = xml_document.createTextNode(bundle_id)
+            repository_bundle_id_node.appendChild(repository_bundle_id_value_node)
+
+            repository_bundle_version_node = xml_document.createElement("version")
+            repository_bundle_node.appendChild(repository_bundle_version_node)
+
+            repository_bundle_version_value_node = xml_document.createTextNode(bundle_version)
+            repository_bundle_version_node.appendChild(repository_bundle_version_value_node)
+
+            repository_bundle_contents_file_node = xml_document.createElement("contents_file")
+            repository_bundle_node.appendChild(repository_bundle_contents_file_node)
+
+            repository_bundle_contents_file_value_node = xml_document.createTextNode(bundle_contents_file)
+            repository_bundle_contents_file_node.appendChild(repository_bundle_contents_file_value_node)
+
+            repository_bundle_dependencies_node = xml_document.createElement("dependencies")
+            repository_bundle_node.appendChild(repository_bundle_dependencies_node)
+
+            # iterates over all the bundle dependencies to
+            # write the dependencies values
+            for bundle_dependency in bundle_dependencies:
+                # retrieves the bundle dependency id and version
+                bundle_dependency_id = bundle_dependency["id"]
+                bundle_dependency_version = bundle_dependency["version"]
+
+                repository_bundle_bundle_dependency_node = xml_document.createElement("bundle_dependency")
+                repository_bundle_dependencies_node.appendChild(repository_bundle_bundle_dependency_node)
+
+                repository_bundle_bundle_id_node = xml_document.createElement("id")
+                repository_bundle_bundle_dependency_node.appendChild(repository_bundle_bundle_id_node)
+
+                repository_bundle_bundle_id_value_node = xml_document.createTextNode(bundle_dependency_id)
+                repository_bundle_bundle_id_node.appendChild(repository_bundle_bundle_id_value_node)
+
+                repository_bundle_bundle_version_node = xml_document.createElement("version")
+                repository_bundle_bundle_dependency_node.appendChild(repository_bundle_bundle_version_node)
+
+                repository_bundle_bundle_version_value_node = xml_document.createTextNode(bundle_dependency_version)
+                repository_bundle_bundle_version_node.appendChild(repository_bundle_bundle_version_value_node)
+
         # creates the repository plugins element
         repository_plugins_node = xml_document.createElement("plugins")
         repository_node.appendChild(repository_plugins_node)
 
-        # retrieves the plugin list for the plugin descriptors
-        plugins_list = [self._get_plugin(value) for value in plugins]
-
         # iterates over all the plugins
-        for plugin in plugins_list:
+        for plugin in plugins:
+            # retrieves the plugin id, version and dependencies
+            plugin_id = plugin["id"]
+            plugin_version = plugin["version"]
+            plugin_dependencies = plugin["dependencies"]
+
+            # creates the plugin contents file
+            plugin_contents_file = plugin_id + "_" + plugin_version + ".cpx"
+
             repository_plugin_node = xml_document.createElement("plugin")
             repository_plugins_node.appendChild(repository_plugin_node)
 
             repository_plugin_name_node = xml_document.createElement("name")
             repository_plugin_node.appendChild(repository_plugin_name_node)
 
-            repository_plugin_name_value_node = xml_document.createTextNode(plugin.id)
+            repository_plugin_name_value_node = xml_document.createTextNode(plugin_id)
             repository_plugin_name_node.appendChild(repository_plugin_name_value_node)
 
             repository_plugin_type_node = xml_document.createElement("type")
@@ -165,13 +238,13 @@ class RepositoryDescriptorGenerator:
             repository_plugin_id_node = xml_document.createElement("id")
             repository_plugin_node.appendChild(repository_plugin_id_node)
 
-            repository_plugin_id_value_node = xml_document.createTextNode(plugin.id)
+            repository_plugin_id_value_node = xml_document.createTextNode(plugin_id)
             repository_plugin_id_node.appendChild(repository_plugin_id_value_node)
 
             repository_plugin_version_node = xml_document.createElement("version")
             repository_plugin_node.appendChild(repository_plugin_version_node)
 
-            repository_plugin_version_value_node = xml_document.createTextNode(plugin.version)
+            repository_plugin_version_value_node = xml_document.createTextNode(plugin_version)
             repository_plugin_version_node.appendChild(repository_plugin_version_value_node)
 
             repository_plugin_main_module_node = xml_document.createElement("main_module")
@@ -195,30 +268,32 @@ class RepositoryDescriptorGenerator:
             repository_plugin_contents_file_node = xml_document.createElement("contents_file")
             repository_plugin_node.appendChild(repository_plugin_contents_file_node)
 
-            repository_plugin_contents_file_value_node = xml_document.createTextNode(plugin.id + "_" + plugin.version + ".cpx")
+            repository_plugin_contents_file_value_node = xml_document.createTextNode(plugin_contents_file)
             repository_plugin_contents_file_node.appendChild(repository_plugin_contents_file_value_node)
 
             repository_plugin_dependencies_node = xml_document.createElement("dependencies")
             repository_plugin_node.appendChild(repository_plugin_dependencies_node)
 
-            plugin_plugin_dependencies = plugin.get_all_plugin_dependencies()
-
             # iterates over all the plugin dependencies to
             # write the dependencies values
-            for plugin_dependency in plugin_plugin_dependencies:
+            for plugin_dependency in plugin_dependencies:
+                # retrieves the plugin dependency id and version
+                plugin_dependency_id = plugin_dependency["id"]
+                plugin_dependency_version = plugin_dependency["version"]
+
                 repository_plugin_plugin_dependency_node = xml_document.createElement("plugin_dependency")
                 repository_plugin_dependencies_node.appendChild(repository_plugin_plugin_dependency_node)
 
                 repository_plugin_plugin_id_node = xml_document.createElement("id")
                 repository_plugin_plugin_dependency_node.appendChild(repository_plugin_plugin_id_node)
 
-                repository_plugin_plugin_id_value_node = xml_document.createTextNode(plugin_dependency.plugin_id)
+                repository_plugin_plugin_id_value_node = xml_document.createTextNode(plugin_dependency_id)
                 repository_plugin_plugin_id_node.appendChild(repository_plugin_plugin_id_value_node)
 
                 repository_plugin_plugin_version_node = xml_document.createElement("version")
                 repository_plugin_plugin_dependency_node.appendChild(repository_plugin_plugin_version_node)
 
-                repository_plugin_plugin_version_value_node = xml_document.createTextNode(plugin_dependency.plugin_version)
+                repository_plugin_plugin_version_value_node = xml_document.createTextNode(plugin_dependency_version)
                 repository_plugin_plugin_version_node.appendChild(repository_plugin_plugin_version_value_node)
 
         # generates the repository descriptor string from the xml document
