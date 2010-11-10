@@ -329,7 +329,7 @@ class BuildAutomation:
         # returns the loaded build automation item plugins
         return self.loaded_build_automation_item_plugins_list
 
-    def run_automation(self, plugin_id, plugin_version = None, stage = None, recursive_level = 1, logger = None, raise_exception = False, is_first = True):
+    def run_automation(self, plugin_id, plugin_version = None, stage = None, recursive_level = 1, logger = None, properties = None, raise_exception = False, is_first = True):
         """
         Runs all the automation plugins for the given plugin id and version.
 
@@ -343,6 +343,8 @@ class BuildAutomation:
         @param recursive_level: The current level of recursion.
         @type logger: Logger
         @param logger: The build automation logger to be used.
+        @type properties: Dictionary
+        @param properties: Map containing the runtime automation information.
         @type raise_exception: bool
         @param raise_exception: If an exception should be raised in case of error.
         @type is_first: bool
@@ -356,8 +358,17 @@ class BuildAutomation:
             # sets the current logger as the logger
             logger = self.logger
 
+        # in case no properties are defined
+        if not properties:
+            # creates a new properties map
+            properties = {}
+
         # retrieves the build automation structure
         build_automation_structure = self.get_build_automation_structure(plugin_id, plugin_version)
+
+        # sets the properties in the build automation structure
+        # the properties are used to store runtime information
+        build_automation_structure.properties = properties
 
         # in case the retrieval of the build automation structure was unsuccessful
         if not build_automation_structure:
@@ -414,7 +425,7 @@ class BuildAutomation:
                 module_stage = module_plugin_stage or stage
 
                 # runs the module plugin for the same stage
-                build_automation_structure_runtime.success = self.run_automation(module_id, module_version, module_stage, recursive_level - 1, logger, raise_exception, False)
+                build_automation_structure_runtime.success = self.run_automation(module_id, module_version, module_stage, recursive_level - 1, logger, properties, raise_exception, False)
         else:
             # prints an info message
             logger.info("Not building modules no recursion level available...")
