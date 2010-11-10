@@ -1,32 +1,32 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <!--
-     Hive Colony Framework
-     Copyright (C) 2008 Hive Solutions Lda.
+ Hive Colony Framework
+ Copyright (C) 2008 Hive Solutions Lda.
 
-     This file is part of Hive Colony Framework.
+ This file is part of Hive Colony Framework.
 
-     Hive Colony Framework is free software: you can redistribute it and/or modify
-     it under the terms of the GNU General Public License as published by
-     the Free Software Foundation, either version 3 of the License, or
-     (at your option) any later version.
+ Hive Colony Framework is free software: you can redistribute it and/or modify
+ it under the terms of the GNU General Public License as published by
+ the Free Software Foundation, either version 3 of the License, or
+ (at your option) any later version.
 
-     Hive Colony Framework is distributed in the hope that it will be useful,
-     but WITHOUT ANY WARRANTY; without even the implied warranty of
-     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-     GNU General Public License for more details.
+ Hive Colony Framework is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ GNU General Public License for more details.
 
-     You should have received a copy of the GNU General Public License
-     along with Hive Colony Framework. If not, see <http://www.gnu.org/licenses/>.
+ You should have received a copy of the GNU General Public License
+ along with Hive Colony Framework. If not, see <http://www.gnu.org/licenses/>.
 -->
 
 <!--
-     __author__    = João Magalhães <joamag@hive.pt>
-     __version__   = 1.0.0
-     __revision__  = $LastChangedRevision: 72 $
-     __date__      = $LastChangedDate: 2008-10-21 23:29:54 +0100 (Tue, 21 Oct 2008) $
-     __copyright__ = Copyright (c) 2008 Hive Solutions Lda.
-     __license__   = GNU General Public License (GPL), Version 3
+ __author__    = João Magalhães <joamag@hive.pt>
+ __version__   = 1.0.0
+ __revision__  = $LastChangedRevision: 72 $
+ __date__      = $LastChangedDate: 2008-10-21 23:29:54 +0100 (Tue, 21 Oct 2008) $
+ __copyright__ = Copyright (c) 2008 Hive Solutions Lda.
+ __license__   = GNU General Public License (GPL), Version 3
 -->
 
 <build_automation xmlns="http://www.hive.pt"
@@ -58,6 +58,10 @@
                         <specification>
                             <type>bundle</type>
                             <specification_file>$base{plugin_directory}/base_bundles/bundles/specifications/bencode_bundle.json</specification_file>
+                        </specification>
+                        <specification>
+                            <type>bundle</type>
+                            <specification_file>$base{plugin_directory}/base_bundles/bundles/specifications/bitmap_loader_bundle.json</specification_file>
                         </specification>
                         <specification>
                             <type>bundle</type>
@@ -114,10 +118,6 @@
                         <specification>
                             <type>bundle</type>
                             <specification_file>$base{plugin_directory}/base_bundles/bundles/specifications/dns_storage_bundle.json</specification_file>
-                        </specification>
-                        <specification>
-                            <type>bundle</type>
-                            <specification_file>$base{plugin_directory}/base_bundles/bundles/specifications/document_bundle.json</specification_file>
                         </specification>
                         <specification>
                             <type>bundle</type>
@@ -218,6 +218,10 @@
                         <specification>
                             <type>bundle</type>
                             <specification_file>$base{plugin_directory}/base_bundles/bundles/specifications/main_console_bundle.json</specification_file>
+                        </specification>
+                        <specification>
+                            <type>bundle</type>
+                            <specification_file>$base{plugin_directory}/base_bundles/bundles/specifications/main_gui_bundle.json</specification_file>
                         </specification>
                         <specification>
                             <type>bundle</type>
