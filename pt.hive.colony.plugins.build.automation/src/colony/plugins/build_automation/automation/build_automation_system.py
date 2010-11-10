@@ -366,10 +366,6 @@ class BuildAutomation:
         # retrieves the build automation structure
         build_automation_structure = self.get_build_automation_structure(plugin_id, plugin_version)
 
-        # sets the properties in the build automation structure
-        # the properties are used to store runtime information
-        build_automation_structure.properties = properties
-
         # in case the retrieval of the build automation structure was unsuccessful
         if not build_automation_structure:
             # returns immediately
@@ -381,8 +377,9 @@ class BuildAutomation:
         # retrieves the initial date time value
         initial_date_time = datetime.datetime.now()
 
-        # creates the build automation structure runtime information
-        build_automation_structure.runtime = RuntimeInformationStructure(True, self.logging_buffer, initial_date_time)
+        # creates the build automation structure runtime information, with the current properties
+        # the properties are shared among the build automation global run that includes the modules
+        build_automation_structure.runtime = RuntimeInformationStructure(True, self.logging_buffer, initial_date_time, False, properties)
 
         # retrieves the build automation structure runtime
         build_automation_structure_runtime = build_automation_structure.runtime
@@ -1735,7 +1732,7 @@ class RuntimeInformationStructure:
     properties = {}
     """ Map containing various properties of the build automation runtime """
 
-    def __init__(self, success = False, logging_buffer = None, initial_date_time = None):
+    def __init__(self, success = False, logging_buffer = None, initial_date_time = None, skipped = False, properties = None):
         """
         Constructor of the class.
 
@@ -1745,10 +1742,15 @@ class RuntimeInformationStructure:
         @param logging_buffer: The date time structure of the beginning of the run.
         @type initial_date_time: DateTime
         @param initial_date_time: The date time structure of the beginning of the run.
+        @type skipped: bool
+        @param skipped: Flag controlling if the build automation was skipped.
+        @type properties: Dictionary
+        @param properties: Map containing various properties of the build automation runtime.
         """
 
         self.success = success
         self.logging_buffer = logging_buffer
         self.initial_date_time = initial_date_time
+        self.skipped = skipped
 
-        self.properties = {}
+        self.properties = properties and properties or {}
