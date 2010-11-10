@@ -1,0 +1,24 @@
+{
+    "type" : "plugin",
+    "platform" : "python",
+    "sub_platforms" : ["cpython"],
+    "id" : "pt.hive.colony.plugins.build.automation.extensions.validation_bundle",
+    "name" : "Validation Bundle Build Automation Extension Plugin",
+    "short_name" : "Validation Bundle Build Automation Extension",
+    "description" : "A plugin to manage the validation bundle build automation tasks",
+    "version" : "1.0.0",
+    "author" : "Hive Solutions Lda. <development@hive.pt>",
+    "capabilities" : ["build_automation_extension", "build_automation_item"],
+    "capabilities_allowed" : [],
+    "dependencies" : [{
+                "id" : "pt.hive.colony.plugins.validation.bundle",
+                "version" : "1.0.0"
+            }],
+    "main_file" : "validation_bundle_build_automation_extension_plugin.py",
+    "resources" : [
+            "validation_bundle_build_automation_extension_plugin.py",
+            "build_automation_extensions/__init__.py",
+            "build_automation_extensions/validation_bundle/__init__.py",
+            "build_automation_extensions/validation_bundle/validation_bundle_build_automation_extension_system.py",
+            "build_automation_extensions/validation_bundle/resources/baf.xml"]
+}

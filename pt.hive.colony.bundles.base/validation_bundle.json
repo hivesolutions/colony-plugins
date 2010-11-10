@@ -5,6 +5,9 @@
     "version" : "1.0.0",
     "author" : "Hive Solutions Lda. <development@hive.pt>",
     "plugins" : [{
+                "id" : "pt.hive.colony.plugins.validation.bundle",
+                "version" : "1.0.0"
+            }, {
                 "id" : "pt.hive.colony.plugins.validation.plugin",
                 "version" : "1.0.0"
             }],

@@ -703,11 +703,12 @@ class ValidationPlugin:
         # opens the build automation file
         build_automation_file = open(build_automation_file_path, "rb")
 
-        # reads the build automation file's data
-        build_automation_file_data = build_automation_file.read()
-
-        # closes the build automation file
-        build_automation_file.close()
+        try:
+            # reads the build automation file's data
+            build_automation_file_data = build_automation_file.read()
+        finally:
+            # closes the build automation file
+            build_automation_file.close()
 
         # parses the build automation file
         build_automation_file_document = xml.dom.minidom.parseString(build_automation_file_data)
@@ -882,11 +883,12 @@ class ValidationPlugin:
         # reads the json file
         json_file = open(json_file_path, "rb")
 
-        # reads the data from the json file
-        json_file_data = json_file.read()
-
-        # closes the json file
-        json_file.close()
+        try:
+            # reads the data from the json file
+            json_file_data = json_file.read()
+        finally:
+            # closes the json file
+            json_file.close()
 
         # decodes the json file data
         json_file_data = json_file_data.decode(DEFAULT_JSON_ENCODING)
@@ -1215,38 +1217,38 @@ class PluginInformation:
         return file_paths
 
     def _get_file_paths(self, path, file_paths):
-        # retrieves the listdir entries for the specified path
-        listdir_entries = os.listdir(path)
+        # retrieves the path entries for the specified path
+        path_entries = os.listdir(path)
 
-        # sorts the listdir entries
-        listdir_entries.sort()
+        # sorts the path entries
+        path_entries.sort()
 
         # initializes the directory paths list
         directory_paths = []
 
         # collects file paths and directory paths
-        for listdir_entry in listdir_entries:
+        for path_entry in path_entries:
             # skips in case this entry is in the exclusion list
-            if listdir_entry in RESOURCE_FILE_NAME_EXCLUSION_LIST:
+            if path_entry in RESOURCE_FILE_NAME_EXCLUSION_LIST:
                 continue
 
-            # defines the listdir entry path
-            listdir_entry_path = path + UNIX_DIRECTORY_SEPARATOR + listdir_entry
+            # defines the path entry path
+            path_entry_path = path + UNIX_DIRECTORY_SEPARATOR + path_entry
 
             # collects a directory path and skips this iteration
-            if os.path.isdir(listdir_entry_path):
-                directory_paths.append(listdir_entry_path)
+            if os.path.isdir(path_entry_path):
+                directory_paths.append(path_entry_path)
                 continue
 
-            # retrieves the listdir entry extension
-            _base_listdir_entry, extension = os.path.splitext(listdir_entry)
+            # retrieves the path entry extension
+            _base_path_entry, extension = os.path.splitext(path_entry)
 
             # skips in case the extension is in the exclusion list
             if extension in RESOURCE_FILE_EXTENSION_EXCLUSION_LIST:
                 continue
 
             # collects the file path
-            file_paths.append(listdir_entry_path)
+            file_paths.append(path_entry_path)
 
         # retrieves the file paths for the collected directories
         for directory_path in directory_paths:

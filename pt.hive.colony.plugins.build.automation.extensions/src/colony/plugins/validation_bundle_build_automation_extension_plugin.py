@@ -19,7 +19,7 @@
 # You should have received a copy of the GNU General Public License
 # along with Hive Colony Framework. If not, see <http://www.gnu.org/licenses/>.
 
-__author__ = "João Magalhães <joamag@hive.pt>"
+__author__ = "Tiago Silva <tsilva@hive.pt>"
 """ The author(s) of the module """
 
 __version__ = "1.0.0"
@@ -40,37 +40,37 @@ __license__ = "GNU General Public License (GPL), Version 3"
 import colony.base.plugin_system
 import colony.base.decorators
 
-class ValidationPluginBuildAutomationExtensionPlugin(colony.base.plugin_system.Plugin):
+class ValidationBundleBuildAutomationExtensionPlugin(colony.base.plugin_system.Plugin):
     """
-    The main class for the Validation Plugin Build Automation Extension plugin
+    The main class for the Validation Bundle Build Automation Extension plugin
     """
 
-    id = "pt.hive.colony.plugins.build.automation.extensions.validation_plugin"
-    name = "Validation Plugin Build Automation Extension Plugin"
-    short_name = "Validation Plugin Build Automation Extension"
-    description = "A plugin to manage the validation plugin build automation tasks"
+    id = "pt.hive.colony.plugins.build.automation.extensions.validation_bundle"
+    name = "Validation Bundle Build Automation Extension Plugin"
+    short_name = "Validation Bundle Build Automation Extension"
+    description = "A plugin to manage the validation bundle build automation tasks"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     loading_type = colony.base.plugin_system.EAGER_LOADING_TYPE
     platforms = [colony.base.plugin_system.CPYTHON_ENVIRONMENT]
-    attributes = {"build_automation_file_path" : "$base{plugin_directory}/build_automation_extensions/validation_plugin/resources/baf.xml"}
+    attributes = {"build_automation_file_path" : "$base{plugin_directory}/build_automation_extensions/validation_bundle/resources/baf.xml"}
     capabilities = ["build_automation_extension", "build_automation_item"]
     capabilities_allowed = []
     dependencies = [colony.base.plugin_system.PluginDependency(
-                    "pt.hive.colony.plugins.validation.plugin", "1.0.0")]
+                    "pt.hive.colony.plugins.validation.bundle", "1.0.0")]
     events_handled = []
     events_registrable = []
-    main_modules = ["build_automation_extensions.validation_plugin.validation_plugin_build_automation_extension_system"]
+    main_modules = ["build_automation_extensions.validation_bundle.validation_bundle_build_automation_extension_system"]
 
-    validation_plugin_build_automation_extension = None
+    validation_bundle_build_automation_extension = None
 
-    validation_plugin_plugin = None
+    validation_bundle_plugin = None
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
         global build_automation_extensions
-        import build_automation_extensions.validation_plugin.validation_plugin_build_automation_extension_system
-        self.validation_plugin_build_automation_extension = build_automation_extensions.validation_plugin.validation_plugin_build_automation_extension_system.ValidationPluginBuildAutomationExtension(self)
+        import build_automation_extensions.validation_bundle.validation_bundle_build_automation_extension_system
+        self.validation_bundle_build_automation_extension = build_automation_extensions.validation_bundle.validation_bundle_build_automation_extension_system.ValidationBundleBuildAutomationExtension(self)
 
     def end_load_plugin(self):
         colony.base.plugin_system.Plugin.end_load_plugin(self)
@@ -87,16 +87,16 @@ class ValidationPluginBuildAutomationExtensionPlugin(colony.base.plugin_system.P
     def unload_allowed(self, plugin, capability):
         colony.base.plugin_system.Plugin.unload_allowed(self, plugin, capability)
 
-    @colony.base.decorators.inject_dependencies("pt.hive.colony.plugins.build.automation.extensions.validation_plugin", "1.0.0")
+    @colony.base.decorators.inject_dependencies("pt.hive.colony.plugins.build.automation.extensions.validation_bundle", "1.0.0")
     def dependency_injected(self, plugin):
         colony.base.plugin_system.Plugin.dependency_injected(self, plugin)
 
     def run_automation(self, plugin, stage, parameters, build_automation_structure, logger):
-        return self.validation_plugin_build_automation_extension.run_automation(plugin, stage, parameters, build_automation_structure, logger)
+        return self.validation_bundle_build_automation_extension.run_automation(plugin, stage, parameters, build_automation_structure, logger)
 
-    def get_validation_plugin_plugin(self):
-        return self.validation_plugin_plugin
+    def get_validation_bundle_plugin(self):
+        return self.validation_bundle_plugin
 
-    @colony.base.decorators.plugin_inject("pt.hive.colony.plugins.validation.plugin")
-    def set_validation_plugin_plugin(self, validation_plugin_plugin):
-        self.validation_plugin_plugin = validation_plugin_plugin
+    @colony.base.decorators.plugin_inject("pt.hive.colony.plugins.validation.bundle")
+    def set_validation_bundle_plugin(self, validation_bundle_plugin):
+        self.validation_bundle_plugin = validation_bundle_plugin

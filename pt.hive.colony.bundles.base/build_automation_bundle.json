@@ -47,6 +47,9 @@
                 "id" : "pt.hive.colony.plugins.build.automation.extensions.test",
                 "version" : "1.0.0"
             }, {
+                "id" : "pt.hive.colony.plugins.build.automation.extensions.validation_bundle",
+                "version" : "1.0.0"
+            }, {
                 "id" : "pt.hive.colony.plugins.build.automation.extensions.validation_plugin",
                 "version" : "1.0.0"
             }, {
