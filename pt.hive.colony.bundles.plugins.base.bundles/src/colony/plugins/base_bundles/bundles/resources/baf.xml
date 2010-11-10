@@ -113,10 +113,6 @@
                         </specification>
                         <specification>
                             <type>bundle</type>
-                            <specification_file>$base{plugin_directory}/base_bundles/bundles/specifications/distribution_bundle.json</specification_file>
-                        </specification>
-                        <specification>
-                            <type>bundle</type>
                             <specification_file>$base{plugin_directory}/base_bundles/bundles/specifications/dns_storage_bundle.json</specification_file>
                         </specification>
                         <specification>
@@ -126,10 +122,6 @@
                         <specification>
                             <type>bundle</type>
                             <specification_file>$base{plugin_directory}/base_bundles/bundles/specifications/downloader_bundle.json</specification_file>
-                        </specification>
-                        <specification>
-                            <type>bundle</type>
-                            <specification_file>$base{plugin_directory}/base_bundles/bundles/specifications/dummy_bundle.json</specification_file>
                         </specification>
                         <specification>
                             <type>bundle</type>
