@@ -62,7 +62,8 @@ class WebMvcManagerPageItemDnsPlugin(colony.base.plugin_system.Plugin):
                     "pt.hive.colony.plugins.dns.storage.database", "1.0.0")]
     events_handled = []
     events_registrable = []
-    main_modules = ["web_mvc_manager_page_item.dns.web_mvc_manager_page_item_dns_controllers", "web_mvc_manager_page_item.dns.web_mvc_manager_page_item_dns_exceptions",
+    main_modules = ["web_mvc_manager_page_item.dns.web_mvc_manager_page_item_dns_controllers",
+                    "web_mvc_manager_page_item.dns.web_mvc_manager_page_item_dns_exceptions",
                     "web_mvc_manager_page_item.dns.web_mvc_manager_page_item_dns_system"]
 
     web_mvc_manager_page_item_dns = None

@@ -59,7 +59,8 @@ class DnsStorageDatabasePlugin(colony.base.plugin_system.Plugin):
                     "pt.hive.colony.plugins.data.entity_manager_helper", "1.0.0")]
     events_handled = []
     events_registrable = []
-    main_modules = ["dns_storage_database.database.dns_storage_database_entities", "dns_storage_database.database.dns_storage_database_exceptions",
+    main_modules = ["dns_storage_database.database.dns_storage_database_entities",
+                    "dns_storage_database.database.dns_storage_database_exceptions",
                     "dns_storage_database.database.dns_storage_database_system"]
 
     dns_storage_database = None

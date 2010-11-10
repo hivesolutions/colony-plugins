@@ -60,8 +60,10 @@ class TemplateEngineManagerPlugin(colony.base.plugin_system.Plugin):
     dependencies = []
     events_handled = []
     events_registrable = []
-    main_modules = ["template_engine.manager.template_engine_ast", "template_engine.manager.template_engine_exceptions",
-                    "template_engine.manager.template_engine_manager_system", "template_engine.manager.template_engine_visitor"]
+    main_modules = ["template_engine.manager.template_engine_ast",
+                    "template_engine.manager.template_engine_exceptions",
+                    "template_engine.manager.template_engine_manager_system",
+                    "template_engine.manager.template_engine_visitor"]
 
     template_engine_manager = None
 

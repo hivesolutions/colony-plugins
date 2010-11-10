@@ -62,7 +62,8 @@ class PrintingPdfPlugin(colony.base.plugin_system.Plugin):
                     "Python Imaging Library (PIL)", "PIL", "1.1.x", "http://www.pythonware.com/products/pil")]
     events_handled = []
     events_registrable = []
-    main_modules = ["printing.pdf.printing_pdf_exceptions", "printing.pdf.printing_pdf_system",
+    main_modules = ["printing.pdf.printing_pdf_exceptions",
+                    "printing.pdf.printing_pdf_system",
                     "printing.pdf.printing_pdf_visitor"]
 
     printing_pdf = None

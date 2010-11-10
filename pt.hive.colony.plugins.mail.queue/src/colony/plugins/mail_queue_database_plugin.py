@@ -59,7 +59,8 @@ class MailQueueDatabasePlugin(colony.base.plugin_system.Plugin):
                     "pt.hive.colony.plugins.data.entity_manager_helper", "1.0.0")]
     events_handled = []
     events_registrable = []
-    main_modules = ["mail_queue_database.database.mail_queue_database_entities", "mail_queue_database.database.mail_queue_database_exceptions",
+    main_modules = ["mail_queue_database.database.mail_queue_database_entities",
+                    "mail_queue_database.database.mail_queue_database_exceptions",
                     "mail_queue_database.database.mail_queue_database_system"]
 
     mail_queue_database = None

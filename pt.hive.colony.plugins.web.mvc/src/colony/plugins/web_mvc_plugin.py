@@ -64,8 +64,10 @@ class WebMvcPlugin(colony.base.plugin_system.Plugin):
                     "pt.hive.colony.plugins.misc.json", "1.0.0")]
     events_handled = []
     events_registrable = ["web.mvc.patterns", "web.mvc.communication"]
-    main_modules = ["web_mvc.mvc.web_mvc_communication_handler", "web_mvc.mvc.web_mvc_exceptions",
-                    "web_mvc.mvc.web_mvc_file_handler", "web_mvc.mvc.web_mvc_system"]
+    main_modules = ["web_mvc.mvc.web_mvc_communication_handler",
+                    "web_mvc.mvc.web_mvc_exceptions",
+                    "web_mvc.mvc.web_mvc_file_handler",
+                    "web_mvc.mvc.web_mvc_system"]
 
     web_mvc = None
 

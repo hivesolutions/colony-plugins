@@ -59,7 +59,8 @@ class EntityManagerPlugin(colony.base.plugin_system.Plugin):
     dependencies = []
     events_handled = []
     events_registrable = []
-    main_modules = ["data.entity_manager.entity_manager_decorators", "data.entity_manager.entity_manager_exceptions",
+    main_modules = ["data.entity_manager.entity_manager_decorators",
+                    "data.entity_manager.entity_manager_exceptions",
                     "data.entity_manager.entity_manager_system"]
 
     entity_manager = None

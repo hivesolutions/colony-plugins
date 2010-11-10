@@ -60,7 +60,8 @@ class ServiceYadisPlugin(colony.base.plugin_system.Plugin):
                     "pt.hive.colony.plugins.main.client.http", "1.0.0")]
     events_handled = []
     events_registrable = []
-    main_modules = ["service_yadis.yadis.service_yadis_exceptions", "service_yadis.yadis.service_yadis_parser",
+    main_modules = ["service_yadis.yadis.service_yadis_exceptions",
+                    "service_yadis.yadis.service_yadis_parser",
                     "service_yadis.yadis.service_yadis_system"]
 
     service_yadis = None

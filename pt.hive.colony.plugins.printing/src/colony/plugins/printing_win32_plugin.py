@@ -61,8 +61,10 @@ class PrintingWin32Plugin(colony.base.plugin_system.Plugin):
                     "Python Imaging Library (PIL)", "PIL", "1.1.x", "http://www.pythonware.com/products/pil")]
     events_handled = []
     events_registrable = []
-    main_modules = ["printing.win32.printing_win32_constants", "printing.win32.printing_win32_exceptions",
-                    "printing.win32.printing_win32_system", "printing.win32.printing_win32_visitor"]
+    main_modules = ["printing.win32.printing_win32_constants",
+                    "printing.win32.printing_win32_exceptions",
+                    "printing.win32.printing_win32_system",
+                    "printing.win32.printing_win32_visitor"]
 
     printing_win32 = None
 

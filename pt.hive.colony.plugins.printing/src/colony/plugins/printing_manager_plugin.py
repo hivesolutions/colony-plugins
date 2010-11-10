@@ -59,9 +59,12 @@ class PrintingManagerPlugin(colony.base.plugin_system.Plugin):
     dependencies = []
     events_handled = []
     events_registrable = []
-    main_modules = ["printing.manager.console_printing_manager", "printing.manager.printing_language_ast",
-                    "printing.manager.printing_language_parser", "printing.manager.printing_language_visitor",
-                    "printing.manager.printing_manager_exceptions", "printing.manager.printing_manager_system"]
+    main_modules = ["printing.manager.console_printing_manager",
+                    "printing.manager.printing_language_ast",
+                    "printing.manager.printing_language_parser",
+                    "printing.manager.printing_language_visitor",
+                    "printing.manager.printing_manager_exceptions",
+                    "printing.manager.printing_manager_system"]
 
     printing_manager = None
     console_printing_manager = None

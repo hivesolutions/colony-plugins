@@ -62,8 +62,10 @@ class BuildAutomationPlugin(colony.base.plugin_system.Plugin):
                     "pt.hive.colony.plugins.build.automation.extensions.test", "1.0.0")]
     events_handled = []
     events_registrable = []
-    main_modules = ["build_automation.automation.build_automation_exceptions", "build_automation.automation.build_automation_parser",
-                    "build_automation.automation.build_automation_system", "build_automation.automation.console_build_automation"]
+    main_modules = ["build_automation.automation.build_automation_exceptions",
+                    "build_automation.automation.build_automation_parser",
+                    "build_automation.automation.build_automation_system",
+                    "build_automation.automation.console_build_automation"]
 
     build_automation = None
     console_build_automation = None

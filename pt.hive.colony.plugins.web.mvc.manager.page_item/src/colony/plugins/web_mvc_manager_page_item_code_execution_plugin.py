@@ -60,7 +60,8 @@ class WebMvcManagerPageItemCodeExecutionPlugin(colony.base.plugin_system.Plugin)
                     "pt.hive.colony.plugins.web.mvc.utils", "1.0.0")]
     events_handled = []
     events_registrable = []
-    main_modules = ["web_mvc_manager_page_item.code_execution.web_mvc_manager_page_item_code_execution_controllers", "web_mvc_manager_page_item.code_execution.web_mvc_manager_page_item_code_execution_exceptions",
+    main_modules = ["web_mvc_manager_page_item.code_execution.web_mvc_manager_page_item_code_execution_controllers",
+                    "web_mvc_manager_page_item.code_execution.web_mvc_manager_page_item_code_execution_exceptions",
                     "web_mvc_manager_page_item.code_execution.web_mvc_manager_page_item_code_execution_system"]
 
     web_mvc_manager_page_item_code_execution = None
