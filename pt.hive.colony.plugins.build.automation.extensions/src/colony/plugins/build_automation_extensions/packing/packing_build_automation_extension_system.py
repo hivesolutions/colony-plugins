@@ -167,7 +167,7 @@ class PackingBuildAutomationExtension:
                       PLUGINS_PATH_VALUE : plugins_directory}
 
         # print an info message
-        logger.info("Packing files using specification file %s into %s" % (specification_file, plugins_directory))
+        logger.info("Packing files using specification file %s into %s" % (specification_file, target_path))
 
         # packs the directory
         main_packing_manager_plugin.pack_files(file_paths_list, properties, COLONY_VALUE)
