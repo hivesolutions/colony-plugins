@@ -24,7 +24,7 @@ __author__ = "João Magalhães <joamag@hive.pt>"
 
 __version__ = "1.0.0"
 """ The version of the module """
-d
+
 __revision__ = "$LastChangedRevision: 428 $"
 """ The revision number of the module """
 
