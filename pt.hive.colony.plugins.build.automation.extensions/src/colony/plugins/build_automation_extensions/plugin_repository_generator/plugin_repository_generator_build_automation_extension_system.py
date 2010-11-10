@@ -44,11 +44,44 @@ import colony.libs.path_util
 TARGET_DIRECTORY_VALUE = "target_directory"
 """ The target directory value """
 
+BUNDLES_DIRECTORY_VALUE = "bundles_directory"
+""" The bundles directory value """
+
 PLUGINS_DIRECTORY_VALUE = "plugins_directory"
 """ The plugins directory value """
 
+LIBRARIES_DIRECTORY_VALUE = "libraries_directory"
+""" The libraries directory value """
+
 TARGET_VALUE = "target"
 """ The target value """
+
+REPOSITORY_NAME_VALUE= "repository_name"
+""" The repository name value """
+
+REPOSITORY_DESCRIPTION = "repository_description"
+""" The repository description value """
+
+REPOSITORY_LAYOUT = "repository_layout"
+""" The repository layout value """
+
+PACKED_BUNDLES_VALUE = "packed_bundles"
+""" The packed bundles value """
+
+PACKED_PLUGINS_VALUE = "packed_plugins"
+""" The packed plugins value """
+
+PACKED_LIBRARIES_VALUE = "packed_libraries"
+""" The packed libraries value """
+
+BUNDLE_EXTENSION_VALUE = ".cbx"
+""" The bundle extension value """
+
+PLUGIN_EXTENSION_VALUE = ".cpx"
+""" The plugin extension value """
+
+LIBRARY_EXTENSION_VALUE = ".clx"
+""" The library extension value """
 
 class PluginRepositoryGeneratorBuildAutomationExtension:
     """
@@ -69,11 +102,11 @@ class PluginRepositoryGeneratorBuildAutomationExtension:
         self.plugin_repository_generator_build_automation_extension_plugin = plugin_repository_generator_build_automation_extension_plugin
 
     def run_automation(self, plugin, stage, parameters, build_automation_structure, logger):
-        # retrieves the plugin manager
-        plugin_manager = self.plugin_repository_generator_build_automation_extension_plugin.manager
-
         # retrieves the repository descriptor generator plugin
         repository_descriptor_generator_plugin = self.plugin_repository_generator_build_automation_extension_plugin.repository_descriptor_generator_plugin
+
+        # retrieves the build automation structure runtime
+        build_automation_structure_runtime = build_automation_structure.runtime
 
         # retrieves the build properties
         build_properties = build_automation_structure.get_all_build_properties()
@@ -81,36 +114,41 @@ class PluginRepositoryGeneratorBuildAutomationExtension:
         # retrieves the target directory
         target_directory = build_properties[TARGET_DIRECTORY_VALUE]
 
+        # retrieves the bundles directory
+        bundles_directory = build_properties[BUNDLES_DIRECTORY_VALUE]
+
         # retrieves the plugins directory
         plugins_directory = build_properties[PLUGINS_DIRECTORY_VALUE]
 
+        # retrieves the libraries directory
+        libraries_directory = build_properties[LIBRARIES_DIRECTORY_VALUE]
+
         # retrieves the repository name
-        repository_name = parameters["repository_name"]
+        repository_name = parameters[REPOSITORY_NAME_VALUE]
 
         # retrieves the repository description
-        repository_description = parameters["repository_description"]
+        repository_description = parameters[REPOSITORY_DESCRIPTION]
 
         # retrieves the repository layout
-        repository_layout = parameters["repository_layout"]
+        repository_layout = parameters[REPOSITORY_LAYOUT]
 
-        plugins = parameters.get("plugins", {})
-        _plugins = plugins.get("plugin", [{"id" : value.id, "version" : value.version} for value in plugin_manager.get_all_loaded_plugins()])
+        # retrieves the packed bundles, plugins and libraries from
+        # the build automation structure runtime
+        packed_bundles = build_automation_structure_runtime.properties.get(PACKED_BUNDLES_VALUE, [])
+        packed_plugins = build_automation_structure_runtime.properties.get(PACKED_PLUGINS_VALUE, [])
+        packed_libraries = build_automation_structure_runtime.properties.get(PACKED_LIBRARIES_VALUE, [])
 
         # retrieves the target
         target = parameters.get(TARGET_VALUE, target_directory)
 
         # creates the full target directory appending the colony plugins
         # suffix value
-        full_target_directory = target + "/colony_plugins"
+        full_target_directory = target + "/colony"
 
-        # creates the full plugins directory
-        full_plugins_directory = full_target_directory + "/plugins"
-
+        # in case the full target directory does not exist
         if not os.path.exists(full_target_directory):
+            # cretes the full target directory
             os.makedirs(full_target_directory)
-
-        if not os.path.exists(full_plugins_directory):
-            os.makedirs(full_plugins_directory)
 
         # creates the repository descriptor file path
         repository_descriptor_file_path = full_target_directory + "/repository_descriptor.xml"
@@ -118,21 +156,76 @@ class PluginRepositoryGeneratorBuildAutomationExtension:
         # generates the repository descriptor file
         repository_descriptor_generator_plugin.generate_repository_descriptor_file(repository_descriptor_file_path, repository_name, repository_description, repository_layout)
 
-        # iterates over all the plugins to copy the files
-        for plugin in _plugins:
-            # retrieves the plugin id and version
-            plugin_id = plugin["id"]
-            plugin_version = plugin["version"]
+        # processes the bundles copying them to the repository directory
+        self._process_bundles(packed_bundles, bundles_directory, full_target_directory)
 
-            # creates the plugin file name from the plugin id and version
-            plugin_file_name = plugin_id + "_" + plugin_version + ".cpx"
+        # processes the plugins copying them to the repository directory
+        self._process_plugins(packed_plugins, plugins_directory, full_target_directory)
 
-            # in case the source plugin path does not exists
-            if not os.path.exists(plugins_directory + "/" + plugin_file_name):
-                # continues the loop
-                continue
-
-            colony.libs.path_util.copy_file(plugins_directory + "/" + plugin_file_name, full_plugins_directory + "/" + plugin_file_name)
+        # processes the libraries copying them to the repository directory
+        self._process_libraries(packed_libraries, libraries_directory, full_target_directory)
 
         # returns true (success)
         return True
+
+    def _process_bundles(self, packed_bundles, bundles_directory, full_target_directory):
+        # creates the full bundles directory
+        full_bundles_directory = full_target_directory + "/bundles"
+
+        # in case the full bundles directory does not exist
+        if not os.path.exists(full_bundles_directory):
+            # creates the full bundles directory
+            os.makedirs(full_bundles_directory)
+
+        # iterates over all the packed bundles to copy the files
+        for packed_bundle in packed_bundles:
+            # installs (deploy) the bundle to the target path
+            self._deploy_packed_item(packed_bundle, BUNDLE_EXTENSION_VALUE, bundles_directory, full_target_directory)
+
+    def _process_plugins(self, packed_plugins, plugins_directory, full_target_directory):
+        # creates the full plugins directory
+        full_plugins_directory = full_target_directory + "/plugins"
+
+        # in case the full plugins directory does not exist
+        if not os.path.exists(full_plugins_directory):
+            # creates the full plugins directory
+            os.makedirs(full_plugins_directory)
+
+        # iterates over all the packed plugins to copy the files
+        for packed_plugin in packed_plugins:
+            # installs (deploy) the plugin to the target path
+            self._deploy_packed_item(packed_plugin, PLUGIN_EXTENSION_VALUE, plugins_directory, full_target_directory)
+
+    def _process_libraries(self, packed_libraries, libraries_directory, full_target_directory):
+        # creates the full libraries directory
+        full_libraries_directory = full_target_directory + "/libraries"
+
+        # in case the full libraries directory does not exist
+        if not os.path.exists(full_libraries_directory):
+            # creates the full libraries directory
+            os.makedirs(full_libraries_directory)
+
+        # iterates over all the packed libraries to copy the files
+        for packed_library in packed_libraries:
+            # installs (deploy) the library to the target path
+            self._deploy_packed_item(packed_library, LIBRARY_EXTENSION_VALUE, libraries_directory, full_target_directory)
+
+    def _deploy_packed_item(self, packed_item, packed_item_extension, packed_item_directoy, full_packed_item_directory):
+        # retrieves the packed item id and version
+        packed_item_id = packed_item["id"]
+        packed_item_version = packed_item["version"]
+
+        # creates the packed item file name from the packed item id and version
+        packed_item_file_name = packed_item_id + "_" + packed_item_version + packed_item_extension
+
+        # creates the packed item file paths
+        packed_item_file_path = packed_item_directoy + "/" + packed_item_file_name
+        packed_item_target_file_path = full_packed_item_directory + "/" + packed_item_file_name
+
+        # in case the source packed item path does not exists
+        if not os.path.exists(packed_item_file_path):
+            # continues the loop
+            continue
+
+        # copies the packed item file from the packed item directory to the repository directory
+        colony.libs.path_util.copy_file(packed_item_file_path, packed_item_target_file_path)

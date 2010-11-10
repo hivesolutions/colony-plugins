@@ -41,6 +41,9 @@ import colony.libs.map_util
 
 import packing_build_automation_extension_exceptions
 
+DEFAULT_ENCODING = "Cp1252"
+""" The default encoding """
+
 BUNDLES_DIRECTORY_VALUE = "bundles_directory"
 """ The bundles directory value """
 
@@ -79,6 +82,21 @@ PLUGIN_VALUE = "plugin"
 
 LIBRARY_VALUE = "library"
 """ The library value """
+
+ID_VALUE = "id"
+""" The id value """
+
+VERSION_VALUE = "version"
+""" The version value """
+
+PACKED_BUNDLES_VALUE = "packed_bundles"
+""" The packed bundles value """
+
+PACKED_PLUGINS_VALUE = "packed_plugins"
+""" The packed plugins value """
+
+PACKED_LIBRARIES_VALUE = "packed_libraries"
+""" The packed libraries value """
 
 class PackingBuildAutomationExtension:
     """
@@ -127,19 +145,22 @@ class PackingBuildAutomationExtension:
         specifications = colony.libs.map_util.map_get_values(resource_specifications, SPECIFICATION_VALUE)
 
         # packs the main specification
-        self._pack_specification(specification, bundles_directory, plugins_directory, libraries_directory, logger)
+        self._pack_specification(specification, bundles_directory, plugins_directory, libraries_directory, build_automation_structure, logger)
 
         # iterates over all the specifications
         for specification in specifications:
             # packs the (resource) specification
-            self._pack_specification(specification, bundles_directory, plugins_directory, libraries_directory, logger)
+            self._pack_specification(specification, bundles_directory, plugins_directory, libraries_directory, build_automation_structure, logger)
 
         # returns true (success)
         return True
 
-    def _pack_specification(self, specification, bundles_directory, plugins_directory, libraries_directory, logger):
+    def _pack_specification(self, specification, bundles_directory, plugins_directory, libraries_directory, build_automation_structure, logger):
         # retrieves the main packing manager plugin
         main_packing_manager_plugin = self.packing_build_automation_extension_plugin.main_packing_manager_plugin
+
+        # retrieves the build automation structure runtime
+        build_automation_structure_runtime = build_automation_structure.runtime
 
         # retrieves the specification type
         type = specification[TYPE_VALUE]
@@ -171,3 +192,58 @@ class PackingBuildAutomationExtension:
 
         # packs the directory
         main_packing_manager_plugin.pack_files(file_paths_list, properties, COLONY_VALUE)
+
+        # updates the build automation structure with the new packing
+        self._update_build_automation_structure(type, specification_file, build_automation_structure_runtime)
+
+    def _update_build_automation_structure(self, type, specification_file, build_automation_structure_runtime):
+        # loads the specification from the specification file
+        specification = self._load_specification(specification_file)
+
+        # in case the packing type is bundle
+        if type == BUNDLE_VALUE:
+            packed_items_key = PACKED_BUNDLES_VALUE
+        # in case the packing type is plugin
+        elif type == PLUGIN_VALUE:
+            packed_items_key = PACKED_PLUGINS_VALUE
+        elif type == LIBRARY_VALUE:
+            packed_items_key = PACKED_LIBRARIES_VALUE
+
+        if not packed_items_key in build_automation_structure_runtime.properties:
+            build_automation_structure_runtime.properties[packed_items_key] = []
+
+            packed_items_list = build_automation_structure_runtime.properties[packed_items_key]
+
+        # retrieves the specification id and version
+        specification_id = specification[ID_VALUE]
+        specification_version = specification[VERSION_VALUE]
+
+        # creates the packed item from the specification id and version
+        packed_item = {ID_VALUE : specification_id, VERSION_VALUE : specification_version}
+
+        # adds the packed item to the packed items list
+        packed_items_list.append(packed_item)
+
+    def _load_specification(self, specification_file_path):
+        # retrieves the json plugin
+        json_plugin = self.packing_build_automation_extension_plugin.json_plugin
+
+        # opens the specification file
+        specification_file = open(specification_file_path)
+
+        try:
+            # retrieves the specification file contents
+            specification_file_contents = specification_file.read()
+
+            # decodes the specification file contents using
+            # the default encoding
+            specification_file_contents = specification_file_contents.decode(DEFAULT_ENCODING)
+        finally:
+            # closes the specification file
+            file.close()
+
+        # retrieves the specification from the specification file contents
+        specification = json_plugin.loads(specification_file_contents)
+
+        # returns the specification
+        return specification

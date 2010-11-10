@@ -57,7 +57,9 @@ class PackingBuildAutomationExtensionPlugin(colony.base.plugin_system.Plugin):
     capabilities = ["build_automation_extension", "build_automation_item"]
     capabilities_allowed = []
     dependencies = [colony.base.plugin_system.PluginDependency(
-                    "pt.hive.colony.plugins.main.packing.manager", "1.0.0")]
+                    "pt.hive.colony.plugins.main.packing.manager", "1.0.0"),
+                    colony.base.plugin_system.PluginDependency(
+                    "pt.hive.colony.plugins.misc.json", "1.0.0")]
     events_handled = []
     events_registrable = []
     main_modules = ["build_automation_extensions.packing.packing_build_automation_extension_exceptions",
@@ -66,6 +68,7 @@ class PackingBuildAutomationExtensionPlugin(colony.base.plugin_system.Plugin):
     packing_build_automation_extension = None
 
     main_packing_manager_plugin = None
+    json_plugin = None
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
@@ -101,3 +104,10 @@ class PackingBuildAutomationExtensionPlugin(colony.base.plugin_system.Plugin):
     @colony.base.decorators.plugin_inject("pt.hive.colony.plugins.main.packing.manager")
     def set_main_packing_manager_plugin(self, main_packing_manager_plugin):
         self.main_packing_manager_plugin = main_packing_manager_plugin
+
+    def get_json_plugin(self):
+        return self.json_plugin
+
+    @colony.base.decorators.plugin_inject("pt.hive.colony.plugins.misc.json")
+    def set_json_plugin(self, json_plugin):
+        self.json_plugin = json_plugin

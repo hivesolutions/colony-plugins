@@ -13,6 +13,9 @@
     "dependencies" : [{
                 "id" : "pt.hive.colony.plugins.main.packing.manager",
                 "version" : "1.0.0"
+            }, {
+                "id" : "pt.hive.colony.plugins.misc.json",
+                "version" : "1.0.0"
             }],
     "main_file" : "packing_build_automation_extension_plugin.py",
     "resources" : [
