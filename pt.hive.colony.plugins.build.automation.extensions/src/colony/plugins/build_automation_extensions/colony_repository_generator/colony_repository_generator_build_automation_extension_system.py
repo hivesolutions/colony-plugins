@@ -155,9 +155,9 @@ class ColonyRepositoryGeneratorBuildAutomationExtension:
 
         # retrieves the packed bundles, plugins and libraries from
         # the build automation structure runtime
-        packed_bundles = build_automation_structure_runtime.properties.get(PACKED_BUNDLES_VALUE, [])
-        packed_plugins = build_automation_structure_runtime.properties.get(PACKED_PLUGINS_VALUE, [])
-        packed_libraries = build_automation_structure_runtime.properties.get(PACKED_LIBRARIES_VALUE, [])
+        packed_bundles = build_automation_structure_runtime.global_properties.get(PACKED_BUNDLES_VALUE, [])
+        packed_plugins = build_automation_structure_runtime.global_properties.get(PACKED_PLUGINS_VALUE, [])
+        packed_libraries = build_automation_structure_runtime.global_properties.get(PACKED_LIBRARIES_VALUE, [])
 
         # retrieves the target
         target = parameters.get(TARGET_VALUE, target_directory)

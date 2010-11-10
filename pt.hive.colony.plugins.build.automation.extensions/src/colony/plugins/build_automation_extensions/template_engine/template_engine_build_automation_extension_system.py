@@ -139,7 +139,7 @@ class TemplateEngineBuildAutomationExtension:
         current_date_time_string = current_datetime.strftime(DATE_TIME_FORMAT)
 
         # retrieves the current version value
-        version_value = build_automation_structure_runtime.properties.get(VERSION_VALUE, -1)
+        version_value = build_automation_structure_runtime.local_properties.get(VERSION_VALUE, -1)
 
         # assigns the release version to the template file
         template_file.assign(RELEASE_VERSION_VALUE, "b" + str(version_value))

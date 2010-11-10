@@ -496,19 +496,19 @@ class EmailBuildAutomationExtension:
         build_automation_success = build_automation_structure_runtime.success
 
         # retrieves the build automation version (revision)
-        build_automation_version = build_automation_structure_runtime.properties.get(VERSION_VALUE, -1)
+        build_automation_version = build_automation_structure_runtime.local_properties.get(VERSION_VALUE, -1)
 
         # retrieves the build automation total time formated
-        build_automation_total_time_formated = build_automation_structure_runtime.properties.get(TOTAL_TIME_FORMATED_VALUE, "")
+        build_automation_total_time_formated = build_automation_structure_runtime.local_properties.get(TOTAL_TIME_FORMATED_VALUE, "")
 
         # retrieves the build automation changelog list
-        build_automation_changelog_list = build_automation_structure_runtime.properties.get(CHANGELOG_LIST_VALUE, [])
+        build_automation_changelog_list = build_automation_structure_runtime.local_properties.get(CHANGELOG_LIST_VALUE, [])
 
         # retrieves the build automation issues list
-        build_automation_issues_list = build_automation_structure_runtime.properties.get(ISSUES_LIST_VALUE, [])
+        build_automation_issues_list = build_automation_structure_runtime.local_properties.get(ISSUES_LIST_VALUE, [])
 
         # retrieves the build automation changers list
-        build_automation_changers_list = build_automation_structure_runtime.properties.get(CHANGERS_LIST_VALUE, [])
+        build_automation_changers_list = build_automation_structure_runtime.local_properties.get(CHANGERS_LIST_VALUE, [])
 
         # retrieves the build automation success in capitals format
         build_automation_success_capitals = SUCCESS_CAPITALS_MAP[build_automation_success]

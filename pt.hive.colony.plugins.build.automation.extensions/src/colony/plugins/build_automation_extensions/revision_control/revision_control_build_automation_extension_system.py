@@ -208,9 +208,9 @@ class RevisionControlBuildAutomationExtension:
             self._write_changelog(changelog_file_path, changelog_list)
 
         # sets the build automation structure runtime properties
-        build_automation_structure_runtime.properties[VERSION_VALUE] = current_revision_number
-        build_automation_structure_runtime.properties[CHANGELOG_LIST_VALUE] = changelog_list
-        build_automation_structure_runtime.properties[CHANGERS_LIST_VALUE] = changers_list
+        build_automation_structure_runtime.local_properties[VERSION_VALUE] = current_revision_number
+        build_automation_structure_runtime.local_properties[CHANGELOG_LIST_VALUE] = changelog_list
+        build_automation_structure_runtime.local_properties[CHANGERS_LIST_VALUE] = changers_list
 
         # returns true (success)
         return True
