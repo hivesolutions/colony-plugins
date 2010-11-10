@@ -1729,8 +1729,8 @@ class RuntimeInformationStructure:
     skipped = False
     """ Flag controlling if the build automation was skipped """
 
-    properties = {}
-    """ Map containing various properties of the build automation runtime """
+    properties = None
+    """ Object containing various properties of the build automation runtime """
 
     def __init__(self, success = False, logging_buffer = None, initial_date_time = None, skipped = False, properties = None):
         """
@@ -1744,13 +1744,12 @@ class RuntimeInformationStructure:
         @param initial_date_time: The date time structure of the beginning of the run.
         @type skipped: bool
         @param skipped: Flag controlling if the build automation was skipped.
-        @type properties: Dictionary
-        @param properties: Map containing various properties of the build automation runtime.
+        @type properties: Object
+        @param properties: Object containing various properties of the build automation runtime.
         """
 
         self.success = success
         self.logging_buffer = logging_buffer
         self.initial_date_time = initial_date_time
         self.skipped = skipped
-
-        self.properties = properties and properties or {}
+        self.properties = self.properties
