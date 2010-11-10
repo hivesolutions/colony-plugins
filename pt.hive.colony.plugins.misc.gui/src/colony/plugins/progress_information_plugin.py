@@ -62,7 +62,8 @@ class ProgressInformationPlugin(colony.base.plugin_system.Plugin):
                     "Wx Python", "wx", "2.8.7.x", "http://wxpython.org")]
     events_handled = ["gui_progress_information_changed"]
     events_registrable = ["task_information_changed"]
-    main_modules = ["misc_gui.progress_information.progress_information_logic", "misc_gui.progress_information.progress_information_system"]
+    main_modules = ["misc_gui.progress_information.progress_information_logic",
+                    "misc_gui.progress_information.progress_information_system"]
 
     progress_information = None
     """ The progress information """

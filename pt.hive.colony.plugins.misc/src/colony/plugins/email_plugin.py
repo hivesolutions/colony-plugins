@@ -62,7 +62,8 @@ class EmailPlugin(colony.base.plugin_system.Plugin):
                     "pt.hive.colony.plugins.format.mime", "1.0.0")]
     events_handled = []
     events_registrable = []
-    main_modules = ["misc.email.console_email", "misc.email.email_system"]
+    main_modules = ["misc.email.console_email",
+                    "misc.email.email_system"]
 
     email = None
     console_email = None

@@ -61,7 +61,8 @@ class MainConsolePlugin(colony.base.plugin_system.Plugin):
     dependencies = []
     events_handled = []
     events_registrable = []
-    main_modules = ["main_console.console.main_console_system", "main_console.console.main_console_test"]
+    main_modules = ["main_console.console.main_console_system",
+                    "main_console.console.main_console_test"]
 
     console = None
     console_test_case_class = None

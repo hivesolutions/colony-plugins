@@ -59,7 +59,8 @@ class InstallationManagerPlugin(colony.base.plugin_system.Plugin):
     dependencies = []
     events_handled = []
     events_registrable = []
-    main_modules = ["installation.manager.installation_manager_exceptions", "installation.manager.installation_manager_system"]
+    main_modules = ["installation.manager.installation_manager_exceptions",
+                    "installation.manager.installation_manager_system"]
 
     installation_manager = None
 

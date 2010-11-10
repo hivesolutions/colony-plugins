@@ -64,7 +64,8 @@ class IzpackBuildAutomationExtensionPlugin(colony.base.plugin_system.Plugin):
                     "pt.hive.colony.plugins.misc.command_execution", "1.0.0")]
     events_handled = []
     events_registrable = []
-    main_modules = ["build_automation_extensions.izpack.izpack_build_automation_extension_exceptions", "build_automation_extensions.izpack.izpack_build_automation_extension_system"]
+    main_modules = ["build_automation_extensions.izpack.izpack_build_automation_extension_exceptions",
+                    "build_automation_extensions.izpack.izpack_build_automation_extension_system"]
 
     izpack_build_automation_extension = None
 

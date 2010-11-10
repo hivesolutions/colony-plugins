@@ -58,7 +58,9 @@ class BencodePlugin(colony.base.plugin_system.Plugin):
     dependencies = []
     events_handled = []
     events_registrable = []
-    main_modules = ["misc.bencode.bencode_exceptions", "misc.bencode.bencode_serializer", "misc.bencode.bencode_system"]
+    main_modules = ["misc.bencode.bencode_exceptions",
+                    "misc.bencode.bencode_serializer",
+                    "misc.bencode.bencode_system"]
 
     bencode = None
 

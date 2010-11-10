@@ -61,7 +61,8 @@ class FormatMimePlugin(colony.base.plugin_system.Plugin):
     dependencies = []
     events_handled = []
     events_registrable = []
-    main_modules = ["format.mime.format_mime_exceptions", "format.mime.format_mime_system"]
+    main_modules = ["format.mime.format_mime_exceptions",
+                    "format.mime.format_mime_system"]
 
     format_mime = None
 

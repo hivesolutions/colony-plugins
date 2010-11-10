@@ -61,7 +61,8 @@ class MainJsonrpcManagerPlugin(colony.base.plugin_system.Plugin):
                     "pt.hive.colony.plugins.misc.json", "1.0.0")]
     events_handled = []
     events_registrable = []
-    main_modules = ["main_remote_jsonrpc.manager.main_jsonrpc_manager_exceptions", "main_remote_jsonrpc.manager.main_jsonrpc_manager_system"]
+    main_modules = ["main_remote_jsonrpc.manager.main_jsonrpc_manager_exceptions",
+                    "main_remote_jsonrpc.manager.main_jsonrpc_manager_system"]
 
     main_jsonrpc_manager = None
 

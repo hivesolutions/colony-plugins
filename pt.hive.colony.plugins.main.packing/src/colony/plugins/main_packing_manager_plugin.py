@@ -59,7 +59,8 @@ class MainPackingManagerPlugin(colony.base.plugin_system.Plugin):
     dependencies = []
     events_handled = []
     events_registrable = []
-    main_modules = ["main_packing.manager.main_packing_manager_exceptions", "main_packing.manager.main_packing_manager_system"]
+    main_modules = ["main_packing.manager.main_packing_manager_exceptions",
+                    "main_packing.manager.main_packing_manager_system"]
 
     main_packing_manager = None
 

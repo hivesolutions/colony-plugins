@@ -62,7 +62,8 @@ class MainServicePolicyPlugin(colony.base.plugin_system.Plugin):
                     "pt.hive.colony.plugins.main.service.utils", "1.0.0")]
     events_handled = []
     events_registrable = []
-    main_modules = ["main_service_policy.policy.main_service_policy_exceptions", "main_service_policy.policy.main_service_policy_system"]
+    main_modules = ["main_service_policy.policy.main_service_policy_exceptions",
+                    "main_service_policy.policy.main_service_policy_system"]
 
     main_service_policy = None
 

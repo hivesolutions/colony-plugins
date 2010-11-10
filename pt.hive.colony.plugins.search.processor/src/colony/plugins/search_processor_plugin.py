@@ -59,7 +59,8 @@ class SearchProcessorPlugin(colony.base.plugin_system.Plugin):
     dependencies = []
     events_handled = []
     events_registrable = []
-    main_modules = ["search_processor.processor.search_processor_exceptions", "search_processor.processor.search_processor_system"]
+    main_modules = ["search_processor.processor.search_processor_exceptions",
+                    "search_processor.processor.search_processor_system"]
 
     search_processor = None
 

@@ -58,7 +58,8 @@ class PackagingArPlugin(colony.base.plugin_system.Plugin):
     dependencies = []
     events_handled = []
     events_registrable = []
-    main_modules = ["packaging.ar.packaging_ar_exceptions", "packaging.ar.packaging_ar_system"]
+    main_modules = ["packaging.ar.packaging_ar_exceptions",
+                    "packaging.ar.packaging_ar_system"]
 
     packaging_ar = None
 

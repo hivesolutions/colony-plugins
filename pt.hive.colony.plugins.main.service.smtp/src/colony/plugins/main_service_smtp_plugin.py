@@ -61,7 +61,8 @@ class MainServiceSmtpPlugin(colony.base.plugin_system.Plugin):
                     "pt.hive.colony.plugins.main.service.utils", "1.0.0")]
     events_handled = []
     events_registrable = []
-    main_modules = ["main_service_smtp.smtp.main_service_smtp_exceptions", "main_service_smtp.smtp.main_service_smtp_system"]
+    main_modules = ["main_service_smtp.smtp.main_service_smtp_exceptions",
+                    "main_service_smtp.smtp.main_service_smtp_system"]
 
     main_service_smtp = None
 

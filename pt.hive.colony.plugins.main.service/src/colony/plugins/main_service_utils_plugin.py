@@ -61,7 +61,8 @@ class MainServiceUtilsPlugin(colony.base.plugin_system.Plugin):
                     "pt.hive.colony.plugins.main.work.work_pool_manager", "1.0.0")]
     events_handled = []
     events_registrable = []
-    main_modules = ["main_service_utils.utils.main_service_utils_exceptions", "main_service_utils.utils.main_service_utils_system"]
+    main_modules = ["main_service_utils.utils.main_service_utils_exceptions",
+                    "main_service_utils.utils.main_service_utils_system"]
 
     main_service_utils = None
 

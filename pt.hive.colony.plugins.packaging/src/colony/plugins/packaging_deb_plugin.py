@@ -59,7 +59,8 @@ class PackagingDebPlugin(colony.base.plugin_system.Plugin):
                     "pt.hive.colony.plugins.packaging.ar", "1.0.0")]
     events_handled = []
     events_registrable = []
-    main_modules = ["packaging.deb.packaging_deb_exceptions", "packaging.deb.packaging_deb_system"]
+    main_modules = ["packaging.deb.packaging_deb_exceptions",
+                    "packaging.deb.packaging_deb_system"]
 
     packaging_deb = None
 

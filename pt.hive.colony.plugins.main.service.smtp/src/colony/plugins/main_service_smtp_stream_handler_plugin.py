@@ -59,7 +59,8 @@ class MainServiceSmtpStreamHandlerPlugin(colony.base.plugin_system.Plugin):
     dependencies = []
     events_handled = []
     events_registrable = []
-    main_modules = ["main_service_smtp_stream_handler.stream_handler.main_service_smtp_stream_handler_exceptions", "main_service_smtp_stream_handler.stream_handler.main_service_smtp_stream_handler_system"]
+    main_modules = ["main_service_smtp_stream_handler.stream_handler.main_service_smtp_stream_handler_exceptions",
+                    "main_service_smtp_stream_handler.stream_handler.main_service_smtp_stream_handler_system"]
 
     main_service_smtp_stream_handler = None
 

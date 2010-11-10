@@ -64,7 +64,10 @@ class MainGuiPlugin(colony.base.plugin_system.Plugin):
                     "Wx Python", "wx", "2.8.7.x", "http://wxpython.org")]
     events_handled = []
     events_registrable = ["gui_widget_plugin_changed", "gui_progress_information_changed"]
-    main_modules = ["main_gui.gui.main_gui_system", "main_gui.gui.main_window", "main_gui.gui.plugin_tree", "main_gui.gui.tab_container_panel"]
+    main_modules = ["main_gui.gui.main_gui_system",
+                    "main_gui.gui.main_window",
+                    "main_gui.gui.plugin_tree",
+                    "main_gui.gui.tab_container_panel"]
 
     main_gui = None
     application = None

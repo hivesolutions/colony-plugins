@@ -58,7 +58,8 @@ class ElementPoolManagerPlugin(colony.base.plugin_system.Plugin):
     dependencies = []
     events_handled = []
     events_registrable = []
-    main_modules = ["main_pool.element_pool_manager.element_pool_manager_exceptions", "main_pool.element_pool_manager.element_pool_manager_system"]
+    main_modules = ["main_pool.element_pool_manager.element_pool_manager_exceptions",
+                    "main_pool.element_pool_manager.element_pool_manager_system"]
 
     element_pool_manager = None
 

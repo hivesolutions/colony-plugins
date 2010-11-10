@@ -57,7 +57,8 @@ class MainServiceHttpWebsocketHandlerPlugin(colony.base.plugin_system.Plugin):
     dependencies = []
     events_handled = []
     events_registrable = []
-    main_modules = ["main_service_http_websocket_handler.websocket_handler.main_service_http_websocket_handler_exceptions", "main_service_http_websocket_handler.websocket_handler.main_service_http_websocket_handler_system"]
+    main_modules = ["main_service_http_websocket_handler.websocket_handler.main_service_http_websocket_handler_exceptions",
+                    "main_service_http_websocket_handler.websocket_handler.main_service_http_websocket_handler_system"]
 
     main_service_http_websocket_handler = None
 

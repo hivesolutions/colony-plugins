@@ -58,7 +58,8 @@ class RepositoryDescriptorGeneratorPlugin(colony.base.plugin_system.Plugin):
     dependencies = []
     events_handled = []
     events_registrable = []
-    main_modules = ["misc.repository_descriptor_generator.console_repository_descriptor_generator", "misc.repository_descriptor_generator.repository_descriptor_generator_system"]
+    main_modules = ["misc.repository_descriptor_generator.console_repository_descriptor_generator",
+                    "misc.repository_descriptor_generator.repository_descriptor_generator_system"]
 
     repository_descriptor_generator = None
     console_repository_descriptor_generator = None

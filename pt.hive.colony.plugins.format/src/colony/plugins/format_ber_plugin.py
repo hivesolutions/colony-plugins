@@ -60,7 +60,8 @@ class FormatBerPlugin(colony.base.plugin_system.Plugin):
     dependencies = []
     events_handled = []
     events_registrable = []
-    main_modules = ["format.ber.format_ber_exceptions", "format.ber.format_ber_system"]
+    main_modules = ["format.ber.format_ber_exceptions",
+                    "format.ber.format_ber_system"]
 
     format_ber = None
 

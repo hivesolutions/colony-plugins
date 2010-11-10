@@ -59,7 +59,8 @@ class BusinessSessionSerializerPlugin(colony.base.plugin_system.Plugin):
     dependencies = []
     events_handled = []
     events_registrable = []
-    main_modules = ["business.session_serializer.business_session_serializer_exceptions", "business.session_serializer.business_session_serializer_system"]
+    main_modules = ["business.session_serializer.business_session_serializer_exceptions",
+                    "business.session_serializer.business_session_serializer_system"]
 
     business_session_serializer = None
 

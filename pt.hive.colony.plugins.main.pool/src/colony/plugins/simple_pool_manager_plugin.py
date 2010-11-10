@@ -58,7 +58,8 @@ class SimplePoolManagerPlugin(colony.base.plugin_system.Plugin):
     dependencies = []
     events_handled = []
     events_registrable = []
-    main_modules = ["main_pool.simple_pool_manager.simple_pool_manager_exceptions", "main_pool.simple_pool_manager.simple_pool_manager_system"]
+    main_modules = ["main_pool.simple_pool_manager.simple_pool_manager_exceptions",
+                    "main_pool.simple_pool_manager.simple_pool_manager_system"]
 
     simple_pool_manager = None
 

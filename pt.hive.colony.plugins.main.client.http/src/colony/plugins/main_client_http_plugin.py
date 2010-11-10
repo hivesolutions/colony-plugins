@@ -63,7 +63,8 @@ class MainClientHttpPlugin(colony.base.plugin_system.Plugin):
                     "pt.hive.colony.plugins.misc.url_parser", "1.0.0")]
     events_handled = []
     events_registrable = []
-    main_modules = ["main_client_http.http.main_client_http_exceptions", "main_client_http.http.main_client_http_system"]
+    main_modules = ["main_client_http.http.main_client_http_exceptions",
+                    "main_client_http.http.main_client_http_system"]
 
     main_client_http = None
 

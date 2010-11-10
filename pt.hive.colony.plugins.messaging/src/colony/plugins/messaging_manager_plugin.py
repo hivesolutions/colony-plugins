@@ -59,7 +59,8 @@ class MessagingManagerPlugin(colony.base.plugin_system.Plugin):
     dependencies = []
     events_handled = []
     events_registrable = []
-    main_modules = ["messaging.manager.messaging_manager_exceptions", "messaging.manager.messaging_manager_system"]
+    main_modules = ["messaging.manager.messaging_manager_exceptions",
+                    "messaging.manager.messaging_manager_system"]
 
     messaging_manager = None
 

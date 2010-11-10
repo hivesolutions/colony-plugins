@@ -62,7 +62,8 @@ class InstallationDebPlugin(colony.base.plugin_system.Plugin):
                     "pt.hive.colony.plugins.template_engine.manager", "1.0.0")]
     events_handled = []
     events_registrable = []
-    main_modules = ["installation.deb.installation_deb_exceptions", "installation.deb.installation_deb_system"]
+    main_modules = ["installation.deb.installation_deb_exceptions",
+                    "installation.deb.installation_deb_system"]
 
     installation_deb = None
 

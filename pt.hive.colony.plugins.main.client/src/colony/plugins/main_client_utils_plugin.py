@@ -60,7 +60,8 @@ class MainClientUtilsPlugin(colony.base.plugin_system.Plugin):
     dependencies = []
     events_handled = []
     events_registrable = []
-    main_modules = ["main_client_utils.utils.main_client_utils_exceptions", "main_client_utils.utils.main_client_utils_system"]
+    main_modules = ["main_client_utils.utils.main_client_utils_exceptions",
+                    "main_client_utils.utils.main_client_utils_system"]
 
     main_client_utils = None
 

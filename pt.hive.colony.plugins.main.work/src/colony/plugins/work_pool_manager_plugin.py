@@ -62,7 +62,8 @@ class WorkPoolManagerPlugin(colony.base.plugin_system.Plugin):
                     "pt.hive.colony.plugins.main.threads.thread_pool_manager", "1.0.0")]
     events_handled = []
     events_registrable = []
-    main_modules = ["main_work.work_pool_manager.work_pool_manager_algorithms", "main_work.work_pool_manager.work_pool_manager_system"]
+    main_modules = ["main_work.work_pool_manager.work_pool_manager_algorithms",
+                    "main_work.work_pool_manager.work_pool_manager_system"]
 
     work_pool_manager = None
 

@@ -62,7 +62,8 @@ class ConsoleInterfacePlugin(colony.base.plugin_system.Plugin):
                     "Wx Python", "wx", "2.8.7.x", "http://wxpython.org")]
     events_handled = []
     events_registrable = []
-    main_modules = ["misc_gui.console_interface.console_interface_system", "misc_gui.console_interface.console_window"]
+    main_modules = ["misc_gui.console_interface.console_interface_system",
+                    "misc_gui.console_interface.console_window"]
 
     console_interface = None
 

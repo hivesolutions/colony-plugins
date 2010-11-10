@@ -61,7 +61,8 @@ class MainClientApplePushPlugin(colony.base.plugin_system.Plugin):
                     "pt.hive.colony.plugins.main.client.utils", "1.0.0")]
     events_handled = []
     events_registrable = []
-    main_modules = ["main_client_apple_push.apple_push.main_client_apple_push_structures", "main_client_apple_push.apple_push.main_client_apple_push_system"]
+    main_modules = ["main_client_apple_push.apple_push.main_client_apple_push_structures",
+                    "main_client_apple_push.apple_push.main_client_apple_push_system"]
 
     main_client_apple_push = None
 

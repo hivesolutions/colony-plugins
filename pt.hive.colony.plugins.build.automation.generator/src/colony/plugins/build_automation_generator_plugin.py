@@ -59,7 +59,8 @@ class BuildAutomationGeneratorPlugin(colony.base.plugin_system.Plugin):
     dependencies = []
     events_handled = []
     events_registrable = []
-    main_modules = ["build_automation_generator.generator.build_automation_generator_exceptions", "build_automation_generator.generator.build_automation_generator_system"]
+    main_modules = ["build_automation_generator.generator.build_automation_generator_exceptions",
+                    "build_automation_generator.generator.build_automation_generator_system"]
 
     build_automation_generator = None
 

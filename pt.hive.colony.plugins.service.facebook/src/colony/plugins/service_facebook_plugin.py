@@ -62,7 +62,8 @@ class ServiceFacebookPlugin(colony.base.plugin_system.Plugin):
                     "pt.hive.colony.plugins.misc.json", "1.0.0")]
     events_handled = []
     events_registrable = []
-    main_modules = ["service_facebook.facebook.service_facebook_exceptions", "service_facebook.facebook.service_facebook_system"]
+    main_modules = ["service_facebook.facebook.service_facebook_exceptions",
+                    "service_facebook.facebook.service_facebook_system"]
 
     service_facebook = None
 

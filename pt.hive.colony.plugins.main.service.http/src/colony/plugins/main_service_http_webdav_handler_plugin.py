@@ -59,7 +59,8 @@ class MainServiceHttpWebdavHandlerPlugin(colony.base.plugin_system.Plugin):
                     "pt.hive.colony.plugins.resources.resource_manager", "1.0.0")]
     events_handled = []
     events_registrable = []
-    main_modules = ["main_service_http_webdav_handler.webdav_handler.main_service_http_webdav_handler_exceptions", "main_service_http_webdav_handler.webdav_handler.main_service_http_webdav_handler_system"]
+    main_modules = ["main_service_http_webdav_handler.webdav_handler.main_service_http_webdav_handler_exceptions",
+                    "main_service_http_webdav_handler.webdav_handler.main_service_http_webdav_handler_system"]
 
     main_service_http_webdav_handler = None
 

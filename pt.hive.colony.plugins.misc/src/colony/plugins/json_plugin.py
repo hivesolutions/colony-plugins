@@ -59,7 +59,9 @@ class JsonPlugin(colony.base.plugin_system.Plugin):
     dependencies = []
     events_handled = []
     events_registrable = []
-    main_modules = ["misc.json.json_exceptions", "misc.json.json_serializer", "misc.json.json_system"]
+    main_modules = ["misc.json.json_exceptions",
+                    "misc.json.json_serializer",
+                    "misc.json.json_system"]
 
     json_system = None
 

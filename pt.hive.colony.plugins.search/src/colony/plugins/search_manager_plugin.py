@@ -79,7 +79,8 @@ class SearchManagerPlugin(colony.base.plugin_system.Plugin):
 
     events_handled = []
     events_registrable = []
-    main_modules = ["search.manager.search_manager_exceptions", "search.manager.search_manager_system"]
+    main_modules = ["search.manager.search_manager_exceptions",
+                    "search.manager.search_manager_system"]
 
     search_manager = None
 

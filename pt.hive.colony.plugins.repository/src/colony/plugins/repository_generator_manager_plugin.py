@@ -59,7 +59,8 @@ class RepositoryGeneratorManagerPlugin(colony.base.plugin_system.Plugin):
     dependencies = []
     events_handled = []
     events_registrable = []
-    main_modules = ["repository.generator_manager.repository_generator_manager_exceptions", "repository.generator_manager.repository_generator_manager_system"]
+    main_modules = ["repository.generator_manager.repository_generator_manager_exceptions",
+                    "repository.generator_manager.repository_generator_manager_system"]
 
     repository_generator_manager = None
 

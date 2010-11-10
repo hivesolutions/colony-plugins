@@ -59,7 +59,8 @@ class AutoloaderPlugin(colony.base.plugin_system.Plugin):
     dependencies = []
     events_handled = []
     events_registrable = []
-    main_modules = ["misc.autoloader.autoloader_system", "misc.autoloader.console_autoloader"]
+    main_modules = ["misc.autoloader.autoloader_system",
+                    "misc.autoloader.console_autoloader"]
 
     autoloader = None
     console_autoloader = None

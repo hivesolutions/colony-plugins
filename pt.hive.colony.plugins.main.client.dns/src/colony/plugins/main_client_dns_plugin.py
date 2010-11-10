@@ -61,7 +61,8 @@ class MainClientDnsPlugin(colony.base.plugin_system.Plugin):
                     "pt.hive.colony.plugins.main.client.utils", "1.0.0")]
     events_handled = []
     events_registrable = []
-    main_modules = ["main_client_dns.dns.main_client_dns_exceptions", "main_client_dns.dns.main_client_dns_system"]
+    main_modules = ["main_client_dns.dns.main_client_dns_exceptions",
+                    "main_client_dns.dns.main_client_dns_system"]
 
     main_client_dns = None
 

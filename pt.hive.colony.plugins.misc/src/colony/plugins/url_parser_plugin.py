@@ -58,7 +58,8 @@ class UrlParserPlugin(colony.base.plugin_system.Plugin):
     dependencies = []
     events_handled = []
     events_registrable = []
-    main_modules = ["misc.url_parser.url_parser_exceptions", "misc.url_parser.url_parser_system"]
+    main_modules = ["misc.url_parser.url_parser_exceptions",
+                    "misc.url_parser.url_parser_system"]
 
     url_parser_system = None
 

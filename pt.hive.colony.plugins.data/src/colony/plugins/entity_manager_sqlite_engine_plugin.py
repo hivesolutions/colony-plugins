@@ -60,7 +60,8 @@ class EntityManagerSqliteEnginePlugin(colony.base.plugin_system.Plugin):
                     "pt.hive.colony.plugins.business.helper", "1.0.0")]
     events_handled = []
     events_registrable = []
-    main_modules = ["data.entity_manager_sqlite_engine.entity_manager_sqlite_engine_exceptions", "data.entity_manager_sqlite_engine.entity_manager_sqlite_engine_system"]
+    main_modules = ["data.entity_manager_sqlite_engine.entity_manager_sqlite_engine_exceptions",
+                    "data.entity_manager_sqlite_engine.entity_manager_sqlite_engine_system"]
 
     entity_manager_sqlite_engine = None
 
