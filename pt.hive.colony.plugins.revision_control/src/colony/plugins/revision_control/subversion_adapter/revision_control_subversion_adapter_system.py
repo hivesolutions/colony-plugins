@@ -87,9 +87,12 @@ class RevisionControlSubversionAdapter:
         head_subversion_revision = pysvn.Revision(pysvn.opt_revision_kind.head)
 
         # determines the current revision by retrieving the property list for the head revision
-        checkout_revision, _prop_dict = revision_control_reference.revproplist(source, head_subversion_revision)
+        checkout_subversion_revision, _prop_dict = revision_control_reference.revproplist(source, head_subversion_revision)
 
-        # returns the update revision
+        # creates the subversion revision resulting from the check out
+        checkout_revision = self.create_revision(checkout_subversion_revision)
+
+        # returns the checked out revision
         return checkout_revision
 
     def update(self, revision_control_reference, resource_identifiers, revision):
