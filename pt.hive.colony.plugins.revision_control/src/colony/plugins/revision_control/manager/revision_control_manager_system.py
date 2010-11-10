@@ -153,6 +153,18 @@ class RevisionControlAdapter:
         # creates the revision control reference using the configured plugin
         self._revision_control_reference = self.revision_control_adapter_plugin.create_revision_control_reference(revision_control_parameters)
 
+    def add(self, resource_identifiers, recurse):
+        """
+        Schedules a set of resources for addition to the repository.
+
+        @type resource_identifiers: List
+        @param resource_identifiers: The list of resource identifiers.
+        @type recurse: Boolean
+        @param recurse: Indicates if a directory's children are to be recursively added.
+        """
+
+        return self.revision_control_adapter_plugin.add(self._revision_control_reference, resource_identifiers, recurse)
+
     def checkout(self, source, destination):
         """
         Performs a checkout from the given source into

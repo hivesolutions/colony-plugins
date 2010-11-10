@@ -44,18 +44,19 @@ INVALID_NUMBER_ARGUMENTS_MESSAGE = "invalid number of arguments"
 """ The invalid number of arguments message """
 
 HELP_TEXT = "### REVISION CONTROL MANAGER HELP ###\n\
-list_revision_control_adapters                                                               - lists the names of the revision control adapters available\n\
-checkout <adapter_name> <source> <destination>                                               - checks out the <source> to the <destination>\n\
-update <adapter_name>  <resource_identifier> <revision>                                      - updates a resource to a specified revision\n\
-commit <adapter_name> <resource_identifier> <commit_message>                                 - commits the changes in the resource with the specified message\n\
-log <adapter_name> <resource_identifier> [start_revision=0] [end_revision=#HEAD]             - lists the change sets for the specified resource identifier between the specified revisions\n\
-status <adapter_name> <resource_identifier>                                                  - lists the pending changes in the current revision\n\
-diff <adapter_name> <resource_identifier> [start_revision=#HEAD.parent] [end_revision=#HEAD] - compares the contents of the specified revisions\n\
-cleanup <adapter_name> <resource_identifier>                                                 - cleans up existing locks at the specified location\n\
-revert <adapter_name> <resource_identifier>                                                  - restores the working copy to its original state\n\n\
-remove_unversioned <adapter_name> <resource_identifier>                                      - removes all unversioned files from the specified location\n\
-get_resource_revision <adapter_name> <resource_identifier> [revision]                        - retrieves the content of the resource in the specified revision\n\
-log_date <adapter_name> <resource_identifier> [date]                                         - lists all the change sets for the specified resource identifier matching the date specification"
+revision_list_adapters                                                             - lists the names of the revision control adapters available\n\
+revision_add <adapter_name> <resource_identifier> [recurse]                        - add <resource_identifier> to be checked in to the repository\n\
+revision_checkout <adapter_name> <source> <destination>                            - checks out the <source> to the <destination>\n\
+revision_update <adapter_name>  <resource_identifier> <revision>                   - updates a resource to a specified revision\n\
+revision_commit <adapter_name> <resource_identifier> <commit_message>              - commits the changes in the resource with the specified message\n\
+revision_log <adapter_name> <resource_identifier> [start_revision] [end_revision]  - lists the change sets for the specified resource identifier between the specified revisions\n\
+revision_status <adapter_name> <resource_identifier>                               - lists the pending changes in the current revision\n\
+revision_diff <adapter_name> <resource_identifier> [start_revision] [end_revision] - compares the contents of the specified revisions\n\
+revision_cleanup <adapter_name> <resource_identifier>                              - cleans up existing locks at the specified location\n\
+revision_revert <adapter_name> <resource_identifier>                               - restores the working copy to its original state\n\n\
+revision_remove_unversioned <adapter_name> <resource_identifier>                   - removes all unversioned files from the specified location\n\
+revision_get_resource_revision <adapter_name> <resource_identifier> [revision]     - retrieves the content of the resource in the specified revision\n\
+revision_log_date <adapter_name> <resource_identifier> [date]                      - lists all the change sets for the specified resource identifier matching the date specification"
 """ The help text """
 
 DATE_FORMAT = "%Y/%m/%d"
@@ -75,18 +76,19 @@ class ConsoleRevisionControlManager:
     revision_control_manager_plugin = None
     """ The revision control manager plugin """
 
-    commands = ["list_revision_control_adapters",
-                "checkout",
-                "update",
-                "commit",
-                "log",
-                "log_name",
-                "status",
-                "diff",
-                "cleanup",
-                "revert",
-                "remove_unversioned",
-                "get_resource_revision"]
+    commands = ["revision_list_adapters",
+                "revision_add",
+                "revision_checkout",
+                "revision_update",
+                "revision_commit",
+                "revision_log",
+                "revision_log_name",
+                "revision_status",
+                "revision_diff",
+                "revision_cleanup",
+                "revision_revert",
+                "revision_remove_unversioned",
+                "revision_get_resource_revision"]
     """ The commands list """
 
     def __init__(self, revision_control_manager_plugin):
@@ -114,7 +116,7 @@ class ConsoleRevisionControlManager:
     def get_help(self):
         return HELP_TEXT
 
-    def process_list_revision_control_adapters(self, args, output_method):
+    def process_revision_list_adapters(self, args, output_method):
         # retrieves the list of adapter names
         adapter_names = [revision_control_adapter_plugin.get_adapter_name() for revision_control_adapter_plugin in self.revision_control_manager_plugin.revision_control_adapter_plugins]
 
@@ -127,7 +129,47 @@ class ConsoleRevisionControlManager:
         # outputs a list of available revision control adapters
         output_method(stripped_output_string)
 
-    def process_checkout(self, args, output_method):
+    def process_revision_add(self, args, output_method):
+        # retrieves the argument count
+        argument_count = len(args)
+
+        # returns in case an invalid number of arguments was provided
+        if argument_count < 2:
+            output_method(INVALID_NUMBER_ARGUMENTS_MESSAGE)
+            return
+
+        # retrieves the adapter name
+        adapter_name = args[0]
+
+        # retrieves the source
+        resource_identifier = args[1]
+
+        # retrieves the recurse flag representation
+        if(argument_count > 2):
+            recurse_string = args[2]
+
+            # retrieves the recurse flag
+            recurse = recurse_string == "true"
+        else:
+            # recurse default to true
+            recurse = True
+
+        # builds the resource identifier list
+        resource_identifiers = [resource_identifier]
+
+        # creates a revision control manager to use on the resource
+        revision_control_manager = self.load_revision_control_manager(adapter_name)
+        try:
+            # uses the revision control manager to perform the checkout
+            revision_control_manager.add(resource_identifiers, recurse)
+
+            # outputs the result
+            output_method("successfully added " + unicode(resource_identifier))
+        except Exception, exception:
+            # outputs the result
+            output_method("problem adding " + unicode(resource_identifier) + ": " + unicode(exception))
+
+    def process_revision_checkout(self, args, output_method):
         # returns in case an invalid number of arguments was provided
         if len(args) < 3:
             output_method(INVALID_NUMBER_ARGUMENTS_MESSAGE)
@@ -148,7 +190,7 @@ class ConsoleRevisionControlManager:
         # uses the revision control manager to perform the checkout
         revision_control_manager.checkout(source, destination)
 
-    def process_update(self, args, output_method):
+    def process_revision_update(self, args, output_method):
         # returns in case an invalid number of arguments was provided
         if len(args) < 2:
             output_method(INVALID_NUMBER_ARGUMENTS_MESSAGE)
@@ -185,7 +227,7 @@ class ConsoleRevisionControlManager:
             # outputs the result
             output_method("problem updating resources: " + unicode(exception))
 
-    def process_commit(self, args, output_method):
+    def process_revision_commit(self, args, output_method):
         # returns in case an invalid number of arguments was provided
         if len(args) < 3:
             output_method(INVALID_NUMBER_ARGUMENTS_MESSAGE)
@@ -221,7 +263,7 @@ class ConsoleRevisionControlManager:
             # outputs the result
             output_method("problem committing resources: " + unicode(exception))
 
-    def process_log(self, args, output_method):
+    def process_revision_log(self, args, output_method):
         # determines the number of arguments
         number_arguments = len(args)
 
@@ -264,7 +306,7 @@ class ConsoleRevisionControlManager:
             # outputs the result
             output_method("problem retrieving change set log: " + unicode(exception))
 
-    def process_status(self, args, output_method):
+    def process_revision_status(self, args, output_method):
         # returns in case an invalid number of arguments was provided
         if len(args) < 2:
             output_method(INVALID_NUMBER_ARGUMENTS_MESSAGE)
@@ -292,7 +334,7 @@ class ConsoleRevisionControlManager:
             # outputs the result
             output_method("problem retrieving status: " + unicode(exception))
 
-    def process_diff(self, args, output_method):
+    def process_revision_diff(self, args, output_method):
         # returns in case an invalid number of arguments was provided
         if len(args) < 2:
             output_method(INVALID_NUMBER_ARGUMENTS_MESSAGE)
@@ -335,7 +377,7 @@ class ConsoleRevisionControlManager:
             # outputs the result
             output_method("problem computing diff: " + unicode(exception))
 
-    def process_cleanup(self, args, output_method):
+    def process_revision_cleanup(self, args, output_method):
         # returns in case an invalid number of arguments was provided
         if len(args) < 2:
             output_method(INVALID_NUMBER_ARGUMENTS_MESSAGE)
@@ -356,7 +398,7 @@ class ConsoleRevisionControlManager:
         # invokes the cleanup command
         revision_control_manager.cleanup(resource_identifiers)
 
-    def process_revert(self, args, output_method):
+    def process_revision_revert(self, args, output_method):
         # returns in case an invalid number of arguments was provided
         if len(args) < 2:
             output_method(INVALID_NUMBER_ARGUMENTS_MESSAGE)
@@ -377,7 +419,7 @@ class ConsoleRevisionControlManager:
         # invokes the revert command
         revision_control_manager.revert(resource_identifiers)
 
-    def process_remove_unversioned(self, args, output_method):
+    def process_revision_remove_unversioned(self, args, output_method):
         # returns in case an invalid number of arguments was provided
         if len(args) < 2:
             output_method(INVALID_NUMBER_ARGUMENTS_MESSAGE)
@@ -396,9 +438,9 @@ class ConsoleRevisionControlManager:
         revision_control_manager = self.load_revision_control_manager(adapter_name, resource_identifier)
 
         # invokes the remove unversioned command
-        revision_control_manager.remove_unversioned(resource_identifiers)
+        revision_control_manager.revision_remove_unversioned(resource_identifiers)
 
-    def process_get_resource_revision(self, args, output_method):
+    def process_revision_get_resource_revision(self, args, output_method):
         # returns in case an invalid number of arguments was provided
         if len(args) < 2:
             output_method(INVALID_NUMBER_ARGUMENTS_MESSAGE)

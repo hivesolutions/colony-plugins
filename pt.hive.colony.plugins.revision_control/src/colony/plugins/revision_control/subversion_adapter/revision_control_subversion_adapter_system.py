@@ -75,6 +75,10 @@ class RevisionControlSubversionAdapter:
         # returns the svn client as the revision control reference
         return client
 
+    def add(self, revision_control_reference, resource_identifiers, recurse):
+        # performs the svn add
+        revision_control_reference.add(resource_identifiers, recurse)
+
     def checkout(self, revision_control_reference, source, destination):
         # performs the svn checkout
         revision_control_reference.checkout(source, destination)

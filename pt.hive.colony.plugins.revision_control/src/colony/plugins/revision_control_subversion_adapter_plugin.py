@@ -90,6 +90,9 @@ class RevisionControlSubversionAdapterPlugin(colony.base.plugin_system.Plugin):
     def create_revision_control_reference(self, revision_control_parameters):
         return self.revision_control_subversion_adapter.create_revision_control_reference(revision_control_parameters)
 
+    def add(self, revision_control_reference, resource_identifiers, recurse):
+        return self.revision_control_subversion_adapter.add(revision_control_reference, resource_identifiers, recurse)
+
     def checkout(self, revision_control_reference, source, destination):
         return self.revision_control_subversion_adapter.checkout(revision_control_reference, source, destination)
 

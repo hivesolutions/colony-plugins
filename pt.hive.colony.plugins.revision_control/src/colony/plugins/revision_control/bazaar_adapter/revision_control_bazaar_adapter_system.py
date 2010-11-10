@@ -82,6 +82,9 @@ class RevisionControlBazaarAdapter:
         # returns the working tree as the revision control reference
         return working_tree
 
+    def add(self, revision_control_reference, resource_identifiers, recurse):
+        raise Exception("method not implemented")
+
     def update(self, revision_control_reference, resource_identifiers, revision):
         # updates the whole working tree
         revision_control_reference.update()

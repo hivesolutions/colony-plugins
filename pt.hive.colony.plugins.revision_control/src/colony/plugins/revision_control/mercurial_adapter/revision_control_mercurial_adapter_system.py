@@ -88,6 +88,9 @@ class RevisionControlMercurialAdapter:
         # returns the repository as the revision control reference
         return repository
 
+    def add(self, revision_control_reference, resource_identifiers, recurse):
+        raise Exception("method not implemented")
+
     def update(self, revision_control_reference, resource_identifiers, revision):
         if revision:
             # retrieves the change context for the specified identifier

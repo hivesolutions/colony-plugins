@@ -90,6 +90,9 @@ class RevisionControlMercurialAdapterPlugin(colony.base.plugin_system.Plugin):
     def create_revision_control_reference(self, revision_control_parameters):
         return self.revision_control_mercurial_adapter.create_revision_control_reference(revision_control_parameters)
 
+    def add(self, revision_control_reference, resource_identifiers, recurse):
+        return self.revision_control_subversion_adapter.add(revision_control_reference, resource_identifiers, recurse)
+
     def update(self, revision_control_reference, resource_identifiers, revision):
         return self.revision_control_mercurial_adapter.update(revision_control_reference, resource_identifiers, revision)
 
