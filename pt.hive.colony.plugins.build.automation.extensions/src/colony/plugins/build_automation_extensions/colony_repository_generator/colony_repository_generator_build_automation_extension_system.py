@@ -201,7 +201,7 @@ class ColonyRepositoryGeneratorBuildAutomationExtension:
         # iterates over all the packed bundles to copy the files
         for packed_bundle in packed_bundles:
             # installs (deploy) the bundle to the target path
-            self._deploy_packed_item(packed_bundle, BUNDLE_EXTENSION_VALUE, bundles_directory, full_target_directory)
+            self._deploy_packed_item(packed_bundle, BUNDLE_EXTENSION_VALUE, bundles_directory, full_bundles_directory)
 
     def _process_plugins(self, packed_plugins, plugins_directory, full_target_directory):
         # creates the full plugins directory
@@ -215,7 +215,7 @@ class ColonyRepositoryGeneratorBuildAutomationExtension:
         # iterates over all the packed plugins to copy the files
         for packed_plugin in packed_plugins:
             # installs (deploy) the plugin to the target path
-            self._deploy_packed_item(packed_plugin, PLUGIN_EXTENSION_VALUE, plugins_directory, full_target_directory)
+            self._deploy_packed_item(packed_plugin, PLUGIN_EXTENSION_VALUE, plugins_directory, full_plugins_directory)
 
     def _process_libraries(self, packed_libraries, libraries_directory, full_target_directory):
         # creates the full libraries directory
@@ -229,7 +229,7 @@ class ColonyRepositoryGeneratorBuildAutomationExtension:
         # iterates over all the packed libraries to copy the files
         for packed_library in packed_libraries:
             # installs (deploy) the library to the target path
-            self._deploy_packed_item(packed_library, LIBRARY_EXTENSION_VALUE, libraries_directory, full_target_directory)
+            self._deploy_packed_item(packed_library, LIBRARY_EXTENSION_VALUE, libraries_directory, full_libraries_directory)
 
     def _deploy_packed_item(self, packed_item, packed_item_extension, packed_item_directoy, full_packed_item_directory):
         # retrieves the packed item id and version
