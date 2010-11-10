@@ -65,7 +65,7 @@
                 </configuration>
             </plugin>
             <plugin>
-                <id>pt.hive.colony.plugins.build.automation.extensions.plugin_repository.generator</id>
+                <id>pt.hive.colony.plugins.build.automation.extensions.colony_repository.generator</id>
                 <version>1.0.0</version>
                 <stage>build</stage>
                 <configuration>
