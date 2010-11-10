@@ -245,8 +245,8 @@ class ColonyRepositoryGeneratorBuildAutomationExtension:
 
         # in case the source packed item path does not exists
         if not os.path.exists(packed_item_file_path):
-            # continues the loop
-            continue
+            # returns immediately
+            return
 
         # copies the packed item file from the packed item directory to the repository directory
         colony.libs.path_util.copy_file(packed_item_file_path, packed_item_target_file_path)
