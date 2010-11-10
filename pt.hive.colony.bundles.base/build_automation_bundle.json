@@ -8,6 +8,9 @@
                 "id" : "pt.hive.colony.plugins.build.automation",
                 "version" : "1.0.0"
             }, {
+                "id" : "pt.hive.colony.plugins.build.automation.extensions.colony_repository.generator",
+                "version" : "1.0.0"
+            }, {
                 "id" : "pt.hive.colony.plugins.build.automation.extensions.command_execution",
                 "version" : "1.0.0"
             }, {
@@ -27,9 +30,6 @@
                 "version" : "1.0.0"
             }, {
                 "id" : "pt.hive.colony.plugins.build.automation.extensions.packing",
-                "version" : "1.0.0"
-            }, {
-                "id" : "pt.hive.colony.plugins.build.automation.extensions.plugin_repository.generator",
                 "version" : "1.0.0"
             }, {
                 "id" : "pt.hive.colony.plugins.build.automation.extensions.report_generator",
