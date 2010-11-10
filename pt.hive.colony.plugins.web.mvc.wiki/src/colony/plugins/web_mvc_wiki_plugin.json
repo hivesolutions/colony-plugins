@@ -62,9 +62,11 @@
             "web_mvc_wiki/mvc_wiki/resources/templates/footer.html.tpl",
             "web_mvc_wiki/mvc_wiki/resources/templates/footer_print.html.tpl",
             "web_mvc_wiki/mvc_wiki/resources/templates/general.html.tpl",
+            "web_mvc_wiki/mvc_wiki/resources/templates/general_action.html.tpl",
             "web_mvc_wiki/mvc_wiki/resources/templates/general_print.html.tpl",
             "web_mvc_wiki/mvc_wiki/resources/templates/header.html.tpl",
             "web_mvc_wiki/mvc_wiki/resources/templates/header_print.html.tpl",
             "web_mvc_wiki/mvc_wiki/resources/templates/includes.html.tpl",
-            "web_mvc_wiki/mvc_wiki/resources/templates/includes_print.html.tpl"]
+            "web_mvc_wiki/mvc_wiki/resources/templates/includes_print.html.tpl",
+            "web_mvc_wiki/mvc_wiki/resources/templates/new_contents.html.tpl"]
 }
