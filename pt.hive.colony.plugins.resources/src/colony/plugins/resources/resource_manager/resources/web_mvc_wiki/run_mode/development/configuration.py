@@ -42,7 +42,7 @@ configuration = {
                                 "colony" : {
                                             "name" : "colony",
                                             "repository_type" : "svn",
-                                            "repository_path" : "c:/Users/joamag/workspace/pt.hive.colony.documentation.technical"
+                                            "repository_path" : "%manager_path%/../../pt.hive.colony.documentation.technical"
                                 }
                  }
              }
