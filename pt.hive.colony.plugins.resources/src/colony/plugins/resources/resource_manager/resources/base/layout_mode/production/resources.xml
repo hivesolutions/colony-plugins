@@ -134,6 +134,12 @@
     </resource>
     <resource>
         <namespace>system.path</namespace>
+        <name>panzerini</name>
+        <type>string</type>
+        <data>$resource{colony.manager_path}/../../</data>
+    </resource>
+    <resource>
+        <namespace>system.path</namespace>
         <name>escolinhas</name>
         <type>string</type>
         <data>$resource{colony.manager_path}/../../</data>
