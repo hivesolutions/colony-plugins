@@ -40,6 +40,8 @@ __license__ = "GNU General Public License (GPL), Version 3"
 import os
 import time
 
+import web_mvc_wiki_exceptions
+
 DEFAULT_ENCODING = "utf-8"
 """ The default encoding value """
 
@@ -180,6 +182,12 @@ class WebMvcWiki:
         # retrieves the instance name
         instance_name = rest_request.path_list[1]
 
+        # in case the instance name does not exist
+        # in the instances map
+        if not instance_name in self.instances_map:
+            # raises the instance not found exception
+            raise web_mvc_wiki_exceptions.InstanceNotFound(instance_name)
+
         # retrieves the instance from the instance name
         instance = self.instances_map[instance_name]
 
@@ -237,6 +245,9 @@ class WebMvcWikiPageController:
         @return: The result of the handling.
         """
 
+        # retrieves the plugin manager
+        plugin_manager = self.web_mvc_wiki_plugin.manager
+
         # retrieves the revision control manager plugin
         revision_control_manager_plugin = self.web_mvc_wiki_plugin.revision_control_manager_plugin
 
@@ -257,7 +268,8 @@ class WebMvcWikiPageController:
         normalized_contents = self._normalize_contents(contents)
 
         # sets the base file path as the instance repository path
-        base_file_path = instance_repository_path
+        # resolved byt the plugin manager
+        base_file_path = plugin_manager.resolve_file_path(instance_repository_path)
 
         # creates the complete file path for the wiki file
         complete_file_path = base_file_path + "/" + rest_request.path_list[-1] + ".wiki"
@@ -268,7 +280,7 @@ class WebMvcWikiPageController:
         print "vai criar o ficheiro %s" % (complete_file_path)
 
         # retrieves the base path from the rest request
-        base_path = self.get_base_path(rest_request)
+        base_path = instance_repository_path
 
         # redirects the request
         rest_request.redirect(base_path + rest_request.path_list[-1])
@@ -300,6 +312,9 @@ class WebMvcWikiPageController:
         @return: The result of the handling.
         """
 
+        # retrieves the plugin manager
+        plugin_manager = self.web_mvc_wiki_plugin.manager
+
         # retrieves the revision control manager plugin
         revision_control_manager_plugin = self.web_mvc_wiki_plugin.revision_control_manager_plugin
 
@@ -323,7 +338,8 @@ class WebMvcWikiPageController:
         normalized_contents = self._normalize_contents(contents)
 
         # sets the base file path as the instance repository path
-        base_file_path = instance_repository_path
+        # resolved byt the plugin manager
+        base_file_path = plugin_manager.resolve_file_path(instance_repository_path)
 
         # creates the complete file path for the wiki file
         complete_file_path = base_file_path + "/" + rest_request.path_list[-1] + ".wiki"
@@ -448,6 +464,9 @@ class WebMvcWikiController:
         # retrieves the initial time
         initial_time = time.clock()
 
+        # retrieves the plugin manager
+        plugin_manager = self.web_mvc_wiki_plugin.manager
+
         # retrieves the instance for the rest request
         instance = self.web_mvc_wiki._get_instance(rest_request)
 
@@ -458,10 +477,12 @@ class WebMvcWikiController:
         instance_repository_path = instance["repository_path"]
 
         # sets the base file path as the instance repository path
-        base_file_path = instance_repository_path
+        # resolved byt the plugin manager
+        base_file_path = plugin_manager.resolve_file_path(instance_repository_path)
 
         # creates the base target path as the cache directory path
-        base_target_path = self._get_cache_directory_path()
+        # using the given instance name
+        base_target_path = self._get_cache_directory_path(instance_name)
 
         # in case the base target path does not exists
         if not os.path.exists(base_target_path):
@@ -620,11 +641,17 @@ class WebMvcWikiController:
         @return: The result of the handling.
         """
 
+        # retrieves the instance for the rest request
+        instance = self.web_mvc_wiki._get_instance(rest_request)
+
+        # retrieves the instance name
+        instance_name = instance["name"]
+
         # retrieves the partial file path
         partial_file_path = "/".join(rest_request.path_list[2:])
 
         # creates the base target path as the cache directory path
-        base_target_path = self._get_cache_directory_path()
+        base_target_path = self._get_cache_directory_path(instance_name)
 
         # creates the full path to the file to be read
         full_file_path = base_target_path + "/" + partial_file_path + "." + rest_request.encoder_name
@@ -648,10 +675,12 @@ class WebMvcWikiController:
         # returns true
         return True
 
-    def _get_cache_directory_path(self):
+    def _get_cache_directory_path(self, instance_name):
         """
         Retrieves the reference path for the cache directory.
 
+        @type instance_name: String
+        @param instance_name: The name of the instance in use.
         @rtype: String
         @return: The reference path to the cache directory.
         """
@@ -663,7 +692,7 @@ class WebMvcWikiController:
         base_cache_directory_path = main_cache_manager_plugin.get_cache_directory_path()
 
         # creates the cache directory path appending the unique identifier
-        cache_diretory_path = base_cache_directory_path + "/" + CACHE_DIRECTORY_IDENTIFIER
+        cache_diretory_path = base_cache_directory_path + "/" + CACHE_DIRECTORY_IDENTIFIER + "/" + instance_name
 
         # returns the cache directory path
         return cache_diretory_path
