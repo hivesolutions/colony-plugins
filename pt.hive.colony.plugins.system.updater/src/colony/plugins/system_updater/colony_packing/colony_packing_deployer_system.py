@@ -37,8 +37,6 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-import colony_packing_deployer_exceptions
-
 DEPLOYER_TYPE = "colony_packing"
 """ The deployer type """
 
@@ -100,8 +98,21 @@ class ColonyPackingDeployer:
         be deployed.
         """
 
-        # raises an operation not implemented exception
-        raise colony_packing_deployer_exceptions.OperationNotSupported("not possible to deploy colony bundles")
+        # retrieves the plugin manager
+        plugin_manager = self.colony_packing_deployer_plugin.manager
+
+        # retrieves the packing manager plugin
+        packing_manager_plugin = self.colony_packing_deployer_plugin.packing_manager_plugin
+
+        # retrieves the main plugin path as the plugin path
+        # for deployment
+        plugin_path = plugin_manager.get_main_plugin_path()
+
+        # creates the properties map for the file unpacking packing
+        properties = {TARGET_PATH_VALUE : plugin_path}
+
+        # unpacks the files using the colony service
+        packing_manager_plugin.unpack_files([contents_file.name], properties, COLONY_VALUE)
 
     def deploy_plugin(self, plugin_id, plugin_version, contents_file):
         """

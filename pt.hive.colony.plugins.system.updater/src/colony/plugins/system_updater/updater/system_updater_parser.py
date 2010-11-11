@@ -759,6 +759,14 @@ class RepositoryDescriptor:
                 elif package.version == package_version:
                     return package
 
+    def get_bundle(self, bundle_id, bundle_version = None):
+        for bundle in self.bundles:
+            if bundle.id == bundle_id:
+                if not bundle_version:
+                    return bundle
+                elif bundle.version == bundle_version:
+                    return bundle
+
     def get_plugin(self, plugin_id, plugin_version = None):
         for plugin in self.plugins:
             if plugin.id == plugin_id:

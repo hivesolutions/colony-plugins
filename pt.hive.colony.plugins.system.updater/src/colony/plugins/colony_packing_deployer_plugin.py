@@ -94,6 +94,22 @@ class ColonyPackingDeployerPlugin(colony.base.plugin_system.Plugin):
     def dependency_injected(self, plugin):
         colony.base.plugin_system.Plugin.dependency_injected(self, plugin)
 
+    def deploy_bundle(self, bundle_id, bundle_version, contents_file):
+        """
+        Method called upon deployment of the bundle with
+        the given id, version and contents file.
+
+        @type bundle_id: String
+        @param bundle_id: The id of the bundle to be deployed.
+        @type bundle_version: String
+        @param bundle_version: The version of the bundle to be deployed.
+        @type contents_file: ContentsFile
+        @param contents_file: The contents file of the bundle to
+        be deployed.
+        """
+
+        return self.colony_packing_deployer.deploy_bundle(bundle_id, bundle_version, contents_file)
+
     def deploy_plugin(self, plugin_id, plugin_version, contents_file):
         """
         Method called upon deployment of the plugin with

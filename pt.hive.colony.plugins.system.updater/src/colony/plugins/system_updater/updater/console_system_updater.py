@@ -62,7 +62,7 @@ class ConsoleSystemUpdater:
     system_updater_plugin = None
     """ The system updater plugin """
 
-    commands = ["list_repositories", "list_repository_packages", "list_repository_plugins", "install_package", "install_plugin"]
+    commands = ["list_repositories", "list_repository_packages", "list_repository_plugins", "install_package", "install_bundle", "install_plugin"]
     """ The commands list """
 
     def __init__(self, system_updater_plugin):
@@ -133,6 +133,19 @@ class ConsoleSystemUpdater:
         else:
             package_version = args[1]
             self.system_updater_plugin.system_updater.install_package(package_identifier, package_version)
+
+    def process_install_bundle(self, args, output_method):
+        if len(args) < 1:
+            output_method(INVALID_NUMBER_ARGUMENTS_MESSAGE)
+            return
+
+        bundle_identifier = args[0]
+
+        if len(args) == 1:
+            self.system_updater_plugin.system_updater.install_bundle(bundle_identifier)
+        else:
+            bundle_version = args[1]
+            self.system_updater_plugin.system_updater.install_bundle(bundle_identifier, bundle_version)
 
     def process_install_plugin(self, args, output_method):
         if len(args) < 1:

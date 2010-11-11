@@ -60,6 +60,12 @@ SIMPLE_REPOSITORY_LAYOUT_VALUE = "simple"
 EXTENDED_REPOSITORY_LAYOUT_VALUE = "extended"
 """ The extended repository layout value """
 
+BUNDLES_VALUE = "bundles"
+""" The bundles value """
+
+PLUGINS_VALUE = "plugins"
+""" The plugins value """
+
 class SystemUpdater:
     """
     The system updater class.
@@ -303,6 +309,52 @@ class SystemUpdater:
             # installs the plugin
             self.install_plugin(plugin_id, plugin_version)
 
+    def install_bundle(self, bundle_id, bundle_version = None):
+        """
+        Installs the plugin with the given id and version from a random repository.
+
+        @type bundle_id: String
+        @param bundle_id: The id of the bundle to install.
+        @type bundle_version: String
+        @param bundle_id: The version of the bundle to install.
+        """
+
+        # loads the information for the repositories
+        self.load_repositories_information()
+
+        # retrieves the descriptor of the bundle
+        bundle_descriptor = self.get_bundle_descriptor(bundle_id, bundle_version)
+
+        # in case the bundle was not found
+        if not bundle_descriptor:
+            # raises the invalid bundle exception
+            raise system_updater_exceptions.InvalidBundleException("bundle %s v%s not found" % (bundle_id, bundle_version))
+
+        # installs the bundle dependencies
+        self._install_bundle_dependencies(bundle_descriptor)
+
+        # retrieves the bundle type
+        bundle_type = bundle_descriptor.bundle_type
+
+        # retrieves a deployer for the given plugin type
+        plugin_deployer = self._get_deployer_plugin_by_deployer_type(bundle_type)
+
+        # retrieves the repository descriptor from the bundle descriptor
+        repository_descriptor = self.get_repository_descriptor_bundle_descriptor(bundle_descriptor)
+
+        # retrieves the repository structure for the provided repository descriptor
+        repository = self.repository_descriptor_repository_map[repository_descriptor]
+
+        # retrieves the contents file
+        contents_file = self._get_contents_file(repository.name, bundle_descriptor.name, bundle_descriptor.version, bundle_descriptor.contents_file, BUNDLES_VALUE)
+
+        # sends the contents file (bundle) to the bundle type deployer
+        # to allow it to be deployed
+        plugin_deployer.deploy_bundle(bundle_descriptor.id, bundle_descriptor.version, contents_file)
+
+        # deletes the contents file
+        self._delete_contents_file(contents_file)
+
     def install_plugin(self, plugin_id, plugin_version = None):
         """
         Installs the plugin with the given id and version from a random repository.
@@ -340,7 +392,7 @@ class SystemUpdater:
         repository = self.repository_descriptor_repository_map[repository_descriptor]
 
         # retrieves the contents file
-        contents_file = self._get_contents_file(repository.name, plugin_descriptor.name, plugin_descriptor.version, plugin_descriptor.contents_file)
+        contents_file = self._get_contents_file(repository.name, plugin_descriptor.name, plugin_descriptor.version, plugin_descriptor.contents_file, PLUGINS_VALUE)
 
         # sends the contents file (plugin) to the plugin type deployer
         # to allow it to be deployed
@@ -411,6 +463,26 @@ class SystemUpdater:
             if package_descripton:
                 return package_descripton
 
+    def get_bundle_descriptor(self, bundle_id, bundle_version = None):
+        """
+        Retrieves the bundle descriptor for the given bundle id and version.
+
+        @type bundle_id: String
+        @param bundle_id: The id of the bundle to retrieve the bundle descriptor.
+        @type bundle_version: String
+        @param bundle_version: The version of the bundle to retrieve the bundle descriptor.
+        @rtype: BundleDescriptor
+        @return: The bundle descriptor for the bundle with the given id and version.
+        """
+
+        # iterates over all the repository descriptors available
+        for repository_descriptor in self.repository_descriptor_list:
+            bundle_descripton = repository_descriptor.get_bundle(bundle_id, bundle_version)
+
+            # in case bundle descriptor exists in current repository descriptor
+            if bundle_descripton:
+                return bundle_descripton
+
     def get_plugin_descriptor(self, plugin_id, plugin_version = None):
         """
         Retrieves the plugin descriptor for the given plugin id and version.
@@ -430,6 +502,20 @@ class SystemUpdater:
             # in case plugin descriptor exists in current repository descriptor
             if plugin_descripton:
                 return plugin_descripton
+
+    def get_repository_descriptor_bundle_descriptor(self, bundle_descriptor):
+        """
+        Retrieves the repository descriptor for the given bundle descriptor.
+
+        @type bundle_descriptor: bundleDescriptor
+        @param bundle_descriptor: The bundle descriptor to get the repository descriptor.
+        @rtype: RepositoryDescriptor
+        @return: The repository descriptor for the given bundle descriptor.
+        """
+
+        for repository_descriptor in self.repository_descriptor_list:
+            if bundle_descriptor in repository_descriptor.bundles:
+                return repository_descriptor
 
     def get_repository_descriptor_plugin_descriptor(self, plugin_descriptor):
         """
@@ -467,6 +553,28 @@ class SystemUpdater:
         # returns the deployer plugin
         return deployer_plugin
 
+    def _install_bundle_dependencies(self, bundle_descriptor):
+        """
+        Install the bundle dependencies for the given bundle
+        descriptor.
+
+        @type bundle_descriptor: BundleDescriptor
+        @param bundle_id: The bundle descriptor of the bundle to
+        install the dependencies.
+        """
+
+        # retrieves the bundle dependencies
+        bundle_dependencies = bundle_descriptor.dependencies
+
+        # iterates over the bundle dependencies
+        for bundle_dependency in bundle_dependencies:
+            try:
+                # installs the bundle dependency
+                self.install_bundle(bundle_dependency.id, bundle_dependency.version)
+            except Exception, exception:
+                # raises the dependency installation exception
+                raise system_updater_exceptions.DependencyInstallationException("problem installing bundle depdency %s v%s: %s" % (bundle_dependency.id, bundle_dependency.version, unicode(exception)))
+
     def _install_plugin_dependencies(self, plugin_descriptor):
         """
         Install the plugin dependencies for the given plugin
@@ -487,23 +595,25 @@ class SystemUpdater:
                 self.install_plugin(plugin_dependency.id, plugin_dependency.version)
             except Exception, exception:
                 # raises the dependency installation exception
-                raise system_updater_exceptions.DependencyInstallationException("problem installing plugin depdency %s v%s: %s", ((plugin_dependency.id, plugin_dependency.version, unicode(exception))))
+                raise system_updater_exceptions.DependencyInstallationException("problem installing plugin depdency %s v%s: %s" % (plugin_dependency.id, plugin_dependency.version, unicode(exception)))
 
-    def _get_contents_file(self, repository_name, plugin_name, plugin_version, contents_file):
+    def _get_contents_file(self, repository_name, content_name, content_version, contents_file, content_type = PLUGINS_VALUE):
         """
-        Retrieves the plugin contents file for the given repository name,
-        plugin name, plugin version and contents file name.
+        Retrieves the content contents file for the given repository name,
+        content name, content version and contents file name.
 
         @type repository_name: String
-        @param repository_name: The name of the repository to use in the plugin contents file retrieval.
-        @type plugin_name: String
-        @param plugin_name: The name of the plugin to use in the plugin contents file retrieval.
-        @type plugin_version: String
-        @param plugin_version: The version of the plugin to use in the plugin contents file retrieval.
+        @param repository_name: The name of the repository to use in the content contents file retrieval.
+        @type content_name: String
+        @param content_name: The name of the content to use in the content contents file retrieval.
+        @type content_version: String
+        @param content_version: The version of the content to use in the content contents file retrieval.
         @type contents_file: String
-        @param contents_file: The name of the plugin contents file to retrieve.
+        @param contents_file: The name of the content contents file to retrieve.
+        @type content_type: String
+        @param content_type: The type of content to use in the content contents file retrieval.
         @rtype: Stream
-        @return: The retrieved plugin contents file stream.
+        @return: The retrieved content contents file stream.
         """
 
         # retrieves the plugin manager
@@ -522,7 +632,7 @@ class SystemUpdater:
         temporary_path = plugin_manager.get_temporary_path()
 
         # downloads the contents file
-        self._download_contents_file(repository_addresses, plugin_name, plugin_version, contents_file, repository_layout, temporary_path)
+        self._download_contents_file(repository_addresses, content_name, content_version, contents_file, content_type, repository_layout, temporary_path)
 
         # the created contents file path
         contents_file_path = temporary_path + "/" + contents_file
@@ -530,25 +640,25 @@ class SystemUpdater:
         # the created contents file
         contents_file = open(contents_file_path, "r")
 
-        # returns teh contents file
+        # returns the contents file
         return contents_file
 
-    def _download_contents_file(self, repository_addresses, plugin_name, plugin_version, contents_file, repository_layout = SIMPLE_REPOSITORY_LAYOUT_VALUE, target_directory = TEMP_DIRECTORY):
+    def _download_contents_file(self, repository_addresses, content_name, content_version, contents_file, content_type = PLUGINS_VALUE, repository_layout = SIMPLE_REPOSITORY_LAYOUT_VALUE, target_directory = TEMP_DIRECTORY):
         """
-        Downloads the plugin contents file for the given repository name, plugin name,
-        plugin version and contents file name.
+        Downloads the content contents file for the given repository name, content name,
+        content version and contents file name.
 
         @type repository_name: String
-        @param repository_name: The name of the repository to use in the plugin
+        @param repository_name: The name of the repository to use in the content
         contents file download.
-        @type plugin_name: String
-        @param plugin_name: The name of the plugin to use in the plugin contents
+        @type content_name: String
+        @param content_name: The name of the content to use in the content contents
         file download.
-        @type plugin_version: String
-        @param plugin_version: The version of the plugin to use in the plugin
+        @type content_version: String
+        @param content_version: The version of the content to use in the content
         contents file download.
         @type contents_file: String
-        @param contents_file: The name of the plugin contents file to download.
+        @param contents_file: The name of the content contents file to download.
         @type repository_layout: String
         @param repository_layout: The layout of the repository.
         @type target_directory: String
@@ -567,13 +677,13 @@ class SystemUpdater:
             repository_address_value = repository_address.value
 
             # in case the layout of the repository is simple
-            # (eg: plugins/plugin_id_version.ext)
+            # (eg: content_type/content_id_version.ext)
             if SIMPLE_REPOSITORY_LAYOUT_VALUE:
-                file_address = repository_address_value + "/plugins/" + contents_file
+                file_address = repository_address_value + "/" + content_type + "/" + contents_file
             # in case the layout of the repository is extended
-            # (eg: plugins/plugin_name/plugin_version/plugin_id_version.ext)
+            # (eg: content_type/content_name/content_version/content_id_version.ext)
             elif EXTENDED_REPOSITORY_LAYOUT_VALUE:
-                file_address = repository_address_value + "/plugins" + plugin_name + "/" + plugin_version + "/" + contents_file
+                file_address = repository_address_value + "/" +  content_type + "/" + content_name + "/" + content_version + "/" + contents_file
 
             try:
                 # downloads the package for the given file address and target directory
@@ -589,7 +699,7 @@ class SystemUpdater:
             return
 
         # raises the file not found exception
-        raise system_updater_exceptions.FileNotFoundException("contents file not found for plugin '%s' v%s" %(plugin_name, plugin_version))
+        raise system_updater_exceptions.FileNotFoundException("contents file not found for content '%s' v%s" % (content_name, content_version))
 
     def _delete_contents_file(self, contents_file):
         """
