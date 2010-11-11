@@ -1,5 +1,5 @@
 <!-- css inclusion -->
-<link rel="stylesheet" href="${out_none value=base_path /}css/print.css" type="text/css" />
+<link rel="stylesheet" href="${out_none value=base_path /}${out_none value=instance_name /}/css/print.css" type="text/css" />
 <link rel="stylesheet" href="${out_none value=base_path /}resources/css/print.css" type="text/css" />
 
 <!-- favicon inclusion -->

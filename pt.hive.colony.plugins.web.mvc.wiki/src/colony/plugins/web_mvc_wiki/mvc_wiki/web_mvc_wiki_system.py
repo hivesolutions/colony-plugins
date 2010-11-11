@@ -75,6 +75,9 @@ class WebMvcWiki:
     web_mvc_wiki_page_controller = None
     """ The web mvc wiki page controller """
 
+    instances_map = {}
+    """ The map of instances reference """
+
     def __init__(self, web_mvc_wiki_plugin):
         """
         Constructor of the class.
@@ -111,10 +114,10 @@ class WebMvcWiki:
         to the web mvc service.
         """
 
-        return ((r"^wiki/pages/new/[a-zA-Z0-9_:\.]+$", self.web_mvc_wiki_page_controller.handle_new),
-                (r"^wiki/pages/edit/[a-zA-Z0-9_:\.]+$", self.web_mvc_wiki_page_controller.handle_edit),
-                (r"^wiki/[a-zA-Z0-9_:\.]*$", self.web_mvc_wiki_controller.handle_wiki),
-                (r"^wiki/(?:js|images|css)/.*$", self.web_mvc_wiki_controller.handle_resources))
+        return ((r"^wiki/[a-zA-Z]+/pages/new/[a-zA-Z0-9_:\.]+$", self.web_mvc_wiki_page_controller.handle_new),
+                (r"^wiki/[a-zA-Z]+/pages/edit/[a-zA-Z0-9_:\.]+$", self.web_mvc_wiki_page_controller.handle_edit),
+                (r"^wiki/[a-zA-Z]+/[a-zA-Z0-9_:\.]*$", self.web_mvc_wiki_controller.handle_wiki),
+                (r"^wiki/[a-zA-Z]+/(?:js|images|css)/.*$", self.web_mvc_wiki_controller.handle_resources))
 
     def get_communication_patterns(self):
         """
@@ -148,6 +151,40 @@ class WebMvcWiki:
         web_mvc_wiki_plugin_path = plugin_manager.get_plugin_path_by_id(self.web_mvc_wiki_plugin.id)
 
         return ((r"^wiki/resources/.+$", (web_mvc_wiki_plugin_path + "/" + EXTRAS_PATH, "wiki/resources")),)
+
+    def set_configuration_property(self, configuration_propery):
+        # retrieves the configuration
+        configuration = configuration_propery.get_data()
+
+        # retrieves the instances map
+        instances_map = configuration["instances"]
+
+        # sets the instances map
+        self.instances_map = instances_map
+
+    def unset_configuration_property(self):
+        # sets the instances map
+        self.instances_map = {}
+
+    def _get_instance(self, rest_request):
+        """
+        Retrieves the current instance for the
+        given rest request.
+
+        @type rest_request: RestRequest
+        @param rest_request: The page rest request to be handled.
+        @rtype: Dictionary
+        @return: The retrieved instance (map).
+        """
+
+        # retrieves the instance name
+        instance_name = rest_request.path_list[1]
+
+        # retrieves the instance from the instance name
+        instance = self.instances_map[instance_name]
+
+        # returns the instance
+        return instance
 
 class WebMvcWikiPageController:
     """
@@ -206,6 +243,12 @@ class WebMvcWikiPageController:
         # processes the form data
         form_data_map = self.process_form_data(rest_request, DEFAULT_ENCODING)
 
+        # retrieves the instance for the rest request
+        instance = self.web_mvc_wiki._get_instance(rest_request)
+
+        # retrieves the instance repository path
+        instance_repository_path = instance["repository_path"]
+
         # retrieves the summary and the contents
         summary = form_data_map.get("wiki_page_new_summary", DEFAULT_SUMMARY)
         contents = form_data_map["wiki_page_new_contents"]
@@ -213,7 +256,8 @@ class WebMvcWikiPageController:
         # normalizes the contents
         normalized_contents = self._normalize_contents(contents)
 
-        base_file_path = "c:/Users/joamag/workspace/pt.hive.colony.documentation.technical"
+        # sets the base file path as the instance repository path
+        base_file_path = instance_repository_path
 
         # creates the complete file path for the wiki file
         complete_file_path = base_file_path + "/" + rest_request.path_list[-1] + ".wiki"
@@ -262,6 +306,15 @@ class WebMvcWikiPageController:
         # processes the form data
         form_data_map = self.process_form_data(rest_request, DEFAULT_ENCODING)
 
+        # retrieves the instance for the rest request
+        instance = self.web_mvc_wiki._get_instance(rest_request)
+
+        # retrieves the instance repository type
+        instance_repository_type = instance["repository_type"]
+
+        # retrieves the instance repository path
+        instance_repository_path = instance["repository_path"]
+
         # retrieves the summary and the contents
         summary = form_data_map.get("wiki_page_edit_summary", DEFAULT_SUMMARY)
         contents = form_data_map["wiki_page_edit_contents"]
@@ -269,7 +322,8 @@ class WebMvcWikiPageController:
         # normalizes the contents
         normalized_contents = self._normalize_contents(contents)
 
-        base_file_path = "c:/Users/joamag/workspace/pt.hive.colony.documentation.technical"
+        # sets the base file path as the instance repository path
+        base_file_path = instance_repository_path
 
         # creates the complete file path for the wiki file
         complete_file_path = base_file_path + "/" + rest_request.path_list[-1] + ".wiki"
@@ -281,7 +335,7 @@ class WebMvcWikiPageController:
         revision_control_parameters = {"repository_path" : base_file_path}
 
         # loads a new revision control manager for the specified adapter name
-        revision_control_manager = revision_control_manager_plugin.load_revision_control_manager("svn", revision_control_parameters)
+        revision_control_manager = revision_control_manager_plugin.load_revision_control_manager(instance_repository_type, revision_control_parameters)
 
         # uses the revision control manager to perform the commit
         commit_revision = revision_control_manager.commit([complete_file_path], summary)
@@ -394,7 +448,17 @@ class WebMvcWikiController:
         # retrieves the initial time
         initial_time = time.clock()
 
-        base_file_path = "c:/Users/joamag/workspace/pt.hive.colony.documentation.technical"
+        # retrieves the instance for the rest request
+        instance = self.web_mvc_wiki._get_instance(rest_request)
+
+        # retrieves the instance name
+        instance_name = instance["name"]
+
+        # retrieves the instance repository path
+        instance_repository_path = instance["repository_path"]
+
+        # sets the base file path as the instance repository path
+        base_file_path = instance_repository_path
 
         # creates the base target path as the cache directory path
         base_target_path = self._get_cache_directory_path()
@@ -408,7 +472,7 @@ class WebMvcWikiController:
         rest_request.set_content_type("text/html")
 
         # retrieves the file base path by joining the rest request path
-        file_path = "/".join(rest_request.path_list[1:])
+        file_path = "/".join(rest_request.path_list[2:])
 
         file_path = file_path.rstrip("/")
 
@@ -525,6 +589,9 @@ class WebMvcWikiController:
             # sets the generation time in the template file
             template_file.assign("generation_time", generation_time_string)
 
+            # sets the instance name in the template file
+            template_file.assign("instance_name", instance_name)
+
             # assigns the session variables to the template file
             self.assign_session_template_file(rest_request, template_file)
 
@@ -553,7 +620,8 @@ class WebMvcWikiController:
         @return: The result of the handling.
         """
 
-        partial_file_path = "/".join(rest_request.path_list[1:])
+        # retrieves the partial file path
+        partial_file_path = "/".join(rest_request.path_list[2:])
 
         # creates the base target path as the cache directory path
         base_target_path = self._get_cache_directory_path()
@@ -564,11 +632,12 @@ class WebMvcWikiController:
         # opens the resource file
         resource_file = open(full_file_path, "rb")
 
-        # retrieves the resource file contents
-        resource_file_contents = resource_file.read()
-
-        # closes the resource file
-        resource_file.close()
+        try:
+            # retrieves the resource file contents
+            resource_file_contents = resource_file.read()
+        finally:
+            # closes the resource file
+            resource_file.close()
 
         # sets the result for the rest request
         rest_request.set_result_translated(resource_file_contents)

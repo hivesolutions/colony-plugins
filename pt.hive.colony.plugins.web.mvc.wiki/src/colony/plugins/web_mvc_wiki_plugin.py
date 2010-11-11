@@ -103,6 +103,14 @@ class WebMvcWikiPlugin(colony.base.plugin_system.Plugin):
     def dependency_injected(self, plugin):
         colony.base.plugin_system.Plugin.dependency_injected(self, plugin)
 
+    @colony.base.decorators.set_configuration_property("pt.hive.colony.plugins.web.mvc.wiki", "1.0.0")
+    def set_configuration_property(self, property_name, property):
+        colony.base.plugin_system.Plugin.set_configuration_property(self, property_name, property)
+
+    @colony.base.decorators.unset_configuration_property("pt.hive.colony.plugins.web.mvc.wiki", "1.0.0")
+    def unset_configuration_property(self, property_name):
+        colony.base.plugin_system.Plugin.unset_configuration_property(self, property_name)
+
     def get_patterns(self):
         """
         Retrieves the tuple of regular expressions to be used as patterns,
@@ -177,3 +185,11 @@ class WebMvcWikiPlugin(colony.base.plugin_system.Plugin):
     @colony.base.decorators.plugin_inject("pt.hive.colony.plugins.misc.string_normalization")
     def set_string_normalization_plugin(self, string_normalization_plugin):
         self.string_normalization_plugin = string_normalization_plugin
+
+    @colony.base.decorators.set_configuration_property_method("configuration")
+    def configuration_set_configuration_property(self, property_name, property):
+        self.web_mvc_wiki.set_configuration_property(property)
+
+    @colony.base.decorators.unset_configuration_property_method("configuration")
+    def configuration_unset_configuration_property(self, property_name):
+        self.web_mvc_wiki.unset_configuration_property()
