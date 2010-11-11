@@ -33,6 +33,20 @@
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://www.hive.pt xsd/resources.xsd">
 
+    <!-- Validation expression -->
+    <validation>
+        <equals_expression>
+            <first_operand>
+                <type>string</type>
+                <data>$local{plugin_manager.run_mode}</data>
+            </first_operand>
+            <second_operand>
+                <type>string</type>
+                <data>development</data>
+            </second_operand>
+        </equals_expression>
+    </validation>
+
     <plugin_configuration>
         <plugin_id>pt.hive.colony.plugins.web.mvc.wiki</plugin_id>
         <resource>
