@@ -77,7 +77,7 @@ ICONS_10X10_PATH = ICONS_PATH + "/" + "10x10"
 ICONS_16X16_PATH = ICONS_PATH + "/" + "16x16"
 ICONS_32X32_PATH = ICONS_PATH + "/" + "32x32"
 
-SPLASH_IMAGE_FILE_NAME = "hive_splash.png"
+SPLASH_IMAGE_FILE_NAME = "colony_splash.png"
 """ The splash image file name """
 
 MENU_TITLE = "Colony Framework Manager"
