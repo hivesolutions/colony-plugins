@@ -38,7 +38,7 @@
         <layout>simple</layout>
         <addresses>
             <address name="Local Address">
-                http://admin:admin@servidor3.hive:8080/integration/LATEST_SUCCESS/repository/colony_plugins
+                http://admin:admin@servidor3.hive:8080/integration/LATEST_SUCCESS/repository/colony
             </address>
         </addresses>
     </repository>
