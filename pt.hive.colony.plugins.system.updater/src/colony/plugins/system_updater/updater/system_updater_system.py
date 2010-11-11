@@ -145,7 +145,15 @@ class SystemUpdater:
     def load_repositories_information(self):
         """
         Loads the repository information for each of the repositories.
+        This method is called to flush the current repository information.
         """
+
+        # in case the repository descriptor list
+        # is already populated (a successful run
+        # of the load has been completed)
+        if self.repository_descriptor_list:
+            # returns immediately
+            return
 
         # iterates over all the repositories in the
         # repository list
@@ -153,16 +161,8 @@ class SystemUpdater:
             # retrieves the repository information (descriptor)
             repository_descriptor = self.get_repository_information(repository)
 
-            # in case not repository descriptor
-            # is retrieved
-            if not repository_descriptor:
-                # continues the loop
-                continue
-
-            # updates the repository information
+            # adds the repository descriptor to the repository descriptor list
             self.repository_descriptor_list.append(repository_descriptor)
-            self.repository_repository_descriptor_map[repository] = repository_descriptor
-            self.repository_descriptor_repository_map[repository_descriptor] = repository
 
     def get_repositories(self):
         """
@@ -250,12 +250,33 @@ class SystemUpdater:
         @return: The repository descriptor for the given repository.
         """
 
-        repository_descriptor_file = self.get_repository_descriptor_file(repository.addresses)
+        # in case the repository exists in the repository descriptor map
+        if repository in self.repository_repository_descriptor_map:
+            # retrieves the repository descriptor from the repository repository descriptor map
+            repository_descriptor = self.repository_repository_descriptor_map[repository]
+        # otherwise it must be retrieved (downloaded)
+        else:
+            # retrieves the repository descriptor file (downloading it)
+            repository_descriptor_file = self.get_repository_descriptor_file(repository.addresses)
 
-        if repository_descriptor_file:
+            # creates the repository descriptor file parser
             repository_descriptor_file_parser = system_updater_parser.RepositoryDescriptorFileParser(repository_descriptor_file)
+
+            # parses the repository descriptor file
             repository_descriptor_file_parser.parse()
-            return repository_descriptor_file_parser.get_value()
+
+            # retrieves the repository descriptor (value) from the repository
+            # descriptor file parser
+            repository_descriptor = repository_descriptor_file_parser.get_value()
+
+            # sets the repository descriptor in the repository repository descriptor map
+            self.repository_repository_descriptor_map[repository] = repository_descriptor
+
+            # sets the repository in the repository descriptor repository map
+            self.repository_descriptor_repository_map[repository_descriptor] = repository
+
+        # returns the repository descriptor
+        return repository_descriptor
 
     def get_repository_descriptor_file(self, repository_addresses):
         """
@@ -285,10 +306,16 @@ class SystemUpdater:
             # retrieves the file buffer using the downloader plugin
             file_buffer = downloader_plugin.get_download_package_stream(repository_file_address)
 
-            # in case the download was successful
-            if file_buffer:
-                # returns the file buffer
-                return file_buffer
+            # in case the download was not successful
+            if not file_buffer:
+                # continues the loop
+                continue
+
+            # returns the file buffer
+            return file_buffer
+
+        # raises the file not found exception
+        raise system_updater_exceptions.FileNotFoundException("repository descriptor not found")
 
     def install_package(self, package_id, package_version = None):
         # loads the information for the repositories
