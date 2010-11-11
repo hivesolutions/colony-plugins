@@ -62,7 +62,7 @@ class MainServiceHttpWebsocketHandlerPlugin(colony.base.plugin_system.Plugin):
 
     main_service_http_websocket_handler = None
 
-    resource_manager_plugin = None
+    websocket_handler_plugins = []
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
@@ -79,9 +79,11 @@ class MainServiceHttpWebsocketHandlerPlugin(colony.base.plugin_system.Plugin):
     def end_unload_plugin(self):
         colony.base.plugin_system.Plugin.end_unload_plugin(self)
 
+    @colony.base.decorators.load_allowed("pt.hive.colony.plugins.main.service.http.websocket_handler", "1.0.0")
     def load_allowed(self, plugin, capability):
         colony.base.plugin_system.Plugin.load_allowed(self, plugin, capability)
 
+    @colony.base.decorators.unload_allowed("pt.hive.colony.plugins.main.service.http.websocket_handler", "1.0.0")
     def unload_allowed(self, plugin, capability):
         colony.base.plugin_system.Plugin.unload_allowed(self, plugin, capability)
 
@@ -107,3 +109,13 @@ class MainServiceHttpWebsocketHandlerPlugin(colony.base.plugin_system.Plugin):
         """
 
         return self.main_service_http_websocket_handler.handle_request(request)
+
+    @colony.base.decorators.load_allowed_capability("websocket_handler")
+    def websocket_handler_load_allowed(self, plugin, capability):
+        self.websocket_handler_plugins.append(plugin)
+        self.main_service_http_websocket_handler.websocket_handler_load(plugin)
+
+    @colony.base.decorators.unload_allowed_capability("websocket_handler")
+    def websocket_handler_unload_allowed(self, plugin, capability):
+        self.websocket_handler_plugins.remove(plugin)
+        self.main_service_http_websocket_handler.websocket_handler_unload(plugin)

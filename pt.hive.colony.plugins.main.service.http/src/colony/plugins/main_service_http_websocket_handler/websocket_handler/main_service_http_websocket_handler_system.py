@@ -96,6 +96,9 @@ class MainServiceHttpWebsocketHandler:
     main_service_http_websocket_handler_plugin = None
     """ The main service http websocket handler plugin """
 
+    websocket_handler_plugins_map = {}
+    """ The websocket handler plugins map """
+
     def __init__(self, main_service_http_websocket_handler_plugin):
         """
         Constructor of the class.
@@ -105,6 +108,8 @@ class MainServiceHttpWebsocketHandler:
         """
 
         self.main_service_http_websocket_handler_plugin = main_service_http_websocket_handler_plugin
+
+        self.websocket_handler_plugins_map = {}
 
     def get_handler_name(self):
         """
@@ -129,6 +134,18 @@ class MainServiceHttpWebsocketHandler:
 
         # opens the websocket connection
         websocket_connection.open()
+
+    def websocket_handler_load(self, websocket_handler_plugin):
+        # retrieves the plugin handler name
+        handler_name = websocket_handler_plugin.get_handler_name()
+
+        self.websocket_handler_plugins_map[handler_name] = websocket_handler_plugin
+
+    def websocket_handler_unload(self, websocket_handler_plugin):
+        # retrieves the plugin handler name
+        handler_name = websocket_handler_plugin.get_handler_name()
+
+        del self.websocket_handler_plugins_map[handler_name]
 
 class WebSocketConnection:
     """
