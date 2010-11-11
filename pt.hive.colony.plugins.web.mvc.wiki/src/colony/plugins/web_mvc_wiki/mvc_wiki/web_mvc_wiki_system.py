@@ -63,6 +63,9 @@ CACHE_DIRECTORY_IDENTIFIER = "web_mvc_wiki"
 DEFAULT_SUMMARY = "automated wiki commit"
 """ The default summary value """
 
+WIKI_EXTENSION = ".wiki"
+""" The wiki extension """
+
 class WebMvcWiki:
     """
     The web mvc wiki class.
@@ -257,6 +260,12 @@ class WebMvcWikiPageController:
         # retrieves the instance for the rest request
         instance = self.web_mvc_wiki._get_instance(rest_request)
 
+        # retrieves the instance name
+        instance_name = instance["name"]
+
+        # retrieves the instance repository type
+        instance_repository_type = instance["repository_type"]
+
         # retrieves the instance repository path
         instance_repository_path = instance["repository_path"]
 
@@ -268,37 +277,41 @@ class WebMvcWikiPageController:
         normalized_contents = self._normalize_contents(contents)
 
         # sets the base file path as the instance repository path
-        # resolved byt the plugin manager
+        # resolved by the plugin manager
         base_file_path = plugin_manager.resolve_file_path(instance_repository_path)
 
+        # retrieves the file name
+        file_name = rest_request.path_list[-1]
+
         # creates the complete file path for the wiki file
-        complete_file_path = base_file_path + "/" + rest_request.path_list[-1] + ".wiki"
+        complete_file_path = base_file_path + "/" + file_name + WIKI_EXTENSION
 
         # writes the normalized contents to the wiki file (in the complete file path)
         self._write_file(complete_file_path, normalized_contents)
 
-        print "vai criar o ficheiro %s" % (complete_file_path)
+        # creates the revision control parameters
+        revision_control_parameters = {"repository_path" : base_file_path}
 
-        # retrieves the base path from the rest request
-        base_path = instance_repository_path
+        # loads a new revision control manager for the specified adapter name
+        revision_control_manager = revision_control_manager_plugin.load_revision_control_manager(instance_repository_type, revision_control_parameters)
+
+        # uses the revision control manager to add the file
+        revision_control_manager.add([complete_file_path], True)
+
+        # uses the revision control manager to perform the commit
+        commit_revision = revision_control_manager.commit([complete_file_path], summary)
+
+        # sets the result for the rest request
+        rest_request.set_result_translated("revision: " + str(commit_revision.get_number()))
+
+        # retrieves the base path
+        base_path = self.get_base_path(rest_request)
 
         # redirects the request
-        rest_request.redirect(base_path + rest_request.path_list[-1])
+        rest_request.redirect(base_path + instance_name + "/" + file_name)
 
-#        # creates the revision control parameters
-#        revision_control_parameters = {"repository_path" : base_file_path}
-#
-#        # loads a new revision control manager for the specified adapter name
-#        revision_control_manager = revision_control_manager_plugin.load_revision_control_manager("svn", revision_control_parameters)
-#
-#        # uses the revision control manager to perform the commit
-#        commit_revision = revision_control_manager.commit([complete_file_path], summary)
-#
-#        # sets the result for the rest request
-#        rest_request.set_result_translated("revision: " + str(commit_revision.get_number()))
-#
-#        # flushes the rest request
-#        rest_request.flush()
+        # flushes the rest request
+        rest_request.flush()
 
         return True
 
@@ -338,11 +351,14 @@ class WebMvcWikiPageController:
         normalized_contents = self._normalize_contents(contents)
 
         # sets the base file path as the instance repository path
-        # resolved byt the plugin manager
+        # resolved by the plugin manager
         base_file_path = plugin_manager.resolve_file_path(instance_repository_path)
 
+        # retrieves the file name
+        file_name = rest_request.path_list[-1]
+
         # creates the complete file path for the wiki file
-        complete_file_path = base_file_path + "/" + rest_request.path_list[-1] + ".wiki"
+        complete_file_path = base_file_path + "/" + file_name + WIKI_EXTENSION
 
         # writes the normalized contents to the wiki file (in the complete file path)
         self._write_file(complete_file_path, normalized_contents)
@@ -477,7 +493,7 @@ class WebMvcWikiController:
         instance_repository_path = instance["repository_path"]
 
         # sets the base file path as the instance repository path
-        # resolved byt the plugin manager
+        # resolved by the plugin manager
         base_file_path = plugin_manager.resolve_file_path(instance_repository_path)
 
         # creates the base target path as the cache directory path
@@ -505,7 +521,7 @@ class WebMvcWikiController:
 
         if not rest_request.encoder_name or rest_request.encoder_name in ("html", "ajx", "prt"):
             # creates the wiki file path
-            wiki_file_path = base_file_path + "/" + file_path + ".wiki"
+            wiki_file_path = base_file_path + "/" + file_path + WIKI_EXTENSION
 
             # in case the wiki file does not exist
             if not os.path.exists(wiki_file_path):
@@ -517,6 +533,9 @@ class WebMvcWikiController:
 
                 # sets the page name in the template file
                 template_file.assign("page_name", file_path)
+
+                # sets the instance name in the template file
+                template_file.assign("instance_name", instance_name)
 
                 # applies the base path to the template file
                 self.apply_base_path_template_file(rest_request, template_file)
