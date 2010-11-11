@@ -53,7 +53,7 @@ class MainServiceHttpWebsocketHandlerPlugin(colony.base.plugin_system.Plugin):
     platforms = [colony.base.plugin_system.CPYTHON_ENVIRONMENT]
     attributes = {"build_automation_file_path" : "$base{plugin_directory}/main_service_http_websocket_handler/websocket_handler/resources/baf.xml"}
     capabilities = ["http_service_handler", "build_automation_item"]
-    capabilities_allowed = []
+    capabilities_allowed = ["websocket_handler"]
     dependencies = []
     events_handled = []
     events_registrable = []

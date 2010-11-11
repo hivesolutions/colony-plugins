@@ -198,6 +198,9 @@ CACHE_CONTROL_VALUE = "Cache-Control"
 CONTENT_DISPOSITION_VALUE = "Content-Disposition"
 """ The content disposition value """
 
+WEB_SOCKET_VALUE = "WebSocket"
+""" The web socket """
+
 NAME_VALUE = "name"
 """ The name value """
 
@@ -224,6 +227,9 @@ DEFAULT_CONTENT_TYPE_CHARSET_VALUE = "default_content_type_charset"
 
 DEFAULT_CACHE_CONTROL_VALUE = "no-cache, must-revalidate"
 """ The default cache control value """
+
+UPGRADE_MESSAGE_SIZE_MAP = {WEB_SOCKET_VALUE : 8}
+""" The upgrade message size map """
 
 class MainServiceHttp:
     """
@@ -865,21 +871,29 @@ class HttpClientServiceHandler:
                         # parses the get attributes
                         request.__parse_get_attributes__()
 
-                        # returns the request
-                        return request
-                    # in case the operation type is not get
-                    else:
-                        # in case the content length is defined in the headers map
-                        if CONTENT_LENGTH_VALUE in request.headers_map:
-                            # retrieves the message size
-                            message_size = int(request.headers_map[CONTENT_LENGTH_VALUE])
-                        elif CONTENT_LENGTH_LOWER_VALUE in request.headers_map:
-                            # retrieves the message size
-                            message_size = int(request.headers_map[CONTENT_LENGTH_LOWER_VALUE])
-                        # in case there is no content length defined in the headers map
+                    # in case the content length is defined in the headers map
+                    if CONTENT_LENGTH_VALUE in request.headers_map:
+                        # retrieves the message size
+                        message_size = int(request.headers_map[CONTENT_LENGTH_VALUE])
+                    elif CONTENT_LENGTH_LOWER_VALUE in request.headers_map:
+                        # retrieves the message size
+                        message_size = int(request.headers_map[CONTENT_LENGTH_LOWER_VALUE])
+                    elif UPGRADE_VALUE in request.headers_map:
+                        # retrieves the upgrade (type) value
+                        upgrade = request.headers_map[UPGRADE_VALUE]
+
+                        # in case the upgrade (type) exists in the
+                        # upgrade message size map
+                        if upgrade in UPGRADE_MESSAGE_SIZE_MAP:
+                            # retrieves the message size for the upgrade (type)
+                            message_size = UPGRADE_MESSAGE_SIZE_MAP[upgrade]
                         else:
                             # returns the request
                             return request
+                    # in case there is no content length defined in the headers map
+                    else:
+                        # returns the request
+                        return request
 
             # in case the message is not loaded and the header is loaded
             if not message_loaded and header_loaded:
