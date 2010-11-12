@@ -77,6 +77,7 @@ configuration = {
                                            "/openid",
                                            "/take_the_bill",
                                            "/a_la_carte",
+                                           "/panzerini",
                                            "/"],
                      "/push_apple" : {
                          "target" : "/colony_mod_python/rest/mvc/web_mvc_communication_push_apple/",
@@ -116,6 +117,10 @@ configuration = {
                      },
                      "/a_la_carte" : {
                          "target" : "/colony_mod_python/rest/mvc/a_la_carte/",
+                         "recursive_redirection" : True
+                     },
+                     "/panzerini" : {
+                         "target" : "/colony_mod_python/rest/mvc/panzerini_web_mvc/",
                          "recursive_redirection" : True
                      },
                      "/" : {
