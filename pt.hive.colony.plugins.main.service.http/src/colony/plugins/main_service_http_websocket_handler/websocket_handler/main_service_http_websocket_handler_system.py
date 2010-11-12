@@ -130,10 +130,13 @@ class MainServiceHttpWebsocketHandler:
         """
 
         # creates a new websocket connection
-        websocket_connection = WebSocketConnection(request)
+        websocket_connection = WebSocketConnection(self, request)
 
         # opens the websocket connection
         websocket_connection.open()
+
+        # prints a debug message
+        self.main_service_http_websocket_handler_plugin.debug("Handling Websocket connection: %s" % websocket_connection)
 
     def websocket_handler_load(self, websocket_handler_plugin):
         # retrieves the plugin handler name
@@ -153,6 +156,9 @@ class WebSocketConnection:
     connection.
     """
 
+    main_service_http_websocket_handler = None
+    """ The main service http websocket handler """
+
     request = None
     """ The http request object """
 
@@ -162,19 +168,31 @@ class WebSocketConnection:
     service_connection = None
     """ The service connection """
 
-    def __init__(self, request):
+    location = None
+    """ The location """
+
+    protocol = None
+    """ The protocol """
+
+    def __init__(self, main_service_http_websocket_handler, request):
         """
         Constructor of the class.
 
+        @type main_service_http_websocket_handler: MainServiceHttpWebsocketHandler
+        @param main_service_http_websocket_handler: The main service http websocket handler.
         @type request: HttpRequest
         @param request: The http request associated with the
         opening of the websocket.
         """
 
+        self.main_service_http_websocket_handler = main_service_http_websocket_handler
         self.request = request
 
         self.http_client_service_handler = request.http_client_service_handler
         self.service_connection = request.service_connection
+
+    def __repr__(self):
+        return "(%s, %s, %s)" % (self.location, self.protocol, self.service_connection,)
 
     def open(self):
         """
@@ -203,6 +221,9 @@ class WebSocketConnection:
         if not protocol:
             # sets the protocol as the default one
             protocol = DEFAULT_WEB_SOCKET_PROTOCOL
+
+        # creates the location value
+        location = "ws://%s%s" % (host, base_path)
 
         # calculates the number results for both the websocket keys
         number_result_1 = self._calculate_number_value(sec_websocket_key_1)
@@ -233,7 +254,7 @@ class WebSocketConnection:
 
         # sets the headers in the request
         self.request.set_header(SEC_WEB_SOCKET_ORIGIN_VALUE, origin)
-        self.request.set_header(SEC_WEB_SOCKET_LOCATION_VALUE, "ws://%s%s" % (host, base_path))
+        self.request.set_header(SEC_WEB_SOCKET_LOCATION_VALUE, location)
         self.request.set_header(SEC_WEB_SOCKET_PROTOCOL_VALUE, protocol)
 
         # sets the request status code
@@ -243,9 +264,16 @@ class WebSocketConnection:
         # writes the result value
         self.request.write(md5_digest)
 
+        # retrieves the service connection handler for the protocol
+        service_connection_handler = self._get_service_connection_handler(protocol)
+
         # sets the request handler for the http client service handler
         # this step upgrades the protocol interpretation
-        self.http_client_service_handler.set_service_connection_request_handler(self.service_connection, self.websocket_request_handler)
+        self.http_client_service_handler.set_service_connection_request_handler(self.service_connection, service_connection_handler)
+
+        # sets the websocket connection values
+        self.protocol = protocol
+        self.location = location
 
     def close(self):
         """
@@ -257,13 +285,11 @@ class WebSocketConnection:
         # the protocol interpretation (back to http)
         self.http_client_service_handler.unset_service_connection_request_handler(self.service_connection)
 
-    def websocket_request_handler(self, service_connection):
+    def websocket_service_connection_handler(self, service_connection):
         # retrieves the data
         data = service_connection.retrieve_data()
 
-        # prints the data
-        print(data)
-
+        # sends the data back
         service_connection.send(data)
 
         # returns true (connection remains open)
@@ -282,3 +308,28 @@ class WebSocketConnection:
 
         # returns the number result
         return number_result
+
+    def _get_service_connection_handler(self, protocol):
+        # retrieves the websocket handler plugins map
+        websocket_handler_plugins_map = self.main_service_http_websocket_handler.websocket_handler_plugins_map
+
+        # in case the protocol is the default one
+        if protocol == DEFAULT_WEB_SOCKET_PROTOCOL:
+            # sets the service connection handler as the websocket
+            # service connection handler method
+            service_connection_handler = self.websocket_service_connection_handler
+        else:
+            # retrieves the websocket handler plugin
+            websocket_handler_plugin = websocket_handler_plugins_map.get(protocol, None)
+
+            # in case the websocket handler plugin is defined
+            if not websocket_handler_plugin:
+                # raises the websocket handler not found exception
+                raise main_service_http_websocket_handler_exceptions.WebsocketHandlerNotFoundException(protocol)
+
+            # sets the service connection handler as the handle service connection
+            # method of the websocket handler plugins
+            service_connection_handler = websocket_handler_plugin.handle_service_connection
+
+        # returns the service connection handler
+        return service_connection_handler
