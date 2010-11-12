@@ -66,4 +66,7 @@ class PanzeriniDummyBot:
         panzer_actions = []
 
         # adds the accelerate action
-        panzer_actions.append("accelerate")
+        panzer_actions.append(("accelerate", []))
+
+        # sets the panzer actions
+        panzer["actions"] = panzer_actions
