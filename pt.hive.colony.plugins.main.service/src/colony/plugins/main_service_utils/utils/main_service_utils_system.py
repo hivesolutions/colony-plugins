@@ -1197,11 +1197,6 @@ class AbstractServiceConnectionHandler:
                 # handles the current request, retrieving the return value
                 return_value = self.client_service.handle_request(ready_service_connection)
             except BaseException, exception:
-                import traceback
-                import sys
-
-                traceback.print_exc(file=sys.stdout)
-
                 # prints an error message about the problem handling the request
                 self.service_plugin.error("Problem while handling the request: " + unicode(exception))
 
