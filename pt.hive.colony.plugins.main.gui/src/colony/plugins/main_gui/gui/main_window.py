@@ -164,7 +164,8 @@ class MainFrame(wx.Frame):
         self.n = 0
         self.x = 0
 
-        self.SetIcon(self.icons_16x16_map["omni"])
+        # sets the small icon for the window
+        self.SetIcon(self.icons_16x16_map["colony"])
 
         # create menu
         mb = wx.MenuBar()
@@ -397,7 +398,9 @@ class MainFrame(wx.Frame):
         info.WebSite = ("http://www.hive.pt", "Hive Solutions Lda. <development@hive.pt>")
         info.Developers = ["Joao Magalhaes <joamag@hive.pt>", "Tiago Silva <tsilva@hive.pt>", "Luís Martinho <lmartinho@hive.pt>"]
         info.License = wx.lib.wordwrap.wordwrap("GNU General Public License (GPL), Version 3", 500, wx.ClientDC(self))
-        info.SetIcon(self.icons_32x32_map["omni"])
+
+        # sets the large icon for the about (info) window
+        info.SetIcon(self.icons_32x32_map["colony"])
 
         # creates the about box with the information
         wx.AboutBox(info)
@@ -534,24 +537,30 @@ class MainFrame(wx.Frame):
         self.text_control = wx.TextCtrl(self, wx.ID_ANY, "", wx.Point(0, 0), wx.Size(150, 90),
                            wx.NO_BORDER | wx.TE_MULTILINE)
 
-        # @todo fazer refactor deste codigo
+        # @todo: refactor this code
         logger = self.main_gui_plugin.manager.get_plugin_by_id("pt.hive.colony.plugins.main.log")
         logger_log = logger.get_logger("main")
         composite_handler = logger.get_composite_handler()
         composite_handler.set_handler_def(self.add_text_to_text_control)
+
+        # sets the logger log handler
         logger_log.set_handler(composite_handler)
 
+        # returns the text control
         return self.text_control
 
     def add_text_to_text_control(self, text):
         self.text_control.AppendText(text)
 
     def refresh_tree(self):
-        # @todo fazer refactor deste codigo
+        # @todo: refactor this code
         logger = self.main_gui_plugin.manager.get_plugin_by_id("pt.hive.colony.plugins.main.log")
         logger_log = logger.get_logger("main")
-        #  @todo this is a fix for mac osx change it to work in all os
+
+        # @todo: this is a fix for mac osx change it to work in all os
         #logger_log.get_logger().warn("refreshing tree\n")
+
+        # refreshes the plugin tree
         self.plugin_tree.refresh()
 
     def refresh_panel_tabs(self):
