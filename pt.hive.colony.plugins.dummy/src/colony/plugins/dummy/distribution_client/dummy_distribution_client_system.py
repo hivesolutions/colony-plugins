@@ -66,9 +66,6 @@ class DummyDistributionClient:
         # retrieves the remote client references
         remote_client_references = distribution_client_plugin.get_remote_client_references()
 
-        # retrieves the map relating the host and the remote client references
-        host_remote_client_references_map = distribution_client_plugin.get_remote_client_references_by_host()
-
         # iterates over all the remote client references
         for remote_client_reference in remote_client_references:
             # retrieves the service type
