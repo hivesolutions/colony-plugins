@@ -86,6 +86,7 @@ configuration = {
                                            "/openid",
                                            "/take_the_bill",
                                            "/a_la_carte",
+                                           "/pecway",
                                            "/panzerini",
                                            "/"],
                      "/push_apple" : {
@@ -126,6 +127,10 @@ configuration = {
                      },
                      "/a_la_carte" : {
                          "target" : "/colony_mod_python/rest/mvc/a_la_carte/",
+                         "recursive_redirection" : True
+                     },
+                     "/pecway" : {
+                         "target" : "/colony_mod_python/rest/mvc/pecway/",
                          "recursive_redirection" : True
                      },
                      "/panzerini" : {
