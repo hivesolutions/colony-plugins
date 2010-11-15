@@ -225,7 +225,7 @@ class MainFrame(wx.Frame):
         tool_bar = wx.ToolBar(self, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize,
                          wx.TB_FLAT | wx.TB_NODIVIDER)
         tool_bar.SetToolBitmapSize(wx.Size(16, 16))
-        tool_bar.AddLabelTool(ID_CreateGrid, "New", self.bitmaps_16x16_map["doc"])
+        tool_bar.AddLabelTool(ID_CreateGrid, "New", self.bitmaps_16x16_map["document"])
         tool_bar.AddLabelTool(ID_CreateGrid, "Save", self.bitmaps_16x16_map["disk"])
         tool_bar.AddSeparator()
         tool_bar.AddLabelTool(ID_CreateGrid, "Play", self.bitmaps_16x16_map["play"])
