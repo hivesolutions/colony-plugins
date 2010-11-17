@@ -393,11 +393,8 @@ class WebMvcManager:
 #                    # retrieves the base path from the rest request
 #                    base_path = controller.get_base_path(rest_request)
 #
-#                # redirects the request
-#                rest_request.redirect(base_path + "signin")
-#
-#                # sets the contents (null)
-#                controller.set_contents(rest_request)
+#                # redirects to the signin page
+#                self.redirect(rest_request, base_path + "signin")
 #
 #            # returns false
 #            return False
