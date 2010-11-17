@@ -39,6 +39,12 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 import web_mvc_utils_exceptions
 
+VALIDATION_METHOD_SUFFIX = "_validate"
+""" The validation method suffix """
+
+TARGET_VALUE = "target"
+""" The target value """
+
 def _start_model(self):
     """
     Starts the model structures.
@@ -136,8 +142,15 @@ def add_validation_method(self, attribute_name, validation_method_name, properti
     @param properties: The properties of the adding of the validation method.
     """
 
+    # in case the attribute name does not exist
+    # in the validation map
     if not attribute_name in self.validation_map:
+        # creates a list for the attribute name in
+        # the validation map
         self.validation_map[attribute_name] = []
+
+    # adds the validation method suffix to the validate method name
+    validation_method_name = validation_method_name + VALIDATION_METHOD_SUFFIX
 
     # in case the validation method does not exist in
     # the current object
@@ -246,3 +259,79 @@ def not_empty_validate(self, attribute_name, attribute_value, properties):
     if not attribute_value:
         # adds an error to the given attribute name
         self.add_error(attribute_name, "value is empty")
+
+def greater_than_zero_validate(self, attribute_name, attribute_value, properties):
+    """
+    Validates an attribute to ensure that it is greater than zero.
+
+    @type attribute_name: String
+    @param attribute_name: The name of the attribute to be validated.
+    @type attribute_value: Object
+    @param attribute_value: The value of the attribute to be validated.
+    @type properties: Dictionary
+    @param properties: The properties for the validation.
+    """
+
+    # in case the attribute value is not greater than zero
+    if not attribute_value > 0:
+        # adds an error to the given attribute name
+        self.add_error(attribute_name, "value is less or equal to zero")
+
+def greater_than_validate(self, attribute_name, attribute_value, properties):
+    """
+    Validates an attribute to ensure that it is greater than.
+
+    @type attribute_name: String
+    @param attribute_name: The name of the attribute to be validated.
+    @type attribute_value: Object
+    @param attribute_value: The value of the attribute to be validated.
+    @type properties: Dictionary
+    @param properties: The properties for the validation.
+    """
+
+    # retrieves the target value from the properties
+    target_value = properties[TARGET_VALUE]
+
+    # in case the attribute value is not greater than
+    # the target value
+    if not attribute_value > target_value:
+        # adds an error to the given attribute name
+        self.add_error(attribute_name, "value is less or equal that the target")
+
+def less_than_zero_validate(self, attribute_name, attribute_value, properties):
+    """
+    Validates an attribute to ensure that it is less than zero.
+
+    @type attribute_name: String
+    @param attribute_name: The name of the attribute to be validated.
+    @type attribute_value: Object
+    @param attribute_value: The value of the attribute to be validated.
+    @type properties: Dictionary
+    @param properties: The properties for the validation.
+    """
+
+    # in case the attribute value is not less than zero
+    if not attribute_value < 0:
+        # adds an error to the given attribute name
+        self.add_error(attribute_name, "value is greater or equal to zero")
+
+def less_than_validate(self, attribute_name, attribute_value, properties):
+    """
+    Validates an attribute to ensure that it is less than target.
+
+    @type attribute_name: String
+    @param attribute_name: The name of the attribute to be validated.
+    @type attribute_value: Object
+    @param attribute_value: The value of the attribute to be validated.
+    @type properties: Dictionary
+    @param properties: The properties for the validation.
+    """
+
+    # retrieves the target value from the properties
+    target_value = properties[TARGET_VALUE]
+
+    # in case the attribute value is not less than
+    # the target value
+    if not attribute_value < target_value:
+        # adds an error to the given attribute name
+        self.add_error(attribute_name, "value is greater or equal that the target")
