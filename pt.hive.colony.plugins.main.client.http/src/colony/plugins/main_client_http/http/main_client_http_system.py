@@ -314,8 +314,11 @@ class HttpClient:
         main_client_http_plugin.debug("Fetching url '%s' with '%s' method" % (url, method))
 
         # parses the url retrieving the protocol the host, the username,
-        # the password, the port, the path and the base url
-        protocol, username, password, host, port, path, base_url = self._parse_url(url)
+        # the password, the port, the path, the base url and the options map
+        protocol, username, password, host, port, path, base_url, options_map = self._parse_url(url)
+
+        # extends the parameters map with the options map
+        parameters = colony.libs.map_util.map_extend(parameters, options_map)
 
         # retrieves the socket name from the protocol socket map
         socket_name = PROTOCOL_SOCKET_NAME_MAP.get(protocol, None)
@@ -904,13 +907,13 @@ class HttpClient:
         """
         Parses the url, retrieving a tuple structure containing
         the protocol, the username, the password, the host, the port,
-        the path and the base url for the given url.
+        the path, the base url and the options map for the given url.
 
         @type url: String
         @param url: The url to be parsed.
         @rtype: Tuple
         @return: A tuple containing the protocol, the username, the password
-        the host, the port, the path and the base url.
+        the host, the port, the path, the base url and the options map.
         """
 
         # retrieves the url parser plugin
@@ -965,16 +968,6 @@ class HttpClient:
             # sets the default path (root)
             path = "/"
 
-        # in case the url structure contains the options
-        if url_structure.options:
-            # adds the options to the path
-            path += "?" + url_structure.options
-
-        # in case the url structure contains the location
-        if url_structure.location:
-            # adds the location to the path
-            path += "#" + url_structure.location
-
         # in case the url structure contains the base url
         if url_structure.base_url:
             # retrieves the base url
@@ -983,9 +976,18 @@ class HttpClient:
             # sets the base url as invalid
             base_url = None
 
+        # in case the url structure contains the options map
+        if url_structure.options_map:
+            # retrieves the options map
+            options_map = url_structure.options_map
+        else:
+            # sets the options map as empty
+            options_map = {}
+
         # returns the tuple containing the protocol, the username,
-        # the password, the host, the port, the path and the base url
-        return (protocol, username, password, host, port, path, base_url)
+        # the password, the host, the port, the path, the base url
+        # and the options map
+        return (protocol, username, password, host, port, path, base_url, options_map)
 
 class HttpRequest:
     """
