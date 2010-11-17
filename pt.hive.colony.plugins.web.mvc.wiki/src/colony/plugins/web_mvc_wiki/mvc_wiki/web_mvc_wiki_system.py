@@ -307,7 +307,7 @@ class WebMvcWikiPageController:
         # retrieves the base path
         base_path = self.get_base_path(rest_request)
 
-        # redirects the request
+        # redirects the rest request
         rest_request.redirect(base_path + instance_name + "/" + file_name)
 
         # flushes the rest request
