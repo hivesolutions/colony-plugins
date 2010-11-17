@@ -143,7 +143,7 @@ class PluginProxy:
 
         @type calling_name: String
         @param calling_name: The calling name for the calling method.
-        @type calling_name: function
+        @type calling_name: Function
         @param calling_name: The caller method for the given calling name.
         """
 
