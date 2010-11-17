@@ -295,6 +295,23 @@ def set_contents(self, rest_request, contents = ""):
     # flushes the rest request
     rest_request.flush()
 
+def redirect(self, rest_request, target):
+    """
+    Redirects the current request to the given
+    target (page).
+
+    @type rest_request: RestRequest
+    @param rest_request: The rest request to be used.
+    @type target: String
+    @param target: The target (page) of the redirect.
+    """
+
+    # redirects the rest request to the target
+    rest_request.redirect(target)
+
+    # sets the contents (null)
+    self.set_contents(rest_request)
+
 def process_set_contents(self, rest_request, template_file, variable_encoding = None):
     """
     Processes the template file and set the result of it
