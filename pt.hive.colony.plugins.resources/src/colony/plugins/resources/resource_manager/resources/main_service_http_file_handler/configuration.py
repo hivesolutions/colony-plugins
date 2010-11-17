@@ -38,8 +38,8 @@ __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
 configuration = {
-                 "default_path" : "",
-                 "default_page" : "",
+                 "default_path" : "$resource{colony.manager_path}/var/http",
+                 "default_page" : "index.html",
                  "preferred_directory_list_handlers" : ["template", "default"],
                  "relative_paths" : False
              }
