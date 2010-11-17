@@ -43,16 +43,16 @@ def transaction(transaction_type = "required"):
 
     @type transaction_type: String
     @param plugin_id: The type of transaction to be created.
-    @rtype: function
+    @rtype: Function
     @return: The created decorator.
     """
 
-    def create_decorator_interceptor(func):
+    def create_decorator_interceptor(function):
         """
         Creates a decorator interceptor, that intercepts the normal function call.
 
-        @type func: function
-        @param func: The callback function.
+        @type function: Function
+        @param function: The callback function.
         """
 
         def decorator_interceptor(*args, **kwargs):
@@ -73,7 +73,7 @@ def transaction(transaction_type = "required"):
 
             try:
                 # calls the callback function and gets the return value
-                return_value = func(*args, **kwargs)
+                return_value = function(*args, **kwargs)
             except:
                 # "rollsback" the transaction
                 self_value.entity_manager.rollback_transaction()
@@ -89,22 +89,22 @@ def transaction(transaction_type = "required"):
 
         return decorator_interceptor
 
-    def decorator(func, *args, **kwargs):
+    def decorator(function, *args, **kwargs):
         """
         The decorator function for the transaction decorator.
 
-        @type func: function
-        @param func: The function to be decorated.
+        @type function: Function
+        @param function: The function to be decorated.
         @type args: pointer
         @param args: The function arguments list.
         @type kwargs: pointer pointer
         @param kwargs: The function arguments map.
-        @rtype: function
+        @rtype: Function
         @param: The decorator interceptor function.
         """
 
         # creates the decorator interceptor with the given function
-        decorator_interceptor_function = create_decorator_interceptor(func)
+        decorator_interceptor_function = create_decorator_interceptor(function)
 
         # returns the interceptor to be used
         return decorator_interceptor_function
