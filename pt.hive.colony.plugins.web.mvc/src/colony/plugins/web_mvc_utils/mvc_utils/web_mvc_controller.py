@@ -312,6 +312,28 @@ def redirect(self, rest_request, target):
     # sets the contents (null)
     self.set_contents(rest_request)
 
+def redirect_base_path(self, rest_request, target):
+    """
+    Redirects the current request to the given
+    target (page).
+    This method updates the target to conform with the
+    current base path.
+
+    @type rest_request: RestRequest
+    @param rest_request: The rest request to be used.
+    @type target: String
+    @param target: The target (page) of the redirect.
+    """
+
+    # retrieves the base path
+    base_path = self.get_base_path(rest_request)
+
+    # creates the "new" target with the base path
+    target_base_path = base_path + target
+
+    # redirects to the target base path
+    self.redirect(rest_request, target_base_path)
+
 def process_set_contents(self, rest_request, template_file, variable_encoding = None):
     """
     Processes the template file and set the result of it
