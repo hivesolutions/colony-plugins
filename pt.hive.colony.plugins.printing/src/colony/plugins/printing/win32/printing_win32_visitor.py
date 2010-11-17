@@ -85,27 +85,27 @@ def _visit(ast_node_class):
 
     @type ast_node_class: String
     @param ast_node_class: The target class for the visit.
-    @rtype: function
+    @rtype: Function
     @return: The created decorator.
     """
 
-    def decorator(func, *args, **kwargs):
+    def decorator(function, *args, **kwargs):
         """
         The decorator function for the visit decorator.
 
-        @type func: function
-        @param func: The function to be decorated.
+        @type function: Function
+        @param function: The function to be decorated.
         @type args: pointer
         @param args: The function arguments list.
         @type kwargs: pointer pointer
         @param kwargs: The function arguments map.
-        @rtype: function
+        @rtype: Function
         @param: The decorator interceptor function.
         """
 
-        func.ast_node_class = ast_node_class
+        function.ast_node_class = ast_node_class
 
-        return func
+        return function
 
     # returns the created decorator
     return decorator
@@ -114,16 +114,16 @@ def dispatch_visit():
     """
     Decorator for the dispatch visit of an ast node.
 
-    @rtype: function
+    @rtype: Function
     @return: The created decorator.
     """
 
-    def create_decorator_interceptor(func):
+    def create_decorator_interceptor(function):
         """
         Creates a decorator interceptor, that intercepts the normal function call.
 
-        @type func: function
-        @param func: The callback function.
+        @type function: Function
+        @param function: The callback function.
         """
 
         def decorator_interceptor(*args, **kwargs):
@@ -172,26 +172,26 @@ def dispatch_visit():
                         return
 
             # in case of failure to find the proper callbak
-            func(*args, **kwargs)
+            function(*args, **kwargs)
 
         return decorator_interceptor
 
-    def decorator(func, *args, **kwargs):
+    def decorator(function, *args, **kwargs):
         """
         The decorator function for the dispatch visit decorator.
 
-        @type func: function
-        @param func: The function to be decorated.
+        @type function: Function
+        @param function: The function to be decorated.
         @type args: pointer
         @param args: The function arguments list.
         @type kwargs: pointer pointer
         @param kwargs: The function arguments map.
-        @rtype: function
+        @rtype: Function
         @param: The decorator interceptor function.
         """
 
         # creates the decorator interceptor with the given function
-        decorator_interceptor_function = create_decorator_interceptor(func)
+        decorator_interceptor_function = create_decorator_interceptor(function)
 
         # returns the interceptor to be used
         return decorator_interceptor_function
