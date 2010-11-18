@@ -102,8 +102,9 @@ def transaction_method(entity_manager_reference, raise_exception = True):
             entity_manager.create_transaction()
 
             try:
-                # calls the callback function
-                function(*args, **kwargs)
+                # calls the callback function,
+                # returning the value
+                return function(*args, **kwargs)
             except:
                 # rolls back the transaction
                 entity_manager.rollback_transaction()
