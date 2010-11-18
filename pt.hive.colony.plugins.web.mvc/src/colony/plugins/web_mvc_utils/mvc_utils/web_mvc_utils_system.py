@@ -48,6 +48,12 @@ import web_mvc_entity_model
 ENGINE_VALUE = "engine"
 """ The engine value """
 
+NAME_REFERENCE_VALUE = "__name__"
+""" The name reference value """
+
+PACKAGE_REFERENCE_VALUE = "__package__"
+""" The package reference value """
+
 GLOBALS_REFERENCE_VALUE = "_globals"
 """ The globals reference value """
 
@@ -96,7 +102,7 @@ class WebMvcUtils:
 
         self.web_mvc_utils_plugin = web_mvc_utils_plugin
 
-    def import_module_mvc_utils(self, module_name, directory_path):
+    def import_module_mvc_utils(self, module_name, package_name, directory_path):
         # creates the globals map from
         # the current globals map
         globals_map = globals()
@@ -109,6 +115,20 @@ class WebMvcUtils:
 
         # sets the target module dictionary as the target map
         target_map = target_module.__dict__
+
+        # in case the package name is defined
+        if package_name:
+            # creates the complete module name from the package name
+            complete_module_name = package_name + "." + module_name
+        # otherwise
+        else:
+            # creates the complete module name just from
+            # the module name
+            complete_module_name = module_name
+
+        # sets the name and the package in the target map
+        target_map[NAME_REFERENCE_VALUE] = complete_module_name
+        target_map[PACKAGE_REFERENCE_VALUE] = package_name
 
         # sets the web mvc utils in the globals map
         globals_map[WEB_MVC_UTILS_VALUE] = web_mvc_utils
