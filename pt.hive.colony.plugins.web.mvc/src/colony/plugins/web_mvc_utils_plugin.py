@@ -104,6 +104,9 @@ class WebMvcUtilsPlugin(colony.base.plugin_system.Plugin):
     def dependency_injected(self, plugin):
         colony.base.plugin_system.Plugin.dependency_injected(self, plugin)
 
+    def import_module_mvc_utils(self, module_name, directory_path):
+        return self.web_mvc_utils.import_module_mvc_utils(module_name, directory_path)
+
     def create_model(self, base_model, base_arguments_list, base_arguments_map):
         return self.web_mvc_utils.create_model(base_model, base_arguments_list, base_arguments_map)
 

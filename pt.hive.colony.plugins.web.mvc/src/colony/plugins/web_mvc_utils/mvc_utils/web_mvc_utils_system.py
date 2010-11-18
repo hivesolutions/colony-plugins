@@ -37,14 +37,22 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
+import imp
 import types
 
+import web_mvc_utils
 import web_mvc_model
 import web_mvc_controller
 import web_mvc_entity_model
 
 ENGINE_VALUE = "engine"
 """ The engine value """
+
+GLOBALS_REFERENCE_VALUE = "_globals"
+""" The globals reference value """
+
+LOCALS_REFERENCE_VALUE = "_locals"
+""" The locals reference value """
 
 CONNECTION_PARAMETERS_VALUE = "connection_parameters"
 """ The connection parameters value """
@@ -57,6 +65,12 @@ ENTITY_CLASSES_MAP_VALUE = "entity_classes_map"
 
 FILE_PATH_VALUE = "file_path"
 """ The file path value """
+
+WEB_MVC_UTILS_VALUE = "web_mvc_utils"
+""" The web mvc utils value """
+
+PYTHON_EXTENSION = ".py"
+""" The python extension """
 
 DEFAULT_ENGINE = "sqlite"
 """ The default engine """
@@ -81,6 +95,39 @@ class WebMvcUtils:
         """
 
         self.web_mvc_utils_plugin = web_mvc_utils_plugin
+
+    def import_module_mvc_utils(self, module_name, directory_path):
+        # creates the globals map from
+        # the current globals map
+        globals_map = globals()
+
+        # creates the locals map
+        locals_map = {}
+
+        # tries to retrieve the target module
+        target_module = self._get_target_module(module_name, globals_map)
+
+        # sets the target module dictionary as the target map
+        target_map = target_module.__dict__
+
+        # sets the web mvc utils in the globals map
+        globals_map[WEB_MVC_UTILS_VALUE] = web_mvc_utils
+
+        # sets the globals reference attribute
+        target_map[GLOBALS_REFERENCE_VALUE] = globals_map
+
+        # sets the locals reference attribute
+        target_map[LOCALS_REFERENCE_VALUE] = locals_map
+
+        # creates the python file path
+        python_file_path = directory_path + "/" + module_name + PYTHON_EXTENSION
+
+        # executes the file in the given environment
+        # to import the symbols
+        execfile(python_file_path, target_map, target_map)
+
+        # returns the target module
+        return target_module
 
     def create_model(self, base_model, base_arguments_list, base_arguments_map):
         # sets the module functions in the base model class
@@ -265,6 +312,21 @@ class WebMvcUtils:
             if item_value_type == types.FunctionType:
                 # sets the item in the
                 setattr(target_class, item, item_value)
+
+    def _get_target_module(self, target_module_name, globals):
+        # tries to retrieve the target module
+        target_module = globals.get(target_module_name, None)
+
+        # in case the target module is not defined
+        if not target_module:
+            # creates the target module
+            target_module = imp.new_module(target_module_name)
+
+            # adds the target module to the globals map
+            globals[target_module_name] = target_module
+
+        # returns the target model
+        return target_module
 
 def create_newinit(base_entity_model):
     """
