@@ -133,7 +133,7 @@ configuration = {
                          "recursive_redirection" : True
                      },
                      "/" : {
-                         "target" : "/colony_mod_python/rest/mvc/hive/",
+                         "target" : "/colony_mod_python/rest/mvc/hive_site/",
                          "recursive_redirection" : True
                      }
                  },
