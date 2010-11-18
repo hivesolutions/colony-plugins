@@ -103,8 +103,8 @@ def transaction_method(entity_manager_reference, raise_exception = True):
 
             try:
                 # calls the callback function,
-                # returning the value
-                return function(*args, **kwargs)
+                # retrieving the return value
+                return_value = function(*args, **kwargs)
             except:
                 # rolls back the transaction
                 entity_manager.rollback_transaction()
@@ -116,6 +116,9 @@ def transaction_method(entity_manager_reference, raise_exception = True):
             else:
                 # commits the transaction
                 entity_manager.commit_transaction()
+
+            # returns the return value
+            return return_value
 
         # returns the decorator interceptor
         return decorator_interceptor
