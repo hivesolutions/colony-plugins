@@ -46,6 +46,7 @@
             "base_bundles/bundles/specifications/encryption_bundle.json",
             "base_bundles/bundles/specifications/execution_environment_bundle.json",
             "base_bundles/bundles/specifications/format_bundle.json",
+            "base_bundles/bundles/specifications/formcode_bundle.json",
             "base_bundles/bundles/specifications/garbage_collector_bundle.json",
             "base_bundles/bundles/specifications/guid_bundle.json",
             "base_bundles/bundles/specifications/http_utils_bundle.json",
