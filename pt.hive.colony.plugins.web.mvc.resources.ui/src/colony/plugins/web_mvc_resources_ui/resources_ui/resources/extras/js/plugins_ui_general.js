@@ -1315,7 +1315,7 @@
             matchedObject.html(textMessage);
 
             // retrieves the message width
-            messageWidth = matchedObject.width();
+            var messageWidth = matchedObject.width();
 
             // sets the left position of the message
             matchedObject.css("left", position.left + (size.width / 2)
@@ -1735,7 +1735,7 @@
             matchedObject.parent().addClass("selected");
 
             // sets the animation properties
-            animationProperties = {
+            var animationProperties = {
                 opacity : "show"
             };
 
