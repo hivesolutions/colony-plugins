@@ -129,6 +129,51 @@ def _start_controller(self):
         # in the controller
         self.start()
 
+def get_entity_model(self, entity_manager, entity_model, entity_model_id):
+    """
+    Retrieves an entity model instance from the given entity manager
+    for the provided entity model (class) and using the given entity
+    model id.
+    The retrieved entity instance is either a new instance (in case
+    no entity is defined for the given id) or an existing instance
+    in case it exists in the entity manager.
+
+    @type entity_manager: EntityManager
+    @param entity_manager: The entity manager to be used.
+    @type entity_model: Class
+    @param entity_model: The entity model (class) to be retrieved.
+    @type entity_model_id: Object
+    @param entity_model_id: The id of the entity model to be retrieved.
+    @rtype: EntityModel
+    @return: The retrieved entity model.
+    """
+
+    # retrieves the id attribute name (key)
+    id_key = entity_model.get_id_attribute_name()
+
+    # in case the entity model id is defined
+    if entity_model_id:
+        # retrieves the entity
+        entity = entity_manager.find(entity_model, entity_model_id)
+
+        # in case the entity is not defined
+        if not entity:
+            # creates a new entity from the entity
+            # model (creates instance)
+            entity = entity_model()
+
+            # sets the id in the entity
+            setattr(entity, id_key, entity_model_id)
+    # otherwise a new entity should be
+    # created
+    else:
+        # creates a new entity from the entity
+        # model
+        entity = entity_model()
+
+    # returns the entity
+    return entity
+
 def validate_model_exception(self, model, exception_message, error_description = True):
     """
     Validates the given model, raising an exception in case
