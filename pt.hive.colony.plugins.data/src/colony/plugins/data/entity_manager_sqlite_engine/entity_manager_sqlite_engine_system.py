@@ -55,6 +55,8 @@ DEFAULT_TIMEOUT_VALUE = 30
 
 DATA_TYPE_MAP = {"text" : "text",
                  "numeric" : "numeric",
+                 "integer" : "numeric",
+                 "float" : "numeric",
                  "date" : "numeric",
                  "relation" : "relation"}
 """ The data type map """
