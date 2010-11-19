@@ -76,6 +76,7 @@
                         <specification_file>$base{plugin_directory}/base_bundles/bundles/specifications/encryption_bundle.json</specification_file>
                         <specification_file>$base{plugin_directory}/base_bundles/bundles/specifications/execution_environment_bundle.json</specification_file>
                         <specification_file>$base{plugin_directory}/base_bundles/bundles/specifications/format_bundle.json</specification_file>
+                        <specification_file>$base{plugin_directory}/base_bundles/bundles/specifications/formcode_bundle.json</specification_file>
                         <specification_file>$base{plugin_directory}/base_bundles/bundles/specifications/garbage_collector_bundle.json</specification_file>
                         <specification_file>$base{plugin_directory}/base_bundles/bundles/specifications/guid_bundle.json</specification_file>
                         <specification_file>$base{plugin_directory}/base_bundles/bundles/specifications/http_utils_bundle.json</specification_file>
@@ -253,6 +254,10 @@
                         </specification>
                         <specification>
                             <type>bundle</type>
+                            <specification_file>$base{plugin_directory}/base_bundles/bundles/specifications/formcode_bundle.json</specification_file>
+                        </specification>
+                        <specification>
+                            <type>bundle</type>
                             <specification_file>$base{plugin_directory}/base_bundles/bundles/specifications/garbage_collector_bundle.json</specification_file>
                         </specification>
                         <specification>
@@ -330,10 +335,6 @@
                         <specification>
                             <type>bundle</type>
                             <specification_file>$base{plugin_directory}/base_bundles/bundles/specifications/main_console_bundle.json</specification_file>
-                        </specification>
-                        <specification>
-                            <type>bundle</type>
-                            <specification_file>$base{plugin_directory}/base_bundles/bundles/specifications/main_gui_bundle.json</specification_file>
                         </specification>
                         <specification>
                             <type>bundle</type>
