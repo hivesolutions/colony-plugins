@@ -121,8 +121,8 @@ CAMEL_CASED_WORD_PAIR_REGEX = re.compile(CAMEL_CASED_WORD_PAIR_REGEX_VALUE)
 NON_CHARACTER_REGEX = re.compile(NON_CHARACTER_REGEX_VALUE)
 """ The non-character regex """
 
-DATA_TYPE_CASTING_TYPES_MAP = {"text" : str, "numeric" : int, "integer" : int, "float" : float, "date" : datetime, "relation" : None}
-""" The map associating the data types with the casting types """
+DATA_TYPE_CAST_TYPES_MAP = {"text" : str, "numeric" : int, "integer" : int, "float" : float, "date" : datetime, "relation" : None}
+""" The map associating the data types with the cast types """
 
 def _start_controller(self):
     """
@@ -135,21 +135,20 @@ def _start_controller(self):
         # in the controller
         self.start()
 
-def get_entity_model(self, entity_manager, entity_model, entity_model_id, update_values_map = {}, create_values_map = {}, secure_value_keys_list = None):
+def get_entity_model(self, entity_manager, entity_model, update_values_map = {}, create_values_map = {}, secure_value_keys_list = None):
     """
     Retrieves an entity model instance from the given entity manager
-    for the provided entity model (class) and using the given entity
-    model id.
+    for the provided entity model (class).
     The retrieved entity instance is either a new instance (in case
     no entity is defined for the given id) or an existing instance
     in case it exists in the entity manager.
+    The update and create values map(s) provide a way to automatically
+    set and update the values of the entity.
 
     @type entity_manager: EntityManager
     @param entity_manager: The entity manager to be used.
     @type entity_model: Class
     @param entity_model: The entity model (class) to be retrieved.
-    @type entity_model_id: Object
-    @param entity_model_id: The id of the entity model to be retrieved.
     @type update_values_map: Dictionary
     @param update_values_map: The map of values to be set automatically (on update and created).
     @type create_values_map: Dictionary
@@ -165,10 +164,28 @@ def get_entity_model(self, entity_manager, entity_model, entity_model_id, update
     # unsets the created entity flag
     created_entity = False
 
+    # retrieves the id attribute name (key)
+    id_key = entity_manager.get_entity_class_id_attribute_name(entity_model)
+
+    # tries to retrieves the entity model id
+    entity_model_id = update_values_map.get(id_key, None)
+
     # in case the entity model id is defined
     if entity_model_id:
+        # retrieves the entity model id value
+        entity_model_id_value = getattr(entity_model, id_key)
+
+        # retrieves the entity model id data type
+        entity_model_id_data_type = entity_model_id_value[DATA_TYPE_VALUE]
+
+        # retrieves the cast type for the data type
+        cast_type = DATA_TYPE_CAST_TYPES_MAP[entity_model_id_data_type]
+
+        # casts the entity model is using the safe mode
+        entity_model_id_casted = self._cast_safe(entity_model_id, cast_type, -1)
+
         # retrieves the entity
-        entity = entity_manager.find(entity_model, entity_model_id)
+        entity = entity_manager.find(entity_model, entity_model_id_casted)
 
         # in case the entity is not defined
         if not entity:
@@ -178,9 +195,6 @@ def get_entity_model(self, entity_manager, entity_model, entity_model_id, update
             # creates a new entity from the entity
             # model (creates instance)
             entity = entity_model()
-
-            # retrieves the id attribute name (key)
-            id_key = entity_model.get_id_attribute_name()
 
             # sets the id in the entity
             setattr(entity, id_key, entity_model_id)
@@ -1163,28 +1177,55 @@ def _set_entity_attribute(self, attribute_key, attribute_value, entity, entity_m
     # retrieves the data type from the entity model attribute value
     data_type = entity_model_attribute_value[DATA_TYPE_VALUE]
 
-    # retrieves the casting type for the data type
-    casting_type = DATA_TYPE_CASTING_TYPES_MAP.get(data_type, None)
+    # retrieves the cast type for the data type
+    cast_type = DATA_TYPE_CAST_TYPES_MAP.get(data_type, None)
 
-    # in case no casting type is defined
+    # in case no cast type is defined
     # it's impossible to convert the data
-    if not casting_type:
+    if not cast_type:
         # returns immediately (no set is made)
         return
 
-    # retrieves the attribute value type
-    attribute_value_type = type(attribute_value)
-
-    # in case the attribute value type is the same
-    # as the casting type
-    if attribute_value_type == casting_type:
-        # sets the attribute value as the attribute
-        # value casted
-        attribute_value_casted = attribute_value
-    # otherwise
-    else:
-        # casts the attribute value using the casting type
-        attribute_value_casted = casting_type(attribute_value)
+    # casts the attribute value is using the safe mode
+    attribute_value_casted = self._cast_safe(attribute_value, cast_type)
 
     # sets the attribute value casted in the entity
     setattr(entity, attribute_key, attribute_value_casted)
+
+def _cast_safe(self, value, cast_type = str, default_value = None):
+    """
+    Casts the given value to the given type.
+    The cast is made in safe mode, if an exception
+    occurs the default value is returned.
+
+    @type value: Object
+    @param value: The value to be casted.
+    @type cast_type: Type
+    @param cast_type: The type to be used to cast the retrieved
+    value (this should be a valid type, with constructor).
+    @type default_value: Object
+    @param default_value: The default value to be used
+    when something wrong (exception raised) occurs.
+    @rtype: Object
+    @return: The value casted to the defined type.
+    """
+
+    try:
+        # retrieves the value type
+        value_type = type(value)
+
+        # in case the value type is the same
+        # as the cast type
+        if value_type == type:
+            # sets the value as the value casted
+            value_casted = value
+        # otherwise
+        else:
+            # casts the value using the type
+            value_casted = cast_type(value)
+
+        # returns the value casted
+        return value_casted
+    except:
+        # returns the default value
+        return default_value
