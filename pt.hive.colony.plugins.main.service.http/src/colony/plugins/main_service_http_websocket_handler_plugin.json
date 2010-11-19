@@ -9,7 +9,7 @@
     "version" : "1.0.0",
     "author" : "Hive Solutions Lda. <development@hive.pt>",
     "capabilities" : ["http_service_handler", "build_automation_item"],
-    "capabilities_allowed" : [],
+    "capabilities_allowed" : ["websocket_handler"],
     "dependencies" : [],
     "main_file" : "main_service_http_websocket_handler_plugin.py",
     "resources" : [
