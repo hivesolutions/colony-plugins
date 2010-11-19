@@ -129,6 +129,34 @@ def _start_controller(self):
         # in the controller
         self.start()
 
+def validate_model_exception(self, model, exception_message, error_description = True):
+    """
+    Validates the given model, raising an exception in case
+    the validation fails.
+    The error descriptor controls if the description of the error
+    should include detailed explanation of the validation.
+
+    @type model: Model
+    @param model:The model to be validated.
+    @type exception_message: String
+    @param exception_message: The message to be used when throwing
+    the exception.
+    @type error_description: bool
+    @param error_description: If a detailed explanation of the validation
+    error should be put in the exception description.
+    """
+
+    # validates the model retrieving the result of the validation
+    model_valid = model.validate()
+
+    # raises an exception in case the model is not valid
+    if not model_valid:
+        # retrieves the model validation errors map
+        model_validation_errors_map = model.validation_errors_map
+
+        # raises the model validation error
+        raise web_mvc_utils_exceptions.ModelValidationError(exception_message + ": " + str(model_validation_errors_map))
+
 def send_broadcast_communication_message(self, parameters, connection_name, message):
     """
     Sends a broadcast message to all the clients in the connection

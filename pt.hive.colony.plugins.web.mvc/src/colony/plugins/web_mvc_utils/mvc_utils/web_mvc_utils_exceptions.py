@@ -124,3 +124,35 @@ class InsufficientHttpInformation(WebMvcUtilsExceptionException):
         """
 
         return "Insufficient http information: %s" % self.message
+
+class ModelValidationError(WebMvcUtilsExceptionException):
+    """
+    The model validation rror class.
+    """
+
+    model = None
+    """ The model that failed the validation """
+
+    def __init__(self, message, model):
+        """
+        Constructor of the class.
+
+        @type message: String
+        @param message: The message to be printed.
+        @type model: Model
+        @param model: The model that failed the validation
+        """
+
+        WebMvcUtilsExceptionException.__init__(self)
+        self.message = message
+        self.model = model
+
+    def __str__(self):
+        """
+        Returns the string representation of the class.
+
+        @rtype: String
+        @return: The string representation of the class.
+        """
+
+        return "Model validation error: %s" % self.message
