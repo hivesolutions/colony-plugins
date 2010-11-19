@@ -94,7 +94,7 @@ DASH_VALUE = "-"
 UNDERSCORE_VALUE = "_"
 """ The underscore value """
 
-ATTRIBUTE_PARSING_REGEX_VALUE = r"(?P<name>\w+)|(?P<sequence>\[\])|(?P<map>\[\w+\])"
+ATTRIBUTE_PARSING_REGEX_VALUE = "(?P<name>[\w]+)|(?P<sequence>\[\])|(?P<map>\[\w+\])"
 """ The attribute parsing regular expression value """
 
 CAPITALIZED_CAMEL_CASED_WORD_PAIR_REGEX_VALUE = "([A-Z]+)([A-Z][a-z])"
@@ -206,6 +206,12 @@ def process_form_data(self, rest_request, encoding = DEFAULT_ENCODING):
     # iterates over all the attributes in the
     # attributes list
     for attribute in attributes_list:
+        # in case the attribute is invalid
+        # or empty (skips the loop)
+        if not attribute:
+            # continues the loop
+            continue
+
         # retrieves the attribute value from the request
         attribute_value = self.get_attribute_decoded(rest_request, attribute, encoding)
 
