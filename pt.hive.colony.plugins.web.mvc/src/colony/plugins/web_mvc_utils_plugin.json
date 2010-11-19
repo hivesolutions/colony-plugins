@@ -29,6 +29,7 @@
             "web_mvc_utils/mvc_utils/web_mvc_controller.py",
             "web_mvc_utils/mvc_utils/web_mvc_entity_model.py",
             "web_mvc_utils/mvc_utils/web_mvc_model.py",
+            "web_mvc_utils/mvc_utils/web_mvc_utils.py",
             "web_mvc_utils/mvc_utils/web_mvc_utils_exceptions.py",
             "web_mvc_utils/mvc_utils/web_mvc_utils_system.py",
             "web_mvc_utils/mvc_utils/resources/baf.xml"]

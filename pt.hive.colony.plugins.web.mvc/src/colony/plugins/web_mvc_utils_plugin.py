@@ -69,6 +69,7 @@ class WebMvcUtilsPlugin(colony.base.plugin_system.Plugin):
     main_modules = ["web_mvc_utils.mvc_utils.web_mvc_controller",
                     "web_mvc_utils.mvc_utils.web_mvc_entity_model",
                     "web_mvc_utils.mvc_utils.web_mvc_model",
+                    "web_mvc_utils.mvc_utils.web_mvc_utils",
                     "web_mvc_utils.mvc_utils.web_mvc_utils_exceptions",
                     "web_mvc_utils.mvc_utils.web_mvc_utils_system"]
 
