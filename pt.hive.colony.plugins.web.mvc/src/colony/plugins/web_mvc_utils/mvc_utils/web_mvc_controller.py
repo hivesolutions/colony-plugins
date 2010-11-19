@@ -158,9 +158,6 @@ def get_entity_model(self, entity_manager, entity_model, entity_model_id, update
     @return: The retrieved entity model.
     """
 
-    # retrieves the id attribute name (key)
-    id_key = entity_model.get_id_attribute_name()
-
     # unsets the created entity flag
     created_entity = False
 
@@ -177,6 +174,9 @@ def get_entity_model(self, entity_manager, entity_model, entity_model_id, update
             # creates a new entity from the entity
             # model (creates instance)
             entity = entity_model()
+
+            # retrieves the id attribute name (key)
+            id_key = entity_model.get_id_attribute_name()
 
             # sets the id in the entity
             setattr(entity, id_key, entity_model_id)
