@@ -155,7 +155,7 @@ def validate_model_exception(self, model, exception_message, error_description =
         model_validation_errors_map = model.validation_errors_map
 
         # raises the model validation error
-        raise web_mvc_utils_exceptions.ModelValidationError(exception_message + ": " + str(model_validation_errors_map))
+        raise web_mvc_utils_exceptions.ModelValidationError(exception_message + ": " + str(model_validation_errors_map), model)
 
 def send_broadcast_communication_message(self, parameters, connection_name, message):
     """
