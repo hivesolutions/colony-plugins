@@ -176,22 +176,25 @@ def get_entity_model(self, entity_manager, entity_model, entity_model_id, update
     # iterates over all the update values items
     for update_value_key, update_value_value in update_values_map.items():
         # sets the update value in the entity
-        self._set_composite_attribute(update_value_key, update_value_value, entity, entity_model)
+        self._set_update_attribute(update_value_key, update_value_value, entity, entity_model)
 
     # returns the entity
     return entity
 
-def _set_composite_attribute(self, attribute_key, attribute_value, entity, entity_model):
-    _attribute_value = getattr(entity_model, attribute_key)
+def _set_update_attribute(self, attribute_key, attribute_value, entity, entity_model):
+    # retrieves the entity model attribute value
+    entity_model_attribute_value = getattr(entity_model, attribute_key)
 
-    data_type = _attribute_value["data_type"]
+    # retrieves the data type from the entity model attribute value
+    data_type = entity_model_attribute_value["data_type"]
 
-    MAPPING_TYPES = {"text" : str,
-                     "numeric" : float,
-                     "date" : datetime,
-                     "relation" : None}
+    DATE_TYPE_CASTING_TYPES = {"text" : str,
+                               "numeric" : float,
+                               "date" : datetime,
+                               "relation" : None}
 
-    casting_type = MAPPING_TYPES.get(data_type, None)
+    # retrieves the casting type for the data type
+    casting_type = DATE_TYPE_CASTING_TYPES.get(data_type, None)
 
     # in case no casting type is defined
     # it's impossible to convert the data
@@ -199,11 +202,18 @@ def _set_composite_attribute(self, attribute_key, attribute_value, entity, entit
         # continues the loop
         continue
 
+    # retrieves the attribute value type
     attribute_value_type = type(attribute_value)
 
+    # in case the attribute value type is the same
+    # as the casting type
     if attribute_value_type == casting_type:
+        # sets the attribute value as the attribute
+        # value casted
         attribute_value_casted = attribute_value
+    # otherwise
     else:
+        # casts the attribute value using the casting type
         attribute_value_casted = casting_type(attribute_value)
 
     # sets the attribute value casted in the entity
