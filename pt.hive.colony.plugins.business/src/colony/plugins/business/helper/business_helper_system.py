@@ -421,7 +421,7 @@ class EntityClass(object):
 
     def __init__(self):
         """
-        Constructor fo the class.
+        Constructor of the class.
         """
 
         pass
