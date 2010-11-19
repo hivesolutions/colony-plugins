@@ -39,7 +39,7 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 import colony.base.plugin_system
 
-class FormDataEncodingPlugin(colony.base.plugin_system.Plugin):
+class FormcodePlugin(colony.base.plugin_system.Plugin):
     """
     The main class for the Formcode plugin.
     """
