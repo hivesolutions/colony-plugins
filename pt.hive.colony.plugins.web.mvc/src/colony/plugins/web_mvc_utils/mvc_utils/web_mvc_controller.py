@@ -1159,7 +1159,7 @@ def _set_entity_attribute(self, attribute_key, attribute_value, entity, entity_m
     # it's impossible to convert the data
     if not casting_type:
         # continues the loop
-        continue
+        return
 
     # retrieves the attribute value type
     attribute_value_type = type(attribute_value)
