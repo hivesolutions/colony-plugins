@@ -1173,7 +1173,7 @@ def _set_entity_attribute(self, attribute_key, attribute_value, entity, entity_m
     # in case no casting type is defined
     # it's impossible to convert the data
     if not casting_type:
-        # continues the loop
+        # returns immediately (no set is made)
         return
 
     # retrieves the attribute value type
