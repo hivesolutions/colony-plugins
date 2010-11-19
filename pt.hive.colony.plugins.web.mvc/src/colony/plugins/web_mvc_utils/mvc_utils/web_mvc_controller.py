@@ -129,7 +129,7 @@ def _start_controller(self):
         # in the controller
         self.start()
 
-def get_entity_model(self, entity_manager, entity_model, entity_model_id, create_values_map = {}, update_values_map = {}):
+def get_entity_model(self, entity_manager, entity_model, entity_model_id, update_values_map = {}):
     """
     Retrieves an entity model instance from the given entity manager
     for the provided entity model (class) and using the given entity
@@ -144,19 +144,14 @@ def get_entity_model(self, entity_manager, entity_model, entity_model_id, create
     @param entity_model: The entity model (class) to be retrieved.
     @type entity_model_id: Object
     @param entity_model_id: The id of the entity model to be retrieved.
-    @type create_values_map: Dictionary
-    @param create_values_map: The map of values to be set in case of creation.
     @type update_values_map: Dictionary
-    @param update_values_map: The map of values to be set in case of update.
+    @param update_values_map: The map of values to be set automatically.
     @rtype: EntityModel
     @return: The retrieved entity model.
     """
 
     # retrieves the id attribute name (key)
     id_key = entity_model.get_id_attribute_name()
-
-    # unsets the create entity model flag
-    create_entity_model = False
 
     # in case the entity model id is defined
     if entity_model_id:
@@ -165,9 +160,6 @@ def get_entity_model(self, entity_manager, entity_model, entity_model_id, create
 
         # in case the entity is not defined
         if not entity:
-            # sets the create entity model flag
-            create_entity_model = True
-
             # creates a new entity from the entity
             # model (creates instance)
             entity = entity_model()
@@ -177,25 +169,14 @@ def get_entity_model(self, entity_manager, entity_model, entity_model_id, create
     # otherwise a new entity should be
     # created
     else:
-        # sets the create entity model flag
-        create_entity_model = True
-
         # creates a new entity from the entity
         # model
         entity = entity_model()
 
-    # in case the create entity model flag is set
-    if create_entity_model:
-        # iterates over all the create values items
-        for create_value_key, create_value_value in create_values_map.items():
-            # sets the create value in the entity
-            self._set_composite_attribute(create_value_key, create_value_value, entity, entity_model)
-    # otherwise the entity is meant to be updated
-    else:
-        # iterates over all the update values items
-        for update_value_key, update_value_value in update_values_map.items():
-            # sets the update value in the entity
-            self._set_composite_attribute(update_value_key, update_value_value, entity, entity_model)
+    # iterates over all the update values items
+    for update_value_key, update_value_value in update_values_map.items():
+        # sets the update value in the entity
+        self._set_composite_attribute(update_value_key, update_value_value, entity, entity_model)
 
     # returns the entity
     return entity
