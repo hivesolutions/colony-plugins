@@ -135,7 +135,7 @@ def _start_controller(self):
         # in the controller
         self.start()
 
-def get_entity_model(self, entity_manager, entity_model, entity_model_id, update_values_map = {}, create_values_map = {}):
+def get_entity_model(self, entity_manager, entity_model, entity_model_id, update_values_map = {}, create_values_map = {}, secure_value_keys_list = None):
     """
     Retrieves an entity model instance from the given entity manager
     for the provided entity model (class) and using the given entity
@@ -154,9 +154,17 @@ def get_entity_model(self, entity_manager, entity_model, entity_model_id, update
     @param update_values_map: The map of values to be set automatically (on update and created).
     @type create_values_map: Dictionary
     @param create_values_map: The map of values to be set on creation.
+    @type secure_value_keys_list: List
+    @param secure_value_keys_list: The list of value keys that may be used
+    while setting the values automatically (update), use this list to control the
+    access to the values.
     @rtype: EntityModel
     @return: The retrieved entity model.
     """
+
+    # sets the secure value keys list value, in case no secure value
+    # key list is set the update values map keys is used
+    secure_value_keys_list = secure_value_keys_list == None and update_values_map.keys() or secure_value_keys_list
 
     # unsets the created entity flag
     created_entity = False
@@ -199,6 +207,12 @@ def get_entity_model(self, entity_manager, entity_model, entity_model_id, update
 
     # iterates over all the update values items
     for update_value_key, update_value_value in update_values_map.items():
+        # in case the update value key does not
+        # exist in the secure value keys list
+        if not update_value_key in secure_value_keys_list:
+            # continues the loop
+            continue
+
         # sets the update value in the entity
         self._set_entity_attribute(update_value_key, update_value_value, entity, entity_model)
 
@@ -253,6 +267,7 @@ def send_broadcast_communication_message(self, parameters, connection_name, mess
 
     # in case there is no communication handler defined
     if not communication_handler:
+        # returns immediately
         return
 
     # sends the broadcast communication message using the communication handler
