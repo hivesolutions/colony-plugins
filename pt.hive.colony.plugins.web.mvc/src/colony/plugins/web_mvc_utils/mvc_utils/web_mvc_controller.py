@@ -70,6 +70,9 @@ BASE_PATH_VALUE = "base_path"
 BACK_PATH_VALUE = "../"
 """ The back path value """
 
+DATA_TYPE_VALUE = "data_type"
+""" The data type value """
+
 NAME_TYPE_VALUE = "name"
 """ The name type value """
 
@@ -118,6 +121,9 @@ CAMEL_CASED_WORD_PAIR_REGEX = re.compile(CAMEL_CASED_WORD_PAIR_REGEX_VALUE)
 NON_CHARACTER_REGEX = re.compile(NON_CHARACTER_REGEX_VALUE)
 """ The non-character regex """
 
+DATA_TYPE_CASTING_TYPES_MAP = {"text" : str, "numeric" : float, "date" : datetime, "relation" : None}
+""" The map associating the data types with the casting types """
+
 def _start_controller(self):
     """
     Starts the controller structures.
@@ -129,7 +135,7 @@ def _start_controller(self):
         # in the controller
         self.start()
 
-def get_entity_model(self, entity_manager, entity_model, entity_model_id, update_values_map = {}):
+def get_entity_model(self, entity_manager, entity_model, entity_model_id, update_values_map = {}, create_values_map = {}):
     """
     Retrieves an entity model instance from the given entity manager
     for the provided entity model (class) and using the given entity
@@ -145,13 +151,18 @@ def get_entity_model(self, entity_manager, entity_model, entity_model_id, update
     @type entity_model_id: Object
     @param entity_model_id: The id of the entity model to be retrieved.
     @type update_values_map: Dictionary
-    @param update_values_map: The map of values to be set automatically.
+    @param update_values_map: The map of values to be set automatically (on update and created).
+    @type create_values_map: Dictionary
+    @param create_values_map: The map of values to be set on creation.
     @rtype: EntityModel
     @return: The retrieved entity model.
     """
 
     # retrieves the id attribute name (key)
     id_key = entity_model.get_id_attribute_name()
+
+    # unsets the created entity flag
+    created_entity = False
 
     # in case the entity model id is defined
     if entity_model_id:
@@ -160,6 +171,9 @@ def get_entity_model(self, entity_manager, entity_model, entity_model_id, update
 
         # in case the entity is not defined
         if not entity:
+            # sets the created entity flag
+            created_entity = True
+
             # creates a new entity from the entity
             # model (creates instance)
             entity = entity_model()
@@ -169,55 +183,27 @@ def get_entity_model(self, entity_manager, entity_model, entity_model_id, update
     # otherwise a new entity should be
     # created
     else:
+        # sets the created entity flag
+        created_entity = True
+
         # creates a new entity from the entity
         # model
         entity = entity_model()
 
+    # in case the entity was created
+    if created_entity:
+        # iterates over all the create values items
+        for create_value_key, create_value_value in create_values_map.items():
+            # sets the create value in the entity
+            self._set_entity_attribute(create_value_key, create_value_value, entity, entity_model)
+
     # iterates over all the update values items
     for update_value_key, update_value_value in update_values_map.items():
         # sets the update value in the entity
-        self._set_update_attribute(update_value_key, update_value_value, entity, entity_model)
+        self._set_entity_attribute(update_value_key, update_value_value, entity, entity_model)
 
     # returns the entity
     return entity
-
-def _set_update_attribute(self, attribute_key, attribute_value, entity, entity_model):
-    # retrieves the entity model attribute value
-    entity_model_attribute_value = getattr(entity_model, attribute_key)
-
-    # retrieves the data type from the entity model attribute value
-    data_type = entity_model_attribute_value["data_type"]
-
-    DATE_TYPE_CASTING_TYPES = {"text" : str,
-                               "numeric" : float,
-                               "date" : datetime,
-                               "relation" : None}
-
-    # retrieves the casting type for the data type
-    casting_type = DATE_TYPE_CASTING_TYPES.get(data_type, None)
-
-    # in case no casting type is defined
-    # it's impossible to convert the data
-    if not casting_type:
-        # continues the loop
-        continue
-
-    # retrieves the attribute value type
-    attribute_value_type = type(attribute_value)
-
-    # in case the attribute value type is the same
-    # as the casting type
-    if attribute_value_type == casting_type:
-        # sets the attribute value as the attribute
-        # value casted
-        attribute_value_casted = attribute_value
-    # otherwise
-    else:
-        # casts the attribute value using the casting type
-        attribute_value_casted = casting_type(attribute_value)
-
-    # sets the attribute value casted in the entity
-    setattr(entity, attribute_key, attribute_value_casted)
 
 def validate_model_exception(self, model, exception_message, error_description = True):
     """
@@ -1142,3 +1128,52 @@ def _get_complete_session_attribute_name(session_attribute_name, namespace_name)
 
     # returns the complete session attribute name
     return complete_session_attribute_name
+
+def _set_entity_attribute(self, attribute_key, attribute_value, entity, entity_model):
+    """
+    Sets the given entity attribute for the given attribute key and value.
+    The entity to set the attribute is the instance of the entity model
+    also sent.
+
+    @type attribute_key: String
+    @param attribute_key: The attribute key in the entity.
+    @type attribute_value: Object
+    @param attribute_value: The value of the attribute to set.
+    @type entity: EntityModel
+    @param entity: The entity to have the attribute set.
+    @type entity_model: Class
+    @param entity_model: The entity model of the entity to have
+    the attribute set.
+    """
+
+    # retrieves the entity model attribute value
+    entity_model_attribute_value = getattr(entity_model, attribute_key)
+
+    # retrieves the data type from the entity model attribute value
+    data_type = entity_model_attribute_value[DATA_TYPE_VALUE]
+
+    # retrieves the casting type for the data type
+    casting_type = DATA_TYPE_CASTING_TYPES_MAP.get(data_type, None)
+
+    # in case no casting type is defined
+    # it's impossible to convert the data
+    if not casting_type:
+        # continues the loop
+        continue
+
+    # retrieves the attribute value type
+    attribute_value_type = type(attribute_value)
+
+    # in case the attribute value type is the same
+    # as the casting type
+    if attribute_value_type == casting_type:
+        # sets the attribute value as the attribute
+        # value casted
+        attribute_value_casted = attribute_value
+    # otherwise
+    else:
+        # casts the attribute value using the casting type
+        attribute_value_casted = casting_type(attribute_value)
+
+    # sets the attribute value casted in the entity
+    setattr(entity, attribute_key, attribute_value_casted)
