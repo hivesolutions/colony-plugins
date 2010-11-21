@@ -53,12 +53,6 @@ POST_METHOD_VALUE = "POST"
 CONTENT_TYPE_CHARSET_VALUE = "content_type_charset"
 """ The content type charset value """
 
-JSON_FORMAT_VALUE = "json"
-""" The json format value """
-
-DEFAULT_FORMAT_VALUE = JSON_FORMAT_VALUE
-""" The default format value """
-
 DEFAULT_API_VERSION = "1.0"
 """ The default easypay api version """
 
@@ -99,14 +93,11 @@ class ServiceEasypay:
         # retrieves the main client http plugin
         main_client_http_plugin = self.service_easypay_plugin.main_client_http_plugin
 
-        # retrieves the json plugin
-        json_plugin = self.service_easypay_plugin.json_plugin
-
         # retrieves the easypay structure (if available)
         easypay_structure = service_attributes.get("easypay_structure", None)
 
         # creates a new easypay client with the given options
-        easypay_client = EasypayClient(json_plugin, main_client_http_plugin, easypay_structure)
+        easypay_client = EasypayClient(main_client_http_plugin, easypay_structure)
 
         # returns the easypay client
         return easypay_client
@@ -115,9 +106,6 @@ class EasypayClient:
     """
     The class that represents a easypay client connection.
     """
-
-    json_plugin = None
-    """ The json plugin """
 
     main_client_http_plugin = None
     """ The main client http plugin """
@@ -128,19 +116,16 @@ class EasypayClient:
     http_client = None
     """ The http client for the connection """
 
-    def __init__(self, json_plugin = None, main_client_http_plugin = None, easypay_structure = None):
+    def __init__(self, main_client_http_plugin = None, easypay_structure = None):
         """
         Constructor of the class.
 
-        @type json_plugin: JsonPlugin
-        @param json_plugin: The json plugin.
         @type main_client_http_plugin: MainClientHttpPlugin
         @param main_client_http_plugin: The main client http plugin.
         @type easypay_structure: EasypayStructure
         @param easypay_structure: The easypay structure.
         """
 
-        self.json_plugin = json_plugin
         self.main_client_http_plugin = main_client_http_plugin
         self.easypay_structure = easypay_structure
 
@@ -161,17 +146,20 @@ class EasypayClient:
             # closes the http client
             self.http_client.close({})
 
-    def generate_easypay_structure(self, consumer_key, consumer_secret, next, api_version = DEFAULT_API_VERSION, set_structure = True):
+    def generate_easypay_structure(self, username, cin, country, language, api_version = DEFAULT_API_VERSION, set_structure = True):
         """
         Generates the easypay structure for the given arguments.
 
-        @type consumer_key: String
-        @param consumer_key: The consumer key.
-        @type consumer_secret: String
-        @param consumer_secret: The consumer secret.
-        @type next: String
-        @param next: The next value from which the easypay request
-        will be redirecting.
+        @type username: String
+        @param username: The username.
+        @type cin: String
+        @param cin: The cin.
+        @type country: String
+        @param country: The two letter string representing the
+        country to be used.
+        @type language: String
+        @param language: The two letter string representing the
+        language to be used.
         @type api_version: String
         @param api_version: The version of the api being used.
         @type set_structure: bool
@@ -182,7 +170,7 @@ class EasypayClient:
         """
 
         # creates a new easypay structure
-        easypay_structure = EasypayStructure(consumer_key, consumer_secret, next, api_version)
+        easypay_structure = EasypayStructure(username, cin, country, language, api_version)
 
         # in case the structure is meant to be set
         if set_structure:
@@ -218,7 +206,7 @@ class EasypayClient:
         parameters["ep_country"] = self.easypay_structure.country
 
         # sets the language
-        parameters["ep_language"] = self.easypay_structure.langauge
+        parameters["ep_language"] = self.easypay_structure.language
 
         # in case the name is set
         if name:
@@ -388,7 +376,7 @@ class EasypayClient:
         status = data["status"]
 
         # retrieves the message value
-        message = data["status"]
+        message = data["message"]
 
         # in case the status does not start with error
         if not status.startswith("err"):
@@ -417,6 +405,38 @@ class EasypayClient:
 
         # returns the http client
         return self.http_client
+
+    def get_xml_node_text(self, xml_document, xml_tag_name):
+        # retrieves the xml nodes
+        xml_nodes = xml_document.getElementsByTagName(xml_tag_name)
+
+        # in case the retrieved xml
+        # nodes are empty
+        if not xml_nodes:
+            # returns invalid
+            return None
+
+        # retrieves the xml node (first)
+        xml_node = xml_nodes[0]
+
+        # retrieves the xml node text
+        xml_node_text = self._get_xml_node_text(xml_node)
+
+        # returns the xml node text
+        return xml_node_text
+
+    def _get_xml_node_text(self, xml_node):
+        # retrieves the child nodes
+        child_nodes = xml_node.childNodes
+
+        # collects the child text nodes
+        child_node_data_list = [child_node.data for child_node in child_nodes if child_node.nodeType == child_node.TEXT_NODE]
+
+        # converts the child text nodes to a string
+        xml_node_text = "".join(child_node_data_list)
+
+        # returns the xml node text
+        return xml_node_text
 
 class EasypayStructure:
     """
