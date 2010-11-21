@@ -558,7 +558,7 @@ class FacebookClient:
         # retrieves the error message
         error_message = data.get("error_msg", None)
 
-        # raises the facebook pi error
+        # raises the facebook api error
         raise service_facebook_exceptions.FacebookApiError("error in request: " + error_message)
 
     def _get_http_client(self):
