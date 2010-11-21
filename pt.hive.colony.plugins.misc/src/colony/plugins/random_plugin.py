@@ -88,28 +88,121 @@ class RandomPlugin(colony.base.plugin_system.Plugin):
         colony.base.plugin_system.Plugin.dependency_injected(self, plugin)
 
     def generate_random(self):
+        """
+        Generates a random string for cryptographic
+        usage (because of its entropy).
+        The string is creating using a random number generator,
+        the current process id, thread id, the current time
+        and a secret key.
+
+        @rtype: String
+        @return: The generated random string for cryptographic
+        usage (with high entropy).
+        """
+
         return self.random.generate_random()
 
     def generate_random_int(self):
+        """
+        Generates a random key, using the current
+        default random generator and converts it
+        into an integer.
+
+        @rtype: int
+        @return: The generated random key converted
+        into integer.
+        """
+
         return self.random.generate_random_int()
 
     def generate_random_value(self):
+        """
+        Generates a random value, using a key generated
+        using the default random generator.
+        This value is considered to be more "random" than
+        using the default random generator because it uses
+        a system with more entropy.
+
+        @rtype: float
+        @return: The generated random value (with high entropy).
+        """
+
         return self.random.generate_random_value()
 
     def generate_random_md5(self):
+        """
+        Generates a random key, using the current
+        default random generator and converts it
+        into an md5 value.
+
+        @rtype: Md5
+        @return: The generated random key converted
+        into an md5 value.
+        """
+
         return self.random.generate_random_md5()
 
     def generate_random_md5_string(self):
+        """
+        Generates a random key, using the current
+        default random generator and converts it
+        into an md5 string value.
+
+        @rtype: String
+        @return: The generated random key converted
+        into an md5 string value.
+        """
+
         return self.random.generate_random_md5_string()
 
     def generate_random_sha1(self):
+        """
+        Generates a random key, using the current
+        default random generator and converts it
+        into an sha1 value.
+
+        @rtype: Sha1
+        @return: The generated random key converted
+        into an sha1 value.
+        """
+
         return self.random.generate_random_sha1()
 
     def generate_random_sha1_string(self):
+        """
+        Generates a random key, using the current
+        default random generator and converts it
+        into an sha1 string value.
+
+        @rtype: String
+        @return: The generated random key converted
+        into an sha1 string value.
+        """
+
         return self.random.generate_random_sha1_string()
 
     def generate_random_sha256(self):
+        """
+        Generates a random key, using the current
+        default random generator and converts it
+        into an sha256 value.
+
+        @rtype: Sha256
+        @return: The generated random key converted
+        into an sha256 value.
+        """
+
         return self.random.generate_random_sha256()
 
     def generate_random_sha256_string(self):
+        """
+        Generates a random key, using the current
+        default random generator and converts it
+        into an sha256 string value.
+
+        @rtype: String
+        @return: The generated random key converted
+        into an sha256 string value.
+        """
+
         return self.random.generate_random_sha256_string()

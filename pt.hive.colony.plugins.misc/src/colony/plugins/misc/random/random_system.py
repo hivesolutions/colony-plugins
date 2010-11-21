@@ -40,16 +40,20 @@ __license__ = "GNU General Public License (GPL), Version 3"
 import os
 import time
 import random
+import thread
 import hashlib
 
 TIME_FACTOR = 1000
 """ The time factor """
 
-MAXIMUM_SESSION_KEY = 18446744073709551616L
-""" The maximum session key"""
+MAXIMUM_KEY = 18446744073709551616L
+""" The maximum key"""
 
 SECRET_KEY = 123123123L
 """ The pseudo secret key """
+
+SYSTEM_RANDOM_VALUE = "SystemRandom"
+""" The system random value """
 
 class Random:
     """
@@ -58,6 +62,9 @@ class Random:
 
     random_plugin = None
     """ The random plugin """
+
+    randrange = random.randrange
+    """ The rand range method to be used """
 
     def __init__(self, random_plugin):
         """
@@ -73,8 +80,26 @@ class Random:
         self.process_randrange()
 
     def generate_random(self):
+        """
+        Generates a random string for cryptographic
+        usage (because of its entropy).
+        The string is creating using a random number generator,
+        the current process id, thread id, the current time
+        and a secret key.
+
+        @rtype: String
+        @return: The generated random string for cryptographic
+        usage (with high entropy).
+        """
+
+        # generates a random key
+        random_key = self.randrange(0, MAXIMUM_KEY)
+
         # retrieves the process id
         process_id = os.getpid()
+
+        # retrieves the thread id
+        thread_id = thread.get_ident()
 
         # retrieves the current time
         current_time = time.time()
@@ -83,12 +108,22 @@ class Random:
         current_time_integer = int(current_time * TIME_FACTOR)
 
         # creates the random value
-        random = "%s%s%s%s"  % ((self.randrange(0, MAXIMUM_SESSION_KEY), process_id, current_time_integer, SECRET_KEY))
+        random = "%s%s%s%s%s"  % (random_key, process_id, thread_id, current_time_integer, SECRET_KEY)
 
         # returns the random value
         return random
 
     def generate_random_int(self):
+        """
+        Generates a random key, using the current
+        default random generator and converts it
+        into an integer.
+
+        @rtype: int
+        @return: The generated random key converted
+        into integer.
+        """
+
         # generates a random value
         random = self.generate_random()
 
@@ -99,6 +134,17 @@ class Random:
         return random_int
 
     def generate_random_value(self):
+        """
+        Generates a random value, using a key generated
+        using the default random generator.
+        This value is considered to be more "random" than
+        using the default random generator because it uses
+        a system with more entropy.
+
+        @rtype: float
+        @return: The generated random value (with high entropy).
+        """
+
         # generates a random int value
         random_int = self.generate_random_int()
 
@@ -112,6 +158,16 @@ class Random:
         return random_value
 
     def generate_random_md5(self):
+        """
+        Generates a random key, using the current
+        default random generator and converts it
+        into an md5 value.
+
+        @rtype: Md5
+        @return: The generated random key converted
+        into an md5 value.
+        """
+
         # generates a random value
         random = self.generate_random()
 
@@ -122,6 +178,16 @@ class Random:
         return random_md5
 
     def generate_random_md5_string(self):
+        """
+        Generates a random key, using the current
+        default random generator and converts it
+        into an md5 string value.
+
+        @rtype: String
+        @return: The generated random key converted
+        into an md5 string value.
+        """
+
         # generates the md5 hash of a random value
         random_md5 = self.generate_random_md5()
 
@@ -133,6 +199,16 @@ class Random:
         return random_md5_string
 
     def generate_random_sha1(self):
+        """
+        Generates a random key, using the current
+        default random generator and converts it
+        into an sha1 value.
+
+        @rtype: Sha1
+        @return: The generated random key converted
+        into an sha1 value.
+        """
+
         # generates a random value
         random = self.generate_random()
 
@@ -143,6 +219,16 @@ class Random:
         return random_sha1
 
     def generate_random_sha1_string(self):
+        """
+        Generates a random key, using the current
+        default random generator and converts it
+        into an sha1 string value.
+
+        @rtype: String
+        @return: The generated random key converted
+        into an sha1 string value.
+        """
+
         # generates the sha1 hash of a random value
         random_sha1 = self.generate_random_sha1()
 
@@ -154,6 +240,16 @@ class Random:
         return random_sha1_string
 
     def generate_random_sha256(self):
+        """
+        Generates a random key, using the current
+        default random generator and converts it
+        into an sha256 value.
+
+        @rtype: Sha256
+        @return: The generated random key converted
+        into an sha256 value.
+        """
+
         # generates a random value
         random = self.generate_random()
 
@@ -164,6 +260,16 @@ class Random:
         return random_sha256
 
     def generate_random_sha256_string(self):
+        """
+        Generates a random key, using the current
+        default random generator and converts it
+        into an sha256 string value.
+
+        @rtype: String
+        @return: The generated random key converted
+        into an sha256 string value.
+        """
+
         # generates the sha256 hash of a random value
         random_sha256 = self.generate_random_sha256()
 
@@ -175,7 +281,19 @@ class Random:
         return random_sha256_string
 
     def process_randrange(self):
-        if hasattr(random, "SystemRandom"):
-            self.randrange = random.SystemRandom().randrange
+        """
+        Processes the current rand range method
+        setting the best possible one.
+        """
+
+        # in case the system random is defined
+        if hasattr(random, SYSTEM_RANDOM_VALUE):
+            # creates a "new" system random
+            system_random = random.SystemRandom()
+
+            # sets the random range method
+            self.randrange = system_random.randrange
+        # otherwise
         else:
+            # sets the random range method (default one)
             self.randrange = random.randrange
