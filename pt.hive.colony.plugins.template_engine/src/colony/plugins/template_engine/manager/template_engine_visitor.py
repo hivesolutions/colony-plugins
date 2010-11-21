@@ -93,6 +93,41 @@ START_INDEX_VALUE = "start_index"
 XML_ESCAPE_VALUE = "xml_escape"
 """ The xml escape value """
 
+ELSE_VALUE = "else"
+""" The else value """
+
+ELIF_VALUE = "elif"
+""" The elif value """
+
+NONE_VALUE = "None"
+""" The none value """
+
+ITER_VALUE = "__iter__"
+""" The iter value """
+
+PROCESS_METHOD_PREFIX = "process_"
+""" The process method prefix """
+
+DEFAULT_YEAR_FORMAT = "%Y"
+""" The default year format """
+
+DEFAULT_DATE_FORMAT = "%d/%m/%y"
+""" The default date format """
+
+DEFAULT_TIME_FORMAT = "%H:%M:%S"
+""" The default time format """
+
+DEFAULT_DATE_TIME_FORMAT = "%d/%m/%y %H:%M:%S"
+""" The default date time format """
+
+COMPARISION_FUNCTIONS = {"eq" : lambda attribute_item, attribute_value: attribute_item == attribute_value,
+                         "neq" : lambda attribute_item, attribute_value: not attribute_item == attribute_value,
+                         "gte" : lambda attribute_item, attribute_value: attribute_item >= attribute_value,
+                         "gt" : lambda attribute_item, attribute_value: attribute_item > attribute_value,
+                         "lte" : lambda attribute_item, attribute_value: attribute_item <= attribute_value,
+                         "lte" : lambda attribute_item, attribute_value: attribute_item < attribute_value}
+""" The map containing the comparison functions (lambda) """
+
 def _visit(ast_node_class):
     """
     Decorator for the visit of an ast node.
@@ -424,7 +459,11 @@ class Visitor:
         pass
 
     def process_accept(self, node, name):
-        getattr(self, "process_" + name)(node)
+        # retrieves the process method for the name
+        process_method = getattr(self, PROCESS_METHOD_PREFIX + name)
+
+        # calls the process method with the node
+        process_method(node)
 
     def process_out(self, node):
         """
@@ -434,19 +473,28 @@ class Visitor:
         @param node: The single node to be processed as out.
         """
 
+        # retrieves the attributes map
         attributes_map = node.get_attributes_map()
+
+        # retrieves the attributes map values
         attribute_value = attributes_map[VALUE_VALUE]
         attribute_value_value = self.get_value(attribute_value)
 
+        # in case the format exists in the attributes map
         if FORMAT_VALUE in attributes_map:
+            # retrieves attribute value value
             format_string = attributes_map[FORMAT_VALUE]
             format_string_value = self.get_value(format_string)
             attribute_value_value = format_string_value % attribute_value_value
 
+        # in case the xml escape exists in the attributes map
         if XML_ESCAPE_VALUE in attributes_map:
+            # retrieves the attribute xml escape value
             attribute_xml_escape = attributes_map[XML_ESCAPE_VALUE]
             attribute_xml_escape_value = self.get_boolean_value(attribute_xml_escape)
+        # otherwise
         else:
+            # unsets the attribute xml escape value
             attribute_xml_escape_value = False
 
         # in case the variable encoding is defined
@@ -457,7 +505,9 @@ class Visitor:
             # converts the value into unicode (in case it's necessary)
             attribute_value_value = unicode(attribute_value_value)
 
+        # in case the attribute xml escape value is set
         if attribute_xml_escape_value:
+            # escapes the attribute value value using xml escaping
             attribute_value_value = xml.sax.saxutils.escape(attribute_value_value)
 
         # writes the attribute value value to the string buffer
@@ -471,19 +521,28 @@ class Visitor:
         @param node: The single node to be processed as out none.
         """
 
+        # retrieves the attributes map
         attributes_map = node.get_attributes_map()
+
+        # retrieves the attributes map values
         attribute_value = attributes_map[VALUE_VALUE]
         attribute_value_value = self.get_value(attribute_value)
 
+        # in case the format exists in the attributes map
         if FORMAT_VALUE in attributes_map:
+            # retrieves attribute value value
             format_string = attributes_map[FORMAT_VALUE]
             format_string_value = self.get_value(format_string)
             attribute_value_value = format_string_value % attribute_value_value
 
+        # in case the xml escape exists in the attributes map
         if XML_ESCAPE_VALUE in attributes_map:
+            # retrieves attribute xml escape value
             attribute_xml_escape = attributes_map[XML_ESCAPE_VALUE]
             attribute_xml_escape_value = self.get_boolean_value(attribute_xml_escape)
+        # otherwise
         else:
+            # unsets the attribute xml escape value
             attribute_xml_escape_value = False
 
         if not attribute_value_value == None:
@@ -508,12 +567,16 @@ class Visitor:
         @param node: The single node to be processed as var.
         """
 
+        # retrieves the attributes map
         attributes_map = node.get_attributes_map()
+
+        # retrieves the attributes map values
         attribute_item = attributes_map[ITEM_VALUE]
         attribute_item_literal_value = self.get_literal_value(attribute_item)
         attribute_value = attributes_map[VALUE_VALUE]
         attribute_value_value = self.get_value(attribute_value)
 
+        # sets the attribute value value in the global map
         self.global_map[attribute_item_literal_value] = attribute_value_value
 
     def process_foreach(self, node):
@@ -524,25 +587,36 @@ class Visitor:
         @param node: The single node to be processed as foreach.
         """
 
+        # retrieves the attributes map
         attributes_map = node.get_attributes_map()
+
+        # retrieves the attributes map values
         attribute_from = attributes_map[FROM_VALUE]
         attribute_from_value = self.get_value(attribute_from)
         attribute_item = attributes_map[ITEM_VALUE]
         attribute_item_literal_value = self.get_literal_value(attribute_item)
 
+        # in case the index exists in the attributes map
         if INDEX_VALUE in attributes_map:
+            # retrieves the attribute index literal value
             attribute_index = attributes_map[INDEX_VALUE]
             attribute_index_literal_value = self.get_literal_value(attribute_index)
         else:
+            # sets the attribute index literal value as none
             attribute_index_literal_value = None
 
+        # in case the key exists in the attributes map
         if KEY_VALUE in attributes_map:
+            # retrieves the attribute key literal value
             attribute_key = attributes_map[KEY_VALUE]
             attribute_key_literal_value = self.get_literal_value(attribute_key)
         else:
+            # sets the attribute key literal value as none
             attribute_key_literal_value = None
 
+        # in case the start index exists in the attributes map
         if START_INDEX_VALUE in attributes_map:
+            # retrieves the attribute start index literal value
             attribute_start_index = attributes_map[START_INDEX_VALUE]
             attribute_start_index_literal_value = self.get_literal_value(attribute_start_index)
 
@@ -554,7 +628,7 @@ class Visitor:
 
         # in case the attribute does not have the iterator method
         # it's not iterable
-        if not hasattr(attribute_from_value, "__iter__"):
+        if not hasattr(attribute_from_value, ITER_VALUE):
             # retrieves the attribute from value
             attribute_from_value = attribute_from[VALUE_VALUE]
 
@@ -564,8 +638,11 @@ class Visitor:
         # retrieves the attribute from value type
         attribute_from_value_type = type(attribute_from_value)
 
+        # in case the type of the attribute from value is dictionary
         if attribute_from_value_type == types.DictType:
+            # iterates over all the attribute from value items
             for attribute_from_value_key, attribute_from_value_value in attribute_from_value.items():
+                # sets the attribute from value value in the global map
                 self.global_map[attribute_item_literal_value] = attribute_from_value_value
 
                 if attribute_index_literal_value:
@@ -580,8 +657,11 @@ class Visitor:
 
                 # increments the index
                 index += 1
+        # otherwise it must be a sequence
         else:
+            # iterates over all the attribute from value values
             for attribute_from_value_item in attribute_from_value:
+                # sets the attribute from value item in the global map
                 self.global_map[attribute_item_literal_value] = attribute_from_value_item
 
                 if attribute_index_literal_value:
@@ -602,34 +682,41 @@ class Visitor:
         @param node: The single node to be processed as if.
         """
 
-        attributes_map = node.get_attributes_map()
-        attribute_item = attributes_map[ITEM_VALUE]
-        attribute_item_value = self.get_value(attribute_item)
-        attribute_value = attributes_map[VALUE_VALUE]
-        attribute_value_value = self.get_value(attribute_value)
-        attribute_operator = attributes_map[OPERATOR_VALUE]
-        attribute_operator_literal_value = self.get_literal_value(attribute_operator)
+        # evaluates the node as comparison
+        result = self._evaluate_comparison_node(node)
 
-        if attribute_operator_literal_value == "eq":
-            result = attribute_item_value == attribute_value_value
-        elif attribute_operator_literal_value == "neq":
-            result = not attribute_item_value == attribute_value_value
-        elif attribute_operator_literal_value == "gte":
-            result = attribute_item_value >= attribute_value_value
-        elif attribute_operator_literal_value == "gt":
-            result = attribute_item_value > attribute_value_value
-        elif attribute_operator_literal_value == "lte":
-            result = attribute_item_value <= attribute_value_value
-        elif attribute_operator_literal_value == "lt":
-            result = attribute_item_value < attribute_value_value
+        # sets the initial accept node value
+        accept_node = result
 
-        # in case the result is valid
-        if result:
-            if self.visit_childs:
-                for node_child_node in node.child_nodes:
-                    node_child_node.accept(self)
+        # in case the visit child is set
+        if self.visit_childs:
+            # iterates over all the node child nodes
+            for node_child_node in node.child_nodes:
+                # validates the accept node using the node child node
+                # and the accept node
+                accept_node = self._validate_accept_node(node_child_node, accept_node)
+
+                # in case the accept node is set to invalid
+                # the evaluation is over
+                if accept_node == None:
+                    # returns immediately
+                    return
+
+                # in case the accept node flag is set
+                # accepts the node child node
+                accept_node and node_child_node.accept(self)
 
     def process_else(self, node):
+        """
+        Processes the else node.
+
+        @type node: SingleNode
+        @param node: The single node to be processed as else.
+        """
+
+        pass
+
+    def process_elif(self, node):
         """
         Processes the else node.
 
@@ -647,7 +734,10 @@ class Visitor:
         @param node: The single node to be processed as count.
         """
 
+        # retrieves the attributes map
         attributes_map = node.get_attributes_map()
+
+        # retrieves the attributes map values
         attribute_value = attributes_map[VALUE_VALUE]
         attribute_value_value = self.get_value(attribute_value)
 
@@ -674,13 +764,18 @@ class Visitor:
         @param node: The single node to be processed as include.
         """
 
+        # retrieves the attributes map
         attributes_map = node.get_attributes_map()
 
+        # in case the file exists in the attributes map
         if FILE_VALUE in attributes_map:
+            # retrieves the attribute file literal value
             attribute_file = attributes_map[FILE_VALUE]
             attribute_file_literal_value = self.get_literal_value(attribute_file)
 
+        # in case the file value exists in the attributes map
         if FILE_VALUE_VALUE in attributes_map:
+            # retrieves the attribute file literal value
             attribute_file_value = attributes_map[FILE_VALUE_VALUE]
             attribute_file_literal_value = self.get_value(attribute_file_value)
 
@@ -731,7 +826,7 @@ class Visitor:
         current_date_time = datetime.datetime.now()
 
         # formats the year value
-        year_value = current_date_time.strftime("%Y")
+        year_value = current_date_time.strftime(DEFAULT_YEAR_FORMAT)
 
         # writes the year value
         self.string_buffer.write(year_value)
@@ -744,9 +839,12 @@ class Visitor:
         @param node: The single node to be processed as date.
         """
 
+        # retrieves the attributes map
         attributes_map = node.get_attributes_map()
 
+        # in case the format exists in the attributes map
         if FORMAT_VALUE in attributes_map:
+            # retrieves the attributes map values
             attribute_format = attributes_map[FORMAT_VALUE]
             attribute_format_literal_value = self.get_literal_value(attribute_format)
 
@@ -754,7 +852,9 @@ class Visitor:
             # to avoid possible problems with string formatting
             attribute_format_literal_value = str(attribute_format_literal_value)
         else:
-            attribute_format_literal_value = "%d/%m/%y"
+            # sets the attribute format literal value
+            # as the default date format
+            attribute_format_literal_value = DEFAULT_DATE_FORMAT
 
         # retrieves the current date time
         current_date_time = datetime.datetime.now()
@@ -773,17 +873,23 @@ class Visitor:
         @param node: The single node to be processed as time.
         """
 
+        # retrieves the attributes map
         attributes_map = node.get_attributes_map()
 
+        # in case the format exists in the attributes map
         if FORMAT_VALUE in attributes_map:
+            # retrieves the attributes map values
             attribute_format = attributes_map[FORMAT_VALUE]
             attribute_format_literal_value = self.get_literal_value(attribute_format)
 
             # converts the attribute format literal value to string, in order
             # to avoid possible problems with string formatting
             attribute_format_literal_value = str(attribute_format_literal_value)
+        # otherwise
         else:
-            attribute_format_literal_value = "%H:%M:%S"
+            # sets the attribute format literal value
+            # as the default time format
+            attribute_format_literal_value = DEFAULT_TIME_FORMAT
 
         # retrieves the current date time
         current_date_time = datetime.datetime.now()
@@ -795,17 +901,23 @@ class Visitor:
         self.string_buffer.write(date_value)
 
     def process_datetime(self, node):
+        # retrieves the attributes map
         attributes_map = node.get_attributes_map()
 
+        # in case the format exists in the attributes map
         if FORMAT_VALUE in attributes_map:
+            # retrieves the attributes map values
             attribute_format = attributes_map[FORMAT_VALUE]
             attribute_format_literal_value = self.get_literal_value(attribute_format)
 
             # converts the attribute format literal value to string, in order
             # to avoid possible problems with string formatting
             attribute_format_literal_value = str(attribute_format_literal_value)
+        # otherwise
         else:
-            attribute_format_literal_value = "%d/%m/%y %H:%M:%S"
+            # sets the attribute format literal value as
+            # the default date time format
+            attribute_format_literal_value = DEFAULT_DATE_TIME_FORMAT
 
         # retrieves the current date time
         current_date_time = datetime.datetime.now()
@@ -817,8 +929,10 @@ class Visitor:
         self.string_buffer.write(datetime_value)
 
     def process_format_datetime(self, node):
+        # retrieves the attributes map
         attributes_map = node.get_attributes_map()
 
+        # retrieves the attributes map values
         attribute_value = attributes_map[VALUE_VALUE]
         attribute_value_value = self.get_value(attribute_value)
         attribute_format = attributes_map[FORMAT_VALUE]
@@ -853,8 +967,10 @@ class Visitor:
             variable_name = attribute_value[VALUE_VALUE]
 
             # in case the variable name is none
-            if variable_name == "None":
+            if variable_name == NONE_VALUE:
+                # sets the value as none
                 value = None
+            # otherwise
             else:
                 # splits the variable name in the dots
                 variable_name_splitted = variable_name.split(".")
@@ -951,3 +1067,84 @@ class Visitor:
 
         # raises an invalid boolean value exception
         raise template_engine_exceptions.InvalidBooleanValue("invalid boolean " + literal_value)
+
+    def _validate_accept_node(self, node, accept_node):
+        """
+        Validates the accept node flag in accordance with the if
+        specification.
+
+        @type node: Node
+        @param node: The child node to be evaluated.
+        @type accept_node: bool
+        @param accept_node: The accept node flag value.
+        @rtype: bool
+        @return: The new value for the accept node flag.
+        """
+
+        # in case the current node is not a match node
+        if not isinstance(node, template_engine_ast.MatchNode):
+            # returns the accept node
+            return accept_node
+
+        # retrieves the value type
+        value_type = node.get_value_type()
+
+        # in case the value type is else
+        if value_type in (ELSE_VALUE, ELIF_VALUE):
+            # in case the accept node
+            # flag is already set (the result is
+            # already been evaluated positively)
+            if accept_node:
+                # returns invalid (to end evaluation)
+                return None
+
+            # in case the type is else, the
+            # node should be accepted
+            if value_type == ELSE_VALUE:
+                # sets the accept node flag
+                accept_node = True
+            # in case the type is elif, the
+            # node should be accepted in case
+            # of positive evaluation
+            elif ELIF_VALUE:
+                # evaluates the node as comparison
+                result = self._evaluate_comparison_node(node)
+
+                # sets the accept node value
+                accept_node = result
+
+        # returns the accept node
+        return accept_node
+
+    def _evaluate_comparison_node(self, node):
+        """
+        Evaluates the given (comparison) node, retrieving
+        the result of the evaluation.
+
+        @type node: Node
+        @param node: The comparison node to be evaluated.
+        @rtype: bool
+        @return: The result of the evaluation of the
+        comparison node.
+        """
+
+        # retrieves the attributes map
+        attributes_map = node.get_attributes_map()
+
+        # retrieves the attributes map values
+        attribute_item = attributes_map[ITEM_VALUE]
+        attribute_item_value = self.get_value(attribute_item)
+        attribute_value = attributes_map[VALUE_VALUE]
+        attribute_value_value = self.get_value(attribute_value)
+        attribute_operator = attributes_map[OPERATOR_VALUE]
+        attribute_operator_literal_value = self.get_literal_value(attribute_operator)
+
+        # retrieves the comparison function
+        comparison_function = COMPARISION_FUNCTIONS[attribute_operator_literal_value]
+
+        # compares the values using the comparison function
+        # and retrieves the results
+        comparison_result = comparison_function(attribute_item_value, attribute_value_value)
+
+        # returns the comparison result
+        return comparison_result

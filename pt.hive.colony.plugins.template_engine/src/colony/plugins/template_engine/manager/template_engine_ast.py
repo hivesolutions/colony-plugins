@@ -301,7 +301,11 @@ class SingleNode(MatchNode):
         return self.value
 
     def accept(self, visitor):
-        visitor.process_accept(self, self.get_value_type())
+        # retrieves the value type
+        value_type = self.get_value_type()
+
+        # calls the process accept method with the value type
+        visitor.process_accept(self, value_type)
 
 class CompositeNode(MatchNode):
     """
@@ -315,4 +319,8 @@ class CompositeNode(MatchNode):
         return self.value[0]
 
     def accept(self, visitor):
-        visitor.process_accept(self, self.get_value_type())
+        # retrieves the value type
+        value_type = self.get_value_type()
+
+        # calls the process accept method with the value type
+        visitor.process_accept(self, value_type)
