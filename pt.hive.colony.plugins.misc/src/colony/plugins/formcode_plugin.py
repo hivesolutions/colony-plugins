@@ -91,6 +91,9 @@ class FormcodePlugin(colony.base.plugin_system.Plugin):
     def dumps(self, object):
         return self.formcode.dumps(object)
 
+    def dumps_base_path(self, object, base_path):
+        return self.formcode.dumps_base_path(object, base_path)
+
     def loads(self, formcode_string):
         return self.formcode.loads(formcode_string)
 

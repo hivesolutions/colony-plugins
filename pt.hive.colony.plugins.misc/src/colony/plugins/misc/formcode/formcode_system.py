@@ -60,6 +60,9 @@ class Formcode:
     def dumps(self, object):
         return formcode_serializer.dumps(object)
 
+    def dumps_base_path(self, object, base_path):
+        return formcode_serializer.dumps(object, base_path)
+
     def loads(self, formcode_string):
         return formcode_serializer.loads(formcode_string)
 

@@ -671,42 +671,51 @@ def dump_parts_buffer(object, string_buffer):
         # raises a json encode exception
         raise json_exceptions.JsonEncodeException(object)
 
-def loads(string):
+def loads(data):
+    # initializes the stack
     stack = []
-    chars = iter(string)
+
+    # retrieves the characters from the data
+    characters = iter(data)
+
+    # starts the value
     value = None
-    curr_char_is_next = False
+
+    # unsets the current character is next flag
+    current_character_is_next = False
 
     try:
-        while(1):
+        # iterates continuously
+        while True:
+            # unsets the skip flag
             skip = False
-            if not curr_char_is_next:
-                character = chars.next()
+            if not current_character_is_next:
+                character = characters.next()
             while(character in [" ", "\t", "\r", "\n"]):
-                character = chars.next()
-            curr_char_is_next = False
+                character = characters.next()
+            current_character_is_next = False
 
             # in case it's the beginning of a string
             if character == "\"":
                 value = ""
                 try:
-                    character = chars.next()
+                    character = characters.next()
 
                     # iterates while the string is not finished
-                    while character != "\"":
+                    while not character == "\"":
                         if character == "\\":
-                            character = chars.next()
+                            character = characters.next()
                             try:
                                 value += escape_char_to_char[character]
                             except KeyError:
                                 if character == "u":
-                                    hex_code = chars.next() + chars.next() + chars.next() + chars.next()
+                                    hex_code = characters.next() + characters.next() + characters.next() + characters.next()
                                     value += unichr(int(hex_code, 16))
                                 else:
                                     raise json_exceptions.JsonDecodeException("Bad Escape Sequence Found")
                         else:
                             value += character
-                        character = chars.next()
+                        character = characters.next()
                 except StopIteration:
                     raise json_exceptions.JsonDecodeException("Expected end of String")
             elif character == "{":
@@ -723,42 +732,42 @@ def loads(string):
                 skip = True
             elif character in digits_list or character == "-":
                 digits = [character]
-                character = chars.next()
+                character = characters.next()
                 num_conv = int
                 try:
                     while character in digits_list:
                         digits.append(character)
-                        character = chars.next()
+                        character = characters.next()
                     if character == ".":
                         num_conv = float
                         digits.append(character)
-                        character = chars.next()
+                        character = characters.next()
                         while character in digits_list:
                             digits.append(character)
-                            character = chars.next()
+                            character = characters.next()
                         if character.upper() == "E":
                             digits.append(character)
-                            character = chars.next()
+                            character = characters.next()
                             if character in ["+", "-"]:
                                 digits.append(character)
-                                character = chars.next()
+                                character = characters.next()
                                 while character in digits_list:
                                     digits.append(character)
-                                    character = chars.next()
+                                    character = characters.next()
                             else:
                                 raise json_exceptions.JsonDecodeException("Expected + or -")
                 except StopIteration:
                     pass
                 value = num_conv("".join(digits))
-                curr_char_is_next = True
+                current_character_is_next = True
 
             elif character in ["t", "f", "n"]:
-                kw = character + chars.next() + chars.next() + chars.next()
+                kw = character + characters.next() + characters.next() + characters.next()
                 if kw == "null":
                     value = None
                 elif kw == "true":
                     value = True
-                elif kw == "fals" and chars.next() == "e":
+                elif kw == "fals" and characters.next() == "e":
                     value = False
                 else:
                     raise json_exceptions.JsonDecodeException("Expected Null, False or True")
