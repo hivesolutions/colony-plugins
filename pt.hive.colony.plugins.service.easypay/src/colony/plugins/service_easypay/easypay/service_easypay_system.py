@@ -53,6 +53,9 @@ POST_METHOD_VALUE = "POST"
 CONTENT_TYPE_CHARSET_VALUE = "content_type_charset"
 """ The content type charset value """
 
+ERROR_STATUS = "err"
+""" The error status """
+
 DEFAULT_API_VERSION = "1.0"
 """ The default easypay api version """
 
@@ -274,6 +277,92 @@ class EasypayClient:
         # returns the data
         return data
 
+    def get_payment_details(self, document_identifier, reference_key):
+        # sets the retrieval url
+        retrieval_url = BASE_REST_SECURE_URL + "api_easypay_03AG.php"
+
+        # start the parameters map
+        parameters = {}
+
+        # sets the base parameters
+        self._set_base_parameters(parameters)
+
+        # sets the document identifier
+        parameters["ep_doc"] = document_identifier
+
+        # sets the reference key
+        parameters["ep_key"] = reference_key
+
+        # fetches the retrieval url with the given parameters retrieving the xml
+        result = self._fetch_url(retrieval_url, parameters)
+
+        # parses the result (response)
+        response_document = xml.dom.minidom.parseString(result)
+
+        # retrieves the get payment details root nodes
+        get_payment_details_root_nodes = response_document.getElementsByTagName("getautoMB_detail")
+
+        # retrieves the get payment details root node
+        get_payment_details_root_node = get_payment_details_root_nodes[0]
+
+        # initializes the data (map)
+        data = {}
+
+        # retrieves the basic payment details
+        get_payment_details_status = self.get_xml_node_text(get_payment_details_root_node, "ep_status")
+        get_payment_details_message = self.get_xml_node_text(get_payment_details_root_node, "ep_message")
+        get_payment_details_cin = self.get_xml_node_text(get_payment_details_root_node, "ep_cin")
+        get_payment_details_user = self.get_xml_node_text(get_payment_details_root_node, "ep_user")
+        get_payment_details_key = self.get_xml_node_text(get_payment_details_root_node, "ep_key")
+        get_payment_details_doc = self.get_xml_node_text(get_payment_details_root_node, "ep_doc")
+
+        # sets the values in the data (map)
+        data["status"] = get_payment_details_status
+        data["message"] = get_payment_details_message
+        data["cin"] = get_payment_details_cin
+        data["user"] = get_payment_details_user
+        data["key"] = get_payment_details_key
+        data["doc"] = get_payment_details_doc
+
+        # retrieves the remaining payment details
+        get_payment_details_entity = self.get_xml_node_text(get_payment_details_root_node, "ep_entity")
+        get_payment_details_reference = self.get_xml_node_text(get_payment_details_root_node, "ep_reference")
+        get_payment_details_value = self.get_xml_node_text(get_payment_details_root_node, "ep_value")
+        get_payment_details_payment_type = self.get_xml_node_text(get_payment_details_root_node, "ep_payment_type")
+        get_payment_details_value_fixed = self.get_xml_node_text(get_payment_details_root_node, "ep_value_fixed")
+        get_payment_details_value_var = self.get_xml_node_text(get_payment_details_root_node, "ep_value_var")
+        get_payment_details_value_tax = self.get_xml_node_text(get_payment_details_root_node, "ep_value_tax")
+        get_payment_details_value_transf = self.get_xml_node_text(get_payment_details_root_node, "ep_value_transf")
+        get_payment_details_date_transf = self.get_xml_node_text(get_payment_details_root_node, "ep_date_transf")
+        get_payment_details_date_read = self.get_xml_node_text(get_payment_details_root_node, "ep_date_read")
+        get_payment_details_status_read = self.get_xml_node_text(get_payment_details_root_node, "ep_status_read")
+
+        # converst the numeric payment details
+        get_payment_details_value = float(get_payment_details_value)
+        get_payment_details_value_fixed = float(get_payment_details_value_fixed)
+        get_payment_details_value_var = float(get_payment_details_value_var)
+        get_payment_details_value_tax = float(get_payment_details_value_tax)
+        get_payment_details_value_transf = float(get_payment_details_value_transf)
+
+        # sets the values in the data (map)
+        data["entity"] = get_payment_details_entity
+        data["reference"] = get_payment_details_reference
+        data["value"] = get_payment_details_value
+        data["payment_type"] = get_payment_details_payment_type
+        data["value_fixed"] = get_payment_details_value_fixed
+        data["value_var"] = get_payment_details_value_var
+        data["value_tax"] = get_payment_details_value_tax
+        data["value_transf"] = get_payment_details_value_transf
+        data["date_transf"] = get_payment_details_date_transf
+        data["date_read"] = get_payment_details_date_read
+        data["status_read"] = get_payment_details_status_read
+
+        # checks for easypay errors
+        self._check_easypay_errors(data)
+
+        # returns the data
+        return data
+
     def get_easypay_structure(self):
         """
         Retrieves the easypay structure.
@@ -379,7 +468,7 @@ class EasypayClient:
         message = data["message"]
 
         # in case the status does not start with error
-        if not status.startswith("err"):
+        if not status.startswith(ERROR_STATUS):
             # returns immediately
             return
 
