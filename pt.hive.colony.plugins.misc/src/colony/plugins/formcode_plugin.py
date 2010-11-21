@@ -99,3 +99,6 @@ class FormcodePlugin(colony.base.plugin_system.Plugin):
 
     def load_file(self, formcode_file):
         return self.formcode.load_file(formcode_file)
+
+    def load_file_encoding(self, formcode_file, encoding):
+        return self.formcode.load_file(formcode_file, encoding)

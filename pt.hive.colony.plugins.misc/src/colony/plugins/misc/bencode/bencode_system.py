@@ -39,6 +39,9 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 import bencode_serializer
 
+DEFAULT_ENCODING = "utf-8"
+""" The default encoding """
+
 class Bencode:
     """
     Provides functions to interact with bencode.
@@ -63,9 +66,12 @@ class Bencode:
     def loads(self, bencode_string):
         return bencode_serializer.loads(bencode_string)
 
-    def load_file(self, bencode_file):
+    def load_file(self, bencode_file, encoding = DEFAULT_ENCODING):
         # reads the bencode file
         bencode_file_contents = bencode_file.read()
 
+        # decodes the bencode file contents using the default encoder
+        bencode_file_contents_decoded = bencode_file_contents.decode(encoding)
+
         # loads the bencode file contents
-        return self.loads(bencode_file_contents)
+        return self.loads(bencode_file_contents_decoded)

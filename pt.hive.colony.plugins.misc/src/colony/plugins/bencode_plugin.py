@@ -96,3 +96,6 @@ class BencodePlugin(colony.base.plugin_system.Plugin):
 
     def load_file(self, bencode_file):
         return self.bencode.load_file(bencode_file)
+
+    def load_file_encoding(self, bencode_file, encoding):
+        return self.bencode.load_file(bencode_file, encoding)

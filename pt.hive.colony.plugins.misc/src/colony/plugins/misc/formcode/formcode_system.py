@@ -39,6 +39,9 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 import formcode_serializer
 
+DEFAULT_ENCODING = "utf-8"
+""" The default encoding """
+
 class Formcode:
     """
     Provides functions to interact with formcode.
@@ -66,9 +69,12 @@ class Formcode:
     def loads(self, formcode_string):
         return formcode_serializer.loads(formcode_string)
 
-    def load_file(self, formcode_file):
+    def load_file(self, formcode_file, encoding = DEFAULT_ENCODING):
         # reads the formcode file
         formcode_file_contents = formcode_file.read()
 
+        # decodes the formcode file contents using the default encoder
+        formcode_file_contents_decoded = formcode_file_contents.decode(encoding)
+
         # loads the formcode file contents
-        return self.loads(formcode_file_contents)
+        return self.loads(formcode_file_contents_decoded)
