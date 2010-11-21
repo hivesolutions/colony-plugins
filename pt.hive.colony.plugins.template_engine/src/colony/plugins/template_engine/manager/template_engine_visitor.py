@@ -54,6 +54,9 @@ FUNCTION_TYPES = (types.MethodType, types.FunctionType, types.BuiltinMethodType,
 VALUE_VALUE = "value"
 """ The value value """
 
+VALUES_VALUE = "values"
+""" The values value """
+
 TYPE_VALUE = "type"
 """ The type value """
 
@@ -545,19 +548,26 @@ class Visitor:
             # unsets the attribute xml escape value
             attribute_xml_escape_value = False
 
-        if not attribute_value_value == None:
-            # in case the variable encoding is defined
-            if self.variable_encoding:
-                # re-encodes the variable value
-                attribute_value_value = unicode(attribute_value_value).encode(self.variable_encoding)
-            else:
-                # converts the value into unicode (in case it's necessary)
-                attribute_value_value = unicode(attribute_value_value)
+        # in case the attribute value value is none
+        if attribute_value_value == None:
+            # returns immediately (no write)
+            return
 
-            if attribute_xml_escape_value:
-                attribute_value_value = xml.sax.saxutils.escape(attribute_value_value)
+        # in case the variable encoding is defined
+        if self.variable_encoding:
+            # re-encodes the variable value
+            attribute_value_value = unicode(attribute_value_value).encode(self.variable_encoding)
+        else:
+            # converts the value into unicode (in case it's necessary)
+            attribute_value_value = unicode(attribute_value_value)
 
-            self.string_buffer.write(attribute_value_value)
+        # in case the attribute xml escape value is set
+        if attribute_xml_escape_value:
+            # escapes the attribute value value using xml escaping
+            attribute_value_value = xml.sax.saxutils.escape(attribute_value_value)
+
+        # writes the attribute value value in the string buffer
+        self.string_buffer.write(attribute_value_value)
 
     def process_var(self, node):
         """
@@ -718,13 +728,57 @@ class Visitor:
 
     def process_elif(self, node):
         """
-        Processes the else node.
+        Processes the elif node.
 
         @type node: SingleNode
-        @param node: The single node to be processed as else.
+        @param node: The single node to be processed as elif.
         """
 
         pass
+
+    def process_cycle(self, node):
+        """
+        Processes the cycle node.
+
+        @type node: SingleNode
+        @param node: The single node to be processed as cycle.
+        """
+
+        # retrieves the attributes map
+        attributes_map = node.get_attributes_map()
+
+        # retrieves the attributes map values
+        attribute_values = attributes_map[VALUES_VALUE]
+        attribute_values_value = self.get_value(attribute_values, True)
+
+        if not hasattr(node, "current_index"):
+            # sets the initial current index
+            current_index = 0
+        else:
+            # retrieves the attribute values value length
+            attribute_values_value_length = len(attribute_values_value)
+
+            # retrieves the current index
+            current_index = node.current_index
+
+            # in case the current index overflows
+            if current_index == attribute_values_value_length - 1:
+                # resets the current index
+                current_index = 0
+            # otherwise
+            else:
+                # increments the current index
+                current_index += 1
+
+        # sets the current index in the node
+        node.current_index = current_index
+
+        # retrieves the current value from the attribute
+        # values values
+        current_value = attribute_values_value[current_index]
+
+        # writes the current value to the string buffer
+        self.string_buffer.write(current_value)
 
     def process_count(self, node):
         """
@@ -929,6 +983,13 @@ class Visitor:
         self.string_buffer.write(datetime_value)
 
     def process_format_datetime(self, node):
+        """
+        Processes the format datetime node.
+
+        @type node: SingleNode
+        @param node: The single node to be processed as format datetime.
+        """
+
         # retrieves the attributes map
         attributes_map = node.get_attributes_map()
 
@@ -948,7 +1009,7 @@ class Visitor:
         # writes the attribute value formatted
         self.string_buffer.write(attribute_value_formatted)
 
-    def get_value(self, attribute_value):
+    def get_value(self, attribute_value, process_literal = False):
         """
         Retrieves the value (variable or literal) of the given
         value.
@@ -957,6 +1018,8 @@ class Visitor:
 
         @type attribute_value: Dictionary
         @param attribute_value: A map describing the attribute value.
+        @type process_string: bool
+        @param process_string: If the literal value should be processed.
         @rtype: Object
         @return: The resolved attribute value.
         """
@@ -1040,8 +1103,18 @@ class Visitor:
             # retrieves the literal value
             literal_value = attribute_value[VALUE_VALUE]
 
-            # sets the value as the literal value
-            value = literal_value
+            # in case the process literal is sets and
+            # the literal value contains commas, it
+            # must be a sequence
+            if process_literal and literal_value.find(","):
+                # sets the value as the list resulting
+                # from the split around the separator
+                value = literal_value.split(",")
+            # otherwise it must be
+            # a simple literal value
+            else:
+                # sets the value as the literal value
+                value = literal_value
 
         # returns the value
         return value

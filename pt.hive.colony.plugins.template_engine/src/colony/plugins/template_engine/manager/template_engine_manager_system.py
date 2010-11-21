@@ -54,7 +54,7 @@ SINGLE_TAG_REGEX_VALUE = "\$\{[^\{\}]*\/\}"
 ATTRIBUTE_REGEX_VALUE = "[a-zA-Z_]+=[a-zA-Z_][a-zA-Z0-9_\.\/]*"
 """ The attribute regular expression value """
 
-ATTRIBUTE_QUOTED_REGEX_VALUE = "[a-zA-Z_]+=\".+\""
+ATTRIBUTE_QUOTED_REGEX_VALUE = "[a-zA-Z_]+=[\"'].+[\"']"
 """ The attribute quoted regular expression value """
 
 ATTRIBUTE_FLOAT_REGEX_VALUE = "[a-zA-Z_]+=-?[0-9]+\.[0-9]*"

@@ -257,7 +257,7 @@ class MatchNode(AstNode):
 
             # in case it's quoted
             if attribute_group_index == 1:
-                attribute_literal_value = attribute_literal_value.strip("\"")
+                attribute_literal_value = attribute_literal_value.strip("\"'")
             # in case it's float
             elif attribute_group_index == 2:
                 attribute_literal_value = float(attribute_literal_value)
