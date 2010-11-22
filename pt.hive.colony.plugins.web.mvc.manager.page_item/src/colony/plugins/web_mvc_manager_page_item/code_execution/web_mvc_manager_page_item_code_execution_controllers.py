@@ -96,7 +96,7 @@ class WebMvcManagerPageItemCodeExecutionController:
         # sets the templates path
         self.set_templates_path(templates_path)
 
-    def handle_execute(self, rest_request, parameters={}):
+    def handle_execute(self, rest_request, parameters = {}):
         # in case the encoder name is ajax
         if rest_request.encoder_name == AJAX_ENCODER_NAME:
             # retrieves the template file
