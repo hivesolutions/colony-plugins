@@ -30,7 +30,7 @@ $(document).ready(function() {
     // in case the logic is already loaded
     if (logicLoaded) {
         // returns immediately
-        return
+        return;
     }
 
     var _registerExtraHandlers = function(targetElement) {
