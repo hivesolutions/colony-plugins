@@ -377,9 +377,6 @@ class WorkTask:
     work_access_condition = None
     """ The condition to control the access to work """
 
-    work_event_lock = None
-    """ The lock that controls the work event """
-
     def __init__(self, work_processing_task):
         """
         Constructor of the class.
@@ -392,7 +389,6 @@ class WorkTask:
 
         self.work_list = []
         self.work_access_condition = threading.Condition()
-        self.work_event_lock = threading.RLock()
 
     def start(self):
         # calls the start method in the work
@@ -424,12 +420,6 @@ class WorkTask:
             # release the work access condition
             self.work_access_condition.release()
 
-            # waits for the event lock to be ready for
-            # iteration (this avoids problems with unordered
-            # release of locks)
-            self.work_event_lock.acquire()
-            self.work_event_lock.release()
-
         # calls the stop method in the work
         # processing task
         self.work_processing_task.stop()
@@ -438,14 +428,8 @@ class WorkTask:
         # wakes the work processing task
         self.wake()
 
-        # acquires the work event lock
-        self.work_event_lock.acquire()
-
         # acquires the work access condition
         self.work_access_condition.acquire()
-
-        # releases the work event lock
-        self.work_event_lock.release()
 
         # sets the stop flag
         self.stop_flag = True
@@ -507,14 +491,8 @@ class WorkTask:
         # wakes the work processing task
         self.wake()
 
-        # acquires the work event lock
-        self.work_event_lock.acquire()
-
         # acquires the work access condition
         self.work_access_condition.acquire()
-
-        # releases the work event lock
-        self.work_event_lock.release()
 
         # iterates over all the work reference
         # in the work list
@@ -529,14 +507,8 @@ class WorkTask:
         # wakes the work processing task
         self.wake()
 
-        # acquires the work event lock
-        self.work_event_lock.acquire()
-
         # acquires the work access condition
         self.work_access_condition.acquire()
-
-        # releases the work event lock
-        self.work_event_lock.release()
 
         # calls the inner add work method
         self._add_work(work_reference)
@@ -548,14 +520,8 @@ class WorkTask:
         # wakes the work processing task
         self.wake()
 
-        # acquires the work event lock
-        self.work_event_lock.acquire()
-
         # acquires the work access condition
         self.work_access_condition.acquire()
-
-        # releases the work event lock
-        self.work_event_lock.release()
 
         # calls the inner remove work method
         self._remove_work(work_reference)
