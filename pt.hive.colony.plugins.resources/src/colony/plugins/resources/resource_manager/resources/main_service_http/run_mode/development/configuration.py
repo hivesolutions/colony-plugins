@@ -165,7 +165,7 @@ configuration = {
                                            "/colony/repository",
                                            "/socket_bridge",
                                            "/system_unix",
-                                           "/system",
+                                           "/system_windows",
                                            "/proxy"],
                      "/colony_web" : {
                          "handler" : "file",
@@ -356,12 +356,12 @@ configuration = {
                              "arguments" : {"file_path" : "%configuration:pt.hive.colony.plugins.main.authentication.python_handler%/authentication.py"}
                          }
                      },
-                     "/system" : {
+                     "/system_windows" : {
                          "handler" : "file",
                          "authentication_handler" : "main",
                          "allow_redirection" : False,
                          "request_properties" : {
-                             "base_path" : "C:/"
+                             "base_path" : "c:/"
                          },
                          "authentication_properties" : {
                              "authentication_handler" : "python",
