@@ -40,6 +40,7 @@ __license__ = "GNU General Public License (GPL), Version 3"
 import threading
 
 import work_pool_manager_algorithms
+import work_pool_manager_exceptions
 
 DEFAULT_NUMBER_THREADS = 5
 """ The default number of threads to be created """
@@ -288,8 +289,8 @@ class WorkPoolImplementation:
 
         # in case there is no space for new work tasks
         if not work_task:
-            # returns immediately
-            return
+            # raises the work pool operation exception
+            raise work_pool_manager_exceptions.WorkPoolOperationException("no work task available")
 
         # adds the work to the work task
         work_task.add_work(work_reference)
@@ -410,6 +411,7 @@ class WorkTask:
                     # release the work access condition
                     self.work_access_condition.release()
 
+                    # returns immediately
                     return
 
                 # waits for the work access condition
@@ -423,8 +425,8 @@ class WorkTask:
             self.work_access_condition.release()
 
             # waits for the event lock to be ready for
-            # iteration (this avoid problems with unordered release
-            # of locks)
+            # iteration (this avoids problems with unordered
+            # release of locks)
             self.work_event_lock.acquire()
             self.work_event_lock.release()
 
