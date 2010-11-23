@@ -190,6 +190,7 @@ class MainServiceHttpFileHandler:
         # in case there is a valid handler path
         if handler_path:
             path = resource_path.replace(handler_path, "", 1)
+        # otherwise
         else:
             path = resource_path
 
@@ -203,8 +204,9 @@ class MainServiceHttpFileHandler:
         # strips the path value from the initial and final slash
         path = path.strip("/")
 
-        # creates the complete path
-        complete_path = real_base_directory + "/" + path
+        # creates the complete path appending the real base
+        # directory and the path
+        complete_path = os.path.join(real_base_directory, path)
 
         # normalizes the complete path
         complete_path = os.path.normpath(complete_path)
