@@ -238,6 +238,19 @@ class RevisionControlAdapter:
 
         return self.revision_control_adapter_plugin.cleanup(self._revision_control_reference, resource_identifiers)
 
+    def cleanup_deep(self, resource_identifiers):
+        """
+        Cleans up any locks in the working copy at path.
+        Typically these locks result from a failed or interrupted operation.
+        Recursively double checks for resource which remain locked.
+        Useful for dealing with locked external resources.
+
+        @type resource_identifiers: List
+        @param resource_identifiers: The list of resource identifiers.
+        """
+
+        return self.revision_control_adapter_plugin.cleanup_deep(self._revision_control_reference, resource_identifiers)
+
     def remove(self, resource_identifiers):
         """
         Schedules a set of resources for removal from the repository.

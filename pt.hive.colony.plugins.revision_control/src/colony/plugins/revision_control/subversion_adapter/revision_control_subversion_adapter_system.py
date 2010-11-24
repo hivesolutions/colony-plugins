@@ -204,15 +204,21 @@ class RevisionControlSubversionAdapter:
         diff_string = revision_control_reference.diff(temporary_path, url_or_path, subversion_revision_1, url_or_path_2, subversion_revision_2)
 
         # splits the diffs in the single diff string
-        # @todo: split in a smarter fashion
         diffs = diff_string.split("\n")
 
         # returns the computed diff
         return diffs
 
     def cleanup(self, revision_control_reference, resource_identifiers):
+        # iterates over all the resource identifiers
         for resource_identifier in resource_identifiers:
-            # cleans up any locks at the specified resource
+            # cleans up any locks at the current resource
+            revision_control_reference.cleanup(resource_identifier)
+
+    def cleanup_deep(self, revision_control_reference, resource_identifiers):
+        # iterates over all the resource identifiers
+        for resource_identifier in resource_identifiers:
+            # cleans up any locks at the current (base) resource
             revision_control_reference.cleanup(resource_identifier)
 
             # retrieves the status for the current resource
@@ -221,7 +227,8 @@ class RevisionControlSubversionAdapter:
             # retrieves the list of resources which remain locked
             locked_resource_identifiers = [status.path for status in status_list if status.is_locked]
 
-            # recursively calls the cleanup method
+            # recursively calls the cleanup method over the
+            # locked resource identifiers
             self.cleanup(revision_control_reference, locked_resource_identifiers)
 
     def remove(self, revision_control_reference, resource_identifiers):
