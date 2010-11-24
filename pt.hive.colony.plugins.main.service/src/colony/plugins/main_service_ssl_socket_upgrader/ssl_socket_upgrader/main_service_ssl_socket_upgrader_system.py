@@ -116,7 +116,7 @@ class MainServiceSslSocketUpgrader:
         """
 
         # prints a debug message
-        self.main_service_ssl_socket_provider_plugin.debug("Upgrading a socket to ssl")
+        self.main_service_ssl_socket_upgrader_plugin.debug("Upgrading a socket to ssl")
 
         # retrieves the plugin manager
         manager = self.main_service_ssl_socket_upgrader_plugin.manager

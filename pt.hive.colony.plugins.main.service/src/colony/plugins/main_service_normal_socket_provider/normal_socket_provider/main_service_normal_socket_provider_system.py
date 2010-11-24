@@ -100,7 +100,7 @@ class MainServiceNormalSocketProvider:
         """
 
         # prints a debug message
-        self.main_service_ssl_socket_provider_plugin.debug("Providing a normal socket")
+        self.main_service_normal_socket_provider_plugin.debug("Providing a normal socket")
 
         # tries to retrieve the socket family
         socket_family = parameters.get(FAMILY_VALUE, socket.AF_INET)
