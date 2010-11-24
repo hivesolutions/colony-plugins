@@ -18,5 +18,6 @@
     "resources" : ["service_easypay_plugin.py", "service_easypay/__init__.py",
             "service_easypay/easypay/__init__.py",
             "service_easypay/easypay/service_easypay_exceptions.py",
-            "service_easypay/easypay/service_easypay_system.py"]
+            "service_easypay/easypay/service_easypay_system.py",
+            "service_easypay/easypay/resources/baf.xml"]
 }
