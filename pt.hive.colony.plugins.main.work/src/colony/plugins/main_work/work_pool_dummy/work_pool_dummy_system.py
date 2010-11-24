@@ -74,8 +74,9 @@ class WorkPoolDummy:
         # start the (dummy) work pool
         self.work_pool.start_pool()
 
-        # iterates over the range
-        for _index in range(100):
+        # iterates over the range of pool
+        # tasks to be inserted
+        for _index in range(10):
             # inserts the dummy work in the work pool
             self.work_pool.insert_work(_index)
 
