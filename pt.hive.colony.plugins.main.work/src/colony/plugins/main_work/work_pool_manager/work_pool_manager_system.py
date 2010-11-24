@@ -425,12 +425,13 @@ class WorkTask:
                 # waits for the work access condition
                 self.work_access_condition.wait()
 
-            # calls the process method in the work
-            # processing task
-            self.work_processing_task.process()
-
-            # release the work access condition
-            self.work_access_condition.release()
+            try:
+                # calls the process method in the work
+                # processing task
+                self.work_processing_task.process()
+            finally:
+                # release the work access condition
+                self.work_access_condition.release()
 
         # calls the stop method in the work
         # processing task
@@ -443,14 +444,15 @@ class WorkTask:
         # acquires the work access condition
         self.work_access_condition.acquire()
 
-        # sets the stop flag
-        self.stop_flag = True
+        try:
+            # sets the stop flag
+            self.stop_flag = True
 
-        # notifies the work access condition
-        self.work_access_condition.notify()
-
-        # releases the work access condition
-        self.work_access_condition.release()
+            # notifies the work access condition
+            self.work_access_condition.notify()
+        finally:
+            # releases the work access condition
+            self.work_access_condition.release()
 
     def pause(self):
         pass
@@ -506,14 +508,15 @@ class WorkTask:
         # acquires the work access condition
         self.work_access_condition.acquire()
 
-        # iterates over all the work reference
-        # in the work list
-        for work_reference in self.work_list:
-            # removes the work
-            self._remove_work(work_reference)
-
-        # releases the work access condition
-        self.work_access_condition.release()
+        try:
+            # iterates over all the work reference
+            # in the work list
+            for work_reference in self.work_list:
+                # removes the work
+                self._remove_work(work_reference)
+        finally:
+            # releases the work access condition
+            self.work_access_condition.release()
 
     def add_work(self, work_reference):
         # wakes the work processing task
@@ -522,11 +525,12 @@ class WorkTask:
         # acquires the work access condition
         self.work_access_condition.acquire()
 
-        # calls the inner add work method
-        self._add_work(work_reference)
-
-        # releases the work access condition
-        self.work_access_condition.release()
+        try:
+            # calls the inner add work method
+            self._add_work(work_reference)
+        finally:
+            # releases the work access condition
+            self.work_access_condition.release()
 
     def remove_work(self, work_reference):
         # wakes the work processing task
@@ -535,11 +539,12 @@ class WorkTask:
         # acquires the work access condition
         self.work_access_condition.acquire()
 
-        # calls the inner remove work method
-        self._remove_work(work_reference)
-
-        # releases the work access condition
-        self.work_access_condition.release()
+        try:
+            # calls the inner remove work method
+            self._remove_work(work_reference)
+        finally:
+            # releases the work access condition
+            self.work_access_condition.release()
 
     def _add_work(self, work_reference):
         """
