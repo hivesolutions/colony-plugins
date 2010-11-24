@@ -156,16 +156,6 @@ class MainServiceSslSocketUpgrader:
         # warps the socket into an ssl socket
         ssl_socket = self._wrap_socket(socket, key_file_path, certificate_file_path, server_side, do_handshake_on_connect = do_handshake_on_connect)
 
-        # creates the bound receive method for the ssl socket
-        _recv = types.MethodType(recv, ssl_socket, ssl.SSLSocket)
-
-        # sets the old receive method in the ssl socket with
-        # a different name
-        ssl_socket._recv = ssl_socket.recv
-
-        # sets the new receive bound method in the ssl socket
-        ssl_socket.recv = _recv
-
         # returns the ssl socket
         return ssl_socket
 
@@ -191,14 +181,24 @@ class MainServiceSslSocketUpgrader:
         # warps the base socket into an ssl socket
         ssl_socket = ssl.wrap_socket(base_socket, key_file_path, certificate_file_path, server_side, do_handshake_on_connect = do_handshake_on_connect)
 
+        # creates the bound receive method for the ssl socket
+        _recv = types.MethodType(recv, ssl_socket, ssl.SSLSocket)
+
+        # sets the old receive method in the ssl socket with
+        # a different name
+        ssl_socket._recv = ssl_socket.recv
+
+        # sets the new receive bound method in the ssl socket
+        ssl_socket.recv = _recv
+
         # returns the ssl socket
         return ssl_socket
 
 def recv(self, buffer_size, flags = 0):
     """
     Receives data from the current ssl socket.
-    Thie method provides a way to avoid current
-    runtime problems occuring in ssl sockets.
+    This method provides a way to avoid current
+    runtime problems occurring in ssl sockets.
 
     @type buffer_size: int
     @param buffer_size: The size of the buffer to be used.

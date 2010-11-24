@@ -203,8 +203,8 @@ class MainServiceSslSocketProvider:
 def recv(self, buffer_size, flags = 0):
     """
     Receives data from the current ssl socket.
-    Thie method provides a way to avoid current
-    runtime problems occuring in ssl sockets.
+    This method provides a way to avoid current
+    runtime problems occurring in ssl sockets.
 
     @type buffer_size: int
     @param buffer_size: The size of the buffer to be used.
