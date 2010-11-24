@@ -106,6 +106,7 @@
             "base_bundles/bundles/specifications/scheduler_bundle.json",
             "base_bundles/bundles/specifications/search_bundle.json",
             "base_bundles/bundles/specifications/security_bundle.json",
+            "base_bundles/bundles/specifications/service_easypay_bundle.json",
             "base_bundles/bundles/specifications/service_facebook_bundle.json",
             "base_bundles/bundles/specifications/service_twitter_bundle.json",
             "base_bundles/bundles/specifications/specifications_bundle.json",
