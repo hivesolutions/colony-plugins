@@ -136,6 +136,11 @@ class MainServiceSmtpRelayMessageHandler:
                 # raises the host resolution error
                 raise main_service_smtp_relay_message_handler_exceptions.HostResolutionError("problem while resolving domain: " + domain)
 
+            # in case no answers are retrieved
+            if not response.answers:
+                # raises the host resolution error
+                raise main_service_smtp_relay_message_handler_exceptions.HostResolutionError("could not resolve domain mx value: " + domain)
+
             # retrieves the hostname
             hostname = response.answers[0][4][1]
 
