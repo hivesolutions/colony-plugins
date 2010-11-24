@@ -190,7 +190,7 @@ class PackingBuildAutomationExtension:
         properties = {TARGET_PATH_VALUE : target_path,
                       PLUGINS_PATH_VALUE : plugins_directory}
 
-        # print an info message
+        # prints an info message
         logger.info("Packing files using specification file %s into %s" % (specification_file, target_path))
 
         # packs the directory
