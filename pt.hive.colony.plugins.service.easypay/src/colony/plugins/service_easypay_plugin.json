@@ -1,0 +1,22 @@
+{
+    "type" : "plugin",
+    "platform" : "python",
+    "sub_platforms" : ["cpython"],
+    "id" : "pt.hive.colony.plugins.service.easypay",
+    "name" : "Easypay Service Plugin",
+    "short_name" : "Easypay Service Main",
+    "description" : "The plugin that offers the easypay service",
+    "version" : "1.0.0",
+    "author" : "Hive Solutions Lda. <development@hive.pt>",
+    "capabilities" : ["service.easypay", "build_automation_item"],
+    "capabilities_allowed" : [],
+    "dependencies" : [{
+                "id" : "pt.hive.colony.plugins.main.client.http",
+                "version" : "1.0.0"
+            }],
+    "main_file" : "service_easypay_plugin.py",
+    "resources" : ["service_easypay_plugin.py", "service_easypay/__init__.py",
+            "service_easypay/easypay/__init__.py",
+            "service_easypay/easypay/service_easypay_exceptions.py",
+            "service_easypay/easypay/service_easypay_system.py"]
+}

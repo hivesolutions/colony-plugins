@@ -18,6 +18,7 @@
     "resources" : ["work_pool_manager_plugin.py", "main_work/__init__.py",
             "main_work/work_pool_manager/__init__.py",
             "main_work/work_pool_manager/work_pool_manager_algorithms.py",
+            "main_work/work_pool_manager/work_pool_manager_exceptions.py",
             "main_work/work_pool_manager/work_pool_manager_system.py",
             "main_work/work_pool_manager/resources/baf.xml"]
 }
