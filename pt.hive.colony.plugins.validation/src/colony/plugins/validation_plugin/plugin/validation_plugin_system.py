@@ -637,12 +637,20 @@ class ValidationPlugin:
             # logs the validation error
             self.add_validation_error(validation_errors, plugin_information, "'%s' json descriptor file has duplicate resource paths" % plugin_module_name)
 
-        # checks if the list of resources if of the same size
-        if not len(plugin_resource_file_paths) == len(plugin_descriptor_data_resources):
-            # logs the validation error
-            self.add_validation_error(validation_errors, plugin_information, "'%s' json descriptor file doesn't have the same number of resources as its plugin" % plugin_module_name)
+        # checks that the plugin resources are in the plugin descriptor
+        for plugin_resource_file_path in plugin_resource_file_paths:
+            if not plugin_resource_file_path in plugin_descriptor_data_resources:
+                # logs the validation error
+                self.add_validation_error(validation_errors, plugin_information, "'%s' json descriptor file is missing plugin resource file '%s'" % (plugin_module_name, plugin_resource_file_path))
 
-            # returns since nothing else can be tested
+        # checks that the plugin descriptor resources are in the plugin
+        for plugin_descriptor_data_resource in plugin_descriptor_data_resources:
+            if not plugin_descriptor_data_resource in plugin_resource_file_paths:
+                # logs the validation error
+                self.add_validation_error(validation_errors, plugin_information, "'%s' is missing resource file '%s' referenced in json descriptor file" % (plugin_module_name, plugin_descriptor_data_resource))
+
+        # returns in case the number of resources in the plugin is different from the descriptor
+        if not len(plugin_resource_file_paths) == len(plugin_descriptor_data_resources):
             return
 
         # looks for resource declarations in the descriptor for each of the discovered resource files
