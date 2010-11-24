@@ -215,6 +215,15 @@ class RevisionControlSubversionAdapter:
             # cleans up any locks at the specified resource
             revision_control_reference.cleanup(resource_identifier)
 
+            # retrieves the status for the current resource
+            status_list = revision_control_reference.status(resource_identifier)
+
+            # retrieves the list of resources which remain locked
+            locked_resource_identifiers = [status.path for status in status_list if status.is_locked]
+
+            # recursively calls the cleanup method
+            self.cleanup(revision_control_reference, locked_resource_identifiers)
+
     def remove(self, revision_control_reference, resource_identifiers):
         # performs the svn remove
         revision_control_reference.remove(resource_identifiers)
