@@ -114,6 +114,9 @@ class MainServiceSslSocketProvider:
         @return: The provided socket.
         """
 
+        # prints a debug message
+        self.main_service_ssl_socket_provider_plugin.debug("Providing an ssl socket")
+
         # retrieves the plugin manager
         manager = self.main_service_ssl_socket_provider_plugin.manager
 

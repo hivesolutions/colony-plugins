@@ -99,6 +99,9 @@ class MainServiceRawSocketProvider:
         @return: The provided socket.
         """
 
+        # prints a debug message
+        self.main_service_ssl_socket_provider_plugin.debug("Providing a raw socket")
+
         # tries to retrieve the socket family
         socket_family = parameters.get(FAMILY_VALUE, socket.AF_INET)
 
