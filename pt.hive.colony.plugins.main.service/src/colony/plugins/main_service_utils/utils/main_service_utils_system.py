@@ -536,7 +536,7 @@ class AbstractService:
                     socket_provider_plugin = socket_provider_plugins_map[socket_provider]
 
                     # the parameters for the socket provider
-                    parameters = {SERVER_SIDE_VALUE : True, DO_HANDSHAKE_ON_CONNECT_VALUE : False}
+                    parameters = {SERVER_SIDE_VALUE : True, DO_HANDSHAKE_ON_CONNECT_VALUE : True}
 
                     # copies the socket parameters to the parameters map
                     colony.libs.map_util.map_copy(socket_parameters, parameters)
