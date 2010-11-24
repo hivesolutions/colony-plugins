@@ -53,6 +53,7 @@ revision_log <adapter_name> <resource_identifier> [start_revision] [end_revision
 revision_status <adapter_name> <resource_identifier>                               - lists the pending changes in the current revision\n\
 revision_diff <adapter_name> <resource_identifier> [start_revision] [end_revision] - compares the contents of the specified revisions\n\
 revision_cleanup <adapter_name> <resource_identifier>                              - cleans up existing locks at the specified location\n\
+revision_cleanup_deep <adapter_name> <resource_identifier>                         - cleans up existing locks at the specified location, including externals\n\
 revision_remove <adapter_name> <resource_identifier>                               - schedules <resource_identifier> to be removed from the repository\n\
 revision_revert <adapter_name> <resource_identifier>                               - restores the working copy to its original state\n\n\
 revision_remove_unversioned <adapter_name> <resource_identifier>                   - removes all unversioned files from the specified location\n\
@@ -87,6 +88,7 @@ class ConsoleRevisionControlManager:
                 "revision_status",
                 "revision_diff",
                 "revision_cleanup",
+                "revision_cleanup_deep",
                 "revision_remove",
                 "revision_revert",
                 "revision_remove_unversioned",
@@ -403,6 +405,27 @@ class ConsoleRevisionControlManager:
 
         # invokes the cleanup command
         revision_control_manager.cleanup(resource_identifiers)
+
+    def process_revision_cleanup_deep(self, args, output_method):
+        # returns in case an invalid number of arguments was provided
+        if len(args) < 2:
+            output_method(INVALID_NUMBER_ARGUMENTS_MESSAGE)
+            return
+
+        # retrieves the adapter name
+        adapter_name = args[0]
+
+        # retrieves the resource identifier
+        resource_identifier = args[1]
+
+        # creates the resource identifiers list
+        resource_identifiers = [resource_identifier]
+
+        # creates a revision control manager to use on the resource
+        revision_control_manager = self.load_revision_control_manager(adapter_name, resource_identifier)
+
+        # invokes the cleanup command
+        revision_control_manager.cleanup_deep(resource_identifiers)
 
     def process_revision_remove(self, args, output_method):
         # returns in case an invalid number of arguments was provided
