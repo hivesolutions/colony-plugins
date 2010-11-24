@@ -90,7 +90,7 @@ class CommunicationPush:
     The communication push plugin.
     """
 
-    comnunication_push_plugin = None
+    communication_push_plugin = None
     """ The communication push plugin """
 
     communication_push_persistence_plugins_map = {}
@@ -129,15 +129,15 @@ class CommunicationPush:
     work_pool = None
     """ The work pool associated with the processing of the push notifications """
 
-    def __init__(self, comnunication_push_plugin):
+    def __init__(self, communication_push_plugin):
         """
         Constructor of the class.
 
-        @type comnunication_push_plugin: CommunicationPushPlugin
-        @param comnunication_push_plugin: The communication push plugin.
+        @type communication_push_plugin: CommunicationPushPlugin
+        @param communication_push_plugin: The communication push plugin.
         """
 
-        self.comnunication_push_plugin = comnunication_push_plugin
+        self.communication_push_plugin = communication_push_plugin
 
         self.communication_push_persistence_plugins_map = {}
         self.communication_name_push_notifications_map = {}
@@ -159,10 +159,10 @@ class CommunicationPush:
         """
 
         # retrieves the work pool manager pool
-        work_pool_manager_plugin = self.comnunication_push_plugin.work_pool_manager_plugin
+        work_pool_manager_plugin = self.communication_push_plugin.work_pool_manager_plugin
 
         # creates the work pool
-        self.work_pool = work_pool_manager_plugin.create_new_work_pool("communication push system pool", "communication push system work pool", CommunicationPushProcessingTask, [self, self.comnunication_push_plugin], NUMBER_THREADS, SCHEDULING_ALGORITHM, MAXIMUM_NUMBER_THREADS, MAXIMUM_NUMBER_WORKER_THREADS, WORK_SCHEDULING_ALGORITHM)
+        self.work_pool = work_pool_manager_plugin.create_new_work_pool("communication push system pool", "communication push system work pool", CommunicationPushProcessingTask, [self, self.communication_push_plugin], NUMBER_THREADS, SCHEDULING_ALGORITHM, MAXIMUM_NUMBER_THREADS, MAXIMUM_NUMBER_WORKER_THREADS, WORK_SCHEDULING_ALGORITHM)
 
         # starts the pool
         self.work_pool.start_pool()
@@ -863,7 +863,7 @@ class CommunicationPush:
                 self.remove_communication_handler(communication_name, communication_handler_name, communication_handler_method)
             except Exception, exception:
                 # prints an information message about the exception
-                self.comnunication_push_plugin.info("Unable to remove communication '%s' for handler '%s', probably due to double removal (%s)" % (communication_name , communication_handler_name, unicode(exception)))
+                self.communication_push_plugin.info("Unable to remove communication '%s' for handler '%s', probably due to double removal (%s)" % (communication_name , communication_handler_name, unicode(exception)))
 
     def _register_communication_profile(self, communication_profile_name, communication_name):
         # retrieves the communication handler tuples list
@@ -958,10 +958,10 @@ class CommunicationPush:
         self.process_notification_lock.acquire()
 
         # retrieves the plugin manager
-        plugin_manager = self.comnunication_push_plugin.manager
+        plugin_manager = self.communication_push_plugin.manager
 
         # retrieves the guid plugin
-        guid_plugin = self.comnunication_push_plugin.guid_plugin
+        guid_plugin = self.communication_push_plugin.guid_plugin
 
         # generates a new guid for the push notification
         generated_guid = guid_plugin.generate_guid()
