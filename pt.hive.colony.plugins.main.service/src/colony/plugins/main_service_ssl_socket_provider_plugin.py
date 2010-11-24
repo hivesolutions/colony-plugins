@@ -55,7 +55,8 @@ class MainServiceSslSocketProviderPlugin(colony.base.plugin_system.Plugin):
     attributes = {"build_automation_file_path" : "$base{plugin_directory}/main_service_ssl_socket_provider/ssl_socket_provider/resources/baf.xml"}
     capabilities = ["socket_provider", "build_automation_item"]
     capabilities_allowed = []
-    dependencies = []
+    dependencies = [colony.base.plugin_system.PackageDependency(
+                    "Python 2.6", "ssl", "2.6.x", "http://python.org")]
     events_handled = []
     events_registrable = []
     main_modules = ["main_service_ssl_socket_provider.ssl_socket_provider.main_service_ssl_socket_provider_system"]

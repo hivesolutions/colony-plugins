@@ -37,6 +37,9 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
+import ssl
+import time
+import types
 import socket
 
 PROVIDER_NAME = "ssl"
@@ -59,6 +62,12 @@ DO_HANDSHAKE_ON_CONNECT_VALUE = "do_handshake_on_connect"
 
 RESOURCES_PATH = "main_service_ssl_socket_provider/ssl_socket_provider/resources"
 """ The resources path """
+
+SSL_ERROR_WANT_READ = 2
+""" The ssl error want read value """
+
+ERROR_SLEEP_TIME = 0.25
+""" The time to be used between error tries """
 
 class MainServiceSslSocketProvider:
     """
@@ -175,114 +184,53 @@ class MainServiceSslSocketProvider:
         @return: The wrapped (ssl) socket.
         """
 
-        try:
-            import ssl
-        except ImportError:
-            return self._old_wrap_socket(base_socket, key_file_path, certificate_file_path, server_side, do_handshake_on_connect)
-
         # warps the base socket into an ssl socket
         ssl_socket = ssl.wrap_socket(base_socket, key_file_path, certificate_file_path, server_side, do_handshake_on_connect = do_handshake_on_connect)
+
+        # creates the bound receive method for the ssl socket
+        _recv = types.MethodType(recv, ssl_socket, ssl.SSLSocket)
+
+        # sets the old receive method in the ssl socket with
+        # a different name
+        ssl_socket._recv = ssl_socket.recv
+
+        # sets the new receive bound method in the ssl socket
+        ssl_socket.recv = _recv
 
         # returns the ssl socket
         return ssl_socket
 
-    def _old_wrap_socket(self, base_socket, key_file_path, certificate_file_path, server_side = False, do_handshake_on_connect = True):
-        """
-        Wraps the base socket into an ssl socket using the given
-        key file, certificate file and attributes.
-        This method provides wrapping for the old ssl abstraction.
-
-        @type base_socket: Socket
-        @param base_socket: The base socket to be used for wrapping.
-        @type key_file_path: String
-        @param key_file_path: The path to the key file.
-        @type certificate_file_path: String
-        @param certificate_file_path: The path to the certificate file.
-        @type server_side: bool
-        @param server_side: If the socket should be created for a server.
-        @type do_handshake_on_connect: bool
-        @param do_handshake_on_connect: If a handshake should be done on connect.
-        @rtype: Socket
-        @return: The wrapped (ssl) socket.
-        """
-
-        # in case server side flag is set
-        if server_side:
-            # raises the system error
-            raise SystemError("No ssl support available for server side")
-
-        # warps the base socket into an ssl socket
-        ssl_socket = socket.ssl(base_socket, key_file_path, certificate_file_path)
-
-        # wrapps the ssl socket
-        ssl_socket_wrapped = SslWrapper(base_socket, ssl_socket)
-
-        # returns the ssl socket wrapped
-        return ssl_socket_wrapped
-
-class SslWrapper:
+def recv(self, buffer_size, flags = 0):
     """
-    The ssl wrapper class, used to create
-    wrapping object for the old ss implementation.
+    Receives data from the current ssl socket.
+    Thie method provides a way to avoid current
+    runtime problems occuring in ssl sockets.
+
+    @type buffer_size: int
+    @param buffer_size: The size of the buffer to be used.
+    @type flags: int
+    @param flags: The flag to be used.
+    @rtype: String
+    @return: The received message.
     """
 
-    old_base_socket = None
-    """" The old base socket """
+    # iterates continuously
+    while True:
+        try:
+            # receives from the socket, retrieving
+            # the return value
+            return_value = self._recv(buffer_size, flags)
 
-    old_ssl_object = None
-    """ The "old" ssl object to be used as base """
+            # returns the return value
+            return return_value
+        except ssl.SSLError, exception:
+            # in case the error is a want read
+            if exception.errno == SSL_ERROR_WANT_READ:
+                # sleeps for the error sleep time
+                time.sleep(ERROR_SLEEP_TIME)
 
-    def __init__(self, old_base_socket, old_ssl_object):
-        """
-        Constructor of the class.
+                # continues the loop
+                continue
 
-        @type old_base_socket: Socket
-        @param old_base_socket: The old base socket.
-        @type old_ssl_object: SslObject
-        @param old_ssl_object: The "old" ssl object to be
-        used as base.
-        """
-
-        self.old_base_socket = old_base_socket
-        self.old_ssl_object = old_ssl_object
-
-        self._initialize_wrapping()
-
-    def __getattr__(self, name):
-        if hasattr(self.old_ssl_object, name):
-            return getattr(self.old_ssl_object, name)
-
-        if hasattr(self.old_base_socket, name):
-            return getattr(self.old_base_socket, name)
-
-    def sendall(self, data):
-        """
-        The send all method, that send all the
-        data, avoiding the normal problem in output
-        buffers.
-
-        @type data: String
-        @param data: The data to be sent.
-        """
-
-        # iterates while there is
-        # data left to be send
-        while(len(data) > 0):
-            # sends the data string, retrieving the sent bytes
-            bytes_sent = self.send(data)
-
-            # sets the new data string
-            data = data[bytes_sent:]
-
-    def _initialize_wrapping(self):
-        """
-        Initializes the wrapping of the ssl object.
-        """
-
-        # sets the recv method as the read method
-        # in the ssl object
-        self.recv = self.old_ssl_object.read
-
-        # sets the send method as the write method
-        # in the ssl object
-        self.send = self.old_ssl_object.write
+            # re-raises the exception
+            raise
