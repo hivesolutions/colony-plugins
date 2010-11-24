@@ -179,7 +179,10 @@ class WorkPoolImplementation:
     """ The thread pool to be used for task execution """
 
     work_tasks_list = []
-    """ The list of active wprk tasks """
+    """ The list of active work tasks """
+
+    work_tasks_access_lock = None
+    """ The work task access lock """
 
     algorithm_manager = None
     """ The algorithm manager object reference """
@@ -230,6 +233,7 @@ class WorkPoolImplementation:
         self.thread_pool = thread_pool_manager.create_new_thread_pool(name, description, number_threads, scheduling_algorithm, maximum_number_threads)
 
         self.work_tasks_list = []
+        self.work_tasks_access_lock = threading.RLock()
 
         # sets the remove work method in the work processing task class
         self.work_processing_task_class.remove_work = remove_work
@@ -279,10 +283,15 @@ class WorkPoolImplementation:
     def insert_work(self, work_reference):
         """
         Inserts new work into the work pool.
+        This method is thread safe and may be called
+        from different threads.
 
         @type work_reference: Object
         @param work_reference: The object used as reference for the work.
         """
+
+        # acquires the work tasks access lock
+        self.work_tasks_access_lock.acquire()
 
         # retrieves the new work task
         work_task = self.algorithm_manager.get_next()
@@ -294,6 +303,9 @@ class WorkPoolImplementation:
 
         # adds the work to the work task
         work_task.add_work(work_reference)
+
+        # releases the work tasks access lock
+        self.work_tasks_access_lock.acquire()
 
     def get_thread_pool(self):
         """
