@@ -793,7 +793,7 @@ class ValidationPlugin:
         # retrieves the plugins tags
         plugins_tags = build_tag.getElementsByTagName(PLUGINS_VALUE)
 
-        # returns in case no plugins tags were found
+        # returns in case the plugin tags list is empty
         if not plugins_tags:
             # logs the validation error
             self.add_validation_error(validation_errors, plugin_information, "'%s' build automation file '%s' is missing attribute 'plugins'" % (plugin_module_name, build_automation_file_path))
