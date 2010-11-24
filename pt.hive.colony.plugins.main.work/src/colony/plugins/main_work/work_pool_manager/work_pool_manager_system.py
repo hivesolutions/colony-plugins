@@ -298,8 +298,9 @@ class WorkPoolImplementation:
 
         # in case there is no space for new work tasks
         if not work_task:
+            return
             # raises the work pool operation exception
-            raise work_pool_manager_exceptions.WorkPoolOperationException("no work task available")
+            #raise work_pool_manager_exceptions.WorkPoolOperationException("no work task available")
 
         # adds the work to the work task
         work_task.add_work(work_reference)
