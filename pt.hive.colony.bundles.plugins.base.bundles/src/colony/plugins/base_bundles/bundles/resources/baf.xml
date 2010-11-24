@@ -175,10 +175,6 @@
                         </specification>
                         <specification>
                             <type>bundle</type>
-                            <specification_file>$base{plugin_directory}/base_bundles/bundles/specifications/bitmap_loader_bundle.json</specification_file>
-                        </specification>
-                        <specification>
-                            <type>bundle</type>
                             <specification_file>$base{plugin_directory}/base_bundles/bundles/specifications/build_automation_bundle.json</specification_file>
                         </specification>
                         <specification>
