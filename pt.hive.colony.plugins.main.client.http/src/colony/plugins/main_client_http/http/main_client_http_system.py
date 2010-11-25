@@ -1373,7 +1373,7 @@ class HttpRequest:
         path_encoded = self._encode(self.path)
 
         # quotes the path
-        path_quoted = colony.libs.quote_util.quote_plus(path_encoded, "/")
+        path_quoted = colony.libs.quote_util.quote(path_encoded, "/")
 
         # returns the quoted path
         return path_quoted
@@ -1399,8 +1399,8 @@ class HttpRequest:
             attribte_value_encoded = self._encode(attribute_value)
 
             # quotes both the attribute key and value
-            attribute_key_quoted = colony.libs.quote_util.quote_plus(attribte_key_encoded)
-            attribute_value_quoted = colony.libs.quote_util.quote_plus(attribte_value_encoded)
+            attribute_key_quoted = colony.libs.quote_util.quote(attribte_key_encoded)
+            attribute_value_quoted = colony.libs.quote_util.quote(attribte_value_encoded)
 
             # in case it's is the first iteration
             if is_first:
