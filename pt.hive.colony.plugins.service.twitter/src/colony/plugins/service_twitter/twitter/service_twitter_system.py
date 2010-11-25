@@ -986,7 +986,7 @@ class TwitterClient:
         """
 
         # returns the quoted version of the url text
-        return colony.libs.quote_util.quote(str(url_text), "")
+        return colony.libs.quote_util.quote_plus(str(url_text), "")
 
     def _check_twitter_errors(self, data):
         """
