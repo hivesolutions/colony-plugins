@@ -92,6 +92,9 @@ CONNECTION_TIMEOUT = 600
 CHUNK_SIZE = 4096
 """ The chunk size """
 
+SEND_RETRIES = 3
+""" The send retries """
+
 SERVER_SIDE_VALUE = "server_side"
 """ The server side value """
 
@@ -1783,7 +1786,7 @@ class ServiceConnection:
         # returns the data
         return data
 
-    def send(self, message, response_timeout = None):
+    def send(self, message, response_timeout = None, retries = SEND_RETRIES):
         """
         Sends the given message to the socket.
         Raises an exception in case there is a problem sending
@@ -1793,6 +1796,8 @@ class ServiceConnection:
         @param message: The message to be sent.
         @type request_timeout: float
         @param request_timeout: The timeout to be used in data sending.
+        @type retries: int
+        @param retries: The number of retries to be used.
         """
 
         # retrieves the response timeout
@@ -1817,8 +1822,19 @@ class ServiceConnection:
                 # sends the data in chunks
                 number_bytes_sent = self.connection_socket.send(message)
             except BaseException, exception:
-                # raises the client response timeout exception
-                raise main_service_utils_exceptions.ServerResponseTimeout("problem sending data: " + unicode(exception))
+                # in case the number of retries (available)
+                # is greater than zero
+                if retries > 0:
+                    # decrements the retries value
+                    retries -= 1
+
+                    # continues the loop
+                    continue
+                # otherwise an exception should be
+                # raised
+                else:
+                    # raises the client response timeout exception
+                    raise main_service_utils_exceptions.ServerResponseTimeout("problem sending data: " + unicode(exception))
 
             # decrements the number of bytes sent
             number_bytes -= number_bytes_sent
