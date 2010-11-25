@@ -305,7 +305,7 @@ class WorkPoolImplementation:
         work_task.add_work(work_reference)
 
         # releases the work tasks access lock
-        self.work_tasks_access_lock.acquire()
+        self.work_tasks_access_lock.release()
 
     def get_thread_pool(self):
         """
