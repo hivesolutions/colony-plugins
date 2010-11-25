@@ -61,6 +61,9 @@ CONNECTION_TIMEOUT = 600
 CHUNK_SIZE = 4096
 """ The chunk size """
 
+SEND_RETRIES = 3
+""" The send retries """
+
 CONNECTION_TYPE_VALUE = "connection"
 """ The connection type value """
 
@@ -645,7 +648,7 @@ class ClientConnection:
         # returns the buffer to the previous position
         self._returned_data_buffer.seek(data_length * -1, os.SEEK_CUR)
 
-    def send(self, message, response_timeout = None):
+    def send(self, message, response_timeout = None, retries = SEND_RETRIES):
         """
         Sends the given message to the socket.
 
@@ -653,6 +656,8 @@ class ClientConnection:
         @param response_timeout: The timeout to be used in data sending.
         @type message: String
         @param message: The message to be sent.
+        @type retries: int
+        @param retries: The number of retries to be used.
         """
 
         # retrieves the response timeout
@@ -714,11 +719,22 @@ class ClientConnection:
                     # sends the data in chunks
                     number_bytes_sent = self.connection_socket.send(message)
                 except Exception, exception:
-                    # closes the connection
-                    self.close()
+                    # in case the number of retries (available)
+                    # is greater than zero
+                    if retries > 0:
+                        # decrements the retries value
+                        retries -= 1
 
-                    # raises the client response timeout exception
-                    raise main_client_utils_exceptions.ClientResponseTimeout("problem sending data: " + unicode(exception))
+                        # continues the loop
+                        continue
+                    # otherwise an exception should be
+                    # raised
+                    else:
+                        # closes the connection
+                        self.close()
+
+                        # raises the client response timeout exception
+                        raise main_client_utils_exceptions.ClientResponseTimeout("problem sending data: " + unicode(exception))
 
                 # decrements the number of bytes sent
                 number_bytes -= number_bytes_sent
