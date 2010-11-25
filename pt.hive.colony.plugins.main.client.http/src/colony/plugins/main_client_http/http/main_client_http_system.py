@@ -322,14 +322,6 @@ class HttpClient:
         # print a debug message
         main_client_http_plugin.debug("Fetching url '%s' with '%s' method" % (url, method))
 
-        # retrieves the url type
-        url_type = type(url)
-
-        # in case the url type is unicode
-        if url_type == types.UnicodeType:
-            # encodes the url using the default encoding
-            url = url.encode("utf-8")
-
         # parses the url retrieving the protocol the host, the username,
         # the password, the port, the path, the base url and the options map
         protocol, username, password, host, port, path, base_url, options_map = self._parse_url(url)
