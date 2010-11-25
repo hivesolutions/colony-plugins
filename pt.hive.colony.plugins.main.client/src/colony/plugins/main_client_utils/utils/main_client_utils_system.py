@@ -673,6 +673,8 @@ class ClientConnection:
                 # raises the request closed exception
                 raise main_client_utils_exceptions.RequestClosed("invalid socket")
 
+            # in case there is pending data to
+            # be received
             if not selected_values[0] == []:
                 try:
                     # receives the data from the socket
@@ -680,21 +682,34 @@ class ClientConnection:
 
                     # in case the data is empty
                     if not len(data):
+                        # prints a debug message
+                        self.client_plugin.debug("Received empty data, reconnecting socket")
+
                         # reconnects the connection socket
                         self._reconnect_connection_socket()
                     else:
+                        # prints a debug message
+                        self.client_plugin.debug("Received extra data, returning it")
+
                         # returns the data back into the queue
                         self.return_data(data)
-                except:
+                except BaseException, exception:
+                    # prints a debug message
+                    self.client_plugin.debug("Problem while receiving pending data: " + unicode(exception))
+
                     # reconnects the connection socket
                     self._reconnect_connection_socket()
+            # in case there are no selected values
+            # connection is closed
             elif selected_values == ([], [], []):
                 # closes the connection
                 self.close()
 
                 # raises the server response timeout exception
                 raise main_client_utils_exceptions.ServerResponseTimeout("%is timeout" % response_timeout)
-            else:
+            # in case the socket is ready to have data
+            # sent through it
+            elif not selected_values[1] == []:
                 try:
                     # sends the data in chunks
                     number_bytes_sent = self.connection_socket.send(message)
@@ -816,16 +831,13 @@ class ClientConnection:
         # the given socket name and parameters
         self.connection_socket = self.client._get_socket(self.connection_socket_name, self.connection_socket_parameters)
 
-        # sets the socket to blocking mode
-        self.connection_socket.setblocking(1)
-
         # reconnects the socket to the connection address
         self.connection_socket.connect(self.connection_address)
 
         # sets the socket to non blocking mode
         self.connection_socket.setblocking(0)
 
-        # prints debug message about reconnection
+        # prints a debug message about reconnection
         self.client_plugin.debug("Reconnected to: %s" % str(self.connection_address))
 
     def _call_connection_opened_handlers(self):
