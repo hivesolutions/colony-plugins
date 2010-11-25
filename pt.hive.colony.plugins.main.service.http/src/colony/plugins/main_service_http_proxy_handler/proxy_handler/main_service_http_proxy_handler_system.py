@@ -367,7 +367,8 @@ class MainServiceHttpProxyHandler:
                 url_structure = url_parser_plugin.parse_url(proxy_target)
 
                 # retrieves the resource reference from the url structure
-                resource_reference = url_structure.resource_reference
+                # or sets the default one (empty) in case it's not defined
+                resource_reference = url_structure.resource_reference or ""
 
                 # removes the resource reference from the location
                 location = location.replace(resource_reference, "")
