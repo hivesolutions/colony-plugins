@@ -2352,7 +2352,7 @@ class HttpRequest:
         self.original_path = path
 
         # "unquotes" the path value
-        path = colony.libs.quote_util.unquote_plus(path)
+        path = colony.libs.quote_util.unquote(path)
 
         # retrieves the resource path of the path
         resource_path = path.split("?")[0]
@@ -2373,7 +2373,7 @@ class HttpRequest:
         """
 
         # "unquotes" the base path value
-        base_path = colony.libs.quote_util.unquote_plus(base_path)
+        base_path = colony.libs.quote_util.unquote(base_path)
 
         # retrieves the resource path of the base path
         resource_base_path = base_path.split("?")[0]
