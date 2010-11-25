@@ -128,7 +128,7 @@ ACCEPT_CHARSET_VALUE = "Accept-Charset"
 KEEP_ALIVE_VALUE = "Keep-Alive"
 """ The keep alive value """
 
-CONNECITON_VALUE = "Connection"
+CONNECTION_VALUE = "Connection"
 """ The connection value """
 
 CACHE_CONTROL_VALUE = "Cache-Control"
@@ -157,6 +157,12 @@ DEFAULT_PORTS = (80, 443)
 
 DEFAULT_SOCKET_PARAMETERS = {}
 """ The default socket parameters """
+
+UNDEFINED_CONTENT_LENGTH = None
+""" The undefined content length """
+
+UNDEFINED_CONTENT_LENGTH_STATUS_CODES = (204, 304)
+""" The status codes for undefined content length """
 
 REDIRECT_STATUS_CODES = (301, 302, 307)
 """ The status codes for redirection """
@@ -237,6 +243,9 @@ class HttpClient:
 
     password = "none"
     """ The password to be used in authentication """
+
+    no_cache = False
+    """ The no cache flag """
 
     redirect = True
     """ The value controlling the "auto" redirection """
@@ -469,6 +478,11 @@ class HttpClient:
             # sets the authentication in the request
             request.set_authentication(self.username, self.password)
 
+        # in case no cache is set
+        if self.no_cache:
+            # sets the no cache in the request
+            request.set_no_cache(self.no_cache)
+
         # retrieves the result value from the request
         result_value = request.get_result()
 
@@ -518,6 +532,9 @@ class HttpClient:
         # creates the received data size (counter)
         received_data_size = 0
 
+        # unsets the undefined content length finished
+        undefined_content_length_finished = False
+
         # continuous loop
         while True:
             # retrieves the data
@@ -525,14 +542,26 @@ class HttpClient:
 
             # in case no valid data was received
             if data == "":
-                # raises the http invalid data exception
-                raise main_client_http_exceptions.HttpInvalidDataException("empty data received")
+                # in case the message size is undefined
+                if message_size == UNDEFINED_CONTENT_LENGTH:
+                    # sets the undefined contents length finished flag
+                    undefined_content_length_finished = True
+                else:
+                    # raises the http invalid data exception
+                    raise main_client_http_exceptions.HttpInvalidDataException("empty data received")
 
             # retrieves the data length
             data_length = len(data)
 
             # increments the received data size (counter)
             received_data_size += data_length
+
+            # in case the undefined content length
+            # search is finished
+            if undefined_content_length_finished:
+                # calculates the message size from the current
+                # received data size
+                message_size = received_data_size - message_offset_index
 
             # writes the data to the string buffer
             message.write(data)
@@ -665,8 +694,21 @@ class HttpClient:
                             # returns the "new" fetched url (redirection)
                             return self.fetch_url(location, GET_METHOD_VALUE, headers = request_headers)
 
-                    # retrieves the message size
-                    message_size = int(response.headers_map.get(CONTENT_LENGTH_VALUE, 0))
+                    # in case the content length exists in the headers map
+                    if CONTENT_LENGTH_VALUE in response.headers_map:
+                        # retrieves the message size as the content length value
+                        message_size = int(response.headers_map[CONTENT_LENGTH_VALUE])
+                    # in case the current status code refers to a response
+                    # with no message body
+                    elif self._status_code_no_message_body(status_code_integer):
+                        # sets the message size as zero
+                        message_size = 0
+                    # otherwise it must be a response with no content
+                    # length defined (must wait for closing of connection)
+                    else:
+                        # sets the message size as undefined content
+                        # length value
+                        message_size = UNDEFINED_CONTENT_LENGTH
 
                     # retrieves the transfer encoding value
                     transfer_encoding = response.headers_map.get(TRANSFER_ENCODING_VALUE, None)
@@ -694,8 +736,9 @@ class HttpClient:
                 message_value_message_length = len(message_value) - start_message_index
 
                 # in case the length of the message value message is the same
-                # or greater as the message size
-                if message_value_message_length >= message_size:
+                # or greater as the message size and the message size
+                # is not undefined
+                if message_value_message_length >= message_size and not message_size == UNDEFINED_CONTENT_LENGTH:
                     # retrieves the message part of the message value
                     message_value_message = message_value[start_message_index:]
 
@@ -870,6 +913,20 @@ class HttpClient:
         self.username = username
         self.password = password
 
+    def set_no_cache(self, no_cache):
+        """
+        Sets the value controlling the explicit invalidation
+        of the cache in the http request.
+
+
+        @type no_cache: bool
+        @param no_cache: The value controlling the explicit invalidation
+        of the cache in the http request.
+        """
+
+        # sets the no cache flag
+        self.no_cache = no_cache
+
     def set_redirect(self, redirect):
         """
         Sets the value controlling the "auto" redirection to be
@@ -989,6 +1046,21 @@ class HttpClient:
         # and the options map
         return (protocol, username, password, host, port, path, base_url, options_map)
 
+    def _status_code_no_message_body(self, status_code_integer):
+        """
+        Tests if the given status code (integer) refers
+        to a response with no message body contents.
+
+        @type status_code_integer: int
+        @param status_code_integer: The status code (integer)
+        to be tested.
+        @rtype: bool
+        @return: If the given status code (integer) refers
+        to a response with no message body contents.
+        """
+
+        return (status_code_integer >= 100 and status_code_integer < 200) or status_code_integer in UNDEFINED_CONTENT_LENGTH_STATUS_CODES
+
 class HttpRequest:
     """
     The http request class.
@@ -1023,6 +1095,9 @@ class HttpRequest:
 
     authentication_token = "none"
     """ The authentication used in authentication """
+
+    no_cache = False
+    """ The no cache flag """
 
     attributes_map = {}
     """ The attributes map """
@@ -1159,6 +1234,10 @@ class HttpRequest:
         if self.authentication:
             headers_ordered_map[AUTHORIZATION_VALUE] = self.authentication_token
 
+        # in case no cache is set
+        if self.no_cache:
+            headers_ordered_map[CACHE_CONTROL_VALUE] = "no-cache"
+
         # sets the base request header values
         headers_ordered_map[HOST_VALUE] = real_host
         headers_ordered_map[USER_AGENT_VALUE] = USER_AGENT_IDENTIFIER
@@ -1166,8 +1245,7 @@ class HttpRequest:
         headers_ordered_map[ACCEPT_LANGUAGE_VALUE] = "en-us,en;q=0.5"
         headers_ordered_map[ACCEPT_CHARSET_VALUE] = "iso-8859-1,utf-8;q=0.7,*;q=0.7"
         headers_ordered_map[KEEP_ALIVE_VALUE] = "115"
-        headers_ordered_map[CONNECITON_VALUE] = "keep-alive"
-        headers_ordered_map[CACHE_CONTROL_VALUE] = "max-age=0"
+        headers_ordered_map[CONNECTION_VALUE] = "keep-alive"
 
         # extends the headers ordered map with the headers map
         headers_ordered_map.extend(self.headers_map)
@@ -1208,6 +1286,26 @@ class HttpRequest:
         # creates the authentication token encoding the username
         # and password in base 64
         self.authentication_token = BASIC_VALUE + " " + base64.b64encode(username + ":" + password)
+
+    def get_no_cache(self, no_cache):
+        """
+        Retrieves the no cache value.
+
+        @rtype: bool
+        @return: The no cache value.
+        """
+
+        return self.no_cache
+
+    def set_no_cache(self, no_cache):
+        """
+        Sets the no cache value.
+
+        @type no_cache: bool
+        @param no_cache: The no cache value.
+        """
+
+        self.no_cache = no_cache
 
     def _get_real_host(self):
         """
