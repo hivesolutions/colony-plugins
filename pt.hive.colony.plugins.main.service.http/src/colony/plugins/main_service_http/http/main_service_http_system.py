@@ -628,9 +628,11 @@ class HttpClientServiceHandler:
         try:
             # retrieves the request
             request = self.retrieve_request(service_connection)
-        except main_service_http_exceptions.MainServiceHttpException:
+        except main_service_http_exceptions.MainServiceHttpException, exception:
             # prints a debug message about the connection closing
             self.service_plugin.debug("Connection: %s closed by peer, timeout or invalid request" % str(service_connection))
+
+            print "vai fechar a conexao em 1: " + str(exception)
 
             # returns false (connection closed)
             return False
@@ -667,11 +669,15 @@ class HttpClientServiceHandler:
 
             # in case no handler name is defined (request not handled)
             if not handler_name:
+                print "mandou a excepcao em 2"
+
                 # raises an http no handler exception
                 raise main_service_http_exceptions.HttpNoHandlerException("no handler defined for current request")
 
             # in case the handler is not found in the handler plugins map
             if not handler_name in http_service_handler_plugins_map:
+                print "mandou a excepcao em 3"
+
                 # raises an http handler not found exception
                 raise main_service_http_exceptions.HttpHandlerNotFoundException("no handler found for current request: " + handler_name)
 
@@ -684,7 +690,9 @@ class HttpClientServiceHandler:
             try:
                 # sends the request to the client (response)
                 self.send_request(service_connection, request)
-            except main_service_http_exceptions.MainServiceHttpException:
+            except main_service_http_exceptions.MainServiceHttpException, exception:
+                print "vai acabar em 4" + str(exception)
+
                 # prints a debug message
                 self.service_plugin.debug("Connection: %s closed by peer, while sending request" % str(service_connection))
 
@@ -693,6 +701,8 @@ class HttpClientServiceHandler:
 
             # in case the connection is not meant to be kept alive
             if not self.keep_alive(request):
+                print "vai acabar em 5"
+
                 # prints a debug message
                 self.service_plugin.debug("Connection: %s closed, not meant to be kept alive" % str(service_connection))
 
@@ -705,19 +715,25 @@ class HttpClientServiceHandler:
             # prints a debug message
             self.service_plugin.debug("Connection: %s kept alive for %ss" % (str(service_connection), str(service_connection_request_timeout)))
         except Exception, exception:
+            print "vai acabar em 6" + str(exception)
+
             # prints info message about exception
             self.service_plugin.info("There was an exception handling the request: " + unicode(exception))
 
             try:
                 # sends the exception
                 self.send_exception(service_connection, request, exception)
-            except main_service_http_exceptions.MainServiceHttpException:
+            except main_service_http_exceptions.MainServiceHttpException, exception:
+                print "vai acabar em 7" + str(exception)
+
                 # prints a debug message
                 self.service_plugin.debug("Connection: %s closed by peer, while sending exception" % str(service_connection))
 
                 # returns false (connection closed)
                 return False
             except Exception, exception:
+                print "vai acabar em 8"
+
                 # prints an error message
                 self.service_plugin.debug("There was an exception handling the exception: " + unicode(exception))
 
