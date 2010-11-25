@@ -92,6 +92,9 @@ CONNECTION_TIMEOUT = 600
 CHUNK_SIZE = 4096
 """ The chunk size """
 
+RETRIEVE_DATA_RETRIES = 3
+""" The retrieve data retries """
+
 SEND_RETRIES = 3
 """ The send retries """
 
@@ -1747,7 +1750,7 @@ class ServiceConnection:
         # sets the socket to non blocking mode
         self.connection_socket.setblocking(0)
 
-    def retrieve_data(self, request_timeout = None, chunk_size = None):
+    def retrieve_data(self, request_timeout = None, chunk_size = None, retries = RETRIEVE_DATA_RETRIES):
         """
         Retrieves the data from the current connection socket, with the
         given timeout and with a maximum size given by the chunk size.
@@ -1756,6 +1759,8 @@ class ServiceConnection:
         @param request_timeout: The timeout to be used in data retrieval.
         @type chunk_size: int
         @param chunk_size: The maximum size of the chunk to be retrieved.
+        @type retries: int
+        @param retries: The number of retries to be used.
         @rtype: String
         @return: The retrieved data.
         """
@@ -1766,22 +1771,38 @@ class ServiceConnection:
         # retrieves the chunk size
         chunk_size = chunk_size and chunk_size or self.connection_chunk_size
 
-        try:
-            # runs the select in the connection socket, with timeout
-            selected_values = select.select([self.connection_socket], [], [], request_timeout)
-        except:
-            # raises the request closed exception
-            raise main_service_utils_exceptions.RequestClosed("invalid socket")
+        # iterates continuously
+        while True:
+            try:
+                # runs the select in the connection socket, with timeout
+                selected_values = select.select([self.connection_socket], [], [self.connection_socket], request_timeout)
+            except:
+                # raises the request closed exception
+                raise main_service_utils_exceptions.RequestClosed("invalid socket")
 
-        if selected_values == ([], [], []):
-            # raises the server request timeout exception
-            raise main_service_utils_exceptions.ServerRequestTimeout("%is timeout" % request_timeout)
-        try:
-            # receives the data in chunks
-            data = self.connection_socket.recv(chunk_size)
-        except BaseException, exception:
-            # raises the client request timeout exception
-            raise main_service_utils_exceptions.ClientRequestTimeout("problem receiving data: " + unicode(exception))
+            if selected_values == ([], [], []):
+                # raises the server request timeout exception
+                raise main_service_utils_exceptions.ServerRequestTimeout("%is timeout" % request_timeout)
+            try:
+                # receives the data in chunks
+                data = self.connection_socket.recv(chunk_size)
+            except BaseException, exception:
+                # in case the number of retries (available)
+                # is greater than zero
+                if retries > 0:
+                    # decrements the retries value
+                    retries -= 1
+
+                    # continues the loop
+                    continue
+                # otherwise an exception should be
+                # raised
+                else:
+                    # raises the client request timeout exception
+                    raise main_service_utils_exceptions.ClientRequestTimeout("problem receiving data: " + unicode(exception))
+
+            # breaks the loop
+            break
 
         # returns the data
         return data
