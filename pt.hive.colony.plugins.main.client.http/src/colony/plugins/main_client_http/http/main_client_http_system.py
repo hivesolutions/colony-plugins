@@ -1062,7 +1062,7 @@ class HttpClient:
 
         # in case the location is not the same, the status code is
         # of type redirect and the redirect flag is set
-        if not location.encode("utf-8") == request.url and status_code in REDIRECT_STATUS_CODES and self.redirect:
+        if not location.decode("utf-8") == request.url and status_code in REDIRECT_STATUS_CODES and self.redirect:
             # prints a debug message
             main_client_http_plugin.debug("Redirecting request to '%s'" % location)
 
