@@ -504,9 +504,6 @@ class HttpClient:
         @return: The response from the sent request.
         """
 
-        # retrieves the main client http plugin
-        main_client_http_plugin = self.main_client_http.main_client_http_plugin
-
         # creates the string buffer for the message
         message = colony.libs.string_buffer_util.StringBuffer()
 
@@ -652,48 +649,6 @@ class HttpClient:
                         # sets the header in the headers map
                         response.headers_map[header_name] = header_value
 
-                    # in case the location value is set in the response header
-                    if LOCATION_VALUE in response.headers_map:
-                        # retrieves the location
-                        location = response.headers_map[LOCATION_VALUE]
-
-                        # retrieves the status code
-                        status_code = response.status_code
-
-                        # in case the location does not start with the http prefix
-                        # it's not an absolute path but a relative one
-                        if not location.startswith(HTTP_PREFIX_VALUE) and not location.startswith(HTTPS_PREFIX_VALUE):
-                            # in case the location starts with the slash value
-                            # the address refers to a base address
-                            if location.startswith("/"):
-                                # retrieves the base url of the request
-                                request_base_url = request.base_url
-
-                                # creates the "absolute" location value
-                                location = request_base_url + location
-                            # the address is relative to the current one
-                            else:
-                                # retrieves the url of the request
-                                request_url = request.url
-
-                                # retrieves the request base url (without the last token)
-                                request_url = request_url.rsplit("/", 1)[0]
-
-                                # sets the "relative" location value
-                                location = request_url + "/" + location
-
-                        # in case the location is not the same, the status code is
-                        # of type redirect and the redirect flag is set
-                        if not location == request.url and status_code in REDIRECT_STATUS_CODES and self.redirect:
-                            # prints a debug message
-                            main_client_http_plugin.debug("Redirecting request to '%s'" % location)
-
-                            # retrieves the request headers
-                            request_headers = request.headers_map
-
-                            # returns the "new" fetched url (redirection)
-                            return self.fetch_url(location, GET_METHOD_VALUE, headers = request_headers)
-
                     # in case the content length exists in the headers map
                     if CONTENT_LENGTH_VALUE in response.headers_map:
                         # retrieves the message size as the content length value
@@ -750,6 +705,12 @@ class HttpClient:
 
                     # decodes the response if necessary
                     self.decode_response(response)
+
+                    # processes the redirection of the request
+                    redirection_value = self._process_redirection(request, response)
+
+                    # sets the final response value
+                    response = redirection_value or response
 
                     # returns the response
                     return response
@@ -1045,6 +1006,74 @@ class HttpClient:
         # the password, the host, the port, the path, the base url
         # and the options map
         return (protocol, username, password, host, port, path, base_url, options_map)
+
+    def _process_redirection(self, request, response):
+        """
+        Processes the redirection part of the response,
+        retrieving the new response in case there is a
+        redirection defined.
+
+        @type request: HttpRequest
+        @param request: The http request to be used in
+        the processing.
+        @type response: HttpResponse
+        @param response: The http response to be used in
+        the processing.
+        @rtype: HttpResponse
+        @return: The http response resulting from the
+        redirection (or none if not redirected).
+        """
+
+        # retrieves the main client http plugin
+        main_client_http_plugin = self.main_client_http.main_client_http_plugin
+
+        # in case the location value is not set in the response header
+        if not LOCATION_VALUE in response.headers_map:
+            # returns invalid
+            return None
+
+        # retrieves the location
+        location = response.headers_map[LOCATION_VALUE]
+
+        # retrieves the status code
+        status_code = response.status_code
+
+        # in case the location does not start with the http prefix
+        # it's not an absolute path but a relative one
+        if not location.startswith(HTTP_PREFIX_VALUE) and not location.startswith(HTTPS_PREFIX_VALUE):
+            # in case the location starts with the slash value
+            # the address refers to a base address
+            if location.startswith("/"):
+                # retrieves the base url of the request
+                request_base_url = request.base_url
+
+                # creates the "absolute" location value
+                location = request_base_url + location
+            # the address is relative to the current one
+            else:
+                # retrieves the url of the request
+                request_url = request.url
+
+                # retrieves the request base url (without the last token)
+                request_url = request_url.rsplit("/", 1)[0]
+
+                # sets the "relative" location value
+                location = request_url + "/" + location
+
+        # in case the location is not the same, the status code is
+        # of type redirect and the redirect flag is set
+        if not location == request.url and status_code in REDIRECT_STATUS_CODES and self.redirect:
+            # prints a debug message
+            main_client_http_plugin.debug("Redirecting request to '%s'" % location)
+
+            # retrieves the request headers
+            request_headers = request.headers_map
+
+            # returns the "new" fetched url (redirection)
+            return self.fetch_url(location, GET_METHOD_VALUE, headers = request_headers)
+
+        # returns invalid
+        return None
 
     def _status_code_no_message_body(self, status_code_integer):
         """
