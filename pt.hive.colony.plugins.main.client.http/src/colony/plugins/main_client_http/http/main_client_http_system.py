@@ -48,9 +48,6 @@ import colony.libs.string_buffer_util
 
 import main_client_http_exceptions
 
-DEFAULT_ENCODING = "utf-8"
-""" the default encoding """
-
 HTTP_PREFIX_VALUE = "http://"
 """ The http prefix value """
 
@@ -95,6 +92,9 @@ DEFAULT_CONTENT_TYPE = None
 
 DEFAULT_CHARSET = None
 """ The default charset """
+
+DEFAULT_URL_ENCODING = "utf-8"
+""" The default url encoding """
 
 STATUS_CODE_VALUES = {100 : "Continue", 101 : "Switching Protocols",
                       200 : "OK", 207 : "Multi-Status",
@@ -1038,6 +1038,12 @@ class HttpClient:
         # retrieves the location
         location = response.headers_map[LOCATION_VALUE]
 
+        # decodes the location using the default url encoding
+        location = location.decode(DEFAULT_URL_ENCODING)
+
+        # retrieves the url of the request
+        request_url = request.url
+
         # retrieves the status code
         status_code = response.status_code
 
@@ -1054,25 +1060,11 @@ class HttpClient:
                 location = request_base_url + location
             # the address is relative to the current one
             else:
-                # retrieves the url of the request
-                request_url = request.url
-
                 # retrieves the request base url (without the last token)
                 request_url = request_url.rsplit("/", 1)[0]
 
                 # sets the "relative" location value
                 location = request_url + "/" + location
-
-        # retrieves the url of the request
-        request_url = request.url
-
-        # retrieves the request url type
-        request_url_type = type(request_url)
-
-        # in case the request url type is unicode
-        if request_url_type == types.UnicodeType:
-            # decodes the location using the default encoding
-            location = location.decode(DEFAULT_ENCODING)
 
         # in case the location is not the same, the status code is
         # of type redirect and the redirect flag is set
