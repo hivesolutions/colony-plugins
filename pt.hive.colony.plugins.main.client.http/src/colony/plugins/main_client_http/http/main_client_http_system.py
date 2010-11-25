@@ -48,6 +48,9 @@ import colony.libs.string_buffer_util
 
 import main_client_http_exceptions
 
+DEFAULT_ENCODING = "utf-8"
+""" the default encoding """
+
 HTTP_PREFIX_VALUE = "http://"
 """ The http prefix value """
 
@@ -1060,9 +1063,20 @@ class HttpClient:
                 # sets the "relative" location value
                 location = request_url + "/" + location
 
+        # retrieves the url of the request
+        request_url = request.url
+
+        # retrieves the request url type
+        request_url_type = type(request_url)
+
+        # in case the request url type is unicode
+        if request_url_type == types.UnicodeType:
+            # decodes the location using the default encoding
+            location = location.decode(DEFAULT_ENCODING)
+
         # in case the location is not the same, the status code is
         # of type redirect and the redirect flag is set
-        if not location.decode("utf-8") == request.url and status_code in REDIRECT_STATUS_CODES and self.redirect:
+        if not location == request_url and status_code in REDIRECT_STATUS_CODES and self.redirect:
             # prints a debug message
             main_client_http_plugin.debug("Redirecting request to '%s'" % location)
 
