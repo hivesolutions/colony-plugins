@@ -189,6 +189,12 @@ WWW_AUTHENTICATE_VALUE = "WWW-Authenticate"
 CHUNKED_VALUE = "chunked"
 """ The chunked value """
 
+KEEP_ALIVE_LOWER_VALUE = "keep-alive"
+""" The keep alive lower value """
+
+UPGRADE_LOWER_VALUE = "upgrade"
+""" The upgrade lower value """
+
 KEEP_ALIVE_VALUE = "Keep-Alive"
 """ The keep alive value """
 
@@ -1200,7 +1206,7 @@ class HttpClientServiceHandler:
             for connection_type_field in connection_type_fields:
                 # in case the connection is meant to be kept alive
                 # or in case is of type upgrade
-                if connection_type_field.lower() in ("keep-alive", "upgrade"):
+                if connection_type_field.lower() in (KEEP_ALIVE_LOWER_VALUE, UPGRADE_LOWER_VALUE):
                     # returns true
                     return True
 
