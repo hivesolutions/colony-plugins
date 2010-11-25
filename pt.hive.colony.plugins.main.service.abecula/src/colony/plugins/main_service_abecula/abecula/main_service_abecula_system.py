@@ -411,6 +411,9 @@ class AbeculaClientServiceHandler:
             # retrieves the abecula service handler plugin
             abecula_service_handler_plugin = abecula_service_handler_plugins_map[handler_name]
 
+            # prints debug message about request
+            self.service_plugin.debug("Handing request to abecula service handler: %s" % handler_name)
+
             # handles the request by the request handler
             abecula_service_handler_plugin.handle_request(request)
 
