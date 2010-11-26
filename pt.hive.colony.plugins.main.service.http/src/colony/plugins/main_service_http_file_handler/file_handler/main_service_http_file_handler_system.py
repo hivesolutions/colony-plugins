@@ -349,11 +349,8 @@ class MainServiceHttpFileHandler:
             # in order to avoid file redirection problems
             resource_path = resource_base_path.encode(DEFAULT_CHARSET) + "/"
 
-            # quotes the resources path
-            resource_path_quoted = colony.libs.quote_util.quote(resource_path)
-
-            # redirects the request to the resource path (quoted)
-            self._redirect(request, resource_path_quoted)
+            # redirects the request to the resource path
+            self._redirect(request, resource_path)
 
             # returns immediately
             return
@@ -495,7 +492,7 @@ class MainServiceHttpFileHandler:
                     # breaks the loop
                     break
 
-    def _redirect(self, request, target_path):
+    def _redirect(self, request, target_path, status_code = 301):
         """
         Redirects the given request to the target path.
 
@@ -503,13 +500,18 @@ class MainServiceHttpFileHandler:
         @param request: The http request to be handled.
         @type target_path: String
         @param target_path: The target path of the redirection.
+        @type status_code: int
+        @param status_code: The status code to be used.
         """
 
-        # sets the status code as permanent redirect
-        request.status_code = 301
+        # quotes the target path
+        target_path_quoted = colony.libs.quote_util.quote(target_path)
 
-        # sets the location header
-        request.set_header(LOCATION_VALUE, target_path)
+        # sets the status code
+        request.status_code = status_code
+
+        # sets the location header (using the quoted target path)
+        request.set_header(LOCATION_VALUE, target_path_quoted)
 
     def _process_ranges(self, request, file_size):
         """
