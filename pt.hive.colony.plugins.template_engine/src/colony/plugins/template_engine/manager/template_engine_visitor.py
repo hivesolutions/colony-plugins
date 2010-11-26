@@ -43,6 +43,7 @@ import datetime
 
 import xml.sax.saxutils
 
+import colony.libs.quote_util
 import colony.libs.string_buffer_util
 
 import template_engine_ast
@@ -93,6 +94,9 @@ KEY_VALUE = "key"
 START_INDEX_VALUE = "start_index"
 """ The start index value """
 
+QUOTE_VALUE = "quote"
+""" The quote value """
+
 XML_ESCAPE_VALUE = "xml_escape"
 """ The xml escape value """
 
@@ -107,6 +111,9 @@ NONE_VALUE = "None"
 
 ITER_VALUE = "__iter__"
 """ The iter value """
+
+QUOTE_ENCODING = "utf-8"
+""" The quote encoding """
 
 PROCESS_METHOD_PREFIX = "process_"
 """ The process method prefix """
@@ -490,6 +497,16 @@ class Visitor:
             format_string_value = self.get_value(format_string)
             attribute_value_value = format_string_value % attribute_value_value
 
+        # in case the quote exists in the attributes map
+        if QUOTE_VALUE in attributes_map:
+            # retrieves attribute quote value
+            attribute_quote = attributes_map[QUOTE_VALUE]
+            attribute_quote_value = self.get_boolean_value(attribute_quote)
+        # otherwise
+        else:
+            # unsets the attribute quote value
+            attribute_quote_value = False
+
         # in case the xml escape exists in the attributes map
         if XML_ESCAPE_VALUE in attributes_map:
             # retrieves the attribute xml escape value
@@ -507,6 +524,14 @@ class Visitor:
         else:
             # converts the value into unicode (in case it's necessary)
             attribute_value_value = unicode(attribute_value_value)
+
+        # in case the attribute quote value is set
+        if attribute_quote_value:
+            # re-encodes the value
+            attribute_value_value = attribute_value_value.encode(QUOTE_ENCODING)
+
+            # quotes the attribute value value
+            attribute_value_value = colony.libs.quote_util.quote(attribute_value_value)
 
         # in case the attribute xml escape value is set
         if attribute_xml_escape_value:
@@ -538,6 +563,16 @@ class Visitor:
             format_string_value = self.get_value(format_string)
             attribute_value_value = format_string_value % attribute_value_value
 
+        # in case the quote exists in the attributes map
+        if QUOTE_VALUE in attributes_map:
+            # retrieves attribute quote value
+            attribute_quote = attributes_map[QUOTE_VALUE]
+            attribute_quote_value = self.get_boolean_value(attribute_quote)
+        # otherwise
+        else:
+            # unsets the attribute quote value
+            attribute_quote_value = False
+
         # in case the xml escape exists in the attributes map
         if XML_ESCAPE_VALUE in attributes_map:
             # retrieves attribute xml escape value
@@ -556,10 +591,18 @@ class Visitor:
         # in case the variable encoding is defined
         if self.variable_encoding:
             # re-encodes the variable value
-            attribute_value_value = unicode(attribute_value_value).encode(self.variable_encoding)
+            attribute_value_value = attribute_value_value.encode(self.variable_encoding)
         else:
             # converts the value into unicode (in case it's necessary)
             attribute_value_value = unicode(attribute_value_value)
+
+        # in case the attribute quote value is set
+        if attribute_quote_value:
+            # re-encodes the value
+            attribute_value_value = attribute_value_value.encode(QUOTE_ENCODING)
+
+            # quotes the attribute value value
+            attribute_value_value = colony.libs.quote_util.quote(attribute_value_value)
 
         # in case the attribute xml escape value is set
         if attribute_xml_escape_value:
