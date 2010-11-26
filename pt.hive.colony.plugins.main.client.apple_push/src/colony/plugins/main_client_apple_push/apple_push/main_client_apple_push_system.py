@@ -263,8 +263,8 @@ class ApplePushClient:
         data_buffer = colony.libs.string_buffer_util.StringBuffer()
 
         try:
-            # retrieves the data
-            data = self.client_connection.retrieve_data(response_timeout, response_size)
+            # receives the data
+            data = self.client_connection.receive(response_timeout, response_size)
 
             # writes the data to the data buffer
             data_buffer.write(data)
