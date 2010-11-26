@@ -433,8 +433,8 @@ class XmppClientServiceHandler:
         # continuous loop
         while True:
             try:
-                # retrieves the data
-                data = service_connection.retrieve_data()
+                # receives the data
+                data = service_connection.receive()
             except self.service_utils_exception_class:
                 # raises the xmpp data retrieval exception
                 raise main_service_xmpp_exceptions.XmppDataRetrievalException("problem retrieving data")
@@ -484,8 +484,8 @@ class XmppClientServiceHandler:
         # continuous loop
         while True:
             try:
-                # retrieves the data
-                data = service_connection.retrieve_data()
+                # receives the data
+                data = service_connection.receive()
             except self.service_utils_exception_class:
                 # raises the xmpp data retrieval exception
                 raise main_service_xmpp_exceptions.XmppDataRetrievalException("problem retrieving data")
