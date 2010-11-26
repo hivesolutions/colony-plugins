@@ -798,16 +798,16 @@ class ClientConnection:
                     # receives the data in chunks
                     data = self.connection_socket.recv(chunk_size)
 
-                    # in case no data is received (end of connection)
-                    if not data:
-                        # returns the empty data
-                        return data
-
                     # adds the data to the read buffer
                     self._read_buffer.append(data)
 
                     # sets the read flag
                     read_flag = True
+
+                    # in case no data is received (end of connection)
+                    if not data:
+                        # breaks the loop
+                        break
             except BaseException, exception:
                 # in case there was at least one
                 # successful read
