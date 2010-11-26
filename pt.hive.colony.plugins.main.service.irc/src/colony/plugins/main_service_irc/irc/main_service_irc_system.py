@@ -391,8 +391,8 @@ class IrcClientServiceHandler:
         # continuous loop
         while True:
             try:
-                # retrieves the data
-                data = service_connection.retrieve_data()
+                # receives the data
+                data = service_connection.receive()
             except self.service_utils_exception_class:
                 # raises the irc data retrieval exception
                 raise main_service_irc_exceptions.IrcDataRetrievalException("problem retrieving data")
