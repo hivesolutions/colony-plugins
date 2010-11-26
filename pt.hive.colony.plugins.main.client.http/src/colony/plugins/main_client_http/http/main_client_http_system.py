@@ -301,7 +301,7 @@ class HttpClient:
         # stops the http client
         self._http_client.stop_client()
 
-    def fetch_url(self, url, method = GET_METHOD_VALUE, parameters = {}, protocol_version = HTTP_1_1_VERSION, headers = {}, content_type = DEFAULT_CONTENT_TYPE, content_type_charset = DEFAULT_CHARSET, contents = None):
+    def fetch_url(self, url, method = GET_METHOD_VALUE, parameters = {}, protocol_version = HTTP_1_1_VERSION, headers = {}, content_type = DEFAULT_CONTENT_TYPE, content_type_charset = DEFAULT_CHARSET, encode_path = False, contents = None):
         """
         Fetches the url for the given url, method and (http) parameters.
 
@@ -319,6 +319,8 @@ class HttpClient:
         @param content_type: The content type of the message.
         @type content_type_charset: String
         @param content_type_charset: The content type charset to be used.
+        @type encode_path: bool
+        @param encode_path: If the path should be encoded.
         @type contents: String
         @param contents: The contents of the message to be sent.
         @rtype: String
@@ -370,8 +372,9 @@ class HttpClient:
         try:
             # sends the request for the host, port, path,
             # parameters, method, headers, protocol version, content type,
-            # content type charset, contents, url and base url and retrieves the request
-            request = self.send_request(host, port, path, parameters, method, headers, protocol_version, content_type, content_type_charset, contents, url, base_url)
+            # content type charset, encode path, contents, url and base url
+            # and retrieves the request
+            request = self.send_request(host, port, path, parameters, method, headers, protocol_version, content_type, content_type_charset, encode_path, contents, url, base_url)
 
             # retrieves the response
             response = self.retrieve_response(request)
@@ -441,7 +444,7 @@ class HttpClient:
         # return the built url
         return url
 
-    def send_request(self, host, port, path, parameters, operation_type, headers, protocol_version, content_type, content_type_charset, contents, url, base_url):
+    def send_request(self, host, port, path, parameters, operation_type, headers, protocol_version, content_type, content_type_charset, encode_path, contents, url, base_url):
         """
         Sends the request for the given parameters.
 
@@ -463,6 +466,8 @@ class HttpClient:
         @param content_type: The content type of the message.
         @type content_type_charset: String
         @param content_type_charset: The content type charset.
+        @type encode_path: bool
+        @param encode_path: If the path should be encoded.
         @type contents: String
         @param contents: The contents of the message to be sent.
         @type url: String
@@ -474,8 +479,9 @@ class HttpClient:
         """
 
         # creates the http request with the host, the port, the path, the parameters, operation type,
-        # the headers, the protocol version, the content type, the content type charset, the url and the base url
-        request = HttpRequest(host, port, path, parameters, operation_type, headers, protocol_version, content_type, content_type_charset, url, base_url)
+        # the headers, the protocol version, the content type, the content type charset, the encode path,
+        # the url and the base url
+        request = HttpRequest(host, port, path, parameters, operation_type, headers, protocol_version, content_type, content_type_charset, encode_path, url, base_url)
 
         # in case the contents are defined
         if contents:
@@ -1155,13 +1161,16 @@ class HttpRequest:
     content_type_charset = None
     """ The content type charset """
 
+    encode_path = False
+    """ The encode path """
+
     url = None
     """ The complete url """
 
     base_url = None
     """ The base url """
 
-    def __init__(self, host = "none", port = None, path = "none", attributes_map = {}, operation_type = GET_METHOD_VALUE, headers_map = {}, protocol_version = HTTP_1_1_VERSION, content_type = DEFAULT_CONTENT_TYPE, content_type_charset = DEFAULT_CHARSET, url = None, base_url = None):
+    def __init__(self, host = "none", port = None, path = "none", attributes_map = {}, operation_type = GET_METHOD_VALUE, headers_map = {}, protocol_version = HTTP_1_1_VERSION, content_type = DEFAULT_CONTENT_TYPE, content_type_charset = DEFAULT_CHARSET, encode_path = False, url = None, base_url = None):
         """
         Constructor of the class.
 
@@ -1183,6 +1192,8 @@ class HttpRequest:
         @param content_type: The content type.
         @type content_type_charset: String
         @param content_type_charset: The content type charset.
+        @type encode_path: bool
+        @param encode_path: If the path should be encoded.
         @type url: String
         @param url: The complete url.
         @type base_url: String
@@ -1198,6 +1209,7 @@ class HttpRequest:
         self.protocol_version = protocol_version
         self.content_type = content_type
         self.content_type_charset = content_type_charset
+        self.encode_path = encode_path
         self.url = url
         self.base_url = base_url
 
@@ -1222,8 +1234,8 @@ class HttpRequest:
         # retrieves the result stream
         result = colony.libs.string_buffer_util.StringBuffer()
 
-        # encodes the path
-        path = self._encode_path()
+        # encodes the path if required
+        path = self.encode_path and self._encode_path() or self.path
 
         # encodes the attributes
         encoded_attributes = self._encode_attributes()
