@@ -430,7 +430,7 @@ def set_contents(self, rest_request, contents = ""):
     # flushes the rest request
     rest_request.flush()
 
-def redirect(self, rest_request, target):
+def redirect(self, rest_request, target, status_code = 302):
     """
     Redirects the current request to the given
     target (page).
@@ -439,10 +439,12 @@ def redirect(self, rest_request, target):
     @param rest_request: The rest request to be used.
     @type target: String
     @param target: The target (page) of the redirect.
+    @type status_code: int
+    @param status_code: The status code to be used.
     """
 
     # redirects the rest request to the target
-    rest_request.redirect(target)
+    rest_request.redirect(target, status_code)
 
     # sets the contents (null)
     self.set_contents(rest_request)
