@@ -44,6 +44,7 @@ import hashlib
 import datetime
 
 import colony.libs.map_util
+import colony.libs.quote_util
 import colony.libs.string_buffer_util
 
 import main_service_http_file_handler_exceptions
@@ -348,8 +349,11 @@ class MainServiceHttpFileHandler:
             # in order to avoid file redirection problems
             resource_path = resource_base_path.encode(DEFAULT_CHARSET) + "/"
 
-            # redirects the request to the resource path
-            self._redirect(request, resource_path)
+            # quotes the resources path
+            resource_path_quoted = colony.libs.quote_util.quote(resource_path)
+
+            # redirects the request to the resource path (quoted)
+            self._redirect(request, resource_path_quoted)
 
             # returns immediately
             return
