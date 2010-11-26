@@ -286,8 +286,8 @@ class WebSocketConnection:
         self.http_client_service_handler.unset_service_connection_request_handler(self.service_connection)
 
     def websocket_service_connection_handler(self, service_connection):
-        # retrieves the data
-        data = service_connection.retrieve_data()
+        # receives the data
+        data = service_connection.receive()
 
         # sends the data back
         service_connection.send(data)
