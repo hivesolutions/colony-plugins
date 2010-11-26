@@ -93,8 +93,8 @@ DEFAULT_CONTENT_TYPE = None
 DEFAULT_CHARSET = None
 """ The default charset """
 
-DEFAULT_URL_ENCODING = "utf-8"
-""" The default url encoding """
+DEFAULT_URL_CHARSET = "utf-8"
+""" The default url charset """
 
 STATUS_CODE_VALUES = {100 : "Continue", 101 : "Switching Protocols",
                       200 : "OK", 207 : "Multi-Status",
@@ -1038,8 +1038,8 @@ class HttpClient:
         # retrieves the location
         location = response.headers_map[LOCATION_VALUE]
 
-        # decodes the location using the default url encoding
-        location = location.decode(DEFAULT_URL_ENCODING)
+        # decodes the location using the default url charset
+        location = location.decode(DEFAULT_URL_CHARSET)
 
         # retrieves the url of the request
         request_url = request.url
