@@ -419,8 +419,8 @@ class SmtpClientServiceHandler:
         # continuous loop
         while True:
             try:
-                # retrieves the data
-                data = service_connection.retrieve_data()
+                # receives the data
+                data = service_connection.receive()
             except self.service_utils_exception_class:
                 # raises the smtp data retrieval exception
                 raise main_service_smtp_exceptions.SmtpDataRetrievalException("problem retrieving data")
