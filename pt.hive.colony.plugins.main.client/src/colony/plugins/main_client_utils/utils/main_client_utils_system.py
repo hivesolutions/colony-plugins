@@ -37,12 +37,11 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-import os
 import time
 import select
+import threading
 
 import colony.libs.map_util
-import colony.libs.string_buffer_util
 
 import main_client_utils_exceptions
 
@@ -72,6 +71,9 @@ CONNECTION_TYPE_VALUE = "connection"
 
 CONNECTIONLESS_TYPE_VALUE = "connectionless"
 """ The connectionless type value """
+
+PROCESS_EXCEPTION_VALUE = "process_exception"
+""" The process exception value """
 
 DEFAULT_TYPE = CONNECTION_TYPE_VALUE
 """ The default type client """
@@ -442,8 +444,11 @@ class ClientConnection:
     _connection_socket = None
     """ The original connection socket """
 
-    _returned_data_buffer = None
-    """ The buffer of returned data """
+    _read_buffer = []
+    """ The read buffer """
+
+    _read_lock = None
+    """ The read lock """
 
     def __init__(self, client_plugin, client, connection_socket, connection_address, connection_socket_name, connection_socket_parameters, connection_request_timeout, connection_response_timeout, connection_chunk_size):
         """
@@ -485,7 +490,8 @@ class ClientConnection:
         self.connection_closed_handlers = []
         self.connection_properties = {}
 
-        self._returned_data_buffer = colony.libs.string_buffer_util.StringBuffer(False)
+        self._read_buffer = []
+        self._read_lock = threading.RLock()
 
     def __repr__(self):
         return "(%s, %s)" % (self.connection_address, self.connection_socket_name)
@@ -570,19 +576,48 @@ class ClientConnection:
         # sets the socket to non blocking mode
         self.connection_socket.setblocking(0)
 
-    def retrieve_data(self, request_timeout = None, chunk_size = None, retries = RETRIEVE_DATA_RETRIES):
+    def receive(self, request_timeout = None, chunk_size = None, retries = RETRIEVE_DATA_RETRIES):
         """
-        Retrieves the data from the current connection socket, with the
+        Receives the data from the current connection socket, with the
         given timeout and with a maximum size given by the chunk size.
 
         @type request_timeout: float
-        @param request_timeout: The timeout to be used in data retrieval.
+        @param request_timeout: The timeout to be used in data receiving.
         @type chunk_size: int
-        @param chunk_size: The maximum size of the chunk to be retrieved.
+        @param chunk_size: The maximum size of the chunk to be received.
         @type retries: int
         @param retries: The number of retries to be used.
         @rtype: String
-        @return: The retrieved data.
+        @return: The received data.
+        """
+
+        # acquires the read lock
+        self._read_lock.acquire()
+
+        try:
+            # receives the data and returns the value
+            return_value = self._receive(request_timeout, chunk_size, retries)
+        finally:
+            # releases the read lock
+            self._read_lock.release()
+
+        # returns the return value
+        return return_value
+
+    def _receive(self, request_timeout, chunk_size, retries):
+        """
+        Receives the data from the current connection socket, with the
+        given timeout and with a maximum size given by the chunk size.
+        This method is not thread safe.
+
+        @type request_timeout: float
+        @param request_timeout: The timeout to be used in data receiving.
+        @type chunk_size: int
+        @param chunk_size: The maximum size of the chunk to be received.
+        @type retries: int
+        @param retries: The number of retries to be used.
+        @rtype: String
+        @return: The received data.
         """
 
         # retrieves the request timeout
@@ -591,19 +626,31 @@ class ClientConnection:
         # retrieves the chunk size
         chunk_size = chunk_size and chunk_size or self.connection_chunk_size
 
-        # in case the returned data buffer is not empty
-        if not self._returned_data_buffer.is_empty():
-            # returns the data buffer value
-            data_buffer_value = self._returned_data_buffer.read(chunk_size)
+        # in case the read buffer is not empty
+        if self._read_buffer:
+            # retrieves the read buffer element
+            read_buffer_element = self._read_buffer.pop(0)
 
-            # in case the returned data buffer has reached the
-            # end of file
-            if self._returned_data_buffer.eof():
-                # resets the returned data buffer
-                self._returned_data_buffer.reset()
+            # retrieves the read buffer element length
+            read_buffer_element_length = len(read_buffer_element)
 
-            # returns the data buffer value
-            return data_buffer_value
+            # in case the read buffer element length is greater
+            # than the chunk size
+            if read_buffer_element_length > chunk_size:
+                # retrieves the (sub) read buffer element
+                read_buffer_element = read_buffer_element[:chunk_size]
+
+                # retrieves the read buffer element remaining
+                read_buffer_element_remaining = read_buffer_element[chunk_size:]
+
+                # inserts the read buffer element remaining in the read buffer
+                self._read_buffer.insert(0, read_buffer_element_remaining)
+
+            # returns the read buffer element
+            return read_buffer_element
+
+        # unsets the read flag
+        read_flag = False
 
         # iterates continuously
         while True:
@@ -611,22 +658,35 @@ class ClientConnection:
                 # runs the select in the connection socket, with timeout
                 selected_values = select.select([self.connection_socket], [], [], request_timeout)
             except:
-                # closes the connection
-                self.close()
-
                 # raises the request closed exception
                 raise main_client_utils_exceptions.RequestClosed("invalid socket")
 
             if selected_values == ([], [], []):
-                # closes the connection
-                self.close()
-
                 # raises the server request timeout exception
-                raise main_client_utils_exceptions.ClientRequestTimeout("%is timeout" % request_timeout)
+                raise main_client_utils_exceptions.ServerRequestTimeout("%is timeout" % request_timeout)
             try:
-                # receives the data in chunks
-                data = self.connection_socket.recv(chunk_size)
+                # iterates continuously
+                while True:
+                    # receives the data in chunks
+                    data = self.connection_socket.recv(chunk_size)
+
+                    # in case no data is received (end of connection)
+                    if not data:
+                        # returns the empty data
+                        return data
+
+                    # adds the data to the read buffer
+                    self._read_buffer.append(data)
+
+                    # sets the read flag
+                    read_flag = True
             except BaseException, exception:
+                # in case there was at least one
+                # successful read
+                if read_flag:
+                    # breaks the loop
+                    break
+
                 # in case the number of retries (available)
                 # is greater than zero
                 if retries > 0:
@@ -638,14 +698,19 @@ class ClientConnection:
                 # otherwise an exception should be
                 # raised
                 else:
-                    # closes the connection
-                    self.close()
+                    # processes the exception
+                    if hasattr(self.connection_socket, PROCESS_EXCEPTION_VALUE) and self.connection_socket.process_exception(exception):
+                        # continues the loop
+                        continue
 
-                    # raises the server request timeout exception
-                    raise main_client_utils_exceptions.ServerRequestTimeout("problem receiving data: " + unicode(exception))
+                    # raises the client request timeout exception
+                    raise main_client_utils_exceptions.ClientRequestTimeout("problem receiving data: " + unicode(exception))
 
             # breaks the loop
             break
+
+        # pops the element from the read buffer
+        data = self._read_buffer.pop(0)
 
         # returns the data
         return data
@@ -660,14 +725,8 @@ class ClientConnection:
         connection internal buffer.
         """
 
-        # retrieves the data length
-        data_length = len(data)
-
-        # adds the data to the returned data buffer
-        self._returned_data_buffer.write(data)
-
-        # returns the buffer to the previous position
-        self._returned_data_buffer.seek(data_length * -1, os.SEEK_CUR)
+        # adds the data to the read buffer
+        self._read_buffer.append(data)
 
     def send(self, message, response_timeout = None, retries = SEND_RETRIES):
         """
