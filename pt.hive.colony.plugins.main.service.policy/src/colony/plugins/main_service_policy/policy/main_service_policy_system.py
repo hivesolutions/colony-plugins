@@ -416,8 +416,8 @@ class PolicyClientServiceHandler:
         # continuous loop
         while True:
             try:
-                # retrieves the data
-                data = service_connection.retrieve_data()
+                # receives the data
+                data = service_connection.receive()
             except self.service_utils_exception_class:
                 # raises the policy data retrieval exception
                 raise main_service_policy_exceptions.PolicyDataRetrievalException("problem retrieving data")
