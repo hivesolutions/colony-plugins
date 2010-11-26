@@ -10,7 +10,7 @@
         <tbody>
             ${foreach item=directory_entry from=directory_entries}
             <tr>
-                <td class="name ${out_none value=directory_entry.type xml_escape=True /}-small"><a href="${out_none value=directory_entry.name xml_escape=True /}">${out_none value=directory_entry.name xml_escape=True /}</a></td>
+                <td class="name ${out_none value=directory_entry.type xml_escape=True /}-small"><a href="${out_none value=directory_entry.name quote=True xml_escape=True /}">${out_none value=directory_entry.name xml_escape=True /}</a></td>
                 <td class="date">${format_datetime value=directory_entry.modified_date format="%d/%m/%y %H:%M:%S" xml_escape=True /}</td>
                 <td class="size">${out_none value=directory_entry.size_string xml_escape=True /}</td>
             </tr>

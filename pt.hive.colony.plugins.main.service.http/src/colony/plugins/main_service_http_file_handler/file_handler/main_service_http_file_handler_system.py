@@ -44,6 +44,7 @@ import hashlib
 import datetime
 
 import colony.libs.map_util
+import colony.libs.path_util
 import colony.libs.quote_util
 import colony.libs.string_buffer_util
 
@@ -365,6 +366,9 @@ class MainServiceHttpFileHandler:
         for directory_name in directory_names:
             # creates the complete file path
             file_path = complete_path + "/" + directory_name
+
+            # normalizes the file path
+            file_path =  colony.libs.path_util.normalize_path(file_path)
 
             # retrieves the file stat
             file_stat = os.stat(file_path)
