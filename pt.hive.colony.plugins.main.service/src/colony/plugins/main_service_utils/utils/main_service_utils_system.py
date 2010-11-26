@@ -92,8 +92,8 @@ CONNECTION_TIMEOUT = 600
 CHUNK_SIZE = 4096
 """ The chunk size """
 
-RETRIEVE_DATA_RETRIES = 3
-""" The retrieve data retries """
+RECEIVE_RETRIES = 3
+""" The receive retries """
 
 SEND_RETRIES = 3
 """ The send retries """
@@ -1762,7 +1762,7 @@ class ServiceConnection:
         # sets the socket to non blocking mode
         self.connection_socket.setblocking(0)
 
-    def receive(self, request_timeout = None, chunk_size = None, retries = RETRIEVE_DATA_RETRIES):
+    def receive(self, request_timeout = None, chunk_size = None, retries = RECEIVE_RETRIES):
         """
         Receives the data from the current connection socket, with the
         given timeout and with a maximum size given by the chunk size.
@@ -2107,12 +2107,12 @@ class ServiceConnectionless(ServiceConnection):
 
         self.connection_data = connection_data
 
-    def retrieve_data(self):
+    def receive(self):
         """
-        Retrieves the data from the current connection socket.
+        Receives the data from the current connection socket.
 
         @rtype: String
-        @return: The retrieved data.
+        @return: The received data.
         """
 
         # returns the connection data
