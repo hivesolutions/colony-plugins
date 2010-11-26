@@ -1645,6 +1645,9 @@ class ServiceConnection:
     _read_lock = None
     """ The read lock """
 
+    _write_lock = None
+    """ The write lock """
+
     def __init__(self, service_plugin, service_connection_handler, connection_socket, connection_address, connection_port, connection_request_timeout, connection_response_timeout, connection_chunk_size):
         """
         Constructor of the class.
@@ -1684,6 +1687,7 @@ class ServiceConnection:
 
         self._read_buffer = []
         self._read_lock = threading.RLock()
+        self._write_lock = threading.RLock()
 
     def __repr__(self):
         return "(%s, %s)" % (self.connection_address, self.connection_port)
@@ -1789,6 +1793,117 @@ class ServiceConnection:
 
         # returns the return value
         return return_value
+
+    def send(self, message, response_timeout = None, retries = SEND_RETRIES):
+        """
+        Sends the given message to the socket.
+        Raises an exception in case there is a problem sending
+        the message.
+
+        @type message: String
+        @param message: The message to be sent.
+        @type request_timeout: float
+        @param request_timeout: The timeout to be used in data sending.
+        @type retries: int
+        @param retries: The number of retries to be used.
+        """
+
+        # acquires the write lock
+        self._write_lock.acquire()
+
+        try:
+            # sends the message
+            self._send(message, response_timeout, retries)
+        finally:
+            # releases the write lock
+            self._write_lock.release()
+
+    def is_open(self):
+        """
+        Retrieves if the current connection is open.
+
+        @rtype: bool
+        @return: If the current connection is open.
+        """
+
+        return self.connection_status
+
+    def get_connection_property(self, property_name):
+        """
+        Retrieves the connection property for the given name.
+
+        @type property_name: String
+        @param property_name: The name of the property to
+        be retrieved.
+        @rtype: Object
+        @return: The value of the retrieved property.
+        """
+
+        return self.connection_properties.get(property_name, None)
+
+    def set_connection_property(self, property_name, property_value):
+        """
+        Sets a connection property, associating the given name
+        with the given value.
+
+        @type property_name: String
+        @param property_name: The name of the property to set.
+        @type property_value: Object
+        @param property_value: The value of the property to set.
+        """
+
+        self.connection_properties[property_name] = property_value
+
+    def unset_connection_property(self, property_name):
+        """
+        Unsets a connection property, removing it from the internal
+        structures.
+
+        @type property_name: String
+        @param property_name: The name of the property to unset.
+        """
+
+        del self.connection_properties[property_name]
+
+    def get_connection_tuple(self):
+        """
+        Returns a tuple representing the connection.
+
+        @rtype: Tuple
+        @return: A tuple representing the connection.
+        """
+
+        return (self._connection_socket, self.connection_address, self.connection_port)
+
+    def get_connection_socket(self):
+        """
+        Retrieves the connection socket.
+
+        @rtype: Socket
+        @return: The connection socket.
+        """
+
+        return self.connection_socket
+
+    def get_connection_address(self):
+        """
+        Retrieves the connection address.
+
+        @rtype: Tuple
+        @return: The connection address.
+        """
+
+        return self.connection_address
+
+    def get_base_connection_socket(self):
+        """
+        Retrieves the base connection socket.
+
+        @rtype: Socket
+        @return: The base connection socket.
+        """
+
+        return self._connection_socket
 
     def _receive(self, request_timeout, chunk_size, retries):
         """
@@ -1901,11 +2016,12 @@ class ServiceConnection:
         # returns the data
         return data
 
-    def send(self, message, response_timeout = None, retries = SEND_RETRIES):
+    def _send(self, message, response_timeout = None, retries = SEND_RETRIES):
         """
         Sends the given message to the socket.
         Raises an exception in case there is a problem sending
         the message.
+        This method is not thread safe.
 
         @type message: String
         @param message: The message to be sent.
@@ -1962,93 +2078,6 @@ class ServiceConnection:
             else:
                 # creates the new message
                 message = message[number_bytes * -1:]
-
-    def is_open(self):
-        """
-        Retrieves if the current connection is open.
-
-        @rtype: bool
-        @return: If the current connection is open.
-        """
-
-        return self.connection_status
-
-    def get_connection_property(self, property_name):
-        """
-        Retrieves the connection property for the given name.
-
-        @type property_name: String
-        @param property_name: The name of the property to
-        be retrieved.
-        @rtype: Object
-        @return: The value of the retrieved property.
-        """
-
-        return self.connection_properties.get(property_name, None)
-
-    def set_connection_property(self, property_name, property_value):
-        """
-        Sets a connection property, associating the given name
-        with the given value.
-
-        @type property_name: String
-        @param property_name: The name of the property to set.
-        @type property_value: Object
-        @param property_value: The value of the property to set.
-        """
-
-        self.connection_properties[property_name] = property_value
-
-    def unset_connection_property(self, property_name):
-        """
-        Unsets a connection property, removing it from the internal
-        structures.
-
-        @type property_name: String
-        @param property_name: The name of the property to unset.
-        """
-
-        del self.connection_properties[property_name]
-
-    def get_connection_tuple(self):
-        """
-        Returns a tuple representing the connection.
-
-        @rtype: Tuple
-        @return: A tuple representing the connection.
-        """
-
-        return (self._connection_socket, self.connection_address, self.connection_port)
-
-    def get_connection_socket(self):
-        """
-        Retrieves the connection socket.
-
-        @rtype: Socket
-        @return: The connection socket.
-        """
-
-        return self.connection_socket
-
-    def get_connection_address(self):
-        """
-        Retrieves the connection address.
-
-        @rtype: Tuple
-        @return: The connection address.
-        """
-
-        return self.connection_address
-
-    def get_base_connection_socket(self):
-        """
-        Retrieves the base connection socket.
-
-        @rtype: Socket
-        @return: The base connection socket.
-        """
-
-        return self._connection_socket
 
     def _call_connection_opened_handlers(self):
         """
