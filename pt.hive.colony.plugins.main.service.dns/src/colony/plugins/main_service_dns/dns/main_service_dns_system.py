@@ -450,8 +450,8 @@ class DnsClientServiceHandler:
         @return: The request from the received message.
         """
 
-        # retrieves the data
-        data = service_connection.retrieve_data()
+        # receives the data
+        data = service_connection.receive()
 
         # retrieves the data length
         data_length = len(data)
