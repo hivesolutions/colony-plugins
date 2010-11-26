@@ -482,8 +482,8 @@ class AbeculaClientServiceHandler:
         # continuous loop
         while True:
             try:
-                # retrieves the data
-                data = service_connection.retrieve_data()
+                # receives the data
+                data = service_connection.receive()
             except self.service_utils_exception_class:
                 # raises the abecula data retrieval exception
                 raise main_service_abecula_exceptions.AbeculaDataRetrievalException("problem retrieving data")
