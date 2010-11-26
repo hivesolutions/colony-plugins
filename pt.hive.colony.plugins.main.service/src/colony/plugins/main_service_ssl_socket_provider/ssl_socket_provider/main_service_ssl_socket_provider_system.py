@@ -39,7 +39,6 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 import ssl
 import types
-import select
 import socket
 
 PROVIDER_NAME = "ssl"
