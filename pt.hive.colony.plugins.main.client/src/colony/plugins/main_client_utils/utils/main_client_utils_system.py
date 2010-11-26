@@ -691,7 +691,7 @@ class ClientConnection:
         while True:
             try:
                 # runs the select in the connection socket, with timeout
-                selected_values = select.select([self.connection_socket], [self.connection_socket], [self.connection_socket], 1)
+                selected_values = select.select([self.connection_socket], [self.connection_socket], [], 1)
             except:
                 # closes the connection
                 self.close()
