@@ -116,6 +116,9 @@ DUMMY_MESSAGE_VALUE = "_"
 EPOLL_VALUE = "epoll"
 """ The poll value """
 
+PROCESS_EXCEPTION_VALUE = "process_exception"
+""" The process exception value """
+
 CONNECTION_TYPE_VALUE = "connection"
 """ The connection type value """
 
@@ -1636,6 +1639,12 @@ class ServiceConnection:
     _connection_socket = None
     """ The original connection socket """
 
+    _read_buffer = []
+    """ The read buffer """
+
+    _read_lock = None
+    """ The read lock """
+
     def __init__(self, service_plugin, service_connection_handler, connection_socket, connection_address, connection_port, connection_request_timeout, connection_response_timeout, connection_chunk_size):
         """
         Constructor of the class.
@@ -1672,6 +1681,9 @@ class ServiceConnection:
         self.connection_opened_handlers = []
         self.connection_closed_handlers = []
         self.connection_properties = {}
+
+        self._read_buffer = []
+        self._read_lock = threading.RLock()
 
     def __repr__(self):
         return "(%s, %s)" % (self.connection_address, self.connection_port)
@@ -1750,19 +1762,48 @@ class ServiceConnection:
         # sets the socket to non blocking mode
         self.connection_socket.setblocking(0)
 
-    def retrieve_data(self, request_timeout = None, chunk_size = None, retries = RETRIEVE_DATA_RETRIES):
+    def receive(self, request_timeout = None, chunk_size = None, retries = RETRIEVE_DATA_RETRIES):
         """
-        Retrieves the data from the current connection socket, with the
+        Receives the data from the current connection socket, with the
         given timeout and with a maximum size given by the chunk size.
 
         @type request_timeout: float
-        @param request_timeout: The timeout to be used in data retrieval.
+        @param request_timeout: The timeout to be used in data receiving.
         @type chunk_size: int
-        @param chunk_size: The maximum size of the chunk to be retrieved.
+        @param chunk_size: The maximum size of the chunk to be received.
         @type retries: int
         @param retries: The number of retries to be used.
         @rtype: String
-        @return: The retrieved data.
+        @return: The received data.
+        """
+
+        # acquires the read lock
+        self._read_lock.acquire()
+
+        try:
+            # receives the data and returns the value
+            return_value = self._receive(request_timeout, chunk_size, retries)
+        finally:
+            # releases the read lock
+            self._read_lock.release()
+
+        # returns the return value
+        return return_value
+
+    def _receive(self, request_timeout, chunk_size, retries):
+        """
+        Receives the data from the current connection socket, with the
+        given timeout and with a maximum size given by the chunk size.
+        This method is not thread safe.
+
+        @type request_timeout: float
+        @param request_timeout: The timeout to be used in data receiving.
+        @type chunk_size: int
+        @param chunk_size: The maximum size of the chunk to be received.
+        @type retries: int
+        @param retries: The number of retries to be used.
+        @rtype: String
+        @return: The received data.
         """
 
         # retrieves the request timeout
@@ -1771,11 +1812,37 @@ class ServiceConnection:
         # retrieves the chunk size
         chunk_size = chunk_size and chunk_size or self.connection_chunk_size
 
+        # in case the read buffer is not empty
+        if self._read_buffer:
+            # retrieves the read buffer element
+            read_buffer_element = self._read_buffer.pop(0)
+
+            # retrieves the read buffer element length
+            read_buffer_element_length = len(read_buffer_element)
+
+            # in case the read buffer element length is greater
+            # than the chunk size
+            if read_buffer_element_length > chunk_size:
+                # retrieves the (sub) read buffer element
+                read_buffer_element = read_buffer_element[:chunk_size]
+
+                # retrieves the read buffer element remaining
+                read_buffer_element_remaining = read_buffer_element[chunk_size:]
+
+                # inserts the read buffer element remaining in the read buffer
+                self._read_buffer.insert(0, read_buffer_element_remaining)
+
+            # returns the read buffer element
+            return read_buffer_element
+
+        # unsets the read flag
+        read_flag = False
+
         # iterates continuously
         while True:
             try:
                 # runs the select in the connection socket, with timeout
-                selected_values = select.select([self.connection_socket], [], [self.connection_socket], request_timeout)
+                selected_values = select.select([self.connection_socket], [], [], request_timeout)
             except:
                 # raises the request closed exception
                 raise main_service_utils_exceptions.RequestClosed("invalid socket")
@@ -1784,9 +1851,28 @@ class ServiceConnection:
                 # raises the server request timeout exception
                 raise main_service_utils_exceptions.ServerRequestTimeout("%is timeout" % request_timeout)
             try:
-                # receives the data in chunks
-                data = self.connection_socket.recv(chunk_size)
+                # iterates continuously
+                while True:
+                    # receives the data in chunks
+                    data = self.connection_socket.recv(chunk_size)
+
+                    # in case no data is received (end of connection)
+                    if not data:
+                        # returns the empty data
+                        return data
+
+                    # adds the data to the read buffer
+                    self._read_buffer.append(data)
+
+                    # sets the read flag
+                    read_flag = True
             except BaseException, exception:
+                # in case there was at least one
+                # successful read
+                if read_flag:
+                    # breaks the loop
+                    break
+
                 # in case the number of retries (available)
                 # is greater than zero
                 if retries > 0:
@@ -1798,11 +1884,19 @@ class ServiceConnection:
                 # otherwise an exception should be
                 # raised
                 else:
+                    # processes the exception
+                    if hasattr(self.connection_socket, PROCESS_EXCEPTION_VALUE) and self.connection_socket.process_exception(exception):
+                        # continues the loop
+                        continue
+
                     # raises the client request timeout exception
                     raise main_service_utils_exceptions.ClientRequestTimeout("problem receiving data: " + unicode(exception))
 
             # breaks the loop
             break
+
+        # pops the element from the read buffer
+        data = self._read_buffer.pop(0)
 
         # returns the data
         return data

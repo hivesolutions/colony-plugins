@@ -181,50 +181,52 @@ class MainServiceSslSocketUpgrader:
         # warps the base socket into an ssl socket
         ssl_socket = ssl.wrap_socket(base_socket, key_file_path, certificate_file_path, server_side, do_handshake_on_connect = do_handshake_on_connect)
 
-        # creates the bound receive method for the ssl socket
-        _recv = types.MethodType(recv, ssl_socket, ssl.SSLSocket)
-
-        # sets the old receive method in the ssl socket with
-        # a different name
-        ssl_socket._recv = ssl_socket.recv
-
-        # sets the new receive bound method in the ssl socket
-        ssl_socket.recv = _recv
+        # wraps the ssl socket with new methods
+        wrap_socket(ssl_socket)
 
         # returns the ssl socket
         return ssl_socket
 
-def recv(self, buffer_size, flags = 0):
-    """
-    Receives data from the current ssl socket.
-    This method provides a way to avoid current
-    runtime problems occurring in ssl sockets.
+def wrap_socket(ssl_socket):
+    # creates the bound accept method for the ssl socket
+    _accept = types.MethodType(accept, ssl_socket, ssl.SSLSocket)
 
-    @type buffer_size: int
-    @param buffer_size: The size of the buffer to be used.
-    @type flags: int
-    @param flags: The flag to be used.
-    @rtype: String
-    @return: The received message.
-    """
+    # creates the bound process exception method for the ssl socket
+    _process_exception = types.MethodType(process_exception, ssl_socket, ssl.SSLSocket)
 
-    # iterates continuously
-    while True:
-        try:
-            # receives from the socket, retrieving
-            # the return value
-            return_value = self._recv(buffer_size, flags)
+    # sets the old accept method in the ssl socket with
+    # a different name
+    ssl_socket._accept = ssl_socket.accept
 
-            # returns the return value
-            return return_value
-        except ssl.SSLError, exception:
-            # in case the error is a want read
-            if exception.errno == SSL_ERROR_WANT_READ:
-                # sleeps for the error sleep time
-                time.sleep(ERROR_SLEEP_TIME)
+    # sets the new accept bound method in the ssl socket
+    ssl_socket.accept = _accept
 
-                # continues the loop
-                continue
+    # sets the new process exception bound method in the ssl socket
+    ssl_socket.process_exception = _process_exception
 
-            # re-raises the exception
-            raise
+def accept(self):
+    # accepts the connection, retrieving
+    # the return value
+    return_value = self._accept()
+
+    # unpacks the return value into
+    # connection and address
+    connection, _address = return_value
+
+    # wraps the (ssl) connection with new methods
+    wrap_socket(connection)
+
+    # returns the return value
+    return return_value
+
+def process_exception(self, exception):
+    # in case the exception is of type ssl error
+    # and the error number is ssl error want read
+    if exception.__class__ == ssl.SSLError and exception.errno == SSL_ERROR_WANT_READ:
+        # return false (exception
+        # must can be ignored)
+        return True
+
+    # return false (exception
+    # must be processed)
+    return False
