@@ -517,6 +517,9 @@ class ClientConnection:
         # calls the connection opened handlers
         self._call_connection_opened_handlers()
 
+        # resets the read buffer
+        self._read_buffer = []
+
         # sets the connection status flag
         self.connection_status = True
 
@@ -527,6 +530,9 @@ class ClientConnection:
 
         # unsets the connection status flag
         self.connection_status = False
+
+        # resets the read buffer
+        self._read_buffer = []
 
         # closes the connection socket
         self.connection_socket.close()
@@ -786,10 +792,16 @@ class ClientConnection:
                 # runs the select in the connection socket, with timeout
                 selected_values = select.select([self.connection_socket], [], [], request_timeout)
             except:
+                # closes the connection
+                self.close()
+
                 # raises the request closed exception
                 raise main_client_utils_exceptions.RequestClosed("invalid socket")
 
             if selected_values == ([], [], []):
+                # closes the connection
+                self.close()
+
                 # raises the server request timeout exception
                 raise main_client_utils_exceptions.ServerRequestTimeout("%is timeout" % request_timeout)
             try:
@@ -831,6 +843,9 @@ class ClientConnection:
                         # continues the loop
                         continue
 
+                    # closes the connection
+                    self.close()
+
                     # raises the client request timeout exception
                     raise main_client_utils_exceptions.ClientRequestTimeout("problem receiving data: " + unicode(exception))
 
@@ -863,6 +878,19 @@ class ClientConnection:
 
         # retrieves the number of bytes in the message
         number_bytes = len(message)
+
+        # iterates over all the read buffer data
+        for data in self._read_buffer:
+            # in case the data is invalid
+            if not data:
+                # prints a debug message
+                self.client_plugin.debug("Received empty data (in read buffer), reconnecting socket")
+
+                # reconnects the connection socket
+                self._reconnect_connection_socket()
+
+                # breaks the loop
+                break
 
         # iterates continuously
         while True:
@@ -954,6 +982,9 @@ class ClientConnection:
 
         # closes the connection socket
         self.connection_socket.close()
+
+        # resets the read buffer
+        self._read_buffer = []
 
         # creates a socket for the client with
         # the given socket name and parameters
