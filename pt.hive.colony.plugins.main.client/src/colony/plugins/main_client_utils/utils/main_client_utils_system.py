@@ -883,13 +883,14 @@ class ClientConnection:
                     # receives the data from the socket
                     data = self.connection_socket.recv(CHUNK_SIZE)
 
-                    # in case the data is empty
-                    if not len(data):
+                    # in case the data is invalid
+                    if not data:
                         # prints a debug message
                         self.client_plugin.debug("Received empty data, reconnecting socket")
 
                         # reconnects the connection socket
                         self._reconnect_connection_socket()
+                    # otherwise there are contents in it
                     else:
                         # prints a debug message
                         self.client_plugin.debug("Received extra data, returning it")
