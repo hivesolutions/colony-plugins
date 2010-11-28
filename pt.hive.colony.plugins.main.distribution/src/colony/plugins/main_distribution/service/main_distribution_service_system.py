@@ -107,7 +107,7 @@ class MainDistributionService:
         # retrieves the method
         method = getattr(plugin, method_name)
 
-        # calls the mehtod retrieving the return value
+        # calls the method retrieving the return value
         return_value = method(*arguments)
 
         # returns the return value
