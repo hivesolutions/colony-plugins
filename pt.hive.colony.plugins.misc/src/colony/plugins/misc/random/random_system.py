@@ -108,17 +108,20 @@ class Random:
         current_time_integer = int(current_time * TIME_FACTOR)
 
         # creates the random value
-        random = "%s%s%s%s%s"  % (random_key, process_id, thread_id, current_time_integer, SECRET_KEY)
+        random = "%s%s%s%s%s"  % (SECRET_KEY, process_id, thread_id, current_time_integer, random_key)
 
         # returns the random value
         return random
 
-    def generate_random_int(self):
+    def generate_random_int(self, number_digits = None):
         """
         Generates a random key, using the current
         default random generator and converts it
         into an integer.
 
+        @type number_digits: int
+        @param number_digits: The number of digits to
+        be used in the random value.
         @rtype: int
         @return: The generated random key converted
         into integer.
@@ -129,6 +132,10 @@ class Random:
 
         # converts the random to int value
         random_int = int(random)
+
+        # converts the random into to the number of
+        # digits wanted
+        random_int = number_digits and random_int % pow(10, number_digits) or random_int
 
         # returns the random int value
         return random_int

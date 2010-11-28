@@ -115,6 +115,22 @@ class RandomPlugin(colony.base.plugin_system.Plugin):
 
         return self.random.generate_random_int()
 
+    def generate_random_int_number_digit(self, number_digits):
+        """
+        Generates a random key, using the current
+        default random generator and converts it
+        into an integer.
+
+        @type number_digits: int
+        @param number_digits: The number of digits to
+        be used in the random value.
+        @rtype: int
+        @return: The generated random key converted
+        into integer.
+        """
+
+        return self.random.generate_random_int(number_digits)
+
     def generate_random_value(self):
         """
         Generates a random value, using a key generated
