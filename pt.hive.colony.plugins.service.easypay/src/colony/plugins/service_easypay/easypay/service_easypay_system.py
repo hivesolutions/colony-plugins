@@ -314,6 +314,7 @@ class EasypayClient:
         get_payment_details_cin = self.get_xml_node_text(get_payment_details_root_node, "ep_cin")
         get_payment_details_user = self.get_xml_node_text(get_payment_details_root_node, "ep_user")
         get_payment_details_key = self.get_xml_node_text(get_payment_details_root_node, "ep_key")
+        get_payment_details_transaction_key = self.get_xml_node_text(get_payment_details_root_node, "t_key")
         get_payment_details_doc = self.get_xml_node_text(get_payment_details_root_node, "ep_doc")
 
         # sets the values in the data (map)
@@ -322,7 +323,11 @@ class EasypayClient:
         data["cin"] = get_payment_details_cin
         data["user"] = get_payment_details_user
         data["key"] = get_payment_details_key
-        data["doc"] = get_payment_details_doc
+        data["transaction_key"] = get_payment_details_transaction_key
+        data["document"] = get_payment_details_doc
+
+        # checks for easypay errors
+        self._check_easypay_errors(data)
 
         # retrieves the remaining payment details
         get_payment_details_entity = self.get_xml_node_text(get_payment_details_root_node, "ep_entity")
@@ -350,10 +355,10 @@ class EasypayClient:
         data["value"] = get_payment_details_value
         data["payment_type"] = get_payment_details_payment_type
         data["value_fixed"] = get_payment_details_value_fixed
-        data["value_var"] = get_payment_details_value_var
+        data["value_variable"] = get_payment_details_value_var
         data["value_tax"] = get_payment_details_value_tax
-        data["value_transf"] = get_payment_details_value_transf
-        data["date_transf"] = get_payment_details_date_transf
+        data["value_transfer"] = get_payment_details_value_transf
+        data["date_transfer"] = get_payment_details_date_transf
         data["date_read"] = get_payment_details_date_read
         data["status_read"] = get_payment_details_status_read
 
