@@ -58,7 +58,7 @@ GET_METHOD_VALUE = "GET"
 """ The get method value """
 
 POST_METHOD_VALUE = "POST"
-""" The post mehtod value """
+""" The post method value """
 
 HTTP_1_1_VERSION = "HTTP/1.1"
 """ The http 1.1 protocol version """
