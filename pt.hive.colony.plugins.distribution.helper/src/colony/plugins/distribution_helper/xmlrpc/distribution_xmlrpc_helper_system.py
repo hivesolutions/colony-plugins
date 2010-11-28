@@ -196,7 +196,7 @@ class XmlrpcClientProxy:
         @type method: Method
         @param method: The method to be modified.
         @rtype: Method
-        @return: The modified mehtod.
+        @return: The modified method.
         """
 
         def getter_attr(self, name):
