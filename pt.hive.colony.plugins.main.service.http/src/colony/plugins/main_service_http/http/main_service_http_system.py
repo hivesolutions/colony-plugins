@@ -60,7 +60,7 @@ GET_METHOD_VALUE = "GET"
 """ The get method value """
 
 POST_METHOD_VALUE = "POST"
-""" The post mehtod value """
+""" The post method value """
 
 MULTIPART_FORM_DATA_VALUE = "multipart/form-data"
 """ The multipart form data value """
