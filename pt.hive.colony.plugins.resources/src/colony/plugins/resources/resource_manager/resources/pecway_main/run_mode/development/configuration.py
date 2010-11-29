@@ -43,7 +43,12 @@ configuration = {
                          "username" : "PLUB210910",
                          "cin" : "1934",
                          "country" : "PT",
-                         "language" : "PT"
+                         "language" : "PT",
+                         "methods" : {
+                             "reference" : {
+                                 "entity" : "10611"
+                             }
+                         }
                      }
                  }
              }
