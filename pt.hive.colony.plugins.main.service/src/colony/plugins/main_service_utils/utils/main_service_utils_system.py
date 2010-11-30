@@ -545,7 +545,7 @@ class AbstractService:
                     socket_provider_plugin = socket_provider_plugins_map[socket_provider]
 
                     # the parameters for the socket provider
-                    parameters = {SERVER_SIDE_VALUE : True, DO_HANDSHAKE_ON_CONNECT_VALUE : True}
+                    parameters = {SERVER_SIDE_VALUE : True, DO_HANDSHAKE_ON_CONNECT_VALUE : False}
 
                     # copies the socket parameters to the parameters map
                     colony.libs.map_util.map_copy(socket_parameters, parameters)
@@ -661,6 +661,22 @@ class AbstractService:
 
             # sets the service connection to non blocking mode
             service_connection.setblocking(0)
+
+            import ssl
+
+            while True:
+                try:
+                    service_connection.do_handshake()
+                    break
+                except ssl.SSLError, err:
+                    if err.args[0] == ssl.SSL_ERROR_WANT_READ:
+                        select.select([service_connection], [], [])
+                    elif err.args[0] == ssl.SSL_ERROR_WANT_WRITE:
+                        select.select([], [service_connection], [])
+                    else:
+                        raise
+
+            print "Connected"
 
             # inserts the connection and address into the pool
             self._insert_connection_pool(service_connection, service_address, port)
