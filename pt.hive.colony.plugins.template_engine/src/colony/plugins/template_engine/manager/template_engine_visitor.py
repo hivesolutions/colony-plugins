@@ -531,7 +531,7 @@ class Visitor:
             attribute_value_value = attribute_value_value.encode(QUOTE_ENCODING)
 
             # quotes the attribute value value
-            attribute_value_value = colony.libs.quote_util.quote(attribute_value_value)
+            attribute_value_value = colony.libs.quote_util.quote(attribute_value_value, "/")
 
         # in case the attribute xml escape value is set
         if attribute_xml_escape_value:
@@ -602,7 +602,7 @@ class Visitor:
             attribute_value_value = attribute_value_value.encode(QUOTE_ENCODING)
 
             # quotes the attribute value value
-            attribute_value_value = colony.libs.quote_util.quote(attribute_value_value)
+            attribute_value_value = colony.libs.quote_util.quote(attribute_value_value, "/")
 
         # in case the attribute xml escape value is set
         if attribute_xml_escape_value:
