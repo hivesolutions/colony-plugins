@@ -1018,7 +1018,7 @@ class RestRequest:
         # flushes the request, sending the output to the client
         self.request.flush()
 
-    def redirect(self, target_path, status_code = 302):
+    def redirect(self, target_path, status_code = 302, quote = True):
         """
         Redirects the request logically, so it
         becomes readable as a new resource.
@@ -1027,10 +1027,12 @@ class RestRequest:
         @param target_path: The target path of the redirection.
         @type status_code: int
         @param status_code: The status code to be used.
+        @type quote: bool
+        @param quote: If the target path should be quoted.
         """
 
         # quotes the target path
-        target_path_quoted = colony.libs.quote_util.quote(target_path)
+        target_path_quoted = quote and colony.libs.quote_util.quote(target_path, "/") or target_path
 
         # sets the status code
         self.request.status_code = status_code
