@@ -496,7 +496,7 @@ class MainServiceHttpFileHandler:
                     # breaks the loop
                     break
 
-    def _redirect(self, request, target_path, status_code = 301):
+    def _redirect(self, request, target_path, status_code = 301, quote = True):
         """
         Redirects the given request to the target path.
 
@@ -506,10 +506,12 @@ class MainServiceHttpFileHandler:
         @param target_path: The target path of the redirection.
         @type status_code: int
         @param status_code: The status code to be used.
+        @type quote: bool
+        @param quote: If the target path should be quoted.
         """
 
         # quotes the target path
-        target_path_quoted = colony.libs.quote_util.quote(target_path)
+        target_path_quoted = quote and colony.libs.quote_util.quote(target_path, "/") or target_path
 
         # sets the status code
         request.status_code = status_code
