@@ -36,8 +36,8 @@
  * @license GNU General Public License (GPL), Version 3 -
  *          http://www.gnu.org/licenses/
  */
-(function($) {
-    $.fn.autocomplete = function(options) {
+(function(jQuery) {
+    jQuery.fn.autocomplete = function(options) {
         var LEFT = 37;
         var UP = 38;
         var RIGHT = 39;
@@ -49,22 +49,22 @@
             showEffect : "fadeIn",
             hideEffect : "fadeOut",
             // by default changes to the target contents page
-            requestHandler : $.historyLoad,
-            requestHandlerScope : $
+            requestHandler : jQuery.historyLoad,
+            requestHandlerScope : jQuery
         };
 
         // sets the default options value
         var options = options ? options : {};
 
         // constructs the options
-        var options = $.extend(defaults, options);
+        var options = jQuery.extend(defaults, options);
 
         // sets the jquery matched object
         var matchedObject = this;
 
-        var inputMatchedObject = $("input", matchedObject);
+        var inputMatchedObject = jQuery("input", matchedObject);
 
-        var seachButtonMatchedObject = $(".autocomplete-search-button",
+        var seachButtonMatchedObject = jQuery(".autocomplete-search-button",
                 matchedObject);
 
         /**
@@ -142,7 +142,7 @@
                         _hideAutoComplete(options, matchedObject);
                     });
 
-            $("body").click(function() {
+            jQuery("body").click(function() {
                         _hideAutoComplete(options, matchedObject);
                     });
         };
@@ -151,18 +151,18 @@
             // retrieves the configured show effect
             var showEffect = options["showEffect"];
 
-            $(".autocomplete-container", matchedObject)[showEffect]();
+            jQuery(".autocomplete-container", matchedObject)[showEffect]();
         }
         var _hideAutoComplete = function(options, matchedObject) {
             // retrieves the configured hide effect
             var hideEffect = options["hideEffect"];
 
-            $(".autocomplete-container", matchedObject)[hideEffect]();
+            jQuery(".autocomplete-container", matchedObject)[hideEffect]();
         }
 
         var _highlightPrevious = function(matchedObject) {
             // retrieves the highlighted element
-            var higlightedElement = $(".highlighted", matchedObject);
+            var higlightedElement = jQuery(".highlighted", matchedObject);
 
             // initializes the previous element
             var previousElement = null;
@@ -189,7 +189,7 @@
 
         var _highlightNext = function(matchedObject) {
             // retrieves the highlighted element
-            var higlightedElement = $(".highlighted", matchedObject);
+            var higlightedElement = jQuery(".highlighted", matchedObject);
 
             // initializes the next element
             var nextElement = null;
@@ -197,7 +197,7 @@
             // in case no element is highlighted
             if (higlightedElement.length == 0) {
                 // highlights the first element
-                nextElement = $(".autocomplete-container li:first",
+                nextElement = jQuery(".autocomplete-container li:first",
                         matchedObject);
                 console.warn(nextElement);
             } else {
@@ -229,7 +229,7 @@
             clearTimeout(searchTimeout);
 
             // retrieves the intended target
-            var targetRequest = $(".highlighted", matchedObject).attr("target_request");
+            var targetRequest = jQuery(".highlighted", matchedObject).attr("target_request");
 
             // retrieves the request handler
             var requestHandler = options["requestHandler"];
@@ -269,7 +269,7 @@
 
             // creates a new search timeout
             options["searchTimeout"] = setTimeout(function() {
-                        $.ajax({
+                        jQuery.ajax({
                                     url : url,
                                     type : "post",
                                     data : formData,
@@ -285,13 +285,13 @@
         // the table content callback function
         var _tableContentCallback = function(options, matchedObject, inputMatchedObject, result) {
             // unbinds the events on the items
-            $(".autocomplete-container > ul > li", matchedObject).unbind();
+            jQuery(".autocomplete-container > ul > li", matchedObject).unbind();
 
             // sets the auto complete items
-            $(".autocomplete-container", matchedObject).html(result);
+            jQuery(".autocomplete-container", matchedObject).html(result);
 
             // retrieves the list of autocomplete items
-            matchedObjectAutocompleteItems = $(
+            matchedObjectAutocompleteItems = jQuery(
                     ".autocomplete-container > ul > li", matchedObject);
 
             // in case no results were retrieved
@@ -308,7 +308,7 @@
 
             // register the click handler for items
             matchedObjectAutocompleteItems.click(function(event) {
-                        var element = $(this);
+                        var element = jQuery(this);
 
                         // hides the auto complete
                         _hideAutoComplete(options, matchedObject);
@@ -328,7 +328,7 @@
                     });
 
             matchedObjectAutocompleteItems.mouseover(function(event) {
-                        var element = $(this);
+                        var element = jQuery(this);
 
                         // skips the update if the element is already highlighted
                         if (element.hasClass("highlighted")) {
@@ -336,14 +336,14 @@
                         }
 
                         // removes the highlight from the currently highlighted element
-                        $(".highlighted", matchedObject).removeClass("highlighted");
+                        jQuery(".highlighted", matchedObject).removeClass("highlighted");
 
                         // highlights the hovered element
                         element.addClass("highlighted");
                     });
 
             // highlights the first element
-            $(".autocomplete-container > ul > li:first", matchedObject).addClass("highlighted");
+            jQuery(".autocomplete-container > ul > li:first", matchedObject).addClass("highlighted");
         };
 
         // initializes the plugin
