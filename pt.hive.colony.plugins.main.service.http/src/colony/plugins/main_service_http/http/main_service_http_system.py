@@ -625,6 +625,8 @@ class HttpClientServiceHandler:
         pass
 
     def handle_request(self, service_connection):
+        print "handling request"
+
         # retrieves the request handler using the service connection request handler map
         request_handler = self.service_connection_request_handler_map.get(service_connection, self.default_request_handler)
 
