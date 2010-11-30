@@ -773,12 +773,16 @@ class HttpClientServiceHandler:
 
         # continuous loop
         while True:
+            print "receiving data"
+
             try:
                 # receives the data
                 data = service_connection.receive()
             except self.service_utils_exception_class:
                 # raises the http data retrieval exception
                 raise main_service_http_exceptions.HttpDataRetrievalException("problem retrieving data")
+
+            print "ended receiving data"
 
             # in case no valid data was received
             if data == "":
