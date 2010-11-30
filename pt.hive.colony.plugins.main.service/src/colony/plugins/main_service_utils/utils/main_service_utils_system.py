@@ -678,6 +678,9 @@ class AbstractService:
 
             print "Connected"
 
+            # sets the service connection to non blocking mode
+            service_connection.setblocking(0)
+
             # inserts the connection and address into the pool
             self._insert_connection_pool(service_connection, service_address, port)
         except Exception, exception:
