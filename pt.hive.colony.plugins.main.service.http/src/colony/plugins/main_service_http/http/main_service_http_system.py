@@ -784,6 +784,8 @@ class HttpClientServiceHandler:
 
             print "ended receiving data"
 
+            print "data: '%s'" % (data)
+
             # in case no valid data was received
             if data == "":
                 # raises the http invalid data exception
