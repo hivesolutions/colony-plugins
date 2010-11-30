@@ -662,25 +662,6 @@ class AbstractService:
             # sets the service connection to non blocking mode
             service_connection.setblocking(0)
 
-            import ssl
-
-            while True:
-                try:
-                    service_connection.do_handshake()
-                    break
-                except ssl.SSLError, err:
-                    if err.args[0] == ssl.SSL_ERROR_WANT_READ:
-                        select.select([service_connection], [], [])
-                    elif err.args[0] == ssl.SSL_ERROR_WANT_WRITE:
-                        select.select([], [service_connection], [])
-                    else:
-                        raise
-
-            print "Connected"
-
-            # sets the service connection to non blocking mode
-            service_connection.setblocking(0)
-
             # inserts the connection and address into the pool
             self._insert_connection_pool(service_connection, service_address, port)
         except Exception, exception:
