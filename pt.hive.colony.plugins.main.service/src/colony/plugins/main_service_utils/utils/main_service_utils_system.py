@@ -1970,6 +1970,8 @@ class ServiceConnection:
                 while True:
                     print "vai mesmo recever"
 
+                    self.connection_socket.setblocking(0)
+
                     # receives the data in chunks
                     data = self.connection_socket.recv(chunk_size)
 
