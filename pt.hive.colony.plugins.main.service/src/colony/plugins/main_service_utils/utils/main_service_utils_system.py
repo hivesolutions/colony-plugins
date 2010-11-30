@@ -1970,8 +1970,6 @@ class ServiceConnection:
                 while True:
                     print "vai mesmo recever"
 
-                    self.connection_socket.setblocking(0)
-
                     # receives the data in chunks
                     data = self.connection_socket.recv(chunk_size)
 
@@ -1989,9 +1987,13 @@ class ServiceConnection:
                         # breaks the loop
                         break
             except BaseException, exception:
+                print "deu excepcao"
+
                 # in case there was at least one
                 # successful read
                 if read_flag:
+                    print "breakou"
+
                     # breaks the loop
                     break
 
@@ -2019,6 +2021,8 @@ class ServiceConnection:
 
         # pops the element from the read buffer
         data = self._read_buffer.pop(0)
+
+        print "vai retornar data '%s'" % data
 
         # returns the data
         return data
