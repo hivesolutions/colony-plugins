@@ -1984,8 +1984,13 @@ class ServiceConnection:
             try:
                 # iterates continuously
                 while True:
+                    print "vai mesmo recever"
+
                     # receives the data in chunks
                     data = self.connection_socket.recv(chunk_size)
+
+                    print "recebeu mesmo"
+                    print "data: '%s'" % data
 
                     # adds the data to the read buffer
                     self._read_buffer.append(data)
