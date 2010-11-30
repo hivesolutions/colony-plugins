@@ -430,7 +430,7 @@ def set_contents(self, rest_request, contents = ""):
     # flushes the rest request
     rest_request.flush()
 
-def redirect(self, rest_request, target, status_code = 302):
+def redirect(self, rest_request, target, status_code = 302, quote = True):
     """
     Redirects the current request to the given
     target (page).
@@ -441,15 +441,17 @@ def redirect(self, rest_request, target, status_code = 302):
     @param target: The target (page) of the redirect.
     @type status_code: int
     @param status_code: The status code to be used.
+    @type quote: bool
+    @param quote: If the target path should be quoted.
     """
 
     # redirects the rest request to the target
-    rest_request.redirect(target, status_code)
+    rest_request.redirect(target, status_code, quote)
 
     # sets the contents (null)
     self.set_contents(rest_request)
 
-def redirect_base_path(self, rest_request, target):
+def redirect_base_path(self, rest_request, target, status_code = 302, quote = True):
     """
     Redirects the current request to the given
     target (page).
@@ -460,6 +462,10 @@ def redirect_base_path(self, rest_request, target):
     @param rest_request: The rest request to be used.
     @type target: String
     @param target: The target (page) of the redirect.
+    @type status_code: int
+    @param status_code: The status code to be used.
+    @type quote: bool
+    @param quote: If the target path should be quoted.
     """
 
     # retrieves the base path
@@ -469,7 +475,7 @@ def redirect_base_path(self, rest_request, target):
     target_base_path = base_path + target
 
     # redirects to the target base path
-    self.redirect(rest_request, target_base_path)
+    self.redirect(rest_request, target_base_path, status_code, quote)
 
 def process_set_contents(self, rest_request, template_file, variable_encoding = None):
     """
