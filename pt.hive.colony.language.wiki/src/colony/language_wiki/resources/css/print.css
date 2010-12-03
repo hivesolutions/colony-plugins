@@ -239,7 +239,7 @@ h5:hover > a.headerlink {
 
 .quote {
     background: #e5e5e5 url(../images/quote_note.gif) no-repeat scroll 0px 0px;
-    padding: 18px 52px 18px 52px;
+    padding: 18px 32px 18px 52px;
     line-height: 1.6em;
     font-family: "Hoefler Text", Constantia, Cambria, Georgia, serif;
     font-size: 115%;
@@ -264,13 +264,13 @@ h5:hover > a.headerlink {
 
 .warning {
     background: #fff9d8 url(../images/warning_note.gif) no-repeat scroll 0px 0px;
-    padding: 18px 52px 18px 52px;
+    padding: 18px 32px 18px 52px;
     line-height: 1.6em;
 }
 
 .error {
     background: #f9d9d8 url(../images/error_note.gif) no-repeat scroll 0px 0px;
-    padding: 18px 52px 18px 52px;
+    padding: 18px 32px 18px 52px;
     line-height: 1.6em;
 }
 
@@ -283,7 +283,7 @@ h5:hover > a.headerlink {
 
 .checkbox {
     background: #eaf2dd url(../images/checkbox_note.gif) no-repeat scroll 0px 0px;
-    padding: 18px 52px 18px 52px;
+    padding: 18px 32px 18px 52px;
     line-height: 1.6em;
 }
 
@@ -306,7 +306,7 @@ h5:hover > a.headerlink {
 
 .resources {
     background: #e6e6e6 url(../images/resources_note.gif) no-repeat scroll 0px 0px;
-    padding: 18px 52px 18px 52px;
+    padding: 18px 32px 18px 52px;
     line-height: 1.6em;
 }
 
@@ -335,7 +335,7 @@ h5:hover > a.headerlink {
 
 .code {
     background: #eeeeee url(../images/code_note.gif) no-repeat scroll 0px 0px;
-    padding: 18px 52px 18px 52px;
+    padding: 18px 32px 18px 52px;
     font-size: 120%;
     line-height: 100%;
     overflow: auto;
@@ -436,7 +436,7 @@ h5:hover > a.headerlink {
 
 .key-value {
     background: #d5e9f6 url(../images/info_note.gif) no-repeat scroll left top;
-    padding: 18px 52px 18px 52px;
+    padding: 18px 32px 18px 52px;
     color: #333333;
 }
 
@@ -470,7 +470,7 @@ h5:hover > a.headerlink {
 
 .document-information {
     background: #e5e5e5 url(../images/document_information_note.gif) no-repeat scroll left top;
-    padding: 18px 52px 18px 52px;
+    padding: 18px 32px 18px 52px;
     color: #333333;
 }
 
