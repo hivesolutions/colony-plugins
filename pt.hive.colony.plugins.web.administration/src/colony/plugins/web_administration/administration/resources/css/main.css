@@ -409,13 +409,13 @@ h5:hover > a.headerlink {
 
 .warning {
     background: #fff9d8 url(../images/warning_note.gif) no-repeat scroll 0px 0px;
-    padding: 18px 52px 18px 52px;
+    padding: 18px 32px 18px 52px;
     line-height: 1.5em;
 }
 
 .error {
     background: #f9d9d8 url(../images/error_note.gif) no-repeat scroll 0px 0px;
-    padding: 18px 52px 18px 52px;
+    padding: 18px 32px 18px 52px;
     line-height: 1.5em;
 }
 
