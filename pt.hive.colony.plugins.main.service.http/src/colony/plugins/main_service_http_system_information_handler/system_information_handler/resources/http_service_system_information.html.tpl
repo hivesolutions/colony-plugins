@@ -28,83 +28,49 @@
                 <img class="system-information-list-image" src="/system_information_handler/images/logo_datacenter.png"/>
                 <div class="system-information-list-text">
                     <b>System Information</b>
-                    <p>Colony Framework 1.0.1 r12647</p>
+                    <p>Colony Framework ${out_none value=plugin_manager_version xml_escape=True /} r${out_none value=plugin_manager_release xml_escape=True /}</p>
                 </div>
             </div>
             <p></p>
             <div class="system-information-list">
+                ${foreach item=system_information_item from=system_information}
                 <div class="table-view">
-                    <table cellspacing="0">
-                        <span class="title">Framework</span>
-                        <thead>
-                            <tr>
-                                <th class="column name"><a href="?comparator=name&sort=${out_none value=sort_orders.name xml_escape=True /}">Name</a></th>
-                                <th class="column value"><a href="?comparator=modified_date&sort=${out_none value=sort_orders.modified_date xml_escape=True /}">Value</a></th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td class="name">uid</td>
-                                <td class="value">129129456107500000</td>
-                            </tr>
-                            <tr>
-                                <td class="name">version</td>
-                                <td class="value">1.0.2</td>
-                            </tr>
-                            <tr>
-                                <td class="name">release</td>
-                                <td class="value">r3450</td>
-                            </tr>
-                            <tr>
-                                <td class="name">build</td>
-                                <td class="value">b3450</td>
-                            </tr>
-                            <tr>
-                                <td class="name">release date</td>
-                                <td class="value">29-06-2010 12:45:23</td>
-                            </tr>
-                            <tr>
-                                <td class="name">environment</td>
-                                <td class="value">python-win32-2.6.6-final</td>
-                            </tr>
-                            <tr>
-                                <td class="name">layout mode</td>
-                                <td class="value">development</td>
-                            </tr>
-                            <tr>
-                                <td class="name">run mode</td>
-                                <td class="value">development</td>
-                            </tr>
-                            <tr>
-                                <td class="name">uptime</td>
-                                <td class="value">22m, 53s</td>
-                            </tr>
-                            <tr>
-                                <td class="name">plugins</td>
-                                <td class="value">302/342</td>
-                            </tr>
-                            <tr>
-                                <td class="name">replicas</td>
-                                <td class="value">2/2</td>
-                            </tr>
-                            <tr>
-                                <td class="name">instances</td>
-                                <td class="value">304/344</td>
-                            </tr>
-                        </tbody>
-                        <tfoot></tfoot>
-                    </table>
-                    <table cellspacing="0">
-                        <thead>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td class="name">This program makes use of the Zend scripting language engine: Zend Engine v1.0.6, Copyright (c) 1998-2001 Zend Technologies</td>
-                            </tr>
-                        </tbody>
-                        <tfoot></tfoot>
-                    </table>
+                    <span class="title">${out_none value=system_information_item.name xml_escape=True /}</span>
+                    ${foreach item=system_information_item_item from=system_information_item.items}
+                    ${if item=system_information_item_item.type value="map" operator=eq}
+                        <table cellspacing="0">
+                            <thead>
+                                <tr>
+                                    ${foreach item=system_information_item_item_column from=system_information_item_item.columns}
+                                    <th class="column ${out_none value=system_information_item_item_column.type xml_escape=True /}"><a href="#">${out_none value=system_information_item_item_column.value xml_escape=True /}</a></th>
+                                    ${/foreach}
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${foreach item=value key=key from=system_information_item_item.values}
+                                <tr>
+                                    <td class="name">${out_none value=key xml_escape=True /}</td>
+                                    <td class="value">${out_none value=value xml_escape=True /}</td>
+                                </tr>
+                                ${/foreach}
+                            </tbody>
+                            <tfoot></tfoot>
+                        </table>
+                    ${elif item=system_information_item_item.type value="simple" operator=eq /}
+                        <table cellspacing="0">
+                            <thead>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td class="name">${out_none value=system_information_item_item.value xml_escape=True /}</td>
+                                </tr>
+                            </tbody>
+                            <tfoot></tfoot>
+                        </table>
+                    ${/if}
+                    ${/foreach}
                 </div>
+                ${/foreach}
                 <div class="table-view">
                     <table cellspacing="0">
                         <span class="title">Thread Pool Manager</span>
