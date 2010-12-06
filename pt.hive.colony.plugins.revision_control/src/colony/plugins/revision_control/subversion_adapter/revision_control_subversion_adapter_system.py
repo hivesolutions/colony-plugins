@@ -43,11 +43,31 @@ import datetime
 
 import colony.libs.path_util
 
+import revision_control_subversion_adapter_exceptions
+
 ADAPTER_NAME = "svn"
 """ The name for the subversion revision control adapter """
 
 DEFAULT_REVISION_KIND = pysvn.opt_revision_kind.number
 """ The default revision kind """
+
+USERNAME_VALUE = "username"
+""" The value for the username """
+
+DEFAULT_USERNAME = "username"
+""" The default username """
+
+PASSWORD_VALUE = "password"
+""" The value for the password """
+
+DEFAULT_PASSWORD = "password"
+""" The default password """
+
+SAVE_USERNAME_PASSWORD_VALUE = "save_username_password"
+""" The save username password value """
+
+DEFAULT_SAVE_USERNAME_PASSWORD = True
+""" The default save username password value """
 
 class RevisionControlSubversionAdapter:
     """
@@ -69,25 +89,34 @@ class RevisionControlSubversionAdapter:
         self.revision_control_subversion_adapter_plugin = revision_control_subversion_adapter_plugin
 
     def create_revision_control_reference(self, revision_control_parameters):
-        # initializes the subversion client
-        client = pysvn.Client()
+        # creates a new subversion revision control reference
+        revision_control_reference = SubversionRevisionControlReference()
+
+        # enables support for authentication
+        self._enable_authentication_support(revision_control_reference, revision_control_parameters)
 
         # returns the svn client as the revision control reference
-        return client
+        return revision_control_reference
 
     def add(self, revision_control_reference, resource_identifiers, recurse):
+        # retrieves the pysvn client from the revision control reference
+        pysvn_client = revision_control_reference.pysvn_client
+
         # performs the svn add
-        revision_control_reference.add(resource_identifiers, recurse)
+        pysvn_client.add(resource_identifiers, recurse)
 
     def checkout(self, revision_control_reference, source, destination):
+        # retrieves the pysvn client from the revision control reference
+        pysvn_client = revision_control_reference.pysvn_client
+
         # performs the svn checkout
-        revision_control_reference.checkout(source, destination)
+        pysvn_client.checkout(source, destination)
 
         # creates the template for the working copy revision
         head_subversion_revision = pysvn.Revision(pysvn.opt_revision_kind.head)
 
         # determines the current revision by retrieving the property list for the head revision
-        checkout_subversion_revision, _prop_dict = revision_control_reference.revproplist(source, head_subversion_revision)
+        checkout_subversion_revision, _prop_dict = pysvn_client.revproplist(source, head_subversion_revision)
 
         # creates the subversion revision resulting from the check out
         checkout_revision = self.create_revision(checkout_subversion_revision)
@@ -96,6 +125,9 @@ class RevisionControlSubversionAdapter:
         return checkout_revision
 
     def update(self, revision_control_reference, resource_identifiers, revision):
+        # retrieves the pysvn client from the revision control reference
+        pysvn_client = revision_control_reference.pysvn_client
+
         # retrieves the first resource identifier
         resource_identifier = resource_identifiers[0]
 
@@ -108,7 +140,7 @@ class RevisionControlSubversionAdapter:
             subversion_revision = pysvn.Revision(pysvn.opt_revision_kind.head)
 
         # performs the update
-        update_subversion_revisions = revision_control_reference.update(resource_identifier, True, subversion_revision)
+        update_subversion_revisions = pysvn_client.update(resource_identifier, True, subversion_revision)
 
         # retrieves the first of the returned revisions
         update_subversion_revision = update_subversion_revisions[0]
@@ -120,8 +152,16 @@ class RevisionControlSubversionAdapter:
         return update_revision
 
     def commit(self, revision_control_reference, resource_identifiers, commit_message):
+        # retrieves the pysvn client from the revision control reference
+        pysvn_client = revision_control_reference.pysvn_client
+
         # retrieves the result revisions
-        commit_subversion_revision = revision_control_reference.checkin(resource_identifiers, commit_message)
+        commit_subversion_revision = pysvn_client.checkin(resource_identifiers, commit_message)
+
+        # in case none is returned
+        if not commit_subversion_revision:
+            # raise the no changes in working copy exception
+            raise revision_control_subversion_adapter_exceptions.WorkingCopyCleanException("no changes in working copy")
 
         # creates the subversion revision resulting from the commit
         commit_revision = self.create_revision(commit_subversion_revision)
@@ -130,6 +170,9 @@ class RevisionControlSubversionAdapter:
         return commit_revision
 
     def log(self, revision_control_reference, resource_identifiers, start_revision, end_revision):
+        # retrieves the pysvn client from the revision control reference
+        pysvn_client = revision_control_reference.pysvn_client
+
         # the list of log messages to retrieve
         log_messages = []
 
@@ -165,7 +208,7 @@ class RevisionControlSubversionAdapter:
 
         for resource_identifier in resource_identifiers:
             # retrieves the log messages for the specified parameters
-            resource_log_messages = revision_control_reference.log(resource_identifier, end_subversion_revision, start_subversion_revision, discover_changed_paths, strict_node_history, limit, peg_revision, include_merged_revisions, revprops)
+            resource_log_messages = pysvn_client.log(resource_identifier, end_subversion_revision, start_subversion_revision, discover_changed_paths, strict_node_history, limit, peg_revision, include_merged_revisions, revprops)
 
             # reverse the order of the obtained messages
             resource_log_messages.reverse()
@@ -179,6 +222,9 @@ class RevisionControlSubversionAdapter:
         return revisions
 
     def diff(self, revision_control_reference, resource_identifiers, revision_1, revision_2):
+        # retrieves the pysvn client from the revision control reference
+        pysvn_client = revision_control_reference.pysvn_client
+
         # retrieves the plugin manager
         plugin_manager = self.revision_control_subversion_adapter_plugin.manager
 
@@ -201,7 +247,7 @@ class RevisionControlSubversionAdapter:
             subversion_revision_2 = pysvn.Revision(pysvn.opt_revision_kind.working)
 
         # processes the diff
-        diff_string = revision_control_reference.diff(temporary_path, url_or_path, subversion_revision_1, url_or_path_2, subversion_revision_2)
+        diff_string = pysvn_client.diff(temporary_path, url_or_path, subversion_revision_1, url_or_path_2, subversion_revision_2)
 
         # splits the diffs in the single diff string
         diffs = diff_string.split("\n")
@@ -210,12 +256,18 @@ class RevisionControlSubversionAdapter:
         return diffs
 
     def cleanup(self, revision_control_reference, resource_identifiers):
+        # retrieves the pysvn client from the revision control reference
+        pysvn_client = revision_control_reference.pysvn_client
+
         # iterates over all the resource identifiers
         for resource_identifier in resource_identifiers:
             # cleans up any locks at the current resource
-            revision_control_reference.cleanup(resource_identifier)
+            pysvn_client.cleanup(resource_identifier)
 
     def cleanup_deep(self, revision_control_reference, resource_identifiers):
+        # retrieves the pysvn client from the revision control reference
+        pysvn_client = revision_control_reference.pysvn_client
+
         # iterates over all the resource identifiers
         for resource_identifier in resource_identifiers:
             # cleans up any locks at the current (base) resource
@@ -229,24 +281,33 @@ class RevisionControlSubversionAdapter:
 
             # recursively calls the cleanup method over the
             # locked resource identifiers
-            self.cleanup(revision_control_reference, locked_resource_identifiers)
+            self.cleanup(pysvn_client, locked_resource_identifiers)
 
     def remove(self, revision_control_reference, resource_identifiers):
+        # retrieves the pysvn client from the revision control reference
+        pysvn_client = revision_control_reference.pysvn_client
+
         # performs the svn remove
-        revision_control_reference.remove(resource_identifiers)
+        pysvn_client.remove(resource_identifiers)
 
     def revert(self, revision_control_reference, resource_identifiers):
+        # retrieves the pysvn client from the revision control reference
+        pysvn_client = revision_control_reference.pysvn_client
+
         # reverts pending changes
-        revision_control_reference.revert(resource_identifiers, recurse = True)
+        pysvn_client.revert(resource_identifiers, recurse = True)
 
         # removes unversioned files
         self.remove_unversioned(revision_control_reference, resource_identifiers)
 
     def remove_unversioned(self, revision_control_reference, resource_identifiers):
+        # retrieves the pysvn client from the revision control reference
+        pysvn_client = revision_control_reference.pysvn_client
+
         # for all the specified resources
         for resource_identifier in resource_identifiers:
             # retrieves the status for the current resource
-            status_list = revision_control_reference.status(resource_identifier)
+            status_list = pysvn_client.status(resource_identifier)
 
             # for each status in the status list
             # looks for unversioned resources
@@ -260,6 +321,9 @@ class RevisionControlSubversionAdapter:
                     self.remove_resource_path(unversioned_resource_path)
 
     def get_resources_revision(self, revision_control_reference, resource_identifiers, revision):
+        # retrieves the pysvn client from the revision control reference
+        pysvn_client = revision_control_reference.pysvn_client
+
         # the revision in which to end the log
         if not revision == None:
             subversion_revision = pysvn.Revision(DEFAULT_REVISION_KIND, revision)
@@ -272,7 +336,7 @@ class RevisionControlSubversionAdapter:
         # initializes the resources revisions list
         for url_or_path in resource_identifiers:
             # retrieves the file contents
-            file_text = revision_control_reference.cat(url_or_path, subversion_revision)
+            file_text = pysvn_client.cat(url_or_path, subversion_revision)
 
             # appends the file contents to the resources revision list
             resources_revision.append(file_text)
@@ -327,6 +391,55 @@ class RevisionControlSubversionAdapter:
         else:
             # removes the resource
             os.remove(resource_path)
+
+    def _enable_authentication_support(self, revision_control_reference, revision_control_parameters):
+        # retrieves the pysvn client from the revision control reference
+        pysvn_client = revision_control_reference.pysvn_client
+
+        # retrieves the user name from the revision control parameters
+        username = revision_control_parameters.get(USERNAME_VALUE, DEFAULT_USERNAME)
+
+        # retrieves the password from the revision control parameters
+        password = revision_control_parameters.get(PASSWORD_VALUE, DEFAULT_PASSWORD)
+
+        # retrieves the option for saving username and password
+        save_username_password = revision_control_parameters.get(SAVE_USERNAME_PASSWORD_VALUE, DEFAULT_SAVE_USERNAME_PASSWORD)
+
+        # sets the username in the revision control reference
+        revision_control_reference.username = username
+
+        # sets the password in the revision control reference
+        revision_control_reference.password = password
+
+        # sets the save username password in the revision control reference
+        revision_control_reference.save_username_password = save_username_password
+
+        # initializes the get login callback
+        def get_login(realm, _username, _may_save):
+            # in case this is not the login first attempt
+            # and no successful logins occurred
+            if revision_control_reference.first_login_attempt:
+                revision_control_reference.first_login_attempt = False
+            # in case this is not the first attempt
+            # but no successful login ocurred
+            elif not revision_control_reference.successful_login:
+                # signals a wrong login credentials exception
+                return False, "none", "none", False
+
+            # in case a user name and password are defined
+            # and any previous try did not fail
+            if revision_control_reference.username and revision_control_reference.password:
+                # indicates credentials are available
+                retcode = True
+            else:
+                # indicates credentials are not available
+                retcode = False
+
+            # returns the pysvn login tuple
+            return retcode, revision_control_reference.username, revision_control_reference.password, revision_control_reference.save_username_password
+
+        # sets the get login callback for the client
+        pysvn_client.callback_get_login = get_login
 
 class SubversionRevision:
     """
@@ -387,3 +500,43 @@ class SubversionRevision:
 
     def set_message(self, message):
         self.message = message
+
+class SubversionRevisionControlReference:
+    """
+    The subversion revision control reference class.
+    """
+
+    pysvn_client = None
+    """ The pysvn client used to contact the repository """
+
+    username = None
+    """ The username used for authentication """
+
+    password = None
+    """ The password used for authentication """
+
+    save_username_password = None
+    """ Indicates if saving username and password data in the svn cache is allowed """
+
+    first_login_attempt = None
+    """ Indicates if a login attempt already occurred """
+
+    successful_login = None
+    """ Indicates if a login attempt already occurred """
+
+    def __init__(self):
+        # initializes the subversion client
+        self.pysvn_client = pysvn.Client()
+
+        # initializes the username
+        self.username = DEFAULT_USERNAME
+
+        # initializes the password
+        self.password = DEFAULT_PASSWORD
+
+        # initializes the save flag
+        self.save_username_password = DEFAULT_SAVE_USERNAME_PASSWORD
+
+        # initializes the status
+        self.first_login_attempt = True
+        self.successful_login = False

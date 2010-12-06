@@ -164,15 +164,11 @@ class ConsoleRevisionControlManager:
         # creates a revision control manager to use on the resource
         revision_control_manager = self.load_revision_control_manager(adapter_name)
 
-        try:
-            # uses the revision control manager to perform the add
-            revision_control_manager.add(resource_identifiers, recurse)
+        # uses the revision control manager to perform the add
+        revision_control_manager.add(resource_identifiers, recurse)
 
-            # outputs the result
-            output_method("successfully added " + unicode(resource_identifier))
-        except Exception, exception:
-            # outputs the result
-            output_method("problem adding " + unicode(resource_identifier) + ": " + unicode(exception))
+        # outputs the result
+        output_method("successfully added " + unicode(resource_identifier))
 
     def process_revision_checkout(self, args, output_method):
         # returns in case an invalid number of arguments was provided
@@ -222,18 +218,15 @@ class ConsoleRevisionControlManager:
         # creates the resource identifiers list
         resource_identifiers = [resource_identifier]
 
-        try:
-            # uses the revision control manager to perform the update
-            update_revision = revision_control_manager.update(resource_identifiers, revision)
+        # uses the revision control manager to perform the update
+        update_revision = revision_control_manager.update(resource_identifiers, revision)
 
-            if update_revision:
-                # outputs the result
-                output_method("successfully updated to revision " + str(update_revision))
-            else:
-                output_method("successfully updated")
-        except Exception, exception:
+        # in case a revision is returned
+        if update_revision:
             # outputs the result
-            output_method("problem updating resources: " + unicode(exception))
+            output_method("successfully updated to revision " + str(update_revision))
+        else:
+            output_method("successfully updated")
 
     def process_revision_commit(self, args, output_method):
         # returns in case an invalid number of arguments was provided
@@ -251,25 +244,16 @@ class ConsoleRevisionControlManager:
         commit_message = args[2]
 
         # creates a revision control manager to use on the resource
-        revision_control_manager = self.load_revision_control_manager(adapter_name, resource_identifier)
+        revision_control_manager = self.load_revision_control_manager(adapter_name, resource_identifier, {"username" : "lmartinho", "password" : "L2u0i1s1"})
 
         # creates the resource identifiers list
         resource_identifiers = [resource_identifier]
 
-        try:
-            # uses the revision control manager to perform the commit
-            commit_revision = revision_control_manager.commit(resource_identifiers, commit_message)
+        # uses the revision control manager to perform the commit
+        commit_revision = revision_control_manager.commit(resource_identifiers, commit_message)
 
-            # in case a valid revision was created
-            if commit_revision:
-                # outputs the result
-                output_method("successfully committed revision " + str(commit_revision))
-            else:
-                # otherwise indicates nothing is available to commit
-                output_method("nothing to commit")
-        except Exception, exception:
-            # outputs the result
-            output_method("problem committing resources: " + unicode(exception))
+        # outputs the result
+        output_method("successfully committed revision " + str(commit_revision))
 
     def process_revision_log(self, args, output_method):
         # determines the number of arguments
@@ -304,15 +288,11 @@ class ConsoleRevisionControlManager:
         # creates the resource identifiers list
         resource_identifiers = [resource_identifier]
 
-        try:
-            # uses the revision control manager to perform the commit
-            log_entries = revision_control_manager.log(resource_identifiers, start_revision, end_revision)
+        # uses the revision control manager to perform the commit
+        log_entries = revision_control_manager.log(resource_identifiers, start_revision, end_revision)
 
-            # outputs the log entries
-            self.output_log_entries(log_entries, output_method)
-        except Exception, exception:
-            # outputs the result
-            output_method("problem retrieving change set log: " + unicode(exception))
+        # outputs the log entries
+        self.output_log_entries(log_entries, output_method)
 
     def process_revision_status(self, args, output_method):
         # returns in case an invalid number of arguments was provided
@@ -332,15 +312,11 @@ class ConsoleRevisionControlManager:
         # creates the resource identifiers list
         resource_identifiers = [resource_identifier]
 
-        try:
-            # uses the revision control manager to check the status
-            status = revision_control_manager.status(resource_identifiers)
+        # uses the revision control manager to check the status
+        status = revision_control_manager.status(resource_identifiers)
 
-            # outputs the result
-            self.output_status(status, output_method)
-        except Exception, exception:
-            # outputs the result
-            output_method("problem retrieving status: " + unicode(exception))
+        # outputs the result
+        self.output_status(status, output_method)
 
     def process_revision_diff(self, args, output_method):
         # returns in case an invalid number of arguments was provided
@@ -375,15 +351,11 @@ class ConsoleRevisionControlManager:
         # creates a revision control manager to use on the resource
         revision_control_manager = self.load_revision_control_manager(adapter_name, resource_identifier)
 
-        try:
-            # uses the revision control manager to perform the diff
-            diffs = revision_control_manager.diff(resource_identifiers, revision_1, revision_2)
+        # uses the revision control manager to perform the diff
+        diffs = revision_control_manager.diff(resource_identifiers, revision_1, revision_2)
 
-            # outputs the result
-            self.output_diffs(diffs, output_method)
-        except Exception, exception:
-            # outputs the result
-            output_method("problem computing diff: " + unicode(exception))
+        # outputs the result
+        self.output_diffs(diffs, output_method)
 
     def process_revision_cleanup(self, args, output_method):
         # returns in case an invalid number of arguments was provided
@@ -445,15 +417,11 @@ class ConsoleRevisionControlManager:
         # creates a revision control manager to use on the resource
         revision_control_manager = self.load_revision_control_manager(adapter_name)
 
-        try:
-            # uses the revision control manager to perform the remove
-            revision_control_manager.remove(resource_identifiers)
+        # uses the revision control manager to perform the remove
+        revision_control_manager.remove(resource_identifiers)
 
-            # outputs the result
-            output_method("successfully removed " + unicode(resource_identifier))
-        except Exception, exception:
-            # outputs the result
-            output_method("problem removing " + unicode(resource_identifier) + ": " + unicode(exception))
+        # outputs the result
+        output_method("successfully removed " + unicode(resource_identifier))
 
     def process_revision_revert(self, args, output_method):
         # returns in case an invalid number of arguments was provided
@@ -524,24 +492,16 @@ class ConsoleRevisionControlManager:
         # creates a revision control manager to use on the resource
         revision_control_manager = self.load_revision_control_manager(adapter_name, resource_identifier)
 
-        try:
-            # uses the revision control manager to perform the cat
-            resources_revision = revision_control_manager.get_resources_revision(resource_identifiers, revision)
+        # uses the revision control manager to perform the cat
+        resources_revision = revision_control_manager.get_resources_revision(resource_identifiers, revision)
 
-            # outputs the result
-            for resource_revision in resources_revision:
-                output_method(resource_revision)
-        except Exception, exception:
-            if not revision:
-                # outputs the result
-                output_method("problem retrieving the resource's content: " + unicode(exception))
-            else:
-                # outputs the result
-                output_method("problem retrieving the resource's content for revision " + revision + ": " + unicode(exception))
+        # outputs the result
+        for resource_revision in resources_revision:
+            output_method(resource_revision)
 
-    def load_revision_control_manager(self, adapter_name, resource_identifier = None):
+    def load_revision_control_manager(self, adapter_name, resource_identifier = None, revision_control_parameters = {}):
         # creates the revision control parameters
-        revision_control_parameters = {"repository_path" : resource_identifier}
+        revision_control_parameters["repository_path"] = resource_identifier
 
         # loads a new revision control manager for the specified adapter name
         revision_control_manager = self.revision_control_manager_plugin.load_revision_control_manager(adapter_name, revision_control_parameters)
