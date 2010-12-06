@@ -8,7 +8,8 @@
     "description" : "Work Pool Manager Plugin",
     "version" : "1.0.0",
     "author" : "Hive Solutions Lda. <development@hive.pt>",
-    "capabilities" : ["work_pool_manager", "build_automation_item"],
+    "capabilities" : ["work_pool_manager", "system_information",
+            "build_automation_item"],
     "capabilities_allowed" : [],
     "dependencies" : [{
                 "id" : "pt.hive.colony.plugins.main.threads.thread_pool_manager",
