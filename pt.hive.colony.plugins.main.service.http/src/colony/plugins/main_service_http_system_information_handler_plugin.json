@@ -9,7 +9,7 @@
     "version" : "1.0.0",
     "author" : "Hive Solutions Lda. <development@hive.pt>",
     "capabilities" : ["http_service_handler", "build_automation_item"],
-    "capabilities_allowed" : [],
+    "capabilities_allowed" : ["system_information"],
     "dependencies" : [{
                 "id" : "pt.hive.colony.plugins.template_engine.manager",
                 "version" : "1.0.0"
