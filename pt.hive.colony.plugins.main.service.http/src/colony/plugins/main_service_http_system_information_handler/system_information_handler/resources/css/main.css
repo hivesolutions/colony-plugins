@@ -310,15 +310,22 @@ h5:hover > a.headerlink {
     display: block;
     font-weight: bold;
     text-align: center;
-    margin: 14px 0px 28px 0px;
+    margin: 0px 0px 20px 0px;
     color: #444444;
     font-family: "Lucida Grande", Verdana, Lucida, Helvetica, Arial, sans-serif;
     font-size: 160%;
 }
 
+.system-information-list .table-view {
+    margin: 12px 0px 32px 0px;
+}
+
+.system-information-list .table-view .table {
+     margin-bottom: 16px;
+}
+
 .system-information-list .table-view table {
     width: 100%;
-    margin-bottom: 20px;
     border-top: 1px solid #b2b2b2;
     border-right: 1px solid #b2b2b2;
     border-left: 1px solid #b2b2b2;

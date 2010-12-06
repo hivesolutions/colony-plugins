@@ -37,6 +37,7 @@
                 <div class="table-view">
                     <span class="title">${out_none value=system_information_item.name xml_escape=True /}</span>
                     ${foreach item=system_information_item_item from=system_information_item.items}
+                    <div class="table">
                     ${if item=system_information_item_item.type value="map" operator=eq}
                         <table class="element-${count value=system_information_item_item.columns /}" cellspacing="0">
                             <thead>
@@ -70,6 +71,7 @@
                             <tfoot></tfoot>
                         </table>
                     ${/if}
+                    </div>
                     ${/foreach}
                 </div>
                 ${/foreach}
