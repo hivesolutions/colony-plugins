@@ -499,7 +499,7 @@ class WebMvcWikiController:
         # in case the base file path is invalid
         if base_file_path == None:
             # raises the invalid repository path exception
-            raise web_mvc_wiki_exceptions.InvalidRepositoryPath(base_file_path)
+            raise web_mvc_wiki_exceptions.InvalidRepositoryPath("'%s' from '%s'" % (base_file_path, instance_repository_path))
 
         # creates the base target path as the cache directory path
         # using the given instance name
