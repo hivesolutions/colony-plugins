@@ -55,7 +55,7 @@ class ThreadPoolManagerPlugin(colony.base.plugin_system.Plugin):
                  colony.base.plugin_system.JYTHON_ENVIRONMENT,
                  colony.base.plugin_system.IRON_PYTHON_ENVIRONMENT]
     attributes = {"build_automation_file_path" : "$base{plugin_directory}/main_threads/thread_pool_manager/resources/baf.xml"}
-    capabilities = ["thread_pool_manager", "build_automation_item"]
+    capabilities = ["thread_pool_manager", "system_information", "build_automation_item"]
     capabilities_allowed = []
     dependencies = []
     events_handled = []
@@ -94,3 +94,14 @@ class ThreadPoolManagerPlugin(colony.base.plugin_system.Plugin):
 
     def get_thread_task_descriptor_class(self):
         return self.thread_pool_manager.get_thread_task_descriptor_class()
+
+    def get_system_information(self):
+        """
+        Retrieves the system information map, containing structured
+        information to be visible using presentation viewers.
+
+        @rtype: Dictionary
+        @return: The system information map.
+        """
+
+        return self.thread_pool_manager.get_system_information()

@@ -40,6 +40,8 @@ __license__ = "GNU General Public License (GPL), Version 3"
 import copy
 import threading
 
+import colony.libs.structures_util
+
 DEFAULT_NUMBER_THREADS = 5
 """ The default number of threads to be created """
 
@@ -78,6 +80,9 @@ TASK_STOPPED_STATUS = 2
 
 TASK_PAUSED_STATUS = 3
 """ The task paused status value """
+
+SCHEDULING_ALGORITHM_NAME_MAP = {CONSTANT_SCHEDULING_ALGORITHM : "constant", DYNAMIC_SCHEDULING_ALGORITHM : "dynamic"}
+""" The scheduling algorithm name map """
 
 class ThreadPoolManager:
     """
@@ -151,6 +156,57 @@ class ThreadPoolManager:
         """
 
         return TaskDescriptor
+
+    def get_system_information(self):
+        """
+        Retrieves the system information map, containing structured
+        information to be visible using presentation viewers.
+
+        @rtype: Dictionary
+        @return: The system information map.
+        """
+
+        # creates the map to hold the system information (ordered  map)
+        thread_pool_manager_information = colony.libs.structures_util.OrderedMap()
+
+        # iterates over all the thread pools
+        for thread_pool in self.thread_pools_list:
+            # retrieves the thread pool values
+            thread_pool_name = thread_pool.name
+            thread_pool_number_threads = thread_pool.number_threads
+            thread_pool_scheduling_algorithm = thread_pool.scheduling_algorithm
+            thread_pool_maximum_number_threads = thread_pool.maximum_number_threads
+            thread_pool_current_threads = thread_pool.current_number_threads
+            thread_pool_busy_threads = thread_pool.busy_threads
+
+            # retrieves the thread pool scheduling algorithm name
+            thread_pool_scheduling_algorithm_name = SCHEDULING_ALGORITHM_NAME_MAP[thread_pool_scheduling_algorithm]
+
+            # creates the thread pool thread string
+            thread_pool_thread_string = "%d / %d / %d / %d" % (thread_pool_busy_threads, thread_pool_current_threads, thread_pool_number_threads, thread_pool_maximum_number_threads)
+
+            # sets the instance value for the thread pool manager information
+            thread_pool_manager_information[thread_pool_name] = (thread_pool_thread_string, thread_pool_scheduling_algorithm_name)
+
+        # creates the thread pool manager item
+        thread_pool_manager_item = {}
+
+        # sets the thread pool manager item values
+        thread_pool_manager_item["type"] = "map"
+        thread_pool_manager_item["columns"] = [{"type" : "name", "value" : "Pool Name"},
+                                             {"type" : "value", "value" : "BUS / CUR / MIN / MAX"},
+                                             {"type" : "value", "value" : "Algorithm"}]
+        thread_pool_manager_item["values"] = thread_pool_manager_information
+
+        # creates the system information (item)
+        system_information = {}
+
+        # sets the system information (item) values
+        system_information["name"] = "Thread Pool Manager"
+        system_information["items"] = [thread_pool_manager_item]
+
+        # returns the system information
+        return system_information
 
 class ThreadPoolImplementation:
     """
