@@ -163,10 +163,14 @@ class WorkPoolManager:
             work_pool_thread_pool = work_pool.thread_pool
             work_pool_work_tasks_list = work_pool.work_tasks_list
 
-            a = 0
+            # starts the work pool work counter
+            work_pool_work_counter = 0
 
+            # iterates over all the work pool task in the work pool tasks list
             for work_pool_work_task in work_pool_work_tasks_list:
-                a += work_pool_work_task.work_counter
+                # increments the work pool work counter with the
+                # work pool work task work counter
+                work_pool_work_counter += work_pool_work_task.work_counter
 
             # retrieves the work pool thread pool name
             work_pool_thread_pool_name = work_pool_thread_pool.name
@@ -174,8 +178,11 @@ class WorkPoolManager:
             # retrieves the work pool scheduling algorithm name
             work_pool_scheduling_algorithm_name = WORK_SCHEDULING_ALGORITHM_NAME_MAP[work_pool_work_scheduling_algorithm]
 
+            # retrieves the work pool work tasks list length
+            work_pool_work_tasks_list_length = len(work_pool_work_tasks_list)
+
             # creates the work pool work string
-            work_pool_work_string = "%d / %d" % (a, maximum_number_works_thread * len(work_pool_work_tasks_list))
+            work_pool_work_string = "%d / %d" % (work_pool_work_counter, maximum_number_works_thread * work_pool_work_tasks_list_length)
 
             # sets the instance value for the work pool manager information
             work_pool_manager_information[work_pool_name] = (work_pool_work_string, work_pool_scheduling_algorithm_name, work_pool_thread_pool_name)
