@@ -683,11 +683,17 @@ class Visitor:
         # in case the attribute does not have the iterator method
         # it's not iterable
         if not hasattr(attribute_from_value, ITER_VALUE):
-            # retrieves the attribute from value
-            attribute_from_value = attribute_from[VALUE_VALUE]
+            # in case the strict mode is active
+            if self.strict_mode:
+                # retrieves the attribute from value
+                attribute_from_value = attribute_from[VALUE_VALUE]
 
-            # raises the variable not iterable exception
-            raise template_engine_exceptions.VariableNotIterable("value not iterable: " + attribute_from_value)
+                # raises the variable not iterable exception
+                raise template_engine_exceptions.VariableNotIterable("value not iterable: " + attribute_from_value)
+            # otherwise avoids exception
+            else:
+                # "casts" the attribute from value to a list
+                attribute_from_value = [attribute_from_value]
 
         # in case the type of the attribute from value is dictionary
         if colony.libs.structures_util.is_dictionary(attribute_from_value):
