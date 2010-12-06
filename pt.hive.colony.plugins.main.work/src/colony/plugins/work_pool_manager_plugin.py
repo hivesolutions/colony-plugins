@@ -56,7 +56,7 @@ class WorkPoolManagerPlugin(colony.base.plugin_system.Plugin):
                  colony.base.plugin_system.JYTHON_ENVIRONMENT,
                  colony.base.plugin_system.IRON_PYTHON_ENVIRONMENT]
     attributes = {"build_automation_file_path" : "$base{plugin_directory}/main_work/work_pool_manager/resources/baf.xml"}
-    capabilities = ["work_pool_manager", "build_automation_item"]
+    capabilities = ["work_pool_manager", "system_information", "build_automation_item"]
     capabilities_allowed = []
     dependencies = [colony.base.plugin_system.PluginDependency(
                     "pt.hive.colony.plugins.main.threads.thread_pool_manager", "1.0.0")]
@@ -98,6 +98,17 @@ class WorkPoolManagerPlugin(colony.base.plugin_system.Plugin):
 
     def create_new_work_pool(self, name, description, work_processing_task_class, work_processing_task_arguments, number_threads, scheduling_algorithm, maximum_number_threads, maximum_number_works_thread, work_scheduling_algorithm):
         return self.work_pool_manager.create_new_work_pool(name, description, work_processing_task_class, work_processing_task_arguments, number_threads, scheduling_algorithm, maximum_number_threads, maximum_number_works_thread, work_scheduling_algorithm)
+
+    def get_system_information(self):
+        """
+        Retrieves the system information map, containing structured
+        information to be visible using presentation viewers.
+
+        @rtype: Dictionary
+        @return: The system information map.
+        """
+
+        return self.work_pool_manager.get_system_information()
 
     def get_thread_pool_manager_plugin(self):
         return self.thread_pool_manager_plugin

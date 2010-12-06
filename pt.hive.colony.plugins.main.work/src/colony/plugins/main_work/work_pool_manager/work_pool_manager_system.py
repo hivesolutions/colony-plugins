@@ -39,6 +39,8 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 import threading
 
+import colony.libs.structures_util
+
 import work_pool_manager_algorithms
 import work_pool_manager_exceptions
 
@@ -59,6 +61,9 @@ DYNAMIC_SCHEDULING_ALGORITHM = 2
 
 ROUND_ROBIN_WORK_SCHEDULING_ALGORITHM = 1
 """ The round robin work scheduling algorithm value """
+
+WORK_SCHEDULING_ALGORITHM_NAME_MAP = {ROUND_ROBIN_WORK_SCHEDULING_ALGORITHM : "round_robin"}
+""" The work scheduling algorithm name map """
 
 class WorkPoolManager:
     """
@@ -136,6 +141,65 @@ class WorkPoolManager:
 
         # returns the new work pool
         return work_pool
+
+    def get_system_information(self):
+        """
+        Retrieves the system information map, containing structured
+        information to be visible using presentation viewers.
+
+        @rtype: Dictionary
+        @return: The system information map.
+        """
+
+        # creates the map to hold the system information (ordered  map)
+        work_pool_manager_information = colony.libs.structures_util.OrderedMap()
+
+        # iterates over all the work pools
+        for work_pool in self.work_pools_list:
+            # retrieves the work pool values
+            work_pool_name = work_pool.name
+            work_pool_work_scheduling_algorithm = work_pool.work_scheduling_algorithm
+            maximum_number_works_thread = work_pool.maximum_number_works_thread
+            work_pool_thread_pool = work_pool.thread_pool
+            work_pool_work_tasks_list = work_pool.work_tasks_list
+
+            a = 0
+
+            for work_pool_work_task in work_pool_work_tasks_list:
+                a += work_pool_work_task.work_counter
+
+            # retrieves the work pool thread pool name
+            work_pool_thread_pool_name = work_pool_thread_pool.name
+
+            # retrieves the work pool scheduling algorithm name
+            work_pool_scheduling_algorithm_name = WORK_SCHEDULING_ALGORITHM_NAME_MAP[work_pool_work_scheduling_algorithm]
+
+            # creates the work pool work string
+            work_pool_work_string = "%d / %d" % (a, maximum_number_works_thread * len(work_pool_work_tasks_list))
+
+            # sets the instance value for the work pool manager information
+            work_pool_manager_information[work_pool_name] = (work_pool_work_string, work_pool_scheduling_algorithm_name, work_pool_thread_pool_name)
+
+        # creates the work pool manager item
+        work_pool_manager_item = {}
+
+        # sets the work pool manager item values
+        work_pool_manager_item["type"] = "map"
+        work_pool_manager_item["columns"] = [{"type" : "name", "value" : "Pool Name"},
+                                             {"type" : "value", "value" : "CUR / MAX"},
+                                             {"type" : "value", "value" : "Algorithm"},
+                                             {"type" : "value", "value" : "Thread Pool"}]
+        work_pool_manager_item["values"] = work_pool_manager_information
+
+        # creates the system information (item)
+        system_information = {}
+
+        # sets the system information (item) values
+        system_information["name"] = "Work Pool Manager"
+        system_information["items"] = [work_pool_manager_item]
+
+        # returns the system information
+        return system_information
 
 class WorkPoolImplementation:
     """
