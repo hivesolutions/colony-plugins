@@ -73,52 +73,6 @@
                     ${/foreach}
                 </div>
                 ${/foreach}
-                <div class="table-view">
-                    <table cellspacing="0">
-                        <span class="title">Thread Pool Manager</span>
-                        <thead>
-                            <tr>
-                                <th class="column name"><a href="?comparator=name&sort=${out_none value=sort_orders.name xml_escape=True /}">Name</a></th>
-                                <th class="column value"><a href="?comparator=modified_date&sort=${out_none value=sort_orders.modified_date xml_escape=True /}">Value</a></th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td class="name">number threads</td>
-                                <td class="value">230</td>
-                            </tr>
-                            <tr>
-                                <td class="name">number pools</td>
-                                <td class="value">10</td>
-                            </tr>
-                            <tr>
-                                <td class="name">processor usage</td>
-                                <td class="value">89%</td>
-                            </tr>
-                        </tbody>
-                        <tfoot></tfoot>
-                    </table>
-                </div>
-                <div class="table-view multiple">
-                    <table cellspacing="0">
-                        <span class="title">Build Automation</span>
-                        <thead>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td class="name">build count</td>
-                                <td class="value">23</td>
-                                <td class="value">1</td>
-                            </tr>
-                            <tr>
-                                <td class="name">average time</td>
-                                <td class="value">1:30</td>
-                                <td class="value">2:30</td>
-                            </tr>
-                        </tbody>
-                        <tfoot></tfoot>
-                    </table>
-                </div>
             </div>
         </div>
         <div id="wiki-footer">
