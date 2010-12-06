@@ -37,7 +37,7 @@
         <version>1.0.0</version>
         <type>colony</type>
         <name>Http Service Main System Information Handler Plugin</name>
-        <description>Http Service Main System Information Handler Plugin</description>
+        <description>The plugin that offers the http service system information handler</description>
         <url>http://www.hive.pt</url>
     </artifact>
     <build>
