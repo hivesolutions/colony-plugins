@@ -282,11 +282,11 @@ h5:hover > a.headerlink {
     font-size: 11pt;
 }
 
-.highlight .directory-list-image {
+.highlight .system-information-list-image {
     float: left;
 }
 
-.highlight .directory-list-text {
+.highlight .system-information-list-text {
     margin-left: 82px;
     word-wrap: break-word;
 }
@@ -300,23 +300,23 @@ h5:hover > a.headerlink {
     font-weight: bold;
 }
 
-.directory-list {
+.system-information-list {
     background: #fbebd3 url(../images/listing_note.gif) no-repeat scroll 0px 0px;
     padding: 18px 32px 18px 52px;
     line-height: 1.5em;
 }
 
-.directory-list .title {
+.system-information-list .title {
     display: block;
     font-weight: bold;
     text-align: center;
-    margin: 24px 0px 28px 0px;
+    margin: 14px 0px 28px 0px;
     color: #444444;
-       font-family: "Lucida Grande", Verdana, Lucida, Helvetica, Arial, sans-serif;
+    font-family: "Lucida Grande", Verdana, Lucida, Helvetica, Arial, sans-serif;
     font-size: 160%;
 }
 
-.directory-list .table-view table {
+.system-information-list .table-view table {
     width: 100%;
     margin-bottom: 20px;
     border-top: 1px solid #b2b2b2;
@@ -324,71 +324,71 @@ h5:hover > a.headerlink {
     border-left: 1px solid #b2b2b2;
 }
 
-.directory-list .table-view table th {
+.system-information-list .table-view table th {
     background-color: #fccd8d;
     padding: 6px 12px 6px 12px;
     border-bottom: 1px solid #b2b2b2;
     border-left: 1px solid #b2b2b2;
 }
 
-.directory-list .table-view table td {
+.system-information-list .table-view table td {
     background-color : #fdf3e6;
     padding: 6px 12px 6px 12px;
     border-bottom: 1px solid #b2b2b2;
     border-left: 1px solid #b2b2b2;
 }
 
-.directory-list .table-view table th.column.name {
+.system-information-list .table-view table th.column.name {
     border-left: none;
 }
 
-.directory-list .table-view table td.name {
+.system-information-list .table-view table td.name {
     border-left: none;
 }
 
-.directory-list .table-view table tr.critical td {
+.system-information-list .table-view table tr.critical td {
     background-color : #f2afaf;
 }
 
-.directory-list .table-view table tr.error td {
+.system-information-list .table-view table tr.error td {
     background-color : #efceb9;
 }
 
-.directory-list .table-view table tr.warning td {
+.system-information-list .table-view table tr.warning td {
     background-color : #efebb9;
 }
 
-.directory-list .table-view table tr.info td {
+.system-information-list .table-view table tr.info td {
     background-color : #dfedef;
 }
 
-.directory-list .table-view table tr.debug td {
+.system-information-list .table-view table tr.debug td {
     background-color : #efefef;
 }
 
-.directory-list .table-view table tr.filter td {
+.system-information-list .table-view table tr.filter td {
     background-color : #e9f2df;
 }
 
-.directory-list .table-view table th.column a {
+.system-information-list .table-view table th.column a {
     color: #444444;
 }
 
-.directory-list .table-view table .column {
+.system-information-list .table-view table .column {
     text-align: left;
 }
 
-.directory-list .table-view table .value {
+.system-information-list .table-view table .value {
     width: 420px;
     color: #444444;
     word-break: break-all;
 }
 
-.directory-list .table-view.multiple table .value {
+.system-information-list .table-view.multiple table .value {
     width: 198px;
 }
 
-.directory-list .table-view table td.value input {
+.system-information-list .table-view table td.value input {
     width: 100%;
 }
 

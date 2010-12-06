@@ -25,14 +25,14 @@
         <div id="wiki-contents">
             <p></p>
             <div class="highlight">
-                <img class="directory-list-image" src="/system_information_handler/images/logo_datacenter.png"/>
-                <div class="directory-list-text">
+                <img class="system-information-list-image" src="/system_information_handler/images/logo_datacenter.png"/>
+                <div class="system-information-list-text">
                     <b>System Information</b>
                     <p>Colony Framework 1.0.1 r12647</p>
                 </div>
             </div>
             <p></p>
-            <div class="directory-list">
+            <div class="system-information-list">
                 <div class="table-view">
                     <table cellspacing="0">
                         <span class="title">Framework</span>
