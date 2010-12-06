@@ -496,6 +496,11 @@ class WebMvcWikiController:
         # resolved by the plugin manager
         base_file_path = plugin_manager.resolve_file_path(instance_repository_path)
 
+        # in case the base file path is invalid
+        if base_file_path == None:
+            # raises the invalid repository path exception
+            raise web_mvc_wiki_exceptions.InvalidRepositoryPath(base_file_path)
+
         # creates the base target path as the cache directory path
         # using the given instance name
         base_target_path = self._get_cache_directory_path(instance_name)

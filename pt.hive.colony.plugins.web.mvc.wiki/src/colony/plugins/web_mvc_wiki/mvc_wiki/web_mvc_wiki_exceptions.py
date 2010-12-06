@@ -72,3 +72,29 @@ class InstanceNotFound(WebMvcWikiException):
         """
 
         return "Instance not found: %s" % self.message
+
+class InvalidRepositoryPath(WebMvcWikiException):
+    """
+    The invalid repository path class.
+    """
+
+    def __init__(self, message):
+        """
+        Constructor of the class.
+
+        @type message: String
+        @param message: The message to be printed.
+        """
+
+        WebMvcWikiException.__init__(self)
+        self.message = message
+
+    def __str__(self):
+        """
+        Returns the string representation of the class.
+
+        @rtype: String
+        @return: The string representation of the class.
+        """
+
+        return "Invalid repository path: %s" % self.message
