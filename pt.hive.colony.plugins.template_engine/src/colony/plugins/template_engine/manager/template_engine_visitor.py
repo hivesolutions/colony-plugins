@@ -44,6 +44,7 @@ import datetime
 import xml.sax.saxutils
 
 import colony.libs.quote_util
+import colony.libs.structures_util
 import colony.libs.string_buffer_util
 
 import template_engine_ast
@@ -688,11 +689,8 @@ class Visitor:
             # raises the variable not iterable exception
             raise template_engine_exceptions.VariableNotIterable("value not iterable: " + attribute_from_value)
 
-        # retrieves the attribute from value type
-        attribute_from_value_type = type(attribute_from_value)
-
         # in case the type of the attribute from value is dictionary
-        if attribute_from_value_type == types.DictType:
+        if colony.libs.structures_util.is_dictionary(attribute_from_value):
             # iterates over all the attribute from value items
             for attribute_from_value_key, attribute_from_value_value in attribute_from_value.items():
                 # sets the attribute from value value in the global map
@@ -1091,11 +1089,8 @@ class Visitor:
                 if not current_variable == None:
                     # iterates over the sub values of the variable
                     for variable_name_split in variable_name_splitted[1:]:
-                        # retrieves the current variable type
-                        current_variable_type = type(current_variable)
-
                         # in case the variable is of type dictionary
-                        if current_variable_type == types.DictType:
+                        if colony.libs.structures_util.is_dictionary(current_variable):
                             if variable_name_split in current_variable:
                                 # retrieves the current variable (from the dictionary)
                                 current_variable = current_variable[variable_name_split]
