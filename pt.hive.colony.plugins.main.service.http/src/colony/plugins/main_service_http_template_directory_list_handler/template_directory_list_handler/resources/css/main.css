@@ -294,7 +294,7 @@ h5:hover > a.headerlink {
 .command {
     background: #eeeeee url(../images/console_icon.png) no-repeat scroll 6px 5px;
     padding: 4px 8px 4px 28px;
-    color: #20435C;
+    color: #20435c;
     font-family: monospace;
     font-size: 110%;
     font-weight: bold;
@@ -302,7 +302,7 @@ h5:hover > a.headerlink {
 
 .directory-list {
     background: #fbebd3 url(../images/listing_note.gif) no-repeat scroll 0px 0px;
-    padding: 18px 52px 18px 52px;
+    padding: 18px 32px 18px 52px;
     line-height: 1.5em;
 }
 
