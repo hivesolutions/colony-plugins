@@ -369,8 +369,9 @@ class ExtensionManager:
                 try:
                     # imports the extension module file
                     __import__(extension)
-                except:
-                    self.logger.error("Problem importing module %s" % extension)
+                except BaseException, exception:
+                    # prints an error message
+                    self.logger.error("Problem importing module %s: %s" % (extension, unicode(exception)))
 
     def get_all_modules(self, path):
         """
