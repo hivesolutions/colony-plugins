@@ -8,7 +8,8 @@
     "description" : "The plugin that offers a web wiki service",
     "version" : "1.0.0",
     "author" : "Hive Solutions Lda. <development@hive.pt>",
-    "capabilities" : ["web.mvc_service", "build_automation_item"],
+    "capabilities" : ["web.mvc_service", "system_information",
+            "build_automation_item"],
     "capabilities_allowed" : [],
     "dependencies" : [{
                 "id" : "pt.hive.colony.plugins.web.mvc.utils",
