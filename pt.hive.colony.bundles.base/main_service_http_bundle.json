@@ -32,6 +32,9 @@
                 "id" : "pt.hive.colony.plugins.main.service.http.starter",
                 "version" : "1.0.0"
             }, {
+                "id" : "pt.hive.colony.plugins.main.service.http.system_information_handler",
+                "version" : "1.0.0"
+            }, {
                 "id" : "pt.hive.colony.plugins.main.service.http.template_directory_list_handler",
                 "version" : "1.0.0"
             }, {
