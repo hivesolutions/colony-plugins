@@ -142,6 +142,13 @@ class MainServiceHttpSystemInformationHandler:
         request.write(processed_template_file_encoded)
 
     def _get_system_information(self):
+        """
+        Retrieves the system information map.
+
+        @rtype: Dictionary
+        @return: The system information map.
+        """
+
         # creates the map to hold the system information (ordered  map)
         system_information = colony.libs.structures_util.OrderedMap()
 
@@ -179,7 +186,7 @@ class MainServiceHttpSystemInformationHandler:
 
     def _get_framework_information(self):
         """
-        Retrives an information map containing information
+        Retrieves an information map containing information
         about the framework.
 
         @rtype: Dictionary
