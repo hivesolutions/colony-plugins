@@ -53,7 +53,7 @@ class WebMvcWikiPlugin(colony.base.plugin_system.Plugin):
     loading_type = colony.base.plugin_system.EAGER_LOADING_TYPE
     platforms = [colony.base.plugin_system.CPYTHON_ENVIRONMENT]
     attributes = {"build_automation_file_path" : "$base{plugin_directory}/web_mvc_wiki/mvc_wiki/resources/baf.xml"}
-    capabilities = ["web.mvc_service", "build_automation_item"]
+    capabilities = ["web.mvc_service", "system_information", "build_automation_item"]
     capabilities_allowed = []
     dependencies = [colony.base.plugin_system.PluginDependency(
                     "pt.hive.colony.plugins.web.mvc.utils", "1.0.0"),
@@ -151,6 +151,17 @@ class WebMvcWikiPlugin(colony.base.plugin_system.Plugin):
         """
 
         return self.web_mvc_wiki.get_resource_patterns()
+
+    def get_system_information(self):
+        """
+        Retrieves the system information map, containing structured
+        information to be visible using presentation viewers.
+
+        @rtype: Dictionary
+        @return: The system information map.
+        """
+
+        return self.web_mvc_wiki.get_system_information()
 
     def get_web_mvc_utils_plugin(self):
         return self.web_mvc_utils_plugin

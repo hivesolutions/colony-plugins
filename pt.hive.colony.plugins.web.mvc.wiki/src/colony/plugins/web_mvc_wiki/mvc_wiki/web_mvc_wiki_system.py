@@ -40,6 +40,8 @@ __license__ = "GNU General Public License (GPL), Version 3"
 import os
 import time
 
+import colony.libs.structures_util
+
 import web_mvc_wiki_exceptions
 
 DEFAULT_ENCODING = "utf-8"
@@ -156,6 +158,47 @@ class WebMvcWiki:
         web_mvc_wiki_plugin_path = plugin_manager.get_plugin_path_by_id(self.web_mvc_wiki_plugin.id)
 
         return ((r"^wiki/resources/.+$", (web_mvc_wiki_plugin_path + "/" + EXTRAS_PATH, "wiki/resources")),)
+
+    def get_system_information(self):
+        """
+        Retrieves the system information map, containing structured
+        information to be visible using presentation viewers.
+
+        @rtype: Dictionary
+        @return: The system information map.
+        """
+
+        # creates the map to hold the system information (ordered  map)
+        web_mvc_wiki_information = colony.libs.structures_util.OrderedMap()
+
+        # iterates over all the instances to creates the information
+        for instance_name, instance_value in self.instances_map.items():
+            # retrieves the instance values
+            instance_repository_path = instance_value["repository_path"]
+            instance_repository_type = instance_value["repository_type"]
+
+            # sets the instance value for the web mvc wiki information
+            web_mvc_wiki_information[instance_name] = (instance_repository_path, instance_repository_type)
+
+        # creates the web mvc wiki main item
+        web_mvc_wiki_main_item = {}
+
+        # sets the web mvc wiki main item values
+        web_mvc_wiki_main_item["type"] = "map"
+        web_mvc_wiki_main_item["columns"] = [{"type" : "name", "value" : "Instance"},
+                                             {"type" : "value", "value" : "Path"},
+                                             {"type" : "value", "value" : "Repository Type"}]
+        web_mvc_wiki_main_item["values"] = web_mvc_wiki_information
+
+        # creates the system information (item)
+        system_information = {}
+
+        # sets the system information (item) values
+        system_information["name"] = "Web Mvc Wiki"
+        system_information["items"] = [web_mvc_wiki_main_item]
+
+        # returns the system information
+        return system_information
 
     def set_configuration_property(self, configuration_propery):
         # retrieves the configuration
