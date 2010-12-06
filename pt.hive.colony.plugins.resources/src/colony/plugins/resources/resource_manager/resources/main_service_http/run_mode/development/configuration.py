@@ -148,6 +148,8 @@ configuration = {
                                            "/colony_manager",
                                            "/colony_mod_python",
                                            "/welcome_handler",
+                                           "/system_information_handler",
+                                           "/system_information",
                                            "/template_error_handler",
                                            "/template_directory_list_handler",
                                            "/eclipse",
@@ -199,6 +201,17 @@ configuration = {
                              "base_path" : "$resource{system.path.colony}/pt.hive.colony.plugins.main.service.http/src/colony/plugins/main_service_http_welcome_handler/welcome_handler/resources",
                              "default_page" : "http_service_welcome.html"
                          }
+                     },
+                     "/system_information_handler" : {
+                         "handler" : "file",
+                         "allow_redirection" : False,
+                         "request_properties" : {
+                             "base_path" : "$resource{system.path.colony}/pt.hive.colony.plugins.main.service.http/src/colony/plugins/main_service_http_system_information_handler/system_information_handler/resources"
+                         }
+                     },
+                     "/system_information" : {
+                         "handler" : "system_information",
+                         "allow_redirection" : False
                      },
                      "/template_error_handler" : {
                          "handler" : "file",
