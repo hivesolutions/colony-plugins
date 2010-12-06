@@ -38,7 +38,7 @@
                     <span class="title">${out_none value=system_information_item.name xml_escape=True /}</span>
                     ${foreach item=system_information_item_item from=system_information_item.items}
                     ${if item=system_information_item_item.type value="map" operator=eq}
-                        <table cellspacing="0">
+                        <table class="element-${count value=system_information_item_item.columns /}" cellspacing="0">
                             <thead>
                                 <tr>
                                     ${foreach item=system_information_item_item_column from=system_information_item_item.columns}
@@ -50,14 +50,16 @@
                                 ${foreach item=value key=key from=system_information_item_item.values}
                                 <tr>
                                     <td class="name">${out_none value=key xml_escape=True /}</td>
-                                    <td class="value">${out_none value=value xml_escape=True /}</td>
+                                    ${foreach item=_value from=value}
+                                    <td class="value">${out_none value=_value xml_escape=True /}</td>
+                                    ${/foreach}
                                 </tr>
                                 ${/foreach}
                             </tbody>
                             <tfoot></tfoot>
                         </table>
                     ${elif item=system_information_item_item.type value="simple" operator=eq /}
-                        <table cellspacing="0">
+                        <table class="element-1" cellspacing="0">
                             <thead>
                             </thead>
                             <tbody>

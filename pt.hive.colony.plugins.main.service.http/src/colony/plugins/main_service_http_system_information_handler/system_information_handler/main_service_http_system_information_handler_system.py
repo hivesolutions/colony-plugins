@@ -149,6 +149,9 @@ class MainServiceHttpSystemInformationHandler:
         @return: The system information map.
         """
 
+        # retrieves the system information plugins
+        system_information_plugins = self.main_service_http_system_information_handler_plugin.system_information_plugins
+
         # creates the map to hold the system information (ordered  map)
         system_information = colony.libs.structures_util.OrderedMap()
 
@@ -180,6 +183,15 @@ class MainServiceHttpSystemInformationHandler:
 
         # sets the system information framework item in the system information
         system_information["framework"] = system_information_framework_item
+
+        # iterates over all the system information plugins
+        for system_information_plugin in system_information_plugins:
+            # retrieves the system information from the system information
+            # plugin (the map containing the information)
+            _system_information = system_information_plugin.get_system_information()
+
+            # sets the system information in the system information map
+            system_information[system_information_plugin.id] = _system_information
 
         # returns the system information
         return system_information

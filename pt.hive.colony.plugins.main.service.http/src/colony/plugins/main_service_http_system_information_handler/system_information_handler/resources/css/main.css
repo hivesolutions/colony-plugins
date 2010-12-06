@@ -379,13 +379,48 @@ h5:hover > a.headerlink {
 }
 
 .system-information-list .table-view table .value {
-    width: 420px;
     color: #444444;
     word-break: break-all;
 }
 
-.system-information-list .table-view.multiple table .value {
-    width: 198px;
+.system-information-list .table-view table.element-1 tr td {
+    width: 100%;
+}
+
+.system-information-list .table-view table.element-1 tr td.value {
+    min-width: 600px;
+}
+
+.system-information-list .table-view table.element-2 tr td {
+    width: 50%;
+}
+
+.system-information-list .table-view table.element-2 tr td.value {
+    min-width: 460px;
+}
+
+.system-information-list .table-view table.element-3 tr td {
+    width: 33%;
+}
+
+.system-information-list .table-view table.element-3 tr td.value {
+    min-width: 230px;
+}
+
+.system-information-list .table-view table.element-4 tr td {
+    width: 25%;
+}
+
+.system-information-list .table-view table.element-4 tr td.value {
+    min-width: 152px;
+}
+
+.system-information-list .table-view table.element-5 tr td {
+    width: 20%;
+}
+
+.system-information-list .table-view table.element-5 tr td.value {
+    min-width: 115px;
 }
 
 .system-information-list .table-view table td.value input {

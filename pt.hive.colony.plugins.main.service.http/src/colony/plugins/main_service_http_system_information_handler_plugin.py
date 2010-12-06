@@ -57,7 +57,7 @@ class MainServiceHttpSystemInformationHandlerPlugin(colony.base.plugin_system.Pl
                  colony.base.plugin_system.IRON_PYTHON_ENVIRONMENT]
     attributes = {"build_automation_file_path" : "$base{plugin_directory}/main_service_http_system_information_handler/system_information_handler/resources/baf.xml"}
     capabilities = ["http_service_handler", "build_automation_item"]
-    capabilities_allowed = []
+    capabilities_allowed = ["system_information"]
     dependencies = [colony.base.plugin_system.PluginDependency(
                     "pt.hive.colony.plugins.template_engine.manager", "1.0.0")]
     events_handled = []
@@ -65,6 +65,8 @@ class MainServiceHttpSystemInformationHandlerPlugin(colony.base.plugin_system.Pl
     main_modules = ["main_service_http_system_information_handler.system_information_handler.main_service_http_system_information_handler_system"]
 
     main_service_http_system_information_handler = None
+
+    system_information_plugins = []
 
     template_engine_manager_plugin = None
 
@@ -83,9 +85,11 @@ class MainServiceHttpSystemInformationHandlerPlugin(colony.base.plugin_system.Pl
     def end_unload_plugin(self):
         colony.base.plugin_system.Plugin.end_unload_plugin(self)
 
+    @colony.base.decorators.load_allowed("pt.hive.colony.plugins.main.service.http.system_information_handler", "1.0.0")
     def load_allowed(self, plugin, capability):
         colony.base.plugin_system.Plugin.load_allowed(self, plugin, capability)
 
+    @colony.base.decorators.unload_allowed("pt.hive.colony.plugins.main.service.http.system_information_handler", "1.0.0")
     def unload_allowed(self, plugin, capability):
         colony.base.plugin_system.Plugin.unload_allowed(self, plugin, capability)
 
@@ -112,6 +116,14 @@ class MainServiceHttpSystemInformationHandlerPlugin(colony.base.plugin_system.Pl
         """
 
         return self.main_service_http_system_information_handler.handle_request(request)
+
+    @colony.base.decorators.load_allowed_capability("system_information")
+    def system_information_load_allowed(self, plugin, capability):
+        self.system_information_plugins.append(plugin)
+
+    @colony.base.decorators.unload_allowed_capability("system_information")
+    def system_information_unload_allowed(self, plugin, capability):
+        self.system_information_plugins.append(plugin)
 
     def get_template_engine_manager_plugin(self):
         return self.template_engine_manager_plugin
