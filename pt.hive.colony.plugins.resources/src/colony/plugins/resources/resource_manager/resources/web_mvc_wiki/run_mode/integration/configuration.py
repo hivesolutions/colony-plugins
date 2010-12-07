@@ -39,10 +39,13 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 configuration = {
                  "instances" : {
-                                "colony" : {
-                                            "name" : "colony",
-                                            "repository_type" : "svn",
-                                            "repository_path" : "%manager_path%/../../pt.hive.colony.documentation.technical"
-                                }
+                     "colony" : {
+                         "name" : "colony",
+                         "repository_type" : "svn",
+                         "repository_arguments" : {
+                             "save_username_password" : False
+                         },
+                         "repository_path" : "%manager_path%/../../pt.hive.colony.documentation.technical"
+                     }
                  }
              }
