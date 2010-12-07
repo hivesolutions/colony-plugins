@@ -40,6 +40,7 @@ __license__ = "GNU General Public License (GPL), Version 3"
 import os
 import time
 
+import colony.libs.map_util
 import colony.libs.structures_util
 
 import web_mvc_wiki_exceptions
@@ -309,6 +310,9 @@ class WebMvcWikiPageController:
         # retrieves the instance repository type
         instance_repository_type = instance["repository_type"]
 
+        # retrieves the instance repository arguments
+        instance_repository_arguments = instance["repository_arguments"]
+
         # retrieves the instance repository path
         instance_repository_path = instance["repository_path"]
 
@@ -333,7 +337,7 @@ class WebMvcWikiPageController:
         self._write_file(complete_file_path, normalized_contents)
 
         # creates the revision control parameters
-        revision_control_parameters = {"repository_path" : base_file_path}
+        revision_control_parameters = colony.libs.map_util.map_extend(instance_repository_arguments, {"repository_path" : base_file_path})
 
         # loads a new revision control manager for the specified adapter name
         revision_control_manager = revision_control_manager_plugin.load_revision_control_manager(instance_repository_type, revision_control_parameters)
@@ -383,6 +387,9 @@ class WebMvcWikiPageController:
         # retrieves the instance repository type
         instance_repository_type = instance["repository_type"]
 
+        # retrieves the instance repository arguments
+        instance_repository_arguments = instance["repository_arguments"]
+
         # retrieves the instance repository path
         instance_repository_path = instance["repository_path"]
 
@@ -407,7 +414,7 @@ class WebMvcWikiPageController:
         self._write_file(complete_file_path, normalized_contents)
 
         # creates the revision control parameters
-        revision_control_parameters = {"repository_path" : base_file_path}
+        revision_control_parameters = colony.libs.map_util.map_extend(instance_repository_arguments, {"repository_path" : base_file_path})
 
         # loads a new revision control manager for the specified adapter name
         revision_control_manager = revision_control_manager_plugin.load_revision_control_manager(instance_repository_type, revision_control_parameters)
