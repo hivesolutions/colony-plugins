@@ -16,6 +16,7 @@
             "revision_control_subversion_adapter_plugin.py",
             "revision_control/__init__.py",
             "revision_control/subversion_adapter/__init__.py",
+            "revision_control/subversion_adapter/revision_control_subversion_adapter_exceptions.py",
             "revision_control/subversion_adapter/revision_control_subversion_adapter_system.py",
             "revision_control/subversion_adapter/resources/baf.xml"]
 }
