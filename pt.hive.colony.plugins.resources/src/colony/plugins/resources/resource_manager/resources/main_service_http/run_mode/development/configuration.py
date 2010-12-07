@@ -82,6 +82,7 @@ configuration = {
                                            "/manager",
                                            "/hive",
                                            "/blog",
+                                           "/media_dashboard",
                                            "/task_registry",
                                            "/openid",
                                            "/take_the_bill",
@@ -111,6 +112,10 @@ configuration = {
                      },
                      "/blog" : {
                          "target" : "/colony_mod_python/rest/mvc/hive_blog/",
+                         "recursive_redirection" : True
+                     },
+                     "/media_dashboard" : {
+                         "target" : "/colony_mod_python/rest/mvc/media_dashboard/",
                          "recursive_redirection" : True
                      },
                      "/task_registry" : {
