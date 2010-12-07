@@ -287,6 +287,16 @@ class RevisionControlAdapter:
 
         return self.revision_control_adapter_plugin.get_resources_revision(self._revision_control_reference, resource_identifiers, revision)
 
+    def create_revision(self):
+        """
+        Creates a new revision object.
+
+        @rtype: Revision
+        @return: A new revision.
+        """
+
+        return Revision()
+
 class Revision:
     """
     The abstract revision class.
