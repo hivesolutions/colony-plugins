@@ -37,7 +37,12 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
+import threading
+
 import web_mvc_exceptions
+
+DEFAULT_UPDATE_WAIT_TIMEOUT = 5.0
+""" The default update wait timeout """
 
 class WebMvcCommunicationHandler:
     """
@@ -142,8 +147,29 @@ class WebMvcCommunicationHandler:
             # raises the communication command exception
             raise web_mvc_exceptions.CommunicationCommandException("no communication connection available")
 
-        # retrieves the message queue
-        message_queue = communication_connection.pop_message_queue()
+        # iterates continuously
+        while True:
+            # retrieves the message queue
+            message_queue = communication_connection.pop_message_queue()
+
+            # in case the message queue is valid
+            # and not empty
+            if message_queue:
+                # breaks the loop
+                break
+            # otherwise should wait for a
+            # message to become available
+            else:
+                # retrieves the message queue event
+                message_queue_event = communication_connection.message_queue_event
+
+                # waits for the message queue event
+                communication_connection.message_queue_event.wait(DEFAULT_UPDATE_WAIT_TIMEOUT)
+
+                # in case the message queue event is not set
+                if not message_queue_event.isSet():
+                    # breaks the loop
+                    break
 
         # writes the message queue into the message
         self._write_message(request, communication_connection, message_queue)
@@ -271,6 +297,12 @@ class CommunicationConnection:
     message_queue = []
     """ The queue of messages pending to be sent """
 
+    message_queue_lock = None
+    """ The lock for the access to the message queue """
+
+    message_queue_event = None
+    """ The event about the new message operation in the message queue """
+
     def __init__(self, connection_id, connection_name, service_connection):
         """
         Constructor of the class.
@@ -288,6 +320,8 @@ class CommunicationConnection:
         self.service_connection = service_connection
 
         self.message_queue = []
+        self.message_queue_lock = threading.RLock()
+        self.message_queue_event = threading.Event()
 
     def serialize_message(self, result_message, serializer):
         """
@@ -326,7 +360,17 @@ class CommunicationConnection:
         connection message queue.
         """
 
+        # acquires the message queue lock
+        self.message_queue_lock.acquire()
+
+        # adds the message to the message queue
         self.message_queue.append(message)
+
+        # sets the message queue event
+        self.message_queue_event.set()
+
+        # releases the message queue lock
+        self.message_queue_lock.release()
 
     def pop_message_queue(self):
         """
@@ -337,11 +381,20 @@ class CommunicationConnection:
         @return: The popped queue.
         """
 
+        # acquires the message queue lock
+        self.message_queue_lock.acquire()
+
         # saves the queue in the pop queue
         pop_queue = self.message_queue
 
         # clears the current message queue
         self.message_queue = []
+
+        # clears the message queue event
+        self.message_queue_event.clear()
+
+        # releases the message queue lock
+        self.message_queue_lock.release()
 
         # returns the pop queue
         return pop_queue
