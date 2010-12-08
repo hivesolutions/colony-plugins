@@ -213,6 +213,20 @@ class RevisionControlAdapter:
 
         return self.revision_control_adapter_plugin.log(self._revision_control_reference, resource_identifiers, start_revision, end_revision)
 
+    def log_time(self, resource_identifiers, start_time, end_time):
+        """
+        Show revision history inside a time interval.
+
+        @type resource_identifiers: List
+        @param resource_identifiers: The list of resource identifiers.
+        @type start_time: int
+        @param start_time: The timestamp for the start date for the time interval.
+        @type end_time: int
+        @param end_time: The timestamp for the end date for the time interval.
+        """
+
+        return self.revision_control_adapter_plugin.log_time(self._revision_control_reference, resource_identifiers, start_time, end_time)
+
     def status(self, resource_identifiers):
         """
         Retrieves the status of the provided resource identifiers.

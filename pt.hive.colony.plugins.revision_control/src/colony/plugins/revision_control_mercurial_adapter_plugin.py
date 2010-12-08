@@ -102,6 +102,9 @@ class RevisionControlMercurialAdapterPlugin(colony.base.plugin_system.Plugin):
     def log(self, revision_control_reference, resource_identifiers, start_revision, end_revision):
         return self.revision_control_mercurial_adapter.log(revision_control_reference, resource_identifiers, start_revision, end_revision)
 
+    def log_time(self, revision_control_reference, resource_identifiers, start_time, end_time):
+        return self.revision_control_mercurial_adapter.log_time(revision_control_reference, resource_identifiers, start_time, end_time)
+
     def status(self, revision_control_reference, resource_identifiers):
         return self.revision_control_mercurial_adapter.status(revision_control_reference, resource_identifiers)
 

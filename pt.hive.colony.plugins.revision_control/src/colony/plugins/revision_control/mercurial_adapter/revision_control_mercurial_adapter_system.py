@@ -164,6 +164,9 @@ class RevisionControlMercurialAdapter:
 
         return revisions
 
+    def log_time(self, revision_control_reference, resource_identifiers, start_time, end_time):
+        raise Exception("not implemented in mercurial adapter")
+
     def status(self, revision_control_reference, resource_identifiers):
         # retrieves the working directory status
         status = revision_control_reference.status()

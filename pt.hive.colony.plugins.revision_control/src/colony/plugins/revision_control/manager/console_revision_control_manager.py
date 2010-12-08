@@ -50,6 +50,7 @@ revision_checkout <adapter_name> <source> <destination>                         
 revision_update <adapter_name>  <resource_identifier> <revision>                   - updates a resource to a specified revision\n\
 revision_commit <adapter_name> <resource_identifier> <commit_message>              - commits the changes in the resource with the specified message\n\
 revision_log <adapter_name> <resource_identifier> [start_revision] [end_revision]  - lists the change sets for the specified resource identifier between the specified revisions\n\
+revision_log_time <adapter_name> <resource_identifier> [start_time] [end_time]     - lists the change sets for the specified resource identifier between the specified timestamps\n\
 revision_status <adapter_name> <resource_identifier>                               - lists the pending changes in the current revision\n\
 revision_diff <adapter_name> <resource_identifier> [start_revision] [end_revision] - compares the contents of the specified revisions\n\
 revision_cleanup <adapter_name> <resource_identifier>                              - cleans up existing locks at the specified location\n\
@@ -84,7 +85,7 @@ class ConsoleRevisionControlManager:
                 "revision_update",
                 "revision_commit",
                 "revision_log",
-                "revision_log_name",
+                "revision_log_time",
                 "revision_status",
                 "revision_diff",
                 "revision_cleanup",
@@ -290,6 +291,45 @@ class ConsoleRevisionControlManager:
 
         # uses the revision control manager to perform the commit
         log_entries = revision_control_manager.log(resource_identifiers, start_revision, end_revision)
+
+        # outputs the log entries
+        self.output_log_entries(log_entries, output_method)
+
+    def process_revision_log_time(self, args, output_method):
+        # determines the number of arguments
+        number_arguments = len(args)
+
+        # returns in case an invalid number of arguments was provided
+        if number_arguments < 2:
+            output_method(INVALID_NUMBER_ARGUMENTS_MESSAGE)
+            return
+
+        # retrieves the adapter name
+        adapter_name = args[0]
+
+        # retrieves the resource identifier
+        resource_identifier = args[1]
+
+        if number_arguments > 2:
+            # retrieves the start revision
+            start_time = int(args[2])
+        else:
+            start_time = None
+
+        if number_arguments > 3:
+            # retrieves the end revision
+            end_time = int(args[3])
+        else:
+            end_time = None
+
+        # creates a revision control manager to use on the resource
+        revision_control_manager = self.load_revision_control_manager(adapter_name, resource_identifier)
+
+        # creates the resource identifiers list
+        resource_identifiers = [resource_identifier]
+
+        # uses the revision control manager to perform the commit
+        log_entries = revision_control_manager.log_time(resource_identifiers, start_time, end_time)
 
         # outputs the log entries
         self.output_log_entries(log_entries, output_method)

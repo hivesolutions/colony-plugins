@@ -178,6 +178,52 @@ class RevisionControlSubversionAdapter:
         return commit_revision
 
     def log(self, revision_control_reference, resource_identifiers, start_revision, end_revision):
+        # in case the start revision is not specified
+        if start_revision == None:
+            # starts with the head of the repository
+            start_subversion_revision = pysvn.Revision(pysvn.opt_revision_kind.head)
+        else:
+            # creates a subversion adapter revision from the specified start revision
+            start_subversion_revision = self.create_subversion_revision_manager_revision(start_revision)
+
+        # in case the end revision is not specified
+        if end_revision == None:
+            # ends on the first revision of the repository
+            end_subversion_revision = pysvn.Revision(pysvn.opt_revision_kind.number, 0)
+        else:
+            # creates a subversion adapter revision from the specified end revision
+            end_subversion_revision = self.create_subversion_revision_manager_revision(end_revision)
+
+        # retrieves the log messages
+        log_messages = self._log(revision_control_reference, resource_identifiers, start_subversion_revision, end_subversion_revision)
+
+        # returns the retrieved log messages
+        return log_messages
+
+    def log_time(self, revision_control_reference, resource_identifiers, start_time, end_time):
+        # in case the start revision is not specified
+        if start_time == None:
+            # starts with the head of the repository
+            start_subversion_revision = pysvn.Revision(pysvn.opt_revision_kind.head)
+        else:
+            # creates a subversion adapter revision from the specified start revision
+            start_subversion_revision = pysvn.Revision(pysvn.opt_revision_kind.date, start_time)
+
+        # in case the end revision is not specified
+        if end_time == None:
+            # ends on the first revision of the repository
+            end_subversion_revision = pysvn.Revision(pysvn.opt_revision_kind.number, 0)
+        else:
+            # creates a subversion adapter revision from the specified end revision
+            end_subversion_revision = pysvn.Revision(pysvn.opt_revision_kind.date, end_time)
+
+        # retrieves the log messages
+        log_messages = self._log(revision_control_reference, resource_identifiers, start_subversion_revision, end_subversion_revision)
+
+        # returns the retrieved log messages
+        return log_messages
+
+    def _log(self, revision_control_reference, resource_identifiers, start_subversion_revision, end_subversion_revision):
         # indicates if the changed_paths dictionary should be filled with a list of changed paths
         discover_changed_paths = False
 
@@ -198,22 +244,6 @@ class RevisionControlSubversionAdapter:
 
         # retrieves the pysvn client from the revision control reference
         pysvn_client = revision_control_reference.pysvn_client
-
-        # in case the start revision is not specified
-        if start_revision == None:
-            # starts with the head of the repository
-            start_subversion_revision = pysvn.Revision(pysvn.opt_revision_kind.head)
-        else:
-            # creates a subversion adapter revision from the specified start revision
-            start_subversion_revision = self.create_subversion_revision_manager_revision(start_revision)
-
-        # in case the end revision is not specified
-        if end_revision == None:
-            # ends on the first revision of the repository
-            end_subversion_revision = pysvn.Revision(pysvn.opt_revision_kind.number, 0)
-        else:
-            # creates a subversion adapter revision from the specified end revision
-            end_subversion_revision = self.create_subversion_revision_manager_revision(end_revision)
 
         # the list of log messages to retrieve
         log_messages = []
@@ -397,26 +427,6 @@ class RevisionControlSubversionAdapter:
 
         # returns the assembled revision
         return revision
-
-    def create_revision_manager_revision(self, manager_revision):
-        """
-        Creates a new adapter revision using a revision control manager generic revision.
-
-        @type manager_revision: Revision
-        @param manager_revision: The generic manager revision.
-        """
-
-        # creates a new subversion adapter revision
-        subversion_adapter_revision = SubversionAdapterRevision()
-
-        # creates the subversion revision from the manager revision
-        subversion_revision = self.create_subversion_revision_manager_revision(manager_revision)
-
-        # sets the subversion revision in the adapter revision
-        subversion_adapter_revision.set_subversion_revision(subversion_revision)
-
-        # returns the subversion adapter revision
-        return subversion_adapter_revision
 
     def create_revision_subversion_revision(self, subversion_revision):
         # creates a new subversion adapter revision

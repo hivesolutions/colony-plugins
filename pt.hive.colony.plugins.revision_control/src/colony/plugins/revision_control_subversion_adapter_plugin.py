@@ -105,6 +105,9 @@ class RevisionControlSubversionAdapterPlugin(colony.base.plugin_system.Plugin):
     def log(self, revision_control_reference, resource_identifiers, start_revision, end_revision):
         return self.revision_control_subversion_adapter.log(revision_control_reference, resource_identifiers, start_revision, end_revision)
 
+    def log_time(self, revision_control_reference, resource_identifiers, start_time, end_time):
+        return self.revision_control_subversion_adapter.log_time(revision_control_reference, resource_identifiers, start_time, end_time)
+
     def diff(self, revision_control_reference, resource_identifiers, revision_1, revision_2):
         return self.revision_control_subversion_adapter.diff(revision_control_reference, resource_identifiers, revision_1, revision_2)
 

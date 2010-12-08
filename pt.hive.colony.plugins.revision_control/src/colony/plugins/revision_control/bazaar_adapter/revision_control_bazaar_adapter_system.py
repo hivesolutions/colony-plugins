@@ -115,6 +115,12 @@ class RevisionControlBazaarAdapter:
         # returns the revision after the commit
         return commit_revision
 
+    def log(self, revision_control_reference, resource_identifiers, start_revision, end_revision):
+        raise Exception("not implemented in bazaar adapter")
+
+    def log_time(self, revision_control_reference, resource_identifiers, start_time, end_time):
+        raise Exception("not implemented in bazaar adapter")
+
     def diff(self, revision_control_reference, resource_identifiers, revision_1, revision_2):
         # the list of bazaar revision specs
         bazaar_revision_specs = []
