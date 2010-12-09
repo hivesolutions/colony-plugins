@@ -59,7 +59,8 @@ class RevisionControlSubversionAdapterPlugin(colony.base.plugin_system.Plugin):
                     "PySvn", "pysvn", "1.6.2.x", "http://pysvn.tigris.org")]
     events_handled = []
     events_registrable = []
-    main_modules = ["revision_control.subversion_adapter.revision_control_subversion_adapter_system"]
+    main_modules = ["revision_control.subversion_adapter.revision_control_subversion_adapter_exceptions",
+                    "revision_control.subversion_adapter.revision_control_subversion_adapter_system"]
 
     revision_control_subversion_adapter = None
 
