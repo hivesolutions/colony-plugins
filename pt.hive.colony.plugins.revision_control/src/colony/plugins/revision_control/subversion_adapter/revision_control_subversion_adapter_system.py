@@ -220,8 +220,35 @@ class RevisionControlSubversionAdapter:
         # retrieves the log messages
         log_messages = self._log(revision_control_reference, resource_identifiers, start_subversion_revision, end_subversion_revision)
 
+        # creates the filtered log messages list
+        filtered_log_messages = list(log_messages)
+
+        # removes the log messages
+        # which are before the start time
+        for log_message in log_messages:
+            # in case the log message is before the start time
+            if log_message.time < start_time:
+                # removes the log message from the list
+                filtered_log_messages.remove(log_message)
+            # otherwise
+            else:
+                # skips further check (assumes sorted by time)
+                break
+
+        # removes the log messages
+        # which are after the end time
+        for log_message in reversed(log_messages):
+            # in case the log message is after the start time
+            if log_message.time > end_time:
+                # removes the log message from the list
+                filtered_log_messages.remove(log_message)
+            # otherwise
+            else:
+                # skips further check (assumes reversely sorted by time)
+                break
+
         # returns the retrieved log messages
-        return log_messages
+        return filtered_log_messages
 
     def _log(self, revision_control_reference, resource_identifiers, start_subversion_revision, end_subversion_revision):
         # indicates if the changed_paths dictionary should be filled with a list of changed paths
@@ -574,6 +601,9 @@ class SubversionAdapterRevision:
     date = None
     """ The revision datetime.datetime date """
 
+    time = None
+    """ The revision timestamp """
+
     author = "none"
     """ The revision author """
 
@@ -605,6 +635,10 @@ class SubversionAdapterRevision:
         self.date = date
 
     def set_date_utc_timestamp(self, date_utc_timestamp):
+        # sets the timestamp
+        self.time = date_utc_timestamp
+
+        # sets the date datetime
         self.date = datetime.datetime.utcfromtimestamp(date_utc_timestamp)
 
     def get_author(self):
