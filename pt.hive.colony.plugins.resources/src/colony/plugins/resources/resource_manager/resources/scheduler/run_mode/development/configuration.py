@@ -41,9 +41,9 @@ configuration = {
                  "sleep_step" : 0.5,
                  "tasks" : [{
                              "type" : "plugin",
-                             "plugin_id" : "pt.hive.hive_development.plugins.revision_control_analyzer",
+                             "plugin_id" : "pt.hive.hive_development.plugins.media_dashboard.updater.revision_control",
                              "plugin_version" : "1.0.0",
-                             "method" : "analyze_notify_media_dashboard",
+                             "method" : "update_media_dashboard",
                              "arguments" : ["svn", {}, "http://svn.hive.pt/hive-main", "http://localhost:8080/media_dashboard/"],
                              "recursion_list" : [0, 0, 1, 0, 0]
                              }]
