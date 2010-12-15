@@ -476,7 +476,7 @@ class TwitterClient:
         Retrieves the public timeline, since the given date id.
 
         @type since_id: String
-        @param since_id: The date id from wich the timeline should be retrieved.
+        @param since_id: The date id from which the timeline should be retrieved.
         @rtype: Dictionary
         @return: The public timeline, since the given date id.
         """
@@ -507,9 +507,9 @@ class TwitterClient:
         and the given page.
 
         @type since_id: String
-        @param since_id: The date id from wich the timeline should be retrieved.
+        @param since_id: The date id from which the timeline should be retrieved.
         @type max_id: String
-        @param max_id: The maximum date if from wich the timeline should be retrieved.
+        @param max_id: The maximum date if from which the timeline should be retrieved.
         @type count: int
         @param count: The number of records to be retrieved.
         @type page: int
@@ -556,9 +556,9 @@ class TwitterClient:
         and the given page.
 
         @type since_id: String
-        @param since_id: The date id from wich the timeline should be retrieved.
+        @param since_id: The date id from which the timeline should be retrieved.
         @type max_id: String
-        @param max_id: The maximum date if from wich the timeline should be retrieved.
+        @param max_id: The maximum date if from which the timeline should be retrieved.
         @type count: int
         @param count: The number of records to be retrieved.
         @type page: int
@@ -605,9 +605,9 @@ class TwitterClient:
         and the given page.
 
         @type since_id: String
-        @param since_id: The date id from wich the timeline should be retrieved.
+        @param since_id: The date id from which the timeline should be retrieved.
         @type max_id: String
-        @param max_id: The maximum date if from wich the timeline should be retrieved.
+        @param max_id: The maximum date if from which the timeline should be retrieved.
         @type count: int
         @param count: The number of records to be retrieved.
         @type page: int
@@ -657,13 +657,13 @@ class TwitterClient:
         for the given user id and screen name.
 
         @type user: String
-        @param user: The user for wich the friends should be retrieved.
+        @param user: The user for which the friends should be retrieved.
         @type cursor: int
         @param cursor: The current cursor for retrieval.
         @type user_id: String
-        @param user_id: The user id for wich the friends should be retrieved.
+        @param user_id: The user id for which the friends should be retrieved.
         @type screen_name: String
-        @param screen_name: The screen name for wich the friends should be retrieved.
+        @param screen_name: The screen name for which the friends should be retrieved.
         @rtype: Dictionary
         @return: The user friends, for the given arguments.
         """
@@ -707,13 +707,13 @@ class TwitterClient:
         for the given user id and screen name.
 
         @type user: String
-        @param user: The user for wich the followers should be retrieved.
+        @param user: The user for which the followers should be retrieved.
         @type cursor: int
         @param cursor: The current cursor for retrieval.
         @type user_id: String
-        @param user_id: The user id for wich the followers should be retrieved.
+        @param user_id: The user id for which the followers should be retrieved.
         @type screen_name: String
-        @param screen_name: The screen name for wich the followers should be retrieved.
+        @param screen_name: The screen name for which the followers should be retrieved.
         @rtype: Dictionary
         @return: The user followers, for the given arguments.
         """
@@ -756,7 +756,7 @@ class TwitterClient:
         Retrieves the user information for the given user.
 
         @type user: String
-        @param user: The user for wich the information should be retrieved.
+        @param user: The user for which the information should be retrieved.
         @rtype: Dictionary
         @return: The user information for the given user.
         """
