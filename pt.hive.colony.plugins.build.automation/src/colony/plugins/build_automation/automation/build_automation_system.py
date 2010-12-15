@@ -513,13 +513,6 @@ class BuildAutomation:
                     # returns false (invalid)
                     return False
             except Exception, exception:
-                import sys
-                import traceback
-
-                print "Exception in user code:"
-                print '-'*60
-                traceback.print_exc(file=sys.stdout)
-
                 # prints an error message
                 logger.error("Problem while executing build automation '%s'" % unicode(exception))
 
