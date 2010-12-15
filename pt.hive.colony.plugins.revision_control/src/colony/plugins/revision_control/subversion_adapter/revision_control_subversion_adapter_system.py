@@ -348,17 +348,17 @@ class RevisionControlSubversionAdapter:
         # iterates over all the resource identifiers
         for resource_identifier in resource_identifiers:
             # cleans up any locks at the current (base) resource
-            revision_control_reference.cleanup(resource_identifier)
+            pysvn_client.cleanup(resource_identifier)
 
             # retrieves the status for the current resource
-            status_list = revision_control_reference.status(resource_identifier)
+            status_list = pysvn_client.status(resource_identifier)
 
             # retrieves the list of resources which remain locked
             locked_resource_identifiers = [status.path for status in status_list if status.is_locked]
 
             # recursively calls the cleanup method over the
             # locked resource identifiers
-            self.cleanup(pysvn_client, locked_resource_identifiers)
+            self.cleanup(revision_control_reference, locked_resource_identifiers)
 
     def remove(self, revision_control_reference, resource_identifiers):
         # retrieves the pysvn client from the revision control reference
