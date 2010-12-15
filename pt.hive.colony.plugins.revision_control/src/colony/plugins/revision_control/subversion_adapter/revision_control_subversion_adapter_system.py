@@ -76,6 +76,9 @@ HEAD_REVISION_IDENTIFIER = "head_revision"
 WORKING_COPY_REVISION_IDENTIFIER = "working_copy_revision"
 """ The working copy revision identifier """
 
+DEFAULT_PYSVN_ENCODING = "utf-8"
+""" The default encoding for the svn adapter """
+
 class RevisionControlSubversionAdapter:
     """
     The revision control subversion adapter class.
@@ -260,14 +263,14 @@ class RevisionControlSubversionAdapter:
         # the maximum number of log messages: 0 means all
         limit = 0
 
-        # in case url_or_path no longer exists in the repos of WC, peg_revision can be specified with a revision where it did exist
+        # peg revision indicates in which revision is the resource valid
         peg_revision = pysvn.Revision(pysvn.opt_revision_kind.unspecified)
 
-        # not documented
+        # not discussed in the official pysvn documentation
         include_merged_revisions = False
 
-        # revprops is a list of strings that name the revprops to be returned.
-        revprops = None
+        # revision properties is the list of revision properties to be returned
+        revision_properties = None
 
         # retrieves the pysvn client from the revision control reference
         pysvn_client = revision_control_reference.pysvn_client
@@ -278,7 +281,7 @@ class RevisionControlSubversionAdapter:
         # for each of the specified resources
         for resource_identifier in resource_identifiers:
             # retrieves the log messages for the specified parameters
-            resource_log_messages = pysvn_client.log(resource_identifier, end_subversion_revision, start_subversion_revision, discover_changed_paths, strict_node_history, limit, peg_revision, include_merged_revisions, revprops)
+            resource_log_messages = pysvn_client.log(resource_identifier, end_subversion_revision, start_subversion_revision, discover_changed_paths, strict_node_history, limit, peg_revision, include_merged_revisions, revision_properties)
 
             # reverse the order of the obtained messages
             resource_log_messages.reverse()
@@ -440,17 +443,23 @@ class RevisionControlSubversionAdapter:
         message = log_entry["message"]
         subversion_revision = log_entry["revision"]
 
+        # decodes the author field into unicode
+        author_decoded = author.decode(DEFAULT_PYSVN_ENCODING)
+
+        # decodes the message field
+        message_decoded = message.decode(DEFAULT_PYSVN_ENCODING)
+
         # creates the revision
         revision = self.create_revision_subversion_revision(subversion_revision)
 
         # sets the author in the revision
-        revision.set_author(author)
+        revision.set_author(author_decoded)
 
         # sets the date in the revision
         revision.set_date_utc_timestamp(date)
 
         # sets the message in the revision
-        revision.set_message(message)
+        revision.set_message(message_decoded)
 
         # returns the assembled revision
         return revision
