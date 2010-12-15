@@ -147,7 +147,7 @@ class CommandExecution:
         @param logger: The logger object to hold the standard output
         and error information.
         @type execution_directory: String
-        @param execution_directory:  The directory in wich the command is going
+        @param execution_directory:  The directory in which the command is going
         to be executed.
         @rtype: Process
         @return: An object representing the created process.
