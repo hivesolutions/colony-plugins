@@ -49,9 +49,13 @@ configuration = {
                  "preferred_error_handlers" : ["template", "default"],
                  "verify_request" : False,
                  "redirections" : {
-                     "resolution_order" : ["/manager"],
+                     "resolution_order" : ["/manager", "/media_dashboard"],
                      "/manager" : {
                          "target" : "/colony_mod_python/rest/mvc/web_mvc_manager/",
+                         "recursive_redirection" : True
+                     },
+                     "/media_dashboard" : {
+                         "target" : "/colony_mod_python/rest/mvc/media_dashboard/",
                          "recursive_redirection" : True
                      }
                  },
