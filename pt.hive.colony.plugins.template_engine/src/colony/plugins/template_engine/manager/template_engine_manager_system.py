@@ -54,8 +54,11 @@ SINGLE_TAG_REGEX_VALUE = "\$\{[^\{\}]*\/\}"
 ATTRIBUTE_REGEX_VALUE = "[a-zA-Z_]+=[a-zA-Z_][a-zA-Z0-9_\.\/]*"
 """ The attribute regular expression value """
 
-ATTRIBUTE_QUOTED_REGEX_VALUE = "[a-zA-Z_]+=[\"'].+[\"']"
-""" The attribute quoted regular expression value """
+ATTRIBUTE_QUOTED_SINGLE_REGEX_VALUE = "[a-zA-Z_]+=['][^']+[']"
+""" The attribute quoted single regular expression value """
+
+ATTRIBUTE_QUOTED_DOUBLE_REGEX_VALUE = "[a-zA-Z_]+=[\"][^\"]+[\"]"
+""" The attribute quoted double regular expression value """
 
 ATTRIBUTE_FLOAT_REGEX_VALUE = "[a-zA-Z_]+=-?[0-9]+\.[0-9]*"
 """ The attribute float regular expression value """
@@ -102,7 +105,8 @@ SINGLE_TAG_REGEX = re.compile(SINGLE_TAG_REGEX_VALUE)
 ATTRIBUTE_REGEX = re.compile(ATTRIBUTE_REGEX_VALUE)
 """ The attribute regular expression """
 
-ATTRIBUTE_LITERAL_REGEX = re.compile("(?P<quoted>" + ATTRIBUTE_QUOTED_REGEX_VALUE + ")|" + \
+ATTRIBUTE_LITERAL_REGEX = re.compile("(?P<quoted_single>" + ATTRIBUTE_QUOTED_SINGLE_REGEX_VALUE + ")|" + \
+                                     "(?P<quoted_double>" + ATTRIBUTE_QUOTED_DOUBLE_REGEX_VALUE + ")|" + \
                                      "(?P<float>" + ATTRIBUTE_FLOAT_REGEX_VALUE + ")|" + \
                                      "(?P<integer>" + ATTRIBUTE_INTEGER_REGEX_VALUE + ")|" + \
                                      "(?P<true_boolean>" + ATTRIBUTE_TRUE_BOOLEAN_REGEX_VALUE + ")|" + \

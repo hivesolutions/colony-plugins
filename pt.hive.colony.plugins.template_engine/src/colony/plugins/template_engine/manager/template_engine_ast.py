@@ -257,21 +257,23 @@ class MatchNode(AstNode):
 
             # in case it's quoted
             if attribute_group_index == 1:
-                attribute_literal_value = attribute_literal_value.strip("\"'")
+                attribute_literal_value = attribute_literal_value.strip("'")
+            if attribute_group_index == 2:
+                attribute_literal_value = attribute_literal_value.strip("\"")
             # in case it's float
-            elif attribute_group_index == 2:
+            elif attribute_group_index == 3:
                 attribute_literal_value = float(attribute_literal_value)
             # in case it's integer
-            elif attribute_group_index == 3:
+            elif attribute_group_index == 4:
                 attribute_literal_value = int(attribute_literal_value)
             # in case it's boolean and true
-            elif attribute_group_index == 4:
+            elif attribute_group_index == 5:
                 attribute_literal_value = True
             # in case it's boolean and false
-            elif attribute_group_index == 5:
+            elif attribute_group_index == 6:
                 attribute_literal_value = False
             # in case it's none
-            elif attribute_group_index == 6:
+            elif attribute_group_index == 7:
                 attribute_literal_value = None
 
             # sets the attribute literal in the attributes map
