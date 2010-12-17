@@ -44,6 +44,27 @@ import hashlib
 HANDLER_NAME = "ldap"
 """ The handler name """
 
+ROOT_DN_VALUE = "root_dn"
+""" The root dn value """
+
+ROOT_PASSWORD_VALUE = "root_password"
+""" The root password value """
+
+HOST_VALUE = "host"
+""" The host value """
+
+SEARCH_DN_VALUE = "search_dn"
+""" The search dn value """
+
+HASH_VALUE = "hash"
+""" The hash value """
+
+VALUE_VALUE = "value"
+""" The value value """
+
+SSHA_VALUE = "ssha"
+""" The ssha value """
+
 PASSWORD_VALUE_REGEX_VALUE = "\{(?P<hash>\w+)\}(?P<value>.+)"
 """ The password value regex value """
 
@@ -99,16 +120,16 @@ class MainAuthenticationLdapHandler:
         arguments = request.get_arguments()
 
         # retrieves the root dn
-        root_dn = arguments["root_dn"]
+        root_dn = arguments[ROOT_DN_VALUE]
 
         # retrieves the root password
-        root_password = arguments["root_password"]
+        root_password = arguments[ROOT_PASSWORD_VALUE]
 
         # retrieves the host
-        host = arguments["host"]
+        host = arguments[HOST_VALUE]
 
         # retrieves the search dn
-        search_dn = arguments["search_dn"]
+        search_dn = arguments[SEARCH_DN_VALUE]
 
         # creates a new ldap client
         ldap_client = main_client_ldap_plugin.create_client({})
@@ -127,13 +148,14 @@ class MainAuthenticationLdapHandler:
             user_password_match = PASSWORD_VALUE_REGEX.match(user_password)
 
             # retrieves the user password hash and value
-            user_password_hash = user_password_match.group("hash")
-            user_password_value = user_password_match.group("value")
+            user_password_hash = user_password_match.group(HASH_VALUE)
+            user_password_value = user_password_match.group(VALUE_VALUE)
 
             # converts the user password hash to lower case
             user_password_hash_lower = user_password_hash.lower()
 
-            if user_password_hash_lower == "ssha":
+            # in case the user password hash is of type ssha
+            if user_password_hash_lower == SSHA_VALUE:
                 # decodes the user password value, retrieving
                 # the reference value
                 reference = base64.b64decode(user_password_value)
@@ -151,6 +173,7 @@ class MainAuthenticationLdapHandler:
                 # the password hash digest and the salt into
                 # base64
                 processed_password_value = base64.b64encode(password_hash_digest + salt)
+            # otherwise it must be a "normal" hash
             else:
                 # creates the password hash value from the user password
                 # hash value in lower
@@ -182,4 +205,5 @@ class MainAuthenticationLdapHandler:
             # closes the ldap client
             ldap_client.close({})
 
+        # returns the return value
         return return_value
