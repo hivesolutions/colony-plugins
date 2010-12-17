@@ -138,14 +138,28 @@ class MainAuthenticationLdapHandler:
                 # retrieves the password hash digest
                 password_hash_digest = password_hash.digest()
 
-                fala = base64.b64encode(password_hash_digest + salt)
+                # creates the processes password value encoding
+                # the password hash digest and the salt into
+                # base64
+                processed_password_value = base64.b64encode(password_hash_digest + salt)
             else:
+                # creates the password hash value from the user password
+                # hash value in lower
                 password_hash = hashlib.new(user_password_hash_lower)
-                password_hash.update(password)
-                password_hash_digest = password_hash.digest()
-                fala = base64.b64encode(password_hash_digest)
 
-            if fala == user_password_value:
+                # updates the password hash with the password
+                password_hash.update(password)
+
+                # retrieves the password hash digest
+                password_hash_digest = password_hash.digest()
+
+                # creates the processed password value encoding
+                # the password hash digest into base64
+                processed_password_value = base64.b64encode(password_hash_digest)
+
+            # in case the processed password value and
+            # the user password value are equal
+            if processed_password_value == user_password_value:
                 # creates the return value
                 return_value = {"username" : username, "valid" : True}
             else:
