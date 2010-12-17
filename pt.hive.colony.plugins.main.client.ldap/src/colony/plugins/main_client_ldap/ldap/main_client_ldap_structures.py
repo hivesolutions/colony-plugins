@@ -64,6 +64,12 @@ UNBIND_VALUE = "unbind"
 SEARCH_VALUE = "search"
 """ The search value """
 
+SEARCH_RESULT_ENTRY_VALUE = "search_result_entry"
+""" The search result entry value """
+
+SEARCH_RESULT_DONE_VALUE = "search_result_done"
+""" The search result done value """
+
 EOC_TYPE = 0x00
 """ The eoc (end of content) type """
 
@@ -113,8 +119,8 @@ LDAP_REQUEST_TYPE_MAP = {BIND_VALUE : 0x00, UNBIND_VALUE : 0x02,
                          "abandon" : 0x00, "extended" : 0x00}
 """ The map of ldap request types """
 
-LDAP_RESPONSE_TYPE_MAP = {BIND_VALUE : 0x01, "search_result_enttry" : 0x04,
-                          "search_result_reference" : 0x13, "search_result_done" : 0x05,
+LDAP_RESPONSE_TYPE_MAP = {BIND_VALUE : 0x01, SEARCH_RESULT_ENTRY_VALUE : 0x04,
+                          "search_result_reference" : 0x13, SEARCH_RESULT_DONE_VALUE : 0x05,
                           "modify" : 0x07, "add" : 0x09, "delete" : 0x0b}
 """ The map of ldap response types """
 
@@ -128,7 +134,7 @@ class ProtocolOperation:
         protocol_operation_extra_type = value[EXTRA_TYPE_VALUE]
 
         # retrieves the protocol operation extra type number
-        protocol_operation_extra_type_number = protocol_operation_extra_type[TYPE_CLASS_VALUE]
+        protocol_operation_extra_type_number = protocol_operation_extra_type[TYPE_NUMBER_VALUE]
 
         # retrieves the protocol operation class from the type
         # class map using the protocol operation extra type number
@@ -144,6 +150,7 @@ class ProtocolOperation:
         return protocol_operation
 
 class SearchResultEntry(ProtocolOperation):
+
     object_name = None
 
     attributes = None
@@ -153,9 +160,54 @@ class SearchResultEntry(ProtocolOperation):
         self.attributes = attributes
 
     def process_value(self, value):
-        pass
+        # retrieves the ldap result value
+        ldap_result_value = value[VALUE_VALUE]
 
-class PartialAttribute:
+        # retrieves the object name and the object name value
+        object_name = ldap_result_value[0]
+        object_name_value = object_name[VALUE_VALUE]
+
+        # retrieves the attributes and the attributes value
+        attributes = ldap_result_value[1]
+        attributes_value = attributes[VALUE_VALUE]
+
+        # creates the attributes value processed and
+        # processes it
+        attributes_value_processed = PartialAttributeList()
+        attributes_value_processed.process_value(attributes_value)
+
+        # sets the current values
+        self.object_name = object_name_value
+        self.attributes = attributes_value_processed
+
+        # returns the self value
+        return self
+
+class PartialAttributeList:
+
+    partial_attributes = None
+
+    def __init__(self, partial_attributes = None):
+        self.partial_attributes = partial_attributes
+
+    def process_value(self, value):
+        # creates the partial attributes processed value list
+        partial_attributes_processed_value = []
+
+        # iterates over all the partial
+        # attribute values
+        for partial_attribute_value in value:
+            partial_attribute_processed = PartialAttributeListItem()
+            partial_attribute_processed.process_value(partial_attribute_value)
+
+            partial_attributes_processed_value.append(partial_attribute_processed)
+
+        self.partial_attributes = partial_attributes_processed_value
+
+        # returns the self value
+        return self
+
+class PartialAttributeListItem:
 
     type = None
 
@@ -166,20 +218,28 @@ class PartialAttribute:
         self.values = values
 
     def process_value(self, value):
-        # retrieves the attribute value
-        attribute_value = value[VALUE_VALUE]
+        # retrieves the ldap result value
+        ldap_result_value = value[VALUE_VALUE]
 
         # retrieves the type and the type value
-        type = attribute_value[0]
+        type = ldap_result_value[0]
         type_value = type[VALUE_VALUE]
 
         # retrieves the values and the values value
-        values = attribute_value[1]
+        values = ldap_result_value[1]
         values_value = values[VALUE_VALUE]
+
+        # creates the values processed value list
+        values_processed_value = []
+
+        # iterates over all the values value value
+        for values_value_value in values_value:
+            values_value_value_value = values_value_value[VALUE_VALUE]
+            values_processed_value.append(values_value_value_value)
 
         # sets the current values
         self.type = type_value
-        self.values = values_value
+        self.values = values_processed_value
 
         # returns the self value
         return self
@@ -225,6 +285,9 @@ class LdapResult(ProtocolOperation):
         return self
 
 class BindResponse(LdapResult):
+    pass
+
+class SearchResultDone(LdapResult):
     pass
 
 class BindRequest(ProtocolOperation):
@@ -381,10 +444,30 @@ class AndFilter(Filter):
         # creates the and filter set value
         and_filter = {TYPE_VALUE: SET_TYPE, VALUE_VALUE : filters,
                       EXTRA_TYPE_VALUE : {TYPE_NUMBER_VALUE : 0,
+                                          TYPE_CONSTRUCTED_VALUE : CONSTRUCTED_MODE,
                                           TYPE_CLASS_VALUE : CONTEXT_SPECIFIC_CLASS}}
 
         # returns the and filter (value)
         return and_filter
+
+class EqualityMatchFilter(Filter):
+
+    attribute_value_assertion = None
+
+    def __init__(self, attribute_value_assertion = None):
+        self.attribute_value_assertion = attribute_value_assertion
+
+    def get_value(self):
+        # retrieves the attribute value assertion value
+        attribute_value_assertion = self.attribute_value_assertion.get_value()
+
+        # sets the extra type in the attribute value assertion (value)
+        attribute_value_assertion[EXTRA_TYPE_VALUE] = {TYPE_NUMBER_VALUE : 3,
+                                                       TYPE_CONSTRUCTED_VALUE : CONSTRUCTED_MODE,
+                                                       TYPE_CLASS_VALUE : CONTEXT_SPECIFIC_CLASS}
+
+        # returns the attribute value assertion (value)
+        return attribute_value_assertion
 
 class PresentFilter(Filter):
 
@@ -402,6 +485,32 @@ class PresentFilter(Filter):
 
         # returns the present filter (value)
         return present_filter
+
+class AttributeValueAssertion:
+
+    attribute_description = None
+
+    assertion_value = None
+
+    def __init__(self, attribute_description = None, assertion_value = None):
+        self.attribute_description = attribute_description
+        self.assertion_value = assertion_value
+
+    def get_value(self):
+        # creates the attribute description octet string value
+        attribute_description = {TYPE_VALUE: OCTET_STRING_TYPE, VALUE_VALUE : self.attribute_description}
+
+        # creates the assertion value octet string value
+        assertion_value = {TYPE_VALUE: OCTET_STRING_TYPE, VALUE_VALUE : self.assertion_value}
+
+        # creates the attribute value assertion contents (list)
+        attribute_value_assertion_contents = [attribute_description, assertion_value]
+
+        # creates the attribute value assertion sequence value
+        attribute_value_assertion = {TYPE_VALUE: SEQUENCE_TYPE, VALUE_VALUE : attribute_value_assertion_contents}
+
+        # returns the attribute value assertion (value)
+        return attribute_value_assertion
 
 class Authentication:
 
@@ -453,5 +562,7 @@ class Attributes:
 TYPE_CLASS_MAP = {LDAP_REQUEST_TYPE_MAP[BIND_VALUE] : BindRequest,
                   LDAP_RESPONSE_TYPE_MAP[BIND_VALUE] : BindResponse,
                   LDAP_REQUEST_TYPE_MAP[UNBIND_VALUE] : UnbindRequest,
-                  LDAP_REQUEST_TYPE_MAP[SEARCH_VALUE] : SearchRequest}
+                  LDAP_REQUEST_TYPE_MAP[SEARCH_VALUE] : SearchRequest,
+                  LDAP_RESPONSE_TYPE_MAP[SEARCH_RESULT_ENTRY_VALUE] : SearchResultEntry,
+                  LDAP_RESPONSE_TYPE_MAP[SEARCH_RESULT_DONE_VALUE] : SearchResultDone}
 """ The map associating a type with a class map """

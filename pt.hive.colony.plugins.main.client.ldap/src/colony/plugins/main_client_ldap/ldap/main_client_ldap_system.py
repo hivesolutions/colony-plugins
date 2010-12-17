@@ -131,7 +131,10 @@ PRIVATE_CLASS = 0x03
 LDAP_TYPE_ALIAS_MAP = {UNIVERSAL_CLASS : {},
                        APPLICATION_CLASS : {0x00 : 0x10,
                                             0x01 : 0x10,
-                                            0x02 : 0x10},
+                                            0x02 : 0x10,
+                                            0x03 : 0x10,
+                                            0x04 : 0x10,
+                                            0x05 : 0x10},
                        CONTEXT_SPECIFIC_CLASS : {},
                        PRIVATE_CLASS: {0x00 : 0x04,
                                        0x03 : 0x10}}
@@ -195,6 +198,9 @@ class LdapClient:
     _ldap_client_lock = None
     """ Lock to control the fetching of the queries """
 
+    _extra_messages_buffer = []
+    """ The extra messages buffer """
+
     def __init__(self, main_client_ldap, protocol_version):
         """
         Constructor of the class.
@@ -212,6 +218,7 @@ class LdapClient:
         self.protocol_version = protocol_version
 
         self._ldap_client_lock = threading.RLock()
+        self._extra_messages_buffer = []
 
     def open(self, parameters):
         # generates the parameters
@@ -311,8 +318,14 @@ class LdapClient:
 
         # continuous loop
         while True:
-            # receives the data
-            data = self.client_connection.receive(response_timeout, CHUNK_SIZE)
+            # in case the extra messages buffer is valid (not empty)
+            if self._extra_messages_buffer:
+                # pops the last value of the extra messages buffer
+                # as the data
+                data = self._extra_messages_buffer.pop()
+            else:
+                # receives the data
+                data = self.client_connection.receive(response_timeout, CHUNK_SIZE)
 
             # in case no valid data was received
             if data == "":
@@ -353,9 +366,21 @@ class LdapClient:
             # in case the message data size is the same
             # as the message size plus the message size length
             # plus the identification byte
-            if received_data_size == message_size + message_size_length + 1:
+            if received_data_size >= message_size + message_size_length + 1:
+                # retrieves the total message size value
+                total_message_size = message_size + message_size_length + 1
+
                 # retrieves the message value from the string buffer
                 message_value = message.get_value()
+
+                # retrieves the extra message value
+                extra_message_value = message_value[total_message_size:]
+
+                # retrieves the "real" message value
+                message_value = message_value[:total_message_size]
+
+                # adds the extra message value to the extra messages buffer
+                extra_message_value and self._extra_messages_buffer.insert(0, extra_message_value)
 
                 # process the message value data in the response
                 response.process_data(message_value, self.ber_structure)
@@ -364,6 +389,16 @@ class LdapClient:
                 return response
 
     def bind(self, name, password):
+        """
+        Executes the bind operation with the given name
+        and password.
+
+        @type name: String
+        @param name: The name to be used in the bind operation.
+        @type password: String
+        @param password: The password to be used in the bind operation.
+        """
+
         # retrieves the protocol version
         protocol_version = self.protocol_version or DEFAULT_PROTOCOL_VERSION
 
@@ -383,6 +418,10 @@ class LdapClient:
         self._validate_response(response)
 
     def unbind(self):
+        """
+        Executes the unbind operation.
+        """
+
         # creates the unbind request
         unbind_request = main_client_ldap_structures.UnbindRequest()
 
@@ -390,14 +429,23 @@ class LdapClient:
         self.send_request(unbind_request, [])
 
     def search(self):
-        # creates the filter
-        filter = main_client_ldap_structures.PresentFilter("objectclass")
+        # creates the attribute value assertion
+        attribute_value_assertion = main_client_ldap_structures.AttributeValueAssertion("uid", "joamag")
+
+        # creates the present filter
+        present_filter = main_client_ldap_structures.PresentFilter("objectclass")
+
+        # creates the equality match filter
+        equality_match_filter = main_client_ldap_structures.EqualityMatchFilter(attribute_value_assertion)
+
+        # creates the and filter
+        and_filter = main_client_ldap_structures.AndFilter([present_filter, equality_match_filter])
 
         # creates the attributes
         attributes = main_client_ldap_structures.Attributes(["+", "*"])
 
         # creates the search request
-        search_request = main_client_ldap_structures.SearchRequest("dc=hive", 0, 0, 0, 0, False, filter, attributes)
+        search_request = main_client_ldap_structures.SearchRequest("dc=hive", 2, 0, 0, 180, False, and_filter, attributes)
 
         # sends the request for the search and controls
         request = self.send_request(search_request, [])
@@ -405,8 +453,10 @@ class LdapClient:
         # retrieves the response
         response = self.retrieve_response(request)
 
-        # validates the response
-        self._validate_response(response)
+        # retrieves the response
+        #response = self.retrieve_response(request)
+
+        print response
 
     def _validate_response(self, response):
         """
