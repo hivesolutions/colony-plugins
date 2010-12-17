@@ -156,38 +156,12 @@ class MainAuthenticationLdapHandler:
 
             # in case the user password hash is of type ssha
             if user_password_hash_lower == SSHA_VALUE:
-                # decodes the user password value, retrieving
-                # the reference value
-                reference = base64.b64decode(user_password_value)
-
-                # retrieves the salt from the reference
-                salt = reference[20:]
-
-                # calculates the password hash value
-                password_hash = hashlib.sha1(password + salt)
-
-                # retrieves the password hash digest
-                password_hash_digest = password_hash.digest()
-
-                # creates the processes password value encoding
-                # the password hash digest and the salt into
-                # base64
-                processed_password_value = base64.b64encode(password_hash_digest + salt)
+                # processes the password using ssha
+                processed_password_value = self._process_password_ssha(password, user_password_value)
             # otherwise it must be a "normal" hash
             else:
-                # creates the password hash value from the user password
-                # hash value in lower
-                password_hash = hashlib.new(user_password_hash_lower)
-
-                # updates the password hash with the password
-                password_hash.update(password)
-
-                # retrieves the password hash digest
-                password_hash_digest = password_hash.digest()
-
-                # creates the processed password value encoding
-                # the password hash digest into base64
-                processed_password_value = base64.b64encode(password_hash_digest)
+                # processes the password using hash
+                processed_password_value = self._process_password_hash(password, user_password_value)
 
             # in case the processed password value and
             # the user password value are equal
@@ -207,3 +181,43 @@ class MainAuthenticationLdapHandler:
 
         # returns the return value
         return return_value
+
+    def _process_password_ssha(self, password, user_password_value):
+        # decodes the user password value, retrieving
+        # the reference value
+        reference = base64.b64decode(user_password_value)
+
+        # retrieves the salt from the reference
+        salt = reference[20:]
+
+        # calculates the password hash value
+        password_hash = hashlib.sha1(password + salt)
+
+        # retrieves the password hash digest
+        password_hash_digest = password_hash.digest()
+
+        # creates the processes password value encoding
+        # the password hash digest and the salt into
+        # base64
+        processed_password_value = base64.b64encode(password_hash_digest + salt)
+
+        # returns the processed password value
+        return processed_password_value
+
+    def _process_password_hash(self, password, user_password_hash_lower):
+        # creates the password hash value from the user password
+        # hash value in lower
+        password_hash = hashlib.new(user_password_hash_lower)
+
+        # updates the password hash with the password
+        password_hash.update(password)
+
+        # retrieves the password hash digest
+        password_hash_digest = password_hash.digest()
+
+        # creates the processed password value encoding
+        # the password hash digest into base64
+        processed_password_value = base64.b64encode(password_hash_digest)
+
+        # returns the processed password value
+        return processed_password_value
