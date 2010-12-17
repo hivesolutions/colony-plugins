@@ -428,7 +428,7 @@ class LdapClient:
         # sends the request for the unbind and controls
         self.send_request(unbind_request, [])
 
-    def search(self, uid, password):
+    def search(self, search_dn, uid, password):
         # creates the attribute value assertion
         attribute_value_assertion = main_client_ldap_structures.AttributeValueAssertion("uid", uid)
 
@@ -445,7 +445,7 @@ class LdapClient:
         attributes = main_client_ldap_structures.Attributes(["+", "*"])
 
         # creates the search request
-        search_request = main_client_ldap_structures.SearchRequest("dc=hive", 2, 0, 0, 180, False, and_filter, attributes)
+        search_request = main_client_ldap_structures.SearchRequest(search_dn, 2, 0, 0, 180, False, and_filter, attributes)
 
         # sends the request for the search and controls
         request = self.send_request(search_request, [])
