@@ -32,5 +32,8 @@
             }, {
                 "id" : "pt.hive.colony.bundles.business",
                 "version" : "1.0.0"
+            }, {
+                "id" : "pt.hive.colony.bundles.main.client.ldap",
+                "version" : "1.0.0"
             }]
 }
