@@ -37,8 +37,18 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
+import re
+import base64
+import hashlib
+
 HANDLER_NAME = "ldap"
 """ The handler name """
+
+PASSWORD_VALUE_REGEX_VALUE = "\{(?P<hash>\w+)\}(?P<value>.+)"
+""" The password value regex value """
+
+PASSWORD_VALUE_REGEX = re.compile(PASSWORD_VALUE_REGEX_VALUE)
+""" The password value regex """
 
 class MainAuthenticationLdapHandler:
     """
@@ -110,15 +120,13 @@ class MainAuthenticationLdapHandler:
             # connects the ldap client
             ldap_client.connect(host, name = root_dn, password = root_password)
 
+            # retrieves the user password searching in the ldap client
             user_password = ldap_client.search(search_dn, username, password)
 
-            import re
-            import hashlib
-            import base64
+            # tries to match the user password
+            user_password_match = PASSWORD_VALUE_REGEX.match(user_password)
 
-            password_value_regex = re.compile("\{(?P<hash>\w+)\}(?P<value>.+)")
-
-            user_password_match = password_value_regex.match(user_password)
+            # retrieves the user password hash and value
             user_password_hash = user_password_match.group("hash")
             user_password_value = user_password_match.group("value")
 
