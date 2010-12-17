@@ -187,6 +187,8 @@ class PartialAttributeList:
 
     partial_attributes = None
 
+    partial_attributes_map = None
+
     def __init__(self, partial_attributes = None):
         self.partial_attributes = partial_attributes
 
@@ -206,6 +208,19 @@ class PartialAttributeList:
 
         # returns the self value
         return self
+
+    def generate_partial_attributes_map(self):
+        # creates the partial attributes map
+        self.partial_attributes_map = {}
+
+        # iterates over all the partial attributes
+        for partial_attribute in self.partial_attributes:
+            # retrieves the partial attribute type and values
+            partial_attribute_type = partial_attribute.type
+            partial_attribute_values = partial_attribute.values
+
+            # sets the partial attribute in the partial attributes map
+            self.partial_attributes_map[partial_attribute_type] = partial_attribute_values
 
 class PartialAttributeListItem:
 

@@ -428,9 +428,9 @@ class LdapClient:
         # sends the request for the unbind and controls
         self.send_request(unbind_request, [])
 
-    def search(self):
+    def search(self, uid, password):
         # creates the attribute value assertion
-        attribute_value_assertion = main_client_ldap_structures.AttributeValueAssertion("uid", "joamag")
+        attribute_value_assertion = main_client_ldap_structures.AttributeValueAssertion("uid", uid)
 
         # creates the present filter
         present_filter = main_client_ldap_structures.PresentFilter("objectclass")
@@ -450,13 +450,31 @@ class LdapClient:
         # sends the request for the search and controls
         request = self.send_request(search_request, [])
 
-        # retrieves the response
-        response = self.retrieve_response(request)
+        # iterates continuously (waiting for replies)
+        while True:
+            # retrieves the response
+            response = self.retrieve_response(request)
 
-        # retrieves the response
-        #response = self.retrieve_response(request)
+            # retrieves the response protocol operation
+            response_protocol_operation = response.protocol_operation
 
-        print response
+            # in case the response protocol operation is search
+            # result done
+            if response_protocol_operation.__class__ == main_client_ldap_structures.SearchResultDone:
+                # breaks the loop
+                break
+            # otherwise it must be a search result
+            else:
+                # retrieves the search result attributes
+                search_result_attributes = response_protocol_operation.attributes
+
+                # generates the partial attributes map
+                search_result_attributes.generate_partial_attributes_map()
+
+                # retrieves the user password
+                user_password = search_result_attributes.partial_attributes_map["userPassword"][0]
+
+        return user_password
 
     def _validate_response(self, response):
         """
