@@ -122,6 +122,7 @@ class MainAuthenticationLdapHandler:
             user_password_hash = user_password_match.group("hash")
             user_password_value = user_password_match.group("value")
 
+            # converts the user password hash to lower case
             user_password_hash_lower = user_password_hash.lower()
 
             if user_password_hash_lower == "ssha":
