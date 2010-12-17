@@ -76,4 +76,85 @@ class MainAuthenticationLdapHandler:
         @param request: The authentication request to be handled.
         """
 
-        pass
+        # retrieves the main client ldap plugin
+        main_client_ldap_plugin = self.main_authentication_ldap_handler_plugin.main_client_ldap_plugin
+
+        # retrieves the request username
+        username = request.get_username()
+
+        # retrieves the request password
+        password = request.get_password()
+
+        # retrieves the request arguments
+        arguments = request.get_arguments()
+
+        # retrieves the root dn
+        root_dn = arguments["root_dn"]
+
+        # retrieves the root password
+        root_password = arguments["root_password"]
+
+        # retrieves the host
+        host = arguments["host"]
+
+        # retrieves the search dn
+        search_dn = arguments["search_dn"]
+
+        # creates a new ldap client
+        ldap_client = main_client_ldap_plugin.create_client({})
+
+        # opens the ldap client
+        ldap_client.open({})
+
+        try:
+            # connects the ldap client
+            ldap_client.connect(host, name = root_dn, password = root_password)
+
+            user_password = ldap_client.search(search_dn, username, password)
+
+            import re
+            import hashlib
+            import base64
+
+            password_value_regex = re.compile("\{(?P<hash>\w+)\}(?P<value>.+)")
+
+            user_password_match = password_value_regex.match(user_password)
+            user_password_hash = user_password_match.group("hash")
+            user_password_value = user_password_match.group("value")
+
+            user_password_hash_lower = user_password_hash.lower()
+
+            if user_password_hash_lower == "ssha":
+                # decodes the user password value, retrieving
+                # the reference value
+                reference = base64.b64decode(user_password_value)
+
+                # retrieves the salt from the reference
+                salt = reference[20:]
+
+                # calculates the password hash value
+                password_hash = hashlib.sha1(password + salt)
+
+                # retrieves the password hash digest
+                password_hash_digest = password_hash.digest()
+
+                fala = base64.b64encode(password_hash_digest + salt)
+            else:
+                password_hash = hashlib.new(user_password_hash_lower)
+                password_hash.update(password)
+                password_hash_digest = password_hash.digest()
+                fala = base64.b64encode(password_hash_digest)
+
+            if fala == user_password_value:
+                # creates the return value
+                return_value = {"username" : username, "valid" : True}
+            else:
+                return_value = None
+
+            # disconnects from the ldap client
+            ldap_client.disconnect()
+        finally:
+            # closes the ldap client
+            ldap_client.close({})
+
+        return return_value

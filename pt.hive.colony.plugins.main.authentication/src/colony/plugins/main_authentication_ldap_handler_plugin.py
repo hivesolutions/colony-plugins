@@ -55,12 +55,15 @@ class MainAuthenticationLdapHandlerPlugin(colony.base.plugin_system.Plugin):
     attributes = {"build_automation_file_path" : "$base{plugin_directory}/main_authentication_ldap_handler/ldap_handler/resources/baf.xml"}
     capabilities = ["authentication_handler", "build_automation_item"]
     capabilities_allowed = []
-    dependencies = []
+    dependencies = [colony.base.plugin_system.PluginDependency(
+                    "pt.hive.colony.plugins.main.client.ldap", "1.0.0")]
     events_handled = []
     events_registrable = []
     main_modules = ["main_authentication_ldap_handler.ldap_handler.main_authentication_ldap_handler_system"]
 
     main_authentication_ldap_handler = None
+
+    main_client_ldap_plugin = None
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
@@ -83,6 +86,7 @@ class MainAuthenticationLdapHandlerPlugin(colony.base.plugin_system.Plugin):
     def unload_allowed(self, plugin, capability):
         colony.base.plugin_system.Plugin.unload_allowed(self, plugin, capability)
 
+    @colony.base.decorators.inject_dependencies("pt.hive.colony.plugins.main.authentication.ldap_handler", "1.0.0")
     def dependency_injected(self, plugin):
         colony.base.plugin_system.Plugin.dependency_injected(self, plugin)
 
@@ -91,3 +95,10 @@ class MainAuthenticationLdapHandlerPlugin(colony.base.plugin_system.Plugin):
 
     def handle_request(self, request):
         return self.main_authentication_ldap_handler.handle_request(request)
+
+    def get_main_client_ldap_plugin(self):
+        return self.main_client_ldap_plugin
+
+    @colony.base.decorators.plugin_inject("pt.hive.colony.plugins.main.client.ldap")
+    def set_main_client_ldap_plugin(self, main_client_ldap_plugin):
+        self.main_client_ldap_plugin = main_client_ldap_plugin

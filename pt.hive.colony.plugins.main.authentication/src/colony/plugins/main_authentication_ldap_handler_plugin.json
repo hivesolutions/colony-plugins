@@ -10,7 +10,10 @@
     "author" : "Hive Solutions Lda. <development@hive.pt>",
     "capabilities" : ["authentication_handler", "build_automation_item"],
     "capabilities_allowed" : [],
-    "dependencies" : [],
+    "dependencies" : [{
+                "id" : "pt.hive.colony.plugins.main.client.ldap",
+                "version" : "1.0.0"
+            }],
     "main_file" : "main_authentication_ldap_handler_plugin.py",
     "resources" : [
             "main_authentication_ldap_handler_plugin.py",

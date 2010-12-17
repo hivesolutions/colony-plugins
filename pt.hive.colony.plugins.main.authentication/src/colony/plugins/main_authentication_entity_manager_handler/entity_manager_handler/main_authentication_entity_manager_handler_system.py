@@ -119,15 +119,15 @@ class MainAuthenticationEntityManagerHandler:
 
         # in case the hash type is defined
         if password_hash_type:
-            # @todo: put this to work with hash values
-            # creates a new password hash
+            # creates the password hash for the given
+            # password hash type
             password_hash = hashlib.new(password_hash_type)
 
             # updates the password hash
             password_hash.update(password)
 
             # retrieves the password hash value
-            password_hash_value = password_hash.hexdigest()
+            password = password_hash.hexdigest()
 
         # retrieves the login entity class
         login_entity_class = entity_manager.get_entity_class(login_entity_name)
@@ -146,10 +146,10 @@ class MainAuthenticationEntityManagerHandler:
         # in case there are user entities defined
         if user_entities:
             # creates the return value
-            return_value = {"username" : username,
-                            "valid" : True}
+            return_value = {"username" : username, "valid" : True}
 
             # returns the return value
             return return_value
 
+        # returns invalid
         return None
