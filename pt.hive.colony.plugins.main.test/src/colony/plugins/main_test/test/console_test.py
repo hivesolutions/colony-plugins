@@ -115,13 +115,19 @@ class ConsoleTest:
 
         if test_cases:
             output_method("starting test case " + test_case_id)
-            self.main_test_plugin.main_test.start_test(test_cases)
+            result = self.main_test_plugin.main_test.start_test(test_cases)
+
+            # processes the result
+            self._process_result(result, output_method)
         else:
             output_method("invalid test case id")
 
     def process_start_all_test(self, args, output_method):
         output_method("starting all test cases")
-        self.main_test_plugin.main_test.start_all_test()
+        result = self.main_test_plugin.main_test.start_all_test()
+
+        # processes the result
+        self._process_result(result, output_method)
 
     def process_show_all_test(self, args, output_method):
         # prints the table top text
@@ -191,3 +197,42 @@ class ConsoleTest:
                 test_cases = main_test.test_case_name_test_cases_map[test_case_name]
 
         return test_cases
+
+    def _process_result(self, result, output_method):
+        # retrieves the tests run
+        result_tests_run = result.testsRun
+
+        # retrieves the failures and errors
+        result_failures = result.failures
+        result_errors = result.errors
+
+        # retrieves the length of failures and errors
+        failures_length = len(result_failures)
+        errors_length = len(result_errors)
+
+        # outputs a message
+        output_method("[%d] tests executed..." % result_tests_run)
+
+        # outputs a message
+        output_method("[%d] failures found..." % failures_length)
+
+        # iterates over all the result failures
+        for failure, failure_traceback in result_failures:
+            # retrieves the failure id
+            failure_id = failure.id()
+
+            # outputs the failure description
+            output_method("name: " + failure_id)
+            output_method("traceback: " + failure_traceback)
+
+        # outputs a message
+        output_method("[%d] errors found..." % errors_length)
+
+        # iterates over all the result errors
+        for error, error_traceback in result_errors:
+            # retrieves the error id
+            error_id = error.id()
+
+            # prints the error description
+            output_method("name: " + error_id)
+            output_method("traceback: " + error_traceback)
