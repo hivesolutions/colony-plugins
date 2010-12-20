@@ -266,6 +266,12 @@ class SmartBusyAlgorithm(WorkPoolManagerAlgorithm):
     pool manager.
     """
 
+    work_tasks_list = []
+    """ The work tasks list """
+
+    work_tasks_map = {}
+    """ The work tasks map """
+
     work_tasks_list_lock = None
     """ The lock to control the access to the work tasks list """
 
@@ -279,7 +285,12 @@ class SmartBusyAlgorithm(WorkPoolManagerAlgorithm):
 
         WorkPoolManagerAlgorithm.__init__(self, work_pool)
 
+        self.work_tasks_list = []
+        self.work_tasks_map = {}
         self.work_tasks_list_lock = threading.Lock()
+
+        # starts the data structures
+        self._start_structures()
 
     def work_added(self, work_task, work_reference):
         """
@@ -292,7 +303,14 @@ class SmartBusyAlgorithm(WorkPoolManagerAlgorithm):
         @param work_reference: The added work reference.
         """
 
-        pass
+        # retrieves the work task tuple from the work tasks map
+        work_task_tuple = self.work_tasks_map[work_task]
+
+        # increments the work task tuple work count value
+        work_task_tuple[1] += 1
+
+        # sorts the work tasks list
+        self.work_tasks_list.sort(self._sort_work_task_tuple)
 
     def work_removed(self, work_task, work_reference):
         """
@@ -305,7 +323,14 @@ class SmartBusyAlgorithm(WorkPoolManagerAlgorithm):
         @param work_reference: The removed work reference.
         """
 
-        pass
+        # retrieves the work task tuple from the work tasks map
+        work_task_tuple = self.work_tasks_map[work_task]
+
+        # decrements the work task tuple work count value
+        work_task_tuple[1] -= 1
+
+        # sorts the work tasks list
+        self.work_tasks_list.sort(self._sort_work_task_tuple)
 
     def get_next(self):
         """
@@ -320,22 +345,23 @@ class SmartBusyAlgorithm(WorkPoolManagerAlgorithm):
         # acquires the lock
         self.work_tasks_list_lock.acquire()
 
-        # retrieves the work tasks list
-        work_tasks_list = self.work_pool.work_tasks_list
-
-        # retrieves the work tasks list length
-        work_tasks_list_length = len(work_tasks_list)
-
         # iterates continuously
         while True:
-            # generates a random index
-            random_index = random.randint(0, work_tasks_list_length - 1)
+            # retrieves the worker task from the work tasks list (ordered)
+            work_task_tuple = self.work_tasks_list[0]
 
-            # retrieves the worker task from the worker threads list
-            work_task = self.work_pool.work_tasks_list[random_index]
+            # unpacks the work task tuple
+            work_task, _work_task_work_count = work_task_tuple
 
             # in case the work task conditions are met
             if self.work_pool._check_conditions(work_task):
+                # breaks the cycle
+                break
+            # otherwise there are no work tasks available
+            else:
+                # invalidates the work task (no work task available)
+                work_task = None
+
                 # breaks the cycle
                 break
 
@@ -344,3 +370,27 @@ class SmartBusyAlgorithm(WorkPoolManagerAlgorithm):
 
         # returns the work task
         return work_task
+
+    def _start_structures(self):
+        # iterates over all the work task in the
+        # work tasks list
+        for work_task in self.work_pool.work_tasks_list:
+            # creates the work task tuple
+            work_task_tuple = [work_task, 0]
+
+            # adds the work task tuple to the work tasks list
+            self.work_tasks_list.append(work_task_tuple)
+
+            # sets the work task tuple in the work tasks map
+            self.work_tasks_map[work_task] = work_task_tuple
+
+    def _sort_work_task_tuple(self, first_value, second_value):
+        # retrieves the first value work count
+        first_value_work_count = first_value[1]
+
+        # retrieves the second value work count
+        second_value_work_count = second_value[1]
+
+        # returns the difference between the first value work count
+        # and the second value work count
+        return first_value_work_count - second_value_work_count
