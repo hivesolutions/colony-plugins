@@ -46,6 +46,9 @@ class MainConsoleTestCase(unittest.TestCase):
     The main console test case class.
     """
 
+    last_output = None
+    """ The last output value """
+
     def setUp(self):
         self.main_console = main_console_system.MainConsole(MainConsoleTestCase.plugin)
 
@@ -54,8 +57,53 @@ class MainConsoleTestCase(unittest.TestCase):
         Tests the process command line using one of the commands.
         """
 
-        # processes the html command to the standard output
-        return_value = self.main_console.process_command_line("status", None)
+        # process the status command line
+        return_value = self.main_console.process_command_line("status", self.output_method)
 
         # assets the return value
         self.assertEqual(return_value, True)
+
+    def test_echo_command(self):
+        """
+        Tests the echo command of the console.
+        """
+
+        # process the echo command line
+        return_value = self.main_console.process_command_line("echo colony", self.output_method)
+
+        # asserts the echo value
+        self.assertEqual(self.last_output, "colony")
+
+        # assets the return value
+        self.assertEqual(return_value, True)
+
+    def test_echo_command_invalid_arguments(self):
+        """
+        Tests and invalid command of the console.
+        """
+
+        # process the invalid command line
+        return_value = self.main_console.process_command_line("echo", self.output_method)
+
+        # asserts the echo value
+        self.assertEqual(self.last_output, main_console_system.INVALID_NUMBER_ARGUMENTS_MESSAGE)
+
+        # assets the return value
+        self.assertEqual(return_value, True)
+
+    def test_invalid_command(self):
+        """
+        Tests and invalid command of the console.
+        """
+
+        # process the invalid command line
+        return_value = self.main_console.process_command_line("invalid_command", self.output_method)
+
+        # asserts the echo value
+        self.assertEqual(self.last_output, main_console_system.INVALID_COMMAND_MESSAGE)
+
+        # assets the return value
+        self.assertEqual(return_value, False)
+
+    def output_method(self, text, new_line = True):
+        self.last_output = text

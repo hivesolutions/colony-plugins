@@ -101,7 +101,7 @@ class MainConsole:
     main_console_plugin = None
     """ The main console plugin """
 
-    commands = ["help", "helpall", "extensions", "status", "show", "showall", "info", "infoall", "add", "remove", "load", "unload", "exec", "exit"]
+    commands = ["help", "helpall", "extensions", "status", "show", "showall", "info", "infoall", "add", "remove", "load", "unload", "exec", "exit", "echo"]
     """ The commands list """
 
     manager = None
@@ -632,6 +632,27 @@ class MainConsole:
         """
 
         self.manager.unload_system()
+
+    def process_echo(self, args, output_method):
+        """
+        Processes the echo command, with the given
+        arguments and output method.
+
+        @type args: List
+        @param args: The arguments for the processing.
+        @type output_method: Method
+        @param output_method: The output method to be used in the processing.
+        """
+
+        if len(args) < 1:
+            output_method(INVALID_NUMBER_ARGUMENTS_MESSAGE)
+            return
+
+        # retrieves the echo value
+        echo_value = args[0]
+
+        # outputs the echo value
+        output_method(echo_value)
 
     def print_plugin_info(self, plugin, output_method):
         """
