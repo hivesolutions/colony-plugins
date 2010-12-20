@@ -22,6 +22,7 @@
     "resources" : ["scheduler_plugin.py", "misc/__init__.py",
             "misc/scheduler/__init__.py",
             "misc/scheduler/console_scheduler.py",
+            "misc/scheduler/scheduler_exceptions.py",
             "misc/scheduler/scheduler_system.py",
             "misc/scheduler/resources/baf.xml"]
 }
