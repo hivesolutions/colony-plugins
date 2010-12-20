@@ -59,11 +59,24 @@ CONSTANT_SCHEDULING_ALGORITHM = 1
 DYNAMIC_SCHEDULING_ALGORITHM = 2
 """ The dynamic size scheduling algorithm value """
 
-ROUND_ROBIN_WORK_SCHEDULING_ALGORITHM = 1
+RANDOM_WORK_SCHEDULING_ALGORITHM = 1
+""" The random work scheduling algorithm value """
+
+ROUND_ROBIN_WORK_SCHEDULING_ALGORITHM = 2
 """ The round robin work scheduling algorithm value """
 
-WORK_SCHEDULING_ALGORITHM_NAME_MAP = {ROUND_ROBIN_WORK_SCHEDULING_ALGORITHM : "round_robin"}
+SMART_BUSY_WORK_SCHEDULING_ALGORITHM = 3
+""" The smart busy work scheduling algorithm value """
+
+WORK_SCHEDULING_ALGORITHM_NAME_MAP = {RANDOM_WORK_SCHEDULING_ALGORITHM : "random",
+                                      ROUND_ROBIN_WORK_SCHEDULING_ALGORITHM : "round_robin",
+                                      SMART_BUSY_WORK_SCHEDULING_ALGORITHM : "smart_busy"}
 """ The work scheduling algorithm name map """
+
+WORK_SCHEDULING_ALGORITHM_CLASS_MAP = {RANDOM_WORK_SCHEDULING_ALGORITHM : work_pool_manager_algorithms.RandomAlgorithm,
+                                       ROUND_ROBIN_WORK_SCHEDULING_ALGORITHM : work_pool_manager_algorithms.RoundRobinAlgorithm,
+                                       SMART_BUSY_WORK_SCHEDULING_ALGORITHM : work_pool_manager_algorithms.SmartBusyAlgorithm}
+""" The work scheduling algorithm class map """
 
 class WorkPoolManager:
     """
@@ -324,10 +337,11 @@ class WorkPoolImplementation:
             # inserts the task into the thread pool
             self._insert_task()
 
-        # in case the selected algorithm is the round robin
-        if self.work_scheduling_algorithm == ROUND_ROBIN_WORK_SCHEDULING_ALGORITHM:
-            # creates the algorithm manager for the current work pool
-            self.algorithm_manager = work_pool_manager_algorithms.RoundRobinAlgorithm(self)
+        # retrieves the work scheduling algorithm class
+        work_scheduling_algorithm_class = WORK_SCHEDULING_ALGORITHM_CLASS_MAP[self.work_scheduling_algorithm]
+
+        # creates the algorithm manager for the current work pool
+        self.algorithm_manager = work_scheduling_algorithm_class(self)
 
     def stop_pool(self):
         """
