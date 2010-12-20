@@ -79,7 +79,7 @@ class RoundRobinAlgorithm(WorkPoolManagerAlgorithm):
     """ The current index """
 
     work_tasks_list_lock = None
-    """ The lock to control the acces to the work tasks list """
+    """ The lock to control the access to the work tasks list """
 
     def __init__(self, work_pool):
         """
