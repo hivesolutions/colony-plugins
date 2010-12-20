@@ -44,6 +44,8 @@ import threading
 
 import colony.libs.map_util
 
+import scheduler_exceptions
+
 METHOD_CALL_TYPE = "method_call"
 """ The method call type """
 
@@ -121,26 +123,22 @@ class Scheduler:
 
         # iterates continuously
         while True:
-            print "vai tentar fazer acquire"
-
             # acquires the lock object
             self.scheduler_lock.acquire()
 
-            print "vai passar aki"
-
             # in case the continue flag is disabled
             if not self.continue_flag:
-                print "fez break"
-
                 # breaks the cycle
                 break
 
-            # runs the scheduler
-            self.scheduler.run()
+            try:
+                # runs the scheduler
+                self.scheduler.run()
+            except scheduler_exceptions.SchedulerCancel:
+                # breaks the cycle
+                break
 
     def unload_scheduler(self):
-        print "vai descarregar scheduler"
-
         # removes all the active scheduler items
         self.remove_all_active_scheduler_items()
 
@@ -151,8 +149,6 @@ class Scheduler:
         if self.scheduler_lock.locked():
             # releases the lock
             self.scheduler_lock.release()
-
-        print "acabou descarregar scheduler"
 
     def register_task(self, task, time):
         # calculates the absolute time
@@ -333,6 +329,11 @@ class Scheduler:
         except BaseException, exception:
             # prints an error message
             self.scheduler_plugin.error("Problem executing scheduler task: " + unicode(exception))
+
+        # in case the continue flag is not set
+        if not self.continue_flag:
+            # raises the scheduler cancel exception
+            raise scheduler_exceptions.SchedulerCancel("continue flag is not set")
 
         # retrieves the is recursive value
         is_recursive = scheduler_item.is_recursive()
