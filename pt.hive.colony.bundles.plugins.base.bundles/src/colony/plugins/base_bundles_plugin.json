@@ -28,7 +28,6 @@
             "base_bundles/bundles/specifications/build_automation_items_colony_bundle.json",
             "base_bundles/bundles/specifications/business_bundle.json",
             "base_bundles/bundles/specifications/code_coverage_bundle.json",
-            "base_bundles/bundles/specifications/colony_build_automation_items_bundle.json",
             "base_bundles/bundles/specifications/command_execution_bundle.json",
             "base_bundles/bundles/specifications/communication_bundle.json",
             "base_bundles/bundles/specifications/compression_bundle.json",
