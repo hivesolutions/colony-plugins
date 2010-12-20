@@ -317,8 +317,12 @@ class Scheduler:
         item_task_method = scheduler_item.task_method
         task_method_arguments = scheduler_item.task_method_arguments
 
-        # calls the task method with the task method arguments
-        item_task_method(*task_method_arguments)
+        try:
+            # calls the task method with the task method arguments
+            item_task_method(*task_method_arguments)
+        except BaseException, exception:
+            # prints an error message
+            self.scheduler_plugin.error("Problem executing scheduler task: " + unicode(exception))
 
         # retrieves the is recursive value
         is_recursive = scheduler_item.is_recursive()
