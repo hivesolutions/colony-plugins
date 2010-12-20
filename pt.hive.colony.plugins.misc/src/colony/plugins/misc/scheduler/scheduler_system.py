@@ -124,8 +124,12 @@ class Scheduler:
             # acquires the lock object
             self.scheduler_lock.acquire()
 
+            print "vai passar aki"
+
             # in case the continue flag is disabled
             if not self.continue_flag:
+                print "fez break"
+
                 # breaks the cycle
                 break
 
@@ -133,6 +137,8 @@ class Scheduler:
             self.scheduler.run()
 
     def unload_scheduler(self):
+        print "vai descarregar scheduler"
+
         # removes all the active scheduler items
         self.remove_all_active_scheduler_items()
 
@@ -143,6 +149,8 @@ class Scheduler:
         if self.scheduler_lock.locked():
             # releases the lock
             self.scheduler_lock.release()
+
+        print "acabou descarregar scheduler"
 
     def register_task(self, task, time):
         # calculates the absolute time
