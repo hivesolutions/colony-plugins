@@ -108,9 +108,14 @@ class Autoloader:
                 if search_directory in self.search_directories_information_map:
                     for file_name in self.search_directories_information_map[search_directory]:
                         self.search_directories_information_map[search_directory][file_name].exists = False
+
+                    # unsets the new flag
                     new_flag = False
+                # otherwise
                 else:
                     self.search_directories_information_map[search_directory] = {}
+
+                    # sets the new flag
                     new_flag = True
 
                 # retrieves the directories list
