@@ -93,6 +93,32 @@ class RoundRobinAlgorithm(WorkPoolManagerAlgorithm):
 
         self.work_tasks_list_lock = threading.Lock()
 
+    def work_added(self, work_task, work_reference):
+        """
+        Called upon new work added to a work task.
+
+        @type work_task: WorkTask
+        @param work_task: The work task that added a new
+        work reference.
+        @type work_reference: Object
+        @param work_reference: The added work reference.
+        """
+
+        pass
+
+    def work_removed(self, work_task, work_reference):
+        """
+        Called upon new work removed from a work task.
+
+        @type work_task: WorkTask
+        @param work_task: The work task that removed a new
+        work reference.
+        @type work_reference: Object
+        @param work_reference: The removed work reference.
+        """
+
+        pass
+
     def get_next(self):
         """
         Retrieves the next element of the work

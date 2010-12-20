@@ -399,7 +399,7 @@ class WorkPoolImplementation:
         work_processing_task = self.work_processing_task_class(*self.work_processing_task_arguments)
 
         # creates a new work task with for work processing task
-        work_task = WorkTask(work_processing_task)
+        work_task = WorkTask(self, work_processing_task)
 
         # sets the work task in the work processing task
         work_processing_task.work_task = work_task
@@ -440,10 +440,19 @@ class WorkPoolImplementation:
         # returns true (valid)
         return True
 
+    def _work_added(self, work_task, work_reference):
+        self.algorithm_manager.work_added(work_task, work_reference)
+
+    def _work_removed(self, work_task, work_reference):
+        self.algorithm_manager.work_removed(work_task, work_reference)
+
 class WorkTask:
     """
     The generic task to process the work.
     """
+
+    work_pool = None
+    """ The work pool for the work task """
 
     work_processing_task = None
     """ The work processing task """
@@ -460,14 +469,17 @@ class WorkTask:
     work_access_condition = None
     """ The condition to control the access to work """
 
-    def __init__(self, work_processing_task):
+    def __init__(self, work_pool, work_processing_task):
         """
         Constructor of the class.
 
+        @type work_pool: WorkPool
+        @param work_pool: The work pool for the work task.
         @type work_processing_task: Object
         @param work_processing_task: The work processing task object.
         """
 
+        self.work_pool = work_pool
         self.work_processing_task = work_processing_task
 
         self.work_list = []
@@ -639,6 +651,9 @@ class WorkTask:
         # notifies the work access condition
         self.work_access_condition.notify()
 
+        # notifies the work pool about work added
+        self.work_pool._work_added(self, work_reference)
+
     def _remove_work(self, work_reference):
         """
         Inner method to remove work from the work task.
@@ -660,6 +675,9 @@ class WorkTask:
 
         # notifies the work access condition
         self.work_access_condition.notify()
+
+        # notifies the work pool about work removed
+        self.work_pool._work_removed(self, work_reference)
 
 def remove_work(self, work_reference):
     """
