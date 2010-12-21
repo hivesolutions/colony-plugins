@@ -7,6 +7,9 @@
     "plugins" : [{
                 "id" : "pt.hive.colony.plugins.encryption.diffie_hellman",
                 "version" : "1.0.0"
+            }, {
+                "id" : "pt.hive.colony.plugins.encryption.rsa",
+                "version" : "1.0.0"
             }],
     "dependencies" : []
 }
