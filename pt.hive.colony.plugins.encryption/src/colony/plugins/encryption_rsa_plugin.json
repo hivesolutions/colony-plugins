@@ -1,0 +1,19 @@
+{
+    "type" : "plugin",
+    "platform" : "python",
+    "sub_platforms" : ["cpython", "jython"],
+    "id" : "pt.hive.colony.plugins.encryption.rsa",
+    "name" : "Rsa Encryption Plugin",
+    "short_name" : "Rsa Encryption",
+    "description" : "The plugin that offers the rsa encryption support",
+    "version" : "1.0.0",
+    "author" : "Hive Solutions Lda. <development@hive.pt>",
+    "capabilities" : ["encryption.rsa", "build_automation_item"],
+    "capabilities_allowed" : [],
+    "dependencies" : [],
+    "main_file" : "encryption_rsa_plugin.py",
+    "resources" : ["encryption_rsa_plugin.py", "encryption/__init__.py",
+            "encryption/rsa/__init__.py",
+            "encryption/rsa/encryption_rsa_system.py",
+            "encryption/rsa/resources/baf.xml"]
+}
