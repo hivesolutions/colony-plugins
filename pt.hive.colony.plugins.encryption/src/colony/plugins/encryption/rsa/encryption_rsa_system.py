@@ -435,6 +435,64 @@ class RsaStructure:
         # returns the key tuple
         return keys_tuple
 
+    def string_to_integer(self, string_value):
+        # starts the integer value
+        integer_value = 0
+
+        # sets the is first flag
+        is_first = True
+
+        # iterates over all the character values
+        for character_value in string_value:
+            # in case the is first flag is set
+            if is_first:
+                # unsets the is first flag
+                is_first = False
+            # otherwise
+            else:
+                # shift the integer value eight bits
+                # to the left
+                integer_value <<= 8
+
+            # retrieves the character oringal value
+            character_ordinal_value = ord(character_value)
+
+            # increments the integer value with
+            # the character ordinal value
+            integer_value += character_ordinal_value
+
+        # returns the integer value
+        return integer_value
+
+    def integer_to_string(self, integer_value):
+        # creates the characters list that will hold
+        # the various characters
+        characters_list = []
+
+        # iterates over all the character values
+        while integer_value > 0:
+            # retrieves the character value for
+            # the least significant byte value of
+            # the integer
+            character_value = chr(integer_value & 0xff)
+
+            # adds the character value to the character list
+            characters_list.append(character_value)
+
+            # shifts the integer value eight bits
+            # to the right
+            integer_value >>= 8
+
+        # reverses the characters list
+        characters_list.reverse()
+
+        # retrieves the string value from the list
+        # of characters
+        string_value = "".join(characters_list)
+
+        # returns the string value
+        return string_value
+
     def encrypt_int(self, message, ekey, n):
         """
         Encrypts a message using encryption key 'ekey', working modulo n.
@@ -446,8 +504,7 @@ class RsaStructure:
         if not type(message) is types.LongType:
             raise TypeError("You must pass a long or an int")
 
-        if message > 0 and \
-                math.floor(math.log(message, 2)) > math.floor(math.log(n, 2)):
+        if message > 0 and math.floor(math.log(message, 2)) > math.floor(math.log(n, 2)):
             raise OverflowError("The message is too long")
 
         return self.fast_exponentiation(message, ekey, n)
@@ -500,24 +557,34 @@ class RsaStructure:
         Used by "encrypt" and "sign".
         """
 
-        msglen = len(message)
-        mbits = msglen * 8
-        nbits = int(math.floor(math.log(n, 2)))
-        nbytes = nbits / 8
-        blocks = msglen / nbytes
+        m = self.string_to_integer(message)
 
-        if msglen % nbytes > 0:
-            blocks += 1
+        c = self.encrypt_int(m, key, n)
 
-        cypher = []
+        OB = self.integer_to_string(c)
 
-        for bindex in range(blocks):
-            offset = bindex * nbytes
-            block = message[offset:offset+nbytes]
-            value = self.bytes2int(block)
-            cypher.append(funcref(value, key, n))
+        OB = base64.b64encode(OB)
 
-        return self.picklechops(cypher)
+        return OB
+
+#        msglen = len(message)
+#        mbits = msglen * 8
+#        nbits = int(math.floor(math.log(n, 2)))
+#        nbytes = nbits / 8
+#        blocks = msglen / nbytes
+#
+#        if msglen % nbytes > 0:
+#            blocks += 1
+#
+#        cypher = []
+#
+#        for bindex in range(blocks):
+#            offset = bindex * nbytes
+#            block = message[offset:offset+nbytes]
+#            value = self.bytes2int(block)
+#            cypher.append(funcref(value, key, n))
+#
+#        return self.picklechops(cypher)
 
     def gluechops(self, chops, key, n, funcref):
         """
@@ -527,15 +594,25 @@ class RsaStructure:
         Used by "decrypt" and "verify".
         """
 
-        message = ""
+        chops = base64.b64decode(chops)
 
-        chops = self.unpicklechops(chops)
+        cypher_integer = self.string_to_integer(chops)
 
-        for cpart in chops:
-            mpart = funcref(cpart, key, n)
-            message += self.int2bytes(mpart)
+        m = self.encrypt_int(cypher_integer, key, n)
 
-        return message
+        EB = self.integer_to_string(m)
+
+        return EB
+
+#        message = ""
+#
+#        chops = self.unpicklechops(chops)
+#
+#        for cpart in chops:
+#            mpart = funcref(cpart, key, n)
+#            message += self.int2bytes(mpart)
+#
+#        return message
 
     def encrypt(self, message, key):
         """
