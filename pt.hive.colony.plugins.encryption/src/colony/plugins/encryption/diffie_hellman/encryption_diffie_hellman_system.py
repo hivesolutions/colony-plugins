@@ -95,6 +95,11 @@ class DiffieHellmanStructure:
     def __init__(self, p_value = None, g_value = None):
         """
         Constructor of the class.
+
+        @type p_value: int
+        @param p_value: The "p" (prime number) value.
+        @type g_value: int
+        @param g_value: The "g" value.
         """
 
         self.p_value = p_value
