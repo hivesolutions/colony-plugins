@@ -85,7 +85,7 @@ class RsaStructure:
 
     def gcd(self, p, q):
         """
-        Returns the greatest common divisor of p and q
+        Returns the greatest common divisor of p and q.
 
         >>> gcd(42, 6)
         6
@@ -101,7 +101,7 @@ class RsaStructure:
 
     def bytes2int(self, bytes):
         """
-        Converts a list of bytes or a string to an integer
+        Converts a list of bytes or a string to an integer.
 
         >>> (128*256 + 64)*256 + + 15
         8405007
@@ -215,7 +215,10 @@ class RsaStructure:
 
         if a % b == 0:
             return 0
+
+        # sets the initial result
         result = 1
+
         while a > 1:
             if a & 1:
                 if ((a-1)*(b-1) >> 2) & 1:
@@ -225,6 +228,8 @@ class RsaStructure:
                 if ((b ** 2 - 1) >> 3) & 1:
                     result = -result
                 a = a >> 1
+
+        # returns the result
         return result
 
     def jacobi_witness(self, x, n):
@@ -236,8 +241,10 @@ class RsaStructure:
         j = self.jacobi(x, n) % n
         f = self.fast_exponentiation(x, (n-1)/2, n)
 
-        if j == f: return False
-        return True
+        if j == f:
+            return False
+        else:
+            return True
 
     def randomized_primality_testing(self, n, k):
         """
@@ -251,7 +258,7 @@ class RsaStructure:
         q = 0.5     # Property of the jacobi_witness function
 
         # t = int(math.ceil(k / math.log(1/q, 2)))
-        t = self.ceil(k / math.log(1/q, 2))
+        t = self.ceil(k / math.log(1 / q, 2))
 
         for _index in range(t + 1):
             x = self.randint(1, n-1)
@@ -278,10 +285,10 @@ class RsaStructure:
         """
 
         if self.randomized_primality_testing(number, 5):
-            # Prime, according to Jacobi
+            # prime, according to jacobi
             return True
 
-        # Not prime
+        # returns false (not prime)
         return False
 
     def getprime(self, nbits):
@@ -626,14 +633,14 @@ class RsaStructure:
         Signs a string "message" with the private key "key"
         """
 
-        return self.chopstring(message, key["d"], key["p"]*key["q"], self.decrypt_int)
+        return self.chopstring(message, key["d"], key["p"] * key["q"], self.decrypt_int)
 
     def decrypt(self, cypher, key):
         """
         Decrypts a cypher with the private key "key"
         """
 
-        return self.gluechops(cypher, key["d"], key["p"]*key["q"], self.decrypt_int)
+        return self.gluechops(cypher, key["d"], key["p"] * key["q"], self.decrypt_int)
 
     def verify(self, cypher, key):
         """
