@@ -14,5 +14,8 @@
                 "id" : "pt.hive.colony.plugins.encryption.rsa",
                 "version" : "1.0.0"
             }],
-    "dependencies" : []
+    "dependencies" : [{
+                "id" : "pt.hive.colony.bundles.format",
+                "version" : "1.0.0"
+            }]
 }
