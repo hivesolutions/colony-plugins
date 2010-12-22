@@ -347,17 +347,6 @@ class Pkcs1Structure:
         # returns the subject public key info
         return subject_plubic_key_info_packed
 
-    def _write_file(self, file_path, string_value):
-        try:
-            # opens the file
-            file = open(file_path, "wb")
-
-            # writes the string value
-            file.write(string_value)
-        finally:
-            # closes the file
-            file.close()
-
     def _split_base_64(self, string_value):
         # retrieves the string value length
         string_value_length = len(string_value)
@@ -398,3 +387,25 @@ class Pkcs1Structure:
 
         # returns the string value splitted
         return string_value_splitted
+
+    def _write_file(self, file_path, string_value):
+        """
+        Writes the given string value to the file
+        in the given file path.
+
+        @type file_path: String
+        @param file_path: The path to the file to write.
+        @type string_value: String
+        @param string_value: The string value to be written
+        in the file.
+        """
+
+        try:
+            # opens the file
+            file = open(file_path, "wb")
+
+            # writes the string value
+            file.write(string_value)
+        finally:
+            # closes the file
+            file.close()
