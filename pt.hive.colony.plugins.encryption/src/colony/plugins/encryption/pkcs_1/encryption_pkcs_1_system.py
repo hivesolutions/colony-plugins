@@ -247,7 +247,7 @@ class Pkcs1Structure:
         # unpacks the keys value
         public_key, private_key, extras = keys
 
-        # retrieves the pubic key values
+        # retrieves the public key values
         modulus = public_key["n"]
         public_exponent = public_key["e"]
 
