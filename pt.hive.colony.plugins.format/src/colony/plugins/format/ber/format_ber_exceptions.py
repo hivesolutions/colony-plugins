@@ -98,3 +98,29 @@ class UnpackingError(FormatBerException):
         """
 
         return "Unpacking error: %s" % self.message
+
+class OperationNotImplemented(FormatBerException):
+    """
+    The operation not implemented class.
+    """
+
+    def __init__(self, message):
+        """
+        Constructor of the class.
+
+        @type message: String
+        @param message: The message to be printed.
+        """
+
+        FormatBerException.__init__(self)
+        self.message = message
+
+    def __str__(self):
+        """
+        Returns the string representation of the class.
+
+        @rtype: String
+        @return: The string representation of the class.
+        """
+
+        return "Operation not implemented: %s" % self.message

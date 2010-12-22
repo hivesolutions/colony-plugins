@@ -58,6 +58,12 @@ BIT_STRING_TYPE = 0x03
 OCTET_STRING_TYPE = 0x04
 """ The octet string type """
 
+NULL_TYPE = 0x05
+""" The null type """
+
+OBJECT_IDENTIFIER_TYPE = 0x06
+""" The object identifier type """
+
 ENUMERATED_TYPE = 0x0a
 """ The enumerated type """
 
@@ -108,6 +114,7 @@ DEFAULT_TYPE_CONSTRUCTED = {EOC_TYPE : 0x00,
                             INTEGER_TYPE : 0x00,
                             BIT_STRING_TYPE : 0x00,
                             OCTET_STRING_TYPE : 0x00,
+                            OBJECT_IDENTIFIER_TYPE : 0x00,
                             ENUMERATED_TYPE : 0x00,
                             SEQUENCE_TYPE : 0x01,
                             SET_TYPE : 0x01}
@@ -165,7 +172,10 @@ class BerStructure:
         # creates the pack methods map reference
         self.pack_methods_map = {BOOLEAN_TYPE : self.pack_boolean,
                                  INTEGER_TYPE : self.pack_integer,
+                                 BIT_STRING_TYPE : self.pack_bit_string,
                                  OCTET_STRING_TYPE : self.pack_octet_string,
+                                 NULL_TYPE : self.pack_null,
+                                 OBJECT_IDENTIFIER_TYPE : self.pack_object_identifier,
                                  ENUMERATED_TYPE : self.pack_enumerated,
                                  SEQUENCE_TYPE : self.pack_sequence,
                                  SET_TYPE : self.pack_set}
@@ -173,7 +183,10 @@ class BerStructure:
         # creates the unpack methods map reference
         self.unpack_methods_map = {BOOLEAN_TYPE : self.unpack_boolean,
                                    INTEGER_TYPE : self.unpack_integer,
+                                   BIT_STRING_TYPE : self.unpack_bit_string,
                                    OCTET_STRING_TYPE : self.unpack_octet_string,
+                                   NULL_TYPE : self.unpack_null,
+                                   OBJECT_IDENTIFIER_TYPE : self.unpack_object_identifier,
                                    ENUMERATED_TYPE : self.unpack_enumerated,
                                    SEQUENCE_TYPE : self.unpack_sequence,
                                    SET_TYPE : self.unpack_set}
@@ -249,6 +262,25 @@ class BerStructure:
         # returns the packed integer
         return packed_integer
 
+    def pack_bit_string(self, bit_string):
+        # resolves the bit string type
+        bit_string_type = self._get_type(bit_string)
+
+        # retrieves the bit string type
+        bit_string_type = self._get_extra_type(bit_string, bit_string_type)
+
+        # retrieves the bit string value
+        bit_string_value = self._get_value(bit_string)
+
+        # packs the bit string value
+        packed_bit_string = self._pack_bit_string(bit_string_value)
+
+        # packs the bit_string as a base value
+        packed_bit_string = self.pack_base_value(packed_bit_string, bit_string_type)
+
+        # returns the packed bit string
+        return packed_bit_string
+
     def pack_octet_string(self, octet_string):
         # resolves the octet string type
         octet_string_type = self._get_type(octet_string)
@@ -267,6 +299,44 @@ class BerStructure:
 
         # returns the packed octet string
         return packed_octet_string
+
+    def pack_null(self, null):
+        # resolves the null type
+        null_type = self._get_type(null)
+
+        # retrieves the null type
+        null_type = self._get_extra_type(null, null_type)
+
+        # retrieves the null value
+        octet_sting_value = self._get_value(null)
+
+        # packs the null value
+        packed_null = self._pack_null(octet_sting_value)
+
+        # packs the null as a base value
+        packed_null = self.pack_base_value(packed_null, null_type)
+
+        # returns the packed null
+        return packed_null
+
+    def pack_object_identifier(self, object_identifier):
+        # resolves the object identifier type
+        object_identifier_type = self._get_type(object_identifier)
+
+        # retrieves the object identifier type
+        object_identifier_type = self._get_extra_type(object_identifier, object_identifier_type)
+
+        # retrieves the object identifier value
+        octet_sting_value = self._get_value(object_identifier)
+
+        # packs the object identifier value
+        packed_object_identifier = self._pack_object_identifier(octet_sting_value)
+
+        # packs the object identifier as a base value
+        packed_object_identifier = self.pack_base_value(packed_object_identifier, object_identifier_type)
+
+        # returns the packed object identifier
+        return packed_object_identifier
 
     def pack_enumerated(self, enumerated):
         # resolves the enumerated type
@@ -380,6 +450,25 @@ class BerStructure:
         # returns the integer
         return integer
 
+    def unpack_bit_string(self, packed_bit_string):
+        # resolves the bit string type
+        bit_string_type = self._resolve_base_type(BIT_STRING_TYPE)
+
+        # retrieves the packed bit string extra type
+        packed_bit_string_extra_type = self._get_packed_extra_type(packed_bit_string, bit_string_type)
+
+        # retrieves the packed bit string value
+        packed_bit_string_value = self._get_packed_value(packed_bit_string)
+
+        # unpacks the packed bit string value
+        upacked_bit_string_value = self._unpack_bit_string(packed_bit_string_value)
+
+        # unpacks the bit string as a base value
+        bit_string = self.unpack_base_value(upacked_bit_string_value, bit_string_type, packed_bit_string_extra_type)
+
+        # returns the bit string
+        return bit_string
+
     def unpack_octet_string(self, packed_octet_string):
         # resolves the octet string type
         octet_string_type = self._resolve_base_type(OCTET_STRING_TYPE)
@@ -398,6 +487,44 @@ class BerStructure:
 
         # returns the octet string
         return octet_string
+
+    def unpack_null(self, packed_null):
+        # resolves the null type
+        null_type = self._resolve_base_type(NULL_TYPE)
+
+        # retrieves the packed null extra type
+        packed_null_extra_type = self._get_packed_extra_type(packed_null, null_type)
+
+        # retrieves the packed null value
+        packed_null_value = self._get_packed_value(packed_null)
+
+        # unpacks the packed null value
+        upacked_null_value = self._unpack_null(packed_null_value)
+
+        # unpacks the null as a base value
+        null = self.unpack_base_value(upacked_null_value, null_type, packed_null_extra_type)
+
+        # returns the null
+        return null
+
+    def unpack_object_identifier(self, packed_object_identifier):
+        # resolves the object identifier type
+        object_identifier_type = self._resolve_base_type(OBJECT_IDENTIFIER_TYPE)
+
+        # retrieves the packed object identifier extra type
+        packed_object_identifier_extra_type = self._get_packed_extra_type(packed_object_identifier, object_identifier_type)
+
+        # retrieves the packed object identifier value
+        packed_object_identifier_value = self._get_packed_value(packed_object_identifier)
+
+        # unpacks the packed object identifier value
+        upacked_object_identifier_value = self._unpack_object_identifier(packed_object_identifier_value)
+
+        # unpacks the object identifier as a base value
+        object_identifier = self.unpack_base_value(upacked_object_identifier_value, object_identifier_type, packed_object_identifier_extra_type)
+
+        # returns the object identifier
+        return object_identifier
 
     def unpack_enumerated(self, packed_enumerated):
         # resolves the enumerated type
@@ -617,12 +744,123 @@ class BerStructure:
         # returns the octets string
         return octets_string
 
+    def _pack_bit_string(self, value):
+        # creates the bit string from the value and
+        # and initial padding bits value of zero
+        bit_string = "\x00" + value
+
+        # returns the octets string
+        return bit_string
+
     def _pack_octet_string(self, value):
         # sets the octets string as the value
         octets_string = value
 
         # returns the octets string
         return octets_string
+
+    def _pack_null(self, value):
+        # sets the null as empty (null)
+        null = ""
+
+        # returns the null
+        return null
+
+    def _pack_object_identifier(self, value):
+        # creates the list to hold the octets
+        octets = []
+
+        # starts the index value
+        index = 0
+
+        # creates the initial part of the first sub identifier
+        sub_identifier = value[index] * 40
+
+        # completes the first sub identifier with the second value
+        sub_identifier += value[index + 1]
+
+        # in case the initial identifier overflows
+        if sub_identifier < 0 or sub_identifier > 0xff:
+            # raises the packing error exception
+            raise format_ber_exceptions.PackingError("Initial sub identifier overflow: %s" % sub_identifier)
+
+        # convert the sub identifier to character
+        sub_identifier_character = chr(sub_identifier)
+
+        # adds the sub identifier character to the octets
+        octets.append(sub_identifier_character)
+
+        # increments the index with the two initial
+        # values
+        index = index + 2
+
+        # retrieves the remaining value (after the
+        # two first values)
+        remaining_value = value[index:]
+
+        # cycle through sub identifiers
+        for sub_identifier in remaining_value:
+            # in case the sub identifier is representable in one byte
+            if sub_identifier > -1 and sub_identifier < 128:
+                # retrieves the sub identifier
+                sub_identifier = sub_identifier & 0x7f
+
+                # convert the sub identifier to character
+                sub_identifier_character = chr(sub_identifier)
+
+                # adds the sub identifier character to the octets
+                octets.append(sub_identifier_character)
+            # in case the value overflows
+            elif sub_identifier < 0 or sub_identifier > 0xffffffffL:
+                # raises the packing error exception
+                raise format_ber_exceptions.PackingError("sub identifier overflow: %s" % sub_identifier)
+            # otherwise a multiple byte encoding must be used
+            else:
+                # creates the result list
+                result = []
+
+                # creates the first sub identifier value
+                first_sub_identifier = sub_identifier & 0x7f
+
+                # convert the first sub identifier to character
+                first_sub_identifier_character = chr(first_sub_identifier)
+
+                # adds the first sub identifier value to the result
+                result.append(first_sub_identifier_character)
+
+                # shifts the sub identifier seven bits to the right
+                sub_identifier >>= 7
+
+                # iterates while the sub identifier
+                # is greater than zero
+                while sub_identifier > 0:
+                    # creates the current sub identifier
+                    current_sub_identifier = 0x80 | (sub_identifier & 0x7f)
+
+                    # converts the current sub identifier to character
+                    current_sub_identifier_character = chr(current_sub_identifier)
+
+                    # insets the current sub identifier character in the result (list)
+                    result.insert(0, current_sub_identifier_character)
+
+                    # shifts the sub identifier seven bits to the right
+                    sub_identifier >>= 7
+
+                # joins the result to obtain the sub
+                # identifier in character
+                sub_identifier_character = "".join(result)
+
+                # adds the sub identifier character to the octets
+                octets.append(sub_identifier_character)
+
+        # joins the octets to form the octets string
+        octets_string = "".join(octets)
+
+        # sets the object identifier as the octets string
+        object_identifier = octets_string
+
+        # returns the object identifier
+        return object_identifier
 
     def _pack_sequence(self, value):
         # saves the value as values list
@@ -660,12 +898,123 @@ class BerStructure:
         # returns the integer
         return integer
 
+    def _unpack_bit_string(self, packed_value):
+        # retrieves the number of padding bits
+        number_padding_bits = ord(packed_value[0])
+
+        # in case the number of padding bits is
+        # not zero
+        if not number_padding_bits == 0:
+            # raises the operation not implemented exception
+            raise format_ber_exceptions.OperationNotImplemented("bit string padding removal")
+
+        # retrieves the bit string
+        bit_string = packed_value[1:]
+
+        # returns the bit string
+        return bit_string
+
     def _unpack_octet_string(self, packed_value):
         # sets the packed string as the octet string
         octet_string = packed_value
 
         # returns the octet string
         return octet_string
+
+    def _unpack_null(self, packed_value):
+        return None
+
+    def _unpack_object_identifier(self, packed_value):
+        # creates the object identifier list
+        object_identifier_list = [];
+
+        # starts the index value
+        index = 0
+
+        # retrieves the current packed value
+        current_packed_value = packed_value[index]
+
+        # retrieves the sub identifier
+        sub_identifier = ord(current_packed_value)
+
+        # retrieves the first value
+        first_value = int(sub_identifier / 40)
+
+        # adds the first value to the object identifier list
+        object_identifier_list.append(first_value)
+
+        # retrieves the second value
+        second_value = int(sub_identifier % 40)
+
+        # adds the second value to the object identifier list
+        object_identifier_list.append(second_value)
+
+        # increments the index
+        index = index + 1
+
+        # retrieves the packed value length
+        packed_value_length = len(packed_value)
+
+        while index < packed_value_length:
+            # retrieves the current packed value
+            current_packed_value = packed_value[index]
+
+            # retrieves the sub identifier
+            sub_identifier = ord(current_packed_value)
+
+            # in case the sub identifier is encoded
+            # in only one byte
+            if sub_identifier < 128:
+                # adds the sub identifier to the object
+                # identifier list
+                object_identifier_list.append(sub_identifier)
+
+                # increments the index
+                index = index + 1
+            # otherwise it must be a multiple byte encoding
+            else:
+                # sets the next sub identifier as the sub identifier
+                next_sub_identifier = sub_identifier
+
+                # starts the sub identifier value
+                sub_identifier = 0
+
+                # iterates while the next sub identifier is greater than the bae (128)
+                # and the index is less than the packed value length
+                while next_sub_identifier >= 128 and index < packed_value_length:
+                    # calculates the sub identifier
+                    sub_identifier = (sub_identifier << 7) + (next_sub_identifier & 0x7f)
+
+                    # increments the index
+                    index = index + 1
+
+                    # retrieves the current packed value
+                    current_packed_value = packed_value[index]
+
+                    # retrieves the next sub identifier
+                    next_sub_identifier = ord(current_packed_value)
+
+                # in case the index and the packed value
+                # length match
+                if index == packed_value_length:
+                    # raises the unpacking error
+                    raise format_ber_exceptions.UnpackingError("short substrate for object identifier: %s" % object_identifier_list)
+
+                # calculates the sub identifier
+                sub_identifier = (sub_identifier << 7) + next_sub_identifier
+
+                # adds the sub identifier to the object identifier list
+                object_identifier_list.append(sub_identifier)
+
+                # increments the index
+                index = index + 1
+
+        # converts the object identifier list
+        # to a tuple to obtain the object identifier
+        object_identifier = tuple(object_identifier_list)
+
+        # returns the object identifier
+        return object_identifier
 
     def _unpack_sequence(self, packed_value):
         # retrieves the packed value length
