@@ -332,12 +332,59 @@ class RsaStructure:
             return False
         """
 
+        if not self.miller_rabin(number):
+            return False
+
+        if not self.fermat(number):
+            return False
+
         if self.randomized_primality_testing(number, 5):
             # prime, according to jacobi
             return True
 
         # returns false (not prime)
         return False
+
+    def miller_rabin(self, n, s = 50):
+        for j in xrange(1, s + 1):
+            a = random.randint(1, n - 1)
+            if (self.test(a, n)):
+                return False # n is complex
+            return True # n is prime
+
+    def toBinary(self, n):
+        r = []
+        while (n > 0):
+            r.append(n % 2)
+            n = n / 2
+        return r
+
+    def test(self, a, n):
+        b = self.toBinary(n - 1)
+        d = 1
+        for i in xrange(len(b) - 1, -1, -1):
+            x = d
+            d = (d * d) % n
+            if d == 1 and x != 1 and x != n - 1:
+                return True # Complex
+            if b[i] == 1:
+                d = (d * a) % n
+        if d != 1:
+            return True # Complex
+        return False # Prime
+
+    def fermat(self, n, b = 2):
+        """
+        Test for primality based on Fermat's Little Theorem.
+
+        returns 0 (condition false) if n is composite, -1 if
+        base is not relatively prime
+        """
+
+        if self.greatest_common_divisor(n, b) > 1:
+            return False
+        else:
+            return pow(b, n - 1, n) == 1
 
     def generate_prime_number(self, number_bits):
         """
@@ -389,7 +436,8 @@ class RsaStructure:
 
     def extended_euclid_greatest_common_divisor(self, a, b):
         """
-        Returns a tuple (d, i, j) such that d = greatest_common_divisor(a, b) = ia + jb.greatest_common_divisor       """
+        Returns a tuple (d, i, j) such that d = greatest_common_divisor(a, b) = ia + jb.greatest_common_divisor
+        """
 
         if b == 0:
             return (a, 1, 0)
@@ -399,7 +447,7 @@ class RsaStructure:
 
         d, k, l = self.extended_euclid_greatest_common_divisor(b, q)
 
-        return (d, l, k - l*r)
+        return (d, l, k - l * r)
 
     # Main function: calculate encryption and decryption keys
     def calculate_keys(self, p, q, number_bits):
@@ -418,7 +466,7 @@ class RsaStructure:
             if self.are_relatively_prime(e, n) and self.are_relatively_prime(e, phi_n):
                 break
 
-        (d, i, _j) = self.extended_euclid_greatest_common_divisor(e, phi_n)
+        d, i, _j = self.extended_euclid_greatest_common_divisor(e, phi_n)
 
         if not d == 1:
             raise Exception("e (%d) and phi_n (%d) are not relatively prime" % (e, phi_n))
