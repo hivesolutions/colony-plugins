@@ -194,85 +194,13 @@ class RsaStructure:
 
         return self.gluechops(message, public_exponent, modulus)
 
-    def jacobi(self, a_value, b_value):
-        """
-        Calculates the value of the Jacobi symbol (a / b).
-        """
-
-        # in case the modulus of the a value
-        # with the b value is zero
-        if a_value % b_value == 0:
-            # returns zero
-            return 0
-
-        # sets the initial result
-        result = 1
-
-        # iterates while the a value
-        # is greater than zero
-        while a_value > 1:
-            # in case the a value is odd
-            if a_value & 1:
-                if ((a_value - 1) * (b_value - 1) >> 2) & 1:
-                    # inverts the result
-                    result = -result
-
-                b_value, a_value = a_value, b_value % a_value
-            # otherwise it must be even
-            else:
-                if ((b_value ** 2 - 1) >> 3) & 1:
-                    # inverts the result
-                    result = -result
-
-                # shifts the a value one bit to the right
-                a_value >>= 1
-
-        # returns the result
-        return result
-
-    def jacobi_witness(self, x, n):
-        """
-        Returns False if n is an Euler pseudo-prime with base x, and
-        True otherwise.
-        """
-
-        j = self.jacobi(x, n) % n
-        f = pow(x, (n - 1) / 2, n)
-
-        if j == f:
-            return False
-        else:
-            return True
-
-    def randomized_primality_testing(self, n, k):
-        """
-        Calculates whether n is composite (which is always correct) or
-        prime (which is incorrect with error probability 2**-k)
-
-        Returns False if the number if composite, and True if it's
-        probably prime.
-        """
-
-        # the property of the jacobi witness function
-        q = 0.5
-
-        t = colony.libs.math_util.ceil_integer(k / math.log(1 / q, 2))
-
-        for _index in range(t + 1):
-            x = self._generate_random_interval(1, n - 1)
-
-            if self.jacobi_witness(x, n):
-                return False
-
-        return True
-
     def is_prime(self, number):
         """
         Returns True if the number is prime, and False otherwise.
         """
 
         # in case the randomized primality testing fails
-        if not self.randomized_primality_testing(number, 5):
+        if not self._randomized_primality_testing(number, 5):
             # return false (invalid)
             # according to jacobi
             return False
@@ -483,7 +411,7 @@ class RsaStructure:
 #
 #        return self.picklechops(cypher)
 
-    def gluechops(self, chops, key, n):
+    def gluechops(self, chops, key, n_value):
         """
         Glues chops back together into a string.  calls
         funcref(integer, key, n) for each chop.
@@ -495,11 +423,11 @@ class RsaStructure:
 
         cypher_integer = self._string_to_integer(chops)
 
-        m = self.encrypt_int(cypher_integer, key, n)
+        message_integer = self.encrypt_int(cypher_integer, key, n_value)
 
-        EB = self._integer_to_string(m)
+        message = self._integer_to_string(message_integer)
 
-        return EB
+        return message
 
 #        message = ""
 #
@@ -624,3 +552,90 @@ class RsaStructure:
 
         # returns the random integer
         return random_integer
+
+    def _randomized_primality_testing(self, number, k_value):
+        """
+        Calculates whether n is composite (which is always correct) or
+        prime (which is incorrect with error probability 2**-k)
+
+        Returns False if the number if composite, and True if it's
+        probably prime.
+        """
+
+        # the property of the jacobi witness function
+        q_value = 0.5
+
+        # calculates t to ha
+        t_value = colony.libs.math_util.ceil_integer(k_value / math.log(1 / q_value, 2))
+
+        # iterates over the range of t value plus one
+        for _index in range(t_value + 1):
+            # generates a random number in the interval
+            random_number = self._generate_random_interval(1, number - 1)
+
+            # in case the random number is a jacobi witness
+            # then the number is not prime
+            if self._jacobi_witness(random_number, number):
+                # returns false (invalid)
+                return False
+
+        # returns true (valid)
+        return True
+
+    def _jacobi_witness(self, x_value, n_value):
+        """
+        Returns False if n is an Euler pseudo-prime with base x, and
+        True otherwise.
+        """
+
+        # calculates the j value from jacobi
+        j_value = self._jacobi(x_value, n_value) % n_value
+
+        # calculates the f value
+        f_value = pow(x_value, (n_value - 1) / 2, n_value)
+
+        # in case the j value and the f value
+        # are the same
+        if j_value == f_value:
+            # returns false (not witness)
+            return False
+        # otherwise
+        else:
+            # returns true (witness)
+            return True
+
+    def _jacobi(self, a_value, b_value):
+        """
+        Calculates the value of the Jacobi symbol (a / b).
+        """
+
+        # in case the modulus of the a value
+        # with the b value is zero
+        if a_value % b_value == 0:
+            # returns zero
+            return 0
+
+        # sets the initial result
+        result = 1
+
+        # iterates while the a value
+        # is greater than zero
+        while a_value > 1:
+            # in case the a value is odd
+            if a_value & 1:
+                if ((a_value - 1) * (b_value - 1) >> 2) & 1:
+                    # inverts the result
+                    result = -result
+
+                b_value, a_value = a_value, b_value % a_value
+            # otherwise it must be even
+            else:
+                if ((b_value ** 2 - 1) >> 3) & 1:
+                    # inverts the result
+                    result = -result
+
+                # shifts the a value one bit to the right
+                a_value >>= 1
+
+        # returns the result
+        return result
