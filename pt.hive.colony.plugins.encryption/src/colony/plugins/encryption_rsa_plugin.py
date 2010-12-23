@@ -59,7 +59,8 @@ class EncryptionRsaPlugin(colony.base.plugin_system.Plugin):
     dependencies = []
     events_handled = []
     events_registrable = []
-    main_modules = ["encryption.rsa.encryption_rsa_system"]
+    main_modules = ["encryption.rsa.encryption_rsa_exceptions",
+                    "encryption.rsa.encryption_rsa_system"]
 
     encryption_rsa = None
 
