@@ -330,8 +330,15 @@ class RsaStructure:
 
     def _generate_keys(self, number_bits):
         """
-        Generate RSA keys of number_bits bits. Returns (p, q, e, d).
-        Note: this can take a long time, depending on the key size.
+        Generates the rsa keys with the given number
+        of bits.
+        This method is cpu intensive.
+
+        @type number_bits: int
+        @param number_bits: The number of bits to be used
+        in the keys generation.
+        @rtype: Tuple
+        @return: A tuple containing the various rsa keys.
         """
 
         # iterates continuously
@@ -449,8 +456,14 @@ class RsaStructure:
 
     def _generate_prime_number(self, number_bits):
         """
-        Returns a prime number of max. "math.ceil(number bits / 8) * 8" bits. In
-        other words: number_bits is rounded up to whole bytes.
+        Generates a prime number with the given number of bits
+        in length.
+
+        @type number_bits: int
+        @param number_bits: The number of bits to be used in
+        the prime number generation.
+        @rtype: int
+        @return: The generated prime number.
         """
 
         # iterates continuously
@@ -489,14 +502,6 @@ class RsaStructure:
         return True
 
     def _randomized_primality_testing(self, number, k_value):
-        """
-        Calculates whether n is composite (which is always correct) or
-        prime (which is incorrect with error probability 2**-k)
-
-        Returns False if the number if composite, and True if it's
-        probably prime.
-        """
-
         # the property of the jacobi witness function
         q_value = 0.5
 
@@ -506,7 +511,7 @@ class RsaStructure:
         # iterates over the range of t value plus one
         for _index in range(t_value + 1):
             # generates a random number in the interval
-            random_number = self._generate_random_interval(1, number - 1)
+            random_number = self._generate_random_integer_interval(1, number - 1)
 
             # in case the random number is a jacobi witness
             # then the number is not prime
@@ -519,8 +524,16 @@ class RsaStructure:
 
     def _jacobi_witness(self, x_value, n_value):
         """
-        Returns False if n is an Euler pseudo-prime with base x, and
-        True otherwise.
+        Checks if the given x value is witness to n value
+        non primality.
+        This check is made according to euler's theorem.
+
+        @type x_value: int
+        @param x_value: The value to be checked for witness.
+        @type n_value: int
+        @param n_value: The value to be checked for primality.
+        @rtype: bool
+        @return: The result of the checking.
         """
 
         # calculates the j value from jacobi
@@ -541,7 +554,15 @@ class RsaStructure:
 
     def _jacobi(self, a_value, b_value):
         """
-        Calculates the value of the Jacobi symbol (a / b).
+        Calculates the value of the jacobi symbol, using the
+        given a and b values.
+
+        @type a_value: int
+        @param a_value: The a value.
+        @type b_value: int
+        @param b_value: The b value.
+        @rtype: int
+        @return: The calculated jacobi symbol.
         """
 
         # in case the modulus of the a value
@@ -596,10 +617,6 @@ class RsaStructure:
         return divisor == 1
 
     def _extended_euclid_greatest_common_divisor(self, a_value, b_value):
-        """
-        Returns a tuple (d, i, j) such that d = greatest_common_divisor(a, b) = ia + jb.greatest_common_divisor
-        """
-
         # in case the b value is zero
         if b_value == 0:
             # creates a simple common divisor tuple
@@ -681,11 +698,7 @@ class RsaStructure:
         # returns the string value
         return string_value
 
-    def _generate_random_interval(self, minimum_value, maximum_value):
-        """
-        Returns a random integer x with minvalue <= x <= maxvalue
-        """
-
+    def _generate_random_integer_interval(self, minimum_value, maximum_value):
         # sets the default minimum number of bits, even if the
         # range is too small
         minimum_number_bits = 32
