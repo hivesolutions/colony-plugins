@@ -190,18 +190,39 @@ class RsaStructure:
 
         return self.gluechops(message, public_exponent, modulus)
 
-    def greatest_common_divisor(self, p, q):
+    def greatest_common_divisor(self, p_value, q_value):
         """
-        Returns the greatest common divisor of p and q.
+        Calculates the greatest common divisor of p value and q value.
+
+        @type p_value: int
+        @param p_value: The first prime number to obtain
+        the greatest common divisor.
+        @type q_value: int
+        @param q_value: The second prime number to obtain
+        the greatest common divisor.
+        @rtype: int
+        @return: The greatest common divisor between both values.
         """
 
-        if p < q:
-            return self.greatest_common_divisor(q, p)
+        # in case the p value is smaller than
+        # the q value
+        if p_value < q_value:
+            # inverts the greatest common divisor
+            # calculation strategy
+            return self.greatest_common_divisor(q_value, p_value)
 
-        if q == 0:
-            return p
+        # in case the q value is zero
+        if q_value == 0:
+            # returns the p value
+            # because there is no division by zero
+            return p_value
 
-        return self.greatest_common_divisor(q, abs(p % q))
+        # calculates the next q value
+        _q_value = abs(p_value % q_value)
+
+        # return the recalculation of the gretest common
+        # divisor
+        return self.greatest_common_divisor(q_value, _q_value)
 
     def read_random_int(self, number_bits):
         """
@@ -302,10 +323,9 @@ class RsaStructure:
         probably prime.
         """
 
-        # Property of the jacobi_witness function
+        # the property of the jacobi witness function
         q = 0.5
 
-        # t = int(math.ceil(k / math.log(1/q, 2)))
         t = self.ceil(k / math.log(1 / q, 2))
 
         for _index in range(t + 1):
@@ -319,18 +339,7 @@ class RsaStructure:
     def is_prime(self, number):
         """
         Returns True if the number is prime, and False otherwise.
-
-        >>> is_prime(42)
-        0
-        >>> is_prime(41)
-        1
         """
-
-        if not self.miller_rabin(number):
-            return False
-
-        if not self.fermat(number):
-            return False
 
         if self.randomized_primality_testing(number, 5):
             # prime, according to jacobi
@@ -338,47 +347,6 @@ class RsaStructure:
 
         # returns false (not prime)
         return False
-
-    def miller_rabin(self, n, s = 50):
-        for j in xrange(1, s + 1):
-            a = random.randint(1, n - 1)
-            if (self.test(a, n)):
-                return False # n is complex
-            return True # n is prime
-
-    def toBinary(self, n):
-        r = []
-        while (n > 0):
-            r.append(n % 2)
-            n = n / 2
-        return r
-
-    def test(self, a, n):
-        b = self.toBinary(n - 1)
-        d = 1
-        for i in xrange(len(b) - 1, -1, -1):
-            x = d
-            d = (d * d) % n
-            if d == 1 and x != 1 and x != n - 1:
-                return True # Complex
-            if b[i] == 1:
-                d = (d * a) % n
-        if d != 1:
-            return True # Complex
-        return False # Prime
-
-    def fermat(self, n, b = 2):
-        """
-        Test for primality based on Fermat's Little Theorem.
-
-        returns 0 (condition false) if n is composite, -1 if
-        base is not relatively prime
-        """
-
-        if self.greatest_common_divisor(n, b) > 1:
-            return False
-        else:
-            return pow(b, n - 1, n) == 1
 
     def generate_prime_number(self, number_bits):
         """
