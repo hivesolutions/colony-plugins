@@ -43,6 +43,8 @@ import types
 import base64
 import random
 
+import colony.libs.math_util
+
 import encryption_rsa_exceptions
 
 class EncryptionRsa:
@@ -192,112 +194,38 @@ class RsaStructure:
 
         return self.gluechops(message, public_exponent, modulus)
 
-    def greatest_common_divisor(self, p_value, q_value):
-        """
-        Calculates the greatest common divisor of p value and q value.
-
-        @type p_value: int
-        @param p_value: The first prime number to obtain
-        the greatest common divisor.
-        @type q_value: int
-        @param q_value: The second prime number to obtain
-        the greatest common divisor.
-        @rtype: int
-        @return: The greatest common divisor between both values.
-        """
-
-        # in case the p value is smaller than
-        # the q value
-        if p_value < q_value:
-            # inverts the greatest common divisor
-            # calculation strategy
-            return self.greatest_common_divisor(q_value, p_value)
-
-        # in case the q value is zero
-        if q_value == 0:
-            # returns the p value
-            # because there is no division by zero
-            return p_value
-
-        # calculates the next q value
-        _q_value = abs(p_value % q_value)
-
-        # return the recalculation of the gretest common
-        # divisor
-        return self.greatest_common_divisor(q_value, _q_value)
-
-    def read_random_int(self, number_bits):
-        """
-        Reads a random integer of approximately number bits bits rounded up
-        to whole bytes.
-        """
-
-        number_bytes = self.ceil(number_bits / 8)
-
-        random_data = os.urandom(number_bytes)
-
-        return self._string_to_integer(random_data)
-
-    def ceil(self, x):
-        """
-        ceil(x) -> int(math.ceil(x))
-        """
-
-        return int(math.ceil(x))
-
-    def randint(self, minvalue, maxvalue):
-        """
-        Returns a random integer x with minvalue <= x <= maxvalue
-        """
-
-        # safety - get a lot of random data even if the range is fairly
-        # small
-        min_number_bits = 32
-
-        # The range of the random numbers we need to generate
-        range = maxvalue - minvalue
-
-        # Which is this number of bytes
-        rangebytes = self.ceil(math.log(range, 2) / 8.)
-
-        # Convert to bits, but make sure it's always at least min_number_bits*2
-        rangebits = max(rangebytes * 8, min_number_bits * 2)
-
-        # Take a random number of bits between min_number_bits and rangebits
-        number_bits = random.randint(min_number_bits, rangebits)
-
-        return (self.read_random_int(number_bits) % range) + minvalue
-
-    def fermat_little_theorem(self, p):
-        """
-        Returns 1 if p may be prime, and something else if p definitely
-        is not prime.
-        """
-
-        a = self.randint(1, p-1)
-
-        return pow(a, p - 1, p)
-
-    def jacobi(self, a, b):
+    def jacobi(self, a_value, b_value):
         """
         Calculates the value of the Jacobi symbol (a / b).
         """
 
-        if a % b == 0:
+        # in case the modulus of the a value
+        # with the b value is zero
+        if a_value % b_value == 0:
+            # returns zero
             return 0
 
         # sets the initial result
         result = 1
 
-        while a > 1:
-            if a & 1:
-                if ((a-1)*(b-1) >> 2) & 1:
+        # iterates while the a value
+        # is greater than zero
+        while a_value > 1:
+            # in case the a value is odd
+            if a_value & 1:
+                if ((a_value - 1) * (b_value - 1) >> 2) & 1:
+                    # inverts the result
                     result = -result
-                b, a = a, b % a
+
+                b_value, a_value = a_value, b_value % a_value
+            # otherwise it must be even
             else:
-                if ((b ** 2 - 1) >> 3) & 1:
+                if ((b_value ** 2 - 1) >> 3) & 1:
+                    # inverts the result
                     result = -result
-                a = a >> 1
+
+                # shifts the a value one bit to the right
+                a_value >>= 1
 
         # returns the result
         return result
@@ -328,10 +256,10 @@ class RsaStructure:
         # the property of the jacobi witness function
         q = 0.5
 
-        t = self.ceil(k / math.log(1 / q, 2))
+        t = colony.libs.math_util.ceil_integer(k / math.log(1 / q, 2))
 
         for _index in range(t + 1):
-            x = self.randint(1, n-1)
+            x = self._generate_random_interval(1, n - 1)
 
             if self.jacobi_witness(x, n):
                 return False
@@ -343,12 +271,14 @@ class RsaStructure:
         Returns True if the number is prime, and False otherwise.
         """
 
-        if self.randomized_primality_testing(number, 5):
-            # prime, according to jacobi
-            return True
+        # in case the randomized primality testing fails
+        if not self.randomized_primality_testing(number, 5):
+            # return false (invalid)
+            # according to jacobi
+            return False
 
-        # returns false (not prime)
-        return False
+        # returns true (valid)
+        return True
 
     def generate_prime_number(self, number_bits):
         """
@@ -359,7 +289,7 @@ class RsaStructure:
         # iterates continuously
         while True:
             # generates a random number
-            integer = self.read_random_int(number_bits)
+            integer = self._generate_random_integer(number_bits)
 
             # make sure its odd
             integer |= 1
@@ -380,7 +310,7 @@ class RsaStructure:
 
         # retrieves the greatest common divisor between the
         # two values
-        divisor = self.greatest_common_divisor(first_value, second_value)
+        divisor = colony.libs.math_util.greatest_common_divisor(first_value, second_value)
 
         # returns if the divisor is one (relatively prime)
         return divisor == 1
@@ -390,16 +320,26 @@ class RsaStructure:
         Returns a tuple of two different primes of number bits bits.
         """
 
-        p = self.generate_prime_number(number_bits)
+        # generates a prime number to serve as p value
+        p_value = self.generate_prime_number(number_bits)
 
         # iterates continuously
         while True:
-            q = self.generate_prime_number(number_bits)
+            # generates a prime number to serve as q value
+            q_value = self.generate_prime_number(number_bits)
 
-            if not q == p:
+            # in case the q value and the p
+            # value are different
+            if not q_value == p_value:
+                # breaks the loop
                 break
 
-        return (p, q)
+        # creates a tuple with the generated
+        # prime numbers
+        prime_tuple = (p_value, q_value)
+
+        # returns the prime tuple
+        return prime_tuple
 
     def extended_euclid_greatest_common_divisor(self, a, b):
         """
@@ -505,21 +445,7 @@ class RsaStructure:
 
         return pow(message, ekey, n)
 
-    def sign_int(self, message, dkey, n):
-        """
-        Signs "message" using key "dkey", working modulo n.
-        """
-
-        return self.decrypt_int(message, dkey, n)
-
-    def verify_int(self, signed, ekey, n):
-        """
-        Verifies "signed" using key "ekey", working modulo n.
-        """
-
-        return self.encrypt_int(signed, ekey, n)
-
-    def chopstring(self, message, key, n):
+    def chopstring(self, message, key, n_value):
         """
         Splits "message" into chops that are at most as long as n,
         converts these into integers, and calls funcref(integer, key, n)
@@ -528,15 +454,15 @@ class RsaStructure:
         Used by "encrypt" and "sign".
         """
 
-        m = self._string_to_integer(message)
+        message_integer = self._string_to_integer(message)
 
-        c = self.encrypt_int(m, key, n)
+        cypered_message_integer = self.encrypt_int(message_integer, key, n_value)
 
-        OB = self._integer_to_string(c)
+        cypered_message = self._integer_to_string(cypered_message_integer)
 
-        OB = base64.b64encode(OB)
+        cypered_message_encoded = base64.b64encode(cypered_message)
 
-        return OB
+        return cypered_message_encoded
 
 #        msglen = len(message)
 #        mbits = msglen * 8
@@ -585,27 +511,6 @@ class RsaStructure:
 #
 #        return message
 
-    def _fast_exponentiation(self, a, p, n):
-        """
-        Calculates r = a ^ p mod n.
-
-        !!!!!! POR COMO UTIL FUCNTION !!!!
-        """
-
-        result = a % n
-        remainders = []
-
-        while p != 1:
-            remainders.append(p & 1)
-            p = p >> 1
-
-        while remainders:
-            rem = remainders.pop()
-            result = ((a ** rem) * result ** 2) % n
-
-        # returns the result
-        return result
-
     def _string_to_integer(self, string_value):
         # starts the integer value
         integer_value = 0
@@ -625,7 +530,7 @@ class RsaStructure:
                 # to the left
                 integer_value <<= 8
 
-            # retrieves the character oringal value
+            # retrieves the character original value
             character_ordinal_value = ord(character_value)
 
             # increments the integer value with
@@ -663,3 +568,59 @@ class RsaStructure:
 
         # returns the string value
         return string_value
+
+    def _generate_random_interval(self, minimum_value, maximum_value):
+        """
+        Returns a random integer x with minvalue <= x <= maxvalue
+        """
+
+        # sets the default minimum number of bits, even if the
+        # range is too small
+        minimum_number_bits = 32
+
+        # calculates the range of the random numbers
+        # to generate
+        range = maximum_value - minimum_value
+
+        # converts the range into bits
+        range_bits = math.log(range, 2)
+
+        # converts the range into bytes
+        range_bytes = colony.libs.math_util.ceil_integer(range_bits / 8.0)
+
+        # converts the range into bits, but verifies that there
+        # is at least a minimum number of bits
+        range_bits = max(range_bytes * 8, minimum_number_bits * 2)
+
+        # generates the random number of bits to be used
+        number_bits = random.randint(minimum_number_bits, range_bits)
+
+        # generates the random integer with the number of bits generated
+        # and applying modulo of the range
+        random_base_value = self._generate_random_integer(number_bits) % range
+
+        # creates the random value adding the minimum value to the
+        # random base value
+        random_value = random_base_value + minimum_value
+
+        # returns the random value
+        return random_value
+
+    def _generate_random_integer(self, number_bits):
+        """
+        Reads a random integer of approximately number bits bits rounded up
+        to whole bytes.
+        """
+
+        # calculates the number of bytes to represent the number
+        number_bytes = colony.libs.math_util.ceil_integer(number_bits / 8.0)
+
+        # generates a random data string with the specified
+        # number of bytes in length
+        random_data = os.urandom(number_bytes)
+
+        # converts the random data to integer
+        random_integer = self._string_to_integer(random_data)
+
+        # returns the random integer
+        return random_integer
