@@ -40,7 +40,6 @@ __license__ = "GNU General Public License (GPL), Version 3"
 import os
 import math
 import types
-import base64
 import random
 
 import colony.libs.math_util
@@ -153,7 +152,7 @@ class RsaStructure:
         modulus = public_key["n"]
         public_exponent = public_key["e"]
 
-        return self.chopstring(message, public_exponent, modulus)
+        return self._encrypt_buffer(message, public_exponent, modulus)
 
     def decrypt(self, encrypted_message, private_key = None):
         """
@@ -179,7 +178,7 @@ class RsaStructure:
         # calculates the modulus
         modulus = prime_1 * prime_2
 
-        return self.gluechops(encrypted_message, private_exponent, modulus)
+        return self._decrypt_buffer(encrypted_message, private_exponent, modulus)
 
     def sign(self, message, private_key = None):
         """
@@ -205,7 +204,7 @@ class RsaStructure:
         # calculates the modulus
         modulus = prime_1 * prime_2
 
-        return self.chopstring(message, private_exponent, modulus)
+        return self._encrypt_string(message, private_exponent, modulus)
 
     def verify(self, signed_message, public_key = None):
         """
@@ -226,74 +225,82 @@ class RsaStructure:
         modulus = public_key["n"]
         public_exponent = public_key["e"]
 
-        return self.gluechops(signed_message, public_exponent, modulus)
+        return self._encrypt_string(signed_message, public_exponent, modulus)
 
-    def chopstring(self, message, key, n_value):
-        """
-        Splits "message" into chops that are at most as long as n,
-        converts these into integers, and calls funcref(integer, key, n)
-        for each chop.
+    def _encrypt_buffer(self, message, key, modulus):
+        # retrieves the modulus number of bits
+        modulus_number_bits = math.log(modulus, 2)
 
-        Used by "encrypt" and "sign".
-        """
+        # converts the modulus number of bits to integer
+        modulus_number_bits_integer = int(modulus_number_bits)
 
+        # converts the modulus number of bits to bytes
+        modulus_number_bytes = modulus_number_bits_integer / 8
+
+        # retrieves the message length
+        message_length = len(message)
+
+        # calculates the message block count (number of message blocks)
+        message_block_count = message_length / modulus_number_bytes
+
+        # in case the modulus of the message length
+        # and the modulus number bytes is greater than zero
+        if message_length % modulus_number_bytes > 0:
+            # increments the message block count
+            message_block_count += 1
+
+        # creates the block values list
+        block_values = []
+
+        # iterate over the range of message block count
+        for index in range(message_block_count):
+            # calculates the offset value
+            offset = index * modulus_number_bytes
+
+            # retrieves the current block value
+            current_block_value = message[offset:offset + modulus_number_bytes]
+
+            # encrypts the current block value
+            current_block_value_encrypted = self._encrypt_string(current_block_value, key, modulus)
+
+            # adds the encrypted current block value to the block values (list)
+            block_values.append(current_block_value_encrypted)
+
+        # returns the block values list
+        return block_values
+
+    def _decrypt_buffer(self, message_values_list, key, modulus):
+        # creates the part value list
+        part_values = []
+
+        # iterates over all the message values list
+        for message_value in message_values_list:
+            # decrypts the message value, retrieving
+            # the current part value
+            current_part_value = self._encrypt_string(message_value, key, modulus)
+
+            # adds the current part value to the part values (list)
+            part_values.append(current_part_value)
+
+        # joins the parts in the part values list
+        # to re-create the message decrypted
+        message_decrypted = "".join(part_values)
+
+        # returns the message decrypted
+        return message_decrypted
+
+    def _encrypt_string(self, message, key, modulus):
         # converts the message to integer
         message_integer = self._string_to_integer(message)
 
-        cypered_message_integer = self._encrypt_integer(message_integer, key, n_value)
+        # encrypts the message integer value with the given key and modulus
+        message_integer_encrypted = self._encrypt_integer(message_integer, key, modulus)
 
-        cypered_message = self._integer_to_string(cypered_message_integer)
+        # converts the integer to string, retrieving the message encrypted
+        message_encrypted = self._integer_to_string(message_integer_encrypted)
 
-        cypered_message_encoded = base64.b64encode(cypered_message)
-
-        return cypered_message_encoded
-
-#        msglen = len(message)
-#        mbits = msglen * 8
-#        number_bits = int(math.floor(math.log(n, 2)))
-#        nbytes = number_bits / 8
-#        blocks = msglen / nbytes
-#
-#        if msglen % nbytes > 0:
-#            blocks += 1
-#
-#        cypher = []
-#
-#        for bindex in range(blocks):
-#            offset = bindex * nbytes
-#            block = message[offset:offset+nbytes]
-#            value = self.bytes2int(block)
-#            cypher.append(funcref(value, key, n))
-#
-#        return self.picklechops(cypher)
-
-    def gluechops(self, chops, key, n_value):
-        """
-        Glues chops back together into a string.  calls
-        funcref(integer, key, n) for each chop.
-
-        Used by "decrypt" and "verify".
-        """
-
-        chops = base64.b64decode(chops)
-
-        cypher_integer = self._string_to_integer(chops)
-
-        message_integer = self._encrypt_integer(cypher_integer, key, n_value)
-
-        message = self._integer_to_string(message_integer)
-
-        return message
-
-#        message = ""
-#
-#        chops = self.unpicklechops(chops)
-#
-#        for cpart in chops:
-#            mpart = funcref(cpart, key, n)
-#            message += self.int2bytes(mpart)
-#
-#        return message
+        # returns the message encrypted
+        return message_encrypted
 
     def _encrypt_integer(self, message, e_value, n_value):
         """
