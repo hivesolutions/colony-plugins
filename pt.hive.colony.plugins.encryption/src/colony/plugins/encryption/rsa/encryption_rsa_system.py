@@ -720,8 +720,15 @@ class RsaStructure:
 
     def _generate_random_integer(self, number_bits):
         """
-        Reads a random integer of approximately number bits bits rounded up
+        Generates a random integer of approximately the
+        size of the provided number bits bits rounded up
         to whole bytes.
+
+        @type number_bits: int
+        @param number_bits: The number of bits of the generated
+        random integer.
+        @rtype: int
+        @return: The generated random integer.
         """
 
         # calculates the number of bytes to represent the number
