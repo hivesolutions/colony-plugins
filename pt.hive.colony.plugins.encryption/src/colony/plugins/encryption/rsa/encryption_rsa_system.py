@@ -194,185 +194,6 @@ class RsaStructure:
 
         return self.gluechops(message, public_exponent, modulus)
 
-    def is_prime(self, number):
-        """
-        Returns True if the number is prime, and False otherwise.
-        """
-
-        # in case the randomized primality testing fails
-        if not self._randomized_primality_testing(number, 5):
-            # return false (invalid)
-            # according to jacobi
-            return False
-
-        # returns true (valid)
-        return True
-
-    def generate_prime_number(self, number_bits):
-        """
-        Returns a prime number of max. "math.ceil(number bits / 8) * 8" bits. In
-        other words: number_bits is rounded up to whole bytes.
-        """
-
-        # iterates continuously
-        while True:
-            # generates a random number
-            integer = self._generate_random_integer(number_bits)
-
-            # make sure its odd
-            integer |= 1
-
-            # checks if it's prime
-            if self.is_prime(integer):
-                # breaks the loop
-                break
-
-        # returns the (generated) integer
-        return integer
-
-    def are_relatively_prime(self, first_value, second_value):
-        """
-        Returns True if a and b are relatively prime, and False if they
-        are not.
-        """
-
-        # retrieves the greatest common divisor between the
-        # two values
-        divisor = colony.libs.math_util.greatest_common_divisor(first_value, second_value)
-
-        # returns if the divisor is one (relatively prime)
-        return divisor == 1
-
-    def find_p_q(self, number_bits):
-        """
-        Returns a tuple of two different primes of number bits bits.
-        """
-
-        # generates a prime number to serve as p value
-        p_value = self.generate_prime_number(number_bits)
-
-        # iterates continuously
-        while True:
-            # generates a prime number to serve as q value
-            q_value = self.generate_prime_number(number_bits)
-
-            # in case the q value and the p
-            # value are different
-            if not q_value == p_value:
-                # breaks the loop
-                break
-
-        # creates a tuple with the generated
-        # prime numbers
-        prime_tuple = (p_value, q_value)
-
-        # returns the prime tuple
-        return prime_tuple
-
-    def extended_euclid_greatest_common_divisor(self, a, b):
-        """
-        Returns a tuple (d, i, j) such that d = greatest_common_divisor(a, b) = ia + jb.greatest_common_divisor
-        """
-
-        if b == 0:
-            return (a, 1, 0)
-
-        q = abs(a % b)
-        r = long(a / b)
-
-        d, k, l = self.extended_euclid_greatest_common_divisor(b, q)
-
-        return (d, l, k - l * r)
-
-    def calculate_keys(self, p, q, number_bits):
-        """
-        Calculates an encryption and a decryption key (exponent)
-        for p and q, returning them as a tuple.
-        """
-
-        # calculates the modulus
-        n = p * q
-
-        # calculates the phi modulus
-        phi_n = (p - 1) * (q - 1)
-
-        # iterates continuously to find
-        # a valid exponent
-        while True:
-            # make sure e has enough bits so we ensure "wrapping" through
-            # modulus (n)
-            e = self.generate_prime_number(max(8, number_bits / 2))
-
-            # checks if the exponent and the modulus are relative primes
-            # and also checks if the exponent and the phi modulus are relative
-            # primes
-            if self.are_relatively_prime(e, n) and self.are_relatively_prime(e, phi_n):
-                # breaks the loop
-                break
-
-        # retrieves the result of the extended euclid greatest common divisor
-        d, i, _j = self.extended_euclid_greatest_common_divisor(e, phi_n)
-
-        # in case the greatest common divisor between both
-        # is not one (not relative primes)
-        if not d == 1:
-            # raises the key generation error
-            raise encryption_rsa_exceptions.KeyGenerationError("The exponent '%d' and the phi modulus '%d' are not relative primes" % (e, phi_n))
-
-        # in case the test for multiplicative inverse
-        # modulo fails
-        if not (e * i) % phi_n == 1:
-            # raises the key generation error
-            raise encryption_rsa_exceptions.KeyGenerationError("The exponent '%d' and exponent '%d' are not multiplicative inverse modulo of phi modulus '%d'" % (e, i, phi_n))
-
-        # creates a tuple with the keys
-        keys_tuple = (e, i)
-
-        # returns the keys tuple
-        return keys_tuple
-
-    def _generate_keys(self, number_bits):
-        """
-        Generate RSA keys of number_bits bits. Returns (p, q, e, d).
-        Note: this can take a long time, depending on the key size.
-        """
-
-        # iterates continuously
-        while True:
-            p, q = self.find_p_q(number_bits)
-
-            # calculates the keys (private and public) for
-            # the given prime number and number of bits
-            e, d = self.calculate_keys(p, q, number_bits)
-
-            # For some reason, d is sometimes negative. We don't know how
-            # to fix it (yet), so we keep trying until everything is shiny
-            if d > 0:
-                # breaks the loop
-                break
-
-        # creates a tuple with the generated keys
-        generated_keys = (p, q, e, d)
-
-        # returns the generated keys
-        return generated_keys
-
-    def encrypt_int(self, message, ekey, n):
-        """
-        Encrypts a message using encryption key 'ekey', working modulo n.
-        """
-
-        if type(message) is types.IntType:
-            return self.encrypt_int(long(message), ekey, n)
-
-        if not type(message) is types.LongType:
-            raise TypeError("You must pass a long or an int")
-
-        if message > 0 and math.floor(math.log(message, 2)) > math.floor(math.log(n, 2)):
-            raise OverflowError("The message is too long")
-
-        return pow(message, ekey, n)
-
     def chopstring(self, message, key, n_value):
         """
         Splits "message" into chops that are at most as long as n,
@@ -384,7 +205,7 @@ class RsaStructure:
 
         message_integer = self._string_to_integer(message)
 
-        cypered_message_integer = self.encrypt_int(message_integer, key, n_value)
+        cypered_message_integer = self._encrypt_integer(message_integer, key, n_value)
 
         cypered_message = self._integer_to_string(cypered_message_integer)
 
@@ -423,7 +244,7 @@ class RsaStructure:
 
         cypher_integer = self._string_to_integer(chops)
 
-        message_integer = self.encrypt_int(cypher_integer, key, n_value)
+        message_integer = self._encrypt_integer(cypher_integer, key, n_value)
 
         message = self._integer_to_string(message_integer)
 
@@ -438,6 +259,308 @@ class RsaStructure:
 #            message += self.int2bytes(mpart)
 #
 #        return message
+
+    def _encrypt_integer(self, message, e_value, n_value):
+        """
+        Encrypts a message using encryption key 'ekey', working modulo n.
+        """
+
+        if type(message) is types.IntType:
+            return self.encrypt_int(long(message), e_value, n_value)
+
+        if not type(message) is types.LongType:
+            raise TypeError("You must pass a long or an int")
+
+        if message > 0 and math.floor(math.log(message, 2)) > math.floor(math.log(n_value, 2)):
+            raise OverflowError("The message is too long")
+
+        return pow(message, e_value, n_value)
+
+    def _generate_keys(self, number_bits):
+        """
+        Generate RSA keys of number_bits bits. Returns (p, q, e, d).
+        Note: this can take a long time, depending on the key size.
+        """
+
+        # iterates continuously
+        while True:
+            # generates the p and q values for the defined
+            # number of bits
+            p_value, q_value = self._generate_p_q_values(number_bits)
+
+            # calculates the exponents (private and public) for
+            # the given prime number and number of bits
+            e_value, d_value = self._generate_exponents(p_value, q_value, number_bits)
+
+            # tests if the number is positive
+            if d_value > 0:
+                # breaks the loop
+                break
+
+        # creates a tuple with the generated keys
+        generated_keys = (p_value, q_value, e_value, d_value)
+
+        # returns the generated keys
+        return generated_keys
+
+    def _generate_exponents(self, p_value, q_value, number_bits):
+        """
+        Calculates an encryption and a decryption key (exponent)
+        for p and q, returning them as a tuple.
+        """
+
+        # calculates the modulus
+        n_value = p_value * q_value
+
+        # calculates the phi modulus
+        phi_n_value = (p_value - 1) * (q_value - 1)
+
+        # iterates continuously to find
+        # a valid exponent
+        while True:
+            # make sure e has enough bits so we ensure "wrapping" through
+            # modulus (n value)
+            e_value = self._generate_prime_number(max(8, number_bits / 2))
+
+            # checks if the exponent and the modulus are relative primes
+            # and also checks if the exponent and the phi modulus are relative
+            # primes
+            if self._relatively_prime(e_value, n_value) and self._relatively_prime(e_value, phi_n_value):
+                # breaks the loop
+                break
+
+        # retrieves the result of the extended euclid greatest common divisor
+        d_value, i_value, _j_value = self._extended_euclid_greatest_common_divisor(e_value, phi_n_value)
+
+        # in case the greatest common divisor between both
+        # is not one (not relative primes)
+        if not d_value == 1:
+            # raises the key generation error
+            raise encryption_rsa_exceptions.KeyGenerationError("The public exponent '%d' and the phi modulus '%d' are not relative primes" % (e_value, phi_n_value))
+
+        # in case the test for multiplicative inverse
+        # modulo fails
+        if not (e_value * i_value) % phi_n_value == 1:
+            # raises the key generation error
+            raise encryption_rsa_exceptions.KeyGenerationError("The public exponent '%d' and private exponent '%d' are not multiplicative inverse modulo of phi modulus '%d'" % (e_value, i_value, phi_n_value))
+
+        # creates a tuple with the keys
+        keys_tuple = (e_value, i_value)
+
+        # returns the keys tuple
+        return keys_tuple
+
+    def _generate_p_q_values(self, number_bits):
+        """
+        Generates two different prime numbers (p and q values)
+        and returns them in a tuple.
+        The generation is made according to the number
+        of bits defined
+
+        @type number_bits: int
+        @param number_bits: The number of bits to be used in
+        prime generation.
+        @rtype: Tuple
+        @return: A tuple containing the two different prime
+        numbers
+        """
+
+        # generates a prime number to serve as p value
+        p_value = self._generate_prime_number(number_bits)
+
+        # iterates continuously
+        while True:
+            # generates a prime number to serve as q value
+            q_value = self._generate_prime_number(number_bits)
+
+            # in case the q value and the p
+            # value are different
+            if not q_value == p_value:
+                # breaks the loop
+                break
+
+        # creates a tuple with the generated
+        # prime numbers
+        prime_tuple = (p_value, q_value)
+
+        # returns the prime tuple
+        return prime_tuple
+
+    def _generate_prime_number(self, number_bits):
+        """
+        Returns a prime number of max. "math.ceil(number bits / 8) * 8" bits. In
+        other words: number_bits is rounded up to whole bytes.
+        """
+
+        # iterates continuously
+        while True:
+            # generates a random number
+            integer = self._generate_random_integer(number_bits)
+
+            # make sure its odd
+            integer |= 1
+
+            # checks if it's prime
+            if self._is_prime(integer):
+                # breaks the loop
+                break
+
+        # returns the (generated) integer
+        return integer
+
+    def _is_prime(self, number):
+        """
+        Tests if the given number is a prime number.
+
+        @type number: int
+        @param number: The number to be tested as prime.
+        @rtype: bool
+        @return: The result of the test.
+        """
+
+        # in case the randomized primality testing fails
+        if not self._randomized_primality_testing(number, 5):
+            # return false (invalid)
+            # according to jacobi
+            return False
+
+        # returns true (valid)
+        return True
+
+    def _randomized_primality_testing(self, number, k_value):
+        """
+        Calculates whether n is composite (which is always correct) or
+        prime (which is incorrect with error probability 2**-k)
+
+        Returns False if the number if composite, and True if it's
+        probably prime.
+        """
+
+        # the property of the jacobi witness function
+        q_value = 0.5
+
+        # calculates t to ha
+        t_value = colony.libs.math_util.ceil_integer(k_value / math.log(1 / q_value, 2))
+
+        # iterates over the range of t value plus one
+        for _index in range(t_value + 1):
+            # generates a random number in the interval
+            random_number = self._generate_random_interval(1, number - 1)
+
+            # in case the random number is a jacobi witness
+            # then the number is not prime
+            if self._jacobi_witness(random_number, number):
+                # returns false (invalid)
+                return False
+
+        # returns true (valid)
+        return True
+
+    def _jacobi_witness(self, x_value, n_value):
+        """
+        Returns False if n is an Euler pseudo-prime with base x, and
+        True otherwise.
+        """
+
+        # calculates the j value from jacobi
+        j_value = self._jacobi(x_value, n_value) % n_value
+
+        # calculates the f value
+        f_value = pow(x_value, (n_value - 1) / 2, n_value)
+
+        # in case the j value and the f value
+        # are the same
+        if j_value == f_value:
+            # returns false (not witness)
+            return False
+        # otherwise
+        else:
+            # returns true (witness)
+            return True
+
+    def _jacobi(self, a_value, b_value):
+        """
+        Calculates the value of the Jacobi symbol (a / b).
+        """
+
+        # in case the modulus of the a value
+        # with the b value is zero
+        if a_value % b_value == 0:
+            # returns zero
+            return 0
+
+        # sets the initial result
+        result = 1
+
+        # iterates while the a value
+        # is greater than zero
+        while a_value > 1:
+            # in case the a value is odd
+            if a_value & 1:
+                if ((a_value - 1) * (b_value - 1) >> 2) & 1:
+                    # inverts the result
+                    result = -result
+
+                b_value, a_value = a_value, b_value % a_value
+            # otherwise it must be even
+            else:
+                if ((b_value ** 2 - 1) >> 3) & 1:
+                    # inverts the result
+                    result = -result
+
+                # shifts the a value one bit to the right
+                a_value >>= 1
+
+        # returns the result
+        return result
+
+    def _relatively_prime(self, first_value, second_value):
+        """
+        Tests if the given values are relative primes
+        to each other.
+
+        @type first_value: int
+        @param first_value: The first value to be tested.
+        @type second_value: int
+        @param second_value: The second value to be tested.
+        @rtype: bool
+        @return: The result of the relative prime test.
+        """
+
+        # retrieves the greatest common divisor between the
+        # two values
+        divisor = colony.libs.math_util.greatest_common_divisor(first_value, second_value)
+
+        # returns if the divisor is one (relatively prime)
+        return divisor == 1
+
+    def _extended_euclid_greatest_common_divisor(self, a_value, b_value):
+        """
+        Returns a tuple (d, i, j) such that d = greatest_common_divisor(a, b) = ia + jb.greatest_common_divisor
+        """
+
+        # in case the b value is zero
+        if b_value == 0:
+            # creates a simple common divisor tuple
+            common_divisor_tuple = (a_value, 1, 0)
+
+            # returns the common divisor tuple
+            return common_divisor_tuple
+
+        # calculates the q value
+        q_value = abs(a_value % b_value)
+
+        # calculates the r value
+        r_value = long(a_value / b_value)
+
+        # retrieves the extended euclid greatest common divisor for b value and q value
+        d_value, k_value, l_value = self._extended_euclid_greatest_common_divisor(b_value, q_value)
+
+        # creates the common divisor tuple
+        common_divisor_tuple = (d_value, l_value, k_value - l_value * r_value)
+
+        # returns the common divisor tuple
+        return common_divisor_tuple
 
     def _string_to_integer(self, string_value):
         # starts the integer value
@@ -552,90 +675,3 @@ class RsaStructure:
 
         # returns the random integer
         return random_integer
-
-    def _randomized_primality_testing(self, number, k_value):
-        """
-        Calculates whether n is composite (which is always correct) or
-        prime (which is incorrect with error probability 2**-k)
-
-        Returns False if the number if composite, and True if it's
-        probably prime.
-        """
-
-        # the property of the jacobi witness function
-        q_value = 0.5
-
-        # calculates t to ha
-        t_value = colony.libs.math_util.ceil_integer(k_value / math.log(1 / q_value, 2))
-
-        # iterates over the range of t value plus one
-        for _index in range(t_value + 1):
-            # generates a random number in the interval
-            random_number = self._generate_random_interval(1, number - 1)
-
-            # in case the random number is a jacobi witness
-            # then the number is not prime
-            if self._jacobi_witness(random_number, number):
-                # returns false (invalid)
-                return False
-
-        # returns true (valid)
-        return True
-
-    def _jacobi_witness(self, x_value, n_value):
-        """
-        Returns False if n is an Euler pseudo-prime with base x, and
-        True otherwise.
-        """
-
-        # calculates the j value from jacobi
-        j_value = self._jacobi(x_value, n_value) % n_value
-
-        # calculates the f value
-        f_value = pow(x_value, (n_value - 1) / 2, n_value)
-
-        # in case the j value and the f value
-        # are the same
-        if j_value == f_value:
-            # returns false (not witness)
-            return False
-        # otherwise
-        else:
-            # returns true (witness)
-            return True
-
-    def _jacobi(self, a_value, b_value):
-        """
-        Calculates the value of the Jacobi symbol (a / b).
-        """
-
-        # in case the modulus of the a value
-        # with the b value is zero
-        if a_value % b_value == 0:
-            # returns zero
-            return 0
-
-        # sets the initial result
-        result = 1
-
-        # iterates while the a value
-        # is greater than zero
-        while a_value > 1:
-            # in case the a value is odd
-            if a_value & 1:
-                if ((a_value - 1) * (b_value - 1) >> 2) & 1:
-                    # inverts the result
-                    result = -result
-
-                b_value, a_value = a_value, b_value % a_value
-            # otherwise it must be even
-            else:
-                if ((b_value ** 2 - 1) >> 3) & 1:
-                    # inverts the result
-                    result = -result
-
-                # shifts the a value one bit to the right
-                a_value >>= 1
-
-        # returns the result
-        return result
