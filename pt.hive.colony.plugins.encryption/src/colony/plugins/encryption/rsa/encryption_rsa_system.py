@@ -96,43 +96,54 @@ class RsaStructure:
 
     def generate_keys(self, number_bits):
         """
-        Generates public and private keys.
+        Generates public, private and extra keys, using
+        the given number of bits to generate the keys
 
         @type number_bits: int
         @param number_bits: The number of bits to be
-        used in the generated key.
+        used in the generated keys.
+        @rtype: Tuple
+        @return: A tuple containing the public, private
+        and extra keys.
         """
 
         # generates the keys for the given number
         # of bits
-        p, q, e, d = self._generate_keys(number_bits)
+        p_value, q_value, e_value, d_value = self._generate_keys(number_bits)
 
         # calculates the modulus
-        n = p * q
+        n_value = p_value * q_value
 
         # calculates the first exponent
-        fe = d % (p - 1)
+        fe_value = d_value % (p_value - 1)
 
         # calculates the second exponent
-        se = d % (q - 1)
+        se_value = d_value % (q_value - 1)
 
         # calculates the coefficient
-        c = (1 / q) % p
+        c_value = (1 / q_value) % p_value
 
-        # creates the public and private keys map
-        public_key_map = {"n": n, "e": e}
-        private_key_map = {"d": d, "p": p, "q": q}
-        extras_map = {"fe": fe, "se": se, "c": c}
+        # creates the public, private and extra keys map
+        public_key_map = {"n": n_value, "e": e_value}
+        private_key_map = {"d": d_value, "p": p_value, "q": q_value}
+        extra_map = {"fe": fe_value, "se": se_value, "c": c_value}
 
         # creates the keys (tuple)
-        keys = (public_key_map, private_key_map, extras_map)
+        keys = (public_key_map, private_key_map, extra_map)
 
         # sets the keys (tuple) in the instance
         self.keys = keys
 
     def encrypt(self, message, public_key = None):
         """
-        Encrypts a string "message" with the public key "key"
+        Encrypts the given message using the given public key.
+
+        @type message: String
+        @param message: The message to be encrypted.
+        @type public_key: Dictionary
+        @param public_key: The map containing the public key.
+        @rtype: String
+        @return: The encrypted message (cypher).
         """
 
         # retrieves the public key to be used
@@ -144,9 +155,17 @@ class RsaStructure:
 
         return self.chopstring(message, public_exponent, modulus)
 
-    def decrypt(self, message, private_key = None):
+    def decrypt(self, encrypted_message, private_key = None):
         """
-        Decrypts a cypher with the private key "key"
+        Decrypts the given message using the given private key.
+
+        @type encrypted_message: String
+        @param encrypted_message: The encrypted message (cyper) to
+        be decrypted.
+        @type private_key: Dictionary
+        @param private_key: The map containing the private key.
+        @rtype: String
+        @return: The decrypted message.
         """
 
         # retrieves the key to be used
@@ -160,11 +179,19 @@ class RsaStructure:
         # calculates the modulus
         modulus = prime_1 * prime_2
 
-        return self.gluechops(message, private_exponent, modulus)
+        return self.gluechops(encrypted_message, private_exponent, modulus)
 
     def sign(self, message, private_key = None):
         """
-        Signs a string "message" with the private key "key"
+        Signs the given message using the given private key.
+
+        @type message: String
+        @param message: The encrypted message (cyper) to
+        be signed.
+        @type private_key: Dictionary
+        @param private_key: The map containing the private key.
+        @rtype: String
+        @return: The signed message.
         """
 
         # retrieves the key to be used
@@ -180,9 +207,16 @@ class RsaStructure:
 
         return self.chopstring(message, private_exponent, modulus)
 
-    def verify(self, message, public_key = None):
+    def verify(self, signed_message, public_key = None):
         """
-        Verifies a cypher with the public key "key"
+        Verifies the given signed message using the given public key.
+
+        @type signed_message: String
+        @param signed_message: The signed message to be verified.
+        @type public_key: Dictionary
+        @param public_key: The map containing the public key.
+        @rtype: String
+        @return: The (original) message.
         """
 
         # retrieves the public key to be used
@@ -192,7 +226,7 @@ class RsaStructure:
         modulus = public_key["n"]
         public_exponent = public_key["e"]
 
-        return self.gluechops(message, public_exponent, modulus)
+        return self.gluechops(signed_message, public_exponent, modulus)
 
     def chopstring(self, message, key, n_value):
         """
@@ -203,6 +237,7 @@ class RsaStructure:
         Used by "encrypt" and "sign".
         """
 
+        # converts the message to integer
         message_integer = self._string_to_integer(message)
 
         cypered_message_integer = self._encrypt_integer(message_integer, key, n_value)
