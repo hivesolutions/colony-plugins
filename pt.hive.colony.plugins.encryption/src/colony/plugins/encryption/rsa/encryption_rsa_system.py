@@ -304,7 +304,17 @@ class RsaStructure:
 
     def _encrypt_integer(self, message, e_value, n_value):
         """
-        Encrypts a message using encryption key 'ekey', working modulo n.
+        Encrypts a message (integer mode) using the given exponent
+        and modulus values.
+
+        @type message: int
+        @param message: The message represented as an integer.
+        @type e_value: int
+        @param e_value: The exponent to be used.
+        @type n_value: int
+        @param n_value: The modulus value.
+        @rtype: int
+        @return: The encrypted message as an integer.
         """
 
         if type(message) is types.IntType:
@@ -347,8 +357,17 @@ class RsaStructure:
 
     def _generate_exponents(self, p_value, q_value, number_bits):
         """
-        Calculates an encryption and a decryption key (exponent)
-        for p and q, returning them as a tuple.
+        Generates the exponents, using the given p and q prime values
+        according to the given number of bits.
+
+        @type p_value: int
+        @param p_value: The p prime value.
+        @type q_value: int
+        @param q_value: The q prime value.
+        @type number_bits: int
+        @param number_bits: The number of bits for the key.
+        @rtype: Tuple
+        @return: A Tuple containing the exponents.
         """
 
         # calculates the modulus
