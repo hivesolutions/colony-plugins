@@ -326,12 +326,6 @@ class RsaStructure:
         1
         """
 
-        """
-        if not fermat_little_theorem(number) == 1:
-            # Not prime, according to Fermat's little theorem
-            return False
-        """
-
         if not self.miller_rabin(number):
             return False
 
@@ -408,15 +402,18 @@ class RsaStructure:
         # returns the (generated) integer
         return integer
 
-    def are_relatively_prime(self, a, b):
+    def are_relatively_prime(self, first_value, second_value):
         """
         Returns True if a and b are relatively prime, and False if they
         are not.
         """
 
-        d = self.greatest_common_divisor(a, b)
+        # retrieves the greatest common divisor between the
+        # two values
+        divisor = self.greatest_common_divisor(first_value, second_value)
 
-        return d == 1
+        # returns if the divisor is one (relatively prime)
+        return divisor == 1
 
     def find_p_q(self, number_bits):
         """
@@ -456,14 +453,17 @@ class RsaStructure:
         returns them as a tuple (e, d).
         """
 
+        # calculates the modulo
         n = p * q
-        phi_n = (p-1) * (q-1)
+        phi_n = (p - 1) * (q - 1)
 
         while True:
             # make sure e has enough bits so we ensure "wrapping" through
             # modulo n
             e = self.generate_prime_number(max(8, number_bits / 2))
+
             if self.are_relatively_prime(e, n) and self.are_relatively_prime(e, phi_n):
+                # breaks the loop
                 break
 
         d, i, _j = self.extended_euclid_greatest_common_divisor(e, phi_n)
@@ -482,13 +482,18 @@ class RsaStructure:
         Note: this can take a long time, depending on the key size.
         """
 
+        # iterates continuously
         while True:
             p, q = self.find_p_q(number_bits)
+
+            # calculates the keys (private and public) for
+            # the given prime number and number of bits
             e, d = self.calculate_keys(p, q, number_bits)
 
             # For some reason, d is sometimes negative. We don't know how
             # to fix it (yet), so we keep trying until everything is shiny
             if d > 0:
+                # breaks the loop
                 break
 
         # creates a tuple with the generated keys
@@ -592,6 +597,27 @@ class RsaStructure:
 #            message += self.int2bytes(mpart)
 #
 #        return message
+
+    def _fast_exponentiation(self, a, p, n):
+        """
+        Calculates r = a ^ p mod n.
+
+        !!!!!! POR COMO UTIL FUCNTION !!!!
+        """
+
+        result = a % n
+        remainders = []
+
+        while p != 1:
+            remainders.append(p & 1)
+            p = p >> 1
+
+        while remainders:
+            rem = remainders.pop()
+            result = ((a ** rem) * result ** 2) % n
+
+        # returns the result
+        return result
 
     def _string_to_integer(self, string_value):
         # starts the integer value
