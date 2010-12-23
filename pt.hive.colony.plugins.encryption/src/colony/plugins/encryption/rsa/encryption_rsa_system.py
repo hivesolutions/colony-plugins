@@ -227,6 +227,26 @@ class RsaStructure:
 
         return self._encrypt_string(signed_message, public_exponent, modulus)
 
+    def get_keys(self):
+        """
+        Returns the keys.
+
+        @rtype: Dictionary
+        @return: The keys.
+        """
+
+        return self.keys
+
+    def set_keys(self, keys):
+        """
+        Sets the keys.
+
+        @type keys: Dictionary
+        @param keys: The keys.
+        """
+
+        self.keys = keys
+
     def _encrypt_buffer(self, message, key, modulus):
         # retrieves the modulus number of bits
         modulus_number_bits = math.log(modulus, 2)
