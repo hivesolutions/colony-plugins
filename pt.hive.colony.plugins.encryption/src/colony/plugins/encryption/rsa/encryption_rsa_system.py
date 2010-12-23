@@ -43,6 +43,8 @@ import types
 import base64
 import random
 
+import encryption_rsa_exceptions
+
 class EncryptionRsa:
     """
     The encryption rsa class.
@@ -414,35 +416,52 @@ class RsaStructure:
 
         return (d, l, k - l * r)
 
-    # Main function: calculate encryption and decryption keys
     def calculate_keys(self, p, q, number_bits):
         """
-        Calculates an encryption and a decryption key for p and q, and
-        returns them as a tuple (e, d).
+        Calculates an encryption and a decryption key (exponent)
+        for p and q, returning them as a tuple.
         """
 
-        # calculates the modulo
+        # calculates the modulus
         n = p * q
+
+        # calculates the phi modulus
         phi_n = (p - 1) * (q - 1)
 
+        # iterates continuously to find
+        # a valid exponent
         while True:
             # make sure e has enough bits so we ensure "wrapping" through
-            # modulo n
+            # modulus (n)
             e = self.generate_prime_number(max(8, number_bits / 2))
 
+            # checks if the exponent and the modulus are relative primes
+            # and also checks if the exponent and the phi modulus are relative
+            # primes
             if self.are_relatively_prime(e, n) and self.are_relatively_prime(e, phi_n):
                 # breaks the loop
                 break
 
+        # retrieves the result of the extended euclid greatest common divisor
         d, i, _j = self.extended_euclid_greatest_common_divisor(e, phi_n)
 
+        # in case the greatest common divisor between both
+        # is not one (not relative primes)
         if not d == 1:
-            raise Exception("e (%d) and phi_n (%d) are not relatively prime" % (e, phi_n))
+            # raises the key generation error
+            raise encryption_rsa_exceptions.KeyGenerationError("The exponent '%d' and the phi modulus '%d' are not relative primes" % (e, phi_n))
 
+        # in case the test for multiplicative inverse
+        # modulo fails
         if not (e * i) % phi_n == 1:
-            raise Exception("e (%d) and i (%d) are not mult. inv. modulo phi_n (%d)" % (e, i, phi_n))
+            # raises the key generation error
+            raise encryption_rsa_exceptions.KeyGenerationError("The exponent '%d' and exponent '%d' are not multiplicative inverse modulo of phi modulus '%d'" % (e, i, phi_n))
 
-        return (e, i)
+        # creates a tuple with the keys
+        keys_tuple = (e, i)
+
+        # returns the keys tuple
+        return keys_tuple
 
     def _generate_keys(self, number_bits):
         """
