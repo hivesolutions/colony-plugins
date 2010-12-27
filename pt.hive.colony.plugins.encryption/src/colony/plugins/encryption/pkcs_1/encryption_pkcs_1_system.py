@@ -152,6 +152,12 @@ class Pkcs1Structure:
         # returns the keys pem
         return keys_pem
 
+    def load_private_key_pem(self, private_key_pem):
+        # decodes the private key pem from base 64
+        private_key_der_decoded = base64.b64encode(private_key_pem)
+
+        #re.compile(BEGIN_RSA_PRIVATE_VALUE + "\n" + "(?P<contents>.*)"
+
     def generate_private_key_pem(self, keys):
         """
         Generates the a private key in pem format, using

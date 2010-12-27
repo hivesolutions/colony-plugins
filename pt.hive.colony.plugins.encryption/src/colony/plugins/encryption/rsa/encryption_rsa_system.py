@@ -338,7 +338,7 @@ class RsaStructure:
         """
 
         if type(message) is types.IntType:
-            return self.encrypt_int(long(message), e_value, n_value)
+            return self._encrypt_integer(long(message), e_value, n_value)
 
         if not type(message) is types.LongType:
             raise TypeError("You must pass a long or an int")
