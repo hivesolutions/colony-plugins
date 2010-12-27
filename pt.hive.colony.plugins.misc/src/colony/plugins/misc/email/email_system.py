@@ -177,7 +177,7 @@ class Email:
 
             # creates the mime message for the given email sender, email receiver, name
             # sender, name receiver, subject and contents
-            mime_message = self._crete_mime_message(email_sender, email_receiver, name_sender, name_receiver, subject, contents)
+            mime_message = self._create_mime_message(email_sender, email_receiver, name_sender, name_receiver, subject, contents)
 
             # retrieves the mime message value
             mime_message_value = mime_message.get_value()
@@ -188,7 +188,7 @@ class Email:
             # closes the smtp client
             smtp_client.close({})
 
-    def _crete_mime_message(self, email_sender, email_receiver, name_sender, name_receiver, subject, contents):
+    def _create_mime_message(self, email_sender, email_receiver, name_sender, name_receiver, subject, contents):
         # retrieves the format mime plugin
         format_mime_plugin = self.email_plugin.format_mime_plugin
 
