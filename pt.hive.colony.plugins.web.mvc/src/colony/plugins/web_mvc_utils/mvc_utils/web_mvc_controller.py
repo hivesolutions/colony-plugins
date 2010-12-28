@@ -85,6 +85,9 @@ MAP_TYPE_VALUE = "map"
 HOST_VALUE = "Host"
 """ The host value """
 
+PARAMETERS_VALUE = "_parameters"
+""" The parameters value """
+
 DASHED_WORD_PAIR_REPLACEMENT_VALUE = "\\1-\\2"
 """ The replacement value for two capture groups to be separated by dash """
 
@@ -318,6 +321,28 @@ def save_entity_relations(self, rest_request, entity_map, entity, relations_map)
 
         # sets the relation entity in the entity
         setattr(entity, relation_name, relation_entity)
+
+def get_entity_map_parameters(self, entity_map):
+    """
+    Retrieves the entity map parameters value.
+    The parameters are stored in a special part of
+    the entity map, that is removed after read.
+
+    @type entity_map: Dictionary
+    @param entity_map: The entity map.
+    @rtype: Dictionary
+    @return: The parameters map for the entity.
+    """
+
+    # retrieves the entity parameters
+    entity_parameters = entity_map.get(PARAMETERS_VALUE, {})
+
+    # removes the parameters from the entity map
+    # in order to avoid possible attribute problems
+    if entity_map: del entity_map[PARAMETERS_VALUE]
+
+    # returns the entity parameters
+    return entity_parameters
 
 def validate_model_exception(self, model, exception_message, error_description = True):
     """
