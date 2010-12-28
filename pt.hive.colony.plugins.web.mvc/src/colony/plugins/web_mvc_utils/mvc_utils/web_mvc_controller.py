@@ -97,6 +97,12 @@ DASH_VALUE = "-"
 UNDERSCORE_VALUE = "_"
 """ The underscore value """
 
+TO_ONE_RELATION_VALUE = 1
+""" The to one relation value """
+
+TO_MANY_RELATION_VALUE = 2
+""" The to many relation value """
+
 ATTRIBUTE_PARSING_REGEX_VALUE = "(?P<name>[\w]+)|(?P<sequence>\[\])|(?P<map>\[\w+\])"
 """ The attribute parsing regular expression value """
 
@@ -123,6 +129,9 @@ NON_CHARACTER_REGEX = re.compile(NON_CHARACTER_REGEX_VALUE)
 
 DATA_TYPE_CAST_TYPES_MAP = {"text" : str, "numeric" : int, "integer" : int, "float" : float, "date" : datetime, "relation" : None}
 """ The map associating the data types with the cast types """
+
+DEFAULT_RELATION_VALUES_MAP = {TO_ONE_RELATION_VALUE : {}, TO_MANY_RELATION_VALUE : []}
+""" The default relation values map """
 
 def _start_controller(self):
     """
@@ -228,6 +237,87 @@ def get_entity_model(self, entity_manager, entity_model, update_values_map = {},
 
     # returns the entity
     return entity
+
+def set_entity_relation(self, entity, relation_name, relation_value):
+    """
+    Sets the given relation value in the given entity.
+
+    @type entity: Object
+    @param entity: The entity to set the relation.
+    @type relation_name: String
+    @param relation_name: The name of the relation to be set.
+    @type relation_value: Object
+    @param relation_value: The value of the relation to be set.
+    """
+
+    # retrieves the relation value type
+    relation_value_type = type(relation_value)
+
+    # in case the type if the relation value is list
+    if relation_value_type == types.ListType:
+        # iterates over all the values
+        # of the list (relation value)
+        for value in relation_value:
+            # in case the validation of the relation value
+            # fails
+            if not self._validate_relation_value(value):
+                # returns immediately
+                return
+    # otherwise it must be a "simple" value
+    else:
+        # in case the validation of the relation value
+        # fails
+        if not self._validate_relation_value(relation_value):
+            # returns immediately
+            return
+
+    # sets the relation value in entity
+    setattr(entity, relation_name, relation_value)
+
+def save_entity_relations(self, rest_request, entity_map, entity, relations_map):
+    """
+    Saves the entity relations in the in the entity with the given map and values.
+    The relations map describes the various entity relation with a tuple
+    containing the type of relation and the method to be sun to save it.
+
+    @type rest_request: RestRequest
+    @param rest_request: The rest request to be used.
+    @type entity_map: Dictionary
+    @param entity_map: The entity values map.
+    @type entity: Object
+    @param entity: The entity object to be used.
+    @type relations_map: Dictionary
+    @param relations_map: The map containing the description of
+    the relation to be set.
+    """
+
+    # iterates over all the relations
+    for relation_name, relation_item in relations_map.items():
+        # unpacks the relation item, retrieving the relation
+        # type and relation method
+        relation_type, relation_method = relation_item
+
+        # retrieves the default relation value according
+        # to the relation type
+        default_relation_value = DEFAULT_RELATION_VALUES_MAP[relation_type]
+
+        # retrieves the relation value
+        relation_value = entity_map.get(relation_name, default_relation_value)
+
+        # in case the relation value is not valid
+        if not relation_value:
+            # continues the loop
+            continue
+
+        # in case the relation type is single
+        if relation_type == 1:
+            relation_entity = relation_method(rest_request, relation_value)
+        # otherwise it must be a multiple relation
+        else:
+            relation_entity = [relation_method(rest_request, relation_value_item) for relation_value_item in relation_value]
+
+        # sets the relation entity in the entity
+        setattr(entity, relation_name, relation_entity)
 
 def validate_model_exception(self, model, exception_message, error_description = True):
     """
@@ -1199,6 +1289,27 @@ def _set_entity_attribute(self, attribute_key, attribute_value, entity, entity_m
 
     # sets the attribute value casted in the entity
     setattr(entity, attribute_key, attribute_value_casted)
+
+def _validate_relation_value(self, relation_value):
+    """
+    Validates the given (entity) relation value, checking
+    if it is a valid relation value.
+
+    @type relation_value: Object
+    @param relation_value: The relation value to be checked.
+    @rtype: bool
+    @return: The result of the validation test.
+    """
+
+    # in case the relation value is valid and
+    # the relation value is not lazy loaded
+    if relation_value and not relation_value == "%lazy-loaded%":
+        # returns true (valid)
+        return True
+    # otherwise it must be invalid
+    else:
+        # returns false (invalid)
+        return False
 
 def _cast_safe(self, value, cast_type = str, default_value = None):
     """
