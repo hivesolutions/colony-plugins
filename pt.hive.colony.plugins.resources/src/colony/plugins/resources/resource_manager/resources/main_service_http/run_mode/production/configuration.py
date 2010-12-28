@@ -65,6 +65,7 @@ configuration = {
                      "resolution_order" : ["/colony_web/plugins",
                                            "/colony_web",
                                            "/colony_mod_python",
+                                           "/cgi-bin",
                                            "/wsgi-bin/remote_sql_service_sqlite",
                                            "/"],
                      "/colony_web" : {
@@ -86,6 +87,13 @@ configuration = {
                          "handler" : "colony",
                          "allow_redirection" : False,
                          "request_properties" : {}
+                     },
+                     "/cgi-bin" : {
+                         "handler" : "cgi",
+                         "allow_redirection" : False,
+                         "request_properties" : {
+                             "base_path" : "${HOME}/cgi-bin",
+                         }
                      },
                      "/wsgi-bin/remote_sql_service_sqlite" : {
                          "handler" : "wsgi",
