@@ -636,7 +636,10 @@ def process_template_file(self, template_file, variable_encoding = None):
     # returns the processed template file
     return processed_template_file
 
-def retrieve_template_file(self, file_name = None, encoding = DEFAULT_TEMPLATE_FILE_ENCODING):
+def retrieve_template_file(self, file_name = None, encoding = DEFAULT_TEMPLATE_FILE_ENCODING, locale = None):
+    # processes the file name according to the locale
+    file_name = self._process_file_name_locale(file_name, locale)
+
     # creates the template file path
     template_file_path = self.templates_path + "/" + file_name
 
@@ -1373,3 +1376,42 @@ def _cast_safe(self, value, cast_type = str, default_value = None):
     except:
         # returns the default value
         return default_value
+
+def _process_file_name_locale(self, file_name, locale = None):
+    """
+    Processes the given file name according to the given locale.
+    In case no locale is given the original file name
+    is returned.
+
+    @type file_name: String
+    @param file_name: The file name to be processed.
+    @type locale: String
+    @param locale: The locale to be used for file
+    name processing.
+    @rtype: String
+    @return: The processed file name.
+    """
+
+    # in case no locale is defined
+    if not locale:
+        # returns the file name
+        return file_name
+
+    # splits the file name around the first dot
+    file_name_splitted = file_name.split(".", 1)
+
+    # converts the locale to lower
+    locale_lower = locale.lower()
+
+    # creates the locale string value from the locale lower
+    locale_string_value = "_" + locale_lower + "."
+
+    # inserts the locale string value in the file name splitted list
+    file_name_splitted.insert(1, locale_string_value)
+
+    # re-joins the file name back to create
+    # the new file name
+    file_name = "".join(file_name_splitted)
+
+    # returns the file name
+    return file_name
