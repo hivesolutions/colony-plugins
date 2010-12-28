@@ -405,6 +405,12 @@ class EntityManager:
         if not self.entity_manager_engine_plugin.exists_table_generator(connection):
             self.entity_manager_engine_plugin.create_table_generator(connection)
 
+    def lock_table(self, table_name, parameters):
+        # retrieves the connection object
+        connection = self.get_connection()
+
+        return self.entity_manager_engine_plugin.lock_table(connection, table_name, parameters)
+
     def retrieve_next_name_id(self, name):
         # retrieves the connection object
         connection = self.get_connection()

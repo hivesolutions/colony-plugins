@@ -137,6 +137,9 @@ class EntityManagerSqliteEnginePlugin(colony.base.plugin_system.Plugin):
     def exists_table_generator(self, connection):
         return self.entity_manager_sqlite_engine.exists_table_generator(connection)
 
+    def lock_table(self, connection, table_name, parameters):
+        return self.entity_manager_sqlite_engine.lock_table(connection, table_name, parameters)
+
     def retrieve_next_name_id(self, connection, name):
         return self.entity_manager_sqlite_engine.retrieve_next_name_id(connection, name)
 

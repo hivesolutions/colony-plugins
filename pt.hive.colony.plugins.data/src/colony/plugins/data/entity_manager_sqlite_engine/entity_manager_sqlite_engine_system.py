@@ -714,6 +714,25 @@ class EntityManagerSqliteEngine:
         else:
             return False
 
+    def lock_table(self, connection, table_name, parameters):
+        # retrieves the database connection from the connection object
+        database_connection = connection.database_connection
+
+        # creates the cursor for the given connection
+        cursor = database_connection.cursor()
+
+        # retrieves the column name from the parameters
+        column_name = parameters["column_name"]
+
+        # creates the query for the database lock
+        query_string_value = "update " + table_name + " set  " + column_name + " = " + column_name + " where 0 = 1"
+
+        # executes the query creating the table
+        self.execute_query(cursor, query_string_value)
+
+        # closes the cursor
+        cursor.close()
+
     def retrieve_next_name_id(self, connection, name):
         # retrieves the database connection from the connection object
         database_connection = connection.database_connection
