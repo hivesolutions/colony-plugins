@@ -37,6 +37,7 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
+import os
 import re
 import types
 import datetime
@@ -636,12 +637,12 @@ def process_template_file(self, template_file, variable_encoding = None):
     # returns the processed template file
     return processed_template_file
 
-def retrieve_template_file(self, file_name = None, encoding = DEFAULT_TEMPLATE_FILE_ENCODING, locale = None):
-    # processes the file name according to the locale
-    file_name = self._process_file_name_locale(file_name, locale)
+def retrieve_template_file(self, file_path = None, encoding = DEFAULT_TEMPLATE_FILE_ENCODING, locale = None):
+    # processes the file path according to the locale
+    file_path = self._process_file_path_locale(file_path, locale)
 
     # creates the template file path
-    template_file_path = self.templates_path + "/" + file_name
+    template_file_path = self.templates_path + "/" + file_path
 
     # parses the template file path
     template_file = self.template_engine_manager_plugin.parse_file_path_encoding(template_file_path, encoding)
@@ -703,6 +704,14 @@ def assign_session_template_file(self, rest_request, template_file, variable_pre
 
         # assigns the session attribute to the template file
         template_file.assign(variable_prefix + session_attribute_name_replaced, session_attribute)
+
+def assign_include_template_file(self, template_file, variable_name, variable_value, locale = None):
+    # processes the variable value (file path) to retrieve
+    # the localized variable value
+    variable_value = locale and self._process_file_path_locale(variable_value, locale) or variable_value
+
+    # assigns the variable to the template file
+    template_file.assign(variable_name, variable_value)
 
 def get_session_attribute(self, rest_request, session_attribute_name, namespace_name = None):
     # tries to retrieve the rest request session
@@ -1377,31 +1386,38 @@ def _cast_safe(self, value, cast_type = str, default_value = None):
         # returns the default value
         return default_value
 
-def _process_file_name_locale(self, file_name, locale = None):
+def _process_file_path_locale(self, file_path, locale = None):
     """
-    Processes the given file name according to the given locale.
-    In case no locale is given the original file name
+    Processes the given file path according to the given locale.
+    In case no locale is given the original file path
     is returned.
 
-    @type file_name: String
-    @param file_name: The file name to be processed.
+    @type file_path: String
+    @param file_path: The file path to be processed.
     @type locale: String
     @param locale: The locale to be used for file
-    name processing.
+    path processing.
     @rtype: String
-    @return: The processed file name.
+    @return: The processed file path.
     """
 
     # in case no locale is defined
     if not locale:
-        # returns the file name
-        return file_name
+        # returns the file path
+        return file_path
+
+    # splits the file path to retrieve the
+    # base file path and the file name
+    base_file_path, file_name = os.path.split(file_path)
 
     # splits the file name around the first dot
     file_name_splitted = file_name.split(".", 1)
 
     # converts the locale to lower
     locale_lower = locale.lower()
+
+    # replaces the slashes with underscores
+    locale_lower = locale_lower.replace("-", "_")
 
     # creates the locale string value from the locale lower
     locale_string_value = "_" + locale_lower + "."
@@ -1413,5 +1429,9 @@ def _process_file_name_locale(self, file_name, locale = None):
     # the new file name
     file_name = "".join(file_name_splitted)
 
-    # returns the file name
-    return file_name
+    # joins the file path and the file name, to retrieve
+    # the final file path
+    file_path = os.path.join(base_file_path, file_name)
+
+    # returns the file path
+    return file_path
