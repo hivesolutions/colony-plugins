@@ -426,8 +426,11 @@ class EmailBuildAutomationExtension:
         mime_message.set_header(DATE_VALUE, current_date_time_formated)
         mime_message.set_header(USER_AGENT_VALUE, USER_AGENT_IDENTIFIER)
 
+        # retrieves the email build automation extension plugin id
+        email_build_automation_extension_plugin_id = self.email_build_automation_extension_plugin.id
+
         # retrieves the email build automation extension plugin path
-        email_build_automation_extension_plugin_path = plugin_manager.get_plugin_path_by_id(self.email_build_automation_extension_plugin.id)
+        email_build_automation_extension_plugin_path = plugin_manager.get_plugin_path_by_id(email_build_automation_extension_plugin_id)
 
         # creates the email html report template file path
         email_html_report_template_file_path = email_build_automation_extension_plugin_path + "/" + BUILD_AUTOMATION_EXTENSIONS_EMAIL_PATH + "/" + GUILTY_EMAIL_HTML_REPORT_TEMPLATE_FILE_NAME
