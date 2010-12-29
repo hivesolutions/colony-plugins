@@ -61,6 +61,10 @@ def remove(self):
     # removes the entity using the entity manager
     self._entity_manager.remove(self)
 
+def save_update(self):
+    # saves or updates the entity using the entity manager
+    self._entity_manager.save_update(self)
+
 def get_id_attribute_name(self):
     # retrieves the class of the current object
     entity_class = self.__class__
