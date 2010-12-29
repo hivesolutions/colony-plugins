@@ -611,6 +611,34 @@ class EntityManager:
         # removes the entity
         return self.entity_manager_engine_plugin.remove_entity(connection, entity)
 
+    def save_update(self, entity):
+        # retrieves the entity class id attribute value
+        entity_id_attribute_value = self.get_entity_id_attribute_value(entity)
+
+        # in case the entity id attribute valid
+        # is not set
+        if entity_id_attribute_value == None:
+            # saves the entity
+            self.save(entity)
+        # otherwise
+        else:
+            # updates the entity
+            self.update(entity)
+
+    def _save_update(self, entity):
+        # retrieves the entity class id attribute value
+        entity_id_attribute_value = self.get_entity_id_attribute_value(entity)
+
+        # in case the entity id attribute valid
+        # is not set
+        if entity_id_attribute_value == None:
+            # saves the entity
+            self._save(entity)
+        # otherwise
+        else:
+            # updates the entity
+            self._update(entity)
+
     def find(self, entity_class, id_value):
         # retrieves the connection object
         connection = self.get_connection()
