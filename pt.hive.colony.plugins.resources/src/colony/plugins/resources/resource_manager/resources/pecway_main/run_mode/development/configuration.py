@@ -50,5 +50,16 @@ configuration = {
                              }
                          }
                      }
+                 },
+                 "email" : {
+                     "sender_email" : "payments@pecway.com",
+                     "sender_name" : "Pecway Payments",
+                     "smtp" : {
+                         "hostname" : "localhost",
+                         "port" : 25,
+                         "username" : None,
+                         "password" : None,
+                         "tls" : False
+                     }
                  }
              }
