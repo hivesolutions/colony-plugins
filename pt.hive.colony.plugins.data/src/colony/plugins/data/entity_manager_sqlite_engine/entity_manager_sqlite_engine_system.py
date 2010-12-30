@@ -725,7 +725,7 @@ class EntityManagerSqliteEngine:
         column_name = parameters["column_name"]
 
         # creates the query for the database lock
-        query_string_value = "update " + table_name + " set  " + column_name + " = " + column_name + " where 0 = 1"
+        query_string_value = "update " + table_name + " set " + column_name + " = " + column_name + " where 0 = 1"
 
         # executes the query creating the table
         self.execute_query(cursor, query_string_value)
@@ -2242,6 +2242,22 @@ class EntityManagerSqliteEngine:
         cursor.close()
 
         return entities_list
+
+    def lock(self, connection, entity_class, id_value):
+        # retrieves the entity class name
+        entity_class_name = entity_class.__name__
+
+        # retrieves all the valid class attribute names, removes method values and the name exceptions
+        entity_class_valid_attribute_names = self.get_entity_class_attribute_names(entity_class)
+
+        # retrieves the entity class valid attribute first name
+        entity_class_valid_attribute_first_name = entity_class_valid_attribute_names[0]
+
+        # creates the parameters map
+        parameters = {"column_name" : entity_class_valid_attribute_first_name}
+
+        # locks the table in order to lock the entity
+        self.lock_table(connection, entity_class_name, parameters)
 
     def get_entity_class_attribute_names(self, entity_class):
         """

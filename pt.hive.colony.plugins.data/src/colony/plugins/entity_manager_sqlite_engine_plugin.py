@@ -173,6 +173,9 @@ class EntityManagerSqliteEnginePlugin(colony.base.plugin_system.Plugin):
     def find_all_entities_options(self, connection, entity_class, value, search_field_name, options):
         return self.entity_manager_sqlite_engine.find_all_entities_options(connection, entity_class, value, search_field_name, options = options)
 
+    def lock(self, connection, entity_class, id_value):
+        return self.entity_manager_sqlite_engine.lock(connection, entity_class, id_value)
+
     def get_business_helper_plugin(self):
         return self.business_helper_plugin
 
