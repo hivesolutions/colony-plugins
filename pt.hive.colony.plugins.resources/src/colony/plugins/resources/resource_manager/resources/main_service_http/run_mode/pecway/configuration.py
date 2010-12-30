@@ -19,7 +19,7 @@
 # You should have received a copy of the GNU General Public License
 # along with Hive Colony Framework. If not, see <http://www.gnu.org/licenses/>.
 
-__author__ = "João Magalhães <joamag@hive.pt> & Luís Martinho <lmartinho@hive.pt>"
+__author__ = "João Magalhães <joamag@hive.pt>"
 """ The author(s) of the module """
 
 __version__ = "1.0.0"
@@ -55,10 +55,20 @@ configuration = {
                  "allowed_hosts" : {"127.0.0.1" : True,
                                     "localhost" : True,
                                     "pecway.com" : True,
+                                    "www.pecway.com" : True,
                                     "payments.plubee.com" : True},
                  "virtual_servers" : {
-                     "resolution_order" : ["pecway.com", "payments.plubee.com"],
+                     "resolution_order" : ["pecway.com", "www.pecway.com", "payments.plubee.com"],
                      "pecway.com" : {
+                         "redirections" : {
+                             "resolution_order" : ["/"],
+                             "/" : {
+                                 "target" : "/colony_mod_python/rest/mvc/pecway/",
+                                 "recursive_redirection" : True
+                             }
+                         }
+                     },
+                     "www.pecway.com" : {
                          "redirections" : {
                              "resolution_order" : ["/"],
                              "/" : {
