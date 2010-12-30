@@ -65,6 +65,16 @@ def save_update(self):
     # saves or updates the entity using the entity manager
     self._entity_manager.save_update(self)
 
+def lock(self):
+    # retrieves the class of the current object
+    entity_class = self.__class__
+
+    # retrieves the id attribute value
+    id_attribute_value = self.get_id_attribute_value()
+
+    # locks the entity with the given attribute
+    self._entity_manager.lock(entity_class, id_attribute_value)
+
 def get_id_attribute_name(self):
     # retrieves the class of the current object
     entity_class = self.__class__
