@@ -455,8 +455,6 @@ def process_form_data(self, rest_request, encoding = DEFAULT_ENCODING):
             # the base attribute name and the attribute value
             self._process_form_attribute(base_attributes_map, attribute, attribute_value)
 
-    print str(base_attributes_map)
-
     # returns the base attributes map
     return base_attributes_map
 
@@ -790,8 +788,6 @@ def get_attribute_decoded(self, rest_request, attribute_name, encoding = DEFAULT
     # retrieves the attribute value from the attribute name
     attribute_value = rest_request.get_attribute(attribute_name)
 
-    print attribute_name + ":'" + str(attribute_value) + "'"
-
     # in case the attribute value is valid
     if attribute_value:
         # retrieves the attribute value type
@@ -832,8 +828,6 @@ def get_attribute_decoded(self, rest_request, attribute_name, encoding = DEFAULT
         # the attribute value decoded
         return attribute_value_decoded
     else:
-        print str(attribute_value)
-
         # returns the empty value
         return ""
 
