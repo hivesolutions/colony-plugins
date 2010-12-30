@@ -788,6 +788,8 @@ def get_attribute_decoded(self, rest_request, attribute_name, encoding = DEFAULT
     # retrieves the attribute value from the attribute name
     attribute_value = rest_request.get_attribute(attribute_name)
 
+    print attribute_name + ":'" + str(attribute_value) + "'"
+
     # in case the attribute value is valid
     if attribute_value:
         # retrieves the attribute value type
