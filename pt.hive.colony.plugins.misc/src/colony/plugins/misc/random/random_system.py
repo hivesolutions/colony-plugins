@@ -98,8 +98,14 @@ class Random:
         # retrieves the process id
         process_id = os.getpid()
 
+        # retrieves the process id in absolute
+        process_id_absolute = abs(process_id)
+
         # retrieves the thread id
         thread_id = thread.get_ident()
+
+        # retrieves the thread id in absolute
+        thread_id_absolute = abs(thread_id)
 
         # retrieves the current time
         current_time = time.time()
@@ -108,7 +114,7 @@ class Random:
         current_time_integer = int(current_time * TIME_FACTOR)
 
         # creates the random value
-        random = "%s%s%s%s%s"  % (SECRET_KEY, process_id, thread_id, current_time_integer, random_key)
+        random = "%s%s%s%s%s"  % (SECRET_KEY, process_id_absolute, thread_id_absolute, current_time_integer, random_key)
 
         # returns the random value
         return random
