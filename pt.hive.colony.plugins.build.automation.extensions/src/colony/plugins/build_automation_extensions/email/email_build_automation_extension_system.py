@@ -287,16 +287,11 @@ class EmailBuildAutomationExtension:
         current_date_time = datetime.datetime.utcnow()
         current_date_time_formated = current_date_time.strftime(DATE_TIME_FORMAT)
 
-        # encodes the values
-        sender_line_encoded = sender_line.encode(DEFAULT_ENCODING)
-        receiver_line_encoded = receiver_line.encode(DEFAULT_ENCODING)
-        subject_encoded = subject.encode(DEFAULT_ENCODING)
-
         # sets the basic mime message headers
-        mime_message.set_header(FROM_VALUE, sender_line_encoded)
-        mime_message.set_header(TO_VALUE, sender_line_encoded)
-        mime_message.set_header(BCC_VALUE, receiver_line_encoded)
-        mime_message.set_header(SUBJECT_VALUE, subject_encoded)
+        mime_message.set_header(FROM_VALUE, sender_line)
+        mime_message.set_header(TO_VALUE, sender_line)
+        mime_message.set_header(BCC_VALUE, receiver_line)
+        mime_message.set_header(SUBJECT_VALUE, subject)
         mime_message.set_header(DATE_VALUE, current_date_time_formated)
         mime_message.set_header(USER_AGENT_VALUE, USER_AGENT_IDENTIFIER)
 
@@ -413,16 +408,11 @@ class EmailBuildAutomationExtension:
         current_date_time = datetime.datetime.utcnow()
         current_date_time_formated = current_date_time.strftime(DATE_TIME_FORMAT)
 
-        # encodes the values
-        sender_line_encoded = sender_line.encode(DEFAULT_ENCODING)
-        receiver_line_encoded = receiver_line.encode(DEFAULT_ENCODING)
-        subject_encoded = subject.encode(DEFAULT_ENCODING)
-
         # sets the basic mime message headers
-        mime_message.set_header(FROM_VALUE, sender_line_encoded)
-        mime_message.set_header(TO_VALUE, sender_line_encoded)
-        mime_message.set_header(BCC_VALUE, receiver_line_encoded)
-        mime_message.set_header(SUBJECT_VALUE, subject_encoded)
+        mime_message.set_header(FROM_VALUE, sender_line)
+        mime_message.set_header(TO_VALUE, sender_line)
+        mime_message.set_header(BCC_VALUE, receiver_line)
+        mime_message.set_header(SUBJECT_VALUE, subject)
         mime_message.set_header(DATE_VALUE, current_date_time_formated)
         mime_message.set_header(USER_AGENT_VALUE, USER_AGENT_IDENTIFIER)
 
