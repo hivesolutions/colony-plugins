@@ -53,6 +53,9 @@ POST_METHOD_VALUE = "POST"
 CONTENT_TYPE_CHARSET_VALUE = "content_type_charset"
 """ The content type charset value """
 
+REQUEST_TIMEOUT_VALUE = "request_timeout"
+""" The request timeout value """
+
 ERROR_STATUS = "err"
 """ The error status """
 
@@ -64,6 +67,9 @@ BASE_REST_URL = "http://www.easypay.pt/_s/"
 
 BASE_REST_SECURE_URL = "https://www.easypay.pt/_s/"
 """ The base rest secure url to be used """
+
+DEFAULT_REQUEST_TIMEOUT = 60
+""" The default request timeout """
 
 class ServiceEasypay:
     """
@@ -495,7 +501,7 @@ class EasypayClient:
             self.http_client = self.main_client_http_plugin.create_client({CONTENT_TYPE_CHARSET_VALUE : DEFAULT_CHARSET})
 
             # opens the http client
-            self.http_client.open({})
+            self.http_client.open({REQUEST_TIMEOUT_VALUE : DEFAULT_REQUEST_TIMEOUT})
 
         # returns the http client
         return self.http_client
