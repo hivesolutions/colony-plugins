@@ -2143,7 +2143,7 @@ class HttpRequest:
 
         return self.headers_map.get(header_name, None)
 
-    def set_header(self, header_name, header_value):
+    def set_header(self, header_name, header_value, encode = True):
         """
         Set a response header value on the request.
 
@@ -2152,8 +2152,21 @@ class HttpRequest:
         @type header_value: Object
         @param header_value: The value of the header to be sent
         in the response.
+        @type encode: bool
+        @param encode: If the header value should be encoded in
+        case the type is unicode.
         """
 
+        # retrieves the header value type
+        header_value_type = type(header_value)
+
+        # in case the header value type is unicode
+        # and the encode flag is set
+        if header_value_type == types.UnicodeType and encode:
+            # encodes the header value with the content type charset
+            header_value = header_value.encode(self.content_type_charset)
+
+        # sets the header value in the headers map
         self.response_headers_map[header_name] = header_value
         self.headers_out[header_name] = header_value
 
