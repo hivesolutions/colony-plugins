@@ -455,6 +455,8 @@ def process_form_data(self, rest_request, encoding = DEFAULT_ENCODING):
             # the base attribute name and the attribute value
             self._process_form_attribute(base_attributes_map, attribute, attribute_value)
 
+    print str(base_attributes_map)
+
     # returns the base attributes map
     return base_attributes_map
 
