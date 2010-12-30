@@ -41,7 +41,7 @@ import colony.base.plugin_system
 
 class MainLocalizationTranslationBundleEnUsPlugin(colony.base.plugin_system.Plugin):
     """
-    The main class for the Localization Translation Bundle En Us Main plugin
+    The main class for the Localization Translation Bundle En Us Main plugin.
     """
 
     id = "pt.hive.colony.plugins.main.localization.translation_bundle.en_us"
