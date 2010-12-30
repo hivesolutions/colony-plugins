@@ -131,7 +131,7 @@ CAMEL_CASED_WORD_PAIR_REGEX = re.compile(CAMEL_CASED_WORD_PAIR_REGEX_VALUE)
 NON_CHARACTER_REGEX = re.compile(NON_CHARACTER_REGEX_VALUE)
 """ The non-character regex """
 
-DATA_TYPE_CAST_TYPES_MAP = {"text" : str, "numeric" : int, "integer" : int, "float" : float, "date" : datetime, "relation" : None}
+DATA_TYPE_CAST_TYPES_MAP = {"text" : unicode, "numeric" : int, "integer" : int, "float" : float, "date" : datetime, "relation" : None}
 """ The map associating the data types with the cast types """
 
 DEFAULT_RELATION_VALUES_MAP = {TO_ONE_RELATION_VALUE : {}, TO_MANY_RELATION_VALUE : []}
