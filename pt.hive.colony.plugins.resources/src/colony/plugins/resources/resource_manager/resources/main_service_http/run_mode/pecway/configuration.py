@@ -90,11 +90,18 @@ configuration = {
                  "redirections" : {
                  },
                  "contexts" : {
-                     "resolution_order" : ["/colony_mod_python"],
+                     "resolution_order" : ["/colony_mod_python", "/template_error_handler"],
                      "/colony_mod_python" : {
                          "handler" : "colony",
                          "allow_redirection" : False,
                          "request_properties" : {}
+                     },
+                     "/template_error_handler" : {
+                         "handler" : "file",
+                         "allow_redirection" : False,
+                         "request_properties" : {
+                             "base_path" : "$resource{system.path.colony}/pt.hive.colony.plugins.main.service.http/src/colony/plugins/main_service_http_template_error_handler/template_error_handler/resources"
+                         }
                      }
                  }
              }
