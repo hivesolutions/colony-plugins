@@ -828,6 +828,8 @@ def get_attribute_decoded(self, rest_request, attribute_name, encoding = DEFAULT
         # the attribute value decoded
         return attribute_value_decoded
     else:
+        print str(attribute_value)
+
         # returns the empty value
         return ""
 
