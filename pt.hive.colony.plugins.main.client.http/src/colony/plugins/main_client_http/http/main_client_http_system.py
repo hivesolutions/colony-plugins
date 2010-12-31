@@ -1239,7 +1239,7 @@ class HttpRequest:
         result = colony.libs.string_buffer_util.StringBuffer()
 
         # encodes the path if required
-        path = self.encode_path and self._encode_path() or self.path
+        path = self.encode_path and self._encode_path() or self._encode(self.path)
 
         # encodes the attributes
         encoded_attributes = self._encode_attributes()
@@ -1316,9 +1316,6 @@ class HttpRequest:
         # values into the result
         result.write("\r\n")
         result.write(message)
-
-        # prints the string list
-        print "String list" + repr(result.string_list)
 
         # retrieves the value from the result buffer
         result_value = result.get_value()
