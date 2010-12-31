@@ -1317,6 +1317,9 @@ class HttpRequest:
         result.write("\r\n")
         result.write(message)
 
+        # prints the string list
+        print "String list" + repr(result.string_list)
+
         # retrieves the value from the result buffer
         result_value = result.get_value()
 
