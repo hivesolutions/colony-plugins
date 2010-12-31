@@ -46,6 +46,11 @@ configuration = {
                  "default_connection_timeout" : 30,
                  "default_request_timeout" : 30,
                  "default_response_timeout" : 30,
+                 "default_number_threads" : 15,
+                 "default_scheduling_algorithm" : 2,
+                 "default_maximum_number_threads" : 30,
+                 "default_maximum_number_work_threads" : 15,
+                 "default_work_scheduling_algorithm" : 3,
                  "contexts" : {
                      "/colony_web" : {
                          "handler" : "file",
