@@ -55,10 +55,9 @@ configuration = {
                  "allowed_hosts" : {"127.0.0.1" : True,
                                     "localhost" : True,
                                     "pecway.com" : True,
-                                    "www.pecway.com" : True,
-                                    "payments.plubee.com" : True},
+                                    "www.pecway.com" : True},
                  "virtual_servers" : {
-                     "resolution_order" : ["pecway.com", "www.pecway.com", "payments.plubee.com"],
+                     "resolution_order" : ["pecway.com", "www.pecway.com"],
                      "pecway.com" : {
                          "redirections" : {
                              "resolution_order" : ["/"],
@@ -69,15 +68,6 @@ configuration = {
                          }
                      },
                      "www.pecway.com" : {
-                         "redirections" : {
-                             "resolution_order" : ["/"],
-                             "/" : {
-                                 "target" : "/colony_mod_python/rest/mvc/pecway/",
-                                 "recursive_redirection" : True
-                             }
-                         }
-                     },
-                     "payments.plubee.com" : {
                          "redirections" : {
                              "resolution_order" : ["/"],
                              "/" : {
