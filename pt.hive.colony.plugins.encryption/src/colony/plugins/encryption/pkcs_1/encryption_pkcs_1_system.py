@@ -219,7 +219,7 @@ class Pkcs1Structure:
     def verify_test(self, keys, signature_verified, string_value):
         # verifies the keys and the signature verified, retrieving
         # the hash algorithm name and the digest value
-        hash_algorithm_name, digest_value = self.verify(keys, signature_verified)
+        hash_algorithm_name, digest_value = self._verify(keys, signature_verified)
 
         # creates a new hash using the given hash algorithm name
         hash = hashlib.new(hash_algorithm_name)
@@ -239,78 +239,6 @@ class Pkcs1Structure:
         else:
             # returns false (invalid)
             return False
-
-    def verify(self, keys, signature_verified):
-        # retrieves the first character
-        first_character = signature_verified[0]
-
-        # converts the first character to ordinal
-        first_character_ordinal = ord(first_character)
-
-        # in case the first character ordinal is not one
-        if not first_character_ordinal == 0x01:
-            # raises the invalid format exception
-            raise encryption_pkcs_1_exceptions.InvalidFormatException("invalid signature format")
-
-        # creates the ber structure
-        ber_structure = self.format_ber_plugin.create_structure({})
-
-        # retrieves the signature verified length
-        signature_verified_length = len(signature_verified)
-
-        # iterates over the range of the signature verified length
-        # starting in the one value
-        for index in range(1, signature_verified_length):
-            # retrieves the current character
-            current_character = signature_verified[index]
-
-            # converts the current character to ordinal
-            current_character_ordinal = ord(current_character)
-
-            # in case the current character ordinal is zero
-            # (end of padding part)
-            if current_character_ordinal == 0x00:
-                # breaks the loop
-                break
-
-        # retrieves the signature value
-        signature_value = signature_verified[index + 1:]
-
-        # unpacks the signature value
-        signature_value_unpacked = ber_structure.unpack(signature_value)
-
-        signature_value_value = signature_value_unpacked[VALUE_VALUE]
-
-        # retrieves the digest algorithm and the digest algorithm value
-        digest_algorithm = signature_value_value[0]
-        digest_algorithm_value = digest_algorithm[VALUE_VALUE]
-
-        # retrieves the algorithm and the algorithm value
-        algorithm = digest_algorithm_value[0]
-        algorithm_value = algorithm[VALUE_VALUE]
-
-        # retrieves the arguments and the arguments value
-        arguments = digest_algorithm_value[1]
-        arguments_value = arguments[VALUE_VALUE]
-
-        # retrieves the digest and the digest value
-        digest = signature_value_value[1]
-        digest_value = digest[VALUE_VALUE]
-
-        # in case the arguments value is not none
-        if not arguments_value == None:
-            # raises the invalid format exception
-            raise encryption_pkcs_1_exceptions.InvalidFormatException("invalid arguments value: " + str(arguments_value))
-
-        # retrieves the hash algorithm name
-        hash_algorithm_name = TUPLES_HASH_OBJECT_IDENTIFIERS_MAP[algorithm_value]
-
-        # creates the return tuple with the hash algorithm name
-        # and the digest value
-        return_tuple = (hash_algorithm_name, digest_value)
-
-        # returns the return value
-        return return_tuple
 
     def generate_private_key_pem(self, keys, version = 1):
         """
@@ -554,47 +482,6 @@ class Pkcs1Structure:
         # returns the subject public key info
         return subject_plubic_key_info_packed
 
-    def _split_base_64(self, string_value):
-        # retrieves the string value length
-        string_value_length = len(string_value)
-
-        # starts the base index
-        base_index = 0
-
-        # creates the list
-        string_value_list = []
-
-        # iterates continuously
-        while True:
-            # in case the base index is greater or equal
-            # to the private key der encoded length
-            if base_index >= string_value_length:
-                # breaks the loop
-                break
-
-            # calculates the end index from the base index
-            end_index = base_index + BASE_64_ENCODED_MAXIMUM_SIZE
-
-            # retrieves the string value token
-            string_value_token = string_value[base_index:end_index]
-
-            # creates the string value from the string value token
-            # and a newline character
-            string_value_line = string_value_token + "\n"
-
-            # adds the string value line to the string value list
-            string_value_list.append(string_value_line)
-
-            # sets the base index as the end index
-            base_index = end_index
-
-        # joins the string value list retrieving the
-        # string value splitted
-        string_value_splitted = "".join(string_value_list)
-
-        # returns the string value splitted
-        return string_value_splitted
-
     def load_private_key_der(self, private_key_der):
         # creates the ber structure
         ber_structure = self.format_ber_plugin.create_structure({})
@@ -723,6 +610,119 @@ class Pkcs1Structure:
 
         # returns the keys tuple
         return keys
+
+    def _verify(self, keys, signature_verified):
+        # retrieves the first character
+        first_character = signature_verified[0]
+
+        # converts the first character to ordinal
+        first_character_ordinal = ord(first_character)
+
+        # in case the first character ordinal is not one
+        if not first_character_ordinal == 0x01:
+            # raises the invalid format exception
+            raise encryption_pkcs_1_exceptions.InvalidFormatException("invalid signature format")
+
+        # creates the ber structure
+        ber_structure = self.format_ber_plugin.create_structure({})
+
+        # retrieves the signature verified length
+        signature_verified_length = len(signature_verified)
+
+        # iterates over the range of the signature verified length
+        # starting in the one value
+        for index in range(1, signature_verified_length):
+            # retrieves the current character
+            current_character = signature_verified[index]
+
+            # converts the current character to ordinal
+            current_character_ordinal = ord(current_character)
+
+            # in case the current character ordinal is zero
+            # (end of padding part)
+            if current_character_ordinal == 0x00:
+                # breaks the loop
+                break
+
+        # retrieves the signature value
+        signature_value = signature_verified[index + 1:]
+
+        # unpacks the signature value
+        signature_value_unpacked = ber_structure.unpack(signature_value)
+
+        signature_value_value = signature_value_unpacked[VALUE_VALUE]
+
+        # retrieves the digest algorithm and the digest algorithm value
+        digest_algorithm = signature_value_value[0]
+        digest_algorithm_value = digest_algorithm[VALUE_VALUE]
+
+        # retrieves the algorithm and the algorithm value
+        algorithm = digest_algorithm_value[0]
+        algorithm_value = algorithm[VALUE_VALUE]
+
+        # retrieves the arguments and the arguments value
+        arguments = digest_algorithm_value[1]
+        arguments_value = arguments[VALUE_VALUE]
+
+        # retrieves the digest and the digest value
+        digest = signature_value_value[1]
+        digest_value = digest[VALUE_VALUE]
+
+        # in case the arguments value is not none
+        if not arguments_value == None:
+            # raises the invalid format exception
+            raise encryption_pkcs_1_exceptions.InvalidFormatException("invalid arguments value: " + str(arguments_value))
+
+        # retrieves the hash algorithm name
+        hash_algorithm_name = TUPLES_HASH_OBJECT_IDENTIFIERS_MAP[algorithm_value]
+
+        # creates the return tuple with the hash algorithm name
+        # and the digest value
+        return_tuple = (hash_algorithm_name, digest_value)
+
+        # returns the return value
+        return return_tuple
+
+    def _split_base_64(self, string_value):
+        # retrieves the string value length
+        string_value_length = len(string_value)
+
+        # starts the base index
+        base_index = 0
+
+        # creates the list
+        string_value_list = []
+
+        # iterates continuously
+        while True:
+            # in case the base index is greater or equal
+            # to the private key der encoded length
+            if base_index >= string_value_length:
+                # breaks the loop
+                break
+
+            # calculates the end index from the base index
+            end_index = base_index + BASE_64_ENCODED_MAXIMUM_SIZE
+
+            # retrieves the string value token
+            string_value_token = string_value[base_index:end_index]
+
+            # creates the string value from the string value token
+            # and a newline character
+            string_value_line = string_value_token + "\n"
+
+            # adds the string value line to the string value list
+            string_value_list.append(string_value_line)
+
+            # sets the base index as the end index
+            base_index = end_index
+
+        # joins the string value list retrieving the
+        # string value splitted
+        string_value_splitted = "".join(string_value_list)
+
+        # returns the string value splitted
+        return string_value_splitted
 
     def _join_base_64(self, string_value):
         # removes the newline characters to obtain
