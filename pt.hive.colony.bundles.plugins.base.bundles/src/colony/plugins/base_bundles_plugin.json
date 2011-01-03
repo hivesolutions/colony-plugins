@@ -121,7 +121,7 @@
             "base_bundles/bundles/specifications/web_manager_bundle.json",
             "base_bundles/bundles/specifications/web_mvc_bundle.json",
             "base_bundles/bundles/specifications/web_mvc_communication_push_apple_bundle.json",
+            "base_bundles/bundles/specifications/web_mvc_encryption_bundle.json",
             "base_bundles/bundles/specifications/web_mvc_wiki_bundle.json",
-            "base_bundles/bundles/specifications/yadis_bundle.json",
-            "base_bundles/bundles/specifications/.settings/org.eclipse.core.resources.prefs"]
+            "base_bundles/bundles/specifications/yadis_bundle.json"]
 }
