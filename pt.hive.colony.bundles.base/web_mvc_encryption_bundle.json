@@ -1,7 +1,7 @@
 {
     "type" : "bundle",
     "platform" : "python",
-    "id" : "pt.hive.colony.plugins.web.mvc.encryption",
+    "id" : "pt.hive.colony.bundles.web.mvc.encryption",
     "version" : "1.0.0",
     "author" : "Hive Solutions Lda. <development@hive.pt>",
     "plugins" : [{
