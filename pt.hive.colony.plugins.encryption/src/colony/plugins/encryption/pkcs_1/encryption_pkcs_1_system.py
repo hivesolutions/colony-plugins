@@ -37,7 +37,10 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
+import re
 import base64
+
+import encryption_pkcs_1_exceptions
 
 TYPE_VALUE = "type"
 """ The type value """
@@ -66,6 +69,12 @@ BEGIN_PUBLIC_VALUE = "-----BEGIN PUBLIC KEY-----"
 END_PUBLIC_VALUE = "-----END PUBLIC KEY-----"
 """ The end public value """
 
+PRIVATE_KEY_VALUE_REGEX = re.compile(BEGIN_RSA_PRIVATE_VALUE + "\n(?P<contents>.*)\n" + END_RSA_PRIVATE_VALUE, re.DOTALL)
+""" The private key value regex """
+
+PUBLIC_KEY_VALUE_REGEX = re.compile(BEGIN_PUBLIC_VALUE + "\n(?P<contents>.*)\n" + END_PUBLIC_VALUE, re.DOTALL)
+""" The public key value regex """
+
 BASE_64_ENCODED_MAXIMUM_SIZE = 64
 """ The base 64 encoded maximum size """
 
@@ -83,6 +92,32 @@ OBJECT_IDENTIFIER_TYPE = 0x06
 
 SEQUENCE_TYPE = 0x10
 """ The sequence type """
+
+OBJECT_IDENTIFIERS_TUPLES_MAP = {"pkcs_1" : (1, 2, 840, 113549, 1, 1),
+                                 "rsa_encryption" : (1, 2, 840, 113549, 1, 1, 1),
+                                 "id_rsaes_oaep" : (1, 2, 840, 113549, 1, 1, 7),
+                                 "id_p_specified" : (1, 2, 840, 113549, 1, 1, 9),
+                                 "id_rsassa_pss" : (1, 2, 840, 113549, 1, 1, 10),
+                                 "md2_with_rsa_encryption" : (1, 2, 840, 113549, 1, 1, 2),
+                                 "md5_with_rsa_encryption" : (1, 2, 840, 113549, 1, 1, 4),
+                                 "sha1_with_rsa_encryption" : (1, 2, 840, 113549, 1, 1, 5),
+                                 "sha256_with_rsa_encryption" : (1, 2, 840, 113549, 1, 1, 11),
+                                 "sha384_with_rsa_encryption" : (1, 2, 840, 113549, 1, 1, 12),
+                                 "sha512_with_rsa_encryption" : (1, 2, 840, 113549, 1, 1, 13)}
+""" The map associating the object identifiers with the tuples """
+
+TUPLES_OBJECT_IDENTIFIERS_MAP = {(1, 2, 840, 113549, 1, 1) : "pkcs_1",
+                                 (1, 2, 840, 113549, 1, 1, 1) : "rsa_encryption",
+                                 (1, 2, 840, 113549, 1, 1, 7) : "id_rsaes_oaep",
+                                 (1, 2, 840, 113549, 1, 1, 9) : "id_p_specified",
+                                 (1, 2, 840, 113549, 1, 1, 10) : "id_rsassa_pss",
+                                 (1, 2, 840, 113549, 1, 1, 2) : "md2_with_rsa_encryption",
+                                 (1, 2, 840, 113549, 1, 1, 4) : "md5_with_rsa_encryption",
+                                 (1, 2, 840, 113549, 1, 1, 5) : "sha1_with_rsa_encryption",
+                                 (1, 2, 840, 113549, 1, 1, 11) : "sha256_with_rsa_encryption",
+                                 (1, 2, 840, 113549, 1, 1, 12) : "sha384_with_rsa_encryption",
+                                 (1, 2, 840, 113549, 1, 1, 13) : "sha512_with_rsa_encryption"}
+""" The map associating the tuples with the object identifiers """
 
 class EncryptionPkcs1:
     """
@@ -131,15 +166,15 @@ class Pkcs1Structure:
 
         self.format_ber_plugin = format_ber_plugin
 
-    def generate_write_keys_pem(self, keys, private_key_file_path, public_key_file_path,):
+    def generate_write_keys_pem(self, keys, private_key_file_path, public_key_file_path, version = 1):
         # generates the public and private key pem values
-        private_key_pem, public_key_pem = self.generate_keys_pem(keys)
+        private_key_pem, public_key_pem = self.generate_keys_pem(keys, version)
 
         # writes the private and public key files
         self._write_file(private_key_file_path, private_key_pem)
         self._write_file(public_key_file_path, public_key_pem)
 
-    def generate_keys_pem(self, keys):
+    def generate_keys_pem(self, keys, version = 1):
         # generates the private key pem
         private_key_pem = self.generate_private_key_pem(keys)
 
@@ -152,13 +187,196 @@ class Pkcs1Structure:
         # returns the keys pem
         return keys_pem
 
+    def load_read_private_key_pem(self, private_key_file_path):
+        # reads the file, retrieving the private key pem
+        private_key_pem = self._read_file(private_key_file_path)
+
+        # loads the private key pem, retrieving the return tuple
+        return_tuple = self.load_private_key_pem(private_key_pem)
+
+        # returns the return tuple
+        return return_tuple
+
+    def load_read_public_key_pem(self, public_key_file_path):
+        # reads the file, retrieving the public key pem
+        public_key_pem = self._read_file(public_key_file_path)
+
+        # loads the public key pem, retrieving the keys tuple
+        keys = self.load_public_key_pem(public_key_pem)
+
+        # returns the keys tuple
+        return keys
+
     def load_private_key_pem(self, private_key_pem):
-        # decodes the private key pem from base 64
-        private_key_der_decoded = base64.b64encode(private_key_pem)
+        # matches the private key pem
+        private_key_pem_match = PRIVATE_KEY_VALUE_REGEX.match(private_key_pem)
 
-        #re.compile(BEGIN_RSA_PRIVATE_VALUE + "\n" + "(?P<contents>.*)"
+        # retrieves the private key pem contents
+        private_key_pem_contents = private_key_pem_match.group("contents")
 
-    def generate_private_key_pem(self, keys):
+        # joins the base 64 value back together
+        private_key_pem_contents_joined = self._join_base_64(private_key_pem_contents)
+
+        # decodes the private key pem from base 64, obtaining
+        # private key der
+        private_key_der = base64.b64decode(private_key_pem_contents_joined)
+
+        # loads the private key der, retrieving the return tuple
+        return_tuple = self.load_private_key_der(private_key_der)
+
+        # returns the return tuple
+        return return_tuple
+
+    def load_public_key_pem(self, public_key_pem):
+        # matches the public key pem
+        public_key_pem_match = PUBLIC_KEY_VALUE_REGEX.match(public_key_pem)
+
+        # retrieves the public key pem contents
+        public_key_pem_match_contents = public_key_pem_match.group("contents")
+
+        # joins the base 64 value back together
+        public_key_pem_match_contents_joined = self._join_base_64(public_key_pem_match_contents)
+
+        # decodes the public key pem from base 64, obtaining
+        # public key der
+        public_key_der = base64.b64decode(public_key_pem_match_contents_joined)
+
+        # loads the public key der, retrieving the keys tuple
+        keys = self.load_public_key_der(public_key_der)
+
+        # returns the keys tuple
+        return keys
+
+    def load_private_key_der(self, private_key_der):
+        # creates the ber structure
+        ber_structure = self.format_ber_plugin.create_structure({})
+
+        # unpacks the rsa private key
+        rsa_private_key_unpacked = ber_structure.unpack(private_key_der)
+
+        # retrieves the rsa private key value
+        rsa_private_key_value = rsa_private_key_unpacked[VALUE_VALUE]
+
+        # retrieves the version and the version value
+        version = rsa_private_key_value[0]
+        version_value = version[VALUE_VALUE]
+
+        # retrieves the modulus and the modulus value
+        modulus = rsa_private_key_value[1]
+        modulus_value = modulus[VALUE_VALUE]
+
+        # retrieves the public exponent and the public exponent value
+        public_exponent = rsa_private_key_value[2]
+        public_exponent_value = public_exponent[VALUE_VALUE]
+
+        # retrieves the private exponent and the private exponent value
+        private_exponent = rsa_private_key_value[3]
+        private_exponent_value = private_exponent[VALUE_VALUE]
+
+        # retrieves the prime 1 and the prime 1 value
+        prime_1 = rsa_private_key_value[4]
+        prime_1_value = prime_1[VALUE_VALUE]
+
+        # retrieves the prime 2 and the prime 2 value
+        prime_2 = rsa_private_key_value[5]
+        prime_2_value = prime_2[VALUE_VALUE]
+
+        # retrieves the exponent 1 and the exponent 1 value
+        exponent_1 = rsa_private_key_value[6]
+        exponent_1_value = exponent_1[VALUE_VALUE]
+
+        # retrieves the exponent 2 and the exponent 2 value
+        exponent_2 = rsa_private_key_value[7]
+        exponent_2_value = exponent_2[VALUE_VALUE]
+
+        # retrieves the coefficient and the coefficient value
+        coefficient = rsa_private_key_value[8]
+        coefficient_value = coefficient[VALUE_VALUE]
+
+        # creates the public key map
+        public_key = {"n" : modulus_value, "e" : public_exponent_value}
+
+        # creates the private key map
+        private_key = {"d" : private_exponent_value, "p" : prime_1_value, "q" : prime_2_value}
+
+        # creates the extras map
+        extras = {"fe" : exponent_1_value, "se" : exponent_2_value, "c" : coefficient_value}
+
+        # creates the keys tuple
+        keys = (public_key, private_key, extras)
+
+        # creates the return tuple
+        return_tuple = (keys, version_value)
+
+        # returns the return tuple
+        return return_tuple
+
+    def load_public_key_der(self, private_key_der):
+        # creates the ber structure
+        ber_structure = self.format_ber_plugin.create_structure({})
+
+        # unpacks the rsa public key
+        rsa_public_key_unpacked = ber_structure.unpack(private_key_der)
+
+        # retrieves the rsa public key value
+        rsa_public_key_value = rsa_public_key_unpacked[VALUE_VALUE]
+
+        # retrieves the algorithm identifier and the algorithm identifier value
+        algorithm_identifier = rsa_public_key_value[0]
+        algorithm_identifier_value = algorithm_identifier[VALUE_VALUE]
+
+        # retrieves the algorithm and the algorithm value
+        algorithm = algorithm_identifier_value[0]
+        algorithm_value = algorithm[VALUE_VALUE]
+
+        # retrieves the arguments and the arguments value
+        arguments = algorithm_identifier_value[1]
+        arguments_value = arguments[VALUE_VALUE]
+
+        # retrieves the rsa public key packed bit value and the rsa public key packed bit value value
+        rsa_public_key_packed_bit = rsa_public_key_value[1]
+        rsa_public_key_packed_bit_value_value = rsa_public_key_packed_bit[VALUE_VALUE]
+
+        # unpacks the rsa public key packed bit value value
+        rsa_public_key = ber_structure.unpack(rsa_public_key_packed_bit_value_value)
+
+        # retrieves the rsa public key value value
+        rsa_public_key_value_value = rsa_public_key[VALUE_VALUE]
+
+        # retrieves the modulus and the modulus value
+        modulus = rsa_public_key_value_value[0]
+        modulus_value = modulus[VALUE_VALUE]
+
+        # retrieves the public exponent and the public exponent value
+        public_exponent = rsa_public_key_value_value[1]
+        public_exponent_value = public_exponent[VALUE_VALUE]
+
+        # in case the object identifier is not rsa encryption
+        if not algorithm_value == OBJECT_IDENTIFIERS_TUPLES_MAP["rsa_encryption"]:
+            # raises the invalid format exception
+            raise encryption_pkcs_1_exceptions.InvalidFormatException("invalid algorithm value: " + str(algorithm_value))
+
+        # in case the arguments value is not none
+        if not arguments_value == None:
+            # raises the invalid format exception
+            raise encryption_pkcs_1_exceptions.InvalidFormatException("invalid arguments value: " + str(arguments_value))
+
+        # creates the public key map
+        public_key = {"n" : modulus_value, "e" : public_exponent_value}
+
+        # creates the private key map
+        private_key = {}
+
+        # creates the extras map
+        extras = {}
+
+        # creates the keys tuple
+        keys = (private_key, public_key, extras)
+
+        # returns the keys tuple
+        return keys
+
+    def generate_private_key_pem(self, keys, version = 1):
         """
         Generates the a private key in pem format, using
         the given keys value.
@@ -166,12 +384,14 @@ class Pkcs1Structure:
         @type keys: Tuple
         @param keys: A tuple containing the public, private
         and extra key values.
+        @type version: int
+        @param version: The version of the keys to be generated.
         @rtype: String
         @return: The generated private key in pem format.
         """
 
         # retrieves the private key in der format
-        private_key_der = self.generate_private_key_der(keys)
+        private_key_der = self.generate_private_key_der(keys, version)
 
         # encodes the private key der in base 64
         private_key_der_encoded = base64.b64encode(private_key_der)
@@ -238,7 +458,7 @@ class Pkcs1Structure:
         # returns the public key pem value
         return public_key_pem
 
-    def generate_private_key_der(self, keys):
+    def generate_private_key_der(self, keys, version = 1):
         """
         Generates the a private key in der format, using
         the given keys value.
@@ -246,6 +466,8 @@ class Pkcs1Structure:
         @type keys: Tuple
         @param keys: A tuple containing the public, private
         and extra key values.
+        @type version: int
+        @param version: The version of the keys to be generated.
         @rtype: String
         @return: The generated private key in der format.
         """
@@ -271,7 +493,7 @@ class Pkcs1Structure:
         ber_structure = self.format_ber_plugin.create_structure({})
 
         # creates the various integer values
-        version_value = {TYPE_VALUE : INTEGER_TYPE, VALUE_VALUE : 0}
+        version_value = {TYPE_VALUE : INTEGER_TYPE, VALUE_VALUE : version}
         modulus_value = {TYPE_VALUE : INTEGER_TYPE, VALUE_VALUE : modulus}
         public_exponent_value = {TYPE_VALUE : INTEGER_TYPE, VALUE_VALUE : public_exponent}
         private_exponent_value = {TYPE_VALUE : INTEGER_TYPE, VALUE_VALUE : private_exponent}
@@ -312,6 +534,9 @@ class Pkcs1Structure:
         modulus = public_key["n"]
         public_exponent = public_key["e"]
 
+        # retrieves the rsa encryption object identifier
+        rsa_encryption_object_identifier = OBJECT_IDENTIFIERS_TUPLES_MAP["rsa_encryption"]
+
         # creates the ber structure
         ber_structure = self.format_ber_plugin.create_structure({})
 
@@ -329,7 +554,7 @@ class Pkcs1Structure:
         rsa_public_key_packed = ber_structure.pack(rsa_public_key)
 
         # creates the algorithm identifier values
-        algorithm_value = {TYPE_VALUE : OBJECT_IDENTIFIER_TYPE, VALUE_VALUE : (1, 2, 840, 113549, 1, 1, 1)}
+        algorithm_value = {TYPE_VALUE : OBJECT_IDENTIFIER_TYPE, VALUE_VALUE : rsa_encryption_object_identifier}
         arguments_value = {TYPE_VALUE : NULL_TYPE, VALUE_VALUE : None}
 
         # creates the algorithm identifier contents (list)
@@ -394,6 +619,14 @@ class Pkcs1Structure:
         # returns the string value splitted
         return string_value_splitted
 
+    def _join_base_64(self, string_value):
+        # removes the newline characters to obtain
+        # the plain base 64 value
+        string_value_joined = string_value.replace("\n", "")
+
+        # returns the string value joined
+        return string_value_joined
+
     def _write_file(self, file_path, string_value):
         """
         Writes the given string value to the file
@@ -406,12 +639,36 @@ class Pkcs1Structure:
         in the file.
         """
 
-        try:
-            # opens the file
-            file = open(file_path, "wb")
+        # opens the file
+        file = open(file_path, "wb")
 
+        try:
             # writes the string value
             file.write(string_value)
         finally:
             # closes the file
             file.close()
+
+    def _read_file(self, file_path):
+        """
+        Reads the contents of the file in the
+        given file path.
+
+        @type file_path: String
+        @param file_path: The path to the file to read.
+        @rtype: String
+        @return: The string value read from the file.
+        """
+
+        # opens the file
+        file = open(file_path, "rb")
+
+        try:
+            # reads the string value
+            string_value = file.read()
+        finally:
+            # closes the file
+            file.close()
+
+        # returns the string value
+        return string_value
