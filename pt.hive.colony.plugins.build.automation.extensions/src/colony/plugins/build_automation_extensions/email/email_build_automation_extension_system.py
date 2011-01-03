@@ -258,7 +258,7 @@ class EmailBuildAutomationExtension:
         mime_message = format_mime_plugin.create_message({})
 
         # creates the sender line
-        sender_line = sender_name + " " + "<" + sender_email + ">"
+        sender_line = "\"" + sender_name + "\" <" + sender_email + ">"
 
         # writes the initial subject line
         subject = "b%i - %s " % (build_automation_version, build_automation_plugin_name)
@@ -566,7 +566,7 @@ class EmailBuildAutomationExtension:
 
             # creates the contact line value with the contact name
             # and email
-            contact_line_value = contact_name + " " + "<" + contact_email + ">"
+            contact_line_value = "\"" + contact_name + "\" <" + contact_email + ">"
 
             # adds the contact line value to the contact
             # line buffer
