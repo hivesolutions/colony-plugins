@@ -341,10 +341,12 @@ class RsaStructure:
             return self._encrypt_integer(long(message), e_value, n_value)
 
         if not type(message) is types.LongType:
-            raise TypeError("You must pass a long or an int")
+            # raises a type error
+            raise TypeError("you must pass a long or an int")
 
         if message > 0 and math.floor(math.log(message, 2)) > math.floor(math.log(n_value, 2)):
-            raise OverflowError("The message is too long")
+            # raises an overflow error
+            raise OverflowError("the message is too long")
 
         return pow(message, e_value, n_value)
 
