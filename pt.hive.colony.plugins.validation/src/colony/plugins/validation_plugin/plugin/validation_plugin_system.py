@@ -149,7 +149,7 @@ BUILD_AUTOMATION_ITEM_CAPABILITY = "build_automation_item"
 BUILD_AUTOMATION_FILE_PATH_ATTRIBUTE = "build_automation_file_path"
 """ The build automation file path attribute """
 
-RESOURCE_FILE_NAME_EXCLUSION_LIST = (".svn", "entries", "all-wcprops", "dir-prop-base")
+RESOURCE_FILE_NAME_EXCLUSION_LIST = (".svn", "entries", "all-wcprops", "dir-prop-base", "org.eclipse.core.resources.prefs")
 """ The resource file name exclusion list """
 
 RESOURCE_FILE_EXTENSION_EXCLUSION_LIST = (".svn", ".svn-base", ".svn-revert", ".class", ".pyc", ".tmp")
