@@ -93,15 +93,8 @@ class WebMvcEncryption:
         to the web mvc service.
         """
 
-        base_patterns_tuple = ((r"^web_mvc_encryption/?$", self.web_mvc_encryption_main_controller.handle_web_mvc_encryption_index),
-                               (r"^web_mvc_encryption/index$", self.web_mvc_encryption_main_controller.handle_web_mvc_encryption_index))
-
-        # extends the base patterns tuple with the extra patterns tuple retrieving the result
-        # patterns tuple
-        result_patterns_tuple = base_patterns_tuple + tuple(self.extra_patterns_list)
-
-        # returns the result patterns tuple
-        return result_patterns_tuple
+        return ((r"^web_mvc_encryption/?$", self.web_mvc_encryption_main_controller.handle_web_mvc_encryption_index),
+                (r"^web_mvc_encryption/index$", self.web_mvc_encryption_main_controller.handle_web_mvc_encryption_index))
 
     def get_communication_patterns(self):
         """
