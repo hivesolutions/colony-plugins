@@ -151,6 +151,7 @@
                         <specification_file>$base{plugin_directory}/base_bundles/bundles/specifications/web_manager_bundle.json</specification_file>
                         <specification_file>$base{plugin_directory}/base_bundles/bundles/specifications/web_mvc_bundle.json</specification_file>
                         <specification_file>$base{plugin_directory}/base_bundles/bundles/specifications/web_mvc_communication_push_apple_bundle.json</specification_file>
+                        <specification_file>$base{plugin_directory}/base_bundles/bundles/specifications/web_mvc_encryption_bundle.json</specification_file>
                         <specification_file>$base{plugin_directory}/base_bundles/bundles/specifications/web_mvc_wiki_bundle.json</specification_file>
                         <specification_file>$base{plugin_directory}/base_bundles/bundles/specifications/yadis_bundle.json</specification_file>
                     </specification_files>
@@ -539,6 +540,10 @@
                         <specification>
                             <type>bundle</type>
                             <specification_file>$base{plugin_directory}/base_bundles/bundles/specifications/web_mvc_communication_push_apple_bundle.json</specification_file>
+                        </specification>
+                        <specification>
+                            <type>bundle</type>
+                            <specification_file>$base{plugin_directory}/base_bundles/bundles/specifications/web_mvc_encryption_bundle.json</specification_file>
                         </specification>
                         <specification>
                             <type>bundle</type>
