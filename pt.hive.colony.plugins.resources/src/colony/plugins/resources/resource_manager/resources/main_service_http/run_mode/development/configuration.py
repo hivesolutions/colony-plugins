@@ -94,6 +94,7 @@ configuration = {
                                            "/a_la_carte",
                                            "/pecway",
                                            "/panzerini",
+                                           "/encryption",
                                            "/"],
                      "/push_apple" : {
                          "target" : "/colony_mod_python/rest/mvc/web_mvc_communication_push_apple/",
@@ -145,6 +146,10 @@ configuration = {
                      },
                      "/panzerini" : {
                          "target" : "/colony_mod_python/rest/mvc/panzerini_web_mvc/",
+                         "recursive_redirection" : True
+                     },
+                     "/encryption" : {
+                         "target" : "/colony_mod_python/rest/mvc/web_mvc_encryption/",
                          "recursive_redirection" : True
                      },
                      "/" : {
