@@ -128,7 +128,7 @@ PLUGIN_MODULE_NAME_ENDING = "_plugin"
 RESOURCES_DIRECTORY = "/resources"
 """ The resources directory """
 
-RESOURCE_FILE_NAME_EXCLUSION_LIST = (".svn", "entries", "all-wcprops", "dir-prop-base")
+RESOURCE_FILE_NAME_EXCLUSION_LIST = (".svn", "entries", "all-wcprops", "dir-prop-base", "org.eclipse.core.resources.prefs")
 """ The resource file name exclusion list """
 
 RESOURCE_FILE_EXTENSION_EXCLUSION_LIST = (".svn-base", ".class", ".pyc", ".tmp")
