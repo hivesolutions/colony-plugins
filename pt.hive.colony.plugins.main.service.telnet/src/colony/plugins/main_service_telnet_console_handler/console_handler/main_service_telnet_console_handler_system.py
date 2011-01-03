@@ -37,10 +37,21 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
+import sys
+
 import main_service_telnet_console_handler_exceptions
 
 HANDLER_NAME = "console"
 """ The handler name """
+
+BRANDING_TEXT = "Hive Colony %s (Hive Solutions Lda. r%s:%s %s)"
+""" The branding text value """
+
+VERSION_PRE_TEXT = "Python "
+""" The version pre text value """
+
+HELP_TEXT = "Type \"help\" for more information."
+""" The help text value """
 
 class MainServiceTelnetConsoleHandler:
     """
@@ -81,6 +92,12 @@ class MainServiceTelnetConsoleHandler:
         request.write(">> ")
 
     def handle_initial_request(self, request):
+        # generates the information
+        information = self.generate_information()
+
+        # writes the information
+        request.write(information)
+
         # writes the caret
         request.write(">> ")
 
@@ -107,3 +124,41 @@ class MainServiceTelnetConsoleHandler:
 
         # returns the created write function
         return write
+
+    def generate_information(self):
+        """
+        Generates the system information to be used as into message.
+
+        @rtype: String
+        @return: The system information to be used as into message.
+        """
+
+        # retrieves the plugin manager
+        plugin_manager = self.main_service_telnet_console_handler_plugin.manager
+
+        # retrieves the plugin manager version
+        plugin_manager_version = plugin_manager.get_version()
+
+        # retrieves the plugin manager release
+        plugin_manager_release = plugin_manager.get_release()
+
+        # retrieves the plugin manager build
+        plugin_manager_build = plugin_manager.get_build()
+
+        # retrieves the plugin manager release date
+        plugin_manager_release_date = plugin_manager.get_release_date()
+
+        # creates the information string
+        information = str()
+
+        # adds the branding information text
+        information += BRANDING_TEXT % (plugin_manager_version, plugin_manager_release, plugin_manager_build, plugin_manager_release_date) + "\r\n"
+
+        # adds the python information
+        information += VERSION_PRE_TEXT + sys.version + "\r\n"
+
+        # adds the help text
+        information += HELP_TEXT + "\r\n"
+
+        # returns the information
+        return information

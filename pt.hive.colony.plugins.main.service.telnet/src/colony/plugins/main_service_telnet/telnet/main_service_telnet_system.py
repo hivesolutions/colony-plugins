@@ -317,6 +317,9 @@ class TelnetClientServiceHandler:
         self.service_utils_exception_class = service_utils_exception_class
 
     def handle_opened(self, service_connection):
+        # receives the initial data
+        service_connection.receive()
+
         # sends the result to the service connection
         service_connection.send("Welcome to colony telnet server\r\n")
 
