@@ -71,7 +71,7 @@ class LdapRuntimeException(MainClientLdapException):
         @return: The string representation of the class.
         """
 
-        return "ldap runtime exception: %s" % self.message
+        return "Ldap runtime exception: %s" % self.message
 
 class LdapInvalidDataException(LdapRuntimeException):
     """
