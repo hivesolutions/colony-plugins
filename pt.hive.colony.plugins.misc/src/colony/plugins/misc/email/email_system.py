@@ -198,7 +198,7 @@ class Email:
         # in case the name of the sender is defined
         if name_sender:
             # creates the sender line with the name and email
-            sender_line = name_sender + "<" + email_sender + ">"
+            sender_line = "\"" + name_sender + "\" <" + email_sender + ">"
         # otherwise
         else:
             # creates the sender line with the email
@@ -207,7 +207,7 @@ class Email:
         # in case the name of the receiver is defined
         if name_receiver:
             # creates the receiver line with the name and email
-            receiver_line = name_receiver + "<" + email_receiver + ">"
+            receiver_line = "\"" + name_receiver + "\" <" + email_receiver + ">"
         else:
             # creates the receiver line with the email
             receiver_line = "<" + email_receiver + ">"
