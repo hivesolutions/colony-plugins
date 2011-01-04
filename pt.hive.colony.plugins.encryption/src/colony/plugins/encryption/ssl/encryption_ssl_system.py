@@ -37,6 +37,8 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
+import base64
+
 class EncryptionSsl:
     """
     The encryption ssl class.
@@ -71,9 +73,55 @@ class SslStructure:
     cryptographic protocol structure.
     """
 
-    def __init__(self):
+    encryption_rsa_plugin = None
+    """ The encryption rsa plugin """
+
+    encryption_pkcs_1_plugin = None
+    """ The encryption pkcs 1 plugin """
+
+    def __init__(self, encryption_rsa_plugin, encryption_pkcs_1_plugin):
         """
         Constructor of the class.
+
+        @type encryption_rsa_plugin: EncryptionRsaPlugin
+        @param encryption_rsa_plugin: The encryption rsa plugin.
+        @type encryption_pkcs_1_plugin: EncryptionPkcs1Plugin
+        @param encryption_pkcs_1_plugin: The encryption pkkc 1 plugin.
         """
 
-        pass
+        self.encryption_rsa_plugin = encryption_rsa_plugin
+        self.encryption_pkcs_1_plugin = encryption_pkcs_1_plugin
+
+    def verify_test_base_64(self, public_key_path, verification_string_value_base_64, base_string_value):
+        # decodes the verification string value base 64
+        verification_string_value = base64.b64decode(verification_string_value_base_64)
+
+        # verifies the verification string value against the base string value,
+        # and returns the return value
+        return_value = self.verify_test(public_key_path, verification_string_value, base_string_value)
+
+        # returns the return value
+        return return_value
+
+    def verify_test(self, public_key_path, verification_string_value, base_string_value):
+        # creates the rsa structure
+        rsa_structure = self.encryption_rsa_plugin.create_structure({})
+
+        # creates the pkcs 1 structure
+        pkcs_1_structure = self.encryption_pkcs_1_plugin.create_structure({})
+
+        # loads the public key, retrieving the keys map
+        keys = pkcs_1_structure.load_read_public_key_pem(public_key_path)
+
+        # sets the keys in the rsa structure
+        rsa_structure.set_keys(keys)
+
+        # verifies the verification string value (using the public key)
+        # and retrieves the signature verified
+        signature_verified = rsa_structure.verify(verification_string_value)
+
+        # verifies the and tests the signature, retrieving the return value
+        return_value = pkcs_1_structure.verify_test(signature_verified, base_string_value)
+
+        # returns the return value
+        return return_value

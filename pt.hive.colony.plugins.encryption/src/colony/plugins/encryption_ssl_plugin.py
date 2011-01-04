@@ -56,13 +56,19 @@ class EncryptionSslPlugin(colony.base.plugin_system.Plugin):
     attributes = {"build_automation_file_path" : "$base{plugin_directory}/encryption/ssl/resources/baf.xml"}
     capabilities = ["encryption.ssl", "build_automation_item"]
     capabilities_allowed = []
-    dependencies = []
+    dependencies = [colony.base.plugin_system.PluginDependency(
+                    "pt.hive.colony.plugins.encryption.rsa", "1.0.0"),
+                    colony.base.plugin_system.PluginDependency(
+                    "pt.hive.colony.plugins.encryption.pkcs_1", "1.0.0")]
     events_handled = []
     events_registrable = []
     main_modules = ["encryption.ssl.encryption_ssl_exceptions",
                     "encryption.ssl.encryption_ssl_system"]
 
     encryption_ssl = None
+
+    encryption_rsa_plugin = None
+    encryption_pkcs_1_plugin = None
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
@@ -85,8 +91,23 @@ class EncryptionSslPlugin(colony.base.plugin_system.Plugin):
     def unload_allowed(self, plugin, capability):
         colony.base.plugin_system.Plugin.unload_allowed(self, plugin, capability)
 
+    @colony.base.decorators.inject_dependencies("pt.hive.colony.plugins.encryption.ssl", "1.0.0")
     def dependency_injected(self, plugin):
         colony.base.plugin_system.Plugin.dependency_injected(self, plugin)
 
     def create_structure(self, parameters):
         return self.encryption_ssl.create_structure(parameters)
+
+    def get_encryption_rsa_plugin(self):
+        return self.encryption_rsa_plugin
+
+    @colony.base.decorators.plugin_inject("pt.hive.colony.plugins.encryption.rsa")
+    def set_encryption_rsa_plugin(self, encryption_rsa_plugin):
+        self.encryption_rsa_plugin = encryption_rsa_plugin
+
+    def get_encryption_pkcs_1_plugin(self):
+        return self.encryption_pkcs_1_plugin
+
+    @colony.base.decorators.plugin_inject("pt.hive.colony.plugins.encryption.pkcs_1")
+    def set_encryption_pkcs_1_plugin(self, encryption_pkcs_1_plugin):
+        self.encryption_pkcs_1_plugin = encryption_pkcs_1_plugin
