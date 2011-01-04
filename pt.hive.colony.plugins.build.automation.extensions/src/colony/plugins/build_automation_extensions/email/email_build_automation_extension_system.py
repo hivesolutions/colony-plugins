@@ -382,7 +382,7 @@ class EmailBuildAutomationExtension:
         mime_message = format_mime_plugin.create_message({})
 
         # creates the sender line
-        sender_line = sender_name + " " + "<" + sender_email + ">"
+        sender_line = "\"" + sender_name + "\" <" + sender_email + ">"
 
         # writes the initial subject line
         subject = "b%i - %s " % (build_automation_version, build_automation_plugin_name)
