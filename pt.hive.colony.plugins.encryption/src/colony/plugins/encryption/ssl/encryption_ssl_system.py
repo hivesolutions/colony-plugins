@@ -39,6 +39,9 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 import base64
 
+BASE_64_ENCODED_MAXIMUM_SIZE = 64
+""" The base 64 encoded maximum size """
+
 class EncryptionSsl:
     """
     The encryption ssl class.
@@ -95,39 +98,124 @@ class SslStructure:
         self.encryption_rsa_plugin = encryption_rsa_plugin
         self.encryption_pkcs_1_plugin = encryption_pkcs_1_plugin
 
-    def verify_test_base_64(self, public_key_path, verification_string_value_base_64, base_string_value):
-        # removes the newline characters from the verification string value in base 64
-        verification_string_value_base_64 = verification_string_value_base_64.replace("\n", "")
+    def sign_base_64(self, private_key_path, hash_algorithm_name, base_string_value):
+        # signs the base string value using the hash algorithm
+        # with the given name and retrieving the signature
+        signature = self.sign(private_key_path, hash_algorithm_name, base_string_value)
 
-        # decodes the verification string value base 64
-        verification_string_value = base64.b64decode(verification_string_value_base_64)
+        # encodes the signature into base 64
+        signature_base_64 = base64.b64encode(signature)
 
-        # verifies the verification string value against the base string value,
+        # splits the signature base 64 value
+        signature_base_64 = self._split_base_64(signature_base_64)
+
+        # returns the signature base 64
+        return signature_base_64
+
+    def verify_base_64(self, public_key_path, signature_base_64, base_string_value):
+        # joins the base 64 value back
+        signature_base_64 = self._join_base_64(signature_base_64)
+
+        # decodes the signature base 64
+        signature = base64.b64decode(signature_base_64)
+
+        # verifies the signature against the base string value,
         # and returns the return value
-        return_value = self.verify_test(public_key_path, verification_string_value, base_string_value)
+        return_value = self.verify(public_key_path, signature, base_string_value)
 
         # returns the return value
         return return_value
 
-    def verify_test(self, public_key_path, verification_string_value, base_string_value):
+    def sign(self, private_key_path, hash_algorithm_name, base_string_value):
         # creates the rsa structure
         rsa_structure = self.encryption_rsa_plugin.create_structure({})
 
         # creates the pkcs 1 structure
         pkcs_1_structure = self.encryption_pkcs_1_plugin.create_structure({})
 
-        # loads the public key, retrieving the keys map
+        # loads the private key, retrieving the keys tuple and the version value
+        keys, _version = pkcs_1_structure.load_read_private_key_pem(private_key_path)
+
+        # sets the keys in the rsa structure
+        rsa_structure.set_keys(keys)
+
+        # signs the base string value using the given hash algorithm name
+        signature_verified = pkcs_1_structure.sign(keys, hash_algorithm_name, base_string_value)
+
+        # signs the signature verified retrieving the signature
+        signature = rsa_structure.sign(signature_verified)
+
+        # returns the signature
+        return signature
+
+    def verify(self, public_key_path, signature, base_string_value):
+        # creates the rsa structure
+        rsa_structure = self.encryption_rsa_plugin.create_structure({})
+
+        # creates the pkcs 1 structure
+        pkcs_1_structure = self.encryption_pkcs_1_plugin.create_structure({})
+
+        # loads the public key, retrieving the keys tuple
         keys = pkcs_1_structure.load_read_public_key_pem(public_key_path)
 
         # sets the keys in the rsa structure
         rsa_structure.set_keys(keys)
 
-        # verifies the verification string value (using the public key)
-        # and retrieves the signature verified
-        signature_verified = rsa_structure.verify(verification_string_value)
+        # verifies the signature (using the public key) and
+        # retrieves the signature verified
+        signature_verified = rsa_structure.verify(signature)
 
         # verifies the and tests the signature, retrieving the return value
-        return_value = pkcs_1_structure.verify_test(keys, signature_verified, base_string_value)
+        return_value = pkcs_1_structure.verify(signature_verified, base_string_value)
 
         # returns the return value
         return return_value
+
+    def _split_base_64(self, string_value):
+        # retrieves the string value length
+        string_value_length = len(string_value)
+
+        # starts the base index
+        base_index = 0
+
+        # creates the list
+        string_value_list = []
+
+        # iterates continuously
+        while True:
+            # in case the base index is greater or equal
+            # to the private key der encoded length
+            if base_index >= string_value_length:
+                # breaks the loop
+                break
+
+            # calculates the end index from the base index
+            end_index = base_index + BASE_64_ENCODED_MAXIMUM_SIZE
+
+            # retrieves the string value token
+            string_value_token = string_value[base_index:end_index]
+
+            # creates the string value from the string value token
+            # and a newline character
+            string_value_line = string_value_token + "\n"
+
+            # adds the string value line to the string value list
+            string_value_list.append(string_value_line)
+
+            # sets the base index as the end index
+            base_index = end_index
+
+        # joins the string value list retrieving the
+        # string value splitted
+        string_value_splitted = "".join(string_value_list)
+
+        # returns the string value splitted
+        return string_value_splitted
+
+    def _join_base_64(self, string_value):
+        # removes the newline characters to obtain
+        # the plain base 64 value
+        string_value_joined = string_value.replace("\n", "")
+
+        # returns the string value joined
+        return string_value_joined

@@ -38,8 +38,11 @@ __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
 import re
+import math
 import base64
 import hashlib
+
+import colony.libs.string_buffer_util
 
 import encryption_pkcs_1_exceptions
 
@@ -85,6 +88,9 @@ INTEGER_TYPE = 0x02
 BIT_STRING_TYPE = 0x03
 """ The bit string type """
 
+OCTET_STRING_TYPE = 0x04
+""" The octet string type """
+
 NULL_TYPE = 0x05
 """ The null type """
 
@@ -119,6 +125,14 @@ TUPLES_OBJECT_IDENTIFIERS_MAP = {(1, 2, 840, 113549, 1, 1) : "pkcs_1",
                                  (1, 2, 840, 113549, 1, 1, 12) : "sha384_with_rsa_encryption",
                                  (1, 2, 840, 113549, 1, 1, 13) : "sha512_with_rsa_encryption"}
 """ The map associating the tuples with the object identifiers """
+
+HASH_OBJECT_IDENTIFIERS_TUPLES_MAP = {"md2" : (1, 2, 840, 113549, 2, 2),
+                                      "md5" : (1, 2, 840, 113549, 2, 5),
+                                      "sha1" : (1, 3, 14, 3, 2, 26),
+                                      "sha256" : (2, 16, 840, 1, 101, 3, 4, 2, 1),
+                                      "sha384" : (2, 16, 840, 1, 101, 3, 4, 2, 2),
+                                      "sha512" : (2, 16, 840, 1, 101, 3, 4, 2, 3)}
+""" The map associating the hash object identifiers with the tuples """
 
 TUPLES_HASH_OBJECT_IDENTIFIERS_MAP = {(1, 2, 840, 113549, 2, 2) : "md2",
                                       (1, 2, 840, 113549, 2, 5) : "md5",
@@ -216,10 +230,26 @@ class Pkcs1Structure:
         # returns the keys tuple
         return keys
 
-    def verify_test(self, keys, signature_verified, string_value):
-        # verifies the keys and the signature verified, retrieving
+    def sign(self, keys, hash_algorithm_name, string_value):
+        # creates a new hash using the given hash algorithm name
+        hash = hashlib.new(hash_algorithm_name)
+
+        # updates the hash with the string value
+        hash.update(string_value)
+
+        # retrieves the digest value
+        digest_value = hash.digest()
+
+        # signs the digest value retrieving the signature verified
+        signature_verified = self._sign(keys, hash_algorithm_name, digest_value)
+
+        # returns the signature verified
+        return signature_verified
+
+    def verify(self, signature_verified, string_value):
+        # verifies the signature verified, retrieving
         # the hash algorithm name and the digest value
-        hash_algorithm_name, digest_value = self._verify(keys, signature_verified)
+        hash_algorithm_name, digest_value = self._verify(signature_verified)
 
         # creates a new hash using the given hash algorithm name
         hash = hashlib.new(hash_algorithm_name)
@@ -611,7 +641,79 @@ class Pkcs1Structure:
         # returns the keys tuple
         return keys
 
-    def _verify(self, keys, signature_verified):
+    def _sign(self, keys, hash_algorithm_name, digest_value):
+        # retrieves the hash algorithm tuple
+        hash_algorithm_tuple = HASH_OBJECT_IDENTIFIERS_TUPLES_MAP[hash_algorithm_name]
+
+        # creates the ber structure
+        ber_structure = self.format_ber_plugin.create_structure({})
+
+        # creates the various integer values
+        algorithm_value = {TYPE_VALUE : OBJECT_IDENTIFIER_TYPE, VALUE_VALUE : hash_algorithm_tuple}
+        arguments_value = {TYPE_VALUE : NULL_TYPE, VALUE_VALUE : None}
+
+        # creates the digest algorithm contents (list)
+        digest_algorithm_contents = [algorithm_value, arguments_value]
+
+        # creates the digest algorithm
+        digest_algorithm = {TYPE_VALUE : {TYPE_CONSTRUCTED_VALUE : 1, TYPE_NUMBER_VALUE : SEQUENCE_TYPE, TYPE_CLASS_VALUE : 0}, VALUE_VALUE : digest_algorithm_contents}
+
+        # creates the digest value value
+        digest_value_value = {TYPE_VALUE : OCTET_STRING_TYPE, VALUE_VALUE : digest_value}
+
+        # creates the signature value contents (list)
+        signature_value_contents = [digest_algorithm, digest_value_value]
+
+        # creates the signature value
+        signature_value = {TYPE_VALUE : {TYPE_CONSTRUCTED_VALUE : 1, TYPE_NUMBER_VALUE : SEQUENCE_TYPE, TYPE_CLASS_VALUE : 0}, VALUE_VALUE : signature_value_contents}
+
+        # packs the signature value
+        signature_value_packed = ber_structure.pack(signature_value)
+
+        # creates the signature buffer
+        signature_buffer = colony.libs.string_buffer_util.StringBuffer()
+
+        # unpacks the keys tuple, retrieving the
+        # public key, private key and extras map
+        public_key, _private_key, _extras = keys
+
+        # retrieves the modulus
+        modulus = public_key["n"]
+
+        # retrieves the signature value packed length
+        signature_value_packed_length = len(signature_value_packed)
+
+        # retrieves the modulus size in bytes
+        modulus_size_bytes = math.floor(math.log(modulus, 256))
+
+        # converts the modulus size in bytes to integer
+        modulus_size_bytes_integer = int(modulus_size_bytes)
+
+        # calculates the padding size (from the modulus size bytes and the signature value packed length)
+        padding_size = modulus_size_bytes_integer - (signature_value_packed_length + 2)
+
+        # writes the beginning of the padding value to the signature buffer
+        signature_buffer.write("\x01")
+
+        # creates the padding string value
+        padding = "\xff" * padding_size
+
+        # writes the padding to the signature buffer
+        signature_buffer.write(padding)
+
+        # writes the end of padding value to the signature buffer
+        signature_buffer.write("\x00")
+
+        # writes the signature value packed in the string buffer
+        signature_buffer.write(signature_value_packed)
+
+        # retrieves the signature verified from the string buffer
+        signature_verified = signature_buffer.get_value()
+
+        # returns the signature verified
+        return signature_verified
+
+    def _verify(self, signature_verified):
         # retrieves the first character
         first_character = signature_verified[0]
 
@@ -650,6 +752,7 @@ class Pkcs1Structure:
         # unpacks the signature value
         signature_value_unpacked = ber_structure.unpack(signature_value)
 
+        # retrieves the signature value value
         signature_value_value = signature_value_unpacked[VALUE_VALUE]
 
         # retrieves the digest algorithm and the digest algorithm value
