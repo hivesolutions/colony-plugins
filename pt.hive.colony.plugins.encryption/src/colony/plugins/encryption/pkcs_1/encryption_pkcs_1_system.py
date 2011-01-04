@@ -606,7 +606,7 @@ class Pkcs1Structure:
         extras = {}
 
         # creates the keys tuple
-        keys = (private_key, public_key, extras)
+        keys = (public_key, private_key, extras)
 
         # returns the keys tuple
         return keys

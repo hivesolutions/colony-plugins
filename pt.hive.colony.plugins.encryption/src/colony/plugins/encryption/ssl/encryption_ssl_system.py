@@ -58,11 +58,14 @@ class EncryptionSsl:
         self.encryption_ssl_plugin = encryption_ssl_plugin
 
     def create_structure(self, parameters):
-        # retrieves the keys (if available)
-        keys = parameters.get("keys", None)
+        # retrieves the encryption rsa plugin
+        encryption_rsa_plugin = self.encryption_ssl_plugin.encryption_rsa_plugin
+
+        # retrieves the encryption pkcs 1 plugin
+        encryption_pkcs_1_plugin = self.encryption_ssl_plugin.encryption_pkcs_1_plugin
 
         # creates the ssl structure
-        ssl_structure = SslStructure(keys)
+        ssl_structure = SslStructure(encryption_rsa_plugin, encryption_pkcs_1_plugin)
 
         # returns the ssl structure
         return ssl_structure
@@ -93,6 +96,9 @@ class SslStructure:
         self.encryption_pkcs_1_plugin = encryption_pkcs_1_plugin
 
     def verify_test_base_64(self, public_key_path, verification_string_value_base_64, base_string_value):
+        # removes the newline characters from the verification string value in base 64
+        verification_string_value_base_64 = verification_string_value_base_64.replace("\n", "")
+
         # decodes the verification string value base 64
         verification_string_value = base64.b64decode(verification_string_value_base_64)
 
@@ -121,7 +127,7 @@ class SslStructure:
         signature_verified = rsa_structure.verify(verification_string_value)
 
         # verifies the and tests the signature, retrieving the return value
-        return_value = pkcs_1_structure.verify_test(signature_verified, base_string_value)
+        return_value = pkcs_1_structure.verify_test(keys, signature_verified, base_string_value)
 
         # returns the return value
         return return_value
