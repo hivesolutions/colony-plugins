@@ -1,0 +1,19 @@
+{
+    "type" : "plugin",
+    "platform" : "python",
+    "sub_platforms" : ["cpython", "jython"],
+    "id" : "pt.hive.colony.plugins.encryption.ssl",
+    "name" : "Ssl Encryption Plugin",
+    "short_name" : "Ssl Encryption",
+    "description" : "The plugin that offers the ssl encryption support",
+    "version" : "1.0.0",
+    "author" : "Hive Solutions Lda. <development@hive.pt>",
+    "capabilities" : ["encryption.ssl", "build_automation_item"],
+    "capabilities_allowed" : [],
+    "dependencies" : [],
+    "main_file" : "encryption_ssl_plugin.py",
+    "resources" : ["encryption_ssl_plugin.py", "encryption/__init__.py",
+            "encryption/ssl/__init__.py",
+            "encryption/ssl/encryption_ssl_system.py",
+            "encryption/ssl/resources/baf.xml"]
+}
