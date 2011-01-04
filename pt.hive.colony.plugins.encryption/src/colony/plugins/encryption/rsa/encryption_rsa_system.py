@@ -58,8 +58,8 @@ class EncryptionRsa:
         """
         Constructor of the class.
 
-        @type encryption_ras_plugin: EncryptionRsaPlugin
-        @param encryption_ras_plugin: The encryption rsa plugin.
+        @type encryption_rsa_plugin: EncryptionRsaPlugin
+        @param encryption_rsa_plugin: The encryption rsa plugin.
         """
 
         self.encryption_rsa_plugin = encryption_rsa_plugin
