@@ -142,11 +142,8 @@ class WebMvcCommunicationPushController:
         @return: The result of the handling.
         """
 
-        # sets the result for the rest request
-        rest_request.set_result_translated(str(self.service_connection_name_communication_handler_map))
-
-        # flushes the rest request
-        rest_request.flush()
+        # sets the request contents
+        self.set_contents(rest_request, str(self.service_connection_name_communication_handler_map))
 
         # returns true
         return True
@@ -249,11 +246,8 @@ class WebMvcCommunicationPushController:
         # serializes the information values list
         information_values_list_serialized = json_plugin.dumps(information_values_list)
 
-        # sets the result for the rest request
-        rest_request.set_result_translated(information_values_list_serialized)
-
-        # flushes the rest request
-        rest_request.flush()
+        # sets the request contents
+        self.set_contents(rest_request, information_values_list_serialized)
 
         # returns true
         return True
