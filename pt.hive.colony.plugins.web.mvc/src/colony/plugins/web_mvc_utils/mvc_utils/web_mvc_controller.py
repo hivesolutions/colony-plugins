@@ -527,7 +527,7 @@ def get_base_path(self, rest_request):
     # returns the base path
     return base_path
 
-def set_contents(self, rest_request, contents = ""):
+def set_contents(self, rest_request, contents = "", content_type = DEFAULT_CONTENT_TYPE):
     """
     Sets the given contents in the given rest request.
 
@@ -535,10 +535,12 @@ def set_contents(self, rest_request, contents = ""):
     @param rest_request: The rest request to be set with the contents.
     @type contents: String
     @param contents: The contents to set in the rest request.
+    @type content_type: String
+    @param content_type: The content type to be set.
     """
 
     # sets the content type for the rest request
-    rest_request.set_content_type(DEFAULT_CONTENT_TYPE)
+    rest_request.set_content_type(content_type)
 
     # sets the result for the rest request
     rest_request.set_result_translated(contents)
