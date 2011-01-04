@@ -1563,6 +1563,11 @@ class HttpClientServiceHandler:
         # retrieves the host value from the request headers
         host = request.headers_map.get(HOST_VALUE, None)
 
+        # in case the host is not defined
+        if not host:
+            # raises the client request security violation exception
+            raise main_service_http_exceptions.ClientRequestSecurityViolation("host not defined")
+
         # retrieves the allowed host map
         allowed_hosts = service_configuration.get("allowed_hosts", {})
 
