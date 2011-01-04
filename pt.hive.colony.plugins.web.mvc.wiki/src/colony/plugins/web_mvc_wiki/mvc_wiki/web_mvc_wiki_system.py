@@ -346,19 +346,13 @@ class WebMvcWikiPageController:
         revision_control_manager.add([complete_file_path], True)
 
         # uses the revision control manager to perform the commit
-        commit_revision = revision_control_manager.commit([complete_file_path], summary)
-
-        # sets the result for the rest request
-        rest_request.set_result_translated("revision: " + str(commit_revision.get_number()))
+        revision_control_manager.commit([complete_file_path], summary)
 
         # retrieves the base path
         base_path = self.get_base_path(rest_request)
 
         # redirects the rest request
-        rest_request.redirect(base_path + instance_name + "/" + file_name)
-
-        # flushes the rest request
-        rest_request.flush()
+        self.redirect(rest_request, base_path + instance_name + "/" + file_name)
 
         return True
 
@@ -422,11 +416,8 @@ class WebMvcWikiPageController:
         # uses the revision control manager to perform the commit
         commit_revision = revision_control_manager.commit([complete_file_path], summary)
 
-        # sets the result for the rest request
-        rest_request.set_result_translated("revision: " + str(commit_revision.get_number()))
-
-        # flushes the rest request
-        rest_request.flush()
+        # sets the request contents
+        self.set_contents(rest_request, "revision: " + str(commit_revision.get_number()))
 
         return True
 
@@ -696,11 +687,8 @@ class WebMvcWikiController:
             # processes the template file and sets the request contents
             self.process_set_contents(rest_request, template_file)
         else:
-            # sets the result for the rest request
-            rest_request.set_result_translated(target_file_contents)
-
-            # flushes the rest request
-            rest_request.flush()
+            # sets the request contents
+            self.set_contents(rest_request, target_file_contents)
 
         # returns true
         return True
@@ -740,11 +728,8 @@ class WebMvcWikiController:
             # closes the resource file
             resource_file.close()
 
-        # sets the result for the rest request
-        rest_request.set_result_translated(resource_file_contents)
-
-        # flushes the rest request
-        rest_request.flush()
+        # sets the request contents
+        self.set_contents(rest_request, resource_file_contents)
 
         # returns true
         return True
