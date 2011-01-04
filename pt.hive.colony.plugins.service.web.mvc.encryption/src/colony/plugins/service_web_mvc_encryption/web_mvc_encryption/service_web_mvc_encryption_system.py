@@ -164,7 +164,7 @@ class WebMvcEncryptionClient:
 
     def sign(self, message, algorithm_name = None):
         # retrieves the base url
-        base_url = self.media_dashboard_structure.base_url
+        base_url = self.web_mvc_encryption_structure.base_url
 
         # sets the retrieval url
         retrieval_url = base_url + "sign"
@@ -188,6 +188,31 @@ class WebMvcEncryptionClient:
 
         # returns the signature
         return signature
+
+    def verify(self, signature, message):
+        # retrieves the base url
+        base_url = self.web_mvc_encryption_structure.base_url
+
+        # sets the retrieval url
+        retrieval_url = base_url + "verify"
+
+        # encodes the message in base 64
+        message_base_64 = base64.b64encode(message)
+
+        # start the parameters map
+        parameters = {}
+
+        # sets the signature
+        parameters["signature"] = signature
+
+        # sets the message
+        parameters["message"] = message_base_64
+
+        # fetches the retrieval url with the given parameters retrieving the signature
+        return_value = self._fetch_url(retrieval_url, parameters)
+
+        # returns the return value
+        return return_value
 
     def get_web_mvc_encryption_structure(self):
         """
