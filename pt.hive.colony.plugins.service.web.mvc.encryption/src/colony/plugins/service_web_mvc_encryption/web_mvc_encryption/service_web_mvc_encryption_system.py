@@ -37,6 +37,8 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
+import base64
+
 DEFAULT_CHARSET = "utf-8"
 """ The default charset """
 
@@ -45,9 +47,6 @@ GET_METHOD_VALUE = "GET"
 
 POST_METHOD_VALUE = "POST"
 """ The post method value """
-
-DEFAULT_API_VERSION = "1.0"
-""" The default web mvc encryption api version """
 
 class ServiceWebMvcEncryption:
     """
@@ -139,22 +138,12 @@ class WebMvcEncryptionClient:
             # closes the http client
             self.http_client.close({})
 
-    def generate_web_mvc_encryption_structure(self, username, cin, country, language, api_version = DEFAULT_API_VERSION, set_structure = True):
+    def generate_web_mvc_encryption_structure(self, base_url, set_structure = True):
         """
         Generates the web mvc encryption structure for the given arguments.
 
-        @type username: String
-        @param username: The username.
-        @type cin: String
-        @param cin: The cin.
-        @type country: String
-        @param country: The two letter string representing the
-        country to be used.
-        @type language: String
-        @param language: The two letter string representing the
-        language to be used.
-        @type api_version: String
-        @param api_version: The version of the api being used.
+        @type base_url: String
+        @param base_url: The base url of the web mvc encryption provider.
         @type set_structure: bool
         @param set_structure: If the structure should be
         set in the web mvc encryption client.
@@ -163,7 +152,7 @@ class WebMvcEncryptionClient:
         """
 
         # creates a new web mvc encryption structure
-        web_mvc_encryption_structure = WebMvcEncryptionStructure(username, cin, country, language, api_version)
+        web_mvc_encryption_structure = WebMvcEncryptionStructure(base_url)
 
         # in case the structure is meant to be set
         if set_structure:
@@ -172,6 +161,33 @@ class WebMvcEncryptionClient:
 
         # returns the web mvc encryption structure
         return web_mvc_encryption_structure
+
+    def sign(self, message, algorithm_name = None):
+        # retrieves the base url
+        base_url = self.media_dashboard_structure.base_url
+
+        # sets the retrieval url
+        retrieval_url = base_url + "sign"
+
+        # encodes the message in base 64
+        message_base_64 = base64.b64encode(message)
+
+        # start the parameters map
+        parameters = {}
+
+        # sets the message
+        parameters["message"] = message_base_64
+
+        # in case the algorithm name is defined
+        if algorithm_name:
+            # sets the algorithm name
+            parameters["algorithm_name"] = algorithm_name
+
+        # fetches the retrieval url with the given parameters retrieving the signature
+        signature = self._fetch_url(retrieval_url, parameters)
+
+        # returns the signature
+        return signature
 
     def get_web_mvc_encryption_structure(self):
         """
@@ -270,141 +286,35 @@ class WebMvcEncryptionStructure:
     The web mvc encryption structure class.
     """
 
-    username = None
-    """ The username """
+    base_url = None
+    """ The base url of the web mvc encryption provider """
 
-    cin = None
-    """ The cin value """
-
-    country = None
-    """ The two letter string representing the country to be used """
-
-    language = None
-    """ The two letter string representing the language to be used """
-
-    api_version = None
-    """ The version of the api being used """
-
-    def __init__(self, username, cin, country, language, api_version = DEFAULT_API_VERSION):
+    def __init__(self, base_url):
         """
         Constructor of the class.
 
-        @type username: String
-        @param username: The username.
-        @type cin: String
-        @param cin: The cin value.
-        @type country: String
-        @param country: The two letter string representing the
-        country to be used.
-        @type language: String
-        @param language: The two letter string representing the
-        language to be used.
-        @type api_version: String
-        @param api_version: The version of the api being used.
+        @type base_url: String
+        @param base_url: The base url of the web mvc encryption provider.
         """
 
-        self.username = username
-        self.cin = cin
-        self.country = country
-        self.language = language
-        self.api_version = api_version
+        self.base_url = base_url
 
-    def get_username(self):
+    def get_base_url(self):
         """
-        Retrieves the username.
+        Retrieves the base url.
 
         @rtype: String
-        @return: The username.
+        @return: The base url.
         """
 
-        return self.username
+        return self.base_url
 
-    def set_username(self, username):
+    def set_base_url(self, base_url):
         """
-        Sets the username.
+        Sets the base url.
 
-        @type username: String
-        @param username: The username.
-        """
-
-        self.username = username
-
-    def get_cin(self):
-        """
-        Retrieves the cin.
-
-        @rtype: String
-        @return: The cin.
+        @type base_url: String
+        @param base_url: The base url.
         """
 
-        return self.cin
-
-    def set_cin(self, cin):
-        """
-        Sets the cin.
-
-        @type cin: String
-        @param cin: The cin.
-        """
-
-        self.cin = cin
-
-    def get_country(self):
-        """
-        Retrieves the country.
-
-        @rtype: String
-        @return: The country.
-        """
-
-        return self.country
-
-    def set_country(self, country):
-        """
-        Sets the country.
-
-        @type country: String
-        @param country: The country.
-        """
-
-        self.country = country
-
-    def get_language(self):
-        """
-        Retrieves the language.
-
-        @rtype: String
-        @return: The language.
-        """
-
-        return self.language
-
-    def set_language(self, language):
-        """
-        Sets the language.
-
-        @type language: String
-        @param language: The language.
-        """
-
-        self.language = language
-
-    def get_api_version(self):
-        """
-        Retrieves the api version.
-
-        @rtype: String
-        @return: The api version.
-        """
-
-        return self.api_version
-
-    def set_api_version(self, api_version):
-        """
-        Sets the api version.
-
-        @type api_version: String
-        @param api_version: The api version.
-        """
-
-        self.api_version = api_version
+        self.base_url = base_url
