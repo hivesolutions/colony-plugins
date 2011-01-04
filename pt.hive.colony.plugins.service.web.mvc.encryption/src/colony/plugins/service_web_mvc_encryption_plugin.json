@@ -1,0 +1,24 @@
+{
+    "type" : "plugin",
+    "platform" : "python",
+    "sub_platforms" : ["cpython"],
+    "id" : "pt.hive.colony.plugins.service.web.mvc.encryption",
+    "name" : "Web Mvc Encryption Service Plugin",
+    "short_name" : "Web Mvc Encryption Service Main",
+    "description" : "The plugin that offers the web mvc encryption service",
+    "version" : "1.0.0",
+    "author" : "Hive Solutions Lda. <development@hive.pt>",
+    "capabilities" : ["service.web.mvc.encryption", "build_automation_item"],
+    "capabilities_allowed" : [],
+    "dependencies" : [{
+                "id" : "pt.hive.colony.plugins.main.client.http",
+                "version" : "1.0.0"
+            }],
+    "main_file" : "service_web_mvc_encryption_plugin.py",
+    "resources" : [
+            "service_web_mvc_encryption_plugin.py",
+            "service_web_mvc_encryption/__init__.py",
+            "service_web_mvc_encryption/web_mvc_encryption/__init__.py",
+            "service_web_mvc_encryption/web_mvc_encryption/service_web_mvc_encryption_system.py",
+            "service_web_mvc_encryption/web_mvc_encryption/resources/baf.xml"]
+}
