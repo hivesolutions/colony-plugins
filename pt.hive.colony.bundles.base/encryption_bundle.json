@@ -13,6 +13,9 @@
             }, {
                 "id" : "pt.hive.colony.plugins.encryption.rsa",
                 "version" : "1.0.0"
+            }, {
+                "id" : "pt.hive.colony.plugins.encryption.ssl",
+                "version" : "1.0.0"
             }],
     "dependencies" : [{
                 "id" : "pt.hive.colony.bundles.format",
