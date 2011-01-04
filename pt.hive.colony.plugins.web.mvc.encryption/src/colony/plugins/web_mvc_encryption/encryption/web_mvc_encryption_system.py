@@ -37,6 +37,8 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
+import base64
+
 DEFAULT_ENCODING = "utf-8"
 """ The default encoding value """
 
@@ -94,7 +96,8 @@ class WebMvcEncryption:
         """
 
         return ((r"^web_mvc_encryption/?$", self.web_mvc_encryption_main_controller.handle_web_mvc_encryption_index),
-                (r"^web_mvc_encryption/index$", self.web_mvc_encryption_main_controller.handle_web_mvc_encryption_index))
+                (r"^web_mvc_encryption/index$", self.web_mvc_encryption_main_controller.handle_web_mvc_encryption_index),
+                (r"^web_mvc_encryption/sign$", self.web_mvc_encryption_main_controller.handle_web_mvc_encryption_sign))
 
     def get_communication_patterns(self):
         """
@@ -191,6 +194,48 @@ class WebMvcEncryptionMainController:
 
         # processes the template file and sets the request contents
         self.process_set_contents(rest_request, template_file)
+
+        # returns true
+        return True
+
+    def handle_web_mvc_encryption_sign(self, rest_request, parameters = {}):
+        """
+        Handles the given web mvc encryption sign rest request.
+
+        @type rest_request: RestRequest
+        @param rest_request: The web mvc encryption sign rest request
+        to be handled.
+        @type parameters: Dictionary
+        @param parameters: The handler parameters.
+        @rtype: bool
+        @return: The result of the handling.
+        """
+
+        # retrieves the encryption ssl plugin
+        encryption_ssl_plugin = self.web_mvc_encryption_plugin.encryption_ssl_plugin
+
+        # processes the form data
+        form_data_map = self.process_form_data(rest_request, DEFAULT_ENCODING)
+
+        # retrieves the message from the form data map
+        message = form_data_map["message"]
+
+        # retrieves the algorithm name from the form data map
+        algorithm_name = form_data_map.get("algorithm_name", "sha1")
+
+        # creates the ssl structure
+        ssl_structure = encryption_ssl_plugin.create_structure({})
+
+        PRIVATE_KEY_PATH = "C:/private.pem"
+
+        # decodes the message (using base 64)
+        message_decoded = base64.b64decode(message)
+
+        # signs the message (decoded) in base 64
+        signature = ssl_structure.sign_base_64(PRIVATE_KEY_PATH, algorithm_name, message_decoded)
+
+        # sets the signature as the contents
+        self.set_contents(rest_request, signature, "text/plain")
 
         # returns true
         return True

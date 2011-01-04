@@ -57,7 +57,9 @@ class WebMvcEncryptionPlugin(colony.base.plugin_system.Plugin):
     capabilities = ["web.mvc_service", "build_automation_item"]
     capabilities_allowed = []
     dependencies = [colony.base.plugin_system.PluginDependency(
-                    "pt.hive.colony.plugins.web.mvc.utils", "1.0.0")]
+                    "pt.hive.colony.plugins.web.mvc.utils", "1.0.0"),
+                    colony.base.plugin_system.PluginDependency(
+                    "pt.hive.colony.plugins.encryption.ssl", "1.0.0")]
     events_handled = []
     events_registrable = []
     main_modules = ["web_mvc_encryption.encryption.web_mvc_encryption_controllers",
@@ -66,6 +68,7 @@ class WebMvcEncryptionPlugin(colony.base.plugin_system.Plugin):
     web_mvc_encryption = None
 
     web_mvc_utils_plugin = None
+    encryption_ssl_plugin = None
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
@@ -83,21 +86,15 @@ class WebMvcEncryptionPlugin(colony.base.plugin_system.Plugin):
     def end_unload_plugin(self):
         colony.base.plugin_system.Plugin.end_unload_plugin(self)
 
-    @colony.base.decorators.load_allowed("pt.hive.colony.plugins.web.mvc.encryption", "1.0.0")
     def load_allowed(self, plugin, capability):
         colony.base.plugin_system.Plugin.load_allowed(self, plugin, capability)
 
-    @colony.base.decorators.unload_allowed("pt.hive.colony.plugins.web.mvc.encryption", "1.0.0")
     def unload_allowed(self, plugin, capability):
         colony.base.plugin_system.Plugin.unload_allowed(self, plugin, capability)
 
     @colony.base.decorators.inject_dependencies("pt.hive.colony.plugins.web.mvc.encryption", "1.0.0")
     def dependency_injected(self, plugin):
         colony.base.plugin_system.Plugin.dependency_injected(self, plugin)
-
-    @colony.base.decorators.event_handler("pt.hive.colony.plugins.web.mvc.encryption", "1.0.0")
-    def event_handler(self, event_name, *event_args):
-        colony.base.plugin_system.Plugin.event_handler(self, event_name, *event_args)
 
     def get_patterns(self):
         """
@@ -145,3 +142,10 @@ class WebMvcEncryptionPlugin(colony.base.plugin_system.Plugin):
     @colony.base.decorators.plugin_inject("pt.hive.colony.plugins.web.mvc.utils")
     def set_web_mvc_utils_plugin(self, web_mvc_utils_plugin):
         self.web_mvc_utils_plugin = web_mvc_utils_plugin
+
+    def get_encryption_ssl_plugin(self):
+        return self.encryption_ssl_plugin
+
+    @colony.base.decorators.plugin_inject("pt.hive.colony.plugins.encryption.ssl")
+    def set_encryption_ssl_plugin(self, encryption_ssl_plugin):
+        self.encryption_ssl_plugin = encryption_ssl_plugin
