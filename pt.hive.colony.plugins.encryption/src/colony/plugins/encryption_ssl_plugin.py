@@ -62,8 +62,7 @@ class EncryptionSslPlugin(colony.base.plugin_system.Plugin):
                     "pt.hive.colony.plugins.encryption.pkcs_1", "1.0.0")]
     events_handled = []
     events_registrable = []
-    main_modules = ["encryption.ssl.encryption_ssl_exceptions",
-                    "encryption.ssl.encryption_ssl_system"]
+    main_modules = ["encryption.ssl.encryption_ssl_system"]
 
     encryption_ssl = None
 
