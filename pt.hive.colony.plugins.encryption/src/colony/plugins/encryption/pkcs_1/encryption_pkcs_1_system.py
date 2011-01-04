@@ -42,6 +42,7 @@ import math
 import base64
 import hashlib
 
+import colony.libs.math_util
 import colony.libs.string_buffer_util
 
 import encryption_pkcs_1_exceptions
@@ -684,15 +685,13 @@ class Pkcs1Structure:
         signature_value_packed_length = len(signature_value_packed)
 
         # retrieves the modulus size in bytes
-        modulus_size_bytes = math.floor(math.log(modulus, 256))
-
-        # converts the modulus size in bytes to integer
-        modulus_size_bytes_integer = int(modulus_size_bytes)
+        modulus_size_bytes = colony.libs.math_util.ceil_integer(math.log(modulus, 256))
 
         # calculates the padding size (from the modulus size bytes and the signature value packed length)
-        padding_size = modulus_size_bytes_integer - (signature_value_packed_length + 2)
+        padding_size = modulus_size_bytes - (signature_value_packed_length + 3)
 
         # writes the beginning of the padding value to the signature buffer
+        signature_buffer.write("\x00")
         signature_buffer.write("\x01")
 
         # creates the padding string value
@@ -720,8 +719,14 @@ class Pkcs1Structure:
         # converts the first character to ordinal
         first_character_ordinal = ord(first_character)
 
-        # in case the first character ordinal is not one
-        if not first_character_ordinal == 0x01:
+        # retrieves the second character
+        second_character = signature_verified[1]
+
+        # converts the second character to ordinal
+        second_character_ordinal = ord(second_character)
+
+        # in case the first character ordinal is not zero or the second character is not one
+        if not first_character_ordinal == 0x00 or not second_character_ordinal == 0x01:
             # raises the invalid format exception
             raise encryption_pkcs_1_exceptions.InvalidFormatException("invalid signature format")
 

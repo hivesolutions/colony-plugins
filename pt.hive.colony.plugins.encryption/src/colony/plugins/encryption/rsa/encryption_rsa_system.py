@@ -310,6 +310,9 @@ class RsaStructure:
         return message_decrypted
 
     def _encrypt_string(self, message, key, modulus):
+        # retrieves the modulus size in bytes
+        modulus_size_bytes = colony.libs.math_util.ceil_integer(math.log(modulus, 256))
+
         # converts the message to integer
         message_integer = self._string_to_integer(message)
 
@@ -317,7 +320,7 @@ class RsaStructure:
         message_integer_encrypted = self._encrypt_integer(message_integer, key, modulus)
 
         # converts the integer to string, retrieving the message encrypted
-        message_encrypted = self._integer_to_string(message_integer_encrypted)
+        message_encrypted = self._integer_to_string(message_integer_encrypted, modulus_size_bytes)
 
         # returns the message encrypted
         return message_encrypted
@@ -691,7 +694,7 @@ class RsaStructure:
         # returns the integer value
         return integer_value
 
-    def _integer_to_string(self, integer_value):
+    def _integer_to_string(self, integer_value, string_length = None):
         # creates the characters list that will hold
         # the various characters
         characters_list = []
@@ -709,6 +712,19 @@ class RsaStructure:
             # shifts the integer value eight bits
             # to the right
             integer_value >>= 8
+
+        # retrieves the characters list length
+        characters_list_length = len(characters_list)
+
+        # in case the string length is defined
+        if string_length:
+            # calculates the extra characters length from the string length
+            extra_characters_length = string_length - characters_list_length
+
+            # iterates over the range of extra characters length
+            for _index in range(extra_characters_length):
+                # adds the extra padding character
+                characters_list.append("\x00")
 
         # reverses the characters list
         characters_list.reverse()
