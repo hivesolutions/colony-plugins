@@ -97,7 +97,8 @@ class WebMvcEncryption:
 
         return ((r"^web_mvc_encryption/?$", self.web_mvc_encryption_main_controller.handle_web_mvc_encryption_index),
                 (r"^web_mvc_encryption/index$", self.web_mvc_encryption_main_controller.handle_web_mvc_encryption_index),
-                (r"^web_mvc_encryption/sign$", self.web_mvc_encryption_main_controller.handle_web_mvc_encryption_sign))
+                (r"^web_mvc_encryption/sign$", self.web_mvc_encryption_main_controller.handle_web_mvc_encryption_sign),
+                (r"^web_mvc_encryption/verify$", self.web_mvc_encryption_main_controller.handle_web_mvc_encryption_verify))
 
     def get_communication_patterns(self):
         """
@@ -236,6 +237,50 @@ class WebMvcEncryptionMainController:
 
         # sets the signature as the contents
         self.set_contents(rest_request, signature, "text/plain")
+
+        # returns true
+        return True
+
+    def handle_web_mvc_encryption_verify(self, rest_request, parameters = {}):
+        """
+        Handles the given web mvc encryption verify rest request.
+
+        @type rest_request: RestRequest
+        @param rest_request: The web mvc encryption verify rest request
+        to be handled.
+        @type parameters: Dictionary
+        @param parameters: The handler parameters.
+        @rtype: bool
+        @return: The result of the handling.
+        """
+
+        # retrieves the encryption ssl plugin
+        encryption_ssl_plugin = self.web_mvc_encryption_plugin.encryption_ssl_plugin
+
+        # processes the form data
+        form_data_map = self.process_form_data(rest_request, DEFAULT_ENCODING)
+
+        # retrieves the signature from the form data map
+        signature = form_data_map["signature"]
+
+        # retrieves the message from the form data map
+        message = form_data_map["message"]
+
+        # creates the ssl structure
+        ssl_structure = encryption_ssl_plugin.create_structure({})
+
+        PUBLIC_KEY_PATH = "C:/public.pem"
+
+        # decodes the message (using base 64)
+        message_decoded = base64.b64decode(message)
+
+        # verifies the signature in base 64
+        return_value = ssl_structure.verify_base_64(PUBLIC_KEY_PATH, signature, message_decoded)
+
+        return_value_string = return_value and "1" or "0"
+
+        # sets the return value string as the contents
+        self.set_contents(rest_request, return_value_string, "text/plain")
 
         # returns true
         return True
