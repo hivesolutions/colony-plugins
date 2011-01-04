@@ -17,6 +17,7 @@
     "main_file" : "encryption_pkcs_1_plugin.py",
     "resources" : ["encryption_pkcs_1_plugin.py", "encryption/__init__.py",
             "encryption/pkcs_1/__init__.py",
+            "encryption/pkcs_1/encryption_pkcs_1_exceptions.py",
             "encryption/pkcs_1/encryption_pkcs_1_system.py",
             "encryption/pkcs_1/resources/baf.xml"]
 }

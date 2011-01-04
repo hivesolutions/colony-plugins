@@ -61,7 +61,8 @@ class EncryptionPkcs1Plugin(colony.base.plugin_system.Plugin):
                     "pt.hive.colony.plugins.format.ber", "1.0.0")]
     events_handled = []
     events_registrable = []
-    main_modules = ["encryption.pkcs_1.encryption_pkcs_1_system"]
+    main_modules = ["encryption.pkcs_1.encryption_pkcs_1_exceptions",
+                    "encryption.pkcs_1.encryption_pkcs_1_system"]
 
     encryption_pkcs_1 = None
 
