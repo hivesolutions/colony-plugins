@@ -37,6 +37,7 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
+import os
 import base64
 
 DEFAULT_ENCODING = "utf-8"
@@ -50,6 +51,9 @@ TEMPLATES_PATH = WEB_MVC_ENCRYPTION_RESOURCES_PATH + "/templates"
 
 EXTRAS_PATH = WEB_MVC_ENCRYPTION_RESOURCES_PATH + "/extras"
 """ The extras path """
+
+DEFAULT_NUMBER_BITS = 256
+""" The default number of bits """
 
 class WebMvcEncryption:
     """
@@ -232,9 +236,6 @@ class WebMvcEncryptionMainController:
         # retrieves the encryption ssl plugin
         encryption_ssl_plugin = self.web_mvc_encryption_plugin.encryption_ssl_plugin
 
-        # retrieves the keys map
-        keys_map = self.web_mvc_encryption.keys_map
-
         # processes the form data
         form_data_map = self.process_form_data(rest_request, DEFAULT_ENCODING)
 
@@ -250,11 +251,8 @@ class WebMvcEncryptionMainController:
         # creates the ssl structure
         ssl_structure = encryption_ssl_plugin.create_structure({})
 
-        # retrieves the key for the key name
-        key = keys_map.get(key_name, {})
-
-        # retrieves the private key path
-        private_key_path = key.get("private_key", None)
+        # retrieves the private key path for the key name
+        private_key_path = self._get_key_path(key_name, "private_key")
 
         # decodes the message (using base 64)
         message_decoded = base64.b64decode(message)
@@ -284,9 +282,6 @@ class WebMvcEncryptionMainController:
         # retrieves the encryption ssl plugin
         encryption_ssl_plugin = self.web_mvc_encryption_plugin.encryption_ssl_plugin
 
-        # retrieves the keys map
-        keys_map = self.web_mvc_encryption.keys_map
-
         # processes the form data
         form_data_map = self.process_form_data(rest_request, DEFAULT_ENCODING)
 
@@ -302,11 +297,8 @@ class WebMvcEncryptionMainController:
         # creates the ssl structure
         ssl_structure = encryption_ssl_plugin.create_structure({})
 
-        # retrieves the key for the key name
-        key = keys_map.get(key_name, {})
-
-        # retrieves the public key path
-        piublic_key_path = key.get("public_key", None)
+        # retrieves the public key path for the key name
+        piublic_key_path = self._get_key_path(key_name, "public_key")
 
         # decodes the message (using base 64)
         message_decoded = base64.b64decode(message)
@@ -322,3 +314,52 @@ class WebMvcEncryptionMainController:
 
         # returns true
         return True
+
+    def _get_key_path(self, key_name, key_type):
+        # retrieves the plugin manager
+        plugin_manager = self.web_mvc_encryption_plugin.manager
+
+        # retrieves the keys map
+        keys_map = self.web_mvc_encryption.keys_map
+
+        # retrieves the key for the key name
+        key = keys_map.get(key_name, {})
+
+        # retrieves the key path
+        key_path = key.get(key_type, None)
+
+        # resolves the key file path
+        key_path = plugin_manager.resolve_file_path(key_path, True, True)
+
+        # in case the key file path does not exists
+        if not os.path.exists(key_path):
+            # generates the key files
+            self._generate_key_files(key)
+
+        # returns the key path
+        return key_path
+
+    def _generate_key_files(self, key):
+        # retrieves the plugin manager
+        plugin_manager = self.web_mvc_encryption_plugin.manager
+
+        # retrieves the encryption ssl plugin
+        encryption_ssl_plugin = self.web_mvc_encryption_plugin.encryption_ssl_plugin
+
+        # retrieves the private key path
+        private_key_path = key.get("private_key", None)
+
+        # retrieves the public key path
+        public_key_path = key.get("public_key", None)
+
+        # resolves the private key file path
+        private_key_path = plugin_manager.resolve_file_path(private_key_path, True, True)
+
+        # resolves the public key file path
+        public_key_path = plugin_manager.resolve_file_path(public_key_path, True, True)
+
+        # creates the ssl structure
+        ssl_structure = encryption_ssl_plugin.create_structure({})
+
+        # generates the public and private keys
+        ssl_structure.generate_keys(private_key_path, public_key_path, DEFAULT_NUMBER_BITS)
