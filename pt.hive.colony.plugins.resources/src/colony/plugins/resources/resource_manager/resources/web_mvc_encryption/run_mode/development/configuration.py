@@ -43,5 +43,8 @@ configuration = {
                          "private_key" : "%configuration:pt.hive.colony.plugins.web.mvc.encryption%/private.pem",
                          "public_key" : "%configuration:pt.hive.colony.plugins.web.mvc.encryption%/public.pem"
                      }
+                 },
+                 "security" : {
+                     "validate_api_key" : False
                  }
              }
