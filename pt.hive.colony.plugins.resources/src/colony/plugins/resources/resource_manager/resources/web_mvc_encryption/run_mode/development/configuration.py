@@ -40,8 +40,8 @@ __license__ = "GNU General Public License (GPL), Version 3"
 configuration = {
                  "keys" : {
                      "colony_default" : {
-                         "public_key" : "%configuration:pt.hive.colony.plugins.web.mvc.encryption%/private.pem",
-                         "private_key" : "%configuration:pt.hive.colony.plugins.web.mvc.encryption%/public.pem"
+                         "private_key" : "%configuration:pt.hive.colony.plugins.web.mvc.encryption%/private.pem",
+                         "public_key" : "%configuration:pt.hive.colony.plugins.web.mvc.encryption%/public.pem"
                      }
                  }
              }
