@@ -39,8 +39,16 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 import colony.libs.importer_util
 
+import web_mvc_encryption_exceptions
+
 WEB_MVC_UTILS_VALUE = "web_mvc_utils"
 """ The web mvc utils value """
+
+VALID_STATUS_VALUE = 1
+""" The valid status value """
+
+INVALID_STATUS_VALUE = 1
+""" The invalid status value """
 
 DEFAULT_ENCODING = "utf-8"
 """ The default encoding value """
@@ -113,7 +121,7 @@ class ConsumerController:
         web_mvc_encryption_entity_models = self.web_mvc_encryption.web_mvc_encryption_entity_models
 
         # creates the consumer create map
-        consumer_create = {"status" : 2,
+        consumer_create = {"status" : INVALID_STATUS_VALUE,
                            "api_key" : self._generate_api_key()}
 
         # retrieves the consumer entity
@@ -124,6 +132,31 @@ class ConsumerController:
 
         # saves the consumer entity
         consumer_entity.save_update()
+
+        # returns the consumer entity
+        return consumer_entity
+
+    def _validate_api_key(self, rest_request, api_key):
+        # retrieves the web mvc encryption entity models
+        web_mvc_encryption_entity_models = self.web_mvc_encryption.web_mvc_encryption_entity_models
+
+        # retrieves the entity manager
+        entity_manager = web_mvc_encryption_entity_models.entity_manager
+
+        # retrieves the consumer entities with the specified api key
+        consumer_entities = entity_manager._find_all_options(web_mvc_encryption_entity_models.Consumer, {"filters" : [{"filter_type" : "equals",
+                                                                                                                "filter_fields" : [{"field_name" : "api_key",
+                                                                                                                                    "field_value" : api_key},
+                                                                                                                                   {"field_name" : "status",
+                                                                                                                                    "field_value" : VALID_STATUS_VALUE}]}]})
+
+        # raises an exception in case no consumer was found
+        if not consumer_entities:
+            # raises the access denied exception
+            raise web_mvc_encryption_exceptions.AccessDeniedException("invalid api key")
+
+        # retrieves the consumer entity
+        consumer_entity = consumer_entities[0]
 
         # returns the consumer entity
         return consumer_entity
