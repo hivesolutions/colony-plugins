@@ -9,6 +9,15 @@
                 "version" : "1.0.0"
             }],
     "dependencies" : [{
+                "id" : "pt.hive.colony.bundles.encryption",
+                "version" : "1.0.0"
+            },{
+                "id" : "pt.hive.colony.bundles.random",
+                "version" : "1.0.0"
+            }, {
+                "id" : "pt.hive.colony.bundles.resources",
+                "version" : "1.0.0"
+            }, {
                 "id" : "pt.hive.colony.bundles.web.mvc",
                 "version" : "1.0.0"
             }]
