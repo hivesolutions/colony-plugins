@@ -138,6 +138,7 @@
                         <specification_file>$base{plugin_directory}/base_bundles/bundles/specifications/service_easypay_bundle.json</specification_file>
                         <specification_file>$base{plugin_directory}/base_bundles/bundles/specifications/service_facebook_bundle.json</specification_file>
                         <specification_file>$base{plugin_directory}/base_bundles/bundles/specifications/service_twitter_bundle.json</specification_file>
+                        <specification_file>$base{plugin_directory}/base_bundles/bundles/specifications/service_web_mvc_encryption_bundle.json</specification_file>
                         <specification_file>$base{plugin_directory}/base_bundles/bundles/specifications/specifications_bundle.json</specification_file>
                         <specification_file>$base{plugin_directory}/base_bundles/bundles/specifications/string_normalization_bundle.json</specification_file>
                         <specification_file>$base{plugin_directory}/base_bundles/bundles/specifications/svn_bundle.json</specification_file>
@@ -488,6 +489,10 @@
                         <specification>
                             <type>bundle</type>
                             <specification_file>$base{plugin_directory}/base_bundles/bundles/specifications/service_twitter_bundle.json</specification_file>
+                        </specification>
+                        <specification>
+                            <type>bundle</type>
+                            <specification_file>$base{plugin_directory}/base_bundles/bundles/specifications/service_web_mvc_encryption_bundle.json</specification_file>
                         </specification>
                         <specification>
                             <type>bundle</type>

@@ -108,6 +108,7 @@
             "base_bundles/bundles/specifications/service_easypay_bundle.json",
             "base_bundles/bundles/specifications/service_facebook_bundle.json",
             "base_bundles/bundles/specifications/service_twitter_bundle.json",
+            "base_bundles/bundles/specifications/service_web_mvc_encryption_bundle.json",
             "base_bundles/bundles/specifications/specifications_bundle.json",
             "base_bundles/bundles/specifications/string_normalization_bundle.json",
             "base_bundles/bundles/specifications/svn_bundle.json",
