@@ -62,6 +62,9 @@ class WebMvcEncryption:
     web_mvc_encryption_main_controller = None
     """ The web mvc encryption main controller """
 
+    keys_map = {}
+    """ The map of keys """
+
     def __init__(self, web_mvc_encryption_plugin):
         """
         Constructor of the class.
@@ -132,6 +135,20 @@ class WebMvcEncryption:
         web_mvc_encryption_plugin_path = plugin_manager.get_plugin_path_by_id(self.web_mvc_encryption_plugin.id)
 
         return ((r"^web_mvc_encryption/resources/.+$", (web_mvc_encryption_plugin_path + "/" + EXTRAS_PATH, "web_mvc_encryption/resources")),)
+
+    def set_configuration_property(self, configuration_property):
+        # retrieves the configuration
+        configuration = configuration_property.get_data()
+
+        # retrieves the extension map
+        keys_map = configuration["keys"]
+
+        # sets the keys map
+        self.keys_map = keys_map
+
+    def unset_configuration_property(self):
+        # sets the keys map
+        self.keys_map = {}
 
 class WebMvcEncryptionMainController:
     """
@@ -215,8 +232,14 @@ class WebMvcEncryptionMainController:
         # retrieves the encryption ssl plugin
         encryption_ssl_plugin = self.web_mvc_encryption_plugin.encryption_ssl_plugin
 
+        # retrieves the keys map
+        keys_map = self.web_mvc_encryption.keys_map
+
         # processes the form data
         form_data_map = self.process_form_data(rest_request, DEFAULT_ENCODING)
+
+        # retrieves the key name from the form data map
+        key_name = form_data_map["key_name"]
 
         # retrieves the message from the form data map
         message = form_data_map["message"]
@@ -227,13 +250,17 @@ class WebMvcEncryptionMainController:
         # creates the ssl structure
         ssl_structure = encryption_ssl_plugin.create_structure({})
 
-        PRIVATE_KEY_PATH = "C:/private.pem"
+        # retrieves the key for the key name
+        key = keys_map.get(key_name, {})
+
+        # retrieves the private key path
+        private_key_path = key.get("private_key", None)
 
         # decodes the message (using base 64)
         message_decoded = base64.b64decode(message)
 
         # signs the message (decoded) in base 64
-        signature = ssl_structure.sign_base_64(PRIVATE_KEY_PATH, algorithm_name, message_decoded)
+        signature = ssl_structure.sign_base_64(private_key_path, algorithm_name, message_decoded)
 
         # sets the signature as the contents
         self.set_contents(rest_request, signature, "text/plain")
@@ -257,8 +284,14 @@ class WebMvcEncryptionMainController:
         # retrieves the encryption ssl plugin
         encryption_ssl_plugin = self.web_mvc_encryption_plugin.encryption_ssl_plugin
 
+        # retrieves the keys map
+        keys_map = self.web_mvc_encryption.keys_map
+
         # processes the form data
         form_data_map = self.process_form_data(rest_request, DEFAULT_ENCODING)
+
+        # retrieves the key name from the form data map
+        key_name = form_data_map["key_name"]
 
         # retrieves the signature from the form data map
         signature = form_data_map["signature"]
@@ -269,15 +302,20 @@ class WebMvcEncryptionMainController:
         # creates the ssl structure
         ssl_structure = encryption_ssl_plugin.create_structure({})
 
-        PUBLIC_KEY_PATH = "C:/public.pem"
+        # retrieves the key for the key name
+        key = keys_map.get(key_name, {})
+
+        # retrieves the public key path
+        piublic_key_path = key.get("public_key", None)
 
         # decodes the message (using base 64)
         message_decoded = base64.b64decode(message)
 
         # verifies the signature in base 64
-        return_value = ssl_structure.verify_base_64(PUBLIC_KEY_PATH, signature, message_decoded)
+        return_value = ssl_structure.verify_base_64(piublic_key_path, signature, message_decoded)
 
-        return_value_string = return_value and "1" or "0"
+        # retrieves the return value in (simple) string mode
+        return_value_string = return_value and "0" or "1"
 
         # sets the return value string as the contents
         self.set_contents(rest_request, return_value_string, "text/plain")

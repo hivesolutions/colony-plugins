@@ -96,6 +96,14 @@ class WebMvcEncryptionPlugin(colony.base.plugin_system.Plugin):
     def dependency_injected(self, plugin):
         colony.base.plugin_system.Plugin.dependency_injected(self, plugin)
 
+    @colony.base.decorators.set_configuration_property("pt.hive.colony.plugins.web.mvc.encryption", "1.0.0")
+    def set_configuration_property(self, property_name, property):
+        colony.base.plugin_system.Plugin.set_configuration_property(self, property_name, property)
+
+    @colony.base.decorators.unset_configuration_property("pt.hive.colony.plugins.web.mvc.encryption", "1.0.0")
+    def unset_configuration_property(self, property_name):
+        colony.base.plugin_system.Plugin.unset_configuration_property(self, property_name)
+
     def get_patterns(self):
         """
         Retrieves the tuple of regular expressions to be used as patterns,
@@ -149,3 +157,11 @@ class WebMvcEncryptionPlugin(colony.base.plugin_system.Plugin):
     @colony.base.decorators.plugin_inject("pt.hive.colony.plugins.encryption.ssl")
     def set_encryption_ssl_plugin(self, encryption_ssl_plugin):
         self.encryption_ssl_plugin = encryption_ssl_plugin
+
+    @colony.base.decorators.set_configuration_property_method("configuration")
+    def service_configuration_set_configuration_property(self, property_name, property):
+        self.web_mvc_encryption.set_configuration_property(property)
+
+    @colony.base.decorators.unset_configuration_property_method("configuration")
+    def service_configuration_unset_configuration_property(self, property_name):
+        self.web_mvc_encryption.unset_configuration_property()
