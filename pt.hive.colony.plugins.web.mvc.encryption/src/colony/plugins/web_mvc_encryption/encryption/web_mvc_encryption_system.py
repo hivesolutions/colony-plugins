@@ -40,6 +40,8 @@ __license__ = "GNU General Public License (GPL), Version 3"
 import os
 import base64
 
+import colony.libs.map_util
+
 DEFAULT_ENCODING = "utf-8"
 """ The default encoding value """
 
@@ -51,6 +53,22 @@ TEMPLATES_PATH = WEB_MVC_ENCRYPTION_RESOURCES_PATH + "/templates"
 
 EXTRAS_PATH = WEB_MVC_ENCRYPTION_RESOURCES_PATH + "/extras"
 """ The extras path """
+
+ENTITY_MANAGER_ARGUMENTS = {"engine" : "sqlite",
+                            "connection_parameters" : {"autocommit" : False}}
+""" The entity manager arguments """
+
+CONNECTION_PARAMETERS_VALUE = "connection_parameters"
+""" The connection parameters value """
+
+FILE_PATH_VALUE = "file_path"
+""" The file path value """
+
+DEFAULT_DATABASE_SUFFIX = "database.db"
+""" The default database suffix """
+
+DEFAULT_DATABASE_PREFIX = "web_mvc_encryption_"
+""" The default database prefix """
 
 DEFAULT_NUMBER_BITS = 256
 """ The default number of bits """
@@ -65,6 +83,9 @@ class WebMvcEncryption:
 
     web_mvc_encryption_main_controller = None
     """ The web mvc encryption main controller """
+
+    web_mvc_encryption_entity_models = None
+    """ the web mvc encryption entity models """
 
     keys_map = {}
     """ The map of keys """
@@ -88,8 +109,17 @@ class WebMvcEncryption:
         # retrieves the web mvc utils plugin
         web_mvc_utils_plugin = self.web_mvc_encryption_plugin.web_mvc_utils_plugin
 
+        # retrieves the entity manager arguments
+        entity_manager_arguments = self.get_entity_manager_arguments()
+
+        # retrieves the current directory path
+        current_directory_path = os.path.dirname(__file__)
+
         # creates the web mvc encryption main controller
         self.web_mvc_encryption_main_controller = web_mvc_utils_plugin.create_controller(WebMvcEncryptionMainController, [self.web_mvc_encryption_plugin, self], {})
+
+        # creates the entity models classes by creating the entity manager and updating the classes
+        self.web_mvc_encryption_entity_models = web_mvc_utils_plugin.create_entity_models("web_mvc_encryption_entity_models", entity_manager_arguments, current_directory_path)
 
     def get_patterns(self):
         """
@@ -153,6 +183,51 @@ class WebMvcEncryption:
     def unset_configuration_property(self):
         # sets the keys map
         self.keys_map = {}
+
+    def get_entity_manager_arguments(self):
+        """
+        Retrieves the entity manager arguments.
+
+        @rtype: Dictionary
+        @return: The entity manager arguments.
+        """
+
+        # retrieves the resource manager plugin
+        resource_manager_plugin = self.web_mvc_encryption_plugin.resource_manager_plugin
+
+        # creates the entity manager arguments map
+        entity_manager_arguments = {}
+
+        # copies the entity manager arguments constant to the new entity manager arguments
+        colony.libs.map_util.map_copy_deep(ENTITY_MANAGER_ARGUMENTS, entity_manager_arguments)
+
+        # retrieves the system database file name resource
+        system_database_filename_resource = resource_manager_plugin.get_resource("system.database.file_name")
+
+        # in case the system database filename resource
+        # is defined
+        if system_database_filename_resource:
+            # retrieves the system database filename suffix
+            system_database_filename_suffix = system_database_filename_resource.data
+        # otherwise
+        else:
+            # sets the system database filename suffix as the default one
+            system_database_filename_suffix = DEFAULT_DATABASE_SUFFIX
+
+        # creates the system database file name value using the prefix and suffix values
+        system_database_filename = DEFAULT_DATABASE_PREFIX + system_database_filename_suffix
+
+        # retrieves the web mvc encryption plugin id
+        web_mvc_encryption_plugin_id = self.web_mvc_encryption_plugin.id
+
+        # creates the database file path using the plugin id and the system database filename
+        database_file_path = "%configuration:" + web_mvc_encryption_plugin_id + "%/" + system_database_filename
+
+        # sets the file path in the entity manager arguments
+        entity_manager_arguments[CONNECTION_PARAMETERS_VALUE][FILE_PATH_VALUE] = database_file_path
+
+        # returns the entity manager arguments
+        return entity_manager_arguments
 
 class WebMvcEncryptionMainController:
     """

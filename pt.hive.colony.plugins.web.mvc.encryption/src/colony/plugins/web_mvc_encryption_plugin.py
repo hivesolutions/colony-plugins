@@ -59,6 +59,8 @@ class WebMvcEncryptionPlugin(colony.base.plugin_system.Plugin):
     dependencies = [colony.base.plugin_system.PluginDependency(
                     "pt.hive.colony.plugins.web.mvc.utils", "1.0.0"),
                     colony.base.plugin_system.PluginDependency(
+                    "pt.hive.colony.plugins.resources.resource_manager", "1.0.0"),
+                    colony.base.plugin_system.PluginDependency(
                     "pt.hive.colony.plugins.encryption.ssl", "1.0.0")]
     events_handled = []
     events_registrable = []
@@ -68,6 +70,7 @@ class WebMvcEncryptionPlugin(colony.base.plugin_system.Plugin):
     web_mvc_encryption = None
 
     web_mvc_utils_plugin = None
+    resource_manager_plugin = None
     encryption_ssl_plugin = None
 
     def load_plugin(self):
@@ -150,6 +153,13 @@ class WebMvcEncryptionPlugin(colony.base.plugin_system.Plugin):
     @colony.base.decorators.plugin_inject("pt.hive.colony.plugins.web.mvc.utils")
     def set_web_mvc_utils_plugin(self, web_mvc_utils_plugin):
         self.web_mvc_utils_plugin = web_mvc_utils_plugin
+
+    def get_resource_manager_plugin(self):
+        return self.resource_manager_plugin
+
+    @colony.base.decorators.plugin_inject("pt.hive.colony.plugins.resources.resource_manager")
+    def set_resource_manager_plugin(self, resource_manager_plugin):
+        self.resource_manager_plugin = resource_manager_plugin
 
     def get_encryption_ssl_plugin(self):
         return self.encryption_ssl_plugin
