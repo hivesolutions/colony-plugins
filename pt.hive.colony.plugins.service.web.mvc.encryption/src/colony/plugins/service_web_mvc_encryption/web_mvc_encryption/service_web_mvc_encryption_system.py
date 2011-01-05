@@ -138,12 +138,14 @@ class WebMvcEncryptionClient:
             # closes the http client
             self.http_client.close({})
 
-    def generate_web_mvc_encryption_structure(self, base_url, set_structure = True):
+    def generate_web_mvc_encryption_structure(self, base_url, key_name, set_structure = True):
         """
         Generates the web mvc encryption structure for the given arguments.
 
         @type base_url: String
         @param base_url: The base url of the web mvc encryption provider.
+        @type key_name: String
+        @param key_name: The name of the key to be used.
         @type set_structure: bool
         @param set_structure: If the structure should be
         set in the web mvc encryption client.
@@ -152,7 +154,7 @@ class WebMvcEncryptionClient:
         """
 
         # creates a new web mvc encryption structure
-        web_mvc_encryption_structure = WebMvcEncryptionStructure(base_url)
+        web_mvc_encryption_structure = WebMvcEncryptionStructure(base_url, key_name)
 
         # in case the structure is meant to be set
         if set_structure:
@@ -174,6 +176,9 @@ class WebMvcEncryptionClient:
 
         # start the parameters map
         parameters = {}
+
+        # sets the base parameters
+        self._set_base_parameters(parameters)
 
         # sets the message
         parameters["message"] = message_base_64
@@ -201,6 +206,9 @@ class WebMvcEncryptionClient:
 
         # start the parameters map
         parameters = {}
+
+        # sets the base parameters
+        self._set_base_parameters(parameters)
 
         # sets the signature
         parameters["signature"] = signature
@@ -233,6 +241,19 @@ class WebMvcEncryptionClient:
         """
 
         self.web_mvc_encryption_structure = web_mvc_encryption_structure
+
+    def _set_base_parameters(self, parameters):
+        """
+        Sets the base web mvc encryption rest request parameters
+        in the parameters map.
+
+        @type parameters: Dictionary
+        @param parameters: The parameters map to be used in setting
+        the base parameters.
+        """
+
+        # sets the key name
+        parameters["key_name"] = self.web_mvc_encryption_structure.key_name
 
     def _fetch_url(self, url, parameters = None, method = GET_METHOD_VALUE):
         """
@@ -314,15 +335,21 @@ class WebMvcEncryptionStructure:
     base_url = None
     """ The base url of the web mvc encryption provider """
 
-    def __init__(self, base_url):
+    key_name = None
+    """ The name of the key to be used """
+
+    def __init__(self, base_url, key_name):
         """
         Constructor of the class.
 
         @type base_url: String
         @param base_url: The base url of the web mvc encryption provider.
+        @type key_name: String
+        @param key_name: The name of the key to be used.
         """
 
         self.base_url = base_url
+        self.key_name = key_name
 
     def get_base_url(self):
         """
@@ -343,3 +370,23 @@ class WebMvcEncryptionStructure:
         """
 
         self.base_url = base_url
+
+    def get_key_name(self):
+        """
+        Retrieves the key name.
+
+        @rtype: String
+        @return: The key name.
+        """
+
+        return self.key_name
+
+    def set_key_name(self, key_name):
+        """
+        Sets the key name.
+
+        @type key_name: String
+        @param key_name: The key name.
+        """
+
+        self.key_name = key_name
