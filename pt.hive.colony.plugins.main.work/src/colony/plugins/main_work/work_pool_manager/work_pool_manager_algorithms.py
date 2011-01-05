@@ -261,7 +261,7 @@ class SmartBusyAlgorithm(WorkPoolManagerAlgorithm):
 
         self.work_tasks_list = []
         self.work_tasks_map = {}
-        self.work_tasks_list_lock = threading.Lock()
+        self.work_tasks_list_lock = threading.RLock()
 
         # starts the data structures
         self._start_structures()
@@ -277,6 +277,9 @@ class SmartBusyAlgorithm(WorkPoolManagerAlgorithm):
         @param work_reference: The added work reference.
         """
 
+        # acquires the lock
+        self.work_tasks_list_lock.acquire()
+
         # retrieves the work task tuple from the work tasks map
         work_task_tuple = self.work_tasks_map[work_task]
 
@@ -285,6 +288,9 @@ class SmartBusyAlgorithm(WorkPoolManagerAlgorithm):
 
         # sorts the work tasks list
         self.work_tasks_list.sort(self._sort_work_task_tuple)
+
+        # releases the lock
+        self.work_tasks_list_lock.release()
 
     def work_removed(self, work_task, work_reference):
         """
@@ -297,6 +303,9 @@ class SmartBusyAlgorithm(WorkPoolManagerAlgorithm):
         @param work_reference: The removed work reference.
         """
 
+        # acquires the lock
+        self.work_tasks_list_lock.acquire()
+
         # retrieves the work task tuple from the work tasks map
         work_task_tuple = self.work_tasks_map[work_task]
 
@@ -305,6 +314,9 @@ class SmartBusyAlgorithm(WorkPoolManagerAlgorithm):
 
         # sorts the work tasks list
         self.work_tasks_list.sort(self._sort_work_task_tuple)
+
+        # releases the lock
+        self.work_tasks_list_lock.release()
 
     def get_next(self):
         """
