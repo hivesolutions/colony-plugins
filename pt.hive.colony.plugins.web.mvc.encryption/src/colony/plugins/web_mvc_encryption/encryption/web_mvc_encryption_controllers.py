@@ -145,10 +145,11 @@ class ConsumerController:
 
         # retrieves the consumer entities with the specified api key
         consumer_entities = entity_manager._find_all_options(web_mvc_encryption_entity_models.Consumer, {"filters" : [{"filter_type" : "equals",
-                                                                                                                "filter_fields" : [{"field_name" : "api_key",
-                                                                                                                                    "field_value" : api_key},
-                                                                                                                                   {"field_name" : "status",
-                                                                                                                                    "field_value" : VALID_STATUS_VALUE}]}]})
+                                                                                                                       "filter_fields" : [{"field_name" : "api_key",
+                                                                                                                                           "field_value" : api_key}]},
+                                                                                                                       {"filter_type" : "equals",
+                                                                                                                       "filter_fields" : [{"field_name" : "status",
+                                                                                                                                           "field_value" : VALID_STATUS_VALUE}]}]})
 
         # raises an exception in case no consumer was found
         if not consumer_entities:
