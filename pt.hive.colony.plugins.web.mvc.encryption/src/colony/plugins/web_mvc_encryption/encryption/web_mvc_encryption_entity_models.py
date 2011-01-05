@@ -1,22 +1,25 @@
 #!/usr/bin/python
 # -*- coding: Cp1252 -*-
 
-# Pecway Payment Gateway
-# Copyright (C) 2010 Hive Solutions Lda.
+# Hive Colony Framework
+# Copyright (C) 2008 Hive Solutions Lda.
 #
-# This file is part of Pecway Payment Gateway.
+# This file is part of Hive Colony Framework.
 #
-# Pecway Payment Gateway is confidential and property of Hive Solutions Lda.,
-# its usage is constrained by the terms of the Hive Solutions
-# Confidential Usage License.
+# Hive Colony Framework is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
 #
-# Pecway Payment Gateway should not be distributed under any circumstances,
-# violation of this may imply legal action.
+# Hive Colony Framework is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+# GNU General Public License for more details.
 #
-# If you have any questions regarding the terms of this license please
-# refer to <http://www.hive.pt/licenses/>.
+# You should have received a copy of the GNU General Public License
+# along with Hive Colony Framework. If not, see <http://www.gnu.org/licenses/>.
 
-__author__ = "João Magalhães <joamag@hive.pt> & Tiago Silva <tsilva@hive.pt>"
+__author__ = "João Magalhães <joamag@hive.pt>"
 """ The author(s) of the module """
 
 __version__ = "1.0.0"
@@ -28,10 +31,10 @@ __revision__ = "$LastChangedRevision: 421 $"
 __date__ = "$LastChangedDate: 2008-11-20 15:16:53 +0000 (Qui, 20 Nov 2008) $"
 """ The last change date of the module """
 
-__copyright__ = "Copyright (c) 2010 Hive Solutions Lda."
+__copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 """ The copyright for the module """
 
-__license__ = "Hive Solutions Confidential Usage License (HSCUL)"
+__license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
 import colony.libs.importer_util
