@@ -42,6 +42,9 @@ import base64
 BASE_64_ENCODED_MAXIMUM_SIZE = 64
 """ The base 64 encoded maximum size """
 
+DEFAULT_NUMBER_BITS = 1024
+""" The default number of bits """
+
 class EncryptionSsl:
     """
     The encryption ssl class.
@@ -97,6 +100,22 @@ class SslStructure:
 
         self.encryption_rsa_plugin = encryption_rsa_plugin
         self.encryption_pkcs_1_plugin = encryption_pkcs_1_plugin
+
+    def generate_keys(self, private_key_path, public_key_path, number_bits = DEFAULT_NUMBER_BITS):
+        # creates the rsa structure
+        rsa_structure = self.encryption_rsa_plugin.create_structure({})
+
+        # creates the pkcs 1 structure
+        pkcs_1_structure = self.encryption_pkcs_1_plugin.create_structure({})
+
+        # generates the keys in the rsa structure
+        rsa_structure.generate_keys(number_bits)
+
+        # retrieves the keys from the rsa structure
+        keys = rsa_structure.get_keys()
+
+        # writes the keys in pem format
+        pkcs_1_structure.generate_write_keys_pem(keys, private_key_path, public_key_path)
 
     def sign_base_64(self, private_key_path, hash_algorithm_name, base_string_value):
         # signs the base string value using the hash algorithm
