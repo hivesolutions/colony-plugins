@@ -93,6 +93,9 @@ class WebMvcEncryption:
     keys_map = {}
     """ The map of keys """
 
+    security_map = {}
+    """ The map of security """
+
     def __init__(self, web_mvc_encryption_plugin):
         """
         Constructor of the class.
@@ -187,12 +190,21 @@ class WebMvcEncryption:
         # retrieves the extension map
         keys_map = configuration["keys"]
 
+        # retrieves the security map
+        security_map = configuration["security"]
+
         # sets the keys map
         self.keys_map = keys_map
+
+        # sets the security map
+        self.security_map = security_map
 
     def unset_configuration_property(self):
         # sets the keys map
         self.keys_map = {}
+
+        # sets the security map
+        self.security_map = {}
 
     def get_entity_manager_arguments(self):
         """
@@ -353,9 +365,6 @@ class WebMvcEncryptionMainController:
         # retrieves the encryption ssl plugin
         encryption_ssl_plugin = self.web_mvc_encryption_plugin.encryption_ssl_plugin
 
-        # retrieves the web mvc encryption consumer controller
-        web_mvc_encryption_consumer_controller = self.web_mvc_encryption.web_mvc_encryption_consumer_controller
-
         # processes the form data
         form_data_map = self.process_form_data(rest_request, DEFAULT_ENCODING)
 
@@ -375,7 +384,7 @@ class WebMvcEncryptionMainController:
         ssl_structure = encryption_ssl_plugin.create_structure({})
 
         # validates the api key
-        web_mvc_encryption_consumer_controller._validate_api_key(rest_request, api_key)
+        self._validate_api_key(rest_request, api_key)
 
         # retrieves the private key path for the key name
         private_key_path = self._get_key_path(key_name, "private_key")
@@ -392,9 +401,6 @@ class WebMvcEncryptionMainController:
     def _verify(self, rest_request):
         # retrieves the encryption ssl plugin
         encryption_ssl_plugin = self.web_mvc_encryption_plugin.encryption_ssl_plugin
-
-        # retrieves the web mvc encryption consumer controller
-        web_mvc_encryption_consumer_controller = self.web_mvc_encryption.web_mvc_encryption_consumer_controller
 
         # processes the form data
         form_data_map = self.process_form_data(rest_request, DEFAULT_ENCODING)
@@ -415,7 +421,7 @@ class WebMvcEncryptionMainController:
         ssl_structure = encryption_ssl_plugin.create_structure({})
 
         # validates the api key
-        web_mvc_encryption_consumer_controller._validate_api_key(rest_request, api_key)
+        self._validate_api_key(rest_request, api_key)
 
         # retrieves the public key path for the key name
         piublic_key_path = self._get_key_path(key_name, "public_key")
@@ -431,6 +437,19 @@ class WebMvcEncryptionMainController:
 
         # returns the return value string
         return return_value_string
+
+    def _validate_api_key(self, rest_request, api_key):
+        # retrieves the web mvc encryption consumer controller
+        web_mvc_encryption_consumer_controller = self.web_mvc_encryption.web_mvc_encryption_consumer_controller
+
+        # retrieves the security map
+        security_map = self.web_mvc_encryption.security_map
+
+        # retrieves the valida pi key value
+        validate_api_key = security_map.get("validate_api_key", True)
+
+        # validates the api key
+        validate_api_key and  web_mvc_encryption_consumer_controller._validate_api_key(rest_request, api_key)
 
     def _get_key_path(self, key_name, key_type):
         # retrieves the plugin manager
