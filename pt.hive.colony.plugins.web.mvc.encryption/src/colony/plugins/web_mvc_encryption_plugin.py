@@ -61,6 +61,8 @@ class WebMvcEncryptionPlugin(colony.base.plugin_system.Plugin):
                     colony.base.plugin_system.PluginDependency(
                     "pt.hive.colony.plugins.resources.resource_manager", "1.0.0"),
                     colony.base.plugin_system.PluginDependency(
+                    "pt.hive.colony.plugins.misc.random", "1.0.0"),
+                    colony.base.plugin_system.PluginDependency(
                     "pt.hive.colony.plugins.encryption.ssl", "1.0.0")]
     events_handled = []
     events_registrable = []
@@ -71,6 +73,7 @@ class WebMvcEncryptionPlugin(colony.base.plugin_system.Plugin):
 
     web_mvc_utils_plugin = None
     resource_manager_plugin = None
+    random_plugin = None
     encryption_ssl_plugin = None
 
     def load_plugin(self):
@@ -167,6 +170,13 @@ class WebMvcEncryptionPlugin(colony.base.plugin_system.Plugin):
     @colony.base.decorators.plugin_inject("pt.hive.colony.plugins.encryption.ssl")
     def set_encryption_ssl_plugin(self, encryption_ssl_plugin):
         self.encryption_ssl_plugin = encryption_ssl_plugin
+
+    def get_random_plugin(self):
+        return self.random_plugin
+
+    @colony.base.decorators.plugin_inject("pt.hive.colony.plugins.misc.random")
+    def set_random_plugin(self, random_plugin):
+        self.random_plugin = random_plugin
 
     @colony.base.decorators.set_configuration_property_method("configuration")
     def service_configuration_set_configuration_property(self, property_name, property):
