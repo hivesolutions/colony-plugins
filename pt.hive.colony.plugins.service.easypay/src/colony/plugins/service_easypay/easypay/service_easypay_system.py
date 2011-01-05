@@ -401,7 +401,7 @@ class EasypayClient:
 
         @type parameters: Dictionary
         @param parameters: The parameters map to be used in setting
-        the authentication parameters.
+        the base parameters.
         """
 
         # sets the username
