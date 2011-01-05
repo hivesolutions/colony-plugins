@@ -138,12 +138,14 @@ class WebMvcEncryptionClient:
             # closes the http client
             self.http_client.close({})
 
-    def generate_web_mvc_encryption_structure(self, base_url, key_name, set_structure = True):
+    def generate_web_mvc_encryption_structure(self, base_url, api_key, key_name, set_structure = True):
         """
         Generates the web mvc encryption structure for the given arguments.
 
         @type base_url: String
         @param base_url: The base url of the web mvc encryption provider.
+        @type api_key: String
+        @param api_key: The key to be used to access the remote api.
         @type key_name: String
         @param key_name: The name of the key to be used.
         @type set_structure: bool
@@ -154,7 +156,7 @@ class WebMvcEncryptionClient:
         """
 
         # creates a new web mvc encryption structure
-        web_mvc_encryption_structure = WebMvcEncryptionStructure(base_url, key_name)
+        web_mvc_encryption_structure = WebMvcEncryptionStructure(base_url, api_key, key_name)
 
         # in case the structure is meant to be set
         if set_structure:
@@ -252,6 +254,9 @@ class WebMvcEncryptionClient:
         the base parameters.
         """
 
+        # sets the api key
+        parameters["api_key"] = self.web_mvc_encryption_structure.api_key
+
         # sets the key name
         parameters["key_name"] = self.web_mvc_encryption_structure.key_name
 
@@ -335,20 +340,26 @@ class WebMvcEncryptionStructure:
     base_url = None
     """ The base url of the web mvc encryption provider """
 
+    api_key = None
+    """ The key to be used to access the remote api """
+
     key_name = None
     """ The name of the key to be used """
 
-    def __init__(self, base_url, key_name):
+    def __init__(self, base_url, api_key, key_name):
         """
         Constructor of the class.
 
         @type base_url: String
         @param base_url: The base url of the web mvc encryption provider.
+        @type api_key: String
+        @param api_key: The key to be used to access the remote api.
         @type key_name: String
         @param key_name: The name of the key to be used.
         """
 
         self.base_url = base_url
+        self.api_key = api_key
         self.key_name = key_name
 
     def get_base_url(self):
@@ -370,6 +381,26 @@ class WebMvcEncryptionStructure:
         """
 
         self.base_url = base_url
+
+    def get_api_key(self):
+        """
+        Retrieves the api key.
+
+        @rtype: String
+        @return: The api key.
+        """
+
+        return self.api_key
+
+    def set_api_key(self, api_key):
+        """
+        Sets the api key.
+
+        @type api_key: String
+        @param api_key: The api key.
+        """
+
+        self.api_key = api_key
 
     def get_key_name(self):
         """
