@@ -613,9 +613,14 @@ class WorkerThread(threading.Thread):
         task_descriptor_running_queue = thread_pool.task_descriptor_running_queue
         task_condition = thread_pool.task_condition
 
+        # iterates continuously
         while True:
+            # acquires the task condition
             task_condition.acquire()
+
+            # iterates while the task queue is empty
             while not len(task_queue):
+                # waits for the task condition
                 task_condition.wait()
 
             # increments the number of busy threads
