@@ -17,14 +17,20 @@
                 "id" : "pt.hive.colony.plugins.resources.resource_manager",
                 "version" : "1.0.0"
             }, {
+                "id" : "pt.hive.colony.plugins.misc.random",
+                "version" : "1.0.0"
+            }, {
                 "id" : "pt.hive.colony.plugins.encryption.ssl",
                 "version" : "1.0.0"
             }],
     "main_file" : "web_mvc_encryption_plugin.py",
-    "resources" : ["web_mvc_encryption_plugin.py",
+    "resources" : [
+            "web_mvc_encryption_plugin.py",
             "web_mvc_encryption/__init__.py",
             "web_mvc_encryption/encryption/__init__.py",
             "web_mvc_encryption/encryption/web_mvc_encryption_controllers.py",
+            "web_mvc_encryption/encryption/web_mvc_encryption_entity_models.py",
+            "web_mvc_encryption/encryption/web_mvc_encryption_exceptions.py",
             "web_mvc_encryption/encryption/web_mvc_encryption_system.py",
             "web_mvc_encryption/encryption/resources/baf.xml"]
 }

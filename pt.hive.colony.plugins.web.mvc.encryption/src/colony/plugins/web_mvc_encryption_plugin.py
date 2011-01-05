@@ -67,6 +67,8 @@ class WebMvcEncryptionPlugin(colony.base.plugin_system.Plugin):
     events_handled = []
     events_registrable = []
     main_modules = ["web_mvc_encryption.encryption.web_mvc_encryption_controllers",
+                    "web_mvc_encryption.encryption.web_mvc_encryption_entity_models",
+                    "web_mvc_encryption.encryption.web_mvc_encryption_exceptions",
                     "web_mvc_encryption.encryption.web_mvc_encryption_system"]
 
     web_mvc_encryption = None
