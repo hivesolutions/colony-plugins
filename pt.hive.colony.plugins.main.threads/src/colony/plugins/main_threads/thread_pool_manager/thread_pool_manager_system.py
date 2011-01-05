@@ -608,9 +608,16 @@ class WorkerThread(threading.Thread):
         Starts the run of the thread.
         """
 
+        # retrieves the thread pool
         thread_pool = self.thread_pool
+
+        # retrieves the task queue from the thread pool
         task_queue = thread_pool.task_queue
+
+        # retrieves the task descriptor running queue from the thread pool
         task_descriptor_running_queue = thread_pool.task_descriptor_running_queue
+
+        # retrieves the task condition from the thread pool
         task_condition = thread_pool.task_condition
 
         # iterates continuously
@@ -638,8 +645,10 @@ class WorkerThread(threading.Thread):
             # retrieves the worker thread task arguments
             worker_thread_task_arguments = worker_thread_task.task_arguments
 
+            # in case the worker thread task type is start thread
             if worker_thread_task_type == START_THREAD_TASK_TYPE:
                 pass
+            # in case the worker thread task type is stop thread
             elif worker_thread_task_type == STOP_THREAD_TASK_TYPE:
                 # decrements the number of busy threads
                 thread_pool.busy_threads -= 1
@@ -649,6 +658,7 @@ class WorkerThread(threading.Thread):
 
                 # returns the thread (finishing it)
                 return
+            # in case the worker thread task type is start task
             elif worker_thread_task_type == START_TASK_TASK_TYPE:
                 # retrieves the task descriptor and the start method arguments
                 task_descriptor, start_method_args = worker_thread_task_arguments
@@ -664,18 +674,21 @@ class WorkerThread(threading.Thread):
 
                 # removes the task descriptor from the queue of running tasks descriptors
                 task_descriptor_running_queue.remove(task_descriptor)
+            # in case the worker thread task type is stop task
             elif worker_thread_task_type == STOP_TASK_TASK_TYPE:
                 # retrieves the task descriptor and the stop method arguments
                 task_descriptor, stop_method_args = worker_thread_task_arguments
 
                 # stops the task represented by the task descriptor
                 task_descriptor.stop_task(stop_method_args)
+            # in case the worker thread task type is pause task
             elif worker_thread_task_type == PAUSE_TASK_TASK_TYPE:
                 # retrieves the task descriptor and the pause method arguments
                 task_descriptor, pause_method_args = worker_thread_task_arguments
 
                 # pauses the task represented by the task descriptor
                 task_descriptor.pause_task(pause_method_args)
+            # in case the worker thread task type is resume task
             elif worker_thread_task_type == RESUME_TASK_TASK_TYPE:
                 # retrieves the task descriptor and the resume method arguments
                 task_descriptor, resume_method_args = worker_thread_task_arguments
