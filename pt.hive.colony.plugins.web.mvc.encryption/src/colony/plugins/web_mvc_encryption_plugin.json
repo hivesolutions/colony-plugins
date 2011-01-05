@@ -13,6 +13,9 @@
     "dependencies" : [{
                 "id" : "pt.hive.colony.plugins.web.mvc.utils",
                 "version" : "1.0.0"
+            }, {
+                "id" : "pt.hive.colony.plugins.encryption.ssl",
+                "version" : "1.0.0"
             }],
     "main_file" : "web_mvc_encryption_plugin.py",
     "resources" : ["web_mvc_encryption_plugin.py",
