@@ -9,6 +9,9 @@
                 "version" : "1.0.0"
             }],
     "dependencies" : [{
+                "id" : "pt.hive.colony.bundles.format",
+                "version" : "1.0.0"
+            }, {
                 "id" : "pt.hive.colony.bundles.language",
                 "version" : "1.0.0"
             }, {
