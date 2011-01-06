@@ -82,7 +82,7 @@ class ServiceFacebook:
     The service facebook class.
     """
 
-    service_facebbok_plugin = None
+    service_facebook_plugin = None
     """ The service facebook plugin """
 
     def __init__(self, service_facebook_plugin):
