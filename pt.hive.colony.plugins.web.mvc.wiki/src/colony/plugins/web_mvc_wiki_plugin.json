@@ -26,6 +26,9 @@
             }, {
                 "id" : "pt.hive.colony.plugins.misc.string_normalization",
                 "version" : "1.0.0"
+            }, {
+                "id" : "pt.hive.colony.plugins.format.mime",
+                "version" : "1.0.0"
             }],
     "main_file" : "web_mvc_wiki_plugin.py",
     "resources" : [

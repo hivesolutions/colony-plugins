@@ -524,6 +524,9 @@ class WebMvcWikiController:
         # retrieves the plugin manager
         plugin_manager = self.web_mvc_wiki_plugin.manager
 
+        # retrieves the format mime plugin
+        format_mime_plugin = self.web_mvc_wiki_plugin.format_mime_plugin
+
         # retrieves the instance for the rest request
         instance = self.web_mvc_wiki._get_instance(rest_request)
 
@@ -551,12 +554,10 @@ class WebMvcWikiController:
             # creates the base target path
             os.makedirs(base_target_path)
 
-        # sets the content type for the rest request
-        rest_request.set_content_type("text/html")
-
         # retrieves the file base path by joining the rest request path
         file_path = "/".join(rest_request.path_list[2:])
 
+        # retrieves the file path striping the file path
         file_path = file_path.rstrip("/")
 
         # retrieves the file path
@@ -589,6 +590,7 @@ class WebMvcWikiController:
                 # processes the template file and sets the request contents
                 self.process_set_contents(rest_request, template_file)
 
+                # returns true (valid)
                 return True
 
             # creates the structure that will hold the information
@@ -611,9 +613,12 @@ class WebMvcWikiController:
         # retrieves the file extension
         file_extension = encoder_name in ("ajx", "prt") and "html" or encoder_name
 
-        # creates the target file path appending the base target path with the file path
-        # and the file extension
-        target_file_path = base_target_path + "/" + file_path + "." + file_extension
+        # creates the target file name from the file path and the file extension
+        target_file_name = file_path + "." + file_extension
+
+        # creates the target file path appending the base target path with
+        # the target file name
+        target_file_path = base_target_path + "/" + target_file_name
 
         # opens the target file
         target_file = open(target_file_path, "rb")
@@ -687,8 +692,11 @@ class WebMvcWikiController:
             # processes the template file and sets the request contents
             self.process_set_contents(rest_request, template_file)
         else:
+            # retrieves the mime type for the target file name
+            mime_type = format_mime_plugin.get_mime_type_file_name(target_file_name)
+
             # sets the request contents
-            self.set_contents(rest_request, target_file_contents)
+            self.set_contents(rest_request, target_file_contents, mime_type)
 
         # returns true
         return True
@@ -703,6 +711,9 @@ class WebMvcWikiController:
         @return: The result of the handling.
         """
 
+        # retrieves the format mime plugin
+        format_mime_plugin = self.web_mvc_wiki_plugin.format_mime_plugin
+
         # retrieves the instance for the rest request
         instance = self.web_mvc_wiki._get_instance(rest_request)
 
@@ -715,8 +726,11 @@ class WebMvcWikiController:
         # creates the base target path as the cache directory path
         base_target_path = self._get_cache_directory_path(instance_name)
 
+        # creates the full file name
+        full_file_name = partial_file_path + "." + rest_request.encoder_name
+
         # creates the full path to the file to be read
-        full_file_path = base_target_path + "/" + partial_file_path + "." + rest_request.encoder_name
+        full_file_path = base_target_path + "/" + full_file_name
 
         # opens the resource file
         resource_file = open(full_file_path, "rb")
@@ -728,8 +742,11 @@ class WebMvcWikiController:
             # closes the resource file
             resource_file.close()
 
+        # retrieves the mime type for the target file name
+        mime_type = format_mime_plugin.get_mime_type_file_name(full_file_name)
+
         # sets the request contents
-        self.set_contents(rest_request, resource_file_contents)
+        self.set_contents(rest_request, resource_file_contents, mime_type)
 
         # returns true
         return True
