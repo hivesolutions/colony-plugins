@@ -57,8 +57,7 @@
                                 <tr height="0" background="cid:build_line_red.gif">
                                     <td></td>
                                 </tr>
-                            ${/if}
-                            ${if item=build_automation.success value=False operator=eq}
+                            ${else /}
                                 <tr height="10" background="cid:build_line_red.gif">
                                     <td></td>
                                 </tr>
@@ -79,8 +78,7 @@
                             <font face="Rockwell, Arial" size="3" color="#214c8f">${out_none value=build_automation.plugin_name xml_escape=True /}</font>
                             ${if item=build_automation.success value=True operator=eq}
                                 <font face="Rockwell, Arial" size="3" color="#214c8f">had</font> <font face="Rockwell, Arial" size="3" color="#4d9341">${out_none value=build_automation.success_capitals xml_escape=True /}</font>
-                            ${/if}
-                            ${if item=build_automation.success value=False operator=eq}
+                            ${else /}
                                 <font face="Rockwell, Arial" size="3" color="#214c8f">has</font> <font face="Rockwell, Arial" size="3" color="#dc1c28">${out_none value=build_automation.success_capitals xml_escape=True /}</font>
                             ${/if}
                             <br />
