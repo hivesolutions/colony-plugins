@@ -161,7 +161,7 @@ class MainAuthenticationLdapHandler:
             # otherwise it must be a "normal" hash
             else:
                 # processes the password using hash
-                processed_password_value = self._process_password_hash(password, user_password_value)
+                processed_password_value = self._process_password_hash(password, user_password_hash_lower)
 
             # in case the processed password value and
             # the user password value are equal
