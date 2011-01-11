@@ -63,6 +63,8 @@ class MainConsoleInterfaceWin32:
     main_console_interface = None
     """ The main console interface """
 
+    test_mode = None
+
     line_buffer = []
     """ The current line buffer """
 
@@ -89,28 +91,12 @@ class MainConsoleInterfaceWin32:
         # starts the line history list
         self.line_history_list = []
 
-        # in case the test flag is not set
-        if not test:
-            # returns immediately
-            return
-
-        value = msvcrt.get_osfhandle(0)
-
-        if not value == 3:
-            # raises the incompatible console interface
-            raise main_console_interface_exceptions.IncompatibleConsoleInterface("eof found while reading standard input")
-#        # puts the character in the buffer
-#        msvcrt.ungetch("\x01")
-#
-#        # retrieves the character from the read buffer
-#        character = msvcrt.getch()
-#
-#        # in case there is keys available and
-#        # the value is invalid (eof)
-#        if character == "\xff":
+        # sets the test mode
+        self.test_mode = test
 
     def stop(self, arguments):
-        pass
+        # unsets the test mode
+        self.test_mode = False
 
     def get_line(self):
         # retrieves the main console plugin
@@ -146,6 +132,16 @@ class MainConsoleInterfaceWin32:
 
             # converts the character to ordinal
             character_ordinal = ord(character)
+
+            # in case the test mode is set
+            if self.test_mode:
+                # in case the character ordinal value is (eof)
+                if character_ordinal == 0xff:
+                    # raises the incompatible console interface
+                    raise main_console_interface_exceptions.IncompatibleConsoleInterface("eof found while reading standard input")
+
+                # unsets the test mode
+                self.test_mode = False
 
             # in case the character ordinal value is (up)
             if character_ordinal == 0xe0 and msvcrt.kbhit():
