@@ -277,6 +277,23 @@ def greater_than_zero_validate(self, attribute_name, attribute_value, properties
         # adds an error to the given attribute name
         self.add_error(attribute_name, "value is less or equal to zero")
 
+def greater_than_or_equal_to_zero_validate(self, attribute_name, attribute_value, properties):
+    """
+    Validates an attribute to ensure that it is greater than or equal to zero.
+
+    @type attribute_name: String
+    @param attribute_name: The name of the attribute to be validated.
+    @type attribute_value: Object
+    @param attribute_value: The value of the attribute to be validated.
+    @type properties: Dictionary
+    @param properties: The properties for the validation.
+    """
+
+    # in case the attribute value is not greater than or equal to zero
+    if not attribute_value >= 0:
+        # adds an error to the given attribute name
+        self.add_error(attribute_name, "value is less than zero")
+
 def greater_than_validate(self, attribute_name, attribute_value, properties):
     """
     Validates an attribute to ensure that it is greater than.
