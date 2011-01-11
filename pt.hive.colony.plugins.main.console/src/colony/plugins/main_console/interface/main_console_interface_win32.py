@@ -37,6 +37,7 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
+import os
 import sys
 import time
 import msvcrt
@@ -62,8 +63,6 @@ class MainConsoleInterfaceWin32:
 
     main_console_interface = None
     """ The main console interface """
-
-    test_mode = None
 
     line_buffer = []
     """ The current line buffer """
@@ -91,12 +90,24 @@ class MainConsoleInterfaceWin32:
         # starts the line history list
         self.line_history_list = []
 
-        # sets the test mode
-        self.test_mode = test
+        # in case test mode is not enabled
+        if not test:
+            # returns immediately
+            return
+
+        # retrieves the standard input file number
+        stdin_file_number = sys.stdin.fileno()
+
+        # tries to set the binary mode
+        mode_value = msvcrt.setmode(stdin_file_number, os.O_TEXT)
+
+        # in case the mode value is not valid
+        if not mode_value == 0x4000:
+            # raises the incompatible console interface
+            raise main_console_interface_exceptions.IncompatibleConsoleInterface("eof found while reading standard input")
 
     def stop(self, arguments):
-        # unsets the test mode
-        self.test_mode = False
+        pass
 
     def get_line(self):
         # retrieves the main console plugin
@@ -132,16 +143,6 @@ class MainConsoleInterfaceWin32:
 
             # converts the character to ordinal
             character_ordinal = ord(character)
-
-            # in case the test mode is set
-            if self.test_mode:
-                # in case the character ordinal value is (eof)
-                if character_ordinal == 0xff:
-                    # raises the incompatible console interface
-                    raise main_console_interface_exceptions.IncompatibleConsoleInterface("eof found while reading standard input")
-
-                # unsets the test mode
-                self.test_mode = False
 
             # in case the character ordinal value is (up)
             if character_ordinal == 0xe0 and msvcrt.kbhit():
@@ -239,7 +240,7 @@ class MainConsoleInterfaceWin32:
                 break
             # otherwise, in case the character is "visible"
             # use it as normal character
-            elif character_ordinal > 0x020:
+            elif character_ordinal > 0x19:
                 # writes the character to the standard output
                 sys.stdout.write(character)
 
