@@ -46,6 +46,9 @@ import resource_manager_parser
 BASE_RESOURCES_PATH = "/resources/resource_manager/resources"
 """ The base resources path """
 
+CONFIGURATION_PATH = "/configuration"
+""" The configuration path """
+
 RESOURCES_SUFIX_VALUE = "resources.xml"
 """ The resources sufix value """
 
@@ -185,6 +188,9 @@ class ResourceManager:
         # loads the base resources
         self.load_base_resources()
 
+        # loads the configuration resources
+        self.load_configuration_resources()
+
     def load_internal_resources(self):
         """
         Loads the resources dedicated to describe the internal
@@ -208,19 +214,45 @@ class ResourceManager:
         """
 
         # retrieves the plugin manager
-        manager = self.resource_manager_plugin.manager
+        plugin_manager = self.resource_manager_plugin.manager
 
         # retrieves the resource manager plugin id
         resource_manager_plugin_id = self.resource_manager_plugin.id
 
         # retrieves the base plugin path
-        plugin_path = manager.get_plugin_path_by_id(resource_manager_plugin_id)
+        plugin_path = plugin_manager.get_plugin_path_by_id(resource_manager_plugin_id)
 
         # constructs the full resources path
         full_resources_path = plugin_path + BASE_RESOURCES_PATH
 
         # loads the base resources for the entry directory
-        self._load_base_resources_directory(full_resources_path)
+        self._load_resources_directory(full_resources_path)
+
+    def load_configuration_resources(self):
+        """
+        Loads the configuration resources from the description file.
+        """
+
+        # retrieves the plugin manager
+        plugin_manager = self.resource_manager_plugin.manager
+
+        # retrieves the resource manager plugin id
+        resource_manager_plugin_id = self.resource_manager_plugin.id
+
+        # retrieves the plugin configuration paths from the resource manager plugin
+        configuration_path, workspace_path = plugin_manager.get_plugin_configuration_paths_by_id(resource_manager_plugin_id)
+
+        # constructs the full configuration path
+        full_configuration_path = configuration_path + CONFIGURATION_PATH
+
+        # constructs the full workspace path
+        full_workspace_path = workspace_path + CONFIGURATION_PATH
+
+        # loads the configuration resources for the entry directory
+        self._load_resources_directory(full_configuration_path)
+
+        # loads the workspace resources for the entry directory
+        self._load_resources_directory(full_workspace_path)
 
     def parse_file(self, file_path, full_resources_path):
         """
@@ -876,14 +908,19 @@ class ResourceManager:
 
         del self.resource_parser_plugins_map[resource_parser_name]
 
-    def _load_base_resources_directory(self, directory_path):
+    def _load_resources_directory(self, directory_path):
         """
-        Loads the base resources in the directory with
+        Loads the resources in the directory with
         the given path.
 
         @type directory_path: String
         @param directory_path: The directory path to search for resources.
         """
+
+        # in case the directory path does not exists
+        if not os.path.exists(directory_path):
+            # returns immediately
+            return
 
         # retrieves the resources path directory contents
         resources_path_directory_contents = os.listdir(directory_path)
@@ -899,8 +936,8 @@ class ResourceManager:
                 # parses the resources description file
                 self.parse_file(resources_full_path_item, directory_path)
             elif os.path.isdir(resources_full_path_item):
-                # loads the base resources for the directory
-                self._load_base_resources_directory(resources_full_path_item)
+                # loads the resources for the directory
+                self._load_resources_directory(resources_full_path_item)
 
     def _invalidate_real_string_value_cache(self):
         """
