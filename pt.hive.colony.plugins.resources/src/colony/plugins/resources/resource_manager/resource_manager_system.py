@@ -373,12 +373,18 @@ class ResourceManager:
         @param resource: The resource to be processed.
         @type full_resources_path: String
         @param full_resources_path: The full resources path.
+        @rtype: bool
+        @return: If the resource data was loaded or set for lazy loading.
         """
 
         # sets the resource full resources path
         resource.full_resources_path = full_resources_path
 
-        return self.parse_resource_data(resource)
+        # parses the resource data
+        resource_data_result = self.parse_resource_data(resource)
+
+        # returns the resources data result
+        return resource_data_result
 
     def parse_resource_data(self, resource):
         """
@@ -386,6 +392,8 @@ class ResourceManager:
 
         @type resource: Resource
         @param resource: The resource to have the data processed.
+        @rtype: bool
+        @return: If the resource data was loaded or set for lazy loading.
         """
 
         # retrieves the resource type
@@ -399,11 +407,17 @@ class ResourceManager:
             resource.data = unicode(resource.data)
         # in case the resource type is boolean
         elif resource_type == BOOLEAN_TYPE:
+            # in case the resource data contains the true value
             if resource.data == TRUE_VALUE:
+                # sets the resource data as true
                 resource.data = True
+            # in case the resource data contains the false value
             elif resource.data == FALSE_VALUE:
+                # sets the resource data as
                 resource.data = False
+            # otherwise
             else:
+                # sets the resource data as none
                 resource.data = None
         # in case the resource type is integer
         elif resource_type == INTEGER_TYPE:
@@ -424,15 +438,16 @@ class ResourceManager:
             # sets the parse resource data method reference
             # to none (no need to parse the resource data in lazy mode)
             resource.parse_resource_data = None
+        # otherwise
         else:
             # sets the parse resource data handler, this technique
             # allows a lazy loading of the resource parser plugins
             resource.parse_resource_data = self.parse_resource_data
 
-            # returns in failure
+            # returns invalid (lazy loading)
             return False
 
-        # returns valid (success)
+        # returns valid (loaded)
         return True
 
     def get_real_string_value(self, string_value):
@@ -664,11 +679,15 @@ class ResourceManager:
         # creates a new resource with the given information
         resource = Resource(resource_namespace, resource_name, resource_type, resource_data)
 
-        # if the resource already exists remove it from all indexes
-        if self.is_resource_registered(resource.get_id()):
-            self.unregister_resource(resource.get_id())
+        # retrieves the resource id
+        resource_id = resource.get_id()
 
-        self.resource_id_resource_map[resource.get_id()] = resource
+        # if the resource already exists remove it from all indexes
+        if self.is_resource_registered(resource_id):
+            self.unregister_resource(resource_id)
+
+        # sets the resource in the resource id resource map
+        self.resource_id_resource_map[resource_id] = resource
 
         # index resource by name
         if not resource.get_name() in self.resource_name_resources_list_map:
@@ -682,7 +701,9 @@ class ResourceManager:
 
         # index resource by namespace
         namespace_values_list = resource.get_namespace().get_list_value()
-        current_namespace = ""
+
+        # initializes the current namespace
+        current_namespace = str()
         for namespace in namespace_values_list:
             if not current_namespace == "":
                 current_namespace += "."
