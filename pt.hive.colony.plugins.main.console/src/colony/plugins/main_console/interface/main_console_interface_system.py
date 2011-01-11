@@ -39,8 +39,18 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 import sys
 
+try:
+    import main_console_interface_win32
+    main_console_interface_class = main_console_interface_win32.MainConsoleInterfaceWin32
+except:
+    import main_console_interface_unix
+    main_console_interface_class = main_console_interface_unix.MainConsoleInterfaceUnix
+
 CARET = ">>"
 """ The caret to be used in the console display """
+
+TEST_VALUE = "test"
+""" The test value """
 
 class MainConsoleInterface:
     """
@@ -76,25 +86,47 @@ class MainConsoleInterface:
         # notifies the ready semaphore
         self.main_console_interface_plugin.release_ready_semaphore()
 
-        # if the continue flag is valid continues the iteration
-        while self.continue_flag:
-            # writes the caret character
-            sys.stdout.write(CARET + " ")
+        # creates a new main console interface system
+        main_console_interface = main_console_interface_class(self.main_console_interface_plugin, self)
 
-            # flushes the standard output
-            sys.stdout.flush()
+        try:
+            # starts the main console interface
+            main_console_interface.start({TEST_VALUE : True})
 
-            # reads a line from the standard input (locks)
-            line = sys.stdin.readline()
+            # sets the main console interface get line method
+            # as the main console interface method
+            main_console_interface_method = main_console_interface.get_line
+        except BaseException, exception:
+            # prints a warning message
+            self.main_console_interface_plugin.warning("Problem starting main console interface: %s" % unicode(exception))
 
-            # in case there is no valid line
-            if not line:
-                # breaks the cycle
-                break
+            # sets the read line method as the main console interface
+            # method as a method for fallback
+            main_console_interface_method = sys.stdin.readline
 
-            # processes the command line, outputting the result to
-            # the default method
-            main_console_plugin.process_command_line(line, None)
+        try:
+            # if the continue flag is valid continues the iteration
+            while self.continue_flag:
+                # prints the caret
+                self._print_caret()
+
+                # retrieves the line using the main console interface method
+                line = main_console_interface_method()
+
+                # flushes the stdout
+                sys.stdout.flush()
+
+                # in case there is no valid line
+                if not line:
+                    # continues the cycle
+                    continue
+
+                # processes the command line, outputting the result to
+                # the default method
+                main_console_plugin.process_command_line(line, None)
+        finally:
+            # stops the main console interface
+            main_console_interface.stop({})
 
     def unload_console(self):
         """
@@ -106,3 +138,7 @@ class MainConsoleInterface:
 
         # notifies the ready semaphore
         self.main_console_interface_plugin.release_ready_semaphore()
+
+    def _print_caret(self):
+        # writes the caret character
+        sys.stdout.write(CARET + " ")

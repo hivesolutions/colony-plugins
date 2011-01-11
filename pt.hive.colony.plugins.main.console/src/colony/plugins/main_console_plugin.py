@@ -115,6 +115,18 @@ class MainConsolePlugin(colony.base.plugin_system.Plugin):
 
         return self.console.process_command_line(command_line, output_method)
 
+    def get_command_line_alternatives(self, command_line):
+        """
+        Processes the given command line, with the given output method.
+
+        @type command_line: String
+        @param command_line: The command line to be retrieve the alternatives.
+        @rtype: List
+        @return: If list of alternatives for the given command line.
+        """
+
+        return self.console.get_command_line_alternatives(command_line)
+
     def get_default_output_method(self):
         """
         Retrieves the default output method.
@@ -138,7 +150,9 @@ class MainConsolePlugin(colony.base.plugin_system.Plugin):
     @colony.base.decorators.load_allowed_capability("console_command_extension")
     def console_command_extension_load_allowed(self, plugin, capability):
         self.console_command_plugins.append(plugin)
+        self.console.console_command_extension_load(plugin)
 
     @colony.base.decorators.unload_allowed_capability("console_command_extension")
     def console_command_extension_unload_allowed(self, plugin, capability):
         self.console_command_plugins.remove(plugin)
+        self.console.console_command_extension_unload(plugin)

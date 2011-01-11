@@ -107,6 +107,9 @@ class MainConsole:
     manager = None
     """ The plugin manager """
 
+    commands_map = {}
+    """ The map associating a command with a plugin """
+
     def __init__(self, main_console_plugin):
         """
         Constructor of the class.
@@ -117,6 +120,8 @@ class MainConsole:
 
         self.main_console_plugin = main_console_plugin
         self.manager = main_console_plugin.manager
+
+        self.commands_map = {}
 
     def process_command_line(self, command_line, output_method = None):
         """
@@ -138,8 +143,11 @@ class MainConsole:
         # splits the command line arguments
         line_split = self.split_command_line_arguments(command_line)
 
+        # retrieves the line split length
+        line_split_length = len(line_split)
+
         # in case the line is not empty
-        if len(line_split) != 0:
+        if not line_split_length == 0:
             # retrieves the command value
             command = line_split[0]
 
@@ -156,6 +164,7 @@ class MainConsole:
 
                 # retrieves the command attribute
                 attribute = getattr(self, method_name)
+
                 try:
                     # runs the command attribute with the arguments
                     # and the output method
@@ -207,6 +216,29 @@ class MainConsole:
             # returns the valid value
             return valid
 
+    def get_command_line_alternatives(self, command_line):
+        """
+        Processes the given command line, with the given output method.
+
+        @type command_line: String
+        @param command_line: The command line to be retrieve the alternatives.
+        @rtype: List
+        @return: If list of alternatives for the given command line.
+        """
+
+        # creates the alternatives list
+        alternatives_list = []
+
+        # iterates over all the commands in the
+        # commands map
+        for command in self.commands_map:
+            # in case the command starts with the
+            # value in the command line
+            command.startswith(command_line) and alternatives_list.append(command)
+
+        # returns the alternatives list
+        return alternatives_list
+
     def get_default_output_method(self):
         """
         Retrieves the default output method.
@@ -216,6 +248,24 @@ class MainConsole:
         """
 
         return self.write
+
+    def console_command_extension_load(self, console_command_extension_plugin):
+        # retrieves all commands from the console command extension
+        all_commands = console_command_extension_plugin.get_all_commands()
+
+        # iterates over all the commands
+        for command in all_commands:
+            # sets the commands in the commands map
+            self.commands_map[command] = console_command_extension_plugin
+
+    def console_command_extension_unload(self, console_command_extension_plugin):
+        # retrieves all commands from the console command extension
+        all_commands = console_command_extension_plugin.get_all_commands()
+
+        # iterates over all the commands
+        for command in all_commands:
+            # sets the commands from the commands map
+            del self.commands_map[command]
 
     def split_command_line_arguments(self, command_line):
         """
