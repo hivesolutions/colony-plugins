@@ -151,13 +151,13 @@ class ConsumerController:
                                                                                                                        "filter_fields" : [{"field_name" : "status",
                                                                                                                                            "field_value" : VALID_STATUS_VALUE}]}]})
 
+        # retrieves the consumer entity
+        consumer_entity = consumer_entities and consumer_entities[0] or None
+
         # raises an exception in case no consumer was found
-        if not consumer_entities:
+        if not consumer_entity:
             # raises the access denied exception
             raise web_mvc_encryption_exceptions.AccessDeniedException("invalid api key")
-
-        # retrieves the consumer entity
-        consumer_entity = consumer_entities[0]
 
         # returns the consumer entity
         return consumer_entity
