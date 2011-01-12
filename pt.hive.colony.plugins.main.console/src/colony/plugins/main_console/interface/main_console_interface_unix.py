@@ -43,6 +43,8 @@ import time
 import fcntl
 import termios
 
+import main_console_interface_character
+
 KEYBOARD_KEY_TIMEOUT = 0.02
 """ The keyboard key timeout """
 
@@ -85,6 +87,9 @@ class MainConsoleInterfaceUnix:
         self.main_console_interface_plugin = main_console_interface_plugin
         self.main_console_interface = main_console_interface
 
+        # creates he main console interface character
+        self.main_console_interface_character = main_console_interface_character.MainConsoleInterfaceCharacter(self.main_console_interface_plugin, self.main_console_interface)
+
     def start(self, arguments):
         # retrieves the standard input file number
         self.stdin_file_number = sys.stdin.fileno()
@@ -112,6 +117,9 @@ class MainConsoleInterfaceUnix:
         # sets the new flags in the standard input
         fcntl.fcntl(self.stdin_file_number, fcntl.F_SETFL, self.new_flags)
 
+        # starts the main console interface character
+        self.main_console_interface_character.start({})
+
     def stop(self, arguments):
         # sets the old terminal reference in the standard input
         (not self.old_terminal_reference == None) and termios.tcsetattr(self.stdin_file_number, termios.TCSAFLUSH, self.old_terminal_reference)
@@ -119,7 +127,13 @@ class MainConsoleInterfaceUnix:
         # sets the old flags in the standard input
         (not self.old_flags == None) and fcntl.fcntl(self.stdin_file_number, fcntl.F_SETFL, self.old_flags)
 
+        # stops the main console interface character
+        self.main_console_interface_character.stop({})
+
     def get_line(self):
+        # starts the line
+        self.main_console_interface_character.start_line()
+
         # iterates continuously
         while True:
             # in case the continue flag is not set
@@ -137,3 +151,17 @@ class MainConsoleInterfaceUnix:
             except IOError:
                 # sleeps for a while
                 time.sleep(KEYBOARD_KEY_TIMEOUT)
+
+            # converts the character to ordinal
+            character_ordinal = ord(character)
+
+            # processes the character
+            if self.main_console_interface_character.process_character(character, character_ordinal):
+                # breaks the loop
+                break
+
+        # ends the line and returns it
+        line = self.main_console_interface_character.end_line()
+
+        # returns the line
+        return line

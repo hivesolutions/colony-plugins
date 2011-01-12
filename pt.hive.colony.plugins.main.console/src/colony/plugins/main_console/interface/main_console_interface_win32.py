@@ -42,16 +42,17 @@ import sys
 import time
 import msvcrt
 
+import main_console_interface_character
 import main_console_interface_exceptions
-
-LINE_HISTORY_LIST_MAXIMUM_SIZE = 100
-""" The line history list maximum size """
 
 KEYBOARD_KEY_TIMEOUT = 0.02
 """ The keyboard key timeout """
 
 ASYNCHRONOUS_MODE_VALUE = 0x4000
 """ The asynchronous  mode value """
+
+SPECIAL_CHARACTER_ORDINAL_VALUE = 0xe0
+""" The special character ordinal value """
 
 TEST_VALUE = "test"
 """ The test value """
@@ -67,11 +68,8 @@ class MainConsoleInterfaceWin32:
     main_console_interface = None
     """ The main console interface """
 
-    line_buffer = []
-    """ The current line buffer """
-
-    line_history_list = []
-    """ The current line history list """
+    main_console_interface_character = None
+    """ The main console interface character """
 
     def __init__(self, main_console_interface_plugin, main_console_interface):
         """
@@ -86,12 +84,15 @@ class MainConsoleInterfaceWin32:
         self.main_console_interface_plugin = main_console_interface_plugin
         self.main_console_interface = main_console_interface
 
+        # creates he main console interface character
+        self.main_console_interface_character = main_console_interface_character.MainConsoleInterfaceCharacter(self.main_console_interface_plugin, self.main_console_interface)
+
     def start(self, arguments):
         # retrieves the test value
         test = arguments.get(TEST_VALUE, True)
 
-        # starts the line history list
-        self.line_history_list = []
+        # starts the main console interface character
+        self.main_console_interface_character.start({})
 
         # in case test mode is not enabled
         if not test:
@@ -114,20 +115,12 @@ class MainConsoleInterfaceWin32:
             raise main_console_interface_exceptions.IncompatibleConsoleInterface("eof found while reading standard input")
 
     def stop(self, arguments):
-        pass
+        # stops the main console interface character
+        self.main_console_interface_character.stop({})
 
     def get_line(self):
-        # retrieves the main console plugin
-        main_console_plugin = self.main_console_interface_plugin.main_console_plugin
-
-        # creates the line buffer
-        self.line_buffer = []
-
-        # adds the temporary element to history
-        self._add_history()
-
-        # starts the index value
-        index = -1
+        # starts the line
+        self.main_console_interface_character.start_line()
 
         # iterates continuously
         while True:
@@ -151,174 +144,32 @@ class MainConsoleInterfaceWin32:
             # converts the character to ordinal
             character_ordinal = ord(character)
 
-            # in case the character ordinal value is (up)
-            if character_ordinal == 0xe0 and msvcrt.kbhit():
+            # in case the character ordinal value is possibly "special"
+            # and there is a keyboard hit
+            if character_ordinal == SPECIAL_CHARACTER_ORDINAL_VALUE and msvcrt.kbhit():
                 # reads a character from the standard input (locks)
                 extraCharacter = msvcrt.getch()
 
                 # convert the extra character to ordinal
                 extraCharacterOrdinal = ord(extraCharacter)
 
-                # in case the character ordinal value is (up)
-                if extraCharacterOrdinal == 0x48:
-                    if index * -1 < len(self.line_history_list):
-                        # decrements the index
-                        index -= 1
+                # in case the character ordinal value is "special"
+                if extraCharacterOrdinal in (0x48, 0x50):
+                    # sets the character as the tuple
+                    # with the extra character
+                    character = (character, extraCharacterOrdinal)
 
-                        # shows the history for the index
-                        self._show_history(index)
-                # in case the character ordinal value is (down)
-                elif extraCharacterOrdinal == 0x50:
-                    if index * -1 > 1:
-                        # increments the index
-                        index += 1
+                    # sets the character ordinal as the tuple
+                    # with the extra character ordinal
+                    character = (character_ordinal, extraCharacterOrdinal)
 
-                        # shows the history for the index
-                        self._show_history(index)
-            # in case the character ordinal value is "backspace"
-            elif character_ordinal == 0x08:
-                # in case the line buffer is
-                # not valid
-                if not self.line_buffer:
-                    # continues the loop
-                    continue
-
-                # removes a character from the standard output
-                self._remove_character()
-
-                # pops an item from the line buffer
-                self.line_buffer.pop()
-            # in case the character ordinal value is "tab"
-            elif character_ordinal == 0x09:
-                # joins the line buffer to retrieve the current line
-                current_line = "".join(self.line_buffer)
-
-                # retrieves the alternatives for the current line
-                alternatives = main_console_plugin.get_command_line_alternatives(current_line)
-
-                # sorts the alternatives
-                alternatives.sort()
-
-                # retrieves the alternatives length
-                alternatives_length = len(alternatives)
-
-                # in case no alternatives are found
-                if alternatives_length == 0:
-                    pass
-                # in case one alternative is found
-                elif alternatives_length == 1:
-                    # retrieves the length of the current line
-                    current_line_length = len(current_line)
-
-                    # retrieves the first alternative
-                    first_alternative = alternatives[0]
-
-                    # retrieves the delta value
-                    delta_value = first_alternative[current_line_length:]
-
-                    # converts the delta value to list
-                    delta_list = list(delta_value)
-
-                    # extends the line buffer with the delta list
-                    self.line_buffer.extend(delta_list)
-
-                    # writes the delta value
-                    sys.stdout.write(delta_value)
-                # in case many alternatives are found
-                else:
-                    # breaks the line
-                    sys.stdout.write("\r\n")
-
-                    # iterates over all the alternatives
-                    for alternative in alternatives:
-                        sys.stdout.write(alternative + "\r\n")
-
-                    # prints the caret
-                    self.main_console_interface._print_caret()
-
-                    # writes the current line
-                    sys.stdout.write(current_line)
-            # in case the character ordinal value is "enter"
-            elif character_ordinal == 0x0d:
-                # breaks the line
-                sys.stdout.write("\r\n")
-
+            # processes the character
+            if self.main_console_interface_character.process_character(character, character_ordinal):
                 # breaks the loop
                 break
-            # otherwise, in case the character is "visible"
-            # use it as normal character
-            elif character_ordinal > 0x19:
-                # writes the character to the standard output
-                sys.stdout.write(character)
 
-                # adds the character to the line buffer
-                self.line_buffer.append(character)
-
-        # removes the last element (temporary) from history
-        self._remove_history()
-
-        # in case the line buffer is valid (not empty) and the line history list
-        # is not valid or the line buffer is different than the list item in the line history
-        if self.line_buffer and (not self.line_history_list or not self.line_buffer == self.line_history_list[-1]):
-            # adds the current line buffer to history
-            self._add_history()
-
-        # joins the line buffer to retrieve the line
-        line = "".join(self.line_buffer)
+        # ends the line and returns it
+        line = self.main_console_interface_character.end_line()
 
         # returns the line
         return line
-
-    def _handle_enter(self):
-        pass
-
-    def _add_history(self):
-        # retrieves the line history length
-        line_history_length = len(self.line_history_list)
-
-        # in case the line history overflows
-        if line_history_length > LINE_HISTORY_LIST_MAXIMUM_SIZE:
-            # pops the last "oldest" element
-            # from the line history
-            self.line_history_list.pop(0)
-
-        # adds the line buffer to the line
-        # history list
-        self.line_history_list.append(self.line_buffer)
-
-    def _remove_history(self):
-        # pops the temporary value
-        self.line_history_list.pop()
-
-    def _show_history(self, index):
-        # retrieves the line buffer length
-        line_buffer_length = len(self.line_buffer)
-
-        # iterates over the range of the line
-        # buffer length
-        for _index in range(line_buffer_length):
-            # removes a character from the standard output
-            self._remove_character()
-
-        # pops the last line buffer from the line history list
-        self.line_buffer = self.line_history_list[index]
-
-        # joins the line buffer to retrieve the current line
-        current_line = "".join(self.line_buffer)
-
-        # writes the current line
-        sys.stdout.write(current_line)
-
-    def _remove_character(self):
-        """
-        Removes a character from the standard output.
-        """
-
-        # writes the backspace character to the standard output
-        sys.stdout.write("\x08")
-
-        # writes the character to the standard output
-        sys.stdout.write(" ")
-
-        # writes the backspace character to the standard output
-        sys.stdout.write("\x08")

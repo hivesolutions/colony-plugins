@@ -47,6 +47,32 @@ class MainConsoleInterfaceException(colony.base.plugin_system_exceptions.ColonyE
     message = None
     """ The exception's message """
 
+class UndefinedConsoleInterface(MainConsoleInterfaceException):
+    """
+    The undefined console interface not found class.
+    """
+
+    def __init__(self, message):
+        """
+        Constructor of the class.
+
+        @type message: String
+        @param message: The message to be printed.
+        """
+
+        MainConsoleInterfaceException.__init__(self)
+        self.message = message
+
+    def __str__(self):
+        """
+        Returns the string representation of the class.
+
+        @rtype: String
+        @return: The string representation of the class.
+        """
+
+        return "Undefined console interface: %s" % self.message
+
 class IncompatibleConsoleInterface(MainConsoleInterfaceException):
     """
     The incompatible console interface not found class.

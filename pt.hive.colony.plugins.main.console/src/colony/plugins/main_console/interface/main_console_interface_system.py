@@ -39,10 +39,14 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 import sys
 
+import main_console_interface_exceptions
+
 try:
     import main_console_interface_win32
     main_console_interface_class = main_console_interface_win32.MainConsoleInterfaceWin32
-except:
+except Exception, exception:
+    print exception
+
     try:
         import main_console_interface_unix
         main_console_interface_class = main_console_interface_unix.MainConsoleInterfaceUnix
@@ -88,6 +92,12 @@ class MainConsoleInterface:
 
         # notifies the ready semaphore
         self.main_console_interface_plugin.release_ready_semaphore()
+
+        # in case the main console interface class is
+        # not defined
+        if not main_console_interface_class:
+            # raises the undefined console interface exception
+            raise main_console_interface_exceptions.UndefinedConsoleInterface("no class available")
 
         # creates a new main console interface system
         main_console_interface = main_console_interface_class(self.main_console_interface_plugin, self)
