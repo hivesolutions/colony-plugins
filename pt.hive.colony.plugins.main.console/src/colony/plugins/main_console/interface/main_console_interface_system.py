@@ -43,8 +43,11 @@ try:
     import main_console_interface_win32
     main_console_interface_class = main_console_interface_win32.MainConsoleInterfaceWin32
 except:
-    import main_console_interface_unix
-    main_console_interface_class = main_console_interface_unix.MainConsoleInterfaceUnix
+    try:
+        import main_console_interface_unix
+        main_console_interface_class = main_console_interface_unix.MainConsoleInterfaceUnix
+    except:
+        main_console_interface_class = None
 
 CARET = ">>"
 """ The caret to be used in the console display """

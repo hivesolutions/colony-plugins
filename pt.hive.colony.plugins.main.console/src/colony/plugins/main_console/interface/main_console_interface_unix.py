@@ -37,6 +37,15 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
+import os
+import sys
+import time
+import fcntl
+import termios
+
+KEYBOARD_KEY_TIMEOUT = 0.02
+""" The keyboard key timeout """
+
 class MainConsoleInterfaceUnix:
     """
     The main console interface unix.
@@ -62,7 +71,50 @@ class MainConsoleInterfaceUnix:
         self.main_console_interface = main_console_interface
 
     def start(self, arguments):
-        pass
+        # retrieves the standard input file number
+        self.stdin_file_number = sys.stdin.fileno()
+
+        # retrieves the terminal reference as new and old
+        self.new_terminal_reference = termios.tcgetattr(self.stdin_file_number)
+        self.old_terminal_reference = termios.tcgetattr(self.stdin_file_number)
+
+        # changes the new terminal reference for echo
+        self.new_terminal_reference[3] = self.new_terminal_reference[3] & ~termios.ICANON & ~termios.ECHO
+
+        # sets the new terminal reference in the standard input
+        termios.tcsetattr(self.stdin_file_number, termios.TCSANOW, self.new_terminal_reference)
+
+        # retrieves the "old" flags for the standard input
+        self.old_flags = fcntl.fcntl(self.stdin_file_number, fcntl.F_GETFL)
+
+        # creates the new flags from the old flags
+        self.new_flgags = self.old_flags | os.O_NONBLOCK #@UndefinedVariable
+
+        # sets the new flags in the standard input
+        fcntl.fcntl(self.stdin_file_number, fcntl.F_SETFL, self.new_flgags)
 
     def stop(self, arguments):
-        pass
+        # sets the old terminal reference in the standard input
+        termios.tcsetattr(self.stdin_file_number, termios.TCSAFLUSH, self.old_terminal_reference)
+
+        # sets the old flags in the standard input
+        fcntl.fcntl(self.stdin_file_number, fcntl.F_SETFL, self.old_flags)
+
+    def get_line(self):
+        # iterates continuously
+        while True:
+            # in case the continue flag is not set
+            if not self.main_console_interface.continue_flag:
+                # returns immediately
+                return
+
+            try:
+                # retrieves the character from the
+                # standard input
+                character = sys.stdin.read(1)
+
+                # prints the character
+                print character,
+            except IOError:
+                # sleeps for a while
+                time.sleep(KEYBOARD_KEY_TIMEOUT)
