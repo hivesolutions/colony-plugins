@@ -106,6 +106,7 @@ class MainConsoleInterfaceCharacter:
         self.line_history_list = []
 
     def start(self, parameters):
+        # clears the line history list
         self.line_history_list = []
 
     def stop(self, parameters):
@@ -283,6 +284,11 @@ class MainConsoleInterfaceCharacter:
         return False
 
     def _add_history(self):
+        """
+        Adds the current line buffer element
+        to the history "list".
+        """
+
         # retrieves the line history length
         line_history_length = len(self.line_history_list)
 
@@ -297,10 +303,20 @@ class MainConsoleInterfaceCharacter:
         self.line_history_list.append(self.line_buffer)
 
     def _remove_history(self):
+        """
+        Removes the last element from the
+        history "list".
+        """
+
         # pops the temporary value
         self.line_history_list.pop()
 
     def _show_history(self):
+        """
+        Shows the current history in the output
+        method.
+        """
+
         # retrieves the line buffer length
         line_buffer_length = len(self.line_buffer)
 
