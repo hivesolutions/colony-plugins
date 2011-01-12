@@ -50,6 +50,9 @@ LINE_HISTORY_LIST_MAXIMUM_SIZE = 100
 KEYBOARD_KEY_TIMEOUT = 0.02
 """ The keyboard key timeout """
 
+ASYNCHRONOUS_MODE_VALUE = 0x4000
+""" The asynchronous  mode value """
+
 TEST_VALUE = "test"
 """ The test value """
 
@@ -102,7 +105,7 @@ class MainConsoleInterfaceWin32:
         mode_value = msvcrt.setmode(stdin_file_number, os.O_TEXT)
 
         # in case the mode value is not valid
-        if not mode_value == 0x4000:
+        if not mode_value == ASYNCHRONOUS_MODE_VALUE:
             # raises the incompatible console interface
             raise main_console_interface_exceptions.IncompatibleConsoleInterface("eof found while reading standard input")
 
