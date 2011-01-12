@@ -145,12 +145,12 @@ class MainConsoleInterfaceUnix:
                 # retrieves the character from the
                 # standard input
                 character = sys.stdin.read(1)
-
-                # prints the character
-                print character,
             except IOError:
                 # sleeps for a while
                 time.sleep(KEYBOARD_KEY_TIMEOUT)
+
+                # continues the loop
+                continue
 
             # converts the character to ordinal
             character_ordinal = ord(character)
