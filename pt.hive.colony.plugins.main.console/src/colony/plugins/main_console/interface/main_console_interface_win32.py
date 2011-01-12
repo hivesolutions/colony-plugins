@@ -101,11 +101,15 @@ class MainConsoleInterfaceWin32:
         # retrieves the standard input file number
         stdin_file_number = sys.stdin.fileno()
 
+        # retrieves the is tty value
+        is_tty = sys.stdin.isatty()
+
         # tries to set the binary mode
         mode_value = msvcrt.setmode(stdin_file_number, os.O_TEXT)
 
-        # in case the mode value is not valid
-        if not mode_value == ASYNCHRONOUS_MODE_VALUE:
+        # in case the current standard input is not tty
+        # or the mode value is not valid
+        if not is_tty or not mode_value == ASYNCHRONOUS_MODE_VALUE:
             # raises the incompatible console interface
             raise main_console_interface_exceptions.IncompatibleConsoleInterface("eof found while reading standard input")
 
