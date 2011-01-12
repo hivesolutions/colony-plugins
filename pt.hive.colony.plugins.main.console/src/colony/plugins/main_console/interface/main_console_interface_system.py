@@ -45,8 +45,6 @@ try:
     import main_console_interface_win32
     main_console_interface_class = main_console_interface_win32.MainConsoleInterfaceWin32
 except Exception, exception:
-    print exception
-
     try:
         import main_console_interface_unix
         main_console_interface_class = main_console_interface_unix.MainConsoleInterfaceUnix
