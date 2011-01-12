@@ -37,7 +37,7 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-import web_mvc_communication_push_apple_controllers
+import os
 
 class WebMvcCommunicationPushApple:
     """
@@ -77,6 +77,12 @@ class WebMvcCommunicationPushApple:
 
         # retrieves the web mvc utils plugin
         web_mvc_utils_plugin = self.web_mvc_communication_push_apple_plugin.web_mvc_utils_plugin
+
+        # retrieves the current directory path
+        current_directory_path = os.path.dirname(__file__)
+
+        # loads the mvc utils in the web mvc communication push apple controllers module
+        web_mvc_communication_push_apple_controllers = web_mvc_utils_plugin.import_module_mvc_utils("web_mvc_communication_push_apple_controllers", "web_mvc_communication_push_apple.communication_push_apple", current_directory_path)
 
         # creates the web mvc manager communication push apple controller
         self.web_mvc_communication_push_apple_controller = web_mvc_utils_plugin.create_controller(web_mvc_communication_push_apple_controllers.WebMvcCommunicationPushAppleController, [self.web_mvc_communication_push_apple_plugin, self], {})

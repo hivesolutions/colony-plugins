@@ -37,7 +37,12 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
+import colony.libs.importer_util
+
 import web_mvc_communication_push_apple_exceptions
+
+WEB_MVC_UTILS_VALUE = "web_mvc_utils"
+""" The web mvc utils value """
 
 DEFAULT_ENCODING = "utf-8"
 """ The default encoding value """
@@ -95,6 +100,9 @@ CERTIFICATE_FILE_PATH_VALUE = "certificate_file_path"
 
 MAXIMUM_PAYLOAD_SIZE = 256
 """ The maximum size for a notification payload """
+
+# imports the web mvc utils
+web_mvc_utils = colony.libs.importer_util.__importer__(WEB_MVC_UTILS_VALUE)
 
 class WebMvcCommunicationPushAppleController:
     """
