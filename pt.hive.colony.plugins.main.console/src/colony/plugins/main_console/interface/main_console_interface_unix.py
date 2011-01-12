@@ -57,6 +57,21 @@ class MainConsoleInterfaceUnix:
     main_console_interface = None
     """ The main console interface """
 
+    stdin_file_number = None
+    """ The standard input file number """
+
+    new_terminal_reference = None
+    """ The new terminal reference """
+
+    old_terminal_reference = None
+    """ The old terminal reference """
+
+    new_flags = None
+    """ The new flags """
+
+    old_flags = None
+    """ The old flags """
+
     def __init__(self, main_console_interface_plugin, main_console_interface):
         """
         Constructor of the class.
@@ -74,6 +89,10 @@ class MainConsoleInterfaceUnix:
         # retrieves the standard input file number
         self.stdin_file_number = sys.stdin.fileno()
 
+        # invalidates the "old" backup values
+        self.old_terminal_reference = None
+        self.old_flags = None
+
         # retrieves the terminal reference as new and old
         self.new_terminal_reference = termios.tcgetattr(self.stdin_file_number)
         self.old_terminal_reference = termios.tcgetattr(self.stdin_file_number)
@@ -88,17 +107,17 @@ class MainConsoleInterfaceUnix:
         self.old_flags = fcntl.fcntl(self.stdin_file_number, fcntl.F_GETFL)
 
         # creates the new flags from the old flags
-        self.new_flgags = self.old_flags | os.O_NONBLOCK #@UndefinedVariable
+        self.new_flags = self.old_flags | os.O_NONBLOCK #@UndefinedVariable
 
         # sets the new flags in the standard input
-        fcntl.fcntl(self.stdin_file_number, fcntl.F_SETFL, self.new_flgags)
+        fcntl.fcntl(self.stdin_file_number, fcntl.F_SETFL, self.new_flags)
 
     def stop(self, arguments):
         # sets the old terminal reference in the standard input
-        termios.tcsetattr(self.stdin_file_number, termios.TCSAFLUSH, self.old_terminal_reference)
+        (not self.old_terminal_reference == None) and termios.tcsetattr(self.stdin_file_number, termios.TCSAFLUSH, self.old_terminal_reference)
 
         # sets the old flags in the standard input
-        fcntl.fcntl(self.stdin_file_number, fcntl.F_SETFL, self.old_flags)
+        (not self.old_flags == None) and fcntl.fcntl(self.stdin_file_number, fcntl.F_SETFL, self.old_flags)
 
     def get_line(self):
         # iterates continuously
