@@ -37,7 +37,12 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
+import colony.libs.importer_util
+
 import web_mvc_communication_push_exceptions
+
+WEB_MVC_UTILS_VALUE = "web_mvc_utils"
+""" The web mvc utils value """
 
 DEFAULT_CHARSET = "utf-8"
 """ The default charset """
@@ -95,6 +100,9 @@ COMMUNICATION_HANDLER_VALUE = "communication_handler"
 
 COMMUNICATION_PROFILE_VALUE = "communication_profile"
 """ The communication profile value """
+
+# imports the web mvc utils
+web_mvc_utils = colony.libs.importer_util.__importer__(WEB_MVC_UTILS_VALUE)
 
 class WebMvcCommunicationPushController:
     """
