@@ -35,6 +35,7 @@
             "web_mvc_wiki_plugin.py",
             "web_mvc_wiki/__init__.py",
             "web_mvc_wiki/mvc_wiki/__init__.py",
+            "web_mvc_wiki/mvc_wiki/web_mvc_wiki_controllers.py",
             "web_mvc_wiki/mvc_wiki/web_mvc_wiki_exceptions.py",
             "web_mvc_wiki/mvc_wiki/web_mvc_wiki_system.py",
             "web_mvc_wiki/mvc_wiki/resources/baf.xml",

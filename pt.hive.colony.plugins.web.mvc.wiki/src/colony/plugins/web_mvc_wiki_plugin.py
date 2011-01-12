@@ -69,7 +69,8 @@ class WebMvcWikiPlugin(colony.base.plugin_system.Plugin):
                     "pt.hive.colony.plugins.format.mime", "1.0.0")]
     events_handled = []
     events_registrable = []
-    main_modules = ["web_mvc_wiki.mvc_wiki.web_mvc_wiki_exceptions",
+    main_modules = ["web_mvc_wiki.mvc_wiki.web_mvc_wiki_controllers",
+                    "web_mvc_wiki.mvc_wiki.web_mvc_wiki_exceptions",
                     "web_mvc_wiki.mvc_wiki.web_mvc_wiki_system"]
 
     web_mvc_wiki = None
