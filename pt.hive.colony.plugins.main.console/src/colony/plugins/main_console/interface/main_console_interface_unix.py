@@ -114,7 +114,7 @@ class MainConsoleInterfaceUnix:
         # changes the new terminal reference for echo
         self.new_terminal_reference[3] = self.new_terminal_reference[3] & ~termios.ICANON & ~termios.ECHO
         self.new_terminal_reference[6][termios.VMIN] = 1
-        self.new_terminal_reference[6][termios.VTIME] = 0
+        self.new_terminal_reference[6][termios.VTIME] = 1
 
         # sets the new terminal reference in the standard input
         termios.tcsetattr(self.stdin_file_number, termios.TCSANOW, self.new_terminal_reference)
