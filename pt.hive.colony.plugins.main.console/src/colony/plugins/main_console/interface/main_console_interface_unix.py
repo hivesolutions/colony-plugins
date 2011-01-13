@@ -50,6 +50,9 @@ import main_console_interface_exceptions
 KEYBOARD_KEY_TIMEOUT = 0.02
 """ The keyboard key timeout """
 
+KEYBOARD_SELECT_TIMEOUT = 1.0
+""" The keyboard select timeout """
+
 CHARACTER_CONVERSION_MAP = {"\x0a" : "\x0d"}
 """ The map for character conversion """
 
@@ -170,7 +173,7 @@ class MainConsoleInterfaceUnix:
                 return
 
             # "selects" the standard input
-            selected_values = select.select([sys.stdin], [], [], 1.0)
+            selected_values = select.select([sys.stdin], [], [], KEYBOARD_SELECT_TIMEOUT)
 
             # in case no values are selected (timeout)
             if selected_values == ([], [], []):
