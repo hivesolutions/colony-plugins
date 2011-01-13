@@ -51,6 +51,18 @@ KEYBOARD_KEY_TIMEOUT = 0.02
 CHARACTER_CONVERSION_MAP = {"\x0a" : "\x0d"}
 """ The map for character conversion """
 
+IFLAG = 0
+""" The iflag value """
+
+CFLAG = 2
+""" The cflag value """
+
+LFLAG = 3
+""" The lflag value """
+
+CC = 6
+""" The cc value """
+
 class MainConsoleInterfaceUnix:
     """
     The main console interface unix.
@@ -103,11 +115,6 @@ class MainConsoleInterfaceUnix:
         # retrieves the terminal reference as new and old
         self.new_terminal_reference = termios.tcgetattr(self.stdin_file_number)
         self.old_terminal_reference = termios.tcgetattr(self.stdin_file_number)
-
-        IFLAG = 0
-        CFLAG = 2
-        LFLAG = 3
-        CC = 6
 
         # changes the new terminal reference for echo
         self.new_terminal_reference[IFLAG] = self.new_terminal_reference[IFLAG] & ~(termios.BRKINT | termios.ICRNL | termios.INPCK | termios.ISTRIP | termios.IXON)
