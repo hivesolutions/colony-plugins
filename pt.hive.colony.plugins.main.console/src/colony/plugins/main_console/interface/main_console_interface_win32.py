@@ -132,20 +132,20 @@ class MainConsoleInterfaceWin32:
             # and there is a keyboard hit
             if character_ordinal == SPECIAL_CHARACTER_ORDINAL_VALUE and msvcrt.kbhit():
                 # reads a character from the standard input (locks)
-                extraCharacter = msvcrt.getch()
+                extra_character = msvcrt.getch()
 
                 # convert the extra character to ordinal
-                extraCharacterOrdinal = ord(extraCharacter)
+                extra_character_ordinal = ord(extra_character)
 
                 # in case the character ordinal value is "special"
-                if extraCharacterOrdinal in (0x48, 0x50):
+                if extra_character_ordinal in (0x48, 0x50):
                     # sets the character as the tuple
                     # with the extra character
-                    character = (character, extraCharacterOrdinal)
+                    character = (character, extra_character)
 
                     # sets the character ordinal as the tuple
                     # with the extra character ordinal
-                    character = (character_ordinal, extraCharacterOrdinal)
+                    character_ordinal = (character_ordinal, extra_character_ordinal)
 
             # processes the character
             if self.main_console_interface_character.process_character(character, character_ordinal):
