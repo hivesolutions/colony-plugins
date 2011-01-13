@@ -126,14 +126,8 @@ class MainConsoleInterfaceUnix:
         # sets the new flags in the standard input
         fcntl.fcntl(self.stdin_file_number, fcntl.F_SETFL, self.new_flags)
 
-        sys.stdout._flush = self.tobias
-
         # starts the main console interface character
         self.main_console_interface_character.start({})
-
-    def tobias(self):
-        # flushes the standard output file
-        termios.tcflush(self.stdout_file_number)
 
     def stop(self, arguments):
         # sets the old terminal reference in the standard input

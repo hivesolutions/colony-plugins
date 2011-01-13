@@ -310,6 +310,11 @@ class MainConsole:
         # flushes the standard output
         sys.stdout.flush()
 
+        import termios
+
+        # flushes the standard output file
+        termios.tcflush(self.stdout.fileno())
+
     def process_help(self, args, output_method):
         """
         Processes the help command, with the given
