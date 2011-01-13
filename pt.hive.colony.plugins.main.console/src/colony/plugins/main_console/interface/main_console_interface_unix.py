@@ -45,6 +45,7 @@ import select
 import termios
 
 import main_console_interface_character
+import main_console_interface_exceptions
 
 KEYBOARD_KEY_TIMEOUT = 0.02
 """ The keyboard key timeout """
@@ -63,6 +64,9 @@ LFLAG = 3
 
 CC = 6
 """ The cc value """
+
+TEST_VALUE = "test"
+""" The test value """
 
 class MainConsoleInterfaceUnix:
     """
@@ -107,6 +111,13 @@ class MainConsoleInterfaceUnix:
         self.main_console_interface_character = main_console_interface_character.MainConsoleInterfaceCharacter(self.main_console_interface_plugin, self.main_console_interface)
 
     def start(self, arguments):
+        # retrieves the test value
+        test = arguments.get(TEST_VALUE, True)
+
+        # in case test mode is not enabled
+        # runs the test
+        test and self._run_test()
+
         # retrieves the standard input file number
         self.stdin_file_number = sys.stdin.fileno()
 
@@ -201,3 +212,12 @@ class MainConsoleInterfaceUnix:
 
         # returns the line
         return line
+
+    def _run_test(self):
+        # retrieves the is tty value
+        is_tty = sys.stdin.isatty()
+
+        # in case the current standard input is not tty
+        if not is_tty:
+            # raises the incompatible console interface
+            raise main_console_interface_exceptions.IncompatibleConsoleInterface("invalid terminal mode")

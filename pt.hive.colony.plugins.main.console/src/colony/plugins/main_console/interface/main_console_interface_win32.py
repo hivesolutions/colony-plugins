@@ -91,28 +91,12 @@ class MainConsoleInterfaceWin32:
         # retrieves the test value
         test = arguments.get(TEST_VALUE, True)
 
+        # in case test mode is not enabled
+        # runs the test
+        test and self._run_test()
+
         # starts the main console interface character
         self.main_console_interface_character.start({})
-
-        # in case test mode is not enabled
-        if not test:
-            # returns immediately
-            return
-
-        # retrieves the standard input file number
-        stdin_file_number = sys.stdin.fileno()
-
-        # retrieves the is tty value
-        is_tty = sys.stdin.isatty()
-
-        # tries to set the binary mode
-        mode_value = msvcrt.setmode(stdin_file_number, os.O_TEXT)
-
-        # in case the current standard input is not tty
-        # or the mode value is not valid
-        if not is_tty or not mode_value == ASYNCHRONOUS_MODE_VALUE:
-            # raises the incompatible console interface
-            raise main_console_interface_exceptions.IncompatibleConsoleInterface("eof found while reading standard input")
 
     def stop(self, arguments):
         # stops the main console interface character
@@ -173,3 +157,19 @@ class MainConsoleInterfaceWin32:
 
         # returns the line
         return line
+
+    def _run_test(self):
+        # retrieves the standard input file number
+        stdin_file_number = sys.stdin.fileno()
+
+        # retrieves the is tty value
+        is_tty = sys.stdin.isatty()
+
+        # tries to set the binary mode
+        mode_value = msvcrt.setmode(stdin_file_number, os.O_TEXT)
+
+        # in case the current standard input is not tty
+        # or the mode value is not valid
+        if not is_tty or not mode_value == ASYNCHRONOUS_MODE_VALUE:
+            # raises the incompatible console interface
+            raise main_console_interface_exceptions.IncompatibleConsoleInterface("invalid terminal mode")
