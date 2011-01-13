@@ -43,7 +43,6 @@ import time
 import colony.libs.structures_util
 
 import web_mvc_wiki_exceptions
-import web_mvc_wiki_controllers
 
 WEB_MVC_WIKI_RESOURCES_PATH = "web_mvc_wiki/mvc_wiki/resources"
 """ The web mvc wiki resources path """
@@ -98,6 +97,12 @@ class WebMvcWiki:
 
         # retrieves the web mvc utils plugin
         web_mvc_utils_plugin = self.web_mvc_wiki_plugin.web_mvc_utils_plugin
+
+        # retrieves the current directory path
+        current_directory_path = os.path.dirname(__file__)
+
+        # loads the mvc utils in the pecway main controllers module
+        web_mvc_wiki_controllers = web_mvc_utils_plugin.import_module_mvc_utils("web_mvc_wiki_controllers", "web_mvc_wiki.mvc_wiki", current_directory_path)
 
         # create the web mvc wiki controller
         self.web_mvc_wiki_controller = web_mvc_utils_plugin.create_controller(WebMvcWikiController, [self.web_mvc_wiki_plugin, self], {})

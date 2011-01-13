@@ -38,6 +38,10 @@ __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
 import colony.libs.map_util
+import colony.libs.importer_util
+
+WEB_MVC_UTILS_VALUE = "web_mvc_utils"
+""" The web mvc utils value """
 
 WEB_MVC_WIKI_RESOURCES_PATH = "web_mvc_wiki/mvc_wiki/resources"
 """ The web mvc wiki resources path """
@@ -56,6 +60,9 @@ TEMPLATES_PATH = WEB_MVC_WIKI_RESOURCES_PATH + "/templates"
 
 WIKI_EXTENSION = ".wiki"
 """ The wiki extension """
+
+# imports the web mvc utils
+web_mvc_utils = colony.libs.importer_util.__importer__(WEB_MVC_UTILS_VALUE)
 
 class WebMvcWikiPageController:
     """
