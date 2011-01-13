@@ -149,7 +149,7 @@ class MainConsoleInterfaceUnix:
             a = select.select([sys.stdin], [], [], 1.0)
 
             if a == ([], [], []):
-                raise Exception("invalid character")
+                continue
 
             # sleeps for a while
             time.sleep(KEYBOARD_KEY_TIMEOUT)
