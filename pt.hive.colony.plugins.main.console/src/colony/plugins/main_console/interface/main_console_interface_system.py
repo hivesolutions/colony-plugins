@@ -122,12 +122,7 @@ class MainConsoleInterface:
                 self._print_caret()
 
                 # flushes the standard output
-#                sys.stdout.flush()
-#
-                import termios
-
-                # flushes the standard output file
-                termios.tcdrain(sys.stdout.fileno())
+                sys.stdout.flush()
 
                 # retrieves the line using the main console interface method
                 line = main_console_interface_method()
