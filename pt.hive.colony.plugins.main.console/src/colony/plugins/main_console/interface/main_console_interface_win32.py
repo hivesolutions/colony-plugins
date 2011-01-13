@@ -197,21 +197,13 @@ class MainConsoleInterfaceWin32:
         sys.stdout.write("\x08")
 
     def _cursor_top(self, amount = 1):
-        # iterates over the range of the amount
-        for _index in range(amount):
-            sys.stdout.write("\xe0\x48")
+        pass
 
     def _cursor_down(self, amount = 1):
-        # iterates over the range of the amount
-        for _index in range(amount):
-            sys.stdout.write("\xe0\x50")
+        pass
 
     def _cursor_right(self, amount = 1):
-        # iterates over the range of the amount
-        for _index in range(amount):
-            sys.stdout.write("\xe0\x4d")
+        pass
 
     def _cursor_left(self, amount = 1):
-        # iterates over the range of the amount
-        for _index in range(amount):
-            sys.stdout.write("\xe0\x4b")
+        pass
