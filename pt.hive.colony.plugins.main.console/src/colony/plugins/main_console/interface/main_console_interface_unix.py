@@ -223,8 +223,6 @@ class MainConsoleInterfaceUnix:
                         # standard input
                         final_character = sys.stdin.read(1)
 
-                        print "encontrou char: " + str(ord(final_character))
-
                         # convert the final character to ordinal
                         final_character_ordinal = ord(final_character)
 
