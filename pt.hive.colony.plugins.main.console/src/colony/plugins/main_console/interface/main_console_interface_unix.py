@@ -41,6 +41,7 @@ import os
 import sys
 import time
 import fcntl
+import select
 import termios
 
 import main_console_interface_character
@@ -157,8 +158,6 @@ class MainConsoleInterfaceUnix:
                 # returns immediately
                 return
 
-            import select
-
             try:
                 # "selects" the standard input
                 selected_values = select.select([sys.stdin], [], [], 1.0)
@@ -175,6 +174,8 @@ class MainConsoleInterfaceUnix:
                 # standard input
                 character = sys.stdin.read(1)
             except IOError:
+                print "Error"
+
                 # sleeps for a while
                 time.sleep(KEYBOARD_KEY_TIMEOUT)
 
