@@ -113,7 +113,7 @@ class MainConsoleInterfaceUnix:
         self.new_terminal_reference[IFLAG] = self.new_terminal_reference[IFLAG] & ~(termios.BRKINT | termios.ICRNL | termios.INPCK | termios.ISTRIP | termios.IXON)
         self.new_terminal_reference[CFLAG] = self.new_terminal_reference[CFLAG] & ~(termios.CSIZE | termios.PARENB)
         self.new_terminal_reference[CFLAG] = self.new_terminal_reference[CFLAG] | termios.CS8
-        self.new_terminal_reference[LFLAG] = self.new_terminal_reference[LFLAG] & ~(termios.ECHO | termios.ICANON | termios.IEXTEN | termios.ISIG)
+        self.new_terminal_reference[LFLAG] = self.new_terminal_reference[LFLAG] & ~(termios.ECHO | termios.ICANON | termios.IEXTEN)
         self.new_terminal_reference[CC][termios.VMIN] = 1
         self.new_terminal_reference[CC][termios.VTIME] = 0
 
