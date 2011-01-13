@@ -100,43 +100,51 @@ class MainConsoleInterfaceUnix:
         # retrieves the standard input file number
         self.stdin_file_number = sys.stdin.fileno()
 
-        # retrieves the standard output file number
-        self.stdout_file_number = sys.stdout.fileno()
+        import tty
+        tty.setraw(self.stdin_file_number)
 
-        # invalidates the "old" backup values
-        self.old_terminal_reference = None
-        self.old_flags = None
-
-        # retrieves the terminal reference as new and old
-        self.new_terminal_reference = termios.tcgetattr(self.stdin_file_number)
-        self.old_terminal_reference = termios.tcgetattr(self.stdin_file_number)
-
-        # changes the new terminal reference for echo
-        self.new_terminal_reference[3] = self.new_terminal_reference[3] & ~termios.ECHO
-        self.new_terminal_reference[6][termios.VMIN] = 1
-        self.new_terminal_reference[6][termios.VTIME] = 1
-
-        # sets the new terminal reference in the standard input
-        termios.tcsetattr(self.stdin_file_number, termios.TCSANOW, self.new_terminal_reference)
-
-        # retrieves the "old" flags for the standard input
-        self.old_flags = fcntl.fcntl(self.stdin_file_number, fcntl.F_GETFL)
-
-        # creates the new flags from the old flags
-        self.new_flags = self.old_flags | os.O_NONBLOCK #@UndefinedVariable
-
-        # sets the new flags in the standard input
-        fcntl.fcntl(self.stdin_file_number, fcntl.F_SETFL, self.new_flags)
+#        # retrieves the standard output file number
+#        self.stdout_file_number = sys.stdout.fileno()
+#
+#        # invalidates the "old" backup values
+#        self.old_terminal_reference = None
+#        self.old_flags = None
+#
+#        # retrieves the terminal reference as new and old
+#        self.new_terminal_reference = termios.tcgetattr(self.stdin_file_number)
+#        self.old_terminal_reference = termios.tcgetattr(self.stdin_file_number)
+#
+#        # changes the new terminal reference for echo
+#        self.new_terminal_reference[3] = self.new_terminal_reference[3] & ~termios.ICANON & ~termios.ECHO
+#        self.new_terminal_reference[6][termios.VMIN] = 1
+#        self.new_terminal_reference[6][termios.VTIME] = 1
+#        self.new_terminal_reference[5][termios.VMIN] = 1
+#        self.new_terminal_reference[5][termios.VTIME] = 1
+#
+#        # sets the new terminal reference in the standard input
+#        termios.tcsetattr(self.stdin_file_number, termios.TCSANOW, self.new_terminal_reference)
+#
+#        # retrieves the "old" flags for the standard input
+#        self.old_flags = fcntl.fcntl(self.stdin_file_number, fcntl.F_GETFL)
+#
+#        # creates the new flags from the old flags
+#        self.new_flags = self.old_flags | os.O_NONBLOCK #@UndefinedVariable
+#
+#        # sets the new flags in the standard input
+#        fcntl.fcntl(self.stdin_file_number, fcntl.F_SETFL, self.new_flags)
 
         # starts the main console interface character
         self.main_console_interface_character.start({})
 
     def stop(self, arguments):
-        # sets the old terminal reference in the standard input
-        (not self.old_terminal_reference == None) and termios.tcsetattr(self.stdin_file_number, termios.TCSAFLUSH, self.old_terminal_reference)
+        import tty
+        tty.setcbreak(self.stdin_file_number)
 
-        # sets the old flags in the standard input
-        (not self.old_flags == None) and fcntl.fcntl(self.stdin_file_number, fcntl.F_SETFL, self.old_flags)
+        # sets the old terminal reference in the standard input
+#        (not self.old_terminal_reference == None) and termios.tcsetattr(self.stdin_file_number, termios.TCSAFLUSH, self.old_terminal_reference)
+#
+#        # sets the old flags in the standard input
+#        (not self.old_flags == None) and fcntl.fcntl(self.stdin_file_number, fcntl.F_SETFL, self.old_flags)
 
         # stops the main console interface character
         self.main_console_interface_character.stop({})
@@ -163,8 +171,6 @@ class MainConsoleInterfaceUnix:
                 # continues the loop
                 continue
 
-            print "ola"
-
             # tries to convert the character using the conversion map
             character = CHARACTER_CONVERSION_MAP.get(character, character)
 
@@ -175,9 +181,6 @@ class MainConsoleInterfaceUnix:
             if self.main_console_interface_character.process_character(character, character_ordinal):
                 # breaks the loop
                 break
-
-            # flushes the standard output
-            sys.stdout.flush()
 
         # ends the line and returns it
         line = self.main_console_interface_character.end_line()
