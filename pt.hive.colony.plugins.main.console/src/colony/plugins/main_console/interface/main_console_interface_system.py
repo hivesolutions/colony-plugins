@@ -121,9 +121,6 @@ class MainConsoleInterface:
                 # prints the caret
                 self._print_caret()
 
-                # flushes the stdout
-                sys.stdout.flush()
-
                 # retrieves the line using the main console interface method
                 line = main_console_interface_method()
 
@@ -153,3 +150,6 @@ class MainConsoleInterface:
     def _print_caret(self):
         # writes the caret character
         sys.stdout.write(CARET + " ")
+
+        # flushes the stdout
+        sys.stdout.flush()
