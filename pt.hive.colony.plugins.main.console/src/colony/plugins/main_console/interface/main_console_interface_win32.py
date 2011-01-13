@@ -102,7 +102,7 @@ class MainConsoleInterfaceWin32:
 
     def stop(self, arguments):
         # stops the main console interface character
-        self.main_console_interface_character.stop({})
+        self.main_console_interface_character and self.main_console_interface_character.stop({})
 
     def get_line(self):
         # starts the line

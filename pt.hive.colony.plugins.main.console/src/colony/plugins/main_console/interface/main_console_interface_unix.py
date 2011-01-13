@@ -183,7 +183,7 @@ class MainConsoleInterfaceUnix:
         (not self.old_flags == None) and fcntl.fcntl(self.stdin_file_number, fcntl.F_SETFL, self.old_flags)
 
         # stops the main console interface character
-        self.main_console_interface_character.stop({})
+        self.main_console_interface_character and self.main_console_interface_character.stop({})
 
     def get_line(self):
         # starts the line
