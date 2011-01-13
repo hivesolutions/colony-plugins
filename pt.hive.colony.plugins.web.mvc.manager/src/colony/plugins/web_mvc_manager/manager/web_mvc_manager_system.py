@@ -128,7 +128,7 @@ class WebMvcManager:
         # retrieves the current directory path
         current_directory_path = os.path.dirname(__file__)
 
-        # loads the mvc utils in the pecway main controllers module
+        # loads the mvc utils in the web mvc manager controllers module
         web_mvc_manager_controllers = web_mvc_utils_plugin.import_module_mvc_utils("web_mvc_manager_controllers", "web_mvc_manager.manager", current_directory_path)
 
         # creates the web mvc manager main controller

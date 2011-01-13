@@ -101,7 +101,7 @@ class WebMvcWiki:
         # retrieves the current directory path
         current_directory_path = os.path.dirname(__file__)
 
-        # loads the mvc utils in the pecway main controllers module
+        # loads the mvc utils in the web mvc wiki controllers module
         web_mvc_wiki_controllers = web_mvc_utils_plugin.import_module_mvc_utils("web_mvc_wiki_controllers", "web_mvc_wiki.mvc_wiki", current_directory_path)
 
         # create the web mvc wiki controller
