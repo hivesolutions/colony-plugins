@@ -45,7 +45,7 @@ import termios
 
 import main_console_interface_character
 
-KEYBOARD_KEY_TIMEOUT = 0.02
+KEYBOARD_KEY_TIMEOUT = 0.10
 """ The keyboard key timeout """
 
 CHARACTER_CONVERSION_MAP = {"\x0a" : "\x0d"}
