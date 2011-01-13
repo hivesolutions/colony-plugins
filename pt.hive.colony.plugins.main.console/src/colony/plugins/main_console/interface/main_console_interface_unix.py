@@ -106,7 +106,7 @@ class MainConsoleInterfaceUnix:
         self.old_terminal_reference = termios.tcgetattr(self.stdin_file_number)
 
         # changes the new terminal reference for echo
-        self.new_terminal_reference[3] = self.new_terminal_reference[3] & ~termios.ICANON & ~termios.ECHO
+        self.new_terminal_reference[3] = self.new_terminal_reference[3] & ~termios.ECHO
 
         # sets the new terminal reference in the standard input
         termios.tcsetattr(self.stdin_file_number, termios.TCSANOW, self.new_terminal_reference)
@@ -143,9 +143,6 @@ class MainConsoleInterfaceUnix:
             if not self.main_console_interface.continue_flag:
                 # returns immediately
                 return
-
-            # sleeps for a while
-            time.sleep(KEYBOARD_KEY_TIMEOUT)
 
             try:
                 # retrieves the character from the
