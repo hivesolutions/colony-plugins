@@ -48,6 +48,9 @@ import main_console_interface_character
 KEYBOARD_KEY_TIMEOUT = 0.02
 """ The keyboard key timeout """
 
+CHARACTER_CONVERSION_MAP = {"\x0a" : "\x0d"}
+""" The map for character conversion """
+
 class MainConsoleInterfaceUnix:
     """
     The main console interface unix.
@@ -152,10 +155,11 @@ class MainConsoleInterfaceUnix:
                 # continues the loop
                 continue
 
+            # tries to convert the character using the conversion map
+            character = CHARACTER_CONVERSION_MAP.get(character, character)
+
             # converts the character to ordinal
             character_ordinal = ord(character)
-
-            print character_ordinal,
 
             # processes the character
             if self.main_console_interface_character.process_character(character, character_ordinal):
