@@ -163,6 +163,8 @@ class MainConsoleInterfaceUnix:
                 # continues the loop
                 continue
 
+            print "ola"
+
             # tries to convert the character using the conversion map
             character = CHARACTER_CONVERSION_MAP.get(character, character)
 
