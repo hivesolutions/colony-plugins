@@ -37,10 +37,16 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
+import os
 import sys
+import time
+import fcntl
 import termios
 
 import main_console_interface_character
+
+KEYBOARD_KEY_TIMEOUT = 0.02
+""" The keyboard key timeout """
 
 CHARACTER_CONVERSION_MAP = {"\x0a" : "\x0d"}
 """ The map for character conversion """
@@ -64,6 +70,12 @@ class MainConsoleInterfaceUnix:
 
     old_terminal_reference = None
     """ The old terminal reference """
+
+    new_flags = None
+    """ The new flags """
+
+    old_flags = None
+    """ The old flags """
 
     def __init__(self, main_console_interface_plugin, main_console_interface):
         """
@@ -108,12 +120,21 @@ class MainConsoleInterfaceUnix:
         # sets the new terminal reference in the standard input
         termios.tcsetattr(self.stdin_file_number, termios.TCSANOW, self.new_terminal_reference)
 
+        # retrieves the "old" flags for the standard input
+        self.old_flags = fcntl.fcntl(self.stdin_file_number, fcntl.F_GETFL)
+
+        # creates the new flags from the old flags
+        self.new_flags = self.old_flags | os.O_NONBLOCK #@UndefinedVariable
+
         # starts the main console interface character
         self.main_console_interface_character.start({})
 
     def stop(self, arguments):
         # sets the old terminal reference in the standard input
         (not self.old_terminal_reference == None) and termios.tcsetattr(self.stdin_file_number, termios.TCSAFLUSH, self.old_terminal_reference)
+
+        # sets the old flags in the standard input
+        (not self.old_flags == None) and fcntl.fcntl(self.stdin_file_number, fcntl.F_SETFL, self.old_flags)
 
         # stops the main console interface character
         self.main_console_interface_character.stop({})
@@ -129,22 +150,16 @@ class MainConsoleInterfaceUnix:
                 # returns immediately
                 return
 
-            import select
-
             try:
-                # "selects" the standard input
-                selected_values = select.select([sys.stdin], [], [], 1.0)
-            except:
-                raise Exception("select problem")
+                # retrieves the character from the
+                # standard input
+                character = sys.stdin.read(1)
+            except IOError:
+                # sleeps for a while
+                time.sleep(KEYBOARD_KEY_TIMEOUT)
 
-            # in case no values are selected (timeout)
-            if selected_values == ([], [], []):
                 # continues the loop
                 continue
-
-            # retrieves the character from the
-            # standard input
-            character = sys.stdin.read(1)
 
             # tries to convert the character using the conversion map
             character = CHARACTER_CONVERSION_MAP.get(character, character)
