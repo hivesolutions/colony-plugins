@@ -300,16 +300,12 @@ class MainConsole:
         @param new_line: If the text should be suffixed with a newline.
         """
 
-        # in case a newline should be appended
-        if new_line:
-            # prints the text
-            print text
-        else:
-            # writes the text contents
-            sys.stdout.write(text)
+        # writes the text contents
+        sys.stdout.write(text)
 
-            # flushes the standard output
-            sys.stdout.flush()
+        # in case a newline should be appended
+        # writes it
+        new_line and sys.stdout.write("\r\n")
 
     def process_help(self, args, output_method):
         """
