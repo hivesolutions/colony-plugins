@@ -187,7 +187,7 @@ class MainConsoleInterfaceUnix:
             # converts the character to ordinal
             character_ordinal = ord(character)
 
-            print character_ordinal
+            print character_ordinal,
 
             # processes the character
             if self.main_console_interface_character.process_character(character, character_ordinal):
