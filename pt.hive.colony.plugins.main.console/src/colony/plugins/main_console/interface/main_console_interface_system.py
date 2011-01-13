@@ -121,6 +121,9 @@ class MainConsoleInterface:
                 # prints the caret
                 self._print_caret()
 
+                # flushes the stdout
+                sys.stdout.flush()
+
                 # retrieves the line using the main console interface method
                 line = main_console_interface_method()
 
@@ -132,9 +135,6 @@ class MainConsoleInterface:
                 # processes the command line, outputting the result to
                 # the default method
                 main_console_plugin.process_command_line(line, None)
-
-                # flushes the stdout
-                sys.stdout.flush()
         finally:
             # stops the main console interface
             main_console_interface.stop({})

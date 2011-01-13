@@ -308,8 +308,8 @@ class MainConsole:
             # writes the text contents
             sys.stdout.write(text)
 
-        # flushes the standard output
-        sys.stdout.flush()
+            # flushes the standard output
+            sys.stdout.flush()
 
     def process_help(self, args, output_method):
         """
