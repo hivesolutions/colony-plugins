@@ -112,7 +112,7 @@ class MainConsoleInterfaceUnix:
         self.old_terminal_reference = termios.tcgetattr(self.stdin_file_number)
 
         # changes the new terminal reference for echo
-        self.new_terminal_reference[3] = self.new_terminal_reference[3] & ~termios.ICANON & ~termios.ECHO
+        self.new_terminal_reference[3] = self.new_terminal_reference[3] & ~termios.ECHO
         self.new_terminal_reference[6][termios.VMIN] = 1
         self.new_terminal_reference[6][termios.VTIME] = 1
 
@@ -173,6 +173,9 @@ class MainConsoleInterfaceUnix:
             if self.main_console_interface_character.process_character(character, character_ordinal):
                 # breaks the loop
                 break
+
+            # flushes the standard output
+            sys.stdout.flush()
 
         # ends the line and returns it
         line = self.main_console_interface_character.end_line()
