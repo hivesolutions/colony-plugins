@@ -144,6 +144,9 @@ class MainConsoleInterfaceUnix:
                 # returns immediately
                 return
 
+            # sleeps for a while
+            time.sleep(KEYBOARD_KEY_TIMEOUT)
+
             try:
                 # retrieves the character from the
                 # standard input
