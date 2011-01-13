@@ -169,11 +169,8 @@ class MainConsoleInterfaceUnix:
                 # returns immediately
                 return
 
-            try:
-                # "selects" the standard input
-                selected_values = select.select([sys.stdin], [], [], 1.0)
-            except:
-                raise Exception("select problem")
+            # "selects" the standard input
+            selected_values = select.select([sys.stdin], [], [], 1.0)
 
             # in case no values are selected (timeout)
             if selected_values == ([], [], []):
@@ -185,8 +182,6 @@ class MainConsoleInterfaceUnix:
                 # standard input
                 character = sys.stdin.read(1)
             except IOError:
-                print "Error"
-
                 # sleeps for a while
                 time.sleep(KEYBOARD_KEY_TIMEOUT)
 
