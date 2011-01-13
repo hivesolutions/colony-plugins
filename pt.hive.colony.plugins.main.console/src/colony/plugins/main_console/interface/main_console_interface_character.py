@@ -228,11 +228,12 @@ class MainConsoleInterfaceCharacter:
         # in case many alternatives are found
         else:
             # breaks the line
-            sys.stdout.write("\r\n")
+            sys.stdout.write("\n")
 
             # iterates over all the alternatives
             for alternative in alternatives:
-                sys.stdout.write(alternative + "\r\n")
+                # prints the alternative
+                sys.stdout.write(alternative + "\n")
 
             # prints the caret
             self.main_console_interface._print_caret()
