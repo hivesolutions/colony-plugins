@@ -44,7 +44,6 @@ import fcntl
 import select
 import termios
 
-import main_console_interface_character
 import main_console_interface_exceptions
 
 KEYBOARD_KEY_TIMEOUT = 0.02
@@ -101,6 +100,9 @@ class MainConsoleInterfaceUnix:
     main_console_interface = None
     """ The main console interface """
 
+    main_console_interface_character = None
+    """ The main console interface character """
+
     stdin_file_number = None
     """ The standard input file number """
 
@@ -129,10 +131,10 @@ class MainConsoleInterfaceUnix:
         self.main_console_interface_plugin = main_console_interface_plugin
         self.main_console_interface = main_console_interface
 
-        # creates he main console interface character
-        self.main_console_interface_character = main_console_interface_character.MainConsoleInterfaceCharacter(self.main_console_interface_plugin, self.main_console_interface, self)
-
     def start(self, arguments):
+        # retrieves the main console plugin
+        main_console_plugin = self.main_console_interface_plugin.main_console_plugin
+
         # retrieves the test value
         test = arguments.get(TEST_VALUE, True)
 
@@ -166,6 +168,9 @@ class MainConsoleInterfaceUnix:
 
         # creates the new flags from the old flags
         self.new_flags = self.old_flags | os.O_NONBLOCK #@UndefinedVariable
+
+        # creates he main console interface character
+        self.main_console_interface_character = main_console_plugin.create_console_interface_character(self)
 
         # starts the main console interface character
         self.main_console_interface_character.start({})
@@ -276,6 +281,11 @@ class MainConsoleInterfaceUnix:
         # writes the string value to the
         # standard output
         sys.stdout.write(string_value)
+
+    def _print_caret(self):
+        # prints the caret using the main
+        # console interface
+        self.main_console_interface._print_caret()
 
     def _remove_character(self):
         """

@@ -1,0 +1,19 @@
+{
+    "type" : "plugin",
+    "platform" : "python",
+    "sub_platforms" : ["cpython", "jython", "iron_python"],
+    "id" : "pt.hive.colony.plugins.main.console.base",
+    "name" : "Console Base Main Plugin",
+    "short_name" : "Console Base Main",
+    "description" : "The plugin that provides the base commands for the system",
+    "version" : "1.0.0",
+    "author" : "Hive Solutions Lda. <development@hive.pt>",
+    "capabilities" : ["console_command_extension", "build_automation_item"],
+    "capabilities_allowed" : [],
+    "dependencies" : [],
+    "main_file" : "main_console_base_plugin.py",
+    "resources" : ["main_console_base_plugin.py", "main_console/__init__.py",
+            "main_console/base/__init__.py",
+            "main_console/base/main_console_base_system.py",
+            "main_console/base/resources/baf.xml"]
+}

@@ -61,7 +61,8 @@ class MainConsolePlugin(colony.base.plugin_system.Plugin):
     dependencies = []
     events_handled = []
     events_registrable = []
-    main_modules = ["main_console.console.main_console_system",
+    main_modules = ["main_console.console.main_console_interfaces",
+                    "main_console.console.main_console_system",
                     "main_console.console.main_console_test"]
 
     console = None
@@ -136,6 +137,19 @@ class MainConsolePlugin(colony.base.plugin_system.Plugin):
         """
 
         return self.console.get_default_output_method()
+
+    def create_console_interface_character(self, console_handler):
+        """
+        Creates a new console interface character based
+        from the given console handler.
+
+        @type console_handler: ConsoleHandler
+        @param console_handler: The console handler to be used.
+        @rtype: ConsoleInterfaceCharacter
+        @return: The create console interface character.
+        """
+
+        return self.console.create_console_interface_character(console_handler)
 
     def get_test_case(self):
         """

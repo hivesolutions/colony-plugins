@@ -25,10 +25,10 @@ __author__ = "João Magalhães <joamag@hive.pt>"
 __version__ = "1.0.0"
 """ The version of the module """
 
-__revision__ = "$LastChangedRevision: 7618 $"
+__revision__ = "$LastChangedRevision: 12604 $"
 """ The revision number of the module """
 
-__date__ = "$LastChangedDate: 2010-03-19 08:32:46 +0000 (sex, 19 Mar 2010) $"
+__date__ = "$LastChangedDate: 2011-01-11 19:52:40 +0000 (ter, 11 Jan 2011) $"
 """ The last change date of the module """
 
 __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
@@ -38,64 +38,46 @@ __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
 import colony.base.plugin_system
-import colony.base.decorators
 
-class MainConsoleInterfacePlugin(colony.base.plugin_system.Plugin):
+class MainConsoleBasePlugin(colony.base.plugin_system.Plugin):
     """
-    The main class for the Console Interface Main plugin.
+    The main class for the Console Base Main plugin.
     """
 
-    id = "pt.hive.colony.plugins.main.console.interface"
-    name = "Console Interface Main Plugin"
-    short_name = "Console Interface Main"
-    description = "The main console plugin that controls the console interface"
+    id = "pt.hive.colony.plugins.main.console.base"
+    name = "Console Base Main Plugin"
+    short_name = "Console Base Main"
+    description = "The plugin that provides the base commands for the system"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     loading_type = colony.base.plugin_system.EAGER_LOADING_TYPE
     platforms = [colony.base.plugin_system.CPYTHON_ENVIRONMENT,
                  colony.base.plugin_system.JYTHON_ENVIRONMENT,
                  colony.base.plugin_system.IRON_PYTHON_ENVIRONMENT]
-    attributes = {"build_automation_file_path" : "$base{plugin_directory}/main_console/interface/resources/baf.xml"}
-    capabilities = ["main", "build_automation_item"]
+    attributes = {"build_automation_file_path" : "$base{plugin_directory}/main_console/base/resources/baf.xml"}
+    capabilities = ["console_command_extension", "build_automation_item"]
     capabilities_allowed = []
-    dependencies = [colony.base.plugin_system.PluginDependency(
-                    "pt.hive.colony.plugins.main.console", "1.0.0")]
+    dependencies = []
     events_handled = []
     events_registrable = []
-    main_modules = ["main_console.interface.main_console_interface_exceptions",
-                    "main_console.interface.main_console_interface_system",
-                    "main_console.interface.main_console_interface_unix",
-                    "main_console.interface.main_console_interface_win32"]
+    main_modules = ["main_console.base.main_console_base_system"]
 
-    console_interface = None
-
-    main_console_plugin = None
+    console_base = None
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
-        self.console_command_plugins = []
         global main_console
-        import main_console.interface.main_console_interface_system
-        self.console_interface = main_console.interface.main_console_interface_system.MainConsoleInterface(self)
-
-        # notifies the ready semaphore
-        self.release_ready_semaphore()
+        import main_console.base.main_console_base_system
+        self.console_base = main_console.base.main_console_base_system.MainConsoleBase(self)
 
     def end_load_plugin(self):
         colony.base.plugin_system.Plugin.end_load_plugin(self)
 
-        self.console_interface.load_console()
-
     def unload_plugin(self):
         colony.base.plugin_system.Plugin.unload_plugin(self)
 
-        self.console_interface.unload_console()
-
     def end_unload_plugin(self):
         colony.base.plugin_system.Plugin.end_unload_plugin(self)
-
-        # notifies the ready semaphore
-        self.release_ready_semaphore()
 
     def load_allowed(self, plugin, capability):
         colony.base.plugin_system.Plugin.load_allowed(self, plugin, capability)
@@ -103,13 +85,17 @@ class MainConsoleInterfacePlugin(colony.base.plugin_system.Plugin):
     def unload_allowed(self, plugin, capability):
         colony.base.plugin_system.Plugin.unload_allowed(self, plugin, capability)
 
-    @colony.base.decorators.inject_dependencies("pt.hive.colony.plugins.main.console.interface", "1.0.0")
     def dependency_injected(self, plugin):
         colony.base.plugin_system.Plugin.dependency_injected(self, plugin)
 
-    def get_main_console_plugin(self):
-        return self.main_console_plugin
+    def get_console_extension_name(self):
+        return self.console_base.get_console_extension_name()
 
-    @colony.base.decorators.plugin_inject("pt.hive.colony.plugins.main.console")
-    def set_main_console_plugin(self, main_console_plugin):
-        self.main_console_plugin = main_console_plugin
+    def get_all_commands(self):
+        return self.console_base.get_all_commands()
+
+    def get_handler_command(self, command):
+        return self.console_base.get_handler_command(command)
+
+    def get_help(self):
+        return self.console_base.get_help()

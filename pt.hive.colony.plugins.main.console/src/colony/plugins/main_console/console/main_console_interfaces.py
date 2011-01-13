@@ -71,15 +71,14 @@ class MainConsoleInterfaceCharacter:
     The main console interface character.
     """
 
-    main_console_interface_plugin = None
-    """ The main console interface plugin """
+    main_console_plugin = None
+    """ The main console plugin """
 
-    main_console_interface = None
-    """ The main console interface """
+    main_console = None
+    """ The main console """
 
-
-    handler = None
-
+    console_handler = None
+    """ The console handler """
 
     character_methods_map = {}
     """ The character methods map """
@@ -93,19 +92,21 @@ class MainConsoleInterfaceCharacter:
     line_history_list = []
     """ The current line history list """
 
-    def __init__(self, main_console_interface_plugin, main_console_interface, handler):
+    def __init__(self, main_console_plugin, main_console, console_handler):
         """
         Constructor of the class.
 
-        @type main_console_interface_plugin: MainConsoleInterfacePlugin
-        @param main_console_interface_plugin: The main console interface plugin.
-        @type main_console_interface: MainConsoleInterface
-        @param main_console_interface: The main console interface.
+        @type main_console_plugin: MainConsolePlugin
+        @param main_console_plugin: The main console plugin.
+        @type main_console: MainConsole
+        @param main_console: The main console.
+        @type console_handler: ConsoleHandler
+        @param console_handler: The console handler to be used.
         """
 
-        self.main_console_interface_plugin = main_console_interface_plugin
-        self.main_console_interface = main_console_interface
-        self.handler = handler
+        self.main_console_plugin = main_console_plugin
+        self.main_console = main_console
+        self.console_handler = console_handler
 
         self.character_methods_map = {BACKSPACE_CHARACTER_ORDINAL : self._process_backspace_character,
                                       TAB_CHARACTER_ORDINAL : self._process_tab_character,
@@ -184,7 +185,7 @@ class MainConsoleInterfaceCharacter:
             return
 
         # prints the character
-        self.handler._print(character)
+        self.console_handler._print(character)
 
         # adds the character to the line buffer
         self.line_buffer.append(character)
@@ -200,7 +201,7 @@ class MainConsoleInterfaceCharacter:
             return False
 
         # removes a character from the standard output
-        self.handler._remove_character()
+        self.console_handler._remove_character()
 
         # pops an item from the line buffer
         self.line_buffer.pop()
@@ -209,14 +210,11 @@ class MainConsoleInterfaceCharacter:
         return False
 
     def _process_tab_character(self, character, character_ordinal):
-        # retrieves the main console plugin
-        main_console_plugin = self.main_console_interface_plugin.main_console_plugin
-
         # joins the line buffer to retrieve the current line
         current_line = "".join(self.line_buffer)
 
         # retrieves the alternatives for the current line
-        alternatives = main_console_plugin.get_command_line_alternatives(current_line)
+        alternatives = self.main_console_plugin.get_command_line_alternatives(current_line)
 
         # sorts the alternatives
         alternatives.sort()
@@ -245,29 +243,29 @@ class MainConsoleInterfaceCharacter:
             self.line_buffer.extend(delta_list)
 
             # prints the delta value
-            self.handler._print(delta_value)
+            self.console_handler._print(delta_value)
         # in case many alternatives are found
         else:
             # breaks the line
-            self.handler._print("\n")
+            self.console_handler._print("\n")
 
             # iterates over all the alternatives
             for alternative in alternatives:
                 # prints the alternative
-                self.handler._print(alternative + "\n")
+                self.console_handler._print(alternative + "\n")
 
             # prints the caret
-            self.main_console_interface._print_caret()
+            self.console_handler._print_caret()
 
             # prints the current line
-            self.handler._print(current_line)
+            self.console_handler._print(current_line)
 
         # returns false (not end of line)
         return False
 
     def _process_enter_character(self, character, character_ordinal):
         # breaks the line
-        self.handler._print("\n")
+        self.console_handler._print("\n")
 
         # returns true (end of line)
         return True
@@ -306,13 +304,13 @@ class MainConsoleInterfaceCharacter:
         return False
 
     def _process_right_character(self, character, character_ordinal):
-        self.handler._cursor_right()
+        self.console_handler._cursor_right()
 
         # returns false (not end of line)
         return False
 
     def _process_left_character(self, character, character_ordinal):
-        self.handler._cursor_left()
+        self.console_handler._cursor_left()
 
         # returns false (not end of line)
         return False
@@ -358,7 +356,7 @@ class MainConsoleInterfaceCharacter:
         # buffer length
         for _index in range(line_buffer_length):
             # removes a character from the standard output
-            self.handler._remove_character()
+            self.console_handler._remove_character()
 
         # pops the last line buffer from the line history list
         self.line_buffer = self.line_history_list[self.line_history_index]
@@ -367,4 +365,4 @@ class MainConsoleInterfaceCharacter:
         current_line = "".join(self.line_buffer)
 
         # prints the current line
-        self.handler._print(current_line)
+        self.console_handler._print(current_line)

@@ -19,16 +19,13 @@
 # You should have received a copy of the GNU General Public License
 # along with Hive Colony Framework. If not, see <http://www.gnu.org/licenses/>.
 
-__author__ = "João Magalhães <joamag@hive.pt>"
-""" The author(s) of the module """
-
 __version__ = "1.0.0"
 """ The version of the module """
 
-__revision__ = "$LastChangedRevision$"
+__revision__ = "$LastChangedRevision: 72 $"
 """ The revision number of the module """
 
-__date__ = "$LastChangedDate$"
+__date__ = "$LastChangedDate: 2008-10-21 23:29:54 +0100 (Ter, 21 Out 2008) $"
 """ The last change date of the module """
 
 __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
@@ -36,35 +33,3 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
-
-import unittest
-
-import main_console_system
-
-class MainConsoleTestCase(unittest.TestCase):
-    """
-    The main console test case class.
-    """
-
-    last_output = None
-    """ The last output value """
-
-    def setUp(self):
-        self.main_console = main_console_system.MainConsole(MainConsoleTestCase.plugin)
-
-    def test_invalid_command(self):
-        """
-        Tests and invalid command of the console.
-        """
-
-        # process the invalid command line
-        return_value = self.main_console.process_command_line("invalid_command", self.output_method)
-
-        # asserts the echo value
-        self.assertEqual(self.last_output, main_console_system.INVALID_COMMAND_MESSAGE)
-
-        # assets the return value
-        self.assertEqual(return_value, False)
-
-    def output_method(self, text, new_line = True):
-        self.last_output = text
