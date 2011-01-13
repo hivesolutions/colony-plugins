@@ -313,7 +313,7 @@ class MainConsole:
         import termios
 
         # flushes the standard output file
-        termios.tcflush(sys.stdout.fileno())
+        termios.tcflush(sys.stdout.fileno(), termios.TCOFLUSH)
 
     def process_help(self, args, output_method):
         """
