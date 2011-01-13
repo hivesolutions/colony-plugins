@@ -54,11 +54,13 @@ KEYBOARD_SELECT_TIMEOUT = 1.0
 """ The keyboard select timeout """
 
 CHARACTER_CONVERSION_MAP = {"\x0a" : "\x0d",
+                            "\x7f" : "\x08",
                             ("\x1b", "\x5b", "\x41") : ("\xe0", "\x48"),
                             ("\x1b", "\x5b", "\x42") : ("\xe0", "\x50")}
 """ The map for character conversion """
 
 CHARACTER_ORDINAL_CONVERSION_MAP = {0x0a : 0x0d,
+                                    0x7f : 0x08,
                                     (0x1b, 0x5b, 0x41) : (0xe0, 0x48),
                                     (0x1b, 0x5b, 0x42) : (0xe0, 0x50)}
 """ The map for character ordinal conversion """
@@ -206,8 +208,6 @@ class MainConsoleInterfaceUnix:
 
             # converts the character to ordinal
             character_ordinal = ord(character)
-
-            print character_ordinal,
 
             # in case the character ordinal value is possibly "special"
             if character_ordinal == SPECIAL_CHARACTER_ORDINAL_VALUE:
