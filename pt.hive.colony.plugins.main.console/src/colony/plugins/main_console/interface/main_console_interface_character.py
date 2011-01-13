@@ -38,6 +38,7 @@ __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
 import sys
+import types
 
 SPECIAL_CHARACTER_ORDINAL = 0xe0
 """ The special character ordinal """
@@ -162,6 +163,14 @@ class MainConsoleInterfaceCharacter:
         return return_value
 
     def _process_writable_character(self, character, character_ordinal):
+        # retrieve the character type
+        character_type = type(character)
+
+        # in case the character type is not string
+        if not character_type == types.StringType:
+            # returns immediately false (not end of line)
+            return
+
         # writes the character to the standard output
         sys.stdout.write(character)
 
