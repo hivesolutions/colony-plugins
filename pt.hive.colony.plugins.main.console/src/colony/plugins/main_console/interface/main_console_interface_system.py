@@ -150,6 +150,3 @@ class MainConsoleInterface:
     def _print_caret(self):
         # writes the caret character
         sys.stdout.write(CARET + " ")
-
-        # flushes the stdout
-        sys.stdout.flush()
