@@ -152,6 +152,9 @@ class MainConsoleInterfaceWin32:
                 # breaks the loop
                 break
 
+            # flushes the standard output
+            sys.stdout.flush()
+
         # ends the line and returns it
         line = self.main_console_interface_character.end_line()
 
