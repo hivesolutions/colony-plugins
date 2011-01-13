@@ -124,9 +124,6 @@ class MainConsoleInterface:
                 # retrieves the line using the main console interface method
                 line = main_console_interface_method()
 
-                # flushes the stdout
-                sys.stdout.flush()
-
                 # in case there is no valid line
                 if not line:
                     # continues the cycle
@@ -135,6 +132,9 @@ class MainConsoleInterface:
                 # processes the command line, outputting the result to
                 # the default method
                 main_console_plugin.process_command_line(line, None)
+
+                # flushes the stdout
+                sys.stdout.flush()
         finally:
             # stops the main console interface
             main_console_interface.stop({})
