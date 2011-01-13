@@ -65,6 +65,9 @@ class MainConsoleInterfaceUnix:
     stdin_file_number = None
     """ The standard input file number """
 
+    stdout_file_number = None
+    """ The standard output file number """
+
     new_terminal_reference = None
     """ The new terminal reference """
 
@@ -97,6 +100,9 @@ class MainConsoleInterfaceUnix:
         # retrieves the standard input file number
         self.stdin_file_number = sys.stdin.fileno()
 
+        # retrieves the standard output file number
+        self.stdout_file_number = sys.stdout.fileno()
+
         # invalidates the "old" backup values
         self.old_terminal_reference = None
         self.old_flags = None
@@ -106,7 +112,7 @@ class MainConsoleInterfaceUnix:
         self.old_terminal_reference = termios.tcgetattr(self.stdin_file_number)
 
         # changes the new terminal reference for echo
-        #self.new_terminal_reference[3] = self.new_terminal_reference[3] & ~termios.ICANON & ~termios.ECHO
+        self.new_terminal_reference[3] = self.new_terminal_reference[3] & ~termios.ICANON & ~termios.ECHO
 
         # sets the new terminal reference in the standard input
         termios.tcsetattr(self.stdin_file_number, termios.TCSANOW, self.new_terminal_reference)
@@ -120,8 +126,14 @@ class MainConsoleInterfaceUnix:
         # sets the new flags in the standard input
         fcntl.fcntl(self.stdin_file_number, fcntl.F_SETFL, self.new_flags)
 
+        sys.stdout.flush = self.tobias
+
         # starts the main console interface character
         self.main_console_interface_character.start({})
+
+    def tobias(self):
+        # flushes the standard output file
+        termios.tcflush(self.stdout_file_number)
 
     def stop(self, arguments):
         # sets the old terminal reference in the standard input
