@@ -37,11 +37,12 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
+import os
+
 import colony.libs.map_util
 
 import web_mvc_manager_helpers
 import web_mvc_manager_exceptions
-import web_mvc_manager_controllers
 
 DEFAULT_ENCODING = "utf-8"
 """ The default encoding value """
@@ -123,6 +124,12 @@ class WebMvcManager:
 
         # retrieves the web mvc utils plugin
         web_mvc_utils_plugin = self.web_mvc_manager_plugin.web_mvc_utils_plugin
+
+        # retrieves the current directory path
+        current_directory_path = os.path.dirname(__file__)
+
+        # loads the mvc utils in the pecway main controllers module
+        web_mvc_manager_controllers = web_mvc_utils_plugin.import_module_mvc_utils("web_mvc_manager_controllers", "web_mvc_manager.manager", current_directory_path)
 
         # creates the web mvc manager main controller
         self.web_mvc_manager_main_controller = web_mvc_utils_plugin.create_controller(WebMvcManagerMainController, [self.web_mvc_manager_plugin, self], {})
