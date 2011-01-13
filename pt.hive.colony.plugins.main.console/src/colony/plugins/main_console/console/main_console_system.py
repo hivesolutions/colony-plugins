@@ -307,6 +307,11 @@ class MainConsole:
         # writes it
         new_line and sys.stdout.write("\n")
 
+        import termios
+
+        # flushes the standard output file
+        termios.tcdrain(sys.stdout.fileno())
+
     def process_help(self, args, output_method):
         """
         Processes the help command, with the given
