@@ -144,6 +144,13 @@ class MainConsoleInterfaceUnix:
                 # returns immediately
                 return
 
+            import select
+
+            a = select([sys.stdin], [], [], 1.0)
+
+            if a == ([], [], []):
+                raise Exception("invalid character")
+
             # sleeps for a while
             time.sleep(KEYBOARD_KEY_TIMEOUT)
 
