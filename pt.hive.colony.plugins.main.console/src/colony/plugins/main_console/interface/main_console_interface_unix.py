@@ -298,7 +298,7 @@ class MainConsoleInterfaceUnix:
         sys.stdout.write("\033[%dB", amount)
 
     def _cursor_right(self, amount = 1):
-        sys.stdout.write("0x9b%dC" % amount)
+        sys.stdout.write("\033[%dC" % amount)
 
     def _cursor_left(self, amount = 1):
-        sys.stdout.write("\x9b%dD" % amount)
+        sys.stdout.write("\033[%dD" % amount)
