@@ -241,7 +241,7 @@ class MainConsoleInterfaceUnix:
             character = CHARACTER_CONVERSION_MAP.get(character, character)
 
             # tries to convert the character ordinal using the conversion map
-            character_ordinal = CHARACTER_CONVERSION_MAP.get(character_ordinal, character_ordinal)
+            character_ordinal = CHARACTER_ORDINAL_CONVERSION_MAP.get(character_ordinal, character_ordinal)
 
             # processes the character
             if self.main_console_interface_character.process_character(character, character_ordinal):
