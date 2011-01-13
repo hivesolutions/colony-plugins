@@ -207,6 +207,8 @@ class MainConsoleInterfaceUnix:
             # converts the character to ordinal
             character_ordinal = ord(character)
 
+            print character_ordinal,
+
             # in case the character ordinal value is possibly "special"
             if character_ordinal == SPECIAL_CHARACTER_ORDINAL_VALUE:
                 try:
