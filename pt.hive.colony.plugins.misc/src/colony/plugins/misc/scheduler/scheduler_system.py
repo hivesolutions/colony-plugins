@@ -300,8 +300,12 @@ class Scheduler:
             # retrieves the current event
             current_event = scheduler_item.current_event
 
-            # cancels the current event
-            self.scheduler.cancel(current_event)
+            try:
+                # cancels the current event
+                self.scheduler.cancel(current_event)
+            except ValueError, exception:
+                # prints a warning message
+                self.scheduler_plugin.warning("Problem canceling the current event: %s" % unicode(exception))
 
         # cancels the scheduler item
         scheduler_item.canceled = True
