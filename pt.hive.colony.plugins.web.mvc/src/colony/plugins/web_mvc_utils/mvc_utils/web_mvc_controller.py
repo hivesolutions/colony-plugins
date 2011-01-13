@@ -131,7 +131,7 @@ CAMEL_CASED_WORD_PAIR_REGEX = re.compile(CAMEL_CASED_WORD_PAIR_REGEX_VALUE)
 NON_CHARACTER_REGEX = re.compile(NON_CHARACTER_REGEX_VALUE)
 """ The non-character regex """
 
-DATA_TYPE_CAST_TYPES_MAP = {"text" : unicode, "numeric" : int, "integer" : int, "float" : float, "date" : datetime, "relation" : None}
+DATA_TYPE_CAST_TYPES_MAP = {"text" : unicode, "numeric" : int, "integer" : int, "float" : float, "date" : datetime.datetime.utcfromtimestamp, "relation" : None}
 """ The map associating the data types with the cast types """
 
 DEFAULT_RELATION_VALUES_MAP = {TO_ONE_RELATION_VALUE : {}, TO_MANY_RELATION_VALUE : []}
@@ -1374,7 +1374,7 @@ def _cast_safe(self, value, cast_type = str, default_value = None):
 
         # in case the value type is the same
         # as the cast type
-        if value_type == type:
+        if value_type == cast_type:
             # sets the value as the value casted
             value_casted = value
         # otherwise
