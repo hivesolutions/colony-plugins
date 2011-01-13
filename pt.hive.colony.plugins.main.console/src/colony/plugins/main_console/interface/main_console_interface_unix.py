@@ -286,3 +286,15 @@ class MainConsoleInterfaceUnix:
 
         # writes the backspace character to the standard output
         sys.stdout.write("\x08")
+
+    def _cursor_top(self, amount = 1):
+        sys.stdout.write("\033[%dA", amount)
+
+    def _cursor_down(self, amount = 1):
+        sys.stdout.write("\033[%dB", amount)
+
+    def _cursor_right(self, amount = 1):
+        sys.stdout.write("\033[%dC", amount)
+
+    def _cursor_left(self, amount = 1):
+        sys.stdout.write("\033[%dD", amount)

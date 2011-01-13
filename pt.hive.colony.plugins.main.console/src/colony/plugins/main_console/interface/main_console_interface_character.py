@@ -57,6 +57,12 @@ UP_CHARACTER_ORDINAL = (SPECIAL_CHARACTER_ORDINAL, 0x48)
 DOWN_CHARACTER_ORDINAL = (SPECIAL_CHARACTER_ORDINAL, 0x50)
 """ The down character ordinal """
 
+RIGHT_CHARACTER_ORDINAL = (SPECIAL_CHARACTER_ORDINAL, 0x4d)
+""" The right character ordinal """
+
+LEFT_CHARACTER_ORDINAL = (SPECIAL_CHARACTER_ORDINAL, 0x4b)
+""" The right character ordinal """
+
 LINE_HISTORY_LIST_MAXIMUM_SIZE = 100
 """ The line history list maximum size """
 
@@ -105,7 +111,9 @@ class MainConsoleInterfaceCharacter:
                                       TAB_CHARACTER_ORDINAL : self._process_tab_character,
                                       ENTER_CHARACTER_ORDINAL : self._process_enter_character,
                                       UP_CHARACTER_ORDINAL : self._process_up_character,
-                                      DOWN_CHARACTER_ORDINAL : self._process_down_character}
+                                      DOWN_CHARACTER_ORDINAL : self._process_down_character,
+                                      RIGHT_CHARACTER_ORDINAL : self._process_right_character,
+                                      LEFT_CHARACTER_ORDINAL : self._process_left_character}
 
         self.line_buffer = []
         self.line_history_list = []
@@ -293,6 +301,18 @@ class MainConsoleInterfaceCharacter:
 
         # shows the history
         self._show_history()
+
+        # returns false (not end of line)
+        return False
+
+    def _process_right_character(self, character, character_ordinal):
+        self.handler._cursor_right()
+
+        # returns false (not end of line)
+        return False
+
+    def _process_left_character(self, character, character_ordinal):
+        self.handler._cursor_left()
 
         # returns false (not end of line)
         return False
