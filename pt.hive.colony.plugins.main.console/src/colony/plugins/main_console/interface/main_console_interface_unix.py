@@ -124,7 +124,7 @@ class MainConsoleInterfaceUnix:
         self.main_console_interface = main_console_interface
 
         # creates he main console interface character
-        self.main_console_interface_character = main_console_interface_character.MainConsoleInterfaceCharacter(self.main_console_interface_plugin, self.main_console_interface)
+        self.main_console_interface_character = main_console_interface_character.MainConsoleInterfaceCharacter(self.main_console_interface_plugin, self.main_console_interface, self)
 
     def start(self, arguments):
         # retrieves the test value
@@ -265,3 +265,22 @@ class MainConsoleInterfaceUnix:
         if not is_tty:
             # raises the incompatible console interface
             raise main_console_interface_exceptions.IncompatibleConsoleInterface("invalid terminal mode")
+
+    def _print(self, string_value):
+        # writes the string value to the
+        # standard output
+        sys.stdout.write(string_value)
+
+    def _remove_character(self):
+        """
+        Removes a character from the standard output.
+        """
+
+        # writes the backspace character to the standard output
+        sys.stdout.write("\033[<N>D")
+
+        # writes the character to the standard output
+        sys.stdout.write(" ")
+
+        # writes the backspace character to the standard output
+        sys.stdout.write("\033[<N>D")

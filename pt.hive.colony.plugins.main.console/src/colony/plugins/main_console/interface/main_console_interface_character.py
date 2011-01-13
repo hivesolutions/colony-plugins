@@ -37,7 +37,6 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-import sys
 import types
 
 SPECIAL_CHARACTER_ORDINAL = 0xe0
@@ -72,6 +71,10 @@ class MainConsoleInterfaceCharacter:
     main_console_interface = None
     """ The main console interface """
 
+
+    handler = None
+
+
     character_methods_map = {}
     """ The character methods map """
 
@@ -84,7 +87,7 @@ class MainConsoleInterfaceCharacter:
     line_history_list = []
     """ The current line history list """
 
-    def __init__(self, main_console_interface_plugin, main_console_interface):
+    def __init__(self, main_console_interface_plugin, main_console_interface, handler):
         """
         Constructor of the class.
 
@@ -96,6 +99,7 @@ class MainConsoleInterfaceCharacter:
 
         self.main_console_interface_plugin = main_console_interface_plugin
         self.main_console_interface = main_console_interface
+        self.handler = handler
 
         self.character_methods_map = {BACKSPACE_CHARACTER_ORDINAL : self._process_backspace_character,
                                       TAB_CHARACTER_ORDINAL : self._process_tab_character,
@@ -171,8 +175,8 @@ class MainConsoleInterfaceCharacter:
             # returns immediately false (not end of line)
             return
 
-        # writes the character to the standard output
-        sys.stdout.write(character)
+        # prints the character
+        self.handler._print(character)
 
         # adds the character to the line buffer
         self.line_buffer.append(character)
@@ -188,7 +192,7 @@ class MainConsoleInterfaceCharacter:
             return False
 
         # removes a character from the standard output
-        self._remove_character()
+        self.handler._remove_character()
 
         # pops an item from the line buffer
         self.line_buffer.pop()
@@ -232,30 +236,30 @@ class MainConsoleInterfaceCharacter:
             # extends the line buffer with the delta list
             self.line_buffer.extend(delta_list)
 
-            # writes the delta value
-            sys.stdout.write(delta_value)
+            # prints the delta value
+            self.handler._print(delta_value)
         # in case many alternatives are found
         else:
             # breaks the line
-            sys.stdout.write("\n")
+            self.handler._print("\n")
 
             # iterates over all the alternatives
             for alternative in alternatives:
                 # prints the alternative
-                sys.stdout.write(alternative + "\n")
+                self.handler._print(alternative + "\n")
 
             # prints the caret
             self.main_console_interface._print_caret()
 
-            # writes the current line
-            sys.stdout.write(current_line)
+            # prints the current line
+            self.handler._print(current_line)
 
         # returns false (not end of line)
         return False
 
     def _process_enter_character(self, character, character_ordinal):
         # breaks the line
-        sys.stdout.write("\n")
+        self.handler._print("\n")
 
         # returns true (end of line)
         return True
@@ -334,7 +338,7 @@ class MainConsoleInterfaceCharacter:
         # buffer length
         for _index in range(line_buffer_length):
             # removes a character from the standard output
-            self._remove_character()
+            self.handler._remove_character()
 
         # pops the last line buffer from the line history list
         self.line_buffer = self.line_history_list[self.line_history_index]
@@ -342,19 +346,5 @@ class MainConsoleInterfaceCharacter:
         # joins the line buffer to retrieve the current line
         current_line = "".join(self.line_buffer)
 
-        # writes the current line
-        sys.stdout.write(current_line)
-
-    def _remove_character(self):
-        """
-        Removes a character from the standard output.
-        """
-
-        # writes the backspace character to the standard output
-        sys.stdout.write("\x08")
-
-        # writes the character to the standard output
-        sys.stdout.write(" ")
-
-        # writes the backspace character to the standard output
-        sys.stdout.write("\x08")
+        # prints the current line
+        self.handler._print(current_line)
