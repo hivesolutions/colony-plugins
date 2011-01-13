@@ -56,13 +56,17 @@ KEYBOARD_SELECT_TIMEOUT = 1.0
 CHARACTER_CONVERSION_MAP = {"\x0a" : "\x0d",
                             "\x7f" : "\x08",
                             ("\x1b", "\x5b", "\x41") : ("\xe0", "\x48"),
-                            ("\x1b", "\x5b", "\x42") : ("\xe0", "\x50")}
+                            ("\x1b", "\x5b", "\x42") : ("\xe0", "\x50"),
+                            ("\x1b", "\x5b", "\x43") : ("\xe0", "\x4d"),
+                            ("\x1b", "\x5b", "\x44") : ("\xe0", "\x4b")}
 """ The map for character conversion """
 
 CHARACTER_ORDINAL_CONVERSION_MAP = {0x0a : 0x0d,
                                     0x7f : 0x08,
                                     (0x1b, 0x5b, 0x41) : (0xe0, 0x48),
-                                    (0x1b, 0x5b, 0x42) : (0xe0, 0x50)}
+                                    (0x1b, 0x5b, 0x42) : (0xe0, 0x50),
+                                    (0x1b, 0x5b, 0x43) : (0xe0, 0x4d),
+                                    (0x1b, 0x5b, 0x44) : (0xe0, 0x4b)}
 """ The map for character ordinal conversion """
 
 IFLAG = 0
