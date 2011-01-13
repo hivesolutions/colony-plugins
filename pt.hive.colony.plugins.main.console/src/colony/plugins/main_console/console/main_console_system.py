@@ -305,7 +305,7 @@ class MainConsole:
 
         # in case a newline should be appended
         # writes it
-        new_line and sys.stdout.write("\r\n")
+        new_line and sys.stdout.write("\n")
 
     def process_help(self, args, output_method):
         """

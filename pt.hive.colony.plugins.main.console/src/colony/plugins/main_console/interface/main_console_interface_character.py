@@ -245,7 +245,7 @@ class MainConsoleInterfaceCharacter:
 
     def _process_enter_character(self, character, character_ordinal):
         # breaks the line
-        sys.stdout.write("\r\n")
+        sys.stdout.write("\n")
 
         # returns true (end of line)
         return True
