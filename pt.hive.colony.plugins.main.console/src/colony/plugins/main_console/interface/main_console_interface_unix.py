@@ -277,10 +277,10 @@ class MainConsoleInterfaceUnix:
         """
 
         # writes the backspace character to the standard output
-        sys.stdout.write("\033[<N>D")
+        sys.stdout.write("\x08")
 
         # writes the character to the standard output
         sys.stdout.write(" ")
 
         # writes the backspace character to the standard output
-        sys.stdout.write("\033[<N>D")
+        sys.stdout.write("\x08")
