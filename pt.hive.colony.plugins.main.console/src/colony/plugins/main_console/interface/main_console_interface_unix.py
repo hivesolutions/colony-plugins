@@ -100,48 +100,52 @@ class MainConsoleInterfaceUnix:
         # retrieves the standard input file number
         self.stdin_file_number = sys.stdin.fileno()
 
-        import tty
-        tty.setraw(self.stdin_file_number)
-
-#        # retrieves the standard output file number
+        # retrieves the standard output file number
 #        self.stdout_file_number = sys.stdout.fileno()
-#
-#        # invalidates the "old" backup values
-#        self.old_terminal_reference = None
-#        self.old_flags = None
-#
-#        # retrieves the terminal reference as new and old
-#        self.new_terminal_reference = termios.tcgetattr(self.stdin_file_number)
-#        self.old_terminal_reference = termios.tcgetattr(self.stdin_file_number)
-#
-#        # changes the new terminal reference for echo
-#        self.new_terminal_reference[3] = self.new_terminal_reference[3] & ~termios.ICANON & ~termios.ECHO
-#        self.new_terminal_reference[6][termios.VMIN] = 1
-#        self.new_terminal_reference[6][termios.VTIME] = 1
-#        self.new_terminal_reference[5][termios.VMIN] = 1
-#        self.new_terminal_reference[5][termios.VTIME] = 1
-#
-#        # sets the new terminal reference in the standard input
-#        termios.tcsetattr(self.stdin_file_number, termios.TCSANOW, self.new_terminal_reference)
+
+        # invalidates the "old" backup values
+        self.old_flags = None
+
+        # retrieves the terminal reference as new and old
+        self.new_terminal_reference = termios.tcgetattr(self.stdin_file_number)
+        self.old_terminal_reference = termios.tcgetattr(self.stdin_file_number)
+
+        # Indexes for termios list.
+        IFLAG = 0
+        OFLAG = 1
+        CFLAG = 2
+        LFLAG = 3
+        ISPEED = 4
+        OSPEED = 5
+        CC = 6
+
+        # changes the new terminal reference for echo
+        self.new_terminal_reference[termios.IFLAG] = self.new_terminal_reference[IFLAG] & ~(termios.BRKINT | termios.ICRNL | termios.INPCK | termios.ISTRIP | termios.IXON)
+        self.new_terminal_reference[OFLAG] = self.new_terminal_reference[OFLAG] & ~(termios.OPOST)
+        self.new_terminal_reference[CFLAG] = self.new_terminal_reference[CFLAG] & ~(termios.CSIZE | termios.PARENB)
+        self.new_terminal_reference[CFLAG] = self.new_terminal_reference[CFLAG] | termios.termios.CS8
+        self.new_terminal_reference[LFLAG] = self.new_terminal_reference[LFLAG] & ~(termios.ECHO | termios.ICANON | termios.IEXTEN | termios.ISIG)
+        self.new_terminal_reference[CC][termios.VMIN] = 1
+        self.new_terminal_reference[CC][termios.VTIME] = 0
+
+        # sets the new terminal reference in the standard input
+        termios.tcsetattr(self.stdin_file_number, termios.TCSANOW, self.new_terminal_reference)
 #
 #        # retrieves the "old" flags for the standard input
 #        self.old_flags = fcntl.fcntl(self.stdin_file_number, fcntl.F_GETFL)
 #
 #        # creates the new flags from the old flags
 #        self.new_flags = self.old_flags | os.O_NONBLOCK #@UndefinedVariable
-#
-#        # sets the new flags in the standard input
-#        fcntl.fcntl(self.stdin_file_number, fcntl.F_SETFL, self.new_flags)
+
+        # sets the new flags in the standard input
+        #fcntl.fcntl(self.stdin_file_number, fcntl.F_SETFL, self.new_flags)
 
         # starts the main console interface character
         self.main_console_interface_character.start({})
 
     def stop(self, arguments):
-        import tty
-        tty.setcbreak(self.stdin_file_number)
-
         # sets the old terminal reference in the standard input
-#        (not self.old_terminal_reference == None) and termios.tcsetattr(self.stdin_file_number, termios.TCSAFLUSH, self.old_terminal_reference)
+        (not self.old_terminal_reference == None) and termios.tcsetattr(self.stdin_file_number, termios.TCSAFLUSH, self.old_terminal_reference)
 #
 #        # sets the old flags in the standard input
 #        (not self.old_flags == None) and fcntl.fcntl(self.stdin_file_number, fcntl.F_SETFL, self.old_flags)
