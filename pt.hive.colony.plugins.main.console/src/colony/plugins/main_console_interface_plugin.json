@@ -10,7 +10,17 @@
     "author" : "Hive Solutions Lda. <development@hive.pt>",
     "capabilities" : ["main", "build_automation_item"],
     "capabilities_allowed" : [],
-    "dependencies" : [{"id" : "pt.hive.colony.plugins.main.console", "version" : "1.0.0"}],
+    "dependencies" : [{
+                "id" : "pt.hive.colony.plugins.main.console",
+                "version" : "1.0.0"
+            }],
     "main_file" : "main_console_interface_plugin.py",
-    "resources" : ["main_console_interface_plugin.py", "main_console/__init__.py", "main_console/interface/__init__.py", "main_console/interface/main_console_interface_exceptions.py", "main_console/interface/main_console_interface_system.py", "main_console/interface/main_console_interface_unix.py", "main_console/interface/main_console_interface_win32.py", "main_console/interface/resources/baf.xml"]
+    "resources" : ["main_console_interface_plugin.py",
+            "main_console/__init__.py", "main_console/interface/__init__.py",
+            "main_console/interface/main_console_interface_character.py",
+            "main_console/interface/main_console_interface_exceptions.py",
+            "main_console/interface/main_console_interface_system.py",
+            "main_console/interface/main_console_interface_unix.py",
+            "main_console/interface/main_console_interface_win32.py",
+            "main_console/interface/resources/baf.xml"]
 }
