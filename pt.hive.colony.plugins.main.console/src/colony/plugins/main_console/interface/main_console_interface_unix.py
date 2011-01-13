@@ -146,7 +146,7 @@ class MainConsoleInterfaceUnix:
 
             import select
 
-            a = select([sys.stdin], [], [], 1.0)
+            a = select.select([sys.stdin], [], [], 1.0)
 
             if a == ([], [], []):
                 raise Exception("invalid character")
