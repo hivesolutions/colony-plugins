@@ -305,12 +305,7 @@ class MainConsole:
 
         # in case a newline should be appended
         # writes it
-        new_line and sys.stdout.write("\n")
-
-        import termios
-
-        # flushes the standard output file
-        termios.tcdrain(sys.stdout.fileno())
+        new_line and sys.stdout.write("\r\n")
 
     def process_help(self, args, output_method):
         """
