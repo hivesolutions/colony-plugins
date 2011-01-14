@@ -50,6 +50,9 @@ COMMAND_EXCEPTION_MESSAGE = "there was an exception"
 INVALID_COMMAND_MESSAGE = "invalid command"
 """ The invalid command message """
 
+INTERNAL_CONFIGURATION_PROBLEM_MESSAGE = "internal configuration problem"
+""" The internal configuration problem message """
+
 COMMAND_LINE_REGEX_VALUE = "\"[^\"]*\"|[^ \s]+"
 """ The regular expression to retrieve the command line arguments """
 
@@ -91,9 +94,6 @@ class MainConsole:
         @return: If the processing of the command line was successful.
         """
 
-        # retrieves the console command plugins
-        console_command_plugins = self.main_console_plugin.console_command_plugins
-
         # in case there is no output method defined
         if not output_method:
             # uses the write function as the output method
@@ -116,43 +116,44 @@ class MainConsole:
         # retrieves the arguments
         arguments = line_split[1:]
 
-        # unsets the valid flag
-        valid = False
+        # retrieves the command information
+        command_information = self.commands_map.get(command, None)
 
-        # iterates over all the console command plugins
-        for console_command_plugin in console_command_plugins:
-            # retrieves the plugin commands
-            plugin_commands = console_command_plugin.get_all_commands()
+        # in case no command information is found (command
+        # not found)
+        if not command_information:
+            # print the internal configuration problem message
+            output_method(INTERNAL_CONFIGURATION_PROBLEM_MESSAGE)
 
-            # iterates over all the plugin commands
-            if command in plugin_commands:
-                # retrieves the command attribute
-                attribute = console_command_plugin.get_handler_command(command)
+            # returns false (invalid)
+            return False
 
-                try:
-                    # runs the command attribute with the arguments
-                    # and the output method
-                    attribute(arguments, output_method)
-                except Exception, exception:
-                    # prints the exception message
-                    output_method(COMMAND_EXCEPTION_MESSAGE + ": " + unicode(exception))
+        # retrieves the command handler
+        command_handler = command_information.get("handler", None)
 
-                    # logs the stack trace value
-                    self.main_console_plugin.log_stack_trace()
-
-                    # returns false (invalid)
-                    return False
-
-                # sets the valid flag
-                valid = True
-
-        # in case the command is not valid
-        if not valid:
+        if not command_handler:
             # print the invalid command message
             output_method(INVALID_COMMAND_MESSAGE)
 
-        # returns the valid value
-        return valid
+            # returns false (invalid)
+            return False
+
+        try:
+            # runs the command handler with the arguments
+            # and the output method
+            command_handler(arguments, output_method)
+        except Exception, exception:
+            # prints the exception message
+            output_method(COMMAND_EXCEPTION_MESSAGE + ": " + unicode(exception))
+
+            # logs the stack trace value
+            self.main_console_plugin.log_stack_trace()
+
+            # returns false (invalid)
+            return False
+
+        # returns true (valid)
+        return True
 
     def get_command_line_alternatives(self, command_line):
         """
@@ -204,17 +205,15 @@ class MainConsole:
         # retrieves the commands map from the console command extension
         commands_map = console_command_extension_plugin.get_commands_map()
 
-        # extends the commands map with the plugin commands map
-        colony.libs.map_util.map_extend(self.commands_map, commands_map)
+        # copies the plugin commands map to the commands map
+        colony.libs.map_util.map_copy(commands_map, self.commands_map)
 
     def console_command_extension_unload(self, console_command_extension_plugin):
         # retrieves the commands map from the console command extension
         commands_map = console_command_extension_plugin.get_commands_map()
 
-        # iterates over all the commands
-        for command in commands_map:
-            # deletes the command from the commands map
-            del self.commands_map[command]
+        # removes the plugin commands map from the plugins commands map
+        colony.libs.map_util.map_remove(commands_map, self.commands_map)
 
     def split_command_line_arguments(self, command_line):
         """
@@ -232,9 +231,16 @@ class MainConsole:
         # retrieves the line split length
         line_split_length = len(line_split)
 
+        # iterates over the range of the line split length
         for line_split_length_index in range(line_split_length):
+            # retrieves the current line
             line = line_split[line_split_length_index]
-            line_split[line_split_length_index] = line.replace("\"", "")
+
+            # removes the "extra" characters from the line
+            line = line.replace("\"", "")
+
+            # sets the line in the line split list
+            line_split[line_split_length_index] = line
 
         # returns the line split
         return line_split

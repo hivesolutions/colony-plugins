@@ -652,6 +652,12 @@ class MainConsoleBase:
         # returns the plugins tuple
         return plugins_tuple
 
+    def get_extension_ids(self):
+        return []
+
+    def get_plugin_ids(self):
+        return []
+
     def __generate_commands_map(self):
         # creates the commands map
         commands_map = {
