@@ -306,7 +306,10 @@ class WebMvc:
         web_mvc_service_plugin_patterns = web_mvc_service_plugin.get_patterns()
 
         # iterates over all the patterns in the web mvc service plugin patterns
-        for pattern_key, _pattern_value in web_mvc_service_plugin_patterns:
+        for web_mvc_service_plugin_pattern in web_mvc_service_plugin_patterns:
+            # retrieves the pattern key
+            pattern_key = web_mvc_service_plugin_pattern[0]
+
             # in case the pattern key exists in the web mvc service patterns map
             if pattern_key in self.web_mvc_service_patterns_map:
                 # removes the pattern from the web mvc service patterns map
