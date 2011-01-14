@@ -944,8 +944,11 @@ class RestRequest:
 
         # in case the operation is of type get
         if self.request.operation_type == GET_METHOD_VALUE:
+            # returns true (valid)
             return True
+        # otherwise
         else:
+            # returns false (invalid)
             return False
 
     def is_post(self):
@@ -959,8 +962,11 @@ class RestRequest:
 
         # in case the operation is of type post
         if self.request.operation_type == POST_METHOD_VALUE:
+            # returns true (valid)
             return True
+        # otherwise
         else:
+            # returns false (invalid)
             return False
 
     def is_debug(self, minimum_level = 6):
