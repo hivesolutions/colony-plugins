@@ -54,23 +54,6 @@ INVALID_PLUGIN_ID_MESSAGE = "invalid plugin id"
 ERROR_IN_HCS_SCRIPT = "there is an error in the hcs script"
 """ The error in hcs script message """
 
-HELP_TEXT = "### PLUGIN SYSTEM HELP ###\n\
-help [extension-id] - shows this message or the referred console extension help message\n\
-helpall             - shows the help message of all the loaded console extensions\n\
-extensions          - shows the list of loaded console extensions\n\
-status              - shows the current status of the system\n\
-show <plugin-id>    - shows the status of the plugin with the defined id\n\
-showall             - shows the status of all the loaded plugins\n\
-info <plugin-id>    - shows information about the plugin with the defined id\n\
-infoall             - shows information about all the loaded plugins\n\
-add <plugin-path>   - adds a new plugin\n\
-remove <plugin-id>  - removes a plugin\n\
-load <plugin-id>    - loads a plugin\n\
-unload <plugin-id>  - unloads a plugin\n\
-exec <file-path>    - executes the given hcs script\n\
-exit                - exits the system"
-""" The help text """
-
 TABLE_TOP_TEXT = "ID      STATUS      PLUGIN ID"
 """ The table top text """
 
@@ -94,8 +77,8 @@ class MainConsoleBase:
     main_console_base_plugin = None
     """ The main console base plugin """
 
-    commands = ["help", "helpall", "extensions", "status", "show", "showall", "info", "infoall", "add", "remove", "load", "unload", "exec", "exit", "echo"]
-    """ The commands list """
+    commands_map = {}
+    """ The map containing the commands information """
 
     def __init__(self, main_console_base_plugin):
         """
@@ -107,20 +90,13 @@ class MainConsoleBase:
 
         self.main_console_base_plugin = main_console_base_plugin
 
+        self.commands_map = self.__generate_commands_map()
+
     def get_console_extension_name(self):
         return CONSOLE_EXTENSION_NAME
 
-    def get_all_commands(self):
-        return self.commands
-
-    def get_handler_command(self, command):
-        if command in self.commands:
-            method_name = "process_" + command
-            attribute = getattr(self, method_name)
-            return attribute
-
-    def get_help(self):
-        return HELP_TEXT
+    def get_commands_map(self):
+        return self.commands_map
 
     def process_help(self, args, output_method):
         """
@@ -136,15 +112,15 @@ class MainConsoleBase:
         # retrieves the main console plugin
         main_console_plugin = self.main_console_base_plugin.main_console_plugin
 
-        if len(args) < 1:
-            output_method(HELP_TEXT)
-        else:
-            extension_name = args[0]
-
-            for console_command_plugin in main_console_plugin.console_command_plugins:
-                console_command_plugin_console_extension_name = console_command_plugin.get_console_extension_name()
-                if console_command_plugin_console_extension_name == extension_name:
-                    output_method(console_command_plugin.get_help())
+#        if len(args) < 1:
+#            output_method(HELP_TEXT)
+#        else:
+#            extension_name = args[0]
+#
+#            for console_command_plugin in main_console_plugin.console_command_plugins:
+#                console_command_plugin_console_extension_name = console_command_plugin.get_console_extension_name()
+#                if console_command_plugin_console_extension_name == extension_name:
+#                    output_method(console_command_plugin.get_help())
 
     def process_helpall(self, args, output_method):
         """
@@ -160,10 +136,10 @@ class MainConsoleBase:
         # retrieves the main console plugin
         main_console_plugin = self.main_console_base_plugin.main_console_plugin
 
-        output_method(HELP_TEXT)
-
-        for console_command_plugin in main_console_plugin.console_command_plugins:
-            output_method(console_command_plugin.get_help())
+#        output_method(HELP_TEXT)
+#
+#        for console_command_plugin in main_console_plugin.console_command_plugins:
+#            output_method(console_command_plugin.get_help())
 
     def process_extensions(self, args, output_method):
         """
@@ -675,3 +651,129 @@ class MainConsoleBase:
 
         # returns the plugins tuple
         return plugins_tuple
+
+    def __generate_commands_map(self):
+        # creates the commands map
+        commands_map = {
+                        "help" : {
+                            "description" : "shows this message or the referred console extension help message",
+                            "arguments" : [
+                                {
+                                    "name" : "extension-id",
+                                    "description" : "the id of the extension to be loaded",
+                                    "values" : self.get_extension_ids
+                                }
+                            ],
+                            "handler" : self.process_help
+                        },
+                        "helpall" : {
+                            "description" : "shows the help message of all the loaded console extensions",
+                            "arguments" : [],
+                            "handler" : self.process_helpall
+                        },
+                        "extensions" : {
+                            "description" : "shows the help message of all the loaded console extensions",
+                            "arguments" : [],
+                            "handler" : self.process_extensions
+                        },
+                        "status" : {
+                            "description" : "shows the current status of the system",
+                            "arguments" : [],
+                            "handler" : self.process_status
+                        },
+                        "show" : {
+                            "description" : "shows the status of the plugin with the defined id",
+                            "arguments" : [
+                                {
+                                    "name" : "plugin-id",
+                                    "description" : "the id of the plugin to be shown",
+                                    "values" : self.get_plugin_ids
+                                }
+                            ],
+                            "handler" : self.process_show
+                        },
+                        "showall" : {
+                            "help" : "shows the status of all the loaded plugins",
+                            "arguments" : [],
+                            "handler" : self.process_showall
+                        },
+                        "info" : {
+                            "help" : "shows the status of all the loaded plugins",
+                            "arguments" : [
+                                {
+                                    "name" : "plugin-id",
+                                    "description" : "the id of the plugin to show the information",
+                                    "values" : self.get_plugin_ids
+                                }
+                            ],
+                            "handler" : self.process_info
+                        },
+                        "infoall" : {
+                            "help" : "shows information about all the loaded plugins",
+                            "arguments" : [],
+                            "handler" : self.process_infoall
+                        },
+                        "add" : {
+                            "help" : "adds a new plugin to the system",
+                            "arguments" : [
+                                {
+                                    "name" : "plugin-path",
+                                    "description" : "the path of the plugin to be added",
+                                    "values" : str
+                                }
+                            ],
+                            "handler" : self.process_add
+                        },
+                        "remove" : {
+                            "help" : "removes plugin from the system",
+                            "arguments" : [
+                                {
+                                    "name" : "plugin-id",
+                                    "description" : "the id of the plugin to be removed",
+                                    "values" : str
+                                }
+                            ],
+                            "handler" : self.process_remove
+                        },
+                        "load" : {
+                            "help" : "loads a plugin",
+                            "arguments" : [
+                                {
+                                    "name" : "plugin-id",
+                                    "description" : "the id of the plugin to be loaded",
+                                    "values" : self.get_plugin_ids
+                                }
+                            ],
+                            "handler" : self.process_load
+                        },
+                        "unload" : {
+                            "help" : "unloads a plugin",
+                            "arguments" : [
+                                {
+                                    "name" : "plugin-id",
+                                    "description" : "the id of the plugin to be unloaded",
+                                    "values" : self.get_plugin_ids
+                                }
+                            ],
+                            "handler" : self.process_unload
+                        },
+                        "exec" : {
+                            "help" : "executes the given hcs script",
+                            "arguments" : [
+                                {
+                                    "name" : "file-path",
+                                    "description" : "the path of the file to be executed",
+                                    "values" : str
+                                }
+                            ],
+                            "handler" : self.process_exec
+                        },
+                        "exit" : {
+                            "help" : "exits the system",
+                            "arguments" : [],
+                            "handler" : self.process_exit
+                        }
+                    }
+
+        # returns the commands map
+        return commands_map

@@ -57,7 +57,7 @@ class MainConsolePlugin(colony.base.plugin_system.Plugin):
                  colony.base.plugin_system.IRON_PYTHON_ENVIRONMENT]
     attributes = {"build_automation_file_path" : "$base{plugin_directory}/main_console/console/resources/baf.xml"}
     capabilities = ["main_console", "test_case", "build_automation_item"]
-    capabilities_allowed = ["console_command_extension"]
+    capabilities_allowed = ["_console_command_extension"]
     dependencies = []
     events_handled = []
     events_registrable = []
@@ -161,12 +161,12 @@ class MainConsolePlugin(colony.base.plugin_system.Plugin):
 
         return self.console_test_case_class
 
-    @colony.base.decorators.load_allowed_capability("console_command_extension")
+    @colony.base.decorators.load_allowed_capability("_console_command_extension")
     def console_command_extension_load_allowed(self, plugin, capability):
         self.console_command_plugins.append(plugin)
         self.console.console_command_extension_load(plugin)
 
-    @colony.base.decorators.unload_allowed_capability("console_command_extension")
+    @colony.base.decorators.unload_allowed_capability("_console_command_extension")
     def console_command_extension_unload_allowed(self, plugin, capability):
         self.console_command_plugins.remove(plugin)
         self.console.console_command_extension_unload(plugin)

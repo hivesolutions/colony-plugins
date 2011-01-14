@@ -40,6 +40,8 @@ __license__ = "GNU General Public License (GPL), Version 3"
 import re
 import sys
 
+import colony.libs.map_util
+
 import main_console_interfaces
 
 COMMAND_EXCEPTION_MESSAGE = "there was an exception"
@@ -48,8 +50,11 @@ COMMAND_EXCEPTION_MESSAGE = "there was an exception"
 INVALID_COMMAND_MESSAGE = "invalid command"
 """ The invalid command message """
 
-COMMAND_LINE_REGEX = "\"[^\"]*\"|[^ \s]+"
+COMMAND_LINE_REGEX_VALUE = "\"[^\"]*\"|[^ \s]+"
 """ The regular expression to retrieve the command line arguments """
+
+COMMAND_LINE_REGEX = re.compile(COMMAND_LINE_REGEX_VALUE)
+""" The regular expression to retrieve the command line arguments (compiled) """
 
 class MainConsole:
     """
@@ -60,7 +65,7 @@ class MainConsole:
     """ The main console plugin """
 
     commands_map = {}
-    """ The map associating a command with a plugin """
+    """ The map with the command association with the command information """
 
     def __init__(self, main_console_plugin):
         """
@@ -196,21 +201,19 @@ class MainConsole:
         return main_console_interfaces.MainConsoleInterfaceCharacter(self.main_console_plugin, self, console_handler)
 
     def console_command_extension_load(self, console_command_extension_plugin):
-        # retrieves all commands from the console command extension
-        all_commands = console_command_extension_plugin.get_all_commands()
+        # retrieves the commands map from the console command extension
+        commands_map = console_command_extension_plugin.get_commands_map()
 
-        # iterates over all the commands
-        for command in all_commands:
-            # sets the commands in the commands map
-            self.commands_map[command] = console_command_extension_plugin
+        # extends the commands map with the plugin commands map
+        colony.libs.map_util.map_extend(self.commands_map, commands_map)
 
     def console_command_extension_unload(self, console_command_extension_plugin):
-        # retrieves all commands from the console command extension
-        all_commands = console_command_extension_plugin.get_all_commands()
+        # retrieves the commands map from the console command extension
+        commands_map = console_command_extension_plugin.get_commands_map()
 
         # iterates over all the commands
-        for command in all_commands:
-            # sets the commands from the commands map
+        for command in commands_map:
+            # deletes the command from the commands map
             del self.commands_map[command]
 
     def split_command_line_arguments(self, command_line):
@@ -223,10 +226,10 @@ class MainConsole:
         @return: The list containing the various command line arguments.
         """
 
-        # compiles the command line regular expression generating the pattern
-        pattern = re.compile(COMMAND_LINE_REGEX)
+        # splits the line using the command line regex
+        line_split = COMMAND_LINE_REGEX.findall(command_line)
 
-        line_split = pattern.findall(command_line)
+        # retrieves the line split length
         line_split_length = len(line_split)
 
         for line_split_length_index in range(line_split_length):
