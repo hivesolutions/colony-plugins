@@ -14,6 +14,7 @@
     "main_file" : "main_console_plugin.py",
     "resources" : ["main_console_plugin.py", "main_console/__init__.py",
             "main_console/console/__init__.py",
+            "main_console/console/main_console_interfaces.py",
             "main_console/console/main_console_system.py",
             "main_console/console/main_console_test.py",
             "main_console/console/resources/baf.xml"]
