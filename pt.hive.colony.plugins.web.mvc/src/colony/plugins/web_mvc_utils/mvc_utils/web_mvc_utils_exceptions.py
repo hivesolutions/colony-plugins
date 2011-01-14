@@ -127,7 +127,7 @@ class InsufficientHttpInformation(WebMvcUtilsExceptionException):
 
 class ModelValidationError(WebMvcUtilsExceptionException):
     """
-    The model validation rror class.
+    The model validation error class.
     """
 
     model = None
@@ -156,3 +156,35 @@ class ModelValidationError(WebMvcUtilsExceptionException):
         """
 
         return "Model validation error: %s" % self.message
+
+class ControllerValidationError(WebMvcUtilsExceptionException):
+    """
+    The controller validation error class.
+    """
+
+    controller = None
+    """ The controller that failed the validation """
+
+    def __init__(self, message, controller):
+        """
+        Constructor of the class.
+
+        @type message: String
+        @param message: The message to be printed.
+        @type controller: Controller
+        @param controller: The controller that failed the validation
+        """
+
+        WebMvcUtilsExceptionException.__init__(self)
+        self.message = message
+        self.controller = controller
+
+    def __str__(self):
+        """
+        Returns the string representation of the class.
+
+        @rtype: String
+        @return: The string representation of the class.
+        """
+
+        return "Controller validation error: %s" % self.message

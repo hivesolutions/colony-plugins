@@ -38,12 +38,19 @@ __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
 import re
+import types
 
 import web_mvc_exceptions
 import web_mvc_file_handler
 import web_mvc_communication_handler
 
 import colony.libs.string_buffer_util
+
+NAMED_GROUPS_REGEX_VALUE = re.compile("\(\?\P\<.*\>(.*)\)")
+""" The named groups regex value """
+
+NAMED_GROUPS_REGEX = re.compile(NAMED_GROUPS_REGEX_VALUE)
+""" The named groups regex """
 
 REGEX_COMPILATION_LIMIT = 99
 """ The regex compilation limit """
@@ -53,6 +60,15 @@ FILE_HANDLER_VALUE = "file_handler"
 
 COMMUNICATION_HANDLER_VALUE = "communication_handler"
 """ The communication handler value """
+
+METHOD_VALUE = "method"
+""" The method value """
+
+ENCODER_NAME_VALUE = "encoder_name"
+""" The encoder name value """
+
+PATTERN_NAMES_VALUE = "pattern_names"
+""" The pattern names value """
 
 class WebMvc:
     """
@@ -163,30 +179,47 @@ class WebMvc:
             # tries to math the resource path
             resource_path_match = resource_matching_regex.match(resource_path)
 
-            # in case there is a valid resource path match
-            if resource_path_match:
-                # handles the match, returning the result of the handling
-                return self._handle_resource_match(rest_request, resource_path, resource_path_match, resource_matching_regex)
+            # in case there is no valid resource path match
+            if not resource_path_match:
+                # continues the loop
+                continue
+
+            # handles the match, returning the result of the handling
+            return self._handle_resource_match(rest_request, resource_path, resource_path_match, resource_matching_regex)
 
         # iterates over all the communication matching regex in the communication matching regex list
         for communication_matching_regex in self.communication_matching_regex_list:
             # tries to math the communication path
             communication_path_match = communication_matching_regex.match(resource_path)
 
-            # in case there is a valid communication path match
-            if communication_path_match:
-                # handles the match, returning the result of the handling
-                return self._handle_communication_match(rest_request, resource_path, communication_path_match, communication_matching_regex)
+            # in case there is no valid communication path match
+            if not resource_path_match:
+                # continues the loop
+                continue
+
+            # handles the match, returning the result of the handling
+            return self._handle_communication_match(rest_request, resource_path, communication_path_match, communication_matching_regex)
 
         # iterates over all the matching regex in the matching regex list
         for matching_regex in self.matching_regex_list:
             # tries to math the resource path
             resource_path_match = matching_regex.match(resource_path)
 
-            # in case there is a valid resource path match
-            if resource_path_match:
-                # handles the match, returning the result of the handling
-                return self._handle_match(rest_request, resource_path_match, matching_regex)
+            # in case there is no valid resource path match
+            if not resource_path_match:
+                # continues the loop
+                continue
+
+            # validate the match and retrieves the handle tuple
+            handle_tuple = self._validate_match(rest_request, resource_path, resource_path_match, matching_regex)
+
+            # in case the handle tuple is not valid
+            if not handle_tuple:
+                # continues the loop
+                continue
+
+            # handles the match, returning the result of the handling
+            return self._handle_match(rest_request, handle_tuple)
 
         # raises the mvc request not handled exception
         raise web_mvc_exceptions.MvcRequestNotHandled("no mvc service plugin could handle the request")
@@ -206,12 +239,29 @@ class WebMvc:
         web_mvc_service_plugin_patterns = web_mvc_service_plugin.get_patterns()
 
         # iterates over all the patterns in the web mvc service plugin patterns
-        for pattern_key, pattern_value in web_mvc_service_plugin_patterns:
+        for web_mvc_service_plugin_pattern in web_mvc_service_plugin_patterns:
+            # retrieves the pattern key
+            pattern_key = web_mvc_service_plugin_pattern[0]
+
+            # retrieves the pattern value
+            pattern_value = web_mvc_service_plugin_pattern[1:]
+
+            # compiles the patter key, retrieving the
+            # pattern validation regex (original regex)
+            pattern_validation_regex = re.compile(pattern_key)
+
+            # creates the pattern attributes (tuple)
+            pattern_attributes = (pattern_validation_regex, pattern_value)
+
+            # escapes the pattern key replacing the named
+            # group selectors
+            pattern_key_escaped = NAMED_GROUPS_REGEX.sub("\g<1>", pattern_key)
+
             # adds the pattern to the web mvc service patterns map
-            self.web_mvc_service_patterns_map[pattern_key] = pattern_value
+            self.web_mvc_service_patterns_map[pattern_key_escaped] = pattern_attributes
 
             # adds the pattern to the web mvc service patterns list
-            self.web_mvc_service_patterns_list.append(pattern_key)
+            self.web_mvc_service_patterns_list.append(pattern_key_escaped)
 
         # retrieves the web mvc service plugin communication patterns
         web_mvc_service_plugin_communication_patterns = web_mvc_service_plugin.get_communication_patterns()
@@ -337,6 +387,7 @@ class WebMvc:
             # raises the invalid token value
             raise web_mvc_exceptions.InvalidTokenValue("invalid initial path request")
 
+        # retrieves the resources initial token length
         resource_initial_token_length = len(resource_initial_token)
 
         # creates the file path from the resource base path and file path
@@ -368,7 +419,7 @@ class WebMvc:
         # handles the given request by the web mvc communication handler
         return self.web_mvc_communication_handler.handle_request(rest_request.request, data_handler_method, connection_changed_handler_method, connection_name)
 
-    def _handle_match(self, rest_request, resource_path_match, matching_regex):
+    def _validate_match(self, rest_request, resource_path, resource_path_match, matching_regex):
         # retrieves the base value for the matching regex
         base_value = self.matching_regex_base_values_map[matching_regex]
 
@@ -382,8 +433,88 @@ class WebMvc:
         # retrieves the pattern for the web mvc service index
         pattern = self.web_mvc_service_patterns_list[web_mvc_service_index]
 
-        # retrieves the pattern handler method
-        handler_method = self.web_mvc_service_patterns_map[pattern]
+        # retrieves the pattern handler arguments
+        handler_attributes = self.web_mvc_service_patterns_map[pattern]
+
+        # unpacks the handler attributes, retrieving the handler
+        # validation regex and the handler arguments
+        handler_validation_regex, handler_arguments = handler_attributes
+
+        # matches the resource path against the validation match
+        resource_path_validation_match = handler_validation_regex.match(resource_path)
+
+        # in case there is no resource path validation match
+        if not resource_path_validation_match:
+            # raises the runtime request exception
+            raise web_mvc_exceptions.RuntimeRequestException("invalid resource path validation match")
+
+        # retrieves the length of the handler arguments
+        handler_arguments_length = len(handler_arguments)
+
+        # retrieves the handler method from the handler arguments
+        handler_method = handler_arguments_length > 0 and handler_arguments[0] or None
+
+        # retrieves the handler operation types from the handler arguments
+        handler_operation_types = handler_arguments_length > 1 and handler_arguments[1] or ("get", "put", "post", "delete")
+
+        # retrieves the handler encoders from the handler arguments
+        handler_encoders = handler_arguments_length > 2 and handler_arguments[2] or None
+
+        # retrieves the handler constraints from the handler arguments
+        handler_contraints = handler_arguments_length > 3 and handler_arguments[3] or {}
+
+        # casts the values to tuples
+        handler_operation_types = self.__cast_tuple(handler_operation_types)
+        handler_encoders = self.__cast_tuple(handler_encoders)
+
+        # retrieves the request
+        request = rest_request.get_request()
+
+        # retrieves the request operation type
+        request_operation_type = request.operation_type
+
+        # lowers the request operation type
+        request_operation_type = request_operation_type.lower()
+
+        # retrieves the rest request encoder name
+        rest_request_encoder_name = rest_request.encoder_name
+
+        # in case the request operation type does not exists in the
+        # handler operation types
+        if not request_operation_type in handler_operation_types:
+            # returns none (invalid)
+            return None
+
+        # in case the handler encoders are defined and the rest
+        # request encoder name does not exists in the handler encoders
+        if handler_encoders and not rest_request_encoder_name in handler_encoders:
+            # returns none (invalid)
+            return None
+
+        # iterates over all the handler constraints
+        for handler_contraint_name, handler_contraint_value in handler_contraints.items():
+            # retrieves the handler constraint value type
+            handler_contraint_value_type = type(handler_contraint_value)
+
+            # retrieves the attribute value base on the
+            # handler constraint name
+            attribute_value = rest_request.get_attribute(handler_contraint_name)
+
+            try:
+                # casts the attribute value
+                attribute_value_casted = handler_contraint_value_type(attribute_value)
+            except:
+                # returns none (invalid)
+                return None
+
+            # in case the attribute value (casted) is not equals
+            # to the handler constraint name
+            if not attribute_value_casted == handler_contraint_value:
+                # returns none (invalid)
+                return None
+
+        # retrieves the resource path validation match groups map
+        resource_path_validation_match_groups_map = resource_path_validation_match.groupdict()
 
         # sets the parameters as an empty map
         parameters = {}
@@ -391,6 +522,19 @@ class WebMvc:
         # sets the extra parameters
         parameters[FILE_HANDLER_VALUE] = self.web_mvc_file_handler
         parameters[COMMUNICATION_HANDLER_VALUE] = self.web_mvc_communication_handler
+        parameters[METHOD_VALUE] = request_operation_type
+        parameters[ENCODER_NAME_VALUE] = rest_request_encoder_name
+        parameters[PATTERN_NAMES_VALUE] = resource_path_validation_match_groups_map
+
+        # creates the handler tuple
+        handler_tuple = (handler_method, parameters)
+
+        # returns the handler tuple
+        return handler_tuple
+
+    def _handle_match(self, rest_request, handler_tuple):
+        # unpacks the handler tuple
+        handler_method, parameters = handler_tuple
 
         # handles the web mvc request to the handler method
         return handler_method(rest_request, parameters)
@@ -640,3 +784,25 @@ class WebMvc:
 
         # sets the base value in resource matching regex base values map
         self.resource_matching_regex_base_values_map[resource_matching_regex] = current_base_value
+
+    def __cast_tuple(self, value):
+        """
+        Casts the given value to a tuple,
+        converting it if required.
+
+        @type value: Object
+        @param value: The value to be "casted".
+        @rtype: Tuple
+        @return: The casted tuple value.
+        """
+
+        # in case the value is invalid
+        if value == None:
+            # returns the value
+            return value
+
+        # creates the tuple value from the value
+        tuple_value = type(value) == types.TupleType and value or (value,)
+
+        # returns the tuple value
+        return tuple_value

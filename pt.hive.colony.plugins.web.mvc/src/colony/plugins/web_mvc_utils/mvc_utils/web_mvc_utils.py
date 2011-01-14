@@ -37,12 +37,115 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
+import web_mvc_utils_exceptions
+
+def validated_method(validation_parameters = None):
+    """
+    Decorator for the validated method.
+
+    @type validation_parameters: Object
+    @param validation_parameters: The parameters to be used when calling
+    the validate method.
+    @rtype: Function
+    @return: The created decorator.
+    """
+
+    def create_decorator_interceptor(function):
+        """
+        Creates a decorator interceptor, that intercepts
+        the normal function call.
+
+        @type function: Function
+        @param function: The callback function.
+        """
+
+        def decorator_interceptor(*args, **kwargs):
+            """
+            The interceptor function for the transaction_method decorator.
+
+            @type args: pointer
+            @param args: The function arguments list.
+            @type kwargs: pointer pointer
+            @param kwargs: The function arguments map.
+            """
+
+            # retrieves the arguments length
+            args_length = len(args)
+
+            # retrieves the self reference
+            self = args[0]
+
+            # retrieves the rest request reference
+            rest_request = args[1]
+
+            # retrieves the parameters reference
+            parameters = args_length > 2 and args[2] or {}
+
+            # in case the controller instance
+            # does not have the validate method
+            if not hasattr(self, "validate"):
+                # raises the controller validation failed
+                raise web_mvc_utils_exceptions.ControllerValidationError("validation method not found", self)
+
+            # calls the validate method with the rest request
+            # the parameters and the validation parameters and retrieves
+            # the list with the validation failure reasons
+            reasons_list = self.validate(rest_request, parameters, validation_parameters)
+
+            # tries to retrieves the validation failed method
+            validation_failed_method = hasattr(self, "validation_failed") and self.validation_failed or None
+
+            # in case the reasons list is not empty
+            if reasons_list:
+                # in case a validation failed method is defined
+                if validation_failed_method:
+                    # calls the validation failed method with the rest request the parameters the
+                    # validation parameters and the reasons list and sets the return value
+                    return_value = validation_failed_method(rest_request, parameters, validation_parameters, reasons_list)
+                # otherwise
+                else:
+                    # raises the controller validation failed
+                    raise web_mvc_utils_exceptions.ControllerValidationError("validation failed: " + str(reasons_list), self)
+            else:
+                # calls the callback function,
+                # retrieving the return value
+                return_value = function(*args, **kwargs)
+
+            # returns the return value
+            return return_value
+
+        # returns the decorator interceptor
+        return decorator_interceptor
+
+    def decorator(function, *args, **kwargs):
+        """
+        The decorator function for the load_allowed decorator.
+
+        @type function: Function
+        @param function: The function to be decorated.
+        @type args: pointer
+        @param args: The function arguments list.
+        @type kwargs: pointer pointer
+        @param kwargs: The function arguments map.
+        @rtype: Function
+        @param: The decorator interceptor function.
+        """
+
+        # creates the decorator interceptor with the given function
+        decorator_interceptor_function = create_decorator_interceptor(function)
+
+        # returns the interceptor to be used
+        return decorator_interceptor_function
+
+    # returns the created decorator
+    return decorator
+
 def transaction_method(entity_manager_reference, raise_exception = True):
     """
     Decorator for the transaction method.
 
     @type entity_manager: EntityManager
-    @param plugin_id: The entity manager to be used for transaction
+    @param entity_manager: The entity manager to be used for transaction
     management, this entity manager should be started and running.
     @type raise_exception: bool
     @param raise_exception: If an exception should be raised in case it occurs.
