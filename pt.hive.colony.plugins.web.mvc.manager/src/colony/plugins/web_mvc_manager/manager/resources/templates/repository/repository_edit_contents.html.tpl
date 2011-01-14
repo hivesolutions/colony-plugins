@@ -17,10 +17,8 @@
                     <th width="75"><span>Install</span><span class="order-down-inactive"></span></th>
                 </tr>
             </thead>
-            <tbody>
-            </tbody>
-            <tfoot>
-            </tfoot>
+            <tbody></tbody>
+            <tfoot></tfoot>
         </table>
     </div>
 </div>
