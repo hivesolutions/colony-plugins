@@ -133,12 +133,15 @@ class MainConsoleBase:
         @param output_method: The output method to be used in the processing.
         """
 
+        # retrieves the main console plugin
+        main_console_plugin = self.main_console_base_plugin.main_console_plugin
+
         if len(args) < 1:
             output_method(HELP_TEXT)
         else:
             extension_name = args[0]
 
-            for console_command_plugin in self.main_console_plugin.console_command_plugins:
+            for console_command_plugin in main_console_plugin.console_command_plugins:
                 console_command_plugin_console_extension_name = console_command_plugin.get_console_extension_name()
                 if console_command_plugin_console_extension_name == extension_name:
                     output_method(console_command_plugin.get_help())
@@ -154,9 +157,12 @@ class MainConsoleBase:
         @param output_method: The output method to be used in the processing.
         """
 
+        # retrieves the main console plugin
+        main_console_plugin = self.main_console_base_plugin.main_console_plugin
+
         output_method(HELP_TEXT)
 
-        for console_command_plugin in self.main_console_plugin.console_command_plugins:
+        for console_command_plugin in main_console_plugin.console_command_plugins:
             output_method(console_command_plugin.get_help())
 
     def process_extensions(self, args, output_method):
@@ -173,9 +179,12 @@ class MainConsoleBase:
         # retrieves the plugin manager
         plugin_manager = self.main_console_base_plugin.manager
 
+        # retrieves the main console plugin
+        main_console_plugin = self.main_console_base_plugin.main_console_plugin
+
         output_method(EXTENSION_TABLE_TOP_TEXT)
 
-        for console_command_plugin in self.main_console_plugin.console_command_plugins:
+        for console_command_plugin in main_console_plugin.console_command_plugins:
             # retrieves the current id for the console command plugin
             console_command_plugin_current_id = plugin_manager.loaded_plugins_id_map[console_command_plugin.id]
             console_command_plugin_current_id_str = str(console_command_plugin_current_id)
