@@ -51,6 +51,9 @@ COMMAND_EXCEPTION_MESSAGE = "there was an exception"
 INVALID_COMMAND_MESSAGE = "invalid command"
 """ The invalid command message """
 
+MISSING_MANDATORY_ARGUMENTS_MESSAGE = "missing mandatory arguments"
+""" The missing mandatory arguments message """
+
 INTERNAL_CONFIGURATION_PROBLEM_MESSAGE = "internal configuration problem"
 """ The internal configuration problem message """
 
@@ -117,26 +120,12 @@ class MainConsole:
         # retrieves the arguments
         arguments = line_split[1:]
 
-        # retrieves the command information
-        command_information = self.commands_map.get(command, None)
+        # validates the command with the given arguments and
+        # retrieves the command handler in success
+        command_handler = self._validate_command(command, arguments, output_method)
 
-        # in case no command information is found
-        # (command not found)
-        if not command_information:
-            # print the invalid command message
-            output_method(INVALID_COMMAND_MESSAGE)
-
-            # returns false (invalid)
-            return False
-
-        # retrieves the command handler
-        command_handler = command_information.get("handler", None)
-
-        # in case no command handler is defined
+        # in case the validation failed
         if not command_handler:
-            # print the internal configuration problem message
-            output_method(INTERNAL_CONFIGURATION_PROBLEM_MESSAGE)
-
             # returns false (invalid)
             return False
 
@@ -322,6 +311,77 @@ class MainConsole:
         # in case a newline should be appended
         # writes it
         new_line and sys.stdout.write("\n")
+
+    def _validate_command(self, command, arguments, output_method):
+        # retrieves the command information
+        command_information = self.commands_map.get(command, None)
+
+        # in case no command information is found
+        # (command not found)
+        if not command_information:
+            # print the invalid command message
+            output_method(INVALID_COMMAND_MESSAGE)
+
+            # returns none (invalid)
+            return None
+
+        # retrieves the command arguments
+        command_arguments = command_information.get("arguments")
+
+        # creates the command mandatory arguments (list)
+        command_mandatory_arguments = []
+
+        # iterates over the command arguments
+        for command_argument in command_arguments:
+            # retrieves the command argument mandatory
+            command_argument_mandatory = command_argument.get("mandatory", False)
+
+            # in case the command argument adds it
+            # to the command mandatory arguments
+            command_argument_mandatory and command_mandatory_arguments.append(command_argument)
+
+        # retrieves the command mandatory arguments length
+        command_mandatory_arguments_length = len(command_mandatory_arguments)
+
+        # retrieves the arguments length
+        arguments_length = len(arguments)
+
+        # in case the command mandatory arguments length is larger
+        # than the arguments length
+        if command_mandatory_arguments_length > arguments_length:
+            # retrieves the missing arguments count, by subtracting the arguments
+            # length from the command mandatory arguments length
+            missing_arguments_count = command_mandatory_arguments_length - arguments_length
+
+            # retrieves the missing arguments list
+            missing_arguments = command_mandatory_arguments[missing_arguments_count * -1:]
+
+            # creates the missing argument names list
+            missing_argument_names = [value.get("name", "undefined") for value in missing_arguments]
+
+            # joins the missing argument names to create the missing
+            # argument names line
+            missing_argument_names_line = ", ".join(missing_argument_names)
+
+            # print the missing mandatory arguments message
+            output_method(MISSING_MANDATORY_ARGUMENTS_MESSAGE + ": " + missing_argument_names_line)
+
+            # returns none (invalid)
+            return None
+
+        # retrieves the command handler
+        command_handler = command_information.get("handler", None)
+
+        # in case no command handler is defined
+        if not command_handler:
+            # print the internal configuration problem message
+            output_method(INTERNAL_CONFIGURATION_PROBLEM_MESSAGE)
+
+            # returns none (invalid)
+            return None
+
+        # returns the command handler
+        return command_handler
 
     def _get_command_alternatives(self, command):
         # creates the alternatives list

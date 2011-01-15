@@ -678,7 +678,7 @@ class MainConsoleBase:
                                     "name" : "extension-id",
                                     "description" : "the id of the extension to be loaded",
                                     "values" : self.get_extension_id_list,
-                                    "optional" : True
+                                    "mandatory" : False
                                 }
                             ],
                             "handler" : self.process_help
@@ -705,7 +705,7 @@ class MainConsoleBase:
                                     "name" : "plugin-id",
                                     "description" : "the id of the plugin to be shown",
                                     "values" : self.get_plugin_id_list,
-                                    "optional" : True
+                                    "mandatory" : False
                                 }
                             ],
                             "handler" : self.process_show
@@ -722,7 +722,7 @@ class MainConsoleBase:
                                     "name" : "plugin-id",
                                     "description" : "the id of the plugin to show the information",
                                     "values" : self.get_plugin_id_list,
-                                    "optional" : True
+                                    "mandatory" : False
                                 }
                             ],
                             "handler" : self.process_info
@@ -739,7 +739,7 @@ class MainConsoleBase:
                                     "name" : "plugin-path",
                                     "description" : "the path of the plugin to be added",
                                     "values" : str,
-                                    "optional" : False
+                                    "mandatory" : True
                                 }
                             ],
                             "handler" : self.process_add
@@ -751,7 +751,7 @@ class MainConsoleBase:
                                     "name" : "plugin-id",
                                     "description" : "the id of the plugin to be removed",
                                     "values" : str,
-                                    "optional" : False
+                                    "mandatory" : True
                                 }
                             ],
                             "handler" : self.process_remove
@@ -763,7 +763,7 @@ class MainConsoleBase:
                                     "name" : "plugin-id",
                                     "description" : "the id of the plugin to be loaded",
                                     "values" : self.get_plugin_id_list,
-                                    "optional" : False
+                                    "mandatory" : True
                                 }
                             ],
                             "handler" : self.process_load
@@ -775,7 +775,7 @@ class MainConsoleBase:
                                     "name" : "plugin-id",
                                     "description" : "the id of the plugin to be unloaded",
                                     "values" : self.get_plugin_id_list,
-                                    "optional" : False
+                                    "mandatory" : True
                                 }
                             ],
                             "handler" : self.process_unload
@@ -787,7 +787,7 @@ class MainConsoleBase:
                                     "name" : "file-path",
                                     "description" : "the path of the file to be executed",
                                     "values" : str,
-                                    "optional" : False
+                                    "mandatory" : True
                                 }
                             ],
                             "handler" : self.process_exec
