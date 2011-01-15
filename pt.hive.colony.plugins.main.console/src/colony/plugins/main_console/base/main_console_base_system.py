@@ -578,11 +578,14 @@ class MainConsoleBase:
             valid = result.group() == id
 
         # in case it matches the regular expression
+        # it is an id value
         if valid:
             int_value = int(id)
             if int_value in plugin_manager.id_loaded_plugins_map:
                 plugin_id = plugin_manager.id_loaded_plugins_map[int_value]
+        # otherwise
         else:
+            # sets the plugin id as the id
             plugin_id = id
 
         # returns the plugin id
@@ -652,11 +655,18 @@ class MainConsoleBase:
         # returns the plugins tuple
         return plugins_tuple
 
-    def get_extension_ids(self):
+    def get_extension_id_list(self):
         return ["rabeton", "tobias"]
 
-    def get_plugin_ids(self):
-        return ["tobias", "matias", "mabis", "rabeton"]
+    def get_plugin_id_list(self):
+        # retrieves the plugin manager
+        plugin_manager = self.main_console_base_plugin.manager
+
+        # retrieves the plugin id list
+        plugin_id_list = plugin_manager.plugin_instances_map.keys()
+
+        # returns the plugin id list
+        return plugin_id_list
 
     def __generate_commands_map(self):
         # creates the commands map
@@ -667,7 +677,8 @@ class MainConsoleBase:
                                 {
                                     "name" : "extension-id",
                                     "description" : "the id of the extension to be loaded",
-                                    "values" : self.get_extension_ids
+                                    "values" : self.get_extension_id_list,
+                                    "optional" : True
                                 }
                             ],
                             "handler" : self.process_help
@@ -693,7 +704,8 @@ class MainConsoleBase:
                                 {
                                     "name" : "plugin-id",
                                     "description" : "the id of the plugin to be shown",
-                                    "values" : self.get_plugin_ids
+                                    "values" : self.get_plugin_id_list,
+                                    "optional" : True
                                 }
                             ],
                             "handler" : self.process_show
@@ -704,12 +716,13 @@ class MainConsoleBase:
                             "handler" : self.process_showall
                         },
                         "info" : {
-                            "help" : "shows the status of all the loaded plugins",
+                            "help" : "shows the status about a plugin",
                             "arguments" : [
                                 {
                                     "name" : "plugin-id",
                                     "description" : "the id of the plugin to show the information",
-                                    "values" : self.get_plugin_ids
+                                    "values" : self.get_plugin_id_list,
+                                    "optional" : True
                                 }
                             ],
                             "handler" : self.process_info
@@ -725,7 +738,8 @@ class MainConsoleBase:
                                 {
                                     "name" : "plugin-path",
                                     "description" : "the path of the plugin to be added",
-                                    "values" : str
+                                    "values" : str,
+                                    "optional" : False
                                 }
                             ],
                             "handler" : self.process_add
@@ -736,7 +750,8 @@ class MainConsoleBase:
                                 {
                                     "name" : "plugin-id",
                                     "description" : "the id of the plugin to be removed",
-                                    "values" : str
+                                    "values" : str,
+                                    "optional" : False
                                 }
                             ],
                             "handler" : self.process_remove
@@ -747,7 +762,8 @@ class MainConsoleBase:
                                 {
                                     "name" : "plugin-id",
                                     "description" : "the id of the plugin to be loaded",
-                                    "values" : self.get_plugin_ids
+                                    "values" : self.get_plugin_id_list,
+                                    "optional" : False
                                 }
                             ],
                             "handler" : self.process_load
@@ -758,7 +774,8 @@ class MainConsoleBase:
                                 {
                                     "name" : "plugin-id",
                                     "description" : "the id of the plugin to be unloaded",
-                                    "values" : self.get_plugin_ids
+                                    "values" : self.get_plugin_id_list,
+                                    "optional" : False
                                 }
                             ],
                             "handler" : self.process_unload
@@ -769,7 +786,8 @@ class MainConsoleBase:
                                 {
                                     "name" : "file-path",
                                     "description" : "the path of the file to be executed",
-                                    "values" : str
+                                    "values" : str,
+                                    "optional" : False
                                 }
                             ],
                             "handler" : self.process_exec

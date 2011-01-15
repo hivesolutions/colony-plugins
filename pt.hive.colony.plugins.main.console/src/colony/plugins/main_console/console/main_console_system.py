@@ -324,14 +324,33 @@ class MainConsole:
         new_line and sys.stdout.write("\n")
 
     def _get_command_alternatives(self, command):
-        # creates the alternatives from the commands in the commands
-        # map by filtering the ones that start with the command value
-        alternatives_list = [value for value in self.commands_map if value.startswith(command)]
+        # creates the alternatives list
+        alternatives_list = []
+
+        # iterates over all the commands in the
+        # commands map
+        for _command in self.commands_map:
+            # retrieves the command information
+            command_information = self.commands_map[_command]
+
+            # retrieves the command arguments
+            command_arguments = command_information.get("arguments", [])
+
+            # recreates the command value base on either the command
+            # contains arguments or not
+            _command = command_arguments and _command + " " or _command
+
+            # in case the command starts with the
+            # value in the command
+            _command.startswith(command) and alternatives_list.append(_command)
 
         # returns the alternatives list
         return alternatives_list
 
     def _get_argument_alternatives(self, command, arguments):
+        # creates the alternatives list
+        alternatives_list = []
+
         # retrieves the command information for the command
         command_information = self.commands_map.get(command, None)
 
@@ -339,7 +358,7 @@ class MainConsole:
         if not command_information:
             # returns immediately an empty
             # alternatives list (no alternatives)
-            return []
+            return alternatives_list
 
         # retrieves the arguments index
         arguments_index = len(arguments) - 1
@@ -358,7 +377,7 @@ class MainConsole:
         if not command_arguments_length > arguments_index:
             # returns immediately an empty
             # alternatives list (no alternatives)
-            return []
+            return alternatives_list
 
         # retrieves the command "target" argument
         command_argument = command_arguments[arguments_index]
@@ -384,9 +403,16 @@ class MainConsole:
             # of the command argument values call
             alternatives_base_list = command_argument_values()
 
-        # creates the alternatives from the commands in the commands
-        # map by filtering the ones that start with the target argument value
-        alternatives_list = [value for value in alternatives_base_list if value.startswith(target_argument)]
+        # iterates over all the commands in the
+        # commands map
+        for alternative_base in alternatives_base_list:
+            # recreates the alternative base value based on either
+            # the command contains any more arguments or not
+            alternative_base = command_arguments_length > arguments_index + 1 and alternative_base + " " or alternative_base
+
+            # in case the alternative base starts with the
+            # value in the target argument
+            alternative_base.startswith(target_argument) and alternatives_list.append(alternative_base)
 
         # returns the alternatives list
         return alternatives_list
