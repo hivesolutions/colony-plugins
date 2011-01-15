@@ -261,46 +261,38 @@ class MainConsoleBase:
         # retrieves the plugin manager
         plugin_manager = self.main_console_base_plugin.manager
 
-        if len(args) < 1:
-            output_method(INVALID_NUMBER_ARGUMENTS_MESSAGE)
-            return
+        # retrieves the arguments length
+        arguments_length = len(args)
 
-        plugin_id = self.get_plugin_id(args[0])
+        # retrieves the plugin id
+        plugin_id = arguments_length > 0 and args[0] or None
 
-        if plugin_id in plugin_manager.plugin_instances_map:
+        # in case the plugin id is defined
+        if plugin_id:
+            # retrieves the "real" plugin id
+            plugin_id = self.get_plugin_id(plugin_id)
+
+            # retrieves the plugin instance from the plugin manager
+            # plugin instances map
             plugin_instance = plugin_manager.plugin_instances_map[plugin_id]
-            plugin_instance_current_id = plugin_manager.loaded_plugins_id_map[plugin_id]
-            plugin_instance_current_id_str = str(plugin_instance_current_id)
 
-            output_method(TABLE_TOP_TEXT)
-            output_method(plugin_instance_current_id_str, False)
-            for _index in range(COLUMN_SPACING - len(plugin_instance_current_id_str)):
-                output_method(" ", False)
-            if plugin_instance.is_loaded():
-                output_method("ACTIVE" + "      ", False)
-            else:
-                output_method("INACTIVE" + "    ", False)
-            output_method(plugin_instance.id + "\n", False)
+            # sets the plugin instances (list) with only the plugin
+            # instance as the element
+            plugin_instances = [plugin_instance]
+        # otherwise
         else:
-            output_method(INVALID_PLUGIN_ID_MESSAGE)
-
-    def process_showall(self, args, output_method):
-        """
-        Processes the show all command, with the given
-        arguments and output method.
-
-        @type args: List
-        @param args: The arguments for the processing.
-        @type output_method: Method
-        @param output_method: The output method to be used in the processing.
-        """
+            # sets the plugin instances as all the plugin
+            # manager instances
+            plugin_instances = plugin_manager.plugin_instances
 
         # retrieves the plugin manager
         plugin_manager = self.main_console_base_plugin.manager
 
+        # prints the table top text
         output_method(TABLE_TOP_TEXT)
 
-        for plugin_instance in plugin_manager.plugin_instances:
+        # iterates over all the plugin instances
+        for plugin_instance in plugin_instances:
             # retrieves the current id for the current plugin instance
             plugin_instance_current_id = plugin_manager.loaded_plugins_id_map[plugin_instance.id]
             plugin_instance_current_id_str = str(plugin_instance_current_id)
@@ -709,11 +701,6 @@ class MainConsoleBase:
                                 }
                             ],
                             "handler" : self.process_show
-                        },
-                        "showall" : {
-                            "help" : "shows the status of all the loaded plugins",
-                            "arguments" : [],
-                            "handler" : self.process_showall
                         },
                         "info" : {
                             "help" : "shows the status about a plugin",
