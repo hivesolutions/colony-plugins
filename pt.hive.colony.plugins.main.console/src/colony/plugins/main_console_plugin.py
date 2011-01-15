@@ -116,17 +116,34 @@ class MainConsolePlugin(colony.base.plugin_system.Plugin):
 
         return self.console.process_command_line(command_line, output_method)
 
-    def get_command_line_alternatives(self, command_line):
+    def get_command_line_alternatives(self, command, arguments):
         """
         Processes the given command line, with the given output method.
+        Retrieves the alternative (possible) values for the given command
+        and arguments.
 
-        @type command_line: String
-        @param command_line: The command line to be retrieve the alternatives.
-        @rtype: List
-        @return: If list of alternatives for the given command line.
+        @type command: String
+        @param command: The command to be retrieve the alternatives.
+        @type arguments: String
+        @param arguments: The list of arguments
+        @rtype: Tuple
+        @return: A tuple containing the list of alternatives for the given
+        command line and the current best match.
         """
 
-        return self.console.get_command_line_alternatives(command_line)
+        return self.console.get_command_line_alternatives(command, arguments)
+
+    def split_command_line(self, command_line):
+        """
+        Splits the given command line into command and arguments.
+
+        @type command_line: String
+        @param command_line: The command line to be splitted.
+        @rtype: Tuple
+        @return: A tuple containing the command and the arguments.
+        """
+
+        return self.console.split_command_line(command_line)
 
     def get_default_output_method(self):
         """

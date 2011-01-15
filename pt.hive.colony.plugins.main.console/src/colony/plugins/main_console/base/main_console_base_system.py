@@ -653,10 +653,10 @@ class MainConsoleBase:
         return plugins_tuple
 
     def get_extension_ids(self):
-        return []
+        return ["rabeton", "tobias"]
 
     def get_plugin_ids(self):
-        return []
+        return ["tobias", "matias", "mabis", "rabeton"]
 
     def __generate_commands_map(self):
         # creates the commands map

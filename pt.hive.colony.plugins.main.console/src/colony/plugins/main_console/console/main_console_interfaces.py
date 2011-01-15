@@ -210,55 +210,45 @@ class MainConsoleInterfaceCharacter:
         return False
 
     def _process_tab_character(self, character, character_ordinal):
-        # joins the line buffer to retrieve the current line
-        current_line = "".join(self.line_buffer)
+        # retrieves the current line
+        current_line = self._get_current_line()
 
-        # retrieves the alternatives for the current line
-        alternatives = self.main_console_plugin.get_command_line_alternatives(current_line)
+        # retrieves the current last token
+        current_last_token = self._get_current_last_token()
 
-        # sorts the alternatives
-        alternatives.sort()
+        # splits the command line into command and arguments
+        command, arguments = self.main_console.split_command_line(current_line, True)
 
-        # retrieves the alternatives length
-        alternatives_length = len(alternatives)
+        # retrieves the alternatives list and the best match
+        # for the current command and arguments
+        alternatives_list, best_match = self.main_console.get_command_line_alternatives(command, arguments)
+
+        # sorts the alternatives list (alphabetically)
+        alternatives_list.sort()
+
+        # retrieves the alternatives list length
+        alternatives_list_length = len(alternatives_list)
 
         # in case no alternatives are found
-        if alternatives_length == 0:
+        if alternatives_list_length == 0:
+            # ignores the choice
             pass
         # in case one alternative is found
-        elif alternatives_length == 1:
-            # retrieves the length of the current line
-            current_line_length = len(current_line)
-
-            # retrieves the first alternative
-            first_alternative = alternatives[0]
-
-            # retrieves the delta value
-            delta_value = first_alternative[current_line_length:]
-
-            # converts the delta value to list
-            delta_list = list(delta_value)
-
-            # extends the line buffer with the delta list
-            self.line_buffer.extend(delta_list)
-
-            # prints the delta value
-            self.console_handler._print(delta_value)
+        elif alternatives_list_length == 1:
+            # completes the alternative
+            self._complete_alternative(best_match)
         # in case many alternatives are found
         else:
-            # breaks the line
-            self.console_handler._print("\n")
-
-            # iterates over all the alternatives
-            for alternative in alternatives:
-                # prints the alternative
-                self.console_handler._print(alternative + "\n")
-
-            # prints the caret
-            self.console_handler._print_caret()
-
-            # prints the current line
-            self.console_handler._print(current_line)
+            # in case the best match is the same
+            # as the current last token
+            if best_match == current_last_token:
+                # shows the alternatives
+                self._show_alternatives(alternatives_list)
+            # otherwise the current line
+            # must be completed
+            else:
+                # completes the alternative
+                self._complete_alternative(best_match)
 
         # returns false (not end of line)
         return False
@@ -366,3 +356,79 @@ class MainConsoleInterfaceCharacter:
 
         # prints the current line
         self.console_handler._print(current_line)
+
+    def _complete_alternative(self, best_match):
+        """
+        Completes the current line value with the
+        given best match.
+
+        @type best_match: String
+        @param best_match: The best match to complete
+        the current line value.
+        """
+
+        # retrieves the current last token
+        current_last_token = self._get_current_last_token()
+
+        # retrieves the length of the current last token
+        current_last_token_length = len(current_last_token)
+
+        # retrieves the delta value
+        delta_value = best_match[current_last_token_length:]
+
+        # converts the delta value to list
+        delta_list = list(delta_value)
+
+        # extends the line buffer with the delta list,
+        # updating the line buffer
+        self.line_buffer.extend(delta_list)
+
+        # prints the delta value
+        self.console_handler._print(delta_value)
+
+    def _show_alternatives(self, alternatives_list):
+        """
+        Shows the given alternatives list in the output
+        method.
+
+        @type alternatives_list: List
+        @param alternatives_list: The list of alternatives to
+        show.
+        """
+
+        # retrieves the current line
+        current_line = self._get_current_line()
+
+        # breaks the line
+        self.console_handler._print("\n")
+
+        # iterates over all the alternatives
+        for alternative in alternatives_list:
+            # prints the alternative
+            self.console_handler._print(alternative + "\n")
+
+        # prints the caret
+        self.console_handler._print_caret()
+
+        # prints the current line
+        self.console_handler._print(current_line)
+
+    def _get_current_line(self):
+        # joins the line buffer to retrieve the current line
+        current_line = "".join(self.line_buffer)
+
+        # returns the current line
+        return current_line
+
+    def _get_current_last_token(self):
+        # joins the line buffer to retrieve the current line
+        current_line = "".join(self.line_buffer)
+
+        # splits the current line into a list of tokens
+        current_line_list = self.main_console.split_command_line_arguments(current_line, True)
+
+        # retrieves the current last token
+        current_last_token = current_line_list and current_line_list[-1] or ""
+
+        # returns the current last token
+        return current_last_token
