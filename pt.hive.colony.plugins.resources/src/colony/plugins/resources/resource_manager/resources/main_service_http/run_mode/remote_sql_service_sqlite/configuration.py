@@ -69,7 +69,9 @@ configuration = {
                          "authentication_properties" : {
                              "authentication_handler" : "python",
                              "authentication_realm" : "system",
-                             "arguments" : {"file_path" : "%configuration:pt.hive.colony.plugins.main.authentication.python_handler%/authentication.py"}
+                             "arguments" : {
+                                 "file_path" : "%configuration:pt.hive.colony.plugins.main.authentication.python_handler%/authentication.py"
+                             }
                          }
                      }
                  }

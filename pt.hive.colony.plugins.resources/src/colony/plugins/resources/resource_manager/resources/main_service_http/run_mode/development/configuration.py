@@ -308,7 +308,9 @@ configuration = {
                          "authentication_properties" : {
                              "authentication_handler" : "python",
                              "authentication_realm" : "system",
-                             "arguments" : {"file_path" : "%configuration:pt.hive.colony.plugins.main.authentication.python_handler%/authentication.py"}
+                             "arguments" : {
+                                 "file_path" : "%configuration:pt.hive.colony.plugins.main.authentication.python_handler%/authentication.py"
+                             }
                          }
                      },
                      "/wsgi-bin/remote_sql_service_sqlite" : {
@@ -323,7 +325,9 @@ configuration = {
                          "authentication_properties" : {
                              "authentication_handler" : "python",
                              "authentication_realm" : "system",
-                             "arguments" : {"file_path" : "%configuration:pt.hive.colony.plugins.main.authentication.python_handler%/authentication.py"}
+                             "arguments" : {
+                                 "file_path" : "%configuration:pt.hive.colony.plugins.main.authentication.python_handler%/authentication.py"
+                             }
                          }
                      },
                      "/wsgi-bin" : {
@@ -394,7 +398,9 @@ configuration = {
                          "authentication_properties" : {
                              "authentication_handler" : "python",
                              "authentication_realm" : "system",
-                             "arguments" : {"file_path" : "%configuration:pt.hive.colony.plugins.main.authentication.python_handler%/authentication.py"}
+                             "arguments" : {
+                                 "file_path" : "%configuration:pt.hive.colony.plugins.main.authentication.python_handler%/authentication.py"
+                             }
                          }
                      },
                      "/proxy" : {

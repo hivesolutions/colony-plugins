@@ -44,11 +44,19 @@ configuration = {
                  "default_session_handler" : "main",
                  "authentication_properties" : {
                      "authentication_handler" : "python",
-                     "arguments" : {"file_path" : "%configuration:pt.hive.colony.plugins.main.authentication.python_handler%/authentication.py"}
+                     "arguments" : {
+                         "file_path" : "%configuration:pt.hive.colony.plugins.main.authentication.python_handler%/authentication.py"
+                     }
                  },
                  "session_properties" : {
                      "message_provider" : "database",
-                     "arguments" : {"entity_manager_arguments" : {"connection_parameters" : {"file_path" : "%configuration:pt.hive.colony.plugins.mail.storage%/messages_database.db",
-                                                                                             "autocommit" : False}}}
+                     "arguments" : {
+                         "entity_manager_arguments" : {
+                             "connection_parameters" : {
+                                 "file_path" : "%configuration:pt.hive.colony.plugins.mail.storage%/messages_database.db",
+                                 "autocommit" : False
+                             }
+                         }
+                     }
                  }
              }

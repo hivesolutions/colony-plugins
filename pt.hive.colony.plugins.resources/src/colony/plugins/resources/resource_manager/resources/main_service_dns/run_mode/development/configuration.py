@@ -41,7 +41,13 @@ configuration = {
                  "default_end_points" : [("datagram", "", 53, {})],
                  "default_handler" : "database",
                  "handler_properties" : {
-                     "arguments" : {"entity_manager_arguments" : {"connection_parameters" : {"file_path" : "%configuration:pt.hive.colony.plugins.dns.storage%/zones_database.db",
-                                                                                             "autocommit" : False}}}
+                     "arguments" : {
+                         "entity_manager_arguments" : {
+                             "connection_parameters" : {
+                                 "file_path" : "%configuration:pt.hive.colony.plugins.dns.storage%/zones_database.db",
+                                 "autocommit" : False
+                             }
+                         }
+                     }
                  }
              }
