@@ -113,6 +113,8 @@ class MainServiceHttpMainAuthenticationHandlerPlugin(colony.base.plugin_system.P
         @param password: The password to be used in the authentication.
         @type properties: Dictionary
         @param properties: The properties used in the authentication process.
+        @rtype: Dictionary
+        @return: The authentication result.
         """
 
         return self.main_service_http_main_authentication_handler.handle_authentication(username, password, properties)
