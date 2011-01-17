@@ -37,34 +37,13 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-import re
-import sys
-import types
+import main_console_exceptions
 
-import colony.libs.map_util
+AUTHENTICATION_HANDLER_VALUE = "authentication_handler"
+""" The authentication handler value """
 
-import main_console_interfaces
-
-COMMAND_EXCEPTION_MESSAGE = "there was an exception"
-""" The command exception message """
-
-INVALID_COMMAND_MESSAGE = "invalid command"
-""" The invalid command message """
-
-MISSING_MANDATORY_ARGUMENTS_MESSAGE = "missing mandatory arguments"
-""" The missing mandatory arguments message """
-
-INTERNAL_CONFIGURATION_PROBLEM_MESSAGE = "internal configuration problem"
-""" The internal configuration problem message """
-
-COMMAND_LINE_REGEX_VALUE = "\"[^\"]*\"|[^ \s]+"
-""" The regular expression to retrieve the command line arguments """
-
-COMMAND_LINE_REGEX = re.compile(COMMAND_LINE_REGEX_VALUE)
-""" The regular expression to retrieve the command line arguments (compiled) """
-
-SEQUENCE_TYPES = (types.ListType, types.TupleType)
-""" The sequence types """
+ARGUMENTS_VALUE = "arguments"
+""" the arguments value """
 
 class MainConsoleAuthentication:
     """
@@ -84,5 +63,41 @@ class MainConsoleAuthentication:
 
         self.main_console_plugin = main_console_plugin
 
-    def authenticate_user(self, username, password, parameters = {}):
-        pass
+    def handle_authentication(self, username, password, properties = {}):
+        """
+        Handles the given console authentication.
+
+        @type username: String
+        @param username: The username to be used in the authentication.
+        @type password: String
+        @param password: The password to be used in the authentication.
+        @type properties: Dictionary
+        @param properties: The properties used in the authentication process.
+        @rtype: Dictionary
+        @return: The authentication result.
+        """
+
+        # in case the authentication handler property is not defined
+        if not AUTHENTICATION_HANDLER_VALUE in properties:
+            # raises the missing property exception
+            raise main_console_exceptions.MissingProperty(AUTHENTICATION_HANDLER_VALUE)
+
+        # in case the arguments property is not defined
+        if not ARGUMENTS_VALUE in properties:
+            # raises the missing property exception
+            raise main_console_exceptions.MissingProperty(ARGUMENTS_VALUE)
+
+        # retrieves the authentication handler
+        authentication_handler = properties[AUTHENTICATION_HANDLER_VALUE]
+
+        # retrieves the arguments
+        arguments = properties[ARGUMENTS_VALUE]
+
+        # retrieves the main authentication plugin
+        main_authentication_plugin = self.main_console_plugin.main_authentication_plugin
+
+        # authenticates the user with the main authentication plugin retrieving the result
+        authentication_result = main_authentication_plugin.authenticate_user(username, password, authentication_handler, arguments)
+
+        # returns the authentication result
+        return authentication_result
