@@ -37,6 +37,7 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
+import os
 import re
 import sys
 import types
@@ -89,7 +90,17 @@ class MainConsole:
 
         self.commands_map = {}
 
-    def process_command_line(self, command_line, output_method = None):
+    def create_console_context(self):
+        """
+        Creates a new console context for third party usage.
+
+        @rtype: ConsoleContext
+        @return: The creates console context.
+        """
+
+        return ConsoleContext(self)
+
+    def process_command_line(self, command_line, output_method = None, console_context = None):
         """
         Processes the given command line, with the given output method.
 
@@ -97,6 +108,9 @@ class MainConsole:
         @param command_line: The command line to be processed.
         @type output_method: Method
         @param output_method: The output method to be used in the processing.
+        @type console_context: ConsoleContext
+        @param console_context: The console context to be used to process
+        the command line.
         @rtype: bool
         @return: If the processing of the command line was successful.
         """
@@ -145,6 +159,16 @@ class MainConsole:
 
         # returns true (valid)
         return True
+
+    def get_default_output_method(self):
+        """
+        Retrieves the default output method.
+
+        @rtype: Method
+        @return: The default output method for console.
+        """
+
+        return self.write
 
     def get_command_line_alternatives(self, command, arguments):
         """
@@ -215,16 +239,6 @@ class MainConsole:
         # returns the command tuple
         return command_tuple
 
-    def get_default_output_method(self):
-        """
-        Retrieves the default output method.
-
-        @rtype: Method
-        @return: The default output method for console.
-        """
-
-        return self.write
-
     def create_console_interface_character(self, console_handler):
         """
         Creates a new console interface character based
@@ -236,7 +250,7 @@ class MainConsole:
         @return: The create console interface character.
         """
 
-        return main_console_interfaces.MainConsoleInterfaceCharacter(self.main_console_plugin, self, console_handler)
+        return main_console_interfaces.MainConsoleInterfaceCharacter(self, console_handler)
 
     def console_command_extension_load(self, console_command_extension_plugin):
         # retrieves the commands map from the console command extension
@@ -537,3 +551,79 @@ class MainConsole:
 
         # returns the best match
         return best_match
+
+class ConsoleContext:
+    """
+    The console context class.
+    """
+
+    main_console = None
+    """ The main console reference """
+
+    path = None
+    """ The current console path """
+
+    user = None
+    """ The current console user """
+
+    def __init__(self, main_console):
+        """
+        Constructor of the class.
+
+        @type main_console: MainConsole
+        @param main_console: The main console reference.
+        """
+
+        self.main_console = main_console
+
+        # sets the current path in the context
+        self.path = os.getcwd()
+
+    def process_command_line(self, command_line, output_method):
+        return self.main_console.process_command_line(command_line, output_method, self)
+
+    def get_command_line_alternatives(self, command, arguments):
+        return self.main_console.get_command_line_alternatives(command, arguments)
+
+    def create_console_interface_character(self, console_handler):
+        return self.main_console.create_console_interface_character(console_handler)
+
+    def get_path(self):
+        """
+        Returns the path.
+
+        @rtype: String
+        @return: The path.
+        """
+
+        return self.path
+
+    def set_path(self, path):
+        """
+        Sets the path.
+
+        @rtype: String
+        @return: The path.
+        """
+
+        return self.path
+
+    def get_user(self):
+        """
+        Returns the user.
+
+        @rtype: String
+        @return: The user.
+        """
+
+        return self.user
+
+    def set_user(self, user):
+        """
+        Sets the user.
+
+        @rtype: String
+        @return: The user.
+        """
+
+        return self.user

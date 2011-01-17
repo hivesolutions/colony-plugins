@@ -104,6 +104,16 @@ class MainConsolePlugin(colony.base.plugin_system.Plugin):
     def execute_command_line(self, command_line):
         return self.console.process_command_line(command_line, None)
 
+    def create_console_context(self):
+        """
+        Creates a new console context for third party usage.
+
+        @rtype: ConsoleContext
+        @return: The creates console context.
+        """
+
+        return self.console.create_console_context()
+
     def process_command_line(self, command_line, output_method):
         """
         Processes the given command line, with the given output method.
@@ -118,35 +128,6 @@ class MainConsolePlugin(colony.base.plugin_system.Plugin):
 
         return self.console.process_command_line(command_line, output_method)
 
-    def get_command_line_alternatives(self, command, arguments):
-        """
-        Processes the given command line, with the given output method.
-        Retrieves the alternative (possible) values for the given command
-        and arguments.
-
-        @type command: String
-        @param command: The command to be retrieve the alternatives.
-        @type arguments: String
-        @param arguments: The list of arguments
-        @rtype: Tuple
-        @return: A tuple containing the list of alternatives for the given
-        command line and the current best match.
-        """
-
-        return self.console.get_command_line_alternatives(command, arguments)
-
-    def split_command_line(self, command_line):
-        """
-        Splits the given command line into command and arguments.
-
-        @type command_line: String
-        @param command_line: The command line to be splitted.
-        @rtype: Tuple
-        @return: A tuple containing the command and the arguments.
-        """
-
-        return self.console.split_command_line(command_line)
-
     def get_default_output_method(self):
         """
         Retrieves the default output method.
@@ -156,19 +137,6 @@ class MainConsolePlugin(colony.base.plugin_system.Plugin):
         """
 
         return self.console.get_default_output_method()
-
-    def create_console_interface_character(self, console_handler):
-        """
-        Creates a new console interface character based
-        from the given console handler.
-
-        @type console_handler: ConsoleHandler
-        @param console_handler: The console handler to be used.
-        @rtype: ConsoleInterfaceCharacter
-        @return: The create console interface character.
-        """
-
-        return self.console.create_console_interface_character(console_handler)
 
     def get_test_case(self):
         """

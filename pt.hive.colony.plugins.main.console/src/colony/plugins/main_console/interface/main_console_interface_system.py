@@ -41,15 +41,21 @@ import sys
 
 import main_console_interface_exceptions
 
+main_console_interface_class = None
+
 try:
-    import main_console_interface_win32
-    main_console_interface_class = main_console_interface_win32.MainConsoleInterfaceWin32
-except Exception, exception:
-    try:
+    if not main_console_interface_class:
+        import main_console_interface_win32
+        main_console_interface_class = main_console_interface_win32.MainConsoleInterfaceWin32
+except:
+    pass
+
+try:
+    if not main_console_interface_class:
         import main_console_interface_unix
         main_console_interface_class = main_console_interface_unix.MainConsoleInterfaceUnix
-    except:
-        main_console_interface_class = None
+except:
+    pass
 
 CARET = ">>"
 """ The caret to be used in the console display """
@@ -100,6 +106,9 @@ class MainConsoleInterface:
         # creates a new main console interface system
         main_console_interface = main_console_interface_class(self.main_console_interface_plugin, self)
 
+        # creates a new console context
+        main_console_context = main_console_plugin.create_console_context()
+
         try:
             # starts the main console interface
             main_console_interface.start({TEST_VALUE : True})
@@ -134,7 +143,7 @@ class MainConsoleInterface:
 
                 # processes the command line, outputting the result to
                 # the default method
-                main_console_plugin.process_command_line(line, None)
+                main_console_context.process_command_line(line, None)
         finally:
             # stops the main console interface
             main_console_interface.stop({})

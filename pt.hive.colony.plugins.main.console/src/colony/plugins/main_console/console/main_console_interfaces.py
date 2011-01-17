@@ -71,9 +71,6 @@ class MainConsoleInterfaceCharacter:
     The main console interface character.
     """
 
-    main_console_plugin = None
-    """ The main console plugin """
-
     main_console = None
     """ The main console """
 
@@ -92,19 +89,16 @@ class MainConsoleInterfaceCharacter:
     line_history_list = []
     """ The current line history list """
 
-    def __init__(self, main_console_plugin, main_console, console_handler):
+    def __init__(self, main_console, console_handler):
         """
         Constructor of the class.
 
-        @type main_console_plugin: MainConsolePlugin
-        @param main_console_plugin: The main console plugin.
         @type main_console: MainConsole
         @param main_console: The main console.
         @type console_handler: ConsoleHandler
         @param console_handler: The console handler to be used.
         """
 
-        self.main_console_plugin = main_console_plugin
         self.main_console = main_console
         self.console_handler = console_handler
 
