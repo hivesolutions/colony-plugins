@@ -25,10 +25,10 @@ __author__ = "Jo„o Magalh„es <joamag@hive.pt>"
 __version__ = "1.0.0"
 """ The version of the module """
 
-__revision__ = "$LastChangedRevision$"
+__revision__ = "$LastChangedRevision: 12728 $"
 """ The revision number of the module """
 
-__date__ = "$LastChangedDate$"
+__date__ = "$LastChangedDate: 2011-01-15 16:11:37 +0000 (s√°b, 15 Jan 2011) $"
 """ The last change date of the module """
 
 __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
@@ -40,15 +40,15 @@ __license__ = "GNU General Public License (GPL), Version 3"
 import colony.base.plugin_system
 import colony.base.decorators
 
-class MainConsolePlugin(colony.base.plugin_system.Plugin):
+class MainConsoleMainAuthenticationPlugin(colony.base.plugin_system.Plugin):
     """
-    The main class for the Console Main plugin.
+    The main class for the Console Main Main Authentication Handler plugin.
     """
 
-    id = "pt.hive.colony.plugins.main.console"
-    name = "Console Main Plugin"
-    short_name = "Console Main"
-    description = "The main console plugin that controls the console"
+    id = "pt.hive.colony.plugins.main.console.main_authentication_handler"
+    name = "Console Main Main Authentication Handler Plugin"
+    short_name = "Console Main Main Authentication Handler"
+    description = "The main console plugin that controls the console authentication"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     loading_type = colony.base.plugin_system.EAGER_LOADING_TYPE
@@ -56,16 +56,14 @@ class MainConsolePlugin(colony.base.plugin_system.Plugin):
                  colony.base.plugin_system.JYTHON_ENVIRONMENT,
                  colony.base.plugin_system.IRON_PYTHON_ENVIRONMENT]
     attributes = {"build_automation_file_path" : "$base{plugin_directory}/main_console/console/resources/baf.xml"}
-    capabilities = ["main_console", "test_case", "build_automation_item"]
-    capabilities_allowed = ["_console_command_extension", "console_authentication_handler"]
+    capabilities = ["console_authentication_handler", "build_automation_item"]
+    capabilities_allowed = []
     dependencies = []
     events_handled = []
     events_registrable = []
-    main_modules = ["main_console.console.main_console_interfaces",
-                    "main_console.console.main_console_system",
-                    "main_console.console.main_console_test"]
+    main_modules = ["main_console.console.main_console_system"]
 
-    console = None
+    console_authentication = None
     console_test_case_class = None
 
     console_command_plugins = []
@@ -167,23 +165,3 @@ class MainConsolePlugin(colony.base.plugin_system.Plugin):
         """
 
         return self.console.create_console_interface_character(console_handler)
-
-    def get_test_case(self):
-        """
-        Retrieves the test case.
-
-        @rtype: TestCase
-        @return: The test case.
-        """
-
-        return self.console_test_case_class
-
-    @colony.base.decorators.load_allowed_capability("_console_command_extension")
-    def console_command_extension_load_allowed(self, plugin, capability):
-        self.console_command_plugins.append(plugin)
-        self.console.console_command_extension_load(plugin)
-
-    @colony.base.decorators.unload_allowed_capability("_console_command_extension")
-    def console_command_extension_unload_allowed(self, plugin, capability):
-        self.console_command_plugins.remove(plugin)
-        self.console.console_command_extension_unload(plugin)
