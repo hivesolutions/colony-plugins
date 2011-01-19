@@ -54,7 +54,7 @@ class SchedulerPlugin(colony.base.plugin_system.Plugin):
     loading_type = colony.base.plugin_system.EAGER_LOADING_TYPE
     platforms = [colony.base.plugin_system.CPYTHON_ENVIRONMENT]
     attributes = {"build_automation_file_path" : "$base{plugin_directory}/misc/scheduler/resources/baf.xml"}
-    capabilities = ["scheduler", "thread", "console_command_extension", "build_automation_item"]
+    capabilities = ["main", "scheduler", "console_command_extension", "build_automation_item"]
     capabilities_allowed = []
     dependencies = [colony.base.plugin_system.PluginDependency(
                     "pt.hive.colony.plugins.misc.guid", "1.0.0"),
