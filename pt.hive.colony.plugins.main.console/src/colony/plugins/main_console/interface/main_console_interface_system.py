@@ -121,9 +121,6 @@ class MainConsoleInterface:
         # creates a new console context
         main_console_context = main_console_plugin.create_console_context()
 
-        # prompts the login using the main console context
-        self._prompt_login(main_console_context)
-
         try:
             # starts the main console interface
             main_console_interface.start({CONSOLE_CONTEXT_VALUE : main_console_context, TEST_VALUE : True})
@@ -140,6 +137,9 @@ class MainConsoleInterface:
             main_console_interface_method = sys.stdin.readline
 
         try:
+            # prompts the login using the main console context
+            self._prompt_login(main_console_context, main_console_interface_method)
+
             # prompts the command line using the main console context
             self._prompt_command_line(main_console_context, main_console_interface_method)
         finally:
@@ -157,15 +157,19 @@ class MainConsoleInterface:
         # notifies the ready semaphore
         self.main_console_interface_plugin.release_ready_semaphore()
 
-    def _prompt_login(self, main_console_context):
+    def _prompt_login(self, main_console_context, main_console_interface_method):
         # unsets the authentication result
         authentication_result = None
 
-        # iterates continuously
-        while True:
-            # retrieves the username and password
-            username = raw_input(LOGIN_AS_MESSAGE + ": ")
-            password = raw_input(PASSWORD_MESSAGE + ": ")
+        # if the continue flag is valid continues the iteration
+        while self.continue_flag:
+            # prompts the login as message using the main console
+            # interface method, retrieving the username
+            username = self._prompt_value(LOGIN_AS_MESSAGE + ": ", main_console_interface_method)
+
+            # prompts the password message using the main console
+            # interface method, retrieving the password
+            password = self._prompt_value(PASSWORD_MESSAGE + ": ", main_console_interface_method)
 
             # authenticates the user
             authentication_result = main_console_context.authenticate_user(username, password)
@@ -175,8 +179,8 @@ class MainConsoleInterface:
                 # breaks the cycle
                 break
 
-            # prints the login failed message
-            print LOGIN_FAILED_MESSAGE
+            # writes the login failed message
+            sys.stdout.write(LOGIN_FAILED_MESSAGE + "\n")
 
     def _prompt_command_line(self, main_console_context, main_console_interface_method):
         # if the continue flag is valid continues the iteration
@@ -198,6 +202,19 @@ class MainConsoleInterface:
             # processes the command line, outputting the result to
             # the default method
             main_console_context.process_command_line(line, None)
+
+    def _prompt_value(self, message, main_console_interface_method):
+        # writes the message
+        sys.stdout.write(message)
+
+        # retrieves the read value using the main console interface method
+        read_value = main_console_interface_method()
+
+        # strips the read value
+        read_value = read_value.rstrip("\n")
+
+        # returns the read value
+        return read_value
 
     def _print_caret(self, main_console_context):
         # retrieves the main console user
