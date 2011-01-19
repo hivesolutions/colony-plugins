@@ -182,6 +182,9 @@ class MainConsoleInterface:
             # writes the login failed message
             sys.stdout.write(LOGIN_FAILED_MESSAGE + "\n")
 
+            # flushes the standard output
+            sys.stdout.flush()
+
     def _prompt_command_line(self, main_console_context, main_console_interface_method):
         # if the continue flag is valid continues the iteration
         while self.continue_flag:
@@ -206,6 +209,9 @@ class MainConsoleInterface:
     def _prompt_value(self, message, main_console_interface_method):
         # writes the message
         sys.stdout.write(message)
+
+        # flushes the standard output
+        sys.stdout.flush()
 
         # retrieves the read value using the main console interface method
         read_value = main_console_interface_method()
