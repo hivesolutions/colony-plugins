@@ -121,6 +121,9 @@ class MainConsoleInterface:
         # creates a new console context
         main_console_context = main_console_plugin.create_console_context()
 
+        # prompts the login using the main console context
+        self._prompt_login(main_console_context)
+
         try:
             # starts the main console interface
             main_console_interface.start({CONSOLE_CONTEXT_VALUE : main_console_context, TEST_VALUE : True})
@@ -137,10 +140,7 @@ class MainConsoleInterface:
             main_console_interface_method = sys.stdin.readline
 
         try:
-            # prompts the login
-            self._prompt_login(main_console_context)
-
-            # prompts the command line
+            # prompts the command line using the main console context
             self._prompt_command_line(main_console_context, main_console_interface_method)
         finally:
             # stops the main console interface
