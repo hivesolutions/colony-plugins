@@ -217,7 +217,7 @@ class MainConsoleInterface:
         read_value = main_console_interface_method()
 
         # strips the read value
-        read_value = read_value.rstrip("\n")
+        read_value = read_value and read_value.rstrip("\n") or read_value
 
         # returns the read value
         return read_value
