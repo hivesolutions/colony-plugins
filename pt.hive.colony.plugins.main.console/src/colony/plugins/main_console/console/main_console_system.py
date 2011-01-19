@@ -620,12 +620,19 @@ class ConsoleContext(colony.libs.protection_util.Protected):
 
     @colony.libs.protection_util.public
     def authenticate_user(self, username, password):
-        # tries to authenticate the user retrieving the result
-        authentication_result = self.main_console.authenticate_user(username, password, self)
+        try:
+            # tries to authenticate the user retrieving the result
+            authentication_result = self.main_console.authenticate_user(username, password, self)
 
-        # sets the user value according to the
-        # authentication result
-        self.user = authentication_result and username or None
+            # sets the user value according to the
+            # authentication result
+            self.user = authentication_result and username or None
+        except BaseException, exception:
+            # prints a debug message
+            self.main_console.main_console_plugin.debug("Problem authenticating user: %s" % unicode(exception))
+
+            # invalidates the user as the authentication failed
+            self.user = None
 
         # returns the user
         return self.user
