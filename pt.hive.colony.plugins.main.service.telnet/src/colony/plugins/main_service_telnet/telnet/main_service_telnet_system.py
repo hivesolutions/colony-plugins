@@ -165,7 +165,7 @@ class MainServiceTelnet:
         colony.libs.map_util.map_copy(service_configuration, self.telnet_service_configuration)
 
     def unset_service_configuration_property(self):
-        # cleans the http service configuration
+        # cleans the telnet service configuration
         colony.libs.map_util.map_clean(self.telnet_service_configuration)
 
     def _get_service_configuration(self):
