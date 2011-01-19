@@ -132,6 +132,8 @@ class Scheduler:
                 break
 
             try:
+                print "running the scheduler"
+
                 # runs the scheduler
                 self.scheduler.run()
             except scheduler_exceptions.SchedulerCancel:
