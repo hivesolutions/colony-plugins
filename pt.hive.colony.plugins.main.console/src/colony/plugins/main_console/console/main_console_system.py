@@ -77,6 +77,9 @@ class MainConsole:
     main_console_plugin = None
     """ The main console plugin """
 
+    main_console_authentication = None
+    """ The main console authentication """
+
     commands_map = {}
     """ The map with the command association with the command information """
 
@@ -95,6 +98,9 @@ class MainConsole:
 
         self.commands_map = {}
         self.console_configuration = {}
+
+        # creates the main console authentication
+        self.main_console_authentication = main_console_authentication.MainConsoleAuthentication(main_console_plugin)
 
     def create_console_context(self):
         """
@@ -122,13 +128,15 @@ class MainConsole:
         return main_console_interfaces.MainConsoleInterfaceCharacter(self, console_handler, console_context)
 
     def authenticate_user(self, username, password, console_context = None):
-
-        main_authentication = main_console_authentication.MainConsoleAuthentication(self.main_console_plugin)
-
         # retrieves the authentication properties from the console configuration
         authentication_properties = self.console_configuration.get("authentication_properties", {})
 
-        return main_authentication.handle_authentication(username, password, authentication_properties)
+        # handles the authentication with the main console authentication and
+        # retrieves the authentication result
+        authentication_result = self.main_console_authentication.handle_authentication(username, password, authentication_properties)
+
+        # returns the authentication result
+        return authentication_result
 
     def process_command_line(self, command_line, output_method = None, console_context = None):
         """
