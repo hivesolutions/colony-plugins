@@ -57,8 +57,17 @@ try:
 except:
     pass
 
-CARET = ">>"
+CARET = "$"
 """ The caret to be used in the console display """
+
+LOGIN_AS_MESSAGE = "Login as"
+""" The login as message """
+
+PASSWORD_MESSAGE = "Password"
+""" The password message """
+
+LOGIN_FAILED_MESSAGE = "Login failed, try again..."
+""" The login failed message """
 
 TEST_VALUE = "test"
 """ The test value """
@@ -125,25 +134,11 @@ class MainConsoleInterface:
             main_console_interface_method = sys.stdin.readline
 
         try:
-            # if the continue flag is valid continues the iteration
-            while self.continue_flag:
-                # prints the caret
-                self._print_caret()
+            # prompts the login
+            self._prompt_login(main_console_context)
 
-                # flushes the standard output
-                sys.stdout.flush()
-
-                # retrieves the line using the main console interface method
-                line = main_console_interface_method()
-
-                # in case there is no valid line
-                if not line:
-                    # continues the cycle
-                    continue
-
-                # processes the command line, outputting the result to
-                # the default method
-                main_console_context.process_command_line(line, None)
+            # prompts the command line
+            self._prompt_command_line(main_console_context, main_console_interface_method)
         finally:
             # stops the main console interface
             main_console_interface.stop({})
@@ -159,6 +154,57 @@ class MainConsoleInterface:
         # notifies the ready semaphore
         self.main_console_interface_plugin.release_ready_semaphore()
 
-    def _print_caret(self):
+    def _prompt_login(self, main_console_context):
+        # unsets the authentication result
+        authentication_result = None
+
+        # iterates continuously
+        while True:
+            # retrieves the username and password
+            username = raw_input(LOGIN_AS_MESSAGE + ": ")
+            password = raw_input(PASSWORD_MESSAGE + ": ")
+
+            # authenticates the user
+            authentication_result = main_console_context.authenticate_user(username, password)
+
+            # in case the authentication as succeed
+            if authentication_result:
+                # breaks the cycle
+                break
+
+            # prints the login failed message
+            print LOGIN_FAILED_MESSAGE
+
+    def _prompt_command_line(self, main_console_context, main_console_interface_method):
+        # if the continue flag is valid continues the iteration
+        while self.continue_flag:
+            # prints the caret
+            self._print_caret(main_console_context)
+
+            # flushes the standard output
+            sys.stdout.flush()
+
+            # retrieves the line using the main console interface method
+            line = main_console_interface_method()
+
+            # in case there is no valid line
+            if not line:
+                # continues the cycle
+                continue
+
+            # processes the command line, outputting the result to
+            # the default method
+            main_console_context.process_command_line(line, None)
+
+    def _print_caret(self, main_console_context):
+        # retrieves the main console user
+        main_console_user = main_console_context.get_user()
+
+        # retrieves the main console base name
+        main_console_base_name = main_console_context.get_base_name()
+
+        # writes the start line value
+        sys.stdout.write("[%s@%s]" % (main_console_user, main_console_base_name))
+
         # writes the caret character
         sys.stdout.write(CARET + " ")

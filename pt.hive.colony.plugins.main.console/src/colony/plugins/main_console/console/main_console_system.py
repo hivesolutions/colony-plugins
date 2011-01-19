@@ -43,8 +43,10 @@ import sys
 import types
 
 import colony.libs.map_util
+import colony.libs.protection_util
 
 import main_console_interfaces
+import main_console_authentication
 
 COMMAND_EXCEPTION_MESSAGE = "there was an exception"
 """ The command exception message """
@@ -78,6 +80,9 @@ class MainConsole:
     commands_map = {}
     """ The map with the command association with the command information """
 
+    console_configuration = {}
+    """ The console configuation configuration """
+
     def __init__(self, main_console_plugin):
         """
         Constructor of the class.
@@ -89,6 +94,7 @@ class MainConsole:
         self.main_console_plugin = main_console_plugin
 
         self.commands_map = {}
+        self.console_configuration = {}
 
     def create_console_context(self):
         """
@@ -99,6 +105,15 @@ class MainConsole:
         """
 
         return ConsoleContext(self)
+
+    def authenticate_user(self, username, password, console_context = None):
+
+        main_authentication = main_console_authentication.MainConsoleAuthentication(self.main_console_plugin)
+
+        # retrieves the authentication properties from the console configuration
+        authentication_properties = self.console_configuration.get("authentication_properties", {})
+
+        return main_authentication.handle_authentication(username, password, authentication_properties)
 
     def process_command_line(self, command_line, output_method = None, console_context = None):
         """
@@ -265,6 +280,20 @@ class MainConsole:
 
         # removes the plugin commands map from the plugins commands map
         colony.libs.map_util.map_remove(commands_map, self.commands_map)
+
+    def set_configuration_property(self, configuration_property):
+        # retrieves the configuration
+        configuration = configuration_property.get_data()
+
+        # cleans the console configuration
+        colony.libs.map_util.map_clean(self.console_configuration)
+
+        # copies the service configuration to the console configuration configuration
+        colony.libs.map_util.map_copy(configuration, self.console_configuration)
+
+    def unset_configuration_property(self):
+        # cleans the console configuration
+        colony.libs.map_util.map_clean(self.console_configuration)
 
     def split_command_line_arguments(self, command_line, include_extra_space = False):
         """
@@ -552,7 +581,7 @@ class MainConsole:
         # returns the best match
         return best_match
 
-class ConsoleContext:
+class ConsoleContext(colony.libs.protection_util.Protected):
     """
     The console context class.
     """
@@ -579,15 +608,46 @@ class ConsoleContext:
         # sets the current path in the context
         self.path = os.getcwd()
 
+    @colony.libs.protection_util.public
+    def authenticate_user(self, username, password):
+        # tries to authenticate the user retrieving the result
+        authentication_result = self.main_console.authenticate_user(username, password, self)
+
+        # sets the user value according to the
+        # authentication result
+        self.user = authentication_result and username or None
+
+        # returns the user
+        return self.user
+
+    @colony.libs.protection_util.public
     def process_command_line(self, command_line, output_method):
         return self.main_console.process_command_line(command_line, output_method, self)
 
+    @colony.libs.protection_util.public
     def get_command_line_alternatives(self, command, arguments):
         return self.main_console.get_command_line_alternatives(command, arguments)
 
+    @colony.libs.protection_util.public
     def create_console_interface_character(self, console_handler):
         return self.main_console.create_console_interface_character(console_handler)
 
+    @colony.libs.protection_util.public
+    def get_base_name(self):
+        """
+        Returns the base name.
+
+        @rtype: String
+        @return: The base name.
+        """
+
+        # retrieves the base name
+        base_name = os.path.basename(self.path)
+
+        # returns the base name
+        return base_name
+
+    @colony.libs.protection_util.public
     def get_path(self):
         """
         Returns the path.
@@ -608,6 +668,7 @@ class ConsoleContext:
 
         return self.path
 
+    @colony.libs.protection_util.public
     def get_user(self):
         """
         Returns the user.

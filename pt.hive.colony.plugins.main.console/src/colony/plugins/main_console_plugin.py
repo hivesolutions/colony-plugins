@@ -58,7 +58,8 @@ class MainConsolePlugin(colony.base.plugin_system.Plugin):
     attributes = {"build_automation_file_path" : "$base{plugin_directory}/main_console/console/resources/baf.xml"}
     capabilities = ["main_console", "test_case", "build_automation_item"]
     capabilities_allowed = ["_console_command_extension", "console_authentication_handler"]
-    dependencies = []
+    dependencies = [colony.base.plugin_system.PluginDependency(
+                    "pt.hive.colony.plugins.main.authentication", "1.0.0")]
     events_handled = []
     events_registrable = []
     main_modules = ["main_console.console.main_console_authentication",
@@ -71,6 +72,8 @@ class MainConsolePlugin(colony.base.plugin_system.Plugin):
     console_test_case_class = None
 
     console_command_plugins = []
+
+    main_authentication_plugin = None
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
@@ -98,8 +101,17 @@ class MainConsolePlugin(colony.base.plugin_system.Plugin):
     def unload_allowed(self, plugin, capability):
         colony.base.plugin_system.Plugin.unload_allowed(self, plugin, capability)
 
+    @colony.base.decorators.inject_dependencies("pt.hive.colony.plugins.main.console", "1.0.0")
     def dependency_injected(self, plugin):
         colony.base.plugin_system.Plugin.dependency_injected(self, plugin)
+
+    @colony.base.decorators.set_configuration_property("pt.hive.colony.plugins.main.console", "1.0.0")
+    def set_configuration_property(self, property_name, property):
+        colony.base.plugin_system.Plugin.set_configuration_property(self, property_name, property)
+
+    @colony.base.decorators.unset_configuration_property("pt.hive.colony.plugins.main.console", "1.0.0")
+    def unset_configuration_property(self, property_name):
+        colony.base.plugin_system.Plugin.unset_configuration_property(self, property_name)
 
     def execute_command_line(self, command_line):
         return self.console.process_command_line(command_line, None)
@@ -157,3 +169,18 @@ class MainConsolePlugin(colony.base.plugin_system.Plugin):
     def console_command_extension_unload_allowed(self, plugin, capability):
         self.console_command_plugins.remove(plugin)
         self.console.console_command_extension_unload(plugin)
+
+    def get_main_authentication_plugin(self):
+        return self.main_authentication_plugin
+
+    @colony.base.decorators.plugin_inject("pt.hive.colony.plugins.main.authentication")
+    def set_main_authentication_plugin(self, main_authentication_plugin):
+        self.main_authentication_plugin = main_authentication_plugin
+
+    @colony.base.decorators.set_configuration_property_method("configuration")
+    def configuration_set_configuration_property(self, property_name, property):
+        self.console.set_configuration_property(property)
+
+    @colony.base.decorators.unset_configuration_property_method("configuration")
+    def configuration_unset_configuration_property(self, property_name):
+        self.console.unset_configuration_property()
