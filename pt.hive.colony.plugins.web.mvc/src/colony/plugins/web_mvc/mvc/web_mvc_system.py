@@ -193,7 +193,7 @@ class WebMvc:
             communication_path_match = communication_matching_regex.match(resource_path)
 
             # in case there is no valid communication path match
-            if not resource_path_match:
+            if not communication_path_match:
                 # continues the loop
                 continue
 
