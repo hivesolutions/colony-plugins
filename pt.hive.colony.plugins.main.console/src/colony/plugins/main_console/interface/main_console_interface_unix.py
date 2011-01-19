@@ -80,6 +80,9 @@ LFLAG = 3
 CC = 6
 """ The cc value """
 
+CONSOLE_CONTEXT_VALUE = "console_context"
+""" The console context value """
+
 TEST_VALUE = "test"
 """ The test value """
 
@@ -102,6 +105,9 @@ class MainConsoleInterfaceUnix:
 
     main_console_interface_character = None
     """ The main console interface character """
+
+    console_context = None
+    """ The console context """
 
     stdin_file_number = None
     """ The standard input file number """
@@ -135,8 +141,14 @@ class MainConsoleInterfaceUnix:
         # retrieves the main console plugin
         main_console_plugin = self.main_console_interface_plugin.main_console_plugin
 
+        # retrieves the console context
+        console_context = arguments.get(CONSOLE_CONTEXT_VALUE, None)
+
         # retrieves the test value
         test = arguments.get(TEST_VALUE, True)
+
+        # sets the console context
+        self.console_context = console_context
 
         # in case test mode is not enabled
         # runs the test
@@ -169,13 +181,16 @@ class MainConsoleInterfaceUnix:
         # creates the new flags from the old flags
         self.new_flags = self.old_flags | os.O_NONBLOCK #@UndefinedVariable
 
-        # creates he main console interface character
-        self.main_console_interface_character = main_console_plugin.create_console_interface_character(self)
+        # creates the main console interface character
+        self.main_console_interface_character = main_console_plugin.create_console_interface_character(self, self.console_context)
 
         # starts the main console interface character
         self.main_console_interface_character.start({})
 
     def stop(self, arguments):
+        # unsets the console context
+        self.console_context = None
+
         # sets the old terminal reference in the standard input
         (not self.old_terminal_reference == None) and termios.tcsetattr(self.stdin_file_number, termios.TCSAFLUSH, self.old_terminal_reference)
 
@@ -285,7 +300,7 @@ class MainConsoleInterfaceUnix:
     def _print_caret(self):
         # prints the caret using the main
         # console interface
-        self.main_console_interface._print_caret()
+        self.main_console_interface._print_caret(self.console_context)
 
     def _remove_character(self):
         """

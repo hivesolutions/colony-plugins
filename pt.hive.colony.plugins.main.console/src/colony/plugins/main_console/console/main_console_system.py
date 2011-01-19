@@ -106,6 +106,21 @@ class MainConsole:
 
         return ConsoleContext(self)
 
+    def create_console_interface_character(self, console_handler, console_context):
+        """
+        Creates a new console interface character based
+        from the given console handler.
+
+        @type console_handler: ConsoleHandler
+        @param console_handler: The console handler to be used.
+        @type console_context: ConsoleContext
+        @param console_context: The console context to be used.
+        @rtype: ConsoleInterfaceCharacter
+        @return: The create console interface character.
+        """
+
+        return main_console_interfaces.MainConsoleInterfaceCharacter(self, console_handler, console_context)
+
     def authenticate_user(self, username, password, console_context = None):
 
         main_authentication = main_console_authentication.MainConsoleAuthentication(self.main_console_plugin)
@@ -253,19 +268,6 @@ class MainConsole:
 
         # returns the command tuple
         return command_tuple
-
-    def create_console_interface_character(self, console_handler):
-        """
-        Creates a new console interface character based
-        from the given console handler.
-
-        @type console_handler: ConsoleHandler
-        @param console_handler: The console handler to be used.
-        @rtype: ConsoleInterfaceCharacter
-        @return: The create console interface character.
-        """
-
-        return main_console_interfaces.MainConsoleInterfaceCharacter(self, console_handler)
 
     def console_command_extension_load(self, console_command_extension_plugin):
         # retrieves the commands map from the console command extension

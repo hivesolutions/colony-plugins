@@ -77,6 +77,9 @@ class MainConsoleInterfaceCharacter:
     console_handler = None
     """ The console handler """
 
+    console_context = None
+    """ The console context """
+
     character_methods_map = {}
     """ The character methods map """
 
@@ -89,7 +92,7 @@ class MainConsoleInterfaceCharacter:
     line_history_list = []
     """ The current line history list """
 
-    def __init__(self, main_console, console_handler):
+    def __init__(self, main_console, console_handler, console_context):
         """
         Constructor of the class.
 
@@ -97,10 +100,13 @@ class MainConsoleInterfaceCharacter:
         @param main_console: The main console.
         @type console_handler: ConsoleHandler
         @param console_handler: The console handler to be used.
+        @type console_context: ConsoleContext
+        @param console_context: The console context to be used.
         """
 
         self.main_console = main_console
         self.console_handler = console_handler
+        self.console_context = console_context
 
         self.character_methods_map = {BACKSPACE_CHARACTER_ORDINAL : self._process_backspace_character,
                                       TAB_CHARACTER_ORDINAL : self._process_tab_character,

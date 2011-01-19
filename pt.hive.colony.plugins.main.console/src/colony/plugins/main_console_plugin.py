@@ -113,9 +113,6 @@ class MainConsolePlugin(colony.base.plugin_system.Plugin):
     def unset_configuration_property(self, property_name):
         colony.base.plugin_system.Plugin.unset_configuration_property(self, property_name)
 
-    def execute_command_line(self, command_line):
-        return self.console.process_command_line(command_line, None)
-
     def create_console_context(self):
         """
         Creates a new console context for third party usage.
@@ -125,6 +122,34 @@ class MainConsolePlugin(colony.base.plugin_system.Plugin):
         """
 
         return self.console.create_console_context()
+
+    def create_console_interface_character(self, console_handler, console_context):
+        """
+        Creates a new console interface character based
+        from the given console handler.
+
+        @type console_handler: ConsoleHandler
+        @param console_handler: The console handler to be used.
+        @type console_context: ConsoleContext
+        @param console_context: The console context to be used.
+        @rtype: ConsoleInterfaceCharacter
+        @return: The create console interface character.
+        """
+
+        return self.console.create_console_interface_character(console_handler, console_context)
+
+    def execute_command_line(self, command_line):
+        """
+        Executes the given command line using the default
+        output method.
+
+        @type command_line: String
+        @param command_line: The command line to be executed.
+        @rtype: bool
+        @return: If the execution of the command line was successful.
+        """
+
+        return self.console.process_command_line(command_line, None)
 
     def process_command_line(self, command_line, output_method):
         """

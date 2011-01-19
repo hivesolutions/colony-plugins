@@ -69,6 +69,9 @@ PASSWORD_MESSAGE = "Password"
 LOGIN_FAILED_MESSAGE = "Login failed, try again..."
 """ The login failed message """
 
+CONSOLE_CONTEXT_VALUE = "console_context"
+""" The console context value """
+
 TEST_VALUE = "test"
 """ The test value """
 
@@ -120,7 +123,7 @@ class MainConsoleInterface:
 
         try:
             # starts the main console interface
-            main_console_interface.start({TEST_VALUE : True})
+            main_console_interface.start({CONSOLE_CONTEXT_VALUE : main_console_context, TEST_VALUE : True})
 
             # sets the main console interface get line method
             # as the main console interface method

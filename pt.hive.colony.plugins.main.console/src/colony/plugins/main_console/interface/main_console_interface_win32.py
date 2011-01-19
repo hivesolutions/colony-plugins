@@ -53,6 +53,9 @@ ASYNCHRONOUS_MODE_VALUE = 0x4000
 SPECIAL_CHARACTER_ORDINAL_VALUE = 0xe0
 """ The special character ordinal value """
 
+CONSOLE_CONTEXT_VALUE = "console_context"
+""" The console context value """
+
 TEST_VALUE = "test"
 """ The test value """
 
@@ -69,6 +72,9 @@ class MainConsoleInterfaceWin32:
 
     main_console_interface_character = None
     """ The main console interface character """
+
+    console_context = None
+    """ The console context """
 
     def __init__(self, main_console_interface_plugin, main_console_interface):
         """
@@ -87,20 +93,29 @@ class MainConsoleInterfaceWin32:
         # retrieves the main console plugin
         main_console_plugin = self.main_console_interface_plugin.main_console_plugin
 
+        # retrieves the console context
+        console_context = arguments.get(CONSOLE_CONTEXT_VALUE, None)
+
         # retrieves the test value
         test = arguments.get(TEST_VALUE, True)
+
+        # sets the console context
+        self.console_context = console_context
 
         # in case test mode is not enabled
         # runs the test
         test and self._run_test()
 
-        # creates he main console interface character
-        self.main_console_interface_character = main_console_plugin.create_console_interface_character(self)
+        # creates the main console interface character
+        self.main_console_interface_character = main_console_plugin.create_console_interface_character(self, self.console_context)
 
         # starts the main console interface character
         self.main_console_interface_character.start({})
 
     def stop(self, arguments):
+        # unsets the console context
+        self.console_context = None
+
         # stops the main console interface character
         self.main_console_interface_character and self.main_console_interface_character.stop({})
 
@@ -187,7 +202,7 @@ class MainConsoleInterfaceWin32:
     def _print_caret(self):
         # prints the caret using the main
         # console interface
-        self.main_console_interface._print_caret()
+        self.main_console_interface._print_caret(self.console_context)
 
     def _remove_character(self):
         """
