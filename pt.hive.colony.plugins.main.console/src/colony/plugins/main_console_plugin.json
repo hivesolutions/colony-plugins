@@ -9,8 +9,11 @@
     "version" : "1.0.0",
     "author" : "Hive Solutions Lda. <development@hive.pt>",
     "capabilities" : ["main_console", "test_case", "build_automation_item"],
-    "capabilities_allowed" : ["console_command_extension"],
-    "dependencies" : [],
+    "capabilities_allowed" : ["_console_command_extension", "console_authentication_handler"],
+    "dependencies" : [{
+                "id" : "pt.hive.colony.plugins.main.authentication",
+                "version" : "1.0.0"
+            }],
     "main_file" : "main_console_plugin.py",
     "resources" : ["main_console_plugin.py", "main_console/__init__.py",
             "main_console/console/__init__.py",
