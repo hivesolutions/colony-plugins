@@ -40,6 +40,8 @@
             "resources/resource_manager/resources/hive_openid_main/development/resources.xml",
             "resources/resource_manager/resources/information_user/configuration.py",
             "resources/resource_manager/resources/information_user/resources.xml",
+            "resources/resource_manager/resources/main_console/run_mode/development/configuration.py",
+            "resources/resource_manager/resources/main_console/run_mode/development/resources.xml",
             "resources/resource_manager/resources/main_service_abecula_communication_push_handler/run_mode/development/configuration.py",
             "resources/resource_manager/resources/main_service_abecula_communication_push_handler/run_mode/development/resources.xml",
             "resources/resource_manager/resources/main_service_dns/run_mode/development/configuration.py",
