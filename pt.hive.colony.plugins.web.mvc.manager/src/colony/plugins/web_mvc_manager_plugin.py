@@ -68,7 +68,8 @@ class WebMvcManagerPlugin(colony.base.plugin_system.Plugin):
                     "pt.hive.colony.plugins.main.packing.manager", "1.0.0")]
     events_handled = ["web.mvc.patterns", "web.mvc.communication"]
     events_registrable = ["web.mvc.side_panel_reload"]
-    main_modules = ["web_mvc_manager.manager.web_mvc_manager_controllers",
+    main_modules = ["web_mvc_manager.manager.web_mvc_manager_communication_controllers",
+                    "web_mvc_manager.manager.web_mvc_manager_controllers",
                     "web_mvc_manager.manager.web_mvc_manager_exceptions",
                     "web_mvc_manager.manager.web_mvc_manager_helpers",
                     "web_mvc_manager.manager.web_mvc_manager_system"]

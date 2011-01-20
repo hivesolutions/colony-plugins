@@ -81,8 +81,122 @@ PROVIDING_VALUE = "providing"
 ALLOWING_VALUE = "allowing"
 """ The allowing value """
 
+NORMAL_ENCODER_NAME = None
+""" The normal encoder name """
+
 # imports the web mvc utils
 web_mvc_utils = colony.libs.importer_util.__importer__(WEB_MVC_UTILS_VALUE)
+
+class WebMvcManagerMainController:
+    """
+    The web mvc manager main controller.
+    """
+
+    web_mvc_manager_plugin = None
+    """ The web mvc manager plugin """
+
+    web_mvc_manager = None
+    """ The web mvc manager """
+
+    def __init__(self, web_mvc_manager_plugin, web_mvc_manager):
+        """
+        Constructor of the class.
+
+        @type web_mvc_manager_plugin: WebMvcManagerPlugin
+        @param web_mvc_manager_plugin: The web mvc manager plugin.
+        @type web_mvc_manager: WebMvcManager
+        @param web_mvc_manager: The web mvc manager.
+        """
+
+        self.web_mvc_manager_plugin = web_mvc_manager_plugin
+        self.web_mvc_manager = web_mvc_manager
+
+    def start(self):
+        """
+        Method called upon structure initialization.
+        """
+
+        # retrieves the plugin manager
+        plugin_manager = self.web_mvc_manager_plugin.manager
+
+        # retrieves the web mvc manager plugin path
+        web_mvc_manager_plugin_path = plugin_manager.get_plugin_path_by_id(self.web_mvc_manager_plugin.id)
+
+        # creates the templates path
+        templates_path = web_mvc_manager_plugin_path + "/" + TEMPLATES_PATH
+
+        # sets the templates path
+        self.set_templates_path(templates_path)
+
+    def handle_web_mvc_manager_index(self, rest_request, parameters = {}):
+        """
+        Handles the given web mvc manager index rest request.
+
+        @type rest_request: RestRequest
+        @param rest_request: The web mvc manager index rest request
+        to be handled.
+        @type parameters: Dictionary
+        @param parameters: The handler parameters.
+        @rtype: bool
+        @return: The result of the handling.
+        """
+
+        # retrieves the template file
+        template_file = self.retrieve_template_file("general.html.tpl")
+
+        # applies the base path to the template file
+        self.apply_base_path_template_file(rest_request, template_file)
+
+        # processes the template file and sets the request contents
+        self.process_set_contents(rest_request, template_file)
+
+        # returns true
+        return True
+
+    def generate_handle_handle_web_mvc_manager_page_item(self, original_handler):
+        """
+        Generates a composite handler from the original page item handler.
+
+        @type original_handler: Method
+        @param original_handler: The original page item handler.
+        @rtype: Method
+        @return: The generated handler method.
+        """
+
+        def handle_web_mvc_manager_page_item(rest_request, parameters = {}):
+            # returns in case the required permissions are not set
+            if not self.web_mvc_manager.require_permissions(self, rest_request):
+                return True
+
+            # in case the encoder name is normal
+            if rest_request.encoder_name == NORMAL_ENCODER_NAME:
+                # retrieves the template file
+                template_file = self.retrieve_template_file("general.html.tpl")
+
+                # assigns the configuration (side panel) variables to the template
+                self.web_mvc_manager.web_mvc_manager_side_panel_controller._assign_configuration_variables(template_file)
+
+                # assigns the header variables to the template
+                self.web_mvc_manager.web_mvc_manager_header_controller._assign_header_variables(template_file)
+            else:
+                # sets the template file to invalid
+                template_file = None
+
+            # retrieves the web mvc manager search helper
+            web_mvc_manager_search_helper = self.web_mvc_manager.web_mvc_manager_search_helper
+
+            # retrieves the web mvc manager communication helper
+            web_mvc_manager_communication_helper = self.web_mvc_manager.web_mvc_manager_communication_helper
+
+            # extens the paramters map with the template file reference
+            handler_parameters = colony.libs.map_util.map_extend(parameters, {"template_file" : template_file,
+                                                                              "search_helper" : web_mvc_manager_search_helper,
+                                                                              "communication_helper" : web_mvc_manager_communication_helper})
+
+            # sends the request to the original handler and returns the result
+            return original_handler(rest_request, handler_parameters)
+
+        return handle_web_mvc_manager_page_item
 
 class SidePanelController:
     """

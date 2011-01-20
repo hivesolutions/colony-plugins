@@ -32,6 +32,7 @@
             "web_mvc_manager_plugin.py",
             "web_mvc_manager/__init__.py",
             "web_mvc_manager/manager/__init__.py",
+            "web_mvc_manager/manager/web_mvc_manager_communication_controllers.py",
             "web_mvc_manager/manager/web_mvc_manager_controllers.py",
             "web_mvc_manager/manager/web_mvc_manager_exceptions.py",
             "web_mvc_manager/manager/web_mvc_manager_helpers.py",
