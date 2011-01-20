@@ -43,6 +43,9 @@ import colony.libs.structures_util
 
 import web_mvc_wiki_exceptions
 
+DEFAULT_ENCODING = "utf-8"
+""" The default encoding value """
+
 WEB_MVC_WIKI_RESOURCES_PATH = "web_mvc_wiki/mvc_wiki/resources"
 """ The web mvc wiki resources path """
 
