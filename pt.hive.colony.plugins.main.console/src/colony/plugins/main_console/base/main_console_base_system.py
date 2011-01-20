@@ -98,15 +98,17 @@ class MainConsoleBase:
     def get_commands_map(self):
         return self.commands_map
 
-    def process_help(self, args, output_method):
+    def process_help(self, arguments, output_method, console_context):
         """
         Processes the help command, with the given
         arguments and output method.
 
-        @type args: List
-        @param args: The arguments for the processing.
+        @type arguments: List
+        @param arguments: The arguments for the processing.
         @type output_method: Method
         @param output_method: The output method to be used in the processing.
+        @type console_context: ConsoleContext
+        @param console_context: The console context for the processing.
         """
 
         # retrieves the main console plugin
@@ -122,15 +124,17 @@ class MainConsoleBase:
 #                if console_command_plugin_console_extension_name == extension_name:
 #                    output_method(console_command_plugin.get_help())
 
-    def process_helpall(self, args, output_method):
+    def process_helpall(self, arguments, output_method, console_context):
         """
         Processes the help all command, with the given
         arguments and output method.
 
-        @type args: List
-        @param args: The arguments for the processing.
+        @type arguments: List
+        @param arguments: The arguments for the processing.
         @type output_method: Method
         @param output_method: The output method to be used in the processing.
+        @type console_context: ConsoleContext
+        @param console_context: The console context for the processing.
         """
 
         # retrieves the main console plugin
@@ -141,15 +145,17 @@ class MainConsoleBase:
 #        for console_command_plugin in main_console_plugin.console_command_plugins:
 #            output_method(console_command_plugin.get_help())
 
-    def process_extensions(self, args, output_method):
+    def process_extensions(self, arguments, output_method, console_context):
         """
         Processes the extensions command, with the given
         arguments and output method.
 
-        @type args: List
-        @param args: The arguments for the processing.
+        @type arguments: List
+        @param arguments: The arguments for the processing.
         @type output_method: Method
         @param output_method: The output method to be used in the processing.
+        @type console_context: ConsoleContext
+        @param console_context: The console context for the processing.
         """
 
         # retrieves the plugin manager
@@ -178,15 +184,17 @@ class MainConsoleBase:
 
             output_method(console_command_plugin.id + "\n", False)
 
-    def process_status(self, args, output_method):
+    def process_status(self, arguments, output_method, console_context):
         """
         Processes the status command, with the given
         arguments and output method.
 
-        @type args: List
-        @param args: The arguments for the processing.
+        @type arguments: List
+        @param arguments: The arguments for the processing.
         @type output_method: Method
         @param output_method: The output method to be used in the processing.
+        @type console_context: ConsoleContext
+        @param console_context: The console context for the processing.
         """
 
         # retrieves the plugin manager
@@ -248,25 +256,27 @@ class MainConsoleBase:
         output_method("replicas:     " + replicas_string)
         output_method("instances:    " + instances_string)
 
-    def process_show(self, args, output_method):
+    def process_show(self, arguments, output_method, console_context):
         """
         Processes the show command, with the given
         arguments and output method.
 
-        @type args: List
-        @param args: The arguments for the processing.
+        @type arguments: List
+        @param arguments: The arguments for the processing.
         @type output_method: Method
         @param output_method: The output method to be used in the processing.
+        @type console_context: ConsoleContext
+        @param console_context: The console context for the processing.
         """
 
         # retrieves the plugin manager
         plugin_manager = self.main_console_base_plugin.manager
 
         # retrieves the arguments length
-        arguments_length = len(args)
+        arguments_length = len(arguments)
 
         # retrieves the plugin id
-        plugin_id = arguments_length > 0 and args[0] or None
+        plugin_id = arguments_length > 0 and arguments[0] or None
 
         # in case the plugin id is defined
         if plugin_id:
@@ -307,25 +317,27 @@ class MainConsoleBase:
                 output_method("INACTIVE" + "    ", False)
             output_method(plugin_instance.id + "\n", False)
 
-    def process_info(self, args, output_method):
+    def process_info(self, arguments, output_method, console_context):
         """
         Processes the info command, with the given
         arguments and output method.
 
-        @type args: List
-        @param args: The arguments for the processing.
+        @type arguments: List
+        @param arguments: The arguments for the processing.
         @type output_method: Method
         @param output_method: The output method to be used in the processing.
+        @type console_context: ConsoleContext
+        @param console_context: The console context for the processing.
         """
 
         # retrieves the plugin manager
         plugin_manager = self.main_console_base_plugin.manager
 
-        if len(args) < 1:
+        if len(arguments) < 1:
             output_method(INVALID_NUMBER_ARGUMENTS_MESSAGE)
             return
 
-        plugin_id = self.get_plugin_id(args[0])
+        plugin_id = self.get_plugin_id(arguments[0])
 
         if plugin_id in plugin_manager.loaded_plugins_map:
             plugin = plugin_manager.loaded_plugins_map[plugin_id]
@@ -333,15 +345,17 @@ class MainConsoleBase:
         else:
             output_method(INVALID_PLUGIN_ID_MESSAGE)
 
-    def process_infoall(self, args, output_method):
+    def process_infoall(self, arguments, output_method, console_context):
         """
         Processes the info all command, with the given
         arguments and output method.
 
-        @type args: List
-        @param args: The arguments for the processing.
+        @type arguments: List
+        @param arguments: The arguments for the processing.
         @type output_method: Method
         @param output_method: The output method to be used in the processing.
+        @type console_context: ConsoleContext
+        @param console_context: The console context for the processing.
         """
 
         # retrieves the plugin manager
@@ -350,122 +364,132 @@ class MainConsoleBase:
         for plugin in plugin_manager.plugin_instances:
             self.print_plugin_info(plugin, output_method)
 
-    def process_add(self, args, output_method):
+    def process_add(self, arguments, output_method, console_context):
         """
         Processes the add command, with the given
         arguments and output method.
 
-        @type args: List
-        @param args: The arguments for the processing.
+        @type arguments: List
+        @param arguments: The arguments for the processing.
         @type output_method: Method
         @param output_method: The output method to be used in the processing.
+        @type console_context: ConsoleContext
+        @param console_context: The console context for the processing.
         """
 
         # retrieves the plugin manager
         plugin_manager = self.main_console_base_plugin.manager
 
-        if len(args) < 1:
+        if len(arguments) < 1:
             output_method(INVALID_NUMBER_ARGUMENTS_MESSAGE)
             return
 
-        plugin_id = self.get_plugin_id(args[0])
+        plugin_id = self.get_plugin_id(arguments[0])
 
         if plugin_id in plugin_manager.plugin_instances_map:
             output_method(INVALID_PLUGIN_ID_MESSAGE)
         else:
             pass
 
-    def process_remove(self, args, output_method):
+    def process_remove(self, arguments, output_method, console_context):
         """
         Processes the remove command, with the given
         arguments and output method.
 
-        @type args: List
-        @param args: The arguments for the processing.
+        @type arguments: List
+        @param arguments: The arguments for the processing.
         @type output_method: Method
         @param output_method: The output method to be used in the processing.
+        @type console_context: ConsoleContext
+        @param console_context: The console context for the processing.
         """
 
         # retrieves the plugin manager
         plugin_manager = self.main_console_base_plugin.manager
 
-        if len(args) < 1:
+        if len(arguments) < 1:
             output_method(INVALID_NUMBER_ARGUMENTS_MESSAGE)
             return
 
-        plugin_id = self.get_plugin_id(args[0])
+        plugin_id = self.get_plugin_id(arguments[0])
 
         if plugin_id in plugin_manager.plugin_instances_map:
             plugin_manager.stop_plugin_complete_by_id(plugin_id)
         else:
             output_method(INVALID_PLUGIN_ID_MESSAGE)
 
-    def process_load(self, args, output_method):
+    def process_load(self, arguments, output_method, console_context):
         """
         Processes the load command, with the given
         arguments and output method.
 
-        @type args: List
-        @param args: The arguments for the processing.
+        @type arguments: List
+        @param arguments: The arguments for the processing.
         @type output_method: Method
         @param output_method: The output method to be used in the processing.
+        @type console_context: ConsoleContext
+        @param console_context: The console context for the processing.
         """
 
         # retrieves the plugin manager
         plugin_manager = self.main_console_base_plugin.manager
 
-        if len(args) < 1:
+        if len(arguments) < 1:
             output_method(INVALID_NUMBER_ARGUMENTS_MESSAGE)
             return
 
-        plugin_id = self.get_plugin_id(args[0])
+        plugin_id = self.get_plugin_id(arguments[0])
 
         if plugin_id in plugin_manager.plugin_instances_map:
             plugin_manager.load_plugin(plugin_id)
         else:
             output_method(INVALID_PLUGIN_ID_MESSAGE)
 
-    def process_unload(self, args, output_method):
+    def process_unload(self, arguments, output_method, console_context):
         """
         Processes the unload command, with the given
         arguments and output method.
 
-        @type args: List
-        @param args: The arguments for the processing.
+        @type arguments: List
+        @param arguments: The arguments for the processing.
         @type output_method: Method
         @param output_method: The output method to be used in the processing.
+        @type console_context: ConsoleContext
+        @param console_context: The console context for the processing.
         """
 
         # retrieves the plugin manager
         plugin_manager = self.main_console_base_plugin.manager
 
-        if len(args) < 1:
+        if len(arguments) < 1:
             output_method(INVALID_NUMBER_ARGUMENTS_MESSAGE)
             return
 
-        plugin_id = self.get_plugin_id(args[0])
+        plugin_id = self.get_plugin_id(arguments[0])
 
         if plugin_id in plugin_manager.plugin_instances_map:
             plugin_manager.unload_plugin(plugin_id)
         else:
             output_method(INVALID_PLUGIN_ID_MESSAGE)
 
-    def process_exec(self, args, output_method):
+    def process_exec(self, arguments, output_method, console_context):
         """
         Processes the exec command, with the given
         arguments and output method.
 
-        @type args: List
-        @param args: The arguments for the processing.
+        @type arguments: List
+        @param arguments: The arguments for the processing.
         @type output_method: Method
         @param output_method: The output method to be used in the processing.
+        @type console_context: ConsoleContext
+        @param console_context: The console context for the processing.
         """
 
-        if len(args) < 1:
+        if len(arguments) < 1:
             output_method(INVALID_NUMBER_ARGUMENTS_MESSAGE)
             return
 
-        file_path = args[0]
+        file_path = arguments[0]
 
         # opens the hcs file
         file = open(file_path, "r")
@@ -486,15 +510,17 @@ class MainConsoleBase:
         # closes the file
         file.close()
 
-    def process_exit(self, args, output_method):
+    def process_exit(self, arguments, output_method, console_context):
         """
         Processes the exit command, with the given
         arguments and output method.
 
-        @type args: List
-        @param args: The arguments for the processing.
+        @type arguments: List
+        @param arguments: The arguments for the processing.
         @type output_method: Method
         @param output_method: The output method to be used in the processing.
+        @type console_context: ConsoleContext
+        @param console_context: The console context for the processing.
         """
 
         # retrieves the plugin manager
@@ -502,23 +528,25 @@ class MainConsoleBase:
 
         plugin_manager.unload_system()
 
-    def process_echo(self, args, output_method):
+    def process_echo(self, arguments, output_method, console_context):
         """
         Processes the echo command, with the given
         arguments and output method.
 
-        @type args: List
-        @param args: The arguments for the processing.
+        @type arguments: List
+        @param arguments: The arguments for the processing.
         @type output_method: Method
         @param output_method: The output method to be used in the processing.
+        @type console_context: ConsoleContext
+        @param console_context: The console context for the processing.
         """
 
-        if len(args) < 1:
+        if len(arguments) < 1:
             output_method(INVALID_NUMBER_ARGUMENTS_MESSAGE)
             return
 
         # retrieves the echo value
-        echo_value = args[0]
+        echo_value = arguments[0]
 
         # outputs the echo value
         output_method(echo_value)

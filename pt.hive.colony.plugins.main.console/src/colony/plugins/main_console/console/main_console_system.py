@@ -182,9 +182,9 @@ class MainConsole:
             return False
 
         try:
-            # runs the command handler with the arguments
-            # and the output method
-            command_handler(arguments, output_method)
+            # runs the command handler with the arguments,
+            # the output method and the console context
+            command_handler(arguments, output_method, console_context)
         except Exception, exception:
             # prints the exception message
             output_method(COMMAND_EXCEPTION_MESSAGE + ": " + unicode(exception))
