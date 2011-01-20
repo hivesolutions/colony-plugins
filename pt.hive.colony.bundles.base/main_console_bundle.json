@@ -11,5 +11,8 @@
                 "id" : "pt.hive.colony.plugins.main.console.interface",
                 "version" : "1.0.0"
             }],
-    "dependencies" : []
+    "dependencies" : [{
+                "id" : "pt.hive.colony.bundles.main.authentication",
+                "version" : "1.0.0"
+            }]
 }
