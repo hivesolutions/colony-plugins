@@ -37,12 +37,7 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-import time
-import copy
-
 import colony.libs.importer_util
-
-import web_mvc_manager_page_item_dns_exceptions
 
 WEB_MVC_UTILS_VALUE = "web_mvc_utils"
 """ The web mvc utils value """
@@ -58,9 +53,6 @@ TEMPLATES_PATH = WEB_MVC_MANAGER_PAGE_ITEM_DNS_RESOURCES_PATH + "/templates"
 
 AJAX_ENCODER_NAME = "ajx"
 """ The ajax encoder name """
-
-JSON_ENCODER_NAME = "json"
-""" The json encoder name """
 
 # imports the web mvc utils
 web_mvc_utils = colony.libs.importer_util.__importer__(WEB_MVC_UTILS_VALUE)
@@ -179,113 +171,14 @@ class WebMvcManagerPageItemDnsController:
         # retrieves the template file
         template_file = self.retrieve_template_file("dns_partial_list_contents.html.tpl")
 
-        # retrieves the filtered repositories
-        filtered_repositories = self._get_fitered_repositories(rest_request)
+        # retrieves the filtered dns zones
+        filtered_dns_zones = self._get_fitered_dns_zones(rest_request)
 
-        # retrieves the partial filter from the filtered repositories
-        partial_filtered_repositories, start_record, number_records, total_number_records = search_helper.partial_filter(rest_request, filtered_repositories)
+        # retrieves the partial filter from the filtered dns zones
+        partial_filtered_dns_zones, start_record, number_records, total_number_records = search_helper.partial_filter(rest_request, filtered_dns_zones)
 
-        # assigns the repositories to the template
-        template_file.assign("repositories", partial_filtered_repositories)
-
-        # assigns the start record to the template
-        template_file.assign("start_record", start_record)
-
-        # assigns the number records to the template
-        template_file.assign("number_records", number_records)
-
-        # assigns the total number records to the template
-        template_file.assign("total_number_records", total_number_records)
-
-        # assigns the session variables to the template file
-        self.assign_session_template_file(rest_request, template_file)
-
-        # applies the base path to the template file
-        self.apply_base_path_template_file(rest_request, template_file)
-
-        # processes the template file and sets the request contents
-        self.process_set_contents(rest_request, template_file)
-
-        # returns true
-        return True
-
-    def handle_install_plugin(self, rest_request, parameters = {}):
-        # in case the encoder name is ajax
-        if rest_request.encoder_name == JSON_ENCODER_NAME:
-            # retrieves the json plugin
-            json_plugin = self.web_mvc_manager_page_item_dns_plugin.json_plugin
-
-            # retrieves the communication helper
-            communication_helper = parameters["communication_helper"]
-
-            # install the plugin and retrieves the result
-            install_plugin_result = self._install_plugin(rest_request)
-
-            # serializes the install result using the json plugin
-            serialized_status = json_plugin.dumps(install_plugin_result)
-
-            # sets the serialized status as the rest request contents
-            self.set_contents(rest_request, serialized_status)
-
-            # sends the serialized broadcast message
-            communication_helper.send_serialized_broadcast_message(parameters, "web_mvc_manager/communication", "web_mvc_manager/plugin/install", serialized_status)
-
-            return True
-
-        return True
-
-    def handle_plugins_partial_list(self, rest_request, parameters = {}):
-        # retrieves the web search helper
-        search_helper = parameters["search_helper"]
-
-        # retrieves the template file
-        template_file = self.retrieve_template_file("dns_plugins_partial_list_contents.html.tpl")
-
-        # retrieves the filtered repositories
-        filtered_dns_plugins = self._get_fitered_dns_plugins(rest_request)
-
-        # retrieves the partial filter from the filtered dns plugins
-        partial_filtered_dns_plugins, start_record, number_records, total_number_records = search_helper.partial_filter(rest_request, filtered_dns_plugins)
-
-        # assigns the repositories to the template
-        template_file.assign("dns_plugins", partial_filtered_dns_plugins)
-
-        # assigns the start record to the template
-        template_file.assign("start_record", start_record)
-
-        # assigns the number records to the template
-        template_file.assign("number_records", number_records)
-
-        # assigns the total number records to the template
-        template_file.assign("total_number_records", total_number_records)
-
-        # assigns the session variables to the template file
-        self.assign_session_template_file(rest_request, template_file)
-
-        # applies the base path to the template file
-        self.apply_base_path_template_file(rest_request, template_file)
-
-        # processes the template file and sets the request contents
-        self.process_set_contents(rest_request, template_file)
-
-        # returns true
-        return True
-
-    def handle_packages_partial_list(self, rest_request, parameters = {}):
-        # retrieves the web search helper
-        search_helper = parameters["search_helper"]
-
-        # retrieves the template file
-        template_file = self.retrieve_template_file("dns_partial_list_contents.html.tpl")
-
-        # retrieves the filtered repositories
-        filtered_repositories = self._get_fitered_repositories(rest_request)
-
-        # retrieves the partial filter from the filtered repositories
-        partial_filtered_repositories, start_record, number_records, total_number_records = search_helper.partial_filter(rest_request, filtered_repositories)
-
-        # assigns the repositories to the template
-        template_file.assign("repositories", partial_filtered_repositories)
+        # assigns the dns zones to the template
+        template_file.assign("dns_zones", partial_filtered_dns_zones)
 
         # assigns the start record to the template
         template_file.assign("start_record", start_record)
@@ -315,11 +208,11 @@ class WebMvcManagerPageItemDnsController:
         # retrieves the dns index from the rest request's path list
         dns_index = int(rest_request.path_list[index])
 
-        # retrieves all the repositories
-        repositories = system_updater_plugin.get_repositories()
+        # retrieves all the dns zones
+        dns_zones = system_updater_plugin.get_dns_zones()
 
-        # retrieves the dns from the repositories list
-        dns = repositories[dns_index - 1]
+        # retrieves the dns from the dns zones list
+        dns = dns_zones[dns_index - 1]
 
         # retrieves the dns name
         dns_name = dns.name
@@ -329,105 +222,35 @@ class WebMvcManagerPageItemDnsController:
 
         return dns_information
 
-    def _get_fitered_repositories(self, rest_request):
+    def _get_fitered_dns_zones(self, rest_request):
         # processes the form data
         form_data_map = self.process_form_data(rest_request, DEFAULT_ENCODING)
 
         # retrieves the form data attributes
         search_query = form_data_map["search_query"]
 
-        # retrieves the repositories
-        repositories = self._get_repositories()
+        # retrieves the dns zones
+        dns_zones = self._get_dns_zones()
 
-        # creates the filtered repositories list
-        filtered_repositories = []
+        # creates the filtered dns zones list
+        filtered_dns_zones = []
 
-        # iterates over all the repositories
-        for dns in repositories:
+        # iterates over all the dns zones
+        for dns_zone in dns_zones:
             # in case the search query is found in the dns name
-            if not dns.name.find(search_query) == -1:
-                # adds the dns to the filtered repositories
-                filtered_repositories.append(dns)
+            if not dns_zone.name.find(search_query) == -1:
+                # adds the dns to the filtered dns zones
+                filtered_dns_zones.append(dns_zone)
 
-        # returns the filtered repositories
-        return filtered_repositories
+        # returns the filtered dns zones
+        return filtered_dns_zones
 
-    def _get_fitered_dns_plugins(self, rest_request):
-        # processes the form data
-        form_data_map = self.process_form_data(rest_request, DEFAULT_ENCODING)
+    def _get_dns_zones(self):
+        return [DnsZone(), DnsZone()]
 
-        # retrieves the form data attributes
-        search_query = form_data_map["search_query"]
+class DnsZone:
+    name = "tobias"
 
-        # retrieves the dns
-        dns = self._get_dns(rest_request, -2)
+    description = "asdas"
 
-        # creates the filtered dns plugins
-        filtered_dns_plugins = []
-
-        # iterates over all the dns plugins
-        for dns_plugin in dns.plugins:
-            # in case the search query is found in the dns plugin id
-            if not dns_plugin.id.find(search_query) == -1:
-                # adds the dns plugin to the filtered dns plugins
-                filtered_dns_plugins.append(dns_plugin)
-
-        return filtered_dns_plugins
-
-    def _get_repositories(self):
-        # retrieves the system updater plugin
-        system_updater_plugin = self.web_mvc_manager_page_item_dns_plugin.system_updater_plugin
-
-        # retrieves all the repositories
-        repositories = system_updater_plugin.get_repositories()
-
-        return repositories
-
-    def _install_plugin(self, rest_request):
-        # retrieves the plugin manager
-        plugin_manager = self.web_mvc_manager_page_item_dns_plugin.manager
-
-        # retrieves the system updater plugin
-        system_updater_plugin = self.web_mvc_manager_page_item_dns_plugin.system_updater_plugin
-
-        # processes the form data
-        form_data_map = self.process_form_data(rest_request, DEFAULT_ENCODING)
-
-        # retrieves the form data attributes
-        plugin_id = form_data_map["plugin_id"]
-        plugin_version = form_data_map["plugin_version"]
-
-        # creates the delta plugin install map
-        delta_plugin_install_map = {"installed" : [], "uninstalled" : []}
-
-        # retrieves the (beginning) list of available plugins
-        available_plugins_beginning = copy.copy(plugin_manager.get_all_plugins())
-
-        # tries to install the plugin
-        return_value = system_updater_plugin.install_plugin(plugin_id, plugin_version)
-
-        # sleeps for a second to give time for the autoloader to update
-        time.sleep(1.0)
-
-        # in case the return value is not valid
-        if not return_value:
-            # raises a runtime exception
-            raise web_mvc_manager_page_item_dns_exceptions.RuntimeException("problem installing plugin")
-
-        # retrieves the (end) list of available plugins
-        available_plugins_end = plugin_manager.get_all_plugins()
-
-        # iterates over all the plugins available at the beginning
-        # to check if they exist in the current available plugins
-        for available_plugin_beginning in available_plugins_beginning:
-            if not available_plugin_beginning in available_plugins_end:
-                delta_plugin_install_map["uninstalled"].append(available_plugin_beginning.id)
-
-        # iterates over all the plugins available at the end
-        # to check if they exist in the previously available plugins
-        for available_plugin_end in available_plugins_end:
-            if not available_plugin_end in available_plugins_beginning:
-                delta_plugin_install_map["installed"].append(available_plugin_end.id)
-
-        # returns the delta plugin install map
-        return delta_plugin_install_map
+    layout = "nada"
