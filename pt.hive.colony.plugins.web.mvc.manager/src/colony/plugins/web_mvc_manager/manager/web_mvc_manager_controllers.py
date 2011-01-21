@@ -188,7 +188,7 @@ class WebMvcManagerMainController:
             # retrieves the web mvc manager communication helper
             web_mvc_manager_communication_helper = self.web_mvc_manager.web_mvc_manager_communication_helper
 
-            # extens the paramters map with the template file reference
+            # extends the parameters map with the template file reference
             handler_parameters = colony.libs.map_util.map_extend(parameters, {"template_file" : template_file,
                                                                               "search_helper" : web_mvc_manager_search_helper,
                                                                               "communication_helper" : web_mvc_manager_communication_helper})
