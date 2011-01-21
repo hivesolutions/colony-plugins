@@ -564,12 +564,8 @@ class MainConsoleBase:
         @param console_context: The console context for the processing.
         """
 
-        if len(arguments) < 1:
-            output_method(INVALID_NUMBER_ARGUMENTS_MESSAGE)
-            return
-
         # retrieves the echo value
-        echo_value = arguments[0]
+        echo_value = arguments_map["echo_value"]
 
         # outputs the echo value
         output_method(echo_value)
@@ -830,6 +826,18 @@ class MainConsoleBase:
                         "exit" : {
                             "handler" : self.process_exit,
                             "help" : "exits the system"
+                        },
+                        "echo" : {
+                            "handler" : self.process_echo,
+                            "help" : "prints the given value",
+                            "arguments" : [
+                                {
+                                    "name" : "echo_value",
+                                    "description" : "the value to be echoed",
+                                    "values" : str,
+                                    "mandatory" : True
+                                }
+                            ]
                         }
                     }
 
