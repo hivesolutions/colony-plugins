@@ -75,6 +75,9 @@ CONSOLE_CONTEXT_VALUE = "console_context"
 TEST_VALUE = "test"
 """ The test value """
 
+ANONYMOUS_VALUE = "anonymous"
+""" The anonymous value """
+
 class MainConsoleInterface:
     """
     The main console interface class.
@@ -225,6 +228,9 @@ class MainConsoleInterface:
     def _print_caret(self, main_console_context):
         # retrieves the main console user
         main_console_user = main_console_context.get_user()
+
+        # retrieves the main console user
+        main_console_user = main_console_user or ANONYMOUS_VALUE
 
         # retrieves the main console base name
         main_console_base_name = main_console_context.get_base_name()

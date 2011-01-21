@@ -224,6 +224,38 @@ class MainConsoleFileSystem:
             # closes the file
             file.close()
 
+    def process_su(self, arguments, arguments_map, output_method, console_context):
+        """
+        Processes the su command, with the given
+        arguments and output method.
+
+        @type arguments: List
+        @param arguments: The arguments for the processing.
+        @type arguments_map: Dictionary
+        @param arguments_map: The map of arguments for the processing.
+        @type output_method: Method
+        @param output_method: The output method to be used in the processing.
+        @type console_context: ConsoleContext
+        @param console_context: The console context for the processing.
+        """
+
+        # retrieves the username from the arguments
+        username = arguments_map.get("username", "admin")
+
+        # retrieves the password from the arguments
+        password = arguments_map.get("password", None)
+
+        # authenticates the user
+        authentication_result = console_context.authenticate_user(username, password)
+
+        # in case the authentication as failed
+        if not authentication_result:
+            # writes the authentication failed message
+            output_method("authentication failed")
+
+            # returns immediately
+            return
+
     def get_path_names_list(self, argument, console_context):
         # retrieves the directory name from the argument
         directory_name = os.path.dirname(argument)
@@ -291,6 +323,23 @@ class MainConsoleFileSystem:
                                     "description" : "the path to be used for cat",
                                     "values" : self.get_path_names_list,
                                     "mandatory" : True
+                                }
+                            ]
+                        },
+                        "su" : {
+                            "handler" : self.process_su,
+                            "description" : "switches the current user session",
+                            "arguments" : [
+                                {
+                                    "name" : "username",
+                                    "description" : "the username to switch user",
+                                    "values" : str,
+                                    "mandatory" : False
+                                }, {
+                                    "name" : "password",
+                                    "description" : "the password to switch user",
+                                    "values" : str,
+                                    "mandatory" : False
                                 }
                             ]
                         }
