@@ -39,34 +39,11 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 import os
 
-import colony.libs.map_util
-
 WEB_MVC_MANAGER_PAGE_ITEM_REPOSITORY_RESOURCES_PATH = "web_mvc_manager_page_item/repository/resources"
 """ The web mvc manager page item repository resources path """
 
 EXTRAS_PATH = WEB_MVC_MANAGER_PAGE_ITEM_REPOSITORY_RESOURCES_PATH + "/extras"
 """ The extras path """
-
-REPOSITORY_LIST_PAGE_ITEM_ATTRIBUTES = {"menu" : "update/Repositories",
-                                        "side_panel" : "lists/Repositories",
-                                        "base_address" : "repositories",
-                                        "pattern" : (r"^web_mvc_manager/repositories$", 1)}
-""" The repository list page item attributes """
-
-REPOSITORY_SHOW_PAGE_ITEM_ATTRIBUTES = {"pattern" : (r"^web_mvc_manager/repositories/[0-9]+$", 2)}
-""" The repository show page item attributes """
-
-REPOSITORY_PARTIAL_LIST_PAGE_ITEM_ATTRIBUTES = {"pattern" : (r"^web_mvc_manager/repositories/partial$", 3)}
-""" The repository partial list page item attributes """
-
-REPOSITORY_INSTALL_PLUGIN_PAGE_ITEM_ATTRIBUTES = {"pattern" : (r"^web_mvc_manager/repositories/install_plugin$", 4)}
-""" The repository install plugin page item attributes """
-
-REPOSITORY_PLUGINS_PARTIAL_ITEM_ATTRIBUTES = {"pattern" : (r"^web_mvc_manager/repositories/[0-9]+/plugins_partial$", 5)}
-""" The repository plugins partial page item attributes """
-
-REPOSITORY_PACKAGES_PARTIAL_ITEM_ATTRIBUTES = {"pattern" : (r"^web_mvc_manager/repositories/[0-9]+/packages_partial$", 5)}
-""" The repository packages partial page item attributes """
 
 class WebMvcManagerPageItemRepository:
     """
@@ -139,14 +116,14 @@ class WebMvcManagerPageItemRepository:
         @return: A list containing information on all page items.
         """
 
-        # creates the repository page item maps
-        repository_list_page_item_map = colony.libs.map_util.map_extend(REPOSITORY_LIST_PAGE_ITEM_ATTRIBUTES, {"action" : self.web_mvc_manager_page_item_repository_controller.handle_list})
-        repository_show_page_item_map = colony.libs.map_util.map_extend(REPOSITORY_SHOW_PAGE_ITEM_ATTRIBUTES, {"action" : self.web_mvc_manager_page_item_repository_controller.handle_show})
-        repository_partial_list_page_item_map = colony.libs.map_util.map_extend(REPOSITORY_PARTIAL_LIST_PAGE_ITEM_ATTRIBUTES, {"action" : self.web_mvc_manager_page_item_repository_controller.handle_partial_list})
-        repository_install_plugin_page_item_map = colony.libs.map_util.map_extend(REPOSITORY_INSTALL_PLUGIN_PAGE_ITEM_ATTRIBUTES, {"action" : self.web_mvc_manager_page_item_repository_controller.handle_install_plugin})
-        repository_plugins_partial_page_item_map = colony.libs.map_util.map_extend(REPOSITORY_PLUGINS_PARTIAL_ITEM_ATTRIBUTES, {"action" : self.web_mvc_manager_page_item_repository_controller.handle_plugins_partial_list})
-        repository_packages_partial_page_item_map = colony.libs.map_util.map_extend(REPOSITORY_PACKAGES_PARTIAL_ITEM_ATTRIBUTES, {"action" : self.web_mvc_manager_page_item_repository_controller.handle_packages_partial_list})
-
-        return [repository_list_page_item_map, repository_show_page_item_map,
-                repository_partial_list_page_item_map, repository_install_plugin_page_item_map,
-                repository_plugins_partial_page_item_map, repository_packages_partial_page_item_map]
+        return ({
+                    "menu" : "update/Repositories",
+                    "side_panel" : "lists/Repositories",
+                    "base_address" : "repositories",
+                    "pattern" : (r"^web_mvc_manager/repositories$", self.web_mvc_manager_page_item_repository_controller.handle_list)
+                },
+                (r"^web_mvc_manager/repositories/[0-9]+$", self.web_mvc_manager_page_item_repository_controller.handle_show),
+                (r"^web_mvc_manager/repositories/partial$", self.web_mvc_manager_page_item_repository_controller.handle_partial_list),
+                (r"^web_mvc_manager/repositories/install_plugin$", self.web_mvc_manager_page_item_repository_controller.handle_install_plugin),
+                (r"^web_mvc_manager/repositories/[0-9]+/plugins_partial$", self.web_mvc_manager_page_item_repository_controller.handle_plugins_partial_list),
+                (r"^web_mvc_manager/repositories/[0-9]+/packages_partial$", self.web_mvc_manager_page_item_repository_controller.handle_packages_partial_list))

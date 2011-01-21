@@ -39,18 +39,11 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 import os
 
-import colony.libs.map_util
-
 WEB_MVC_MANAGER_PAGE_ITEM_CODE_EXECUTION_RESOURCES_PATH = "web_mvc_manager_page_item/code_execution/resources"
 """ The web mvc manager page item code_execution resources path """
 
 EXTRAS_PATH = WEB_MVC_MANAGER_PAGE_ITEM_CODE_EXECUTION_RESOURCES_PATH + "/extras"
 """ The extras path """
-
-CODE_EXECUTION_EXECUTE_PAGE_ITEM_ATTRIBUTES = {"menu" : "services/Code Execution",
-                                               "base_address" : "code_execution",
-                                               "pattern" : (r"^web_mvc_manager/code_execution$", 1)}
-""" The code execution execute page item attributes """
 
 class WebMvcManagerPageItemCodeExecution:
     """
@@ -123,7 +116,8 @@ class WebMvcManagerPageItemCodeExecution:
         @return: A list containing information on all page items.
         """
 
-        # creates the code execution page item maps
-        code_execution_execute_page_item_map = colony.libs.map_util.map_extend(CODE_EXECUTION_EXECUTE_PAGE_ITEM_ATTRIBUTES, {"action" : self.web_mvc_manager_page_item_code_execution_controller.handle_execute})
-
-        return [code_execution_execute_page_item_map]
+        return ({
+                    "menu" : "services/Code Execution",
+                    "base_address" : "code_execution",
+                    "pattern" : (r"^web_mvc_manager/code_execution$", self.web_mvc_manager_page_item_code_execution_controller.handle_execute)
+                },)

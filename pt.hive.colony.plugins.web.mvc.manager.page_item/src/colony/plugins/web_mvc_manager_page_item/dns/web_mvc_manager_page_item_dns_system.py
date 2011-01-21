@@ -39,28 +39,11 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 import os
 
-import colony.libs.map_util
-
 WEB_MVC_MANAGER_PAGE_ITEM_DNS_RESOURCES_PATH = "web_mvc_manager_page_item/dns/resources"
 """ The web mvc manager page item dns resources path """
 
 EXTRAS_PATH = WEB_MVC_MANAGER_PAGE_ITEM_DNS_RESOURCES_PATH + "/extras"
 """ The extras path """
-
-DNS_LIST_PAGE_ITEM_ATTRIBUTES = {"menu" : "services/Dns",
-                                 "side_panel" : "lists/Dns",
-                                 "base_address" : "dns",
-                                 "pattern" : (r"^web_mvc_manager/dns$", 1)}
-""" The dns list page item attributes """
-
-DNS_SHOW_PAGE_ITEM_ATTRIBUTES = {"pattern" : (r"^web_mvc_manager/dns/[a-zA-Z0-9.]+$", 2)}
-""" The dns show page item attributes """
-
-DNS_PARTIAL_LIST_PAGE_ITEM_ATTRIBUTES = {"pattern" : (r"^web_mvc_manager/dns/partial$", 3)}
-""" The dns partial list page item attributes """
-
-DNS_RECORDS_PARTIAL_ITEM_ATTRIBUTES = {"pattern" : (r"^web_mvc_manager/dns/[a-zA-Z0-9.]+/records_partial$", 5)}
-""" The dns plugins partial page item attributes """
 
 class WebMvcManagerPageItemDns:
     """
@@ -133,11 +116,12 @@ class WebMvcManagerPageItemDns:
         @return: A list containing information on all page items.
         """
 
-        # creates the dns page item maps
-        dns_list_page_item_map = colony.libs.map_util.map_extend(DNS_LIST_PAGE_ITEM_ATTRIBUTES, {"action" : self.web_mvc_manager_page_item_dns_controller.handle_list})
-        dns_show_page_item_map = colony.libs.map_util.map_extend(DNS_SHOW_PAGE_ITEM_ATTRIBUTES, {"action" : self.web_mvc_manager_page_item_dns_controller.handle_show})
-        dns_partial_list_page_item_map = colony.libs.map_util.map_extend(DNS_PARTIAL_LIST_PAGE_ITEM_ATTRIBUTES, {"action" : self.web_mvc_manager_page_item_dns_controller.handle_partial_list})
-        dns_records_partial_page_item_map = colony.libs.map_util.map_extend(DNS_RECORDS_PARTIAL_ITEM_ATTRIBUTES, {"action" : self.web_mvc_manager_page_item_dns_controller.handle_install_plugin})
-
-        return [dns_list_page_item_map, dns_show_page_item_map,
-                dns_partial_list_page_item_map, dns_records_partial_page_item_map]
+        return ({
+                    "menu" : "services/Dns",
+                    "side_panel" : "lists/Dns",
+                    "base_address" : "dns",
+                    "pattern" : (r"^web_mvc_manager/dns$", self.web_mvc_manager_page_item_dns_controller.handle_list)
+                },
+                (r"^web_mvc_manager/dns/[a-zA-Z0-9.]+$", self.web_mvc_manager_page_item_dns_controller.handle_show),
+                (r"^web_mvc_manager/dns/partial$", self.web_mvc_manager_page_item_dns_controller.handle_partial_list),
+                (r"^web_mvc_manager/dns/[a-zA-Z0-9.]+/records_partial$", self.web_mvc_manager_page_item_dns_controller.handle_install_plugin))
