@@ -87,23 +87,17 @@ class MainConsoleFileSystem:
         """
 
         # retrieves the path argument
-        path = arguments_map.get("path")
+        path = arguments_map["path"]
 
-        # retrieves the console context path
-        console_context_path = console_context.get_path()
+        # retrieves the full path for the "new" console
+        # context path
+        console_context_path = console_context.get_full_path(path)
 
-        # creates the (new) console context path with the console
-        # context path and the argument
-        console_context_path = console_context_path + "/" + path
+        # retrieves the path exists and is directory
+        path_is_directory = os.path.isdir(console_context_path)
 
-        # normalizes the console context path
-        console_context_path = os.path.normpath(console_context_path)
-
-        # retrieves the path exists value
-        path_exists = os.path.exists(path)
-
-        # in case the path does not exists
-        if not path_exists:
+        # in case the path is not a directory
+        if not path_is_directory:
             # writes the invalid path message
             output_method("invalid path '%s'" % path)
 
@@ -137,20 +131,34 @@ class MainConsoleFileSystem:
         # sets the path value
         path = path or console_context_path
 
-        # retrieves the is directory value
-        is_directory = os.path.isdir(path)
+        # retrieves the "full" path
+        full_path = console_context.get_full_path(path)
 
-        # in case it is a directory
-        if is_directory:
+        # retrieves the path exists value
+        path_exists = os.path.exists(full_path)
+
+        # in case the path does not exists
+        if not path_exists:
+            # writes the invalid path message
+            output_method("invalid path '%s'" % path)
+
+            # returns immediately
+            return
+
+        # retrieves the path is a directory
+        path_is_directory = os.path.isdir(full_path)
+
+        # in case the path is a directory
+        if path_is_directory:
             # retrieves the path names
-            path_names = os.listdir(path)
+            path_names = os.listdir(full_path)
 
             # sets the path contents as the
             # path names
             path_contents = path_names
         else:
             # retrieves the path base name
-            path_base_name = os.path.basename(path)
+            path_base_name = os.path.basename(full_path)
 
             # sets the path contents as the
             # path base name
@@ -182,12 +190,46 @@ class MainConsoleFileSystem:
         # writes the value of the console context path
         output_method(console_context_path)
 
-    def get_path_names_list(self, argument, console_context):
-        # retrieves the console context path
-        console_context_path = console_context.get_path()
+    def process_cat(self, arguments, arguments_map, output_method, console_context):
+        """
+        Processes the cat command, with the given
+        arguments and output method.
 
-        # creates the path with the console context path and the argument
-        path = console_context_path + argument
+        @type arguments: List
+        @param arguments: The arguments for the processing.
+        @type arguments_map: Dictionary
+        @param arguments_map: The map of arguments for the processing.
+        @type output_method: Method
+        @param output_method: The output method to be used in the processing.
+        @type console_context: ConsoleContext
+        @param console_context: The console context for the processing.
+        """
+
+        # retrieves the path from the arguments
+        path = arguments_map["path"]
+
+        # retrieves the full path using the console context
+        full_path = console_context.get_full_path(path)
+
+        # read the file in the path
+        file = open(full_path, "rb")
+
+        try:
+            # reads the file contents
+            file_contents = file.read()
+
+            # writes the file contents
+            output_method(file_contents)
+        finally:
+            # closes the file
+            file.close()
+
+    def get_path_names_list(self, argument, console_context):
+        # retrieves the directory name from the argument
+        directory_name = os.path.dirname(argument)
+
+        # retrieves the "full" path
+        path = console_context.get_full_path(directory_name)
 
         # retrieves the path exists value
         path_exists = os.path.exists(path)
@@ -200,6 +242,11 @@ class MainConsoleFileSystem:
 
         # retrieves the path names
         path_names = os.listdir(path)
+
+        # in case the directory name is set
+        if directory_name:
+            # re-creates the path name joining the directory name
+            path_names = [os.path.join(directory_name, value) for value in path_names]
 
         # returns the path names list
         return path_names
@@ -215,7 +262,7 @@ class MainConsoleFileSystem:
                                     "name" : "path",
                                     "description" : "the path to be used for cd",
                                     "values" : self.get_path_names_list,
-                                    "mandatory" : False
+                                    "mandatory" : True
                                 }
                             ]
                         },
@@ -226,7 +273,7 @@ class MainConsoleFileSystem:
                                 {
                                     "name" : "path",
                                     "description" : "the path to be used for ls",
-                                    "values" : [],
+                                    "values" : self.get_path_names_list,
                                     "mandatory" : False
                                 }
                             ]
@@ -234,6 +281,18 @@ class MainConsoleFileSystem:
                         "pwd" : {
                             "handler" : self.process_pwd,
                             "description" : "show the present working directory"
+                        },
+                        "cat" : {
+                            "handler" : self.process_cat,
+                            "description" : "prints the file in the path to the output",
+                            "arguments" : [
+                                {
+                                    "name" : "path",
+                                    "description" : "the path to be used for cat",
+                                    "values" : self.get_path_names_list,
+                                    "mandatory" : True
+                                }
+                            ]
                         }
                     }
 

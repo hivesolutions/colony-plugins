@@ -692,6 +692,36 @@ class ConsoleContext(colony.libs.protection_util.Protected):
         # returns the base name
         return base_name
 
+    def get_full_path(self, base_path):
+        """
+        Returns the full path for the given
+        base path value.
+
+        @type base_path: base_path
+        @param base_path: The base path to retrieve
+        the full path.
+        @rtype: String
+        @return: The full path for the given base path.
+        """
+
+        # retrieves the value of the is absolute path
+        is_absolute_path = os.path.isabs(base_path)
+
+        # in case the base path is absolute
+        if is_absolute_path:
+            # sets the path as the base path
+            path = base_path
+        else:
+            # joins the current path with the base path
+            # to creates the path
+            path = os.path.join(self.path, base_path)
+
+        # normalizes the path
+        path = os.path.normpath(path)
+
+        # returns the path
+        return path
+
     @colony.libs.protection_util.public
     def get_path(self):
         """
