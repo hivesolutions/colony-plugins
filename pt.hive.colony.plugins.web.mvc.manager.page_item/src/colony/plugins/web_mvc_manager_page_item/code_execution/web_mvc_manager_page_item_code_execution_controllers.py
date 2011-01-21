@@ -40,6 +40,11 @@ __license__ = "GNU General Public License (GPL), Version 3"
 import sys
 import StringIO
 
+import colony.libs.importer_util
+
+WEB_MVC_UTILS_VALUE = "web_mvc_utils"
+""" The web mvc utils value """
+
 DEFAULT_ENCODING = "utf-8"
 """ The default encoding value """
 
@@ -54,6 +59,9 @@ AJAX_ENCODER_NAME = "ajx"
 
 JSON_ENCODER_NAME = "json"
 """ The json encoder name """
+
+# imports the web mvc utils
+web_mvc_utils = colony.libs.importer_util.__importer__(WEB_MVC_UTILS_VALUE)
 
 class WebMvcManagerPageItemCodeExecutionController:
     """

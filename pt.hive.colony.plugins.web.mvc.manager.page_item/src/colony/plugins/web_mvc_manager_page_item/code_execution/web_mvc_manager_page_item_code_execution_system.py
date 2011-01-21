@@ -37,9 +37,9 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-import colony.libs.map_util
+import os
 
-import web_mvc_manager_page_item_code_execution_controllers
+import colony.libs.map_util
 
 WEB_MVC_MANAGER_PAGE_ITEM_CODE_EXECUTION_RESOURCES_PATH = "web_mvc_manager_page_item/code_execution/resources"
 """ The web mvc manager page item code_execution resources path """
@@ -81,6 +81,12 @@ class WebMvcManagerPageItemCodeExecution:
 
         # retrieves the web mvc utils plugin
         web_mvc_utils_plugin = self.web_mvc_manager_page_item_code_execution_plugin.web_mvc_utils_plugin
+
+        # retrieves the current directory path
+        current_directory_path = os.path.dirname(__file__)
+
+        # loads the mvc utils in the web mvc manager page item code execution controllers module
+        web_mvc_manager_page_item_code_execution_controllers = web_mvc_utils_plugin.import_module_mvc_utils("web_mvc_manager_page_item_code_execution_controllers", "web_mvc_manager_page_item.code_execution", current_directory_path)
 
         # creates the web mvc manager page item code_execution controller
         self.web_mvc_manager_page_item_code_execution_controller = web_mvc_utils_plugin.create_controller(web_mvc_manager_page_item_code_execution_controllers.WebMvcManagerPageItemCodeExecutionController, [self.web_mvc_manager_page_item_code_execution_plugin, self], {})

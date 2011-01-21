@@ -37,9 +37,9 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-import colony.libs.map_util
+import os
 
-import web_mvc_manager_page_item_dns_controllers
+import colony.libs.map_util
 
 WEB_MVC_MANAGER_PAGE_ITEM_DNS_RESOURCES_PATH = "web_mvc_manager_page_item/dns/resources"
 """ The web mvc manager page item dns resources path """
@@ -91,6 +91,12 @@ class WebMvcManagerPageItemDns:
 
         # retrieves the web mvc utils plugin
         web_mvc_utils_plugin = self.web_mvc_manager_page_item_dns_plugin.web_mvc_utils_plugin
+
+        # retrieves the current directory path
+        current_directory_path = os.path.dirname(__file__)
+
+        # loads the mvc utils in the web mvc manager page item dns controllers module
+        web_mvc_manager_page_item_dns_controllers = web_mvc_utils_plugin.import_module_mvc_utils("web_mvc_manager_page_item_dns_controllers", "web_mvc_manager_page_item.dns", current_directory_path)
 
         # creates the web mvc manager page item dns controller
         self.web_mvc_manager_page_item_dns_controller = web_mvc_utils_plugin.create_controller(web_mvc_manager_page_item_dns_controllers.WebMvcManagerPageItemDnsController, [self.web_mvc_manager_page_item_dns_plugin, self], {})
