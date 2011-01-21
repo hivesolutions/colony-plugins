@@ -3,7 +3,7 @@
         <tbody id="table-body">
         ${foreach item=dns_zone index=dns_zone_index from=dns_zones}
         <tr>
-            <td><a href="#repositories/${out_none value=dns_zone_index xml_escape=True /}">${out_none value=dns_zone.name xml_escape=True /}</a></td>
+            <td><a href="#dns/${out_none value=dns_zone_index xml_escape=True /}">${out_none value=dns_zone.name xml_escape=True /}</a></td>
             <td>${out_none value=dns_zone.description xml_escape=True /}</td>
             <td>${out_none value=dns_zone.layout xml_escape=True /}</td>
         </tr>
