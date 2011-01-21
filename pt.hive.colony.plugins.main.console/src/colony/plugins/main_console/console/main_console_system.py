@@ -208,7 +208,7 @@ class MainConsole:
 
         return self.write
 
-    def get_command_line_alternatives(self, command, arguments):
+    def get_command_line_alternatives(self, command, arguments, console_context = None):
         """
         Processes the given command line, with the given output method.
         Retrieves the alternative (possible) values for the given command
@@ -218,6 +218,9 @@ class MainConsole:
         @param command: The command to be retrieve the alternatives.
         @type arguments: String
         @param arguments: The list of arguments
+        @type console_context: ConsoleContext
+        @param console_context: The console context to be used to retrieve
+        the command line alternatives.
         @rtype: Tuple
         @return: A tuple containing the list of alternatives for the given
         command line and the current best match.
@@ -226,7 +229,7 @@ class MainConsole:
         # in case the argument are valid
         if arguments:
             # retrieves the list of argument alternatives
-            alternatives_list = self._get_argument_alternatives(command, arguments)
+            alternatives_list = self._get_argument_alternatives(command, arguments, console_context)
         # otherwise we're completing a command only
         else:
             # retrieves the list of command alternatives
@@ -376,7 +379,7 @@ class MainConsole:
             output_method(INVALID_COMMAND_MESSAGE)
 
             # returns none (invalid)
-            return None
+            return (None, None)
 
         # retrieves the command arguments
         command_arguments = command_information.get("arguments", [])
@@ -412,7 +415,7 @@ class MainConsole:
             output_method(MISSING_MANDATORY_ARGUMENTS_MESSAGE + ": " + missing_argument_names_line)
 
             # returns none (invalid)
-            return None
+            return (None, None)
 
         # retrieves the command handler
         command_handler = command_information.get("handler", None)
@@ -423,7 +426,7 @@ class MainConsole:
             output_method(INTERNAL_CONFIGURATION_PROBLEM_MESSAGE)
 
             # returns none (invalid)
-            return None
+            return (None, None)
 
         # retrieves the received arguments list
         received_arguments = command_arguments[:arguments_length]
@@ -469,7 +472,7 @@ class MainConsole:
         # returns the alternatives list
         return alternatives_list
 
-    def _get_argument_alternatives(self, command, arguments):
+    def _get_argument_alternatives(self, command, arguments, console_context):
         # creates the alternatives list
         alternatives_list = []
 
@@ -523,7 +526,7 @@ class MainConsole:
         elif command_argument_values_type == types.MethodType:
             # sets the alternatives base list as the return
             # of the command argument values call
-            alternatives_base_list = command_argument_values()
+            alternatives_base_list = command_argument_values(target_argument, console_context)
 
         # iterates over all the commands in the
         # commands map
@@ -668,7 +671,7 @@ class ConsoleContext(colony.libs.protection_util.Protected):
 
     @colony.libs.protection_util.public
     def get_command_line_alternatives(self, command, arguments):
-        return self.main_console.get_command_line_alternatives(command, arguments)
+        return self.main_console.get_command_line_alternatives(command, arguments, self)
 
     @colony.libs.protection_util.public
     def create_console_interface_character(self, console_handler):
@@ -708,7 +711,7 @@ class ConsoleContext(colony.libs.protection_util.Protected):
         @return: The path.
         """
 
-        return self.path
+        self.path = path
 
     @colony.libs.protection_util.public
     def get_user(self):
@@ -729,4 +732,4 @@ class ConsoleContext(colony.libs.protection_util.Protected):
         @return: The user.
         """
 
-        return self.user
+        self.user = user

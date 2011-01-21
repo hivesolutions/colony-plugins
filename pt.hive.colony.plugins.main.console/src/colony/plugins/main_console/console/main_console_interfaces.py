@@ -221,7 +221,7 @@ class MainConsoleInterfaceCharacter:
 
         # retrieves the alternatives list and the best match
         # for the current command and arguments
-        alternatives_list, best_match = self.main_console.get_command_line_alternatives(command, arguments)
+        alternatives_list, best_match = self.console_context.get_command_line_alternatives(command, arguments)
 
         # sorts the alternatives list (alphabetically)
         alternatives_list.sort()

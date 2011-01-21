@@ -699,10 +699,10 @@ class MainConsoleBase:
         # returns the plugins tuple
         return plugins_tuple
 
-    def get_extension_id_list(self):
+    def get_extension_id_list(self, argument, console_context):
         return ["rabeton", "tobias"]
 
-    def get_plugin_id_list(self):
+    def get_plugin_id_list(self, argument, console_context):
         # retrieves the plugin manager
         plugin_manager = self.main_console_base_plugin.manager
 

@@ -71,6 +71,48 @@ class MainConsoleFileSystem:
     def get_commands_map(self):
         return self.commands_map
 
+    def process_cd(self, arguments, arguments_map, output_method, console_context):
+        """
+        Processes the cd command, with the given
+        arguments and output method.
+
+        @type arguments: List
+        @param arguments: The arguments for the processing.
+        @type arguments_map: Dictionary
+        @param arguments_map: The map of arguments for the processing.
+        @type output_method: Method
+        @param output_method: The output method to be used in the processing.
+        @type console_context: ConsoleContext
+        @param console_context: The console context for the processing.
+        """
+
+        # retrieves the path argument
+        path = arguments_map.get("path")
+
+        # retrieves the console context path
+        console_context_path = console_context.get_path()
+
+        # creates the (new) console context path with the console
+        # context path and the argument
+        console_context_path = console_context_path + "/" + path
+
+        # normalizes the console context path
+        console_context_path = os.path.normpath(console_context_path)
+
+        # retrieves the path exists value
+        path_exists = os.path.exists(path)
+
+        # in case the path does not exists
+        if not path_exists:
+            # writes the invalid path message
+            output_method("invalid path '%s'" % path)
+
+            # returns immediately
+            return
+
+        # sets the console context path
+        console_context.set_path(console_context_path)
+
     def process_ls(self, arguments, arguments_map, output_method, console_context):
         """
         Processes the ls command, with the given
@@ -140,9 +182,43 @@ class MainConsoleFileSystem:
         # writes the value of the console context path
         output_method(console_context_path)
 
+    def get_path_names_list(self, argument, console_context):
+        # retrieves the console context path
+        console_context_path = console_context.get_path()
+
+        # creates the path with the console context path and the argument
+        path = console_context_path + argument
+
+        # retrieves the path exists value
+        path_exists = os.path.exists(path)
+
+        # in case the path does
+        # not exists
+        if not path_exists:
+            # returns empty list
+            return []
+
+        # retrieves the path names
+        path_names = os.listdir(path)
+
+        # returns the path names list
+        return path_names
+
     def __generate_commands_map(self):
         # creates the commands map
         commands_map = {
+                        "cd" : {
+                            "handler" : self.process_cd,
+                            "description" : "changes the current directory",
+                            "arguments" : [
+                                {
+                                    "name" : "path",
+                                    "description" : "the path to be used for cd",
+                                    "values" : self.get_path_names_list,
+                                    "mandatory" : False
+                                }
+                            ]
+                        },
                         "ls" : {
                             "handler" : self.process_ls,
                             "description" : "list the contents of the current path",
