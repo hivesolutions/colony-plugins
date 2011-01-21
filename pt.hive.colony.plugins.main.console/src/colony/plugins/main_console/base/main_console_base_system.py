@@ -716,6 +716,7 @@ class MainConsoleBase:
         # creates the commands map
         commands_map = {
                         "help" : {
+                            "handler" : self.process_help,
                             "description" : "shows this message or the referred console extension help message",
                             "arguments" : [
                                 {
@@ -724,25 +725,22 @@ class MainConsoleBase:
                                     "values" : self.get_extension_id_list,
                                     "mandatory" : False
                                 }
-                            ],
-                            "handler" : self.process_help
+                            ]
                         },
                         "helpall" : {
-                            "description" : "shows the help message of all the loaded console extensions",
-                            "arguments" : [],
-                            "handler" : self.process_helpall
+                            "handler" : self.process_helpall,
+                            "description" : "shows the help message of all the loaded console extensions"
                         },
                         "extensions" : {
-                            "description" : "shows the help message of all the loaded console extensions",
-                            "arguments" : [],
-                            "handler" : self.process_extensions
+                            "handler" : self.process_extensions,
+                            "description" : "shows the help message of all the loaded console extensions"
                         },
                         "status" : {
-                            "description" : "shows the current status of the system",
-                            "arguments" : [],
-                            "handler" : self.process_status
+                            "handler" : self.process_status,
+                            "description" : "shows the current status of the system"
                         },
                         "show" : {
+                            "handler" : self.process_show,
                             "description" : "shows the status of the plugin with the defined id",
                             "arguments" : [
                                 {
@@ -751,10 +749,10 @@ class MainConsoleBase:
                                     "values" : self.get_plugin_id_list,
                                     "mandatory" : False
                                 }
-                            ],
-                            "handler" : self.process_show
+                            ]
                         },
                         "info" : {
+                            "handler" : self.process_info,
                             "help" : "shows the status about a plugin",
                             "arguments" : [
                                 {
@@ -763,15 +761,14 @@ class MainConsoleBase:
                                     "values" : self.get_plugin_id_list,
                                     "mandatory" : False
                                 }
-                            ],
-                            "handler" : self.process_info
+                            ]
                         },
                         "infoall" : {
-                            "help" : "shows information about all the loaded plugins",
-                            "arguments" : [],
-                            "handler" : self.process_infoall
+                            "handler" : self.process_infoall,
+                            "help" : "shows information about all the loaded plugins"
                         },
                         "add" : {
+                            "handler" : self.process_add,
                             "help" : "adds a new plugin to the system",
                             "arguments" : [
                                 {
@@ -780,10 +777,10 @@ class MainConsoleBase:
                                     "values" : str,
                                     "mandatory" : True
                                 }
-                            ],
-                            "handler" : self.process_add
+                            ]
                         },
                         "remove" : {
+                            "handler" : self.process_remove,
                             "help" : "removes plugin from the system",
                             "arguments" : [
                                 {
@@ -792,10 +789,10 @@ class MainConsoleBase:
                                     "values" : str,
                                     "mandatory" : True
                                 }
-                            ],
-                            "handler" : self.process_remove
+                            ]
                         },
                         "load" : {
+                            "handler" : self.process_load,
                             "help" : "loads a plugin",
                             "arguments" : [
                                 {
@@ -804,10 +801,10 @@ class MainConsoleBase:
                                     "values" : self.get_plugin_id_list,
                                     "mandatory" : True
                                 }
-                            ],
-                            "handler" : self.process_load
+                            ]
                         },
                         "unload" : {
+                            "handler" : self.process_unload,
                             "help" : "unloads a plugin",
                             "arguments" : [
                                 {
@@ -816,10 +813,10 @@ class MainConsoleBase:
                                     "values" : self.get_plugin_id_list,
                                     "mandatory" : True
                                 }
-                            ],
-                            "handler" : self.process_unload
+                            ]
                         },
                         "exec" : {
+                            "handler" : self.process_exec,
                             "help" : "executes the given hcs script",
                             "arguments" : [
                                 {
@@ -828,13 +825,11 @@ class MainConsoleBase:
                                     "values" : str,
                                     "mandatory" : True
                                 }
-                            ],
-                            "handler" : self.process_exec
+                            ]
                         },
                         "exit" : {
-                            "help" : "exits the system",
-                            "arguments" : [],
-                            "handler" : self.process_exit
+                            "handler" : self.process_exit,
+                            "help" : "exits the system"
                         }
                     }
 

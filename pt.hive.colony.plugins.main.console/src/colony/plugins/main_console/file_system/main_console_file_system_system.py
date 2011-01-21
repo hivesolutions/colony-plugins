@@ -144,6 +144,7 @@ class MainConsoleFileSystem:
         # creates the commands map
         commands_map = {
                         "ls" : {
+                            "handler" : self.process_ls,
                             "description" : "list the contents of the current path",
                             "arguments" : [
                                 {
@@ -152,12 +153,11 @@ class MainConsoleFileSystem:
                                     "values" : [],
                                     "mandatory" : False
                                 }
-                            ],
-                            "handler" : self.process_ls
+                            ]
                         },
                         "pwd" : {
-                            "description" : "show the present working directory",
-                            "handler" : self.process_pwd
+                            "handler" : self.process_pwd,
+                            "description" : "show the present working directory"
                         }
                     }
 
