@@ -38,6 +38,7 @@ __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
 import os
+import types
 
 import web_mvc_manager_helpers
 import web_mvc_manager_exceptions
@@ -241,14 +242,8 @@ class WebMvcManager:
         # iterate over all the page items in the
         # page item bundle
         for page_item in page_item_bundle:
-            # retrieves the page item menu
-            page_item_menu = page_item.get("menu", None)
-
-            # retrieves the page item side panel
-            page_item_side_panel = page_item.get("side_panel", None)
-
-            # retrieves the base address item side panel
-            page_item_base_address = page_item.get("base_address", None)
+            # unpacks the page item i
+            page_item_menu, page_item_side_panel, page_item_base_address, page_item_pattern = self.__unpack_page_item(page_item)
 
             # in case there is a menu defined for the page item
             # and the base address is also defined
@@ -262,14 +257,8 @@ class WebMvcManager:
                 # adds the side panel item for the side panel and base address
                 self._add_side_panel_item(page_item_side_panel, page_item_base_address)
 
-            # retrieves the page item pattern
-            page_item_pattern = page_item.get("pattern", None)
-
-            # retrieves the page item action
-            page_item_action = page_item.get("action", None)
-
-            # retrieves the page item pattern name
-            page_item_pattern_name = page_item_pattern[0]
+            # unpacks the page item pattern
+            page_item_pattern_name, page_item_action = page_item_pattern
 
             # retrieves the page item value
             page_item_value = self.web_mvc_manager_main_controller.generate_handle_handle_web_mvc_manager_page_item(page_item_action)
@@ -296,14 +285,8 @@ class WebMvcManager:
         # iterate over all the page items in the
         # page item bundle
         for page_item in page_item_bundle:
-            # retrieves the page item menu
-            page_item_menu = page_item.get("menu", None)
-
-            # retrieves the page item side panel
-            page_item_side_panel = page_item.get("side_panel", None)
-
-            # retrieves the base address item side panel
-            page_item_base_address = page_item.get("base_address", None)
+            # unpacks the page item
+            page_item_menu, page_item_side_panel, page_item_base_address, page_item_pattern = self.__unpack_page_item(page_item)
 
             # in case there is a menu defined for the page item
             # and the base address is also defined
@@ -317,11 +300,8 @@ class WebMvcManager:
                 # removes the side panel item for the side panel and base address
                 self._remove_side_panel_item(page_item_side_panel, page_item_base_address)
 
-            # retrieves the page item pattern
-            page_item_pattern = page_item.get("pattern", None)
-
-            # retrieves the page item pattern name
-            page_item_pattern_name = page_item_pattern[0]
+            # unpacks the page item pattern
+            page_item_pattern_name, _page_item_action = page_item_pattern
 
             # sets the page item in the extra patterns map
             page_item_value = self.extra_patterns_map[page_item_pattern_name]
@@ -524,3 +504,36 @@ class WebMvcManager:
         if target_item_tuple in base_item_list:
             # removes the target item tuple from the base item list
             base_item_list.remove(target_item_tuple)
+
+    def __unpack_page_item(self, page_item):
+        # retrieves the page item type
+        page_item_type = type(page_item)
+
+        # in case the page item is a map
+        if page_item_type == types.DictType:
+            # retrieves the page item menu
+            page_item_menu = page_item.get("menu", None)
+
+            # retrieves the page item side panel
+            page_item_side_panel = page_item.get("side_panel", None)
+
+            # retrieves the base address item side panel
+            page_item_base_address = page_item.get("base_address", None)
+
+            # retrieves the page item pattern
+            page_item_pattern = page_item.get("pattern", None)
+        # otherwise it must be a tuple
+        else:
+            # sets the unused value to none
+            page_item_menu = None
+            page_item_side_panel = None
+            page_item_base_address = None
+
+            # sets the page item pattern as the page item
+            page_item_pattern = page_item
+
+        # creates the page item tuple
+        page_item_tuple = (page_item_menu, page_item_side_panel, page_item_base_address, page_item_pattern)
+
+        # returns the page item tuple
+        return page_item_tuple
