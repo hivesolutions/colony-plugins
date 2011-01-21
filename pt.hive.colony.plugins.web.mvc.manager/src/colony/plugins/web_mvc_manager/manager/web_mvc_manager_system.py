@@ -258,19 +258,26 @@ class WebMvcManager:
                 self._add_side_panel_item(page_item_side_panel, page_item_base_address)
 
             # unpacks the page item pattern
-            page_item_pattern_name, page_item_action = page_item_pattern
+            page_item_pattern_name = page_item_pattern[0]
+            page_item_action = page_item_pattern[1]
 
-            # retrieves the page item value
-            page_item_value = self.web_mvc_manager_main_controller.generate_handle_handle_web_mvc_manager_page_item(page_item_action)
+            # converts the page item action to allow composite validation of mvc manager
+            page_item_action_composite = self.web_mvc_manager_main_controller.generate_handle_handle_web_mvc_manager_page_item(page_item_action)
 
-            # creates the page item tuple with the page item pattern name and value
-            page_item_tuple = (page_item_pattern_name, page_item_value)
+            # converts the page item patter to list
+            page_item_pattern_list = list(page_item_pattern)
 
-            # sets the page item tuple in the extra patterns list
-            self.extra_patterns_list.append(page_item_tuple)
+            # sets the new page item action
+            page_item_pattern_list[1] = page_item_action_composite
+
+            # converts the page item patter back t tuple
+            page_item_pattern = tuple(page_item_pattern_list)
+
+            # adds the page item pattern to the extra patterns list
+            self.extra_patterns_list.append(page_item_pattern)
 
             # sets the page item in the extra patterns map
-            self.extra_patterns_map[page_item_pattern_name] = page_item_value
+            self.extra_patterns_map[page_item_pattern_name] = page_item_pattern
 
         # generates the patterns event
         self.web_mvc_manager_plugin.generate_event("web.mvc.patterns", [self.web_mvc_manager_plugin])
@@ -301,16 +308,13 @@ class WebMvcManager:
                 self._remove_side_panel_item(page_item_side_panel, page_item_base_address)
 
             # unpacks the page item pattern
-            page_item_pattern_name, _page_item_action = page_item_pattern
+            page_item_pattern_name = page_item_pattern[0]
 
-            # sets the page item in the extra patterns map
-            page_item_value = self.extra_patterns_map[page_item_pattern_name]
+            # retrieves the page item pattern from the extra patterns map
+            page_item_pattern = self.extra_patterns_map[page_item_pattern_name]
 
-            # creates the page item tuple with the page item pattern name and value
-            pattern_tuple = (page_item_pattern_name, page_item_value)
-
-            # removes the patter tuple from the extra patterns list
-            self.extra_patterns_list.remove(pattern_tuple)
+            # removes the page item pattern from the extra patterns list
+            self.extra_patterns_list.remove(page_item_pattern)
 
             # unsets the page item in the extra patterns map
             del self.extra_patterns_map[page_item_pattern_name]
