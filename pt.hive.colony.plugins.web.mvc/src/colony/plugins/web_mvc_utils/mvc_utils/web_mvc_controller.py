@@ -50,6 +50,9 @@ DEFAULT_CONTENT_TYPE = "text/html;charset=utf-8"
 DEFAULT_ENCODING = "utf-8"
 """ The default encoding value """
 
+DEFAULT_LOCALE = "en_us"
+""" The default locale """
+
 DEFAULT_TEMPLATE_FILE_ENCODING = "Cp1252"
 """ The default template file encoding """
 
@@ -83,8 +86,17 @@ SEQUENCE_TYPE_VALUE = "sequence"
 MAP_TYPE_VALUE = "map"
 """ The map type value """
 
+LOCALE_VALUE = "locale"
+""" The locale value """
+
+RELATIVE_VALUE_VALUE = "relative_value"
+""" The relative value value """
+
 HOST_VALUE = "Host"
 """ The host value """
+
+ACCEPT_LANGUAGE_VALUE = "Accept-Language"
+""" The accept language header value """
 
 PARAMETERS_VALUE = "_parameters"
 """ The parameters value """
@@ -119,6 +131,9 @@ CAMEL_CASED_WORD_PAIR_REGEX_VALUE = "([a-z\d])([A-Z])"
 NON_CHARACTER_REGEX_VALUE = "[^A-Z^a-z^0-9^\/]+"
 """ The non-character regex value """
 
+LOCALE_REGEX_VALUE = "(?P<locale>[a-zA-Z0-9-]+)(;q=(?P<relative_value>[0-9]+(\.[0-9]+)?))?"
+""" The locale regex value """
+
 ATTRIBUTE_PARSING_REGEX = re.compile(ATTRIBUTE_PARSING_REGEX_VALUE)
 """ The attribute parsing regex """
 
@@ -130,6 +145,9 @@ CAMEL_CASED_WORD_PAIR_REGEX = re.compile(CAMEL_CASED_WORD_PAIR_REGEX_VALUE)
 
 NON_CHARACTER_REGEX = re.compile(NON_CHARACTER_REGEX_VALUE)
 """ The non-character regex """
+
+LOCALE_REGEX = re.compile(LOCALE_REGEX_VALUE)
+""" The locale regex """
 
 DATA_TYPE_CAST_TYPES_MAP = {"text" : unicode, "numeric" : int, "integer" : int, "float" : float, "date" : datetime.datetime.utcfromtimestamp, "relation" : None}
 """ The map associating the data types with the cast types """
@@ -833,6 +851,52 @@ def get_attribute_decoded(self, rest_request, attribute_name, encoding = DEFAULT
         # returns the empty value
         return ""
 
+def get_locale(self, rest_request, available_locales = (DEFAULT_LOCALE,), default_locale = DEFAULT_LOCALE):
+    """
+    Retrieves the current "best" locale for the given rest
+    request and for the available locales.
+    In case no available locales are used the default locale is used.
+
+    @type rest_request: RestRequest
+    @param rest_request: The rest request to be used.
+    @type available_locales: Tuple
+    @param available_locales: A tuple containing the available
+    and "valid" locales.
+    @type default_locale: String
+    @param default_locale: The default locale to be used.
+    @rtype: String
+    @return: The current "best" locale"
+    """
+
+    # creates the get locales method tuple
+    get_locales_methods = (self._get_locales_header, self._get_locales_default)
+
+    # sets the initial locale
+    locale = None
+
+    # iterates over all the get locales methods
+    for get_locales_method in get_locales_methods:
+        # calls the get locales method
+        locales_list = get_locales_method(rest_request)
+
+        # retrieves the list of available locales
+        available_locales_list = [value for value in locales_list if value in available_locales]
+
+        # in case the available locales list
+        # is not valid (empty)
+        if not available_locales_list:
+            # continues the loop
+            continue
+
+        # retrieves the (first) locale
+        locale = available_locales_list[0]
+
+        # breaks the loop
+        break
+
+    # returns the locale
+    return locale
+
 def get_templates_path(self):
     """
     Retrieves the templates path.
@@ -1455,3 +1519,77 @@ def _lower_locale(self, locale):
 
     # returns the locale lower (value)
     return locale_lower
+
+def _get_locales_header(self, rest_request):
+    """
+    Retrieves the locales list value using an
+    (http) header strategy.
+
+    @type rest_request: RestRequest
+    @param rest_request: The rest request to be used.
+    @rtype: List
+    @return: The retrieved locales list.
+    """
+
+    # retrieves the accepted language
+    accept_language = rest_request.get_header(ACCEPT_LANGUAGE_VALUE)
+
+    # retrieves the locales map for the accept language
+    locales_map = self._get_locales_map(accept_language)
+
+    # retrieves the locales list ordered by value in reverse
+    locales_list = sorted(locales_map, key = locales_map.__getitem__, reverse = True)
+
+    # returns the locales list
+    return locales_list
+
+def _get_locales_default(self, rest_request):
+    """
+    Retrieves the locales list value using a
+    default strategy.
+
+    @type rest_request: RestRequest
+    @param rest_request: The rest request to be used.
+    @rtype: List
+    @return: The retrieved locales list.
+    """
+
+    # returns the default locale
+    return (DEFAULT_LOCALE,)
+
+def _get_locales_map(self, accept_language):
+    """
+    Given am accept language header value, this
+    method converts the values into a map of locale
+    key and relative value value.
+
+    @type accept_language: String
+    @param accept_language: The accept language header value.
+    @rtype: Dictionary
+    @return: The map locales for the given language
+    header value.
+    """
+
+    # creates the locales map
+    locales_map = {}
+
+    # marches the accept language value, retrieving the match iterator
+    accept_language_match_iterator = LOCALE_REGEX.finditer(accept_language)
+
+    # iterates over all the accept language matches (iterator)
+    for accept_language_match in accept_language_match_iterator:
+        # retrieves the values from the accept language match
+        locale = accept_language_match.group(LOCALE_VALUE)
+        relative_value = accept_language_match.group(RELATIVE_VALUE_VALUE)
+
+        # converts the locale to lower
+        locale_lower = self._lower_locale(locale)
+
+        # retrieves the relative value in float mode
+        relative_value_float = relative_value == None and 1.0 or float(relative_value)
+
+        # sets the locale lower value in the locales map
+        locales_map[locale_lower] = relative_value_float
+
+    # returns the locales map
+    return locales_map
