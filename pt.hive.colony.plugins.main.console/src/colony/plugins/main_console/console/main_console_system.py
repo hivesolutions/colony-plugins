@@ -173,8 +173,8 @@ class MainConsole:
         arguments = line_split[1:]
 
         # validates the command with the given arguments and
-        # retrieves the command handler in success
-        command_handler = self._validate_command(command, arguments, output_method)
+        # retrieves the command handler and the arguments map in success
+        command_handler, arguments_map = self._validate_command(command, arguments, output_method)
 
         # in case the validation failed
         if not command_handler:
@@ -183,8 +183,8 @@ class MainConsole:
 
         try:
             # runs the command handler with the arguments,
-            # the output method and the console context
-            command_handler(arguments, output_method, console_context)
+            # the arguments map, the output method and the console context
+            command_handler(arguments, arguments_map, output_method, console_context)
         except Exception, exception:
             # prints the exception message
             output_method(COMMAND_EXCEPTION_MESSAGE + ": " + unicode(exception))
@@ -381,17 +381,9 @@ class MainConsole:
         # retrieves the command arguments
         command_arguments = command_information.get("arguments")
 
-        # creates the command mandatory arguments (list)
-        command_mandatory_arguments = []
-
-        # iterates over the command arguments
-        for command_argument in command_arguments:
-            # retrieves the command argument mandatory
-            command_argument_mandatory = command_argument.get("mandatory", False)
-
-            # in case the command argument adds it
-            # to the command mandatory arguments
-            command_argument_mandatory and command_mandatory_arguments.append(command_argument)
+        # retrieves the command mandatory arguments from the
+        # the command information
+        command_mandatory_arguments = self.__get_command_mandatory_arguments(command_arguments)
 
         # retrieves the command mandatory arguments length
         command_mandatory_arguments_length = len(command_mandatory_arguments)
@@ -399,9 +391,9 @@ class MainConsole:
         # retrieves the arguments length
         arguments_length = len(arguments)
 
-        # in case the command mandatory arguments length is larger
-        # than the arguments length
-        if command_mandatory_arguments_length > arguments_length:
+        # in case the arguments length is smaller than the
+        # command mandatory arguments length
+        if arguments_length < command_mandatory_arguments_length:
             # retrieves the missing arguments count, by subtracting the arguments
             # length from the command mandatory arguments length
             missing_arguments_count = command_mandatory_arguments_length - arguments_length
@@ -433,8 +425,25 @@ class MainConsole:
             # returns none (invalid)
             return None
 
-        # returns the command handler
-        return command_handler
+        # retrieves the received arguments list
+        received_arguments = command_arguments[:arguments_length]
+
+        # retrieves the received argument names
+        received_argument_names = [value.get("name", "undefined") for value in received_arguments]
+
+        # zip the received argument names and the arguments list
+        received_arguments_tuple = zip(received_argument_names, arguments)
+
+        # creates the arguments map from the received
+        # arguments tuple
+        arguments_map = dict(received_arguments_tuple)
+
+        # creates the command tuple from the command handler
+        # and the arguments map
+        command_tuple = (command_handler, arguments_map)
+
+        # returns the command tuple
+        return command_tuple
 
     def _get_command_alternatives(self, command):
         # creates the alternatives list
@@ -590,6 +599,22 @@ class MainConsole:
 
         # returns the best match
         return best_match
+
+    def __get_command_mandatory_arguments(self, command_arguments):
+        # creates the command mandatory arguments (list)
+        command_mandatory_arguments = []
+
+        # iterates over the command arguments
+        for command_argument in command_arguments:
+            # retrieves the command argument mandatory
+            command_argument_mandatory = command_argument.get("mandatory", False)
+
+            # in case the command argument adds it
+            # to the command mandatory arguments
+            command_argument_mandatory and command_mandatory_arguments.append(command_argument)
+
+        # returns the command mandatory arguments
+        return command_mandatory_arguments
 
 class ConsoleContext(colony.libs.protection_util.Protected):
     """

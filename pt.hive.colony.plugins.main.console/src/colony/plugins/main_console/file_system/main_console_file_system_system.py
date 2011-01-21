@@ -71,13 +71,15 @@ class MainConsoleFileSystem:
     def get_commands_map(self):
         return self.commands_map
 
-    def process_ls(self, arguments, output_method, console_context):
+    def process_ls(self, arguments, arguments_map, output_method, console_context):
         """
         Processes the ls command, with the given
         arguments and output method.
 
         @type arguments: List
         @param arguments: The arguments for the processing.
+        @type arguments_map: Dictionary
+        @param arguments_map: The map of arguments for the processing.
         @type output_method: Method
         @param output_method: The output method to be used in the processing.
         @type console_context: ConsoleContext

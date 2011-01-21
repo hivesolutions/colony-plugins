@@ -98,13 +98,15 @@ class MainConsoleBase:
     def get_commands_map(self):
         return self.commands_map
 
-    def process_help(self, arguments, output_method, console_context):
+    def process_help(self, arguments, arguments_map, output_method, console_context):
         """
         Processes the help command, with the given
         arguments and output method.
 
         @type arguments: List
         @param arguments: The arguments for the processing.
+        @type arguments_map: Dictionary
+        @param arguments_map: The map of arguments for the processing.
         @type output_method: Method
         @param output_method: The output method to be used in the processing.
         @type console_context: ConsoleContext
@@ -124,13 +126,15 @@ class MainConsoleBase:
 #                if console_command_plugin_console_extension_name == extension_name:
 #                    output_method(console_command_plugin.get_help())
 
-    def process_helpall(self, arguments, output_method, console_context):
+    def process_helpall(self, arguments, arguments_map, output_method, console_context):
         """
         Processes the help all command, with the given
         arguments and output method.
 
         @type arguments: List
         @param arguments: The arguments for the processing.
+        @type arguments_map: Dictionary
+        @param arguments_map: The map of arguments for the processing.
         @type output_method: Method
         @param output_method: The output method to be used in the processing.
         @type console_context: ConsoleContext
@@ -145,13 +149,15 @@ class MainConsoleBase:
 #        for console_command_plugin in main_console_plugin.console_command_plugins:
 #            output_method(console_command_plugin.get_help())
 
-    def process_extensions(self, arguments, output_method, console_context):
+    def process_extensions(self, arguments, arguments_map, output_method, console_context):
         """
         Processes the extensions command, with the given
         arguments and output method.
 
         @type arguments: List
         @param arguments: The arguments for the processing.
+        @type arguments_map: Dictionary
+        @param arguments_map: The map of arguments for the processing.
         @type output_method: Method
         @param output_method: The output method to be used in the processing.
         @type console_context: ConsoleContext
@@ -184,13 +190,15 @@ class MainConsoleBase:
 
             output_method(console_command_plugin.id + "\n", False)
 
-    def process_status(self, arguments, output_method, console_context):
+    def process_status(self, arguments, arguments_map, output_method, console_context):
         """
         Processes the status command, with the given
         arguments and output method.
 
         @type arguments: List
         @param arguments: The arguments for the processing.
+        @type arguments_map: Dictionary
+        @param arguments_map: The map of arguments for the processing.
         @type output_method: Method
         @param output_method: The output method to be used in the processing.
         @type console_context: ConsoleContext
@@ -256,13 +264,15 @@ class MainConsoleBase:
         output_method("replicas:     " + replicas_string)
         output_method("instances:    " + instances_string)
 
-    def process_show(self, arguments, output_method, console_context):
+    def process_show(self, arguments, arguments_map, output_method, console_context):
         """
         Processes the show command, with the given
         arguments and output method.
 
         @type arguments: List
         @param arguments: The arguments for the processing.
+        @type arguments_map: Dictionary
+        @param arguments_map: The map of arguments for the processing.
         @type output_method: Method
         @param output_method: The output method to be used in the processing.
         @type console_context: ConsoleContext
@@ -272,11 +282,8 @@ class MainConsoleBase:
         # retrieves the plugin manager
         plugin_manager = self.main_console_base_plugin.manager
 
-        # retrieves the arguments length
-        arguments_length = len(arguments)
-
         # retrieves the plugin id
-        plugin_id = arguments_length > 0 and arguments[0] or None
+        plugin_id = arguments_map.get("plugin_id", None)
 
         # in case the plugin id is defined
         if plugin_id:
@@ -317,13 +324,15 @@ class MainConsoleBase:
                 output_method("INACTIVE" + "    ", False)
             output_method(plugin_instance.id + "\n", False)
 
-    def process_info(self, arguments, output_method, console_context):
+    def process_info(self, arguments, arguments_map, output_method, console_context):
         """
         Processes the info command, with the given
         arguments and output method.
 
         @type arguments: List
         @param arguments: The arguments for the processing.
+        @type arguments_map: Dictionary
+        @param arguments_map: The map of arguments for the processing.
         @type output_method: Method
         @param output_method: The output method to be used in the processing.
         @type console_context: ConsoleContext
@@ -345,7 +354,7 @@ class MainConsoleBase:
         else:
             output_method(INVALID_PLUGIN_ID_MESSAGE)
 
-    def process_infoall(self, arguments, output_method, console_context):
+    def process_infoall(self, arguments, arguments_map, output_method, console_context):
         """
         Processes the info all command, with the given
         arguments and output method.
@@ -364,13 +373,15 @@ class MainConsoleBase:
         for plugin in plugin_manager.plugin_instances:
             self.print_plugin_info(plugin, output_method)
 
-    def process_add(self, arguments, output_method, console_context):
+    def process_add(self, arguments, arguments_map, output_method, console_context):
         """
         Processes the add command, with the given
         arguments and output method.
 
         @type arguments: List
         @param arguments: The arguments for the processing.
+        @type arguments_map: Dictionary
+        @param arguments_map: The map of arguments for the processing.
         @type output_method: Method
         @param output_method: The output method to be used in the processing.
         @type console_context: ConsoleContext
@@ -391,13 +402,15 @@ class MainConsoleBase:
         else:
             pass
 
-    def process_remove(self, arguments, output_method, console_context):
+    def process_remove(self, arguments, arguments_map, output_method, console_context):
         """
         Processes the remove command, with the given
         arguments and output method.
 
         @type arguments: List
         @param arguments: The arguments for the processing.
+        @type arguments_map: Dictionary
+        @param arguments_map: The map of arguments for the processing.
         @type output_method: Method
         @param output_method: The output method to be used in the processing.
         @type console_context: ConsoleContext
@@ -418,13 +431,15 @@ class MainConsoleBase:
         else:
             output_method(INVALID_PLUGIN_ID_MESSAGE)
 
-    def process_load(self, arguments, output_method, console_context):
+    def process_load(self, arguments, arguments_map, output_method, console_context):
         """
         Processes the load command, with the given
         arguments and output method.
 
         @type arguments: List
         @param arguments: The arguments for the processing.
+        @type arguments_map: Dictionary
+        @param arguments_map: The map of arguments for the processing.
         @type output_method: Method
         @param output_method: The output method to be used in the processing.
         @type console_context: ConsoleContext
@@ -445,13 +460,15 @@ class MainConsoleBase:
         else:
             output_method(INVALID_PLUGIN_ID_MESSAGE)
 
-    def process_unload(self, arguments, output_method, console_context):
+    def process_unload(self, arguments, arguments_map, output_method, console_context):
         """
         Processes the unload command, with the given
         arguments and output method.
 
         @type arguments: List
         @param arguments: The arguments for the processing.
+        @type arguments_map: Dictionary
+        @param arguments_map: The map of arguments for the processing.
         @type output_method: Method
         @param output_method: The output method to be used in the processing.
         @type console_context: ConsoleContext
@@ -472,13 +489,15 @@ class MainConsoleBase:
         else:
             output_method(INVALID_PLUGIN_ID_MESSAGE)
 
-    def process_exec(self, arguments, output_method, console_context):
+    def process_exec(self, arguments, arguments_map, output_method, console_context):
         """
         Processes the exec command, with the given
         arguments and output method.
 
         @type arguments: List
         @param arguments: The arguments for the processing.
+        @type arguments_map: Dictionary
+        @param arguments_map: The map of arguments for the processing.
         @type output_method: Method
         @param output_method: The output method to be used in the processing.
         @type console_context: ConsoleContext
@@ -510,13 +529,15 @@ class MainConsoleBase:
         # closes the file
         file.close()
 
-    def process_exit(self, arguments, output_method, console_context):
+    def process_exit(self, arguments, arguments_map, output_method, console_context):
         """
         Processes the exit command, with the given
         arguments and output method.
 
         @type arguments: List
         @param arguments: The arguments for the processing.
+        @type arguments_map: Dictionary
+        @param arguments_map: The map of arguments for the processing.
         @type output_method: Method
         @param output_method: The output method to be used in the processing.
         @type console_context: ConsoleContext
@@ -528,13 +549,15 @@ class MainConsoleBase:
 
         plugin_manager.unload_system()
 
-    def process_echo(self, arguments, output_method, console_context):
+    def process_echo(self, arguments, arguments_map, output_method, console_context):
         """
         Processes the echo command, with the given
         arguments and output method.
 
         @type arguments: List
         @param arguments: The arguments for the processing.
+        @type arguments_map: Dictionary
+        @param arguments_map: The map of arguments for the processing.
         @type output_method: Method
         @param output_method: The output method to be used in the processing.
         @type console_context: ConsoleContext
@@ -696,7 +719,7 @@ class MainConsoleBase:
                             "description" : "shows this message or the referred console extension help message",
                             "arguments" : [
                                 {
-                                    "name" : "extension-id",
+                                    "name" : "extension_id",
                                     "description" : "the id of the extension to be loaded",
                                     "values" : self.get_extension_id_list,
                                     "mandatory" : False
@@ -723,7 +746,7 @@ class MainConsoleBase:
                             "description" : "shows the status of the plugin with the defined id",
                             "arguments" : [
                                 {
-                                    "name" : "plugin-id",
+                                    "name" : "plugin_id",
                                     "description" : "the id of the plugin to be shown",
                                     "values" : self.get_plugin_id_list,
                                     "mandatory" : False
@@ -735,7 +758,7 @@ class MainConsoleBase:
                             "help" : "shows the status about a plugin",
                             "arguments" : [
                                 {
-                                    "name" : "plugin-id",
+                                    "name" : "plugin_id",
                                     "description" : "the id of the plugin to show the information",
                                     "values" : self.get_plugin_id_list,
                                     "mandatory" : False
@@ -752,7 +775,7 @@ class MainConsoleBase:
                             "help" : "adds a new plugin to the system",
                             "arguments" : [
                                 {
-                                    "name" : "plugin-path",
+                                    "name" : "plugin_path",
                                     "description" : "the path of the plugin to be added",
                                     "values" : str,
                                     "mandatory" : True
@@ -764,7 +787,7 @@ class MainConsoleBase:
                             "help" : "removes plugin from the system",
                             "arguments" : [
                                 {
-                                    "name" : "plugin-id",
+                                    "name" : "plugin_id",
                                     "description" : "the id of the plugin to be removed",
                                     "values" : str,
                                     "mandatory" : True
@@ -776,7 +799,7 @@ class MainConsoleBase:
                             "help" : "loads a plugin",
                             "arguments" : [
                                 {
-                                    "name" : "plugin-id",
+                                    "name" : "plugin_id",
                                     "description" : "the id of the plugin to be loaded",
                                     "values" : self.get_plugin_id_list,
                                     "mandatory" : True
@@ -788,7 +811,7 @@ class MainConsoleBase:
                             "help" : "unloads a plugin",
                             "arguments" : [
                                 {
-                                    "name" : "plugin-id",
+                                    "name" : "plugin_id",
                                     "description" : "the id of the plugin to be unloaded",
                                     "values" : self.get_plugin_id_list,
                                     "mandatory" : True
@@ -800,7 +823,7 @@ class MainConsoleBase:
                             "help" : "executes the given hcs script",
                             "arguments" : [
                                 {
-                                    "name" : "file-path",
+                                    "name" : "file_path",
                                     "description" : "the path of the file to be executed",
                                     "values" : str,
                                     "mandatory" : True
