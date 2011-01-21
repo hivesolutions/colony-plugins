@@ -1416,10 +1416,7 @@ def _process_file_path_locale(self, file_path, locale = None):
     file_name_splitted = file_name.split(".", 1)
 
     # converts the locale to lower
-    locale_lower = locale.lower()
-
-    # replaces the slashes with underscores
-    locale_lower = locale_lower.replace("-", "_")
+    locale_lower = self._lower_locale(locale)
 
     # creates the locale string value from the locale lower
     locale_string_value = "_" + locale_lower + "."
@@ -1437,3 +1434,24 @@ def _process_file_path_locale(self, file_path, locale = None):
 
     # returns the file path
     return file_path
+
+def _lower_locale(self, locale):
+    """
+    Converts the given locale string value
+    to the lower version of it.
+
+    @type locale: String
+    @param locale: The lower locale string value to
+    be converted.
+    @rtype: String
+    @return: The lower locale string value.
+    """
+
+    # converts the locale to lower
+    locale_lower = locale.lower()
+
+    # replaces the slashes with underscores
+    locale_lower = locale_lower.replace("-", "_")
+
+    # returns the locale lower (value)
+    return locale_lower
