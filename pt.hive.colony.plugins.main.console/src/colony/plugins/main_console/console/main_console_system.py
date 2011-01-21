@@ -379,7 +379,7 @@ class MainConsole:
             return None
 
         # retrieves the command arguments
-        command_arguments = command_information.get("arguments")
+        command_arguments = command_information.get("arguments", [])
 
         # retrieves the command mandatory arguments from the
         # the command information

@@ -86,32 +86,59 @@ class MainConsoleFileSystem:
         @param console_context: The console context for the processing.
         """
 
-        # retrieves the console context path
+        # retrieves the path from the arguments
+        path = arguments_map.get("path", None)
+
+        # retrieves the path
         console_context_path = console_context.get_path()
 
+        # sets the path value
+        path = path or console_context_path
+
         # retrieves the is directory value
-        is_directory = os.path.isdir(console_context_path)
+        is_directory = os.path.isdir(path)
 
         # in case it is a directory
         if is_directory:
-            # retrieves the console context path names
-            console_context_path_names = os.listdir(console_context_path)
+            # retrieves the path names
+            path_names = os.listdir(path)
 
-            # sets the console context path contents as the
-            # console context path names
-            console_context_path_contents = console_context_path_names
+            # sets the path contents as the
+            # path names
+            path_contents = path_names
         else:
-            # retrieves the console context path base name
-            console_context_path_base_name = os.path.basename(console_context_path)
+            # retrieves the path base name
+            path_base_name = os.path.basename(path)
 
-            # sets the console context path contents as the
-            # console context path base name
-            console_context_path_contents = [console_context_path_base_name]
+            # sets the path contents as the
+            # path base name
+            path_contents = [path_base_name]
 
-        # iterates over all the context path contents
-        for console_context_path_item in console_context_path_contents:
-            # writes the value of the console context path item
-            output_method(console_context_path_item)
+        # iterates over all the path contents
+        for path_item in path_contents:
+            # writes the value of the path item
+            output_method(path_item)
+
+    def process_pwd(self, arguments, arguments_map, output_method, console_context):
+        """
+        Processes the pwd command, with the given
+        arguments and output method.
+
+        @type arguments: List
+        @param arguments: The arguments for the processing.
+        @type arguments_map: Dictionary
+        @param arguments_map: The map of arguments for the processing.
+        @type output_method: Method
+        @param output_method: The output method to be used in the processing.
+        @type console_context: ConsoleContext
+        @param console_context: The console context for the processing.
+        """
+
+        # retrieves the console context path
+        console_context_path = console_context.get_path()
+
+        # writes the value of the console context path
+        output_method(console_context_path)
 
     def __generate_commands_map(self):
         # creates the commands map
@@ -127,6 +154,10 @@ class MainConsoleFileSystem:
                                 }
                             ],
                             "handler" : self.process_ls
+                        },
+                        "pwd" : {
+                            "description" : "show the present working directory",
+                            "handler" : self.process_pwd
                         }
                     }
 
