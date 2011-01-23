@@ -650,7 +650,7 @@ class ConsoleContext(colony.libs.protection_util.Protected):
     def authenticate_user(self, username, password):
         try:
             # tries to authenticate the user retrieving the result
-            authentication_result = self.main_console.authenticate_user(username, password, self)
+            authentication_result = self.main_console.authenticate_user(username, password, self._proxy_instance)
 
             # sets the user value according to the
             # authentication result
@@ -667,11 +667,11 @@ class ConsoleContext(colony.libs.protection_util.Protected):
 
     @colony.libs.protection_util.public
     def process_command_line(self, command_line, output_method):
-        return self.main_console.process_command_line(command_line, output_method, self)
+        return self.main_console.process_command_line(command_line, output_method, self._proxy_instance)
 
     @colony.libs.protection_util.public
     def get_command_line_alternatives(self, command, arguments):
-        return self.main_console.get_command_line_alternatives(command, arguments, self)
+        return self.main_console.get_command_line_alternatives(command, arguments, self._proxy_instance)
 
     @colony.libs.protection_util.public
     def create_console_interface_character(self, console_handler):
@@ -692,6 +692,7 @@ class ConsoleContext(colony.libs.protection_util.Protected):
         # returns the base name
         return base_name
 
+    @colony.libs.protection_util.public
     def get_full_path(self, base_path):
         """
         Returns the full path for the given
