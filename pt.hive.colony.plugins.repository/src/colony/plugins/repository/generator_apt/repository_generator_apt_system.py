@@ -191,8 +191,10 @@ class RepositoryGeneratorApt:
             # retrieves the control contents from the control map
             control_contents = control_map.get("control", "")
 
+            # decodes the control contents
             control_contents = control_contents.decode("utf-8")
 
+            # retrieves the various lines from the control contents
             lines = [value.strip() for value in control_contents.split("\n")]
 
             # creates the control values map
@@ -266,15 +268,15 @@ class RepositoryGeneratorApt:
                            "installed_size" : control_values_map.get("Installed-Size", "0"),
                            "pre_dependencies" : control_values_map.get("Pre-Depends", ""),
                            "dependencies" : control_values_map.get("Depends", ""),
+                           "replaces" : control_values_map.get("Replaces", ""),
                            "provides" : control_values_map.get("Provides", ""),
                            "filename" : complete_target_file_name,
                            "size" : deb_file_size,
                            "md5" : deb_file_md5_digest,
                            "sha1" : deb_file_sha1_digest,
                            "sha256" : deb_file_sha256_digest,
-                           "sha256" : deb_file_sha256_digest,
-                           "provides" : control_values_map.get("Provides", ""),
-                           "replaces" : control_values_map.get("Replaces", ""),
+                           "section" : control_values_map.get("Section", ""),
+                           "priority" : control_values_map.get("Priority", ""),
                            "description" : control_values_map.get("Description", "")}
 
             # adds the packages map to the packages list
@@ -300,16 +302,13 @@ class RepositoryGeneratorApt:
         # retrieves the value from the buffer (compressed)
         packages_contents_compressed = packages_contents_compressed_buffer.get_value()
 
-        # opens the packages file
-        packages_file = open(target_apt + "/Packages.gz", "wb")
+        # writes the packages contents to the
+        # packages file
+        self._write_file(target_apt + "/Packages", packages_contents)
 
-        try:
-            # writes the packages contents compressed to the
-            # packages file
-            packages_file.write(packages_contents_compressed)
-        finally:
-            # closes the packages file
-            packages_file.close()
+        # writes the packages contents compressed to the
+        # packages compressed file
+        self._write_file(target_apt + "/Packages.gz", packages_contents_compressed)
 
     def _process_template_file(self, template_file_name, parameters_map):
         # retrieves the plugin manager
@@ -341,3 +340,24 @@ class RepositoryGeneratorApt:
 
         # returns the processed template file encoded
         return processed_template_file_encoded
+
+    def _write_file(self, file_path, contents):
+        """
+        Writes the contents to the file in the given
+        file path.
+
+        @type file_path: String
+        @param file_path: The path to the file to write.
+        @type contents: String
+        @param contents: The contents to be written.
+        """
+
+        # opens the file for writing
+        file = open(file_path, "wb")
+
+        try:
+            # writes the contents
+            file.write(contents)
+        finally:
+            # closes the file
+            file.close()
