@@ -706,6 +706,9 @@ class HttpClientServiceHandler:
                 # prints a debug message
                 self.service_plugin.debug("Connection: %s closed, not meant to be kept alive" % str(service_connection))
 
+                # runs the logging steps for the request
+                self._log(request)
+
                 # returns false (connection closed)
                 return False
 
@@ -731,8 +734,45 @@ class HttpClientServiceHandler:
                 # prints an error message
                 self.service_plugin.debug("There was an exception handling the exception: " + unicode(exception))
 
+        # runs the logging steps for the request
+        self._log(request)
+
         # returns true (connection remains open)
         return True
+
+    def _log(self, request):
+        # retrieves the service connection
+        service_connection = request.service_connection
+
+        # retrieves the connection information
+        # from the service connection
+        connection_host, _connection_port =  service_connection.connection_address
+
+        # retrieves the user id
+        user_id = "-"
+
+        # retrieves the operation type
+        operation_type = request.operation_type
+
+        # retrieves the requested resource path
+        resource_path = request.get_resource_path_decoded()
+
+        # retrieves the protocol version
+        protocol_version = request.protocol_version
+
+        # retrieves the status code
+        status_code = request.status_code
+
+        # retrieves the content length
+        content_length = request.content_length
+
+        # retrieves the current date time value
+        current_date_time = datetime.datetime.utcnow()
+
+        # formats the current date time
+        current_date_time_formatted = current_date_time.strftime("%d/%b/%Y:%H:%M:%S +0000")
+
+        print "%s - %s [%s] \"%s %s %s\" %d %d" % (connection_host, user_id, current_date_time_formatted, operation_type, resource_path, protocol_version, status_code, content_length)
 
     def retrieve_request(self, service_connection):
         """
@@ -1841,6 +1881,9 @@ class HttpRequest:
     encoded = False
     """ The encoded flag """
 
+    content_length = None
+    """ The content length """
+
     encoding_name = "none"
     """ The encoding name """
 
@@ -2223,11 +2266,11 @@ class HttpRequest:
         if self.mediated:
             # retrieves the content length
             # from the mediated handler
-            content_length = self.mediated_handler.get_size()
+            self.content_length = self.mediated_handler.get_size()
         else:
             # retrieves the content length from the
             # message content itself
-            content_length = len(message)
+            self.content_length = len(message)
 
         # retrieves the value for the status code
         status_code_value = self.get_status_code_value()
@@ -2251,7 +2294,7 @@ class HttpRequest:
         if self.chunked_encoding:
             headers_ordered_map[TRANSFER_ENCODING_VALUE] = CHUNKED_VALUE
         if not self.chunked_encoding and self.contains_message:
-            headers_ordered_map[CONTENT_LENGTH_VALUE] = str(content_length)
+            headers_ordered_map[CONTENT_LENGTH_VALUE] = str(self.content_length)
         if self.upgrade_mode:
             headers_ordered_map[UPGRADE_VALUE] = self.upgrade_mode
         if self.etag:
