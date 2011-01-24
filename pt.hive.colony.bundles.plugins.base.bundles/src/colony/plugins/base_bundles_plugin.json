@@ -32,7 +32,6 @@
             "base_bundles/bundles/specifications/communication_bundle.json",
             "base_bundles/bundles/specifications/compression_bundle.json",
             "base_bundles/bundles/specifications/configuration_bundle.json",
-            "base_bundles/bundles/specifications/data_bundle.json",
             "base_bundles/bundles/specifications/data_converter_bundle.json",
             "base_bundles/bundles/specifications/dependencies_calculator_bundle.json",
             "base_bundles/bundles/specifications/descriptor_generator_bundle.json",
