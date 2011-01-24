@@ -266,18 +266,18 @@ class RepositoryGeneratorApt:
                            "essential" : control_values_map.get("Essential", "no"),
                            "maintainer" : control_values_map.get("Maintainer", ""),
                            "installed_size" : control_values_map.get("Installed-Size", "0"),
-                           "pre_dependencies" : control_values_map.get("Pre-Depends", None),
-                           "dependencies" : control_values_map.get("Depends", None),
-                           "replaces" : control_values_map.get("Replaces", None),
-                           "provides" : control_values_map.get("Provides", None),
+                           "pre_dependencies" : control_values_map.get("Pre-Depends", ""),
+                           "dependencies" : control_values_map.get("Depends", ""),
+                           "replaces" : control_values_map.get("Replaces", ""),
+                           "provides" : control_values_map.get("Provides", ""),
                            "filename" : complete_target_file_name,
                            "size" : deb_file_size,
                            "md5" : deb_file_md5_digest,
                            "sha1" : deb_file_sha1_digest,
                            "sha256" : deb_file_sha256_digest,
-                           "section" : control_values_map.get("Section", None),
-                           "priority" : control_values_map.get("Priority", None),
-                           "description" : control_values_map.get("Description", None)}
+                           "section" : control_values_map.get("Section", ""),
+                           "priority" : control_values_map.get("Priority", ""),
+                           "description" : control_values_map.get("Description", "")}
 
             # adds the packages map to the packages list
             packages_list.append(package_map)
