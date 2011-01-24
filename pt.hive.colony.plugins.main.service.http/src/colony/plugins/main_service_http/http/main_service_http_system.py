@@ -647,6 +647,8 @@ class HttpClientServiceHandler:
             # returns false (connection closed)
             return False
 
+        print "PASSOU PEDIDO: " + request.resource_path
+
         try:
             # prints debug message about request
             self.service_plugin.debug("Handling request: %s" % str(request))
