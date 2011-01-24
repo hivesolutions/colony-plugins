@@ -502,8 +502,8 @@ class AbeculaClientServiceHandler:
             # writes the data to the string buffer
             message.write(data)
 
-            # in case the header is loaded or the message contents are completely loaded
-            if not header_loaded or received_data_size - message_offset_index == message_size:
+            # in case the header is not loaded or the message contents are completely loaded
+            if not header_loaded or received_data_size == message_size + message_offset_index:
                 # retrieves the message value from the string buffer
                 message_value = message.get_value()
             # in case there's no need to inspect the message contents
@@ -597,8 +597,11 @@ class AbeculaClientServiceHandler:
                         message_size = int(request.headers_map[CONTENT_LENGTH_LOWER_VALUE])
                     # in case there is no content length defined in the headers map
                     else:
-                        # returns the request
-                        return request
+                        # sets the message size to zero
+                        message_size = 0
+
+                        # breaks the loop
+                        break
 
             # in case the message is not loaded and the header is loaded
             if not message_loaded and header_loaded:
@@ -610,7 +613,7 @@ class AbeculaClientServiceHandler:
 
                 # in case the length of the message value message is the same
                 # as the message size
-                if message_value_message_length == message_size:
+                if message_value_message_length >= message_size:
                     # retrieves the message part of the message value
                     message_value_message = message_value[start_message_index:]
 
@@ -623,8 +626,11 @@ class AbeculaClientServiceHandler:
                     # decodes the request if necessary
                     self.decode_request(request)
 
-                    # returns the request
-                    return request
+                    # breaks the loop
+                    break
+
+        # returns the request
+        return request
 
     def decode_request(self, request):
         """
