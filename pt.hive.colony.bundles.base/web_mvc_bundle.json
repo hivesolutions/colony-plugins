@@ -21,7 +21,7 @@
                 "version" : "1.0.0"
             }],
     "dependencies" : [{
-                "id" : "pt.hive.colony.bundles.data",
+                "id" : "pt.hive.colony.bundles.business",
                 "version" : "1.0.0"
             }, {
                 "id" : "pt.hive.colony.bundles.format",
@@ -37,9 +37,6 @@
                 "version" : "1.0.0"
             }, {
                 "id" : "pt.hive.colony.bundles.template_engine",
-                "version" : "1.0.0"
-            }, {
-                "id" : "pt.hive.colony.bundles.business",
                 "version" : "1.0.0"
             }]
 }

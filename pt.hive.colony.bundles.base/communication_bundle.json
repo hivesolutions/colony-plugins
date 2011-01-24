@@ -12,13 +12,13 @@
                 "version" : "1.0.0"
             }],
     "dependencies" : [{
+                "id" : "pt.hive.colony.bundles.business",
+                "version" : "1.0.0"
+            }, {
                 "id" : "pt.hive.colony.bundles.guid",
                 "version" : "1.0.0"
             }, {
                 "id" : "pt.hive.colony.bundles.main.work",
-                "version" : "1.0.0"
-            }, {
-                "id" : "pt.hive.colony.bundles.data",
                 "version" : "1.0.0"
             }]
 }

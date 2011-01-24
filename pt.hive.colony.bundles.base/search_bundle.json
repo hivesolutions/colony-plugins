@@ -81,9 +81,6 @@
                 "version" : "1.0.0"
             }],
     "dependencies" : [{
-                "id" : "pt.hive.colony.bundles.data",
-                "version" : "1.0.0"
-            }, {
                 "id" : "pt.hive.colony.bundles.main.tasks",
                 "version" : "1.0.0"
             }, {

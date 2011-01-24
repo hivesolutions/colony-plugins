@@ -13,15 +13,21 @@
             }, {
                 "id" : "pt.hive.colony.plugins.business.session_serializer",
                 "version" : "1.0.0"
+            }, {
+                "id" : "pt.hive.colony.plugins.data.entity_manager",
+                "version" : "1.0.0"
+            }, {
+                "id" : "pt.hive.colony.plugins.data.entity_manager.sqlite_engine",
+                "version" : "1.0.0"
+            }, {
+                "id" : "pt.hive.colony.plugins.data.entity_manager_helper",
+                "version" : "1.0.0"
             }],
     "dependencies" : [{
                 "id" : "pt.hive.colony.bundles.main.pool",
                 "version" : "1.0.0"
             }, {
                 "id" : "pt.hive.colony.bundles.random",
-                "version" : "1.0.0"
-            }, {
-                "id" : "pt.hive.colony.bundles.data",
                 "version" : "1.0.0"
             }]
 }
