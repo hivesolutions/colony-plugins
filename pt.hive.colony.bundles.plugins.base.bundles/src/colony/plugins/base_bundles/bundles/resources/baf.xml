@@ -62,7 +62,6 @@
                         <specification_file>$base{plugin_directory}/base_bundles/bundles/specifications/communication_bundle.json</specification_file>
                         <specification_file>$base{plugin_directory}/base_bundles/bundles/specifications/compression_bundle.json</specification_file>
                         <specification_file>$base{plugin_directory}/base_bundles/bundles/specifications/configuration_bundle.json</specification_file>
-                        <specification_file>$base{plugin_directory}/base_bundles/bundles/specifications/data_bundle.json</specification_file>
                         <specification_file>$base{plugin_directory}/base_bundles/bundles/specifications/data_converter_bundle.json</specification_file>
                         <specification_file>$base{plugin_directory}/base_bundles/bundles/specifications/dependencies_calculator_bundle.json</specification_file>
                         <specification_file>$base{plugin_directory}/base_bundles/bundles/specifications/descriptor_generator_bundle.json</specification_file>
@@ -209,10 +208,6 @@
                         <specification>
                             <type>bundle</type>
                             <specification_file>$base{plugin_directory}/base_bundles/bundles/specifications/configuration_bundle.json</specification_file>
-                        </specification>
-                        <specification>
-                            <type>bundle</type>
-                            <specification_file>$base{plugin_directory}/base_bundles/bundles/specifications/data_bundle.json</specification_file>
                         </specification>
                         <specification>
                             <type>bundle</type>
