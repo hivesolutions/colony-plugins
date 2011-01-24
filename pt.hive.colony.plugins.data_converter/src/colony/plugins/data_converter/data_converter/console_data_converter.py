@@ -137,7 +137,6 @@ class ConsoleDataConverter:
 
         # discovers the maximum column length for each column
         for configuration_item in configuration_items:
-
             # sets the new maximum id column length
             configuration_item_id = configuration_item.get_configuration_item_id()
             configuration_item_id_str = str(configuration_item_id)
@@ -164,11 +163,11 @@ class ConsoleDataConverter:
 
         # creates the table header
         id_column_gap_length = (maximum_id_column_length - len(ID_COLUMN_HEADER)) + COLUMN_SPACING
-        output_configuration_items_str = ID_COLUMN_HEADER + "".zfill(id_column_gap_length).replace("0", " ")
+        output_configuration_items_str = ID_COLUMN_HEADER + " " * id_column_gap_length
         enabled_column_gap_length = (maximum_enabled_column_length - len(ENABLED_COLUMN_HEADER)) + COLUMN_SPACING
-        output_configuration_items_str += ENABLED_COLUMN_HEADER + "".zfill(enabled_column_gap_length).replace("0", " ")
+        output_configuration_items_str += ENABLED_COLUMN_HEADER + " " * enabled_column_gap_length
         type_column_gap_length = (maximum_type_column_length - len(TYPE_COLUMN_HEADER)) + COLUMN_SPACING
-        output_configuration_items_str += TYPE_COLUMN_HEADER + "".zfill(type_column_gap_length).replace("0", " ")
+        output_configuration_items_str += TYPE_COLUMN_HEADER + " " * type_column_gap_length
         output_configuration_items_str += DESCRIPTION_COLUMN_HEADER + "\n"
 
         # creates the table rows
@@ -178,7 +177,7 @@ class ConsoleDataConverter:
             # creates the cell for the id column
             configuration_item_id_str = str(configuration_item.get_configuration_item_id())
             id_column_gap_length = (maximum_id_column_length - len(configuration_item_id_str)) + COLUMN_SPACING
-            configuration_item_str += configuration_item_id_str + "".zfill(id_column_gap_length).replace("0", " ")
+            configuration_item_str += configuration_item_id_str + " " * id_column_gap_length
 
             # creates the cell for the enabled column
             enabled = configuration_item.is_enabled()
@@ -186,12 +185,12 @@ class ConsoleDataConverter:
             if enabled:
                 enabled_str = ACTIVE_VALUE
             enabled_column_gap_length = (maximum_enabled_column_length - len(enabled_str)) + COLUMN_SPACING
-            configuration_item_str += enabled_str + "".zfill(enabled_column_gap_length).replace("0", " ")
+            configuration_item_str += enabled_str + " " * enabled_column_gap_length
 
             # creates the cell for the type column
             configuration_item_type_str = configuration_item.__class__.__name__
             type_column_gap_length = (maximum_type_column_length - len(configuration_item_type_str)) + COLUMN_SPACING
-            configuration_item_str += configuration_item_type_str + "".zfill(type_column_gap_length).replace("0", " ")
+            configuration_item_str += configuration_item_type_str + " " * type_column_gap_length
 
             # creates the description for the description column
             configuration_item_description_str = str(configuration_item)
@@ -221,7 +220,7 @@ class ConsoleDataConverter:
 
         # creates the table header
         id_column_gap_length = (maximum_id_column_length - len(ID_COLUMN_HEADER)) + COLUMN_SPACING
-        output_configurations_str = ID_COLUMN_HEADER + "".zfill(id_column_gap_length).replace("0", " ")
+        output_configurations_str = ID_COLUMN_HEADER + " " * id_column_gap_length
         output_configurations_str += DESCRIPTION_COLUMN_HEADER + "\n"
 
         # creates the table rows
@@ -231,7 +230,7 @@ class ConsoleDataConverter:
             # creates the cell for the id column
             configuration_id_str = str(configuration.get_configuration_id())
             id_column_gap_length = (maximum_id_column_length - len(configuration_id_str)) + COLUMN_SPACING
-            configuration_str += configuration_id_str + "".zfill(id_column_gap_length).replace("0", " ")
+            configuration_str += configuration_id_str + " " * id_column_gap_length
 
             # creates the description for the description column
             configuration_description_str = str(configuration)
