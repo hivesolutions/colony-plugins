@@ -268,7 +268,7 @@ class RepositoryGeneratorApt:
                            "installed_size" : control_values_map.get("Installed-Size", "0"),
                            "pre_dependencies" : control_values_map.get("Pre-Depends", ""),
                            "dependencies" : control_values_map.get("Depends", ""),
-                           "replaces" : control_values_map.get("Replaces", ""),
+                           "replaces" : control_values_map.get("Replaces", "invalid"),
                            "provides" : control_values_map.get("Provides", ""),
                            "filename" : complete_target_file_name,
                            "size" : deb_file_size,
