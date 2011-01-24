@@ -192,11 +192,6 @@ class PluginManagerPanel(misc_gui.tree_visualizer.tree_visualizer_system.TreeVis
         self.add_events_registrable(plugin_node, plugin)
 
     def refresh_tree(self):
-        def plugin_comparer(plugin1, plugin2):
-            if plugin1.name > plugin2.name:
-                return 1
-            return - 1
-
         # constructs the plugin nodes map
         self.plugin_nodes_map = {}
 
@@ -210,7 +205,7 @@ class PluginManagerPanel(misc_gui.tree_visualizer.tree_visualizer_system.TreeVis
         plugin_list.extend(plugin_list_original)
 
         # sorts the plugins
-        plugin_list.sort(plugin_comparer)
+        plugin_list.sort()
 
         # sets the root node
         self.set_root("Plugins")
