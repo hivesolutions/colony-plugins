@@ -579,8 +579,8 @@ class HttpClient:
             # writes the data to the string buffer
             message.write(data)
 
-            # in case the header is loaded or the message contents are completely loaded
-            if not header_loaded or received_data_size - message_offset_index == message_size:
+            # in case the header is not loaded or the message contents are completely loaded
+            if not header_loaded or received_data_size == message_size + message_offset_index:
                 # retrieves the message value from the string buffer
                 message_value = message.get_value()
             # in case there's no need to inspect the message contents
@@ -695,8 +695,8 @@ class HttpClient:
                         # retrieves the response in chunked mode
                         self.retrieve_response_chunked(response, start_message_value, response_timeout)
 
-                        # returns the response
-                        return response
+                        # breaks the loop
+                        break
 
             # in case the message is not loaded and the header is loaded
             if not message_loaded and header_loaded:
@@ -728,8 +728,11 @@ class HttpClient:
                     # sets the final response value
                     response = redirection_value or response
 
-                    # returns the response
-                    return response
+                    # breaks the loop
+                    break
+
+        # returns the response
+        return response
 
     def retrieve_response_chunked(self, response, message_value, response_timeout = None):
         # creates the message string buffer
