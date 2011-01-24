@@ -45,7 +45,7 @@ class MainConsoleFileSystemPlugin(colony.base.plugin_system.Plugin):
     """
 
     id = "pt.hive.colony.plugins.main.console.file_system"
-    name = "Console File Dystem Main Plugin"
+    name = "Console File System Main Plugin"
     short_name = "Console File System Main"
     description = "The plugin that provides the file system commands for the system"
     version = "1.0.0"
