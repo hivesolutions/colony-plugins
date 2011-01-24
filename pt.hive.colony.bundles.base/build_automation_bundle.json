@@ -57,6 +57,9 @@
                 "version" : "1.0.0"
             }],
     "dependencies" : [{
+                "id" : "pt.hive.colony.bundles.command_execution",
+                "version" : "1.0.0"
+            }, {
                 "id" : "pt.hive.colony.bundles.compression",
                 "version" : "1.0.0"
             }, {
@@ -109,9 +112,6 @@
                 "version" : "1.0.0"
             }, {
                 "id" : "pt.hive.colony.bundles.validation",
-                "version" : "1.0.0"
-            }, {
-                "id" : "pt.hive.colony.bundles.command_execution",
                 "version" : "1.0.0"
             }]
 }
