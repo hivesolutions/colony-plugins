@@ -265,7 +265,7 @@ class RepositoryGeneratorApt:
                            "architecture" : control_values_map.get("Architecture", "all"),
                            "essential" : control_values_map.get("Essential", "no"),
                            "maintainer" : control_values_map.get("Maintainer", ""),
-                           "installed_size" : control_values_map.get("Installed-Size", deb_file_size),
+                           "installed_size" : control_values_map.get("Installed-Size", "0"),
                            "pre_dependencies" : control_values_map.get("Pre-Depends", ""),
                            "dependencies" : control_values_map.get("Depends", ""),
                            "replaces" : control_values_map.get("Replaces", ""),
