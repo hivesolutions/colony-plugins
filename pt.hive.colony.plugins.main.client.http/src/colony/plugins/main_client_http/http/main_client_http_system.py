@@ -1174,6 +1174,9 @@ class HttpRequest:
     base_url = None
     """ The base url """
 
+    content_length = None
+    """ The content length """
+
     def __init__(self, host = "none", port = None, path = "none", attributes_map = {}, operation_type = GET_METHOD_VALUE, headers_map = {}, protocol_version = HTTP_1_1_VERSION, content_type = DEFAULT_CONTENT_TYPE, content_type_charset = DEFAULT_CHARSET, encode_path = False, url = None, base_url = None):
         """
         Constructor of the class.
@@ -1271,7 +1274,7 @@ class HttpRequest:
 
         # retrieves the content length from the
         # message content itself
-        content_length = len(message)
+        self.content_length = len(message)
 
         # writes the http command in the string buffer (version, status code and status value)
         result.write(self.operation_type + " " + path + " " + self.protocol_version + "\r\n")
@@ -1284,8 +1287,8 @@ class HttpRequest:
             headers_ordered_map[CONTENT_TYPE_VALUE] = self.content_type
 
         # in case the content length is valid
-        if content_length > 0:
-            headers_ordered_map[CONTENT_LENGTH_VALUE] = str(content_length)
+        if self.content_length > 0:
+            headers_ordered_map[CONTENT_LENGTH_VALUE] = str(self.content_length)
 
         # in case authentication is set
         if self.authentication:
