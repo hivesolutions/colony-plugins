@@ -6,7 +6,6 @@ Maintainer: ${out value=package.maintainer /}
 Installed-Size: ${out value=package.installed_size /}
 Pre-Depends: ${out value=package.pre_dependencies /}
 Depends: ${out value=package.dependencies /}
-Replaces: ${out value=package.replaces /}
 Provides: ${out value=package.provides /}
 Filename: ${out value=package.filename /}
 Size: ${out value=package.size /}
