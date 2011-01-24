@@ -587,6 +587,9 @@ class HttpClientServiceHandler:
     content_type_charset = DEFAULT_CHARSET
     """ The content type charset """
 
+    pending_data = None
+    """ The current pending data """
+
     service_connection_request_handler_map = {}
     """ The map associating the service connection with the request handler (method) """
 
@@ -635,8 +638,6 @@ class HttpClientServiceHandler:
         # retrieves the http service handler plugins map
         http_service_handler_plugins_map = self.service_plugin.main_service_http.http_service_handler_plugins_map
 
-        print "RECEBEU PEDIDO"
-
         try:
             # retrieves the request
             request = self.retrieve_request(service_connection)
@@ -646,8 +647,6 @@ class HttpClientServiceHandler:
 
             # returns false (connection closed)
             return False
-
-        print "PASSOU PEDIDO: " + request.resource_path
 
         try:
             # prints debug message about request
@@ -741,6 +740,10 @@ class HttpClientServiceHandler:
         # runs the logging steps for the request
         self._log(request)
 
+        # in case there is pending data calls the default
+        # request handler to handle the remaining data (allows http pipelining)
+        self.pending_data and self.default_request_handler(service_connection)
+
         # returns true (connection remains open)
         return True
 
@@ -816,8 +819,8 @@ class HttpClientServiceHandler:
         # continuous loop
         while True:
             try:
-                # receives the data
-                data = service_connection.receive()
+                # receives the data (or the pending data)
+                data = self.pending_data or service_connection.receive()
             except self.service_utils_exception_class:
                 # raises the http data retrieval exception
                 raise main_service_http_exceptions.HttpDataRetrievalException("problem retrieving data")
@@ -836,8 +839,8 @@ class HttpClientServiceHandler:
             # writes the data to the string buffer
             message.write(data)
 
-            # in case the header is loaded or the message contents are completely loaded
-            if not header_loaded or received_data_size - message_offset_index == message_size:
+            # in case the header is not loaded or the message contents are completely loaded
+            if not header_loaded or received_data_size >= message_offset_index + message_size:
                 # retrieves the message value from the string buffer
                 message_value = message.get_value()
             # in case there's no need to inspect the message contents
@@ -941,13 +944,20 @@ class HttpClientServiceHandler:
                         if upgrade in UPGRADE_MESSAGE_SIZE_MAP:
                             # retrieves the message size for the upgrade (type)
                             message_size = UPGRADE_MESSAGE_SIZE_MAP[upgrade]
+                        # otherwise
                         else:
-                            # returns the request
-                            return request
+                            # sets the message size to zero (not set)
+                            message_size = 0
+
+                            # breaks the loop
+                            break
                     # in case there is no content length defined in the headers map
                     else:
-                        # returns the request
-                        return request
+                        # sets the message size to zero (not set)
+                        message_size = 0
+
+                        # breaks the loop
+                        break
 
             # in case the message is not loaded and the header is loaded
             if not message_loaded and header_loaded:
@@ -972,8 +982,23 @@ class HttpClientServiceHandler:
                     # decodes the request if necessary
                     self.decode_request(request)
 
-                    # returns the request
-                    return request
+                    # breaks the loop
+                    break
+
+        # unsets the pending data (it must have been read)
+        self.pending_data = None
+
+        # calculates the complete message size
+        complete_message_size = message_size + message_offset_index
+
+        # in case the received data size is larger than
+        # the complete message size
+        if received_data_size > complete_message_size:
+            # retrieves the pending data
+            self.pending_data = message_value[complete_message_size:]
+
+        # returns the request
+        return request
 
     def decode_request(self, request):
         """
