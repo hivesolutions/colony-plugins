@@ -15,4 +15,5 @@ SHA256: ${out value=package.sha256 /}
 Section: ${out value=package.section /}
 Priority: ${out value=package.priority /}
 Description: ${out value=package.description /}
+
 ${/foreach}
