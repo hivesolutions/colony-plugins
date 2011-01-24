@@ -820,6 +820,9 @@ class AbeculaResponse:
     content_charset = None
     """ The content charset """
 
+    content_length = None
+    """ The content length """
+
     parameters = {}
     """ The parameters """
 
@@ -864,7 +867,7 @@ class AbeculaResponse:
         message = self.message_stream.get_value()
 
         # retrieves the content length from the message content
-        content_length = len(message)
+        self.content_length = len(message)
 
         # writes the abecula command in the string buffer (operation id, operation type, target and protocol version)
         result.write(self.operation_id + " " + self.operation_type + " " + self.target + " " + self.protocol_version + "\r\n")
@@ -874,7 +877,7 @@ class AbeculaResponse:
 
         # sets the base request header values
         headers_ordered_map[SERVER_VALUE] = SERVER_IDENTIFIER
-        headers_ordered_map[CONTENT_LENGTH_VALUE] = str(content_length)
+        headers_ordered_map[CONTENT_LENGTH_VALUE] = str(self.content_length)
 
         # extends the headers ordered map with the headers map
         headers_ordered_map.extend(self.headers_map)
@@ -979,6 +982,9 @@ class AbeculaRequest:
     content_charset = None
     """ The content charset """
 
+    content_length = None
+    """ The content length """
+
     parameters = {}
     """ The parameters """
 
@@ -1036,7 +1042,7 @@ class AbeculaRequest:
         message = self.message_stream.get_value()
 
         # retrieves the content length from the message content
-        content_length = len(message)
+        self.content_length = len(message)
 
         # retrieves the value for the status code
         status_code_value = self.get_status_code_value()
@@ -1049,7 +1055,7 @@ class AbeculaRequest:
 
         # sets the base request header values
         headers_ordered_map[SERVER_VALUE] = SERVER_IDENTIFIER
-        headers_ordered_map[CONTENT_LENGTH_VALUE] = str(content_length)
+        headers_ordered_map[CONTENT_LENGTH_VALUE] = str(self.content_length)
 
         # extends the headers ordered map with the response headers map
         headers_ordered_map.extend(self.response_headers_map)
