@@ -844,6 +844,12 @@ def loads(data):
                         # retrieves the top id
                         top_id = id(top)
 
+                        # in case the top id is not present
+                        # in the valid map
+                        if not top_id in valid_map:
+                            # raises the json decode exception
+                            raise json_exceptions.JsonDecodeException("Expected list structure")
+
                         # in case the top is valid
                         if valid_map[top_id]:
                             # appends the value to the top (list)
@@ -860,6 +866,12 @@ def loads(data):
                     elif type(top) in types.StringTypes:
                         # retrieves the top id
                         top_id = id(top)
+
+                        # in case the top id is not present
+                        # in the valid map
+                        if not top_id in valid_map:
+                            # raises the json decode exception
+                            raise json_exceptions.JsonDecodeException("Expected dictionary structure")
 
                         # in case the top is valid
                         if valid_map[top_id]:
@@ -881,7 +893,7 @@ def loads(data):
                             valid_map[top_id] = False
                         else:
                             # raises the json decode exception
-                            raise json_exceptions.JsonDecodeException("Expected map separator ':'")
+                            raise json_exceptions.JsonDecodeException("Expected dictionary separator ':'")
                     # otherwise
                     else:
                         # raises the json decode exception
