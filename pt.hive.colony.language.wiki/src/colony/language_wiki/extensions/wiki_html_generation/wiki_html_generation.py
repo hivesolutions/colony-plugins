@@ -50,7 +50,7 @@ import language_wiki.wiki_exceptions
 DEFAULT_RESOURCES_PATH = "resources"
 """ The default resources path """
 
-DOCTYPE_HEADER_VALUE = "<?xml version=\"1.0\" encoding=\"iso-8859-1\"?><!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd\">"
+DOCTYPE_HEADER_VALUE = "<!DOCTYPE html>"
 """ The doctype header value """
 
 META_HEADER_VALUE = "<meta http-equiv=\"Content-Type\" content=\"text/html; charset=iso-8859-1\" />"
