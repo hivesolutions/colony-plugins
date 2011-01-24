@@ -87,7 +87,7 @@ escape_char_to_char = {
         "\"" : "\""}
 
 string_escape_re = re.compile(r"[\x00-\x19\\\"/\b\f\n\r\t]")
-digits_list = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"]
+digits_list = ("0", "1", "2", "3", "4", "5", "6", "7", "8", "9")
 
 def escape_character(match):
     """
@@ -675,6 +675,9 @@ def loads(data):
     # initializes the stack
     stack = []
 
+    # creates the map for structure validation
+    valid_map = {}
+
     # retrieves the characters from the data
     characters = iter(data)
 
@@ -689,22 +692,34 @@ def loads(data):
         while True:
             # unsets the skip flag
             skip = False
+
+            # in case the current character is not
+            # the next one
             if not current_character_is_next:
+                # retrieves the next character
                 character = characters.next()
-            while(character in [" ", "\t", "\r", "\n"]):
+
+            # iterates while the character is a space character
+            while character in (" ", "\t", "\r", "\n"):
+                # retrieves the next character
                 character = characters.next()
+
+            # unsets the current character is next flag
             current_character_is_next = False
 
             # in case it's the beginning of a string
             if character == "\"":
                 value = ""
                 try:
+                    # retrieves the next character
                     character = characters.next()
 
                     # iterates while the string is not finished
                     while not character == "\"":
                         if character == "\\":
+                            # retrieves the next character
                             character = characters.next()
+
                             try:
                                 value += escape_char_to_char[character]
                             except KeyError:
@@ -712,23 +727,64 @@ def loads(data):
                                     hex_code = characters.next() + characters.next() + characters.next() + characters.next()
                                     value += unichr(int(hex_code, 16))
                                 else:
+                                    # raises the json decode exception
                                     raise json_exceptions.JsonDecodeException("Bad Escape Sequence Found")
                         else:
                             value += character
+
+                        # retrieves the next character
                         character = characters.next()
                 except StopIteration:
+                    # raises the json decode exception
                     raise json_exceptions.JsonDecodeException("Expected end of String")
             elif character == "{":
-                stack.append({})
+                # creates a new map
+                _map = {}
+
+                # retrieves the map id
+                _map_id = id(_map)
+
+                # sets the map to the
+                # initial valid state
+                valid_map[_map_id] = True
+
+                # adds the map to the stack
+                stack.append(_map)
+
+                # sets the skip flag
                 skip = True
             elif character == "}":
+                # pops the value from the stack
                 value = stack.pop()
             elif character == "[":
-                stack.append([])
+                # creates a new list
+                _list = []
+
+                # retrieves the list id
+                _list_id = id(_list)
+
+                # sets the list to the
+                # initial valid state
+                valid_map[_list_id] = True
+
+                # adds the list to the stack
+                stack.append(_list)
+
+                # sets the skip flag
                 skip = True
             elif character == "]":
                 value = stack.pop()
-            elif character in [",", ":"]:
+            elif character in (",", ":"):
+                # retrieves the stack top
+                top = stack[-1]
+
+                # retrieves the top id
+                top_id = id(top)
+
+                # sets the top as valid
+                valid_map[top_id] = True
+
+                # sets the skip flag
                 skip = True
             elif character in digits_list or character == "-":
                 digits = [character]
@@ -758,10 +814,13 @@ def loads(data):
                                 raise json_exceptions.JsonDecodeException("Expected + or -")
                 except StopIteration:
                     pass
+
                 value = num_conv("".join(digits))
+
+                # sets the current character is next value
                 current_character_is_next = True
 
-            elif character in ["t", "f", "n"]:
+            elif character in ("t", "f", "n"):
                 kw = character + characters.next() + characters.next() + characters.next()
                 if kw == "null":
                     value = None
@@ -770,23 +829,67 @@ def loads(data):
                 elif kw == "fals" and characters.next() == "e":
                     value = False
                 else:
+                    # raises the json decode exception
                     raise json_exceptions.JsonDecodeException("Expected Null, False or True")
             else:
+                # raises the json decode exception
                 raise json_exceptions.JsonDecodeException("Expected []{},\" or Number, Null, False or True")
 
             if not skip:
                 if len(stack):
+                    # retrieves the top of the stack
                     top = stack[-1]
+
                     if type(top) is types.ListType:
-                        top.append(value)
+                        # retrieves the top id
+                        top_id = id(top)
+
+                        # in case the top is valid
+                        if valid_map[top_id]:
+                            # appends the value to the top (list)
+                            top.append(value)
+
+                            # sets the top as invalid
+                            valid_map[top_id] = False
+                        else:
+                            # raises the json decode exception
+                            raise json_exceptions.JsonDecodeException("Expected list separator ','")
                     elif type(top) is types.DictionaryType:
+                        # appends the value to the stack
                         stack.append(value)
                     elif type(top) in types.StringTypes:
-                        key = stack.pop()
-                        stack[-1][key] = value
+                        # retrieves the top id
+                        top_id = id(top)
+
+                        # in case the top is valid
+                        if valid_map[top_id]:
+                            # retrieves the top of the stack as
+                            # the key
+                            key = stack.pop()
+
+                            # retrieves the top of the stack
+                            top = stack[-1]
+
+                            # retrieves the top id
+                            top_id = id(top)
+
+                            # sets the value in the stack
+                            # top value
+                            top[key] = value
+
+                            # sets the top as invalid
+                            valid_map[top_id] = False
+                        else:
+                            # raises the json decode exception
+                            raise json_exceptions.JsonDecodeException("Expected map separator ':'")
+                    # otherwise
                     else:
+                        # raises the json decode exception
                         raise json_exceptions.JsonDecodeException("Expected dictionary key, or start of a value")
+                # otherwise
                 else:
+                    # returns the value
                     return value
     except StopIteration:
+        # raises the json decode exception
         raise json_exceptions.JsonDecodeException("Unexpected end of Json source")
