@@ -8,6 +8,12 @@
                 "id" : "pt.hive.colony.plugins.main.console",
                 "version" : "1.0.0"
             }, {
+                "id" : "pt.hive.colony.plugins.main.console.base",
+                "version" : "1.0.0"
+            }, {
+                "id" : "pt.hive.colony.plugins.main.console.file_system",
+                "version" : "1.0.0"
+            }, {
                 "id" : "pt.hive.colony.plugins.main.console.interface",
                 "version" : "1.0.0"
             }],
