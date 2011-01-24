@@ -2,7 +2,7 @@
     "type" : "plugin",
     "platform" : "python",
     "sub_platforms" : ["cpython", "jython", "iron_python"],
-    "id" : "pt.hive.colony.plugins.main.console.interface",
+    "id" : "pt.hive.colony.plugins.main.console.file_system",
     "name" : "Console File System Main Plugin",
     "short_name" : "Console File System Main",
     "description" : "The plugin that provides the file system commands for the system",
