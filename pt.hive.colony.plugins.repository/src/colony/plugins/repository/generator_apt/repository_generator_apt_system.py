@@ -267,7 +267,7 @@ class RepositoryGeneratorApt:
                            "maintainer" : control_values_map.get("Maintainer", ""),
                            "installed_size" : control_values_map.get("Installed-Size", "0"),
                            "pre_dependencies" : control_values_map.get("Pre-Depends", None),
-                           "dependencies" : control_values_map.get("Depends", ""),
+                           "dependencies" : control_values_map.get("Depends", None),
                            "replaces" : control_values_map.get("Replaces", None),
                            "provides" : control_values_map.get("Provides", None),
                            "filename" : complete_target_file_name,
