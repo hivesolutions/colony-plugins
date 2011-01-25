@@ -140,11 +140,9 @@ class WebMvcEncryption:
         to the web mvc service.
         """
 
-        return ((r"^web_mvc_encryption/?$", self.web_mvc_encryption_main_controller.handle_web_mvc_encryption_index),
-                (r"^web_mvc_encryption/index$", self.web_mvc_encryption_main_controller.handle_web_mvc_encryption_index),
-                (r"^web_mvc_encryption/sign$", self.web_mvc_encryption_main_controller.handle_web_mvc_encryption_sign),
-                (r"^web_mvc_encryption/verify$", self.web_mvc_encryption_main_controller.handle_web_mvc_encryption_verify),
-                (r"^web_mvc_encryption/consumers/new$", self.web_mvc_encryption_consumer_controller.handle_new))
+        return ((r"^web_mvc_encryption/sign$", self.web_mvc_encryption_main_controller.handle_web_mvc_encryption_sign, "post"),
+                (r"^web_mvc_encryption/verify$", self.web_mvc_encryption_main_controller.handle_web_mvc_encryption_verify, "post"),
+                (r"^web_mvc_encryption/consumers/new$", self.web_mvc_encryption_consumer_controller.handle_new, "post"))
 
     def get_communication_patterns(self):
         """

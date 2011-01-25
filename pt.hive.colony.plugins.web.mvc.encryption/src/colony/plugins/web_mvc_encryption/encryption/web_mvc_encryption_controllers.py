@@ -109,31 +109,6 @@ class WebMvcEncryptionMainController:
         # sets the templates path
         self.set_templates_path(templates_path)
 
-    def handle_web_mvc_encryption_index(self, rest_request, parameters = {}):
-        """
-        Handles the given web mvc encryption index rest request.
-
-        @type rest_request: RestRequest
-        @param rest_request: The web mvc encryption index rest request
-        to be handled.
-        @type parameters: Dictionary
-        @param parameters: The handler parameters.
-        @rtype: bool
-        @return: The result of the handling.
-        """
-
-        # retrieves the template file
-        template_file = self.retrieve_template_file("general.html.tpl")
-
-        # applies the base path to the template file
-        self.apply_base_path_template_file(rest_request, template_file)
-
-        # processes the template file and sets the request contents
-        self.process_set_contents(rest_request, template_file)
-
-        # returns true
-        return True
-
     def handle_web_mvc_encryption_sign(self, rest_request, parameters = {}):
         """
         Handles the given web mvc encryption sign rest request.
@@ -359,10 +334,6 @@ class ConsumerController:
         @rtype: bool
         @return: The result of the handling.
         """
-
-        # returns false in case this is not post request
-        if not rest_request.is_post():
-            return False
 
         # retrieves the form data by processing the form
         form_data_map = self.process_form_data(rest_request, DEFAULT_ENCODING)
