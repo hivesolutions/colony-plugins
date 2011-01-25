@@ -40,12 +40,6 @@
         <description>The build automation item for the base of the colony framework</description>
         <url>http://www.hive.pt</url>
     </artifact>
-    <!--<modules>
-        <module>
-            <id>pt.hive.colony.plugins.*</id>
-            <version>.*</version>
-        </module>
-    </modules>-->
     <build>
         <default_stage>build</default_stage>
         <plugins>
@@ -56,28 +50,6 @@
                 <configuration>
                     <type>plugin</type>
                     <specification_file>$base{plugin_directory}/colony_base_build_automation_item_plugin.json</specification_file>
-                </configuration>
-            </plugin>
-            <!--<plugin>
-                <id>pt.hive.colony.plugins.build.automation.extensions.izpack</id>
-                <version>1.0.0</version>
-                <stage>build</stage>
-                <configuration>
-                    <base_directory>$base{plugin_directory}</base_directory>
-                    <install_file>$base{plugin_directory}/build_automation_items/colony_base/resources/installer/install.xml</install_file>
-                </configuration>
-            </plugin>-->
-            <plugin>
-                <id>pt.hive.colony.plugins.build.automation.extensions.template_engine</id>
-                <version>1.0.0</version>
-                <stage>build</stage>
-                <configuration>
-                    <contents>
-                        <file>
-                            <path>$base{plugin_system_directory}/colony/base/plugin_system_information.py</path>
-                            <encoding>Cp1252</encoding>
-                        </file>
-                    </contents>
                 </configuration>
             </plugin>
             <plugin>
