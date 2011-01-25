@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+ Hive Colony Framework
+ Copyright (C) 2008 Hive Solutions Lda.
+
+ This file is part of Hive Colony Framework.
+
+ Hive Colony Framework is free software: you can redistribute it and/or modify
+ it under the terms of the GNU General Public License as published by
+ the Free Software Foundation, either version 3 of the License, or
+ (at your option) any later version.
+
+ Hive Colony Framework is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ GNU General Public License for more details.
+
+ You should have received a copy of the GNU General Public License
+ along with Hive Colony Framework. If not, see <http://www.gnu.org/licenses/>.
+-->
+
+<!--
+ __author__    = João Magalhães <joamag@hive.pt>
+ __version__   = 1.0.0
+ __revision__  = $LastChangedRevision: 72 $
+ __date__      = $LastChangedDate: 2008-10-21 23:29:54 +0100 (Ter, 21 Out 2008) $
+ __copyright__ = Copyright (c) 2008 Hive Solutions Lda.
+ __license__   = GNU General Public License (GPL), Version 3
+-->
+
+<resources xmlns="http://www.hive.pt"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.hive.pt xsd/resources.xsd">
+
+    <!-- Validation expression -->
+    <validation>
+        <equals_expression>
+            <first_operand>
+                <type>string</type>
+                <data>$local{plugin_manager.run_mode}</data>
+            </first_operand>
+            <second_operand>
+                <type>string</type>
+                <data>production</data>
+            </second_operand>
+        </equals_expression>
+    </validation>
+
+    <plugin_configuration>
+        <plugin_id>pt.hive.colony.plugins.main.console</plugin_id>
+        <resource>
+            <name>configuration</name>
+            <type>python</type>
+            <data>configuration.py</data>
+        </resource>
+    </plugin_configuration>
+</resources>
