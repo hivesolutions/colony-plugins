@@ -156,6 +156,9 @@ class MainServicePop:
         @param parameters: The parameters to stop the service.
         """
 
+        # destroys the parameters
+        self._destroy_service_parameters(parameters)
+
         # starts the pop service
         self.pop_service.stop_service()
 
@@ -320,6 +323,18 @@ class MainServicePop:
 
         # returns the parameters
         return parameters
+
+    def _destroy_service_parameters(self, parameters):
+        """
+        Destroys the service parameters map from the base parameters
+        map.
+
+        @type parameters: Dictionary
+        @param parameters: The base parameters map to be used to destroy
+        the final service parameters map.
+        """
+
+        pass
 
 class PopClientServiceHandler:
     """
