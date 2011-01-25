@@ -53,6 +53,7 @@ configuration = {
                  "default_work_scheduling_algorithm" : 3,
                  "preferred_error_handlers" : ["template", "default"],
                  "verify_request" : False,
+                 "log_file_path" : "%configuration:pt.hive.colony.plugins.main.service.http%/access.log",
                  "connectors" : [
                      {
                          "default_end_points" : [("normal", "", 8181, {})],
