@@ -94,6 +94,7 @@ configuration = {
                                            "/take_the_bill",
                                            "/a_la_carte",
                                            "/pecway",
+                                           "/bargania",
                                            "/panzerini",
                                            "/encryption",
                                            "/"],
@@ -143,6 +144,10 @@ configuration = {
                      },
                      "/pecway" : {
                          "target" : "/colony_mod_python/rest/mvc/pecway/",
+                         "recursive_redirection" : True
+                     },
+                     "/bargania" : {
+                         "target" : "/colony_mod_python/rest/mvc/bargania_site/",
                          "recursive_redirection" : True
                      },
                      "/panzerini" : {
