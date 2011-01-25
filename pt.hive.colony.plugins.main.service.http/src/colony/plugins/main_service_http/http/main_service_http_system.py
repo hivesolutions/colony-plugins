@@ -47,6 +47,7 @@ import datetime
 import traceback
 
 import colony.libs.map_util
+import colony.libs.file_util
 import colony.libs.quote_util
 import colony.libs.structures_util
 import colony.libs.string_buffer_util
@@ -226,6 +227,9 @@ ENCODING_VALUE = "encoding"
 ENCODING_HANDLER_VALUE = "encoding_handler"
 """ The encoding handler value """
 
+LOG_FILE_VALUE = "log_file"
+""" The log file value """
+
 RESOLUTION_ORDER_VALUE = "resolution_order"
 """ The resolution order value """
 
@@ -263,6 +267,9 @@ class MainServiceHttp:
 
     http_service = None
     """ The http service reference """
+
+    http_log_file = None
+    """ The log file """
 
     http_service_configuration = {}
     """ The http service configuration """
@@ -310,6 +317,9 @@ class MainServiceHttp:
         @type parameters: Dictionary
         @param parameters: The parameters to stop the service.
         """
+
+        # destroys the parameters
+        self._destroy_service_parameters(parameters)
 
         # starts the http service
         self.http_service.stop_service()
@@ -464,6 +474,9 @@ class MainServiceHttp:
         @return: The final service parameters map.
         """
 
+        # retrieves the plugin manager
+        plugin_manager = self.main_service_http_plugin.manager
+
         # retrieves the end points value
         end_points = parameters.get("end_points", [])
 
@@ -524,6 +537,18 @@ class MainServiceHttp:
         # retrieves the work scheduling algorithm configuration value
         work_scheduling_algorithm = service_configuration.get("default_work_scheduling_algorithm", WORK_SCHEDULING_ALGORITHM)
 
+        # retrieves the log file path
+        http_log_file_path = service_configuration.get("log_file_path", None)
+
+        # resolves thehttp  log file path using the plugin manager
+        http_log_file_path = plugin_manager.resolve_file_path(http_log_file_path, True, True)
+
+        # creates the http log file (using a file rotator)
+        self.http_log_file = http_log_file_path and colony.libs.file_util.FileRotator(http_log_file_path) or None
+
+        # opens the http log file
+        self.http_log_file.open()
+
         # retrieves the encoding handler for the given encoding
         encoding_handler = self._get_encoding_handler(encoding)
 
@@ -538,7 +563,8 @@ class MainServiceHttp:
 
         # creates the extra parameters map
         extra_parameters = {"encoding" : encoding,
-                            "encoding_handler" : encoding_handler}
+                            "encoding_handler" : encoding_handler,
+                            "log_file" : self.http_log_file}
 
         # creates the parameters map
         parameters = {"type" : CONNECTION_TYPE,
@@ -560,6 +586,19 @@ class MainServiceHttp:
 
         # returns the parameters
         return parameters
+
+    def _destroy_service_parameters(self, parameters):
+        """
+        Destroys the service parameters map from the base parameters
+        map.
+
+        @type parameters: Dictionary
+        @param parameters: The base parameters map to be used to destroy
+        the final service parameters map.
+        """
+
+        # closes the http log file
+        self.http_log_file and self.http_log_file.close()
 
 class HttpClientServiceHandler:
     """
@@ -586,6 +625,9 @@ class HttpClientServiceHandler:
 
     content_type_charset = DEFAULT_CHARSET
     """ The content type charset """
+
+    log_file = None
+    """ The log file """
 
     pending_data = None
     """ The current pending data """
@@ -619,6 +661,7 @@ class HttpClientServiceHandler:
 
         self.encoding = extra_parameters.get(ENCODING_VALUE, None)
         self.encoding_handler = extra_parameters.get(ENCODING_HANDLER_VALUE, None)
+        self.log_file = extra_parameters.get(LOG_FILE_VALUE, None)
         self.content_type_charset = self.service_configuration.get(DEFAULT_CONTENT_TYPE_CHARSET_VALUE, DEFAULT_CHARSET)
 
     def handle_opened(self, service_connection):
@@ -748,6 +791,11 @@ class HttpClientServiceHandler:
         return True
 
     def _log(self, request):
+        # in case the log file is not defined
+        if not self.log_file:
+            # returns immediately
+            return
+
         # retrieves the service connection
         service_connection = request.service_connection
 
@@ -779,7 +827,11 @@ class HttpClientServiceHandler:
         # formats the current date time
         current_date_time_formatted = current_date_time.strftime("%d/%b/%Y:%H:%M:%S +0000")
 
-        print "%s - %s [%s] \"%s %s %s\" %d %d" % (connection_host, user_id, current_date_time_formatted, operation_type, resource_path, protocol_version, status_code, content_length)
+        # creates the log line value
+        log_line_value = "%s - %s [%s] \"%s %s %s\" %d %d\n" % (connection_host, user_id, current_date_time_formatted, operation_type, resource_path, protocol_version, status_code, content_length)
+
+        # writes the log line value to the log file
+        self.log_file.write(log_line_value)
 
     def retrieve_request(self, service_connection):
         """
