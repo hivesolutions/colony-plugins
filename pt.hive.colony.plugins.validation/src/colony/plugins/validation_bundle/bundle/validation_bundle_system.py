@@ -134,23 +134,9 @@ class ValidationBundle:
         # retrieves all plugins
         plugins = self.validation_bundle_plugin.manager.get_all_plugins()
 
-        # checks that all plugins are inside a bundle
+        # validates all plugins
         for plugin in plugins:
-            # skips in case the plugin is in the exclusion list
-            if plugin.original_id in PLUGIN_EXCLUSION_LIST:
-                continue
-
-            # skips in case the plugin is not a colony plugin
-            if not plugin.original_id.startswith(COLONY_PLUGIN_NAMESPACE):
-                continue
-
-            # defines the plugin bundle key
-            plugin_bundle_key = (plugin.original_id, plugin.version)
-
-            # checks if the plugin is in a bundle
-            if not plugin_bundle_key in plugin_bundle_map:
-                # adds the validation error
-                self.add_validation_error(validation_errors, None, None, None, "'%s (%s)' is not in any bundle" % (plugin.original_id, plugin.version))
+            self._validate_plugin(plugin, plugin_bundle_map, validation_errors)
 
         # validates all bundles
         for bundle_data_key in bundle_data_map:
@@ -158,6 +144,23 @@ class ValidationBundle:
 
         # returns the validation errors
         return validation_errors
+
+    def _validate_plugin(self, plugin, plugin_bundle_map, validation_errors):
+        # skips in case the plugin is in the exclusion list
+        if plugin.original_id in PLUGIN_EXCLUSION_LIST:
+            return
+
+        # skips in case the plugin is not a colony plugin
+        if not plugin.original_id.startswith(COLONY_PLUGIN_NAMESPACE):
+            return
+
+        # defines the plugin bundle key
+        plugin_bundle_key = (plugin.original_id, plugin.version)
+
+        # checks if the plugin is in a bundle
+        if not plugin_bundle_key in plugin_bundle_map:
+            # adds the validation error
+            self.add_validation_error(validation_errors, None, None, None, "'%s (%s)' is not in any bundle" % (plugin.original_id, plugin.version))
 
     def _validate_bundle(self, bundle_data_key, bundle_data_map, plugin_bundle_map, validation_errors):
         # retrieves the bundle data
@@ -290,6 +293,9 @@ class ValidationBundle:
         # retrieves the bundle dependency version
         bundle_dependency_version = bundle_dependency[VERSION_VALUE]
 
+        # defines the bundle data key
+        bundle_dependency_data_key = (bundle_dependency_id, bundle_dependency_version)
+
         # checks that the bundle dependency id starts with the expected namespace
         if not bundle_dependency_id.startswith(COLONY_BUNDLE_NAMESPACE):
             # adds the validation error
@@ -298,16 +304,70 @@ class ValidationBundle:
             # returns since nothing else can be tested
             return
 
+        # checks if the bundle dependency exists
+        if not bundle_dependency_data_key in bundle_data_map:
+            # adds the validation error
+            self.add_validation_error(validation_errors, bundle_id, bundle_version, bundle_file_path, "Bundle '%s (%s)' references unexistent bundle '%s (%s)'" % (bundle_id, bundle_version, bundle_dependency_id, bundle_dependency_version))
+
+        # checks if a cycle was found
+        if bundle_id == bundle_dependency_id and bundle_version == bundle_dependency_version:
+            # adds the validation error
+            self.add_validation_error(validation_errors, bundle_id, bundle_version, bundle_file_path, "Bundle '%s (%s)' references dependency '%s (%s)' which causes a cycle" % (bundle_id, bundle_version, bundle_dependency_id, bundle_dependency_version))
+
+            # returns since a cycle was found
+            return
+
+        # defines the dependency path key
+        bundle_dependency_path_key = (bundle_id, bundle_version)
+
+        # initializes the dependency path list
+        dependency_path_list = [bundle_dependency_path_key]
+
+        # validates that no dependency cycles exist
+        self.__validate_bundle_dependency_cycle(bundle_data, bundle_data_map, bundle_dependency, dependency_path_list, validation_errors)
+
+    def __validate_bundle_dependency_cycle(self, bundle_data, bundle_data_map, bundle_dependency, dependency_path_list, validation_errors):
+        # retrieves the bundle id
+        bundle_id = bundle_data[ID_VALUE]
+
+        # retrieves the bundle version
+        bundle_version = bundle_data[VERSION_VALUE]
+
+        # retrieves the bundle file path
+        bundle_file_path = bundle_data[FILE_PATH_VALUE]
+
+        # retrieves the bundle dependency id
+        bundle_dependency_id = bundle_dependency[ID_VALUE]
+
         # retrieves the bundle dependency version
         bundle_dependency_version = bundle_dependency[VERSION_VALUE]
 
-        # defines the bundle data key
-        bundle_data_key = (bundle_dependency_id, bundle_dependency_version)
+        # defines the dependency path key
+        bundle_dependency_path_key = (bundle_dependency_id, bundle_dependency_version)
 
-        # checks if the bundle dependency exists
-        if not bundle_data_key in bundle_data_map:
+        # checks if a cycle was found
+        if bundle_dependency_path_key in dependency_path_list:
             # adds the validation error
-            self.add_validation_error(validation_errors, bundle_id, bundle_version, bundle_file_path, "Bundle '%s (%s)' references unexistent bundle '%s (%s)'" % (bundle_id, bundle_version, bundle_dependency_id, bundle_dependency_version))
+            self.add_validation_error(validation_errors, bundle_id, bundle_version, bundle_file_path, "Bundle '%s (%s)' references dependency '%s (%s)' which causes a cycle" % (bundle_id, bundle_version, bundle_dependency_id, bundle_dependency_version))
+
+            # returns since a cycle was found
+            return
+
+        # adds the bundle dependency path key to the dependency path list, cloning to avoid manipulating the same list across calls
+        dependency_path_list = list(dependency_path_list) + [bundle_dependency_path_key]
+
+        # defines the bundle dependency data key
+        bundle_dependency_data_key = (bundle_dependency_id, bundle_dependency_version)
+
+        # retrieves the bundle dependency data
+        bundle_dependency_data = bundle_data_map[bundle_dependency_data_key]
+
+        # retrieves the bundle dependency's dependencies
+        bundle_dependency_dependencies = bundle_dependency_data[DEPENDENCIES_VALUE]
+
+        # iterates through the remaining dependencies
+        for bundle_dependency_dependency in bundle_dependency_dependencies:
+            self.__validate_bundle_dependency_cycle(bundle_data, bundle_data_map, bundle_dependency_dependency, dependency_path_list, validation_errors)
 
     def get_bundle_data_map(self, bundle_file_paths, validation_errors):
         # initializes the bundle map
@@ -315,48 +375,63 @@ class ValidationBundle:
 
         # populates the bundle data map
         for bundle_file_path in bundle_file_paths:
-            try:
-                # retrieves the bundle data
-                bundle_data = self.get_json_data(bundle_file_path)
-            except:
-                # logs the validation error
-                self.add_validation_error(validation_errors, None, None, bundle_file_path, "'%s' has invalid syntax" % bundle_file_path)
-            else:
-                # initializes the valid attribute
-                valid = True
+            # retrieves the bundle data
+            bundle_data = self.get_bundle_data(bundle_file_path, validation_errors)
 
-                # checks that all bundle attributes are present
-                for bundle_attribute_name in MANDATORY_BUNDLE_ATTRIBUTE_NAMES:
-                    # skips the iteration in case the attribute was found
-                    if bundle_attribute_name in bundle_data:
-                        continue
+            # skips in case the bundle data was not retrieved
+            if not bundle_data:
+                continue
 
-                    # marks the bundle as invalid
-                    valid = False
+            # retrieves the bundle id
+            bundle_id = bundle_data[ID_VALUE]
 
-                    # logs the validation error
-                    self.add_validation_error(validation_errors, None, None, bundle_file_path, "'%s' is missing attribute '%s'" % (bundle_file_path, bundle_attribute_name))
+            # retrieves the bundle version
+            bundle_version = bundle_data[VERSION_VALUE]
 
-                # skips the bundle in case it is missing an attribute
-                if not valid:
-                    continue
+            # creates the bundle data key
+            bundle_data_key = (bundle_id, bundle_version)
 
-                # sets the bundle file path in the bundle data
-                bundle_data[FILE_PATH_VALUE] = bundle_file_path
+            # sets the bundle data in the bundle data map
+            bundle_data_map[bundle_data_key] = bundle_data
 
-                # retrieves the bundle id
-                bundle_id = bundle_data[ID_VALUE]
-
-                # retrieves the bundle version
-                bundle_version = bundle_data[VERSION_VALUE]
-
-                # creates the bundle data key
-                bundle_data_key = (bundle_id, bundle_version)
-
-                # sets the bundle data in the bundle data map
-                bundle_data_map[bundle_data_key] = bundle_data
-
+        # returns the bundle data map
         return bundle_data_map
+
+    def get_bundle_data(self, bundle_file_path, validation_errors):
+        try:
+            # retrieves the bundle data
+            bundle_data = self.get_json_data(bundle_file_path)
+        except:
+            # logs the validation error
+            self.add_validation_error(validation_errors, None, None, bundle_file_path, "'%s' has invalid syntax" % bundle_file_path)
+
+            # returns in case the bundle was not loaded
+            return
+
+        # initializes the valid attribute
+        valid = True
+
+        # checks that all bundle attributes are present
+        for bundle_attribute_name in MANDATORY_BUNDLE_ATTRIBUTE_NAMES:
+            # skips the iteration in case the attribute was found
+            if bundle_attribute_name in bundle_data:
+                continue
+
+            # marks the bundle as invalid
+            valid = False
+
+            # logs the validation error
+            self.add_validation_error(validation_errors, None, None, bundle_file_path, "'%s' is missing attribute '%s'" % (bundle_file_path, bundle_attribute_name))
+
+        # returns in case the bundle is invalid
+        if not valid:
+            return
+
+        # sets the bundle file path in the bundle data
+        bundle_data[FILE_PATH_VALUE] = bundle_file_path
+
+        # returns the bundle data
+        return bundle_data
 
     def get_plugin_bundle_map(self, bundle_data_map, validation_errors):
         # initializes the plugin bundle map
@@ -374,6 +449,7 @@ class ValidationBundle:
             for bundle_plugin in bundle_plugins:
                 self._get_plugin_bundle_map(bundle_data, bundle_plugin, plugin_bundle_map, validation_errors)
 
+        # returns the plugin bundle map
         return plugin_bundle_map
 
     def _get_plugin_bundle_map(self, bundle_data, bundle_plugin, plugin_bundle_map, validation_errors):
@@ -424,6 +500,7 @@ class ValidationBundle:
             # retrieves the bundle file paths within the specified path
             bundle_file_paths += self._get_bundle_file_paths(plugin_path, [])
 
+        # returns the bundle file paths
         return bundle_file_paths
 
     def _get_bundle_file_paths(self, path, file_paths):
@@ -457,6 +534,7 @@ class ValidationBundle:
         for directory_path in directory_paths:
             file_paths = self._get_bundle_file_paths(directory_path, file_paths)
 
+        # returns the file paths
         return file_paths
 
     def add_validation_error(self, validation_errors, bundle_id, bundle_version, bundle_file_path, validation_error_message):
@@ -486,4 +564,5 @@ class ValidationBundle:
         # loads the json data from the json file
         json_data = self.validation_bundle_plugin.json_plugin.loads(json_file_data)
 
+        # returns the json data
         return json_data
