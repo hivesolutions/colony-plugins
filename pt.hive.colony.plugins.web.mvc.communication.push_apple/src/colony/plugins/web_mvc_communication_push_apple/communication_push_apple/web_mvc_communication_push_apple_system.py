@@ -98,11 +98,11 @@ class WebMvcCommunicationPushApple:
         to the web mvc service.
         """
 
-        return ((r"^web_mvc_communication_push_apple/?$", self.web_mvc_communication_push_apple_controller.handle_show),
-                (r"^web_mvc_communication_push_apple/register$", self.web_mvc_communication_push_apple_controller.handle_register),
-                (r"^web_mvc_communication_push_apple/unregister$", self.web_mvc_communication_push_apple_controller.handle_unregister),
-                (r"^web_mvc_communication_push_apple/load_profile$", self.web_mvc_communication_push_apple_controller.handle_load_profile),
-                (r"^web_mvc_communication_push_apple/unload_profile$", self.web_mvc_communication_push_apple_controller.handle_unload_profile))
+        return ((r"^web_mvc_communication_push_apple/?$", self.web_mvc_communication_push_apple_controller.handle_show, "get"),
+                (r"^web_mvc_communication_push_apple/register$", self.web_mvc_communication_push_apple_controller.handle_register, "post"),
+                (r"^web_mvc_communication_push_apple/unregister$", self.web_mvc_communication_push_apple_controller.handle_unregister, "post"),
+                (r"^web_mvc_communication_push_apple/load_profile$", self.web_mvc_communication_push_apple_controller.handle_load_profile, "post"),
+                (r"^web_mvc_communication_push_apple/unload_profile$", self.web_mvc_communication_push_apple_controller.handle_unload_profile, "post"))
 
     def get_communication_patterns(self):
         """

@@ -89,16 +89,16 @@ class WebMvcCommunicationPush:
         to the web mvc service.
         """
 
-        return ((r"^web_mvc_communication_push/?$", self.web_mvc_communication_push_controller.handle_show),
-                (r"^web_mvc_communication_push/register$", self.web_mvc_communication_push_controller.handle_register),
-                (r"^web_mvc_communication_push/unregister$", self.web_mvc_communication_push_controller.handle_unregister),
-                (r"^web_mvc_communication_push/message$", self.web_mvc_communication_push_controller.handle_message),
-                (r"^web_mvc_communication_push/set_property$", self.web_mvc_communication_push_controller.handle_set_property),
-                (r"^web_mvc_communication_push/stat$", self.web_mvc_communication_push_controller.handle_stat),
-                (r"^web_mvc_communication_push/load_profile$", self.web_mvc_communication_push_controller.handle_load_profile),
-                (r"^web_mvc_communication_push/unload_profile$", self.web_mvc_communication_push_controller.handle_unload_profile),
-                (r"^web_mvc_communication_push/set_profile$", self.web_mvc_communication_push_controller.handle_set_profile),
-                (r"^web_mvc_communication_push/unset_profile$", self.web_mvc_communication_push_controller.handle_unset_profile))
+        return ((r"^web_mvc_communication_push/?$", self.web_mvc_communication_push_controller.handle_show, "get"),
+                (r"^web_mvc_communication_push/register$", self.web_mvc_communication_push_controller.handle_register, "post"),
+                (r"^web_mvc_communication_push/unregister$", self.web_mvc_communication_push_controller.handle_unregister, "post"),
+                (r"^web_mvc_communication_push/message$", self.web_mvc_communication_push_controller.handle_message, "post"),
+                (r"^web_mvc_communication_push/set_property$", self.web_mvc_communication_push_controller.handle_set_property, "post"),
+                (r"^web_mvc_communication_push/stat$", self.web_mvc_communication_push_controller.handle_stat, "get"),
+                (r"^web_mvc_communication_push/load_profile$", self.web_mvc_communication_push_controller.handle_load_profile, "post"),
+                (r"^web_mvc_communication_push/unload_profile$", self.web_mvc_communication_push_controller.handle_unload_profile, "post"),
+                (r"^web_mvc_communication_push/set_profile$", self.web_mvc_communication_push_controller.handle_set_profile, "post"),
+                (r"^web_mvc_communication_push/unset_profile$", self.web_mvc_communication_push_controller.handle_unset_profile, "post"))
 
     def get_communication_patterns(self):
         """
