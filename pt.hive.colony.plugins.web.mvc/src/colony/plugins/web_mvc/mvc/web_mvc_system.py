@@ -46,7 +46,7 @@ import web_mvc_communication_handler
 
 import colony.libs.string_buffer_util
 
-NAMED_GROUPS_REGEX_VALUE = re.compile("\(\?\P\<.*\>(.*)\)")
+NAMED_GROUPS_REGEX_VALUE = "\(\?\P\<[a-zA-Z_][a-zA-Z0-9_]*\>(.+?)\)"
 """ The named groups regex value """
 
 NAMED_GROUPS_REGEX = re.compile(NAMED_GROUPS_REGEX_VALUE)
