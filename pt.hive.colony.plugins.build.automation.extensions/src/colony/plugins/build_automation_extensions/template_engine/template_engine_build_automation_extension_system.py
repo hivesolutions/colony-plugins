@@ -56,6 +56,9 @@ VERSION_VALUE = "version"
 RELEASE_VERSION_VALUE = "release_version"
 """ The release version value """
 
+BUILD_VERSION_VALUE = "build_version"
+""" The build version value """
+
 DATE_VALUE = "date"
 """ The date value """
 
@@ -142,7 +145,10 @@ class TemplateEngineBuildAutomationExtension:
         version_value = build_automation_structure_runtime.local_properties.get(VERSION_VALUE, -1)
 
         # assigns the release version to the template file
-        template_file.assign(RELEASE_VERSION_VALUE, "b" + str(version_value))
+        template_file.assign(RELEASE_VERSION_VALUE, version_value)
+
+        # assigns the build version to the template file
+        template_file.assign(BUILD_VERSION_VALUE, version_value)
 
         # assigns the date to the template file
         template_file.assign(DATE_VALUE, current_date_string)
