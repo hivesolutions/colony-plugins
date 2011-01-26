@@ -60,6 +60,9 @@ DEFAULT_SUMMARY = "automated wiki commit"
 TARGET_FILE_ENCODING = "Cp1252"
 """ The target file encoding """
 
+WIKI_FILE_ENCODING = "Cp1252"
+""" The wiki file encoding """
+
 TEMPLATES_PATH = WEB_MVC_WIKI_RESOURCES_PATH + "/templates"
 """ The templates path """
 
@@ -163,11 +166,6 @@ class WebMvcWikiController:
         # using the given instance name
         base_target_path = self._get_cache_directory_path(instance_name)
 
-        # in case the base target path does not exists
-        if not os.path.exists(base_target_path):
-            # creates the base target path
-            os.makedirs(base_target_path)
-
         # retrieves the file path striping the file path
         file_path = page_name.rstrip("/")
 
@@ -177,12 +175,15 @@ class WebMvcWikiController:
         # retrieves the encoder name
         encoder_name = rest_request.encoder_name and rest_request.encoder_name or "html"
 
+        # encoder name is not provided or the encoder name is html, ajax or print
         if not rest_request.encoder_name or rest_request.encoder_name in ("html", "ajx", "prt"):
             # creates the wiki file path
             wiki_file_path = base_file_path + "/" + file_path + WIKI_EXTENSION
 
-            # in case the wiki file does not exist
-            if not os.path.exists(wiki_file_path):
+            try:
+                # generates the wiki files using the wiki engine
+                self._generate_wiki_html_files(base_target_path, wiki_file_path)
+            except web_mvc_wiki_exceptions.WikiFileNotFound:
                 # retrieves the template file
                 template_file = self.retrieve_template_file("general_action.html.tpl")
 
@@ -204,23 +205,6 @@ class WebMvcWikiController:
                 # returns true (valid)
                 return True
 
-            # creates the structure that will hold the information
-            # about the output of the wiki generation
-            output_structure = {}
-
-            # creates the configuration map for the html generation
-            configuration_map = {"auto_numbered_sections" : True, "generate_footer" : False, "simple_parse" : True}
-
-            # creates the engine properties map
-            engine_properties = {"file_path" : wiki_file_path, "target_path" : base_target_path,
-                                 "output_structure" : output_structure, "configuration_map" : configuration_map}
-
-            # retrieves the language wiki plugin
-            language_wiki_plugin = self.web_mvc_wiki_plugin.language_wiki_plugin
-
-            # generates the html files using the wiki engine with the given engine properties
-            language_wiki_plugin.generate("html", engine_properties)
-
         # retrieves the file extension
         file_extension = encoder_name in ("ajx", "prt") and "html" or encoder_name
 
@@ -231,83 +215,72 @@ class WebMvcWikiController:
         # the target file name
         target_file_path = base_target_path + "/" + target_file_name
 
-        # opens the target file
-        target_file = open(target_file_path, "rb")
-
-        # reads the target file contents
-        target_file_contents = target_file.read()
-
-        # closes the target file
-        target_file.close()
+        # retrieves the target file contents
+        target_file_contents = self._get_file_contents(target_file_path)
 
         # in case the file is html one
         if file_extension == "html":
             # decodes the file contents using the file encoding
             target_file_contents = target_file_contents.decode(TARGET_FILE_ENCODING)
 
-        if not rest_request.encoder_name or rest_request.encoder_name in ("html", "prt"):
-            # in case there is no encoder name defined or the encoder name is html
-            if not rest_request.encoder_name or rest_request.encoder_name == "html":
-                # retrieves the general template file
-                template_file_name = "general.html.tpl"
-            # in case the encoder name is print
-            elif rest_request.encoder_name == "prt":
-                # retrieves the general print template file
-                template_file_name = "general_print.html.tpl"
-
-            # retrieves the template file
-            template_file = self.retrieve_template_file(template_file_name)
-
-            # opens the wiki file
-            wiki_file = open(wiki_file_path, "rb")
-
-            # reads the wiki file contents
-            wiki_file_contents = wiki_file.read()
-
-            # decodes the wiki file contents
-            wiki_file_contents = wiki_file_contents.decode("Cp1252")
-
-            # closes the wiki file
-            wiki_file.close()
-
-            # retrieves the final time
-            final_time = time.clock()
-
-            # calculates the generation (delta) time
-            generation_time = final_time - initial_time
-
-            # creates the generation time string
-            generation_time_string = "%.2f" % generation_time
-
-            # sets the page name in the template file
-            template_file.assign("page_name", file_path)
-
-            # sets the page source in the template file
-            template_file.assign("page_source", wiki_file_contents)
-
-            # sets the page page contents to be loaded in the template file
-            template_file.assign("page_contents", target_file_contents)
-
-            # sets the generation time in the template file
-            template_file.assign("generation_time", generation_time_string)
-
-            # sets the instance name in the template file
-            template_file.assign("instance_name", instance_name)
-
-            # assigns the session variables to the template file
-            self.assign_session_template_file(rest_request, template_file)
-
-            # applies the base path to the template file
-            self.apply_base_path_template_file(rest_request, template_file)
-
-            # processes the template file and sets the request contents
-            self.process_set_contents(rest_request, template_file)
-        else:
+        # in case and encoder name is provided but is not html or print
+        if rest_request.encoder_name and not rest_request.encoder_name in ("html", "prt"):
             # retrieves the mime type for the target file name
             mime_type = format_mime_plugin.get_mime_type_file_name(target_file_name)
 
             # sets the request contents
             self.set_contents(rest_request, target_file_contents, mime_type)
+
+            # returns True
+            return True
+
+        # in case there is no encoder name defined or the encoder name is html
+        if not rest_request.encoder_name or rest_request.encoder_name == "html":
+            # retrieves the general template file
+            template_file_name = "general.html.tpl"
+        # in case the encoder name is print
+        elif rest_request.encoder_name == "prt":
+            # retrieves the general print template file
+            template_file_name = "general_print.html.tpl"
+
+        # retrieves the wiki file contents decoded
+        wiki_file_contents = self._get_file_contents_decoded(wiki_file_path, WIKI_FILE_ENCODING)
+
+        # retrieves the final time
+        final_time = time.clock()
+
+        # calculates the generation (delta) time
+        generation_time = final_time - initial_time
+
+        # creates the generation time string
+        generation_time_string = "%.2f" % generation_time
+
+        # retrieves the template file
+        template_file = self.retrieve_template_file(template_file_name)
+
+        # sets the page name in the template file
+        template_file.assign("page_name", file_path)
+
+        # sets the page source in the template file
+        template_file.assign("page_source", wiki_file_contents)
+
+        # sets the page page contents to be loaded in the template file
+        template_file.assign("page_contents", target_file_contents)
+
+        # sets the generation time in the template file
+        template_file.assign("generation_time", generation_time_string)
+
+        # sets the instance name in the template file
+        template_file.assign("instance_name", instance_name)
+
+        # assigns the session variables to the template file
+        self.assign_session_template_file(rest_request, template_file)
+
+        # applies the base path to the template file
+        self.apply_base_path_template_file(rest_request, template_file)
+
+        # processes the template file and sets the request contents
+        self.process_set_contents(rest_request, template_file)
 
         # returns true
         return True
@@ -389,6 +362,83 @@ class WebMvcWikiController:
 
         # returns the cache directory path
         return cache_diretory_path
+
+    def _generate_wiki_html_files(self, base_target_path, wiki_file_path):
+        """
+        Generates the html files using the wiki engine.
+
+        @type base_target_path String.
+        @param base_target_path The base target path.
+        @type wiki_file_path String.
+        @param wiki_file_path The wiki file path.
+        """
+
+        # in case the base target path does not exists
+        if not os.path.exists(base_target_path):
+            # creates the base target path
+            os.makedirs(base_target_path)
+
+        # in case the wiki file does not exist
+        if not os.path.exists(wiki_file_path):
+            # raise the file not found exception
+            raise web_mvc_wiki_exceptions.WikiFileNotFound(wiki_file_path)
+
+        # creates the structure that will hold the information
+        # about the output of the wiki generation
+        output_structure = {}
+
+        # creates the configuration map for the html generation
+        configuration_map = {"auto_numbered_sections" : True, "generate_footer" : False, "simple_parse" : True}
+
+        # creates the engine properties map
+        engine_properties = {"file_path" : wiki_file_path, "target_path" : base_target_path,
+                             "output_structure" : output_structure, "configuration_map" : configuration_map}
+
+        # retrieves the language wiki plugin
+        language_wiki_plugin = self.web_mvc_wiki_plugin.language_wiki_plugin
+
+        # generates the html files using the wiki engine with the given engine properties
+        language_wiki_plugin.generate("html", engine_properties)
+
+    def _get_file_contents(self, file_path):
+        """
+        Retrieves the contents of specified file.
+
+        @type file_path: String
+        @param file_path: The path to the file.
+        """
+
+        # opens the target file
+        file = open(file_path, "rb")
+
+        try:
+            # reads the file contents
+            file_contents = file.read()
+
+            # returns the file contents
+            return file_contents
+        finally:
+            # closes the target file
+            file.close()
+
+    def _get_file_contents_decoded(self, file_path, file_encoding):
+        """
+        Retrieves the contents of specified file in unicode.
+
+        @type file_path: String
+        @param file_path: The path to the file.
+        @type file_encoding: String
+        @param file_encoding: The encoding of the file.
+        """
+
+        # retrieves the file contents
+        file_contents = self._get_file_contents(file_path)
+
+        # decodes the file contents using the file encoding
+        file_contents = file_contents.decode(file_encoding)
+
+        # returns the file contents decoded
+        return file_contents
 
 class WebMvcWikiPageController:
     """
