@@ -547,7 +547,7 @@ class MainServiceHttp:
         self.http_log_file = http_log_file_path and colony.libs.file_util.FileRotator(http_log_file_path) or None
 
         # opens the http log file
-        self.http_log_file.open()
+        self.http_log_file and self.http_log_file.open()
 
         # retrieves the encoding handler for the given encoding
         encoding_handler = self._get_encoding_handler(encoding)
