@@ -468,6 +468,13 @@ class PluginController:
         # returns true
         return True
 
+    def handle_create(self, rest_request, parameters = {}):
+        # deploys the package
+        self._deploy_package(rest_request)
+
+        # returns true
+        return True
+
     def handle_show(self, rest_request, parameters = {}):
         # returns in case the required permissions are not set
         if not self.web_mvc_manager.require_permissions(self, rest_request):
@@ -487,8 +494,14 @@ class PluginController:
             # sets the side panel to be included
             template_file.assign("side_panel_include", "side_panel/side_panel_configuration.html.tpl")
 
+        # retrieves the pattern names from the parameters
+        pattern_names = parameters["pattern_names"]
+
+        # retrieves the plugin id pattern
+        plugin_id = pattern_names["plugin_id"]
+
         # retrieves the specified plugin
-        plugin = self._get_plugin(rest_request)
+        plugin = self._get_plugin(plugin_id)
 
         # assigns the plugin to the template
         template_file.assign("plugin", plugin)
@@ -637,15 +650,12 @@ class PluginController:
         # unpacks the files using the colony service
         packing_manager_plugin.unpack_files(["c:/temp.cpx"], properties, "colony")
 
-    def _get_plugin(self, rest_request):
+    def _get_plugin(self, plugin_id):
         # retrieves the plugin manager
         plugin_manager = self.web_mvc_manager_plugin.manager
 
-        # retrieves the plugin's id from the rest request's path list
-        plguin_id = rest_request.path_list[-1]
-
         # retrieves the plugin from the given plugin id
-        plugin = plugin_manager._get_plugin_by_id(plguin_id)
+        plugin = plugin_manager._get_plugin_by_id(plugin_id)
 
         return plugin
 
@@ -785,8 +795,11 @@ class CapabilityController:
             # sets the side panel to be included
             template_file.assign("side_panel_include", "side_panel/side_panel_configuration.html.tpl")
 
-        # retrieves the specified capability
-        capability = self._get_capability(rest_request)
+        # retrieves the pattern names from the parameters
+        pattern_names = parameters["pattern_names"]
+
+        # retrieves the capability pattern
+        capability = pattern_names["capability"]
 
         # retrieves the plugins map for the capability
         plugins_capability = self._get_plugins_capability(capability)
@@ -886,12 +899,6 @@ class CapabilityController:
 
         # returns true
         return True
-
-    def _get_capability(self, rest_request):
-        # retrieves the capability from the rest request's path list
-        capability = rest_request.path_list[-1]
-
-        return capability
 
     def _get_fitered_capabilities(self, rest_request):
         # processes the form data
