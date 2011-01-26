@@ -1597,6 +1597,11 @@ def _get_locales_map(self, accept_language):
     # creates the locales map
     locales_map = {}
 
+    # in case accept language is invalid
+    if not accept_language:
+        # returns immediately
+        return locales_map
+
     # marches the accept language value, retrieving the match iterator
     accept_language_match_iterator = LOCALE_REGEX.finditer(accept_language)
 
