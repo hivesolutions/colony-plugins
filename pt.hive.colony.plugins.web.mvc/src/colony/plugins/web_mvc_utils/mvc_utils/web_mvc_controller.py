@@ -358,7 +358,7 @@ def get_entity_map_parameters(self, entity_map):
 
     # removes the parameters from the entity map
     # in order to avoid possible attribute problems
-    if entity_map: del entity_map[PARAMETERS_VALUE]
+    if PARAMETERS_VALUE in entity_map: del entity_map[PARAMETERS_VALUE]
 
     # returns the entity parameters
     return entity_parameters
