@@ -111,10 +111,10 @@ class WebMvcWiki:
         to the web mvc service.
         """
 
-        return ((r"^wiki/[a-zA-Z]+/pages/new/[a-zA-Z0-9_:\.]+$", self.web_mvc_wiki_page_controller.handle_new),
-                (r"^wiki/[a-zA-Z]+/pages/edit/[a-zA-Z0-9_:\.]+$", self.web_mvc_wiki_page_controller.handle_edit),
-                (r"^wiki/[a-zA-Z]+/[a-zA-Z0-9_:\.]*$", self.web_mvc_wiki_controller.handle_wiki),
-                (r"^wiki/[a-zA-Z]+/(?:js|images|css)/.*$", self.web_mvc_wiki_controller.handle_resources))
+        return ((r"^wiki/(?P<instance_name>[a-zA-Z]+)/pages/new/(?P<page_name>[a-zA-Z0-9_:\.]+)$", self.web_mvc_wiki_page_controller.handle_new, "post"),
+                (r"^wiki/(?P<instance_name>[a-zA-Z]+)/pages/edit/(?P<page_name>[a-zA-Z0-9_:\.]+)$", self.web_mvc_wiki_page_controller.handle_edit, "post"),
+                (r"^wiki/(?P<instance_name>[a-zA-Z]+)/(?P<page_name>[a-zA-Z0-9_:\.]*)$", self.web_mvc_wiki_controller.handle_wiki, "get"),
+                (r"^wiki/(?P<instance_name>[a-zA-Z]+)/(?:(?P<resource_type>js|images|css))/(?P<resource_name>.*)$", self.web_mvc_wiki_controller.handle_resources, "get"))
 
     def get_communication_patterns(self):
         """
@@ -204,19 +204,14 @@ class WebMvcWiki:
         # sets the instances map
         self.instances_map = {}
 
-    def _get_instance(self, rest_request):
+    def _get_instance(self, instance_name):
         """
         Retrieves the current instance for the
-        given rest request.
+        given instance name.
 
-        @type rest_request: RestRequest
-        @param rest_request: The page rest request to be handled.
-        @rtype: Dictionary
-        @return: The retrieved instance (map).
+        @type instance_name: String
+        @param instance_name: The instance name to retrieve.
         """
-
-        # retrieves the instance name
-        instance_name = rest_request.path_list[1]
 
         # in case the instance name does not exist
         # in the instances map

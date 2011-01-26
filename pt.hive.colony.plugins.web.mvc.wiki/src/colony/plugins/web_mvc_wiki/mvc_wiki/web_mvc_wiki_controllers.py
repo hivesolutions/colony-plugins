@@ -116,7 +116,7 @@ class WebMvcWikiController:
         # sets the templates path
         self.set_templates_path(templates_path)
 
-    def handle_wiki(self, rest_request, parameters):
+    def handle_wiki(self, rest_request, parameters = {}):
         """
         Handles the given wiki rest request.
 
@@ -135,11 +135,17 @@ class WebMvcWikiController:
         # retrieves the format mime plugin
         format_mime_plugin = self.web_mvc_wiki_plugin.format_mime_plugin
 
-        # retrieves the instance for the rest request
-        instance = self.web_mvc_wiki._get_instance(rest_request)
+        # retrieves the pattern names from the parameters
+        pattern_names = parameters["pattern_names"]
 
-        # retrieves the instance name
-        instance_name = instance["name"]
+        # retrieves the instance name pattern
+        instance_name = pattern_names["instance_name"]
+
+        # retrieves the page name pattern
+        page_name = pattern_names["page_name"]
+
+        # retrieves the instance for the rest request
+        instance = self.web_mvc_wiki._get_instance(instance_name)
 
         # retrieves the instance repository path
         instance_repository_path = instance["repository_path"]
@@ -162,11 +168,8 @@ class WebMvcWikiController:
             # creates the base target path
             os.makedirs(base_target_path)
 
-        # retrieves the file base path by joining the rest request path
-        file_path = "/".join(rest_request.path_list[2:])
-
         # retrieves the file path striping the file path
-        file_path = file_path.rstrip("/")
+        file_path = page_name.rstrip("/")
 
         # retrieves the file path
         file_path = file_path and file_path or "index"
@@ -322,20 +325,26 @@ class WebMvcWikiController:
         # retrieves the format mime plugin
         format_mime_plugin = self.web_mvc_wiki_plugin.format_mime_plugin
 
-        # retrieves the instance for the rest request
-        instance = self.web_mvc_wiki._get_instance(rest_request)
+        # retrieves the pattern names from the parameters
+        pattern_names = parameters["pattern_names"]
 
-        # retrieves the instance name
-        instance_name = instance["name"]
+        # retrieves the instance name pattern
+        instance_name = pattern_names["instance_name"]
 
-        # retrieves the partial file path
-        partial_file_path = "/".join(rest_request.path_list[2:])
+        # retrieves the resource type pattern
+        resource_type = pattern_names["resource_type"]
+
+        # retrieves the resource name pattern
+        resource_name = pattern_names["resource_name"]
 
         # creates the base target path as the cache directory path
         base_target_path = self._get_cache_directory_path(instance_name)
 
+        # retrieves the file base path by joining resource values
+        file_path = "/".join([resource_type, resource_name])
+
         # creates the full file name
-        full_file_name = partial_file_path + "." + rest_request.encoder_name
+        full_file_name = file_path + "." + rest_request.encoder_name
 
         # creates the full path to the file to be read
         full_file_path = base_target_path + "/" + full_file_name
@@ -422,7 +431,7 @@ class WebMvcWikiPageController:
         # sets the templates path
         self.set_templates_path(templates_path)
 
-    def handle_new(self, rest_request, parameters):
+    def handle_new(self, rest_request, parameters = {}):
         """
         Handles the given page rest request.
 
@@ -441,8 +450,17 @@ class WebMvcWikiPageController:
         # processes the form data
         form_data_map = self.process_form_data(rest_request, DEFAULT_ENCODING)
 
-        # retrieves the instance for the rest request
-        instance = self.web_mvc_wiki._get_instance(rest_request)
+        # retrieves the pattern names from the parameters
+        pattern_names = parameters["pattern_names"]
+
+        # retrieves the instance name pattern
+        instance_name = pattern_names["instance_name"]
+
+        # retrieves the page name pattern
+        page_name = pattern_names["page_name"]
+
+        # retrieves the instance for the instance name
+        instance = self.web_mvc_wiki._get_instance(instance_name)
 
         # retrieves the instance name
         instance_name = instance["name"]
@@ -467,11 +485,8 @@ class WebMvcWikiPageController:
         # resolved by the plugin manager
         base_file_path = plugin_manager.resolve_file_path(instance_repository_path)
 
-        # retrieves the file name
-        file_name = rest_request.path_list[-1]
-
         # creates the complete file path for the wiki file
-        complete_file_path = base_file_path + "/" + file_name + WIKI_EXTENSION
+        complete_file_path = base_file_path + "/" + page_name + WIKI_EXTENSION
 
         # writes the normalized contents to the wiki file (in the complete file path)
         self._write_file(complete_file_path, normalized_contents)
@@ -492,11 +507,11 @@ class WebMvcWikiPageController:
         base_path = self.get_base_path(rest_request)
 
         # redirects the rest request
-        self.redirect(rest_request, base_path + instance_name + "/" + file_name)
+        self.redirect(rest_request, base_path + instance_name + "/" + page_name)
 
         return True
 
-    def handle_edit(self, rest_request, parameters):
+    def handle_edit(self, rest_request, parameters = {}):
         """
         Handles the given page rest request.
 
@@ -515,8 +530,17 @@ class WebMvcWikiPageController:
         # processes the form data
         form_data_map = self.process_form_data(rest_request, DEFAULT_ENCODING)
 
+        # retrieves the pattern names from the parameters
+        pattern_names = parameters["pattern_names"]
+
+        # retrieves the instance name pattern
+        instance_name = pattern_names["instance_name"]
+
+        # retrieves the page name pattern
+        page_name = pattern_names["page_name"]
+
         # retrieves the instance for the rest request
-        instance = self.web_mvc_wiki._get_instance(rest_request)
+        instance = self.web_mvc_wiki._get_instance(instance_name)
 
         # retrieves the instance repository type
         instance_repository_type = instance["repository_type"]
@@ -538,11 +562,8 @@ class WebMvcWikiPageController:
         # resolved by the plugin manager
         base_file_path = plugin_manager.resolve_file_path(instance_repository_path)
 
-        # retrieves the file name
-        file_name = rest_request.path_list[-1]
-
         # creates the complete file path for the wiki file
-        complete_file_path = base_file_path + "/" + file_name + WIKI_EXTENSION
+        complete_file_path = base_file_path + "/" + page_name + WIKI_EXTENSION
 
         # writes the normalized contents to the wiki file (in the complete file path)
         self._write_file(complete_file_path, normalized_contents)
