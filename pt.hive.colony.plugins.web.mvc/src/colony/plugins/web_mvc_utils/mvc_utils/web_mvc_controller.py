@@ -545,6 +545,28 @@ def get_base_path(self, rest_request):
     # returns the base path
     return base_path
 
+def get_base_path_absolute(self, rest_request):
+    """
+    Retrieves the base path absolute according to
+    the current rest request path.
+
+    @type rest_request: RestRequest
+    @param rest_request: The rest request to be used to retrieve
+    the base path absolute.
+    @rtype: String
+    @return: The base path absolute.
+    """
+
+    # retrieves the base path list
+    base_path_list = rest_request.path_list[:1]
+
+    # joins the base path list to retrieve the base
+    # path absolute value
+    base_path_absolute = "/".join(base_path_list) + "/"
+
+    # returns the base path absolute
+    return base_path_absolute
+
 def set_contents(self, rest_request, contents = "", content_type = DEFAULT_CONTENT_TYPE):
     """
     Sets the given contents in the given rest request.
