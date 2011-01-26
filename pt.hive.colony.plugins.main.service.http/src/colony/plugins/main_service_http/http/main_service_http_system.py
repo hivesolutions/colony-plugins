@@ -764,11 +764,6 @@ class HttpClientServiceHandler:
             # prints a debug message
             self.service_plugin.debug("Connection: %s kept alive for %ss" % (str(service_connection), str(service_connection_request_timeout)))
         except Exception, exception:
-            print "Exception in user code:"
-            print '-'*60
-            traceback.print_exc(file=sys.stdout)
-            print '-'*60
-
             # prints info message about exception
             self.service_plugin.info("There was an exception handling the request: " + unicode(exception))
 
