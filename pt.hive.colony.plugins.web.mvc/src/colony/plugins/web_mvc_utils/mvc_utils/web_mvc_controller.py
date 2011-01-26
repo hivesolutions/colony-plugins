@@ -635,7 +635,7 @@ def redirect_base_path(self, rest_request, target, status_code = 302, quote = Tr
     # redirects to the target base path
     self.redirect(rest_request, target_base_path, status_code, quote)
 
-def process_set_contents(self, rest_request, template_file, variable_encoding = None):
+def process_set_contents(self, rest_request, template_file, variable_encoding = None, content_type = DEFAULT_CONTENT_TYPE):
     """
     Processes the template file and set the result of it
     as the contents of the given rest request.
@@ -647,14 +647,16 @@ def process_set_contents(self, rest_request, template_file, variable_encoding = 
     @type variable_encoding: String
     @param variable_encoding: The encoding to be used to encode the variables
     in the template file processing.
+    @type content_type: String
+    @param content_type: The content type to be set.
     """
 
     # processes the template file with the given variable encoding
     # retrieving the processed template file
     processed_template_file = self.process_template_file(template_file, variable_encoding)
 
-    # sets the request contents
-    self.set_contents(rest_request, processed_template_file)
+    # sets the request contents, using the given content type
+    self.set_contents(rest_request, processed_template_file, content_type)
 
 def process_template_file(self, template_file, variable_encoding = None):
     """
