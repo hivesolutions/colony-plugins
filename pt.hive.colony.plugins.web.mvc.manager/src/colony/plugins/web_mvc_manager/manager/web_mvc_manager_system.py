@@ -171,13 +171,13 @@ class WebMvcManager:
                                (r"^web_mvc_manager/side_panel/update$", self.web_mvc_manager_side_panel_controller.handle_update, "get"),
                                (r"^web_mvc_manager/header$", self.web_mvc_manager_header_controller.handle_header, "get"),
                                (r"^web_mvc_manager/plugins$", self.web_mvc_manager_plugin_controller.handle_list, "get"),
-                               (r"^web_mvc_manager/plugins/partial$", self.web_mvc_manager_plugin_controller.handle_partial_list, "post"),
-                               (r"^web_mvc_manager/plugins/new$", self.web_mvc_manager_plugin_controller.handle_new, "get"),
+                               (r"^web_mvc_manager/plugins_/partial$", self.web_mvc_manager_plugin_controller.handle_partial_list, "post"),
+                               (r"^web_mvc_manager/plugins_/new$", self.web_mvc_manager_plugin_controller.handle_new, "get"),
                                (r"^web_mvc_manager/plugins_$", self.web_mvc_manager_plugin_controller.handle_create, "post"),
                                (r"^web_mvc_manager/plugins/change_status$", self.web_mvc_manager_plugin_controller.handle_change_status),
                                (r"^web_mvc_manager/plugins/(?P<plugin_id>[a-zA-Z0-9\._]+)$", self.web_mvc_manager_plugin_controller.handle_show, "get"),
                                (r"^web_mvc_manager/capabilities$", self.web_mvc_manager_capability_controller.handle_list, "get"),
-                               (r"^web_mvc_manager/capabilities/partial$", self.web_mvc_manager_capability_controller.handle_partial_list, "post"),
+                               (r"^web_mvc_manager/capabilities_/partial$", self.web_mvc_manager_capability_controller.handle_partial_list, "post"),
                                (r"^web_mvc_manager/capabilities/(?P<capability>[a-zA-Z0-9\._]+)$", self.web_mvc_manager_capability_controller.handle_show, "get"))
 
         # extends the base patterns tuple with the extra patterns tuple retrieving the result

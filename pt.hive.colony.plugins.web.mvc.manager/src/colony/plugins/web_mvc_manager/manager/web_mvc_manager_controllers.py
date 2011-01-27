@@ -450,11 +450,11 @@ class PluginController:
             # retrieves the template file
             template_file = self.retrieve_template_file("../general.html.tpl")
 
-            # sets the page to be included
-            template_file.assign("page_include", "plugin/plugin_new_contents.html.tpl")
+            # assigns the include to the template
+            self.assign_include_template_file(template_file, "page_include", "plugin/plugin_new_contents.html.tpl")
 
-            # sets the side panel to be included
-            template_file.assign("side_panel_include", "side_panel/side_panel_configuration.html.tpl")
+            # assigns the include to the template
+            self.assign_include_template_file(template_file, "side_panel_include", "side_panel/side_panel_configuration.html.tpl")
 
         # assigns the session variables to the template file
         self.assign_session_template_file(rest_request, template_file)
@@ -488,11 +488,11 @@ class PluginController:
             # retrieves the template file
             template_file = self.retrieve_template_file("../general.html.tpl")
 
-            # sets the page to be included
-            template_file.assign("page_include", "plugin/plugin_edit_contents.html.tpl")
+            # assigns the include to the template
+            self.assign_include_template_file(template_file, "page_include", "plugin/plugin_edit_contents.html.tpl")
 
-            # sets the side panel to be included
-            template_file.assign("side_panel_include", "side_panel/side_panel_configuration.html.tpl")
+            # assigns the include to the template
+            self.assign_include_template_file(template_file, "side_panel_include", "side_panel/side_panel_configuration.html.tpl")
 
         # retrieves the pattern names from the parameters
         pattern_names = parameters["pattern_names"]
@@ -531,11 +531,11 @@ class PluginController:
             # retrieves the template file
             template_file = self.retrieve_template_file("../general.html.tpl")
 
-            # sets the page to be included
-            template_file.assign("page_include", "plugin/plugin_list_contents.html.tpl")
+            # assigns the include to the template
+            self.assign_include_template_file(template_file, "page_include", "plugin/plugin_list_contents.html.tpl")
 
-            # sets the side panel to be included
-            template_file.assign("side_panel_include", "side_panel/side_panel_configuration.html.tpl")
+            # assigns the include to the template
+            self.assign_include_template_file(template_file, "side_panel_include", "side_panel/side_panel_configuration.html.tpl")
 
             # assigns the configuration (side panel) variables to the template
             self.web_mvc_manager.web_mvc_manager_side_panel_controller._assign_configuration_variables(template_file)
@@ -789,11 +789,11 @@ class CapabilityController:
             # retrieves the template file
             template_file = self.retrieve_template_file("../general.html.tpl")
 
-            # sets the page to be included
-            template_file.assign("page_include", "capability/capability_edit_contents.html.tpl")
+            # assigns the include to the template
+            self.assign_include_template_file(template_file, "page_include", "capability/capability_edit_contents.html.tpl")
 
-            # sets the side panel to be included
-            template_file.assign("side_panel_include", "side_panel/side_panel_configuration.html.tpl")
+            # assigns the include to the template
+            self.assign_include_template_file(template_file, "side_panel_include", "side_panel/side_panel_configuration.html.tpl")
 
         # retrieves the pattern names from the parameters
         pattern_names = parameters["pattern_names"]
@@ -841,11 +841,11 @@ class CapabilityController:
             # retrieves the template file
             template_file = self.retrieve_template_file("../general.html.tpl")
 
-            # sets the page to be included
-            template_file.assign("page_include", "capability/capability_list_contents.html.tpl")
+            # assigns the include to the template
+            self.assign_include_template_file(template_file, "page_include", "capability/capability_list_contents.html.tpl")
 
-            # sets the side panel to be included
-            template_file.assign("side_panel_include", "side_panel/side_panel_configuration.html.tpl")
+            # assigns the include to the template
+            self.assign_include_template_file(template_file, "side_panel_include", "side_panel/side_panel_configuration.html.tpl")
 
         # assigns the session variables to the template file
         self.assign_session_template_file(rest_request, template_file)

@@ -9,7 +9,7 @@
 <div id="contents">
     <h1>Configuration</h1>
     <h2>Plugins</h2>
-    <div id="plugin-table" class="search-table" provider_url="plugins/partial">
+    <div id="plugin-table" class="search-table" provider_url="plugins_/partial">
         <table class="table" cellspacing="0" cellpadding="0">
             <thead>
                 <tr>
