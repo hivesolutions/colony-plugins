@@ -530,7 +530,7 @@ class EasypayClient:
         child_nodes = xml_node.childNodes
 
         # collects the child text nodes
-        child_node_data_list = [child_node.data for child_node in child_nodes if child_node.nodeType == child_node.TEXT_NODE]
+        child_node_data_list = [child_node.data for child_node in child_nodes if child_node.nodeType == xml.dom.minidom.Node.TEXT_NODE]
 
         # converts the child text nodes to a string
         xml_node_text = "".join(child_node_data_list)
