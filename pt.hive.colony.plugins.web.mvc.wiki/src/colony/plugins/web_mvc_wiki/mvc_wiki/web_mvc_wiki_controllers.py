@@ -187,8 +187,8 @@ class WebMvcWikiController:
                 # retrieves the template file
                 template_file = self.retrieve_template_file("general_action.html.tpl")
 
-                # sets the page to be included
-                template_file.assign("page_include", "new_contents.html.tpl")
+                # assigns the include to the template
+                self.assign_include_template_file(template_file, "page_include", "new_contents.html.tpl")
 
                 # sets the page name in the template file
                 template_file.assign("page_name", file_path)
