@@ -115,11 +115,11 @@ class WebMvcManagerPageItemRepositoryController:
             # retrieves the template file
             template_file = self.retrieve_template_file("../general.html.tpl")
 
-            # sets the page to be included
-            template_file.assign("page_include", "capability/repository_edit_contents.html.tpl")
+            # assigns the include to the template
+            self.assign_include_template_file(template_file, "page_include", "capability/repository_edit_contents.html.tpl")
 
-            # sets the side panel to be included
-            template_file.assign("side_panel_include", "side_panel/side_panel_update.html.tpl")
+            # assigns the include to the template
+            self.assign_include_template_file(template_file, "side_panel_include", "side_panel/side_panel_update.html.tpl")
 
         # retrieves the specified capability
         repository = self._get_repository(rest_request)
@@ -154,11 +154,11 @@ class WebMvcManagerPageItemRepositoryController:
             # retrieves the template file from the parameters
             template_file = parameters["template_file"]
 
-            # sets the page to be included
-            template_file.assign("page_include", "repository/repository_list_contents.html.tpl")
+            # assigns the include to the template
+            self.assign_include_template_file(template_file, "page_include", "repository/repository_list_contents.html.tpl")
 
-            # sets the side panel to be included
-            template_file.assign("side_panel_include", "side_panel/side_panel_configuration.html.tpl")
+            # assigns the include to the template
+            self.assign_include_template_file(template_file, "side_panel_include", "side_panel/side_panel_configuration.html.tpl")
 
         # assigns the session variables to the template file
         self.assign_session_template_file(rest_request, template_file)

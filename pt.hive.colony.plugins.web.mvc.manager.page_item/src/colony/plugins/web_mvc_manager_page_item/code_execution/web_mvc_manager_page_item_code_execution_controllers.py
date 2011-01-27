@@ -113,11 +113,11 @@ class WebMvcManagerPageItemCodeExecutionController:
             # retrieves the template file
             template_file = self.retrieve_template_file("../general.html.tpl")
 
-            # sets the page to be included
-            template_file.assign("page_include", "capability/code_execution_contents.html.tpl")
+            # assigns the include to the template
+            self.assign_include_template_file(template_file, "page_include", "capability/code_execution_contents.html.tpl")
 
-            # sets the side panel to be included
-            template_file.assign("side_panel_include", "side_panel/side_panel_update.html.tpl")
+            # assigns the include to the template
+            self.assign_include_template_file(template_file, "side_panel_include", "side_panel/side_panel_update.html.tpl")
 
         # executs the command in case it was a post request
         if rest_request.is_post():
