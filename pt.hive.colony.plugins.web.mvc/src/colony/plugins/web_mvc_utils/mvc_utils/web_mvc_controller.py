@@ -1458,6 +1458,12 @@ def _cast_safe(self, value, cast_type = str, default_value = None):
     @return: The value casted to the defined type.
     """
 
+    # in case the value is none
+    # it's a special case (type)
+    if value == None:
+        # returns the value immediately
+        return value
+
     try:
         # retrieves the value type
         value_type = type(value)
