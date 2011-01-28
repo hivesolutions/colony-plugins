@@ -67,7 +67,7 @@ configuration = {
                      "bargania.com" : True
                  },
                  "virtual_servers" : {
-                     "resolution_order" : ["blog.hive.pt", "openid.hive.pt", "takethebill.com", "svn.hive.pt", "trac.hive.pt"],
+                     "resolution_order" : ["blog.hive.pt", "openid.hive.pt", "takethebill.com", "svn.hive.pt", "trac.hive.pt", "bargania.com"],
                      "blog.hive.pt" : {
                          "redirections" : {
                              "resolution_order" : ["/"],
