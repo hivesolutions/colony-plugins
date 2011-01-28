@@ -557,7 +557,7 @@ class BarganiaRssClient:
         signal_string = date_string[-5]
 
         # converts the signal to integer (multiplier)
-        signal = signal_string == "-" and -1 or 1
+        signal = signal_string == "+" and -1 or 1
 
         # re-calculates the utc offset values
         utc_offset_hours = utc_offset_hours * signal
