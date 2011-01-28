@@ -214,6 +214,7 @@ class BarganiaRssClient:
             bargania_deal_description = self.get_xml_node_text(item_node, "bargania:description")
             bargania_deal_details_url = self.get_xml_node_text(item_node, "bargania:details_url")
             bargania_deal_purchase_url = self.get_xml_node_text(item_node, "bargania:purchase_url")
+            bargania_deal_currency = self.get_xml_node_text(item_node, "bargania:currency")
             bargania_deal_retail_price = self.get_xml_node_text(item_node, "bargania:retail_price")
             bargania_deal_discounted_price = self.get_xml_node_text(item_node, "bargania:discounted_price")
             bargania_deal_number_purchases = self.get_xml_node_text(item_node, "bargania:number_purchases")
@@ -238,6 +239,7 @@ class BarganiaRssClient:
             bargania_deal["description"] = bargania_deal_description
             bargania_deal["details_url"] = bargania_deal_details_url
             bargania_deal["purchase_url"] = bargania_deal_purchase_url
+            bargania_deal["currency"] = bargania_deal_currency
             bargania_deal["retail_price"] = bargania_deal_retail_price
             bargania_deal["discounted_price"] = bargania_deal_discounted_price
             bargania_deal["number_purchases"] = bargania_deal_number_purchases
