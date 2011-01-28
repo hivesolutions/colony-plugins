@@ -260,6 +260,26 @@ def not_empty_validate(self, attribute_name, attribute_value, properties):
         # adds an error to the given attribute name
         self.add_error(attribute_name, "value is empty")
 
+def in_enumeration_validate(self, attribute_name, attribute_value, properties):
+    """
+    Validates an attribute to ensure that it is greater than zero.
+
+    @type attribute_name: String
+    @param attribute_name: The name of the attribute to be validated.
+    @type attribute_value: Object
+    @param attribute_value: The value of the attribute to be validated.
+    @type properties: Dictionary
+    @param properties: The properties for the validation.
+    """
+
+    # retrieves the values from the properties
+    values = properties["values"]
+
+    # in case the attribute value is not in the values
+    if not attribute_value in values:
+        # adds an error to the given attribute name
+        self.add_error(attribute_name, "value is not in enumeration")
+
 def greater_than_zero_validate(self, attribute_name, attribute_value, properties):
     """
     Validates an attribute to ensure that it is greater than zero.
