@@ -52,8 +52,10 @@ configuration = {
                  "default_maximum_number_work_threads" : 15,
                  "default_work_scheduling_algorithm" : 3,
                  "preferred_error_handlers" : ["template", "default"],
-                 "allowed_hosts" : {"127.0.0.1" : True,
-                                    "localhost" : True},
+                 "allowed_hosts" : {
+                     "127.0.0.1" : True,
+                     "localhost" : True
+                 },
                  "redirections" : {
                      "resolution_order" : ["/manager"],
                      "/manager" : {

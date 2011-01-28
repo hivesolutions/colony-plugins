@@ -53,16 +53,19 @@ configuration = {
                  "default_work_scheduling_algorithm" : 3,
                  "preferred_error_handlers" : ["template", "default"],
                  "log_file_path" : "%configuration:pt.hive.colony.plugins.main.service.http%/access.log",
-                 "allowed_hosts" : {"127.0.0.1" : True,
-                                    "localhost" : True,
-                                    "hive.pt" : True,
-                                    "www.hive.pt" : True,
-                                    "blog.hive.pt" : True,
-                                    "openid.hive.pt" : True,
-                                    "takethebill.com" : True,
-                                    "www.takethebill.com" : True,
-                                    "svn.hive.pt" : True,
-                                    "trac.hive.pt" : True},
+                 "allowed_hosts" : {
+                     "127.0.0.1" : True,
+                     "localhost" : True,
+                     "hive.pt" : True,
+                     "www.hive.pt" : True,
+                     "blog.hive.pt" : True,
+                     "openid.hive.pt" : True,
+                     "takethebill.com" : True,
+                     "www.takethebill.com" : True,
+                     "svn.hive.pt" : True,
+                     "trac.hive.pt" : True,
+                     "bargania.com" : True
+                 },
                  "virtual_servers" : {
                      "resolution_order" : ["blog.hive.pt", "openid.hive.pt", "takethebill.com", "svn.hive.pt", "trac.hive.pt"],
                      "blog.hive.pt" : {
@@ -106,6 +109,15 @@ configuration = {
                              "resolution_order" : ["/"],
                              "/" : {
                                  "target" : "/proxy_trac/",
+                                 "recursive_redirection" : True
+                             }
+                         }
+                     },
+                     "bargania.com" : {
+                         "redirections" : {
+                             "resolution_order" : ["/"],
+                             "/" : {
+                                 "target" : "/colony_mod_python/rest/mvc/bargania_site/",
                                  "recursive_redirection" : True
                              }
                          }
