@@ -60,8 +60,7 @@ class ServiceBarganiaRssPlugin(colony.base.plugin_system.Plugin):
                     "pt.hive.colony.plugins.main.client.http", "1.0.0")]
     events_handled = []
     events_registrable = []
-    main_modules = ["service_bargania_rss.bargania_rss.service_bargania_rss_exceptions",
-                    "service_bargania_rss.bargania_rss.service_bargania_rss_system"]
+    main_modules = ["service_bargania_rss.bargania_rss.service_bargania_rss_system"]
 
     service_bargania_rss = None
 
