@@ -76,7 +76,7 @@ class ServiceEasypay:
     The service easypay class.
     """
 
-    service_facebbok_plugin = None
+    service_easypay_plugin = None
     """ The service easypay plugin """
 
     def __init__(self, service_easypay_plugin):
