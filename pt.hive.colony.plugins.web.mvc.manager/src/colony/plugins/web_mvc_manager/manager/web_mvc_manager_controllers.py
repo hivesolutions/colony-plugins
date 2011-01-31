@@ -84,6 +84,9 @@ ALLOWING_VALUE = "allowing"
 NORMAL_ENCODER_NAME = None
 """ The normal encoder name """
 
+PATTERN_NAMES_VALUE = "pattern_names"
+""" The pattern names value """
+
 # imports the web mvc utils
 web_mvc_utils = colony.libs.importer_util.__importer__(WEB_MVC_UTILS_VALUE)
 
@@ -495,7 +498,7 @@ class PluginController:
             self.assign_include_template_file(template_file, "side_panel_include", "side_panel/side_panel_configuration.html.tpl")
 
         # retrieves the pattern names from the parameters
-        pattern_names = parameters["pattern_names"]
+        pattern_names = parameters[PATTERN_NAMES_VALUE]
 
         # retrieves the plugin id pattern
         plugin_id = pattern_names["plugin_id"]
@@ -796,7 +799,7 @@ class CapabilityController:
             self.assign_include_template_file(template_file, "side_panel_include", "side_panel/side_panel_configuration.html.tpl")
 
         # retrieves the pattern names from the parameters
-        pattern_names = parameters["pattern_names"]
+        pattern_names = parameters[PATTERN_NAMES_VALUE]
 
         # retrieves the capability pattern
         capability = pattern_names["capability"]

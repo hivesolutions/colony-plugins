@@ -75,6 +75,9 @@ CACHE_DIRECTORY_IDENTIFIER = "web_mvc_wiki"
 WIKI_EXTENSION = ".wiki"
 """ The wiki extension """
 
+PATTERN_NAMES_VALUE = "pattern_names"
+""" The pattern names value """
+
 # imports the web mvc utils
 web_mvc_utils = colony.libs.importer_util.__importer__(WEB_MVC_UTILS_VALUE)
 
@@ -139,7 +142,7 @@ class WebMvcWikiController:
         format_mime_plugin = self.web_mvc_wiki_plugin.format_mime_plugin
 
         # retrieves the pattern names from the parameters
-        pattern_names = parameters["pattern_names"]
+        pattern_names = parameters[PATTERN_NAMES_VALUE]
 
         # retrieves the instance name pattern
         instance_name = pattern_names["instance_name"]
@@ -299,7 +302,7 @@ class WebMvcWikiController:
         format_mime_plugin = self.web_mvc_wiki_plugin.format_mime_plugin
 
         # retrieves the pattern names from the parameters
-        pattern_names = parameters["pattern_names"]
+        pattern_names = parameters[PATTERN_NAMES_VALUE]
 
         # retrieves the instance name pattern
         instance_name = pattern_names["instance_name"]
@@ -501,7 +504,7 @@ class WebMvcWikiPageController:
         form_data_map = self.process_form_data(rest_request, DEFAULT_ENCODING)
 
         # retrieves the pattern names from the parameters
-        pattern_names = parameters["pattern_names"]
+        pattern_names = parameters[PATTERN_NAMES_VALUE]
 
         # retrieves the instance name pattern
         instance_name = pattern_names["instance_name"]
@@ -581,7 +584,7 @@ class WebMvcWikiPageController:
         form_data_map = self.process_form_data(rest_request, DEFAULT_ENCODING)
 
         # retrieves the pattern names from the parameters
-        pattern_names = parameters["pattern_names"]
+        pattern_names = parameters[PATTERN_NAMES_VALUE]
 
         # retrieves the instance name pattern
         instance_name = pattern_names["instance_name"]
