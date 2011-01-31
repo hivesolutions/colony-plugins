@@ -281,8 +281,9 @@ class CommandExecution:
         if os.name == NT_PLATFORM_VALUE:
             import win32con
             startup_info = subprocess.STARTUPINFO()
-            startup_info.dwFlags |= subprocess.STARTF_USESHOWWINDOW
+            startup_info.dwFlags |= subprocess.STARTF_USESHOWWINDOW #@UndefinedVariable
             startup_info.wShowWindow = win32con.SW_HIDE
+        # otherwise it must be a different os
         else:
             # sets the startup info to none
             startup_info = None
