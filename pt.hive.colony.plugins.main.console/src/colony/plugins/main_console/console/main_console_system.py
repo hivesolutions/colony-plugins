@@ -734,6 +734,7 @@ class ConsoleContext(colony.libs.protection_util.Protected):
 
         return self.path
 
+    @colony.libs.protection_util.public
     def set_path(self, path):
         """
         Sets the path.
