@@ -666,6 +666,9 @@ class DnsRequest:
         the request.
         """
 
+        # validates the current request
+        self.validate()
+
         # retrieves the result stream
         result = colony.libs.string_buffer_util.StringBuffer(False)
 
@@ -739,6 +742,14 @@ class DnsRequest:
 
         # returns the result value
         return result_value
+
+    def validate(self):
+        """
+        Validates the current request, raising exception
+        in case validation fails.
+        """
+
+        pass
 
     def reset_response(self):
         """
