@@ -117,6 +117,23 @@ class ConsoleSystemUpdater:
         for package_information in package_information_list:
             self.print_package_info(package_information, output_method)
 
+    def process_list_repository_bundles(self, arguments, arguments_map, output_method, console_context):
+        """
+        Processes the list repository bundles command, with the given
+        arguments and output method.
+
+        @type arguments: List
+        @param arguments: The arguments for the processing.
+        @type arguments_map: Dictionary
+        @param arguments_map: The map of arguments for the processing.
+        @type output_method: Method
+        @param output_method: The output method to be used in the processing.
+        @type console_context: ConsoleContext
+        @param console_context: The console context for the processing.
+        """
+
+        pass
+
     def process_list_repository_plugins(self, arguments, arguments_map, output_method, console_context):
         """
         Processes the list repository plugins command, with the given
@@ -141,6 +158,23 @@ class ConsoleSystemUpdater:
         # prints the plugin information
         for plugin_information in plugin_information_list:
             self.print_plugin_info(plugin_information, output_method)
+
+    def process_install(self, arguments, arguments_map, output_method, console_context):
+        """
+        Processes the install command, with the given
+        arguments and output method.
+
+        @type arguments: List
+        @param arguments: The arguments for the processing.
+        @type arguments_map: Dictionary
+        @param arguments_map: The map of arguments for the processing.
+        @type output_method: Method
+        @param output_method: The output method to be used in the processing.
+        @type console_context: ConsoleContext
+        @param console_context: The console context for the processing.
+        """
+
+        pass
 
     def process_install_package(self, arguments, arguments_map, output_method, console_context):
         """
@@ -272,6 +306,10 @@ class ConsoleSystemUpdater:
                                 }
                             ]
                         },
+                        "list_repository_bundles" : {
+                            "handler" : self.process_list_repository_bundles,
+                            "description" : "lists the bundles for the given repository"
+                        },
                         "list_repository_plugins" : {
                             "handler" : self.process_list_repository_plugins,
                             "description" : "lists the plugins for the given repository",
@@ -283,6 +321,10 @@ class ConsoleSystemUpdater:
                                     "mandatory" : True
                                 }
                             ]
+                        },
+                        "install" : {
+                            "handler" : self.process_install,
+                            "description" : "installs the package, bundle or plugin with the given id and version"
                         },
                         "install_package" : {
                             "handler" : self.process_install_package,
