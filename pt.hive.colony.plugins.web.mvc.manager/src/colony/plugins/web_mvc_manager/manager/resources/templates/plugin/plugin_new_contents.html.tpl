@@ -8,7 +8,7 @@
     <h1>Configuration</h1>
     <h2>Install Plugin</h2>
     <div class="message">${out_none value=result_message xml_escape=True /}</div>
-    <form action_target="plugins_" class="new-plugin" method="post">
+    <form action_target="plugins" class="new-plugin" method="post">
         <div class="form-field-area">
             <h4>Dados da Empresa</h4>
             <hr/>

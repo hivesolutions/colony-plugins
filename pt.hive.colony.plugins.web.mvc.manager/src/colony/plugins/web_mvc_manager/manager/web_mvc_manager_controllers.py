@@ -449,69 +449,10 @@ class PluginController:
         # returns the result of the escape permissions error
         return self.web_mvc_manager.escape_permissions_failed(self, rest_request, reasons_list)
 
-    @web_mvc_utils.validated_method("plugins.new")
-    def handle_new(self, rest_request, parameters = {}):
-        # in case the encoder name is ajax
-        if rest_request.encoder_name == AJAX_ENCODER_NAME:
-            # retrieves the template file
-            template_file = self.retrieve_template_file("plugin_new_contents.html.tpl")
-        else:
-            # retrieves the template file
-            template_file = self.retrieve_template_file("../general.html.tpl")
-
-            # assigns the include to the template
-            self.assign_include_template_file(template_file, "page_include", "plugin/plugin_new_contents.html.tpl")
-
-            # assigns the include to the template
-            self.assign_include_template_file(template_file, "side_panel_include", "side_panel/side_panel_configuration.html.tpl")
-
-        # assigns the session variables to the template file
-        self.assign_session_template_file(rest_request, template_file)
-
-        # applies the base path to the template file
-        self.apply_base_path_template_file(rest_request, template_file)
-
-        # processes the template file and sets the request contents
-        self.process_set_contents(rest_request, template_file)
-
-        # returns true
-        return True
-
-    @web_mvc_utils.validated_method("plugins.create")
-    def handle_create(self, rest_request, parameters = {}):
-        # deploys the package
-        self._deploy_package(rest_request)
-
-        # returns true
-        return True
-
-    @web_mvc_utils.validated_method("plugins.show")
-    def handle_show(self, rest_request, parameters = {}):
-        # in case the encoder name is ajax
-        if rest_request.encoder_name == AJAX_ENCODER_NAME:
-            # retrieves the template file
-            template_file = self.retrieve_template_file("plugin_edit_contents.html.tpl")
-        else:
-            # retrieves the template file
-            template_file = self.retrieve_template_file("../general.html.tpl")
-
-            # assigns the include to the template
-            self.assign_include_template_file(template_file, "page_include", "plugin/plugin_edit_contents.html.tpl")
-
-            # assigns the include to the template
-            self.assign_include_template_file(template_file, "side_panel_include", "side_panel/side_panel_configuration.html.tpl")
-
-        # retrieves the pattern names from the parameters
-        pattern_names = parameters[PATTERN_NAMES_VALUE]
-
-        # retrieves the plugin id pattern
-        plugin_id = pattern_names["plugin_id"]
-
-        # retrieves the specified plugin
-        plugin = self._get_plugin(plugin_id)
-
-        # assigns the plugin to the template
-        template_file.assign("plugin", plugin)
+    @web_mvc_utils.validated_method("plugins.list")
+    def handle_list_ajx(self, rest_request, parameters = {}):
+        # retrieves the template file
+        template_file = self.retrieve_template_file("plugin_list_contents.html.tpl")
 
         # assigns the session variables to the template file
         self.assign_session_template_file(rest_request, template_file)
@@ -527,25 +468,20 @@ class PluginController:
 
     @web_mvc_utils.validated_method("plugins.list")
     def handle_list(self, rest_request, parameters = {}):
-        # in case the encoder name is ajax
-        if rest_request.encoder_name == AJAX_ENCODER_NAME:
-            # retrieves the template file
-            template_file = self.retrieve_template_file("plugin_list_contents.html.tpl")
-        else:
-            # retrieves the template file
-            template_file = self.retrieve_template_file("../general.html.tpl")
+        # retrieves the template file
+        template_file = self.retrieve_template_file("../general.html.tpl")
 
-            # assigns the include to the template
-            self.assign_include_template_file(template_file, "page_include", "plugin/plugin_list_contents.html.tpl")
+        # assigns the include to the template
+        self.assign_include_template_file(template_file, "page_include", "plugin/plugin_list_contents.html.tpl")
 
-            # assigns the include to the template
-            self.assign_include_template_file(template_file, "side_panel_include", "side_panel/side_panel_configuration.html.tpl")
+        # assigns the include to the template
+        self.assign_include_template_file(template_file, "side_panel_include", "side_panel/side_panel_configuration.html.tpl")
 
-            # assigns the configuration (side panel) variables to the template
-            self.web_mvc_manager.web_mvc_manager_side_panel_controller._assign_configuration_variables(template_file)
+        # assigns the configuration (side panel) variables to the template
+        self.web_mvc_manager.web_mvc_manager_side_panel_controller._assign_configuration_variables(template_file)
 
-            # assigns the header variables to the template
-            self.web_mvc_manager.web_mvc_manager_header_controller._assign_header_variables(template_file)
+        # assigns the header variables to the template
+        self.web_mvc_manager.web_mvc_manager_header_controller._assign_header_variables(template_file)
 
         # assigns the session variables to the template file
         self.assign_session_template_file(rest_request, template_file)
@@ -583,6 +519,118 @@ class PluginController:
 
         # assigns the total number records to the template
         template_file.assign("total_number_records", total_number_records)
+
+        # assigns the session variables to the template file
+        self.assign_session_template_file(rest_request, template_file)
+
+        # applies the base path to the template file
+        self.apply_base_path_template_file(rest_request, template_file)
+
+        # processes the template file and sets the request contents
+        self.process_set_contents(rest_request, template_file)
+
+        # returns true
+        return True
+
+    @web_mvc_utils.validated_method("plugins.new")
+    def handle_new_ajx(self, rest_request, parameters = {}):
+        # retrieves the template file
+        template_file = self.retrieve_template_file("plugin_new_contents.html.tpl")
+
+        # assigns the session variables to the template file
+        self.assign_session_template_file(rest_request, template_file)
+
+        # applies the base path to the template file
+        self.apply_base_path_template_file(rest_request, template_file)
+
+        # processes the template file and sets the request contents
+        self.process_set_contents(rest_request, template_file)
+
+        # returns true
+        return True
+
+    @web_mvc_utils.validated_method("plugins.new")
+    def handle_new(self, rest_request, parameters = {}):
+        # retrieves the template file
+        template_file = self.retrieve_template_file("../general.html.tpl")
+
+        # assigns the include to the template
+        self.assign_include_template_file(template_file, "page_include", "plugin/plugin_new_contents.html.tpl")
+
+        # assigns the include to the template
+        self.assign_include_template_file(template_file, "side_panel_include", "side_panel/side_panel_configuration.html.tpl")
+
+        # assigns the session variables to the template file
+        self.assign_session_template_file(rest_request, template_file)
+
+        # applies the base path to the template file
+        self.apply_base_path_template_file(rest_request, template_file)
+
+        # processes the template file and sets the request contents
+        self.process_set_contents(rest_request, template_file)
+
+        # returns true
+        return True
+
+    @web_mvc_utils.validated_method("plugins.create")
+    def handle_create(self, rest_request, parameters = {}):
+        # deploys the package
+        self._deploy_package(rest_request)
+
+        # returns true
+        return True
+
+    @web_mvc_utils.validated_method("plugins.show")
+    def handle_show_ajx(self, rest_request, parameters = {}):
+        # retrieves the template file
+        template_file = self.retrieve_template_file("plugin_edit_contents.html.tpl")
+
+        # retrieves the pattern names from the parameters
+        pattern_names = parameters[PATTERN_NAMES_VALUE]
+
+        # retrieves the plugin id pattern
+        plugin_id = pattern_names["plugin_id"]
+
+        # retrieves the specified plugin
+        plugin = self._get_plugin(plugin_id)
+
+        # assigns the plugin to the template
+        template_file.assign("plugin", plugin)
+
+        # assigns the session variables to the template file
+        self.assign_session_template_file(rest_request, template_file)
+
+        # applies the base path to the template file
+        self.apply_base_path_template_file(rest_request, template_file)
+
+        # processes the template file and sets the request contents
+        self.process_set_contents(rest_request, template_file)
+
+        # returns true
+        return True
+
+    @web_mvc_utils.validated_method("plugins.show")
+    def handle_show(self, rest_request, parameters = {}):
+        # retrieves the template file
+        template_file = self.retrieve_template_file("../general.html.tpl")
+
+        # assigns the include to the template
+        self.assign_include_template_file(template_file, "page_include", "plugin/plugin_edit_contents.html.tpl")
+
+        # assigns the include to the template
+        self.assign_include_template_file(template_file, "side_panel_include", "side_panel/side_panel_configuration.html.tpl")
+
+        # retrieves the pattern names from the parameters
+        pattern_names = parameters[PATTERN_NAMES_VALUE]
+
+        # retrieves the plugin id pattern
+        plugin_id = pattern_names["plugin_id"]
+
+        # retrieves the specified plugin
+        plugin = self._get_plugin(plugin_id)
+
+        # assigns the plugin to the template
+        template_file.assign("plugin", plugin)
 
         # assigns the session variables to the template file
         self.assign_session_template_file(rest_request, template_file)
@@ -782,42 +830,10 @@ class CapabilityController:
         # returns the result of the escape permissions error
         return self.web_mvc_manager.escape_permissions_failed(self, rest_request, reasons_list)
 
-    @web_mvc_utils.validated_method("capabilites.show")
-    def handle_show(self, rest_request, parameters = {}):
-        # in case the encoder name is ajax
-        if rest_request.encoder_name == AJAX_ENCODER_NAME:
-            # retrieves the template file
-            template_file = self.retrieve_template_file("capability_edit_contents.html.tpl")
-        else:
-            # retrieves the template file
-            template_file = self.retrieve_template_file("../general.html.tpl")
-
-            # assigns the include to the template
-            self.assign_include_template_file(template_file, "page_include", "capability/capability_edit_contents.html.tpl")
-
-            # assigns the include to the template
-            self.assign_include_template_file(template_file, "side_panel_include", "side_panel/side_panel_configuration.html.tpl")
-
-        # retrieves the pattern names from the parameters
-        pattern_names = parameters[PATTERN_NAMES_VALUE]
-
-        # retrieves the capability pattern
-        capability = pattern_names["capability"]
-
-        # retrieves the plugins map for the capability
-        plugins_capability = self._get_plugins_capability(capability)
-
-        # retrieves the sub capabilities for the capability
-        sub_capabilities = self._get_sub_capabilities(capability)
-
-        # assigns the capability to the template
-        template_file.assign("capability", capability)
-
-        # assigns the plugins capability to the template
-        template_file.assign("plugins_capability", plugins_capability)
-
-        # assigns the sub capabilities to the template
-        template_file.assign("sub_capabilities", sub_capabilities)
+    @web_mvc_utils.validated_method("capabilites.list")
+    def handle_list_ajx(self, rest_request, parameters = {}):
+        # retrieves the template file
+        template_file = self.retrieve_template_file("capability_list_contents.html.tpl")
 
         # assigns the session variables to the template file
         self.assign_session_template_file(rest_request, template_file)
@@ -833,19 +849,14 @@ class CapabilityController:
 
     @web_mvc_utils.validated_method("capabilites.list")
     def handle_list(self, rest_request, parameters = {}):
-        # in case the encoder name is ajax
-        if rest_request.encoder_name == AJAX_ENCODER_NAME:
-            # retrieves the template file
-            template_file = self.retrieve_template_file("capability_list_contents.html.tpl")
-        else:
-            # retrieves the template file
-            template_file = self.retrieve_template_file("../general.html.tpl")
+        # retrieves the template file
+        template_file = self.retrieve_template_file("../general.html.tpl")
 
-            # assigns the include to the template
-            self.assign_include_template_file(template_file, "page_include", "capability/capability_list_contents.html.tpl")
+        # assigns the include to the template
+        self.assign_include_template_file(template_file, "page_include", "capability/capability_list_contents.html.tpl")
 
-            # assigns the include to the template
-            self.assign_include_template_file(template_file, "side_panel_include", "side_panel/side_panel_configuration.html.tpl")
+        # assigns the include to the template
+        self.assign_include_template_file(template_file, "side_panel_include", "side_panel/side_panel_configuration.html.tpl")
 
         # assigns the session variables to the template file
         self.assign_session_template_file(rest_request, template_file)
@@ -884,6 +895,88 @@ class CapabilityController:
 
         # assigns the total number records to the template
         template_file.assign("total_number_records", total_number_records)
+
+        # assigns the session variables to the template file
+        self.assign_session_template_file(rest_request, template_file)
+
+        # applies the base path to the template file
+        self.apply_base_path_template_file(rest_request, template_file)
+
+        # processes the template file and sets the request contents
+        self.process_set_contents(rest_request, template_file)
+
+        # returns true
+        return True
+
+    @web_mvc_utils.validated_method("capabilites.show")
+    def handle_show_ajx(self, rest_request, parameters = {}):
+        # retrieves the template file
+        template_file = self.retrieve_template_file("capability_edit_contents.html.tpl")
+
+        # retrieves the pattern names from the parameters
+        pattern_names = parameters[PATTERN_NAMES_VALUE]
+
+        # retrieves the capability pattern
+        capability = pattern_names["capability"]
+
+        # retrieves the plugins map for the capability
+        plugins_capability = self._get_plugins_capability(capability)
+
+        # retrieves the sub capabilities for the capability
+        sub_capabilities = self._get_sub_capabilities(capability)
+
+        # assigns the capability to the template
+        template_file.assign("capability", capability)
+
+        # assigns the plugins capability to the template
+        template_file.assign("plugins_capability", plugins_capability)
+
+        # assigns the sub capabilities to the template
+        template_file.assign("sub_capabilities", sub_capabilities)
+
+        # assigns the session variables to the template file
+        self.assign_session_template_file(rest_request, template_file)
+
+        # applies the base path to the template file
+        self.apply_base_path_template_file(rest_request, template_file)
+
+        # processes the template file and sets the request contents
+        self.process_set_contents(rest_request, template_file)
+
+        # returns true
+        return True
+
+    @web_mvc_utils.validated_method("capabilites.show")
+    def handle_show(self, rest_request, parameters = {}):
+        # retrieves the template file
+        template_file = self.retrieve_template_file("../general.html.tpl")
+
+        # assigns the include to the template
+        self.assign_include_template_file(template_file, "page_include", "capability/capability_edit_contents.html.tpl")
+
+        # assigns the include to the template
+        self.assign_include_template_file(template_file, "side_panel_include", "side_panel/side_panel_configuration.html.tpl")
+
+        # retrieves the pattern names from the parameters
+        pattern_names = parameters[PATTERN_NAMES_VALUE]
+
+        # retrieves the capability pattern
+        capability = pattern_names["capability"]
+
+        # retrieves the plugins map for the capability
+        plugins_capability = self._get_plugins_capability(capability)
+
+        # retrieves the sub capabilities for the capability
+        sub_capabilities = self._get_sub_capabilities(capability)
+
+        # assigns the capability to the template
+        template_file.assign("capability", capability)
+
+        # assigns the plugins capability to the template
+        template_file.assign("plugins_capability", plugins_capability)
+
+        # assigns the sub capabilities to the template
+        template_file.assign("sub_capabilities", sub_capabilities)
 
         # assigns the session variables to the template file
         self.assign_session_template_file(rest_request, template_file)

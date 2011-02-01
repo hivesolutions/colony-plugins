@@ -6,7 +6,7 @@
 <div id="left-column">
     <h1 id="assistants">Assistants</h1>
     <ul id="assistants">
-        <li target_request="plugins_/new"><span>Install Plugin</span></li>
+        <li target_request="plugins/new"><span>Install Plugin</span></li>
     </ul>
     <h1 id="lists">Lists</h1>
     <ul id="lists">
