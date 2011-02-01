@@ -40,6 +40,8 @@ __license__ = "GNU General Public License (GPL), Version 3"
 import os
 import types
 
+import colony.libs.map_util
+
 CONSOLE_EXTENSION_NAME = "log_analyzer"
 """ The console extension name """
 
@@ -101,7 +103,7 @@ class ConsoleHttpLogAnalyzer:
         log_analyzis_map = self.http_log_analyzer_plugin.analyze_log(full_path, log_type)
 
         # outputs the log analyzis map
-        self._output_map(log_analyzis_map, output_method)
+        colony.libs.map_util.map_output(log_analyzis_map, output_method)
 
     def get_path_names_list(self, argument, console_context):
         # retrieves the directory name from the argument
@@ -142,8 +144,7 @@ class ConsoleHttpLogAnalyzer:
                                     "description" : "the http log file path",
                                     "values" : self.get_path_names_list,
                                     "mandatory" : True
-                                },
-                                {
+                                }, {
                                     "name" : "log_type",
                                     "description" : "the http log type",
                                     "values" : ("common",),
@@ -155,29 +156,3 @@ class ConsoleHttpLogAnalyzer:
 
         # returns the commands map
         return commands_map
-
-    def _output_map(self, map, output_method, indentation = ""):
-        # outputs each key and value
-        for key in map:
-            # retrieves the map value
-            map_value = map[key]
-
-            # outputs the map value
-            if type(map_value) == types.DictType:
-                # defines the key string
-                key_string = indentation + unicode(key) + ":"
-
-                # outputs the key string
-                output_method(key_string)
-
-                # defines the output map indentation
-                output_map_identation = indentation + "  "
-
-                # outputs the map value
-                self._output_map(map_value, output_method, output_map_identation)
-            else:
-                # creates a string representation of the map value
-                map_value_string = indentation + unicode(key) + " = " + unicode(map_value)
-
-                # outputs the map value string
-                output_method(map_value_string)
