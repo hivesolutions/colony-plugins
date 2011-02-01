@@ -55,6 +55,9 @@ TEMPLATES_PATH = WEB_MVC_MANAGER_RESOURCES_PATH + "/templates"
 EXTRAS_PATH = WEB_MVC_MANAGER_RESOURCES_PATH + "/extras"
 """ The extras path """
 
+AJAX_ENCODER_NAME = "ajx"
+""" The ajax encoder name """
+
 class WebMvcManager:
     """
     The web mvc manager class.
@@ -355,8 +358,6 @@ class WebMvcManager:
     def require_permissions(self, controller, rest_request, permissions_list = [], base_path = None):
         """
         Requires the permissions in the given permissions list to be set.
-        In case the requirements are not met the request is redirected or an
-        error message is sent.
 
         @type controller: Controller
         @param controller: The controller being validated.
@@ -366,28 +367,46 @@ class WebMvcManager:
         @param permissions_list: The list of permission to be validated.
         @type base_path: String
         @param base_path: The base path to be used as prefix in the url.
+        @rtype: List
+        @return: The list of reasons for permission validation failure.
         """
 
-#        # retrieves the login session attribute
-#        login = controller.get_session_attribute(rest_request, "login")
-#
-#        # in case the login is not set
-#        if not login:
-#            # in case the encoder name is ajax
-#            if rest_request.encoder_name == AJAX_ENCODER_NAME:
-#                # sets the contents
-#                controller.set_contents(rest_request, "not enough permissions - access denied")
-#            else:
-#                # in case the base path is not defined
-#                if not base_path:
-#                    # retrieves the base path from the rest request
-#                    base_path = controller.get_base_path(rest_request)
-#
-#                # redirects to the signin page
-#                controller.redirect(rest_request, base_path + "signin")
-#
-#            # returns false
-#            return False
+        # casts the permissions list
+        permissions_list = self.__cast_list(permissions_list)
+
+        # creates the reasons list
+        reasons_list = []
+
+        # returns the reasons list
+        return reasons_list
+
+    def escape_permissions_failed(self, controller, rest_request, reasons_list = [], base_path = None):
+        """
+        Handler for permission validation failures.
+        Displays a message or redirects depending on the encoder name.
+
+        @type controller: Controller
+        @param controller: The controller which handled the request.
+        @type rest_request: RestRequest
+        @param rest_request: The rest request object.
+        @type reasons_list: List
+        @param reasons_list: A list with the reasons for validation failure.
+        @type base_path: String.
+        @param base_path: The base path for the request. Defaults to None.
+        """
+
+        # in case the encoder name is ajax
+        if rest_request.encoder_name == AJAX_ENCODER_NAME:
+            # sets the contents
+            controller.set_contents(rest_request, "not enough permissions - access denied")
+        else:
+            # in case the base path is not defined
+            if not base_path:
+                # retrieves the base path from the rest request
+                base_path = controller.get_base_path(rest_request)
+
+            # redirects to the signin page
+            controller.redirect(rest_request, base_path + "signin")
 
         # returns true
         return True
@@ -542,3 +561,25 @@ class WebMvcManager:
 
         # returns the page item tuple
         return page_item_tuple
+
+    def __cast_list(self, value):
+        """
+        Casts the given value to a list,
+        converting it if required.
+
+        @type value: Object
+        @param value: The value to be "casted".
+        @rtype: List
+        @return: The casted list value.
+        """
+
+        # in case the value is invalid
+        if value == None:
+            # returns the value
+            return value
+
+        # creates the list value from the value
+        list_value = type(value) == types.ListType and value or (value,)
+
+        # returns the list value
+        return list_value

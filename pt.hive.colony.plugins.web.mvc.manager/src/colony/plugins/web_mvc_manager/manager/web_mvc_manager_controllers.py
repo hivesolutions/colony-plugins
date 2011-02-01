@@ -131,6 +131,14 @@ class WebMvcManagerMainController:
         # sets the templates path
         self.set_templates_path(templates_path)
 
+    def validate(self, rest_request, parameters, validation_parameters):
+        # returns the result of the require permission call
+        return self.web_mvc_manager.require_permissions(self, rest_request, validation_parameters)
+
+    def validation_failed(self, rest_request, parameters, validation_parameters, reasons_list):
+        # returns the result of the escape permissions error
+        return self.web_mvc_manager.escape_permissions_failed(self, rest_request, reasons_list)
+
     def handle_web_mvc_manager_index(self, rest_request, parameters = {}):
         """
         Handles the given web mvc manager index rest request.
@@ -433,18 +441,16 @@ class PluginController:
         # sets the templates path
         self.set_templates_path(templates_path)
 
+    def validate(self, rest_request, parameters, validation_parameters):
+        # returns the result of the require permission call
+        return self.web_mvc_manager.require_permissions(self, rest_request, validation_parameters)
+
+    def validation_failed(self, rest_request, parameters, validation_parameters, reasons_list):
+        # returns the result of the escape permissions error
+        return self.web_mvc_manager.escape_permissions_failed(self, rest_request, reasons_list)
+
+    @web_mvc_utils.validated_method("plugins.new")
     def handle_new(self, rest_request, parameters = {}):
-        # returns in case the required permissions are not set
-        if not self.web_mvc_manager.require_permissions(self, rest_request):
-            return True
-
-        # creates a new company in case this is a post request
-        if rest_request.is_post():
-            # deploys the package
-            self._deploy_package(rest_request)
-
-            return True
-
         # in case the encoder name is ajax
         if rest_request.encoder_name == AJAX_ENCODER_NAME:
             # retrieves the template file
@@ -471,6 +477,7 @@ class PluginController:
         # returns true
         return True
 
+    @web_mvc_utils.validated_method("plugins.create")
     def handle_create(self, rest_request, parameters = {}):
         # deploys the package
         self._deploy_package(rest_request)
@@ -478,11 +485,8 @@ class PluginController:
         # returns true
         return True
 
+    @web_mvc_utils.validated_method("plugins.show")
     def handle_show(self, rest_request, parameters = {}):
-        # returns in case the required permissions are not set
-        if not self.web_mvc_manager.require_permissions(self, rest_request):
-            return True
-
         # in case the encoder name is ajax
         if rest_request.encoder_name == AJAX_ENCODER_NAME:
             # retrieves the template file
@@ -521,11 +525,8 @@ class PluginController:
         # returns true
         return True
 
+    @web_mvc_utils.validated_method("plugins.list")
     def handle_list(self, rest_request, parameters = {}):
-        # returns in case the required permissions are not set
-        if not self.web_mvc_manager.require_permissions(self, rest_request):
-            return True
-
         # in case the encoder name is ajax
         if rest_request.encoder_name == AJAX_ENCODER_NAME:
             # retrieves the template file
@@ -558,11 +559,8 @@ class PluginController:
         # returns true
         return True
 
+    @web_mvc_utils.validated_method("plugins.list")
     def handle_partial_list(self, rest_request, parameters = {}):
-        # returns in case the required permissions are not set
-        if not self.web_mvc_manager.require_permissions(self, rest_request):
-            return True
-
         # retrieves the web mvc manager search helper
         web_mvc_manager_search_helper = self.web_mvc_manager.web_mvc_manager_search_helper
 
@@ -598,11 +596,8 @@ class PluginController:
         # returns true
         return True
 
+    @web_mvc_utils.validated_method("plugins.change_status")
     def handle_change_status(self, rest_request, parameters = {}):
-        # returns in case the required permissions are not set
-        if not self.web_mvc_manager.require_permissions(self, rest_request):
-            return True
-
         # in case the encoder name is ajax
         if rest_request.encoder_name == JSON_ENCODER_NAME:
             # retrieves the json plugin
@@ -779,11 +774,16 @@ class CapabilityController:
         # sets the templates path
         self.set_templates_path(templates_path)
 
-    def handle_show(self, rest_request, parameters = {}):
-        # returns in case the required permissions are not set
-        if not self.web_mvc_manager.require_permissions(self, rest_request):
-            return True
+    def validate(self, rest_request, parameters, validation_parameters):
+        # returns the result of the require permission call
+        return self.web_mvc_manager.require_permissions(self, rest_request, validation_parameters)
 
+    def validation_failed(self, rest_request, parameters, validation_parameters, reasons_list):
+        # returns the result of the escape permissions error
+        return self.web_mvc_manager.escape_permissions_failed(self, rest_request, reasons_list)
+
+    @web_mvc_utils.validated_method("capabilites.show")
+    def handle_show(self, rest_request, parameters = {}):
         # in case the encoder name is ajax
         if rest_request.encoder_name == AJAX_ENCODER_NAME:
             # retrieves the template file
@@ -831,11 +831,8 @@ class CapabilityController:
         # returns true
         return True
 
+    @web_mvc_utils.validated_method("capabilites.list")
     def handle_list(self, rest_request, parameters = {}):
-        # returns in case the required permissions are not set
-        if not self.web_mvc_manager.require_permissions(self, rest_request):
-            return True
-
         # in case the encoder name is ajax
         if rest_request.encoder_name == AJAX_ENCODER_NAME:
             # retrieves the template file
@@ -862,11 +859,8 @@ class CapabilityController:
         # returns true
         return True
 
+    @web_mvc_utils.validated_method("capabilites.list")
     def handle_partial_list(self, rest_request, parameters = {}):
-        # returns in case the required permissions are not set
-        if not self.web_mvc_manager.require_permissions(self, rest_request):
-            return True
-
         # retrieves the web mvc manager search helper
         web_mvc_manager_search_helper = self.web_mvc_manager.web_mvc_manager_search_helper
 
