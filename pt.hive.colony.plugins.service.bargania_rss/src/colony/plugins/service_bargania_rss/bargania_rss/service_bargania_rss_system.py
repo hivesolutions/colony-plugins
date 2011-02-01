@@ -223,7 +223,7 @@ class BarganiaRssClient:
             bargania_deal_expiration_date = self.get_xml_node_text(item_node, "bargania:expiration_date")
 
             # retrieves the bargania deal relations
-            bargania_deal_location = self._get_media(item_node, "bargania:location")
+            bargania_deal_location = self._get_location(item_node, "bargania:location")
             bargania_deal_advertisement_media = self._get_media(item_node, "bargania:advertisement_media")
             bargania_deal_store = self._get_store(item_node, "bargania:store")
             bargania_deal_primary_address = self._get_address(item_node, "bargania:primary_address")
@@ -411,6 +411,30 @@ class BarganiaRssClient:
 
         # returns the xml node text
         return xml_node_text
+
+    def _get_location(self, item_node, advertisement_location_node_name):
+        # creates the location map
+        location = {}
+
+        # retrieves the location nodes
+        location_nodes = item_node.getElementsByTagName(advertisement_location_node_name)
+
+        # in case the location nodes is not valid
+        if not location_nodes:
+            # returns invalid
+            return None
+
+        # retrieves the location node
+        location_node = location_nodes[0]
+
+        # retrieves the basic location details
+        location_id = self.get_xml_node_text(location_node, "bargania:id")
+
+        # sets the values in the location (map)
+        location["id"] = location_id
+
+        # returns the location
+        return location
 
     def _get_media(self, item_node, advertisement_media_node_name):
         # creates the media map
