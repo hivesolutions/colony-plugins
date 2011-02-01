@@ -567,6 +567,9 @@ class PolicyRequest:
         @return: The result value for the current request.
         """
 
+        # validates the current request
+        self.validate()
+
         # opens the file path
         file = open(self.file_path, "rb")
 
@@ -582,6 +585,14 @@ class PolicyRequest:
 
         # returns the file contents as the result
         return file_contents
+
+    def validate(self):
+        """
+        Validates the current request, raising exception
+        in case validation fails.
+        """
+
+        pass
 
     def set_file_path(self, file_path):
         """
