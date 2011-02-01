@@ -19,16 +19,16 @@
 # You should have received a copy of the GNU General Public License
 # along with Hive Colony Framework. If not, see <http://www.gnu.org/licenses/>.
 
-__author__ = "João Magalhães <joamag@hive.pt>"
+__author__ = "João Magalhães <joamag@hive.pt> & Tiago Silva <tsilva@hive.pt>"
 """ The author(s) of the module """
 
 __version__ = "1.0.0"
 """ The version of the module """
 
-__revision__ = "$LastChangedRevision: 72 $"
+__revision__ = "$LastChangedRevision: 12939 $"
 """ The revision number of the module """
 
-__date__ = "$LastChangedDate: 2008-10-21 23:29:54 +0100 (Tue, 21 Oct 2008) $"
+__date__ = "$LastChangedDate: 2011-02-01 17:54:16 +0000 (Tue, 01 Feb 2011) $"
 """ The last change date of the module """
 
 __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
@@ -39,14 +39,6 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 CONSOLE_EXTENSION_NAME = "email"
 """ The console extension name """
-
-INVALID_NUMBER_ARGUMENTS_MESSAGE = "invalid number of arguments"
-""" The invalid number of arguments message """
-
-HELP_TEXT = "### EMAIL HELP ###\n\
-send_email <destiny-address>      - sends an email with the given contains to the defined destiny address\n\
-send_test_email <destiny-address> - sends a test email to the defined destiny address"
-""" The help text """
 
 TEST_SUBJECT = "Colony Framework [getcolony.com] ping message"
 """ The test subject contents """
@@ -66,44 +58,94 @@ class ConsoleEmail:
     email_plugin = None
     """ The email plugin """
 
-    commands = ["send_email", "send_test_email"]
-    """ The commands list """
+    commands_map = {}
+    """ The map containing the commands information """
 
     def __init__(self, email_plugin):
         """
         Constructor of the class.
 
-        @type email_plugin: EmailPlugin
+        @type email_plugin: DownloaderPlugin
         @param email_plugin: The email plugin.
         """
 
         self.email_plugin = email_plugin
 
+        # initializes the commands map
+        self.commands_map = self.__generate_commands_map()
+
     def get_console_extension_name(self):
         return CONSOLE_EXTENSION_NAME
 
-    def get_all_commands(self):
-        return self.commands
+    def get_commands_map(self):
+        return self.commands_map
 
-    def get_handler_command(self, command):
-        if command in self.commands:
-            method_name = "process_" + command
-            attribute = getattr(self, method_name)
-            return attribute
+    def process_send_email(self, arguments, arguments_map, output_method, console_context):
+        """
+        Processes the send email command, with the given
+        arguments and output method.
 
-    def get_help(self):
-        return HELP_TEXT
+        @type arguments: List
+        @param arguments: The arguments for the processing.
+        @type arguments_map: Dictionary
+        @param arguments_map: The map of arguments for the processing.
+        @type output_method: Method
+        @param output_method: The output method to be used in the processing.
+        @type console_context: ConsoleContext
+        @param console_context: The console context for the processing.
+        """
 
-    def process_send_email(self, args, output_method):
         pass
 
-    def process_send_test_email(self, args, output_method):
-        if len(args) < 1:
-            output_method(INVALID_NUMBER_ARGUMENTS_MESSAGE)
-            return
+    def process_send_test_email(self, arguments, arguments_map, output_method, console_context):
+        """
+        Processes the send test email command, with the given
+        arguments and output method.
 
-        # retrieves the destiny address
-        destiny_address = args[0]
+        @type arguments: List
+        @param arguments: The arguments for the processing.
+        @type arguments_map: Dictionary
+        @param arguments_map: The map of arguments for the processing.
+        @type output_method: Method
+        @param output_method: The output method to be used in the processing.
+        @type console_context: ConsoleContext
+        @param console_context: The console context for the processing.
+        """
+
+        # retrieves the file path from the arguments
+        destiny_address = arguments_map["destiny_address"]
 
         # sends the test email to the destiny address
         self.email_plugin.email.send_email(TEST_EMAIL_SENDER, destiny_address, None, None, TEST_SUBJECT, TEST_MESSAGE)
+
+    def __generate_commands_map(self):
+        # creates the commands map
+        commands_map = {
+                        "send_email" : {
+                            "handler" : self.process_send_email,
+                            "description" : "sends an email with the given contains to the defined destiny address",
+                            "arguments" : [
+                                {
+                                    "name" : "destiny_address",
+                                    "description" : "the address where to send the email to",
+                                    "values" : str,
+                                    "mandatory" : True
+                                }
+                            ]
+                        },
+                        "send_test_email" : {
+                            "handler" : self.process_send_test_email,
+                            "description" : "sends a test email to the defined destiny address",
+                            "arguments" : [
+                                {
+                                    "name" : "destiny_address",
+                                    "description" : "the address where to send the email to",
+                                    "values" : str,
+                                    "mandatory" : True
+                                }
+                            ]
+                        }
+                    }
+
+        # returns the commands map
+        return commands_map
