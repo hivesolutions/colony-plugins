@@ -19,16 +19,16 @@
 # You should have received a copy of the GNU General Public License
 # along with Hive Colony Framework. If not, see <http://www.gnu.org/licenses/>.
 
-__author__ = "João Magalhães <joamag@hive.pt>"
+__author__ = "João Magalhães <joamag@hive.pt> & Tiago Silva <tsilva@hive.pt>"
 """ The author(s) of the module """
 
 __version__ = "1.0.0"
 """ The version of the module """
 
-__revision__ = "$LastChangedRevision: 72 $"
+__revision__ = "$LastChangedRevision: 12938 $"
 """ The revision number of the module """
 
-__date__ = "$LastChangedDate: 2008-10-21 23:29:54 +0100 (Ter, 21 Out 2008) $"
+__date__ = "$LastChangedDate: 2011-02-01 17:43:36 +0000 (Tue, 01 Feb 2011) $"
 """ The last change date of the module """
 
 __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
@@ -39,13 +39,6 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 CONSOLE_EXTENSION_NAME = "scheduler"
 """ The console extension name """
-
-INVALID_NUMBER_ARGUMENTS_MESSAGE = "invalid number of arguments"
-""" The invalid number of arguments message """
-
-HELP_TEXT = "### SCHEDULER HELP ###\n\
-show_all_scheduler - shows all the scheduled tasks"
-""" The help text """
 
 TABLE_TOP_TEXT = "ID      TASK            TIME      RECURSIVITY"
 """ The table top text """
@@ -58,8 +51,8 @@ class ConsoleScheduler:
     scheduler_plugin = None
     """ The scheduler plugin """
 
-    commands = ["show_all_scheduler"]
-    """ The commands list """
+    commands_map = {}
+    """ The map containing the commands information """
 
     def __init__(self, scheduler_plugin):
         """
@@ -71,22 +64,30 @@ class ConsoleScheduler:
 
         self.scheduler_plugin = scheduler_plugin
 
+        # initializes the commands map
+        self.commands_map = self.__generate_commands_map()
+
     def get_console_extension_name(self):
         return CONSOLE_EXTENSION_NAME
 
-    def get_all_commands(self):
-        return self.commands
+    def get_commands_map(self):
+        return self.commands_map
 
-    def get_handler_command(self, command):
-        if command in self.commands:
-            method_name = "process_" + command
-            attribute = getattr(self, method_name)
-            return attribute
+    def process_show_all_scheduler(self, arguments, arguments_map, output_method, console_context):
+        """
+        Processes the show all scheduler command, with the given
+        arguments and output method.
 
-    def get_help(self):
-        return HELP_TEXT
+        @type arguments: List
+        @param arguments: The arguments for the processing.
+        @type arguments_map: Dictionary
+        @param arguments_map: The map of arguments for the processing.
+        @type output_method: Method
+        @param output_method: The output method to be used in the processing.
+        @type console_context: ConsoleContext
+        @param console_context: The console context for the processing.
+        """
 
-    def process_show_all_scheduler(self, args, output_method):
         # prints the table top text
         output_method(TABLE_TOP_TEXT)
 
@@ -99,3 +100,15 @@ class ConsoleScheduler:
         # iterates over all the scheduler items
         for scheduler_item in scheduler_items:
             output_method(scheduler_item.item_id, True)
+
+    def __generate_commands_map(self):
+        # creates the commands map
+        commands_map = {
+                        "show_all_scheduler" : {
+                            "handler" : self.process_show_all_scheduler,
+                            "description" : "shows all the scheduled tasks"
+                        }
+                    }
+
+        # returns the commands map
+        return commands_map

@@ -54,7 +54,7 @@ class SchedulerPlugin(colony.base.plugin_system.Plugin):
     loading_type = colony.base.plugin_system.EAGER_LOADING_TYPE
     platforms = [colony.base.plugin_system.CPYTHON_ENVIRONMENT]
     attributes = {"build_automation_file_path" : "$base{plugin_directory}/misc/scheduler/resources/baf.xml"}
-    capabilities = ["main", "scheduler", "console_command_extension", "build_automation_item"]
+    capabilities = ["main", "scheduler", "_console_command_extension", "build_automation_item"]
     capabilities_allowed = []
     dependencies = [colony.base.plugin_system.PluginDependency(
                     "pt.hive.colony.plugins.misc.guid", "1.0.0"),
@@ -123,14 +123,8 @@ class SchedulerPlugin(colony.base.plugin_system.Plugin):
     def get_console_extension_name(self):
         return self.console_scheduler.get_console_extension_name()
 
-    def get_all_commands(self):
-        return self.console_scheduler.get_all_commands()
-
-    def get_handler_command(self, command):
-        return self.console_scheduler.get_handler_command(command)
-
-    def get_help(self):
-        return self.console_scheduler.get_help()
+    def get_commands_map(self):
+        return self.console_scheduler.get_commands_map()
 
     def register_task(self, task, time):
         return self.scheduler.register_task(task, time)
