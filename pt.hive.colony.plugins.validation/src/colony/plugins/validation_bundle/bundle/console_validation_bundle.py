@@ -25,10 +25,10 @@ __author__ = "Tiago Silva <tsilva@hive.pt>"
 __version__ = "1.0.0"
 """ The version of the module """
 
-__revision__ = "$LastChangedRevision: 72 $"
+__revision__ = "$LastChangedRevision: 12670 $"
 """ The revision number of the module """
 
-__date__ = "$LastChangedDate: 2008-10-21 23:29:54 +0100 (Tue, 21 Oct 2008) $"
+__date__ = "$LastChangedDate: 2011-01-13 13:08:29 +0000 (qui, 13 Jan 2011) $"
 """ The last change date of the module """
 
 __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
@@ -46,15 +46,11 @@ BUNDLE_VERSION_VALUE = "bundle_version"
 BUNDLE_MESSAGE_VALUE = "message"
 """ The bundle message value """
 
+VALIDATION_ERROR_MESSAGE_FORMAT = "[%s (%s)] %s"
+""" The validation error message format """
+
 CONSOLE_EXTENSION_NAME = "validation_bundle"
 """ The console extension name """
-
-INVALID_NUMBER_ARGUMENTS_MESSAGE = "invalid number of arguments"
-""" The invalid number of arguments message """
-
-HELP_TEXT = "### BUNDLE VALIDATION HELP ###\n\
-validate_bundle - validates bundles"
-""" The help text """
 
 class ConsoleValidationBundle:
     """
@@ -64,8 +60,8 @@ class ConsoleValidationBundle:
     validation_bundle_plugin = None
     """ The validation bundle plugin """
 
-    commands = ["validate_bundle"]
-    """ The commands list """
+    commands_map = {}
+    """ The map containing the commands information """
 
     def __init__(self, validation_bundle_plugin):
         """
@@ -77,22 +73,30 @@ class ConsoleValidationBundle:
 
         self.validation_bundle_plugin = validation_bundle_plugin
 
+        # initializes the commands map
+        self.commands_map = self.__generate_commands_map()
+
     def get_console_extension_name(self):
         return CONSOLE_EXTENSION_NAME
 
-    def get_all_commands(self):
-        return self.commands
+    def get_commands_map(self):
+        return self.commands_map
 
-    def get_handler_command(self, command):
-        if command in self.commands:
-            method_name = "process_" + command
-            attribute = getattr(self, method_name)
-            return attribute
+    def process_validate_bundle(self, arguments, arguments_map, output_method, console_context):
+        """
+        Processes the validate bundle command, with the given
+        arguments and output method.
 
-    def get_help(self):
-        return HELP_TEXT
+        @type arguments: List
+        @param arguments: The arguments for the processing.
+        @type arguments_map: Dictionary
+        @param arguments_map: The map of arguments for the processing.
+        @type output_method: Method
+        @param output_method: The output method to be used in the processing.
+        @type console_context: ConsoleContext
+        @param console_context: The console context for the processing.
+        """
 
-    def process_validate_bundle(self, args, output_method):
         # validates the bundles
         validation_errors = self.validation_bundle_plugin.validate_bundles([])
 
@@ -108,7 +112,19 @@ class ConsoleValidationBundle:
             validation_error_message = validation_error[BUNDLE_MESSAGE_VALUE]
 
             # creates a validation error message
-            validation_error_message = "[%s (%s)] %s" % (validation_error_bundle_id, validation_error_bundle_version, validation_error_message)
+            validation_error_message = VALIDATION_ERROR_MESSAGE_FORMAT % (validation_error_bundle_id, validation_error_bundle_version, validation_error_message)
 
             # prints the validation error message
             output_method(validation_error_message)
+
+    def __generate_commands_map(self):
+        # creates the commands map
+        commands_map = {
+                        "validate_bundle" : {
+                            "handler" : self.process_validate_bundle,
+                            "description" : "validates all bundles"
+                        }
+                    }
+
+        # returns the commands map
+        return commands_map
