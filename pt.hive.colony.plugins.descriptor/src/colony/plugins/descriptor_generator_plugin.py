@@ -56,7 +56,7 @@ class DescriptorGeneratorPlugin(colony.base.plugin_system.Plugin):
                  colony.base.plugin_system.JYTHON_ENVIRONMENT,
                  colony.base.plugin_system.IRON_PYTHON_ENVIRONMENT]
     attributes = {"build_automation_file_path" : "$base{plugin_directory}/descriptor_generator/generator/resources/baf.xml"}
-    capabilities = ["console_command_extension", "build_automation_item"]
+    capabilities = ["_console_command_extension", "build_automation_item"]
     capabilities_allowed = []
     dependencies = [colony.base.plugin_system.PluginDependency(
                     "pt.hive.colony.plugins.validation.plugin", "1.0.0"),
@@ -111,14 +111,8 @@ class DescriptorGeneratorPlugin(colony.base.plugin_system.Plugin):
     def get_console_extension_name(self):
         return self.console_descriptor_generator.get_console_extension_name()
 
-    def get_all_commands(self):
-        return self.console_descriptor_generator.get_all_commands()
-
-    def get_handler_command(self, command):
-        return self.console_descriptor_generator.get_handler_command(command)
-
-    def get_help(self):
-        return self.console_descriptor_generator.get_help()
+    def get_commands_map(self):
+        return self.console_descriptor_generator.get_commands_map()
 
     def generate_plugin_descriptor(self, plugin_id):
         # generates a plugin descriptor for the specified plugin

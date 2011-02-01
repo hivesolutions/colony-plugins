@@ -25,10 +25,10 @@ __author__ = "Tiago Silva <tsilva@hive.pt>"
 __version__ = "1.0.0"
 """ The version of the module """
 
-__revision__ = "$LastChangedRevision: 72 $"
+__revision__ = "$LastChangedRevision: 12670 $"
 """ The revision number of the module """
 
-__date__ = "$LastChangedDate: 2008-10-21 23:29:54 +0100 (Tue, 21 Oct 2008) $"
+__date__ = "$LastChangedDate: 2011-01-13 13:08:29 +0000 (qui, 13 Jan 2011) $"
 """ The last change date of the module """
 
 __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
@@ -40,13 +40,6 @@ __license__ = "GNU General Public License (GPL), Version 3"
 CONSOLE_EXTENSION_NAME = "descriptor_generator"
 """ The console extension name """
 
-INVALID_NUMBER_ARGUMENTS_MESSAGE = "invalid number of arguments"
-""" The invalid number of arguments message """
-
-HELP_TEXT = "### DESCRIPTOR GENERATOR HELP ###\n\
-generate_descriptor [plugin_id] - generates plugin descriptors"
-""" The help text """
-
 class ConsoleDescriptorGenerator:
     """
     The console descriptor generator class.
@@ -55,8 +48,8 @@ class ConsoleDescriptorGenerator:
     descriptor_generator_plugin = None
     """ The descriptor generator plugin """
 
-    commands = ["generate_descriptor"]
-    """ The commands list """
+    commands_map = {}
+    """ The map containing the commands information """
 
     def __init__(self, descriptor_generator_plugin):
         """
@@ -68,34 +61,66 @@ class ConsoleDescriptorGenerator:
 
         self.descriptor_generator_plugin = descriptor_generator_plugin
 
+        # initializes the commands map
+        self.commands_map = self.__generate_commands_map()
+
     def get_console_extension_name(self):
         return CONSOLE_EXTENSION_NAME
 
-    def get_all_commands(self):
-        return self.commands
+    def get_commands_map(self):
+        return self.commands_map
 
-    def get_handler_command(self, command):
-        if command in self.commands:
-            method_name = "process_" + command
-            attribute = getattr(self, method_name)
-            return attribute
+    def process_generate_descriptor(self, arguments, arguments_map, output_method, console_context):
+        """
+        Processes the generate descriptor command, with the given
+        arguments and output method.
 
-    def get_help(self):
-        return HELP_TEXT
+        @type arguments: List
+        @param arguments: The arguments for the processing.
+        @type arguments_map: Dictionary
+        @param arguments_map: The map of arguments for the processing.
+        @type output_method: Method
+        @param output_method: The output method to be used in the processing.
+        @type console_context: ConsoleContext
+        @param console_context: The console context for the processing.
+        """
 
-    def process_generate_descriptor(self, args, output_method):
-        # returns in case the not enough arguments were provided
-        if len(args) > 1:
-            output_method(INVALID_NUMBER_ARGUMENTS_MESSAGE)
-            return
+        # retrieves the plugin id from the arguments
+        plugin_id = arguments_map.get("plugin_id", None)
 
-        # generates the descriptors for all plugins in case no argument was specified
-        if len(args) == 0:
+        # generates a plugin descriptor for the specified plugin in case an id was specified
+        if plugin_id:
+            self.descriptor_generator_plugin.generate_plugin_descriptor(plugin_id)
+        else:
+            # otherwise generates descriptors for all plugins that fail validation
             self.descriptor_generator_plugin.generate_plugin_descriptors()
-            return
 
-        # retrieves the plugin's id
-        plugin_id = args[0]
+    def get_plugin_id_list(self, argument, console_context):
+        # retrieves the plugin manager
+        plugin_manager = self.descriptor_generator_plugin.manager
 
-        # generates a plugin descriptor for the specified plugin
-        self.descriptor_generator_plugin.generate_plugin_descriptor(plugin_id)
+        # retrieves the plugin id list
+        plugin_id_list = plugin_manager.plugin_instances_map.keys()
+
+        # returns the plugin id list
+        return plugin_id_list
+
+    def __generate_commands_map(self):
+        # creates the commands map
+        commands_map = {
+                        "generate_descriptor" : {
+                            "handler" : self.process_generate_descriptor,
+                            "description" : "generates the plugin descriptor",
+                            "arguments" : [
+                                {
+                                    "name" : "plugin_id",
+                                    "description" : "the plugin id",
+                                    "values" : self.get_plugin_id_list,
+                                    "mandatory" : False
+                                }
+                            ]
+                        }
+                    }
+
+        # returns the commands map
+        return commands_map
