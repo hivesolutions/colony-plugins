@@ -552,11 +552,31 @@ class TelnetRequest:
         self.message_stream.write(message)
 
     def get_result(self):
+        """
+        Retrieves the result string value of
+        the request.
+
+        @rtype: String
+        @return: The result string value of
+        the request.
+        """
+
+        # validate the current request
+        self.validate()
+
         # retrieves the result string value
         message = self.message_stream.get_value()
 
         # returns the return message
         return message
+
+    def validate(self):
+        """
+        Validates the current request, raising exception
+        in case validation fails.
+        """
+
+        pass
 
     def get_message(self):
         return self.message
