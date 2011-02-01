@@ -212,7 +212,6 @@ class BarganiaRssClient:
             bargania_deal_status = self.get_xml_node_text(bargania_deal_node, "bargania:status")
             bargania_deal_title = self.get_xml_node_text(bargania_deal_node, "bargania:title")
             bargania_deal_description = self.get_xml_node_text(item_node, "bargania:description")
-            bargania_deal_location = self.get_xml_node_text(item_node, "bargania:location")
             bargania_deal_details_url = self.get_xml_node_text(item_node, "bargania:details_url")
             bargania_deal_purchase_url = self.get_xml_node_text(item_node, "bargania:purchase_url")
             bargania_deal_currency = self.get_xml_node_text(item_node, "bargania:currency")
@@ -224,6 +223,7 @@ class BarganiaRssClient:
             bargania_deal_expiration_date = self.get_xml_node_text(item_node, "bargania:expiration_date")
 
             # retrieves the bargania deal relations
+            bargania_deal_location = self._get_media(item_node, "bargania:location")
             bargania_deal_advertisement_media = self._get_media(item_node, "bargania:advertisement_media")
             bargania_deal_store = self._get_store(item_node, "bargania:store")
             bargania_deal_primary_address = self._get_address(item_node, "bargania:primary_address")
@@ -238,7 +238,6 @@ class BarganiaRssClient:
             bargania_deal["status"] = bargania_deal_status
             bargania_deal["title"] = bargania_deal_title
             bargania_deal["description"] = bargania_deal_description
-            bargania_deal["location"] = bargania_deal_location
             bargania_deal["details_url"] = bargania_deal_details_url
             bargania_deal["purchase_url"] = bargania_deal_purchase_url
             bargania_deal["currency"] = bargania_deal_currency
@@ -250,6 +249,7 @@ class BarganiaRssClient:
             bargania_deal["expiration_date"] = bargania_deal_expiration_date
 
             # sets the relations in the bargania deal (map)
+            bargania_deal["location"] = bargania_deal_location
             bargania_deal["advertisement_media"] = [bargania_deal_advertisement_media]
             bargania_deal["store"] = bargania_deal_store
             bargania_deal["primary_address"] = bargania_deal_primary_address
