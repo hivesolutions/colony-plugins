@@ -208,8 +208,9 @@ class BarganiaRssClient:
 
             # retrieves the basic bargania deal details
             bargania_deal_object_id = self.get_xml_node_text(bargania_deal_node, "bargania:object_id")
-            bargania_deal_provider_id = self.get_xml_node_text(bargania_deal_node, "bargania:provider_id")
             bargania_deal_status = self.get_xml_node_text(bargania_deal_node, "bargania:status")
+            bargania_deal_provider_id = self.get_xml_node_text(bargania_deal_node, "bargania:provider_id")
+            bargania_deal_location_id = self.get_xml_node_text(item_node, "bargania:location_id")
             bargania_deal_title = self.get_xml_node_text(bargania_deal_node, "bargania:title")
             bargania_deal_description = self.get_xml_node_text(item_node, "bargania:description")
             bargania_deal_details_url = self.get_xml_node_text(item_node, "bargania:details_url")
@@ -221,7 +222,6 @@ class BarganiaRssClient:
             bargania_deal_minimum_purchases = self.get_xml_node_text(item_node, "bargania:minimum_purchases")
             bargania_deal_maximum_purchases = self.get_xml_node_text(item_node, "bargania:maximum_purchases")
             bargania_deal_expiration_date = self.get_xml_node_text(item_node, "bargania:expiration_date")
-            bargania_deal_location = self.get_xml_node_text(item_node, "bargania:location")
 
             # retrieves the bargania deal relations
             bargania_deal_advertisement_media = self._get_media(item_node, "bargania:advertisement_media")
@@ -234,8 +234,9 @@ class BarganiaRssClient:
 
             # sets the values in the bargania deal (map)
             bargania_deal["object_id"] = bargania_deal_object_id
-            bargania_deal["provider_id"] = bargania_deal_provider_id
             bargania_deal["status"] = bargania_deal_status
+            bargania_deal["provider_id"] = bargania_deal_provider_id
+            bargania_deal["location_id"] = bargania_deal_location_id
             bargania_deal["title"] = bargania_deal_title
             bargania_deal["description"] = bargania_deal_description
             bargania_deal["details_url"] = bargania_deal_details_url
@@ -247,7 +248,6 @@ class BarganiaRssClient:
             bargania_deal["minimum_purchases"] = bargania_deal_minimum_purchases
             bargania_deal["maximum_purchases"] = bargania_deal_maximum_purchases
             bargania_deal["expiration_date"] = bargania_deal_expiration_date
-            bargania_deal["location"] = bargania_deal_location
 
             # sets the relations in the bargania deal (map)
             bargania_deal["advertisement_media"] = [bargania_deal_advertisement_media]
