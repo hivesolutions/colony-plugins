@@ -221,9 +221,9 @@ class BarganiaRssClient:
             bargania_deal_minimum_purchases = self.get_xml_node_text(item_node, "bargania:minimum_purchases")
             bargania_deal_maximum_purchases = self.get_xml_node_text(item_node, "bargania:maximum_purchases")
             bargania_deal_expiration_date = self.get_xml_node_text(item_node, "bargania:expiration_date")
+            bargania_deal_location = self.get_xml_node_text(item_node, "bargania:location")
 
             # retrieves the bargania deal relations
-            bargania_deal_location = self._get_location(item_node, "bargania:location")
             bargania_deal_advertisement_media = self._get_media(item_node, "bargania:advertisement_media")
             bargania_deal_store = self._get_store(item_node, "bargania:store")
             bargania_deal_primary_address = self._get_address(item_node, "bargania:primary_address")
@@ -247,9 +247,9 @@ class BarganiaRssClient:
             bargania_deal["minimum_purchases"] = bargania_deal_minimum_purchases
             bargania_deal["maximum_purchases"] = bargania_deal_maximum_purchases
             bargania_deal["expiration_date"] = bargania_deal_expiration_date
+            bargania_deal["location"] = bargania_deal_location
 
             # sets the relations in the bargania deal (map)
-            bargania_deal["location"] = bargania_deal_location
             bargania_deal["advertisement_media"] = [bargania_deal_advertisement_media]
             bargania_deal["store"] = bargania_deal_store
             bargania_deal["primary_address"] = bargania_deal_primary_address
