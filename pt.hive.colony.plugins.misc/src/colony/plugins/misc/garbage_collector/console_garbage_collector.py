@@ -19,7 +19,7 @@
 # You should have received a copy of the GNU General Public License
 # along with Hive Colony Framework. If not, see <http://www.gnu.org/licenses/>.
 
-__author__ = "João Magalhães <joamag@hive.pt>"
+__author__ = "João Magalhães <joamag@hive.pt> & Tiago Silva <tsilva@hive.pt>"
 """ The author(s) of the module """
 
 __version__ = "1.0.0"
@@ -40,23 +40,16 @@ __license__ = "GNU General Public License (GPL), Version 3"
 CONSOLE_EXTENSION_NAME = "garbage_collector"
 """ The console extension name """
 
-INVALID_NUMBER_ARGUMENTS_MESSAGE = "invalid number of arguments"
-""" The invalid number of arguments message """
-
-HELP_TEXT = "### GARBAGE COLLECTOR HELP ###\n\
-run_garbage_collector - runs the python garbage collector"
-""" The help text """
-
 class ConsoleGarbageCollector:
     """
-    The console garbage collector.
+    The console garbage collector class.
     """
 
     garbage_collector_plugin = None
     """ The garbage collector plugin """
 
-    commands = ["run_garbage_collector"]
-    """ The commands list """
+    commands_map = {}
+    """ The map containing the commands information """
 
     def __init__(self, garbage_collector_plugin):
         """
@@ -68,22 +61,44 @@ class ConsoleGarbageCollector:
 
         self.garbage_collector_plugin = garbage_collector_plugin
 
+        # initializes the commands map
+        self.commands_map = self.__generate_commands_map()
+
     def get_console_extension_name(self):
         return CONSOLE_EXTENSION_NAME
 
-    def get_all_commands(self):
-        return self.commands
+    def get_commands_map(self):
+        return self.commands_map
 
-    def get_handler_command(self, command):
-        if command in self.commands:
-            method_name = "process_" + command
-            attribute = getattr(self, method_name)
-            return attribute
+    def process_run_garbage_collector(self, arguments, arguments_map, output_method, console_context):
+        """
+        Processes the run garbage collector command, with the given
+        arguments and output method.
 
-    def get_help(self):
-        return HELP_TEXT
+        @type arguments: List
+        @param arguments: The arguments for the processing.
+        @type arguments_map: Dictionary
+        @param arguments_map: The map of arguments for the processing.
+        @type output_method: Method
+        @param output_method: The output method to be used in the processing.
+        @type console_context: ConsoleContext
+        @param console_context: The console context for the processing.
+        """
 
-    def process_run_garbage_collector(self, args, output_method):
+        # outputs a message stating that the garbage collector has started running
         output_method("running garbage collector")
 
+        # runs the garbage collector
         self.garbage_collector_plugin.garbage_collector.run_garbage_collector()
+
+    def __generate_commands_map(self):
+        # creates the commands map
+        commands_map = {
+                        "run_garbage_collector" : {
+                            "handler" : self.process_run_garbage_collector,
+                            "description" : "runs the python garbage collector"
+                        }
+                    }
+
+        # returns the commands map
+        return commands_map

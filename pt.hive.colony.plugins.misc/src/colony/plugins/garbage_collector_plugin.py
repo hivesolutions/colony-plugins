@@ -53,7 +53,7 @@ class GarbageCollectorPlugin(colony.base.plugin_system.Plugin):
     loading_type = colony.base.plugin_system.EAGER_LOADING_TYPE
     platforms = [colony.base.plugin_system.CPYTHON_ENVIRONMENT]
     attributes = {"build_automation_file_path" : "$base{plugin_directory}/misc/garbage_collector/resources/baf.xml"}
-    capabilities = ["garbage_collector", "console_command_extension", "build_automation_item"]
+    capabilities = ["garbage_collector", "_console_command_extension", "build_automation_item"]
     capabilities_allowed = []
     dependencies = []
     events_handled = []
@@ -111,11 +111,5 @@ class GarbageCollectorPlugin(colony.base.plugin_system.Plugin):
     def get_console_extension_name(self):
         return self.console_garbage_collector.get_console_extension_name()
 
-    def get_all_commands(self):
-        return self.console_garbage_collector.get_all_commands()
-
-    def get_handler_command(self, command):
-        return self.console_garbage_collector.get_handler_command(command)
-
-    def get_help(self):
-        return self.console_garbage_collector.get_help()
+    def get_commands_map(self):
+        return self.console_garbage_collector.get_commands_map()
