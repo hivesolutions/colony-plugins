@@ -54,7 +54,7 @@ class BuildAutomationSchedulerPlugin(colony.base.plugin_system.Plugin):
     loading_type = colony.base.plugin_system.EAGER_LOADING_TYPE
     platforms = [colony.base.plugin_system.CPYTHON_ENVIRONMENT]
     attributes = {"build_automation_file_path" : "$base{plugin_directory}/build_automation/scheduler/resources/baf.xml"}
-    capabilities = ["build_automation_scheduler", "console_command_extension", "build_automation_item"]
+    capabilities = ["build_automation_scheduler", "_console_command_extension", "build_automation_item"]
     capabilities_allowed = []
     dependencies = [colony.base.plugin_system.PluginDependency(
                     "pt.hive.colony.plugins.build.automation", "1.0.0"),
@@ -107,14 +107,8 @@ class BuildAutomationSchedulerPlugin(colony.base.plugin_system.Plugin):
     def get_console_extension_name(self):
         return self.console_build_automation_scheduler.get_console_extension_name()
 
-    def get_all_commands(self):
-        return self.console_build_automation_scheduler.get_all_commands()
-
-    def get_handler_command(self, command):
-        return self.console_build_automation_scheduler.get_handler_command(command)
-
-    def get_help(self):
-        return self.console_build_automation_scheduler.get_help()
+    def get_commands_map(self):
+        return self.console_build_automation_scheduler.get_commands_map()
 
     def get_build_automation_plugin(self):
         return self.build_automation_plugin

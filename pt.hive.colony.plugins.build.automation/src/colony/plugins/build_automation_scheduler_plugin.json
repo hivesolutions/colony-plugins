@@ -9,7 +9,7 @@
     "version" : "1.0.0",
     "author" : "Hive Solutions Lda. <development@hive.pt>",
     "capabilities" : ["build_automation_scheduler",
-            "console_command_extension", "build_automation_item"],
+            "_console_command_extension", "build_automation_item"],
     "capabilities_allowed" : [],
     "dependencies" : [{
                 "id" : "pt.hive.colony.plugins.build.automation",
