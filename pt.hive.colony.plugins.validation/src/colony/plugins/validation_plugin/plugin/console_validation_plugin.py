@@ -19,16 +19,16 @@
 # You should have received a copy of the GNU General Public License
 # along with Hive Colony Framework. If not, see <http://www.gnu.org/licenses/>.
 
-__author__ = "João Magalhães <joamag@hive.pt>"
+__author__ = "Tiago Silva <tsilva@hive.pt>"
 """ The author(s) of the module """
 
 __version__ = "1.0.0"
 """ The version of the module """
 
-__revision__ = "$LastChangedRevision: 72 $"
+__revision__ = "$LastChangedRevision: 12670 $"
 """ The revision number of the module """
 
-__date__ = "$LastChangedDate: 2008-10-21 23:29:54 +0100 (Tue, 21 Oct 2008) $"
+__date__ = "$LastChangedDate: 2011-01-13 13:08:29 +0000 (qui, 13 Jan 2011) $"
 """ The last change date of the module """
 
 __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
@@ -37,15 +37,17 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
+MESSAGE_VALUE = "message"
+""" The message value """
+
+PLUGIN_ID_VALUE = "plugin_id"
+""" The plugin id value """
+
+VALIDATION_ERROR_MESSAGE_FORMAT = "[%s] %s"
+""" The validation error message format """
+
 CONSOLE_EXTENSION_NAME = "validation_plugin"
 """ The console extension name """
-
-INVALID_NUMBER_ARGUMENTS_MESSAGE = "invalid number of arguments"
-""" The invalid number of arguments message """
-
-HELP_TEXT = "### PLUGIN VALIDATION HELP ###\n\
-validate_plugin [plugin_id] - validates plugin(s)"
-""" The help text """
 
 class ConsoleValidationPlugin:
     """
@@ -55,8 +57,8 @@ class ConsoleValidationPlugin:
     validation_plugin_plugin = None
     """ The validation plugin plugin """
 
-    commands = ["validate_plugin"]
-    """ The commands list """
+    commands_map = {}
+    """ The map containing the commands information """
 
     def __init__(self, validation_plugin_plugin):
         """
@@ -68,41 +70,80 @@ class ConsoleValidationPlugin:
 
         self.validation_plugin_plugin = validation_plugin_plugin
 
+        # initializes the commands map
+        self.commands_map = self.__generate_commands_map()
+
     def get_console_extension_name(self):
         return CONSOLE_EXTENSION_NAME
 
-    def get_all_commands(self):
-        return self.commands
+    def get_commands_map(self):
+        return self.commands_map
 
-    def get_handler_command(self, command):
-        if command in self.commands:
-            method_name = "process_" + command
-            attribute = getattr(self, method_name)
-            return attribute
+    def process_validate_plugin(self, arguments, arguments_map, output_method, console_context):
+        """
+        Processes the validate plugin command, with the given
+        arguments and output method.
 
-    def get_help(self):
-        return HELP_TEXT
+        @type arguments: List
+        @param arguments: The arguments for the processing.
+        @type arguments_map: Dictionary
+        @param arguments_map: The map of arguments for the processing.
+        @type output_method: Method
+        @param output_method: The output method to be used in the processing.
+        @type console_context: ConsoleContext
+        @param console_context: The console context for the processing.
+        """
 
-    def process_validate_plugin(self, args, output_method):
-        # returns in case the not enough arguments were provided
-        if len(args) > 1:
-            output_method(INVALID_NUMBER_ARGUMENTS_MESSAGE)
-            return
+        # retrieves the plugin id from the arguments
+        plugin_id = arguments_map.get("plugin_id", None)
 
-        # validates all plugins
-        if len(args) == 0:
-            validation_errors = self.validation_plugin_plugin.validate_plugins()
-        else:
-            # retrieves the plugin's id
-            plugin_id = args[0]
-
-            # validates the specified plugin
+        # validates the specified plugin in case it was provided
+        if plugin_id:
             validation_errors = self.validation_plugin_plugin.validate_plugin(plugin_id)
+        else:
+            # otherwise validates all plugins
+            validation_errors = self.validation_plugin_plugin.validate_plugins()
 
         # outputs the validation errors
         for validation_error in validation_errors:
+            # retrieves the validation error plugin id
+            validation_error_plugin_id = validation_error[PLUGIN_ID_VALUE]
+
+            # retrieves the validation error plugin message
+            validation_error_message = validation_error[MESSAGE_VALUE]
+
             # creates a validation error message
-            validation_error_message = "[%s] %s" % (validation_error["plugin_id"], validation_error["message"])
+            validation_error_message = VALIDATION_ERROR_MESSAGE_FORMAT % (validation_error_plugin_id, validation_error_message)
 
             # prints the validation error message
             output_method(validation_error_message)
+
+    def get_plugin_id_list(self, argument, console_context):
+        # retrieves the plugin manager
+        plugin_manager = self.validation_plugin_plugin.manager
+
+        # retrieves the plugin id list
+        plugin_id_list = plugin_manager.plugin_instances_map.keys()
+
+        # returns the plugin id list
+        return plugin_id_list
+
+    def __generate_commands_map(self):
+        # creates the commands map
+        commands_map = {
+                        "validate_plugin" : {
+                            "handler" : self.process_validate_plugin,
+                            "description" : "validates the specified plugin",
+                            "arguments" : [
+                                {
+                                    "name" : "plugin_id",
+                                    "description" : "the plugin id",
+                                    "values" : self.get_plugin_id_list,
+                                    "mandatory" : False
+                                }
+                            ]
+                        }
+                    }
+
+        # returns the commands map
+        return commands_map

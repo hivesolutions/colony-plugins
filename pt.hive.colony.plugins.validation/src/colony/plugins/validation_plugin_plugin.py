@@ -56,7 +56,7 @@ class ValidationPluginPlugin(colony.base.plugin_system.Plugin):
                  colony.base.plugin_system.JYTHON_ENVIRONMENT,
                  colony.base.plugin_system.IRON_PYTHON_ENVIRONMENT]
     attributes = {"build_automation_file_path" : "$base{plugin_directory}/validation_plugin/plugin/resources/baf.xml"}
-    capabilities = ["validation.plugin", "console_command_extension", "build_automation_item"]
+    capabilities = ["validation.plugin", "_console_command_extension", "build_automation_item"]
     capabilities_allowed = []
     dependencies = [colony.base.plugin_system.PluginDependency(
                     "pt.hive.colony.plugins.misc.json", "1.0.0")]
@@ -106,14 +106,8 @@ class ValidationPluginPlugin(colony.base.plugin_system.Plugin):
     def get_console_extension_name(self):
         return self.console_validation_plugin.get_console_extension_name()
 
-    def get_all_commands(self):
-        return self.console_validation_plugin.get_all_commands()
-
-    def get_handler_command(self, command):
-        return self.console_validation_plugin.get_handler_command(command)
-
-    def get_help(self):
-        return self.console_validation_plugin.get_help()
+    def get_commands_map(self):
+        return self.console_validation_plugin.get_commands_map()
 
     def validate_plugins(self):
         return self.validation_plugin.validate_plugins()
