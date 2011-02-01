@@ -2334,6 +2334,15 @@ class HttpRequest:
         self.set_header(header_name, final_header_value)
 
     def get_result(self):
+        """
+        Retrieves the result string value of
+        the request.
+
+        @rtype: String
+        @return: The result string value of
+        the request.
+        """
+
         # validates the current request
         self.validate()
 
