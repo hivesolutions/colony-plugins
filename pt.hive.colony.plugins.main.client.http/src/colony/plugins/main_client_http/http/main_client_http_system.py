@@ -1241,6 +1241,18 @@ class HttpRequest:
         pass
 
     def get_result(self):
+        """
+        Retrieves the result string (serialized) value of
+        the request.
+
+        @rtype: String
+        @return: The result string (serialized) value of
+        the request.
+        """
+
+        # validates the current request
+        self.validate()
+
         # retrieves the result stream
         result = colony.libs.string_buffer_util.StringBuffer()
 
@@ -1328,6 +1340,14 @@ class HttpRequest:
 
         # returns the result value
         return result_value
+
+    def validate(self):
+        """
+        Validates the current request, raising exception
+        in case validation fails.
+        """
+
+        pass
 
     def set_authentication(self, username, password):
         """
