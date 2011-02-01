@@ -99,6 +99,9 @@ class MainServiceHttpSystemInformationHandler:
         # sets the request content type
         request.content_type = HTML_MIME_TYPE
 
+        # sets the request status code
+        request.status_code = 200
+
         # retrieves the plugin manager
         plugin_manager = self.main_service_http_system_information_handler_plugin.manager
 
@@ -140,6 +143,9 @@ class MainServiceHttpSystemInformationHandler:
 
         # writes the processed template file encoded to the request
         request.write(processed_template_file_encoded)
+
+        # returns true (valid)
+        return True
 
     def _get_system_information(self):
         """
