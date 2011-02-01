@@ -513,10 +513,23 @@ class IrcRequest:
 
     def get_result(self):
         """
-        Retrieves the result value for the current request.
+        Retrieves the result string value of
+        the request.
 
         @rtype: String
-        @return: The result value for the current request.
+        @return: The result string value of
+        the request.
         """
 
+        # validates the current request
+        self.validate()
+
         return ""
+
+    def validate(self):
+        """
+        Validates the current request, raising exception
+        in case validation fails.
+        """
+
+        pass
