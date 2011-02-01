@@ -19,16 +19,16 @@
 # You should have received a copy of the GNU General Public License
 # along with Hive Colony Framework. If not, see <http://www.gnu.org/licenses/>.
 
-__author__ = "João Magalhães <joamag@hive.pt>"
+__author__ = "João Magalhães <joamag@hive.pt> & Tiago Silva <tsilva@hive.pt>"
 """ The author(s) of the module """
 
 __version__ = "1.0.0"
 """ The version of the module """
 
-__revision__ = "$LastChangedRevision: 72 $"
+__revision__ = "$LastChangedRevision: 12939 $"
 """ The revision number of the module """
 
-__date__ = "$LastChangedDate: 2008-10-21 23:29:54 +0100 (Ter, 21 Out 2008) $"
+__date__ = "$LastChangedDate: 2011-02-01 17:54:16 +0000 (Tue, 01 Feb 2011) $"
 """ The last change date of the module """
 
 __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
@@ -41,14 +41,6 @@ import re
 
 CONSOLE_EXTENSION_NAME = "automation"
 """ The console extension name """
-
-INVALID_NUMBER_ARGUMENTS_MESSAGE = "invalid number of arguments"
-""" The invalid number of arguments message """
-
-HELP_TEXT = "### BUILD AUTOMATION HELP ###\n\
-run_automation <plugin-id> [recursive_level] [stage] [plugin-version] - runs the build automation for the stage and recursive level in the plugin with the given id and version\n\
-show_all_automation                                                   - shows all the build automations"
-""" The help text """
 
 TABLE_TOP_TEXT = "ID      BUILD AUTOMATION ID"
 """ The table top text """
@@ -67,8 +59,8 @@ class ConsoleBuildAutomation:
     build_automation_plugin = None
     """ The build automation plugin """
 
-    commands = ["run_automation", "show_all_automation"]
-    """ The commands list """
+    commands_map = {}
+    """ The map containing the commands information """
 
     def __init__(self, build_automation_plugin):
         """
@@ -80,51 +72,62 @@ class ConsoleBuildAutomation:
 
         self.build_automation_plugin = build_automation_plugin
 
+        # initializes the commands map
+        self.commands_map = self.__generate_commands_map()
+
     def get_console_extension_name(self):
         return CONSOLE_EXTENSION_NAME
 
-    def get_all_commands(self):
-        return self.commands
+    def get_commands_map(self):
+        return self.commands_map
 
-    def get_handler_command(self, command):
-        if command in self.commands:
-            method_name = "process_" + command
-            attribute = getattr(self, method_name)
-            return attribute
+    def process_run_automation(self, arguments, arguments_map, output_method, console_context):
+        """
+        Processes the run automation command, with the given
+        arguments and output method.
 
-    def get_help(self):
-        return HELP_TEXT
+        @type arguments: List
+        @param arguments: The arguments for the processing.
+        @type arguments_map: Dictionary
+        @param arguments_map: The map of arguments for the processing.
+        @type output_method: Method
+        @param output_method: The output method to be used in the processing.
+        @type console_context: ConsoleContext
+        @param console_context: The console context for the processing.
+        """
 
-    def process_run_automation(self, args, output_method):
-        if len(args) < 1:
-            output_method(INVALID_NUMBER_ARGUMENTS_MESSAGE)
-            return
+        # retrieves the mandatory arguments
+        plugin_id = arguments_map["plugin_id"]
 
-        # retrieves the plugin id
-        plugin_id = args[0]
+        # retrieves the optional arguments
+        recursive_level = arguments_map.get("recursive_level", 1)
+        stage = arguments_map.get("stage", None)
+        plugin_version = arguments_map.get("plugin_version", None)
+
+        # converts the recursive level to an integer
+        recursive_level = int(recursive_level)
 
         # retrieves the real
         real_plugin_id = self.get_plugin_id(plugin_id)
 
-        # sets the default parameter values
-        plugin_version = None
-        stage = None
-        recursive_level = 1
-
-        if len(args) == 2:
-            # retrieves the recursive level
-            recursive_level = int(args[1])
-        elif len(args) == 3:
-            # retrieves the stage
-            stage = args[2]
-        elif len(args) == 4:
-            # retrieves the plugin version
-            plugin_version = args[3]
-
         # runs the automation for the plugin
         self.build_automation_plugin.build_automation.run_automation(real_plugin_id, plugin_version, stage, recursive_level)
 
-    def process_show_all_automation(self, args, output_method):
+    def process_show_all_automation(self, arguments, arguments_map, output_method, console_context):
+        """
+        Processes the show all automation command, with the given
+        arguments and output method.
+
+        @type arguments: List
+        @param arguments: The arguments for the processing.
+        @type arguments_map: Dictionary
+        @param arguments_map: The map of arguments for the processing.
+        @type output_method: Method
+        @param output_method: The output method to be used in the processing.
+        @type console_context: ConsoleContext
+        @param console_context: The console context for the processing.
+        """
+
         # prints the table top text
         output_method(TABLE_TOP_TEXT)
 
@@ -178,3 +181,52 @@ class ConsoleBuildAutomation:
             plugin_id = id
 
         return plugin_id
+
+    def get_plugin_id_list(self, argument, console_context):
+        # retrieves the plugin manager
+        plugin_manager = self.build_automation_plugin.manager
+
+        # retrieves the plugin id list
+        plugin_id_list = plugin_manager.plugin_instances_map.keys()
+
+        # returns the plugin id list
+        return plugin_id_list
+
+    def __generate_commands_map(self):
+        # creates the commands map
+        commands_map = {
+                        "run_automation" : {
+                            "handler" : self.process_run_automation,
+                            "description" : "runs the build automation for the stage and recursive level in the plugin with the given id and version",
+                            "arguments" : [
+                                {
+                                    "name" : "plugin_id",
+                                    "description" : "the id of the plugin to perform the build automation in",
+                                    "values" : self.get_plugin_id_list,
+                                    "mandatory" : True
+                                }, {
+                                    "name" : "recursive_level",
+                                    "description" : "the build automation recursive level",
+                                    "values" : str,
+                                    "mandatory" : False
+                                }, {
+                                    "name" : "stage",
+                                    "description" : "the build automation stage",
+                                    "values" : str,
+                                    "mandatory" : False
+                                }, {
+                                    "name" : "plugin_version",
+                                    "description" : "the version of the plugin to perform the build automation in",
+                                    "values" : str,
+                                    "mandatory" : False
+                                }
+                            ]
+                        },
+                        "show_all_automation" : {
+                            "handler" : self.process_show_all_automation,
+                            "description" : "shows all the build automations"
+                        }
+                    }
+
+        # returns the commands map
+        return commands_map
