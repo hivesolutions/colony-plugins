@@ -881,6 +881,18 @@ class AbeculaResponse:
         pass
 
     def get_result(self):
+        """
+        Retrieves the result string value of
+        the response.
+
+        @rtype: String
+        @return: The result string value of
+        the response.
+        """
+
+        # validates the current response
+        self.validate()
+
         # retrieves the result stream
         result = colony.libs.string_buffer_util.StringBuffer()
 
@@ -918,6 +930,14 @@ class AbeculaResponse:
 
         # returns the result value
         return result_value
+
+    def validate(self):
+        """
+        Validates the current response, raising exception
+        in case validation fails.
+        """
+
+        pass
 
     def set_operation_id(self, operation_id):
         """
@@ -1056,6 +1076,18 @@ class AbeculaRequest:
         pass
 
     def get_result(self):
+        """
+        Retrieves the result string (serialized) value of
+        the request.
+
+        @rtype: String
+        @return: The result string (serialized) value of
+        the request.
+        """
+
+        # validates the current request
+        self.validate()
+
         # retrieves the result stream
         result = colony.libs.string_buffer_util.StringBuffer()
 
@@ -1096,6 +1128,14 @@ class AbeculaRequest:
 
         # returns the result value
         return result_value
+
+    def validate(self):
+        """
+        Validates the current request, raising exception
+        in case validation fails.
+        """
+
+        pass
 
     def get_service_handler(self):
         """
