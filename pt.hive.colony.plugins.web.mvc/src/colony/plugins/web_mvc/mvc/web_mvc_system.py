@@ -105,6 +105,12 @@ class WebMvc:
     web_mvc_service_patterns_map = {}
     """ The web mvc service patterns map """
 
+    web_mvc_service_pattern_escaped_map = {}
+    """ The web mvc service pattern escaped map """
+
+    web_mvc_service_pattern_compiled_map = {}
+    """ The web mvc service pattern compiled map """
+
     web_mvc_service_patterns_list = []
     """ The web mvc service patterns list for indexing """
 
@@ -137,6 +143,8 @@ class WebMvc:
         self.resource_matching_regex_list = []
         self.resource_matching_regex_base_values_map = {}
         self.web_mvc_service_patterns_map = {}
+        self.web_mvc_service_pattern_escaped_map = {}
+        self.web_mvc_service_pattern_compiled_map = {}
         self.web_mvc_service_patterns_list = []
         self.web_mvc_service_communication_patterns_map = {}
         self.web_mvc_service_communication_patterns_list = []
@@ -246,7 +254,7 @@ class WebMvc:
             # retrieves the pattern value
             pattern_value = web_mvc_service_plugin_pattern[1:]
 
-            # compiles the patter key, retrieving the
+            # compiles the pattern key, retrieving the
             # pattern validation regex (original regex)
             pattern_validation_regex = re.compile(pattern_key)
 
@@ -257,11 +265,25 @@ class WebMvc:
             # group selectors
             pattern_key_escaped = NAMED_GROUPS_REGEX.sub("\g<1>", pattern_key)
 
-            # adds the pattern to the web mvc service patterns map
-            self.web_mvc_service_patterns_map[pattern_key_escaped] = pattern_attributes
+            # in case the pattern key escaped does not exists
+            # in the web mvc service patterns map
+            if not pattern_key_escaped in self.web_mvc_service_patterns_map:
+                # creates a new (pattern attributes) list for the pattern key in the
+                # web mvc service patterns map
+                self.web_mvc_service_patterns_map[pattern_key_escaped] = []
 
-            # adds the pattern to the web mvc service patterns list
-            self.web_mvc_service_patterns_list.append(pattern_key_escaped)
+                # adds the pattern to the web mvc service patterns list
+                self.web_mvc_service_patterns_list.append(pattern_key_escaped)
+
+            # retrieves the pattern attributes list from the web mvc service patterns map
+            pattern_attributes_list = self.web_mvc_service_patterns_map[pattern_key_escaped]
+
+            # removes the pattern attributes from the pattern attributes list
+            pattern_attributes_list.append(pattern_attributes)
+
+            # saves the escaped and compiled values of the pattern for latter usage
+            self.web_mvc_service_pattern_escaped_map[pattern_key] = pattern_key_escaped
+            self.web_mvc_service_pattern_compiled_map[pattern_key] = pattern_validation_regex
 
         # retrieves the web mvc service plugin communication patterns
         web_mvc_service_plugin_communication_patterns = web_mvc_service_plugin.get_communication_patterns()
@@ -310,13 +332,41 @@ class WebMvc:
             # retrieves the pattern key
             pattern_key = web_mvc_service_plugin_pattern[0]
 
-            # in case the pattern key exists in the web mvc service patterns map
-            if pattern_key in self.web_mvc_service_patterns_map:
-                # removes the pattern from the web mvc service patterns map
-                del self.web_mvc_service_patterns_map[pattern_key]
+            # retrieves the pattern value
+            pattern_value = web_mvc_service_plugin_pattern[1:]
+
+            # retrieves the pattern key escaped from the web mvc service
+            # pattern escaped map
+            pattern_key_escaped = self.web_mvc_service_pattern_escaped_map[pattern_key]
+
+            # in case the pattern key escaped exists in the web mvc service patterns map
+            if pattern_key_escaped in self.web_mvc_service_patterns_map:
+                # retrieves the pattern validation regex from the web mvc service
+                # pattern compiled map
+                pattern_validation_regex = self.web_mvc_service_pattern_compiled_map[pattern_key]
+
+                # creates the pattern attributes (tuple)
+                pattern_attributes = (pattern_validation_regex, pattern_value)
+
+                # retrieves the pattern attributes list from the web mvc service
+                # patterns map
+                pattern_attributes_list = self.web_mvc_service_patterns_map[pattern_key_escaped]
+
+                # removes the pattern attributes from the pattern attributes list
+                pattern_attributes_list.remove(pattern_attributes)
+
+                # in case the pattern attributes list is not empty
+                # more patterns associated with the pattern key, no need
+                # to remove the patter key references
+                if pattern_attributes_list:
+                    # continues the loop
+                    continue
+
+                # removes the pattern attributes list from the web mvc service patterns map
+                del self.web_mvc_service_patterns_map[pattern_key_escaped]
 
                 # removes the pattern from the web mvc service patterns list
-                self.web_mvc_service_patterns_list.remove(pattern_key)
+                self.web_mvc_service_patterns_list.remove(pattern_key_escaped)
 
         # retrieves the web mvc service plugin communication patterns
         web_mvc_service_plugin_communication_patterns = web_mvc_service_plugin.get_communication_patterns()
@@ -436,104 +486,31 @@ class WebMvc:
         # retrieves the pattern for the web mvc service index
         pattern = self.web_mvc_service_patterns_list[web_mvc_service_index]
 
-        # retrieves the pattern handler arguments
-        handler_attributes = self.web_mvc_service_patterns_map[pattern]
+        # retrieves the pattern attributes list from the web
+        # mvc service patterns map
+        pattern_attributes_list = self.web_mvc_service_patterns_map[pattern]
 
-        # unpacks the handler attributes, retrieving the handler
-        # validation regex and the handler arguments
-        handler_validation_regex, handler_arguments = handler_attributes
+        # starts the return value
+        return_value = None
 
-        # matches the resource path against the validation match
-        resource_path_validation_match = handler_validation_regex.match(resource_path)
+        # iterates over all the pattern attributes (handler attributes)
+        # in the pattern attributes list
+        for handler_attributes in pattern_attributes_list:
+            # tries to validation the match using the rest request,
+            # handler attributes and the resource path
+            return_value = self.__validate_match(rest_request, handler_attributes, resource_path)
 
-        # in case there is no resource path validation match
-        if not resource_path_validation_match:
-            # raises the runtime request exception
-            raise web_mvc_exceptions.RuntimeRequestException("invalid resource path validation match")
+            # in case the return value is not valid
+            # (no success in validation)
+            if not return_value:
+                # continues the loop
+                continue
 
-        # retrieves the length of the handler arguments
-        handler_arguments_length = len(handler_arguments)
+            # breaks the loop (valid match)
+            break
 
-        # retrieves the handler method from the handler arguments
-        handler_method = handler_arguments_length > 0 and handler_arguments[0] or None
-
-        # retrieves the handler operation types from the handler arguments
-        handler_operation_types = handler_arguments_length > 1 and handler_arguments[1] or ("get", "put", "post", "delete")
-
-        # retrieves the handler encoders from the handler arguments
-        handler_encoders = handler_arguments_length > 2 and handler_arguments[2] or None
-
-        # retrieves the handler constraints from the handler arguments
-        handler_contraints = handler_arguments_length > 3 and handler_arguments[3] or {}
-
-        # casts the values to tuples
-        handler_operation_types = self.__cast_tuple(handler_operation_types)
-        handler_encoders = self.__cast_tuple(handler_encoders)
-
-        # retrieves the request
-        request = rest_request.get_request()
-
-        # retrieves the request operation type
-        request_operation_type = request.operation_type
-
-        # lowers the request operation type
-        request_operation_type = request_operation_type.lower()
-
-        # retrieves the rest request encoder name
-        rest_request_encoder_name = rest_request.encoder_name
-
-        # in case the request operation type does not exists in the
-        # handler operation types
-        if not request_operation_type in handler_operation_types:
-            # returns none (invalid)
-            return None
-
-        # in case the handler encoders are defined and the rest
-        # request encoder name does not exists in the handler encoders
-        if handler_encoders and not rest_request_encoder_name in handler_encoders:
-            # returns none (invalid)
-            return None
-
-        # iterates over all the handler constraints
-        for handler_contraint_name, handler_contraint_value in handler_contraints.items():
-            # retrieves the handler constraint value type
-            handler_contraint_value_type = type(handler_contraint_value)
-
-            # retrieves the attribute value base on the
-            # handler constraint name
-            attribute_value = rest_request.get_attribute(handler_contraint_name)
-
-            try:
-                # casts the attribute value
-                attribute_value_casted = handler_contraint_value_type(attribute_value)
-            except:
-                # returns none (invalid)
-                return None
-
-            # in case the attribute value (casted) is not equals
-            # to the handler constraint name
-            if not attribute_value_casted == handler_contraint_value:
-                # returns none (invalid)
-                return None
-
-        # retrieves the resource path validation match groups map
-        resource_path_validation_match_groups_map = resource_path_validation_match.groupdict()
-
-        # sets the parameters as an empty map
-        parameters = {}
-
-        # sets the extra parameters
-        parameters[FILE_HANDLER_VALUE] = self.web_mvc_file_handler
-        parameters[COMMUNICATION_HANDLER_VALUE] = self.web_mvc_communication_handler
-        parameters[METHOD_VALUE] = request_operation_type
-        parameters[ENCODER_NAME_VALUE] = rest_request_encoder_name
-        parameters[PATTERN_NAMES_VALUE] = resource_path_validation_match_groups_map
-
-        # creates the handler tuple
-        handler_tuple = (handler_method, parameters)
-
-        # returns the handler tuple
-        return handler_tuple
+        # returns the return value
+        return return_value
 
     def _handle_match(self, rest_request, handler_tuple):
         # unpacks the handler tuple
@@ -787,6 +764,103 @@ class WebMvc:
 
         # sets the base value in resource matching regex base values map
         self.resource_matching_regex_base_values_map[resource_matching_regex] = current_base_value
+
+    def __validate_match(self, rest_request, handler_attributes, resource_path):
+        # unpacks the handler attributes, retrieving the handler
+        # validation regex and the handler arguments
+        handler_validation_regex, handler_arguments = handler_attributes
+
+        # matches the resource path against the validation match
+        resource_path_validation_match = handler_validation_regex.match(resource_path)
+
+        # in case there is no resource path validation match
+        if not resource_path_validation_match:
+            # raises the runtime request exception
+            raise web_mvc_exceptions.RuntimeRequestException("invalid resource path validation match")
+
+        # retrieves the length of the handler arguments
+        handler_arguments_length = len(handler_arguments)
+
+        # retrieves the handler method from the handler arguments
+        handler_method = handler_arguments_length > 0 and handler_arguments[0] or None
+
+        # retrieves the handler operation types from the handler arguments
+        handler_operation_types = handler_arguments_length > 1 and handler_arguments[1] or ("get", "put", "post", "delete")
+
+        # retrieves the handler encoders from the handler arguments
+        handler_encoders = handler_arguments_length > 2 and handler_arguments[2] or None
+
+        # retrieves the handler constraints from the handler arguments
+        handler_contraints = handler_arguments_length > 3 and handler_arguments[3] or {}
+
+        # casts the values to tuples
+        handler_operation_types = self.__cast_tuple(handler_operation_types)
+        handler_encoders = self.__cast_tuple(handler_encoders)
+
+        # retrieves the request
+        request = rest_request.get_request()
+
+        # retrieves the request operation type
+        request_operation_type = request.operation_type
+
+        # lowers the request operation type
+        request_operation_type = request_operation_type.lower()
+
+        # retrieves the rest request encoder name
+        rest_request_encoder_name = rest_request.encoder_name
+
+        # in case the request operation type does not exists in the
+        # handler operation types
+        if not request_operation_type in handler_operation_types:
+            # returns none (invalid)
+            return None
+
+        # in case the handler encoders are defined and the rest
+        # request encoder name does not exists in the handler encoders
+        if handler_encoders and not rest_request_encoder_name in handler_encoders:
+            # returns none (invalid)
+            return None
+
+        # iterates over all the handler constraints
+        for handler_contraint_name, handler_contraint_value in handler_contraints.items():
+            # retrieves the handler constraint value type
+            handler_contraint_value_type = type(handler_contraint_value)
+
+            # retrieves the attribute value base on the
+            # handler constraint name
+            attribute_value = rest_request.get_attribute(handler_contraint_name)
+
+            try:
+                # casts the attribute value
+                attribute_value_casted = handler_contraint_value_type(attribute_value)
+            except:
+                # returns none (invalid)
+                return None
+
+            # in case the attribute value (casted) is not equals
+            # to the handler constraint name
+            if not attribute_value_casted == handler_contraint_value:
+                # returns none (invalid)
+                return None
+
+        # retrieves the resource path validation match groups map
+        resource_path_validation_match_groups_map = resource_path_validation_match.groupdict()
+
+        # sets the parameters as an empty map
+        parameters = {}
+
+        # sets the extra parameters
+        parameters[FILE_HANDLER_VALUE] = self.web_mvc_file_handler
+        parameters[COMMUNICATION_HANDLER_VALUE] = self.web_mvc_communication_handler
+        parameters[METHOD_VALUE] = request_operation_type
+        parameters[ENCODER_NAME_VALUE] = rest_request_encoder_name
+        parameters[PATTERN_NAMES_VALUE] = resource_path_validation_match_groups_map
+
+        # creates the handler tuple
+        handler_tuple = (handler_method, parameters)
+
+        # returns the handler tuple
+        return handler_tuple
 
     def __cast_tuple(self, value):
         """
