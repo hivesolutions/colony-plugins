@@ -19,7 +19,7 @@
 # You should have received a copy of the GNU General Public License
 # along with Hive Colony Framework. If not, see <http://www.gnu.org/licenses/>.
 
-__author__ = "João Magalhães <joamag@hive.pt>"
+__author__ = "Tiago Silva <tsilva@hive.pt>"
 """ The author(s) of the module """
 
 __version__ = "1.0.0"
@@ -40,17 +40,6 @@ __license__ = "GNU General Public License (GPL), Version 3"
 CONSOLE_EXTENSION_NAME = "downloader"
 """ The console extension name """
 
-INVALID_NUMBER_ARGUMENTS_MESSAGE = "invalid number of arguments"
-""" The invalid number of arguments message """
-
-INVALID_ADDRESS_MESSAGE = "invalid address"
-""" The invalid address message """
-
-HELP_TEXT = "### DOWNLOADER HELP ###\n\
-download <file-address>      - starts the download of the file\n\
-test_download <file-address> - test the download of the file"
-""" The help text """
-
 class ConsoleDownloader:
     """
     The console downloader class.
@@ -59,8 +48,8 @@ class ConsoleDownloader:
     downloader_plugin = None
     """ The downloader plugin """
 
-    commands = ["download", "test_download"]
-    """ The commands list """
+    commands_map = {}
+    """ The map containing the commands information """
 
     def __init__(self, downloader_plugin):
         """
@@ -72,39 +61,91 @@ class ConsoleDownloader:
 
         self.downloader_plugin = downloader_plugin
 
+        # initializes the commands map
+        self.commands_map = self.__generate_commands_map()
+
     def get_console_extension_name(self):
         return CONSOLE_EXTENSION_NAME
 
-    def get_all_commands(self):
-        return self.commands
+    def get_commands_map(self):
+        return self.commands_map
 
-    def get_handler_command(self, command):
-        if command in self.commands:
-            method_name = "process_" + command
-            attribute = getattr(self, method_name)
-            return attribute
+    def process_download(self, arguments, arguments_map, output_method, console_context):
+        """
+        Processes the download command, with the given
+        arguments and output method.
 
-    def get_help(self):
-        return HELP_TEXT
+        @type arguments: List
+        @param arguments: The arguments for the processing.
+        @type arguments_map: Dictionary
+        @param arguments_map: The map of arguments for the processing.
+        @type output_method: Method
+        @param output_method: The output method to be used in the processing.
+        @type console_context: ConsoleContext
+        @param console_context: The console context for the processing.
+        """
 
-    def process_download(self, args, output_method):
-        if len(args) < 1:
-            output_method(INVALID_NUMBER_ARGUMENTS_MESSAGE)
-            return
+        # retrieves the file path from the arguments
+        file_path = arguments_map["file_path"]
 
-        file_path = args[0]
-
+        # outputs a message stating that the download has started
         output_method("starting download of " + file_path)
 
+        # downloads the specified file
         self.downloader_plugin.downloader.download_package(file_path)
 
-    def process_test_download(self, args, output_method):
-        if len(args) < 1:
-            output_method(INVALID_NUMBER_ARGUMENTS_MESSAGE)
-            return
+    def process_test_download(self, arguments, arguments_map, output_method, console_context):
+        """
+        Processes the test download command, with the given
+        arguments and output method.
 
-        file_path = args[0]
+        @type arguments: List
+        @param arguments: The arguments for the processing.
+        @type arguments_map: Dictionary
+        @param arguments_map: The map of arguments for the processing.
+        @type output_method: Method
+        @param output_method: The output method to be used in the processing.
+        @type console_context: ConsoleContext
+        @param console_context: The console context for the processing.
+        """
 
+        # retrieves the file path from the arguments
+        file_path = arguments_map["file_path"]
+
+        # outputs a message stating that the test has started
         output_method("starting test of " + file_path)
 
+        # tests downloading the specified file
         self.downloader_plugin.downloader.test_package(file_path)
+
+    def __generate_commands_map(self):
+        # creates the commands map
+        commands_map = {
+                        "download" : {
+                            "handler" : self.process_download,
+                            "description" : "starts the download of the file",
+                            "arguments" : [
+                                {
+                                    "name" : "file_path",
+                                    "description" : "the path of the file to download",
+                                    "values" : str,
+                                    "mandatory" : True
+                                }
+                            ]
+                        },
+                        "test_download" : {
+                            "handler" : self.process_test_download,
+                            "description" : "tests the download of the file",
+                            "arguments" : [
+                                {
+                                    "name" : "file_path",
+                                    "description" : "the path of the file to test the download",
+                                    "values" : str,
+                                    "mandatory" : True
+                                }
+                            ]
+                        }
+                    }
+
+        # returns the commands map
+        return commands_map

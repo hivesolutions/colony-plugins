@@ -54,7 +54,7 @@ class DownloaderPlugin(colony.base.plugin_system.Plugin):
     loading_type = colony.base.plugin_system.EAGER_LOADING_TYPE
     platforms = [colony.base.plugin_system.CPYTHON_ENVIRONMENT]
     attributes = {"build_automation_file_path" : "$base{plugin_directory}/misc/downloader/resources/baf.xml"}
-    capabilities = ["download", "console_command_extension", "build_automation_item"]
+    capabilities = ["download", "_console_command_extension", "build_automation_item"]
     capabilities_allowed = []
     dependencies = [colony.base.plugin_system.PluginDependency(
                     "pt.hive.colony.plugins.main.client.http", "1.0.0")]
@@ -108,14 +108,8 @@ class DownloaderPlugin(colony.base.plugin_system.Plugin):
     def get_console_extension_name(self):
         return self.console_downloader.get_console_extension_name()
 
-    def get_all_commands(self):
-        return self.console_downloader.get_all_commands()
-
-    def get_handler_command(self, command):
-        return self.console_downloader.get_handler_command(command)
-
-    def get_help(self):
-        return self.console_downloader.get_help()
+    def get_commands_map(self):
+        return self.console_downloader.get_commands_map()
 
     def get_main_client_http_plugin(self):
         return self.main_client_http_plugin
