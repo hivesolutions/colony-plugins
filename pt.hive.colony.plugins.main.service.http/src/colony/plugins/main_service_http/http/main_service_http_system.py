@@ -740,6 +740,12 @@ class HttpClientServiceHandler:
             try:
                 # sends the request to the client (response)
                 self.send_request(service_connection, request)
+            except main_service_http_exceptions.HttpRuntimeException, exception:
+                # prints a warning message message
+                self.service_plugin.warning("Runtime problem: %s, while sending request" % unicode(exception))
+
+                # returns false (connection closed)
+                return False
             except main_service_http_exceptions.MainServiceHttpException:
                 # prints a debug message
                 self.service_plugin.debug("Connection: %s closed by peer, while sending request" % str(service_connection))
@@ -2328,6 +2334,9 @@ class HttpRequest:
         self.set_header(header_name, final_header_value)
 
     def get_result(self):
+        # validates the current request
+        self.validate()
+
         # retrieves the result stream
         result = colony.libs.string_buffer_util.StringBuffer()
 
@@ -2421,6 +2430,17 @@ class HttpRequest:
 
         # returns the result value
         return result_value
+
+    def validate(self):
+        """
+        Validates the current request, raising exception
+        in case validation fails.
+        """
+
+        # checks if the request contains a status code
+        if not self.status_code:
+            # raises the http runtime exception
+            raise main_service_http_exceptions.HttpRuntimeException("status code not defined")
 
     def get_server_identifier(self):
         """
