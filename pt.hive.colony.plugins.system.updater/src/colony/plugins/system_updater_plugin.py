@@ -54,7 +54,7 @@ class SystemUpdaterPlugin(colony.base.plugin_system.Plugin):
     loading_type = colony.base.plugin_system.EAGER_LOADING_TYPE
     platforms = [colony.base.plugin_system.CPYTHON_ENVIRONMENT]
     attributes = {"build_automation_file_path" : "$base{plugin_directory}/system_updater/updater/resources/baf.xml"}
-    capabilities = ["system_updating", "console_command_extension", "build_automation_item"]
+    capabilities = ["system_updating", "_console_command_extension", "build_automation_item"]
     capabilities_allowed = ["deployer"]
     dependencies = [colony.base.plugin_system.PluginDependency(
                     "pt.hive.colony.plugins.misc.downloader", "1.0.0")]
@@ -120,14 +120,8 @@ class SystemUpdaterPlugin(colony.base.plugin_system.Plugin):
     def get_console_extension_name(self):
         return self.console_system_updater.get_console_extension_name()
 
-    def get_all_commands(self):
-        return self.console_system_updater.get_all_commands()
-
-    def get_handler_command(self, command):
-        return self.console_system_updater.get_handler_command(command)
-
-    def get_help(self):
-        return self.console_system_updater.get_help()
+    def get_commands_map(self):
+        return self.console_system_updater.get_commands_map()
 
     @colony.base.decorators.load_allowed_capability("deployer")
     def deployer_load_allowed(self, plugin, capability):

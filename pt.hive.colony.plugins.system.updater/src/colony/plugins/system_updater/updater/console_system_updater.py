@@ -19,7 +19,7 @@
 # You should have received a copy of the GNU General Public License
 # along with Hive Colony Framework. If not, see <http://www.gnu.org/licenses/>.
 
-__author__ = "João Magalhães <joamag@hive.pt>"
+__author__ = "João Magalhães <joamag@hive.pt> & Tiago Silva <tsilva@hive.pt>"
 """ The author(s) of the module """
 
 __version__ = "1.0.0"
@@ -40,20 +40,6 @@ __license__ = "GNU General Public License (GPL), Version 3"
 CONSOLE_EXTENSION_NAME = "system_updater"
 """ The console extension name """
 
-INVALID_NUMBER_ARGUMENTS_MESSAGE = "invalid number of arguments"
-""" The invalid number of arguments message """
-
-HELP_TEXT = "### SYSTEM UPDATER HELP ###\n\
-list_repositories                              - lists the current available repositories\n\
-list_repository_packages <repository-name>     - lists the packages for the given repository\n\
-list_repository_bundles <repository-name>      - lists the bundles for the given repository\n\
-list_repository_plugins <repository-name>      - lists the plugins for the given repository\n\
-install <id> [version]                         - installs the package, bundle or plugin with the given id and version\n\
-install_package <package-id> [package-version] - installs the package with the given id and version\n\
-install_bundle <bundle-id> [bundle-version]    - installs the bundle with the given id and version\n\
-install_plugin <plugin-id> [plugin-version]    - installs the plugin with the given id and version"
-""" The help text """
-
 class ConsoleSystemUpdater:
     """
     The console system updater class.
@@ -62,8 +48,8 @@ class ConsoleSystemUpdater:
     system_updater_plugin = None
     """ The system updater plugin """
 
-    commands = ["list_repositories", "list_repository_packages", "list_repository_plugins", "install_package", "install_bundle", "install_plugin"]
-    """ The commands list """
+    commands_map = {}
+    """ The map containing the commands information """
 
     def __init__(self, system_updater_plugin):
         """
@@ -75,95 +61,172 @@ class ConsoleSystemUpdater:
 
         self.system_updater_plugin = system_updater_plugin
 
+        # initializes the commands map
+        self.commands_map = self.__generate_commands_map()
+
     def get_console_extension_name(self):
         return CONSOLE_EXTENSION_NAME
 
-    def get_all_commands(self):
-        return self.commands
+    def get_commands_map(self):
+        return self.commands_map
 
-    def get_handler_command(self, command):
-        if command in self.commands:
-            method_name = "process_" + command
-            attribute = getattr(self, method_name)
-            return attribute
+    def process_list_repositories(self, arguments, arguments_map, output_method, console_context):
+        """
+        Processes the list repositories command, with the given
+        arguments and output method.
 
-    def get_help(self):
-        return HELP_TEXT
+        @type arguments: List
+        @param arguments: The arguments for the processing.
+        @type arguments_map: Dictionary
+        @param arguments_map: The map of arguments for the processing.
+        @type output_method: Method
+        @param output_method: The output method to be used in the processing.
+        @type console_context: ConsoleContext
+        @param console_context: The console context for the processing.
+        """
 
-    def process_list_repositories(self, args, output_method):
-
+        # retrieves the repositories list
         repositories_list = self.system_updater_plugin.system_updater.get_repositories()
 
+        # prints the repository information
         for repository in repositories_list:
             self.print_repository_info(repository, output_method)
 
-    def process_list_repository_packages(self, args, output_method):
-        if len(args) < 1:
-            output_method(INVALID_NUMBER_ARGUMENTS_MESSAGE)
-            return
+    def process_list_repository_packages(self, arguments, arguments_map, output_method, console_context):
+        """
+        Processes the list repository packages command, with the given
+        arguments and output method.
 
-        repository_name = args[0]
+        @type arguments: List
+        @param arguments: The arguments for the processing.
+        @type arguments_map: Dictionary
+        @param arguments_map: The map of arguments for the processing.
+        @type output_method: Method
+        @param output_method: The output method to be used in the processing.
+        @type console_context: ConsoleContext
+        @param console_context: The console context for the processing.
+        """
 
+        # retrieves the repository name
+        repository_name = arguments_map["repository_name"]
+
+        # retrieves the package information list
         package_information_list = self.system_updater_plugin.system_updater.get_package_information_list_by_repository_name(repository_name)
 
+        # prints the package information
         for package_information in package_information_list:
             self.print_package_info(package_information, output_method)
 
-    def process_list_repository_plugins(self, args, output_method):
-        if len(args) < 1:
-            output_method(INVALID_NUMBER_ARGUMENTS_MESSAGE)
-            return
+    def process_list_repository_plugins(self, arguments, arguments_map, output_method, console_context):
+        """
+        Processes the list repository plugins command, with the given
+        arguments and output method.
 
-        repository_name = args[0]
+        @type arguments: List
+        @param arguments: The arguments for the processing.
+        @type arguments_map: Dictionary
+        @param arguments_map: The map of arguments for the processing.
+        @type output_method: Method
+        @param output_method: The output method to be used in the processing.
+        @type console_context: ConsoleContext
+        @param console_context: The console context for the processing.
+        """
 
+        # retrieves the repository name
+        repository_name = arguments_map["repository_name"]
+
+        # retrieves the plugin information list
         plugin_information_list = self.system_updater_plugin.system_updater.get_plugin_information_list_by_repository_name(repository_name)
 
+        # prints the plugin information
         for plugin_information in plugin_information_list:
             self.print_plugin_info(plugin_information, output_method)
 
-    def process_install_package(self, args, output_method):
-        if len(args) < 1:
-            output_method(INVALID_NUMBER_ARGUMENTS_MESSAGE)
-            return
+    def process_install_package(self, arguments, arguments_map, output_method, console_context):
+        """
+        Processes the install package command, with the given
+        arguments and output method.
 
-        package_identifier = args[0]
+        @type arguments: List
+        @param arguments: The arguments for the processing.
+        @type arguments_map: Dictionary
+        @param arguments_map: The map of arguments for the processing.
+        @type output_method: Method
+        @param output_method: The output method to be used in the processing.
+        @type console_context: ConsoleContext
+        @param console_context: The console context for the processing.
+        """
 
-        if len(args) == 1:
-            self.system_updater_plugin.system_updater.install_package(package_identifier)
+        # retrieves the package identifier
+        package_id = arguments_map["package_id"]
+
+        # retrieves the package version
+        package_version = arguments_map.get("package_version", None)
+
+        # installs the package
+        if package_version:
+            self.system_updater_plugin.system_updater.install_package(package_id, package_version)
         else:
-            package_version = args[1]
-            self.system_updater_plugin.system_updater.install_package(package_identifier, package_version)
+            self.system_updater_plugin.system_updater.install_package(package_id)
 
-    def process_install_bundle(self, args, output_method):
-        if len(args) < 1:
-            output_method(INVALID_NUMBER_ARGUMENTS_MESSAGE)
-            return
+    def process_install_bundle(self, arguments, arguments_map, output_method, console_context):
+        """
+        Processes the install bundle command, with the given
+        arguments and output method.
 
-        bundle_identifier = args[0]
+        @type arguments: List
+        @param arguments: The arguments for the processing.
+        @type arguments_map: Dictionary
+        @param arguments_map: The map of arguments for the processing.
+        @type output_method: Method
+        @param output_method: The output method to be used in the processing.
+        @type console_context: ConsoleContext
+        @param console_context: The console context for the processing.
+        """
 
-        if len(args) == 1:
-            self.system_updater_plugin.system_updater.install_bundle(bundle_identifier)
+        # retrieves the bundle identifier
+        bundle_id = arguments_map["bundle_id"]
+
+        # retrieves the bundle version
+        bundle_version = arguments_map.get("bundle_version", None)
+
+        # installs the bundle
+        if bundle_version:
+            self.system_updater_plugin.system_updater.install_bundle(bundle_id, bundle_version)
         else:
-            bundle_version = args[1]
-            self.system_updater_plugin.system_updater.install_bundle(bundle_identifier, bundle_version)
+            self.system_updater_plugin.system_updater.install_bundle(bundle_id)
 
-    def process_install_plugin(self, args, output_method):
-        if len(args) < 1:
-            output_method(INVALID_NUMBER_ARGUMENTS_MESSAGE)
-            return
+    def process_install_plugin(self, arguments, arguments_map, output_method, console_context):
+        """
+        Processes the install plugin command, with the given
+        arguments and output method.
 
-        plugin_identifier = args[0]
+        @type arguments: List
+        @param arguments: The arguments for the processing.
+        @type arguments_map: Dictionary
+        @param arguments_map: The map of arguments for the processing.
+        @type output_method: Method
+        @param output_method: The output method to be used in the processing.
+        @type console_context: ConsoleContext
+        @param console_context: The console context for the processing.
+        """
 
-        if len(args) == 1:
-            self.system_updater_plugin.system_updater.install_plugin(plugin_identifier)
+        # retrieves the plugin identifier
+        plugin_id = arguments_map["plugin_id"]
+
+        # retrieves the plugin version
+        plugin_version = arguments_map.get("plugin_version", None)
+
+        # installs the plugin
+        if plugin_version:
+            self.system_updater_plugin.system_updater.install_plugin(plugin_id, plugin_version)
         else:
-            plugin_version = args[1]
-            self.system_updater_plugin.system_updater.install_plugin(plugin_identifier, plugin_version)
+            self.system_updater_plugin.system_updater.install_plugin(plugin_id)
 
-    def print_repository_info(self, repository, output_method):
-        output_method("name:        " + repository.name)
-        output_method("description: " + repository.description)
-        output_method("addresses:   " + str(repository.addresses))
+    def print_repository_info(self, repository_information, output_method):
+        output_method("name:        " + repository_information.name)
+        output_method("description: " + repository_information.description)
+        output_method("addresses:   " + str(repository_information.addresses))
 
     def print_package_info(self, package_information, output_method):
         output_method("name:    " + package_information.name)
@@ -189,3 +252,92 @@ class ConsoleSystemUpdater:
     def print_dependency_info(self, dependency_information, output_method):
         output_method("id:            " + dependency_information.id)
         output_method("version:       " + dependency_information.version)
+
+    def __generate_commands_map(self):
+        # creates the commands map
+        commands_map = {
+                        "list_repositories" : {
+                            "handler" : self.process_list_repositories,
+                            "description" : "lists the current available repositories"
+                        },
+                        "list_repository_packages" : {
+                            "handler" : self.process_list_repository_packages,
+                            "description" : "lists the packages for the given repository",
+                            "arguments" : [
+                                {
+                                    "name" : "repository_name",
+                                    "description" : "the name of the repository from where to list the packages",
+                                    "values" : str,
+                                    "mandatory" : True
+                                }
+                            ]
+                        },
+                        "list_repository_plugins" : {
+                            "handler" : self.process_list_repository_plugins,
+                            "description" : "lists the plugins for the given repository",
+                            "arguments" : [
+                                {
+                                    "name" : "repository_name",
+                                    "description" : "the name of the repository from where to list the plugins",
+                                    "values" : str,
+                                    "mandatory" : True
+                                }
+                            ]
+                        },
+                        "install_package" : {
+                            "handler" : self.process_install_package,
+                            "description" : "installs the package with the given id and version",
+                            "arguments" : [
+                                {
+                                    "name" : "package_id",
+                                    "description" : "the id of the package to install",
+                                    "values" : str,
+                                    "mandatory" : True
+                                },
+                                {
+                                    "name" : "package_version",
+                                    "description" : "the version of the package to install",
+                                    "values" : str,
+                                    "mandatory" : False
+                                }
+                            ]
+                        },
+                        "install_bundle" : {
+                            "handler" : self.process_install_bundle,
+                            "description" : "installs the bundle with the given id and version",
+                            "arguments" : [
+                                {
+                                    "name" : "bundle_id",
+                                    "description" : "the id of the bundle to install",
+                                    "values" : str,
+                                    "mandatory" : True
+                                },
+                                {
+                                    "name" : "bundle_version",
+                                    "description" : "the version of the bundle to install",
+                                    "values" : str,
+                                    "mandatory" : False
+                                }
+                            ]
+                        },
+                        "install_plugin" : {
+                            "handler" : self.process_install_plugin,
+                            "description" : "installs the plugin with the given id and version",
+                            "arguments" : [
+                                {
+                                    "name" : "plugin_id",
+                                    "description" : "the id of the plugin to install",
+                                    "values" : str,
+                                    "mandatory" : True
+                                }, {
+                                    "name" : "plugin_version",
+                                    "description" : "the version of the plugin to install",
+                                    "values" : str,
+                                    "mandatory" : False
+                                }
+                            ]
+                        }
+                    }
+
+        # returns the commands map
+        return commands_map
