@@ -334,7 +334,22 @@ class ApplePushRequest:
         the request.
         """
 
-        return self.notification_message.get_value()
+        # validates the current request
+        self.validate()
+
+        # retrieves the result value
+        result_value = self.notification_message.get_value()
+
+        # returns the result value
+        return result_value
+
+    def validate(self):
+        """
+        Validates the current request, raising exception
+        in case validation fails.
+        """
+
+        pass
 
 class ApplePushResponse:
     """
