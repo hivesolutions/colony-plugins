@@ -352,6 +352,12 @@ class IrcClientServiceHandler:
             try:
                 # sends the request to the client (response)
                 self.send_request(service_connection, request)
+            except main_service_irc_exceptions.IrcRuntimeException, exception:
+                # prints a warning message message
+                self.service_plugin.warning("Runtime problem: %s, while sending request" % unicode(exception))
+
+                # returns false (connection closed)
+                return False
             except main_service_irc_exceptions.MainServiceIrcException:
                 # prints a debug message
                 self.service_plugin.debug("Connection: %s closed by peer, while sending request" % str(service_connection))
