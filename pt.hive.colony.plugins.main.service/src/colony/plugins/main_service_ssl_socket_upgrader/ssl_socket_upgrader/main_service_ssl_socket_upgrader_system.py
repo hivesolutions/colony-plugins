@@ -39,6 +39,7 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 import ssl
 import types
+import select
 
 UPGRADER_NAME = "ssl"
 """ The upgrader name """
@@ -178,13 +179,50 @@ class MainServiceSslSocketUpgrader:
         """
 
         # warps the base socket into an ssl socket
-        ssl_socket = ssl.wrap_socket(base_socket, key_file_path, certificate_file_path, server_side, do_handshake_on_connect = do_handshake_on_connect)
+        ssl_socket = ssl.wrap_socket(base_socket, key_file_path, certificate_file_path, server_side, do_handshake_on_connect = False)
+
+        # does the handshake (on connect)
+        do_handshake_on_connect and self._do_handshake(ssl_socket)
 
         # wraps the ssl socket with new methods
         wrap_socket(ssl_socket)
 
         # returns the ssl socket
         return ssl_socket
+
+    def _do_handshake(self, ssl_socket):
+        """
+        Does the handshake for the given ssl socket.
+        This method of handshake is proof to non blocking sockets.
+
+        @type ssl_socket: SslSocket
+        @param ssl_socket: The ssl socket to be used in the handshake.
+        """
+
+        # iterates continuously
+        while True:
+            try:
+                # does the ssl socket handshake
+                ssl_socket.do_handshake()
+
+                # breaks the loop
+                break
+            except ssl.SSLError, exception:
+                # retrieves the exception value
+                exception_value = exception[0]
+
+                # in case it's an ssl want read exception
+                if exception_value == ssl.SSL_ERROR_WANT_READ:
+                    # select the ssl socket for read
+                    select.select([ssl_socket], [], [])
+                # in case it's an ssl want write exception
+                elif exception_value == ssl.SSL_ERROR_WANT_WRITE:
+                    # select the ssl socket for write
+                    select.select([], [ssl_socket], [])
+                # otherwise it must be a different kind of exception
+                else:
+                    # re-raises the exception
+                    raise
 
 def wrap_socket(ssl_socket):
     # creates the bound accept method for the ssl socket
