@@ -227,7 +227,7 @@ $(document).ready(function() {
             });
 
             // opens the xml http request
-            xmlHttpRequest.open("post", "plugins/new");
+            xmlHttpRequest.open("post", "plugins");
 
             // sets the content type header
             xmlHttpRequest.setRequestHeader("Content-Type",
