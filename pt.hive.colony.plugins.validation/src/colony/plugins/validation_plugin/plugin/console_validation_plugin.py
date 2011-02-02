@@ -94,15 +94,18 @@ class ConsoleValidationPlugin:
         @param console_context: The console context for the processing.
         """
 
+        # retrieves the validation plugin
+        validation_plugin = self.validation_plugin_plugin.validation_plugin
+
         # retrieves the plugin id from the arguments
         plugin_id = arguments_map.get("plugin_id", None)
 
         # validates the specified plugin in case it was provided
         if plugin_id:
-            validation_errors = self.validation_plugin_plugin.validate_plugin(plugin_id)
+            validation_errors = validation_plugin.validate_plugin(plugin_id)
         else:
             # otherwise validates all plugins
-            validation_errors = self.validation_plugin_plugin.validate_plugins()
+            validation_errors = validation_plugin.validate_plugins()
 
         # outputs the validation errors
         for validation_error in validation_errors:
