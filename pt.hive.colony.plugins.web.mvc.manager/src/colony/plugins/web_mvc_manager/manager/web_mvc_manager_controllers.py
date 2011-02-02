@@ -62,6 +62,9 @@ AJAX_ENCODER_NAME = "ajx"
 JSON_ENCODER_NAME = "json"
 """ The json encoder name """
 
+COLONY_PLUGIN_FILE_EXTENSION = "cpx"
+""" The colony plugin file extension """
+
 LOAD_VALUE = "load"
 """ The load value """
 
@@ -684,14 +687,14 @@ class PluginController:
         temporary_plugin_path = plugin_manager.get_temporary_plugin_path_by_id(web_mvc_manager_plugin_id)
 
         # creates the temporary plugin path directories
-        os.makedirs(temporary_plugin_path)
+        not os.path.exists(temporary_plugin_path) and os.makedirs(temporary_plugin_path)
 
         # retrieves the current time
         current_time = time.time()
 
         # generates a unique file name base on the
         # current time
-        unique_file_name = str(current_time)
+        unique_file_name = str(current_time) + "." + COLONY_PLUGIN_FILE_EXTENSION
 
         # creates the unique file path joining the temporary plugin path
         # and the unique file name
