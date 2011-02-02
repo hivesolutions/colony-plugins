@@ -85,6 +85,9 @@ class ConsoleDownloader:
         @param console_context: The console context for the processing.
         """
 
+        # retrieves the downloader instance
+        downloader = self.downloader_plugin.downloader
+
         # retrieves the file path from the arguments
         file_path = arguments_map["file_path"]
 
@@ -92,7 +95,7 @@ class ConsoleDownloader:
         output_method("starting download of " + file_path)
 
         # downloads the specified file
-        self.downloader_plugin.downloader.download_package(file_path)
+        downloader.download_package(file_path)
 
     def process_test_download(self, arguments, arguments_map, output_method, console_context):
         """
@@ -109,6 +112,9 @@ class ConsoleDownloader:
         @param console_context: The console context for the processing.
         """
 
+        # retrieves the downloader instance
+        downloader = self.downloader_plugin.downloader
+
         # retrieves the file path from the arguments
         file_path = arguments_map["file_path"]
 
@@ -116,7 +122,7 @@ class ConsoleDownloader:
         output_method("starting test of " + file_path)
 
         # tests downloading the specified file
-        self.downloader_plugin.downloader.test_package(file_path)
+        downloader.test_package(file_path)
 
     def __generate_commands_map(self):
         # creates the commands map
