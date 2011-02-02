@@ -48,7 +48,7 @@ class HttpLogParserCommonPlugin(colony.base.plugin_system.Plugin):
     id = "pt.hive.colony.plugins.http_log_parser.common"
     name = "Http Log Parser Common Plugin"
     short_name = "Http Log Parser Common"
-    description = "The log parser common plugin"
+    description = "The http log parser common plugin"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     loading_type = colony.base.plugin_system.EAGER_LOADING_TYPE
