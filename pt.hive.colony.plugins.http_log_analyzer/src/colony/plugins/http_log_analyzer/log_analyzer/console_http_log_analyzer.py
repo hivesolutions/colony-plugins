@@ -89,6 +89,9 @@ class ConsoleHttpLogAnalyzer:
         @param console_context: The console context for the processing.
         """
 
+        # retrieves the log analyzer
+        log_analyzer = self.http_log_analyzer_plugin.log_analyzer
+
         # retrieves the path from the arguments
         path = arguments_map["path"]
 
@@ -99,7 +102,7 @@ class ConsoleHttpLogAnalyzer:
         full_path = console_context.get_full_path(path)
 
         # analyzes the log file
-        log_analyzis_map = self.http_log_analyzer_plugin.analyze_log(full_path, log_type)
+        log_analyzis_map = log_analyzer.analyze_log(full_path, log_type)
 
         # outputs the log analyzis map
         colony.libs.map_util.map_output(log_analyzis_map, output_method)
