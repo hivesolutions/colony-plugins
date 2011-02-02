@@ -77,6 +77,7 @@
                         <specification_file>$base{plugin_directory}/base_bundles/bundles/specifications/formcode_bundle.json</specification_file>
                         <specification_file>$base{plugin_directory}/base_bundles/bundles/specifications/garbage_collector_bundle.json</specification_file>
                         <specification_file>$base{plugin_directory}/base_bundles/bundles/specifications/guid_bundle.json</specification_file>
+                        <specification_file>$base{plugin_directory}/base_bundles/bundles/specifications/http_log_analyzer_bundle.json</specification_file>
                         <specification_file>$base{plugin_directory}/base_bundles/bundles/specifications/http_utils_bundle.json</specification_file>
                         <specification_file>$base{plugin_directory}/base_bundles/bundles/specifications/image_treatment_bundle.json</specification_file>
                         <specification_file>$base{plugin_directory}/base_bundles/bundles/specifications/information_bundle.json</specification_file>
@@ -253,6 +254,10 @@
                         <specification>
                             <type>bundle</type>
                             <specification_file>$base{plugin_directory}/base_bundles/bundles/specifications/guid_bundle.json</specification_file>
+                        </specification>
+                        <specification>
+                            <type>bundle</type>
+                            <specification_file>$base{plugin_directory}/base_bundles/bundles/specifications/http_log_analyzer_bundle.json</specification_file>
                         </specification>
                         <specification>
                             <type>bundle</type>

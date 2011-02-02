@@ -47,6 +47,7 @@
             "base_bundles/bundles/specifications/formcode_bundle.json",
             "base_bundles/bundles/specifications/garbage_collector_bundle.json",
             "base_bundles/bundles/specifications/guid_bundle.json",
+            "base_bundles/bundles/specifications/http_log_analyzer_bundle.json",
             "base_bundles/bundles/specifications/http_utils_bundle.json",
             "base_bundles/bundles/specifications/image_treatment_bundle.json",
             "base_bundles/bundles/specifications/information_bundle.json",
