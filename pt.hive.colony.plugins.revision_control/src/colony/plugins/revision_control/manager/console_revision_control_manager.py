@@ -540,11 +540,14 @@ class ConsoleRevisionControlManager:
             output_method(resource_revision)
 
     def load_revision_control_manager(self, adapter_name, resource_identifier = None, revision_control_parameters = {}):
+        # retrieves the revision control manager instance
+        revision_control_manager = self.revision_control_manager_plugin.revision_control_manager
+
         # creates the revision control parameters
         revision_control_parameters["repository_path"] = resource_identifier
 
         # loads a new revision control manager for the specified adapter name
-        revision_control_manager = self.revision_control_manager_plugin.load_revision_control_manager(adapter_name, revision_control_parameters)
+        revision_control_manager = revision_control_manager.load_revision_control_manager(adapter_name, revision_control_parameters)
 
         # returns the creates revision control manager
         return revision_control_manager
