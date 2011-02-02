@@ -110,11 +110,11 @@ class SystemInstallerPlugin(colony.base.plugin_system.Plugin):
         return self.console_system_installer.get_commands_map()
 
     @colony.base.decorators.load_allowed_capability("installer")
-    def deployer_load_allowed(self, plugin, capability):
+    def installer_load_allowed(self, plugin, capability):
         self.installer_plugins.append(plugin)
         self.system_installer.installer_load(plugin)
 
     @colony.base.decorators.unload_allowed_capability("installer")
-    def deployer_unload_allowed(self, plugin, capability):
+    def installer_unload_allowed(self, plugin, capability):
         self.installer_plugins.remove(plugin)
         self.system_installer.installer_unload(plugin)

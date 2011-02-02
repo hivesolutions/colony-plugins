@@ -57,7 +57,9 @@ class ColonyPackingInstallerPlugin(colony.base.plugin_system.Plugin):
     capabilities = ["installer", "build_automation_item"]
     capabilities_allowed = []
     dependencies = [colony.base.plugin_system.PluginDependency(
-                    "pt.hive.colony.plugins.main.packing.manager", "1.0.0")]
+                    "pt.hive.colony.plugins.main.packing.manager", "1.0.0"),
+                    colony.base.plugin_system.PluginDependency(
+                    "pt.hive.colony.plugins.misc.json", "1.0.0")]
     events_handled = []
     events_registrable = []
     main_modules = ["system_installer.colony_packing.colony_packing_installer_exceptions",
@@ -66,7 +68,10 @@ class ColonyPackingInstallerPlugin(colony.base.plugin_system.Plugin):
     colony_packing_installer = None
 
     packing_manager_plugin = None
-    """ Plugin to for packing of files """
+    """ Plugin for packing of files """
+
+    json_plugin = None
+    """ Plugin for json file handling """
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
@@ -89,7 +94,7 @@ class ColonyPackingInstallerPlugin(colony.base.plugin_system.Plugin):
     def unload_allowed(self, plugin, capability):
         colony.base.plugin_system.Plugin.unload_allowed(self, plugin, capability)
 
-    @colony.base.decorators.inject_dependencies("pt.hive.colony.plugins.system.updater.colony_packing_installer", "1.0.0")
+    @colony.base.decorators.inject_dependencies("pt.hive.colony.plugins.system.installer.colony_packing_installer", "1.0.0")
     def dependency_injected(self, plugin):
         colony.base.plugin_system.Plugin.dependency_injected(self, plugin)
 
@@ -98,7 +103,7 @@ class ColonyPackingInstallerPlugin(colony.base.plugin_system.Plugin):
 
     def install_bundle(self, file_path, properties):
         """
-        Method called upon deployment of the bundle with
+        Method called upon installation of the bundle with
         the given file path and properties.
 
         @type file_path: String
@@ -111,7 +116,7 @@ class ColonyPackingInstallerPlugin(colony.base.plugin_system.Plugin):
 
     def install_plugin(self, file_path, properties):
         """
-        Method called upon deployment of the plugin with
+        Method called upon installation of the plugin with
         the given file path and properties.
 
         @type file_path: String
@@ -128,3 +133,10 @@ class ColonyPackingInstallerPlugin(colony.base.plugin_system.Plugin):
     @colony.base.decorators.plugin_inject("pt.hive.colony.plugins.main.packing.manager")
     def set_packing_manager_plugin(self, packing_manager_plugin):
         self.packing_manager_plugin = packing_manager_plugin
+
+    def get_json_plugin(self):
+        return self.json_plugin
+
+    @colony.base.decorators.plugin_inject("pt.hive.colony.plugins.misc.json")
+    def set_json_plugin(self, json_plugin):
+        self.json_plugin = json_plugin

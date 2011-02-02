@@ -37,6 +37,9 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
+import os
+import time
+
 INSTALLER_TYPE = "colony_packing"
 """ The installer type """
 
@@ -67,17 +70,17 @@ class ColonyPackingInstaller:
 
     def get_installer_type(self):
         """
-        Retrieves the type of deployer.
+        Retrieves the type of installer.
 
         @rtype: String
-        @return: The type of deployer.
+        @return: The type of installer.
         """
 
         return INSTALLER_TYPE
 
-    def deploy_bundle(self, file_path, properties):
+    def install_bundle(self, file_path, properties):
         """
-        Method called upon deployment of the bundle with
+        Method called upon installation of the bundle with
         the given file path and properties.
 
         @type file_path: String
@@ -86,27 +89,18 @@ class ColonyPackingInstaller:
         @param properties: The map of properties for installation.
         """
 
-        pass
+        # retrieves the plugin manager
+        plugin_manager = self.colony_packing_installer_plugin.manager
 
-#        # retrieves the plugin manager
-#        plugin_manager = self.colony_packing_deployer_plugin.manager
-#
-#        # retrieves the packing manager plugin
-#        packing_manager_plugin = self.colony_packing_deployer_plugin.packing_manager_plugin
-#
-#        # retrieves the main plugin path as the plugin path
-#        # for deployment
-#        plugin_path = plugin_manager.get_main_plugin_path()
-#
-#        # creates the properties map for the file unpacking packing
-#        properties = {TARGET_PATH_VALUE : plugin_path}
-#
-#        # unpacks the files using the colony service
-#        packing_manager_plugin.unpack_files([contents_file.name], properties, COLONY_VALUE)
+        # retrieves the manager path
+        manager_path = plugin_manager.get_manager_path()
 
-    def deploy_plugin(self, file_path, properties):
+        # creates the bundles file path
+        bundles_file_path = os.path.join(manager_path, "var/bundles.json")
+
+    def install_plugin(self, file_path, properties):
         """
-        Method called upon deployment of the plugin with
+        Method called upon installation of the plugin with
         the given file path and properties.
 
         @type file_path: String
@@ -115,20 +109,86 @@ class ColonyPackingInstaller:
         @param properties: The map of properties for installation.
         """
 
-        pass
+        # retrieves the plugin manager
+        plugin_manager = self.colony_packing_installer_plugin.manager
 
-#        # retrieves the plugin manager
-#        plugin_manager = self.colony_packing_deployer_plugin.manager
-#
-#        # retrieves the packing manager plugin
-#        packing_manager_plugin = self.colony_packing_deployer_plugin.packing_manager_plugin
-#
-#        # retrieves the main plugin path as the plugin path
-#        # for deployment
-#        plugin_path = plugin_manager.get_main_plugin_path()
-#
-#        # creates the properties map for the file unpacking packing
-#        properties = {TARGET_PATH_VALUE : plugin_path}
-#
-#        # unpacks the files using the colony service
-#        packing_manager_plugin.unpack_files([contents_file.name], properties, COLONY_VALUE)
+        # retrieves the json plugin
+        json_plugin = self.colony_packing_installer_plugin.json_plugin
+
+        # retrieves the manager path
+        manager_path = plugin_manager.get_manager_path()
+
+        # creates the plugins file path
+        plugins_file_path = os.path.join(manager_path, "var/plugins.json")
+
+        # TENHO DE CONTAR COM O CASE DE O FICHEIRO NAO EXISTIR
+
+        # tenho de obter as informacoes sobre o cpx aki
+        # e depois tenho de acrescentar essas informacoes ao plugins.json
+        # tenho tb de verificar conflicto de plgugins
+        # se tiver a mesma versao so com force posso eu fazer deploy
+
+        # HARDCODES
+
+        PLUGIN_ID = "pt.hive.colony.matias"
+
+        PLUGIN_VERSION = "1.0.0"
+
+        # -----------------------------------------
+
+        # retrieves the properties values
+        upgrade = properties.get("upgrade", True)
+        force = properties.get("force", False)
+
+        # reads the plugin file contents
+        plugins_file_contents = self._read_file(plugins_file_path)
+
+        plugins = json_plugin.loads(plugins_file_contents)
+
+        installed_plugins = plugins.get("installed_plugins", {})
+
+        installed_plugin = installed_plugins.get(PLUGIN_ID, {})
+
+        if installed_plugin and not upgrade:
+            raise Exception("Plugin already installed")
+
+        installed_plugin_version = installed_plugin.get("version", None)
+
+        if installed_plugin_version == PLUGIN_VERSION and not force:
+            raise Exception("Plugin version already installed")
+
+        # retrieves the current time
+        current_time = time.time()
+
+        installed_plugins[PLUGIN_ID] = {"version" : PLUGIN_VERSION, "timestamp" : current_time}
+
+        # serializes the plugins (in pretty mode)
+        plugins_serialized = json_plugin.dumps_pretty(plugins)
+
+        # writes the plugins serialized value in the plugins file
+        self._write_file(plugins_file_path, plugins_serialized)
+
+    def _read_file(self, file_path):
+        # open the file
+        file = open(file_path, "rb")
+
+        try:
+            # reads the file contents
+            file_contents = file.read()
+        finally:
+            # closes the file
+            file.close()
+
+        # returns the file contents
+        return file_contents
+
+    def _write_file(self, file_path, file_contents):
+        # open the file
+        file = open(file_path, "wb")
+
+        try:
+            # writes the file contents
+            file.write(file_contents)
+        finally:
+            # closes the file
+            file.close()
