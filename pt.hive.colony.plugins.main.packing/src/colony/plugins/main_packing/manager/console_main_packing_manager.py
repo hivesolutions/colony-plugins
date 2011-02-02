@@ -111,6 +111,45 @@ class ConsoleMainPackingManager:
         # packs the files using the main packing manager
         main_packing_manager.pack_files([full_path], properties, service_name)
 
+    def process_unpack(self, arguments, arguments_map, output_method, console_context):
+        """
+        Processes the unpack command, with the given
+        arguments and output method.
+
+        @type arguments: List
+        @param arguments: The arguments for the processing.
+        @type arguments_map: Dictionary
+        @param arguments_map: The map of arguments for the processing.
+        @type output_method: Method
+        @param output_method: The output method to be used in the processing.
+        @type console_context: ConsoleContext
+        @param console_context: The console context for the processing.
+        """
+
+        # retrieves the main packing manager
+        main_packing_manager = self.main_packing_manager_plugin.main_packing_manager
+
+        # retrieves the current path
+        current_path = console_context.get_path()
+
+        # retrieves the path from the arguments
+        path = arguments_map["path"]
+
+        # retrieves the service name from the arguments
+        service_name = arguments_map.get("service_name", "colony")
+
+        # retrieves the target path from the arguments
+        target_path = arguments_map.get("target_path", current_path)
+
+        # retrieves the full path using the console context
+        full_path = console_context.get_full_path(path)
+
+        # creates the properties map for the directory packing
+        properties = {"target_path" : target_path}
+
+        # unpacks the files using the main packing manager
+        main_packing_manager.unpack_files([full_path], properties, service_name)
+
     def get_path_names_list(self, argument, console_context):
         # retrieves the directory name from the argument
         directory_name = os.path.dirname(argument)
@@ -171,6 +210,28 @@ class ConsoleMainPackingManager:
                                 }, {
                                     "name" : "target_path",
                                     "description" : "the path to deploy the created package",
+                                    "values" : self.get_path_names_list,
+                                    "mandatory" : False
+                                }
+                            ]
+                        },
+                        "unpack" : {
+                            "handler" : self.process_unpack,
+                            "description" : "unpacks the given file with the given type",
+                            "arguments" : [
+                                {
+                                    "name" : "path",
+                                    "description" : "the path to the file to be used in unpacking",
+                                    "values" : self.get_path_names_list,
+                                    "mandatory" : True
+                                }, {
+                                    "name" : "service_name",
+                                    "description" : "the name of the service to be used for unpacking",
+                                    "values" : self.get_service_names_list,
+                                    "mandatory" : False
+                                }, {
+                                    "name" : "target_path",
+                                    "description" : "the path to deploy the destroyed package",
                                     "values" : self.get_path_names_list,
                                     "mandatory" : False
                                 }
