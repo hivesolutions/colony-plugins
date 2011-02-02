@@ -53,7 +53,7 @@ class HttpLogParserCommonPlugin(colony.base.plugin_system.Plugin):
     author = "Hive Solutions Lda. <development@hive.pt>"
     loading_type = colony.base.plugin_system.EAGER_LOADING_TYPE
     platforms = [colony.base.plugin_system.CPYTHON_ENVIRONMENT]
-    attributes = {"build_automation_file_path" : "$base{plugin_directory}/http_common_log_parser/log_parser/resources/baf.xml"}
+    attributes = {"build_automation_file_path" : "$base{plugin_directory}/http_log_parser_common/log_parser_common/resources/baf.xml"}
     capabilities = ["http_log_parser", "build_automation_item"]
     capabilities_allowed = []
     dependencies = []
