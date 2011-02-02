@@ -37,6 +37,8 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
+import os
+import time
 import copy
 import base64
 
@@ -59,9 +61,6 @@ AJAX_ENCODER_NAME = "ajx"
 
 JSON_ENCODER_NAME = "json"
 """ The json encoder name """
-
-PLUGINS_DIRECTORY = "colony/plugins"
-""" The plugins directory value """
 
 LOAD_VALUE = "load"
 """ The load value """
@@ -672,29 +671,56 @@ class PluginController:
         return True
 
     def _deploy_package(self, rest_request):
+        # retrieves the plugin manager
+        plugin_manager = self.web_mvc_manager_plugin.manager
+
+        # retrieves the main plugin path
+        main_plugin_path = plugin_manager.get_main_plugin_path()
+
+        # retrieves the web mvc manager plugin id
+        web_mvc_manager_plugin_id = self.web_mvc_manager_plugin.id
+
+        # retrieves a temporary plugin path
+        temporary_plugin_path = plugin_manager.get_temporary_plugin_path_by_id(web_mvc_manager_plugin_id)
+
+        # creates the temporary plugin path directories
+        os.makedirs(temporary_plugin_path)
+
+        # generates a unique file name base on the
+        # current time
+        unique_file_name = str(time.time())
+
+        # creates the unique file path joining the temporary plugin path
+        # and the unique file name
+        unique_file_path = os.path.join(temporary_plugin_path, unique_file_name)
+
         # retrieves the request contents
         contents = rest_request.request.read()
 
         # decodes the contents from base64
         contents_decoded = base64.b64decode(contents)
 
-        # opens the temporary cpx file
-        temp_file = open("c:/temp.cpx", "wb")
+        # opens the temporary (unique) cpx file
+        temp_file = open(unique_file_path, "wb")
 
-        # writes the contents (decoded) to the file
-        temp_file.write(contents_decoded)
-
-        # closes the temporary file
-        temp_file.close()
+        try:
+            # writes the contents (decoded) to the file
+            temp_file.write(contents_decoded)
+        finally:
+            # closes the temporary file
+            temp_file.close()
 
         # retrieves the packing manager plugin
         packing_manager_plugin = self.web_mvc_manager_plugin.packing_manager_plugin
 
         # creates the properties map for the file unpacking packing
-        properties = {"target_path" : PLUGINS_DIRECTORY}
+        properties = {"target_path" : main_plugin_path}
 
         # unpacks the files using the colony service
-        packing_manager_plugin.unpack_files(["c:/temp.cpx"], properties, "colony")
+        packing_manager_plugin.unpack_files([unique_file_path], properties, "colony")
+
+        # removes the unique file
+        os.remove(unique_file_path)
 
     def _get_plugin(self, plugin_id):
         # retrieves the plugin manager
