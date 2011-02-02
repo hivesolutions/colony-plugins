@@ -42,7 +42,7 @@ import colony.base.decorators
 
 class ColonyPackingDeployerPlugin(colony.base.plugin_system.Plugin):
     """
-    The main class for the Colony Packing Deployer plugin
+    The main class for the Colony Packing Deployer plugin.
     """
 
     id = "pt.hive.colony.plugins.system.updater.colony_packing_deployer"

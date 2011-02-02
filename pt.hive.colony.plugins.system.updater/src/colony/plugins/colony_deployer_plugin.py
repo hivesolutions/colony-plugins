@@ -42,7 +42,7 @@ import colony.base.decorators
 
 class ColonyDeployerPlugin(colony.base.plugin_system.Plugin):
     """
-    The main class for the Colony Deployer plugin
+    The main class for the Colony Deployer plugin.
     """
 
     id = "pt.hive.colony.plugins.system.updater.colony_deployer"

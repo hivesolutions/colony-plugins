@@ -42,7 +42,7 @@ import colony.base.decorators
 
 class SystemUpdaterPlugin(colony.base.plugin_system.Plugin):
     """
-    The main class for the System Updater plugin
+    The main class for the System Updater plugin.
     """
 
     id = "pt.hive.colony.plugins.system.updater"
