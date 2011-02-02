@@ -85,15 +85,18 @@ class ConsoleDescriptorGenerator:
         @param console_context: The console context for the processing.
         """
 
+        # retrieves the descriptor generator instance
+        descriptor_generator = self.descriptor_generator_plugin.descriptor_generator
+
         # retrieves the plugin id from the arguments
         plugin_id = arguments_map.get("plugin_id", None)
 
         # generates a plugin descriptor for the specified plugin in case an id was specified
         if plugin_id:
-            self.descriptor_generator_plugin.generate_plugin_descriptor(plugin_id)
+            descriptor_generator.generate_plugin_descriptor(plugin_id)
         else:
             # otherwise generates descriptors for all plugins that fail validation
-            self.descriptor_generator_plugin.generate_plugin_descriptors()
+            descriptor_generator.generate_plugin_descriptors()
 
     def get_plugin_id_list(self, argument, console_context):
         # retrieves the plugin manager
