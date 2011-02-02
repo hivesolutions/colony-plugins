@@ -686,9 +686,12 @@ class PluginController:
         # creates the temporary plugin path directories
         os.makedirs(temporary_plugin_path)
 
+        # retrieves the current time
+        current_time = time.time()
+
         # generates a unique file name base on the
         # current time
-        unique_file_name = str(time.time())
+        unique_file_name = str(current_time)
 
         # creates the unique file path joining the temporary plugin path
         # and the unique file name
