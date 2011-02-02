@@ -245,6 +245,10 @@ class MainPackingColonyService:
             elif self.library_regex.match(file_path):
                 # processes the library file
                 self._process_library_file(file_path, target_path)
+            # otherwise the file path is not valid
+            else:
+                # raises the invalid file path exception
+                raise main_packing_colony_service_exceptions.InvalidFilePath(file_path)
 
     def unpack_files(self, file_paths_list, properties):
         """
@@ -280,6 +284,10 @@ class MainPackingColonyService:
             elif file_extension == DEFAULT_COLONY_LIBRARY_FILE_EXTENSION:
                 #(un)processes the library file using the given specification file path
                 self._unprocess_plugin_library(file_path, target_path, specification_file_path)
+            # otherwise the file extension is not valid
+            else:
+                # raises the invalid file extension
+                raise main_packing_colony_service_exceptions.InvalidFileExtension(file_extension)
 
     def _pack_directory(self, arguments, directory_path, directory_file_list):
         """
