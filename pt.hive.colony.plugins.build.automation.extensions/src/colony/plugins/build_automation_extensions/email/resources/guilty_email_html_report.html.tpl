@@ -89,8 +89,9 @@
                                 Code has been updated to <font face="Rockwell, Arial" size="2" color="#214c8f"><b>r${out_none value=build_automation.version xml_escape=True /}</b></font>.<br />
                                 The updating of the code involved:
                                 ${foreach item=changer from=build_automation.changers_list}
-                                <font face="Rockwell, Arial" size="2" color="#214c8f"><b>${out_none value=changer.name xml_escape=True /} (${out_none value=changer.username xml_escape=True /})</b></font>,
-                                ${/foreach}.<br />
+                                    <font face="Rockwell, Arial" size="2" color="#214c8f"><b>${out_none value=changer.name xml_escape=True /} (${out_none value=changer.username xml_escape=True /})</b></font>,
+                                ${/foreach}.
+                                <br />
                                 The total time for the build automation run was <font face="Rockwell, Arial" size="2" color="#214c8f"><b>${out_none value=build_automation.total_time_formated xml_escape=True /}</b></font>.
                             </font>
                         </p>
@@ -100,12 +101,12 @@
                         <font face="Rockwell, Arial" size="3" color="#808080"><strong>Code Changes</strong></font>
                         <br />
                         ${foreach item=change from=build_automation.changelog_list}
-                        <p>
-                            <font face="Arial" size="2" color="#333333">
-                                <font face="Rockwell, Arial" size="3" color="#214c8f"><b><a href="${out_none value=build_automation.changelog_url xml_escape=True /}/${out_none value=change.number xml_escape=True /}">r${out_none value=change.number xml_escape=True /}</a> - ${out_none value=change.user.name xml_escape=True /} (${out_none value=change.user.username xml_escape=True /})</b></font><br />
-                                ${out_none value=change.message xml_escape=True /}
-                            </font>
-                        </p>
+                            <p>
+                                <font face="Arial" size="2" color="#333333">
+                                    <font face="Rockwell, Arial" size="3" color="#214c8f"><b><a href="${out_none value=build_automation.changelog_url xml_escape=True /}/${out_none value=change.number xml_escape=True /}">r${out_none value=change.number xml_escape=True /}</a> - ${out_none value=change.user.name xml_escape=True /} (${out_none value=change.user.username xml_escape=True /})</b></font><br />
+                                    ${out_none value=change.message xml_escape=True /}
+                                </font>
+                            </p>
                         ${/foreach}
                         <img src="cid:line.gif" width="100%" height="1" alt="separator" />
                         <p align="right">
@@ -114,12 +115,12 @@
                         <font face="Rockwell, Arial" size="3" color="#808080"><strong>Issues</strong></font>
                         <br />
                         ${foreach item=issue from=build_automation.issues_list}
-                        <p>
-                            <font face="Arial" size="2" color="#333333">
-                                <font face="Rockwell, Arial" size="3" color="#214c8f"><b><a href="#">r${out_none value=issue.number xml_escape=True /}</a> - ${out_none value=issue.title xml_escape=True /}</b></font><br />
-                                ${out_none value=issue.description xml_escape=True /}
-                            </font>
-                        </p>
+                            <p>
+                                <font face="Arial" size="2" color="#333333">
+                                    <font face="Rockwell, Arial" size="3" color="#214c8f"><b><a href="#">r${out_none value=issue.number xml_escape=True /}</a> - ${out_none value=issue.title xml_escape=True /}</b></font><br />
+                                    ${out_none value=issue.description xml_escape=True /}
+                                </font>
+                            </p>
                         ${/foreach}
                         <img src="cid:line.gif" width="100%" height="1" alt="separator" />
                         <p align="right"><font face="Arial" size="2" color="#333333"><a href="#">issues details ></a></font></p>
