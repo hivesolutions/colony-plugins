@@ -37,6 +37,8 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
+import system_installer_exceptions
+
 class SystemInstaller:
     """
     The system installer class.
@@ -60,6 +62,20 @@ class SystemInstaller:
 
         self.installer_plugins_map = {}
 
+    def install_bundle(self, file_path, properties, installer_type):
+        # retrieves the installer plugin for the installer type
+        installer_plugin = self._get_installer_plugin_by_installer_type(installer_type)
+
+        # installs the bundle with the installer plugin
+        installer_plugin.installbundle(file_path, properties)
+
+    def install_plugin(self, file_path, properties, installer_type):
+        # retrieves the installer plugin for the installer type
+        installer_plugin = self._get_installer_plugin_by_installer_type(installer_type)
+
+        # installs the plugin with the installer plugin
+        installer_plugin.install_plugin(file_path, properties)
+
     def installer_load(self, installer_plugin):
         # retrieves the plugin installer type
         installer_type = installer_plugin.get_installer_type()
@@ -75,3 +91,25 @@ class SystemInstaller:
         # removes the installer plugin from the installer
         # plugins map
         del self.installer_plugins_map[installer_type]
+
+    def _get_installer_plugin_by_installer_type(self, installer_type):
+        """
+        Retrieves a installer plugin for the given installer type.
+
+        @type installer_type : String
+        @param installer_type: The type of the installer to retrieve.
+        @rtype: Plugin
+        @return: The installer plugin for the given installer type.
+        """
+
+        # in case the installer type does not exist in the installer
+        # plugins map
+        if not installer_type in self.installer_plugins_map:
+            # raises the missing installer exception
+            raise system_installer_exceptions.MissingInstaller(installer_type)
+
+        # retrieves the installer plugin from the installer plugins map
+        installer_plugin = self.installer_plugins_map[installer_type]
+
+        # returns the installer plugin
+        return installer_plugin

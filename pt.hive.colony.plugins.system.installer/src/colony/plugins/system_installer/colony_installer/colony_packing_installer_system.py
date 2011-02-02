@@ -104,7 +104,7 @@ class ColonyPackingInstaller:
 #        # unpacks the files using the colony service
 #        packing_manager_plugin.unpack_files([contents_file.name], properties, COLONY_VALUE)
 
-    def deploy_plugin(self, plugin_id, plugin_version, contents_file):
+    def deploy_plugin(self, file_path, properties):
         """
         Method called upon deployment of the plugin with
         the given file path and properties.

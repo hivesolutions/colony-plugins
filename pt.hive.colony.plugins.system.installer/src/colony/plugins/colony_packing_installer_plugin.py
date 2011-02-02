@@ -96,7 +96,7 @@ class ColonyPackingInstallerPlugin(colony.base.plugin_system.Plugin):
     def get_installer_type(self):
         return self.colony_packing_installer.get_installer_type()
 
-    def install_bundle(self, bundle_id, bundle_version, contents_file):
+    def install_bundle(self, file_path, properties):
         """
         Method called upon deployment of the bundle with
         the given file path and properties.
@@ -107,9 +107,9 @@ class ColonyPackingInstallerPlugin(colony.base.plugin_system.Plugin):
         @param properties: The map of properties for installation.
         """
 
-        return self.colony_packing_installer.install_bundle(bundle_id, bundle_version, contents_file)
+        return self.colony_packing_installer.install_bundle(file_path, properties)
 
-    def install_plugin(self, plugin_id, plugin_version, contents_file):
+    def install_plugin(self, file_path, properties):
         """
         Method called upon deployment of the plugin with
         the given file path and properties.
@@ -120,7 +120,7 @@ class ColonyPackingInstallerPlugin(colony.base.plugin_system.Plugin):
         @param properties: The map of properties for installation.
         """
 
-        return self.colony_packing_installer.install_plugin(plugin_id, plugin_version, contents_file)
+        return self.colony_packing_installer.install_plugin(file_path, properties)
 
     def get_packing_manager_plugin(self):
         return self.packing_manager_plugin

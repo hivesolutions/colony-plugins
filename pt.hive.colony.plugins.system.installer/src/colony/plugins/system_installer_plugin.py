@@ -97,14 +97,11 @@ class SystemInstallerPlugin(colony.base.plugin_system.Plugin):
     def dependency_injected(self, plugin):
         colony.base.plugin_system.Plugin.dependency_injected(self, plugin)
 
-    def install_package(self, package_id, package_version):
-        return self.system_installer.install_package(package_id, package_version)
+    def install_bundle(self, file_path, properties, installer_type):
+        return self.system_installer.install_bundle(file_path, properties, installer_type)
 
-    def install_bundle(self, bundle_id, bundle_version):
-        return self.system_installer.install_bundle(bundle_id, bundle_version)
-
-    def install_plugin(self, plugin_id, plugin_version):
-        return self.system_installer.install_plugin(plugin_id, plugin_version)
+    def install_plugin(self, file_path, properties, installer_type):
+        return self.system_installer.install_plugin(file_path, properties, installer_type)
 
     def get_console_extension_name(self):
         return self.console_system_installer.get_console_extension_name()

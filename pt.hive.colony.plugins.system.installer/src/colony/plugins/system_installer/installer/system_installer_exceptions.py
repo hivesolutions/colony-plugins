@@ -46,3 +46,29 @@ class SystemInstallerException(colony.base.plugin_system_exceptions.ColonyExcept
 
     message = None
     """ The exception's message """
+
+class MissingInstaller(SystemInstallerException):
+    """
+    The missing installer class.
+    """
+
+    def __init__(self, message):
+        """
+        Constructor of the class.
+
+        @type message: String
+        @param message: The message to be printed.
+        """
+
+        SystemInstallerException.__init__(self)
+        self.message = message
+
+    def __str__(self):
+        """
+        Returns the string representation of the class.
+
+        @rtype: String
+        @return: The string representation of the class.
+        """
+
+        return "Missing installer: %s" % self.message
