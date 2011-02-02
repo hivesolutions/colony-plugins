@@ -42,7 +42,7 @@
                     <b>Traceback</b>
                 </p>
                 ${foreach item=traceback_line from=traceback}
-                <p class="traceback">${out_none value=traceback_line xml_escape=True /}</p>
+                    <p class="traceback">${out_none value=traceback_line xml_escape=True /}</p>
                 ${/foreach}
             </div>
         </div>

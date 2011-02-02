@@ -28,10 +28,10 @@
                 <div class="directory-list-text">
                     <b>Directory listing</b>
                     <p>
-                    ${foreach item=directory_item from=directory_list}
-                    <a href="${out_none value=directory_item.link quote=True xml_escape=True /}">${out_none value=directory_item.name xml_escape=True /}</a> /
-                    ${/foreach}
-                    ${out_none value=directory_final_item xml_escape=True /}
+                        ${foreach item=directory_item from=directory_list}
+                            <a href="${out_none value=directory_item.link quote=True xml_escape=True /}">${out_none value=directory_item.name xml_escape=True /}</a> /
+                        ${/foreach}
+                        ${out_none value=directory_final_item xml_escape=True /}
                     </p>
                 </div>
             </div>
