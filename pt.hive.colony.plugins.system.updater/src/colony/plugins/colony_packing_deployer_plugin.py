@@ -94,6 +94,9 @@ class ColonyPackingDeployerPlugin(colony.base.plugin_system.Plugin):
     def dependency_injected(self, plugin):
         colony.base.plugin_system.Plugin.dependency_injected(self, plugin)
 
+    def get_deployer_type(self):
+        return self.colony_packing_deployer.get_deployer_type()
+
     def deploy_bundle(self, bundle_id, bundle_version, contents_file):
         """
         Method called upon deployment of the bundle with
@@ -125,9 +128,6 @@ class ColonyPackingDeployerPlugin(colony.base.plugin_system.Plugin):
         """
 
         return self.colony_packing_deployer.deploy_plugin(plugin_id, plugin_version, contents_file)
-
-    def get_deployer_type(self):
-        return self.colony_packing_deployer.get_deployer_type()
 
     def get_packing_manager_plugin(self):
         return self.packing_manager_plugin
