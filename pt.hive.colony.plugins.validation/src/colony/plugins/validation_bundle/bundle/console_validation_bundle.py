@@ -97,8 +97,11 @@ class ConsoleValidationBundle:
         @param console_context: The console context for the processing.
         """
 
+        # retrieves the validation bundle
+        validation_bundle = self.validation_bundle_plugin.validation_bundle
+
         # validates the bundles
-        validation_errors = self.validation_bundle_plugin.validate_bundles([])
+        validation_errors = validation_bundle.validate_bundles([])
 
         # outputs the validation errors
         for validation_error in validation_errors:
