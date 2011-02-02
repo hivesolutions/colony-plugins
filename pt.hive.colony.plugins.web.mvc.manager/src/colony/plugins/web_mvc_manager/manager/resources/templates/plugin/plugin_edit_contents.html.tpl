@@ -8,7 +8,7 @@
     <h1>Configuration</h1>
     <h2>Plugin - ${out_none value=plugin.id xml_escape=True /}</h2>
     <div class="message">${out_none value=result_message xml_escape=True /}</div>
-    <form action_target="plugins/edit/${out_none value=plugin.id xml_escape=True /}" id="edit-plugin" method="post">
+    <form data-action_target="plugins/edit/${out_none value=plugin.id xml_escape=True /}" id="edit-plugin" method="post">
         <div class="form-field-area">
             <h4>Plugin Data</h4>
             <hr/>

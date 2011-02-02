@@ -232,7 +232,7 @@
                         }
 
                         // retrieves the target request fromt the target element
-                        var targetRequest = targetElement.attr("target_request");
+                        var targetRequest = targetElement.attr("data-target_request");
 
                         // updates the history with the new value
                         $.historyLoad(targetRequest);
@@ -357,7 +357,7 @@
 
                             // retrieves the action target value
                             // from the form
-                            var actionTarget = formValue.attr("action_target");
+                            var actionTarget = formValue.attr("data-action_target");
 
                             // in case there is no action target defined
                             // (not dynamic) form
@@ -382,7 +382,7 @@
 
                         // retrieves the action target value
                         // from the link
-                        var actionTarget = linkValue.attr("action_target");
+                        var actionTarget = linkValue.attr("data-action_target");
 
                         // in case there is no action target defined
                         // (not dynamic) link
@@ -697,7 +697,7 @@
             $("#left-column > ul > li", matchedObject).removeClass("active");
 
             // retrieves the target element to be changed
-            var targetElement = $("#left-column > ul > li[target_request="
+            var targetElement = $("#left-column > ul > li[data-target_request="
                             + target + "]", matchedObject);
 
             // adds the active class to the target element
@@ -1043,7 +1043,7 @@
                         }
 
                         // retrieves the target request from the target element
-                        var targetRequest = targetElement.attr("target_request");
+                        var targetRequest = targetElement.attr("data-target_request");
 
                         // updates the history with the new value
                         $.historyLoad(targetRequest);
@@ -1539,7 +1539,7 @@
         var _registerHandlers = function() {
             matchedObjectChildren.bind("click", function() {
                         // retrieves the link address
-                        var linkAddress = $(this).attr("link");
+                        var linkAddress = $(this).attr("data-link");
 
                         // replaces the url and redirects the page
                         window.location.replace(linkAddress);

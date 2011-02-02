@@ -229,7 +229,7 @@
             clearTimeout(searchTimeout);
 
             // retrieves the intended target
-            var targetRequest = jQuery(".highlighted", matchedObject).attr("target_request");
+            var targetRequest = jQuery(".highlighted", matchedObject).attr("data-target_request");
 
             // retrieves the request handler
             var requestHandler = options["requestHandler"];
@@ -314,7 +314,7 @@
                         _hideAutoComplete(options, matchedObject);
 
                         // retrieves the intended target
-                        targetRequest = element.attr("target_request");
+                        targetRequest = element.attr("data-target_request");
 
                         // retrieves the request handler
                         var requestHandler = options["requestHandler"];

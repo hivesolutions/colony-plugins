@@ -9,7 +9,7 @@
     </ul>
     <h1 id="lists">Lists</h1>
     <ul id="lists">
-        <li target_request="repositories"><span>Repositories</span></li>
+        <li data-target_request="repositories"><span>Repositories</span></li>
     </ul>
     ${foreach item=panel_item from=panel_items}
         ${out_none value=panel_item /}
