@@ -75,18 +75,15 @@ class ColonyPackingInstaller:
 
         return INSTALLER_TYPE
 
-    def deploy_bundle(self, bundle_id, bundle_version, contents_file):
+    def deploy_bundle(self, file_path, properties):
         """
         Method called upon deployment of the bundle with
-        the given id, version and contents file.
+        the given file path and properties.
 
-        @type bundle_id: String
-        @param bundle_id: The id of the bundle to be deployed.
-        @type bundle_version: String
-        @param bundle_version: The version of the bundle to be deployed.
-        @type contents_file: ContentsFile
-        @param contents_file: The contents file of the bundle to
-        be deployed.
+        @type file_path: String
+        @param file_path: The path to the bundle file to be installed.
+        @type properties: Dictionary
+        @param properties: The map of properties for installation.
         """
 
         pass
@@ -110,15 +107,12 @@ class ColonyPackingInstaller:
     def deploy_plugin(self, plugin_id, plugin_version, contents_file):
         """
         Method called upon deployment of the plugin with
-        the given id, version and contents file.
+        the given file path and properties.
 
-        @type plugin_id: String
-        @param plugin_id: The id of the plugin to be deployed.
-        @type plugin_version: String
-        @param plugin_version: The version of the plugin to be deployed.
-        @type contents_file: ContentsFile
-        @param contents_file: The contents file of the plugin to
-        be deployed.
+        @type file_path: String
+        @param file_path: The path to the plugin file to be installed.
+        @type properties: Dictionary
+        @param properties: The map of properties for installation.
         """
 
         pass
