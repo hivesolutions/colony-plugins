@@ -85,8 +85,11 @@ class ConsoleSystemUpdater:
         @param console_context: The console context for the processing.
         """
 
+        # retrieves the system updater
+        system_updater = self.system_updater_plugin.system_updater
+
         # retrieves the repositories list
-        repositories_list = self.system_updater_plugin.system_updater.get_repositories()
+        repositories_list = system_updater.get_repositories()
 
         # prints the repository information
         for repository in repositories_list:
@@ -107,11 +110,14 @@ class ConsoleSystemUpdater:
         @param console_context: The console context for the processing.
         """
 
+        # retrieves the system updater
+        system_updater = self.system_updater_plugin.system_updater
+
         # retrieves the repository name
         repository_name = arguments_map["repository_name"]
 
         # retrieves the package information list
-        package_information_list = self.system_updater_plugin.system_updater.get_package_information_list_by_repository_name(repository_name)
+        package_information_list = system_updater.get_package_information_list_by_repository_name(repository_name)
 
         # prints the package information
         for package_information in package_information_list:
@@ -149,11 +155,14 @@ class ConsoleSystemUpdater:
         @param console_context: The console context for the processing.
         """
 
+        # retrieves the system updater
+        system_updater = self.system_updater_plugin.system_updater
+
         # retrieves the repository name
         repository_name = arguments_map["repository_name"]
 
         # retrieves the plugin information list
-        plugin_information_list = self.system_updater_plugin.system_updater.get_plugin_information_list_by_repository_name(repository_name)
+        plugin_information_list = system_updater.get_plugin_information_list_by_repository_name(repository_name)
 
         # prints the plugin information
         for plugin_information in plugin_information_list:
@@ -191,6 +200,9 @@ class ConsoleSystemUpdater:
         @param console_context: The console context for the processing.
         """
 
+        # retrieves the system updater
+        system_updater = self.system_updater_plugin.system_updater
+
         # retrieves the package identifier
         package_id = arguments_map["package_id"]
 
@@ -199,9 +211,9 @@ class ConsoleSystemUpdater:
 
         # installs the package
         if package_version:
-            self.system_updater_plugin.system_updater.install_package(package_id, package_version)
+            system_updater.install_package(package_id, package_version)
         else:
-            self.system_updater_plugin.system_updater.install_package(package_id)
+            system_updater.install_package(package_id)
 
     def process_install_bundle(self, arguments, arguments_map, output_method, console_context):
         """
@@ -218,6 +230,9 @@ class ConsoleSystemUpdater:
         @param console_context: The console context for the processing.
         """
 
+        # retrieves the system updater
+        system_updater = self.system_updater_plugin.system_updater
+
         # retrieves the bundle identifier
         bundle_id = arguments_map["bundle_id"]
 
@@ -226,9 +241,9 @@ class ConsoleSystemUpdater:
 
         # installs the bundle
         if bundle_version:
-            self.system_updater_plugin.system_updater.install_bundle(bundle_id, bundle_version)
+            system_updater.install_bundle(bundle_id, bundle_version)
         else:
-            self.system_updater_plugin.system_updater.install_bundle(bundle_id)
+            system_updater.install_bundle(bundle_id)
 
     def process_install_plugin(self, arguments, arguments_map, output_method, console_context):
         """
@@ -245,6 +260,9 @@ class ConsoleSystemUpdater:
         @param console_context: The console context for the processing.
         """
 
+        # retrieves the system updater
+        system_updater = self.system_updater_plugin.system_updater
+
         # retrieves the plugin identifier
         plugin_id = arguments_map["plugin_id"]
 
@@ -253,9 +271,9 @@ class ConsoleSystemUpdater:
 
         # installs the plugin
         if plugin_version:
-            self.system_updater_plugin.system_updater.install_plugin(plugin_id, plugin_version)
+            system_updater.install_plugin(plugin_id, plugin_version)
         else:
-            self.system_updater_plugin.system_updater.install_plugin(plugin_id)
+            system_updater.install_plugin(plugin_id)
 
     def print_repository_info(self, repository_information, output_method):
         output_method("name:        " + repository_information.name)
