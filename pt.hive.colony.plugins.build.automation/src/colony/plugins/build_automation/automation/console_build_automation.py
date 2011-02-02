@@ -96,6 +96,9 @@ class ConsoleBuildAutomation:
         @param console_context: The console context for the processing.
         """
 
+        # retrieves the build automation instance
+        build_automation = self.build_automation_plugin.build_automation
+
         # retrieves the mandatory arguments
         plugin_id = arguments_map["plugin_id"]
 
@@ -111,7 +114,7 @@ class ConsoleBuildAutomation:
         real_plugin_id = self.get_plugin_id(plugin_id)
 
         # runs the automation for the plugin
-        self.build_automation_plugin.build_automation.run_automation(real_plugin_id, plugin_version, stage, recursive_level)
+        build_automation.run_automation(real_plugin_id, plugin_version, stage, recursive_level)
 
     def process_show_all_automation(self, arguments, arguments_map, output_method, console_context):
         """
