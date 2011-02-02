@@ -112,11 +112,14 @@ class ConsoleEmail:
         @param console_context: The console context for the processing.
         """
 
+        # retrieves the email instance
+        email = self.email_plugin.email
+
         # retrieves the file path from the arguments
         destiny_address = arguments_map["destiny_address"]
 
         # sends the test email to the destiny address
-        self.email_plugin.email.send_email(TEST_EMAIL_SENDER, destiny_address, None, None, TEST_SUBJECT, TEST_MESSAGE)
+        email.send_email(TEST_EMAIL_SENDER, destiny_address, None, None, TEST_SUBJECT, TEST_MESSAGE)
 
     def __generate_commands_map(self):
         # creates the commands map
