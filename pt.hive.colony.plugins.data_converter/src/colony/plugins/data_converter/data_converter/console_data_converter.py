@@ -246,9 +246,12 @@ class ConsoleDataConverter:
         output_method(output_string)
 
     def process_list_loaded_configurations(self, args, output_method):
+        # retrieves the data converter instance
+        data_converter = self.data_converter_plugin.data_converter
+
         # retrieves the loaded configurations
-        loaded_configuration_ids = self.data_converter_plugin.get_loaded_configuration_ids()
-        loaded_configurations = [self.data_converter_plugin.get_loaded_configuration(loaded_configuration_id) for loaded_configuration_id in loaded_configuration_ids]
+        loaded_configuration_ids = data_converter.get_loaded_configuration_ids()
+        loaded_configurations = [data_converter.get_loaded_configuration(loaded_configuration_id) for loaded_configuration_id in loaded_configuration_ids]
 
         # outputs the retrieved configurations
         output_method(self.get_configurations_string(loaded_configurations))
@@ -259,11 +262,14 @@ class ConsoleDataConverter:
             output_method(INVALID_NUMBER_ARGUMENTS_MESSAGE)
             return
 
+        # retrieves the data converter instance
+        data_converter = self.data_converter_plugin.data_converter
+
         # retrieves the data converter configuration id from the console command arguments
         data_converter_configuration_plugin_id = args[0]
 
         # loads a new configuration instance from the specified configuration plugin
-        self.data_converter_plugin.load_configuration(data_converter_configuration_plugin_id, {})
+        data_converter.load_configuration(data_converter_configuration_plugin_id, {})
 
     def process_unload_configuration(self, args, output_method):
         # returns in case an invalid number of arguments was provided
@@ -271,11 +277,14 @@ class ConsoleDataConverter:
             output_method(INVALID_NUMBER_ARGUMENTS_MESSAGE)
             return
 
+        # retrieves the data converter instance
+        data_converter = self.data_converter_plugin.data_converter
+
         # retrieves the data converter configuration id from the console command arguments
         data_converter_configuration_id = int(args[0])
 
         # unloads a new configuration instance from the specified configuration plugin
-        self.data_converter_plugin.unload_configuration(data_converter_configuration_id)
+        data_converter.unload_configuration(data_converter_configuration_id)
 
     def process_set_configuration_option(self, args, output_method):
         # returns in case an invalid number of arguments was provided
@@ -283,13 +292,16 @@ class ConsoleDataConverter:
             output_method(INVALID_NUMBER_ARGUMENTS_MESSAGE)
             return
 
+        # retrieves the data converter instance
+        data_converter = self.data_converter_plugin.data_converter
+
         # retrieves the command parameters
         data_converter_configuration_id = int(args[0])
         option_name = args[1]
         option_value = args[2]
 
         # sets an option in the specified conversion configuration
-        self.data_converter_plugin.set_configuration_option(data_converter_configuration_id, option_name, option_value)
+        data_converter.set_configuration_option(data_converter_configuration_id, option_name, option_value)
 
     def process_list_configuration_items(self, args, output_method):
         # returns in case an invalid number of arguments was provided
@@ -297,11 +309,14 @@ class ConsoleDataConverter:
             output_method(INVALID_NUMBER_ARGUMENTS_MESSAGE)
             return
 
+        # retrieves the data converter instance
+        data_converter = self.data_converter_plugin.data_converter
+
         # retrieves the data converter configuration id from the console command arguments
         data_converter_configuration_id = int(args[0])
 
         # retrieves the specified data converter configuration instance
-        data_converter_configuration = self.data_converter_plugin.get_loaded_configuration(data_converter_configuration_id)
+        data_converter_configuration = data_converter.get_loaded_configuration(data_converter_configuration_id)
 
         # retrieves configuration item ids of the specified type in case two arguments were provided
         if len(args) >= 2:
@@ -323,12 +338,15 @@ class ConsoleDataConverter:
             output_method(INVALID_NUMBER_ARGUMENTS_MESSAGE)
             return
 
+        # retrieves the data converter instance
+        data_converter = self.data_converter_plugin.data_converter
+
         # retrieves the data converter configuration id and dependency configuration item id from the console command arguments
         data_converter_configuration_id = int(args[0])
         configuration_item_id = int(args[1])
 
         # retrieves the specified data converter configuration instance
-        data_converter_configuration = self.data_converter_plugin.get_loaded_configuration(data_converter_configuration_id)
+        data_converter_configuration = data_converter.get_loaded_configuration(data_converter_configuration_id)
 
         # retrieves the dependent configuration item ids of the specified type in case three arguments were provided
         if len(args) >= 3:
@@ -350,12 +368,15 @@ class ConsoleDataConverter:
             output_method(INVALID_NUMBER_ARGUMENTS_MESSAGE)
             return
 
+        # retrieves the data converter instance
+        data_converter = self.data_converter_plugin.data_converter
+
         # retrieves the data converter configuration id and configuration item id from the console command arguments
         data_converter_configuration_id = int(args[0])
         configuration_item_id = int(args[1])
 
         # retrieves the specified data converter configuration instance
-        data_converter_configuration = self.data_converter_plugin.get_loaded_configuration(data_converter_configuration_id)
+        data_converter_configuration = data_converter.get_loaded_configuration(data_converter_configuration_id)
 
         # enables the specified configuration item and all that depend on it
         data_converter_configuration.enable_configuration_item(configuration_item_id)
@@ -366,11 +387,14 @@ class ConsoleDataConverter:
             output_method(INVALID_NUMBER_ARGUMENTS_MESSAGE)
             return
 
+        # retrieves the data converter instance
+        data_converter = self.data_converter_plugin.data_converter
+
         # retrieves the data converter configuration id from the console command arguments
         data_converter_configuration_id = int(args[0])
 
         # retrieves the specified data converter configuration instance
-        data_converter_configuration = self.data_converter_plugin.get_loaded_configuration(data_converter_configuration_id)
+        data_converter_configuration = data_converter.get_loaded_configuration(data_converter_configuration_id)
 
         # enables all disabled configuration items
         configuration_item_ids = data_converter_configuration.get_configuration_item_ids()
@@ -386,12 +410,15 @@ class ConsoleDataConverter:
             output_method(INVALID_NUMBER_ARGUMENTS_MESSAGE)
             return
 
+        # retrieves the data converter instance
+        data_converter = self.data_converter_plugin.data_converter
+
         # retrieves the data converter configuration id and configuration item id from the console command arguments
         data_converter_configuration_id = int(args[0])
         configuration_item_id = int(args[1])
 
         # retrieves the specified data converter configuration instance
-        data_converter_configuration = self.data_converter_plugin.get_loaded_configuration(data_converter_configuration_id)
+        data_converter_configuration = data_converter.get_loaded_configuration(data_converter_configuration_id)
 
         # disables the specified configuration item and all that depend on it
         data_converter_configuration.disable_configuration_item(configuration_item_id)
@@ -402,11 +429,14 @@ class ConsoleDataConverter:
             output_method(INVALID_NUMBER_ARGUMENTS_MESSAGE)
             return
 
+        # retrieves the data converter instance
+        data_converter = self.data_converter_plugin.data_converter
+
         # retrieves the data converter configuration id from the console command arguments
         data_converter_configuration_id = int(args[0])
 
         # retrieves the specified data converter configuration instance
-        data_converter_configuration = self.data_converter_plugin.get_loaded_configuration(data_converter_configuration_id)
+        data_converter_configuration = data_converter.get_loaded_configuration(data_converter_configuration_id)
 
         # disables all enabled configuration items
         configuration_item_ids = data_converter_configuration.get_configuration_item_ids()
@@ -422,8 +452,11 @@ class ConsoleDataConverter:
             output_method(INVALID_NUMBER_ARGUMENTS_MESSAGE)
             return
 
+        # retrieves the data converter instance
+        data_converter = self.data_converter_plugin.data_converter
+
         # retrieves the data converter configuration id from the console command arguments
         data_converter_configuration_id = int(args[0])
 
         # converts data using the specified data converter configuration
-        self.data_converter_plugin.convert_data(data_converter_configuration_id)
+        data_converter.convert_data(data_converter_configuration_id)
