@@ -66,7 +66,7 @@ class ColonyPackingDeployerPlugin(colony.base.plugin_system.Plugin):
     colony_packing_deployer = None
 
     packing_manager_plugin = None
-    """ Plugin to for packing of files """
+    """ Plugin for packing of files """
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
