@@ -107,6 +107,9 @@ class ConsoleTest:
             output_method(INVALID_NUMBER_ARGUMENTS_MESSAGE)
             return
 
+        # retrieves the main test instance
+        main_test = self.main_test_plugin.main_test
+
         # retrieves the test case id
         test_case_id = args[0]
 
@@ -115,7 +118,7 @@ class ConsoleTest:
 
         if test_cases:
             output_method("starting test case " + test_case_id)
-            result = self.main_test_plugin.main_test.start_test(test_cases)
+            result = main_test.start_test(test_cases)
 
             # processes the result
             self._process_result(result, output_method)
@@ -123,8 +126,14 @@ class ConsoleTest:
             output_method("invalid test case id")
 
     def process_start_all_test(self, args, output_method):
+        # retrieves the main test instance
+        main_test = self.main_test_plugin.main_test
+
+        # outputs a message stating that testing has started
         output_method("starting all test cases")
-        result = self.main_test_plugin.main_test.start_all_test()
+
+        # runs the all tests
+        result = main_test.start_all_test()
 
         # processes the result
         self._process_result(result, output_method)
