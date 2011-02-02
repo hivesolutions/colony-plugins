@@ -91,6 +91,9 @@ class ConsoleRepositoryDescriptorGenerator:
         @param console_context: The console context for the processing.
         """
 
+        # retrieves the repository descriptor generator instance
+        repository_descriptor_generator = self.repository_descriptor_generator_plugin.repository_descriptor_generator
+
         # retrieves the mandatory arguments
         file_path = arguments_map["file_path"]
 
@@ -103,7 +106,7 @@ class ConsoleRepositoryDescriptorGenerator:
         output_method("creating repository descriptor in " + file_path)
 
         # generates the repository descriptor file
-        self.repository_descriptor_generator_plugin.repository_descriptor_generator.generate_repository_descriptor_file(file_path, repository_name, repository_description, repository_layout)
+        repository_descriptor_generator.generate_repository_descriptor_file(file_path, repository_name, repository_description, repository_layout)
 
     def __generate_commands_map(self):
         # creates the commands map
