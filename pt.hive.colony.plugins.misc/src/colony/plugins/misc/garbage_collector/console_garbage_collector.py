@@ -85,11 +85,14 @@ class ConsoleGarbageCollector:
         @param console_context: The console context for the processing.
         """
 
+        # retrieves the garbage collector instance
+        garbage_collector = self.garbage_collector_plugin.garbage_collector
+
         # outputs a message stating that the garbage collector has started running
         output_method("running garbage collector")
 
         # runs the garbage collector
-        self.garbage_collector_plugin.garbage_collector.run_garbage_collector()
+        garbage_collector.run_garbage_collector()
 
     def __generate_commands_map(self):
         # creates the commands map
