@@ -54,15 +54,17 @@ class MainPackingManagerPlugin(colony.base.plugin_system.Plugin):
     loading_type = colony.base.plugin_system.EAGER_LOADING_TYPE
     platforms = [colony.base.plugin_system.CPYTHON_ENVIRONMENT]
     attributes = {"build_automation_file_path" : "$base{plugin_directory}/main_packing/manager/resources/baf.xml"}
-    capabilities = ["packing_manager", "build_automation_item"]
+    capabilities = ["packing_manager", "_console_command_extension", "build_automation_item"]
     capabilities_allowed = ["packing_service"]
     dependencies = []
     events_handled = []
     events_registrable = []
-    main_modules = ["main_packing.manager.main_packing_manager_exceptions",
+    main_modules = ["main_packing.manager.console_main_packing_manager",
+                    "main_packing.manager.main_packing_manager_exceptions",
                     "main_packing.manager.main_packing_manager_system"]
 
     main_packing_manager = None
+    console_main_packing_manager = None
 
     packing_service_plugins = []
 
@@ -70,7 +72,9 @@ class MainPackingManagerPlugin(colony.base.plugin_system.Plugin):
         colony.base.plugin_system.Plugin.load_plugin(self)
         global main_packing
         import main_packing.manager.main_packing_manager_system
+        import main_packing.manager.console_main_packing_manager
         self.main_packing_manager = main_packing.manager.main_packing_manager_system.MainPackingManager(self)
+        self.console_main_packing_manager = main_packing.manager.console_main_packing_manager.ConsoleMainPackingManager(self)
 
     def end_load_plugin(self):
         colony.base.plugin_system.Plugin.end_load_plugin(self)
@@ -134,6 +138,12 @@ class MainPackingManagerPlugin(colony.base.plugin_system.Plugin):
         """
 
         return self.main_packing_manager.unpack_files(file_paths_list, properties, service_name)
+
+    def get_console_extension_name(self):
+        return self.console_main_packing_manager.get_console_extension_name()
+
+    def get_commands_map(self):
+        return self.console_main_packing_manager.get_commands_map()
 
     @colony.base.decorators.load_allowed_capability("packing_service")
     def packing_service_capability_load_allowed(self, plugin, capability):
