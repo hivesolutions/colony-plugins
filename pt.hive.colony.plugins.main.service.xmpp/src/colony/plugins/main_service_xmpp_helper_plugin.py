@@ -38,7 +38,6 @@ __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
 import colony.base.plugin_system
-import colony.base.decorators
 
 class MainServiceXmppHelperPlugin(colony.base.plugin_system.Plugin):
     """

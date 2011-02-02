@@ -398,6 +398,12 @@ class XmppClientServiceHandler:
             try:
                 # sends the request to the client (response)
                 self.send_request(request)
+            except main_service_xmpp_exceptions.XmppRuntimeException, exception:
+                # prints a warning message message
+                self.service_plugin.warning("Runtime problem: %s, while sending request" % unicode(exception))
+
+                # returns false (connection closed)
+                return False
             except main_service_xmpp_exceptions.MainServiceXmppException:
                 # prints a debug message
                 self.service_plugin.debug("Connection: %s closed by peer, while sending request" % str(service_connection))

@@ -37,8 +37,6 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-import main_service_xmpp_stream_handler_exceptions
-
 HANDLER_NAME = "stream"
 """ The handler name """
 
