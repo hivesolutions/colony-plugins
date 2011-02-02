@@ -53,15 +53,15 @@ class ColonyPackingInstallerPlugin(colony.base.plugin_system.Plugin):
     author = "Hive Solutions Lda. <development@hive.pt>"
     loading_type = colony.base.plugin_system.EAGER_LOADING_TYPE
     platforms = [colony.base.plugin_system.CPYTHON_ENVIRONMENT]
-    attributes = {"build_automation_file_path" : "$base{plugin_directory}/system_updater/colony_packing/resources/baf.xml"}
+    attributes = {"build_automation_file_path" : "$base{plugin_directory}/system_installer/colony_packing/resources/baf.xml"}
     capabilities = ["installer", "build_automation_item"]
     capabilities_allowed = []
     dependencies = [colony.base.plugin_system.PluginDependency(
                     "pt.hive.colony.plugins.main.packing.manager", "1.0.0")]
     events_handled = []
     events_registrable = []
-    main_modules = ["system_updater.colony_packing.colony_packing_installer_exceptions",
-                    "system_updater.colony_packing.colony_packing_installer_system"]
+    main_modules = ["system_installer.colony_packing.colony_packing_installer_exceptions",
+                    "system_installer.colony_packing.colony_packing_installer_system"]
 
     colony_packing_installer = None
 
@@ -70,9 +70,9 @@ class ColonyPackingInstallerPlugin(colony.base.plugin_system.Plugin):
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
-        global system_updater
-        import system_updater.colony_packing.colony_packing_installer_system
-        self.colony_packing_installer = system_updater.colony_packing.colony_packing_installer_system.ColonyPackingInstaller(self)
+        global system_installer
+        import system_installer.colony_packing.colony_packing_installer_system
+        self.colony_packing_installer = system_installer.colony_packing.colony_packing_installer_system.ColonyPackingInstaller(self)
 
     def end_load_plugin(self):
         colony.base.plugin_system.Plugin.end_load_plugin(self)
