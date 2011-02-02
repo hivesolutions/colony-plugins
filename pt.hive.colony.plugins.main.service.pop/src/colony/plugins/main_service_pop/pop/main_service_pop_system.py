@@ -628,6 +628,12 @@ class PopClientServiceHandler:
             try:
                 # sends the initial request to the client (initial response)
                 self.send_request(service_connection, request)
+            except main_service_pop_exceptions.PopRuntimeException, exception:
+                # prints a warning message message
+                self.service_plugin.warning("Runtime problem: %s, while sending request" % unicode(exception))
+
+                # returns false (connection closed)
+                return False
             except main_service_pop_exceptions.MainServicePopException:
                 # prints a debug message
                 self.service_plugin.debug("Connection: %s closed by peer, while sending request" % str(service_connection))
@@ -698,6 +704,12 @@ class PopClientServiceHandler:
             try:
                 # sends the request to the client (response)
                 self.send_request(service_connection, request)
+            except main_service_pop_exceptions.PopRuntimeException, exception:
+                # prints a warning message message
+                self.service_plugin.warning("Runtime problem: %s, while sending request" % unicode(exception))
+
+                # returns false (connection closed)
+                return False
             except main_service_pop_exceptions.MainServicePopException:
                 # prints a debug message
                 self.service_plugin.debug("Connection: %s closed by peer, while sending request" % str(service_connection))
