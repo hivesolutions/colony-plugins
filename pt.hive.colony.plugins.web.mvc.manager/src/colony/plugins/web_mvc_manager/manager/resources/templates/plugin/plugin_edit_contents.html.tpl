@@ -43,9 +43,11 @@
             <hr/>
             <div class="column-first">
                 ${foreach item=capability from=plugin.capabilities}
-                <div class="form-field">
-                    <label><a href="#capabilities/${out_none value=capability xml_escape=True /}">${out_none value=capability xml_escape=True /}</a></label>
-                </div>
+                    <div class="form-field">
+                        <label>
+                            <a href="#capabilities/${out_none value=capability xml_escape=True /}">${out_none value=capability xml_escape=True /}</a>
+                        </label>
+                    </div>
                 ${/foreach}
             </div>
             <div class="column-second">
@@ -57,16 +59,18 @@
             <hr/>
             <div class="column-first">
                 ${foreach item=dependency from=plugin.dependencies}
-                <div class="form-field">
-                    <label><a href="#plugins/${out_none value=dependency.plugin_id xml_escape=True /}">${out_none value=dependency.plugin_id xml_escape=True /} [${out_none value=dependency.plugin_version xml_escape=True /}]</a></label>
-                </div>
+                    <div class="form-field">
+                        <label>
+                            <a href="#plugins/${out_none value=dependency.plugin_id xml_escape=True /}">${out_none value=dependency.plugin_id xml_escape=True /} [${out_none value=dependency.plugin_version xml_escape=True /}]</a>
+                        </label>
+                    </div>
                 ${/foreach}
             </div>
             <div class="column-second">
                 ${foreach item=dependency from=plugin.dependencies}
-                <div class="form-field">
-                    <label>${out_none value=dependency.package_name xml_escape=True /} [${out_none value=dependency.package_version xml_escape=True /}]</label>
-                </div>
+                    <div class="form-field">
+                        <label>${out_none value=dependency.package_name xml_escape=True /} [${out_none value=dependency.package_version xml_escape=True /}]</label>
+                    </div>
                 ${/foreach}
             </div>
             <div class="clear"></div>

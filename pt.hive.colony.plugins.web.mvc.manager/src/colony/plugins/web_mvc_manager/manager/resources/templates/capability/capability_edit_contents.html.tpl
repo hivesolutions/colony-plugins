@@ -29,7 +29,9 @@
                 <div class="form-field">
                     <label>Plugins providing capability: </label>
                     ${foreach item=providing_plugin from=plugins_capability.providing}
-                    <label><a href="#plugins/${out_none value=providing_plugin.id xml_escape=True /}">${out_none value=providing_plugin.id xml_escape=True /}</a></label>
+                        <label>
+                            <a href="#plugins/${out_none value=providing_plugin.id xml_escape=True /}">${out_none value=providing_plugin.id xml_escape=True /}</a>
+                        </label>
                     ${/foreach}
                 </div>
             </div>
@@ -37,7 +39,9 @@
                 <div class="form-field">
                     <label>Plugins allowing capability: </label>
                     ${foreach item=allowing_plugin from=plugins_capability.allowing}
-                    <label><a href="#plugins/${out_none value=allowing_plugin.id xml_escape=True /}">${out_none value=allowing_plugin.id xml_escape=True /}</a></label>
+                        <label>
+                            <a href="#plugins/${out_none value=allowing_plugin.id xml_escape=True /}">${out_none value=allowing_plugin.id xml_escape=True /}</a>
+                        </label>
                     ${/foreach}
                 </div>
             </div>
@@ -48,9 +52,11 @@
             <hr/>
             <div class="column-first">
                 ${foreach item=sub_capability from=sub_capabilities}
-                <div class="form-field">
-                    <label><a href="#capabilities/${out_none value=sub_capability xml_escape=True /}">${out_none value=sub_capability xml_escape=True /}</a></label>
-                </div>
+                    <div class="form-field">
+                        <label>
+                            <a href="#capabilities/${out_none value=sub_capability xml_escape=True /}">${out_none value=sub_capability xml_escape=True /}</a>
+                        </label>
+                    </div>
                 ${/foreach}
             </div>
             <div class="column-second">

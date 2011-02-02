@@ -30,7 +30,9 @@
             <li><a id="reports">Reports</a></li>
             <li><a id="configuration">Configuration</a></li>
             ${foreach item=menu_item_value key=menu_item_name from=menu_items}
-            <li><a id="${out_none value=menu_item_name /}">${out_none value=menu_item_name.capitalize /}</a></li>
+                <li>
+                    <a id="${out_none value=menu_item_name /}">${out_none value=menu_item_name.capitalize /}</a>
+                </li>
             ${/foreach}
         </ul>
         <div id="menu-bar-search-field" class="search-field">
@@ -69,7 +71,9 @@
        <div id="${out_none value=menu_item_name /}-menu" class="drop-menu">
         <ul>
             ${foreach item=menu_item_item from=menu_item_value}
-            <li><a href="#${out_none value=menu_item_item.address /}">${out_none value=menu_item_item.target /}</a></li>
+                <li>
+                    <a href="#${out_none value=menu_item_item.address /}">${out_none value=menu_item_item.target /}</a>
+                </li>
             ${/foreach}
         </ul>
     </div>
