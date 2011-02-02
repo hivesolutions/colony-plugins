@@ -39,6 +39,9 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 import os
 import time
+import datetime
+
+import colony_packing_installer_exceptions
 
 INSTALLER_TYPE = "colony_packing"
 """ The installer type """
@@ -136,31 +139,49 @@ class ColonyPackingInstaller:
 
         # -----------------------------------------
 
-        # retrieves the properties values
+        # retrieves the flag properties values
         upgrade = properties.get("upgrade", True)
         force = properties.get("force", False)
 
         # reads the plugin file contents
         plugins_file_contents = self._read_file(plugins_file_path)
 
+        # loads the plugin file contents from json
         plugins = json_plugin.loads(plugins_file_contents)
 
+        # retrieves the installed plugins
         installed_plugins = plugins.get("installed_plugins", {})
 
+        # retrieves the installed plugin value
         installed_plugin = installed_plugins.get(PLUGIN_ID, {})
 
+        # in case there is an installed plugin and the upgrade
+        # flag is not set
         if installed_plugin and not upgrade:
-            raise Exception("Plugin already installed")
+            # raises the colony packing installer exception
+            raise colony_packing_installer_exceptions.ColonyPackingInstallerException("plugin already installed")
 
+        # retrieves the installed plugin version
         installed_plugin_version = installed_plugin.get("version", None)
 
+        # in case the installed plugin version is the same as the
+        # plugin version and the force flag is not set
         if installed_plugin_version == PLUGIN_VERSION and not force:
-            raise Exception("Plugin version already installed")
+            # raises the colony packing installer exception
+            raise colony_packing_installer_exceptions.ColonyPackingInstallerException("plugin version already installed")
 
         # retrieves the current time
         current_time = time.time()
 
+        # retrieves the current date time
+        current_date_time = datetime.datetime.utcnow()
+
+        # formats the current date time
+        current_date_time_formated = current_date_time.strftime("%d-%m-%Y %H:%M:%S")
+
         installed_plugins[PLUGIN_ID] = {"version" : PLUGIN_VERSION, "timestamp" : current_time}
+        plugins["last_modified_timestamp"] = current_time
+        plugins["last_modified_date"] = current_date_time_formated
 
         # serializes the plugins (in pretty mode)
         plugins_serialized = json_plugin.dumps_pretty(plugins)
