@@ -183,6 +183,45 @@ class MainPackingColonyService:
 
         return SERVICE_NAME
 
+    def get_packing_information(self, file_path, properties):
+        """
+        Retrieves the packing information from the file
+        in the given file path using the service.
+
+        @type file_path: String
+        @param file_path: The path of the file to retrieve
+        packing information.
+        @type properties: Dictionary
+        @param properties: The properties for the retrieval.
+        @rtype: Specification
+        @return: The packing information for the file.
+        """
+
+        # retrieves the specification manager plugin
+        specification_manager_plugin = self.main_packing_colony_service_plugin.specification_manager_plugin
+
+        # retrieves the specification file path property
+        specification_file_path = properties.get(SPECIFICATION_FILE_PATH_VALUE, DEFAULT_SPECIFICATION_FILE_PATH)
+
+        # creates a new compressed file
+        compressed_file = ColonyCompressedFile()
+
+        # opens the compressed file
+        compressed_file.open(file_path, "r")
+
+        try:
+            # reads the specification file from the compressed file
+            specification_file_buffer = compressed_file.read(specification_file_path)
+        finally:
+            # closes the compressed file
+            compressed_file.close()
+
+        # retrieves the (bundle) specification for the given file
+        specification = specification_manager_plugin.get_specification_file_buffer(specification_file_buffer, {})
+
+        # returns the specification
+        return specification
+
     def pack_directory(self, directory_path, properties):
         """
         Packs the directory using the service.

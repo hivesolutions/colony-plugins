@@ -101,6 +101,22 @@ class MainPackingColonyServicePlugin(colony.base.plugin_system.Plugin):
 
         return self.main_packing_colony_service.get_service_name()
 
+    def get_packing_information(self, file_path, properties):
+        """
+        Retrieves the packing information from the file
+        in the given file path using the service.
+
+        @type file_path: String
+        @param file_path: The path of the file to retrieve
+        packing information.
+        @type properties: Dictionary
+        @param properties: The properties for the retrieval.
+        @rtype: Specification
+        @return: The packing information for the file.
+        """
+
+        return self.main_packing_colony_service.get_packing_information(file_path, properties)
+
     def pack_directory(self, directory_path, properties):
         """
         Packs the directory using the service.

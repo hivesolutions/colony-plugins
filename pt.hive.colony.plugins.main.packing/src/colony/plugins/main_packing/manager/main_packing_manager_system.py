@@ -62,6 +62,29 @@ class MainPackingManager:
 
         self.service_name_packing_service_plugin_map = {}
 
+    def get_packing_information(self, file_path, properties, service_name):
+        """
+        Retrieves the packing information from the file
+        in the given file path using the provided service name.
+
+        @type file_path: String
+        @param file_path: The path of the file to retrieve
+        packing information.
+        @type properties: Dictionary
+        @param properties: The properties for the retrieval.
+        @type service_name: String
+        @param service_name: The name of the service to be used
+        for retrieving information.
+        @rtype: Specification
+        @return: The packing information for the file.
+        """
+
+        # retrieves the packing service plugin for the service name
+        packing_service_plugin = self._get_service_name_plugin_by_packing_service_name(service_name)
+
+        # retrieves the packing information using the packing service plugin
+        return packing_service_plugin.get_packing_information(file_path, properties)
+
     def pack_directory(self, directory_path, properties, service_name):
         """
         Packs the directory using the provided service name.
