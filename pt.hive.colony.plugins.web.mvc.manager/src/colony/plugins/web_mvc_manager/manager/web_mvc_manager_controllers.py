@@ -517,7 +517,7 @@ class PluginController:
         number_records = int(number_records)
 
         # retrieves the filtered plugins
-        filtered_plugins = self._get_fitered_plugins(rest_request, search_query)
+        filtered_plugins = self._get_filtered_plugins(rest_request, search_query)
 
         # retrieves the partial filtered plugins and meta data
         partial_filtered_plugins, start_record, number_records, total_number_records = web_mvc_manager_search_helper.partial_filter(rest_request, filtered_plugins, start_record, number_records)
@@ -759,7 +759,7 @@ class PluginController:
 
         return plugin
 
-    def _get_fitered_plugins(self, rest_request, search_query):
+    def _get_filtered_plugins(self, rest_request, search_query):
         # retrieves the plugins
         plugins = self._get_plugins()
 
@@ -935,7 +935,7 @@ class CapabilityController:
         number_records = int(number_records)
 
         # retrieves the filtered capabilities
-        filtered_capabilities = self._get_fitered_capabilities(rest_request, search_query)
+        filtered_capabilities = self._get_filtered_capabilities(rest_request, search_query)
 
         # retrieves the partial filter from the filtered capabilities
         partial_filtered_capabilities, start_record, number_records, total_number_records = web_mvc_manager_search_helper.partial_filter(rest_request, filtered_capabilities, start_record, number_records)
@@ -1049,7 +1049,7 @@ class CapabilityController:
         # returns true
         return True
 
-    def _get_fitered_capabilities(self, rest_request, search_query):
+    def _get_filtered_capabilities(self, rest_request, search_query):
         # retrieves the capabilities
         capabilities = self._get_capabilities()
 
