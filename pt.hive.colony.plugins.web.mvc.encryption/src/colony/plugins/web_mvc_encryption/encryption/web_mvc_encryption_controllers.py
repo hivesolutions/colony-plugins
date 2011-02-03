@@ -65,6 +65,9 @@ INVALID_STATUS_VALUE = 2
 DEFAULT_ENCODING = "utf-8"
 """ The default encoding value """
 
+DEFAULT_ALGORITHM_NAME = "sha1"
+""" The default algorithm name """
+
 # imports the web mvc utils
 web_mvc_utils = colony.libs.importer_util.__importer__(WEB_MVC_UTILS_VALUE)
 
@@ -122,8 +125,23 @@ class WebMvcEncryptionMainController:
         @return: The result of the handling.
         """
 
+        # retrieves the form data by processing the form
+        form_data_map = self.process_form_data(rest_request, DEFAULT_ENCODING)
+
+        # retrieves the api key from the form data map
+        api_key = form_data_map.get("api_key", None)
+
+        # retrieves the key name from the form data map
+        key_name = form_data_map["key_name"]
+
+        # retrieves the message from the form data map
+        message = form_data_map["message"]
+
+        # retrieves the algorithm name from the form data map
+        algorithm_name = form_data_map.get("algorithm_name", DEFAULT_ALGORITHM_NAME)
+
         # signs the message and retrieves the signature
-        signature = self._sign(rest_request)
+        signature = self._sign(rest_request, api_key, key_name, message, algorithm_name)
 
         # sets the signature as the contents
         self.set_contents(rest_request, signature, "text/plain")
@@ -144,20 +162,7 @@ class WebMvcEncryptionMainController:
         @return: The result of the handling.
         """
 
-        # verifies the signature and retrieves the return value string
-        return_value_string = self._verify(rest_request)
-
-        # sets the return value string as the contents
-        self.set_contents(rest_request, return_value_string, "text/plain")
-
-        # returns true
-        return True
-
-    def _sign(self, rest_request):
-        # retrieves the encryption ssl plugin
-        encryption_ssl_plugin = self.web_mvc_encryption_plugin.encryption_ssl_plugin
-
-        # processes the form data
+        # retrieves the form data by processing the form
         form_data_map = self.process_form_data(rest_request, DEFAULT_ENCODING)
 
         # retrieves the api key from the form data map
@@ -166,11 +171,24 @@ class WebMvcEncryptionMainController:
         # retrieves the key name from the form data map
         key_name = form_data_map["key_name"]
 
+        # retrieves the signature from the form data map
+        signature = form_data_map["signature"]
+
         # retrieves the message from the form data map
         message = form_data_map["message"]
 
-        # retrieves the algorithm name from the form data map
-        algorithm_name = form_data_map.get("algorithm_name", "sha1")
+        # verifies the signature and retrieves the return value string
+        return_value_string = self._verify(rest_request, api_key, key_name, signature, message)
+
+        # sets the return value string as the contents
+        self.set_contents(rest_request, return_value_string, "text/plain")
+
+        # returns true
+        return True
+
+    def _sign(self, rest_request, api_key, key_name, message, algorithm_name):
+        # retrieves the encryption ssl plugin
+        encryption_ssl_plugin = self.web_mvc_encryption_plugin.encryption_ssl_plugin
 
         # creates the ssl structure
         ssl_structure = encryption_ssl_plugin.create_structure({})
@@ -190,24 +208,9 @@ class WebMvcEncryptionMainController:
         # returns the signature
         return signature
 
-    def _verify(self, rest_request):
+    def _verify(self, rest_request, api_key, key_name, signature, message):
         # retrieves the encryption ssl plugin
         encryption_ssl_plugin = self.web_mvc_encryption_plugin.encryption_ssl_plugin
-
-        # processes the form data
-        form_data_map = self.process_form_data(rest_request, DEFAULT_ENCODING)
-
-        # retrieves the api key from the form data map
-        api_key = form_data_map.get("api_key", None)
-
-        # retrieves the key name from the form data map
-        key_name = form_data_map["key_name"]
-
-        # retrieves the signature from the form data map
-        signature = form_data_map["signature"]
-
-        # retrieves the message from the form data map
-        message = form_data_map["message"]
 
         # creates the ssl structure
         ssl_structure = encryption_ssl_plugin.create_structure({})
@@ -216,13 +219,13 @@ class WebMvcEncryptionMainController:
         self._validate_api_key(rest_request, api_key)
 
         # retrieves the public key path for the key name
-        piublic_key_path = self._get_key_path(key_name, "public_key")
+        public_key_path = self._get_key_path(key_name, "public_key")
 
         # decodes the message (using base 64)
         message_decoded = base64.b64decode(message)
 
         # verifies the signature in base 64
-        return_value = ssl_structure.verify_base_64(piublic_key_path, signature, message_decoded)
+        return_value = ssl_structure.verify_base_64(public_key_path, signature, message_decoded)
 
         # retrieves the return value in (simple) string mode
         return_value_string = return_value and "0" or "1"
@@ -323,7 +326,7 @@ class ConsumerController:
 
         pass
 
-    def handle_new(self, rest_request, parameters = {}):
+    def handle_create(self, rest_request, parameters = {}):
         """
         Handles the new consumer rest request.
 
