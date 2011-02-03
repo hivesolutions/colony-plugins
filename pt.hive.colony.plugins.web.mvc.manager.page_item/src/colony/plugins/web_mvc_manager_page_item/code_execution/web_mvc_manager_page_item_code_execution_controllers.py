@@ -104,28 +104,42 @@ class WebMvcManagerPageItemCodeExecutionController:
         # sets the templates path
         self.set_templates_path(templates_path)
 
-    def handle_execute(self, rest_request, parameters = {}):
+    def handle_new(self, rest_request, parameters = {}):
         # in case the encoder name is ajax
         if rest_request.encoder_name == AJAX_ENCODER_NAME:
             # retrieves the template file
             template_file = self.retrieve_template_file("code_execution_contents.html.tpl")
         else:
-            # retrieves the template file
-            template_file = self.retrieve_template_file("../general.html.tpl")
+            # retrieves the template file from the parameters
+            template_file = parameters["template_file"]
 
             # assigns the include to the template
-            self.assign_include_template_file(template_file, "page_include", "capability/code_execution_contents.html.tpl")
+            self.assign_include_template_file(template_file, "page_include", "code_execution/code_execution_contents.html.tpl")
 
             # assigns the include to the template
-            self.assign_include_template_file(template_file, "side_panel_include", "side_panel/side_panel_update.html.tpl")
+            self.assign_include_template_file(template_file, "side_panel_include", "side_panel/side_panel_configuration.html.tpl")
 
-        # executs the command in case it was a post request
-        if rest_request.is_post():
-            # executes the command
-            output_message = self.execute_command(rest_request)
+        # assigns the session variables to the template file
+        self.assign_session_template_file(rest_request, template_file)
 
-            # assigns the output to the template
-            template_file.assign("output_message", output_message)
+        # applies the base path to the template file
+        self.apply_base_path_template_file(rest_request, template_file)
+
+        # processes the template file and sets the request contents
+        self.process_set_contents(rest_request, template_file)
+
+        # returns true
+        return True
+
+    def handle_execute(self, rest_request, parameters = {}):
+        # retrieves the template file
+        template_file = self.retrieve_template_file("code_execution_contents.html.tpl")
+
+        # executes the command
+        output_message = self.execute_command(rest_request)
+
+        # assigns the output to the template
+        template_file.assign("output_message", output_message)
 
         # assigns the session variables to the template file
         self.assign_session_template_file(rest_request, template_file)

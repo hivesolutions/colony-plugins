@@ -10,13 +10,15 @@
             <div class="form-field">
                 <label>Command:</label>
                 <div>
-                    <textarea class="text" name="command" type="text" />
+                    <textarea class="text" name="command" type="text"></textarea>
                 </div>
             </div>
             ${if item=output_message value=None operator=neq}
                 <div class="form-field">
                     <label>Output:</label>
-                    <div><p>${out value=output_message xml_escape=True /}</p></div>
+                    <div>
+                        <p>${out value=output_message /}</p>
+                    </div>
                 </div>
             ${/if}
         </div>
