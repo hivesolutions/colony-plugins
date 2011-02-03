@@ -177,10 +177,6 @@ class WebMvcManagerMainController:
         """
 
         def handle_web_mvc_manager_page_item(rest_request, parameters = {}):
-            # returns in case the required permissions are not set
-            if not self.web_mvc_manager.require_permissions(self, rest_request):
-                return True
-
             # retrieves the web mvc manager search helper
             web_mvc_manager_search_helper = self.web_mvc_manager.web_mvc_manager_search_helper
 
