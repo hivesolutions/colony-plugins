@@ -64,14 +64,7 @@ class SearchHelper:
         self.web_mvc_manager_plugin = web_mvc_manager_plugin
         self.web_mvc_manager = web_mvc_manager
 
-    def partial_filter(self, rest_request, contents_list):
-        # processes the form data
-        form_data_map = self.process_form_data(rest_request, DEFAULT_ENCODING)
-
-        # retrieves the form data attributes
-        start_record = int(form_data_map["start_record"])
-        number_records = int(form_data_map["number_records"])
-
+    def partial_filter(self, rest_request, contents_list, start_record, number_records):
         # retrieves the partial contents list
         partial_contents_list = contents_list[start_record:start_record + number_records]
 

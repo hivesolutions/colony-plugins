@@ -63,10 +63,9 @@ $(document).ready(function() {
                             switchButton.addClass(opositeStatus);
 
                             $.ajax({
-                                        url : "plugins/change_status.json",
+                                        url : "plugins/" + pluginId + "/change_status.json",
                                         type : "post",
                                         data : {
-                                            plugin_id : pluginId,
                                             plugin_status : pluginStatus
                                         }
                                     });

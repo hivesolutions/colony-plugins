@@ -181,7 +181,7 @@ class WebMvcManager:
                                (r"^web_mvc_manager/plugins$", self.web_mvc_manager_plugin_controller.handle_create, "post"),
                                (r"^web_mvc_manager/plugins/(?P<plugin_id>[a-zA-Z0-9\._]+)$", self.web_mvc_manager_plugin_controller.handle_show_ajx, "get", "ajx"),
                                (r"^web_mvc_manager/plugins/(?P<plugin_id>[a-zA-Z0-9\._]+)$", self.web_mvc_manager_plugin_controller.handle_show, "get"),
-                               (r"^web_mvc_manager/plugins/change_status$", self.web_mvc_manager_plugin_controller.handle_change_status),
+                               (r"^web_mvc_manager/plugins/(?P<plugin_id>[a-zA-Z0-9\._]+)/change_status$", self.web_mvc_manager_plugin_controller.handle_change_status, "post", "json"),
                                (r"^web_mvc_manager/capabilities$", self.web_mvc_manager_capability_controller.handle_list_ajx, "get", "ajx"),
                                (r"^web_mvc_manager/capabilities$", self.web_mvc_manager_capability_controller.handle_list, "get"),
                                (r"^web_mvc_manager/capabilities/partial$", self.web_mvc_manager_capability_controller.handle_partial_list, "post"),

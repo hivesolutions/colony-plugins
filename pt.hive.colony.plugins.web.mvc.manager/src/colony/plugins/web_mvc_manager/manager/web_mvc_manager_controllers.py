@@ -502,13 +502,32 @@ class PluginController:
         # retrieves the web mvc manager search helper
         web_mvc_manager_search_helper = self.web_mvc_manager.web_mvc_manager_search_helper
 
-        # retrieves the template file
-        template_file = self.retrieve_template_file("plugin_partial_list_contents.html.tpl")
+        # retrieves the form data by processing the form
+        form_data_map = self.process_form_data(rest_request, DEFAULT_ENCODING)
+
+        # retrieves the form data attributes
+        search_query = form_data_map["search_query"]
+
+        # retrieves the start record
+        start_record = form_data_map["start_record"]
+
+        # retrieves the number records
+        number_records = form_data_map["number_records"]
+
+        # converts the start record to integer
+        start_record = int(start_record)
+
+        # converts the number records to integer
+        number_records = int(number_records)
 
         # retrieves the filtered plugins
-        filtered_plugins = self._get_fitered_plugins(rest_request)
+        filtered_plugins = self._get_fitered_plugins(rest_request, search_query)
 
-        partial_filtered_plugins, start_record, number_records, total_number_records = web_mvc_manager_search_helper.partial_filter(rest_request, filtered_plugins)
+        # retrieves the partial filtered plugins and meta data
+        partial_filtered_plugins, start_record, number_records, total_number_records = web_mvc_manager_search_helper.partial_filter(rest_request, filtered_plugins, start_record, number_records)
+
+        # retrieves the template file
+        template_file = self.retrieve_template_file("plugin_partial_list_contents.html.tpl")
 
         # assigns the plugins to the template
         template_file.assign("plugins", partial_filtered_plugins)
@@ -584,9 +603,6 @@ class PluginController:
 
     @web_mvc_utils.validated_method("plugins.show")
     def handle_show_ajx(self, rest_request, parameters = {}):
-        # retrieves the template file
-        template_file = self.retrieve_template_file("plugin_edit_contents.html.tpl")
-
         # retrieves the pattern names from the parameters
         pattern_names = parameters[PATTERN_NAMES_VALUE]
 
@@ -594,7 +610,10 @@ class PluginController:
         plugin_id = pattern_names["plugin_id"]
 
         # retrieves the specified plugin
-        plugin = self._get_plugin(plugin_id)
+        plugin = self._get_plugin(rest_request, plugin_id)
+
+        # retrieves the template file
+        template_file = self.retrieve_template_file("plugin_edit_contents.html.tpl")
 
         # assigns the plugin to the template
         template_file.assign("plugin", plugin)
@@ -613,6 +632,15 @@ class PluginController:
 
     @web_mvc_utils.validated_method("plugins.show")
     def handle_show(self, rest_request, parameters = {}):
+        # retrieves the pattern names from the parameters
+        pattern_names = parameters[PATTERN_NAMES_VALUE]
+
+        # retrieves the plugin id pattern
+        plugin_id = pattern_names["plugin_id"]
+
+        # retrieves the specified plugin
+        plugin = self._get_plugin(rest_request, plugin_id)
+
         # retrieves the template file
         template_file = self.retrieve_template_file("../general.html.tpl")
 
@@ -621,15 +649,6 @@ class PluginController:
 
         # assigns the include to the template
         self.assign_include_template_file(template_file, "side_panel_include", "side_panel/side_panel_configuration.html.tpl")
-
-        # retrieves the pattern names from the parameters
-        pattern_names = parameters[PATTERN_NAMES_VALUE]
-
-        # retrieves the plugin id pattern
-        plugin_id = pattern_names["plugin_id"]
-
-        # retrieves the specified plugin
-        plugin = self._get_plugin(plugin_id)
 
         # assigns the plugin to the template
         template_file.assign("plugin", plugin)
@@ -648,29 +667,36 @@ class PluginController:
 
     @web_mvc_utils.validated_method("plugins.change_status")
     def handle_change_status(self, rest_request, parameters = {}):
-        # in case the encoder name is ajax
-        if rest_request.encoder_name == JSON_ENCODER_NAME:
-            # retrieves the json plugin
-            json_plugin = self.web_mvc_manager_plugin.json_plugin
+        # retrieves the json plugin
+        json_plugin = self.web_mvc_manager_plugin.json_plugin
 
-            # retrieves the web mvc communication helper
-            web_mvc_manager_communication_helper = self.web_mvc_manager.web_mvc_manager_communication_helper
+        # retrieves the web mvc communication helper
+        web_mvc_manager_communication_helper = self.web_mvc_manager.web_mvc_manager_communication_helper
 
-            # changes the plugin status and retrieves the result
-            change_status_plugin_result = self._change_status_plugin(rest_request)
+        # retrieves the form data by processing the form
+        form_data_map = self.process_form_data(rest_request, DEFAULT_ENCODING)
 
-            # serializes the change status result using the json plugin
-            serialized_status = json_plugin.dumps(change_status_plugin_result)
+        # retrieves the pattern names from the parameters
+        pattern_names = parameters[PATTERN_NAMES_VALUE]
 
-            # sets the serialized status as the rest request contents
-            self.set_contents(rest_request, serialized_status)
+        # retrieves the plugin id pattern
+        plugin_id = pattern_names["plugin_id"]
 
-            # sends the serialized broadcast message
-            web_mvc_manager_communication_helper.send_serialized_broadcast_message(parameters, "web_mvc_manager/communication", "web_mvc_manager/plugin/change_status", serialized_status)
+        # retrieves the plugin status from the form data map
+        plugin_status = form_data_map["plugin_status"]
 
-            return True
+        # changes the plugin status and retrieves the result
+        change_status_plugin_result = self._change_status_plugin(rest_request, plugin_id, plugin_status)
 
-        # returns true
+        # serializes the change status result using the json plugin
+        serialized_status = json_plugin.dumps(change_status_plugin_result)
+
+        # sets the serialized status as the rest request contents
+        self.set_contents(rest_request, serialized_status)
+
+        # sends the serialized broadcast message
+        web_mvc_manager_communication_helper.send_serialized_broadcast_message(parameters, "web_mvc_manager/communication", "web_mvc_manager/plugin/change_status", serialized_status)
+
         return True
 
     def _deploy_package(self, rest_request):
@@ -728,7 +754,7 @@ class PluginController:
         # removes the unique file
         os.remove(unique_file_path)
 
-    def _get_plugin(self, plugin_id):
+    def _get_plugin(self, rest_request, plugin_id):
         # retrieves the plugin manager
         plugin_manager = self.web_mvc_manager_plugin.manager
 
@@ -737,13 +763,7 @@ class PluginController:
 
         return plugin
 
-    def _get_fitered_plugins(self, rest_request):
-        # processes the form data
-        form_data_map = self.process_form_data(rest_request, DEFAULT_ENCODING)
-
-        # retrieves the form data attributes
-        search_query = form_data_map["search_query"]
-
+    def _get_fitered_plugins(self, rest_request, search_query):
         # retrieves the plugins
         plugins = self._get_plugins()
 
@@ -769,16 +789,9 @@ class PluginController:
 
         return plugins
 
-    def _change_status_plugin(self, rest_request):
+    def _change_status_plugin(self, rest_request, plugin_id, plugin_status):
         # retrieves the plugin manager
         plugin_manager = self.web_mvc_manager_plugin.manager
-
-        # processes the form data
-        form_data_map = self.process_form_data(rest_request, DEFAULT_ENCODING)
-
-        # retrieves the form data attributes
-        plugin_id = form_data_map["plugin_id"]
-        plugin_status = form_data_map["plugin_status"]
 
         # retrieves the (beginning) list of loaded plugins
         loaded_plugins_beginning = copy.copy(plugin_manager.get_all_loaded_plugins())
@@ -907,14 +920,32 @@ class CapabilityController:
         # retrieves the web mvc manager search helper
         web_mvc_manager_search_helper = self.web_mvc_manager.web_mvc_manager_search_helper
 
-        # retrieves the template file
-        template_file = self.retrieve_template_file("capability_partial_list_contents.html.tpl")
+        # retrieves the form data by processing the form
+        form_data_map = self.process_form_data(rest_request, DEFAULT_ENCODING)
+
+        # retrieves the form data attributes
+        search_query = form_data_map["search_query"]
+
+        # retrieves the start record
+        start_record = form_data_map["start_record"]
+
+        # retrieves the number records
+        number_records = form_data_map["number_records"]
+
+        # converts the start record to integer
+        start_record = int(start_record)
+
+        # converts the number records to integer
+        number_records = int(number_records)
 
         # retrieves the filtered capabilities
-        filtered_capabilities = self._get_fitered_capabilities(rest_request)
+        filtered_capabilities = self._get_fitered_capabilities(rest_request, search_query)
 
         # retrieves the partial filter from the filtered capabilities
-        partial_filtered_capabilities, start_record, number_records, total_number_records = web_mvc_manager_search_helper.partial_filter(rest_request, filtered_capabilities)
+        partial_filtered_capabilities, start_record, number_records, total_number_records = web_mvc_manager_search_helper.partial_filter(rest_request, filtered_capabilities, start_record, number_records)
+
+        # retrieves the template file
+        template_file = self.retrieve_template_file("capability_partial_list_contents.html.tpl")
 
         # assigns the capabilities to the template
         template_file.assign("capabilities", partial_filtered_capabilities)
@@ -942,9 +973,6 @@ class CapabilityController:
 
     @web_mvc_utils.validated_method("capabilites.show")
     def handle_show_ajx(self, rest_request, parameters = {}):
-        # retrieves the template file
-        template_file = self.retrieve_template_file("capability_edit_contents.html.tpl")
-
         # retrieves the pattern names from the parameters
         pattern_names = parameters[PATTERN_NAMES_VALUE]
 
@@ -952,10 +980,13 @@ class CapabilityController:
         capability = pattern_names["capability"]
 
         # retrieves the plugins map for the capability
-        plugins_capability = self._get_plugins_capability(capability)
+        plugins_capability = self._get_plugins_capability(rest_request, capability)
 
         # retrieves the sub capabilities for the capability
-        sub_capabilities = self._get_sub_capabilities(capability)
+        sub_capabilities = self._get_sub_capabilities(rest_request, capability)
+
+        # retrieves the template file
+        template_file = self.retrieve_template_file("capability_edit_contents.html.tpl")
 
         # assigns the capability to the template
         template_file.assign("capability", capability)
@@ -980,6 +1011,18 @@ class CapabilityController:
 
     @web_mvc_utils.validated_method("capabilites.show")
     def handle_show(self, rest_request, parameters = {}):
+        # retrieves the pattern names from the parameters
+        pattern_names = parameters[PATTERN_NAMES_VALUE]
+
+        # retrieves the capability pattern
+        capability = pattern_names["capability"]
+
+        # retrieves the plugins map for the capability
+        plugins_capability = self._get_plugins_capability(rest_request, capability)
+
+        # retrieves the sub capabilities for the capability
+        sub_capabilities = self._get_sub_capabilities(rest_request, capability)
+
         # retrieves the template file
         template_file = self.retrieve_template_file("../general.html.tpl")
 
@@ -988,18 +1031,6 @@ class CapabilityController:
 
         # assigns the include to the template
         self.assign_include_template_file(template_file, "side_panel_include", "side_panel/side_panel_configuration.html.tpl")
-
-        # retrieves the pattern names from the parameters
-        pattern_names = parameters[PATTERN_NAMES_VALUE]
-
-        # retrieves the capability pattern
-        capability = pattern_names["capability"]
-
-        # retrieves the plugins map for the capability
-        plugins_capability = self._get_plugins_capability(capability)
-
-        # retrieves the sub capabilities for the capability
-        sub_capabilities = self._get_sub_capabilities(capability)
 
         # assigns the capability to the template
         template_file.assign("capability", capability)
@@ -1022,13 +1053,7 @@ class CapabilityController:
         # returns true
         return True
 
-    def _get_fitered_capabilities(self, rest_request):
-        # processes the form data
-        form_data_map = self.process_form_data(rest_request, DEFAULT_ENCODING)
-
-        # retrieves the form data attributes
-        search_query = form_data_map["search_query"]
-
+    def _get_fitered_capabilities(self, rest_request, search_query):
         # retrieves the capabilities
         capabilities = self._get_capabilities()
 
@@ -1057,7 +1082,7 @@ class CapabilityController:
 
         return capabilities
 
-    def _get_plugins_capability(self, capability):
+    def _get_plugins_capability(self, rest_request, capability):
         # retrieves the plugin manager
         plugin_manager = self.web_mvc_manager_plugin.manager
 
@@ -1075,7 +1100,7 @@ class CapabilityController:
 
         return {PROVIDING_VALUE : plugins_offering_unique, ALLOWING_VALUE : plugins_allowing_unique}
 
-    def _get_sub_capabilities(self, capability):
+    def _get_sub_capabilities(self, rest_request, capability):
         # retrieves the plugin manager
         plugin_manager = self.web_mvc_manager_plugin.manager
 
