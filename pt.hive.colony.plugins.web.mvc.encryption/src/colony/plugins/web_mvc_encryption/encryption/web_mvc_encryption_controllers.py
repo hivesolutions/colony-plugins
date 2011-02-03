@@ -59,7 +59,7 @@ DEFAULT_NUMBER_BITS = 256
 VALID_STATUS_VALUE = 1
 """ The valid status value """
 
-INVALID_STATUS_VALUE = 1
+INVALID_STATUS_VALUE = 2
 """ The invalid status value """
 
 DEFAULT_ENCODING = "utf-8"
