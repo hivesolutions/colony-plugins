@@ -97,11 +97,12 @@ class JsonSpecificationParser:
             # opens the json file
             json_file = open(file_path, "rb")
 
-            # parses the json contents retrieving the json data
-            json_data = json_plugin.load_file_encoding(json_file, JSON_FILE_ENCODING)
-
-            # closes the json file
-            json_file.close()
+            try:
+                # parses the json contents retrieving the json data
+                json_data = json_plugin.load_file_encoding(json_file, JSON_FILE_ENCODING)
+            finally:
+                # closes the json file
+                json_file.close()
         else:
             # raises the invalid specification file exception
             raise json_specification_parser_exceptions.InvalidSpecificationFile("not enough information about file")
