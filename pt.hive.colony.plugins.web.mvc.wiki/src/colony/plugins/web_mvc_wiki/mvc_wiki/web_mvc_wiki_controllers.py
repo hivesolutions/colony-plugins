@@ -500,7 +500,7 @@ class WebMvcWikiPageController:
         # retrieves the revision control manager plugin
         revision_control_manager_plugin = self.web_mvc_wiki_plugin.revision_control_manager_plugin
 
-        # processes the form data
+        # retrieves the form data by processing the form
         form_data_map = self.process_form_data(rest_request, DEFAULT_ENCODING)
 
         # retrieves the pattern names from the parameters
@@ -580,7 +580,7 @@ class WebMvcWikiPageController:
         # retrieves the revision control manager plugin
         revision_control_manager_plugin = self.web_mvc_wiki_plugin.revision_control_manager_plugin
 
-        # processes the form data
+        # retrieves the form data by processing the form
         form_data_map = self.process_form_data(rest_request, DEFAULT_ENCODING)
 
         # retrieves the pattern names from the parameters
@@ -604,8 +604,10 @@ class WebMvcWikiPageController:
         # retrieves the instance repository path
         instance_repository_path = instance["repository_path"]
 
-        # retrieves the summary and the contents
+        # retrieves the edit summary
         summary = form_data_map.get("wiki_page_edit_summary", DEFAULT_SUMMARY)
+
+        # retrieves the edit contents
         contents = form_data_map["wiki_page_edit_contents"]
 
         # normalizes the contents
