@@ -223,10 +223,10 @@ class WebMvcManagerPageItemDnsController:
         return dns_information
 
     def _get_fitered_dns_zones(self, rest_request):
-        # processes the form data
+        # retrieves the form data by processing the form
         form_data_map = self.process_form_data(rest_request, DEFAULT_ENCODING)
 
-        # retrieves the form data attributes
+        # retrieves the search query
         search_query = form_data_map["search_query"]
 
         # retrieves the dns zones

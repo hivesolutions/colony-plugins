@@ -140,10 +140,10 @@ class WebMvcManagerPageItemCodeExecutionController:
         return True
 
     def execute_command(self, rest_request):
-        # processes the form data
+        # retrieves the form data by processing the form
         form_data_map = self.process_form_data(rest_request, DEFAULT_ENCODING)
 
-        # partitions the form data
+        # retrieves the command
         command = form_data_map["command"]
 
         # returns in case no command was specified

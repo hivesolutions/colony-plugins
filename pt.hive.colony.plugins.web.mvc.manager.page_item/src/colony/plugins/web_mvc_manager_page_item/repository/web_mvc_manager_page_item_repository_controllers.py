@@ -330,10 +330,10 @@ class WebMvcManagerPageItemRepositoryController:
         return repository_information
 
     def _get_fitered_repositories(self, rest_request):
-        # processes the form data
+        # retrieves the form data by processing the form
         form_data_map = self.process_form_data(rest_request, DEFAULT_ENCODING)
 
-        # retrieves the form data attributes
+        # retrieves the search query
         search_query = form_data_map["search_query"]
 
         # retrieves the repositories
@@ -353,7 +353,7 @@ class WebMvcManagerPageItemRepositoryController:
         return filtered_repositories
 
     def _get_fitered_repository_plugins(self, rest_request):
-        # processes the form data
+        # retrieves the form data by processing the form
         form_data_map = self.process_form_data(rest_request, DEFAULT_ENCODING)
 
         # retrieves the form data attributes
@@ -390,11 +390,13 @@ class WebMvcManagerPageItemRepositoryController:
         # retrieves the system updater plugin
         system_updater_plugin = self.web_mvc_manager_page_item_repository_plugin.system_updater_plugin
 
-        # processes the form data
+        # retrieves the form data by processing the form
         form_data_map = self.process_form_data(rest_request, DEFAULT_ENCODING)
 
-        # retrieves the form data attributes
+        # retrieves the plugin id
         plugin_id = form_data_map["plugin_id"]
+
+        # retrieves the plugin version
         plugin_version = form_data_map["plugin_version"]
 
         # creates the delta plugin install map
