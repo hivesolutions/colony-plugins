@@ -119,6 +119,7 @@ class WebMvcManagerPageItemCodeExecution:
         return ({
                     "menu" : "services/Code Execution",
                     "base_address" : "code_execution/new",
-                    "pattern" : (r"^web_mvc_manager/code_execution/new$", self.web_mvc_manager_page_item_code_execution_controller.handle_new, "get")
+                    "pattern" : (r"^web_mvc_manager/code_execution/new$", self.web_mvc_manager_page_item_code_execution_controller.handle_new_ajx, "get", "ajx")
                 },
+                (r"^web_mvc_manager/code_execution/new$", self.web_mvc_manager_page_item_code_execution_controller.handle_new, "get"),
                 (r"^web_mvc_manager/code_execution$", self.web_mvc_manager_page_item_code_execution_controller.handle_execute, "post", "ajx"))
