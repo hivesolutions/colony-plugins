@@ -169,8 +169,23 @@ class WebMvcCommunicationPushAppleController:
         @return: The result of the handling.
         """
 
+        # retrieves the form data by processing the form
+        form_data_map = self.process_form_data(rest_request, DEFAULT_ENCODING)
+
+        # retrieves the communication handler name
+        communication_handler_name = form_data_map[COMMUNICATION_HANDLER_NAME_VALUE]
+
+        # retrieves the communication name
+        communication_name = form_data_map[COMMUNICATION_NAME_VALUE]
+
+        # retrieves the device id
+        device_id = form_data_map[DEVICE_ID_VALUE]
+
+        # retrieves the notification handler name
+        notification_handler_name = form_data_map.get(NOTIFICATION_HANDLER_NAME_VALUE, None)
+
         # registers for the given request
-        self._register(rest_request)
+        self._register(rest_request, communication_handler_name, communication_name, device_id, notification_handler_name)
 
         # returns true
         return True
@@ -188,8 +203,20 @@ class WebMvcCommunicationPushAppleController:
         @return: The result of the handling.
         """
 
+        # retrieves the form data by processing the form
+        form_data_map = self.process_form_data(rest_request, DEFAULT_ENCODING)
+
+        # retrieves the communication handler name
+        communication_handler_name = form_data_map[COMMUNICATION_HANDLER_NAME_VALUE]
+
+        # retrieves the communication name
+        communication_name = form_data_map[COMMUNICATION_NAME_VALUE]
+
+        # retrieves the device id
+        device_id = form_data_map[DEVICE_ID_VALUE]
+
         # unregisters for the given request
-        self._unregister(rest_request)
+        self._unregister(rest_request, communication_handler_name, communication_name, device_id)
 
         # returns true
         return True
@@ -207,8 +234,23 @@ class WebMvcCommunicationPushAppleController:
         @return: The result of the handling.
         """
 
+        # retrieves the form data by processing the form
+        form_data_map = self.process_form_data(rest_request, DEFAULT_ENCODING)
+
+        # retrieves the communication handler name
+        communication_handler_name = form_data_map[COMMUNICATION_HANDLER_NAME_VALUE]
+
+        # retrieves the communication profile name
+        communication_profile_name = form_data_map[COMMUNICATION_PROFILE_NAME_VALUE]
+
+        # retrieves the device id
+        device_id = form_data_map[DEVICE_ID_VALUE]
+
+        # retrieves the notification handler name
+        notification_handler_name = form_data_map.get(NOTIFICATION_HANDLER_NAME_VALUE, None)
+
         # loads the profile for the given request
-        self._load_profile(rest_request)
+        self._load_profile(rest_request, communication_handler_name, communication_profile_name, device_id, notification_handler_name)
 
         # returns true
         return True
@@ -226,8 +268,20 @@ class WebMvcCommunicationPushAppleController:
         @return: The result of the handling.
         """
 
+        # retrieves the form data by processing the form
+        form_data_map = self.process_form_data(rest_request, DEFAULT_ENCODING)
+
+        # retrieves the communication handler name
+        communication_handler_name = form_data_map[COMMUNICATION_HANDLER_NAME_VALUE]
+
+        # retrieves the communication profile name
+        communication_profile_name = form_data_map[COMMUNICATION_PROFILE_NAME_VALUE]
+
+        # retrieves the device id
+        device_id = form_data_map[DEVICE_ID_VALUE]
+
         # unloads the profile for the given request
-        self._unload_profile(rest_request)
+        self._unload_profile(rest_request, communication_handler_name, communication_profile_name, device_id)
 
         # returns true
         return True
@@ -347,18 +401,9 @@ class WebMvcCommunicationPushAppleController:
         # returns the communication handler
         return communication_handler
 
-    def _register(self, rest_request):
+    def _register(self, rest_request, communication_handler_name, communication_name, device_id, notification_handler_name):
         # retrieves the communication push plugin
         communication_push_plugin = self.web_mvc_communication_push_apple_plugin.communication_push_plugin
-
-        # processes the form data
-        form_data_map = self.process_form_data(rest_request, DEFAULT_ENCODING)
-
-        # retrieves the form data attributes
-        communication_handler_name = form_data_map[COMMUNICATION_HANDLER_NAME_VALUE]
-        communication_name = form_data_map[COMMUNICATION_NAME_VALUE]
-        device_id = form_data_map[DEVICE_ID_VALUE]
-        notification_handler_name = form_data_map.get(NOTIFICATION_HANDLER_NAME_VALUE, None)
 
         # generates a communication handler for the given device id and notification handler name
         generated_communication_handler = self.generate_handler(device_id, notification_handler_name)
@@ -372,17 +417,9 @@ class WebMvcCommunicationPushAppleController:
         # adds a new communication handler
         communication_push_plugin.add_communication_handler(communication_name, communication_handler_name, generated_communication_handler)
 
-    def _unregister(self, rest_request):
+    def _unregister(self, rest_request, communication_handler_name, communication_name, device_id):
         # retrieves the communication push plugin
         communication_push_plugin = self.web_mvc_communication_push_apple_plugin.communication_push_plugin
-
-        # processes the form data
-        form_data_map = self.process_form_data(rest_request, DEFAULT_ENCODING)
-
-        # retrieves the form data attributes
-        communication_handler_name = form_data_map[COMMUNICATION_HANDLER_NAME_VALUE]
-        communication_name = form_data_map[COMMUNICATION_NAME_VALUE]
-        device_id = form_data_map[DEVICE_ID_VALUE]
 
         # creates the service connection name tuple
         service_connection_name_tuple = (communication_handler_name, device_id, communication_name)
@@ -396,18 +433,9 @@ class WebMvcCommunicationPushAppleController:
         # removes the service connection name from the service connection name communication handler map
         del self.service_connection_name_communication_handler_map[service_connection_name_tuple]
 
-    def _load_profile(self, rest_request):
+    def _load_profile(self, rest_request, communication_handler_name, communication_profile_name, device_id, notification_handler_name):
         # retrieves the communication push plugin
         communication_push_plugin = self.web_mvc_communication_push_apple_plugin.communication_push_plugin
-
-        # processes the form data
-        form_data_map = self.process_form_data(rest_request, DEFAULT_ENCODING)
-
-        # retrieves the form data attributes
-        communication_handler_name = form_data_map[COMMUNICATION_HANDLER_NAME_VALUE]
-        communication_profile_name = form_data_map[COMMUNICATION_PROFILE_NAME_VALUE]
-        device_id = form_data_map[DEVICE_ID_VALUE]
-        notification_handler_name = form_data_map.get(NOTIFICATION_HANDLER_NAME_VALUE, None)
 
         # generates a communication handler for the given device id and notification handler name
         generated_communication_handler = self.generate_handler(device_id, notification_handler_name)
@@ -421,17 +449,9 @@ class WebMvcCommunicationPushAppleController:
         # loads the communication profile
         communication_push_plugin.load_communication_profile(communication_handler_name, communication_profile_name, generated_communication_handler)
 
-    def _unload_profile(self, rest_request):
+    def _unload_profile(self, rest_request, communication_handler_name, communication_profile_name, device_id):
         # retrieves the communication push plugin
         communication_push_plugin = self.web_mvc_communication_push_apple_plugin.communication_push_plugin
-
-        # processes the form data
-        form_data_map = self.process_form_data(rest_request, DEFAULT_ENCODING)
-
-        # retrieves the form data attributes
-        communication_handler_name = form_data_map[COMMUNICATION_HANDLER_NAME_VALUE]
-        communication_profile_name = form_data_map[COMMUNICATION_PROFILE_NAME_VALUE]
-        device_id = form_data_map[DEVICE_ID_VALUE]
 
         # creates the service connection profile name tuple
         service_connection_profile_name_tuple = (communication_handler_name, device_id, communication_profile_name)
