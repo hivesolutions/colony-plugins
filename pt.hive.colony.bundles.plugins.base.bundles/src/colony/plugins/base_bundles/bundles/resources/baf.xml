@@ -143,6 +143,7 @@
                         <specification_file>$base{plugin_directory}/base_bundles/bundles/specifications/specifications_bundle.json</specification_file>
                         <specification_file>$base{plugin_directory}/base_bundles/bundles/specifications/string_normalization_bundle.json</specification_file>
                         <specification_file>$base{plugin_directory}/base_bundles/bundles/specifications/svn_bundle.json</specification_file>
+                        <specification_file>$base{plugin_directory}/base_bundles/bundles/specifications/system_installer_bundle.json</specification_file>
                         <specification_file>$base{plugin_directory}/base_bundles/bundles/specifications/system_updater_bundle.json</specification_file>
                         <specification_file>$base{plugin_directory}/base_bundles/bundles/specifications/template_engine_bundle.json</specification_file>
                         <specification_file>$base{plugin_directory}/base_bundles/bundles/specifications/template_handler_bundle.json</specification_file>
@@ -510,6 +511,10 @@
                         <specification>
                             <type>bundle</type>
                             <specification_file>$base{plugin_directory}/base_bundles/bundles/specifications/svn_bundle.json</specification_file>
+                        </specification>
+                        <specification>
+                            <type>bundle</type>
+                            <specification_file>$base{plugin_directory}/base_bundles/bundles/specifications/system_installer_bundle.json</specification_file>
                         </specification>
                         <specification>
                             <type>bundle</type>

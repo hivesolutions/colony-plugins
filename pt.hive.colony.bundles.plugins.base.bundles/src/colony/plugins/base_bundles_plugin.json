@@ -113,6 +113,7 @@
             "base_bundles/bundles/specifications/specifications_bundle.json",
             "base_bundles/bundles/specifications/string_normalization_bundle.json",
             "base_bundles/bundles/specifications/svn_bundle.json",
+            "base_bundles/bundles/specifications/system_installer_bundle.json",
             "base_bundles/bundles/specifications/system_updater_bundle.json",
             "base_bundles/bundles/specifications/template_engine_bundle.json",
             "base_bundles/bundles/specifications/template_handler_bundle.json",
