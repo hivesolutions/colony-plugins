@@ -40,11 +40,20 @@ __license__ = "GNU General Public License (GPL), Version 3"
 import os
 import time
 import datetime
+import threading
+
+import colony.libs.path_util
 
 import colony_packing_installer_exceptions
 
 INSTALLER_TYPE = "colony_packing"
 """ The installer type """
+
+ID_VALUE = "id"
+""" The id value """
+
+VERSION_VALUE = "version"
+""" The version value """
 
 class ColonyPackingInstaller:
     """
@@ -101,7 +110,7 @@ class ColonyPackingInstaller:
         # creates the bundles file path
         bundles_file_path = os.path.join(manager_path, "var/bundles.json")
 
-    def install_plugin(self, file_path, properties):
+    def install_plugin(self, file_path, properties, file_context = None):
         """
         Method called upon installation of the plugin with
         the given file path and properties.
@@ -115,6 +124,9 @@ class ColonyPackingInstaller:
         # retrieves the plugin manager
         plugin_manager = self.colony_packing_installer_plugin.manager
 
+        # retrieves the packing manager plugin
+        packing_manager_plugin = self.colony_packing_installer_plugin.packing_manager_plugin
+
         # retrieves the json plugin
         json_plugin = self.colony_packing_installer_plugin.json_plugin
 
@@ -124,72 +136,153 @@ class ColonyPackingInstaller:
         # creates the plugins file path
         plugins_file_path = os.path.join(manager_path, "var/plugins.json")
 
-        # TENHO DE CONTAR COM O CASE DE O FICHEIRO NAO EXISTIR
+        # creates a new file transaction context
+        file_context = file_context or FileTransactionContext("c:\\transactions\\")
 
-        # tenho de obter as informacoes sobre o cpx aki
-        # e depois tenho de acrescentar essas informacoes ao plugins.json
-        # tenho tb de verificar conflicto de plgugins
-        # se tiver a mesma versao so com force posso eu fazer deploy
+        # opens a new transaction in the file context
+        file_context.open()
 
-        # HARDCODES
+        try:
+            # ------ HARDCODES ----------
 
-        PLUGIN_ID = "pt.hive.colony.matias"
+            CPX_PATH = "c:\\test.cpx"
 
-        PLUGIN_VERSION = "1.0.0"
+            # ----------------------------
 
-        # -----------------------------------------
+            # retrieves the packing information
+            packing_information = packing_manager_plugin.get_packing_information(CPX_PATH, {}, "colony")
 
-        # retrieves the flag properties values
-        upgrade = properties.get("upgrade", True)
-        force = properties.get("force", False)
+            # retrieves the plugin id
+            plugin_id = packing_information.get_property(ID_VALUE)
 
-        # reads the plugin file contents
-        plugins_file_contents = self._read_file(plugins_file_path)
+            # retrieves the plugin version
+            plugin_version = packing_information.get_property(VERSION_VALUE)
 
-        # loads the plugin file contents from json
-        plugins = json_plugin.loads(plugins_file_contents)
+            # ------------------------------------------------
 
-        # retrieves the installed plugins
-        installed_plugins = plugins.get("installed_plugins", {})
+            # TENHO DE CONTAR COM O CASE DE O FICHEIRO NAO EXISTIR
 
-        # retrieves the installed plugin value
-        installed_plugin = installed_plugins.get(PLUGIN_ID, {})
+            # tenho de obter as informacoes sobre o cpx aki
+            # e depois tenho de acrescentar essas informacoes ao plugins.json
+            # tenho tb de verificar conflicto de plgugins
+            # se tiver a mesma versao so com force posso eu fazer deploy
 
-        # in case there is an installed plugin and the upgrade
-        # flag is not set
-        if installed_plugin and not upgrade:
-            # raises the colony packing installer exception
-            raise colony_packing_installer_exceptions.ColonyPackingInstallerException("plugin already installed")
+            # HARDCODES
 
-        # retrieves the installed plugin version
-        installed_plugin_version = installed_plugin.get("version", None)
+            # -----------------------------------------
 
-        # in case the installed plugin version is the same as the
-        # plugin version and the force flag is not set
-        if installed_plugin_version == PLUGIN_VERSION and not force:
-            # raises the colony packing installer exception
-            raise colony_packing_installer_exceptions.ColonyPackingInstallerException("plugin version already installed")
+            # retrieves the flag properties values
+            upgrade = properties.get("upgrade", True)
+            force = properties.get("force", False)
 
-        # retrieves the current time
-        current_time = time.time()
+            # -----------------------------------------------------
 
-        # retrieves the current date time
-        current_date_time = datetime.datetime.utcnow()
+            # reads the plugin file contents
+            plugins_file_contents = file_context.read_file(plugins_file_path)
 
-        # formats the current date time
-        current_date_time_formated = current_date_time.strftime("%d-%m-%Y %H:%M:%S")
+            # loads the plugin file contents from json
+            plugins = json_plugin.loads(plugins_file_contents)
 
-        installed_plugins[PLUGIN_ID] = {"version" : PLUGIN_VERSION, "timestamp" : current_time}
-        plugins["last_modified_timestamp"] = current_time
-        plugins["last_modified_date"] = current_date_time_formated
+            # retrieves the installed plugins
+            installed_plugins = plugins.get("installed_plugins", {})
 
-        # serializes the plugins (in pretty mode)
-        plugins_serialized = json_plugin.dumps_pretty(plugins)
+            # retrieves the installed plugin value
+            installed_plugin = installed_plugins.get(plugin_id, {})
 
-        # writes the plugins serialized value in the plugins file
-        self._write_file(plugins_file_path, plugins_serialized)
+            # in case there is an installed plugin and the upgrade
+            # flag is not set
+            if installed_plugin and not upgrade:
+                # raises the plugin installation error
+                raise colony_packing_installer_exceptions.PluginInstallationError("plugin already installed")
 
-    def _read_file(self, file_path):
+            # retrieves the installed plugin version
+            installed_plugin_version = installed_plugin.get("version", None)
+
+            # in case the installed plugin version is the same as the
+            # plugin version and the force flag is not set
+            if installed_plugin_version == plugin_version and not force:
+                # raises the plugin installation error
+                raise colony_packing_installer_exceptions.PluginInstallationError("plugin version already installed")
+
+            # --------------------------------------
+
+            # retrieves the main plugin path
+            main_plugin_path = plugin_manager.get_main_plugin_path()
+
+            # retrieves the "virtual" main plugin path from the file context
+            # this is necessary to ensure a transaction mode
+            main_plugin_virtual_path = file_context.get_file_path(main_plugin_path)
+
+            # deploys the package using the main plugin "virtual" path
+            self._deploy_package(CPX_PATH, main_plugin_virtual_path)
+
+            # --------------------------------------
+
+            # retrieves the current time
+            current_time = time.time()
+
+            # retrieves the current date time
+            current_date_time = datetime.datetime.utcnow()
+
+            # formats the current date time
+            current_date_time_formated = current_date_time.strftime("%d-%m-%Y %H:%M:%S")
+
+            # sets the installed plugin map
+            installed_plugins[plugin_id] = {"version" : plugin_version, "timestamp" : current_time}
+
+            # updates the plugins map with the current time
+            # and date time values
+            plugins["last_modified_timestamp"] = current_time
+            plugins["last_modified_date"] = current_date_time_formated
+
+            # serializes the plugins (in pretty mode)
+            plugins_serialized = json_plugin.dumps_pretty(plugins)
+
+            # writes the plugins serialized value in the plugins file
+            file_context.write_file(plugins_file_path, plugins_serialized)
+
+            # commits the transaction
+            file_context.commit()
+        except:
+            # rollsback the transaction
+            file_context.rollback()
+
+            # re-raises the exception
+            raise
+
+    def _deploy_package(self, package_path, target_path = None):
+        # retrieves the plugin manager
+        plugin_manager = self.colony_packing_installer_plugin.manager
+
+        # retrieves the packing manager plugin
+        packing_manager_plugin = self.colony_packing_installer_plugin.packing_manager_plugin
+
+        # retrieves the main plugin path
+        main_plugin_path = plugin_manager.get_main_plugin_path()
+
+        # sets the target path
+        target_path = target_path or main_plugin_path
+
+        # creates the properties map for the file unpacking packing
+        properties = {"target_path" : target_path}
+
+        # unpacks the files using the colony service
+        packing_manager_plugin.unpack_files([package_path], properties, "colony")
+
+class FileContext:
+    """
+    The file context class used to read and write
+    contents from files.
+    """
+
+    def __init__(self):
+        """
+        Constructor of the class.
+        """
+
+        pass
+
+    def read_file(self, file_path):
         # open the file
         file = open(file_path, "rb")
 
@@ -203,7 +296,10 @@ class ColonyPackingInstaller:
         # returns the file contents
         return file_contents
 
-    def _write_file(self, file_path, file_contents):
+    def write_file(self, file_path, file_contents):
+        # creates the directory for the file path
+        self._create_directory(file_path)
+
         # open the file
         file = open(file_path, "wb")
 
@@ -213,3 +309,193 @@ class ColonyPackingInstaller:
         finally:
             # closes the file
             file.close()
+
+    def get_file_path(self, file_path):
+        # returns the file path
+        return file_path
+
+    def _create_directory(self, file_path):
+        # retrieves the directory path for the file path
+        directory_path = os.path.dirname(file_path)
+
+        # in case the directory path exists
+        if os.path.exists(directory_path):
+            # returns immediately
+            return
+
+        # creates the various required directories
+        os.makedirs(directory_path)
+
+class FileTransactionContext(FileContext):
+    """
+    The file transaction context class that controls
+    a transaction involving the file system.
+    """
+
+    transaction_level = 0
+    """ The current transaction level in use """
+
+    temporary_path = None
+    """ The temporary path to be used in the file transaction """
+
+    target_path = None
+    """ The target path """
+
+    path_tuples_list = []
+    """ The list of path tuples associated with the transaction """
+
+    access_lock = None
+    """ The lock controlling the access to the file transaction """
+
+    def __init__(self, temporary_path):
+        """
+        Constructor of the class.
+
+        @type temporary_path: String
+        @param temporary_path: The temporary path to be used
+        for the transaction temporary files.
+        """
+
+        FileContext.__init__(self)
+        self.temporary_path = temporary_path
+
+        self.path_tuples_list = []
+        self.access_lock = threading.RLock()
+
+    def write_file(self, file_path, file_contents):
+        # retrieves the virtual file path for the file path
+        virtual_file_path = self._get_virtual_file_path(file_path)
+
+        # writes the file using the file context (virtual file path used)
+        FileContext.write_file(self, virtual_file_path, file_contents)
+
+        # creates a path tuple with the virtual file path
+        # and the file path
+        path_tuple = (virtual_file_path, file_path)
+
+        # adds the path tuple
+        self._add_path_tuple(path_tuple)
+
+    def get_file_path(self, file_path):
+        # retrieves the virtual file path for the file path
+        virtual_file_path = self._get_virtual_file_path(file_path)
+
+        # creates a path tuple with the virtual file path
+        # and the file path
+        path_tuple = (virtual_file_path, file_path)
+
+        # adds the path tuple
+        self._add_path_tuple(path_tuple)
+
+        # returns the virtual file path
+        return virtual_file_path
+
+    def open(self):
+        # acquires the access lock
+        self.access_lock.acquire()
+
+        try:
+            # increments the transaction level
+            self.transaction_level += 1
+        finally:
+            # releases the access lock
+            self.access_lock.release()
+
+    def commit(self):
+        # acquires the access lock
+        self.access_lock.acquire()
+
+        try:
+            # decrements the transaction level
+            self.transaction_level -= 1
+
+            # in case the transaction level is positive
+            if self.transaction_level > 0:
+                # returns immediately
+                return
+            # in case the transaction level is negative
+            elif self.transaction_level < 0:
+                # raises the runtime error
+                raise RuntimeError("Invalid transaction level")
+
+            # iterates over all the path tuples in
+            # path tuples list
+            for path_tuple in self.path_tuples_list:
+                # unpacks the path tuple
+                virtual_file_path, file_path = path_tuple
+
+                # in case the virtual file path is a directory
+                if os.path.isdir(virtual_file_path):
+                    # copies the directory in the virtual path to the directory in the file path
+                    colony.libs.path_util.copy_directory(virtual_file_path, file_path)
+                # otherwise it must be a "normal" file
+                else:
+                    # copies the file in the virtual path to the file in the file path
+                    colony.libs.path_util.copy_file(virtual_file_path, file_path)
+
+            # runs the cleanup
+            self._cleanup()
+        finally:
+            # empties the path tuples list
+            self.path_tuples_list = []
+
+            # resets the transaction level
+            self.transaction_level = 0
+
+            # releases the access lock
+            self.access_lock.release()
+
+    def rollback(self):
+        # acquires the access lock
+        self.access_lock.acquire()
+
+        try:
+            # runs the cleanup
+            self._cleanup()
+        finally:
+            # empties the path tuples list
+            self.path_tuples_list = []
+
+            # resets the transaction level
+            self.transaction_level = 0
+
+            # releases the access lock
+            self.access_lock.release()
+
+    def _cleanup(self):
+        # iterates over all the path tuples in
+        # path tuples list
+        for path_tuple in self.path_tuples_list:
+            # unpacks the path tuple
+            virtual_file_path, _file_path = path_tuple
+
+            # in case the virtual file path is a directory
+            if os.path.isdir(virtual_file_path):
+                # removes the directory in the virtual file path
+                colony.libs.path_util.remove_directory(virtual_file_path)
+            # otherwise it must be a "normal" file
+            else:
+                # removes the virtual file path
+                os.remove(virtual_file_path)
+
+    def _add_path_tuple(self, path_tuple):
+        # adds the path tuple to the path tuples list
+        self.path_tuples_list.append(path_tuple)
+
+    def _get_virtual_file_path(self, file_path):
+        # splits the file path into drive and
+        # base file path
+        _drive, base_file_path = os.path.splitdrive(file_path)
+
+        # strips the base file path
+        base_file_path = base_file_path.lstrip("\\/")
+
+        # joins the temporary path and the
+        # base file path
+        virtual_file_path = os.path.join(self.temporary_path, base_file_path)
+
+        # normalizes the virtual file path
+        virtual_file_path = os.path.normpath(virtual_file_path)
+
+        # returns the virtual file path
+        return virtual_file_path
