@@ -181,6 +181,12 @@ class WebMvcManagerMainController:
             if not self.web_mvc_manager.require_permissions(self, rest_request):
                 return True
 
+            # retrieves the web mvc manager search helper
+            web_mvc_manager_search_helper = self.web_mvc_manager.web_mvc_manager_search_helper
+
+            # retrieves the web mvc manager communication helper
+            web_mvc_manager_communication_helper = self.web_mvc_manager.web_mvc_manager_communication_helper
+
             # in case the encoder name is normal
             if rest_request.encoder_name == NORMAL_ENCODER_NAME:
                 # retrieves the template file
@@ -194,12 +200,6 @@ class WebMvcManagerMainController:
             else:
                 # sets the template file to invalid
                 template_file = None
-
-            # retrieves the web mvc manager search helper
-            web_mvc_manager_search_helper = self.web_mvc_manager.web_mvc_manager_search_helper
-
-            # retrieves the web mvc manager communication helper
-            web_mvc_manager_communication_helper = self.web_mvc_manager.web_mvc_manager_communication_helper
 
             # extends the parameters map with the template file reference
             handler_parameters = colony.libs.map_util.map_extend(parameters, {"template_file" : template_file,
