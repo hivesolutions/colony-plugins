@@ -463,20 +463,24 @@ class FileTransactionContext(FileContext):
             self.access_lock.release()
 
     def _cleanup(self):
-        # iterates over all the path tuples in
-        # path tuples list
-        for path_tuple in self.path_tuples_list:
-            # unpacks the path tuple
-            virtual_file_path, _file_path = path_tuple
+        # retrieves the temporary path items
+        temporary_path_items = os.listdir(self.temporary_path)
 
-            # in case the virtual file path is a directory
-            if os.path.isdir(virtual_file_path):
-                # removes the directory in the virtual file path
-                colony.libs.path_util.remove_directory(virtual_file_path)
+        # iterates over all the temporary path items
+        for temporary_path_item in temporary_path_items:
+            # creates the temporary complete path item, by joining the
+            # temporary path and the temporary path item
+            temporary_complete_path_item = os.path.join(self.temporary_path, temporary_path_item)
+
+            # in case the temporary item is a directory
+            if os.path.isdir(temporary_complete_path_item):
+                # removes the directory in the temporary
+                # complete path item
+                colony.libs.path_util.remove_directory(temporary_complete_path_item)
             # otherwise it must be a "normal" file
             else:
-                # removes the virtual file path
-                os.remove(virtual_file_path)
+                # removes the temporary complete path item
+                os.remove(temporary_complete_path_item)
 
     def _add_path_tuple(self, path_tuple):
         # adds the path tuple to the path tuples list
