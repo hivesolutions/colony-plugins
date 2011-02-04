@@ -54,6 +54,9 @@ TEMPLATES_PATH = WEB_MVC_MANAGER_PAGE_ITEM_DNS_RESOURCES_PATH + "/templates"
 AJAX_ENCODER_NAME = "ajx"
 """ The ajax encoder name """
 
+PATTERN_NAMES_VALUE = "pattern_names"
+""" The pattern names value """
+
 # imports the web mvc utils
 web_mvc_utils = colony.libs.importer_util.__importer__(WEB_MVC_UTILS_VALUE)
 
@@ -98,26 +101,21 @@ class WebMvcManagerPageItemDnsController:
         # sets the templates path
         self.set_templates_path(templates_path)
 
-    def handle_show(self, rest_request, parameters = {}):
-        # in case the encoder name is ajax
-        if rest_request.encoder_name == AJAX_ENCODER_NAME:
-            # retrieves the template file
-            template_file = self.retrieve_template_file("dns_edit_contents.html.tpl")
-        else:
-            # retrieves the template file
-            template_file = self.retrieve_template_file("../general.html.tpl")
+    def handle_show_ajx(self, rest_request, parameters = {}):
+        # retrieves the pattern names
+        pattern_names = parameters[PATTERN_NAMES_VALUE]
 
-            # assigns the include to the template
-            self.assign_include_template_file(template_file, "page_include", "capability/dns_edit_contents.html.tpl")
+        # retrieves the dns index patterns
+        dns_index = pattern_names["dns_index"]
 
-            # assigns the include to the template
-            self.assign_include_template_file(template_file, "side_panel_include", "side_panel/side_panel_update.html.tpl")
+        # converts the dns index to integer
+        dns_index = int(dns_index)
 
         # retrieves the specified capability
-        dns = self._get_dns(rest_request)
+        dns = self._get_dns(rest_request, dns_index)
 
-        # retrieves the respository index
-        dns_index = int(rest_request.path_list[-1])
+        # retrieves the template file
+        template_file = self.retrieve_template_file("dns_edit_contents.html.tpl")
 
         # assigns the dns to the template
         template_file.assign("dns", dns)
@@ -137,20 +135,71 @@ class WebMvcManagerPageItemDnsController:
         # returns true
         return True
 
+    def handle_show(self, rest_request, parameters = {}):
+        # retrieves the pattern names
+        pattern_names = parameters[PATTERN_NAMES_VALUE]
+
+        # retrieves the dns index patterns
+        dns_index = pattern_names["dns_index"]
+
+        # converts the dns index to integer
+        dns_index = int(dns_index)
+
+        # retrieves the specified capability
+        dns = self._get_dns(rest_request, dns_index)
+
+        # retrieves the template file from the parameters
+        template_file = parameters["template_file"]
+
+        # assigns the include to the template
+        self.assign_include_template_file(template_file, "page_include", "dns/dns_edit_contents.html.tpl")
+
+        # assigns the include to the template
+        self.assign_include_template_file(template_file, "side_panel_include", "side_panel/side_panel_update.html.tpl")
+
+        # assigns the dns to the template
+        template_file.assign("dns", dns)
+
+        # assigns the dns index to the template
+        template_file.assign("dns_index", dns_index)
+
+        # assigns the session variables to the template file
+        self.assign_session_template_file(rest_request, template_file)
+
+        # applies the base path to the template file
+        self.apply_base_path_template_file(rest_request, template_file)
+
+        # processes the template file and sets the request contents
+        self.process_set_contents(rest_request, template_file)
+
+        # returns true
+        return True
+
+    def handle_list_ajx(self, rest_request, parameters = {}):
+        # retrieves the template file
+        template_file = self.retrieve_template_file("dns_list_contents.html.tpl")
+
+        # assigns the session variables to the template file
+        self.assign_session_template_file(rest_request, template_file)
+
+        # applies the base path to the template file
+        self.apply_base_path_template_file(rest_request, template_file)
+
+        # processes the template file and sets the request contents
+        self.process_set_contents(rest_request, template_file)
+
+        # returns true
+        return True
+
     def handle_list(self, rest_request, parameters = {}):
-        # in case the encoder name is ajax
-        if rest_request.encoder_name == AJAX_ENCODER_NAME:
-            # retrieves the template file
-            template_file = self.retrieve_template_file("dns_list_contents.html.tpl")
-        else:
-            # retrieves the template file from the parameters
-            template_file = parameters["template_file"]
+        # retrieves the template file from the parameters
+        template_file = parameters["template_file"]
 
-            # assigns the include to the template
-            self.assign_include_template_file(template_file, "page_include", "dns/dns_list_contents.html.tpl")
+        # assigns the include to the template
+        self.assign_include_template_file(template_file, "page_include", "dns/dns_list_contents.html.tpl")
 
-            # assigns the include to the template
-            self.assign_include_template_file(template_file, "side_panel_include", "side_panel/side_panel_configuration.html.tpl")
+        # assigns the include to the template
+        self.assign_include_template_file(template_file, "side_panel_include", "side_panel/side_panel_configuration.html.tpl")
 
         # assigns the session variables to the template file
         self.assign_session_template_file(rest_request, template_file)
@@ -168,14 +217,29 @@ class WebMvcManagerPageItemDnsController:
         # retrieves the web search helper
         search_helper = parameters["search_helper"]
 
+        # retrieves the form data by processing the form
+        form_data_map = self.process_form_data(rest_request, DEFAULT_ENCODING)
+
+        # retrieves the start record
+        start_record = form_data_map["start_record"]
+
+        # retrieves the number records
+        number_records = form_data_map["number_records"]
+
+        # converts the start record to integer
+        start_record = int(start_record)
+
+        # converts the number records to integer
+        number_records = int(number_records)
+
         # retrieves the template file
         template_file = self.retrieve_template_file("dns_partial_list_contents.html.tpl")
 
         # retrieves the filtered dns zones
-        filtered_dns_zones = self._get_fitered_dns_zones(rest_request)
+        filtered_dns_zones = self._get_filtered_dns_zones(rest_request)
 
         # retrieves the partial filter from the filtered dns zones
-        partial_filtered_dns_zones, start_record, number_records, total_number_records = search_helper.partial_filter(rest_request, filtered_dns_zones)
+        partial_filtered_dns_zones, start_record, number_records, total_number_records = search_helper.partial_filter(rest_request, filtered_dns_zones, start_record, number_records)
 
         # assigns the dns zones to the template
         template_file.assign("dns_zones", partial_filtered_dns_zones)
@@ -201,12 +265,9 @@ class WebMvcManagerPageItemDnsController:
         # returns true
         return True
 
-    def _get_dns(self, rest_request, index = -1):
+    def _get_dns(self, rest_request, dns_index):
         # retrieves the system updater plugin
         system_updater_plugin = self.web_mvc_manager_page_item_dns_plugin.system_updater_plugin
-
-        # retrieves the dns index from the rest request's path list
-        dns_index = int(rest_request.path_list[index])
 
         # retrieves all the dns zones
         dns_zones = system_updater_plugin.get_dns_zones()
@@ -222,7 +283,7 @@ class WebMvcManagerPageItemDnsController:
 
         return dns_information
 
-    def _get_fitered_dns_zones(self, rest_request):
+    def _get_filtered_dns_zones(self, rest_request):
         # retrieves the form data by processing the form
         form_data_map = self.process_form_data(rest_request, DEFAULT_ENCODING)
 

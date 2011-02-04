@@ -1,13 +1,13 @@
 <div id="partial-contents">
     <table id="table">
         <tbody id="table-body">
-            ${foreach item=repository index=repository_index from=repositories}
+            ${foreach item=dns_zone index=dns_zone_index from=dns_zones}
                 <tr>
                     <td>
-                        <a href="#repositories/${out_none value=repository_index xml_escape=True /}">${out_none value=repository.name xml_escape=True /}</a>
+                        <a href="#dns/${out_none value=dns_zone_index xml_escape=True /}">${out_none value=dns_zone.name xml_escape=True /}</a>
                     </td>
-                    <td>${out_none value=repository.description xml_escape=True /}</td>
-                    <td>${out_none value=repository.layout xml_escape=True /}</td>
+                    <td>${out_none value=dns_zone.description xml_escape=True /}</td>
+                    <td>${out_none value=dns_zone.layout xml_escape=True /}</td>
                 </tr>
             ${/foreach}
         </tbody>

@@ -13,9 +13,18 @@
         <table class="table" cellspacing="0" cellpadding="0">
             <thead>
                 <tr>
-                    <th width="200"><span>Name</span><span class="order-down-inactive"></span></th>
-                    <th><span>Description</span><span class="order-down-inactive"></span></th>
-                    <th width="100"><span>Layout</span><span class="order-down-inactive"></span></th>
+                    <th width="200">
+                        <span>Name</span>
+                        <span class="order-down-inactive"></span>
+                    </th>
+                    <th>
+                        <span>Description</span>
+                        <span class="order-down-inactive"></span>
+                    </th>
+                    <th width="100">
+                        <span>Layout</span>
+                        <span class="order-down-inactive"></span>
+                    </th>
                 </tr>
             </thead>
             <tbody></tbody>
