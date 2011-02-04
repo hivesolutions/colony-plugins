@@ -494,11 +494,41 @@ class WebMvcWikiPageController:
         @return: The result of the handling.
         """
 
-        # retrieves the plugin manager
-        plugin_manager = self.web_mvc_wiki_plugin.manager
+        # retrieves the form data by processing the form
+        form_data_map = self.process_form_data(rest_request, DEFAULT_ENCODING)
 
-        # retrieves the revision control manager plugin
-        revision_control_manager_plugin = self.web_mvc_wiki_plugin.revision_control_manager_plugin
+        # retrieves the pattern names from the parameters
+        pattern_names = parameters[PATTERN_NAMES_VALUE]
+
+        # retrieves the instance name pattern
+        instance_name = pattern_names["instance_name"]
+
+        # retrieves the page
+        page = form_data_map.get("page", {})
+
+        # creates the page
+        _create_revision = self._create_page(rest_request, page, instance_name)
+
+        # retrieves the base path
+        base_path = self.get_base_path(rest_request)
+
+        # retrieves the page name
+        page_name = page["name"]
+
+        # redirects the rest request
+        self.redirect(rest_request, base_path + instance_name + "/" + page_name)
+
+        return True
+
+    def handle_update(self, rest_request, parameters = {}):
+        """
+        Handles the given page rest request.
+
+        @type rest_request: RestRequest
+        @param rest_request: The page rest request to be handled.
+        @rtype: bool
+        @return: The result of the handling.
+        """
 
         # retrieves the form data by processing the form
         form_data_map = self.process_form_data(rest_request, DEFAULT_ENCODING)
@@ -508,6 +538,33 @@ class WebMvcWikiPageController:
 
         # retrieves the instance name pattern
         instance_name = pattern_names["instance_name"]
+
+        # retrieves the page name pattern
+        page_name = pattern_names["page_name"]
+
+        # retrieves the page
+        page = form_data_map.get("page", {})
+
+        # sets the page name in the page
+        page["name"] = page_name
+
+        # updates the page
+        update_revision = self._update_page(rest_request, page, instance_name)
+
+        # retrieves the update revision number string
+        update_revision_number_string = str(update_revision.get_number())
+
+        # sets the request contents
+        self.set_contents(rest_request, "revision: " + update_revision_number_string)
+
+        return True
+
+    def _create_page(self, rest_request, page, instance_name):
+        # retrieves the plugin manager
+        plugin_manager = self.web_mvc_wiki_plugin.manager
+
+        # retrieves the revision control manager plugin
+        revision_control_manager_plugin = self.web_mvc_wiki_plugin.revision_control_manager_plugin
 
         # retrieves the instance for the instance name
         instance = self.web_mvc_wiki._get_instance(instance_name)
@@ -525,16 +582,16 @@ class WebMvcWikiPageController:
         instance_repository_path = instance["repository_path"]
 
         # retrieves the page name
-        page_name = form_data_map.get("wiki_page_name", DEFAULT_SUMMARY)
+        page_name = page.get("name", DEFAULT_SUMMARY)
 
         # retrieves the page summary
-        summary = form_data_map.get("wiki_page_new_summary", DEFAULT_SUMMARY)
+        page_summary = page.get("summary", DEFAULT_SUMMARY)
 
         # retrieves the page contents
-        contents = form_data_map["wiki_page_new_contents"]
+        page_contents = page["contents"]
 
         # normalizes the contents
-        normalized_contents = self._normalize_contents(contents)
+        normalized_contents = self._normalize_contents(page_contents)
 
         # sets the base file path as the instance repository path
         # resolved by the plugin manager
@@ -556,43 +613,17 @@ class WebMvcWikiPageController:
         revision_control_manager.add([complete_file_path], True)
 
         # uses the revision control manager to perform the commit
-        revision_control_manager.commit([complete_file_path], summary)
+        commit_revision = revision_control_manager.commit([complete_file_path], page_summary)
 
-        # retrieves the base path
-        base_path = self.get_base_path(rest_request)
+        # returns the creation revision
+        return commit_revision
 
-        # redirects the rest request
-        self.redirect(rest_request, base_path + instance_name + "/" + page_name)
-
-        return True
-
-    def handle_update(self, rest_request, parameters = {}):
-        """
-        Handles the given page rest request.
-
-        @type rest_request: RestRequest
-        @param rest_request: The page rest request to be handled.
-        @rtype: bool
-        @return: The result of the handling.
-        """
-
+    def _update_page(self, rest_request, page, instance_name):
         # retrieves the plugin manager
         plugin_manager = self.web_mvc_wiki_plugin.manager
 
         # retrieves the revision control manager plugin
         revision_control_manager_plugin = self.web_mvc_wiki_plugin.revision_control_manager_plugin
-
-        # retrieves the form data by processing the form
-        form_data_map = self.process_form_data(rest_request, DEFAULT_ENCODING)
-
-        # retrieves the pattern names from the parameters
-        pattern_names = parameters[PATTERN_NAMES_VALUE]
-
-        # retrieves the instance name pattern
-        instance_name = pattern_names["instance_name"]
-
-        # retrieves the page name pattern
-        page_name = pattern_names["page_name"]
 
         # retrieves the instance for the rest request
         instance = self.web_mvc_wiki._get_instance(instance_name)
@@ -606,14 +637,17 @@ class WebMvcWikiPageController:
         # retrieves the instance repository path
         instance_repository_path = instance["repository_path"]
 
-        # retrieves the edit summary
-        summary = form_data_map.get("wiki_page_edit_summary", DEFAULT_SUMMARY)
+        # retrieves the page name
+        page_name = page["name"]
 
         # retrieves the edit contents
-        contents = form_data_map["wiki_page_edit_contents"]
+        page_contents = page["contents"]
+
+        # retrieves the edit summary
+        page_summary = page.get("summary", DEFAULT_SUMMARY)
 
         # normalizes the contents
-        normalized_contents = self._normalize_contents(contents)
+        normalized_contents = self._normalize_contents(page_contents)
 
         # sets the base file path as the instance repository path
         # resolved by the plugin manager
@@ -632,12 +666,10 @@ class WebMvcWikiPageController:
         revision_control_manager = revision_control_manager_plugin.load_revision_control_manager(instance_repository_type, revision_control_parameters)
 
         # uses the revision control manager to perform the commit
-        commit_revision = revision_control_manager.commit([complete_file_path], summary)
+        commit_revision = revision_control_manager.commit([complete_file_path], page_summary)
 
-        # sets the request contents
-        self.set_contents(rest_request, "revision: " + str(commit_revision.get_number()))
-
-        return True
+        # returns the update revision
+        return commit_revision
 
     def _normalize_contents(self, contents):
         """

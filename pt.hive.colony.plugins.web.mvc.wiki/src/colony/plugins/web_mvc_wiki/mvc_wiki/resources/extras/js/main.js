@@ -148,8 +148,8 @@ $(document).ready(function() {
                             type : "post",
                             url : completeUrl,
                             data : {
-                                wiki_page_edit_contents : contents,
-                                wiki_page_edit_summary : summary
+                                "page[contents]" : contents,
+                                "page[summary]" : summary
                             },
                             success : function(data) {
                                 $.ajax({
