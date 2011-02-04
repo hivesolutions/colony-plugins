@@ -42,6 +42,12 @@ import colony.libs.importer_util
 BASE_ENTITY_MODULE_VALUE = "base_entity"
 """ The base entity module value """
 
+CONSUMER_STATUS_ACTIVE = 1
+""" The consumer status active """
+
+CONSUMER_STATUS_INACTIVE = 2
+""" The consumer status inactive """
+
 # imports the base entity classes
 base_entity = colony.libs.importer_util.__importer__(BASE_ENTITY_MODULE_VALUE)
 
@@ -98,5 +104,5 @@ class Consumer(RootEntity):
         # validates that a non empty api key was set
         self.add_validation_method("api_key", "not_empty", {})
 
-        # validates that an status greater than zero was set
-        self.add_validation_method("status", "greater_than_zero", {})
+        # validates that the status value is valid
+        self.add_validation_method("status", "in_enumeration", {"values" : (CONSUMER_STATUS_ACTIVE, CONSUMER_STATUS_INACTIVE)})
