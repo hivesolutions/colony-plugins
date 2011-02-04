@@ -143,11 +143,17 @@ class WebMvcManagerPageItemCodeExecutionController:
         return True
 
     def handle_execute(self, rest_request, parameters = {}):
-        # retrieves the template file
-        template_file = self.retrieve_template_file("code_execution_contents.html.tpl")
+        # retrieves the form data by processing the form
+        form_data_map = self.process_form_data(rest_request, DEFAULT_ENCODING)
+
+        # retrieves the command
+        command = form_data_map["command"]
 
         # executes the command
-        output_message = self.execute_command(rest_request)
+        output_message = self.execute_command(rest_request, command)
+
+        # retrieves the template file
+        template_file = self.retrieve_template_file("code_execution_contents.html.tpl")
 
         # assigns the output to the template
         template_file.assign("output_message", output_message)
@@ -164,15 +170,10 @@ class WebMvcManagerPageItemCodeExecutionController:
         # returns true
         return True
 
-    def execute_command(self, rest_request):
-        # retrieves the form data by processing the form
-        form_data_map = self.process_form_data(rest_request, DEFAULT_ENCODING)
-
-        # retrieves the command
-        command = form_data_map["command"]
-
-        # returns in case no command was specified
+    def execute_command(self, rest_request, command):
+        # in case an invalid command is specified
         if not command:
+            # returns
             return
 
         # creates a stream for stdout
@@ -207,4 +208,5 @@ class WebMvcManagerPageItemCodeExecutionController:
             # replaces new lines with line breaks
             output_message = output_message.replace("\n", "<br />")
 
+        # returns the output message
         return output_message
