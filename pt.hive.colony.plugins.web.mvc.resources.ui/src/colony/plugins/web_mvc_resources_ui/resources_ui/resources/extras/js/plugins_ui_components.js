@@ -2112,7 +2112,7 @@
             // processes the ajax request
             $.ajax({
                         url : providerUrl,
-                        type : "post",
+                        type : "get",
                         data : searchButtonData,
                         success : function(data) {
                             _partialCallback(searchTable, options, data, update);

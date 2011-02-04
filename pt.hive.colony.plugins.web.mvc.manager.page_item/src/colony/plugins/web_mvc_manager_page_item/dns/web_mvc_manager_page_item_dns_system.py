@@ -123,6 +123,6 @@ class WebMvcManagerPageItemDns:
                     "pattern" : (r"^web_mvc_manager/dns$", self.web_mvc_manager_page_item_dns_controller.handle_list_ajx, "get", "ajx")
                 },
                 (r"^web_mvc_manager/dns$", self.web_mvc_manager_page_item_dns_controller.handle_list, "get"),
-                (r"^web_mvc_manager/dns/partial$", self.web_mvc_manager_page_item_dns_controller.handle_partial_list, "post"),
+                (r"^web_mvc_manager/dns/partial$", self.web_mvc_manager_page_item_dns_controller.handle_partial_list, "get"),
                 (r"^web_mvc_manager/dns/(?P<dns_index>[0-9]+)$", self.web_mvc_manager_page_item_dns_controller.handle_show_ajx, "get", "ajx"),
                 (r"^web_mvc_manager/dns/(?P<dns_index>[0-9]+)$", self.web_mvc_manager_page_item_dns_controller.handle_show, "get"))
