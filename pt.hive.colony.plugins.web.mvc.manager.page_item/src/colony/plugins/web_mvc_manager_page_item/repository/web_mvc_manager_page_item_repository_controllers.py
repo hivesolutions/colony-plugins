@@ -56,11 +56,8 @@ WEB_MVC_MANAGER_PAGE_ITEM_REPOSITORY_RESOURCES_PATH = "web_mvc_manager_page_item
 TEMPLATES_PATH = WEB_MVC_MANAGER_PAGE_ITEM_REPOSITORY_RESOURCES_PATH + "/templates"
 """ The templates path """
 
-AJAX_ENCODER_NAME = "ajx"
-""" The ajax encoder name """
-
-JSON_ENCODER_NAME = "json"
-""" The json encoder name """
+PATTERN_NAMES_VALUE = "pattern_names"
+""" The pattern names value """
 
 # imports the web mvc utils
 web_mvc_utils = colony.libs.importer_util.__importer__(WEB_MVC_UTILS_VALUE)
@@ -106,26 +103,21 @@ class WebMvcManagerPageItemRepositoryController:
         # sets the templates path
         self.set_templates_path(templates_path)
 
-    def handle_show(self, rest_request, parameters = {}):
-        # in case the encoder name is ajax
-        if rest_request.encoder_name == AJAX_ENCODER_NAME:
-            # retrieves the template file
-            template_file = self.retrieve_template_file("repository_edit_contents.html.tpl")
-        else:
-            # retrieves the template file
-            template_file = self.retrieve_template_file("../general.html.tpl")
+    def handle_show_ajx(self, rest_request, parameters = {}):
+        # retrieves the pattern names from the parameters
+        pattern_names = parameters[PATTERN_NAMES_VALUE]
 
-            # assigns the include to the template
-            self.assign_include_template_file(template_file, "page_include", "capability/repository_edit_contents.html.tpl")
+        # retrieves the repository index pattern
+        repository_index = pattern_names["repository_index"]
 
-            # assigns the include to the template
-            self.assign_include_template_file(template_file, "side_panel_include", "side_panel/side_panel_update.html.tpl")
+        # converts the repository index to integer
+        repository_index = int(repository_index)
 
         # retrieves the specified capability
-        repository = self._get_repository(rest_request)
+        repository = self._get_repository(rest_request, repository_index)
 
-        # retrieves the repository index
-        repository_index = int(rest_request.path_list[-1])
+        # retrieves the template file
+        template_file = self.retrieve_template_file("repository_edit_contents.html.tpl")
 
         # assigns the repository to the template
         template_file.assign("repository", repository)
@@ -145,20 +137,71 @@ class WebMvcManagerPageItemRepositoryController:
         # returns true
         return True
 
+    def handle_show(self, rest_request, parameters = {}):
+        # retrieves the pattern names from the parameters
+        pattern_names = parameters[PATTERN_NAMES_VALUE]
+
+        # retrieves the repository index pattern
+        repository_index = pattern_names["repository_index"]
+
+        # converts the repository index to integer
+        repository_index = int(repository_index)
+
+        # retrieves the specified capability
+        repository = self._get_repository(rest_request, repository_index)
+
+        # retrieves the template file
+        template_file = self.retrieve_template_file("../general.html.tpl")
+
+        # assigns the include to the template
+        self.assign_include_template_file(template_file, "page_include", "capability/repository_edit_contents.html.tpl")
+
+        # assigns the include to the template
+        self.assign_include_template_file(template_file, "side_panel_include", "side_panel/side_panel_update.html.tpl")
+
+        # assigns the repository to the template
+        template_file.assign("repository", repository)
+
+        # assigns the repository index to the template
+        template_file.assign("repository_index", repository_index)
+
+        # assigns the session variables to the template file
+        self.assign_session_template_file(rest_request, template_file)
+
+        # applies the base path to the template file
+        self.apply_base_path_template_file(rest_request, template_file)
+
+        # processes the template file and sets the request contents
+        self.process_set_contents(rest_request, template_file)
+
+        # returns true
+        return True
+
+    def handle_list_ajx(self, rest_request, parameters = {}):
+        # retrieves the template file
+        template_file = self.retrieve_template_file("repository_list_contents.html.tpl")
+
+        # assigns the session variables to the template file
+        self.assign_session_template_file(rest_request, template_file)
+
+        # applies the base path to the template file
+        self.apply_base_path_template_file(rest_request, template_file)
+
+        # processes the template file and sets the request contents
+        self.process_set_contents(rest_request, template_file)
+
+        # returns true
+        return True
+
     def handle_list(self, rest_request, parameters = {}):
-        # in case the encoder name is ajax
-        if rest_request.encoder_name == AJAX_ENCODER_NAME:
-            # retrieves the template file
-            template_file = self.retrieve_template_file("repository_list_contents.html.tpl")
-        else:
-            # retrieves the template file from the parameters
-            template_file = parameters["template_file"]
+        # retrieves the template file from the parameters
+        template_file = parameters["template_file"]
 
-            # assigns the include to the template
-            self.assign_include_template_file(template_file, "page_include", "repository/repository_list_contents.html.tpl")
+        # assigns the include to the template
+        self.assign_include_template_file(template_file, "page_include", "repository/repository_list_contents.html.tpl")
 
-            # assigns the include to the template
-            self.assign_include_template_file(template_file, "side_panel_include", "side_panel/side_panel_configuration.html.tpl")
+        # assigns the include to the template
+        self.assign_include_template_file(template_file, "side_panel_include", "side_panel/side_panel_configuration.html.tpl")
 
         # assigns the session variables to the template file
         self.assign_session_template_file(rest_request, template_file)
@@ -173,17 +216,35 @@ class WebMvcManagerPageItemRepositoryController:
         return True
 
     def handle_partial_list(self, rest_request, parameters = {}):
+        # retrieves the form data by processing the form
+        form_data_map = self.process_form_data(rest_request, DEFAULT_ENCODING)
+
         # retrieves the web search helper
         search_helper = parameters["search_helper"]
 
-        # retrieves the template file
-        template_file = self.retrieve_template_file("repository_partial_list_contents.html.tpl")
+        # retrieves the search_query
+        search_query = form_data_map["search_query"]
+
+        # retrieves the start record
+        start_record = form_data_map["start_record"]
+
+        # retrieves the number records
+        number_records = form_data_map["number_records"]
+
+        # converts the start record to integer
+        start_record = int(start_record)
+
+        # converts the number records to integer
+        number_records = int(number_records)
 
         # retrieves the filtered repositories
-        filtered_repositories = self._get_fitered_repositories(rest_request)
+        filtered_repositories = self._get_filtered_repositories(rest_request, search_query)
 
         # retrieves the partial filter from the filtered repositories
-        partial_filtered_repositories, start_record, number_records, total_number_records = search_helper.partial_filter(rest_request, filtered_repositories)
+        partial_filtered_repositories, start_record, number_records, total_number_records = search_helper.partial_filter(rest_request, filtered_repositories, start_record, number_records)
+
+        # retrieves the template file
+        template_file = self.retrieve_template_file("repository_partial_list_contents.html.tpl")
 
         # assigns the repositories to the template
         template_file.assign("repositories", partial_filtered_repositories)
@@ -210,42 +271,65 @@ class WebMvcManagerPageItemRepositoryController:
         return True
 
     def handle_install_plugin(self, rest_request, parameters = {}):
-        # in case the encoder name is ajax
-        if rest_request.encoder_name == JSON_ENCODER_NAME:
-            # retrieves the json plugin
-            json_plugin = self.web_mvc_manager_page_item_repository_plugin.json_plugin
+        # retrieves the json plugin
+        json_plugin = self.web_mvc_manager_page_item_repository_plugin.json_plugin
 
-            # retrieves the communication helper
-            communication_helper = parameters["communication_helper"]
+        # retrieves the form data by processing the form
+        form_data_map = self.process_form_data(rest_request, DEFAULT_ENCODING)
 
-            # install the plugin and retrieves the result
-            install_plugin_result = self._install_plugin(rest_request)
+        # retrieves the communication helper
+        communication_helper = parameters["communication_helper"]
 
-            # serializes the install result using the json plugin
-            serialized_status = json_plugin.dumps(install_plugin_result)
+        # retrieves the plugin id
+        plugin_id = form_data_map["plugin_id"]
 
-            # sets the serialized status as the rest request contents
-            self.set_contents(rest_request, serialized_status)
+        # retrieves the plugin version
+        plugin_version = form_data_map["plugin_version"]
 
-            # sends the serialized broadcast message
-            communication_helper.send_serialized_broadcast_message(parameters, "web_mvc_manager/communication", "web_mvc_manager/plugin/install", serialized_status)
+        # install the plugin and retrieves the result
+        install_plugin_result = self._install_plugin(rest_request, plugin_id, plugin_version)
 
-            return True
+        # serializes the install result using the json plugin
+        serialized_status = json_plugin.dumps(install_plugin_result)
+
+        # sets the serialized status as the rest request contents
+        self.set_contents(rest_request, serialized_status)
+
+        # sends the serialized broadcast message
+        communication_helper.send_serialized_broadcast_message(parameters, "web_mvc_manager/communication", "web_mvc_manager/plugin/install", serialized_status)
 
         return True
 
     def handle_plugins_partial_list(self, rest_request, parameters = {}):
+        # retrieves the form data by processing the form
+        form_data_map = self.process_form_data(rest_request, DEFAULT_ENCODING)
+
         # retrieves the web search helper
         search_helper = parameters["search_helper"]
 
-        # retrieves the template file
-        template_file = self.retrieve_template_file("repository_plugins_partial_list_contents.html.tpl")
+        # retrieves the search query
+        search_query = form_data_map["search_query"]
+
+        # retrieves the start record
+        start_record = form_data_map["start_record"]
+
+        # retrieves the number records
+        number_records = form_data_map["number_records"]
+
+        # converts the start record to integer
+        start_record = int(start_record)
+
+        # converts the number records to integer
+        number_records = int(number_records)
 
         # retrieves the filtered repositories
-        filtered_repository_plugins = self._get_fitered_repository_plugins(rest_request)
+        filtered_repository_plugins = self._get_filtered_repository_plugins(rest_request, search_query)
 
         # retrieves the partial filter from the filtered repository plugins
-        partial_filtered_repository_plugins, start_record, number_records, total_number_records = search_helper.partial_filter(rest_request, filtered_repository_plugins)
+        partial_filtered_repository_plugins, start_record, number_records, total_number_records = search_helper.partial_filter(rest_request, filtered_repository_plugins, start_record, number_records)
+
+        # retrieves the template file
+        template_file = self.retrieve_template_file("repository_plugins_partial_list_contents.html.tpl")
 
         # assigns the repositories to the template
         template_file.assign("repository_plugins", partial_filtered_repository_plugins)
@@ -272,17 +356,35 @@ class WebMvcManagerPageItemRepositoryController:
         return True
 
     def handle_packages_partial_list(self, rest_request, parameters = {}):
+        # retrieves the form data by processing the form
+        form_data_map = self.process_form_data(rest_request, DEFAULT_ENCODING)
+
         # retrieves the web search helper
         search_helper = parameters["search_helper"]
 
-        # retrieves the template file
-        template_file = self.retrieve_template_file("repository_partial_list_contents.html.tpl")
+        # retrieves the search query
+        search_query = form_data_map["search_query"]
+
+        # retrieves the start record
+        start_record = form_data_map["start_record"]
+
+        # retrieves the number records
+        number_records = form_data_map["number_records"]
+
+        # converts the start record to integer
+        start_record = int(start_record)
+
+        # converts the number records to integer
+        number_records = int(number_records)
 
         # retrieves the filtered repositories
-        filtered_repositories = self._get_fitered_repositories(rest_request)
+        filtered_repositories = self._get_filtered_repositories(rest_request, search_query)
 
         # retrieves the partial filter from the filtered repositories
-        partial_filtered_repositories, start_record, number_records, total_number_records = search_helper.partial_filter(rest_request, filtered_repositories)
+        partial_filtered_repositories, start_record, number_records, total_number_records = search_helper.partial_filter(rest_request, filtered_repositories, start_record, number_records)
+
+        # retrieves the template file
+        template_file = self.retrieve_template_file("repository_partial_list_contents.html.tpl")
 
         # assigns the repositories to the template
         template_file.assign("repositories", partial_filtered_repositories)
@@ -308,12 +410,9 @@ class WebMvcManagerPageItemRepositoryController:
         # returns true
         return True
 
-    def _get_repository(self, rest_request, index = -1):
+    def _get_repository(self, rest_request, repository_index):
         # retrieves the system updater plugin
         system_updater_plugin = self.web_mvc_manager_page_item_repository_plugin.system_updater_plugin
-
-        # retrieves the repository index from the rest request's path list
-        repository_index = int(rest_request.path_list[index])
 
         # retrieves all the repositories
         repositories = system_updater_plugin.get_repositories()
@@ -329,13 +428,7 @@ class WebMvcManagerPageItemRepositoryController:
 
         return repository_information
 
-    def _get_fitered_repositories(self, rest_request):
-        # retrieves the form data by processing the form
-        form_data_map = self.process_form_data(rest_request, DEFAULT_ENCODING)
-
-        # retrieves the search query
-        search_query = form_data_map["search_query"]
-
+    def _get_filtered_repositories(self, rest_request, search_query):
         # retrieves the repositories
         repositories = self._get_repositories()
 
@@ -352,13 +445,7 @@ class WebMvcManagerPageItemRepositoryController:
         # returns the filtered repositories
         return filtered_repositories
 
-    def _get_fitered_repository_plugins(self, rest_request):
-        # retrieves the form data by processing the form
-        form_data_map = self.process_form_data(rest_request, DEFAULT_ENCODING)
-
-        # retrieves the form data attributes
-        search_query = form_data_map["search_query"]
-
+    def _get_filtered_repository_plugins(self, rest_request, search_query):
         # retrieves the repository
         repository = self._get_repository(rest_request, -2)
 
@@ -383,21 +470,12 @@ class WebMvcManagerPageItemRepositoryController:
 
         return repositories
 
-    def _install_plugin(self, rest_request):
+    def _install_plugin(self, rest_request, plugin_id, plugin_version):
         # retrieves the plugin manager
         plugin_manager = self.web_mvc_manager_page_item_repository_plugin.manager
 
         # retrieves the system updater plugin
         system_updater_plugin = self.web_mvc_manager_page_item_repository_plugin.system_updater_plugin
-
-        # retrieves the form data by processing the form
-        form_data_map = self.process_form_data(rest_request, DEFAULT_ENCODING)
-
-        # retrieves the plugin id
-        plugin_id = form_data_map["plugin_id"]
-
-        # retrieves the plugin version
-        plugin_version = form_data_map["plugin_version"]
 
         # creates the delta plugin install map
         delta_plugin_install_map = {"installed" : [], "uninstalled" : []}
