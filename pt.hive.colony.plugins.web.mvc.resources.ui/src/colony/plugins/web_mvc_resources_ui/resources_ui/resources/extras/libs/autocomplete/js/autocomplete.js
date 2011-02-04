@@ -271,7 +271,7 @@
             options["searchTimeout"] = setTimeout(function() {
                         jQuery.ajax({
                                     url : url,
-                                    type : "post",
+                                    type : "get",
                                     data : formData,
                                     success : function(result) {
                                         _tableContentCallback(options,
