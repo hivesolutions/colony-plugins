@@ -232,14 +232,14 @@ class WebMvcManagerPageItemDnsController:
         # converts the number records to integer
         number_records = int(number_records)
 
-        # retrieves the template file
-        template_file = self.retrieve_template_file("dns_partial_list_contents.html.tpl")
-
         # retrieves the filtered dns zones
         filtered_dns_zones = self._get_filtered_dns_zones(rest_request)
 
         # retrieves the partial filter from the filtered dns zones
         partial_filtered_dns_zones, start_record, number_records, total_number_records = search_helper.partial_filter(rest_request, filtered_dns_zones, start_record, number_records)
+
+        # retrieves the template file
+        template_file = self.retrieve_template_file("dns_partial_list_contents.html.tpl")
 
         # assigns the dns zones to the template
         template_file.assign("dns_zones", partial_filtered_dns_zones)
