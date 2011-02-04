@@ -13,8 +13,14 @@
         <table class="table" cellspacing="0" cellpadding="0">
             <thead>
                 <tr>
-                    <th><span>Plugin ID</span><span class="order-down-inactive"></span></th>
-                    <th width="75"><span>Install</span><span class="order-down-inactive"></span></th>
+                    <th>
+                        <span>Plugin ID</span>
+                        <span class="order-down-inactive"></span>
+                    </th>
+                    <th width="75">
+                        <span>Install</span>
+                        <span class="order-down-inactive"></span>
+                    </th>
                 </tr>
             </thead>
             <tbody></tbody>
