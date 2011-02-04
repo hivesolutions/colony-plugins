@@ -509,9 +509,6 @@ class WebMvcWikiPageController:
         # retrieves the instance name pattern
         instance_name = pattern_names["instance_name"]
 
-        # retrieves the page name pattern
-        page_name = pattern_names["page_name"]
-
         # retrieves the instance for the instance name
         instance = self.web_mvc_wiki._get_instance(instance_name)
 
@@ -527,8 +524,13 @@ class WebMvcWikiPageController:
         # retrieves the instance repository path
         instance_repository_path = instance["repository_path"]
 
-        # retrieves the summary and the contents
+        # retrieves the page name
+        page_name = form_data_map.get("wiki_page_name", DEFAULT_SUMMARY)
+
+        # retrieves the page summary
         summary = form_data_map.get("wiki_page_new_summary", DEFAULT_SUMMARY)
+
+        # retrieves the page contents
         contents = form_data_map["wiki_page_new_contents"]
 
         # normalizes the contents

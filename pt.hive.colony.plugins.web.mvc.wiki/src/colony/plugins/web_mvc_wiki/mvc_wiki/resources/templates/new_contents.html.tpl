@@ -1,6 +1,7 @@
 <div id="wiki-page-new-container">
     <div id="wiki-page-new">
-        <form action="pages/${out_none value=page_name /}" id="wiki-page-new-form" method="post">
+        <form action="pages" id="wiki-page-new-form" method="post">
+            <input name="wiki_page_name" type="hidden" value="${out_none value=page_name /}" />
             <div class="wiki-page-new-line">
                    <div class="error">This page does not exist yet. Please make sure no similar pages exist before creating it.</div>
             </div>
