@@ -484,7 +484,7 @@ class WebMvcWikiPageController:
         # sets the templates path
         self.set_templates_path(templates_path)
 
-    def handle_new(self, rest_request, parameters = {}):
+    def handle_create(self, rest_request, parameters = {}):
         """
         Handles the given page rest request.
 
@@ -564,7 +564,7 @@ class WebMvcWikiPageController:
 
         return True
 
-    def handle_edit(self, rest_request, parameters = {}):
+    def handle_update(self, rest_request, parameters = {}):
         """
         Handles the given page rest request.
 

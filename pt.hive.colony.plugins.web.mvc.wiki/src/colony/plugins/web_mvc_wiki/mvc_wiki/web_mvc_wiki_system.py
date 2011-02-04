@@ -111,8 +111,8 @@ class WebMvcWiki:
         to the web mvc service.
         """
 
-        return ((r"^wiki/(?P<instance_name>[a-zA-Z]+)/pages/new/(?P<page_name>[a-zA-Z0-9_:\.]+)$", self.web_mvc_wiki_page_controller.handle_new, "post"),
-                (r"^wiki/(?P<instance_name>[a-zA-Z]+)/pages/edit/(?P<page_name>[a-zA-Z0-9_:\.]+)$", self.web_mvc_wiki_page_controller.handle_edit, "post"),
+        return ((r"^wiki/(?P<instance_name>[a-zA-Z]+)/pages/(?P<page_name>[a-zA-Z0-9_:\.]+)$", self.web_mvc_wiki_page_controller.handle_create, "post"),
+                (r"^wiki/(?P<instance_name>[a-zA-Z]+)/pages/(?P<page_name>[a-zA-Z0-9_:\.]+)/update$", self.web_mvc_wiki_page_controller.handle_update, "post"),
                 (r"^wiki/(?P<instance_name>[a-zA-Z]+)/(?P<page_name>[a-zA-Z0-9_:\.]*)$", self.web_mvc_wiki_controller.handle_wiki, "get"),
                 (r"^wiki/(?P<instance_name>[a-zA-Z]+)/(?:(?P<resource_type>js|images|css))/(?P<resource_name>.*)$", self.web_mvc_wiki_controller.handle_resources, "get"))
 
