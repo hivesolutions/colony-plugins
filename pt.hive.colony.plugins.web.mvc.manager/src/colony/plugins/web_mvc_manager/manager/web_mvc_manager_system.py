@@ -98,7 +98,7 @@ class WebMvcManager:
     """ The list containing the extra patterns """
 
     extra_patterns_map = {}
-    """ The map containing the extra patterns """
+    """ The map containing the extra patterns mapping """
 
     def __init__(self, web_mvc_manager_plugin):
         """
@@ -245,6 +245,9 @@ class WebMvcManager:
                 (r"^web_mvc_manager/resources_ui/.+$", (web_mvc_resources_ui_plugin_resources_path, "web_mvc_manager/resources_ui")))
 
     def load_web_mvc_manager_page_item_bundle_plugin(self, web_mvc_manager_page_item_bundle_plugin):
+        # generates the patterns unload event
+        self.web_mvc_manager_plugin.generate_event("web.mvc.patterns_unload", [self.web_mvc_manager_plugin])
+
         # retrieves the page item bundle from the web mvc manager page item bundle plugin
         page_item_bundle = web_mvc_manager_page_item_bundle_plugin.get_page_item_bundle({})
 
@@ -267,7 +270,6 @@ class WebMvcManager:
                 self._add_side_panel_item(page_item_side_panel, page_item_base_address)
 
             # unpacks the page item pattern
-            page_item_pattern_name = page_item_pattern[0]
             page_item_action = page_item_pattern[1]
 
             # converts the page item action to allow composite validation of mvc manager
@@ -280,21 +282,24 @@ class WebMvcManager:
             page_item_pattern_list[1] = page_item_action_composite
 
             # converts the page item patter back t tuple
-            page_item_pattern = tuple(page_item_pattern_list)
+            _page_item_pattern = tuple(page_item_pattern_list)
 
             # adds the page item pattern to the extra patterns list
-            self.extra_patterns_list.append(page_item_pattern)
+            self.extra_patterns_list.append(_page_item_pattern)
 
-            # sets the page item in the extra patterns map
-            self.extra_patterns_map[page_item_pattern_name] = page_item_pattern
+            # sets the "new" page item pattern in the extra patterns map
+            self.extra_patterns_map[page_item_pattern] = _page_item_pattern
 
-        # generates the patterns event
-        self.web_mvc_manager_plugin.generate_event("web.mvc.patterns", [self.web_mvc_manager_plugin])
+        # generates the patterns load event
+        self.web_mvc_manager_plugin.generate_event("web.mvc.patterns_load", [self.web_mvc_manager_plugin])
 
         # reloads the ui in the client side
         self._reload_ui()
 
     def unload_web_mvc_manager_page_item_bundle_plugin(self, web_mvc_manager_page_item_bundle_plugin):
+        # generates the patterns unload event
+        self.web_mvc_manager_plugin.generate_event("web.mvc.patterns_unload", [self.web_mvc_manager_plugin])
+
         # retrieves the page item bundle from the web mvc manager page item bundle plugin
         page_item_bundle = web_mvc_manager_page_item_bundle_plugin.get_page_item_bundle({})
 
@@ -316,20 +321,17 @@ class WebMvcManager:
                 # removes the side panel item for the side panel and base address
                 self._remove_side_panel_item(page_item_side_panel, page_item_base_address)
 
-            # unpacks the page item pattern
-            page_item_pattern_name = page_item_pattern[0]
-
-            # retrieves the page item pattern from the extra patterns map
-            page_item_pattern = self.extra_patterns_map[page_item_pattern_name]
+            # retrieves the "new" page item pattern from the extra patterns map
+            _page_item_pattern = self.extra_patterns_map[page_item_pattern]
 
             # removes the page item pattern from the extra patterns list
-            self.extra_patterns_list.remove(page_item_pattern)
+            self.extra_patterns_list.remove(_page_item_pattern)
 
-            # unsets the page item in the extra patterns map
-            del self.extra_patterns_map[page_item_pattern_name]
+            # removes the page item pattern from the extra patterns map
+            del self.extra_patterns_map[page_item_pattern]
 
-        # generates the patterns event
-        self.web_mvc_manager_plugin.generate_event("web.mvc.patterns", [self.web_mvc_manager_plugin])
+        # generates the patterns load event
+        self.web_mvc_manager_plugin.generate_event("web.mvc.patterns_load", [self.web_mvc_manager_plugin])
 
         # reloads the ui in the client side
         self._reload_ui()
