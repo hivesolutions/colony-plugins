@@ -48,6 +48,9 @@ import colony_packing_installer_exceptions
 INSTALLER_TYPE = "colony_packing"
 """ The installer type """
 
+JSON_FILE_EXTENSION = "json"
+""" The json file extension """
+
 ID_VALUE = "id"
 """ The id value """
 
@@ -59,6 +62,12 @@ TIMESTAMP_VALUE = "timestamp"
 
 UPGRADE_VALUE = "upgrade"
 """ The upgrade value """
+
+TARGET_PATH_VALUE = "target_path"
+""" The target path value """
+
+INSTALLED_PLUGINS_VALUE = "installed_plugins"
+""" The installed plugins value """
 
 FORCE_VALUE = "force"
 """ The force value """
@@ -122,7 +131,7 @@ class ColonyPackingInstaller:
         manager_path = plugin_manager.get_manager_path()
 
         # creates the bundles file path
-        bundles_file_path = os.path.join(manager_path, "var/bundles.json")
+        bundles_file_path = os.path.join(manager_path, "var/registry/bundles.json")
 
     def install_plugin(self, file_path, properties, file_context = None):
         """
@@ -148,7 +157,10 @@ class ColonyPackingInstaller:
         manager_path = plugin_manager.get_manager_path()
 
         # creates the plugins file path
-        plugins_file_path = os.path.join(manager_path, "var/plugins.json")
+        plugins_file_path = os.path.join(manager_path, "var/registry/plugins.json")
+
+        # creates the plugins directory path
+        plugins_directory_path = os.path.join(manager_path, "var/registry/plugins")
 
         # creates a new file transaction context
         file_context = file_context or colony.libs.file_util.FileTransactionContext("c:\\transactions\\")
@@ -169,15 +181,17 @@ class ColonyPackingInstaller:
             # ------------------------------------------------
 
             # TENHO DE CONTAR COM O CASE DE O FICHEIRO NAO EXISTIR
-
             # tenho de obter as informacoes sobre o cpx aki
             # e depois tenho de acrescentar essas informacoes ao plugins.json
-            # tenho tb de verificar conflicto de plgugins
-            # se tiver a mesma versao so com force posso eu fazer deploy
 
-            # retrieves the flag properties values
-            upgrade = properties.get(UPGRADE_VALUE, True)
-            force = properties.get(FORCE_VALUE, False)
+            # --------------------------------------
+
+            # creates the plugin descriptor file path
+            plugin_descriptor_file_path = os.path.join(plugins_directory_path, plugin_id + "_" + plugin_version + "." + JSON_FILE_EXTENSION)
+
+            file_context.write_file(plugin_descriptor_file_path, "asdasd")
+
+            #------------------------------------------------------------------
 
             # reads the plugin file contents
             plugins_file_contents = file_context.read_file(plugins_file_path)
@@ -186,27 +200,10 @@ class ColonyPackingInstaller:
             plugins = json_plugin.loads(plugins_file_contents)
 
             # retrieves the installed plugins
-            installed_plugins = plugins.get("installed_plugins", {})
+            installed_plugins = plugins.get(INSTALLED_PLUGINS_VALUE, {})
 
-            # retrieves the installed plugin value
-            installed_plugin = installed_plugins.get(plugin_id, {})
-
-            # in case there is an installed plugin and the upgrade
-            # flag is not set
-            if installed_plugin and not upgrade:
-                # raises the plugin installation error
-                raise colony_packing_installer_exceptions.PluginInstallationError("plugin already installed")
-
-            # retrieves the installed plugin version
-            installed_plugin_version = installed_plugin.get(VERSION_VALUE, None)
-
-            # in case the installed plugin version is the same as the
-            # plugin version and the force flag is not set
-            if installed_plugin_version == plugin_version and not force:
-                # raises the plugin installation error
-                raise colony_packing_installer_exceptions.PluginInstallationError("plugin version already installed")
-
-            # --------------------------------------
+            # validates the plugin transaction requirements
+            self._validate_plugin_transaction(properties, plugins_file_path, plugins, packing_information)
 
             # retrieves the main plugin path
             main_plugin_path = plugin_manager.get_main_plugin_path()
@@ -217,8 +214,6 @@ class ColonyPackingInstaller:
 
             # deploys the package using the main plugin "virtual" path
             self._deploy_package(file_path, main_plugin_virtual_path)
-
-            # --------------------------------------
 
             # retrieves the current time
             current_time = time.time()
@@ -252,6 +247,38 @@ class ColonyPackingInstaller:
             # re-raises the exception
             raise
 
+    def _validate_plugin_transaction(self, properties, plugins_file_path, plugins, packing_information):
+        # retrieves the plugin id
+        plugin_id = packing_information.get_property(ID_VALUE)
+
+        # retrieves the plugin version
+        plugin_version = packing_information.get_property(VERSION_VALUE)
+
+        # retrieves the flag properties values
+        upgrade = properties.get(UPGRADE_VALUE, True)
+        force = properties.get(FORCE_VALUE, False)
+
+        # retrieves the installed plugins
+        installed_plugins = plugins.get(INSTALLED_PLUGINS_VALUE, {})
+
+        # retrieves the installed plugin value
+        installed_plugin = installed_plugins.get(plugin_id, {})
+
+        # in case there is an installed plugin and the upgrade
+        # flag is not set
+        if installed_plugin and not upgrade:
+            # raises the plugin installation error
+            raise colony_packing_installer_exceptions.PluginInstallationError("plugin already installed")
+
+        # retrieves the installed plugin version
+        installed_plugin_version = installed_plugin.get(VERSION_VALUE, None)
+
+        # in case the installed plugin version is the same as the
+        # plugin version and the force flag is not set
+        if installed_plugin_version == plugin_version and not force:
+            # raises the plugin installation error
+            raise colony_packing_installer_exceptions.PluginInstallationError("plugin version already installed")
+
     def _deploy_package(self, package_path, target_path = None):
         # retrieves the plugin manager
         plugin_manager = self.colony_packing_installer_plugin.manager
@@ -266,7 +293,7 @@ class ColonyPackingInstaller:
         target_path = target_path or main_plugin_path
 
         # creates the properties map for the file unpacking packing
-        properties = {"target_path" : target_path}
+        properties = {TARGET_PATH_VALUE : target_path}
 
         # unpacks the files using the colony service
         packing_manager_plugin.unpack_files([package_path], properties, "colony")
