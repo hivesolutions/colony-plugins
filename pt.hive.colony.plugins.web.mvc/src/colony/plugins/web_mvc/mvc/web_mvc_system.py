@@ -403,12 +403,20 @@ class WebMvc:
         # updates the resource matching regex
         self._update_resource_matching_regex()
 
-    def process_web_mvc_patterns_event(self, event_name, plugin):
+    def process_web_mvc_patterns_reload_event(self, event_name, plugin):
         # unloads the web mvc service plugin
         self.unload_web_mvc_service_plugin(plugin)
 
         # loads the web mvc service plugin
         self.load_web_mvc_service_plugin(plugin)
+
+    def process_web_mvc_patterns_load_event(self, event_name, plugin):
+        # loads the web mvc service plugin
+        self.load_web_mvc_service_plugin(plugin)
+
+    def process_web_mvc_patterns_unload_event(self, event_name, plugin):
+        # unloads the web mvc service plugin
+        self.unload_web_mvc_service_plugin(plugin)
 
     def process_web_mvc_communication_event(self, event_name, connection_name, message):
         # sends the broadcast message

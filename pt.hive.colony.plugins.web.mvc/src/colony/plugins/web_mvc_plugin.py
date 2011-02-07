@@ -63,7 +63,7 @@ class WebMvcPlugin(colony.base.plugin_system.Plugin):
                     colony.base.plugin_system.PluginDependency(
                     "pt.hive.colony.plugins.misc.json", "1.0.0")]
     events_handled = []
-    events_registrable = ["web.mvc.patterns", "web.mvc.communication"]
+    events_registrable = ["web.mvc.patterns_reload", "web.mvc.patterns_load", "web.mvc.patterns_unload", "web.mvc.communication"]
     main_modules = ["web_mvc.mvc.web_mvc_communication_handler",
                     "web_mvc.mvc.web_mvc_exceptions",
                     "web_mvc.mvc.web_mvc_file_handler",
@@ -163,9 +163,17 @@ class WebMvcPlugin(colony.base.plugin_system.Plugin):
     def set_json_plugin(self, json_plugin):
         self.json_plugin = json_plugin
 
-    @colony.base.decorators.event_handler_method("web.mvc.patterns")
-    def web_mvc_patterns_handler(self, event_name, *event_args):
-        self.web_mvc.process_web_mvc_patterns_event(event_name, *event_args)
+    @colony.base.decorators.event_handler_method("web.mvc.patterns_reload")
+    def web_mvc_patterns_reload_handler(self, event_name, *event_args):
+        self.web_mvc.process_web_mvc_patterns_reload_event(event_name, *event_args)
+
+    @colony.base.decorators.event_handler_method("web.mvc.patterns_load")
+    def web_mvc_patterns_load_handler(self, event_name, *event_args):
+        self.web_mvc.process_web_mvc_patterns_load_event(event_name, *event_args)
+
+    @colony.base.decorators.event_handler_method("web.mvc.patterns_unload")
+    def web_mvc_patterns_unload_handler(self, event_name, *event_args):
+        self.web_mvc.process_web_mvc_patterns_unload_event(event_name, *event_args)
 
     @colony.base.decorators.event_handler_method("web.mvc.communication")
     def web_mvc_communication_handler(self, event_name, *event_args):
