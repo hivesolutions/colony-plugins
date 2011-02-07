@@ -189,7 +189,7 @@ class ColonyPackingInstaller:
             # creates the plugin descriptor file path
             plugin_descriptor_file_path = os.path.join(plugins_directory_path, plugin_id + "_" + plugin_version + "." + JSON_FILE_EXTENSION)
 
-            file_context.write_file(plugin_descriptor_file_path, "asdasd")
+            file_context.write_file(plugin_descriptor_file_path, "CHANGE_TO_PLUGIN_DESCRIPTOR")
 
             #------------------------------------------------------------------
 
