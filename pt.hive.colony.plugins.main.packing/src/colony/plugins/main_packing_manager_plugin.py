@@ -115,6 +115,25 @@ class MainPackingManagerPlugin(colony.base.plugin_system.Plugin):
 
         return self.main_packing_manager.get_packing_information(file_path, properties, service_name)
 
+    def get_packing_file_contents(self, file_path, properties, service_name):
+        """
+        Retrieves the packing file contents from the file
+        in the given file path using the provided service name.
+
+        @type file_path: String
+        @param file_path: The path of the file to retrieve
+        packing file contents.
+        @type properties: Dictionary
+        @param properties: The properties for the retrieval.
+        @type service_name: String
+        @param service_name: The name of the service to be used
+        for retrieving the file contents.
+        @rtype: String
+        @return: The packing file contents for the file.
+        """
+
+        return self.main_packing_manager.get_packing_file_contents(file_path, properties, service_name)
+
     def pack_directory(self, directory_path, properties, service_name):
         """
         Packs the directory using the provided service name.

@@ -222,6 +222,39 @@ class MainPackingColonyService:
         # returns the specification
         return specification
 
+    def get_packing_file_contents(self, file_path, properties):
+        """
+        Retrieves the packing file contents from the file
+        in the given file path using the service.
+
+        @type file_path: String
+        @param file_path: The path of the file to retrieve
+        packing file contents.
+        @type properties: Dictionary
+        @param properties: The properties for the retrieval.
+        @rtype: String
+        @return: The packing file contents for the file.
+        """
+
+        # retrieves the specification file path property
+        specification_file_path = properties.get(SPECIFICATION_FILE_PATH_VALUE, DEFAULT_SPECIFICATION_FILE_PATH)
+
+        # creates a new compressed file
+        compressed_file = ColonyCompressedFile()
+
+        # opens the compressed file
+        compressed_file.open(file_path, "r")
+
+        try:
+            # reads the specification file from the compressed file
+            specification_file_buffer = compressed_file.read(specification_file_path)
+        finally:
+            # closes the compressed file
+            compressed_file.close()
+
+        # returns the specification file buffer
+        return specification_file_buffer
+
     def pack_directory(self, directory_path, properties):
         """
         Packs the directory using the service.
