@@ -172,6 +172,9 @@ class ColonyPackingInstaller:
             # retrieves the packing information
             packing_information = packing_manager_plugin.get_packing_information(file_path, {}, "colony")
 
+            # retrieves the packing file contents
+            packing_file_contents = packing_manager_plugin.get_packing_file_contents(file_path, {}, "colony")
+
             # retrieves the plugin id
             plugin_id = packing_information.get_property(ID_VALUE)
 
@@ -189,7 +192,8 @@ class ColonyPackingInstaller:
             # creates the plugin descriptor file path
             plugin_descriptor_file_path = os.path.join(plugins_directory_path, plugin_id + "_" + plugin_version + "." + JSON_FILE_EXTENSION)
 
-            file_context.write_file(plugin_descriptor_file_path, "CHANGE_TO_PLUGIN_DESCRIPTOR")
+            # writes the packing file contents to the plugin descriptor file path
+            file_context.write_file(plugin_descriptor_file_path, packing_file_contents)
 
             #------------------------------------------------------------------
 
