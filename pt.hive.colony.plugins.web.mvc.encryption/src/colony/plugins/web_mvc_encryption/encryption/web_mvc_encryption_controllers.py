@@ -371,7 +371,7 @@ class ConsumerController:
         # returns the consumer entity
         return consumer_entity
 
-    def _validate_api_key(self, rest_request, api_key):
+    def _get_consumers(self, rest_request, filter):
         # retrieves the web mvc encryption entity models
         web_mvc_encryption_entity_models = self.web_mvc_encryption.web_mvc_encryption_entity_models
 
@@ -379,12 +379,38 @@ class ConsumerController:
         entity_manager = web_mvc_encryption_entity_models.entity_manager
 
         # retrieves the consumer entities with the specified api key
-        consumer_entities = entity_manager._find_all_options(web_mvc_encryption_entity_models.Consumer, {"filters" : [{"filter_type" : "equals",
-                                                                                                                       "filter_fields" : [{"field_name" : "api_key",
-                                                                                                                                           "field_value" : api_key}]},
-                                                                                                                       {"filter_type" : "equals",
-                                                                                                                       "filter_fields" : [{"field_name" : "status",
-                                                                                                                                           "field_value" : VALID_STATUS_VALUE}]}]})
+        consumer_entities = entity_manager._find_all_options(web_mvc_encryption_entity_models.Consumer, filter)
+
+        # returns the consumer entities
+        return consumer_entities
+
+    def _validate_api_key(self, rest_request, api_key):
+        # creates the filter map
+        filter = {
+                  "filters" : [
+                      {
+                          "filter_type" : "equals",
+                          "filter_fields" : [
+                              {
+                                   "field_name" : "api_key",
+                                   "field_value" : api_key
+                              }
+                          ]
+                      },
+                      {
+                           "filter_type" : "equals",
+                           "filter_fields" : [
+                               {
+                                   "field_name" : "status",
+                                   "field_value" : VALID_STATUS_VALUE
+                               }
+                           ]
+                      }
+                  ]
+              }
+
+        # retrieves the consumer entities with the api key
+        consumer_entities = self._get_consumers(rest_request, filter)
 
         # retrieves the consumer entity
         consumer_entity = consumer_entities and consumer_entities[0] or None
