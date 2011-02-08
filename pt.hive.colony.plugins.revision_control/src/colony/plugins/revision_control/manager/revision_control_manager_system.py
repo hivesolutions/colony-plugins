@@ -67,7 +67,7 @@ class RevisionControlManager:
         Creates a revision control manager for the specified adapter name.
 
         @type adapter_name: String
-        @param adapter_name: The name of the adapter to for loading the revision control manager
+        @param adapter_name: The name of the adapter for loading the revision control manager
         @type revision_control_parameters: Dictionary
         @param revision_control_parameters: The parameters with which to load revision control manager
         """
