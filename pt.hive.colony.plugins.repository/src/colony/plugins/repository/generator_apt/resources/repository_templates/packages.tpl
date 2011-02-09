@@ -1,19 +1,20 @@
-${foreach item=package from=packages}Package: ${out value=package.name /}
-Version: ${out value=package.version /}
-Architecture: ${out value=package.architecture /}
-Essential: ${out value=package.essential /}
-Maintainer: ${out value=package.maintainer /}
-Installed-Size: ${out value=package.installed_size /}
-Pre-Depends: ${out value=package.pre_dependencies /}
-Depends: ${out value=package.dependencies /}
-Provides: ${out value=package.provides /}
-Filename: ${out value=package.filename /}
-Size: ${out value=package.size /}
-MD5sum: ${out value=package.md5 /}
-SHA1: ${out value=package.sha1 /}
-SHA256: ${out value=package.sha256 /}
-Section: ${out value=package.section /}
-Priority: ${out value=package.priority /}
-Description: ${out value=package.description /}
+${foreach item=package from=packages}${out prefix="Package: " value=package.name /}
+${out_none prefix="Version: " value=package.version /}
+${out_none prefix="Architecture: " value=package.architecture /}
+${out_none prefix="Essential: " value=package.essential /}
+${out_none prefix="Maintainer: " value=package.maintainer /}
+${out_none prefix="Installed-Size: " value=package.installed_size /}
+${out_none prefix="Pre-Depends: " value=package.pre_dependencies /}
+${out_none prefix="Depends: " value=package.dependencies /}
+${out_none prefix="Replaces: " value=package.replaces /}
+${out_none prefix="Provides: " value=package.provides /}
+${out_none prefix="Filename: " value=package.filename /}
+${out_none prefix="Size: " value=package.size /}
+${out_none prefix="MD5sum: " value=package.md5 /}
+${out_none prefix="SHA1: " value=package.sha1 /}
+${out_none prefix="SHA256: " value=package.sha256 /}
+${out_none prefix="Section: " value=package.section /}
+${out_none prefix="Priority: " value=package.priority /}
+${out_none prefix="Description: " value=package.description /}
 
 ${/foreach}
