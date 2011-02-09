@@ -101,6 +101,9 @@ QUOTE_VALUE = "quote"
 XML_ESCAPE_VALUE = "xml_escape"
 """ The xml escape value """
 
+PREFIX_VALUE = "prefix"
+""" The prefix value """
+
 ELSE_VALUE = "else"
 """ The else value """
 
@@ -518,6 +521,15 @@ class Visitor:
             # unsets the attribute xml escape value
             attribute_xml_escape_value = False
 
+        # in case the prefix exists in the attributes map
+        if PREFIX_VALUE in attributes_map:
+            # retrieves attribute prefix value
+            attribute_prefix = attributes_map[PREFIX_VALUE]
+            attribute_prefix_value = self.get_value(attribute_prefix)
+
+            # adds the attribute prefix value to the attribute value value
+            attribute_value_value = attribute_prefix_value + attribute_value_value
+
         # in case the variable encoding is defined
         if self.variable_encoding:
             # re-encodes the variable value
@@ -588,6 +600,15 @@ class Visitor:
         if attribute_value_value == None:
             # returns immediately (no write)
             return
+
+        # in case the prefix exists in the attributes map
+        if PREFIX_VALUE in attributes_map:
+            # retrieves attribute prefix value
+            attribute_prefix = attributes_map[PREFIX_VALUE]
+            attribute_prefix_value = self.get_value(attribute_prefix)
+
+            # adds the attribute prefix value to the attribute value value
+            attribute_value_value = attribute_prefix_value + attribute_value_value
 
         # in case the variable encoding is defined
         if self.variable_encoding:
