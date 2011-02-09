@@ -101,6 +101,9 @@ QUOTE_VALUE = "quote"
 XML_ESCAPE_VALUE = "xml_escape"
 """ The xml escape value """
 
+ALLOW_EMPTY_VALUE = "allow_empty"
+""" The allow empty value """
+
 PREFIX_VALUE = "prefix"
 """ The prefix value """
 
@@ -596,8 +599,21 @@ class Visitor:
             # unsets the attribute xml escape value
             attribute_xml_escape_value = False
 
-        # in case the attribute value value is none
-        if attribute_value_value == None:
+        # in case the allow empty exists in the attributes map
+        if ALLOW_EMPTY_VALUE in attributes_map:
+            # retrieves attribute allow empty value
+            attribute_allow_empty = attributes_map[ALLOW_EMPTY_VALUE]
+            attribute_allow_empty_value = self.get_value(attribute_allow_empty)
+        # otherwise
+        else:
+            # sets the attribute allow empty value
+            attribute_allow_empty_value = True
+
+        # creates the invalid values tuple
+        invalid_values = attribute_allow_empty_value and (None,) or (None, "")
+
+        # in case the attribute value value is invalid
+        if attribute_value_value in invalid_values:
             # returns immediately (no write)
             return
 
