@@ -877,8 +877,17 @@ class HttpClientServiceHandler:
         # continuous loop
         while True:
             try:
-                # receives the data (or the pending data)
-                data = self.pending_data or service_connection.receive()
+                # in case there is pending data to be read
+                if self.pending_data:
+                    # sets the data as the pending data
+                    data = self.pending_data
+
+                    # unsets the pending data (it has been read)
+                    self.pending_data = None
+                # otherwise (read normally)
+                else:
+                    # receives the data
+                    data = service_connection.receive()
             except self.service_utils_exception_class:
                 # raises the http data retrieval exception
                 raise main_service_http_exceptions.HttpDataRetrievalException("problem retrieving data")
@@ -1042,9 +1051,6 @@ class HttpClientServiceHandler:
 
                     # breaks the loop
                     break
-
-        # unsets the pending data (it must have been read)
-        self.pending_data = None
 
         # calculates the complete message size
         complete_message_size = message_size + message_offset_index
