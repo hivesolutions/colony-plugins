@@ -1,4 +1,4 @@
-${foreach item=package from=packages}${out prefix="Package: " value=package.name /}
+${foreach item=package from=packages}${out_none prefix="Package: " value=package.name /}
 ${out_none prefix="Version: " value=package.version /}
 ${out_none prefix="Architecture: " value=package.architecture /}
 ${out_none prefix="Essential: " value=package.essential /}
