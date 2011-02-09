@@ -1,12 +1,13 @@
-Package: ${out_none value=package.name /}
-Version: ${out_none value=package.version /}
-Section: ${out_none value=package.section /}
-Priority: ${out_none value=package.priority /}
-Architecture: ${out_none value=package.architecture /}
-Essential: ${out_none value=package.essential /}
-Depends: ${out_none value=package.dependencies /}
-Pre-Depends: ${out_none value=package.pre_dependencies /}
-Installed-Size: ${out_none value=package.installed_size /}
-Maintainer: ${out_none value=package.maintainer /}
-Provides: ${out_none value=package.provides /}
-Description: ${out_none value=package.description /}
+${out_none prefix="Package: " value=package.name /}
+${out_none prefix="Version: " value=package.version /}
+${out_none prefix="Section: " value=package.section /}
+${out_none prefix="Priority: " value=package.priority /}
+${out_none prefix="Architecture: " value=package.architecture /}
+${out_none prefix="Essential: " value=package.essential /}
+${out_none prefix="Depends: " value=package.dependencies /}
+${out_none prefix="Pre-Depends: " value=package.pre_dependencies /}
+${out_none prefix="Installed-Size: " value=package.installed_size /}
+${out_none prefix="Maintainer: " value=package.maintainer /}
+${out_none prefix="Provides: " value=package.provides /}
+${out_none prefix="Replaces: " value=package.replaces /}
+${out_none prefix="Description: " value=package.description /}
