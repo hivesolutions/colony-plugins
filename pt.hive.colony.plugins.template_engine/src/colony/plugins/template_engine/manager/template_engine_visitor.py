@@ -521,15 +521,6 @@ class Visitor:
             # unsets the attribute xml escape value
             attribute_xml_escape_value = False
 
-        # in case the prefix exists in the attributes map
-        if PREFIX_VALUE in attributes_map:
-            # retrieves attribute prefix value
-            attribute_prefix = attributes_map[PREFIX_VALUE]
-            attribute_prefix_value = self.get_value(attribute_prefix)
-
-            # adds the attribute prefix value to the attribute value value
-            attribute_value_value = attribute_prefix_value + attribute_value_value
-
         # in case the variable encoding is defined
         if self.variable_encoding:
             # re-encodes the variable value
@@ -550,6 +541,15 @@ class Visitor:
         if attribute_xml_escape_value:
             # escapes the attribute value value using xml escaping
             attribute_value_value = xml.sax.saxutils.escape(attribute_value_value)
+
+        # in case the prefix exists in the attributes map
+        if PREFIX_VALUE in attributes_map:
+            # retrieves attribute prefix value
+            attribute_prefix = attributes_map[PREFIX_VALUE]
+            attribute_prefix_value = self.get_value(attribute_prefix)
+
+            # adds the attribute prefix value to the attribute value value
+            attribute_value_value = attribute_prefix_value + attribute_value_value
 
         # writes the attribute value value to the string buffer
         self.string_buffer.write(attribute_value_value)
@@ -601,15 +601,6 @@ class Visitor:
             # returns immediately (no write)
             return
 
-        # in case the prefix exists in the attributes map
-        if PREFIX_VALUE in attributes_map:
-            # retrieves attribute prefix value
-            attribute_prefix = attributes_map[PREFIX_VALUE]
-            attribute_prefix_value = self.get_value(attribute_prefix)
-
-            # adds the attribute prefix value to the attribute value value
-            attribute_value_value = attribute_prefix_value + attribute_value_value
-
         # in case the variable encoding is defined
         if self.variable_encoding:
             # re-encodes the variable value
@@ -630,6 +621,15 @@ class Visitor:
         if attribute_xml_escape_value:
             # escapes the attribute value value using xml escaping
             attribute_value_value = xml.sax.saxutils.escape(attribute_value_value)
+
+        # in case the prefix exists in the attributes map
+        if PREFIX_VALUE in attributes_map:
+            # retrieves attribute prefix value
+            attribute_prefix = attributes_map[PREFIX_VALUE]
+            attribute_prefix_value = self.get_value(attribute_prefix)
+
+            # adds the attribute prefix value to the attribute value value
+            attribute_value_value = attribute_prefix_value + attribute_value_value
 
         # writes the attribute value value in the string buffer
         self.string_buffer.write(attribute_value_value)
