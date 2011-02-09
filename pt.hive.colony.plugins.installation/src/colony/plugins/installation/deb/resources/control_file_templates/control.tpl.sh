@@ -9,5 +9,4 @@ Pre-Depends: ${out_none value=package.pre_dependencies /}
 Installed-Size: ${out_none value=package.installed_size /}
 Maintainer: ${out_none value=package.maintainer /}
 Provides: ${out_none value=package.provides /}
-Replaces: ${out_none value=package.replaces /}
 Description: ${out_none value=package.description /}
