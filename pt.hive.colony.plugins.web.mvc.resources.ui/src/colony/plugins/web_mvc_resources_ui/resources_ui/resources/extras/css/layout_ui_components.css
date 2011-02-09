@@ -186,16 +186,16 @@ textarea.invalid {
     background-image: url(../images/components/button/button-blue-clicked.png);
 }
 
-.button-grey {
-    background: transparent url(../images/components/button/button-grey-normal.png) no-repeat center center;
+.button-gray {
+    background: transparent url(../images/components/button/button-gray-normal.png) no-repeat center center;
 }
 
-.button-grey:hover {
-    background-image: url(../images/components/button/button-grey-hover.png);
+.button-gray:hover {
+    background-image: url(../images/components/button/button-gray-hover.png);
 }
 
-.button-grey.click {
-    background-image: url(../images/components/button/button-grey-clicked.png);
+.button-gray.click {
+    background-image: url(../images/components/button/button-gray-clicked.png);
 }
 
 .button-big {
@@ -221,13 +221,13 @@ textarea.invalid {
 }
 
 /* Button Drop */
-.button-drop-small-grey {
+.button-drop-small-gray {
     float: right;
     cursor: pointer;
 }
 
-.button-drop-small-grey .label {
-    background: transparent url(../images/components/button_drop/button-drop-small-grey-normal.png) no-repeat center center;
+.button-drop-small-gray .label {
+    background: transparent url(../images/components/button_drop/button-drop-small-gray-normal.png) no-repeat center center;
     float: left;
     height: 18px;
     width: 80px;
@@ -238,20 +238,20 @@ textarea.invalid {
     text-align: center;
 }
 
-.button-drop-small-grey .label:hover {
-    background: transparent url(../images/components/button_drop/button-drop-small-grey-hover.png) no-repeat center center;
+.button-drop-small-gray .label:hover {
+    background: transparent url(../images/components/button_drop/button-drop-small-gray-hover.png) no-repeat center center;
     color: #005b9c;
 }
 
-.button-drop-small-grey .arrow {
-    background: transparent url(../images/components/button_drop/button-drop-small-grey-arrow-normal.png) no-repeat center center;
+.button-drop-small-gray .arrow {
+    background: transparent url(../images/components/button_drop/button-drop-small-gray-arrow-normal.png) no-repeat center center;
     float: left;
     height: 22px;
     width: 22px;
 }
 
-.button-drop-small-grey .arrow:hover {
-    background: transparent url(../images/components/button_drop/button-drop-small-grey-arrow-hover.png) no-repeat center center;
+.button-drop-small-gray .arrow:hover {
+    background: transparent url(../images/components/button_drop/button-drop-small-gray-arrow-hover.png) no-repeat center center;
 }
 
 /* Form Button */

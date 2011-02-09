@@ -117,7 +117,7 @@ class Graph:
 
     MARK_WHITE = 1
     MARK_BLACK = 2
-    MARK_GREY = 3
+    MARK_GRAY = 3
 
     nodes_list = []
     """ The nodes list """
@@ -139,10 +139,10 @@ class Graph:
         return False
 
     def visit_node(self, node):
-        node.mark = Graph.MARK_GREY
+        node.mark = Graph.MARK_GRAY
 
         for connected_node in node.connected_nodes_list:
-            if connected_node.mark == Graph.MARK_GREY:
+            if connected_node.mark == Graph.MARK_GRAY:
                 return True
             elif connected_node.mark == Graph.MARK_WHITE:
                 if self.visit_node(connected_node):

@@ -13,7 +13,7 @@
             </div>
         </div>
         <div id="wiki-footer-contents-right">
-            <div id="wiki-options-button" class="wiki-button wiki-button-grey">Options</div>
+            <div id="wiki-options-button" class="wiki-button wiki-button-gray">Options</div>
         </div>
     </div>
 </div>

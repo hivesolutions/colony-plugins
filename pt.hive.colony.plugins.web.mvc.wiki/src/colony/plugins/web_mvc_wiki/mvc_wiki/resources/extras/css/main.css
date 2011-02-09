@@ -203,7 +203,7 @@
     border-right: 1px solid #214c8f;
 }
 
-.wiki-button-container.wiki-button-grey {
+.wiki-button-container.wiki-button-gray {
     border-top: 1px solid #444444;
     border-left: 1px solid #444444;
     border-bottom: 1px solid #222222;
@@ -247,8 +247,8 @@
     border-right: 1px solid transparent;
 }
 
-.wiki-button.wiki-button-grey {
-    background-image: url(../images/wiki-button-sprite-grey.png);
+.wiki-button.wiki-button-gray {
+    background-image: url(../images/wiki-button-sprite-gray.png);
     color: #222222;
     text-shadow: 1px 1px #ffffff;
     border-top: 1px solid #ffffff;
