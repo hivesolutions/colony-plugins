@@ -884,7 +884,6 @@ class HttpClientServiceHandler:
 
                     # unsets the pending data (it has been read)
                     self.pending_data = None
-                    print "PASSOU !!!!!"
                 # otherwise (read normally)
                 else:
                     # receives the data
