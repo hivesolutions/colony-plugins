@@ -405,7 +405,20 @@ class InstallationDeb:
                                        "maintainer" : package_maintainer,
                                        "provides" : package_provides,
                                        "replaces" : package_replaces,
-                                       "description" : package_description}}
+                                       "description" : package_description},
+                          "package_keys" : {"name" : "Package",
+                                            "version" : "Version",
+                                            "section" : "Section",
+                                            "priority" : "Priority",
+                                            "architecture" : "Architecture",
+                                            "essential" : "Essential",
+                                            "dependencies" : "Depends",
+                                            "pre_dependencies" : "Pre-Depends",
+                                            "installed_size" : "Installed-Size",
+                                            "maintainer" : "Maintainer",
+                                            "provides" : "Provides",
+                                            "replaces" : "Replaces",
+                                            "description" : "Description"}}
 
         return self._process_template_file("control.tpl.sh", parameters_map)
 
