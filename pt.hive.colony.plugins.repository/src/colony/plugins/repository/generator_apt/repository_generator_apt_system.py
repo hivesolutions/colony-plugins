@@ -266,8 +266,8 @@ class RepositoryGeneratorApt:
                                         "essential" : control_values_map.get("Essential", "no"),
                                         "maintainer" : control_values_map.get("Maintainer", ""),
                                         "installed_size" : control_values_map.get("Installed-Size", "0"),
-                                        "pre_dependencies" : control_values_map.get("Pre-Depends", ""),
                                         "dependencies" : control_values_map.get("Depends", ""),
+                                        "pre_dependencies" : control_values_map.get("Pre-Depends", ""),
                                         "replaces" : control_values_map.get("Replaces", ""),
                                         "provides" : control_values_map.get("Provides", ""),
                                         "filename" : complete_target_file_name,
@@ -284,8 +284,8 @@ class RepositoryGeneratorApt:
                                              "essential" : "Essential",
                                              "maintainer" : "Maintainer",
                                              "installed_size" : "Installed-Size",
-                                             "pre_dependencies" : "Pre-Depends",
                                              "dependencies" : "Depends",
+                                             "pre_dependencies" : "Pre-Depends",
                                              "replaces" : "Replaces",
                                              "provides" : "Provides",
                                              "filename" : "Filename",
@@ -295,7 +295,11 @@ class RepositoryGeneratorApt:
                                              "sha256" : "SHA256",
                                              "section" : "Section",
                                              "priority" : "Priority",
-                                             "description" : "Description"}}
+                                             "description" : "Description"},
+                           "package_keys_order" : ("name", "version", "architecture", "essential", "maintainer",
+                                                   "installed_size", "dependencies", "pre_dependencies", "replaces",
+                                                   "provides", "filename", "size", "md5", "sha1", "sha256", "section",
+                                                   "priority", "description")}
 
             # adds the packages map to the packages list
             packages_list.append(package_map)
