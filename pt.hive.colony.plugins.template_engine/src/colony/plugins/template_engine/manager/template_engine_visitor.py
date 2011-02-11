@@ -104,6 +104,9 @@ QUOTE_VALUE = "quote"
 KEY_MAP_VALUE = "key_map"
 """ The key map value """
 
+KEY_ORDER_LIST_VALUE = "key_order_list"
+""" The key order list value """
+
 XML_ESCAPE_VALUE = "xml_escape"
 """ The xml escape value """
 
@@ -692,6 +695,16 @@ class Visitor:
             # sets the attribute key map value
             attribute_key_map_value = {}
 
+        # in case the key order list exists in the attributes map
+        if KEY_ORDER_LIST_VALUE in attributes_map:
+            # retrieves attribute key order list value
+            attribute_key_order_list = attributes_map[KEY_ORDER_LIST_VALUE]
+            attribute_key_order_list_value = self.get_value(attribute_key_order_list)
+        # otherwise
+        else:
+            # sets the attribute key order list value
+            attribute_key_order_list_value = attribute_value_value.keys()
+
         # in case the key separator exists in the attributes map
         if KEY_SEPARATOR_VALUE in attributes_map:
             # retrieves attribute key separator value
@@ -735,8 +748,12 @@ class Visitor:
         # creates the invalid values tuple
         invalid_values = attribute_allow_empty_value and (None,) or (None, "")
 
-        # iterates over all the attribute value value items
-        for key, value in attribute_value_value.items():
+        # iterates over all the attribute value key items
+        for key in attribute_key_order_list_value:
+            # retrieves the attribute value value for
+            # the current key
+            value = attribute_value_value[key]
+
             # in case the value is invalid
             if value in invalid_values:
                 # skips the iteration
