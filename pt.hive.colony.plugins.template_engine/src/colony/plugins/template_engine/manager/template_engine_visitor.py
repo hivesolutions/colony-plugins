@@ -746,6 +746,14 @@ class Visitor:
             # key map value
             key = attribute_key_map_value.get(key, key)
 
+            # in case the variable encoding is defined
+            if self.variable_encoding:
+                # re-encodes the variable value
+                value = value.encode(self.variable_encoding)
+            else:
+                # converts the value into unicode (in case it's necessary)
+                value = unicode(value)
+
             # in case the attribute xml escape value is set
             if attribute_xml_escape_value:
                 # escapes the key using xml escaping
