@@ -95,8 +95,14 @@ KEY_VALUE = "key"
 START_INDEX_VALUE = "start_index"
 """ The start index value """
 
+PREFIX_VALUE = "prefix"
+""" The prefix value """
+
 QUOTE_VALUE = "quote"
 """ The quote value """
+
+KEY_MAP_VALUE = "key_map"
+""" The key map value """
 
 XML_ESCAPE_VALUE = "xml_escape"
 """ The xml escape value """
@@ -104,8 +110,11 @@ XML_ESCAPE_VALUE = "xml_escape"
 ALLOW_EMPTY_VALUE = "allow_empty"
 """ The allow empty value """
 
-PREFIX_VALUE = "prefix"
-""" The prefix value """
+KEY_SEPARATOR_VALUE = "key_separator"
+""" The key separator value """
+
+ITEM_SEPARATOR_VALUE = "item_separator"
+""" The item separator value """
 
 ELSE_VALUE = "else"
 """ The else value """
@@ -497,6 +506,16 @@ class Visitor:
         attribute_value = attributes_map[VALUE_VALUE]
         attribute_value_value = self.get_value(attribute_value)
 
+        # in case the prefix exists in the attributes map
+        if PREFIX_VALUE in attributes_map:
+            # retrieves attribute prefix value
+            attribute_prefix = attributes_map[PREFIX_VALUE]
+            attribute_prefix_value = self.get_value(attribute_prefix)
+        # otherwise
+        else:
+            # sets the default prefix value
+            attribute_prefix_value = ""
+
         # in case the format exists in the attributes map
         if FORMAT_VALUE in attributes_map:
             # retrieves attribute value value
@@ -545,14 +564,8 @@ class Visitor:
             # escapes the attribute value value using xml escaping
             attribute_value_value = xml.sax.saxutils.escape(attribute_value_value)
 
-        # in case the prefix exists in the attributes map
-        if PREFIX_VALUE in attributes_map:
-            # retrieves attribute prefix value
-            attribute_prefix = attributes_map[PREFIX_VALUE]
-            attribute_prefix_value = self.get_value(attribute_prefix)
-
-            # adds the attribute prefix value to the attribute value value
-            attribute_value_value = attribute_prefix_value + attribute_value_value
+        # adds the attribute prefix value to the attribute value value
+        attribute_value_value = attribute_prefix_value + attribute_value_value
 
         # writes the attribute value value to the string buffer
         self.string_buffer.write(attribute_value_value)
@@ -571,6 +584,16 @@ class Visitor:
         # retrieves the attributes map values
         attribute_value = attributes_map[VALUE_VALUE]
         attribute_value_value = self.get_value(attribute_value)
+
+        # in case the prefix exists in the attributes map
+        if PREFIX_VALUE in attributes_map:
+            # retrieves attribute prefix value
+            attribute_prefix = attributes_map[PREFIX_VALUE]
+            attribute_prefix_value = self.get_value(attribute_prefix)
+        # otherwise
+        else:
+            # sets the default prefix value
+            attribute_prefix_value = ""
 
         # in case the format exists in the attributes map
         if FORMAT_VALUE in attributes_map:
@@ -638,17 +661,101 @@ class Visitor:
             # escapes the attribute value value using xml escaping
             attribute_value_value = xml.sax.saxutils.escape(attribute_value_value)
 
-        # in case the prefix exists in the attributes map
-        if PREFIX_VALUE in attributes_map:
-            # retrieves attribute prefix value
-            attribute_prefix = attributes_map[PREFIX_VALUE]
-            attribute_prefix_value = self.get_value(attribute_prefix)
-
-            # adds the attribute prefix value to the attribute value value
-            attribute_value_value = attribute_prefix_value + attribute_value_value
+        # adds the attribute prefix value to the attribute value value
+        attribute_value_value = attribute_prefix_value + attribute_value_value
 
         # writes the attribute value value in the string buffer
         self.string_buffer.write(attribute_value_value)
+
+    def process_out_map(self, node):
+        """
+        Processes the out none node.
+
+        @type node: SingleNode
+        @param node: The single node to be processed as out none.
+        """
+
+        # retrieves the attributes map
+        attributes_map = node.get_attributes_map()
+
+        # retrieves the attributes map values
+        attribute_value = attributes_map[VALUE_VALUE]
+        attribute_value_value = self.get_value(attribute_value)
+
+        # in case the key map exists in the attributes map
+        if KEY_MAP_VALUE in attributes_map:
+            # retrieves attribute key map value
+            attribute_key_map = attributes_map[KEY_MAP_VALUE]
+            attribute_key_map_value = self.get_value(attribute_key_map)
+        # otherwise
+        else:
+            # sets the attribute key map value
+            attribute_key_map_value = {}
+
+        # in case the key separator exists in the attributes map
+        if KEY_SEPARATOR_VALUE in attributes_map:
+            # retrieves attribute key separator value
+            attribute_key_separator = attributes_map[KEY_SEPARATOR_VALUE]
+            attribute_key_separator_value = self.get_value(attribute_key_separator)
+        # otherwise
+        else:
+            # sets the attribute key separator value
+            attribute_key_separator_value = ": "
+
+        # in case the item separator exists in the attributes map
+        if ITEM_SEPARATOR_VALUE in attributes_map:
+            # retrieves attribute item separator value
+            attribute_item_separator = attributes_map[ITEM_SEPARATOR_VALUE]
+            attribute_item_separator_value = self.get_value(attribute_item_separator)
+        # otherwise
+        else:
+            # sets the attribute item separator value
+            attribute_item_separator_value = "\n"
+
+        # in case the xml escape exists in the attributes map
+        if XML_ESCAPE_VALUE in attributes_map:
+            # retrieves attribute xml escape value
+            attribute_xml_escape = attributes_map[XML_ESCAPE_VALUE]
+            attribute_xml_escape_value = self.get_boolean_value(attribute_xml_escape)
+        # otherwise
+        else:
+            # unsets the attribute xml escape value
+            attribute_xml_escape_value = False
+
+        # in case the allow empty exists in the attributes map
+        if ALLOW_EMPTY_VALUE in attributes_map:
+            # retrieves attribute allow empty value
+            attribute_allow_empty = attributes_map[ALLOW_EMPTY_VALUE]
+            attribute_allow_empty_value = self.get_value(attribute_allow_empty)
+        # otherwise
+        else:
+            # sets the attribute allow empty value
+            attribute_allow_empty_value = True
+
+        # creates the invalid values tuple
+        invalid_values = attribute_allow_empty_value and (None,) or (None, "")
+
+        # iterates over all the attribute value value items
+        for key, value in attribute_value_value.items():
+            # in case the value is invalid
+            if value in invalid_values:
+                # skips the iteration
+                continue
+
+            # tries to retrieve the key from the attribute
+            # key map value
+            key = attribute_key_map_value.get(key, key)
+
+            # in case the attribute xml escape value is set
+            if attribute_xml_escape_value:
+                # escapes the key using xml escaping
+                key = xml.sax.saxutils.escape(key)
+
+                # escapes the value using xml escaping
+                value = xml.sax.saxutils.escape(value)
+
+            # writes the attribute value value in the string buffer
+            self.string_buffer.write(key + attribute_key_separator_value + value + attribute_item_separator_value)
 
     def process_var(self, node):
         """
