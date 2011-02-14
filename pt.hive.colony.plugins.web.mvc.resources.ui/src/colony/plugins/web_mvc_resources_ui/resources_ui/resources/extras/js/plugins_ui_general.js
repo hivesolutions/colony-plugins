@@ -24,7 +24,7 @@
 // __license__   = GNU General Public License (GPL), Version 3
 
 (function($) {
-    $.fn.page = function(method, options) {
+    jQuery.fn.page = function(method, options) {
         // the default values for the menu
         var defaults = {
             headerPath : "header"
@@ -37,7 +37,7 @@
         var options = options ? options : {};
 
         // constructs the options
-        var options = $.extend(defaults, options);
+        var options = jQuery.extend(defaults, options);
 
         // sets the jquery matched object
         var matchedObject = this;
@@ -65,14 +65,14 @@
             var basePath = _getBasePath();
 
             // creates the menu bar in the menu bar component
-            $("#menu-bar", matchedObject).menubar();
+            jQuery("#menu-bar", matchedObject).menubar();
 
             // creates the link table in the
             // site menu component
-            $("#site-menu", matchedObject).linktable();
+            jQuery("#site-menu", matchedObject).linktable();
 
             // installs the autocomplete in the menu bar search field
-            $("#menu-bar-search-field", matchedObject).autocomplete({
+            jQuery("#menu-bar-search-field", matchedObject).autocomplete({
                         url : basePath + "search/autocomplete/partial",
                         showEffect : "slideDown",
                         hideEffect : "slideUp"
@@ -81,7 +81,7 @@
             // in case the history load flag is active
             if (historyLoad) {
                 // initializes the history
-                $.historyInit(pageLoad, "");
+                jQuery.historyInit(pageLoad, "");
             }
         };
 
@@ -102,7 +102,7 @@
             // base path to the header path
             var fullTarget = basePath + headerPath
 
-            $.ajax({
+            jQuery.ajax({
                         url : fullTarget,
                         success : function(data) {
                             __reloadMenuBar(matchedObject, options, data);
@@ -114,10 +114,10 @@
 
         var __reloadMenuBar = function(matchedObject, options, contents) {
             // retrieves the header element
-            var header = $("#header", matchedObject);
+            var header = jQuery("#header", matchedObject);
 
             // retrieves the menu bar element active
-            var menuBarElementActive = $("#menu-bar > ul > li.active > a",
+            var menuBarElementActive = jQuery("#menu-bar > ul > li.active > a",
                     header);
 
             // removes the menu bar element active id
@@ -130,13 +130,13 @@
             header.append(contents);
 
             // removes the active class from the current active list item
-            $("#menu-bar > ul > li.active", header).removeClass("active");
+            jQuery("#menu-bar > ul > li.active", header).removeClass("active");
 
             // adds the active class to the previopus acrive list item
-            $("#menu-bar > ul > li > #" + menuBarElementActiveId).parent().addClass("active");
+            jQuery("#menu-bar > ul > li > #" + menuBarElementActiveId).parent().addClass("active");
 
             // creates the menu bar in the menu bar component
-            $("#menu-bar", matchedObject).menubar();
+            jQuery("#menu-bar", matchedObject).menubar();
         };
 
         /**
@@ -166,7 +166,7 @@
 })(jQuery);
 
 (function($) {
-    $.fn.maincontainer = function(method, options) {
+    jQuery.fn.maincontainer = function(method, options) {
         // the default values for the menu
         var defaults = {
             minimumContentsHeight : 600,
@@ -181,7 +181,7 @@
         var options = options ? options : {};
 
         // constructs the options
-        var options = $.extend(defaults, options);
+        var options = jQuery.extend(defaults, options);
 
         // sets the jquery matched object
         var matchedObject = this;
@@ -200,28 +200,28 @@
          */
         var _appendHtml = function() {
             // retrieves the left column
-            var leftColumn = $("#left-column", matchedObject);
+            var leftColumn = jQuery("#left-column", matchedObject);
 
             // sets the initial attribute value
             leftColumn.data("visible", true);
 
             // adds the loading animation to all
             // the items in the side bar
-            $("#left-column > ul > li", matchedObject).loadinganimation();
+            jQuery("#left-column > ul > li", matchedObject).loadinganimation();
         };
 
         /**
          * Registers the event handlers for the created objects.
          */
         var _registerHandlers = function() {
-            $("#content-icon", matchedObject).click(function() {
+            jQuery("#content-icon", matchedObject).click(function() {
                         _toggleSidePanel(matchedObject, options);
                     });
 
-            $("#left-column > ul > li", matchedObject).click(
+            jQuery("#left-column > ul > li", matchedObject).click(
                     function(event, element) {
                         // retrieves the event target element
-                        var targetElement = $(event.target);
+                        var targetElement = jQuery(event.target);
 
                         // in case the target element is not a list item
                         // the parent should be the target element
@@ -235,7 +235,7 @@
                         var targetRequest = targetElement.attr("data-target_request");
 
                         // updates the history with the new value
-                        $.historyLoad(targetRequest);
+                        jQuery.historyLoad(targetRequest);
                     });
         };
 
@@ -249,7 +249,7 @@
          */
         var _toggleSidePanel = function(matchedObject, options) {
             // retrieves the left column
-            var leftColumn = $("#left-column", matchedObject);
+            var leftColumn = jQuery("#left-column", matchedObject);
 
             // retrieves and inverts the current visible value
             var visible = !leftColumn.data("visible");
@@ -290,38 +290,38 @@
             var basePath = _getBasePath();
 
             // starts the overlay component
-            $("#overlay").overlay();
+            jQuery("#overlay").overlay();
 
             // creates the text area components
-            $("input, textarea", matchedObject).textarea();
+            jQuery("input, textarea", matchedObject).textarea();
 
             // creates the button components
-            $("div.button", matchedObject).button();
+            jQuery("div.button", matchedObject).button();
 
             // creates the switch button components
-            $("div.switch-button", matchedObject).switchbutton();
+            jQuery("div.switch-button", matchedObject).switchbutton();
 
             // creates the date field components
-            $("div.date-field", matchedObject).datefield();
+            jQuery("div.date-field", matchedObject).datefield();
 
             // creates the progress indicator components
-            $("div.progress-indicator", matchedObject).progressindicator();
+            jQuery("div.progress-indicator", matchedObject).progressindicator();
 
             // creates the dropbox components
-            $("div.dropbox", matchedObject).dropbox();
+            jQuery("div.dropbox", matchedObject).dropbox();
 
             // creates the message components
-            $("div.message", matchedObject).message();
+            jQuery("div.message", matchedObject).message();
 
             // creates the search table components
-            $("div.search-table", matchedObject).searchtable();
+            jQuery("div.search-table", matchedObject).searchtable();
 
             // adds the mandatory dot code to the labels that
             // contain the mandatory option
-            $("label.mandatory", matchedObject).append("<span style=\"color: red;margin-left: 4px;\">&bull;</span>");
+            jQuery("label.mandatory", matchedObject).append("<span style=\"color: red;margin-left: 4px;\">&bull;</span>");
 
             // binss the form keypress to the form submit action
-            $("form", matchedObject).bind("keypress", function(event) {
+            jQuery("form", matchedObject).bind("keypress", function(event) {
                         // retrieves the event code
                         var code = (event.keyCode ? event.keyCode : event.which);
 
@@ -334,26 +334,26 @@
 
             // binds the click event of the submit button to
             // the form submit function
-            $("form div.submit", matchedObject).bind("click", __formSubmit);
+            jQuery("form div.submit", matchedObject).bind("click", __formSubmit);
 
             // binds the click event of the reset button to
             // the form reset function
-            $("form div.cancel", matchedObject).bind("click", __formReset);
+            jQuery("form div.cancel", matchedObject).bind("click", __formReset);
 
             // in case ajax submission is enabled
             if (_getAjaxSubmit() != "false") {
                 // binds the submit event of the forms to the form
                 // submit function
-                $("form", matchedObject).bind("submit", function(event) {
+                jQuery("form", matchedObject).bind("submit", function(event) {
                             __formSubmit(event);
                             return false;
                         });
 
                 // iterates over all the forms to
                 // set the "dynamic" action
-                $("form", matchedObject).each(function() {
+                jQuery("form", matchedObject).each(function() {
                             // retrieves the form value
-                            var formValue = $(this);
+                            var formValue = jQuery(this);
 
                             // retrieves the action target value
                             // from the form
@@ -376,9 +376,9 @@
 
             // iterates over all the links of "type" (class) dynamic
             // to set the "dynamic" href (action)
-            $("a.dynamic", matchedObject).each(function() {
+            jQuery("a.dynamic", matchedObject).each(function() {
                         // retrieves the link value
-                        var linkValue = $(this);
+                        var linkValue = jQuery(this);
 
                         // retrieves the action target value
                         // from the link
@@ -399,7 +399,7 @@
                     });
 
             // updates the contents size
-            $("#main-container").maincontainer("update");
+            jQuery("#main-container").maincontainer("update");
 
             // register the forms
             _registerForms(matchedObject, options);
@@ -414,37 +414,37 @@
          *            The options of the plugin instance.
          */
         var _registerForms = function(matchedObject, options) {
-            $("form", matchedObject).bind("submit_start", function(event) {
+            jQuery("form", matchedObject).bind("submit_start", function(event) {
                         // shows the filter
-                        $(this).filter("show");
+                        jQuery(this).filter("show");
                     });
 
-            $("form", matchedObject).bind(
+            jQuery("form", matchedObject).bind(
                     "success",
                     function(event, responseText, status, xmlHttpRequest, form) {
                         // hides the filter
-                        $(this).filter("hide");
+                        jQuery(this).filter("hide");
 
                         // updates the contents page with the response text
                         __updateContentsPage(matchedObject, options,
                                 responseText);
 
                         // shows the message (if necessary)
-                        $(".message", matchedObject).message("show", {
+                        jQuery(".message", matchedObject).message("show", {
                                     "timeout" : 7500
                                 });
                     });
 
-            $("form", matchedObject).bind("error", function() {
+            jQuery("form", matchedObject).bind("error", function() {
                 // hides the filter
-                $(this).filter("hide");
+                jQuery(this).filter("hide");
 
                 // updates the contents page with an error message
                 __updateContentsPage(matchedObject, options,
                         "There was an error submiting the form");
 
                 // shows the message (if necessary)
-                $(".message", matchedObject).message("show", {
+                jQuery(".message", matchedObject).message("show", {
                             "timeout" : 15000
                         });
             });
@@ -461,7 +461,7 @@
          */
         var _updateContentsSize = function(matchedObject, options) {
             // retrieves the contents
-            var contents = $("#contents", matchedObject);
+            var contents = jQuery("#contents", matchedObject);
 
             // waits until the contents is ready
             contents.ready(function() {
@@ -486,10 +486,10 @@
             var minimumContentsHeight = options["minimumContentsHeight"];
 
             // retrieves the contents
-            var contents = $("#contents", matchedObject);
+            var contents = jQuery("#contents", matchedObject);
 
             // retrieves the content body
-            var contentBody = $("#content-body", matchedObject);
+            var contentBody = jQuery("#content-body", matchedObject);
 
             // retrieves the contents height
             var contentsHeight = contents.height();
@@ -531,10 +531,10 @@
             var smallWidth = options["smallWidth"];
 
             // retrieves the left column
-            var leftColumn = $("#left-column", matchedObject);
+            var leftColumn = jQuery("#left-column", matchedObject);
 
             // retrieves the contents
-            var contents = $("#contents", matchedObject);
+            var contents = jQuery("#contents", matchedObject);
 
             // retrieves the visible value
             var visible = leftColumn.data("visible");
@@ -549,7 +549,7 @@
 
         var _hideMenuLoading = function(matchedObject, options) {
             // removes the loading class from loading list items
-            $("#left-column > ul > li.loading", matchedObject).removeClass("loading");
+            jQuery("#left-column > ul > li.loading", matchedObject).removeClass("loading");
         };
 
         var _changeContents = function(matchedObject, options) {
@@ -560,7 +560,7 @@
             var minimumContentsHeight = options["minimumContentsHeight"];
 
             // retrieves the contents
-            var contents = $("#contents", matchedObject);
+            var contents = jQuery("#contents", matchedObject);
 
             // retrieves the contents position
             var contentsPosition = contents.position();
@@ -617,8 +617,8 @@
             };
 
             // shows both the filter and the loading message
-            $("#filter").mainfilter("show", filterOptions);
-            $("#loading-message").loadingmessage("show", messageOptions);
+            jQuery("#filter").mainfilter("show", filterOptions);
+            jQuery("#loading-message").loadingmessage("show", messageOptions);
 
             // retrieves the base path
             var basePath = _getBasePath();
@@ -636,7 +636,7 @@
             // base path to the target and appending the arguments
             var fullTarget = basePath + realTarget + ".ajx?" + arguments;
 
-            $.ajax({
+            jQuery.ajax({
                 url : fullTarget,
                 success : function(data) {
                     var successCallback = function() {
@@ -649,14 +649,14 @@
                     };
 
                     // hides the filter and calls the callback
-                    $("#filter").mainfilter("hide", filterOptions);
+                    jQuery("#filter").mainfilter("hide", filterOptions);
 
                     // unsets the loading
                     __unsetLoading(matchedObject, options);
                 },
                 error : function(request, textStatus, errorThrown) {
                     var errorCallback = function() {
-                        $("body").dialogwindow("default", {
+                        jQuery("body").dialogwindow("default", {
                             "title" : "Warning",
                             "subTitle" : "Problem Loading Resources",
                             "message" : "There was a problem loading resources, this indicates an erroneous behaviour communicating with the server.",
@@ -675,7 +675,7 @@
                     };
 
                     // hides the filter and calls the callback
-                    $("#filter").mainfilter("hide", filterOptions);
+                    jQuery("#filter").mainfilter("hide", filterOptions);
 
                     // unsets the loading
                     __unsetLoading(matchedObject, options);
@@ -691,13 +691,13 @@
             matchedObject.data("menu", target);
 
             // removes the active class fomr all the header items
-            $("#left-column > h1", matchedObject).removeClass("active");
+            jQuery("#left-column > h1", matchedObject).removeClass("active");
 
             // removes the active class fomr all the list items
-            $("#left-column > ul > li", matchedObject).removeClass("active");
+            jQuery("#left-column > ul > li", matchedObject).removeClass("active");
 
             // retrieves the target element to be changed
-            var targetElement = $("#left-column > ul > li[data-target_request="
+            var targetElement = jQuery("#left-column > ul > li[data-target_request="
                             + target + "]", matchedObject);
 
             // adds the active class to the target element
@@ -717,7 +717,7 @@
 
         var __unsetLoading = function(matchedObject, options) {
             // hides the loading message element
-            $("#loading-message").loadingmessage("hide");
+            jQuery("#loading-message").loadingmessage("hide");
 
             // hides the menu loading
             _hideMenuLoading(matchedObject, options);
@@ -728,7 +728,7 @@
             var eventTarget = event.target;
 
             // retrieves the event target element
-            var eventTargetElement = $(eventTarget);
+            var eventTargetElement = jQuery(eventTarget);
 
             if (eventTargetElement.is("form")) {
                 // retrieves the parent form
@@ -766,7 +766,7 @@
             var eventTarget = event.target;
 
             // retrieves the event target element
-            var eventTargetElement = $(eventTarget);
+            var eventTargetElement = jQuery(eventTarget);
 
             if (eventTargetElement.is("form")) {
                 // retrieves the parent form
@@ -839,16 +839,16 @@
         var __updateContentsPage = function(matchedObject, options, data) {
             // removes the current includes, meta data and contents from the
             // contents body element
-            $("#content-body > #includes, #content-body > #meta-data, #content-body > #contents").remove();
+            jQuery("#content-body > #includes, #content-body > #meta-data, #content-body > #contents").remove();
 
             // removes all the css temporary elements
-            $("head > #css-removal").remove();
+            jQuery("head > #css-removal").remove();
 
             // adds the data to the contents body
-            $("#content-body").append(data);
+            jQuery("#content-body").append(data);
 
             // reloads the contents page
-            $("#main-container").maincontainer("reload");
+            jQuery("#main-container").maincontainer("reload");
 
             // loads the includes
             __loadIncludes(matchedObject, options);
@@ -859,19 +859,19 @@
 
         var __loadIncludes = function(matchedObject, options) {
             // retrieves the content body
-            var contentBody = $("#content-body")
+            var contentBody = jQuery("#content-body")
 
             // retreives the includes from the content body
-            var includes = $("#includes", contentBody);
+            var includes = jQuery("#includes", contentBody);
 
             // retrieves the javascript file references from the includes
-            var javascriptFiles = $(".javascript", includes);
+            var javascriptFiles = jQuery(".javascript", includes);
 
             // retrieves the css file references from the includes
-            var cssFiles = $(".css", includes);
+            var cssFiles = jQuery(".css", includes);
 
             // retrieves the head element
-            var head = $("head");
+            var head = jQuery("head");
 
             // retrieves the base path
             var basePath = _getBasePath();
@@ -879,19 +879,19 @@
             // iterates over all the javascript file references
             javascriptFiles.each(function(index, element) {
                 // retrieves the target from the javascript element
-                var target = $(element).html();
+                var target = jQuery(element).html();
 
                 // creates the full target path by prepending the
                 // base path to the target
                 var fullTarget = basePath + target
 
-                $.ajax({
+                jQuery.ajax({
                     url : fullTarget,
                     success : function(data) {
                         eval(data);
                     },
                     error : function(request, textStatus, errorThrown) {
-                        $("body").dialogwindow("default", {
+                        jQuery("body").dialogwindow("default", {
                             "title" : "Warning",
                             "subTitle" : "Problem Loading Javascript Files",
                             "message" : "There was a problem loading javascript files, this indicates an erroneous behaviour communicating with the server.",
@@ -906,7 +906,7 @@
             // iterates over all the css file references
             cssFiles.each(function(index, element) {
                         // retrieves the target from the javascript element
-                        var target = $(element).html();
+                        var target = jQuery(element).html();
 
                         // creates the html to import the css element
                         var cssHtml = "<link type=\"text/css\" href=\""
@@ -923,24 +923,24 @@
             var forceReload = options["forceReload"];
 
             // retrieves the content body
-            var contentBody = $("#content-body")
+            var contentBody = jQuery("#content-body")
 
             // retreives the meta data from the
-            var metaData = $("#meta-data", contentBody);
+            var metaData = jQuery("#meta-data", contentBody);
 
             // retrieves the area references from the meta data
-            var areas = $(".area", metaData);
+            var areas = jQuery(".area", metaData);
 
             // retrieves the side panel file references from the meta data
-            var sidePanels = $(".side-panel", metaData);
+            var sidePanels = jQuery(".side-panel", metaData);
 
             // iterates over all area references
             areas.each(function(index, element) {
                         // retrieves the area name from the element
-                        var areaName = $(element).html();
+                        var areaName = jQuery(element).html();
 
                         // change the current active menu
-                        $("#menu-bar").menubar("change", {
+                        jQuery("#menu-bar").menubar("change", {
                                     area : areaName
                                 });
                     });
@@ -954,7 +954,7 @@
                 var sidePanel = matchedObject.data("sidePanel");
 
                 // retrieves the target from the javascript element
-                var target = $(element).html();
+                var target = jQuery(element).html();
 
                 // in case the target side panel
                 // is the current one and the force reload
@@ -971,14 +971,14 @@
                 // base path to the target
                 var fullTarget = basePath + target
 
-                $.ajax({
+                jQuery.ajax({
                     url : fullTarget,
                     success : function(data) {
                         // retrieves the left column
-                        var leftColumn = $("#left-column", contentBody);
+                        var leftColumn = jQuery("#left-column", contentBody);
 
                         // retrieves the icon bar
-                        var iconBar = $("#icon-bar", contentBody);
+                        var iconBar = jQuery("#icon-bar", contentBody);
 
                         // retrieves the visible value
                         var visible = leftColumn.data("visible");
@@ -999,7 +999,7 @@
                         _changeContentsMenu(matchedObject, options);
                     },
                     error : function(request, textStatus, errorThrown) {
-                        $("body").dialogwindow("default", {
+                        jQuery("body").dialogwindow("default", {
                             "title" : "Warning",
                             "subTitle" : "Problem Loading Side Panel",
                             "message" : "There was a problem loading side panel, this indicates an erroneous behaviour communicating with the server.",
@@ -1014,7 +1014,7 @@
 
         var __reloadSidePanel = function(matchedObject, options, visible) {
             // retrieves the left column
-            var leftColumn = $("#left-column", matchedObject);
+            var leftColumn = jQuery("#left-column", matchedObject);
 
             // in case the left column is not visible
             if (!visible) {
@@ -1025,14 +1025,14 @@
             // sets the new visible value
             leftColumn.data("visible", visible);
 
-            $("#content-icon", matchedObject).click(function() {
+            jQuery("#content-icon", matchedObject).click(function() {
                         _toggleSidePanel(matchedObject, options);
                     });
 
-            $("#left-column > ul > li", matchedObject).click(
+            jQuery("#left-column > ul > li", matchedObject).click(
                     function(event, element) {
                         // retrieves the event target element
-                        var targetElement = $(event.target);
+                        var targetElement = jQuery(event.target);
 
                         // in case the target element is not a list item
                         // the parent should be the target element
@@ -1046,7 +1046,7 @@
                         var targetRequest = targetElement.attr("data-target_request");
 
                         // updates the history with the new value
-                        $.historyLoad(targetRequest);
+                        jQuery.historyLoad(targetRequest);
                     });
         };
 
@@ -1106,7 +1106,7 @@
 })(jQuery);
 
 (function($) {
-    $.fn.loadinganimation = function(options) {
+    jQuery.fn.loadinganimation = function(options) {
         // the default values for the menu
         var defaults = {};
 
@@ -1114,7 +1114,7 @@
         var options = options ? options : {};
 
         // constructs the options
-        var options = $.extend(defaults, options);
+        var options = jQuery.extend(defaults, options);
 
         // sets the jquery matched object
         var matchedObject = this;
@@ -1151,7 +1151,7 @@
 })(jQuery);
 
 (function($) {
-    $.fn.mainfilter = function(method, options) {
+    jQuery.fn.mainfilter = function(method, options) {
         // the default values for the menu
         var defaults = {
             margins : {
@@ -1167,7 +1167,7 @@
         var options = options ? options : {};
 
         // constructs the options
-        var options = $.extend(defaults, options);
+        var options = jQuery.extend(defaults, options);
 
         // sets the jquery matched object
         var matchedObject = this;
@@ -1253,7 +1253,7 @@
 })(jQuery);
 
 (function($) {
-    $.fn.loadingmessage = function(method, options) {
+    jQuery.fn.loadingmessage = function(method, options) {
         // the default values for the menu
         var defaults = {
             margins : {
@@ -1269,7 +1269,7 @@
         var options = options ? options : {};
 
         // constructs the options
-        var options = $.extend(defaults, options);
+        var options = jQuery.extend(defaults, options);
 
         // sets the jquery matched object
         var matchedObject = this;
@@ -1358,7 +1358,7 @@
 })(jQuery);
 
 (function($) {
-    $.fn.filter = function(method, options) {
+    jQuery.fn.filter = function(method, options) {
         // the default values for the menu
         var defaults = {};
 
@@ -1369,7 +1369,7 @@
         var options = options ? options : {};
 
         // constructs the options
-        var options = $.extend(defaults, options);
+        var options = jQuery.extend(defaults, options);
 
         // sets the jquery matched object
         var matchedObject = this;
@@ -1452,7 +1452,7 @@
             var callback = options["callback"];
 
             // retrieves the filter object
-            var filter = $("#filter");
+            var filter = jQuery("#filter");
 
             // sets the filter left position
             filter.css("left", position.left);
@@ -1476,7 +1476,7 @@
             var callback = options["callback"];
 
             // retrieves the filter
-            var filter = $("#filter");
+            var filter = jQuery("#filter");
 
             // fades out the filter and calls the
             // callback (on end)
@@ -1501,7 +1501,7 @@
 })(jQuery);
 
 (function($) {
-    $.fn.linktable = function(options) {
+    jQuery.fn.linktable = function(options) {
         // the default values for the menu
         var defaults = {};
 
@@ -1509,13 +1509,13 @@
         var options = options ? options : {};
 
         // constructs the options
-        var options = $.extend(defaults, options);
+        var options = jQuery.extend(defaults, options);
 
         // sets the jquery matched object
         var matchedObject = this;
 
         // retrieves the matched object children
-        var matchedObjectChildren = $("li", matchedObject);
+        var matchedObjectChildren = jQuery("li", matchedObject);
 
         /**
          * Initializer of the plugin, runs the necessary functions to initialize
@@ -1539,7 +1539,7 @@
         var _registerHandlers = function() {
             matchedObjectChildren.bind("click", function() {
                         // retrieves the link address
-                        var linkAddress = $(this).attr("data-link");
+                        var linkAddress = jQuery(this).attr("data-link");
 
                         // replaces the url and redirects the page
                         window.location.replace(linkAddress);
@@ -1555,7 +1555,7 @@
 })(jQuery);
 
 (function($) {
-    $.fn.menubar = function(method, options) {
+    jQuery.fn.menubar = function(method, options) {
         // the default values for the menu
         var defaults = {};
 
@@ -1566,13 +1566,13 @@
         var options = options ? options : {};
 
         // constructs the options
-        var options = $.extend(defaults, options);
+        var options = jQuery.extend(defaults, options);
 
         // sets the jquery matched object
         var matchedObject = this;
 
         // retrieves the matched object children
-        var matchedObjectChildren = $("ul > li > a", matchedObject);
+        var matchedObjectChildren = jQuery("ul > li > a", matchedObject);
 
         /**
          * Initializer of the plugin, runs the necessary functions to initialize
@@ -1588,7 +1588,7 @@
          */
         var _appendHtml = function() {
             matchedObjectChildren.each(function(index, element) {
-                        $(element).menu();
+                        jQuery(element).menu();
                     });
         };
 
@@ -1608,18 +1608,18 @@
         var _listenActive = function(matchedObjectChildren) {
             matchedObjectChildren.each(function(index, element) {
                         // retrieves the element reference
-                        var elementReference = $(element)
+                        var elementReference = jQuery(element)
 
                         elementReference.mouseenter(function(event) {
                                     matchedObjectChildren.each(
                                             function(index, element) {
-                                                $(element).menu("hide", {
+                                                jQuery(element).menu("hide", {
                                                             noEvent : true
                                                         });
                                             });
 
                                     // shows the menu for the element
-                                    $(element).menu("show", {
+                                    jQuery(element).menu("show", {
                                                 noEffects : true,
                                                 noEvent : true
                                             });
@@ -1636,10 +1636,10 @@
             var areaName = options["area"];
 
             // removes the active class from the currently active item
-            $("#menu-bar > ul > li.active").removeClass("active");
+            jQuery("#menu-bar > ul > li.active").removeClass("active");
 
             // adds the active class to the target item
-            $("#menu-bar > ul > li > #" + areaName).parent().addClass("active");
+            jQuery("#menu-bar > ul > li > #" + areaName).parent().addClass("active");
         };
 
         // switches over the method
@@ -1660,7 +1660,7 @@
 })(jQuery);
 
 (function($) {
-    $.fn.menu = function(method, options) {
+    jQuery.fn.menu = function(method, options) {
         // the default values for the menu
         var defaults = {};
 
@@ -1674,13 +1674,13 @@
         var menuObjectId = "#" + this.attr("id") + "-menu";
 
         // retrieves the menu object
-        var menuObject = $(menuObjectId);
+        var menuObject = jQuery(menuObjectId);
 
         // sets the menu in the options
         options["menu"] = menuObject;
 
         // constructs the options
-        var options = $.extend(defaults, options);
+        var options = jQuery.extend(defaults, options);
 
         // sets the jquery matched object
         var matchedObject = this;
@@ -1744,7 +1744,7 @@
 
             menuObject.animate(animationProperties, animationDuration,
                     function() {
-                        $(document).click(function() {
+                        jQuery(document).click(function() {
                                     _hideMenu(matchedObject, options);
                                 });
                     });
@@ -1774,7 +1774,7 @@
             matchedObject.parent().removeClass("selected");
 
             // unbinds the click event from the document
-            $(document).unbind("click");
+            jQuery(document).unbind("click");
 
             // in case the no event flag is inactive
             if (!noEvent) {

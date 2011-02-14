@@ -24,7 +24,7 @@
 // __license__   = GNU General Public License (GPL), Version 3
 
 (function($) {
-    $.fn.textarea = function(options) {
+    jQuery.fn.textarea = function(options) {
         // the default values for the menu
         var defaults = {};
 
@@ -32,7 +32,7 @@
         var options = options ? options : {};
 
         // constructs the options
-        var options = $.extend(defaults, options);
+        var options = jQuery.extend(defaults, options);
 
         // sets the jquery matched object
         var matchedObject = this;
@@ -57,11 +57,11 @@
          */
         var _registerHandlers = function() {
             matchedObject.focus(function(event) {
-                        $(this).addClass("active");
+                        jQuery(this).addClass("active");
                     });
 
             matchedObject.blur(function(event) {
-                        $(this).removeClass("active");
+                        jQuery(this).removeClass("active");
                     });
         };
 
@@ -74,7 +74,7 @@
 })(jQuery);
 
 (function($) {
-    $.fn.button = function(options) {
+    jQuery.fn.button = function(options) {
         // the default values for the menu
         var defaults = {};
 
@@ -82,7 +82,7 @@
         var options = options ? options : {};
 
         // constructs the options
-        var options = $.extend(defaults, options);
+        var options = jQuery.extend(defaults, options);
 
         // sets the jquery matched object
         var matchedObject = this;
@@ -108,12 +108,12 @@
         var _registerHandlers = function() {
             matchedObject.mousedown(function(event) {
                         // adds the click class
-                        $(this).addClass("click");
+                        jQuery(this).addClass("click");
                     });
 
             matchedObject.mouseup(function(event) {
                         // removes the click class
-                        $(this).removeClass("click");
+                        jQuery(this).removeClass("click");
                     });
         };
 
@@ -126,7 +126,7 @@
 })(jQuery);
 
 (function($) {
-    $.fn.switchbutton = function(options) {
+    jQuery.fn.switchbutton = function(options) {
         // the default values for the menu
         var defaults = {};
 
@@ -134,7 +134,7 @@
         var options = options ? options : {};
 
         // constructs the options
-        var options = $.extend(defaults, options);
+        var options = jQuery.extend(defaults, options);
 
         // sets the jquery matched object
         var matchedObject = this;
@@ -164,9 +164,9 @@
          * Registers the event handlers for the created objects.
          */
         var _registerHandlers = function() {
-            $(matchedObject).click(function(event) {
+            jQuery(matchedObject).click(function(event) {
                 // retrieves the switch button
-                var switchButton = $(this);
+                var switchButton = jQuery(this);
 
                 // in case the swirch button contains the
                 // on class
@@ -201,7 +201,7 @@
 })(jQuery);
 
 (function($) {
-    $.fn.datefield = function(options) {
+    jQuery.fn.datefield = function(options) {
         // the default values for the menu
         var defaults = {
             monthsMap : {
@@ -224,7 +224,7 @@
         var options = options ? options : {};
 
         // constructs the options
-        var options = $.extend(defaults, options);
+        var options = jQuery.extend(defaults, options);
 
         // sets the jquery matched object
         var matchedObject = this;
@@ -286,14 +286,14 @@
             // iterates over each of the matched objects
             matchedObject.each(function(index, element) {
                         // retrieves the element reference
-                        var elementReference = $(element);
+                        var elementReference = jQuery(element);
 
                         // retrieves the date field input
-                        var dateFieldInput = $(".date-field-input",
+                        var dateFieldInput = jQuery(".date-field-input",
                                 elementReference);
 
                         // retrieves the date field input hidden
-                        var dateFieldInputHidden = $(
+                        var dateFieldInputHidden = jQuery(
                                 ".date-field-input-hidden", elementReference);
 
                         // tries to retrieve the timestamp value
@@ -347,35 +347,35 @@
          */
         var _registerHandlers = function() {
             // retrieves the date field input
-            var dateFieldInput = $(".date-field-input", matchedObject);
+            var dateFieldInput = jQuery(".date-field-input", matchedObject);
 
             // retrieves the date field button
-            var dateFieldButton = $(".date-field-button", matchedObject);
+            var dateFieldButton = jQuery(".date-field-button", matchedObject);
 
             // retrieves the date field header button next
-            var dateFieldHeaderButtonNext = $(
+            var dateFieldHeaderButtonNext = jQuery(
                     ".date-field-contents-header > .button-next", matchedObject);
 
             // retrieves the date field header button previous
-            var dateFieldHeaderButtonPrevious = $(
+            var dateFieldHeaderButtonPrevious = jQuery(
                     ".date-field-contents-header > .button-previous",
                     matchedObject);
 
             // retrieves the date field footer button today
-            var dateFieldFooterButtonToday = $(
+            var dateFieldFooterButtonToday = jQuery(
                     ".date-field-contents-footer .button-today", matchedObject);
 
             dateFieldInput.focus(function(event) {
-                        $(this).addClass("active");
+                        jQuery(this).addClass("active");
                     });
 
             dateFieldInput.blur(function(event) {
-                        $(this).removeClass("active");
+                        jQuery(this).removeClass("active");
                     });
 
             dateFieldButton.click(function(event) {
                         // retrieves the parent date field
-                        var dateField = $(this).parents(".date-field");
+                        var dateField = jQuery(this).parents(".date-field");
 
                         // retrieves the current date
                         var currentDate = dateField.data("date");
@@ -396,17 +396,17 @@
 
             dateFieldButton.mousedown(function() {
                         // adds the click class
-                        $(this).addClass("click");
+                        jQuery(this).addClass("click");
                     });
 
             dateFieldButton.mouseup(function() {
                         // removes the click class
-                        $(this).removeClass("click");
+                        jQuery(this).removeClass("click");
                     });
 
             dateFieldHeaderButtonNext.click(function(event) {
                         // retrieves the parent date field
-                        var dateField = $(this).parents(".date-field");
+                        var dateField = jQuery(this).parents(".date-field");
 
                         // retrieves the current date
                         var currentDate = dateField.data("viewDate");
@@ -435,7 +435,7 @@
 
             dateFieldHeaderButtonPrevious.click(function(event) {
                         // retrieves the parent date field
-                        var dateField = $(this).parents(".date-field");
+                        var dateField = jQuery(this).parents(".date-field");
 
                         // retrieves the current date
                         var currentDate = dateField.data("viewDate");
@@ -464,7 +464,7 @@
 
             dateFieldFooterButtonToday.click(function(event) {
                         // retrieves the parent date field
-                        var dateField = $(this).parents(".date-field");
+                        var dateField = jQuery(this).parents(".date-field");
 
                         // retrieves the current date
                         var currentDate = new Date();
@@ -476,7 +476,7 @@
 
         var __toggle = function(dateField) {
             // retrieves the date field contents
-            var dateFieldContents = $(".date-field-contents", dateField);
+            var dateFieldContents = jQuery(".date-field-contents", dateField);
 
             // toggles the date field contents visibility
             if (dateFieldContents.is(":visible")) {
@@ -490,7 +490,7 @@
 
         var __show = function(dateField) {
             // retrieves the date field contents
-            var dateFieldContents = $(".date-field-contents", dateField);
+            var dateFieldContents = jQuery(".date-field-contents", dateField);
 
             // fades the date field contents in
             dateFieldContents.fadeIn(250);
@@ -498,7 +498,7 @@
 
         var __hide = function(dateField) {
             // retrieves the date field contents
-            var dateFieldContents = $(".date-field-contents", dateField);
+            var dateFieldContents = jQuery(".date-field-contents", dateField);
 
             // fades the date field contents out
             dateFieldContents.fadeOut(150);
@@ -516,10 +516,10 @@
                     dateStringValue);
 
             // updates the date field input with the date string value
-            $(".date-field-input", element).attr("value", dateStringValue);
+            jQuery(".date-field-input", element).attr("value", dateStringValue);
 
             // updates the date field input hidden with the date target string value
-            $(".date-field-input-hidden", element).attr("value",
+            jQuery(".date-field-input-hidden", element).attr("value",
                     dateTargetStringValue);
         };
 
@@ -673,11 +673,11 @@
             var stringValue = stringBuffer.toString();
 
             // retrieves the date fiel table body
-            var dateFieldTableBody = $(
+            var dateFieldTableBody = jQuery(
                     ".date-field-contents-body > table > tbody", dateField);
 
             // retrieves the date field title
-            var dateFieldTitle = $(".date-field-contents-header > h1",
+            var dateFieldTitle = jQuery(".date-field-contents-header > h1",
                     dateField);
 
             // clears the current date field table body
@@ -696,13 +696,13 @@
             // sets the top label in the date field title
             dateFieldTitle.html(topLabel);
 
-            var dateFieldTableBodyActiveElements = $(
+            var dateFieldTableBodyActiveElements = jQuery(
                     ".date-field-contents-body > table > tbody span.active",
                     dateField);
 
             dateFieldTableBodyActiveElements.click(function() {
                         // retrieves the date value from the element
-                        var elementDate = $(this).attr("date");
+                        var elementDate = jQuery(this).attr("date");
 
                         // sets the new date element
                         dateField.data("date", new Date(elementDate));
@@ -768,7 +768,7 @@
 })(jQuery);
 
 (function($) {
-    $.fn.dropbox = function(options) {
+    jQuery.fn.dropbox = function(options) {
         // the default values for the menu
         var defaults = {};
 
@@ -776,7 +776,7 @@
         var options = options ? options : {};
 
         // constructs the options
-        var options = $.extend(defaults, options);
+        var options = jQuery.extend(defaults, options);
 
         // sets the jquery matched object
         var matchedObject = this;
@@ -807,10 +807,10 @@
 
             matchedObject.each(function(index, element) {
                         // retrieves the element reference from the element
-                        var elementReference = $(element);
+                        var elementReference = jQuery(element);
 
                         // retrieves the dropbox text input
-                        var dropboxTextInput = $(".dropbox-text-input",
+                        var dropboxTextInput = jQuery(".dropbox-text-input",
                                 elementReference);
 
                         // retrieves the value from the element reference
@@ -831,7 +831,7 @@
 
                         if (value) {
                             // retrieves the list element
-                            var listElement = $("li[name=" + value + "]",
+                            var listElement = jQuery("li[name=" + value + "]",
                                     elementReference)
 
                             // changes the selection
@@ -846,10 +846,10 @@
         var _registerHandlers = function() {
             matchedObject.keydown(function(event) {
                 // retrieves the dropbox
-                var dropbox = $(this);
+                var dropbox = jQuery(this);
 
                 // retrieves the dropbox contents selected list element
-                var dropboxContentsListSelectedElement = $(
+                var dropboxContentsListSelectedElement = jQuery(
                         ".dropbox-contents li.selected", dropbox);
 
                 // in case it's the down arrow or the left arrow
@@ -862,12 +862,12 @@
                 }
                 // in case it's the page up or home
                 else if (event.keyCode == 33 || event.keyCode == 36) {
-                    __changeSelection($(":first",
+                    __changeSelection(jQuery(":first",
                             dropboxContentsListSelectedElement.parent()));
                 }
                 // in case it's the page down or end
                 else if (event.keyCode == 34 || event.keyCode == 35) {
-                    __changeSelection($(":last",
+                    __changeSelection(jQuery(":last",
                             dropboxContentsListSelectedElement.parent()));
                 }
 
@@ -877,7 +877,7 @@
                 var upperCharValue = charValue.toUpperCase();
 
                 // retrieves all the list element for the current char key
-                var dropboxContentsListSelectedElement = $(
+                var dropboxContentsListSelectedElement = jQuery(
                         ".dropbox-contents li[name^=" + charValue
                                 + "], .dropbox-contents li[name^="
                                 + upperCharValue + "]", dropbox);
@@ -885,32 +885,32 @@
                 // in case there are valid element selected
                 if (dropboxContentsListSelectedElement.size() > 0) {
                     // changes the selection to the first (best) list element
-                    __changeSelection($(dropboxContentsListSelectedElement.get(0)));
+                    __changeSelection(jQuery(dropboxContentsListSelectedElement.get(0)));
                 }
             });
 
-            $(".dropbox-text-input", matchedObject).focus(function() {
+            jQuery(".dropbox-text-input", matchedObject).focus(function() {
                         // retrieves the parent dropbox
-                        var dropbox = $(this).parents(".dropbox");
+                        var dropbox = jQuery(this).parents(".dropbox");
 
                         // adds the active class from the dropbox
                         dropbox.addClass("active");
                     });
 
-            $(".dropbox-text-input", matchedObject).blur(function() {
+            jQuery(".dropbox-text-input", matchedObject).blur(function() {
                         // retrieves the parent dropbox
-                        var dropbox = $(this).parents(".dropbox");
+                        var dropbox = jQuery(this).parents(".dropbox");
 
                         // removes the active class from the dropbox
                         dropbox.removeClass("active");
                     });
 
-            $(".dropbox-text-field", matchedObject).click(function() {
+            jQuery(".dropbox-text-field", matchedObject).click(function() {
                         // retrieves the parent dropbox
-                        var dropbox = $(this).parents(".dropbox");
+                        var dropbox = jQuery(this).parents(".dropbox");
 
                         // retrieves the dropbox contents
-                        var dropboxContents = $(".dropbox-contents", dropbox);
+                        var dropboxContents = jQuery(".dropbox-contents", dropbox);
 
                         // retrieves the current dropbox contents height
                         var dropboxContentsHeight = dropboxContents.height();
@@ -926,9 +926,9 @@
                         __toggle(dropbox);
                     });
 
-            $("li", matchedObject).click(function() {
+            jQuery("li", matchedObject).click(function() {
                         // retrieves the list element
-                        var listElement = $(this);
+                        var listElement = jQuery(this);
 
                         // retrieves the parent dropbox
                         var dropbox = listElement.parents(".dropbox");
@@ -940,14 +940,14 @@
                         __hide(dropbox);
                     });
 
-            $(".dropbox-button", matchedObject).mousedown(function() {
+            jQuery(".dropbox-button", matchedObject).mousedown(function() {
                         // adds the click class
-                        $(this).addClass("click");
+                        jQuery(this).addClass("click");
                     });
 
-            $(".dropbox-button", matchedObject).mouseup(function() {
+            jQuery(".dropbox-button", matchedObject).mouseup(function() {
                         // removes the click class
-                        $(this).removeClass("click");
+                        jQuery(this).removeClass("click");
                     });
         };
 
@@ -965,16 +965,16 @@
             var dropbox = listElement.parents(".dropbox");
 
             // retrieves the dropbox contents
-            var dropboxContents = $(".dropbox-contents", dropbox);
+            var dropboxContents = jQuery(".dropbox-contents", dropbox);
 
             // retrieves the dropbox value
-            var dropboxValue = $(".dropbox-value", dropbox);
+            var dropboxValue = jQuery(".dropbox-value", dropbox);
 
             // retrieves the dropbox text input
-            var dropboxTextInput = $(".dropbox-text-input", dropbox);
+            var dropboxTextInput = jQuery(".dropbox-text-input", dropbox);
 
             // retrieves the dropbox contents selected list elements
-            var dropboxContentsListSelectedElements = $("li.selected",
+            var dropboxContentsListSelectedElements = jQuery("li.selected",
                     dropboxContents);
 
             // retrieves the current scroll top
@@ -1001,7 +1001,7 @@
 
         var __toggle = function(dropbox) {
             // retrieves the dropbox contents
-            var dropboxContents = $(".dropbox-contents", dropbox);
+            var dropboxContents = jQuery(".dropbox-contents", dropbox);
 
             // toggles the dropbox contents visibility
             if (dropboxContents.is(":visible")) {
@@ -1015,7 +1015,7 @@
 
         var __show = function(dropbox) {
             // retrieves the dropbox contents
-            var dropboxContents = $(".dropbox-contents", dropbox);
+            var dropboxContents = jQuery(".dropbox-contents", dropbox);
 
             // retrieves the dropbox contents scrolll top
             var dropboxContentsScrollTop = dropboxContents.data("scrollTop");
@@ -1032,7 +1032,7 @@
 
         var __hide = function(dropbox) {
             // retrieves the dropbox contents
-            var dropboxContents = $(".dropbox-contents", dropbox);
+            var dropboxContents = jQuery(".dropbox-contents", dropbox);
 
             // fades the dropbox contents in
             dropboxContents.fadeOut(150);
@@ -1047,7 +1047,7 @@
 })(jQuery);
 
 (function($) {
-    $.fn.message = function(method, options) {
+    jQuery.fn.message = function(method, options) {
         // the default values for the menu
         var defaults = {};
 
@@ -1058,7 +1058,7 @@
         var options = options ? options : {};
 
         // constructs the options
-        var options = $.extend(defaults, options);
+        var options = jQuery.extend(defaults, options);
 
         // sets the jquery matched object
         var matchedObject = this;
@@ -1086,7 +1086,7 @@
             // iterates over all the matched objects
             matchedObject.each(function(index, element) {
                         // retrives the element reference
-                        var elementReference = $(element);
+                        var elementReference = jQuery(element);
 
                         // retrieves the contents code from the element
                         var contentsCode = elementReference.html();
@@ -1098,7 +1098,7 @@
                         elementReference.append(htmlCode);
 
                         // retrieves the message contents
-                        var messageContents = $(".message-contents",
+                        var messageContents = jQuery(".message-contents",
                                 elementReference);
 
                         // sets the message contents code
@@ -1110,9 +1110,9 @@
          * Registers the event handlers for the created objects.
          */
         var _registerHandlers = function() {
-            $(".message-button", matchedObject).click(function(event) {
+            jQuery(".message-button", matchedObject).click(function(event) {
                         // retrieves the parent message
-                        var message = $(this).parents(".message");
+                        var message = jQuery(this).parents(".message");
 
                         // toggles the message
                         __toggle(message);
@@ -1183,7 +1183,7 @@
 })(jQuery);
 
 (function($) {
-    $.fn.window = function(method, options) {
+    jQuery.fn.window = function(method, options) {
         // the default values for the menu
         var defaults = {};
 
@@ -1194,7 +1194,7 @@
         var options = options ? options : {};
 
         // constructs the options
-        var options = $.extend(defaults, options);
+        var options = jQuery.extend(defaults, options);
 
         // sets the jquery matched object
         var matchedObject = this;
@@ -1282,7 +1282,7 @@
 })(jQuery);
 
 (function($) {
-    $.fn.notificationwindow = function(method, options) {
+    jQuery.fn.notificationwindow = function(method, options) {
         // the default values for the menu
         var defaults = {};
 
@@ -1293,7 +1293,7 @@
         var options = options ? options : {};
 
         // constructs the options
-        var options = $.extend(defaults, options);
+        var options = jQuery.extend(defaults, options);
 
         // sets the jquery matched object
         var matchedObject = this;
@@ -1359,7 +1359,7 @@
             matchedObject.append(htmlCode);
 
             // retrieves the notification window
-            var notificationMessage = $(".notification-message:last",
+            var notificationMessage = jQuery(".notification-message:last",
                     matchedObject);
 
             // sets the callbacks in the notification message
@@ -1386,21 +1386,21 @@
          */
         var _registerHandlers = function() {
             // retrieves the notification window
-            var notificationMessage = $(".notification-message", matchedObject);
+            var notificationMessage = jQuery(".notification-message", matchedObject);
 
-            $(".button-green", notificationMessage).click(function(event) {
+            jQuery(".button-green", notificationMessage).click(function(event) {
                 // retrieves the notification message
-                var notificationMessage = $(this).parents(".notification-message");
+                var notificationMessage = jQuery(this).parents(".notification-message");
 
                 // closes the notification message and calls the success callbacks
                 _close(notificationMessage, options);
                 __callSuccessCallbacks(notificationMessage, options);
             });
 
-            $(".window-button-close, .button-blue", notificationMessage).click(
+            jQuery(".window-button-close, .button-blue", notificationMessage).click(
                     function(event) {
                         // retrieves the notification message
-                        var notificationMessage = $(this).parents(".notification-message");
+                        var notificationMessage = jQuery(this).parents(".notification-message");
 
                         // closes the notification message and calls the error callbacks
                         _close(notificationMessage, options);
@@ -1426,7 +1426,7 @@
                     : [];
 
             // iterates over all the success callback functions
-            $(successCallbackFunctions).each(function(index, element) {
+            jQuery(successCallbackFunctions).each(function(index, element) {
                         // calls the callback function
                         element();
                     });
@@ -1442,7 +1442,7 @@
                     : [];
 
             // iterates over all the error callback functions
-            $(errorCallbackFunctions).each(function(index, element) {
+            jQuery(errorCallbackFunctions).each(function(index, element) {
                         // calls the callback function
                         element();
                     });
@@ -1467,7 +1467,7 @@
 })(jQuery);
 
 (function($) {
-    $.fn.messagewindow = function(method, options) {
+    jQuery.fn.messagewindow = function(method, options) {
         // the default values for the menu
         var defaults = {};
 
@@ -1478,7 +1478,7 @@
         var options = options ? options : {};
 
         // constructs the options
-        var options = $.extend(defaults, options);
+        var options = jQuery.extend(defaults, options);
 
         // sets the jquery matched object
         var matchedObject = this;
@@ -1537,7 +1537,7 @@
             matchedObject.append(htmlCode);
 
             // retrieves the message window
-            var messageMessage = $(".message-message:last", matchedObject);
+            var messageMessage = jQuery(".message-message:last", matchedObject);
 
             // retrieves the matched object dimensions
             var matchedObjectHeight = matchedObject.height();
@@ -1557,10 +1557,10 @@
             messageMessage.fadeIn(500);
 
             // sets the overlay to be shown
-            $("#overlay").overlay("show");
+            jQuery("#overlay").overlay("show");
 
             // scrolls to the message window
-            $.scrollTo(messageMessage, 800, {
+            jQuery.scrollTo(messageMessage, 800, {
                         offset : {
                             top : -250,
                             left : 0
@@ -1576,10 +1576,10 @@
 
         var _close = function(matchedObject, options) {
             // retrieves the message window
-            var messageMessage = $(".message-message", matchedObject);
+            var messageMessage = jQuery(".message-message", matchedObject);
 
             // sets the overlay to be hidden
-            $("#overlay").overlay("hide");
+            jQuery("#overlay").overlay("hide");
 
             // fades out the message window
             messageMessage.fadeOut(400, function() {
@@ -1606,7 +1606,7 @@
 })(jQuery);
 
 (function($) {
-    $.fn.dialogwindow = function(method, options) {
+    jQuery.fn.dialogwindow = function(method, options) {
         // the default values for the menu
         var defaults = {};
 
@@ -1617,7 +1617,7 @@
         var options = options ? options : {};
 
         // constructs the options
-        var options = $.extend(defaults, options);
+        var options = jQuery.extend(defaults, options);
 
         // sets the jquery matched object
         var matchedObject = this;
@@ -1691,7 +1691,7 @@
             matchedObject.append(htmlCode);
 
             // retrieves the dialog window
-            var dialogMessage = $(".dialog-message:last", matchedObject);
+            var dialogMessage = jQuery(".dialog-message:last", matchedObject);
 
             // sets the callbacks in the dialog message
             dialogMessage.data("successCallbackFunctions",
@@ -1716,10 +1716,10 @@
             dialogMessage.fadeIn(500);
 
             // sets the overlay to be shown
-            $("#overlay").overlay("show");
+            jQuery("#overlay").overlay("show");
 
             // scrolls to the dialog window
-            $.scrollTo(dialogMessage, 800, {
+            jQuery.scrollTo(dialogMessage, 800, {
                         offset : {
                             top : -250,
                             left : 0
@@ -1732,17 +1732,17 @@
          */
         var _registerHandlers = function() {
             // retrieves the dialog window
-            var dialogMessage = $(".dialog-message", matchedObject);
+            var dialogMessage = jQuery(".dialog-message", matchedObject);
 
             // registers the dialog message buttons
-            $(".button", dialogMessage).button();
+            jQuery(".button", dialogMessage).button();
 
-            $(".button-green", dialogMessage).click(function(event) {
+            jQuery(".button-green", dialogMessage).click(function(event) {
                         _close(matchedObject, options);
                         __callSuccessCallbacks(matchedObject, options);
                     });
 
-            $(".window-button-close, .button-blue", dialogMessage).click(
+            jQuery(".window-button-close, .button-blue", dialogMessage).click(
                     function(event) {
                         _close(matchedObject, options);
                         __callErrorCallbacks(matchedObject, options);
@@ -1751,10 +1751,10 @@
 
         var _close = function(matchedObject, options) {
             // retrieves the dialog window
-            var dialogMessage = $(".dialog-message", matchedObject);
+            var dialogMessage = jQuery(".dialog-message", matchedObject);
 
             // sets the overlay to be hidden
-            $("#overlay").overlay("hide");
+            jQuery("#overlay").overlay("hide");
 
             // fades out the dialog window
             dialogMessage.fadeOut(400, function() {
@@ -1765,7 +1765,7 @@
 
         var __callSuccessCallbacks = function(matchedObject, options) {
             // retrieves the dialog message
-            var dialogMessage = $(".dialog-message", matchedObject);
+            var dialogMessage = jQuery(".dialog-message", matchedObject);
 
             // retrieves the success callback functions
             var successCallbackFunctions = dialogMessage.data("successCallbackFunctions");
@@ -1776,7 +1776,7 @@
                     : [];
 
             // iterates over all the success callback functions
-            $(successCallbackFunctions).each(function(index, element) {
+            jQuery(successCallbackFunctions).each(function(index, element) {
                         // calls the callback function
                         element();
                     });
@@ -1784,7 +1784,7 @@
 
         var __callErrorCallbacks = function(matchedObject, options) {
             // retrieves the dialog message
-            var dialogMessage = $(".dialog-message", matchedObject);
+            var dialogMessage = jQuery(".dialog-message", matchedObject);
 
             // retrieves the error callback functions
             var errorCallbackFunctions = dialogMessage.data("errorCallbackFunctions");
@@ -1795,7 +1795,7 @@
                     : [];
 
             // iterates over all the error callback functions
-            $(errorCallbackFunctions).each(function(index, element) {
+            jQuery(errorCallbackFunctions).each(function(index, element) {
                         // calls the callback function
                         element();
                     });
@@ -1820,7 +1820,7 @@
 })(jQuery);
 
 (function($) {
-    $.fn.progressindicator = function(method, options) {
+    jQuery.fn.progressindicator = function(method, options) {
         // the default values for the menu
         var defaults = {};
 
@@ -1831,7 +1831,7 @@
         var options = options ? options : {};
 
         // constructs the options
-        var options = $.extend(defaults, options);
+        var options = jQuery.extend(defaults, options);
 
         // sets the jquery matched object
         var matchedObject = this;
@@ -1868,15 +1868,15 @@
             var percentage = options["percentage"];
 
             // sets the percentage in the progress indicator bar
-            $(".progress-indicator-bar", matchedObject).css("width",
+            jQuery(".progress-indicator-bar", matchedObject).css("width",
                     percentage + "%");
 
             // sets the percentage value in the indicator
-            $(".progress-indicator-value", matchedObject).html(percentage + "%");
+            jQuery(".progress-indicator-value", matchedObject).html(percentage + "%");
 
             // in case the percentage is bigger than the minimum
             if (percentage > 55) {
-                $(".progress-indicator-value", matchedObject).addClass("white");
+                jQuery(".progress-indicator-value", matchedObject).addClass("white");
             }
         };
 
@@ -1898,7 +1898,7 @@
 })(jQuery);
 
 (function($) {
-    $.fn.overlay = function(method, options) {
+    jQuery.fn.overlay = function(method, options) {
         // the default values for the menu
         var defaults = {};
 
@@ -1909,7 +1909,7 @@
         var options = options ? options : {};
 
         // constructs the options
-        var options = $.extend(defaults, options);
+        var options = jQuery.extend(defaults, options);
 
         // sets the jquery matched object
         var matchedObject = this;
@@ -1951,8 +1951,8 @@
         var _show = function(matchedObject, options) {
             // sets the document height and widht in
             // the matched object
-            matchedObject.height($(document).height());
-            matchedObject.width($(document).width());
+            matchedObject.height(jQuery(document).height());
+            matchedObject.width(jQuery(document).width());
 
             // shows the matched options object
             matchedObject.fadeIn(250);
@@ -1989,7 +1989,7 @@
 })(jQuery);
 
 (function($) {
-    $.fn.searchtable = function(options) {
+    jQuery.fn.searchtable = function(options) {
         // the enter key code
         var ENTER = 13;
 
@@ -2002,7 +2002,7 @@
         var options = options ? options : {};
 
         // constructs the options
-        var options = $.extend(defaults, options);
+        var options = jQuery.extend(defaults, options);
 
         // sets the jquery matched object
         var matchedObject = this;
@@ -2030,7 +2030,7 @@
             matchedObject.prepend(htmlCode);
 
             // retrieves the search query element
-            var searchQuery = $("#search-query", matchedObject);
+            var searchQuery = jQuery("#search-query", matchedObject);
 
             // creates the text area
             searchQuery.textarea();
@@ -2044,12 +2044,12 @@
          */
         var _registerHandlers = function() {
             // registers the handler for the next button
-            $("#search-query", matchedObject).keydown(function(event) {
+            jQuery("#search-query", matchedObject).keydown(function(event) {
                         var keyCode = event.keyCode;
 
                         if (keyCode == ENTER) {
                             // retrieves the searcg table field
-                            var searchTable = $(this).parents(".search-table");
+                            var searchTable = jQuery(this).parents(".search-table");
 
                             // resets the table search
                             __resetTableSearch(searchTable);
@@ -2060,9 +2060,9 @@
                     });
 
             // registers the handler for the key event in the search query field
-            $("#search-query", matchedObject).keyup(function(event) {
+            jQuery("#search-query", matchedObject).keyup(function(event) {
                         // retrieves the searcg table field
-                        var searchTable = $(this).parents(".search-table");
+                        var searchTable = jQuery(this).parents(".search-table");
 
                         // resets the table search
                         __resetTableSearch(searchTable);
@@ -2078,16 +2078,16 @@
         var _startSearch = function() {
             // iterates over all the element in the matched object
             matchedObject.each(function(index, element) {
-                        _search($(element), options, false);
+                        _search(jQuery(element), options, false);
                     });
         };
 
         var _search = function(searchTable, options, update) {
             // retrueves the search query
-            var searchQuery = $("#search-query", searchTable);
+            var searchQuery = jQuery("#search-query", searchTable);
 
             // retrueves the table
-            var table = $("table", searchTable);
+            var table = jQuery("table", searchTable);
 
             // retrieves the provider url
             var providerUrl = searchTable.attr("provider_url");
@@ -2110,7 +2110,7 @@
             };
 
             // processes the ajax request
-            $.ajax({
+            jQuery.ajax({
                         url : providerUrl,
                         type : "get",
                         data : searchButtonData,
@@ -2122,35 +2122,35 @@
 
         var _partialCallback = function(searchTable, options, data, update) {
             // retrieves the data element
-            var dataElement = $(data);
+            var dataElement = jQuery(data);
 
             // retrieves the table body data
-            var tableBody = $("#table-body", dataElement);
+            var tableBody = jQuery("#table-body", dataElement);
 
             // retrieves the table metadata data
-            var tableMetadata = $("#meta-data", dataElement);
+            var tableMetadata = jQuery("#meta-data", dataElement);
 
             // triggers the content change event
             searchTable.trigger("content_change", [tableBody])
 
             if (update) {
-                $("tbody", searchTable).append($("tr", tableBody));
+                jQuery("tbody", searchTable).append(jQuery("tr", tableBody));
             } else {
                 // replaces the table body contents
-                $("tbody", searchTable).replaceWith(tableBody);
+                jQuery("tbody", searchTable).replaceWith(tableBody);
             }
 
             // retrieves the number of records retrieves
-            var numberRecords = parseInt($("#number-records", tableMetadata).html());
-            var totalNumberRecords = parseInt($("#total-number-records",
+            var numberRecords = parseInt(jQuery("#number-records", tableMetadata).html());
+            var totalNumberRecords = parseInt(jQuery("#total-number-records",
                     tableMetadata).html());
 
             // sets the initial table data
-            var currentFinalRecord = $("table", searchTable).data("currentFinalRecord");
+            var currentFinalRecord = jQuery("table", searchTable).data("currentFinalRecord");
             currentFinalRecord += numberRecords;
 
             // removes the more button
-            $("#more-button", searchTable).remove();
+            jQuery("#more-button", searchTable).remove();
 
             // in case the current final record is smaller
             // than the total number of records
@@ -2159,10 +2159,10 @@
                 var htmlCode = "<div id=\"more-button\" class=\"button button-green center\">More</div>";
 
                 // appends the button html code
-                $(searchTable).append(htmlCode);
+                jQuery(searchTable).append(htmlCode);
 
                 // retrieves the more button
-                var moreButton = $("#more-button", searchTable);
+                var moreButton = jQuery("#more-button", searchTable);
 
                 // creates the more button
                 moreButton.button();
@@ -2175,27 +2175,27 @@
             }
 
             // sets the new table values
-            $("table", searchTable).data("currentFinalRecord",
+            jQuery("table", searchTable).data("currentFinalRecord",
                     currentFinalRecord);
-            $("table", searchTable).data("totalNumberRecords",
+            jQuery("table", searchTable).data("totalNumberRecords",
                     totalNumberRecords);
 
             // updates the main container (size)
-            $("#main-container").maincontainer("update");
+            jQuery("#main-container").maincontainer("update");
 
             // in case the update flag is set
             if (update) {
                 // retrieves the table footer
-                var tableFooter = $("table > tfoot", searchTable);
+                var tableFooter = jQuery("table > tfoot", searchTable);
 
                 // retrieves the current window (viewport) height
-                var windowHeight = $(window).height();
+                var windowHeight = jQuery(window).height();
 
                 // calculates the offset to the top to be used
                 var offsetTop = (windowHeight - 46) * -1;
 
                 // scrolls to the table footer
-                $.scrollTo(tableFooter, 400, {
+                jQuery.scrollTo(tableFooter, 400, {
                             offset : {
                                 top : offsetTop,
                                 left : 0
@@ -2206,8 +2206,8 @@
 
         var __resetTableSearch = function(targetElement) {
             // sets the initial table data
-            $("table", targetElement).data("currentFinalRecord", 0);
-            $("table", targetElement).data("totalNumberRecords", 0);
+            jQuery("table", targetElement).data("currentFinalRecord", 0);
+            jQuery("table", targetElement).data("totalNumberRecords", 0);
         };
 
         var __baseTableHandlers = function(targetElement) {

@@ -23,9 +23,9 @@
 // __copyright__ = Copyright (c) 2008 Hive Solutions Lda.
 // __license__   = GNU General Public License (GPL), Version 3
 
-$(document).ready(function() {
+jQuery(document).ready(function() {
     // sets the logic loaded data
-    var logicLoaded = $("#contents").data("logicLoaded");
+    var logicLoaded = jQuery("#contents").data("logicLoaded");
 
     // in case the logic is already loaded
     if (logicLoaded) {
@@ -35,7 +35,7 @@ $(document).ready(function() {
 
     var _registerExtraHandlers = function(targetElement) {
         // retrieves the buttons from the target element
-        var buttons = $(".button", targetElement)
+        var buttons = jQuery(".button", targetElement)
 
         // creates the buttons
         buttons.button();
@@ -43,13 +43,13 @@ $(document).ready(function() {
         // registers the callback for the click event
         buttons.click(function(event, element, status) {
                     // retrieves the button
-                    var button = $(this);
+                    var button = jQuery(this);
 
                     // retrieves the plugin id and version from the button
                     var pluginId = button.attr("plugin_id");
                     var pluginVersion = button.attr("plugin_version");
 
-                    $.ajax({
+                    jQuery.ajax({
                                 url : "repositories/install_plugin.json",
                                 type : "post",
                                 data : {
@@ -61,7 +61,7 @@ $(document).ready(function() {
     };
 
     // retrieves the repository plugins plugin table
-    var repositoryPluginsTable = $("#repository-plugins-table");
+    var repositoryPluginsTable = jQuery("#repository-plugins-table");
 
     // registers the extra handlers for the repository plugins table
     _registerExtraHandlers(repositoryPluginsTable);
@@ -72,5 +72,5 @@ $(document).ready(function() {
             });
 
     // sets the logic loaded data
-    $("#contents").data("logicLoaded", true);
+    jQuery("#contents").data("logicLoaded", true);
 });

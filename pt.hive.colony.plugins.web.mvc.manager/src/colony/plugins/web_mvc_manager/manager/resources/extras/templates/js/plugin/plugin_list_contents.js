@@ -23,66 +23,64 @@
 // __copyright__ = Copyright (c) 2008 Hive Solutions Lda.
 // __license__   = GNU General Public License (GPL), Version 3
 
-$(document).ready(function() {
-            // sets the logic loaded data
-            var logicLoaded = $("#contents").data("logicLoaded");
+jQuery(document).ready(function() {
+    // sets the logic loaded data
+    var logicLoaded = jQuery("#contents").data("logicLoaded");
 
-            // in case the logic is already loaded
-            if (logicLoaded) {
-                // returns immediately
-                return
-            }
+    // in case the logic is already loaded
+    if (logicLoaded) {
+        // returns immediately
+        return
+    }
 
-            var _registerExtraHandlers = function(targetElement) {
-                // retrieves the switch buttons from the target element
-                var switchButtons = $(".switch-button", targetElement);
+    var _registerExtraHandlers = function(targetElement) {
+        // retrieves the switch buttons from the target element
+        var switchButtons = jQuery(".switch-button", targetElement);
 
-                // creates the switch buttons
-                switchButtons.switchbutton();
+        // creates the switch buttons
+        switchButtons.switchbutton();
 
-                // registers the callback for the status change event
-                switchButtons.bind("status_change",
-                        function(event, element, status) {
-                            // retrieves the switch button
-                            var switchButton = $(this);
+        // registers the callback for the status change event
+        switchButtons.bind("status_change", function(event, element, status) {
+                    // retrieves the switch button
+                    var switchButton = jQuery(this);
 
-                            // retrieves the plugin id from the switch button
-                            var pluginId = switchButton.attr("plugin");
+                    // retrieves the plugin id from the switch button
+                    var pluginId = switchButton.attr("plugin");
 
-                            // retrieves the plugin status, from the stauts of the switch button
-                            var pluginStatus = status == "on"
-                                    ? "load"
-                                    : "unload";
+                    // retrieves the plugin status, from the stauts of the switch button
+                    var pluginStatus = status == "on" ? "load" : "unload";
 
-                            // retrieves the oposite status
-                            var opositeStatus = status == "on" ? "off" : "on";
+                    // retrieves the oposite status
+                    var opositeStatus = status == "on" ? "off" : "on";
 
-                            // removes the status class, and adds
-                            // the oposite class (changing status)
-                            switchButton.removeClass(status);
-                            switchButton.addClass(opositeStatus);
+                    // removes the status class, and adds
+                    // the oposite class (changing status)
+                    switchButton.removeClass(status);
+                    switchButton.addClass(opositeStatus);
 
-                            $.ajax({
-                                        url : "plugins/" + pluginId + "/change_status.json",
-                                        type : "post",
-                                        data : {
-                                            plugin_status : pluginStatus
-                                        }
-                                    });
-                        });
-            };
+                    jQuery.ajax({
+                                url : "plugins/" + pluginId
+                                        + "/change_status.json",
+                                type : "post",
+                                data : {
+                                    plugin_status : pluginStatus
+                                }
+                            });
+                });
+    };
 
-            // retrieves the plugin table
-            var pluginTable = $("#plugin-table");
+    // retrieves the plugin table
+    var pluginTable = jQuery("#plugin-table");
 
-            // registers the extra handlers for the plugin table
-            _registerExtraHandlers(pluginTable);
+    // registers the extra handlers for the plugin table
+    _registerExtraHandlers(pluginTable);
 
-            // register the callback to the content change event
-            pluginTable.bind("content_change", function(event, targetElements) {
-                        _registerExtraHandlers(targetElements);
-                    });
+    // register the callback to the content change event
+    pluginTable.bind("content_change", function(event, targetElements) {
+                _registerExtraHandlers(targetElements);
+            });
 
-            // sets the logic loaded data
-            $("#contents").data("logicLoaded", true);
-        });
+    // sets the logic loaded data
+    jQuery("#contents").data("logicLoaded", true);
+});

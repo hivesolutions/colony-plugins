@@ -40,20 +40,20 @@ function textGetSelection(token, endToken, space) {
     text.value = finalValue;
 }
 
-$(document).ready(function() {
+jQuery(document).ready(function() {
 
-    $(".wiki-button").each(function(index, element) {
-                var elemento = $(element).clone();
+    jQuery(".wiki-button").each(function(index, element) {
+                var elemento = jQuery(element).clone();
 
                 var html = "<div class=\"wiki-button-container\"></div>";
 
-                var elemento = $(html);
+                var elemento = jQuery(html);
 
-                var novoElement = $(element).replaceWith(elemento);
+                var novoElement = jQuery(element).replaceWith(elemento);
 
-                elemento.append($(element))
+                elemento.append(jQuery(element))
 
-                var classes = $(element).attr("class");
+                var classes = jQuery(element).attr("class");
 
                 var classesList = classes.split(" ")
 
@@ -66,85 +66,85 @@ $(document).ready(function() {
                 }
             });
 
-    $("#wiki-options-button").click(function() {
-                window.location = $("#wiki-page-title").html() + ".prt";
+    jQuery("#wiki-options-button").click(function() {
+                window.location = jQuery("#wiki-page-title").html() + ".prt";
             });
 
-    $(".wiki-button").mousedown(function() {
-                $(this).addClass("click");
+    jQuery(".wiki-button").mousedown(function() {
+                jQuery(this).addClass("click");
             });
 
-    $(".wiki-button").mouseup(function() {
-                $(this).removeClass("click");
+    jQuery(".wiki-button").mouseup(function() {
+                jQuery(this).removeClass("click");
             });
 
-    $("#wiki-page-edit-button").click(function(event) {
-                if ($("#wiki-page-edit").is(":visible")) {
-                    $("#wiki-page-edit").fadeOut(200);
+    jQuery("#wiki-page-edit-button").click(function(event) {
+                if (jQuery("#wiki-page-edit").is(":visible")) {
+                    jQuery("#wiki-page-edit").fadeOut(200);
                 } else {
-                    $("#wiki-page-edit").fadeIn(300);
+                    jQuery("#wiki-page-edit").fadeIn(300);
                 }
 
                 // stops the event propagation
                 event.stopPropagation();
             });
 
-    $(document).click(function() {
-                $("#wiki-page-edit").fadeOut(200);
+    jQuery(document).click(function() {
+                jQuery("#wiki-page-edit").fadeOut(200);
             });
 
-    $("#wiki-page-edit").click(function(event) {
+    jQuery("#wiki-page-edit").click(function(event) {
                 // stops the event propagation to avoid handling by the body
                 event.stopPropagation();
             });
 
-    $("#wiki-more-button").click(function() {
-                if ($("#wiki-sub-header").is(":visible")) {
-                    $("#wiki-sub-header").fadeOut(200);
+    jQuery("#wiki-more-button").click(function() {
+                if (jQuery("#wiki-sub-header").is(":visible")) {
+                    jQuery("#wiki-sub-header").fadeOut(200);
                 } else {
-                    $("#wiki-sub-header").fadeIn(300);
+                    jQuery("#wiki-sub-header").fadeIn(300);
                 }
             });
 
-    $(".wiki-input, .wiki-text-area").focus(function() {
-                $(this).addClass("selected");
+    jQuery(".wiki-input, .wiki-text-area").focus(function() {
+                jQuery(this).addClass("selected");
             });
 
-    $(".wiki-input, .wiki-text-area").blur(function() {
-                $(this).removeClass("selected");
+    jQuery(".wiki-input, .wiki-text-area").blur(function() {
+                jQuery(this).removeClass("selected");
             });
 
-    $(".wiki-control-icon-bold").click(function() {
+    jQuery(".wiki-control-icon-bold").click(function() {
                 textGetSelection("**", "**", false);
             });
 
-    $(".wiki-control-icon-italic").click(function() {
+    jQuery(".wiki-control-icon-italic").click(function() {
                 textGetSelection("//", "//", false);
             });
 
-    $(".wiki-control-icon-quote").click(function() {
+    jQuery(".wiki-control-icon-quote").click(function() {
                 textGetSelection("<quote author=\"...\">", "</quote>", false);
             });
 
-    $("#wiki-page-new-publish-button").click(function() {
-                $(this).parents("form").submit();
+    jQuery("#wiki-page-new-publish-button").click(function() {
+                jQuery(this).parents("form").submit();
             });
 
-    $("#wiki-page-edit-publish-button").click(function() {
+    jQuery("#wiki-page-edit-publish-button").click(function() {
                 // retrieves the contents value
-                var contents = $("#wiki-page-edit-contents-text-area").attr("value");
+                var contents = jQuery("#wiki-page-edit-contents-text-area").attr("value");
 
                 // retrieves the symmary value
-                var summary = $("#wiki-page-edit-summary-input").attr("value");
+                var summary = jQuery("#wiki-page-edit-summary-input").attr("value");
 
                 // retrieves the wiki page value
-                var wikiPage = $("#wiki-page-title").html();
+                var wikiPage = jQuery("#wiki-page-title").html();
 
                 // creates the complete url
                 var completeUrl = "pages/" + wikiPage + "/update";
 
                 // calls the edit resource
-                $.ajax({
+                jQuery.ajax({
                             type : "post",
                             url : completeUrl,
                             data : {
@@ -152,21 +152,21 @@ $(document).ready(function() {
                                 "page[summary]" : summary
                             },
                             success : function(data) {
-                                $.ajax({
+                                jQuery.ajax({
                                             type : "get",
                                             url : wikiPage + ".ajx",
                                             success : function(data) {
-                                                $("#wiki-contents").html(data);
-                                                $("#wiki-page-edit").fadeOut(200);
+                                                jQuery("#wiki-contents").html(data);
+                                                jQuery("#wiki-page-edit").fadeOut(200);
                                             }
                                         });
                             }
                         });
             });
 
-    $(".wiki-input").each(function(index, value) {
+    jQuery(".wiki-input").each(function(index, value) {
                 // retrieves the value reference
-                var valueReference = $(value);
+                var valueReference = jQuery(value);
 
                 // retrieves the current status
                 var currentStatus = valueReference.attr("current_status");

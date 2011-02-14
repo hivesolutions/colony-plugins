@@ -25,7 +25,7 @@
 
 function messageProcessor(data) {
     // parses the data retrieving the json
-    var jsonData = $.parseJSON(data);
+    var jsonData = jQuery.parseJSON(data);
 
     // retrieves the message id and contents
     var messageId = jsonData["id"];
@@ -33,19 +33,19 @@ function messageProcessor(data) {
 
     if (messageId == "web_mvc_manager/plugin/change_status") {
         // parses the data (json) retrieving the status
-        var status = $.parseJSON(messageContents);
+        var status = jQuery.parseJSON(messageContents);
 
         // retrieves the unloaded plugins
         var unloadedPlugins = status["unloaded"];
 
         // iterates over all the unloaded plugins
-        $(unloadedPlugins).each(function(index, element) {
-            var switchButtonElement = $("#plugin-table .switch-button[plugin="
+        jQuery(unloadedPlugins).each(function(index, element) {
+            var switchButtonElement = jQuery("#plugin-table .switch-button[plugin="
                     + element + "]");
             switchButtonElement.removeClass("on");
             switchButtonElement.addClass("off");
 
-            $("#notification-area-contents").notificationwindow("default", {
+            jQuery("#notification-area-contents").notificationwindow("default", {
                         "title" : "<span class=\"red\">Plugin Unloaded</span>",
                         "subTitle" : "",
                         "message" : element,
@@ -57,13 +57,13 @@ function messageProcessor(data) {
         var loadedPlugins = status["loaded"];
 
         // iterates over all the loaded plugins
-        $(loadedPlugins).each(function(index, element) {
-            var switchButtonElement = $("#plugin-table .switch-button[plugin="
+        jQuery(loadedPlugins).each(function(index, element) {
+            var switchButtonElement = jQuery("#plugin-table .switch-button[plugin="
                     + element + "]");
             switchButtonElement.removeClass("off");
             switchButtonElement.addClass("on");
 
-            $("#notification-area-contents").notificationwindow("default", {
+            jQuery("#notification-area-contents").notificationwindow("default", {
                         "title" : "<span class=\"green\">Plugin Loaded</span>",
                         "subTitle" : "",
                         "message" : element,
@@ -72,14 +72,14 @@ function messageProcessor(data) {
         });
     } else if (messageId == "web_mvc_manager/plugin/install") {
         // parses the data (json) retrieving the status
-        var status = $.parseJSON(messageContents);
+        var status = jQuery.parseJSON(messageContents);
 
         // retrieves the uninstalled plugins
         var uninstalledPlugins = status["uninstalled"];
 
         // iterates over all the uninstalled plugins
-        $(uninstalledPlugins).each(function(index, element) {
-            $("#notification-area-contents").notificationwindow("default", {
+        jQuery(uninstalledPlugins).each(function(index, element) {
+            jQuery("#notification-area-contents").notificationwindow("default", {
                         "title" : "<span class=\"red\">Plugin Uninstalled</span>",
                         "subTitle" : "",
                         "message" : element,
@@ -91,8 +91,8 @@ function messageProcessor(data) {
         var installedPlugins = status["installed"];
 
         // iterates over all the installed plugins
-        $(installedPlugins).each(function(index, element) {
-            $("#notification-area-contents").notificationwindow("default", {
+        jQuery(installedPlugins).each(function(index, element) {
+            jQuery("#notification-area-contents").notificationwindow("default", {
                         "title" : "<span class=\"green\">Plugin Installed</span>",
                         "subTitle" : "",
                         "message" : element,
@@ -101,33 +101,33 @@ function messageProcessor(data) {
         });
     } else if (messageId == "web_mvc_manager/header/reload") {
         // reloads the header
-        $("body").page("reloadHeader");
+        jQuery("body").page("reloadHeader");
     } else if (messageId == "web_mvc_manager/side_panel/reload") {
         // retrieves the current active menu as the target menu
-        var targetMenu = $("#main-container").data("menu");
+        var targetMenu = jQuery("#main-container").data("menu");
 
         // reloads the metadata in the main container
-        $("#main-container").maincontainer("loadMetadata", {
+        jQuery("#main-container").maincontainer("loadMetadata", {
                     forceReload : true,
                     target : targetMenu
                 });
     }
 }
 
-$(document).ready(function() {
-    $("body").communication("default", {
+jQuery(document).ready(function() {
+    jQuery("body").communication("default", {
                 url : "communication",
                 timeout : 500,
                 dataCallbackFunctions : [messageProcessor]
             });
 
-    $("body").bind("dragenter", function(event) {
+    jQuery("body").bind("dragenter", function(event) {
                 // stops the event propagation and prevents
                 // the default event operation
                 event.stopPropagation();
                 event.preventDefault();
 
-                $("body").messagewindow("default", {
+                jQuery("body").messagewindow("default", {
                             "title" : "Install new plugin",
                             "subTitle" : "",
                             "message" : "Drop the file to install the new plugin.",
@@ -135,24 +135,24 @@ $(document).ready(function() {
                         });
             });
 
-    $("#overlay").bind("dragleave", function(event) {
+    jQuery("#overlay").bind("dragleave", function(event) {
                 // stops the event propagation and prevents
                 // the default event operation
                 event.stopPropagation();
                 event.preventDefault();
 
                 // closes the message window
-                $("body").messagewindow("close");
+                jQuery("body").messagewindow("close");
             });
 
-    $("#overlay").bind("drop", function(event) {
+    jQuery("#overlay").bind("drop", function(event) {
         // stops the event propagation and prevents
         // the default event operation
         event.stopPropagation();
         event.preventDefault();
 
         // closes the message window
-        $("body").messagewindow("close");
+        jQuery("body").messagewindow("close");
 
         // retrieves the data tranfer and the files
         // rom the original event
@@ -179,7 +179,7 @@ $(document).ready(function() {
             var xmlHttpRequest = new XMLHttpRequest();
 
             // retrieves the upload element
-            var uploadElement = $(xmlHttpRequest.upload);
+            var uploadElement = jQuery(xmlHttpRequest.upload);
 
             uploadElement.bind("progress", function(event) {
                 if (event.lengthComputable) {
@@ -188,7 +188,7 @@ $(document).ready(function() {
                             / event.total);
 
                     // sets the progress indicator percentage
-                    $(".message-message .progress-indicator", "body").progressindicator(
+                    jQuery(".message-message .progress-indicator", "body").progressindicator(
                             "change", {
                                 percentage : percentage
                             });
@@ -197,7 +197,7 @@ $(document).ready(function() {
 
             uploadElement.bind("load", function(event) {
                 // sets the progress indicator percentage
-                $(".message-message .progress-indicator", "body").progressindicator(
+                jQuery(".message-message .progress-indicator", "body").progressindicator(
                         "change", {
                             percentage : 100
                         });
@@ -205,10 +205,10 @@ $(document).ready(function() {
                 // sets a timeout to close the message window
                 setTimeout(function() {
                     // closes the message window
-                    $("body").messagewindow("close");
+                    jQuery("body").messagewindow("close");
 
                     if (xmlHttpRequest.status == 200) {
-                        $("#notification-area-contents").notificationwindow(
+                        jQuery("#notification-area-contents").notificationwindow(
                                 "default", {
                                     "title" : "<span class=\"green\">Plugin Installed</span>",
                                     "subTitle" : "",
@@ -216,7 +216,7 @@ $(document).ready(function() {
                                     "timeout" : 5000
                                 });
                     } else {
-                        $("body").dialogwindow("default", {
+                        jQuery("body").dialogwindow("default", {
                             "title" : "Warning",
                             "subTitle" : "Problem Installing Plugin",
                             "message" : "There was a problem installing plugin, this indicates a problem in the server or a problem in the sent file.",
@@ -238,7 +238,7 @@ $(document).ready(function() {
 
             // creates a message windows with for the progress of
             // the installation
-            $("body").messagewindow("default", {
+            jQuery("body").messagewindow("default", {
                         "title" : "Installing new plugin",
                         "subTitle" : "The systems is installing the new plugin",
                         "message" : "<div class=\"progress-indicator\"></div>",
@@ -246,28 +246,28 @@ $(document).ready(function() {
                     });
 
             // starts the progress indicator
-            $(".message-message .progress-indicator", "body").progressindicator();
+            jQuery(".message-message .progress-indicator", "body").progressindicator();
         };
     });
 
-    $("#overlay").bind("dragover", function(event) {
+    jQuery("#overlay").bind("dragover", function(event) {
                 // stops the event propagation and prevents
                 // the default event operation
                 event.stopPropagation();
                 event.preventDefault();
             });
 
-    $("#account-description").click(function() {
-                if (!$("#account-float-panel").is(":visible")) {
-                    $("#account-float-panel").fadeIn(200, function() {
-                                $("#account-float-panel").click(
+    jQuery("#account-description").click(function() {
+                if (!jQuery("#account-float-panel").is(":visible")) {
+                    jQuery("#account-float-panel").fadeIn(200, function() {
+                                jQuery("#account-float-panel").click(
                                         function(event) {
                                             event.stopPropagation();
 
                                         });
-                                $(document).click(function(event) {
-                                            $("#account-float-panel").hide();
-                                            $(document).unbind("click");
+                                jQuery(document).click(function(event) {
+                                            jQuery("#account-float-panel").hide();
+                                            jQuery(document).unbind("click");
                                         });
                             });
                 }
@@ -282,13 +282,13 @@ $(document).ready(function() {
  */
 function contentsLoad() {
     // sets the page in the body
-    $("body").page();
+    jQuery("body").page();
 
     // sets the main container
-    $("#main-container").maincontainer();
+    jQuery("#main-container").maincontainer();
 
     // reloads the contents page
-    $("#main-container").maincontainer("reload");
+    jQuery("#main-container").maincontainer("reload");
 }
 
 /**
@@ -308,11 +308,11 @@ function pageLoad(hash) {
  *            target The target to be used in the update of the main container.
  */
 function changeContents(target) {
-    $("#main-container").maincontainer("changeMenu", {
+    jQuery("#main-container").maincontainer("changeMenu", {
                 target : target
             });
 
-    $("#main-container").maincontainer("change", {
+    jQuery("#main-container").maincontainer("change", {
                 target : target
             });
 }
@@ -325,7 +325,7 @@ function changeContents(target) {
 function getBasePath() {
     // returns the base path, based on the
     // component in the dom
-    return $("#environment-variables > #base-path").html();
+    return jQuery("#environment-variables > #base-path").html();
 }
 
 /**
@@ -336,5 +336,5 @@ function getBasePath() {
 function getAjaxSubmit() {
     // returns the ajax submit value, based on the
     // component in the dom
-    return $("#environment-variables > #ajax-submit").html();
+    return jQuery("#environment-variables > #ajax-submit").html();
 }
