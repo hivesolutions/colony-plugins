@@ -451,6 +451,7 @@ class EntityManager:
             # retrieves the transaction stack
             transaction_stack = self.get_transaction_stack()
 
+            # adds the transaction name to the transaction stack
             transaction_stack.append(transaction_name)
 
             return True
