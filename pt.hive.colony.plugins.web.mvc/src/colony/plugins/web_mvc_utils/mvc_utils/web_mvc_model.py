@@ -37,6 +37,10 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
+import re
+
+import colony.libs.control_util
+
 import web_mvc_utils_exceptions
 
 VALIDATION_METHOD_SUFFIX = "_validate"
@@ -44,6 +48,18 @@ VALIDATION_METHOD_SUFFIX = "_validate"
 
 TARGET_VALUE = "target"
 """ The target value """
+
+EMAIL_REGEX_VALUE = "[\w\d\._%+-]+@[\w\d\.-]+\.\w{2,4}"
+""" The email regex value """
+
+URL_REGEX_VALUE = "\w+\:\/\/[^\:\/\?#]+(\:\d+)?(\/[^\?#]+)*\/?(\?[^#]*)?(#.*)?"
+""" The url regex value """
+
+EMAIL_REGEX = re.compile(EMAIL_REGEX_VALUE)
+""" The email regex """
+
+URL_REGEX = re.compile(URL_REGEX_VALUE)
+""" The url regex """
 
 def _start_model(self):
     """
@@ -372,3 +388,86 @@ def less_than_validate(self, attribute_name, attribute_value, properties):
     if not attribute_value < target_value:
         # adds an error to the given attribute name
         self.add_error(attribute_name, "value is greater or equal that the target")
+
+def is_percentage_decimal_validate(self, attribute_name, attribute_value, properties):
+    """
+    Validates an attribute to ensure that the value is a percentage.
+
+    @type attribute_name: String
+    @param attribute_name: The name of the attribute to be validated.
+    @type attribute_value: Object
+    @param attribute_value: The value of the attribute to be validated.
+    @type properties: Dictionary
+    @param properties: The properties for the validation.
+    """
+
+    # in case the value is not within the decimal percentage boundaries
+    if attribute_value < 0 or attribute_value > 1:
+        # adds an error to the given attribute name
+        self.add_error(attribute_name, "value is not a decimal percentage")
+
+def is_url_validate(self, attribute_name, attribute_value, properties):
+    """
+    Validates an attribute to ensure that the value is an url.
+
+    @type attribute_name: String
+    @param attribute_name: The name of the attribute to be validated.
+    @type attribute_value: Object
+    @param attribute_value: The value of the attribute to be validated.
+    @type properties: Dictionary
+    @param properties: The properties for the validation.
+    """
+
+    # checks if the attribute value matches the regular expression
+    match = URL_REGEX.match(attribute_value)
+
+    # in case the value is not an url
+    if not match:
+        # adds an error to the given attribute name
+        self.add_error(attribute_name, "value is not an url")
+
+def is_email_validate(self, attribute_name, attribute_value, properties):
+    """
+    Validates an attribute to ensure that the value is an email.
+
+    @type attribute_name: String
+    @param attribute_name: The name of the attribute to be validated.
+    @type attribute_value: Object
+    @param attribute_value: The value of the attribute to be validated.
+    @type properties: Dictionary
+    @param properties: The properties for the validation.
+    """
+
+    # checks if the attribute value matches the regular expression
+    match = EMAIL_REGEX.match(attribute_value)
+
+    # in case the value is not an email
+    if not match:
+        # adds an error to the given attribute name
+        self.add_error(attribute_name, "value is not an email")
+
+def is_tax_number_validate(self, attribute_name, attribute_value, properties):
+    """
+    Validates an attribute to ensure that the value is a tax number.
+
+    @type attribute_name: String
+    @param attribute_name: The name of the attribute to be validated.
+    @type attribute_value: Object
+    @param attribute_value: The value of the attribute to be validated.
+    @type properties: Dictionary
+    @param properties: The properties for the validation.
+    """
+
+    # retrieves the control value
+    control_value = attribute_value % 10
+
+    # removes the control value from the attribute value
+    tax_number = attribute_value / 10
+
+    # calculates the control value
+    calculated_control_value = colony.libs.control_util.calculate_tax_number_control_value(tax_number)
+
+    # in case the control value doesn't match the calculated one
+    if not control_value == calculated_control_value:
+        # adds an error to the given attribute name
+        self.add_error(attribute_name, "value is not a valid tax number")
