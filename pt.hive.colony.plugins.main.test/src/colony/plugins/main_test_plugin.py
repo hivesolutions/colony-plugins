@@ -54,7 +54,7 @@ class MainTestPlugin(colony.base.plugin_system.Plugin):
     loading_type = colony.base.plugin_system.EAGER_LOADING_TYPE
     platforms = [colony.base.plugin_system.CPYTHON_ENVIRONMENT]
     attributes = {"build_automation_file_path" : "$base{plugin_directory}/main_test/test/resources/baf.xml"}
-    capabilities = ["test", "console_command_extension", "build_automation_item"]
+    capabilities = ["test", "_console_command_extension", "build_automation_item"]
     capabilities_allowed = ["test_manager", "test_case", "test_case_bundle", "plugin_test_case", "plugin_test_case_bundle"]
     dependencies = []
     events_handled = []
@@ -102,14 +102,8 @@ class MainTestPlugin(colony.base.plugin_system.Plugin):
     def get_console_extension_name(self):
         return self.console_test.get_console_extension_name()
 
-    def get_all_commands(self):
-        return self.console_test.get_all_commands()
-
-    def get_handler_command(self, command):
-        return self.console_test.get_handler_command(command)
-
-    def get_help(self):
-        return self.console_test.get_help()
+    def get_commands_map(self):
+        return self.console_test.get_commands_map()
 
     def get_all_test_cases(self):
         return self.main_test.get_all_test_cases()

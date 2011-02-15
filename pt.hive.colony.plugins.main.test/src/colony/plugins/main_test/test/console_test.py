@@ -19,7 +19,7 @@
 # You should have received a copy of the GNU General Public License
 # along with Hive Colony Framework. If not, see <http://www.gnu.org/licenses/>.
 
-__author__ = "João Magalhães <joamag@hive.pt>"
+__author__ = "Tiago Silva <tsilva@hive.pt>"
 """ The author(s) of the module """
 
 __version__ = "1.0.0"
@@ -39,21 +39,6 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 import re
 
-CONSOLE_EXTENSION_NAME = "test"
-""" The console extension name """
-
-INVALID_NUMBER_ARGUMENTS_MESSAGE = "invalid number of arguments"
-""" The invalid number of arguments message """
-
-INVALID_TEST_ID_MESSAGE = "invalid test id"
-""" The invalid test id message """
-
-HELP_TEXT = "### UNIT TESTING HELP ###\n\
-start_test <unit-testid> - starts a unit test\n\
-start_all_test           - starts all the unit tests\n\
-show_all_test            - shows all the unit tests"
-""" The help text """
-
 TABLE_TOP_TEXT = "ID      TEST CASE NAME                PLUGIN ID"
 """ The table top text """
 
@@ -66,16 +51,19 @@ SECOND_COLUMN_SPACING = 30
 ID_REGEX = "[0-9]+"
 """ The regular expression to retrieve the id of the test case """
 
+CONSOLE_EXTENSION_NAME = "main_test"
+""" The console extension name """
+
 class ConsoleTest:
     """
-    The console test class.
+    The console main test class.
     """
 
     main_test_plugin = None
     """ The main test plugin """
 
-    commands = ["start_test", "start_all_test", "show_all_test"]
-    """ The commands list """
+    commands_map = {}
+    """ The map containing the commands information """
 
     def __init__(self, main_test_plugin):
         """
@@ -87,31 +75,35 @@ class ConsoleTest:
 
         self.main_test_plugin = main_test_plugin
 
+        # initializes the commands map
+        self.commands_map = self.__generate_commands_map()
+
     def get_console_extension_name(self):
         return CONSOLE_EXTENSION_NAME
 
-    def get_all_commands(self):
-        return self.commands
+    def get_commands_map(self):
+        return self.commands_map
 
-    def get_handler_command(self, command):
-        if command in self.commands:
-            method_name = "process_" + command
-            attribute = getattr(self, method_name)
-            return attribute
+    def process_start_test(self, arguments, arguments_map, output_method, console_context):
+        """
+        Processes the start test command, with the given
+        arguments and output method.
 
-    def get_help(self):
-        return HELP_TEXT
-
-    def process_start_test(self, args, output_method):
-        if len(args) < 1:
-            output_method(INVALID_NUMBER_ARGUMENTS_MESSAGE)
-            return
+        @type arguments: List
+        @param arguments: The arguments for the processing.
+        @type arguments_map: Dictionary
+        @param arguments_map: The map of arguments for the processing.
+        @type output_method: Method
+        @param output_method: The output method to be used in the processing.
+        @type console_context: ConsoleContext
+        @param console_context: The console context for the processing.
+        """
 
         # retrieves the main test instance
         main_test = self.main_test_plugin.main_test
 
-        # retrieves the test case id
-        test_case_id = args[0]
+        # retrieves the test case id from the arguments
+        test_case_id = arguments_map["test_case_id"]
 
         # retrieves the test cases for the given test case id
         test_cases = self.get_test_cases(test_case_id)
@@ -125,7 +117,21 @@ class ConsoleTest:
         else:
             output_method("invalid test case id")
 
-    def process_start_all_test(self, args, output_method):
+    def process_start_all_test(self, arguments, arguments_map, output_method, console_context):
+        """
+        Processes the start all test command, with the given
+        arguments and output method.
+
+        @type arguments: List
+        @param arguments: The arguments for the processing.
+        @type arguments_map: Dictionary
+        @param arguments_map: The map of arguments for the processing.
+        @type output_method: Method
+        @param output_method: The output method to be used in the processing.
+        @type console_context: ConsoleContext
+        @param console_context: The console context for the processing.
+        """
+
         # retrieves the main test instance
         main_test = self.main_test_plugin.main_test
 
@@ -138,7 +144,21 @@ class ConsoleTest:
         # processes the result
         self._process_result(result, output_method)
 
-    def process_show_all_test(self, args, output_method):
+    def process_show_all_test(self, arguments, arguments_map, output_method, console_context):
+        """
+        Processes the show all test command, with the given
+        arguments and output method.
+
+        @type arguments: List
+        @param arguments: The arguments for the processing.
+        @type arguments_map: Dictionary
+        @param arguments_map: The map of arguments for the processing.
+        @type output_method: Method
+        @param output_method: The output method to be used in the processing.
+        @type console_context: ConsoleContext
+        @param console_context: The console context for the processing.
+        """
+
         # prints the table top text
         output_method(TABLE_TOP_TEXT)
 
@@ -245,3 +265,55 @@ class ConsoleTest:
             # prints the error description
             output_method("name: " + error_id)
             output_method("traceback: " + error_traceback)
+
+    def get_test_case_id_list(self, argument, console_context):
+        # retrieves the main test instance
+        main_test = self.main_test_plugin.main_test
+
+        # retrieves all the available test cases
+        test_cases = main_test.get_all_test_cases()
+
+        # initializes the test case ids list
+        test_case_ids = []
+
+        # collects the test case ids
+        for test_case in test_cases:
+            # retrieves the test case ids
+            test_case_id = main_test.loaded_test_cases_id_map[test_case]
+
+            # creates the string representation of the test case id
+            test_case_id_string = str(test_case_id)
+
+            # adds the test case id to the list
+            test_case_ids.append(test_case_id_string)
+
+        # returns the test case ids
+        return test_case_ids
+
+    def __generate_commands_map(self):
+        # creates the commands map
+        commands_map = {
+                        "start_test" : {
+                            "handler" : self.process_start_test,
+                            "description" : "starts a unit test",
+                            "arguments" : [
+                                {
+                                    "name" : "test_case_id",
+                                    "description" : "the unique identifier for the test case",
+                                    "values" : self.get_test_case_id_list,
+                                    "mandatory" : True
+                                }
+                            ]
+                        },
+                        "start_all_test" : {
+                            "handler" : self.process_start_all_test,
+                            "description" : "starts all the unit tests"
+                        },
+                        "show_all_test" : {
+                            "handler" : self.process_show_all_test,
+                            "description" : "shows all the unit tests"
+                        }
+                    }
+
+        # returns the commands map
+        return commands_map
