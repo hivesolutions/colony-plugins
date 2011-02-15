@@ -67,6 +67,14 @@ class RootEntity(base_entity.EntityClass):
 
         self.object_id = None
 
+    def set_validation(self):
+        """
+        Sets the validation structures for the
+        current structure.
+        """
+
+        pass
+
 class Consumer(RootEntity):
     """
     The consumer class, which represents a generic
@@ -97,6 +105,9 @@ class Consumer(RootEntity):
         Sets the validation structures for the
         current structure.
         """
+
+        # adds the inherited validations
+        RootEntity.set_validation(self)
 
         # validates that a non empty name was set
         self.add_validation_method("name", "not_empty", {})
