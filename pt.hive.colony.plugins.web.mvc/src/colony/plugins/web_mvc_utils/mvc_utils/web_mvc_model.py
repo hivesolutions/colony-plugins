@@ -49,6 +49,9 @@ VALIDATION_METHOD_SUFFIX = "_validate"
 TARGET_VALUE = "target"
 """ The target value """
 
+MANDATORY_VALUE = "mandatory"
+""" The mandatory value """
+
 EMAIL_REGEX_VALUE = "[\w\d\._%+-]+@[\w\d\.-]+\.\w{2,4}"
 """ The email regex value """
 
@@ -215,6 +218,18 @@ def validate(self):
         # retrieves the attribute value
         attribute_value = getattr(self, attribute_name)
 
+        # retrieves the attribute class value
+        attribute_class_value = getattr(self.__class__, attribute_name)
+
+        # retrieves the attribute is mandatory value
+        attribute_is_mandatory = attribute_class_value.get(MANDATORY_VALUE, False)
+
+        # in case the attribute is not mandatory and the attribute
+        # value is none
+        if not attribute_is_mandatory and attribute_value == None:
+            # continues the loop
+            continue
+
         # iterates over all the validation tuples
         for validation_tuple in validation_tuple_list:
             # retrieves the validation method and properties
@@ -238,8 +253,11 @@ def is_valid(self):
     # in case the validation errors map
     # is not valid or empty
     if self.validation_errors_map:
+        # returns false (invalid)
         return False
+    # otherwise it's empty (no errors)
     else:
+        # returns true (valid)
         return True
 
 def not_none_validate(self, attribute_name, attribute_value, properties):
