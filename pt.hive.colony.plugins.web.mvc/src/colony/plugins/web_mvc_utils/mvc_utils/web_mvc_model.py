@@ -230,6 +230,15 @@ def validate(self):
             # continues the loop
             continue
 
+        # in case the attribute is mandatory and the attribute
+        # value is none
+        if attribute_is_mandatory and attribute_value == None:
+            # adds an error to the given attribute name
+            self.add_error(attribute_name, "value is not set for mandatory attribute")
+
+            # continues the loop
+            continue
+
         # iterates over all the validation tuples
         for validation_tuple in validation_tuple_list:
             # retrieves the validation method and properties
