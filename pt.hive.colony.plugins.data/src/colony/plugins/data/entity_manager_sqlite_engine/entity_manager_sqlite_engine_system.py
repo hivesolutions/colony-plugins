@@ -283,13 +283,33 @@ class EntityManagerSqliteEngine:
         # retrieves the transaction stack from the connection object
         transaction_stack = connection.transaction_stack
 
-        # in case there is only one element in the transaction stack
-        if len(transaction_stack) == 1:
-            return self.commit_connection(connection)
+        # retrieves the transaction stack length
+        transaction_stack_length = len(transaction_stack)
 
-        return True
+        # in case the transaction stack length is greater
+        # than one
+        if transaction_stack_length > 1:
+            # returns immediately (no need to commit
+            # an inner connection)
+            return True
+
+        # commits the connection
+        return self.commit_connection(connection)
 
     def rollback_transaction(self, connection, transaction_name):
+        # retrieves the transaction stack from the connection object
+        transaction_stack = connection.transaction_stack
+
+        # retrieves the transaction stack length
+        transaction_stack_length = len(transaction_stack)
+
+        # in case the transaction stack length is greater
+        # than one
+        if transaction_stack_length > 1:
+            # returns immediately (no need to rollback
+            # an inner connection)
+            return True
+
         # "rollsback" the transaction
         return self.rollback_connection(connection)
 
@@ -1435,9 +1455,6 @@ class EntityManagerSqliteEngine:
         # retrieves the entity class name
         entity_class_name = entity_class.__name__
 
-        # retrieves all the valid class attribute names, removes method values and the name exceptions
-        entity_class_valid_attribute_names = self.get_entity_class_attribute_names(entity_class)
-
         # retrieves the entity class id attribute name
         entity_class_id_attribute_name = self.get_entity_class_id_attribute_name(entity_class)
 
@@ -1801,9 +1818,6 @@ class EntityManagerSqliteEngine:
 
         # retrieves the entity class name
         entity_class_name = entity_class.__name__
-
-        # retrieves all the valid class attribute names, removes method values and the name exceptions
-        entity_class_valid_attribute_names = self.get_entity_class_attribute_names(entity_class)
 
         # in case the search field is defined
         if search_field_name:

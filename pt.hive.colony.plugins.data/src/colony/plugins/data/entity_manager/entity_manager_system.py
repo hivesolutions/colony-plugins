@@ -447,6 +447,7 @@ class EntityManager:
         # retrieves the connection object
         connection = self.get_connection()
 
+        # in case the creation of the transaction is successfull
         if self.entity_manager_engine_plugin.create_transaction(connection, transaction_name):
             # retrieves the transaction stack
             transaction_stack = self.get_transaction_stack()
@@ -454,6 +455,7 @@ class EntityManager:
             # adds the transaction name to the transaction stack
             transaction_stack.append(transaction_name)
 
+            # returns true
             return True
 
     def commit_transaction(self, transaction_name = None):
@@ -472,14 +474,18 @@ class EntityManager:
 
         # in case the transaction stack is empty
         if not transaction_stack:
+            # returns false
             return False
 
         # retrieves the connection object
         connection = self.get_connection()
 
+        # in case the commit transaction is successful
         if self.entity_manager_engine_plugin.commit_transaction(connection, transaction_name):
+            # pops the current element from the transaction stack
             transaction_stack.pop()
 
+            # returns true
             return True
 
     def rollback_transaction(self, transaction_name = None):
@@ -498,14 +504,18 @@ class EntityManager:
 
         # in case the transaction stack is empty
         if not transaction_stack:
+            # returns false
             return False
 
         # retrieves the connection object
         connection = self.get_connection()
 
+        # in case the rollback is successful
         if self.entity_manager_engine_plugin.rollback_transaction(connection, transaction_name):
-            del transaction_stack[:]
+            # pops the current element from the transaction stack
+            transaction_stack.pop()
 
+            # returns true
             return True
 
     def commit(self):
