@@ -310,8 +310,14 @@ class WebMvcManagerPageItemDnsController:
         return [DnsZone(), DnsZone()]
 
 class DnsZone:
+    """
+    The dns zone class.
+    """
+
     name = "tobias"
+    """ The name of the zone """
 
     description = "asdas"
+    """ The description of the zone """
 
     layout = "nada"
