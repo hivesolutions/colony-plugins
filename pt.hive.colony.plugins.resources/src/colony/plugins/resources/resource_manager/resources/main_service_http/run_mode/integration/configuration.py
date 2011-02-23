@@ -54,22 +54,7 @@ configuration = {
                  "preferred_error_handlers" : ["template", "default"],
                  "verify_request" : False,
                  "virtual_servers" : {
-                     "resolution_order" : ["repo.hive", "board.hive"],
-                     "repo.hive" : {
-                         "handler" : "file",
-                         "authentication_handler" : "main",
-                         "allow_redirection" : False,
-                         "request_properties" : {
-                             "base_path" : "$resource{system.path.integration}"
-                         },
-                         "authentication_properties" : {
-                             "authentication_handler" : "python",
-                             "authentication_realm" : "system",
-                             "arguments" : {
-                                 "file_path" : "%configuration:pt.hive.colony.plugins.main.authentication.python_handler%/authentication.py"
-                             }
-                         }
-                     },
+                     "resolution_order" : ["board.hive"],
                      "board.hive" : {
                          "redirections" : {
                              "resolution_order" : ["/"],
