@@ -154,9 +154,17 @@ class Autoloader:
 
                     # in case it's not a directory and the extension of the file is .py (python file)
                     if not stat.S_ISDIR(mode) and extension_name == ".py":
+                        # in case the file name exists in the search directories information map
+                        # for the current search directory
                         if file_name in self.search_directories_information_map[search_directory]:
+                            # retrieves the file information for the given file name
                             file_information = self.search_directories_information_map[search_directory][file_name]
+
+                            # retrieves the file properties from the file information
                             file_properties = file_information.file_properties
+
+                            # in case the modified data is differente from
+                            # the modified date in the file properties (file changed)
                             if not modified_date == file_properties.modified_date:
                                 # tries to retrieve the plugin from the plugin manager using the module name
                                 plugin = self.manager.get_plugin_by_module_name(module_name)
@@ -171,14 +179,25 @@ class Autoloader:
 
                                 # sets the new modified date
                                 file_properties.modified_date = modified_date
+
+                            # sets the file information exists flag as true
                             file_information.exists = True
+                        # otherwise the file must be new and a new
+                        # file information structure should be created
                         else:
+                            # creates a file properties instance for the given
+                            # modified date
                             file_properties = FileProperties(modified_date)
+
+                            # creates a new file information
                             file_information = FileInformation(file_name, file_properties, True)
+
+                            # sets the file information in the search directories information map
+                            # for the current file name and search directory
                             self.search_directories_information_map[search_directory][file_name] = file_information
 
-                            if not new_flag:
-                                self.load_module(search_directory, module_name)
+                            # in case the new flag is not set loads the module
+                            not new_flag and self.load_module(search_directory, module_name)
 
                 # the list of file names to be removed
                 remove_list = []
@@ -190,9 +209,17 @@ class Autoloader:
 
                 # removes all the modules in the remove list
                 for remove_item in remove_list:
+                    # splits the path of the remove item
                     split = os.path.splitext(remove_item)
+
+                    # retrieves the module name
                     module_name = "".join(split[:-1])
+
+                    # unloads the module for the given
+                    # module name
                     self.unload_module(module_name)
+
+                    # deletes the search directories information map reference
                     del self.search_directories_information_map[search_directory][remove_item]
 
             # sleeps for the given sleep time
