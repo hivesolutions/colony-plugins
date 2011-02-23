@@ -54,7 +54,14 @@ configuration = {
                  "preferred_error_handlers" : ["template", "default"],
                  "verify_request" : False,
                  "virtual_servers" : {
-                     "resolution_order" : ["board.hive"],
+                     "resolution_order" : ["repo.hive", "board.hive"],
+                     "repo.hive" : {
+                         "handler" : "file",
+                         "allow_redirection" : False,
+                         "request_properties" : {
+                             "base_path" : "/var/colony/automation"
+                         }
+                     },
                      "board.hive" : {
                          "redirections" : {
                              "resolution_order" : ["/"],
