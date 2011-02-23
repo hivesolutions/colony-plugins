@@ -53,6 +53,18 @@ configuration = {
                  "default_work_scheduling_algorithm" : 3,
                  "preferred_error_handlers" : ["template", "default"],
                  "verify_request" : False,
+                 "virtual_servers" : {
+                     "resolution_order" : ["board.hive"],
+                     "board.hive" : {
+                         "redirections" : {
+                             "resolution_order" : ["/"],
+                             "/" : {
+                                 "target" : "/colony_mod_python/rest/mvc/media_dashboard/",
+                                 "recursive_redirection" : True
+                             }
+                         }
+                     }
+                 },
                  "redirections" : {
                      "resolution_order" : ["/manager", "/media_dashboard"],
                      "/manager" : {
