@@ -75,6 +75,8 @@
             "resources/resource_manager/resources/main_service_pop/run_mode/development/resources.xml",
             "resources/resource_manager/resources/main_service_smtp/run_mode/development/configuration.py",
             "resources/resource_manager/resources/main_service_smtp/run_mode/development/resources.xml",
+            "resources/resource_manager/resources/main_service_smtp/run_mode/integration/configuration.py",
+            "resources/resource_manager/resources/main_service_smtp/run_mode/integration/resources.xml",
             "resources/resource_manager/resources/pecway_main/run_mode/development/configuration.py",
             "resources/resource_manager/resources/pecway_main/run_mode/development/resources.xml",
             "resources/resource_manager/resources/pecway_main/run_mode/pecway/configuration.py",
