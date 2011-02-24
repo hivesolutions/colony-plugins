@@ -456,7 +456,7 @@ def create_form_data(self, rest_request, data_map, encoding = DEFAULT_ENCODING):
     data_map = data_map[form_data_map_key]
 
     # creates the form data map
-    form_data_map = self._create_form_data(rest_request, data_map, form_data_map_key, form_data_map, encoding)
+    self._create_form_data(rest_request, data_map, form_data_map_key, form_data_map, encoding)
 
     # returns the form data map
     return form_data_map
