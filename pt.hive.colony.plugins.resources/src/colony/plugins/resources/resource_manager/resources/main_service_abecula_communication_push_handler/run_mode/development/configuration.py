@@ -38,12 +38,21 @@ __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
 configuration = {
-                 "authenticated_operations" : ["register", "unregister", "message", "stat", "prop",
-                                               "load", "unload", "set", "unset"],
-                 "authentication_properties" : {
-                     "authentication_handler" : "python",
-                     "arguments" : {
-                         "file_path" : "%configuration:pt.hive.colony.plugins.main.authentication.python_handler%/authentication.py"
-                     }
-                 }
-             }
+    "authenticated_operations" : [
+        "register",
+        "unregister",
+        "message",
+        "stat",
+        "prop",
+        "load",
+        "unload",
+        "set",
+        "unset"
+    ],
+    "authentication_properties" : {
+        "authentication_handler" : "python",
+        "arguments" : {
+            "file_path" : "%configuration:pt.hive.colony.plugins.main.authentication.python_handler%/authentication.py"
+        }
+    }
+}

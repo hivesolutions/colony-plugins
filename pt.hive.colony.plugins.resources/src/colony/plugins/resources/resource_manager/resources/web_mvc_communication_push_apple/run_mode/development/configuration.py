@@ -38,11 +38,11 @@ __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
 configuration = {
-                 "apple_push_configuration" : {
-                     "hostname" : "gateway.sandbox.push.apple.com",
-                     "port" : 2195,
-                     "feedback_hostname" : "feedback.sandbox.push.apple.com",
-                     "feedback_port" : 2196,
-                     "certificate_file_path" : "c:/apple_development_push_services_lmartinho.pem"
-                 }
-             }
+    "apple_push_configuration" : {
+        "hostname" : "gateway.sandbox.push.apple.com",
+        "port" : 2195,
+        "feedback_hostname" : "feedback.sandbox.push.apple.com",
+        "feedback_port" : 2196,
+        "certificate_file_path" : "c:/apple_development_push_services_lmartinho.pem"
+    }
+}

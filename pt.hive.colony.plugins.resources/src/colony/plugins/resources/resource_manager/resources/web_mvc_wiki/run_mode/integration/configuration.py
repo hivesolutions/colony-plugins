@@ -38,14 +38,14 @@ __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
 configuration = {
-                 "instances" : {
-                     "colony" : {
-                         "name" : "colony",
-                         "repository_type" : "svn",
-                         "repository_arguments" : {
-                             "save_username_password" : False
-                         },
-                         "repository_path" : "%manager_path%/../../pt.hive.colony.documentation.technical"
-                     }
-                 }
-             }
+    "instances" : {
+        "colony" : {
+            "name" : "colony",
+            "repository_type" : "svn",
+            "repository_arguments" : {
+                "save_username_password" : False
+            },
+            "repository_path" : "%manager_path%/../../pt.hive.colony.documentation.technical"
+        }
+    }
+}

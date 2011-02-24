@@ -38,89 +38,89 @@ __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
 configuration = {
-                 "default_end_points" : [("normal", "", 8888, {}), ("ssl", "", 443, {})],
-                 "default_handler" : "file",
-                 "default_encoding" : None,
-                 "default_content_type_charset" : "utf-8",
-                 "default_client_connection_timeout" : 3,
-                 "default_connection_timeout" : 30,
-                 "default_request_timeout" : 30,
-                 "default_response_timeout" : 30,
-                 "default_number_threads" : 30,
-                 "default_scheduling_algorithm" : 2,
-                 "default_maximum_number_threads" : 60,
-                 "default_maximum_number_work_threads" : 15,
-                 "default_work_scheduling_algorithm" : 3,
-                 "preferred_error_handlers" : ["template", "default"],
-                 "allowed_hosts" : {
-                     "127.0.0.1" : True,
-                     "localhost" : True
-                 },
-                 "redirections" : {
-                     "resolution_order" : ["/manager"],
-                     "/manager" : {
-                         "target" : "/colony_mod_python/rest/mvc/web_mvc_manager/",
-                         "recursive_redirection" : True
-                     }
-                 },
-                 "contexts" : {
-                     "resolution_order" : ["/colony_web/plugins",
-                                           "/colony_web",
-                                           "/colony_mod_python",
-                                           "/cgi-bin",
-                                           "/wsgi-bin/remote_sql_service_sqlite",
-                                           "/"],
-                     "/colony_web" : {
-                         "handler" : "file",
-                         "allow_redirection" : False,
-                         "request_properties" : {
-                             "base_path" : "$resource{system.path.colony_web}/pt.hive.colony.web",
-                             "default_page" : "index.html"
-                         }
-                     },
-                     "/colony_web/plugins" : {
-                         "handler" : "colony",
-                         "allow_redirection" : False,
-                         "request_properties" : {
-                             "plugin_handler" : "pt.hive.colony.plugins.javascript.file_handler"
-                         }
-                     },
-                     "/colony_mod_python" : {
-                         "handler" : "colony",
-                         "allow_redirection" : False,
-                         "request_properties" : {}
-                     },
-                     "/cgi-bin" : {
-                         "handler" : "cgi",
-                         "allow_redirection" : False,
-                         "request_properties" : {
-                             "base_path" : "${HOME}/cgi-bin",
-                         }
-                     },
-                     "/wsgi-bin/remote_sql_service_sqlite" : {
-                         "handler" : "wsgi",
-                         "authentication_handler" : "main",
-                         "allow_redirection" : False,
-                         "request_properties" : {
-                             "base_path" : "$resource{system.path.toolbox}/pt.hive.toolbox.remote_sql_service/src/toolbox/remote_sql_service_sqlite/sqlite",
-                             "module_name" : "remote_sql_service_sqlite",
-                             "application_name" : "application"
-                         },
-                         "authentication_properties" : {
-                             "authentication_handler" : "python",
-                             "authentication_realm" : "system",
-                             "arguments" : {
-                                 "file_path" : "%configuration:pt.hive.colony.plugins.main.authentication.python_handler%/authentication.py"
-                             }
-                         }
-                     },
-                     "/" : {
-                         "handler" : "file",
-                         "allow_redirection" : False,
-                         "request_properties" : {
-                             "base_path" : "$resource{system.path.colony_web}/pt.hive.colony.web",
-                             "default_page" : "redirect.html"
-                         }
-                     }
-                 }
-             }
+    "default_end_points" : [("normal", "", 8888, {}), ("ssl", "", 443, {})],
+    "default_handler" : "file",
+    "default_encoding" : None,
+    "default_content_type_charset" : "utf-8",
+    "default_client_connection_timeout" : 3,
+    "default_connection_timeout" : 30,
+    "default_request_timeout" : 30,
+    "default_response_timeout" : 30,
+    "default_number_threads" : 30,
+    "default_scheduling_algorithm" : 2,
+    "default_maximum_number_threads" : 60,
+    "default_maximum_number_work_threads" : 15,
+    "default_work_scheduling_algorithm" : 3,
+    "preferred_error_handlers" : ["template", "default"],
+    "allowed_hosts" : {
+        "127.0.0.1" : True,
+        "localhost" : True
+    },
+    "redirections" : {
+        "resolution_order" : ["/manager"],
+        "/manager" : {
+            "target" : "/colony_mod_python/rest/mvc/web_mvc_manager/",
+            "recursive_redirection" : True
+        }
+    },
+    "contexts" : {
+        "resolution_order" : ["/colony_web/plugins",
+                              "/colony_web",
+                              "/colony_mod_python",
+                              "/cgi-bin",
+                              "/wsgi-bin/remote_sql_service_sqlite",
+                              "/"],
+        "/colony_web" : {
+            "handler" : "file",
+            "allow_redirection" : False,
+            "request_properties" : {
+                "base_path" : "$resource{system.path.colony_web}/pt.hive.colony.web",
+                "default_page" : "index.html"
+            }
+        },
+        "/colony_web/plugins" : {
+            "handler" : "colony",
+            "allow_redirection" : False,
+            "request_properties" : {
+                "plugin_handler" : "pt.hive.colony.plugins.javascript.file_handler"
+            }
+        },
+        "/colony_mod_python" : {
+            "handler" : "colony",
+            "allow_redirection" : False,
+            "request_properties" : {}
+        },
+        "/cgi-bin" : {
+            "handler" : "cgi",
+            "allow_redirection" : False,
+            "request_properties" : {
+                "base_path" : "${HOME}/cgi-bin",
+            }
+        },
+        "/wsgi-bin/remote_sql_service_sqlite" : {
+            "handler" : "wsgi",
+            "authentication_handler" : "main",
+            "allow_redirection" : False,
+            "request_properties" : {
+                "base_path" : "$resource{system.path.toolbox}/pt.hive.toolbox.remote_sql_service/src/toolbox/remote_sql_service_sqlite/sqlite",
+                "module_name" : "remote_sql_service_sqlite",
+                "application_name" : "application"
+            },
+            "authentication_properties" : {
+                "authentication_handler" : "python",
+                "authentication_realm" : "system",
+                "arguments" : {
+                    "file_path" : "%configuration:pt.hive.colony.plugins.main.authentication.python_handler%/authentication.py"
+                }
+            }
+        },
+        "/" : {
+            "handler" : "file",
+            "allow_redirection" : False,
+            "request_properties" : {
+                "base_path" : "$resource{system.path.colony_web}/pt.hive.colony.web",
+                "default_page" : "redirect.html"
+            }
+        }
+    }
+}

@@ -38,13 +38,13 @@ __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
 configuration = {
-                 "keys" : {
-                     "colony_default" : {
-                         "private_key" : "%configuration:pt.hive.colony.plugins.web.mvc.encryption%/private.pem",
-                         "public_key" : "%configuration:pt.hive.colony.plugins.web.mvc.encryption%/public.pem"
-                     }
-                 },
-                 "security" : {
-                     "validate_api_key" : False
-                 }
-             }
+    "keys" : {
+        "colony_default" : {
+            "private_key" : "%configuration:pt.hive.colony.plugins.web.mvc.encryption%/private.pem",
+            "public_key" : "%configuration:pt.hive.colony.plugins.web.mvc.encryption%/public.pem"
+        }
+    },
+    "security" : {
+        "validate_api_key" : False
+    }
+}

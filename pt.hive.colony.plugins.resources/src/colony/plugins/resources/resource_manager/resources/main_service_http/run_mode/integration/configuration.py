@@ -38,82 +38,82 @@ __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
 configuration = {
-                 "default_end_points" : [("normal", "", 8080, {})],
-                 "default_handler" : "file",
-                 "default_encoding" : None,
-                 "default_content_type_charset" : "utf-8",
-                 "default_client_connection_timeout" : 3,
-                 "default_connection_timeout" : 30,
-                 "default_request_timeout" : 30,
-                 "default_response_timeout" : 30,
-                 "default_number_threads" : 15,
-                 "default_scheduling_algorithm" : 2,
-                 "default_maximum_number_threads" : 30,
-                 "default_maximum_number_work_threads" : 15,
-                 "default_work_scheduling_algorithm" : 3,
-                 "preferred_error_handlers" : ["template", "default"],
-                 "verify_request" : False,
-                 "virtual_servers" : {
-                     "resolution_order" : ["board.hive"],
-                     "board.hive" : {
-                         "redirections" : {
-                             "resolution_order" : ["/"],
-                             "/" : {
-                                 "target" : "/colony_mod_python/rest/mvc/media_dashboard/",
-                                 "recursive_redirection" : True
-                             }
-                         }
-                     }
-                 },
-                 "redirections" : {
-                     "resolution_order" : ["/manager", "/media_dashboard"],
-                     "/manager" : {
-                         "target" : "/colony_mod_python/rest/mvc/web_mvc_manager/",
-                         "recursive_redirection" : True
-                     },
-                     "/media_dashboard" : {
-                         "target" : "/colony_mod_python/rest/mvc/media_dashboard/",
-                         "recursive_redirection" : True
-                     }
-                 },
-                 "contexts" : {
-                     "resolution_order" : ["/colony_mod_python",
-                                           "/template_error_handler",
-                                           "/template_directory_list_handler",
-                                           "/integration"],
-                     "/colony_mod_python" : {
-                         "handler" : "colony",
-                         "allow_redirection" : False,
-                         "request_properties" : {}
-                     },
-                     "/template_error_handler" : {
-                         "handler" : "file",
-                         "allow_redirection" : False,
-                         "request_properties" : {
-                             "base_path" : "$resource{system.path.colony}/pt.hive.colony.plugins.main.service.http/src/colony/plugins/main_service_http_template_error_handler/template_error_handler/resources"
-                         }
-                     },
-                     "/template_directory_list_handler" : {
-                         "handler" : "file",
-                         "allow_redirection" : False,
-                         "request_properties" : {
-                             "base_path" : "$resource{system.path.colony}/pt.hive.colony.plugins.main.service.http/src/colony/plugins/main_service_http_template_directory_list_handler/template_directory_list_handler/resources"
-                         }
-                     },
-                     "/integration" : {
-                         "handler" : "file",
-                         "authentication_handler" : "main",
-                         "allow_redirection" : False,
-                         "request_properties" : {
-                             "base_path" : "$resource{system.path.integration}"
-                         },
-                         "authentication_properties" : {
-                             "authentication_handler" : "python",
-                             "authentication_realm" : "system",
-                             "arguments" : {
-                                 "file_path" : "%configuration:pt.hive.colony.plugins.main.authentication.python_handler%/authentication.py"
-                             }
-                         }
-                     }
-                 }
-             }
+    "default_end_points" : [("normal", "", 8080, {})],
+    "default_handler" : "file",
+    "default_encoding" : None,
+    "default_content_type_charset" : "utf-8",
+    "default_client_connection_timeout" : 3,
+    "default_connection_timeout" : 30,
+    "default_request_timeout" : 30,
+    "default_response_timeout" : 30,
+    "default_number_threads" : 15,
+    "default_scheduling_algorithm" : 2,
+    "default_maximum_number_threads" : 30,
+    "default_maximum_number_work_threads" : 15,
+    "default_work_scheduling_algorithm" : 3,
+    "preferred_error_handlers" : ["template", "default"],
+    "verify_request" : False,
+    "virtual_servers" : {
+        "resolution_order" : ["board.hive"],
+        "board.hive" : {
+            "redirections" : {
+                "resolution_order" : ["/"],
+                "/" : {
+                    "target" : "/colony_mod_python/rest/mvc/media_dashboard/",
+                    "recursive_redirection" : True
+                }
+            }
+        }
+    },
+    "redirections" : {
+        "resolution_order" : ["/manager", "/media_dashboard"],
+        "/manager" : {
+            "target" : "/colony_mod_python/rest/mvc/web_mvc_manager/",
+            "recursive_redirection" : True
+        },
+        "/media_dashboard" : {
+            "target" : "/colony_mod_python/rest/mvc/media_dashboard/",
+            "recursive_redirection" : True
+        }
+    },
+    "contexts" : {
+        "resolution_order" : ["/colony_mod_python",
+                              "/template_error_handler",
+                              "/template_directory_list_handler",
+                              "/integration"],
+        "/colony_mod_python" : {
+            "handler" : "colony",
+            "allow_redirection" : False,
+            "request_properties" : {}
+        },
+        "/template_error_handler" : {
+            "handler" : "file",
+            "allow_redirection" : False,
+            "request_properties" : {
+                "base_path" : "$resource{system.path.colony}/pt.hive.colony.plugins.main.service.http/src/colony/plugins/main_service_http_template_error_handler/template_error_handler/resources"
+            }
+        },
+        "/template_directory_list_handler" : {
+            "handler" : "file",
+            "allow_redirection" : False,
+            "request_properties" : {
+                "base_path" : "$resource{system.path.colony}/pt.hive.colony.plugins.main.service.http/src/colony/plugins/main_service_http_template_directory_list_handler/template_directory_list_handler/resources"
+            }
+        },
+        "/integration" : {
+            "handler" : "file",
+            "authentication_handler" : "main",
+            "allow_redirection" : False,
+            "request_properties" : {
+                "base_path" : "$resource{system.path.integration}"
+            },
+            "authentication_properties" : {
+                "authentication_handler" : "python",
+                "authentication_realm" : "system",
+                "arguments" : {
+                    "file_path" : "%configuration:pt.hive.colony.plugins.main.authentication.python_handler%/authentication.py"
+                }
+            }
+        }
+    }
+}

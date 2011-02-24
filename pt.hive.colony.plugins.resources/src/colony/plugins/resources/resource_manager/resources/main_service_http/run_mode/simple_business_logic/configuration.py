@@ -38,79 +38,79 @@ __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
 configuration = {
-                 "default_end_points" : [("normal", "", 8080, {})],
-                 "default_handler" : "file",
-                 "default_encoding" : None,
-                 "default_content_type_charset" : "utf-8",
-                 "default_client_connection_timeout" : 3,
-                 "default_connection_timeout" : 30,
-                 "default_request_timeout" : 30,
-                 "default_response_timeout" : 30,
-                 "default_number_threads" : 30,
-                 "default_scheduling_algorithm" : 2,
-                 "default_maximum_number_threads" : 60,
-                 "default_maximum_number_work_threads" : 15,
-                 "default_work_scheduling_algorithm" : 3,
-                 "preferred_error_handlers" : ["default"],
-                 "allowed_hosts" : {
-                     "127.0.0.1" : True,
-                     "localhost" : True
-                 },
-                 "redirections" : {},
-                 "contexts" : {
-                     "resolution_order" : ["/wsgi-bin/simple_business_logic",
-                                           "/wsgi-bin/remote_sql_service_foxpro",
-                                           "/wsgi-bin/remote_sql_service_sqlite"],
-                     "/wsgi-bin/simple_business_logic" : {
-                         "handler" : "wsgi",
-                         "authentication_handler" : "main",
-                         "allow_redirection" : False,
-                         "request_properties" : {
-                             "base_path" : "$resource{system.path.toolbox}/pt.hive.toolbox.simple_business_logic/src/toolbox/simple_business_logic_service/service",
-                             "module_name" : "simple_business_logic_service",
-                             "application_name" : "application"
-                         },
-                         "authentication_properties" : {
-                             "authentication_handler" : "python",
-                             "authentication_realm" : "system",
-                             "arguments" : {
-                                 "file_path" : "%configuration:pt.hive.colony.plugins.main.authentication.python_handler%/authentication.py"
-                             }
-                         }
-                     },
-                     "/wsgi-bin/remote_sql_service_foxpro" : {
-                         "handler" : "wsgi",
-                         "authentication_handler" : "main",
-                         "allow_redirection" : False,
-                         "request_properties" : {
-                             "base_path" : "$resource{system.path.toolbox}/pt.hive.toolbox.remote_sql_service/src/toolbox/remote_sql_service_foxpro/foxpro",
-                             "module_name" : "remote_sql_service_foxpro",
-                             "application_name" : "application"
-                         },
-                         "authentication_properties" : {
-                             "authentication_handler" : "python",
-                             "authentication_realm" : "system",
-                             "arguments" : {
-                                 "file_path" : "%configuration:pt.hive.colony.plugins.main.authentication.python_handler%/authentication.py"
-                             }
-                         }
-                     },
-                     "/wsgi-bin/remote_sql_service_sqlite" : {
-                         "handler" : "wsgi",
-                         "authentication_handler" : "main",
-                         "allow_redirection" : False,
-                         "request_properties" : {
-                             "base_path" : "$resource{system.path.toolbox}/pt.hive.toolbox.remote_sql_service/src/toolbox/remote_sql_service_sqlite/sqlite",
-                             "module_name" : "remote_sql_service_sqlite",
-                             "application_name" : "application"
-                         },
-                         "authentication_properties" : {
-                             "authentication_handler" : "python",
-                             "authentication_realm" : "system",
-                             "arguments" : {
-                                 "file_path" : "%configuration:pt.hive.colony.plugins.main.authentication.python_handler%/authentication.py"
-                             }
-                         }
-                     }
-                 }
-             }
+    "default_end_points" : [("normal", "", 8080, {})],
+    "default_handler" : "file",
+    "default_encoding" : None,
+    "default_content_type_charset" : "utf-8",
+    "default_client_connection_timeout" : 3,
+    "default_connection_timeout" : 30,
+    "default_request_timeout" : 30,
+    "default_response_timeout" : 30,
+    "default_number_threads" : 30,
+    "default_scheduling_algorithm" : 2,
+    "default_maximum_number_threads" : 60,
+    "default_maximum_number_work_threads" : 15,
+    "default_work_scheduling_algorithm" : 3,
+    "preferred_error_handlers" : ["default"],
+    "allowed_hosts" : {
+        "127.0.0.1" : True,
+        "localhost" : True
+    },
+    "redirections" : {},
+    "contexts" : {
+        "resolution_order" : ["/wsgi-bin/simple_business_logic",
+                              "/wsgi-bin/remote_sql_service_foxpro",
+                              "/wsgi-bin/remote_sql_service_sqlite"],
+        "/wsgi-bin/simple_business_logic" : {
+            "handler" : "wsgi",
+            "authentication_handler" : "main",
+            "allow_redirection" : False,
+            "request_properties" : {
+                "base_path" : "$resource{system.path.toolbox}/pt.hive.toolbox.simple_business_logic/src/toolbox/simple_business_logic_service/service",
+                "module_name" : "simple_business_logic_service",
+                "application_name" : "application"
+            },
+            "authentication_properties" : {
+                "authentication_handler" : "python",
+                "authentication_realm" : "system",
+                "arguments" : {
+                    "file_path" : "%configuration:pt.hive.colony.plugins.main.authentication.python_handler%/authentication.py"
+                }
+            }
+        },
+        "/wsgi-bin/remote_sql_service_foxpro" : {
+            "handler" : "wsgi",
+            "authentication_handler" : "main",
+            "allow_redirection" : False,
+            "request_properties" : {
+                "base_path" : "$resource{system.path.toolbox}/pt.hive.toolbox.remote_sql_service/src/toolbox/remote_sql_service_foxpro/foxpro",
+                "module_name" : "remote_sql_service_foxpro",
+                "application_name" : "application"
+            },
+            "authentication_properties" : {
+                "authentication_handler" : "python",
+                "authentication_realm" : "system",
+                "arguments" : {
+                    "file_path" : "%configuration:pt.hive.colony.plugins.main.authentication.python_handler%/authentication.py"
+                }
+            }
+        },
+        "/wsgi-bin/remote_sql_service_sqlite" : {
+            "handler" : "wsgi",
+            "authentication_handler" : "main",
+            "allow_redirection" : False,
+            "request_properties" : {
+                "base_path" : "$resource{system.path.toolbox}/pt.hive.toolbox.remote_sql_service/src/toolbox/remote_sql_service_sqlite/sqlite",
+                "module_name" : "remote_sql_service_sqlite",
+                "application_name" : "application"
+            },
+            "authentication_properties" : {
+                "authentication_handler" : "python",
+                "authentication_realm" : "system",
+                "arguments" : {
+                    "file_path" : "%configuration:pt.hive.colony.plugins.main.authentication.python_handler%/authentication.py"
+                }
+            }
+        }
+    }
+}

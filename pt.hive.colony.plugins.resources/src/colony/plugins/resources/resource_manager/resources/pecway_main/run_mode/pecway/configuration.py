@@ -38,28 +38,28 @@ __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
 configuration = {
-                 "services" : {
-                     "easypay" : {
-                         "username" : "PLUB210910",
-                         "cin" : "1934",
-                         "country" : "PT",
-                         "language" : "PT",
-                         "methods" : {
-                             "reference" : {
-                                 "entity" : "10611"
-                             }
-                         }
-                     }
-                 },
-                 "email" : {
-                     "sender_email" : "payments@pecway.com",
-                     "sender_name" : "Pecway Payments",
-                     "smtp" : {
-                         "hostname" : "localhost",
-                         "port" : 25,
-                         "username" : None,
-                         "password" : None,
-                         "tls" : False
-                     }
-                 }
-             }
+    "services" : {
+        "easypay" : {
+            "username" : "PLUB210910",
+            "cin" : "1934",
+            "country" : "PT",
+            "language" : "PT",
+            "methods" : {
+                "reference" : {
+                    "entity" : "10611"
+                }
+            }
+        }
+    },
+    "email" : {
+        "sender_email" : "payments@pecway.com",
+        "sender_name" : "Pecway Payments",
+        "smtp" : {
+            "hostname" : "localhost",
+            "port" : 25,
+            "username" : None,
+            "password" : None,
+            "tls" : False
+        }
+    }
+}

@@ -38,47 +38,47 @@ __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
 configuration = {
-                 "default_end_points" : [("normal", "", 8081, {})],
-                 "default_handler" : "file",
-                 "default_encoding" : None,
-                 "default_content_type_charset" : "utf-8",
-                 "default_client_connection_timeout" : 3,
-                 "default_connection_timeout" : 30,
-                 "default_request_timeout" : 30,
-                 "default_response_timeout" : 30,
-                 "default_number_threads" : 15,
-                 "default_scheduling_algorithm" : 2,
-                 "default_maximum_number_threads" : 30,
-                 "default_maximum_number_work_threads" : 15,
-                 "default_work_scheduling_algorithm" : 3,
-                 "contexts" : {
-                     "/colony_web" : {
-                         "handler" : "file",
-                         "request_properties" : {
-                             "base_path" : "$resource{system.path.colony_web}/pt.hive.colony.web",
-                             "default_page" : "index.html"
-                         }
-                     },
-                     "/colony_web/plugins" : {
-                         "handler" : "colony",
-                         "request_properties" : {
-                             "plugin_handler" : "pt.hive.colony.plugins.javascript.file_handler"
-                         }
-                     },
-                     "/colony_manager" : {
-                         "handler" : "colony",
-                         "request_properties" : {}
-                     },
-                     "/colony_mod_python" : {
-                         "handler" : "colony",
-                         "request_properties" : {}
-                     },
-                     "/eclipse" : {
-                         "handler" : "file",
-                         "request_properties" : {
-                             "base_path" : "$resource{system.path.colony}/pt.hive.eclipse.plugins.site",
-                             "default_page" : "site.xml"
-                         }
-                     }
-                 }
-             }
+    "default_end_points" : [("normal", "", 8081, {})],
+    "default_handler" : "file",
+    "default_encoding" : None,
+    "default_content_type_charset" : "utf-8",
+    "default_client_connection_timeout" : 3,
+    "default_connection_timeout" : 30,
+    "default_request_timeout" : 30,
+    "default_response_timeout" : 30,
+    "default_number_threads" : 15,
+    "default_scheduling_algorithm" : 2,
+    "default_maximum_number_threads" : 30,
+    "default_maximum_number_work_threads" : 15,
+    "default_work_scheduling_algorithm" : 3,
+    "contexts" : {
+        "/colony_web" : {
+            "handler" : "file",
+            "request_properties" : {
+                "base_path" : "$resource{system.path.colony_web}/pt.hive.colony.web",
+                "default_page" : "index.html"
+            }
+        },
+        "/colony_web/plugins" : {
+            "handler" : "colony",
+            "request_properties" : {
+                "plugin_handler" : "pt.hive.colony.plugins.javascript.file_handler"
+            }
+        },
+        "/colony_manager" : {
+            "handler" : "colony",
+            "request_properties" : {}
+        },
+        "/colony_mod_python" : {
+            "handler" : "colony",
+            "request_properties" : {}
+        },
+        "/eclipse" : {
+            "handler" : "file",
+            "request_properties" : {
+                "base_path" : "$resource{system.path.colony}/pt.hive.eclipse.plugins.site",
+                "default_page" : "site.xml"
+            }
+        }
+    }
+}

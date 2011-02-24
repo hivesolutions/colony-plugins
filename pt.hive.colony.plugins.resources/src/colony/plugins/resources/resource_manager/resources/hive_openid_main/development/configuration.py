@@ -35,10 +35,10 @@ __license__ = "Hive Solutions Confidential Usage License (HSCUL)"
 """ The license for the module """
 
 configuration = {
-                 "authentication_properties" : {
-                     "authentication_handler" : "python",
-                     "arguments" : {
-                         "file_path" : "%configuration:pt.hive.colony.plugins.main.authentication.python_handler%/authentication.py"
-                     }
-                 }
-             }
+    "authentication_properties" : {
+        "authentication_handler" : "python",
+        "arguments" : {
+            "file_path" : "%configuration:pt.hive.colony.plugins.main.authentication.python_handler%/authentication.py"
+        }
+    }
+}

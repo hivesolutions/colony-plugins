@@ -38,9 +38,9 @@ __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
 configuration = {
-                 "hostname" : "localhost",
-                 "port" : 25,
-                 "username" : None,
-                 "password" : None,
-                 "tls" : False
-             }
+    "hostname" : "localhost",
+    "port" : 25,
+    "username" : None,
+    "password" : None,
+    "tls" : False
+}
