@@ -2454,11 +2454,11 @@ class EntityManagerSqliteEngine:
             # retrieves the attribute value type
             attribute_value_type = type(attribute_value)
 
-            # retrieves the is mandatory value from the class attribute value
-            is_mandatory = class_attribute_value.get("mandatory", False)
-
             # retrieves the data type value from the class attribute value
             data_type = class_attribute_value.get("data_type", False)
+
+            # retrieves the is mandatory value from the class attribute value
+            is_mandatory = class_attribute_value.get("mandatory", False)
 
             # retrieves the "expected" python data types
             python_data_types = DATA_TYPE_PYTHON_MAP.get(data_type, None)
