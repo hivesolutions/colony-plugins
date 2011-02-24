@@ -2424,9 +2424,31 @@ class EntityManagerSqliteEngine:
         # retrieves all the valid class attribute names
         entity_class_valid_attribute_names = self.get_entity_class_attribute_names(entity_class)
 
-        # retrieves all the valid attribute values
-        entity_valid_attribute_values = [getattr(entity, attribute_name) for attribute_name in entity_class_valid_attribute_names]
+        # starts the valid attribute values (list)
+        entity_valid_attribute_values = []
 
+        # iterates over all the entity class valid attribute names
+        for attribute_name in entity_class_valid_attribute_names:
+            # retrieves the attribute value for the attribute name
+            attribute_value = getattr(entity, attribute_name)
+
+            # retrieves the class attribute value for the attribute name
+            class_attribute_value = getattr(entity_class, attribute_name)
+
+            # retrieves the is mandatory value from the class attribute value
+            is_mandatory = class_attribute_value.get("mandatory", False)
+
+            # in case the attribute is mandatory and the attribute
+            # value is not set
+            if is_mandatory and attribute_value == None:
+                # raises the sqlite engine missing mandatory value
+                raise entity_manager_sqlite_engine_exceptions.SqliteEngineMissingMandatoryValue("the mandatory value: " + attribute_name + " was not found in entity: " + entity_class.__name__)
+
+            # adds the attribute value to the entity valid
+            # attribute values
+            entity_valid_attribute_values.append(attribute_value)
+
+        # returns the entity valid attribute values
         return entity_valid_attribute_values
 
     def get_entity_indirect_attribute_values(self, entity):
@@ -2753,7 +2775,9 @@ class EntityManagerSqliteEngine:
                 if optional_field:
                     # returns None
                     return None
+                # otherwise
                 else:
+                    # raises the sqlite engine missing mandatory value
                     raise entity_manager_sqlite_engine_exceptions.SqliteEngineMissingMandatoryValue("the relational value: " + relation_attribute_name + " was not found in entity: " + entity_class.__name__)
 
             # retrieves the relation attribute value
