@@ -19,7 +19,7 @@
 # You should have received a copy of the GNU General Public License
 # along with Hive Colony Framework. If not, see <http://www.gnu.org/licenses/>.
 
-__author__ = "João Magalhães <joamag@hive.pt> & Luís Martinho <lmartinho@hive.pt>"
+__author__ = "João Magalhães <joamag@hive.pt> & Luís Martinho <lmartinho@hive.pt> & Tiago Silva <tsilva@hive.pt>"
 """ The author(s) of the module """
 
 __version__ = "1.0.0"
@@ -432,7 +432,7 @@ def create_form_data(self, rest_request, data_map, encoding = DEFAULT_ENCODING):
 
     @type rest_request: RestRequest
     @param rest_request: The rest request to be used.
-    @rtype: Dictionary
+    @type: Dictionary
     @param data_map: The map containing the hierarchy of defined structure
     for the "form" contents.
     @type encoding: String
@@ -1181,6 +1181,26 @@ def _dasherize_underscored(self, string_value):
     return dasherized_string_value
 
 def _create_form_data(self, rest_request, data_map, form_data_map_key, form_data_map, encoding):
+    """
+    Processes the data map, populating the form data map with all the
+    attributes described in the form data format.
+
+    @type rest_request: RestRequest
+    @param rest_request: The rest request to be used.
+    @type: Dictionary
+    @param data_map: The map containing the hierarchy of defined structure
+    for the "form" contents.
+    @type: Dictionary
+    @param form_data_map: The map containing the data map's attributes
+    in the form data format.
+    @type form_data_map_key: String
+    @param form_data_map_key: The prefix to all form data map keys,
+    which is used to indicate the current context.
+    @type encoding: String
+    @param encoding: The encoding to be used when retrieving
+    the attribute values.
+    """
+
     # sets each attribute in the form data map
     for attribute_name in data_map:
         # retrieves the attribute value
@@ -1220,9 +1240,6 @@ def _create_form_data(self, rest_request, data_map, form_data_map_key, form_data
 
             # sets the attribute value in the form data map
             form_data_map[attribute_form_data_map_key] = attribute_value
-
-    # returns the form data map
-    return form_data_map
 
 def _process_form_attribute_flat(self, parent_structure, attribute_names_list, attribute_value):
     """
