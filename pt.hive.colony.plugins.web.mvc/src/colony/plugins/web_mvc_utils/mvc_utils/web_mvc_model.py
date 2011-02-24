@@ -218,21 +218,8 @@ def validate(self):
         # retrieves the attribute value
         attribute_value = getattr(self, attribute_name)
 
-        # retrieves the attribute class value
-        attribute_class_value = getattr(self.__class__, attribute_name)
-
-        # retrieves the attribute is mandatory value
-        attribute_is_mandatory = attribute_class_value.get(MANDATORY_VALUE, False)
-
-        # in case the attribute is not mandatory and the attribute
-        # value is none
-        if not attribute_is_mandatory and attribute_value == None:
-            # continues the loop
-            continue
-
-        # in case the attribute is mandatory and the attribute
-        # value is none
-        if attribute_is_mandatory and attribute_value == None:
+        # in case the attribute value is none
+        if attribute_value == None:
             # continues the loop
             continue
 
