@@ -42,6 +42,7 @@ configuration = {
     "default_handler" : "stream",
     "default_authentication_handler" : "main",
     "default_session_handler" : "main",
+    "anonymous_relay_hosts" : ["127.0.0.1", "localhost"],
     "authentication_properties" : {
         "authentication_handler" : "python",
         "arguments" : {
