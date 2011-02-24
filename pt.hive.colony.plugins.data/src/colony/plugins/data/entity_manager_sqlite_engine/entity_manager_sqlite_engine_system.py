@@ -53,10 +53,23 @@ ENGINE_NAME = "sqlite"
 DEFAULT_TIMEOUT_VALUE = 30
 """ The default timeout value """
 
-DATA_TYPE_MAP = {"text" : "text", "numeric" : "numeric", "integer" : "numeric", "float" : "numeric", "date" : "numeric", "relation" : "relation"}
+DATA_TYPE_MAP = {
+    "text" : "text",
+    "numeric" : "numeric",
+    "integer" : "numeric",
+    "float" : "numeric",
+    "date" : "numeric",
+    "relation" : "relation"
+}
 """ The data type map """
 
-DATA_TYPE_PYTHON_MAP = {"text" : (str, unicode), "numeric" : (int, long), "integer" : (int, long), "float" : (int, long, float), "date" : (datetime.datetime)}
+DATA_TYPE_PYTHON_MAP = {
+    "text" : (types.StringType, types.UnicodeType, types.NoneType),
+    "numeric" : (types.IntType, types.LongType, types.NoneType),
+    "integer" : (types.IntType, types.LongType, types.NoneType),
+    "float" : (types.IntType, types.LongType, types.FloatType, types.NoneType),
+    "date" : (datetime.datetime, types.NoneType)
+}
 """ The data type python map """
 
 FILE_PATH_VALUE = "file_path"
@@ -2447,14 +2460,15 @@ class EntityManagerSqliteEngine:
             # retrieves the data type value from the class attribute value
             data_type = class_attribute_value.get("data_type", False)
 
-            # retrieves the "expected" python data type
-            python_data_type = DATA_TYPE_PYTHON_MAP.get(data_type, None)
+            # retrieves the "expected" python data types
+            python_data_types = DATA_TYPE_PYTHON_MAP.get(data_type, None)
 
             # in case the attribute value type is not the "expected" python
-            # data type
-            if not attribute_value_type == python_data_type:
+            # data types, tests if the python data type is defined (validation ready
+            # attribute type)
+            if python_data_types and not attribute_value_type in python_data_types:
                 # raises the sqlite engine type check failed exception
-                raise entity_manager_sqlite_engine_exceptions.SqliteEngineTypeCheckFailed("in attribute value: " + attribute_name + " expected type: " + str(python_data_type) + " got: " + str(attribute_value_type))
+                raise entity_manager_sqlite_engine_exceptions.SqliteEngineTypeCheckFailed("in attribute value: " + attribute_name + " expected type(s): " + str(python_data_types) + " got: " + str(attribute_value_type))
 
             # in case the attribute is mandatory and the attribute
             # value is not set
