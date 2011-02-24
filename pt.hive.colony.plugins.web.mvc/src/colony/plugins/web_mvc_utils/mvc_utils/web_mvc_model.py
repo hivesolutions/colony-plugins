@@ -233,9 +233,6 @@ def validate(self):
         # in case the attribute is mandatory and the attribute
         # value is none
         if attribute_is_mandatory and attribute_value == None:
-            # adds an error to the given attribute name
-            self.add_error(attribute_name, "value is not set for mandatory attribute")
-
             # continues the loop
             continue
 
