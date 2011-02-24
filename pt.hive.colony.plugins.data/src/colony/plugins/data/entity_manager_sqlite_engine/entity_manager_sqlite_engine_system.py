@@ -56,6 +56,9 @@ DEFAULT_TIMEOUT_VALUE = 30
 DATA_TYPE_MAP = {"text" : "text", "numeric" : "numeric", "integer" : "numeric", "float" : "numeric", "date" : "numeric", "relation" : "relation"}
 """ The data type map """
 
+DATA_TYPE_PYTHON_MAP = {"text" : (str, unicode), "numeric" : (int, long), "integer" : (int, long), "float" : (int, long, float), "date" : (datetime.datetime)}
+""" The data type python map """
+
 FILE_PATH_VALUE = "file_path"
 """ The file path value """
 
@@ -2435,13 +2438,28 @@ class EntityManagerSqliteEngine:
             # retrieves the class attribute value for the attribute name
             class_attribute_value = getattr(entity_class, attribute_name)
 
+            # retrieves the attribute value type
+            attribute_value_type = type(attribute_value)
+
             # retrieves the is mandatory value from the class attribute value
             is_mandatory = class_attribute_value.get("mandatory", False)
+
+            # retrieves the data type value from the class attribute value
+            data_type = class_attribute_value.get("data_type", False)
+
+            # retrieves the "expected" python data type
+            python_data_type = DATA_TYPE_PYTHON_MAP.get(data_type, None)
+
+            # in case the attribute value type is not the "expected" python
+            # data type
+            if not attribute_value_type == python_data_type:
+                # raises the sqlite engine type check failed exception
+                raise entity_manager_sqlite_engine_exceptions.SqliteEngineTypeCheckFailed("in attribute value: " + attribute_name + " expected type: " + str(python_data_type) + " got: " + str(attribute_value_type))
 
             # in case the attribute is mandatory and the attribute
             # value is not set
             if is_mandatory and attribute_value == None:
-                # raises the sqlite engine missing mandatory value
+                # raises the sqlite engine missing mandatory value exception
                 raise entity_manager_sqlite_engine_exceptions.SqliteEngineMissingMandatoryValue("the mandatory value: " + attribute_name + " was not found in entity: " + entity_class.__name__)
 
             # adds the attribute value to the entity valid

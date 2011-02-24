@@ -151,6 +151,32 @@ class SqliteEngineMissingMandatoryValue(SqliteEngineException):
 
         return "Missing mandatory value: %s" % self.message
 
+class SqliteEngineTypeCheckFailed(SqliteEngineException):
+    """
+    The sqlite engine type check failed class.
+    """
+
+    def __init__(self, message):
+        """
+        Constructor of the class.
+
+        @type message: String
+        @param message: The message to be printed.
+        """
+
+        SqliteEngineException.__init__(self)
+        self.message = message
+
+    def __str__(self):
+        """
+        Returns the string representation of the class.
+
+        @rtype: String
+        @return: The string representation of the class.
+        """
+
+        return "Type check failed: %s" % self.message
+
 class SqliteEngineIntegrityCheckFailed(SqliteEngineException):
     """
     The sqlite engine integrity check failed class.
