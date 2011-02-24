@@ -157,6 +157,12 @@ DATA_TYPE_CAST_TYPES_MAP = {"text" : unicode, "numeric" : int, "integer" : int, 
 DEFAULT_RELATION_VALUES_MAP = {TO_ONE_RELATION_VALUE : {}, TO_MANY_RELATION_VALUE : []}
 """ The default relation values map """
 
+FORM_DATA_MAP_KEY_FORMAT = "%s[%s]"
+""" The form data map key format """
+
+FORM_DATA_LIST_KEY_FORMAT = "%s[%s][]"
+""" The form data list key format """
+
 def _start_controller(self):
     """
     Starts the controller structures.
@@ -418,6 +424,86 @@ def send_broadcast_communication_message(self, parameters, connection_name, mess
 
     # sends the broadcast communication message using the communication handler
     communication_handler.send_broadcast_communication_message(connection_name, message)
+
+def create_form_data(self, rest_request, data_map, encoding = DEFAULT_ENCODING):
+    """
+    Processes the data map, creating a single map with all the
+    attributes described in the form data format.
+
+    @type rest_request: RestRequest
+    @param rest_request: The rest request to be used.
+    @rtype: Dictionary
+    @param data_map: The map containing the hierarchy of defined structure
+    for the "form" contents.
+    @type encoding: String
+    @param encoding: The encoding to be used when retrieving
+    the attribute values.
+    @rtype: Dictionary
+    @return: The map representing the data map in a flat format
+    where the data map's depth is expressed in the keys.
+    """
+
+    # initializes the form data map
+    form_data_map = {}
+
+    # retrieves the data map keys
+    data_map_keys = data_map.keys()
+
+    # retrieves the root data map key
+    form_data_map_key = data_map_keys[0]
+
+    # retrieves the next depth level in the data map
+    data_map = data_map[form_data_map_key]
+
+    # creates the form data map
+    form_data_map = self._create_form_data(rest_request, data_map, form_data_map_key, form_data_map, encoding)
+
+    # returns the form data map
+    return form_data_map
+
+def _create_form_data(self, rest_request, data_map, form_data_map_key, form_data_map, encoding):
+    # sets each attribute in the form data map
+    for attribute_name in data_map:
+        # retrieves the attribute value
+        attribute_value = data_map[attribute_name]
+
+        # retrieves the attribute value type
+        attribute_value_type = type(attribute_value)
+
+        # retrieves the form data map key format
+        form_data_map_key_format = attribute_value_type == types.ListType and FORM_DATA_LIST_KEY_FORMAT or FORM_DATA_MAP_KEY_FORMAT
+
+        # retrieves the attribute form data map key
+        attribute_form_data_map_key = form_data_map_key_format % (form_data_map_key, attribute_name)
+
+        # invokes this same function recursively
+        # in case the attribute value is a map
+        if attribute_value_type == types.DictType:
+            self._create_form_data(rest_request, attribute_value, attribute_form_data_map_key, form_data_map, encoding)
+        # invokes this same function recursively for each
+        # item in case the attribute value is a list
+        elif attribute_value_type == types.ListType:
+            for attribute_value_item in attribute_value:
+                self._create_form_data(rest_request, attribute_value_item, attribute_form_data_map_key, form_data_map, encoding)
+        # decodes the attribute value and sets it
+        # in the form data map in case it is a string
+        elif attribute_value_type == types.StringType:
+            # decodes the attribute value
+            attribute_value = attribute_value.decode(encoding)
+
+            # sets the attribute value in the form data map
+            form_data_map[attribute_form_data_map_key] = attribute_value
+        # otherwise converts the attribute value to
+        # a string and sets it in the form data map
+        else:
+            # converts the attribute value to a string
+            attribute_value = unicode(attribute_value)
+
+            # sets the attribute value in the form data map
+            form_data_map[attribute_form_data_map_key] = attribute_value
+
+    # returns the form data map
+    return form_data_map
 
 def process_form_data(self, rest_request, encoding = DEFAULT_ENCODING):
     """
