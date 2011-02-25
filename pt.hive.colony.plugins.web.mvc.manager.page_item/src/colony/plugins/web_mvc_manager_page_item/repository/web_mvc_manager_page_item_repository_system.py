@@ -54,7 +54,10 @@ class WebMvcManagerPageItemRepository:
     """ The web mvc manager page item repository plugin """
 
     web_mvc_manager_page_item_repository_controller = None
-    """ The web mvc page item repository controller """
+    """ The web mvc manager page item repository controller """
+
+    web_mvc_manager_page_item_repository_controllers = None
+    """ The web mvc mananager page item repository controllers """
 
     def __init__(self, web_mvc_manager_page_item_repository_plugin):
         """
@@ -83,6 +86,9 @@ class WebMvcManagerPageItemRepository:
 
         # creates the web mvc manager page item repository controller
         self.web_mvc_manager_page_item_repository_controller = web_mvc_utils_plugin.create_controller(web_mvc_manager_page_item_repository_controllers.WebMvcManagerPageItemRepositoryController, [self.web_mvc_manager_page_item_repository_plugin, self], {})
+
+        # creates the web mvc manager page item repository controllers
+        self.web_mvc_manager_page_item_repository_controllers = {"main" : self.web_mvc_manager_page_item_repository_controller}
 
     def get_resource_patterns(self):
         """

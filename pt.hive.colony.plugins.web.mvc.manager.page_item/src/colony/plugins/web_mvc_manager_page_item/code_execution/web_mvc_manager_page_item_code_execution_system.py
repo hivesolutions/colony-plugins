@@ -56,6 +56,9 @@ class WebMvcManagerPageItemCodeExecution:
     web_mvc_manager_page_item_code_execution_controller = None
     """ The web mvc page item code execution controller """
 
+    web_mvc_manager_page_item_code_execution_controllers = None
+    """ The web mvc manager page item code execution controllers """
+
     def __init__(self, web_mvc_manager_page_item_code_execution_plugin):
         """
         Constructor of the class.
@@ -83,6 +86,9 @@ class WebMvcManagerPageItemCodeExecution:
 
         # creates the web mvc manager page item code_execution controller
         self.web_mvc_manager_page_item_code_execution_controller = web_mvc_utils_plugin.create_controller(web_mvc_manager_page_item_code_execution_controllers.WebMvcManagerPageItemCodeExecutionController, [self.web_mvc_manager_page_item_code_execution_plugin, self], {})
+
+        # creates the web mvc manager page item code execution controllers
+        self.web_mvc_manager_page_item_code_execution_controllers = {"main" : self.web_mvc_manager_page_item_code_execution_controller}
 
     def get_resource_patterns(self):
         """

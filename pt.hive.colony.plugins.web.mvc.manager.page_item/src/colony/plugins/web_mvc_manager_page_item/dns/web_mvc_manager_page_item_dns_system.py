@@ -56,6 +56,9 @@ class WebMvcManagerPageItemDns:
     web_mvc_manager_page_item_dns_controller = None
     """ The web mvc manager page item dns controller """
 
+    web_mvc_manager_page_item_dns_controllers = None
+    """ The web mvc manager page item dns controllers """
+
     def __init__(self, web_mvc_manager_page_item_dns_plugin):
         """
         Constructor of the class.
@@ -83,6 +86,9 @@ class WebMvcManagerPageItemDns:
 
         # creates the web mvc manager page item dns controller
         self.web_mvc_manager_page_item_dns_controller = web_mvc_utils_plugin.create_controller(web_mvc_manager_page_item_dns_controllers.WebMvcManagerPageItemDnsController, [self.web_mvc_manager_page_item_dns_plugin, self], {})
+
+        # creates the web mvc manager page item dns controllers
+        self.web_mvc_manager_page_item_dns_controllers = {"main" : self.web_mvc_manager_page_item_dns_controller}
 
     def get_resource_patterns(self):
         """
