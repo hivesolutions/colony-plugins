@@ -245,8 +245,8 @@ class ApplePushClient:
         """
         Retrieves the response from the sent request.
 
-        @type: ApplePushRequest
-        @return: The request that originated the response.
+        @type request: ApplePushRequest
+        @param request: The request that originated the response.
         @type notification_response: NotificationMessage
         @param notification_response: The notification response to be used.
         @type response_size: int
