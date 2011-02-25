@@ -100,7 +100,7 @@ def transaction(transaction_type = "required"):
         @type kwargs: pointer pointer
         @param kwargs: The function arguments map.
         @rtype: Function
-        @param: The decorator interceptor function.
+        @return: The decorator interceptor function.
         """
 
         # creates the decorator interceptor with the given function
