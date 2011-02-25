@@ -178,7 +178,7 @@ def _visit(ast_node_class):
         @type kwargs: pointer pointer
         @param kwargs: The function arguments map.
         @rtype: Function
-        @param: The decorator interceptor function.
+        @return: The decorator interceptor function.
         """
 
         function.ast_node_class = ast_node_class
@@ -265,7 +265,7 @@ def dispatch_visit():
         @type kwargs: pointer pointer
         @param kwargs: The function arguments map.
         @rtype: Function
-        @param: The decorator interceptor function.
+        @return: The decorator interceptor function.
         """
 
         # creates the decorator interceptor with the given function
