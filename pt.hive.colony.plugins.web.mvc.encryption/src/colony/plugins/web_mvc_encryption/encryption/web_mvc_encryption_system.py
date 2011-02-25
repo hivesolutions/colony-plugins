@@ -84,7 +84,10 @@ class WebMvcEncryption:
     """ The web mvc encryption consumer controller """
 
     web_mvc_encryption_entity_models = None
-    """ the web mvc encryption entity models """
+    """ The web mvc encryption entity models """
+
+    web_mvc_encryption_controllers = None
+    """ The web mvc encryption controllers """
 
     keys_map = {}
     """ The map of keys """
@@ -128,6 +131,12 @@ class WebMvcEncryption:
 
         # creates the entity models classes by creating the entity manager and updating the classes
         self.web_mvc_encryption_entity_models = web_mvc_utils_plugin.create_entity_models("web_mvc_encryption_entity_models", entity_manager_arguments, current_directory_path)
+
+        # creates the web mvc encryption controllers map
+        self.web_mvc_encryption_controllers = {
+                                               "main" : self.web_mvc_encryption_main_controller,
+                                               "consumer" : self.web_mvc_encryption_consumer_controller
+                                           }
 
     def get_patterns(self):
         """
