@@ -37,11 +37,11 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-import unittest
+import colony.libs.test_util
 
 import main_console_system
 
-class MainConsoleTestCase(unittest.TestCase):
+class MainConsoleTestCase(colony.libs.test_util.ColonyTestCase):
     """
     The main console test case class.
     """
