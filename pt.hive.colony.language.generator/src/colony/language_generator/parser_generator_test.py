@@ -40,6 +40,8 @@ __license__ = "GNU General Public License (GPL), Version 3"
 import types
 import unittest
 
+import colony.libs.test_util
+
 import lexer_generator
 import parser_generator
 import parser_generator_exceptions
@@ -52,7 +54,7 @@ import examples.shift_reduce_example
 import examples.simple_example
 import examples.ultra_simple_example
 
-class TestParser(unittest.TestCase):
+class TestParser(colony.libs.test_util.ColonyTestCase):
     """
     The test parser class.
     """
