@@ -94,8 +94,10 @@ class WebMvcManager:
     """ The web mvc manager controllers """
 
     menu_items_map = {}
+    """ The menu items map """
 
     side_panel_items_map = {}
+    """ The side panel items map """
 
     extra_patterns_list = []
     """ The list containing the extra patterns """
