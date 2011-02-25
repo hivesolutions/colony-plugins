@@ -50,6 +50,9 @@ class WebMvcCommunicationPushApple:
     web_mvc_communication_push_apple_controller = None
     """ The web mvc communication push apple controller """
 
+    web_mvc_communication_push_apple_controllers = None
+    """ The web mvc communication push apple controllers """
+
     notification_handler_apple_push_plugins_map = {}
     """ The notification handler apple push plugins map """
 
@@ -86,6 +89,9 @@ class WebMvcCommunicationPushApple:
 
         # creates the web mvc manager communication push apple controller
         self.web_mvc_communication_push_apple_controller = web_mvc_utils_plugin.create_controller(web_mvc_communication_push_apple_controllers.WebMvcCommunicationPushAppleController, [self.web_mvc_communication_push_apple_plugin, self], {})
+
+        # creates the web mvc communication push apple controllers
+        self.web_mvc_communication_push_apple_controllers = {"main" : self.web_mvc_communication_push_apple_controller}
 
     def get_patterns(self):
         """
