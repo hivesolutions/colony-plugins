@@ -297,8 +297,8 @@ class SmtpClient:
         """
         Retrieves the response from the sent request.
 
-        @type: SmtpRequest
-        @return: The request that originated the response.
+        @type request: SmtpRequest
+        @param request: The request that originated the response.
         @type session: SmtpSession
         @param session: The current smtp session.
         @type response_timeout: int
