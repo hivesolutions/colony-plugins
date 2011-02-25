@@ -37,7 +37,7 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-import unittest
+import colony.libs.test_util
 
 class DummyPluginUnitTest:
     """
@@ -60,7 +60,7 @@ class DummyPluginUnitTest:
     def get_plugin_test_case_bundle(self):
         return [DummyPluginTestCase]
 
-class DummyTest(unittest.TestCase):
+class DummyTest(colony.libs.test_util.ColonyTestCase):
 
     def setUp(self):
         # prints a debug message
