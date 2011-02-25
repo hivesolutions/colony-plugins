@@ -432,7 +432,7 @@ def create_form_data(self, rest_request, data_map, encoding = DEFAULT_ENCODING):
 
     @type rest_request: RestRequest
     @param rest_request: The rest request to be used.
-    @type: Dictionary
+    @type data_map: Dictionary
     @param data_map: The map containing the hierarchy of defined structure
     for the "form" contents.
     @type encoding: String
@@ -1187,15 +1187,15 @@ def _create_form_data(self, rest_request, data_map, form_data_map_key, form_data
 
     @type rest_request: RestRequest
     @param rest_request: The rest request to be used.
-    @type: Dictionary
+    @type data_map: Dictionary
     @param data_map: The map containing the hierarchy of defined structure
     for the "form" contents.
-    @type: Dictionary
-    @param form_data_map: The map containing the data map's attributes
-    in the form data format.
     @type form_data_map_key: String
     @param form_data_map_key: The prefix to all form data map keys,
     which is used to indicate the current context.
+    @type form_data_map: Dictionary
+    @param form_data_map: The map containing the data map's attributes
+    in the form data format.
     @type encoding: String
     @param encoding: The encoding to be used when retrieving
     the attribute values.

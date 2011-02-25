@@ -128,7 +128,7 @@ def validated_method(validation_parameters = None):
         @type kwargs: pointer pointer
         @param kwargs: The function arguments map.
         @rtype: Function
-        @param: The decorator interceptor function.
+        @return: The decorator interceptor function.
         """
 
         # creates the decorator interceptor with the given function
@@ -237,7 +237,7 @@ def transaction_method(entity_manager_reference, raise_exception = True):
         @type kwargs: pointer pointer
         @param kwargs: The function arguments map.
         @rtype: Function
-        @param: The decorator interceptor function.
+        @return: The decorator interceptor function.
         """
 
         # creates the decorator interceptor with the given function
