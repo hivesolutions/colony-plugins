@@ -50,6 +50,9 @@ class WebMvcCommunicationPush:
     web_mvc_communication_push_controller = None
     """ The web mvc communication push controller """
 
+    web_mvc_communication_push_controllers = None
+    """ The web mvc communication push controllers """
+
     def __init__(self, web_mvc_communication_push_plugin):
         """
         Constructor of the class.
@@ -77,6 +80,11 @@ class WebMvcCommunicationPush:
 
         # creates the web mvc manager communication push controller
         self.web_mvc_communication_push_controller = web_mvc_utils_plugin.create_controller(web_mvc_communication_push_controllers.WebMvcCommunicationPushController, [self.web_mvc_communication_push_plugin, self], {})
+
+        # creates the web mvc communication push controllers map
+        self.web_mvc_communication_push_controllers = {
+                                                       "main" : self.web_mvc_communication_push_controller
+                                                   }
 
     def get_patterns(self):
         """
