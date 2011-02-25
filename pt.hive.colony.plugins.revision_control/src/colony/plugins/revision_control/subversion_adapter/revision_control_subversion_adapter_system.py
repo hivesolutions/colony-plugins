@@ -79,6 +79,14 @@ WORKING_COPY_REVISION_IDENTIFIER = "working_copy_revision"
 DEFAULT_PYSVN_ENCODING = "utf-8"
 """ The default encoding for the svn adapter """
 
+PYSVN_SUMMARIZE_KIND_CHANGE_TYPE_MAP = {
+    pysvn.diff_summarize_kind.normal : "normal",
+    pysvn.diff_summarize_kind.modified : "modified",
+    pysvn.diff_summarize_kind.delete : "deleted",
+    pysvn.diff_summarize_kind.added : "added"
+}
+""" The pysvn summarize kind to change type map """
+
 class RevisionControlSubversionAdapter:
     """
     The revision control subversion adapter class.
@@ -335,6 +343,44 @@ class RevisionControlSubversionAdapter:
         # returns the computed diff
         return diffs
 
+    def diff_summary(self, revision_control_reference, resource_identifiers, revision_1, revision_2):
+        # retrieves the pysvn client from the revision control reference
+        pysvn_client = revision_control_reference.pysvn_client
+
+        # retrieves the plugin manager
+        plugin_manager = self.revision_control_subversion_adapter_plugin.manager
+
+        # retrieves the urls or paths
+        url_or_path_1 = resource_identifiers[0]
+        url_or_path_2 = url_or_path_1
+
+        # in case the first revision is not specified
+        if revision_1 == None:
+            # uses the base revision
+            subversion_revision_1 = pysvn.Revision(pysvn.opt_revision_kind.base)
+        # otherwise
+        else:
+            # creates the subversion revision
+            subversion_revision_1 = self.create_subversion_revision_manager_revision(revision_1)
+
+        # in case the second revision is not specified
+        if revision_2 == None:
+            # uses the working revision
+            subversion_revision_2 = pysvn.Revision(pysvn.opt_revision_kind.working)
+        # otherwise
+        else:
+            # creates the subversion revision
+            subversion_revision_2 = self.create_subversion_revision_manager_revision(revision_2)
+
+        # processes the diff
+        diff_summary = pysvn_client.diff_summarize(url_or_path_1, subversion_revision_1, url_or_path_2, subversion_revision_2)
+
+        # adapts the diff summary to a standard format
+        diffs = self.adapt_diff_summary(diff_summary)
+
+        # returns the computed diff
+        return diffs
+
     def cleanup(self, revision_control_reference, resource_identifiers):
         # retrieves the pysvn client from the revision control reference
         pysvn_client = revision_control_reference.pysvn_client
@@ -418,7 +464,7 @@ class RevisionControlSubversionAdapter:
         # initializes the resources revisions list
         for url_or_path in resource_identifiers:
             # retrieves the file contents
-            file_text = pysvn_client.cat(url_or_path, subversion_revision)
+            file_text = pysvn_client.cat(url_or_path, subversion_revision, peg_revision = subversion_revision)
 
             # appends the file contents to the resources revision list
             resources_revision.append(file_text)
@@ -463,6 +509,42 @@ class RevisionControlSubversionAdapter:
 
         # returns the assembled revision
         return revision
+
+    def adapt_diff_summary(self, diff_summary):
+        # creates the diffs list
+        diffs = []
+
+        # for each diff in the diff summary
+        for diff in diff_summary:
+            # retrieves the diff data map
+            diff_data = diff.data
+
+            # retrieves the diff path
+            diff_path = diff_data["path"]
+
+            # retrieves the summarize kind
+            diff_summarize_kind = diff_data["summarize_kind"]
+
+            # retrieves the diff type
+            diff_type = self.adapt_diff_summarize_kind(diff_summarize_kind)
+
+            # creates a new diff map
+            diff_map = {
+                "path" : diff_path,
+                "change_type" : diff_type
+            }
+
+            # appends the diff map to the diffs list
+            diffs.append(diff_map)
+
+        return diffs
+
+    def adapt_diff_summarize_kind(self, diff_summarize_kind):
+        # retrieves the corresponding change type
+        change_type = PYSVN_SUMMARIZE_KIND_CHANGE_TYPE_MAP.get(diff_summarize_kind, None)
+
+        # returns the change type
+        return change_type
 
     def create_revision_subversion_revision(self, subversion_revision):
         # creates a new subversion adapter revision

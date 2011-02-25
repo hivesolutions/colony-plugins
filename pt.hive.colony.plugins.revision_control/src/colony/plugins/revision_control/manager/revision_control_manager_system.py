@@ -241,6 +241,13 @@ class RevisionControlAdapter:
 
         return self.revision_control_adapter_plugin.diff(self._revision_control_reference, resource_identifiers, revision_1, revision_2)
 
+    def diff_summary(self, resource_identifiers, revision_1, revision_2):
+        """
+        Retrieves the diff summary between the specified revisions for the specified resources.
+        """
+
+        return self.revision_control_adapter_plugin.diff_summary(self._revision_control_reference, resource_identifiers, revision_1, revision_2)
+
     def cleanup(self, resource_identifiers):
         """
         Cleans up any locks in the working copy at path.
