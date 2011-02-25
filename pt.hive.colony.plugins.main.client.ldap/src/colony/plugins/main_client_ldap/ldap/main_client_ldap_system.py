@@ -297,8 +297,8 @@ class LdapClient:
         """
         Retrieves the response from the sent request.
 
-        @type: LdapRequest
-        @return: The request that originated the response.
+        @type request: LdapRequest
+        @param request: The request that originated the response.
         @type response_timeout: int
         @param response_timeout: The timeout for the response retrieval.
         @rtype: LdapResponse
