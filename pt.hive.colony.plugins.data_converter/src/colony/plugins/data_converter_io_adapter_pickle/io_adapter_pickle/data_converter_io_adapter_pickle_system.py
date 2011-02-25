@@ -118,7 +118,7 @@ class IoAdapterPickle:
         """
         Retrieves an identifier to replace for the object in the serialization process.
 
-        @type: Object
+        @type object: Object
         @param object: Object that is going to be serialized by pickle.
         @rtype: String
         @return: String that will be serialized instead of the object, None in case the object itself should be serialized.
@@ -130,7 +130,7 @@ class IoAdapterPickle:
         """
         Retrieves the object that corresponds to the serialized persistent object id.
 
-        @type: String
+        @type persistent_object_id: String
         @param persistent_object_id: Identifier that was serialized instead of the object.
         @rtype: Object
         @return: The object that corresponds to the persistent object id.

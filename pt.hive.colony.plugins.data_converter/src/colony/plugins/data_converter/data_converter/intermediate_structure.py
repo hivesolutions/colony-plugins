@@ -125,7 +125,7 @@ class IntermediateStructure:
         """
         Retrieves all entities with the specified name.
 
-        @type: String
+        @type entity_name: String
         @param entity_name: String specifying the name the retrieved entities must have.
         @rtype: List
         @return: List with the intermediate structure's entities.
@@ -143,7 +143,7 @@ class IntermediateStructure:
         """
         Returns the specified entity from the intermediate structure.
 
-        @type: String
+        @type index: String
         @param index: Index that the entity is indexed by in the intermediate structure.
         @rtype: List
         @return: The entities that are in the specified index.
@@ -162,7 +162,7 @@ class IntermediateStructure:
         """
         Creates an entity with the specified name in the intermediate structure.
 
-        @type: String
+        @type entity_name: String
         @param entity_name: Name of the entity one wants to create.
         @rtype: Entity
         @return: The specified intermediate structure entity.
@@ -191,7 +191,7 @@ class IntermediateStructure:
         """
         Adds the provided entity to the intermediate structure.
 
-        @type: Entity
+        @type entity: Entity
         @param entity: Entity to add to the intermediate structure.
         """
 
@@ -221,9 +221,9 @@ class IntermediateStructure:
         """
         Indexes an intermediate structure entity with the specified index.
 
-        @type: Entity
+        @type entity: Entity
         @param entity: Entity to index.
-        @type: String
+        @type index: String
         @param index: Index with which to index the entity by.
         """
 
@@ -250,7 +250,7 @@ class IntermediateStructure:
         """
         Removes the specified entity from the intermediate structure.
 
-        @type: Entity
+        @type entity: Entity
         @param entity: Entity one wants to remove from the intermediate structure.
         """
 
@@ -391,7 +391,7 @@ class Entity:
         """
         Indicates if the entity has the specified attribute.
 
-        @type: String
+        @type attribute_name: String
         @param attribute_name: Name of the attribute one wants to know if
         its exists in the entity.
         @rtype: bool
@@ -418,7 +418,7 @@ class Entity:
         """
         Retrieves the value of the specified entity attribute.
 
-        @type: String
+        @type attribute_name: String
         @param attribute_name: Name of the attribute whose value one wants to
         retrieve from the entity.
         @return: Retrieves the value of the specified attribute.
@@ -441,9 +441,10 @@ class Entity:
         """
         Sets the value for an entity's attribute.
 
-        @type: String
+        @type attribute_name: String
         @param attribute_name: Name of the attribute whose value one wants
         to set in the entity.
+        @type attribute_value: Object
         @param attribute_value: Attribute value one wants to set.
         """
 
@@ -470,10 +471,9 @@ class Entity:
         """
         Removes the specified attribute from the entity.
 
-        @type: String
+        @type attribute_name: String
         @param attribute_name: Name of the attribute whose value one wants
         to remove from the entity.
-        @param attribute_name: Name of the attribute one wants to remove.
         """
 
         # raises an exception in case the entity is configured and with attributes with this name
