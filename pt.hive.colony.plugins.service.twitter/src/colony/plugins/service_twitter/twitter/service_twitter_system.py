@@ -1197,8 +1197,8 @@ class OauthStructure:
         """
         Sets the consumer secret.
 
-        @type: String
-        @param: The consumer secret.
+        @type oauth_consumer_secret: String
+        @param oauth_consumer_secret: The consumer secret.
         """
 
         self.oauth_consumer_secret = oauth_consumer_secret
