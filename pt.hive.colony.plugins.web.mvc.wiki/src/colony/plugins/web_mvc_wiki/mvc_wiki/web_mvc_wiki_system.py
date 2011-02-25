@@ -66,6 +66,9 @@ class WebMvcWiki:
     web_mvc_wiki_page_controller = None
     """ The web mvc wiki page controller """
 
+    web_mvc_wiki_controllers = None
+    """ The web mvc wiki controllers """
+
     instances_map = {}
     """ The map of instances reference """
 
@@ -99,6 +102,12 @@ class WebMvcWiki:
 
         # create the web mvc wiki page controller
         self.web_mvc_wiki_page_controller = web_mvc_utils_plugin.create_controller(web_mvc_wiki_controllers.WebMvcWikiPageController, [self.web_mvc_wiki_plugin, self], {})
+
+        # creates the web mvc wiki controllers map
+        self.web_mvc_wiki_controllers = {
+                                         "main" : self.web_mvc_wiki_controller,
+                                         "page" : self.web_mvc_wiki_page_controller
+                                     }
 
     def get_patterns(self):
         """
