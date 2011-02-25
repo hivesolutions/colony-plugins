@@ -90,6 +90,9 @@ class WebMvcManager:
     web_mvc_manager_communication_helper = None
     """ The web mvc manager communication helper """
 
+    web_mvc_manager_controllers = None
+    """ The web mvc manager controllers """
+
     menu_items_map = {}
 
     side_panel_items_map = {}
@@ -157,6 +160,17 @@ class WebMvcManager:
         # creates the web mvc manager communication helper
         self.web_mvc_manager_communication_helper = web_mvc_utils_plugin.create_controller(web_mvc_manager_helpers.CommunicationHelper, [self.web_mvc_manager_plugin, self], {})
 
+        # creates the web mvc manager controllers map
+        self.web_mvc_manager_controllers = {
+                                            "main" : self.web_mvc_manager_main_controller,
+                                            "communication" : self.web_mvc_manager_communication_controller,
+                                            "side_panel" : self.web_mvc_manager_side_panel_controller,
+                                            "header" : self.web_mvc_manager_header_controller,
+                                            "plugin" : self.web_mvc_manager_plugin_controller,
+                                            "capability" : self.web_mvc_manager_capability_controller,
+                                            "search_helper" : self.web_mvc_manager_search_helper,
+                                            "communication_helper" : self.web_mvc_manager_communication_helper
+                                        }
     def get_patterns(self):
         """
         Retrieves the tuple of regular expressions to be used as patterns,
