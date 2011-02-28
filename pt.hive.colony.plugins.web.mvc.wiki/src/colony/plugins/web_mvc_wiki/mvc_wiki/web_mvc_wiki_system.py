@@ -82,6 +82,8 @@ class WebMvcWiki:
 
         self.web_mvc_wiki_plugin = web_mvc_wiki_plugin
 
+        self.instances_map = {}
+
     def load_components(self):
         """
         Loads the main components controller, etc.
