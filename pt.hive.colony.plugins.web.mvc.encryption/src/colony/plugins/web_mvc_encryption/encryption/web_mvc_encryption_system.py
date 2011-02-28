@@ -105,6 +105,9 @@ class WebMvcEncryption:
 
         self.web_mvc_encryption_plugin = web_mvc_encryption_plugin
 
+        self.keys_map = {}
+        self.security_map = {}
+
     def load_components(self):
         """
         Loads the main components controller, etc.
