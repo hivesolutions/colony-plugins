@@ -65,7 +65,7 @@ DATA_TYPE_MAP = {
 
 DATA_TYPE_PYTHON_MAP = {
     "text" : (types.StringType, types.UnicodeType, types.NoneType),
-    "numeric" : (types.IntType, types.LongType, types.NoneType),
+    "numeric" : (types.IntType, types.LongType, types.FloatType, types.NoneType),
     "integer" : (types.IntType, types.LongType, types.NoneType),
     "float" : (types.IntType, types.LongType, types.FloatType, types.NoneType),
     "date" : (datetime.datetime, types.NoneType)
