@@ -523,14 +523,14 @@ class EntityManager:
         connection = self.get_connection()
 
         # commits the current cached data
-        return self.entity_manager_engine_plugin.commit_connection(connection)
+        self.entity_manager_engine_plugin.commit_connection(connection)
 
     def rollback(self):
         # retrieves the connection object
         connection = self.get_connection()
 
         # "rollsback" the current cached data
-        return self.entity_manager_engine_plugin.rollback_connection(connection)
+        self.entity_manager_engine_plugin.rollback_connection(connection)
 
     def save(self, entity):
         # retrieves the connection object

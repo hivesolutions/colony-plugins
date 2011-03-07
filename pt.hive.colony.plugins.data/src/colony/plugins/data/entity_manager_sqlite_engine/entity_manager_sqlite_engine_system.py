@@ -81,10 +81,10 @@ AUTOCOMMIT_VALUE = "autocommit"
 ISOLATION_LEVEL_VALUE = "isolation_level"
 """ The isolation level value """
 
-ATTRIBUTE_EXCLUSION_LIST = ["__class__", "__delattr__", "__dict__", "__doc__", "__getattribute__", "__hash__", "__module__", "__new__", "__reduce__", "__reduce_ex__", "__repr__", "__setattr__", "__str__", "__weakref__", "__format__", "__sizeof__", "__subclasshook__", "mapping_options", "id_attribute_name"]
+ATTRIBUTE_EXCLUSION_LIST = ("__class__", "__delattr__", "__dict__", "__doc__", "__getattribute__", "__hash__", "__module__", "__new__", "__reduce__", "__reduce_ex__", "__repr__", "__setattr__", "__str__", "__weakref__", "__format__", "__sizeof__", "__subclasshook__", "mapping_options", "id_attribute_name")
 """ The attribute exclusion list """
 
-TYPE_EXCLUSION_LIST = [types.MethodType, types.FunctionType, types.ClassType, types.InstanceType]
+TYPE_EXCLUSION_LIST = (types.MethodType, types.FunctionType, types.ClassType, types.InstanceType)
 """ The type exclusion list """
 
 RELATION_DATA_TYPE = "relation"
@@ -177,10 +177,10 @@ INEXISTING_RELATION_ATTRIBUTE_REASON_CODE = 2
 INVALID_ATTRIBUTE_TYPE_REASON_CODE = 3
 """ The invalid attribute type reason code """
 
-INEXISTING_ATTRIBUTE_REASON_CODES = [1, 2]
+INEXISTING_ATTRIBUTE_REASON_CODES = (1, 2)
 """ The inexisting attribute reason codes """
 
-FORCE_UPDATE_REASON_CODES = [2, 3]
+FORCE_UPDATE_REASON_CODES = (2, 3)
 """ The force update reason codes """
 
 class EntityManagerSqliteEngine:
@@ -223,6 +223,7 @@ class EntityManagerSqliteEngine:
 
         # in case the file path is not defined
         if not FILE_PATH_VALUE in connection_parameters:
+            # raises the missing property exception
             raise entity_manager_sqlite_engine_exceptions.MissingProperty(FILE_PATH_VALUE)
 
         # retrieves the file path parameter value
@@ -231,19 +232,23 @@ class EntityManagerSqliteEngine:
         # sets the isolation level value as deferred
         isolation_level_value = "DEFERRED"
 
-        if AUTOCOMMIT_VALUE in connection_parameters:
-            # retrieves the autocommit parameter value
-            autocommit_value = connection_parameters[AUTOCOMMIT_VALUE]
+        # retrieves the autocommit parameter value
+        autocommit_value = connection_parameters.get(AUTOCOMMIT_VALUE, False)
 
-            if autocommit_value:
-                isolation_level_value = None
+        # in case the autocommit
+        if autocommit_value:
+            # unsets the isolation level value
+            isolation_level_value = None
 
+        # in case the isolation level is set
         if ISOLATION_LEVEL_VALUE in connection_parameters:
+            # retrieves the isolation level value
             isolation_level_value = connection_parameters[ISOLATION_LEVEL_VALUE]
 
         # creates the sqlite database connection
         connection = sqlite3.connect(file_path, timeout = DEFAULT_TIMEOUT_VALUE, isolation_level = isolation_level_value)
 
+        # returns the created connection
         return connection
 
     def close_connection(self, connection):
@@ -257,45 +262,90 @@ class EntityManagerSqliteEngine:
         connection.close()
 
     def commit_connection(self, connection):
+        """
+        Commits the current transaction in the given connections.
+
+        @type connection: Connection
+        @param connection: The connection with the transaction
+        to be committed.
+        """
+
         # retrieves the database connection from the connection object
         database_connection = connection.database_connection
 
         # commits the changes to the connection
         database_connection.commit()
 
-        return True
-
     def commit_system_connection(self, connection):
+        """
+        Commits the current connection completely.
+        All the transactions in the connections will be committed.
+
+        @type connection: Connection
+        @param connection: The connection to be committed.
+        """
+
         # retrieves the database system connection from the connection object
         database_system_connection = connection.database_system_connection
 
         # commits the changes to the connection
         database_system_connection.commit()
 
-        return True
-
     def rollback_connection(self, connection):
+        """
+        "Rollsback" the current transaction in the given connection.
+
+        @type connection: Connection
+        @param connection: The connection with the transaction to
+        be "rollbacked".
+        """
+
         # retrieves the database connection from the connection object
         database_connection = connection.database_connection
 
         # "rollsback" the changes to the connection
         database_connection.rollback()
 
-        return True
-
     def rollback_system_connection(self, connection):
+        """
+        "Rollsback" the current transaction completely.
+        All the transactions in the connections will be "rollbacked".
+
+        @type connection: Connection
+        @param connection: The connection to be "rollbacked".
+        """
+
         # retrieves the database system connection from the connection object
         database_system_connection = connection.database_system_connection
 
         # "rollsback" the changes to the connection
         database_system_connection.rollback()
 
-        return True
-
     def create_transaction(self, connection, transaction_name):
-        return True
+        """
+        Creates a new transaction in the given connection
+        with the given name.
+
+        @type connection: Connection
+        @param connection: The connection to create the transaction.
+        @type transaction_name: String
+        @param transaction_name: The name of the transaction to
+        be created.
+        """
+
+        pass
 
     def commit_transaction(self, connection, transaction_name):
+        """
+        Commits the transaction with the given name.
+
+        @type connection: Connection
+        @param connection: The connection to commit the transaction.
+        @type transaction_name: String
+        @param transaction_name: The name of the transaction to be
+        committed.
+        """
+
         # retrieves the transaction stack from the connection object
         transaction_stack = connection.transaction_stack
 
@@ -303,16 +353,26 @@ class EntityManagerSqliteEngine:
         transaction_stack_length = len(transaction_stack)
 
         # in case the transaction stack length is greater
-        # than one
+        # than one (inner transaction)
         if transaction_stack_length > 1:
             # returns immediately (no need to commit
-            # an inner connection)
-            return True
+            # an inner transaction)
+            return
 
         # commits the connection
-        return self.commit_connection(connection)
+        self.commit_connection(connection)
 
     def rollback_transaction(self, connection, transaction_name):
+        """
+        "Rollsback" the transaction with the given name.
+
+        @type connection: Connection
+        @param connection: The connection to commit the transaction.
+        @type transaction_name: String
+        @param transaction_name: The name of the transaction to be
+        "rollbacked".
+        """
+
         # retrieves the transaction stack from the connection object
         transaction_stack = connection.transaction_stack
 
@@ -320,14 +380,14 @@ class EntityManagerSqliteEngine:
         transaction_stack_length = len(transaction_stack)
 
         # in case the transaction stack length is greater
-        # than one
+        # than one (inner transaction)
         if transaction_stack_length > 1:
             # returns immediately (no need to rollback
-            # an inner connection)
-            return True
+            # an inner transaction)
+            return
 
         # "rollsback" the transaction
-        return self.rollback_connection(connection)
+        self.rollback_connection(connection)
 
     def exists_entity_definition(self, connection, entity_class):
         # retrieves the database connection from the connection object
@@ -339,20 +399,22 @@ class EntityManagerSqliteEngine:
         # creates the cursor for the given connection
         cursor = database_connection.cursor()
 
-        # selects all the names of existing tables
-        self.execute_query(cursor, EXISTS_ENTITY_DEFINITION_QUERY)
+        try:
+            # selects all the names of existing tables
+            self.execute_query(cursor, EXISTS_ENTITY_DEFINITION_QUERY)
 
-        # selects the table names from the cursor
-        table_names_list = [value[0] for value in cursor]
+            # selects the table names from the cursor
+            table_names_list = [value[0] for value in cursor]
+        finally:
+            # closes the cursor
+            cursor.close()
 
-        # closes the cursor
-        cursor.close()
+        # tests if the entity class name exists in the table names list
+        # retrieving the result into a boolean flag
+        entity_definition_exists = entity_class_name in table_names_list
 
-        # in case the entity class name exists in the tables names list
-        if entity_class_name in table_names_list:
-            return True
-        else:
-            return False
+        # returns the result of the entity definition exists test
+        return entity_definition_exists
 
     def exists_table_definition(self, connection, table_name):
         # retrieves the database connection from the connection object
@@ -361,23 +423,30 @@ class EntityManagerSqliteEngine:
         # creates the cursor for the given connection
         cursor = database_connection.cursor()
 
-        # selects all the names of existing tables
-        self.execute_query(cursor, EXISTS_ENTITY_DEFINITION_QUERY)
+        try:
+            # selects all the names of existing tables
+            self.execute_query(cursor, EXISTS_ENTITY_DEFINITION_QUERY)
 
-        # selects the table names from the cursor
-        table_names_list = [value[0] for value in cursor]
+            # selects the table names from the cursor
+            table_names_list = [value[0] for value in cursor]
+        finally:
+            # closes the cursor
+            cursor.close()
 
-        # closes the cursor
-        cursor.close()
+        # tests if the table name exists in the table names list
+        # retrieving the result into a boolean flag
+        table_definition_exists = table_name in table_names_list
 
-        # in case the table name exists in the tables names list
-        if table_name in table_names_list:
-            return True
-        else:
-            return False
+        # returns the result of the table definition exists test
+        return table_definition_exists
 
     def exists_table_column_definition(self, connection, table_name, column_name):
-        if not self.exists_table_definition(connection, table_name):
+        # tests if the table definition exists for the current table
+        exists_table_definition = self.exists_table_definition(connection, table_name)
+
+        # in case the table definition does not exists
+        if not exists_table_definition:
+            # returns false (invalid)
             return False
 
         # retrieves the database connection from the connection object
@@ -386,31 +455,37 @@ class EntityManagerSqliteEngine:
         # creates the cursor for the given connection
         cursor = database_connection.cursor()
 
-        # retrieves the query string value
-        query_string_value = self.create_exists_table_column_definition(table_name)
+        try:
+            # retrieves the query string value
+            query_string_value = self.create_exists_table_column_definition(table_name)
 
-        # executes the query retrieving the values
-        self.execute_query(cursor, query_string_value)
+            # executes the query retrieving the values
+            self.execute_query(cursor, query_string_value)
 
-        # selects the table information from the cursor
-        table_information_list = [value for value in cursor]
+            # selects the table information from the cursor
+            table_information_list = [value for value in cursor]
 
-        # iterates over all the table information
-        for table_information_item in table_information_list:
-            # retrieves the attribute name
-            attribute_name = table_information_item[1]
+            # iterates over all the table information
+            for table_information_item in table_information_list:
+                # retrieves the attribute name
+                attribute_name = table_information_item[1]
 
-            # in case the attribute name is the same
-            # as the column name
-            if attribute_name == column_name:
+                # in case the attribute name is not the same
+                # as the column name
+                if not attribute_name == column_name:
+                    # continues the loop
+                    continue
+
                 # closes the cursor
                 cursor.close()
 
+                # returns true (valid)
                 return True
+        finally:
+            # closes the cursor
+            cursor.close()
 
-        # closes the cursor
-        cursor.close()
-
+        # returns false (invalid)
         return False
 
     def create_exists_table_column_definition(self, table_name):
@@ -1772,15 +1847,38 @@ class EntityManagerSqliteEngine:
         cursor.close()
 
     def set_fields(self, entity, fields):
+        """
+        Sets the given fields into the entity.
+        In order to avoid problems while setting fields into an
+        entity a new entity is created and the fields are set
+        into the entity that does not inherit from object
+        and so does not protected the field setting.
+
+        @type entity: Entity
+        @param entity: The entity to set the fields.
+        @type fields: List
+        @param fields: The list of filed to be set.
+        @rtype: Entity
+        @return: The entity with the fields set.
+        """
+
+        # in case no field are defined
         if not fields:
+            # returns the entity itself
             return entity
 
+        # creates a new (default) entity
         new_entity = DefaultEntity()
 
+        # iterates over all the field to populate
+        # the entity
         for field in fields:
+            # retrieve the field value
+            # and sets it into the new entity
             field_value = getattr(entity, field)
             setattr(new_entity, field, field_value)
 
+        # returns the new entity
         return new_entity
 
     def find_all_entities(self, connection, entity_class, field_value, search_field_name, retrieved_entities_list = None):
@@ -3261,11 +3359,11 @@ class EntityManagerSqliteEngine:
                 # in case the attribute missing is of type relation
                 if self.is_attribute_name_relation(entity_class_valid_attribute_name, entity_class):
                     # adds the attribute to the unsynced attributes with reason
-                    # relation attribute inexistant
+                    # relation attribute inexistent
                     unsynced_attributes_list.append((entity_class_valid_attribute_name, INEXISTING_RELATION_ATTRIBUTE_REASON_CODE))
                 else:
                     # adds the attribute to the unsynced attributes with reason
-                    # attribute inexistant
+                    # attribute inexistent
                     unsynced_attributes_list.append((entity_class_valid_attribute_name, INEXISTING_ATTRIBUTE_REASON_CODE))
             # the attribute exists in the data source
             else:
@@ -3318,24 +3416,37 @@ class EntityManagerSqliteEngine:
             # retrieves the relation type field
             relation_type_field = relation_attributes[RELATION_TYPE_FIELD]
 
-            # in case the relation is of type many-to-many
-            if relation_type_field == MANY_TO_MANY_RELATION:
-                # retrieves the join table field
-                join_table_field = relation_attributes[JOIN_TABLE_FIELD]
+            # in case the relation is not of type many-to-many
+            if not relation_type_field == MANY_TO_MANY_RELATION:
+                # continues the loop
+                continue
 
-                # retrieves the attribute column name field
-                attribute_column_name_field = relation_attributes[ATTRIBUTE_COLUMN_NAME_FIELD]
+            # retrieves the join table field
+            join_table_field = relation_attributes[JOIN_TABLE_FIELD]
 
-                # in case there is a table definition for the relation table
-                if self.exists_table_definition(connection, join_table_field):
-                    if not self.exists_table_column_definition(connection, join_table_field, attribute_column_name_field):
-                        # adds the attribute to the unsynced attributes with reason
-                        # attribute inexistant
-                        unsynced_attributes_list.append((entity_class_valid_indirect_attribute_name, INEXISTING_ATTRIBUTE_REASON_CODE))
-                else:
+            # retrieves the attribute column name field
+            attribute_column_name_field = relation_attributes[ATTRIBUTE_COLUMN_NAME_FIELD]
+
+            # tests to check if exists a table definition for the join table
+            exists_table_definition = self.exists_table_definition(connection, join_table_field)
+
+            # in case there is a table definition for the relation table
+            if exists_table_definition:
+                # tests to check if the join field definition exists in the join table
+                exists_join_field_definition = self.exists_table_column_definition(connection, join_table_field, attribute_column_name_field);
+
+                # in case the join field definition does not exist
+                # in the join table it must be created
+                if not exists_join_field_definition:
                     # adds the attribute to the unsynced attributes with reason
-                    # attribute inexistant
+                    # attribute inexistent
                     unsynced_attributes_list.append((entity_class_valid_indirect_attribute_name, INEXISTING_ATTRIBUTE_REASON_CODE))
+            # otherwise there is no table definition and it must
+            # be created
+            else:
+                # adds the attribute to the unsynced attributes with reason
+                # attribute inexistent
+                unsynced_attributes_list.append((entity_class_valid_indirect_attribute_name, INEXISTING_ATTRIBUTE_REASON_CODE))
 
         # closes the cursor
         cursor.close()
@@ -3448,6 +3559,8 @@ class BufferedEntities:
 class DefaultEntity:
     """
     The default entity class.
+    This class does not inherit from the object
+    class in order to avoid attribute protection.
     """
 
     pass
