@@ -820,10 +820,11 @@ class EntityManagerSqliteEngine:
         # closes the cursor
         cursor.close()
 
-        if values_list:
-            return True
-        else:
-            return False
+        # retrieves the exists table generator result
+        exists_table_generator = values_list and True or False
+
+        # returns the exists table generator result
+        return exists_table_generator
 
     def lock_table(self, connection, table_name, parameters):
         # retrieves the database connection from the connection object
@@ -1064,6 +1065,17 @@ class EntityManagerSqliteEngine:
         return query_string_value
 
     def generate_id(self, connection, entity):
+        """
+        Generates the id value for the given entity.
+        In case the given entity id generation is not set
+        nothing happens.
+
+        @type connection: Connection
+        @param connection: The connection to be used.
+        @type entity: Entity
+        @param entity: The entity to generate the id.
+        """
+
         # retrieves the entity class for the entity
         entity_class = entity.__class__
 
@@ -1076,38 +1088,52 @@ class EntityManagerSqliteEngine:
         # retrieves the entity id attribute value
         entity_id_attribute_value = self.get_entity_id_attribute_value(entity)
 
-        # in case the id attribute is note defined
-        if entity_id_attribute_value == None:
-            # in case the id field is to be generated
-            if GENERATED_FIELD in entity_class_id_attribute_value:
-                generator_type = entity_class_id_attribute_value[GENERATOR_TYPE_FIELD]
+        # in case the id attribute is already defined
+        if not entity_id_attribute_value == None:
+            # returns immediately (no need to generate id)
+            return
 
-                if generator_type == "uuid":
-                    next_id_value = int(time.time() % 10 * 100000000)
-                elif generator_type == "table":
-                    if "table_generator_field_name" in entity_class_id_attribute_value:
-                        table_generator_field_name = entity_class_id_attribute_value["table_generator_field_name"]
-                    else:
-                        table_generator_field_name = entity_class_name
+        # in case the id field is not to be generated
+        if not GENERATED_FIELD in entity_class_id_attribute_value:
+            # returns immediately (no need to generate id)
+            return
 
-                    # retrieves the next id value
-                    next_id_value = self.retrieve_next_name_id(connection, table_generator_field_name)
+        # retrieves the generator type field
+        generator_type = entity_class_id_attribute_value[GENERATOR_TYPE_FIELD]
 
-                    if next_id_value:
-                        self._increment_next_name_id(connection, table_generator_field_name, next_id_value)
-                    else:
-                        next_id_value = 1
+        # in case the generator type is universal unique id
+        if generator_type == "uuid":
+            # generates a pseudo unique id
+            next_id_value = int(time.time() % 10 * 100000000)
+        # in case the generator type is table
+        elif generator_type == "table":
+            # retrieves the table generator field name, in case it is not set
+            # the entity class name is used
+            table_generator_field_name = entity_class_id_attribute_value.get("table_generator_field_name", entity_class_name)
 
-                        self.set_next_name_id(connection, table_generator_field_name, 2)
+            # retrieves the next id value
+            next_id_value = self.retrieve_next_name_id(connection, table_generator_field_name)
 
-                # retrieves the entity class id attribute name
-                entity_class_id_attribute_name = self.get_entity_class_id_attribute_name(entity_class)
+            # in case the next id value is already defined
+            if next_id_value:
+                # increments the next name id value (involves locking table)
+                self._increment_next_name_id(connection, table_generator_field_name, next_id_value)
+            # otherwise a new id value must be created
+            else:
+                # sets the initial next id value
+                next_id_value = 1
 
-                # sets the new entity id attribute value
-                setattr(entity, entity_class_id_attribute_name, next_id_value)
+                # sets the next name id (involves locking table)
+                self.set_next_name_id(connection, table_generator_field_name, next_id_value + 1)
 
-                # retrieves the entity id attribute value
-                entity_id_attribute_value = self.get_entity_id_attribute_value(entity)
+        # retrieves the entity class id attribute name
+        entity_class_id_attribute_name = self.get_entity_class_id_attribute_name(entity_class)
+
+        # sets the new entity id attribute value
+        setattr(entity, entity_class_id_attribute_name, next_id_value)
+
+        # retrieves the entity id attribute value
+        entity_id_attribute_value = self.get_entity_id_attribute_value(entity)
 
     def save_entity_indirect_relations(self, connection, entity):
         """
