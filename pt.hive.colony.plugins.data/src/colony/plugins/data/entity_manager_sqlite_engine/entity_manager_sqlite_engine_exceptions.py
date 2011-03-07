@@ -99,6 +99,32 @@ class SqliteEngineDuplicateEntry(SqliteEngineException):
 
         return "Duplicate entry: %s" % self.message
 
+class SqliteInvalidNextId(SqliteEngineException):
+    """
+    The sqlite invalid next id class.
+    """
+
+    def __init__(self, message):
+        """
+        Constructor of the class.
+
+        @type message: String
+        @param message: The message to be printed.
+        """
+
+        SqliteEngineException.__init__(self)
+        self.message = message
+
+    def __str__(self):
+        """
+        Returns the string representation of the class.
+
+        @rtype: String
+        @return: The string representation of the class.
+        """
+
+        return "Invalid next id: %s" % self.message
+
 class SqliteEngineEntryNotFound(SqliteEngineException):
     """
     The sqlite engine entry not found class.

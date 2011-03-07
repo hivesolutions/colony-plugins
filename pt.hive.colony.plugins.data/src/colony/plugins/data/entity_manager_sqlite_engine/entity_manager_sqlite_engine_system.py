@@ -548,8 +548,11 @@ class EntityManagerSqliteEngine:
         # retrieves all the valid class attribute values
         entity_class_valid_attribute_values = self.get_entity_class_attribute_values(entity_class)
 
-        # creates the initial query string value
-        query_string_value = "create table " + entity_class_name + "("
+        # creates the query string buffer
+        query_string_buffer = colony.libs.string_buffer_util.StringBuffer()
+
+        # creates the initial query string buffer
+        query_string_buffer.write("create table " + entity_class_name + "(")
 
         # creates the initial index value
         index = 0
@@ -573,17 +576,20 @@ class EntityManagerSqliteEngine:
                 # sets the is flag to false to start adding commas
                 is_first = False
             else:
-                # adds a comma to the query string value
-                query_string_value += ", "
+                # adds a comma to the query string buffer
+                query_string_buffer.write(", ")
 
-            # extends the query string value
-            query_string_value += entity_class_valid_attribute_name + " " + entity_class_valid_attribute_target_data_type
+            # extends the query string buffer
+            query_string_buffer.write(entity_class_valid_attribute_name + " " + entity_class_valid_attribute_target_data_type)
 
             # increments the index value
             index += 1
 
-        # closes the query string value
-        query_string_value += ")"
+        # closes the query string buffer
+        query_string_buffer.write(")")
+
+        # retrieves the query string value
+        query_string_value = query_string_buffer.get_value()
 
         # executes the query creating the table
         self.execute_query(cursor, query_string_value)
@@ -880,10 +886,22 @@ class EntityManagerSqliteEngine:
         return values_list[0][1]
 
     def set_next_name_id(self, connection, name, next_id):
-        # retrieves the previous next id
+        """
+        Sets the next name id for the given name (identifier).
+
+        @type connection: Connection
+        @param connection: The connection to be used.
+        @type name: String
+        @param name: The name (identifier) to set the next id.
+        @type next_id: Object
+        @param next_id: The next id to be set.
+        """
+
+        # retrieves the previous next id (it may not find any
+        # next name id)
         previous_next_name_id = self.retrieve_next_name_id(connection, name)
 
-        # uses the internal setter method
+        # uses the internal setter method (safe)
         self._set_next_name_id(connection, name, next_id, previous_next_name_id)
 
     def _set_next_name_id(self, connection, name, next_id, previous_next_name_id):
@@ -893,25 +911,55 @@ class EntityManagerSqliteEngine:
         # creates the cursor for the given connection
         cursor = database_connection.cursor()
 
+        # creates the query string buffer
+        query_string_buffer = colony.libs.string_buffer_util.StringBuffer()
+
         # in case there is already a valid next id
         if previous_next_name_id:
             # creates the query for the update of the data
-            query_string_value = "update generator set next_id = "
+            query_string_buffer.write("update generator set next_id = ")
 
-            if type(next_id) == types.StringType:
-                query_string_value += "\"" + next_id + "\""
+            # retrieves the next id type
+            next_id_type = type(next_id)
+
+            # in case the next id type is string
+            if next_id_type == types.StringType:
+                # writes the next
+                query_string_buffer.write("\"" + next_id + "\"")
+            # otherwise it must be a string convertible value
+            # and a numeric one
             else:
-                query_string_value += str(next_id)
+                # converts the next id to string
+                next_id_string = str(next_id)
 
-            query_string_value += " where name = \"" + name + "\""
+                # writes the next id in string mode
+                query_string_buffer.write(next_id_string)
+
+            # writes the where clause to the query string buffer
+            query_string_buffer.write(" where name = \"" + name + "\"")
+        # otherwise its a new next id value
         else:
             # creates the query for the insertion of the data
-            query_string_value = "insert into generator(name, next_id) values(\"" + name + "\", "
+            query_string_buffer.write("insert into generator(name, next_id) values(\"" + name + "\", ")
 
-            if type(next_id) == types.StringType:
-                query_string_value += "\"" + next_id + "\")"
+            # retrieves the next id type
+            next_id_type = type(next_id)
+
+            # in case the next id type is string
+            if next_id_type == types.StringType:
+                # writes the next
+                query_string_buffer.write("\"" + next_id + "\"")
+            # otherwise it must be a string convertible value
+            # and a numeric one
             else:
-                query_string_value += str(next_id) + ")"
+                # converts the next id to string
+                next_id_string = str(next_id)
+
+                # writes the next id in string mode
+                query_string_buffer.write(next_id_string)
+
+        # retrieves the query string value
+        query_string_value = query_string_buffer.get_value()
 
         # executes the query creating the table
         self.execute_query(cursor, query_string_value)
@@ -929,8 +977,8 @@ class EntityManagerSqliteEngine:
     def _increment_next_name_id(self, connection, name, previous_next_name_id, id_increment = 1):
         # in case there is no previous next name id defined
         if not previous_next_name_id:
-            # @todo should raise exception
-            pass
+            # raises the sqlite invalid next id exception
+            raise entity_manager_sqlite_engine_exceptions.SqliteInvalidNextId("no previous next name id found")
 
         # calculates the next name id based on the previous next name id
         next_name_id = previous_next_name_id + id_increment
@@ -1217,20 +1265,29 @@ class EntityManagerSqliteEngine:
                         # retrieves the target entity id attribute value
                         target_entity_id_attribute_value = self.get_entity_id_attribute_value(object_value)
 
-                        # creates the initial query string value
-                        query_string_value = "update " + target_entity_name_field + " set " + join_attribute_name_field + " = "
+                        # creates the query string buffer
+                        query_string_buffer = colony.libs.string_buffer_util.StringBuffer();
+
+                        # creates the initial query string buffer
+                        query_string_buffer.write("update " + target_entity_name_field + " set " + join_attribute_name_field + " = ")
 
                         # retrieves the id attribute sqlite string value
                         id_attribute_value_sqlite_string_value = self.get_attribute_sqlite_string_value(id_attribute_value, id_attribute_value_data_type)
 
-                        query_string_value += id_attribute_value_sqlite_string_value
+                        # writes the id attribute value sqlite string value
+                        query_string_buffer.write(id_attribute_value_sqlite_string_value)
 
-                        query_string_value += " where " + target_entity_id_attribute_name + " = "
+                        # writes the where clause in the query string buffer
+                        query_string_buffer.write(" where " + target_entity_id_attribute_name + " = ")
 
                         # retrieves the id attribute sqlite string value
                         target_entity_id_attribute_value_sqlite_string_value = self.get_attribute_sqlite_string_value(target_entity_id_attribute_value, target_entity_id_attribute_value_data_type)
 
-                        query_string_value += target_entity_id_attribute_value_sqlite_string_value
+                        # writes the target entity id attribute value sqlite string value
+                        query_string_buffer.write(target_entity_id_attribute_value_sqlite_string_value)
+
+                        # retrieves the query string value
+                        query_string_value = query_string_buffer.get_value()
 
                         # executes the query updating the values
                         self.execute_query(cursor, query_string_value)
@@ -1278,23 +1335,33 @@ class EntityManagerSqliteEngine:
                         # retrieves the target attribute value
                         target_attribute_value = getattr(object_value, join_attribute_name_field)
 
+                        # creates the query string buffer
+                        query_string_buffer = colony.libs.string_buffer_util.StringBuffer();
+
                         # creates the initial query string value
-                        query_string_value = "insert into " + join_table_field + "(" + attribute_column_name_field + ", " + \
-                                             join_attribute_column_name_field + ") values("
+                        query_string_buffer.write("insert into " + join_table_field + "(" + attribute_column_name_field + ", " + \
+                                                  join_attribute_column_name_field + ") values(")
 
                         # retrieves the id attribute sqlite string value
                         id_attribute_value_sqlite_string_value = self.get_attribute_sqlite_string_value(id_attribute_value, id_attribute_value_data_type)
 
-                        query_string_value += id_attribute_value_sqlite_string_value
+                        # writes the id attribute value sqlite string value to the query string buffer
+                        query_string_buffer.write(id_attribute_value_sqlite_string_value)
 
-                        query_string_value += ", "
+                        # adds a comma to the query string buffer
+                        query_string_buffer.write(", ")
 
                         # retrieves the target attribute sqlite string value
                         target_attribute_value_sqlite_string_value = self.get_attribute_sqlite_string_value(target_attribute_value, target_attribute_value_data_type)
 
-                        query_string_value += target_attribute_value_sqlite_string_value
+                        # writes the target attribute value sqlite string value
+                        query_string_buffer.write(target_attribute_value_sqlite_string_value)
 
-                        query_string_value += ")"
+                        # adds the closing brace to the query string buffer
+                        query_string_buffer.write(")")
+
+                        # retrieves the query string value
+                        query_string_value = query_string_buffer.get_value()
 
                         # executes the query inserting the values
                         self.execute_query(cursor, query_string_value)
@@ -1348,8 +1415,11 @@ class EntityManagerSqliteEngine:
         # retrieves all the valid class attribute values
         entity_class_valid_attribute_values = self.get_entity_class_attribute_values(entity_class)
 
-        # creates the initial query string value
-        query_string_value = "update " + entity_class_name + " set "
+        # creates the query string buffer
+        query_string_buffer = colony.libs.string_buffer_util.StringBuffer()
+
+        # creates the initial query string buffer
+        query_string_buffer.write("update " + entity_class_name + " set ")
 
         # creates the initial index value
         index = 0
@@ -1376,27 +1446,32 @@ class EntityManagerSqliteEngine:
                     # sets the is flag to false to start adding commas
                     is_first = False
                 else:
-                    # adds a comma to the query string value
-                    query_string_value += ", "
+                    # adds a comma to the query string buffer
+                    query_string_buffer.write(", ")
 
-                # extends the query string value
-                query_string_value += entity_valid_attribute_name + " = "
+                # extends the query string buffer
+                query_string_buffer.write(entity_valid_attribute_name + " = ")
 
                 # retrieves the entity valid attribute value sqlite string value
                 entity_valid_attribute_value_sqlite_string_value = self.get_attribute_sqlite_string_value(entity_valid_attribute_value, entity_class_valid_attribute_data_type)
 
-                query_string_value += entity_valid_attribute_value_sqlite_string_value
+                # writes the entity valid attribute value sqlite string value
+                query_string_buffer.write(entity_valid_attribute_value_sqlite_string_value)
 
             # increments the index value
             index += 1
 
-        # extends the query string value
-        query_string_value += " where " + entity_class_id_attribute_name + " = "
+        # extends the query string buffer
+        query_string_buffer.write(" where " + entity_class_id_attribute_name + " = ")
 
         # retrieves the entity id attribute value sqlite string value
         entity_id_attribute_value_sqlite_string_value = self.get_attribute_sqlite_string_value(entity_id_attribute_value, entity_class_id_attribute_value_data_type)
 
-        query_string_value += entity_id_attribute_value_sqlite_string_value
+        # writes the entity id attribute value sqlite string value
+        query_string_buffer.write(entity_id_attribute_value_sqlite_string_value)
+
+        # retrieves the query string value
+        query_string_value = query_string_buffer.get_value()
 
         # executes the query updating the values
         self.execute_query(cursor, query_string_value)
