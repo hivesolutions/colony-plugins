@@ -1069,37 +1069,46 @@ class EntityManagerSqliteEngine:
 
         # iterates over all the valid attribute values
         for entity_valid_attribute_value in entity_valid_attribute_values:
-            # in case the entity valid attribute value is not lazy loaded
-            if not entity_valid_attribute_value == "%lazy-loaded%":
-                # retrieves the current entity class valid attribute value
-                entity_class_valid_attribute_value = entity_class_valid_attribute_values[index]
+            # in case the entity valid attribute value is lazy loaded
+            if entity_valid_attribute_value == "%lazy-loaded%":
+                # increments the index value
+                index += 1
 
-                # retrieves the entity valid attribute name
-                entity_valid_attribute_name = entity_valid_attribute_names[index]
+                # continues the loop
+                continue
 
-                # retrieves the entity class valid attribute value data type
-                entity_class_valid_attribute_data_type = self.get_attribute_data_type(entity_class_valid_attribute_value, entity_class, entity_valid_attribute_name)
+            # retrieves the current entity class valid attribute value
+            entity_class_valid_attribute_value = entity_class_valid_attribute_values[index]
 
-                # in case the attribute is of type relation
-                if self.is_attribute_relation(entity_class_valid_attribute_value):
-                    # retrieves the relation attribute value using the current entity class, the relation attribute
-                    # resolution system uses the join attribute to find the correct attribute value
-                    entity_valid_attribute_value = self.get_relation_attribute_value(entity_valid_attribute_value, entity_class_valid_attribute_value, entity_class, entity_valid_attribute_name)
+            # retrieves the entity valid attribute name
+            entity_valid_attribute_name = entity_valid_attribute_names[index]
 
-                # in case is the first field to be processed
-                if is_first:
-                    # sets the is flag to false to start adding commas
-                    is_first = False
-                # otherwise it is not the first field to be processed
-                else:
-                    # adds a comma to the query string buffer
-                    query_string_buffer.write(", ")
+            # retrieves the entity class valid attribute value data type
+            entity_class_valid_attribute_data_type = self.get_attribute_data_type(entity_class_valid_attribute_value, entity_class, entity_valid_attribute_name)
 
-                # retrieves the entity valid attribute sqlite string value
-                entity_valid_attribute_value_sqlite_string_value = self.get_attribute_sqlite_string_value(entity_valid_attribute_value, entity_class_valid_attribute_data_type)
+            # checks if the attribute is of type relation
+            is_attribute_relation = self.is_attribute_relation(entity_class_valid_attribute_value)
 
-                # writes the entity valid attribute sqlite string value into the query string buffer
-                query_string_buffer.write(entity_valid_attribute_value_sqlite_string_value)
+            # in case the attribute is of type relation
+            if is_attribute_relation:
+                # retrieves the relation attribute value using the current entity class, the relation attribute
+                # resolution system uses the join attribute to find the correct attribute value
+                entity_valid_attribute_value = self.get_relation_attribute_value(entity_valid_attribute_value, entity_class_valid_attribute_value, entity_class, entity_valid_attribute_name)
+
+            # in case is the first field to be processed
+            if is_first:
+                # sets the is flag to false to start adding commas
+                is_first = False
+            # otherwise it is not the first field to be processed
+            else:
+                # adds a comma to the query string buffer
+                query_string_buffer.write(", ")
+
+            # retrieves the entity valid attribute sqlite string value
+            entity_valid_attribute_value_sqlite_string_value = self.get_attribute_sqlite_string_value(entity_valid_attribute_value, entity_class_valid_attribute_data_type)
+
+            # writes the entity valid attribute sqlite string value into the query string buffer
+            query_string_buffer.write(entity_valid_attribute_value_sqlite_string_value)
 
             # increments the index value
             index += 1
@@ -1430,36 +1439,45 @@ class EntityManagerSqliteEngine:
 
         # iterates over all the entity valid attribute names and valid attribute values
         for entity_valid_attribute_name, entity_valid_attribute_value in zip(entity_valid_attribute_names, entity_valid_attribute_values):
-            # in case the entity valid attribute value is not lazy loaded
-            if not entity_valid_attribute_value == "%lazy-loaded%":
-                # retrieves the current entity class valid attribute value
-                entity_class_valid_attribute_value = entity_class_valid_attribute_values[index]
+            # in case the entity valid attribute value is lazy loaded
+            if entity_valid_attribute_value == "%lazy-loaded%":
+                # increments the index value
+                index += 1
 
-                # retrieves the entity class valid attribute value data type
-                entity_class_valid_attribute_data_type = self.get_attribute_data_type(entity_class_valid_attribute_value, entity_class, entity_valid_attribute_name)
+                # continues the loop
+                continue
 
-                # in case the attribute is of type relation
-                if self.is_attribute_relation(entity_class_valid_attribute_value):
-                    # retrieves the relation attribute value using the current entity class, the relation attribute
-                    # resolution system uses the join attribute to find the correct attribute value
-                    entity_valid_attribute_value = self.get_relation_attribute_value(entity_valid_attribute_value, entity_class_valid_attribute_value, entity_class, entity_valid_attribute_name)
+            # retrieves the current entity class valid attribute value
+            entity_class_valid_attribute_value = entity_class_valid_attribute_values[index]
 
-                # in case is the first field to be processed
-                if is_first:
-                    # sets the is flag to false to start adding commas
-                    is_first = False
-                else:
-                    # adds a comma to the query string buffer
-                    query_string_buffer.write(", ")
+            # retrieves the entity class valid attribute value data type
+            entity_class_valid_attribute_data_type = self.get_attribute_data_type(entity_class_valid_attribute_value, entity_class, entity_valid_attribute_name)
 
-                # extends the query string buffer
-                query_string_buffer.write(entity_valid_attribute_name + " = ")
+            # checks if the attribute is of type relation
+            is_attribute_relation = self.is_attribute_relation(entity_class_valid_attribute_value)
 
-                # retrieves the entity valid attribute value sqlite string value
-                entity_valid_attribute_value_sqlite_string_value = self.get_attribute_sqlite_string_value(entity_valid_attribute_value, entity_class_valid_attribute_data_type)
+            # in case the attribute is of type relation
+            if is_attribute_relation:
+                # retrieves the relation attribute value using the current entity class, the relation attribute
+                # resolution system uses the join attribute to find the correct attribute value
+                entity_valid_attribute_value = self.get_relation_attribute_value(entity_valid_attribute_value, entity_class_valid_attribute_value, entity_class, entity_valid_attribute_name)
 
-                # writes the entity valid attribute value sqlite string value
-                query_string_buffer.write(entity_valid_attribute_value_sqlite_string_value)
+            # in case is the first field to be processed
+            if is_first:
+                # sets the is flag to false to start adding commas
+                is_first = False
+            else:
+                # adds a comma to the query string buffer
+                query_string_buffer.write(", ")
+
+            # extends the query string buffer
+            query_string_buffer.write(entity_valid_attribute_name + " = ")
+
+            # retrieves the entity valid attribute value sqlite string value
+            entity_valid_attribute_value_sqlite_string_value = self.get_attribute_sqlite_string_value(entity_valid_attribute_value, entity_class_valid_attribute_data_type)
+
+            # writes the entity valid attribute value sqlite string value
+            query_string_buffer.write(entity_valid_attribute_value_sqlite_string_value)
 
             # increments the index value
             index += 1
