@@ -3493,6 +3493,7 @@ class EntityManagerSqliteEngine:
 class BufferedEntities:
     """
     The buffered entities class.
+    This class controls a buffer of entities for lazy retrieval.
     """
 
     buffered_entities_map = {}
@@ -3500,7 +3501,7 @@ class BufferedEntities:
 
     def __init__(self):
         """
-        Constructor of the class
+        Constructor of the class.
         """
 
         self.buffered_entities_map = {}
@@ -3518,11 +3519,17 @@ class BufferedEntities:
         # retrieves the entity class
         entity_class = entity.__class__
 
+        # in case the entity class does not exist in the
+        # buffered entities map
         if not entity_class in self.buffered_entities_map:
+            # sets the entity class in the buffered entities
+            # map as a new empty map
             self.buffered_entities_map[entity_class] = {}
 
+        # retrieves the entity class map from the buffered entities map
         buffered_entities_map_entity_class_map = self.buffered_entities_map[entity_class]
 
+        # sets the entity in the entity class map for the id value
         buffered_entities_map_entity_class_map[id_value] = entity
 
     def get_entity(self, entity_class, id_value):
@@ -3533,6 +3540,8 @@ class BufferedEntities:
         @param entity_class: The entity class of the entity to retrieve.
         @type id_value: Object
         @param id_value: The id of the entity to retrieve.
+        @rtype: Entity
+        @return: The retrieved entity or none in case it's not found.
         """
 
         # retrieves the entity sub classes
@@ -3544,24 +3553,44 @@ class BufferedEntities:
         # retrieves the valid entity sub classes
         valid_entity_sub_classes = [value for value in entity_sub_classes if value in self.buffered_entities_map]
 
+        # in case no valid entity sub classes are found
         if not valid_entity_sub_classes:
+            # returns none (invalid)
             return None
 
         # iterates over all the valid entity sub classes
+        # trying to find the entity for the id value
         for valid_entity_sub_class in valid_entity_sub_classes:
+            # retrieves the entity class map for the "current" entity sub class
             buffered_entities_map_entity_class_map = self.buffered_entities_map[valid_entity_sub_class]
 
-            # in case the id value exists in the buffered entities map entity class map
-            if id_value in buffered_entities_map_entity_class_map:
-                # retrieves the entity from the buffered entities map entity class map
-                entity = buffered_entities_map_entity_class_map[id_value]
+            # in case the id value does not exists in the buffered
+            # entities map entity class map
+            if not id_value in buffered_entities_map_entity_class_map:
+                # continues the loop
+                continue
 
-                # returns the buffered entity
-                return entity
+            # retrieves the entity from the buffered entities map entity class map
+            entity = buffered_entities_map_entity_class_map[id_value]
 
+            # returns the buffered entity
+            return entity
+
+        # returns none (invalid)
         return None
 
     def get_entity_sub_classes(self, entity_class):
+        """
+        Retrieves the entity sub classes from the given
+        entity class.
+
+        @type entity_class: Class
+        @param entity_class: The entity class to retrieve
+        the sub classes.
+        @rtype: List
+        @return: The sub classes for the given entity class.
+        """
+
         # retrieves the entity class direct sub classes
         entity_sub_classes = entity_class.__subclasses__()
 
