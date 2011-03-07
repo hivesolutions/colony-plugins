@@ -120,12 +120,6 @@ RELATION_TYPE_FIELD = "relation_type"
 TARGET_ENTITY_FIELD = "target_entity"
 """ The target entity field """
 
-TARGET_ENTITY_NAME_FIELD = "target_entity_name"
-""" The target entity name field """
-
-JOIN_ATTRIBUTE_FIELD = "join_attribute"
-""" The join attribute field """
-
 JOIN_ATTRIBUTE_NAME_FIELD = "join_attribute_name"
 """ The join attribute name field """
 
@@ -1088,12 +1082,15 @@ class EntityManagerSqliteEngine:
 
                 # in case the attribute is of type relation
                 if self.is_attribute_relation(entity_class_valid_attribute_value):
+                    # retrieves the relation attribute value using the current entity class, the relation attribute
+                    # resolution system uses the join attribute to find the correct attribute value
                     entity_valid_attribute_value = self.get_relation_attribute_value(entity_valid_attribute_value, entity_class_valid_attribute_value, entity_class, entity_valid_attribute_name)
 
                 # in case is the first field to be processed
                 if is_first:
                     # sets the is flag to false to start adding commas
                     is_first = False
+                # otherwise it is not the first field to be processed
                 else:
                     # adds a comma to the query string buffer
                     query_string_buffer.write(", ")
@@ -1237,11 +1234,11 @@ class EntityManagerSqliteEngine:
                     # retrieves the target entity field
                     target_entity_field = relation_attributes[TARGET_ENTITY_FIELD]
 
-                    # retrieves the target entity name field
-                    target_entity_name_field = relation_attributes[TARGET_ENTITY_NAME_FIELD]
-
                     # retrieves the join attribute name field
                     join_attribute_name_field = relation_attributes[JOIN_ATTRIBUTE_NAME_FIELD]
+
+                    # retrieves the target entity name
+                    target_entity_name_field = target_entity_field.__name__
 
                     # retrieves the id attribute name
                     id_attribute_name = self.get_entity_class_id_attribute_name(entity_class)
@@ -1304,12 +1301,6 @@ class EntityManagerSqliteEngine:
                     # retrieves the target entity field
                     target_entity_field = relation_attributes[TARGET_ENTITY_FIELD]
 
-                    # retrieves the target entity name field
-                    target_entity_name_field = relation_attributes[TARGET_ENTITY_NAME_FIELD]
-
-                    # retrieves the join attribute field
-                    join_attribute_field = relation_attributes[JOIN_ATTRIBUTE_FIELD]
-
                     # retrieves the join attribute name field
                     join_attribute_name_field = relation_attributes[JOIN_ATTRIBUTE_NAME_FIELD]
 
@@ -1318,6 +1309,12 @@ class EntityManagerSqliteEngine:
 
                     # retrieves the attribute column name field
                     attribute_column_name_field = relation_attributes[ATTRIBUTE_COLUMN_NAME_FIELD]
+
+                    # retrieves the target entity name
+                    target_entity_name_field = target_entity_field.__name__
+
+                    # retrieves the join attribute
+                    join_attribute_field = getattr(target_entity_field, join_attribute_name_field)
 
                     # retrieves the target attribute value data type
                     target_attribute_value_data_type = self.get_attribute_data_type(join_attribute_field, target_entity_field, join_attribute_name_field)
@@ -1443,6 +1440,8 @@ class EntityManagerSqliteEngine:
 
                 # in case the attribute is of type relation
                 if self.is_attribute_relation(entity_class_valid_attribute_value):
+                    # retrieves the relation attribute value using the current entity class, the relation attribute
+                    # resolution system uses the join attribute to find the correct attribute value
                     entity_valid_attribute_value = self.get_relation_attribute_value(entity_valid_attribute_value, entity_class_valid_attribute_value, entity_class, entity_valid_attribute_name)
 
                 # in case is the first field to be processed
@@ -1578,11 +1577,14 @@ class EntityManagerSqliteEngine:
                 relation_type_field = relation_attributes[RELATION_TYPE_FIELD]
 
                 if relation_type_field == ONE_TO_ONE_RELATION or relation_type_field == ONE_TO_MANY_RELATION:
-                    # retrieves the target entity name field
-                    target_entity_name_field = relation_attributes[TARGET_ENTITY_NAME_FIELD]
+                    # retrieves the target entity
+                    target_entity_field = relation_attributes[TARGET_ENTITY_FIELD]
 
                     # retrieves the join attribute name field
                     join_attribute_name_field = relation_attributes[JOIN_ATTRIBUTE_NAME_FIELD]
+
+                    # retrieves the target entity name
+                    target_entity_name_field = target_entity_field.__name__
 
                     # creates the initial query string value
                     query_string_value = "update " + target_entity_name_field + " set " + join_attribute_name_field + " = null where " + join_attribute_name_field + " = "
@@ -2968,6 +2970,7 @@ class EntityManagerSqliteEngine:
     def get_relation_attribute_value(self, attribute_value, class_attribute_value, entity_class, relation_attribute_name):
         """
         Retrieves the value of a relation attribute value sent for the given class attribute values.
+        The relation attribute value must be set prior to retrieval.
 
         @type attribute_value: Object
         @param attriobute_value: The relation attribute value.
@@ -2989,38 +2992,42 @@ class EntityManagerSqliteEngine:
 
         # in case the value of the attribute is none returns immediately
         if attribute_value == None:
+            # return immediately none (unset)
             return None
 
         # retrieves the class attribute value data type
         class_attribute_value_data_type = class_attribute_value[DATA_TYPE_FIELD]
 
-        # in case the class attribute value data type is of type relation
-        if class_attribute_value_data_type == RELATION_DATA_TYPE:
-            # retrieves the relation attributes
-            relation_attributes = self.get_relation_attributes(entity_class, relation_attribute_name)
+        # in case the class attribute value data type is not of type relation
+        if not class_attribute_value_data_type == RELATION_DATA_TYPE:
+            # return immediately none (unset)
+            return None
 
-            # retrieves the join attribute name field
-            join_attribute_name_field = relation_attributes[JOIN_ATTRIBUTE_NAME_FIELD]
+        # retrieves the relation attributes
+        relation_attributes = self.get_relation_attributes(entity_class, relation_attribute_name)
 
-            # retrieves the optional field
-            optional_field = relation_attributes.get(OPTIONAL_FIELD, DEFAULT_OPTIONAL_FIELD_VALUE)
+        # retrieves the join attribute name field
+        join_attribute_name_field = relation_attributes[JOIN_ATTRIBUTE_NAME_FIELD]
 
-            # in case the relation attribute value is of type entity class
-            if not isinstance(attribute_value, object_entity_class):
-                # in case the value is optional
-                if optional_field:
-                    # returns None
-                    return None
-                # otherwise
-                else:
-                    # raises the sqlite engine missing mandatory value
-                    raise entity_manager_sqlite_engine_exceptions.SqliteEngineMissingMandatoryValue("the relational value: " + relation_attribute_name + " was not found in entity: " + entity_class.__name__)
+        # retrieves the optional field
+        optional_field = relation_attributes.get(OPTIONAL_FIELD, DEFAULT_OPTIONAL_FIELD_VALUE)
 
-            # retrieves the relation attribute value
-            relation_attribute_value = getattr(attribute_value, join_attribute_name_field)
+        # in case the relation attribute value is of type entity class
+        if not isinstance(attribute_value, object_entity_class):
+            # in case the value is optional
+            if optional_field:
+                # returns none (unset)
+                return None
+            # otherwise
+            else:
+                # raises the sqlite engine missing mandatory value
+                raise entity_manager_sqlite_engine_exceptions.SqliteEngineMissingMandatoryValue("the relational value: " + relation_attribute_name + " was not found in entity: " + entity_class.__name__)
 
-            # returns the relation attribute value
-            return relation_attribute_value
+        # retrieves the relation attribute value
+        relation_attribute_value = getattr(attribute_value, join_attribute_name_field)
+
+        # returns the relation attribute value
+        return relation_attribute_value
 
     def get_attribute_data_type(self, attribute_value, entity_class, relation_attribute_name):
         """
@@ -3044,13 +3051,20 @@ class EntityManagerSqliteEngine:
             # retrieves the relation attributes
             relation_attributes = self.get_relation_attributes(entity_class, relation_attribute_name)
 
+            # retrieves the entity class target entity
+            entity_class_target_entity = relation_attributes[TARGET_ENTITY_FIELD]
+
+            # retrieves the entity class join attribute name
+            entity_class_join_attribute_name = relation_attributes[JOIN_ATTRIBUTE_NAME_FIELD]
+
             # retrieves the entity class join attribute
-            entity_class_join_attribute = relation_attributes[JOIN_ATTRIBUTE_FIELD]
+            entity_class_join_attribute = getattr(entity_class_target_entity, entity_class_join_attribute_name)
 
             # retrieves the data type for the entity class join attribute
             entity_class_join_attribute_data_type = entity_class_join_attribute[DATA_TYPE_FIELD]
 
             return entity_class_join_attribute_data_type
+        # otherwise it must be a "simple" attribute
         else:
             return attribute_value_data_type
 
