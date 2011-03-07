@@ -2992,7 +2992,7 @@ class EntityManagerSqliteEngine:
 
         # in case the value of the attribute is none returns immediately
         if attribute_value == None:
-            # return immediately none (unset)
+            # returns immediately none (unset)
             return None
 
         # retrieves the class attribute value data type
@@ -3000,11 +3000,20 @@ class EntityManagerSqliteEngine:
 
         # in case the class attribute value data type is not of type relation
         if not class_attribute_value_data_type == RELATION_DATA_TYPE:
-            # return immediately none (unset)
+            # returns immediately none (unset)
             return None
 
         # retrieves the relation attributes
         relation_attributes = self.get_relation_attributes(entity_class, relation_attribute_name)
+
+        # retrieves the mapped by field
+        mapped_by_field = relation_attributes.get(MAPPED_BY_FIELD, entity_class)
+
+        # in case the relation attribute is not mapped by the current entity class
+        # there is no need to return any value (because there is no need to persist it)
+        if not mapped_by_field == entity_class:
+            # returns immediately none (unset)
+            return None
 
         # retrieves the join attribute name field
         join_attribute_name_field = relation_attributes[JOIN_ATTRIBUTE_NAME_FIELD]
