@@ -948,7 +948,7 @@ class EntityManagerSqliteEngine:
             # in case the next id type is string
             if next_id_type == types.StringType:
                 # writes the next
-                query_string_buffer.write("\"" + next_id + "\"")
+                query_string_buffer.write("\"" + next_id + "\")")
             # otherwise it must be a string convertible value
             # and a numeric one
             else:
@@ -956,7 +956,7 @@ class EntityManagerSqliteEngine:
                 next_id_string = str(next_id)
 
                 # writes the next id in string mode
-                query_string_buffer.write(next_id_string)
+                query_string_buffer.write(next_id_string + ")")
 
         # retrieves the query string value
         query_string_value = query_string_buffer.get_value()
