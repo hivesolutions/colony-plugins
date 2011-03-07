@@ -683,17 +683,18 @@ class EntityManagerSqliteEngine:
         # creates the cursor for the given connection
         cursor = database_connection.cursor()
 
-        # retrieves the entity class name
-        entity_class_name = entity_class.__name__
+        try:
+            # retrieves the entity class name
+            entity_class_name = entity_class.__name__
 
-        # creates the query string value
-        query_string_value = "drop table " + entity_class_name
+            # creates the query string value
+            query_string_value = "drop table " + entity_class_name
 
-        # executes the query dropping the table
-        self.execute_query(cursor, query_string_value)
-
-        # closes the cursor
-        cursor.close()
+            # executes the query dropping the table
+            self.execute_query(cursor, query_string_value)
+        finally:
+            # closes the cursor
+            cursor.close()
 
     def update_entity_definition(self, connection, entity_class):
         """
@@ -814,17 +815,18 @@ class EntityManagerSqliteEngine:
         # creates the cursor for the given connection
         cursor = database_connection.cursor()
 
-        # creates the query for the existence checking in generator table
-        query_string_value = "pragma table_info(generator)"
+        try:
+            # creates the query for the existence checking in generator table
+            query_string_value = "pragma table_info(generator)"
 
-        # executes the query creating the table
-        self.execute_query(cursor, query_string_value)
+            # executes the query creating the table
+            self.execute_query(cursor, query_string_value)
 
-        # selects the values from the cursor
-        values_list = [value for value in cursor]
-
-        # closes the cursor
-        cursor.close()
+            # selects the values from the cursor
+            values_list = [value for value in cursor]
+        finally:
+            # closes the cursor
+            cursor.close()
 
         # retrieves the exists table generator result
         exists_table_generator = values_list and True or False
@@ -839,17 +841,18 @@ class EntityManagerSqliteEngine:
         # creates the cursor for the given connection
         cursor = database_connection.cursor()
 
-        # retrieves the column name from the parameters
-        column_name = parameters["column_name"]
+        try:
+            # retrieves the column name from the parameters
+            column_name = parameters["column_name"]
 
-        # creates the query for the database lock
-        query_string_value = "update " + table_name + " set " + column_name + " = " + column_name + " where 0 = 1"
+            # creates the query for the database lock
+            query_string_value = "update " + table_name + " set " + column_name + " = " + column_name + " where 0 = 1"
 
-        # executes the query creating the table
-        self.execute_query(cursor, query_string_value)
-
-        # closes the cursor
-        cursor.close()
+            # executes the query creating the table
+            self.execute_query(cursor, query_string_value)
+        finally:
+            # closes the cursor
+            cursor.close()
 
     def retrieve_next_name_id(self, connection, name):
         # retrieves the database connection from the connection object
@@ -858,30 +861,31 @@ class EntityManagerSqliteEngine:
         # creates the cursor for the given connection
         cursor = database_connection.cursor()
 
-        # creates the query for the database lock
-        query_string_value = "update generator set next_id = next_id where 0 = 1"
+        try:
+            # creates the query for the database lock
+            query_string_value = "update generator set next_id = next_id where 0 = 1"
 
-        # executes the query creating the table
-        self.execute_query(cursor, query_string_value)
+            # executes the query creating the table
+            self.execute_query(cursor, query_string_value)
 
-        # creates the query for the selection of the generator table
-        query_string_value = "select name, next_id from generator where name = \"" + name + "\""
+            # creates the query for the selection of the generator table
+            query_string_value = "select name, next_id from generator where name = \"" + name + "\""
 
-        # executes the query selecting the table
-        self.execute_query(cursor, query_string_value)
+            # executes the query selecting the table
+            self.execute_query(cursor, query_string_value)
 
-        # selects the values from the cursor
-        values_list = [value for value in cursor]
+            # selects the values from the cursor
+            values_list = [value for value in cursor]
 
-        if not values_list:
+            if not values_list:
+                # closes the cursor
+                cursor.close()
+
+                # returns none, no such value
+                return None
+        finally:
             # closes the cursor
             cursor.close()
-
-            # returns none, no such value
-            return None
-
-        # closes the cursor
-        cursor.close()
 
         return values_list[0][1]
 
@@ -1677,6 +1681,7 @@ class EntityManagerSqliteEngine:
 
             # in case the entity is already buffered
             if buffered_entity:
+                # unsets the flag
                 flag = False
 
                 for key in eager_loading_relations:
