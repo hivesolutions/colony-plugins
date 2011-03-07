@@ -447,16 +447,17 @@ class EntityManager:
         # retrieves the connection object
         connection = self.get_connection()
 
-        # in case the creation of the transaction is successfull
-        if self.entity_manager_engine_plugin.create_transaction(connection, transaction_name):
-            # retrieves the transaction stack
-            transaction_stack = self.get_transaction_stack()
+        # creates the transaction in the engine plugin
+        self.entity_manager_engine_plugin.create_transaction(connection, transaction_name)
 
-            # adds the transaction name to the transaction stack
-            transaction_stack.append(transaction_name)
+        # retrieves the transaction stack
+        transaction_stack = self.get_transaction_stack()
 
-            # returns true
-            return True
+        # adds the transaction name to the transaction stack
+        transaction_stack.append(transaction_name)
+
+        # returns true
+        return True
 
     def commit_transaction(self, transaction_name = None):
         """
@@ -480,13 +481,14 @@ class EntityManager:
         # retrieves the connection object
         connection = self.get_connection()
 
-        # in case the commit transaction is successful
-        if self.entity_manager_engine_plugin.commit_transaction(connection, transaction_name):
-            # pops the current element from the transaction stack
-            transaction_stack.pop()
+        # commits the transaction in the engine plugin
+        self.entity_manager_engine_plugin.commit_transaction(connection, transaction_name)
 
-            # returns true
-            return True
+        # pops the current element from the transaction stack
+        transaction_stack.pop()
+
+        # returns true
+        return True
 
     def rollback_transaction(self, transaction_name = None):
         """
@@ -510,13 +512,14 @@ class EntityManager:
         # retrieves the connection object
         connection = self.get_connection()
 
-        # in case the rollback is successful
-        if self.entity_manager_engine_plugin.rollback_transaction(connection, transaction_name):
-            # pops the current element from the transaction stack
-            transaction_stack.pop()
+        # "rollsback" the transaction in the engine plugin
+        self.entity_manager_engine_plugin.rollback_transaction(connection, transaction_name)
 
-            # returns true
-            return True
+        # pops the current element from the transaction stack
+        transaction_stack.pop()
+
+        # returns true
+        return True
 
     def commit(self):
         # retrieves the connection object
