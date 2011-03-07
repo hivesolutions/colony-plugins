@@ -130,8 +130,6 @@ class Mailbox(RootEntity):
     def get_relation_attributes_messages():
         return {"relation_type" : "one-to-many",
                 "target_entity" : Message,
-                "target_entity_name" : "Message",
-                "join_attribute" : Message.mailbox,
                 "join_attribute_name" : "mailbox",
                 "mapped_by" : Message,
                 "optional" : True}
@@ -209,8 +207,6 @@ class Message(RootEntity):
     def get_relation_attributes_contents():
         return {"relation_type" : "one-to-one",
                 "target_entity" : MessageContents,
-                "target_entity_name" : "MessageContents",
-                "join_attribute" : MessageContents.message,
                 "join_attribute_name" : "message",
                 "mapped_by" : MessageContents,
                 "optional" : True}
@@ -219,8 +215,6 @@ class Message(RootEntity):
     def get_relation_attributes_mailbox():
         return {"relation_type" : "many-to-one",
                 "target_entity" : Mailbox,
-                "target_entity_name" : "Mailbox",
-                "join_attribute" : Mailbox.object_id,
                 "join_attribute_name" : "object_id",
                 "optional" : True}
 
@@ -283,7 +277,5 @@ class MessageContents(RootEntity):
     def get_relation_attributes_message():
         return {"relation_type" : "one-to-one",
                 "target_entity" : Message,
-                "target_entity_name" : "Message",
-                "join_attribute" : Message.object_id,
                 "join_attribute_name" : "object_id",
                 "optional" : True}
