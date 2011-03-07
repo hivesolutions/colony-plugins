@@ -2793,14 +2793,21 @@ class EntityManagerSqliteEngine:
         @return: The result of the attribute relation test.
         """
 
+        # in case the attribute value is not set
         if attribute_value == None:
+            # returns false (not relation)
             return False
 
+        # retrieves the attribute value data type
         attribute_value_data_type = attribute_value[DATA_TYPE_FIELD]
 
+        # in case the attribute is a relation
         if attribute_value_data_type == RELATION_DATA_TYPE:
+            # returns true (relation)
             return True
+        # otherwise it is not a relation
         else:
+            # returns false (not relation)
             return False
 
     def is_attribute_name_relation(self, attribute_name, entity_class):
