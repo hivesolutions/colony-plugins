@@ -918,5 +918,4 @@ class Connection:
         del self.connection_parameters[key]
 
     def get_connection_parameter(self, key):
-        if key in self.connection_parameters:
-            return self.connection_parameters[key]
+        return self.connection_parameters.get(key, None)
