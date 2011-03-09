@@ -148,11 +148,35 @@ class DataEntityManager:
             del self.loaded_entity_classes_map[entity_class_name]
 
     def load_entity_bundle(self, entity_bundle):
+        """
+        Loads (registers) the given entity bundle
+        in the entity manager.
+
+        @type entity_bundle: List
+        @param entity_bundle: The entity bundle (list) to be
+        loaded in the entity manager.
+        """
+
+        # iterates over all the entity classes in the
+        # entity bundle (list) to load them
         for entity_class in entity_bundle:
+            # loads the entity class
             self.load_entity_class(entity_class)
 
     def unload_entity_bundle(self, entity_bundle):
+        """
+        Unloads (unregisters) the given entity bundle
+        from the entity manager.
+
+        @type entity_bundle: List
+        @param entity_bundle: The entity bundle (list) to be
+        unloaded from the entity manager.
+        """
+
+        # iterates over all the entity classes in the
+        # entity bundle (list) to unload them
         for entity_class in entity_bundle:
+            # unloads the entity class
             self.unload_entity_class(entity_class)
 
     def load_entity_manager(self, engine_name, properties = {}):
