@@ -129,16 +129,22 @@ CONTEXT_SPECIFIC_CLASS = 0x02
 PRIVATE_CLASS = 0x03
 """ The private class """
 
-LDAP_TYPE_ALIAS_MAP = {UNIVERSAL_CLASS : {},
-                       APPLICATION_CLASS : {0x00 : 0x10,
-                                            0x01 : 0x10,
-                                            0x02 : 0x10,
-                                            0x03 : 0x10,
-                                            0x04 : 0x10,
-                                            0x05 : 0x10},
-                       CONTEXT_SPECIFIC_CLASS : {},
-                       PRIVATE_CLASS: {0x00 : 0x04,
-                                       0x03 : 0x10}}
+LDAP_TYPE_ALIAS_MAP = {
+    UNIVERSAL_CLASS : {},
+    APPLICATION_CLASS : {
+        0x00 : 0x10,
+        0x01 : 0x10,
+        0x02 : 0x10,
+        0x03 : 0x10,
+        0x04 : 0x10,
+        0x05 : 0x10
+    },
+    CONTEXT_SPECIFIC_CLASS : {},
+    PRIVATE_CLASS: {
+        0x00 : 0x04,
+        0x03 : 0x10
+    }
+}
 """ The map of ldap type alias """
 
 class MainClientLdap:
@@ -539,9 +545,11 @@ class LdapClient:
         """
 
         # creates the default parameters
-        default_parameters = {"client_plugin" : self.main_client_ldap.main_client_ldap_plugin,
-                              "request_timeout" : REQUEST_TIMEOUT,
-                              "response_timeout" : RESPONSE_TIMEOUT}
+        default_parameters = {
+            "client_plugin" : self.main_client_ldap.main_client_ldap_plugin,
+            "request_timeout" : REQUEST_TIMEOUT,
+            "response_timeout" : RESPONSE_TIMEOUT
+        }
 
         # creates the parameters map, from the default parameters
         parameters = colony.libs.map_util.map_extend(parameters, default_parameters, False)
@@ -614,7 +622,10 @@ class LdapRequest:
         """
 
         # creates the message id integer value
-        message_id = {TYPE_VALUE: INTEGER_TYPE, VALUE_VALUE : self.message_id}
+        message_id = {
+            TYPE_VALUE: INTEGER_TYPE,
+            VALUE_VALUE : self.message_id
+        }
 
         # retrieves the protocol operation value
         protocol_operation = self.protocol_operation.get_value()
@@ -623,7 +634,10 @@ class LdapRequest:
         ldap_message_contents = [message_id, protocol_operation]
 
         # creates the ldap message sequence value
-        ldap_message = {TYPE_VALUE : SEQUENCE_TYPE, VALUE_VALUE : ldap_message_contents}
+        ldap_message = {
+            TYPE_VALUE : SEQUENCE_TYPE,
+            VALUE_VALUE : ldap_message_contents
+        }
 
         # packs the ldap message
         packed_ldap_message = ber_structure.pack(ldap_message)

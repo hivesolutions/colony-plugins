@@ -112,16 +112,29 @@ CONTEXT_SPECIFIC_CLASS = 0x02
 PRIVATE_CLASS = 0x03
 """ The private class """
 
-LDAP_REQUEST_TYPE_MAP = {BIND_VALUE : 0x00, UNBIND_VALUE : 0x02,
-                         SEARCH_VALUE : 0x03, "modify" : 0x06,
-                         "add" : 0x08, "delete" : 0x0a,
-                         "modify_dn" : 0x00, "compare" : 0x00,
-                         "abandon" : 0x00, "extended" : 0x00}
+LDAP_REQUEST_TYPE_MAP = {
+    BIND_VALUE : 0x00,
+    UNBIND_VALUE : 0x02,
+    SEARCH_VALUE : 0x03,
+    "modify" : 0x06,
+    "add" : 0x08,
+    "delete" : 0x0a,
+    "modify_dn" : 0x00,
+    "compare" : 0x00,
+    "abandon" : 0x00,
+    "extended" : 0x00
+}
 """ The map of ldap request types """
 
-LDAP_RESPONSE_TYPE_MAP = {BIND_VALUE : 0x01, SEARCH_RESULT_ENTRY_VALUE : 0x04,
-                          "search_result_reference" : 0x13, SEARCH_RESULT_DONE_VALUE : 0x05,
-                          "modify" : 0x07, "add" : 0x09, "delete" : 0x0b}
+LDAP_RESPONSE_TYPE_MAP = {
+    BIND_VALUE : 0x01,
+    SEARCH_RESULT_ENTRY_VALUE : 0x04,
+    "search_result_reference" : 0x13,
+    SEARCH_RESULT_DONE_VALUE : 0x05,
+    "modify" : 0x07,
+    "add" : 0x09,
+    "delete" : 0x0b
+}
 """ The map of ldap response types """
 
 class ProtocolOperation:
@@ -324,10 +337,16 @@ class BindRequest(ProtocolOperation):
         bind_request_type = LDAP_REQUEST_TYPE_MAP[BIND_VALUE]
 
         # creates the version integer value
-        version = {TYPE_VALUE: INTEGER_TYPE, VALUE_VALUE : self.version}
+        version = {
+            TYPE_VALUE: INTEGER_TYPE,
+            VALUE_VALUE : self.version
+        }
 
         # creates the name octet string value
-        name = {TYPE_VALUE: OCTET_STRING_TYPE, VALUE_VALUE : self.name}
+        name = {
+            TYPE_VALUE: OCTET_STRING_TYPE,
+            VALUE_VALUE : self.name
+        }
 
         # retrieves the authentication value
         authentication = self.authentication.get_value()
@@ -336,10 +355,15 @@ class BindRequest(ProtocolOperation):
         protocol_operation_contents = [version, name, authentication]
 
         # creates the bind operation sequence value
-        bind_operation = {TYPE_VALUE: SEQUENCE_TYPE, VALUE_VALUE : protocol_operation_contents,
-                          EXTRA_TYPE_VALUE : {TYPE_NUMBER_VALUE : bind_request_type,
-                                              TYPE_CONSTRUCTED_VALUE : CONSTRUCTED_MODE,
-                                              TYPE_CLASS_VALUE : APPLICATION_CLASS}}
+        bind_operation = {
+            TYPE_VALUE: SEQUENCE_TYPE,
+            VALUE_VALUE : protocol_operation_contents,
+            EXTRA_TYPE_VALUE : {
+                TYPE_NUMBER_VALUE : bind_request_type,
+                TYPE_CONSTRUCTED_VALUE : CONSTRUCTED_MODE,
+                TYPE_CLASS_VALUE : APPLICATION_CLASS
+            }
+        }
 
         # returns the bind operation (value)
         return bind_operation
@@ -357,9 +381,14 @@ class UnbindRequest(ProtocolOperation):
         protocol_operation_contents = []
 
         # creates the unbind operation sequence value
-        unbind_operation = {TYPE_VALUE: SEQUENCE_TYPE, VALUE_VALUE : protocol_operation_contents,
-                            EXTRA_TYPE_VALUE : {TYPE_NUMBER_VALUE : unbind_request_type,
-                                                TYPE_CLASS_VALUE : APPLICATION_CLASS}}
+        unbind_operation = {
+            TYPE_VALUE: SEQUENCE_TYPE,
+            VALUE_VALUE : protocol_operation_contents,
+            EXTRA_TYPE_VALUE : {
+                TYPE_NUMBER_VALUE : unbind_request_type,
+                TYPE_CLASS_VALUE : APPLICATION_CLASS
+            }
+        }
 
         # returns the unbind operation (value)
         return unbind_operation
@@ -396,22 +425,40 @@ class SearchRequest(ProtocolOperation):
         search_request_type = LDAP_REQUEST_TYPE_MAP[SEARCH_VALUE]
 
         # creates the base object octet string value
-        base_object = {TYPE_VALUE: OCTET_STRING_TYPE, VALUE_VALUE : self.base_object}
+        base_object = {
+            TYPE_VALUE: OCTET_STRING_TYPE,
+            VALUE_VALUE : self.base_object
+        }
 
         # creates the scope enumerated value
-        scope = {TYPE_VALUE: ENUMERATED_TYPE, VALUE_VALUE : self.scope}
+        scope = {
+            TYPE_VALUE: ENUMERATED_TYPE,
+            VALUE_VALUE : self.scope
+        }
 
         # creates the dref aliases enumerated value
-        dref_aliases = {TYPE_VALUE: ENUMERATED_TYPE, VALUE_VALUE : self.deref_aliases}
+        dref_aliases = {
+            TYPE_VALUE: ENUMERATED_TYPE,
+            VALUE_VALUE : self.deref_aliases
+        }
 
         # creates the size limit integer value
-        size_limit = {TYPE_VALUE: INTEGER_TYPE, VALUE_VALUE : self.size_limit}
+        size_limit = {
+            TYPE_VALUE: INTEGER_TYPE,
+            VALUE_VALUE : self.size_limit
+        }
 
         # creates the time limit integer value
-        time_limit = {TYPE_VALUE: INTEGER_TYPE, VALUE_VALUE : self.time_limit}
+        time_limit = {
+            TYPE_VALUE: INTEGER_TYPE,
+            VALUE_VALUE : self.time_limit
+        }
 
         # creates the types only boolean value
-        types_only = {TYPE_VALUE: BOOLEAN_TYPE, VALUE_VALUE : self.types_only}
+        types_only = {
+            TYPE_VALUE: BOOLEAN_TYPE,
+            VALUE_VALUE : self.types_only
+        }
 
         # retrieves the filter value
         filter = self.filter.get_value()
@@ -423,10 +470,15 @@ class SearchRequest(ProtocolOperation):
         protocol_operation_contents = [base_object, scope, dref_aliases, size_limit, time_limit, types_only, filter, attributes]
 
         # creates the search operation sequence value
-        search_operation = {TYPE_VALUE: SEQUENCE_TYPE, VALUE_VALUE : protocol_operation_contents,
-                            EXTRA_TYPE_VALUE : {TYPE_NUMBER_VALUE : search_request_type,
-                                                TYPE_CONSTRUCTED_VALUE : CONSTRUCTED_MODE,
-                                                TYPE_CLASS_VALUE : APPLICATION_CLASS}}
+        search_operation = {
+            TYPE_VALUE: SEQUENCE_TYPE,
+            VALUE_VALUE : protocol_operation_contents,
+            EXTRA_TYPE_VALUE : {
+                TYPE_NUMBER_VALUE : search_request_type,
+                TYPE_CONSTRUCTED_VALUE : CONSTRUCTED_MODE,
+                TYPE_CLASS_VALUE : APPLICATION_CLASS
+            }
+        }
 
         # returns the search operation (value)
         return search_operation
@@ -457,10 +509,14 @@ class AndFilter(Filter):
             filters.append(filter)
 
         # creates the and filter set value
-        and_filter = {TYPE_VALUE: SET_TYPE, VALUE_VALUE : filters,
-                      EXTRA_TYPE_VALUE : {TYPE_NUMBER_VALUE : 0,
-                                          TYPE_CONSTRUCTED_VALUE : CONSTRUCTED_MODE,
-                                          TYPE_CLASS_VALUE : CONTEXT_SPECIFIC_CLASS}}
+        and_filter = {
+            TYPE_VALUE: SET_TYPE, VALUE_VALUE : filters,
+            EXTRA_TYPE_VALUE : {
+                TYPE_NUMBER_VALUE : 0,
+                TYPE_CONSTRUCTED_VALUE : CONSTRUCTED_MODE,
+                TYPE_CLASS_VALUE : CONTEXT_SPECIFIC_CLASS
+            }
+        }
 
         # returns the and filter (value)
         return and_filter
@@ -477,9 +533,11 @@ class EqualityMatchFilter(Filter):
         attribute_value_assertion = self.attribute_value_assertion.get_value()
 
         # sets the extra type in the attribute value assertion (value)
-        attribute_value_assertion[EXTRA_TYPE_VALUE] = {TYPE_NUMBER_VALUE : 3,
-                                                       TYPE_CONSTRUCTED_VALUE : CONSTRUCTED_MODE,
-                                                       TYPE_CLASS_VALUE : CONTEXT_SPECIFIC_CLASS}
+        attribute_value_assertion[EXTRA_TYPE_VALUE] = {
+            TYPE_NUMBER_VALUE : 3,
+            TYPE_CONSTRUCTED_VALUE : CONSTRUCTED_MODE,
+            TYPE_CLASS_VALUE : CONTEXT_SPECIFIC_CLASS
+        }
 
         # returns the attribute value assertion (value)
         return attribute_value_assertion
@@ -494,9 +552,13 @@ class PresentFilter(Filter):
 
     def get_value(self):
         # creates the present filter octet string value
-        present_filter = {TYPE_VALUE: OCTET_STRING_TYPE, VALUE_VALUE : self.present,
-                          EXTRA_TYPE_VALUE : {TYPE_NUMBER_VALUE : 7,
-                                              TYPE_CLASS_VALUE : CONTEXT_SPECIFIC_CLASS}}
+        present_filter = {
+            TYPE_VALUE: OCTET_STRING_TYPE, VALUE_VALUE : self.present,
+            EXTRA_TYPE_VALUE : {
+                TYPE_NUMBER_VALUE : 7,
+                TYPE_CLASS_VALUE : CONTEXT_SPECIFIC_CLASS
+            }
+        }
 
         # returns the present filter (value)
         return present_filter
@@ -513,16 +575,25 @@ class AttributeValueAssertion:
 
     def get_value(self):
         # creates the attribute description octet string value
-        attribute_description = {TYPE_VALUE: OCTET_STRING_TYPE, VALUE_VALUE : self.attribute_description}
+        attribute_description = {
+            TYPE_VALUE: OCTET_STRING_TYPE,
+            VALUE_VALUE : self.attribute_description
+        }
 
         # creates the assertion value octet string value
-        assertion_value = {TYPE_VALUE: OCTET_STRING_TYPE, VALUE_VALUE : self.assertion_value}
+        assertion_value = {
+            TYPE_VALUE: OCTET_STRING_TYPE,
+            VALUE_VALUE : self.assertion_value
+        }
 
         # creates the attribute value assertion contents (list)
         attribute_value_assertion_contents = [attribute_description, assertion_value]
 
         # creates the attribute value assertion sequence value
-        attribute_value_assertion = {TYPE_VALUE: SEQUENCE_TYPE, VALUE_VALUE : attribute_value_assertion_contents}
+        attribute_value_assertion = {
+            TYPE_VALUE: SEQUENCE_TYPE,
+            VALUE_VALUE : attribute_value_assertion_contents
+        }
 
         # returns the attribute value assertion (value)
         return attribute_value_assertion
@@ -542,9 +613,14 @@ class SimpleAuthentication(Authentication):
 
     def get_value(self):
         # creates the authentication octet string value
-        authentication = {TYPE_VALUE: OCTET_STRING_TYPE, VALUE_VALUE : self.value,
-                          EXTRA_TYPE_VALUE : {TYPE_NUMBER_VALUE : 0,
-                                              TYPE_CLASS_VALUE : CONTEXT_SPECIFIC_CLASS}}
+        authentication = {
+            TYPE_VALUE: OCTET_STRING_TYPE,
+            VALUE_VALUE : self.value,
+            EXTRA_TYPE_VALUE : {
+                TYPE_NUMBER_VALUE : 0,
+                TYPE_CLASS_VALUE : CONTEXT_SPECIFIC_CLASS
+            }
+        }
 
         # returns the authentication (value)
         return authentication
@@ -563,21 +639,29 @@ class Attributes:
         # iterates over all the attributes
         for attribute in self.attributes:
             # creates the attribute octet string value
-            attribute = {TYPE_VALUE: OCTET_STRING_TYPE, VALUE_VALUE : attribute}
+            attribute = {
+                TYPE_VALUE: OCTET_STRING_TYPE,
+                VALUE_VALUE : attribute
+            }
 
             # adds the attribute to the list of attributes contents
             attributes_contents.append(attribute)
 
         # creates the attributes sequence value
-        attributes = {TYPE_VALUE: SEQUENCE_TYPE, VALUE_VALUE : attributes_contents}
+        attributes = {
+            TYPE_VALUE: SEQUENCE_TYPE,
+            VALUE_VALUE : attributes_contents
+        }
 
         # returns the attributes
         return attributes
 
-TYPE_CLASS_MAP = {LDAP_REQUEST_TYPE_MAP[BIND_VALUE] : BindRequest,
-                  LDAP_RESPONSE_TYPE_MAP[BIND_VALUE] : BindResponse,
-                  LDAP_REQUEST_TYPE_MAP[UNBIND_VALUE] : UnbindRequest,
-                  LDAP_REQUEST_TYPE_MAP[SEARCH_VALUE] : SearchRequest,
-                  LDAP_RESPONSE_TYPE_MAP[SEARCH_RESULT_ENTRY_VALUE] : SearchResultEntry,
-                  LDAP_RESPONSE_TYPE_MAP[SEARCH_RESULT_DONE_VALUE] : SearchResultDone}
+TYPE_CLASS_MAP = {
+    LDAP_REQUEST_TYPE_MAP[BIND_VALUE] : BindRequest,
+    LDAP_RESPONSE_TYPE_MAP[BIND_VALUE] : BindResponse,
+    LDAP_REQUEST_TYPE_MAP[UNBIND_VALUE] : UnbindRequest,
+    LDAP_REQUEST_TYPE_MAP[SEARCH_VALUE] : SearchRequest,
+    LDAP_RESPONSE_TYPE_MAP[SEARCH_RESULT_ENTRY_VALUE] : SearchResultEntry,
+    LDAP_RESPONSE_TYPE_MAP[SEARCH_RESULT_DONE_VALUE] : SearchResultDone
+}
 """ The map associating a type with a class map """
