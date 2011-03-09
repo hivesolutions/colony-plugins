@@ -67,22 +67,60 @@ MESSAGE_HEADER_SIZE = 12
 NORMAL_REQUEST_VALUE = 0x0100
 """ The normal request value """
 
-TYPES_MAP = {"A" : 0x01, "NS" : 0x02, "MD" : 0x03, "MF" : 0x04, "CNAME" : 0x05,
-             "SOA" : 0x06, "MB" : 0x07, "MG" : 0x08, "MR" : 0x09, "NULL" : 0x0a,
-             "WKS" : 0x0b, "PTR" : 0x0c, "HINFO" : 0x0d, "MINFO" : 0x0e, "MX" : 0x0f,
-             "TXT" : 0x10}
+TYPES_MAP = {
+    "A" : 0x01,
+    "NS" : 0x02,
+    "MD" : 0x03,
+    "MF" : 0x04,
+    "CNAME" : 0x05,
+    "SOA" : 0x06,
+    "MB" : 0x07,
+    "MG" : 0x08,
+    "MR" : 0x09,
+    "NULL" : 0x0a,
+    "WKS" : 0x0b,
+    "PTR" : 0x0c,
+    "HINFO" : 0x0d,
+    "MINFO" : 0x0e,
+    "MX" : 0x0f,
+    "TXT" : 0x10
+}
 """ The map associating the type string with the integer value """
 
-TYPES_REVERSE_MAP = {0x01 : "A", 0x02 : "NS", 0x03 : "MD", 0x04 : "MF", 0x05 : "CNAME",
-                     0x06 : "SOA", 0x07 : "MB", 0x08 : "MG", 0x09 : "MR", 0x0a : "NULL",
-                     0x0b : "WKS", 0x0c : "PTR", 0x0d : "HINFO", 0x0e : "MINFO", 0x0f : "MX",
-                     0x10 : "TXT"}
+TYPES_REVERSE_MAP = {
+    0x01 : "A",
+    0x02 : "NS",
+    0x03 : "MD",
+    0x04 : "MF",
+    0x05 : "CNAME",
+    0x06 : "SOA",
+    0x07 : "MB",
+    0x08 : "MG",
+    0x09 : "MR",
+    0x0a : "NULL",
+    0x0b : "WKS",
+    0x0c : "PTR",
+    0x0d : "HINFO",
+    0x0e : "MINFO",
+    0x0f : "MX",
+    0x10 : "TXT"
+}
 """ The map associating the type integer with the string value """
 
-CLASSES_MAP = {"IN" : 0x01, "CS" : 0x02, "CH" : 0x03, "HS" : 0x04}
+CLASSES_MAP = {
+    "IN" : 0x01,
+    "CS" : 0x02,
+    "CH" : 0x03,
+    "HS" : 0x04
+}
 """ The map associating the class string with the integer value """
 
-CLASSES_REVERSE_MAP = {0x01 : "IN", 0x02 : "CS", 0x03 : "CH", 0x04 : "HS"}
+CLASSES_REVERSE_MAP = {
+    0x01 : "IN",
+    0x02 : "CS",
+    0x03 : "CH",
+    0x04 : "HS"
+}
 """ The map associating the class integer with the string value """
 
 class MainClientDns:
@@ -276,9 +314,11 @@ class DnsClient:
         """
 
         # creates the default parameters
-        default_parameters = {"client_plugin" : self.main_client_dns.main_client_dns_plugin,
-                              "request_timeout" : REQUEST_TIMEOUT,
-                              "response_timeout" : RESPONSE_TIMEOUT}
+        default_parameters = {
+            "client_plugin" : self.main_client_dns.main_client_dns_plugin,
+            "request_timeout" : REQUEST_TIMEOUT,
+            "response_timeout" : RESPONSE_TIMEOUT
+        }
 
         # creates the parameters map, from the default parameters
         parameters = colony.libs.map_util.map_extend(parameters, default_parameters, False)
