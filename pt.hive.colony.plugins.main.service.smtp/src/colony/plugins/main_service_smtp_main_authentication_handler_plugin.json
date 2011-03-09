@@ -22,6 +22,5 @@
             "main_service_smtp_main_authentication_handler/main_authentication_handler/__init__.py",
             "main_service_smtp_main_authentication_handler/main_authentication_handler/main_service_smtp_main_authentication_handler_exceptions.py",
             "main_service_smtp_main_authentication_handler/main_authentication_handler/main_service_smtp_main_authentication_handler_system.py",
-            "main_service_smtp_main_authentication_handler/main_authentication_handler/resources/authentication_configuration.py",
             "main_service_smtp_main_authentication_handler/main_authentication_handler/resources/baf.xml"]
 }
