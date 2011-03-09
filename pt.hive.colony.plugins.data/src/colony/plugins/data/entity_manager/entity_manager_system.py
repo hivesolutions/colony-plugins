@@ -42,10 +42,35 @@ import thread
 
 import entity_manager_exceptions
 
-ATTRIBUTE_EXCLUSION_LIST = ["__class__", "__delattr__", "__dict__", "__doc__", "__getattribute__", "__hash__", "__module__", "__new__", "__reduce__", "__reduce_ex__", "__repr__", "__setattr__", "__str__", "__weakref__", "__format__", "__sizeof__", "__subclasshook__", "mapping_options", "id_attribute_name"]
+ATTRIBUTE_EXCLUSION_LIST = (
+    "__class__",
+    "__delattr__",
+    "__dict__",
+    "__doc__",
+    "__getattribute__",
+    "__hash__",
+    "__module__",
+    "__new__",
+    "__reduce__",
+    "__reduce_ex__",
+    "__repr__",
+    "__setattr__",
+    "__str__",
+    "__weakref__",
+    "__format__",
+    "__sizeof__",
+    "__subclasshook__",
+    "mapping_options",
+    "id_attribute_name"
+)
 """ The attribute exclusion list """
 
-TYPE_EXCLUSION_LIST = [types.MethodType, types.FunctionType, types.ClassType, types.InstanceType]
+TYPE_EXCLUSION_LIST = (
+    types.MethodType,
+    types.FunctionType,
+    types.ClassType,
+    types.InstanceType
+)
 """ The type exclusion list """
 
 RELATION_DATA_TYPE = "relation"
@@ -258,6 +283,8 @@ class EntityManager:
         Closes the current available connection.
         """
 
+        # closes the database connection and the
+        # database system connection
         self.close_database_connection()
         self.close_database_system_connection()
 
@@ -838,14 +865,29 @@ class EntityManager:
         # creates the initial index value
         index = 0
 
+        # iterates over all the entity class valid attribute values
+        # in order to find the correct id value
         for entity_class_valid_attribute_value in entity_class_valid_attribute_values:
-            if ID_FIELD in entity_class_valid_attribute_value:
-                if entity_class_valid_attribute_value[ID_FIELD]:
-                    setattr(entity_class, ID_ATTRIBUTE_NAME_VALUE, entity_class_valid_attribute_names[index])
-                    return entity_class_valid_attribute_names[index]
+            # retrieve the id field value
+            id_field_value = entity_class_valid_attribute_value.get(ID_FIELD, False)
 
-            # increments the index value
-            index += 1
+            # in case the current attribute value is not an id
+            if id_field_value:
+                # increments the index value
+                index += 1
+
+                # continues the loop
+                continue
+
+            # retrieves the id attribute name
+            id_attribute_name = entity_class_valid_attribute_names[index]
+
+            # sets the id attribute name value in the entity class to the id attribute name
+            # this strategy allow the caching of the id value (improving speed)
+            setattr(entity_class, ID_ATTRIBUTE_NAME_VALUE, id_attribute_name)
+
+            # returns the id attribute name
+            return id_attribute_name
 
     def get_entity_classes_list(self):
         """
@@ -899,23 +941,64 @@ class Connection:
     database_system_connection = None
     """ The database system connection object """
 
-    connection_parameters = []
+    connection_parameters = {}
     """ The connection parameters for the connection """
 
     transaction_stack = []
     """ The transaction stack for the connection """
 
     def __init__(self, database_connection, database_system_connection, connection_parameters, transaction_stack):
+        """
+        Constructor of the class.
+
+        @type database_connection: DatabaseConnection
+        @param database_connection: The database connection object.
+        @type database_system_connection: DatabaseConnection
+        @param database_system_connection: The database system connection object.
+        @type connection_parameters: Dictionary
+        @param connection_parameters: The connection parameters for the connection.
+        @type transaction_stack: List
+        @param transaction_stack: The transaction stack for the connection.
+        """
+
         self.database_connection = database_connection
         self.database_system_connection = database_system_connection
         self.connection_parameters = connection_parameters
         self.transaction_stack = transaction_stack
 
     def add_conection_parameter(self, key, value):
+        """
+        Adds a parameter to the connection.
+
+        @type key: String
+        @param key: The name of the parameter to be added.
+        @type value: Object
+        @param value: The parameter value to be added.
+        """
+
         self.connection_parameters[key] = value
 
     def remove_connection_parameter(self, key):
+        """
+        Removes the parameter with the given name
+        from the connection parameters.
+
+        @type key: String
+        @param key: The name of the parameter to be removed.
+        """
+
         del self.connection_parameters[key]
 
     def get_connection_parameter(self, key):
+        """
+        Retrieves the parameter with the given name
+        from the connection.
+
+        @type key: String
+        @param key: The name of the parameter to be
+        retrieved.
+        @rtype: Object
+        @return: The retrieved parameter.
+        """
+
         return self.connection_parameters.get(key, None)
