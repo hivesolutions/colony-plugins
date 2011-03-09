@@ -1017,7 +1017,9 @@ class EntityManagerSqliteEngine:
 
     def save_entities(self, connection, entities):
         # iterates over all the entities
+        # to save them
         for entity in entities:
+            # saves the entity
             self.save_entity(connection, entity)
 
     def create_save_entity_query(self, entity):
@@ -2922,8 +2924,12 @@ class EntityManagerSqliteEngine:
             # in case it's a one to one relation, it will check if
             # the entity is mapped by other relation
             elif relation_type == ONE_TO_ONE_RELATION:
-                # in case the mapped by field is defined in the relation attributes
-                if MAPPED_BY_FIELD in relation_attributes:
+                # retrieves the mapped by value
+                mapped_by = relation_attributes.get(MAPPED_BY_FIELD, entity_class)
+
+                # in case the relation is not mapped by the
+                # the entity class
+                if not mapped_by == entity_class:
                     return True
                 else:
                     return False
