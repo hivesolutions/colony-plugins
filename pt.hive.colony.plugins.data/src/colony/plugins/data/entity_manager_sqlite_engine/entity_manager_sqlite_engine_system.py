@@ -3217,7 +3217,7 @@ class EntityManagerSqliteEngine:
         # in case the entity class does not contain the method
         # for the relation attributes retrieval method
         if not hasattr(entity_class, method_name):
-            # raises the sqlite engine missing relation method
+            # raises the sqlite engine missing relation method exception
             raise entity_manager_sqlite_engine_exceptions.SqliteEngineMissingRelationMethod(method_name)
 
         # retrieves the relation attributes retrieval method
