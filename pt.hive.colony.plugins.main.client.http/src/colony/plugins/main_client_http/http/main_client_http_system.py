@@ -97,18 +97,49 @@ DEFAULT_CHARSET = None
 DEFAULT_URL_CHARSET = "utf-8"
 """ The default url charset """
 
-STATUS_CODE_VALUES = {100 : "Continue", 101 : "Switching Protocols",
-                      200 : "OK", 201 : "Created", 202 : "Accepted", 203 : "Non-Authoritative Information",
-                      204 : "No Content", 205 : "Reset Content", 206 : "Partial Content", 207 : "Multi-Status",
-                      301 : "Moved permanently", 302 : "Found", 303 : "See Other", 304 : "Not Modified",
-                      305 : "Use Proxy", 306 : "(Unused)", 307 : "Temporary Redirect",
-                      400 : "Bad Request", 401 : "Unauthorized", 402 : "Payment Required", 403 : "Forbidden",
-                      404 : "Not Found", 405 : "Method Not Allowed", 406 : "Not Acceptable", 407 : "Proxy Authentication Required",
-                      408 : "Request Timeout", 409 : "Conflict", 410 : "Gone", 411 : "Length Required", 412 : "Precondition Failed",
-                      413 : "Request Entity Too Large", 414 : "Request-URI Too Long", 415 : "Unsupported Media Type",
-                      416 : "Requested Range Not Satisfiable", 417 : "Expectation Failed",
-                      500 : "Internal Server Error", 501 : "Not Implemented", 502 : "Bad Gateway",
-                      503 : "Service Unavailable", 504 : "Gateway Timeout", 505 : "HTTP Version Not Supported"}
+STATUS_CODE_VALUES = {
+    100 : "Continue",
+    101 : "Switching Protocols",
+    200 : "OK",
+    201 : "Created",
+    202 : "Accepted",
+    203 : "Non-Authoritative Information",
+    204 : "No Content",
+    205 : "Reset Content",
+    206 : "Partial Content",
+    207 : "Multi-Status",
+    301 : "Moved permanently",
+    302 : "Found",
+    303 : "See Other",
+    304 : "Not Modified",
+    305 : "Use Proxy",
+    306 : "(Unused)",
+    307 : "Temporary Redirect",
+    400 : "Bad Request",
+    401 : "Unauthorized",
+    402 : "Payment Required",
+    403 : "Forbidden",
+    404 : "Not Found",
+    405 : "Method Not Allowed",
+    406 : "Not Acceptable",
+    407 : "Proxy Authentication Required",
+    408 : "Request Timeout",
+    409 : "Conflict",
+    410 : "Gone",
+    411 : "Length Required",
+    412 : "Precondition Failed",
+    413 : "Request Entity Too Large",
+    414 : "Request-URI Too Long",
+    415 : "Unsupported Media Type",
+    416 : "Requested Range Not Satisfiable",
+    417 : "Expectation Failed",
+    500 : "Internal Server Error",
+    501 : "Not Implemented",
+    502 : "Bad Gateway",
+    503 : "Service Unavailable",
+    504 : "Gateway Timeout",
+    505 : "HTTP Version Not Supported"
+}
 """ The status code values map """
 
 CHUNKED_VALUE = "chunked"
@@ -177,10 +208,16 @@ UNDEFINED_CONTENT_LENGTH_STATUS_CODES = (204, 304)
 REDIRECT_STATUS_CODES = (301, 302, 307)
 """ The status codes for redirection """
 
-PROTOCOL_SOCKET_NAME_MAP = {HTTP_PREFIX_VALUE : "normal", HTTPS_PREFIX_VALUE : "ssl"}
+PROTOCOL_SOCKET_NAME_MAP = {
+    HTTP_PREFIX_VALUE : "normal",
+    HTTPS_PREFIX_VALUE : "ssl"
+}
 """ The map associating the http protocol prefixed with the name of the socket """
 
-PROTOCOL_DEFAULT_PORT_MAP = {HTTP_PREFIX_VALUE : 80, HTTPS_PREFIX_VALUE : 443}
+PROTOCOL_DEFAULT_PORT_MAP = {
+    HTTP_PREFIX_VALUE : 80,
+    HTTPS_PREFIX_VALUE : 443
+}
 """ The map associating the http protocol prefixed with the port number """
 
 DATE_FORMAT = "%a, %d %b %Y %H:%M:%S GMT"
@@ -933,9 +970,11 @@ class HttpClient:
         """
 
         # creates the default parameters
-        default_parameters = {"client_plugin" : self.main_client_http.main_client_http_plugin,
-                              "request_timeout" : REQUEST_TIMEOUT,
-                              "response_timeout" : RESPONSE_TIMEOUT}
+        default_parameters = {
+            "client_plugin" : self.main_client_http.main_client_http_plugin,
+            "request_timeout" : REQUEST_TIMEOUT,
+            "response_timeout" : RESPONSE_TIMEOUT
+        }
 
         # creates the parameters map, from the default parameters
         parameters = colony.libs.map_util.map_extend(parameters, default_parameters, False)
