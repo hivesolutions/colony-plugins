@@ -873,7 +873,7 @@ class EntityManager:
             id_field_value = entity_class_valid_attribute_value.get(ID_FIELD, False)
 
             # in case the current attribute value is not an id
-            if id_field_value:
+            if not id_field_value:
                 # increments the index value
                 index += 1
 
