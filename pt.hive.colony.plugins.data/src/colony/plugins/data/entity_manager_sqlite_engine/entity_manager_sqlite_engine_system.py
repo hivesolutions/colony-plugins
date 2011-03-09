@@ -299,6 +299,7 @@ class EntityManagerSqliteEngine:
         @param connection: The connection to be closed.
         """
 
+        # closes the connection
         connection.close()
 
     def commit_connection(self, connection):
