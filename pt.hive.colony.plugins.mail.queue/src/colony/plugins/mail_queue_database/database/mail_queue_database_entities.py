@@ -158,8 +158,6 @@ class MailQueue(RootEntity):
     def get_relation_attributes_first_message():
         return {"relation_type" : "one-to-one",
                 "target_entity" : Message,
-                "target_entity_name" : "Message",
-                "join_attribute" : Message.object_id,
                 "join_attribute_name" : "object_id",
                 "optional" : True}
 
@@ -167,8 +165,6 @@ class MailQueue(RootEntity):
     def get_relation_attributes_last_message():
         return {"relation_type" : "one-to-one",
                 "target_entity" : Message,
-                "target_entity_name" : "Message",
-                "join_attribute" : Message.object_id,
                 "join_attribute_name" : "object_id",
                 "optional" : True}
 
@@ -176,8 +172,6 @@ class MailQueue(RootEntity):
     def get_relation_attributes_messages():
         return {"relation_type" : "one-to-many",
                 "target_entity" : Message,
-                "target_entity_name" : "Message",
-                "join_attribute" : Message.mail_queue,
                 "join_attribute_name" : "mail_queue",
                 "mapped_by" : Message,
                 "optional" : True}
@@ -318,8 +312,6 @@ class Message(RootEntity):
     def get_relation_attributes_contents():
         return {"relation_type" : "one-to-one",
                 "target_entity" : MessageContents,
-                "target_entity_name" : "MessageContents",
-                "join_attribute" : MessageContents.message,
                 "join_attribute_name" : "message",
                 "mapped_by" : MessageContents,
                 "optional" : True}
@@ -328,8 +320,6 @@ class Message(RootEntity):
     def get_relation_attributes_mail_queue_first():
         return {"relation_type" : "one-to-one",
                 "target_entity" : MailQueue,
-                "target_entity_name" : "MailQueue",
-                "join_attribute" : MailQueue.first_message,
                 "join_attribute_name" : "first_message",
                 "mapped_by" : MailQueue,
                 "optional" : True}
@@ -338,8 +328,6 @@ class Message(RootEntity):
     def get_relation_attributes_mail_queue_last():
         return {"relation_type" : "one-to-one",
                 "target_entity" : MailQueue,
-                "target_entity_name" : "MailQueue",
-                "join_attribute" : MailQueue.last_message,
                 "join_attribute_name" : "last_message",
                 "mapped_by" : MailQueue,
                 "optional" : True}
@@ -348,8 +336,6 @@ class Message(RootEntity):
     def get_relation_attributes_mail_queue():
         return {"relation_type" : "many-to-one",
                 "target_entity" : MailQueue,
-                "target_entity_name" : "MailQueue",
-                "join_attribute" : MailQueue.object_id,
                 "join_attribute_name" : "object_id",
                 "optional" : True}
 
@@ -357,8 +343,6 @@ class Message(RootEntity):
     def get_relation_attributes_next_message():
         return {"relation_type" : "one-to-one",
                 "target_entity" : Message,
-                "target_entity_name" : "Message",
-                "join_attribute" : Message.object_id,
                 "join_attribute_name" : "object_id",
                 "optional" : True}
 
@@ -366,8 +350,6 @@ class Message(RootEntity):
     def get_relation_attributes_previous_message():
         return {"relation_type" : "one-to-one",
                 "target_entity" : Message,
-                "target_entity_name" : "Message",
-                "join_attribute" : Message.next_message,
                 "join_attribute_name" : "next_message",
                 "mapped_by" : Message,
                 "optional" : True}
@@ -431,7 +413,5 @@ class MessageContents(RootEntity):
     def get_relation_attributes_message():
         return {"relation_type" : "one-to-one",
                 "target_entity" : Message,
-                "target_entity_name" : "Message",
-                "join_attribute" : Message.object_id,
                 "join_attribute_name" : "object_id",
                 "optional" : True}
