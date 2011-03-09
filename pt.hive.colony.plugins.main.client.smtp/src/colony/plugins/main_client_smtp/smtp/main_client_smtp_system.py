@@ -660,9 +660,11 @@ class SmtpClient:
         """
 
         # creates the default parameters
-        default_parameters = {"client_plugin" : self.main_client_smtp.main_client_smtp_plugin,
-                              "request_timeout" : REQUEST_TIMEOUT,
-                              "response_timeout" : RESPONSE_TIMEOUT}
+        default_parameters = {
+            "client_plugin" : self.main_client_smtp.main_client_smtp_plugin,
+            "request_timeout" : REQUEST_TIMEOUT,
+            "response_timeout" : RESPONSE_TIMEOUT
+        }
 
         # creates the parameters map, from the default parameters
         parameters = colony.libs.map_util.map_extend(parameters, default_parameters, False)
