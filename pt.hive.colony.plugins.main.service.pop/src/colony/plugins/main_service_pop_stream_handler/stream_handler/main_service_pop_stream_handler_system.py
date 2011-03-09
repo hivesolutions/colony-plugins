@@ -113,19 +113,19 @@ class MainServicePopStreamHandler:
         """
 
         # asserts the helo arguments
-        self.assert_arguments(arguments, 1)
+        self.assert_arguments(arguments, 2)
 
-        # retrieves the client hostname
-        client_hostname = arguments[0]
+        # retrieves the user argument
+        user_argument = arguments[0]
+
+        # sets the current user
+        session.set_current_user(user_argument)
 
         # sets the request response code
         request.set_response_code("+OK")
 
         # sets the request response message
-        request.set_response_message("Hello pleased to meet you")
-
-        # sets the client hostname
-        session.set_client_hostname(client_hostname)
+        request.set_response_message("Hello again %s you're authenticated" % user_argument)
 
     def process_capa(self, request, session, arguments):
         """
