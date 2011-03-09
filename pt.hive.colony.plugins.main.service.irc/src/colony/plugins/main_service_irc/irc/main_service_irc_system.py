@@ -245,34 +245,38 @@ class MainServiceIrc:
         work_scheduling_algorithm = service_configuration.get("default_work_scheduling_algorithm", WORK_SCHEDULING_ALGORITHM)
 
         # creates the pool configuration map
-        pool_configuration = {"name" : "irc pool",
-                              "description" : "pool to support irc client connections",
-                              "number_threads" : number_threads,
-                              "scheduling_algorithm" : scheduling_algorithm,
-                              "maximum_number_threads" : maximum_number_threads,
-                              "maximum_number_works_thread" : maximum_number_work_threads,
-                              "work_scheduling_algorithm" : work_scheduling_algorithm}
+        pool_configuration = {
+            "name" : "irc pool",
+            "description" : "pool to support irc client connections",
+            "number_threads" : number_threads,
+            "scheduling_algorithm" : scheduling_algorithm,
+            "maximum_number_threads" : maximum_number_threads,
+            "maximum_number_works_thread" : maximum_number_work_threads,
+            "work_scheduling_algorithm" : work_scheduling_algorithm
+        }
 
         # creates the extra parameters map
         extra_parameters = {}
 
         # creates the parameters map
-        parameters = {"type" : CONNECTION_TYPE,
-                      "service_plugin" : self.main_service_irc_plugin,
-                      "service_handling_task_class" : IrcClientServiceHandler,
-                      "end_points" : end_points,
-                      "socket_provider" : socket_provider,
-                      "bind_host" : BIND_HOST,
-                      "port" : port,
-                      "socket_parameters" : socket_parameters,
-                      "chunk_size" : CHUNK_SIZE,
-                      "service_configuration" : service_configuration,
-                      "extra_parameters" :  extra_parameters,
-                      "pool_configuration" : pool_configuration,
-                      "client_connection_timeout" : client_connection_timeout,
-                      "connection_timeout" : connection_timeout,
-                      "request_timeout" : request_timeout,
-                      "response_timeout" : response_timeout}
+        parameters = {
+            "type" : CONNECTION_TYPE,
+            "service_plugin" : self.main_service_irc_plugin,
+            "service_handling_task_class" : IrcClientServiceHandler,
+            "end_points" : end_points,
+            "socket_provider" : socket_provider,
+            "bind_host" : BIND_HOST,
+            "port" : port,
+            "socket_parameters" : socket_parameters,
+            "chunk_size" : CHUNK_SIZE,
+            "service_configuration" : service_configuration,
+            "extra_parameters" :  extra_parameters,
+            "pool_configuration" : pool_configuration,
+            "client_connection_timeout" : client_connection_timeout,
+            "connection_timeout" : connection_timeout,
+            "request_timeout" : request_timeout,
+            "response_timeout" : response_timeout
+        }
 
         # returns the parameters
         return parameters
