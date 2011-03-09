@@ -3043,9 +3043,11 @@ class EntityManagerSqliteEngine:
 
             # in case it's a one to many relation
             if relation_type == ONE_TO_MANY_RELATION:
+                # returns true (valid)
                 return True
             # in case it's a many to many relation
             elif relation_type == MANY_TO_MANY_RELATION:
+                # returns true (valid)
                 return True
             # in case it's a one to one relation, it will check if
             # the entity is mapped by other relation
@@ -3056,12 +3058,16 @@ class EntityManagerSqliteEngine:
                 # in case the relation is not mapped by the
                 # the entity class
                 if not mapped_by == entity_class:
+                    # returns true (valid)
                     return True
                 # otherwise the relation is mapped by the
                 # entity class itself
                 else:
+                    # returns false (invalid)
                     return False
+        # otherwise the attribute is not a relation
         else:
+            # returns false (invalid)
             return False
 
     def is_attribute_name_indirect_relation(self, attribute_name, entity_class):
