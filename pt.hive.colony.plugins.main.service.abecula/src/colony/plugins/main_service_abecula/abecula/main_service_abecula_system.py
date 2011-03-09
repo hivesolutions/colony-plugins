@@ -97,12 +97,22 @@ DEFAULT_PORT = 7676
 DEFAULT_CHARSET = "utf-8"
 """ The default charset """
 
-STATUS_CODE_VALUES = {100 : "Continue", 101 : "Switching Protocols",
-                      200 : "OK", 207 : "Multi-Status",
-                      301 : "Moved permanently", 302 : "Found", 303 : "See Other", 304 : "Not Modified",
-                      305 : "Use Proxy", 306 : "(Unused)", 307 : "Temporary Redirect",
-                      403 : "Forbidden", 404 : "Not Found",
-                      500 : "Internal Server Error"}
+STATUS_CODE_VALUES = {
+    100 : "Continue",
+    101 : "Switching Protocols",
+    200 : "OK",
+    207 : "Multi-Status",
+    301 : "Moved permanently",
+    302 : "Found",
+    303 : "See Other",
+    304 : "Not Modified",
+    305 : "Use Proxy",
+    306 : "(Unused)",
+    307 : "Temporary Redirect",
+    403 : "Forbidden",
+    404 : "Not Found",
+    500 : "Internal Server Error"
+}
 """ The status code values map """
 
 DEFAULT_STATUS_CODE_VALUE = "Invalid"
@@ -290,34 +300,38 @@ class MainServiceAbecula:
         work_scheduling_algorithm = service_configuration.get("default_work_scheduling_algorithm", WORK_SCHEDULING_ALGORITHM)
 
         # creates the pool configuration map
-        pool_configuration = {"name" : "abecula pool",
-                              "description" : "pool to support abecula client connections",
-                              "number_threads" : number_threads,
-                              "scheduling_algorithm" : scheduling_algorithm,
-                              "maximum_number_threads" : maximum_number_threads,
-                              "maximum_number_works_thread" : maximum_number_work_threads,
-                              "work_scheduling_algorithm" : work_scheduling_algorithm}
+        pool_configuration = {
+            "name" : "abecula pool",
+            "description" : "pool to support abecula client connections",
+            "number_threads" : number_threads,
+            "scheduling_algorithm" : scheduling_algorithm,
+            "maximum_number_threads" : maximum_number_threads,
+            "maximum_number_works_thread" : maximum_number_work_threads,
+            "work_scheduling_algorithm" : work_scheduling_algorithm
+        }
 
         # creates the extra parameters map
         extra_parameters = {}
 
         # creates the parameters map
-        parameters = {"type" : CONNECTION_TYPE,
-                      "service_plugin" : self.main_service_abecula_plugin,
-                      "service_handling_task_class" : AbeculaClientServiceHandler,
-                      "end_points" : end_points,
-                      "socket_provider" : socket_provider,
-                      "bind_host" : BIND_HOST,
-                      "port" : port,
-                      "socket_parameters" : socket_parameters,
-                      "chunk_size" : CHUNK_SIZE,
-                      "service_configuration" : service_configuration,
-                      "extra_parameters" :  extra_parameters,
-                      "pool_configuration" : pool_configuration,
-                      "client_connection_timeout" : client_connection_timeout,
-                      "connection_timeout" : connection_timeout,
-                      "request_timeout" : request_timeout,
-                      "response_timeout" : response_timeout}
+        parameters = {
+            "type" : CONNECTION_TYPE,
+            "service_plugin" : self.main_service_abecula_plugin,
+            "service_handling_task_class" : AbeculaClientServiceHandler,
+            "end_points" : end_points,
+            "socket_provider" : socket_provider,
+            "bind_host" : BIND_HOST,
+            "port" : port,
+            "socket_parameters" : socket_parameters,
+            "chunk_size" : CHUNK_SIZE,
+            "service_configuration" : service_configuration,
+            "extra_parameters" :  extra_parameters,
+            "pool_configuration" : pool_configuration,
+            "client_connection_timeout" : client_connection_timeout,
+            "connection_timeout" : connection_timeout,
+            "request_timeout" : request_timeout,
+            "response_timeout" : response_timeout
+        }
 
         # returns the parameters
         return parameters
@@ -472,8 +486,10 @@ class AbeculaClientServiceHandler:
         message = colony.libs.string_buffer_util.StringBuffer()
 
         # creates a request object
-        request = AbeculaRequest({"service_handler" : self,
-                                  "service_connection" : service_connection})
+        request = AbeculaRequest({
+            "service_handler" : self,
+            "service_connection" : service_connection
+        })
 
         # creates the start line loaded flag
         start_line_loaded = False
