@@ -125,8 +125,6 @@ class DummyEntityBundleAssociation(DummyEntityBundleParent):
     def get_relation_attributes_entity_relation():
         return {"relation_type" : "one-to-many",
                 "target_entity" : DummyEntityBundle,
-                "target_entity_name" : "DummyEntityBundle",
-                "join_attribute" : DummyEntityBundle.entity_relation,
                 "join_attribute_name" : "entity_relation",
                 "mapped_by" : DummyEntityBundle,
                 "optional" : True}
@@ -135,8 +133,6 @@ class DummyEntityBundleAssociation(DummyEntityBundleParent):
     def get_relation_attributes_entity_to_many_relation():
         return {"relation_type" : "many-to-many",
                 "target_entity" : DummyEntityBundle,
-                "target_entity_name" : "DummyEntityBundle",
-                "join_attribute" : DummyEntityBundle.name,
                 "join_attribute_name" : "name",
                 "attribute_column_name" : "dummy_entity_bundle_association_name",
                 "join_attribute_column_name" : "dummy_entity_bundle_name",
@@ -146,8 +142,6 @@ class DummyEntityBundleAssociation(DummyEntityBundleParent):
     def get_relation_attributes_entity_other_to_many_relation():
         return {"relation_type" : "many-to-many",
                 "target_entity" : DummyEntityBundleNew,
-                "target_entity_name" : "DummyEntityBundleNew",
-                "join_attribute" : DummyEntityBundleNew.name,
                 "join_attribute_name" : "name",
                 "attribute_column_name" : "dummy_entity_bundle_association_name",
                 "join_attribute_column_name" : "dummy_entity_bundle_new_name",
@@ -180,8 +174,6 @@ class DummyEntityBundle(DummyEntityBundleParent):
     def get_relation_attributes_entity_relation():
         return {"relation_type" : "many-to-one",
                 "target_entity" : DummyEntityBundleAssociation,
-                "target_entity_name" : "DummyEntityBundleAssociation",
-                "join_attribute" : DummyEntityBundleAssociation.name,
                 "join_attribute_name" : "name",
                 "optional" : True}
 
@@ -189,8 +181,6 @@ class DummyEntityBundle(DummyEntityBundleParent):
     def get_relation_attributes_entity_to_many_relation():
         return {"relation_type" : "many-to-many",
                 "target_entity" : DummyEntityBundleAssociation,
-                "target_entity_name" : "DummyEntityBundleAssociation",
-                "join_attribute" : DummyEntityBundleAssociation.name,
                 "join_attribute_name" : "name",
                 "attribute_column_name" : "dummy_entity_bundle_name",
                 "join_attribute_column_name" : "dummy_entity_bundle_association_name",
@@ -209,8 +199,6 @@ class DummyEntityBundleNew(DummyEntityBundleParent):
     def get_relation_attributes_entity_other_to_many_relation():
         return {"relation_type" : "many-to-many",
                 "target_entity" : DummyEntityBundleAssociation,
-                "target_entity_name" : "DummyEntityBundleAssociation",
-                "join_attribute" : DummyEntityBundleAssociation.name,
                 "join_attribute_name" : "name",
                 "attribute_column_name" : "dummy_entity_bundle_new_name",
                 "join_attribute_column_name" : "dummy_entity_bundle_association_name",
