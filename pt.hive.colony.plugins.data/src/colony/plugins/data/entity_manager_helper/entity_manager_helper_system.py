@@ -57,7 +57,10 @@ FILE_PATH_VALUE = "file_path"
 DEFAULT_ENGINE = "sqlite"
 """ The default engine """
 
-DEFAULT_CONNECTION_PARAMETERS = {"file_path" : "mvc_utils_system.db", "autocommit" : False}
+DEFAULT_CONNECTION_PARAMETERS = {
+    "file_path" : "system.db",
+    "autocommit" : False
+}
 """ The default connection parameters """
 
 class EntityManagerHelper:

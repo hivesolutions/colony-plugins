@@ -163,7 +163,7 @@ class DataEntityManager:
         @param engine_name: The name of the engine to be used.
         @type properties: Dictionary
         @param properties: The properties to be used in the
-        loading of the entity manager
+        loading of the entity manager.
         @rtype: EntityManager
         @return: The loaded entity manager.
         """
@@ -457,8 +457,7 @@ class EntityManager:
         return self.entity_manager_engine_plugin.increment_next_name_id(connection, name, id_increment)
 
     def get_entity_class(self, entity_class_name):
-        if entity_class_name in self.entity_classes_map:
-            return self.entity_classes_map[entity_class_name]
+        return self.entity_classes_map.get(entity_class_name, None)
 
     def create_transaction(self, transaction_name = None):
         """
