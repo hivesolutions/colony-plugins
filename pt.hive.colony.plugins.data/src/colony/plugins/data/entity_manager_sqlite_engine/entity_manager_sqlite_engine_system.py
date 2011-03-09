@@ -1905,15 +1905,18 @@ class EntityManagerSqliteEngine:
 
             # iterates over all the mapped by other names
             for mapped_by_other_name in mapped_by_other_names:
+                # in case the mapped by other name is a lazy relation and is not set in the eager
+                # loading relations
                 if self.is_attribute_name_lazy_relation(mapped_by_other_name, entity_class) and not mapped_by_other_name in eager_loading_relations:
                     # sets the lazy loaded attribute in the instance
                     setattr(entity, mapped_by_other_name, "%lazy-loaded%")
+                # otherwise it's an eager relation and should be loaded
                 else:
-                    # creates the relation attribute tuple
-                    relation_attribute_tuple = (mapped_by_other_name, None)
+                    # creates the mapped by other attribute tuple
+                    mapped_by_other_attribute_tuple = (mapped_by_other_name, None)
 
-                    # adds the relation attribute tuple to the list of relation attributes
-                    relation_attributes_list.append(relation_attribute_tuple)
+                    # adds the mapped by other attribute tuple to the list of relation attributes
+                    relation_attributes_list.append(mapped_by_other_attribute_tuple)
 
             # retrieves the id attribute value
             id_attribute_value = self.get_entity_id_attribute_value(entity)
@@ -2507,15 +2510,18 @@ class EntityManagerSqliteEngine:
 
                 # iterates over all the mapped by other names
                 for mapped_by_other_name in mapped_by_other_names:
+                    # in case the mapped by other name is a lazy relation and is not set in the eager
+                    # loading relations
                     if self.is_attribute_name_lazy_relation(mapped_by_other_name, entity_class) and not mapped_by_other_name in eager_loading_relations:
                         # sets the lazy loaded attribute in the instance
                         setattr(entity, mapped_by_other_name, "%lazy-loaded%")
+                    # otherwise it's an eager relation and should be loaded
                     else:
-                        # creates the relation attribute tuple
-                        relation_attribute_tuple = (mapped_by_other_name, None)
+                        # creates the mapped by other attribute tuple
+                        mapped_by_other_attribute_tuple = (mapped_by_other_name, None)
 
-                        # adds the relation attribute tuple to the list of relation attributes
-                        relation_attributes_list.append(relation_attribute_tuple)
+                        # adds the mapped by other attribute tuple to the list of relation attributes
+                        relation_attributes_list.append(mapped_by_other_attribute_tuple)
 
                 # retrieves the id attribute value
                 id_attribute_value = self.get_entity_id_attribute_value(entity)

@@ -640,6 +640,7 @@ class EntityManager:
 
         # in case there is no entry with the same key value
         if not self.entity_manager_engine_plugin.find_entity(connection, entity_class, entity_id_attribute_value):
+            # raises the entity manager engine entry not found exception
             raise entity_manager_exceptions.EntityManagerEngineEntryNotFound("the key value " + str(entity_id_attribute_value) + " was not found in the database")
 
         # removes the entity
