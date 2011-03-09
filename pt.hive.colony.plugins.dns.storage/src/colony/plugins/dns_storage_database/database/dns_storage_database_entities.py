@@ -92,8 +92,6 @@ class Zone(RootEntity):
     def get_relation_attributes_records():
         return {"relation_type" : "one-to-many",
                 "target_entity" : Record,
-                "target_entity_name" : "Record",
-                "join_attribute" : Record.zone,
                 "join_attribute_name" : "zone",
                 "mapped_by" : Record,
                 "optional" : True}
@@ -189,7 +187,5 @@ class Record(RootEntity):
     def get_relation_attributes_zone():
         return {"relation_type" : "many-to-one",
                 "target_entity" : Zone,
-                "target_entity_name" : "Zone",
-                "join_attribute" : Zone.object_id,
                 "join_attribute_name" : "object_id",
                 "optional" : True}
