@@ -1903,13 +1903,17 @@ class EntityManagerSqliteEngine:
             # retrieves all the mapped by other names
             mapped_by_other_names = self.get_entity_class_mapped_by_other_names(entity_class)
 
-            # creates the list of mapped by other (relation) attributes
-            mapped_by_other_attributes_list = [(value, None) for value in mapped_by_other_names]
+            # iterates over all the mapped by other names
+            for mapped_by_other_name in mapped_by_other_names:
+                if self.is_attribute_name_lazy_relation(mapped_by_other_name, entity_class) and not mapped_by_other_name in eager_loading_relations:
+                    # sets the lazy loaded attribute in the instance
+                    setattr(entity, mapped_by_other_name, "%lazy-loaded%")
+                else:
+                    # creates the relation attribute tuple
+                    relation_attribute_tuple = (mapped_by_other_name, None)
 
-            # extends the relation attributes list with the mapped by other attributes
-            # list, this attributes represent the ones that are mapped by the other side
-            # of the relation
-            relation_attributes_list.extend(mapped_by_other_attributes_list)
+                    # adds the relation attribute tuple to the list of relation attributes
+                    relation_attributes_list.append(relation_attribute_tuple)
 
             # retrieves the id attribute value
             id_attribute_value = self.get_entity_id_attribute_value(entity)
@@ -2501,13 +2505,17 @@ class EntityManagerSqliteEngine:
                 # retrieves all the mapped by other names
                 mapped_by_other_names = self.get_entity_class_mapped_by_other_names(entity_class)
 
-                # creates the list of mapped by other (relation) attributes
-                mapped_by_other_attributes_list = [(value, None) for value in mapped_by_other_names]
+                # iterates over all the mapped by other names
+                for mapped_by_other_name in mapped_by_other_names:
+                    if self.is_attribute_name_lazy_relation(mapped_by_other_name, entity_class) and not mapped_by_other_name in eager_loading_relations:
+                        # sets the lazy loaded attribute in the instance
+                        setattr(entity, mapped_by_other_name, "%lazy-loaded%")
+                    else:
+                        # creates the relation attribute tuple
+                        relation_attribute_tuple = (mapped_by_other_name, None)
 
-                # extends the relation attributes list with the mapped by other attributes
-                # list, this attributes represent the ones that are mapped by the other side
-                # of the relation
-                relation_attributes_list.extend(mapped_by_other_attributes_list)
+                        # adds the relation attribute tuple to the list of relation attributes
+                        relation_attributes_list.append(relation_attribute_tuple)
 
                 # retrieves the id attribute value
                 id_attribute_value = self.get_entity_id_attribute_value(entity)
