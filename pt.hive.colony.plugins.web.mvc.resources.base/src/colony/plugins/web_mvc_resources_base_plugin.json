@@ -32,6 +32,7 @@
             "web_mvc_resources_base/resources_base/resources/extras/libs/jquery_util/include/js/include.js",
             "web_mvc_resources_base/resources_base/resources/extras/libs/jquery_util/mouse_wheel/js/mouse_wheel.js",
             "web_mvc_resources_base/resources_base/resources/extras/libs/jquery_util/overlay/js/overlay.js",
+            "web_mvc_resources_base/resources_base/resources/extras/libs/jquery_util/parse_data/js/parse_data.js",
             "web_mvc_resources_base/resources_base/resources/extras/libs/jquery_util/scroll_to/js/scroll_to.js",
             "web_mvc_resources_base/resources_base/resources/extras/libs/jquery_util/selection/js/selection.js",
             "web_mvc_resources_base/resources_base/resources/extras/libs/util/base64.js",
