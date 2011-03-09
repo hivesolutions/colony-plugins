@@ -2527,8 +2527,9 @@ class EntityManagerSqliteEngine:
         entity_class_attribute_names = dir(entity_class)
 
         # retrieves all the valid class attribute names, removes method values, the name exceptions and the indirect attributes
-        entity_class_valid_attribute_names = [attribute_name for attribute_name in entity_class_attribute_names if not attribute_name in ATTRIBUTE_EXCLUSION_LIST and not type(getattr(entity_class, attribute_name)) in TYPE_EXCLUSION_LIST and not self.is_attribute_name_table_joined_relation(attribute_name, entity_class)]
+        entity_class_valid_attribute_names = [attribute_name for attribute_name in entity_class_attribute_names if not attribute_name in ATTRIBUTE_EXCLUSION_LIST and not type(getattr(entity_class, attribute_name)) in TYPE_EXCLUSION_LIST and not self.is_attribute_name_table_joined_relation(attribute_name, entity_class) and not self.is_attribute_name_mapped_by_other(attribute_name, entity_class)]
 
+        # returns the entity class valid attribute names
         return entity_class_valid_attribute_names
 
     def get_entity_class_indirect_attribute_names(self, entity_class):
@@ -2969,9 +2970,49 @@ class EntityManagerSqliteEngine:
             # retrieves the relation type
             relation_type = relation_attributes[RELATION_TYPE_FIELD]
 
+            # in case the relation type is many to many
             if relation_type == MANY_TO_MANY_RELATION:
+                # returns true (valid)
                 return True
+        # otherwise it's not a relation
         else:
+            # return false (invalid)
+            return False
+
+    def is_attribute_mapped_by_other(self, attribute_value, attribute_name, entity_class):
+        """
+        Retrieves the result of the attribute mapped by other test.
+
+        @type attribute_value: Object
+        @param attribute_value: The value of the attribute to test for mapped by other.
+        @type attribute_name: String
+        @param attribute_name: The value of the attribute name to test for mapped by other.
+        @type entity_class: Class
+        @param entity_class: The entity class for the attribute name to test for mapped by other.
+        @rtype: bool
+        @return: The result of the attribute mapped by other test.
+        """
+
+        # is case the attribute is of type relation
+        if self.is_attribute_relation(attribute_value):
+            # retrieves the relation attributes
+            relation_attributes = self.get_relation_attributes(entity_class, attribute_name)
+
+            # retrieves the mapped by
+            mapped_by = relation_attributes.get(MAPPED_BY_FIELD, entity_class)
+
+            # in case the relation is not mapped
+            # by itself it must be mapped by "other"
+            if not mapped_by == entity_class:
+                # returns true (valid)
+                return True
+            # otherwise it must be mapped by itself
+            else:
+                # returns false (invalid)
+                return False
+        # otherwise it's not a relation
+        else:
+            # return false (invalid)
             return False
 
     def is_attribute_name_table_joined_relation(self, attribute_name, entity_class):
@@ -2991,6 +3032,24 @@ class EntityManagerSqliteEngine:
 
         # tests the attribute value for table joined relation
         return self.is_attribute_table_joined_relation(attribute_value, attribute_name, entity_class)
+
+    def is_attribute_name_mapped_by_other(self, attribute_name, entity_class):
+        """
+        Retrieves the result of the attribute name mapped by other test.
+
+        @type attribute_name: Object
+        @param attribute_name: The value of the attribute name to test for mapped by other.
+        @type entity_class: Class
+        @param entity_class: The entity class for the attribute name to test for mapped by other.
+        @rtype: bool
+        @return: The result of the attribute name mapped by other test.
+        """
+
+        # retrieves the attribute value
+        attribute_value = getattr(entity_class, attribute_name)
+
+        # tests the attribute value for mapped by other
+        return self.is_attribute_mapped_by_other(attribute_value, attribute_name, entity_class)
 
     def get_relation_attribute_value(self, attribute_value, class_attribute_value, entity_class, relation_attribute_name):
         """
@@ -3155,14 +3214,20 @@ class EntityManagerSqliteEngine:
         # creates the method name with the relation attributes prefix and the relation attribute name
         method_name = RELATION_ATTRIBUTES_METHOD_PREFIX + relation_attribute_name
 
-        if hasattr(entity_class, method_name):
-            # retrieves the relation attributes retrieval method
-            relation_attributes_method = getattr(entity_class, method_name)
+        # in case the entity class does not contain the method
+        # for the relation attributes retrieval method
+        if not hasattr(entity_class, method_name):
+            # raises the sqlite engine missing relation method
+            raise entity_manager_sqlite_engine_exceptions.SqliteEngineMissingRelationMethod(method_name)
 
-            # retrieves the relation attributes
-            relation_attributes = relation_attributes_method()
+        # retrieves the relation attributes retrieval method
+        relation_attributes_method = getattr(entity_class, method_name)
 
-            return relation_attributes
+        # retrieves the relation attributes
+        relation_attributes = relation_attributes_method()
+
+        # returns the relation attributes
+        return relation_attributes
 
     def execute_query(self, cursor, query_string_value):
         """
