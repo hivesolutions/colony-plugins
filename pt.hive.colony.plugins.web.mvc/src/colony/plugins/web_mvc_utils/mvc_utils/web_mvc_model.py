@@ -457,6 +457,32 @@ def is_email_validate(self, attribute_name, attribute_value, properties):
         # adds an error to the given attribute name
         self.add_error(attribute_name, "value is not an email")
 
+def is_id_number_validate(self, attribute_name, attribute_value, properties):
+    """
+    Validates an attribute to ensure that the value is an id number.
+
+    @type attribute_name: String
+    @param attribute_name: The name of the attribute to be validated.
+    @type attribute_value: Object
+    @param attribute_value: The value of the attribute to be validated.
+    @type properties: Dictionary
+    @param properties: The properties for the validation.
+    """
+
+    # retrieves the control value
+    control_value = attribute_value % 10
+
+    # removes the control value from the attribute value
+    id_number = attribute_value / 10
+
+    # calculates the control value
+    calculated_control_value = colony.libs.control_util.calculate_id_number_control_value(id_number)
+
+    # in case the control value doesn't match the calculated one
+    if not control_value == calculated_control_value:
+        # adds an error to the given attribute name
+        self.add_error(attribute_name, "value is not a valid id number")
+
 def is_tax_number_validate(self, attribute_name, attribute_value, properties):
     """
     Validates an attribute to ensure that the value is a tax number.
