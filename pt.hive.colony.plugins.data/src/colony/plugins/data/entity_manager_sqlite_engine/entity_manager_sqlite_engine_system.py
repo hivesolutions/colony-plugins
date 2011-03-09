@@ -64,11 +64,32 @@ DATA_TYPE_MAP = {
 """ The data type map """
 
 DATA_TYPE_PYTHON_MAP = {
-    "text" : (types.StringType, types.UnicodeType, types.NoneType),
-    "numeric" : (types.IntType, types.LongType, types.FloatType, types.NoneType),
-    "integer" : (types.IntType, types.LongType, types.NoneType),
-    "float" : (types.IntType, types.LongType, types.FloatType, types.NoneType),
-    "date" : (datetime.datetime, types.NoneType)
+    "text" : (
+        types.StringType,
+        types.UnicodeType,
+        types.NoneType
+    ),
+    "numeric" : (
+        types.IntType,
+        types.LongType,
+        types.FloatType,
+        types.NoneType
+    ),
+    "integer" : (
+        types.IntType,
+        types.LongType,
+        types.NoneType
+    ),
+    "float" : (
+        types.IntType,
+        types.LongType,
+        types.FloatType,
+        types.NoneType
+    ),
+    "date" : (
+        datetime.datetime,
+        types.NoneType
+    )
 }
 """ The data type python map """
 
@@ -81,10 +102,35 @@ AUTOCOMMIT_VALUE = "autocommit"
 ISOLATION_LEVEL_VALUE = "isolation_level"
 """ The isolation level value """
 
-ATTRIBUTE_EXCLUSION_LIST = ("__class__", "__delattr__", "__dict__", "__doc__", "__getattribute__", "__hash__", "__module__", "__new__", "__reduce__", "__reduce_ex__", "__repr__", "__setattr__", "__str__", "__weakref__", "__format__", "__sizeof__", "__subclasshook__", "mapping_options", "id_attribute_name")
+ATTRIBUTE_EXCLUSION_LIST = (
+    "__class__",
+    "__delattr__",
+    "__dict__",
+    "__doc__",
+    "__getattribute__",
+    "__hash__",
+    "__module__",
+    "__new__",
+    "__reduce__",
+    "__reduce_ex__",
+    "__repr__",
+    "__setattr__",
+    "__str__",
+    "__weakref__",
+    "__format__",
+    "__sizeof__",
+    "__subclasshook__",
+    "mapping_options",
+    "id_attribute_name"
+)
 """ The attribute exclusion list """
 
-TYPE_EXCLUSION_LIST = (types.MethodType, types.FunctionType, types.ClassType, types.InstanceType)
+TYPE_EXCLUSION_LIST = (
+    types.MethodType,
+    types.FunctionType,
+    types.ClassType,
+    types.InstanceType
+)
 """ The type exclusion list """
 
 RELATION_DATA_TYPE = "relation"
@@ -1351,8 +1397,10 @@ class EntityManagerSqliteEngine:
                         query_string_buffer = colony.libs.string_buffer_util.StringBuffer();
 
                         # creates the initial query string value
-                        query_string_buffer.write("insert into " + join_table_field + "(" + attribute_column_name_field + ", " + \
-                                                  join_attribute_column_name_field + ") values(")
+                        query_string_buffer.write(
+                            "insert into " + join_table_field + "(" + attribute_column_name_field + ", " + \
+                            join_attribute_column_name_field + ") values("
+                        )
 
                         # retrieves the id attribute sqlite string value
                         id_attribute_value_sqlite_string_value = self.get_attribute_sqlite_string_value(id_attribute_value, id_attribute_value_data_type)
@@ -1829,6 +1877,7 @@ class EntityManagerSqliteEngine:
                         if self.is_attribute_name_lazy_relation(entity_class_valid_attribute_name, entity_class) and not entity_class_valid_attribute_name in eager_loading_relations:
                             # sets the lazy loaded attribute in the instance
                             setattr(entity, entity_class_valid_attribute_name, "%lazy-loaded%")
+                        # otherwise it's not a relation (simple attribute)
                         else:
                             # creates the relation attribute tuple
                             relation_attribute_tuple = (entity_class_valid_attribute_name, attribute_value)
@@ -1851,6 +1900,17 @@ class EntityManagerSqliteEngine:
                 # increments the index value
                 index += 1
 
+            # retrieves all the mapped by other names
+            mapped_by_other_names = self.get_entity_class_mapped_by_other_names(entity_class)
+
+            # creates the list of mapped by other (relation) attributes
+            mapped_by_other_attributes_list = [(value, None) for value in mapped_by_other_names]
+
+            # extends the relation attributes list with the mapped by other attributes
+            # list, this attributes represent the ones that are mapped by the other side
+            # of the relation
+            relation_attributes_list.extend(mapped_by_other_attributes_list)
+
             # retrieves the id attribute value
             id_attribute_value = self.get_entity_id_attribute_value(entity)
 
@@ -1862,15 +1922,27 @@ class EntityManagerSqliteEngine:
                 # closes the cursor
                 cursor.close()
 
-                flag = False
+                # unsets the lazy loaded flag
+                lazy_loaded_flag = False
 
+                # iterates over all the eager loading relations
+                # to make sure that they are correctly loaded
                 for key in eager_loading_relations:
-                    if getattr(buffered_entity, key) == "%lazy-loaded%":
-                        flag = True
+                    # retrieves the eager loading relation
+                    eager_loading_relation = getattr(buffered_entity, key)
 
-                if not flag:
+                    # in case the eager loading relation is lazy loaded
+                    if eager_loading_relation == "%lazy-loaded%":
+                        # sets the lazy loaded flag
+                        # because one of the eager loading relations
+                        # in the buffered entities is lazy loaded
+                        lazy_loaded_flag = True
+
+                # in case the lazy loaded flag is not set
+                if not lazy_loaded_flag:
                     # returns the buffered entity
                     return buffered_entity
+            # otherwise the entity is not buffered
             else:
                 # adds the entity to the list of retrieved entities
                 retrieved_entities_list.add_entity(id_attribute_value, entity)
@@ -1985,7 +2057,7 @@ class EntityManagerSqliteEngine:
         @type entity: Entity
         @param entity: The entity to set the fields.
         @type fields: List
-        @param fields: The list of filed to be set.
+        @param fields: The list of fields to be set.
         @rtype: Entity
         @return: The entity with the fields set.
         """
@@ -2399,6 +2471,7 @@ class EntityManagerSqliteEngine:
                     if hasattr(entity_class, entity_class_valid_attribute_name):
                         # in case the attribute is a relation
                         if self.is_attribute_name_relation(entity_class_valid_attribute_name, entity_class):
+                            # in case the attribute is lazy and is not in the eager loading relations map
                             if self.is_attribute_name_lazy_relation(entity_class_valid_attribute_name, entity_class) and not entity_class_valid_attribute_name in eager_loading_relations:
                                 # sets the lazy loaded attribute in the instance
                                 setattr(entity, entity_class_valid_attribute_name, "%lazy-loaded%")
@@ -2408,6 +2481,7 @@ class EntityManagerSqliteEngine:
 
                                 # adds the relation attribute tuple to the list of relation attributes
                                 relation_attributes_list.append(relation_attribute_tuple)
+                        # otherwise it's not a relation (simple attribute)
                         else:
                             # retrieves the entity class attribute value
                             entity_class_valid_attribute_value = getattr(entity_class, entity_class_valid_attribute_name)
@@ -2423,6 +2497,17 @@ class EntityManagerSqliteEngine:
 
                     # increments the index value
                     index += 1
+
+                # retrieves all the mapped by other names
+                mapped_by_other_names = self.get_entity_class_mapped_by_other_names(entity_class)
+
+                # creates the list of mapped by other (relation) attributes
+                mapped_by_other_attributes_list = [(value, None) for value in mapped_by_other_names]
+
+                # extends the relation attributes list with the mapped by other attributes
+                # list, this attributes represent the ones that are mapped by the other side
+                # of the relation
+                relation_attributes_list.extend(mapped_by_other_attributes_list)
 
                 # retrieves the id attribute value
                 id_attribute_value = self.get_entity_id_attribute_value(entity)
@@ -2497,6 +2582,7 @@ class EntityManagerSqliteEngine:
         # closes the cursor
         cursor.close()
 
+        # returns the entities list
         return entities_list
 
     def lock(self, connection, entity_class, id_value):
@@ -2518,6 +2604,8 @@ class EntityManagerSqliteEngine:
     def get_entity_class_attribute_names(self, entity_class):
         """
         Retrieves a list with the names of all attributes from the given entity class.
+        The valid attributes are the ones that are simple attributes or that
+        are relation attributes mapped in the current entity class.
 
         @type entity_class: Class
         @param entity_class: The entity class.
@@ -2528,15 +2616,38 @@ class EntityManagerSqliteEngine:
         # retrieves all the class attribute names
         entity_class_attribute_names = dir(entity_class)
 
-        # retrieves all the valid class attribute names, removes method values, the name exceptions and the indirect attributes
+        # retrieves all the valid class attribute names, removes method values, the name exceptions, the indirect attributes and the mapped by other attributes
         entity_class_valid_attribute_names = [attribute_name for attribute_name in entity_class_attribute_names if not attribute_name in ATTRIBUTE_EXCLUSION_LIST and not type(getattr(entity_class, attribute_name)) in TYPE_EXCLUSION_LIST and not self.is_attribute_name_table_joined_relation(attribute_name, entity_class) and not self.is_attribute_name_mapped_by_other(attribute_name, entity_class)]
 
         # returns the entity class valid attribute names
         return entity_class_valid_attribute_names
 
+    def get_entity_class_mapped_by_other_names(self, entity_class):
+        """
+        Retrieves a list with the names of all attributes from the given entity class.
+        The mapped by other attributes are the ones that are mapped by the other side
+        of the relation, in this case the entity class is a non owner one.
+
+        @type entity_class: Class
+        @param entity_class: The entity class.
+        @rtype: List
+        @return: The list with the names of all attributes from the given entity class.
+        """
+
+        # retrieves all the class attribute names
+        entity_class_attribute_names = dir(entity_class)
+
+        # retrieves all the mapped by other attribute names, removes method values, the name exceptions, the indirect attributes and filters the mapped by other attributes
+        entity_class_mapped_by_other_attribute_names = [attribute_name for attribute_name in entity_class_attribute_names if not attribute_name in ATTRIBUTE_EXCLUSION_LIST and not type(getattr(entity_class, attribute_name)) in TYPE_EXCLUSION_LIST and not self.is_attribute_name_table_joined_relation(attribute_name, entity_class) and self.is_attribute_name_mapped_by_other(attribute_name, entity_class)]
+
+        # returns the entity class mapped by other names
+        return entity_class_mapped_by_other_attribute_names
+
     def get_entity_class_indirect_attribute_names(self, entity_class):
         """
         Retrieves a list with the names of all indirect attributes from the given entity class.
+        The indirect attributes are the ones that are mapped by a join table or by the other
+        entity (non owner case).
 
         @type entity_class: Class
         @param entity_class: The entity class.
@@ -2550,6 +2661,7 @@ class EntityManagerSqliteEngine:
         # retrieves all the valid class indirect attribute names, removes method values and the name exceptions and the non indirect attributes
         entity_class_valid_indirect_attribute_names = [attribute_name for attribute_name in entity_class_attribute_names if not attribute_name in ATTRIBUTE_EXCLUSION_LIST and not type(getattr(entity_class, attribute_name)) in TYPE_EXCLUSION_LIST and self.is_attribute_name_indirect_relation(attribute_name, entity_class)]
 
+        # returns the entity class valid indirect attribute names
         return entity_class_valid_indirect_attribute_names
 
     def get_entity_attribute_names(self, entity):
@@ -2931,6 +3043,8 @@ class EntityManagerSqliteEngine:
                 # the entity class
                 if not mapped_by == entity_class:
                     return True
+                # otherwise the relation is mapped by the
+                # entity class itself
                 else:
                     return False
         else:
@@ -3204,9 +3318,6 @@ class EntityManagerSqliteEngine:
             elif relation_attribute_relation_type == ONE_TO_MANY_RELATION:
                 # retrieves the target entity class
                 target_entity_class = relation_attributes[TARGET_ENTITY_FIELD]
-
-                # retrieves the mapped by field
-                mapped_by_field = relation_attributes[MAPPED_BY_FIELD]
 
                 # retrieves the join attribute name field
                 join_attribute_name_field = relation_attributes[JOIN_ATTRIBUTE_NAME_FIELD]
