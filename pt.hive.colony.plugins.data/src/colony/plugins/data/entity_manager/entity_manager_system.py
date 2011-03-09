@@ -99,8 +99,8 @@ class DataEntityManager:
     entity_manager_plugin = None
     """ The entity manager plugin """
 
-    entity_manager_engine_plugins_list = []
-    """ The list of entity manager engine plugins """
+    entity_manager_engine_plugins_map = {}
+    """ The map of entity manager engine plugins """
 
     loaded_entity_classes_list = []
     """ The list of loaded entity classes """
@@ -118,17 +118,25 @@ class DataEntityManager:
 
         self.entity_manager_plugin = entity_manager_plugin
 
-        self.entity_manager_engine_plugins_list = []
+        self.entity_manager_engine_plugins_map = {}
         self.loaded_entities_list = []
         self.loaded_entity_classes_map = {}
 
     def register_entity_manager_engine_plugin(self, entity_manager_engine_plugin):
-        if not entity_manager_engine_plugin in self.entity_manager_engine_plugins_list:
-            self.entity_manager_engine_plugins_list.append(entity_manager_engine_plugin)
+        # retrieves the plugin engine name
+        engine_name = entity_manager_engine_plugin.get_engine_name()
+
+        # sets the entity manager engine plugin in the entity manager
+        # engine plugins map
+        self.entity_manager_engine_plugins_map[engine_name] = entity_manager_engine_plugin
 
     def unregister_entity_manager_engine_plugin(self, entity_manager_engine_plugin):
-        if entity_manager_engine_plugin in self.entity_manager_engine_plugins_list:
-            self.entity_manager_engine_plugins_list.remove(entity_manager_engine_plugin)
+        # retrieves the plugin engine name
+        engine_name = entity_manager_engine_plugin.get_engine_name()
+
+        # removes the entity manager engine plugin from the entity manager
+        # engine plugins map
+        del self.entity_manager_engine_plugins_map[engine_name]
 
     def load_entity_class(self, entity_class):
         # retrieves the entity class name
@@ -200,23 +208,21 @@ class DataEntityManager:
         # the currently loaded entity classes map
         entity_classes_map = properties.get(ENTITY_CLASSES_MAP_VALUE, self.loaded_entity_classes_map)
 
-        # iterates over all the entity manager engine plugins
-        for entity_manager_engine_plugin in self.entity_manager_engine_plugins_list:
-            # retrieves the entity manager engine name
-            entity_manager_engine_name = entity_manager_engine_plugin.get_engine_name()
+        # in case the engine name does not exist in the entity manager
+        # engine plugins map
+        if not engine_name in self.entity_manager_engine_plugins_map:
+            # raises the entity manager engine not found exception
+            raise entity_manager_exceptions.EntityManagerEngineNotFound("engine " + engine_name + " not available")
 
-            # in case the entity manager engine name is the requested
-            # engine name
-            if entity_manager_engine_name == engine_name:
-                # creates a new entity manager with the entity manager engine plugin, entity classes list
-                # and the entity classes map
-                entity_manager = EntityManager(entity_manager_engine_plugin, entity_classes_list, entity_classes_map)
+        # retrieves the entity mager engine plugin
+        entity_manager_engine_plugin = self.entity_manager_engine_plugins_map[engine_name]
 
-                # returns the entity manager
-                return entity_manager
+        # creates a new entity manager with the entity manager engine plugin, entity classes list
+        # and the entity classes map
+        entity_manager = EntityManager(entity_manager_engine_plugin, entity_classes_list, entity_classes_map)
 
-        # raises the entity manager engine not found exception
-        raise entity_manager_exceptions.EntityManagerEngineNotFound("engine " + engine_name + " not available")
+        # returns the entity manager
+        return entity_manager
 
 class EntityManager:
     """
