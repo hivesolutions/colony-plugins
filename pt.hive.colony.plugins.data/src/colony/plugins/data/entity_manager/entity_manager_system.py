@@ -142,6 +142,7 @@ class DataEntityManager:
         # retrieves the entity class name
         entity_class_name = entity_class.__name__
 
+        # adds the entity class to the loaded entity classes structures
         self.loaded_entity_classes_list.append(entity_class)
         self.loaded_entity_classes_map[entity_class_name] = entity_class
 
