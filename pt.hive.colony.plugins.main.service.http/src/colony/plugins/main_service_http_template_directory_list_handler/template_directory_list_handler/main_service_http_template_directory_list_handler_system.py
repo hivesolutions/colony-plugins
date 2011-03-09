@@ -67,9 +67,11 @@ SIZE_UNIT_COEFFICIENT = 1024
 DEFAULT_MINIMUM = 1000
 """ The default minimum value """
 
-FORMATS_MAP = {"table" : "",
-               "mosaic" : "",
-               "thumbnail" : ""}
+FORMATS_MAP = {
+    "table" : "",
+    "mosaic" : "",
+    "thumbnail" : ""
+}
 """ The formats map """
 
 class MainServiceHttpTemplateDirectoryListHandler:

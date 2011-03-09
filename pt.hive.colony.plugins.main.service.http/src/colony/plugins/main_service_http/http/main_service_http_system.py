@@ -123,18 +123,49 @@ DEFAULT_CHARSET = "utf-8"
 DEFAULT_VALUE = "default"
 """ The default value """
 
-STATUS_CODE_VALUES = {100 : "Continue", 101 : "Switching Protocols",
-                      200 : "OK", 201 : "Created", 202 : "Accepted", 203 : "Non-Authoritative Information",
-                      204 : "No Content", 205 : "Reset Content", 206 : "Partial Content", 207 : "Multi-Status",
-                      301 : "Moved permanently", 302 : "Found", 303 : "See Other", 304 : "Not Modified",
-                      305 : "Use Proxy", 306 : "(Unused)", 307 : "Temporary Redirect",
-                      400 : "Bad Request", 401 : "Unauthorized", 402 : "Payment Required", 403 : "Forbidden",
-                      404 : "Not Found", 405 : "Method Not Allowed", 406 : "Not Acceptable", 407 : "Proxy Authentication Required",
-                      408 : "Request Timeout", 409 : "Conflict", 410 : "Gone", 411 : "Length Required", 412 : "Precondition Failed",
-                      413 : "Request Entity Too Large", 414 : "Request-URI Too Long", 415 : "Unsupported Media Type",
-                      416 : "Requested Range Not Satisfiable", 417 : "Expectation Failed",
-                      500 : "Internal Server Error", 501 : "Not Implemented", 502 : "Bad Gateway",
-                      503 : "Service Unavailable", 504 : "Gateway Timeout", 505 : "HTTP Version Not Supported"}
+STATUS_CODE_VALUES = {
+    100 : "Continue",
+    101 : "Switching Protocols",
+    200 : "OK",
+    201 : "Created",
+    202 : "Accepted",
+    203 : "Non-Authoritative Information",
+    204 : "No Content",
+    205 : "Reset Content",
+    206 : "Partial Content",
+    207 : "Multi-Status",
+    301 : "Moved permanently",
+    302 : "Found",
+    303 : "See Other",
+    304 : "Not Modified",
+    305 : "Use Proxy",
+    306 : "(Unused)",
+    307 : "Temporary Redirect",
+    400 : "Bad Request",
+    401 : "Unauthorized",
+    402 : "Payment Required",
+    403 : "Forbidden",
+    404 : "Not Found",
+    405 : "Method Not Allowed",
+    406 : "Not Acceptable",
+    407 : "Proxy Authentication Required",
+    408 : "Request Timeout",
+    409 : "Conflict",
+    410 : "Gone",
+    411 : "Length Required",
+    412 : "Precondition Failed",
+    413 : "Request Entity Too Large",
+    414 : "Request-URI Too Long",
+    415 : "Unsupported Media Type",
+    416 : "Requested Range Not Satisfiable",
+    417 : "Expectation Failed",
+    500 : "Internal Server Error",
+    501 : "Not Implemented",
+    502 : "Bad Gateway",
+    503 : "Service Unavailable",
+    504 : "Gateway Timeout",
+    505 : "HTTP Version Not Supported"
+}
 """ The status code values map """
 
 DEFAULT_STATUS_CODE_VALUE = "Invalid"
@@ -242,7 +273,9 @@ DEFAULT_CONTENT_TYPE_CHARSET_VALUE = "default_content_type_charset"
 DEFAULT_CACHE_CONTROL_VALUE = "no-cache, must-revalidate"
 """ The default cache control value """
 
-UPGRADE_MESSAGE_SIZE_MAP = {WEB_SOCKET_VALUE : 8}
+UPGRADE_MESSAGE_SIZE_MAP = {
+    WEB_SOCKET_VALUE : 8
+}
 """ The upgrade message size map """
 
 class MainServiceHttp:
@@ -553,36 +586,42 @@ class MainServiceHttp:
         encoding_handler = self._get_encoding_handler(encoding)
 
         # creates the pool configuration map
-        pool_configuration = {"name" : "http pool",
-                              "description" : "pool to support http client connections",
-                              "number_threads" : number_threads,
-                              "scheduling_algorithm" : scheduling_algorithm,
-                              "maximum_number_threads" : maximum_number_threads,
-                              "maximum_number_works_thread" : maximum_number_work_threads,
-                              "work_scheduling_algorithm" : work_scheduling_algorithm}
+        pool_configuration = {
+            "name" : "http pool",
+            "description" : "pool to support http client connections",
+            "number_threads" : number_threads,
+            "scheduling_algorithm" : scheduling_algorithm,
+            "maximum_number_threads" : maximum_number_threads,
+            "maximum_number_works_thread" : maximum_number_work_threads,
+            "work_scheduling_algorithm" : work_scheduling_algorithm
+        }
 
         # creates the extra parameters map
-        extra_parameters = {"encoding" : encoding,
-                            "encoding_handler" : encoding_handler,
-                            "log_file" : self.http_log_file}
+        extra_parameters = {
+            "encoding" : encoding,
+            "encoding_handler" : encoding_handler,
+            "log_file" : self.http_log_file
+        }
 
         # creates the parameters map
-        parameters = {"type" : CONNECTION_TYPE,
-                      "service_plugin" : self.main_service_http_plugin,
-                      "service_handling_task_class" : HttpClientServiceHandler,
-                      "end_points" : end_points,
-                      "socket_provider" : socket_provider,
-                      "bind_host" : BIND_HOST,
-                      "port" : port,
-                      "socket_parameters" : socket_parameters,
-                      "chunk_size" : CHUNK_SIZE,
-                      "service_configuration" : service_configuration,
-                      "extra_parameters" :  extra_parameters,
-                      "pool_configuration" : pool_configuration,
-                      "client_connection_timeout" : client_connection_timeout,
-                      "connection_timeout" : connection_timeout,
-                      "request_timeout" : request_timeout,
-                      "response_timeout" : response_timeout}
+        parameters = {
+            "type" : CONNECTION_TYPE,
+            "service_plugin" : self.main_service_http_plugin,
+            "service_handling_task_class" : HttpClientServiceHandler,
+            "end_points" : end_points,
+            "socket_provider" : socket_provider,
+            "bind_host" : BIND_HOST,
+            "port" : port,
+            "socket_parameters" : socket_parameters,
+            "chunk_size" : CHUNK_SIZE,
+            "service_configuration" : service_configuration,
+            "extra_parameters" :  extra_parameters,
+            "pool_configuration" : pool_configuration,
+            "client_connection_timeout" : client_connection_timeout,
+            "connection_timeout" : connection_timeout,
+            "request_timeout" : request_timeout,
+            "response_timeout" : response_timeout
+        }
 
         # returns the parameters
         return parameters

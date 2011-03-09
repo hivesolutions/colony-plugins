@@ -117,8 +117,10 @@ class MainServiceHttpProxyHandler:
 
         self.main_service_http_proxy_handler_plugin = main_service_http_proxy_handler_plugin
 
-        self.request_handler_methods_map = {FORWARD_VALUE : self.handle_forward_request,
-                                            REVERSE_VALUE : self.handle_reverse_request}
+        self.request_handler_methods_map = {
+            FORWARD_VALUE : self.handle_forward_request,
+            REVERSE_VALUE : self.handle_reverse_request
+        }
 
     def load_handler(self):
         """

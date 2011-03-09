@@ -124,8 +124,10 @@ DEFAULT_STATUS = 200
 DEFAULT_PATH = "~/cgi-bin"
 """ The default path """
 
-WINDOWS_CONTENT_HANDLERS_MAP = {"py" : "python.exe",
-                                "py.sh" : "python.exe"}
+WINDOWS_CONTENT_HANDLERS_MAP = {
+    "py" : "python.exe",
+    "py.sh" : "python.exe"
+}
 """ The windows content handlers map """
 
 class MainServiceHttpCgiHandler:

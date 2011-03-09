@@ -102,6 +102,7 @@ class MainServiceHttpColonyHandler:
                         else:
                             # sets the default error request status code
                             request.status_code = 500
+
                     return
         else:
             # iterates over all the http python handler plugins

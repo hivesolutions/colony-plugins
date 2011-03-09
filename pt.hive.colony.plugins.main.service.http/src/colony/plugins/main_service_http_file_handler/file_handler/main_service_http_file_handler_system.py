@@ -101,9 +101,11 @@ FILE_TYPE = "file"
 UNKNOWN_TYPE = "unknown"
 """ The unknown type """
 
-ITEM_SORT_MAP = {FOLDER_TYPE : 1,
-                 FILE_TYPE : 2,
-                 UNKNOWN_TYPE : 3}
+ITEM_SORT_MAP = {
+    FOLDER_TYPE : 1,
+    FILE_TYPE : 2,
+    UNKNOWN_TYPE : 3
+}
 """ Map used for list sorting """
 
 class MainServiceHttpFileHandler:
