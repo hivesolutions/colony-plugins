@@ -38,6 +38,7 @@ __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
 import time
+import types
 import datetime
 
 import xml.dom.minidom
@@ -185,6 +186,12 @@ class BarganiaRssClient:
 
         # fetches the retrieval url with the given parameters retrieving the xml
         result = self._fetch_url(retrieval_url, parameters)
+
+        # retrieves the result type
+        result_type = type(result)
+
+        # encodes the result into the default encoding in case the result is unicode
+        result = result_type == types.UnicodeType and result.encode(DEFAULT_CHARSET) or result
 
         # parses the result (response)
         response_document = xml.dom.minidom.parseString(result)
