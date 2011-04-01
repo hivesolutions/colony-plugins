@@ -57,9 +57,14 @@ configuration = {
         "localhost" : True
     },
     "redirections" : {
-        "resolution_order" : ["/manager"],
+        "resolution_order" : ["/manager",
+                              "/encryption"],
         "/manager" : {
             "target" : "/colony_mod_python/rest/mvc/web_mvc_manager/",
+            "recursive_redirection" : True
+        },
+        "/encryption" : {
+            "target" : "/colony_mod_python/rest/mvc/web_mvc_encryption/",
             "recursive_redirection" : True
         }
     },
