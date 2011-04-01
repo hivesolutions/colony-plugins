@@ -58,13 +58,18 @@ configuration = {
     },
     "redirections" : {
         "resolution_order" : ["/manager",
-                              "/encryption"],
+                              "/encryption",
+                              "/"],
         "/manager" : {
             "target" : "/colony_mod_python/rest/mvc/web_mvc_manager/",
             "recursive_redirection" : True
         },
         "/encryption" : {
             "target" : "/colony_mod_python/rest/mvc/web_mvc_encryption/",
+            "recursive_redirection" : True
+        },
+        "/" : {
+            "target" : "/welcome_handler/",
             "recursive_redirection" : True
         }
     },
