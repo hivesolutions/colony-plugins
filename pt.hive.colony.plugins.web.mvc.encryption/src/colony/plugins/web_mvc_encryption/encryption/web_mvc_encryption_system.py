@@ -137,9 +137,9 @@ class WebMvcEncryption:
 
         # creates the web mvc encryption controllers map
         self.web_mvc_encryption_controllers = {
-                                               "main" : self.web_mvc_encryption_main_controller,
-                                               "consumer" : self.web_mvc_encryption_consumer_controller
-                                           }
+            "main" : self.web_mvc_encryption_main_controller,
+            "consumer" : self.web_mvc_encryption_consumer_controller
+        }
 
     def get_patterns(self):
         """
