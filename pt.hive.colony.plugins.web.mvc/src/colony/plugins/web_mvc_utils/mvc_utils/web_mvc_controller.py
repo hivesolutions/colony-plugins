@@ -39,12 +39,15 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 import os
 import re
+import sys
 import types
 import datetime
+import traceback
 
 import web_mvc_utils_exceptions
 
 import colony.libs.time_util
+import colony.libs.string_util
 
 DEFAULT_CONTENT_TYPE = "text/html;charset=utf-8"
 """ The default content type """
@@ -75,6 +78,24 @@ BASE_PATH_VALUE = "base_path"
 
 BACK_PATH_VALUE = "../"
 """ The back path value """
+
+EXCEPTION_VALUE = "exception"
+""" The exception value """
+
+EXCEPTION_NAME_VALUE = "exception_name"
+""" The exception name value """
+
+MESSAGE_VALUE = "message"
+""" The message value """
+
+TRACEBACK_VALUE = "traceback"
+""" The traceback value """
+
+VALIDATION_MAP_VALUE = "validation_map"
+""" The validation map value """
+
+VALIDATION_ERRORS_MAP_VALUE = "validation_errors_map"
+""" The validation errors map value """
 
 DATA_TYPE_VALUE = "data_type"
 """ The data type value """
@@ -173,6 +194,98 @@ def _start_controller(self):
         # calls the start method
         # in the controller
         self.start()
+
+def get_exception_map(self, exception):
+    """
+    Retrieves the exception map (describing the exception)
+    for the given exception.
+
+    @type exception: Exception
+    @param exception: The exception to retrieve the
+    exception map.
+    @rtype: Dicitonary
+    @return: The exception map describing the exception.
+    """
+
+    # retrieves the execution information
+    _type, _value, traceback_list = sys.exc_info()
+
+    # starts the formatted traceback (with the default value)
+    formatted_traceback = None
+
+    # in case the traceback list is valid
+    if traceback_list:
+        # creates the (initial) formated traceback
+        formatted_traceback = traceback.format_tb(traceback_list)
+
+        # retrieves the file system encoding
+        file_system_encoding = sys.getfilesystemencoding()
+
+        # decodes the traceback values using the file system encoding
+        formatted_traceback = [value.decode(file_system_encoding) for value in formatted_traceback]
+
+    # retrieves the exception class
+    exception_class = exception.__class__
+
+    # retrieves the exception class name
+    exception_class_name = exception_class.__name__
+
+    # retrieves the exception message
+    exception_message = exception.message
+
+    # creates the exception map
+    exception_map = {
+        EXCEPTION_VALUE : {
+            EXCEPTION_NAME_VALUE : exception_class_name,
+            MESSAGE_VALUE : exception_message,
+            TRACEBACK_VALUE : formatted_traceback
+        }
+    }
+
+    # converts the exception class name to underscore notation
+    exception_class_name_underscore = colony.libs.string_util.convert_underscore(exception_class_name)
+
+    # creates the exception class process method name
+    exception_class_process_method_name = "process_map_" + exception_class_name_underscore
+
+    # in case the instance contains the process handler
+    # for the exception class
+    if hasattr(self, exception_class_process_method_name):
+        # retrieves the exception class process method
+        exception_class_process_method = getattr(self, exception_class_process_method_name)
+
+        # calls the exception class process method with
+        # the exception map and the exception
+        exception_class_process_method(exception_map, exception)
+
+    # returns the exception map
+    return exception_map
+
+def process_map_model_validation_error(self, exception_map, exception):
+    """
+    Processes the exception map for the given exception.
+    This process method includes the specific information
+    of this exception into the exception map.
+
+    @type exception_map: Dictionary
+    @param exception_map: The map containing the exception
+    information.
+    @type exception: Exception
+    @param exception: The exception to be processed.
+    """
+
+    # retrieves the model in the exception
+    exception_model = exception.model
+
+    # retrieves the exception validation map
+    exception_validation_map = exception_model.validation_map
+
+    # retrieves the exception validation errors map
+    exception_validation_errors_map = exception_model.validation_errors_map
+
+    # sets the exception map values
+    exception_map[VALIDATION_MAP_VALUE] = exception_validation_map
+    exception_map[VALIDATION_ERRORS_MAP_VALUE] = exception_validation_errors_map
 
 def get_entity_model(self, entity_manager, entity_model, update_values_map = {}, create_values_map = {}, secure_value_keys_list = None):
     """

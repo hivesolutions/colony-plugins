@@ -39,6 +39,15 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 import web_mvc_utils_exceptions
 
+VALIDATE_VALUE = "validate"
+""" The validate value """
+
+VALIDATION_FAILED_VALUE = "validation_failed"
+""" The validation failed value """
+
+SERIALIZER_VALUE = "serializer"
+""" The serializer value """
+
 def validated_method(validation_parameters = None):
     """
     Decorator for the validated method.
@@ -83,7 +92,7 @@ def validated_method(validation_parameters = None):
 
             # in case the controller instance
             # does not have the validate method
-            if not hasattr(self, "validate"):
+            if not hasattr(self, VALIDATE_VALUE):
                 # raises the controller validation failed
                 raise web_mvc_utils_exceptions.ControllerValidationError("validation method not found", self)
 
@@ -93,7 +102,7 @@ def validated_method(validation_parameters = None):
             reasons_list = self.validate(rest_request, parameters, validation_parameters)
 
             # tries to retrieves the validation failed method
-            validation_failed_method = hasattr(self, "validation_failed") and self.validation_failed or None
+            validation_failed_method = hasattr(self, VALIDATION_FAILED_VALUE) and self.validation_failed or None
 
             # in case the reasons list is not empty
             if reasons_list:
@@ -219,6 +228,97 @@ def transaction_method(entity_manager_reference, raise_exception = True):
             else:
                 # commits the transaction
                 entity_manager.commit_transaction()
+
+            # returns the return value
+            return return_value
+
+        # returns the decorator interceptor
+        return decorator_interceptor
+
+    def decorator(function, *args, **kwargs):
+        """
+        The decorator function for the load_allowed decorator.
+
+        @type function: Function
+        @param function: The function to be decorated.
+        @type args: pointer
+        @param args: The function arguments list.
+        @type kwargs: pointer pointer
+        @param kwargs: The function arguments map.
+        @rtype: Function
+        @return: The decorator interceptor function.
+        """
+
+        # creates the decorator interceptor with the given function
+        decorator_interceptor_function = create_decorator_interceptor(function)
+
+        # returns the interceptor to be used
+        return decorator_interceptor_function
+
+    # returns the created decorator
+    return decorator
+
+def serialize_exceptions(serialization_parameters = None):
+    """
+    Decorator for the serialize exceptions.
+
+    @type serialization_parameters: Object
+    @param serialization_parameters: The parameters to be used when serializing
+    the exception.
+    @rtype: Function
+    @return: The created decorator.
+    """
+
+    def create_decorator_interceptor(function):
+        """
+        Creates a decorator interceptor, that intercepts
+        the normal function call.
+
+        @type function: Function
+        @param function: The callback function.
+        """
+
+        def decorator_interceptor(*args, **kwargs):
+            """
+            The interceptor function for the transaction_method decorator.
+
+            @type args: pointer
+            @param args: The function arguments list.
+            @type kwargs: pointer pointer
+            @param kwargs: The function arguments map.
+            """
+
+            # retrieves the arguments length
+            args_length = len(args)
+
+            # retrieves the self reference
+            self = args[0]
+
+            # retrieves the rest request reference
+            rest_request = args[1]
+
+            # retrieves the parameters reference
+            parameters = args_length > 2 and args[2] or {}
+
+            # retrieves the serializer
+            serializer = parameters.get(SERIALIZER_VALUE, None)
+
+            try:
+                # calls the callback function,
+                # retrieving the return value
+                return_value = function(*args, **kwargs)
+            except BaseException, exception:
+                # retrieves the exception map for the exception
+                exception_map = self.get_exception_map(exception)
+
+                # dumps the exception map to the serialized form
+                exception_map_serialized = serializer.dumps(exception_map)
+
+                # sets the serialized map as the rest request contents
+                self.set_contents(rest_request, exception_map_serialized)
+
+                # sets the return value as invalid (error)
+                return_value = False
 
             # returns the return value
             return return_value
