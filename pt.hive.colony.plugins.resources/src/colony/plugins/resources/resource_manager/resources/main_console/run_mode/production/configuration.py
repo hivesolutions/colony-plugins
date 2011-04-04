@@ -38,11 +38,11 @@ __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
 configuration = {
-                 "allow_anonymous" : True,
-                 "authentication_properties" : {
-                     "authentication_handler" : "python",
-                     "arguments" : {
-                         "file_path" : "%configuration:pt.hive.colony.plugins.main.authentication.python_handler%/authentication.py"
-                     }
-                 }
-             }
+    "allow_anonymous" : True,
+    "authentication_properties" : {
+        "authentication_handler" : "python",
+        "arguments" : {
+            "file_path" : "%configuration:pt.hive.colony.plugins.main.authentication.python_handler%/authentication.py"
+        }
+    }
+}

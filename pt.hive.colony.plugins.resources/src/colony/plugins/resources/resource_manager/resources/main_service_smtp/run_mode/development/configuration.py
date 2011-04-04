@@ -38,7 +38,9 @@ __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
 configuration = {
-    "default_end_points" : [("normal", "", 25, {})],
+    "default_end_points" : [
+        ("normal", "", 25, {})
+    ],
     "default_handler" : "stream",
     "default_authentication_handler" : "main",
     "default_session_handler" : "main",
