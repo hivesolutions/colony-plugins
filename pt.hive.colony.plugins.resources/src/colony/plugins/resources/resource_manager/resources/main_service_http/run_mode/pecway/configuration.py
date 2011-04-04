@@ -38,7 +38,10 @@ __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
 configuration = {
-    "default_end_points" : [("normal", "", 8888, {}), ("ssl", "", 443, {})],
+    "default_end_points" : [
+        ("normal", "", 8888, {}),
+        ("ssl", "", 443, {})
+    ],
     "default_handler" : "file",
     "default_encoding" : None,
     "default_content_type_charset" : "utf-8",
@@ -51,7 +54,10 @@ configuration = {
     "default_maximum_number_threads" : 60,
     "default_maximum_number_work_threads" : 15,
     "default_work_scheduling_algorithm" : 3,
-    "preferred_error_handlers" : ["template", "default"],
+    "preferred_error_handlers" : [
+        "template",
+        "default"
+    ],
     "allowed_hosts" : {
         "127.0.0.1" : True,
         "localhost" : True,
@@ -61,7 +67,9 @@ configuration = {
         "resolution_order" : ["pecway.com"],
         "pecway.com" : {
             "redirections" : {
-                "resolution_order" : ["/"],
+                "resolution_order" : [
+                    "/"
+                ],
                 "/" : {
                     "target" : "/colony_mod_python/rest/mvc/pecway/",
                     "recursive_redirection" : True
@@ -72,7 +80,10 @@ configuration = {
     "redirections" : {
     },
     "contexts" : {
-        "resolution_order" : ["/colony_mod_python", "/template_error_handler"],
+        "resolution_order" : [
+            "/colony_mod_python",
+            "/template_error_handler"
+        ],
         "/colony_mod_python" : {
             "handler" : "colony",
             "allow_redirection" : False,

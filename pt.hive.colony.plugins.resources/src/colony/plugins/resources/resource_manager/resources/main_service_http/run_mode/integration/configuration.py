@@ -51,13 +51,20 @@ configuration = {
     "default_maximum_number_threads" : 30,
     "default_maximum_number_work_threads" : 15,
     "default_work_scheduling_algorithm" : 3,
-    "preferred_error_handlers" : ["template", "default"],
+    "preferred_error_handlers" : [
+        "template",
+        "default"
+    ],
     "verify_request" : False,
     "virtual_servers" : {
-        "resolution_order" : ["board.hive"],
+        "resolution_order" : [
+            "board.hive"
+        ],
         "board.hive" : {
             "redirections" : {
-                "resolution_order" : ["/"],
+                "resolution_order" : [
+                    "/"
+                ],
                 "/" : {
                     "target" : "/colony_mod_python/rest/mvc/media_dashboard/",
                     "recursive_redirection" : True
@@ -66,7 +73,10 @@ configuration = {
         }
     },
     "redirections" : {
-        "resolution_order" : ["/manager", "/media_dashboard"],
+        "resolution_order" : [
+            "/manager",
+            "/media_dashboard"
+        ],
         "/manager" : {
             "target" : "/colony_mod_python/rest/mvc/web_mvc_manager/",
             "recursive_redirection" : True
@@ -77,10 +87,12 @@ configuration = {
         }
     },
     "contexts" : {
-        "resolution_order" : ["/colony_mod_python",
-                              "/template_error_handler",
-                              "/template_directory_list_handler",
-                              "/integration"],
+        "resolution_order" : [
+            "/colony_mod_python",
+            "/template_error_handler",
+            "/template_directory_list_handler",
+            "/integration"
+        ],
         "/colony_mod_python" : {
             "handler" : "colony",
             "allow_redirection" : False,

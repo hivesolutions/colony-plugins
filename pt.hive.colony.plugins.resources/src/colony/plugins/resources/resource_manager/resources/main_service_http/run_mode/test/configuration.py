@@ -38,7 +38,9 @@ __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
 configuration = {
-    "default_end_points" : [("normal", "", 8081, {})],
+    "default_end_points" : [
+        ("normal", "", 8081, {})
+    ],
     "default_handler" : "file",
     "default_encoding" : None,
     "default_content_type_charset" : "utf-8",

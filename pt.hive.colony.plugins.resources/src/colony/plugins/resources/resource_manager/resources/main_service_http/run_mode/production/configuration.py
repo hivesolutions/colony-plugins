@@ -38,7 +38,10 @@ __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
 configuration = {
-    "default_end_points" : [("normal", "", 8888, {}), ("ssl", "", 443, {})],
+    "default_end_points" : [
+        ("normal", "", 8888, {}),
+        ("ssl", "", 443, {})
+    ],
     "default_handler" : "file",
     "default_encoding" : None,
     "default_content_type_charset" : "utf-8",
@@ -51,15 +54,20 @@ configuration = {
     "default_maximum_number_threads" : 60,
     "default_maximum_number_work_threads" : 15,
     "default_work_scheduling_algorithm" : 3,
-    "preferred_error_handlers" : ["template", "default"],
+    "preferred_error_handlers" : [
+        "template",
+        "default"
+    ],
     "allowed_hosts" : {
         "127.0.0.1" : True,
         "localhost" : True
     },
     "redirections" : {
-        "resolution_order" : ["/manager",
-                              "/encryption",
-                              "/"],
+        "resolution_order" : [
+            "/manager",
+            "/encryption",
+            "/"
+        ],
         "/manager" : {
             "target" : "/colony_mod_python/rest/mvc/web_mvc_manager/",
             "recursive_redirection" : True
@@ -74,12 +82,14 @@ configuration = {
         }
     },
     "contexts" : {
-        "resolution_order" : ["/colony_web/plugins",
-                              "/colony_web",
-                              "/colony_mod_python",
-                              "/cgi-bin",
-                              "/wsgi-bin/remote_sql_service_sqlite",
-                              "/"],
+        "resolution_order" : [
+            "/colony_web/plugins",
+            "/colony_web",
+            "/colony_mod_python",
+            "/cgi-bin",
+            "/wsgi-bin/remote_sql_service_sqlite",
+            "/"
+        ],
         "/colony_web" : {
             "handler" : "file",
             "allow_redirection" : False,

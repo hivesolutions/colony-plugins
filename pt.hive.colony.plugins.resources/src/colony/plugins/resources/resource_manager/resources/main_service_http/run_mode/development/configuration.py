@@ -38,7 +38,9 @@ __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
 configuration = {
-    "default_end_points" : [("normal", "", 8080, {})],
+    "default_end_points" : [
+        ("normal", "", 8080, {})
+    ],
     "default_handler" : "file",
     "default_encoding" : None,
     "default_content_type_charset" : "utf-8",
@@ -51,17 +53,24 @@ configuration = {
     "default_maximum_number_threads" : 30,
     "default_maximum_number_work_threads" : 15,
     "default_work_scheduling_algorithm" : 3,
-    "preferred_error_handlers" : ["template", "default"],
+    "preferred_error_handlers" : [
+        "template",
+        "default"
+    ],
     "verify_request" : False,
     "log_file_path" : "%configuration:pt.hive.colony.plugins.main.service.http%/access.log",
     "connectors" : [
         {
-            "default_end_points" : [("normal", "", 8181, {})],
+            "default_end_points" : [
+                ("normal", "", 8181, {})
+            ],
             "default_handler" : "file"
         }
     ],
     "virtual_servers" : {
-        "resolution_order" : ["127.0.0.1", "panzerini.com"],
+        "resolution_order" : [
+            "127.0.0.1", "panzerini.com"
+        ],
         "127.0.0.1" : {
             "redirections" : {
                 "resolution_order" : ["/"],
@@ -82,22 +91,24 @@ configuration = {
         }
     },
     "redirections" : {
-        "resolution_order" : ["/push_apple",
-                              "/push",
-                              "/wiki",
-                              "/manager",
-                              "/hive",
-                              "/blog",
-                              "/media_dashboard",
-                              "/task_registry",
-                              "/openid",
-                              "/take_the_bill",
-                              "/a_la_carte",
-                              "/pecway",
-                              "/bargania",
-                              "/panzerini",
-                              "/encryption",
-                              "/"],
+        "resolution_order" : [
+            "/push_apple",
+            "/push",
+            "/wiki",
+            "/manager",
+            "/hive",
+            "/blog",
+            "/media_dashboard",
+            "/task_registry",
+            "/openid",
+            "/take_the_bill",
+            "/a_la_carte",
+            "/pecway",
+            "/bargania",
+            "/panzerini",
+            "/encryption",
+            "/"
+        ],
         "/push_apple" : {
             "target" : "/colony_mod_python/rest/mvc/web_mvc_communication_push_apple/",
             "recursive_redirection" : True
@@ -164,32 +175,34 @@ configuration = {
         }
     },
     "contexts" : {
-        "resolution_order" : ["/colony_web/plugins",
-                              "/colony_web",
-                              "/colony_manager",
-                              "/colony_mod_python",
-                              "/welcome_handler",
-                              "/system_information_handler",
-                              "/system_information",
-                              "/template_error_handler",
-                              "/template_directory_list_handler",
-                              "/eclipse",
-                              "/repository/ubuntu",
-                              "/repository/debian",
-                              "/cgi-bin",
-                              "/fastcgi-bin",
-                              "/wsgi-bin/simple_business_logic",
-                              "/wsgi-bin/remote_sql_service_foxpro",
-                              "/wsgi-bin/remote_sql_service_sqlite",
-                              "/wsgi-bin",
-                              "/web_administration",
-                              "/websession_test",
-                              "/websession",
-                              "/colony/repository",
-                              "/socket_bridge",
-                              "/system_unix",
-                              "/system_windows",
-                              "/proxy"],
+        "resolution_order" : [
+            "/colony_web/plugins",
+            "/colony_web",
+            "/colony_manager",
+            "/colony_mod_python",
+            "/welcome_handler",
+            "/system_information_handler",
+            "/system_information",
+            "/template_error_handler",
+            "/template_directory_list_handler",
+            "/eclipse",
+            "/repository/ubuntu",
+            "/repository/debian",
+            "/cgi-bin",
+            "/fastcgi-bin",
+            "/wsgi-bin/simple_business_logic",
+            "/wsgi-bin/remote_sql_service_foxpro",
+            "/wsgi-bin/remote_sql_service_sqlite",
+            "/wsgi-bin",
+            "/web_administration",
+            "/websession_test",
+            "/websession",
+            "/colony/repository",
+            "/socket_bridge",
+            "/system_unix",
+            "/system_windows",
+            "/proxy"
+        ],
         "/colony_web" : {
             "handler" : "file",
             "allow_redirection" : False,

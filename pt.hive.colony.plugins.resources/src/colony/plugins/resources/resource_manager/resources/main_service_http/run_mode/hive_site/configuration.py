@@ -38,7 +38,10 @@ __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
 configuration = {
-    "default_end_points" : [("normal", "", 80, {}), ("ssl", "", 443, {})],
+    "default_end_points" : [
+        ("normal", "", 80, {}),
+        ("ssl", "", 443, {})
+    ],
     "default_handler" : "file",
     "default_encoding" : None,
     "default_content_type_charset" : "utf-8",
@@ -51,7 +54,10 @@ configuration = {
     "default_maximum_number_threads" : 60,
     "default_maximum_number_work_threads" : 15,
     "default_work_scheduling_algorithm" : 3,
-    "preferred_error_handlers" : ["template", "default"],
+    "preferred_error_handlers" : [
+        "template",
+        "default"
+    ],
     "log_file_path" : "%configuration:pt.hive.colony.plugins.main.service.http%/access.log",
     "allowed_hosts" : {
         "127.0.0.1" : True,
@@ -67,7 +73,14 @@ configuration = {
         "bargania.com" : True
     },
     "virtual_servers" : {
-        "resolution_order" : ["blog.hive.pt", "openid.hive.pt", "takethebill.com", "svn.hive.pt", "trac.hive.pt", "bargania.com"],
+        "resolution_order" : [
+            "blog.hive.pt",
+            "openid.hive.pt",
+            "takethebill.com",
+            "svn.hive.pt",
+            "trac.hive.pt",
+            "bargania.com"
+        ],
         "blog.hive.pt" : {
             "redirections" : {
                 "resolution_order" : ["/"],
@@ -124,11 +137,13 @@ configuration = {
         }
     },
     "redirections" : {
-        "resolution_order" : ["/manager",
-                              "/blog",
-                              "/openid",
-                              "/take_the_bill",
-                              "/"],
+        "resolution_order" : [
+            "/manager",
+            "/blog",
+            "/openid",
+            "/take_the_bill",
+            "/"
+        ],
         "/manager" : {
             "target" : "/colony_mod_python/rest/mvc/web_mvc_manager/",
             "recursive_redirection" : True
@@ -151,19 +166,21 @@ configuration = {
         }
     },
     "contexts" : {
-        "resolution_order" : ["/colony_web/plugins",
-                              "/colony_web",
-                              "/colony_manager",
-                              "/colony_mod_python",
-                              "/template_error_handler",
-                              "/eclipse",
-                              "/cgi-bin",
-                              "/fastcgi-bin",
-                              "/web_administration",
-                              "/websession_test",
-                              "/websession",
-                              "/proxy_svn",
-                              "/proxy_trac"],
+        "resolution_order" : [
+            "/colony_web/plugins",
+            "/colony_web",
+            "/colony_manager",
+            "/colony_mod_python",
+            "/template_error_handler",
+            "/eclipse",
+            "/cgi-bin",
+            "/fastcgi-bin",
+            "/web_administration",
+            "/websession_test",
+            "/websession",
+            "/proxy_svn",
+            "/proxy_trac"
+        ],
         "/colony_web" : {
             "handler" : "file",
             "allow_redirection" : False,
