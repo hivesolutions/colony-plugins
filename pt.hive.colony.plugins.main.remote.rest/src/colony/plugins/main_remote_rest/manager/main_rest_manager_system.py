@@ -898,31 +898,15 @@ class RestRequest:
     def update_session(self):
         """
         Updates the current session.
-        This method retrieves information from the cookie to
-        update the session based in the session id.
+        The updating of the session will be archived using
+        a set of predefined techniques.
         """
 
-        # retrieves the cookie value from the request
-        cookie_value = self.request.get_header(COOKIE_VALUE)
+        # updates the session using the cookie method
+        self._update_session_cookie()
 
-        # in case there is a valid cookie value
-        if cookie_value:
-            # creates a new cookie
-            cookie = Cookie(cookie_value)
-
-            # parses the cookie
-            cookie.parse()
-
-            # retrieves the session id
-            session_id = cookie.get_attribute(SESSION_ID_VALUE)
-
-            # retrieves the session from the session id
-            self.session = self.main_rest_manager.get_session(session_id)
-
-            # if no session is selected
-            if not self.session:
-                # raises an invalid session exception
-                raise main_rest_manager_exceptions.InvalidSession("no session started or session timed out")
+        # updates the session using the attribute method
+        self._update_session_attribute()
 
     def parse_post(self):
         """
@@ -1287,6 +1271,61 @@ class RestRequest:
         """
 
         self.set_rest_encoder_plugins_map = set_rest_encoder_plugins_map
+
+    def _update_session_cookie(self):
+        """
+        Updates the current session.
+        This method retrieves information from the cookie to
+        update the session based in the session id.
+        """
+
+        # retrieves the cookie value from the request
+        cookie_value = self.request.get_header(COOKIE_VALUE)
+
+        # in case there is not valid cookie value
+        if not cookie_value:
+            # returns immediately
+            return
+
+        # creates a new cookie
+        cookie = Cookie(cookie_value)
+
+        # parses the cookie
+        cookie.parse()
+
+        # retrieves the session id
+        session_id = cookie.get_attribute(SESSION_ID_VALUE)
+
+        # retrieves the session from the session id
+        self.session = self.main_rest_manager.get_session(session_id)
+
+        # if no session is selected
+        if not self.session:
+            # raises an invalid session exception
+            raise main_rest_manager_exceptions.InvalidSession("no session started or session timed out")
+
+    def _update_session_attribute(self):
+        """
+        Updates the current session.
+        This method retrieves information from the attribute to
+        update the session based in the session id.
+        """
+
+        # retrieves the session id attribute value from the request
+        session_id = self.request.get_attribute(SESSION_ID_VALUE)
+
+        # in case there is no valid session id
+        if not session_id:
+            # returns immediately
+            return
+
+        # retrieves the session from the session id
+        self.session = self.main_rest_manager.get_session(session_id)
+
+        # if no session is selected
+        if not self.session:
+            # raises an invalid session exception
+            raise main_rest_manager_exceptions.InvalidSession("no session started or session timed out")
 
     def _get_domain(self):
         """
