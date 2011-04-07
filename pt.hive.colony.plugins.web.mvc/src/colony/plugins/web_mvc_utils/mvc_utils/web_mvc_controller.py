@@ -915,6 +915,22 @@ def assign_include_template_file(self, template_file, variable_name, variable_va
     template_file.assign(variable_name, variable_value)
 
 def get_session_attribute(self, rest_request, session_attribute_name, namespace_name = None):
+    """
+    Retrieves the session attribute from the given rest request
+    with the given name and for the given namespace.
+
+    @type rest_request: RestRequest
+    @param rest_request: The rest request to be used.
+    @type session_attribute_name: String
+    @param session_attribute_name: The name of the session
+    attribute to be retrieved.
+    @type namespace_name: String
+    @param namespace_name: The name of the namespace for the
+    attribute to be retrieved.
+    @rtype: Object
+    @return The retrieved session attribute.
+    """
+
     # tries to retrieve the rest request session
     rest_request_session = rest_request.get_session()
 
@@ -934,6 +950,24 @@ def get_session_attribute(self, rest_request, session_attribute_name, namespace_
     return session_attribute
 
 def set_session_attribute(self, rest_request, session_attribute_name, session_attribute_value, namespace_name = None):
+    """
+    Sets the session attribute in the given rest request
+    with the given name and for the given namespace.
+    The session attribute value may be of any type.
+
+    @type rest_request: RestRequest
+    @param rest_request: The rest request to be used.
+    @type session_attribute_name: String
+    @param session_attribute_name: The name of the session
+    attribute to be set.
+    @type session_attribute_value: Object
+    @param session_attribute_value: The value of the session
+    attribute to be set.
+    @type namespace_name: String
+    @param namespace_name: The name of the namespace for the
+    attribute to be set.
+    """
+
     # tries to retrieve the rest request session
     rest_request_session = rest_request.get_session()
 
@@ -953,6 +987,20 @@ def set_session_attribute(self, rest_request, session_attribute_name, session_at
     rest_request_session.set_attribute(session_attribute_name, session_attribute_value)
 
 def unset_session_attribute(self, rest_request, session_attribute_name, namespace_name = None):
+    """
+    Unsets the session attribute from the given rest request
+    with the given name and for the given namespace.
+
+    @type rest_request: RestRequest
+    @param rest_request: The rest request to be used.
+    @type session_attribute_name: String
+    @param session_attribute_name: The name of the session
+    attribute to be unset.
+    @type namespace_name: String
+    @param namespace_name: The name of the namespace for the
+    attribute to be unset.
+    """
+
     # tries to retrieve the rest request session
     rest_request_session = rest_request.get_session()
 
@@ -967,6 +1015,32 @@ def unset_session_attribute(self, rest_request, session_attribute_name, namespac
 
     # unsets the attribute from the session
     rest_request_session.unset_attribute(session_attribute_name)
+
+def get_session_id(self, rest_request):
+    """
+    Retrieves the session id for the session that exists
+    in the given rest request.
+
+    @type rest_request: RestRequest
+    @param rest_request: The rest request to be used.
+    @rtype: String
+    @return: The session id that exists in the given rest request.
+    """
+
+    # tries to retrieve the rest request session
+    rest_request_session = rest_request.get_session()
+
+    # in case the rest request session
+    # is invalid
+    if not rest_request_session:
+        # returns none (invalid)
+        return None
+
+    # retrieves the session id
+    session_id = rest_request_session.get_session_id()
+
+    # returns the session id
+    return session_id
 
 def get_attribute_decoded(self, rest_request, attribute_name, encoding = DEFAULT_ENCODING):
     """
