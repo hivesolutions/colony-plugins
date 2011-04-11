@@ -139,7 +139,10 @@ class MainAuthenticationPythonHandler:
             return None
 
         # creates the return value
-        return_value = {"username" : username, "valid" : True}
+        return_value = {
+            "username" : username,
+            "valid" : True
+        }
 
         # returns the return value
         return return_value

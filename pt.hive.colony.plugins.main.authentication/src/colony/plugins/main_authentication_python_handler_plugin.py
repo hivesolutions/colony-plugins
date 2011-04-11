@@ -53,10 +53,16 @@ class MainAuthenticationPythonHandlerPlugin(colony.base.plugin_system.Plugin):
     loading_type = colony.base.plugin_system.EAGER_LOADING_TYPE
     platforms = [colony.base.plugin_system.CPYTHON_ENVIRONMENT,
                  colony.base.plugin_system.JYTHON_ENVIRONMENT]
-    attributes = {"build_automation_file_path" : "$base{plugin_directory}/main_authentication_python_handler/python_handler/resources/baf.xml",
-                  "configuration_models_bundle" : {"authentication.py" : {"path" : "main_authentication_python_handler/python_handler/configuration/authentication_configuration.py",
-                                                                          "global" : False,
-                                                                          "replace" : False}}}
+    attributes = {
+        "build_automation_file_path" : "$base{plugin_directory}/main_authentication_python_handler/python_handler/resources/baf.xml",
+        "configuration_models_bundle" : {
+            "authentication.py" : {
+                "path" : "main_authentication_python_handler/python_handler/configuration/authentication_configuration.py",
+                "global" : False,
+                "replace" : False
+            }
+        }
+    }
     capabilities = ["authentication_handler", "configuration_model_provider", "build_automation_item"]
     capabilities_allowed = []
     dependencies = []
