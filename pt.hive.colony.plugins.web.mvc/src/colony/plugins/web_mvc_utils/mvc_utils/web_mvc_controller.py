@@ -446,6 +446,12 @@ def save_entity_relations(self, rest_request, entity_map, entity, relations_map)
 
     # iterates over all the relations
     for relation_name, relation_item in relations_map.items():
+        # skips the relation in case it's
+        # not defined in the relation map
+        if not relation_name in entity_map:
+            # continues the loop
+            continue
+
         # unpacks the relation item, retrieving the relation
         # type and relation method
         relation_type, relation_method = relation_item
@@ -457,17 +463,12 @@ def save_entity_relations(self, rest_request, entity_map, entity, relations_map)
         # retrieves the relation value
         relation_value = entity_map.get(relation_name, default_relation_value)
 
-        # in case the relation value is not valid
-        if not relation_value:
-            # continues the loop
-            continue
-
         # in case the relation type is single
         if relation_type == 1:
-            relation_entity = relation_method(rest_request, relation_value)
+            relation_entity = relation_value and relation_method(rest_request, relation_value) or None
         # otherwise it must be a multiple relation
         else:
-            relation_entity = [relation_method(rest_request, relation_value_item) for relation_value_item in relation_value]
+            relation_entity = relation_value and [relation_method(rest_request, relation_value_item) for relation_value_item in relation_value] or []
 
         # sets the relation entity in the entity
         setattr(entity, relation_name, relation_entity)
