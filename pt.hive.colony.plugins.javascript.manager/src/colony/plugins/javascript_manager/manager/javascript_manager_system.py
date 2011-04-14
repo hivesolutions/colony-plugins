@@ -460,8 +460,10 @@ class JavascriptManager:
             # in case the item exists in the current plugin search directories map
             if relative_file_path_item in current_plugin_search_directories_map:
                 current_plugin_search_directories_map = current_plugin_search_directories_map[relative_file_path_item]
+            # otherwise
             else:
-                raise javascript_manager_exceptions.InvalidFileNameException("the file: " + relative_file_path_item + " is not valid" + str(current_plugin_search_directories_map))
+                # raises the invalid file name exception
+                raise javascript_manager_exceptions.InvalidFileNameException("the file: " + relative_file_path_item + " is not valid")
 
         # returns the full file path
         return current_plugin_search_directories_map
