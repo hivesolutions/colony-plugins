@@ -8,6 +8,9 @@
                 "id" : "pt.hive.colony.plugins.installation.deb",
                 "version" : "1.0.0"
             }, {
+                "id" : "pt.hive.colony.plugins.installation.zip",
+                "version" : "1.0.0"
+            }, {
                 "id" : "pt.hive.colony.plugins.installation.manager",
                 "version" : "1.0.0"
             }],
