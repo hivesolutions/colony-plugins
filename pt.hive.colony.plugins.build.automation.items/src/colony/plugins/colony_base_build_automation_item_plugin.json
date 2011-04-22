@@ -17,9 +17,5 @@
             "build_automation_items/__init__.py",
             "build_automation_items/colony_base/__init__.py",
             "build_automation_items/colony_base/colony_base_build_automation_item_system.py",
-            "build_automation_items/colony_base/resources/baf.xml",
-            "build_automation_items/colony_base/resources/installer/install.xml",
-            "build_automation_items/colony_base/resources/installer/license.txt",
-            "build_automation_items/colony_base/resources/installer/readme.txt",
-            "build_automation_items/colony_base/resources/installer/shortcutSpec.xml"]
+            "build_automation_items/colony_base/resources/baf.xml"]
 }
