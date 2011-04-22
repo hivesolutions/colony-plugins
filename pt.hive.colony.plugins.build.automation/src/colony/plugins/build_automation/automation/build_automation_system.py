@@ -73,6 +73,9 @@ CALL_REGEX = "\$call\{(\$\{[^\}]*\}|[^\}])*\}"
 RESOURCE_REGEX = "\$resource\{(\$\{[^\}]*\}|[^\}])*\}"
 """ The regular expression for the resource """
 
+PLUGIN_REGEX = "\$plugin\{(\$\{[^\}]*\}|[^\}])*\}"
+""" The regular expression for the plugin """
+
 CONTENTS_REGEX = "\$contents\{(\$\{[^\}]*\}|[^\}])*\}"
 """ The regular expression for the contents """
 
@@ -138,6 +141,9 @@ class BuildAutomation:
     resource_pattern = None
     """ The resource pattern used for regular expression match """
 
+    plugin_pattern = None
+    """ The plugin pattern used for regular expression match """
+
     contents_pattern = None
     """ The contents pattern used for regular expression match """
 
@@ -176,6 +182,9 @@ class BuildAutomation:
 
         # compiles the resource regular expression generating the pattern
         self.resource_pattern = re.compile(RESOURCE_REGEX)
+
+        # compiles the plugin regular expression generating the pattern
+        self.plugin_pattern = re.compile(PLUGIN_REGEX)
 
         # compiles the contents regular expression generating the pattern
         self.contents_pattern = re.compile(CONTENTS_REGEX)
@@ -1188,6 +1197,23 @@ class BuildAutomation:
             # replaces the value in the string
             string = string.replace(group, real_resource_value)
 
+        # retrieves the plugin match iterator
+        plugin_match_iterator = self.plugin_pattern.finditer(string)
+
+        # iterates using the plugin match iterator
+        for plugin_match in plugin_match_iterator:
+            # retrieves the match group
+            group = plugin_match.group()
+
+            # retrieves the plugin value
+            plugin_value = group[8:-1]
+
+            # retrieves the real plugin value
+            real_plugin_value = self.get_plugin_value(plugin_value, build_automation_structure)
+
+            # replaces the value in the string
+            string = string.replace(group, real_plugin_value)
+
         # retrieves the contents match iterator
         contents_match_iterator = self.contents_pattern.finditer(string)
 
@@ -1337,6 +1363,28 @@ class BuildAutomation:
         else:
             # returns invalid
             return None
+
+    def get_plugin_value(self, plugin_value, build_automation_structure):
+        """
+        Retrieves the real "plugin" value by retrieving the plugin path value
+        from the plugin manager.
+
+        @type resource_value: String
+        @param resource_value: The plugin value in string mode representing the plugin.
+        @type build_automation_structure: BuildAutomationStructure
+        @param build_automation_structure: The build automation structure to be used in the retrieving of the plugin.
+        @rtype: Object
+        @return: The real value of the plugin.
+        """
+
+        # retrieves the plugin manager
+        plugin_manager = self.build_automation_plugin.manager
+
+        # retrieves the plugin path for the "plugin value"
+        plugin_path = plugin_manager.get_plugin_path_by_id(plugin_value)
+
+        # returns the plugin path
+        return plugin_path
 
     def get_contents_value(self, contents_value, build_automation_structure):
         """
