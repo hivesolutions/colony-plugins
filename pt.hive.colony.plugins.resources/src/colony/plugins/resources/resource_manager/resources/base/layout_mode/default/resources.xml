@@ -42,7 +42,7 @@
             </first_operand>
             <second_operand>
                 <type>string</type>
-                <data>production</data>
+                <data>default</data>
             </second_operand>
         </equals_expression>
     </validation>

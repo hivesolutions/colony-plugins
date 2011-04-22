@@ -42,7 +42,7 @@
             </first_operand>
             <second_operand>
                 <type>string</type>
-                <data>development</data>
+                <data>workspace_eclipse</data>
             </second_operand>
         </equals_expression>
     </validation>
