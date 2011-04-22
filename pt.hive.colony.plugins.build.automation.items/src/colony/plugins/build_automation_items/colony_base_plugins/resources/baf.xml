@@ -102,11 +102,15 @@
             <version>.*</version>
         </module>
         <module>
-            <id>pt.hive.colony.plugins.main.service.http.welcome_handler</id>
+            <id>pt.hive.colony.plugins.main.service.http.starter</id>
             <version>.*</version>
         </module>
         <module>
-            <id>pt.hive.colony.plugins.main.service.http.starter</id>
+            <id>pt.hive.colony.plugins.main.service.http.system_information_handler</id>
+            <version>.*</version>
+        </module>
+        <module>
+            <id>pt.hive.colony.plugins.main.service.http.welcome_handler</id>
             <version>.*</version>
         </module>
         <module>
@@ -488,20 +492,6 @@
                             </parameters>
                         </file>
                         <file>
-                            <path>${build_automation.build.plugins_directory}/pt.hive.colony.plugins.main.service.http.welcome_handler_1.0.0.cpx</path>
-                            <owner>0</owner>
-                            <group>0</group>
-                            <mode>755</mode>
-                            <parameters>
-                                <deb>
-                                    <target>usr/lib/colony/deploy/pt.hive.colony.plugins.main.service.http.welcome_handler_1.0.0.cpx</target>
-                                </deb>
-                                <zip>
-                                    <target>colony/deploy/pt.hive.colony.plugins.main.service.http.welcome_handler_1.0.0.cpx</target>
-                                </zip>
-                            </parameters>
-                        </file>
-                        <file>
                             <path>${build_automation.build.plugins_directory}/pt.hive.colony.plugins.main.service.http.starter_1.0.0.cpx</path>
                             <owner>0</owner>
                             <group>0</group>
@@ -512,6 +502,34 @@
                                 </deb>
                                 <zip>
                                     <target>colony/deploy/pt.hive.colony.plugins.main.service.http.starter_1.0.0.cpx</target>
+                                </zip>
+                            </parameters>
+                        </file>
+                        <file>
+                            <path>${build_automation.build.plugins_directory}/pt.hive.colony.plugins.main.service.http.system_information_handler_1.0.0.cpx</path>
+                            <owner>0</owner>
+                            <group>0</group>
+                            <mode>755</mode>
+                            <parameters>
+                                <deb>
+                                    <target>usr/lib/colony/deploy/pt.hive.colony.plugins.main.service.http.system_information_handler_1.0.0.cpx</target>
+                                </deb>
+                                <zip>
+                                    <target>colony/deploy/pt.hive.colony.plugins.main.service.http.system_information_handler_1.0.0.cpx</target>
+                                </zip>
+                            </parameters>
+                        </file>
+                        <file>
+                            <path>${build_automation.build.plugins_directory}/pt.hive.colony.plugins.main.service.http.welcome_handler_1.0.0.cpx</path>
+                            <owner>0</owner>
+                            <group>0</group>
+                            <mode>755</mode>
+                            <parameters>
+                                <deb>
+                                    <target>usr/lib/colony/deploy/pt.hive.colony.plugins.main.service.http.welcome_handler_1.0.0.cpx</target>
+                                </deb>
+                                <zip>
+                                    <target>colony/deploy/pt.hive.colony.plugins.main.service.http.welcome_handler_1.0.0.cpx</target>
                                 </zip>
                             </parameters>
                         </file>
