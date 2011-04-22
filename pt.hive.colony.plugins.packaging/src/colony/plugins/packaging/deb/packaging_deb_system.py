@@ -111,10 +111,12 @@ DEFAULT_FILE_FORMAT = TAR_FILE_FORMAT
 DEFAULT_DEB_FILE_ARGUMENTS = {}
 """ The default deb file arguments """
 
-FILE_EXTENSIONS_MAP = {TAR_FILE_FORMAT : ".tar",
-                       TAR_GZ_FILE_FORMAT : ".tar.gz",
-                       TAR_BZ2_FILE_FORMAT : ".tar.bz2",
-                       TAR_BZ2_FILE_FORMAT : ".tar.lzma"}
+FILE_EXTENSIONS_MAP = {
+    TAR_FILE_FORMAT : ".tar",
+    TAR_GZ_FILE_FORMAT : ".tar.gz",
+    TAR_BZ2_FILE_FORMAT : ".tar.bz2",
+    TAR_BZ2_FILE_FORMAT : ".tar.lzma"
+}
 """ The file extensions map """
 
 CONTROL_FILE_MODE = "w:gz"
