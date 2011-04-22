@@ -152,13 +152,17 @@ class InstallationDeb:
         self._write_file_contents(temporary_plugin_generated_path, "postinst", postinst_file_contents)
 
         # creates the deb file parameters map
-        deb_file_parameters = {"file_path" : file_path,
-                               "file_format" : "tar_gz",
-                               "deb_file_arguments" : {"control" : os.path.join(temporary_plugin_generated_path, "control"),
-                                                       "config" : os.path.join(temporary_plugin_generated_path, "config"),
-                                                       "prerm" : os.path.join(temporary_plugin_generated_path, "prerm"),
-                                                       "postrm" : os.path.join(temporary_plugin_generated_path, "postrm"),
-                                                       "postinst" : os.path.join(temporary_plugin_generated_path, "postinst")}}
+        deb_file_parameters = {
+            "file_path" : file_path,
+            "file_format" : "tar_gz",
+            "deb_file_arguments" : {
+                "control" : os.path.join(temporary_plugin_generated_path, "control"),
+                "config" : os.path.join(temporary_plugin_generated_path, "config"),
+                "prerm" : os.path.join(temporary_plugin_generated_path, "prerm"),
+                "postrm" : os.path.join(temporary_plugin_generated_path, "postrm"),
+                "postinst" : os.path.join(temporary_plugin_generated_path, "postinst")
+            }
+        }
 
         # creates the deb file
         deb_file = packaging_deb_plugin.create_file(deb_file_parameters)
@@ -246,10 +250,17 @@ class InstallationDeb:
             # retrieves the file target
             file_target = file_parameters_deb["target"]
 
+            # creates the write parameters
+            parameters = {
+                "file_properties" : {
+                    "owner" : file_owner,
+                    "group" : file_group,
+                    "mode" : file_mode
+                }
+            }
+
             # writes the file to the deb file
-            deb_file.write(file_path, file_target, {"file_properties" : {"owner" : file_owner,
-                                                                         "group" : file_group,
-                                                                         "mode" : file_mode}})
+            deb_file.write(file_path, file_target, parameters)
 
         # iterates over all the links
         # to put them into the deb file
@@ -269,19 +280,33 @@ class InstallationDeb:
             # retrieves the link source
             link_target = link["parameters"]["deb"]["target"]
 
+            # creates the write parameters
+            parameters = {
+                "file_properties" : {
+                    "type" : "link",
+                    "link_name" : link_target,
+                    "owner" : link_owner,
+                    "group" : link_group,
+                    "mode" : link_mode
+                }
+            }
+
             # writes the link to the deb file
-            deb_file.write_register_value(link_source, {"file_properties" : {"type" : "link",
-                                                                             "link_name" : link_target,
-                                                                             "owner" : link_owner,
-                                                                             "group" : link_group,
-                                                                             "mode" : link_mode}})
+            deb_file.write_register_value(link_source, parameters)
 
     def _process_directory_contents(self, deb_file, directory_path, directory_target, recursive = True, directory_owner = 0, directory_group = 0, directory_mode = 0, exclusion_regex = None):
+        # creates the write parameters
+        parameters = {
+            "file_properties" : {
+                "type" : "directory",
+                "owner" : directory_owner,
+                "group" : directory_group,
+                "mode" : directory_mode
+            }
+        }
+
         # writes the directory register in the deb file
-        deb_file.write_register_value(directory_target, {"file_properties" : {"type" : "directory",
-                                                                              "owner" : directory_owner,
-                                                                              "group" : directory_group,
-                                                                              "mode" : directory_mode}})
+        deb_file.write_register_value(directory_target, parameters)
 
         # in case no directory path is defined
         if not directory_path:
@@ -310,10 +335,17 @@ class InstallationDeb:
                 # in case the recursive flag is active processes the inner directory
                 recursive and self._process_directory_contents(deb_file, directory_item_path, directory_item_target, recursive, directory_owner, directory_group, directory_mode, exclusion_regex)
             else:
+                # creates the write parameters
+                parameters = {
+                    "file_properties" : {
+                        "owner" : directory_owner,
+                        "group" : directory_group,
+                        "mode" : directory_mode
+                    }
+                }
+
                 # writes the directory item (file) to the deb file
-                deb_file.write(directory_item_path, directory_item_target, {"file_properties" : {"owner" : directory_owner,
-                                                                                                 "group" : directory_group,
-                                                                                                 "mode" : directory_mode}})
+                deb_file.write(directory_item_path, directory_item_target, parameters)
 
     def _write_file_contents(self, temporary_path, file_name, file_contents):
         # create the complete file path by append the file name
@@ -393,35 +425,53 @@ class InstallationDeb:
         package_description = package_parameters.get("package_description", "")
 
         # creates the parameters map
-        parameters_map = {"package" : {"name" : package_name,
-                                       "version" : package_version,
-                                       "section" : pacakge_section,
-                                       "priority" : pacakge_priority,
-                                       "architecture" : package_architecture,
-                                       "essential" : package_essential,
-                                       "dependencies" : package_dependencies,
-                                       "pre_dependencies" : package_pre_dependencies,
-                                       "installed_size" : package_installed_size,
-                                       "maintainer" : package_maintainer,
-                                       "provides" : package_provides,
-                                       "replaces" : package_replaces,
-                                       "description" : package_description},
-                          "package_keys" : {"name" : "Package",
-                                            "version" : "Version",
-                                            "section" : "Section",
-                                            "priority" : "Priority",
-                                            "architecture" : "Architecture",
-                                            "essential" : "Essential",
-                                            "dependencies" : "Depends",
-                                            "pre_dependencies" : "Pre-Depends",
-                                            "installed_size" : "Installed-Size",
-                                            "maintainer" : "Maintainer",
-                                            "provides" : "Provides",
-                                            "replaces" : "Replaces",
-                                            "description" : "Description"},
-                          "package_keys_order" : ("name", "version", "section", "priority", "architecture", "essential",
-                                                  "dependencies", "pre_dependencies", "installed_size", "maintainer",
-                                                  "provides", "replaces", "description")}
+        parameters_map = {
+            "package" : {
+                "name" : package_name,
+                "version" : package_version,
+                "section" : pacakge_section,
+                "priority" : pacakge_priority,
+                "architecture" : package_architecture,
+                "essential" : package_essential,
+                "dependencies" : package_dependencies,
+                "pre_dependencies" : package_pre_dependencies,
+                "installed_size" : package_installed_size,
+                "maintainer" : package_maintainer,
+                "provides" : package_provides,
+                "replaces" : package_replaces,
+                "description" : package_description
+            },
+            "package_keys" : {
+                "name" : "Package",
+                "version" : "Version",
+                "section" : "Section",
+                "priority" : "Priority",
+                "architecture" : "Architecture",
+                "essential" : "Essential",
+                "dependencies" : "Depends",
+                "pre_dependencies" : "Pre-Depends",
+                "installed_size" : "Installed-Size",
+                "maintainer" : "Maintainer",
+                "provides" : "Provides",
+                "replaces" : "Replaces",
+                "description" : "Description"
+            },
+            "package_keys_order" : (
+                "name",
+                "version",
+                "section",
+                "priority",
+                "architecture",
+                "essential",
+                "dependencies",
+                "pre_dependencies",
+                "installed_size",
+                "maintainer",
+                "provides",
+                "replaces",
+                "description"
+            )
+        }
 
         return self._process_template_file("control.tpl.sh", parameters_map)
 
