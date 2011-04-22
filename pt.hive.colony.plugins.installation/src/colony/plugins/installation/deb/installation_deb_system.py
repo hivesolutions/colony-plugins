@@ -349,7 +349,7 @@ class InstallationDeb:
 
     def _write_file_contents(self, temporary_path, file_name, file_contents):
         # create the complete file path by append the file name
-        complete_file_path = temporary_path + "/" + file_name
+        complete_file_path = os.path.join(temporary_path, file_name)
 
         # normalizes the complete file path
         complete_file_path_normalized = colony.libs.path_util.normalize_path(complete_file_path)
