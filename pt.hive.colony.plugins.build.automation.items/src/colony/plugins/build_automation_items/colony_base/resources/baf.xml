@@ -84,8 +84,12 @@
                             <group>0</group>
                             <mode>755</mode>
                             <parameters>
-                                <deb><target>usr/lib/colony/main.py</target></deb>
-                                <zip><target>main.py</target></zip>
+                                <deb>
+                                    <target>usr/lib/colony/main.py</target>
+                                </deb>
+                                <zip>
+                                    <target>main.py</target>
+                                </zip>
                             </parameters>
                         </file>
                         <file>
@@ -94,8 +98,12 @@
                             <group>0</group>
                             <mode>755</mode>
                             <parameters>
-                                <deb><target>usr/lib/colony/script.py</target></deb>
-                                <zip><target>script.py</target></zip>
+                                <deb>
+                                    <target>usr/lib/colony/script.py</target>
+                                </deb>
+                                <zip>
+                                    <target>script.py</target>
+                                </zip>
                             </parameters>
                         </file>
                         <directory>
@@ -103,8 +111,12 @@
                             <group>0</group>
                             <mode>755</mode>
                             <parameters>
-                                <deb><target>usr/lib/colony</target></deb>
-                                <zip><target>colony</target></zip>
+                                <deb>
+                                    <target>usr/lib/colony</target>
+                                </deb>
+                                <zip>
+                                    <target>colony</target>
+                                </zip>
                             </parameters>
                         </directory>
                         <directory>
@@ -112,8 +124,12 @@
                             <group>0</group>
                             <mode>777</mode>
                             <parameters>
-                                <deb><target>usr/lib/colony/deploy</target></deb>
-                                <zip><target>deploy</target></zip>
+                                <deb>
+                                    <target>usr/lib/colony/deploy</target>
+                                </deb>
+                                <zip>
+                                    <target>deploy</target>
+                                </zip>
                             </parameters>
                         </directory>
                         <directory>
@@ -121,8 +137,12 @@
                             <group>0</group>
                             <mode>777</mode>
                             <parameters>
-                                <deb><target>usr/lib/colony/log</target></deb>
-                                <zip><target>log</target></zip>
+                                <deb>
+                                    <target>usr/lib/colony/log</target>
+                                </deb>
+                                <zip>
+                                    <target>log</target>
+                                </zip>
                             </parameters>
                         </directory>
                         <directory>
@@ -130,8 +150,12 @@
                             <group>0</group>
                             <mode>777</mode>
                             <parameters>
-                                <deb><target>usr/lib/colony/meta</target></deb>
-                                <zip><target>meta</target></zip>
+                                <deb>
+                                    <target>usr/lib/colony/meta</target>
+                                </deb>
+                                <zip>
+                                    <target>meta</target>
+                                </zip>
                             </parameters>
                         </directory>
                         <directory>
@@ -139,8 +163,12 @@
                             <group>0</group>
                             <mode>755</mode>
                             <parameters>
-                                <deb><target>usr/lib/colony/plugins</target></deb>
-                                <zip><target>plugins</target></zip>
+                                <deb>
+                                    <target>usr/lib/colony/plugins</target>
+                                </deb>
+                                <zip>
+                                    <target>plugins</target>
+                                </zip>
                             </parameters>
                         </directory>
                         <directory>
@@ -148,8 +176,12 @@
                             <group>0</group>
                             <mode>777</mode>
                             <parameters>
-                                <deb><target>usr/lib/colony/tmp</target></deb>
-                                <zip><target>tmp</target></zip>
+                                <deb>
+                                    <target>usr/lib/colony/tmp</target>
+                                </deb>
+                                <zip>
+                                    <target>tmp</target>
+                                </zip>
                             </parameters>
                         </directory>
                         <directory>
@@ -157,7 +189,9 @@
                             <group>0</group>
                             <mode>755</mode>
                             <parameters>
-                                <deb><target>var/colony</target></deb>
+                                <deb>
+                                    <target>var/colony</target>
+                                </deb>
                             </parameters>
                         </directory>
                        <directory>
@@ -165,7 +199,9 @@
                             <group>0</group>
                             <mode>755</mode>
                             <parameters>
-                                <deb><target>var/log/colony</target></deb>
+                                <deb>
+                                    <target>var/log/colony</target>
+                                </deb>
                             </parameters>
                         </directory>
                         <directory>
@@ -184,8 +220,12 @@
                             <group>0</group>
                             <mode>755</mode>
                             <parameters>
-                                <deb><target>usr/lib/colony/config</target></deb>
-                                <zip><target>config</target></zip>
+                                <deb>
+                                    <target>usr/lib/colony/config</target>
+                                </deb>
+                                <zip>
+                                    <target>config</target>
+                                </zip>
                             </parameters>
                         </directory>
                         <directory>
@@ -194,8 +234,12 @@
                             <group>0</group>
                             <mode>755</mode>
                             <parameters>
-                                <deb><target>usr/lib/colony/scripts</target></deb>
-                                <zip><target>scripts</target></zip>
+                                <deb>
+                                    <target>usr/lib/colony/scripts</target>
+                                </deb>
+                                <zip>
+                                    <target>scripts</target>
+                                </zip>
                             </parameters>
                         </directory>
                         <link>
