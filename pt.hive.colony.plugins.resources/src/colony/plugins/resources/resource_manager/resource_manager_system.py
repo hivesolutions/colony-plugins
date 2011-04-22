@@ -64,6 +64,9 @@ ENVIRONMENT_VARIABLE_REGEX = "\$\{[a-zA-Z0-9_]*\}"
 RESOURCE_VARIABLE_REGEX = "\$resource\{[a-zA-Z0-9_.]*\}"
 """ The regular expression for the resource variable """
 
+PLUGIN_VARIABLE_REGEX = "\$plugin\{[a-zA-Z0-9_.]*\}"
+""" The regular expression for the plugin variable """
+
 GLOBAL_VARIABLE_REGEX = "\$global\{[a-zA-Z0-9_.]*\}"
 """ The regular expression for the global variable """
 
@@ -126,6 +129,9 @@ class ResourceManager:
     resource_variable_regex = None
     """ The resource variable regular expression used for regular expression match """
 
+    plugin_variable_regex = None
+    """ The plugin variable regular expression used for regular expression match """
+
     global_variable_regex = None
     """ The global variable regular expression used for regular expression match """
 
@@ -154,6 +160,9 @@ class ResourceManager:
 
         # compiles the resource variable regular expression
         self.resource_variable_regex = re.compile(RESOURCE_VARIABLE_REGEX)
+
+        # compiles the plugin variable regular expression
+        self.plugin_variable_regex = re.compile(PLUGIN_VARIABLE_REGEX)
 
         # compiles the global variable regular expression
         self.global_variable_regex = re.compile(GLOBAL_VARIABLE_REGEX)
@@ -493,6 +502,9 @@ class ResourceManager:
         @return: The converted string.
         """
 
+        # retrieves the plugin manager
+        plugin_manager = self.resource_manager_plugin.manager
+
         # retrieves the file system encoding
         file_system_encoding = sys.getfilesystemencoding()
 
@@ -543,6 +555,23 @@ class ResourceManager:
 
             # sets the new real string value
             real_string_value = real_string_value.replace(match_group, resource_data)
+
+        # retrieves the find iterator for the given regular expression
+        find_iterator = self.plugin_variable_regex.finditer(real_string_value)
+
+        # iterates over all the matches in the find iterator
+        for match in find_iterator:
+            # retrieves the match group
+            match_group = match.group()
+
+            # retrieves the variable name
+            variable_name = match_group[8:-1]
+
+            # retrieves the plugin path for the match
+            plugin_path = plugin_manager.get_plugin_path_by_id(variable_name)
+
+            # sets the new real string value
+            real_string_value = real_string_value.replace(match_group, plugin_path)
 
         # retrieves the find iterator for the given regular expression
         find_iterator = self.global_variable_regex.finditer(real_string_value)

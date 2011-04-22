@@ -232,7 +232,7 @@ configuration = {
             "handler" : "file",
             "allow_redirection" : False,
             "request_properties" : {
-                "base_path" : "$resource{system.path.colony}/pt.hive.colony.plugins.main.service.http/src/colony/plugins/main_service_http_welcome_handler/welcome_handler/resources",
+                "base_path" : "$plugin{pt.hive.colony.plugins.main.service.http.welcome_handler}/main_service_http_welcome_handler/welcome_handler/resources",
                 "default_page" : "http_service_welcome.html"
             }
         },
@@ -240,7 +240,7 @@ configuration = {
             "handler" : "file",
             "allow_redirection" : False,
             "request_properties" : {
-                "base_path" : "$resource{system.path.colony}/pt.hive.colony.plugins.main.service.http/src/colony/plugins/main_service_http_system_information_handler/system_information_handler/resources"
+                "base_path" : "$plugin{pt.hive.colony.plugins.main.service.http.system_information_handler}/main_service_http_system_information_handler/system_information_handler/resources"
             }
         },
         "/system_information" : {
@@ -251,21 +251,21 @@ configuration = {
             "handler" : "file",
             "allow_redirection" : False,
             "request_properties" : {
-                "base_path" : "$resource{system.path.colony}/pt.hive.colony.plugins.main.service.http/src/colony/plugins/main_service_http_template_error_handler/template_error_handler/resources"
+                "base_path" : "$plugin{pt.hive.colony.plugins.main.service.http.template_error_handler}/main_service_http_template_error_handler/template_error_handler/resources"
             }
         },
         "/template_directory_list_handler" : {
             "handler" : "file",
             "allow_redirection" : False,
             "request_properties" : {
-                "base_path" : "$resource{system.path.colony}/pt.hive.colony.plugins.main.service.http/src/colony/plugins/main_service_http_template_directory_list_handler/template_directory_list_handler/resources"
+                "base_path" : "$plugin{pt.hive.colony.plugins.main.service.http.template_directory_list_handler}/main_service_http_template_directory_list_handler/template_directory_list_handler/resources"
             }
         },
         "/eclipse" : {
             "handler" : "file",
             "allow_redirection" : False,
             "request_properties" : {
-                "base_path" : "$resource{system.path.base}/pt.hive.eclipse.plugins.site",
+                "base_path" : "$plugin{pt.hive.eclipse.plugins.site}",
                 "default_page" : "site.xml"
             }
         },
@@ -312,7 +312,9 @@ configuration = {
             "authentication_properties" : {
                 "authentication_handler" : "python",
                 "authentication_realm" : "system",
-                "arguments" : {"file_path" : "%configuration:pt.hive.colony.plugins.main.authentication.python_handler%/authentication.py"}
+                "arguments" : {
+                    "file_path" : "%configuration:pt.hive.colony.plugins.main.authentication.python_handler%/authentication.py"
+                }
             }
         },
         "/wsgi-bin/remote_sql_service_foxpro" : {
@@ -362,7 +364,7 @@ configuration = {
             "handler" : "file",
             "allow_redirection" : False,
             "request_properties" : {
-                "base_path" : "$resource{system.path.colony}/pt.hive.colony.plugins.web.administration/src/colony/plugins/web_administration/administration/resources"
+                "base_path" : "$plugin{pt.hive.colony.plugins.web.administration}/web_administration/administration/resources"
             }
         },
         "/websession_test" : {
