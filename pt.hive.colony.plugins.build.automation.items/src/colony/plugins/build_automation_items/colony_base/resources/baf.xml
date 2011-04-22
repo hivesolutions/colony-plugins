@@ -57,7 +57,7 @@
                 <version>1.0.0</version>
                 <stage>build</stage>
                 <configuration>
-                    <formats>deb</formats>
+                    <formats>deb,zip</formats>
                     <base_name>colony</base_name>
                     <package>
                         <package_name>colony</package_name>
