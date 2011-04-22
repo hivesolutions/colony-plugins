@@ -40,11 +40,11 @@ __license__ = "GNU General Public License (GPL), Version 3"
 import os
 import re
 
-import installation_deb_exceptions
-
 import colony.libs.map_util
 import colony.libs.path_util
 import colony.libs.string_buffer_util
+
+import installation_deb_exceptions
 
 DEFAULT_ENCODING = "Cp1252"
 """ The default encoding """
@@ -181,6 +181,16 @@ class InstallationDeb:
         colony.libs.path_util.remove_directory(temporary_plugin_generated_path)
 
     def _process_contents(self, deb_file, parameters):
+        """
+        Processes the contents of the deb file using
+        the given parameters map.
+
+        @type deb_file: DebFile
+        @param deb_file: The deb file to be used for processing.
+        @type parameters: Dictionary
+        @param parameters: The parameters for processing.
+        """
+
         # retrieves the contents map from the parameters
         contents = parameters["contents"]
 
@@ -221,7 +231,7 @@ class InstallationDeb:
             directory_mode = int(directory.get("mode", "0"), 8)
 
             # retrieves the file target
-            directory_target = directory_parameters_deb["target"]
+            directory_target = directory_parameters_deb.get("target", None)
 
             # writes the file to the deb file
             self._process_directory_contents(deb_file, directory_path, directory_target, directory_recursive, directory_owner, directory_group, directory_mode, exclusion_regex)
@@ -248,7 +258,7 @@ class InstallationDeb:
             file_mode = int(file.get("mode", "0"), 8)
 
             # retrieves the file target
-            file_target = file_parameters_deb["target"]
+            file_target = file_parameters_deb.get("target", None)
 
             # creates the write parameters
             parameters = {
@@ -295,6 +305,11 @@ class InstallationDeb:
             deb_file.write_register_value(link_source, parameters)
 
     def _process_directory_contents(self, deb_file, directory_path, directory_target, recursive = True, directory_owner = 0, directory_group = 0, directory_mode = 0, exclusion_regex = None):
+        # in case no target directory is defined
+        if not directory_target:
+            # returns immediately
+            return
+
         # creates the write parameters
         parameters = {
             "file_properties" : {
