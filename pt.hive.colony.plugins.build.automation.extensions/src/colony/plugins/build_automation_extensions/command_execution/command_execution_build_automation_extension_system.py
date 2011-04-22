@@ -81,12 +81,14 @@ class CommandExecutionBuildAutomationExtension:
         timeout = int(parameters.get("timeout", "0"))
 
         # creates the parameters map for the execution command
-        parameters = {"command" : command,
-                      "arguments" : _arguments,
-                      "stdin" : subprocess.PIPE,
-                      "stdout" : subprocess.PIPE,
-                      "stderr" : subprocess.PIPE,
-                      "shell" : shell}
+        parameters = {
+            "command" : command,
+            "arguments" : _arguments,
+            "stdin" : subprocess.PIPE,
+            "stdout" : subprocess.PIPE,
+            "stderr" : subprocess.PIPE,
+            "shell" : shell
+        }
 
         # prints an info message
         logger.info("Running command '%s' with arguments %s in shell" % (command, str(_arguments)))

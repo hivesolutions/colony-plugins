@@ -101,10 +101,12 @@ class RepositoryGeneratorBuildAutomationExtension:
         # iterates over all the formats to generate the installation files
         for format in formats:
             # creates the repository generation parameters map
-            repository_generation_parameters = {"repository_generator_adapter" : format,
-                                                "source" : source,
-                                                "target" : target,
-                                                "contents" : contents}
+            repository_generation_parameters = {
+                "repository_generator_adapter" : format,
+                "source" : source,
+                "target" : target,
+                "contents" : contents
+            }
 
             # generates the repository
             repository_generator_manager_plugin.generate_repository(repository_generation_parameters)

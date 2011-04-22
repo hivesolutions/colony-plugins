@@ -136,7 +136,10 @@ USER_AGENT_IDENTIFIER = USER_AGENT_NAME + "/" + USER_AGENT_VERSION + " (python/"
 DATE_TIME_FORMAT = "%a, %d %b %Y %H:%M:%S +0000 (UTC)"
 """ The format for the displayed date times """
 
-SUCCESS_CAPITALS_MAP = {True : "SUCCESS", False : "FAILED"}
+SUCCESS_CAPITALS_MAP = {
+    True : "SUCCESS",
+    False : "FAILED"
+}
 """ The success capitals map """
 
 class EmailBuildAutomationExtension:
