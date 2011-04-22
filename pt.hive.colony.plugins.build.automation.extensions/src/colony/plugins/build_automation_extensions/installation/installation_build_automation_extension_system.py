@@ -98,10 +98,12 @@ class InstallationBuildAutomationExtension:
         # iterates over all the formats to generate the installation files
         for format in formats:
             # creates the installation parameters map
-            installation_parameters = {"installation_adapter" : format,
-                                       "file_path" : file_path,
-                                       "package" : package,
-                                       "contents" : contents}
+            installation_parameters = {
+                "installation_adapter" : format,
+                "file_path" : file_path,
+                "package" : package,
+                "contents" : contents
+            }
 
             # generates the installation file
             installation_manager_plugin.generate_installation_file(installation_parameters)

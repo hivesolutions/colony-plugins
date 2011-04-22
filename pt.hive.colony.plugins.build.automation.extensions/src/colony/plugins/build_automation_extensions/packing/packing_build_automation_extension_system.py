@@ -139,7 +139,10 @@ class PackingBuildAutomationExtension:
         specification_file = parameters[SPECIFICATION_FILE_VALUE]
 
         # creates the "main" specification
-        specification = {TYPE_VALUE : type, SPECIFICATION_FILE_VALUE : specification_file}
+        specification = {
+            TYPE_VALUE : type,
+            SPECIFICATION_FILE_VALUE : specification_file
+        }
 
         # retrieves the resource specifications
         resource_specifications = parameters.get(RESOURCES_SPECIFICATIONS_VALUE, {})
@@ -180,15 +183,19 @@ class PackingBuildAutomationExtension:
         # in case the packing type is plugin
         elif type == PLUGIN_VALUE:
             target_path = plugins_directory
+        # in case the packaing type is library
         elif type == LIBRARY_VALUE:
             target_path = libraries_directory
+        # otherwise it must be invalid
         else:
             # raises the invalid packing type exception
             raise packing_build_automation_extension_exceptions.InvalidPackingTypeException(type)
 
         # creates the properties map for the directory packing
-        properties = {TARGET_PATH_VALUE : target_path,
-                      PLUGINS_PATH_VALUE : plugins_directory}
+        properties = {
+            TARGET_PATH_VALUE : target_path,
+            PLUGINS_PATH_VALUE : plugins_directory
+        }
 
         # prints an info message
         logger.info("Packing files using specification file %s into %s" % (specification_file, target_path))
@@ -229,9 +236,11 @@ class PackingBuildAutomationExtension:
 
         # creates the packed item from the specification id, version
         # and dependencies
-        packed_item = {ID_VALUE : specification_id,
-                       VERSION_VALUE : specification_version,
-                       DEPENDENCIES_VALUE : specification_dependencies}
+        packed_item = {
+            ID_VALUE : specification_id,
+            VERSION_VALUE : specification_version,
+            DEPENDENCIES_VALUE : specification_dependencies
+        }
 
         # adds the packed item to the packed items list
         packed_items_list.append(packed_item)
