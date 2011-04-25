@@ -64,8 +64,8 @@ SIZE_UNITS_LIST = ("B", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB")
 SIZE_UNIT_COEFFICIENT = 1024
 """ The size unit coefficient """
 
-DEFAULT_MAXIMUM = 1024
-""" The default maximum value """
+DEFAULT_MINIMUM = 1024
+""" The default minimum value """
 
 FORMATS_MAP = {
     "table" : "",
@@ -222,15 +222,15 @@ class MainServiceHttpTemplateDirectoryListHandler:
         # writes the processed template file encoded to the request
         request.write(processed_template_file_encoded)
 
-    def _round_size_unit(self, size_value, maximum = DEFAULT_MAXIMUM, depth = 0):
+    def _round_size_unit(self, size_value, minimum = DEFAULT_MINIMUM, depth = 0):
         """
         Rounds the size unit, returning a string representation
         of the value with a good rounding precision.
 
         @type size_value: int
         @param size_value: The current size value.
-        @type maximum: int
-        @param maximum: The maximum value to be used.
+        @type minimum: int
+        @param minimum: The minimum value to be used.
         @type depth: int
         @param depth: The current iteration depth value.
         @rtype: String
@@ -239,8 +239,8 @@ class MainServiceHttpTemplateDirectoryListHandler:
         """
 
         # in case the current size value is
-        # acceptable (less than the maximum)
-        if size_value < maximum:
+        # acceptable (less than the minimum)
+        if size_value < minimum:
             # rounds the size value
             rounded_size_value = int(size_value)
 
@@ -264,4 +264,4 @@ class MainServiceHttpTemplateDirectoryListHandler:
             new_depth = depth + 1
 
             # runs the round size unit again with the new values
-            return self._round_size_unit(new_size_value, maximum, new_depth)
+            return self._round_size_unit(new_size_value, minimum, new_depth)
