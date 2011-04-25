@@ -274,17 +274,6 @@
                             <mode>755</mode>
                             <parameters>
                                 <deb>
-                                    <source>usr/bin/colony_daemon</source>
-                                    <target>/usr/lib/colony/scripts/unix/colony_daemon.sh</target>
-                                </deb>
-                            </parameters>
-                        </link>
-                        <link>
-                            <owner>0</owner>
-                            <group>0</group>
-                            <mode>755</mode>
-                            <parameters>
-                                <deb>
                                     <source>usr/bin/colony_deploy</source>
                                     <target>/usr/lib/colony/scripts/unix/colony_deploy.sh</target>
                                 </deb>
@@ -296,8 +285,30 @@
                             <mode>755</mode>
                             <parameters>
                                 <deb>
+                                    <source>usr/bin/colony_daemon</source>
+                                    <target>/usr/lib/colony/scripts/unix/colony_daemon.sh</target>
+                                </deb>
+                            </parameters>
+                        </link>
+                        <link>
+                            <owner>0</owner>
+                            <group>0</group>
+                            <mode>755</mode>
+                            <parameters>
+                                <deb>
                                     <source>usr/bin/colony_daemon_test</source>
                                     <target>/usr/lib/colony/scripts/unix/colony_daemon_test.sh</target>
+                                </deb>
+                            </parameters>
+                        </link>
+                        <link>
+                            <owner>0</owner>
+                            <group>0</group>
+                            <mode>755</mode>
+                            <parameters>
+                                <deb>
+                                    <source>usr/bin/colony_command</source>
+                                    <target>/usr/lib/colony/scripts/unix/colony_command.sh</target>
                                 </deb>
                             </parameters>
                         </link>
