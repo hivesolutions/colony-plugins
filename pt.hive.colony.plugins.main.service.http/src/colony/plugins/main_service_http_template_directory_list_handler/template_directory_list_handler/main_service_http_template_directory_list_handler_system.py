@@ -64,7 +64,7 @@ SIZE_UNITS_LIST = ("B", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB")
 SIZE_UNIT_COEFFICIENT = 1024
 """ The size unit coefficient """
 
-DEFAULT_MINIMUM = 1000
+DEFAULT_MINIMUM = 1024
 """ The default minimum value """
 
 FORMATS_MAP = {
