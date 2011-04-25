@@ -102,14 +102,14 @@ configuration = {
             "handler" : "file",
             "allow_redirection" : False,
             "request_properties" : {
-                "base_path" : "$resource{system.path.colony}/pt.hive.colony.plugins.main.service.http/src/colony/plugins/main_service_http_template_error_handler/template_error_handler/resources"
+                "base_path" : "$plugin{pt.hive.colony.plugins.main.service.http.template_error_handler}/main_service_http_template_error_handler/template_error_handler/resources"
             }
         },
         "/template_directory_list_handler" : {
             "handler" : "file",
             "allow_redirection" : False,
             "request_properties" : {
-                "base_path" : "$resource{system.path.colony}/pt.hive.colony.plugins.main.service.http/src/colony/plugins/main_service_http_template_directory_list_handler/template_directory_list_handler/resources"
+                "base_path" : "$plugin{pt.hive.colony.plugins.main.service.http.template_directory_list_handler}/main_service_http_template_directory_list_handler/template_directory_list_handler/resources"
             }
         },
         "/integration" : {

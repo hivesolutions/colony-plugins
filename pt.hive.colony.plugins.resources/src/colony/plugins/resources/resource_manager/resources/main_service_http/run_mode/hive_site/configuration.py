@@ -242,7 +242,7 @@ configuration = {
             "handler" : "file",
             "allow_redirection" : False,
             "request_properties" : {
-                "base_path" : "$resource{system.path.colony}/pt.hive.colony.plugins.web.administration/src/colony/plugins/web_administration/administration/resources"
+                "base_path" : "$plugin{pt.hive.colony.plugins.web.administration}/web_administration/administration/resources"
             }
         },
         "/websession_test" : {
