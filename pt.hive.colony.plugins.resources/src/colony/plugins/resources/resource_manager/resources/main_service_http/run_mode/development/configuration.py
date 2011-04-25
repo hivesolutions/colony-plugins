@@ -265,7 +265,7 @@ configuration = {
             "handler" : "file",
             "allow_redirection" : False,
             "request_properties" : {
-                "base_path" : "$plugin{pt.hive.eclipse.plugins.site}",
+                "base_path" : "$resource{system.path.base}/pt.hive.eclipse.plugins.site",
                 "default_page" : "site.xml"
             }
         },
