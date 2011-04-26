@@ -149,12 +149,14 @@ DEFAULT_TIME_FORMAT = "%H:%M:%S"
 DEFAULT_DATE_TIME_FORMAT = "%d/%m/%y %H:%M:%S"
 """ The default date time format """
 
-COMPARISION_FUNCTIONS = {"eq" : lambda attribute_item, attribute_value: attribute_item == attribute_value,
-                         "neq" : lambda attribute_item, attribute_value: not attribute_item == attribute_value,
-                         "gte" : lambda attribute_item, attribute_value: attribute_item >= attribute_value,
-                         "gt" : lambda attribute_item, attribute_value: attribute_item > attribute_value,
-                         "lte" : lambda attribute_item, attribute_value: attribute_item <= attribute_value,
-                         "lte" : lambda attribute_item, attribute_value: attribute_item < attribute_value}
+COMPARISION_FUNCTIONS = {
+    "eq" : lambda attribute_item, attribute_value: attribute_item == attribute_value,
+    "neq" : lambda attribute_item, attribute_value: not attribute_item == attribute_value,
+    "gte" : lambda attribute_item, attribute_value: attribute_item >= attribute_value,
+    "gt" : lambda attribute_item, attribute_value: attribute_item > attribute_value,
+    "lte" : lambda attribute_item, attribute_value: attribute_item <= attribute_value,
+    "lte" : lambda attribute_item, attribute_value: attribute_item < attribute_value
+}
 """ The map containing the comparison functions (lambda) """
 
 def _visit(ast_node_class):

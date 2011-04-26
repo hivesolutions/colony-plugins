@@ -239,7 +239,10 @@ class MatchNode(AstNode):
             attribute_name, attribute_value = attribute_splitted
 
             # sets the attribute in the attributes map
-            self.attributes_map[attribute_name] = {"value" : attribute_value, "type" : "variable"}
+            self.attributes_map[attribute_name] = {
+                "value" : attribute_value,
+                "type" : "variable"
+            }
 
         # iterates over all the attributes literal matches
         for attribute_literal_match in attributes_literal_matches:
@@ -277,7 +280,10 @@ class MatchNode(AstNode):
                 attribute_literal_value = None
 
             # sets the attribute literal in the attributes map
-            self.attributes_map[attribute_literal_name] = {"value" : attribute_literal_value, "type" : "literal"}
+            self.attributes_map[attribute_literal_name] = {
+                "value" : attribute_literal_value,
+                "type" : "literal"
+            }
 
     def get_value_type(self):
         return self.value_type
