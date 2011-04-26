@@ -539,10 +539,12 @@ class ValidationBundle:
 
     def add_validation_error(self, validation_errors, bundle_id, bundle_version, bundle_file_path, validation_error_message):
         # defines the validation error map
-        validation_error_map = {BUNDLE_ID_VALUE : bundle_id,
-                                BUNDLE_VERSION_VALUE : bundle_version,
-                                BUNDLE_PATH_VALUE : bundle_file_path,
-                                MESSAGE_VALUE : validation_error_message}
+        validation_error_map = {
+            BUNDLE_ID_VALUE : bundle_id,
+            BUNDLE_VERSION_VALUE : bundle_version,
+            BUNDLE_PATH_VALUE : bundle_file_path,
+            MESSAGE_VALUE : validation_error_message
+        }
 
         # adds the validation error map to the validation errors list
         validation_errors.append(validation_error_map)

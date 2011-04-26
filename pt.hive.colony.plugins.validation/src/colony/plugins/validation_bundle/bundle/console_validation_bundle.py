@@ -123,11 +123,11 @@ class ConsoleValidationBundle:
     def __generate_commands_map(self):
         # creates the commands map
         commands_map = {
-                        "validate_bundle" : {
-                            "handler" : self.process_validate_bundle,
-                            "description" : "validates all bundles"
-                        }
-                    }
+            "validate_bundle" : {
+                "handler" : self.process_validate_bundle,
+                "description" : "validates all bundles"
+            }
+        }
 
         # returns the commands map
         return commands_map
