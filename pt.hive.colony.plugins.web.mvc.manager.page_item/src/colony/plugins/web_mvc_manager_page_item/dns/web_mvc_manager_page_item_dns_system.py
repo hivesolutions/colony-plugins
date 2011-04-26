@@ -88,7 +88,9 @@ class WebMvcManagerPageItemDns:
         self.web_mvc_manager_page_item_dns_controller = web_mvc_utils_plugin.create_controller(web_mvc_manager_page_item_dns_controllers.WebMvcManagerPageItemDnsController, [self.web_mvc_manager_page_item_dns_plugin, self], {})
 
         # creates the web mvc manager page item dns controllers
-        self.web_mvc_manager_page_item_dns_controllers = {"main" : self.web_mvc_manager_page_item_dns_controller}
+        self.web_mvc_manager_page_item_dns_controllers = {
+            "main" : self.web_mvc_manager_page_item_dns_controller
+        }
 
     def get_resource_patterns(self):
         """

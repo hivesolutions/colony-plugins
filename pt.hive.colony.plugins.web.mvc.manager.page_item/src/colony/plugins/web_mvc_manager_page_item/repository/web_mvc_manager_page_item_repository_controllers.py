@@ -478,7 +478,10 @@ class WebMvcManagerPageItemRepositoryController:
         system_updater_plugin = self.web_mvc_manager_page_item_repository_plugin.system_updater_plugin
 
         # creates the delta plugin install map
-        delta_plugin_install_map = {"installed" : [], "uninstalled" : []}
+        delta_plugin_install_map = {
+            "installed" : [],
+            "uninstalled" : []
+        }
 
         # retrieves the (beginning) list of available plugins
         available_plugins_beginning = copy.copy(plugin_manager.get_all_plugins())
