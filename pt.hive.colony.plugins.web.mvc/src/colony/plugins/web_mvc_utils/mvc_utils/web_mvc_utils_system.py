@@ -81,7 +81,10 @@ PYTHON_EXTENSION = ".py"
 DEFAULT_ENGINE = "sqlite"
 """ The default engine """
 
-DEFAULT_CONNECTION_PARAMETERS = {"file_path" : "mvc_utils_system.db", "autocommit" : False}
+DEFAULT_CONNECTION_PARAMETERS = {
+    "file_path" : "mvc_utils_system.db",
+    "autocommit" : False
+}
 """ The default connection parameters """
 
 class WebMvcUtils:
@@ -213,7 +216,10 @@ class WebMvcUtils:
         self._resolve_connection_parameters(connection_parameters)
 
         # creates the entity manager properties
-        entity_manager_properties = {ENTITY_CLASSES_LIST_VALUE : base_entity_models, ENTITY_CLASSES_MAP_VALUE : base_entity_models_map}
+        entity_manager_properties = {
+            ENTITY_CLASSES_LIST_VALUE : base_entity_models,
+            ENTITY_CLASSES_MAP_VALUE : base_entity_models_map
+        }
 
         # creates a new entity manager for the remote models with the given properties
         entity_manager = entity_manager_plugin.load_entity_manager_properties(engine, entity_manager_properties)
