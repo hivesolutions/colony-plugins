@@ -83,8 +83,8 @@ class WebMvcCommunicationPush:
 
         # creates the web mvc communication push controllers map
         self.web_mvc_communication_push_controllers = {
-                                                       "main" : self.web_mvc_communication_push_controller
-                                                   }
+            "main" : self.web_mvc_communication_push_controller
+        }
 
     def get_patterns(self):
         """

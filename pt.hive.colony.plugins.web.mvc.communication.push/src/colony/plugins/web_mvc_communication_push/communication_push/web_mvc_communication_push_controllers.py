@@ -485,10 +485,12 @@ class WebMvcCommunicationPushController:
             guid = notification.get_guid()
 
             # creates the parameters map
-            parameters = {COMMUNICATION_NAME_VALUE : communication_name,
-                          COMMUNICATION_HANDLER_NAME_VALUE : sender_id,
-                          GUID_VALUE : guid,
-                          MESSAGE_CONTENTS_VALUE : message}
+            parameters = {
+                COMMUNICATION_NAME_VALUE : communication_name,
+                COMMUNICATION_HANDLER_NAME_VALUE : sender_id,
+                GUID_VALUE : guid,
+                MESSAGE_CONTENTS_VALUE : message
+            }
 
             # fetches the url, retrieving the contents
             http_client.fetch_url(return_url, method, parameters, content_type_charset = DEFAULT_CHARSET)
