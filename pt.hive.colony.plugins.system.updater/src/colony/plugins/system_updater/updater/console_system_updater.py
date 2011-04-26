@@ -308,96 +308,97 @@ class ConsoleSystemUpdater:
     def __generate_commands_map(self):
         # creates the commands map
         commands_map = {
-                        "list_repositories" : {
-                            "handler" : self.process_list_repositories,
-                            "description" : "lists the current available repositories"
-                        },
-                        "list_repository_packages" : {
-                            "handler" : self.process_list_repository_packages,
-                            "description" : "lists the packages for the given repository",
-                            "arguments" : [
-                                {
-                                    "name" : "repository_name",
-                                    "description" : "the name of the repository from where to list the packages",
-                                    "values" : str,
-                                    "mandatory" : True
-                                }
-                            ]
-                        },
-                        "list_repository_bundles" : {
-                            "handler" : self.process_list_repository_bundles,
-                            "description" : "lists the bundles for the given repository"
-                        },
-                        "list_repository_plugins" : {
-                            "handler" : self.process_list_repository_plugins,
-                            "description" : "lists the plugins for the given repository",
-                            "arguments" : [
-                                {
-                                    "name" : "repository_name",
-                                    "description" : "the name of the repository from where to list the plugins",
-                                    "values" : str,
-                                    "mandatory" : True
-                                }
-                            ]
-                        },
-                        "install" : {
-                            "handler" : self.process_install,
-                            "description" : "installs the package, bundle or plugin with the given id and version"
-                        },
-                        "install_package" : {
-                            "handler" : self.process_install_package,
-                            "description" : "installs the package with the given id and version",
-                            "arguments" : [
-                                {
-                                    "name" : "package_id",
-                                    "description" : "the id of the package to install",
-                                    "values" : str,
-                                    "mandatory" : True
-                                },
-                                {
-                                    "name" : "package_version",
-                                    "description" : "the version of the package to install",
-                                    "values" : str,
-                                    "mandatory" : False
-                                }
-                            ]
-                        },
-                        "install_bundle" : {
-                            "handler" : self.process_install_bundle,
-                            "description" : "installs the bundle with the given id and version",
-                            "arguments" : [
-                                {
-                                    "name" : "bundle_id",
-                                    "description" : "the id of the bundle to install",
-                                    "values" : str,
-                                    "mandatory" : True
-                                },
-                                {
-                                    "name" : "bundle_version",
-                                    "description" : "the version of the bundle to install",
-                                    "values" : str,
-                                    "mandatory" : False
-                                }
-                            ]
-                        },
-                        "install_plugin" : {
-                            "handler" : self.process_install_plugin,
-                            "description" : "installs the plugin with the given id and version",
-                            "arguments" : [
-                                {
-                                    "name" : "plugin_id",
-                                    "description" : "the id of the plugin to install",
-                                    "values" : str,
-                                    "mandatory" : True
-                                }, {
-                                    "name" : "plugin_version",
-                                    "description" : "the version of the plugin to install",
-                                    "values" : str,
-                                    "mandatory" : False
-                                }
-                            ]
-                        }
+            "list_repositories" : {
+                "handler" : self.process_list_repositories,
+                "description" : "lists the current available repositories"
+            },
+            "list_repository_packages" : {
+                "handler" : self.process_list_repository_packages,
+                "description" : "lists the packages for the given repository",
+                "arguments" : [
+                    {
+                        "name" : "repository_name",
+                        "description" : "the name of the repository from where to list the packages",
+                        "values" : str,
+                        "mandatory" : True
                     }
+                ]
+            },
+            "list_repository_bundles" : {
+                "handler" : self.process_list_repository_bundles,
+                "description" : "lists the bundles for the given repository"
+            },
+            "list_repository_plugins" : {
+                "handler" : self.process_list_repository_plugins,
+                "description" : "lists the plugins for the given repository",
+                "arguments" : [
+                    {
+                        "name" : "repository_name",
+                        "description" : "the name of the repository from where to list the plugins",
+                        "values" : str,
+                        "mandatory" : True
+                    }
+                ]
+            },
+            "install" : {
+                "handler" : self.process_install,
+                "description" : "installs the package, bundle or plugin with the given id and version"
+            },
+            "install_package" : {
+                "handler" : self.process_install_package,
+                "description" : "installs the package with the given id and version",
+                "arguments" : [
+                    {
+                        "name" : "package_id",
+                        "description" : "the id of the package to install",
+                        "values" : str,
+                        "mandatory" : True
+                    },
+                    {
+                        "name" : "package_version",
+                        "description" : "the version of the package to install",
+                        "values" : str,
+                        "mandatory" : False
+                    }
+                ]
+            },
+            "install_bundle" : {
+                "handler" : self.process_install_bundle,
+                "description" : "installs the bundle with the given id and version",
+                "arguments" : [
+                    {
+                        "name" : "bundle_id",
+                        "description" : "the id of the bundle to install",
+                        "values" : str,
+                        "mandatory" : True
+                    },
+                    {
+                        "name" : "bundle_version",
+                        "description" : "the version of the bundle to install",
+                        "values" : str,
+                        "mandatory" : False
+                    }
+                ]
+            },
+            "install_plugin" : {
+                "handler" : self.process_install_plugin,
+                "description" : "installs the plugin with the given id and version",
+                "arguments" : [
+                    {
+                        "name" : "plugin_id",
+                        "description" : "the id of the plugin to install",
+                        "values" : str,
+                        "mandatory" : True
+                    },
+                    {
+                        "name" : "plugin_version",
+                        "description" : "the version of the plugin to install",
+                        "values" : str,
+                        "mandatory" : False
+                    }
+                ]
+            }
+        }
 
         # returns the commands map
         return commands_map

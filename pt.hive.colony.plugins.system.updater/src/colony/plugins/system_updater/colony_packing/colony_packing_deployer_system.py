@@ -109,7 +109,9 @@ class ColonyPackingDeployer:
         plugin_path = plugin_manager.get_main_plugin_path()
 
         # creates the properties map for the file unpacking packing
-        properties = {TARGET_PATH_VALUE : plugin_path}
+        properties = {
+            TARGET_PATH_VALUE : plugin_path
+        }
 
         # unpacks the files using the colony service
         packing_manager_plugin.unpack_files([contents_file.name], properties, COLONY_VALUE)
@@ -139,7 +141,9 @@ class ColonyPackingDeployer:
         plugin_path = plugin_manager.get_main_plugin_path()
 
         # creates the properties map for the file unpacking packing
-        properties = {TARGET_PATH_VALUE : plugin_path}
+        properties = {
+            TARGET_PATH_VALUE : plugin_path
+        }
 
         # unpacks the files using the colony service
         packing_manager_plugin.unpack_files([contents_file.name], properties, COLONY_VALUE)
