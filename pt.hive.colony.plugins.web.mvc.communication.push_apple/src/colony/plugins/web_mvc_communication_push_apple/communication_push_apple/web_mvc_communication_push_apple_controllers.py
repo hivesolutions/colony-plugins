@@ -338,10 +338,12 @@ class WebMvcCommunicationPushAppleController:
             guid = notification.get_guid()
 
             # creates the parameters map
-            parameters = {COMMUNICATION_NAME_VALUE : communication_name,
-                          COMMUNICATION_HANDLER_NAME_VALUE : sender_id,
-                          GUID_VALUE : guid,
-                          MESSAGE_CONTENTS_VALUE : message}
+            parameters = {
+                COMMUNICATION_NAME_VALUE : communication_name,
+                COMMUNICATION_HANDLER_NAME_VALUE : sender_id,
+                GUID_VALUE : guid,
+                MESSAGE_CONTENTS_VALUE : message
+            }
 
             # retrieves the notification handler for the notification handler name
             notification_handler = self._get_notification_handler(notification_handler_name)
@@ -350,7 +352,11 @@ class WebMvcCommunicationPushAppleController:
             alert, badge, sound = notification_handler(notification)
 
             # creates the aps map
-            aps = {ALERT_VALUE : alert, BADGE_VALUE : badge, SOUND_VALUE : sound}
+            aps = {
+                ALERT_VALUE : alert,
+                BADGE_VALUE : badge,
+                SOUND_VALUE : sound
+            }
 
             # creates the payload map
             payload = {}
@@ -388,8 +394,10 @@ class WebMvcCommunicationPushAppleController:
             certificate_file_path = apple_push_configuration_map.get(CERTIFICATE_FILE_PATH_VALUE)
 
             # creates the socket parameters map
-            socket_parameters = {KEY_FILE_PATH_VALUE : None,
-                                 CERTIFICATE_FILE_PATH_VALUE : certificate_file_path}
+            socket_parameters = {
+                KEY_FILE_PATH_VALUE : None,
+                CERTIFICATE_FILE_PATH_VALUE : certificate_file_path
+            }
 
             try:
                 # sends the notification (payload) to the device
