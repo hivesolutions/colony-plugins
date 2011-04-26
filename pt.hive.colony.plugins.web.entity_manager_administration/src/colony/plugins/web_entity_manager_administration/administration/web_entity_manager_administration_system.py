@@ -122,7 +122,10 @@ class WebEntityManagerAdministration:
             entity_id = path_list[1]
 
             # creates the filter field
-            filter_field = {"field_name" : "object_id", "field_value" : entity_id}
+            filter_field = {
+                "field_name" : "object_id",
+                "field_value" : entity_id
+            }
 
             # adds the filter field to the filter fields list
             filter_fields_list.append(filter_field)
@@ -138,14 +141,20 @@ class WebEntityManagerAdministration:
             attribute_value = request.attributes_map[attribute_name]
 
             # creates the filter field
-            filter_field = {"field_name" : attribute_name, "field_value" : attribute_value}
+            filter_field = {
+                "field_name" : attribute_name,
+                "field_value" : attribute_value
+            }
 
             # adds the filter field to the filter fields list
             filter_fields_list.append(filter_field)
 
         if filter_fields_list:
             # creates the filter map
-            filter = {"filter_type" : "equals", "filter_fields" : filter_fields_list}
+            filter = {
+                "filter_type" : "equals",
+                "filter_fields" : filter_fields_list
+            }
         else:
             # sets the filter as none
             filter = None
@@ -266,7 +275,9 @@ class WebEntityManagerAdministration:
         resource_manager_plugin = self.web_entity_manager_administration_plugin.resource_manager_plugin
 
         # creates the entity manager connection parameters
-        connection_parameters = {"autocommit" : False}
+        connection_parameters = {
+            "autocommit" : False
+        }
 
         # retrieves the system database file name resource
         system_database_filename_resource = resource_manager_plugin.get_resource("system.database.file_name")
