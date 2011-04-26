@@ -58,6 +58,9 @@ DEFAULT_ENCODING = "utf-8"
 DEFAULT_LOCALE = "en_us"
 """ The default locale """
 
+DEFAULT_ALIAS_LOCALES = {}
+""" The default alias locales """
+
 DEFAULT_TEMPLATE_FILE_ENCODING = "Cp1252"
 """ The default template file encoding """
 
@@ -1117,7 +1120,7 @@ def get_attribute_decoded(self, rest_request, attribute_name, encoding = DEFAULT
         # returns the empty value
         return ""
 
-def get_locale(self, rest_request, available_locales = (DEFAULT_LOCALE,), default_locale = DEFAULT_LOCALE):
+def get_locale(self, rest_request, available_locales = (DEFAULT_LOCALE,), alias_locales = DEFAULT_ALIAS_LOCALES, default_locale = DEFAULT_LOCALE):
     """
     Retrieves the current "best" locale for the given rest
     request and for the available locales.
@@ -1128,6 +1131,8 @@ def get_locale(self, rest_request, available_locales = (DEFAULT_LOCALE,), defaul
     @type available_locales: Tuple
     @param available_locales: A tuple containing the available
     and "valid" locales.
+    @type alias_locales: Dictionary
+    @param alias_locales: The map to be used for locale alias resolution.
     @type default_locale: String
     @param default_locale: The default locale to be used.
     @rtype: String
@@ -1159,6 +1164,10 @@ def get_locale(self, rest_request, available_locales = (DEFAULT_LOCALE,), defaul
 
         # breaks the loop
         break
+
+    # resolves the alias locale (retrieving the
+    # "real" locale)
+    locale = alias_locales.get(locale, locale)
 
     # returns the locale
     return locale
