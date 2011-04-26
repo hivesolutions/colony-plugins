@@ -53,8 +53,12 @@ TEMPLATES_PATH = WEB_MVC_ENCRYPTION_RESOURCES_PATH + "/templates"
 EXTRAS_PATH = WEB_MVC_ENCRYPTION_RESOURCES_PATH + "/extras"
 """ The extras path """
 
-ENTITY_MANAGER_ARGUMENTS = {"engine" : "sqlite",
-                            "connection_parameters" : {"autocommit" : False}}
+ENTITY_MANAGER_ARGUMENTS = {
+    "engine" : "sqlite",
+    "connection_parameters" : {
+        "autocommit" : False
+    }
+}
 """ The entity manager arguments """
 
 CONNECTION_PARAMETERS_VALUE = "connection_parameters"

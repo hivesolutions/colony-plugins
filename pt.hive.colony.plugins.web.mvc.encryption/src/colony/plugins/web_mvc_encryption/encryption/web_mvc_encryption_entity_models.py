@@ -57,8 +57,14 @@ class RootEntity(base_entity.EntityClass):
     in order for them to have a global unique identifier.
     """
 
-    object_id = {"id" : True, "data_type" : "numeric", "generated" : True, "generator_type" : "table", "table_generator_field_name" : "RootEntity"}
-    """ The object id of the comment """
+    object_id = {
+        "id" : True,
+        "data_type" : "numeric",
+        "generated" : True,
+        "generator_type" : "table",
+        "table_generator_field_name" : "RootEntity"
+    }
+    """ The object id of the root entity """
 
     def __init__(self):
         """
@@ -81,13 +87,19 @@ class Consumer(RootEntity):
     consumer client with an api key.
     """
 
-    name = {"data_type" : "text"}
+    name = {
+        "data_type" : "text"
+    }
     """ The consumers's name """
 
-    api_key = {"data_type" : "text"}
+    api_key = {
+        "data_type" : "text"
+    }
     """ The consumers's value """
 
-    status = {"data_type" : "numeric"}
+    status = {
+        "data_type" : "numeric"
+    }
     """ The consumers's status (1 - active, 2 - inactive) """
 
     def __init__(self):
