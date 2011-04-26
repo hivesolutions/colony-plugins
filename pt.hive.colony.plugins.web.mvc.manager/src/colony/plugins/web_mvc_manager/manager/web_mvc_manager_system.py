@@ -164,15 +164,16 @@ class WebMvcManager:
 
         # creates the web mvc manager controllers map
         self.web_mvc_manager_controllers = {
-                                            "main" : self.web_mvc_manager_main_controller,
-                                            "communication" : self.web_mvc_manager_communication_controller,
-                                            "side_panel" : self.web_mvc_manager_side_panel_controller,
-                                            "header" : self.web_mvc_manager_header_controller,
-                                            "plugin" : self.web_mvc_manager_plugin_controller,
-                                            "capability" : self.web_mvc_manager_capability_controller,
-                                            "search_helper" : self.web_mvc_manager_search_helper,
-                                            "communication_helper" : self.web_mvc_manager_communication_helper
-                                        }
+            "main" : self.web_mvc_manager_main_controller,
+            "communication" : self.web_mvc_manager_communication_controller,
+            "side_panel" : self.web_mvc_manager_side_panel_controller,
+            "header" : self.web_mvc_manager_header_controller,
+            "plugin" : self.web_mvc_manager_plugin_controller,
+            "capability" : self.web_mvc_manager_capability_controller,
+            "search_helper" : self.web_mvc_manager_search_helper,
+            "communication_helper" : self.web_mvc_manager_communication_helper
+        }
+
     def get_patterns(self):
         """
         Retrieves the tuple of regular expressions to be used as patterns,
@@ -458,7 +459,10 @@ class WebMvcManager:
         base_item_list = self.menu_items_map[base_item]
 
         # creates the target item map
-        target_item_map = {"target" : target_item, "address" : base_address}
+        target_item_map = {
+            "target" : target_item,
+            "address" : base_address
+        }
 
         # adds the target item map to the base item list
         base_item_list.append(target_item_map)
@@ -474,7 +478,10 @@ class WebMvcManager:
         base_item_list = self.menu_items_map[base_item]
 
         # creates the target item map
-        target_item_map = {"target" : target_item, "address" : base_address}
+        target_item_map = {
+            "target" : target_item,
+            "address" : base_address
+        }
 
         # in case the target item map
         # exists in the base item list
