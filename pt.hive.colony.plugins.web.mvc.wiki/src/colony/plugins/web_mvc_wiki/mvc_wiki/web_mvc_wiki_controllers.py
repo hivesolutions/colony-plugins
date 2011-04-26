@@ -391,11 +391,19 @@ class WebMvcWikiController:
         output_structure = {}
 
         # creates the configuration map for the html generation
-        configuration_map = {"auto_numbered_sections" : True, "generate_footer" : False, "simple_parse" : True}
+        configuration_map = {
+            "auto_numbered_sections" : True,
+            "generate_footer" : False,
+            "simple_parse" : True
+        }
 
         # creates the engine properties map
-        engine_properties = {"file_path" : wiki_file_path, "target_path" : base_target_path,
-                             "output_structure" : output_structure, "configuration_map" : configuration_map}
+        engine_properties = {
+            "file_path" : wiki_file_path,
+            "target_path" : base_target_path,
+            "output_structure" : output_structure,
+            "configuration_map" : configuration_map
+        }
 
         # retrieves the language wiki plugin
         language_wiki_plugin = self.web_mvc_wiki_plugin.language_wiki_plugin
@@ -603,8 +611,13 @@ class WebMvcWikiPageController:
         # writes the normalized contents to the wiki file (in the complete file path)
         self._write_file(complete_file_path, normalized_contents)
 
+        # creates the repository arguments
+        repository_arguments = {
+            "repository_path" : base_file_path
+        }
+
         # creates the revision control parameters
-        revision_control_parameters = colony.libs.map_util.map_extend(instance_repository_arguments, {"repository_path" : base_file_path})
+        revision_control_parameters = colony.libs.map_util.map_extend(instance_repository_arguments, repository_arguments)
 
         # loads a new revision control manager for the specified adapter name
         revision_control_manager = revision_control_manager_plugin.load_revision_control_manager(instance_repository_type, revision_control_parameters)

@@ -107,9 +107,9 @@ class WebMvcWiki:
 
         # creates the web mvc wiki controllers map
         self.web_mvc_wiki_controllers = {
-                                         "main" : self.web_mvc_wiki_controller,
-                                         "page" : self.web_mvc_wiki_page_controller
-                                     }
+            "main" : self.web_mvc_wiki_controller,
+            "page" : self.web_mvc_wiki_page_controller
+        }
 
     def get_patterns(self):
         """
@@ -181,14 +181,28 @@ class WebMvcWiki:
             # sets the instance value for the web mvc wiki information
             web_mvc_wiki_information[instance_name] = (instance_repository_path, instance_repository_type)
 
+        # defines the web mvc wiki main item columns
+        web_mvc_wiki_main_item_columns = [
+            {
+                "type" : "name",
+                "value" : "Instance"
+            },
+            {
+                "type" : "value",
+                "value" : "Path"
+            },
+            {
+                "type" : "value",
+                "value" : "Repository Type"
+            }
+        ]
+
         # creates the web mvc wiki main item
         web_mvc_wiki_main_item = {}
 
         # sets the web mvc wiki main item values
         web_mvc_wiki_main_item["type"] = "map"
-        web_mvc_wiki_main_item["columns"] = [{"type" : "name", "value" : "Instance"},
-                                             {"type" : "value", "value" : "Path"},
-                                             {"type" : "value", "value" : "Repository Type"}]
+        web_mvc_wiki_main_item["columns"] = web_mvc_wiki_main_item_columns
         web_mvc_wiki_main_item["values"] = web_mvc_wiki_information
 
         # creates the system information (item)
