@@ -51,8 +51,14 @@ class RootEntity(base_entity.EntityClass):
     entity models inherit.
     """
 
-    object_id = {"id" : True, "data_type" : "numeric", "generated" : True, "generator_type" : "table", "table_generator_field_name" : "RootEntity"}
-    """ The object id of the comment """
+    object_id = {
+        "id" : True,
+        "data_type" : "numeric",
+        "generated" : True,
+        "generator_type" : "table",
+        "table_generator_field_name" : "RootEntity"
+    }
+    """ The object id of the root entity """
 
     def __init__(self):
         self.object_id = None
@@ -63,22 +69,37 @@ class MailQueue(RootEntity):
     mail queue entity.
     """
 
-    name = {"data_type" : "text"}
+    name = {
+        "data_type" : "text"
+    }
     """ The name of the mail queue """
 
-    messages_count = {"data_type" : "numeric"}
+    messages_count = {
+        "data_type" : "numeric"
+    }
     """ The number of messages in the mail queue """
 
-    messages_size = {"data_type" : "numeric"}
+    messages_size = {
+        "data_type" : "numeric"
+    }
     """ The size of messages in the mail queue """
 
-    first_message = {"data_type" : "relation", "fetch_type" : "lazy"}
+    first_message = {
+        "data_type" : "relation",
+        "fetch_type" : "lazy"
+    }
     """ The first message of the mail queue """
 
-    last_message = {"data_type" : "relation", "fetch_type" : "lazy"}
+    last_message = {
+        "data_type" : "relation",
+        "fetch_type" : "lazy"
+    }
     """ The last message of the mail queue """
 
-    messages = {"data_type" : "relation", "fetch_type" : "lazy"}
+    messages = {
+        "data_type" : "relation",
+        "fetch_type" : "lazy"
+    }
     """ The messages of the mail queue """
 
     def __init__(self):
@@ -156,25 +177,31 @@ class MailQueue(RootEntity):
 
     @staticmethod
     def get_relation_attributes_first_message():
-        return {"relation_type" : "one-to-one",
-                "target_entity" : Message,
-                "join_attribute_name" : "object_id",
-                "optional" : True}
+        return {
+            "relation_type" : "one-to-one",
+            "target_entity" : Message,
+            "join_attribute_name" : "object_id",
+            "optional" : True
+        }
 
     @staticmethod
     def get_relation_attributes_last_message():
-        return {"relation_type" : "one-to-one",
-                "target_entity" : Message,
-                "join_attribute_name" : "object_id",
-                "optional" : True}
+        return {
+            "relation_type" : "one-to-one",
+            "target_entity" : Message,
+            "join_attribute_name" : "object_id",
+            "optional" : True
+        }
 
     @staticmethod
     def get_relation_attributes_messages():
-        return {"relation_type" : "one-to-many",
-                "target_entity" : Message,
-                "join_attribute_name" : "mail_queue",
-                "mapped_by" : Message,
-                "optional" : True}
+        return {
+            "relation_type" : "one-to-many",
+            "target_entity" : Message,
+            "join_attribute_name" : "mail_queue",
+            "mapped_by" : Message,
+            "optional" : True
+        }
 
 class Message(RootEntity):
     """
@@ -182,31 +209,55 @@ class Message(RootEntity):
     message entity.
     """
 
-    uid = {"data_type" : "text"}
+    uid = {
+        "data_type" : "text"
+    }
     """ The unique identifier of the message """
 
-    sender = {"data_type" : "text"}
+    sender = {
+        "data_type" : "text"
+    }
     """ The sender of the message """
 
-    contents_size = {"data_type" : "numeric"}
+    contents_size = {
+        "data_type" : "numeric"
+    }
     """ The contents size of the message """
 
-    contents = {"data_type" : "relation", "fetch_type" : "lazy"}
+    contents = {
+        "data_type" : "relation",
+        "fetch_type" : "lazy"
+    }
     """ The contents of the message """
 
-    mail_queue_first = {"data_type" : "relation", "fetch_type" : "lazy"}
+    mail_queue_first = {
+        "data_type" : "relation",
+        "fetch_type" : "lazy"
+    }
     """ The mail queue reference to the first item """
 
-    mail_queue_last = {"data_type" : "relation", "fetch_type" : "lazy"}
+    mail_queue_last = {
+        "data_type" : "relation",
+        "fetch_type" : "lazy"
+    }
     """ The mail queue reference to the last item """
 
-    mail_queue = {"data_type" : "relation", "fetch_type" : "lazy"}
+    mail_queue = {
+        "data_type" : "relation",
+        "fetch_type" : "lazy"
+    }
     """ The mail queue that contains the message """
 
-    next_message = {"data_type" : "relation", "fetch_type" : "lazy"}
+    next_message = {
+        "data_type" : "relation",
+        "fetch_type" : "lazy"
+    }
     """ The next message in the priority list """
 
-    previous_message = {"data_type" : "relation", "fetch_type" : "lazy"}
+    previous_message = {
+        "data_type" : "relation",
+        "fetch_type" : "lazy"
+    }
     """ The previous message in the priority list """
 
     def __init__(self):
@@ -310,49 +361,61 @@ class Message(RootEntity):
 
     @staticmethod
     def get_relation_attributes_contents():
-        return {"relation_type" : "one-to-one",
-                "target_entity" : MessageContents,
-                "join_attribute_name" : "message",
-                "mapped_by" : MessageContents,
-                "optional" : True}
+        return {
+            "relation_type" : "one-to-one",
+            "target_entity" : MessageContents,
+            "join_attribute_name" : "message",
+            "mapped_by" : MessageContents,
+            "optional" : True
+        }
 
     @staticmethod
     def get_relation_attributes_mail_queue_first():
-        return {"relation_type" : "one-to-one",
-                "target_entity" : MailQueue,
-                "join_attribute_name" : "first_message",
-                "mapped_by" : MailQueue,
-                "optional" : True}
+        return {
+            "relation_type" : "one-to-one",
+            "target_entity" : MailQueue,
+            "join_attribute_name" : "first_message",
+            "mapped_by" : MailQueue,
+            "optional" : True
+        }
 
     @staticmethod
     def get_relation_attributes_mail_queue_last():
-        return {"relation_type" : "one-to-one",
-                "target_entity" : MailQueue,
-                "join_attribute_name" : "last_message",
-                "mapped_by" : MailQueue,
-                "optional" : True}
+        return {
+            "relation_type" : "one-to-one",
+            "target_entity" : MailQueue,
+            "join_attribute_name" : "last_message",
+            "mapped_by" : MailQueue,
+            "optional" : True
+        }
 
     @staticmethod
     def get_relation_attributes_mail_queue():
-        return {"relation_type" : "many-to-one",
-                "target_entity" : MailQueue,
-                "join_attribute_name" : "object_id",
-                "optional" : True}
+        return {
+            "relation_type" : "many-to-one",
+            "target_entity" : MailQueue,
+            "join_attribute_name" : "object_id",
+            "optional" : True
+        }
 
     @staticmethod
     def get_relation_attributes_next_message():
-        return {"relation_type" : "one-to-one",
-                "target_entity" : Message,
-                "join_attribute_name" : "object_id",
-                "optional" : True}
+        return {
+            "relation_type" : "one-to-one",
+            "target_entity" : Message,
+            "join_attribute_name" : "object_id",
+            "optional" : True
+        }
 
     @staticmethod
     def get_relation_attributes_previous_message():
-        return {"relation_type" : "one-to-one",
-                "target_entity" : Message,
-                "join_attribute_name" : "next_message",
-                "mapped_by" : Message,
-                "optional" : True}
+        return {
+            "relation_type" : "one-to-one",
+            "target_entity" : Message,
+            "join_attribute_name" : "next_message",
+            "mapped_by" : Message,
+            "optional" : True
+        }
 
 class MessageContents(RootEntity):
     """
@@ -360,13 +423,20 @@ class MessageContents(RootEntity):
     message contents entity.
     """
 
-    contents_size = {"data_type" : "numeric"}
+    contents_size = {
+        "data_type" : "numeric"
+    }
     """ The contents size of the message contents """
 
-    contents_data = {"data_type" : "text"}
+    contents_data = {
+        "data_type" : "text"
+    }
     """ The contents data of the message contents """
 
-    message = {"data_type" : "relation", "fetch_type" : "lazy"}
+    message = {
+        "data_type" : "relation",
+        "fetch_type" : "lazy"
+    }
     """ The contents data of the message contents """
 
     def __init__(self):
@@ -411,7 +481,9 @@ class MessageContents(RootEntity):
 
     @staticmethod
     def get_relation_attributes_message():
-        return {"relation_type" : "one-to-one",
-                "target_entity" : Message,
-                "join_attribute_name" : "object_id",
-                "optional" : True}
+        return {
+            "relation_type" : "one-to-one",
+            "target_entity" : Message,
+            "join_attribute_name" : "object_id",
+            "optional" : True
+        }

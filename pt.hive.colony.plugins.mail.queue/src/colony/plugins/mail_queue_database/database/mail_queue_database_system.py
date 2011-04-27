@@ -195,9 +195,19 @@ class MailQueueDatabaseClient:
         mail_queue_class = entity_manager.get_entity_class("MailQueue")
 
         # defines the find options for retrieving the mailboxes
-        find_options = {FILTERS_VALUE : [{FILTER_TYPE_VALUE : "equals",
-                                          FILTER_FIELDS_VALUE : ({"field_name" : "name",
-                                                                  "field_value" : name},)}]}
+        find_options = {
+            FILTERS_VALUE : [
+                {
+                    FILTER_TYPE_VALUE : "equals",
+                    FILTER_FIELDS_VALUE : (
+                        {
+                            "field_name" : "name",
+                            "field_value" : name
+                        }
+                    ,)
+                }
+            ]
+        }
 
         # retrieves the valid mail queues
         mail_queues = entity_manager._find_all_options(mail_queue_class, find_options)
@@ -213,13 +223,32 @@ class MailQueueDatabaseClient:
         mail_queue_class = entity_manager.get_entity_class("MailQueue")
 
         # the options for the message relations
-        message_options = {EAGER_LOADING_RELATIONS_VALUE : {"next_message" : {}, "previous_message" : {}}}
+        message_options = {
+            EAGER_LOADING_RELATIONS_VALUE : {
+                "next_message" : {},
+                "previous_message" : {}
+            }
+        }
 
         # defines the find options for retrieving the mailboxes
-        find_options = {FILTERS_VALUE : [{FILTER_TYPE_VALUE : "equals",
-                                          FILTER_FIELDS_VALUE : ({"field_name" : "name",
-                                                                  "field_value" : name},)}],
-                        EAGER_LOADING_RELATIONS_VALUE : {"first_message" : message_options, "last_message" : message_options, "messages" : {}}}
+        find_options = {
+            FILTERS_VALUE : [
+                {
+                    FILTER_TYPE_VALUE : "equals",
+                    FILTER_FIELDS_VALUE : (
+                        {
+                            "field_name" : "name",
+                            "field_value" : name
+                        }
+                    ,)
+                }
+            ],
+            EAGER_LOADING_RELATIONS_VALUE : {
+                "first_message" : message_options,
+                "last_message" : message_options,
+                "messages" : {}
+            }
+        }
 
         # retrieves the valid mail queues
         mail_queues = entity_manager._find_all_options(mail_queue_class, find_options)
