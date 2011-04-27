@@ -164,12 +164,24 @@ class MainServiceHttpSystemInformationHandler:
         # retrieves the framework information
         framework_information = self._get_framework_information()
 
+        # defines the framework main item columns
+        framework_main_item_columns = [
+            {
+                "type" : "name",
+                "value" : "Name"
+            },
+            {
+                "type" : "value",
+                "value" : "Value"
+            }
+        ]
+
         # creates the framework main item
         framework_main_item = {}
 
         # sets the framework main item values
         framework_main_item["type"] = "map"
-        framework_main_item["columns"] = [{"type" : "name", "value" : "Name"}, {"type" : "value", "value" : "Value"}]
+        framework_main_item["columns"] = framework_main_item_columns
         framework_main_item["values"] = framework_information
 
         # creates the framework copyright item
