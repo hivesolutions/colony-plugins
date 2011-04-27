@@ -379,8 +379,10 @@ class CommunicationPush:
         communication_handler_names_list_length = len(communication_handler_names_list)
 
         # creates the communication information
-        communication_information = {COMMUNICATION_HANDLER_COUNT_VALUE : communication_handler_names_list_length,
-                                     COMMUNICATION_HANDLER_NAMES_VALUE : communication_handler_names_list}
+        communication_information = {
+            COMMUNICATION_HANDLER_COUNT_VALUE : communication_handler_names_list_length,
+            COMMUNICATION_HANDLER_NAMES_VALUE : communication_handler_names_list
+        }
 
         # returns the communication information
         return communication_information
@@ -408,9 +410,11 @@ class CommunicationPush:
         properties_map = self._get_communication_handler_properties(communication_handler_name)
 
         # creates the communication handler information
-        communication_handler_information = {COMMUNICATION_NAMES_VALUE : communication_names_list,
-                                             COMMUNICATION_PROFILE_NAMES_VALUE : communication_profile_names_list,
-                                             PROPERTIES_VALUE : properties_map}
+        communication_handler_information = {
+            COMMUNICATION_NAMES_VALUE : communication_names_list,
+            COMMUNICATION_PROFILE_NAMES_VALUE : communication_profile_names_list,
+            PROPERTIES_VALUE : properties_map
+        }
 
         # returns the communication handler information
         return communication_handler_information
@@ -438,9 +442,11 @@ class CommunicationPush:
         communication_handler_tuples_list_length = len(communication_handler_tuples_list)
 
         # creates the communication profile information
-        communication_profile_information = {COMMUNICATION_NAMES_VALUE : communication_names_list,
-                                             COMMUNICATION_HANDLER_COUNT_VALUE : communication_handler_tuples_list_length,
-                                             COMMUNICATION_HANDLER_TUPLES_VALUE : communication_handler_tuples_list}
+        communication_profile_information = {
+            COMMUNICATION_NAMES_VALUE : communication_names_list,
+            COMMUNICATION_HANDLER_COUNT_VALUE : communication_handler_tuples_list_length,
+            COMMUNICATION_HANDLER_TUPLES_VALUE : communication_handler_tuples_list
+        }
 
         # returns the communication profile information
         return communication_profile_information
