@@ -75,7 +75,7 @@ class BusinessHelper:
 
         self.business_helper_plugin = business_helper_plugin
 
-    def import_class_module(self, class_module_name, globals, locals, global_values, base_directory_path, target_module_name = DEFAULT_MODULE_NAME):
+    def import_class_module(self, class_module_name, globals, locals, global_values, base_directory_path, target_module_name=DEFAULT_MODULE_NAME):
         """
         Imports the class module using the globals and locals from the current target,
         it imports the symbols in the module to the current globals environment.

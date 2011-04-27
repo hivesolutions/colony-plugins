@@ -582,8 +582,13 @@ class SessionManagerMaster(SessionManager):
         # the session information
         session_information = self.create_persistent_session()
 
+        # creates the return value map
+        return_value_map = {
+            "session_information" : session_information
+        }
+
         # creates the return value
-        return_value = self._create_return_value({"session_information" : session_information}, session_information)
+        return_value = self._create_return_value(return_value_map, session_information)
 
         # returns the return value
         return return_value
@@ -607,8 +612,13 @@ class SessionManagerMaster(SessionManager):
             # creates a new persistent session
             session_information = self.create_persistent_session()
 
+        # creates the return value map
+        return_value_map = {
+            "session_methods" : self.business_logic_class_methods_map
+        }
+
         # creates the return value
-        return_value = self._create_return_value({"session_methods" : self.business_logic_class_methods_map}, session_information)
+        return_value = self._create_return_value(return_value_map, session_information)
 
         # returns the return value
         return return_value
@@ -628,8 +638,13 @@ class SessionManagerMaster(SessionManager):
         # retrieves the session information
         session_information = self._get_session_information(session_information)
 
+        # creates the return value map
+        return_value_map = {
+            "session_information" : session_information
+        }
+
         # creates the return value
-        return_value = self._create_return_value({"session_information" : session_information}, session_information)
+        return_value = self._create_return_value(return_value_map, session_information)
 
         # returns the return value
         return return_value
@@ -655,8 +670,13 @@ class SessionManagerMaster(SessionManager):
         # sets the session information map in the session information
         session_information.set_session_information_map(session_information_map)
 
+        # creates the return value map
+        return_value_map = {
+            "session_information" : session_information
+        }
+
         # creates the return value
-        return_value = self._create_return_value({"session_information" : session_information}, session_information)
+        return_value = self._create_return_value(return_value_map, session_information)
 
         # returns the return value
         return return_value
@@ -700,8 +720,13 @@ class SessionManagerMaster(SessionManager):
         # releases the session manager to the pool
         self.session_manager_pool.release_pool_item(session_manager)
 
+        # creates the return value map
+        return_value_map = {
+            "return_value" : return_value
+        }
+
         # creates the return value
-        return_value = self._create_return_value({"return_value" : return_value}, session_information)
+        return_value = self._create_return_value(return_value_map, session_information)
 
         # returns the return value
         return return_value
