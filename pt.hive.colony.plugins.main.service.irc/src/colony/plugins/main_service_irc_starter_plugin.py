@@ -77,7 +77,13 @@ class MainServiceIrcStarterPlugin(colony.base.plugin_system.Plugin):
         # notifies the ready semaphore
         self.release_ready_semaphore()
 
-        self.main_service_irc_plugin.start_service({"socket_provider" : "normal", "port" : 6667})
+        # defines the parameters
+        parameters = {
+            "socket_provider" : "normal",
+            "port" : 6667
+        }
+
+        self.main_service_irc_plugin.start_service(parameters)
 
     def unload_plugin(self):
         colony.base.plugin_system.Plugin.unload_plugin(self)
