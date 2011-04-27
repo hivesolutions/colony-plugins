@@ -52,18 +52,29 @@ class EntityManagerPlugin(colony.base.plugin_system.Plugin):
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     loading_type = colony.base.plugin_system.EAGER_LOADING_TYPE
-    platforms = [colony.base.plugin_system.CPYTHON_ENVIRONMENT]
-    attributes = {"build_automation_file_path" : "$base{plugin_directory}/data/entity_manager/resources/baf.xml"}
-    capabilities = ["entity_manager", "build_automation_item"]
-    capabilities_allowed = ["entity_manager_engine", "entity", "entity_bundle"]
-    dependencies = []
-    events_handled = []
-    events_registrable = []
-    main_modules = ["data.entity_manager.entity_manager_decorators",
-                    "data.entity_manager.entity_manager_exceptions",
-                    "data.entity_manager.entity_manager_system"]
+    platforms = [
+        colony.base.plugin_system.CPYTHON_ENVIRONMENT
+    ]
+    attributes = {
+        "build_automation_file_path" : "$base{plugin_directory}/data/entity_manager/resources/baf.xml"
+    }
+    capabilities = [
+        "entity_manager",
+        "build_automation_item"
+    ]
+    capabilities_allowed = [
+        "entity_manager_engine",
+        "entity",
+        "entity_bundle"
+    ]
+    main_modules = [
+        "data.entity_manager.entity_manager_decorators",
+        "data.entity_manager.entity_manager_exceptions",
+        "data.entity_manager.entity_manager_system"
+    ]
 
     entity_manager = None
+    """ The entity manager """
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
