@@ -103,8 +103,13 @@ class HttpLogAnalyzer:
             # retrieves the log parser
             log_parser = log_parser_plugin.create_log_parser()
 
+            # defines the parameters
+            parameters = {
+                "log_file_path" : log_file_path
+            }
+
             # opens the log parser
-            log_parser.open({"log_file_path" : log_file_path})
+            log_parser.open(parameters)
 
             # analyzes all log entries
             while True:

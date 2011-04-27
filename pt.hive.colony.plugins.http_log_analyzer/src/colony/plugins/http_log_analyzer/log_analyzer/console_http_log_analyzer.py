@@ -137,24 +137,25 @@ class ConsoleHttpLogAnalyzer:
     def __generate_commands_map(self):
         # creates the commands map
         commands_map = {
-                        "analyze_http_log" : {
-                            "handler" : self.process_analyze_http_log,
-                            "description" : "analyzes the specified http log file",
-                            "arguments" : [
-                                {
-                                    "name" : "path",
-                                    "description" : "the http log file path",
-                                    "values" : self.get_path_names_list,
-                                    "mandatory" : True
-                                }, {
-                                    "name" : "log_type",
-                                    "description" : "the http log type",
-                                    "values" : ("common",),
-                                    "mandatory" : False
-                                }
-                            ]
-                        }
+            "analyze_http_log" : {
+                "handler" : self.process_analyze_http_log,
+                "description" : "analyzes the specified http log file",
+                "arguments" : [
+                    {
+                        "name" : "path",
+                        "description" : "the http log file path",
+                        "values" : self.get_path_names_list,
+                        "mandatory" : True
+                    },
+                    {
+                        "name" : "log_type",
+                        "description" : "the http log type",
+                        "values" : ("common",),
+                        "mandatory" : False
                     }
+                ]
+            }
+        }
 
         # returns the commands map
         return commands_map

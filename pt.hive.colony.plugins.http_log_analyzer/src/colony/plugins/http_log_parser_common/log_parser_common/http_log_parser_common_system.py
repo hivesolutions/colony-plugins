@@ -48,10 +48,12 @@ COMMON_VALUE = "common"
 LOG_FILE_ENCODING = "Cp1252"
 """ The log file encoding """
 
-COMMON_LOG_FILE_ENTRY_REGEX = re.compile("(?P<ip_address>[a-fA-F0-9\.\:]*) (?P<identity>.*) (?P<user_id>[a-zA-Z0-9_\-].*) " \
-                                         "\[(?P<finish_time_day>\d\d)/(?P<finish_time_month>[A-Z][a-z][a-z])/(?P<finish_time_year>\d\d\d\d)\:(?P<finish_time_hours>\d\d)\:(?P<finish_time_minutes>\d\d)\:(?P<finish_time_seconds>\d\d) (?P<finish_time_timezone>[\+\-]\d\d\d\d)\] " \
-                                         "\"(?P<request_type>[a-zA-Z]*) (?P<request_path>(\/[^\?#]+)+\/?(\?([^#])*)?(#(.*))?) (?P<request_protocol>HTTP/[0-9\.]+)\" " \
-                                         "(?P<status_code>\d+) (?P<size>[\d\-]+)")
+COMMON_LOG_FILE_ENTRY_REGEX = re.compile(
+    "(?P<ip_address>[a-fA-F0-9\.\:]*) (?P<identity>.*) (?P<user_id>[a-zA-Z0-9_\-].*) " \
+    "\[(?P<finish_time_day>\d\d)/(?P<finish_time_month>[A-Z][a-z][a-z])/(?P<finish_time_year>\d\d\d\d)\:(?P<finish_time_hours>\d\d)\:(?P<finish_time_minutes>\d\d)\:(?P<finish_time_seconds>\d\d) (?P<finish_time_timezone>[\+\-]\d\d\d\d)\] " \
+    "\"(?P<request_type>[a-zA-Z]*) (?P<request_path>(\/[^\?#]+)+\/?(\?([^#])*)?(#(.*))?) (?P<request_protocol>HTTP/[0-9\.]+)\" " \
+    "(?P<status_code>\d+) (?P<size>[\d\-]+)"
+)
 """ Common log file entry regex """
 
 READ_CHUNK_SIZE = 10485760
@@ -60,7 +62,20 @@ READ_CHUNK_SIZE = 10485760
 LOG_FILE_LINE_ENDING = "\n"
 """ The log file line ending """
 
-MONTHS_MAP = {"Jan" : 1, "Feb" : 2, "Mar" : 3, "Apr" : 4, "May" : 5, "Jun" : 6, "Jul" : 7, "Aug" : 8, "Sep" : 9, "Oct" : 10, "Nov" : 11, "Dec" : 12}
+MONTHS_MAP = {
+    "Jan" : 1,
+    "Feb" : 2,
+    "Mar" : 3,
+    "Apr" : 4,
+    "May" : 5,
+    "Jun" : 6,
+    "Jul" : 7,
+    "Aug" : 8,
+    "Sep" : 9,
+    "Oct" : 10,
+    "Nov" : 11,
+    "Dec" : 12
+}
 """ The months map """
 
 class HttpLogParserCommon:
@@ -187,18 +202,18 @@ class CommonLogParser:
 
             # defines the log entry map
             log_entry_map = {
-                             "ip_address" : ip_address,
-                             "identity" : identity,
-                             "user_id" : user_id,
-                             "finish_time" : finish_datetime,
-                             "request" : {
-                                 "type" : request_type,
-                                 "path" : request_path,
-                                 "protocol" : request_protocol
-                             },
-                             "status_code" : status_code,
-                             "size" : size
-                         }
+                "ip_address" : ip_address,
+                "identity" : identity,
+                "user_id" : user_id,
+                "finish_time" : finish_datetime,
+                "request" : {
+                    "type" : request_type,
+                    "path" : request_path,
+                    "protocol" : request_protocol
+                },
+                "status_code" : status_code,
+                "size" : size
+            }
 
             # appends the log entry map to the log entries list
             log_entries.append(log_entry_map)
