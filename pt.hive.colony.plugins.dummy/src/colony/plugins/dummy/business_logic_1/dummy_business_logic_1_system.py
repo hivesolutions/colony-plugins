@@ -102,7 +102,10 @@ class DummyBusinessLogic1:
         business_logic_classes_map = business_helper_plugin.generate_bundle_map(business_logic_classes)
 
         # creates the entity manager properties
-        entity_manager_properties = {ENTITY_CLASSES_LIST_VALUE : entity_classes, ENTITY_CLASSES_MAP_VALUE : entity_classes_map}
+        entity_manager_properties = {
+            ENTITY_CLASSES_LIST_VALUE : entity_classes,
+            ENTITY_CLASSES_MAP_VALUE : entity_classes_map
+        }
 
         # creates the dummy session
         dummy_session = business_session_manager_plugin.load_session_manager_master_entity_manager_business_logic("dummy_session", "sqlite", entity_manager_properties,  business_logic_classes, business_logic_classes_map)
@@ -143,7 +146,9 @@ class DummyBusinessLogic1:
         resource_manager_plugin = self.dummy_business_logic_1_plugin.resource_manager_plugin
 
         # creates the entity manager connection parameters
-        connection_parameters = {"autocommit" : False}
+        connection_parameters = {
+            "autocommit" : False
+        }
 
         # retrieves the system database file name resource
         system_database_filename_resource = resource_manager_plugin.get_resource("system.database.file_name")

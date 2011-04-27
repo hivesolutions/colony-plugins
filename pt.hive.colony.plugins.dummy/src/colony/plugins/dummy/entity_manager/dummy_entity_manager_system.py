@@ -93,7 +93,10 @@ class DummyEntityManager:
         entity_classes_map = business_helper_plugin.generate_bundle_map(entity_classes)
 
         # creates the entity manager properties
-        entity_manager_properties = {ENTITY_CLASSES_LIST_VALUE : entity_classes, ENTITY_CLASSES_MAP_VALUE : entity_classes_map}
+        entity_manager_properties = {
+            ENTITY_CLASSES_LIST_VALUE : entity_classes,
+            ENTITY_CLASSES_MAP_VALUE : entity_classes_map
+        }
 
         # creates a new entity manager with the sqlite engine
         entity_manager = entity_manager_plugin.load_entity_manager_properties("sqlite", entity_manager_properties)
@@ -209,7 +212,9 @@ class DummyEntityManager:
         resource_manager_plugin = self.dummy_entity_manager_plugin.resource_manager_plugin
 
         # creates the entity manager connection parameters
-        connection_parameters = {"autocommit" : False}
+        connection_parameters = {
+            "autocommit" : False
+        }
 
         # retrieves the system database file name resource
         system_database_filename_resource = resource_manager_plugin.get_resource("system.database.file_name")

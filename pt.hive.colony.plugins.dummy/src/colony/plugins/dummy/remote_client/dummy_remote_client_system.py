@@ -59,8 +59,13 @@ class DummyRemoteClient:
         # retrieves the remote client manager plugin
         remote_client_manager_plugin = self.dummy_remote_client_plugin.remote_client_manager_plugin
 
+        # defines the parameters
+        parameters = {
+            "pyro_main_uri" : "PYRO://192.168.1.21:7766/c0a80115239814b98c09807c8217e571"
+        }
+
         # creates the pyro remote client
-        remote_client = remote_client_manager_plugin.create_remote_client("pyro", {"pyro_main_uri" : "PYRO://192.168.1.21:7766/c0a80115239814b98c09807c8217e571"})
+        remote_client = remote_client_manager_plugin.create_remote_client("pyro", parameters)
 
         # in case no remote client is set
         if not remote_client:
