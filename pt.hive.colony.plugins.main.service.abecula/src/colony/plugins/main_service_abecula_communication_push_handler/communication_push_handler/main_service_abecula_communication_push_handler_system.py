@@ -272,8 +272,14 @@ class MainServiceAbeculaCommunicationPushHandler:
         # sets the communication client id for the service connection
         self.service_connection_communication_client_id_map[service_connection] = communication_client_id
 
+        # defines the request contents
+        request_contents = {
+            RESULT_VALUE : SUCCESS_VALUE,
+            COMMUNICATION_CLIENT_ID_VALUE : communication_client_id
+        }
+
         # sets the encoded request contents
-        self._set_encoded_request_contents(request, {RESULT_VALUE : SUCCESS_VALUE, COMMUNICATION_CLIENT_ID_VALUE : communication_client_id})
+        self._set_encoded_request_contents(request, request_contents)
 
         # adds the handle connection closed to the connection closed handlers
         service_connection.connection_closed_handlers.append(self.handle_connection_closed)
@@ -306,8 +312,13 @@ class MainServiceAbeculaCommunicationPushHandler:
         # unloads all the communication profiles for the communication client id
         communication_push_plugin.unload_all_communication_profile(communication_client_id)
 
+        # defines the request contents
+        request_contents = {
+            RESULT_VALUE : SUCCESS_VALUE
+        }
+
         # sets the encoded request contents
-        self._set_encoded_request_contents(request, {RESULT_VALUE : SUCCESS_VALUE})
+        self._set_encoded_request_contents(request, request_contents)
 
     def handle_register(self, request, communication_push_plugin):
         """
@@ -352,8 +363,14 @@ class MainServiceAbeculaCommunicationPushHandler:
             # adds a new communication handler
             communication_push_plugin.add_communication_handler(communication_name, communication_client_id, generated_communication_handler)
 
+        # defines the request contents
+        request_contents = {
+            RESULT_VALUE : SUCCESS_VALUE,
+            COMMUNICATION_NAME_VALUE : communication_name
+        }
+
         # sets the encoded request contents
-        self._set_encoded_request_contents(request, {RESULT_VALUE : SUCCESS_VALUE, COMMUNICATION_NAME_VALUE : communication_name})
+        self._set_encoded_request_contents(request, request_contents)
 
     def handle_unregister(self, request, communication_push_plugin):
         """
@@ -395,8 +412,14 @@ class MainServiceAbeculaCommunicationPushHandler:
             # removes the service connection name from the service connection name communication handler map
             del self.service_connection_name_communication_handler_map[service_connection_name_tuple]
 
+        # defines the request contents
+        request_contents = {
+            RESULT_VALUE : SUCCESS_VALUE,
+            COMMUNICATION_NAME_VALUE : communication_name
+        }
+
         # sets the encoded request contents
-        self._set_encoded_request_contents(request, {RESULT_VALUE : SUCCESS_VALUE, COMMUNICATION_NAME_VALUE : communication_name})
+        self._set_encoded_request_contents(request, request_contents)
 
     def handle_message(self, request, communication_push_plugin):
         """
@@ -426,8 +449,13 @@ class MainServiceAbeculaCommunicationPushHandler:
         # sends the notification in broadcast mode
         communication_push_plugin.send_broadcast_notification(communication_name, notification)
 
+        # defines the request contents
+        request_contents = {
+            RESULT_VALUE : SUCCESS_VALUE
+        }
+
         # sets the encoded request contents
-        self._set_encoded_request_contents(request, {RESULT_VALUE : SUCCESS_VALUE})
+        self._set_encoded_request_contents(request, request_contents)
 
     def handle_stat(self, request, communication_push_plugin):
         """
@@ -481,8 +509,14 @@ class MainServiceAbeculaCommunicationPushHandler:
             # adds the information value to the information values list
             information_values_list.append(information_value)
 
+        # defines the request contents
+        request_contents = {
+            RESULT_VALUE : SUCCESS_VALUE,
+            INFORMATION_VALUE : information_values_list
+        }
+
         # sets the encoded request contents
-        self._set_encoded_request_contents(request, {RESULT_VALUE : SUCCESS_VALUE, INFORMATION_VALUE : information_values_list})
+        self._set_encoded_request_contents(request, request_contents)
 
     def handle_prop(self, request, communication_push_plugin):
         """
@@ -509,8 +543,13 @@ class MainServiceAbeculaCommunicationPushHandler:
         # sets the communication handler property
         communication_push_plugin.set_communication_handler_property(communication_client_id, property_name, property_value)
 
+        # defines the request contents
+        request_contents = {
+            RESULT_VALUE : SUCCESS_VALUE
+        }
+
         # sets the encoded request contents
-        self._set_encoded_request_contents(request, {RESULT_VALUE : SUCCESS_VALUE})
+        self._set_encoded_request_contents(request, request_contents)
 
     def handle_load(self, request, communication_push_plugin):
         """
@@ -554,8 +593,13 @@ class MainServiceAbeculaCommunicationPushHandler:
             # loads the communication profile
             communication_push_plugin.load_communication_profile(communication_client_id, communication_profile_name, generated_communication_handler)
 
+        # defines the request contents
+        request_contents = {
+            RESULT_VALUE : SUCCESS_VALUE
+        }
+
         # sets the encoded request contents
-        self._set_encoded_request_contents(request, {RESULT_VALUE : SUCCESS_VALUE})
+        self._set_encoded_request_contents(request, request_contents)
 
     def handle_unload(self, request, communication_push_plugin):
         """
@@ -597,8 +641,13 @@ class MainServiceAbeculaCommunicationPushHandler:
             # removes the service connection profile name from the service connection profile name communication handler map
             del self.service_connection_profile_name_communication_handler_map[service_connection_profile_name_tuple]
 
+        # defines the request contents
+        request_contents = {
+            RESULT_VALUE : SUCCESS_VALUE
+        }
+
         # sets the encoded request contents
-        self._set_encoded_request_contents(request, {RESULT_VALUE : SUCCESS_VALUE})
+        self._set_encoded_request_contents(request, request_contents)
 
     def handle_set(self, request, communication_push_plugin):
         """
@@ -627,8 +676,13 @@ class MainServiceAbeculaCommunicationPushHandler:
             # sets the communication profile
             communication_push_plugin.set_communication_profile(communication_profile_name, communication_name)
 
+        # defines the request contents
+        request_contents = {
+            RESULT_VALUE : SUCCESS_VALUE
+        }
+
         # sets the encoded request contents
-        self._set_encoded_request_contents(request, {RESULT_VALUE : SUCCESS_VALUE})
+        self._set_encoded_request_contents(request, request_contents)
 
     def handle_unset(self, request, communication_push_plugin):
         """
@@ -657,8 +711,13 @@ class MainServiceAbeculaCommunicationPushHandler:
             # unsets the communication profile
             communication_push_plugin.unset_communication_profile(communication_profile_name, communication_name)
 
+        # defines the request contents
+        request_contents = {
+            RESULT_VALUE : SUCCESS_VALUE
+        }
+
         # sets the encoded request contents
-        self._set_encoded_request_contents(request, {RESULT_VALUE : SUCCESS_VALUE})
+        self._set_encoded_request_contents(request, request_contents)
 
     def handle_get(self, request, communication_push_plugin):
         """
@@ -702,8 +761,14 @@ class MainServiceAbeculaCommunicationPushHandler:
             # adds the structured notification to the structured notifications
             structured_notifications.append(structured_notification)
 
+        # defines the request contents
+        request_contents = {
+            RESULT_VALUE : SUCCESS_VALUE,
+            NOTIFICATIONS_VALUE : structured_notifications
+        }
+
         # sets the encoded request contents
-        self._set_encoded_request_contents(request, {RESULT_VALUE : SUCCESS_VALUE, NOTIFICATIONS_VALUE : structured_notifications})
+        self._set_encoded_request_contents(request, request_contents)
 
     def handle_ping(self, request, communication_push_plugin):
         """
@@ -715,8 +780,13 @@ class MainServiceAbeculaCommunicationPushHandler:
         @param communication_push_plugin: The communication push plugin.
         """
 
+        # defines the request contents
+        request_contents = {
+            RESULT_VALUE : SUCCESS_VALUE
+        }
+
         # sets the encoded request contents
-        self._set_encoded_request_contents(request, {RESULT_VALUE : SUCCESS_VALUE})
+        self._set_encoded_request_contents(request, request_contents)
 
     def handle_connection_closed(self, service_connection):
         """
@@ -1036,11 +1106,13 @@ class MainServiceAbeculaCommunicationPushHandler:
         sequence_id = notification.get_sequence_id()
 
         # creates the complete message contents from the original message contents
-        message_contents = {COMMUNICATION_NAME_VALUE : communication_name,
-                            COMMUNICATION_CLIENT_ID_VALUE : sender_id,
-                            GUID_VALUE : guid,
-                            SEQUENCE_ID_VALUE : sequence_id,
-                            MESSAGE_CONTENTS_VALUE : message}
+        message_contents = {
+            COMMUNICATION_NAME_VALUE : communication_name,
+            COMMUNICATION_CLIENT_ID_VALUE : sender_id,
+            GUID_VALUE : guid,
+            SEQUENCE_ID_VALUE : sequence_id,
+            MESSAGE_CONTENTS_VALUE : message
+        }
 
         # returns the message contents
         return message_contents

@@ -486,10 +486,12 @@ class AbeculaClientServiceHandler:
         message = colony.libs.string_buffer_util.StringBuffer()
 
         # creates a request object
-        request = AbeculaRequest({
-            "service_handler" : self,
-            "service_connection" : service_connection
-        })
+        request = AbeculaRequest(
+            {
+                "service_handler" : self,
+                "service_connection" : service_connection
+            }
+        )
 
         # creates the start line loaded flag
         start_line_loaded = False
