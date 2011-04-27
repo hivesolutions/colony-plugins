@@ -103,7 +103,10 @@ if __name__ == "__main__":
         target_path = file_path + "/" + DEFAULT_TARGET_PATH
 
     # creates the properties map
-    properties = {"file_path" : file_path, "target_path" : target_path}
+    properties = {
+        "file_path" : file_path,
+        "target_path" : target_path
+    }
 
     # creates a new wiki generator
     wiki_generator = colony.language_wiki.wiki_generator.WikiGenerator()

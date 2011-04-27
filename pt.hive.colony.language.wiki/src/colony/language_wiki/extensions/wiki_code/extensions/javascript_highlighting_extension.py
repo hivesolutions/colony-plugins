@@ -55,16 +55,18 @@ import language_generator.lexer_generator
 HIGHLIGHTING_TYPE = "javascript"
 """ The highlighting type """
 
-CLASS_DEFINITION = {"FUNCTION" : "kw5",
-                    "IF" : "kw5",
-                    "ELSE" : "kw5",
-                    "VAR" : "kw5",
-                    "RETURN" : "kw5",
-                    "NAME" : "kw2",
-                    "STRING" : "st0",
-                    "NUMBER" : "kw6",
-                    "BOOL" : "kw5",
-                    "COMMENT" : "kw4"}
+CLASS_DEFINITION = {
+    "FUNCTION" : "kw5",
+    "IF" : "kw5",
+    "ELSE" : "kw5",
+    "VAR" : "kw5",
+    "RETURN" : "kw5",
+    "NAME" : "kw2",
+    "STRING" : "st0",
+    "NUMBER" : "kw6",
+    "BOOL" : "kw5",
+    "COMMENT" : "kw4"
+}
 """ The class definition map """
 
 class JavascriptHighlightingExtension(wiki_code.wiki_code_extension_system.WikiCodeExtension):

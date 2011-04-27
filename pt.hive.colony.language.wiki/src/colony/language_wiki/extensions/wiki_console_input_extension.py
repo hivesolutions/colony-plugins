@@ -44,7 +44,10 @@ import language_wiki.wiki_extension_system
 GENERATOR_TYPE = "console_input"
 """ The generator type """
 
-CONFIGURATION_MAP = {"generate_footer" : False, "simple_parse" : True}
+CONFIGURATION_MAP = {
+    "generate_footer" : False,
+    "simple_parse" : True
+}
 """ The configuration map """
 
 class WikiConsoleInputExtension(language_wiki.wiki_extension_system.WikiExtension):

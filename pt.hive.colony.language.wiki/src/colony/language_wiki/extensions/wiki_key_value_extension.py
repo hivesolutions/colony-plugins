@@ -47,7 +47,10 @@ SEPARATOR_VALUE = "---"
 GENERATOR_TYPE = "key_value"
 """ The generator type """
 
-CONFIGURATION_MAP = {"generate_footer" : False, "simple_parse" : True}
+CONFIGURATION_MAP = {
+    "generate_footer" : False,
+    "simple_parse" : True
+}
 """ The configuration map """
 
 class WikiKeyValueExtension(language_wiki.wiki_extension_system.WikiExtension):

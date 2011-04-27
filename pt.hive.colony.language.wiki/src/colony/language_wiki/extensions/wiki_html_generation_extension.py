@@ -51,36 +51,41 @@ GENERATION_TYPE = "html"
 WIKI_EXTENSIONS = ("wiki", "wik")
 """ The valid wiki extensions list """
 
-BASE_FILES = {"resources/css/main.css" : "/css",
-              "resources/css/print.css" : "/css",
-              "resources/js/main.js" : "/js",
-              "resources/images/link_icon.png" : "/images",
-              "resources/images/console_icon.png" : "/images",
-              "resources/images/header.png" : "/images",
-              "resources/images/tick_icon.png" : "/images",
-              "resources/images/arrow_icon.png" : "/images",
-              "resources/images/wikipedia_icon.png" : "/images",
-              "resources/images/colony_logo.png" : "/images",
-              "resources/images/powered_by_colony.png" : "/images",
-              "resources/images/separator.png" : "/images",
-              "resources/images/quote.png" : "/images",
-              "resources/images/document_information_note.gif" : "/images",
-              "resources/images/warning_note.gif" : "/images",
-              "resources/images/error_note.gif" : "/images",
-              "resources/images/info_note.gif" : "/images",
-              "resources/images/quote_note.gif" : "/images",
-              "resources/images/code_note.gif" : "/images",
-              "resources/images/image_note.gif" : "/images",
-              "resources/images/video_note.gif" : "/images",
-              "resources/images/checkbox_note.gif" : "/images",
-              "resources/images/resources_note.gif" : "/images",
-              "resources/images/diagram_note.gif" : "/images"}
+BASE_FILES = {
+    "resources/css/main.css" : "/css",
+    "resources/css/print.css" : "/css",
+    "resources/js/main.js" : "/js",
+    "resources/images/link_icon.png" : "/images",
+    "resources/images/console_icon.png" : "/images",
+    "resources/images/header.png" : "/images",
+    "resources/images/tick_icon.png" : "/images",
+    "resources/images/arrow_icon.png" : "/images",
+    "resources/images/wikipedia_icon.png" : "/images",
+    "resources/images/colony_logo.png" : "/images",
+    "resources/images/powered_by_colony.png" : "/images",
+    "resources/images/separator.png" : "/images",
+    "resources/images/quote.png" : "/images",
+    "resources/images/document_information_note.gif" : "/images",
+    "resources/images/warning_note.gif" : "/images",
+    "resources/images/error_note.gif" : "/images",
+    "resources/images/info_note.gif" : "/images",
+    "resources/images/quote_note.gif" : "/images",
+    "resources/images/code_note.gif" : "/images",
+    "resources/images/image_note.gif" : "/images",
+    "resources/images/video_note.gif" : "/images",
+    "resources/images/checkbox_note.gif" : "/images",
+    "resources/images/resources_note.gif" : "/images",
+    "resources/images/diagram_note.gif" : "/images"
+}
 """ The base files """
 
 EXTRA_RESOURCES_MANIFEST_FILE = "extra_resources.manifest"
 """ The extra resources manifest file """
 
-DEFAULT_CONFIGURATION_MAP = {"auto_numbered_sections" : True, "generate_footer" : True}
+DEFAULT_CONFIGURATION_MAP = {
+    "auto_numbered_sections" : True,
+    "generate_footer" : True
+}
 """ The default configuration map """
 
 class WikiHtmlGenerator(language_wiki.wiki_extension_system.WikiExtension):

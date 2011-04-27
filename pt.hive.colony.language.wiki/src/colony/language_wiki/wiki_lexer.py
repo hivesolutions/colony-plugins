@@ -63,11 +63,13 @@ t_SPACE = r"[ \t\r]+"
 
 t_FORCED_NEWLINE = r"\\\\"
 
-states_map = {"BOLD" : False,
-              "ITALIC" : False,
-              "UNDERLINE" : False,
-              "MONOSPACE" : False,
-              "SECTION" : False}
+states_map = {
+    "BOLD" : False,
+    "ITALIC" : False,
+    "UNDERLINE" : False,
+    "MONOSPACE" : False,
+    "SECTION" : False
+}
 
 def t_NAME_ESCAPED(t):
     r"%%.*?%%"

@@ -55,15 +55,17 @@ import language_generator.lexer_generator
 HIGHLIGHTING_TYPE = "xml"
 """ The highlighting type """
 
-CLASS_DEFINITION = {"TAG_END" : "kw5",
-                    "TAG_INIT" : "kw5",
-                    "XML" : "kw3",
-                    "CDATA" : "kw4",
-                    "ATTRIBUTION" : "kw4",
-                    "NAME" : "kw2",
-                    "STRING" : "st0",
-                    "NUMBER" : "kw6",
-                    "COMMENT" : "kw4"}
+CLASS_DEFINITION = {
+    "TAG_END" : "kw5",
+    "TAG_INIT" : "kw5",
+    "XML" : "kw3",
+    "CDATA" : "kw4",
+    "ATTRIBUTION" : "kw4",
+    "NAME" : "kw2",
+    "STRING" : "st0",
+    "NUMBER" : "kw6",
+    "COMMENT" : "kw4"
+}
 """ The class definition map """
 
 class XmlHighlightingExtension(wiki_code.wiki_code_extension_system.WikiCodeExtension):

@@ -55,20 +55,22 @@ import language_generator.lexer_generator
 HIGHLIGHTING_TYPE = "python"
 """ The highlighting type """
 
-CLASS_DEFINITION = {"CLASS" : "kw5",
-                    "DEF" : "kw5",
-                    "IF" : "kw5",
-                    "ELSE" : "kw5",
-                    "ELIF" : "kw5",
-                    "END" : "kw5",
-                    "PASS" : "kw5",
-                    "RETURN" : "kw5",
-                    "IMPORT" : "kw5",
-                    "NAME" : "kw2",
-                    "DECORATOR_NAME" : "kw1",
-                    "STRING" : "st0",
-                    "NUMBER" : "kw6",
-                    "COMMENT" : "kw4"}
+CLASS_DEFINITION = {
+    "CLASS" : "kw5",
+    "DEF" : "kw5",
+    "IF" : "kw5",
+    "ELSE" : "kw5",
+    "ELIF" : "kw5",
+    "END" : "kw5",
+    "PASS" : "kw5",
+    "RETURN" : "kw5",
+    "IMPORT" : "kw5",
+    "NAME" : "kw2",
+    "DECORATOR_NAME" : "kw1",
+    "STRING" : "st0",
+    "NUMBER" : "kw6",
+    "COMMENT" : "kw4"
+}
 """ The class definition map """
 
 class PythonHighlightingExtension(wiki_code.wiki_code_extension_system.WikiCodeExtension):
