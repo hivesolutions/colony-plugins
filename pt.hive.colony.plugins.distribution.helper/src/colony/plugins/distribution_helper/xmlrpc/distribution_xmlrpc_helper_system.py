@@ -100,8 +100,13 @@ class DistributionXmlrpcHelper:
         # creates the xmlrpc server address
         xmlrpc_server_address = HTTP_PROTOCOL_PREFIX + hostname + ":" + str(port) + "/" + xmlrpc_handler_base_filename + "." + xmlrpc_handler_extension
 
+        # creates the parameters
+        parameters = {
+            "xmlrpc_server_address" : xmlrpc_server_address
+        }
+
         # creates the xmlrpc remote client
-        xmlrpc_remote_client = main_xmlrpc_client_plugin.create_remote_client({"xmlrpc_server_address" : xmlrpc_server_address})
+        xmlrpc_remote_client = main_xmlrpc_client_plugin.create_remote_client(parameters)
 
         # creates the xmlrpc remote client proxy
         xmlrpc_remote_client_proxy = XmlrpcClientProxy(xmlrpc_remote_client, remote_reference)
@@ -135,8 +140,13 @@ class DistributionXmlrpcHelper:
         # creates the xmlrpc server address
         xmlrpc_server_address = HTTP_PROTOCOL_PREFIX + hostname + ":" + str(port) + "/" + xmlrpc_handler_base_filename + "." + xmlrpc_handler_extension
 
+        # creates the parameters
+        parameters = {
+            "xmlrpc_server_address" : xmlrpc_server_address
+        }
+
         # creates the xmlrpc remote client
-        xmlrpc_remote_client = main_xmlrpc_client_plugin.create_remote_client({"xmlrpc_server_address" : xmlrpc_server_address})
+        xmlrpc_remote_client = main_xmlrpc_client_plugin.create_remote_client(parameters)
 
         # returns the xmlrpc remote client
         return xmlrpc_remote_client
