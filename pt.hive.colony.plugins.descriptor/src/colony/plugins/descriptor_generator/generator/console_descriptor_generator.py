@@ -111,19 +111,19 @@ class ConsoleDescriptorGenerator:
     def __generate_commands_map(self):
         # creates the commands map
         commands_map = {
-                        "generate_descriptor" : {
-                            "handler" : self.process_generate_descriptor,
-                            "description" : "generates the plugin descriptor",
-                            "arguments" : [
-                                {
-                                    "name" : "plugin_id",
-                                    "description" : "the plugin id",
-                                    "values" : self.get_plugin_id_list,
-                                    "mandatory" : False
-                                }
-                            ]
-                        }
+            "generate_descriptor" : {
+                "handler" : self.process_generate_descriptor,
+                "description" : "generates the plugin descriptor",
+                "arguments" : [
+                    {
+                        "name" : "plugin_id",
+                        "description" : "the plugin id",
+                        "values" : self.get_plugin_id_list,
+                        "mandatory" : False
                     }
+                ]
+            }
+        }
 
         # returns the commands map
         return commands_map
