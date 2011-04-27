@@ -443,7 +443,10 @@ class MainRestManager:
         @return: The handler properties.
         """
 
-        return {"handler_base_filename" : HANDLER_BASE_FILENAME, "handler_extension" : HANDLER_EXTENSION}
+        return {
+            "handler_base_filename" : HANDLER_BASE_FILENAME,
+            "handler_extension" : HANDLER_EXTENSION
+        }
 
     def load_rest_service_plugin(self, rest_service_plugin):
         """
