@@ -106,7 +106,9 @@ class ConsoleMainPackingManager:
         full_path = console_context.get_full_path(path)
 
         # creates the properties map for the directory packing
-        properties = {"target_path" : target_path}
+        properties = {
+            "target_path" : target_path
+        }
 
         # packs the files using the main packing manager
         main_packing_manager.pack_files([full_path], properties, service_name)
@@ -145,7 +147,9 @@ class ConsoleMainPackingManager:
         full_path = console_context.get_full_path(path)
 
         # creates the properties map for the directory packing
-        properties = {"target_path" : target_path}
+        properties = {
+            "target_path" : target_path
+        }
 
         # unpacks the files using the main packing manager
         main_packing_manager.unpack_files([full_path], properties, service_name)
@@ -193,51 +197,55 @@ class ConsoleMainPackingManager:
     def __generate_commands_map(self):
         # creates the commands map
         commands_map = {
-                        "pack" : {
-                            "handler" : self.process_pack,
-                            "description" : "packs the given file with the given type",
-                            "arguments" : [
-                                {
-                                    "name" : "path",
-                                    "description" : "the path to the file to be used in packing",
-                                    "values" : self.get_path_names_list,
-                                    "mandatory" : True
-                                }, {
-                                    "name" : "service_name",
-                                    "description" : "the name of the service to be used for packing",
-                                    "values" : self.get_service_names_list,
-                                    "mandatory" : False
-                                }, {
-                                    "name" : "target_path",
-                                    "description" : "the path to deploy the created package",
-                                    "values" : self.get_path_names_list,
-                                    "mandatory" : False
-                                }
-                            ]
-                        },
-                        "unpack" : {
-                            "handler" : self.process_unpack,
-                            "description" : "unpacks the given file with the given type",
-                            "arguments" : [
-                                {
-                                    "name" : "path",
-                                    "description" : "the path to the file to be used in unpacking",
-                                    "values" : self.get_path_names_list,
-                                    "mandatory" : True
-                                }, {
-                                    "name" : "service_name",
-                                    "description" : "the name of the service to be used for unpacking",
-                                    "values" : self.get_service_names_list,
-                                    "mandatory" : False
-                                }, {
-                                    "name" : "target_path",
-                                    "description" : "the path to deploy the destroyed package",
-                                    "values" : self.get_path_names_list,
-                                    "mandatory" : False
-                                }
-                            ]
-                        }
+            "pack" : {
+                "handler" : self.process_pack,
+                "description" : "packs the given file with the given type",
+                "arguments" : [
+                    {
+                        "name" : "path",
+                        "description" : "the path to the file to be used in packing",
+                        "values" : self.get_path_names_list,
+                        "mandatory" : True
+                    },
+                    {
+                        "name" : "service_name",
+                        "description" : "the name of the service to be used for packing",
+                        "values" : self.get_service_names_list,
+                        "mandatory" : False
+                    },
+                    {
+                        "name" : "target_path",
+                        "description" : "the path to deploy the created package",
+                        "values" : self.get_path_names_list,
+                        "mandatory" : False
                     }
+                ]
+            },
+            "unpack" : {
+                "handler" : self.process_unpack,
+                "description" : "unpacks the given file with the given type",
+                "arguments" : [
+                    {
+                        "name" : "path",
+                        "description" : "the path to the file to be used in unpacking",
+                        "values" : self.get_path_names_list,
+                        "mandatory" : True
+                    },
+                    {
+                        "name" : "service_name",
+                        "description" : "the name of the service to be used for unpacking",
+                        "values" : self.get_service_names_list,
+                        "mandatory" : False
+                    },
+                    {
+                        "name" : "target_path",
+                        "description" : "the path to deploy the destroyed package",
+                        "values" : self.get_path_names_list,
+                        "mandatory" : False
+                    }
+                ]
+            }
+        }
 
         # returns the commands map
         return commands_map
