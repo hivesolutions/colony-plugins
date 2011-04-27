@@ -752,7 +752,10 @@ class ParserGenerator:
     HASH_VALUE = "hash"
     """ The hash value """
 
-    IGNORE_TOKENS_MAP = {"comment" : True, "ignore" : True}
+    IGNORE_TOKENS_MAP = {
+        "comment" : True,
+        "ignore" : True
+    }
     """ The ignore tokens list """
 
     parser_type = None
