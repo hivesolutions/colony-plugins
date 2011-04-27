@@ -77,7 +77,13 @@ class MainServiceXmppStarterPlugin(colony.base.plugin_system.Plugin):
         # notifies the ready semaphore
         self.release_ready_semaphore()
 
-        self.main_service_xmpp_plugin.start_service({"socket_provider" : "normal", "port" : 5222})
+        # defines the parameters
+        parameters = {
+            "socket_provider" : "normal",
+            "port" : 5222
+        }
+
+        self.main_service_xmpp_plugin.start_service(parameters)
 
     def unload_plugin(self):
         colony.base.plugin_system.Plugin.unload_plugin(self)
