@@ -248,10 +248,23 @@ class MailStorageDatabaseClient:
         message_class = entity_manager.get_entity_class("Message")
 
         # defines the find options for retrieving the messages
-        find_options = {FILTERS_VALUE : [{FILTER_TYPE_VALUE : "equals",
-                                          FILTER_FIELDS_VALUE : ({"field_name" : "uid",
-                                                                  "field_value" : uid},)}],
-                        EAGER_LOADING_RELATIONS_VALUE : {"mailbox" : {}, "contents" : {}}}
+        find_options = {
+            FILTERS_VALUE : (
+                {
+                    FILTER_TYPE_VALUE : "equals",
+                    FILTER_FIELDS_VALUE : (
+                        {
+                            "field_name" : "uid",
+                            "field_value" : uid
+                        }
+                    ,)
+                }
+            ,),
+            EAGER_LOADING_RELATIONS_VALUE : {
+                "mailbox" : {},
+                "contents" : {}
+            }
+        }
 
         # retrieves the valid messages
         messages = entity_manager._find_all_options(message_class, find_options)
@@ -316,10 +329,23 @@ class MailStorageDatabaseClient:
         message_class = entity_manager.get_entity_class("Message")
 
         # defines the find options for retrieving the messages
-        find_options = {FILTERS_VALUE : [{FILTER_TYPE_VALUE : "equals",
-                                          FILTER_FIELDS_VALUE : ({"field_name" : "uid",
-                                                                  "field_value" : uid},)}],
-                        EAGER_LOADING_RELATIONS_VALUE : {"mailbox" : {}, "contents" : {}}}
+        find_options = {
+            FILTERS_VALUE : (
+                {
+                    FILTER_TYPE_VALUE : "equals",
+                    FILTER_FIELDS_VALUE : (
+                        {
+                            "field_name" : "uid",
+                            "field_value" : uid
+                        }
+                    ,)
+                }
+            ,),
+            EAGER_LOADING_RELATIONS_VALUE : {
+                "mailbox" : {},
+                "contents" : {}
+            }
+        }
 
         # retrieves the valid messages
         messages = entity_manager._find_all_options(message_class, find_options)
@@ -345,13 +371,17 @@ class MailStorageDatabaseClient:
 
         # defines the find options for retrieving the mailboxes
         find_options = {
-            FILTERS_VALUE : [{
-                FILTER_TYPE_VALUE : "equals",
-                FILTER_FIELDS_VALUE : ({
-                    "field_name" : "name",
-                    "field_value" : name
-                },)
-            }]
+            FILTERS_VALUE : (
+                {
+                    FILTER_TYPE_VALUE : "equals",
+                    FILTER_FIELDS_VALUE : (
+                        {
+                            "field_name" : "name",
+                            "field_value" : name
+                        }
+                    ,)
+                }
+            ,)
         }
 
         # retrieves the valid mailboxes
@@ -378,13 +408,17 @@ class MailStorageDatabaseClient:
 
         # defines the find options for retrieving the mailboxes
         find_options = {
-            FILTERS_VALUE : [{
-                FILTER_TYPE_VALUE : "equals",
-                FILTER_FIELDS_VALUE : ({
-                    "field_name" : "name",
-                    "field_value" : name
-                },)
-            }],
+            FILTERS_VALUE : (
+                {
+                    FILTER_TYPE_VALUE : "equals",
+                    FILTER_FIELDS_VALUE : (
+                        {
+                            "field_name" : "name",
+                            "field_value" : name
+                        }
+                    ,)
+                }
+            ,),
             EAGER_LOADING_RELATIONS_VALUE : {
                 "messages" : {}
             }
