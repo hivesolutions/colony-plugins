@@ -122,10 +122,25 @@ class RsaStructure:
         # calculates the coefficient
         c_value = (1 / q_value) % p_value
 
-        # creates the public, private and extra keys map
-        public_key_map = {"n": n_value, "e": e_value}
-        private_key_map = {"d": d_value, "p": p_value, "q": q_value}
-        extra_map = {"fe": fe_value, "se": se_value, "c": c_value}
+        # creates the public key map
+        public_key_map = {
+            "n" : n_value,
+            "e" : e_value
+        }
+
+        # creates the private key map
+        private_key_map = {
+            "d" : d_value,
+            "p" : p_value,
+            "q" : q_value
+        }
+
+        # creates the extra map
+        extra_map = {
+            "fe" : fe_value,
+            "se" : se_value,
+            "c" : c_value
+        }
 
         # creates the keys (tuple)
         keys = (public_key_map, private_key_map, extra_map)
