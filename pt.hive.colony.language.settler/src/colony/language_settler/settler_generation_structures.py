@@ -53,12 +53,30 @@ MULTIPLE_ADDRESSES_OPERATIONS = ["LOAD", "LOAD_CONST", "STORE_NAME", "STORE_FAST
                                  "SETUP_LOOP", "BUILD_TUPLE", "BUILD_LIST", "IMPORT_NAME"]
 """ The list of multiple addresses operations """
 
-STACK_INCREMENTER_OPERATIONS = {"LOAD" : 1, "LOAD_CONST" : 1, "LOAD_NAME" : 1, "LOAD_FAST" : 1, "LOAD_GLOBAL" : 1}
+STACK_INCREMENTER_OPERATIONS = {
+    "LOAD" : 1,
+    "LOAD_CONST" : 1,
+    "LOAD_NAME" : 1,
+    "LOAD_FAST" : 1,
+    "LOAD_GLOBAL" : 1
+}
 """ The list of stack incrementer operations map"""
 
-STACK_DECREMENTER_OPERATIONS = {"POP_TOP" : 1, "STORE_NAME" : 1, "STORE_FAST" : 1, "STORE_GLOBAL" : 1, "STORE_ATTR" : 1,
-                                "IMPORT_NAME" : 1, "PRINT_ITEM" : 1, "BINARY_ADD" : 1, "BINARY_SUBTRACT" : 1, "BINARY_MULTIPLY" : 1,
-                                "BINARY_DIVIDE" : 1, "BINARY_POWER" : 1, "BUILD_CLASS" : 2}
+STACK_DECREMENTER_OPERATIONS = {
+    "POP_TOP" : 1,
+    "STORE_NAME" : 1,
+    "STORE_FAST" : 1,
+    "STORE_GLOBAL" : 1,
+    "STORE_ATTR" : 1,
+    "IMPORT_NAME" : 1,
+    "PRINT_ITEM" : 1,
+    "BINARY_ADD" : 1,
+    "BINARY_SUBTRACT" : 1,
+    "BINARY_MULTIPLY" : 1,
+    "BINARY_DIVIDE" : 1,
+    "BINARY_POWER" : 1,
+    "BUILD_CLASS" : 2
+}
 """ The list of stack decrementer operations map """
 
 class ContextCodeInformation:

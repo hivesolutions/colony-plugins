@@ -46,15 +46,17 @@ LOOP_TYPE = "loop"
 CALL_TYPE = "call"
 DECLARATION_TYPE = "declaration"
 
-CONTEXT_TYPE_TYPE = {"global" : EXECUTION_TYPE,
-                     "execution" : EXECUTION_TYPE,
-                     "boolean_expression" : EXECUTION_TYPE,
-                     "if_condition" : CONDITIONAL_TYPE,
-                     "else_condition" : CONDITIONAL_TYPE,
-                     "while" : LOOP_TYPE,
-                     "for" : LOOP_TYPE,
-                     "function_call" : CALL_TYPE,
-                     "function" : DECLARATION_TYPE}
+CONTEXT_TYPE_TYPE = {
+    "global" : EXECUTION_TYPE,
+    "execution" : EXECUTION_TYPE,
+    "boolean_expression" : EXECUTION_TYPE,
+    "if_condition" : CONDITIONAL_TYPE,
+    "else_condition" : CONDITIONAL_TYPE,
+    "while" : LOOP_TYPE,
+    "for" : LOOP_TYPE,
+    "function_call" : CALL_TYPE,
+    "function" : DECLARATION_TYPE
+}
 
 EXECUTION_CONTEXT_TYPES = ["global", "execution", "boolean_expression"]
 CONDITIONAL_CONTEXT_TYPES = ["if_condition", "else_condition"]
@@ -63,13 +65,15 @@ CALL_CONTEXT_TYPES = ["function_call"]
 DECLARATION_CONTEXT_TYPES = ["function"]
 RETURN_CONTEXT_TYPES = ["return"]
 
-context_type_ast_node_map = {"boolean_expression" : [settler_ast.AndExpressionNode, settler_ast.OrExpressionNode],
-                             "if_condition" : [settler_ast.IfConditionNode],
-                             "else_condition" : [settler_ast.ElseConditionNode, settler_ast.ElseConditionNode],
-                             "while" : [settler_ast.WhileNode],
-                             "for" : [settler_ast.ForNode],
-                             "function_call" : [settler_ast.FunctionCallNode],
-                             "function" : [settler_ast.FunctionNode]}
+context_type_ast_node_map = {
+    "boolean_expression" : [settler_ast.AndExpressionNode, settler_ast.OrExpressionNode],
+    "if_condition" : [settler_ast.IfConditionNode],
+    "else_condition" : [settler_ast.ElseConditionNode, settler_ast.ElseConditionNode],
+    "while" : [settler_ast.WhileNode],
+    "for" : [settler_ast.ForNode],
+    "function_call" : [settler_ast.FunctionCallNode],
+    "function" : [settler_ast.FunctionNode]
+}
 
 class InterpretationVisitor(settler_visitor.Visitor):
     """
