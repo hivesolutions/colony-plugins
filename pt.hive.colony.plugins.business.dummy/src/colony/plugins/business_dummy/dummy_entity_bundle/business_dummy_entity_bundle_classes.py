@@ -47,10 +47,18 @@ base_entity = colony.libs.importer_util.__importer__(BASE_ENTITY_MODULE_VALUE)
 
 class TestEntity(base_entity.EntityClass):
 
-    id = {"id" : True, "data_type" : "numeric", "generated" : True, "generator_type" : "table", "table_generator_field_name" : "Test"}
+    id = {
+        "id" : True,
+        "data_type" : "numeric",
+        "generated" : True,
+        "generator_type" : "table",
+        "table_generator_field_name" : "Test"
+    }
     """ The id of the entity """
 
-    object_value = {"data_type" : "text"}
+    object_value = {
+        "data_type" : "text"
+    }
     """ The object value of the entity """
 
     def __init__(self):
@@ -59,16 +67,25 @@ class TestEntity(base_entity.EntityClass):
 
 class DummyEntityBundleParent(base_entity.EntityClass):
 
-    name = {"id" : True, "data_type" : "text"}
+    name = {
+        "id" : True,
+        "data_type" : "text"
+    }
     """ The name of the entity """
 
-    address = {"data_type" : "text"}
+    address = {
+        "data_type" : "text"
+    }
     """ The address of the entity """
 
-    local_date = {"data_type" : "date"}
+    local_date = {
+        "data_type" : "date"
+    }
     """ The local date of the entity """
 
-    mapping_options = {"inheritance_mapping": "table_per_class"}
+    mapping_options = {
+        "inheritance_mapping": "table_per_class"
+    }
     """ The object relational (o/r) options """
 
     def __init__(self):
@@ -96,16 +113,25 @@ class DummyEntityBundleParent(base_entity.EntityClass):
 
 class DummyEntityBundleAssociation(DummyEntityBundleParent):
 
-    hair_type = {"data_type" : "text"}
+    hair_type = {
+        "data_type" : "text"
+    }
     """ The hair type of the entity """
 
-    entity_relation = {"data_type" : "relation"}
+    entity_relation = {
+        "data_type" : "relation"
+    }
     """ The dummy entity relation """
 
-    entity_to_many_relation = {"data_type" : "relation"}
+    entity_to_many_relation = {
+        "data_type" : "relation"
+    }
     """  The dummy to many relation """
 
-    entity_other_to_many_relation = {"data_type" : "relation", "fetch_type" : "lazy"}
+    entity_other_to_many_relation = {
+        "data_type" : "relation",
+        "fetch_type" : "lazy"
+    }
     """  The dummy other to many relation """
 
     def __init__(self):
@@ -123,39 +149,52 @@ class DummyEntityBundleAssociation(DummyEntityBundleParent):
 
     @staticmethod
     def get_relation_attributes_entity_relation():
-        return {"relation_type" : "one-to-many",
-                "target_entity" : DummyEntityBundle,
-                "join_attribute_name" : "entity_relation",
-                "mapped_by" : DummyEntityBundle,
-                "optional" : True}
+        return {
+            "relation_type" : "one-to-many",
+            "target_entity" : DummyEntityBundle,
+            "join_attribute_name" : "entity_relation",
+            "mapped_by" : DummyEntityBundle,
+            "optional" : True
+        }
 
     @staticmethod
     def get_relation_attributes_entity_to_many_relation():
-        return {"relation_type" : "many-to-many",
-                "target_entity" : DummyEntityBundle,
-                "join_attribute_name" : "name",
-                "attribute_column_name" : "dummy_entity_bundle_association_name",
-                "join_attribute_column_name" : "dummy_entity_bundle_name",
-                "join_table" : "DummyJoin"}
+        return {
+            "relation_type" : "many-to-many",
+            "target_entity" : DummyEntityBundle,
+            "join_attribute_name" : "name",
+            "attribute_column_name" : "dummy_entity_bundle_association_name",
+            "join_attribute_column_name" : "dummy_entity_bundle_name",
+            "join_table" : "DummyJoin"
+        }
 
     @staticmethod
     def get_relation_attributes_entity_other_to_many_relation():
-        return {"relation_type" : "many-to-many",
-                "target_entity" : DummyEntityBundleNew,
-                "join_attribute_name" : "name",
-                "attribute_column_name" : "dummy_entity_bundle_association_name",
-                "join_attribute_column_name" : "dummy_entity_bundle_new_name",
-                "join_table" : "DummyOtherJoin"}
+        return {
+            "relation_type" : "many-to-many",
+            "target_entity" : DummyEntityBundleNew,
+            "join_attribute_name" : "name",
+            "attribute_column_name" : "dummy_entity_bundle_association_name",
+            "join_attribute_column_name" : "dummy_entity_bundle_new_name",
+            "join_table" : "DummyOtherJoin"
+        }
 
 class DummyEntityBundle(DummyEntityBundleParent):
 
-    age = {"data_type" : "numeric"}
+    age = {
+        "data_type" : "numeric"
+    }
     """ The age of the entity """
 
-    entity_relation = {"data_type" : "relation"}
+    entity_relation = {
+        "data_type" : "relation"
+    }
     """ The dummy entity relation """
 
-    entity_to_many_relation = {"data_type" : "relation", "fetch_type" : "lazy"}
+    entity_to_many_relation = {
+        "data_type" : "relation",
+        "fetch_type" : "lazy"
+    }
     """  The dummy to many relation """
 
     def __init__(self):
@@ -172,23 +211,30 @@ class DummyEntityBundle(DummyEntityBundleParent):
 
     @staticmethod
     def get_relation_attributes_entity_relation():
-        return {"relation_type" : "many-to-one",
-                "target_entity" : DummyEntityBundleAssociation,
-                "join_attribute_name" : "name",
-                "optional" : True}
+        return {
+            "relation_type" : "many-to-one",
+            "target_entity" : DummyEntityBundleAssociation,
+            "join_attribute_name" : "name",
+            "optional" : True
+        }
 
     @staticmethod
     def get_relation_attributes_entity_to_many_relation():
-        return {"relation_type" : "many-to-many",
-                "target_entity" : DummyEntityBundleAssociation,
-                "join_attribute_name" : "name",
-                "attribute_column_name" : "dummy_entity_bundle_name",
-                "join_attribute_column_name" : "dummy_entity_bundle_association_name",
-                "join_table" : "DummyJoin"}
+        return {
+            "relation_type" : "many-to-many",
+            "target_entity" : DummyEntityBundleAssociation,
+            "join_attribute_name" : "name",
+            "attribute_column_name" : "dummy_entity_bundle_name",
+            "join_attribute_column_name" : "dummy_entity_bundle_association_name",
+            "join_table" : "DummyJoin"
+        }
 
 class DummyEntityBundleNew(DummyEntityBundleParent):
 
-    entity_other_to_many_relation = {"data_type" : "relation", "fetch_type" : "lazy"}
+    entity_other_to_many_relation = {
+        "data_type" : "relation",
+        "fetch_type" : "lazy"
+    }
     """  The dummy other to many relation """
 
     def __init__(self):
@@ -197,12 +243,14 @@ class DummyEntityBundleNew(DummyEntityBundleParent):
 
     @staticmethod
     def get_relation_attributes_entity_other_to_many_relation():
-        return {"relation_type" : "many-to-many",
-                "target_entity" : DummyEntityBundleAssociation,
-                "join_attribute_name" : "name",
-                "attribute_column_name" : "dummy_entity_bundle_new_name",
-                "join_attribute_column_name" : "dummy_entity_bundle_association_name",
-                "join_table" : "DummyOtherJoin"}
+        return {
+            "relation_type" : "many-to-many",
+            "target_entity" : DummyEntityBundleAssociation,
+            "join_attribute_name" : "name",
+            "attribute_column_name" : "dummy_entity_bundle_new_name",
+            "join_attribute_column_name" : "dummy_entity_bundle_association_name",
+            "join_table" : "DummyOtherJoin"
+        }
 
 ENTITY_CLASSES = [TestEntity, DummyEntityBundleParent, DummyEntityBundleAssociation, DummyEntityBundle, DummyEntityBundleNew]
 """ The entity classes of the module """

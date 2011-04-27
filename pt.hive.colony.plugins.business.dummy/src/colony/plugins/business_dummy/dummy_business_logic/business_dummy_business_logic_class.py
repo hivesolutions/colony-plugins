@@ -176,8 +176,16 @@ class DummyBusinessLogic:
         self.entity_manager.save(dummy_entity_bundle_instance_1)
 
         # creates the find options map
-        find_options = {"eager_loading_relations" : {"entity_relation" : {},
-                                                     "entity_to_many_relation" : {"eager_loading_relations" : {"entity_other_to_many_relation" : {}}}}}
+        find_options = {
+            "eager_loading_relations" : {
+                "entity_relation" : {},
+                "entity_to_many_relation" : {
+                    "eager_loading_relations" : {
+                        "entity_other_to_many_relation" : {}
+                    }
+                }
+            }
+        }
 
         # finds the entity bundle instance
         dummy_entity_bundle_instance = self.entity_manager.find_options(dummy_entity_bundle_class, "test", find_options)
@@ -188,18 +196,50 @@ class DummyBusinessLogic:
         # updates the entity bundle instance
         self.entity_manager.update(dummy_entity_bundle_instance)
 
+        # creates the find options map
+        find_options = {
+            "retrieve_eager_loading_relations" : True,
+            "fields" : [
+                "age"
+            ],
+            "order_by" : [
+                (
+                    "name",
+                    "descending"
+                ),
+                (
+                    "age",
+                    "descending"
+                )
+            ],
+            "filters" : [
+                {
+                    "filter_type" : "equals",
+                    "filter_fields" : [
+                        {
+                            "field_name" : "name",
+                            "field_value" : "test_1"
+                        },
+                        {
+                            "field_name" : "name",
+                            "field_value" : "test"
+                        }
+                    ]
+                },
+                {
+                    "filter_type" : "like",
+                    "filter_fields" : [
+                        {
+                            "field_name" : "name",
+                            "field_value" : "test"
+                        }
+                    ]
+                }
+            ]
+        }
+
         # finds all the dummy entity bundle entities with the given filter
-        self.entity_manager._find_all_options(dummy_entity_bundle_class, {"retrieve_eager_loading_relations" : True,
-                                                                           "fields" : ["age"],
-                                                                           "order_by" : [("name", "descending"), ("age", "descending")],
-                                                                           "filters" : [{"filter_type" : "equals",
-                                                                                         "filter_fields" : [{"field_name" : "name",
-                                                                                                             "field_value" : "test_1"},
-                                                                                                             {"field_name" : "name",
-                                                                                                             "field_value" : "test"}]},
-                                                                                        {"filter_type" : "like",
-                                                                                         "filter_fields" : [{"field_name" : "name",
-                                                                                                             "field_value" : "test"}]}]})
+        self.entity_manager._find_all_options(dummy_entity_bundle_class, find_options)
 
         # removes the entity instance
         self.entity_manager.remove(dummy_entity_bundle_new_instance)

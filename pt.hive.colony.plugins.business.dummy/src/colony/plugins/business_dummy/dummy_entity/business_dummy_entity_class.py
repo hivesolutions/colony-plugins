@@ -47,7 +47,9 @@ dummy_bundle = colony.libs.importer_util.__importer__(DUMMY_BUNDLE_MODULE_VALUE)
 
 class DummyEntity(dummy_bundle.DummyEntityBundleParent):
 
-    age = {"data_type" : "numeric"}
+    age = {
+        "data_type" : "numeric"
+    }
     """ The age of the entity """
 
     def __init__(self):
