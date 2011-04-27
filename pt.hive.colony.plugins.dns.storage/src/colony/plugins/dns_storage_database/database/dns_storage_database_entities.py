@@ -51,8 +51,14 @@ class RootEntity(base_entity.EntityClass):
     entity models inherit.
     """
 
-    object_id = {"id" : True, "data_type" : "numeric", "generated" : True, "generator_type" : "table", "table_generator_field_name" : "RootEntity"}
-    """ The object id of the comment """
+    object_id = {
+        "id" : True,
+        "data_type" : "numeric",
+        "generated" : True,
+        "generator_type" : "table",
+        "table_generator_field_name" : "RootEntity"
+    }
+    """ The object id of the root entity """
 
     def __init__(self):
         self.object_id = None
@@ -63,10 +69,15 @@ class Zone(RootEntity):
     zone entity.
     """
 
-    name = {"data_type" : "text"}
+    name = {
+        "data_type" : "text"
+    }
     """ The name of the zone """
 
-    records = {"data_type" : "relation", "fetch_type" : "lazy"}
+    records = {
+        "data_type" : "relation",
+        "fetch_type" : "lazy"
+    }
     """ The records of the zone """
 
     def __init__(self):
@@ -90,11 +101,13 @@ class Zone(RootEntity):
 
     @staticmethod
     def get_relation_attributes_records():
-        return {"relation_type" : "one-to-many",
-                "target_entity" : Record,
-                "join_attribute_name" : "zone",
-                "mapped_by" : Record,
-                "optional" : True}
+        return {
+            "relation_type" : "one-to-many",
+            "target_entity" : Record,
+            "join_attribute_name" : "zone",
+            "mapped_by" : Record,
+            "optional" : True
+        }
 
 class Record(RootEntity):
     """
@@ -102,22 +115,35 @@ class Record(RootEntity):
     record entity.
     """
 
-    name = {"data_type" : "text"}
+    name = {
+        "data_type" : "text"
+    }
     """ The name of the record """
 
-    type = {"data_type" : "text"}
+    type = {
+        "data_type" : "text"
+    }
     """ The type of the record """
 
-    class_ = {"data_type" : "text"}
+    class_ = {
+        "data_type" : "text"
+    }
     """ The class of the record """
 
-    time_to_live = {"data_type" : "numeric"}
+    time_to_live = {
+        "data_type" : "numeric"
+    }
     """ The time to live of the record """
 
-    value = {"data_type" : "text"}
+    value = {
+        "data_type" : "text"
+    }
     """ The value of the record """
 
-    zone = {"data_type" : "relation", "fetch_type" : "lazy"}
+    zone = {
+        "data_type" : "relation",
+        "fetch_type" : "lazy"
+    }
     """ The zone that contains the record """
 
     def __init__(self):
@@ -185,7 +211,9 @@ class Record(RootEntity):
 
     @staticmethod
     def get_relation_attributes_zone():
-        return {"relation_type" : "many-to-one",
-                "target_entity" : Zone,
-                "join_attribute_name" : "object_id",
-                "optional" : True}
+        return {
+            "relation_type" : "many-to-one",
+            "target_entity" : Zone,
+            "join_attribute_name" : "object_id",
+            "optional" : True
+        }

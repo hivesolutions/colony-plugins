@@ -209,13 +209,27 @@ class DnsStorageDatabaseClient:
         record_class = entity_manager.get_entity_class("Record")
 
         # defines the find options for retrieving the records
-        find_options = {FILTERS_VALUE : [{FILTER_TYPE_VALUE : "equals",
-                                          FILTER_FIELDS_VALUE : ({"field_name" : "name",
-                                                                  "field_value" : name},
-                                                                  {"field_name" : "type",
-                                                                  "field_value" : type},
-                                                                  {"field_name" : "class_",
-                                                                  "field_value" : class_})}]}
+        find_options = {
+            FILTERS_VALUE : [
+                {
+                    FILTER_TYPE_VALUE : "equals",
+                    FILTER_FIELDS_VALUE : (
+                        {
+                            "field_name" : "name",
+                            "field_value" : name
+                        },
+                        {
+                            "field_name" : "type",
+                            "field_value" : type
+                        },
+                        {
+                            "field_name" : "class_",
+                            "field_value" : class_
+                        }
+                    )
+                }
+            ]
+        }
 
         # retrieves the valid records
         records = entity_manager._find_all_options(record_class, find_options)
@@ -239,9 +253,19 @@ class DnsStorageDatabaseClient:
         zone_class = entity_manager.get_entity_class("Zone")
 
         # defines the find options for retrieving the zones
-        find_options = {FILTERS_VALUE : [{FILTER_TYPE_VALUE : "equals",
-                                          FILTER_FIELDS_VALUE : ({"field_name" : "name",
-                                                                  "field_value" : name},)}]}
+        find_options = {
+            FILTERS_VALUE : [
+                {
+                    FILTER_TYPE_VALUE : "equals",
+                    FILTER_FIELDS_VALUE : (
+                        {
+                            "field_name" : "name",
+                            "field_value" : name
+                        }
+                    ,)
+                }
+            ]
+        }
 
         # retrieves the valid zones
         zones = entity_manager._find_all_options(zone_class, find_options)
