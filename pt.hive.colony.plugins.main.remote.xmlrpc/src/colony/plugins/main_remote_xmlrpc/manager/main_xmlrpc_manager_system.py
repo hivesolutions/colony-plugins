@@ -211,7 +211,10 @@ class MainXmlrpcManager:
         @return: The handler properties.
         """
 
-        return {"handler_base_filename" : HANDLER_BASE_FILENAME, "handler_extension" : HANDLER_EXTENSION}
+        return {
+            "handler_base_filename" : HANDLER_BASE_FILENAME,
+            "handler_extension" : HANDLER_EXTENSION
+        }
 
     def update_service_methods(self, updated_rpc_service_plugin = None):
 
