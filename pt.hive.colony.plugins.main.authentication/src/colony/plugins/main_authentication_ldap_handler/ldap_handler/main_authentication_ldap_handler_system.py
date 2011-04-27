@@ -167,7 +167,10 @@ class MainAuthenticationLdapHandler:
             # the user password value are equal
             if processed_password_value == user_password_value:
                 # creates the return value
-                return_value = {"username" : username, "valid" : True}
+                return_value = {
+                    "username" : username,
+                    "valid" : True
+                }
             # otherwise no authentication is made
             else:
                 # sets the return value as invalid

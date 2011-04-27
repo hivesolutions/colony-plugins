@@ -133,12 +133,28 @@ class MainAuthenticationEntityManagerHandler:
         login_entity_class = entity_manager.get_entity_class(login_entity_name)
 
         # creates the find options
-        find_options = {"filters" : [{"filter_type" : "equals",
-                              "filter_fields" : [{"field_name" : "username",
-                                                  "field_value" : username}]},
-                             {"filter_type" : "equals",
-                              "filter_fields" : [{"field_name" : "password_hash",
-                                                  "field_value" : password}]}]}
+        find_options = {
+            "filters" : (
+                {
+                    "filter_type" : "equals",
+                    "filter_fields" : (
+                        {
+                            "field_name" : "username",
+                            "field_value" : username
+                        }
+                    ,)
+                },
+                {
+                    "filter_type" : "equals",
+                    "filter_fields" : (
+                        {
+                            "field_name" : "password_hash",
+                            "field_value" : password
+                        }
+                    ,)
+                }
+            )
+        }
 
         # finds all options in the entity manager
         user_entities = entity_manager._find_all_options(login_entity_class, find_options)
@@ -146,7 +162,10 @@ class MainAuthenticationEntityManagerHandler:
         # in case there are user entities defined
         if user_entities:
             # creates the return value
-            return_value = {"username" : username, "valid" : True}
+            return_value = {
+                "username" : username,
+                "valid" : True
+            }
 
             # returns the return value
             return return_value
