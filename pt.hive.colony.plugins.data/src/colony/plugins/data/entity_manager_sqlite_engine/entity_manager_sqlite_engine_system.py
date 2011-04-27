@@ -2611,7 +2611,9 @@ class EntityManagerSqliteEngine:
         entity_class_valid_attribute_first_name = entity_class_valid_attribute_names[0]
 
         # creates the parameters map
-        parameters = {"column_name" : entity_class_valid_attribute_first_name}
+        parameters = {
+            "column_name" : entity_class_valid_attribute_first_name
+        }
 
         # locks the table in order to lock the entity
         self.lock_table(connection, entity_class_name, parameters)
