@@ -133,7 +133,9 @@ class RevisionControlBuildAutomationExtension:
         changelog_file_path = parameters.get(CHANGELOG_FILE_PATH_VALUE, None)
 
         # creates the revision control parameters
-        revision_control_parameters = {REPOSITORY_PATH_VALUE : target_path}
+        revision_control_parameters = {
+            REPOSITORY_PATH_VALUE : target_path
+        }
 
         # loads a new revision control manager for the specified adapter name
         revision_control_manager = revision_control_manager_plugin.load_revision_control_manager(adapter, revision_control_parameters)
