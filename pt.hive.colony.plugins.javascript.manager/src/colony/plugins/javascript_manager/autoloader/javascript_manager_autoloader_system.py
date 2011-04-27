@@ -322,9 +322,11 @@ class JavascriptManagerAutoloader:
             self.update_plugin_lock.release()
 
         # creates the status map for the response
-        status_map = {"timestamp" : current_timestamp,
-                      "updated_plugins" : updated_plugins,
-                      "removed_plugins" : removed_plugins}
+        status_map = {
+            "timestamp" : current_timestamp,
+            "updated_plugins" : updated_plugins,
+            "removed_plugins" : removed_plugins
+        }
 
         # returns the status map
         return status_map
