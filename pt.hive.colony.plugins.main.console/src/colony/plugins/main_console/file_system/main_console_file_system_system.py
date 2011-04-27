@@ -286,64 +286,64 @@ class MainConsoleFileSystem:
     def __generate_commands_map(self):
         # creates the commands map
         commands_map = {
-                        "cd" : {
-                            "handler" : self.process_cd,
-                            "description" : "changes the current directory",
-                            "arguments" : [
-                                {
-                                    "name" : "path",
-                                    "description" : "the path to be used for cd",
-                                    "values" : self.get_path_names_list,
-                                    "mandatory" : True
-                                }
-                            ]
-                        },
-                        "ls" : {
-                            "handler" : self.process_ls,
-                            "description" : "list the contents of the current path",
-                            "arguments" : [
-                                {
-                                    "name" : "path",
-                                    "description" : "the path to be used for ls",
-                                    "values" : self.get_path_names_list,
-                                    "mandatory" : False
-                                }
-                            ]
-                        },
-                        "pwd" : {
-                            "handler" : self.process_pwd,
-                            "description" : "show the present working directory"
-                        },
-                        "cat" : {
-                            "handler" : self.process_cat,
-                            "description" : "prints the file in the path to the output",
-                            "arguments" : [
-                                {
-                                    "name" : "path",
-                                    "description" : "the path to be used for cat",
-                                    "values" : self.get_path_names_list,
-                                    "mandatory" : True
-                                }
-                            ]
-                        },
-                        "su" : {
-                            "handler" : self.process_su,
-                            "description" : "switches the current user session",
-                            "arguments" : [
-                                {
-                                    "name" : "username",
-                                    "description" : "the username to switch user",
-                                    "values" : str,
-                                    "mandatory" : False
-                                }, {
-                                    "name" : "password",
-                                    "description" : "the password to switch user",
-                                    "values" : str,
-                                    "mandatory" : False
-                                }
-                            ]
-                        }
+            "cd" : {
+                "handler" : self.process_cd,
+                "description" : "changes the current directory",
+                "arguments" : [
+                    {
+                        "name" : "path",
+                        "description" : "the path to be used for cd",
+                        "values" : self.get_path_names_list,
+                        "mandatory" : True
                     }
+                ]
+            },
+            "ls" : {
+                "handler" : self.process_ls,
+                "description" : "list the contents of the current path",
+                "arguments" : [
+                    {
+                        "name" : "path",
+                        "description" : "the path to be used for ls",
+                        "values" : self.get_path_names_list,
+                        "mandatory" : False
+                    }
+                ]
+            },
+            "pwd" : {
+                "handler" : self.process_pwd,
+                "description" : "show the present working directory"
+            },
+            "cat" : {
+                "handler" : self.process_cat,
+                "description" : "prints the file in the path to the output",
+                "arguments" : [
+                    {
+                        "name" : "path",
+                        "description" : "the path to be used for cat",
+                        "values" : self.get_path_names_list,
+                        "mandatory" : True
+                    }
+                ]
+            },
+            "su" : {
+                "handler" : self.process_su,
+                "description" : "switches the current user session",
+                "arguments" : [
+                    {
+                        "name" : "username",
+                        "description" : "the username to switch user",
+                        "values" : str,
+                        "mandatory" : False
+                    }, {
+                        "name" : "password",
+                        "description" : "the password to switch user",
+                        "values" : str,
+                        "mandatory" : False
+                    }
+                ]
+            }
+        }
 
         # returns the commands map
         return commands_map

@@ -108,13 +108,15 @@ class MainConsoleInterfaceCharacter:
         self.console_handler = console_handler
         self.console_context = console_context
 
-        self.character_methods_map = {BACKSPACE_CHARACTER_ORDINAL : self._process_backspace_character,
-                                      TAB_CHARACTER_ORDINAL : self._process_tab_character,
-                                      ENTER_CHARACTER_ORDINAL : self._process_enter_character,
-                                      UP_CHARACTER_ORDINAL : self._process_up_character,
-                                      DOWN_CHARACTER_ORDINAL : self._process_down_character,
-                                      RIGHT_CHARACTER_ORDINAL : self._process_right_character,
-                                      LEFT_CHARACTER_ORDINAL : self._process_left_character}
+        self.character_methods_map = {
+            BACKSPACE_CHARACTER_ORDINAL : self._process_backspace_character,
+            TAB_CHARACTER_ORDINAL : self._process_tab_character,
+            ENTER_CHARACTER_ORDINAL : self._process_enter_character,
+            UP_CHARACTER_ORDINAL : self._process_up_character,
+            DOWN_CHARACTER_ORDINAL : self._process_down_character,
+            RIGHT_CHARACTER_ORDINAL : self._process_right_character,
+            LEFT_CHARACTER_ORDINAL : self._process_left_character
+        }
 
         self.line_buffer = []
         self.line_history_list = []

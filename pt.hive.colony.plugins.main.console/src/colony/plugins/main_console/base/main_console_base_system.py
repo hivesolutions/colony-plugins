@@ -711,135 +711,135 @@ class MainConsoleBase:
     def __generate_commands_map(self):
         # creates the commands map
         commands_map = {
-                        "help" : {
-                            "handler" : self.process_help,
-                            "description" : "shows this message or the referred console extension help message",
-                            "arguments" : [
-                                {
-                                    "name" : "extension_id",
-                                    "description" : "the id of the extension to be loaded",
-                                    "values" : self.get_extension_id_list,
-                                    "mandatory" : False
-                                }
-                            ]
-                        },
-                        "helpall" : {
-                            "handler" : self.process_helpall,
-                            "description" : "shows the help message of all the loaded console extensions"
-                        },
-                        "extensions" : {
-                            "handler" : self.process_extensions,
-                            "description" : "shows the help message of all the loaded console extensions"
-                        },
-                        "status" : {
-                            "handler" : self.process_status,
-                            "description" : "shows the current status of the system"
-                        },
-                        "show" : {
-                            "handler" : self.process_show,
-                            "description" : "shows the status of the plugin with the defined id",
-                            "arguments" : [
-                                {
-                                    "name" : "plugin_id",
-                                    "description" : "the id of the plugin to be shown",
-                                    "values" : self.get_plugin_id_list,
-                                    "mandatory" : False
-                                }
-                            ]
-                        },
-                        "info" : {
-                            "handler" : self.process_info,
-                            "help" : "shows the status about a plugin",
-                            "arguments" : [
-                                {
-                                    "name" : "plugin_id",
-                                    "description" : "the id of the plugin to show the information",
-                                    "values" : self.get_plugin_id_list,
-                                    "mandatory" : False
-                                }
-                            ]
-                        },
-                        "infoall" : {
-                            "handler" : self.process_infoall,
-                            "help" : "shows information about all the loaded plugins"
-                        },
-                        "add" : {
-                            "handler" : self.process_add,
-                            "help" : "adds a new plugin to the system",
-                            "arguments" : [
-                                {
-                                    "name" : "plugin_path",
-                                    "description" : "the path of the plugin to be added",
-                                    "values" : str,
-                                    "mandatory" : True
-                                }
-                            ]
-                        },
-                        "remove" : {
-                            "handler" : self.process_remove,
-                            "help" : "removes plugin from the system",
-                            "arguments" : [
-                                {
-                                    "name" : "plugin_id",
-                                    "description" : "the id of the plugin to be removed",
-                                    "values" : str,
-                                    "mandatory" : True
-                                }
-                            ]
-                        },
-                        "load" : {
-                            "handler" : self.process_load,
-                            "help" : "loads a plugin",
-                            "arguments" : [
-                                {
-                                    "name" : "plugin_id",
-                                    "description" : "the id of the plugin to be loaded",
-                                    "values" : self.get_plugin_id_list,
-                                    "mandatory" : True
-                                }
-                            ]
-                        },
-                        "unload" : {
-                            "handler" : self.process_unload,
-                            "help" : "unloads a plugin",
-                            "arguments" : [
-                                {
-                                    "name" : "plugin_id",
-                                    "description" : "the id of the plugin to be unloaded",
-                                    "values" : self.get_plugin_id_list,
-                                    "mandatory" : True
-                                }
-                            ]
-                        },
-                        "exec" : {
-                            "handler" : self.process_exec,
-                            "help" : "executes the given hcs script",
-                            "arguments" : [
-                                {
-                                    "name" : "file_path",
-                                    "description" : "the path of the file to be executed",
-                                    "values" : str,
-                                    "mandatory" : True
-                                }
-                            ]
-                        },
-                        "exit" : {
-                            "handler" : self.process_exit,
-                            "help" : "exits the system"
-                        },
-                        "echo" : {
-                            "handler" : self.process_echo,
-                            "help" : "prints the given value",
-                            "arguments" : [
-                                {
-                                    "name" : "echo_value",
-                                    "description" : "the value to be echoed",
-                                    "values" : str,
-                                    "mandatory" : True
-                                }
-                            ]
-                        }
+            "help" : {
+                "handler" : self.process_help,
+                "description" : "shows this message or the referred console extension help message",
+                "arguments" : [
+                    {
+                        "name" : "extension_id",
+                        "description" : "the id of the extension to be loaded",
+                        "values" : self.get_extension_id_list,
+                        "mandatory" : False
                     }
+                ]
+            },
+            "helpall" : {
+                "handler" : self.process_helpall,
+                "description" : "shows the help message of all the loaded console extensions"
+            },
+            "extensions" : {
+                "handler" : self.process_extensions,
+                "description" : "shows the help message of all the loaded console extensions"
+            },
+            "status" : {
+                "handler" : self.process_status,
+                "description" : "shows the current status of the system"
+            },
+            "show" : {
+                "handler" : self.process_show,
+                "description" : "shows the status of the plugin with the defined id",
+                "arguments" : [
+                    {
+                        "name" : "plugin_id",
+                        "description" : "the id of the plugin to be shown",
+                        "values" : self.get_plugin_id_list,
+                        "mandatory" : False
+                    }
+                ]
+            },
+            "info" : {
+                "handler" : self.process_info,
+                "help" : "shows the status about a plugin",
+                "arguments" : [
+                    {
+                        "name" : "plugin_id",
+                        "description" : "the id of the plugin to show the information",
+                        "values" : self.get_plugin_id_list,
+                        "mandatory" : False
+                    }
+                ]
+            },
+            "infoall" : {
+                "handler" : self.process_infoall,
+                "help" : "shows information about all the loaded plugins"
+            },
+            "add" : {
+                "handler" : self.process_add,
+                "help" : "adds a new plugin to the system",
+                "arguments" : [
+                    {
+                        "name" : "plugin_path",
+                        "description" : "the path of the plugin to be added",
+                        "values" : str,
+                        "mandatory" : True
+                    }
+                ]
+            },
+            "remove" : {
+                "handler" : self.process_remove,
+                "help" : "removes plugin from the system",
+                "arguments" : [
+                    {
+                        "name" : "plugin_id",
+                        "description" : "the id of the plugin to be removed",
+                        "values" : str,
+                        "mandatory" : True
+                    }
+                ]
+            },
+            "load" : {
+                "handler" : self.process_load,
+                "help" : "loads a plugin",
+                "arguments" : [
+                    {
+                        "name" : "plugin_id",
+                        "description" : "the id of the plugin to be loaded",
+                        "values" : self.get_plugin_id_list,
+                        "mandatory" : True
+                    }
+                ]
+            },
+            "unload" : {
+                "handler" : self.process_unload,
+                "help" : "unloads a plugin",
+                "arguments" : [
+                    {
+                        "name" : "plugin_id",
+                        "description" : "the id of the plugin to be unloaded",
+                        "values" : self.get_plugin_id_list,
+                        "mandatory" : True
+                    }
+                ]
+            },
+            "exec" : {
+                "handler" : self.process_exec,
+                "help" : "executes the given hcs script",
+                "arguments" : [
+                    {
+                        "name" : "file_path",
+                        "description" : "the path of the file to be executed",
+                        "values" : str,
+                        "mandatory" : True
+                    }
+                ]
+            },
+            "exit" : {
+                "handler" : self.process_exit,
+                "help" : "exits the system"
+            },
+            "echo" : {
+                "handler" : self.process_echo,
+                "help" : "prints the given value",
+                "arguments" : [
+                    {
+                        "name" : "echo_value",
+                        "description" : "the value to be echoed",
+                        "values" : str,
+                        "mandatory" : True
+                    }
+                ]
+            }
+        }
 
         # returns the commands map
         return commands_map

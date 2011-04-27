@@ -125,8 +125,14 @@ class MainConsoleInterface:
         main_console_context = main_console_plugin.create_console_context()
 
         try:
+            # defines the parameters
+            parameters = {
+                CONSOLE_CONTEXT_VALUE : main_console_context,
+                TEST_VALUE : True
+            }
+
             # starts the main console interface
-            main_console_interface.start({CONSOLE_CONTEXT_VALUE : main_console_context, TEST_VALUE : True})
+            main_console_interface.start(parameters)
 
             # sets the main console interface get line method
             # as the main console interface method
