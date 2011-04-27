@@ -109,15 +109,17 @@ TYPE_CONSTRUCTED_VALUE = "type_constructed"
 TYPE_CLASS_VALUE = "type_class"
 """ The type class value """
 
-DEFAULT_TYPE_CONSTRUCTED = {EOC_TYPE : 0x00,
-                            BOOLEAN_TYPE : 0x00,
-                            INTEGER_TYPE : 0x00,
-                            BIT_STRING_TYPE : 0x00,
-                            OCTET_STRING_TYPE : 0x00,
-                            OBJECT_IDENTIFIER_TYPE : 0x00,
-                            ENUMERATED_TYPE : 0x00,
-                            SEQUENCE_TYPE : 0x01,
-                            SET_TYPE : 0x01}
+DEFAULT_TYPE_CONSTRUCTED = {
+    EOC_TYPE : 0x00,
+    BOOLEAN_TYPE : 0x00,
+    INTEGER_TYPE : 0x00,
+    BIT_STRING_TYPE : 0x00,
+    OCTET_STRING_TYPE : 0x00,
+    OBJECT_IDENTIFIER_TYPE : 0x00,
+    ENUMERATED_TYPE : 0x00,
+    SEQUENCE_TYPE : 0x01,
+    SET_TYPE : 0x01
+}
 """ The map containing the default constructed values for the types """
 
 DEFAULT_CLASS = 0x00
@@ -170,26 +172,30 @@ class BerStructure:
         self.type_alias_map = {}
 
         # creates the pack methods map reference
-        self.pack_methods_map = {BOOLEAN_TYPE : self.pack_boolean,
-                                 INTEGER_TYPE : self.pack_integer,
-                                 BIT_STRING_TYPE : self.pack_bit_string,
-                                 OCTET_STRING_TYPE : self.pack_octet_string,
-                                 NULL_TYPE : self.pack_null,
-                                 OBJECT_IDENTIFIER_TYPE : self.pack_object_identifier,
-                                 ENUMERATED_TYPE : self.pack_enumerated,
-                                 SEQUENCE_TYPE : self.pack_sequence,
-                                 SET_TYPE : self.pack_set}
+        self.pack_methods_map = {
+            BOOLEAN_TYPE : self.pack_boolean,
+            INTEGER_TYPE : self.pack_integer,
+            BIT_STRING_TYPE : self.pack_bit_string,
+            OCTET_STRING_TYPE : self.pack_octet_string,
+            NULL_TYPE : self.pack_null,
+            OBJECT_IDENTIFIER_TYPE : self.pack_object_identifier,
+            ENUMERATED_TYPE : self.pack_enumerated,
+            SEQUENCE_TYPE : self.pack_sequence,
+            SET_TYPE : self.pack_set
+        }
 
         # creates the unpack methods map reference
-        self.unpack_methods_map = {BOOLEAN_TYPE : self.unpack_boolean,
-                                   INTEGER_TYPE : self.unpack_integer,
-                                   BIT_STRING_TYPE : self.unpack_bit_string,
-                                   OCTET_STRING_TYPE : self.unpack_octet_string,
-                                   NULL_TYPE : self.unpack_null,
-                                   OBJECT_IDENTIFIER_TYPE : self.unpack_object_identifier,
-                                   ENUMERATED_TYPE : self.unpack_enumerated,
-                                   SEQUENCE_TYPE : self.unpack_sequence,
-                                   SET_TYPE : self.unpack_set}
+        self.unpack_methods_map = {
+            BOOLEAN_TYPE : self.unpack_boolean,
+            INTEGER_TYPE : self.unpack_integer,
+            BIT_STRING_TYPE : self.unpack_bit_string,
+            OCTET_STRING_TYPE : self.unpack_octet_string,
+            NULL_TYPE : self.unpack_null,
+            OBJECT_IDENTIFIER_TYPE : self.unpack_object_identifier,
+            ENUMERATED_TYPE : self.unpack_enumerated,
+            SEQUENCE_TYPE : self.unpack_sequence,
+            SET_TYPE : self.unpack_set
+        }
 
     def to_hex(self, string_value):
         for index in string_value:
@@ -588,12 +594,17 @@ class BerStructure:
         type_number, type_constructed, type_class = self._get_type_tuple(None, type)
 
         # creates the type map (to set as type value)
-        type_map = {TYPE_NUMBER_VALUE : type_number,
-                    TYPE_CONSTRUCTED_VALUE : type_constructed,
-                    TYPE_CLASS_VALUE : type_class}
+        type_map = {
+            TYPE_NUMBER_VALUE : type_number,
+            TYPE_CONSTRUCTED_VALUE : type_constructed,
+            TYPE_CLASS_VALUE : type_class
+        }
 
         # creates the unpacked base value
-        unpaked_base_value = {TYPE_VALUE : type_map, VALUE_VALUE : unpacked_base_value}
+        unpaked_base_value = {
+            TYPE_VALUE : type_map,
+            VALUE_VALUE : unpacked_base_value
+        }
 
         # in case the extra type is defined
         if not extra_type == None:
@@ -601,9 +612,11 @@ class BerStructure:
             extra_type_number, extra_type_constructed, extra_type_class = self._get_type_tuple(None, extra_type)
 
             # creates the extra type map (to set as extra type value)
-            extra_type_map = {TYPE_NUMBER_VALUE : extra_type_number,
-                              TYPE_CONSTRUCTED_VALUE : extra_type_constructed,
-                              TYPE_CLASS_VALUE : extra_type_class}
+            extra_type_map = {
+                TYPE_NUMBER_VALUE : extra_type_number,
+                TYPE_CONSTRUCTED_VALUE : extra_type_constructed,
+                TYPE_CLASS_VALUE : extra_type_class
+            }
 
             # sets the extra type (map) in the unpacked base value
             unpaked_base_value[EXTRA_TYPE_VALUE] = extra_type_map
