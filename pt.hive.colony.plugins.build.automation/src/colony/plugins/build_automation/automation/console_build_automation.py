@@ -198,38 +198,41 @@ class ConsoleBuildAutomation:
     def __generate_commands_map(self):
         # creates the commands map
         commands_map = {
-                        "run_automation" : {
-                            "handler" : self.process_run_automation,
-                            "description" : "runs the build automation for the stage and recursive level in the plugin with the given id and version",
-                            "arguments" : [
-                                {
-                                    "name" : "plugin_id",
-                                    "description" : "the id of the plugin to perform the build automation in",
-                                    "values" : self.get_plugin_id_list,
-                                    "mandatory" : True
-                                }, {
-                                    "name" : "recursive_level",
-                                    "description" : "the build automation recursive level",
-                                    "values" : str,
-                                    "mandatory" : False
-                                }, {
-                                    "name" : "stage",
-                                    "description" : "the build automation stage",
-                                    "values" : str,
-                                    "mandatory" : False
-                                }, {
-                                    "name" : "plugin_version",
-                                    "description" : "the version of the plugin to perform the build automation in",
-                                    "values" : str,
-                                    "mandatory" : False
-                                }
-                            ]
-                        },
-                        "show_all_automation" : {
-                            "handler" : self.process_show_all_automation,
-                            "description" : "shows all the build automations"
-                        }
+            "run_automation" : {
+                "handler" : self.process_run_automation,
+                "description" : "runs the build automation for the stage and recursive level in the plugin with the given id and version",
+                "arguments" : [
+                    {
+                        "name" : "plugin_id",
+                        "description" : "the id of the plugin to perform the build automation in",
+                        "values" : self.get_plugin_id_list,
+                        "mandatory" : True
+                    },
+                    {
+                        "name" : "recursive_level",
+                        "description" : "the build automation recursive level",
+                        "values" : str,
+                        "mandatory" : False
+                    },
+                    {
+                        "name" : "stage",
+                        "description" : "the build automation stage",
+                        "values" : str,
+                        "mandatory" : False
+                    },
+                    {
+                        "name" : "plugin_version",
+                        "description" : "the version of the plugin to perform the build automation in",
+                        "values" : str,
+                        "mandatory" : False
                     }
+                ]
+            },
+            "show_all_automation" : {
+                "handler" : self.process_show_all_automation,
+                "description" : "shows all the build automations"
+            }
+        }
 
         # returns the commands map
         return commands_map

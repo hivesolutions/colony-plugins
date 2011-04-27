@@ -180,38 +180,41 @@ class ConsoleBuildAutomationScheduler:
     def __generate_commands_map(self):
         # creates the commands map
         commands_map = {
-                        "schedule_automation" : {
-                            "handler" : self.process_schedule_automation,
-                            "description" : "schedules the given automation",
-                            "arguments" : [
-                                {
-                                    "name" : "plugin_id",
-                                    "description" : "the id of the plugin to perform the build automation in",
-                                    "values" : self.get_plugin_id_list,
-                                    "mandatory" : True
-                                }, {
-                                    "name" : "date_time",
-                                    "description" : "the date when to run the build automation",
-                                    "values" : str,
-                                    "mandatory" : True
-                                }, {
-                                    "name" : "recursion",
-                                    "description" : "the build automation recursion",
-                                    "values" : str,
-                                    "mandatory" : True
-                                }, {
-                                    "name" : "plugin_version",
-                                    "description" : "the version of the plugin to perform the build automation in",
-                                    "values" : str,
-                                    "mandatory" : False
-                                }
-                            ]
-                        },
-                        "show_all_automation_scheduler" : {
-                            "handler" : self.process_show_all_automation_scheduler,
-                            "description" : "shows all the scheduled build automations"
-                        }
+            "schedule_automation" : {
+                "handler" : self.process_schedule_automation,
+                "description" : "schedules the given automation",
+                "arguments" : [
+                    {
+                        "name" : "plugin_id",
+                        "description" : "the id of the plugin to perform the build automation in",
+                        "values" : self.get_plugin_id_list,
+                        "mandatory" : True
+                    },
+                    {
+                        "name" : "date_time",
+                        "description" : "the date when to run the build automation",
+                        "values" : str,
+                        "mandatory" : True
+                    },
+                    {
+                        "name" : "recursion",
+                        "description" : "the build automation recursion",
+                        "values" : str,
+                        "mandatory" : True
+                    },
+                    {
+                        "name" : "plugin_version",
+                        "description" : "the version of the plugin to perform the build automation in",
+                        "values" : str,
+                        "mandatory" : False
                     }
+                ]
+            },
+            "show_all_automation_scheduler" : {
+                "handler" : self.process_show_all_automation_scheduler,
+                "description" : "shows all the scheduled build automations"
+            }
+        }
 
         # returns the commands map
         return commands_map
