@@ -43,15 +43,26 @@ GLOBAL_CONTEXT_NAME = "global"
 
 class ProcessingStructure:
 
-    symbols_table = {GLOBAL_CONTEXT_NAME : {}}
+    symbols_table = {
+        GLOBAL_CONTEXT_NAME : {}
+    }
 
     current_context_stack = [GLOBAL_CONTEXT_NAME]
 
     current_id = 0
 
     def __init__(self):
-        self.symbols_table = {GLOBAL_CONTEXT_NAME : {}}
-        self.current_context_stack = [GLOBAL_CONTEXT_NAME]
+        # sets the symbols table
+        self.symbols_table = {
+            GLOBAL_CONTEXT_NAME : {}
+        }
+
+        # sets the current context stack
+        self.current_context_stack = [
+            GLOBAL_CONTEXT_NAME
+        ]
+
+        # sets the current id
         self.current_id = 0
 
     def set_symbol_value(self, context, name, value):

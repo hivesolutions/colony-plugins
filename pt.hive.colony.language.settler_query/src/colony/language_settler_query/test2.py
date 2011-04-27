@@ -43,11 +43,35 @@ import settler_query_generation
 
 import settler_query_structures_associative_array_visitor
 
-ARRAY = {"Person" : [{"name" : "Tobias", "nationality" : "Portuguese", "age" : 12},
-                     {"name" : "Matias", "nationality" : "Portuguese", "age" : 56},
-                     {"name" : "Matias", "nationality" : "English", "age" : 23}],
-         "User" : [{"username" : "joamag", "password" : "123123"},
-                   {"username" : "tiagooo", "password" : "234"}]}
+ARRAY = {
+    "Person" : [
+        {
+            "name" : "Tobias",
+            "nationality" : "Portuguese",
+            "age" : 12
+        },
+        {
+            "name" : "Matias",
+            "nationality" : "Portuguese",
+            "age" : 56
+        },
+        {
+            "name" : "Matias",
+            "nationality" : "English",
+            "age" : 23
+        }
+    ],
+    "User" : [
+        {
+            "username" : "joamag",
+            "password" : "123123"
+        },
+        {
+            "username" : "tiagooo",
+            "password" : "234"
+        }
+    ]
+}
 
 rootNode = settler_query_parser.parser.parse("select age from Person where age > 22 and nationality = \"Portuguese\"\n")
 

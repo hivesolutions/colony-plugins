@@ -41,11 +41,35 @@ import settler_query_structures
 import settler_query_structures_visitor
 import settler_query_structures_associative_array_visitor
 
-ARRAY = {"Person" : [{"name" : "Tobias", "nationality" : "Portuguese", "age" : 12},
-                     {"name" : "Matias", "nationality" : "Portuguese", "age" : 56},
-                     {"name" : "Matias", "nationality" : "English", "age" : 23}],
-         "User" : [{"username" : "joamag", "password" : "123123"},
-                   {"username" : "tiagooo", "password" : "234"}]}
+ARRAY = {
+    "Person" : [
+        {
+            "name" : "Tobias",
+            "nationality" : "Portuguese",
+            "age" : 12
+        },
+        {
+            "name" : "Matias",
+            "nationality" : "Portuguese",
+            "age" : 56
+        },
+        {
+            "name" : "Matias",
+            "nationality" : "English",
+            "age" : 23
+        }
+    ],
+    "User" : [
+        {
+            "username" : "joamag",
+            "password" : "123123"
+        },
+        {
+            "username" : "tiagooo",
+            "password" : "234"
+        }
+    ]
+}
 
 # creates a new select query
 select_query = settler_query_structures.SelectQuery()
