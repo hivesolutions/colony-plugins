@@ -75,9 +75,11 @@ POSITION_VALUE = "position"
 FREQUENCY_LOCATION_DISTANCE_FUNCTION_PARAMETERS_VALUE = "frequency_location_distance_scorer_function_parameters"
 """ The key to retrieve the parameters for the frequency location distance function from the properties map """
 
-DEFAULT_FREQUENCY_LOCATION_DISTANCE_FUNCTION_PARAMETERS = {WORD_FREQUENCY_SCORER_FUNCTION_IDENTIFIER: 1.0,
-                                                           DOCUMENT_LOCATION_SCORER_FUNCTION_IDENTIFIER: 1.0,
-                                                           WORD_DISTANCE_SCORER_FUNCTION_IDENTIFIER: 1.0}
+DEFAULT_FREQUENCY_LOCATION_DISTANCE_FUNCTION_PARAMETERS = {
+    WORD_FREQUENCY_SCORER_FUNCTION_IDENTIFIER: 1.0,
+    DOCUMENT_LOCATION_SCORER_FUNCTION_IDENTIFIER: 1.0,
+    WORD_DISTANCE_SCORER_FUNCTION_IDENTIFIER: 1.0
+}
 """ The default parameters for the frequency location distance function """
 
 ASCENDING_SORT_ORDER = "ascending"

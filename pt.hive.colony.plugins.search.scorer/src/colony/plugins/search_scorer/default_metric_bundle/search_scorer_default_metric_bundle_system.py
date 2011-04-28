@@ -383,7 +383,6 @@ class WordDocumentFrequencyScorerMetric(DefaultBundleMetric):
         return metric_values
 
     def compute_for_index(self, search_index, properties):
-
         # the metric_values
         metric_values = {}
 
@@ -412,7 +411,6 @@ class WordDocumentFrequencyScorerMetric(DefaultBundleMetric):
         return metric_values
 
     def compute_for_document_ids(self, search_index, document_id_list, properties):
-
         # the metric_values
         metric_values = {}
 

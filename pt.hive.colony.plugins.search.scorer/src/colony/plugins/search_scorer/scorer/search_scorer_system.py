@@ -183,10 +183,12 @@ class SearchScorer:
         # - word level: metrics that apply to a word across all documents
         # - word in document level: metrics that apply to a word in a specific document
         # - hit level: metrics that apply to a specific hit of a specific word in a specific document
-        metrics_values_level_map = {DOCUMENT_LEVEL_VALUE : {},
-                                    WORD_LEVEL_VALUE : {},
-                                    WORD_DOCUMENT_LEVEL_VALUE : {},
-                                    HIT_LEVEL_VALUE : {}}
+        metrics_values_level_map = {
+            DOCUMENT_LEVEL_VALUE : {},
+            WORD_LEVEL_VALUE : {},
+            WORD_DOCUMENT_LEVEL_VALUE : {},
+            HIT_LEVEL_VALUE : {}
+        }
 
         # computes each metric for the search results
         for scorer_metric in scorer_metrics:
@@ -222,6 +224,8 @@ class SearchScorer:
                 # get the metrics map for the document search result
                 if not METRICS_VALUE in search_result:
                     search_result[METRICS_VALUE] = {}
+
+                # retrieves the document metrics
                 document_metrics = search_result[METRICS_VALUE]
 
                 # set the current metric in the search result metrics
