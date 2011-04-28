@@ -268,10 +268,12 @@ class SearchIndexer:
         # - word level: metrics that apply to a word across all documents
         # - word in document level: metrics that apply to a word in a specific document
         # - hit level: metrics that apply to a specific hit of a specific word in a specific document
-        metrics_values_level_map = {DOCUMENT_LEVEL_VALUE : {},
-                                    WORD_LEVEL_VALUE : {},
-                                    WORD_DOCUMENT_LEVEL_VALUE : {},
-                                    HIT_LEVEL_VALUE : {}}
+        metrics_values_level_map = {
+            DOCUMENT_LEVEL_VALUE : {},
+            WORD_LEVEL_VALUE : {},
+            WORD_DOCUMENT_LEVEL_VALUE : {},
+            HIT_LEVEL_VALUE : {}
+        }
 
         # computes each metric for the whole index
         for scorer_metric in scorer_metrics:
@@ -452,8 +454,14 @@ class SearchIndex:
         return self.statistics
 
     def get_metadata(self):
-        metadata = {"properties" : self.properties, "metrics" : self.metrics, "statistics": self.statistics}
+        # defines the metadata
+        metadata = {
+            "properties" : self.properties,
+            "metrics" : self.metrics,
+            "statistics": self.statistics
+        }
 
+        # returns the metadata
         return metadata
 
     def get_document_information_map_metadata(self, document_id):
