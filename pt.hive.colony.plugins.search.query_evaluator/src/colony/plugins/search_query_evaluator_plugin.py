@@ -52,19 +52,29 @@ class SearchQueryEvaluatorPlugin(colony.base.plugin_system.Plugin):
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     loading_type = colony.base.plugin_system.EAGER_LOADING_TYPE
-    platforms = [colony.base.plugin_system.CPYTHON_ENVIRONMENT]
-    attributes = {"build_automation_file_path" : "$base{plugin_directory}/search_query_evaluator/query_evaluator/resources/baf.xml"}
-    capabilities = ["search_query_evaluator", "build_automation_item"]
-    capabilities_allowed = ["search_query_evaluator_adapter"]
-    dependencies = []
-    events_handled = []
-    events_registrable = []
-    main_modules = ["search_query_evaluator.query_evaluator.search_query_evaluator_exceptions",
-                    "search_query_evaluator.query_evaluator.search_query_evaluator_system"]
+    platforms = [
+        colony.base.plugin_system.CPYTHON_ENVIRONMENT
+    ]
+    attributes = {
+        "build_automation_file_path" : "$base{plugin_directory}/search_query_evaluator/query_evaluator/resources/baf.xml"
+    }
+    capabilities = [
+        "search_query_evaluator",
+        "build_automation_item"
+    ]
+    capabilities_allowed = [
+        "search_query_evaluator_adapter"
+    ]
+    main_modules = [
+        "search_query_evaluator.query_evaluator.search_query_evaluator_exceptions",
+        "search_query_evaluator.query_evaluator.search_query_evaluator_system"
+    ]
 
     search_query_evaluator = None
+    """ The search query evaluator """
 
     search_query_evaluator_adapter_plugins = []
+    """ The search query evaluator adapter plugins """
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)

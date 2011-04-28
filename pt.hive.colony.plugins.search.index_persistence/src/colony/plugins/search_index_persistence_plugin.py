@@ -51,19 +51,29 @@ class SearchIndexPersistencePlugin(colony.base.plugin_system.Plugin):
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     loading_type = colony.base.plugin_system.EAGER_LOADING_TYPE
-    platforms = [colony.base.plugin_system.CPYTHON_ENVIRONMENT]
-    attributes = {"build_automation_file_path" : "$base{plugin_directory}/search_index_persistence/index_persistence/resources/baf.xml"}
-    capabilities = ["search_index_persistence", "build_automation_item"]
-    capabilities_allowed = ["search_index_persistence_adapter"]
-    dependencies = []
-    events_handled = []
-    events_registrable = []
-    main_modules = ["search_index_persistence.index_persistence.search_index_persistence_exceptions",
-                    "search_index_persistence.index_persistence.search_index_persistence_system"]
+    platforms = [
+        colony.base.plugin_system.CPYTHON_ENVIRONMENT
+    ]
+    attributes = {
+        "build_automation_file_path" : "$base{plugin_directory}/search_index_persistence/index_persistence/resources/baf.xml"
+    }
+    capabilities = [
+        "search_index_persistence",
+        "build_automation_item"
+    ]
+    capabilities_allowed = [
+        "search_index_persistence_adapter"
+    ]
+    main_modules = [
+        "search_index_persistence.index_persistence.search_index_persistence_exceptions",
+        "search_index_persistence.index_persistence.search_index_persistence_system"
+    ]
 
     search_index_persistence = None
+    """ The search index persistence """
 
     search_index_persistence_adapter_plugins = []
+    """ The search index persistence adapter plugins """
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)

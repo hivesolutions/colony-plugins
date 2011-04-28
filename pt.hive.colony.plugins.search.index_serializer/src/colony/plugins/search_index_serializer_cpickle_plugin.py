@@ -51,17 +51,23 @@ class SearchIndexSerializerCpicklePlugin(colony.base.plugin_system.Plugin):
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     loading_type = colony.base.plugin_system.EAGER_LOADING_TYPE
-    platforms = [colony.base.plugin_system.CPYTHON_ENVIRONMENT]
-    attributes = {"build_automation_file_path" : "$base{plugin_directory}/search_index_serializer/cpickle/resources/baf.xml"}
-    capabilities = ["search_index_serializer", "build_automation_item"]
-    capabilities_allowed = []
-    dependencies = []
-    events_handled = []
-    events_registrable = []
-    main_modules = ["search_index_serializer.cpickle.search_index_serializer_cpickle_exceptions",
-                    "search_index_serializer.cpickle.search_index_serializer_cpickle_system"]
+    platforms = [
+        colony.base.plugin_system.CPYTHON_ENVIRONMENT
+    ]
+    attributes = {
+        "build_automation_file_path" : "$base{plugin_directory}/search_index_serializer/cpickle/resources/baf.xml"
+    }
+    capabilities = [
+        "search_index_serializer",
+        "build_automation_item"
+    ]
+    main_modules = [
+        "search_index_serializer.cpickle.search_index_serializer_cpickle_exceptions",
+        "search_index_serializer.cpickle.search_index_serializer_cpickle_system"
+    ]
 
     search_index_serializer_cpickle = None
+    """ The search index serializer cpickle """
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)

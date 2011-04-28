@@ -52,20 +52,28 @@ class SearchQueryInterpreterPlugin(colony.base.plugin_system.Plugin):
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     loading_type = colony.base.plugin_system.EAGER_LOADING_TYPE
-    platforms = [colony.base.plugin_system.CPYTHON_ENVIRONMENT]
-    attributes = {"build_automation_file_path" : "$base{plugin_directory}/search_query_interpreter/query_interpreter/resources/baf.xml"}
-    capabilities = ["search_query_interpreter", "build_automation_item"]
-    capabilities_allowed = []
-    dependencies = [colony.base.plugin_system.PackageDependency(
-                    "PLY", "ply", "2.5.x", "http://www.dabeaz.com/ply")]
-    events_handled = []
-    events_registrable = []
-    main_modules = ["search_query_interpreter.query_interpreter.search_query_interpreter_ast",
-                    "search_query_interpreter.query_interpreter.search_query_interpreter_lexer",
-                    "search_query_interpreter.query_interpreter.search_query_interpreter_parser",
-                    "search_query_interpreter.query_interpreter.search_query_interpreter_system"]
+    platforms = [
+        colony.base.plugin_system.CPYTHON_ENVIRONMENT
+    ]
+    attributes = {
+        "build_automation_file_path" : "$base{plugin_directory}/search_query_interpreter/query_interpreter/resources/baf.xml"
+    }
+    capabilities = [
+        "search_query_interpreter",
+        "build_automation_item"
+    ]
+    dependencies = [
+        colony.base.plugin_system.PackageDependency("PLY", "ply", "2.5.x", "http://www.dabeaz.com/ply")
+    ]
+    main_modules = [
+        "search_query_interpreter.query_interpreter.search_query_interpreter_ast",
+        "search_query_interpreter.query_interpreter.search_query_interpreter_lexer",
+        "search_query_interpreter.query_interpreter.search_query_interpreter_parser",
+        "search_query_interpreter.query_interpreter.search_query_interpreter_system"
+    ]
 
     search_query_interpreter = None
+    """ The search query interpreter """
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)

@@ -51,19 +51,29 @@ class SearchIndexPersistenceFileSystemAdapterPlugin(colony.base.plugin_system.Pl
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     loading_type = colony.base.plugin_system.EAGER_LOADING_TYPE
-    platforms = [colony.base.plugin_system.CPYTHON_ENVIRONMENT]
-    attributes = {"build_automation_file_path" : "$base{plugin_directory}/search_index_persistence/file_system_adapter/resources/baf.xml"}
-    capabilities = ["search_index_persistence_adapter.file_system", "build_automation_item"]
-    capabilities_allowed = ["search_index_serializer"]
-    dependencies = []
-    events_handled = []
-    events_registrable = []
-    main_modules = ["search_index_persistence.file_system_adapter.search_index_persistence_file_system_adapter_exceptions",
-                    "search_index_persistence.file_system_adapter.search_index_persistence_file_system_adapter_system"]
+    platforms = [
+        colony.base.plugin_system.CPYTHON_ENVIRONMENT
+    ]
+    attributes = {
+        "build_automation_file_path" : "$base{plugin_directory}/search_index_persistence/file_system_adapter/resources/baf.xml"
+    }
+    capabilities = [
+        "search_index_persistence_adapter.file_system",
+        "build_automation_item"
+    ]
+    capabilities_allowed = [
+        "search_index_serializer"
+    ]
+    main_modules = [
+        "search_index_persistence.file_system_adapter.search_index_persistence_file_system_adapter_exceptions",
+        "search_index_persistence.file_system_adapter.search_index_persistence_file_system_adapter_system"
+    ]
 
     search_index_persistence_file_system_adapter = None
+    """ The search index persistence file system adapter """
 
     search_index_serializer_plugins = []
+    """ The search index serializer plugins """
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
