@@ -52,25 +52,44 @@ class MainServicePopPlugin(colony.base.plugin_system.Plugin):
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     loading_type = colony.base.plugin_system.EAGER_LOADING_TYPE
-    platforms = [colony.base.plugin_system.CPYTHON_ENVIRONMENT,
-                 colony.base.plugin_system.JYTHON_ENVIRONMENT]
-    attributes = {"build_automation_file_path" : "$base{plugin_directory}/main_service_pop/pop/resources/baf.xml"}
-    capabilities = ["service.pop", "build_automation_item"]
-    capabilities_allowed = ["pop_service_handler", "pop_service_authentication_handler", "pop_service_session_handler"]
-    dependencies = [colony.base.plugin_system.PluginDependency(
-                    "pt.hive.colony.plugins.main.service.utils", "1.0.0")]
-    events_handled = []
-    events_registrable = []
-    main_modules = ["main_service_pop.pop.main_service_pop_exceptions",
-                    "main_service_pop.pop.main_service_pop_system"]
+    platforms = [
+        colony.base.plugin_system.CPYTHON_ENVIRONMENT,
+        colony.base.plugin_system.JYTHON_ENVIRONMENT
+    ]
+    attributes = {
+        "build_automation_file_path" : "$base{plugin_directory}/main_service_pop/pop/resources/baf.xml"
+    }
+    capabilities = [
+        "service.pop",
+        "build_automation_item"
+    ]
+    capabilities_allowed = [
+        "pop_service_handler",
+        "pop_service_authentication_handler",
+        "pop_service_session_handler"
+    ]
+    dependencies = [
+        colony.base.plugin_system.PluginDependency("pt.hive.colony.plugins.main.service.utils", "1.0.0")
+    ]
+    main_modules = [
+        "main_service_pop.pop.main_service_pop_exceptions",
+        "main_service_pop.pop.main_service_pop_system"
+    ]
 
     main_service_pop = None
+    """ The main service pop """
 
     pop_service_handler_plugins = []
+    """ The pop service handler plugins """
+
     pop_service_authentication_handler_plugins = []
+    """ The pop service authentication handler plugins """
+
     pop_service_session_handler_plugins = []
+    """ The pop service session handler plugins """
 
     main_service_utils_plugin = None
+    """ The main service utils plugin """
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
