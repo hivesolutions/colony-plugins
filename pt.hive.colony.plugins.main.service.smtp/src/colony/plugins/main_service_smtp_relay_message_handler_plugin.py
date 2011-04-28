@@ -52,24 +52,34 @@ class MainServiceSmtpRelayMessageHandlerPlugin(colony.base.plugin_system.Plugin)
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     loading_type = colony.base.plugin_system.EAGER_LOADING_TYPE
-    platforms = [colony.base.plugin_system.CPYTHON_ENVIRONMENT,
-                 colony.base.plugin_system.JYTHON_ENVIRONMENT]
-    attributes = {"build_automation_file_path" : "$base{plugin_directory}/main_service_smtp_relay_message_handler/relay_message_handler/resources/baf.xml"}
-    capabilities = ["smtp_service_message_handler", "build_automation_item"]
-    capabilities_allowed = []
-    dependencies = [colony.base.plugin_system.PluginDependency(
-                    "pt.hive.colony.plugins.main.client.smtp", "1.0.0"),
-                    colony.base.plugin_system.PluginDependency(
-                    "pt.hive.colony.plugins.main.client.dns", "1.0.0")]
-    events_handled = []
-    events_registrable = []
-    main_modules = ["main_service_smtp_relay_message_handler.relay_message_handler.main_service_smtp_relay_message_handler_exceptions",
-                    "main_service_smtp_relay_message_handler.relay_message_handler.main_service_smtp_relay_message_handler_system"]
+    platforms = [
+        colony.base.plugin_system.CPYTHON_ENVIRONMENT,
+        colony.base.plugin_system.JYTHON_ENVIRONMENT
+    ]
+    attributes = {
+        "build_automation_file_path" : "$base{plugin_directory}/main_service_smtp_relay_message_handler/relay_message_handler/resources/baf.xml"
+    }
+    capabilities = [
+        "smtp_service_message_handler",
+        "build_automation_item"
+    ]
+    dependencies = [
+        colony.base.plugin_system.PluginDependency("pt.hive.colony.plugins.main.client.smtp", "1.0.0"),
+        colony.base.plugin_system.PluginDependency("pt.hive.colony.plugins.main.client.dns", "1.0.0")
+    ]
+    main_modules = [
+        "main_service_smtp_relay_message_handler.relay_message_handler.main_service_smtp_relay_message_handler_exceptions",
+        "main_service_smtp_relay_message_handler.relay_message_handler.main_service_smtp_relay_message_handler_system"
+    ]
 
     main_service_smtp_relay_session_handler = None
+    """ The main service smtp relay session handler """
 
     main_client_smtp_plugin = None
+    """ The main client smtp plugin """
+
     main_client_dns_plugin = None
+    """ The main client dns plugin """
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)

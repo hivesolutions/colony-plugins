@@ -52,25 +52,44 @@ class MainServiceSmtpPlugin(colony.base.plugin_system.Plugin):
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     loading_type = colony.base.plugin_system.EAGER_LOADING_TYPE
-    platforms = [colony.base.plugin_system.CPYTHON_ENVIRONMENT,
-                 colony.base.plugin_system.JYTHON_ENVIRONMENT]
-    attributes = {"build_automation_file_path" : "$base{plugin_directory}/main_service_smtp/smtp/resources/baf.xml"}
-    capabilities = ["service.smtp", "build_automation_item"]
-    capabilities_allowed = ["smtp_service_handler", "smtp_service_authentication_handler", "smtp_service_session_handler"]
-    dependencies = [colony.base.plugin_system.PluginDependency(
-                    "pt.hive.colony.plugins.main.service.utils", "1.0.0")]
-    events_handled = []
-    events_registrable = []
-    main_modules = ["main_service_smtp.smtp.main_service_smtp_exceptions",
-                    "main_service_smtp.smtp.main_service_smtp_system"]
+    platforms = [
+        colony.base.plugin_system.CPYTHON_ENVIRONMENT,
+        colony.base.plugin_system.JYTHON_ENVIRONMENT
+    ]
+    attributes = {
+        "build_automation_file_path" : "$base{plugin_directory}/main_service_smtp/smtp/resources/baf.xml"
+    }
+    capabilities = [
+        "service.smtp",
+        "build_automation_item"
+    ]
+    capabilities_allowed = [
+        "smtp_service_handler",
+        "smtp_service_authentication_handler",
+        "smtp_service_session_handler"
+    ]
+    dependencies = [
+        colony.base.plugin_system.PluginDependency("pt.hive.colony.plugins.main.service.utils", "1.0.0")
+    ]
+    main_modules = [
+        "main_service_smtp.smtp.main_service_smtp_exceptions",
+        "main_service_smtp.smtp.main_service_smtp_system"
+    ]
 
     main_service_smtp = None
+    """ The main service smtp """
 
     smtp_service_handler_plugins = []
+    """ The smtp service handler plugins """
+
     smtp_service_authentication_handler_plugins = []
+    """ The smtp service authentication handler plugins """
+
     smtp_service_session_handler_plugins = []
+    """ The smtp service session handler plugins """
 
     main_service_utils_plugin = None
+    """ The main service utils plugin """
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
