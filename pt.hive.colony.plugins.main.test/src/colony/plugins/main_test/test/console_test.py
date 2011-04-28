@@ -293,27 +293,27 @@ class ConsoleTest:
     def __generate_commands_map(self):
         # creates the commands map
         commands_map = {
-                        "start_test" : {
-                            "handler" : self.process_start_test,
-                            "description" : "starts a unit test",
-                            "arguments" : [
-                                {
-                                    "name" : "test_case_id",
-                                    "description" : "the unique identifier for the test case",
-                                    "values" : self.get_test_case_id_list,
-                                    "mandatory" : True
-                                }
-                            ]
-                        },
-                        "start_all_test" : {
-                            "handler" : self.process_start_all_test,
-                            "description" : "starts all the unit tests"
-                        },
-                        "show_all_test" : {
-                            "handler" : self.process_show_all_test,
-                            "description" : "shows all the unit tests"
-                        }
+            "start_test" : {
+                "handler" : self.process_start_test,
+                "description" : "starts a unit test",
+                "arguments" : [
+                    {
+                        "name" : "test_case_id",
+                        "description" : "the unique identifier for the test case",
+                        "values" : self.get_test_case_id_list,
+                        "mandatory" : True
                     }
+                ]
+            },
+            "start_all_test" : {
+                "handler" : self.process_start_all_test,
+                "description" : "starts all the unit tests"
+            },
+            "show_all_test" : {
+                "handler" : self.process_show_all_test,
+                "description" : "shows all the unit tests"
+            }
+        }
 
         # returns the commands map
         return commands_map
