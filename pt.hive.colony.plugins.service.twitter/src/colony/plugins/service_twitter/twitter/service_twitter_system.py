@@ -91,7 +91,9 @@ POST_METHOD_VALUE = "POST"
 OUT_OF_BAND_CALLBACK_VALUE = "oob"
 """ The out of band (default) callback value """
 
-HMAC_HASH_MODULES_MAP = {HMAC_SHA1_VALUE : hashlib.sha1}
+HMAC_HASH_MODULES_MAP = {
+    HMAC_SHA1_VALUE : hashlib.sha1
+}
 """ The map associating the hmac values with the hashlib hash function modules """
 
 BASE_REST_URL = "http://twitter.com/"
@@ -443,7 +445,9 @@ class TwitterClient:
         retrieval_url = BASE_REST_SECURE_URL + "oauth/authorize"
 
         # creates the authentication parameters
-        authentication_parameters = {"oauth_token" : self.oauth_structure.oauth_token}
+        authentication_parameters = {
+            "oauth_token" : self.oauth_structure.oauth_token
+        }
 
         # creates the authentication url from the authentication token
         authentication_url = self._build_url(retrieval_url, authentication_parameters)
@@ -463,7 +467,9 @@ class TwitterClient:
         retrieval_url = BASE_REST_SECURE_URL + "oauth/authenticate"
 
         # creates the authentication parameters
-        authentication_parameters = {"oauth_token" : self.oauth_structure.oauth_token}
+        authentication_parameters = {
+            "oauth_token" : self.oauth_structure.oauth_token
+        }
 
         # creates the authentication url from the authentication token
         authentication_url = self._build_url(retrieval_url, authentication_parameters)
@@ -1076,8 +1082,13 @@ class TwitterClient:
 
         # in case no http client exists
         if not self.http_client:
+            # defines the client parameters
+            client_parameters = {
+                CONTENT_TYPE_CHARSET_VALUE : DEFAULT_CHARSET
+            }
+
             # creates the http client
-            self.http_client = self.main_client_http_plugin.create_client({CONTENT_TYPE_CHARSET_VALUE : DEFAULT_CHARSET})
+            self.http_client = self.main_client_http_plugin.create_client(client_parameters)
 
             # opens the http client
             self.http_client.open({})
