@@ -149,10 +149,23 @@ BUILD_AUTOMATION_ITEM_CAPABILITY = "build_automation_item"
 BUILD_AUTOMATION_FILE_PATH_ATTRIBUTE = "build_automation_file_path"
 """ The build automation file path attribute """
 
-RESOURCE_FILE_NAME_EXCLUSION_LIST = (".svn", "entries", "all-wcprops", "dir-prop-base", "org.eclipse.core.resources.prefs")
+RESOURCE_FILE_NAME_EXCLUSION_LIST = (
+    ".svn",
+    "entries",
+    "all-wcprops",
+    "dir-prop-base",
+    "org.eclipse.core.resources.prefs"
+)
 """ The resource file name exclusion list """
 
-RESOURCE_FILE_EXTENSION_EXCLUSION_LIST = (".svn", ".svn-base", ".svn-revert", ".class", ".pyc", ".tmp")
+RESOURCE_FILE_EXTENSION_EXCLUSION_LIST = (
+    ".svn",
+    ".svn-base",
+    ".svn-revert",
+    ".class",
+    ".pyc",
+    ".tmp"
+)
 """ The resource file extension exclusion list """
 
 BUILD_AUTOMATION_ITEM_CAPABILITY_PLUGIN_EXCLUSION_LIST = ("pt.hive.colony.plugins.build.automation")
@@ -161,20 +174,24 @@ BUILD_AUTOMATION_ITEM_CAPABILITY_PLUGIN_EXCLUSION_LIST = ("pt.hive.colony.plugin
 BUILD_AUTOMATION_EXTENSIONS_PACKING_PLUGIN_ID = "pt.hive.colony.plugins.build.automation.extensions.packing"
 """ The build automation extensions packing plugin id """
 
-PLUGIN_DESCRIPTOR_ATTRIBUTES_MAP = {"id" : "original_id",
-                                    "sub_platforms" : "platforms",
-                                    "name" : "name",
-                                    "short_name" : "short_name",
-                                    "description" : "description",
-                                    "version" : "version",
-                                    "author" : "author",
-                                    "capabilities" : "capabilities"}
+PLUGIN_DESCRIPTOR_ATTRIBUTES_MAP = {
+    "id" : "original_id",
+    "sub_platforms" : "platforms",
+    "name" : "name",
+    "short_name" : "short_name",
+    "description" : "description",
+    "version" : "version",
+    "author" : "author",
+    "capabilities" : "capabilities"
+}
 """ Defines the association between attributes in the plugin descriptor file and the plugin itself """
 
-BUILD_AUTOMATION_FILE_ARTIFACT_ATTRIBUTES_MAP = {"id" : "original_id",
-                                                 "version" : "version",
-                                                 "name" : "name",
-                                                 "description" : "description"}
+BUILD_AUTOMATION_FILE_ARTIFACT_ATTRIBUTES_MAP = {
+    "id" : "original_id",
+    "version" : "version",
+    "name" : "name",
+    "description" : "description"
+}
 """ Defines the association between attributes in the plugin build automation file and the plugin itself """
 
 class ValidationPlugin:
@@ -880,9 +897,11 @@ class ValidationPlugin:
 
     def add_validation_error(self, validation_errors, plugin_information, validation_error_message):
         # defines the validation error map
-        validation_error_map = {PLUGIN_ID_VALUE : plugin_information.plugin.id,
-                                PLUGIN_PATH_VALUE : plugin_information.plugin_file_path,
-                                MESSAGE_VALUE : validation_error_message}
+        validation_error_map = {
+            PLUGIN_ID_VALUE : plugin_information.plugin.id,
+            PLUGIN_PATH_VALUE : plugin_information.plugin_file_path,
+            MESSAGE_VALUE : validation_error_message
+        }
 
         # adds the validation error map to the validation errors list
         validation_errors.append(validation_error_map)

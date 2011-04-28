@@ -134,19 +134,19 @@ class ConsoleValidationPlugin:
     def __generate_commands_map(self):
         # creates the commands map
         commands_map = {
-                        "validate_plugin" : {
-                            "handler" : self.process_validate_plugin,
-                            "description" : "validates the specified plugin",
-                            "arguments" : [
-                                {
-                                    "name" : "plugin_id",
-                                    "description" : "the plugin id",
-                                    "values" : self.get_plugin_id_list,
-                                    "mandatory" : False
-                                }
-                            ]
-                        }
+            "validate_plugin" : {
+                "handler" : self.process_validate_plugin,
+                "description" : "validates the specified plugin",
+                "arguments" : [
+                    {
+                        "name" : "plugin_id",
+                        "description" : "the plugin id",
+                        "values" : self.get_plugin_id_list,
+                        "mandatory" : False
                     }
+                ]
+            }
+        }
 
         # returns the commands map
         return commands_map
