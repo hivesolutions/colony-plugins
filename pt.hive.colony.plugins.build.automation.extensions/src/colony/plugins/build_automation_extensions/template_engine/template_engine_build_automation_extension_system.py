@@ -84,6 +84,9 @@ class TemplateEngineBuildAutomationExtension:
         self.template_engine_build_automation_extension_plugin = template_engine_build_automation_extension_plugin
 
     def run_automation(self, plugin, stage, parameters, build_automation_structure, logger):
+        # prints an info message
+        logger.info("Running template engine plugin build automation plugin")
+
         # retrieves the template engine manager plugin
         template_engine_manager_plugin = self.template_engine_build_automation_extension_plugin.template_engine_manager_plugin
 
