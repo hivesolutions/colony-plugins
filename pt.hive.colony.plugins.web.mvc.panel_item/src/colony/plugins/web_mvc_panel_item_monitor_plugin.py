@@ -52,21 +52,37 @@ class WebMvcPanelItemMonitorPlugin(colony.base.plugin_system.Plugin):
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     loading_type = colony.base.plugin_system.EAGER_LOADING_TYPE
-    platforms = [colony.base.plugin_system.CPYTHON_ENVIRONMENT]
-    attributes = {"build_automation_file_path" : "$base{plugin_directory}/web_mvc_panel_item/monitor/resources/baf.xml"}
-    capabilities = ["web.mvc.panel_item", "build_automation_item"]
-    capabilities_allowed = ["web.mvc.monitor_item"]
-    dependencies = [colony.base.plugin_system.PluginDependency(
-                    "pt.hive.colony.plugins.web.mvc.utils", "1.0.0")]
-    events_handled = ["web.mvc.side_panel_reload"]
-    events_registrable = []
-    main_modules = ["web_mvc_panel_item.monitor.web_mvc_panel_item_monitor_system"]
+    platforms = [
+        colony.base.plugin_system.CPYTHON_ENVIRONMENT
+    ]
+    attributes = {
+        "build_automation_file_path" : "$base{plugin_directory}/web_mvc_panel_item/monitor/resources/baf.xml"
+    }
+    capabilities = [
+        "web.mvc.panel_item",
+        "build_automation_item"
+    ]
+    capabilities_allowed = [
+        "web.mvc.monitor_item"
+    ]
+    dependencies = [
+        colony.base.plugin_system.PluginDependency("pt.hive.colony.plugins.web.mvc.utils", "1.0.0")
+    ]
+    events_handled = [
+        "web.mvc.side_panel_reload"
+    ]
+    main_modules = [
+        "web_mvc_panel_item.monitor.web_mvc_panel_item_monitor_system"
+    ]
 
     web_mvc_panel_item_monitor = None
+    """ The web mvc panel item monitor """
 
     web_mvc_monitor_item_plugins = []
+    """ The web mvc monitor item plugins """
 
     web_mvc_utils_plugin = None
+    """ The web mvc utils plugin """
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)

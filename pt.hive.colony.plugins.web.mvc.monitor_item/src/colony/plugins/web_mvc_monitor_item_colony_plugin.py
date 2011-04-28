@@ -52,19 +52,28 @@ class WebMvcMonitorItemColonyPlugin(colony.base.plugin_system.Plugin):
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     loading_type = colony.base.plugin_system.EAGER_LOADING_TYPE
-    platforms = [colony.base.plugin_system.CPYTHON_ENVIRONMENT]
-    attributes = {"build_automation_file_path" : "$base{plugin_directory}/web_mvc_monitor_item/colony/resources/baf.xml"}
-    capabilities = ["web.mvc.monitor_item", "build_automation_item"]
-    capabilities_allowed = []
-    dependencies = [colony.base.plugin_system.PluginDependency(
-                    "pt.hive.colony.plugins.web.mvc.utils", "1.0.0")]
-    events_handled = []
-    events_registrable = []
-    main_modules = ["web_mvc_monitor_item.colony.web_mvc_monitor_item_colony_system"]
+    platforms = [
+        colony.base.plugin_system.CPYTHON_ENVIRONMENT
+    ]
+    attributes = {
+        "build_automation_file_path" : "$base{plugin_directory}/web_mvc_monitor_item/colony/resources/baf.xml"
+    }
+    capabilities = [
+        "web.mvc.monitor_item",
+        "build_automation_item"
+    ]
+    dependencies = [
+        colony.base.plugin_system.PluginDependency("pt.hive.colony.plugins.web.mvc.utils", "1.0.0")
+    ]
+    main_modules = [
+        "web_mvc_monitor_item.colony.web_mvc_monitor_item_colony_system"
+    ]
 
     web_mvc_monitor_colony_system = None
+    """ The web mvc monitor colony system """
 
     web_mvc_utils_plugin = None
+    """ The web mvc utils plugin """
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)

@@ -51,31 +51,53 @@ class WebMvcPlugin(colony.base.plugin_system.Plugin):
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     loading_type = colony.base.plugin_system.EAGER_LOADING_TYPE
-    platforms = [colony.base.plugin_system.CPYTHON_ENVIRONMENT,
-                 colony.base.plugin_system.JYTHON_ENVIRONMENT]
-    attributes = {"build_automation_file_path" : "$base{plugin_directory}/web_mvc/mvc/resources/baf.xml"}
-    capabilities = ["web.mvc", "rest_service", "build_automation_item"]
-    capabilities_allowed = ["web.mvc_service"]
-    dependencies = [colony.base.plugin_system.PluginDependency(
-                    "pt.hive.colony.plugins.format.mime", "1.0.0"),
-                    colony.base.plugin_system.PluginDependency(
-                    "pt.hive.colony.plugins.misc.random", "1.0.0"),
-                    colony.base.plugin_system.PluginDependency(
-                    "pt.hive.colony.plugins.misc.json", "1.0.0")]
-    events_handled = []
-    events_registrable = ["web.mvc.patterns_reload", "web.mvc.patterns_load", "web.mvc.patterns_unload", "web.mvc.communication"]
-    main_modules = ["web_mvc.mvc.web_mvc_communication_handler",
-                    "web_mvc.mvc.web_mvc_exceptions",
-                    "web_mvc.mvc.web_mvc_file_handler",
-                    "web_mvc.mvc.web_mvc_system"]
+    platforms = [
+        colony.base.plugin_system.CPYTHON_ENVIRONMENT,
+        colony.base.plugin_system.JYTHON_ENVIRONMENT
+    ]
+    attributes = {
+        "build_automation_file_path" : "$base{plugin_directory}/web_mvc/mvc/resources/baf.xml"
+    }
+    capabilities = [
+        "web.mvc",
+        "rest_service",
+        "build_automation_item"
+    ]
+    capabilities_allowed = [
+        "web.mvc_service"
+    ]
+    dependencies = [
+        colony.base.plugin_system.PluginDependency("pt.hive.colony.plugins.format.mime", "1.0.0"),
+        colony.base.plugin_system.PluginDependency("pt.hive.colony.plugins.misc.random", "1.0.0"),
+        colony.base.plugin_system.PluginDependency("pt.hive.colony.plugins.misc.json", "1.0.0")
+    ]
+    events_registrable = [
+        "web.mvc.patterns_reload",
+        "web.mvc.patterns_load",
+        "web.mvc.patterns_unload",
+        "web.mvc.communication"
+    ]
+    main_modules = [
+        "web_mvc.mvc.web_mvc_communication_handler",
+        "web_mvc.mvc.web_mvc_exceptions",
+        "web_mvc.mvc.web_mvc_file_handler",
+        "web_mvc.mvc.web_mvc_system"
+    ]
 
     web_mvc = None
+    """ The web mvc """
 
     web_mvc_service_plugins = []
+    """ The web mvc service plugins """
 
     format_mime_plugin = None
+    """ The format mime plugin """
+
     random_plugin = None
+    """ The random plugin """
+
     json_plugin = None
+    """ The json plugin """
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)

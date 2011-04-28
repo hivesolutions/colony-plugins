@@ -52,31 +52,43 @@ class WebMvcEncryptionPlugin(colony.base.plugin_system.Plugin):
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     loading_type = colony.base.plugin_system.EAGER_LOADING_TYPE
-    platforms = [colony.base.plugin_system.CPYTHON_ENVIRONMENT]
-    attributes = {"build_automation_file_path" : "$base{plugin_directory}/web_mvc_encryption/encryption/resources/baf.xml"}
-    capabilities = ["web.mvc_service", "build_automation_item"]
-    capabilities_allowed = []
-    dependencies = [colony.base.plugin_system.PluginDependency(
-                    "pt.hive.colony.plugins.web.mvc.utils", "1.0.0"),
-                    colony.base.plugin_system.PluginDependency(
-                    "pt.hive.colony.plugins.resources.resource_manager", "1.0.0"),
-                    colony.base.plugin_system.PluginDependency(
-                    "pt.hive.colony.plugins.misc.random", "1.0.0"),
-                    colony.base.plugin_system.PluginDependency(
-                    "pt.hive.colony.plugins.encryption.ssl", "1.0.0")]
-    events_handled = []
-    events_registrable = []
-    main_modules = ["web_mvc_encryption.encryption.web_mvc_encryption_controllers",
-                    "web_mvc_encryption.encryption.web_mvc_encryption_entity_models",
-                    "web_mvc_encryption.encryption.web_mvc_encryption_exceptions",
-                    "web_mvc_encryption.encryption.web_mvc_encryption_system"]
+    platforms = [
+        colony.base.plugin_system.CPYTHON_ENVIRONMENT
+    ]
+    attributes = {
+        "build_automation_file_path" : "$base{plugin_directory}/web_mvc_encryption/encryption/resources/baf.xml"
+    }
+    capabilities = [
+        "web.mvc_service",
+        "build_automation_item"
+    ]
+    dependencies = [
+        colony.base.plugin_system.PluginDependency("pt.hive.colony.plugins.web.mvc.utils", "1.0.0"),
+        colony.base.plugin_system.PluginDependency("pt.hive.colony.plugins.resources.resource_manager", "1.0.0"),
+        colony.base.plugin_system.PluginDependency("pt.hive.colony.plugins.misc.random", "1.0.0"),
+        colony.base.plugin_system.PluginDependency("pt.hive.colony.plugins.encryption.ssl", "1.0.0")
+    ]
+    main_modules = [
+        "web_mvc_encryption.encryption.web_mvc_encryption_controllers",
+        "web_mvc_encryption.encryption.web_mvc_encryption_entity_models",
+        "web_mvc_encryption.encryption.web_mvc_encryption_exceptions",
+        "web_mvc_encryption.encryption.web_mvc_encryption_system"
+    ]
 
     web_mvc_encryption = None
+    """ The web mvc encryption """
 
     web_mvc_utils_plugin = None
+    """ The web mvc utils plugin """
+
     resource_manager_plugin = None
+    """ The resource manager plugin """
+
     random_plugin = None
+    """ The random plugin """
+
     encryption_ssl_plugin = None
+    """ The encryption ssl plugin """
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)

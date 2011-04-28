@@ -51,16 +51,22 @@ class WebMvcResourcesBasePlugin(colony.base.plugin_system.Plugin):
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     loading_type = colony.base.plugin_system.EAGER_LOADING_TYPE
-    platforms = [colony.base.plugin_system.CPYTHON_ENVIRONMENT]
-    attributes = {"build_automation_file_path" : "$base{plugin_directory}/web_mvc_resources_base/resources_base/resources/baf.xml"}
-    capabilities = ["web.mvc_resources", "build_automation_item"]
-    capabilities_allowed = []
-    dependencies = []
-    events_handled = []
-    events_registrable = []
-    main_modules = ["web_mvc_resources_base.resources_base.web_mvc_resources_base_system"]
+    platforms = [
+        colony.base.plugin_system.CPYTHON_ENVIRONMENT
+    ]
+    attributes = {
+        "build_automation_file_path" : "$base{plugin_directory}/web_mvc_resources_base/resources_base/resources/baf.xml"
+    }
+    capabilities = [
+        "web.mvc_resources",
+        "build_automation_item"
+    ]
+    main_modules = [
+        "web_mvc_resources_base.resources_base.web_mvc_resources_base_system"
+    ]
 
     web_mvc_resources_base = None
+    """ The web mvc resources base """
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
