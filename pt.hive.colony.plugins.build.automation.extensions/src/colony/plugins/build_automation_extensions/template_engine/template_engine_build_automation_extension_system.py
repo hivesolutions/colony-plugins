@@ -108,7 +108,7 @@ class TemplateEngineBuildAutomationExtension:
             file_encoding = file.get("encoding", DEFAULT_ENCODING)
 
             # prints a debug message
-            logger.debug("Processing template file with path '%s' and encoding '%s'", (file_path, file_encoding))
+            logger.info("Processing template file with path '%s' and encoding '%s'", (file_path, file_encoding))
 
             # parses the template file path using the file encoding
             template_file = template_engine_manager_plugin.parse_file_path_encoding(file_path, file_encoding)
