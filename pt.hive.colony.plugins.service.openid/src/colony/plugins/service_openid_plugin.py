@@ -51,30 +51,42 @@ class ServiceOpenidPlugin(colony.base.plugin_system.Plugin):
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     loading_type = colony.base.plugin_system.EAGER_LOADING_TYPE
-    platforms = [colony.base.plugin_system.CPYTHON_ENVIRONMENT]
-    attributes = {"build_automation_file_path" : "$base{plugin_directory}/service_openid/openid/resources/baf.xml"}
-    capabilities = ["service.openid", "build_automation_item"]
-    capabilities_allowed = []
-    dependencies = [colony.base.plugin_system.PluginDependency(
-                    "pt.hive.colony.plugins.main.client.http", "1.0.0"),
-                    colony.base.plugin_system.PluginDependency(
-                    "pt.hive.colony.plugins.service.yadis", "1.0.0"),
-                    colony.base.plugin_system.PluginDependency(
-                    "pt.hive.colony.plugins.encryption.diffie_hellman", "1.0.0"),
-                    colony.base.plugin_system.PluginDependency(
-                    "pt.hive.colony.plugins.misc.random", "1.0.0")]
-    events_handled = []
-    events_registrable = []
-    main_modules = ["service_openid.openid.service_openid_exceptions",
-                    "service_openid.openid.service_openid_parser",
-                    "service_openid.openid.service_openid_system"]
+    platforms = [
+        colony.base.plugin_system.CPYTHON_ENVIRONMENT
+    ]
+    attributes = {
+        "build_automation_file_path" : "$base{plugin_directory}/service_openid/openid/resources/baf.xml"
+    }
+    capabilities = [
+        "service.openid",
+        "build_automation_item"
+    ]
+    dependencies = [
+        colony.base.plugin_system.PluginDependency("pt.hive.colony.plugins.main.client.http", "1.0.0"),
+        colony.base.plugin_system.PluginDependency("pt.hive.colony.plugins.service.yadis", "1.0.0"),
+        colony.base.plugin_system.PluginDependency("pt.hive.colony.plugins.encryption.diffie_hellman", "1.0.0"),
+        colony.base.plugin_system.PluginDependency("pt.hive.colony.plugins.misc.random", "1.0.0")
+    ]
+    main_modules = [
+        "service_openid.openid.service_openid_exceptions",
+        "service_openid.openid.service_openid_parser",
+        "service_openid.openid.service_openid_system"
+    ]
 
     service_openid = None
+    """ The service openid """
 
     main_client_http_plugin = None
+    """ The main client http plugin """
+
     service_yadis_plugin = None
+    """ The service yadis plugin """
+
     encryption_diffie_hellman_plugin = None
+    """ The encryption diffie helman plugin """
+
     random_plugin = None
+    """ The random plugin """
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)

@@ -53,22 +53,30 @@ class ServiceTwitterPlugin(colony.base.plugin_system.Plugin):
     author = "Hive Solutions Lda. <development@hive.pt>"
     loading_type = colony.base.plugin_system.EAGER_LOADING_TYPE
     platforms = [colony.base.plugin_system.CPYTHON_ENVIRONMENT]
-    attributes = {"build_automation_file_path" : "$base{plugin_directory}/service_twitter/twitter/resources/baf.xml"}
-    capabilities = ["service.twitter", "build_automation_item"]
-    capabilities_allowed = []
-    dependencies = [colony.base.plugin_system.PluginDependency(
-                    "pt.hive.colony.plugins.main.client.http", "1.0.0"),
-                    colony.base.plugin_system.PluginDependency(
-                    "pt.hive.colony.plugins.misc.json", "1.0.0")]
-    events_handled = []
-    events_registrable = []
-    main_modules = ["service_twitter.twitter.service_twitter_exceptions",
-                    "service_twitter.twitter.service_twitter_system"]
+    attributes = {
+        "build_automation_file_path" : "$base{plugin_directory}/service_twitter/twitter/resources/baf.xml"
+    }
+    capabilities = [
+        "service.twitter",
+        "build_automation_item"
+    ]
+    dependencies = [
+        colony.base.plugin_system.PluginDependency("pt.hive.colony.plugins.main.client.http", "1.0.0"),
+        colony.base.plugin_system.PluginDependency("pt.hive.colony.plugins.misc.json", "1.0.0")
+    ]
+    main_modules = [
+        "service_twitter.twitter.service_twitter_exceptions",
+        "service_twitter.twitter.service_twitter_system"
+    ]
 
     service_twitter = None
+    """ The service twitter """
 
     main_client_http_plugin = None
+    """ The main client http plugin """
+
     json_plugin = None
+    """ The json plugin """
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
