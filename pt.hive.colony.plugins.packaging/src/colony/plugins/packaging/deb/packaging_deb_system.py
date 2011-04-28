@@ -264,8 +264,13 @@ class DebFile:
         # retrieves the packing ar plugin
         packaging_ar_plugin = self.packing_deb.packaging_deb_plugin.packaging_ar_plugin
 
+        # defines the file parameters
+        file_parameters = {
+            FILE_PATH_VALUE : self.file_path
+        }
+
         # creates the file
-        self.file = packaging_ar_plugin.create_file({FILE_PATH_VALUE : self.file_path})
+        self.file = packaging_ar_plugin.create_file(file_parameters)
 
         # opens the file with the current mode
         self.file.open(mode)
