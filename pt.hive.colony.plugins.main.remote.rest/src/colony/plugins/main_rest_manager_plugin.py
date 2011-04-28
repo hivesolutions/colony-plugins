@@ -52,26 +52,46 @@ class MainRestManagerPlugin(colony.base.plugin_system.Plugin):
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     loading_type = colony.base.plugin_system.EAGER_LOADING_TYPE
-    platforms = [colony.base.plugin_system.CPYTHON_ENVIRONMENT]
-    attributes = {"build_automation_file_path" : "$base{plugin_directory}/main_remote_rest/manager/resources/baf.xml"}
-    capabilities = ["rest_manager", "http_python_handler", "rpc_handler", "build_automation_item"]
-    capabilities_allowed = ["rest_encoder", "rest_service", "rpc_service"]
-    dependencies = [colony.base.plugin_system.PluginDependency(
-                    "pt.hive.colony.plugins.resources.resource_manager", "1.0.0"),
-                    colony.base.plugin_system.PluginDependency(
-                    "pt.hive.colony.plugins.misc.random", "1.0.0")]
-    events_handled = []
-    events_registrable = []
-    main_modules = ["main_remote_rest.manager.main_rest_manager_exceptions",
-                    "main_remote_rest.manager.main_rest_manager_system"]
+    platforms = [
+        colony.base.plugin_system.CPYTHON_ENVIRONMENT
+    ]
+    attributes = {
+        "build_automation_file_path" : "$base{plugin_directory}/main_remote_rest/manager/resources/baf.xml"
+    }
+    capabilities = [
+        "rest_manager",
+        "http_python_handler",
+        "rpc_handler",
+        "build_automation_item"
+    ]
+    capabilities_allowed = [
+        "rest_encoder",
+        "rest_service",
+        "rpc_service"
+    ]
+    dependencies = [
+        colony.base.plugin_system.PluginDependency("pt.hive.colony.plugins.resources.resource_manager", "1.0.0"),
+        colony.base.plugin_system.PluginDependency("pt.hive.colony.plugins.misc.random", "1.0.0")
+    ]
+    main_modules = [
+        "main_remote_rest.manager.main_rest_manager_exceptions",
+        "main_remote_rest.manager.main_rest_manager_system"
+    ]
 
     main_rest_manager = None
+    """ The main rest manager """
 
     resource_manager_plugin = None
+    """ The resource manager plugin """
 
     rest_encoder_plugins = []
+    """ The rest encoder plugins """
+
     rest_service_plugins = []
+    """ The rest service plugins """
+
     rpc_service_plugins = []
+    """ The rpc service plugins """
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
