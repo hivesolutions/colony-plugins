@@ -52,19 +52,31 @@ class MainXmlrpcManagerPlugin(colony.base.plugin_system.Plugin):
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     loading_type = colony.base.plugin_system.EAGER_LOADING_TYPE
-    platforms = [colony.base.plugin_system.CPYTHON_ENVIRONMENT]
-    attributes = {"build_automation_file_path" : "$base{plugin_directory}/main_remote_xmlrpc/manager/resources/baf.xml"}
-    capabilities = ["xmlrpc_manager", "http_python_handler", "rpc_handler", "build_automation_item"]
-    capabilities_allowed = ["rpc_service"]
-    dependencies = []
-    events_handled = []
-    events_registrable = []
-    main_modules = ["main_remote_xmlrpc.manager.main_xmlrpc_manager_exceptions",
-                    "main_remote_xmlrpc.manager.main_xmlrpc_manager_system"]
+    platforms = [
+        colony.base.plugin_system.CPYTHON_ENVIRONMENT
+    ]
+    attributes = {
+        "build_automation_file_path" : "$base{plugin_directory}/main_remote_xmlrpc/manager/resources/baf.xml"
+    }
+    capabilities = [
+        "xmlrpc_manager",
+        "http_python_handler",
+        "rpc_handler",
+        "build_automation_item"
+    ]
+    capabilities_allowed = [
+        "rpc_service"
+    ]
+    main_modules = [
+        "main_remote_xmlrpc.manager.main_xmlrpc_manager_exceptions",
+        "main_remote_xmlrpc.manager.main_xmlrpc_manager_system"
+    ]
 
     main_xmlrpc_manager = None
+    """ The main xmlrpc manager """
 
     rpc_service_plugins = []
+    """ The rpc service plugins """
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)

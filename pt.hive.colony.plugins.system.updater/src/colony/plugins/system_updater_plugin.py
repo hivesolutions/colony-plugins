@@ -52,25 +52,41 @@ class SystemUpdaterPlugin(colony.base.plugin_system.Plugin):
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     loading_type = colony.base.plugin_system.EAGER_LOADING_TYPE
-    platforms = [colony.base.plugin_system.CPYTHON_ENVIRONMENT]
-    attributes = {"build_automation_file_path" : "$base{plugin_directory}/system_updater/updater/resources/baf.xml"}
-    capabilities = ["system_updating", "_console_command_extension", "build_automation_item"]
-    capabilities_allowed = ["deployer"]
-    dependencies = [colony.base.plugin_system.PluginDependency(
-                    "pt.hive.colony.plugins.misc.downloader", "1.0.0")]
-    events_handled = []
-    events_registrable = []
-    main_modules = ["system_updater.updater.console_system_updater",
-                    "system_updater.updater.system_updater_exceptions",
-                    "system_updater.updater.system_updater_parser",
-                    "system_updater.updater.system_updater_system"]
+    platforms = [
+        colony.base.plugin_system.CPYTHON_ENVIRONMENT
+    ]
+    attributes = {
+        "build_automation_file_path" : "$base{plugin_directory}/system_updater/updater/resources/baf.xml"
+    }
+    capabilities = [
+        "system_updating",
+        "_console_command_extension",
+        "build_automation_item"
+    ]
+    capabilities_allowed = [
+        "deployer"
+    ]
+    dependencies = [
+        colony.base.plugin_system.PluginDependency("pt.hive.colony.plugins.misc.downloader", "1.0.0")
+    ]
+    main_modules = [
+        "system_updater.updater.console_system_updater",
+        "system_updater.updater.system_updater_exceptions",
+        "system_updater.updater.system_updater_parser",
+        "system_updater.updater.system_updater_system"
+    ]
 
     system_updater = None
+    """ The system updater """
+
     console_system_updater = None
+    """ The console system updater """
 
     deployer_plugins = []
+    """ The deployer plugins """
 
     downloader_plugin = None
+    """ The downloader plugin """
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)

@@ -52,19 +52,29 @@ class WebAdministrationPlugin(colony.base.plugin_system.Plugin):
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     loading_type = colony.base.plugin_system.EAGER_LOADING_TYPE
-    platforms = [colony.base.plugin_system.CPYTHON_ENVIRONMENT]
-    attributes = {"build_automation_file_path" : "$base{plugin_directory}/web_administration/administration/resources/baf.xml"}
-    capabilities = ["web.administration", "rest_service", "build_automation_item"]
-    capabilities_allowed = []
-    dependencies = [colony.base.plugin_system.PluginDependency(
-                    "pt.hive.colony.plugins.template_engine.manager", "1.0.0")]
-    events_handled = []
-    events_registrable = []
-    main_modules = ["web_administration.administration.web_administration_system"]
+    platforms = [
+        colony.base.plugin_system.CPYTHON_ENVIRONMENT
+    ]
+    attributes = {
+        "build_automation_file_path" : "$base{plugin_directory}/web_administration/administration/resources/baf.xml"
+    }
+    capabilities = [
+        "web.administration",
+        "rest_service",
+        "build_automation_item"
+    ]
+    dependencies = [
+        colony.base.plugin_system.PluginDependency("pt.hive.colony.plugins.template_engine.manager", "1.0.0")
+    ]
+    main_modules = [
+        "web_administration.administration.web_administration_system"
+    ]
 
     web_administration = None
+    """ The web administration """
 
     template_engine_manager_plugin = None
+    """ The template engine manager plugin """
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)

@@ -52,19 +52,29 @@ class MessagingManagerPlugin(colony.base.plugin_system.Plugin):
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     loading_type = colony.base.plugin_system.EAGER_LOADING_TYPE
-    platforms = [colony.base.plugin_system.CPYTHON_ENVIRONMENT]
-    attributes = {"build_automation_file_path" : "$base{plugin_directory}/messaging/manager/resources/baf.xml"}
-    capabilities = ["messaging_manager", "build_automation_item"]
-    capabilities_allowed = ["messaging_extension"]
-    dependencies = []
-    events_handled = []
-    events_registrable = []
-    main_modules = ["messaging.manager.messaging_manager_exceptions",
-                    "messaging.manager.messaging_manager_system"]
+    platforms = [
+        colony.base.plugin_system.CPYTHON_ENVIRONMENT
+    ]
+    attributes = {
+        "build_automation_file_path" : "$base{plugin_directory}/messaging/manager/resources/baf.xml"
+    }
+    capabilities = [
+        "messaging_manager",
+        "build_automation_item"
+    ]
+    capabilities_allowed = [
+        "messaging_extension"
+    ]
+    main_modules = [
+        "messaging.manager.messaging_manager_exceptions",
+        "messaging.manager.messaging_manager_system"
+    ]
 
     messaging_manager = None
+    """ The messaging manager """
 
     messaging_extension_plugins = []
+    """ The messaging extension plugins """
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)

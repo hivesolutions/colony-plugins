@@ -52,18 +52,24 @@ class PluginManagerLogicPlugin(colony.base.plugin_system.Plugin):
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     loading_type = colony.base.plugin_system.EAGER_LOADING_TYPE
-    platforms = [colony.base.plugin_system.CPYTHON_ENVIRONMENT,
-                 colony.base.plugin_system.JYTHON_ENVIRONMENT]
-    attributes = {"build_automation_file_path" : "$base{plugin_directory}/plugin_manager_logic/logic/resources/baf.xml",
-                  "business_logic_namespaces" : ("pt.colony.plugin_manager_logic",)}
-    capabilities = ["business_logic_bundle", "build_automation_item"]
-    capabilities_allowed = []
-    dependencies = []
-    events_handled = []
-    events_registrable = []
-    main_modules = ["plugin_manager_logic.logic.plugin_manager_logic_system"]
+    platforms = [
+        colony.base.plugin_system.CPYTHON_ENVIRONMENT,
+        colony.base.plugin_system.JYTHON_ENVIRONMENT
+    ]
+    attributes = {
+        "build_automation_file_path" : "$base{plugin_directory}/plugin_manager_logic/logic/resources/baf.xml",
+        "business_logic_namespaces" : ("pt.colony.plugin_manager_logic",)
+    }
+    capabilities = [
+        "business_logic_bundle",
+        "build_automation_item"
+    ]
+    main_modules = [
+        "plugin_manager_logic.logic.plugin_manager_logic_system"
+    ]
 
     plugin_manager_logic = None
+    """ The plugin manager logic """
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)

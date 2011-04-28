@@ -51,18 +51,24 @@ class PythonResourceParserPlugin(colony.base.plugin_system.Plugin):
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     loading_type = colony.base.plugin_system.EAGER_LOADING_TYPE
-    platforms = [colony.base.plugin_system.CPYTHON_ENVIRONMENT,
-                 colony.base.plugin_system.JYTHON_ENVIRONMENT,
-                 colony.base.plugin_system.IRON_PYTHON_ENVIRONMENT]
-    attributes = {"build_automation_file_path" : "$base{plugin_directory}/resources/python_resource_parser/resources/baf.xml"}
-    capabilities = ["resource_parser", "build_automation_item"]
-    capabilities_allowed = []
-    dependencies = []
-    events_handled = []
-    events_registrable = []
-    main_modules = ["resources.python_resource_parser.python_resource_parser_system"]
+    platforms = [
+        colony.base.plugin_system.CPYTHON_ENVIRONMENT,
+        colony.base.plugin_system.JYTHON_ENVIRONMENT,
+        colony.base.plugin_system.IRON_PYTHON_ENVIRONMENT
+    ]
+    attributes = {
+        "build_automation_file_path" : "$base{plugin_directory}/resources/python_resource_parser/resources/baf.xml"
+    }
+    capabilities = [
+        "resource_parser",
+        "build_automation_item"
+    ]
+    main_modules = [
+        "resources.python_resource_parser.python_resource_parser_system"
+    ]
 
     python_resource_parser = None
+    """ The python resource parser """
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)

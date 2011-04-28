@@ -51,19 +51,28 @@ class SecurityCaptchaPlugin(colony.base.plugin_system.Plugin):
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     loading_type = colony.base.plugin_system.EAGER_LOADING_TYPE
-    platforms = [colony.base.plugin_system.CPYTHON_ENVIRONMENT,
-                 colony.base.plugin_system.JYTHON_ENVIRONMENT,
-                 colony.base.plugin_system.IRON_PYTHON_ENVIRONMENT]
-    attributes = {"build_automation_file_path" : "$base{plugin_directory}/security_captcha/captcha/resources/baf.xml"}
-    capabilities = ["startup", "security_captcha", "build_automation_item"]
-    capabilities_allowed = []
-    dependencies = [colony.base.plugin_system.PackageDependency(
-                    "Python Imaging Library (PIL)", "PIL", "1.1.x", "http://www.pythonware.com/products/pil")]
-    events_handled = []
-    events_registrable = []
-    main_modules = ["security_captcha.captcha.security_captcha_system"]
+    platforms = [
+        colony.base.plugin_system.CPYTHON_ENVIRONMENT,
+        colony.base.plugin_system.JYTHON_ENVIRONMENT,
+        colony.base.plugin_system.IRON_PYTHON_ENVIRONMENT
+    ]
+    attributes = {
+        "build_automation_file_path" : "$base{plugin_directory}/security_captcha/captcha/resources/baf.xml"
+    }
+    capabilities = [
+        "startup",
+        "security_captcha",
+        "build_automation_item"
+    ]
+    dependencies = [
+        colony.base.plugin_system.PackageDependency("Python Imaging Library (PIL)", "PIL", "1.1.x", "http://www.pythonware.com/products/pil")
+    ]
+    main_modules = [
+        "security_captcha.captcha.security_captcha_system"
+    ]
 
     security_captcha = None
+    """ The security captcha """
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)

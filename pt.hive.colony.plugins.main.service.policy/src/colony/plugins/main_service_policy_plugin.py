@@ -52,24 +52,37 @@ class MainServicePolicyPlugin(colony.base.plugin_system.Plugin):
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     loading_type = colony.base.plugin_system.EAGER_LOADING_TYPE
-    platforms = [colony.base.plugin_system.CPYTHON_ENVIRONMENT,
-                 colony.base.plugin_system.JYTHON_ENVIRONMENT,
-                 colony.base.plugin_system.IRON_PYTHON_ENVIRONMENT]
-    attributes = {"build_automation_file_path" : "$base{plugin_directory}/main_service_policy/policy/resources/baf.xml"}
-    capabilities = ["service.policy", "build_automation_item"]
-    capabilities_allowed = ["policy_service_handler"]
-    dependencies = [colony.base.plugin_system.PluginDependency(
-                    "pt.hive.colony.plugins.main.service.utils", "1.0.0")]
-    events_handled = []
-    events_registrable = []
-    main_modules = ["main_service_policy.policy.main_service_policy_exceptions",
-                    "main_service_policy.policy.main_service_policy_system"]
+    platforms = [
+        colony.base.plugin_system.CPYTHON_ENVIRONMENT,
+        colony.base.plugin_system.JYTHON_ENVIRONMENT,
+        colony.base.plugin_system.IRON_PYTHON_ENVIRONMENT
+    ]
+    attributes = {
+        "build_automation_file_path" : "$base{plugin_directory}/main_service_policy/policy/resources/baf.xml"
+    }
+    capabilities = [
+        "service.policy",
+        "build_automation_item"
+    ]
+    capabilities_allowed = [
+        "policy_service_handler"
+    ]
+    dependencies = [
+        colony.base.plugin_system.PluginDependency("pt.hive.colony.plugins.main.service.utils", "1.0.0")
+    ]
+    main_modules = [
+        "main_service_policy.policy.main_service_policy_exceptions",
+        "main_service_policy.policy.main_service_policy_system"
+    ]
 
     main_service_policy = None
+    """ The main service policy """
 
     policy_service_handler_plugins = []
+    """ The policy service handler plugins """
 
     main_service_utils_plugin = None
+    """ The main service utils plugin """
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)

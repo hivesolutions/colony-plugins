@@ -51,16 +51,22 @@ class StdoutMessagingExtensionPlugin(colony.base.plugin_system.Plugin):
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     loading_type = colony.base.plugin_system.EAGER_LOADING_TYPE
-    platforms = [colony.base.plugin_system.CPYTHON_ENVIRONMENT]
-    attributes = {"build_automation_file_path" : "$base{plugin_directory}/messaging_extensions/stdout/resources/baf.xml"}
-    capabilities = ["messaging_extension", "build_automation_item"]
-    capabilities_allowed = []
-    dependencies = []
-    events_handled = []
-    events_registrable = []
-    main_modules = ["messaging_extensions.stdout.stdout_messaging_extension_system"]
+    platforms = [
+        colony.base.plugin_system.CPYTHON_ENVIRONMENT
+    ]
+    attributes = {
+        "build_automation_file_path" : "$base{plugin_directory}/messaging_extensions/stdout/resources/baf.xml"
+    }
+    capabilities = [
+        "messaging_extension",
+        "build_automation_item"
+    ]
+    main_modules = [
+        "messaging_extensions.stdout.stdout_messaging_extension_system"
+    ]
 
     stdout_messaging_extension = None
+    """ The stdout messaging extension """
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
