@@ -52,24 +52,37 @@ class PrintingManagerPlugin(colony.base.plugin_system.Plugin):
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     loading_type = colony.base.plugin_system.EAGER_LOADING_TYPE
-    platforms = [colony.base.plugin_system.CPYTHON_ENVIRONMENT]
-    attributes = {"build_automation_file_path" : "$base{plugin_directory}/printing/manager/resources/baf.xml"}
-    capabilities = ["printing_manager", "console_command_extension", "build_automation_item"]
-    capabilities_allowed = ["printing"]
-    dependencies = []
-    events_handled = []
-    events_registrable = []
-    main_modules = ["printing.manager.console_printing_manager",
-                    "printing.manager.printing_language_ast",
-                    "printing.manager.printing_language_parser",
-                    "printing.manager.printing_language_visitor",
-                    "printing.manager.printing_manager_exceptions",
-                    "printing.manager.printing_manager_system"]
+    platforms = [
+        colony.base.plugin_system.CPYTHON_ENVIRONMENT
+    ]
+    attributes = {
+        "build_automation_file_path" : "$base{plugin_directory}/printing/manager/resources/baf.xml"
+    }
+    capabilities = [
+        "printing_manager",
+        "console_command_extension",
+        "build_automation_item"
+    ]
+    capabilities_allowed = [
+        "printing"
+    ]
+    main_modules = [
+        "printing.manager.console_printing_manager",
+        "printing.manager.printing_language_ast",
+        "printing.manager.printing_language_parser",
+        "printing.manager.printing_language_visitor",
+        "printing.manager.printing_manager_exceptions",
+        "printing.manager.printing_manager_system"
+    ]
 
     printing_manager = None
+    """ The printing manager """
+
     console_printing_manager = None
+    """ The console printing manager """
 
     printing_plugins = []
+    """ The printing plugins """
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)

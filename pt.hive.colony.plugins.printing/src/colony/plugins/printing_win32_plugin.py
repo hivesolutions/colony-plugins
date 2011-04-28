@@ -51,22 +51,29 @@ class PrintingWin32Plugin(colony.base.plugin_system.Plugin):
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     loading_type = colony.base.plugin_system.EAGER_LOADING_TYPE
-    platforms = [colony.base.plugin_system.CPYTHON_ENVIRONMENT]
-    attributes = {"build_automation_file_path" : "$base{plugin_directory}/printing/win32/resources/baf.xml"}
-    capabilities = ["printing", "build_automation_item"]
-    capabilities_allowed = []
-    dependencies = [colony.base.plugin_system.PackageDependency(
-                    "Win32 Extensions for Python", "win32print", "b202", "http://starship.python.net/crew/mhammond/win32"),
-                    colony.base.plugin_system.PackageDependency(
-                    "Python Imaging Library (PIL)", "PIL", "1.1.x", "http://www.pythonware.com/products/pil")]
-    events_handled = []
-    events_registrable = []
-    main_modules = ["printing.win32.printing_win32_constants",
-                    "printing.win32.printing_win32_exceptions",
-                    "printing.win32.printing_win32_system",
-                    "printing.win32.printing_win32_visitor"]
+    platforms = [
+        colony.base.plugin_system.CPYTHON_ENVIRONMENT
+    ]
+    attributes = {
+        "build_automation_file_path" : "$base{plugin_directory}/printing/win32/resources/baf.xml"
+    }
+    capabilities = [
+        "printing",
+        "build_automation_item"
+    ]
+    dependencies = [
+        colony.base.plugin_system.PackageDependency("Win32 Extensions for Python", "win32print", "b202", "http://starship.python.net/crew/mhammond/win32"),
+        colony.base.plugin_system.PackageDependency("Python Imaging Library (PIL)", "PIL", "1.1.x", "http://www.pythonware.com/products/pil")
+    ]
+    main_modules = [
+        "printing.win32.printing_win32_constants",
+        "printing.win32.printing_win32_exceptions",
+        "printing.win32.printing_win32_system",
+        "printing.win32.printing_win32_visitor"
+    ]
 
     printing_win32 = None
+    """ The printing win32 """
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)

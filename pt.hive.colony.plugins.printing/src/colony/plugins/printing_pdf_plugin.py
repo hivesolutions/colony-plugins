@@ -52,23 +52,31 @@ class PrintingPdfPlugin(colony.base.plugin_system.Plugin):
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     loading_type = colony.base.plugin_system.EAGER_LOADING_TYPE
-    platforms = [colony.base.plugin_system.CPYTHON_ENVIRONMENT]
-    attributes = {"build_automation_file_path" : "$base{plugin_directory}/printing/pdf/resources/baf.xml"}
-    capabilities = ["printing", "build_automation_item"]
-    capabilities_allowed = []
-    dependencies = [colony.base.plugin_system.PluginDependency(
-                    "pt.hive.colony.plugins.document.pdf", "1.0.0"),
-                    colony.base.plugin_system.PackageDependency(
-                    "Python Imaging Library (PIL)", "PIL", "1.1.x", "http://www.pythonware.com/products/pil")]
-    events_handled = []
-    events_registrable = []
-    main_modules = ["printing.pdf.printing_pdf_exceptions",
-                    "printing.pdf.printing_pdf_system",
-                    "printing.pdf.printing_pdf_visitor"]
+    platforms = [
+        colony.base.plugin_system.CPYTHON_ENVIRONMENT
+    ]
+    attributes = {
+        "build_automation_file_path" : "$base{plugin_directory}/printing/pdf/resources/baf.xml"
+    }
+    capabilities = [
+        "printing",
+        "build_automation_item"
+    ]
+    dependencies = [
+        colony.base.plugin_system.PluginDependency("pt.hive.colony.plugins.document.pdf", "1.0.0"),
+        colony.base.plugin_system.PackageDependency("Python Imaging Library (PIL)", "PIL", "1.1.x", "http://www.pythonware.com/products/pil")
+    ]
+    main_modules = [
+        "printing.pdf.printing_pdf_exceptions",
+        "printing.pdf.printing_pdf_system",
+        "printing.pdf.printing_pdf_visitor"
+    ]
 
     printing_pdf = None
+    """ The printing pdf """
 
     document_pdf_plugin = None
+    """ The document pdf plugin """
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
