@@ -314,8 +314,16 @@ class Task:
 
         self.percentage_complete = percentage_complete
 
+        # defines the event arguments
+        event_arguments = [
+            self,
+            {
+                "percentage_complete" : percentage_complete
+            }
+        ]
+
         # generates a task updated event
-        self.task_manager_plugin.generate_event("task_information_changed.updated_task", [self, {"percentage_complete" : percentage_complete}])
+        self.task_manager_plugin.generate_event("task_information_changed.updated_task", event_arguments)
 
     def start(self, args):
         """
@@ -406,8 +414,16 @@ class Task:
         # confirms the status
         self.status_confirmed = True
 
+        # defines the event arguments
+        event_arguments = [
+            self,
+            {
+                "status" : "paused"
+            }
+        ]
+
         # generates a task updated event
-        self.task_manager_plugin.generate_event("task_information_changed.updated_task", [self, {"status" : "paused"}])
+        self.task_manager_plugin.generate_event("task_information_changed.updated_task", event_arguments)
 
     def confirm_resume(self, force = False):
         """
@@ -426,8 +442,16 @@ class Task:
         # confirms the status
         self.status_confirmed = True
 
+        # defines the event arguments
+        event_arguments = [
+            self,
+            {
+                "status" : "running"
+            }
+        ]
+
         # generates a task updated event
-        self.task_manager_plugin.generate_event("task_information_changed.updated_task", [self, {"status" : "running"}])
+        self.task_manager_plugin.generate_event("task_information_changed.updated_task", event_arguments)
 
     def confirm_stop(self, force = False):
         """
