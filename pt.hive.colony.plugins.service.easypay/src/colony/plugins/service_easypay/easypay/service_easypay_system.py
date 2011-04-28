@@ -497,11 +497,21 @@ class EasypayClient:
 
         # in case no http client exists
         if not self.http_client:
+            # defines the client parameters
+            client_parameters = {
+                CONTENT_TYPE_CHARSET_VALUE : DEFAULT_CHARSET
+            }
+
             # creates the http client
-            self.http_client = self.main_client_http_plugin.create_client({CONTENT_TYPE_CHARSET_VALUE : DEFAULT_CHARSET})
+            self.http_client = self.main_client_http_plugin.create_client(client_parameters)
+
+            # defines the open parameters
+            open_parameters = {
+                REQUEST_TIMEOUT_VALUE : DEFAULT_REQUEST_TIMEOUT
+            }
 
             # opens the http client
-            self.http_client.open({REQUEST_TIMEOUT_VALUE : DEFAULT_REQUEST_TIMEOUT})
+            self.http_client.open(open_parameters)
 
         # returns the http client
         return self.http_client
