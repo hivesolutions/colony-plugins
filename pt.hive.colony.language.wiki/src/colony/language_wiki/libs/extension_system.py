@@ -319,8 +319,14 @@ class ExtensionManager:
         for extension_path in self.extension_paths:
             self.referred_modules.extend(self.get_all_modules(extension_path))
 
+        # defines the extension system configuration
+        extension_system_configuration = {
+            "extension_paths": self.extension_paths,
+            "extensions": self.referred_modules
+        }
+
         # starts the extension loading process
-        self.init_extension_system({"extension_paths": self.extension_paths, "extensions": self.referred_modules})
+        self.init_extension_system(extension_system_configuration)
 
     def init_extension_system(self, configuration):
         """
