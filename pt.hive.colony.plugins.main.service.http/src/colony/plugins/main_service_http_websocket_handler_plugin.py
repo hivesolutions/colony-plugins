@@ -50,19 +50,29 @@ class MainServiceHttpWebsocketHandlerPlugin(colony.base.plugin_system.Plugin):
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     loading_type = colony.base.plugin_system.EAGER_LOADING_TYPE
-    platforms = [colony.base.plugin_system.CPYTHON_ENVIRONMENT]
-    attributes = {"build_automation_file_path" : "$base{plugin_directory}/main_service_http_websocket_handler/websocket_handler/resources/baf.xml"}
-    capabilities = ["http_service_handler", "build_automation_item"]
-    capabilities_allowed = ["websocket_handler"]
-    dependencies = []
-    events_handled = []
-    events_registrable = []
-    main_modules = ["main_service_http_websocket_handler.websocket_handler.main_service_http_websocket_handler_exceptions",
-                    "main_service_http_websocket_handler.websocket_handler.main_service_http_websocket_handler_system"]
+    platforms = [
+        colony.base.plugin_system.CPYTHON_ENVIRONMENT
+    ]
+    attributes = {
+        "build_automation_file_path" : "$base{plugin_directory}/main_service_http_websocket_handler/websocket_handler/resources/baf.xml"
+    }
+    capabilities = [
+        "http_service_handler",
+        "build_automation_item"
+    ]
+    capabilities_allowed = [
+        "websocket_handler"
+    ]
+    main_modules = [
+        "main_service_http_websocket_handler.websocket_handler.main_service_http_websocket_handler_exceptions",
+        "main_service_http_websocket_handler.websocket_handler.main_service_http_websocket_handler_system"
+    ]
 
     main_service_http_websocket_handler = None
+    """ The main service http websocket handler """
 
     websocket_handler_plugins = []
+    """ The websocket handler plugins """
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)

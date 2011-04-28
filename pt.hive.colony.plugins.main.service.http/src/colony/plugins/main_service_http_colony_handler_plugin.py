@@ -52,21 +52,31 @@ class MainServiceHttpColonyHandlerPlugin(colony.base.plugin_system.Plugin):
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     loading_type = colony.base.plugin_system.EAGER_LOADING_TYPE
-    platforms = [colony.base.plugin_system.CPYTHON_ENVIRONMENT,
-                 colony.base.plugin_system.JYTHON_ENVIRONMENT,
-                 colony.base.plugin_system.IRON_PYTHON_ENVIRONMENT]
-    attributes = {"build_automation_file_path" : "$base{plugin_directory}/main_service_http_colony_handler/colony_handler/resources/baf.xml"}
-    capabilities = ["http_service_handler", "build_automation_item"]
-    capabilities_allowed = ["http_python_handler"]
-    dependencies = []
-    events_handled = []
-    events_registrable = []
-    main_modules = ["main_service_http_colony_handler.colony_handler.main_service_http_colony_handler_exceptions",
-                    "main_service_http_colony_handler.colony_handler.main_service_http_colony_handler_system"]
+    platforms = [
+        colony.base.plugin_system.CPYTHON_ENVIRONMENT,
+        colony.base.plugin_system.JYTHON_ENVIRONMENT,
+        colony.base.plugin_system.IRON_PYTHON_ENVIRONMENT
+    ]
+    attributes = {
+        "build_automation_file_path" : "$base{plugin_directory}/main_service_http_colony_handler/colony_handler/resources/baf.xml"
+    }
+    capabilities = [
+        "http_service_handler",
+        "build_automation_item"
+    ]
+    capabilities_allowed = [
+        "http_python_handler"
+    ]
+    main_modules = [
+        "main_service_http_colony_handler.colony_handler.main_service_http_colony_handler_exceptions",
+        "main_service_http_colony_handler.colony_handler.main_service_http_colony_handler_system"
+    ]
 
     main_service_http_colony_handler = None
+    """ The main service http colony handler """
 
     http_python_handler_plugins = []
+    """ The http python handler plugins """
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)

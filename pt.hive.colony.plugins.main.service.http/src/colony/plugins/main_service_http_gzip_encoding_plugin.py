@@ -52,20 +52,29 @@ class MainServiceHttpGzipEncodingPlugin(colony.base.plugin_system.Plugin):
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     loading_type = colony.base.plugin_system.EAGER_LOADING_TYPE
-    platforms = [colony.base.plugin_system.CPYTHON_ENVIRONMENT,
-                 colony.base.plugin_system.JYTHON_ENVIRONMENT]
-    attributes = {"build_automation_file_path" : "$base{plugin_directory}/main_service_http_gzip_encoding/gzip_encoding/resources/baf.xml"}
-    capabilities = ["http_service_encoding", "build_automation_item"]
-    capabilities_allowed = []
-    dependencies = [colony.base.plugin_system.PluginDependency(
-                    "pt.hive.colony.plugins.misc.gzip", "1.0.0")]
-    events_handled = []
-    events_registrable = []
-    main_modules = ["main_service_http_gzip_encoding.gzip_encoding.main_service_http_gzip_encoding_system"]
+    platforms = [
+        colony.base.plugin_system.CPYTHON_ENVIRONMENT,
+        colony.base.plugin_system.JYTHON_ENVIRONMENT
+    ]
+    attributes = {
+        "build_automation_file_path" : "$base{plugin_directory}/main_service_http_gzip_encoding/gzip_encoding/resources/baf.xml"
+    }
+    capabilities = [
+        "http_service_encoding",
+        "build_automation_item"
+    ]
+    dependencies = [
+        colony.base.plugin_system.PluginDependency("pt.hive.colony.plugins.misc.gzip", "1.0.0")
+    ]
+    main_modules = [
+        "main_service_http_gzip_encoding.gzip_encoding.main_service_http_gzip_encoding_system"
+    ]
 
     main_service_http_gzip_encoding = None
+    """ The main service http gzip encoding """
 
     gzip_plugin = None
+    """ The gzip plugin """
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
