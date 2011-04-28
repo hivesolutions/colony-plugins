@@ -461,11 +461,16 @@ class Visitor:
             if font_style == "italic" or font_style == "bold_italic":
                 text_italic = True
 
+            # defines the font parameters
+            font_parameters = {
+                "name" : font_name,
+                "height" : font_size * FONT_SCALE_FACTOR,
+                "weight" : text_weight,
+                "italic" : text_italic
+            }
+
             # creates the font
-            font = win32ui.CreateFont({"name" : font_name,
-                                       "height" : font_size * FONT_SCALE_FACTOR,
-                                       "weight" : text_weight,
-                                       "italic" : text_italic})
+            font = win32ui.CreateFont(font_parameters)
 
             # selects the font object
             handler_device_context.SelectObject(font)
