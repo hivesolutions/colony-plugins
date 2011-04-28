@@ -52,26 +52,40 @@ class MainServiceXmppPlugin(colony.base.plugin_system.Plugin):
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     loading_type = colony.base.plugin_system.EAGER_LOADING_TYPE
-    platforms = [colony.base.plugin_system.CPYTHON_ENVIRONMENT,
-                 colony.base.plugin_system.JYTHON_ENVIRONMENT]
-    attributes = {"build_automation_file_path" : "$base{plugin_directory}/main_service_xmpp/xmpp/resources/baf.xml"}
-    capabilities = ["service.xmpp", "build_automation_item"]
-    capabilities_allowed = ["xmpp_service_handler"]
-    dependencies = [colony.base.plugin_system.PluginDependency(
-                    "pt.hive.colony.plugins.main.service.utils", "1.0.0"),
-                    colony.base.plugin_system.PluginDependency(
-                    "pt.hive.colony.plugins.main.service.xmpp_helper", "1.0.0")]
-    events_handled = []
-    events_registrable = []
-    main_modules = ["main_service_xmpp.xmpp.main_service_xmpp_exceptions",
-                    "main_service_xmpp.xmpp.main_service_xmpp_system"]
+    platforms = [
+        colony.base.plugin_system.CPYTHON_ENVIRONMENT,
+        colony.base.plugin_system.JYTHON_ENVIRONMENT
+    ]
+    attributes = {
+        "build_automation_file_path" : "$base{plugin_directory}/main_service_xmpp/xmpp/resources/baf.xml"
+    }
+    capabilities = [
+        "service.xmpp",
+        "build_automation_item"
+    ]
+    capabilities_allowed = [
+        "xmpp_service_handler"
+    ]
+    dependencies = [
+        colony.base.plugin_system.PluginDependency("pt.hive.colony.plugins.main.service.utils", "1.0.0"),
+        colony.base.plugin_system.PluginDependency("pt.hive.colony.plugins.main.service.xmpp_helper", "1.0.0")
+    ]
+    main_modules = [
+        "main_service_xmpp.xmpp.main_service_xmpp_exceptions",
+        "main_service_xmpp.xmpp.main_service_xmpp_system"
+    ]
 
     main_service_xmpp = None
+    """ The main service xmpp """
 
     xmpp_service_handler_plugins = []
+    """ The xmpp service handler plugins """
 
     main_service_utils_plugin = None
+    """ The main service utils plugin """
+
     main_service_xmpp_helper_plugin = None
+    """ The main service xmpp helper plugin """
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
