@@ -52,25 +52,39 @@ class SchedulerPlugin(colony.base.plugin_system.Plugin):
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     loading_type = colony.base.plugin_system.EAGER_LOADING_TYPE
-    platforms = [colony.base.plugin_system.CPYTHON_ENVIRONMENT]
-    attributes = {"build_automation_file_path" : "$base{plugin_directory}/misc/scheduler/resources/baf.xml"}
-    capabilities = ["main", "scheduler", "_console_command_extension", "build_automation_item"]
-    capabilities_allowed = []
-    dependencies = [colony.base.plugin_system.PluginDependency(
-                    "pt.hive.colony.plugins.misc.guid", "1.0.0"),
-                    colony.base.plugin_system.PluginDependency(
-                    "pt.hive.colony.plugins.main.console", "1.0.0")]
-    events_handled = []
-    events_registrable = []
-    main_modules = ["misc.scheduler.console_scheduler",
-                    "misc.scheduler.scheduler_exceptions",
-                    "misc.scheduler.scheduler_system"]
+    platforms = [
+        colony.base.plugin_system.CPYTHON_ENVIRONMENT
+    ]
+    attributes = {
+        "build_automation_file_path" : "$base{plugin_directory}/misc/scheduler/resources/baf.xml"
+    }
+    capabilities = [
+        "main",
+        "scheduler",
+        "_console_command_extension",
+        "build_automation_item"
+    ]
+    dependencies = [
+        colony.base.plugin_system.PluginDependency("pt.hive.colony.plugins.misc.guid", "1.0.0"),
+        colony.base.plugin_system.PluginDependency("pt.hive.colony.plugins.main.console", "1.0.0")
+    ]
+    main_modules = [
+        "misc.scheduler.console_scheduler",
+        "misc.scheduler.scheduler_exceptions",
+        "misc.scheduler.scheduler_system"
+    ]
 
     scheduler = None
+    """ The scheduler """
+
     console_scheduler = None
+    """ The console scheduler """
 
     guid_plugin = None
+    """ The guid plugin """
+
     main_console_plugin = None
+    """ The main console plugin """
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)

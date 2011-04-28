@@ -51,17 +51,25 @@ class SvnPlugin(colony.base.plugin_system.Plugin):
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     loading_type = colony.base.plugin_system.EAGER_LOADING_TYPE
-    platforms = [colony.base.plugin_system.CPYTHON_ENVIRONMENT]
-    attributes = {"build_automation_file_path" : "$base{plugin_directory}/misc/svn/resources/baf.xml"}
-    capabilities = ["svn", "build_automation_item"]
-    capabilities_allowed = []
-    dependencies = [colony.base.plugin_system.PackageDependency(
-                    "PySvn", "pysvn", "1.6.2.x", "http://pysvn.tigris.org")]
-    events_handled = []
-    events_registrable = []
-    main_modules = ["misc.svn.svn_system"]
+    platforms = [
+        colony.base.plugin_system.CPYTHON_ENVIRONMENT
+    ]
+    attributes = {
+        "build_automation_file_path" : "$base{plugin_directory}/misc/svn/resources/baf.xml"
+    }
+    capabilities = [
+        "svn",
+        "build_automation_item"
+    ]
+    dependencies = [
+        colony.base.plugin_system.PackageDependency("PySvn", "pysvn", "1.6.2.x", "http://pysvn.tigris.org")
+    ]
+    main_modules = [
+        "misc.svn.svn_system"
+    ]
 
     svn = None
+    """ The svn """
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)

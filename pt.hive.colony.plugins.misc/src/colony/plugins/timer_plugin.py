@@ -51,29 +51,34 @@ class TimerPlugin(colony.base.plugin_system.Plugin):
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     loading_type = colony.base.plugin_system.EAGER_LOADING_TYPE
-    platforms = [colony.base.plugin_system.CPYTHON_ENVIRONMENT]
-    attributes = {"build_automation_file_path" : "$base{plugin_directory}/misc/timer/resources/baf.xml"}
-    capabilities = ["timer", "build_automation_item"]
-    capabilities_allowed = []
-    dependencies = []
-    events_handled = []
-    events_registrable = []
-    main_modules = ["misc.timer.timer_system"]
+    platforms = [
+        colony.base.plugin_system.CPYTHON_ENVIRONMENT
+    ]
+    attributes = {
+        "build_automation_file_path" : "$base{plugin_directory}/misc/timer/resources/baf.xml"
+    }
+    capabilities = [
+        "timer",
+        "build_automation_item"
+    ]
+    main_modules = [
+        "misc.timer.timer_system"
+    ]
 
-    codebase = None
+    timer = None
+    """ The timer """
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
         global misc
         import misc.timer.timer_system
-        self.codebase = misc.timer.timer_system.Timer(self)
+        self.timer = misc.timer.timer_system.Timer(self)
 
     def end_load_plugin(self):
         colony.base.plugin_system.Plugin.end_load_plugin(self)
 
     def unload_plugin(self):
         colony.base.plugin_system.Plugin.unload_plugin(self)
-        self.codebase = None
 
     def end_unload_plugin(self):
         colony.base.plugin_system.Plugin.end_unload_plugin(self)
@@ -95,7 +100,7 @@ class TimerPlugin(colony.base.plugin_system.Plugin):
         @return: The start timestamp.
         """
 
-        return self.codebase.start()
+        return self.timer.start()
 
     def stop(self):
         """
@@ -105,7 +110,7 @@ class TimerPlugin(colony.base.plugin_system.Plugin):
         @return: The stop timestamp.
         """
 
-        return self.codebase.stop()
+        return self.timer.stop()
 
     def get_time_elapsed(self):
         """
@@ -115,4 +120,4 @@ class TimerPlugin(colony.base.plugin_system.Plugin):
         @return: The time between when start() and stop() calls.
         """
 
-        return self.codebase.get_time_elapsed()
+        return self.timer.get_time_elapsed()

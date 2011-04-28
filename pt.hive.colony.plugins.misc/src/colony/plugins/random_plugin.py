@@ -51,17 +51,23 @@ class RandomPlugin(colony.base.plugin_system.Plugin):
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     loading_type = colony.base.plugin_system.EAGER_LOADING_TYPE
-    platforms = [colony.base.plugin_system.CPYTHON_ENVIRONMENT,
-                 colony.base.plugin_system.JYTHON_ENVIRONMENT]
-    attributes = {"build_automation_file_path" : "$base{plugin_directory}/misc/random/resources/baf.xml"}
-    capabilities = ["random", "build_automation_item"]
-    capabilities_allowed = []
-    dependencies = []
-    events_handled = []
-    events_registrable = []
-    main_modules = ["misc.random.random_system"]
+    platforms = [
+        colony.base.plugin_system.CPYTHON_ENVIRONMENT,
+        colony.base.plugin_system.JYTHON_ENVIRONMENT
+    ]
+    attributes = {
+        "build_automation_file_path" : "$base{plugin_directory}/misc/random/resources/baf.xml"
+    }
+    capabilities = [
+        "random",
+        "build_automation_item"
+    ]
+    main_modules = [
+        "misc.random.random_system"
+    ]
 
     random = None
+    """ The random """
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
