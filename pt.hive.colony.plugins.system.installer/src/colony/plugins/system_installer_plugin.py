@@ -52,21 +52,34 @@ class SystemInstallerPlugin(colony.base.plugin_system.Plugin):
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     loading_type = colony.base.plugin_system.EAGER_LOADING_TYPE
-    platforms = [colony.base.plugin_system.CPYTHON_ENVIRONMENT]
-    attributes = {"build_automation_file_path" : "$base{plugin_directory}/system_installer/installer/resources/baf.xml"}
-    capabilities = ["system_installation", "_console_command_extension", "build_automation_item"]
-    capabilities_allowed = ["installer"]
-    dependencies = []
-    events_handled = []
-    events_registrable = []
-    main_modules = ["system_installer.installer.console_system_installer",
-                    "system_installer.installer.system_installer_exceptions",
-                    "system_installer.installer.system_installer_system"]
+    platforms = [
+        colony.base.plugin_system.CPYTHON_ENVIRONMENT
+    ]
+    attributes = {
+        "build_automation_file_path" : "$base{plugin_directory}/system_installer/installer/resources/baf.xml"
+    }
+    capabilities = [
+        "system_installation",
+        "_console_command_extension",
+        "build_automation_item"
+    ]
+    capabilities_allowed = [
+        "installer"
+    ]
+    main_modules = [
+        "system_installer.installer.console_system_installer",
+        "system_installer.installer.system_installer_exceptions",
+        "system_installer.installer.system_installer_system"
+    ]
 
     system_installer = None
+    """ The system installer """
+
     console_system_installer = None
+    """ The console system installer """
 
     installer_plugins = []
+    """ The installer plugins """
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)

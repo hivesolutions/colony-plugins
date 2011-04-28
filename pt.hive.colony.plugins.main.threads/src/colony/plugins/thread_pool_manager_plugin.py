@@ -51,18 +51,23 @@ class ThreadPoolManagerPlugin(colony.base.plugin_system.Plugin):
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     loading_type = colony.base.plugin_system.EAGER_LOADING_TYPE
-    platforms = [colony.base.plugin_system.CPYTHON_ENVIRONMENT,
-                 colony.base.plugin_system.JYTHON_ENVIRONMENT,
-                 colony.base.plugin_system.IRON_PYTHON_ENVIRONMENT]
-    attributes = {"build_automation_file_path" : "$base{plugin_directory}/main_threads/thread_pool_manager/resources/baf.xml"}
-    capabilities = ["thread_pool_manager", "system_information", "build_automation_item"]
-    capabilities_allowed = []
-    dependencies = []
-    events_handled = []
-    events_registrable = []
-    main_modules = ["main_threads.thread_pool_manager.thread_pool_manager_system"]
+    platforms = [
+        colony.base.plugin_system.CPYTHON_ENVIRONMENT,
+        colony.base.plugin_system.JYTHON_ENVIRONMENT,
+        colony.base.plugin_system.IRON_PYTHON_ENVIRONMENT
+    ]
+    attributes = {
+        "build_automation_file_path" : "$base{plugin_directory}/main_threads/thread_pool_manager/resources/baf.xml"
+    }
+    capabilities = [
+        "thread_pool_manager", "system_information", "build_automation_item"
+    ]
+    main_modules = [
+        "main_threads.thread_pool_manager.thread_pool_manager_system"
+    ]
 
     thread_pool_manager = None
+    """ The thread pool manager """
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
@@ -75,6 +80,8 @@ class ThreadPoolManagerPlugin(colony.base.plugin_system.Plugin):
 
     def unload_plugin(self):
         colony.base.plugin_system.Plugin.unload_plugin(self)
+
+        # unloads the thread pool manager
         self.thread_pool_manager.unload()
 
     def end_unload_plugin(self):

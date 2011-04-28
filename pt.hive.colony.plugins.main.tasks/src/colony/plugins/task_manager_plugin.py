@@ -51,19 +51,32 @@ class TaskManagerPlugin(colony.base.plugin_system.Plugin):
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     loading_type = colony.base.plugin_system.EAGER_LOADING_TYPE
-    platforms = [colony.base.plugin_system.CPYTHON_ENVIRONMENT]
-    attributes = {"build_automation_file_path" : "$base{plugin_directory}/main_tasks/task_manager/resources/baf.xml"}
-    capabilities = ["task_manager", "task_information", "build_automation_item"]
-    capabilities_allowed = []
-    dependencies = [colony.base.plugin_system.PluginDependency(
-                    "pt.hive.colony.plugins.main.threads.thread_pool_manager", "1.0.0")]
-    events_handled = ["task_information_changed"]
-    events_registrable = []
-    main_modules = ["main_tasks.task_manager.task_manager_system"]
+    platforms = [
+        colony.base.plugin_system.CPYTHON_ENVIRONMENT
+    ]
+    attributes = {
+        "build_automation_file_path" : "$base{plugin_directory}/main_tasks/task_manager/resources/baf.xml"
+    }
+    capabilities = [
+        "task_manager",
+        "task_information",
+        "build_automation_item"
+    ]
+    dependencies = [
+        colony.base.plugin_system.PluginDependency("pt.hive.colony.plugins.main.threads.thread_pool_manager", "1.0.0")
+    ]
+    events_handled = [
+        "task_information_changed"
+    ]
+    main_modules = [
+        "main_tasks.task_manager.task_manager_system"
+    ]
 
     task_manager = None
+    """ The task manager """
 
     thread_pool_manager_plugin = None
+    """ The thread pool manager plugin """
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)

@@ -52,23 +52,46 @@ class MainTestPlugin(colony.base.plugin_system.Plugin):
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     loading_type = colony.base.plugin_system.EAGER_LOADING_TYPE
-    platforms = [colony.base.plugin_system.CPYTHON_ENVIRONMENT]
-    attributes = {"build_automation_file_path" : "$base{plugin_directory}/main_test/test/resources/baf.xml"}
-    capabilities = ["test", "_console_command_extension", "build_automation_item"]
-    capabilities_allowed = ["test_manager", "test_case", "test_case_bundle", "plugin_test_case", "plugin_test_case_bundle"]
-    dependencies = []
-    events_handled = []
-    events_registrable = []
-    main_modules = ["main_test.test.console_test",
-                    "main_test.test.main_test_system"]
+    platforms = [
+        colony.base.plugin_system.CPYTHON_ENVIRONMENT
+    ]
+    attributes = {
+        "build_automation_file_path" : "$base{plugin_directory}/main_test/test/resources/baf.xml"
+    }
+    capabilities = [
+        "test",
+        "_console_command_extension",
+        "build_automation_item"
+    ]
+    capabilities_allowed = [
+        "test_manager",
+        "test_case",
+        "test_case_bundle",
+        "plugin_test_case",
+        "plugin_test_case_bundle"
+    ]
+    main_modules = [
+        "main_test.test.console_test",
+        "main_test.test.main_test_system"
+    ]
 
     main_test = None
+    """ The main test """
+
     console_test = None
+    """ The console test """
 
     test_case_plugins = []
+    """ The test case plugins """
+
     test_case_bundle_plugins = []
+    """ The test case bundle plugins """
+
     plugin_test_case_plugins = []
+    """ The plugin test case plugins """
+
     plugin_test_case_bundle_plugins = []
+    """ The plugin test case bundle plugins """
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)

@@ -52,18 +52,26 @@ class ValidationPluginPlugin(colony.base.plugin_system.Plugin):
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     loading_type = colony.base.plugin_system.EAGER_LOADING_TYPE
-    platforms = [colony.base.plugin_system.CPYTHON_ENVIRONMENT,
-                 colony.base.plugin_system.JYTHON_ENVIRONMENT,
-                 colony.base.plugin_system.IRON_PYTHON_ENVIRONMENT]
-    attributes = {"build_automation_file_path" : "$base{plugin_directory}/validation_plugin/plugin/resources/baf.xml"}
-    capabilities = ["validation.plugin", "_console_command_extension", "build_automation_item"]
-    capabilities_allowed = []
-    dependencies = [colony.base.plugin_system.PluginDependency(
-                    "pt.hive.colony.plugins.misc.json", "1.0.0")]
-    events_handled = []
-    events_registrable = []
-    main_modules = ["validation_plugin.plugin.console_validation_plugin",
-                    "validation_plugin.plugin.validation_plugin_system"]
+    platforms = [
+        colony.base.plugin_system.CPYTHON_ENVIRONMENT,
+        colony.base.plugin_system.JYTHON_ENVIRONMENT,
+        colony.base.plugin_system.IRON_PYTHON_ENVIRONMENT
+    ]
+    attributes = {
+        "build_automation_file_path" : "$base{plugin_directory}/validation_plugin/plugin/resources/baf.xml"
+    }
+    capabilities = [
+        "validation.plugin",
+        "_console_command_extension",
+        "build_automation_item"
+    ]
+    dependencies = [
+        colony.base.plugin_system.PluginDependency("pt.hive.colony.plugins.misc.json", "1.0.0")
+    ]
+    main_modules = [
+        "validation_plugin.plugin.console_validation_plugin",
+        "validation_plugin.plugin.validation_plugin_system"
+    ]
 
     validation_plugin = None
     """ The validation plugin """
