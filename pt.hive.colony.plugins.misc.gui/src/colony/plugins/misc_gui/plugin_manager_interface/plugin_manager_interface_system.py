@@ -37,8 +37,6 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-import wx
-import re
 import wx.lib.customtreectrl
 
 import misc_gui.tree_visualizer.tree_visualizer_system
@@ -66,13 +64,12 @@ class PluginManagerPanel(misc_gui.tree_visualizer.tree_visualizer_system.TreeVis
         self.tree.Bind(wx.lib.customtreectrl.EVT_TREE_ITEM_CHECKED, self.on_checked)
 
     def on_hyperlink(self, evt):
-        tree_item = evt._item
         (plugin_id, version) = self.tree.GetItemPyData(evt._item)
         self.select_plugin(plugin_id, version)
 
     def on_checked(self, evt):
         item = evt.GetItem()
-        (plugin_id, plugin_version) = self.tree.GetItemPyData(item)
+        (plugin_id, _plugin_version) = self.tree.GetItemPyData(item)
         if item._checked:
             self.parent_plugin.manager.load_plugin(plugin_id)
         else:

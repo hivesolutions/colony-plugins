@@ -46,49 +46,57 @@ NAV_KEYS = (wx.WXK_END, wx.WXK_LEFT, wx.WXK_RIGHT, wx.WXK_UP, wx.WXK_DOWN, wx.WX
 
 # in case the current platform is windows
 if "wxMSW" in wx.PlatformInfo:
-    FACES = {"times"     : "Times New Roman",
-             "mono"      : "Courier New",
-             "helv"      : "Arial",
-             "lucida"    : "Lucida Console",
-             "other"     : "Comic Sans MS",
-             "size"      : 10,
-             "lnsize"    : 8,
-             "backcol"   : "#FFFFFF",
-             "calltipbg" : "#FFFFB8",
-             "calltipfg" : "#404040"}
+    FACES = {
+        "times"     : "Times New Roman",
+        "mono"      : "Courier New",
+        "helv"      : "Arial",
+        "lucida"    : "Lucida Console",
+        "other"     : "Comic Sans MS",
+        "size"      : 10,
+        "lnsize"    : 8,
+        "backcol"   : "#FFFFFF",
+        "calltipbg" : "#FFFFB8",
+        "calltipfg" : "#404040"
+    }
 # in case the current platform is gtk (unix, linux, etc.)
 elif "wxGTK" in wx.PlatformInfo and "gtk2" in wx.PlatformInfo:
-    FACES = {"times"     : "Serif",
-             "mono"      : "Monospace",
-             "helv"      : "Sans",
-             "other"     : "new century schoolbook",
-             "size"      : 10,
-             "lnsize"    : 9,
-             "backcol"   : "#FFFFFF",
-             "calltipbg" : "#FFFFB8",
-             "calltipfg" : "#404040"}
+    FACES = {
+        "times"     : "Serif",
+        "mono"      : "Monospace",
+        "helv"      : "Sans",
+        "other"     : "new century schoolbook",
+        "size"      : 10,
+        "lnsize"    : 9,
+        "backcol"   : "#FFFFFF",
+        "calltipbg" : "#FFFFB8",
+        "calltipfg" : "#404040"
+    }
 # in case the current platform is mac os x
 elif "wxMac" in wx.PlatformInfo:
-    FACES = {"times"     : "Lucida Grande",
-             "mono"      : "Monaco",
-             "helv"      : "Geneva",
-             "other"     : "new century schoolbook",
-             "size"      : 13,
-             "lnsize"    : 10,
-             "backcol"   : "#FFFFFF",
-             "calltipbg" : "#FFFFB8",
-             "calltipfg" : "#404040"}
+    FACES = {
+        "times"     : "Lucida Grande",
+        "mono"      : "Monaco",
+        "helv"      : "Geneva",
+        "other"     : "new century schoolbook",
+        "size"      : 13,
+        "lnsize"    : 10,
+        "backcol"   : "#FFFFFF",
+        "calltipbg" : "#FFFFB8",
+        "calltipfg" : "#404040"
+    }
 # in case the current platform is mac os x
 else:
-    FACES = {"times"     : "Times",
-             "mono"      : "Courier",
-             "helv"      : "Helvetica",
-             "other"     : "new century schoolbook",
-             "size"      : 12,
-             "lnsize"    : 10,
-             "backcol"   : "#FFFFFF",
-             "calltipbg" : "#FFFFB8",
-             "calltipfg" : "#404040"}
+    FACES = {
+        "times"     : "Times",
+        "mono"      : "Courier",
+        "helv"      : "Helvetica",
+        "other"     : "new century schoolbook",
+        "size"      : 12,
+        "lnsize"    : 10,
+        "backcol"   : "#FFFFFF",
+        "calltipbg" : "#FFFFB8",
+        "calltipfg" : "#404040"
+    }
 
 class ConsoleWindow(wx.stc.StyledTextCtrl):
     """
