@@ -52,29 +52,44 @@ class MainServiceBittorrentPlugin(colony.base.plugin_system.Plugin):
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     loading_type = colony.base.plugin_system.EAGER_LOADING_TYPE
-    platforms = [colony.base.plugin_system.CPYTHON_ENVIRONMENT]
-    attributes = {"build_automation_file_path" : "$base{plugin_directory}/main_service_bittorrent/bittorrent/resources/baf.xml"}
-    capabilities = ["service.bittorrent", "build_automation_item"]
-    capabilities_allowed = ["bittorrent_service_handler"]
-    dependencies = [colony.base.plugin_system.PluginDependency(
-                    "pt.hive.colony.plugins.main.service.utils", "1.0.0"),
-                    colony.base.plugin_system.PluginDependency(
-                    "pt.hive.colony.plugins.misc.bencode", "1.0.0"),
-                    colony.base.plugin_system.PluginDependency(
-                    "pt.hive.colony.plugins.main.client.http", "1.0.0")]
-    events_handled = []
-    events_registrable = []
-    main_modules = ["main_service_bittorrent.bittorrent.main_service_bittorrent_exceptions",
-                    "main_service_bittorrent.bittorrent.main_service_bittorrent_parser",
-                    "main_service_bittorrent.bittorrent.main_service_bittorrent_system"]
+    platforms = [
+        colony.base.plugin_system.CPYTHON_ENVIRONMENT
+    ]
+    attributes = {
+        "build_automation_file_path" : "$base{plugin_directory}/main_service_bittorrent/bittorrent/resources/baf.xml"
+    }
+    capabilities = [
+        "service.bittorrent",
+        "build_automation_item"
+    ]
+    capabilities_allowed = [
+        "bittorrent_service_handler"
+    ]
+    dependencies = [
+        colony.base.plugin_system.PluginDependency("pt.hive.colony.plugins.main.service.utils", "1.0.0"),
+        colony.base.plugin_system.PluginDependency("pt.hive.colony.plugins.misc.bencode", "1.0.0"),
+        colony.base.plugin_system.PluginDependency("pt.hive.colony.plugins.main.client.http", "1.0.0")
+    ]
+    main_modules = [
+        "main_service_bittorrent.bittorrent.main_service_bittorrent_exceptions",
+        "main_service_bittorrent.bittorrent.main_service_bittorrent_parser",
+        "main_service_bittorrent.bittorrent.main_service_bittorrent_system"
+    ]
 
     main_service_bittorrent = None
+    """ The main service bittorrent """
 
     bittorrent_service_handler_plugins = []
+    """ The bittorrent service handler plugins """
 
     main_service_utils_plugin = None
+    """ The main service utils plugin """
+
     bencode_plugin = None
+    """ The bencode plugin """
+
     main_client_http_plugin = None
+    """ The main client http plugin """
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
