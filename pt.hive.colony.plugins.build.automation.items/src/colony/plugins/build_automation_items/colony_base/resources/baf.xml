@@ -246,6 +246,20 @@
                                 </zip>
                             </parameters>
                         </directory>
+                        <directory>
+                            <path>$base{plugin_system_directory}/var</path>
+                            <owner>0</owner>
+                            <group>0</group>
+                            <mode>755</mode>
+                            <parameters>
+                                <deb>
+                                    <target>usr/lib/colony/var</target>
+                                </deb>
+                                <zip>
+                                    <target>colony/var</target>
+                                </zip>
+                            </parameters>
+                        </directory>
                         <link>
                             <owner>0</owner>
                             <group>0</group>
