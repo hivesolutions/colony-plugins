@@ -52,19 +52,28 @@ class ValidationBundleBuildAutomationExtensionPlugin(colony.base.plugin_system.P
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     loading_type = colony.base.plugin_system.EAGER_LOADING_TYPE
-    platforms = [colony.base.plugin_system.CPYTHON_ENVIRONMENT]
-    attributes = {"build_automation_file_path" : "$base{plugin_directory}/build_automation_extensions/validation_bundle/resources/baf.xml"}
-    capabilities = ["build_automation_extension", "build_automation_item"]
-    capabilities_allowed = []
-    dependencies = [colony.base.plugin_system.PluginDependency(
-                    "pt.hive.colony.plugins.validation.bundle", "1.0.0")]
-    events_handled = []
-    events_registrable = []
-    main_modules = ["build_automation_extensions.validation_bundle.validation_bundle_build_automation_extension_system"]
+    platforms = [
+        colony.base.plugin_system.CPYTHON_ENVIRONMENT
+    ]
+    attributes = {
+        "build_automation_file_path" : "$base{plugin_directory}/build_automation_extensions/validation_bundle/resources/baf.xml"
+    }
+    capabilities = [
+        "build_automation_extension",
+        "build_automation_item"
+    ]
+    dependencies = [
+        colony.base.plugin_system.PluginDependency("pt.hive.colony.plugins.validation.bundle", "1.0.0")
+    ]
+    main_modules = [
+        "build_automation_extensions.validation_bundle.validation_bundle_build_automation_extension_system"
+    ]
 
     validation_bundle_build_automation_extension = None
+    """ The validation bundle build automation extension """
 
     validation_bundle_plugin = None
+    """ The validation bundle plugin """
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
