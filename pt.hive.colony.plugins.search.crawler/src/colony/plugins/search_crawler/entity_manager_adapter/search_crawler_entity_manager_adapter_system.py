@@ -73,15 +73,37 @@ ENTITY_CLASSES_MAP_VALUE = "entity_classes_map"
 DEFAULT_ENGINE = "sqlite"
 """ The default engine """
 
-DEFAULT_CONNECTION_PARAMETERS = {"autocommit" : False}
+DEFAULT_CONNECTION_PARAMETERS = {
+    "autocommit" : False
+}
 """ The default connection parameters """
 
-EXCLUSION_MAP = {"__class__" : True, "__delattr__" : True, "__dict__" : True, "__doc__" : True, "__getattribute__" : True, "__hash__" : True,
-                 "__init__" : True, "__module__" : True, "__new__" : True, "__reduce__" : True, "__reduce_ex__" : True, "__repr__" : True,
-                 "__setattr__" : True, "__str__" : True, "__weakref__" : True, "__format__" : True, "__sizeof__" : True, "__subclasshook__" : True}
+EXCLUSION_MAP = {
+    "__class__" : True,
+    "__delattr__" : True,
+    "__dict__" : True,
+    "__doc__" : True,
+    "__getattribute__" : True,
+    "__hash__" : True,
+    "__init__" : True,
+    "__module__" : True,
+    "__new__" : True,
+    "__reduce__" : True,
+    "__reduce_ex__" : True,
+    "__repr__" : True,
+    "__setattr__" : True,
+    "__str__" : True,
+    "__weakref__" : True,
+    "__format__" : True,
+    "__sizeof__" : True,
+    "__subclasshook__" : True
+}
 """ The exclusion map for the entity attributes not to be crawled """
 
-EXCLUSION_TYPES = {types.MethodType : True, types.FunctionType : True}
+EXCLUSION_TYPES = {
+    types.MethodType : True,
+    types.FunctionType : True
+}
 """ The types to be excluded from the crawl """
 
 WORD_REGEX_VALUE = "(?u)\w+"
@@ -144,7 +166,10 @@ class SearchCrawlerEntityManagerAdapter:
         connection_parameters = entity_manager_arguments.get(CONNECTION_PARAMETERS_VALUE, DEFAULT_CONNECTION_PARAMETERS)
 
         # creates the entity manager properties
-        entity_manager_properties = {ENTITY_CLASSES_LIST_VALUE : entity_classes_list, ENTITY_CLASSES_MAP_VALUE : entity_classes_map}
+        entity_manager_properties = {
+            ENTITY_CLASSES_LIST_VALUE : entity_classes_list,
+            ENTITY_CLASSES_MAP_VALUE : entity_classes_map
+        }
 
         # creates a new entity manager with the given properties
         entity_manager = entity_manager_plugin.load_entity_manager_properties(engine, entity_manager_properties)
@@ -223,7 +248,10 @@ class SearchCrawlerEntityManagerAdapter:
         entity_word_metadata_list = [{"position" : value, "attribute" : attribute} for value, attribute in zip(entity_word_positions_list, entity_word_attribute_list)]
 
         # creates the document information map
-        document_information_map = {"document_id": id_attribute_value, "entity_class_name" : entity_class_name}
+        document_information_map = {
+            "document_id": id_attribute_value,
+            "entity_class_name" : entity_class_name
+        }
 
         return [entity_word_list, entity_word_metadata_list, document_information_map]
 
