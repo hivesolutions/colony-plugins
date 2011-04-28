@@ -142,10 +142,12 @@ NONCE_TIME_FORMAT = "%Y-%m-%dT%H:%M:%SZUNIQUE"
 MAXIMUM_NONCE_VALUES_LIST_SIZE = 1000
 """ The maximum nonce values list size """
 
-HMAC_HASH_MODULES_MAP = {HMAC_SHA1_VALUE : hashlib.sha1,
-                         HMAC_SHA256_VALUE : hashlib.sha256,
-                         DH_SHA1_VALUE : hashlib.sha1,
-                         DH_SHA256_VALUE : hashlib.sha1}
+HMAC_HASH_MODULES_MAP = {
+    HMAC_SHA1_VALUE : hashlib.sha1,
+    HMAC_SHA256_VALUE : hashlib.sha256,
+    DH_SHA1_VALUE : hashlib.sha1,
+    DH_SHA256_VALUE : hashlib.sha1
+}
 """ The map associating the hmac values with the hashlib hash function modules """
 
 DIFFIE_HELLMAN_ASSOCIATION_TYPES = (DH_SHA1_VALUE, DH_SHA256_VALUE)
@@ -455,8 +457,10 @@ class OpenidServer:
 
         # creates the parameters to send to be used in the diffie hellman
         # structure creation
-        parameters = {"prime_value" : prime_value,
-                      "base_value" : base_value}
+        parameters = {
+            "prime_value" : prime_value,
+            "base_value" : base_value
+        }
 
         # creates the diffie hellman management structure with the prime
         # and base values given
@@ -1434,8 +1438,13 @@ class OpenidClient:
 
         # in case no http client exists
         if not self.http_client:
+            # defines the client parameters
+            client_parameters = {
+                CONTENT_TYPE_CHARSET_VALUE : DEFAULT_CHARSET
+            }
+
             # creates the http client
-            self.http_client = self.main_client_http_plugin.create_client({CONTENT_TYPE_CHARSET_VALUE : DEFAULT_CHARSET})
+            self.http_client = self.main_client_http_plugin.create_client(client_parameters)
 
             # opens the http client
             self.http_client.open({})
