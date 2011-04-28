@@ -68,14 +68,18 @@ ROUND_ROBIN_WORK_SCHEDULING_ALGORITHM = 2
 SMART_BUSY_WORK_SCHEDULING_ALGORITHM = 3
 """ The smart busy work scheduling algorithm value """
 
-WORK_SCHEDULING_ALGORITHM_NAME_MAP = {RANDOM_WORK_SCHEDULING_ALGORITHM : "random",
-                                      ROUND_ROBIN_WORK_SCHEDULING_ALGORITHM : "round_robin",
-                                      SMART_BUSY_WORK_SCHEDULING_ALGORITHM : "smart_busy"}
+WORK_SCHEDULING_ALGORITHM_NAME_MAP = {
+    RANDOM_WORK_SCHEDULING_ALGORITHM : "random",
+    ROUND_ROBIN_WORK_SCHEDULING_ALGORITHM : "round_robin",
+    SMART_BUSY_WORK_SCHEDULING_ALGORITHM : "smart_busy"
+}
 """ The work scheduling algorithm name map """
 
-WORK_SCHEDULING_ALGORITHM_CLASS_MAP = {RANDOM_WORK_SCHEDULING_ALGORITHM : work_pool_manager_algorithms.RandomAlgorithm,
-                                       ROUND_ROBIN_WORK_SCHEDULING_ALGORITHM : work_pool_manager_algorithms.RoundRobinAlgorithm,
-                                       SMART_BUSY_WORK_SCHEDULING_ALGORITHM : work_pool_manager_algorithms.SmartBusyAlgorithm}
+WORK_SCHEDULING_ALGORITHM_CLASS_MAP = {
+    RANDOM_WORK_SCHEDULING_ALGORITHM : work_pool_manager_algorithms.RandomAlgorithm,
+    ROUND_ROBIN_WORK_SCHEDULING_ALGORITHM : work_pool_manager_algorithms.RoundRobinAlgorithm,
+    SMART_BUSY_WORK_SCHEDULING_ALGORITHM : work_pool_manager_algorithms.SmartBusyAlgorithm
+}
 """ The work scheduling algorithm class map """
 
 class WorkPoolManager:
@@ -200,15 +204,32 @@ class WorkPoolManager:
             # sets the instance value for the work pool manager information
             work_pool_manager_information[work_pool_name] = (work_pool_work_string, work_pool_scheduling_algorithm_name, work_pool_thread_pool_name)
 
+        # defines the work pool manager item columns
+        work_pool_manager_item_columns = [
+            {
+                "type" : "name",
+                "value" : "Pool Name"
+            },
+            {
+                "type" : "value",
+                "value" : "CUR / MAX"
+            },
+            {
+                "type" : "value",
+                "value" : "Algorithm"
+            },
+            {
+                "type" : "value",
+                "value" : "Thread Pool"
+            }
+        ]
+
         # creates the work pool manager item
         work_pool_manager_item = {}
 
         # sets the work pool manager item values
         work_pool_manager_item["type"] = "map"
-        work_pool_manager_item["columns"] = [{"type" : "name", "value" : "Pool Name"},
-                                             {"type" : "value", "value" : "CUR / MAX"},
-                                             {"type" : "value", "value" : "Algorithm"},
-                                             {"type" : "value", "value" : "Thread Pool"}]
+        work_pool_manager_item["columns"] = work_pool_manager_item_columns
         work_pool_manager_item["values"] = work_pool_manager_information
 
         # creates the system information (item)
