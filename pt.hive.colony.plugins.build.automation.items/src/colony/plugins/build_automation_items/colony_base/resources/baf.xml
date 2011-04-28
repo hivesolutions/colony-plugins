@@ -114,74 +114,6 @@
                                 <deb>
                                     <target>usr/lib/colony</target>
                                 </deb>
-                                <zip>
-                                    <target>colony/colony</target>
-                                </zip>
-                            </parameters>
-                        </directory>
-                        <directory>
-                            <owner>0</owner>
-                            <group>0</group>
-                            <mode>777</mode>
-                            <parameters>
-                                <deb>
-                                    <target>usr/lib/colony/deploy</target>
-                                </deb>
-                                <zip>
-                                    <target>colony/deploy</target>
-                                </zip>
-                            </parameters>
-                        </directory>
-                        <directory>
-                            <owner>0</owner>
-                            <group>0</group>
-                            <mode>777</mode>
-                            <parameters>
-                                <deb>
-                                    <target>usr/lib/colony/log</target>
-                                </deb>
-                                <zip>
-                                    <target>colony/log</target>
-                                </zip>
-                            </parameters>
-                        </directory>
-                        <directory>
-                            <owner>0</owner>
-                            <group>0</group>
-                            <mode>777</mode>
-                            <parameters>
-                                <deb>
-                                    <target>usr/lib/colony/meta</target>
-                                </deb>
-                                <zip>
-                                    <target>colony/meta</target>
-                                </zip>
-                            </parameters>
-                        </directory>
-                        <directory>
-                            <owner>0</owner>
-                            <group>0</group>
-                            <mode>755</mode>
-                            <parameters>
-                                <deb>
-                                    <target>usr/lib/colony/plugins</target>
-                                </deb>
-                                <zip>
-                                    <target>colony/plugins</target>
-                                </zip>
-                            </parameters>
-                        </directory>
-                        <directory>
-                            <owner>0</owner>
-                            <group>0</group>
-                            <mode>777</mode>
-                            <parameters>
-                                <deb>
-                                    <target>usr/lib/colony/tmp</target>
-                                </deb>
-                                <zip>
-                                    <target>colony/tmp</target>
-                                </zip>
                             </parameters>
                         </directory>
                         <directory>
@@ -194,7 +126,7 @@
                                 </deb>
                             </parameters>
                         </directory>
-                       <directory>
+                        <directory>
                             <owner>0</owner>
                             <group>0</group>
                             <mode>755</mode>
@@ -229,6 +161,62 @@
                                 </deb>
                                 <zip>
                                     <target>colony/config</target>
+                                </zip>
+                            </parameters>
+                        </directory>
+                        <directory>
+                            <path>$base{plugin_system_directory}/deploy</path>
+                            <owner>0</owner>
+                            <group>0</group>
+                            <mode>777</mode>
+                            <parameters>
+                                <deb>
+                                    <target>usr/lib/colony/deploy</target>
+                                </deb>
+                                <zip>
+                                    <target>colony/deploy</target>
+                                </zip>
+                            </parameters>
+                        </directory>
+                        <directory>
+                            <path>$base{plugin_system_directory}/log</path>
+                            <owner>0</owner>
+                            <group>0</group>
+                            <mode>777</mode>
+                            <parameters>
+                                <deb>
+                                    <target>usr/lib/colony/log</target>
+                                </deb>
+                                <zip>
+                                    <target>colony/log</target>
+                                </zip>
+                            </parameters>
+                        </directory>
+                        <directory>
+                            <path>$base{plugin_system_directory}/meta</path>
+                            <owner>0</owner>
+                            <group>0</group>
+                            <mode>777</mode>
+                            <parameters>
+                                <deb>
+                                    <target>usr/lib/colony/meta</target>
+                                </deb>
+                                <zip>
+                                    <target>colony/meta</target>
+                                </zip>
+                            </parameters>
+                        </directory>
+                        <directory>
+                            <path>$base{plugin_system_directory}/plugins</path>
+                            <owner>0</owner>
+                            <group>0</group>
+                            <mode>755</mode>
+                            <parameters>
+                                <deb>
+                                    <target>usr/lib/colony/plugins</target>
+                                </deb>
+                                <zip>
+                                    <target>colony/plugins</target>
                                 </zip>
                             </parameters>
                         </directory>
