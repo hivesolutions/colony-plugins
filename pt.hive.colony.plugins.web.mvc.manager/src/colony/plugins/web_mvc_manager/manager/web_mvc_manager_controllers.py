@@ -197,10 +197,15 @@ class WebMvcManagerMainController:
                 # sets the template file to invalid
                 template_file = None
 
+            # defines the default parameters
+            default_parameters = {
+                "template_file" : template_file,
+                "search_helper" : web_mvc_manager_search_helper,
+                "communication_helper" : web_mvc_manager_communication_helper
+            }
+
             # extends the parameters map with the template file reference
-            handler_parameters = colony.libs.map_util.map_extend(parameters, {"template_file" : template_file,
-                                                                              "search_helper" : web_mvc_manager_search_helper,
-                                                                              "communication_helper" : web_mvc_manager_communication_helper})
+            handler_parameters = colony.libs.map_util.map_extend(parameters, default_parameters)
 
             # sends the request to the original handler and returns the result
             return original_handler(rest_request, handler_parameters)
@@ -742,7 +747,9 @@ class PluginController:
         packing_manager_plugin = self.web_mvc_manager_plugin.packing_manager_plugin
 
         # creates the properties map for the file unpacking packing
-        properties = {"target_path" : main_plugin_path}
+        properties = {
+            "target_path" : main_plugin_path
+        }
 
         # unpacks the files using the colony service
         packing_manager_plugin.unpack_files([unique_file_path], properties, "colony")
@@ -805,7 +812,10 @@ class PluginController:
         loaded_plugins_end = plugin_manager.get_all_loaded_plugins()
 
         # creates the delta plugin status map
-        delta_plugin_status_map = {LOADED_VALUE : [], UNLOADED_VALUE : []}
+        delta_plugin_status_map = {
+            LOADED_VALUE : [],
+            UNLOADED_VALUE : []
+        }
 
         # iterates over all the plugins loaded at the beginning
         # to check if they exist in the current loaded plugins
@@ -1094,7 +1104,14 @@ class CapabilityController:
         # creates an unique set of plugins allowing the capability
         plugins_allowing_unique = set(plugins_allowing)
 
-        return {PROVIDING_VALUE : plugins_offering_unique, ALLOWING_VALUE : plugins_allowing_unique}
+        # defines the plugins map
+        plugins_map = {
+            PROVIDING_VALUE : plugins_offering_unique,
+            ALLOWING_VALUE : plugins_allowing_unique
+        }
+
+        # returns the plugins map
+        return plugins_map
 
     def _get_sub_capabilities(self, rest_request, capability):
         # retrieves the plugin manager
@@ -1103,4 +1120,5 @@ class CapabilityController:
         # retrieves the sub capabilities for the capability
         sub_capabilities = plugin_manager.capabilities_sub_capabilities_map.get(capability, [])
 
+        # returns the sub capabilities
         return sub_capabilities
