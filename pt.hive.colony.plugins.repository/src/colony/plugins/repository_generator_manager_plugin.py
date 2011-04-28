@@ -52,19 +52,29 @@ class RepositoryGeneratorManagerPlugin(colony.base.plugin_system.Plugin):
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     loading_type = colony.base.plugin_system.EAGER_LOADING_TYPE
-    platforms = [colony.base.plugin_system.CPYTHON_ENVIRONMENT]
-    attributes = {"build_automation_file_path" : "$base{plugin_directory}/repository/generator_manager/resources/baf.xml"}
-    capabilities = ["repository.generator.manager", "build_automation_item"]
-    capabilities_allowed = ["repository.generator.adapter"]
-    dependencies = []
-    events_handled = []
-    events_registrable = []
-    main_modules = ["repository.generator_manager.repository_generator_manager_exceptions",
-                    "repository.generator_manager.repository_generator_manager_system"]
+    platforms = [
+        colony.base.plugin_system.CPYTHON_ENVIRONMENT
+    ]
+    attributes = {
+        "build_automation_file_path" : "$base{plugin_directory}/repository/generator_manager/resources/baf.xml"
+    }
+    capabilities = [
+        "repository.generator.manager",
+        "build_automation_item"
+    ]
+    capabilities_allowed = [
+        "repository.generator.adapter"
+    ]
+    main_modules = [
+        "repository.generator_manager.repository_generator_manager_exceptions",
+        "repository.generator_manager.repository_generator_manager_system"
+    ]
 
     repository_generator_manager = None
+    """ The repository generator manager """
 
     repository_generator_adapter_plugins = []
+    """ The repository generator adapter plugins """
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
