@@ -91,7 +91,9 @@ class WebMvcCommunicationPushApple:
         self.web_mvc_communication_push_apple_controller = web_mvc_utils_plugin.create_controller(web_mvc_communication_push_apple_controllers.WebMvcCommunicationPushAppleController, [self.web_mvc_communication_push_apple_plugin, self], {})
 
         # creates the web mvc communication push apple controllers
-        self.web_mvc_communication_push_apple_controllers = {"main" : self.web_mvc_communication_push_apple_controller}
+        self.web_mvc_communication_push_apple_controllers = {
+            "main" : self.web_mvc_communication_push_apple_controller
+        }
 
     def get_patterns(self):
         """
