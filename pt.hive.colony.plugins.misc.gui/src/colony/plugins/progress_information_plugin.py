@@ -52,18 +52,33 @@ class ProgressInformationPlugin(colony.base.plugin_system.Plugin):
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     loading_type = colony.base.plugin_system.EAGER_LOADING_TYPE
-    platforms = [colony.base.plugin_system.CPYTHON_ENVIRONMENT]
-    attributes = {"build_automation_file_path" : "$base{plugin_directory}/misc_gui/progress_information/resources/baf.xml"}
-    capabilities = ["gui_progress_information", "build_automation_item"]
-    capabilities_allowed = ["task_information"]
-    dependencies = [colony.base.plugin_system.PluginDependency(
-                    "pt.hive.colony.plugins.misc.bitmap_loader", "1.0.0"),
-                    colony.base.plugin_system.PackageDependency(
-                    "Wx Python", "wx", "2.8.7.x", "http://wxpython.org")]
-    events_handled = ["gui_progress_information_changed"]
-    events_registrable = ["task_information_changed"]
-    main_modules = ["misc_gui.progress_information.progress_information_logic",
-                    "misc_gui.progress_information.progress_information_system"]
+    platforms = [
+        colony.base.plugin_system.CPYTHON_ENVIRONMENT
+    ]
+    attributes = {
+        "build_automation_file_path" : "$base{plugin_directory}/misc_gui/progress_information/resources/baf.xml"
+    }
+    capabilities = [
+        "gui_progress_information",
+        "build_automation_item"
+    ]
+    capabilities_allowed = [
+        "task_information"
+    ]
+    dependencies = [
+        colony.base.plugin_system.PluginDependency("pt.hive.colony.plugins.misc.bitmap_loader", "1.0.0"),
+        colony.base.plugin_system.PackageDependency("Wx Python", "wx", "2.8.7.x", "http://wxpython.org")
+    ]
+    events_handled = [
+        "gui_progress_information_changed"
+    ]
+    events_registrable = [
+        "task_information_changed"
+    ]
+    main_modules = [
+        "misc_gui.progress_information.progress_information_logic",
+        "misc_gui.progress_information.progress_information_system"
+    ]
 
     progress_information = None
     """ The progress information """

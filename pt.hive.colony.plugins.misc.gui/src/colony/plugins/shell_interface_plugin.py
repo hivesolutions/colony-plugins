@@ -51,17 +51,25 @@ class ShellInterfacePlugin(colony.base.plugin_system.Plugin):
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     loading_type = colony.base.plugin_system.EAGER_LOADING_TYPE
-    platforms = [colony.base.plugin_system.CPYTHON_ENVIRONMENT]
-    attributes = {"build_automation_file_path" : "$base{plugin_directory}/misc_gui/shell_interface/resources/baf.xml"}
-    capabilities = ["gui_panel", "build_automation_item"]
-    capabilities_allowed = []
-    dependencies = [colony.base.plugin_system.PackageDependency(
-                    "Wx Python", "wx", "2.8.7.x", "http://wxpython.org")]
-    events_handled = []
-    events_registrable = []
-    main_modules = ["misc_gui.shell_interface.shell_interface_system"]
+    platforms = [
+        colony.base.plugin_system.CPYTHON_ENVIRONMENT
+    ]
+    attributes = {
+        "build_automation_file_path" : "$base{plugin_directory}/misc_gui/shell_interface/resources/baf.xml"
+    }
+    capabilities = [
+        "gui_panel",
+        "build_automation_item"
+    ]
+    dependencies = [
+        colony.base.plugin_system.PackageDependency("Wx Python", "wx", "2.8.7.x", "http://wxpython.org")
+    ]
+    main_modules = [
+        "misc_gui.shell_interface.shell_interface_system"
+    ]
 
     shell_interface = None
+    """ The shell interface """
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
