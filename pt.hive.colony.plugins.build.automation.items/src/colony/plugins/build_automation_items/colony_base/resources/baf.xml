@@ -77,6 +77,7 @@
                         <exclusions>
                             <exclusion>.*.svn$</exclusion>
                             <exclusion>.*.pyc$</exclusion>
+                            <exclusion>.*.log$</exclusion>
                         </exclusions>
                         <file>
                             <path>$base{plugin_system_directory}/main.py</path>
@@ -155,6 +156,7 @@
                             <owner>0</owner>
                             <group>0</group>
                             <mode>755</mode>
+                            <recursive>false</recursive>
                             <parameters>
                                 <deb>
                                     <target>usr/lib/colony/config</target>
@@ -169,6 +171,7 @@
                             <owner>0</owner>
                             <group>0</group>
                             <mode>777</mode>
+                            <recursive>false</recursive>
                             <parameters>
                                 <deb>
                                     <target>usr/lib/colony/deploy</target>
@@ -183,6 +186,7 @@
                             <owner>0</owner>
                             <group>0</group>
                             <mode>777</mode>
+                            <recursive>false</recursive>
                             <parameters>
                                 <deb>
                                     <target>usr/lib/colony/log</target>
@@ -197,6 +201,7 @@
                             <owner>0</owner>
                             <group>0</group>
                             <mode>777</mode>
+                            <recursive>false</recursive>
                             <parameters>
                                 <deb>
                                     <target>usr/lib/colony/meta</target>
@@ -211,6 +216,7 @@
                             <owner>0</owner>
                             <group>0</group>
                             <mode>755</mode>
+                            <recursive>false</recursive>
                             <parameters>
                                 <deb>
                                     <target>usr/lib/colony/plugins</target>
