@@ -672,8 +672,13 @@ class WebMvcWikiPageController:
         # writes the normalized contents to the wiki file (in the complete file path)
         self._write_file(complete_file_path, normalized_contents)
 
+        # defines the default repository arguments
+        default_repository_arguments = {
+            "repository_path" : base_file_path
+        }
+
         # creates the revision control parameters
-        revision_control_parameters = colony.libs.map_util.map_extend(instance_repository_arguments, {"repository_path" : base_file_path})
+        revision_control_parameters = colony.libs.map_util.map_extend(instance_repository_arguments, default_repository_arguments)
 
         # loads a new revision control manager for the specified adapter name
         revision_control_manager = revision_control_manager_plugin.load_revision_control_manager(instance_repository_type, revision_control_parameters)
