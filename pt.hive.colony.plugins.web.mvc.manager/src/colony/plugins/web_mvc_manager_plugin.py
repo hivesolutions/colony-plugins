@@ -52,38 +52,67 @@ class WebMvcManagerPlugin(colony.base.plugin_system.Plugin):
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     loading_type = colony.base.plugin_system.EAGER_LOADING_TYPE
-    platforms = [colony.base.plugin_system.CPYTHON_ENVIRONMENT]
-    attributes = {"build_automation_file_path" : "$base{plugin_directory}/web_mvc_manager/manager/resources/baf.xml"}
-    capabilities = ["web.mvc_service", "build_automation_item"]
-    capabilities_allowed = ["web.mvc.manager.page_item_bundle", "web.mvc.panel_item"]
-    dependencies = [colony.base.plugin_system.PluginDependency(
-                    "pt.hive.colony.plugins.web.mvc.utils", "1.0.0"),
-                    colony.base.plugin_system.PluginDependency(
-                    "pt.hive.colony.plugins.web.mvc.resources.base", "1.0.0"),
-                    colony.base.plugin_system.PluginDependency(
-                    "pt.hive.colony.plugins.web.mvc.resources.ui", "1.0.0"),
-                    colony.base.plugin_system.PluginDependency(
-                    "pt.hive.colony.plugins.misc.json", "1.0.0"),
-                    colony.base.plugin_system.PluginDependency(
-                    "pt.hive.colony.plugins.main.packing.manager", "1.0.0")]
-    events_handled = ["web.mvc.patterns_reload", "web.mvc.patterns_load", "web.mvc.patterns_unload", "web.mvc.communication"]
-    events_registrable = ["web.mvc.side_panel_reload"]
-    main_modules = ["web_mvc_manager.manager.web_mvc_manager_communication_controllers",
-                    "web_mvc_manager.manager.web_mvc_manager_controllers",
-                    "web_mvc_manager.manager.web_mvc_manager_exceptions",
-                    "web_mvc_manager.manager.web_mvc_manager_helpers",
-                    "web_mvc_manager.manager.web_mvc_manager_system"]
+    platforms = [
+        colony.base.plugin_system.CPYTHON_ENVIRONMENT
+    ]
+    attributes = {
+        "build_automation_file_path" : "$base{plugin_directory}/web_mvc_manager/manager/resources/baf.xml"
+    }
+    capabilities = [
+        "web.mvc_service",
+        "build_automation_item"
+    ]
+    capabilities_allowed = [
+        "web.mvc.manager.page_item_bundle",
+        "web.mvc.panel_item"
+    ]
+    dependencies = [
+        colony.base.plugin_system.PluginDependency("pt.hive.colony.plugins.web.mvc.utils", "1.0.0"),
+        colony.base.plugin_system.PluginDependency("pt.hive.colony.plugins.web.mvc.resources.base", "1.0.0"),
+        colony.base.plugin_system.PluginDependency("pt.hive.colony.plugins.web.mvc.resources.ui", "1.0.0"),
+        colony.base.plugin_system.PluginDependency("pt.hive.colony.plugins.misc.json", "1.0.0"),
+        colony.base.plugin_system.PluginDependency("pt.hive.colony.plugins.main.packing.manager", "1.0.0")
+    ]
+    events_handled = [
+        "web.mvc.patterns_reload",
+        "web.mvc.patterns_load",
+        "web.mvc.patterns_unload",
+        "web.mvc.communication"
+    ]
+    events_registrable = [
+        "web.mvc.side_panel_reload"
+    ]
+    main_modules = [
+        "web_mvc_manager.manager.web_mvc_manager_communication_controllers",
+        "web_mvc_manager.manager.web_mvc_manager_controllers",
+        "web_mvc_manager.manager.web_mvc_manager_exceptions",
+        "web_mvc_manager.manager.web_mvc_manager_helpers",
+        "web_mvc_manager.manager.web_mvc_manager_system"
+    ]
 
     web_mvc_manager = None
+    """ The web mvc manager """
 
     web_mvc_manager_page_item_bundle_plugins = []
+    """ The web mvc manager page item bundle plugins """
+
     web_mvc_panel_item_plugins = []
+    """ The web mvc panel item plugins """
 
     web_mvc_utils_plugin = None
+    """ The web mvc utils plugin """
+
     web_mvc_resources_base_plugin = None
+    """ The web mvc resources base plugin """
+
     web_mvc_resources_ui_plugin = None
+    """ The web mvc resources ui plugin """
+
     json_plugin = None
+    """ The json plugin """
+
     packing_manager_plugin = None
+    """ The packing manager plugin """
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)

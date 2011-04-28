@@ -51,36 +51,51 @@ class WebMvcWikiPlugin(colony.base.plugin_system.Plugin):
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     loading_type = colony.base.plugin_system.EAGER_LOADING_TYPE
-    platforms = [colony.base.plugin_system.CPYTHON_ENVIRONMENT]
-    attributes = {"build_automation_file_path" : "$base{plugin_directory}/web_mvc_wiki/mvc_wiki/resources/baf.xml"}
-    capabilities = ["web.mvc_service", "system_information", "build_automation_item"]
-    capabilities_allowed = []
-    dependencies = [colony.base.plugin_system.PluginDependency(
-                    "pt.hive.colony.plugins.web.mvc.utils", "1.0.0"),
-                    colony.base.plugin_system.PluginDependency(
-                    "pt.hive.colony.plugins.language.wiki", "1.0.0"),
-                     colony.base.plugin_system.PluginDependency(
-                    "pt.hive.colony.plugins.main.cache.manager", "1.0.0"),
-                    colony.base.plugin_system.PluginDependency(
-                    "pt.hive.colony.plugins.revision_control.manager", "1.0.0"),
-                    colony.base.plugin_system.PluginDependency(
-                    "pt.hive.colony.plugins.misc.string_normalization", "1.0.0"),
-                    colony.base.plugin_system.PluginDependency(
-                    "pt.hive.colony.plugins.format.mime", "1.0.0")]
-    events_handled = []
-    events_registrable = []
-    main_modules = ["web_mvc_wiki.mvc_wiki.web_mvc_wiki_controllers",
-                    "web_mvc_wiki.mvc_wiki.web_mvc_wiki_exceptions",
-                    "web_mvc_wiki.mvc_wiki.web_mvc_wiki_system"]
+    platforms = [
+        colony.base.plugin_system.CPYTHON_ENVIRONMENT
+    ]
+    attributes = {
+        "build_automation_file_path" : "$base{plugin_directory}/web_mvc_wiki/mvc_wiki/resources/baf.xml"
+    }
+    capabilities = [
+        "web.mvc_service",
+        "system_information",
+        "build_automation_item"
+    ]
+    dependencies = [
+        colony.base.plugin_system.PluginDependency("pt.hive.colony.plugins.web.mvc.utils", "1.0.0"),
+        colony.base.plugin_system.PluginDependency("pt.hive.colony.plugins.language.wiki", "1.0.0"),
+        colony.base.plugin_system.PluginDependency("pt.hive.colony.plugins.main.cache.manager", "1.0.0"),
+        colony.base.plugin_system.PluginDependency("pt.hive.colony.plugins.revision_control.manager", "1.0.0"),
+        colony.base.plugin_system.PluginDependency("pt.hive.colony.plugins.misc.string_normalization", "1.0.0"),
+        colony.base.plugin_system.PluginDependency("pt.hive.colony.plugins.format.mime", "1.0.0")
+    ]
+    main_modules = [
+        "web_mvc_wiki.mvc_wiki.web_mvc_wiki_controllers",
+        "web_mvc_wiki.mvc_wiki.web_mvc_wiki_exceptions",
+        "web_mvc_wiki.mvc_wiki.web_mvc_wiki_system"
+    ]
 
     web_mvc_wiki = None
+    """ The web mvc wiki """
 
     web_mvc_utils_plugin = None
+    """ The web mvc utils plugin """
+
     language_wiki_plugin = None
+    """ The language wiki plugin """
+
     main_cache_manager_plugin = None
+    """ The main cache manager plugin """
+
     revision_control_manager_plugin = None
+    """ The revision manager plugin """
+
     string_normalization_plugin = None
+    """ The string normalization plugin """
+
     format_mime_plugin = None
+    """ The format mime plugin """
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)

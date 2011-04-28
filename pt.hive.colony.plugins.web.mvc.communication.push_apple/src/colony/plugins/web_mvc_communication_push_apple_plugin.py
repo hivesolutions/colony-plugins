@@ -52,32 +52,47 @@ class WebMvcCommunicationPushApplePlugin(colony.base.plugin_system.Plugin):
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     loading_type = colony.base.plugin_system.EAGER_LOADING_TYPE
-    platforms = [colony.base.plugin_system.CPYTHON_ENVIRONMENT]
-    attributes = {"build_automation_file_path" : "$base{plugin_directory}/web_mvc_communication_push_apple/communication_push_apple/resources/baf.xml"}
-    capabilities = ["web.mvc_service", "build_automation_item"]
-    capabilities_allowed = ["notification_handler.apple_push"]
-    dependencies = [colony.base.plugin_system.PluginDependency(
-                    "pt.hive.colony.plugins.web.mvc.utils", "1.0.0"),
-                    colony.base.plugin_system.PluginDependency(
-                    "pt.hive.colony.plugins.communication.push", "1.0.0"),
-                    colony.base.plugin_system.PluginDependency(
-                    "pt.hive.colony.plugins.main.client.apple_push", "1.0.0"),
-                    colony.base.plugin_system.PluginDependency(
-                    "pt.hive.colony.plugins.misc.json", "1.0.0")]
-    events_handled = []
-    events_registrable = []
-    main_modules = ["web_mvc_communication_push_apple.communication_push_apple.web_mvc_communication_push_apple_controllers",
-                    "web_mvc_communication_push_apple.communication_push_apple.web_mvc_communication_push_apple_exceptions",
-                    "web_mvc_communication_push_apple.communication_push_apple.web_mvc_communication_push_apple_system"]
+    platforms = [
+        colony.base.plugin_system.CPYTHON_ENVIRONMENT
+    ]
+    attributes = {
+        "build_automation_file_path" : "$base{plugin_directory}/web_mvc_communication_push_apple/communication_push_apple/resources/baf.xml"
+    }
+    capabilities = [
+        "web.mvc_service", "build_automation_item"
+    ]
+    capabilities_allowed = [
+        "notification_handler.apple_push"
+    ]
+    dependencies = [
+        colony.base.plugin_system.PluginDependency("pt.hive.colony.plugins.web.mvc.utils", "1.0.0"),
+        colony.base.plugin_system.PluginDependency("pt.hive.colony.plugins.communication.push", "1.0.0"),
+        colony.base.plugin_system.PluginDependency("pt.hive.colony.plugins.main.client.apple_push", "1.0.0"),
+        colony.base.plugin_system.PluginDependency("pt.hive.colony.plugins.misc.json", "1.0.0")
+    ]
+    main_modules = [
+        "web_mvc_communication_push_apple.communication_push_apple.web_mvc_communication_push_apple_controllers",
+        "web_mvc_communication_push_apple.communication_push_apple.web_mvc_communication_push_apple_exceptions",
+        "web_mvc_communication_push_apple.communication_push_apple.web_mvc_communication_push_apple_system"
+    ]
 
     web_mvc_communication_push_apple = None
+    """ The web mvc communication push apple """
 
     notification_handler_apple_push_plugins = []
+    """ The notification handler apple push plugins """
 
     web_mvc_utils_plugin = None
+    """ The web mvc utils plugin """
+
     communication_push_plugin = None
+    """ The communication push plugin """
+
     main_client_apple_push_plugin = None
+    """ The main client apple push plugin """
+
     json_plugin = None
+    """ The json plugin """
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)

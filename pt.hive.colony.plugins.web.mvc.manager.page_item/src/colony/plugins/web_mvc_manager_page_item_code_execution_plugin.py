@@ -52,23 +52,36 @@ class WebMvcManagerPageItemCodeExecutionPlugin(colony.base.plugin_system.Plugin)
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     loading_type = colony.base.plugin_system.EAGER_LOADING_TYPE
-    platforms = [colony.base.plugin_system.CPYTHON_ENVIRONMENT]
-    attributes = {"build_automation_file_path" : "$base{plugin_directory}/web_mvc_manager_page_item/code_execution/resources/baf.xml"}
-    capabilities = ["web.mvc.manager.page_item_bundle", "build_automation_item"]
-    capabilities_allowed = []
-    dependencies = [colony.base.plugin_system.PluginDependency(
-                    "pt.hive.colony.plugins.web.mvc.utils", "1.0.0")]
-    events_handled = []
-    events_registrable = []
-    main_modules = ["web_mvc_manager_page_item.code_execution.web_mvc_manager_page_item_code_execution_controllers",
-                    "web_mvc_manager_page_item.code_execution.web_mvc_manager_page_item_code_execution_exceptions",
-                    "web_mvc_manager_page_item.code_execution.web_mvc_manager_page_item_code_execution_system"]
+    platforms = [
+        colony.base.plugin_system.CPYTHON_ENVIRONMENT
+    ]
+    attributes = {
+        "build_automation_file_path" : "$base{plugin_directory}/web_mvc_manager_page_item/code_execution/resources/baf.xml"
+    }
+    capabilities = [
+        "web.mvc.manager.page_item_bundle",
+        "build_automation_item"
+    ]
+    dependencies = [
+        colony.base.plugin_system.PluginDependency("pt.hive.colony.plugins.web.mvc.utils", "1.0.0")
+    ]
+    main_modules = [
+        "web_mvc_manager_page_item.code_execution.web_mvc_manager_page_item_code_execution_controllers",
+        "web_mvc_manager_page_item.code_execution.web_mvc_manager_page_item_code_execution_exceptions",
+        "web_mvc_manager_page_item.code_execution.web_mvc_manager_page_item_code_execution_system"
+    ]
 
     web_mvc_manager_page_item_code_execution = None
+    """ The web mvc manager page item code execution """
 
     web_mvc_utils_plugin = None
+    """ The web mvc utils plugin """
+
     system_updater_plugin = None
+    """ The system update plugin """
+
     json_plugin = None
+    """ The json plugin """
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
