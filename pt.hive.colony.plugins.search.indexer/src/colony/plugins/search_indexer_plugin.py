@@ -51,19 +51,29 @@ class SearchIndexerPlugin(colony.base.plugin_system.Plugin):
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     loading_type = colony.base.plugin_system.EAGER_LOADING_TYPE
-    platforms = [colony.base.plugin_system.CPYTHON_ENVIRONMENT]
-    attributes = {"build_automation_file_path" : "$base{plugin_directory}/search_indexer/indexer/resources/baf.xml"}
-    capabilities = ["search_indexer", "build_automation_item"]
-    capabilities_allowed = ["search_scorer_metric_repository"]
-    dependencies = []
-    events_handled = []
-    events_registrable = []
-    main_modules = ["search_indexer.indexer.search_indexer_exceptions",
-                    "search_indexer.indexer.search_indexer_system"]
+    platforms = [
+        colony.base.plugin_system.CPYTHON_ENVIRONMENT
+    ]
+    attributes = {
+        "build_automation_file_path" : "$base{plugin_directory}/search_indexer/indexer/resources/baf.xml"
+    }
+    capabilities = [
+        "search_indexer",
+        "build_automation_item"
+    ]
+    capabilities_allowed = [
+        "search_scorer_metric_repository"
+    ]
+    main_modules = [
+        "search_indexer.indexer.search_indexer_exceptions",
+        "search_indexer.indexer.search_indexer_system"
+    ]
 
     search_indexer = None
+    """ The search indexer """
 
     search_scorer_metric_repository_plugins = []
+    """ The search scorer metric repository plugins """
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
