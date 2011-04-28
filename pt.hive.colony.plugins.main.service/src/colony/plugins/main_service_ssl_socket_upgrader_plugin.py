@@ -51,17 +51,25 @@ class MainServiceSslSocketUpgraderPlugin(colony.base.plugin_system.Plugin):
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     loading_type = colony.base.plugin_system.EAGER_LOADING_TYPE
-    platforms = [colony.base.plugin_system.CPYTHON_ENVIRONMENT]
-    attributes = {"build_automation_file_path" : "$base{plugin_directory}/main_service_ssl_socket_upgrader/ssl_socket_upgrader/resources/baf.xml"}
-    capabilities = ["socket_upgrader", "build_automation_item"]
-    capabilities_allowed = []
-    dependencies = [colony.base.plugin_system.PackageDependency(
-                    "Python 2.6", "ssl", "2.6.x", "http://python.org")]
-    events_handled = []
-    events_registrable = []
-    main_modules = ["main_service_ssl_socket_upgrader.ssl_socket_upgrader.main_service_ssl_socket_upgrader_system"]
+    platforms = [
+        colony.base.plugin_system.CPYTHON_ENVIRONMENT
+    ]
+    attributes = {
+        "build_automation_file_path" : "$base{plugin_directory}/main_service_ssl_socket_upgrader/ssl_socket_upgrader/resources/baf.xml"
+    }
+    capabilities = [
+        "socket_upgrader",
+        "build_automation_item"
+    ]
+    dependencies = [
+        colony.base.plugin_system.PackageDependency("Python 2.6", "ssl", "2.6.x", "http://python.org")
+    ]
+    main_modules = [
+        "main_service_ssl_socket_upgrader.ssl_socket_upgrader.main_service_ssl_socket_upgrader_system"
+    ]
 
     main_service_ssl_socket_upgrader = None
+    """ The main service ssl socket upgrader """
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
