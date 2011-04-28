@@ -172,8 +172,10 @@ class RepositoryGeneratorApt:
             colony.libs.path_util.copy_file(complete_file_path, complete_target_file_path)
 
             # creates the deb file parameters map
-            deb_file_parameters = {"file_path" : complete_file_path,
-                                   "file_format" : DEFAULT_FILE_FORMAT}
+            deb_file_parameters = {
+                "file_path" : complete_file_path,
+                "file_format" : DEFAULT_FILE_FORMAT
+            }
 
             # creates the deb file
             deb_file = packaging_deb_plugin.create_file(deb_file_parameters)
@@ -260,52 +262,79 @@ class RepositoryGeneratorApt:
             deb_file_sha256_digest = deb_file_sha256.hexdigest()
 
             # creates the package map
-            package_map = {"package" : {"name" : control_values_map.get("Package", ""),
-                                        "version" : control_values_map.get("Version", "1.0.0"),
-                                        "architecture" : control_values_map.get("Architecture", "all"),
-                                        "essential" : control_values_map.get("Essential", "no"),
-                                        "maintainer" : control_values_map.get("Maintainer", ""),
-                                        "installed_size" : control_values_map.get("Installed-Size", "0"),
-                                        "dependencies" : control_values_map.get("Depends", ""),
-                                        "pre_dependencies" : control_values_map.get("Pre-Depends", ""),
-                                        "replaces" : control_values_map.get("Replaces", ""),
-                                        "provides" : control_values_map.get("Provides", ""),
-                                        "filename" : complete_target_file_name,
-                                        "size" : deb_file_size,
-                                        "md5" : deb_file_md5_digest,
-                                        "sha1" : deb_file_sha1_digest,
-                                        "sha256" : deb_file_sha256_digest,
-                                        "section" : control_values_map.get("Section", ""),
-                                        "priority" : control_values_map.get("Priority", ""),
-                                        "description" : control_values_map.get("Description", "")},
-                           "package_keys" : {"name" : "Package",
-                                             "version" : "Version",
-                                             "architecture" : "Architecture",
-                                             "essential" : "Essential",
-                                             "maintainer" : "Maintainer",
-                                             "installed_size" : "Installed-Size",
-                                             "dependencies" : "Depends",
-                                             "pre_dependencies" : "Pre-Depends",
-                                             "replaces" : "Replaces",
-                                             "provides" : "Provides",
-                                             "filename" : "Filename",
-                                             "size" : "Size",
-                                             "md5" : "MD5sum",
-                                             "sha1" : "SHA1",
-                                             "sha256" : "SHA256",
-                                             "section" : "Section",
-                                             "priority" : "Priority",
-                                             "description" : "Description"},
-                           "package_keys_order" : ("name", "version", "architecture", "essential", "maintainer",
-                                                   "installed_size", "dependencies", "pre_dependencies", "replaces",
-                                                   "provides", "filename", "size", "md5", "sha1", "sha256", "section",
-                                                   "priority", "description")}
+            package_map = {
+                "package" : {
+                    "name" : control_values_map.get("Package", ""),
+                    "version" : control_values_map.get("Version", "1.0.0"),
+                    "architecture" : control_values_map.get("Architecture", "all"),
+                    "essential" : control_values_map.get("Essential", "no"),
+                    "maintainer" : control_values_map.get("Maintainer", ""),
+                    "installed_size" : control_values_map.get("Installed-Size", "0"),
+                    "dependencies" : control_values_map.get("Depends", ""),
+                    "pre_dependencies" : control_values_map.get("Pre-Depends", ""),
+                    "replaces" : control_values_map.get("Replaces", ""),
+                    "provides" : control_values_map.get("Provides", ""),
+                    "filename" : complete_target_file_name,
+                    "size" : deb_file_size,
+                    "md5" : deb_file_md5_digest,
+                    "sha1" : deb_file_sha1_digest,
+                    "sha256" : deb_file_sha256_digest,
+                    "section" : control_values_map.get("Section", ""),
+                    "priority" : control_values_map.get("Priority", ""),
+                    "description" : control_values_map.get("Description", "")
+                },
+                "package_keys" : {
+                    "name" : "Package",
+                    "version" : "Version",
+                    "architecture" : "Architecture",
+                    "essential" : "Essential",
+                    "maintainer" : "Maintainer",
+                    "installed_size" : "Installed-Size",
+                    "dependencies" : "Depends",
+                    "pre_dependencies" : "Pre-Depends",
+                    "replaces" : "Replaces",
+                    "provides" : "Provides",
+                    "filename" : "Filename",
+                    "size" : "Size",
+                    "md5" : "MD5sum",
+                    "sha1" : "SHA1",
+                    "sha256" : "SHA256",
+                    "section" : "Section",
+                    "priority" : "Priority",
+                    "description" : "Description"
+                },
+                "package_keys_order" : (
+                    "name",
+                    "version",
+                    "architecture",
+                    "essential",
+                    "maintainer",
+                    "installed_size",
+                    "dependencies",
+                    "pre_dependencies",
+                    "replaces",
+                    "provides",
+                    "filename",
+                    "size",
+                    "md5",
+                    "sha1",
+                    "sha256",
+                    "section",
+                    "priority",
+                    "description"
+                )
+            }
 
             # adds the packages map to the packages list
             packages_list.append(package_map)
 
+        # defines the template parameters
+        template_parameters = {
+            "packages" : packages_list
+        }
+
         # processes the template file, retrieving the packages contents
-        packages_contents = self._process_template_file("packages.tpl", {"packages" : packages_list})
+        packages_contents = self._process_template_file("packages.tpl", template_parameters)
 
         # creates the buffer to hold the package contents compressed
         packages_contents_compressed_buffer = colony.libs.string_buffer_util.StringBuffer()
