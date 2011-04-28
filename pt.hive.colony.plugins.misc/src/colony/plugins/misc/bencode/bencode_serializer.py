@@ -46,18 +46,44 @@ import colony.libs.string_buffer_util
 
 import bencode_exceptions
 
-EXCLUSION_MAP = {"__class__" : True, "__delattr__" : True, "__dict__" : True, "__doc__" : True, "__getattribute__" : True, "__hash__" : True,
-                 "__init__" : True, "__module__" : True, "__new__" : True, "__reduce__" : True, "__reduce_ex__" : True, "__repr__" : True,
-                 "__setattr__" : True, "__str__" : True, "__weakref__" : True, "__format__" : True, "__sizeof__" : True, "__subclasshook__" : True}
+EXCLUSION_MAP = {
+    "__class__" : True,
+    "__delattr__" : True,
+    "__dict__" : True,
+    "__doc__" : True,
+    "__getattribute__" : True,
+    "__hash__" : True,
+    "__init__" : True,
+    "__module__" : True,
+    "__new__" : True,
+    "__reduce__" : True,
+    "__reduce_ex__" : True,
+    "__repr__" : True,
+    "__setattr__" : True,
+    "__str__" : True,
+    "__weakref__" : True,
+    "__format__" : True,
+    "__sizeof__" : True,
+    "__subclasshook__" : True
+}
 """ The map of items to be excluded from object serialization """
 
-EXCLUSION_TYPES = {types.MethodType : True, types.FunctionType : True}
+EXCLUSION_TYPES = {
+    types.MethodType : True,
+    types.FunctionType : True
+}
 """ The map of types to be excluded from object serialization """
 
-INT_TYPES = {types.IntType : True, types.LongType : True}
+INT_TYPES = {
+    types.IntType : True,
+    types.LongType : True
+}
 """ The map of int types """
 
-LIST_TYPES = {types.ListType : True, types.TupleType : True}
+LIST_TYPES = {
+    types.ListType : True,
+    types.TupleType : True
+}
 """ The map of list types """
 
 DECIMAL_REGEX_VALUE = "\d"

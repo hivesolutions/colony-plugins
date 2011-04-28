@@ -41,10 +41,12 @@ import os
 import wx
 import stat
 
-EXTENSIONS_MAP = {".png" : wx.BITMAP_TYPE_PNG,
-                  ".gif" : wx.BITMAP_TYPE_GIF,
-                  ".jpg" : wx.BITMAP_TYPE_JPEG,
-                  ".ico" : wx.BITMAP_TYPE_ICO}
+EXTENSIONS_MAP = {
+    ".png" : wx.BITMAP_TYPE_PNG,
+    ".gif" : wx.BITMAP_TYPE_GIF,
+    ".jpg" : wx.BITMAP_TYPE_JPEG,
+    ".ico" : wx.BITMAP_TYPE_ICO
+}
 """ The map of extensions and types """
 
 class BitmapLoader:

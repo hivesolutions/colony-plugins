@@ -111,34 +111,37 @@ class ConsoleRepositoryDescriptorGenerator:
     def __generate_commands_map(self):
         # creates the commands map
         commands_map = {
-                        "generate_repository_descriptor" : {
-                            "handler" : self.process_generate_repository_descriptor,
-                            "description" : "generates a repository descriptor with the available plugins",
-                            "arguments" : [
-                                {
-                                    "name" : "file_path",
-                                    "description" : "the path of the repository descriptor file",
-                                    "values" : str,
-                                    "mandatory" : True
-                                }, {
-                                    "name" : "repository_name",
-                                    "description" : "the name of the repository",
-                                    "values" : str,
-                                    "mandatory" : False
-                                }, {
-                                    "name" : "repository_description",
-                                    "description" : "the description of the repository",
-                                    "values" : str,
-                                    "mandatory" : False
-                                }, {
-                                    "name" : "repository_layout",
-                                    "description" : "the layout of the repository",
-                                    "values" : str,
-                                    "mandatory" : False
-                                }
-                            ]
-                        }
+            "generate_repository_descriptor" : {
+                "handler" : self.process_generate_repository_descriptor,
+                "description" : "generates a repository descriptor with the available plugins",
+                "arguments" : [
+                    {
+                        "name" : "file_path",
+                        "description" : "the path of the repository descriptor file",
+                        "values" : str,
+                        "mandatory" : True
+                    },
+                    {
+                        "name" : "repository_name",
+                        "description" : "the name of the repository",
+                        "values" : str,
+                        "mandatory" : False
+                    },
+                    {
+                        "name" : "repository_description",
+                        "description" : "the description of the repository",
+                        "values" : str,
+                        "mandatory" : False
+                    },
+                    {
+                        "name" : "repository_layout",
+                        "description" : "the layout of the repository",
+                        "values" : str,
+                        "mandatory" : False
                     }
+                ]
+            }
+        }
 
         # returns the commands map
         return commands_map

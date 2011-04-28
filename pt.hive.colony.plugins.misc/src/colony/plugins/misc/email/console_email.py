@@ -124,31 +124,31 @@ class ConsoleEmail:
     def __generate_commands_map(self):
         # creates the commands map
         commands_map = {
-                        "send_email" : {
-                            "handler" : self.process_send_email,
-                            "description" : "sends an email with the given contains to the defined destiny address",
-                            "arguments" : [
-                                {
-                                    "name" : "destiny_address",
-                                    "description" : "the address where to send the email to",
-                                    "values" : str,
-                                    "mandatory" : True
-                                }
-                            ]
-                        },
-                        "send_test_email" : {
-                            "handler" : self.process_send_test_email,
-                            "description" : "sends a test email to the defined destiny address",
-                            "arguments" : [
-                                {
-                                    "name" : "destiny_address",
-                                    "description" : "the address where to send the email to",
-                                    "values" : str,
-                                    "mandatory" : True
-                                }
-                            ]
-                        }
+            "send_email" : {
+                "handler" : self.process_send_email,
+                "description" : "sends an email with the given contains to the defined destiny address",
+                "arguments" : [
+                    {
+                        "name" : "destiny_address",
+                        "description" : "the address where to send the email to",
+                        "values" : str,
+                        "mandatory" : True
                     }
+                ]
+            },
+            "send_test_email" : {
+                "handler" : self.process_send_test_email,
+                "description" : "sends a test email to the defined destiny address",
+                "arguments" : [
+                    {
+                        "name" : "destiny_address",
+                        "description" : "the address where to send the email to",
+                        "values" : str,
+                        "mandatory" : True
+                    }
+                ]
+            }
+        }
 
         # returns the commands map
         return commands_map

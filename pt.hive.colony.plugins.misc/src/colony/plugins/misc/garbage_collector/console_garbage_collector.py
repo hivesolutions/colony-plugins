@@ -97,11 +97,11 @@ class ConsoleGarbageCollector:
     def __generate_commands_map(self):
         # creates the commands map
         commands_map = {
-                        "run_garbage_collector" : {
-                            "handler" : self.process_run_garbage_collector,
-                            "description" : "runs the python garbage collector"
-                        }
-                    }
+            "run_garbage_collector" : {
+                "handler" : self.process_run_garbage_collector,
+                "description" : "runs the python garbage collector"
+            }
+        }
 
         # returns the commands map
         return commands_map

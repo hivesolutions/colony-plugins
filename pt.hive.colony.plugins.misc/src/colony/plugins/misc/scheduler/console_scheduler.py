@@ -104,11 +104,11 @@ class ConsoleScheduler:
     def __generate_commands_map(self):
         # creates the commands map
         commands_map = {
-                        "show_all_scheduler" : {
-                            "handler" : self.process_show_all_scheduler,
-                            "description" : "shows all the scheduled tasks"
-                        }
-                    }
+            "show_all_scheduler" : {
+                "handler" : self.process_show_all_scheduler,
+                "description" : "shows all the scheduled tasks"
+            }
+        }
 
         # returns the commands map
         return commands_map

@@ -127,31 +127,31 @@ class ConsoleDownloader:
     def __generate_commands_map(self):
         # creates the commands map
         commands_map = {
-                        "download" : {
-                            "handler" : self.process_download,
-                            "description" : "starts the download of the file",
-                            "arguments" : [
-                                {
-                                    "name" : "file_path",
-                                    "description" : "the path of the file to download",
-                                    "values" : str,
-                                    "mandatory" : True
-                                }
-                            ]
-                        },
-                        "test_download" : {
-                            "handler" : self.process_test_download,
-                            "description" : "tests the download of the file",
-                            "arguments" : [
-                                {
-                                    "name" : "file_path",
-                                    "description" : "the path of the file to test the download",
-                                    "values" : str,
-                                    "mandatory" : True
-                                }
-                            ]
-                        }
+            "download" : {
+                "handler" : self.process_download,
+                "description" : "starts the download of the file",
+                "arguments" : [
+                    {
+                        "name" : "file_path",
+                        "description" : "the path of the file to download",
+                        "values" : str,
+                        "mandatory" : True
                     }
+                ]
+            },
+            "test_download" : {
+                "handler" : self.process_test_download,
+                "description" : "tests the download of the file",
+                "arguments" : [
+                    {
+                        "name" : "file_path",
+                        "description" : "the path of the file to test the download",
+                        "values" : str,
+                        "mandatory" : True
+                    }
+                ]
+            }
+        }
 
         # returns the commands map
         return commands_map

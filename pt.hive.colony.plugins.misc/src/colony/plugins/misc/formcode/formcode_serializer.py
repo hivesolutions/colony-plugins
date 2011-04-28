@@ -57,10 +57,18 @@ ATTRIBUTE_PARSING_REGEX_VALUE = "(?P<name>[\w]+)|(?P<sequence>\[\])|(?P<map>\[\w
 ATTRIBUTE_PARSING_REGEX = re.compile(ATTRIBUTE_PARSING_REGEX_VALUE)
 """ The attribute parsing regex """
 
-NUMBER_TYPES = {types.IntType : True, types.LongType: True, types.FloatType : True}
+NUMBER_TYPES = {
+    types.IntType : True,
+    types.LongType: True,
+    types.FloatType : True
+}
 """ The map used to check number types """
 
-SEQUENCE_TYPES = {types.TupleType : True, types.ListType : True, types.GeneratorType : True}
+SEQUENCE_TYPES = {
+    types.TupleType : True,
+    types.ListType : True,
+    types.GeneratorType : True
+}
 """ The map used to check sequence types """
 
 def dumps(object, base_path = ""):
