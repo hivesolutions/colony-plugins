@@ -335,7 +335,8 @@ class MainConsoleFileSystem:
                         "description" : "the username to switch user",
                         "values" : str,
                         "mandatory" : False
-                    }, {
+                    },
+                    {
                         "name" : "password",
                         "description" : "the password to switch user",
                         "values" : str,
