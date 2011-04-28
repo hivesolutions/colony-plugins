@@ -121,9 +121,15 @@ class IoAdapterEntityManager:
             # retrieves the entity manager plugin
             entity_manager_plugin = self.io_adapter_entity_manager_plugin.entity_manager_plugin
 
+            # defines the connection parameters
+            connection_parameters = {
+                FILE_PATH_VALUE : file_path,
+                AUTOCOMMIT_VALUE : False
+            }
+
             # initializes the entity manager
             entity_manager = entity_manager_plugin.load_entity_manager(entity_manager_engine)
-            entity_manager.set_connection_parameters({FILE_PATH_VALUE : file_path, AUTOCOMMIT_VALUE : False})
+            entity_manager.set_connection_parameters(connection_parameters)
 
             # loads the entity manager
             entity_manager.load_entity_manager()
