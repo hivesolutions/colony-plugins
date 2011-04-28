@@ -66,7 +66,9 @@ ENTITY_CLASSES_MAP_VALUE = "entity_classes_map"
 DEFAULT_ENGINE = "sqlite"
 """ The default engine """
 
-DEFAULT_CONNECTION_PARAMETERS = {"autocommit" : False}
+DEFAULT_CONNECTION_PARAMETERS = {
+    "autocommit" : False
+}
 """ The default connection parameters """
 
 class SearchProcessorEntityManagerAdapter:
@@ -126,7 +128,10 @@ class SearchProcessorEntityManagerAdapter:
         connection_parameters = entity_manager_arguments.get(CONNECTION_PARAMETERS_VALUE, DEFAULT_CONNECTION_PARAMETERS)
 
         # creates the entity manager properties
-        entity_manager_properties = {ENTITY_CLASSES_LIST_VALUE : entity_classes_list, ENTITY_CLASSES_MAP_VALUE : entity_classes_map}
+        entity_manager_properties = {
+            ENTITY_CLASSES_LIST_VALUE : entity_classes_list,
+            ENTITY_CLASSES_MAP_VALUE : entity_classes_map
+        }
 
         # creates a new entity manager with the given properties
         entity_manager = entity_manager_plugin.load_entity_manager_properties(engine, entity_manager_properties)
