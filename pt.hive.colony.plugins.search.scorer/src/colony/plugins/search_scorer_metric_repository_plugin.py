@@ -51,19 +51,29 @@ class SearchScorerMetricRepositoryPlugin(colony.base.plugin_system.Plugin):
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     loading_type = colony.base.plugin_system.EAGER_LOADING_TYPE
-    platforms = [colony.base.plugin_system.CPYTHON_ENVIRONMENT]
-    attributes = {"build_automation_file_path" : "$base{plugin_directory}/search_scorer/metric_repository/resources/baf.xml"}
-    capabilities = ["search_scorer_metric_repository", "build_automation_item"]
-    capabilities_allowed = ["search_scorer_metric_bundle"]
-    dependencies = []
-    events_handled = []
-    events_registrable = []
-    main_modules = ["search_scorer.metric_repository.search_scorer_metric_repository_exceptions",
-                    "search_scorer.metric_repository.search_scorer_metric_repository_system"]
+    platforms = [
+        colony.base.plugin_system.CPYTHON_ENVIRONMENT
+    ]
+    attributes = {
+        "build_automation_file_path" : "$base{plugin_directory}/search_scorer/metric_repository/resources/baf.xml"
+    }
+    capabilities = [
+        "search_scorer_metric_repository",
+        "build_automation_item"
+    ]
+    capabilities_allowed = [
+        "search_scorer_metric_bundle"
+    ]
+    main_modules = [
+        "search_scorer.metric_repository.search_scorer_metric_repository_exceptions",
+        "search_scorer.metric_repository.search_scorer_metric_repository_system"
+    ]
 
     search_scorer_metric_repository = None
+    """ The search scorer metric repository """
 
     search_scorer_metric_bundle_plugins = []
+    """ The search scorer metric bundle plugins """
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
@@ -102,14 +112,22 @@ class SearchScorerMetricRepositoryPlugin(colony.base.plugin_system.Plugin):
 
     @colony.base.decorators.load_allowed_capability("search_scorer_metric_bundle")
     def search_scorer_metric_bundle_load_allowed(self, plugin, capability):
+        # adds the plugin to the search scorer metric bundle plugins list
         self.search_scorer_metric_bundle_plugins.append(plugin)
 
+        # retrieves the plugin metrics map
         plugin_metrics_map = plugin.get_metrics_map()
+
+        # adds the plugin metrics
         self.search_scorer_metric_repository.add_search_scorer_metrics_map(plugin_metrics_map)
 
     @colony.base.decorators.unload_allowed_capability("search_scorer_metric_bundle")
     def search_scorer_metric_bundle_unload_allowed(self, plugin, capability):
+        # removes the plugin from the search scorer metric bundle plugins list
         self.search_scorer_metric_bundle_plugins.remove(plugin)
 
+        # retrieves the plugin metrics map
         plugin_metrics_map = plugin.get_metrics_map()
+
+        # removes the plugin metrics
         self.search_scorer_metric_repository.remove_search_scorer_metrics_map(plugin_metrics_map)

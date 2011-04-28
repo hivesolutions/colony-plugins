@@ -51,18 +51,26 @@ class SearchSorterPlugin(colony.base.plugin_system.Plugin):
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     loading_type = colony.base.plugin_system.EAGER_LOADING_TYPE
-    platforms = [colony.base.plugin_system.CPYTHON_ENVIRONMENT]
-    attributes = {"build_automation_file_path" : "$base{plugin_directory}/search_sorter/sorter/resources/baf.xml"}
-    capabilities = ["search_sorter", "build_automation_item"]
-    capabilities_allowed = []
-    dependencies = [colony.base.plugin_system.PluginDependency(
-                    "pt.hive.colony.plugins.search.scorer", "1.0.0")]
-    events_handled = []
-    events_registrable = []
-    main_modules = ["search_sorter.sorter.search_sorter_exceptions",
-                    "search_sorter.sorter.search_sorter_system"]
+    platforms = [
+        colony.base.plugin_system.CPYTHON_ENVIRONMENT
+    ]
+    attributes = {
+        "build_automation_file_path" : "$base{plugin_directory}/search_sorter/sorter/resources/baf.xml"
+    }
+    capabilities = [
+        "search_sorter",
+        "build_automation_item"
+    ]
+    dependencies = [
+        colony.base.plugin_system.PluginDependency("pt.hive.colony.plugins.search.scorer", "1.0.0")
+    ]
+    main_modules = [
+        "search_sorter.sorter.search_sorter_exceptions",
+        "search_sorter.sorter.search_sorter_system"
+    ]
 
     search_sorter = None
+    """ The search sorter """
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
