@@ -72,8 +72,7 @@ class ConsoleSystemInstaller:
 
     def __generate_commands_map(self):
         # creates the commands map
-        commands_map = {
-                    }
+        commands_map = {}
 
         # returns the commands map
         return commands_map

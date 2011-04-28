@@ -229,7 +229,10 @@ class ColonyPackingInstaller:
             current_date_time_formated = current_date_time.strftime("%d-%m-%Y %H:%M:%S")
 
             # sets the installed plugin map
-            installed_plugins[plugin_id] = {VERSION_VALUE : plugin_version, TIMESTAMP_VALUE : current_time}
+            installed_plugins[plugin_id] = {
+                VERSION_VALUE : plugin_version,
+                TIMESTAMP_VALUE : current_time
+            }
 
             # updates the plugins map with the current time
             # and date time values
@@ -297,7 +300,9 @@ class ColonyPackingInstaller:
         target_path = target_path or main_plugin_path
 
         # creates the properties map for the file unpacking packing
-        properties = {TARGET_PATH_VALUE : target_path}
+        properties = {
+            TARGET_PATH_VALUE : target_path
+        }
 
         # unpacks the files using the colony service
         packing_manager_plugin.unpack_files([package_path], properties, "colony")
