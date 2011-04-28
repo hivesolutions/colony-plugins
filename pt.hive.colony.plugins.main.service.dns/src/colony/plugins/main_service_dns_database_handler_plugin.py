@@ -52,21 +52,30 @@ class MainServiceDnsDatabaseHandlerPlugin(colony.base.plugin_system.Plugin):
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     loading_type = colony.base.plugin_system.EAGER_LOADING_TYPE
-    platforms = [colony.base.plugin_system.CPYTHON_ENVIRONMENT,
-                 colony.base.plugin_system.JYTHON_ENVIRONMENT,
-                 colony.base.plugin_system.IRON_PYTHON_ENVIRONMENT]
-    attributes = {"build_automation_file_path" : "$base{plugin_directory}/main_service_dns_database_handler/database_handler/resources/baf.xml"}
-    capabilities = ["dns_service_handler", "build_automation_item"]
-    capabilities_allowed = []
-    dependencies = [colony.base.plugin_system.PluginDependency(
-                    "pt.hive.colony.plugins.dns.storage.database", "1.0.0")]
-    events_handled = []
-    events_registrable = []
-    main_modules = ["main_service_dns_database_handler.database_handler.main_service_dns_database_handler_system"]
+    platforms = [
+        colony.base.plugin_system.CPYTHON_ENVIRONMENT,
+        colony.base.plugin_system.JYTHON_ENVIRONMENT,
+        colony.base.plugin_system.IRON_PYTHON_ENVIRONMENT
+    ]
+    attributes = {
+        "build_automation_file_path" : "$base{plugin_directory}/main_service_dns_database_handler/database_handler/resources/baf.xml"
+    }
+    capabilities = [
+        "dns_service_handler",
+        "build_automation_item"
+    ]
+    dependencies = [
+        colony.base.plugin_system.PluginDependency("pt.hive.colony.plugins.dns.storage.database", "1.0.0")
+    ]
+    main_modules = [
+        "main_service_dns_database_handler.database_handler.main_service_dns_database_handler_system"
+    ]
 
     main_service_dns_database_handler = None
+    """ The main service dns database handler """
 
     dns_storage_database_plugin = None
+    """ The dns storage database plugin """
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
