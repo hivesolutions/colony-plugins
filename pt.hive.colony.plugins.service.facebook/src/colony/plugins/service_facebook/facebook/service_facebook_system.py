@@ -572,8 +572,13 @@ class FacebookClient:
 
         # in case no http client exists
         if not self.http_client:
+            # defines the client parameters
+            client_parameters = {
+                CONTENT_TYPE_CHARSET_VALUE : DEFAULT_CHARSET
+            }
+
             # creates the http client
-            self.http_client = self.main_client_http_plugin.create_client({CONTENT_TYPE_CHARSET_VALUE : DEFAULT_CHARSET})
+            self.http_client = self.main_client_http_plugin.create_client(client_parameters)
 
             # opens the http client
             self.http_client.open({})
