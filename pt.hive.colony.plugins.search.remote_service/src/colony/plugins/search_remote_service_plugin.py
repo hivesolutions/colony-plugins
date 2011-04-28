@@ -52,19 +52,26 @@ class SearchRemoteServicePlugin(colony.base.plugin_system.Plugin):
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     loading_type = colony.base.plugin_system.EAGER_LOADING_TYPE
-    platforms = [colony.base.plugin_system.CPYTHON_ENVIRONMENT]
-    attributes = {"build_automation_file_path" : "$base{plugin_directory}/search_remote_service/remote_service/resources/baf.xml"}
-    capabilities = ["rpc_service", "build_automation_item"]
-    capabilities_allowed = []
-    dependencies = [colony.base.plugin_system.PluginDependency(
-                    "pt.hive.colony.plugins.search.manager", "1.0.0"),
-                    colony.base.plugin_system.PluginDependency(
-                    "pt.hive.colony.plugins.main.tasks.task_manager", "1.0.0"),]
-    events_handled = []
-    events_registrable = []
-    main_modules = ["search_remote_service.remote_service.search_remote_service_system"]
+    platforms = [
+        colony.base.plugin_system.CPYTHON_ENVIRONMENT
+    ]
+    attributes = {
+        "build_automation_file_path" : "$base{plugin_directory}/search_remote_service/remote_service/resources/baf.xml"
+    }
+    capabilities = [
+        "rpc_service",
+        "build_automation_item"
+    ]
+    dependencies = [
+        colony.base.plugin_system.PluginDependency("pt.hive.colony.plugins.search.manager", "1.0.0"),
+        colony.base.plugin_system.PluginDependency("pt.hive.colony.plugins.main.tasks.task_manager", "1.0.0")
+    ]
+    main_modules = [
+        "search_remote_service.remote_service.search_remote_service_system"
+    ]
 
     search_remote_service = None
+    """ The search remote service """
 
     search_manager_plugin = None
     """ Search manager plugin """

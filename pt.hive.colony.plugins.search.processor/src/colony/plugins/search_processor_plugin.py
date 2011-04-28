@@ -52,20 +52,32 @@ class SearchProcessorPlugin(colony.base.plugin_system.Plugin):
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     loading_type = colony.base.plugin_system.EAGER_LOADING_TYPE
-    platforms = [colony.base.plugin_system.CPYTHON_ENVIRONMENT]
-    attributes = {"build_automation_file_path" : "$base{plugin_directory}/search_processor/processor/resources/baf.xml"}
-    capabilities = ["search_processor", "build_automation_item"]
-    capabilities_allowed = ["search_processor_adapter"]
-    dependencies = []
-    events_handled = []
-    events_registrable = []
-    main_modules = ["search_processor.processor.search_processor_exceptions",
-                    "search_processor.processor.search_processor_system"]
+    platforms = [
+        colony.base.plugin_system.CPYTHON_ENVIRONMENT
+    ]
+    attributes = {
+        "build_automation_file_path" : "$base{plugin_directory}/search_processor/processor/resources/baf.xml"
+    }
+    capabilities = [
+        "search_processor",
+        "build_automation_item"
+    ]
+    capabilities_allowed = [
+        "search_processor_adapter"
+    ]
+    main_modules = [
+        "search_processor.processor.search_processor_exceptions",
+        "search_processor.processor.search_processor_system"
+    ]
 
     search_processor = None
+    """ The search processor """
 
     search_processor_adapter_plugins = []
+    """ The search processor adapter plugins """
+
     search_provider_file_system_plugins = []
+    """ The search provider file system plugins """
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)

@@ -52,25 +52,39 @@ class SearchProcessorEntityManagerAdapterPlugin(colony.base.plugin_system.Plugin
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     loading_type = colony.base.plugin_system.EAGER_LOADING_TYPE
-    platforms = [colony.base.plugin_system.CPYTHON_ENVIRONMENT]
-    attributes = {"build_automation_file_path" : "$base{plugin_directory}/search_processor/entity_manager_adapter/resources/baf.xml"}
-    capabilities = ["search_processor_adapter.entity_manager", "build_automation_item"]
-    capabilities_allowed = ["search_provider.entity_manager"]
-    dependencies = [colony.base.plugin_system.PluginDependency(
-                    "pt.hive.colony.plugins.data.entity_manager", "1.0.0"),
-                    colony.base.plugin_system.PluginDependency(
-                    "pt.hive.colony.plugins.business.helper", "1.0.0")]
-    events_handled = []
-    events_registrable = []
-    main_modules = ["search_processor.entity_manager_adapter.search_processor_entity_manager_adapter_exceptions",
-                    "search_processor.entity_manager_adapter.search_processor_entity_manager_adapter_system"]
+    platforms = [
+        colony.base.plugin_system.CPYTHON_ENVIRONMENT
+    ]
+    attributes = {
+        "build_automation_file_path" : "$base{plugin_directory}/search_processor/entity_manager_adapter/resources/baf.xml"
+    }
+    capabilities = [
+        "search_processor_adapter.entity_manager",
+        "build_automation_item"
+    ]
+    capabilities_allowed = [
+        "search_provider.entity_manager"
+    ]
+    dependencies = [
+        colony.base.plugin_system.PluginDependency("pt.hive.colony.plugins.data.entity_manager", "1.0.0"),
+        colony.base.plugin_system.PluginDependency("pt.hive.colony.plugins.business.helper", "1.0.0")
+    ]
+    main_modules = [
+        "search_processor.entity_manager_adapter.search_processor_entity_manager_adapter_exceptions",
+        "search_processor.entity_manager_adapter.search_processor_entity_manager_adapter_system"
+    ]
 
     search_processor_entity_manager_adapter = None
+    """ The search processor entity manager adapter """
 
     search_provider_entity_manager_plugins = []
+    """ The search provider entity manager plugins """
 
     entity_manager_plugin = None
+    """ The entity manager plugin """
+
     business_helper_plugin = None
+    """ The business helper plugin """
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
