@@ -78,10 +78,11 @@ class SearchRemoteService:
         return {}
 
     def create_index_with_identifier(self, search_index_identifier, properties):
-
         # the task options map
-        options = {SEARCH_INDEX_IDENTIFIER_VALUE : search_index_identifier,
-                   PROPERTIES_VALUE : properties}
+        options = {
+            SEARCH_INDEX_IDENTIFIER_VALUE : search_index_identifier,
+            PROPERTIES_VALUE : properties
+        }
 
         # creates an index creation task using the task manager
         self.task = self.search_remote_service_plugin.task_manager_plugin.create_new_task("Search Remote Service", "Creating index", self.start_create_index_handler)
@@ -126,18 +127,28 @@ class SearchRemoteService:
         # retrieves the search manager plugin
         search_manager_plugin = self.search_remote_service_plugin.search_manager_plugin
 
-        return search_manager_plugin.get_search_crawler_adapter_types()
+        # retrieves the search crawler adapter types
+        search_crawler_adapter_types = search_manager_plugin.get_search_crawler_adapter_types()
+
+        # returns the search crawler adapter types
+        return search_crawler_adapter_types
 
     def get_search_index_persistence_adapter_types(self):
         # retrieves the search manager plugin
         search_manager_plugin = self.search_remote_service_plugin.search_manager_plugin
 
-        return search_manager_plugin.get_search_index_persistence_adapter_types()
+        # retrieves the search index persistence adapter types
+        search_index_persistence_adapter_types = search_manager_plugin.get_search_index_persistence_adapter_types()
+
+        # returns the search index persistence adapter types
+        return search_index_persistence_adapter_types
 
     def persist_index_with_identifier(self, search_index_identifier, properties):
         # the task options map
-        options = {SEARCH_INDEX_IDENTIFIER_VALUE : search_index_identifier,
-                   PROPERTIES_VALUE : properties}
+        options = {
+            SEARCH_INDEX_IDENTIFIER_VALUE : search_index_identifier,
+            PROPERTIES_VALUE : properties
+        }
 
         # creates an index persistence task using the task manager
         self.task = self.search_remote_service_plugin.task_manager_plugin.create_new_task("Search Remote Service", "Persisting index", self.start_persist_index_with_identifier_handler)
@@ -146,12 +157,15 @@ class SearchRemoteService:
         self.task.set_task_stop_handler(self.stop_handler)
         self.task.start(options)
 
+        # returns true
         return True
 
     def load_index_with_identifier(self, search_index_identifier, properties):
         # the task options map
-        options = {SEARCH_INDEX_IDENTIFIER_VALUE : search_index_identifier,
-                   PROPERTIES_VALUE : properties}
+        options = {
+            SEARCH_INDEX_IDENTIFIER_VALUE : search_index_identifier,
+            PROPERTIES_VALUE : properties
+        }
 
         # creates an index load task using the task manager
         self.task = self.search_remote_service_plugin.task_manager_plugin.create_new_task("Search Remote Service", "Loading index", self.start_load_index_with_identifier_handler)
@@ -160,6 +174,7 @@ class SearchRemoteService:
         self.task.set_task_stop_handler(self.stop_handler)
         self.task.start(options)
 
+        # returns true
         return True
 
     def start_create_index_handler(self, task, options):
@@ -172,6 +187,7 @@ class SearchRemoteService:
 
         # retrieves the search index identifier for the creation operation
         search_index_identifier = options[SEARCH_INDEX_IDENTIFIER_VALUE]
+
         # retrieves the creation properties for the creation operation
         properties = options[PROPERTIES_VALUE]
 
@@ -192,6 +208,7 @@ class SearchRemoteService:
 
         # retrieves the search index identifier for the persistence operation
         search_index_identifier = options[SEARCH_INDEX_IDENTIFIER_VALUE]
+
         # retrieves the persistence properties for the persistence operation
         properties = options[PROPERTIES_VALUE]
 
@@ -212,6 +229,7 @@ class SearchRemoteService:
 
         # retrieves the search index identifier for the load operation
         search_index_identifier = options[SEARCH_INDEX_IDENTIFIER_VALUE]
+
         # retrieves the load properties for the load operation
         properties = options[PROPERTIES_VALUE]
 
