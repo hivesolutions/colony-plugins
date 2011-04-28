@@ -81,7 +81,10 @@ TASK_STOPPED_STATUS = 2
 TASK_PAUSED_STATUS = 3
 """ The task paused status value """
 
-SCHEDULING_ALGORITHM_NAME_MAP = {CONSTANT_SCHEDULING_ALGORITHM : "constant", DYNAMIC_SCHEDULING_ALGORITHM : "dynamic"}
+SCHEDULING_ALGORITHM_NAME_MAP = {
+    CONSTANT_SCHEDULING_ALGORITHM : "constant",
+    DYNAMIC_SCHEDULING_ALGORITHM : "dynamic"
+}
 """ The scheduling algorithm name map """
 
 class ThreadPoolManager:
@@ -188,14 +191,28 @@ class ThreadPoolManager:
             # sets the instance value for the thread pool manager information
             thread_pool_manager_information[thread_pool_name] = (thread_pool_thread_string, thread_pool_scheduling_algorithm_name)
 
+        # defines the thread pool manager item columns
+        thread_pool_manager_item_columns = [
+            {
+                "type" : "name",
+                "value" : "Pool Name"
+            },
+            {
+                "type" : "value",
+                "value" : "BUS / CUR / MIN / MAX"
+            },
+            {
+                "type" : "value",
+                "value" : "Algorithm"
+            }
+        ]
+
         # creates the thread pool manager item
         thread_pool_manager_item = {}
 
         # sets the thread pool manager item values
         thread_pool_manager_item["type"] = "map"
-        thread_pool_manager_item["columns"] = [{"type" : "name", "value" : "Pool Name"},
-                                             {"type" : "value", "value" : "BUS / CUR / MIN / MAX"},
-                                             {"type" : "value", "value" : "Algorithm"}]
+        thread_pool_manager_item["columns"] = thread_pool_manager_item_columns
         thread_pool_manager_item["values"] = thread_pool_manager_information
 
         # creates the system information (item)
