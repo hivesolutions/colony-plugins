@@ -219,7 +219,7 @@ class InstallationDeb:
             directory_path = directory.get("path", directory_parameters_deb.get("path", None))
 
             # retrieves the directory recursive value
-            directory_recursive = directory.get("recursive", True)
+            directory_recursive = directory.get("recursive", "true") == "true"
 
             # retrieves the directory owner value
             directory_owner = int(directory.get("owner", "0"))
