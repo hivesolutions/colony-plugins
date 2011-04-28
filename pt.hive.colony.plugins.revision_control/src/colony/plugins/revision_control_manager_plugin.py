@@ -51,21 +51,34 @@ class RevisionControlManagerPlugin(colony.base.plugin_system.Plugin):
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     loading_type = colony.base.plugin_system.EAGER_LOADING_TYPE
-    platforms = [colony.base.plugin_system.CPYTHON_ENVIRONMENT]
-    attributes = {"build_automation_file_path" : "$base{plugin_directory}/revision_control/manager/resources/baf.xml"}
-    capabilities = ["revision_control_manager", "console_command_extension", "build_automation_item"]
-    capabilities_allowed = ["revision_control.adapter"]
-    dependencies = []
-    events_handled = []
-    events_registrable = []
-    main_modules = ["revision_control.manager.console_revision_control_manager",
-                    "revision_control.manager.revision_control_manager_exceptions",
-                    "revision_control.manager.revision_control_manager_system"]
+    platforms = [
+        colony.base.plugin_system.CPYTHON_ENVIRONMENT
+    ]
+    attributes = {
+        "build_automation_file_path" : "$base{plugin_directory}/revision_control/manager/resources/baf.xml"
+    }
+    capabilities = [
+        "revision_control_manager",
+        "console_command_extension",
+        "build_automation_item"
+    ]
+    capabilities_allowed = [
+        "revision_control.adapter"
+    ]
+    main_modules = [
+        "revision_control.manager.console_revision_control_manager",
+        "revision_control.manager.revision_control_manager_exceptions",
+        "revision_control.manager.revision_control_manager_system"
+    ]
 
     revision_control_manager = None
+    """ The revision control manager """
+
     console_revision_control_manager = None
+    """ The console revision control manager """
 
     revision_control_adapter_plugins = []
+    """ The revision control adapter plugins """
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)

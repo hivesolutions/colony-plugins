@@ -51,17 +51,25 @@ class RevisionControlMercurialAdapterPlugin(colony.base.plugin_system.Plugin):
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     loading_type = colony.base.plugin_system.EAGER_LOADING_TYPE
-    platforms = [colony.base.plugin_system.CPYTHON_ENVIRONMENT]
-    attributes = {"build_automation_file_path" : "$base{plugin_directory}/revision_control/mercurial_adapter/resources/baf.xml"}
-    capabilities = ["revision_control.adapter", "build_automation_item"]
-    capabilities_allowed = []
-    dependencies = [colony.base.plugin_system.PackageDependency(
-                    "Mercurial", "mercurial", "1.4.x", "http://mercurial.selenic.com")]
-    events_handled = []
-    events_registrable = []
-    main_modules = ["revision_control.mercurial_adapter.revision_control_mercurial_adapter_system"]
+    platforms = [
+        colony.base.plugin_system.CPYTHON_ENVIRONMENT
+    ]
+    attributes = {
+        "build_automation_file_path" : "$base{plugin_directory}/revision_control/mercurial_adapter/resources/baf.xml"
+    }
+    capabilities = [
+        "revision_control.adapter",
+        "build_automation_item"
+    ]
+    dependencies = [
+        colony.base.plugin_system.PackageDependency("Mercurial", "mercurial", "1.4.x", "http://mercurial.selenic.com")
+    ]
+    main_modules = [
+        "revision_control.mercurial_adapter.revision_control_mercurial_adapter_system"
+    ]
 
     revision_control_mercurial_adapter = None
+    """ The revision control mercurial adapter """
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
