@@ -368,8 +368,10 @@ class SearchManager:
             number_search_results = len(search_results)
 
             # builds the search results map
-            search_results_map = {COUNT_VALUE : number_search_results,
-                                  SEARCH_STATISTICS_VALUE : search_statistics}
+            search_results_map = {
+                COUNT_VALUE : number_search_results,
+                SEARCH_STATISTICS_VALUE : search_statistics
+            }
 
             # returns the search results map
             # and skips the limiting step
@@ -378,8 +380,10 @@ class SearchManager:
         # in case the search did not retrieve any results
         if not search_results:
             # builds the search results map with the empty results
-            search_results_map = {SEARCH_RESULTS_VALUE : search_results,
-                                  SEARCH_STATISTICS_VALUE : search_statistics}
+            search_results_map = {
+                SEARCH_RESULTS_VALUE : search_results,
+                SEARCH_STATISTICS_VALUE : search_statistics
+            }
 
             # returns the search results map
             # and skips the subsequent steps
@@ -399,8 +403,10 @@ class SearchManager:
         processed_search_results = self.process_results(limited_search_results, properties, search_statistics)
 
         # builds the search results map
-        search_results_map = {SEARCH_RESULTS_VALUE : processed_search_results,
-                              SEARCH_STATISTICS_VALUE : search_statistics}
+        search_results_map = {
+            SEARCH_RESULTS_VALUE : processed_search_results,
+            SEARCH_STATISTICS_VALUE : search_statistics
+        }
 
         # returns the full search results map
         return search_results_map
