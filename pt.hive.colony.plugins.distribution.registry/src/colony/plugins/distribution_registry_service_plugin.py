@@ -52,19 +52,28 @@ class DistributionRegistryServicePlugin(colony.base.plugin_system.Plugin):
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     loading_type = colony.base.plugin_system.EAGER_LOADING_TYPE
-    platforms = [colony.base.plugin_system.CPYTHON_ENVIRONMENT]
-    attributes = {"build_automation_file_path" : "$base{plugin_directory}/distribution_registry/service/resources/baf.xml"}
-    capabilities = ["rpc_service", "build_automation_item"]
-    capabilities_allowed = []
-    dependencies = [colony.base.plugin_system.PluginDependency(
-                    "pt.hive.colony.plugins.distribution.registry", "1.0.0")]
-    events_handled = []
-    events_registrable = []
-    main_modules = ["distribution_registry.service.distribution_registry_service_system"]
+    platforms = [
+        colony.base.plugin_system.CPYTHON_ENVIRONMENT
+    ]
+    attributes = {
+        "build_automation_file_path" : "$base{plugin_directory}/distribution_registry/service/resources/baf.xml"
+    }
+    capabilities = [
+        "rpc_service",
+        "build_automation_item"
+    ]
+    dependencies = [
+        colony.base.plugin_system.PluginDependency("pt.hive.colony.plugins.distribution.registry", "1.0.0")
+    ]
+    main_modules = [
+        "distribution_registry.service.distribution_registry_service_system"
+    ]
 
     distribution_registry_service = None
+    """ The distribution registry service """
 
     distribution_registry_plugin = None
+    """ The distribution registry plugin """
 
     @colony.base.decorators.load_plugin("pt.hive.colony.plugins.distribution.registry.service", "1.0.0")
     def load_plugin(self):
