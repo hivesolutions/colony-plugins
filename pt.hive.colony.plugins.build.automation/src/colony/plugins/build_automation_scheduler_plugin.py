@@ -52,30 +52,45 @@ class BuildAutomationSchedulerPlugin(colony.base.plugin_system.Plugin):
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     loading_type = colony.base.plugin_system.EAGER_LOADING_TYPE
-    platforms = [colony.base.plugin_system.CPYTHON_ENVIRONMENT]
-    attributes = {"build_automation_file_path" : "$base{plugin_directory}/build_automation/scheduler/resources/baf.xml"}
-    capabilities = ["build_automation_scheduler", "_console_command_extension", "build_automation_item"]
-    capabilities_allowed = []
-    dependencies = [colony.base.plugin_system.PluginDependency(
-                    "pt.hive.colony.plugins.build.automation", "1.0.0"),
-                    colony.base.plugin_system.PluginDependency(
-                    "pt.hive.colony.plugins.misc.scheduler", "1.0.0"),
-                    colony.base.plugin_system.PluginDependency(
-                    "pt.hive.colony.plugins.messaging.manager", "1.0.0"),
-                    colony.base.plugin_system.PluginDependency(
-                    "pt.hive.colony.plugins.misc.guid", "1.0.0")]
-    events_handled = []
-    events_registrable = []
-    main_modules = ["build_automation.scheduler.build_automation_scheduler_system",
-                    "build_automation.scheduler.console_build_automation_scheduler"]
+    platforms = [
+        colony.base.plugin_system.CPYTHON_ENVIRONMENT
+    ]
+    attributes = {
+        "build_automation_file_path" : "$base{plugin_directory}/build_automation/scheduler/resources/baf.xml"
+    }
+    capabilities = [
+        "build_automation_scheduler",
+        "_console_command_extension",
+        "build_automation_item"
+    ]
+    dependencies = [
+        colony.base.plugin_system.PluginDependency("pt.hive.colony.plugins.build.automation", "1.0.0"),
+        colony.base.plugin_system.PluginDependency("pt.hive.colony.plugins.misc.scheduler", "1.0.0"),
+        colony.base.plugin_system.PluginDependency("pt.hive.colony.plugins.messaging.manager", "1.0.0"),
+        colony.base.plugin_system.PluginDependency("pt.hive.colony.plugins.misc.guid", "1.0.0")
+    ]
+    main_modules = [
+        "build_automation.scheduler.build_automation_scheduler_system",
+        "build_automation.scheduler.console_build_automation_scheduler"
+    ]
 
     build_automation_scheduler = None
+    """ The build automation scheduler """
+
     console_build_automation_scheduler = None
+    """ The console build automation scheduler """
 
     build_automation_plugin = None
+    """ The build automation plugin """
+
     scheduler_plugin = None
+    """ The scheduler plugin """
+
     messaging_manager_plugin = None
+    """ The messaging manager plugin """
+
     guid_plugin = None
+    """ The guid plugin """
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)

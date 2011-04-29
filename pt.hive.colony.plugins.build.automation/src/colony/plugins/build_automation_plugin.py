@@ -52,28 +52,46 @@ class BuildAutomationPlugin(colony.base.plugin_system.Plugin):
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     loading_type = colony.base.plugin_system.EAGER_LOADING_TYPE
-    platforms = [colony.base.plugin_system.CPYTHON_ENVIRONMENT]
-    attributes = {"build_automation_file_path" : "$base{plugin_directory}/build_automation/automation/resources/baf.xml"}
-    capabilities = ["build_automation", "_console_command_extension", "build_automation_item"]
-    capabilities_allowed = ["build_automation_extension", "build_automation_item"]
-    dependencies = [colony.base.plugin_system.PluginDependency(
-                    "pt.hive.colony.plugins.resources.resource_manager", "1.0.0"),
-                    colony.base.plugin_system.PluginDependency(
-                    "pt.hive.colony.plugins.build.automation.extensions.test", "1.0.0")]
-    events_handled = []
-    events_registrable = []
-    main_modules = ["build_automation.automation.build_automation_exceptions",
-                    "build_automation.automation.build_automation_parser",
-                    "build_automation.automation.build_automation_system",
-                    "build_automation.automation.console_build_automation"]
+    platforms = [
+        colony.base.plugin_system.CPYTHON_ENVIRONMENT
+    ]
+    attributes = {
+        "build_automation_file_path" : "$base{plugin_directory}/build_automation/automation/resources/baf.xml"
+    }
+    capabilities = [
+        "build_automation",
+        "_console_command_extension",
+        "build_automation_item"
+    ]
+    capabilities_allowed = [
+        "build_automation_extension",
+        "build_automation_item"
+    ]
+    dependencies = [
+        colony.base.plugin_system.PluginDependency("pt.hive.colony.plugins.resources.resource_manager", "1.0.0"),
+        colony.base.plugin_system.PluginDependency("pt.hive.colony.plugins.build.automation.extensions.test", "1.0.0")
+    ]
+    main_modules = [
+        "build_automation.automation.build_automation_exceptions",
+        "build_automation.automation.build_automation_parser",
+        "build_automation.automation.build_automation_system",
+        "build_automation.automation.console_build_automation"
+    ]
 
     build_automation = None
+    """ The build automation """
+
     console_build_automation = None
+    """ The console build automation """
 
     build_automation_extension_plugins = []
+    """ The build automation extension plugins """
+
     build_automation_item_plugins = []
+    """ The build automation item plugins """
 
     resource_manager_plugin = None
+    """ The resource manager plugin """
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
