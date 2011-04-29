@@ -51,16 +51,23 @@ class MainJsonrpcClientPlugin(colony.base.plugin_system.Plugin):
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     loading_type = colony.base.plugin_system.EAGER_LOADING_TYPE
-    platforms = [colony.base.plugin_system.CPYTHON_ENVIRONMENT]
-    attributes = {"build_automation_file_path" : "$base{plugin_directory}/main_remote_client_jsonrpc/client/resources/baf.xml"}
-    capabilities = ["jsonrpc_client", "remote_client_adapter", "build_automation_item"]
-    capabilities_allowed = []
-    dependencies = []
-    events_handled = []
-    events_registrable = []
-    main_modules = ["main_remote_client_jsonrpc.client.main_jsonrpc_client_system"]
+    platforms = [
+        colony.base.plugin_system.CPYTHON_ENVIRONMENT
+    ]
+    attributes = {
+        "build_automation_file_path" : "$base{plugin_directory}/main_remote_client_jsonrpc/client/resources/baf.xml"
+    }
+    capabilities = [
+        "jsonrpc_client",
+        "remote_client_adapter",
+        "build_automation_item"
+    ]
+    main_modules = [
+        "main_remote_client_jsonrpc.client.main_jsonrpc_client_system"
+    ]
 
     main_jsonrpc_client = None
+    """ The main jsonrpc client """
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
