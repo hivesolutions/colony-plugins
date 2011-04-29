@@ -121,6 +121,14 @@ class Consumer(RootEntity):
         # adds the inherited validations
         RootEntity.set_validation(self)
 
+        # defines the status validation properties
+        status_validation_properties = {
+            "values" : (
+                CONSUMER_STATUS_ACTIVE,
+                CONSUMER_STATUS_INACTIVE
+            )
+        }
+
         # validates that a non empty name was set
         self.add_validation_method("name", "not_empty", {})
 
@@ -128,4 +136,4 @@ class Consumer(RootEntity):
         self.add_validation_method("api_key", "not_empty", {})
 
         # validates that the status value is valid
-        self.add_validation_method("status", "in_enumeration", {"values" : (CONSUMER_STATUS_ACTIVE, CONSUMER_STATUS_INACTIVE)})
+        self.add_validation_method("status", "in_enumeration", status_validation_properties)
