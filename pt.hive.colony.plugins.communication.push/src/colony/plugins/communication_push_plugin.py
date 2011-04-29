@@ -52,26 +52,41 @@ class CommunicationPushPlugin(colony.base.plugin_system.Plugin):
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     loading_type = colony.base.plugin_system.EAGER_LOADING_TYPE
-    platforms = [colony.base.plugin_system.CPYTHON_ENVIRONMENT,
-                 colony.base.plugin_system.JYTHON_ENVIRONMENT,
-                 colony.base.plugin_system.IRON_PYTHON_ENVIRONMENT]
-    attributes = {"build_automation_file_path" : "$base{plugin_directory}/communication_push/push/resources/baf.xml"}
-    capabilities = ["communication.push", "diagnostics", "build_automation_item"]
-    capabilities_allowed = ["communication.push_persistence"]
-    dependencies = [colony.base.plugin_system.PluginDependency(
-                    "pt.hive.colony.plugins.main.work.work_pool_manager", "1.0.0"),
-                    colony.base.plugin_system.PluginDependency(
-                    "pt.hive.colony.plugins.misc.guid", "1.0.0")]
-    events_handled = []
-    events_registrable = []
-    main_modules = ["communication_push.push.communication_push_system"]
+    platforms = [
+        colony.base.plugin_system.CPYTHON_ENVIRONMENT,
+        colony.base.plugin_system.JYTHON_ENVIRONMENT,
+        colony.base.plugin_system.IRON_PYTHON_ENVIRONMENT
+    ]
+    attributes = {
+        "build_automation_file_path" : "$base{plugin_directory}/communication_push/push/resources/baf.xml"
+    }
+    capabilities = [
+        "communication.push",
+        "diagnostics",
+        "build_automation_item"
+    ]
+    capabilities_allowed = [
+        "communication.push_persistence"
+    ]
+    dependencies = [
+        colony.base.plugin_system.PluginDependency("pt.hive.colony.plugins.main.work.work_pool_manager", "1.0.0"),
+        colony.base.plugin_system.PluginDependency("pt.hive.colony.plugins.misc.guid", "1.0.0")
+    ]
+    main_modules = [
+        "communication_push.push.communication_push_system"
+    ]
 
     communication_push = None
+    """ The communication push """
 
     communication_push_persistence_plugins = []
+    """ The communication push persistence plugins """
 
     work_pool_manager_plugin = None
+    """ The work pool manager plugin """
+
     guid_plugin = None
+    """ The guid plugin """
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
@@ -81,10 +96,14 @@ class CommunicationPushPlugin(colony.base.plugin_system.Plugin):
 
     def end_load_plugin(self):
         colony.base.plugin_system.Plugin.end_load_plugin(self)
+
+        # starts the pool
         self.communication_push.start_pool()
 
     def unload_plugin(self):
         colony.base.plugin_system.Plugin.unload_plugin(self)
+
+        # stops the pool
         self.communication_push.stop_pool()
 
     def end_unload_plugin(self):
