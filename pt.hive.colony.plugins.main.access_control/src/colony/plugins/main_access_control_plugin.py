@@ -51,16 +51,22 @@ class MainAccessControlPlugin(colony.base.plugin_system.Plugin):
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     loading_type = colony.base.plugin_system.EAGER_LOADING_TYPE
-    platforms = [colony.base.plugin_system.CPYTHON_ENVIRONMENT]
-    attributes = {"build_automation_file_path" : "$base{plugin_directory}/main_access_control/access_control/resources/baf.xml"}
-    capabilities = ["access_control", "build_automation_item"]
-    capabilities_allowed = []
-    dependencies = []
-    events_handled = []
-    events_registrable = []
-    main_modules = ["main_access_control.access_control.main_access_control_system"]
+    platforms = [
+        colony.base.plugin_system.CPYTHON_ENVIRONMENT
+    ]
+    attributes = {
+        "build_automation_file_path" : "$base{plugin_directory}/main_access_control/access_control/resources/baf.xml"
+    }
+    capabilities = [
+        "access_control",
+        "build_automation_item"
+    ]
+    main_modules = [
+        "main_access_control.access_control.main_access_control_system"
+    ]
 
     main_access_control = None
+    """ The main access control """
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)

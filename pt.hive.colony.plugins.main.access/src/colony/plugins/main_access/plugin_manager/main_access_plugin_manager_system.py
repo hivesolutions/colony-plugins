@@ -40,7 +40,10 @@ __license__ = "GNU General Public License (GPL), Version 3"
 class MainAccessPluginManager:
 
     main_access_plugin_manager_plugin = None
+    """ The main access plugin manager plugin """
+
     manager = None
+    """ The manager """
 
     def __init__(self, main_access_plugin_manager_plugin):
         self.main_access_plugin_manager_plugin = main_access_plugin_manager_plugin
