@@ -52,22 +52,38 @@ class DistributionClientPlugin(colony.base.plugin_system.Plugin):
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     loading_type = colony.base.plugin_system.EAGER_LOADING_TYPE
-    platforms = [colony.base.plugin_system.CPYTHON_ENVIRONMENT]
-    attributes = {"build_automation_file_path" : "$base{plugin_directory}/distribution/client/resources/baf.xml"}
-    capabilities = ["distribution_client", "build_automation_item"]
-    capabilities_allowed = ["distribution_client_adapter", "distribution_helper"]
-    dependencies = [colony.base.plugin_system.PluginDependency(
-                    "pt.hive.colony.plugins.resources.resource_manager", "1.0.0")]
-    events_handled = []
-    events_registrable = []
-    main_modules = ["distribution.client.distribution_client_system"]
+    platforms = [
+        colony.base.plugin_system.CPYTHON_ENVIRONMENT
+    ]
+    attributes = {
+        "build_automation_file_path" : "$base{plugin_directory}/distribution/client/resources/baf.xml"
+    }
+    capabilities = [
+        "distribution_client",
+        "build_automation_item"
+    ]
+    capabilities_allowed = [
+        "distribution_client_adapter",
+        "distribution_helper"
+    ]
+    dependencies = [
+        colony.base.plugin_system.PluginDependency("pt.hive.colony.plugins.resources.resource_manager", "1.0.0")
+    ]
+    main_modules = [
+        "distribution.client.distribution_client_system"
+    ]
 
     distribution_client = None
+    """ The distribution client """
 
     distribution_client_adapter_plugins = []
+    """ The distribution client adapter plugins """
+
     distribution_helper_plugins = []
+    """ The distribution helper plugins """
 
     resource_manager_plugin = None
+    """ The resource manager plugin """
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)

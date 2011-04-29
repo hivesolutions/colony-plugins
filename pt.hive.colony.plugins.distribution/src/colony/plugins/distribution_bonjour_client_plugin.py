@@ -51,19 +51,28 @@ class DistributionBonjourClientPlugin(colony.base.plugin_system.Plugin):
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     loading_type = colony.base.plugin_system.EAGER_LOADING_TYPE
-    platforms = [colony.base.plugin_system.CPYTHON_ENVIRONMENT]
-    attributes = {"build_automation_file_path" : "$base{plugin_directory}/distribution/bonjour_client/resources/baf.xml"}
-    capabilities = ["distribution_client_adapter", "build_automation_item"]
-    capabilities_allowed = []
-    dependencies = [colony.base.plugin_system.PluginDependency(
-                    "pt.hive.colony.plugins.misc.bonjour", "1.0.0")]
-    events_handled = []
-    events_registrable = []
-    main_modules = ["distribution.bonjour_client.distribution_bonjour_client_system"]
+    platforms = [
+        colony.base.plugin_system.CPYTHON_ENVIRONMENT
+    ]
+    attributes = {
+        "build_automation_file_path" : "$base{plugin_directory}/distribution/bonjour_client/resources/baf.xml"
+    }
+    capabilities = [
+        "distribution_client_adapter",
+        "build_automation_item"
+    ]
+    dependencies = [
+        colony.base.plugin_system.PluginDependency("pt.hive.colony.plugins.misc.bonjour", "1.0.0")
+    ]
+    main_modules = [
+        "distribution.bonjour_client.distribution_bonjour_client_system"
+    ]
 
     distribution_bonjour_client = None
+    """ The distribution bonjour client """
 
     bonjour_plugin = None
+    """ The bonjour plugin """
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
