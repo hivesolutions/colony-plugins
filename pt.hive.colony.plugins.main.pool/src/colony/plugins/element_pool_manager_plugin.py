@@ -51,17 +51,23 @@ class ElementPoolManagerPlugin(colony.base.plugin_system.Plugin):
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     loading_type = colony.base.plugin_system.EAGER_LOADING_TYPE
-    platforms = [colony.base.plugin_system.CPYTHON_ENVIRONMENT]
-    attributes = {"build_automation_file_path" : "$base{plugin_directory}/main_pool/element_pool_manager/resources/baf.xml"}
-    capabilities = ["element_pool_manager", "build_automation_item"]
-    capabilities_allowed = []
-    dependencies = []
-    events_handled = []
-    events_registrable = []
-    main_modules = ["main_pool.element_pool_manager.element_pool_manager_exceptions",
-                    "main_pool.element_pool_manager.element_pool_manager_system"]
+    platforms = [
+        colony.base.plugin_system.CPYTHON_ENVIRONMENT
+    ]
+    attributes = {
+        "build_automation_file_path" : "$base{plugin_directory}/main_pool/element_pool_manager/resources/baf.xml"
+    }
+    capabilities = [
+        "element_pool_manager",
+        "build_automation_item"
+    ]
+    main_modules = [
+        "main_pool.element_pool_manager.element_pool_manager_exceptions",
+        "main_pool.element_pool_manager.element_pool_manager_system"
+    ]
 
     element_pool_manager = None
+    """ The element pool manager """
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
