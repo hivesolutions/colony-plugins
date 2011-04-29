@@ -52,20 +52,30 @@ class DummyTranslationPlugin(colony.base.plugin_system.Plugin):
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     loading_type = colony.base.plugin_system.EAGER_LOADING_TYPE
-    platforms = [colony.base.plugin_system.CPYTHON_ENVIRONMENT,
-                 colony.base.plugin_system.JYTHON_ENVIRONMENT,
-                 colony.base.plugin_system.IRON_PYTHON_ENVIRONMENT]
-    attributes = {"build_automation_file_path" : "$base{plugin_directory}/dummy/translation/resources/baf.xml"}
-    capabilities = ["console_command_extension", "build_automation_item"]
-    capabilities_allowed = ["translation_engine"]
-    dependencies = []
-    events_handled = []
-    events_registrable = []
-    main_modules = ["dummy.translation.dummy_translation_system"]
+    platforms = [
+        colony.base.plugin_system.CPYTHON_ENVIRONMENT,
+        colony.base.plugin_system.JYTHON_ENVIRONMENT,
+        colony.base.plugin_system.IRON_PYTHON_ENVIRONMENT
+    ]
+    attributes = {
+        "build_automation_file_path" : "$base{plugin_directory}/dummy/translation/resources/baf.xml"
+    }
+    capabilities = [
+        "console_command_extension",
+        "build_automation_item"
+    ]
+    capabilities_allowed = [
+        "translation_engine"
+    ]
+    main_modules = [
+        "dummy.translation.dummy_translation_system"
+    ]
 
     dummy_translation = None
+    """ The dummy translation """
 
     translation_engine_plugins = []
+    """ The translation engine plugins """
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)

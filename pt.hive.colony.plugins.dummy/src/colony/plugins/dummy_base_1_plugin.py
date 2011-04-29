@@ -52,21 +52,40 @@ class DummyBase1Plugin(colony.base.plugin_system.Plugin):
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     loading_type = colony.base.plugin_system.EAGER_LOADING_TYPE
-    platforms = [colony.base.plugin_system.CPYTHON_ENVIRONMENT,
-                 colony.base.plugin_system.JYTHON_ENVIRONMENT,
-                 colony.base.plugin_system.IRON_PYTHON_ENVIRONMENT]
-    attributes = {"build_automation_file_path" : "$base{plugin_directory}/dummy/base_1/resources/baf.xml"}
-    capabilities = ["dummy_base_1_capability", "build_automation_item"]
-    capabilities_allowed = [("dummy_base_2_capability", colony.base.plugin_system.NEW_DIFFUSION_SCOPE), ("dummy_base_3_capability", colony.base.plugin_system.NEW_DIFFUSION_SCOPE)]
-    dependencies = [colony.base.plugin_system.PluginDependency(
-                    "pt.hive.colony.plugins.main.threads.thread_pool_manager", "1.0.0")]
-    events_handled = ["dummy_base_1_event"]
-    events_registrable = ["plugin_manager.end_load_plugin"]
-    main_modules = ["dummy.base_1.dummy_base_1_system"]
+    platforms = [
+        colony.base.plugin_system.CPYTHON_ENVIRONMENT,
+        colony.base.plugin_system.JYTHON_ENVIRONMENT,
+        colony.base.plugin_system.IRON_PYTHON_ENVIRONMENT
+    ]
+    attributes = {
+        "build_automation_file_path" : "$base{plugin_directory}/dummy/base_1/resources/baf.xml"
+    }
+    capabilities = [
+        "dummy_base_1_capability",
+        "build_automation_item"
+    ]
+    capabilities_allowed = [
+        ("dummy_base_2_capability", colony.base.plugin_system.NEW_DIFFUSION_SCOPE),
+        ("dummy_base_3_capability", colony.base.plugin_system.NEW_DIFFUSION_SCOPE)
+    ]
+    dependencies = [
+        colony.base.plugin_system.PluginDependency("pt.hive.colony.plugins.main.threads.thread_pool_manager", "1.0.0")
+    ]
+    events_handled = [
+        "dummy_base_1_event"
+    ]
+    events_registrable = [
+        "plugin_manager.end_load_plugin"
+    ]
+    main_modules = [
+        "dummy.base_1.dummy_base_1_system"
+    ]
 
     dummy_base_1 = None
+    """ The dummy base 1 """
 
     thread_pool_manager_plugin = None
+    """ The thread pool manager plugin """
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)

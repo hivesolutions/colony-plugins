@@ -52,16 +52,22 @@ class DummyWindowsFormsLabelPlugin(colony.base.plugin_system.Plugin):
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     loading_type = colony.base.plugin_system.LAZY_LOADING_TYPE
-    platforms = [colony.base.plugin_system.IRON_PYTHON_ENVIRONMENT]
-    attributes = {"build_automation_file_path" : "$base{plugin_directory}/dummy/windows_forms_label/resources/baf.xml"}
-    capabilities = ["dummy_windows_forms_label", "build_automation_item"]
-    capabilities_allowed = []
-    dependencies = []
-    events_handled = []
-    events_registrable = []
-    main_modules = ["dummy.windows_forms_label.dummy_windows_forms_label_system"]
+    platforms = [
+        colony.base.plugin_system.IRON_PYTHON_ENVIRONMENT
+    ]
+    attributes = {
+        "build_automation_file_path" : "$base{plugin_directory}/dummy/windows_forms_label/resources/baf.xml"
+    }
+    capabilities = [
+        "dummy_windows_forms_label",
+        "build_automation_item"
+    ]
+    main_modules = [
+        "dummy.windows_forms_label.dummy_windows_forms_label_system"
+    ]
 
     dummy_windows_forms_label = None
+    """ The dummy windows forms label """
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)

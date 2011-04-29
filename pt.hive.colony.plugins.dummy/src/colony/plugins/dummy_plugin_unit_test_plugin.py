@@ -51,16 +51,22 @@ class DummyPluginUnitTestPlugin(colony.base.plugin_system.Plugin):
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     loading_type = colony.base.plugin_system.EAGER_LOADING_TYPE
-    platforms = [colony.base.plugin_system.CPYTHON_ENVIRONMENT]
-    attributes = {"build_automation_file_path" : "$base{plugin_directory}/dummy/plugin_unit_test/resources/baf.xml"}
-    capabilities = ["plugin_test_case_bundle", "build_automation_item"]
-    capabilities_allowed = []
-    dependencies = []
-    events_handled = []
-    events_registrable = []
-    main_modules = ["dummy.plugin_unit_test.dummy_plugin_unit_test_system"]
+    platforms = [
+        colony.base.plugin_system.CPYTHON_ENVIRONMENT
+    ]
+    attributes = {
+        "build_automation_file_path" : "$base{plugin_directory}/dummy/plugin_unit_test/resources/baf.xml"
+    }
+    capabilities = [
+        "plugin_test_case_bundle",
+        "build_automation_item"
+    ]
+    main_modules = [
+        "dummy.plugin_unit_test.dummy_plugin_unit_test_system"
+    ]
 
     dummy_plugin_unit_test = None
+    """ The dummy plugin unit test """
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)

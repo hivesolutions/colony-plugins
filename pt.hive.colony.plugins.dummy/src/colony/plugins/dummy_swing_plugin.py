@@ -51,16 +51,22 @@ class DummySwingPlugin(colony.base.plugin_system.Plugin):
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     loading_type = colony.base.plugin_system.EAGER_LOADING_TYPE
-    platforms = [colony.base.plugin_system.JYTHON_ENVIRONMENT]
-    attributes = {"build_automation_file_path" : "$base{plugin_directory}/dummy/swing/resources/baf.xml"}
-    capabilities = ["dummy_swing", "build_automation_item"]
-    capabilities_allowed = []
-    dependencies = []
-    events_handled = []
-    events_registrable = []
-    main_modules = ["dummy.swing.dummy_swing_system"]
+    platforms = [
+        colony.base.plugin_system.JYTHON_ENVIRONMENT
+    ]
+    attributes = {
+        "build_automation_file_path" : "$base{plugin_directory}/dummy/swing/resources/baf.xml"
+    }
+    capabilities = [
+        "dummy_swing",
+        "build_automation_item"
+    ]
+    main_modules = [
+        "dummy.swing.dummy_swing_system"
+    ]
 
     dummy_swing = None
+    """ The dummy swing """
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
@@ -70,10 +76,14 @@ class DummySwingPlugin(colony.base.plugin_system.Plugin):
         global dummy
         import dummy.swing.dummy_swing_system
         self.dummy_swing = dummy.swing.dummy_swing_system.DummySwing(self)
+
+        # starts the dummy swing
         self.dummy_swing.start()
 
     def unload_plugin(self):
         colony.base.plugin_system.Plugin.unload_plugin(self)
+
+        # stops the dummy swing
         self.dummy_swing.stop()
 
     def end_unload_plugin(self):

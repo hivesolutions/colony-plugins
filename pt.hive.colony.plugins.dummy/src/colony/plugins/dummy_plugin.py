@@ -51,18 +51,34 @@ class DummyPlugin(colony.base.plugin_system.Plugin):
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     loading_type = colony.base.plugin_system.EAGER_LOADING_TYPE
-    platforms = [colony.base.plugin_system.CPYTHON_ENVIRONMENT,
-                 colony.base.plugin_system.JYTHON_ENVIRONMENT,
-                 colony.base.plugin_system.IRON_PYTHON_ENVIRONMENT]
-    attributes = {"build_automation_file_path" : "$base{plugin_directory}/dummy/dummy/resources/baf.xml"}
-    capabilities = ["dummy_capability", "build_automation_item"]
-    capabilities_allowed = ["dummy_base_1_capability", "dummy_base_2_capability"]
-    dependencies = []
-    events_handled = ["dummy_event"]
-    events_registrable = ["dummy_base_1_event"]
-    main_modules = ["dummy.dummy.dummy_system"]
+    platforms = [
+        colony.base.plugin_system.CPYTHON_ENVIRONMENT,
+        colony.base.plugin_system.JYTHON_ENVIRONMENT,
+        colony.base.plugin_system.IRON_PYTHON_ENVIRONMENT
+    ]
+    attributes = {
+        "build_automation_file_path" : "$base{plugin_directory}/dummy/dummy/resources/baf.xml"
+    }
+    capabilities = [
+        "dummy_capability",
+        "build_automation_item"
+    ]
+    capabilities_allowed = [
+        "dummy_base_1_capability",
+        "dummy_base_2_capability"
+    ]
+    events_handled = [
+        "dummy_event"
+    ]
+    events_registrable = [
+        "dummy_base_1_event"
+    ]
+    main_modules = [
+        "dummy.dummy.dummy_system"
+    ]
 
     dummy = None
+    """ The dummy """
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)

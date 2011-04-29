@@ -51,18 +51,24 @@ class DummyEnglishDictionaryPlugin(colony.base.plugin_system.Plugin):
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     loading_type = colony.base.plugin_system.EAGER_LOADING_TYPE
-    platforms = [colony.base.plugin_system.CPYTHON_ENVIRONMENT,
-                 colony.base.plugin_system.JYTHON_ENVIRONMENT,
-                 colony.base.plugin_system.IRON_PYTHON_ENVIRONMENT]
-    attributes = {"build_automation_file_path" : "$base{plugin_directory}/dummy/english_dictionary/resources/baf.xml"}
-    capabilities = ["translation_engine", "build_automation_item"]
-    capabilities_allowed = []
-    dependencies = []
-    events_handled = []
-    events_registrable = []
-    main_modules = ["dummy.english_dictionary.dummy_english_dictionary_system"]
+    platforms = [
+        colony.base.plugin_system.CPYTHON_ENVIRONMENT,
+        colony.base.plugin_system.JYTHON_ENVIRONMENT,
+        colony.base.plugin_system.IRON_PYTHON_ENVIRONMENT
+    ]
+    attributes = {
+        "build_automation_file_path" : "$base{plugin_directory}/dummy/english_dictionary/resources/baf.xml"
+    }
+    capabilities = [
+        "translation_engine",
+        "build_automation_item"
+    ]
+    main_modules = [
+        "dummy.english_dictionary.dummy_english_dictionary_system"
+    ]
 
     dummy_english_dictionary = None
+    """ The dummy english dictionary """
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)

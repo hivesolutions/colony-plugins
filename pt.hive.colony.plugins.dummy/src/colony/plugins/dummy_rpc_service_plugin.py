@@ -52,16 +52,22 @@ class DummyRpcServicePlugin(colony.base.plugin_system.Plugin):
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     loading_type = colony.base.plugin_system.LAZY_LOADING_TYPE
-    platforms = [colony.base.plugin_system.CPYTHON_ENVIRONMENT]
-    attributes = {"build_automation_file_path" : "$base{plugin_directory}/dummy/rpc_service/resources/baf.xml"}
-    capabilities = ["rpc_service", "build_automation_item"]
-    capabilities_allowed = []
-    dependencies = []
-    events_handled = []
-    events_registrable = []
-    main_modules = ["dummy.rpc_service.dummy_rpc_service_system"]
+    platforms = [
+        colony.base.plugin_system.CPYTHON_ENVIRONMENT
+    ]
+    attributes = {
+        "build_automation_file_path" : "$base{plugin_directory}/dummy/rpc_service/resources/baf.xml"
+    }
+    capabilities = [
+        "rpc_service",
+        "build_automation_item"
+    ]
+    main_modules = [
+        "dummy.rpc_service.dummy_rpc_service_system"
+    ]
 
     dummy_rpc_service = None
+    """ The dummy rpc service """
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)

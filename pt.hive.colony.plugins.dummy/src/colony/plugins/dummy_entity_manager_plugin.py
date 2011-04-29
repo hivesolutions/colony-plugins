@@ -52,28 +52,40 @@ class DummyEntityManagerPlugin(colony.base.plugin_system.Plugin):
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     loading_type = colony.base.plugin_system.EAGER_LOADING_TYPE
-    platforms = [colony.base.plugin_system.CPYTHON_ENVIRONMENT]
-    attributes = {"build_automation_file_path" : "$base{plugin_directory}/dummy/entity_manager/resources/baf.xml"}
-    capabilities = ["dummy_entity_manager", "build_automation_item"]
-    capabilities_allowed = []
-    dependencies = [colony.base.plugin_system.PluginDependency(
-                    "pt.hive.colony.plugins.resources.resource_manager", "1.0.0"),
-                    colony.base.plugin_system.PluginDependency(
-                    "pt.hive.colony.plugins.data.entity_manager", "1.0.0"),
-                    colony.base.plugin_system.PluginDependency(
-                    "pt.hive.colony.plugins.business.helper", "1.0.0"),
-                    colony.base.plugin_system.PluginDependency(
-                    "pt.hive.colony.plugins.business.dummy.entity", "1.0.0")]
-    events_handled = []
-    events_registrable = []
-    main_modules = ["dummy.entity_manager.dummy_entity_manager_system"]
+    platforms = [
+        colony.base.plugin_system.CPYTHON_ENVIRONMENT
+    ]
+    attributes = {
+        "build_automation_file_path" : "$base{plugin_directory}/dummy/entity_manager/resources/baf.xml"
+    }
+    capabilities = [
+        "dummy_entity_manager",
+        "build_automation_item"
+    ]
+    dependencies = [
+        colony.base.plugin_system.PluginDependency("pt.hive.colony.plugins.resources.resource_manager", "1.0.0"),
+        colony.base.plugin_system.PluginDependency("pt.hive.colony.plugins.data.entity_manager", "1.0.0"),
+        colony.base.plugin_system.PluginDependency("pt.hive.colony.plugins.business.helper", "1.0.0"),
+        colony.base.plugin_system.PluginDependency("pt.hive.colony.plugins.business.dummy.entity", "1.0.0")
+    ]
+    main_modules = [
+        "dummy.entity_manager.dummy_entity_manager_system"
+    ]
 
     dummy_entity_manager = None
+    """ The dummy entity manager """
 
     resource_manager_plugin = None
+    """ The resource manager plugin """
+
     entity_manager_plugin = None
+    """ The entity manager plugin """
+
     business_helper_plugin = None
+    """ The business helper plugin """
+
     business_dummy_entity_plugin = None
+    """ The business dummy entity plugin """
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)

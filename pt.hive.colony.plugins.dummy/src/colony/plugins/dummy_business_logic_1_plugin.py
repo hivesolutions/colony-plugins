@@ -52,25 +52,36 @@ class DummyBusinessLogic1Plugin(colony.base.plugin_system.Plugin):
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     loading_type = colony.base.plugin_system.EAGER_LOADING_TYPE
-    platforms = [colony.base.plugin_system.CPYTHON_ENVIRONMENT]
-    attributes = {"build_automation_file_path" : "$base{plugin_directory}/dummy/business_logic_1/resources/baf.xml"}
-    capabilities = ["dummy_business_logic_1", "build_automation_item"]
-    capabilities_allowed = []
-    dependencies = [colony.base.plugin_system.PluginDependency(
-                    "pt.hive.colony.plugins.resources.resource_manager", "1.0.0"),
-                    colony.base.plugin_system.PluginDependency(
-                    "pt.hive.colony.plugins.business.session_manager", "1.0.0"),
-                    colony.base.plugin_system.PluginDependency(
-                    "pt.hive.colony.plugins.business.helper", "1.0.0")]
-    events_handled = []
-    events_registrable = []
-    main_modules = ["dummy.business_logic_1.dummy_business_logic_1_system"]
+    platforms = [
+        colony.base.plugin_system.CPYTHON_ENVIRONMENT
+    ]
+    attributes = {
+        "build_automation_file_path" : "$base{plugin_directory}/dummy/business_logic_1/resources/baf.xml"
+    }
+    capabilities = [
+        "dummy_business_logic_1",
+        "build_automation_item"
+    ]
+    dependencies = [
+        colony.base.plugin_system.PluginDependency("pt.hive.colony.plugins.resources.resource_manager", "1.0.0"),
+        colony.base.plugin_system.PluginDependency("pt.hive.colony.plugins.business.session_manager", "1.0.0"),
+        colony.base.plugin_system.PluginDependency("pt.hive.colony.plugins.business.helper", "1.0.0")
+    ]
+    main_modules = [
+        "dummy.business_logic_1.dummy_business_logic_1_system"
+    ]
 
     dummy_business_logic_1 = None
+    """ The dummy business logic 1 """
 
     resource_manager_plugin = None
+    """ The resource manager plugin """
+
     business_session_manager_plugin = None
+    """ The business session manager plugin """
+
     business_helper_plugin = None
+    """ The business helper plugin """
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)

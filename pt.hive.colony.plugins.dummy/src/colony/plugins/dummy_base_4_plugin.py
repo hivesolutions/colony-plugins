@@ -52,21 +52,34 @@ class DummyBase4Plugin(colony.base.plugin_system.Plugin):
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     loading_type = colony.base.plugin_system.EAGER_LOADING_TYPE
-    platforms = [colony.base.plugin_system.CPYTHON_ENVIRONMENT,
-                 colony.base.plugin_system.JYTHON_ENVIRONMENT,
-                 colony.base.plugin_system.IRON_PYTHON_ENVIRONMENT]
-    attributes = {"build_automation_file_path" : "$base{plugin_directory}/dummy/base_4/resources/baf.xml"}
-    capabilities = ["dummy_base_4_capability", "task_information", "build_automation_item"]
-    capabilities_allowed = []
-    dependencies = [colony.base.plugin_system.PluginDependency(
-                    "pt.hive.colony.plugins.main.tasks.task_manager", "1.0.0")]
-    events_handled = ["task_information_changed"]
-    events_registrable = []
-    main_modules = ["dummy.base_4.dummy_base_4_system"]
+    platforms = [
+        colony.base.plugin_system.CPYTHON_ENVIRONMENT,
+        colony.base.plugin_system.JYTHON_ENVIRONMENT,
+        colony.base.plugin_system.IRON_PYTHON_ENVIRONMENT
+    ]
+    attributes = {
+        "build_automation_file_path" : "$base{plugin_directory}/dummy/base_4/resources/baf.xml"
+    }
+    capabilities = [
+        "dummy_base_4_capability",
+        "task_information",
+        "build_automation_item"
+    ]
+    dependencies = [
+        colony.base.plugin_system.PluginDependency("pt.hive.colony.plugins.main.tasks.task_manager", "1.0.0")
+    ]
+    events_handled = [
+        "task_information_changed"
+    ]
+    main_modules = [
+        "dummy.base_4.dummy_base_4_system"
+    ]
 
     dummy_base_4 = None
+    """ The dummy base 4 """
 
     task_manager_plugin = None
+    """ The task manager plugin """
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
