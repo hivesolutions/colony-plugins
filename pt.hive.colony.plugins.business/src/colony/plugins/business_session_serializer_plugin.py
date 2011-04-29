@@ -52,17 +52,24 @@ class BusinessSessionSerializerPlugin(colony.base.plugin_system.Plugin):
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     loading_type = colony.base.plugin_system.EAGER_LOADING_TYPE
-    platforms = [colony.base.plugin_system.CPYTHON_ENVIRONMENT]
-    attributes = {"build_automation_file_path" : "$base{plugin_directory}/business/session_serializer/resources/baf.xml"}
-    capabilities = ["business_session_serializer", "rpc_service", "build_automation_item"]
-    capabilities_allowed = []
-    dependencies = []
-    events_handled = []
-    events_registrable = []
-    main_modules = ["business.session_serializer.business_session_serializer_exceptions",
-                    "business.session_serializer.business_session_serializer_system"]
+    platforms = [
+        colony.base.plugin_system.CPYTHON_ENVIRONMENT
+    ]
+    attributes = {
+        "build_automation_file_path" : "$base{plugin_directory}/business/session_serializer/resources/baf.xml"
+    }
+    capabilities = [
+        "business_session_serializer",
+        "rpc_service",
+        "build_automation_item"
+    ]
+    main_modules = [
+        "business.session_serializer.business_session_serializer_exceptions",
+        "business.session_serializer.business_session_serializer_system"
+    ]
 
     business_session_serializer = None
+    """ The business session serializer """
 
     @colony.base.decorators.load_plugin("pt.hive.colony.plugins.business.session_serializer", "1.0.0")
     def load_plugin(self):

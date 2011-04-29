@@ -51,21 +51,40 @@ class BusinessHelperPlugin(colony.base.plugin_system.Plugin):
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     loading_type = colony.base.plugin_system.EAGER_LOADING_TYPE
-    platforms = [colony.base.plugin_system.CPYTHON_ENVIRONMENT]
-    attributes = {"build_automation_file_path" : "$base{plugin_directory}/business/helper/resources/baf.xml"}
-    capabilities = ["business_helper", "build_automation_item"]
-    capabilities_allowed = ["entity", "entity_bundle", "business_logic", "business_logic_bundle"]
-    dependencies = []
-    events_handled = []
-    events_registrable = []
-    main_modules = ["business.helper.business_helper_system"]
+    platforms = [
+        colony.base.plugin_system.CPYTHON_ENVIRONMENT
+    ]
+    attributes = {
+        "build_automation_file_path" : "$base{plugin_directory}/business/helper/resources/baf.xml"
+    }
+    capabilities = [
+        "business_helper",
+        "build_automation_item"
+    ]
+    capabilities_allowed = [
+        "entity",
+        "entity_bundle",
+        "business_logic",
+        "business_logic_bundle"
+    ]
+    main_modules = [
+        "business.helper.business_helper_system"
+    ]
 
     business_helper = None
+    """ The business helper """
 
     entity_plugins = []
+    """ The entity plugins """
+
     entity_bundle_plugins = []
+    """ The entity bundle plugins """
+
     business_logic_plugins = []
+    """ The business logic plugins """
+
     business_logic_bundle_plugins = []
+    """ The business logic bundle plugins """
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)

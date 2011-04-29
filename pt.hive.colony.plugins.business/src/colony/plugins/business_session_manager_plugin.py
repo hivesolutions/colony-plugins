@@ -52,28 +52,45 @@ class BusinessSessionManagerPlugin(colony.base.plugin_system.Plugin):
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     loading_type = colony.base.plugin_system.EAGER_LOADING_TYPE
-    platforms = [colony.base.plugin_system.CPYTHON_ENVIRONMENT]
-    attributes = {"build_automation_file_path" : "$base{plugin_directory}/business/session_manager/resources/baf.xml"}
-    capabilities = ["business_session_manager", "build_automation_item"]
-    capabilities_allowed = ["business_session_serializer", "business_logic", "business_logic_bundle"]
-    dependencies = [colony.base.plugin_system.PluginDependency(
-                    "pt.hive.colony.plugins.data.entity_manager", "1.0.0"),
-                    colony.base.plugin_system.PluginDependency(
-                    "pt.hive.colony.plugins.main.pool.simple_pool_manager", "1.0.0"),
-                    colony.base.plugin_system.PluginDependency(
-                    "pt.hive.colony.plugins.misc.random", "1.0.0")]
-    events_handled = []
-    events_registrable = []
-    main_modules = ["business.session_manager.business_session_manager_exceptions",
-                    "business.session_manager.business_session_manager_system"]
+    platforms = [
+        colony.base.plugin_system.CPYTHON_ENVIRONMENT
+    ]
+    attributes = {
+        "build_automation_file_path" : "$base{plugin_directory}/business/session_manager/resources/baf.xml"
+    }
+    capabilities = [
+        "business_session_manager",
+        "build_automation_item"
+    ]
+    capabilities_allowed = [
+        "business_session_serializer",
+        "business_logic",
+        "business_logic_bundle"
+    ]
+    dependencies = [
+        colony.base.plugin_system.PluginDependency("pt.hive.colony.plugins.data.entity_manager", "1.0.0"),
+        colony.base.plugin_system.PluginDependency("pt.hive.colony.plugins.main.pool.simple_pool_manager", "1.0.0"),
+        colony.base.plugin_system.PluginDependency("pt.hive.colony.plugins.misc.random", "1.0.0")
+    ]
+    main_modules = [
+        "business.session_manager.business_session_manager_exceptions",
+        "business.session_manager.business_session_manager_system"
+    ]
 
     business_session_manager = None
+    """ The business session manager """
 
     business_session_serializer_plugins = []
+    """ The business session serializer plugins """
 
     entity_manager_plugin = None
+    """ The entity manager plugin """
+
     simple_pool_manager_plugin = None
+    """ The simple pool manager plugin """
+
     random_plugin = None
+    """ The random plugin """
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
