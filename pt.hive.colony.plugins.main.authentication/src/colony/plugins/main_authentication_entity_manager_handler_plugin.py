@@ -51,17 +51,23 @@ class MainAuthenticationEntityManagerHandlerPlugin(colony.base.plugin_system.Plu
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     loading_type = colony.base.plugin_system.EAGER_LOADING_TYPE
-    platforms = [colony.base.plugin_system.CPYTHON_ENVIRONMENT]
-    attributes = {"build_automation_file_path" : "$base{plugin_directory}/main_authentication_entity_manager_handler/entity_manager_handler/resources/baf.xml"}
-    capabilities = ["authentication_handler", "build_automation_item"]
-    capabilities_allowed = []
-    dependencies = []
-    events_handled = []
-    events_registrable = []
-    main_modules = ["main_authentication_entity_manager_handler.entity_manager_handler.main_authentication_entity_manager_handler_exceptions",
-                    "main_authentication_entity_manager_handler.entity_manager_handler.main_authentication_entity_manager_handler_system"]
+    platforms = [
+        colony.base.plugin_system.CPYTHON_ENVIRONMENT
+    ]
+    attributes = {
+        "build_automation_file_path" : "$base{plugin_directory}/main_authentication_entity_manager_handler/entity_manager_handler/resources/baf.xml"
+    }
+    capabilities = [
+        "authentication_handler",
+        "build_automation_item"
+    ]
+    main_modules = [
+        "main_authentication_entity_manager_handler.entity_manager_handler.main_authentication_entity_manager_handler_exceptions",
+        "main_authentication_entity_manager_handler.entity_manager_handler.main_authentication_entity_manager_handler_system"
+    ]
 
     main_authentication_entity_manager_handler = None
+    """ The main authentication entity manager handler """
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)

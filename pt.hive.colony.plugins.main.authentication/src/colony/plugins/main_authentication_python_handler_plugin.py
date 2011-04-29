@@ -51,8 +51,10 @@ class MainAuthenticationPythonHandlerPlugin(colony.base.plugin_system.Plugin):
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     loading_type = colony.base.plugin_system.EAGER_LOADING_TYPE
-    platforms = [colony.base.plugin_system.CPYTHON_ENVIRONMENT,
-                 colony.base.plugin_system.JYTHON_ENVIRONMENT]
+    platforms = [
+        colony.base.plugin_system.CPYTHON_ENVIRONMENT,
+        colony.base.plugin_system.JYTHON_ENVIRONMENT
+    ]
     attributes = {
         "build_automation_file_path" : "$base{plugin_directory}/main_authentication_python_handler/python_handler/resources/baf.xml",
         "configuration_models_bundle" : {
@@ -63,16 +65,19 @@ class MainAuthenticationPythonHandlerPlugin(colony.base.plugin_system.Plugin):
             }
         }
     }
-    capabilities = ["authentication_handler", "configuration_model_provider", "build_automation_item"]
-    capabilities_allowed = []
-    dependencies = []
-    events_handled = []
-    events_registrable = []
-    main_modules = ["main_authentication_python_handler.python_handler.configuration.authentication_configuration",
-                    "main_authentication_python_handler.python_handler.main_authentication_python_handler_exceptions",
-                    "main_authentication_python_handler.python_handler.main_authentication_python_handler_system"]
+    capabilities = [
+        "authentication_handler",
+        "configuration_model_provider",
+        "build_automation_item"
+    ]
+    main_modules = [
+        "main_authentication_python_handler.python_handler.configuration.authentication_configuration",
+        "main_authentication_python_handler.python_handler.main_authentication_python_handler_exceptions",
+        "main_authentication_python_handler.python_handler.main_authentication_python_handler_system"
+    ]
 
     main_authentication_python_handler = None
+    """ The main authentication python handler """
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
