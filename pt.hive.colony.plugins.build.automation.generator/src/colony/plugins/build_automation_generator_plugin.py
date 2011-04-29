@@ -52,19 +52,29 @@ class BuildAutomationGeneratorPlugin(colony.base.plugin_system.Plugin):
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     loading_type = colony.base.plugin_system.EAGER_LOADING_TYPE
-    platforms = [colony.base.plugin_system.CPYTHON_ENVIRONMENT]
-    attributes = {"build_automation_file_path" : "$base{plugin_directory}/build_automation_generator/generator/resources/baf.xml"}
-    capabilities = ["build_automation_generator", "build_automation_item"]
-    capabilities_allowed = ["build_automation_generator_handler"]
-    dependencies = []
-    events_handled = []
-    events_registrable = []
-    main_modules = ["build_automation_generator.generator.build_automation_generator_exceptions",
-                    "build_automation_generator.generator.build_automation_generator_system"]
+    platforms = [
+        colony.base.plugin_system.CPYTHON_ENVIRONMENT
+    ]
+    attributes = {
+        "build_automation_file_path" : "$base{plugin_directory}/build_automation_generator/generator/resources/baf.xml"
+    }
+    capabilities = [
+        "build_automation_generator",
+        "build_automation_item"
+    ]
+    capabilities_allowed = [
+        "build_automation_generator_handler"
+    ]
+    main_modules = [
+        "build_automation_generator.generator.build_automation_generator_exceptions",
+        "build_automation_generator.generator.build_automation_generator_system"
+    ]
 
     build_automation_generator = None
+    """ The build automation generator """
 
     build_automation_generator_handler_plugins = []
+    """ The build automation generator handler plugins """
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
