@@ -52,15 +52,20 @@ class DataConverterIoAdapterXmlPlugin(colony.base.plugin_system.Plugin):
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     loading_type = colony.base.plugin_system.EAGER_LOADING_TYPE
-    platforms = [colony.base.plugin_system.CPYTHON_ENVIRONMENT]
-    attributes = {"build_automation_file_path" : "$base{plugin_directory}/data_converter_io_adapter_xml/io_adapter_xml/resources/baf.xml"}
-    capabilities = ["data_converter_io_adapter.xml", "build_automation_item"]
-    capabilities_allowed = []
-    dependencies = []
-    events_handled = []
-    events_registrable = []
-    main_modules = ["data_converter_io_adapter_xml.io_adapter_xml.data_converter_io_adapter_xml_exceptions",
-                    "data_converter_io_adapter_xml.io_adapter_xml.data_converter_io_adapter_xml_system"]
+    platforms = [
+        colony.base.plugin_system.CPYTHON_ENVIRONMENT
+    ]
+    attributes = {
+        "build_automation_file_path" : "$base{plugin_directory}/data_converter_io_adapter_xml/io_adapter_xml/resources/baf.xml"
+    }
+    capabilities = [
+        "data_converter_io_adapter.xml",
+        "build_automation_item"
+    ]
+    main_modules = [
+        "data_converter_io_adapter_xml.io_adapter_xml.data_converter_io_adapter_xml_exceptions",
+        "data_converter_io_adapter_xml.io_adapter_xml.data_converter_io_adapter_xml_system"
+    ]
 
     io_adapter_xml = None
     """ The intermediate structure xml input output adapter """
@@ -79,7 +84,6 @@ class DataConverterIoAdapterXmlPlugin(colony.base.plugin_system.Plugin):
 
     def unload_plugin(self):
         colony.base.plugin_system.Plugin.unload_plugin(self)
-        self.io_adapter_xml = None
 
     def end_unload_plugin(self):
         colony.base.plugin_system.Plugin.end_unload_plugin(self)

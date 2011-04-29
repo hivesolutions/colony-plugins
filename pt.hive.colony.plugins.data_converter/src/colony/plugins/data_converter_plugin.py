@@ -52,29 +52,39 @@ class DataConverterPlugin(colony.base.plugin_system.Plugin):
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     loading_type = colony.base.plugin_system.EAGER_LOADING_TYPE
-    platforms = [colony.base.plugin_system.CPYTHON_ENVIRONMENT]
-    attributes = {"build_automation_file_path" : "$base{plugin_directory}/data_converter/data_converter/resources/baf.xml"}
-    capabilities = ["console_command_extension", "build_automation_item"]
-    capabilities_allowed = ["data_converter_io_adapter",
-                            "data_converter_configuration"]
-    dependencies = [colony.base.plugin_system.PluginDependency(
-                    "pt.hive.colony.plugins.resources.resource_manager", "1.0.0")]
-    events_handled = []
-    events_registrable = []
-    main_modules = ["data_converter.data_converter.console_data_converter",
-                    "data_converter.data_converter.data_converter_configuration",
-                    "data_converter.data_converter.data_converter_exceptions",
-                    "data_converter.data_converter.data_converter_system",
-                    "data_converter.data_converter.generic_attribute_handlers",
-                    "data_converter.data_converter.generic_attribute_validators",
-                    "data_converter.data_converter.generic_connectors",
-                    "data_converter.data_converter.generic_entity_handlers",
-                    "data_converter.data_converter.generic_entity_validators",
-                    "data_converter.data_converter.generic_input_entity_indexers",
-                    "data_converter.data_converter.generic_output_entity_indexers",
-                    "data_converter.data_converter.generic_post_attribute_mapping_handlers",
-                    "data_converter.data_converter.generic_post_conversion_handlers",
-                    "data_converter.data_converter.intermediate_structure"]
+    platforms = [
+        colony.base.plugin_system.CPYTHON_ENVIRONMENT
+    ]
+    attributes = {
+        "build_automation_file_path" : "$base{plugin_directory}/data_converter/data_converter/resources/baf.xml"
+    }
+    capabilities = [
+        "console_command_extension",
+        "build_automation_item"
+    ]
+    capabilities_allowed = [
+        "data_converter_io_adapter",
+        "data_converter_configuration"
+    ]
+    dependencies = [
+        colony.base.plugin_system.PluginDependency("pt.hive.colony.plugins.resources.resource_manager", "1.0.0")
+    ]
+    main_modules = [
+        "data_converter.data_converter.console_data_converter",
+        "data_converter.data_converter.data_converter_configuration",
+        "data_converter.data_converter.data_converter_exceptions",
+        "data_converter.data_converter.data_converter_system",
+        "data_converter.data_converter.generic_attribute_handlers",
+        "data_converter.data_converter.generic_attribute_validators",
+        "data_converter.data_converter.generic_connectors",
+        "data_converter.data_converter.generic_entity_handlers",
+        "data_converter.data_converter.generic_entity_validators",
+        "data_converter.data_converter.generic_input_entity_indexers",
+        "data_converter.data_converter.generic_output_entity_indexers",
+        "data_converter.data_converter.generic_post_attribute_mapping_handlers",
+        "data_converter.data_converter.generic_post_conversion_handlers",
+        "data_converter.data_converter.intermediate_structure"
+    ]
 
     data_converter = None
     """ Data converter backend """
@@ -108,10 +118,6 @@ class DataConverterPlugin(colony.base.plugin_system.Plugin):
 
     def unload_plugin(self):
         colony.base.plugin_system.Plugin.unload_plugin(self)
-        self.data_converter = None
-        self.io_adapter_plugins = []
-        self.configuration_plugins = []
-        self.resource_manager_plugin = None
 
     def end_unload_plugin(self):
         colony.base.plugin_system.Plugin.end_unload_plugin(self)

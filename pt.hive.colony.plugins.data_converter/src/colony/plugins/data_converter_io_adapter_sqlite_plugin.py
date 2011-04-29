@@ -52,15 +52,20 @@ class DataConverterIoAdapterSqlitePlugin(colony.base.plugin_system.Plugin):
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     loading_type = colony.base.plugin_system.EAGER_LOADING_TYPE
-    platforms = [colony.base.plugin_system.CPYTHON_ENVIRONMENT]
-    attributes = {"build_automation_file_path" : "$base{plugin_directory}/data_converter_io_adapter_sqlite/io_adapter_sqlite/resources/baf.xml"}
-    capabilities = ["data_converter_io_adapter.sqlite", "build_automation_item"]
-    capabilities_allowed = []
-    dependencies = []
-    events_handled = []
-    events_registrable = []
-    main_modules = ["data_converter_io_adapter_sqlite.io_adapter_sqlite.data_converter_io_adapter_sqlite_exceptions",
-                    "data_converter_io_adapter_sqlite.io_adapter_sqlite.data_converter_io_adapter_sqlite_system"]
+    platforms = [
+        colony.base.plugin_system.CPYTHON_ENVIRONMENT
+    ]
+    attributes = {
+        "build_automation_file_path" : "$base{plugin_directory}/data_converter_io_adapter_sqlite/io_adapter_sqlite/resources/baf.xml"
+    }
+    capabilities = [
+        "data_converter_io_adapter.sqlite",
+        "build_automation_item"
+    ]
+    main_modules = [
+        "data_converter_io_adapter_sqlite.io_adapter_sqlite.data_converter_io_adapter_sqlite_exceptions",
+        "data_converter_io_adapter_sqlite.io_adapter_sqlite.data_converter_io_adapter_sqlite_system"
+    ]
 
     io_adapter_sqlite = None
     """ The intermediate structure sqlite input output adapter """
@@ -79,7 +84,6 @@ class DataConverterIoAdapterSqlitePlugin(colony.base.plugin_system.Plugin):
 
     def unload_plugin(self):
         colony.base.plugin_system.Plugin.unload_plugin(self)
-        self.io_adapter_sqlite = None
 
     def end_unload_plugin(self):
         colony.base.plugin_system.Plugin.end_unload_plugin(self)

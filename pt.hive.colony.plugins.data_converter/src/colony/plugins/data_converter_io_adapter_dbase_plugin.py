@@ -52,21 +52,26 @@ class DataConverterIoAdapterDbasePlugin(colony.base.plugin_system.Plugin):
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     loading_type = colony.base.plugin_system.EAGER_LOADING_TYPE
-    platforms = [colony.base.plugin_system.CPYTHON_ENVIRONMENT]
-    attributes = {"build_automation_file_path" : "$base{plugin_directory}/data_converter_io_adapter_dbase/io_adapter_dbase/resources/baf.xml"}
-    capabilities = ["data_converter_io_adapter.dbase", "build_automation_item"]
-    capabilities_allowed = []
-    dependencies = [colony.base.plugin_system.PackageDependency(
-                    "Win32 Extensions for Python", "dbi", "b202", "http://starship.python.net/crew/mhammond/win32"),
-                    colony.base.plugin_system.PackageDependency(
-                    "Win32 Extensions for Python", "odbc", "b202", "http://starship.python.net/crew/mhammond/win32"),
-                    colony.base.plugin_system.PackageDependency(
-                    "DBFpy", "dbfpy", "2.2.3", "http://sourceforge.net/projects/dbfpy")]
-    events_handled = []
-    events_registrable = []
-    main_modules = ["data_converter_io_adapter_dbase.io_adapter_dbase.data_converter_io_adapter_dbase_exceptions",
-                    "data_converter_io_adapter_dbase.io_adapter_dbase.data_converter_io_adapter_dbase_system",
-                    "data_converter_io_adapter_dbase.io_adapter_dbase.dbfpy_extensions"]
+    platforms = [
+        colony.base.plugin_system.CPYTHON_ENVIRONMENT
+    ]
+    attributes = {
+        "build_automation_file_path" : "$base{plugin_directory}/data_converter_io_adapter_dbase/io_adapter_dbase/resources/baf.xml"
+    }
+    capabilities = [
+        "data_converter_io_adapter.dbase",
+        "build_automation_item"
+    ]
+    dependencies = [
+        colony.base.plugin_system.PackageDependency("Win32 Extensions for Python", "dbi", "b202", "http://starship.python.net/crew/mhammond/win32"),
+        colony.base.plugin_system.PackageDependency("Win32 Extensions for Python", "odbc", "b202", "http://starship.python.net/crew/mhammond/win32"),
+        colony.base.plugin_system.PackageDependency("DBFpy", "dbfpy", "2.2.3", "http://sourceforge.net/projects/dbfpy")
+    ]
+    main_modules = [
+        "data_converter_io_adapter_dbase.io_adapter_dbase.data_converter_io_adapter_dbase_exceptions",
+        "data_converter_io_adapter_dbase.io_adapter_dbase.data_converter_io_adapter_dbase_system",
+        "data_converter_io_adapter_dbase.io_adapter_dbase.dbfpy_extensions"
+    ]
 
     io_adapter_dbase = None
     """ The intermediate structure dbase input output adapter """
@@ -91,8 +96,6 @@ class DataConverterIoAdapterDbasePlugin(colony.base.plugin_system.Plugin):
 
     def unload_plugin(self):
         colony.base.plugin_system.Plugin.unload_plugin(self)
-        self.io_adapter_dbase = None
-        self.dbfpy_extensions = None
 
     def end_unload_plugin(self):
         colony.base.plugin_system.Plugin.end_unload_plugin(self)
