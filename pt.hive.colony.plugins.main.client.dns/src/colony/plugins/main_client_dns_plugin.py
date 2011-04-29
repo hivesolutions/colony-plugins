@@ -52,21 +52,30 @@ class MainClientDnsPlugin(colony.base.plugin_system.Plugin):
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     loading_type = colony.base.plugin_system.EAGER_LOADING_TYPE
-    platforms = [colony.base.plugin_system.CPYTHON_ENVIRONMENT,
-                 colony.base.plugin_system.JYTHON_ENVIRONMENT]
-    attributes = {"build_automation_file_path" : "$base{plugin_directory}/main_client_dns/dns/resources/baf.xml"}
-    capabilities = ["client.dns", "build_automation_item"]
-    capabilities_allowed = []
-    dependencies = [colony.base.plugin_system.PluginDependency(
-                    "pt.hive.colony.plugins.main.client.utils", "1.0.0")]
-    events_handled = []
-    events_registrable = []
-    main_modules = ["main_client_dns.dns.main_client_dns_exceptions",
-                    "main_client_dns.dns.main_client_dns_system"]
+    platforms = [
+        colony.base.plugin_system.CPYTHON_ENVIRONMENT,
+        colony.base.plugin_system.JYTHON_ENVIRONMENT
+    ]
+    attributes = {
+        "build_automation_file_path" : "$base{plugin_directory}/main_client_dns/dns/resources/baf.xml"
+    }
+    capabilities = [
+        "client.dns",
+        "build_automation_item"
+    ]
+    dependencies = [
+        colony.base.plugin_system.PluginDependency("pt.hive.colony.plugins.main.client.utils", "1.0.0")
+    ]
+    main_modules = [
+        "main_client_dns.dns.main_client_dns_exceptions",
+        "main_client_dns.dns.main_client_dns_system"
+    ]
 
     main_client_dns = None
+    """ The main client dns """
 
     main_client_utils_plugin = None
+    """ The main client utils plugin """
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
