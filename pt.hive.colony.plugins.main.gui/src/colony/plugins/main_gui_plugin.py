@@ -52,27 +52,45 @@ class MainGuiPlugin(colony.base.plugin_system.Plugin):
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     loading_type = colony.base.plugin_system.EAGER_LOADING_TYPE
-    platforms = [colony.base.plugin_system.CPYTHON_ENVIRONMENT]
-    attributes = {"build_automation_file_path" : "$base{plugin_directory}/main_gui/gui/resources/baf.xml"}
-    capabilities = ["main", "build_automation_item"]
-    capabilities_allowed = ["gui_manager", "gui_panel", "gui_progress_information"]
-    dependencies = [colony.base.plugin_system.PluginDependency(
-                    "pt.hive.colony.plugins.main.log", "1.0.0"),
-                    colony.base.plugin_system.PluginDependency(
-                    "pt.hive.colony.plugins.misc.bitmap_loader", "1.0.0"),
-                    colony.base.plugin_system.PackageDependency(
-                    "Wx Python", "wx", "2.8.7.x", "http://wxpython.org")]
-    events_handled = []
-    events_registrable = ["gui_widget_plugin_changed", "gui_progress_information_changed"]
-    main_modules = ["main_gui.gui.main_gui_system",
-                    "main_gui.gui.main_window",
-                    "main_gui.gui.plugin_tree",
-                    "main_gui.gui.tab_container_panel"]
+    platforms = [
+        colony.base.plugin_system.CPYTHON_ENVIRONMENT
+    ]
+    attributes = {
+        "build_automation_file_path" : "$base{plugin_directory}/main_gui/gui/resources/baf.xml"
+    }
+    capabilities = [
+        "main",
+        "build_automation_item"
+    ]
+    capabilities_allowed = [
+        "gui_manager",
+        "gui_panel",
+        "gui_progress_information"
+    ]
+    dependencies = [
+        colony.base.plugin_system.PluginDependency("pt.hive.colony.plugins.main.log", "1.0.0"),
+        colony.base.plugin_system.PluginDependency("pt.hive.colony.plugins.misc.bitmap_loader", "1.0.0"),
+        colony.base.plugin_system.PackageDependency("Wx Python", "wx", "2.8.7.x", "http://wxpython.org")
+    ]
+    events_registrable = [
+        "gui_widget_plugin_changed",
+        "gui_progress_information_changed"
+    ]
+    main_modules = [
+        "main_gui.gui.main_gui_system",
+        "main_gui.gui.main_window",
+        "main_gui.gui.plugin_tree",
+        "main_gui.gui.tab_container_panel"
+    ]
 
     main_gui = None
+    """ The main gui """
+
     application = None
+    """ The application """
 
     bitmap_loader_plugin = None
+    """ The bitmap loader plugin """
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
