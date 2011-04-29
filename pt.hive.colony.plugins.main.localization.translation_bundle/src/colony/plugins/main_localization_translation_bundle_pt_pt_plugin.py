@@ -51,16 +51,22 @@ class MainLocalizationTranslationBundlePtPtPlugin(colony.base.plugin_system.Plug
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     loading_type = colony.base.plugin_system.EAGER_LOADING_TYPE
-    platforms = [colony.base.plugin_system.CPYTHON_ENVIRONMENT]
-    attributes = {"build_automation_file_path" : "$base{plugin_directory}/main_localization_translation_bundle_pt_pt/pt_pt/resources/baf.xml"}
-    capabilities = ["localization_translation_bundle", "build_automation_item"]
-    capabilities_allowed = []
-    dependencies = []
-    events_handled = []
-    events_registrable = []
-    main_modules = ["main_localization_translation_bundle_pt_pt.pt_pt.main_localization_translation_bundle_pt_pt_system"]
+    platforms = [
+        colony.base.plugin_system.CPYTHON_ENVIRONMENT
+    ]
+    attributes = {
+        "build_automation_file_path" : "$base{plugin_directory}/main_localization_translation_bundle_pt_pt/pt_pt/resources/baf.xml"
+    }
+    capabilities = [
+        "localization_translation_bundle",
+        "build_automation_item"
+    ]
+    main_modules = [
+        "main_localization_translation_bundle_pt_pt.pt_pt.main_localization_translation_bundle_pt_pt_system"
+    ]
 
     main_localization_translation_bundle_pt_pt = None
+    """ The main localization translation bundle pt pt """
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
