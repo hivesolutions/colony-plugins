@@ -52,24 +52,33 @@ class MainConsoleInterfacePlugin(colony.base.plugin_system.Plugin):
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     loading_type = colony.base.plugin_system.EAGER_LOADING_TYPE
-    platforms = [colony.base.plugin_system.CPYTHON_ENVIRONMENT,
-                 colony.base.plugin_system.JYTHON_ENVIRONMENT,
-                 colony.base.plugin_system.IRON_PYTHON_ENVIRONMENT]
-    attributes = {"build_automation_file_path" : "$base{plugin_directory}/main_console/interface/resources/baf.xml"}
-    capabilities = ["main", "build_automation_item"]
-    capabilities_allowed = []
-    dependencies = [colony.base.plugin_system.PluginDependency(
-                    "pt.hive.colony.plugins.main.console", "1.0.0")]
-    events_handled = []
-    events_registrable = []
-    main_modules = ["main_console.interface.main_console_interface_exceptions",
-                    "main_console.interface.main_console_interface_system",
-                    "main_console.interface.main_console_interface_unix",
-                    "main_console.interface.main_console_interface_win32"]
+    platforms = [
+        colony.base.plugin_system.CPYTHON_ENVIRONMENT,
+        colony.base.plugin_system.JYTHON_ENVIRONMENT,
+        colony.base.plugin_system.IRON_PYTHON_ENVIRONMENT
+    ]
+    attributes = {
+        "build_automation_file_path" : "$base{plugin_directory}/main_console/interface/resources/baf.xml"
+    }
+    capabilities = [
+        "main",
+        "build_automation_item"
+    ]
+    dependencies = [
+        colony.base.plugin_system.PluginDependency("pt.hive.colony.plugins.main.console", "1.0.0")
+    ]
+    main_modules = [
+        "main_console.interface.main_console_interface_exceptions",
+        "main_console.interface.main_console_interface_system",
+        "main_console.interface.main_console_interface_unix",
+        "main_console.interface.main_console_interface_win32"
+    ]
 
     console_interface = None
+    """ The console interface """
 
     main_console_plugin = None
+    """ The main console plugin """
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
@@ -84,11 +93,13 @@ class MainConsoleInterfacePlugin(colony.base.plugin_system.Plugin):
     def end_load_plugin(self):
         colony.base.plugin_system.Plugin.end_load_plugin(self)
 
+        # loads the console
         self.console_interface.load_console()
 
     def unload_plugin(self):
         colony.base.plugin_system.Plugin.unload_plugin(self)
 
+        # unloads the console
         self.console_interface.unload_console()
 
     def end_unload_plugin(self):

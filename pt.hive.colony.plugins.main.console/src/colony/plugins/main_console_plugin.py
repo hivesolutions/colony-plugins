@@ -52,28 +52,45 @@ class MainConsolePlugin(colony.base.plugin_system.Plugin):
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     loading_type = colony.base.plugin_system.EAGER_LOADING_TYPE
-    platforms = [colony.base.plugin_system.CPYTHON_ENVIRONMENT,
-                 colony.base.plugin_system.JYTHON_ENVIRONMENT,
-                 colony.base.plugin_system.IRON_PYTHON_ENVIRONMENT]
-    attributes = {"build_automation_file_path" : "$base{plugin_directory}/main_console/console/resources/baf.xml"}
-    capabilities = ["main_console", "test_case", "build_automation_item"]
-    capabilities_allowed = ["_console_command_extension", "console_authentication_handler"]
-    dependencies = [colony.base.plugin_system.PluginDependency(
-                    "pt.hive.colony.plugins.main.authentication", "1.0.0")]
-    events_handled = []
-    events_registrable = []
-    main_modules = ["main_console.console.main_console_authentication",
-                    "main_console.console.main_console_exceptions",
-                    "main_console.console.main_console_interfaces",
-                    "main_console.console.main_console_system",
-                    "main_console.console.main_console_test"]
+    platforms = [
+        colony.base.plugin_system.CPYTHON_ENVIRONMENT,
+        colony.base.plugin_system.JYTHON_ENVIRONMENT,
+        colony.base.plugin_system.IRON_PYTHON_ENVIRONMENT
+    ]
+    attributes = {
+        "build_automation_file_path" : "$base{plugin_directory}/main_console/console/resources/baf.xml"
+    }
+    capabilities = [
+        "main_console",
+        "test_case",
+        "build_automation_item"
+    ]
+    capabilities_allowed = [
+        "_console_command_extension",
+        "console_authentication_handler"
+    ]
+    dependencies = [
+        colony.base.plugin_system.PluginDependency("pt.hive.colony.plugins.main.authentication", "1.0.0")
+    ]
+    main_modules = [
+        "main_console.console.main_console_authentication",
+        "main_console.console.main_console_exceptions",
+        "main_console.console.main_console_interfaces",
+        "main_console.console.main_console_system",
+        "main_console.console.main_console_test"
+    ]
 
     console = None
+    """ The console """
+
     console_test_case_class = None
+    """ The console test case class """
 
     console_command_plugins = []
+    """ The console command plugins """
 
     main_authentication_plugin = None
+    """ The main authentication plugin """
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
