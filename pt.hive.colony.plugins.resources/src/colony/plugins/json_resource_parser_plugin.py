@@ -52,19 +52,28 @@ class JsonResourceParserPlugin(colony.base.plugin_system.Plugin):
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     loading_type = colony.base.plugin_system.EAGER_LOADING_TYPE
-    platforms = [colony.base.plugin_system.CPYTHON_ENVIRONMENT]
-    attributes = {"build_automation_file_path" : "$base{plugin_directory}/resources/json_resource_parser/resources/baf.xml"}
-    capabilities = ["resource_parser", "build_automation_item"]
-    capabilities_allowed = []
-    dependencies = [colony.base.plugin_system.PluginDependency(
-                    "pt.hive.colony.plugins.misc.json", "1.0.0")]
-    events_handled = []
-    events_registrable = []
-    main_modules = ["resources.json_resource_parser.json_resource_parser_system"]
+    platforms = [
+        colony.base.plugin_system.CPYTHON_ENVIRONMENT
+    ]
+    attributes = {
+        "build_automation_file_path" : "$base{plugin_directory}/resources/json_resource_parser/resources/baf.xml"
+    }
+    capabilities = [
+        "resource_parser",
+        "build_automation_item"
+    ]
+    dependencies = [
+        colony.base.plugin_system.PluginDependency("pt.hive.colony.plugins.misc.json", "1.0.0")
+    ]
+    main_modules = [
+        "resources.json_resource_parser.json_resource_parser_system"
+    ]
 
     json_resource_parser = None
+    """ The json resource parser """
 
     json_plugin = None
+    """ The json plugin """
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
