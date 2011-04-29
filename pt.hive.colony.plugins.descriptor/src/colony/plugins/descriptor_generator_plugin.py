@@ -52,20 +52,26 @@ class DescriptorGeneratorPlugin(colony.base.plugin_system.Plugin):
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     loading_type = colony.base.plugin_system.EAGER_LOADING_TYPE
-    platforms = [colony.base.plugin_system.CPYTHON_ENVIRONMENT,
-                 colony.base.plugin_system.JYTHON_ENVIRONMENT,
-                 colony.base.plugin_system.IRON_PYTHON_ENVIRONMENT]
-    attributes = {"build_automation_file_path" : "$base{plugin_directory}/descriptor_generator/generator/resources/baf.xml"}
-    capabilities = ["_console_command_extension", "build_automation_item"]
-    capabilities_allowed = []
-    dependencies = [colony.base.plugin_system.PluginDependency(
-                    "pt.hive.colony.plugins.validation.plugin", "1.0.0"),
-                    colony.base.plugin_system.PluginDependency(
-                    "pt.hive.colony.plugins.template_engine.manager", "1.0.0")]
-    events_handled = []
-    events_registrable = []
-    main_modules = ["descriptor_generator.generator.console_descriptor_generator",
-                    "descriptor_generator.generator.descriptor_generator_system"]
+    platforms = [
+        colony.base.plugin_system.CPYTHON_ENVIRONMENT,
+        colony.base.plugin_system.JYTHON_ENVIRONMENT,
+        colony.base.plugin_system.IRON_PYTHON_ENVIRONMENT
+    ]
+    attributes = {
+        "build_automation_file_path" : "$base{plugin_directory}/descriptor_generator/generator/resources/baf.xml"
+    }
+    capabilities = [
+        "_console_command_extension",
+        "build_automation_item"
+    ]
+    dependencies = [
+        colony.base.plugin_system.PluginDependency("pt.hive.colony.plugins.validation.plugin", "1.0.0"),
+        colony.base.plugin_system.PluginDependency("pt.hive.colony.plugins.template_engine.manager", "1.0.0")
+    ]
+    main_modules = [
+        "descriptor_generator.generator.console_descriptor_generator",
+        "descriptor_generator.generator.descriptor_generator_system"
+    ]
 
     descriptor_generator = None
     """ The descriptor generator """
