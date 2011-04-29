@@ -52,19 +52,28 @@ class JavascriptManagerAutoloaderPlugin(colony.base.plugin_system.Plugin):
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     loading_type = colony.base.plugin_system.EAGER_LOADING_TYPE
-    platforms = [colony.base.plugin_system.CPYTHON_ENVIRONMENT]
-    attributes = {"build_automation_file_path" : "$base{plugin_directory}/javascript_manager/autoloader/resources/baf.xml"}
-    capabilities = ["rpc_service", "build_automation_item"]
-    capabilities_allowed = []
-    dependencies = [colony.base.plugin_system.PluginDependency(
-                    "pt.hive.colony.plugins.javascript.manager", "1.0.0")]
-    events_handled = []
-    events_registrable = []
-    main_modules = ["javascript_manager.autoloader.javascript_manager_autoloader_system"]
+    platforms = [
+        colony.base.plugin_system.CPYTHON_ENVIRONMENT
+    ]
+    attributes = {
+        "build_automation_file_path" : "$base{plugin_directory}/javascript_manager/autoloader/resources/baf.xml"
+    }
+    capabilities = [
+        "rpc_service",
+        "build_automation_item"
+    ]
+    dependencies = [
+        colony.base.plugin_system.PluginDependency("pt.hive.colony.plugins.javascript.manager", "1.0.0")
+    ]
+    main_modules = [
+        "javascript_manager.autoloader.javascript_manager_autoloader_system"
+    ]
 
     javascript_manager_autoloader = None
+    """ The javascript manager autoloader """
 
     javascript_manager_plugin = None
+    """ The javascript manager plugin """
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)

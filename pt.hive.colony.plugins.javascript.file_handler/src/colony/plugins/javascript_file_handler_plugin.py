@@ -52,25 +52,40 @@ class JavascriptFileHandlerPlugin(colony.base.plugin_system.Plugin):
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     loading_type = colony.base.plugin_system.EAGER_LOADING_TYPE
-    platforms = [colony.base.plugin_system.CPYTHON_ENVIRONMENT,
-                 colony.base.plugin_system.JYTHON_ENVIRONMENT]
-    attributes = {"build_automation_file_path" : "$base{plugin_directory}/javascript_file_handler/file_handler/resources/baf.xml"}
-    capabilities = ["javascript_file_handler", "http_python_handler", "build_automation_item"]
-    capabilities_allowed = ["javascript_handler"]
-    dependencies = [colony.base.plugin_system.PluginDependency(
-                    "pt.hive.colony.plugins.javascript.manager", "1.0.0"),
-                    colony.base.plugin_system.PluginDependency(
-                    "pt.hive.colony.plugins.format.mime", "1.0.0")]
-    events_handled = []
-    events_registrable = []
-    main_modules = ["javascript_file_handler.file_handler.javascript_file_handler_system"]
+    platforms = [
+        colony.base.plugin_system.CPYTHON_ENVIRONMENT,
+        colony.base.plugin_system.JYTHON_ENVIRONMENT
+    ]
+    attributes = {
+        "build_automation_file_path" : "$base{plugin_directory}/javascript_file_handler/file_handler/resources/baf.xml"
+    }
+    capabilities = [
+        "javascript_file_handler",
+        "http_python_handler",
+        "build_automation_item"
+    ]
+    capabilities_allowed = [
+        "javascript_handler"
+    ]
+    dependencies = [
+        colony.base.plugin_system.PluginDependency("pt.hive.colony.plugins.javascript.manager", "1.0.0"),
+        colony.base.plugin_system.PluginDependency("pt.hive.colony.plugins.format.mime", "1.0.0")
+    ]
+    main_modules = [
+        "javascript_file_handler.file_handler.javascript_file_handler_system"
+    ]
 
     javascript_file_handler = None
+    """ The javascript file handler """
 
     javascript_handler_plugins = []
+    """ The javascript handler plugins """
 
     javascript_manager_plugin = None
+    """ The javascript manager plugin """
+
     format_mime_plugin = None
+    """ The format mime plugin """
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)

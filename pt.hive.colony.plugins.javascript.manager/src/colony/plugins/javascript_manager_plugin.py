@@ -52,22 +52,31 @@ class JavascriptManagerPlugin(colony.base.plugin_system.Plugin):
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     loading_type = colony.base.plugin_system.EAGER_LOADING_TYPE
-    platforms = [colony.base.plugin_system.CPYTHON_ENVIRONMENT,
-                 colony.base.plugin_system.JYTHON_ENVIRONMENT]
-    attributes = {"build_automation_file_path" : "$base{plugin_directory}/javascript_manager/manager/resources/baf.xml"}
-    capabilities = ["rpc_service", "build_automation_item"]
-    capabilities_allowed = []
-    dependencies = [colony.base.plugin_system.PluginDependency(
-                    "pt.hive.colony.plugins.resources.resource_manager", "1.0.0")]
-    events_handled = []
-    events_registrable = []
-    main_modules = ["javascript_manager.manager.javascript_manager_exceptions",
-                    "javascript_manager.manager.javascript_manager_parser",
-                    "javascript_manager.manager.javascript_manager_system"]
+    platforms = [
+        colony.base.plugin_system.CPYTHON_ENVIRONMENT,
+        colony.base.plugin_system.JYTHON_ENVIRONMENT
+    ]
+    attributes = {
+        "build_automation_file_path" : "$base{plugin_directory}/javascript_manager/manager/resources/baf.xml"
+    }
+    capabilities = [
+        "rpc_service",
+        "build_automation_item"
+    ]
+    dependencies = [
+        colony.base.plugin_system.PluginDependency("pt.hive.colony.plugins.resources.resource_manager", "1.0.0")
+    ]
+    main_modules = [
+        "javascript_manager.manager.javascript_manager_exceptions",
+        "javascript_manager.manager.javascript_manager_parser",
+        "javascript_manager.manager.javascript_manager_system"
+    ]
 
     javascript_manager = None
+    """ The javascript manager """
 
     resource_manager_plugin = None
+    """ The resource manager plugin """
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
@@ -105,19 +114,29 @@ class JavascriptManagerPlugin(colony.base.plugin_system.Plugin):
 
     @colony.base.decorators.plugin_call(True)
     def get_service_alias(self):
-        return ["pluginManagerAccess"]
+        return [
+            "pluginManagerAccess"
+        ]
 
     @colony.base.decorators.plugin_call(True)
     def get_available_rpc_methods(self):
-        return [self.get_plugin_descriptor, self.get_plugin_file, self.get_plugins_files, self.get_available_plugins, self.get_available_plugin_descriptors]
+        return [
+            self.get_plugin_descriptor,
+            self.get_plugin_file,
+            self.get_plugins_files,
+            self.get_available_plugins,
+            self.get_available_plugin_descriptors
+        ]
 
     @colony.base.decorators.plugin_call(True)
     def get_rpc_methods_alias(self):
-        return {self.get_plugin_descriptor : ["getPluginDescriptor"],
-                self.get_plugin_file : ["getPluginFile"],
-                self.get_plugins_files : ["getPluginsFiles"],
-                self.get_available_plugins : ["getAvailablePlugins"],
-                self.get_available_plugin_descriptors : ["getAvailablePluginDescriptors"]}
+        return {
+            self.get_plugin_descriptor : ["getPluginDescriptor"],
+            self.get_plugin_file : ["getPluginFile"],
+            self.get_plugins_files : ["getPluginsFiles"],
+            self.get_available_plugins : ["getAvailablePlugins"],
+            self.get_available_plugin_descriptors : ["getAvailablePluginDescriptors"]
+        }
 
     def get_plugin_descriptor(self, plugin_id):
         return self.javascript_manager.get_plugin_descriptor(plugin_id)
