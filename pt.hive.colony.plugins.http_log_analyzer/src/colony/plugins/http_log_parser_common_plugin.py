@@ -52,15 +52,20 @@ class HttpLogParserCommonPlugin(colony.base.plugin_system.Plugin):
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     loading_type = colony.base.plugin_system.EAGER_LOADING_TYPE
-    platforms = [colony.base.plugin_system.CPYTHON_ENVIRONMENT]
-    attributes = {"build_automation_file_path" : "$base{plugin_directory}/http_log_parser_common/log_parser_common/resources/baf.xml"}
-    capabilities = ["http_log_parser", "build_automation_item"]
-    capabilities_allowed = []
-    dependencies = []
-    events_handled = []
-    events_registrable = []
-    main_modules = ["http_log_parser_common.log_parser_common.http_log_parser_common_exceptions",
-                    "http_log_parser_common.log_parser_common.http_log_parser_common_system"]
+    platforms = [
+        colony.base.plugin_system.CPYTHON_ENVIRONMENT
+    ]
+    attributes = {
+        "build_automation_file_path" : "$base{plugin_directory}/http_log_parser_common/log_parser_common/resources/baf.xml"
+    }
+    capabilities = [
+        "http_log_parser",
+        "build_automation_item"
+    ]
+    main_modules = [
+        "http_log_parser_common.log_parser_common.http_log_parser_common_exceptions",
+        "http_log_parser_common.log_parser_common.http_log_parser_common_system"
+    ]
 
     http_log_parser_common = None
     """ The http log parser common """

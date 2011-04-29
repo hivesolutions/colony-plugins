@@ -52,16 +52,24 @@ class HttpLogAnalyzerPlugin(colony.base.plugin_system.Plugin):
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     loading_type = colony.base.plugin_system.EAGER_LOADING_TYPE
-    platforms = [colony.base.plugin_system.CPYTHON_ENVIRONMENT]
-    attributes = {"build_automation_file_path" : "$base{plugin_directory}/http_log_analyzer/log_analyzer/resources/baf.xml"}
-    capabilities = ["_console_command_extension", "build_automation_item"]
-    capabilities_allowed = ["http_log_parser"]
-    dependencies = []
-    events_handled = []
-    events_registrable = []
-    main_modules = ["http_log_analyzer.log_analyzer.console_http_log_analyzer",
-                    "http_log_analyzer.log_analyzer.http_log_analyzer_exceptions",
-                    "http_log_analyzer.log_analyzer.http_log_analyzer_system"]
+    platforms = [
+        colony.base.plugin_system.CPYTHON_ENVIRONMENT
+    ]
+    attributes = {
+        "build_automation_file_path" : "$base{plugin_directory}/http_log_analyzer/log_analyzer/resources/baf.xml"
+    }
+    capabilities = [
+        "_console_command_extension",
+        "build_automation_item"
+    ]
+    capabilities_allowed = [
+        "http_log_parser"
+    ]
+    main_modules = [
+        "http_log_analyzer.log_analyzer.console_http_log_analyzer",
+        "http_log_analyzer.log_analyzer.http_log_analyzer_exceptions",
+        "http_log_analyzer.log_analyzer.http_log_analyzer_system"
+    ]
 
     http_log_analyzer = None
     """ The http log analyzer """
