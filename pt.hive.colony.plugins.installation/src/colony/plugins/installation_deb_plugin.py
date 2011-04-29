@@ -52,23 +52,33 @@ class InstallationDebPlugin(colony.base.plugin_system.Plugin):
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     loading_type = colony.base.plugin_system.EAGER_LOADING_TYPE
-    platforms = [colony.base.plugin_system.CPYTHON_ENVIRONMENT]
-    attributes = {"build_automation_file_path" : "$base{plugin_directory}/installation/deb/resources/baf.xml"}
-    capabilities = ["installation.adapter", "build_automation_item"]
-    capabilities_allowed = []
-    dependencies = [colony.base.plugin_system.PluginDependency(
-                    "pt.hive.colony.plugins.packaging.deb", "1.0.0"),
-                    colony.base.plugin_system.PluginDependency(
-                    "pt.hive.colony.plugins.template_engine.manager", "1.0.0")]
-    events_handled = []
-    events_registrable = []
-    main_modules = ["installation.deb.installation_deb_exceptions",
-                    "installation.deb.installation_deb_system"]
+    platforms = [
+        colony.base.plugin_system.CPYTHON_ENVIRONMENT
+    ]
+    attributes = {
+        "build_automation_file_path" : "$base{plugin_directory}/installation/deb/resources/baf.xml"
+    }
+    capabilities = [
+        "installation.adapter",
+        "build_automation_item"
+    ]
+    dependencies = [
+        colony.base.plugin_system.PluginDependency("pt.hive.colony.plugins.packaging.deb", "1.0.0"),
+        colony.base.plugin_system.PluginDependency("pt.hive.colony.plugins.template_engine.manager", "1.0.0")
+    ]
+    main_modules = [
+        "installation.deb.installation_deb_exceptions",
+        "installation.deb.installation_deb_system"
+    ]
 
     installation_deb = None
+    """ The installation deb """
 
     packaging_deb_plugin = None
+    """ The packaging deb plugin """
+
     template_engine_manager_plugin = None
+    """ The template engine manager plugin """
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)

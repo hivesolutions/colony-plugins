@@ -52,19 +52,29 @@ class InstallationManagerPlugin(colony.base.plugin_system.Plugin):
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     loading_type = colony.base.plugin_system.EAGER_LOADING_TYPE
-    platforms = [colony.base.plugin_system.CPYTHON_ENVIRONMENT]
-    attributes = {"build_automation_file_path" : "$base{plugin_directory}/installation/manager/resources/baf.xml"}
-    capabilities = ["installation.manager", "build_automation_item"]
-    capabilities_allowed = ["installation.adapter"]
-    dependencies = []
-    events_handled = []
-    events_registrable = []
-    main_modules = ["installation.manager.installation_manager_exceptions",
-                    "installation.manager.installation_manager_system"]
+    platforms = [
+        colony.base.plugin_system.CPYTHON_ENVIRONMENT
+    ]
+    attributes = {
+        "build_automation_file_path" : "$base{plugin_directory}/installation/manager/resources/baf.xml"
+    }
+    capabilities = [
+        "installation.manager",
+        "build_automation_item"
+    ]
+    capabilities_allowed = [
+        "installation.adapter"
+    ]
+    main_modules = [
+        "installation.manager.installation_manager_exceptions",
+        "installation.manager.installation_manager_system"
+    ]
 
     installation_manager = None
+    """ The installation manager """
 
     installation_adapter_plugins = []
+    """ The installation adapter plugins """
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
