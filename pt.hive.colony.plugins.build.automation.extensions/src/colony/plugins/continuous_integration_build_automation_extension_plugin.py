@@ -52,19 +52,28 @@ class ContinuousIntegrationBuildAutomationExtensionPlugin(colony.base.plugin_sys
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     loading_type = colony.base.plugin_system.EAGER_LOADING_TYPE
-    platforms = [colony.base.plugin_system.CPYTHON_ENVIRONMENT]
-    attributes = {"build_automation_file_path" : "$base{plugin_directory}/build_automation_extensions/continuous_integration/resources/baf.xml"}
-    capabilities = ["build_automation_extension", "build_automation_item"]
-    capabilities_allowed = []
-    dependencies = [colony.base.plugin_system.PluginDependency(
-                    "pt.hive.colony.plugins.misc.zip", "1.0.0")]
-    events_handled = []
-    events_registrable = []
-    main_modules = ["build_automation_extensions.continuous_integration.continuous_integration_build_automation_extension_system"]
+    platforms = [
+        colony.base.plugin_system.CPYTHON_ENVIRONMENT
+    ]
+    attributes = {
+        "build_automation_file_path" : "$base{plugin_directory}/build_automation_extensions/continuous_integration/resources/baf.xml"
+    }
+    capabilities = [
+        "build_automation_extension",
+        "build_automation_item"
+    ]
+    dependencies = [
+        colony.base.plugin_system.PluginDependency("pt.hive.colony.plugins.misc.zip", "1.0.0")
+    ]
+    main_modules = [
+        "build_automation_extensions.continuous_integration.continuous_integration_build_automation_extension_system"
+    ]
 
     continuous_integration_build_automation_extension = None
+    """ The continous integration build automation extension """
 
     zip_plugin = None
+    """ The zip plugin """
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)

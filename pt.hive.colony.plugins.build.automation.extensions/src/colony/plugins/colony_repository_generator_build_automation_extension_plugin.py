@@ -52,19 +52,28 @@ class ColonyRepositoryGeneratorBuildAutomationExtensionPlugin(colony.base.plugin
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     loading_type = colony.base.plugin_system.EAGER_LOADING_TYPE
-    platforms = [colony.base.plugin_system.CPYTHON_ENVIRONMENT]
-    attributes = {"build_automation_file_path" : "$base{plugin_directory}/build_automation_extensions/colony_repository_generator/resources/baf.xml"}
-    capabilities = ["build_automation_extension", "build_automation_item"]
-    capabilities_allowed = []
-    dependencies = [colony.base.plugin_system.PluginDependency(
-                    "pt.hive.colony.plugins.misc.repository_descriptor_generator", "1.0.0")]
-    events_handled = []
-    events_registrable = []
-    main_modules = ["build_automation_extensions.colony_repository_generator.colony_repository_generator_build_automation_extension_system"]
+    platforms = [
+        colony.base.plugin_system.CPYTHON_ENVIRONMENT
+    ]
+    attributes = {
+        "build_automation_file_path" : "$base{plugin_directory}/build_automation_extensions/colony_repository_generator/resources/baf.xml"
+    }
+    capabilities = [
+        "build_automation_extension",
+        "build_automation_item"
+    ]
+    dependencies = [
+        colony.base.plugin_system.PluginDependency("pt.hive.colony.plugins.misc.repository_descriptor_generator", "1.0.0")
+    ]
+    main_modules = [
+        "build_automation_extensions.colony_repository_generator.colony_repository_generator_build_automation_extension_system"
+    ]
 
     colony_repository_generator_build_automation_extension = None
+    """ The colony repository generator build automation extension """
 
     repository_descriptor_generator_plugin = None
+    """ The repository descriptor generator plugin """
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)

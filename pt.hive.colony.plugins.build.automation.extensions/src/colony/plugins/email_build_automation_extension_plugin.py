@@ -52,28 +52,40 @@ class EmailBuildAutomationExtensionPlugin(colony.base.plugin_system.Plugin):
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     loading_type = colony.base.plugin_system.EAGER_LOADING_TYPE
-    platforms = [colony.base.plugin_system.CPYTHON_ENVIRONMENT]
-    attributes = {"build_automation_file_path" : "$base{plugin_directory}/build_automation_extensions/email/resources/baf.xml"}
-    capabilities = ["build_automation_extension", "build_automation_item"]
-    capabilities_allowed = []
-    dependencies = [colony.base.plugin_system.PluginDependency(
-                    "pt.hive.colony.plugins.main.client.smtp", "1.0.0"),
-                    colony.base.plugin_system.PluginDependency(
-                    "pt.hive.colony.plugins.format.mime", "1.0.0"),
-                    colony.base.plugin_system.PluginDependency(
-                    "pt.hive.colony.plugins.format.mime.utils", "1.0.0"),
-                    colony.base.plugin_system.PluginDependency(
-                    "pt.hive.colony.plugins.template_engine.manager", "1.0.0")]
-    events_handled = []
-    events_registrable = []
-    main_modules = ["build_automation_extensions.email.email_build_automation_extension_system"]
+    platforms = [
+        colony.base.plugin_system.CPYTHON_ENVIRONMENT
+    ]
+    attributes = {
+        "build_automation_file_path" : "$base{plugin_directory}/build_automation_extensions/email/resources/baf.xml"
+    }
+    capabilities = [
+        "build_automation_extension",
+        "build_automation_item"
+    ]
+    dependencies = [
+        colony.base.plugin_system.PluginDependency("pt.hive.colony.plugins.main.client.smtp", "1.0.0"),
+        colony.base.plugin_system.PluginDependency("pt.hive.colony.plugins.format.mime", "1.0.0"),
+        colony.base.plugin_system.PluginDependency("pt.hive.colony.plugins.format.mime.utils", "1.0.0"),
+        colony.base.plugin_system.PluginDependency("pt.hive.colony.plugins.template_engine.manager", "1.0.0")
+    ]
+    main_modules = [
+        "build_automation_extensions.email.email_build_automation_extension_system"
+    ]
 
     email_build_automation_extension = None
+    """ The email build automation extension """
 
     main_client_smtp_plugin = None
+    """ The main client smtp plugin """
+
     format_mime_plugin = None
+    """ The format mime plugin """
+
     format_mime_utils_plugin = None
+    """ The format mime utils plugin """
+
     template_engine_manager_plugin = None
+    """ The template engine manager plugin """
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
