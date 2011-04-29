@@ -38,7 +38,6 @@ __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
 import colony.base.plugin_system
-import colony.base.decorators
 
 class MainDistributionPluginSystemPlugin(colony.base.plugin_system.Plugin):
     """
@@ -52,16 +51,21 @@ class MainDistributionPluginSystemPlugin(colony.base.plugin_system.Plugin):
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     loading_type = colony.base.plugin_system.EAGER_LOADING_TYPE
-    platforms = [colony.base.plugin_system.CPYTHON_ENVIRONMENT]
-    attributes = {"build_automation_file_path" : "$base{plugin_directory}/main_distribution/plugin_system/resources/baf.xml"}
-    capabilities = ["build_automation_item"]
-    capabilities_allowed = []
-    dependencies = []
-    events_handled = []
-    events_registrable = []
-    main_modules = ["main_distribution.plugin_system.main_distribution_plugin_system_system"]
+    platforms = [
+        colony.base.plugin_system.CPYTHON_ENVIRONMENT
+    ]
+    attributes = {
+        "build_automation_file_path" : "$base{plugin_directory}/main_distribution/plugin_system/resources/baf.xml"
+    }
+    capabilities = [
+        "build_automation_item"
+    ]
+    main_modules = [
+        "main_distribution.plugin_system.main_distribution_plugin_system_system"
+    ]
 
     main_distribution_plugin_system = None
+    """ The main distribution plugin system """
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)

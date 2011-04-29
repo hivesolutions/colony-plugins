@@ -38,7 +38,6 @@ __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
 import types
-import inspect
 
 ATTRIBUTE_EXCLUSION_LIST = []
 """ The attribute exclusion list """
