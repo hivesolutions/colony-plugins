@@ -51,24 +51,36 @@ class BusinessDummyBusinessLogicPlugin(colony.base.plugin_system.Plugin):
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     loading_type = colony.base.plugin_system.EAGER_LOADING_TYPE
-    platforms = [colony.base.plugin_system.CPYTHON_ENVIRONMENT]
-    attributes = {"build_automation_file_path" : "$base{plugin_directory}/business_dummy/dummy_business_logic/resources/baf.xml",
-                  "business_logic_namespaces" : ("pt.hive.colony.business.dummy",)}
-    capabilities = ["business_logic", "build_automation_item"]
-    capabilities_allowed = []
-    dependencies = [colony.base.plugin_system.PluginDependency(
-                    "pt.hive.colony.plugins.data.entity_manager", "1.0.0"),
-                    colony.base.plugin_system.PluginDependency(
-                    "pt.hive.colony.plugins.business.helper", "1.0.0")]
-    events_handled = []
-    events_registrable = []
-    main_modules = ["business_dummy.dummy_business_logic.business_dummy_business_logic_class",
-                    "business_dummy.dummy_business_logic.business_dummy_business_logic_system"]
+    platforms = [
+        colony.base.plugin_system.CPYTHON_ENVIRONMENT
+    ]
+    attributes = {
+        "build_automation_file_path" : "$base{plugin_directory}/business_dummy/dummy_business_logic/resources/baf.xml",
+        "business_logic_namespaces" : (
+            "pt.hive.colony.business.dummy"
+        ,)
+    }
+    capabilities = [
+        "business_logic",
+        "build_automation_item"
+    ]
+    dependencies = [
+        colony.base.plugin_system.PluginDependency("pt.hive.colony.plugins.data.entity_manager", "1.0.0"),
+        colony.base.plugin_system.PluginDependency("pt.hive.colony.plugins.business.helper", "1.0.0")
+    ]
+    main_modules = [
+        "business_dummy.dummy_business_logic.business_dummy_business_logic_class",
+        "business_dummy.dummy_business_logic.business_dummy_business_logic_system"
+    ]
 
     business_dummy_business_logic = None
+    """ The business dummy business logic """
 
     entity_manager_plugin = None
+    """ The entity manager plugin """
+
     business_helper_plugin = None
+    """ The business helper plugin """
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
