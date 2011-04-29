@@ -51,18 +51,26 @@ class LanguageWikiPlugin(colony.base.plugin_system.Plugin):
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     loading_type = colony.base.plugin_system.EAGER_LOADING_TYPE
-    platforms = [colony.base.plugin_system.CPYTHON_ENVIRONMENT]
-    attributes = {"build_automation_file_path" : "$base{plugin_directory}/_language_wiki/wiki/resources/baf.xml"}
-    capabilities = ["language.wiki", "build_automation_item"]
-    capabilities_allowed = []
-    dependencies = [colony.base.plugin_system.PackageDependency(
-                    "Colony Language Wiki", "language_wiki.wiki_generator", "1.0.x", "http://www.hive.pt")]
-    events_handled = []
-    events_registrable = []
-    main_modules = ["_language_wiki.wiki.language_wiki_exceptions",
-                    "_language_wiki.wiki.language_wiki_system"]
+    platforms = [
+        colony.base.plugin_system.CPYTHON_ENVIRONMENT
+    ]
+    attributes = {
+        "build_automation_file_path" : "$base{plugin_directory}/_language_wiki/wiki/resources/baf.xml"
+    }
+    capabilities = [
+        "language.wiki",
+        "build_automation_item"
+    ]
+    dependencies = [
+        colony.base.plugin_system.PackageDependency("Colony Language Wiki", "language_wiki.wiki_generator", "1.0.x", "http://www.hive.pt")
+    ]
+    main_modules = [
+        "_language_wiki.wiki.language_wiki_exceptions",
+        "_language_wiki.wiki.language_wiki_system"
+    ]
 
     language_wiki = None
+    """ The language wiki """
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
