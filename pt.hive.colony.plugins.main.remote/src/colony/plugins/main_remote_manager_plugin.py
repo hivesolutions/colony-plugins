@@ -51,18 +51,28 @@ class MainRemoteManagerPlugin(colony.base.plugin_system.Plugin):
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     loading_type = colony.base.plugin_system.EAGER_LOADING_TYPE
-    platforms = [colony.base.plugin_system.CPYTHON_ENVIRONMENT]
-    attributes = {"build_automation_file_path" : "$base{plugin_directory}/main_remote/manager/resources/baf.xml"}
-    capabilities = ["rpc_handler_manager", "build_automation_item"]
-    capabilities_allowed = ["rpc_handler"]
-    dependencies = []
-    events_handled = []
-    events_registrable = []
-    main_modules = ["main_remote.manager.main_remote_manager_system"]
+    platforms = [
+        colony.base.plugin_system.CPYTHON_ENVIRONMENT
+    ]
+    attributes = {
+        "build_automation_file_path" : "$base{plugin_directory}/main_remote/manager/resources/baf.xml"
+    }
+    capabilities = [
+        "rpc_handler_manager",
+        "build_automation_item"
+    ]
+    capabilities_allowed = [
+        "rpc_handler"
+    ]
+    main_modules = [
+        "main_remote.manager.main_remote_manager_system"
+    ]
 
     main_remote_manager = None
+    """ The main remote manager """
 
     rpc_handler_plugins = []
+    """ The rpc handler plugins """
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
