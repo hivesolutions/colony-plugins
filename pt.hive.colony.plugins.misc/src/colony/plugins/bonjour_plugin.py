@@ -52,22 +52,31 @@ class BonjourPlugin(colony.base.plugin_system.Plugin):
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     loading_type = colony.base.plugin_system.EAGER_LOADING_TYPE
-    platforms = [colony.base.plugin_system.CPYTHON_ENVIRONMENT]
-    attributes = {"build_automation_file_path" : "$base{plugin_directory}/misc/bonjour/resources/baf.xml"}
-    capabilities = ["thread", "bonjour", "build_automation_item"]
-    capabilities_allowed = []
-    dependencies = [colony.base.plugin_system.PluginDependency(
-                    "pt.hive.colony.plugins.misc.guid", "1.0.0"),
-                    colony.base.plugin_system.PackageDependency(
-                    "Bonjour", "bonjour", "0.2.x", "http://www.apple.com")]
-    events_handled = []
-    events_registrable = []
-    main_modules = ["misc.bonjour.bonjour_exceptions",
-                    "misc.bonjour.bonjour_system"]
+    platforms = [
+        colony.base.plugin_system.CPYTHON_ENVIRONMENT
+    ]
+    attributes = {
+        "build_automation_file_path" : "$base{plugin_directory}/misc/bonjour/resources/baf.xml"
+    }
+    capabilities = [
+        "thread",
+        "bonjour",
+        "build_automation_item"
+    ]
+    dependencies = [
+        colony.base.plugin_system.PluginDependency("pt.hive.colony.plugins.misc.guid", "1.0.0"),
+        colony.base.plugin_system.PackageDependency("Bonjour", "bonjour", "0.2.x", "http://www.apple.com")
+    ]
+    main_modules = [
+        "misc.bonjour.bonjour_exceptions",
+        "misc.bonjour.bonjour_system"
+    ]
 
     bonjour = None
+    """ The bonjour """
 
     guid_plugin = None
+    """ The guid plugin """
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
@@ -78,6 +87,7 @@ class BonjourPlugin(colony.base.plugin_system.Plugin):
         # notifies the ready semaphore
         self.release_ready_semaphore()
 
+        # starts the browsing loop
         self.bonjour.start_browsing_loop()
 
     def end_load_plugin(self):

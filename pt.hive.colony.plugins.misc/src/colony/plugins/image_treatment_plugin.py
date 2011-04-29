@@ -51,17 +51,25 @@ class ImageTreatmentPlugin(colony.base.plugin_system.Plugin):
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     loading_type = colony.base.plugin_system.EAGER_LOADING_TYPE
-    platforms = [colony.base.plugin_system.CPYTHON_ENVIRONMENT]
-    attributes = {"build_automation_file_path" : "$base{plugin_directory}/misc/image_treatment/resources/baf.xml"}
-    capabilities = ["image_treatment", "build_automation_item"]
-    capabilities_allowed = []
-    dependencies = [colony.base.plugin_system.PackageDependency(
-                    "Python Imaging Library (PIL)", "PIL", "1.1.x", "http://www.pythonware.com/products/pil")]
-    events_handled = []
-    events_registrable = []
-    main_modules = ["misc.image_treatment.image_treatment_system"]
+    platforms = [
+        colony.base.plugin_system.CPYTHON_ENVIRONMENT
+    ]
+    attributes = {
+        "build_automation_file_path" : "$base{plugin_directory}/misc/image_treatment/resources/baf.xml"
+    }
+    capabilities = [
+        "image_treatment",
+        "build_automation_item"
+    ]
+    dependencies = [
+        colony.base.plugin_system.PackageDependency("Python Imaging Library (PIL)", "PIL", "1.1.x", "http://www.pythonware.com/products/pil")
+    ]
+    main_modules = [
+        "misc.image_treatment.image_treatment_system"
+    ]
 
     image_treatment = None
+    """ The image treatment """
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)

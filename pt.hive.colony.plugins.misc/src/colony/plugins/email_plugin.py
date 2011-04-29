@@ -52,24 +52,37 @@ class EmailPlugin(colony.base.plugin_system.Plugin):
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     loading_type = colony.base.plugin_system.EAGER_LOADING_TYPE
-    platforms = [colony.base.plugin_system.CPYTHON_ENVIRONMENT]
-    attributes = {"build_automation_file_path" : "$base{plugin_directory}/misc/email/resources/baf.xml"}
-    capabilities = ["email", "_console_command_extension", "build_automation_item"]
-    capabilities_allowed = []
-    dependencies = [colony.base.plugin_system.PluginDependency(
-                    "pt.hive.colony.plugins.main.client.smtp", "1.0.0"),
-                    colony.base.plugin_system.PluginDependency(
-                    "pt.hive.colony.plugins.format.mime", "1.0.0")]
-    events_handled = []
-    events_registrable = []
-    main_modules = ["misc.email.console_email",
-                    "misc.email.email_system"]
+    platforms = [
+        colony.base.plugin_system.CPYTHON_ENVIRONMENT
+    ]
+    attributes = {
+        "build_automation_file_path" : "$base{plugin_directory}/misc/email/resources/baf.xml"
+    }
+    capabilities = [
+        "email",
+        "_console_command_extension",
+        "build_automation_item"
+    ]
+    dependencies = [
+        colony.base.plugin_system.PluginDependency("pt.hive.colony.plugins.main.client.smtp", "1.0.0"),
+        colony.base.plugin_system.PluginDependency("pt.hive.colony.plugins.format.mime", "1.0.0")
+    ]
+    main_modules = [
+        "misc.email.console_email",
+        "misc.email.email_system"
+    ]
 
     email = None
+    """ The email """
+
     console_email = None
+    """ The console email """
 
     main_client_smtp_plugin = None
+    """ The main client smtp plugin """
+
     format_mime_plugin = None
+    """ The format mime plugin """
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)

@@ -51,18 +51,27 @@ class GarbageCollectorPlugin(colony.base.plugin_system.Plugin):
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     loading_type = colony.base.plugin_system.EAGER_LOADING_TYPE
-    platforms = [colony.base.plugin_system.CPYTHON_ENVIRONMENT]
-    attributes = {"build_automation_file_path" : "$base{plugin_directory}/misc/garbage_collector/resources/baf.xml"}
-    capabilities = ["garbage_collector", "_console_command_extension", "build_automation_item"]
-    capabilities_allowed = []
-    dependencies = []
-    events_handled = []
-    events_registrable = []
-    main_modules = ["misc.garbage_collector.console_garbage_collector",
-                    "misc.garbage_collector.garbage_collector_system"]
+    platforms = [
+        colony.base.plugin_system.CPYTHON_ENVIRONMENT
+    ]
+    attributes = {
+        "build_automation_file_path" : "$base{plugin_directory}/misc/garbage_collector/resources/baf.xml"
+    }
+    capabilities = [
+        "garbage_collector",
+        "_console_command_extension",
+        "build_automation_item"
+    ]
+    main_modules = [
+        "misc.garbage_collector.console_garbage_collector",
+        "misc.garbage_collector.garbage_collector_system"
+    ]
 
     garbage_collector = None
+    """ The garbage collector """
+
     console_garbage_collector = None
+    """ The console garbage collector """
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)

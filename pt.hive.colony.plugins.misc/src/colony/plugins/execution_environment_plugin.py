@@ -51,16 +51,22 @@ class ExecutionEnvironmentPlugin(colony.base.plugin_system.Plugin):
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     loading_type = colony.base.plugin_system.EAGER_LOADING_TYPE
-    platforms = [colony.base.plugin_system.CPYTHON_ENVIRONMENT]
-    attributes = {"build_automation_file_path" : "$base{plugin_directory}/misc/execution_environment/resources/baf.xml"}
-    capabilities = ["execution_environment", "build_automation_item"]
-    capabilities_allowed = []
-    dependencies = []
-    events_handled = []
-    events_registrable = []
-    main_modules = ["misc.execution_environment.execution_environment_system"]
+    platforms = [
+        colony.base.plugin_system.CPYTHON_ENVIRONMENT
+    ]
+    attributes = {
+        "build_automation_file_path" : "$base{plugin_directory}/misc/execution_environment/resources/baf.xml"
+    }
+    capabilities = [
+        "execution_environment",
+        "build_automation_item"
+    ]
+    main_modules = [
+        "misc.execution_environment.execution_environment_system"
+    ]
 
     execution_environment = None
+    """ The execution environment """
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)

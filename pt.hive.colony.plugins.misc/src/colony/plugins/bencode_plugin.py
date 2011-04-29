@@ -51,18 +51,24 @@ class BencodePlugin(colony.base.plugin_system.Plugin):
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     loading_type = colony.base.plugin_system.EAGER_LOADING_TYPE
-    platforms = [colony.base.plugin_system.CPYTHON_ENVIRONMENT]
-    attributes = {"build_automation_file_path" : "$base{plugin_directory}/misc/bencode/resources/baf.xml"}
-    capabilities = ["serializer.bencode", "build_automation_item"]
-    capabilities_allowed = []
-    dependencies = []
-    events_handled = []
-    events_registrable = []
-    main_modules = ["misc.bencode.bencode_exceptions",
-                    "misc.bencode.bencode_serializer",
-                    "misc.bencode.bencode_system"]
+    platforms = [
+        colony.base.plugin_system.CPYTHON_ENVIRONMENT
+    ]
+    attributes = {
+        "build_automation_file_path" : "$base{plugin_directory}/misc/bencode/resources/baf.xml"
+    }
+    capabilities = [
+        "serializer.bencode",
+        "build_automation_item"
+    ]
+    main_modules = [
+        "misc.bencode.bencode_exceptions",
+        "misc.bencode.bencode_serializer",
+        "misc.bencode.bencode_system"
+    ]
 
     bencode = None
+    """ The bencode """
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)

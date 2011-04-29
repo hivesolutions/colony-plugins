@@ -51,18 +51,24 @@ class FormcodePlugin(colony.base.plugin_system.Plugin):
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     loading_type = colony.base.plugin_system.EAGER_LOADING_TYPE
-    platforms = [colony.base.plugin_system.CPYTHON_ENVIRONMENT]
-    attributes = {"build_automation_file_path" : "$base{plugin_directory}/misc/formcode/resources/baf.xml"}
-    capabilities = ["serializer.formcode", "build_automation_item"]
-    capabilities_allowed = []
-    dependencies = []
-    events_handled = []
-    events_registrable = []
-    main_modules = ["misc.formcode.formcode_exceptions",
-                    "misc.formcode.formcode_serializer",
-                    "misc.formcode.formcode_system"]
+    platforms = [
+        colony.base.plugin_system.CPYTHON_ENVIRONMENT
+    ]
+    attributes = {
+        "build_automation_file_path" : "$base{plugin_directory}/misc/formcode/resources/baf.xml"
+    }
+    capabilities = [
+        "serializer.formcode",
+        "build_automation_item"
+    ]
+    main_modules = [
+        "misc.formcode.formcode_exceptions",
+        "misc.formcode.formcode_serializer",
+        "misc.formcode.formcode_system"
+    ]
 
     formcode = None
+    """ The formcode """
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
