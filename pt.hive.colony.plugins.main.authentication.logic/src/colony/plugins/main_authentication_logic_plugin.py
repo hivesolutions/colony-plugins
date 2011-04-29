@@ -52,24 +52,30 @@ class MainAuthenticationLogicPlugin(colony.base.plugin_system.Plugin):
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     loading_type = colony.base.plugin_system.EAGER_LOADING_TYPE
-    platforms = [colony.base.plugin_system.CPYTHON_ENVIRONMENT]
-    attributes = {"build_automation_file_path" : "$base{plugin_directory}/main_authentication_logic/authentication_logic/resources/baf.xml",
-                  "business_logic_namespaces" : ("pt.hive.colony.main.authentication.logic",)}
-    capabilities = ["business_logic_bundle", "build_automation_item"]
-    capabilities_allowed = []
-    dependencies = [colony.base.plugin_system.PluginDependency(
-                    "pt.hive.colony.plugins.data.entity_manager", "1.0.0"),
-                    colony.base.plugin_system.PluginDependency(
-                    "pt.hive.colony.plugins.business.helper", "1.0.0"),
-                    colony.base.plugin_system.PluginDependency(
-                    "pt.hive.colony.plugins.main.authentication", "1.0.0")]
-    events_handled = []
-    events_registrable = []
-    main_modules = ["main_authentication_logic.authentication_logic.main_authentication_logic_classes",
-                    "main_authentication_logic.authentication_logic.main_authentication_logic_exceptions",
-                    "main_authentication_logic.authentication_logic.main_authentication_logic_system"]
+    platforms = [
+        colony.base.plugin_system.CPYTHON_ENVIRONMENT
+    ]
+    attributes = {
+        "build_automation_file_path" : "$base{plugin_directory}/main_authentication_logic/authentication_logic/resources/baf.xml",
+        "business_logic_namespaces" : ("pt.hive.colony.main.authentication.logic",)
+    }
+    capabilities = [
+        "business_logic_bundle",
+        "build_automation_item"
+    ]
+    dependencies = [
+        colony.base.plugin_system.PluginDependency("pt.hive.colony.plugins.data.entity_manager", "1.0.0"),
+        colony.base.plugin_system.PluginDependency("pt.hive.colony.plugins.business.helper", "1.0.0"),
+        colony.base.plugin_system.PluginDependency("pt.hive.colony.plugins.main.authentication", "1.0.0")
+    ]
+    main_modules = [
+        "main_authentication_logic.authentication_logic.main_authentication_logic_classes",
+        "main_authentication_logic.authentication_logic.main_authentication_logic_exceptions",
+        "main_authentication_logic.authentication_logic.main_authentication_logic_system"
+    ]
 
     main_authentication_logic = None
+    """ The main authentication logic """
 
     entity_manager_plugin = None
     """ The entity manager plugin """
