@@ -52,18 +52,28 @@ class MainLocalizationManagerPlugin(colony.base.plugin_system.Plugin):
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     loading_type = colony.base.plugin_system.EAGER_LOADING_TYPE
-    platforms = [colony.base.plugin_system.CPYTHON_ENVIRONMENT]
-    attributes = {"build_automation_file_path" : "$base{plugin_directory}/main_localization_manager/manager/resources/baf.xml"}
-    capabilities = ["localization_manager", "build_automation_item"]
-    capabilities_allowed = ["localization_handler"]
-    dependencies = []
-    events_handled = []
-    events_registrable = []
-    main_modules = ["main_localization_manager.manager.main_localization_manager_system"]
+    platforms = [
+        colony.base.plugin_system.CPYTHON_ENVIRONMENT
+    ]
+    attributes = {
+        "build_automation_file_path" : "$base{plugin_directory}/main_localization_manager/manager/resources/baf.xml"
+    }
+    capabilities = [
+        "localization_manager",
+        "build_automation_item"
+    ]
+    capabilities_allowed = [
+        "localization_handler"
+    ]
+    main_modules = [
+        "main_localization_manager.manager.main_localization_manager_system"
+    ]
 
     main_localization_manager = None
+    """ The main localization manager """
 
     localization_handler_plugins = []
+    """ The localization handler plugins """
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
