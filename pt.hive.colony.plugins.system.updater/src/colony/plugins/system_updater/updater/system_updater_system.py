@@ -524,6 +524,7 @@ class SystemUpdater:
 
         # iterates over all the repository descriptors available
         for repository_descriptor in self.repository_descriptor_list:
+            # retrieves the plugin descriptor for repository descriptor
             plugin_descripton = repository_descriptor.get_plugin(plugin_id, plugin_version)
 
             # in case plugin descriptor exists in current repository descriptor
