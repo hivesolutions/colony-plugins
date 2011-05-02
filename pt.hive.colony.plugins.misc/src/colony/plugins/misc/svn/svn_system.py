@@ -40,6 +40,9 @@ __license__ = "GNU General Public License (GPL), Version 3"
 import os
 import pysvn
 
+HEAD_VALUE = "head"
+""" The head value """
+
 class Svn:
     """
     The svn class.
@@ -169,7 +172,7 @@ class SvnClient:
         svn_checkout_directory = checkout_directory
 
         # in case the revision is of type head
-        if revision == "head":
+        if revision == HEAD_VALUE:
             # creates the pysvn revision object
             svn_revision = pysvn.Revision(pysvn.opt_revision_kind.head)
 
