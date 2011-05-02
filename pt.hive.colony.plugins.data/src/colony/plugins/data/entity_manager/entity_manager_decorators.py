@@ -112,14 +112,14 @@ def transaction(transaction_type = "required"):
     # returns the created decorator
     return decorator
 
-def lock_table(table_name, lock_parameters):
+def lock_table(table_name, parameters):
     """
     Decorator for the locking table data logic.
 
     @type table_name: String
     @param table_name: The name of the table to be locked.
-    @type lock_parameters: Dictionary
-    @param lock_parameters: The parameters for the lock.
+    @type parameters: Dictionary
+    @param parameters: The parameters for the lock.
     @rtype: Function
     @return: The created decorator.
     """
@@ -146,7 +146,7 @@ def lock_table(table_name, lock_parameters):
             self_value = args[0]
 
             # locks the table
-            self_value.entity_manager.lock_table(table_name, lock_parameters)
+            self_value.entity_manager.lock_table(table_name, parameters)
 
             # calls the callback function and gets the return value
             return_value = function(*args, **kwargs)
