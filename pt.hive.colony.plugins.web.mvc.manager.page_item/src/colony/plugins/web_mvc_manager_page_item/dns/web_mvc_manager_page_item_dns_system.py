@@ -109,7 +109,9 @@ class WebMvcManagerPageItemDns:
         # retrieves the web mvc manager page item dns plugin path
         web_mvc_manager_page_item_dns_plugin_path = plugin_manager.get_plugin_path_by_id(self.web_mvc_manager_page_item_dns_plugin.id)
 
-        return ((r"^web_mvc_manager/resources_page_item_dns/.+$", (web_mvc_manager_page_item_dns_plugin_path + "/" + EXTRAS_PATH, "web_mvc_manager/resources_page_item_dns")),)
+        return (
+            (r"^web_mvc_manager/resources_page_item_dns/.+$", (web_mvc_manager_page_item_dns_plugin_path + "/" + EXTRAS_PATH, "web_mvc_manager/resources_page_item_dns")),
+        )
 
     def get_page_item_bundle(self, parameters):
         """
