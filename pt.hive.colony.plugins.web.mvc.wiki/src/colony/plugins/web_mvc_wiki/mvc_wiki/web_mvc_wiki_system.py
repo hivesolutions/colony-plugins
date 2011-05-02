@@ -158,7 +158,9 @@ class WebMvcWiki:
         # retrieves the web mvc wiki plugin path
         web_mvc_wiki_plugin_path = plugin_manager.get_plugin_path_by_id(self.web_mvc_wiki_plugin.id)
 
-        return ((r"^wiki/resources/.+$", (web_mvc_wiki_plugin_path + "/" + EXTRAS_PATH, "wiki/resources")),)
+        return (
+            (r"^wiki/resources/.+$", (web_mvc_wiki_plugin_path + "/" + EXTRAS_PATH, "wiki/resources")),
+        )
 
     def get_system_information(self):
         """
