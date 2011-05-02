@@ -191,7 +191,9 @@ class WebMvcEncryption:
         # retrieves the web mvc encryption plugin path
         web_mvc_encryption_plugin_path = plugin_manager.get_plugin_path_by_id(self.web_mvc_encryption_plugin.id)
 
-        return ((r"^web_mvc_encryption/resources/.+$", (web_mvc_encryption_plugin_path + "/" + EXTRAS_PATH, "web_mvc_encryption/resources")),)
+        return (
+            (r"^web_mvc_encryption/resources/.+$", (web_mvc_encryption_plugin_path + "/" + EXTRAS_PATH, "web_mvc_encryption/resources")),
+        )
 
     def set_configuration_property(self, configuration_property):
         # retrieves the configuration
