@@ -370,7 +370,7 @@ class Scheduler:
 
     def date_time_to_timestamp(self, date_time):
         # creates the date time time tuple
-        date_time_time_tuple = date_time.timetuple()
+        date_time_time_tuple = date_time.utctimetuple()
 
         # creates the date time timestamp
         date_time_timestamp = time.mktime(date_time_time_tuple)
