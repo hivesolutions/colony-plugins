@@ -141,6 +141,17 @@ class EntityManagerPlugin(colony.base.plugin_system.Plugin):
 
         return data.entity_manager.entity_manager_decorators.transaction
 
+    def get_lock_table_decorator(self):
+        """
+        Retrieves the lock table decorator used to decorate
+        a method in order to force locking in table.
+
+        @rtype: Function
+        @return: The lock table decorator function.
+        """
+
+        return data.entity_manager.entity_manager_decorators.lock_table
+
     @colony.base.decorators.load_allowed_capability("entity_manager_engine")
     def entity_manager_engine_load_allowed(self, plugin, capability):
         self.entity_manager.register_entity_manager_engine_plugin(plugin)

@@ -42,7 +42,7 @@ def transaction(transaction_type = "required"):
     Decorator for the transactional data logic.
 
     @type transaction_type: String
-    @param plugin_id: The type of transaction to be created.
+    @param transaction_type: The type of transaction to be created.
     @rtype: Function
     @return: The created decorator.
     """
@@ -57,7 +57,7 @@ def transaction(transaction_type = "required"):
 
         def decorator_interceptor(*args, **kwargs):
             """
-            The interceptor function for the load_allowed decorator.
+            The interceptor function for the transaction decorator.
 
             @type args: pointer
             @param args: The function arguments list.
@@ -83,6 +83,73 @@ def transaction(transaction_type = "required"):
 
             # closes the transaction
             self_value.entity_manager.commit_transaction()
+
+            # returns the return value
+            return return_value
+
+        return decorator_interceptor
+
+    def decorator(function, *args, **kwargs):
+        """
+        The decorator function for the transaction decorator.
+
+        @type function: Function
+        @param function: The function to be decorated.
+        @type args: pointer
+        @param args: The function arguments list.
+        @type kwargs: pointer pointer
+        @param kwargs: The function arguments map.
+        @rtype: Function
+        @return: The decorator interceptor function.
+        """
+
+        # creates the decorator interceptor with the given function
+        decorator_interceptor_function = create_decorator_interceptor(function)
+
+        # returns the interceptor to be used
+        return decorator_interceptor_function
+
+    # returns the created decorator
+    return decorator
+
+def lock_table(table_name, lock_parameters):
+    """
+    Decorator for the locking table data logic.
+
+    @type table_name: String
+    @param table_name: The name of the table to be locked.
+    @type lock_parameters: Dictionary
+    @param lock_parameters: The parameters for the lock.
+    @rtype: Function
+    @return: The created decorator.
+    """
+
+    def create_decorator_interceptor(function):
+        """
+        Creates a decorator interceptor, that intercepts the normal function call.
+
+        @type function: Function
+        @param function: The callback function.
+        """
+
+        def decorator_interceptor(*args, **kwargs):
+            """
+            The interceptor function for the lock_table decorator.
+
+            @type args: pointer
+            @param args: The function arguments list.
+            @type kwargs: pointer pointer
+            @param kwargs: The function arguments map.
+            """
+
+            # retrieves the instance self
+            self_value = args[0]
+
+            # locks the table
+            self_value.entity_manager.lock_table(table_name, lock_parameters)
+
+            # calls the callback function and gets the return value
+            return_value = function(*args, **kwargs)
 
             # returns the return value
             return return_value
