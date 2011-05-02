@@ -447,7 +447,7 @@ class WebMvcManagerPageItemRepositoryController:
 
     def _get_filtered_repository_plugins(self, rest_request, search_query):
         # retrieves the repository
-        repository = self._get_repository(rest_request, -2)
+        repository = self._get_repository(rest_request, 1)
 
         # creates the filtered repository plugins
         filtered_repository_plugins = []
