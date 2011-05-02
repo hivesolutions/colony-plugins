@@ -620,7 +620,7 @@ class BarganiaRssClient:
             date_time_value = date_time_value + date_time_delta
 
             # retrieves the date time value tuple
-            date_time_value_tuple = date_time_value.timetuple()
+            date_time_value_tuple = date_time_value.utctimetuple()
 
             # converts the date time value tuple to timestamp
             date_time_timestamp = time.mktime(date_time_value_tuple)
