@@ -185,25 +185,27 @@ class WebMvcManager:
         to the web mvc service.
         """
 
-        base_patterns_tuple = ((r"^web_mvc_manager/?$", self.web_mvc_manager_main_controller.handle_web_mvc_manager_index, "get"),
-                               (r"^web_mvc_manager/index$", self.web_mvc_manager_main_controller.handle_web_mvc_manager_index, "get"),
-                               (r"^web_mvc_manager/side_panel/configuration$", self.web_mvc_manager_side_panel_controller.handle_configuration, "get"),
-                               (r"^web_mvc_manager/side_panel/update$", self.web_mvc_manager_side_panel_controller.handle_update, "get"),
-                               (r"^web_mvc_manager/header$", self.web_mvc_manager_header_controller.handle_header, "get"),
-                               (r"^web_mvc_manager/plugins$", self.web_mvc_manager_plugin_controller.handle_list_ajx, "get", "ajx"),
-                               (r"^web_mvc_manager/plugins$", self.web_mvc_manager_plugin_controller.handle_list, "get"),
-                               (r"^web_mvc_manager/plugins/partial$", self.web_mvc_manager_plugin_controller.handle_partial_list, "get"),
-                               (r"^web_mvc_manager/plugins/new$", self.web_mvc_manager_plugin_controller.handle_new_ajx, "get", "ajx"),
-                               (r"^web_mvc_manager/plugins/new$", self.web_mvc_manager_plugin_controller.handle_new, "get"),
-                               (r"^web_mvc_manager/plugins$", self.web_mvc_manager_plugin_controller.handle_create, "post"),
-                               (r"^web_mvc_manager/plugins/(?P<plugin_id>[a-zA-Z0-9\._]+)$", self.web_mvc_manager_plugin_controller.handle_show_ajx, "get", "ajx"),
-                               (r"^web_mvc_manager/plugins/(?P<plugin_id>[a-zA-Z0-9\._]+)$", self.web_mvc_manager_plugin_controller.handle_show, "get"),
-                               (r"^web_mvc_manager/plugins/(?P<plugin_id>[a-zA-Z0-9\._]+)/change_status$", self.web_mvc_manager_plugin_controller.handle_change_status, "post", "json"),
-                               (r"^web_mvc_manager/capabilities$", self.web_mvc_manager_capability_controller.handle_list_ajx, "get", "ajx"),
-                               (r"^web_mvc_manager/capabilities$", self.web_mvc_manager_capability_controller.handle_list, "get"),
-                               (r"^web_mvc_manager/capabilities/partial$", self.web_mvc_manager_capability_controller.handle_partial_list, "get"),
-                               (r"^web_mvc_manager/capabilities/(?P<capability>[a-zA-Z0-9\._]+)$", self.web_mvc_manager_capability_controller.handle_show_ajx, "get", "ajx"),
-                               (r"^web_mvc_manager/capabilities/(?P<capability>[a-zA-Z0-9\._]+)$", self.web_mvc_manager_capability_controller.handle_show, "get"))
+        base_patterns_tuple = (
+            (r"^web_mvc_manager/?$", self.web_mvc_manager_main_controller.handle_web_mvc_manager_index, "get"),
+            (r"^web_mvc_manager/index$", self.web_mvc_manager_main_controller.handle_web_mvc_manager_index, "get"),
+            (r"^web_mvc_manager/side_panel/configuration$", self.web_mvc_manager_side_panel_controller.handle_configuration, "get"),
+            (r"^web_mvc_manager/side_panel/update$", self.web_mvc_manager_side_panel_controller.handle_update, "get"),
+            (r"^web_mvc_manager/header$", self.web_mvc_manager_header_controller.handle_header, "get"),
+            (r"^web_mvc_manager/plugins$", self.web_mvc_manager_plugin_controller.handle_list_ajx, "get", "ajx"),
+            (r"^web_mvc_manager/plugins$", self.web_mvc_manager_plugin_controller.handle_list, "get"),
+            (r"^web_mvc_manager/plugins/partial$", self.web_mvc_manager_plugin_controller.handle_partial_list, "get"),
+            (r"^web_mvc_manager/plugins/new$", self.web_mvc_manager_plugin_controller.handle_new_ajx, "get", "ajx"),
+            (r"^web_mvc_manager/plugins/new$", self.web_mvc_manager_plugin_controller.handle_new, "get"),
+            (r"^web_mvc_manager/plugins$", self.web_mvc_manager_plugin_controller.handle_create, "post"),
+            (r"^web_mvc_manager/plugins/(?P<plugin_id>[a-zA-Z0-9\._]+)$", self.web_mvc_manager_plugin_controller.handle_show_ajx, "get", "ajx"),
+            (r"^web_mvc_manager/plugins/(?P<plugin_id>[a-zA-Z0-9\._]+)$", self.web_mvc_manager_plugin_controller.handle_show, "get"),
+            (r"^web_mvc_manager/plugins/(?P<plugin_id>[a-zA-Z0-9\._]+)/change_status$", self.web_mvc_manager_plugin_controller.handle_change_status, "post", "json"),
+            (r"^web_mvc_manager/capabilities$", self.web_mvc_manager_capability_controller.handle_list_ajx, "get", "ajx"),
+            (r"^web_mvc_manager/capabilities$", self.web_mvc_manager_capability_controller.handle_list, "get"),
+            (r"^web_mvc_manager/capabilities/partial$", self.web_mvc_manager_capability_controller.handle_partial_list, "get"),
+            (r"^web_mvc_manager/capabilities/(?P<capability>[a-zA-Z0-9\._]+)$", self.web_mvc_manager_capability_controller.handle_show_ajx, "get", "ajx"),
+            (r"^web_mvc_manager/capabilities/(?P<capability>[a-zA-Z0-9\._]+)$", self.web_mvc_manager_capability_controller.handle_show, "get")
+        )
 
         # extends the base patterns tuple with the extra patterns tuple retrieving the result
         # patterns tuple
@@ -224,9 +226,9 @@ class WebMvcManager:
         to the web mvc service.
         """
 
-        return ((r"^web_mvc_manager/communication$", (self.web_mvc_manager_communication_controller.handle_data,
-                                                      self.web_mvc_manager_communication_controller.handle_connection_changed,
-                                                      "web_mvc_manager/communication")),)
+        return (
+            (r"^web_mvc_manager/communication$", (self.web_mvc_manager_communication_controller.handle_data, self.web_mvc_manager_communication_controller.handle_connection_changed, "web_mvc_manager/communication")),
+        )
 
     def get_resource_patterns(self):
         """
@@ -257,9 +259,11 @@ class WebMvcManager:
         # retrieves the web mvc resources ui plugin resources path
         web_mvc_resources_ui_plugin_resources_path = web_mvc_resources_ui_plugin.get_resources_path()
 
-        return ((r"^web_mvc_manager/resources/.+$", (web_mvc_manager_plugin_path + "/" + EXTRAS_PATH, "web_mvc_manager/resources")),
-                (r"^web_mvc_manager/resources_base/.+$", (web_mvc_resources_base_plugin_resources_path, "web_mvc_manager/resources_base")),
-                (r"^web_mvc_manager/resources_ui/.+$", (web_mvc_resources_ui_plugin_resources_path, "web_mvc_manager/resources_ui")))
+        return (
+            (r"^web_mvc_manager/resources/.+$", (web_mvc_manager_plugin_path + "/" + EXTRAS_PATH, "web_mvc_manager/resources")),
+            (r"^web_mvc_manager/resources_base/.+$", (web_mvc_resources_base_plugin_resources_path, "web_mvc_manager/resources_base")),
+            (r"^web_mvc_manager/resources_ui/.+$", (web_mvc_resources_ui_plugin_resources_path, "web_mvc_manager/resources_ui"))
+        )
 
     def load_web_mvc_manager_page_item_bundle_plugin(self, web_mvc_manager_page_item_bundle_plugin):
         # generates the patterns unload event
