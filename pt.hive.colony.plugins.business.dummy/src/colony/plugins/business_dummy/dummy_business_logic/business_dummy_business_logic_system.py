@@ -70,8 +70,11 @@ class BusinessDummyBusinessLogic:
         # retrieves the transaction decorator
         transaction_decorator = entity_manager_plugin.get_transaction_decorator()
 
+        # retrieves the lock table decorator
+        lock_table_decorator = entity_manager_plugin.get_lock_table_decorator()
+
         # creates the list of global values
-        global_values = [transaction_decorator]
+        global_values = [transaction_decorator, lock_table_decorator]
 
         # retrieves the base directory name
         base_directory_name = self.get_path_directory_name()
