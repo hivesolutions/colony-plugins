@@ -52,7 +52,9 @@ DEFAULT_DATABASE_SUFFIX = "database.db"
 DEFAULT_DATABASE_PREFIX = "dummy_entity_manager_"
 """ The default database prefix """
 
-ENTITY_CLASSES_NAMESPACES = ("pt.hive.colony.business.dummy",)
+ENTITY_CLASSES_NAMESPACES = (
+    "pt.hive.colony.business.dummy",
+)
 """ The entity classes namespaces """
 
 class DummyEntityManager:

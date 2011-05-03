@@ -96,11 +96,29 @@ class DummyWindowsForms:
         return self.form
 
     def add_label(self, label):
-        self.queue.append(("add_label", label))
+        # defines the add label tuple
+        add_label_tuple = (
+            "add_label",
+            label
+        )
+
+        # adds the adda label tuple to the queue
+        self.queue.append(add_label_tuple)
+
+        # invalidates the form
         self.form.Invalidate()
 
     def remove_label(self, label):
-        self.queue.append(("remove_label", label))
+        # defines the remove label tuple
+        remove_label_tuple = (
+            "remove_label",
+            label
+        )
+
+        # adds the remove label tuple to the queue
+        self.queue.append(remove_label_tuple)
+
+        # invalidates the form
         self.form.Invalidate()
 
 class DummyForm(System.Windows.Forms.Form):

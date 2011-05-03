@@ -52,10 +52,14 @@ DEFAULT_DATABASE_SUFFIX = "database.db"
 DEFAULT_DATABASE_PREFIX = "dummy_business_logic_1_"
 """ The default database prefix """
 
-ENTITY_CLASSES_NAMESPACES = ("pt.hive.colony.business.dummy",)
+ENTITY_CLASSES_NAMESPACES = (
+    "pt.hive.colony.business.dummy",
+)
 """ The entity classes namespaces """
 
-BUSINESS_LOGIC_CLASSES_NAMESPACES = ("pt.hive.colony.business.dummy",)
+BUSINESS_LOGIC_CLASSES_NAMESPACES = (
+    "pt.hive.colony.business.dummy",
+)
 """ The business logic classes namespaces """
 
 class DummyBusinessLogic1:
