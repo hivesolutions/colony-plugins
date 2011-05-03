@@ -305,6 +305,18 @@ class ColonyPackingInstaller:
                 # properties and file context
                 self.install_plugin(plugin_file_path, properties, file_context)
 
+                # retrieves the package item key
+                package_item_key = plugin_id
+
+                # creates the package item value
+                package_item_value = {
+                    TYPE_VALUE : PLUGIN_VALUE,
+                    VERSION_VALUE : plugin_version
+                }
+
+                # adds the package item
+                self._add_package_item(package_item_key, package_item_value, file_context)
+
             # retrieves the bundle item key
             bundle_item_key = bundle_id
 
