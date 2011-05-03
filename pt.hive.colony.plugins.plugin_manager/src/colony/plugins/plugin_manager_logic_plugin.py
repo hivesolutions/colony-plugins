@@ -58,7 +58,9 @@ class PluginManagerLogicPlugin(colony.base.plugin_system.Plugin):
     ]
     attributes = {
         "build_automation_file_path" : "$base{plugin_directory}/plugin_manager_logic/logic/resources/baf.xml",
-        "business_logic_namespaces" : ("pt.colony.plugin_manager_logic",)
+        "business_logic_namespaces" : (
+            "pt.colony.plugin_manager_logic",
+        )
     }
     capabilities = [
         "business_logic_bundle",
