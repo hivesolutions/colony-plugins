@@ -60,11 +60,20 @@ VERSION_VALUE = "version"
 TIMESTAMP_VALUE = "timestamp"
 """ The timestamp value """
 
+PLUGINS_VALUE = "plugins"
+""" The plugins value """
+
 UPGRADE_VALUE = "upgrade"
 """ The upgrade value """
 
 TARGET_PATH_VALUE = "target_path"
 """ The target path value """
+
+INSTALLED_PACKAGES_VALUE = "installed_packages"
+""" The installed packages value """
+
+INSTALLED_BUNDLES_VALUE = "installed_bundles"
+""" The installed bundles value """
 
 INSTALLED_PLUGINS_VALUE = "installed_plugins"
 """ The installed plugins value """
@@ -77,6 +86,24 @@ LAST_MODIFIED_TIMESTAMP_VALUE = "last_modified_timestamp"
 
 LAST_MODIFIED_DATE_VALUE = "last_modified_date"
 """ The last modified date value """
+
+RELATIVE_REGISTRY_PATH = "var/registry"
+""" The path relative to the manager path for the registry """
+
+PACKAGES_FILE_NAME = "packages.json"
+""" The packages file name """
+
+BUNDLES_FILE_NAME = "bundles.json"
+""" The bundles file name """
+
+PLUGINS_FILE_NAME = "plugins.json"
+""" The plugins file name """
+
+COLONY_BUNDLE_FILE_EXTENSION = ".cbx"
+""" The colony bundle file extension """
+
+COLONY_PLUGIN_FILE_EXTENSION = ".cpx"
+""" The colony plugin file extension """
 
 class ColonyPackingInstaller:
     """
@@ -113,7 +140,7 @@ class ColonyPackingInstaller:
 
         return INSTALLER_TYPE
 
-    def install_bundle(self, file_path, properties):
+    def install_bundle(self, file_path, properties, file_context = None):
         """
         Method called upon installation of the bundle with
         the given file path and properties.
@@ -122,16 +149,75 @@ class ColonyPackingInstaller:
         @param file_path: The path to the bundle file to be installed.
         @type properties: Dictionary
         @param properties: The map of properties for installation.
+        @type file_context: FileContext
+        @param file_context: The file context to be used.
         """
 
-        # retrieves the plugin manager
-        plugin_manager = self.colony_packing_installer_plugin.manager
+        # retrieves the packing manager plugin
+        packing_manager_plugin = self.colony_packing_installer_plugin.packing_manager_plugin
 
-        # retrieves the manager path
-        manager_path = plugin_manager.get_manager_path()
+        # creates a new file transaction context
+        file_context = file_context or colony.libs.file_util.FileTransactionContext("c:\\transactions\\")
 
-        # creates the bundles file path
-        bundles_file_path = os.path.join(manager_path, "var/registry/bundles.json")
+        # opens a new transaction in the file context
+        file_context.open()
+
+        try:
+            # resolves the file path retrieving the real file path
+            real_file_path = file_context.resolve_file_path(file_path)
+
+            # retrieves the packing information
+            packing_information = packing_manager_plugin.get_packing_information(real_file_path, {}, "colony")
+
+            # retrieves the bundle id
+            bundle_id = packing_information.get_property(ID_VALUE)
+
+            # retrieves the bundle version
+            bundle_version = packing_information.get_property(VERSION_VALUE)
+
+            # retrieves the plugins
+            plugins = packing_information.get_property(PLUGINS_VALUE)
+
+            # retrieves the "virtual" main bundle path from the file context
+            # this is necessary to ensure a transaction mode
+            main_bundle_virtual_path = file_context.get_file_path("/tmp/bundles")
+
+            # deploys the package using the main bundle "virtual" path
+            self._deploy_package(real_file_path, main_bundle_virtual_path)
+
+            # iterates over all the plugins
+            for plugin in plugins:
+                # retrieves the plugin id
+                plugin_id = plugin[ID_VALUE]
+
+                # retrieves the plugin version
+                plugin_version = plugin[VERSION_VALUE]
+
+                plugin_file_path = "/tmp/bundles/plugins/" + plugin_id + "_" + plugin_version + COLONY_PLUGIN_FILE_EXTENSION
+
+                # installs the plugin for the given plugin file path
+                # properties and file context
+                self.install_plugin(plugin_file_path, properties, file_context)
+
+            # retrieves the bundle item key
+            bundle_item_key = bundle_id
+
+            # creates the bundle item value
+            bundle_item_value = {
+                VERSION_VALUE : bundle_version
+            }
+
+            # adds the bundle item
+            self._add_bundle_item(bundle_item_key, bundle_item_value, file_context)
+
+            # commits the transaction
+            file_context.commit()
+        except:
+            # rollsback the transaction
+            file_context.rollback()
+
+            # re-raises the exception
+            raise
 
     def install_plugin(self, file_path, properties, file_context = None):
         """
@@ -142,6 +228,8 @@ class ColonyPackingInstaller:
         @param file_path: The path to the plugin file to be installed.
         @type properties: Dictionary
         @param properties: The map of properties for installation.
+        @type file_context: FileContext
+        @param file_context: The file context to be used.
         """
 
         # retrieves the plugin manager
@@ -157,10 +245,10 @@ class ColonyPackingInstaller:
         manager_path = plugin_manager.get_manager_path()
 
         # creates the plugins file path
-        plugins_file_path = os.path.join(manager_path, "var/registry/plugins.json")
+        plugins_file_path = os.path.join(manager_path, RELATIVE_REGISTRY_PATH + "/" + PLUGINS_FILE_NAME)
 
         # creates the plugins directory path
-        plugins_directory_path = os.path.join(manager_path, "var/registry/plugins")
+        plugins_directory_path = os.path.join(manager_path, RELATIVE_REGISTRY_PATH + "/" + PLUGINS_VALUE)
 
         # creates a new file transaction context
         file_context = file_context or colony.libs.file_util.FileTransactionContext("c:\\transactions\\")
@@ -169,11 +257,11 @@ class ColonyPackingInstaller:
         file_context.open()
 
         try:
-            # retrieves the packing information
-            packing_information = packing_manager_plugin.get_packing_information(file_path, {}, "colony")
+            # resolves the file path retrieving the real file path
+            real_file_path = file_context.resolve_file_path(file_path)
 
-            # retrieves the packing file contents
-            packing_file_contents = packing_manager_plugin.get_packing_file_contents(file_path, {}, "colony")
+            # retrieves the packing information
+            packing_information = packing_manager_plugin.get_packing_information(real_file_path, {}, "colony")
 
             # retrieves the plugin id
             plugin_id = packing_information.get_property(ID_VALUE)
@@ -181,33 +269,23 @@ class ColonyPackingInstaller:
             # retrieves the plugin version
             plugin_version = packing_information.get_property(VERSION_VALUE)
 
-            # ------------------------------------------------
-
-            # TENHO DE CONTAR COM O CASE DE O FICHEIRO NAO EXISTIR
-            # tenho de obter as informacoes sobre o cpx aki
-            # e depois tenho de acrescentar essas informacoes ao plugins.json
-
-            # --------------------------------------
-
-            # creates the plugin descriptor file path
-            plugin_descriptor_file_path = os.path.join(plugins_directory_path, plugin_id + "_" + plugin_version + "." + JSON_FILE_EXTENSION)
-
-            # writes the packing file contents to the plugin descriptor file path
-            file_context.write_file(plugin_descriptor_file_path, packing_file_contents)
-
-            #------------------------------------------------------------------
-
             # reads the plugin file contents
             plugins_file_contents = file_context.read_file(plugins_file_path)
 
             # loads the plugin file contents from json
             plugins = json_plugin.loads(plugins_file_contents)
 
-            # retrieves the installed plugins
-            installed_plugins = plugins.get(INSTALLED_PLUGINS_VALUE, {})
-
             # validates the plugin transaction requirements
             self._validate_plugin_transaction(properties, plugins_file_path, plugins, packing_information)
+
+            # reads the plugin file contents
+            plugin_file_contents = file_context.read_file(file_path)
+
+            # creates the plugin descriptor file path
+            plugin_file_path = os.path.join(plugins_directory_path, plugin_id + "_" + plugin_version + COLONY_PLUGIN_FILE_EXTENSION)
+
+            # writes the plugin file contents to the plugin file path
+            file_context.write_file(plugin_file_path, plugin_file_contents)
 
             # retrieves the main plugin path
             main_plugin_path = plugin_manager.get_main_plugin_path()
@@ -217,33 +295,18 @@ class ColonyPackingInstaller:
             main_plugin_virtual_path = file_context.get_file_path(main_plugin_path)
 
             # deploys the package using the main plugin "virtual" path
-            self._deploy_package(file_path, main_plugin_virtual_path)
+            self._deploy_package(real_file_path, main_plugin_virtual_path)
 
-            # retrieves the current time
-            current_time = time.time()
+            # retrieves the plugin item key
+            plugin_item_key = plugin_id
 
-            # retrieves the current date time
-            current_date_time = datetime.datetime.utcnow()
-
-            # formats the current date time
-            current_date_time_formated = current_date_time.strftime("%d-%m-%Y %H:%M:%S")
-
-            # sets the installed plugin map
-            installed_plugins[plugin_id] = {
-                VERSION_VALUE : plugin_version,
-                TIMESTAMP_VALUE : current_time
+            # creates the plugin item value
+            plugin_item_value = {
+                VERSION_VALUE : plugin_version
             }
 
-            # updates the plugins map with the current time
-            # and date time values
-            plugins[LAST_MODIFIED_TIMESTAMP_VALUE] = current_time
-            plugins[LAST_MODIFIED_DATE_VALUE] = current_date_time_formated
-
-            # serializes the plugins (in pretty mode)
-            plugins_serialized = json_plugin.dumps_pretty(plugins)
-
-            # writes the plugins serialized value in the plugins file
-            file_context.write_file(plugins_file_path, plugins_serialized)
+            # adds the plugin item
+            self._add_plugin_item(plugin_item_key, plugin_item_value, file_context)
 
             # commits the transaction
             file_context.commit()
@@ -306,3 +369,138 @@ class ColonyPackingInstaller:
 
         # unpacks the files using the colony service
         packing_manager_plugin.unpack_files([package_path], properties, "colony")
+
+    def _touch_structure(self, structure):
+        """
+        Touches the structure, updating the timestamp
+        references present in it.
+
+        @type structure: Dictionary
+        @param structure: The structure to be update with with
+        new timestamps.
+        """
+
+        # retrieves the current time
+        current_time = time.time()
+
+        # retrieves the current date time
+        current_date_time = datetime.datetime.utcnow()
+
+        # formats the current date time
+        current_date_time_formated = current_date_time.strftime("%d-%m-%Y %H:%M:%S")
+
+        # updates the structure map with the current time
+        # and date time values
+        structure[LAST_MODIFIED_TIMESTAMP_VALUE] = current_time
+        structure[LAST_MODIFIED_DATE_VALUE] = current_date_time_formated
+
+    def _add_package_item(self, item_key, item_value, file_context, update_time = True):
+        """
+        Adds a package item to the packages file structure.
+
+        @type item_key: String
+        @param item_key: The key to the item to be added.
+        @type item_value: Dictionary
+        @param item_value: The map containing the item value to be added.
+        @type file_context: FileContext
+        @param file_context: The file context to be used.
+        @type update_time: bool
+        @param update_time: If the timetamp value should be updated.
+        """
+
+        self.__add_structure_item(item_key, item_value, file_context, update_time, PACKAGES_FILE_NAME, INSTALLED_PACKAGES_VALUE)
+
+    def _add_bundle_item(self, item_key, item_value, file_context, update_time = True):
+        """
+        Adds a bundle item to the bundles file structure.
+
+        @type item_key: String
+        @param item_key: The key to the item to be added.
+        @type item_value: Dictionary
+        @param item_value: The map containing the item value to be added.
+        @type file_context: FileContext
+        @param file_context: The file context to be used.
+        @type update_time: bool
+        @param update_time: If the timetamp value should be updated.
+        """
+
+        self.__add_structure_item(item_key, item_value, file_context, update_time, BUNDLES_FILE_NAME, INSTALLED_BUNDLES_VALUE)
+
+    def _add_plugin_item(self, item_key, item_value, file_context, update_time = True):
+        """
+        Adds a plugin item to the plugins file structure.
+
+        @type item_key: String
+        @param item_key: The key to the item to be added.
+        @type item_value: Dictionary
+        @param item_value: The map containing the item value to be added.
+        @type file_context: FileContext
+        @param file_context: The file context to be used.
+        @type update_time: bool
+        @param update_time: If the timetamp value should be updated.
+        """
+
+        self.__add_structure_item(item_key, item_value, file_context, update_time, PLUGINS_FILE_NAME, INSTALLED_PLUGINS_VALUE)
+
+    def __add_structure_item(self, item_key, item_value, file_context, update_time, structure_file_name, structure_key_name):
+        """
+        Adds a new structure item to an existing structures file.
+
+        @type item_key: String
+        @param item_key: The key to the item to be added.
+        @type item_value: Dictionary
+        @param item_value: The map containing the item value to be added.
+        @type file_context: FileContext
+        @param file_context: The file context to be used.
+        @type update_time: bool
+        @param update_time: If the timetamp value should be updated.
+        @type structure_file_name: String
+        @param structure_file_name: The name of the structure file to be used.
+        @type structure_key_name: String
+        @param structure_key_name: The key to the structure base item.
+        """
+
+        # retrieves the plugin manager
+        plugin_manager = self.colony_packing_installer_plugin.manager
+
+        # retrieves the json plugin
+        json_plugin = self.colony_packing_installer_plugin.json_plugin
+
+        # retrieves the manager path
+        manager_path = plugin_manager.get_manager_path()
+
+        # retrieves the registry path
+        registry_path = os.path.normpath(manager_path + "/" + RELATIVE_REGISTRY_PATH)
+
+        # creates the structure file path
+        structure_file_path = os.path.normpath(registry_path + "/" + structure_file_name)
+
+        # reads the structure file contents
+        structure_file_contents = file_context.read_file(structure_file_path)
+
+        # loads the structure file contents from json
+        structure = json_plugin.loads(structure_file_contents)
+
+        # retrieves the installed structure
+        installed_structure = structure.get(structure_key_name, {})
+
+        # in case the update time flag is set
+        if update_time:
+            # retrieves the current time
+            current_time = time.time()
+
+            # sets the item value
+            item_value[TIMESTAMP_VALUE] = current_time
+
+        # sets the installed structure map
+        installed_structure[item_key] = item_value
+
+        # touches the structure (internal structure)
+        # updating the dates in it
+        self._touch_structure(structure)
+
+        # serializes the structure
+        structure_serialized = json_plugin.dumps_pretty(structure)
+
+        # writes the structure file contents
+        file_context.write_file(structure_file_path, structure_serialized)
