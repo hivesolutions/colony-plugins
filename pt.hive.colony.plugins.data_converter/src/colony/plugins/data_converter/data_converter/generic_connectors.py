@@ -126,8 +126,14 @@ def connector_output_entities_created_by_input_entity(data_converter, configurat
                 join_entity = entity_name_entity_map[join_entity_name]
                 join_attribute_value = join_entity.get_attribute(join_attribute_name)
 
+            # defines the attribute name value tuple
+            attribute_name_value_tuple = (
+                input_attribute_name,
+                join_attribute_value
+            )
+
             # adds the attribute name and value pair to the list of tuples
-            attribute_name_value_tuples.append((input_attribute_name, join_attribute_value))
+            attribute_name_value_tuples.append(attribute_name_value_tuple)
 
         # retrieves the input entity targeted by the join
         input_entity = get_input_entity(input_intermediate_structure, input_entity_name, attribute_name_value_tuples)

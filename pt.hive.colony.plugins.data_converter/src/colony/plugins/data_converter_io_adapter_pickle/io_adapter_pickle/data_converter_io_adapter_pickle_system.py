@@ -108,9 +108,21 @@ class IoAdapterPickle:
         # serializes the intermediate structure
         storage_file = open(file_path, "w")
         try:
+            # creates the pickler instance
             pickler = cPickle.Pickler(storage_file)
+
+            # sets the pickler persistent id
             pickler.persistent_id = self.get_persistent_object_id
-            pickler.dump((intermediate_structure.entities, intermediate_structure.entity_name_entities_map, intermediate_structure.index_entity_map))
+
+            # defines the pickler dump tuple
+            pickler_dump_tuple = (
+                intermediate_structure.entities,
+                intermediate_structure.entity_name_entities_map,
+                intermediate_structure.index_entity_map
+            )
+
+            # dumps the pickler dump tuple
+            pickler.dump(pickler_dump_tuple)
         finally:
             storage_file.close()
 
