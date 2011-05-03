@@ -67,7 +67,7 @@ class SystemInstaller:
         installer_plugin = self._get_installer_plugin_by_installer_type(installer_type)
 
         # installs the bundle with the installer plugin
-        installer_plugin.installbundle(file_path, properties)
+        installer_plugin.install_bundle(file_path, properties)
 
     def install_plugin(self, file_path, properties, installer_type):
         # retrieves the installer plugin for the installer type
