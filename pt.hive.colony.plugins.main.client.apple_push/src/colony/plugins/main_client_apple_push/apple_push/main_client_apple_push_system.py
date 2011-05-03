@@ -142,8 +142,16 @@ class ApplePushClient:
         self._apple_push_client.stop_client()
 
     def notify_device(self, host, port, device_token, payload, identifier = None, expiry = None, socket_name = DEFAULT_SOCKET_NAME, socket_parameters = DEFAULT_SOCKET_PARAMETERS):
+        # defines the connection parameters
+        connection_parameters = (
+            host,
+            port,
+            socket_name,
+            socket_parameters
+        )
+
         # retrieves the corresponding (apple push) client connection
-        self.client_connection = self._apple_push_client.get_client_connection((host, port, socket_name, socket_parameters))
+        self.client_connection = self._apple_push_client.get_client_connection(connection_parameters)
 
         # acquires the apple push client lock
         self._apple_push_client_lock.acquire()
@@ -166,8 +174,16 @@ class ApplePushClient:
             self._apple_push_client_lock.release()
 
     def notify_device_error(self, host, port, device_token, payload, identifier = None, expiry = None, socket_name = DEFAULT_SOCKET_NAME, socket_parameters = DEFAULT_SOCKET_PARAMETERS):
+        # defines the connection parameters
+        connection_parameters = (
+            host,
+            port,
+            socket_name,
+            socket_parameters
+        )
+
         # retrieves the corresponding (apple push) client connection
-        self.client_connection = self._apple_push_client.get_client_connection((host, port, socket_name, socket_parameters))
+        self.client_connection = self._apple_push_client.get_client_connection(connection_parameters)
 
         # acquires the apple push client lock
         self._apple_push_client_lock.acquire()
@@ -200,8 +216,16 @@ class ApplePushClient:
         return response
 
     def obtain_feedback(self, host, port, socket_name = DEFAULT_SOCKET_NAME, socket_parameters = DEFAULT_SOCKET_PARAMETERS):
+        # defines the connection parameters
+        connection_parameters = (
+            host,
+            port,
+            socket_name,
+            socket_parameters
+        )
+
         # retrieves the corresponding (apple push) client connection
-        self.client_connection = self._apple_push_client.get_client_connection((host, port, socket_name, socket_parameters))
+        self.client_connection = self._apple_push_client.get_client_connection(connection_parameters)
 
         # acquires the apple push client lock
         self._apple_push_client_lock.acquire()
