@@ -664,7 +664,9 @@ class ExternalLinkNode(LinkNode):
     BASE_NAME_REGEX = re.compile("(\w+\:\/\/)?(?P<base_name>[^\:\/\?#]+)")
     """ The base name regex """
 
-    SPECIAL_BASE_NAMES = ("wikipedia",)
+    SPECIAL_BASE_NAMES = (
+        "wikipedia",
+    )
     """ The special base names """
 
     base_name_match = None

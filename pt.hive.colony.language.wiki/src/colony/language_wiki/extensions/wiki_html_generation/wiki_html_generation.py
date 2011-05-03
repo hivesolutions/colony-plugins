@@ -80,10 +80,19 @@ MAXIMUM_SECTIONS_VALUE = 5
 ESCAPE_NAME_VALUE = "escape_name"
 """ The escape name value """
 
-AVAILABLE_TAG_NAMES = ("del",)
+AVAILABLE_TAG_NAMES = (
+    "del",
+)
 """ The available tag names """
 
-INDEX_KEYS_LIST = ("Introduction", "Tutorials", "Standards &amp; Practices", "Design documents", "How-tos", "Demos")
+INDEX_KEYS_LIST = (
+    "Introduction",
+    "Tutorials",
+    "Standards &amp; Practices",
+    "Design documents",
+    "How-tos",
+    "Demos"
+)
 """ The index keys list """
 
 INDEX_MAP = {

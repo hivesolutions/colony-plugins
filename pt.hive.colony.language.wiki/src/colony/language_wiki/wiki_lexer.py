@@ -43,12 +43,14 @@ ESCAPE_REGEX = re.compile(r"%%(.*?)%%", re.UNICODE)
 """ The escape regex value """
 
 # the token definitions
-tokens = ("LBRACK", "RBRACK", "LBRACE", "RBRACE", "PIPE",
-          "BOLD", "BOLD_END", "ITALIC", "ITALIC_END",
-          "UNDERLINE", "UNDERLINE_END", "MONOSPACE", "MONOSPACE_END",
-          "SECTION", "SECTION_END", "TAG",
-          "SPACE", "FORCED_NEWLINE", "BULLET_LIST",
-          "ORDERED_LIST", "LINK_NAME", "NAME", "NEWLINE")
+tokens = (
+    "LBRACK", "RBRACK", "LBRACE", "RBRACE", "PIPE",
+    "BOLD", "BOLD_END", "ITALIC", "ITALIC_END",
+    "UNDERLINE", "UNDERLINE_END", "MONOSPACE", "MONOSPACE_END",
+    "SECTION", "SECTION_END", "TAG",
+    "SPACE", "FORCED_NEWLINE", "BULLET_LIST",
+    "ORDERED_LIST", "LINK_NAME", "NAME", "NEWLINE"
+)
 
 # the reserved keywords
 reserved = {

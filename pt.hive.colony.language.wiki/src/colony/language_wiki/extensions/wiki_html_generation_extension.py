@@ -163,8 +163,15 @@ class WikiHtmlGenerator(language_wiki.wiki_extension_system.WikiExtension):
             # sets the file direcory path as the file path
             file_directory_path = file_path
 
+            # defines the wiki file arguments
+            wiki_file_arguments = (
+                full_target_path,
+                extra_resources_paths_list,
+                configuration_map
+            )
+
             # walks the file path
-            os.path.walk(file_path, self.generate_wiki_file, (full_target_path, extra_resources_paths_list, configuration_map))
+            os.path.walk(file_path, self.generate_wiki_file, wiki_file_arguments)
         else:
             # retrieves the file directory path
             file_directory_path = os.path.dirname(file_path)
@@ -172,8 +179,15 @@ class WikiHtmlGenerator(language_wiki.wiki_extension_system.WikiExtension):
             # retrieves the file base path
             file_base_path = os.path.basename(file_path)
 
+            # defines the wiki file arguments
+            wiki_file_arguments = (
+                full_target_path,
+                extra_resources_paths_list,
+                configuration_map
+            )
+
             # generates the wiki file
-            self.generate_wiki_file((full_target_path, extra_resources_paths_list, configuration_map), file_directory_path, (file_base_path,))
+            self.generate_wiki_file(wiki_file_arguments, file_directory_path, (file_base_path,))
 
         # computes the extra resources manifest file
         self._compute_extra_resources_manifest(file_directory_path, extra_resources_paths_list)
