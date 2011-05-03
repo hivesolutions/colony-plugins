@@ -47,12 +47,14 @@ from settler_query_lexer import * #@UnusedWildImport
 
 # parsing rules
 # precedence of operators
-precedence = (("left", "OR"),
-              ("left", "AND"),
-              ("left", "GREATER", "GREATEREQUAL", "LESS", "LESSEQUAL", "EQUALEQUAL"),
-              ("left", "PLUS", "MINUS"),
-              ("left", "TIMES", "DIVIDE", "POWER"),
-              ("right", "NOT"),)
+precedence = (
+    ("left", "OR"),
+    ("left", "AND"),
+    ("left", "GREATER", "GREATEREQUAL", "LESS", "LESSEQUAL", "EQUALEQUAL"),
+    ("left", "PLUS", "MINUS"),
+    ("left", "TIMES", "DIVIDE", "POWER"),
+    ("right", "NOT")
+)
 
 def p_program(t):
     "program : statements"
