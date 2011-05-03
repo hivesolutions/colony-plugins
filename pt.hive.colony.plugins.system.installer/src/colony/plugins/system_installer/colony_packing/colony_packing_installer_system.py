@@ -328,6 +328,9 @@ class ColonyPackingInstaller:
             # adds the bundle item
             self._add_bundle_item(bundle_item_key, bundle_item_value, file_context)
 
+            # removes the temporary bundles path (directory)
+            file_context.remove_directory(temporary_bundles_path)
+
             # commits the transaction
             file_context.commit()
         except:
