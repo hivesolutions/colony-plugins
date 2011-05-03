@@ -163,8 +163,16 @@ class SmtpClient:
         self._smtp_client.stop_client()
 
     def send_mail(self, host, port, sender, recipients_list, message, parameters = {}, socket_name = DEFAULT_SOCKET_NAME, socket_parameters = DEFAULT_SOCKET_PARAMETERS):
+        # defines the connection parameters
+        connection_parameters = (
+            host,
+            port,
+            socket_name,
+            socket_parameters
+        )
+
         # retrieves the corresponding (smtp) client connection
-        self.client_connection = self._smtp_client.get_client_connection((host, port, socket_name, socket_parameters))
+        self.client_connection = self._smtp_client.get_client_connection(connection_parameters)
 
         # acquires the smtp client lock
         self._smtp_client_lock.acquire()

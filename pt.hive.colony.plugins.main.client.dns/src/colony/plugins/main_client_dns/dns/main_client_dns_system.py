@@ -209,8 +209,16 @@ class DnsClient:
         self._dns_client.stop_client()
 
     def resolve_queries(self, host, port, queries, parameters = {}, socket_name = DEFAULT_SOCKET_NAME, socket_parameters = DEFAULT_SOCKET_PARAMETERS):
+        # defines the connection parameters
+        connection_parameters = (
+            host,
+            port,
+            socket_name,
+            socket_parameters
+        )
+
         # retrieves the corresponding (dns) client connection
-        self.client_connection = self._dns_client.get_client_connection((host, port, socket_name, socket_parameters))
+        self.client_connection = self._dns_client.get_client_connection(connection_parameters)
 
         # acquires the dns client lock
         self._dns_client_lock.acquire()

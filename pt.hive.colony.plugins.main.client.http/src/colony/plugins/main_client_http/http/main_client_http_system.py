@@ -384,8 +384,16 @@ class HttpClient:
         # retrieves the socket parameters (default)
         socket_parameters = DEFAULT_SOCKET_PARAMETERS
 
+        # defines the connection parameters
+        connection_parameters = (
+            host,
+            port,
+            socket_name,
+            socket_parameters
+        )
+
         # retrieves the corresponding (http) client connection
-        self.client_connection = self._http_client.get_client_connection((host, port, socket_name, socket_parameters))
+        self.client_connection = self._http_client.get_client_connection(connection_parameters)
 
         # acquires the http client lock
         self._http_client_lock.acquire()
