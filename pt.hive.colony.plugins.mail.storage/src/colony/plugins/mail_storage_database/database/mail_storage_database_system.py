@@ -256,10 +256,10 @@ class MailStorageDatabaseClient:
                         {
                             "field_name" : "uid",
                             "field_value" : uid
-                        }
-                    ,)
-                }
-            ,),
+                        },
+                    )
+                },
+            ),
             EAGER_LOADING_RELATIONS_VALUE : {
                 "mailbox" : {},
                 "contents" : {}
@@ -337,10 +337,10 @@ class MailStorageDatabaseClient:
                         {
                             "field_name" : "uid",
                             "field_value" : uid
-                        }
-                    ,)
-                }
-            ,),
+                        },
+                    )
+                },
+            ),
             EAGER_LOADING_RELATIONS_VALUE : {
                 "mailbox" : {},
                 "contents" : {}
@@ -378,10 +378,10 @@ class MailStorageDatabaseClient:
                         {
                             "field_name" : "name",
                             "field_value" : name
-                        }
-                    ,)
-                }
-            ,)
+                        },
+                    )
+                },
+            )
         }
 
         # retrieves the valid mailboxes
@@ -415,10 +415,10 @@ class MailStorageDatabaseClient:
                         {
                             "field_name" : "name",
                             "field_value" : name
-                        }
-                    ,)
-                }
-            ,),
+                        },
+                    )
+                },
+            ),
             EAGER_LOADING_RELATIONS_VALUE : {
                 "messages" : {}
             }
