@@ -110,6 +110,9 @@ class SystemInstallerPlugin(colony.base.plugin_system.Plugin):
     def dependency_injected(self, plugin):
         colony.base.plugin_system.Plugin.dependency_injected(self, plugin)
 
+    def install_package(self, file_path, properties, installer_type):
+        return self.system_installer.install_package(file_path, properties, installer_type)
+
     def install_bundle(self, file_path, properties, installer_type):
         return self.system_installer.install_bundle(file_path, properties, installer_type)
 

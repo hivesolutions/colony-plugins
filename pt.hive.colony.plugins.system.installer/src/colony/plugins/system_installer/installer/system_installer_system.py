@@ -62,6 +62,13 @@ class SystemInstaller:
 
         self.installer_plugins_map = {}
 
+    def install_package(self, file_path, properties, installer_type):
+        # retrieves the installer plugin for the installer type
+        installer_plugin = self._get_installer_plugin_by_installer_type(installer_type)
+
+        # installs the package with the installer plugin
+        installer_plugin.install_package(file_path, properties)
+
     def install_bundle(self, file_path, properties, installer_type):
         # retrieves the installer plugin for the installer type
         installer_plugin = self._get_installer_plugin_by_installer_type(installer_type)

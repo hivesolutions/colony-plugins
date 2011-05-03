@@ -108,6 +108,19 @@ class ColonyPackingInstallerPlugin(colony.base.plugin_system.Plugin):
     def get_installer_type(self):
         return self.colony_packing_installer.get_installer_type()
 
+    def install_package(self, file_path, properties):
+        """
+        Method called upon installation of the package with
+        the given file path and properties.
+
+        @type file_path: String
+        @param file_path: The path to the package file to be installed.
+        @type properties: Dictionary
+        @param properties: The map of properties for installation.
+        """
+
+        return self.colony_packing_installer.install_package(file_path, properties)
+
     def install_bundle(self, file_path, properties):
         """
         Method called upon installation of the bundle with

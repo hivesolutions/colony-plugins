@@ -60,11 +60,20 @@ VERSION_VALUE = "version"
 TIMESTAMP_VALUE = "timestamp"
 """ The timestamp value """
 
-PLUGINS_VALUE = "plugins"
-""" The plugins value """
+TYPE_VALUE = "type"
+""" The type value """
+
+BUNDLE_VALUE = "bundle"
+""" The bundle value """
+
+PLUGIN_VALUE = "plugin"
+""" The plugin value """
 
 BUNDLES_VALUE = "bundles"
 """ The bundles value """
+
+PLUGINS_VALUE = "plugins"
+""" The plugins value """
 
 UPGRADE_VALUE = "upgrade"
 """ The upgrade value """
@@ -143,6 +152,75 @@ class ColonyPackingInstaller:
 
         return INSTALLER_TYPE
 
+    def install_package(self, file_path, properties, file_context = None):
+        """
+        Method called upon installation of the package with
+        the given file path and properties.
+
+        @type file_path: String
+        @param file_path: The path to the package file to be installed.
+        @type properties: Dictionary
+        @param properties: The map of properties for installation.
+        """
+
+        # retrieves the packing manager plugin
+        packing_manager_plugin = self.colony_packing_installer_plugin.packing_manager_plugin
+
+        # creates a new file transaction context
+        file_context = file_context or colony.libs.file_util.FileTransactionContext()
+
+        # opens a new transaction in the file context
+        file_context.open()
+
+        try:
+            # resolves the file path retrieving the real file path
+            real_file_path = file_context.resolve_file_path(file_path)
+
+            # retrieves the packing information
+            packing_information = packing_manager_plugin.get_packing_information(real_file_path, {}, "colony")
+
+            # retrieves the type
+            type = packing_information.get_property(TYPE_VALUE)
+
+            # retrieves the package id
+            package_id = packing_information.get_property(ID_VALUE)
+
+            # retrieves the package version
+            package_version = packing_information.get_property(VERSION_VALUE)
+
+            # in case the type is bundle
+            if type == BUNDLE_VALUE:
+                # installs the bundle
+                self.install_bundle(file_path, properties, file_context)
+            # in case the type is plugin
+            elif type == PLUGIN_VALUE:
+                # installs the plugin
+                self.install_plugin(file_path, properties, file_context)
+            # otherwise it's not a valid type
+            else:
+                raise Exception("TA FEITO !!!!")
+
+            # retrieves the package item key
+            package_item_key = package_id
+
+            # creates the package item value
+            package_item_value = {
+                TYPE_VALUE : type,
+                VERSION_VALUE : package_version
+            }
+
+            # adds the package item
+            self._add_package_item(package_item_key, package_item_value, file_context)
+
+            # commits the transaction
+            file_context.commit()
+        except:
+            # rollsback the transaction
+            file_context.rollback()
+
+            # re-raises the exception
+            raise
+
     def install_bundle(self, file_path, properties, file_context = None):
         """
         Method called upon installation of the bundle with
@@ -161,6 +239,12 @@ class ColonyPackingInstaller:
 
         # retrieves the packing manager plugin
         packing_manager_plugin = self.colony_packing_installer_plugin.packing_manager_plugin
+
+        # retrieves the manager path
+        manager_path = plugin_manager.get_manager_path()
+
+        # creates the bundles directory path
+        bundles_directory_path = os.path.join(manager_path, RELATIVE_REGISTRY_PATH + "/" + BUNDLES_VALUE)
 
         # creates a new file transaction context
         file_context = file_context or colony.libs.file_util.FileTransactionContext()
@@ -184,6 +268,15 @@ class ColonyPackingInstaller:
             # retrieves the plugins
             plugins = packing_information.get_property(PLUGINS_VALUE)
 
+            # reads the bundle file contents
+            bundle_file_contents = file_context.read_file(file_path)
+
+            # creates the bundle descriptor file path
+            bundle_file_path = os.path.join(bundles_directory_path, bundle_id + "_" + bundle_version + COLONY_BUNDLE_FILE_EXTENSION)
+
+            # writes the bundle file contents to the bundle file path
+            file_context.write_file(bundle_file_path, bundle_file_contents)
+
             # retrieves the temporary path
             temporary_path = plugin_manager.get_temporary_path()
 
@@ -192,7 +285,7 @@ class ColonyPackingInstaller:
 
             # retrieves the "virtual" main bundle path from the file context
             # this is necessary to ensure a transaction mode
-            main_bundle_virtual_path = file_context.get_file_path(temporary_path)
+            main_bundle_virtual_path = file_context.get_file_path(temporary_bundles_path)
 
             # deploys the package using the main bundle "virtual" path
             self._deploy_package(real_file_path, main_bundle_virtual_path)
@@ -231,9 +324,6 @@ class ColonyPackingInstaller:
 
             # re-raises the exception
             raise
-
-        # removes the temporary bundles path
-        os.remove(temporary_bundles_path)
 
     def install_plugin(self, file_path, properties, file_context = None):
         """
