@@ -141,8 +141,8 @@ class MainAuthenticationEntityManagerHandler:
                         {
                             "field_name" : "username",
                             "field_value" : username
-                        }
-                    ,)
+                        },
+                    )
                 },
                 {
                     "filter_type" : "equals",
@@ -150,8 +150,8 @@ class MainAuthenticationEntityManagerHandler:
                         {
                             "field_name" : "password_hash",
                             "field_value" : password
-                        }
-                    ,)
+                        },
+                    )
                 }
             )
         }
