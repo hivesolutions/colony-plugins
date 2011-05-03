@@ -63,6 +63,9 @@ TIMESTAMP_VALUE = "timestamp"
 PLUGINS_VALUE = "plugins"
 """ The plugins value """
 
+BUNDLES_VALUE = "bundles"
+""" The bundles value """
+
 UPGRADE_VALUE = "upgrade"
 """ The upgrade value """
 
@@ -153,11 +156,14 @@ class ColonyPackingInstaller:
         @param file_context: The file context to be used.
         """
 
+        # retrieves the plugin manager
+        plugin_manager = self.colony_packing_installer_plugin.manager
+
         # retrieves the packing manager plugin
         packing_manager_plugin = self.colony_packing_installer_plugin.packing_manager_plugin
 
         # creates a new file transaction context
-        file_context = file_context or colony.libs.file_util.FileTransactionContext("c:\\transactions\\")
+        file_context = file_context or colony.libs.file_util.FileTransactionContext()
 
         # opens a new transaction in the file context
         file_context.open()
@@ -178,9 +184,15 @@ class ColonyPackingInstaller:
             # retrieves the plugins
             plugins = packing_information.get_property(PLUGINS_VALUE)
 
+            # retrieves the temporary path
+            temporary_path = plugin_manager.get_temporary_path()
+
+            # creates the temporary bundles path
+            temporary_bundles_path = os.path.join(temporary_path, BUNDLES_VALUE)
+
             # retrieves the "virtual" main bundle path from the file context
             # this is necessary to ensure a transaction mode
-            main_bundle_virtual_path = file_context.get_file_path("/tmp/bundles")
+            main_bundle_virtual_path = file_context.get_file_path(temporary_path)
 
             # deploys the package using the main bundle "virtual" path
             self._deploy_package(real_file_path, main_bundle_virtual_path)
@@ -193,7 +205,8 @@ class ColonyPackingInstaller:
                 # retrieves the plugin version
                 plugin_version = plugin[VERSION_VALUE]
 
-                plugin_file_path = "/tmp/bundles/plugins/" + plugin_id + "_" + plugin_version + COLONY_PLUGIN_FILE_EXTENSION
+                # creates the plugin file path
+                plugin_file_path = os.path.join(temporary_bundles_path, PLUGINS_VALUE + "/" + plugin_id + "_" + plugin_version + COLONY_PLUGIN_FILE_EXTENSION)
 
                 # installs the plugin for the given plugin file path
                 # properties and file context
@@ -218,6 +231,9 @@ class ColonyPackingInstaller:
 
             # re-raises the exception
             raise
+
+        # removes the temporary bundles path
+        os.remove(temporary_bundles_path)
 
     def install_plugin(self, file_path, properties, file_context = None):
         """
@@ -251,7 +267,7 @@ class ColonyPackingInstaller:
         plugins_directory_path = os.path.join(manager_path, RELATIVE_REGISTRY_PATH + "/" + PLUGINS_VALUE)
 
         # creates a new file transaction context
-        file_context = file_context or colony.libs.file_util.FileTransactionContext("c:\\transactions\\")
+        file_context = file_context or colony.libs.file_util.FileTransactionContext()
 
         # opens a new transaction in the file context
         file_context.open()
