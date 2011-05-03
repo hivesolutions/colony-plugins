@@ -55,13 +55,15 @@ COLONY_GENERATOR_PATH = "../../../../pt.hive.colony.language.generator/src/colon
 
 # parsing rules
 # precedence of operators
-precedence = (("left", "OR"),
-              ("left", "AND"),
-              ("left", "GREATER", "GREATEREQUAL", "LESS", "LESSEQUAL", "EQUALEQUAL"),
-              ("left", "PLUS", "MINUS"),
-              ("left", "TIMES", "DIVIDE", "POWER"),
-              ("right", "NOT"),
-              ("right", "UMINUS"),)
+precedence = (
+    ("left", "OR"),
+    ("left", "AND"),
+    ("left", "GREATER", "GREATEREQUAL", "LESS", "LESSEQUAL", "EQUALEQUAL"),
+    ("left", "PLUS", "MINUS"),
+    ("left", "TIMES", "DIVIDE", "POWER"),
+    ("right", "NOT"),
+    ("right", "UMINUS")
+)
 
 def p_program(t):
     "program : statements"

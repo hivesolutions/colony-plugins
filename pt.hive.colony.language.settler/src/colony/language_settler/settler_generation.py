@@ -316,7 +316,7 @@ class PythonCodeGenerationVisitor(settler_visitor.Visitor):
             self.add_operation("MAKE_FUNCTION", (0, ))
 
             # adds the store operation to the list of operations
-            self.add_store_operation((function_name, ))
+            self.add_store_operation((function_name,))
         elif self.get_current_context_type() == "class":
             # retrieves the code object
             code_object = self.current_context_code_information.code_object
