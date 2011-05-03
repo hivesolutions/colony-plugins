@@ -310,10 +310,10 @@ class PythonCodeGenerationVisitor(settler_visitor.Visitor):
             self.add_variable(function_name)
 
             # adds the operation to the list of operations
-            self.add_operation("LOAD_CONST", (code_object, ))
+            self.add_operation("LOAD_CONST", (code_object,))
 
             # adds the operation to the list of operations
-            self.add_operation("MAKE_FUNCTION", (0, ))
+            self.add_operation("MAKE_FUNCTION", (0,))
 
             # adds the store operation to the list of operations
             self.add_store_operation((function_name,))
@@ -346,32 +346,32 @@ class PythonCodeGenerationVisitor(settler_visitor.Visitor):
             self.add_constant(())
 
             # adds the operation to the list of operations
-            self.add_operation("LOAD_CONST", (class_name, ))
+            self.add_operation("LOAD_CONST", (class_name,))
 
             if extends_list:
                 for extends_item in extends_list:
                     # adds the operation to the list of operations
-                    self.add_operation("LOAD", (extends_item, ))
+                    self.add_operation("LOAD", (extends_item,))
                 # adds the operation to the list of operations
-                self.add_operation("BUILD_TUPLE", (len(extends_list), ))
+                self.add_operation("BUILD_TUPLE", (len(extends_list),))
             else:
                 # adds the operation to the list of operations
-                self.add_operation("LOAD_CONST", ((), ))
+                self.add_operation("LOAD_CONST", ((),))
 
             # adds the operation to the list of operations
-            self.add_operation("LOAD_CONST", (code_object, ))
+            self.add_operation("LOAD_CONST", (code_object,))
 
             # adds the operation to the list of operations
-            self.add_operation("MAKE_FUNCTION", (0, ))
+            self.add_operation("MAKE_FUNCTION", (0,))
 
             # adds the operation to the list of operations
-            self.add_operation("CALL_FUNCTION", (0, ))
+            self.add_operation("CALL_FUNCTION", (0,))
 
             # adds the operation to the list of operations
-            self.add_operation("BUILD_CLASS", (0, ))
+            self.add_operation("BUILD_CLASS", (0,))
 
             # adds the store operation to the list of operations
-            self.add_store_operation((class_name, ))
+            self.add_store_operation((class_name,))
         elif self.get_current_context_type() == "plugin":
             # retrieves the code object
             code_object = self.current_context_code_information.code_object
@@ -401,53 +401,53 @@ class PythonCodeGenerationVisitor(settler_visitor.Visitor):
             self.add_constant(())
 
             # adds the operation to the list of operations
-            self.add_operation("LOAD_CONST", (plugin_name, ))
+            self.add_operation("LOAD_CONST", (plugin_name,))
 
             if extends_list:
                 for extends_item in extends_list:
                     # adds the operation to the list of operations
-                    self.add_operation("LOAD", (extends_item, ))
+                    self.add_operation("LOAD", (extends_item,))
                 # adds the operation to the list of operations
-                self.add_operation("BUILD_TUPLE", (len(extends_list), ))
+                self.add_operation("BUILD_TUPLE", (len(extends_list),))
             else:
                 # adds the operation to the list of operations
-                self.add_operation("LOAD", ("colony", ))
+                self.add_operation("LOAD", ("colony",))
 
                 # adds the variable to the current context
                 self.add_variable("plugins")
 
                 # adds the operation to the list of operations
-                self.add_operation("LOAD_ATTR", ("plugins", ))
+                self.add_operation("LOAD_ATTR", ("plugins",))
 
                 # adds the variable to the current context
                 self.add_variable("plugin_system")
 
                 # adds the operation to the list of operations
-                self.add_operation("LOAD_ATTR", ("plugin_system", ))
+                self.add_operation("LOAD_ATTR", ("plugin_system",))
 
                 # adds the variable to the current context
                 self.add_variable("Plugin")
 
                 # adds the operation to the list of operations
-                self.add_operation("LOAD_ATTR", ("Plugin", ))
+                self.add_operation("LOAD_ATTR", ("Plugin",))
 
                 # adds the operation to the list of operations
-                self.add_operation("BUILD_TUPLE", (1, ))
+                self.add_operation("BUILD_TUPLE", (1,))
 
             # adds the operation to the list of operations
-            self.add_operation("LOAD_CONST", (code_object, ))
+            self.add_operation("LOAD_CONST", (code_object,))
 
             # adds the operation to the list of operations
-            self.add_operation("MAKE_FUNCTION", (0, ))
+            self.add_operation("MAKE_FUNCTION", (0,))
 
             # adds the operation to the list of operations
-            self.add_operation("CALL_FUNCTION", (0, ))
+            self.add_operation("CALL_FUNCTION", (0,))
 
             # adds the operation to the list of operations
-            self.add_operation("BUILD_CLASS", (0, ))
+            self.add_operation("BUILD_CLASS", (0,))
 
             # adds the store operation to the list of operations
-            self.add_store_operation((plugin_name, ))
+            self.add_store_operation((plugin_name,))
 
         settler_visitor.Visitor.pop_current_context_type(self, node)
 
@@ -607,7 +607,7 @@ class PythonCodeGenerationVisitor(settler_visitor.Visitor):
         # in case the visit mode is of type module
         if self.visit_mode == MODULE_MODE:
             # adds the operation to the list of operations
-            self.add_operation("LOAD_CONST", (None, ))
+            self.add_operation("LOAD_CONST", (None,))
 
             # adds the operation to the list of operations
             self.add_operation("RETURN_VALUE", ())
@@ -620,7 +620,7 @@ class PythonCodeGenerationVisitor(settler_visitor.Visitor):
             # in case the current stack is empty
             if not current_stack_size:
                 # adds the operation to the list of operations
-                self.add_operation("LOAD_CONST", (None, ))
+                self.add_operation("LOAD_CONST", (None,))
             # adds the operation to the list of operations
             self.add_operation("RETURN_VALUE", ())
 
@@ -666,23 +666,23 @@ class PythonCodeGenerationVisitor(settler_visitor.Visitor):
                     self.add_variable(name_reference)
 
                     # adds the store operation to the list of operations
-                    self.add_store_operation((name_reference, ))
+                    self.add_store_operation((name_reference,))
                 else:
                     # adds the name to the current context
                     self.add_name(name_reference)
 
                     # adds the operation to the list of operations
-                    self.add_operation("STORE_ATTR", (name_reference, ))
+                    self.add_operation("STORE_ATTR", (name_reference,))
             else:
                 if first_visit:
                     # adds the operation to the list of operations
-                    self.add_operation("LOAD", (name_reference, ))
+                    self.add_operation("LOAD", (name_reference,))
                 else:
                     # adds the name to the current context
                     self.add_name(name_reference)
 
                     # adds the operation to the list of operations
-                    self.add_operation("LOAD_ATTR", (name_reference, ))
+                    self.add_operation("LOAD_ATTR", (name_reference,))
 
             # sets the first visit flag as false
             first_visit = False
@@ -739,7 +739,7 @@ class PythonCodeGenerationVisitor(settler_visitor.Visitor):
             self.decrement_operations_stack_level_virtual()
 
             # adds the operation to the list of operations
-            self.add_operation("JUMP_FORWARD", (else_stack_memory_size, ))
+            self.add_operation("JUMP_FORWARD", (else_stack_memory_size,))
 
             # increments the operations stack level (virtual)
             self.increment_operations_stack_level_virtual()
@@ -754,7 +754,7 @@ class PythonCodeGenerationVisitor(settler_visitor.Visitor):
         self.decrement_operations_stack_level_virtual()
 
         # adds the operation to the list of operations
-        self.add_operation("JUMP_IF_FALSE", (stack_memory_size, ))
+        self.add_operation("JUMP_IF_FALSE", (stack_memory_size,))
 
         # increments the operations stack level (virtual)
         self.increment_operations_stack_level_virtual()
@@ -821,7 +821,7 @@ class PythonCodeGenerationVisitor(settler_visitor.Visitor):
             self.decrement_operations_stack_level_virtual()
 
             # adds the operation to the list of operations
-            self.add_operation("JUMP_FORWARD", (else_stack_memory_size, ))
+            self.add_operation("JUMP_FORWARD", (else_stack_memory_size,))
 
             # increments the operations stack level (virtual)
             self.increment_operations_stack_level_virtual()
@@ -836,7 +836,7 @@ class PythonCodeGenerationVisitor(settler_visitor.Visitor):
         self.decrement_operations_stack_level_virtual()
 
         # adds the operation to the list of operations
-        self.add_operation("JUMP_IF_FALSE", (stack_memory_size, ))
+        self.add_operation("JUMP_IF_FALSE", (stack_memory_size,))
 
         # increments the operations stack level (virtual)
         self.increment_operations_stack_level_virtual()
@@ -880,7 +880,7 @@ class PythonCodeGenerationVisitor(settler_visitor.Visitor):
         program_counter_after_setup_loop = current_program_counter + 3
 
         # adds the operation to the list of operations
-        self.add_operation("JUMP_ABSOLUTE", (program_counter_after_setup_loop, ))
+        self.add_operation("JUMP_ABSOLUTE", (program_counter_after_setup_loop,))
 
         # retrieves the stack memory size
         stack_memory_size = self.get_current_operations_stack_memory_size()
@@ -889,7 +889,7 @@ class PythonCodeGenerationVisitor(settler_visitor.Visitor):
         self.decrement_operations_stack_level_virtual()
 
         # adds the operation to the list of operations
-        self.add_operation("JUMP_IF_FALSE", (stack_memory_size, ))
+        self.add_operation("JUMP_IF_FALSE", (stack_memory_size,))
 
         # increments the operations stack level (virtual)
         self.increment_operations_stack_level_virtual()
@@ -910,7 +910,7 @@ class PythonCodeGenerationVisitor(settler_visitor.Visitor):
         self.decrement_operations_stack_level_virtual()
 
         # adds the operation to the list of operations
-        self.add_operation("SETUP_LOOP", (complete_stack_memory_size, ))
+        self.add_operation("SETUP_LOOP", (complete_stack_memory_size,))
 
         # increments the operations stack level (virtual)
         self.increment_operations_stack_level_virtual()
@@ -939,7 +939,7 @@ class PythonCodeGenerationVisitor(settler_visitor.Visitor):
         self.add_constant(integer_value)
 
         # adds the operation to the list of operations
-        self.add_operation("LOAD_CONST", (integer_value, ))
+        self.add_operation("LOAD_CONST", (integer_value,))
 
     @settler_visitor._visit(settler_ast.StringExpressionNode)
     def visit_string_expression_node(self, node):
@@ -950,7 +950,7 @@ class PythonCodeGenerationVisitor(settler_visitor.Visitor):
         self.add_constant(string_value)
 
         # adds the operation to the list of operations
-        self.add_operation("LOAD_CONST", (string_value, ))
+        self.add_operation("LOAD_CONST", (string_value,))
 
     @settler_visitor._visit(settler_ast.BoolExpressionNode)
     def visit_bool_expression_node(self, node):
@@ -964,7 +964,7 @@ class PythonCodeGenerationVisitor(settler_visitor.Visitor):
         self.add_variable(real_bool_balue)
 
         # adds the operation to the list of operations
-        self.add_operation("LOAD_NAME", (real_bool_balue, ))
+        self.add_operation("LOAD_NAME", (real_bool_balue,))
 
     @settler_visitor._visit(settler_ast.NameExpressionNode)
     def visit_name_expression_node(self, node):
@@ -981,13 +981,13 @@ class PythonCodeGenerationVisitor(settler_visitor.Visitor):
 
             if first_visit:
                 # adds the operation to the list of operations
-                self.add_operation("LOAD", (name_reference, ))
+                self.add_operation("LOAD", (name_reference,))
             else:
                 # adds the name to the current context
                 self.add_name(name_reference)
 
                 # adds the operation to the list of operations
-                self.add_operation("LOAD_ATTR", (name_reference, ))
+                self.add_operation("LOAD_ATTR", (name_reference,))
 
             # sets the first visit flag as false
             first_visit = False
@@ -1001,7 +1001,7 @@ class PythonCodeGenerationVisitor(settler_visitor.Visitor):
         list_contents_node_length = list_contents_node.count()
 
         # adds the operation to the list of operations
-        self.add_operation("BUILD_LIST", (list_contents_node_length, ))
+        self.add_operation("BUILD_LIST", (list_contents_node_length,))
 
     @settler_visitor._visit(settler_ast.ListContentsNode)
     def visit_list_contents_node(self, node):
@@ -1051,17 +1051,17 @@ class PythonCodeGenerationVisitor(settler_visitor.Visitor):
     @settler_visitor._visit(settler_ast.EqualExpressionNode)
     def visit_equal_expression_node(self, node):
         # adds the operation to the list of operations
-        self.add_operation("COMPARE_OP", (2, ))
+        self.add_operation("COMPARE_OP", (2,))
 
     @settler_visitor._visit(settler_ast.GreaterExpressionNode)
     def visit_greater_expression_node(self, node):
         # adds the operation to the list of operations
-        self.add_operation("COMPARE_OP", (4, ))
+        self.add_operation("COMPARE_OP", (4,))
 
     @settler_visitor._visit(settler_ast.GreaterEqualExpressionNode)
     def visit_greater_equal_expression_node(self, node):
         # adds the operation to the list of operations
-        self.add_operation("COMPARE_OP", (5, ))
+        self.add_operation("COMPARE_OP", (5,))
 
     @settler_visitor._visit(settler_ast.AndExpressionNode)
     def visit_and_expression_node(self, node):
@@ -1113,7 +1113,7 @@ class PythonCodeGenerationVisitor(settler_visitor.Visitor):
             self.decrement_operations_stack_level_virtual()
 
             # adds the operation to the list of operations
-            self.add_operation("JUMP_IF_FALSE", (second_expression_node_stack_memory_size, ))
+            self.add_operation("JUMP_IF_FALSE", (second_expression_node_stack_memory_size,))
 
             # increments the operations stack level (virtual)
             self.increment_operations_stack_level_virtual()
@@ -1130,7 +1130,7 @@ class PythonCodeGenerationVisitor(settler_visitor.Visitor):
             self.decrement_operations_stack_level_virtual()
 
             # adds the operation to the list of operations
-            self.add_operation("JUMP_IF_FALSE", (failure_deferred_value, ))
+            self.add_operation("JUMP_IF_FALSE", (failure_deferred_value,))
 
             # increments the operations stack level (virtual)
             self.increment_operations_stack_level_virtual()
@@ -1192,7 +1192,7 @@ class PythonCodeGenerationVisitor(settler_visitor.Visitor):
             self.decrement_operations_stack_level_virtual()
 
             # adds the operation to the list of operations
-            self.add_operation("JUMP_IF_TRUE", (second_expression_node_stack_memory_size, ))
+            self.add_operation("JUMP_IF_TRUE", (second_expression_node_stack_memory_size,))
 
             # increments the operations stack level (virtual)
             self.increment_operations_stack_level_virtual()
@@ -1209,7 +1209,7 @@ class PythonCodeGenerationVisitor(settler_visitor.Visitor):
             self.decrement_operations_stack_level_virtual()
 
             # adds the operation to the list of operations
-            self.add_operation("JUMP_IF_TRUE", (success_deferred_value, ))
+            self.add_operation("JUMP_IF_TRUE", (success_deferred_value,))
 
             # increments the operations stack level (virtual)
             self.increment_operations_stack_level_virtual()
@@ -1260,16 +1260,16 @@ class PythonCodeGenerationVisitor(settler_visitor.Visitor):
         self.add_constant(-1)
 
         # adds the operation to the list of operations
-        self.add_operation("LOAD_CONST", (-1, ))
+        self.add_operation("LOAD_CONST", (-1,))
 
         # adds the operation to the list of operations
-        self.add_operation("LOAD_CONST", (None, ))
+        self.add_operation("LOAD_CONST", (None,))
 
         # adds the operation to the list of operations
-        self.add_operation("IMPORT_NAME", (import_name, ))
+        self.add_operation("IMPORT_NAME", (import_name,))
 
         # adds the store operation to the list of operations
-        self.add_store_operation((first_name_reference, ))
+        self.add_store_operation((first_name_reference,))
 
     @settler_visitor._visit(settler_ast.FunctionNode)
     def visit_function_node(self, node):
@@ -1295,7 +1295,7 @@ class PythonCodeGenerationVisitor(settler_visitor.Visitor):
         self.current_context_code_information.flags = 0x0043
 
         # adds the operation to the list of operations
-        self.add_operation("LOAD_CONST", (None, ))
+        self.add_operation("LOAD_CONST", (None,))
 
         # adds the operation to the list of operations
         self.add_operation("RETURN_VALUE", ())
@@ -1379,18 +1379,18 @@ class PythonCodeGenerationVisitor(settler_visitor.Visitor):
                 if first_visit:
                     if is_complex and name_reference[0] in string.ascii_uppercase:
                         # adds the operation to the list of operations
-                        self.add_operation("LOAD", (name_reference, ))
+                        self.add_operation("LOAD", (name_reference,))
                         # adds the operation to the list of operations
-                        self.add_operation("CALL_FUNCTION", (0, ))
+                        self.add_operation("CALL_FUNCTION", (0,))
                     else:
                         # adds the operation to the list of operations
-                        self.add_operation("LOAD", (name_reference, ))
+                        self.add_operation("LOAD", (name_reference,))
                 else:
                     # adds the variable to the current context
                     self.add_variable(name_reference)
 
                     # adds the operation to the list of operations
-                    self.add_operation("LOAD_ATTR", (name_reference, ))
+                    self.add_operation("LOAD_ATTR", (name_reference,))
 
                 # sets the first visit flag as false
                 first_visit = False
@@ -1399,7 +1399,7 @@ class PythonCodeGenerationVisitor(settler_visitor.Visitor):
             self.decrement_operations_stack_level(False, True)
 
             # adds the operation to the list of operations
-            self.add_operation("CALL_FUNCTION", (number_function_arguments, ))
+            self.add_operation("CALL_FUNCTION", (number_function_arguments,))
 
     @settler_visitor._visit(settler_ast.ArgumentValuesNode)
     def visit_argument_values_node(self, node):
