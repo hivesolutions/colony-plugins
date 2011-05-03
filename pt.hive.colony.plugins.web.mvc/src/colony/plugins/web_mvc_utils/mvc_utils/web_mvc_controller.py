@@ -1897,7 +1897,9 @@ def _get_locales_default(self, rest_request):
     """
 
     # returns the default locale
-    return (DEFAULT_LOCALE,)
+    return (
+        DEFAULT_LOCALE,
+    )
 
 def _get_locales_map(self, accept_language):
     """
