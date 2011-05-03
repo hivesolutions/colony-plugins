@@ -203,8 +203,8 @@ class MailQueueDatabaseClient:
                         {
                             "field_name" : "name",
                             "field_value" : name
-                        }
-                    ,)
+                        },
+                    )
                 }
             ]
         }
@@ -232,17 +232,17 @@ class MailQueueDatabaseClient:
 
         # defines the find options for retrieving the mailboxes
         find_options = {
-            FILTERS_VALUE : [
+            FILTERS_VALUE : (
                 {
                     FILTER_TYPE_VALUE : "equals",
                     FILTER_FIELDS_VALUE : (
                         {
                             "field_name" : "name",
                             "field_value" : name
-                        }
-                    ,)
-                }
-            ],
+                        },
+                    )
+                },
+            ),
             EAGER_LOADING_RELATIONS_VALUE : {
                 "first_message" : message_options,
                 "last_message" : message_options,
