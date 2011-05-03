@@ -43,8 +43,10 @@ import search_query_interpreter_ast
 
 from search_query_interpreter_lexer import * #@UnusedWildImport
 
-precedence = (("left", "OR"),
-              ("left", "AND"),)
+precedence = (
+    ("left", "OR"),
+    ("left", "AND")
+)
 
 def p_query(t):
     "query : term"
