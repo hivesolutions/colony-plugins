@@ -196,9 +196,20 @@ class MainServiceBittorrent:
             print address + ": " + str(port)
 
             try:
+                # creates the socket
                 socket_value = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+
+                # sets the socket's timeout
                 socket_value.settimeout(1.0)
-                socket_value.connect((address, port))
+
+                # defines the connect parameters
+                connect_parameters = (
+                    address,
+                    port
+                )
+
+                # connects the socket
+                socket_value.connect(connect_parameters)
             except:
                 print "problema"
             else:

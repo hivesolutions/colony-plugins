@@ -431,7 +431,16 @@ class AbstractService:
         # in case no end points are defined and there is a socket provider
         # a default end point is creates with those values
         if not self.end_points and self.socket_provider:
-            self.end_points.append((self.socket_provider, self.bind_host, self.port, self.socket_parameters))
+            # defines the end point tuple
+            end_point_tuple = (
+                self.socket_provider,
+                self.bind_host,
+                self.port,
+                self.socket_parameters
+            )
+
+            # adds the end point
+            self.end_points.append(end_point_tuple)
 
     def start_service(self):
         """
@@ -712,8 +721,14 @@ class AbstractService:
             # sets the socket to be able to reuse the socket
             service_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
 
+            # defines the bind parameters
+            bind_parameters = (
+                bind_host,
+                port
+            )
+
             # binds the service socket
-            service_socket.bind((bind_host, port))
+            service_socket.bind(bind_parameters)
 
             # in case the service type is connection
             if self.service_type == CONNECTION_TYPE_VALUE:
@@ -911,8 +926,14 @@ class AbstractServiceConnectionHandler:
         # sets the socket to non blocking mode
         self.wake_file.setblocking(0)
 
+        # defines the bind parameters
+        bind_parameters = (
+            LOCAL_HOST,
+            self.wake_file_port
+        )
+
         # binds to the current host
-        self.wake_file.bind((LOCAL_HOST, self.wake_file_port))
+        self.wake_file.bind(bind_parameters)
 
         # retrieves the wake file descriptor
         wake_file_descriptor = self.wake_file.fileno()

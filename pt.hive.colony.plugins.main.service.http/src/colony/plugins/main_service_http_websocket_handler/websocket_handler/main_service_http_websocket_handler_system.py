@@ -192,7 +192,7 @@ class WebSocketConnection:
         self.service_connection = request.service_connection
 
     def __repr__(self):
-        return "(%s, %s, %s)" % (self.location, self.protocol, self.service_connection,)
+        return "(%s, %s, %s)" % (self.location, self.protocol, self.service_connection)
 
     def open(self):
         """

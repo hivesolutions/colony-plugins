@@ -87,10 +87,14 @@ TRANSFER_ENCODING_VALUE = "Transfer-Encoding"
 HTTP_PROTOCOL_PREFIX_VALUE = "HTTP/"
 """ The http protocol prefix value """
 
-REMOVAL_HEADERS = (HOST_VALUE,)
+REMOVAL_HEADERS = (
+    HOST_VALUE,
+)
 """ The removal headers list """
 
-REMOVAL_RESPONSE_HEADERS = (TRANSFER_ENCODING_VALUE,)
+REMOVAL_RESPONSE_HEADERS = (
+    TRANSFER_ENCODING_VALUE,
+)
 """ The removal response headers list """
 
 class MainServiceHttpProxyHandler:
