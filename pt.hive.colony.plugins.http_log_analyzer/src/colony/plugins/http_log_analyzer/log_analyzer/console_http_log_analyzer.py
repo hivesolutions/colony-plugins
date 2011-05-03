@@ -150,7 +150,9 @@ class ConsoleHttpLogAnalyzer:
                     {
                         "name" : "log_type",
                         "description" : "the http log type",
-                        "values" : ("common",),
+                        "values" : (
+                            "common",
+                        ),
                         "mandatory" : False
                     }
                 ]
