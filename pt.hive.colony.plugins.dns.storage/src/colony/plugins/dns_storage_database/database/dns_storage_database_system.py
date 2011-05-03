@@ -254,17 +254,17 @@ class DnsStorageDatabaseClient:
 
         # defines the find options for retrieving the zones
         find_options = {
-            FILTERS_VALUE : [
+            FILTERS_VALUE : (
                 {
                     FILTER_TYPE_VALUE : "equals",
                     FILTER_FIELDS_VALUE : (
                         {
                             "field_name" : "name",
                             "field_value" : name
-                        }
-                    ,)
-                }
-            ]
+                        },
+                    )
+                },
+            )
         }
 
         # retrieves the valid zones
