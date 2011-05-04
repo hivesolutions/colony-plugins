@@ -119,6 +119,12 @@ class SystemInstallerPlugin(colony.base.plugin_system.Plugin):
     def install_plugin(self, file_path, properties, installer_type):
         return self.system_installer.install_plugin(file_path, properties, installer_type)
 
+    def uninstall_package(self, package_id, package_version, properties, installer_type):
+        return self.system_installer.uninstall_package(package_id, package_version, properties, installer_type)
+
+    def uninstall_bundle(self, bundle_id, bundle_version, properties, installer_type):
+        return self.system_installer.uninstall_bundle(bundle_id, bundle_version, properties, installer_type)
+
     def uninstall_plugin(self, plugin_id, plugin_version, properties, installer_type):
         return self.system_installer.uninstall_plugin(plugin_id, plugin_version, properties, installer_type)
 

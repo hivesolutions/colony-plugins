@@ -147,6 +147,36 @@ class ColonyPackingInstallerPlugin(colony.base.plugin_system.Plugin):
 
         return self.colony_packing_installer.install_plugin(file_path, properties)
 
+    def uninstall_package(self, package_id, package_version, properties):
+        """
+        Method called upon removal of the package with
+        the given id, version and properties.
+
+        @type package_id: String
+        @param package_id: The id of the package to be removed.
+        @type package_version: String
+        @param package_version: The version of the package to be removed.
+        @type properties: Dictionary
+        @param properties: The map of properties for removal.
+        """
+
+        return self.colony_packing_installer.uninstall_package(package_id, package_version, properties)
+
+    def uninstall_bundle(self, bundle_id, bundle_version, properties):
+        """
+        Method called upon removal of the bundle with
+        the given id, version and properties.
+
+        @type bundle_id: String
+        @param bundle_id: The id of the bundle to be removed.
+        @type bundle_version: String
+        @param bundle_version: The version of the bundle to be removed.
+        @type properties: Dictionary
+        @param properties: The map of properties for removal.
+        """
+
+        return self.colony_packing_installer.uninstall_bundle(bundle_id, bundle_version, properties)
+
     def uninstall_plugin(self, plugin_id, plugin_version, properties):
         """
         Method called upon removal of the plugin with

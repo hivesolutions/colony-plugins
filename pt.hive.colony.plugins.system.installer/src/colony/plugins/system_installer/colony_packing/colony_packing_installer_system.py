@@ -339,7 +339,7 @@ class ColonyPackingInstaller:
             self._add_bundle_item(bundle_item_key, bundle_item_value, file_context)
 
             # removes the temporary bundles path (directory)
-            file_context.remove_directory_real(temporary_bundles_path)
+            file_context.remove_directory_immediate(temporary_bundles_path)
 
             # commits the transaction
             file_context.commit()
@@ -438,6 +438,170 @@ class ColonyPackingInstaller:
 
             # adds the plugin item
             self._add_plugin_item(plugin_item_key, plugin_item_value, file_context)
+
+            # commits the transaction
+            file_context.commit()
+        except:
+            # rollsback the transaction
+            file_context.rollback()
+
+            # re-raises the exception
+            raise
+
+    def uninstall_package(self, package_id, package_version, properties, file_context = None):
+        """
+        Method called upon removal of the package with
+        the given id, version and properties.
+
+        @type package_id: String
+        @param package_id: The id of the package to be removed.
+        @type package_version: String
+        @param package_version: The version of the package to be removed.
+        @type properties: Dictionary
+        @param properties: The map of properties for removal.
+        @type file_context: FileContext
+        @param file_context: The file context to be used.
+        """
+
+        # creates a new file transaction context
+        file_context = file_context or colony.libs.file_util.FileTransactionContext()
+
+        # opens a new transaction in the file context
+        file_context.open()
+
+        try:
+            # retrieves the packages structure
+            packages = self._get_packages(file_context)
+
+            # retrieves the installed packages
+            installed_packages = packages.get(INSTALLED_PACKAGES_VALUE, {})
+
+            # in case the package id is not found in the installed packages
+            if not package_id in installed_packages:
+                # raises the plugin installation error
+                raise colony_packing_installer_exceptions.PluginInstallationError("package '%s' v'%s' is not installed" % (package_id, package_version))
+
+            # retrieves the package (information) from the
+            # installed packages
+            package = installed_packages[package_id]
+
+            # retrieves the package version as the package version
+            # or from the package structure
+            package_version = package_version or package[VERSION_VALUE]
+
+            # retrieves the package type
+            package_type = package[TYPE_VALUE]
+
+            # in case the type is bundle
+            if package_type == BUNDLE_VALUE:
+                # removes the bundle
+                self.uninstall_bundle(package_id, package_version, properties, file_context)
+            # in case the type is plugin
+            elif package_type == PLUGIN_VALUE:
+                # removes the plugin
+                self.uninstall_plugin(package_id, package_version, properties, file_context)
+            # otherwise it's not a valid type
+            else:
+                # raises a plugin installation error
+                raise colony_packing_installer_exceptions.PluginInstallationError("invalid packaging type: %s" % package_type)
+
+            # removes the package item
+            self._remove_package_item(package_id, file_context)
+
+            # commits the transaction
+            file_context.commit()
+        except:
+            # rollsback the transaction
+            file_context.rollback()
+
+            # re-raises the exception
+            raise
+
+    def uninstall_bundle(self, bundle_id, bundle_version, properties, file_context = None):
+        """
+        Method called upon removal of the bundle with
+        the given id, version and properties.
+
+        @type bundle_id: String
+        @param bundle_id: The id of the bundle to be removed.
+        @type bundle_version: String
+        @param bundle_version: The version of the bundle to be removed.
+        @type properties: Dictionary
+        @param properties: The map of properties for removal.
+        @type file_context: FileContext
+        @param file_context: The file context to be used.
+        """
+
+        # retrieves the plugin manager
+        plugin_manager = self.colony_packing_installer_plugin.manager
+
+        # retrieves the packing manager plugin
+        packing_manager_plugin = self.colony_packing_installer_plugin.packing_manager_plugin
+
+        # retrieves the manager path
+        manager_path = plugin_manager.get_manager_path()
+
+        # retrieves the registry path
+        registry_path = os.path.join(manager_path, RELATIVE_REGISTRY_PATH)
+
+        # creates a new file transaction context
+        file_context = file_context or colony.libs.file_util.FileTransactionContext()
+
+        # opens a new transaction in the file context
+        file_context.open()
+
+        try:
+            # retrieves the bundles structure
+            bundles = self._get_bundles(file_context)
+
+            # retrieves the installed bundles
+            installed_bundles = bundles.get(INSTALLED_BUNDLES_VALUE, {})
+
+            # in case the bundle id is not found in the installed bundles
+            if not bundle_id in installed_bundles:
+                # raises the plugin installation error
+                raise colony_packing_installer_exceptions.PluginInstallationError("bundle '%s' v'%s' is not installed" % (bundle_id, bundle_version))
+
+            # retrieves the bundle (information) from the
+            # installed bundles
+            bundle = installed_bundles[bundle_id]
+
+            # retrieves the bundle version as the bundle version
+            # or from the bundle structure
+            bundle_version = bundle_version or bundle[VERSION_VALUE]
+
+            # creates the bundle file name from the bundle
+            # id and version
+            bundle_file_name = bundle_id + "_" + bundle_version + COLONY_BUNDLE_FILE_EXTENSION
+
+            # creates the bundle file path from the
+            bundle_path = os.path.normpath(registry_path + "/" + RELATIVE_BUNDLES_PATH + "/" + bundle_file_name)
+
+            # retrieves the packing information
+            packing_information = packing_manager_plugin.get_packing_information(bundle_path, {}, "colony")
+
+            # retrieves the bundle plugins
+            bundle_plugins = packing_information.get_property(PLUGINS_VALUE)
+
+            # iterates over all the plugins to remove them
+            for bundle_plugin in bundle_plugins:
+                # retrieves the plugin id
+                plugin_id = bundle_plugin[ID_VALUE]
+
+                # retrieves the plugin version
+                plugin_version = bundle_plugin[VERSION_VALUE]
+
+                # removes the plugin
+                self.uninstall_plugin(plugin_id, plugin_version, properties, file_context)
+
+                # removes the package item
+                self._remove_package_item(plugin_id, file_context)
+
+            # removes the bundle file
+            file_context.remove_file(bundle_path)
+
+            # removes the bundle item
+            self._remove_bundle_item(bundle_id, file_context)
 
             # commits the transaction
             file_context.commit()
