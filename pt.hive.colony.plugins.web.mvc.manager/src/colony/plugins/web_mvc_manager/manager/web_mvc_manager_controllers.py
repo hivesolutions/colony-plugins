@@ -83,6 +83,12 @@ PROVIDING_VALUE = "providing"
 ALLOWING_VALUE = "allowing"
 """ The allowing value """
 
+UPGRADE_VALUE = "upgrade"
+""" The upgrade value """
+
+COLONY_PACKING_VALUE = "colony_packing"
+""" The colony packing value """
+
 NORMAL_ENCODER_NAME = None
 """ The normal encoder name """
 
@@ -745,11 +751,11 @@ class PluginController:
 
         # installation options
         installation_properties = {
-            "upgrade" : True
+            UPGRADE_VALUE : True
         }
 
         # installs the package
-        system_installer_plugin.install_package(unique_file_path, installation_properties, "colony_packing")
+        system_installer_plugin.install_package(unique_file_path, installation_properties, COLONY_PACKING_VALUE)
 
         # removes the unique file
         os.remove(unique_file_path)
