@@ -83,6 +83,13 @@ class SystemInstaller:
         # installs the plugin with the installer plugin
         installer_plugin.install_plugin(file_path, properties)
 
+    def uninstall_plugin(self, plugin_id, plugin_version, properties, installer_type):
+        # retrieves the installer plugin for the installer type
+        installer_plugin = self._get_installer_plugin_by_installer_type(installer_type)
+
+        # uninstalls the plugin with the installer plugin
+        installer_plugin.uninstall_plugin(plugin_id, plugin_version, properties)
+
     def installer_load(self, installer_plugin):
         # retrieves the plugin installer type
         installer_type = installer_plugin.get_installer_type()

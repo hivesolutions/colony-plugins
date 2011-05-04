@@ -119,6 +119,9 @@ class SystemInstallerPlugin(colony.base.plugin_system.Plugin):
     def install_plugin(self, file_path, properties, installer_type):
         return self.system_installer.install_plugin(file_path, properties, installer_type)
 
+    def uninstall_plugin(self, plugin_id, plugin_version, properties, installer_type):
+        return self.system_installer.uninstall_plugin(plugin_id, plugin_version, properties, installer_type)
+
     def get_console_extension_name(self):
         return self.console_system_installer.get_console_extension_name()
 

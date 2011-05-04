@@ -99,6 +99,12 @@ LAST_MODIFIED_TIMESTAMP_VALUE = "last_modified_timestamp"
 LAST_MODIFIED_DATE_VALUE = "last_modified_date"
 """ The last modified date value """
 
+RELATIVE_BUNDLES_PATH = "bundles"
+""" The path relative to the manager path for the bundles """
+
+RELATIVE_PLUGINS_PATH = "plugins"
+""" The path relative to the manager path for the plugins """
+
 RELATIVE_REGISTRY_PATH = "var/registry"
 """ The path relative to the manager path for the registry """
 
@@ -245,7 +251,7 @@ class ColonyPackingInstaller:
         manager_path = plugin_manager.get_manager_path()
 
         # creates the bundles directory path
-        bundles_directory_path = os.path.join(manager_path, RELATIVE_REGISTRY_PATH + "/" + BUNDLES_VALUE)
+        bundles_directory_path = os.path.join(manager_path, RELATIVE_REGISTRY_PATH + "/" + RELATIVE_BUNDLES_PATH)
 
         # creates a new file transaction context
         file_context = file_context or colony.libs.file_util.FileTransactionContext()
@@ -370,7 +376,7 @@ class ColonyPackingInstaller:
         plugins_file_path = os.path.join(manager_path, RELATIVE_REGISTRY_PATH + "/" + PLUGINS_FILE_NAME)
 
         # creates the plugins directory path
-        plugins_directory_path = os.path.join(manager_path, RELATIVE_REGISTRY_PATH + "/" + PLUGINS_VALUE)
+        plugins_directory_path = os.path.join(manager_path, RELATIVE_REGISTRY_PATH + "/" + RELATIVE_PLUGINS_PATH)
 
         # creates a new file transaction context
         file_context = file_context or colony.libs.file_util.FileTransactionContext()
@@ -439,6 +445,73 @@ class ColonyPackingInstaller:
             # re-raises the exception
             raise
 
+    def uninstall_plugin(self, plugin_id, plugin_version, properties, file_context = None):
+        """
+        Method called upon removal of the plugin with
+        the given id, version and properties.
+
+        @type plugin_id: String
+        @param plugin_id: The id of the plugin to be removed.
+        @type plugin_version: String
+        @param plugin_version: The version of the plugin to be removed.
+        @type properties: Dictionary
+        @param properties: The map of properties for removal.
+        @type file_context: FileContext
+        @param file_context: The file context to be used.
+        """
+
+        # retrieves the plugin manager
+        plugin_manager = self.colony_packing_installer_plugin.manager
+
+        # retrieves the packing manager plugin
+        packing_manager_plugin = self.colony_packing_installer_plugin.packing_manager_plugin
+
+        # retrieves the manager path
+        manager_path = plugin_manager.get_manager_path()
+
+        # retrieves the registry path
+        registry_path = os.path.normpath(manager_path + "/" + RELATIVE_REGISTRY_PATH)
+
+        # creates a new file transaction context
+        file_context = file_context or colony.libs.file_util.FileTransactionContext()
+
+        # retrieves the plugins structure
+        plugins = self._get_plugins(file_context)
+
+        # retrieves the installed plugins
+        installed_plugins = plugins.get(INSTALLED_PLUGINS_VALUE, {})
+
+        # in case the plugin id is not found in the installed plugins
+        if not plugin_id in installed_plugins:
+            # raises the plugin installation error
+            raise colony_packing_installer_exceptions.PluginInstallationError("plugin '%s' v'%s' is not installed" % (plugin_id, plugin_version))
+
+        # retrieves the plugin (information) from the
+        # installed plugins
+        plugin = installed_plugins[plugin_id]
+
+        # retrieves the plugin version as the plugin version
+        # or from the plugin structure
+        plugin_version = plugin_version or plugin[VERSION_VALUE]
+
+        # creates the plugin file name from the plugin
+        # id and version
+        plugin_file_name = plugin_id + "_" + plugin_version + COLONY_PLUGIN_FILE_EXTENSION
+
+        # creates the plugin file path from the
+        plugin_path = os.path.normpath(registry_path + "/" + RELATIVE_PLUGINS_PATH + "/" + plugin_file_name)
+
+        # retrieves the packing information
+        packing_information = packing_manager_plugin.get_packing_information(plugin_path, {}, "colony")
+
+        # retrieves the plugin id
+        plugin_id = packing_information.get_property(ID_VALUE)
+
+        # retrieves the plugin version
+        plugin_version = packing_information.get_property(VERSION_VALUE)
+
+        print plugin_id
+
     def _validate_plugin_transaction(self, properties, plugins_file_path, plugins, packing_information):
         # retrieves the plugin id
         plugin_id = packing_information.get_property(ID_VALUE)
@@ -472,6 +545,17 @@ class ColonyPackingInstaller:
             raise colony_packing_installer_exceptions.PluginInstallationError("plugin version already installed")
 
     def _deploy_package(self, package_path, target_path = None):
+        """
+        Deploys the package in the given path.
+        In case the target path is not defined the main plugin path
+        is used for deploying.
+
+        @type package_path: String
+        @param package_path: The path to the package to be deployed.
+        @type target_path: String
+        @param target_path: The path to the target of the deployment.
+        """
+
         # retrieves the plugin manager
         plugin_manager = self.colony_packing_installer_plugin.manager
 
@@ -515,6 +599,42 @@ class ColonyPackingInstaller:
         # and date time values
         structure[LAST_MODIFIED_TIMESTAMP_VALUE] = current_time
         structure[LAST_MODIFIED_DATE_VALUE] = current_date_time_formated
+
+    def _get_packages(self, file_context):
+        """
+        Retrieves the packages structure.
+
+        @type file_context: FileContext
+        @param file_context: The file context to be used.
+        @rtype: Dictionary
+        @return: The retrieved bundles structure.
+        """
+
+        return self.__get_structure(file_context, PACKAGES_FILE_NAME)
+
+    def _get_bundles(self, file_context):
+        """
+        Retrieves the bundles structure.
+
+        @type file_context: FileContext
+        @param file_context: The file context to be used.
+        @rtype: Dictionary
+        @return: The retrieved bundles structure.
+        """
+
+        return self.__get_structure(file_context, BUNDLES_FILE_NAME)
+
+    def _get_plugins(self, file_context):
+        """
+        Retrieves the plugins structure.
+
+        @type file_context: FileContext
+        @param file_context: The file context to be used.
+        @rtype: Dictionary
+        @return: The retrieved plugins structure.
+        """
+
+        return self.__get_structure(file_context, PLUGINS_FILE_NAME)
 
     def _add_package_item(self, item_key, item_value, file_context, update_time = True):
         """
@@ -563,6 +683,78 @@ class ColonyPackingInstaller:
         """
 
         self.__add_structure_item(item_key, item_value, file_context, update_time, PLUGINS_FILE_NAME, INSTALLED_PLUGINS_VALUE)
+
+    def _remove_package_item(self, item_key, file_context):
+        """
+        Removes a package item from the packages file structure.
+
+        @type item_key: String
+        @param item_key: The key to the item to be removed.
+        @type file_context: FileContext
+        @param file_context: The file context to be used.
+        """
+
+        self.__remove_structure_item(item_key, file_context, PACKAGES_FILE_NAME, INSTALLED_PACKAGES_VALUE)
+
+    def _remove_bundle_item(self, item_key, file_context):
+        """
+        Removes a bundle item from the bundles file structure.
+
+        @type item_key: String
+        @param item_key: The key to the item to be removed.
+        @type file_context: FileContext
+        @param file_context: The file context to be used.
+        """
+
+        self.__remove_structure_item(item_key, file_context, BUNDLES_FILE_NAME, INSTALLED_BUNDLES_VALUE)
+
+    def _remove_plugin_item(self, item_key, file_context):
+        """
+        Removes a plugin item from the bundles file structure.
+
+        @type item_key: String
+        @param item_key: The key to the item to be removed.
+        @type file_context: FileContext
+        @param file_context: The file context to be used.
+        """
+
+        self.__remove_structure_item(item_key, file_context, PLUGINS_FILE_NAME, INSTALLED_PLUGINS_VALUE)
+
+    def __get_structure(self, file_context, structure_file_name):
+        """
+        Retrieves the structure from the structure file.
+
+        @type file_context: FileContext
+        @param file_context: The file context to be used.
+        @type structure_file_name: String
+        @param structure_file_name: The name of the structure file to be used.
+        @rtype: Dictionary
+        @return: The structure retrieved from the structure file.
+        """
+
+        # retrieves the plugin manager
+        plugin_manager = self.colony_packing_installer_plugin.manager
+
+        # retrieves the json plugin
+        json_plugin = self.colony_packing_installer_plugin.json_plugin
+
+        # retrieves the manager path
+        manager_path = plugin_manager.get_manager_path()
+
+        # retrieves the registry path
+        registry_path = os.path.normpath(manager_path + "/" + RELATIVE_REGISTRY_PATH)
+
+        # creates the structure file path
+        structure_file_path = os.path.normpath(registry_path + "/" + structure_file_name)
+
+        # reads the structure file contents
+        structure_file_contents = file_context.read_file(structure_file_path)
+
+        # loads the structure file contents from json
+        structure = json_plugin.loads(structure_file_contents)
+
+        # returns the structure
+        return structure
 
     def __add_structure_item(self, item_key, item_value, file_context, update_time, structure_file_name, structure_key_name):
         """
@@ -616,6 +808,63 @@ class ColonyPackingInstaller:
 
         # sets the installed structure map
         installed_structure[item_key] = item_value
+
+        # touches the structure (internal structure)
+        # updating the dates in it
+        self._touch_structure(structure)
+
+        # serializes the structure
+        structure_serialized = json_plugin.dumps_pretty(structure)
+
+        # writes the structure file contents
+        file_context.write_file(structure_file_path, structure_serialized)
+
+    def __remove_structure_item(self, item_key, file_context, structure_file_name, structure_key_name):
+        """
+        Removes a structure item from an existing structures file.
+
+        @type item_key: String
+        @param item_key: The key to the item to be removed.
+        @type file_context: FileContext
+        @param file_context: The file context to be used.
+        @type structure_file_name: String
+        @param structure_file_name: The name of the structure file to be used.
+        @type structure_key_name: String
+        @param structure_key_name: The key to the structure base item.
+        """
+
+        # retrieves the plugin manager
+        plugin_manager = self.colony_packing_installer_plugin.manager
+
+        # retrieves the json plugin
+        json_plugin = self.colony_packing_installer_plugin.json_plugin
+
+        # retrieves the manager path
+        manager_path = plugin_manager.get_manager_path()
+
+        # retrieves the registry path
+        registry_path = os.path.normpath(manager_path + "/" + RELATIVE_REGISTRY_PATH)
+
+        # creates the structure file path
+        structure_file_path = os.path.normpath(registry_path + "/" + structure_file_name)
+
+        # reads the structure file contents
+        structure_file_contents = file_context.read_file(structure_file_path)
+
+        # loads the structure file contents from json
+        structure = json_plugin.loads(structure_file_contents)
+
+        # retrieves the installed structure
+        installed_structure = structure.get(structure_key_name, {})
+
+        # in case the item key is not present in the
+        # installed structure
+        if not item_key in installed_structure:
+            # raises a plugin installation error
+            raise colony_packing_installer_exceptions.PluginInstallationError("item key '%s' does not exist" % item_key)
+
+        # removes the item from the installed structure
+        del installed_structure[item_key]
 
         # touches the structure (internal structure)
         # updating the dates in it

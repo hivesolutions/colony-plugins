@@ -147,6 +147,21 @@ class ColonyPackingInstallerPlugin(colony.base.plugin_system.Plugin):
 
         return self.colony_packing_installer.install_plugin(file_path, properties)
 
+    def uninstall_plugin(self, plugin_id, plugin_version, properties):
+        """
+        Method called upon removal of the plugin with
+        the given id, version and properties.
+
+        @type plugin_id: String
+        @param plugin_id: The id of the plugin to be removed.
+        @type plugin_version: String
+        @param plugin_version: The version of the plugin to be removed.
+        @type properties: Dictionary
+        @param properties: The map of properties for removal.
+        """
+
+        return self.colony_packing_installer.uninstall_plugin(plugin_id, plugin_version, properties)
+
     def get_packing_manager_plugin(self):
         return self.packing_manager_plugin
 
