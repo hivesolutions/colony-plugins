@@ -63,6 +63,9 @@ TIMESTAMP_VALUE = "timestamp"
 TYPE_VALUE = "type"
 """ The type value """
 
+RESOURCES_VALUE = "resources"
+""" The resources value """
+
 BUNDLE_VALUE = "bundle"
 """ The bundle value """
 
@@ -336,7 +339,7 @@ class ColonyPackingInstaller:
             self._add_bundle_item(bundle_item_key, bundle_item_value, file_context)
 
             # removes the temporary bundles path (directory)
-            file_context.remove_directory(temporary_bundles_path)
+            file_context.remove_directory_real(temporary_bundles_path)
 
             # commits the transaction
             file_context.commit()
@@ -470,47 +473,102 @@ class ColonyPackingInstaller:
         manager_path = plugin_manager.get_manager_path()
 
         # retrieves the registry path
-        registry_path = os.path.normpath(manager_path + "/" + RELATIVE_REGISTRY_PATH)
+        registry_path = os.path.join(manager_path, RELATIVE_REGISTRY_PATH)
+
+        # creates the plugins path
+        plugins_path = os.path.join(manager_path, RELATIVE_PLUGINS_PATH)
 
         # creates a new file transaction context
         file_context = file_context or colony.libs.file_util.FileTransactionContext()
 
-        # retrieves the plugins structure
-        plugins = self._get_plugins(file_context)
+        # opens a new transaction in the file context
+        file_context.open()
 
-        # retrieves the installed plugins
-        installed_plugins = plugins.get(INSTALLED_PLUGINS_VALUE, {})
+        try:
+            # retrieves the plugins structure
+            plugins = self._get_plugins(file_context)
 
-        # in case the plugin id is not found in the installed plugins
-        if not plugin_id in installed_plugins:
-            # raises the plugin installation error
-            raise colony_packing_installer_exceptions.PluginInstallationError("plugin '%s' v'%s' is not installed" % (plugin_id, plugin_version))
+            # retrieves the installed plugins
+            installed_plugins = plugins.get(INSTALLED_PLUGINS_VALUE, {})
 
-        # retrieves the plugin (information) from the
-        # installed plugins
-        plugin = installed_plugins[plugin_id]
+            # in case the plugin id is not found in the installed plugins
+            if not plugin_id in installed_plugins:
+                # raises the plugin installation error
+                raise colony_packing_installer_exceptions.PluginInstallationError("plugin '%s' v'%s' is not installed" % (plugin_id, plugin_version))
 
-        # retrieves the plugin version as the plugin version
-        # or from the plugin structure
-        plugin_version = plugin_version or plugin[VERSION_VALUE]
+            # retrieves the plugin (information) from the
+            # installed plugins
+            plugin = installed_plugins[plugin_id]
 
-        # creates the plugin file name from the plugin
-        # id and version
-        plugin_file_name = plugin_id + "_" + plugin_version + COLONY_PLUGIN_FILE_EXTENSION
+            # retrieves the plugin version as the plugin version
+            # or from the plugin structure
+            plugin_version = plugin_version or plugin[VERSION_VALUE]
 
-        # creates the plugin file path from the
-        plugin_path = os.path.normpath(registry_path + "/" + RELATIVE_PLUGINS_PATH + "/" + plugin_file_name)
+            # creates the plugin file name from the plugin
+            # id and version
+            plugin_file_name = plugin_id + "_" + plugin_version + COLONY_PLUGIN_FILE_EXTENSION
 
-        # retrieves the packing information
-        packing_information = packing_manager_plugin.get_packing_information(plugin_path, {}, "colony")
+            # creates the plugin file path from the
+            plugin_path = os.path.normpath(registry_path + "/" + RELATIVE_PLUGINS_PATH + "/" + plugin_file_name)
 
-        # retrieves the plugin id
-        plugin_id = packing_information.get_property(ID_VALUE)
+            # retrieves the packing information
+            packing_information = packing_manager_plugin.get_packing_information(plugin_path, {}, "colony")
 
-        # retrieves the plugin version
-        plugin_version = packing_information.get_property(VERSION_VALUE)
+            # retrieves the plugin resources
+            plugin_resources = packing_information.get_property(RESOURCES_VALUE)
 
-        print plugin_id
+            # creates the list of directory paths for (possible)
+            # later removal
+            directory_path_list = []
+
+            # iterates over all the resources to remove them
+            for plugin_resource in plugin_resources:
+                # creates the (complete) resource file path
+                resource_file_path = os.path.normpath(plugins_path + "/" + plugin_resource)
+
+                # in case the resource file path exists
+                if not os.path.exists(resource_file_path):
+                    # continues the loop
+                    continue
+
+                # removes the resource file in the resource file path
+                file_context.remove_file(resource_file_path)
+
+                # retrieves the resource file directory path
+                resource_file_directory_path = os.path.dirname(resource_file_path)
+
+                # in case the resource file directory path is not yet
+                # present in the directory path list
+                if not resource_file_directory_path in directory_path_list:
+                    # adds the file directory path to the
+                    # directory path list
+                    directory_path_list.append(resource_file_directory_path)
+
+            # iterates over all the directory paths
+            for directory_path in directory_path_list:
+                # in case the directory path does not refers
+                # a directory
+                if not os.path.isdir(directory_path):
+                    # continues the loop
+                    continue
+
+                # removes the directories in the directory path
+                file_context.remove_directory(directory_path)
+
+            # removes the plugin file
+            file_context.remove_file(plugin_path)
+
+            # removes the plugin item
+            self._remove_plugin_item(plugin_id, file_context)
+
+            # commits the transaction
+            file_context.commit()
+        except:
+            # rollsback the transaction
+            file_context.rollback()
+
+            # re-raises the exception
+            raise
 
     def _validate_plugin_transaction(self, properties, plugins_file_path, plugins, packing_information):
         # retrieves the plugin id
