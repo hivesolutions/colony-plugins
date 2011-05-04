@@ -108,8 +108,8 @@ RELATIVE_BUNDLES_PATH = "bundles"
 RELATIVE_PLUGINS_PATH = "plugins"
 """ The path relative to the manager path for the plugins """
 
-RELATIVE_REGISTRY_PATH = "var/registry"
-""" The path relative to the manager path for the registry """
+RELATIVE_REGISTRY_PATH = "registry"
+""" The path relative to the variable path for the registry """
 
 PACKAGES_FILE_NAME = "packages.json"
 """ The packages file name """
@@ -287,11 +287,11 @@ class ColonyPackingInstaller:
         # retrieves the packing manager plugin
         packing_manager_plugin = self.colony_packing_installer_plugin.packing_manager_plugin
 
-        # retrieves the manager path
-        manager_path = plugin_manager.get_manager_path()
+        # retrieves the variable path
+        variable_path = plugin_manager.get_variable_path()
 
         # creates the bundles directory path
-        bundles_directory_path = os.path.join(manager_path, RELATIVE_REGISTRY_PATH + "/" + RELATIVE_BUNDLES_PATH)
+        bundles_directory_path = os.path.join(variable_path, RELATIVE_REGISTRY_PATH + "/" + RELATIVE_BUNDLES_PATH)
 
         # creates a new file transaction context
         file_context = file_context or colony.libs.file_util.FileTransactionContext()
@@ -406,11 +406,11 @@ class ColonyPackingInstaller:
         # retrieves the packing manager plugin
         packing_manager_plugin = self.colony_packing_installer_plugin.packing_manager_plugin
 
-        # retrieves the manager path
-        manager_path = plugin_manager.get_manager_path()
+        # retrieves the variable path
+        variable_path = plugin_manager.get_variable_path()
 
         # creates the plugins directory path
-        plugins_directory_path = os.path.join(manager_path, RELATIVE_REGISTRY_PATH + "/" + RELATIVE_PLUGINS_PATH)
+        plugins_directory_path = os.path.join(variable_path, RELATIVE_REGISTRY_PATH + "/" + RELATIVE_PLUGINS_PATH)
 
         # creates a new file transaction context
         file_context = file_context or colony.libs.file_util.FileTransactionContext()
@@ -566,11 +566,11 @@ class ColonyPackingInstaller:
         # retrieves the packing manager plugin
         packing_manager_plugin = self.colony_packing_installer_plugin.packing_manager_plugin
 
-        # retrieves the manager path
-        manager_path = plugin_manager.get_manager_path()
+        # retrieves the variable path
+        variable_path = plugin_manager.get_variable_path()
 
         # retrieves the registry path
-        registry_path = os.path.join(manager_path, RELATIVE_REGISTRY_PATH)
+        registry_path = os.path.join(variable_path, RELATIVE_REGISTRY_PATH)
 
         # creates a new file transaction context
         file_context = file_context or colony.libs.file_util.FileTransactionContext()
@@ -603,7 +603,7 @@ class ColonyPackingInstaller:
             bundle_file_name = bundle_id + "_" + bundle_version + COLONY_BUNDLE_FILE_EXTENSION
 
             # creates the bundle file path from the
-            bundle_path = os.path.normpath(registry_path + "/" + RELATIVE_BUNDLES_PATH + "/" + bundle_file_name)
+            bundle_path = os.path.join(registry_path, RELATIVE_BUNDLES_PATH + "/" + bundle_file_name)
 
             # retrieves the packing information
             packing_information = packing_manager_plugin.get_packing_information(bundle_path, {}, COLONY_VALUE)
@@ -661,14 +661,14 @@ class ColonyPackingInstaller:
         # retrieves the packing manager plugin
         packing_manager_plugin = self.colony_packing_installer_plugin.packing_manager_plugin
 
-        # retrieves the manager path
-        manager_path = plugin_manager.get_manager_path()
+        # retrieves the variable path
+        variable_path = plugin_manager.get_variable_path()
 
         # retrieves the registry path
-        registry_path = os.path.join(manager_path, RELATIVE_REGISTRY_PATH)
+        registry_path = os.path.join(variable_path, RELATIVE_REGISTRY_PATH)
 
         # creates the plugins path
-        plugins_path = os.path.join(manager_path, RELATIVE_PLUGINS_PATH)
+        plugins_path = plugin_manager.get_main_plugin_path()
 
         # creates a new file transaction context
         file_context = file_context or colony.libs.file_util.FileTransactionContext()
@@ -701,7 +701,7 @@ class ColonyPackingInstaller:
             plugin_file_name = plugin_id + "_" + plugin_version + COLONY_PLUGIN_FILE_EXTENSION
 
             # creates the plugin file path from the
-            plugin_path = os.path.normpath(registry_path + "/" + RELATIVE_PLUGINS_PATH + "/" + plugin_file_name)
+            plugin_path = os.path.join(registry_path, RELATIVE_PLUGINS_PATH + "/" + plugin_file_name)
 
             # retrieves the packing information
             packing_information = packing_manager_plugin.get_packing_information(plugin_path, {}, COLONY_VALUE)
@@ -716,7 +716,7 @@ class ColonyPackingInstaller:
             # iterates over all the resources to remove them
             for plugin_resource in plugin_resources:
                 # creates the (complete) resource file path
-                resource_file_path = os.path.normpath(plugins_path + "/" + plugin_resource)
+                resource_file_path = os.path.join(plugins_path, plugin_resource)
 
                 # in case the resource file path exists
                 if not os.path.exists(resource_file_path):
@@ -991,14 +991,14 @@ class ColonyPackingInstaller:
         # retrieves the json plugin
         json_plugin = self.colony_packing_installer_plugin.json_plugin
 
-        # retrieves the manager path
-        manager_path = plugin_manager.get_manager_path()
+        # retrieves the variable path
+        variable_path = plugin_manager.get_variable_path()
 
         # retrieves the registry path
-        registry_path = os.path.normpath(manager_path + "/" + RELATIVE_REGISTRY_PATH)
+        registry_path = os.path.join(variable_path, RELATIVE_REGISTRY_PATH)
 
         # creates the structure file path
-        structure_file_path = os.path.normpath(registry_path + "/" + structure_file_name)
+        structure_file_path = os.path.join(registry_path, structure_file_name)
 
         # reads the structure file contents
         structure_file_contents = file_context.read_file(structure_file_path)
@@ -1033,14 +1033,14 @@ class ColonyPackingInstaller:
         # retrieves the json plugin
         json_plugin = self.colony_packing_installer_plugin.json_plugin
 
-        # retrieves the manager path
-        manager_path = plugin_manager.get_manager_path()
+        # retrieves the variable path
+        variable_path = plugin_manager.get_variable_path()
 
         # retrieves the registry path
-        registry_path = os.path.normpath(manager_path + "/" + RELATIVE_REGISTRY_PATH)
+        registry_path = os.path.join(variable_path, RELATIVE_REGISTRY_PATH)
 
         # creates the structure file path
-        structure_file_path = os.path.normpath(registry_path + "/" + structure_file_name)
+        structure_file_path = os.path.join(registry_path, structure_file_name)
 
         # reads the structure file contents
         structure_file_contents = file_context.read_file(structure_file_path)
@@ -1092,14 +1092,14 @@ class ColonyPackingInstaller:
         # retrieves the json plugin
         json_plugin = self.colony_packing_installer_plugin.json_plugin
 
-        # retrieves the manager path
-        manager_path = plugin_manager.get_manager_path()
+        # retrieves the variable path
+        variable_path = plugin_manager.get_variable_path()
 
         # retrieves the registry path
-        registry_path = os.path.normpath(manager_path + "/" + RELATIVE_REGISTRY_PATH)
+        registry_path = os.path.join(variable_path, RELATIVE_REGISTRY_PATH)
 
         # creates the structure file path
-        structure_file_path = os.path.normpath(registry_path + "/" + structure_file_name)
+        structure_file_path = os.path.join(registry_path, structure_file_name)
 
         # reads the structure file contents
         structure_file_contents = file_context.read_file(structure_file_path)
