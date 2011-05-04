@@ -581,9 +581,6 @@ class MainPackingColonyService:
 
                 # extracts the plugin
                 compressed_file.extract(bundle_plugin_path, bundle_plugin_target_path, False)
-
-                # (un)processes the plugin file
-                self._unprocess_plugin_file(bundle_plugin_target_path, target_path, specification_file_path)
         finally:
             # closes the compressed file
             compressed_file.close()
