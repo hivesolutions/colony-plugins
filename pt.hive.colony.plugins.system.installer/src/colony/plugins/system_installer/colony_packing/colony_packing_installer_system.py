@@ -369,14 +369,8 @@ class ColonyPackingInstaller:
         # retrieves the packing manager plugin
         packing_manager_plugin = self.colony_packing_installer_plugin.packing_manager_plugin
 
-        # retrieves the json plugin
-        json_plugin = self.colony_packing_installer_plugin.json_plugin
-
         # retrieves the manager path
         manager_path = plugin_manager.get_manager_path()
-
-        # creates the plugins file path
-        plugins_file_path = os.path.join(manager_path, RELATIVE_REGISTRY_PATH + "/" + PLUGINS_FILE_NAME)
 
         # creates the plugins directory path
         plugins_directory_path = os.path.join(manager_path, RELATIVE_REGISTRY_PATH + "/" + RELATIVE_PLUGINS_PATH)
@@ -399,15 +393,6 @@ class ColonyPackingInstaller:
 
             # retrieves the plugin version
             plugin_version = packing_information.get_property(VERSION_VALUE)
-
-            # reads the plugin file contents
-            plugins_file_contents = file_context.read_file(plugins_file_path)
-
-            # loads the plugin file contents from json
-            plugins = json_plugin.loads(plugins_file_contents)
-
-            # validates the plugin transaction requirements
-            self._validate_plugin_transaction(properties, plugins_file_path, plugins, packing_information)
 
             # reads the plugin file contents
             plugin_file_contents = file_context.read_file(file_path)
@@ -733,38 +718,6 @@ class ColonyPackingInstaller:
 
             # re-raises the exception
             raise
-
-    def _validate_plugin_transaction(self, properties, plugins_file_path, plugins, packing_information):
-        # retrieves the plugin id
-        plugin_id = packing_information.get_property(ID_VALUE)
-
-        # retrieves the plugin version
-        plugin_version = packing_information.get_property(VERSION_VALUE)
-
-        # retrieves the flag properties values
-        upgrade = properties.get(UPGRADE_VALUE, True)
-        force = properties.get(FORCE_VALUE, False)
-
-        # retrieves the installed plugins
-        installed_plugins = plugins.get(INSTALLED_PLUGINS_VALUE, {})
-
-        # retrieves the installed plugin value
-        installed_plugin = installed_plugins.get(plugin_id, {})
-
-        # in case there is an installed plugin and the upgrade
-        # flag is not set
-        if installed_plugin and not upgrade:
-            # raises the plugin installation error
-            raise colony_packing_installer_exceptions.PluginInstallationError("plugin already installed")
-
-        # retrieves the installed plugin version
-        installed_plugin_version = installed_plugin.get(VERSION_VALUE, None)
-
-        # in case the installed plugin version is the same as the
-        # plugin version and the force flag is not set
-        if installed_plugin_version == plugin_version and not force:
-            # raises the plugin installation error
-            raise colony_packing_installer_exceptions.PluginInstallationError("plugin version already installed")
 
     def _deploy_package(self, package_path, target_path = None):
         """
