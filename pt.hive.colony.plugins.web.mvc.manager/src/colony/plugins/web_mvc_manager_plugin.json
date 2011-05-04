@@ -24,7 +24,7 @@
                 "id" : "pt.hive.colony.plugins.misc.json",
                 "version" : "1.0.0"
             }, {
-                "id" : "pt.hive.colony.plugins.main.packing.manager",
+                "id" : "pt.hive.colony.plugins.system.installer",
                 "version" : "1.0.0"
             }],
     "main_file" : "web_mvc_manager_plugin.py",

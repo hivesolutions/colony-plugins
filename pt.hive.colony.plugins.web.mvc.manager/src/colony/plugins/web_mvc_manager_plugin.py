@@ -71,7 +71,7 @@ class WebMvcManagerPlugin(colony.base.plugin_system.Plugin):
         colony.base.plugin_system.PluginDependency("pt.hive.colony.plugins.web.mvc.resources.base", "1.0.0"),
         colony.base.plugin_system.PluginDependency("pt.hive.colony.plugins.web.mvc.resources.ui", "1.0.0"),
         colony.base.plugin_system.PluginDependency("pt.hive.colony.plugins.misc.json", "1.0.0"),
-        colony.base.plugin_system.PluginDependency("pt.hive.colony.plugins.main.packing.manager", "1.0.0")
+        colony.base.plugin_system.PluginDependency("pt.hive.colony.plugins.system.installer", "1.0.0")
     ]
     events_handled = [
         "web.mvc.patterns_reload",
@@ -111,8 +111,8 @@ class WebMvcManagerPlugin(colony.base.plugin_system.Plugin):
     json_plugin = None
     """ The json plugin """
 
-    packing_manager_plugin = None
-    """ The packing manager plugin """
+    system_installer_plugin = None
+    """ The system installer plugin """
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
@@ -236,12 +236,12 @@ class WebMvcManagerPlugin(colony.base.plugin_system.Plugin):
     def set_json_plugin(self, json_plugin):
         self.json_plugin = json_plugin
 
-    def get_packing_manager_plugin(self):
-        return self.packing_manager_plugin
+    def get_system_installer_plugin(self):
+        return self.system_installer_plugin
 
-    @colony.base.decorators.plugin_inject("pt.hive.colony.plugins.main.packing.manager")
-    def set_packing_manager_plugin(self, packing_manager_plugin):
-        self.packing_manager_plugin = packing_manager_plugin
+    @colony.base.decorators.plugin_inject("pt.hive.colony.plugins.system.installer")
+    def set_system_installer_plugin(self, system_installer_plugin):
+        self.system_installer_plugin = system_installer_plugin
 
     @colony.base.decorators.event_handler_method("web.mvc.side_panel_reload")
     def web_mvc_communication_handler(self, event_name, *event_args):

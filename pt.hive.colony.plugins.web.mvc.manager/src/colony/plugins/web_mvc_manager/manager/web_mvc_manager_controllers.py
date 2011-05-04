@@ -704,8 +704,8 @@ class PluginController:
         # retrieves the plugin manager
         plugin_manager = self.web_mvc_manager_plugin.manager
 
-        # retrieves the main plugin path
-        main_plugin_path = plugin_manager.get_main_plugin_path()
+        # retrieves the system installer plugin
+        system_installer_plugin = self.web_mvc_manager_plugin.system_installer_plugin
 
         # retrieves the web mvc manager plugin id
         web_mvc_manager_plugin_id = self.web_mvc_manager_plugin.id
@@ -743,16 +743,13 @@ class PluginController:
             # closes the temporary file
             temp_file.close()
 
-        # retrieves the packing manager plugin
-        packing_manager_plugin = self.web_mvc_manager_plugin.packing_manager_plugin
-
-        # creates the properties map for the file unpacking packing
-        properties = {
-            "target_path" : main_plugin_path
+        # installation options
+        installation_properties = {
+            "upgrade" : True
         }
 
-        # unpacks the files using the colony service
-        packing_manager_plugin.unpack_files([unique_file_path], properties, "colony")
+        # installs the package
+        system_installer_plugin.install_package(unique_file_path, installation_properties, "colony_packing")
 
         # removes the unique file
         os.remove(unique_file_path)
