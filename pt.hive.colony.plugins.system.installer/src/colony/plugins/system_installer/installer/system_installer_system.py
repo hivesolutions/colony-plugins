@@ -104,6 +104,27 @@ class SystemInstaller:
         # uninstalls the plugin with the installer plugin
         installer_plugin.uninstall_plugin(plugin_id, plugin_version, properties)
 
+    def open_transaction(self, transaction_properties, installer_type):
+        # retrieves the installer plugin for the installer type
+        installer_plugin = self._get_installer_plugin_by_installer_type(installer_type)
+
+        # opens a transaction using the installer plugin
+        return installer_plugin.open_transaction(transaction_properties)
+
+    def commit_transaction(self, transaction_properties, installer_type):
+        # retrieves the installer plugin for the installer type
+        installer_plugin = self._get_installer_plugin_by_installer_type(installer_type)
+
+        # commits the transaction using the installer plugin
+        installer_plugin.commit_transaction(transaction_properties)
+
+    def rollback_transaction(self, transaction_properties, installer_type):
+        # retrieves the installer plugin for the installer type
+        installer_plugin = self._get_installer_plugin_by_installer_type(installer_type)
+
+        # "rollsback" the transaction using the installer plugin
+        installer_plugin.rollback_transaction(transaction_properties)
+
     def installer_load(self, installer_plugin):
         # retrieves the plugin installer type
         installer_type = installer_plugin.get_installer_type()

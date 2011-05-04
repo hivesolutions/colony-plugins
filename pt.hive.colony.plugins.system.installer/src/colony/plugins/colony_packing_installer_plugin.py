@@ -192,6 +192,44 @@ class ColonyPackingInstallerPlugin(colony.base.plugin_system.Plugin):
 
         return self.colony_packing_installer.uninstall_plugin(plugin_id, plugin_version, properties)
 
+    def open_transaction(self, transaction_properties):
+        """
+        Opens a new transaction and retrieves the transaction
+        properties map.
+
+        @type transaction_properties: Dictionary
+        @param transaction_properties: The properties of
+        the current transaction.
+        @rtype: Dictionary
+        @return: The map describing the transaction.
+        """
+
+        return self.colony_packing_installer.open_transaction(transaction_properties)
+
+    def commit_transaction(self, transaction_properties):
+        """
+        Commits the transaction described by the given
+        transaction properties.
+
+        @type transaction_properties: Dictionary
+        @param transaction_properties: The properties of
+        the transaction to be commited.
+        """
+
+        return self.colony_packing_installer.commit_transaction(transaction_properties)
+
+    def rollback_transaction(self, transaction_properties):
+        """
+        "Rollsback" the transaction described by the given
+        transaction properties.
+
+        @type transaction_properties: Dictionary
+        @param transaction_properties: The properties of
+        the transaction to be "rollbacked".
+        """
+
+        return self.colony_packing_installer.rollback_transaction(transaction_properties)
+
     def get_packing_manager_plugin(self):
         return self.packing_manager_plugin
 

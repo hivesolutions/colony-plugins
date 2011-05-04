@@ -54,6 +54,12 @@ JSON_FILE_EXTENSION = "json"
 COLONY_VALUE = "colony"
 """ The colony value """
 
+FILE_CONTEXT_VALUE = "file_context"
+""" The file context value """
+
+TRANSACTION_PROPERTIES_VALUE = "transaction_properties"
+""" The transaction properties value """
+
 ID_VALUE = "id"
 """ The id value """
 
@@ -206,8 +212,11 @@ class ColonyPackingInstaller:
         # retrieves the packing manager plugin
         packing_manager_plugin = self.colony_packing_installer_plugin.packing_manager_plugin
 
+        # retrieves the transaction properties
+        transaction_properties = properties.get(TRANSACTION_PROPERTIES_VALUE, {})
+
         # creates a new file transaction context
-        file_context = file_context or colony.libs.file_util.FileTransactionContext()
+        file_context = file_context or transaction_properties.get(FILE_CONTEXT_VALUE, None) or colony.libs.file_util.FileTransactionContext()
 
         # opens a new transaction in the file context
         file_context.open()
@@ -293,8 +302,11 @@ class ColonyPackingInstaller:
         # creates the bundles directory path
         bundles_directory_path = os.path.join(variable_path, RELATIVE_REGISTRY_PATH + "/" + RELATIVE_BUNDLES_PATH)
 
+        # retrieves the transaction properties
+        transaction_properties = properties.get(TRANSACTION_PROPERTIES_VALUE, {})
+
         # creates a new file transaction context
-        file_context = file_context or colony.libs.file_util.FileTransactionContext()
+        file_context = file_context or transaction_properties.get(FILE_CONTEXT_VALUE, None) or colony.libs.file_util.FileTransactionContext()
 
         # opens a new transaction in the file context
         file_context.open()
@@ -412,8 +424,11 @@ class ColonyPackingInstaller:
         # creates the plugins directory path
         plugins_directory_path = os.path.join(variable_path, RELATIVE_REGISTRY_PATH + "/" + RELATIVE_PLUGINS_PATH)
 
+        # retrieves the transaction properties
+        transaction_properties = properties.get(TRANSACTION_PROPERTIES_VALUE, {})
+
         # creates a new file transaction context
-        file_context = file_context or colony.libs.file_util.FileTransactionContext()
+        file_context = file_context or transaction_properties.get(FILE_CONTEXT_VALUE, None) or colony.libs.file_util.FileTransactionContext()
 
         # opens a new transaction in the file context
         file_context.open()
@@ -488,8 +503,11 @@ class ColonyPackingInstaller:
         # prints an info message
         self.colony_packing_installer_plugin.info("Uninstalling package '%s'" % (package_id))
 
+        # retrieves the transaction properties
+        transaction_properties = properties.get(TRANSACTION_PROPERTIES_VALUE, {})
+
         # creates a new file transaction context
-        file_context = file_context or colony.libs.file_util.FileTransactionContext()
+        file_context = file_context or transaction_properties.get(FILE_CONTEXT_VALUE, None) or colony.libs.file_util.FileTransactionContext()
 
         # opens a new transaction in the file context
         file_context.open()
@@ -572,8 +590,11 @@ class ColonyPackingInstaller:
         # retrieves the registry path
         registry_path = os.path.join(variable_path, RELATIVE_REGISTRY_PATH)
 
+        # retrieves the transaction properties
+        transaction_properties = properties.get(TRANSACTION_PROPERTIES_VALUE, {})
+
         # creates a new file transaction context
-        file_context = file_context or colony.libs.file_util.FileTransactionContext()
+        file_context = file_context or transaction_properties.get(FILE_CONTEXT_VALUE, None) or colony.libs.file_util.FileTransactionContext()
 
         # opens a new transaction in the file context
         file_context.open()
@@ -670,8 +691,11 @@ class ColonyPackingInstaller:
         # creates the plugins path
         plugins_path = plugin_manager.get_main_plugin_path()
 
+        # retrieves the transaction properties
+        transaction_properties = properties.get(TRANSACTION_PROPERTIES_VALUE, {})
+
         # creates a new file transaction context
-        file_context = file_context or colony.libs.file_util.FileTransactionContext()
+        file_context = file_context or transaction_properties.get(FILE_CONTEXT_VALUE, None) or colony.libs.file_util.FileTransactionContext()
 
         # opens a new transaction in the file context
         file_context.open()
@@ -761,6 +785,65 @@ class ColonyPackingInstaller:
 
             # re-raises the exception
             raise
+
+    def open_transaction(self, transaction_properties):
+        """
+        Opens a new transaction and retrieves the transaction
+        properties map.
+
+        @type transaction_properties: Dictionary
+        @param transaction_properties: The properties of
+        the current transaction.
+        @rtype: Dictionary
+        @return: The map describing the transaction.
+        """
+
+        # retrieves the transaction properties
+        transaction_properties = transaction_properties or {}
+
+        # creates a new file transaction context
+        file_context = transaction_properties.get(FILE_CONTEXT_VALUE) or colony.libs.file_util.FileTransactionContext()
+
+        # opens the file context
+        file_context.open()
+
+        # sets the file context in the transaction properties
+        transaction_properties[FILE_CONTEXT_VALUE] = file_context
+
+        # returns the transaction properties
+        return transaction_properties
+
+    def commit_transaction(self, transaction_properties):
+        """
+        Commits the transaction described by the given
+        transaction properties.
+
+        @type transaction_properties: Dictionary
+        @param transaction_properties: The properties of
+        the transaction to be commited.
+        """
+
+        # retrieves the file context
+        file_context = transaction_properties.get(FILE_CONTEXT_VALUE)
+
+        # commits the file context
+        file_context.commit()
+
+    def rollback_transaction(self, transaction_properties):
+        """
+        "Rollsback" the transaction described by the given
+        transaction properties.
+
+        @type transaction_properties: Dictionary
+        @param transaction_properties: The properties of
+        the transaction to be "rollbacked".
+        """
+
+        # retrieves the file context
+        file_context = transaction_properties.get(FILE_CONTEXT_VALUE)
+
+        # "rollsback" the file context
+        file_context.rollback()
 
     def _deploy_package(self, package_path, target_path = None):
         """

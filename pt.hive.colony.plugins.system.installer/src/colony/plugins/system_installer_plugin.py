@@ -128,6 +128,15 @@ class SystemInstallerPlugin(colony.base.plugin_system.Plugin):
     def uninstall_plugin(self, plugin_id, plugin_version, properties, installer_type):
         return self.system_installer.uninstall_plugin(plugin_id, plugin_version, properties, installer_type)
 
+    def open_transaction(self, transaction_properties, installer_type):
+        return self.system_installer.open_transaction(transaction_properties, installer_type)
+
+    def commit_transaction(self, transaction_properties, installer_type):
+        return self.system_installer.commit_transaction(transaction_properties, installer_type)
+
+    def rollback_transaction(self, transaction_properties, installer_type):
+        return self.system_installer.rollback_transaction(transaction_properties, installer_type)
+
     def get_console_extension_name(self):
         return self.console_system_installer.get_console_extension_name()
 
