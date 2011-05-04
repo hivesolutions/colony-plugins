@@ -210,6 +210,14 @@
             <version>.*</version>
         </module>
         <module>
+            <id>pt.hive.colony.plugins.specifications.json_specification_parser</id>
+            <version>.*</version>
+        </module>
+        <module>
+            <id>pt.hive.colony.plugins.specifications.specification_manager</id>
+            <version>.*</version>
+        </module>
+        <module>
             <id>pt.hive.colony.plugins.system.installer</id>
             <version>.*</version>
         </module>
@@ -882,6 +890,34 @@
                                 </deb>
                                 <zip>
                                     <target>colony/deploy/pt.hive.colony.plugins.search.sorter_1.0.0.cpx</target>
+                                </zip>
+                            </parameters>
+                        </file>
+                        <file>
+                            <path>${build_automation.build.plugins_directory}/pt.hive.colony.plugins.specifications.json_specification_parser_1.0.0.cpx</path>
+                            <owner>0</owner>
+                            <group>0</group>
+                            <mode>755</mode>
+                            <parameters>
+                                <deb>
+                                    <target>usr/lib/colony/deploy/pt.hive.colony.plugins.specifications.json_specification_parser_1.0.0.cpx</target>
+                                </deb>
+                                <zip>
+                                    <target>colony/deploy/pt.hive.colony.plugins.specifications.json_specification_parser_1.0.0.cpx</target>
+                                </zip>
+                            </parameters>
+                        </file>
+                        <file>
+                            <path>${build_automation.build.plugins_directory}/pt.hive.colony.plugins.specifications.specification_manager_1.0.0.cpx</path>
+                            <owner>0</owner>
+                            <group>0</group>
+                            <mode>755</mode>
+                            <parameters>
+                                <deb>
+                                    <target>usr/lib/colony/deploy/pt.hive.colony.plugins.specifications.specification_manager_1.0.0.cpx</target>
+                                </deb>
+                                <zip>
+                                    <target>colony/deploy/pt.hive.colony.plugins.specifications.specification_manager_1.0.0.cpx</target>
                                 </zip>
                             </parameters>
                         </file>
