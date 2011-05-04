@@ -37,7 +37,7 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-DEPLOYER_TYPE = "colony"
+DEPLOYER_TYPE = "colony_packing"
 """ The deployer type """
 
 UPGRADE_VALUE = "upgrade"
@@ -93,7 +93,7 @@ class ColonyPackingInstallerDeployer:
         """
 
         # retrieves the colony packing installer plugin
-        colony_packing_installer_plugin = self.colony_packing_deployer_plugin.system_installer_plugin
+        colony_packing_installer_plugin = self.colony_packing_installer_deployer_plugin.colony_packing_installer_plugin
 
         # installation options
         installation_properties = {
@@ -118,7 +118,7 @@ class ColonyPackingInstallerDeployer:
         """
 
         # retrieves the colony packing installer plugin
-        colony_packing_installer_plugin = self.colony_packing_deployer_plugin.system_installer_plugin
+        colony_packing_installer_plugin = self.colony_packing_installer_deployer_plugin.colony_packing_installer_plugin
 
         # installation options
         installation_properties = {

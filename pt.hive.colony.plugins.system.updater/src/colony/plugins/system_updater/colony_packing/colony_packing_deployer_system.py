@@ -37,7 +37,7 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-DEPLOYER_TYPE = "colony_packing"
+DEPLOYER_TYPE = "colony_packing_base"
 """ The deployer type """
 
 COLONY_VALUE = "colony"
