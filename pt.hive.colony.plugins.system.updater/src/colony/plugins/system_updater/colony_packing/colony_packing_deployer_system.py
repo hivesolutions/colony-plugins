@@ -84,7 +84,7 @@ class ColonyPackingDeployer:
 
         return DEPLOYER_TYPE
 
-    def deploy_bundle(self, bundle_id, bundle_version, contents_file):
+    def deploy_bundle(self, bundle_id, bundle_version, contents_file, transaction_properties):
         """
         Method called upon deployment of the bundle with
         the given id, version and contents file.
@@ -96,6 +96,9 @@ class ColonyPackingDeployer:
         @type contents_file: ContentsFile
         @param contents_file: The contents file of the bundle to
         be deployed.
+        @type transaction_properties: Dictionary
+        @param transaction_properties: The properties map for the
+        current transaction.
         """
 
         # retrieves the plugin manager
@@ -116,7 +119,7 @@ class ColonyPackingDeployer:
         # unpacks the files using the colony service
         packing_manager_plugin.unpack_files([contents_file.name], properties, COLONY_VALUE)
 
-    def deploy_plugin(self, plugin_id, plugin_version, contents_file):
+    def deploy_plugin(self, plugin_id, plugin_version, contents_file, transaction_properties):
         """
         Method called upon deployment of the plugin with
         the given id, version and contents file.
@@ -128,6 +131,9 @@ class ColonyPackingDeployer:
         @type contents_file: ContentsFile
         @param contents_file: The contents file of the plugin to
         be deployed.
+        @type transaction_properties: Dictionary
+        @param transaction_properties: The properties map for the
+        current transaction.
         """
 
         # retrieves the plugin manager
@@ -147,3 +153,41 @@ class ColonyPackingDeployer:
 
         # unpacks the files using the colony service
         packing_manager_plugin.unpack_files([contents_file.name], properties, COLONY_VALUE)
+
+    def open_transaction(self, transaction_properties):
+        """
+        Opens a new transaction and retrieves the transaction
+        properties map.
+
+        @type transaction_properties: Dictionary
+        @param transaction_properties: The properties of
+        the current transaction.
+        @rtype: Dictionary
+        @return: The map describing the transaction.
+        """
+
+        pass
+
+    def commit_transaction(self, transaction_properties):
+        """
+        Commits the transaction described by the given
+        transaction properties.
+
+        @type transaction_properties: Dictionary
+        @param transaction_properties: The properties of
+        the transaction to be commited.
+        """
+
+        pass
+
+    def rollback_transaction(self, transaction_properties):
+        """
+        "Rollsback" the transaction described by the given
+        transaction properties.
+
+        @type transaction_properties: Dictionary
+        @param transaction_properties: The properties of
+        the transaction to be "rollbacked".
+        """
+
+        pass

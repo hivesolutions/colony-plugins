@@ -105,7 +105,7 @@ class ColonyPackingDeployerPlugin(colony.base.plugin_system.Plugin):
     def get_deployer_type(self):
         return self.colony_packing_deployer.get_deployer_type()
 
-    def deploy_bundle(self, bundle_id, bundle_version, contents_file):
+    def deploy_bundle(self, bundle_id, bundle_version, contents_file, transaction_properties):
         """
         Method called upon deployment of the bundle with
         the given id, version and contents file.
@@ -117,11 +117,14 @@ class ColonyPackingDeployerPlugin(colony.base.plugin_system.Plugin):
         @type contents_file: ContentsFile
         @param contents_file: The contents file of the bundle to
         be deployed.
+        @type transaction_properties: Dictionary
+        @param transaction_properties: The properties map for the
+        current transaction.
         """
 
-        return self.colony_packing_deployer.deploy_bundle(bundle_id, bundle_version, contents_file)
+        return self.colony_packing_deployer.deploy_bundle(bundle_id, bundle_version, contents_file, transaction_properties)
 
-    def deploy_plugin(self, plugin_id, plugin_version, contents_file):
+    def deploy_plugin(self, plugin_id, plugin_version, contents_file, transaction_properties):
         """
         Method called upon deployment of the plugin with
         the given id, version and contents file.
@@ -133,9 +136,50 @@ class ColonyPackingDeployerPlugin(colony.base.plugin_system.Plugin):
         @type contents_file: ContentsFile
         @param contents_file: The contents file of the plugin to
         be deployed.
+        @type transaction_properties: Dictionary
+        @param transaction_properties: The properties map for the
+        current transaction.
         """
 
-        return self.colony_packing_deployer.deploy_plugin(plugin_id, plugin_version, contents_file)
+        return self.colony_packing_deployer.deploy_plugin(plugin_id, plugin_version, contents_file, transaction_properties)
+
+    def open_transaction(self, transaction_properties):
+        """
+        Opens a new transaction and retrieves the transaction
+        properties map.
+
+        @type transaction_properties: Dictionary
+        @param transaction_properties: The properties of
+        the current transaction.
+        @rtype: Dictionary
+        @return: The map describing the transaction.
+        """
+
+        return self.colony_packing_deployer.open_transaction(transaction_properties)
+
+    def commit_transaction(self, transaction_properties):
+        """
+        Commits the transaction described by the given
+        transaction properties.
+
+        @type transaction_properties: Dictionary
+        @param transaction_properties: The properties of
+        the transaction to be commited.
+        """
+
+        return self.colony_packing_deployer.commit_transaction(transaction_properties)
+
+    def rollback_transaction(self, transaction_properties):
+        """
+        "Rollsback" the transaction described by the given
+        transaction properties.
+
+        @type transaction_properties: Dictionary
+        @param transaction_properties: The properties of
+        the transaction to be "rollbacked".
+        """
+
+        return self.colony_packing_deployer.rollback_transaction(transaction_properties)
 
     def get_packing_manager_plugin(self):
         return self.packing_manager_plugin

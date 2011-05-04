@@ -43,6 +43,9 @@ DEPLOYER_TYPE = "colony_packing"
 UPGRADE_VALUE = "upgrade"
 """ The upgrade value """
 
+TRANSACTION_PROPERTIES_VALUE = "transaction_properties"
+""" The transaction properties value """
+
 class ColonyPackingInstallerDeployer:
     """
     The colony packing installer deployer class.
@@ -78,7 +81,7 @@ class ColonyPackingInstallerDeployer:
 
         return DEPLOYER_TYPE
 
-    def deploy_bundle(self, bundle_id, bundle_version, contents_file):
+    def deploy_bundle(self, bundle_id, bundle_version, contents_file, transaction_properties):
         """
         Method called upon deployment of the bundle with
         the given id, version and contents file.
@@ -90,6 +93,9 @@ class ColonyPackingInstallerDeployer:
         @type contents_file: ContentsFile
         @param contents_file: The contents file of the bundle to
         be deployed.
+        @type transaction_properties: Dictionary
+        @param transaction_properties: The properties map for the
+        current transaction.
         """
 
         # retrieves the colony packing installer plugin
@@ -97,13 +103,14 @@ class ColonyPackingInstallerDeployer:
 
         # installation options
         installation_properties = {
-            UPGRADE_VALUE : True
+            UPGRADE_VALUE : True,
+            TRANSACTION_PROPERTIES_VALUE : transaction_properties
         }
 
         # installs the package (plugin)
         colony_packing_installer_plugin.install_package(contents_file.name, installation_properties)
 
-    def deploy_plugin(self, plugin_id, plugin_version, contents_file):
+    def deploy_plugin(self, plugin_id, plugin_version, contents_file, transaction_properties):
         """
         Method called upon deployment of the plugin with
         the given id, version and contents file.
@@ -115,6 +122,9 @@ class ColonyPackingInstallerDeployer:
         @type contents_file: ContentsFile
         @param contents_file: The contents file of the plugin to
         be deployed.
+        @type transaction_properties: Dictionary
+        @param transaction_properties: The properties map for the
+        current transaction.
         """
 
         # retrieves the colony packing installer plugin
@@ -122,8 +132,62 @@ class ColonyPackingInstallerDeployer:
 
         # installation options
         installation_properties = {
-            UPGRADE_VALUE : True
+            UPGRADE_VALUE : True,
+            TRANSACTION_PROPERTIES_VALUE : transaction_properties
         }
 
         # installs the package (plugin)
         colony_packing_installer_plugin.install_package(contents_file.name, installation_properties)
+
+    def open_transaction(self, transaction_properties):
+        """
+        Opens a new transaction and retrieves the transaction
+        properties map.
+
+        @type transaction_properties: Dictionary
+        @param transaction_properties: The properties of
+        the current transaction.
+        @rtype: Dictionary
+        @return: The map describing the transaction.
+        """
+
+        # retrieves the colony packing installer plugin
+        colony_packing_installer_plugin = self.colony_packing_installer_deployer_plugin.colony_packing_installer_plugin
+
+        # opens a transaction, retrieving the transaction properties
+        transaction_properties = colony_packing_installer_plugin.open_transaction(transaction_properties)
+
+        # returns the transaction properties
+        return transaction_properties
+
+    def commit_transaction(self, transaction_properties):
+        """
+        Commits the transaction described by the given
+        transaction properties.
+
+        @type transaction_properties: Dictionary
+        @param transaction_properties: The properties of
+        the transaction to be commited.
+        """
+
+        # retrieves the colony packing installer plugin
+        colony_packing_installer_plugin = self.colony_packing_installer_deployer_plugin.colony_packing_installer_plugin
+
+        # commits the transaction
+        colony_packing_installer_plugin.commit_transaction(transaction_properties)
+
+    def rollback_transaction(self, transaction_properties):
+        """
+        "Rollsback" the transaction described by the given
+        transaction properties.
+
+        @type transaction_properties: Dictionary
+        @param transaction_properties: The properties of
+        the transaction to be "rollbacked".
+        """
+
+        # retrieves the colony packing installer plugin
+        colony_packing_installer_plugin = self.colony_packing_installer_deployer_plugin.colony_packing_installer_plugin
+
+        # "rollsback" the transaction
+        colony_packing_installer_plugin.rollback_transaction(transaction_properties)
