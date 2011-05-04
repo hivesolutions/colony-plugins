@@ -51,6 +51,9 @@ INSTALLER_TYPE = "colony_packing"
 JSON_FILE_EXTENSION = "json"
 """ The json file extension """
 
+COLONY_VALUE = "colony"
+""" The colony value """
+
 ID_VALUE = "id"
 """ The id value """
 
@@ -217,7 +220,7 @@ class ColonyPackingInstaller:
             real_file_path = file_context.resolve_file_path(file_path)
 
             # retrieves the packing information
-            packing_information = packing_manager_plugin.get_packing_information(real_file_path, {}, "colony")
+            packing_information = packing_manager_plugin.get_packing_information(real_file_path, {}, COLONY_VALUE)
 
             # retrieves the type
             type = packing_information.get_property(TYPE_VALUE)
@@ -309,7 +312,7 @@ class ColonyPackingInstaller:
             real_file_path = file_context.resolve_file_path(file_path)
 
             # retrieves the packing information
-            packing_information = packing_manager_plugin.get_packing_information(real_file_path, {}, "colony")
+            packing_information = packing_manager_plugin.get_packing_information(real_file_path, {}, COLONY_VALUE)
 
             # retrieves the bundle id
             bundle_id = packing_information.get_property(ID_VALUE)
@@ -428,7 +431,7 @@ class ColonyPackingInstaller:
             real_file_path = file_context.resolve_file_path(file_path)
 
             # retrieves the packing information
-            packing_information = packing_manager_plugin.get_packing_information(real_file_path, {}, "colony")
+            packing_information = packing_manager_plugin.get_packing_information(real_file_path, {}, COLONY_VALUE)
 
             # retrieves the plugin id
             plugin_id = packing_information.get_property(ID_VALUE)
@@ -611,7 +614,7 @@ class ColonyPackingInstaller:
             bundle_path = os.path.normpath(registry_path + "/" + RELATIVE_BUNDLES_PATH + "/" + bundle_file_name)
 
             # retrieves the packing information
-            packing_information = packing_manager_plugin.get_packing_information(bundle_path, {}, "colony")
+            packing_information = packing_manager_plugin.get_packing_information(bundle_path, {}, COLONY_VALUE)
 
             # retrieves the bundle plugins
             bundle_plugins = packing_information.get_property(PLUGINS_VALUE)
@@ -709,7 +712,7 @@ class ColonyPackingInstaller:
             plugin_path = os.path.normpath(registry_path + "/" + RELATIVE_PLUGINS_PATH + "/" + plugin_file_name)
 
             # retrieves the packing information
-            packing_information = packing_manager_plugin.get_packing_information(plugin_path, {}, "colony")
+            packing_information = packing_manager_plugin.get_packing_information(plugin_path, {}, COLONY_VALUE)
 
             # retrieves the plugin resources
             plugin_resources = packing_information.get_property(RESOURCES_VALUE)
@@ -797,7 +800,7 @@ class ColonyPackingInstaller:
         }
 
         # unpacks the files using the colony service
-        packing_manager_plugin.unpack_files([package_path], properties, "colony")
+        packing_manager_plugin.unpack_files([package_path], properties, COLONY_VALUE)
 
     def _touch_structure(self, structure):
         """
