@@ -161,6 +161,32 @@ class ColonyPackingInstaller:
 
         return INSTALLER_TYPE
 
+    def exists_package(self, package_id, file_context):
+        """
+        Tests if the package with the given id exists in the
+        current appropriate target.
+
+        @type package_id: String
+        @param package_id: The id of the package to be tested
+        for existence.
+        @type file_context: FileContext
+        @param file_context: The file context to be used.
+        @rtype: bool
+        @return: The result of the existence package test.
+        """
+
+        # retrieves the packages structure
+        packages = self._get_packages(file_context)
+
+        # retrieves the installed packages
+        installed_packages = packages.get(INSTALLED_PACKAGES_VALUE, {})
+
+        # checks if the package exists in the installed packages
+        exists_package = package_id in installed_packages
+
+        # returns the exists package (flag)
+        return exists_package
+
     def install_package(self, file_path, properties, file_context = None):
         """
         Method called upon installation of the package with
@@ -170,7 +196,12 @@ class ColonyPackingInstaller:
         @param file_path: The path to the package file to be installed.
         @type properties: Dictionary
         @param properties: The map of properties for installation.
+        @type file_context: FileContext
+        @param file_context: The file context to be used.
         """
+
+        # prints an info message
+        self.colony_packing_installer_plugin.info("Installing package '%s'" % (file_path))
 
         # retrieves the packing manager plugin
         packing_manager_plugin = self.colony_packing_installer_plugin.packing_manager_plugin
@@ -196,6 +227,14 @@ class ColonyPackingInstaller:
 
             # retrieves the package version
             package_version = packing_information.get_property(VERSION_VALUE)
+
+            # checks if the package is already installed
+            # (in case it "exists")
+            exists_package = self.exists_package(package_id, file_context)
+
+            # in case the package exists remove the package
+            # with the current id
+            exists_package and self.uninstall_package(package_id, package_version, file_context)
 
             # in case the type is bundle
             if type == BUNDLE_VALUE:
@@ -230,6 +269,9 @@ class ColonyPackingInstaller:
 
             # re-raises the exception
             raise
+
+        # prints an info message
+        self.colony_packing_installer_plugin.info("Finished installing package '%s'" % (file_path))
 
     def install_bundle(self, file_path, properties, file_context = None):
         """
@@ -448,6 +490,9 @@ class ColonyPackingInstaller:
         @param file_context: The file context to be used.
         """
 
+        # prints an info message
+        self.colony_packing_installer_plugin.info("Uninstalling package '%s'" % (package_id))
+
         # creates a new file transaction context
         file_context = file_context or colony.libs.file_util.FileTransactionContext()
 
@@ -501,6 +546,9 @@ class ColonyPackingInstaller:
 
             # re-raises the exception
             raise
+
+        # prints an info message
+        self.colony_packing_installer_plugin.info("Finished uninstalling package '%s'" % (package_id))
 
     def uninstall_bundle(self, bundle_id, bundle_version, properties, file_context = None):
         """
