@@ -228,23 +228,8 @@ class ColonyPackingInstaller:
             # retrieves the package version
             package_version = packing_information.get_property(VERSION_VALUE)
 
-            # checks if the package is already installed
-            # (in case it "exists")
-            exists_package = self.exists_package(package_id, file_context)
-
-            # retrieves the upgrade property
-            upgrade = properties.get(UPGRADE_VALUE, True)
-
-            # in case the package already exists
-            if exists_package:
-                # in case the upgrade flag is set
-                if upgrade:
-                    # removes the package in order to provide upgrade
-                    self.uninstall_package(package_id, package_version, properties, file_context)
-                # otherwise
-                else:
-                    # raises a plugin installation error
-                    raise colony_packing_installer_exceptions.PluginInstallationError("package with the same id already exists")
+            # processes the upgrade part of the installation
+            self._process_upgrade(package_id, package_version, properties, file_context)
 
             # in case the type is bundle
             if type == BUNDLE_VALUE:
@@ -808,6 +793,41 @@ class ColonyPackingInstaller:
 
         # unpacks the files using the colony service
         packing_manager_plugin.unpack_files([package_path], properties, COLONY_VALUE)
+
+    def _process_upgrade(self, package_id, package_version, properties, file_context):
+        """
+        Processes the upgrade part of the installation.
+
+        @type package_id: String
+        @param package_id: The id of the package to te upgraded.
+        @type package_version: String
+        @param package_version: The version of the package to te upgraded.
+        @type properties: Dictionary
+        @param properties: The map of properties for installation.
+        @type file_context: FileContext
+        @param file_context: The file context to be used.
+        """
+
+        # checks if the package is already installed
+        # (in case it "exists")
+        exists_package = self.exists_package(package_id, file_context)
+
+        # retrieves the upgrade property
+        upgrade = properties.get(UPGRADE_VALUE, True)
+
+        # in case the package does not already exists
+        if not exists_package:
+            # returns immediately
+            return
+
+        # in case the upgrade flag is set
+        if upgrade:
+            # removes the package in order to provide upgrade
+            self.uninstall_package(package_id, package_version, properties, file_context)
+        # otherwise
+        else:
+            # raises a plugin installation error
+            raise colony_packing_installer_exceptions.PluginInstallationError("package with the same id already exists")
 
     def _touch_structure(self, structure):
         """
