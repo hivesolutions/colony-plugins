@@ -96,9 +96,6 @@ INSTALLED_BUNDLES_VALUE = "installed_bundles"
 INSTALLED_PLUGINS_VALUE = "installed_plugins"
 """ The installed plugins value """
 
-FORCE_VALUE = "force"
-""" The force value """
-
 LAST_MODIFIED_TIMESTAMP_VALUE = "last_modified_timestamp"
 """ The last modified timestamp value """
 
@@ -235,9 +232,19 @@ class ColonyPackingInstaller:
             # (in case it "exists")
             exists_package = self.exists_package(package_id, file_context)
 
-            # in case the package exists remove the package
-            # with the current id
-            exists_package and self.uninstall_package(package_id, package_version, file_context)
+            # retrieves the upgrade property
+            upgrade = properties.get(UPGRADE_VALUE, True)
+
+            # in case the package already exists
+            if exists_package:
+                # in case the upgrade flag is set
+                if upgrade:
+                    # removes the package in order to provide upgrade
+                    self.uninstall_package(package_id, package_version, properties, file_context)
+                # otherwise
+                else:
+                    # raises a plugin installation error
+                    raise colony_packing_installer_exceptions.PluginInstallationError("package with the same id already exists")
 
             # in case the type is bundle
             if type == BUNDLE_VALUE:
