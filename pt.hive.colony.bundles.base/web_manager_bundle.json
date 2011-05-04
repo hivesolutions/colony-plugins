@@ -36,7 +36,7 @@
                 "id" : "pt.hive.colony.bundles.json",
                 "version" : "1.0.0"
             }, {
-                "id" : "pt.hive.colony.bundles.main.packing",
+                "id" : "pt.hive.colony.bundles.system.installer",
                 "version" : "1.0.0"
             }, {
                 "id" : "pt.hive.colony.bundles.system.updater",
