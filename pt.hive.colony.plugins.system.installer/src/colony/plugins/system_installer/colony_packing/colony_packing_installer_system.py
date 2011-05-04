@@ -198,7 +198,8 @@ class ColonyPackingInstaller:
                 self.install_plugin(file_path, properties, file_context)
             # otherwise it's not a valid type
             else:
-                raise Exception("TA FEITO !!!!")
+                # raises a plugin installation error
+                raise colony_packing_installer_exceptions.PluginInstallationError("invalid packaging type: %s" % type)
 
             # retrieves the package item key
             package_item_key = package_id
