@@ -45,7 +45,6 @@ class SystemRegistry:
     system_registry_plugin = None
     """ The system registry plugin """
 
-
     def __init__(self, system_registry_plugin):
         """
         Constructor of the class.
