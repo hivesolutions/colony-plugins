@@ -79,7 +79,13 @@ class MainServiceDnsFileHandler:
         """
 
         # creates a dummy answer
-        answer = ("www.google.com", "A", "IN", 20000, "192.168.1.11")
+        answer = (
+            "www.google.com",
+            "A",
+            "IN",
+            20000,
+            "192.168.1.11"
+        )
 
         # adds a new answer to the request
         request.answers.append(answer)

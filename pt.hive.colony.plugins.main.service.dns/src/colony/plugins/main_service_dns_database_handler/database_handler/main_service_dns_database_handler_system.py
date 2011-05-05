@@ -117,7 +117,13 @@ class MainServiceDnsDatabaseHandler:
             record_value = record.get_value()
 
             # creates the record tuple
-            record_tuple = (record_name, record_type, record_class, record_time_to_live, record_value)
+            record_tuple = (
+                record_name,
+                record_type,
+                record_class,
+                record_time_to_live,
+                record_value
+            )
 
             # adds the record tuple to the list of record tuples
             record_tuples.append(record_tuple)
