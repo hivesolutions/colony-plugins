@@ -206,7 +206,11 @@ class PluginManagerPanel(misc_gui.tree_visualizer.tree_visualizer_system.TreeVis
 
         # sets the root node
         self.set_root("Plugins")
-        self.node_list = [self.tree.GetRootItem()]
+
+        self.node_list = [
+            self.tree.GetRootItem()
+        ]
+
         for plugin in plugin_list:
             self.add_plugin(self.tree.GetRootItem(), plugin)
         self.check_plugin_nodes()

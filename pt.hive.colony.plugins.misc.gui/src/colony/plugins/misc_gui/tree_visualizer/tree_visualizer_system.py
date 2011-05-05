@@ -270,7 +270,11 @@ class TreeVisualizerPanel(wx.Panel):
 
 def escape_string(raw_string):
     new_string = ""
-    special_characters = [".", "^", "$", "*", "+", "?", "{", "[", "]", "\\", "|", "(", ")"]
+
+    special_characters = [
+        ".", "^", "$", "*", "+", "?", "{", "[", "]", "\\", "|", "(", ")"
+    ]
+
     for character in raw_string:
         if character in special_characters:
             new_string += "\\"

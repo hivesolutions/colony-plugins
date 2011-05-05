@@ -41,7 +41,12 @@ import wx
 import copy
 
 SQUARE_SIZE = 150
-COLORS = [wx.RED, wx.GREEN, wx.BLUE, wx.BLACK]
+COLORS = [
+    wx.RED,
+    wx.GREEN,
+    wx.BLUE,
+    wx.BLACK
+]
 
 #@todo: review and comment this file
 class DependenciesVisualizer:
@@ -91,9 +96,12 @@ class DrawPanel(wx.Panel):
         self.Bind(wx.EVT_MOTION, self.on_motion)
 
     def create_shapes(self, graph):
-
         rectangle = wx.Rect(0,0, SQUARE_SIZE, SQUARE_SIZE)
-        position = [0, 0]
+
+        position = [
+            0, 0
+        ]
+
         for color in COLORS:
             dc, graphic_dc, bitmap = self.create_dc_gdc_bitmap()
             pen_color = color
@@ -126,7 +134,11 @@ class DrawPanel(wx.Panel):
         except:
             graphic_dc = mem_dc
 
-        return (mem_dc, graphic_dc, bitmap)
+        return (
+            mem_dc,
+            graphic_dc,
+            bitmap
+        )
 
     def close_dc_gdc_bitmap(self, dc, gdc, bitmap):
         dc.SelectObject(wx.NullBitmap)
