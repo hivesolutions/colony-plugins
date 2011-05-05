@@ -209,7 +209,12 @@ class PrintingWin32:
         printer_margins = printing_options.get("printer_margins", self.get_default_printer_margins(handler_device_context))
 
         # returns the printer handler tuple
-        return (handler_device_context, printable_area, printer_size, printer_margins)
+        return (
+            handler_device_context,
+            printable_area,
+            printer_size,
+            printer_margins
+        )
 
     def close_printer_handler(self, printer_handler_context):
         """

@@ -60,7 +60,11 @@ class ConsolePrintingManager:
     printing_manager_plugin = None
     """ The printing manager plugin """
 
-    commands = ["print_test", "print_test_image", "print_printing_language"]
+    commands = [
+        "print_test",
+        "print_test_image",
+        "print_printing_language"
+    ]
     """ The commands list """
 
     def __init__(self, printing_manager_plugin):

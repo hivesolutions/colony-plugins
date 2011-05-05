@@ -49,7 +49,14 @@ import printing.manager.printing_language_ast
 IMAGE_SCALE_FACTOR = 0.5
 """ The image scale factor """
 
-EXCLUSION_LIST = ["__class__", "__delattr__", "__dict__", "__doc__", "__getattribute__", "__hash__", "__init__", "__module__", "__new__", "__reduce__", "__reduce_ex__", "__repr__", "__setattr__", "__str__", "__weakref__", "__format__", "__sizeof__", "__subclasshook__", "accept", "accept_double", "accept_post_order", "add_child_node", "remove_child_node", "set_indent", "set_value", "indent", "value", "child_nodes"]
+EXCLUSION_LIST = [
+    "__class__", "__delattr__", "__dict__", "__doc__", "__getattribute__",
+    "__hash__", "__init__", "__module__", "__new__", "__reduce__",
+    "__reduce_ex__", "__repr__", "__setattr__", "__str__", "__weakref__",
+    "__format__", "__sizeof__", "__subclasshook__", "accept", "accept_double",
+    "accept_post_order", "add_child_node", "remove_child_node", "set_indent",
+    "set_value", "indent", "value", "child_nodes"
+]
 """ The exclusion list """
 
 DEFAULT_ENCODER = "Cp1252"
@@ -317,7 +324,9 @@ class Visitor:
             self.pdf_document_controller.set_title(printing_document_name)
 
             # sets the initial position
-            self.current_position = (0, 0)
+            self.current_position = (
+                0, 0
+            )
         # in case it's the second visit
         elif self.visit_index == 1:
             # removes the context information
@@ -351,7 +360,10 @@ class Visitor:
             # retrieves the current position in x and y
             current_position_x, current_position_y = self.current_position
 
-            self.current_position = (current_position_x, current_position_y + margin_top)
+            self.current_position = (
+                current_position_x,
+                current_position_y + margin_top
+            )
         elif self.visit_index == 1:
             # retrieves the line biggest height
             biggest_height = self.get_context_information("biggest_height")
@@ -370,7 +382,10 @@ class Visitor:
             current_position_x, current_position_y = self.current_position
 
             # sets the new current position
-            self.current_position = (0, current_position_y + biggest_height + margin_bottom)
+            self.current_position = (
+                0,
+                current_position_y + biggest_height + margin_bottom
+            )
 
             # removes the context information
             self.remove_context_information(node)
@@ -522,7 +537,10 @@ class Visitor:
             self.pdf_document_controller.draw_image(bitmap_image, real_bitmap_x, real_bitmap_y, real_bitmap_image_width, real_bitmap_image_height)
 
             # sets the new current position
-            self.current_position = (current_position_x + real_bitmap_image_height, current_position_y)
+            self.current_position = (
+                current_position_x + real_bitmap_image_height,
+                current_position_y
+            )
 
             # in case the bitmap image height is bigger than the current
             # context biggest height, updates the information
@@ -540,7 +558,10 @@ class Visitor:
         current_position_x, current_position_y = self.current_position
 
         # converts the current position to context
-        current_position_context = (current_position_x, -1 * current_position_y)
+        current_position_context = (
+            current_position_x,
+            -1 * current_position_y
+        )
 
         return current_position_context
 

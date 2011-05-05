@@ -55,7 +55,13 @@ FONT_SCALE_FACTOR = 20
 IMAGE_SCALE_FACTOR = 10
 """ The image scale factor """
 
-EXCLUSION_LIST = ["__class__", "__delattr__", "__dict__", "__doc__", "__getattribute__", "__hash__", "__init__", "__module__", "__new__", "__reduce__", "__reduce_ex__", "__repr__", "__setattr__", "__str__", "__weakref__", "__format__", "__sizeof__", "__subclasshook__", "accept", "accept_double", "accept_post_order", "add_child_node", "remove_child_node", "set_indent", "set_value", "indent", "value", "child_nodes"]
+EXCLUSION_LIST = [
+    "__class__", "__delattr__", "__dict__", "__doc__", "__getattribute__",
+    "__hash__", "__init__", "__module__", "__new__", "__reduce__", "__reduce_ex__",
+    "__repr__", "__setattr__", "__str__", "__weakref__", "__format__", "__sizeof__",
+    "__subclasshook__", "accept", "accept_double", "accept_post_order", "add_child_node",
+    "remove_child_node", "set_indent", "set_value", "indent", "value", "child_nodes"
+]
 """ The exclusion list """
 
 DEFAULT_ENCODER = "Cp1252"
@@ -347,7 +353,9 @@ class Visitor:
             handler_device_context.SelectObject(pen)
 
             # sets the initial position
-            self.current_position = (0, 0)
+            self.current_position = (
+                0, 0
+            )
         # in case it's the second visit
         elif self.visit_index == 1:
             # ends the current page
@@ -384,7 +392,10 @@ class Visitor:
             # retrieves the current position in x and y
             current_position_x, current_position_y = self.current_position
 
-            self.current_position = (current_position_x, current_position_y - margin_top * FONT_SCALE_FACTOR)
+            self.current_position = (
+                current_position_x,
+                current_position_y - margin_top * FONT_SCALE_FACTOR
+            )
         elif self.visit_index == 1:
             biggest_height = self.get_context_information("biggest_height")
 
@@ -401,7 +412,9 @@ class Visitor:
             current_position_x, current_position_y = self.current_position
 
             # sets the new current position
-            self.current_position = (0, current_position_y - biggest_height - margin_bottom * FONT_SCALE_FACTOR)
+            self.current_position = (
+                0, current_position_y - biggest_height - margin_bottom * FONT_SCALE_FACTOR
+            )
 
             # removes the context information
             self.remove_context_information(node)
@@ -600,7 +613,10 @@ class Visitor:
             handler_device_context.SetMapMode(win32con.MM_TWIPS)
 
             # sets the new current position
-            self.current_position = (real_bitmap_x2, current_position_y)
+            self.current_position = (
+                real_bitmap_x2,
+                current_position_y
+            )
 
             if self.get_context_information("biggest_height") < real_bitmap_image_height * IMAGE_SCALE_FACTOR:
                 self.put_context_information("biggest_height", real_bitmap_image_height * IMAGE_SCALE_FACTOR)
@@ -622,7 +638,10 @@ class Visitor:
         current_position_x, current_position_y = self.current_position
 
         # converts the current position to context
-        current_position_context = (FONT_SCALE_FACTOR * current_position_x, -1 * FONT_SCALE_FACTOR * current_position_y)
+        current_position_context = (
+            FONT_SCALE_FACTOR * current_position_x,
+            -1 * FONT_SCALE_FACTOR * current_position_y
+        )
 
         # returns the current position context
         return current_position_context
