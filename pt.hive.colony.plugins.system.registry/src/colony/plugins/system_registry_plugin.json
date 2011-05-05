@@ -10,7 +10,10 @@
     "author" : "Hive Solutions Lda. <development@hive.pt>",
     "capabilities" : ["system_registry", "build_automation_item"],
     "capabilities_allowed" : [],
-    "dependencies" : [],
+    "dependencies" : [{
+                "id" : "pt.hive.colony.plugins.misc.json",
+                "version" : "1.0.0"
+            }],
     "main_file" : "system_registry_plugin.py",
     "resources" : ["system_registry_plugin.py", "system_registry/__init__.py",
             "system_registry/registry/__init__.py",
