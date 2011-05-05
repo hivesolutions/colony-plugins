@@ -48,8 +48,8 @@ VALIDATION_FAILED_VALUE = "validation_failed"
 SERIALIZER_VALUE = "serializer"
 """ The serializer value """
 
-REST_SERIALIZER_VALUE = "rest_serializer"
-""" The rest serializer value """
+EXCEPTION_HANDLER_VALUE = "exception_handler"
+""" The exception handler value """
 
 def validated_method(validation_parameters = None):
     """
@@ -311,25 +311,32 @@ def serialize_exceptions(serialization_parameters = None):
                 # retrieves the serializer
                 serializer = parameters.get(SERIALIZER_VALUE, None)
 
-                # retrieves the rest serializer
-                rest_serializer = parameters.get(REST_SERIALIZER_VALUE, None)
+                # retrieves the exception handler
+                exception_handler = parameters.get(EXCEPTION_HANDLER_VALUE, None)
 
-                # in case no serializer is set
-                if not serializer and not rest_serializer:
+                # in case the serializer and the exception
+                # handler are not set
+                if not serializer and not exception_handler:
                     # re-raises the exception
                     raise
 
                 # retrieves the exception map for the exception
                 exception_map = self.get_exception_map(exception)
 
-                # dumps the exception map to the serialized form
-                exception_map_serialized = serializer and serializer.dumps(exception_map) or rest_serializer.dumps(exception_map, rest_request)
+                # in case the serializer is set
+                if serializer:
+                    # dumps the exception map to the serialized form
+                    exception_map_serialized = serializer.dumps(exception_map)
 
-                # sets the serialized map as the rest request contents
-                self.set_contents(rest_request, exception_map_serialized)
+                    # sets the serialized map as the rest request contents
+                    self.set_contents(rest_request, exception_map_serialized)
 
-                # sets the return value as invalid (error)
-                return_value = False
+                    # sets the return value as invalid (error)
+                    return_value = False
+                # in case the exception handler is set
+                elif exception_handler:
+                    # handles the exception map with the exception handler
+                    return_value = exception_handler.handle_exception(rest_request, exception_map,)
 
             # returns the return value
             return return_value
