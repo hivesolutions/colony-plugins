@@ -362,7 +362,10 @@ class SmartBusyAlgorithm(WorkPoolManagerAlgorithm):
         # work tasks list
         for work_task in self.work_pool.work_tasks_list:
             # creates the work task tuple
-            work_task_tuple = [work_task, 0]
+            work_task_tuple = [
+                work_task,
+                0
+            ]
 
             # adds the work task tuple to the work tasks list
             self.work_tasks_list.append(work_task_tuple)

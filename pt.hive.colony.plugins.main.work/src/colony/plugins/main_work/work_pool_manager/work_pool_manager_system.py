@@ -202,7 +202,11 @@ class WorkPoolManager:
             work_pool_work_string = "%d / %d" % (work_pool_work_counter, maximum_number_works_thread * work_pool_work_tasks_list_length)
 
             # sets the instance value for the work pool manager information
-            work_pool_manager_information[work_pool_name] = (work_pool_work_string, work_pool_scheduling_algorithm_name, work_pool_thread_pool_name)
+            work_pool_manager_information[work_pool_name] = (
+                work_pool_work_string,
+                work_pool_scheduling_algorithm_name,
+                work_pool_thread_pool_name
+            )
 
         # defines the work pool manager item columns
         work_pool_manager_item_columns = [
@@ -237,7 +241,9 @@ class WorkPoolManager:
 
         # sets the system information (item) values
         system_information["name"] = "Work Pool Manager"
-        system_information["items"] = [work_pool_manager_item]
+        system_information["items"] = [
+            work_pool_manager_item
+        ]
 
         # returns the system information
         return system_information
