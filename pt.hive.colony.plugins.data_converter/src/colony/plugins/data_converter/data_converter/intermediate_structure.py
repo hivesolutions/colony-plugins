@@ -212,9 +212,15 @@ class IntermediateStructure:
         # adds the entity to the ordered list
         self.entities.append(entity)
 
-        # indexes the entity by its object id
+        # retrieves the entity object id
         entity_object_id = entity.get_object_id()
-        index = (OBJECT_ID_VALUE, EQUALS_VALUE, entity_object_id)
+
+        # defines the index
+        index = (
+            OBJECT_ID_VALUE, EQUALS_VALUE, entity_object_id
+        )
+
+        # indexes the entity by its object id
         self.index_entity(entity, index)
 
     def index_entity(self, entity, index):
@@ -238,7 +244,9 @@ class IntermediateStructure:
 
         # indexes the entity by the specified key
         if not index in self.index_entity_map:
-            self.index_entity_map[index] = [entity]
+            self.index_entity_map[index] = [
+                entity
+            ]
         else:
             # adds the entity to the index location
             self.index_entity_map[index].append(entity)
@@ -491,7 +499,9 @@ class Entity:
         # converts the attribute value into a list in case it is not
         # in order to reuse the same code
         if not type(attribute_value) == types.ListType:
-            attribute_value = [attribute_value]
+            attribute_value = [
+                attribute_value
+            ]
 
         # splits the attribute types into python types and entity types
         plain_attribute_types = [attribute_type for attribute_type in attribute_types if not type(attribute_type) in types.StringTypes]

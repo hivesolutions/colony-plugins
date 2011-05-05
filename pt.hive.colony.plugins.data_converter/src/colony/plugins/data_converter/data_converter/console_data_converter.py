@@ -90,18 +90,20 @@ class ConsoleDataConverter:
     data_converter_plugin = None
     """ The data converter plugin """
 
-    commands = ["list_configurations",
-                "list_loaded_configurations",
-                "load_configuration",
-                "unload_configuration",
-                "set_configuration_option",
-                "list_configuration_items",
-                "list_dependent_configuration_items",
-                "enable_configuration_item",
-                "enable_all_configuration_items",
-                "disable_configuration_item",
-                "disable_all_configuration_items",
-                "convert_data"]
+    commands = [
+        "list_configurations",
+        "list_loaded_configurations",
+        "load_configuration",
+        "unload_configuration",
+        "set_configuration_option",
+        "list_configuration_items",
+        "list_dependent_configuration_items",
+        "enable_configuration_item",
+        "enable_all_configuration_items",
+        "disable_configuration_item",
+        "disable_all_configuration_items",
+        "convert_data"
+    ]
     """ The commands list """
 
     def __init__(self, data_converter_plugin):

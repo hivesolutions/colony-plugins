@@ -71,7 +71,10 @@ RELATED_ENTITY_OBJECT_ID_VALUE = "related_entity_object_id"
 
 VARCHAR_VALUE = "varchar(255)"
 
-RELATION_COLUMN_NAMES = (ENTITY_OBJECT_ID_VALUE, RELATED_ENTITY_OBJECT_ID_VALUE)
+RELATION_COLUMN_NAMES = (
+    ENTITY_OBJECT_ID_VALUE,
+    RELATED_ENTITY_OBJECT_ID_VALUE
+)
 """ List with the names of the columns used to map relations in relation tables """
 
 RELATION_TABLE_NAME_SEPARATOR = "__"
@@ -349,7 +352,9 @@ class IoAdapterSqlite:
             entity_name = entity.get_name()
             attribute_names = [attribute_name for attribute_name, attribute_value in entity.get_attributes().iteritems() if not type(attribute_value) in (types.ListType, types.InstanceType)]
             if not entity_name in table_name_column_names_map:
-                table_name_column_names_map[entity_name] = [OBJECT_ID_VALUE]
+                table_name_column_names_map[entity_name] = [
+                    OBJECT_ID_VALUE
+                ]
             table_name_column_names_map[entity_name].extend(attribute_names)
 
         # creates the tables where to store the intermediate entities
@@ -502,7 +507,9 @@ class IoAdapterSqlite:
         @return: String with the index that can be used to retrieve an entity from the intermediate structure.
         """
 
-        intermediate_entity_index = (OBJECT_ID_VALUE, EQUALS_VALUE, intermediate_entity_object_id)
+        intermediate_entity_index = (
+            OBJECT_ID_VALUE, EQUALS_VALUE, intermediate_entity_object_id
+        )
 
         return intermediate_entity_index
 

@@ -391,7 +391,10 @@ def get_input_entity(input_intermediate_structure, input_entity_name, attribute_
     return input_entity
 
 def get_creator_input_entity(input_intermediate_structure, output_entity_object_id):
-    input_entity_index = (INPUT_ENTITY_VALUE, CREATED_VALUE, OUTPUT_ENTITY_OBJECT_ID_VALUE, EQUALS_VALUE, output_entity_object_id)
+    input_entity_index = (
+        INPUT_ENTITY_VALUE, CREATED_VALUE, OUTPUT_ENTITY_OBJECT_ID_VALUE, EQUALS_VALUE, output_entity_object_id
+    )
+
     input_entities = input_intermediate_structure.get_entities_by_index(input_entity_index)
 
     # raises an exception in case more than one input entity is found when only one was expected
@@ -408,8 +411,11 @@ def get_creator_input_entity(input_intermediate_structure, output_entity_object_
     return input_entity
 
 def get_created_output_entities(output_intermediate_structure, input_entity_object_id, output_entity_name):
-    output_entity_index = (OUTPUT_ENTITY_VALUE, WHERE_VALUE, INPUT_ENTITY_OBJECT_ID_VALUE, EQUALS_VALUE, input_entity_object_id,
-                           CREATED_VALUE, OUTPUT_ENTITY_NAME_VALUE, EQUALS_VALUE, output_entity_name)
+    output_entity_index = (
+        OUTPUT_ENTITY_VALUE, WHERE_VALUE, INPUT_ENTITY_OBJECT_ID_VALUE, EQUALS_VALUE, input_entity_object_id,
+        CREATED_VALUE, OUTPUT_ENTITY_NAME_VALUE, EQUALS_VALUE, output_entity_name
+    )
+
     output_entities = output_intermediate_structure.get_entities_by_index(output_entity_index)
 
     return output_entities

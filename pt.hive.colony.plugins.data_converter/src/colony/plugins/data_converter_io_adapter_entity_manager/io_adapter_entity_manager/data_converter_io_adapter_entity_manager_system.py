@@ -253,7 +253,10 @@ class IoAdapterEntityManager:
 
                     intermediate_entity.set_attribute(attribute_name, attribute_value)
 
-        return (entity_object_id_entity_map, entity_object_id_intermediate_entity_object_id_map)
+        return (
+            entity_object_id_entity_map,
+            entity_object_id_intermediate_entity_object_id_map
+        )
 
     def load_relations(self, intermediate_structure, entity_manager, options, entity_object_id_entity_map, entity_object_id_intermediate_entity_object_id_map):
         """
@@ -330,7 +333,9 @@ class IoAdapterEntityManager:
                         if not intermediate_entity_attribute_value:
                             intermediate_entity_attribute_value = []
                         else:
-                            intermediate_entity_attribute_value = [intermediate_entity_attribute_value]
+                            intermediate_entity_attribute_value = [
+                                intermediate_entity_attribute_value
+                            ]
 
                     # retrieves the intermediate entity associated with each related entity and adds it to the intermediate entity's relation attribute
                     for related_entity in related_entities:
@@ -562,7 +567,9 @@ class IoAdapterEntityManager:
                 if type(intermediate_related_entity_or_entities) == types.ListType:
                     intermediate_related_entities = intermediate_related_entity_or_entities
                 elif intermediate_related_entity_or_entities:
-                    intermediate_related_entities = [intermediate_related_entity_or_entities]
+                    intermediate_related_entities = [
+                        intermediate_related_entity_or_entities
+                    ]
                 else:
                     intermediate_related_entities = []
 
@@ -622,7 +629,10 @@ class IoAdapterEntityManager:
             if type(entity_attribute_value) == types.ListType:
                 entity_attribute_value.append(related_entity)
             elif entity_attribute_value:
-                entity_attribute_value = [entity_attribute_value]
+                entity_attribute_value = [
+                    entity_attribute_value
+                ]
+
                 entity_attribute_value.append(related_entity)
             else:
                 entity_attribute_value = related_entity
@@ -641,7 +651,9 @@ class IoAdapterEntityManager:
         entity from the intermediate structure.
         """
 
-        intermediate_entity_index = (OBJECT_ID_VALUE, EQUALS_VALUE, intermediate_entity_object_id)
+        intermediate_entity_index = (
+            OBJECT_ID_VALUE, EQUALS_VALUE, intermediate_entity_object_id
+        )
 
         return intermediate_entity_index
 

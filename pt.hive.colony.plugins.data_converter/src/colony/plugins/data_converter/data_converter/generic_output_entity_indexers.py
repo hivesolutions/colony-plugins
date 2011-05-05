@@ -58,14 +58,19 @@ def output_indexer_created_output_entities(data_converter, configuration, input_
     output_entity_name = output_entity.get_name()
 
     # adds the output entity to the list of all output entities with this name that were created by this specific input entity
-    output_entity_index = (OUTPUT_ENTITY_VALUE, WHERE_VALUE, INPUT_ENTITY_OBJECT_ID_VALUE, EQUALS_VALUE, input_entity_object_id,
-                           CREATED_VALUE, OUTPUT_ENTITY_NAME_VALUE, EQUALS_VALUE, output_entity_name)
+    output_entity_index = (
+        OUTPUT_ENTITY_VALUE, WHERE_VALUE, INPUT_ENTITY_OBJECT_ID_VALUE, EQUALS_VALUE, input_entity_object_id,
+        CREATED_VALUE, OUTPUT_ENTITY_NAME_VALUE, EQUALS_VALUE, output_entity_name
+    )
 
     output_intermediate_structure.index_entity(output_entity, output_entity_index)
 
 def output_indexer_creator_input_entity(data_converter, configuration, input_intermediate_structure, input_entity, output_intermediate_structure, output_entity, arguments):
     output_entity_object_id = output_entity.get_object_id()
 
+    input_entity_index = (
+        INPUT_ENTITY_VALUE, CREATED_VALUE, OUTPUT_ENTITY_OBJECT_ID_VALUE, EQUALS_VALUE, output_entity_object_id
+    )
+
     # indexes the input entity by the created output entity
-    input_entity_index = (INPUT_ENTITY_VALUE, CREATED_VALUE, OUTPUT_ENTITY_OBJECT_ID_VALUE, EQUALS_VALUE, output_entity_object_id)
     input_intermediate_structure.index_entity(input_entity, input_entity_index)

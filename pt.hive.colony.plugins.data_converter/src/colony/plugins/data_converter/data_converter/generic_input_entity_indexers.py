@@ -68,9 +68,13 @@ def input_indexer_primary_key(data_converter, configuration, input_intermediate_
     if not len(attribute_names) == len(attribute_values):
         return
 
-    # creates the index for the input entity
     input_entity_name = input_entity.get_name()
-    index = [ENTITY_NAME_VALUE, EQUALS_VALUE, input_entity_name, AND_VALUE]
+
+    index = [
+        ENTITY_NAME_VALUE, EQUALS_VALUE, input_entity_name, AND_VALUE
+    ]
+
+    # creates the index for the input entity
     attribute_name_value_pairs = zip(attribute_names, attribute_values)
     for attribute_name, attribute_value in attribute_name_value_pairs:
         index.extend([attribute_name, EQUALS_VALUE, attribute_value, AND_VALUE])

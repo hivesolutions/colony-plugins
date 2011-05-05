@@ -96,7 +96,9 @@ def post_conversion_handler_copy_entity_attributes(data_converter, configuration
                     destination_destination_attribute_name = destination_attribute_names[1]
 
                 if type(source_attribute_names) in types.StringTypes:
-                    source_attribute_names = [source_attribute_names]
+                    source_attribute_names = [
+                        source_attribute_names
+                    ]
 
                 for source_attribute_name in source_attribute_names:
 

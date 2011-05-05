@@ -105,7 +105,11 @@ class IoAdapterCsv:
 
         # extracts the mandatory options
         directory_path = configuration.get_option(INPUT_DIRECTORY_PATH_VALUE)
-        directory_paths = [directory_path]
+
+        # sets the directory paths
+        directory_paths = [
+            directory_path
+        ]
 
         # extracts the non-mandatory options
         input_entity_handlers = options.get(INPUT_ENTITY_HANDLERS_VALUE, [])
@@ -196,7 +200,11 @@ class IoAdapterCsv:
 
     # @todo: comment this
     def tokenize_csv_data(self, csv_data, token_separator, text_delimiter):
-        separators = (token_separator, "\n")
+        separators = (
+            token_separator,
+            "\n"
+        )
+
         tokens = []
         token = str()
         inside_text = False
