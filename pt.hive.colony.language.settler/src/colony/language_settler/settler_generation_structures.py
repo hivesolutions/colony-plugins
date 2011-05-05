@@ -44,13 +44,17 @@ import types
 
 import settler_exceptions
 
-COMPLEX_OPERATIONS = ["LOAD"]
+COMPLEX_OPERATIONS = [
+    "LOAD"
+]
 """ The list of complex operations """
 
-MULTIPLE_ADDRESSES_OPERATIONS = ["LOAD", "LOAD_CONST", "STORE_NAME", "STORE_FAST", "STORE_GLOBAL", "STORE_ATTR",
-                                 "LOAD_NAME", "LOAD_FAST", "LOAD_ATTR", "LOAD_GLOBAL", "COMPARE_OP", "MAKE_FUNCTION",
-                                 "CALL_FUNCTION", "JUMP_IF_FALSE", "JUMP_IF_TRUE", "JUMP_FORWARD", "JUMP_ABSOLUTE",
-                                 "SETUP_LOOP", "BUILD_TUPLE", "BUILD_LIST", "IMPORT_NAME"]
+MULTIPLE_ADDRESSES_OPERATIONS = [
+    "LOAD", "LOAD_CONST", "STORE_NAME", "STORE_FAST", "STORE_GLOBAL", "STORE_ATTR",
+    "LOAD_NAME", "LOAD_FAST", "LOAD_ATTR", "LOAD_GLOBAL", "COMPARE_OP", "MAKE_FUNCTION",
+    "CALL_FUNCTION", "JUMP_IF_FALSE", "JUMP_IF_TRUE", "JUMP_FORWARD", "JUMP_ABSOLUTE",
+    "SETUP_LOOP", "BUILD_TUPLE", "BUILD_LIST", "IMPORT_NAME"
+]
 """ The list of multiple addresses operations """
 
 STACK_INCREMENTER_OPERATIONS = {
@@ -400,7 +404,11 @@ class ContextCodeInformation:
         @param arguments: The arguments of the operation to be added.
         """
 
-        operation_tuple = (operation, arguments)
+        operation_tuple = (
+            operation,
+            arguments
+        )
+
         self.operations_stack.append(operation_tuple)
         self.increment_program_counter(operation)
         self.update_current_stack_size_add(operation, arguments)
@@ -415,7 +423,11 @@ class ContextCodeInformation:
         @param arguments: The arguments of the operation to be removed.
         """
 
-        operation_tuple = (operation, arguments)
+        operation_tuple = (
+            operation,
+            arguments
+        )
+
         self.operations_stack.remove(operation_tuple)
         self.decrement_program_counter(operation)
         self.update_current_stack_size_remove(operation, arguments)

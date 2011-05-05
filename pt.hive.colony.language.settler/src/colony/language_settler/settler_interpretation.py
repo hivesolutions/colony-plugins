@@ -58,21 +58,58 @@ CONTEXT_TYPE_TYPE = {
     "function" : DECLARATION_TYPE
 }
 
-EXECUTION_CONTEXT_TYPES = ["global", "execution", "boolean_expression"]
-CONDITIONAL_CONTEXT_TYPES = ["if_condition", "else_condition"]
-LOOP_CONTEXT_TYPES = ["while", "for"]
-CALL_CONTEXT_TYPES = ["function_call"]
-DECLARATION_CONTEXT_TYPES = ["function"]
-RETURN_CONTEXT_TYPES = ["return"]
+EXECUTION_CONTEXT_TYPES = [
+    "global",
+    "execution",
+    "boolean_expression"
+]
+
+CONDITIONAL_CONTEXT_TYPES = [
+    "if_condition",
+    "else_condition"
+]
+
+LOOP_CONTEXT_TYPES = [
+    "while",
+    "for"
+]
+
+CALL_CONTEXT_TYPES = [
+    "function_call"
+]
+
+DECLARATION_CONTEXT_TYPES = [
+    "function"
+]
+
+RETURN_CONTEXT_TYPES = [
+    "return"
+]
 
 context_type_ast_node_map = {
-    "boolean_expression" : [settler_ast.AndExpressionNode, settler_ast.OrExpressionNode],
-    "if_condition" : [settler_ast.IfConditionNode],
-    "else_condition" : [settler_ast.ElseConditionNode, settler_ast.ElseConditionNode],
-    "while" : [settler_ast.WhileNode],
-    "for" : [settler_ast.ForNode],
-    "function_call" : [settler_ast.FunctionCallNode],
-    "function" : [settler_ast.FunctionNode]
+    "boolean_expression" : [
+        settler_ast.AndExpressionNode,
+        settler_ast.OrExpressionNode
+    ],
+    "if_condition" : [
+        settler_ast.IfConditionNode
+    ],
+    "else_condition" : [
+        settler_ast.ElseConditionNode,
+        settler_ast.ElseConditionNode
+    ],
+    "while" : [
+        settler_ast.WhileNode
+    ],
+    "for" : [
+        settler_ast.ForNode
+    ],
+    "function_call" : [
+        settler_ast.FunctionCallNode
+    ],
+    "function" : [
+        settler_ast.FunctionNode
+    ]
 }
 
 class InterpretationVisitor(settler_visitor.Visitor):

@@ -47,7 +47,9 @@ class ProcessingStructure:
         GLOBAL_CONTEXT_NAME : {}
     }
 
-    current_context_stack = [GLOBAL_CONTEXT_NAME]
+    current_context_stack = [
+        GLOBAL_CONTEXT_NAME
+    ]
 
     current_id = 0
 

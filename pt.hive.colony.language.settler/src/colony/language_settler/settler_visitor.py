@@ -167,10 +167,14 @@ class Visitor:
     node_method_map = {}
     """ The node method map """
 
-    current_context_stack = ["global"]
+    current_context_stack = [
+        "global"
+    ]
     """ The current context stack """
 
-    current_context_type_stack = ["function"]
+    current_context_type_stack = [
+        "function"
+    ]
     """ The current context type stack """
 
     visit_childs = True
@@ -181,8 +185,15 @@ class Visitor:
 
     def __init__(self):
         self.node_method_map = {}
-        self.current_context_stack = ["global"]
-        self.current_context_type_stack = ["global"]
+
+        self.current_context_stack = [
+            "global"
+        ]
+
+        self.current_context_type_stack = [
+            "global"
+        ]
+
         self.visit_childs = True
         self.visit_next = True
 

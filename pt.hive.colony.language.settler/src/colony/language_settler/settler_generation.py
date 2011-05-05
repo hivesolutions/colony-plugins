@@ -188,7 +188,13 @@ class PythonCodeGenerationVisitor(settler_visitor.Visitor):
             return
 
         if self.stack_mode_counter:
-            operation_tuple = (operation, arguments, mark_line, line_increment)
+            operation_tuple = (
+                operation,
+                arguments,
+                mark_line,
+                line_increment
+            )
+
             current_operations_stack = self.operations_stacks_stack[self.stack_mode_counter - 1]
             current_operations_stack.append(operation_tuple)
         else:
@@ -200,7 +206,13 @@ class PythonCodeGenerationVisitor(settler_visitor.Visitor):
 
     def remove_operation(self, operation, arguments, mark_line = False, line_increment = 1):
         if self.stack_mode_counter:
-            operation_tuple = (operation, arguments, mark_line, line_increment)
+            operation_tuple = (
+                operation,
+                arguments,
+                mark_line,
+                line_increment
+            )
+
             current_operations_stack = self.operations_stacks_stack[self.stack_mode_counter - 1]
             current_operations_stack.remove(operation_tuple)
         else:
@@ -1078,7 +1090,10 @@ class PythonCodeGenerationVisitor(settler_visitor.Visitor):
         failure_deferred_value = settler_generation_structures.DeferredValue()
 
         # creates the deferred tuple
-        deferred_tuple = (success_deferred_value, failure_deferred_value)
+        deferred_tuple = (
+            success_deferred_value,
+            failure_deferred_value
+        )
 
         self.push_boolean_stack_value(deferred_tuple)
 
@@ -1157,7 +1172,10 @@ class PythonCodeGenerationVisitor(settler_visitor.Visitor):
         failure_deferred_value = settler_generation_structures.DeferredValue()
 
         # creates the deferred tuple
-        deferred_tuple = (success_deferred_value, failure_deferred_value)
+        deferred_tuple = (
+            success_deferred_value,
+            failure_deferred_value
+        )
 
         self.push_boolean_stack_value(deferred_tuple)
 
