@@ -292,10 +292,15 @@ class MainServiceHttpWsgiHandler:
         # sets the colony attributes in the environment map
         environment_map[COLONY_PLUGIN_MANAGER_VALUE] = plugin_manager
 
+        # define sthe wsgi version
+        wsgi_version = (
+            1, 0
+        )
+
         # sets the wsgi attributes in the environment map
         environment_map[WSGI_INPUT_VALUE] = request
         environment_map[WSGI_ERRORS_VALUE] = request
-        environment_map[WSGI_VERSION_VALUE] = (1, 0)
+        environment_map[WSGI_VERSION_VALUE] = wsgi_version
         environment_map[WSGI_MULTITHREAD_VALUE] = False
         environment_map[WSGI_MULTIPROCESS_VALUE] = True
         environment_map[WSGI_RUN_ONCE_VALUE] = True

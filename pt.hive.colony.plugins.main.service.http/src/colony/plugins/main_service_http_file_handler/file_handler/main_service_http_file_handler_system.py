@@ -569,7 +569,10 @@ class MainServiceHttpFileHandler:
             end_value_number = end_value and int(end_value) or - 1
 
             # creates the range number tuple with both the initial and end values
-            range_number_tuple = (initial_value_number, end_value_number)
+            range_number_tuple = (
+                initial_value_number,
+                end_value_number
+            )
 
             # adds the range number tuple to the ranges number list
             ranges_number_list.append(range_number_tuple)

@@ -197,7 +197,10 @@ class MainServiceHttpSystemInformationHandler:
 
         # sets the system information framework item values
         system_information_framework_item["name"] = "Framework"
-        system_information_framework_item["items"] = [framework_main_item, framework_copyright_item]
+        system_information_framework_item["items"] = [
+            framework_main_item,
+            framework_copyright_item
+        ]
 
         # sets the system information framework item in the system information
         system_information["framework"] = system_information_framework_item
@@ -348,7 +351,11 @@ class MainServiceHttpSystemInformationHandler:
 
         # creates the plugins tuple from the plugins string, the replicas
         # string and the instances string
-        plugins_tuple = (plugins_string, replicas_string, instances_string)
+        plugins_tuple = (
+            plugins_string,
+            replicas_string,
+            instances_string
+        )
 
         # returns the plugins tuple
         return plugins_tuple

@@ -216,7 +216,10 @@ DEFAULT_PATH = "~/fastcgi-bin"
 DEFAULT_CONNECTION_TYPE = INTERNET_CONNECTION_TYPE
 """ The default connection type """
 
-DEFAULT_CONNECTION_ARGUMENTS = ("127.0.0.1", 9000)
+DEFAULT_CONNECTION_ARGUMENTS = (
+    "127.0.0.1",
+    9000
+)
 """ The default connection arguments type """
 
 class MainServiceHttpFastCgiHandler:
@@ -472,7 +475,10 @@ class MainServiceHttpFastCgiHandler:
         """
 
         # creates the connection id tuple
-        connection_id_tuple = (connection_type, connection_arguments)
+        connection_id_tuple = (
+            connection_type,
+            connection_arguments
+        )
 
         # in case the connection id tuples does not exists
         # in the connection map
@@ -613,7 +619,14 @@ class FastCgiConnection:
                 self.socket.recv(padding_length)
 
             # creates the record as a tuple
-            record = (version, type, request_id, content_length, padding_length, contents)
+            record = (
+                version,
+                type,
+                request_id,
+                content_length,
+                padding_length,
+                contents
+            )
 
             # in case the request id is the same as the target
             # request id

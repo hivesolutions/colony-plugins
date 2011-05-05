@@ -58,7 +58,9 @@ TEMPLATE_DIRECTORY_LIST_HANDLER_RESOURCES_PATH = "main_service_http_template_dir
 HTTP_SERVICE_DIRECTORY_LIST_HTML_TEMPLATE_FILE_NAME = "http_service_directory_list.html.tpl"
 """ The http service directory list html template file name """
 
-SIZE_UNITS_LIST = ("B", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB")
+SIZE_UNITS_LIST = (
+    "B", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB"
+)
 """ The size units list """
 
 SIZE_UNIT_COEFFICIENT = 1024

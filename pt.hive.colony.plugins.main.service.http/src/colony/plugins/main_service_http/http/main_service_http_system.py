@@ -54,7 +54,11 @@ import colony.libs.string_buffer_util
 
 import main_service_http_exceptions
 
-RESOLUTION_ORDER_ITEMS = ("virtual_servers", "redirections", "contexts")
+RESOLUTION_ORDER_ITEMS = (
+    "virtual_servers",
+    "redirections",
+    "contexts"
+)
 """ The items to be used in the resolution order """
 
 GET_METHOD_VALUE = "GET"
@@ -2112,7 +2116,10 @@ class HttpRequest:
             else:
                 # sets the list with the previously defined attribute reference
                 # and the attribute value
-                self.attributes_map[attribute_name] = [attribute_value_reference, attribute_value]
+                self.attributes_map[attribute_name] = [
+                    attribute_value_reference,
+                    attribute_value
+                ]
         else:
             # sets the attribute value in the attributes map
             self.attributes_map[attribute_name] = attribute_value
@@ -2823,7 +2830,10 @@ class HttpRequest:
         contents = self.multipart[end_header_index + 4:end_index - 2]
 
         # returns the headers map and the contents as a tuple
-        return (headers_map, contents)
+        return (
+            headers_map,
+            contents
+        )
 
     def _parse_content_disposition(self, headers_map):
         """
