@@ -48,6 +48,9 @@ VALIDATION_FAILED_VALUE = "validation_failed"
 SERIALIZER_VALUE = "serializer"
 """ The serializer value """
 
+REST_SERIALIZER_VALUE = "rest_serializer"
+""" The rest serializer value """
+
 def validated_method(validation_parameters = None):
     """
     Decorator for the validated method.
@@ -308,8 +311,11 @@ def serialize_exceptions(serialization_parameters = None):
                 # retrieves the serializer
                 serializer = parameters.get(SERIALIZER_VALUE, None)
 
-                # in case the serializer is not set
-                if not serializer:
+                # retrieves the rest serializer
+                rest_serializer = parameters.get(REST_SERIALIZER_VALUE, None)
+
+                # in case no serializer is set
+                if not serializer and not rest_serializer:
                     # re-raises the exception
                     raise
 
@@ -317,7 +323,7 @@ def serialize_exceptions(serialization_parameters = None):
                 exception_map = self.get_exception_map(exception)
 
                 # dumps the exception map to the serialized form
-                exception_map_serialized = serializer.dumps(exception_map)
+                exception_map_serialized = serializer and serializer.dumps(exception_map) or rest_serializer.dumps(exception_map, rest_request)
 
                 # sets the serialized map as the rest request contents
                 self.set_contents(rest_request, exception_map_serialized)
