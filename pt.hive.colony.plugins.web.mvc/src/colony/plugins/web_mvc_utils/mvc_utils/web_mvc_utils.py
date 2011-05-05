@@ -300,14 +300,19 @@ def serialize_exceptions(serialization_parameters = None):
             # retrieves the parameters reference
             parameters = args_length > 2 and args[2] or {}
 
-            # retrieves the serializer
-            serializer = parameters.get(SERIALIZER_VALUE, None)
-
             try:
                 # calls the callback function,
                 # retrieving the return value
                 return_value = function(*args, **kwargs)
             except BaseException, exception:
+                # retrieves the serializer
+                serializer = parameters.get(SERIALIZER_VALUE, None)
+
+                # in case the serializer is not set
+                if not serializer:
+                    # re-raises the exception
+                    raise
+
                 # retrieves the exception map for the exception
                 exception_map = self.get_exception_map(exception)
 
