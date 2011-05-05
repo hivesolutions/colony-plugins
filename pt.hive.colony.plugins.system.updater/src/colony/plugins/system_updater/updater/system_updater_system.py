@@ -38,6 +38,7 @@ __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
 import os
+import threading
 
 import system_updater_parser
 import system_updater_exceptions
@@ -74,6 +75,9 @@ class SystemUpdater:
     system_updater_plugin = None
     """ The system updater plugin """
 
+    system_updater_lock = None
+    """ The system updater lock """
+
     repository_list = []
     """ The list of repositories """
 
@@ -99,6 +103,7 @@ class SystemUpdater:
 
         self.system_updater_plugin = system_updater_plugin
 
+        self.system_updater_lock = threading.RLock()
         self.repository_list = []
         self.repository_descriptor_list = []
         self.repository_repository_descriptor_map = {}
@@ -331,23 +336,15 @@ class SystemUpdater:
         current transaction.
         """
 
-        # loads the information for the repositories
-        self.load_repositories_information()
+        # acquires the system updater lock
+        self.system_updater_lock.acquire()
 
-        # retrieves the descriptor of the package
-        package_descriptor = self.get_package_descriptor(package_id, package_version)
-
-        # retrieves the package plugins
-        package_plugins = package_descriptor.plugins
-
-        # iterates over all the plugins in the plugin descriptor
-        for plugin in package_plugins:
-            # retrieves the plugin id and version
-            plugin_id = plugin.id
-            plugin_version = plugin.version
-
-            # installs the plugin
-            self.install_plugin(plugin_id, plugin_version, transaction_properties)
+        try:
+            # installs the package (concrete)
+            self._install_package(package_id, package_version, transaction_properties)
+        finally:
+            # releases the system updater lock
+            self.system_updater_lock.release()
 
     def install_bundle(self, bundle_id, bundle_version = None, transaction_properties = None):
         """
@@ -363,58 +360,15 @@ class SystemUpdater:
         current transaction.
         """
 
-        # loads the information for the repositories
-        self.load_repositories_information()
-
-        # retrieves the descriptor of the bundle
-        bundle_descriptor = self.get_bundle_descriptor(bundle_id, bundle_version)
-
-        # in case the bundle was not found
-        if not bundle_descriptor:
-            # raises the invalid bundle exception
-            raise system_updater_exceptions.InvalidBundleException("bundle %s v%s not found" % (bundle_id, bundle_version))
-
-        # retrieves the bundle type
-        bundle_type = bundle_descriptor.bundle_type
-
-        # retrieves a deployer for the given plugin type
-        plugin_deployer = self._get_deployer_plugin_by_deployer_type(bundle_type)
-
-        # retrieves the current transaction properties or creates a new transaction
-        transaction_properties = plugin_deployer.open_transaction(transaction_properties)
+        # acquires the system updater lock
+        self.system_updater_lock.acquire()
 
         try:
-            # installs the bundle dependencies
-            self._install_bundle_dependencies(bundle_descriptor, transaction_properties)
-
-            # retrieves the repository descriptor from the bundle descriptor
-            repository_descriptor = self.get_repository_descriptor_bundle_descriptor(bundle_descriptor)
-
-            # retrieves the repository structure for the provided repository descriptor
-            repository = self.repository_descriptor_repository_map[repository_descriptor]
-
-            # retrieves the contents file
-            contents_file = self._get_contents_file(repository.name, bundle_descriptor.name, bundle_descriptor.version, bundle_descriptor.contents_file, BUNDLES_VALUE)
-
-            try:
-                # sends the contents file (bundle) to the bundle type deployer
-                # to allow it to be deployed, the transaction properties are
-                # also sent for transaction control
-                plugin_deployer.deploy_bundle(bundle_descriptor.id, bundle_descriptor.version, contents_file, transaction_properties)
-            finally:
-                # deletes the contents file
-                self._delete_contents_file(contents_file)
-
-            # commits the transaction represented in the
-            # transaction properties
-            plugin_deployer.commit_transaction(transaction_properties)
-        except:
-            # "rollsback" the transaction represented in the
-            # transaction properties
-            plugin_deployer.rollback_transaction(transaction_properties)
-
-            # re-raises the exception
-            raise
+            # installs the bundle (concrete)
+            self._install_bundle(bundle_id, bundle_version, transaction_properties)
+        finally:
+            # releases the system updater lock
+            self.system_updater_lock.release()
 
     def install_plugin(self, plugin_id, plugin_version = None, transaction_properties = None):
         """
@@ -430,58 +384,15 @@ class SystemUpdater:
         current transaction.
         """
 
-        # loads the information for the repositories
-        self.load_repositories_information()
-
-        # retrieves the descriptor of the plugin
-        plugin_descriptor = self.get_plugin_descriptor(plugin_id, plugin_version)
-
-        # in case the plugin was not found
-        if not plugin_descriptor:
-            # raises the invalid plugin exception
-            raise system_updater_exceptions.InvalidPluginException("plugin %s v%s not found" % (plugin_id, plugin_version))
-
-        # retrieves the plugin type
-        plugin_type = plugin_descriptor.plugin_type
-
-        # retrieves a deployer for the given plugin type
-        plugin_deployer = self._get_deployer_plugin_by_deployer_type(plugin_type)
-
-        # retrieves the current transaction properties or creates a new transaction
-        transaction_properties = plugin_deployer.open_transaction(transaction_properties)
+        # acquires the system updater lock
+        self.system_updater_lock.acquire()
 
         try:
-            # installs the plugin dependencies
-            self._install_plugin_dependencies(plugin_descriptor, transaction_properties)
-
-            # retrieves the repository descriptor from the plugin descriptor
-            repository_descriptor = self.get_repository_descriptor_plugin_descriptor(plugin_descriptor)
-
-            # retrieves the repository structure for the provided repository descriptor
-            repository = self.repository_descriptor_repository_map[repository_descriptor]
-
-            # retrieves the contents file
-            contents_file = self._get_contents_file(repository.name, plugin_descriptor.name, plugin_descriptor.version, plugin_descriptor.contents_file, PLUGINS_VALUE)
-
-            try:
-                # sends the contents file (plugin) to the plugin type deployer
-                # to allow it to be deployed, the transaction properties are
-                # also sent for transaction control
-                plugin_deployer.deploy_plugin(plugin_descriptor.id, plugin_descriptor.version, contents_file, transaction_properties)
-            finally:
-                # deletes the contents file
-                self._delete_contents_file(contents_file)
-
-            # commits the transaction represented in the
-            # transaction properties
-            plugin_deployer.commit_transaction(transaction_properties)
-        except:
-            # "rollsback" the transaction represented in the
-            # transaction properties
-            plugin_deployer.rollback_transaction(transaction_properties)
-
-            # re-raises the exception
-            raise
+            # installs the plugin (concrete)
+            self._install_plugin(plugin_id, plugin_version, transaction_properties)
+        finally:
+            # releases the system updater lock
+            self.system_updater_lock.release()
 
     def deployer_load(self, deployer_plugin):
         # retrieves the plugin deployer type
@@ -613,6 +524,172 @@ class SystemUpdater:
         for repository_descriptor in self.repository_descriptor_list:
             if plugin_descriptor in repository_descriptor.plugins:
                 return repository_descriptor
+
+    def _install_package(self, package_id, package_version = None, transaction_properties = None):
+        """
+        Installs the package with the given id and version
+        from a random repository.
+
+        @type package_id: String
+        @param package_id: The id of the package to install.
+        @type package_version: String
+        @param package_version: The version of the package to install.
+        @type transaction_properties: Dictionary
+        @param transaction_properties: The properties map for the
+        current transaction.
+        """
+
+        # loads the information for the repositories
+        self.load_repositories_information()
+
+        # retrieves the descriptor of the package
+        package_descriptor = self.get_package_descriptor(package_id, package_version)
+
+        # retrieves the package plugins
+        package_plugins = package_descriptor.plugins
+
+        # iterates over all the plugins in the plugin descriptor
+        for plugin in package_plugins:
+            # retrieves the plugin id and version
+            plugin_id = plugin.id
+            plugin_version = plugin.version
+
+            # installs the plugin
+            self.install_plugin(plugin_id, plugin_version, transaction_properties)
+
+    def _install_bundle(self, bundle_id, bundle_version = None, transaction_properties = None):
+        """
+        Installs the plugin with the given id and version
+        from a random repository.
+
+        @type bundle_id: String
+        @param bundle_id: The id of the bundle to install.
+        @type bundle_version: String
+        @param bundle_version: The version of the bundle to install.
+        @type transaction_properties: Dictionary
+        @param transaction_properties: The properties map for the
+        current transaction.
+        """
+
+        # loads the information for the repositories
+        self.load_repositories_information()
+
+        # retrieves the descriptor of the bundle
+        bundle_descriptor = self.get_bundle_descriptor(bundle_id, bundle_version)
+
+        # in case the bundle was not found
+        if not bundle_descriptor:
+            # raises the invalid bundle exception
+            raise system_updater_exceptions.InvalidBundleException("bundle %s v%s not found" % (bundle_id, bundle_version))
+
+        # retrieves the bundle type
+        bundle_type = bundle_descriptor.bundle_type
+
+        # retrieves a deployer for the given plugin type
+        plugin_deployer = self._get_deployer_plugin_by_deployer_type(bundle_type)
+
+        # retrieves the current transaction properties or creates a new transaction
+        transaction_properties = plugin_deployer.open_transaction(transaction_properties)
+
+        try:
+            # installs the bundle dependencies
+            self._install_bundle_dependencies(bundle_descriptor, transaction_properties)
+
+            # retrieves the repository descriptor from the bundle descriptor
+            repository_descriptor = self.get_repository_descriptor_bundle_descriptor(bundle_descriptor)
+
+            # retrieves the repository structure for the provided repository descriptor
+            repository = self.repository_descriptor_repository_map[repository_descriptor]
+
+            # retrieves the contents file
+            contents_file = self._get_contents_file(repository.name, bundle_descriptor.name, bundle_descriptor.version, bundle_descriptor.contents_file, BUNDLES_VALUE)
+
+            try:
+                # sends the contents file (bundle) to the bundle type deployer
+                # to allow it to be deployed, the transaction properties are
+                # also sent for transaction control
+                plugin_deployer.deploy_bundle(bundle_descriptor.id, bundle_descriptor.version, contents_file, transaction_properties)
+            finally:
+                # deletes the contents file
+                self._delete_contents_file(contents_file)
+
+            # commits the transaction represented in the
+            # transaction properties
+            plugin_deployer.commit_transaction(transaction_properties)
+        except:
+            # "rollsback" the transaction represented in the
+            # transaction properties
+            plugin_deployer.rollback_transaction(transaction_properties)
+
+            # re-raises the exception
+            raise
+
+    def _install_plugin(self, plugin_id, plugin_version = None, transaction_properties = None):
+        """
+        Installs the plugin with the given id and version from
+        a random repository.
+
+        @type plugin_id: String
+        @param plugin_id: The id of the plugin to install.
+        @type plugin_version: String
+        @param plugin_version: The version of the plugin to install.
+        @type transaction_properties: Dictionary
+        @param transaction_properties: The properties map for the
+        current transaction.
+        """
+
+        # loads the information for the repositories
+        self.load_repositories_information()
+
+        # retrieves the descriptor of the plugin
+        plugin_descriptor = self.get_plugin_descriptor(plugin_id, plugin_version)
+
+        # in case the plugin was not found
+        if not plugin_descriptor:
+            # raises the invalid plugin exception
+            raise system_updater_exceptions.InvalidPluginException("plugin %s v%s not found" % (plugin_id, plugin_version))
+
+        # retrieves the plugin type
+        plugin_type = plugin_descriptor.plugin_type
+
+        # retrieves a deployer for the given plugin type
+        plugin_deployer = self._get_deployer_plugin_by_deployer_type(plugin_type)
+
+        # retrieves the current transaction properties or creates a new transaction
+        transaction_properties = plugin_deployer.open_transaction(transaction_properties)
+
+        try:
+            # installs the plugin dependencies
+            self._install_plugin_dependencies(plugin_descriptor, transaction_properties)
+
+            # retrieves the repository descriptor from the plugin descriptor
+            repository_descriptor = self.get_repository_descriptor_plugin_descriptor(plugin_descriptor)
+
+            # retrieves the repository structure for the provided repository descriptor
+            repository = self.repository_descriptor_repository_map[repository_descriptor]
+
+            # retrieves the contents file
+            contents_file = self._get_contents_file(repository.name, plugin_descriptor.name, plugin_descriptor.version, plugin_descriptor.contents_file, PLUGINS_VALUE)
+
+            try:
+                # sends the contents file (plugin) to the plugin type deployer
+                # to allow it to be deployed, the transaction properties are
+                # also sent for transaction control
+                plugin_deployer.deploy_plugin(plugin_descriptor.id, plugin_descriptor.version, contents_file, transaction_properties)
+            finally:
+                # deletes the contents file
+                self._delete_contents_file(contents_file)
+
+            # commits the transaction represented in the
+            # transaction properties
+            plugin_deployer.commit_transaction(transaction_properties)
+        except:
+            # "rollsback" the transaction represented in the
+            # transaction properties
+            plugin_deployer.rollback_transaction(transaction_properties)
+
+            # re-raises the exception
+            raise
 
     def _get_deployer_plugin_by_deployer_type(self, deployer_type):
         """
