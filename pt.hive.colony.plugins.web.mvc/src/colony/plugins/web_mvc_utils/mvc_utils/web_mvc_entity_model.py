@@ -43,10 +43,16 @@ import datetime
 PLURALIZATION_SUFFIX_VALUE = "s"
 """ The pluralization suffix value """
 
-TO_ONE_RELATIONS = ("one-to-one", "many-to-one")
+TO_ONE_RELATIONS = (
+    "one-to-one",
+    "many-to-one"
+)
 """ The tuple containing the "to-one" relations """
 
-TO_MANY_RELATIONS = ("one-to-many", "many-to-many")
+TO_MANY_RELATIONS = (
+    "one-to-many",
+    "many-to-many"
+)
 """ The tuple containing the "to-many" relations """
 
 def save(self):

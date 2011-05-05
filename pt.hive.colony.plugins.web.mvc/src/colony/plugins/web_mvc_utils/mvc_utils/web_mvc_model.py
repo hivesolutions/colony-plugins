@@ -181,7 +181,10 @@ def add_validation_method(self, attribute_name, validation_method_name, properti
 
     # creates the validation tuple as the set of the validation
     # method and the properties
-    validation_tuple = (validation_method, properties)
+    validation_tuple = (
+        validation_method,
+        properties
+    )
 
     # adds the validation tuple to the validation map
     self.validation_map[attribute_name].append(validation_tuple)

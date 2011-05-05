@@ -1140,7 +1140,10 @@ def get_locale(self, rest_request, available_locales = (DEFAULT_LOCALE,), alias_
     """
 
     # creates the get locales method tuple
-    get_locales_methods = (self._get_locales_header, self._get_locales_default)
+    get_locales_methods = (
+        self._get_locales_header,
+        self._get_locales_default
+    )
 
     # sets the initial locale
     locale = None

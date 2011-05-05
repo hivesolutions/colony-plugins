@@ -164,7 +164,9 @@ class WebMvc:
         to the rest service.
         """
 
-        return [r"^mvc/.*$"]
+        return [
+            r"^mvc/.*$"
+        ]
 
     def handle_rest_request(self, rest_request):
         """
@@ -259,7 +261,10 @@ class WebMvc:
             pattern_validation_regex = re.compile(pattern_key)
 
             # creates the pattern attributes (tuple)
-            pattern_attributes = (pattern_validation_regex, pattern_value)
+            pattern_attributes = (
+                pattern_validation_regex,
+                pattern_value
+            )
 
             # escapes the pattern key replacing the named
             # group selectors
@@ -346,7 +351,10 @@ class WebMvc:
                 pattern_validation_regex = self.web_mvc_service_pattern_compiled_map[pattern_key]
 
                 # creates the pattern attributes (tuple)
-                pattern_attributes = (pattern_validation_regex, pattern_value)
+                pattern_attributes = (
+                    pattern_validation_regex,
+                    pattern_value
+                )
 
                 # retrieves the pattern attributes list from the web mvc service
                 # patterns map
@@ -865,7 +873,10 @@ class WebMvc:
         parameters[PATTERN_NAMES_VALUE] = resource_path_validation_match_groups_map
 
         # creates the handler tuple
-        handler_tuple = (handler_method, parameters)
+        handler_tuple = (
+            handler_method,
+            parameters
+        )
 
         # returns the handler tuple
         return handler_tuple

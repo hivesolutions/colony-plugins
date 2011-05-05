@@ -407,7 +407,10 @@ class CommunicationConnection:
         @return: The connection complete information.
         """
 
-        return (self.connection_id, self.connection_name)
+        return (
+            self.connection_id,
+            self.connection_name
+        )
 
     def get_connection_id(self):
         """
