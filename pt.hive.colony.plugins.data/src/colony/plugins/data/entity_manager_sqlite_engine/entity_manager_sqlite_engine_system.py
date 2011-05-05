@@ -1881,7 +1881,10 @@ class EntityManagerSqliteEngine:
                         # otherwise it's not a relation (simple attribute)
                         else:
                             # creates the relation attribute tuple
-                            relation_attribute_tuple = (entity_class_valid_attribute_name, attribute_value)
+                            relation_attribute_tuple = (
+                                entity_class_valid_attribute_name,
+                                attribute_value
+                            )
 
                             # adds the relation attribute tuple to the list of relation attributes
                             relation_attributes_list.append(relation_attribute_tuple)
@@ -1914,7 +1917,10 @@ class EntityManagerSqliteEngine:
                 # otherwise it's an eager relation and should be loaded
                 else:
                     # creates the mapped by other attribute tuple
-                    mapped_by_other_attribute_tuple = (mapped_by_other_name, None)
+                    mapped_by_other_attribute_tuple = (
+                        mapped_by_other_name,
+                        None
+                    )
 
                     # adds the mapped by other attribute tuple to the list of relation attributes
                     relation_attributes_list.append(mapped_by_other_attribute_tuple)
@@ -2485,7 +2491,10 @@ class EntityManagerSqliteEngine:
                                 setattr(entity, entity_class_valid_attribute_name, "%lazy-loaded%")
                             else:
                                 # creates the relation attribute tuple
-                                relation_attribute_tuple = (entity_class_valid_attribute_name, attribute_value)
+                                relation_attribute_tuple = (
+                                    entity_class_valid_attribute_name,
+                                    attribute_value
+                                )
 
                                 # adds the relation attribute tuple to the list of relation attributes
                                 relation_attributes_list.append(relation_attribute_tuple)
@@ -2519,7 +2528,10 @@ class EntityManagerSqliteEngine:
                     # otherwise it's an eager relation and should be loaded
                     else:
                         # creates the mapped by other attribute tuple
-                        mapped_by_other_attribute_tuple = (mapped_by_other_name, None)
+                        mapped_by_other_attribute_tuple = (
+                            mapped_by_other_name,
+                            None
+                        )
 
                         # adds the mapped by other attribute tuple to the list of relation attributes
                         relation_attributes_list.append(mapped_by_other_attribute_tuple)
