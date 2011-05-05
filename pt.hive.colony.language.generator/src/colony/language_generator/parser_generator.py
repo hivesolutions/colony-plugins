@@ -136,7 +136,11 @@ class ItemSet(object):
                 return
 
         # creates the rule position tuple
-        rule_position_tuple = (rule, token_position, closure)
+        rule_position_tuple = (
+            rule,
+            token_position,
+            closure
+        )
 
         # add the rule position tuple to the rules list
         self.rules_list.append(rule_position_tuple)
@@ -154,7 +158,11 @@ class ItemSet(object):
         """
 
         # creates the rule position tuple
-        rule_position_tuple = (rule, token_position, closure)
+        rule_position_tuple = (
+            rule,
+            token_position,
+            closure
+        )
 
         # removes the rule position tuple from the rules list
         self.rules_list.remove(rule_position_tuple)
@@ -306,7 +314,10 @@ class LookAheadItemSet(ItemSet):
         rule_base_rule = rule.get_rule()
 
         # creates the base rule tuple
-        base_rule_tuple = (rule_base_rule, token_position)
+        base_rule_tuple = (
+            rule_base_rule,
+            token_position
+        )
 
         # in case the base rule tuple exists in the base rule map
         if base_rule_tuple in self.base_rule_map:
@@ -325,7 +336,10 @@ class LookAheadItemSet(ItemSet):
             return
 
         # creates the rule tuple
-        rule_tuple = (rule, token_position)
+        rule_tuple = (
+            rule,
+            token_position
+        )
 
         # sets the rule tuple in the base rule map
         self.base_rule_map[base_rule_tuple] = rule_tuple
@@ -1268,7 +1282,10 @@ class ParserGenerator:
                 current_symbol = "".join(rule_symbols_list[:current_token_position + 1])
 
                 # creates the identifier of the state
-                state_identifier = (current_symbol, previous_item_set)
+                state_identifier = (
+                    current_symbol,
+                    previous_item_set
+                )
 
                 # creates the previous identifier of the state
                 state_previous_identifier = None
@@ -1281,7 +1298,10 @@ class ParserGenerator:
                     # in case the previous symbol is a non terminal
                     if previous_symbol in self.symbols_non_terminal_map:
                         # creates the state previous identifier
-                        state_previous_identifier = (previous_symbol, previous_item_set)
+                        state_previous_identifier = (
+                            previous_symbol,
+                            previous_item_set
+                        )
 
                 # in case the current token position is not the final one
                 if rule_symbols_list_length > current_token_position + 1:
@@ -1421,7 +1441,10 @@ class ParserGenerator:
                         # in case it's not a closure
                         if not closure:
                             # creates the rule tuple
-                            rule_tuple = (rule, token_position)
+                            rule_tuple = (
+                                rule,
+                                token_position
+                            )
 
                             # sets the current item set in the rules items sets map
                             self.rules_item_sets_map[rule_tuple] = current_item_set
@@ -1435,7 +1458,11 @@ class ParserGenerator:
                         # in case the current token position is not the final one
                         if rule_symbols_list_length > token_position + 1:
                             # creates the rule tuple
-                            rule_tuple = (rule, token_position + 1, current_item_set)
+                            rule_tuple = (
+                                rule,
+                                token_position + 1,
+                                current_item_set
+                            )
 
                             # adds the rule tuple to the next rules list
                             next_rules_list.append(rule_tuple)
@@ -1576,7 +1603,10 @@ class ParserGenerator:
                     item_set_rule_symbol = "$"
 
                 # creates the rule tuple from the item set rule
-                rule_tuple = (item_set_rule, item_set_token_position + 1)
+                rule_tuple = (
+                    item_set_rule,
+                    item_set_token_position + 1
+                )
 
                 # in case the rule tuple is defined in the
                 # rules item sets map
@@ -1626,7 +1656,10 @@ class ParserGenerator:
                 # in the symbols terminal map
                 if item_set_rule_symbol in self.symbols_terminal_map:
                     # creates the shift value
-                    shift_value = (transition_table_line[item_set_rule_symbol], ParserGenerator.SHIFT_OPERATION_VALUE)
+                    shift_value = (
+                        transition_table_line[item_set_rule_symbol],
+                        ParserGenerator.SHIFT_OPERATION_VALUE
+                    )
 
                     # adds the shift value to the action table line
                     action_table_line[item_set_rule_symbol] = shift_value
@@ -1642,7 +1675,10 @@ class ParserGenerator:
             for item_set_rule, item_set_token_position, _item_set_closure in item_set.get_rules_list():
                 if item_set_rule.get_rule_name() == ParserGenerator.PROGRAM_VALUE and len(item_set_rule.get_symbols_list()) == item_set_token_position + 1:
                     # creates the accept value
-                    accept_value = (0, ParserGenerator.ACCEPT_OPERATION_VALUE)
+                    accept_value = (
+                        0,
+                        ParserGenerator.ACCEPT_OPERATION_VALUE
+                    )
 
                     # adds the accept value to the action table line
                     action_table_line["$"] = accept_value
@@ -1669,7 +1705,10 @@ class ParserGenerator:
                     rule_id = rule.get_rule_id()
 
                     # creates the reduce value
-                    reduce_value = (rule_id, ParserGenerator.REDUCE_OPERATION_VALUE)
+                    reduce_value = (
+                        rule_id,
+                        ParserGenerator.REDUCE_OPERATION_VALUE
+                    )
 
                     # iterates over all the terminal symbols
                     for symbol_terminal in self.symbols_terminal_end_map:
@@ -1910,7 +1949,10 @@ class ParserGenerator:
                 ahead_symbols = self._get_first_set(second_symbol)
 
                 # creates the symbol tuple
-                symbol_tuple = (symbol, ahead_symbols)
+                symbol_tuple = (
+                    symbol,
+                    ahead_symbols
+                )
 
                 # appends the symbol tuple to the extra
                 # symbols list
@@ -2222,7 +2264,10 @@ class ParserGenerator:
 
                     # creates the goto tuple with the goto value
                     # and the return value
-                    goto_tuple = (goto_value, return_value)
+                    goto_tuple = (
+                        goto_value,
+                        return_value
+                    )
 
                     # appends the goto tuple to the stack
                     stack.append(goto_tuple)
@@ -2238,7 +2283,10 @@ class ParserGenerator:
 
                 # creates the current tuple with the action value
                 # and the token value
-                current_tuple = (action_value, token_value)
+                current_tuple = (
+                    action_value,
+                    token_value
+                )
 
                 # appends the current tuple to the stack
                 stack.append(current_tuple)
@@ -2285,7 +2333,10 @@ class ParserGenerator:
 
                 # creates the goto tuple with the goto value
                 # and the return value
-                goto_tuple = (-1, return_value)
+                goto_tuple = (
+                    -1,
+                    return_value
+                )
 
                 # appends the goto tuple to the stack
                 stack.append(goto_tuple)

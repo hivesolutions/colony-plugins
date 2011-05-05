@@ -125,10 +125,16 @@ class LexerGenerator:
     TOKENS_LIST_VALUE = "tokens"
     """ The tokens list value """
 
-    BASE_TOKENS_LIST = ["comment", "ignore", "error"]
+    BASE_TOKENS_LIST = [
+        "comment",
+        "ignore",
+        "error"
+    ]
     """ The base tokens list """
 
-    ADVANCE_TOKENS_LIST = ["comment"]
+    ADVANCE_TOKENS_LIST = [
+        "comment"
+    ]
     """ The advance tokens list """
 
     strings_regex = None

@@ -40,7 +40,11 @@ __license__ = "GNU General Public License (GPL), Version 3"
 import logging
 
 # the token definitions
-tokens = ("PLUS", "1", "0")
+tokens = (
+    "PLUS",
+    "1",
+    "0"
+)
 
 # token definition
 t_PLUS = r"\+"
