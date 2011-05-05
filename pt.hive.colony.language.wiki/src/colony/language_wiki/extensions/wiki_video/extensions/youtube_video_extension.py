@@ -47,10 +47,22 @@ VIDEO_TYPE = "youtube"
 BASE_ADDRESS = "http://www.youtube.com/v"
 """ The base address """
 
-VALID_DOMAIN_NAMES = ("www.youtube.com", "youtube.com")
+VALID_DOMAIN_NAMES = (
+    "www.youtube.com",
+    "youtube.com"
+)
 """ The valid domain names """
 
-VALID_OPTIONS_LIST = ("hl", "hd", "fs", "rel", "border", "showinfo", "color1", "color2")
+VALID_OPTIONS_LIST = (
+    "hl",
+    "hd",
+    "fs",
+    "rel",
+    "border",
+    "showinfo",
+    "color1",
+    "color2"
+)
 """ The valid options list """
 
 class YoutubeVideoExtension(wiki_video.wiki_video_extension_system.WikiVideoExtension):
@@ -73,7 +85,9 @@ class YoutubeVideoExtension(wiki_video.wiki_video_extension_system.WikiVideoExte
     version = "1.0.0"
     """ The version of the extension """
 
-    capabilities = ["video"]
+    capabilities = = [
+        "video"
+    ]
     """ The capabilities of the extension """
 
     capabilities_allowed = []

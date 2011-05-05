@@ -88,7 +88,9 @@ class XmlHighlightingExtension(wiki_code.wiki_code_extension_system.WikiCodeExte
     version = "1.0.0"
     """ The version of the extension """
 
-    capabilities = ["code_highlighting"]
+    capabilities = [
+        "code_highlighting"
+    ]
     """ The capabilities of the extension """
 
     capabilities_allowed = []
@@ -150,7 +152,14 @@ class XmlHighlightingExtension(wiki_code.wiki_code_extension_system.WikiCodeExte
             token_class = CLASS_DEFINITION.get(token_type, None)
 
             # creates the token tuple
-            token_tuple = (token_type, token_value, token_position, token_end_position, token_line, token_class)
+            token_tuple = (
+                token_type,
+                token_value,
+                token_position,
+                token_end_position,
+                token_line,
+                token_class
+            )
 
             # appends the token tuple to the tokens list
             tokens_list.append(token_tuple)

@@ -48,7 +48,10 @@ import wiki_html_generation.wiki_html_generation
 GENERATION_TYPE = "html"
 """ The generation type """
 
-WIKI_EXTENSIONS = ("wiki", "wik")
+WIKI_EXTENSIONS = (
+    "wiki",
+    "wik"
+)
 """ The valid wiki extensions list """
 
 BASE_FILES = {
@@ -108,7 +111,9 @@ class WikiHtmlGenerator(language_wiki.wiki_extension_system.WikiExtension):
     version = "1.0.0"
     """ The version of the extension """
 
-    capabilities = ["generation"]
+    capabilities = [
+        "generation"
+    ]
     """ The capabilities of the extension """
 
     capabilities_allowed = []

@@ -45,7 +45,10 @@ import language_wiki.wiki_extension_system
 GENERATION_TYPE = "ast"
 """ The generation type """
 
-WIKI_EXTENSIONS = ("wiki", "wik")
+WIKI_EXTENSIONS = (
+    "wiki",
+    "wik"
+)
 """ The valid wiki extensions list """
 
 class WikiAstGenerator(language_wiki.wiki_extension_system.WikiExtension):

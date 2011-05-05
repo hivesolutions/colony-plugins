@@ -71,7 +71,9 @@ class WikiCodeExtension(language_wiki.wiki_extension_system.WikiExtension):
     version = "1.0.0"
     """ The version of the extension """
 
-    capabilities = ["generator"]
+    capabilities = [
+        "generator"
+    ]
     """ The capabilities of the extension """
 
     capabilities_allowed = []

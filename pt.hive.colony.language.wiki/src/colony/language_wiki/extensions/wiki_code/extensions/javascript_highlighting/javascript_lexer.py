@@ -38,16 +38,18 @@ __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
 # the token definitions
-tokens = ("MULTI_LINE_COMMENT", "COMMENT", "NAME", "NUMBER",
-          "STRING", "STRING_QUOTES", "BOOL", "PLUS",
-          "MINUS", "TIMES", "DIVIDE", "POWER",
-          "EQUALS", "EQUALEQUAL", "GREATER",
-          "GREATEREQUAL", "LESS", "LESSEQUAL",
-          "NOT", "AND", "OR", "LPAREN", "RPAREN",
-          "LBRACK", "RBRACK", "LBRACE", "RBRACE",
-          "FUNCTION", "RETURN", "COLON", "SEMI_COLON", "COMA",
-          "DOT", "IF", "ELSE", "ELIF", "END", "NEWLINE",
-          "WHILE", "FOR", "IN", "VAR")
+tokens = (
+    "MULTI_LINE_COMMENT", "COMMENT", "NAME", "NUMBER",
+    "STRING", "STRING_QUOTES", "BOOL", "PLUS",
+    "MINUS", "TIMES", "DIVIDE", "POWER",
+    "EQUALS", "EQUALEQUAL", "GREATER",
+    "GREATEREQUAL", "LESS", "LESSEQUAL",
+    "NOT", "AND", "OR", "LPAREN", "RPAREN",
+    "LBRACK", "RBRACK", "LBRACE", "RBRACE",
+    "FUNCTION", "RETURN", "COLON", "SEMI_COLON", "COMA",
+    "DOT", "IF", "ELSE", "ELIF", "END", "NEWLINE",
+    "WHILE", "FOR", "IN", "VAR"
+)
 
 # the reserved keywords
 reserved = {

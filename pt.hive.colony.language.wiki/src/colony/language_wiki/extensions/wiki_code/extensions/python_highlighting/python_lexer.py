@@ -38,18 +38,20 @@ __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
 # the token definitions
-tokens = ("MULTI_LINE_COMMENT", "NAME", "DECORATOR_NAME",
-          "NUMBER", "STRING", "STRING_QUOTES", "BOOL",
-          "PLUS", "MINUS", "TIMES", "DIVIDE", "POWER",
-          "EQUALS", "EQUALEQUAL", "NOTEQUAL", "GREATER",
-          "GREATEREQUAL", "LESS", "LESSEQUAL",
-          "NOT", "AND", "OR", "LPAREN", "RPAREN",
-          "LBRACK", "RBRACK", "LBRACE", "RBRACE", "DEF", "RETURN",
-          "COLON", "SEMI_COLON", "COMA", "DOT", "IF", "ELSE", "ELIF",
-          "END", "NEWLINE", "WHILE", "FOR", "IN", "IMPORT",
-          "CLASS", "EXTENDS", "IMPLEMENTS", "INTERFACE",
-          "PLUGIN", "CAPABILITY", "ALLOWS", "PASS", "STATIC",
-          "GLOBAL", "COMMENT")
+tokens = (
+    "MULTI_LINE_COMMENT", "NAME", "DECORATOR_NAME",
+    "NUMBER", "STRING", "STRING_QUOTES", "BOOL",
+    "PLUS", "MINUS", "TIMES", "DIVIDE", "POWER",
+    "EQUALS", "EQUALEQUAL", "NOTEQUAL", "GREATER",
+    "GREATEREQUAL", "LESS", "LESSEQUAL",
+    "NOT", "AND", "OR", "LPAREN", "RPAREN",
+    "LBRACK", "RBRACK", "LBRACE", "RBRACE", "DEF", "RETURN",
+    "COLON", "SEMI_COLON", "COMA", "DOT", "IF", "ELSE", "ELIF",
+    "END", "NEWLINE", "WHILE", "FOR", "IN", "IMPORT",
+    "CLASS", "EXTENDS", "IMPLEMENTS", "INTERFACE",
+    "PLUGIN", "CAPABILITY", "ALLOWS", "PASS", "STATIC",
+    "GLOBAL", "COMMENT"
+)
 
 # the reserved keywords
 reserved = {

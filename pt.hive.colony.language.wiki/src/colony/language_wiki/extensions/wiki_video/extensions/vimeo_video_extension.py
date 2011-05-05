@@ -47,10 +47,20 @@ VIDEO_TYPE = "vimeo"
 BASE_ADDRESS = "http://vimeo.com/moogaloop.swf"
 """ The base address """
 
-VALID_DOMAIN_NAMES = ("www.vimeo.com", "vimeo.com")
+VALID_DOMAIN_NAMES = (
+    "www.vimeo.com",
+    "vimeo.com"
+)
 """ The valid domain names """
 
-VALID_OPTIONS_LIST = ("server", "show_title", "show_byline", "show_portrait", "color", "fullscreen")
+VALID_OPTIONS_LIST = (
+    "server",
+    "show_title",
+    "show_byline",
+    "show_portrait",
+    "color",
+    "fullscreen"
+)
 """ The valid options list """
 
 class VimeoVideoExtension(wiki_video.wiki_video_extension_system.WikiVideoExtension):
@@ -73,7 +83,9 @@ class VimeoVideoExtension(wiki_video.wiki_video_extension_system.WikiVideoExtens
     version = "1.0.0"
     """ The version of the extension """
 
-    capabilities = ["video"]
+    capabilities = [
+        "video"
+    ]
     """ The capabilities of the extension """
 
     capabilities_allowed = []
