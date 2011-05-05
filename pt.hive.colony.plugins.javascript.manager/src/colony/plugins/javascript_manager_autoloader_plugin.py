@@ -108,16 +108,27 @@ class JavascriptManagerAutoloaderPlugin(colony.base.plugin_system.Plugin):
 
     @colony.base.decorators.plugin_call(True)
     def get_service_alias(self):
-        return ["pluginManagerAutoloaderAccess"]
+        return [
+            "pluginManagerAutoloaderAccess"
+        ]
 
     @colony.base.decorators.plugin_call(True)
     def get_available_rpc_methods(self):
-        return [self.update_plugin_manager, self.get_status_plugins]
+        return [
+            self.update_plugin_manager,
+            self.get_status_plugins
+        ]
 
     @colony.base.decorators.plugin_call(True)
     def get_rpc_methods_alias(self):
-        return {self.update_plugin_manager : ["updatePluginManager"],
-                self.get_status_plugins : ["getStatusPlugins"]}
+        return {
+            self.update_plugin_manager : [
+                "updatePluginManager"
+            ],
+            self.get_status_plugins : [
+                "getStatusPlugins"
+            ]
+        }
 
     def update_plugin_manager(self):
         return self.javascript_manager_autoloader.update_plugin_manager()
