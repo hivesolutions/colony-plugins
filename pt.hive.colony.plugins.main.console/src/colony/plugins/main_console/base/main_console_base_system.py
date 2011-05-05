@@ -690,13 +690,20 @@ class MainConsoleBase:
 
         # creates the plugins tuple from the plugins string, the replicas
         # string and the instances string
-        plugins_tuple = (plugins_string, replicas_string, instances_string)
+        plugins_tuple = (
+            plugins_string,
+            replicas_string,
+            instances_string
+        )
 
         # returns the plugins tuple
         return plugins_tuple
 
     def get_extension_id_list(self, argument, console_context):
-        return ["rabeton", "tobias"]
+        return [
+            "rabeton",
+            "tobias"
+        ]
 
     def get_plugin_id_list(self, argument, console_context):
         # retrieves the plugin manager

@@ -162,7 +162,9 @@ class MainConsoleFileSystem:
 
             # sets the path contents as the
             # path base name
-            path_contents = [path_base_name]
+            path_contents = [
+                path_base_name
+            ]
 
         # iterates over all the path contents
         for path_item in path_contents:

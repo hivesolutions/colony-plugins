@@ -66,7 +66,10 @@ COMMAND_LINE_REGEX_VALUE = "\"[^\"]*\"|[^ \s]+"
 COMMAND_LINE_REGEX = re.compile(COMMAND_LINE_REGEX_VALUE)
 """ The regular expression to retrieve the command line arguments (compiled) """
 
-SEQUENCE_TYPES = (types.ListType, types.TupleType)
+SEQUENCE_TYPES = (
+    types.ListType,
+    types.TupleType
+)
 """ The sequence types """
 
 class MainConsole:
@@ -240,7 +243,10 @@ class MainConsole:
 
         # creates the alternatives tuple containing
         # the alternatives list and the best match
-        alternatives_tuple = (alternatives_list, best_match)
+        alternatives_tuple = (
+            alternatives_list,
+            best_match
+        )
 
         # returns the alternatives tuple
         return alternatives_tuple
@@ -275,7 +281,10 @@ class MainConsole:
 
         # creates the command tuple with the command
         # and the arguments
-        command_tuple = (command, arguments)
+        command_tuple = (
+            command,
+            arguments
+        )
 
         # returns the command tuple
         return command_tuple
@@ -379,7 +388,10 @@ class MainConsole:
             output_method(INVALID_COMMAND_MESSAGE)
 
             # returns none (invalid)
-            return (None, None)
+            return (
+                None,
+                None
+            )
 
         # retrieves the command arguments
         command_arguments = command_information.get("arguments", [])
@@ -415,7 +427,10 @@ class MainConsole:
             output_method(MISSING_MANDATORY_ARGUMENTS_MESSAGE + ": " + missing_argument_names_line)
 
             # returns none (invalid)
-            return (None, None)
+            return (
+                None,
+                None
+            )
 
         # retrieves the command handler
         command_handler = command_information.get("handler", None)
@@ -426,7 +441,10 @@ class MainConsole:
             output_method(INTERNAL_CONFIGURATION_PROBLEM_MESSAGE)
 
             # returns none (invalid)
-            return (None, None)
+            return (
+                None,
+                None
+            )
 
         # retrieves the received arguments list
         received_arguments = command_arguments[:arguments_length]
@@ -443,7 +461,10 @@ class MainConsole:
 
         # creates the command tuple from the command handler
         # and the arguments map
-        command_tuple = (command_handler, arguments_map)
+        command_tuple = (
+            command_handler,
+            arguments_map
+        )
 
         # returns the command tuple
         return command_tuple

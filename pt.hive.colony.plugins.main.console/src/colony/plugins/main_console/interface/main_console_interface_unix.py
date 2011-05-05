@@ -258,11 +258,19 @@ class MainConsoleInterfaceUnix:
 
                         # sets the character as the tuple
                         # with the final character
-                        character = (character, extra_character, final_character)
+                        character = (
+                            character,
+                            extra_character,
+                            final_character
+                        )
 
                         # sets the character ordinal as the tuple
                         # with the extra character ordinal
-                        character_ordinal = (character_ordinal, extra_character_ordinal, final_character_ordinal)
+                        character_ordinal = (
+                            character_ordinal,
+                            extra_character_ordinal,
+                            final_character_ordinal
+                        )
                 except IOError:
                     # ignores no special sequence
                     pass

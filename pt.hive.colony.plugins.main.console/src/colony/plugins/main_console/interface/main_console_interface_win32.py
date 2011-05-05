@@ -158,11 +158,17 @@ class MainConsoleInterfaceWin32:
                 if extra_character_ordinal in (0x48, 0x50, 0x4d, 0x4b):
                     # sets the character as the tuple
                     # with the extra character
-                    character = (character, extra_character)
+                    character = (
+                        character,
+                        extra_character
+                    )
 
                     # sets the character ordinal as the tuple
                     # with the extra character ordinal
-                    character_ordinal = (character_ordinal, extra_character_ordinal)
+                    character_ordinal = (
+                        character_ordinal,
+                        extra_character_ordinal
+                    )
 
             # processes the character
             if self.main_console_interface_character.process_character(character, character_ordinal):
