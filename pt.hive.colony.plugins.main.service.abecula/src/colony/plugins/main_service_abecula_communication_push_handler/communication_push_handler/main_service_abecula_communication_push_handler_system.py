@@ -355,7 +355,10 @@ class MainServiceAbeculaCommunicationPushHandler:
         # them in the communication push plugin
         for communication_name in communication_names:
             # creates the service connection name tuple
-            service_connection_name_tuple = (service_connection, communication_name)
+            service_connection_name_tuple = (
+                service_connection,
+                communication_name
+            )
 
             # sets the generated communication handler in the service connection name communication handler map
             self.service_connection_name_communication_handler_map[service_connection_name_tuple] = generated_communication_handler
@@ -401,7 +404,10 @@ class MainServiceAbeculaCommunicationPushHandler:
         # them in the communication push plugin
         for communication_name in communication_names:
             # creates the service connection name tuple
-            service_connection_name_tuple = (service_connection, communication_name)
+            service_connection_name_tuple = (
+                service_connection,
+                communication_name
+            )
 
             # retrieves the generated communication handler for the service connection and communication name
             generated_communication_handler = self.service_connection_name_communication_handler_map[service_connection_name_tuple]
@@ -585,7 +591,10 @@ class MainServiceAbeculaCommunicationPushHandler:
         # iterates over all the communication profile names to load them
         for communication_profile_name in communication_profile_names:
             # creates the service communication profile name tuple
-            service_connection_profile_name_tuple = (service_connection, communication_profile_name)
+            service_connection_profile_name_tuple = (
+                service_connection,
+                communication_profile_name
+            )
 
             # sets the generated communication handler in the service connection profile name communication handler map
             self.service_connection_profile_name_communication_handler_map[service_connection_profile_name_tuple] = generated_communication_handler
@@ -630,7 +639,10 @@ class MainServiceAbeculaCommunicationPushHandler:
         # them in the communication push plugin
         for communication_profile_name in communication_profile_names:
             # creates the service communication profile name tuple
-            service_connection_profile_name_tuple = (service_connection, communication_profile_name)
+            service_connection_profile_name_tuple = (
+                service_connection,
+                communication_profile_name
+            )
 
             # retrieves the generated communication handler for the service connection and communication profile name
             generated_communication_handler = self.service_connection_profile_name_communication_handler_map[service_connection_profile_name_tuple]
@@ -1064,7 +1076,10 @@ class MainServiceAbeculaCommunicationPushHandler:
         # the service connection information
         for communication_name in communication_names:
             # creates the service connection name tuple
-            service_connection_name_tuple = (service_connection, communication_name)
+            service_connection_name_tuple = (
+                service_connection,
+                communication_name
+            )
 
             # in case the service connection name tuple exists in the service connection
             # name communication handler map
@@ -1079,7 +1094,10 @@ class MainServiceAbeculaCommunicationPushHandler:
         # the service connection information
         for communication_profile_name in communication_profile_names:
             # creates the service connection profile name tuple
-            service_connection_profile_name_tuple = (service_connection, communication_profile_name)
+            service_connection_profile_name_tuple = (
+                service_connection,
+                communication_profile_name
+            )
 
             # removes the service connection name from the service connection profile name communication handler map
             del self.service_connection_profile_name_communication_handler_map[service_connection_profile_name_tuple]
