@@ -10,7 +10,8 @@
             }],
     "dependencies" : [{
                 "id" : "pt.hive.colony.bundles.main.service.sockets",
-                "version" : "1.0.0"
+                "version" : "1.0.0",
+                "required" : false
             }, {
                 "id" : "pt.hive.colony.bundles.main.work",
                 "version" : "1.0.0"
