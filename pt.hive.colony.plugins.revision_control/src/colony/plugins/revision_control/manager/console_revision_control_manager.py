@@ -68,7 +68,9 @@ DATE_FORMAT = "%Y/%m/%d"
 DATE_TIME_FORMAT = "%a %b %d %H:%M:%S %Y %Z"
 """ The format for the displayed date times """
 
-STATUS_STRING_LIST = ("M", "A", "R", "D", "U", "I", "C")
+STATUS_STRING_LIST = (
+    "M", "A", "R", "D", "U", "I", "C"
+)
 """ The status string list """
 
 class ConsoleRevisionControlManager:
@@ -79,21 +81,23 @@ class ConsoleRevisionControlManager:
     revision_control_manager_plugin = None
     """ The revision control manager plugin """
 
-    commands = ["revision_list_adapters",
-                "revision_add",
-                "revision_checkout",
-                "revision_update",
-                "revision_commit",
-                "revision_log",
-                "revision_log_time",
-                "revision_status",
-                "revision_diff",
-                "revision_cleanup",
-                "revision_cleanup_deep",
-                "revision_remove",
-                "revision_revert",
-                "revision_remove_unversioned",
-                "revision_get_resource_revision"]
+    commands = [
+        "revision_list_adapters",
+        "revision_add",
+        "revision_checkout",
+        "revision_update",
+        "revision_commit",
+        "revision_log",
+        "revision_log_time",
+        "revision_status",
+        "revision_diff",
+        "revision_cleanup",
+        "revision_cleanup_deep",
+        "revision_remove",
+        "revision_revert",
+        "revision_remove_unversioned",
+        "revision_get_resource_revision"
+    ]
     """ The commands list """
 
     def __init__(self, revision_control_manager_plugin):
@@ -160,7 +164,9 @@ class ConsoleRevisionControlManager:
             recurse = True
 
         # builds the resource identifier list
-        resource_identifiers = [resource_identifier]
+        resource_identifiers = [
+            resource_identifier
+        ]
 
         # creates a revision control manager to use on the resource
         revision_control_manager = self.load_revision_control_manager(adapter_name)
@@ -217,7 +223,9 @@ class ConsoleRevisionControlManager:
         revision_control_manager = self.load_revision_control_manager(adapter_name)
 
         # creates the resource identifiers list
-        resource_identifiers = [resource_identifier]
+        resource_identifiers = [
+            resource_identifier
+        ]
 
         # uses the revision control manager to perform the update
         update_revision = revision_control_manager.update(resource_identifiers, revision)
@@ -248,7 +256,9 @@ class ConsoleRevisionControlManager:
         revision_control_manager = self.load_revision_control_manager(adapter_name, resource_identifier, {"username" : "lmartinho", "password" : "L2u0i1s1"})
 
         # creates the resource identifiers list
-        resource_identifiers = [resource_identifier]
+        resource_identifiers = [
+            resource_identifier
+        ]
 
         # uses the revision control manager to perform the commit
         commit_revision = revision_control_manager.commit(resource_identifiers, commit_message)
@@ -287,7 +297,9 @@ class ConsoleRevisionControlManager:
         revision_control_manager = self.load_revision_control_manager(adapter_name, resource_identifier)
 
         # creates the resource identifiers list
-        resource_identifiers = [resource_identifier]
+        resource_identifiers = [
+            resource_identifier
+        ]
 
         # uses the revision control manager to perform the commit
         log_entries = revision_control_manager.log(resource_identifiers, start_revision, end_revision)
@@ -326,7 +338,9 @@ class ConsoleRevisionControlManager:
         revision_control_manager = self.load_revision_control_manager(adapter_name, resource_identifier)
 
         # creates the resource identifiers list
-        resource_identifiers = [resource_identifier]
+        resource_identifiers = [
+            resource_identifier
+        ]
 
         # uses the revision control manager to perform the commit
         log_entries = revision_control_manager.log_time(resource_identifiers, start_time, end_time)
@@ -386,7 +400,9 @@ class ConsoleRevisionControlManager:
             revision_2 = None
 
         # creates the resource identifiers list
-        resource_identifiers = [resource_identifier]
+        resource_identifiers = [
+            resource_identifier
+        ]
 
         # creates a revision control manager to use on the resource
         revision_control_manager = self.load_revision_control_manager(adapter_name, resource_identifier)
@@ -410,7 +426,9 @@ class ConsoleRevisionControlManager:
         resource_identifier = args[1]
 
         # creates the resource identifiers list
-        resource_identifiers = [resource_identifier]
+        resource_identifiers = [
+            resource_identifier
+        ]
 
         # creates a revision control manager to use on the resource
         revision_control_manager = self.load_revision_control_manager(adapter_name, resource_identifier)
@@ -452,7 +470,9 @@ class ConsoleRevisionControlManager:
         resource_identifier = args[1]
 
         # builds the resource identifier list
-        resource_identifiers = [resource_identifier]
+        resource_identifiers = [
+            resource_identifier
+        ]
 
         # creates a revision control manager to use on the resource
         revision_control_manager = self.load_revision_control_manager(adapter_name)
@@ -497,7 +517,9 @@ class ConsoleRevisionControlManager:
         resource_identifier = args[1]
 
         # creates the resource identifiers list
-        resource_identifiers = [resource_identifier]
+        resource_identifiers = [
+            resource_identifier
+        ]
 
         # creates a revision control manager to use on the resource
         revision_control_manager = self.load_revision_control_manager(adapter_name, resource_identifier)
@@ -527,7 +549,9 @@ class ConsoleRevisionControlManager:
             revision = None
 
         # creates the resource identifiers list
-        resource_identifiers = [resource_identifier]
+        resource_identifiers = [
+            resource_identifier
+        ]
 
         # creates a revision control manager to use on the resource
         revision_control_manager = self.load_revision_control_manager(adapter_name, resource_identifier)
