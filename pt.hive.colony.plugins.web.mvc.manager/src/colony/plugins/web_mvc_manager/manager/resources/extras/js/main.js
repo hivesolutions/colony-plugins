@@ -45,7 +45,8 @@ function messageProcessor(data) {
             switchButtonElement.removeClass("on");
             switchButtonElement.addClass("off");
 
-            jQuery("#notification-area-contents").notificationwindow("default", {
+            jQuery("#notification-area-contents").notificationwindow("default",
+                    {
                         "title" : "<span class=\"red\">Plugin Unloaded</span>",
                         "subTitle" : "",
                         "message" : element,
@@ -63,7 +64,8 @@ function messageProcessor(data) {
             switchButtonElement.removeClass("off");
             switchButtonElement.addClass("on");
 
-            jQuery("#notification-area-contents").notificationwindow("default", {
+            jQuery("#notification-area-contents").notificationwindow("default",
+                    {
                         "title" : "<span class=\"green\">Plugin Loaded</span>",
                         "subTitle" : "",
                         "message" : element,
@@ -79,7 +81,8 @@ function messageProcessor(data) {
 
         // iterates over all the uninstalled plugins
         jQuery(uninstalledPlugins).each(function(index, element) {
-            jQuery("#notification-area-contents").notificationwindow("default", {
+            jQuery("#notification-area-contents").notificationwindow("default",
+                    {
                         "title" : "<span class=\"red\">Plugin Uninstalled</span>",
                         "subTitle" : "",
                         "message" : element,
@@ -92,7 +95,8 @@ function messageProcessor(data) {
 
         // iterates over all the installed plugins
         jQuery(installedPlugins).each(function(index, element) {
-            jQuery("#notification-area-contents").notificationwindow("default", {
+            jQuery("#notification-area-contents").notificationwindow("default",
+                    {
                         "title" : "<span class=\"green\">Plugin Installed</span>",
                         "subTitle" : "",
                         "message" : element,
@@ -216,10 +220,21 @@ jQuery(document).ready(function() {
                                     "timeout" : 5000
                                 });
                     } else {
+                        // parses the response text to get the response
+                        var response = jQuery.parseJSON(xmlHttpRequest.responseText);
+
+                        // retrieves the exception from the response
+                        var exception = response["exception"];
+
+                        // retrieves the exception message
+                        var exceptionMessage = exception["message"];
+
+                        // shows a dialob window in the body
                         jQuery("body").dialogwindow("default", {
                             "title" : "Warning",
                             "subTitle" : "Problem Installing Plugin",
-                            "message" : "There was a problem installing plugin, this indicates a problem in the server or a problem in the sent file.",
+                            "message" : "There was a problem installing plugin: "
+                                    + exceptionMessage,
                             "buttonMessage" : "Do you want to continue ?"
                         });
                     }
@@ -227,7 +242,7 @@ jQuery(document).ready(function() {
             });
 
             // opens the xml http request
-            xmlHttpRequest.open("post", "plugins");
+            xmlHttpRequest.open("post", "plugins.json");
 
             // sets the content type header
             xmlHttpRequest.setRequestHeader("Content-Type",

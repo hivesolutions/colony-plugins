@@ -89,6 +89,9 @@ UPGRADE_VALUE = "upgrade"
 COLONY_PACKING_VALUE = "colony_packing"
 """ The colony packing value """
 
+SERIALIZER_VALUE = "serializer"
+""" The serializer value """
+
 NORMAL_ENCODER_NAME = None
 """ The normal encoder name """
 
@@ -600,16 +603,35 @@ class PluginController:
         # returns true
         return True
 
+    @web_mvc_utils.serialize_exceptions("all")
     @web_mvc_utils.validated_method("plugins.create")
-    def handle_create(self, rest_request, parameters = {}):
+    def handle_create_serialized(self, rest_request, parameters = {}):
         # deploys the package
         self._deploy_package(rest_request)
 
         # returns true
         return True
 
+    def handle_create_json(self, rest_request, parameters = {}):
+        # retrieves the json plugin
+        json_plugin = self.web_mvc_manager_plugin.json_plugin
+
+        # sets the serializer in the parameters
+        parameters[SERIALIZER_VALUE] = json_plugin
+
+        # handles the request with the general
+        # handle create serialized method
+        return self.handle_create_serialized(rest_request, parameters)
+
+    @web_mvc_utils.serialize_exceptions("all")
     @web_mvc_utils.validated_method("plugins.show")
     def handle_show_ajx(self, rest_request, parameters = {}):
+        # retrieves the json plugin
+        json_plugin = self.web_mvc_manager_plugin.json_plugin
+
+        # sets the serializer in the parameters
+        parameters[SERIALIZER_VALUE] = json_plugin
+
         # retrieves the pattern names from the parameters
         pattern_names = parameters[PATTERN_NAMES_VALUE]
 
