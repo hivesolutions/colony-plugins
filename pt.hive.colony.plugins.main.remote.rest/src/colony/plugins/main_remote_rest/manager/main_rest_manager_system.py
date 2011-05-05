@@ -100,7 +100,10 @@ PATH_VALUE = "path"
 DOMAIN_VALUE = "domain"
 """ The domain value """
 
-LOCALHOST_VALUES = ("localhost", "127.0.0.1")
+LOCALHOST_VALUES = (
+    "localhost",
+    "127.0.0.1"
+)
 """ The localhost values """
 
 HOST_VALUE = "Host"
@@ -493,7 +496,9 @@ class MainRestManager:
 
     def update_service_methods(self, updated_rpc_service_plugin = None):
         if updated_rpc_service_plugin:
-            updated_rpc_service_plugins = [updated_rpc_service_plugin]
+            updated_rpc_service_plugins = [
+                updated_rpc_service_plugin
+            ]
         else:
             # clears the service methods list
             self.service_methods = []
