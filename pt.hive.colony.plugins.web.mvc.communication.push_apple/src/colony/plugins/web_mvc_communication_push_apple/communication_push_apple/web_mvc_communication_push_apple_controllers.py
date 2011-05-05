@@ -297,7 +297,11 @@ class WebMvcCommunicationPushAppleController:
 
         # creates the apple push notification tuple with
         # the alert the badge and the sound
-        apple_push_notification_tuple = (alert, badge, sound)
+        apple_push_notification_tuple = (
+            alert,
+            badge,
+            sound
+        )
 
         # returns the apple push notification tuple
         return apple_push_notification_tuple
@@ -417,7 +421,11 @@ class WebMvcCommunicationPushAppleController:
         generated_communication_handler = self.generate_handler(device_id, notification_handler_name)
 
         # creates the service connection name tuple
-        service_connection_name_tuple = (communication_handler_name, device_id, communication_name)
+        service_connection_name_tuple = (
+            communication_handler_name,
+            device_id,
+            communication_name
+        )
 
         # sets the generated communication handler in the service connection name communication handler map
         self.service_connection_name_communication_handler_map[service_connection_name_tuple] = generated_communication_handler
@@ -430,7 +438,11 @@ class WebMvcCommunicationPushAppleController:
         communication_push_plugin = self.web_mvc_communication_push_apple_plugin.communication_push_plugin
 
         # creates the service connection name tuple
-        service_connection_name_tuple = (communication_handler_name, device_id, communication_name)
+        service_connection_name_tuple = (
+            communication_handler_name,
+            device_id,
+            communication_name
+        )
 
         # retrieves the generated communication handler for the service connection and communication name
         generated_communication_handler = self.service_connection_name_communication_handler_map[service_connection_name_tuple]
@@ -449,7 +461,11 @@ class WebMvcCommunicationPushAppleController:
         generated_communication_handler = self.generate_handler(device_id, notification_handler_name)
 
         # creates the service connection profile name tuple
-        service_connection_profile_name_tuple = (communication_handler_name, device_id, communication_profile_name)
+        service_connection_profile_name_tuple = (
+            communication_handler_name,
+            device_id,
+            communication_profile_name
+        )
 
         # sets the generated communication handler in the service connection profile name communication handler map
         self.service_connection_profile_name_communication_handler_map[service_connection_profile_name_tuple] = generated_communication_handler
@@ -462,7 +478,11 @@ class WebMvcCommunicationPushAppleController:
         communication_push_plugin = self.web_mvc_communication_push_apple_plugin.communication_push_plugin
 
         # creates the service connection profile name tuple
-        service_connection_profile_name_tuple = (communication_handler_name, device_id, communication_profile_name)
+        service_connection_profile_name_tuple = (
+            communication_handler_name,
+            device_id,
+            communication_profile_name
+        )
 
         # retrieves the generated communication handler for the service connection and communication profile name
         generated_communication_handler = self.service_connection_profile_name_communication_handler_map[service_connection_profile_name_tuple]
