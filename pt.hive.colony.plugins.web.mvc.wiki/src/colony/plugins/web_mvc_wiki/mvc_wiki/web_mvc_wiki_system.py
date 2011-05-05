@@ -183,7 +183,10 @@ class WebMvcWiki:
             instance_repository_type = instance_value["repository_type"]
 
             # sets the instance value for the web mvc wiki information
-            web_mvc_wiki_information[instance_name] = (instance_repository_path, instance_repository_type)
+            web_mvc_wiki_information[instance_name] = (
+                instance_repository_path,
+                instance_repository_type
+            )
 
         # defines the web mvc wiki main item columns
         web_mvc_wiki_main_item_columns = [
@@ -214,7 +217,9 @@ class WebMvcWiki:
 
         # sets the system information (item) values
         system_information["name"] = "Web Mvc Wiki"
-        system_information["items"] = [web_mvc_wiki_main_item]
+        system_information["items"] = [
+            web_mvc_wiki_main_item
+        ]
 
         # returns the system information
         return system_information
