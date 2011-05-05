@@ -726,11 +726,22 @@ class SystemUpdater:
         current transaction.
         """
 
+        # retrieves the system registry plugin
+        system_registry_plugin = self.system_updater_plugin.system_registry_plugin
+
         # retrieves the bundle dependencies
         bundle_dependencies = bundle_descriptor.dependencies
 
         # iterates over the bundle dependencies
         for bundle_dependency in bundle_dependencies:
+            # retrieves the bundle information for the bundle dependency
+            bundle_information = system_registry_plugin.get_bundle_information(bundle_dependency.id, bundle_dependency.version)
+
+            # in case the bundle information is valid
+            if bundle_information:
+                # continues the loop
+                continue
+
             try:
                 # installs the bundle dependency
                 self.install_bundle(bundle_dependency.id, bundle_dependency.version, transaction_properties)
@@ -751,20 +762,20 @@ class SystemUpdater:
         current transaction.
         """
 
-        # retrieves the plugin manager
-        plugin_manager = self.system_updater_plugin.manager
+        # retrieves the system registry plugin
+        system_registry_plugin = self.system_updater_plugin.system_registry_plugin
 
         # retrieves the plugin dependencies
         plugin_dependencies = plugin_descriptor.dependencies
 
         # iterates over the plugin dependencies
         for plugin_dependency in plugin_dependencies:
-            # retrieves the plugin for the id and version
-            plugin = plugin_manager._get_plugin_by_id_and_version(plugin_dependency.id, plugin_dependency.version)
+            # retrieves the plugin information for the plugin dependency
+            plugin_information = system_registry_plugin.get_plugin_information(plugin_dependency.id, plugin_dependency.version)
 
-            # in case the plugin is found and valid
-            if plugin:
-                # continues no loop (no need to install it)
+            # in case the plugin information is valid
+            if plugin_information:
+                # continues the loop
                 continue
 
             try:

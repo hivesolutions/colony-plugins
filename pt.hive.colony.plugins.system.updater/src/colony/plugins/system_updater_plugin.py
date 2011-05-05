@@ -67,6 +67,7 @@ class SystemUpdaterPlugin(colony.base.plugin_system.Plugin):
         "deployer"
     ]
     dependencies = [
+        colony.base.plugin_system.PluginDependency("pt.hive.colony.plugins.system.registry", "1.0.0"),
         colony.base.plugin_system.PluginDependency("pt.hive.colony.plugins.misc.downloader", "1.0.0")
     ]
     main_modules = [
@@ -84,6 +85,9 @@ class SystemUpdaterPlugin(colony.base.plugin_system.Plugin):
 
     deployer_plugins = []
     """ The deployer plugins """
+
+    system_registry_plugin = None
+    """ The system registry plugin """
 
     downloader_plugin = None
     """ The downloader plugin """
@@ -148,6 +152,13 @@ class SystemUpdaterPlugin(colony.base.plugin_system.Plugin):
     def deployer_unload_allowed(self, plugin, capability):
         self.deployer_plugins.remove(plugin)
         self.system_updater.deployer_unload(plugin)
+
+    def get_system_registry_plugin(self):
+        return self.system_registry_plugin
+
+    @colony.base.decorators.plugin_inject("pt.hive.colony.plugins.system.registry")
+    def set_system_registry_plugin(self, system_registry_plugin):
+        self.system_registry_plugin = system_registry_plugin
 
     def get_downloader_plugin(self):
         return self.downloader_plugin

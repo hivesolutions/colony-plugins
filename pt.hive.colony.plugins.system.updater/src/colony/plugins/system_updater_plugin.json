@@ -12,6 +12,9 @@
             "build_automation_item"],
     "capabilities_allowed" : ["deployer"],
     "dependencies" : [{
+                "id" : "pt.hive.colony.plugins.system.registry",
+                "version" : "1.0.0"
+            }, {
                 "id" : "pt.hive.colony.plugins.misc.downloader",
                 "version" : "1.0.0"
             }],
