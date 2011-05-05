@@ -168,13 +168,19 @@ class ReportLabPdfDocumentController:
         current_font_height = self._get_current_font_height()
 
         # returns the text size tuple
-        return (text_width, current_font_height)
+        return (
+            text_width,
+            current_font_height
+        )
 
     def get_page_size(self):
         return self.canvas._pagesize
 
     def get_current_font(self):
-        return (self.canvas._fontname, self.canvas._fontsize)
+        return (
+            self.canvas._fontname,
+            self.canvas._fontsize
+        )
 
     def set_title(self, title):
         self.canvas.setTitle(title)
