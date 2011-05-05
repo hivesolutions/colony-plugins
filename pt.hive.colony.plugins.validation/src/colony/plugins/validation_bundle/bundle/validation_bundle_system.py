@@ -72,6 +72,12 @@ PLUGINS_VALUE = "plugins"
 PYTHON_VALUE = "python"
 """ The python value """
 
+REFERENCED_BUNDLE_DEPENDENCY_KEYS_VALUE = "referenced_bundle_dependency_keys"
+""" The referenced bundle dependency keys value """
+
+REQUIRED_VALUE = "required"
+""" The required value """
+
 TYPE_VALUE = "type"
 """ The type value """
 
@@ -90,10 +96,20 @@ COLONY_PLUGIN_NAMESPACE = "pt.hive.colony.plugins."
 DEFAULT_JSON_ENCODING = "Cp1252"
 """ The default json encoding """
 
-MANDATORY_BUNDLE_ATTRIBUTE_NAMES = ("type", "platform", "id", "version", "author", "plugins", "dependencies")
+MANDATORY_BUNDLE_ATTRIBUTE_NAMES = (
+    "type",
+    "platform",
+    "id",
+    "version",
+    "author",
+    "plugins",
+    "dependencies"
+)
 """ The mandatory bundle attribute names """
 
-PLUGIN_EXCLUSION_LIST = ("pt.hive.colony.bundles.plugins.base.bundles")
+PLUGIN_EXCLUSION_LIST = (
+    "pt.hive.colony.bundles.plugins.base.bundles",
+)
 """ The plugin exclusion list """
 
 UNIX_DIRECTORY_SEPARATOR = "/"
@@ -139,8 +155,8 @@ class ValidationBundle:
             self._validate_plugin(plugin, plugin_bundle_map, validation_errors)
 
         # validates all bundles
-        for bundle_data_key in bundle_data_map:
-            self._validate_bundle(bundle_data_key, bundle_data_map, plugin_bundle_map, validation_errors)
+        for bundle_key in bundle_data_map:
+            self._validate_bundle(bundle_key, bundle_data_map, plugin_bundle_map, validation_errors)
 
         # returns the validation errors
         return validation_errors
@@ -154,17 +170,18 @@ class ValidationBundle:
         if not plugin.original_id.startswith(COLONY_PLUGIN_NAMESPACE):
             return
 
-        # defines the plugin bundle key
-        plugin_bundle_key = (plugin.original_id, plugin.version)
+        # defines the plugin key
+        plugin_key = (
+            plugin.original_id,
+            plugin.version
+        )
 
-        # checks if the plugin is in a bundle
-        if not plugin_bundle_key in plugin_bundle_map:
-            # adds the validation error
-            self.add_validation_error(validation_errors, None, None, None, "'%s (%s)' is not in any bundle" % (plugin.original_id, plugin.version))
+        # adds the validation error in case the plugin is not in any bundle
+        not (plugin_key in plugin_bundle_map) and self.add_validation_error(validation_errors, None, None, None, "'%s (%s)' is not in any bundle" % (plugin.original_id, plugin.version))
 
-    def _validate_bundle(self, bundle_data_key, bundle_data_map, plugin_bundle_map, validation_errors):
+    def _validate_bundle(self, bundle_key, bundle_data_map, plugin_bundle_map, validation_errors):
         # retrieves the bundle data
-        bundle_data = bundle_data_map[bundle_data_key]
+        bundle_data = bundle_data_map[bundle_key]
 
         # retrieves the bundle type
         bundle_type = bundle_data[TYPE_VALUE]
@@ -187,30 +204,27 @@ class ValidationBundle:
         # retrieves the bundle dependencies
         bundle_dependencies = bundle_data[DEPENDENCIES_VALUE]
 
-        # checks that the bundle type is correct
-        if not bundle_type == BUNDLE_VALUE:
-            # adds the validation error
-            self.add_validation_error(validation_errors, bundle_id, bundle_version, bundle_file_path, "Bundle '%s (%s)' has invalid attribute 'type'" % (bundle_id, bundle_version))
+        # adds the validation error in case the bundle type is not correct
+        not (bundle_type == BUNDLE_VALUE) and self.add_validation_error(validation_errors, bundle_id, bundle_version, bundle_file_path, "Bundle '%s (%s)' has invalid attribute 'type'" % (bundle_id, bundle_version))
 
-        # checks that the bundle platform is correct
-        if not bundle_platform == PYTHON_VALUE:
-            # adds the validation error
-            self.add_validation_error(validation_errors, bundle_id, bundle_version, bundle_file_path, "Bundle '%s (%s)' has invalid attribute 'platform'" % (bundle_id, bundle_version))
-
-        # checks that the bundle id starts with the expected namespace
-        if not bundle_id.startswith(COLONY_BUNDLE_NAMESPACE):
-            # adds the validation error
-            self.add_validation_error(validation_errors, bundle_id, bundle_version, bundle_file_path, "Bundle '%s (%s)' does not start with '%s'" % (bundle_id, bundle_version, COLONY_BUNDLE_NAMESPACE))
-
-        # validates the bundle plugins
-        for bundle_plugin in bundle_plugins:
-            self.__validate_bundle_plugin(bundle_data, bundle_plugin, plugin_bundle_map, validation_errors)
+        # adds the validation error in case the platform is not correct
+        not (bundle_platform == PYTHON_VALUE) and self.add_validation_error(validation_errors, bundle_id, bundle_version, bundle_file_path, "Bundle '%s (%s)' has invalid attribute 'platform'" % (bundle_id, bundle_version))
 
         # validates the bundle dependencies
         for bundle_dependency in bundle_dependencies:
             self.__validate_bundle_dependency(bundle_data, bundle_data_map, bundle_dependency, validation_errors)
 
-    def __validate_bundle_plugin(self, bundle_data, bundle_plugin, plugin_bundle_map, validation_errors):
+        # initializes the bundle usage map
+        bundle_usage_map = self.create_bundle_usage_map(bundle_data_map, bundle_dependencies)
+
+        # validates the bundle plugins
+        for bundle_plugin in bundle_plugins:
+            self.__validate_bundle_plugin(bundle_data, bundle_plugin, plugin_bundle_map, bundle_usage_map, validation_errors)
+
+        # validates the bundle usage map
+        self.__validate_bundle_usage_map(bundle_data, bundle_usage_map, validation_errors)
+
+    def __validate_bundle_plugin(self, bundle_data, bundle_plugin, plugin_bundle_map, bundle_usage_map, validation_errors):
         # retrieves the bundle id
         bundle_id = bundle_data[ID_VALUE]
 
@@ -226,56 +240,69 @@ class ValidationBundle:
         # retrieves the bundle file path
         bundle_file_path = bundle_data[FILE_PATH_VALUE]
 
-        # retrieves the bundle dependencies
-        bundle_dependencies = bundle_data[DEPENDENCIES_VALUE]
-
-        # retrieves the bundle dependency id version tuples
-        bundle_dependency_keys = [(bundle_dependency[ID_VALUE], bundle_dependency[VERSION_VALUE]) for bundle_dependency in bundle_dependencies]
+        # defines the bundle key
+        bundle_key = (
+            bundle_id,
+            bundle_version
+        )
 
         # retrieves the bundle plugin
         plugin = self.validation_bundle_plugin.manager._get_plugin_by_id_and_version(bundle_plugin_id, bundle_plugin_version)
 
-        # adds a validation error in case the plugin doesn't exist
+        # in case the plugin doesn't exist
         if not plugin:
-            # adds the validation error
+            # adds a validation error
             self.add_validation_error(validation_errors, bundle_id, bundle_version, bundle_file_path, "Bundle '%s (%s)' references unexistent plugin '%s (%s)'" % (bundle_id, bundle_version, bundle_plugin_id, bundle_plugin_version))
 
-            # skips this bundle plugin
+            # returns since no more validations
+            # can be performed
             return
 
         # retrieves the plugin dependencies
         plugin_dependencies = plugin.get_all_plugin_dependencies()
 
-        # checks that the plugin's dependencies are contained in one of the bundle's bundle dependencies
+        # iterates over the plugin dependencies
         for plugin_dependency in plugin_dependencies:
-            # defines the plugin bundle key
-            plugin_bundle_key = (plugin_dependency.plugin_id, plugin_dependency.plugin_version)
+            # defines the plugin dependency key
+            plugin_dependency_key = (
+                plugin_dependency.plugin_id,
+                plugin_dependency.plugin_version
+            )
 
-            # checks that the plugin dependency is in a bundle
-            if not plugin_bundle_key in plugin_bundle_map:
-                # adds the validation error
-                self.add_validation_error(validation_errors, bundle_id, bundle_version, bundle_file_path, "Bundle '%s (%s)' references plugin '%s (%s)' whose dependency '%s (%s)' is not in any bundle" % (bundle_id, bundle_version, bundle_plugin_id, bundle_plugin_version, plugin_dependency.plugin_id, plugin_dependency.plugin_version))
+            # retrieves the plugin's bundles
+            plugin_bundles = plugin_bundle_map.get(plugin_dependency_key, [])
 
-                # skips this dependency
-                continue
+            # unsets the valid flag
+            valid_flag = False
 
-            # defines the plugin bundle key
-            plugin_bundle_key = (plugin_dependency.plugin_id, plugin_dependency.plugin_version)
+            # iterates over all the bundles
+            # that contain the plugin dependency
+            for plugin_bundle_key in plugin_bundles:
+                # in case the plugin bundle is the
+                # same as this bundle
+                if plugin_bundle_key == bundle_key:
+                    # the dependency is fulfilled
+                    # so the valid flag is set
+                    valid_flag = True
 
-            # unpacks the plugin dependency key
-            plugin_dependency_bundle_dependency_key = plugin_bundle_map[plugin_bundle_key]
+                    # continues the loop
+                    continue
 
-            # retrieves the id and version of the bundle the plugin dependency is contained in
-            plugin_dependency_bundle_id, plugin_dependency_bundle_version = plugin_dependency_bundle_dependency_key
+                # in case the bundle is not
+                # a dependency of the bundle
+                if not plugin_bundle_key in bundle_usage_map:
+                    # continues the loop
+                    continue
 
-            # skips in case the dependency is within the same bundle
-            if plugin_dependency_bundle_id == bundle_id and plugin_dependency_bundle_version == bundle_version:
-                continue
+                # marks the bundle as used by the dependencies
+                bundle_usage_map[plugin_bundle_key] = True
 
-            # checks that the bundle the plugin dependency is contained ib is referenced in the bundle's dependencies
-            if not plugin_dependency_bundle_dependency_key in bundle_dependency_keys:
-                # adds the validation error
-                self.add_validation_error(validation_errors, bundle_id, bundle_version, bundle_file_path, "Bundle '%s (%s)' references plugin '%s (%s)' whose dependency '%s (%s)' is not in any bundle referenced in the dependencies" % (bundle_id, bundle_version, bundle_plugin_id, bundle_plugin_version, plugin_dependency.plugin_id, plugin_dependency.plugin_version))
+                # the dependency is fulfilled
+                # so the valid flag is set
+                valid_flag = True
+
+            # adds a validation error stating that the plugin dependency is not in any bundle
+            not valid_flag and self.add_validation_error(validation_errors, bundle_id, bundle_version, bundle_file_path, "Bundle '%s (%s)' references plugin '%s (%s)' whose dependency '%s (%s)' is not in any bundle" % (bundle_id, bundle_version, bundle_plugin_id, bundle_plugin_version, plugin_dependency.plugin_id, plugin_dependency.plugin_version))
 
     def __validate_bundle_dependency(self, bundle_data, bundle_data_map, bundle_dependency, validation_errors):
         # retrieves the bundle id
@@ -293,21 +320,20 @@ class ValidationBundle:
         # retrieves the bundle dependency version
         bundle_dependency_version = bundle_dependency[VERSION_VALUE]
 
-        # defines the bundle data key
-        bundle_dependency_data_key = (bundle_dependency_id, bundle_dependency_version)
+        # defines the bundle dependency key
+        bundle_dependency_key = (
+            bundle_dependency_id,
+            bundle_dependency_version
+        )
 
-        # checks that the bundle dependency id starts with the expected namespace
-        if not bundle_dependency_id.startswith(COLONY_BUNDLE_NAMESPACE):
-            # adds the validation error
-            self.add_validation_error(validation_errors, bundle_id, bundle_version, bundle_file_path, "Bundle '%s (%s)' has dependency '%s (%s)' that does not start with '%s'" % (bundle_id, bundle_version, bundle_dependency_id, bundle_dependency_version, COLONY_BUNDLE_NAMESPACE))
-
-            # returns since nothing else can be tested
-            return
-
-        # checks if the bundle dependency exists
-        if not bundle_dependency_data_key in bundle_data_map:
+        # in case the bundle dependency doesn't exist
+        if not bundle_dependency_key in bundle_data_map:
             # adds the validation error
             self.add_validation_error(validation_errors, bundle_id, bundle_version, bundle_file_path, "Bundle '%s (%s)' references unexistent bundle '%s (%s)'" % (bundle_id, bundle_version, bundle_dependency_id, bundle_dependency_version))
+
+            # returns since no more
+            # tests can be performed
+            return
 
         # checks if a cycle was found
         if bundle_id == bundle_dependency_id and bundle_version == bundle_dependency_version:
@@ -317,11 +343,13 @@ class ValidationBundle:
             # returns since a cycle was found
             return
 
-        # defines the dependency path key
-        bundle_dependency_path_key = (bundle_id, bundle_version)
-
         # initializes the dependency path list
-        dependency_path_list = [bundle_dependency_path_key]
+        dependency_path_list = [
+            (
+                bundle_id,
+                bundle_version
+            )
+        ]
 
         # validates that no dependency cycles exist
         self.__validate_bundle_dependency_cycle(bundle_data, bundle_data_map, bundle_dependency, dependency_path_list, validation_errors)
@@ -343,7 +371,10 @@ class ValidationBundle:
         bundle_dependency_version = bundle_dependency[VERSION_VALUE]
 
         # defines the dependency path key
-        bundle_dependency_path_key = (bundle_dependency_id, bundle_dependency_version)
+        bundle_dependency_path_key = (
+            bundle_dependency_id,
+            bundle_dependency_version
+        )
 
         # checks if a cycle was found
         if bundle_dependency_path_key in dependency_path_list:
@@ -356,11 +387,23 @@ class ValidationBundle:
         # adds the bundle dependency path key to the dependency path list, cloning to avoid manipulating the same list across calls
         dependency_path_list = list(dependency_path_list) + [bundle_dependency_path_key]
 
-        # defines the bundle dependency data key
-        bundle_dependency_data_key = (bundle_dependency_id, bundle_dependency_version)
+        # defines the bundle dependency key
+        bundle_dependency_key = (
+            bundle_dependency_id,
+            bundle_dependency_version
+        )
+
+        # in case the bundle dependency doesn't exist
+        if not bundle_dependency_key in bundle_data_map:
+            # adds the validation error
+            self.add_validation_error(validation_errors, bundle_id, bundle_version, bundle_file_path, "Bundle '%s (%s)' references unexistent bundle '%s (%s)'" % (bundle_id, bundle_version, bundle_dependency_id, bundle_dependency_version))
+
+            # returns since no more
+            # tests can be performed
+            return
 
         # retrieves the bundle dependency data
-        bundle_dependency_data = bundle_data_map[bundle_dependency_data_key]
+        bundle_dependency_data = bundle_data_map[bundle_dependency_key]
 
         # retrieves the bundle dependency's dependencies
         bundle_dependency_dependencies = bundle_dependency_data[DEPENDENCIES_VALUE]
@@ -368,6 +411,59 @@ class ValidationBundle:
         # iterates through the remaining dependencies
         for bundle_dependency_dependency in bundle_dependency_dependencies:
             self.__validate_bundle_dependency_cycle(bundle_data, bundle_data_map, bundle_dependency_dependency, dependency_path_list, validation_errors)
+
+    def __validate_bundle_usage_map(self, bundle_data, bundle_usage_map, validation_errors):
+        # retrieves the bundle id
+        bundle_id = bundle_data[ID_VALUE]
+
+        # retrieves the bundle version
+        bundle_version = bundle_data[VERSION_VALUE]
+
+        # retrieves the bundle file path
+        bundle_file_path = bundle_data[FILE_PATH_VALUE]
+
+        # retrieves the bundle usage map items
+        bundle_usage_map_items = bundle_usage_map.items()
+
+        # iterates over the bundle usage map
+        for bundle_key, bundle_usage in bundle_usage_map_items:
+            # unpacks the bundle key
+            bundle_dependency_id, bundle_dependency_version = bundle_key
+
+            # adds the validation error in case the bundle is not used
+            not bundle_usage and self.add_validation_error(validation_errors, bundle_id, bundle_version, bundle_file_path, "Bundle '%s (%s)' references unnecessary bundle '%s (%s)'" % (bundle_id, bundle_version, bundle_dependency_id, bundle_dependency_version))
+
+    def create_bundle_usage_map(self, bundle_data_map, bundle_dependencies):
+        # initializes the bundle usage map
+        bundle_usage_map = {}
+
+        # iterates over the bundle dependencies
+        for bundle_dependency in bundle_dependencies:
+            # retrieves the bundle dependency id
+            bundle_dependency_id = bundle_dependency[ID_VALUE]
+
+            # retrieves the bundle dependency version
+            bundle_dependency_version = bundle_dependency[VERSION_VALUE]
+
+            # retrieves the bundle dependency required value
+            bundle_dependency_required = bundle_dependency.get(REQUIRED_VALUE, True)
+
+            # defines the bundle dependency key
+            bundle_dependency_key = (
+                bundle_dependency_id,
+                bundle_dependency_version
+            )
+
+            # in case the bundle dependency doesn't exist
+            if not bundle_dependency_key in bundle_data_map:
+                # continues the loop
+                continue
+
+            # sets the bundle dependency's usage flag
+            bundle_usage_map[bundle_dependency_key] = not bundle_dependency_required
+
+        # returns the bundle usage map
+        return bundle_usage_map
 
     def get_bundle_data_map(self, bundle_file_paths, validation_errors):
         # initializes the bundle map
@@ -388,11 +484,14 @@ class ValidationBundle:
             # retrieves the bundle version
             bundle_version = bundle_data[VERSION_VALUE]
 
-            # creates the bundle data key
-            bundle_data_key = (bundle_id, bundle_version)
+            # creates the bundle key
+            bundle_key = (
+                bundle_id,
+                bundle_version
+            )
 
             # sets the bundle data in the bundle data map
-            bundle_data_map[bundle_data_key] = bundle_data
+            bundle_data_map[bundle_key] = bundle_data
 
         # returns the bundle data map
         return bundle_data_map
@@ -438,9 +537,9 @@ class ValidationBundle:
         plugin_bundle_map = {}
 
         # populates the plugin bundle map
-        for bundle_data_key in bundle_data_map:
+        for bundle_key in bundle_data_map:
             # retrieves the bundle data
-            bundle_data = bundle_data_map[bundle_data_key]
+            bundle_data = bundle_data_map[bundle_key]
 
             # retrieves the bundle plugins
             bundle_plugins = bundle_data[PLUGINS_VALUE]
@@ -465,25 +564,26 @@ class ValidationBundle:
         # retrieves the bundle plugin version
         bundle_plugin_version = bundle_plugin[VERSION_VALUE]
 
-        # defines the plugin bundle key
-        plugin_bundle_key = (bundle_plugin_id, bundle_plugin_version)
+        # defines the plugin key
+        plugin_key = (
+            bundle_plugin_id,
+            bundle_plugin_version
+        )
 
-        # checks that the plugin is not in more than one bundle
-        if plugin_bundle_key in plugin_bundle_map:
-            # retrieves the bundle file path
-            bundle_file_path = bundle_data[FILE_PATH_VALUE]
+        # retrieves the bundles the plugin is contained in
+        bundle_keys = plugin_bundle_map.get(plugin_key, [])
 
-            # retrieves the duplicate bundle id and version
-            duplicate_bundle_id, duplicate_bundle_version = plugin_bundle_map[plugin_bundle_key]
+        # defines the bundle key
+        bundle_key = (
+            bundle_id,
+            bundle_version
+        )
 
-            # adds the validation error
-            self.add_validation_error(validation_errors, bundle_id, bundle_version, bundle_file_path, "'%s (%s)' is in bundle '%s' (%s) and bundle '%s (%s)'" % (bundle_plugin_id, bundle_plugin_version, bundle_id, bundle_version, duplicate_bundle_id, duplicate_bundle_version))
+        # adds the bundle key to the list
+        bundle_keys.append(bundle_key)
 
-            # skips this bundle plugin
-            return
-
-        # associates the bundle plugin with the bundle
-        plugin_bundle_map[plugin_bundle_key] = (bundle_id, bundle_version)
+        # sets the list of bundle keys in the plugin bundle map
+        plugin_bundle_map[plugin_key] = bundle_keys
 
     def get_bundle_file_paths(self):
         # initializes the bundle file paths list
