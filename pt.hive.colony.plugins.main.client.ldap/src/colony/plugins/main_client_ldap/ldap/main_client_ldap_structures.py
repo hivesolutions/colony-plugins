@@ -352,7 +352,11 @@ class BindRequest(ProtocolOperation):
         authentication = self.authentication.get_value()
 
         # creates the protocol operation contents (list)
-        protocol_operation_contents = [version, name, authentication]
+        protocol_operation_contents = [
+            version,
+            name,
+            authentication
+        ]
 
         # creates the bind operation sequence value
         bind_operation = {
@@ -467,7 +471,16 @@ class SearchRequest(ProtocolOperation):
         attributes = self.attributes.get_value()
 
         # creates the protocol operation contents (list)
-        protocol_operation_contents = [base_object, scope, dref_aliases, size_limit, time_limit, types_only, filter, attributes]
+        protocol_operation_contents = [
+            base_object,
+            scope,
+            dref_aliases,
+            size_limit,
+            time_limit,
+            types_only,
+            filter,
+            attributes
+        ]
 
         # creates the search operation sequence value
         search_operation = {
@@ -587,7 +600,10 @@ class AttributeValueAssertion:
         }
 
         # creates the attribute value assertion contents (list)
-        attribute_value_assertion_contents = [attribute_description, assertion_value]
+        attribute_value_assertion_contents = [
+            attribute_description,
+            assertion_value
+        ]
 
         # creates the attribute value assertion sequence value
         attribute_value_assertion = {

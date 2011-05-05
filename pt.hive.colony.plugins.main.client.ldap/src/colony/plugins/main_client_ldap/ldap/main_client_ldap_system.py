@@ -639,7 +639,10 @@ class LdapRequest:
         protocol_operation = self.protocol_operation.get_value()
 
         # creates the ldap message contents (list)
-        ldap_message_contents = [message_id, protocol_operation]
+        ldap_message_contents = [
+            message_id,
+            protocol_operation
+        ]
 
         # creates the ldap message sequence value
         ldap_message = {
