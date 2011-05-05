@@ -78,7 +78,12 @@ class SearchHelper:
             number_records = total_number_records
 
         # creates the filter contents tuple
-        filter_contents = (partial_contents_list, start_record, number_records, total_number_records)
+        filter_contents = (
+            partial_contents_list,
+            start_record,
+            number_records,
+            total_number_records
+        )
 
         # returns the filter contents tuple
         return filter_contents

@@ -538,7 +538,10 @@ class WebMvcManager:
         base_item_list = self.side_panel_items_map[base_item]
 
         # creates the target item tuple
-        target_item_tuple = (target_item, base_address)
+        target_item_tuple = (
+            target_item,
+            base_address
+        )
 
         # adds the target item tuple to the base item list
         base_item_list.append(target_item_tuple)
@@ -569,7 +572,10 @@ class WebMvcManager:
         base_item_list = self.side_panel_items_map[base_item]
 
         # creates the target item tuple
-        target_item_tuple = (target_item, base_address)
+        target_item_tuple = (
+            target_item,
+            base_address
+        )
 
         # in case the target item tuple
         # exists in the base item list
@@ -605,7 +611,12 @@ class WebMvcManager:
             page_item_pattern = page_item
 
         # creates the page item tuple
-        page_item_tuple = (page_item_menu, page_item_side_panel, page_item_base_address, page_item_pattern)
+        page_item_tuple = (
+            page_item_menu,
+            page_item_side_panel,
+            page_item_base_address,
+            page_item_pattern
+        )
 
         # returns the page item tuple
         return page_item_tuple
