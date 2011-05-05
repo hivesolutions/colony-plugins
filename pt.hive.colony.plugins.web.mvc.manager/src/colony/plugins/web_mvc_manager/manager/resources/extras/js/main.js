@@ -269,8 +269,6 @@ jQuery(document).ready(function() {
                     break;
             }
 
-            debugger;
-
             // opens the xml http request
             xmlHttpRequest.open("post", url);
 
