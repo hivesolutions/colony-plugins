@@ -349,7 +349,11 @@ class EmailBuildAutomationExtension:
 
         # creates the email tuple with the sender email, the receiver
         # emails and the mime message value
-        email_tuple = (sender_email, receiver_emails, mime_message_value)
+        email_tuple = (
+            sender_email,
+            receiver_emails,
+            mime_message_value
+        )
 
         # returns the email tuple
         return email_tuple
@@ -473,7 +477,11 @@ class EmailBuildAutomationExtension:
 
         # creates the email tuple with the sender email, the receiver
         # emails and the mime message value
-        email_tuple = (sender_email, receiver_emails, mime_message_value)
+        email_tuple = (
+            sender_email,
+            receiver_emails,
+            mime_message_value
+        )
 
         # returns the email tuple
         return email_tuple
@@ -584,7 +592,10 @@ class EmailBuildAutomationExtension:
 
         # creates the contact tuple with the contact line
         # and the list of contact emails
-        contact_tuple = (contact_line, contact_emails)
+        contact_tuple = (
+            contact_line,
+            contact_emails
+        )
 
         # returns the contact tuple
         return contact_tuple

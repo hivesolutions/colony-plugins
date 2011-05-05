@@ -79,7 +79,11 @@ PLUGIN_REGEX = "\$plugin\{(\$\{[^\}]*\}|[^\}])*\}"
 CONTENTS_REGEX = "\$contents\{(\$\{[^\}]*\}|[^\}])*\}"
 """ The regular expression for the contents """
 
-EXCLUSION_LIST = ("__doc__", "__init__", "__module__")
+EXCLUSION_LIST = (
+    "__doc__",
+    "__init__",
+    "__module__"
+)
 """ The exclusion list """
 
 PLUGIN_SYSTEM_DIRECTORY_VALUE = "plugin_system_directory"
@@ -103,10 +107,21 @@ DEFAULT_STAGE_VALUE = "default_stage"
 DEFAULT_LOG_LEVEL = logging.INFO
 """ The default log level """
 
-BUILD_AUTOMATION_STAGES = ["compile", "test", "build", "install", "deploy", "clean", "site", "site-deploy"]
+BUILD_AUTOMATION_STAGES = [
+    "compile",
+    "test",
+    "build",
+    "install",
+    "deploy",
+    "clean",
+    "site",
+    "site-deploy"
+]
 """ The build automation stages """
 
-POST_BUILD_AUTOMATION_STAGES = ["post-build"]
+POST_BUILD_AUTOMATION_STAGES = [
+    "post-build"
+]
 """ The post build automation stages """
 
 class BuildAutomation:
@@ -499,7 +514,10 @@ class BuildAutomation:
             automation_plugin_version = automation_plugin.version
 
             # creates the automation plugin tuple
-            automation_plugin_tuple = (automation_plugin_id, automation_plugin_version)
+            automation_plugin_tuple = (
+                automation_plugin_id,
+                automation_plugin_version
+            )
 
             # retrieves the automation plugin configurations
             automation_plugin_configurations = build_automation_structure.get_all_automation_plugin_configurations(automation_plugin_tuple)
@@ -850,7 +868,10 @@ class BuildAutomation:
             build_automation_plugin_version = build_automation_plugin.version
 
             # creates the build automation plugin tuple
-            build_automation_plugin_tuple = (build_automation_plugin_id, build_automation_plugin_version)
+            build_automation_plugin_tuple = (
+                build_automation_plugin_id,
+                build_automation_plugin_version
+            )
 
             # retrieves the build automation plugin instance
             build_automation_plugin_instance = self.get_build_automation_extension_plugin(build_automation_plugin_id, build_automation_plugin_version)

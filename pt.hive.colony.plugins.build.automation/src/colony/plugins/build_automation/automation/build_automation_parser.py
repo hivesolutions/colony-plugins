@@ -41,7 +41,10 @@ import types
 
 import xml.dom.minidom
 
-TEXT_NODE_TYPES = (xml.dom.minidom.Node.TEXT_NODE, xml.dom.minidom.Node.CDATA_SECTION_NODE)
+TEXT_NODE_TYPES = (
+    xml.dom.minidom.Node.TEXT_NODE,
+    xml.dom.minidom.Node.CDATA_SECTION_NODE
+)
 """ The text node types tuple """
 
 class Parser:

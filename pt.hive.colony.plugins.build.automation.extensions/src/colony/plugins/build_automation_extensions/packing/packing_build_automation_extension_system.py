@@ -175,7 +175,9 @@ class PackingBuildAutomationExtension:
         specification_file = specification[SPECIFICATION_FILE_VALUE]
 
         # creates the file paths list
-        file_paths_list = [specification_file]
+        file_paths_list = [
+            specification_file
+        ]
 
         # in case the packing type is bundle
         if type == BUNDLE_VALUE:
