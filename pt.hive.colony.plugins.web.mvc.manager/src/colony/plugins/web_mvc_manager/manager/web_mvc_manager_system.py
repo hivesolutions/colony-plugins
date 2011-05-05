@@ -78,6 +78,12 @@ class WebMvcManager:
     web_mvc_manager_header_controller = None
     """ The web mvc manager header controller """
 
+    web_mvc_manager_package_controller = None
+    """ The web mvc manager package controller """
+
+    web_mvc_manager_bundle_controller = None
+    """ The web mvc manager bundle controller """
+
     web_mvc_manager_plugin_controller = None
     """ The web mvc manager plugin controller """
 
@@ -150,6 +156,12 @@ class WebMvcManager:
         # creates the web mvc manager header controller
         self.web_mvc_manager_header_controller = web_mvc_utils_plugin.create_controller(web_mvc_manager_controllers.HeaderController, [self.web_mvc_manager_plugin, self], {})
 
+        # creates the web mvc manager package controller
+        self.web_mvc_manager_package_controller = web_mvc_utils_plugin.create_controller(web_mvc_manager_controllers.PackageController, [self.web_mvc_manager_plugin, self], {})
+
+        # creates the web mvc manager bundle controller
+        self.web_mvc_manager_bundle_controller = web_mvc_utils_plugin.create_controller(web_mvc_manager_controllers.BundleController, [self.web_mvc_manager_plugin, self], {})
+
         # creates the web mvc manager plugin controller
         self.web_mvc_manager_plugin_controller = web_mvc_utils_plugin.create_controller(web_mvc_manager_controllers.PluginController, [self.web_mvc_manager_plugin, self], {})
 
@@ -191,6 +203,8 @@ class WebMvcManager:
             (r"^web_mvc_manager/side_panel/configuration$", self.web_mvc_manager_side_panel_controller.handle_configuration, "get"),
             (r"^web_mvc_manager/side_panel/update$", self.web_mvc_manager_side_panel_controller.handle_update, "get"),
             (r"^web_mvc_manager/header$", self.web_mvc_manager_header_controller.handle_header, "get"),
+            (r"^web_mvc_manager/packages$", self.web_mvc_manager_package_controller.handle_create_json, "post", "json"),
+            (r"^web_mvc_manager/bundles$", self.web_mvc_manager_bundle_controller.handle_create_json, "post", "json"),
             (r"^web_mvc_manager/plugins$", self.web_mvc_manager_plugin_controller.handle_list_ajx, "get", "ajx"),
             (r"^web_mvc_manager/plugins$", self.web_mvc_manager_plugin_controller.handle_list, "get"),
             (r"^web_mvc_manager/plugins/partial$", self.web_mvc_manager_plugin_controller.handle_partial_list, "get"),

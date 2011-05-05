@@ -166,6 +166,15 @@ jQuery(document).ready(function() {
         // retrieves the first file
         var file = files[0];
 
+        // retrieves the file name
+        var fileName = file.name;
+
+        // splits the file name to retrieve
+        // the file extension
+        var fileNameSplit = fileName.split(".");
+        var fileNameSplitLength = fileNameSplit.length;
+        var fileExtension = fileNameSplit[fileNameSplitLength - 1];
+
         // creates a new file reader, to read
         // the file contents (ad binary data)
         var fileReader = new FileReader();
@@ -241,8 +250,29 @@ jQuery(document).ready(function() {
                 }, 500);
             });
 
+            // switches over the file extension
+            switch(fileExtension) {
+                // in case it's a bundle extension
+                case "cbx":
+                     // sets the bundles json url
+                    var url = "bundles.json";
+
+                    // breaks the switch
+                    break;
+
+                // in case it's a plugin extension
+                case "cpx":
+                     // sets the plugins json url
+                    var url = "plugins.json";
+
+                    // breaks the switch
+                    break;
+            }
+
+            debugger;
+
             // opens the xml http request
-            xmlHttpRequest.open("post", "plugins.json");
+            xmlHttpRequest.open("post", url);
 
             // sets the content type header
             xmlHttpRequest.setRequestHeader("Content-Type",

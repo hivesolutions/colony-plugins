@@ -62,6 +62,9 @@ AJAX_ENCODER_NAME = "ajx"
 JSON_ENCODER_NAME = "json"
 """ The json encoder name """
 
+COLONY_BUNDLE_FILE_EXTENSION = "cbx"
+""" The colony bundle file extension """
+
 COLONY_PLUGIN_FILE_EXTENSION = "cpx"
 """ The colony plugin file extension """
 
@@ -412,6 +415,160 @@ class HeaderController:
         # assigns the menu items to the template
         template_file.assign("menu_items", self.web_mvc_manager.menu_items_map)
 
+class PackageController:
+    """
+    The web mvc manager package controller.
+    """
+
+    web_mvc_manager_plugin = None
+    """ The web mvc manager plugin """
+
+    web_mvc_manager = None
+    """ The web mvc manager """
+
+    def __init__(self, web_mvc_manager_plugin, web_mvc_manager):
+        """
+        Constructor of the class.
+
+        @type web_mvc_manager_plugin: WebMvcManagerPlugin
+        @param web_mvc_manager_plugin: The web mvc manager plugin.
+        @type web_mvc_manager: WebMvcManager
+        @param web_mvc_manager: The web mvc manager.
+        """
+
+        self.web_mvc_manager_plugin = web_mvc_manager_plugin
+        self.web_mvc_manager = web_mvc_manager
+
+    def validate(self, rest_request, parameters, validation_parameters):
+        # returns the result of the require permission call
+        return self.web_mvc_manager.require_permissions(self, rest_request, validation_parameters)
+
+    @web_mvc_utils.serialize_exceptions("all")
+    @web_mvc_utils.validated_method("packages.create")
+    def handle_create_serialized(self, rest_request, parameters = {}):
+        # deploys the package
+        self._deploy_package(rest_request)
+
+        # returns true
+        return True
+
+    def handle_create_json(self, rest_request, parameters = {}):
+        # retrieves the json plugin
+        json_plugin = self.web_mvc_manager_plugin.json_plugin
+
+        # sets the serializer in the parameters
+        parameters[SERIALIZER_VALUE] = json_plugin
+
+        # handles the request with the general
+        # handle create serialized method
+        return self.handle_create_serialized(rest_request, parameters)
+
+    def _deploy_package(self, rest_request, package_type = COLONY_PLUGIN_FILE_EXTENSION):
+        # retrieves the plugin manager
+        plugin_manager = self.web_mvc_manager_plugin.manager
+
+        # retrieves the system installer plugin
+        system_installer_plugin = self.web_mvc_manager_plugin.system_installer_plugin
+
+        # retrieves the web mvc manager plugin id
+        web_mvc_manager_plugin_id = self.web_mvc_manager_plugin.id
+
+        # retrieves a temporary plugin path
+        temporary_plugin_path = plugin_manager.get_temporary_plugin_path_by_id(web_mvc_manager_plugin_id)
+
+        # creates the temporary plugin path directories
+        not os.path.exists(temporary_plugin_path) and os.makedirs(temporary_plugin_path)
+
+        # retrieves the current time
+        current_time = time.time()
+
+        # generates a unique file name base on the
+        # current time
+        unique_file_name = str(current_time) + "." + package_type
+
+        # creates the unique file path joining the temporary plugin path
+        # and the unique file name
+        unique_file_path = os.path.join(temporary_plugin_path, unique_file_name)
+
+        # retrieves the request contents
+        contents = rest_request.request.read()
+
+        # decodes the contents from base64
+        contents_decoded = base64.b64decode(contents)
+
+        # opens the temporary (unique) cpx file
+        temp_file = open(unique_file_path, "wb")
+
+        try:
+            try:
+                # writes the contents (decoded) to the file
+                temp_file.write(contents_decoded)
+            finally:
+                # closes the temporary file
+                temp_file.close()
+
+            # installation options
+            installation_properties = {
+                UPGRADE_VALUE : True
+            }
+
+            # installs the package
+            system_installer_plugin.install_package(unique_file_path, installation_properties, COLONY_PACKING_VALUE)
+        finally:
+            # removes the temporary file (with the unique file path)
+            os.remove(unique_file_path)
+
+class BundleController:
+    """
+    The web mvc manager bundle controller.
+    """
+
+    web_mvc_manager_plugin = None
+    """ The web mvc manager plugin """
+
+    web_mvc_manager = None
+    """ The web mvc manager """
+
+    def __init__(self, web_mvc_manager_plugin, web_mvc_manager):
+        """
+        Constructor of the class.
+
+        @type web_mvc_manager_plugin: WebMvcManagerPlugin
+        @param web_mvc_manager_plugin: The web mvc manager plugin.
+        @type web_mvc_manager: WebMvcManager
+        @param web_mvc_manager: The web mvc manager.
+        """
+
+        self.web_mvc_manager_plugin = web_mvc_manager_plugin
+        self.web_mvc_manager = web_mvc_manager
+
+    def validate(self, rest_request, parameters, validation_parameters):
+        # returns the result of the require permission call
+        return self.web_mvc_manager.require_permissions(self, rest_request, validation_parameters)
+
+    @web_mvc_utils.serialize_exceptions("all")
+    @web_mvc_utils.validated_method("bundles.create")
+    def handle_create_serialized(self, rest_request, parameters = {}):
+        # retrieves the package controller
+        web_mvc_manager_package_controller = self.web_mvc_manager.web_mvc_manager_package_controller
+
+        # deploys the package
+        web_mvc_manager_package_controller._deploy_package(rest_request, COLONY_BUNDLE_FILE_EXTENSION)
+
+        # returns true
+        return True
+
+    def handle_create_json(self, rest_request, parameters = {}):
+        # retrieves the json plugin
+        json_plugin = self.web_mvc_manager_plugin.json_plugin
+
+        # sets the serializer in the parameters
+        parameters[SERIALIZER_VALUE] = json_plugin
+
+        # handles the request with the general
+        # handle create serialized method
+        return self.handle_create_serialized(rest_request, parameters)
+
 class PluginController:
     """
     The web mvc manager plugin controller.
@@ -606,8 +763,11 @@ class PluginController:
     @web_mvc_utils.serialize_exceptions("all")
     @web_mvc_utils.validated_method("plugins.create")
     def handle_create_serialized(self, rest_request, parameters = {}):
+        # retrieves the package controller
+        web_mvc_manager_package_controller = self.web_mvc_manager.web_mvc_manager_package_controller
+
         # deploys the package
-        self._deploy_package(rest_request)
+        web_mvc_manager_package_controller._deploy_package(rest_request, COLONY_PLUGIN_FILE_EXTENSION)
 
         # returns true
         return True
@@ -726,61 +886,8 @@ class PluginController:
         # sends the serialized broadcast message
         web_mvc_manager_communication_helper.send_serialized_broadcast_message(parameters, "web_mvc_manager/communication", "web_mvc_manager/plugin/change_status", serialized_status)
 
+        # returns true
         return True
-
-    def _deploy_package(self, rest_request):
-        # retrieves the plugin manager
-        plugin_manager = self.web_mvc_manager_plugin.manager
-
-        # retrieves the system installer plugin
-        system_installer_plugin = self.web_mvc_manager_plugin.system_installer_plugin
-
-        # retrieves the web mvc manager plugin id
-        web_mvc_manager_plugin_id = self.web_mvc_manager_plugin.id
-
-        # retrieves a temporary plugin path
-        temporary_plugin_path = plugin_manager.get_temporary_plugin_path_by_id(web_mvc_manager_plugin_id)
-
-        # creates the temporary plugin path directories
-        not os.path.exists(temporary_plugin_path) and os.makedirs(temporary_plugin_path)
-
-        # retrieves the current time
-        current_time = time.time()
-
-        # generates a unique file name base on the
-        # current time
-        unique_file_name = str(current_time) + "." + COLONY_PLUGIN_FILE_EXTENSION
-
-        # creates the unique file path joining the temporary plugin path
-        # and the unique file name
-        unique_file_path = os.path.join(temporary_plugin_path, unique_file_name)
-
-        # retrieves the request contents
-        contents = rest_request.request.read()
-
-        # decodes the contents from base64
-        contents_decoded = base64.b64decode(contents)
-
-        # opens the temporary (unique) cpx file
-        temp_file = open(unique_file_path, "wb")
-
-        try:
-            # writes the contents (decoded) to the file
-            temp_file.write(contents_decoded)
-        finally:
-            # closes the temporary file
-            temp_file.close()
-
-        # installation options
-        installation_properties = {
-            UPGRADE_VALUE : True
-        }
-
-        # installs the package
-        system_installer_plugin.install_package(unique_file_path, installation_properties, COLONY_PACKING_VALUE)
-
-        # removes the unique file
-        os.remove(unique_file_path)
 
     def _get_plugin(self, rest_request, plugin_id):
         # retrieves the plugin manager
