@@ -8,5 +8,8 @@
                 "id" : "pt.hive.colony.plugins.system.registry",
                 "version" : "1.0.0"
             }],
-    "dependencies" : []
+    "dependencies" : [{
+                "id" : "pt.hive.colony.bundles.json",
+                "version" : "1.0.0"
+            }]
 }
