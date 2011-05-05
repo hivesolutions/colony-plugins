@@ -214,7 +214,10 @@ class Pkcs1Structure:
         public_key_pem = self.generate_public_key_pem(keys)
 
         # creates a tuple with the private key and public key pem
-        keys_pem = (private_key_pem, public_key_pem)
+        keys_pem = (
+            private_key_pem,
+            public_key_pem
+        )
 
         # returns the keys pem
         return keys_pem
@@ -490,7 +493,17 @@ class Pkcs1Structure:
         }
 
         # creates the rsa private key contents (list)
-        rsa_private_key_contents = [version_value, modulus_value, public_exponent_value, private_exponent_value, prime_1_value, prime_2_value, exponent_1_value, exponent_2_value, coefficient_value]
+        rsa_private_key_contents = [
+            version_value,
+            modulus_value,
+            public_exponent_value,
+            private_exponent_value,
+            prime_1_value,
+            prime_2_value,
+            exponent_1_value,
+            exponent_2_value,
+            coefficient_value
+        ]
 
         # creates the rsa private key
         rsa_private_key = {
@@ -546,7 +559,10 @@ class Pkcs1Structure:
         }
 
         # creates the rsa public key contents (list)
-        rsa_public_key_contents = [modulus_value, public_exponent_value]
+        rsa_public_key_contents = [
+            modulus_value,
+            public_exponent_value
+        ]
 
         # creates the rsa public key
         rsa_public_key = {
@@ -574,7 +590,10 @@ class Pkcs1Structure:
         }
 
         # creates the algorithm identifier contents (list)
-        algorithm_identifier_contents = [algorithm_value, arguments_value]
+        algorithm_identifier_contents = [
+            algorithm_value,
+            arguments_value
+        ]
 
         # creates the algorithm identifier
         algorithm_identifier = {
@@ -593,7 +612,10 @@ class Pkcs1Structure:
         }
 
         # creates the subject public key info contents (list)
-        subject_plubic_key_info_contents = [algorithm_identifier, rsa_public_key_packed_bit_value]
+        subject_plubic_key_info_contents = [
+            algorithm_identifier,
+            rsa_public_key_packed_bit_value
+        ]
 
         # creates the subject public key info
         subject_plubic_key_info = {
@@ -678,10 +700,17 @@ class Pkcs1Structure:
         }
 
         # creates the keys tuple
-        keys = (public_key, private_key, extras)
+        keys = (
+            public_key,
+            private_key,
+            extras
+        )
 
         # creates the return tuple
-        return_tuple = (keys, version_value)
+        return_tuple = (
+            keys,
+            version_value
+        )
 
         # returns the return tuple
         return return_tuple
@@ -749,7 +778,11 @@ class Pkcs1Structure:
         extras = {}
 
         # creates the keys tuple
-        keys = (public_key, private_key, extras)
+        keys = (
+            public_key,
+            private_key,
+            extras
+        )
 
         # returns the keys tuple
         return keys
@@ -774,7 +807,10 @@ class Pkcs1Structure:
         }
 
         # creates the digest algorithm contents (list)
-        digest_algorithm_contents = [algorithm_value, arguments_value]
+        digest_algorithm_contents = [
+            algorithm_value,
+            arguments_value
+        ]
 
         # creates the digest algorithm
         digest_algorithm = {
@@ -793,7 +829,10 @@ class Pkcs1Structure:
         }
 
         # creates the signature value contents (list)
-        signature_value_contents = [digest_algorithm, digest_value_value]
+        signature_value_contents = [
+            digest_algorithm,
+            digest_value_value
+        ]
 
         # creates the signature value
         signature_value = {
@@ -923,7 +962,10 @@ class Pkcs1Structure:
 
         # creates the return tuple with the hash algorithm name
         # and the digest value
-        return_tuple = (hash_algorithm_name, digest_value)
+        return_tuple = (
+            hash_algorithm_name,
+            digest_value
+        )
 
         # returns the return value
         return return_tuple

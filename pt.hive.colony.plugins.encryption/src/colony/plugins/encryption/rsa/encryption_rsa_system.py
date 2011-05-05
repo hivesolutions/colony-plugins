@@ -143,7 +143,11 @@ class RsaStructure:
         }
 
         # creates the keys (tuple)
-        keys = (public_key_map, private_key_map, extra_map)
+        keys = (
+            public_key_map,
+            private_key_map,
+            extra_map
+        )
 
         # sets the keys (tuple) in the instance
         self.keys = keys
@@ -397,7 +401,12 @@ class RsaStructure:
                 break
 
         # creates a tuple with the generated keys
-        generated_keys = (p_value, q_value, e_value, d_value)
+        generated_keys = (
+            p_value,
+            q_value,
+            e_value,
+            d_value
+        )
 
         # returns the generated keys
         return generated_keys
@@ -453,7 +462,10 @@ class RsaStructure:
             raise encryption_rsa_exceptions.KeyGenerationError("The public exponent '%d' and private exponent '%d' are not multiplicative inverse modulo of phi modulus '%d'" % (e_value, i_value, phi_n_value))
 
         # creates a tuple with the keys
-        keys_tuple = (e_value, i_value)
+        keys_tuple = (
+            e_value,
+            i_value
+        )
 
         # returns the keys tuple
         return keys_tuple
@@ -660,7 +672,11 @@ class RsaStructure:
         # in case the b value is zero
         if b_value == 0:
             # creates a simple common divisor tuple
-            common_divisor_tuple = (a_value, 1, 0)
+            common_divisor_tuple = (
+                a_value,
+                1,
+                0
+            )
 
             # returns the common divisor tuple
             return common_divisor_tuple
@@ -675,7 +691,11 @@ class RsaStructure:
         d_value, k_value, l_value = self._extended_euclid_greatest_common_divisor(b_value, q_value)
 
         # creates the common divisor tuple
-        common_divisor_tuple = (d_value, l_value, k_value - l_value * r_value)
+        common_divisor_tuple = (
+            d_value,
+            l_value,
+            k_value - l_value * r_value
+        )
 
         # returns the common divisor tuple
         return common_divisor_tuple
