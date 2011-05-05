@@ -42,7 +42,12 @@ import re
 
 import search_provider_text_exceptions
 
-DEFAULT_FILE_EXTENSIONS = ["txt", "text", "TXT", "TEXT"]
+DEFAULT_FILE_EXTENSIONS = [
+    "txt",
+    "text",
+    "TXT",
+    "TEXT"
+]
 """ Default file extensions for the plugin to crawl for """
 
 FILE_EXTENSIONS_VALUE = "file_extensions"
@@ -131,4 +136,8 @@ class SearchProviderText:
             "file_size" : file_size
         }
 
-        return [words_list, words_metadata_list, document_information_map]
+        return [
+            words_list,
+            words_metadata_list,
+            document_information_map
+        ]

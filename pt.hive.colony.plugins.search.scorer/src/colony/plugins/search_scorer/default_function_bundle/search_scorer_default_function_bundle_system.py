@@ -299,7 +299,9 @@ class WordFrequencyFunction(DefaultBundleFunction):
         DefaultBundleFunction.__init__(self, search_scorer_function_repository_plugin)
 
         # initialize the required metrics list for the function object
-        self.required_metrics_identifiers = [WORD_DOCUMENT_FREQUENCY_SCORER_METRIC_IDENTIFIER]
+        self.required_metrics_identifiers = [
+            WORD_DOCUMENT_FREQUENCY_SCORER_METRIC_IDENTIFIER
+        ]
 
     def compute(self, search_results, properties):
         # the list of computed values for each search result
@@ -505,7 +507,11 @@ class FrequencyLocationDistanceFunction(DefaultBundleFunction):
         DefaultBundleFunction.__init__(self, search_scorer_function_repository_plugin)
 
         # initializes the required functions list for the function object
-        self.required_functions_identifiers = [WORD_FREQUENCY_SCORER_FUNCTION_IDENTIFIER, DOCUMENT_LOCATION_SCORER_FUNCTION_IDENTIFIER, WORD_DISTANCE_SCORER_FUNCTION_IDENTIFIER]
+        self.required_functions_identifiers = [
+            WORD_FREQUENCY_SCORER_FUNCTION_IDENTIFIER,
+            DOCUMENT_LOCATION_SCORER_FUNCTION_IDENTIFIER,
+            WORD_DISTANCE_SCORER_FUNCTION_IDENTIFIER
+        ]
 
         # initializes the required metrics
         self.required_metrics_identifiers = []

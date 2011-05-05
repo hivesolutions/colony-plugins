@@ -40,7 +40,12 @@ __license__ = "GNU General Public License (GPL), Version 3"
 import ply.lex
 
 # the token definitions
-tokens = ("NAME", "QUOTED", "AND", "OR")
+tokens = (
+    "NAME",
+    "QUOTED",
+    "AND",
+    "OR"
+)
 
 # the reserved keywords
 reserved = {

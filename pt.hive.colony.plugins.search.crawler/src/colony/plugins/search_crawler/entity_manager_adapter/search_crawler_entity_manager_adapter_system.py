@@ -253,7 +253,11 @@ class SearchCrawlerEntityManagerAdapter:
             "entity_class_name" : entity_class_name
         }
 
-        return [entity_word_list, entity_word_metadata_list, document_information_map]
+        return [
+            entity_word_list,
+            entity_word_metadata_list,
+            document_information_map
+        ]
 
     def _get_entity_classes(self, module, entity_class):
         """
