@@ -144,7 +144,10 @@ class SecurityCaptcha:
 
         # returns a tuple with the string value and
         # the string buffer
-        return (string_value, string_buffer)
+        return (
+            string_value,
+            string_buffer
+        )
 
     def generate_captcha_string_value(self, properties):
         # tries to retrieve the number of letters
