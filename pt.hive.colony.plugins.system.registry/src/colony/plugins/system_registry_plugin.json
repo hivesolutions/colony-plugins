@@ -8,7 +8,7 @@
     "description" : "System Registry Plugin",
     "version" : "1.0.0",
     "author" : "Hive Solutions Lda. <development@hive.pt>",
-    "capabilities" : ["system_registry"],
+    "capabilities" : ["system_registry", "build_automation_item"],
     "capabilities_allowed" : [],
     "dependencies" : [],
     "main_file" : "system_registry_plugin.py",

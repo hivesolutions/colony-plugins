@@ -58,7 +58,8 @@ class SystemRegistryPlugin(colony.base.plugin_system.Plugin):
         "build_automation_file_path" : "$base{plugin_directory}/system_registry/registry/resources/baf.xml"
     }
     capabilities = [
-        "system_registry"
+        "system_registry",
+        "build_automation_item"
     ]
     main_modules = [
         "system_registry.registry.system_registry_system"
