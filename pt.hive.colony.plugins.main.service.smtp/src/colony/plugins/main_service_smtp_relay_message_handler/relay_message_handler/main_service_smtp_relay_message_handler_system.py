@@ -127,7 +127,11 @@ class MainServiceSmtpRelayMessageHandler:
             recipients_list = domain_recipients_map[domain]
 
             # creates the domain query
-            domain_query = (domain, MX_VALUE, IN_VALUE)
+            domain_query = (
+                domain,
+                MX_VALUE,
+                IN_VALUE
+            )
 
             try:
                 # resolves the queries and retrieves the result

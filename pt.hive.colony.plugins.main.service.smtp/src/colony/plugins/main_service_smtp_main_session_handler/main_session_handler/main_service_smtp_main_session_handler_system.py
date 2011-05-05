@@ -54,7 +54,10 @@ RELAY_VALUE = "relay"
 DATABASE_VALUE = "database"
 """ The database value """
 
-DEFAULT_LOCAL_DOMAINS = ("127.0.0.1", "localhost")
+DEFAULT_LOCAL_DOMAINS = (
+    "127.0.0.1",
+    "localhost"
+)
 """ The default list of local domains """
 
 class MainServiceSmtpMainSessionHandler:
