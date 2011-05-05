@@ -751,11 +751,22 @@ class SystemUpdater:
         current transaction.
         """
 
+        # retrieves the plugin manager
+        plugin_manager = self.system_updater_plugin.manager
+
         # retrieves the plugin dependencies
         plugin_dependencies = plugin_descriptor.dependencies
 
         # iterates over the plugin dependencies
         for plugin_dependency in plugin_dependencies:
+            # retrieves the plugin for the id and version
+            plugin = plugin_manager._get_plugin_by_id_and_version(plugin_dependency.id, plugin_dependency.version)
+
+            # in case the plugin is found and valid
+            if plugin:
+                # continues no loop (no need to install it)
+                continue
+
             try:
                 # installs the plugin dependency
                 self.install_plugin(plugin_dependency.id, plugin_dependency.version, transaction_properties)
