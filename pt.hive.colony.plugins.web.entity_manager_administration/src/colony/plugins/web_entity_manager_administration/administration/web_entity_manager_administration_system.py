@@ -80,7 +80,9 @@ class WebEntityManagerAdministration:
         to the rest service.
         """
 
-        return [r"^entity_manager/.*$"]
+        return [
+            r"^entity_manager/.*$"
+        ]
 
     def handle_rest_request(self, rest_request):
         """

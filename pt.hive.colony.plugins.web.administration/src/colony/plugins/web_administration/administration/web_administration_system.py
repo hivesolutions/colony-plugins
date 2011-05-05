@@ -77,7 +77,9 @@ class WebAdministration:
         to the rest service.
         """
 
-        return [r"^administrator/.*$"]
+        return [
+            r"^administrator/.*$"
+        ]
 
     def handle_rest_request(self, rest_request):
         """
