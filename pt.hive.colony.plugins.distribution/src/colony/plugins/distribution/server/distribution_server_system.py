@@ -67,7 +67,9 @@ class DistributionServer:
 
         if plugin:
             # sets the distribution server adapter plugins as a list containing the defined plugin
-            distribution_server_adapter_plugins = [plugin]
+            distribution_server_adapter_plugins = [
+                plugin
+            ]
         else:
             # retrieves the distribution server adapter plugins
             distribution_server_adapter_plugins = self.distribution_server_plugin.distribution_server_adapter_plugins
@@ -98,7 +100,9 @@ class DistributionServer:
 
         if plugin:
             # sets the distribution server adapter plugins as a list containing the defined plugin
-            distribution_server_adapter_plugins = [plugin]
+            distribution_server_adapter_plugins = [
+                plugin
+            ]
         else:
             # retrieves the distribution server adapter plugins
             distribution_server_adapter_plugins = self.distribution_server_plugin.distribution_server_adapter_plugins

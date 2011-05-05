@@ -122,7 +122,10 @@ class DistributionRegistry:
         """
 
         # creates the registry entry id tuple
-        registry_entry_id = (hostname, name)
+        registry_entry_id = (
+            hostname,
+            name
+        )
 
         if not registry_entry_id in self.name_registry_entries_map:
             return
@@ -153,7 +156,10 @@ class DistributionRegistry:
         registy_entry_name = registry_entry.name
 
         # creates the registry entry id tuple
-        registry_entry_id = (registy_entry_hostname, registy_entry_name)
+        registry_entry_id = (
+            registy_entry_hostname,
+            registy_entry_name
+        )
 
         self.registry_entries.append(registry_entry)
         self.name_registry_entries_map[registry_entry_id] = registry_entry

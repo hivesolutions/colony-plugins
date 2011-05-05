@@ -191,7 +191,11 @@ class DistributionBonjourClient:
         bonjour_service_service_type = bonjour_service_service_type[1:]
 
         # returns a tuple containing the plugin manager unique id and the service type
-        return (bonjour_service_properties_list, bonjour_service_plugin_manager_uid, bonjour_service_service_type)
+        return (
+            bonjour_service_properties_list,
+            bonjour_service_plugin_manager_uid,
+            bonjour_service_service_type
+        )
 
 class BonjourRemoteReference:
     """

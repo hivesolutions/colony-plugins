@@ -42,7 +42,13 @@ import socket
 DISTRIBUTION_SERVER_TYPE = "registry"
 """ The distribution server type """
 
-RESERVED_NAMES = ["registry_type", "registry_hostname", "registry_port", "registry_type", "endpoint_type"]
+RESERVED_NAMES = [
+    "registry_type",
+    "registry_hostname",
+    "registry_port",
+    "registry_type",
+    "endpoint_type"
+]
 """ The reserved names list """
 
 class DistributionRegistryServer:
@@ -283,7 +289,11 @@ class DistributionRegistryServer:
             available_rpc_handler_properties = available_rpc_handler.get_handler_properties()
 
             # creates the enpoint tuple
-            endpoint = (available_rpc_handler_name, available_rpc_handler_port, available_rpc_handler_properties)
+            endpoint = (
+                available_rpc_handler_name,
+                available_rpc_handler_port,
+                available_rpc_handler_properties
+            )
 
             # adds the endpoint tuple to the list of available endpoints
             available_endpoints.append(endpoint)
