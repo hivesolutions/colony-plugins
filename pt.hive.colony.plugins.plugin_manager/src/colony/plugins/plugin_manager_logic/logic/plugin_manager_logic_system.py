@@ -39,7 +39,15 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 import os
 
-SERIALIZABLE_PLUGIN_ATTRIBUTES = ["id", "name", "short_name", "description", "version", "author", "loaded"]
+SERIALIZABLE_PLUGIN_ATTRIBUTES = [
+    "id",
+    "name",
+    "short_name",
+    "description",
+    "version",
+    "author",
+    "loaded"
+]
 """ List of attributes from the plugin that can be serialized and sent to the client """
 
 class PluginManagerLogic:
@@ -71,7 +79,9 @@ class PluginManagerLogic:
 
     def generate_classes(self):
         # sets the business logic bundle
-        self.business_logic_bundle = [PluginManagerBaseLogic]
+        self.business_logic_bundle = [
+            PluginManagerBaseLogic
+        ]
 
         # creates the business logic bundle map
         business_logic_bundle_map = {}
