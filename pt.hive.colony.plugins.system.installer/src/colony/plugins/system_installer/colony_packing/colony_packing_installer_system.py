@@ -40,6 +40,7 @@ __license__ = "GNU General Public License (GPL), Version 3"
 import os
 import time
 import datetime
+import threading
 
 import colony.libs.file_util
 
@@ -140,6 +141,9 @@ class ColonyPackingInstaller:
     colony_packing_installer_plugin = None
     """ The colony packing installer plugin """
 
+    colony_packing_installer_lock = None
+    """ The lock to controll the access to installation """
+
     def __init__(self, colony_packing_installer_plugin):
         """
         Constructor of the class.
@@ -149,6 +153,8 @@ class ColonyPackingInstaller:
         """
 
         self.colony_packing_installer_plugin = colony_packing_installer_plugin
+
+        self.colony_packing_installer_lock = threading.RLock()
 
     def load_installer(self):
         """
@@ -194,6 +200,209 @@ class ColonyPackingInstaller:
         return exists_package
 
     def install_package(self, file_path, properties, file_context = None):
+        """
+        Method called upon installation of the package with
+        the given file path and properties.
+
+        @type file_path: String
+        @param file_path: The path to the package file to be installed.
+        @type properties: Dictionary
+        @param properties: The map of properties for installation.
+        @type file_context: FileContext
+        @param file_context: The file context to be used.
+        """
+
+        # acquires the colony packing installer lock
+        self.colony_packing_installer_lock.acquire()
+
+        try:
+            # installs the package (concrete method)
+            self._install_package(file_path, properties, file_context)
+        finally:
+            # releases the colony packing installer lock
+            self.colony_packing_installer_lock.release()
+
+    def install_bundle(self, file_path, properties, file_context = None):
+        """
+        Method called upon installation of the bundle with
+        the given file path and properties.
+
+        @type file_path: String
+        @param file_path: The path to the bundle file to be installed.
+        @type properties: Dictionary
+        @param properties: The map of properties for installation.
+        @type file_context: FileContext
+        @param file_context: The file context to be used.
+        """
+
+        # acquires the colony packing installer lock
+        self.colony_packing_installer_lock.acquire()
+
+        try:
+            # installs the bundle (concrete method)
+            self._install_bundle(file_path, properties, file_context)
+        finally:
+            # releases the colony packing installer lock
+            self.colony_packing_installer_lock.release()
+
+    def install_plugin(self, file_path, properties, file_context = None):
+        """
+        Method called upon installation of the plugin with
+        the given file path and properties.
+
+        @type file_path: String
+        @param file_path: The path to the plugin file to be installed.
+        @type properties: Dictionary
+        @param properties: The map of properties for installation.
+        @type file_context: FileContext
+        @param file_context: The file context to be used.
+        """
+
+        # acquires the colony packing installer lock
+        self.colony_packing_installer_lock.acquire()
+
+        try:
+            # installs the plugin (concrete method)
+            self._install_plugin(file_path, properties, file_context)
+        finally:
+            # releases the colony packing installer lock
+            self.colony_packing_installer_lock.release()
+
+    def uninstall_package(self, package_id, package_version, properties, file_context = None):
+        """
+        Method called upon removal of the package with
+        the given id, version and properties.
+
+        @type package_id: String
+        @param package_id: The id of the package to be removed.
+        @type package_version: String
+        @param package_version: The version of the package to be removed.
+        @type properties: Dictionary
+        @param properties: The map of properties for removal.
+        @type file_context: FileContext
+        @param file_context: The file context to be used.
+        """
+
+        # acquires the colony packing installer lock
+        self.colony_packing_installer_lock.acquire()
+
+        try:
+            # installs the package (concrete method)
+            self._uninstall_package(package_id, package_version, properties, file_context)
+        finally:
+            # releases the colony packing installer lock
+            self.colony_packing_installer_lock.release()
+
+    def uninstall_bundle(self, bundle_id, bundle_version, properties, file_context = None):
+        """
+        Method called upon removal of the bundle with
+        the given id, version and properties.
+
+        @type bundle_id: String
+        @param bundle_id: The id of the bundle to be removed.
+        @type bundle_version: String
+        @param bundle_version: The version of the bundle to be removed.
+        @type properties: Dictionary
+        @param properties: The map of properties for removal.
+        @type file_context: FileContext
+        @param file_context: The file context to be used.
+        """
+
+        # acquires the colony packing installer lock
+        self.colony_packing_installer_lock.acquire()
+
+        try:
+            # installs the bundle (concrete method)
+            self._uninstall_bundle(bundle_id, bundle_version, properties, file_context)
+        finally:
+            # releases the colony packing installer lock
+            self.colony_packing_installer_lock.release()
+
+    def uninstall_plugin(self, plugin_id, plugin_version, properties, file_context = None):
+        """
+        Method called upon removal of the plugin with
+        the given id, version and properties.
+
+        @type plugin_id: String
+        @param plugin_id: The id of the plugin to be removed.
+        @type plugin_version: String
+        @param plugin_version: The version of the plugin to be removed.
+        @type properties: Dictionary
+        @param properties: The map of properties for removal.
+        @type file_context: FileContext
+        @param file_context: The file context to be used.
+        """
+
+        # acquires the colony packing installer lock
+        self.colony_packing_installer_lock.acquire()
+
+        try:
+            # installs the plugin (concrete method)
+            self._uninstall_plugin(plugin_id, plugin_version, properties, file_context)
+        finally:
+            # releases the colony packing installer lock
+            self.colony_packing_installer_lock.release()
+
+    def open_transaction(self, transaction_properties):
+        """
+        Opens a new transaction and retrieves the transaction
+        properties map.
+
+        @type transaction_properties: Dictionary
+        @param transaction_properties: The properties of
+        the current transaction.
+        @rtype: Dictionary
+        @return: The map describing the transaction.
+        """
+
+        # retrieves the transaction properties
+        transaction_properties = transaction_properties or {}
+
+        # creates a new file transaction context
+        file_context = transaction_properties.get(FILE_CONTEXT_VALUE) or colony.libs.file_util.FileTransactionContext()
+
+        # opens the file context
+        file_context.open()
+
+        # sets the file context in the transaction properties
+        transaction_properties[FILE_CONTEXT_VALUE] = file_context
+
+        # returns the transaction properties
+        return transaction_properties
+
+    def commit_transaction(self, transaction_properties):
+        """
+        Commits the transaction described by the given
+        transaction properties.
+
+        @type transaction_properties: Dictionary
+        @param transaction_properties: The properties of
+        the transaction to be commited.
+        """
+
+        # retrieves the file context
+        file_context = transaction_properties.get(FILE_CONTEXT_VALUE)
+
+        # commits the file context
+        file_context.commit()
+
+    def rollback_transaction(self, transaction_properties):
+        """
+        "Rollsback" the transaction described by the given
+        transaction properties.
+
+        @type transaction_properties: Dictionary
+        @param transaction_properties: The properties of
+        the transaction to be "rollbacked".
+        """
+
+        # retrieves the file context
+        file_context = transaction_properties.get(FILE_CONTEXT_VALUE)
+
+        # "rollsback" the file context
+        file_context.rollback()
+
+    def _install_package(self, file_path, properties, file_context = None):
         """
         Method called upon installation of the package with
         the given file path and properties.
@@ -277,7 +486,7 @@ class ColonyPackingInstaller:
         # prints an info message
         self.colony_packing_installer_plugin.info("Finished installing package '%s'" % (file_path))
 
-    def install_bundle(self, file_path, properties, file_context = None):
+    def _install_bundle(self, file_path, properties, file_context = None):
         """
         Method called upon installation of the bundle with
         the given file path and properties.
@@ -399,7 +608,7 @@ class ColonyPackingInstaller:
             # re-raises the exception
             raise
 
-    def install_plugin(self, file_path, properties, file_context = None):
+    def _install_plugin(self, file_path, properties, file_context = None):
         """
         Method called upon installation of the plugin with
         the given file path and properties.
@@ -485,7 +694,7 @@ class ColonyPackingInstaller:
             # re-raises the exception
             raise
 
-    def uninstall_package(self, package_id, package_version, properties, file_context = None):
+    def _uninstall_package(self, package_id, package_version, properties, file_context = None):
         """
         Method called upon removal of the package with
         the given id, version and properties.
@@ -563,7 +772,7 @@ class ColonyPackingInstaller:
         # prints an info message
         self.colony_packing_installer_plugin.info("Finished uninstalling package '%s'" % (package_id))
 
-    def uninstall_bundle(self, bundle_id, bundle_version, properties, file_context = None):
+    def _uninstall_bundle(self, bundle_id, bundle_version, properties, file_context = None):
         """
         Method called upon removal of the bundle with
         the given id, version and properties.
@@ -661,7 +870,7 @@ class ColonyPackingInstaller:
             # re-raises the exception
             raise
 
-    def uninstall_plugin(self, plugin_id, plugin_version, properties, file_context = None):
+    def _uninstall_plugin(self, plugin_id, plugin_version, properties, file_context = None):
         """
         Method called upon removal of the plugin with
         the given id, version and properties.
@@ -785,65 +994,6 @@ class ColonyPackingInstaller:
 
             # re-raises the exception
             raise
-
-    def open_transaction(self, transaction_properties):
-        """
-        Opens a new transaction and retrieves the transaction
-        properties map.
-
-        @type transaction_properties: Dictionary
-        @param transaction_properties: The properties of
-        the current transaction.
-        @rtype: Dictionary
-        @return: The map describing the transaction.
-        """
-
-        # retrieves the transaction properties
-        transaction_properties = transaction_properties or {}
-
-        # creates a new file transaction context
-        file_context = transaction_properties.get(FILE_CONTEXT_VALUE) or colony.libs.file_util.FileTransactionContext()
-
-        # opens the file context
-        file_context.open()
-
-        # sets the file context in the transaction properties
-        transaction_properties[FILE_CONTEXT_VALUE] = file_context
-
-        # returns the transaction properties
-        return transaction_properties
-
-    def commit_transaction(self, transaction_properties):
-        """
-        Commits the transaction described by the given
-        transaction properties.
-
-        @type transaction_properties: Dictionary
-        @param transaction_properties: The properties of
-        the transaction to be commited.
-        """
-
-        # retrieves the file context
-        file_context = transaction_properties.get(FILE_CONTEXT_VALUE)
-
-        # commits the file context
-        file_context.commit()
-
-    def rollback_transaction(self, transaction_properties):
-        """
-        "Rollsback" the transaction described by the given
-        transaction properties.
-
-        @type transaction_properties: Dictionary
-        @param transaction_properties: The properties of
-        the transaction to be "rollbacked".
-        """
-
-        # retrieves the file context
-        file_context = transaction_properties.get(FILE_CONTEXT_VALUE)
-
-        # "rollsback" the file context
-        file_context.rollback()
 
     def _deploy_package(self, package_path, target_path = None):
         """
