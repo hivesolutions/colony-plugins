@@ -30,7 +30,7 @@
                 "id" : "pt.hive.colony.bundles.system.installer",
                 "version" : "1.0.0"
             }, {
-                "id" : " pt.hive.colony.bundles.system.registry",
+                "id" : "pt.hive.colony.bundles.system.registry",
                 "version" : "1.0.0"
             }]
 }
