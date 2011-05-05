@@ -108,5 +108,7 @@ class AuthenticationLogic:
         # returns the authentication result
         return authentication_result
 
-BUSINESS_LOGIC_CLASSES = [AuthenticationLogic]
+BUSINESS_LOGIC_CLASSES = [
+    AuthenticationLogic
+]
 """ The business logic classes """

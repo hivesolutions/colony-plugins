@@ -82,7 +82,11 @@ class MainAuthenticationLogic:
         lock_table_decorator = entity_manager_plugin.get_lock_table_decorator()
 
         # creates the list of global values
-        global_values = [transaction_decorator, lock_table_decorator, main_authentication_logic_exceptions]
+        global_values = [
+            transaction_decorator,
+            lock_table_decorator,
+            main_authentication_logic_exceptions
+        ]
 
         # retrieves the base directory name
         base_directory_name = self.get_path_directory_name()
