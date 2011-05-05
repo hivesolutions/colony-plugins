@@ -38,6 +38,7 @@ __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
 import colony.base.plugin_system
+import colony.base.decorators
 
 class SystemRegistryPlugin(colony.base.plugin_system.Plugin):
     """
@@ -61,12 +62,18 @@ class SystemRegistryPlugin(colony.base.plugin_system.Plugin):
         "system_registry",
         "build_automation_item"
     ]
+    dependencies = [
+        colony.base.plugin_system.PluginDependency("pt.hive.colony.plugins.misc.json", "1.0.0")
+    ]
     main_modules = [
         "system_registry.registry.system_registry_system"
     ]
 
     system_registry = None
     """ The system registry """
+
+    json_plugin = None
+    """ the json plugin """
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
@@ -89,5 +96,97 @@ class SystemRegistryPlugin(colony.base.plugin_system.Plugin):
     def unload_allowed(self, plugin, capability):
         colony.base.plugin_system.Plugin.unload_allowed(self, plugin, capability)
 
+    @colony.base.decorators.inject_dependencies("pt.hive.colony.plugins.system.registry", "1.0.0")
     def dependency_injected(self, plugin):
         colony.base.plugin_system.Plugin.dependency_injected(self, plugin)
+
+    def get_packages_structure(self):
+        """
+        Retrieves the packages structure.
+
+        @rtype: Dictionary
+        @return: The packages structure.
+        """
+
+        return self.system_registry.get_packages_structure()
+
+    def get_bundles_structure(self):
+        """
+        Retrieves the bundles structure.
+
+        @rtype: Dictionary
+        @return: The bundles structure.
+        """
+
+        return self.system_registry.get_bundles_structure()
+
+    def get_plugins_structure(self):
+        """
+        Retrieves the plugins structure.
+
+        @rtype: Dictionary
+        @return: The plugins structure.
+        """
+
+        return self.system_registry.get_plugins_structure()
+
+    def get_package_information(self, package_id, package_version):
+        """
+        Retrieves the package information for the package
+        with the given id and version.
+
+        @type package_id: String
+        @param package_id: The id of the package information
+        to retrieve.
+        @type package_version: String
+        @param package_version: The version of the package information
+        to retrieve.
+        @rtype: Dictionary
+        @return: The package information for the package
+        with the given id and version.
+        """
+
+        return self.system_registry.get_package_information(package_id, package_version)
+
+    def get_bundle_information(self, bundle_id, bundle_version):
+        """
+        Retrieves the bundle information for the bundle
+        with the given id and version.
+
+        @type bundle_id: String
+        @param bundle_id: The id of the bundle information
+        to retrieve.
+        @type bundle_version: String
+        @param bundle_version: The version of the bundle information
+        to retrieve.
+        @rtype: Dictionary
+        @return: The bundle information for the bundle
+        with the given id and version.
+        """
+
+        return self.system_registry.get_bundle_information(bundle_id, bundle_version)
+
+    def get_plugin_information(self, plugin_id, plugin_version):
+        """
+        Retrieves the plugin information for the plugin
+        with the given id and version.
+
+        @type plugin_id: String
+        @param plugin_id: The id of the plugin information
+        to retrieve.
+        @type plugin_version: String
+        @param plugin_version: The version of the plugin information
+        to retrieve.
+        @rtype: Dictionary
+        @return: The plugin information for the plugin
+        with the given id and version.
+        """
+
+        return self.system_registry.get_plugin_information(plugin_id, plugin_version)
+
+    def get_json_plugin(self):
+        return self.json_plugin
+
+    @colony.base.decorators.plugin_inject("pt.hive.colony.plugins.misc.json")
+    def set_json_plugin(self, json_plugin):
+        self.json_plugin = json_plugin
