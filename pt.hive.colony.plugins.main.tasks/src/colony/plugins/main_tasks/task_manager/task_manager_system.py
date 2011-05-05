@@ -173,7 +173,10 @@ class TaskManager:
             task_descriptor = self.task_descriptor_class(start_method = task.task_creation_handler)
 
             # creates the list of arguments to the task creation handler method
-            task_creation_handler_arguments_list = [task, args]
+            task_creation_handler_arguments_list = [
+                task,
+                args
+            ]
 
             # insets the task descriptor into the thread pool
             self.thread_pool.insert_task(task_descriptor, task_creation_handler_arguments_list)
