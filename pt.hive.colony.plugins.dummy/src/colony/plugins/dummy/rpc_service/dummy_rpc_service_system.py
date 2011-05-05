@@ -62,10 +62,14 @@ class DummyRpcService:
         return []
 
     def get_available_rpc_methods(self):
-        return [self.echo]
+        return [
+            self.echo
+        ]
 
     def get_rpc_methods_alias(self):
-        return {self.echo : []}
+        return {
+            self.echo : []
+        }
 
     def echo(self, value):
         return "echo: " + value

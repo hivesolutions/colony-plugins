@@ -58,7 +58,9 @@ class DummyPluginUnitTest:
         self.dummy_plugin_unit_test_plugin = dummy_plugin_unit_test_plugin
 
     def get_plugin_test_case_bundle(self):
-        return [DummyPluginTestCase]
+        return (
+            DummyPluginTestCase,
+        )
 
 class DummyTest(colony.libs.test_util.ColonyTestCase):
 

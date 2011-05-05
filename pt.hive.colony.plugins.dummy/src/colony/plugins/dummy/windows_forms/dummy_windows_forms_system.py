@@ -128,7 +128,12 @@ class DummyForm(System.Windows.Forms.Form):
     def add_label(self, label):
         current_position_x, current_position_y = self.current_position
         label_location = System.Drawing.Point(current_position_x, current_position_y)
-        self.current_position = (current_position_x, current_position_y + 20)
+
+        self.current_position = (
+            current_position_x,
+            current_position_y + 20
+        )
+
         label.Location = label_location
         self.Controls.Add(label)
 

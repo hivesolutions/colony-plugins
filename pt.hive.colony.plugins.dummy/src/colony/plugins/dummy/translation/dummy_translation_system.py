@@ -63,7 +63,10 @@ class DummyTranslation:
         return "translation_dummy"
 
     def get_all_commands(self):
-        return ["get_translation_engines", "translate"]
+        return [
+            "get_translation_engines",
+            "translate"
+        ]
 
     def get_handler_command(self, command):
         if command == "get_translation_engines":
