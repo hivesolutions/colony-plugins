@@ -192,7 +192,10 @@ class CommunicationPush:
 
         # creates the communication handler tuple with the handler name
         # and the handler method
-        communication_handler_tuple = (communication_handler_name, communication_handler_method)
+        communication_handler_tuple = (
+            communication_handler_name,
+            communication_handler_method
+        )
 
         # in case the communication name is not defined in the communication name
         # communication handlers map
@@ -222,7 +225,10 @@ class CommunicationPush:
 
         # creates the communication handler name tuple with the communication name
         # and the communication handler name
-        communication_handler_name_tuple = (communication_name, communication_handler_name)
+        communication_handler_name_tuple = (
+            communication_name,
+            communication_handler_name
+        )
 
         # sets the communication handler name tuple for the communication handler method
         # in the communication handler name communication handler method map
@@ -245,7 +251,10 @@ class CommunicationPush:
 
         # creates the communication handler tuple with the handler name
         # and the handler method
-        communication_handler_tuple = (communication_handler_name, communication_handler_method)
+        communication_handler_tuple = (
+            communication_handler_name,
+            communication_handler_method
+        )
 
         # retrieves the communication handlers list for the communication name
         communication_handlers_list = self.communication_name_communication_handlers_map[communication_name]
@@ -266,7 +275,10 @@ class CommunicationPush:
 
         # creates the communication handler name tuple with the communication name
         # and the communication handler name
-        communication_handler_name_tuple = (communication_name, communication_handler_name)
+        communication_handler_name_tuple = (
+            communication_name,
+            communication_handler_name
+        )
 
         # removes the communication handler name tuple for the communication handler method
         # in the communication handler name communication handler method map
@@ -294,7 +306,10 @@ class CommunicationPush:
         for communication_name in communication_names_list_copy:
             # creates the communication handler name tuple with the communication name
             # and the communication handler name
-            communication_handler_name_tuple = (communication_name, communication_handler_name)
+            communication_handler_name_tuple = (
+                communication_name,
+                communication_handler_name
+            )
 
             # retrieves the communication handler method for the communication handler name tuple
             communication_handler_method = self.communication_handler_name_communication_handler_method_map[communication_handler_name_tuple]
@@ -523,10 +538,16 @@ class CommunicationPush:
         """
 
         # creates the communication handler tuple
-        communication_handler_tuple = (communication_handler_name, communication_handler_method)
+        communication_handler_tuple = (
+            communication_handler_name,
+            communication_handler_method
+        )
 
         # creates the communication handler profile tuple
-        communication_handler_profile_tuple = (communication_handler_name, communication_profile_name)
+        communication_handler_profile_tuple = (
+            communication_handler_name,
+            communication_profile_name
+        )
 
         # in case the communication profile name is not defined in the communication
         # profile name communication handler tuples map
@@ -575,10 +596,16 @@ class CommunicationPush:
         """
 
         # creates the communication handler tuple
-        communication_handler_tuple = (communication_handler_name, communication_handler_method)
+        communication_handler_tuple = (
+            communication_handler_name,
+            communication_handler_method
+        )
 
         # creates the communication handler profile tuple
-        communication_handler_profile_tuple = (communication_handler_name, communication_profile_name)
+        communication_handler_profile_tuple = (
+            communication_handler_name,
+            communication_profile_name
+        )
 
         # retrieves the communication handler tuples list
         communication_handler_tuples_list = self.communication_profile_name_communication_handler_tuples_map[communication_profile_name]
@@ -614,7 +641,10 @@ class CommunicationPush:
         # iterates over all the communication profile names list
         for communication_profile_name in communication_profile_names_list:
             # creates the communication handler profile tuple
-            communication_handler_profile_tuple = (communication_handler_name, communication_profile_name)
+            communication_handler_profile_tuple = (
+                communication_handler_name,
+                communication_profile_name
+            )
 
             # retrieves the communication handler method fo the communication handler profile tuple
             communication_handler_method = self.communication_handler_name_communication_handler_method_map[communication_handler_profile_tuple]
