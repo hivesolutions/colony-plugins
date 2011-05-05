@@ -55,10 +55,24 @@ DEFAULT_CHARSET = "utf-8"
 DEFAULT_EXPIRES_IN = "3600"
 """ The default expires in """
 
-DEFAULT_SIGNED_NAMES = ("op_endpoint", "return_to", "response_nonce", "assoc_handle", "claimed_id", "identity")
+DEFAULT_SIGNED_NAMES = (
+    "op_endpoint",
+    "return_to",
+    "response_nonce",
+    "assoc_handle",
+    "claimed_id",
+    "identity"
+)
 """ The default signed names """
 
-DEFAULT_SIGNED_ITEMS = ("provider_url", "return_to", "response_nonce", "association_handle", "claimed_id", "identity")
+DEFAULT_SIGNED_ITEMS = (
+    "provider_url",
+    "return_to",
+    "response_nonce",
+    "association_handle",
+    "claimed_id",
+    "identity"
+)
 """ The default signed items """
 
 TRUE_VALUE = "true"
@@ -150,7 +164,10 @@ HMAC_HASH_MODULES_MAP = {
 }
 """ The map associating the hmac values with the hashlib hash function modules """
 
-DIFFIE_HELLMAN_ASSOCIATION_TYPES = (DH_SHA1_VALUE, DH_SHA256_VALUE)
+DIFFIE_HELLMAN_ASSOCIATION_TYPES = (
+    DH_SHA1_VALUE,
+    DH_SHA256_VALUE
+)
 """ The diffie hellman association types """
 
 DEFAULT_PRIME_VALUE = 155172898181473697471232257763715539915724801966915404479707795314057629378541917580651227423698188993727816152646631438561595825688188889951272158842675419950341258706556549803580104870537681476726513255747040765857479291291572334510643245094715007229621094194349783925984760375594985848253359305585439638443L

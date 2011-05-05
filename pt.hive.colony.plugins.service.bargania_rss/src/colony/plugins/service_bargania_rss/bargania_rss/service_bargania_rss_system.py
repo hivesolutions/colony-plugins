@@ -61,7 +61,10 @@ DEFAULT_API_VERSION = "1.0"
 DEFAULT_REQUEST_TIMEOUT = 60
 """ The default request timeout """
 
-XML_TEXT_NODES = (xml.dom.minidom.Node.TEXT_NODE, xml.dom.minidom.Node.CDATA_SECTION_NODE)
+XML_TEXT_NODES = (
+    xml.dom.minidom.Node.TEXT_NODE,
+    xml.dom.minidom.Node.CDATA_SECTION_NODE
+)
 """ The xml text nodes """
 
 class ServiceBarganiaRss:
