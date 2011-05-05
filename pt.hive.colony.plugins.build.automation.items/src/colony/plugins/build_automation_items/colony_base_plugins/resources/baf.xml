@@ -230,6 +230,10 @@
             <version>.*</version>
         </module>
         <module>
+            <id>pt.hive.colony.plugins.system.registry</id>
+            <version>.*</version>
+        </module>
+        <module>
             <id>pt.hive.colony.plugins.system.updater</id>
             <version>.*</version>
         </module>
@@ -964,6 +968,20 @@
                                 </deb>
                                 <zip>
                                     <target>colony/deploy/pt.hive.colony.plugins.system.installer.colony_packing_installer_1.0.0.cpx</target>
+                                </zip>
+                            </parameters>
+                        </file>
+                        <file>
+                            <path>${build_automation.build.plugins_directory}/pt.hive.colony.plugins.system.registry_1.0.0.cpx</path>
+                            <owner>0</owner>
+                            <group>0</group>
+                            <mode>755</mode>
+                            <parameters>
+                                <deb>
+                                    <target>usr/lib/colony/deploy/pt.hive.colony.plugins.system.registry_1.0.0.cpx</target>
+                                </deb>
+                                <zip>
+                                    <target>colony/deploy/pt.hive.colony.plugins.system.registry_1.0.0.cpx</target>
                                 </zip>
                             </parameters>
                         </file>
