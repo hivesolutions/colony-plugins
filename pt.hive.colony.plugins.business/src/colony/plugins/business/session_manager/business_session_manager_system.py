@@ -218,7 +218,10 @@ class BusinessSessionManager:
         business_logic_classes_map = business_logic_classes_map == None and self.loaded_business_logic_classes_map or business_logic_classes_map
 
         # returns a tuple containing the business logic values
-        return (business_logic_classes_list, business_logic_classes_map)
+        return (
+            business_logic_classes_list,
+            business_logic_classes_map
+        )
 
 class SessionManager:
     """
