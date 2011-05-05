@@ -132,7 +132,9 @@ class HttpLogAnalyzer:
 
     def get_log_file_paths(self, log_file_path):
         # initializes the log file paths
-        log_file_paths = [log_file_path]
+        log_file_paths = [
+            log_file_path
+        ]
 
         # initializes the rotation index
         rotation_index = 1
