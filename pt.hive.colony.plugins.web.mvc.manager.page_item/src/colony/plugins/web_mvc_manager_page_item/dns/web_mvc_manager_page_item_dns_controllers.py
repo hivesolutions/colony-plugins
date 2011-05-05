@@ -307,7 +307,10 @@ class WebMvcManagerPageItemDnsController:
         return filtered_dns_zones
 
     def _get_dns_zones(self):
-        return [DnsZone(), DnsZone()]
+        return [
+            DnsZone(),
+            DnsZone()
+        ]
 
 class DnsZone:
     """

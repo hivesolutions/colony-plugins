@@ -1,4 +1,4 @@
-#!/usr/bin/python
+    #!/usr/bin/python
 # -*- coding: Cp1252 -*-
 
 # Hive Colony Framework
@@ -48,10 +48,12 @@ TEMPLATES_PATH = WEB_MVC_PANEL_ITEM_DID_YOU_KNOW_RESOURCES_PATH + "/templates"
 RANDOM_MESSAGE = False
 """ The random message flag """
 
-DID_YOU_KNOW_LIST = ("Chuck Norris once shot down a German fighter plane with his finger, by yelling, \"Bang!\"",
-                     "A Handicapped parking sign does not signify that this spot is for handicapped people. It is actually in fact a warning, that the spot belongs to Chuck Norris and that you will be handicapped if you park there.",
-                     "Everybody loves Raymond. Except Chuck Norris.",
-                     "Chuck Norris once round-house kicked a salesman. Over the phone.")
+DID_YOU_KNOW_LIST = (
+    "Chuck Norris once shot down a German fighter plane with his finger, by yelling, \"Bang!\"",
+    "A Handicapped parking sign does not signify that this spot is for handicapped people. It is actually in fact a warning, that the spot belongs to Chuck Norris and that you will be handicapped if you park there.",
+    "Everybody loves Raymond. Except Chuck Norris.",
+    "Chuck Norris once round-house kicked a salesman. Over the phone."
+)
 """ The list of did you know sentences """
 
 class WebMvcPanelItemDidYouKnow:
