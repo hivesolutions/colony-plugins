@@ -1074,7 +1074,16 @@ class HttpClient:
         # returns the tuple containing the protocol, the username,
         # the password, the host, the port, the path, the base url
         # and the options map
-        return (protocol, username, password, host, port, path, base_url, options_map)
+        return (
+            protocol,
+            username,
+            password,
+            host,
+            port,
+            path,
+            base_url,
+            options_map
+        )
 
     def _process_redirection(self, request, response):
         """

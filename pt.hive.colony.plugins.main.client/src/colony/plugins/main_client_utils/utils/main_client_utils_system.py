@@ -318,7 +318,10 @@ class AbstractClient:
         host, port, socket_name, socket_parameters = connection_tuple
 
         # creates the address tuple
-        address = (host, port)
+        address = (
+            host,
+            port
+        )
 
         # creates a socket for the client with
         # the given socket name
@@ -706,7 +709,11 @@ class ClientConnection:
         @return: A tuple representing the connection.
         """
 
-        return (self._connection_socket, self.connection_address, self.connection_port)
+        return (
+            self._connection_socket,
+            self.connection_address,
+            self.connection_port
+        )
 
     def get_connection_socket(self):
         """

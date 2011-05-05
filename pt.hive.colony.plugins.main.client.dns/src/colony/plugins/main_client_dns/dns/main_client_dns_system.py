@@ -581,9 +581,16 @@ class DnsResponse:
         query_class = CLASSES_REVERSE_MAP[query_class_integer]
 
         # creates the query tuple with the name, type and class of the query
-        query = (query_name, query_type, query_class)
+        query = (
+            query_name,
+            query_type,
+            query_class
+        )
 
-        return (query, current_index)
+        return (
+            query,
+            current_index
+        )
 
     def _get_answer(self, data, current_index):
         # retrieves the name for the data and current index
@@ -610,9 +617,18 @@ class DnsResponse:
 
         # creates the answer tuple with the name, type, class,
         # time to live and data of the answer
-        answer = (answer_name, answer_type, answer_class, answer_time_to_live, answer_data)
+        answer = (
+            answer_name,
+            answer_type,
+            answer_class,
+            answer_time_to_live,
+            answer_data
+        )
 
-        return (answer, current_index)
+        return (
+            answer,
+            current_index
+        )
 
     def _process_answer_data(self, data, current_index, answer_type_integer, answer_data_length):
         """
@@ -646,7 +662,10 @@ class DnsResponse:
             answer_data_name, _current_index = self._get_name_joined(data, current_index + 2)
 
             # sets the answer data tuple
-            answer_data = (answer_data_preference, answer_data_name)
+            answer_data = (
+                answer_data_preference,
+                answer_data_name
+            )
         else:
             # in case the is ipv4 (four bytes)
             if answer_data_length == 4:
@@ -687,7 +706,10 @@ class DnsResponse:
         # joins the name with dots
         name_joined = ".".join(name_list)
 
-        return (name_joined, current_index)
+        return (
+            name_joined,
+            current_index
+        )
 
     def _get_name(self, data, current_index):
         """
@@ -736,7 +758,10 @@ class DnsResponse:
                 # extends the current name items with the previous (cached) name items
                 name_items.extend(extra_name_items)
 
-                return (name_items, current_index)
+                return (
+                    name_items,
+                    current_index
+                )
             else:
                 # retrieves the partial name from the data
                 partial_name = data[current_index + 1:current_index + partial_name_length + 1]
@@ -752,4 +777,7 @@ class DnsResponse:
         current_index += 1
 
         # returns the name items list
-        return (name_items, current_index)
+        return (
+            name_items,
+            current_index
+        )

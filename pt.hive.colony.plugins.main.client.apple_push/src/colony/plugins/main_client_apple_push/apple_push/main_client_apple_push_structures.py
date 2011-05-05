@@ -297,7 +297,10 @@ class FeedbackNotificationResponse(NotificationResponse):
             device_token = binascii.hexlify(device_token)
 
             # sets the current value in the feedback tuple
-            feedback_tuple = (timestamp, device_token)
+            feedback_tuple = (
+                timestamp,
+                device_token
+            )
 
             # adds the feedback tuple to the feedback tuples
             self.feedback_tuples.append(feedback_tuple)
