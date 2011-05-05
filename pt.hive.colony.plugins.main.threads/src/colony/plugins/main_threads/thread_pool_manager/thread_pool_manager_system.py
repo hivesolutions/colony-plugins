@@ -189,7 +189,10 @@ class ThreadPoolManager:
             thread_pool_thread_string = "%d / %d / %d / %d" % (thread_pool_busy_threads, thread_pool_current_threads, thread_pool_number_threads, thread_pool_maximum_number_threads)
 
             # sets the instance value for the thread pool manager information
-            thread_pool_manager_information[thread_pool_name] = (thread_pool_thread_string, thread_pool_scheduling_algorithm_name)
+            thread_pool_manager_information[thread_pool_name] = (
+                thread_pool_thread_string,
+                thread_pool_scheduling_algorithm_name
+            )
 
         # defines the thread pool manager item columns
         thread_pool_manager_item_columns = [
