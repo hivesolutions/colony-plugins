@@ -41,7 +41,9 @@ import os
 
 import downloader_exceptions
 
-VALID_STATUS_CODES = (200,)
+VALID_STATUS_CODES = (
+    200,
+)
 """ The valid status codes """
 
 class Downloader:

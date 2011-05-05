@@ -117,7 +117,10 @@ escape_char_to_char = {
 }
 
 string_escape_re = re.compile(r"[\x00-\x19\\\"/\b\f\n\r\t]")
-digits_list = ("0", "1", "2", "3", "4", "5", "6", "7", "8", "9")
+
+digits_list = (
+    "0", "1", "2", "3", "4", "5", "6", "7", "8", "9"
+)
 
 def escape_character(match):
     """
@@ -817,7 +820,10 @@ def loads(data):
                 # sets the skip flag
                 skip = True
             elif character in digits_list or character == "-":
-                digits = [character]
+                digits = [
+                    character
+                ]
+
                 character = characters.next()
                 num_conv = int
                 try:

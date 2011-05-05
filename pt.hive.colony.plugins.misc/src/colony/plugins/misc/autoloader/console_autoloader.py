@@ -55,7 +55,9 @@ class ConsoleAutoloader:
     autoloader_plugin = None
     """ The autoloader plugin """
 
-    commands = ["config_autoloader"]
+    commands = [
+        "config_autoloader"
+    ]
     """ The commands list """
 
     def __init__(self, autoloader_plugin):

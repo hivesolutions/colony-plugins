@@ -194,7 +194,10 @@ class Bonjour:
         # retrieves the socket and loops
         file_descriptor = bonjour.DNSServiceRefSockFD(service_reference)
 
-        return (file_descriptor, service_reference)
+        return (
+            file_descriptor,
+            service_reference
+        )
 
     def browse_service_bonjour_callback(self, service_reference, flags, interface_index, error_code, service_name, registration_type, domain, user_data):
         """
@@ -221,10 +224,18 @@ class Bonjour:
         # in case it's a notification of type service removed
         if flags & bonjour.kDNSServiceFlagsAdd:
             # the user data for zeroconf resolution
-            user_data = (ADDED_VALUE, registration_type, domain)
+            user_data = (
+                ADDED_VALUE,
+                registration_type,
+                domain
+            )
         else:
             # the user data for zeroconf resolution
-            user_data = (REMOVED_VALUE, registration_type, domain)
+            user_data = (
+                REMOVED_VALUE,
+                registration_type,
+                domain
+            )
 
         # the service flags for zeroconf resolution
         flags = 0
@@ -279,7 +290,11 @@ class Bonjour:
         host_striped = host.strip(".")
 
         # creates the service value
-        service_value = (service_full_name, host_striped, port)
+        service_value = (
+            service_full_name,
+            host_striped,
+            port
+        )
 
         if operation_type == ADDED_VALUE:
             # adds the service value
@@ -301,7 +316,10 @@ class Bonjour:
         """
 
         # creates the browsing service
-        browsing_service = (registration_type, domain)
+        browsing_service = (
+            registration_type,
+            domain
+        )
 
         # retrieves the service full name, the host and the port
         service_full_name, host, port = service_value
@@ -352,7 +370,10 @@ class Bonjour:
         """
 
         # creates the browsing service
-        browsing_service = (registration_type, domain)
+        browsing_service = (
+            registration_type,
+            domain
+        )
 
         # retrieves the service full name, the host and the port
         service_full_name, host, port = service_value
@@ -400,7 +421,10 @@ class Bonjour:
         registration_type = self.convert_type(registration_type)
 
         # creates the browsing service tuple
-        browsing_service = (registration_type, domain)
+        browsing_service = (
+            registration_type,
+            domain
+        )
 
         # in case the browsing service does not exists in the list of browsing services
         if not browsing_service in self.browsing_services:
@@ -430,7 +454,10 @@ class Bonjour:
         registration_type = self.convert_type(registration_type)
 
         # creates the browsing service tuple
-        browsing_service = (registration_type, domain)
+        browsing_service = (
+            registration_type,
+            domain
+        )
 
         # in case the browsing service exists in the list of browsing services
         if browsing_service in self.browsing_services:
@@ -735,7 +762,11 @@ class Bonjour:
         host_striped = host.strip(".")
 
         # creates the value
-        value = (service_full_name, host_striped, port)
+        value = (
+            service_full_name,
+            host_striped,
+            port
+        )
 
         # in case the value is not in values list
         if not value in values_list:
