@@ -523,7 +523,17 @@ class AbstractService:
         service_handler_class = self._get_service_handler_class()
 
         # creates the service connection handler arguments
-        service_connection_handler_arguments = (self, self.service_plugin, self.service_configuration, self.connection_timeout, self.request_timeout, self.response_timeout, self.chunk_size, self.service_handling_task_class, self.extra_parameters)
+        service_connection_handler_arguments = (
+            self,
+            self.service_plugin,
+            self.service_configuration,
+            self.connection_timeout,
+            self.request_timeout,
+            self.response_timeout,
+            self.chunk_size,
+            self.service_handling_task_class,
+            self.extra_parameters
+        )
 
         # creates the service client pool
         self.service_client_pool = work_pool_manager_plugin.create_new_work_pool(pool_name, pool_description, service_handler_class, service_connection_handler_arguments, number_threads, scheduling_algorithm, maximum_number_threads, maximum_number_works_thread, work_scheduling_algorithm)
@@ -761,7 +771,11 @@ class AbstractService:
         """
 
         # creates the work reference tuple
-        work_reference = (service_connection, service_address, port)
+        work_reference = (
+            service_connection,
+            service_address,
+            port
+        )
 
         # inserts the work into the service client pool
         self.service_client_pool.insert_work(work_reference)
@@ -784,7 +798,12 @@ class AbstractService:
         """
 
         # creates the work reference tuple
-        work_reference = (service_data, service_socket, service_address, port)
+        work_reference = (
+            service_data,
+            service_socket,
+            service_address,
+            port
+        )
 
         # inserts the work into the service client pool
         self.service_client_pool.insert_work(work_reference)
@@ -1531,7 +1550,10 @@ class AbstractServiceConnectionlessHandler:
         service_connection = ServiceConnectionless(self.service_plugin, self, connection_socket, connection_address, connection_port, connection_data, self.request_timeout, self.response_timeout, self.chunk_size)
 
         # creates the connection tuple
-        connection_tuple = (connection_socket, connection_address)
+        connection_tuple = (
+            connection_socket,
+            connection_address
+        )
 
         # adds the service connection to the service connections list
         self.service_connections_list.append(service_connection)
@@ -1560,7 +1582,10 @@ class AbstractServiceConnectionlessHandler:
         connection_address = service_connection.get_connection_address()
 
         # creates the connection tuple
-        connection_tuple = (connection_socket, connection_address)
+        connection_tuple = (
+            connection_socket,
+            connection_address
+        )
 
         # handles the closed service connection
         self.client_service.handle_closed(service_connection)
@@ -1584,7 +1609,10 @@ class AbstractServiceConnectionlessHandler:
         """
 
         # creates the connection tuple
-        connection_tuple = (connection_socket, connection_address)
+        connection_tuple = (
+            connection_socket,
+            connection_address
+        )
 
         # retrieves the service connection from the service connections map
         service_connection = self.service_connections_map[connection_tuple]
@@ -1900,7 +1928,11 @@ class ServiceConnection:
         @return: A tuple representing the connection.
         """
 
-        return (self._connection_socket, self.connection_address, self.connection_port)
+        return (
+            self._connection_socket,
+            self.connection_address,
+            self.connection_port
+        )
 
     def get_connection_socket(self):
         """
@@ -2192,4 +2224,9 @@ class ServiceConnectionless(ServiceConnection):
         @return: A tuple representing the connection.
         """
 
-        return (self.connection_data, self.connection_socket, self.connection_address, self.connection_port)
+        return (
+            self.connection_data,
+            self.connection_socket,
+            self.connection_address,
+            self.connection_port
+        )
