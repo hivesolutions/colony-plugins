@@ -47,10 +47,10 @@ function messageProcessor(data) {
 
             jQuery("#notification-area-contents").notificationwindow("default",
                     {
-                        "title" : "<span class=\"red\">Plugin Unloaded</span>",
-                        "subTitle" : "",
-                        "message" : element,
-                        "timeout" : 5000
+                        title : "<span class=\"red\">Plugin Unloaded</span>",
+                        subTitle : "",
+                        message : element,
+                        timeout : 5000
                     });
         });
 
@@ -66,10 +66,10 @@ function messageProcessor(data) {
 
             jQuery("#notification-area-contents").notificationwindow("default",
                     {
-                        "title" : "<span class=\"green\">Plugin Loaded</span>",
-                        "subTitle" : "",
-                        "message" : element,
-                        "timeout" : 5000
+                        title : "<span class=\"green\">Plugin Loaded</span>",
+                        subTitle : "",
+                        message : element,
+                        timeout : 5000
                     });
         });
     } else if (messageId == "web_mvc_manager/plugin/install") {
@@ -83,10 +83,10 @@ function messageProcessor(data) {
         jQuery(uninstalledPlugins).each(function(index, element) {
             jQuery("#notification-area-contents").notificationwindow("default",
                     {
-                        "title" : "<span class=\"red\">Plugin Uninstalled</span>",
-                        "subTitle" : "",
-                        "message" : element,
-                        "timeout" : 5000
+                        title : "<span class=\"red\">Plugin Uninstalled</span>",
+                        subTitle : "",
+                        message : element,
+                        timeout : 5000
                     });
         });
 
@@ -97,10 +97,10 @@ function messageProcessor(data) {
         jQuery(installedPlugins).each(function(index, element) {
             jQuery("#notification-area-contents").notificationwindow("default",
                     {
-                        "title" : "<span class=\"green\">Plugin Installed</span>",
-                        "subTitle" : "",
-                        "message" : element,
-                        "timeout" : 5000
+                        title : "<span class=\"green\">Plugin Installed</span>",
+                        subTitle : "",
+                        message : element,
+                        timeout : 5000
                     });
         });
     } else if (messageId == "web_mvc_manager/header/reload") {
@@ -119,6 +119,8 @@ function messageProcessor(data) {
 }
 
 jQuery(document).ready(function() {
+    // register the communication for the communig+cation
+    // url given
     jQuery("body").communication("default", {
                 url : "communication",
                 timeout : 500,
@@ -131,11 +133,13 @@ jQuery(document).ready(function() {
                 event.stopPropagation();
                 event.preventDefault();
 
+                // creates a new message window to notify the
+                // user about the dropping capabilities
                 jQuery("body").messagewindow("default", {
-                            "title" : "Install new plugin",
-                            "subTitle" : "",
-                            "message" : "Drop the file to install the new plugin.",
-                            "icon" : "resources/images/icon/icon-plugin-install.png"
+                            title : "Install new plugin",
+                            subTitle : "",
+                            message : "Drop the file to install the new plugin.",
+                            icon : "resources/images/icon/icon-plugin-install.png"
                         });
             });
 
@@ -223,10 +227,10 @@ jQuery(document).ready(function() {
                     if (xmlHttpRequest.status == 200) {
                         jQuery("#notification-area-contents").notificationwindow(
                                 "default", {
-                                    "title" : "<span class=\"green\">Plugin Installed</span>",
-                                    "subTitle" : "",
-                                    "message" : "Plugin installed successfully",
-                                    "timeout" : 5000
+                                    title : "<span class=\"green\">Plugin Installed</span>",
+                                    subTitle : "",
+                                    message : "Plugin installed successfully",
+                                    timeout : 5000
                                 });
                     } else {
                         // parses the response text to get the response
@@ -240,29 +244,29 @@ jQuery(document).ready(function() {
 
                         // shows a dialob window in the body
                         jQuery("body").dialogwindow("default", {
-                            "title" : "Warning",
-                            "subTitle" : "Problem Installing Plugin",
-                            "message" : "There was a problem installing plugin: "
+                            title : "Warning",
+                            subTitle : "Problem Installing Plugin",
+                            message : "There was a problem installing plugin: "
                                     + exceptionMessage,
-                            "buttonMessage" : "Do you want to continue ?"
+                            buttonMessage : "Do you want to continue ?"
                         });
                     }
                 }, 500);
             });
 
             // switches over the file extension
-            switch(fileExtension) {
+            switch (fileExtension) {
                 // in case it's a bundle extension
-                case "cbx":
-                     // sets the bundles json url
+                case "cbx" :
+                    // sets the bundles json url
                     var url = "bundles.json";
 
                     // breaks the switch
                     break;
 
                 // in case it's a plugin extension
-                case "cpx":
-                     // sets the plugins json url
+                case "cpx" :
+                    // sets the plugins json url
                     var url = "plugins.json";
 
                     // breaks the switch
@@ -282,10 +286,10 @@ jQuery(document).ready(function() {
             // creates a message windows with for the progress of
             // the installation
             jQuery("body").messagewindow("default", {
-                        "title" : "Installing new plugin",
-                        "subTitle" : "The systems is installing the new plugin",
-                        "message" : "<div class=\"progress-indicator\"></div>",
-                        "icon" : "resources/images/icon/icon-plugin-install.png"
+                        title : "Installing new plugin",
+                        subTitle : "The systems is installing the new plugin",
+                        message : "<div class=\"progress-indicator\"></div>",
+                        icon : "resources/images/icon/icon-plugin-install.png"
                     });
 
             // starts the progress indicator
@@ -324,8 +328,12 @@ jQuery(document).ready(function() {
  * Loads the initial contents, modifing the internal DOM structure if necessary.
  */
 function contentsLoad() {
-    // sets the page in the body
-    jQuery("body").page();
+    // sets the page in the body and configures it
+    // to allow history load for the given history handler
+    jQuery("body").page("default", {
+                historyLoad : true,
+                historyHandler : changeContents
+            });
 
     // sets the main container
     jQuery("#main-container").maincontainer();
@@ -335,26 +343,18 @@ function contentsLoad() {
 }
 
 /**
- * Loads the page for the given hahs value.
- *
- * @param {String}
- *            hash The hash value to be reloaded.
- */
-function pageLoad(hash) {
-    changeContents(hash);
-}
-
-/**
  * Changes the contents of the main container.
  *
  * @param {String}
  *            target The target to be used in the update of the main container.
  */
 function changeContents(target) {
+    // changes the menu to the new contents from the target
     jQuery("#main-container").maincontainer("changeMenu", {
                 target : target
             });
 
+    // changes the main container to the new contents from the target
     jQuery("#main-container").maincontainer("change", {
                 target : target
             });
