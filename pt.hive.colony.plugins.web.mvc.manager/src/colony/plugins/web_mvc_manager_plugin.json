@@ -43,6 +43,8 @@
             "web_mvc_manager/manager/resources/extras/images/icon/icon-plugin-install.png",
             "web_mvc_manager/manager/resources/extras/images/logo/logo-omni.png",
             "web_mvc_manager/manager/resources/extras/js/main.js",
+            "web_mvc_manager/manager/resources/extras/js/plugins.js",
+            "web_mvc_manager/manager/resources/extras/js/templates.js",
             "web_mvc_manager/manager/resources/extras/templates/js/capability/capability_list_contents.js",
             "web_mvc_manager/manager/resources/extras/templates/js/plugin/plugin_list_contents.js",
             "web_mvc_manager/manager/resources/extras/templates/js/repository/repository_edit_contents.js",
