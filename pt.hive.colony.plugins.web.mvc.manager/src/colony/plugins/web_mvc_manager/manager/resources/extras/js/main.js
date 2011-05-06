@@ -23,6 +23,9 @@
 // __copyright__ = Copyright (c) 2008 Hive Solutions Lda.
 // __license__   = GNU General Public License (GPL), Version 3
 
+// the valid status code
+VALID_STATUS_CODE = 200
+
 function messageProcessor(data) {
     // parses the data retrieving the json
     var jsonData = jQuery.parseJSON(data);
@@ -211,7 +214,7 @@ function fileInstallLoad() {
                 _body.messagewindow("close");
 
                 // in case the response status is valid
-                if (responseStatus == 200) {
+                if (responseStatus == VALID_STATUS_CODE) {
                     jQuery("#notification-area-contents").notificationwindow(
                             "default", INSTALLED_NEW_PLUGIN_WINDOW);
                 }
