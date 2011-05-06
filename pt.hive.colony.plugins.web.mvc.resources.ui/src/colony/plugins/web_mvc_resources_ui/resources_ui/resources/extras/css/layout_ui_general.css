@@ -145,7 +145,6 @@ h2 {
 }
 
 #notification-area-contents {
-    width: 1000px;
     margin: 0px auto 0px auto;
 }
 
@@ -157,7 +156,7 @@ h2 {
 #header {
     background: transparent url(../images/general/header/header-background.png);
     height: 74px;
-    width: 1000px;
+    width: 960px;
     margin: 0px auto 0px auto;
 }
 
@@ -365,7 +364,7 @@ h2 {
 
 /* Main container */
 #main-container {
-    width: 1000px;
+    width: 960px;
     margin: 10px auto 0px auto;
 }
 
@@ -564,7 +563,7 @@ h2 {
 /* Footer */
 #footer {
     height: 30px;
-    width: 1000px;
+    width: 960px;
     margin: 20px auto 0px auto;
     color: #86b4d4;
     text-align: center;

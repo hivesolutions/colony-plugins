@@ -178,8 +178,8 @@
         // the default values for the menu
         var defaults = {
             minimumContentsHeight : 600,
-            smallWidth : 724,
-            largeWidth : 924
+            smallWidth : 684,
+            largeWidth : 884
         };
 
         // sets the default method value
@@ -253,7 +253,7 @@
          * @param {Element}
          *            matchedObject The matched object.
          * @param {Map}
-         *            The options of the plugin instance.
+         *            options The options of the plugin instance.
          */
         var _toggleSidePanel = function(matchedObject, options) {
             // retrieves the left column
@@ -290,7 +290,7 @@
          * @param {Element}
          *            matchedObject The matched object.
          * @param {Map}
-         *            The options of the plugin instance.
+         *            options The options of the plugin instance.
          */
         var _reloadContents = function(matchedObject, options) {
             // retrieves the base path to be used
@@ -299,6 +299,9 @@
 
             // starts the overlay component
             jQuery("#overlay").overlay();
+
+            // starts the notification area
+            jQuery("#notification-area").notificationarea();
 
             // creates the text area components
             jQuery("input, textarea", matchedObject).textarea();
@@ -419,7 +422,7 @@
          * @param {Element}
          *            matchedObject The matched object.
          * @param {Map}
-         *            The options of the plugin instance.
+         *            options The options of the plugin instance.
          */
         var _registerForms = function(matchedObject, options) {
             jQuery("form", matchedObject).bind("submit_start", function(event) {
@@ -465,11 +468,14 @@
          * @param {Element}
          *            matchedObject The matched object.
          * @param {Map}
-         *            The options of the plugin instance.
+         *            options The options of the plugin instance.
          */
         var _updateContentsSize = function(matchedObject, options) {
             // retrieves the contents
             var contents = jQuery("#contents", matchedObject);
+
+            // sets the content size as set
+            contents.data("sizeSet", true)
 
             // waits until the contents is ready
             contents.ready(function() {
@@ -487,7 +493,7 @@
          * @param {Element}
          *            matchedObject The matched object.
          * @param {Map}
-         *            The options of the plugin instance.
+         *            options The options of the plugin instance.
          */
         var _updateContentsHeight = function(matchedObject, options) {
             // retrieves the minimum contents height
@@ -529,7 +535,7 @@
          * @param {Element}
          *            matchedObject The matched object.
          * @param {Map}
-         *            The options of the plugin instance.
+         *            options The options of the plugin instance.
          */
         var _updateContentsWidth = function(matchedObject, options) {
             // retrieves the large width value
@@ -549,8 +555,12 @@
 
             // in case the menu is visible
             if (visible) {
+                // updates the width to large
                 contents.width(smallWidth);
-            } else {
+            }
+            // otherwise the menu is not visible
+            else {
+                // updates the width to large
                 contents.width(largeWidth);
             }
         };
@@ -577,6 +587,9 @@
 
             // retrieves the contents
             var contents = jQuery("#contents", matchedObject);
+
+            // retrieves the content size set value
+            var contentsSizeSet = contents.data("sizeSet");
 
             // retrieves the contents position
             var contentsPosition = contents.position();
@@ -632,9 +645,15 @@
                 textMessage : "Loading"
             };
 
-            // shows both the filter and the loading message
-            jQuery("#filter").mainfilter("show", filterOptions);
-            jQuery("#loading-message").loadingmessage("show", messageOptions);
+            // in case the contents size is set, the filter
+            // and the loading message may be shown (it's possible
+            // to measure the width of the contents)
+            if (contentsSizeSet) {
+                // shows both the filter and the loading message
+                jQuery("#filter").mainfilter("show", filterOptions);
+                jQuery("#loading-message").loadingmessage("show",
+                        messageOptions);
+            }
 
             // retrieves the base path
             var basePath = _getBasePath();
@@ -655,11 +674,13 @@
             jQuery.ajax({
                 url : fullTarget,
                 success : function(data) {
+                    // creates the success callback function
                     var successCallback = function() {
                         // updates the contents page with the retrieved data
                         __updateContentsPage(matchedObject, options, data);
                     };
 
+                    // creates the filter options
                     var filterOptions = {
                         callback : successCallback
                     };
@@ -1090,42 +1111,49 @@
         // switches over the method
         switch (method) {
             case "reload" :
+                // reloads the contents
                 _reloadContents(matchedObject, options);
 
                 // breaks the switch
                 break;
 
             case "update" :
+                // updats the contents size
                 _updateContentsSize(matchedObject, options);
 
                 // breaks the switch
                 break;
 
             case "hideLoading" :
+                // hides the menu loading
                 _hideMenuLoading(matchedObject, options);
 
                 // breaks the switch
                 break;
 
             case "changeAll" :
+                // changes all
                 _changeAll(matchedObject, options);
 
                 // breaks the switch
                 break;
 
             case "change" :
+                // changes the contents
                 _changeContents(matchedObject, options);
 
                 // breaks the switch
                 break;
 
             case "changeMenu" :
+                // changes the content menu
                 _changeContentsMenu(matchedObject, options);
 
                 // breaks the switch
                 break;
 
             case "loadMetadata" :
+                // loads the meta data
                 __loadMetaData(matchedObject, options);
 
                 // breaks the switch

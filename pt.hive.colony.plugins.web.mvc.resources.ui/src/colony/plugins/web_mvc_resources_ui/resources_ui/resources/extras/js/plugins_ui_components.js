@@ -910,7 +910,8 @@
                         var dropbox = jQuery(this).parents(".dropbox");
 
                         // retrieves the dropbox contents
-                        var dropboxContents = jQuery(".dropbox-contents", dropbox);
+                        var dropboxContents = jQuery(".dropbox-contents",
+                                dropbox);
 
                         // retrieves the current dropbox contents height
                         var dropboxContentsHeight = dropboxContents.height();
@@ -1282,6 +1283,74 @@
 })(jQuery);
 
 (function($) {
+    jQuery.fn.notificationarea = function(method, options) {
+        // the default values for the plugin
+        var defaults = {};
+
+        // sets the default method value
+        var method = method ? method : "default";
+
+        // sets the jquery matched object
+        var matchedObject = this;
+
+        /**
+         * Initializer of the plugin, runs the necessary functions to initialize
+         * the structures.
+         */
+        var initialize = function() {
+            _appendHtml();
+            _registerHandlers();
+        };
+
+        /**
+         * Creates the necessary html for the component.
+         */
+        var _appendHtml = function() {
+        };
+
+        /**
+         * Registers the event handlers for the created objects.
+         */
+        var _registerHandlers = function() {
+            // retrieves the window
+            var _window = jQuery(window);
+
+            // registers for the scroll event
+            _window.scroll(function(event) {
+                        // scrolls the notification area
+                        _scrollNotificationArea(matchedObject, options);
+                    });
+        };
+
+        /**
+         * Scrolls the notification area according to the current window
+         * position.
+         *
+         * @param {Element}
+         *            matchedObject The mathched object.
+         * @param {Map}
+         *            options The options of the plugin instance.
+         */
+        var _scrollNotificationArea = function(matchedObject, options) {
+            // retrieves the window
+            var _window = jQuery(window);
+
+            // retrieves the window scroll top
+            var windowScrollTop = _window.scrollTop();
+
+            // sets the notification area top position
+            matchedObject.css("top", windowScrollTop);
+        };
+
+        // initializes the plugin
+        initialize();
+
+        // returns the object
+        return this;
+    };
+})(jQuery);
+
+(function($) {
     jQuery.fn.notificationwindow = function(method, options) {
         // the default values for the menu
         var defaults = {};
@@ -1386,7 +1455,8 @@
          */
         var _registerHandlers = function() {
             // retrieves the notification window
-            var notificationMessage = jQuery(".notification-message", matchedObject);
+            var notificationMessage = jQuery(".notification-message",
+                    matchedObject);
 
             jQuery(".button-green", notificationMessage).click(function(event) {
                 // retrieves the notification message
@@ -1872,7 +1942,8 @@
                     percentage + "%");
 
             // sets the percentage value in the indicator
-            jQuery(".progress-indicator-value", matchedObject).html(percentage + "%");
+            jQuery(".progress-indicator-value", matchedObject).html(percentage
+                    + "%");
 
             // in case the percentage is bigger than the minimum
             if (percentage > 55) {
@@ -2141,7 +2212,8 @@
             }
 
             // retrieves the number of records retrieves
-            var numberRecords = parseInt(jQuery("#number-records", tableMetadata).html());
+            var numberRecords = parseInt(jQuery("#number-records",
+                    tableMetadata).html());
             var totalNumberRecords = parseInt(jQuery("#total-number-records",
                     tableMetadata).html());
 
