@@ -1,5 +1,5 @@
 <div id="overlay"></div>
-<div id="notification-area" class="right">
+<div id="notification-area">
     <div id="notification-area-contents"></div>
 </div>
 <div id="header">
