@@ -38,6 +38,9 @@ function messageProcessor(data) {
         // retrieves the unloaded plugins
         var unloadedPlugins = status["unloaded"];
 
+        // retrieves the notification area contents
+        var notificationAreaContents = jQuery("#notification-area-contents");
+
         // iterates over all the unloaded plugins
         jQuery(unloadedPlugins).each(function(index, element) {
             var switchButtonElement = jQuery("#plugin-table .switch-button[plugin="
@@ -45,13 +48,12 @@ function messageProcessor(data) {
             switchButtonElement.removeClass("on");
             switchButtonElement.addClass("off");
 
-            jQuery("#notification-area-contents").notificationwindow("default",
-                    {
-                        title : "<span class=\"red\">Plugin Unloaded</span>",
-                        subTitle : "",
-                        message : element,
-                        timeout : 5000
-                    });
+            // sets the message in the plugin unloaded window
+            PLUGIN_UNLOADED_WINDOW["message"] = element;
+
+            // shows the notification window
+            notificationAreaContents.notificationwindow("default",
+                    PLUGIN_UNLOADED_WINDOW);
         });
 
         // retrieves the loaded plugins
@@ -64,13 +66,12 @@ function messageProcessor(data) {
             switchButtonElement.removeClass("off");
             switchButtonElement.addClass("on");
 
-            jQuery("#notification-area-contents").notificationwindow("default",
-                    {
-                        title : "<span class=\"green\">Plugin Loaded</span>",
-                        subTitle : "",
-                        message : element,
-                        timeout : 5000
-                    });
+            // sets the message in the plugin loaded window
+            PLUGIN_LOADED_WINDOW["message"] = element;
+
+            // shows the notification window
+            notificationAreaContents.notificationwindow("default",
+                    PLUGIN_LOADED_WINDOW);
         });
     } else if (messageId == "web_mvc_manager/plugin/install") {
         // parses the data (json) retrieving the status
@@ -79,15 +80,17 @@ function messageProcessor(data) {
         // retrieves the uninstalled plugins
         var uninstalledPlugins = status["uninstalled"];
 
+        // retrieves the notification area contents
+        var notificationAreaContents = jQuery("#notification-area-contents");
+
         // iterates over all the uninstalled plugins
         jQuery(uninstalledPlugins).each(function(index, element) {
-            jQuery("#notification-area-contents").notificationwindow("default",
-                    {
-                        title : "<span class=\"red\">Plugin Uninstalled</span>",
-                        subTitle : "",
-                        message : element,
-                        timeout : 5000
-                    });
+            // sets the message in the plugin uninstalled window
+            PLUGIN_UNINSTALLED_WINDOW["message"] = element;
+
+            // shows the notification window
+            notificationAreaContents.notificationwindow("default",
+                    PLUGIN_UNINSTALLED_WINDOW);
         });
 
         // retrieves the installed plugins
@@ -95,13 +98,12 @@ function messageProcessor(data) {
 
         // iterates over all the installed plugins
         jQuery(installedPlugins).each(function(index, element) {
-            jQuery("#notification-area-contents").notificationwindow("default",
-                    {
-                        title : "<span class=\"green\">Plugin Installed</span>",
-                        subTitle : "",
-                        message : element,
-                        timeout : 5000
-                    });
+            // sets the message in the plugin installed window
+            PLUGIN_INSTALLED_WINDOW["message"] = element;
+
+            // shows the notification window
+            notificationAreaContents.notificationwindow("default",
+                    PLUGIN_INSTALLED_WINDOW);
         });
     } else if (messageId == "web_mvc_manager/header/reload") {
         // reloads the header
@@ -206,7 +208,7 @@ function fileInstallLoad() {
                         });
 
                 // closes the message window
-                jQuery("body").messagewindow("close");
+                _body.messagewindow("close");
 
                 // in case the response status is valid
                 if (responseStatus == 200) {
@@ -232,8 +234,7 @@ function fileInstallLoad() {
                     PROBLEM_NEW_PLUGIN_WINDOW["message"] = errorMessage;
 
                     // shows a dialob window in the body
-                    jQuery("body").dialogwindow("default",
-                            PROBLEM_NEW_PLUGIN_WINDOW);
+                    _body.dialogwindow("default", PROBLEM_NEW_PLUGIN_WINDOW);
                 }
             });
 }

@@ -23,6 +23,55 @@
 // __copyright__ = Copyright (c) 2008 Hive Solutions Lda.
 // __license__   = GNU General Public License (GPL), Version 3
 
+/**
+ * The plugin loaded window definition map.
+ *
+ * @type Map
+ */
+PLUGIN_LOADED_WINDOW = {
+    title : "<span class=\"green\">Plugin Loaded</span>",
+    subTitle : "",
+    timeout : 5000
+};
+
+/**
+ * The plugin unloaded window definition map.
+ *
+ * @type Map
+ */
+PLUGIN_UNLOADED_WINDOW = {
+    title : "<span class=\"red\">Plugin Unloaded</span>",
+    subTitle : "",
+    timeout : 5000
+};
+
+/**
+ * The plugin installed window definition map.
+ *
+ * @type Map
+ */
+PLUGIN_INSTALLED_WINDOW = {
+    title : "<span class=\"red\">Plugin Installed</span>",
+    subTitle : "",
+    timeout : 5000
+};
+
+/**
+ * The plugin uninstalled window definition map.
+ *
+ * @type Map
+ */
+PLUGIN_UNINSTALLED_WINDOW = {
+    title : "<span class=\"red\">Plugin Uninstalled</span>",
+    subTitle : "",
+    timeout : 5000
+};
+
+/**
+ * The installing new plugin window definition map.
+ *
+ * @type Map
+ */
 INSTALLING_NEW_PLUGIN_WINDOW = {
     title : "Installing new plugin",
     subTitle : "The systems is installing the new plugin",
@@ -30,6 +79,11 @@ INSTALLING_NEW_PLUGIN_WINDOW = {
     icon : "resources/images/icon/icon-plugin-install.png"
 };
 
+/**
+ * The installed new plugin window definition map.
+ *
+ * @type Map
+ */
 INSTALLED_NEW_PLUGIN_WINDOW = {
     title : "<span class=\"green\">Plugin Installed</span>",
     subTitle : "",
@@ -37,6 +91,11 @@ INSTALLED_NEW_PLUGIN_WINDOW = {
     timeout : 5000
 };
 
+/**
+ * The problem new plugin window definition map.
+ *
+ * @type Map
+ */
 PROBLEM_NEW_PLUGIN_WINDOW = {
     title : "Warning",
     subTitle : "Problem Installing Plugin",
