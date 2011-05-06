@@ -25,6 +25,15 @@
 
 (function($) {
     jQuery.fn.installfile = function(options) {
+        // the post value
+        var POST_VALUE = "post";
+
+        // the content type value
+        var CONTENT_TYPE_VALUE = "Content-Type";
+
+        // the application octet stream value
+        var APPLICATION_OCTET_STREAM_VALUE = "application/octet-stream";
+
         // the default values for the plugin
         var defaults = {};
 
@@ -143,11 +152,11 @@
                     });
 
             // opens the xml http request to the target url
-            xmlHttpRequest.open("post", targetUrl);
+            xmlHttpRequest.open(POST_VALUE, targetUrl);
 
             // sets the content type header
-            xmlHttpRequest.setRequestHeader("Content-Type",
-                    "application/octet-stream")
+            xmlHttpRequest.setRequestHeader(CONTENT_TYPE_VALUE,
+                    APPLICATION_OCTET_STREAM_VALUE)
 
             // sends the file contents (in base64)
             xmlHttpRequest.send(fileContentsBase64);
