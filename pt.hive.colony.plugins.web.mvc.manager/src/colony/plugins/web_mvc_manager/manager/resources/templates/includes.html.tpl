@@ -19,5 +19,6 @@
 <script type="text/javascript" src="${out_none value=base_path /}resources_ui/libs/autocomplete/js/autocomplete.js"></script>
 <script type="text/javascript" src="${out_none value=base_path /}resources_ui/js/plugins_ui_general.js"></script>
 <script type="text/javascript" src="${out_none value=base_path /}resources_ui/js/plugins_ui_components.js"></script>
+<script type="text/javascript" src="${out_none value=base_path /}resources/js/templates.js"></script>
 <script type="text/javascript" src="${out_none value=base_path /}resources/js/plugins.js"></script>
 <script type="text/javascript" src="${out_none value=base_path /}resources/js/main.js"></script>

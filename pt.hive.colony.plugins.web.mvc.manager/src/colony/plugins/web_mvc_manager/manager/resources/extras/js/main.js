@@ -127,183 +127,6 @@ jQuery(document).ready(function() {
                 dataCallbackFunctions : [messageProcessor]
             });
 
-    jQuery("body").bind("dragenter", function(event) {
-                // stops the event propagation and prevents
-                // the default event operation
-                event.stopPropagation();
-                event.preventDefault();
-
-                // creates a new message window to notify the
-                // user about the dropping capabilities
-                jQuery("body").messagewindow("default", {
-                            title : "Install new plugin",
-                            subTitle : "",
-                            message : "Drop the file to install the new plugin.",
-                            icon : "resources/images/icon/icon-plugin-install.png"
-                        });
-            });
-
-    jQuery("#overlay").bind("dragleave", function(event) {
-                // stops the event propagation and prevents
-                // the default event operation
-                event.stopPropagation();
-                event.preventDefault();
-
-                // closes the message window
-                jQuery("body").messagewindow("close");
-            });
-
-    jQuery("#overlay").bind("drop", function(event) {
-        // stops the event propagation and prevents
-        // the default event operation
-        event.stopPropagation();
-        event.preventDefault();
-
-        // closes the message window
-        jQuery("body").messagewindow("close");
-
-        // retrieves the data tranfer and the files
-        // rom the original event
-        var dataTransfer = event.originalEvent.dataTransfer;
-        var files = dataTransfer.files;
-
-        // retrieves the first file
-        var file = files[0];
-
-        // retrieves the file name
-        var fileName = file.name;
-
-        // splits the file name to retrieve
-        // the file extension
-        var fileNameSplit = fileName.split(".");
-        var fileNameSplitLength = fileNameSplit.length;
-        var fileExtension = fileNameSplit[fileNameSplitLength - 1];
-
-        // creates a new file reader, to read
-        // the file contents (ad binary data)
-        var fileReader = new FileReader();
-        fileReader.readAsBinaryString(file);
-
-        fileReader.onload = function() {
-            // retrieves the file contents from
-            // the file reader
-            var fileContents = fileReader.result;
-
-            // encodes the file contents into base64
-            var fileContentsBase64 = Base64.encode(fileContents);
-
-            // creates a new cml http request
-            var xmlHttpRequest = new XMLHttpRequest();
-
-            // retrieves the upload element
-            var uploadElement = jQuery(xmlHttpRequest.upload);
-
-            uploadElement.bind("progress", function(event) {
-                if (event.lengthComputable) {
-                    // calculates the percentage of loading
-                    var percentage = Math.round((event.loaded * 100)
-                            / event.total);
-
-                    // sets the progress indicator percentage
-                    jQuery(".message-message .progress-indicator", "body").progressindicator(
-                            "change", {
-                                percentage : percentage
-                            });
-                }
-            });
-
-            uploadElement.bind("load", function(event) {
-                // sets the progress indicator percentage
-                jQuery(".message-message .progress-indicator", "body").progressindicator(
-                        "change", {
-                            percentage : 100
-                        });
-
-                // sets a timeout to close the message window
-                setTimeout(function() {
-                    // closes the message window
-                    jQuery("body").messagewindow("close");
-
-                    if (xmlHttpRequest.status == 200) {
-                        jQuery("#notification-area-contents").notificationwindow(
-                                "default", {
-                                    title : "<span class=\"green\">Plugin Installed</span>",
-                                    subTitle : "",
-                                    message : "Plugin installed successfully",
-                                    timeout : 5000
-                                });
-                    } else {
-                        // parses the response text to get the response
-                        var response = jQuery.parseJSON(xmlHttpRequest.responseText);
-
-                        // retrieves the exception from the response
-                        var exception = response["exception"];
-
-                        // retrieves the exception message
-                        var exceptionMessage = exception["message"];
-
-                        // shows a dialob window in the body
-                        jQuery("body").dialogwindow("default", {
-                            title : "Warning",
-                            subTitle : "Problem Installing Plugin",
-                            message : "There was a problem installing plugin: "
-                                    + exceptionMessage,
-                            buttonMessage : "Do you want to continue ?"
-                        });
-                    }
-                }, 500);
-            });
-
-            // switches over the file extension
-            switch (fileExtension) {
-                // in case it's a bundle extension
-                case "cbx" :
-                    // sets the bundles json url
-                    var url = "bundles.json";
-
-                    // breaks the switch
-                    break;
-
-                // in case it's a plugin extension
-                case "cpx" :
-                    // sets the plugins json url
-                    var url = "plugins.json";
-
-                    // breaks the switch
-                    break;
-            }
-
-            // opens the xml http request
-            xmlHttpRequest.open("post", url);
-
-            // sets the content type header
-            xmlHttpRequest.setRequestHeader("Content-Type",
-                    "application/octet-stream")
-
-            // sends the file contents (in base64)
-            xmlHttpRequest.send(fileContentsBase64);
-
-            // creates a message windows with for the progress of
-            // the installation
-            jQuery("body").messagewindow("default", {
-                        title : "Installing new plugin",
-                        subTitle : "The systems is installing the new plugin",
-                        message : "<div class=\"progress-indicator\"></div>",
-                        icon : "resources/images/icon/icon-plugin-install.png"
-                    });
-
-            // starts the progress indicator
-            jQuery(".message-message .progress-indicator", "body").progressindicator();
-        };
-    });
-
-    jQuery("#overlay").bind("dragover", function(event) {
-                // stops the event propagation and prevents
-                // the default event operation
-                event.stopPropagation();
-                event.preventDefault();
-            });
-
     jQuery("#account-description").click(function() {
                 if (!jQuery("#account-float-panel").is(":visible")) {
                     jQuery("#account-float-panel").fadeIn(200, function() {
@@ -320,9 +143,100 @@ jQuery(document).ready(function() {
                 }
             });
 
+    // loads the file drop
+    fileDropLoad();
+
+    // loads the file install
+    fileInstallLoad();
+
     // loads the contents
     contentsLoad();
 });
+
+function fileDropLoad() {
+    // retrieves the body element
+    var _body = jQuery("body");
+
+    // register the file drop in the overlay
+    _body.filedrop()
+
+    // registers the handler for the file drop event
+    // in the overlay
+    _body.bind("file_drop", function(event, files) {
+                // retrievs the files element
+                var _files = jQuery(files);
+
+                // iterates over the files
+                _files.each(function(index, element) {
+                            // installs the package file
+                            _body.installpackagefile({
+                                        file : element
+                                    });
+                        });
+            });
+}
+
+function fileInstallLoad() {
+    // retrieves the body element
+    var _body = jQuery("body");
+
+    _body.bind("file_loading", function(event) {
+        // creates a message windows with for the progress of
+        // the installation
+        _body.messagewindow("default", INSTALLING_NEW_PLUGIN_WINDOW);
+
+        // starts the progress indicator
+        jQuery(".message-message .progress-indicator", "body").progressindicator();
+    });
+
+    _body.bind("file_progress_change", function(event, percentage) {
+        // sets the progress indicator percentage
+        jQuery(".message-message .progress-indicator", "body").progressindicator(
+                "change", {
+                    percentage : percentage
+                });
+    });
+
+    _body.bind("file_loaded",
+            function(event, responseText, responseStatus, xmlHttpRequest) {
+                // sets the progress indicator percentage
+                jQuery(".message-message .progress-indicator", "body").progressindicator(
+                        "change", {
+                            percentage : 100
+                        });
+
+                // closes the message window
+                jQuery("body").messagewindow("close");
+
+                // in case the response status is valid
+                if (responseStatus == 200) {
+                    jQuery("#notification-area-contents").notificationwindow(
+                            "default", INSTALLED_NEW_PLUGIN_WINDOW);
+                }
+                // otherwise it must be an invalid status
+                else {
+                    // parses the response text to get the response
+                    var response = jQuery.parseJSON(responseText);
+
+                    // retrieves the exception from the response
+                    var exception = response["exception"];
+
+                    // retrieves the exception message
+                    var exceptionMessage = exception["message"];
+
+                    // creates the complete error message
+                    var errorMessage = "There was a problem installing plugin: "
+                            + exceptionMessage;
+
+                    // sets the error message in the problem new plugi window
+                    PROBLEM_NEW_PLUGIN_WINDOW["message"] = errorMessage;
+
+                    // shows a dialob window in the body
+                    jQuery("body").dialogwindow("default",
+                            PROBLEM_NEW_PLUGIN_WINDOW);
+                }
+            });
+}
 
 /**
  * Loads the initial contents, modifing the internal DOM structure if necessary.
