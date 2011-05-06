@@ -55,8 +55,11 @@
          * Creates the necessary html for the component.
          */
         var _appendHtml = function() {
-            // tries to retrieve the hitory load value
+            // tries to retrieve the history load value
             var historyLoad = options["historyLoad"];
+
+            // tries to retrieve the history handler
+            var historyHandler = options["historyHandler"];
 
             // sets the defaul history load value
             historyLoad = historyLoad != null ? historyLoad : true;
@@ -81,7 +84,7 @@
             // in case the history load flag is active
             if (historyLoad) {
                 // initializes the history
-                jQuery.historyInit(pageLoad, "");
+                jQuery.historyInit(historyHandler, "");
             }
         };
 
@@ -151,12 +154,17 @@
         // switches over the method
         switch (method) {
             case "reloadHeader" :
+                // reloads the header
                 _reloadHeader(matchedObject, options);
+
+                // breaks the switch
                 break;
 
             case "default" :
                 // initializes the plugin
                 initialize();
+
+                // breaks the swtich
                 break;
         }
 
@@ -431,7 +439,7 @@
 
                         // shows the message (if necessary)
                         jQuery(".message", matchedObject).message("show", {
-                                    "timeout" : 7500
+                                    timeout : 7500
                                 });
                     });
 
@@ -445,7 +453,7 @@
 
                 // shows the message (if necessary)
                 jQuery(".message", matchedObject).message("show", {
-                            "timeout" : 15000
+                            timeout : 15000
                         });
             });
         };
@@ -552,6 +560,14 @@
             jQuery("#left-column > ul > li.loading", matchedObject).removeClass("loading");
         };
 
+        var _changeAll = function(matchedObject, options) {
+            // changes the contents
+            _changeContents(matchedObject, optiosn);
+
+            // changes the contents menu
+            _changeContentsMenu(matchedObject, optiosn);
+        }
+
         var _changeContents = function(matchedObject, options) {
             // retrieves the target
             var target = options["target"];
@@ -657,10 +673,10 @@
                 error : function(request, textStatus, errorThrown) {
                     var errorCallback = function() {
                         jQuery("body").dialogwindow("default", {
-                            "title" : "Warning",
-                            "subTitle" : "Problem Loading Resources",
-                            "message" : "There was a problem loading resources, this indicates an erroneous behaviour communicating with the server.",
-                            "buttonMessage" : "Do you want to continue ?",
+                            title : "Warning",
+                            subTitle : "Problem Loading Resources",
+                            message : "There was a problem loading resources, this indicates an erroneous behaviour communicating with the server.",
+                            buttonMessage : "Do you want to continue ?",
                             errorCallbackFunctions : [function() {
                                     }]
                         });
@@ -697,8 +713,9 @@
             jQuery("#left-column > ul > li", matchedObject).removeClass("active");
 
             // retrieves the target element to be changed
-            var targetElement = jQuery("#left-column > ul > li[data-target_request="
-                            + target + "]", matchedObject);
+            var targetElement = jQuery(
+                    "#left-column > ul > li[data-target_request=" + target
+                            + "]", matchedObject);
 
             // adds the active class to the target element
             // the refered list item
@@ -892,10 +909,10 @@
                     },
                     error : function(request, textStatus, errorThrown) {
                         jQuery("body").dialogwindow("default", {
-                            "title" : "Warning",
-                            "subTitle" : "Problem Loading Javascript Files",
-                            "message" : "There was a problem loading javascript files, this indicates an erroneous behaviour communicating with the server.",
-                            "buttonMessage" : "Do you want to continue ?",
+                            title : "Warning",
+                            subTitle : "Problem Loading Javascript Files",
+                            message : "There was a problem loading javascript files, this indicates an erroneous behaviour communicating with the server.",
+                            buttonMessage : "Do you want to continue ?",
                             errorCallbackFunctions : [function() {
                                     }]
                         });
@@ -1000,10 +1017,10 @@
                     },
                     error : function(request, textStatus, errorThrown) {
                         jQuery("body").dialogwindow("default", {
-                            "title" : "Warning",
-                            "subTitle" : "Problem Loading Side Panel",
-                            "message" : "There was a problem loading side panel, this indicates an erroneous behaviour communicating with the server.",
-                            "buttonMessage" : "Do you want to continue ?",
+                            title : "Warning",
+                            subTitle : "Problem Loading Side Panel",
+                            message : "There was a problem loading side panel, this indicates an erroneous behaviour communicating with the server.",
+                            buttonMessage : "Do you want to continue ?",
                             errorCallbackFunctions : [function() {
                                     }]
                         });
@@ -1065,38 +1082,60 @@
          * @return {Boolean} The submit form for the current environment.
          */
         var _getAjaxSubmit = function() {
-            return typeof(getAjaxSubmit) === "undefined" ? "false" : getAjaxSubmit();
+            return typeof(getAjaxSubmit) === "undefined"
+                    ? "false"
+                    : getAjaxSubmit();
         }
 
         // switches over the method
         switch (method) {
             case "reload" :
                 _reloadContents(matchedObject, options);
+
+                // breaks the switch
                 break;
 
             case "update" :
                 _updateContentsSize(matchedObject, options);
+
+                // breaks the switch
                 break;
 
             case "hideLoading" :
                 _hideMenuLoading(matchedObject, options);
+
+                // breaks the switch
+                break;
+
+            case "changeAll" :
+                _changeAll(matchedObject, options);
+
+                // breaks the switch
                 break;
 
             case "change" :
                 _changeContents(matchedObject, options);
+
+                // breaks the switch
                 break;
 
             case "changeMenu" :
                 _changeContentsMenu(matchedObject, options);
+
+                // breaks the switch
                 break;
 
             case "loadMetadata" :
                 __loadMetaData(matchedObject, options);
+
+                // breaks the switch
                 break;
 
             case "default" :
                 // initializes the plugin
                 initialize();
+
+                // breaks the switch
                 break;
         }
 
