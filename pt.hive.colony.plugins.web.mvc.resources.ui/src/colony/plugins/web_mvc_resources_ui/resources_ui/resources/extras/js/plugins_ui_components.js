@@ -1283,12 +1283,15 @@
 })(jQuery);
 
 (function($) {
-    jQuery.fn.notificationarea = function(method, options) {
+    jQuery.fn.notificationarea = function(options) {
         // the default values for the plugin
         var defaults = {};
 
-        // sets the default method value
-        var method = method ? method : "default";
+        // sets the default options value
+        var options = options ? options : {};
+
+        // constructs the options
+        var options = jQuery.extend(defaults, options);
 
         // sets the jquery matched object
         var matchedObject = this;
