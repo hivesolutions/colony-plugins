@@ -565,6 +565,7 @@ class WebMvcWikiPageController:
         # sets the request contents
         self.set_contents(rest_request, "revision: " + update_revision_number_string)
 
+        # returns true
         return True
 
     def _create_page(self, rest_request, page, instance_name):
