@@ -66,19 +66,22 @@ configuration = {
         "www.hive.pt" : True,
         "blog.hive.pt" : True,
         "openid.hive.pt" : True,
-        "takethebill.com" : True,
-        "www.takethebill.com" : True,
         "svn.hive.pt" : True,
         "trac.hive.pt" : True,
+        "getcolony.com" : True,
+        "takethebill.com" : True,
+        "www.takethebill.com" : True,
         "bargania.com" : True
     },
     "virtual_servers" : {
         "resolution_order" : [
             "blog.hive.pt",
             "openid.hive.pt",
-            "takethebill.com",
             "svn.hive.pt",
             "trac.hive.pt",
+            "getcolony.com",
+            "takethebill.com",
+            "www.takethebill.com",
             "bargania.com"
         ],
         "blog.hive.pt" : {
@@ -99,15 +102,6 @@ configuration = {
                 }
             }
         },
-        "takethebill.com" : {
-            "redirections" : {
-                "resolution_order" : ["/"],
-                "/" : {
-                    "target" : "/colony_mod_python/rest/mvc/take_the_bill/",
-                    "recursive_redirection" : True
-                }
-            }
-        },
         "svn.hive.pt" : {
             "redirections" : {
                 "resolution_order" : ["/"],
@@ -122,6 +116,33 @@ configuration = {
                 "resolution_order" : ["/"],
                 "/" : {
                     "target" : "/proxy_trac/",
+                    "recursive_redirection" : True
+                }
+            }
+        },
+        "getcolony.com" : {
+            "redirections" : {
+                "resolution_order" : ["/"],
+                "/" : {
+                    "target" : "/colony_mod_python/rest/mvc/colony_site/",
+                    "recursive_redirection" : True
+                }
+            }
+        },
+        "takethebill.com" : {
+            "redirections" : {
+                "resolution_order" : ["/"],
+                "/" : {
+                    "target" : "/colony_mod_python/rest/mvc/take_the_bill_site/",
+                    "recursive_redirection" : True
+                }
+            }
+        },
+        "www.takethebill.com" : {
+            "redirections" : {
+                "resolution_order" : ["/"],
+                "/" : {
+                    "target" : "/colony_mod_python/rest/mvc/take_the_bill_site/",
                     "recursive_redirection" : True
                 }
             }
