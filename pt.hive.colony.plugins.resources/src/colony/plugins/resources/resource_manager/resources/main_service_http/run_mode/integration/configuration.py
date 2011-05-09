@@ -75,9 +75,9 @@ configuration = {
         "hivesolutions.dyndns.org" : {
             "redirections" : {
                 "resolution_order" : [
-                    "/"
+                    "/integration"
                 ],
-                "/" : {
+                "/integration" : {
                     "handler" : "file",
                     "authentication_handler" : "main",
                     "allow_redirection" : False,
