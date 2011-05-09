@@ -75,9 +75,9 @@ configuration = {
         "hivesolutions.dyndns.org" : {
             "redirections" : {
                 "resolution_order" : [
-                    "/"
+                    "/integration_public"
                 ],
-                "/" : {
+                "/integration_public" : {
                     "target" : "/integration_public/",
                     "recursive_redirection" : True
                 }
@@ -103,7 +103,7 @@ configuration = {
             "/colony_mod_python",
             "/template_error_handler",
             "/template_directory_list_handler",
-            "/integration_public"
+            "/integration_public",
             "/integration"
         ],
         "/colony_mod_python" : {
