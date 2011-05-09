@@ -85,7 +85,7 @@ class YoutubeVideoExtension(wiki_video.wiki_video_extension_system.WikiVideoExte
     version = "1.0.0"
     """ The version of the extension """
 
-    capabilities = = [
+    capabilities = [
         "video"
     ]
     """ The capabilities of the extension """
