@@ -69,6 +69,7 @@ configuration = {
         "svn.hive.pt" : True,
         "trac.hive.pt" : True,
         "getcolony.com" : True,
+        "www.getcolony.com" : True,
         "takethebill.com" : True,
         "www.takethebill.com" : True,
         "bargania.com" : True
@@ -80,6 +81,7 @@ configuration = {
             "svn.hive.pt",
             "trac.hive.pt",
             "getcolony.com",
+            "www.getcolony.com",
             "takethebill.com",
             "www.takethebill.com",
             "bargania.com"
@@ -121,6 +123,15 @@ configuration = {
             }
         },
         "getcolony.com" : {
+            "redirections" : {
+                "resolution_order" : ["/"],
+                "/" : {
+                    "target" : "/colony_mod_python/rest/mvc/colony_site/",
+                    "recursive_redirection" : True
+                }
+            }
+        },
+        "www.getcolony.com" : {
             "redirections" : {
                 "resolution_order" : ["/"],
                 "/" : {
