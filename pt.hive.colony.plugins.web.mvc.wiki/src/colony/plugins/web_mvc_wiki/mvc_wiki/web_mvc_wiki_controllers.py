@@ -376,6 +376,12 @@ class WebMvcWikiController:
         @param wiki_file_path The wiki file path.
         """
 
+        print base_target_path
+        print wiki_file_path
+
+        # prints a debug message
+        self.web_mvc_wiki_plugin.debug("Generating wiki file: %s" % wiki_file_path)
+
         # in case the base target path does not exists
         if not os.path.exists(base_target_path):
             # creates the base target path
