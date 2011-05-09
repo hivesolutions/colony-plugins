@@ -75,22 +75,11 @@ configuration = {
         "hivesolutions.dyndns.org" : {
             "redirections" : {
                 "resolution_order" : [
-                    "/integration"
+                    "/"
                 ],
-                "/integration" : {
-                    "handler" : "file",
-                    "authentication_handler" : "main",
-                    "allow_redirection" : False,
-                    "request_properties" : {
-                        "base_path" : "$resource{system.path.integration}"
-                    },
-                    "authentication_properties" : {
-                        "authentication_handler" : "python",
-                        "authentication_realm" : "system",
-                        "arguments" : {
-                            "file_path" : "%configuration:pt.hive.colony.plugins.main.authentication.python_handler%/authentication.py"
-                        }
-                    }
+                "/" : {
+                    "target" : "/integration/",
+                    "recursive_redirection" : True
                 }
             }
         }
