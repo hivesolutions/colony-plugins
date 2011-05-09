@@ -45,7 +45,7 @@ configuration = {
             "repository_arguments" : {
                 "save_username_password" : False
             },
-            "repository_path" : "%manager_path%/../../pt.hive.colony.documentation.technical"
+            "repository_path" : "%manager_path%/../../../../pt.hive.colony.documentation/trunk/pt.hive.colony.documentation.technical"
         }
     }
 }
