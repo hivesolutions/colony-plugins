@@ -133,9 +133,16 @@ configuration = {
         },
         "www.getcolony.com" : {
             "redirections" : {
-                "resolution_order" : ["/"],
+                "resolution_order" : [
+                    "/",
+                    "/docs",
+                ],
                 "/" : {
                     "target" : "/colony_mod_python/rest/mvc/colony_site/",
+                    "recursive_redirection" : True
+                },
+                "/docs" : {
+                    "target" : "/colony_mod_python/rest/mvc/wiki/colony",
                     "recursive_redirection" : True
                 }
             }
