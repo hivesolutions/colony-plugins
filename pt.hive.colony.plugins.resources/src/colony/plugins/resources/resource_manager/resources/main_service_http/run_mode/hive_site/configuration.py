@@ -129,7 +129,7 @@ configuration = {
                     "/"
                 ],
                 "/docs" : {
-                    "target" : "/colony_mod_python/rest/mvc/wiki/colony/",
+                    "target" : "/colony_mod_python/rest/mvc/wiki/",
                     "recursive_redirection" : True
                 },
                 "/" : {
@@ -145,7 +145,7 @@ configuration = {
                     "/"
                 ],
                 "/docs" : {
-                    "target" : "/colony_mod_python/rest/mvc/wiki/colony/",
+                    "target" : "/colony_mod_python/rest/mvc/wiki/",
                     "recursive_redirection" : True
                 },
                 "/" : {
