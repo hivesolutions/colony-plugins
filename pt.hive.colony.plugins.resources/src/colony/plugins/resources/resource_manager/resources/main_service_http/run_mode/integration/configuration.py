@@ -78,7 +78,7 @@ configuration = {
                     "/"
                 ],
                 "/" : {
-                    "target" : "/integration/",
+                    "target" : "/integration_public/",
                     "recursive_redirection" : True
                 }
             }
@@ -103,6 +103,7 @@ configuration = {
             "/colony_mod_python",
             "/template_error_handler",
             "/template_directory_list_handler",
+            "/integration_public"
             "/integration"
         ],
         "/colony_mod_python" : {
@@ -122,6 +123,13 @@ configuration = {
             "allow_redirection" : False,
             "request_properties" : {
                 "base_path" : "$plugin{pt.hive.colony.plugins.main.service.http.template_directory_list_handler}/main_service_http_template_directory_list_handler/template_directory_list_handler/resources"
+            }
+        },
+        "/integration_public" : {
+            "handler" : "file",
+            "allow_redirection" : False,
+            "request_properties" : {
+                "base_path" : "$resource{system.path.integration}"
             }
         },
         "/integration" : {
