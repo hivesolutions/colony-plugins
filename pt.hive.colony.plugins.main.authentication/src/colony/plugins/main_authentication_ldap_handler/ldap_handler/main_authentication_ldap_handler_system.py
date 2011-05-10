@@ -41,6 +41,8 @@ import re
 import base64
 import hashlib
 
+import colony.libs.crypt_util
+
 HANDLER_NAME = "ldap"
 """ The handler name """
 
@@ -198,63 +200,6 @@ class MainAuthenticationLdapHandler:
         # returns the return value
         return return_value
 
-    def md5crypt(self, password, salt, magic = "$1$"):
-        # /* The password first, since that is what is most unknown */ /* Then our magic string */ /* Then the raw salt */
-        m = hashlib.md5()
-        m.update(password + magic + salt)
-
-        # /* Then just as many characters of the MD5(pw,salt,pw) */
-        mixin = hashlib.md5(password + salt + password).digest()
-        for i in range(0, len(password)):
-            m.update(mixin[i % 16])
-
-        # /* Then something really weird... */
-        # Also really broken, as far as I can tell.  -m
-        i = len(password)
-        while i:
-            if i & 1:
-                m.update("\x00")
-            else:
-                m.update(password[0])
-            i >>= 1
-
-        final = m.digest()
-
-        # /* and now, just to make sure things don't run too fast */
-        for i in range(1000):
-            m2 = hashlib.md5()
-            if i & 1:
-                m2.update(password)
-            else:
-                m2.update(final)
-
-            if i % 3:
-                m2.update(salt)
-
-            if i % 7:
-                m2.update(password)
-
-            if i & 1:
-                m2.update(final)
-            else:
-                m2.update(password)
-
-            final = m2.digest()
-
-        itoa64 = "./0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"
-
-        rearranged = ""
-        for a, b, c in ((0, 6, 12), (1, 7, 13), (2, 8, 14), (3, 9, 15), (4, 10, 5)):
-            v = ord(final[a]) << 16 | ord(final[b]) << 8 | ord(final[c])
-            for i in range(4):
-                rearranged += itoa64[v & 0x3f]; v >>= 6
-
-        v = ord(final[11])
-        for i in range(2):
-            rearranged += itoa64[v & 0x3f]; v >>= 6
-
-        return magic + salt + "$" + rearranged
-
     def _process_password_md5_crypt(self, password, user_password_value):
         # matches the user password value against the
         # md5 crypt salt value regex
@@ -265,7 +210,7 @@ class MainAuthenticationLdapHandler:
 
         # encrypts the password and the salt with the
         # md5 crypt algorithm
-        processed_password_value = self.md5crypt(password, salt)
+        processed_password_value = colony.libs.crypt_util.md5_crypt(password, salt)
 
         # returns the processed password value
         return processed_password_value
