@@ -25,7 +25,7 @@
 
 jQuery(document).ready(function() {
     // sets the logic loaded data
-    var logicLoaded = jQuery("#contents").data("logicLoaded");
+    var logicLoaded = jQuery("#contents").data("logic_loaded");
 
     // in case the logic is already loaded
     if (logicLoaded) {
@@ -82,5 +82,5 @@ jQuery(document).ready(function() {
             });
 
     // sets the logic loaded data
-    jQuery("#contents").data("logicLoaded", true);
+    jQuery("#contents").data("logic_loaded", true);
 });
