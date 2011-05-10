@@ -475,7 +475,7 @@
             var contents = jQuery("#contents", matchedObject);
 
             // sets the content size as set
-            contents.data("sizeSet", true)
+            contents.data("size_set", true)
 
             // waits until the contents is ready
             contents.ready(function() {
@@ -589,7 +589,7 @@
             var contents = jQuery("#contents", matchedObject);
 
             // retrieves the content size set value
-            var contentsSizeSet = contents.data("sizeSet");
+            var contentsSizeSet = contents.data("size_set");
 
             // retrieves the contents position
             var contentsPosition = contents.position();
@@ -989,7 +989,7 @@
             // iterates over all the side panel file references
             sidePanels.each(function(index, element) {
                 // sets the current side panel in the matched object
-                var sidePanel = matchedObject.data("sidePanel");
+                var sidePanel = matchedObject.data("side_panel");
 
                 // retrieves the target from the javascript element
                 var target = jQuery(element).html();
@@ -1003,7 +1003,7 @@
                 }
 
                 // sets the side panel in the current object
-                matchedObject.data("sidePanel", target);
+                matchedObject.data("side_panel", target);
 
                 // creates the full target path by prepending the
                 // base path to the target

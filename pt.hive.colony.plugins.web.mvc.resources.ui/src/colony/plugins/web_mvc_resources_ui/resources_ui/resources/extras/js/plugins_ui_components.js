@@ -385,7 +385,7 @@
                         var viewDate = new Date(currentDate);
 
                         // sets the current view date
-                        dateField.data("viewDate", viewDate);
+                        dateField.data("view_date", viewDate);
 
                         // updates the calendar with the current date
                         __updateCalendar(options, dateField, currentDate);
@@ -409,7 +409,7 @@
                         var dateField = jQuery(this).parents(".date-field");
 
                         // retrieves the current date
-                        var currentDate = dateField.data("viewDate");
+                        var currentDate = dateField.data("view_date");
 
                         // retrieves the current month
                         var currentMonth = currentDate.getMonth();
@@ -438,7 +438,7 @@
                         var dateField = jQuery(this).parents(".date-field");
 
                         // retrieves the current date
-                        var currentDate = dateField.data("viewDate");
+                        var currentDate = dateField.data("view_date");
 
                         // retrieves the current month
                         var currentMonth = currentDate.getMonth();
@@ -991,7 +991,7 @@
             dropboxTextInput.attr("value", currentName);
 
             // sets the current scroll top in the dropbox contents
-            dropboxContents.data("scrollTop", dropboxContentsScrollTop);
+            dropboxContents.data("scroll_top", dropboxContentsScrollTop);
 
             // removes the selected class from all selected list elements
             dropboxContentsListSelectedElements.removeClass("selected");
@@ -1019,7 +1019,7 @@
             var dropboxContents = jQuery(".dropbox-contents", dropbox);
 
             // retrieves the dropbox contents scrolll top
-            var dropboxContentsScrollTop = dropboxContents.data("scrollTop");
+            var dropboxContentsScrollTop = dropboxContents.data("scroll_top");
 
             // shows the dropbox contents
             dropboxContents.show();
@@ -1435,9 +1435,9 @@
                     matchedObject);
 
             // sets the callbacks in the notification message
-            notificationMessage.data("successCallbackFunctions",
+            notificationMessage.data("success_callback_functions",
                     successCallbackFunctions);
-            notificationMessage.data("errorCallbackFunctions",
+            notificationMessage.data("error_callback_functions",
                     errorCallbackFunctions);
 
             // fades in the notification message
@@ -1491,7 +1491,7 @@
 
         var __callSuccessCallbacks = function(notificationMessage, options) {
             // retrieves the success callback functions
-            var successCallbackFunctions = notificationMessage.data("successCallbackFunctions");
+            var successCallbackFunctions = notificationMessage.data("success_callback_functions");
 
             // sets the default success callback functions
             successCallbackFunctions = successCallbackFunctions
@@ -1507,7 +1507,7 @@
 
         var __callErrorCallbacks = function(notificationMessage, options) {
             // retrieves the error callback functions
-            var errorCallbackFunctions = notificationMessage.data("errorCallbackFunctions");
+            var errorCallbackFunctions = notificationMessage.data("error_callback_functions");
 
             // sets the default error callback functions
             errorCallbackFunctions = errorCallbackFunctions
@@ -1767,9 +1767,9 @@
             var dialogMessage = jQuery(".dialog-message:last", matchedObject);
 
             // sets the callbacks in the dialog message
-            dialogMessage.data("successCallbackFunctions",
+            dialogMessage.data("success_callback_functions",
                     successCallbackFunctions);
-            dialogMessage.data("errorCallbackFunctions", errorCallbackFunctions);
+            dialogMessage.data("error_callback_functions", errorCallbackFunctions);
 
             // retrieves the matched object dimensions
             var matchedObjectHeight = matchedObject.height();
@@ -1841,7 +1841,7 @@
             var dialogMessage = jQuery(".dialog-message", matchedObject);
 
             // retrieves the success callback functions
-            var successCallbackFunctions = dialogMessage.data("successCallbackFunctions");
+            var successCallbackFunctions = dialogMessage.data("success_callback_functions");
 
             // sets the default success callback functions
             successCallbackFunctions = successCallbackFunctions
@@ -1860,7 +1860,7 @@
             var dialogMessage = jQuery(".dialog-message", matchedObject);
 
             // retrieves the error callback functions
-            var errorCallbackFunctions = dialogMessage.data("errorCallbackFunctions");
+            var errorCallbackFunctions = dialogMessage.data("error_callback_functions");
 
             // sets the default error callback functions
             errorCallbackFunctions = errorCallbackFunctions
@@ -2173,7 +2173,7 @@
             var searchQueryValue = searchQuery.attr("value");
 
             // retrieves the current final record
-            var currentFinalRecord = table.data("currentFinalRecord",
+            var currentFinalRecord = table.data("current_final_record",
                     currentFinalRecord);
 
             // assembles the form data to submit with the search button click event
@@ -2221,7 +2221,7 @@
                     tableMetadata).html());
 
             // sets the initial table data
-            var currentFinalRecord = jQuery("table", searchTable).data("currentFinalRecord");
+            var currentFinalRecord = jQuery("table", searchTable).data("current_final_record");
             currentFinalRecord += numberRecords;
 
             // removes the more button
@@ -2250,9 +2250,9 @@
             }
 
             // sets the new table values
-            jQuery("table", searchTable).data("currentFinalRecord",
+            jQuery("table", searchTable).data("current_final_record",
                     currentFinalRecord);
-            jQuery("table", searchTable).data("totalNumberRecords",
+            jQuery("table", searchTable).data("total_number_records",
                     totalNumberRecords);
 
             // updates the main container (size)
@@ -2281,8 +2281,8 @@
 
         var __resetTableSearch = function(targetElement) {
             // sets the initial table data
-            jQuery("table", targetElement).data("currentFinalRecord", 0);
-            jQuery("table", targetElement).data("totalNumberRecords", 0);
+            jQuery("table", targetElement).data("current_final_record", 0);
+            jQuery("table", targetElement).data("total_number_records", 0);
         };
 
         var __baseTableHandlers = function(targetElement) {
