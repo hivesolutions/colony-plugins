@@ -37,14 +37,16 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
+import colony.libs.importer_util
+
 ENTITY_MANAGER_VALUE = "entity_manager"
+""" The entity manager value """
 
 USER_VALUE = "User"
+""" The user value """
 
 MAIN_AUTHENTICATION_PLUGIN_ID = "pt.hive.colony.plugins.main.authentication"
 """ The main authentication plugin id """
-
-import colony.libs.importer_util
 
 MAIN_AUTHENTICATION_LOGIC_EXCEPTIONS_VALUE = "main_authentication_logic_exceptions"
 """ The main authentication logic exceptions value """
@@ -75,13 +77,10 @@ class AuthenticationLogic:
         # authenticates the user retrieving the authentication result
         authentication_result = main_authentication_plugin.authenticate_user(username, password, ENTITY_MANAGER_VALUE, arguments)
 
-        # in case the authentication result was valid
+        # in case the authentication result is valid
         if authentication_result:
-            # retrieves the current session information
-            current_session_information = self.session_manager.get_current_session_information()
-
-            # sets the authentication value of the session information as the authentication result
-            current_session_information.set_session_property("authentication_value", authentication_result)
+            # sets the authentication result in the session
+            self._set_session_information(authentication_result)
 
         # returns the authentication result
         return authentication_result
@@ -97,16 +96,20 @@ class AuthenticationLogic:
         # authenticates the user retrieving the authentication result
         authentication_result = main_authentication_plugin.process_authentication_string(authentication_string)
 
-        # in case the authentication result was valid
+        # in case the authentication result is valid
         if authentication_result:
-            # retrieves the current session information
-            current_session_information = self.session_manager.get_current_session_information()
-
-            # sets the authentication value of the session information as the authentication result
-            current_session_information.set_session_property("authentication_value", authentication_result)
+            # sets the authentication result in the session
+            self._set_session_information(authentication_result)
 
         # returns the authentication result
         return authentication_result
+
+    def _set_session_information(self, authentication_result):
+        # retrieves the current session information
+        current_session_information = self.session_manager.get_current_session_information()
+
+        # sets the authentication value of the session information as the authentication result
+        current_session_information.set_session_property("authentication_value", authentication_result)
 
 BUSINESS_LOGIC_CLASSES = [
     AuthenticationLogic
