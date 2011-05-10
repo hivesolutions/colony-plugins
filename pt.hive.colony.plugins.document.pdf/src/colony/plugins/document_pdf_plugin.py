@@ -72,7 +72,7 @@ class DocumentPdfPlugin(colony.base.plugin_system.Plugin):
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
-        global data
+        global document_pdf
         import document_pdf.pdf.document_pdf_system
         self.document_pdf = document_pdf.pdf.document_pdf_system.DocumentPdf(self)
 
