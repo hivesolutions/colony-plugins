@@ -181,6 +181,9 @@ AUTHORIZATION_VALUE = "Authorization"
 TRANSFER_ENCODING_VALUE = "Transfer-Encoding"
 """ The transfer encoding value """
 
+TRANSFER_ENCODING_LOWER_VALUE = "transfer-encoding"
+""" The transfer encoding value """
+
 LOCATION_VALUE = "Location"
 """ The location value """
 
@@ -728,6 +731,9 @@ class HttpClient:
 
                     # retrieves the transfer encoding value
                     transfer_encoding = response.headers_map.get(TRANSFER_ENCODING_VALUE, None)
+
+                    # retrieves the transfer encoding value using the lower cased value
+                    transfer_encoding = response.headers_map.get(TRANSFER_ENCODING_LOWER_VALUE, transfer_encoding)
 
                     # in case the transfer encoding is chunked
                     if transfer_encoding == CHUNKED_VALUE:
