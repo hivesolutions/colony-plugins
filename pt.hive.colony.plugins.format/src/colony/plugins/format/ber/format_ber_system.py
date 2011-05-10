@@ -772,9 +772,9 @@ class BerStructure:
         # retrieves the value type
         value_type = type(value)
 
-        # sets the octets string as the value or the decoded
+        # sets the octets string as the value or the encoded
         # unicode value (using the default encoding)
-        octets_string = value_type == types.UnicodeType and value.decode(DEFAULT_ENCODING) or value
+        octets_string = value_type == types.UnicodeType and value.encode(DEFAULT_ENCODING) or value
 
         # returns the octets string
         return octets_string
