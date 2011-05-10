@@ -147,6 +147,51 @@ LDAP_TYPE_ALIAS_MAP = {
 }
 """ The map of ldap type alias """
 
+RESPONSE_CODE_MESSAGE_MAP = {
+    0 : "Success",
+    1 : "Operation Error",
+    2 : "Protocol Error",
+    3 : "Time Limit Exceeded",
+    4 : "Size Limit Exceeded",
+    5 : "Compare False",
+    6 : "Compare True",
+    7 : "Authentication Method Not Supported",
+    8 : "Strong Authentication Method Required",
+    9 : "Reserved",
+    10 : "Referral",
+    11 : "Administration Limit Exceeded",
+    12 : "Unavailable Critical Extension",
+    14 : "Sasl Bind In Progress",
+    16 : "No Such Attribute",
+    17 : "Undefined Attribute Type",
+    18 : "Inappropriate Matching",
+    19 : "Constraint Violation",
+    20 : "Attribute Or Value Exists",
+    21 : "Invalid Attribute Syntax",
+    21 : "Invalid Attribute Syntax",
+    32 : "No Such Object",
+    33 : "Alias Problem",
+    34 : "Invalid DN Syntax",
+    36 : "Alias Dereferencing Problem",
+    48 : "Inappropriate Authentication",
+    49 : "Invalid Credentials",
+    50 : "Insufficient Access Rights",
+    51 : "Busy",
+    52 : "Unavailable",
+    53 : "Unwilling To Perform",
+    54 : "Loop Detected",
+    64 : "Naming Violation",
+    65 : "Object Class Violation",
+    66 : "Not Allowed On Non Leaf",
+    67 : "Not Allowed On Root DN",
+    68 : "Entry Already Exists",
+    69 : "Object Class Mods Prohibited",
+    70 : "Reserved",
+    71 : "Affects Multiple DSAs",
+    80 : "Other"
+}
+""" The map associating the response codes with the erro messages """
+
 class MainClientLdap:
     """
     The main client ldap class.
@@ -462,6 +507,9 @@ class LdapClient:
         # creates the search request
         search_request = main_client_ldap_structures.SearchRequest(search_dn, 2, 0, 0, 180, False, and_filter, attributes)
 
+        # sets the initial user password
+        user_password = None
+
         # sends the request for the search and controls
         request = self.send_request(search_request, [])
 
@@ -489,6 +537,7 @@ class LdapClient:
                 # retrieves the user password
                 user_password = search_result_attributes.partial_attributes_map["userPassword"][0]
 
+        # returns the user password
         return user_password
 
     def _validate_response(self, response):
@@ -522,8 +571,11 @@ class LdapClient:
 
         # in case the response result code is not valid
         if not response_result_code == 0:
+            # "resolves" the message for the response code
+            response_code_message = RESPONSE_CODE_MESSAGE_MAP.get(response_result_code, "Undefined")
+
             # raises a ldap validation exception
-            raise main_client_ldap_exceptions.LdapValidationException("invalid response code: " + str(response_result_code))
+            raise main_client_ldap_exceptions.LdapValidationException("invalid response code: " + str(response_result_code) + " (" + response_code_message + ")")
 
     def _get_message_id(self):
         """
