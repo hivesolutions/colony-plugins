@@ -39,7 +39,9 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 configuration = {
     "default_end_points" : [
-        ("normal", "", 25, {})
+        (
+            "normal", "", 25, {}
+        )
     ],
     "default_handler" : "stream",
     "default_authentication_handler" : "main",
@@ -51,7 +53,10 @@ configuration = {
         }
     },
     "session_properties" : {
-        "local_domains" : ("127.0.0.1", "localhost"),
+        "local_domains" : (
+            "127.0.0.1",
+            "localhost"
+        ),
         "arguments" : {
             "entity_manager_arguments" : {
                 "connection_parameters" : {

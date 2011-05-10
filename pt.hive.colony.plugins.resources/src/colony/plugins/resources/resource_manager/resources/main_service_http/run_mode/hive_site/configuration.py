@@ -39,8 +39,12 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 configuration = {
     "default_end_points" : [
-        ("normal", "", 80, {}),
-        ("ssl", "", 443, {})
+        (
+            "normal", "", 80, {}
+        ),
+        (
+            "ssl", "", 443, {}
+        )
     ],
     "default_handler" : "file",
     "default_encoding" : None,
@@ -88,7 +92,9 @@ configuration = {
         ],
         "blog.hive.pt" : {
             "redirections" : {
-                "resolution_order" : ["/"],
+                "resolution_order" : [
+                    "/"
+                ],
                 "/" : {
                     "target" : "/colony_mod_python/rest/mvc/hive_blog/",
                     "recursive_redirection" : True
@@ -97,7 +103,9 @@ configuration = {
         },
         "openid.hive.pt" : {
             "redirections" : {
-                "resolution_order" : ["/"],
+                "resolution_order" : [
+                    "/"
+                ],
                 "/" : {
                     "target" : "/colony_mod_python/rest/mvc/hive_openid/",
                     "recursive_redirection" : True
@@ -106,7 +114,9 @@ configuration = {
         },
         "svn.hive.pt" : {
             "redirections" : {
-                "resolution_order" : ["/"],
+                "resolution_order" : [
+                    "/"
+                ],
                 "/" : {
                     "target" : "/proxy_svn/",
                     "recursive_redirection" : True
@@ -115,7 +125,9 @@ configuration = {
         },
         "trac.hive.pt" : {
             "redirections" : {
-                "resolution_order" : ["/"],
+                "resolution_order" : [
+                    "/"
+                ],
                 "/" : {
                     "target" : "/proxy_trac/",
                     "recursive_redirection" : True
@@ -156,7 +168,9 @@ configuration = {
         },
         "takethebill.com" : {
             "redirections" : {
-                "resolution_order" : ["/"],
+                "resolution_order" : [
+                    "/"
+                ],
                 "/" : {
                     "target" : "/colony_mod_python/rest/mvc/take_the_bill_site/",
                     "recursive_redirection" : True
@@ -165,7 +179,9 @@ configuration = {
         },
         "www.takethebill.com" : {
             "redirections" : {
-                "resolution_order" : ["/"],
+                "resolution_order" : [
+                    "/"
+                ],
                 "/" : {
                     "target" : "/colony_mod_python/rest/mvc/take_the_bill_site/",
                     "recursive_redirection" : True
@@ -174,7 +190,9 @@ configuration = {
         },
         "bargania.com" : {
             "redirections" : {
-                "resolution_order" : ["/"],
+                "resolution_order" : [
+                    "/"
+                ],
                 "/" : {
                     "target" : "/colony_mod_python/rest/mvc/bargania_site/",
                     "recursive_redirection" : True
@@ -281,7 +299,10 @@ configuration = {
                 "handler_type" : "local",
                 "base_path" : "${HOME}",
                 "connection_type" : 1,
-                "connection_arguments" : ("localhost", 9010)
+                "connection_arguments" : (
+                    "localhost",
+                    9010
+                )
             }
         },
         "/web_administration" : {

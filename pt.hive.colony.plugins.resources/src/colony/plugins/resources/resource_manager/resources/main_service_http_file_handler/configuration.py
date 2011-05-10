@@ -40,6 +40,9 @@ __license__ = "GNU General Public License (GPL), Version 3"
 configuration = {
     "default_path" : "$resource{colony.manager_path}/var/http",
     "default_page" : "",
-    "preferred_directory_list_handlers" : ["template", "default"],
+    "preferred_directory_list_handlers" : [
+        "template",
+        "default"
+    ],
     "relative_paths" : False
 }

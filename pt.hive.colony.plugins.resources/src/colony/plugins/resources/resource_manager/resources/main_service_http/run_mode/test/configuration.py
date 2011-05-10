@@ -39,7 +39,9 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 configuration = {
     "default_end_points" : [
-        ("normal", "", 8081, {})
+        (
+            "normal", "", 8081, {}
+        )
     ],
     "default_handler" : "file",
     "default_encoding" : None,
@@ -53,6 +55,5 @@ configuration = {
     "default_maximum_number_threads" : 30,
     "default_maximum_number_work_threads" : 15,
     "default_work_scheduling_algorithm" : 3,
-    "contexts" : {
-    }
+    "contexts" : {}
 }

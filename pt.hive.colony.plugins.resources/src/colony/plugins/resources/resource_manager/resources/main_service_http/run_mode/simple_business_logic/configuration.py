@@ -39,7 +39,9 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 configuration = {
     "default_end_points" : [
-        ("normal", "", 8080, {})
+        (
+            "normal", "", 8080, {}
+        )
     ],
     "default_handler" : "file",
     "default_encoding" : None,

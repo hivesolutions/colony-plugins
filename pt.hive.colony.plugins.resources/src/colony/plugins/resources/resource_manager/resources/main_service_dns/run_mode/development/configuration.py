@@ -39,7 +39,9 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 configuration = {
     "default_end_points" : [
-        ("datagram", "", 53, {})
+        (
+            "datagram", "", 53, {}
+        )
     ],
     "default_handler" : "database",
     "handler_properties" : {

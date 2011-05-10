@@ -39,7 +39,9 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 configuration = {
     "default_end_points" : [
-        ("normal", "", 110, {})
+        (
+            "normal", "", 110, {}
+        )
     ],
     "default_handler" : "stream",
     "default_authentication_handler" : "main",

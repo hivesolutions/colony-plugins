@@ -39,7 +39,9 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 configuration = {
     "default_end_points" : [
-        ("normal", "", 8080, {})
+        (
+            "normal", "", 8080, {}
+        )
     ],
     "default_handler" : "file",
     "default_encoding" : None,
@@ -62,7 +64,9 @@ configuration = {
     "connectors" : [
         {
             "default_end_points" : [
-                ("normal", "", 8181, {})
+                (
+                    "normal", "", 8181, {}
+                )
             ],
             "default_handler" : "file"
         }
@@ -73,7 +77,9 @@ configuration = {
         ],
         "127.0.0.1" : {
             "redirections" : {
-                "resolution_order" : ["/"],
+                "resolution_order" : [
+                    "/"
+                ],
                 "/" : {
                     "target" : "/colony_mod_python/rest/mvc/hive_blog/",
                     "recursive_redirection" : True
@@ -82,7 +88,9 @@ configuration = {
         },
         "panzerini.com" : {
             "redirections" : {
-                "resolution_order" : ["/"],
+                "resolution_order" : [
+                    "/"
+                ],
                 "/" : {
                     "target" : "/colony_mod_python/rest/mvc/panzerini_web_mvc/",
                     "recursive_redirection" : True
@@ -297,7 +305,10 @@ configuration = {
                 "handler_type" : "local",
                 "base_path" : "${HOME}/fcgi-bin",
                 "connection_type" : 1,
-                "connection_arguments" : ("localhost", 9010)
+                "connection_arguments" : (
+                    "localhost",
+                    9010
+                )
             }
         },
         "/wsgi-bin/simple_business_logic" : {
