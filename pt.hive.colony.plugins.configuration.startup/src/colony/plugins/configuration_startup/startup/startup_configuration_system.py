@@ -96,7 +96,7 @@ class StartupConfiguration:
                 if not startup_configuration_plugin.load:
                     # returns false (is not loadable)
                     return False
-                # otherwiser
+                # otherwise
                 else:
                     # returns true (is loadable)
                     return True

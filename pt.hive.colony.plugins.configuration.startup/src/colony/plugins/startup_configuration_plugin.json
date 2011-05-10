@@ -10,6 +10,7 @@
     "author" : "Hive Solutions Lda. <development@hive.pt>",
     "capabilities" : ["plugin_manager_extension",
             "plugin_manager_extension.init_plugin_load",
+            "plugin_manager_extension.test_plugin_load",
             "build_automation_item"],
     "capabilities_allowed" : [],
     "dependencies" : [],

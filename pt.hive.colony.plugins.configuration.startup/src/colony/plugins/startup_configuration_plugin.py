@@ -62,6 +62,7 @@ class StartupConfigurationPlugin(colony.base.plugin_system.PluginManagerPlugin):
     capabilities = [
         "plugin_manager_extension",
         "plugin_manager_extension.init_plugin_load",
+        "plugin_manager_extension.test_plugin_load",
         "build_automation_item"
     ]
     main_modules = [
@@ -100,3 +101,6 @@ class StartupConfigurationPlugin(colony.base.plugin_system.PluginManagerPlugin):
 
     def init_plugin_load(self, plugin, type, loading_type):
         return self.startup_configuration.is_plugin_loadable(plugin, type, loading_type)
+
+    def test_plugin_load(self, plugin):
+        return self.startup_configuration.is_plugin_loadable(plugin, None, None)
