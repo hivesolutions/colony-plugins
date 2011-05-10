@@ -43,6 +43,9 @@ import format_ber_exceptions
 
 import colony.libs.string_buffer_util
 
+DEFAULT_ENCODING = "utf-8"
+""" The default encoding """
+
 EOC_TYPE = 0x00
 """ The eoc (end of content) type """
 
@@ -766,8 +769,12 @@ class BerStructure:
         return bit_string
 
     def _pack_octet_string(self, value):
-        # sets the octets string as the value
-        octets_string = value
+        # retrieves the value type
+        value_type = type(value)
+
+        # sets the octets string as the value or the decoded
+        # unicode value (using the default encoding)
+        octets_string = value_type == types.UnicodeType and value.decode(DEFAULT_ENCODING) or value
 
         # returns the octets string
         return octets_string
