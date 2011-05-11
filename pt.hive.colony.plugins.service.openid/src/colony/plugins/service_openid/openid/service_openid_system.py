@@ -1597,6 +1597,29 @@ class OpenidStructure:
             # raises the invalid claimed id exception
             raise service_openid_exceptions.InvalidClaimedId("no claimed id available")
 
+    def get_username_claimed_id(self):
+        """
+        Retrieves the username from the current claimed id
+        value, converted accordingly.
+
+        @rtype: String
+        @return: The username from the current claimed id
+        value, converted accordingly.
+        """
+
+        # retrieves the claimed id
+        claimed_id = self.get_preferred_claimed_id()
+
+        # strips the claimed id
+        claimed_id = claimed_id.rstrip("/")
+
+        # splits the claimed id into base claimed id
+        # and username
+        _base_claimed_id, username = claimed_id.rsplit("/", 1)
+
+        # returns the username
+        return username
+
     def get_provider_url(self):
         """
         Retrieves the provider url.
