@@ -25,6 +25,9 @@
 
 (function($) {
     jQuery.fn.installfile = function(options) {
+        // the valid status code
+        var VALID_STATUS_CODE = 200;
+
         // the post value
         var POST_VALUE = "post";
 
@@ -143,8 +146,14 @@
                         // retrieves the response text
                         var responseText = xmlHttpRequest.responseText;
 
-                        // retrieves the response status
-                        var responseStatus = xmlHttpRequest.status;
+                        try {
+                            // retrieves the response status
+                            var responseStatus = xmlHttpRequest.status;
+                        } catch (exception) {
+                            // sets the response status as valid
+                            // in order to avoid possible problems
+                            var responseStatus = VALID_STATUS_CODE;
+                        }
 
                         // triggers the file loaded event
                         matchedObject.trigger("file_loaded", [responseText,

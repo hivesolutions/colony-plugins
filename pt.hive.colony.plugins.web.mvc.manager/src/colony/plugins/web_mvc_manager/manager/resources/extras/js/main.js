@@ -24,7 +24,7 @@
 // __license__   = GNU General Public License (GPL), Version 3
 
 // the valid status code
-VALID_STATUS_CODE = 200
+VALID_STATUS_CODE = 200;
 
 function messageProcessor(data) {
     // parses the data retrieving the json
