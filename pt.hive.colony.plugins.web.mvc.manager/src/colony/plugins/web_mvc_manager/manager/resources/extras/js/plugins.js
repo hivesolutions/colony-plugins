@@ -131,7 +131,7 @@
                 // in case the length is not
                 // computable
                 if (!event.lengthComputable) {
-                    return
+                    return;
                 }
 
                 // calculates the percentage of loading

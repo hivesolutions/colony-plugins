@@ -223,11 +223,19 @@ function fileInstallLoad() {
                     // parses the response text to get the response
                     var response = jQuery.parseJSON(responseText);
 
-                    // retrieves the exception from the response
-                    var exception = response["exception"];
+                    // in case the response is valid
+                    if (response) {
+                        // retrieves the exception from the response
+                        var exception = response["exception"];
 
-                    // retrieves the exception message
-                    var exceptionMessage = exception["message"];
+                        // retrieves the exception message
+                        var exceptionMessage = exception["message"];
+                    }
+                    // otherwise it must be a generic problem
+                    else {
+                        // sets the exception message as undefined
+                        var exceptionMessage = "undefined exception";
+                    }
 
                     // creates the complete error message
                     var errorMessage = "There was a problem installing plugin: "
