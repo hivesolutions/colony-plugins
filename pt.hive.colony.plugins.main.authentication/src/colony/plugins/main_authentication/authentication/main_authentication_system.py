@@ -203,12 +203,10 @@ class MainAuthentication:
 
         # creates the exception map
         exception_map = {
-            EXCEPTION_VALUE : {
-                EXCEPTION_REFERENCE_VALUE : exception,
-                EXCEPTION_NAME_VALUE : exception_class_name,
-                MESSAGE_VALUE : exception_message,
-                TRACEBACK_VALUE : formatted_traceback
-            }
+            EXCEPTION_REFERENCE_VALUE : exception,
+            EXCEPTION_NAME_VALUE : exception_class_name,
+            MESSAGE_VALUE : exception_message,
+            TRACEBACK_VALUE : formatted_traceback
         }
 
         # converts the exception class name to underscore notation
