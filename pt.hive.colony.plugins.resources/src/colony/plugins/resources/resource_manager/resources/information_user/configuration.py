@@ -46,6 +46,7 @@ configuration = {
             "email" : u"joamag@hive.pt",
             "username" : u"joamag",
             "website" : u"http://joaomagalhaes.eu",
+            "description" : u"Enthusiasm driven software developer, programming language devourer",
             "images" : {
                 "gravatar" : u"http://www.gravatar.com/avatar/639590e6cd348a5581826da23b78511a"
             },
@@ -73,6 +74,7 @@ configuration = {
             "email" : u"tsilva@hive.pt",
             "username" : u"tsilva",
             "website" : u"http://tiagosilva.me",
+            "description" : u"A diversified multi-cultural post-modern deconstructionist",
             "images" : {
                 "gravatar" : u"http://www.gravatar.com/avatar/b2e064935878cfd489107331aaa296d3"
             },
@@ -99,6 +101,7 @@ configuration = {
             "email" : u"lmartinho@hive.pt",
             "username" : u"lmartinho",
             "website" : u"http://luismartinho.com",
+            "description" : u"Software Craftsman, I build stuff",
             "images" : {
                 "gravatar" : u"http://www.gravatar.com/avatar/8262b6b2a430566de13df6da0c481846"
             },
@@ -124,6 +127,7 @@ configuration = {
             "last_name" : u"Castro",
             "email" : u"v-fcastro@hive.pt",
             "username" : u"v-fcastro",
+            "description" : u"Work in progress...",
             "images" : {
                 "gravatar" : u"http://www.gravatar.com/avatar/e8f4b05866847b6d9e9638c40ce77d93"
             },
@@ -150,6 +154,7 @@ configuration = {
             "email" : u"v-msousa@hive.pt",
             "username" : u"v-msousa",
             "website" : u"http://marcosousa.me",
+            "description" : u"Visual Designer & Web Design",
             "images" : {
                 "gravatar" : u"http://www.gravatar.com/avatar/e7f7880c089f0d104df7f088dbc213e9"
             },
