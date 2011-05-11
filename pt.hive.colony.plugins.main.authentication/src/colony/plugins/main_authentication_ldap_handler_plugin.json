@@ -19,6 +19,7 @@
             "main_authentication_ldap_handler_plugin.py",
             "main_authentication_ldap_handler/__init__.py",
             "main_authentication_ldap_handler/ldap_handler/__init__.py",
+            "main_authentication_ldap_handler/ldap_handler/main_authentication_ldap_handler_exceptions.py",
             "main_authentication_ldap_handler/ldap_handler/main_authentication_ldap_handler_system.py",
             "main_authentication_ldap_handler/ldap_handler/resources/baf.xml"]
 }

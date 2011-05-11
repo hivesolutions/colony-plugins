@@ -44,6 +44,12 @@ import main_authentication_entity_manager_handler_exceptions
 HANDLER_NAME = "entity_manager"
 """ The handler name """
 
+USERNAME_VALUE = "valid"
+""" The username value """
+
+VALID_VALUE = "valid"
+""" The valid value """
+
 ENTITY_MANAGER_VALUE = "entity_manager"
 """ The entity manager value """
 
@@ -163,12 +169,14 @@ class MainAuthenticationEntityManagerHandler:
         if user_entities:
             # creates the return value
             return_value = {
-                "username" : username,
-                "valid" : True
+                VALID_VALUE : True,
+                USERNAME_VALUE : username
             }
+        # otherwise there is no valid username password
+        # combination
+        else:
+            # raises the authentication error
+            raise main_authentication_entity_manager_handler_exceptions.AuthenticationError("invalid username password combination")
 
-            # returns the return value
-            return return_value
-
-        # returns invalid
-        return None
+        # returns the return value
+        return return_value

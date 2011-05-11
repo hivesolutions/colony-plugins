@@ -45,8 +45,14 @@ HANDLER_NAME = "python"
 FILE_PATH_VALUE = "file_path"
 """ The file path value """
 
+USERNAME_VALUE = "username"
+""" The username value """
+
 PASSWORD_VALUE = "password"
 """ The password value """
+
+VALID_VALUE = "valid"
+""" The valid value """
 
 AUTHENTICATION_CONFIGURATION_VALUE = "authentication_configuration"
 """ The authentication configuration value """
@@ -135,13 +141,13 @@ class MainAuthenticationPythonHandler:
         # in case the user password matches the one
         # in the configuration and is valid
         if not user_password or not user_password == password:
-            # returns invalid
-            return None
+            # raises the authentication error
+            raise main_authentication_python_handler_exceptions.AuthenticationError("password mismatch")
 
         # creates the return value
         return_value = {
-            "username" : username,
-            "valid" : True
+            VALID_VALUE : True,
+            USERNAME_VALUE : username
         }
 
         # returns the return value

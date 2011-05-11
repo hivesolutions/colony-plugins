@@ -43,8 +43,16 @@ import hashlib
 
 import colony.libs.crypt_util
 
+import main_authentication_ldap_handler_exceptions
+
 HANDLER_NAME = "ldap"
 """ The handler name """
+
+USERNAME_VALUE = "username"
+""" The username value """
+
+VALID_VALUE = "valid"
+""" The valid value """
 
 ROOT_DN_VALUE = "root_dn"
 """ The root dn value """
@@ -183,13 +191,13 @@ class MainAuthenticationLdapHandler:
             if processed_password_value == user_password_value:
                 # creates the return value
                 return_value = {
-                    "username" : username,
-                    "valid" : True
+                    VALID_VALUE : True,
+                    USERNAME_VALUE : username
                 }
-            # otherwise no authentication is made
+            # otherwise there is an error in authentication
             else:
-                # sets the return value as invalid
-                return_value = None
+                # raises the authentication error
+                raise main_authentication_ldap_handler_exceptions.AuthenticationError("password mismatch")
 
             # disconnects from the ldap client
             ldap_client.disconnect()
