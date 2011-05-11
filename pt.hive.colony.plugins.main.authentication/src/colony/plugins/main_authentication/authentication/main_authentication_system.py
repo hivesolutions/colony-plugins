@@ -48,6 +48,9 @@ VALID_VALUE = "valid"
 EXCEPTION_VALUE = "exception"
 """ The exception value """
 
+EXCEPTION_REFERENCE_VALUE = "exception_reference"
+""" The exception reference value """
+
 EXCEPTION_NAME_VALUE = "exception_name"
 """ The exception name value """
 
@@ -201,6 +204,7 @@ class MainAuthentication:
         # creates the exception map
         exception_map = {
             EXCEPTION_VALUE : {
+                EXCEPTION_REFERENCE_VALUE : exception,
                 EXCEPTION_NAME_VALUE : exception_class_name,
                 MESSAGE_VALUE : exception_message,
                 TRACEBACK_VALUE : formatted_traceback
