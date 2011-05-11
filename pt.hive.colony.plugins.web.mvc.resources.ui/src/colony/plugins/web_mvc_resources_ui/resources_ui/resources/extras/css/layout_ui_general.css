@@ -134,8 +134,8 @@ h2 {
 
 /* Notification */
 #notification-area {
-    width: 100%;
     position: absolute;
+    right: 0px;
 }
 
 #notification-area.right {
