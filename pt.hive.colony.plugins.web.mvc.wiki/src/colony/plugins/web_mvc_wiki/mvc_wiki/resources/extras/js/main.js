@@ -24,47 +24,71 @@
 // __license__   = GNU General Public License (GPL), Version 3
 
 function textGetSelection(token, endToken, space) {
+    // initializes the spacer according to the parameter
     var spaceValue = space ? " " : "";
 
+    // retrieves the text area element
     var text = document.getElementById("wiki-page-contents-text-area");
 
+    // computes the delta for the selection
     var delta = text.selectionEnd - text.selectionStart;
 
+    // retrieves the slice before the selection
     var first = text.value.slice(0, text.selectionStart);
+
+    // retrieves the selection slice
     var second = text.value.slice(text.selectionStart, text.selectionEnd);
+
+    // retrieves the slice after the selection
     var third = text.value.slice(text.selectionEnd, text.value.length);
 
+    // assembles the final value placing the token and spacer between the slices
     var finalValue = first + token + spaceValue + second + spaceValue
             + endToken + third;
 
+    // sets the text value
     text.value = finalValue;
 }
 
 jQuery(document).ready(function() {
-
+    // for each wiki button
     jQuery(".wiki-button").each(function(index, element) {
-                var elemento = jQuery(element).clone();
+        // retrieves the element
+        var elementReference = jQuery(element);
 
-                var html = "<div class=\"wiki-button-container\"></div>";
+        // clones the element
+        elementReference.clone();
 
-                var elemento = jQuery(html);
+        // creates the wiki button container markup
+        var wikiButtonContainerHtml = "<div class=\"wiki-button-container\"></div>";
 
-                var novoElement = jQuery(element).replaceWith(elemento);
+        // creates the wiki button container element
+        var wikiButtonContainer = jQuery(wikiButtonContainerHtml);
 
-                elemento.append(jQuery(element))
+        // replaces the matched object with the new button container
+        elementReference.replaceWith(wikiButtonContainer);
 
-                var classes = jQuery(element).attr("class");
+        // appends the element to the container to finish the wrapping
+        wikiButtonContainer.append(elementReference);
 
-                var classesList = classes.split(" ")
+        // retrieves the element class
+        var classes = elementReference.attr("class");
 
-                for (var i = 0; i < classesList.length; i++) {
-                    var classValue = classesList[i].trim();
+        // splits the classes string
+        var classesList = classes.split(" ")
 
-                    if (classValue != "wiki-button") {
-                        elemento.addClass(classValue);
-                    }
-                }
-            });
+        // for each class
+        for (var i = 0; i < classesList.length; i++) {
+            // retrieves the class value
+            var classValue = classesList[i].trim();
+
+            // in case the class is not the wiki button class
+            if (classValue != "wiki-button") {
+                // adds the matched object class to the container element
+                wikiButtonContainer.addClass(classValue);
+            }
+        }
+    });
 
     jQuery("#wiki-options-button").click(function() {
                 window.location = jQuery("#wiki-page-title").html() + ".prt";
@@ -131,38 +155,38 @@ jQuery(document).ready(function() {
             });
 
     jQuery("#wiki-page-edit-publish-button").click(function() {
-                // retrieves the contents value
-                var contents = jQuery("#wiki-page-edit-contents-text-area").attr("value");
+        // retrieves the contents value
+        var contents = jQuery("#wiki-page-edit-contents-text-area").attr("value");
 
-                // retrieves the symmary value
-                var summary = jQuery("#wiki-page-edit-summary-input").attr("value");
+        // retrieves the symmary value
+        var summary = jQuery("#wiki-page-edit-summary-input").attr("value");
 
-                // retrieves the wiki page value
-                var wikiPage = jQuery("#wiki-page-title").html();
+        // retrieves the wiki page value
+        var wikiPage = jQuery("#wiki-page-title").html();
 
-                // creates the complete url
-                var completeUrl = "pages/" + wikiPage + "/update";
+        // creates the complete url
+        var completeUrl = "pages/" + wikiPage + "/update";
 
-                // calls the edit resource
-                jQuery.ajax({
-                            type : "post",
-                            url : completeUrl,
-                            data : {
-                                "page[contents]" : contents,
-                                "page[summary]" : summary
-                            },
-                            success : function(data) {
-                                jQuery.ajax({
-                                            type : "get",
-                                            url : wikiPage + ".ajx",
-                                            success : function(data) {
-                                                jQuery("#wiki-contents").html(data);
-                                                jQuery("#wiki-page-edit").fadeOut(200);
-                                            }
-                                        });
-                            }
-                        });
-            });
+        // calls the edit resource
+        jQuery.ajax({
+                    type : "post",
+                    url : completeUrl,
+                    data : {
+                        "page[contents]" : contents,
+                        "page[summary]" : summary
+                    },
+                    success : function(data) {
+                        jQuery.ajax({
+                                    type : "get",
+                                    url : wikiPage + ".ajx",
+                                    success : function(data) {
+                                        jQuery("#wiki-contents").html(data);
+                                        jQuery("#wiki-page-edit").fadeOut(200);
+                                    }
+                                });
+                    }
+                });
+    });
 
     jQuery(".wiki-input").each(function(index, value) {
                 // retrieves the value reference
