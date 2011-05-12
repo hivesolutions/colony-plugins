@@ -41,6 +41,7 @@ configuration = {
     "instances" : {
         "colony" : {
             "name" : "colony",
+            "template" : "simply",
             "repository_type" : "svn",
             "repository_arguments" : {
                 "save_username_password" : False
