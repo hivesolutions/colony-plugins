@@ -57,6 +57,7 @@ WIKI_EXTENSIONS = (
 BASE_FILES = {
     "resources/css/main.css" : "/css",
     "resources/css/print.css" : "/css",
+    "resources/css/simply.css" : "/css",
     "resources/js/main.js" : "/js",
     "resources/images/link_icon.png" : "/images",
     "resources/images/console_icon.png" : "/images",

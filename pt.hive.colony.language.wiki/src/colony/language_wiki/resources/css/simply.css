@@ -52,8 +52,7 @@ body {
 }
 
 #wiki-contents {
-    width: 70%;
-    min-width: 800px;
+    width: 960px;
     margin: 0px auto 10px auto;
 }
 
@@ -69,8 +68,6 @@ h1, h2, h3, h4, h5 {
 }
 
 h1, h2, h3 {
-    background-color: #f2f2f2;
-    border-bottom: 1px solid #cccccc;
     padding: 6px 0px 3px 5px;
 }
 
@@ -177,14 +174,12 @@ h5:hover > a.headerlink {
 }
 
 .image {
-    background: #e6e6e6 url(../images/image_note.gif) no-repeat scroll 0px 0px;
     overflow: auto;
-    padding: 1.2em 1.2em 0.6em 3.2em;
     text-align: center;
 }
 
 .image img {
-    -moz-box-shadow: 0.25em 0.25em 2em rgba(0, 0, 0, 0.35);
+    -moz-box-shadow: 0.2em 0.2em 1em rgba(128, 128, 128, 0.35);
     -webkit-box-shadow: rgba(0, 0, 0, 0.35) 0.25em 0.25em 2em;
 }
 
@@ -205,8 +200,7 @@ h5:hover > a.headerlink {
 }
 
 #wiki-header .wiki-header-contents {
-    width: 70%;
-    min-width: 800px;
+    width: 960px;
     margin: 0px auto 10px auto;
     padding-top: 12px;
 }
@@ -324,7 +318,7 @@ h5:hover > a.headerlink {
 }
 
 #wiki-footer .wiki-footer-contents {
-    width: 70%;
+    width: 960px;
     height: 38px;
     margin: 0px auto 0px auto;
     padding-top: 12px;
@@ -483,8 +477,8 @@ h5:hover > a.headerlink {
 .code {
     background: #eeeeee url(../images/code_note.gif) no-repeat scroll 0px 0px;
     padding: 18px 32px 18px 52px;
-    font-size: 120%;
-    line-height: 100%;
+    font-size: 100%;
+    line-height: 110%;
     overflow: auto;
 }
 
