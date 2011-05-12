@@ -694,9 +694,16 @@ class HtmlGenerationVisitor(language_wiki.wiki_visitor.Visitor):
     @language_wiki.wiki_visitor._visit(language_wiki.wiki_ast.BulletListNode)
     def visit_bullet_list_node(self, node):
         if self.visit_index == 0:
-            if self.string_buffer.get_last() == "</ul>":
-                self.string_buffer.rollback_last()
+            if self.string_buffer.get_last(-2) == "</ul>":
+                # "rollsback" the last two items
+                self.string_buffer.rollback_last(2)
+
+                # forces the closing of the paragraph
+                self.paragraph_open = False
             else:
+                # closes the current paragraph
+                self.close_paragraph()
+
                 self._write("<ul>")
 
             self._write("<li class=\"indentation-" + str(node.indentation_value) + "\">")
@@ -706,12 +713,22 @@ class HtmlGenerationVisitor(language_wiki.wiki_visitor.Visitor):
             self._write("</li>")
             self._write("</ul>")
 
+            # opens a new paragraph
+            self.open_paragraph()
+
     @language_wiki.wiki_visitor._visit(language_wiki.wiki_ast.OrderedListNode)
     def visit_ordered_list_node(self, node):
         if self.visit_index == 0:
-            if self.string_buffer.get_last() == "</ol>":
-                self.string_buffer.rollback_last()
+            if self.string_buffer.get_last(-2) == "</ol>":
+                # "rollsback" the last two items
+                self.string_buffer.rollback_last(2)
+
+                # forces the closing of the paragraph
+                self.paragraph_open = False
             else:
+                # closes the current paragraph
+                self.close_paragraph()
+
                 self._write("<ol>")
 
             self._write("<li class=\"indentation-" + str(node.indentation_value) + "\">")
@@ -720,6 +737,9 @@ class HtmlGenerationVisitor(language_wiki.wiki_visitor.Visitor):
             self._write("</div>")
             self._write("</li>")
             self._write("</ol>")
+
+            # opens a new paragraph
+            self.open_paragraph()
 
     @language_wiki.wiki_visitor._visit(language_wiki.wiki_ast.TagNode)
     def visit_tag_node(self, node):
@@ -782,10 +802,16 @@ class HtmlGenerationVisitor(language_wiki.wiki_visitor.Visitor):
         Opens the paragraph.
         """
 
+        # in case there is already a
+        # paragraph open
         if self.paragraph_open:
+            # returns immediately
             return
 
+        # writes the paragraph element
         self._write("<p>")
+
+        # sets the paragraph as open
         self.paragraph_open = True
 
     def close_paragraph(self):
@@ -793,10 +819,23 @@ class HtmlGenerationVisitor(language_wiki.wiki_visitor.Visitor):
         Closes the paragraph.
         """
 
+        # in case there is no paragraph
+        # already open
         if not self.paragraph_open:
+            # returns immediately
             return
 
-        self._write("</p>")
+        # in case the last element is a paragraph element
+        # the paragraph is empty and should be removed
+        if self.string_buffer.get_last() == "<p>":
+            # rollsback the last element
+            self.string_buffer.rollback_last()
+        # otherwise the paragraph is not empty
+        else:
+            # writes the end paragraph element
+            self._write("</p>")
+
+        # sets the paragraph as closed
         self.paragraph_open = False
 
     def escape_string_value(self, string_value):
@@ -847,7 +886,7 @@ class HtmlGenerationVisitor(language_wiki.wiki_visitor.Visitor):
             # retrieves the index value order list
             index_value_order_list = index_value.get("order", [])
 
-            # retrieves the index valu items map
+            # retrieves the index value items map
             index_value_items_map = index_value.get("items", {})
 
             for index_value_key in index_value_order_list:
