@@ -37,6 +37,9 @@
         // the application octet stream value
         var APPLICATION_OCTET_STREAM_VALUE = "application/octet-stream";
 
+        // the http complete state value
+        var HTTP_COMPLETE_STATE = 4;
+
         // the default values for the plugin
         var defaults = {};
 
@@ -126,6 +129,9 @@
             // retrieves the upload element
             var uploadElement = jQuery(xmlHttpRequest.upload);
 
+            // retrieves the xml http request element
+            var xmlHttpRequestElement = jQuery(xmlHttpRequest);
+
             // registers the upload element to the progress event
             uploadElement.bind("progress", function(event) {
                 // in case the length is not
@@ -143,6 +149,19 @@
 
             // registers the upload element to the load event
             uploadElement.bind("load", function(event) {
+                        // triggers the file loaded event
+                        matchedObject.trigger("file_loaded", [xmlHttpRequest]);
+                    });
+
+            // registers the upload element to the load event
+            xmlHttpRequestElement.bind("readystatechange", function(event) {
+                        // in case the xml http request state is different
+                        // from the complete one
+                        if (xmlHttpRequest.readyState != HTTP_COMPLETE_STATE) {
+                            // returns immediately
+                            return;
+                        }
+
                         // retrieves the response text
                         var responseText = xmlHttpRequest.responseText;
 
@@ -156,7 +175,7 @@
                         }
 
                         // triggers the file loaded event
-                        matchedObject.trigger("file_loaded", [responseText,
+                        matchedObject.trigger("file_completed", [responseText,
                                         responseStatus, xmlHttpRequest]);
                     });
 

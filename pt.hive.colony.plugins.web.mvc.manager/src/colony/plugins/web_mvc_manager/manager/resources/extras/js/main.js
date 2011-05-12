@@ -202,7 +202,7 @@ function fileInstallLoad() {
                 });
     });
 
-    _body.bind("file_loaded",
+    _body.bind("file_completed",
             function(event, responseText, responseStatus, xmlHttpRequest) {
                 // sets the progress indicator percentage
                 jQuery(".message-message .progress-indicator", "body").progressindicator(
