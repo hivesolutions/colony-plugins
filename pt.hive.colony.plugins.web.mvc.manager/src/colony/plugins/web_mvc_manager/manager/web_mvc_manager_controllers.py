@@ -101,6 +101,15 @@ NORMAL_ENCODER_NAME = None
 PATTERN_NAMES_VALUE = "pattern_names"
 """ The pattern names value """
 
+EXCEPTION_VALUE = "exception"
+""" The exception value """
+
+MESSAGE_VALUE = "message"
+""" The message value """
+
+EXCEPTION_HANDLER_VALUE = "exception_handler"
+""" The exception handler value """
+
 # imports the web mvc utils
 web_mvc_utils = colony.libs.importer_util.__importer__(WEB_MVC_UTILS_VALUE)
 
@@ -149,10 +158,7 @@ class WebMvcManagerMainController:
         # returns the result of the require permission call
         return self.web_mvc_manager.require_permissions(self, rest_request, validation_parameters)
 
-    def validation_failed(self, rest_request, parameters, validation_parameters, reasons_list):
-        # returns the result of the escape permissions error
-        return self.web_mvc_manager.escape_permissions_failed(self, rest_request, reasons_list)
-
+    @web_mvc_utils.serialize_exceptions("all")
     def handle_web_mvc_manager_index(self, rest_request, parameters = {}):
         """
         Handles the given web mvc manager index rest request.
@@ -165,6 +171,12 @@ class WebMvcManagerMainController:
         @rtype: bool
         @return: The result of the handling.
         """
+
+        # retrieves the exception handler
+        exception_handler = self.web_mvc_manager.web_mvc_manager_exception_controller
+
+        # sets the exception handler in the parameters
+        parameters[EXCEPTION_HANDLER_VALUE] = exception_handler
 
         # retrieves the template file
         template_file = self.retrieve_template_file("general.html.tpl")
@@ -614,29 +626,15 @@ class PluginController:
         # returns the result of the require permission call
         return self.web_mvc_manager.require_permissions(self, rest_request, validation_parameters)
 
-    def validation_failed(self, rest_request, parameters, validation_parameters, reasons_list):
-        # returns the result of the escape permissions error
-        return self.web_mvc_manager.escape_permissions_failed(self, rest_request, reasons_list)
-
-    @web_mvc_utils.validated_method("plugins.list")
-    def handle_list_ajx(self, rest_request, parameters = {}):
-        # retrieves the template file
-        template_file = self.retrieve_template_file("plugin_list_contents.html.tpl")
-
-        # assigns the session variables to the template file
-        self.assign_session_template_file(rest_request, template_file)
-
-        # applies the base path to the template file
-        self.apply_base_path_template_file(rest_request, template_file)
-
-        # processes the template file and sets the request contents
-        self.process_set_contents(rest_request, template_file)
-
-        # returns true
-        return True
-
+    @web_mvc_utils.serialize_exceptions("all")
     @web_mvc_utils.validated_method("plugins.list")
     def handle_list(self, rest_request, parameters = {}):
+        # retrieves the exception handler
+        exception_handler = self.web_mvc_manager.web_mvc_manager_exception_controller
+
+        # sets the exception handler in the parameters
+        parameters[EXCEPTION_HANDLER_VALUE] = exception_handler
+
         # retrieves the template file
         template_file = self.retrieve_template_file("../general.html.tpl")
 
@@ -664,8 +662,39 @@ class PluginController:
         # returns true
         return True
 
+    @web_mvc_utils.serialize_exceptions("all")
     @web_mvc_utils.validated_method("plugins.list")
-    def handle_partial_list(self, rest_request, parameters = {}):
+    def handle_list_ajx(self, rest_request, parameters = {}):
+        # retrieves the json plugin
+        json_plugin = self.web_mvc_manager_plugin.json_plugin
+
+        # sets the serializer in the parameters
+        parameters[SERIALIZER_VALUE] = json_plugin
+
+        # retrieves the template file
+        template_file = self.retrieve_template_file("plugin_list_contents.html.tpl")
+
+        # assigns the session variables to the template file
+        self.assign_session_template_file(rest_request, template_file)
+
+        # applies the base path to the template file
+        self.apply_base_path_template_file(rest_request, template_file)
+
+        # processes the template file and sets the request contents
+        self.process_set_contents(rest_request, template_file)
+
+        # returns true
+        return True
+
+    @web_mvc_utils.serialize_exceptions("all")
+    @web_mvc_utils.validated_method("plugins.list")
+    def handle_partial_list_ajx(self, rest_request, parameters = {}):
+        # retrieves the json plugin
+        json_plugin = self.web_mvc_manager_plugin.json_plugin
+
+        # sets the serializer in the parameters
+        parameters[SERIALIZER_VALUE] = json_plugin
+
         # retrieves the web mvc manager search helper
         web_mvc_manager_search_helper = self.web_mvc_manager.web_mvc_manager_search_helper
 
@@ -720,10 +749,23 @@ class PluginController:
         # returns true
         return True
 
+    @web_mvc_utils.serialize_exceptions("all")
     @web_mvc_utils.validated_method("plugins.new")
-    def handle_new_ajx(self, rest_request, parameters = {}):
+    def handle_new(self, rest_request, parameters = {}):
+        # retrieves the exception handler
+        exception_handler = self.web_mvc_manager.web_mvc_manager_exception_controller
+
+        # sets the exception handler in the parameters
+        parameters[EXCEPTION_HANDLER_VALUE] = exception_handler
+
         # retrieves the template file
-        template_file = self.retrieve_template_file("plugin_new_contents.html.tpl")
+        template_file = self.retrieve_template_file("../general.html.tpl")
+
+        # assigns the include to the template
+        self.assign_include_template_file(template_file, "page_include", "plugin/plugin_new_contents.html.tpl")
+
+        # assigns the include to the template
+        self.assign_include_template_file(template_file, "side_panel_include", "side_panel/side_panel_configuration.html.tpl")
 
         # assigns the session variables to the template file
         self.assign_session_template_file(rest_request, template_file)
@@ -737,16 +779,17 @@ class PluginController:
         # returns true
         return True
 
+    @web_mvc_utils.serialize_exceptions("all")
     @web_mvc_utils.validated_method("plugins.new")
-    def handle_new(self, rest_request, parameters = {}):
+    def handle_new_ajx(self, rest_request, parameters = {}):
+        # retrieves the json plugin
+        json_plugin = self.web_mvc_manager_plugin.json_plugin
+
+        # sets the serializer in the parameters
+        parameters[SERIALIZER_VALUE] = json_plugin
+
         # retrieves the template file
-        template_file = self.retrieve_template_file("../general.html.tpl")
-
-        # assigns the include to the template
-        self.assign_include_template_file(template_file, "page_include", "plugin/plugin_new_contents.html.tpl")
-
-        # assigns the include to the template
-        self.assign_include_template_file(template_file, "side_panel_include", "side_panel/side_panel_configuration.html.tpl")
+        template_file = self.retrieve_template_file("plugin_new_contents.html.tpl")
 
         # assigns the session variables to the template file
         self.assign_session_template_file(rest_request, template_file)
@@ -785,6 +828,48 @@ class PluginController:
 
     @web_mvc_utils.serialize_exceptions("all")
     @web_mvc_utils.validated_method("plugins.show")
+    def handle_show(self, rest_request, parameters = {}):
+        # retrieves the exception handler
+        exception_handler = self.web_mvc_manager.web_mvc_manager_exception_controller
+
+        # sets the exception handler in the parameters
+        parameters[EXCEPTION_HANDLER_VALUE] = exception_handler
+
+        # retrieves the pattern names from the parameters
+        pattern_names = parameters[PATTERN_NAMES_VALUE]
+
+        # retrieves the plugin id pattern
+        plugin_id = pattern_names["plugin_id"]
+
+        # retrieves the specified plugin
+        plugin = self._get_plugin(rest_request, plugin_id)
+
+        # retrieves the template file
+        template_file = self.retrieve_template_file("../general.html.tpl")
+
+        # assigns the include to the template
+        self.assign_include_template_file(template_file, "page_include", "plugin/plugin_edit_contents.html.tpl")
+
+        # assigns the include to the template
+        self.assign_include_template_file(template_file, "side_panel_include", "side_panel/side_panel_configuration.html.tpl")
+
+        # assigns the plugin to the template
+        template_file.assign("plugin", plugin)
+
+        # assigns the session variables to the template file
+        self.assign_session_template_file(rest_request, template_file)
+
+        # applies the base path to the template file
+        self.apply_base_path_template_file(rest_request, template_file)
+
+        # processes the template file and sets the request contents
+        self.process_set_contents(rest_request, template_file)
+
+        # returns true
+        return True
+
+    @web_mvc_utils.serialize_exceptions("all")
+    @web_mvc_utils.validated_method("plugins.show")
     def handle_show_ajx(self, rest_request, parameters = {}):
         # retrieves the json plugin
         json_plugin = self.web_mvc_manager_plugin.json_plugin
@@ -819,45 +904,11 @@ class PluginController:
         # returns true
         return True
 
-    @web_mvc_utils.validated_method("plugins.show")
-    def handle_show(self, rest_request, parameters = {}):
-        # retrieves the pattern names from the parameters
-        pattern_names = parameters[PATTERN_NAMES_VALUE]
-
-        # retrieves the plugin id pattern
-        plugin_id = pattern_names["plugin_id"]
-
-        # retrieves the specified plugin
-        plugin = self._get_plugin(rest_request, plugin_id)
-
-        # retrieves the template file
-        template_file = self.retrieve_template_file("../general.html.tpl")
-
-        # assigns the include to the template
-        self.assign_include_template_file(template_file, "page_include", "plugin/plugin_edit_contents.html.tpl")
-
-        # assigns the include to the template
-        self.assign_include_template_file(template_file, "side_panel_include", "side_panel/side_panel_configuration.html.tpl")
-
-        # assigns the plugin to the template
-        template_file.assign("plugin", plugin)
-
-        # assigns the session variables to the template file
-        self.assign_session_template_file(rest_request, template_file)
-
-        # applies the base path to the template file
-        self.apply_base_path_template_file(rest_request, template_file)
-
-        # processes the template file and sets the request contents
-        self.process_set_contents(rest_request, template_file)
-
-        # returns true
-        return True
-
+    @web_mvc_utils.serialize_exceptions("all")
     @web_mvc_utils.validated_method("plugins.change_status")
-    def handle_change_status(self, rest_request, parameters = {}):
-        # retrieves the json plugin
-        json_plugin = self.web_mvc_manager_plugin.json_plugin
+    def handle_change_status_serialized(self, rest_request, parameters = {}):
+        # retrieves the serializer
+        serializer = parameters[SERIALIZER_VALUE]
 
         # retrieves the web mvc communication helper
         web_mvc_manager_communication_helper = self.web_mvc_manager.web_mvc_manager_communication_helper
@@ -878,7 +929,7 @@ class PluginController:
         change_status_plugin_result = self._change_status_plugin(rest_request, plugin_id, plugin_status)
 
         # serializes the change status result using the json plugin
-        serialized_status = json_plugin.dumps(change_status_plugin_result)
+        serialized_status = serializer.dumps(change_status_plugin_result)
 
         # sets the serialized status as the rest request contents
         self.set_contents(rest_request, serialized_status)
@@ -888,6 +939,17 @@ class PluginController:
 
         # returns true
         return True
+
+    def handle_change_status_json(self, rest_request, parameters = {}):
+        # retrieves the json plugin
+        json_plugin = self.web_mvc_manager_plugin.json_plugin
+
+        # sets the serializer in the parameters
+        parameters[SERIALIZER_VALUE] = json_plugin
+
+        # handles the request with the general
+        # handle create serialized method
+        return self.handle_change_status_serialized(rest_request, parameters)
 
     def _get_plugin(self, rest_request, plugin_id):
         # retrieves the plugin manager
@@ -1009,29 +1071,15 @@ class CapabilityController:
         # returns the result of the require permission call
         return self.web_mvc_manager.require_permissions(self, rest_request, validation_parameters)
 
-    def validation_failed(self, rest_request, parameters, validation_parameters, reasons_list):
-        # returns the result of the escape permissions error
-        return self.web_mvc_manager.escape_permissions_failed(self, rest_request, reasons_list)
-
-    @web_mvc_utils.validated_method("capabilites.list")
-    def handle_list_ajx(self, rest_request, parameters = {}):
-        # retrieves the template file
-        template_file = self.retrieve_template_file("capability_list_contents.html.tpl")
-
-        # assigns the session variables to the template file
-        self.assign_session_template_file(rest_request, template_file)
-
-        # applies the base path to the template file
-        self.apply_base_path_template_file(rest_request, template_file)
-
-        # processes the template file and sets the request contents
-        self.process_set_contents(rest_request, template_file)
-
-        # returns true
-        return True
-
+    @web_mvc_utils.serialize_exceptions("all")
     @web_mvc_utils.validated_method("capabilites.list")
     def handle_list(self, rest_request, parameters = {}):
+        # retrieves the exception handler
+        exception_handler = self.web_mvc_manager.web_mvc_manager_exception_controller
+
+        # sets the exception handler in the parameters
+        parameters[EXCEPTION_HANDLER_VALUE] = exception_handler
+
         # retrieves the template file
         template_file = self.retrieve_template_file("../general.html.tpl")
 
@@ -1053,8 +1101,39 @@ class CapabilityController:
         # returns true
         return True
 
+    @web_mvc_utils.serialize_exceptions("all")
     @web_mvc_utils.validated_method("capabilites.list")
-    def handle_partial_list(self, rest_request, parameters = {}):
+    def handle_list_ajx(self, rest_request, parameters = {}):
+        # retrieves the json plugin
+        json_plugin = self.web_mvc_manager_plugin.json_plugin
+
+        # sets the serializer in the parameters
+        parameters[SERIALIZER_VALUE] = json_plugin
+
+        # retrieves the template file
+        template_file = self.retrieve_template_file("capability_list_contents.html.tpl")
+
+        # assigns the session variables to the template file
+        self.assign_session_template_file(rest_request, template_file)
+
+        # applies the base path to the template file
+        self.apply_base_path_template_file(rest_request, template_file)
+
+        # processes the template file and sets the request contents
+        self.process_set_contents(rest_request, template_file)
+
+        # returns true
+        return True
+
+    @web_mvc_utils.serialize_exceptions("all")
+    @web_mvc_utils.validated_method("capabilites.list")
+    def handle_partial_list_ajx(self, rest_request, parameters = {}):
+        # retrieves the json plugin
+        json_plugin = self.web_mvc_manager_plugin.json_plugin
+
+        # sets the serializer in the parameters
+        parameters[SERIALIZER_VALUE] = json_plugin
+
         # retrieves the web mvc manager search helper
         web_mvc_manager_search_helper = self.web_mvc_manager.web_mvc_manager_search_helper
 
@@ -1110,7 +1189,7 @@ class CapabilityController:
         return True
 
     @web_mvc_utils.validated_method("capabilites.show")
-    def handle_show_ajx(self, rest_request, parameters = {}):
+    def handle_show(self, rest_request, parameters = {}):
         # retrieves the pattern names from the parameters
         pattern_names = parameters[PATTERN_NAMES_VALUE]
 
@@ -1124,7 +1203,13 @@ class CapabilityController:
         sub_capabilities = self._get_sub_capabilities(rest_request, capability)
 
         # retrieves the template file
-        template_file = self.retrieve_template_file("capability_edit_contents.html.tpl")
+        template_file = self.retrieve_template_file("../general.html.tpl")
+
+        # assigns the include to the template
+        self.assign_include_template_file(template_file, "page_include", "capability/capability_edit_contents.html.tpl")
+
+        # assigns the include to the template
+        self.assign_include_template_file(template_file, "side_panel_include", "side_panel/side_panel_configuration.html.tpl")
 
         # assigns the capability to the template
         template_file.assign("capability", capability)
@@ -1147,8 +1232,15 @@ class CapabilityController:
         # returns true
         return True
 
+    @web_mvc_utils.serialize_exceptions("all")
     @web_mvc_utils.validated_method("capabilites.show")
-    def handle_show(self, rest_request, parameters = {}):
+    def handle_show_ajx(self, rest_request, parameters = {}):
+        # retrieves the json plugin
+        json_plugin = self.web_mvc_manager_plugin.json_plugin
+
+        # sets the serializer in the parameters
+        parameters[SERIALIZER_VALUE] = json_plugin
+
         # retrieves the pattern names from the parameters
         pattern_names = parameters[PATTERN_NAMES_VALUE]
 
@@ -1162,13 +1254,7 @@ class CapabilityController:
         sub_capabilities = self._get_sub_capabilities(rest_request, capability)
 
         # retrieves the template file
-        template_file = self.retrieve_template_file("../general.html.tpl")
-
-        # assigns the include to the template
-        self.assign_include_template_file(template_file, "page_include", "capability/capability_edit_contents.html.tpl")
-
-        # assigns the include to the template
-        self.assign_include_template_file(template_file, "side_panel_include", "side_panel/side_panel_configuration.html.tpl")
+        template_file = self.retrieve_template_file("capability_edit_contents.html.tpl")
 
         # assigns the capability to the template
         template_file.assign("capability", capability)
@@ -1254,3 +1340,71 @@ class CapabilityController:
 
         # returns the sub capabilities
         return sub_capabilities
+
+class ExceptionController:
+    """
+    The web mvc manager exception controller.
+    """
+
+    web_mvc_manager_plugin = None
+    """ The web mvc manager plugin """
+
+    web_mvc_manager = None
+    """ The web mvc manager """
+
+    def __init__(self, web_mvc_manager_plugin, web_mvc_manager):
+        """
+        Constructor of the class.
+
+        @type web_mvc_manager_plugin: WebMvcManagerPlugin
+        @param web_mvc_manager_plugin: The web mvc manager plugin.
+        @type web_mvc_manager: WebMvcManager
+        @param web_mvc_manager: The web mvc manager.
+        """
+
+        self.web_mvc_manager_plugin = web_mvc_manager_plugin
+        self.web_mvc_manager = web_mvc_manager
+
+    def start(self):
+        """
+        Method called upon structure initialization.
+        """
+
+        # retrieves the plugin manager
+        plugin_manager = self.web_mvc_manager_plugin.manager
+
+        # retrieves the web mvc manager plugin path
+        web_mvc_manager_plugin_path = plugin_manager.get_plugin_path_by_id(self.web_mvc_manager_plugin.id)
+
+        # creates the templates path
+        templates_path = web_mvc_manager_plugin_path + "/" + TEMPLATES_PATH
+
+        # sets the templates path
+        self.set_templates_path(templates_path)
+
+    def handle_exception(self, rest_request, parameters = {}):
+        """
+        Handles an exception.
+
+        @type rest_request: RestRequest
+        @param rest_request: The rest request for which the exception occurred.
+        @type parameters: Dictionary
+        @param parameters: The handler parameters.
+        @rtype: bool
+        @return: The result of the handling.
+        """
+
+        # retrieves the exception
+        exception = parameters.get(EXCEPTION_VALUE)
+
+        # retrieves the exception message
+        exception_message = exception.get(MESSAGE_VALUE)
+
+        # creates the exception complete message
+        exception_complete_message = "Exception: " + exception_message
+
+        # sets the exception message in the rest request
+        self.set_contents(rest_request, exception_complete_message)
+
+        # returns true
+        return True

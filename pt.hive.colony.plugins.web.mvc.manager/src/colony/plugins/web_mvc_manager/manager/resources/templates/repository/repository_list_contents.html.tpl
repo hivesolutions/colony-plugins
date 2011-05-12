@@ -9,7 +9,7 @@
 <div id="contents">
     <h1>Update</h1>
     <h2>Repositories</h2>
-    <div id="repository-table" class="search-table" provider_url="repositories/partial">
+    <div id="repository-table" class="search-table" provider_url="repositories/partial.ajx">
         <table class="table" cellspacing="0" cellpadding="0">
             <thead>
                 <tr>

@@ -90,6 +90,9 @@ class WebMvcManager:
     web_mvc_manager_capability_controller = None
     """ The web mvc manager capability controller """
 
+    web_mvc_manager_exception_controller = None
+    """ The web mvc manager exception controller """
+
     web_mvc_manager_search_helper = None
     """ The web mvc manager search helper """
 
@@ -168,6 +171,9 @@ class WebMvcManager:
         # creates the web mvc manager capability controller
         self.web_mvc_manager_capability_controller = web_mvc_utils_plugin.create_controller(web_mvc_manager_controllers.CapabilityController, [self.web_mvc_manager_plugin, self], {})
 
+        # creates the web mvc manager exception controller
+        self.web_mvc_manager_exception_controller = web_mvc_utils_plugin.create_controller(web_mvc_manager_controllers.ExceptionController, [self.web_mvc_manager_plugin, self], {})
+
         # creates the web mvc manager search helper
         self.web_mvc_manager_search_helper = web_mvc_utils_plugin.create_controller(web_mvc_manager_helpers.SearchHelper, [self.web_mvc_manager_plugin, self], {})
 
@@ -183,7 +189,8 @@ class WebMvcManager:
             "plugin" : self.web_mvc_manager_plugin_controller,
             "capability" : self.web_mvc_manager_capability_controller,
             "search_helper" : self.web_mvc_manager_search_helper,
-            "communication_helper" : self.web_mvc_manager_communication_helper
+            "communication_helper" : self.web_mvc_manager_communication_helper,
+            "exception" : self.web_mvc_manager_exception_controller
         }
 
     def get_patterns(self):
@@ -207,16 +214,16 @@ class WebMvcManager:
             (r"^web_mvc_manager/bundles$", self.web_mvc_manager_bundle_controller.handle_create_json, "post", "json"),
             (r"^web_mvc_manager/plugins$", self.web_mvc_manager_plugin_controller.handle_list_ajx, "get", "ajx"),
             (r"^web_mvc_manager/plugins$", self.web_mvc_manager_plugin_controller.handle_list, "get"),
-            (r"^web_mvc_manager/plugins/partial$", self.web_mvc_manager_plugin_controller.handle_partial_list, "get"),
+            (r"^web_mvc_manager/plugins/partial$", self.web_mvc_manager_plugin_controller.handle_partial_list_ajx, "get"),
             (r"^web_mvc_manager/plugins/new$", self.web_mvc_manager_plugin_controller.handle_new_ajx, "get", "ajx"),
             (r"^web_mvc_manager/plugins/new$", self.web_mvc_manager_plugin_controller.handle_new, "get"),
             (r"^web_mvc_manager/plugins$", self.web_mvc_manager_plugin_controller.handle_create_json, "post", "json"),
             (r"^web_mvc_manager/plugins/(?P<plugin_id>[a-zA-Z0-9\._]+)$", self.web_mvc_manager_plugin_controller.handle_show_ajx, "get", "ajx"),
             (r"^web_mvc_manager/plugins/(?P<plugin_id>[a-zA-Z0-9\._]+)$", self.web_mvc_manager_plugin_controller.handle_show, "get"),
-            (r"^web_mvc_manager/plugins/(?P<plugin_id>[a-zA-Z0-9\._]+)/change_status$", self.web_mvc_manager_plugin_controller.handle_change_status, "post", "json"),
+            (r"^web_mvc_manager/plugins/(?P<plugin_id>[a-zA-Z0-9\._]+)/change_status$", self.web_mvc_manager_plugin_controller.handle_change_status_json, "post", "json"),
             (r"^web_mvc_manager/capabilities$", self.web_mvc_manager_capability_controller.handle_list_ajx, "get", "ajx"),
             (r"^web_mvc_manager/capabilities$", self.web_mvc_manager_capability_controller.handle_list, "get"),
-            (r"^web_mvc_manager/capabilities/partial$", self.web_mvc_manager_capability_controller.handle_partial_list, "get"),
+            (r"^web_mvc_manager/capabilities/partial$", self.web_mvc_manager_capability_controller.handle_partial_list_ajx, "get", "ajx"),
             (r"^web_mvc_manager/capabilities/(?P<capability>[a-zA-Z0-9\._]+)$", self.web_mvc_manager_capability_controller.handle_show_ajx, "get", "ajx"),
             (r"^web_mvc_manager/capabilities/(?P<capability>[a-zA-Z0-9\._]+)$", self.web_mvc_manager_capability_controller.handle_show, "get")
         )

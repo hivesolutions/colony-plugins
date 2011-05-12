@@ -9,7 +9,7 @@
 <div id="contents">
     <h1>Configuration</h1>
     <h2>Capabilities</h2>
-    <div id="capability-table" class="search-table" provider_url="capabilities/partial">
+    <div id="capability-table" class="search-table" provider_url="capabilities/partial.ajx">
         <table class="table" cellspacing="0" cellpadding="0">
             <thead>
                 <tr>
