@@ -67,7 +67,6 @@ CLASS_DEFINITION = {
     "PASS" : "kw5",
     "RETURN" : "kw5",
     "IMPORT" : "kw5",
-    "NAME" : "kw2",
     "DECORATOR_NAME" : "kw1",
     "BOOL" : "kw5",
     "STRING" : "st0",

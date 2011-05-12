@@ -91,6 +91,14 @@ h5 {
     font-size: 80%;
 }
 
+div {
+}
+
+div.paragraph {
+    margin: 1.0em 0.0em 1.0em 0.0em;
+    line-height: 1.6em;
+}
+
 ul {
     color: #20435c;
     line-height: 145%;
@@ -364,6 +372,11 @@ h5:hover > a.headerlink {
     margin-top: 0.6em;
 }
 
+.highlight div.paragraph {
+    font-size: 13pt;
+    margin-top: 0.6em;
+}
+
 .highlight ul {
     color: #333333;
     list-style-type: upper-roman;
@@ -477,8 +490,8 @@ h5:hover > a.headerlink {
 .code {
     background: #eeeeee url(../images/code_note.gif) no-repeat scroll 0px 0px;
     padding: 18px 32px 18px 52px;
-    font-size: 100%;
-    line-height: 110%;
+    font-size: 110%;
+    line-height: 1.0em;
     overflow: auto;
 }
 
