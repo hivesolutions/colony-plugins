@@ -1,0 +1,337 @@
+@charset "utf-8";
+
+/*
+ Hive Colony Framework
+ Copyright (C) 2008 Hive Solutions Lda.
+
+ This file is part of Hive Colony Framework.
+
+ Hive Colony Framework is free software: you can redistribute it and/or modify
+ it under the terms of the GNU General Public License as published by
+ the Free Software Foundation, either version 3 of the License, or
+ (at your option) any later version.
+
+ Hive Colony Framework is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ GNU General Public License for more details.
+
+ You should have received a copy of the GNU General Public License
+ along with Hive Colony Framework. If not, see <http://www.gnu.org/licenses/>.
+*/
+
+/*
+ __author__    = Marco Sousa <v-msousa@hive.pt> & João Magalhães <joamag@hive.pt>
+ __version__   = 1.0.0
+ __revision__  = $LastChangedRevision: 5971 $
+ __date__      = $LastChangedDate: 2009-10-30 05:40:10 +0000 (sex, 30 Out 2009) $
+ __copyright__ = Copyright (c) 2008 Hive Solutions Lda.
+ __license__   = GNU General Public License (GPL), Version 3
+*/
+
+#environment-variables {
+    display: none;
+}
+
+.wiki-float-left {
+    float: left;
+}
+
+#wiki-page-edit-container {
+    position: absolute;
+    top: 129px;
+    width: 100%;
+}
+
+#wiki-sub-header {
+    display: none;
+    background: transparent url(../images/sub-header-shadow.png) repeat-x;
+    height: 60px;
+    margin-top: -15px;
+}
+
+#wiki-sub-header-contents {
+    width: 960px;
+    margin: 0 auto;
+}
+
+#wiki-sub-header-left {
+    float: left;
+    height: 50px;
+}
+
+#wiki-sub-header-right {
+    float: right;
+    margin-top: 8px;
+}
+
+#wiki-page-title {
+    margin-top: 14px;
+    background-color: transparent;
+    border-bottom: none;
+    padding: 0px 0 0px 0px;
+    color: #ffffff;
+    text-shadow: 1px 1px #333333;
+    font-size: 120%;
+}
+
+#wiki-page-edit {
+    display: none;
+    background: #cad4e4 url(../images/wiki-page-edit-background.png) repeat-x;
+    margin: 0 auto 10px;
+    clear: both;
+    width: 60%;
+    min-width: 320px;
+    height: 480px;
+    padding: 18px 20px 24px 20px;
+    border: 1px solid #4b6ea4;
+    border-radius: 0px 0px 6px 6px;
+    -moz-border-radius: 0px 0px 6px 6px;
+    -webkit-border-radius: 0px 0px 6px 6px;
+    box-shadow: 1px 1px 6px 0px #666666;;
+    -moz-box-shadow: 1px 1px 6px 0px #666666;
+    -webkit-box-shadow: 1px 1px 6px 0px #666666;
+}
+
+#wiki-page-search-container {
+    width: 260px;
+}
+
+#wiki-page-search {
+    float: left;
+}
+
+#wiki-page-search-background {
+    float: right;
+    width: 18px;
+    height: 18px;
+    margin-right: 6px;
+    margin-top: -25px;
+    background: transparent url(../images/wiki-page-search-background.png) no-repeat right top;
+}
+
+#wiki-page-new-buttons {
+    height: 34px;
+}
+
+#wiki-page-new-buttons .wiki-button-container {
+    float: right;
+}
+
+#wiki-page-edit-buttons {
+    height: 34px;
+}
+
+#wiki-page-edit-buttons .wiki-button-container {
+    float: right;
+}
+
+.wiki-page-new-area {
+    margin-bottom: 24px;
+}
+
+.wiki-page-edit-area {
+    margin-bottom: 24px;
+}
+
+.wiki-page-new-line {
+    margin-bottom: 12px;
+}
+
+.wiki-page-edit-line {
+    margin-bottom: 12px;
+}
+
+.wiki-page-new-label {
+    color: #20435c;
+    font-size: 100%;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+}
+
+.wiki-page-edit-label {
+    color: #20435c;
+    font-size: 100%;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+}
+
+#wiki-page-new-summary-input {
+    width: 100%;
+}
+
+#wiki-page-edit-summary-input {
+    width: 100%;
+}
+
+#wiki-page-new-contents-text-area {
+    height: 360px;
+    margin: 0px 0px 0px 0px;
+    font-family: monospace;
+    font-size: 120%;
+}
+
+#wiki-page-edit-contents-text-area {
+    height: 360px;
+    margin: 0px 0px 0px 0px;
+    font-family: monospace;
+    font-size: 120%;
+}
+
+#wiki-footer-contents-left {
+    float: left;
+}
+
+#wiki-footer-contents-right {
+    float: right;
+    font-size: 160%;
+}
+
+.wiki-button-container {
+    float: left;
+    width: 122px;
+    height: 32px;
+    margin-left: 6px;
+    margin-right: 6px;
+}
+
+.wiki-button-container.wiki-button-blue {
+    border-top: 1px solid #2a629c;
+    border-left: 1px solid #2a629c;
+    border-bottom: 1px solid #214c8f;
+    border-right: 1px solid #214c8f;
+}
+
+.wiki-button-container.wiki-button-gray {
+    border-top: 1px solid #444444;
+    border-left: 1px solid #444444;
+    border-bottom: 1px solid #222222;
+    border-right: 1px solid #222222;
+}
+
+.wiki-button {
+    float: left;
+    width: 120px;
+    height: 23px;
+    background: transparent none repeat-x 0px 0px;
+    padding-top: 7px;
+    vertical-align: middle;
+    color: #ffffff;
+    font-size: 90%;
+    text-align: center;
+    text-shadow: 1px 1px #333333;
+    cursor: pointer;
+}
+
+.wiki-button:hover {
+    background-position: 0px -68px;
+}
+
+.wiki-button.click {
+    background-position: 0px -34px;
+}
+
+.wiki-button.disabled {
+    background-position: 0px -102px;
+    text-shadow: 0px 0px;
+}
+
+.wiki-button.wiki-button-blue {
+    background-image: url(../images/wiki-button-sprite-blue.png);
+    color: #ffffff;
+    text-shadow: 1px 1px #2a629c;
+    border-top: 1px solid #9cb4cf;
+    border-left: 1px solid #9cb4cf;
+    border-bottom: 1px solid transparent;
+    border-right: 1px solid transparent;
+}
+
+.wiki-button.wiki-button-gray {
+    background-image: url(../images/wiki-button-sprite-gray.png);
+    color: #222222;
+    text-shadow: 1px 1px #ffffff;
+    border-top: 1px solid #ffffff;
+    border-left: 1px solid #ffffff;
+    border-bottom: 1px solid transparent;
+    border-right: 1px solid transparent;
+}
+
+.wiki-input {
+    width: 100%;
+    height: 16px;
+    background: #ffffff url(../images/wiki-input-background.png) repeat-x;
+    padding-top: 8px;
+    padding-bottom: 8px;
+    background-color: #ffffff;
+    text-indent: 8px;
+    border: 1px solid #214c8f;
+    font-family:"Lucida Grande",Verdana,Lucida,Helvetica,Arial,sans-serif;
+    font-size: 90%;
+    outline: none;
+}
+
+.wiki-input.lower {
+    color: #666666;
+}
+
+.wiki-input.selected {
+    border-color: #f3ba0a;
+}
+
+.wiki-text-area {
+    width: 100%;
+    background: #ffffff url(../images/wiki-text-area-background.png) repeat-x;
+    padding: 0px 0px 0px 0px;
+    border: 1px solid #214c8f;
+    font-family:"Lucida Grande",Verdana,Lucida,Helvetica,Arial,sans-serif;
+    font-size: 90%;
+}
+
+.wiki-text-area.selected {
+    border-color: #f3ba0a;
+}
+
+#wiki-controls {
+    width: 100%;
+    height: 32px;
+    margin: 0px 0px 0px 0px;
+    background-color: #bcc9dd;
+    border-top: 1px solid #214c8f;
+    border-left: 1px solid #214c8f;
+    border-right: 1px solid #214c8f;
+}
+
+#wiki-controls-icons {
+    padding-top: 6px;
+    padding-left: 6px;
+}
+
+.wiki-control-icon {
+    float: left;
+    width: 22px;
+    height: 22px;
+}
+
+.wiki-control-icon.wiki-control-icon-bold {
+    background: transparent url(../images/bold.png);
+}
+
+.wiki-control-icon.wiki-control-icon-bold:hover {
+    background-image: url(../images/bold-hover.png)
+}
+
+.wiki-control-icon.wiki-control-icon-italic {
+    background: transparent url(../images/italic.png);
+}
+
+.wiki-control-icon.wiki-control-icon-italic:hover {
+    background-image: url(../images/italic-hover.png)
+}
+
+.wiki-control-icon.wiki-control-icon-quote {
+    background: transparent url(../images/quote.png);
+}
+
+.wiki-control-icon.wiki-control-icon-quote:hover {
+    background-image: url(../images/quote-hover.png)
+}

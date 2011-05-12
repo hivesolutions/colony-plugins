@@ -1,6 +1,6 @@
 <!-- css inclusion -->
-<link rel="stylesheet" href="${out_none value=base_path /}${out_none value=instance_name /}/css/main.css" type="text/css" />
-<link rel="stylesheet" href="${out_none value=base_path /}resources/css/main.css" type="text/css" />
+<link rel="stylesheet" href="${out_none value=base_path /}${out_none value=instance_name /}/css/${out_none value=template /}.css" type="text/css" />
+<link rel="stylesheet" href="${out_none value=base_path /}resources/css/${out_none value=template /}.css" type="text/css" />
 
 <!-- favicon inclusion -->
 <link rel="shortcut icon" href="${out_none value=base_path /}resources/images/favicon.ico" />

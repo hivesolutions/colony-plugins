@@ -153,6 +153,9 @@ class WebMvcWikiController:
         # retrieves the instance for the rest request
         instance = self.web_mvc_wiki._get_instance(instance_name)
 
+        # retrieves the instance template
+        instance_template = instance.get("template", "main")
+
         # retrieves the instance repository path
         instance_repository_path = instance["repository_path"]
 
@@ -267,8 +270,11 @@ class WebMvcWikiController:
         # sets the page source in the template file
         template_file.assign("page_source", wiki_file_contents)
 
-        # sets the page page contents to be loaded in the template file
+        # sets the page contents to be loaded in the template file
         template_file.assign("page_contents", target_file_contents)
+
+        # sets the template to be loaded in the template file
+        template_file.assign("template", instance_template)
 
         # sets the generation time in the template file
         template_file.assign("generation_time", generation_time_string)
