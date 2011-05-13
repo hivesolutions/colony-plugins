@@ -52,6 +52,21 @@ ADAPTER_NAME = "svn"
 DEFAULT_REVISION_KIND = pysvn.opt_revision_kind.number
 """ The default revision kind """
 
+NUMBER_VALUE = "number"
+""" The number value """
+
+IDENTIFIER_VALUE = "identifier"
+""" The identifier value """
+
+DATE_VALUE = "date"
+""" The date value """
+
+AUTHOR_VALUE = "author"
+""" The author value """
+
+MESSAGE_VALUE = "message"
+""" The message value """
+
 USERNAME_VALUE = "username"
 """ The value for the username """
 
@@ -692,9 +707,6 @@ class SubversionAdapterRevision:
     date = None
     """ The revision datetime.datetime date """
 
-    time = None
-    """ The revision timestamp """
-
     author = "none"
     """ The revision author """
 
@@ -713,11 +725,13 @@ class SubversionAdapterRevision:
         return str(self._subversion_revision.number)
 
     def get_identifier(self):
-        # returns the revision number
-        return self._subversion_revision.number
+        return self.number
+
+    def set_identifier(self, identifier):
+        self.identifier = identifier
 
     def get_number(self):
-        return self._subversion_revision.number
+        return self.number
 
     def get_date(self):
         return self.date
@@ -726,9 +740,6 @@ class SubversionAdapterRevision:
         self.date = date
 
     def set_date_utc_timestamp(self, date_utc_timestamp):
-        # sets the timestamp
-        self.time = date_utc_timestamp
-
         # sets the date datetime
         self.date = datetime.datetime.utcfromtimestamp(date_utc_timestamp)
 
@@ -755,8 +766,59 @@ class SubversionAdapterRevision:
         @param subversion_revision: The adapted subversion revision.
         """
 
+        # retrieves the subversion revision date
+        date = subversion_revision.date
+
+        # retrieves the subversion revision number
+        number = subversion_revision.number
+
+        # sets the revision date
+        self.date = date
+
+        # sets the revision number
+        self.number = number
+
+        # sets the revision identifier
+        # (using the subversion revision number)
+        self.identifier = str(number)
+
         # sets the subversion revision
         self._subversion_revision = subversion_revision
+
+    def get_revision_map(self):
+        """
+        Retrieves the revision map for the current revision.
+
+        @rtype: Dictionary
+        @return: The revision map.
+        """
+
+        # retrieves the number
+        number = self.get_number()
+
+        # retrieves the identifier
+        identifier = self.get_identifier()
+
+        # retrieves the date
+        date = self.get_date()
+
+        # retrieves the author
+        author = self.get_author()
+
+        # retrieves the message
+        message = self.get_message()
+
+        # creates the revision map
+        revision_map = {
+            NUMBER_VALUE : number,
+            IDENTIFIER_VALUE : identifier,
+            DATE_VALUE : date,
+            AUTHOR_VALUE : author,
+            MESSAGE_VALUE : message
+        }
+
+        # returns the created revision map
+        return revision_map
 
 class SubversionRevisionControlReference:
     """

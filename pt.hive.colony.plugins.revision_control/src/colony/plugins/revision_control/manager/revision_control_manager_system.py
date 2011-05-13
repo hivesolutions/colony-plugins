@@ -39,6 +39,21 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 import revision_control_manager_exceptions
 
+NUMBER_VALUE = "number"
+""" The number value """
+
+IDENTIFIER_VALUE = "identifier"
+""" The identifier value """
+
+DATE_VALUE = "date"
+""" The date value """
+
+AUTHOR_VALUE = "author"
+""" The author value """
+
+MESSAGE_VALUE = "message"
+""" The message value """
+
 class RevisionControlManager:
     """
     The revision control manager class.
@@ -444,3 +459,38 @@ class Revision:
         """
 
         self.message = message
+
+    def get_revision_map(self):
+        """
+        Retrieves the revision map for the current revision.
+
+        @rtype: Dictionary
+        @return: The revision map.
+        """
+
+        # retrieves the number
+        number = self.get_number()
+
+        # retrieves the identifier
+        identifier = self.get_identifier()
+
+        # retrieves the date
+        date = self.get_date()
+
+        # retrieves the author
+        author = self.get_author()
+
+        # retrieves the message
+        message = self.get_message()
+
+        # creates the revision map
+        revision_map = {
+            NUMBER_VALUE : number,
+            IDENTIFIER_VALUE : identifier,
+            DATE_VALUE : date,
+            AUTHOR_VALUE : author,
+            MESSAGE_VALUE : message
+        }
+
+        # returns the created revision map
+        return revision_map
