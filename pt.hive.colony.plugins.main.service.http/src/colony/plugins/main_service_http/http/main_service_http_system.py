@@ -127,6 +127,9 @@ DEFAULT_CHARSET = "utf-8"
 DEFAULT_VALUE = "default"
 """ The default value """
 
+VALID_VALUE = "valid"
+""" The valid value """
+
 STATUS_CODE_VALUES = {
     100 : "Continue",
     101 : "Switching Protocols",
@@ -1708,8 +1711,11 @@ class HttpClientServiceHandler:
         # uses the authentication handler to try to authenticate
         authentication_result = http_service_authentication_handler_plugin.handle_authentication(username, password, authentication_properties)
 
-        # in case the authentication is not valid
-        if not authentication_result:
+        # retrieves the authentication result valid
+        authentication_result_valid = authentication_result.get(VALID_VALUE, False)
+
+        # in case the authentication result is not valid
+        if not authentication_result_valid:
             # sets the location header
             request.set_header(WWW_AUTHENTICATE_VALUE, "Basic realm=\"Secure Area\"")
 
