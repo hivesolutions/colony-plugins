@@ -331,8 +331,17 @@ class Scheduler:
         # converts the item id to string
         item_id_string = str(item_id)
 
+        # converts the task method arguments to string
+        item_task_method_name = item_task_method.name
+
+        # converts the task method arguments to string
+        task_method_arguments_string = str(task_method_arguments)
+
         # print an info message
         self.scheduler_plugin.info("Starting execution of task: " + item_id_string)
+
+        # prints a debug message
+        self.scheduler_plugin.debug("Calling method: " + item_task_method_name + " with arguments: " + task_method_arguments_string)
 
         try:
             # calls the task method with the task method arguments
