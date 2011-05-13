@@ -332,7 +332,7 @@ class Scheduler:
         item_id_string = str(item_id)
 
         # converts the task method arguments to string
-        item_task_method_name = item_task_method.name
+        item_task_method_name = item_task_method.__name__
 
         # converts the task method arguments to string
         task_method_arguments_string = str(task_method_arguments)
