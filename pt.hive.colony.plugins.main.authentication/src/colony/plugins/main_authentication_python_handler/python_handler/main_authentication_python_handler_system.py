@@ -131,8 +131,8 @@ class MainAuthenticationPythonHandler:
 
         # in case no user authentication configuration is defined
         if not user_authentication_configuration:
-            # returns invalid
-            return None
+            # raises the authentication error
+            raise main_authentication_python_handler_exceptions.AuthenticationError("user not found")
 
         # retrieves the user password from the user authentication
         # configuration

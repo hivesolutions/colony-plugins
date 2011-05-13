@@ -44,7 +44,7 @@ import main_authentication_entity_manager_handler_exceptions
 HANDLER_NAME = "entity_manager"
 """ The handler name """
 
-USERNAME_VALUE = "valid"
+USERNAME_VALUE = "username"
 """ The username value """
 
 VALID_VALUE = "valid"
