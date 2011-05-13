@@ -47,6 +47,9 @@ WEB_MVC_UTILS_VALUE = "web_mvc_utils"
 DEFAULT_ENCODING = "utf-8"
 """ The default encoding value """
 
+SERIALIZER_VALUE = "serializer"
+""" The serializer value """
+
 COMMUNICATION_NAME_VALUE = "communication_name"
 """ The communication name value """
 
@@ -137,37 +140,71 @@ class WebMvcCommunicationPushAppleController:
         self.service_connection_name_communication_handler_map = {}
         self.service_connection_profile_name_communication_handler_map = {}
 
-    def handle_show(self, rest_request, parameters = {}):
+    @web_mvc_utils.serialize_exceptions("all")
+    def handle_show_serialized(self, rest_request, parameters = {}):
         """
-        Handles the given show rest request.
+        Handles the given show serialized rest request.
 
         @type rest_request: RestRequest
-        @param rest_request: The header rest request
-        to be handled.
+        @param rest_request: The show serialized rest request
+to be handled.
         @type parameters: Dictionary
         @param parameters: The handler parameters.
         @rtype: bool
         @return: The result of the handling.
         """
 
+        # retrieves the serializer
+        serializer = parameters[SERIALIZER_VALUE]
+
+        # retrieves the string representation of the connection name handler map
+        serialized_service_connection_name_communication_handler_map = serializer.dumps(self.service_connection_name_communication_handler_map)
+
         # sets the request contents
-        self.set_contents(rest_request, str(self.service_connection_name_communication_handler_map))
+        self.set_contents(rest_request, serialized_service_connection_name_communication_handler_map)
 
         # returns true
         return True
 
-    def handle_register(self, rest_request, parameters = {}):
+    def handle_show_json(self, rest_request, parameters = {}):
         """
-        Handles the given register rest request.
+        Handles the given show json rest request.
 
         @type rest_request: RestRequest
-        @param rest_request: The header rest request
+        @param rest_request: The show json rest request
         to be handled.
         @type parameters: Dictionary
         @param parameters: The handler parameters.
         @rtype: bool
         @return: The result of the handling.
         """
+
+        # retrieves the json plugin
+        json_plugin = self.web_mvc_communication_push_apple_plugin.json_plugin
+
+        # sets the serializer in the parameters
+        parameters[SERIALIZER_VALUE] = json_plugin
+
+        # handles the request with the general
+        # handle show serialized method
+        return self.handle_show_serialized(rest_request, parameters)
+
+    @web_mvc_utils.serialize_exceptions("all")
+    def handle_register_serialized(self, rest_request, parameters = {}):
+        """
+        Handles the given register serialized rest request.
+
+        @type rest_request: RestRequest
+        @param rest_request: The register serialized rest request
+        to be handled.
+        @type parameters: Dictionary
+        @param parameters: The handler parameters.
+        @rtype: bool
+        @return: The result of the handling.
+        """
+
+        # retrieves the serializer
+        serializer = parameters[SERIALIZER_VALUE]
 
         # retrieves the form data by processing the form
         form_data_map = self.process_form_data(rest_request, DEFAULT_ENCODING)
@@ -185,23 +222,56 @@ class WebMvcCommunicationPushAppleController:
         notification_handler_name = form_data_map.get(NOTIFICATION_HANDLER_NAME_VALUE, None)
 
         # registers for the given request
-        self._register(rest_request, communication_handler_name, communication_name, device_id, notification_handler_name)
+        register_result = self._register(rest_request, communication_handler_name, communication_name, device_id, notification_handler_name)
+
+        # serializes the register result
+        serialized_register_result = serializer.dumps(register_result)
+
+        # sets the request contents
+        self.set_contents(rest_request, serialized_register_result)
 
         # returns true
         return True
 
-    def handle_unregister(self, rest_request, parameters = {}):
+    def handle_register_json(self, rest_request, parameters = {}):
         """
-        Handles the given unregister rest request.
+        Handles the given register json rest request.
 
         @type rest_request: RestRequest
-        @param rest_request: The header rest request
+        @param rest_request: The register json rest request
         to be handled.
         @type parameters: Dictionary
         @param parameters: The handler parameters.
         @rtype: bool
         @return: The result of the handling.
         """
+
+        # retrieves the json plugin
+        json_plugin = self.web_mvc_communication_push_apple_plugin.json_plugin
+
+        # sets the serializer in the parameters
+        parameters[SERIALIZER_VALUE] = json_plugin
+
+        # handles the request with the general
+        # handle register serialized method
+        return self.handle_register_serialized(rest_request, parameters)
+
+    @web_mvc_utils.serialize_exceptions("all")
+    def handle_unregister_serialized(self, rest_request, parameters = {}):
+        """
+        Handles the given unregister serialized rest request.
+
+        @type rest_request: RestRequest
+        @param rest_request: The unregister serialized rest request
+        to be handled.
+        @type parameters: Dictionary
+        @param parameters: The handler parameters.
+        @rtype: bool
+        @return: The result of the handling.
+        """
+
+        # retrieves the serializer
+        serializer = parameters[SERIALIZER_VALUE]
 
         # retrieves the form data by processing the form
         form_data_map = self.process_form_data(rest_request, DEFAULT_ENCODING)
@@ -216,23 +286,56 @@ class WebMvcCommunicationPushAppleController:
         device_id = form_data_map[DEVICE_ID_VALUE]
 
         # unregisters for the given request
-        self._unregister(rest_request, communication_handler_name, communication_name, device_id)
+        unregister_result = self._unregister(rest_request, communication_handler_name, communication_name, device_id)
+
+        # serializes the unregister result
+        serialized_unregister_result = serializer.dumps(unregister_result)
+
+        # sets the request contents
+        self.set_contents(rest_request, serialized_unregister_result)
 
         # returns true
         return True
 
-    def handle_load_profile(self, rest_request, parameters = {}):
+    def handle_unregister_json(self, rest_request, parameters = {}):
         """
-        Handles the given load profile rest request.
+        Handles the given unregister json rest request.
 
         @type rest_request: RestRequest
-        @param rest_request: The header rest request
+        @param rest_request: The unregister json rest request
         to be handled.
         @type parameters: Dictionary
         @param parameters: The handler parameters.
         @rtype: bool
         @return: The result of the handling.
         """
+
+        # retrieves the json plugin
+        json_plugin = self.web_mvc_communication_push_apple_plugin.json_plugin
+
+        # sets the serializer in the parameters
+        parameters[SERIALIZER_VALUE] = json_plugin
+
+        # handles the request with the general
+        # handle unregister serialized method
+        return self.handle_unregister_serialized(rest_request, parameters)
+
+    @web_mvc_utils.serialize_exceptions("all")
+    def handle_load_profile_serialized(self, rest_request, parameters = {}):
+        """
+        Handles the given load profile serialized rest request.
+
+        @type rest_request: RestRequest
+        @param rest_request: The load profile serialized rest request
+        to be handled.
+        @type parameters: Dictionary
+        @param parameters: The handler parameters.
+        @rtype: bool
+        @return: The result of the handling.
+        """
+
+        # retrieves the serialized
+        serializer = parameters[SERIALIZER_VALUE]
 
         # retrieves the form data by processing the form
         form_data_map = self.process_form_data(rest_request, DEFAULT_ENCODING)
@@ -250,23 +353,56 @@ class WebMvcCommunicationPushAppleController:
         notification_handler_name = form_data_map.get(NOTIFICATION_HANDLER_NAME_VALUE, None)
 
         # loads the profile for the given request
-        self._load_profile(rest_request, communication_handler_name, communication_profile_name, device_id, notification_handler_name)
+        load_profile_result = self._load_profile(rest_request, communication_handler_name, communication_profile_name, device_id, notification_handler_name)
+
+        # serializes the load profile result
+        serialized_load_profile_result = serializer.dumps(load_profile_result)
+
+        # sets the request contents
+        self.set_contents(rest_request, serialized_load_profile_result)
 
         # returns true
         return True
 
-    def handle_unload_profile(self, rest_request, parameters = {}):
+    def handle_load_profile_json(self, rest_request, parameters = {}):
         """
-        Handles the given unload profile rest request.
+        Handles the given load profile json rest request.
 
         @type rest_request: RestRequest
-        @param rest_request: The header rest request
+        @param rest_request: The load profile json rest request
         to be handled.
         @type parameters: Dictionary
         @param parameters: The handler parameters.
         @rtype: bool
         @return: The result of the handling.
         """
+
+        # retrieves the json plugin
+        json_plugin = self.web_mvc_communication_push_apple_plugin.json_plugin
+
+        # sets the serializer in the parameters
+        parameters[SERIALIZER_VALUE] = json_plugin
+
+        # handles the request with the general
+        # handle load profile serialized method
+        return self.handle_load_profile_serialized(rest_request, parameters)
+
+    @web_mvc_utils.serialize_exceptions("all")
+    def handle_unload_profile_serialized(self, rest_request, parameters = {}):
+        """
+        Handles the given unload profile serialized rest request.
+
+        @type rest_request: RestRequest
+        @param rest_request: The unload profile serialized rest request
+        to be handled.
+        @type parameters: Dictionary
+        @param parameters: The handler parameters.
+        @rtype: bool
+        @return: The result of the handling.
+        """
+
+        # retrieves the serializer
+        serializer = parameters[SERIALIZER_VALUE]
 
         # retrieves the form data by processing the form
         form_data_map = self.process_form_data(rest_request, DEFAULT_ENCODING)
@@ -281,10 +417,39 @@ class WebMvcCommunicationPushAppleController:
         device_id = form_data_map[DEVICE_ID_VALUE]
 
         # unloads the profile for the given request
-        self._unload_profile(rest_request, communication_handler_name, communication_profile_name, device_id)
+        unload_profile_result = self._unload_profile(rest_request, communication_handler_name, communication_profile_name, device_id)
+
+        # serializes the unload profile result
+        serialized_unload_profile_result = serializer.dumps(unload_profile_result)
+
+        # sets the request contents
+        self.set_contents(rest_request, serialized_unload_profile_result)
 
         # returns true
         return True
+
+    def handle_unload_profile_json(self, rest_request, parameters = {}):
+        """
+        Handles the given unload profile json rest request.
+
+        @type rest_request: RestRequest
+        @param rest_request: The unload profile json rest request
+        to be handled.
+        @type parameters: Dictionary
+        @param parameters: The handler parameters.
+        @rtype: bool
+        @return: The result of the handling.
+        """
+
+        # retrieves the json plugin
+        json_plugin = self.web_mvc_communication_push_apple_plugin.json_plugin
+
+        # sets the serializer in the parameters
+        parameters[SERIALIZER_VALUE] = json_plugin
+
+        # handles the request with the general
+        # handle unload profile serialized method
+        return self.handle_unload_profile_serialized(rest_request, parameters)
 
     def default_notification_handler(self, notification):
         # retrieves the notification message
