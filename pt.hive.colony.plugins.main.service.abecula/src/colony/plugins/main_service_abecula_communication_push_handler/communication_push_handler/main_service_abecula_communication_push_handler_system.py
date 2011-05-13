@@ -126,6 +126,12 @@ ARGUMENTS_VALUE = "arguments"
 VALID_VALUE = "valid"
 """ The valid value """
 
+EXCEPTION_VALUE = "exception"
+""" The exception value """
+
+EXCEPTION_MESSAGE_VALUE = "message"
+""" The message value """
+
 AUTHORIZATION_VALUE = "Authorization"
 """ The authorization value """
 
@@ -917,18 +923,17 @@ class MainServiceAbeculaCommunicationPushHandler:
         # authenticates the user
         return_value = main_authentication_plugin.authenticate_user(username, password, authentication_handler, authentication_arguments)
 
-        # in case no return value is received
-        if not return_value:
-            # raises the authentication error
-            raise main_service_abecula_communication_push_handler_exceptions.AuthenticationError("invalid authentication credentials")
+        # retrieves the return value valid
+        return_value_valid = return_value.get(VALID_VALUE, False)
 
-        # tries to retrieve the valid value from the return value
-        valid_value = return_value.get(VALID_VALUE, False)
+        # in case no return value is not valid
+        if not return_value_valid:
+            # retrieves the return valid exception information
+            return_value_exception = return_value.get(EXCEPTION_VALUE, {})
+            return_value_exception_message = return_value_exception.get(EXCEPTION_MESSAGE_VALUE, "undefined error")
 
-        # in case no valid value is set
-        if not valid_value:
             # raises the authentication error
-            raise main_service_abecula_communication_push_handler_exceptions.AuthenticationError("invalid authentication credentials")
+            raise main_service_abecula_communication_push_handler_exceptions.AuthenticationError(return_value_exception_message)
 
     def _generate_operation_id(self):
         """
