@@ -195,8 +195,5 @@ class SvnClient:
             # returns the tuple representing the return code (valid/invalid), the username,
             # the password and the save (persist) data in the svn client directory
             return (
-                True,
-                username,
-                password,
-                False
+                True, username, password, False
             )
