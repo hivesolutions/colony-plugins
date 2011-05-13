@@ -360,6 +360,9 @@ class Scheduler:
 
         # in case it's recursive
         if is_recursive:
+            # prints a debug message
+            self.scheduler_plugin.debug("Re-scheduling task for recursion: " + item_id_string)
+
             # retrieves the recursion list
             recursion_list = scheduler_item.recursion_list
 
@@ -383,6 +386,9 @@ class Scheduler:
         # otherwise it's not recursive and there is no
         # need to re-schedule the task
         else:
+            # prints a debug message
+
+
             # removes the scheduler item from the scheduler
             self.remove_scheduler_item(scheduler_item)
 
