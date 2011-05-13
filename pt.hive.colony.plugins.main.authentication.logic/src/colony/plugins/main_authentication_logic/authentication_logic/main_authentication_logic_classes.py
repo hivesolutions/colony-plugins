@@ -42,6 +42,15 @@ import colony.libs.importer_util
 ENTITY_MANAGER_VALUE = "entity_manager"
 """ The entity manager value """
 
+VALID_VALUE = "valid"
+""" The valid value """
+
+ENTITY_MANAGER_VALUE = "entity_manager"
+""" The entity manager value """
+
+LOGIN_ENTITY_NAME_VALUE = "login_entity_name"
+""" The login entity name value """
+
 USER_VALUE = "User"
 """ The user value """
 
@@ -62,6 +71,7 @@ class AuthenticationLogic:
 
         # raises an exception in case the plugin was not found
         if not main_authentication_plugin:
+            # raises the main authentication logic exception
             raise main_authentication_logic_exceptions.MainAuthenticationLogicException("Main authentication plugin not found")
 
         # creates the arguments map in case it is not defined
@@ -69,16 +79,19 @@ class AuthenticationLogic:
             arguments = {}
 
         # sets the entity manager in the arguments map
-        arguments["entity_manager"] = self.entity_manager
+        arguments[ENTITY_MANAGER_VALUE] = self.entity_manager
 
         # sets the login entity name in the arguments map
-        arguments["login_entity_name"] = USER_VALUE
+        arguments[LOGIN_ENTITY_NAME_VALUE] = USER_VALUE
 
         # authenticates the user retrieving the authentication result
         authentication_result = main_authentication_plugin.authenticate_user(username, password, ENTITY_MANAGER_VALUE, arguments)
 
+        # retrieves the authentication result valid
+        authentication_result_valid = authentication_result.get(VALID_VALUE, False)
+
         # in case the authentication result is valid
-        if authentication_result:
+        if authentication_result_valid:
             # sets the authentication result in the session
             self._set_session_information(authentication_result)
 
@@ -91,13 +104,17 @@ class AuthenticationLogic:
 
         # raises an exception in case the plugin was not found
         if not main_authentication_plugin:
+            # raises the main authentication logic exception
             raise main_authentication_logic_exceptions.MainAuthenticationLogicException("Main authentication plugin not found")
 
         # authenticates the user retrieving the authentication result
         authentication_result = main_authentication_plugin.process_authentication_string(authentication_string)
 
+        # retrieves the authentication result valid
+        authentication_result_valid = authentication_result.get(VALID_VALUE, False)
+
         # in case the authentication result is valid
-        if authentication_result:
+        if authentication_result_valid:
             # sets the authentication result in the session
             self._set_session_information(authentication_result)
 
