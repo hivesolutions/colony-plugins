@@ -159,6 +159,9 @@ class WebMvcWikiController:
         # retrieves the instance repository path
         instance_repository_path = instance["repository_path"]
 
+        # retrieves the instance configuration map
+        instance_configuration_map = instance.get("configuration_map", {})
+
         # sets the base file path as the instance repository path
         # resolved by the plugin manager
         base_file_path = plugin_manager.resolve_file_path(instance_repository_path)
@@ -188,7 +191,7 @@ class WebMvcWikiController:
 
             try:
                 # generates the wiki files using the wiki engine
-                self._generate_wiki_html_files(base_target_path, wiki_file_path)
+                self._generate_wiki_html_files(base_target_path, wiki_file_path, instance_configuration_map)
             except web_mvc_wiki_exceptions.WikiFileNotFound:
                 # retrieves the template file
                 template_file = self.retrieve_template_file("general_action.html.tpl")
@@ -372,14 +375,16 @@ class WebMvcWikiController:
         # returns the cache directory path
         return cache_diretory_path
 
-    def _generate_wiki_html_files(self, base_target_path, wiki_file_path):
+    def _generate_wiki_html_files(self, base_target_path, wiki_file_path, configuration_map):
         """
         Generates the html files using the wiki engine.
 
-        @type base_target_path String.
-        @param base_target_path The base target path.
-        @type wiki_file_path String.
-        @param wiki_file_path The wiki file path.
+        @type base_target_path: String.
+        @param base_target_path: The base target path.
+        @type wiki_file_path: String.
+        @param wiki_file_path: The wiki file path.
+        @type configuration_map: String.
+        @param configuration_map: The configuration map to be used.
         """
 
         # prints a debug message
@@ -398,13 +403,6 @@ class WebMvcWikiController:
         # creates the structure that will hold the information
         # about the output of the wiki generation
         output_structure = {}
-
-        # creates the configuration map for the html generation
-        configuration_map = {
-            "auto_numbered_sections" : True,
-            "generate_footer" : False,
-            "simple_parse" : True
-        }
 
         # creates the engine properties map
         engine_properties = {

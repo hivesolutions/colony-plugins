@@ -42,11 +42,17 @@ configuration = {
         "colony" : {
             "name" : "colony",
             "template" : "simply",
+            "main_page" : "documentation_index",
             "repository_type" : "svn",
+            "repository_path" : "%manager_path%/../../pt.hive.colony.documentation.technical",
             "repository_arguments" : {
                 "save_username_password" : False
             },
-            "repository_path" : "%manager_path%/../../pt.hive.colony.documentation.technical"
+            "configuration_map" : {
+                "auto_numbered_sections" : True,
+                "generate_footer" : False,
+                "simple_parse" : True
+            }
         }
     }
 }
