@@ -324,8 +324,15 @@ class Scheduler:
 
     def task_hander(self, scheduler_item):
         # retrieves the scheduler item attributes
+        item_id = scheduler_item.item_id
         item_task_method = scheduler_item.task_method
         task_method_arguments = scheduler_item.task_method_arguments
+
+        # converts the item id to string
+        item_id_string = str(item_id)
+
+        # print an info message
+        self.scheduler_plugin.info("Starting execution of task: " + item_id_string)
 
         try:
             # calls the task method with the task method arguments
@@ -364,9 +371,14 @@ class Scheduler:
 
             # ads the new scheduler item to the scheduler
             self.add_scheduler_item(scheduler_item)
+        # otherwise it's not recursive and there is no
+        # need to re-schedule the task
         else:
             # removes the scheduler item from the scheduler
             self.remove_scheduler_item(scheduler_item)
+
+        # print an info message
+        self.scheduler_plugin.info("Ending execution of task: " + item_id_string)
 
     def date_time_to_timestamp(self, date_time):
         # creates the date time time tuple
