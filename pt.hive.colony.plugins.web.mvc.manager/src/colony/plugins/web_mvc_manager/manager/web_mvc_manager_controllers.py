@@ -238,7 +238,7 @@ class WebMvcManagerMainController:
 
 class SidePanelController:
     """
-    The side panel controller.
+    The web mvc manager side panel controller.
     """
 
     web_mvc_manager_plugin = None
@@ -356,7 +356,7 @@ class SidePanelController:
 
 class HeaderController:
     """
-    The header controller.
+    The web mvc manager header controller.
     """
 
     web_mvc_manager_plugin = None
