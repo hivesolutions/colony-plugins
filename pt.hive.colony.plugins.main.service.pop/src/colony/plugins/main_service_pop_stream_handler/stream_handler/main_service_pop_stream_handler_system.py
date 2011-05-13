@@ -45,6 +45,9 @@ import main_service_pop_stream_handler_exceptions
 HANDLER_NAME = "stream"
 """ The handler name """
 
+VALID_VALUE = "valid"
+""" The valid value """
+
 AUTHENTICATION_VALUE = "authentication"
 """ The authentication value """
 
@@ -550,8 +553,11 @@ class MainServicePopStreamHandler:
         # tries to authenticate with the session mechanism
         authentication_result = session.authenticate(username, password)
 
+        # retrieves the authentication result valid
+        authentication_result_valid = authentication_result.get(VALID_VALUE, False)
+
         # in case the authentication was successful
-        if authentication_result:
+        if authentication_result_valid:
             # sets the request response code
             request.set_response_code("+OK")
 

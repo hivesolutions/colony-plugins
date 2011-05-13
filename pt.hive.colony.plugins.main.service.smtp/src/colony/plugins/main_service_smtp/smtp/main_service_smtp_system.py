@@ -90,6 +90,9 @@ DEFAULT_END_TOKEN_VALUE = END_TOKEN_VALUE
 SOCKET_UPGRADER_NAME = "ssl"
 """ The socket upgrader name """
 
+VALID_VALUE = "valid"
+""" The valid value """
+
 class MainServiceSmtp:
     """
     The main service smtp class.
@@ -1227,9 +1230,12 @@ class SmtpSession:
         # uses the authentication handler to try to authenticate
         authentication_result = self.authentication_handler.handle_authentication(username, password, self.authentication_properties)
 
+        # retrieves the authentication result valid
+        authentication_result_valid = authentication_result.get(VALID_VALUE, False)
+
         # in case the authentication result
         # is valid
-        if authentication_result:
+        if authentication_result_valid:
             # sets the authenticated flag
             self.authenticated = True
 
