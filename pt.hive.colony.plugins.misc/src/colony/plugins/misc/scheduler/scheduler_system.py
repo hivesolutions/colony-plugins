@@ -341,7 +341,7 @@ class Scheduler:
         self.scheduler_plugin.info("Starting execution of task: " + item_id_string)
 
         # prints a debug message
-        self.scheduler_plugin.debug("Calling method: " + item_task_method_name + " with arguments: " + task_method_arguments_string)
+        self.scheduler_plugin.debug("Calling task method: " + item_task_method_name + " with arguments: " + task_method_arguments_string)
 
         try:
             # calls the task method with the task method arguments
