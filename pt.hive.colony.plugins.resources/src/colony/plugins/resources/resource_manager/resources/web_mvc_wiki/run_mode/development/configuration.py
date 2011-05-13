@@ -52,7 +52,44 @@ configuration = {
                 "auto_numbered_sections" : True,
                 "generate_footer" : False,
                 "simple_parse" : True
-            }
+            },
+            "configuration_index" : [
+                {
+                    "name" : "Global",
+                    "items" : [
+                        {
+                            "name" : "Index",
+                            "link" : "documentation_index"
+                        }
+                    ]
+                },
+                {
+                    "name" : "Dive into Colony",
+                    "items" : [
+                        {
+                            "name" : "Establish your Colony in 3 Easy Steps",
+                            "link" : "documentation_how_to_establish_your_colony_in_3_easy_steps"
+                        },
+                        {
+                            "name" : "Expand your Colony in 10 Minutes or Less",
+                            "link" : "documentation_how_to_expand_your_colony_in_10_minutes_or_less"
+                        }
+                    ]
+                },
+                {
+                    "name" : "Learn How it Works",
+                    "items" : [
+                        {
+                            "name" : "Why Colony ?",
+                            "link" : "documentation_why_colony"
+                        },
+                        {
+                            "name" : "What Can I Build with Colony ?",
+                            "link" : "documentation_why_colony"
+                        }
+                    ]
+                }
+            ]
         }
     }
 }
