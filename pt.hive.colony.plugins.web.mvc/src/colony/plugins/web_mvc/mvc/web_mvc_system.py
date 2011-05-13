@@ -256,9 +256,13 @@ class WebMvc:
             # retrieves the pattern value
             pattern_value = web_mvc_service_plugin_pattern[1:]
 
-            # compiles the pattern key, retrieving the
+            # tries to retrieve the pattern validation regex from the web mvc
+            # service pattern compiled map
+            pattern_validation_regex = self.web_mvc_service_pattern_compiled_map.get(pattern_key, None)
+
+            # compiles (in case it's necessary) the pattern key, retrieving the
             # pattern validation regex (original regex)
-            pattern_validation_regex = re.compile(pattern_key)
+            pattern_validation_regex = pattern_validation_regex or re.compile(pattern_key)
 
             # creates the pattern attributes (tuple)
             pattern_attributes = (
@@ -363,7 +367,7 @@ class WebMvc:
                 # removes the pattern attributes from the pattern attributes list
                 pattern_attributes_list.remove(pattern_attributes)
 
-                # in case the pattern attributes list is not empty
+                # in case the pattern attributes list is not empty, there are
                 # more patterns associated with the pattern key, no need
                 # to remove the patter key references
                 if pattern_attributes_list:
