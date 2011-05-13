@@ -1028,7 +1028,9 @@ class InterpretationVisitor(settler_visitor.Visitor):
         expression_value = expression_node.value
 
         # calculates the parenthesis expression value
-        parenthesis_expression_value = ( expression_value )
+        parenthesis_expression_value = (
+            expression_value,
+        )
 
         # sets the node value as the parenthesis expression value
         node.set_value(parenthesis_expression_value)
