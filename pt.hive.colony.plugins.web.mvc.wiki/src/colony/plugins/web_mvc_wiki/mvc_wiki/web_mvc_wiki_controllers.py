@@ -165,6 +165,9 @@ class WebMvcWikiController:
         # retrieves the instance configuration map
         instance_configuration_map = instance.get("configuration_map", {})
 
+        # retrieves the instance configuration index
+        instance_configuration_index = instance.get("configuration_index", [])
+
         # sets the base file path as the instance repository path
         # resolved by the plugin manager
         base_file_path = plugin_manager.resolve_file_path(instance_repository_path)
@@ -213,6 +216,9 @@ class WebMvcWikiController:
 
                 # sets the instance name in the template file
                 template_file.assign("instance_name", instance_name)
+
+                # sets the instance configuration index in the template file
+                template_file.assign("instance_configuration_index", instance_configuration_index)
 
                 # applies the base path to the template file
                 self.apply_base_path_template_file(rest_request, template_file)
@@ -296,6 +302,9 @@ class WebMvcWikiController:
 
         # sets the instance name in the template file
         template_file.assign("instance_name", instance_name)
+
+        # sets the instance configuration index in the template file
+        template_file.assign("instance_configuration_index", instance_configuration_index)
 
         # assigns the session variables to the template file
         self.assign_session_template_file(rest_request, template_file)
