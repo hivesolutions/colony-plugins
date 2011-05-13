@@ -162,7 +162,7 @@ class Scheduler:
 
     def register_task_date_time(self, task, date_time):
         # retrieves the current date time
-        current_date_time = datetime.datetime.now()
+        current_date_time = datetime.datetime.utcnow()
 
         # calculates the new date time
         new_date_time = current_date_time + date_time
@@ -223,7 +223,7 @@ class Scheduler:
 
     def register_task_date_time_recursive(self, task, date_time, recursion_list):
         # retrieves the current date time
-        current_date_time = datetime.datetime.now()
+        current_date_time = datetime.datetime.utcnow()
 
         # calculates the new date time
         new_date_time = current_date_time + date_time
@@ -367,13 +367,13 @@ class Scheduler:
             recursion_list = scheduler_item.recursion_list
 
             # retrieves the current date time
-            current_date_time = datetime.datetime.now()
+            current_date_time = datetime.datetime.utcnow()
 
             # create the delta date time object
             delta_date_time = datetime.timedelta(days = recursion_list[0], hours = recursion_list[1], minutes = recursion_list[2], seconds = recursion_list[3],  microseconds = recursion_list[4])
 
             # creates the new date time object
-            new_date_time = current_date_time +  delta_date_time
+            new_date_time = current_date_time + delta_date_time
 
             # converts the new date time object to a timestamp
             new_timestamp = self.date_time_to_timestamp(new_date_time)
@@ -386,9 +386,6 @@ class Scheduler:
         # otherwise it's not recursive and there is no
         # need to re-schedule the task
         else:
-            # prints a debug message
-
-
             # removes the scheduler item from the scheduler
             self.remove_scheduler_item(scheduler_item)
 
