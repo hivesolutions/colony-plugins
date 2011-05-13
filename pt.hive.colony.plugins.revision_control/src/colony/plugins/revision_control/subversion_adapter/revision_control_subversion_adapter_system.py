@@ -707,6 +707,9 @@ class SubversionAdapterRevision:
     date = None
     """ The revision datetime.datetime date """
 
+    time = None
+    """ The revision timestamp """
+
     author = "none"
     """ The revision author """
 
@@ -740,6 +743,9 @@ class SubversionAdapterRevision:
         self.date = date
 
     def set_date_utc_timestamp(self, date_utc_timestamp):
+        # sets the timestamp
+        self.time = date_utc_timestamp
+
         # sets the date datetime
         self.date = datetime.datetime.utcfromtimestamp(date_utc_timestamp)
 
