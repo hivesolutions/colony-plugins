@@ -86,72 +86,10 @@ AVAILABLE_TAG_NAMES = (
 """ The available tag names """
 
 INDEX_KEYS_LIST = (
-    "Introduction",
-    "Tutorials",
-    "Standards &amp; Practices",
-    "Design documents",
-    "How-tos",
-    "Demos"
 )
 """ The index keys list """
 
 INDEX_MAP = {
-    "Introduction" : {
-        "order" : [
-            "What is Colony?",
-            "What Can I Build With Colony?",
-            "How Can I Get Started?",
-            "How Can I Help?",
-            "Frequently Asked Questions"
-        ],
-        "items" : {
-            "What is Colony?" : "documentation_what_is_colony.html",
-            "What Can I Build With Colony?" : "documentation_what_can_i_build_with_colony.html",
-            "How Can I Get Started?" : "documentation_how_can_i_get_started.html",
-            "How Can I Help?" : "documentation_how_can_i_help.html",
-            "Frequently Asked Questions" : "documentation_frequently_asked_questions.html"
-        }
-    },
-    "Tutorials" : {
-        "order" : [
-            "Colony Hello World Tutorial",
-            "Colony Web Hello World Tutorial",
-            "Colony Web MVC Hello World Tutorial"
-        ],
-        "items" : {
-            "Colony Hello World Tutorial" : "documentation_tutorial_colony_hello_world.html",
-            "Colony Web Hello World Tutorial" : "documentation_tutorial_colony_web_hello_world.html",
-            "Colony Web MVC Hello World Tutorial" : "documentation_tutorial_colony_web_mvc_hello_world.html"
-        }
-    },
-    "Standards &amp; Practices" : {
-        "order" : [
-            "Colony Style Guide"
-        ],
-        "items" :  {
-            "Colony Style Guide" : "documentation_colony_style_guide.html"
-        }
-    },
-    "Design documents" : {
-        "order" : [
-            "Colony Plugin Framework",
-            "Colony Web Plugin Framework",
-            "Colony Web MVC Framework"
-        ],
-        "items" : {
-            "Colony Plugin Framework" : "documentation_colony_plugin_framework.html",
-            "Colony Web Plugin Framework" : "documentation_colony_web_plugin_framework.html",
-            "Colony Web MVC Framework" : "documentation_colony_web_mvc_framework.html"
-        }
-    },
-    "How-tos" : {
-        "order" : [],
-        "items" : {}
-    },
-    "Demos" : {
-        "order" : [],
-        "items" : {}
-    }
 }
 """ The index map """
 
