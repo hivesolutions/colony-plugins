@@ -46,7 +46,20 @@ import colony.libs.map_util
 import colony.libs.protection_util
 
 import main_console_interfaces
+import main_console_exceptions
 import main_console_authentication
+
+VALID_VALUE = "valid"
+""" The valid value """
+
+EXCEPTION_VALUE = "exception"
+""" The exception value """
+
+MESSAGE_VALUE = "message"
+""" The message value """
+
+USERNAME_VALUE = "username"
+""" The username value """
 
 COMMAND_EXCEPTION_MESSAGE = "there was an exception"
 """ The command exception message """
@@ -654,6 +667,9 @@ class ConsoleContext(colony.libs.protection_util.Protected):
     user = None
     """ The current console user """
 
+    authentication_information = None
+    """ The current authentication information/result """
+
     def __init__(self, main_console):
         """
         Constructor of the class.
@@ -673,15 +689,36 @@ class ConsoleContext(colony.libs.protection_util.Protected):
             # tries to authenticate the user retrieving the result
             authentication_result = self.main_console.authenticate_user(username, password, self._proxy_instance)
 
+            # retrieves the authentication result valid
+            authentication_result_valid = authentication_result.get(VALID_VALUE, False)
+
+            # in case the authentication is not valid
+            if not authentication_result_valid:
+                # retrieves the authentication result information
+                authentication_result_exception = authentication_result.get(EXCEPTION_VALUE, {})
+                authentication_result_exception_message = authentication_result_exception.get(MESSAGE_VALUE, "undefined error")
+
+                # raises the authentication failed exception
+                raise main_console_exceptions.AuthenticationFailed(authentication_result_exception_message)
+
+            # retrieves the username from the authentication result
+            username = authentication_result.get(USERNAME_VALUE, None)
+
             # sets the user value according to the
             # authentication result
-            self.user = authentication_result and username or None
+            self.user = username
+
+            # sets the authentication information with the authentication
+            # result value
+            self.authentication_information = authentication_result
         except BaseException, exception:
             # prints a debug message
             self.main_console.main_console_plugin.debug("Problem authenticating user: %s" % unicode(exception))
 
-            # invalidates the user as the authentication failed
+            # invalidates the user and authentication information as
+            # the authentication failed
             self.user = None
+            self.authentication_information = None
 
         # returns the user
         return self.user

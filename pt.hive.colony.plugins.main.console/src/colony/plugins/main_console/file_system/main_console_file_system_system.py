@@ -42,6 +42,9 @@ import os
 CONSOLE_EXTENSION_NAME = "file_system"
 """ The console extension name """
 
+AUTHENTICATION_FAILED_MESSAGE = "authentication failed"
+""" The authentication failed message """
+
 class MainConsoleFileSystem:
     """
     The main console base class.
@@ -253,7 +256,7 @@ class MainConsoleFileSystem:
         # in case the authentication as failed
         if not authentication_result:
             # writes the authentication failed message
-            output_method("authentication failed")
+            output_method(AUTHENTICATION_FAILED_MESSAGE)
 
             # returns immediately
             return
