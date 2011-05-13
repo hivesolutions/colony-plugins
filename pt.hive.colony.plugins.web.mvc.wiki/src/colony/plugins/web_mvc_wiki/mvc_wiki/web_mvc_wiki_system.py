@@ -60,8 +60,8 @@ class WebMvcWiki:
     web_mvc_wiki_plugin = None
     """ The web mvc wiki plugin """
 
-    web_mvc_wiki_controller = None
-    """ The web mvc wiki controller """
+    web_mvc_wiki_main_controller = None
+    """ The web mvc wiki main controller """
 
     web_mvc_wiki_page_controller = None
     """ The web mvc wiki page controller """
@@ -99,15 +99,15 @@ class WebMvcWiki:
         # loads the mvc utils in the web mvc wiki controllers module
         web_mvc_wiki_controllers = web_mvc_utils_plugin.import_module_mvc_utils("web_mvc_wiki_controllers", "web_mvc_wiki.mvc_wiki", current_directory_path)
 
-        # create the web mvc wiki controller
-        self.web_mvc_wiki_controller = web_mvc_utils_plugin.create_controller(web_mvc_wiki_controllers.WebMvcWikiController, [self.web_mvc_wiki_plugin, self], {})
+        # create the web mvc wiki main controller
+        self.web_mvc_wiki_main_controller = web_mvc_utils_plugin.create_controller(web_mvc_wiki_controllers.WebMvcWikiMainController, [self.web_mvc_wiki_plugin, self], {})
 
         # create the web mvc wiki page controller
-        self.web_mvc_wiki_page_controller = web_mvc_utils_plugin.create_controller(web_mvc_wiki_controllers.WebMvcWikiPageController, [self.web_mvc_wiki_plugin, self], {})
+        self.web_mvc_wiki_page_controller = web_mvc_utils_plugin.create_controller(web_mvc_wiki_controllers.PageController, [self.web_mvc_wiki_plugin, self], {})
 
         # creates the web mvc wiki controllers map
         self.web_mvc_wiki_controllers = {
-            "main" : self.web_mvc_wiki_controller,
+            "main" : self.web_mvc_wiki_main_controller,
             "page" : self.web_mvc_wiki_page_controller
         }
 
@@ -124,9 +124,9 @@ class WebMvcWiki:
 
         return (
             (r"^wiki/(?P<instance_name>[a-zA-Z]+)/pages$", self.web_mvc_wiki_page_controller.handle_create, "post"),
-            (r"^wiki/(?P<instance_name>[a-zA-Z]+)/pages/(?P<page_name>[a-zA-Z0-9_:\.]+)/update$", self.web_mvc_wiki_page_controller.handle_update, "post"),
-            (r"^wiki/(?P<instance_name>[a-zA-Z]+)/(?P<page_name>[a-zA-Z0-9_:\.]*)$", self.web_mvc_wiki_controller.handle_wiki, "get"),
-            (r"^wiki/(?P<instance_name>[a-zA-Z]+)/(?:(?P<resource_type>js|images|css))/(?P<resource_name>.*)$", self.web_mvc_wiki_controller.handle_resources, "get")
+            (r"^wiki/(?P<instance_name>[a-zA-Z]+)/pages/(?P<page_name>[a-zA-Z0-9_:\.]+)/update$", self.web_mvc_wiki_page_controller.handle_update_json, "post", "json"),
+            (r"^wiki/(?P<instance_name>[a-zA-Z]+)/(?P<page_name>[a-zA-Z0-9_:\.]*)$", self.web_mvc_wiki_main_controller.handle_wiki, "get"),
+            (r"^wiki/(?P<instance_name>[a-zA-Z]+)/(?:(?P<resource_type>js|images|css))/(?P<resource_name>.*)$", self.web_mvc_wiki_main_controller.handle_resources, "get")
         )
 
     def get_communication_patterns(self):

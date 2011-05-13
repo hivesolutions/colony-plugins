@@ -54,6 +54,9 @@ WEB_MVC_WIKI_RESOURCES_PATH = "web_mvc_wiki/mvc_wiki/resources"
 DEFAULT_ENCODING = "utf-8"
 """ The default encoding value """
 
+SERIALIZER_VALUE = "serializer"
+""" The default serializer value """
+
 DEFAULT_SUMMARY = "automated wiki commit"
 """ The default summary value """
 
@@ -81,9 +84,9 @@ PATTERN_NAMES_VALUE = "pattern_names"
 # imports the web mvc utils
 web_mvc_utils = colony.libs.importer_util.__importer__(WEB_MVC_UTILS_VALUE)
 
-class WebMvcWikiController:
+class WebMvcWikiMainController:
     """
-    The web mvc wiki controller.
+    The web mvc wiki main controller.
     """
 
     web_mvc_wiki_plugin = None
@@ -113,11 +116,11 @@ class WebMvcWikiController:
         # retrieves the plugin manager
         plugin_manager = self.web_mvc_wiki_plugin.manager
 
-        # retrieves the web mvc manager plugin path
-        web_mvc_manager_plugin_path = plugin_manager.get_plugin_path_by_id(self.web_mvc_wiki_plugin.id)
+        # retrieves the web mvc wiki plugin path
+        web_mvc_wiki_plugin_path = plugin_manager.get_plugin_path_by_id(self.web_mvc_wiki_plugin.id)
 
         # creates the templates path
-        templates_path = web_mvc_manager_plugin_path + "/" + TEMPLATES_PATH
+        templates_path = web_mvc_wiki_plugin_path + "/" + TEMPLATES_PATH
 
         # sets the templates path
         self.set_templates_path(templates_path)
@@ -479,7 +482,7 @@ class WebMvcWikiController:
         # returns the file contents decoded
         return file_contents
 
-class WebMvcWikiPageController:
+class PageController:
     """
     The web mvc wiki page controller.
     """
@@ -511,21 +514,22 @@ class WebMvcWikiPageController:
         # retrieves the plugin manager
         plugin_manager = self.web_mvc_wiki_plugin.manager
 
-        # retrieves the web mvc manager plugin path
-        web_mvc_manager_plugin_path = plugin_manager.get_plugin_path_by_id(self.web_mvc_wiki_plugin.id)
+        # retrieves the web mvc wiki plugin path
+        web_mvc_wiki_plugin_path = plugin_manager.get_plugin_path_by_id(self.web_mvc_wiki_plugin.id)
 
         # creates the templates path
-        templates_path = web_mvc_manager_plugin_path + "/" + TEMPLATES_PATH
+        templates_path = web_mvc_wiki_plugin_path + "/" + TEMPLATES_PATH
 
         # sets the templates path
         self.set_templates_path(templates_path)
 
     def handle_create(self, rest_request, parameters = {}):
         """
-        Handles the given page rest request.
+        Handles the given create page rest request.
 
         @type rest_request: RestRequest
-        @param rest_request: The page rest request to be handled.
+        @param rest_request: The create page rest request to
+        be handled.
         @rtype: bool
         @return: The result of the handling.
         """
@@ -556,15 +560,20 @@ class WebMvcWikiPageController:
 
         return True
 
-    def handle_update(self, rest_request, parameters = {}):
+    @web_mvc_utils.serialize_exceptions("all")
+    def handle_update_serialized(self, rest_request, parameters = {}):
         """
-        Handles the given page rest request.
+        Handles the given update page serialized rest request.
 
         @type rest_request: RestRequest
-        @param rest_request: The page rest request to be handled.
+        @param rest_request: The update page serialized rest request
+        to be handled.
         @rtype: bool
         @return: The result of the handling.
         """
+
+        # retrieves the serializer
+        serializer = parameters[SERIALIZER_VALUE]
 
         # retrieves the form data by processing the form
         form_data_map = self.process_form_data(rest_request, DEFAULT_ENCODING)
@@ -587,14 +596,40 @@ class WebMvcWikiPageController:
         # updates the page
         update_revision = self._update_page(rest_request, page, instance_name)
 
-        # retrieves the update revision number string
-        update_revision_number_string = str(update_revision.get_number())
+        # retrieves the revision number
+        update_revision_map = update_revision.get_revision_map()
+
+        # serializes the update revision map
+        serialized_update_revision_map = serializer.dumps(update_revision_map)
 
         # sets the request contents
-        self.set_contents(rest_request, "revision: " + update_revision_number_string)
+        self.set_contents(rest_request, serialized_update_revision_map)
 
         # returns true
         return True
+
+    def handle_update_json(self, rest_request, parameters = {}):
+        """
+        Handles the given update page json rest request.
+
+        @type rest_request: RestRequest
+        @param rest_request: The update page json rest request
+        to be handled.
+        @type parameters: Dictionary
+        @param parameters: The handler parameters.
+        @rtype: bool
+        @return: The result of the handling.
+        """
+
+        # retrieves the json plugin
+        json_plugin = self.web_mvc_wiki_plugin.json_plugin
+
+        # sets the serializer in the parameters
+        parameters[SERIALIZER_VALUE] = json_plugin
+
+        # handles the request with the general
+        # handle update serialized method
+        return self.handle_update_serialized(rest_request, parameters)
 
     def _create_page(self, rest_request, page, instance_name):
         # retrieves the plugin manager

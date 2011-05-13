@@ -165,7 +165,7 @@ jQuery(document).ready(function() {
         var wikiPage = jQuery("#wiki-page-title").html();
 
         // creates the complete url
-        var completeUrl = "pages/" + wikiPage + "/update";
+        var completeUrl = "pages/" + wikiPage + "/update.json";
 
         // calls the edit resource
         jQuery.ajax({

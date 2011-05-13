@@ -68,7 +68,8 @@ class WebMvcWikiPlugin(colony.base.plugin_system.Plugin):
         colony.base.plugin_system.PluginDependency("pt.hive.colony.plugins.main.cache.manager", "1.0.0"),
         colony.base.plugin_system.PluginDependency("pt.hive.colony.plugins.revision_control.manager", "1.0.0"),
         colony.base.plugin_system.PluginDependency("pt.hive.colony.plugins.misc.string_normalization", "1.0.0"),
-        colony.base.plugin_system.PluginDependency("pt.hive.colony.plugins.format.mime", "1.0.0")
+        colony.base.plugin_system.PluginDependency("pt.hive.colony.plugins.format.mime", "1.0.0"),
+        colony.base.plugin_system.PluginDependency("pt.hive.colony.plugins.misc.json", "1.0.0")
     ]
     main_modules = [
         "web_mvc_wiki.mvc_wiki.web_mvc_wiki_controllers",
@@ -96,6 +97,9 @@ class WebMvcWikiPlugin(colony.base.plugin_system.Plugin):
 
     format_mime_plugin = None
     """ The format mime plugin """
+
+    json_plugin = None
+    """ The json plugin """
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
@@ -223,6 +227,13 @@ class WebMvcWikiPlugin(colony.base.plugin_system.Plugin):
     @colony.base.decorators.plugin_inject("pt.hive.colony.plugins.format.mime")
     def set_format_mime_plugin(self, format_mime_plugin):
         self.format_mime_plugin = format_mime_plugin
+
+    def get_json_plugin(self):
+        return self.json_plugin
+
+    @colony.base.decorators.plugin_inject("pt.hive.colony.plugins.misc.json")
+    def set_json_plugin(self, json_plugin):
+        self.json_plugin = json_plugin
 
     @colony.base.decorators.set_configuration_property_method("configuration")
     def configuration_set_configuration_property(self, property_name, property):
