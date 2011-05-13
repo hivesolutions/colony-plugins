@@ -53,6 +53,9 @@ DEFAULT_ENCODING = "utf-8"
 GET_METHOD_VALUE = "GET"
 """ The get method value """
 
+SERIALIZER_VALUE = "serializer"
+""" The serializer value """
+
 CONTENT_TYPE_CHARSET_VALUE = "content_type_charset"
 """ The content type charset value """
 
@@ -137,12 +140,13 @@ class WebMvcCommunicationPushController:
         self.service_connection_name_communication_handler_map = {}
         self.service_connection_profile_name_communication_handler_map = {}
 
-    def handle_show(self, rest_request, parameters = {}):
+    @web_mvc_utils.serialize_exceptions("all")
+    def handle_show_serialized(self, rest_request, parameters = {}):
         """
-        Handles the given show rest request.
+        Handles the given show serialized rest request.
 
         @type rest_request: RestRequest
-        @param rest_request: The header rest request
+        @param rest_request: The show serialized rest request
         to be handled.
         @type parameters: Dictionary
         @param parameters: The handler parameters.
@@ -150,27 +154,57 @@ class WebMvcCommunicationPushController:
         @return: The result of the handling.
         """
 
+        # retrieves the serializer
+        serializer = parameters[SERIALIZER_VALUE]
+
         # retrieves the string representation of the connection name handler map
-        service_connection_name_communication_handler_map = str(self.service_connection_name_communication_handler_map)
+        serialized_service_connection_name_communication_handler_map = serializer.dumps(self.service_connection_name_communication_handler_map)
 
         # sets the request contents
-        self.set_contents(rest_request, service_connection_name_communication_handler_map)
+        self.set_contents(rest_request, serialized_service_connection_name_communication_handler_map)
 
         # returns true
         return True
 
-    def handle_register(self, rest_request, parameters = {}):
+    def handle_show_json(self, rest_request, parameters = {}):
         """
-        Handles the given register rest request.
+        Handles the given show json rest request.
 
         @type rest_request: RestRequest
-        @param rest_request: The header rest request
+        @param rest_request: The show json rest request
         to be handled.
         @type parameters: Dictionary
         @param parameters: The handler parameters.
         @rtype: bool
         @return: The result of the handling.
         """
+
+        # retrieves the json plugin
+        json_plugin = self.web_mvc_communication_push_plugin.json_plugin
+
+        # sets the serializer in the parameters
+        parameters[SERIALIZER_VALUE] = json_plugin
+
+        # handles the request with the general
+        # handle show serialized method
+        return self.handle_show_serialized(rest_request, parameters)
+
+    @web_mvc_utils.serialize_exceptions("all")
+    def handle_register_serialized(self, rest_request, parameters = {}):
+        """
+        Handles the given register serialized rest request.
+
+        @type rest_request: RestRequest
+        @param rest_request: The register serialized rest request
+        to be handled.
+        @type parameters: Dictionary
+        @param parameters: The handler parameters.
+        @rtype: bool
+        @return: The result of the handling.
+        """
+
+        # retrieves the serializer
+        serializer = parameters[SERIALIZER_VALUE]
 
         # retrieves the form data by processing the form
         form_data_map = self.process_form_data(rest_request, DEFAULT_ENCODING)
@@ -188,23 +222,56 @@ class WebMvcCommunicationPushController:
         method = form_data_map.get(METHOD_VALUE, GET_METHOD_VALUE)
 
         # registers for the given request
-        self._register(rest_request, communication_handler_name, communication_name, return_url, method)
+        register_result = self._register(rest_request, communication_handler_name, communication_name, return_url, method)
+
+        # serializes the register result
+        serialized_register_result = serializer.dumps(register_result)
+
+        # sets the request contents
+        self.set_contents(rest_request, serialized_register_result)
 
         # returns true
         return True
 
-    def handle_unregister(self, rest_request, parameters = {}):
+    def handle_register_json(self, rest_request, parameters = {}):
         """
-        Handles the given unregister rest request.
+        Handles the given register json rest request.
 
         @type rest_request: RestRequest
-        @param rest_request: The header rest request
+        @param rest_request: The register json rest request
         to be handled.
         @type parameters: Dictionary
         @param parameters: The handler parameters.
         @rtype: bool
         @return: The result of the handling.
         """
+
+        # retrieves the json plugin
+        json_plugin = self.web_mvc_communication_push_plugin.json_plugin
+
+        # sets the serializer in the parameters
+        parameters[SERIALIZER_VALUE] = json_plugin
+
+        # handles the request with the general
+        # handle register serialized method
+        return self.handle_register_serialized(rest_request, parameters)
+
+    @web_mvc_utils.serialize_exceptions("all")
+    def handle_unregister_serialized(self, rest_request, parameters = {}):
+        """
+        Handles the given unregister serialized rest request.
+
+        @type rest_request: RestRequest
+        @param rest_request: The unregister serialized rest request
+        to be handled.
+        @type parameters: Dictionary
+        @param parameters: The handler parameters.
+        @rtype: bool
+        @return: The result of the handling.
+        """
+
+        # retrieves the serializer
+        serializer = parameters[SERIALIZER_VALUE]
 
         # retrieves the form data by processing the form
         form_data_map = self.process_form_data(rest_request, DEFAULT_ENCODING)
@@ -219,23 +286,56 @@ class WebMvcCommunicationPushController:
         return_url = form_data_map[RETURN_URL_VALUE]
 
         # unregisters for the given request
-        self._unregister(rest_request, communication_handler_name, communication_name, return_url)
+        unregister_result = self._unregister(rest_request, communication_handler_name, communication_name, return_url)
+
+        # serializes the unregister result
+        serialized_unregister_result = serializer.dumps(unregister_result)
+
+        # sets the request contents
+        self.set_contents(rest_request, serialized_unregister_result)
 
         # returns true
         return True
 
-    def handle_message(self, rest_request, parameters = {}):
+    def handle_unregister_json(self, rest_request, parameters = {}):
         """
-        Handles the given message rest request.
+        Handles the given unregister json rest request.
 
         @type rest_request: RestRequest
-        @param rest_request: The header rest request
+        @param rest_request: The unregister json rest request
         to be handled.
         @type parameters: Dictionary
         @param parameters: The handler parameters.
         @rtype: bool
         @return: The result of the handling.
         """
+
+        # retrieves the json plugin
+        json_plugin = self.web_mvc_communication_push_plugin.json_plugin
+
+        # sets the serializer in the parameters
+        parameters[SERIALIZER_VALUE] = json_plugin
+
+        # handles the request with the general
+        # handle unregister serialized method
+        return self.handle_unregister_serialized(rest_request, parameters)
+
+    @web_mvc_utils.serialize_exceptions("all")
+    def handle_message_serialized(self, rest_request, parameters = {}):
+        """
+        Handles the given message serialized rest request.
+
+        @type rest_request: RestRequest
+        @param rest_request: The message serialized rest request
+        to be handled.
+        @type parameters: Dictionary
+        @param parameters: The handler parameters.
+        @rtype: bool
+        @return: The result of the handling.
+        """
+
+        # retrieves the serializer value
+        serializer = parameters[SERIALIZER_VALUE]
 
         # retrieves the form data by processing the form
         form_data_map = self.process_form_data(rest_request, DEFAULT_ENCODING)
@@ -250,23 +350,56 @@ class WebMvcCommunicationPushController:
         message = form_data_map[MESSAGE_VALUE]
 
         # sends the message for the given request
-        self._message(rest_request, communication_handler_name, communication_name, message)
+        message_result = self._message(rest_request, communication_handler_name, communication_name, message)
+
+        # serializes the message result
+        serialized_message_result = serializer.dumps(message_result)
+
+        # sets the request contents
+        self.set_contents(rest_request, serialized_message_result)
 
         # returns true
         return True
 
-    def handle_set_property(self, rest_request, parameters = {}):
+    def handle_message_json(self, rest_request, parameters = {}):
         """
-        Handles the given set property rest request.
+        Handles the given message json rest request.
 
         @type rest_request: RestRequest
-        @param rest_request: The header rest request
+        @param rest_request: The message json rest request
         to be handled.
         @type parameters: Dictionary
         @param parameters: The handler parameters.
         @rtype: bool
         @return: The result of the handling.
         """
+
+        # retrieves the json plugin
+        json_plugin = self.web_mvc_communication_push_plugin.json_plugin
+
+        # sets the serializer in the parameters
+        parameters[SERIALIZER_VALUE] = json_plugin
+
+        # handles the request with the general
+        # handle message serialized method
+        return self.handle_message_serialized(rest_request, parameters)
+
+    @web_mvc_utils.serialize_exceptions("all")
+    def handle_set_property_serialized(self, rest_request, parameters = {}):
+        """
+        Handles the given set property serialized rest request.
+
+        @type rest_request: RestRequest
+        @param rest_request: The set property serialized rest request
+        to be handled.
+        @type parameters: Dictionary
+        @param parameters: The handler parameters.
+        @rtype: bool
+        @return: The result of the handling.
+        """
+
+        # retrieves the serializer
+        serializer = parameters[SERIALIZER_VALUE]
 
         # retrieves the form data by processing the form
         form_data_map = self.process_form_data(rest_request, DEFAULT_ENCODING)
@@ -281,17 +414,23 @@ class WebMvcCommunicationPushController:
         property_value = form_data_map[PROPERTY_VALUE_VALUE]
 
         # sets the property for the given request
-        self._set_property(rest_request, communication_handler_name, property_name, property_value)
+        set_property_result = self._set_property(rest_request, communication_handler_name, property_name, property_value)
+
+        # serializes the set property result
+        serialized_set_property_result = serializer.dumps(set_property_result)
+
+        # sets the request contents
+        self.set_contents(rest_request, serialized_set_property_result)
 
         # returns true
         return True
 
-    def handle_stat(self, rest_request, parameters = {}):
+    def handle_set_property_json(self, rest_request, parameters = {}):
         """
-        Handles the given message rest request.
+        Handles the given set property json rest request.
 
         @type rest_request: RestRequest
-        @param rest_request: The header rest request
+        @param rest_request: The set property json rest request
         to be handled.
         @type parameters: Dictionary
         @param parameters: The handler parameters.
@@ -299,8 +438,32 @@ class WebMvcCommunicationPushController:
         @return: The result of the handling.
         """
 
-        # retrieves the json plugin
+        # retrieves the serializer
         json_plugin = self.web_mvc_communication_push_plugin.json_plugin
+
+        # sets the serializer in the parameters
+        parameters[SERIALIZER_VALUE] = json_plugin
+
+        # handles the request with the general
+        # handle set property serialized method
+        return self.handle_set_property_serialized(rest_request, parameters)
+
+    @web_mvc_utils.serialize_exceptions("all")
+    def handle_stat_serialized(self, rest_request, parameters = {}):
+        """
+        Handles the given stat serialized rest request.
+
+        @type rest_request: RestRequest
+        @param rest_request: The stat serialized rest request
+        to be handled.
+        @type parameters: Dictionary
+        @param parameters: The handler parameters.
+        @rtype: bool
+        @return: The result of the handling.
+        """
+
+        # retrieves the serializer
+        serializer = parameters[SERIALIZER_VALUE]
 
         # retrieves the form data by processing the form
         form_data_map = self.process_form_data(rest_request, DEFAULT_ENCODING)
@@ -311,30 +474,57 @@ class WebMvcCommunicationPushController:
         # retrieves the information keys
         information_keys = form_data_map[INFORMATION_KEYS_VALUE]
 
-        # sends the message for the given request
-        information_values_list = self._stat(rest_request, information_item, information_keys)
+        # performs the stat for the given request
+        stat_result = self._stat(rest_request, information_item, information_keys)
 
-        # serializes the information values list
-        information_values_list_serialized = json_plugin.dumps(information_values_list)
+        # serializes the stat result
+        serialized_stat_result = serializer.dumps(stat_result)
 
         # sets the request contents
-        self.set_contents(rest_request, information_values_list_serialized)
+        self.set_contents(rest_request, serialized_stat_result)
 
         # returns true
         return True
 
-    def handle_load_profile(self, rest_request, parameters = {}):
+    def handle_stat_json(self, rest_request, parameters = {}):
         """
-        Handles the given load profile rest request.
+        Handles the given stat json rest request.
 
         @type rest_request: RestRequest
-        @param rest_request: The header rest request
+        @param rest_request: The stat json rest request
         to be handled.
         @type parameters: Dictionary
         @param parameters: The handler parameters.
         @rtype: bool
         @return: The result of the handling.
         """
+
+        # retrieves the json plugin
+        json_plugin = self.web_mvc_communication_push_plugin.json_plugin
+
+        # sets the serializer in the parameters
+        parameters[SERIALIZER_VALUE] = json_plugin
+
+        # handles the request with the general
+        # handle stat serialized method
+        return self.handle_stat_serialized(rest_request, parameters)
+
+    @web_mvc_utils.serialize_exceptions("all")
+    def handle_load_profile_serialized(self, rest_request, parameters = {}):
+        """
+        Handles the given load profile serialized rest request.
+
+        @type rest_request: RestRequest
+        @param rest_request: The load profile serialized rest request
+        to be handled.
+        @type parameters: Dictionary
+        @param parameters: The handler parameters.
+        @rtype: bool
+        @return: The result of the handling.
+        """
+
+        # retrieves the serializer
+        serializer = parameters[SERIALIZER_VALUE]
 
         # retrieves the form data by processing the form
         form_data_map = self.process_form_data(rest_request, DEFAULT_ENCODING)
@@ -352,23 +542,56 @@ class WebMvcCommunicationPushController:
         method = form_data_map.get(METHOD_VALUE, GET_METHOD_VALUE)
 
         # loads the profile for the given request
-        self._load_profile(rest_request, communication_handler_name, communication_profile_name, return_url, method)
+        load_profile_result = self._load_profile(rest_request, communication_handler_name, communication_profile_name, return_url, method)
+
+        # serializes the load profile result
+        serialized_load_profile_result = serializer.dumps(load_profile_result)
+
+        # sets the request contents
+        self.set_contents(rest_request, serialized_load_profile_result)
 
         # returns true
         return True
 
-    def handle_unload_profile(self, rest_request, parameters = {}):
+    def handle_load_profile_json(self, rest_request, parameters = {}):
         """
-        Handles the given unload profile rest request.
+        Handles the given load profile json rest request.
 
         @type rest_request: RestRequest
-        @param rest_request: The header rest request
+        @param rest_request: The load profile json rest request
         to be handled.
         @type parameters: Dictionary
         @param parameters: The handler parameters.
         @rtype: bool
         @return: The result of the handling.
         """
+
+        # retrieves the json plugin
+        json_plugin = self.web_mvc_communication_push_plugin.json_plugin
+
+        # sets the serializer in the parameters
+        parameters[SERIALIZER_VALUE] = json_plugin
+
+        # handles the request with the general
+        # handle load profile serialized method
+        return self.handle_load_profile_serialized(rest_request, parameters)
+
+    @web_mvc_utils.serialize_exceptions("all")
+    def handle_unload_profile_serialized(self, rest_request, parameters = {}):
+        """
+        Handles the given unload profile serialized rest request.
+
+        @type rest_request: RestRequest
+        @param rest_request: The unload profile serialized rest request
+        to be handled.
+        @type parameters: Dictionary
+        @param parameters: The handler parameters.
+        @rtype: bool
+        @return: The result of the handling.
+        """
+
+        # retrieves the serializer
+        serializer = parameters[SERIALIZER_VALUE]
 
         # retrieves the form data by processing the form
         form_data_map = self.process_form_data(rest_request, DEFAULT_ENCODING)
@@ -383,23 +606,56 @@ class WebMvcCommunicationPushController:
         return_url = form_data_map[RETURN_URL_VALUE]
 
         # unloads the profile for the given request
-        self._unload_profile(rest_request, communication_handler_name, communication_profile_name, return_url)
+        unload_profile_result = self._unload_profile(rest_request, communication_handler_name, communication_profile_name, return_url)
+
+        # serializes the load profile result
+        serialized_unload_profile_result = serializer.dumps(unload_profile_result)
+
+        # sets the request contents
+        self.set_contents(rest_request, serialized_unload_profile_result)
 
         # returns true
         return True
 
-    def handle_set_profile(self, rest_request, parameters = {}):
+    def handle_unload_profile_json(self, rest_request, parameters = {}):
         """
-        Handles the given set profile rest request.
+        Handles the given unload profile json rest request.
 
         @type rest_request: RestRequest
-        @param rest_request: The header rest request
+        @param rest_request: The unload profile json rest request
         to be handled.
         @type parameters: Dictionary
         @param parameters: The handler parameters.
         @rtype: bool
         @return: The result of the handling.
         """
+
+        # retrieves the json plugin
+        json_plugin = self.web_mvc_communication_push_plugin.json_plugin
+
+        # sets the serializer in the parameters
+        parameters[SERIALIZER_VALUE] = json_plugin
+
+        # handles the request with the general
+        # handle unload profile serialized method
+        return self.handle_unload_profile_serialized(rest_request, parameters)
+
+    @web_mvc_utils.serialize_exceptions("all")
+    def handle_set_profile_serialized(self, rest_request, parameters = {}):
+        """
+        Handles the given set profile serialized rest request.
+
+        @type rest_request: RestRequest
+        @param rest_request: The set profile serialized rest request
+        to be handled.
+        @type parameters: Dictionary
+        @param parameters: The handler parameters.
+        @rtype: bool
+        @return: The result of the handling.
+        """
+
+        # retrieves the serializer
+        serializer = parameters[SERIALIZER_VALUE]
 
         # retrieves the form data by processing the form
         form_data_map = self.process_form_data(rest_request, DEFAULT_ENCODING)
@@ -411,23 +667,56 @@ class WebMvcCommunicationPushController:
         communication_name = form_data_map[COMMUNICATION_NAME_VALUE]
 
         # sets the profile for the given request
-        self._set_profile(rest_request, communication_profile_name, communication_name)
+        set_profile_result = self._set_profile(rest_request, communication_profile_name, communication_name)
+
+        # serializes the set profile result
+        serialized_set_profile_result = serializer.dumps(set_profile_result)
+
+        # sets the request contents
+        self.set_contents(rest_request, serialized_set_profile_result)
 
         # returns true
         return True
 
-    def handle_unset_profile(self, rest_request, parameters = {}):
+    def handle_set_profile_json(self, rest_request, parameters = {}):
         """
-        Handles the given unset profile rest request.
+        Handles the given set profile json rest request.
 
         @type rest_request: RestRequest
-        @param rest_request: The header rest request
+        @param rest_request: The set profile json rest request
         to be handled.
         @type parameters: Dictionary
         @param parameters: The handler parameters.
         @rtype: bool
         @return: The result of the handling.
         """
+
+        # retrieves the json plugin
+        json_plugin = self.web_mvc_communication_push_plugin.json_plugin
+
+        # sets the serializer in the parameters
+        parameters[SERIALIZER_VALUE] = json_plugin
+
+        # handles the request with the general
+        # handle set profile serialized method
+        return self.handle_set_profile_serialized(rest_request, parameters)
+
+    @web_mvc_utils.serialize_exceptions("all")
+    def handle_unset_profile_serialized(self, rest_request, parameters = {}):
+        """
+        Handles the given unset profile serialized rest request.
+
+        @type rest_request: RestRequest
+        @param rest_request: The unset profile serialized rest request
+        to be handled.
+        @type parameters: Dictionary
+        @param parameters: The handler parameters.
+        @rtype: bool
+        @return: The result of the handling.
+        """
+
+        # retrieves the serializer
+        serializer = parameters[SERIALIZER_VALUE]
 
         # retrieves the form data by processing the form
         form_data_map = self.process_form_data(rest_request, DEFAULT_ENCODING)
@@ -439,10 +728,39 @@ class WebMvcCommunicationPushController:
         communication_name = form_data_map[COMMUNICATION_NAME_VALUE]
 
         # unsets the profile for the given request
-        self._unset_profile(rest_request, communication_profile_name, communication_name)
+        unset_profile_result = self._unset_profile(rest_request, communication_profile_name, communication_name)
+
+        # serializes the unset profile result
+        serialized_unset_profile_result = serializer.dumps(unset_profile_result)
+
+        # sets the request contents
+        self.set_contents(rest_request, serialized_unset_profile_result)
 
         # returns true
         return True
+
+    def handle_unset_profile_json(self, rest_request, parameters = {}):
+        """
+        Handles the given unset profile json rest request.
+
+        @type rest_request: RestRequest
+        @param rest_request: The unset profile json rest request
+        to be handled.
+        @type parameters: Dictionary
+        @param parameters: The handler parameters.
+        @rtype: bool
+        @return: The result of the handling.
+        """
+
+        # retrieves the json plugin
+        json_plugin = self.web_mvc_communication_push_plugin.json_plugin
+
+        # sets the serializer in the parameters
+        parameters[SERIALIZER_VALUE] = json_plugin
+
+        # handles the request with the general
+        # handle unset profile serialized method
+        return self.handle_unset_profile_serialized(rest_request, parameters)
 
     def generate_handler(self, return_url, method):
         """
