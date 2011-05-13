@@ -9,10 +9,16 @@
                 "version" : "1.0.0"
             }],
     "dependencies" : [{
+                "id" : "pt.hive.colony.bundles.json",
+                "version" : "1.0.0"
+            }, {
                 "id" : "pt.hive.colony.bundles.format",
                 "version" : "1.0.0"
             }, {
                 "id" : "pt.hive.colony.bundles.language",
+                "version" : "1.0.0"
+            }, {
+                "id" : "pt.hive.colony.bundles.main.cache",
                 "version" : "1.0.0"
             }, {
                 "id" : "pt.hive.colony.bundles.revision_control",
@@ -22,9 +28,6 @@
                 "version" : "1.0.0"
             }, {
                 "id" : "pt.hive.colony.bundles.web.mvc",
-                "version" : "1.0.0"
-            }, {
-                "id" : "pt.hive.colony.bundles.main.cache",
                 "version" : "1.0.0"
             }]
 }
