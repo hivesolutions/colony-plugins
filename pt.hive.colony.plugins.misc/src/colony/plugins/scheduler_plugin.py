@@ -165,6 +165,14 @@ class SchedulerPlugin(colony.base.plugin_system.Plugin):
         return self.scheduler.register_task_date_time_absolute_recursive(task, absolute_date_time, recursion_list)
 
     def get_task_class(self):
+        """
+        Retrieves the class that represents
+        a task in the current scope.
+
+        @rtype: Class
+        @return: The task class for the current scope.
+        """
+
         return self.scheduler.get_task_class()
 
     def get_guid_plugin(self):
