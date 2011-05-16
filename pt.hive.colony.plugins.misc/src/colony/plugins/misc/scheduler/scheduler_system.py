@@ -52,6 +52,33 @@ METHOD_CALL_TYPE = "method_call"
 CONSOLE_COMMAND_TYPE = "console_command"
 """ The console command type """
 
+PLUGIN_ID_VALUE = "plugin_id"
+""" The plugin id value """
+
+PLUGIN_VERSION_VALUE = "plugin_version"
+""" The plugin version value """
+
+METHOD_VALUE = "method"
+""" The method value """
+
+METHOD_ARGUMENTS_VALUE = "method_arguments"
+""" The method arguments value """
+
+ARGUMENTS_VALUE = "arguments"
+""" The arguments value """
+
+RECURSION_LIST_VALUE = "recursion_list"
+""" The recursion list value """
+
+CONSOLE_COMMAND_VALUE = "console_command"
+""" The console command value """
+
+TASKS_VALUE = "tasks"
+""" The tasks value """
+
+SLEEP_STEP_VALUE = "sleep_step"
+""" The sleep step value """
+
 DEFAULT_SLEEP_STEP = 1.0
 """ The default sleep step value used in sleep function """
 
@@ -109,6 +136,13 @@ class Scheduler:
         self.startup_configuration = {}
 
     def load_scheduler(self):
+        """
+        Loads the scheduler, loading the configuration and the
+        startup tasks.
+        The continuous execution of the scheduler assures the correct
+        execution of the tasks.
+        """
+
         # notifies the ready semaphore
         self.scheduler_plugin.release_ready_semaphore()
 
@@ -139,6 +173,12 @@ class Scheduler:
                 break
 
     def unload_scheduler(self):
+        """
+        Unloads the scheduler, removes all the
+        active scheduler items.
+        Releases all the active structures.
+        """
+
         # removes all the active scheduler items
         self.remove_all_active_scheduler_items()
 
@@ -151,14 +191,23 @@ class Scheduler:
             self.scheduler_lock.release()
 
     def register_task(self, task, time):
+        """
+        Registers the given task for the given time.
+
+        @type task: SchedulerTask
+        @param task: The task to be registered.
+        @type time: float
+        @param time: The timestamp to register the task.
+        """
+
         # calculates the absolute time
         absolute_time = self.timestamp_to_absolute_timestamp(time)
 
-        # registers the task
-        return self.register_task_absolute(task, absolute_time)
+        # registers the task with absolute time
+        self.register_task_absolute(task, absolute_time)
 
     def register_task_absolute(self, task, absolute_time):
-        return self.register_task_absolute_recursive(task, absolute_time, None)
+        self.register_task_absolute_recursive(task, absolute_time, None)
 
     def register_task_date_time(self, task, date_time):
         # retrieves the current date time
@@ -197,17 +246,17 @@ class Scheduler:
         # in case the task type is of type method_call
         if task_type == METHOD_CALL_TYPE:
             # retrieves the method
-            method = task_arguments["method"]
+            method = task_arguments[METHOD_VALUE]
 
             # retrieve the method arguments
-            method_arguments = task_arguments["method_arguments"]
+            method_arguments = task_arguments[METHOD_ARGUMENTS_VALUE]
 
             # creates a new scheduler item
             scheduler_item = self.create_scheduler_item(method, method_arguments, absolute_time, recursion_list)
         # in case the task is of type console_command
         elif task_type == CONSOLE_COMMAND_TYPE:
             # retrieves the console command
-            console_command = task_arguments["console_command"]
+            console_command = task_arguments[CONSOLE_COMMAND_VALUE]
 
             # retrieves the main console plugin
             main_console_plugin = self.scheduler_plugin.main_console_plugin
@@ -242,6 +291,14 @@ class Scheduler:
         return self.register_task_absolute_recursive(task, absolute_timestamp, recursion_list)
 
     def get_task_class(self):
+        """
+        Retrieves the class that represents
+        a task in the current scope.
+
+        @rtype: Class
+        @return: The task class for the current scope.
+        """
+
         return SchedulerTask
 
     def set_startup_configuration_property(self, startup_configuration_property):
@@ -418,7 +475,7 @@ class Scheduler:
         """
 
         # retrieves the sleep step from the startup configuration map
-        self.sleep_step = self.startup_configuration.get("sleep_step", DEFAULT_SLEEP_STEP)
+        self.sleep_step = self.startup_configuration.get(SLEEP_STEP_VALUE, DEFAULT_SLEEP_STEP)
 
     def _load_startup_tasks(self):
         """
@@ -427,7 +484,7 @@ class Scheduler:
         """
 
         # retrieves the startup tasks from the startup configuration map
-        startup_tasks = self.startup_configuration.get("tasks", [])
+        startup_tasks = self.startup_configuration.get(TASKS_VALUE, [])
 
         # retrieves the current time
         current_time = time.time()
@@ -439,11 +496,11 @@ class Scheduler:
             plugin_manager = self.scheduler_plugin.manager
 
             # retrieves the various startup task attributes
-            plugin_id = startup_task["plugin_id"]
-            plugin_version = startup_task.get("plugin_version", None)
-            method = startup_task["method"]
-            arguments = startup_task["arguments"]
-            recursion_list = startup_task["recursion_list"]
+            plugin_id = startup_task[PLUGIN_ID_VALUE]
+            plugin_version = startup_task.get(PLUGIN_VERSION_VALUE, None)
+            method = startup_task[METHOD_VALUE]
+            arguments = startup_task[ARGUMENTS_VALUE]
+            recursion_list = startup_task[RECURSION_LIST_VALUE]
 
             # retrieves the plugin
             plugin = plugin_manager.get_plugin_by_id_and_version(plugin_id, plugin_version)
@@ -499,6 +556,15 @@ class SchedulerTask:
     """ The task arguments map """
 
     def __init__(self, task_type, task_arguments = {}):
+        """
+        Constructor of the class.
+
+        @type task_type: String
+        @param task_type: The task type.
+        @type task_arguments: Dictionary
+        @param task_arguments: The task arguments map.
+        """
+
         self.task_type = task_type
         self.task_arguments = task_arguments
 
@@ -529,6 +595,25 @@ class SchedulerItem:
     """ The canceled flag """
 
     def __init__(self, item_id, task_method, task_method_arguments, absolute_time, recursion_list = None, current_event = None, canceled = False):
+        """
+        Constructor of the class.
+
+        @type item_id: String
+        @param item_id: The item id.
+        @type task_method: Method
+        @param task_method: The task method.
+        @type task_method_arguments: List
+        @param task_method_arguments: The task method arguments.
+        @type absolute_time: float
+        @param absolute_time: The absolute time.
+        @type recursion_list: List
+        @param recursion_list: The recursion list.
+        @type current_event: Event
+        @param current_event: The current event.
+        @type canceled: bool
+        @param canceled: The canceled flag.
+        """
+
         self.item_id = item_id
         self.task_method = task_method
         self.task_method_arguments = task_method_arguments
@@ -538,13 +623,41 @@ class SchedulerItem:
         self.canceled = canceled
 
     def is_recursive(self):
+        """
+        Retrieves if the current scheduler task
+        is recursive or not.
+
+        @rtype: bool
+        @return: If the current task is recursive
+        or not.
+        """
+
+        # in case the recursion list is set and the
+        # canceled flag is not
         if self.recursion_list and not self.canceled:
+            # returns true (valid)
             return True
+        # otherwise it's not recursive
         else:
+            # returns false (invalid)
             return False
 
     def is_active(self):
+        """
+        Retrieves if the current scheduler task
+        is active or not.
+
+        @rtype: bool
+        @return: If the current task is active
+        or not.
+        """
+
+        # in case the current event is set and the
+        # canceled flag is not
         if self.current_event and not self.canceled:
+            # returns true (valid)
             return True
+        # otherwise it's not active
         else:
+            # returns false (invalid)
             return False
