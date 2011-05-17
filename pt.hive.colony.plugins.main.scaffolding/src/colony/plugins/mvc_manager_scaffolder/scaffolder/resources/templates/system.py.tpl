@@ -183,13 +183,10 @@ class ${out value=scaffold_attributes.class_name /}:
         # defines the page item bundle
         page_item_bundle = [
             {
-                "menu" : "root_entities/Root Entities",
+                "menu" : "dummy/Dummy",
                 "base_address" : "root_entities",
                 "pattern" : (r"^web_mvc_manager/root_entities$", self.root_entity_controller.handle_list, "get")
-            },
-            (r"^web_mvc_manager/root_entities/partial$", self.root_entity_controller.handle_partial_list, "get"),
-            (r"^web_mvc_manager/root_entities$", self.root_entity_controller.handle_create, "post"),
-            (r"^web_mvc_manager/root_entities/(?P<root_entity_object_id>[0-9]+)/delete$", self.root_entity_controller.handle_delete, "get")
+            }
         ]
 
         # returns the page item bundle

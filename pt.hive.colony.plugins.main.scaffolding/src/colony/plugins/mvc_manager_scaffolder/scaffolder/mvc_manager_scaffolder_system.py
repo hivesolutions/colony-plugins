@@ -61,16 +61,6 @@ TEMPLATES_MAP = {
         RELATIVE_PATH_VALUE : TEMPLATES_PATH,
         RELATIVE_DESTINATION_FILE_PATH_FORMAT : "${relative_backend_path}/${variable_name}_entity_models.py"
     },
-    "list_contents.html.tpl" : {
-        RELATIVE_PATH_VALUE : TEMPLATES_PATH,
-        RELATIVE_DESTINATION_FILE_PATH_FORMAT : "${relative_backend_path}/resources/templates/${variable_name}_list_contents.html.tpl",
-        "process" : False
-    },
-    "partial_list_contents.html.tpl" : {
-        RELATIVE_PATH_VALUE : TEMPLATES_PATH,
-        RELATIVE_DESTINATION_FILE_PATH_FORMAT : "${relative_backend_path}/resources/templates/${variable_name}_partial_list_contents.html.tpl",
-        "process" : False
-    },
     "exceptions.py.tpl" : {
         RELATIVE_PATH_VALUE : TEMPLATES_PATH,
         RELATIVE_DESTINATION_FILE_PATH_FORMAT : "${relative_backend_path}/${variable_name}_exceptions.py"

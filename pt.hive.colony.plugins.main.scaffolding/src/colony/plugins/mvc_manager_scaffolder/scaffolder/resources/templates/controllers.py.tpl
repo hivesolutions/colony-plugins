@@ -21,15 +21,6 @@
 
 import colony.libs.importer_util
 
-PATTERN_NAMES_VALUE = "pattern_names"
-""" The pattern names value """
-
-SERIALIZER_VALUE = "serializer"
-""" The serializer value """
-
-DEFAULT_ENCODING = "utf-8"
-""" The default encoding value """
-
 TEMPLATES_PATH = "${out value=scaffold_attributes.relative_backend_path /}/resources/templates"
 """ The templates path """
 
@@ -77,82 +68,9 @@ class RootEntityController:
         # sets the templates path
         self.set_templates_path(templates_path)
 
-    @web_mvc_utils.transaction_method("${out value=scaffold_attributes.variable_name /}.${out value=scaffold_attributes.variable_name /}_entity_models.entity_manager")
-    def handle_create(self, rest_request, parameters = {}):
-        # processes the form data and retrieves the description
-        form_data_map = self.process_form_data(rest_request, "utf-8")
-        root_entity_description = form_data_map["root_entity"]["description"]
-
-        # creates and stores a root entity
-        ${out value=scaffold_attributes.variable_name /}_entity_models = self.${out value=scaffold_attributes.variable_name /}.${out value=scaffold_attributes.variable_name /}_entity_models
-        root_entity = ${out value=scaffold_attributes.variable_name /}_entity_models.RootEntity()
-        root_entity.description = root_entity_description
-        root_entity.save()
-
-        # processes the template and sets it as the response
-        template_file = self.retrieve_template_file("${out value=scaffold_attributes.variable_name /}_list_contents.html.tpl")
-        self.process_set_contents(rest_request, template_file)
-
-        # returns true to indicate that the operation was successful
-        return True
-
     def handle_list(self, rest_request, parameters = {}):
-        # processes the template and sets it as the response
-        template_file = self.retrieve_template_file("${out value=scaffold_attributes.variable_name /}_list_contents.html.tpl")
-        self.process_set_contents(rest_request, template_file)
-
-        # returns true to indicate that the operation was successful
-        return True
-
-    def handle_partial_list(self, rest_request, parameters = {}):
-        # processes the form data and retrieves the search query
-        form_data_map = self.process_form_data(rest_request, "utf-8")
-        search_query = form_data_map["search_query"]
-        start_record = form_data_map["start_record"]
-        number_records = form_data_map["number_records"]
-        start_record = int(start_record)
-        number_records = int(number_records)
-
-        # retrieves all root_entity entities and filters them
-        ${out value=scaffold_attributes.variable_name /}_entity_models = self.${out value=scaffold_attributes.variable_name /}.${out value=scaffold_attributes.variable_name /}_entity_models
-        entity_manager = ${out value=scaffold_attributes.variable_name /}_entity_models.entity_manager
-        root_entities = entity_manager._find_all_options(${out value=scaffold_attributes.variable_name /}_entity_models.RootEntity, {})
-        filtered_root_entitys = [root_entity for root_entity in root_entities if not root_entity.description.find(search_query) == -1]
-
-        # retrieves the specified page of root_entitys
-        search_helper = parameters["search_helper"]
-        results_tuple = search_helper.partial_filter(rest_request, filtered_root_entitys, start_record, number_records)
-        partial_filtered_root_entitys, start_record, number_records, total_number_records = results_tuple
-
-        # retrieves the template and assigns its values
-        template_file = self.retrieve_template_file("${out value=scaffold_attributes.variable_name /}_partial_list_contents.html.tpl")
-        template_file.assign("root_entitys", partial_filtered_root_entitys)
-        template_file.assign("start_record", start_record)
-        template_file.assign("number_records", number_records)
-        template_file.assign("total_number_records", total_number_records)
-
-        # processes the template and sets it as the response
-        self.process_set_contents(rest_request, template_file)
-
-        # returns true to indicate that the operation was successful
-        return True
-
-    @web_mvc_utils.transaction_method("${out value=scaffold_attributes.variable_name /}.${out value=scaffold_attributes.variable_name /}_entity_models.entity_manager")
-    def handle_delete(self, rest_request, parameters = {}):
-        # retrieves the root_entity object id from the parameters
-        pattern_names = parameters["pattern_names"]
-        root_entity_object_id = pattern_names["root_entity_object_id"]
-        root_entity_object_id = int(root_entity_object_id)
-
-        # removes the root entity
-        ${out value=scaffold_attributes.variable_name /}_entity_models = self.${out value=scaffold_attributes.variable_name /}.${out value=scaffold_attributes.variable_name /}_entity_models
-        root_entity = ${out value=scaffold_attributes.variable_name /}_entity_models.RootEntity()
-        root_entity.object_id = root_entity_object_id
-        root_entity.remove()
-
-        # processes the template and sets it as the response
-        template_file = self.retrieve_template_file("${out value=scaffold_attributes.variable_name /}_list_contents.html.tpl")
-        self.process_set_contents(rest_request, template_file)
+        # sets the response contents
+        self.set_contents(rest_request, "dummy")
 
         # returns true to indicate that the operation was successful
         return True
