@@ -76,6 +76,9 @@ DEFAULT_SENDER_NAME = "Colony Automation"
 DEFAULT_SENDER_EMAIL = "automation@getcolony.com"
 """ The default sender email """
 
+DEFAULT_LOG_FILE_PATH = "log/build_automation.log"
+""" The default log file path """
+
 VERSION_VALUE = "version"
 """ The version value """
 
@@ -543,7 +546,7 @@ class EmailBuildAutomationExtension:
         build_automation_structure_converted["changers_list"] = build_automation_changers_list
         build_automation_structure_converted["repository_url"] = integration_base_url
         build_automation_structure_converted["changelog_url"] = changelog_base_url
-        build_automation_structure_converted["log_file_path"] = integration_base_url + "/log/build_automation.log"
+        build_automation_structure_converted["log_file_path"] = DEFAULT_LOG_FILE_PATH
 
         # returns the build automation structure converted
         return build_automation_structure_converted
