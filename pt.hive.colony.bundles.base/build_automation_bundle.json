@@ -32,6 +32,9 @@
                 "id" : "pt.hive.colony.plugins.build.automation.extensions.packing",
                 "version" : "1.0.0"
             }, {
+                "id" : "pt.hive.colony.plugins.build.automation.extensions.properties",
+                "version" : "1.0.0"
+            }, {
                 "id" : "pt.hive.colony.plugins.build.automation.extensions.report_generator",
                 "version" : "1.0.0"
             }, {
