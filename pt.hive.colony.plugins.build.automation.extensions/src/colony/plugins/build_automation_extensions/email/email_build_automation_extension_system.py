@@ -91,6 +91,12 @@ ISSUES_LIST_VALUE = "issues_list"
 CHANGERS_LIST_VALUE = "changers_list"
 """ The changers list value """
 
+INTEGRATION_BASE_URL_VALUE = "integration_base_url"
+""" The integration base url """
+
+CHANGELOG_BASE_URL_VALUE = "changelog_base_url"
+""" The changelog base url """
+
 USERNAME_VALUE = "username"
 """ The username value """
 
@@ -514,6 +520,12 @@ class EmailBuildAutomationExtension:
         # retrieves the build automation changers list
         build_automation_changers_list = build_automation_structure_runtime.local_properties.get(CHANGERS_LIST_VALUE, [])
 
+        # retrieves the integration base url
+        integration_base_url = build_automation_structure_runtime.local_properties.get(INTEGRATION_BASE_URL_VALUE, [])
+
+        # retrieves the changelog base url
+        changelog_base_url = build_automation_structure_runtime.local_properties.get(CHANGELOG_BASE_URL_VALUE, [])
+
         # retrieves the build automation success in capitals format
         build_automation_success_capitals = SUCCESS_CAPITALS_MAP[build_automation_success]
 
@@ -529,9 +541,9 @@ class EmailBuildAutomationExtension:
         build_automation_structure_converted["changelog_list"] = build_automation_changelog_list
         build_automation_structure_converted["issues_list"] = build_automation_issues_list
         build_automation_structure_converted["changers_list"] = build_automation_changers_list
-        build_automation_structure_converted["repository_url"] = "http://servidor3.hive:8080/integration/" + str(build_automation_version)
-        build_automation_structure_converted["changelog_url"] = "http://trac.hive.pt:8080/changeset"
-        build_automation_structure_converted["log_file_path"] = "log/build_automation.log"
+        build_automation_structure_converted["repository_url"] = integration_base_url
+        build_automation_structure_converted["changelog_url"] = changelog_base_url
+        build_automation_structure_converted["log_file_path"] = integration_base_url + "/log/build_automation.log"
 
         # returns the build automation structure converted
         return build_automation_structure_converted
