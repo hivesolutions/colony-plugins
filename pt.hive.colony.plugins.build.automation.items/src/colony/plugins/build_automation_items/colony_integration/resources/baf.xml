@@ -45,6 +45,21 @@
         <clean_target_directory>true</clean_target_directory>
         <plugins>
             <plugin>
+                <id>pt.hive.colony.plugins.build.automation.extensions.properties</id>
+                <version>1.0.0</version>
+                   <stage>build</stage>
+                <configuration>
+                    <property>
+                        <key>integration_base_url</key>
+                        <value>http://repo.hive:8080/integration</value>
+                    </property>
+                    <property>
+                        <key>changelog_base_url</key>
+                        <value>http://trac.hive.pt:8080/changeset</value>
+                    </property>
+                </configuration>
+            </plugin>
+            <plugin>
                 <id>pt.hive.colony.plugins.build.automation.extensions.packing</id>
                 <version>1.0.0</version>
                 <stage>build</stage>
