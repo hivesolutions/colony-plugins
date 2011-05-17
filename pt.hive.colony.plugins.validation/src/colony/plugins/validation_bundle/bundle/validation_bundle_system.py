@@ -138,8 +138,7 @@ class ValidationBundle:
         validation_errors = []
 
         # retrieves the bundle file paths in case an empty list was provided
-        if not bundle_file_paths:
-            bundle_file_paths = self.get_bundle_file_paths()
+        bundle_file_paths = bundle_file_paths or self.get_bundle_file_paths()
 
         # retrieves the bundle data map
         bundle_data_map = self.get_bundle_data_map(bundle_file_paths, validation_errors)
