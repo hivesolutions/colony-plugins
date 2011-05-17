@@ -123,7 +123,7 @@ class InvalidFilePath(MainPackingColonyServiceException):
         @return: The string representation of the class.
         """
 
-        return "Invalid file path: " % self.message
+        return "Invalid file path: %s" % self.message
 
 class InvalidFileExtension(MainPackingColonyServiceException):
     """
@@ -149,4 +149,4 @@ class InvalidFileExtension(MainPackingColonyServiceException):
         @return: The string representation of the class.
         """
 
-        return "Invalid file extension: " % self.message
+        return "Invalid file extension: %s" % self.message
