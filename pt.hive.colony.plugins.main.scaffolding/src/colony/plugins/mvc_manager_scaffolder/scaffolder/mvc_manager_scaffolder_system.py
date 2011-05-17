@@ -37,6 +37,11 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
+import os
+
+RELATIVE_BACKEND_PATH_VALUE = "relative_backend_path"
+""" The relative backend path value """
+
 RELATIVE_PATH_VALUE = "relative_path"
 """ The relative path value """
 
@@ -48,6 +53,9 @@ UNIX_DIRECTORY_SEPARATOR = "/"
 
 SCAFFOLDER_TYPE = "mvc_manager"
 """ The scaffolder type """
+
+BACKEND_TEMPLATES_PATH = "resources/templates"
+""" The backend templates path """
 
 TEMPLATES_PATH = "mvc_manager_scaffolder/scaffolder/resources/templates"
 """ The templates path """
@@ -111,4 +119,11 @@ class MvcManagerScaffolder:
         return template
 
     def generate_scaffold(self, scaffold_path, scaffold_attributes_map):
-        pass
+        # retrieves the relative backend path
+        relative_backend_path = scaffold_attributes_map[RELATIVE_BACKEND_PATH_VALUE]
+
+        # defines the templates path
+        templates_path = scaffold_path + UNIX_DIRECTORY_SEPARATOR + relative_backend_path + UNIX_DIRECTORY_SEPARATOR + BACKEND_TEMPLATES_PATH
+
+        # creates the directories for the templates path
+        os.makedirs(templates_path)
