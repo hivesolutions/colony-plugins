@@ -72,3 +72,29 @@ class ScaffolderTypeNotSupported(MainScaffoldingException):
         """
 
         return "Scaffolder type not supported exception: %s" % self.message
+
+class InvalidPluginIdentifier(MainScaffoldingException):
+    """
+    The invalid plugin identifier class.
+    """
+
+    def __init__(self, message):
+        """
+        Constructor of the class.
+
+        @type message: String
+        @param message: The message to be printed.
+        """
+
+        MainScaffoldingException.__init__(self)
+        self.message = message
+
+    def __str__(self):
+        """
+        Returns the string representation of the class.
+
+        @rtype: String
+        @return: The string representation of the class.
+        """
+
+        return "Invalid plugin identifier exception: %s" % self.message

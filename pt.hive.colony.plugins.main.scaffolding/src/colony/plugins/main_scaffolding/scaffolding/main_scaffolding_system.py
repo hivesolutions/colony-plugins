@@ -108,6 +108,9 @@ RELATIVE_PATH_VALUE = "relative_path"
 ROOT_FOLDER_NAME_VALUE = "root_folder_name"
 """ The root folder name value """
 
+PLUGIN_ID_NAMESPACE_PLUGINS_CHUNK = ".plugins."
+""" The plugin id namespace plugins chunk """
+
 TEMPLATE_FILE_PATH_VALUE = "template_file_path"
 """ The template file path value """
 
@@ -197,6 +200,11 @@ class MainScaffolding:
         if not scaffolder_plugin:
             # raises a scaffolder type not supported exception
             raise main_scaffolding_exceptions.ScaffolderTypeNotSupported("the specified scaffolder type is not supported")
+
+        # in case the plugins chunk was not found in the plugin id
+        if not PLUGIN_ID_NAMESPACE_PLUGINS_CHUNK in plugin_id:
+            # raises an invalid plugin identifier exception
+            raise main_scaffolding_exceptions.InvalidPluginIdentifier("the plugin id must have '.plugins.' in its namespace")
 
         # initializes the scaffold attributes map
         scaffold_attributes_map = {
