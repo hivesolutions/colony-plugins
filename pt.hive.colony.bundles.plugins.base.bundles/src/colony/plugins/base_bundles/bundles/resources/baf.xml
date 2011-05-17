@@ -105,6 +105,7 @@
                         <specification_file>$base{plugin_directory}/base_bundles/bundles/specifications/main_pool_bundle.json</specification_file>
                         <specification_file>$base{plugin_directory}/base_bundles/bundles/specifications/main_remote_bundle.json</specification_file>
                         <specification_file>$base{plugin_directory}/base_bundles/bundles/specifications/main_restricted_bundle.json</specification_file>
+                        <specification_file>$base{plugin_directory}/base_bundles/bundles/specifications/main_scaffolding_bundle.json</specification_file>
                         <specification_file>$base{plugin_directory}/base_bundles/bundles/specifications/main_service_abecula_bundle.json</specification_file>
                         <specification_file>$base{plugin_directory}/base_bundles/bundles/specifications/main_service_bittorrent_bundle.json</specification_file>
                         <specification_file>$base{plugin_directory}/base_bundles/bundles/specifications/main_service_bundle.json</specification_file>
@@ -364,6 +365,10 @@
                         <specification>
                             <type>bundle</type>
                             <specification_file>$base{plugin_directory}/base_bundles/bundles/specifications/main_restricted_bundle.json</specification_file>
+                        </specification>
+                        <specification>
+                            <type>bundle</type>
+                            <specification_file>$base{plugin_directory}/base_bundles/bundles/specifications/main_scaffolding_bundle.json</specification_file>
                         </specification>
                         <specification>
                             <type>bundle</type>

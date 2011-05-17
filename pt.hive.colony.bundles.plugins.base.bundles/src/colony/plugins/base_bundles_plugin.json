@@ -75,6 +75,7 @@
             "base_bundles/bundles/specifications/main_pool_bundle.json",
             "base_bundles/bundles/specifications/main_remote_bundle.json",
             "base_bundles/bundles/specifications/main_restricted_bundle.json",
+            "base_bundles/bundles/specifications/main_scaffolding_bundle.json",
             "base_bundles/bundles/specifications/main_service_abecula_bundle.json",
             "base_bundles/bundles/specifications/main_service_bittorrent_bundle.json",
             "base_bundles/bundles/specifications/main_service_bundle.json",

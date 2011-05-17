@@ -1,0 +1,27 @@
+{
+    "type" : "bundle",
+    "platform" : "python",
+    "id" : "pt.hive.colony.bundles.main.scaffolding",
+    "version" : "1.0.0",
+    "author" : "Hive Solutions Lda. <development@hive.pt>",
+    "plugins" : [{
+                "id" : "pt.hive.colony.plugins.main.scaffolding",
+                "version" : "1.0.0"
+            }, {
+                "id" : "pt.hive.colony.plugins.main.scaffolding.mvc",
+                "version" : "1.0.0"
+            }, {
+                "id" : "pt.hive.colony.plugins.main.scaffolding.mvc_manager",
+                "version" : "1.0.0"
+            }, {
+                "id" : "pt.hive.colony.plugins.main.scaffolding.simple",
+                "version" : "1.0.0"
+            }],
+    "dependencies" : [{
+                "id" : "pt.hive.colony.bundles.json",
+                "version" : "1.0.0"
+            }, {
+                "id" : "pt.hive.colony.bundles.template_engine",
+                "version" : "1.0.0"
+            }]
+}
