@@ -170,7 +170,7 @@ class MainScaffolding:
         scaffolder_type = scaffolder_plugin.get_scaffolder_type()
 
         # sets the scaffolder plugin in the map
-        self.scaffolder_plugins_map.set(scaffolder_type, scaffolder_plugin)
+        self.scaffolder_plugins_map[scaffolder_type] = scaffolder_plugin
 
     def unload_scaffolder_plugin(self, scaffolder_plugin):
         # retrieves the scaffolder type
@@ -191,7 +191,7 @@ class MainScaffolding:
         plugin_manager = self.main_scaffolding_plugin.manager
 
         # retrieves the scaffolder for the specified type
-        scaffolder_plugin = self.scaffolder_plugins_map.get(scaffolder_type)
+        scaffolder_plugin = self.scaffolder_plugins_map[scaffolder_type]
 
         # in case no scaffolder plugin was found
         if not scaffolder_plugin:
@@ -463,7 +463,51 @@ class MultipleValueDictionary:
         # initializes the map
         self.map = {}
 
-    def get(self, key):
+    def keys(self):
+        """
+        Retrieves the keys.
+
+        @rtype: List
+        @return: The dictionary keys.
+        """
+
+        # retrieves the keys
+        keys = self.map.keys()
+
+        # returns the keys
+        return keys
+
+    def values(self):
+        """
+        Retrieves the values.
+
+        @rtype: List
+        @return: The dictionary values.
+        """
+
+        # retrieves the values
+        values = self.map.values()
+
+        # returns the values
+        return values
+
+    def unset(self, key, value):
+        """
+        Unsets the value from the specified key.
+
+        @type key: Object
+        @param key: The key where to unset the value.
+        @type value: Object
+        @param value: The value to unset.
+        """
+
+        # retrieves the values
+        values = self.map[key]
+
+        # removes the value
+        values.remove(value)
+
+    def __getitem__(self, key):
         """
         Retrieves the value for the specified key.
 
@@ -487,7 +531,7 @@ class MultipleValueDictionary:
         # returns the value
         return value
 
-    def set(self, key, value):
+    def __setitem__(self, key, value):
         """
         Sets the value in the specified key.
 
@@ -506,18 +550,13 @@ class MultipleValueDictionary:
         # sets the values in the map
         self.map[key] = values
 
-    def unset(self, key, value):
+    def __delitem__(self, key):
         """
-        Unsets the value from the specified key.
+        Removes the specified key.
 
         @type key: Object
-        @param key: The key where to unset the value.
-        @type value: Object
-        @param value: The value to unset.
+        @param key: The key to remove.
         """
 
-        # retrieves the values
-        values = self.map[key]
-
-        # removes the value
-        values.remove(value)
+        # removes the specified key
+        del self.map[key]
