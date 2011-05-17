@@ -53,7 +53,7 @@ configuration = {
     "default_connection_timeout" : 30,
     "default_request_timeout" : 30,
     "default_response_timeout" : 30,
-    "default_number_threads" : 30,
+    "default_number_threads" : 120,
     "default_scheduling_algorithm" : 2,
     "default_maximum_number_threads" : 60,
     "default_maximum_number_work_threads" : 15,
