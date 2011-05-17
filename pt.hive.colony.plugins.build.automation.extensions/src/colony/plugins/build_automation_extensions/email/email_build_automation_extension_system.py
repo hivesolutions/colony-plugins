@@ -532,6 +532,10 @@ class EmailBuildAutomationExtension:
         # retrieves the build automation success in capitals format
         build_automation_success_capitals = SUCCESS_CAPITALS_MAP[build_automation_success]
 
+        # creates the repository url appending the current build automation version
+        # to the integration base url
+        repository_url = integration_base_url + "/" + str(build_automation_version)
+
         # creates the build automation structure converted
         build_automation_structure_converted = {}
 
@@ -544,7 +548,7 @@ class EmailBuildAutomationExtension:
         build_automation_structure_converted["changelog_list"] = build_automation_changelog_list
         build_automation_structure_converted["issues_list"] = build_automation_issues_list
         build_automation_structure_converted["changers_list"] = build_automation_changers_list
-        build_automation_structure_converted["repository_url"] = integration_base_url
+        build_automation_structure_converted["repository_url"] = repository_url
         build_automation_structure_converted["changelog_url"] = changelog_base_url
         build_automation_structure_converted["log_file_path"] = DEFAULT_LOG_FILE_PATH
 
