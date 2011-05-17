@@ -183,7 +183,7 @@ class ${out value=scaffold_attributes.class_name /}:
         # defines the page item bundle
         page_item_bundle = [
             {
-                "menu" : "dummy/Dummy",
+                "menu" : "scaffold/Scaffold",
                 "base_address" : "root_entities",
                 "pattern" : (r"^web_mvc_manager/root_entities$", self.root_entity_controller.handle_list, "get")
             }

@@ -70,7 +70,7 @@ class RootEntityController:
 
     def handle_list(self, rest_request, parameters = {}):
         # sets the response contents
-        self.set_contents(rest_request, "dummy")
+        self.set_contents(rest_request, "scaffold")
 
         # returns true to indicate that the operation was successful
         return True
