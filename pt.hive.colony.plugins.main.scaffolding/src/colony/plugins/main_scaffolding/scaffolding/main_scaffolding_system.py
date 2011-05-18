@@ -471,33 +471,51 @@ class MultipleValueMap:
         # initializes the map
         self.map = {}
 
+    def __len__(self):
+        return self.map.__len__()
+
+    def __getitem__(self, key):
+        # returns the value
+        values = self.map.get(key)
+
+        # returns in case no
+        # value was found
+        if not values:
+            return
+
+        # retrieves the first value
+        value = values[0]
+
+        # returns the value
+        return value
+
+    def __setitem__(self, key, value):
+        # retrieves the values
+        values = self.map.get(key, [])
+
+        # adds the value to the list
+        values.append(value)
+
+        # sets the values in the map
+        self.map[key] = values
+
+    def __delitem__(self, key):
+        del self.map[key]
+
+    def __iter__(self):
+        return self.map.__iter__()
+
+    def __contains__(self, item):
+        return self.map.__contains__(item)
+
     def keys(self):
-        """
-        Retrieves the keys.
-
-        @rtype: List
-        @return: The dictionary keys.
-        """
-
-        # retrieves the keys
-        keys = self.map.keys()
-
-        # returns the keys
-        return keys
+        return self.map.keys()
 
     def values(self):
-        """
-        Retrieves the values.
+        return self.map.values()
 
-        @rtype: List
-        @return: The dictionary values.
-        """
-
-        # retrieves the values
-        values = self.map.values()
-
-        # returns the values
-        return values
+    def items(self):
+        return self.map.items()
 
     def unset(self, key, value):
         """
@@ -514,57 +532,3 @@ class MultipleValueMap:
 
         # removes the value
         values.remove(value)
-
-    def __getitem__(self, key):
-        """
-        Retrieves the value for the specified key.
-
-        @type key: Object
-        @param key: The key where to fetch the value.
-        @rtype: Object
-        @return: The first value at the specified key.
-        """
-
-        # returns the value
-        values = self.map.get(key)
-
-        # returns in case no
-        # value was found
-        if not values:
-            return
-
-        # retrieves the first value
-        value = values[0]
-
-        # returns the value
-        return value
-
-    def __setitem__(self, key, value):
-        """
-        Sets the value in the specified key.
-
-        @type key: Object
-        @param key: The key where to set the value.
-        @type value: Object
-        @param value: The value to set.
-        """
-
-        # retrieves the values
-        values = self.map.get(key, [])
-
-        # adds the value to the list
-        values.append(value)
-
-        # sets the values in the map
-        self.map[key] = values
-
-    def __delitem__(self, key):
-        """
-        Removes the specified key.
-
-        @type key: Object
-        @param key: The key to remove.
-        """
-
-        # removes the specified key
-        del self.map[key]
