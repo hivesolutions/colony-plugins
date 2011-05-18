@@ -39,9 +39,17 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 # the token definitions
 tokens = (
-    "XML", "CDATA", "TAG_INIT", "TAG_END",
-    "TAG_END_END", "ATTRIBUTION", "COMMENT",
-    "NAME", "STRING", "NEWLINE", "EQUALS"
+    "XML",
+    "CDATA",
+    "TAG_INIT",
+    "TAG_END",
+    "TAG_END_END",
+    "ATTRIBUTION",
+    "COMMENT",
+    "NAME",
+    "STRING",
+    "NEWLINE",
+    "EQUALS"
 )
 
 # the reserved keywords
