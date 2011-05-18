@@ -46,6 +46,9 @@ DEFAULT_VERSION = "1.0.0"
 CONSOLE_EXTENSION_NAME = "main_scaffolding"
 """ The console extension name """
 
+DEVELOPMENT_PATH = "development"
+""" The development path """
+
 class ConsoleMainScaffolding:
     """
     The console main scaffolding class.
@@ -91,20 +94,26 @@ class ConsoleMainScaffolding:
         @param console_context: The console context for the processing.
         """
 
-        # retrieves the main scaffolding plugin
-        main_scaffolding_plugin = self.main_scaffolding_plugin
-
         # retrieves the mandatory arguments
         scaffolder_type = arguments_map["scaffolder_type"]
         plugin_id = arguments_map["plugin_id"]
 
+        # retrieves the scaffold path for the plugin id
+        scaffold_path = self._get_scaffold_path(plugin_id)
+
         # retrieves the optional arguments
         plugin_version = arguments_map.get("plugin_version", DEFAULT_VERSION)
-        scaffold_path = arguments_map.get("scaffold_path", None)
+        scaffold_path = arguments_map.get("scaffold_path", scaffold_path)
         specification_file_path = arguments_map.get("specification_file_path", None)
+
+        # prints a message
+        output_method("started generating %s scaffold files..." % scaffolder_type)
 
         # generates the scaffold
         self.main_scaffolding_plugin.generate_scaffold(scaffolder_type, plugin_id, plugin_version, scaffold_path, specification_file_path)
+
+        # prints a message
+        output_method("finished generating scaffold files into: %s" % scaffold_path)
 
     def get_scaffolder_types(self, argument, console_context):
         # returns the plugin types
@@ -136,6 +145,25 @@ class ConsoleMainScaffolding:
 
         # returns the path names list
         return path_names
+
+    def _get_scaffold_path(self, plugin_id):
+        # retrieves the plugin manager
+        plugin_manager = self.main_scaffolding_plugin.manager
+
+        # retrieves the main scaffolding plugin
+        main_scaffolding_plugin = self.main_scaffolding_plugin
+
+        # retrieves the variable path
+        variable_path = plugin_manager.get_variable_path()
+
+        # creates the development path from the variable path
+        development_path = os.path.join(variable_path, DEVELOPMENT_PATH)
+
+        # creates the scaffold path by joining the plugin id to it
+        scaffold_path = os.path.join(development_path, plugin_id)
+
+        # returns the scaffold path (for the plugin id)
+        return scaffold_path
 
     def __generate_commands_map(self):
         # creates the commands map

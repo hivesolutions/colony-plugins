@@ -144,9 +144,6 @@ UNIX_DIRECTORY_SEPARATOR = "/"
 TEMPLATES_PATH = "main_scaffolding/scaffolding/resources/templates"
 """ The templates path """
 
-DEVELOPMENT_PATH = "development"
-""" The development path """
-
 class MainScaffolding:
     """
     The main scaffolding.
@@ -209,21 +206,12 @@ class MainScaffolding:
             # raises an invalid plugin identifier exception
             raise main_scaffolding_exceptions.InvalidPluginIdentifier("the plugin id must have '.plugins.' in its namespace")
 
-        # retrieves the variable path
-        variable_path = plugin_manager.get_variable_path()
-
-        # creates the development path from the variable path
-        development_path = os.path.join(variable_path, DEVELOPMENT_PATH)
-
-        # retrieves the scaffold path or the development path as default
-        scaffold_path = scaffold_path or development_path
-
-        # creates the scaffold path by joining the plugin id to it
-        scaffold_path = os.path.join(scaffold_path, plugin_id)
+        # checks id the scaffold path exists
+        scaffold_path_exists = os.path.exists(scaffold_path)
 
         # makes the directories for the scaffold path
         # (in case it's necessary)
-        os.makedirs(scaffold_path)
+        not scaffold_path_exists and os.makedirs(scaffold_path)
 
         # initializes the scaffold attributes map
         scaffold_attributes_map = {
