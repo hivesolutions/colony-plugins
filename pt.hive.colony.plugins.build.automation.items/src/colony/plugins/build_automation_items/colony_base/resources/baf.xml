@@ -156,7 +156,6 @@
                             <owner>0</owner>
                             <group>0</group>
                             <mode>755</mode>
-                            <recursive>false</recursive>
                             <parameters>
                                 <deb>
                                     <target>usr/lib/colony/config</target>
