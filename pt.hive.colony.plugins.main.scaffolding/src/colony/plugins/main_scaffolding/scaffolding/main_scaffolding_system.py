@@ -19,7 +19,7 @@
 # You should have received a copy of the GNU General Public License
 # along with Hive Colony Framework. If not, see <http://www.gnu.org/licenses/>.
 
-__author__ = "Tiago Silva <tsilva@hive.pt>"
+__author__ = "Tiago Silva <tsilva@hive.pt> & João Magalhães <joamag@hive.pt>"
 """ The author(s) of the module """
 
 __version__ = "1.0.0"
@@ -196,18 +196,6 @@ class MainScaffolding:
         # retrieves the plugin manager
         plugin_manager = self.main_scaffolding_plugin.manager
 
-        # retrieves the variable path
-        variable_path = plugin_manager.get_variable_path()
-
-        # creates the development path from the variable path
-        development_path = os.path.join(variable_path, plugin_manager.get_variable_path())
-
-        # retrieves the scaffold path or the development path as default
-        scaffold_path = scaffold_path or development_path
-
-        # creates the scaffold path by joining the plugin id to it
-        scaffold_path = os.path.join(scaffold_path, plugin_id)
-
         # retrieves the scaffolder for the specified type
         scaffolder_plugin = self.scaffolder_plugins_map[scaffolder_type]
 
@@ -220,6 +208,22 @@ class MainScaffolding:
         if not PLUGIN_ID_NAMESPACE_PLUGINS_CHUNK in plugin_id:
             # raises an invalid plugin identifier exception
             raise main_scaffolding_exceptions.InvalidPluginIdentifier("the plugin id must have '.plugins.' in its namespace")
+
+        # retrieves the variable path
+        variable_path = plugin_manager.get_variable_path()
+
+        # creates the development path from the variable path
+        development_path = os.path.join(variable_path, DEVELOPMENT_PATH)
+
+        # retrieves the scaffold path or the development path as default
+        scaffold_path = scaffold_path or development_path
+
+        # creates the scaffold path by joining the plugin id to it
+        scaffold_path = os.path.join(scaffold_path, plugin_id)
+
+        # makes the directories for the scaffold path
+        # (in case it's necessary)
+        os.makedirs(scaffold_path)
 
         # initializes the scaffold attributes map
         scaffold_attributes_map = {
@@ -274,6 +278,9 @@ class MainScaffolding:
 
         # generates the scaffolder's part of the scaffold
         scaffolder_plugin.generate_scaffold(scaffold_path, scaffold_attributes_map)
+
+        # adds the scaffold path to the plugin paths (and persists it)
+        plugin_manager.add_plugin_path(scaffold_path, True)
 
     def process_scaffold_attributes(self, scaffold_attributes_map):
         # retrieves the mandatory scaffold attributes
