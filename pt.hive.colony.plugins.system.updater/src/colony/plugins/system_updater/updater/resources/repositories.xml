@@ -38,7 +38,7 @@
         <layout>simple</layout>
         <addresses>
             <address name="Local Address">
-                http://admin:admin@repo.hive:8080/integration/LATEST_SUCCESS/repository/colony
+                http://hivesolutions.dyndns.org/integration_public/LATEST_SUCCESS/repository/colony/
             </address>
         </addresses>
     </repository>
