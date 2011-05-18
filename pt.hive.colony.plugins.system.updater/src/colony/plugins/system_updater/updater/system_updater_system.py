@@ -747,7 +747,7 @@ class SystemUpdater:
                 self.install_bundle(bundle_dependency.id, bundle_dependency.version, transaction_properties)
             except Exception, exception:
                 # raises the dependency installation exception
-                raise system_updater_exceptions.DependencyInstallationException("problem installing bundle depdency %s v%s: %s" % (bundle_dependency.id, bundle_dependency.version, unicode(exception)))
+                raise system_updater_exceptions.DependencyInstallationException("problem installing bundle dependency %s v%s: %s" % (bundle_dependency.id, bundle_dependency.version, unicode(exception)))
 
     def _install_plugin_dependencies(self, plugin_descriptor, transaction_properties):
         """
