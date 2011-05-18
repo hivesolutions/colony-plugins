@@ -42,9 +42,6 @@ import os
 WEB_MVC_MANAGER_PAGE_ITEM_REPOSITORY_RESOURCES_PATH = "web_mvc_manager_page_item/repository/resources"
 """ The web mvc manager page item repository resources path """
 
-EXTRAS_PATH = WEB_MVC_MANAGER_PAGE_ITEM_REPOSITORY_RESOURCES_PATH + "/extras"
-""" The extras path """
-
 class WebMvcManagerPageItemRepository:
     """
     The web mvc manager page item repository class.
@@ -103,15 +100,7 @@ class WebMvcManagerPageItemRepository:
         to the web mvc service.
         """
 
-        # retrieves the plugin manager
-        plugin_manager = self.web_mvc_manager_page_item_repository_plugin.manager
-
-        # retrieves the web mvc manager page item repository plugin path
-        web_mvc_manager_page_item_repository_plugin_path = plugin_manager.get_plugin_path_by_id(self.web_mvc_manager_page_item_repository_plugin.id)
-
-        return (
-            (r"^web_mvc_manager/resources_page_item_repository/.+$", (web_mvc_manager_page_item_repository_plugin_path + "/" + EXTRAS_PATH, "web_mvc_manager/resources_page_item_repository")),
-        )
+        return ()
 
     def get_page_item_bundle(self, parameters):
         """

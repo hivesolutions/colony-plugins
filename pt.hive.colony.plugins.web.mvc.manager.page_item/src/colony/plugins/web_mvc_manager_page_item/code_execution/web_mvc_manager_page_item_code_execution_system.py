@@ -42,9 +42,6 @@ import os
 WEB_MVC_MANAGER_PAGE_ITEM_CODE_EXECUTION_RESOURCES_PATH = "web_mvc_manager_page_item/code_execution/resources"
 """ The web mvc manager page item code_execution resources path """
 
-EXTRAS_PATH = WEB_MVC_MANAGER_PAGE_ITEM_CODE_EXECUTION_RESOURCES_PATH + "/extras"
-""" The extras path """
-
 class WebMvcManagerPageItemCodeExecution:
     """
     The web mvc manager page item code execution class.
@@ -103,15 +100,7 @@ class WebMvcManagerPageItemCodeExecution:
         to the web mvc service.
         """
 
-        # retrieves the plugin manager
-        plugin_manager = self.web_mvc_manager_page_item_code_execution_plugin.manager
-
-        # retrieves the web mvc manager page item code_execution plugin path
-        web_mvc_manager_page_item_code_execution_plugin_path = plugin_manager.get_plugin_path_by_id(self.web_mvc_manager_page_item_code_execution_plugin.id)
-
-        return (
-            (r"^web_mvc_manager/resources_page_item_code_execution/.+$", (web_mvc_manager_page_item_code_execution_plugin_path + "/" + EXTRAS_PATH, "web_mvc_manager/resources_page_item_code_execution")),
-        )
+        return ()
 
     def get_page_item_bundle(self, parameters):
         """
