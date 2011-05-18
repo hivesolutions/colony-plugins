@@ -53,9 +53,6 @@ class Autoloader:
     autoloader_plugin = None
     """ The autoloader plugin """
 
-    manager = None
-    """ The plugin manager """
-
     continue_flag = True
     """ The continue flag that controls the autoloading system """
 
@@ -74,9 +71,9 @@ class Autoloader:
         """
 
         self.autoloader_plugin = autoloader_plugin
-        self.manager = autoloader_plugin.manager
 
         self.search_directories = []
+        self.search_directories_information_map = {}
 
     def load_autoloader(self):
         """
@@ -84,146 +81,170 @@ class Autoloader:
         and setting the update time.
         """
 
-        # iterates over all the plugin manager paths
-        for plugin_path in self.manager.plugin_paths:
-            # adds the search path
-            self.add_search_directory(plugin_path)
+        # retrieves the plugin manager
+        plugin_manager = self.autoloader_plugin.manager
+
+        # retrieves the plugin paths
+        plugin_paths = plugin_manager.get_plugin_paths()
+
+        # adds the plugin paths to the search directories
+        self.add_search_directories(plugin_paths)
 
         # notifies the ready semaphore
         self.autoloader_plugin.release_ready_semaphore()
 
         # while the flag is active
         while self.continue_flag:
-            # iterates over all the search directories
-            for search_directory in self.search_directories:
-                # in case the search directory does not exists
-                if not os.path.exists(search_directory):
-                    # prints a debug message
-                    self.autoloader_plugin.debug("Search directory '%s' does not exist in the current filesystem" % (search_directory))
-
-                    # passes iteration
-                    continue
-
-                # iterates over all the search directories in the search directories information map
-                if search_directory in self.search_directories_information_map:
-                    for file_name in self.search_directories_information_map[search_directory]:
-                        self.search_directories_information_map[search_directory][file_name].exists = False
-
-                    # unsets the new flag
-                    new_flag = False
-                # otherwise
-                else:
-                    self.search_directories_information_map[search_directory] = {}
-
-                    # sets the new flag
-                    new_flag = True
-
-                # retrieves the directories list
-                dir_list = os.listdir(search_directory)
-
-                # for all the files in the directory
-                for file_name in dir_list:
-                    # constructs the full path from the seach directory and the file name
-                    full_path = search_directory + "/" + file_name
-
-                    # in case the search directory does not exists
-                    if not os.path.exists(full_path):
-                        # prints a debug message
-                        self.autoloader_plugin.debug("Path '%s' does not exist in the current filesystem" % (search_directory))
-
-                        # passes iteration
-                        continue
-
-                    # retrieves the file stat
-                    file_stat = os.stat(full_path)
-
-                    # retrieves the modified date
-                    modified_date = time.localtime(file_stat[stat.ST_MTIME])
-
-                    # retrieves the mode
-                    mode = file_stat[stat.ST_MODE]
-
-                    # splits the file name
-                    split = os.path.splitext(file_name)
-
-                    # retrieves the module name
-                    module_name = "".join(split[:-1])
-
-                    # retrieves the extension name
-                    extension_name = split[-1]
-
-                    # in case it's not a directory and the extension of the file is .py (python file)
-                    if not stat.S_ISDIR(mode) and extension_name == ".py":
-                        # in case the file name exists in the search directories information map
-                        # for the current search directory
-                        if file_name in self.search_directories_information_map[search_directory]:
-                            # retrieves the file information for the given file name
-                            file_information = self.search_directories_information_map[search_directory][file_name]
-
-                            # retrieves the file properties from the file information
-                            file_properties = file_information.file_properties
-
-                            # in case the modified data is differente from
-                            # the modified date in the file properties (file changed)
-                            if not modified_date == file_properties.modified_date:
-                                # tries to retrieve the plugin from the plugin manager using the module name
-                                plugin = self.manager.get_plugin_by_module_name(module_name)
-
-                                # in case the plugin is already loaded in the plugin manager
-                                if plugin:
-                                    # reloads the module
-                                    self.reload_module(plugin, module_name)
-                                else:
-                                    # loads the module
-                                    self.load_module(search_directory, module_name)
-
-                                # sets the new modified date
-                                file_properties.modified_date = modified_date
-
-                            # sets the file information exists flag as true
-                            file_information.exists = True
-                        # otherwise the file must be new and a new
-                        # file information structure should be created
-                        else:
-                            # creates a file properties instance for the given
-                            # modified date
-                            file_properties = FileProperties(modified_date)
-
-                            # creates a new file information
-                            file_information = FileInformation(file_name, file_properties, True)
-
-                            # sets the file information in the search directories information map
-                            # for the current file name and search directory
-                            self.search_directories_information_map[search_directory][file_name] = file_information
-
-                            # in case the new flag is not set loads the module
-                            not new_flag and self.load_module(search_directory, module_name)
-
-                # the list of file names to be removed
-                remove_list = []
-
-                for file_name in self.search_directories_information_map[search_directory]:
-                    file_information = self.search_directories_information_map[search_directory][file_name]
-                    if not file_information.exists:
-                        remove_list.append(file_name)
-
-                # removes all the modules in the remove list
-                for remove_item in remove_list:
-                    # splits the path of the remove item
-                    split = os.path.splitext(remove_item)
-
-                    # retrieves the module name
-                    module_name = "".join(split[:-1])
-
-                    # unloads the module for the given
-                    # module name
-                    self.unload_module(module_name)
-
-                    # deletes the search directories information map reference
-                    del self.search_directories_information_map[search_directory][remove_item]
+            # iterates over all the search directories (lists)
+            for search_directory_list in self.search_directories:
+                # iterates over all the search directories
+                for search_directory in search_directory_list:
+                    # analyzes the given search directory
+                    self.analyze_search_directory(search_directory)
 
             # sleeps for the given sleep time
             time.sleep(SLEEP_TIME_VALUE)
+
+    def analyze_search_directory(self, search_directory):
+        """
+        Analyzes the given search directory: loading, unloading or
+        reloading the appropriate plugins.
+
+        @type search_directory: String
+        @param search_directory: The search directory to be analyzed.
+        """
+
+        # retrieves the plugin manager
+        plugin_manager = self.autoloader_plugin.manager
+
+        # in case the search directory does not exists
+        if not os.path.exists(search_directory):
+            # prints a debug message
+            self.autoloader_plugin.debug("Search directory '%s' does not exist in the current filesystem" % (search_directory))
+
+            # returns immediately
+            return
+
+        # iterates over all the search directories in the search directories information map
+        if search_directory in self.search_directories_information_map:
+            for file_name in self.search_directories_information_map[search_directory]:
+                self.search_directories_information_map[search_directory][file_name].exists = False
+
+            # unsets the new flag
+            new_flag = False
+        # otherwise
+        else:
+            # initializes the search directories information map for the
+            # search directory information
+            self.search_directories_information_map[search_directory] = {}
+
+            # sets the new flag
+            new_flag = True
+
+        # retrieves the directories list
+        dir_list = os.listdir(search_directory)
+
+        # for all the files in the directory
+        for file_name in dir_list:
+            # constructs the full path from the seach directory and the file name
+            full_path = search_directory + "/" + file_name
+
+            # in case the search directory does not exists
+            if not os.path.exists(full_path):
+                # prints a debug message
+                self.autoloader_plugin.debug("Path '%s' does not exist in the current filesystem" % (search_directory))
+
+                # returns immediately
+                return
+
+            # retrieves the file stat
+            file_stat = os.stat(full_path)
+
+            # retrieves the modified date
+            modified_date = time.localtime(file_stat[stat.ST_MTIME])
+
+            # retrieves the mode
+            mode = file_stat[stat.ST_MODE]
+
+            # splits the file name
+            split = os.path.splitext(file_name)
+
+            # retrieves the module name
+            module_name = "".join(split[:-1])
+
+            # retrieves the extension name
+            extension_name = split[-1]
+
+            # in case it's not a directory and the extension of the file is .py (python file)
+            if not stat.S_ISDIR(mode) and extension_name == ".py":
+                # in case the file name exists in the search directories information map
+                # for the current search directory
+                if file_name in self.search_directories_information_map[search_directory]:
+                    # retrieves the file information for the given file name
+                    file_information = self.search_directories_information_map[search_directory][file_name]
+
+                    # retrieves the file properties from the file information
+                    file_properties = file_information.file_properties
+
+                    # in case the modified data is differente from
+                    # the modified date in the file properties (file changed)
+                    if not modified_date == file_properties.modified_date:
+                        # tries to retrieve the plugin from the plugin manager using the module name
+                        plugin = plugin_manager.get_plugin_by_module_name(module_name)
+
+                        # in case the plugin is already loaded in the plugin manager
+                        if plugin:
+                            # reloads the module
+                            self.reload_module(plugin, module_name)
+                        else:
+                            # loads the module
+                            self.load_module(search_directory, module_name)
+
+                        # sets the new modified date
+                        file_properties.modified_date = modified_date
+
+                    # sets the file information exists flag as true
+                    file_information.exists = True
+                # otherwise the file must be new and a new
+                # file information structure should be created
+                else:
+                    # creates a file properties instance for the given
+                    # modified date
+                    file_properties = FileProperties(modified_date)
+
+                    # creates a new file information
+                    file_information = FileInformation(file_name, file_properties, True)
+
+                    # sets the file information in the search directories information map
+                    # for the current file name and search directory
+                    self.search_directories_information_map[search_directory][file_name] = file_information
+
+                    # in case the new plugin manager loading is complete or
+                    # the new flag is not set loads the module
+                    (plugin_manager.init_complete or not new_flag) and self.load_module(search_directory, module_name)
+
+        # the list of file names to be removed
+        remove_list = []
+
+        for file_name in self.search_directories_information_map[search_directory]:
+            file_information = self.search_directories_information_map[search_directory][file_name]
+            if not file_information.exists:
+                remove_list.append(file_name)
+
+        # removes all the modules in the remove list
+        for remove_item in remove_list:
+            # splits the path of the remove item
+            split = os.path.splitext(remove_item)
+
+            # retrieves the module name
+            module_name = "".join(split[:-1])
+
+            # unloads the module for the given
+            # module name
+            self.unload_module(module_name)
+
+            # deletes the search directories information map reference
+            del self.search_directories_information_map[search_directory][remove_item]
 
     def load_module(self, search_directory, module_name):
         """
@@ -240,22 +261,25 @@ class Autoloader:
             # prints an info message
             self.autoloader_plugin.info("Loading module " + module_name)
 
+            # retrieves the plugin manager
+            plugin_manager = self.autoloader_plugin.manager
+
             # in case the search directory is not is the system (python) path
             if not search_directory in sys.path:
                 # inserts the search directory in the system (python) path
                 sys.path.insert(0, search_directory)
 
             # loads the plugin for the module name
-            self.manager.load_plugins([module_name])
+            plugin_manager.load_plugins([module_name])
 
             # starts the plugins
-            self.manager.start_plugins()
+            plugin_manager.start_plugins()
 
             # retrieves the plugin for the module name
-            plugin = self.manager.get_plugin_by_module_name(module_name)
+            plugin = plugin_manager.get_plugin_by_module_name(module_name)
 
             # loads the plugin
-            self.manager.load_plugin(plugin.id)
+            plugin_manager.load_plugin(plugin.id)
         except Exception, exception:
             # prints an error message
             self.autoloader_plugin.error("There was a problem loading module %s: %s" % (module_name, unicode(exception)))
@@ -272,8 +296,11 @@ class Autoloader:
             # prints an info message
             self.autoloader_plugin.info("Unloading module " + module_name)
 
+            # retrieves the plugin manager
+            plugin_manager = self.autoloader_plugin.manager
+
             # stops the module
-            self.manager.stop_module(module_name)
+            plugin_manager.stop_module(module_name)
         except Exception, exception:
             # prints an error message
             self.autoloader_plugin.error("There was a problem unloading module %s: %s" % (module_name, unicode(exception)))
@@ -293,11 +320,14 @@ class Autoloader:
             # prints an info message
             self.autoloader_plugin.info("Reloading module " + module_name)
 
+            # retrieves the plugin manager
+            plugin_manager = self.autoloader_plugin.manager
+
             # retrieves the plugin id
             plugin_id = plugin.id
 
             # retrieves the loaded plugins
-            loaded_plugins = self.manager.get_all_loaded_plugins()
+            loaded_plugins = plugin_manager.get_all_loaded_plugins()
 
             # creates a new list for the loaded plugins ids
             loaded_plugins_ids = []
@@ -307,16 +337,16 @@ class Autoloader:
                 loaded_plugins_ids.append(loaded_plugin.id)
 
             # stops the module
-            self.manager.stop_module(module_name)
+            plugin_manager.stop_module(module_name)
 
             # loads the plugins for the module name
-            self.manager.load_plugins([module_name])
+            plugin_manager.load_plugins([module_name])
 
             # starts all the plugins in the plugin manager
-            self.manager.start_plugins()
+            plugin_manager.start_plugins()
 
             # retrieves the plugin using the plugin id
-            plugin = self.manager._get_plugin_by_id(plugin_id)
+            plugin = plugin_manager._get_plugin_by_id(plugin_id)
 
             # reloads the main modules
             plugin.reload_main_modules()
@@ -324,7 +354,7 @@ class Autoloader:
             # iterates over all the loaded plugins ids
             for loaded_plugin_id in loaded_plugins_ids:
                 # tries to load the plugin with the given id
-                self.manager.load_plugin(loaded_plugin_id)
+                plugin_manager.load_plugin(loaded_plugin_id)
         except Exception, exception:
             # prints an error message
             self.autoloader_plugin.error("There was a problem reloading module %s: %s" % (module_name, unicode(exception)))
@@ -343,21 +373,21 @@ class Autoloader:
         to the autoloader search path.
         """
 
-        # extends the search directories with the system
-        # path
-        self.search_directories.extend(sys.path)
+        # adds the search directories with the system
+        # path (list)
+        self.search_directories.append(sys.path)
 
-    def add_search_directory(self, path):
+    def add_search_directories(self, paths_list):
         """
-        Adds the given path to the autoloader search path.
+        Adds the given paths list to the autoloader search path.
 
         @type path: String
-        @param path: The path to be added to the autoloader
+        @param path: The paths list to be added to the autoloader
         search path.
         """
 
-        # adds the path to the search directories
-        self.search_directories.append(path)
+        # adds the paths list to the search directories
+        self.search_directories.append(paths_list)
 
 class FileInformation:
     """
