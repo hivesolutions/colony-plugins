@@ -83,7 +83,7 @@ def t_COMMENT(t):
     return t
 
 def t_NAME(t):
-    r"[\w\$\.,:/#+\-]+"
+    r"[\w\$\.,:/#+\-\{\}]+"
     t.type = reserved.get(t.value, "NAME")
     t.value = reserved_values.get(t.value, t.value)
     return t
