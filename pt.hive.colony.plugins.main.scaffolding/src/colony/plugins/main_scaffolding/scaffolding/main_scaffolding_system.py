@@ -166,7 +166,7 @@ class MainScaffolding:
         self.main_scaffolding_plugin = main_scaffolding_plugin
 
         # initializes the structures
-        self.scaffolder_plugins_map = MultipleValueDictionary()
+        self.scaffolder_plugins_map = MultipleValueMap()
 
     def load_scaffolder_plugin(self, scaffolder_plugin):
         # retrieves the scaffolder type
@@ -453,10 +453,10 @@ class MainScaffolding:
         # returns the data
         return data
 
-class MultipleValueDictionary:
+class MultipleValueMap:
     """
-    Dictionary that holds multiple
-    values for each key, and considers
+    Map that holds multiple values for
+    each key, and considers
     the first value to the key's value.
     """
 
