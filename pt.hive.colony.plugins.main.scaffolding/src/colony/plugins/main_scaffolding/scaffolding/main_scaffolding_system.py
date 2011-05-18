@@ -144,6 +144,9 @@ UNIX_DIRECTORY_SEPARATOR = "/"
 TEMPLATES_PATH = "main_scaffolding/scaffolding/resources/templates"
 """ The templates path """
 
+DEVELOPMENT_PATH = "development"
+""" The development path """
+
 class MainScaffolding:
     """
     The main scaffolding.
@@ -462,6 +465,22 @@ class MainScaffolding:
 
         # returns the data
         return data
+
+    def _get_scaffold_path(self, plugin_id):
+        # retrieves the plugin manager
+        plugin_manager = self.main_scaffolding_plugin.manager
+
+        # retrieves the variable path
+        variable_path = plugin_manager.get_variable_path()
+
+        # creates the development path from the variable path
+        development_path = os.path.join(variable_path, DEVELOPMENT_PATH)
+
+        # creates the scaffold path by joining the plugin id to it
+        scaffold_path = os.path.join(development_path, plugin_id)
+
+        # returns the scaffold path (for the plugin id)
+        return scaffold_path
 
 class MultipleValueMap:
     """
