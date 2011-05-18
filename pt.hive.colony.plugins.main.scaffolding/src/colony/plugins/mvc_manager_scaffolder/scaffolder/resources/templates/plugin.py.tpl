@@ -44,8 +44,6 @@ class ${out value=scaffold_attributes.class_name /}Plugin(colony.base.plugin_sys
     ]
     dependencies = [
         colony.base.plugin_system.PluginDependency("pt.hive.colony.plugins.web.mvc.utils", "${out value=scaffold_attributes.plugin_version /}"),
-        colony.base.plugin_system.PluginDependency("pt.hive.colony.plugins.web.mvc.resources.base", "${out value=scaffold_attributes.plugin_version /}"),
-        colony.base.plugin_system.PluginDependency("pt.hive.colony.plugins.web.mvc.resources.ui", "${out value=scaffold_attributes.plugin_version /}"),
         colony.base.plugin_system.PluginDependency("pt.hive.colony.plugins.resources.resource_manager", "${out value=scaffold_attributes.plugin_version /}")
     ]
     main_modules = [
@@ -67,12 +65,6 @@ class ${out value=scaffold_attributes.class_name /}Plugin(colony.base.plugin_sys
 
     resource_manager_plugin = None
     """ The resource manager plugin """
-
-    web_mvc_resources_base_plugin = None
-    """ The web mvc resources base plugin """
-
-    web_mvc_resources_ui_plugin = None
-    """ The web mvc resources ui plugin """
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
@@ -125,20 +117,6 @@ class ${out value=scaffold_attributes.class_name /}Plugin(colony.base.plugin_sys
     @colony.base.decorators.plugin_inject("pt.hive.colony.plugins.web.mvc.utils")
     def set_web_mvc_utils_plugin(self, web_mvc_utils_plugin):
         self.web_mvc_utils_plugin = web_mvc_utils_plugin
-
-    def get_web_mvc_resources_base_plugin(self):
-        return self.web_mvc_resources_base_plugin
-
-    @colony.base.decorators.plugin_inject("pt.hive.colony.plugins.web.mvc.resources.base")
-    def set_web_mvc_resources_base_plugin(self, web_mvc_resources_base_plugin):
-        self.web_mvc_resources_base_plugin = web_mvc_resources_base_plugin
-
-    def get_web_mvc_resources_ui_plugin(self):
-        return self.web_mvc_resources_ui_plugin
-
-    @colony.base.decorators.plugin_inject("pt.hive.colony.plugins.web.mvc.resources.ui")
-    def set_web_mvc_resources_ui_plugin(self, web_mvc_resources_ui_plugin):
-        self.web_mvc_resources_ui_plugin = web_mvc_resources_ui_plugin
 
     def get_resource_manager_plugin(self):
         return self.resource_manager_plugin
