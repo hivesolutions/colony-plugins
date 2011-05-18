@@ -835,8 +835,11 @@ class ColonyPackingInstaller:
             # creates the bundle file path from the
             bundle_path = os.path.join(registry_path, RELATIVE_BUNDLES_PATH + "/" + bundle_file_name)
 
+            # resolves the bundle path
+            real_bundle_path = file_context.resolve_file_path(bundle_path)
+
             # retrieves the packing information
-            packing_information = packing_manager_plugin.get_packing_information(bundle_path, {}, COLONY_VALUE)
+            packing_information = packing_manager_plugin.get_packing_information(real_bundle_path, {}, COLONY_VALUE)
 
             # retrieves the bundle plugins
             bundle_plugins = packing_information.get_property(PLUGINS_VALUE)
@@ -856,7 +859,7 @@ class ColonyPackingInstaller:
                 self._remove_package_item(plugin_id, file_context)
 
             # removes the bundle file
-            file_context.remove_file(bundle_path)
+            file_context.remove_file(real_bundle_path)
 
             # removes the bundle item
             self._remove_bundle_item(bundle_id, file_context)
@@ -936,8 +939,11 @@ class ColonyPackingInstaller:
             # creates the plugin file path from the
             plugin_path = os.path.join(registry_path, RELATIVE_PLUGINS_PATH + "/" + plugin_file_name)
 
+            # resolves the plugin path
+            real_plugin_path = file_context.resolve_file_path(plugin_path)
+
             # retrieves the packing information
-            packing_information = packing_manager_plugin.get_packing_information(plugin_path, {}, COLONY_VALUE)
+            packing_information = packing_manager_plugin.get_packing_information(real_plugin_path, {}, COLONY_VALUE)
 
             # retrieves the plugin resources
             plugin_resources = packing_information.get_property(RESOURCES_VALUE)
@@ -952,7 +958,7 @@ class ColonyPackingInstaller:
                 resource_file_path = os.path.join(plugins_path, plugin_resource)
 
                 # in case the resource file path exists
-                if not os.path.exists(resource_file_path):
+                if not file_context.exists_file_path(resource_file_path):
                     # continues the loop
                     continue
 
@@ -973,7 +979,7 @@ class ColonyPackingInstaller:
             for directory_path in directory_path_list:
                 # in case the directory path does not refers
                 # a directory
-                if not os.path.isdir(directory_path):
+                if not file_context.is_directory_path(directory_path):
                     # continues the loop
                     continue
 
@@ -981,7 +987,7 @@ class ColonyPackingInstaller:
                 file_context.remove_directory(directory_path)
 
             # removes the plugin file
-            file_context.remove_file(plugin_path)
+            file_context.remove_file(real_plugin_path)
 
             # removes the plugin item
             self._remove_plugin_item(plugin_id, file_context)
