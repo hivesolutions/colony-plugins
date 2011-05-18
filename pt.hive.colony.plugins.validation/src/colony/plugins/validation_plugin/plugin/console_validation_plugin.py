@@ -100,12 +100,9 @@ class ConsoleValidationPlugin:
         # retrieves the plugin id from the arguments
         plugin_id = arguments_map.get("plugin_id", None)
 
-        # validates the specified plugin in case it was provided
-        if plugin_id:
-            validation_errors = validation_plugin.validate_plugin(plugin_id)
-        else:
-            # otherwise validates all plugins
-            validation_errors = validation_plugin.validate_plugins()
+        # validates the specified plugin in case one was
+        # specified, otherwise validates all plugins
+        validation_errors = plugin_id and validation_plugin.validate_plugin(plugin_id) or validation_plugin.validate_plugins()
 
         # outputs the validation errors
         for validation_error in validation_errors:
