@@ -94,16 +94,13 @@ class ConsoleMainScaffolding:
         # retrieves the main scaffolding plugin
         main_scaffolding_plugin = self.main_scaffolding_plugin
 
-        # retrieves the console context path
-        console_context_path = console_context.get_path()
-
         # retrieves the mandatory arguments
         scaffolder_type = arguments_map["scaffolder_type"]
         plugin_id = arguments_map["plugin_id"]
 
         # retrieves the optional arguments
         plugin_version = arguments_map.get("plugin_version", DEFAULT_VERSION)
-        scaffold_path = arguments_map.get("scaffold_path", console_context_path)
+        scaffold_path = arguments_map.get("scaffold_path", None)
         specification_file_path = arguments_map.get("specification_file_path", None)
 
         # generates the scaffold
