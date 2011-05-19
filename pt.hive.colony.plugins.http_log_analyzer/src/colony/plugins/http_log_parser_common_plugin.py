@@ -72,7 +72,6 @@ class HttpLogParserCommonPlugin(colony.base.plugin_system.Plugin):
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
-        global http_log_parser_common
         import http_log_parser_common.log_parser_common.http_log_parser_common_system
         self.http_log_parser_common = http_log_parser_common.log_parser_common.http_log_parser_common_system.HttpLogParserCommon(self)
 

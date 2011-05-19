@@ -79,7 +79,6 @@ class HttpLogAnalyzerPlugin(colony.base.plugin_system.Plugin):
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
-        global http_log_analyzer
         import http_log_analyzer.log_analyzer.http_log_analyzer_system
         import http_log_analyzer.log_analyzer.console_http_log_analyzer
         self.http_log_analyzer = http_log_analyzer.log_analyzer.http_log_analyzer_system.HttpLogAnalyzer(self)
