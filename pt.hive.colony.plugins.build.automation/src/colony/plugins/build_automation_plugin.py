@@ -95,7 +95,6 @@ class BuildAutomationPlugin(colony.base.plugin_system.Plugin):
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
-        global build_automation
         import build_automation.automation.build_automation_system
         import build_automation.automation.console_build_automation
         self.build_automation = build_automation.automation.build_automation_system.BuildAutomation(self)

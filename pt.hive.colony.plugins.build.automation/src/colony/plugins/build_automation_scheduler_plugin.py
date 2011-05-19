@@ -94,7 +94,6 @@ class BuildAutomationSchedulerPlugin(colony.base.plugin_system.Plugin):
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
-        global build_automation
         import build_automation.scheduler.build_automation_scheduler_system
         import build_automation.scheduler.console_build_automation_scheduler
         self.build_automation_scheduler = build_automation.scheduler.build_automation_scheduler_system.BuildAutomationScheduler(self)
