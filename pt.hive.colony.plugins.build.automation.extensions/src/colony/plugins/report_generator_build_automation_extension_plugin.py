@@ -70,7 +70,6 @@ class ReportGeneratorBuildAutomationExtensionPlugin(colony.base.plugin_system.Pl
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
-        global build_automation_extensions
         import build_automation_extensions.report_generator.report_generator_build_automation_extension_system
         self.report_generator_build_automation_extension = build_automation_extensions.report_generator.report_generator_build_automation_extension_system.ReportGeneratorBuildAutomationExtension(self)
 

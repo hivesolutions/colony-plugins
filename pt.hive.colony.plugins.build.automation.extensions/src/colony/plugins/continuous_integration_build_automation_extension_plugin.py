@@ -77,7 +77,6 @@ class ContinuousIntegrationBuildAutomationExtensionPlugin(colony.base.plugin_sys
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
-        global build_automation_extensions
         import build_automation_extensions.continuous_integration.continuous_integration_build_automation_extension_system
         self.continuous_integration_build_automation_extension = build_automation_extensions.continuous_integration.continuous_integration_build_automation_extension_system.ContinuousIntegrationBuildAutomationExtension(self)
 

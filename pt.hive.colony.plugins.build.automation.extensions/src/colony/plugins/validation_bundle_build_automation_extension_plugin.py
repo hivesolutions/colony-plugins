@@ -77,7 +77,6 @@ class ValidationBundleBuildAutomationExtensionPlugin(colony.base.plugin_system.P
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
-        global build_automation_extensions
         import build_automation_extensions.validation_bundle.validation_bundle_build_automation_extension_system
         self.validation_bundle_build_automation_extension = build_automation_extensions.validation_bundle.validation_bundle_build_automation_extension_system.ValidationBundleBuildAutomationExtension(self)
 

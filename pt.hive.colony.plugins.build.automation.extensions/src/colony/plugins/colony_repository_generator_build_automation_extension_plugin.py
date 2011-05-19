@@ -77,7 +77,6 @@ class ColonyRepositoryGeneratorBuildAutomationExtensionPlugin(colony.base.plugin
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
-        global build_automation_extensions
         import build_automation_extensions.colony_repository_generator.colony_repository_generator_build_automation_extension_system
         self.colony_repository_generator_build_automation_extension = build_automation_extensions.colony_repository_generator.colony_repository_generator_build_automation_extension_system.ColonyRepositoryGeneratorBuildAutomationExtension(self)
 

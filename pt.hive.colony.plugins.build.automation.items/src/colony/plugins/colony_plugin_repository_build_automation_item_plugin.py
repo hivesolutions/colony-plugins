@@ -71,7 +71,6 @@ class ColonyPluginRepositoryBuildAutomationItemPlugin(colony.base.plugin_system.
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
-        global build_automation_items
         import build_automation_items.colony_plugin_repository.colony_plugin_repository_build_automation_item_system
         self.colony_plugin_repository_build_automation_item = build_automation_items.colony_plugin_repository.colony_plugin_repository_build_automation_item_system.ColonyPluginRepositoryBuildAutomationItem(self)
 

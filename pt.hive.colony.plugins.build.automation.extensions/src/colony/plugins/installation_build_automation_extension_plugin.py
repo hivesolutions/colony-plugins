@@ -77,7 +77,6 @@ class InstallationBuildAutomationExtensionPlugin(colony.base.plugin_system.Plugi
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
-        global build_automation_extensions
         import build_automation_extensions.installation.installation_build_automation_extension_system
         self.installation_build_automation_extension = build_automation_extensions.installation.installation_build_automation_extension_system.InstallationBuildAutomationExtension(self)
 

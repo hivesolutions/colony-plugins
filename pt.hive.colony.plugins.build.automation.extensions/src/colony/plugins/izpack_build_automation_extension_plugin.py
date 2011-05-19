@@ -86,7 +86,6 @@ class IzpackBuildAutomationExtensionPlugin(colony.base.plugin_system.Plugin):
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
-        global build_automation_extensions
         import build_automation_extensions.izpack.izpack_build_automation_extension_system
         self.izpack_build_automation_extension = build_automation_extensions.izpack.izpack_build_automation_extension_system.IzpackBuildAutomationExtension(self)
 

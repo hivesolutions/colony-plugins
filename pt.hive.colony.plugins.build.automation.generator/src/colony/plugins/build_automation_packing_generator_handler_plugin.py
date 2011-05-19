@@ -77,7 +77,6 @@ class BuildAutomationPackingGeneratorHandlerPlugin(colony.base.plugin_system.Plu
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
-        global build_automation_generator
         import build_automation_generator.packing_generator_handler.build_automation_packing_generator_handler_system
         self.build_automation_packing_generator_handler = build_automation_generator.packing_generator_handler.build_automation_packing_generator_handler_system.BuildAutomationPackingGeneratorHandler(self)
 

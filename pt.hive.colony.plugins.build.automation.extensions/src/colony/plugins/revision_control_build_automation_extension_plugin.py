@@ -85,7 +85,6 @@ class RevisionControlBuildAutomationExtensionPlugin(colony.base.plugin_system.Pl
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
-        global build_automation_extensions
         import build_automation_extensions.revision_control.revision_control_build_automation_extension_system
         self.revision_control_build_automation_extension = build_automation_extensions.revision_control.revision_control_build_automation_extension_system.RevisionControlBuildAutomationExtension(self)
 

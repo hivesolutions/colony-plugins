@@ -78,7 +78,6 @@ class TemplateEngineBuildAutomationExtensionPlugin(colony.base.plugin_system.Plu
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
-        global build_automation_extensions
         import build_automation_extensions.template_engine.template_engine_build_automation_extension_system
         self.template_engine_build_automation_extension = build_automation_extensions.template_engine.template_engine_build_automation_extension_system.TemplateEngineBuildAutomationExtension(self)
 

@@ -78,7 +78,6 @@ class CommandExecutionBuildAutomationExtensionPlugin(colony.base.plugin_system.P
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
-        global build_automation_extensions
         import build_automation_extensions.command_execution.command_execution_build_automation_extension_system
         self.command_execution_build_automation_extension = build_automation_extensions.command_execution.command_execution_build_automation_extension_system.CommandExecutionBuildAutomationExtension(self)
 
