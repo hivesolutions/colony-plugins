@@ -77,7 +77,6 @@ class JsonSpecificationGeneratorHandlerPlugin(colony.base.plugin_system.Plugin):
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
-        global specifications
         import specifications.json_specification_generator_handler.json_specification_generator_handler_system
         self.json_specification_generator_handler = specifications.json_specification_generator_handler.json_specification_generator_handler_system.JsonSepecificationGeneratorHandler(self)
 

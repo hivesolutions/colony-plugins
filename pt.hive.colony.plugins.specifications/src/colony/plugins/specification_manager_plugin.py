@@ -78,7 +78,6 @@ class SpecificationManagerPlugin(colony.base.plugin_system.Plugin):
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
-        global specifications
         import specifications.specification_manager.specification_manager_system
         self.specification_manager = specifications.specification_manager.specification_manager_system.SepecificationManager(self)
 

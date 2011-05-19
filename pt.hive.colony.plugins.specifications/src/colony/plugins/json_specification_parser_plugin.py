@@ -78,7 +78,6 @@ class JsonSpecificationParserPlugin(colony.base.plugin_system.Plugin):
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
-        global specifications
         import specifications.json_specification_parser.json_specification_parser_system
         self.json_specification_parser = specifications.json_specification_parser.json_specification_parser_system.JsonSpecificationParser(self)
 

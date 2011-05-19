@@ -78,7 +78,6 @@ class SpecificationGeneratorPlugin(colony.base.plugin_system.Plugin):
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
-        global specifications
         import specifications.specification_generator.specification_generator_system
         self.specification_generator = specifications.specification_generator.specification_generator_system.SepecificationGenerator(self)
 
