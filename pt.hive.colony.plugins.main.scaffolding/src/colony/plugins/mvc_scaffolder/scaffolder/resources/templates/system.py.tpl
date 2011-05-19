@@ -54,6 +54,15 @@ class ${out value=scaffold_attributes.class_name /}:
     ${out value=scaffold_attributes.variable_name /}_plugin = None
     """ The ${out value=scaffold_attributes.short_name_lowercase /} plugin """
 
+    root_entity_controller = None
+    """ The root entity controller """
+
+    ${out value=scaffold_attributes.variable_name /}_entity_models = None
+    """ The ${out value=scaffold_attributes.short_name_lowercase /} entity models """
+
+    ${out value=scaffold_attributes.variable_name /}_controllers = {}
+    """ The ${out value=scaffold_attributes.short_name_lowercase /} controllers """
+
     def __init__(self, ${out value=scaffold_attributes.variable_name /}_plugin):
         """
         Constructor of the class.
