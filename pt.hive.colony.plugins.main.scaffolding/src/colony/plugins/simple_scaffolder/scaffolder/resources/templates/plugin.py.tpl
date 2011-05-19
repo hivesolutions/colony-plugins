@@ -20,7 +20,6 @@
 # along with Hive Colony Framework. If not, see <http://www.gnu.org/licenses/>.
 
 import colony.base.plugin_system
-import colony.base.decorators
 
 class ${out value=scaffold_attributes.class_name /}Plugin(colony.base.plugin_system.Plugin):
     """
@@ -76,15 +75,12 @@ class ${out value=scaffold_attributes.class_name /}Plugin(colony.base.plugin_sys
     def end_unload_plugin(self):
         colony.base.plugin_system.Plugin.end_unload_plugin(self)
 
-    @colony.base.decorators.load_allowed("${out value=scaffold_attributes.plugin_id /}", "${out value=scaffold_attributes.plugin_version /}")
     def load_allowed(self, plugin, capability):
         colony.base.plugin_system.Plugin.load_allowed(self, plugin, capability)
 
-    @colony.base.decorators.unload_allowed("${out value=scaffold_attributes.plugin_id /}", "${out value=scaffold_attributes.plugin_version /}")
     def unload_allowed(self, plugin, capability):
         colony.base.plugin_system.Plugin.unload_allowed(self, plugin, capability)
 
-    @colony.base.decorators.inject_dependencies("${out value=scaffold_attributes.plugin_id /}", "${out value=scaffold_attributes.plugin_version /}")
     def dependency_injected(self, plugin):
         colony.base.plugin_system.Plugin.dependency_injected(self, plugin)
 
