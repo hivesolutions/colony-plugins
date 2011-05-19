@@ -910,7 +910,7 @@ class EntityManagerSqliteEngine:
             self.execute_query(cursor, query_string_value)
 
             # creates the query for the selection of the generator table
-            query_string_value = "select name, next_id from generator where name = \"" + name + "\""
+            query_string_value = "select name, next_id from generator where name = '" + name + "'"
 
             # executes the query selecting the table
             self.execute_query(cursor, query_string_value)
@@ -970,7 +970,7 @@ class EntityManagerSqliteEngine:
             # in case the next id type is string
             if next_id_type == types.StringType:
                 # writes the next
-                query_string_buffer.write("\"" + next_id + "\"")
+                query_string_buffer.write("'" + next_id + "'")
             # otherwise it must be a string convertible value
             # and a numeric one
             else:
@@ -981,11 +981,11 @@ class EntityManagerSqliteEngine:
                 query_string_buffer.write(next_id_string)
 
             # writes the where clause to the query string buffer
-            query_string_buffer.write(" where name = \"" + name + "\"")
+            query_string_buffer.write(" where name = '" + name + "'")
         # otherwise its a new next id value
         else:
             # creates the query for the insertion of the data
-            query_string_buffer.write("insert into generator(name, next_id) values(\"" + name + "\", ")
+            query_string_buffer.write("insert into generator(name, next_id) values('" + name + "', ")
 
             # retrieves the next id type
             next_id_type = type(next_id)
@@ -993,7 +993,7 @@ class EntityManagerSqliteEngine:
             # in case the next id type is string
             if next_id_type == types.StringType:
                 # writes the next
-                query_string_buffer.write("\"" + next_id + "\")")
+                query_string_buffer.write("'" + next_id + "')")
             # otherwise it must be a string convertible value
             # and a numeric one
             else:
@@ -1814,7 +1814,7 @@ class EntityManagerSqliteEngine:
             # creates the select query string value
             query_string_value += "select "
 
-            query_string_value += "\"" + entity_sub_class_name + "\" as class_data_type"
+            query_string_value += "'" + entity_sub_class_name + "' as class_data_type"
 
             # @todo cache this value it's to painful to use
             entity_sub_class_valid_attribute_names = self.get_entity_class_attribute_names(entity_sub_class)
@@ -1826,7 +1826,7 @@ class EntityManagerSqliteEngine:
                 if entity_class_valid_attribute_name in entity_sub_class_valid_attribute_names:
                     query_string_value += entity_class_valid_attribute_name
                 else:
-                    query_string_value += "\"\" as " + entity_class_valid_attribute_name
+                    query_string_value += "'' as " + entity_class_valid_attribute_name
 
             query_string_value += " from " + entity_sub_class_name + " where " + entity_class_id_attribute_name + " = "
 
@@ -2223,7 +2223,7 @@ class EntityManagerSqliteEngine:
                 query_string_value += " count(1) as counter "
             # in case it's a normal select
             else:
-                query_string_value += "\"" + entity_sub_class_name + "\" as class_data_type"
+                query_string_value += "'" + entity_sub_class_name + "' as class_data_type"
 
                 # @todo cache this value it's to painful to use
                 entity_sub_class_valid_attribute_names = self.get_entity_class_attribute_names(entity_sub_class)
@@ -2235,7 +2235,7 @@ class EntityManagerSqliteEngine:
                     if entity_class_valid_attribute_name in entity_sub_class_valid_attribute_names:
                         query_string_value += entity_class_valid_attribute_name
                     else:
-                        query_string_value += "\"\" as " + entity_class_valid_attribute_name
+                        query_string_value += "'' as " + entity_class_valid_attribute_name
 
             is_first_where = True
 
@@ -2326,16 +2326,16 @@ class EntityManagerSqliteEngine:
                         query_string_value += filter_field_name + " like "
 
                         if like_filter_type in ["left", "both"]:
-                            query_string_value += "\"%"
+                            query_string_value += "'%"
                         else:
-                            query_string_value += "\""
+                            query_string_value += "'"
 
                         query_string_value += filter_field_value_string
 
                         if like_filter_type in ["right", "both"]:
-                            query_string_value += "%\""
+                            query_string_value += "%'"
                         else:
-                            query_string_value += "\""
+                            query_string_value += "'"
 
                 # in case the filter is of type greater
                 elif filter_type == "greater":
