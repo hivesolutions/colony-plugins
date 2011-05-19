@@ -88,7 +88,7 @@ class RootEntityController:
         # retrieves the filter
         filter = form_data_map.get("filter", {})
 
-        # retrieves the company entities
+        # retrieves the root entities
         root_entities = self._get_root_entities(rest_request, filter)
 
         # serializes the root entities
