@@ -77,7 +77,6 @@ class ServiceBarganiaRssPlugin(colony.base.plugin_system.Plugin):
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
-        global service_bargania_rss
         import service_bargania_rss.bargania_rss.service_bargania_rss_system
         self.service_bargania_rss = service_bargania_rss.bargania_rss.service_bargania_rss_system.ServiceBarganiaRss(self)
 

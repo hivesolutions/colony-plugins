@@ -79,7 +79,6 @@ class ServiceEasypayPlugin(colony.base.plugin_system.Plugin):
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
-        global service_easypay
         import service_easypay.easypay.service_easypay_system
         self.service_easypay = service_easypay.easypay.service_easypay_system.ServiceEasypay(self)
 

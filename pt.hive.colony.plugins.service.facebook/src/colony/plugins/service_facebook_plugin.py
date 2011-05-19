@@ -82,7 +82,6 @@ class ServiceFacebookPlugin(colony.base.plugin_system.Plugin):
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
-        global service_facebook
         import service_facebook.facebook.service_facebook_system
         self.service_facebook = service_facebook.facebook.service_facebook_system.ServiceFacebook(self)
 

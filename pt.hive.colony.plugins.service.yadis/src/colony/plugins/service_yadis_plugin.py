@@ -79,7 +79,6 @@ class ServiceYadisPlugin(colony.base.plugin_system.Plugin):
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
-        global service_yadis
         import service_yadis.yadis.service_yadis_system
         self.service_yadis = service_yadis.yadis.service_yadis_system.ServiceYadis(self)
 

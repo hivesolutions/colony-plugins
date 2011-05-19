@@ -90,7 +90,6 @@ class ServiceOpenidPlugin(colony.base.plugin_system.Plugin):
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
-        global service_openid
         import service_openid.openid.service_openid_system
         self.service_openid = service_openid.openid.service_openid_system.ServiceOpenid(self)
 
