@@ -92,8 +92,10 @@ def t_COMMENT(t):
 
 def t_NAME(t):
     r"[\w\$\.,:/#+\-\{\}]+"
+
     t.type = reserved.get(t.value, "NAME")
     t.value = reserved_values.get(t.value, t.value)
+
     return t
 
 # string definition
@@ -107,7 +109,9 @@ def t_STRING(t):
 # the new line character
 def t_NEWLINE(t):
     r"(\r?\n)+"
+
     t.lexer.lineno += t.value.count("\n")
+
     return t
 
 # ignored characters

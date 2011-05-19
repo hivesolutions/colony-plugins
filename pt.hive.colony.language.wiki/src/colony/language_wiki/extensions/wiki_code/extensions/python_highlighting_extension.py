@@ -67,10 +67,16 @@ CLASS_DEFINITION = {
     "PASS" : "kw5",
     "RETURN" : "kw5",
     "IMPORT" : "kw5",
+    "FROM" : "kw5",
+    "TRY" : "kw5",
+    "EXCEPT" : "kw5",
+    "FINALLY" : "kw5",
+    "RAISE" : "kw5",
     "DECORATOR_NAME" : "kw1",
     "BOOL" : "kw5",
     "STRING" : "st0",
     "NUMBER" : "kw6",
+    "GLOBAL" : "kw5",
     "COMMENT" : "kw4"
 }
 """ The class definition map """

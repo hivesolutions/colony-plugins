@@ -181,7 +181,9 @@ def t_STRING_QUOTES(t):
 # the new line character
 def t_NEWLINE(t):
     r"(\r?\n)+"
+
     t.lexer.lineno += t.value.count("\n")
+
     return t
 
 # single line comments
@@ -189,6 +191,7 @@ def t_COMMENT(t):
     r"//[^\n]*\n*"
 
     t.lexer.lineno += 1
+
     return t
 
 # ignored characters
