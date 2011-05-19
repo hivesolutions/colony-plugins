@@ -79,7 +79,6 @@ class MainClientDnsPlugin(colony.base.plugin_system.Plugin):
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
-        global main_client_dns
         import main_client_dns.dns.main_client_dns_system
         self.main_client_dns = main_client_dns.dns.main_client_dns_system.MainClientDns(self)
 

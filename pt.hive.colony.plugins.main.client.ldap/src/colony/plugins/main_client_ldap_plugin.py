@@ -87,7 +87,6 @@ class MainClientLdapPlugin(colony.base.plugin_system.Plugin):
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
-        global main_client_ldap
         import main_client_ldap.ldap.main_client_ldap_system
         self.main_client_ldap = main_client_ldap.ldap.main_client_ldap_system.MainClientLdap(self)
 

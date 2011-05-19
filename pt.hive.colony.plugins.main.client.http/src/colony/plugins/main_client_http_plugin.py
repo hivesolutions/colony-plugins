@@ -83,7 +83,6 @@ class MainClientHttpPlugin(colony.base.plugin_system.Plugin):
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
-        global main_client_http
         import main_client_http.http.main_client_http_system
         self.main_client_http = main_client_http.http.main_client_http_system.MainClientHttp(self)
 

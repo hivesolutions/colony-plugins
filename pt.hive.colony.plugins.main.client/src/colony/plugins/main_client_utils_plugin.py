@@ -82,7 +82,6 @@ class MainClientUtilsPlugin(colony.base.plugin_system.Plugin):
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
-        global main_client_utils
         import main_client_utils.utils.main_client_utils_system
         self.main_client_utils = main_client_utils.utils.main_client_utils_system.MainClientUtils(self)
 
