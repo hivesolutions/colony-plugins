@@ -77,7 +77,6 @@ class DummyRemoteClientPlugin(colony.base.plugin_system.Plugin):
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
-        global dummy
         import dummy.remote_client.dummy_remote_client_system
         self.dummy_remote_client = dummy.remote_client.dummy_remote_client_system.DummyRemoteClient(self)
 

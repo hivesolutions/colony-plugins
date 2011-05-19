@@ -81,7 +81,6 @@ class DummyWindowsFormsPlugin(colony.base.plugin_system.Plugin):
 
     def end_load_plugin(self):
         colony.base.plugin_system.Plugin.end_load_plugin(self)
-        global dummy
         import dummy.windows_forms.dummy_windows_forms_system
         self.dummy_windows_forms = dummy.windows_forms.dummy_windows_forms_system.DummyWindowsForms(self)
 

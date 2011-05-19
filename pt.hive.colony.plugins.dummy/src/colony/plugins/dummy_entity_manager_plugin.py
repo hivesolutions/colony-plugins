@@ -89,7 +89,6 @@ class DummyEntityManagerPlugin(colony.base.plugin_system.Plugin):
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
-        global dummy
         import dummy.entity_manager.dummy_entity_manager_system
         self.dummy_entity_manager = dummy.entity_manager.dummy_entity_manager_system.DummyEntityManager(self)
 

@@ -89,7 +89,6 @@ class DummyBase1Plugin(colony.base.plugin_system.Plugin):
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
-        global dummy
         import dummy.base_1.dummy_base_1_system
         self.dummy_base_1 = dummy.base_1.dummy_base_1_system.DummyBase1(self)
 

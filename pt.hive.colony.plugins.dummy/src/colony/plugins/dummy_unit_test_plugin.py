@@ -70,7 +70,6 @@ class DummyUnitTestPlugin(colony.base.plugin_system.Plugin):
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
-        global dummy
         import dummy.unit_test.dummy_unit_test_system
         self.dummy_unit_test = dummy.unit_test.dummy_unit_test_system.DummyUnitTest(self)
 

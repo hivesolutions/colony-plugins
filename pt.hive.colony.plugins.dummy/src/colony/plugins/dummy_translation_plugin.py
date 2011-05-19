@@ -79,7 +79,6 @@ class DummyTranslationPlugin(colony.base.plugin_system.Plugin):
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
-        global dummy
         import dummy.translation.dummy_translation_system
         self.dummy_translation = dummy.translation.dummy_translation_system.DummyTranslation(self)
 

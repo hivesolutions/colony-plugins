@@ -85,7 +85,6 @@ class DummyBusinessLogic2Plugin(colony.base.plugin_system.Plugin):
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
-        global dummy
         import dummy.business_logic_2.dummy_business_logic_2_system
         self.dummy_business_logic_2 = dummy.business_logic_2.dummy_business_logic_2_system.DummyBusinessLogic2(self)
 

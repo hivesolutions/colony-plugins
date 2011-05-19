@@ -72,7 +72,6 @@ class DummyEnglishDictionaryPlugin(colony.base.plugin_system.Plugin):
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
-        global dummy
         import dummy.english_dictionary.dummy_english_dictionary_system
         self.dummy_english_dictionary = dummy.english_dictionary.dummy_english_dictionary_system.DummyEnglishDictionary(self)
 

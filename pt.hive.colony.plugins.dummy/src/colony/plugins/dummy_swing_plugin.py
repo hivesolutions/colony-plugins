@@ -73,7 +73,6 @@ class DummySwingPlugin(colony.base.plugin_system.Plugin):
 
     def end_load_plugin(self):
         colony.base.plugin_system.Plugin.end_load_plugin(self)
-        global dummy
         import dummy.swing.dummy_swing_system
         self.dummy_swing = dummy.swing.dummy_swing_system.DummySwing(self)
 
