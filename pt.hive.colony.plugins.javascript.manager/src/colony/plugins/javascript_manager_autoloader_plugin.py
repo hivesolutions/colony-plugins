@@ -77,7 +77,6 @@ class JavascriptManagerAutoloaderPlugin(colony.base.plugin_system.Plugin):
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
-        global javascript_manager
         import javascript_manager.autoloader.javascript_manager_autoloader_system
         self.javascript_manager_autoloader = javascript_manager.autoloader.javascript_manager_autoloader_system.JavascriptManagerAutoloader(self)
 

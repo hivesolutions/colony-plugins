@@ -80,7 +80,6 @@ class JavascriptManagerPlugin(colony.base.plugin_system.Plugin):
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
-        global javascript_manager
         import javascript_manager.manager.javascript_manager_system
         self.javascript_manager = javascript_manager.manager.javascript_manager_system.JavascriptManager(self)
 

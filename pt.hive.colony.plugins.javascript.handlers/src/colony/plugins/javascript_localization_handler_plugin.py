@@ -71,7 +71,6 @@ class JavascriptLocalizationHandlerPlugin(colony.base.plugin_system.Plugin):
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
-        global javascript_localization
         import javascript_localization.localization_handler.javascript_localization_handler_system
         self.javascript_localization_handler = javascript_localization.localization_handler.javascript_localization_handler_system.JavascriptLocalizationHandler(self)
 
