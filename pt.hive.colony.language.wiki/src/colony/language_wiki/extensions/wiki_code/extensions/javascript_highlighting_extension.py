@@ -63,6 +63,7 @@ CLASS_DEFINITION = {
     "RETURN" : "kw5",
     "NAME" : "kw2",
     "STRING" : "st0",
+    "STRING_QUOTES" : "st0",
     "NUMBER" : "kw6",
     "BOOL" : "kw5",
     "COMMENT" : "kw4"
@@ -172,8 +173,18 @@ class JavascriptHighlightingExtension(wiki_code.wiki_code_extension_system.WikiC
         return tokens_list
 
     def _get_real_value(self, token):
-        if token.type == "STRING":
-            return "\"" + token.value + "\""
+        # retrieves the token type
+        token_type = token.type
+
+        # retrieves the token value
+        token_value = token.value
+
+        # in case the token type is string
+        if token_type == "STRING":
+            return "\"" + token_value + "\""
+        # in case the token type is string with quotes
+        elif token_type == "STRING_QUOTES":
+            return "'" + token_value + "'"
 
         # returns the token value
-        return token.value
+        return token_value

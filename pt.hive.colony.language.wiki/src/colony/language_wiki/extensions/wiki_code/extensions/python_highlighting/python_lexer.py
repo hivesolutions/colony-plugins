@@ -213,7 +213,7 @@ def t_STRING(t):
 def t_STRING_QUOTES(t):
     r"\'([^\\\n]|(\\.)|\\n\\\r?\n)*?\'"
 
-    t.type = "STRING"
+    t.type = "STRING_QUOTES"
     t.value = t.value[1:-1]
 
     return t

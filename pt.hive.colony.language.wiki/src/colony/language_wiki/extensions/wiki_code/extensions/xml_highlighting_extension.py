@@ -63,6 +63,7 @@ CLASS_DEFINITION = {
     "ATTRIBUTION" : "kw4",
     "NAME" : "kw2",
     "STRING" : "st0",
+    "STRING_QUOTES" : "st0",
     "NUMBER" : "kw6",
     "COMMENT" : "kw4"
 }
@@ -180,6 +181,9 @@ class XmlHighlightingExtension(wiki_code.wiki_code_extension_system.WikiCodeExte
         # in case the token type is string
         if token_type == "STRING":
             return "\"" + token_value + "\""
+        # in case the token type is string with quotes
+        elif token_type == "STRING_QUOTES":
+            return "'" + token_value + "'"
 
         # returns the token value
         return token_value

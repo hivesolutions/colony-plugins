@@ -75,6 +75,7 @@ CLASS_DEFINITION = {
     "DECORATOR_NAME" : "kw1",
     "BOOL" : "kw5",
     "STRING" : "st0",
+    "STRING_QUOTES" : "st0",
     "NUMBER" : "kw6",
     "GLOBAL" : "kw5",
     "COMMENT" : "kw4"
@@ -193,6 +194,9 @@ class PythonHighlightingExtension(wiki_code.wiki_code_extension_system.WikiCodeE
         # in case the token type is string
         if token_type == "STRING":
             return "\"" + token_value + "\""
+        # in case the token type is string with quotes
+        elif token_type == "STRING_QUOTES":
+            return "'" + token_value + "'"
 
         # returns the token value
         return token_value

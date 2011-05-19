@@ -42,6 +42,7 @@ tokens = (
     "NAME",
     "NUMBER",
     "STRING",
+    "STRING_QUOTES",
     "BOOL",
     "PLUS",
     "MINUS",
@@ -170,6 +171,15 @@ def t_NUMBER(t):
 def t_STRING(t):
     r"\"([^\\\n]|(\\.)|\\n\\\n)*?\""
 
+    t.value = t.value[1:-1]
+
+    return t
+
+# string quotes definition
+def t_STRING_QUOTES(t):
+    r"\'([^\\\n]|(\\.)|\\n\\\r?\n)*?\'"
+
+    t.type = "STRING_QUOTES"
     t.value = t.value[1:-1]
 
     return t
