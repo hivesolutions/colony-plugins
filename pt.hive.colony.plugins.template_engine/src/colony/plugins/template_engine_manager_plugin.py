@@ -75,7 +75,6 @@ class TemplateEngineManagerPlugin(colony.base.plugin_system.Plugin):
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
-        global template_engine
         import template_engine.manager.template_engine_manager_system
         self.template_engine_manager = template_engine.manager.template_engine_manager_system.TemplateEngineManager(self)
 

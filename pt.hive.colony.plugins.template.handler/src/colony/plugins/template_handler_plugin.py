@@ -84,7 +84,6 @@ class TemplateHandlerPlugin(colony.base.plugin_system.Plugin):
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
-        global template_handler
         import template_handler.handler.template_handler_system
         self.template_handler = template_handler.handler.template_handler_system.TemplateHandler(self)
 
