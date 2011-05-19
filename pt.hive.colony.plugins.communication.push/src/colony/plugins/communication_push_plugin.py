@@ -90,7 +90,6 @@ class CommunicationPushPlugin(colony.base.plugin_system.Plugin):
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
-        global communication_push
         import communication_push.push.communication_push_system
         self.communication_push = communication_push.push.communication_push_system.CommunicationPush(self)
 

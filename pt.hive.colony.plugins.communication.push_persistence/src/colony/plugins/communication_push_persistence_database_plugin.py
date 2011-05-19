@@ -79,7 +79,6 @@ class CommunicationPushPersistenceDatabasePlugin(colony.base.plugin_system.Plugi
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
-        global communication_push_persistence_database
         import communication_push_persistence_database.database.communication_push_persistence_database_system
         self.communication_push_persistence_database = communication_push_persistence_database.database.communication_push_persistence_database_system.CommunicationPushPersistenceDatabase(self)
 
