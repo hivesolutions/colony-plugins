@@ -81,7 +81,6 @@ class SearchScorerPlugin(colony.base.plugin_system.Plugin):
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
-        global search_scorer
         import search_scorer.scorer.search_scorer_system
         self.search_scorer = search_scorer.scorer.search_scorer_system.SearchScorer(self)
 

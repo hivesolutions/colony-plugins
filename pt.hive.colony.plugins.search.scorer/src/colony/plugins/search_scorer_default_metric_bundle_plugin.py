@@ -76,7 +76,6 @@ class SearchScorerDefaultMetricBundlePlugin(colony.base.plugin_system.Plugin):
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
-        global search_scorer
         import search_scorer.default_metric_bundle.search_scorer_default_metric_bundle_system
         self.search_scorer_default_metric_bundle = search_scorer.default_metric_bundle.search_scorer_default_metric_bundle_system.SearchScorerDefaultMetricBundle(self)
 

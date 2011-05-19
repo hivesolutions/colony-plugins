@@ -71,7 +71,6 @@ class SearchIndexSerializerShelvePlugin(colony.base.plugin_system.Plugin):
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
-        global search_index_serializer
         import search_index_serializer.shelve.search_index_serializer_shelve_system
         self.search_index_serializer_shelve = search_index_serializer.shelve.search_index_serializer_shelve_system.SearchIndexSerializerShelve(self)
 

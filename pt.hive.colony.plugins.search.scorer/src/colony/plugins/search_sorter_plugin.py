@@ -74,7 +74,6 @@ class SearchSorterPlugin(colony.base.plugin_system.Plugin):
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
-        global search_sorter
         import search_sorter.sorter.search_sorter_system
         self.search_sorter = search_sorter.sorter.search_sorter_system.SearchSorter(self)
 

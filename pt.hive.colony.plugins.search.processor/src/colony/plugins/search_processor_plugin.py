@@ -81,7 +81,6 @@ class SearchProcessorPlugin(colony.base.plugin_system.Plugin):
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
-        global search_processor
         import search_processor.processor.search_processor_system
         self.search_processor = search_processor.processor.search_processor_system.SearchProcessor(self)
 

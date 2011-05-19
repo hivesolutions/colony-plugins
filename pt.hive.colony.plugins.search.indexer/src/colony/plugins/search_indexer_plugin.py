@@ -77,7 +77,6 @@ class SearchIndexerPlugin(colony.base.plugin_system.Plugin):
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
-        global search_indexer
         import search_indexer.indexer.search_indexer_system
         self.search_indexer = search_indexer.indexer.search_indexer_system.SearchIndexer(self)
 

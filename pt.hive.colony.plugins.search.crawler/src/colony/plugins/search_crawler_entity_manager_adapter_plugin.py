@@ -88,7 +88,6 @@ class SearchCrawlerEntityManagerAdapterPlugin(colony.base.plugin_system.Plugin):
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
-        global search_crawler
         import search_crawler.entity_manager_adapter.search_crawler_entity_manager_adapter_system
         self.search_crawler_entity_manager_adapter = search_crawler.entity_manager_adapter.search_crawler_entity_manager_adapter_system.SearchCrawlerEntityManagerAdapter(self)
 

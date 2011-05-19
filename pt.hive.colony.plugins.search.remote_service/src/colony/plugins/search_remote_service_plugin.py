@@ -82,7 +82,6 @@ class SearchRemoteServicePlugin(colony.base.plugin_system.Plugin):
     @colony.base.decorators.load_plugin("pt.hive.colony.plugins.search.remote_service", "1.0.0")
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
-        global search_remote_service
         import search_remote_service.remote_service.search_remote_service_system
         self.search_remote_service = search_remote_service.remote_service.search_remote_service_system.SearchRemoteService(self)
 

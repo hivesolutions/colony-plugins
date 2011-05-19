@@ -78,7 +78,6 @@ class SearchQueryEvaluatorPlugin(colony.base.plugin_system.Plugin):
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
-        global search_query_evaluator
         import search_query_evaluator.query_evaluator.search_query_evaluator_system
         self.search_query_evaluator = search_query_evaluator.query_evaluator.search_query_evaluator_system.SearchQueryEvaluator(self)
 

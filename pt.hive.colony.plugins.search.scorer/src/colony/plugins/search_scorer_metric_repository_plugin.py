@@ -77,7 +77,6 @@ class SearchScorerMetricRepositoryPlugin(colony.base.plugin_system.Plugin):
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
-        global search_scorer
         import search_scorer.metric_repository.search_scorer_metric_repository_system
         self.search_scorer_metric_repository = search_scorer.metric_repository.search_scorer_metric_repository_system.SearchScorerMetricRepository(self)
 

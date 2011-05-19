@@ -77,7 +77,6 @@ class SearchIndexPersistenceFileSystemAdapterPlugin(colony.base.plugin_system.Pl
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
-        global search_index_persistence
         import search_index_persistence.file_system_adapter.search_index_persistence_file_system_adapter_system
         self.search_index_persistence_file_system_adapter = search_index_persistence.file_system_adapter.search_index_persistence_file_system_adapter_system.SearchIndexPersistenceFileSystemAdapter(self)
 

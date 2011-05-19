@@ -79,7 +79,6 @@ class SearchQueryEvaluatorVisitorAdapterPlugin(colony.base.plugin_system.Plugin)
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
-        global search_query_evaluator
         import search_query_evaluator.visitor_adapter.search_query_evaluator_visitor_adapter_system
         self.search_query_evaluator_visitor_adapter = search_query_evaluator.visitor_adapter.search_query_evaluator_visitor_adapter_system.SearchQueryEvaluatorVisitorAdapter(self)
 

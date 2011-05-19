@@ -78,7 +78,6 @@ class SearchCrawlerFileSystemAdapterPlugin(colony.base.plugin_system.Plugin):
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
-        global search_crawler
         import search_crawler.file_system_adapter.search_crawler_file_system_adapter_system
         self.search_crawler_file_system_adapter = search_crawler.file_system_adapter.search_crawler_file_system_adapter_system.SearchCrawlerFileSystemAdapter(self)
 

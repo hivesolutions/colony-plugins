@@ -76,7 +76,6 @@ class SearchInterpreterPlugin(colony.base.plugin_system.Plugin):
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
-        global search_interpreter
         import search_interpreter.interpreter.search_interpreter_system
         self.search_intepreter = search_interpreter.interpreter.search_interpreter_system.SearchInterpreter(self)
 

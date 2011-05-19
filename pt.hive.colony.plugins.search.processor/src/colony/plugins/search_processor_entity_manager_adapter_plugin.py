@@ -88,7 +88,6 @@ class SearchProcessorEntityManagerAdapterPlugin(colony.base.plugin_system.Plugin
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
-        global search_processor
         import search_processor.entity_manager_adapter.search_processor_entity_manager_adapter_system
         self.search_processor_entity_manager_adapter = search_processor.entity_manager_adapter.search_processor_entity_manager_adapter_system.SearchProcessorEntityManagerAdapter(self)
 

@@ -81,7 +81,6 @@ class SearchCrawlerPlugin(colony.base.plugin_system.Plugin):
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
-        global search_crawler
         import search_crawler.crawler.search_crawler_system
         self.search_crawler = search_crawler.crawler.search_crawler_system.SearchCrawler(self)
 

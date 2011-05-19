@@ -77,7 +77,6 @@ class SearchIndexPersistencePlugin(colony.base.plugin_system.Plugin):
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
-        global search_index_persistence
         import search_index_persistence.index_persistence.search_index_persistence_system
         self.search_index_persistence = search_index_persistence.index_persistence.search_index_persistence_system.SearchIndexPersistence(self)
 

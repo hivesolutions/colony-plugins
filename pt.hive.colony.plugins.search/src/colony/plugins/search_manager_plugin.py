@@ -114,7 +114,6 @@ class SearchManagerPlugin(colony.base.plugin_system.Plugin):
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
-        global search
         import search.manager.search_manager_system
         self.search_manager = search.manager.search_manager_system.SearchManager(self)
 

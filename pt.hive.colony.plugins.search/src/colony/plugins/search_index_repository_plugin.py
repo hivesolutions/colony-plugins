@@ -71,7 +71,6 @@ class SearchIndexRepositoryPlugin(colony.base.plugin_system.Plugin):
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
-        global search
         import search.index_repository.search_index_repository_system
         self.search_index_repository = search.index_repository.search_index_repository_system.SearchIndexRepository(self)
 

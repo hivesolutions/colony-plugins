@@ -71,7 +71,6 @@ class SearchIndexSerializerCpicklePlugin(colony.base.plugin_system.Plugin):
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
-        global search_index_serializer
         import search_index_serializer.cpickle.search_index_serializer_cpickle_system
         self.search_index_serializer_cpickle = search_index_serializer.cpickle.search_index_serializer_cpickle_system.SearchIndexSerializerCpickle(self)
 

@@ -70,7 +70,6 @@ class SearchInterpreterCapitalsAdapterPlugin(colony.base.plugin_system.Plugin):
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
-        global search_interpreter
         import search_interpreter.capitals_adapter.search_interpreter_capitals_adapter_system
         self.search_interpreter_capitals_adapter = search_interpreter.capitals_adapter.search_interpreter_capitals_adapter_system.SearchInterpreterCapitalsAdapter(self)
 
