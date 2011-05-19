@@ -76,7 +76,6 @@ class DistributionRegistryClientPlugin(colony.base.plugin_system.Plugin):
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
-        global distribution
         import distribution.registry_client.distribution_registry_client_system
         self.distribution_registry_client = distribution.registry_client.distribution_registry_client_system.DistributionRegistryClient(self)
 

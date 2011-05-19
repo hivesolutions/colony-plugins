@@ -87,7 +87,6 @@ class DistributionRegistryServerPlugin(colony.base.plugin_system.Plugin):
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
-        global distribution
         import distribution.registry_server.distribution_registry_server_system
         self.distribution_registry_server = distribution.registry_server.distribution_registry_server_system.DistributionRegistryServer(self)
 

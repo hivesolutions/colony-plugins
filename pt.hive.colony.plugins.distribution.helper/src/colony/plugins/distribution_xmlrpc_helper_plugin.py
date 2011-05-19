@@ -77,7 +77,6 @@ class DistributionXmlrpcHelperPlugin(colony.base.plugin_system.Plugin):
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
-        global distribution_helper
         import distribution_helper.xmlrpc.distribution_xmlrpc_helper_system
         self.distribution_xmlrpc_helper = distribution_helper.xmlrpc.distribution_xmlrpc_helper_system.DistributionXmlrpcHelper(self)
 

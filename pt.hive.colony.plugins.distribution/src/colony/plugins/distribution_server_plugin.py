@@ -84,7 +84,6 @@ class DistributionServerPlugin(colony.base.plugin_system.Plugin):
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
-        global distribution
         import distribution.server.distribution_server_system
         self.distribution_server = distribution.server.distribution_server_system.DistributionServer(self)
 

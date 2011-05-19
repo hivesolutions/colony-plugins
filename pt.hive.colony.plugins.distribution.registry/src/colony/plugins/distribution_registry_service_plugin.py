@@ -78,7 +78,6 @@ class DistributionRegistryServicePlugin(colony.base.plugin_system.Plugin):
     @colony.base.decorators.load_plugin("pt.hive.colony.plugins.distribution.registry.service", "1.0.0")
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
-        global distribution_registry
         import distribution_registry.service.distribution_registry_service_system
         self.distribution_registry_service = distribution_registry.service.distribution_registry_service_system.DistributionRegistryService(self)
 
