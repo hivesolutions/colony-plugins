@@ -80,7 +80,6 @@ class MainLocalizationTranslationManagerPlugin(colony.base.plugin_system.Plugin)
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
-        global main_localization_translation_manager
         import main_localization_translation_manager.translation_manager.main_localization_translation_manager_system
         self.main_localization_translation_manager = main_localization_translation_manager.translation_manager.main_localization_translation_manager_system.MainLocalizationTranslationManager(self)
 

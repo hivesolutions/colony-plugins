@@ -77,7 +77,6 @@ class MainLocalizationManagerPlugin(colony.base.plugin_system.Plugin):
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
-        global main_localization_manager
         import main_localization_manager.manager.main_localization_manager_system
         self.main_localization_manager = main_localization_manager.manager.main_localization_manager_system.MainLocalizationManager(self)
 

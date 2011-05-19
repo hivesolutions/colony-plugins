@@ -70,7 +70,6 @@ class MainLocalizationTranslationBundleEnUsPlugin(colony.base.plugin_system.Plug
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
-        global main_localization_translation_bundle_en_us
         import main_localization_translation_bundle_en_us.en_us.main_localization_translation_bundle_en_us_system
         self.main_localization_translation_bundle_en_us = main_localization_translation_bundle_en_us.en_us.main_localization_translation_bundle_en_us_system.MainLocalizationTranslationBundleEnUs(self)
 

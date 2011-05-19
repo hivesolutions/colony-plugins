@@ -77,7 +77,6 @@ class MainLocalizationTranslationJsonBundleHandlerPlugin(colony.base.plugin_syst
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
-        global main_localization_translation_json_bundle_handler
         import main_localization_translation_json_bundle_handler.translation_json_bundle_handler.main_localization_translation_json_bundle_handler_system
         self.main_localization_translation_json_bundle_handler = main_localization_translation_json_bundle_handler.translation_json_bundle_handler.main_localization_translation_json_bundle_handler_system.MainLocalizationTranslationJsonBundleHandler(self)
 
