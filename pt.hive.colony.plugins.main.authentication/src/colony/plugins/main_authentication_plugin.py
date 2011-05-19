@@ -78,7 +78,6 @@ class MainAuthenticationPlugin(colony.base.plugin_system.Plugin):
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
-        global main_authentication
         import main_authentication.authentication.main_authentication_system
         self.main_authentication = main_authentication.authentication.main_authentication_system.MainAuthentication(self)
 

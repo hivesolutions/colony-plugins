@@ -71,7 +71,6 @@ class MainAuthenticationEntityManagerHandlerPlugin(colony.base.plugin_system.Plu
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
-        global main_authentication_entity_manager_handler
         import main_authentication_entity_manager_handler.entity_manager_handler.main_authentication_entity_manager_handler_system
         self.main_authentication_entity_manager_handler = main_authentication_entity_manager_handler.entity_manager_handler.main_authentication_entity_manager_handler_system.MainAuthenticationEntityManagerHandler(self)
 

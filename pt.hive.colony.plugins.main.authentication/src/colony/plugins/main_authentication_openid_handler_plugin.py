@@ -70,7 +70,6 @@ class MainAuthenticationOpenidHandlerPlugin(colony.base.plugin_system.Plugin):
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
-        global main_authentication_openid_handler
         import main_authentication_openid_handler.openid_handler.main_authentication_openid_handler_system
         self.main_authentication_openid_handler = main_authentication_openid_handler.openid_handler.main_authentication_openid_handler_system.MainAuthenticationOpenidHandler(self)
 

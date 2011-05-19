@@ -77,7 +77,6 @@ class MainAuthenticationLdapHandlerPlugin(colony.base.plugin_system.Plugin):
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
-        global main_authentication_ldap_handler
         import main_authentication_ldap_handler.ldap_handler.main_authentication_ldap_handler_system
         self.main_authentication_ldap_handler = main_authentication_ldap_handler.ldap_handler.main_authentication_ldap_handler_system.MainAuthenticationLdapHandler(self)
 
