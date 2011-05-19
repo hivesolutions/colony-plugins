@@ -67,10 +67,8 @@ class Console${out value=scaffold_attributes.class_name /}:
         @param console_context: The console context for the processing.
         """
 
-        # retrieves the ${out value=scaffold_attributes.short_name_lowercase /}_plugin
+        # retrieves the ${out value=scaffold_attributes.short_name_lowercase /}
         ${out value=scaffold_attributes.variable_name /}_plugin = self.${out value=scaffold_attributes.variable_name /}_plugin
-
-        # retrieves the plugin's backend
         ${out value=scaffold_attributes.variable_name /} = ${out value=scaffold_attributes.variable_name /}_plugin.${out value=scaffold_attributes.variable_name /}
 
         # invokes the plugin's dummy method
