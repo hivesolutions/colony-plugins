@@ -78,7 +78,6 @@ class ColonyPackingDeployerPlugin(colony.base.plugin_system.Plugin):
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
-        global system_updater
         import system_updater.colony_packing.colony_packing_deployer_system
         self.colony_packing_deployer = system_updater.colony_packing.colony_packing_deployer_system.ColonyPackingDeployer(self)
 

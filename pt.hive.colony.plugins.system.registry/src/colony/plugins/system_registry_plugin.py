@@ -77,7 +77,6 @@ class SystemRegistryPlugin(colony.base.plugin_system.Plugin):
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
-        global system_registry
         import system_registry.registry.system_registry_system
         self.system_registry = system_registry.registry.system_registry_system.SystemRegistry(self)
 
