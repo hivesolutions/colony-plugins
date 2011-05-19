@@ -138,6 +138,7 @@ t_DOT = r"\."
 
 def t_MULTI_LINE_COMMENT(t):
     r"/\*(.|\n)*?\*/"
+
     # sets the token type
     t.type = "COMMENT"
 
@@ -145,8 +146,10 @@ def t_MULTI_LINE_COMMENT(t):
 
 def t_NAME(t):
     r"[a-zA-Z_\$][a-zA-Z_\$0-9]*"
+
     t.type = reserved.get(t.value, "NAME")
     t.value = reserved_values.get(t.value, t.value)
+
     return t
 
 # number definition
@@ -199,5 +202,7 @@ t_ignore = " \t\r"
 
 # other character
 def t_error(t):
+
     print "Illegal character '%s'" % t.value[0]
+
     t.lexer.skip(1)

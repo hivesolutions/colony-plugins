@@ -148,8 +148,10 @@ t_DOT = r"\."
 
 def t_NAME(t):
     r"[a-zA-Z_][a-zA-Z_0-9]*"
+
     t.type = reserved.get(t.value, "NAME")
     t.value = reserved_values.get(t.value, t.value)
+
     return t
 
 # number definition
@@ -175,13 +177,17 @@ def t_STRING(t):
 # the new line character
 def t_NEWLINE(t):
     r"(\r?\n)+"
+
     t.lexer.lineno += t.value.count("\n")
+
     return t
 
 # single line comments
 def t_COMMENT(t):
     r"\#[^\n]*\n+"
+
     t.lexer.lineno += 1
+
     return t
 
 # ignored characters
@@ -189,5 +195,7 @@ t_ignore = " \t\r"
 
 # other character
 def t_error(t):
+
     print "Illegal character '%s'" % t.value[0]
+
     t.lexer.skip(1)

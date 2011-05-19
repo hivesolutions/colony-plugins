@@ -170,12 +170,15 @@ t_DOT = r"\."
 
 def t_NAME(t):
     r"[a-zA-Z_][a-zA-Z_0-9]*"
+
     t.type = reserved.get(t.value, "NAME")
     t.value = reserved_values.get(t.value, t.value)
+
     return t
 
 def t_DECORATOR_NAME(t):
     r"\@[a-zA-Z_.][a-zA-Z_0-9.]+"
+
     return t
 
 # number definition
@@ -192,6 +195,7 @@ def t_NUMBER(t):
 
 def t_MULTI_LINE_COMMENT(t):
     r"\"{3}(.|\n)*?\"{3}"
+
     # sets the token type
     t.type = "COMMENT"
 
@@ -235,5 +239,7 @@ t_ignore = " \t\r"
 
 # other character
 def t_error(t):
+
     print "Illegal character '%s'" % t.value[0]
+
     t.lexer.skip(1)

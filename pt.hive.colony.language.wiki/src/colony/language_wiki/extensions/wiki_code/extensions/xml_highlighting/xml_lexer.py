@@ -64,30 +64,37 @@ t_EQUALS = r"="
 
 def t_XML(t):
     r"\<\?xml(.|\n)*?\?\>"
+
     return t
 
 def t_CDATA(t):
     r"\<\!\[CDATA\[(.|\n)*?\]\]\>"
+
     return t
 
 def t_TAG_INIT(t):
     r"\<[^\!\?\> ]+"
+
     return t
 
 def t_TAG_END(t):
     r"\>"
+
     return t
 
 def t_TAG_END_END(t):
     r"/\>"
+
     return t
 
 def t_ATTRIBUTION(t):
     r"[a-zA-Z_\$\.0-9][a-zA-Z_\$\.\:0-9]*="
+
     return t
 
 def t_COMMENT(t):
     r"<!--(.|\n)*?-->"
+
     return t
 
 def t_NAME(t):
@@ -119,5 +126,7 @@ t_ignore = " \t\r"
 
 # other character
 def t_error(t):
+
     print "Illegal character '%s'" % t.value[0]
+
     t.lexer.skip(1)
