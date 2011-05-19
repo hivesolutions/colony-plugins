@@ -38,7 +38,6 @@ __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
 import colony.base.plugin_system
-import colony.base.decorators
 
 class SimpleScaffolderPlugin(colony.base.plugin_system.Plugin):
     """
@@ -71,7 +70,6 @@ class SimpleScaffolderPlugin(colony.base.plugin_system.Plugin):
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
-        global simple_scaffolder
         import simple_scaffolder.scaffolder.simple_scaffolder_system
         self.simple_scaffolder = simple_scaffolder.scaffolder.simple_scaffolder_system.SimpleScaffolder(self)
 
@@ -84,15 +82,12 @@ class SimpleScaffolderPlugin(colony.base.plugin_system.Plugin):
     def end_unload_plugin(self):
         colony.base.plugin_system.Plugin.end_unload_plugin(self)
 
-    @colony.base.decorators.load_allowed("pt.hive.colony.plugins.main.scaffolding.simple", "1.0.0")
     def load_allowed(self, plugin, capability):
         colony.base.plugin_system.Plugin.load_allowed(self, plugin, capability)
 
-    @colony.base.decorators.unload_allowed("pt.hive.colony.plugins.main.scaffolding.simple", "1.0.0")
     def unload_allowed(self, plugin, capability):
         colony.base.plugin_system.Plugin.unload_allowed(self, plugin, capability)
 
-    @colony.base.decorators.inject_dependencies("pt.hive.colony.plugins.main.scaffolding.simple", "1.0.0")
     def dependency_injected(self, plugin):
         colony.base.plugin_system.Plugin.dependency_injected(self, plugin)
 

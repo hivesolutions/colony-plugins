@@ -54,9 +54,6 @@ CLASS_NAME_VALUE = "class_name"
 DESCRIPTION_VALUE = "description"
 """ The description value """
 
-FOLDER_NAMES_VALUE = "folder_names"
-""" The folder names value """
-
 NAME_VALUE = "name"
 """ The name value """
 
@@ -105,12 +102,6 @@ RELATIVE_DESTINATION_FILE_PATH_FORMAT_VALUE = "relative_destination_file_path_fo
 RELATIVE_PATH_VALUE = "relative_path"
 """ The relative path value """
 
-ROOT_FOLDER_NAME_VALUE = "root_folder_name"
-""" The root folder name value """
-
-PLUGIN_ID_NAMESPACE_PLUGINS_CHUNK = ".plugins."
-""" The plugin id namespace plugins chunk """
-
 TEMPLATE_FILE_PATH_VALUE = "template_file_path"
 """ The template file path value """
 
@@ -137,6 +128,9 @@ INIT_FILE_NAME = "__init__.py"
 
 INIT_TEMPLATE_FILE_NAME = "__init__.py.tpl"
 """ The init template file name """
+
+PLUGIN_ID_REGEX = re.compile("[a-z][a-z0-9_]*[a-z0-9]+\.(?:[a-z][a-z0-9_]*[a-z0-9]+\.)*[a-z][a-z0-9_]*[a-z0-9]+")
+""" The plugin id regex """
 
 UNIX_DIRECTORY_SEPARATOR = "/"
 """ The unix directory separator """
@@ -196,18 +190,11 @@ class MainScaffolding:
         # retrieves the plugin manager
         plugin_manager = self.main_scaffolding_plugin.manager
 
-        # retrieves the scaffolder for the specified type
-        scaffolder_plugin = self.scaffolder_plugins_map[scaffolder_type]
+        # retrieves the scaffolder plugin
+        scaffolder_plugin = self._get_scaffolder_plugin(scaffolder_type)
 
-        # in case no scaffolder plugin was found
-        if not scaffolder_plugin:
-            # raises a scaffolder type not supported exception
-            raise main_scaffolding_exceptions.ScaffolderTypeNotSupported("the specified scaffolder type is not supported")
-
-        # in case the plugins chunk was not found in the plugin id
-        if not PLUGIN_ID_NAMESPACE_PLUGINS_CHUNK in plugin_id:
-            # raises an invalid plugin identifier exception
-            raise main_scaffolding_exceptions.InvalidPluginIdentifier("the plugin id must have '.plugins.' in its namespace")
+        # validates the plugin id
+        self._validate_plugin_id(plugin_id)
 
         # checks id the scaffold path exists
         scaffold_path_exists = os.path.exists(scaffold_path)
@@ -293,6 +280,9 @@ class MainScaffolding:
         # calculates the short name index
         short_name_index = plugins_index + plugins_length
 
+        # sets the short name index to zero in case plugins was not found
+        short_name_index = plugins_index > -1 and short_name_index or 0
+
         # creates the short name out of the id suffix in case none is defined
         short_name = short_name or plugin_id[short_name_index:]
 
@@ -315,11 +305,20 @@ class MainScaffolding:
         # defines the variable name
         variable_name = variable_name or short_name_lowercase.replace(" ", "_")
 
-        # retrieves the slash index
-        slash_index = variable_name.rindex("_")
+        # retrieves the variable name tokens
+        variable_name_tokens = variable_name.split("_")
 
-        # defines the relative backend path in case it's undefined
-        relative_backend_path = relative_backend_path or variable_name + UNIX_DIRECTORY_SEPARATOR + variable_name[slash_index + 1:]
+        # retrieves the number of variable name tokens
+        number_variable_name_tokens = len(variable_name_tokens)
+
+        # defines the root folder name
+        root_folder_name = variable_name
+
+        # defines the sub folder name
+        sub_folder_name = number_variable_name_tokens > 1 and variable_name_tokens[-1] or variable_name
+
+        # defines the relative backend path
+        relative_backend_path = root_folder_name + UNIX_DIRECTORY_SEPARATOR + sub_folder_name
 
         # defines the class name
         class_name = "".join([short_name_token.capitalize() for short_name_token in short_name.split()])
@@ -328,13 +327,7 @@ class MainScaffolding:
         description = description or DESCRIPTION_FORMAT % short_name_lowercase
 
         # defines the backend namespace
-        backend_namespace = relative_backend_path.replace("/", ".")
-
-        # retrieves the backend folder names
-        folder_names = relative_backend_path.split(UNIX_DIRECTORY_SEPARATOR)
-
-        # retrieves the root folder name
-        root_folder_name = folder_names[0]
+        backend_namespace = relative_backend_path.replace(UNIX_DIRECTORY_SEPARATOR, ".")
 
         # sets the attributes in the scaffold attributes map
         scaffold_attributes_map[RELATIVE_BACKEND_PATH_VALUE] = relative_backend_path
@@ -346,8 +339,6 @@ class MainScaffolding:
         scaffold_attributes_map[CLASS_NAME_VALUE] = class_name
         scaffold_attributes_map[DESCRIPTION_VALUE] = description
         scaffold_attributes_map[BACKEND_NAMESPACE_VALUE] = backend_namespace
-        scaffold_attributes_map[FOLDER_NAMES_VALUE] = folder_names
-        scaffold_attributes_map[ROOT_FOLDER_NAME_VALUE] = root_folder_name
 
     def process_template(self, template_file_path, scaffold_attributes_map):
         # retrieves the template engine manager plugin
@@ -397,6 +388,30 @@ class MainScaffolding:
 
             # creates the init file
             self._create_file(init_file_path, init_template)
+
+    def _validate_plugin_id(self, plugin_id):
+        # matches the plugin id against the regular expression
+        plugin_id_matches = PLUGIN_ID_REGEX.findall(plugin_id)
+
+        # retrieves the plugin id match
+        plugin_id_match = plugin_id_matches and plugin_id_matches[0] or None
+
+        # in case the plugin id match isn't the plugin id
+        if not plugin_id_match == plugin_id:
+            # raises an invalid plugin identifier exception
+            raise main_scaffolding_exceptions.InvalidPluginIdentifier("plugin identifier is invalid")
+
+    def _get_scaffolder_plugin(self, scaffolder_type):
+        # retrieves the scaffolder for the specified type
+        scaffolder_plugin = self.scaffolder_plugins_map[scaffolder_type]
+
+        # in case no scaffolder plugin was found
+        if not scaffolder_plugin:
+            # raises a scaffolder type not supported exception
+            raise main_scaffolding_exceptions.ScaffolderTypeNotSupported("the specified scaffolder type is not supported")
+
+        # returns the scaffolder plugin
+        return scaffolder_plugin
 
     def _apply_attributes(self, data, attributes_map):
         # retrieves the attribute names

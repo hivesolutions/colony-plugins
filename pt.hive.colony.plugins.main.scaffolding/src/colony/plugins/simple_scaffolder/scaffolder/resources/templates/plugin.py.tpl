@@ -58,7 +58,6 @@ class ${out value=scaffold_attributes.class_name /}Plugin(colony.base.plugin_sys
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
-        global ${out value=scaffold_attributes.root_folder_name /}
         import ${out value=scaffold_attributes.backend_namespace /}.${out value=scaffold_attributes.variable_name /}_system
         import ${out value=scaffold_attributes.backend_namespace /}.console_${out value=scaffold_attributes.variable_name /}
         import ${out value=scaffold_attributes.backend_namespace /}.${out value=scaffold_attributes.variable_name /}_test

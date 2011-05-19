@@ -92,11 +92,13 @@ class MainScaffoldingPlugin(colony.base.plugin_system.Plugin):
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
-        global main_scaffolding
         import main_scaffolding.scaffolding.main_scaffolding_system
         import main_scaffolding.scaffolding.console_main_scaffolding
         self.main_scaffolding = main_scaffolding.scaffolding.main_scaffolding_system.MainScaffolding(self)
         self.console_main_scaffolding = main_scaffolding.scaffolding.console_main_scaffolding.ConsoleMainScaffolding(self)
+
+        # initializes the scaffolder plugins list
+        self.scaffolder_plugins = []
 
     def end_load_plugin(self):
         colony.base.plugin_system.Plugin.end_load_plugin(self)
