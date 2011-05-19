@@ -77,7 +77,6 @@ class MainRestEncoderJsonPlugin(colony.base.plugin_system.Plugin):
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
-        global main_remote_rest_encoder
         import main_remote_rest_encoder.json.main_rest_encoder_json_system
         self.main_rest_encoder_json = main_remote_rest_encoder.json.main_rest_encoder_json_system.MainRestEncoderJson(self)
 

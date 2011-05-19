@@ -77,7 +77,6 @@ class MainRemoteClientManagerPlugin(colony.base.plugin_system.Plugin):
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
-        global main_remote_client
         import main_remote_client.manager.main_remote_client_manager_system
         self.main_remote_client_manager = main_remote_client.manager.main_remote_client_manager_system.MainRemoteClientManager(self)
 

@@ -95,7 +95,6 @@ class MainRestManagerPlugin(colony.base.plugin_system.Plugin):
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
-        global main_remote_rest
         import main_remote_rest.manager.main_rest_manager_system
         self.main_rest_manager = main_remote_rest.manager.main_rest_manager_system.MainRestManager(self)
 

@@ -87,7 +87,6 @@ class MainJsonrpcManagerPlugin(colony.base.plugin_system.Plugin):
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
-        global main_remote_jsonrpc
         import main_remote_jsonrpc.manager.main_jsonrpc_manager_system
         self.main_jsonrpc_manager = main_remote_jsonrpc.manager.main_jsonrpc_manager_system.MainJsonrpcManager(self)
 

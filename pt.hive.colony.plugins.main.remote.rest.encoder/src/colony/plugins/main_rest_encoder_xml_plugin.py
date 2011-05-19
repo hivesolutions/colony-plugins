@@ -70,7 +70,6 @@ class MainRestEncoderXmlPlugin(colony.base.plugin_system.Plugin):
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
-        global rest_encoder_xml
         import main_remote_rest_encoder.xml.main_rest_encoder_xml_system
         self.main_rest_encoder_xml = main_remote_rest_encoder.xml.main_rest_encoder_xml_system.MainRestEncoderXml(self)
 
