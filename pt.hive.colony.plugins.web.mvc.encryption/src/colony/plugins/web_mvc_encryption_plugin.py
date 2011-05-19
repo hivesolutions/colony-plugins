@@ -92,7 +92,6 @@ class WebMvcEncryptionPlugin(colony.base.plugin_system.Plugin):
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
-        global web_mvc_encryption
         import web_mvc_encryption.encryption.web_mvc_encryption_system
         self.web_mvc_encryption = web_mvc_encryption.encryption.web_mvc_encryption_system.WebMvcEncryption(self)
 

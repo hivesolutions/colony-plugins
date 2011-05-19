@@ -77,7 +77,6 @@ class WebMvcMonitorItemColonyPlugin(colony.base.plugin_system.Plugin):
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
-        global web_mvc_monitor_item
         import web_mvc_monitor_item.colony.web_mvc_monitor_item_colony_system
         self.web_mvc_monitor_colony_system = web_mvc_monitor_item.colony.web_mvc_monitor_item_colony_system.WebMvcMonitorItemColony(self)
 

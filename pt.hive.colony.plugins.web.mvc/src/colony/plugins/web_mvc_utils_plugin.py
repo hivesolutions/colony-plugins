@@ -94,7 +94,6 @@ class WebMvcUtilsPlugin(colony.base.plugin_system.Plugin):
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
-        global web_mvc_utils
         import web_mvc_utils.mvc_utils.web_mvc_utils_system
         self.web_mvc_utils = web_mvc_utils.mvc_utils.web_mvc_utils_system.WebMvcUtils(self)
 

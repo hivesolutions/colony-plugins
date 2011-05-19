@@ -96,7 +96,6 @@ class WebMvcCommunicationPushApplePlugin(colony.base.plugin_system.Plugin):
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
-        global web_mvc_communication_push_apple
         import web_mvc_communication_push_apple.communication_push_apple.web_mvc_communication_push_apple_system
         self.web_mvc_communication_push_apple = web_mvc_communication_push_apple.communication_push_apple.web_mvc_communication_push_apple_system.WebMvcCommunicationPushApple(self)
 

@@ -80,7 +80,6 @@ class WebMvcSearchPlugin(colony.base.plugin_system.Plugin):
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
-        global web_mvc_search
         import web_mvc_search.mvc_search.web_mvc_search_system
         self.web_mvc_search = web_mvc_search.mvc_search.web_mvc_search_system.WebMvcSearch(self)
 

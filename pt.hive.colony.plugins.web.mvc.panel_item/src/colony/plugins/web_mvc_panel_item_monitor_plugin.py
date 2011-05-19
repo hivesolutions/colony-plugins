@@ -86,10 +86,10 @@ class WebMvcPanelItemMonitorPlugin(colony.base.plugin_system.Plugin):
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
-        global web_mvc_panel_item
         import web_mvc_panel_item.monitor.web_mvc_panel_item_monitor_system
         self.web_mvc_panel_item_monitor = web_mvc_panel_item.monitor.web_mvc_panel_item_monitor_system.WebMvcPanelItemMonitor(self)
 
+        # initializes the structures
         self.web_mvc_monitor_item_plugins = []
 
     def end_load_plugin(self):

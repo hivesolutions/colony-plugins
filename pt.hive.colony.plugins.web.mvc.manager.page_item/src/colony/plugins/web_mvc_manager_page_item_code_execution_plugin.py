@@ -85,7 +85,6 @@ class WebMvcManagerPageItemCodeExecutionPlugin(colony.base.plugin_system.Plugin)
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
-        global web_mvc_manager_page_item
         import web_mvc_manager_page_item.code_execution.web_mvc_manager_page_item_code_execution_system
         self.web_mvc_manager_page_item_code_execution = web_mvc_manager_page_item.code_execution.web_mvc_manager_page_item_code_execution_system.WebMvcManagerPageItemCodeExecution(self)
 

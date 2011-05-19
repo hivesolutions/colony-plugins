@@ -116,7 +116,6 @@ class WebMvcManagerPlugin(colony.base.plugin_system.Plugin):
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
-        global web_mvc_manager
         import web_mvc_manager.manager.web_mvc_manager_system
         self.web_mvc_manager = web_mvc_manager.manager.web_mvc_manager_system.WebMvcManager(self)
 

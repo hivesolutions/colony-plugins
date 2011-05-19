@@ -77,7 +77,6 @@ class WebMvcMonitorItemUptimePlugin(colony.base.plugin_system.Plugin):
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
-        global web_mvc_monitor_item
         import web_mvc_monitor_item.uptime.web_mvc_monitor_item_uptime_system
         self.web_mvc_monitor_uptime_system = web_mvc_monitor_item.uptime.web_mvc_monitor_item_uptime_system.WebMvcMonitorItemUptime(self)
 

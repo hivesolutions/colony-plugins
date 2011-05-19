@@ -70,7 +70,6 @@ class WebMvcResourcesBasePlugin(colony.base.plugin_system.Plugin):
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
-        global web_mvc_resources_base
         import web_mvc_resources_base.resources_base.web_mvc_resources_base_system
         self.web_mvc_resources_base = web_mvc_resources_base.resources_base.web_mvc_resources_base_system.WebMvcResourcesBase(self)
 

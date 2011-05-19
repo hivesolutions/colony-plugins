@@ -87,7 +87,6 @@ class WebMvcManagerPageItemRepositoryPlugin(colony.base.plugin_system.Plugin):
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
-        global web_mvc_manager_page_item
         import web_mvc_manager_page_item.repository.web_mvc_manager_page_item_repository_system
         self.web_mvc_manager_page_item_repository = web_mvc_manager_page_item.repository.web_mvc_manager_page_item_repository_system.WebMvcManagerPageItemRepository(self)
 

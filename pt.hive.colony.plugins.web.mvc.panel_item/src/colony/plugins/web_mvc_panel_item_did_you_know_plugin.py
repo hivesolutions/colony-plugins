@@ -77,7 +77,6 @@ class WebMvcPanelItemDidYouKnowPlugin(colony.base.plugin_system.Plugin):
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
-        global web_mvc_panel_item
         import web_mvc_panel_item.did_you_know.web_mvc_panel_item_did_you_know_system
         self.web_mvc_panel_item_did_you_know = web_mvc_panel_item.did_you_know.web_mvc_panel_item_did_you_know_system.WebMvcPanelItemDidYouKnow(self)
 

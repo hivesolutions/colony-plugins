@@ -83,7 +83,6 @@ class WebMvcManagerPageItemDnsPlugin(colony.base.plugin_system.Plugin):
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
-        global web_mvc_manager_page_item
         import web_mvc_manager_page_item.dns.web_mvc_manager_page_item_dns_system
         self.web_mvc_manager_page_item_dns = web_mvc_manager_page_item.dns.web_mvc_manager_page_item_dns_system.WebMvcManagerPageItemDns(self)
 
