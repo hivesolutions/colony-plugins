@@ -78,7 +78,6 @@ class DnsStorageDatabasePlugin(colony.base.plugin_system.Plugin):
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
-        global dns_storage_database
         import dns_storage_database.database.dns_storage_database_system
         self.dns_storage_database = dns_storage_database.database.dns_storage_database_system.DnsStorageDatabase(self)
 
