@@ -81,6 +81,9 @@ class MainScaffoldingPlugin(colony.base.plugin_system.Plugin):
     console_main_scaffolding = None
     """ The console main scaffolding """
 
+    scaffolder_plugins = []
+    """ The scaffolder plugins """
+
     template_engine_manager_plugin = None
     """ The template engine manager plugin """
 
@@ -130,10 +133,12 @@ class MainScaffoldingPlugin(colony.base.plugin_system.Plugin):
 
     @colony.base.decorators.load_allowed_capability("scaffolder")
     def scaffolder_load_allowed(self, plugin, capability):
+        self.scaffolder_plugins.append(plugin)
         self.main_scaffolding.load_scaffolder_plugin(plugin)
 
     @colony.base.decorators.unload_allowed_capability("scaffolder")
     def scaffolder_unload_allowed(self, plugin, capability):
+        self.scaffolder_plugins.remove(plugin)
         self.main_scaffolding.unload_scaffolder_plugin(plugin)
 
     def get_template_engine_manager_plugin(self):
