@@ -40,7 +40,7 @@ __license__ = "GNU General Public License (GPL), Version 3"
 import os
 import re
 
-import colony.libs.structures_util.MultipleValueMap
+import colony.libs.structures_util
 
 import main_scaffolding_exceptions
 
@@ -140,8 +140,8 @@ UNIX_DIRECTORY_SEPARATOR = "/"
 TEMPLATES_PATH = "main_scaffolding/scaffolding/resources/templates"
 """ The templates path """
 
-DEVELOPMENT_PATH = "development"
-""" The development path """
+EXTRAS_PATH = "extras"
+""" The extras path """
 
 class MainScaffolding:
     """
@@ -490,11 +490,12 @@ class MainScaffolding:
         # retrieves the variable path
         variable_path = plugin_manager.get_variable_path()
 
-        # creates the development path from the variable path
-        development_path = os.path.join(variable_path, DEVELOPMENT_PATH)
+        # creates the extras path from the variable path
+        extras_path = os.path.join(variable_path, EXTRAS_PATH)
 
-        # creates the scaffold path by joining the plugin id to it
-        scaffold_path = os.path.join(development_path, plugin_id)
+        # creates the scaffold path by joining the plugin id to
+        # the extras path
+        scaffold_path = os.path.join(extras_path, plugin_id)
 
         # returns the scaffold path (for the plugin id)
         return scaffold_path
