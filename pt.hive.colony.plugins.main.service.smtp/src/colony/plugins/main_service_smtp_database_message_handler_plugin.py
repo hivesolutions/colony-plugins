@@ -78,7 +78,6 @@ class MainServiceSmtpDatabaseMessageHandlerPlugin(colony.base.plugin_system.Plug
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
-        global main_service_smtp_database_message_handler
         import main_service_smtp_database_message_handler.database_message_handler.main_service_smtp_database_message_handler_system
         self.main_service_smtp_database_message_handler = main_service_smtp_database_message_handler.database_message_handler.main_service_smtp_database_message_handler_system.MainServiceSmtpDatabaseMessageHandler(self)
 

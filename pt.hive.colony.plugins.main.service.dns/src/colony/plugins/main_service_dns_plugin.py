@@ -84,7 +84,6 @@ class MainServiceDnsPlugin(colony.base.plugin_system.Plugin):
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
-        global main_service_dns
         import main_service_dns.dns.main_service_dns_system
         self.main_service_dns = main_service_dns.dns.main_service_dns_system.MainServiceDns(self)
 

@@ -77,7 +77,6 @@ class MainServicePopDatabaseMessageProviderPlugin(colony.base.plugin_system.Plug
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
-        global main_service_pop_database_message_provider
         import main_service_pop_database_message_provider.database_message_provider.main_service_pop_database_message_provider_system
         self.main_service_pop_database_message_provider =  main_service_pop_database_message_provider.database_message_provider.main_service_pop_database_message_provider_system.MainServicePopDatabaseMessageProvider(self)
 

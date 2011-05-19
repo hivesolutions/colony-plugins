@@ -93,7 +93,6 @@ class MainServiceBittorrentPlugin(colony.base.plugin_system.Plugin):
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
-        global main_service_bittorrent
         import main_service_bittorrent.bittorrent.main_service_bittorrent_system
         self.main_service_bittorrent = main_service_bittorrent.bittorrent.main_service_bittorrent_system.MainServiceBittorrent(self)
 

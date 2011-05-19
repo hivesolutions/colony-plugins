@@ -79,7 +79,6 @@ class MainServiceSmtpMainAuthenticationHandlerPlugin(colony.base.plugin_system.P
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
-        global main_service_smtp_main_authentication_handler
         import main_service_smtp_main_authentication_handler.main_authentication_handler.main_service_smtp_main_authentication_handler_system
         self.main_service_smtp_main_authentication_handler =  main_service_smtp_main_authentication_handler.main_authentication_handler.main_service_smtp_main_authentication_handler_system.MainServiceSmtpMainAuthenticationHandler(self)
 

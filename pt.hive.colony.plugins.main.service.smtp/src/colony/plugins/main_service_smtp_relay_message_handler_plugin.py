@@ -83,7 +83,6 @@ class MainServiceSmtpRelayMessageHandlerPlugin(colony.base.plugin_system.Plugin)
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
-        global main_service_smtp_relay_message_handler
         import main_service_smtp_relay_message_handler.relay_message_handler.main_service_smtp_relay_message_handler_system
         self.main_service_smtp_relay_session_handler = main_service_smtp_relay_message_handler.relay_message_handler.main_service_smtp_relay_message_handler_system.MainServiceSmtpRelayMessageHandler(self)
 

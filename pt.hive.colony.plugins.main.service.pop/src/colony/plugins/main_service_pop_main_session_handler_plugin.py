@@ -78,7 +78,6 @@ class MainServicePopMainSessionHandlerPlugin(colony.base.plugin_system.Plugin):
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
-        global main_service_pop_main_session_handler
         import main_service_pop_main_session_handler.main_session_handler.main_service_pop_main_session_handler_system
         self.main_service_pop_main_session_handler =  main_service_pop_main_session_handler.main_session_handler.main_service_pop_main_session_handler_system.MainServicePopMainSessionHandler(self)
 

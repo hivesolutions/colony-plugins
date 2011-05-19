@@ -73,7 +73,6 @@ class MainServiceSslSocketUpgraderPlugin(colony.base.plugin_system.Plugin):
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
-        global main_service_ssl_socket_upgrader
         import main_service_ssl_socket_upgrader.ssl_socket_upgrader.main_service_ssl_socket_upgrader_system
         self.main_service_ssl_socket_upgrader = main_service_ssl_socket_upgrader.ssl_socket_upgrader.main_service_ssl_socket_upgrader_system.MainServiceSslSocketUpgrader(self)
 

@@ -80,7 +80,6 @@ class MainServiceHttpCgiHandlerPlugin(colony.base.plugin_system.Plugin):
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
-        global main_service_http_cgi_handler
         import main_service_http_cgi_handler.cgi_handler.main_service_http_cgi_handler_system
         self.main_service_http_cgi_handler = main_service_http_cgi_handler.cgi_handler.main_service_http_cgi_handler_system.MainServiceHttpCgiHandler(self)
 

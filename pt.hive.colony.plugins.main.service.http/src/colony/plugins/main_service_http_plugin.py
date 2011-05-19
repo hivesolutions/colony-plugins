@@ -98,7 +98,6 @@ class MainServiceHttpPlugin(colony.base.plugin_system.Plugin):
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
-        global main_service_http
         import main_service_http.http.main_service_http_system
         self.main_service_http = main_service_http.http.main_service_http_system.MainServiceHttp(self)
 

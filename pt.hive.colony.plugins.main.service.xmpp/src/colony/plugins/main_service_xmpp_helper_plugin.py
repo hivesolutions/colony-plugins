@@ -71,7 +71,6 @@ class MainServiceXmppHelperPlugin(colony.base.plugin_system.Plugin):
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
-        global main_service_xmpp_helper
         import main_service_xmpp_helper.xmpp_helper.main_service_xmpp_helper_system
         self.main_service_xmpp_helper = main_service_xmpp_helper.xmpp_helper.main_service_xmpp_helper_system.MainServiceXmppHelper(self)
 

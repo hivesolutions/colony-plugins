@@ -89,7 +89,6 @@ class MainServiceAbeculaCommunicationPushHandlerPlugin(colony.base.plugin_system
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
-        global main_service_abecula_communication_push_handler
         import main_service_abecula_communication_push_handler.communication_push_handler.main_service_abecula_communication_push_handler_system
         self.main_service_abecula_communication_push_handler = main_service_abecula_communication_push_handler.communication_push_handler.main_service_abecula_communication_push_handler_system.MainServiceAbeculaCommunicationPushHandler(self)
 

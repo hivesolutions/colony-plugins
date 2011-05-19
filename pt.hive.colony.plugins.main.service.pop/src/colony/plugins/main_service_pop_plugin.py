@@ -93,7 +93,6 @@ class MainServicePopPlugin(colony.base.plugin_system.Plugin):
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
-        global main_service_pop
         import main_service_pop.pop.main_service_pop_system
         self.main_service_pop = main_service_pop.pop.main_service_pop_system.MainServicePop(self)
 

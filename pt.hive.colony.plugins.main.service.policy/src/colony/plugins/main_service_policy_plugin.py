@@ -86,7 +86,6 @@ class MainServicePolicyPlugin(colony.base.plugin_system.Plugin):
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
-        global main_service_policy
         import main_service_policy.policy.main_service_policy_system
         self.main_service_policy = main_service_policy.policy.main_service_policy_system.MainServicePolicy(self)
 

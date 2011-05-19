@@ -79,7 +79,6 @@ class MainServiceDnsDatabaseHandlerPlugin(colony.base.plugin_system.Plugin):
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
-        global main_service_dns_database_handler
         import main_service_dns_database_handler.database_handler.main_service_dns_database_handler_system
         self.main_service_dns_database_handler = main_service_dns_database_handler.database_handler.main_service_dns_database_handler_system.MainServiceDnsDatabaseHandler(self)
 
