@@ -80,7 +80,6 @@ class TaskManagerPlugin(colony.base.plugin_system.Plugin):
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
-        global main_tasks
         import main_tasks.task_manager.task_manager_system
         self.task_manager = main_tasks.task_manager.task_manager_system.TaskManager(self)
 
