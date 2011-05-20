@@ -70,9 +70,7 @@ class MainLogPlugin(colony.base.plugin_system.Plugin):
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
-        global main_log
         import main_log.log.main_log_system
-
         self.main_log = main_log.log.main_log_system.MainLog(self)
 
     def end_load_plugin(self):
