@@ -76,7 +76,6 @@ class MainRestrictedPlugin(colony.base.plugin_system.PluginManagerPlugin):
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
-        global main_restricted
         import main_restricted.restricted.main_restricted_system
         self.main_restricted = main_restricted.restricted.main_restricted_system.MainRestricted(self)
 
