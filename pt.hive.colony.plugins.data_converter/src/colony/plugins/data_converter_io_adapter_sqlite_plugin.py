@@ -75,7 +75,6 @@ class DataConverterIoAdapterSqlitePlugin(colony.base.plugin_system.Plugin):
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
-        global data_converter_io_adapter_sqlite
         import data_converter_io_adapter_sqlite.io_adapter_sqlite.data_converter_io_adapter_sqlite_system
         self.io_adapter_sqlite = data_converter_io_adapter_sqlite.io_adapter_sqlite.data_converter_io_adapter_sqlite_system.IoAdapterSqlite(self)
 

@@ -75,7 +75,6 @@ class DataConverterIoAdapterCsvPlugin(colony.base.plugin_system.Plugin):
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
-        global data_converter_io_adapter_csv
         import data_converter_io_adapter_csv.io_adapter_csv.data_converter_io_adapter_csv_system
         self.io_adapter_csv = data_converter_io_adapter_csv.io_adapter_csv.data_converter_io_adapter_csv_system.IoAdapterCsv(self)
 

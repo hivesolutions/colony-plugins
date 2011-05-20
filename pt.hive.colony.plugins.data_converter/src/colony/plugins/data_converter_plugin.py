@@ -106,7 +106,6 @@ class DataConverterPlugin(colony.base.plugin_system.Plugin):
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
-        global data_converter
         import data_converter.data_converter.data_converter_system
         import data_converter.data_converter.console_data_converter
         self.data_converter = data_converter.data_converter.data_converter_system.DataConverter(self)

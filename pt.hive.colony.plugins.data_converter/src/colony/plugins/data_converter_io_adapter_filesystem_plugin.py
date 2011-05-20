@@ -75,7 +75,6 @@ class DataConverterIoAdapterFilesystemPlugin(colony.base.plugin_system.Plugin):
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
-        global data_converter_io_adapter_filesystem
         import data_converter_io_adapter_filesystem.io_adapter_filesystem.data_converter_io_adapter_filesystem_system
         self.io_adapter_filesystem = data_converter_io_adapter_filesystem.io_adapter_filesystem.data_converter_io_adapter_filesystem_system.IoAdapterFilesystem(self)
 

@@ -76,7 +76,6 @@ class DataConverterIoAdapterPicklePlugin(colony.base.plugin_system.Plugin):
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
-        global data_converter_io_adapter_pickle
         import data_converter_io_adapter_pickle.io_adapter_pickle.data_converter_io_adapter_pickle_system
         self.io_adapter_pickle = data_converter_io_adapter_pickle.io_adapter_pickle.data_converter_io_adapter_pickle_system.IoAdapterPickle(self)
 
