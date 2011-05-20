@@ -77,7 +77,6 @@ class JsonResourceParserPlugin(colony.base.plugin_system.Plugin):
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
-        global resources
         import resources.json_resource_parser.json_resource_parser_system
         self.json_resource_parser = resources.json_resource_parser.json_resource_parser_system.JsonResourceParser(self)
 

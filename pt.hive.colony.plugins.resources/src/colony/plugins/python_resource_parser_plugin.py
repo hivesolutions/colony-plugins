@@ -72,7 +72,6 @@ class PythonResourceParserPlugin(colony.base.plugin_system.Plugin):
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
-        global resources
         import resources.python_resource_parser.python_resource_parser_system
         self.python_resource_parser = resources.python_resource_parser.python_resource_parser_system.PythonResourceParser(self)
 

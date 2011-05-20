@@ -88,7 +88,6 @@ class ResourceManagerPlugin(colony.base.plugin_system.Plugin):
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
-        global resources
         import resources.resource_manager.resource_manager_system
         import resources.resource_manager.resource_manager_tests
         self.resource_manager = resources.resource_manager.resource_manager_system.ResourceManager(self)
