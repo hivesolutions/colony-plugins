@@ -71,7 +71,6 @@ class SimplePoolManagerPlugin(colony.base.plugin_system.Plugin):
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
-        global main_pool
         import main_pool.simple_pool_manager.simple_pool_manager_system
         self.simple_pool_manager = main_pool.simple_pool_manager.simple_pool_manager_system.SimplePoolManager(self)
 
