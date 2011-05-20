@@ -90,7 +90,6 @@ class DescriptorGeneratorPlugin(colony.base.plugin_system.Plugin):
 
     def end_load_plugin(self):
         colony.base.plugin_system.Plugin.end_load_plugin(self)
-        global descriptor_generator
         import descriptor_generator.generator.descriptor_generator_system
         import descriptor_generator.generator.console_descriptor_generator
         self.descriptor_generator = descriptor_generator.generator.descriptor_generator_system.DescriptorGenerator(self)
