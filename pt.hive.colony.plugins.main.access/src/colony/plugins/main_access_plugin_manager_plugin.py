@@ -70,7 +70,6 @@ class MainAccessPluginManagerPlugin(colony.base.plugin_system.Plugin):
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
-        global main_access
         import main_access.plugin_manager.main_access_plugin_manager_system
         self.main_access_plugin_manager = main_access.plugin_manager.main_access_plugin_manager_system.MainAccessPluginManager(self)
 
