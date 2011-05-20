@@ -76,7 +76,6 @@ class SecurityCaptchaPlugin(colony.base.plugin_system.Plugin):
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
-        global security_captcha
         import security_captcha.captcha.security_captcha_system
         self.security_captcha = security_captcha.captcha.security_captcha_system.SecurityCaptcha(self)
 
