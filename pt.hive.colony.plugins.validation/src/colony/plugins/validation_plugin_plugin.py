@@ -87,7 +87,6 @@ class ValidationPluginPlugin(colony.base.plugin_system.Plugin):
 
     def end_load_plugin(self):
         colony.base.plugin_system.Plugin.end_load_plugin(self)
-        global validation_plugin
         import validation_plugin.plugin.validation_plugin_system
         import validation_plugin.plugin.console_validation_plugin
         self.validation_plugin = validation_plugin.plugin.validation_plugin_system.ValidationPlugin(self)
