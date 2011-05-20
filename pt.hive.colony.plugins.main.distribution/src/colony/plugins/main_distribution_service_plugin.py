@@ -75,7 +75,6 @@ class MainDistributionServicePlugin(colony.base.plugin_system.Plugin):
     @colony.base.decorators.load_plugin("pt.hive.colony.plugins.distribution.main.registry.service", "1.0.0")
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
-        global main_distribution
         import main_distribution.service.main_distribution_service_system
         self.main_distribution_service = main_distribution.service.main_distribution_service_system.MainDistributionService(self)
 

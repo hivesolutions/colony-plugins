@@ -69,7 +69,6 @@ class MainDistributionPluginSystemPlugin(colony.base.plugin_system.Plugin):
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
-        global main_distribution
         import main_distribution.plugin_system.main_distribution_plugin_system_system
         self.main_distribution_plugin_system = main_distribution.plugin_system.main_distribution_plugin_system_system.MainDistributionPluginSystem(self)
 
