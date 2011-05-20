@@ -88,7 +88,6 @@ class BusinessHelperPlugin(colony.base.plugin_system.Plugin):
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
-        global business
         import business.helper.business_helper_system
         self.business_helper = business.helper.business_helper_system.BusinessHelper(self)
 

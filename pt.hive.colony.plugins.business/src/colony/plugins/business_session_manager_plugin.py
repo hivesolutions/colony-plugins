@@ -94,7 +94,6 @@ class BusinessSessionManagerPlugin(colony.base.plugin_system.Plugin):
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
-        global business
         import business.session_manager.business_session_manager_system
         self.business_session_manager = business.session_manager.business_session_manager_system.BusinessSessionManager(self)
 
