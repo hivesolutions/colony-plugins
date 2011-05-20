@@ -72,7 +72,6 @@ class InformationUserPlugin(colony.base.plugin_system.Plugin):
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
-        global information
         import information.user.information_user_system
         self.information_user = information.user.information_user_system.InformationUser(self)
 
