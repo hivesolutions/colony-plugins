@@ -71,7 +71,6 @@ class InstallationZipPlugin(colony.base.plugin_system.Plugin):
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
-        global installation
         import installation.zip.installation_zip_system
         self.installation_zip = installation.zip.installation_zip_system.InstallationZip(self)
 
