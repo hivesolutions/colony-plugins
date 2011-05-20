@@ -76,7 +76,6 @@ class MainModPythonPlugin(colony.base.plugin_system.Plugin):
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
-        global main_mod_python
         import main_mod_python.mod_python.main_mod_python_system
         self.main_mod_python = main_mod_python.mod_python.main_mod_python_system.MainModPython(self)
 
