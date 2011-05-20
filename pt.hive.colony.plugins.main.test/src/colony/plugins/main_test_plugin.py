@@ -95,7 +95,6 @@ class MainTestPlugin(colony.base.plugin_system.Plugin):
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
-        global main_test
         import main_test.test.main_test_system
         import main_test.test.console_test
         self.main_test = main_test.test.main_test_system.MainTest(self)
