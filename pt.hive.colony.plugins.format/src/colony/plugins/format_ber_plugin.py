@@ -73,7 +73,6 @@ class FormatBerPlugin(colony.base.plugin_system.Plugin):
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
-        global format
         import format.ber.format_ber_system
         self.format_ber = format.ber.format_ber_system.FormatBer(self)
 

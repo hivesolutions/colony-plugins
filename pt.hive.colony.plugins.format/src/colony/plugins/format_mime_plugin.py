@@ -74,7 +74,6 @@ class FormatMimePlugin(colony.base.plugin_system.Plugin):
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
-        global format
         import format.mime.format_mime_system
         self.format_mime = format.mime.format_mime_system.FormatMime(self)
 
