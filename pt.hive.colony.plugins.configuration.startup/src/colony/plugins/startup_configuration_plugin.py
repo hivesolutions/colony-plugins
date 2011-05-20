@@ -76,7 +76,6 @@ class StartupConfigurationPlugin(colony.base.plugin_system.PluginManagerPlugin):
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
-        global configuration_startup
         import configuration_startup.startup.startup_configuration_system
         self.startup_configuration = configuration_startup.startup.startup_configuration_system.StartupConfiguration(self)
         self.startup_configuration.load_startup_configuration_file()
