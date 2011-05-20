@@ -74,7 +74,6 @@ class EntityManagerHelperPlugin(colony.base.plugin_system.Plugin):
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
-        global data
         import data.entity_manager_helper.entity_manager_helper_system
         self.entity_manger_helper = data.entity_manager_helper.entity_manager_helper_system.EntityManagerHelper(self)
 
