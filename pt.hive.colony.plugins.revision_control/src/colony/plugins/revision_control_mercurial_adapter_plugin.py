@@ -73,7 +73,6 @@ class RevisionControlMercurialAdapterPlugin(colony.base.plugin_system.Plugin):
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
-        global revision_control
         import revision_control.mercurial_adapter.revision_control_mercurial_adapter_system
         self.revision_control_mercurial_adapter = revision_control.mercurial_adapter.revision_control_mercurial_adapter_system.RevisionControlMercurialAdapter(self)
 

@@ -82,7 +82,6 @@ class RevisionControlManagerPlugin(colony.base.plugin_system.Plugin):
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
-        global revision_control
         import revision_control.manager.revision_control_manager_system
         import revision_control.manager.console_revision_control_manager
         self.revision_control_manager = revision_control.manager.revision_control_manager_system.RevisionControlManager(self)

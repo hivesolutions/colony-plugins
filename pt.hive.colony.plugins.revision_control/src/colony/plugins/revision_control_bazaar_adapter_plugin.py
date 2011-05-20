@@ -73,7 +73,6 @@ class RevisionControlBazaarAdapterPlugin(colony.base.plugin_system.Plugin):
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
-        global revision_control
         import revision_control.bazaar_adapter.revision_control_bazaar_adapter_system
         self.revision_control_bazaar_adapter = revision_control.bazaar_adapter.revision_control_bazaar_adapter_system.RevisionControlBazaarAdapter(self)
 

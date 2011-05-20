@@ -74,7 +74,6 @@ class RevisionControlSubversionAdapterPlugin(colony.base.plugin_system.Plugin):
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
-        global revision_control
         import revision_control.subversion_adapter.revision_control_subversion_adapter_system
         self.revision_control_subversion_adapter = revision_control.subversion_adapter.revision_control_subversion_adapter_system.RevisionControlSubversionAdapter(self)
 
