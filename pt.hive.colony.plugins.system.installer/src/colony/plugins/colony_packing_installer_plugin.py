@@ -82,7 +82,6 @@ class ColonyPackingInstallerPlugin(colony.base.plugin_system.Plugin):
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
-        global system_installer
         import system_installer.colony_packing.colony_packing_installer_system
         self.colony_packing_installer = system_installer.colony_packing.colony_packing_installer_system.ColonyPackingInstaller(self)
 

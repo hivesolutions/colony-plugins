@@ -83,7 +83,6 @@ class SystemInstallerPlugin(colony.base.plugin_system.Plugin):
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
-        global system_installer
         import system_installer.installer.system_installer_system
         import system_installer.installer.console_system_installer
         self.system_installer = system_installer.installer.system_installer_system.SystemInstaller(self)
