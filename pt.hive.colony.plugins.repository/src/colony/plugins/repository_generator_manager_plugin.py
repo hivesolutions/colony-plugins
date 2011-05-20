@@ -78,7 +78,6 @@ class RepositoryGeneratorManagerPlugin(colony.base.plugin_system.Plugin):
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
-        global repository
         import repository.generator_manager.repository_generator_manager_system
         self.repository_generator_manager = repository.generator_manager.repository_generator_manager_system.RepositoryGeneratorManager(self)
 

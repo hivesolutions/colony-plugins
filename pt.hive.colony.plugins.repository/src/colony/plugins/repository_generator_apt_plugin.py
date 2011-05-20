@@ -81,7 +81,6 @@ class RepositoryGeneratorAptPlugin(colony.base.plugin_system.Plugin):
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
-        global repository
         import repository.generator_apt.repository_generator_apt_system
         self.repository_generator_apt = repository.generator_apt.repository_generator_apt_system.RepositoryGeneratorApt(self)
 
