@@ -76,12 +76,15 @@ class EntityManagerPlugin(colony.base.plugin_system.Plugin):
     entity_manager = None
     """ The entity manager """
 
+    entity_manager_decorators_module = None
+    """ The entity manager decorators module """
+
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
-        global data
         import data.entity_manager.entity_manager_system
         import data.entity_manager.entity_manager_decorators
         self.entity_manager = data.entity_manager.entity_manager_system.DataEntityManager(self)
+        self.entity_manager_decorators_module = data.entity_manager.entity_manager_decorators
 
     def end_load_plugin(self):
         colony.base.plugin_system.Plugin.end_load_plugin(self)
@@ -139,7 +142,7 @@ class EntityManagerPlugin(colony.base.plugin_system.Plugin):
         @return: The transaction decorator function.
         """
 
-        return data.entity_manager.entity_manager_decorators.transaction
+        return self.entity_manager_decorators_module.transaction
 
     def get_lock_table_decorator(self):
         """
@@ -150,7 +153,7 @@ class EntityManagerPlugin(colony.base.plugin_system.Plugin):
         @return: The lock table decorator function.
         """
 
-        return data.entity_manager.entity_manager_decorators.lock_table
+        return self.entity_manager_decorators_module.lock_table
 
     @colony.base.decorators.load_allowed_capability("entity_manager_engine")
     def entity_manager_engine_load_allowed(self, plugin, capability):
