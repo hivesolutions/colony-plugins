@@ -70,7 +70,6 @@ class StdoutMessagingExtensionPlugin(colony.base.plugin_system.Plugin):
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
-        global messaging_extensions
         import messaging_extensions.stdout.stdout_messaging_extension_system
         self.stdout_messaging_extension = messaging_extensions.stdout.stdout_messaging_extension_system.StdoutMessagingExtension(self)
 

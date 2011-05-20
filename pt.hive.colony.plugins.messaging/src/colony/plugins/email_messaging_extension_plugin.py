@@ -74,7 +74,6 @@ class EmailMessagingExtensionPlugin(colony.base.plugin_system.Plugin):
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
-        global messaging_extensions
         import messaging_extensions.email.email_messaging_extension_system
         self.email_messaging_extension = messaging_extensions.email.email_messaging_extension_system.EmailMessagingExtension(self)
 
