@@ -78,7 +78,6 @@ class MailQueueDatabasePlugin(colony.base.plugin_system.Plugin):
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
-        global mail_queue_database
         import mail_queue_database.database.mail_queue_database_system
         self.mail_queue_database = mail_queue_database.database.mail_queue_database_system.MailQueueDatabase(self)
 
