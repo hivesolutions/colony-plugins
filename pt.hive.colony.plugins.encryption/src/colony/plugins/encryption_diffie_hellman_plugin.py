@@ -71,7 +71,6 @@ class EncryptionDiffieHellmanPlugin(colony.base.plugin_system.Plugin):
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
-        global encryption
         import encryption.diffie_hellman.encryption_diffie_hellman_system
         self.encryption_diffie_hellman = encryption.diffie_hellman.encryption_diffie_hellman_system.EncryptionDiffieHellman(self)
 

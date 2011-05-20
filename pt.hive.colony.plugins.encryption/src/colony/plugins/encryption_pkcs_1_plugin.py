@@ -79,7 +79,6 @@ class EncryptionPkcs1Plugin(colony.base.plugin_system.Plugin):
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
-        global encryption
         import encryption.pkcs_1.encryption_pkcs_1_system
         self.encryption_pkcs_1 = encryption.pkcs_1.encryption_pkcs_1_system.EncryptionPkcs1(self)
 
