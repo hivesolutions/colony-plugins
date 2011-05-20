@@ -77,7 +77,6 @@ class PrintingWin32Plugin(colony.base.plugin_system.Plugin):
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
-        global printing
         import printing.win32.printing_win32_system
         self.printing_win32 = printing.win32.printing_win32_system.PrintingWin32(self)
 

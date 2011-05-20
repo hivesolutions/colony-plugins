@@ -86,7 +86,6 @@ class PrintingManagerPlugin(colony.base.plugin_system.Plugin):
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
-        global printing
         import printing.manager.printing_manager_system
         import printing.manager.console_printing_manager
         self.printing_manager = printing.manager.printing_manager_system.PrintingManager(self)
