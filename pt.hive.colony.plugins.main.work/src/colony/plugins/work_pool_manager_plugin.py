@@ -82,7 +82,6 @@ class WorkPoolManagerPlugin(colony.base.plugin_system.Plugin):
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
-        global main_work
         import main_work.work_pool_manager.work_pool_manager_system
         self.work_pool_manager = main_work.work_pool_manager.work_pool_manager_system.WorkPoolManager(self)
 
