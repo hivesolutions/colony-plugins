@@ -69,7 +69,6 @@ class UtilJavascriptMinifierPlugin(colony.base.plugin_system.Plugin):
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
-        global util_javascript_minifier
         import util_javascript_minifier.javascript_minifier.util_javascript_minifier_system
         self.util_javascript_minifier = util_javascript_minifier.javascript_minifier.util_javascript_minifier_system.UtilJavascriptMinifier(self)
 
