@@ -78,7 +78,6 @@ class EntityManagerSqliteEnginePlugin(colony.base.plugin_system.Plugin):
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
-        global data
         import data.entity_manager_sqlite_engine.entity_manager_sqlite_engine_system
         self.entity_manager_sqlite_engine = data.entity_manager_sqlite_engine.entity_manager_sqlite_engine_system.EntityManagerSqliteEngine(self)
 
