@@ -71,7 +71,6 @@ class MainCacheManagerPlugin(colony.base.plugin_system.Plugin):
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
-        global main_cache_manager
         import main_cache_manager.manager.main_cache_manager_system
         self.main_cache_manager = main_cache_manager.manager.main_cache_manager_system.MainCacheManager(self)
 
