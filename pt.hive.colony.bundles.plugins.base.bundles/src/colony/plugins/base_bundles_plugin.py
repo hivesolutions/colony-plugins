@@ -69,7 +69,6 @@ class BaseBundlesPlugin(colony.base.plugin_system.Plugin):
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
-        global base_bundles
         import base_bundles.bundles.base_bundles_system
         self.base_bundles = base_bundles.bundles.base_bundles_system.BaseBundles(self)
 
