@@ -70,7 +70,6 @@ class DependenciesCalculatorPlugin(colony.base.plugin_system.Plugin):
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
-        global misc
         import misc.dependencies_calculator.dependencies_calculator_system
         self.dependencies_calculator = misc.dependencies_calculator.dependencies_calculator_system.DependenciesCalculator(self)
 

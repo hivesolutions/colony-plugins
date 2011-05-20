@@ -86,7 +86,6 @@ class EmailPlugin(colony.base.plugin_system.Plugin):
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
-        global misc
         import misc.email.email_system
         import misc.email.console_email
         self.email = misc.email.email_system.Email(self)

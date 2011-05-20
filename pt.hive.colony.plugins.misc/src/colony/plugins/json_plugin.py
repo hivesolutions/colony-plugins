@@ -73,7 +73,6 @@ class JsonPlugin(colony.base.plugin_system.Plugin):
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
-        global misc
         import misc.json.json_system
         self.json_system = misc.json.json_system.Json(self)
 

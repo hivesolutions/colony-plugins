@@ -77,7 +77,6 @@ class AutoloaderPlugin(colony.base.plugin_system.Plugin):
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
-        global misc
         import misc.autoloader.autoloader_system
         import misc.autoloader.console_autoloader
         self.autoloader = misc.autoloader.autoloader_system.Autoloader(self)

@@ -83,7 +83,6 @@ class DownloaderPlugin(colony.base.plugin_system.Plugin):
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
-        global misc
         import misc.downloader.downloader_system
         import misc.downloader.console_downloader
         self.downloader = misc.downloader.downloader_system.Downloader(self)

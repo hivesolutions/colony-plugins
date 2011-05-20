@@ -71,7 +71,6 @@ class GzipPlugin(colony.base.plugin_system.Plugin):
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
-        global misc
         import misc.gzip.gzip_system
         self.gzip_system = misc.gzip.gzip_system.Gzip(self)
 

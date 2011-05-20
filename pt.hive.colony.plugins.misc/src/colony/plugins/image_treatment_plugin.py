@@ -73,7 +73,6 @@ class ImageTreatmentPlugin(colony.base.plugin_system.Plugin):
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
-        global misc
         import misc.image_treatment.image_treatment_system
         self.image_treatment = misc.image_treatment.image_treatment_system.ImageTreatment(self)
 

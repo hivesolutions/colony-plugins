@@ -73,7 +73,6 @@ class CommandExecutionPlugin(colony.base.plugin_system.Plugin):
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
-        global misc
         import misc.command_execution.command_execution_system
         self.command_execution = misc.command_execution.command_execution_system.CommandExecution(self)
 

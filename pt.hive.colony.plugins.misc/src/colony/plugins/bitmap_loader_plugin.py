@@ -73,7 +73,6 @@ class BitmapLoaderPlugin(colony.base.plugin_system.Plugin):
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
-        global misc
         import misc.bitmap_loader.bitmap_loader_system
         self.bitmap_loader = misc.bitmap_loader.bitmap_loader_system.BitmapLoader(self)
 

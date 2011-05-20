@@ -88,7 +88,6 @@ class SchedulerPlugin(colony.base.plugin_system.Plugin):
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
-        global misc
         import misc.scheduler.scheduler_system
         import misc.scheduler.console_scheduler
         self.scheduler = misc.scheduler.scheduler_system.Scheduler(self)

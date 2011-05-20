@@ -70,7 +70,6 @@ class ExecutionEnvironmentPlugin(colony.base.plugin_system.Plugin):
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
-        global misc
         import misc.execution_environment.execution_environment_system
         self.execution_environment = misc.execution_environment.execution_environment_system.ExecutionEnvironment(self)
 

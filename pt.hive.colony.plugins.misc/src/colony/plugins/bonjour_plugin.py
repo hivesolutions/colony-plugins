@@ -80,7 +80,6 @@ class BonjourPlugin(colony.base.plugin_system.Plugin):
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
-        global misc
         import misc.bonjour.bonjour_system
         self.bonjour = misc.bonjour.bonjour_system.Bonjour(self)
 

@@ -75,7 +75,6 @@ class RepositoryDescriptorGeneratorPlugin(colony.base.plugin_system.Plugin):
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
-        global misc
         import misc.repository_descriptor_generator.repository_descriptor_generator_system
         import misc.repository_descriptor_generator.console_repository_descriptor_generator
         self.repository_descriptor_generator = misc.repository_descriptor_generator.repository_descriptor_generator_system.RepositoryDescriptorGenerator(self)
