@@ -70,8 +70,6 @@ STATUS_TASK_PAUSED = progress_information_logic.STATUS_PAUSED
 STATUS_TASK_STOPPING = progress_information_logic.STATUS_STOPPING
 STATUS_TASK_STOPPED = progress_information_logic.STATUS_STOPPED
 
-#@todo: review and comment this file
-#@TODO fazer refactor a todo a parte grafica para que fique com bom aspecto os nomes das variaveis etc.
 class ProgressInformation:
 
     progress_information_plugin = None
@@ -197,8 +195,6 @@ class ProgressInformationPanel(wx.Panel):
         wx.Panel.__init__(self, parent, wx.ID_ANY)
 
         self.progress_information = progress_information
-
-        progress_information_items_list = []
 
         self.panel = wx.lib.scrolledpanel.ScrolledPanel(self, wx.ID_ANY, style = wx.DOUBLE_BORDER | wx.TAB_TRAVERSAL)
         self.bitmap_1 = wx.StaticBitmap(self, wx.ID_ANY, wx.ArtProvider_GetBitmap(wx.ART_INFORMATION))

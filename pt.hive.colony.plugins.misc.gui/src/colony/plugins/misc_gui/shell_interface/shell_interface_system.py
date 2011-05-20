@@ -37,20 +37,32 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-import wx
 import wx.py
 
 INTRO_MESSAGE = "Welcome to the plugin system shell"
+""" The introduction message """
 
-#@todo: review and comment this file
 class ShellInterface:
 
     shell_interface_plugin = None
+    """ The shell interface plugin """
 
     def __init__(self, shell_interface_plugin):
+        """
+        Constructor of the class.
+
+        @type shell_interface_plugin: ShellInterfacePlugin
+        @param shell_interface_plugin: The shell interface plugin.
+        """
+
         self.shell_interface_plugin = shell_interface_plugin
 
     def do_panel(self, parent):
+        # creates the shell panel
         shell_panel = wx.py.shell.Shell(parent, wx.ID_ANY, introText = INTRO_MESSAGE)
+
+        # enables line numbers in the shell panel
         shell_panel.setDisplayLineNumbers(True)
+
+        # returns the shell panel
         return shell_panel

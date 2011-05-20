@@ -79,7 +79,6 @@ class ConsoleInterfacePlugin(colony.base.plugin_system.Plugin):
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
-        global misc_gui
         import misc_gui.console_interface.console_interface_system
         self.console_interface = misc_gui.console_interface.console_interface_system.ConsoleInterface(self)
 

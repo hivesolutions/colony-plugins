@@ -62,20 +62,19 @@ class PluginManagerInterfacePlugin(colony.base.plugin_system.Plugin):
         "build_automation_item"
     ]
     dependencies = [
-        colony.base.plugin_system.PluginDependency("pt.hive.colony.plugins.misc.gui.tree_visualizer", "1.0.0"),
         colony.base.plugin_system.PackageDependency("Wx Python", "wx", "2.8.7.x", "http://wxpython.org")
     ]
     main_modules = [
         "misc_gui.plugin_manager_interface.plugin_manager_interface_system"
     ]
 
-    panel = None
-    """ The panel """
+    plugin_manager_interface = None
+    """ The plugin manager interface """
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
-        global misc_gui
         import misc_gui.plugin_manager_interface.plugin_manager_interface_system
+        self.plugin_manager_interface = misc_gui.plugin_manager_interface.plugin_manager_interface_system.PluginManagerInterface(self)
 
     def end_load_plugin(self):
         colony.base.plugin_system.Plugin.end_load_plugin(self)
@@ -95,7 +94,5 @@ class PluginManagerInterfacePlugin(colony.base.plugin_system.Plugin):
     def dependency_injected(self, plugin):
         colony.base.plugin_system.Plugin.dependency_injected(self, plugin)
 
-    def do_panel(self, parent):
-        self.panel = misc_gui.plugin_manager_interface.plugin_manager_interface_system.PluginManagerPanel(parent, self)
-        self.panel.reset_interface()
-        return self.panel
+    def do_panel(self, parent_widget):
+        return self.plugin_manager_interface.do_panel(parent_widget)

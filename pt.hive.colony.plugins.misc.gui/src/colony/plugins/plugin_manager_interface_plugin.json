@@ -10,10 +10,7 @@
     "author" : "Hive Solutions Lda. <development@hive.pt>",
     "capabilities" : ["gui_panel", "build_automation_item"],
     "capabilities_allowed" : [],
-    "dependencies" : [{
-                "id" : "pt.hive.colony.plugins.misc.gui.tree_visualizer",
-                "version" : "1.0.0"
-            }],
+    "dependencies" : [],
     "main_file" : "plugin_manager_interface_plugin.py",
     "resources" : [
             "plugin_manager_interface_plugin.py",
