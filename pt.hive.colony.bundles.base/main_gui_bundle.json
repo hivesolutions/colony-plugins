@@ -11,12 +11,6 @@
                 "id" : "pt.hive.colony.plugins.misc.gui.console_interface",
                 "version" : "1.0.0"
             }, {
-                "id" : "pt.hive.colony.plugins.misc.gui.dependencies_visualizer",
-                "version" : "1.0.0"
-            }, {
-                "id" : "pt.hive.colony.plugins.misc.gui.garbage_collector_visualizer",
-                "version" : "1.0.0"
-            }, {
                 "id" : "pt.hive.colony.plugins.misc.gui.plugin_manager_interface",
                 "version" : "1.0.0"
             }, {
@@ -25,17 +19,8 @@
             }, {
                 "id" : "pt.hive.colony.plugins.misc.gui.shell_interface",
                 "version" : "1.0.0"
-            }, {
-                "id" : "pt.hive.colony.plugins.misc.gui.system_updater_interface",
-                "version" : "1.0.0"
-            }, {
-                "id" : "pt.hive.colony.plugins.misc.gui.tree_visualizer",
-                "version" : "1.0.0"
             }],
     "dependencies" : [{
-                "id" : "pt.hive.colony.bundles.dependencies_calculator",
-                "version" : "1.0.0"
-            }, {
                 "id" : "pt.hive.colony.bundles.main.console",
                 "version" : "1.0.0"
             }, {
