@@ -79,7 +79,6 @@ class BusinessDummyEntityBundlePlugin(colony.base.plugin_system.Plugin):
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
-        global business_dummy
         import business_dummy.dummy_entity_bundle.business_dummy_entity_bundle_system
         self.business_dummy_entity_bundle = business_dummy.dummy_entity_bundle.business_dummy_entity_bundle_system.BusinessDummyEntityBundle(self)
 
