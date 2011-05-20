@@ -82,7 +82,6 @@ class WebEntityManagerAdministrationPlugin(colony.base.plugin_system.Plugin):
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
-        global web_entity_manager_administration
         import web_entity_manager_administration.administration.web_entity_manager_administration_system
         self.web_entity_manager_administration = web_entity_manager_administration.administration.web_entity_manager_administration_system.WebEntityManagerAdministration(self)
 
