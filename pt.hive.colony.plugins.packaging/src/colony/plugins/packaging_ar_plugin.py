@@ -71,7 +71,6 @@ class PackagingArPlugin(colony.base.plugin_system.Plugin):
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
-        global packaging
         import packaging.ar.packaging_ar_system
         self.packaging_ar = packaging.ar.packaging_ar_system.PackagingAr(self)
 

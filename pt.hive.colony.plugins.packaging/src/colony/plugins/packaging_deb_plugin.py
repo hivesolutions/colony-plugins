@@ -77,7 +77,6 @@ class PackagingDebPlugin(colony.base.plugin_system.Plugin):
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
-        global packaging
         import packaging.deb.packaging_deb_system
         self.packaging_deb = packaging.deb.packaging_deb_system.PackagingDeb(self)
 
