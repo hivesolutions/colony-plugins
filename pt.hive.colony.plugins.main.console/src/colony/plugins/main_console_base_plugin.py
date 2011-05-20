@@ -79,7 +79,6 @@ class MainConsoleBasePlugin(colony.base.plugin_system.Plugin):
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
-        global main_console
         import main_console.base.main_console_base_system
         self.console_base = main_console.base.main_console_base_system.MainConsoleBase(self)
 
