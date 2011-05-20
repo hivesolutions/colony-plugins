@@ -71,7 +71,6 @@ class ThreadPoolManagerPlugin(colony.base.plugin_system.Plugin):
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
-        global main_threads
         import main_threads.thread_pool_manager.thread_pool_manager_system
         self.thread_pool_manager = main_threads.thread_pool_manager.thread_pool_manager_system.ThreadPoolManager(self)
 
