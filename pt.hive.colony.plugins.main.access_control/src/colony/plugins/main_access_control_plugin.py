@@ -70,7 +70,6 @@ class MainAccessControlPlugin(colony.base.plugin_system.Plugin):
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
-        global main_access_control
         import main_access_control.access_control.main_access_control_system
         self.main_access_control = main_access_control.access_control.main_access_control_system.MainAccessControl(self)
 
