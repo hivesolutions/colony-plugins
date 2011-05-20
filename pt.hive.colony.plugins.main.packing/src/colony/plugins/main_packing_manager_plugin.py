@@ -83,7 +83,6 @@ class MainPackingManagerPlugin(colony.base.plugin_system.Plugin):
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
-        global main_packing
         import main_packing.manager.main_packing_manager_system
         import main_packing.manager.console_main_packing_manager
         self.main_packing_manager = main_packing.manager.main_packing_manager_system.MainPackingManager(self)
