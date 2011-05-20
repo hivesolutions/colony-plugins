@@ -74,7 +74,6 @@ class LanguageWikiPlugin(colony.base.plugin_system.Plugin):
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
-        global _language_wiki
         import _language_wiki.wiki.language_wiki_system
         self.language_wiki = _language_wiki.wiki.language_wiki_system.LanguageWiki(self)
 
