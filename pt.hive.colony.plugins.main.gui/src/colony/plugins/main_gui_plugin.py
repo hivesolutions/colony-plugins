@@ -86,6 +86,9 @@ class MainGuiPlugin(colony.base.plugin_system.Plugin):
     main_gui = None
     """ The main gui """
 
+    main_window_module = None
+    """ The main window module """
+
     application = None
     """ The application """
 
@@ -94,26 +97,23 @@ class MainGuiPlugin(colony.base.plugin_system.Plugin):
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
-        global main_gui
         import main_gui.gui.main_gui_system
         import main_gui.gui.main_window
-
         self.main_gui = main_gui.gui.main_gui_system.MainGui(self)
+        self.main_window_module = main_gui.gui.main_window
 
         # notifies the ready semaphore
         self.release_ready_semaphore()
 
     def end_load_plugin(self):
         colony.base.plugin_system.Plugin.end_load_plugin(self)
-        if not self.application:
-            self.application = main_gui.gui.main_window.MainApplication(0, self)
+        self.application = not self.application and self.main_window_module.MainApplication(0, self) or self.application
         self.application.load_main_frame()
         self.application.MainLoop()
 
     def unload_plugin(self):
         colony.base.plugin_system.Plugin.unload_plugin(self)
         self.application.unload()
-        self.bitmap_loader_plugin = None
 
         # notifies the ready semaphore
         self.release_ready_semaphore()
