@@ -281,6 +281,39 @@
                             <mode>755</mode>
                             <parameters>
                                 <deb>
+                                    <source>usr/bin/colony_pypy</source>
+                                    <target>/usr/lib/colony/scripts/unix/colony_pypy.sh</target>
+                                </deb>
+                            </parameters>
+                        </link>
+                        <link>
+                            <owner>0</owner>
+                            <group>0</group>
+                            <mode>755</mode>
+                            <parameters>
+                                <deb>
+                                    <source>usr/bin/colony_jython</source>
+                                    <target>/usr/lib/colony/scripts/unix/colony_jython.sh</target>
+                                </deb>
+                            </parameters>
+                        </link>
+                        <link>
+                            <owner>0</owner>
+                            <group>0</group>
+                            <mode>755</mode>
+                            <parameters>
+                                <deb>
+                                    <source>usr/bin/colony_ironpython</source>
+                                    <target>/usr/lib/colony/scripts/unix/colony_ironpython.sh</target>
+                                </deb>
+                            </parameters>
+                        </link>
+                        <link>
+                            <owner>0</owner>
+                            <group>0</group>
+                            <mode>755</mode>
+                            <parameters>
+                                <deb>
                                     <source>usr/bin/colony_deploy</source>
                                     <target>/usr/lib/colony/scripts/unix/colony_deploy.sh</target>
                                 </deb>
