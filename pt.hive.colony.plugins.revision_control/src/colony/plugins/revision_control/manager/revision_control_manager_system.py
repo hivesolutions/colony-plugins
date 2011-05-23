@@ -407,7 +407,7 @@ class Revision:
         """
         Retrieves the date.
 
-        @rtype: datetime.datetime
+        @rtype: datetime
         @return: The revision date.
         """
 
@@ -417,7 +417,7 @@ class Revision:
         """
         Sets the date.
 
-        @type date: datetime.datetime
+        @type date: datetime
         @param date: The date.
         """
 
@@ -427,7 +427,7 @@ class Revision:
         """
         Retrieves the timestamp.
 
-        @rtype: Integer
+        @rtype: int
         @return: The date as an utc timestamp.
         """
 
@@ -437,7 +437,7 @@ class Revision:
         """
         Sets the timestamp.
 
-        @type timestamp: Integer
+        @type timestamp: int
         @param timestamp: The utc timestamp for the revision.
         """
 
