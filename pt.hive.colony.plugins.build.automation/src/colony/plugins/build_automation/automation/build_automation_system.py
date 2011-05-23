@@ -1812,7 +1812,7 @@ class RuntimeInformationStructure:
         @param success: Flag controlling the success of the current build automation.
         @type logging_buffer: StringBuffer
         @param logging_buffer: The date time structure of the beginning of the run.
-        @type initial_date_time: DateTime
+        @type initial_date_time: datetime
         @param initial_date_time: The date time structure of the beginning of the run.
         @type skipped: bool
         @param skipped: Flag controlling if the build automation was skipped.
