@@ -40,6 +40,7 @@ __license__ = "GNU General Public License (GPL), Version 3"
 import os
 import pysvn
 import types
+import calendar
 import datetime
 
 import colony.libs.path_util
@@ -252,8 +253,11 @@ class RevisionControlSubversionAdapter:
         # removes the log messages
         # which are before the start time
         for log_message in log_messages:
+            # retrieves the log message timestamp
+            log_message_timestamp = log_message.get_timestamp()
+
             # in case the log message is before the start time
-            if log_message.time < start_time:
+            if log_message_timestamp < start_time:
                 # removes the log message from the list
                 filtered_log_messages.remove(log_message)
             # otherwise
@@ -264,8 +268,11 @@ class RevisionControlSubversionAdapter:
         # removes the log messages
         # which are after the end time
         for log_message in reversed(log_messages):
+            # retrieves the log message utc time stamp
+            log_message_timestamp = log_message.get_timestamp()
+
             # in case the log message is after the start time
-            if log_message.time > end_time:
+            if log_message_timestamp > end_time:
                 # removes the log message from the list
                 filtered_log_messages.remove(log_message)
             # otherwise
@@ -517,7 +524,7 @@ class RevisionControlSubversionAdapter:
         revision.set_author(author_decoded)
 
         # sets the date in the revision
-        revision.set_date_utc_timestamp(date)
+        revision.set_timestamp(date)
 
         # sets the message in the revision
         revision.set_message(message_decoded)
@@ -707,7 +714,7 @@ class SubversionAdapterRevision:
     date = None
     """ The revision datetime.datetime date """
 
-    time = None
+    timestamp = None
     """ The revision timestamp """
 
     author = "none"
@@ -740,14 +747,27 @@ class SubversionAdapterRevision:
         return self.date
 
     def set_date(self, date):
-        self.date = date
+        # retrieves an utc time tuple from the date
+        date_utc_time_tuple = date.utctimetuple()
 
-    def set_date_utc_timestamp(self, date_utc_timestamp):
-        # sets the timestamp
-        self.time = date_utc_timestamp
+        # converts the time tuple to unix timestamp
+        date_utc_timestamp = calendar.timegm(date_utc_time_tuple)
 
         # sets the date datetime
-        self.date = datetime.datetime.utcfromtimestamp(date_utc_timestamp)
+        self.date = date
+
+        # sets the timestamp
+        self.timestamp = date_utc_timestamp
+
+    def get_timestamp(self):
+        return self.timestamp
+
+    def set_timestamp(self, timestamp):
+        # sets the timestamp
+        self.timestamp = timestamp
+
+        # sets the date datetime
+        self.date = datetime.datetime.utcfromtimestamp(timestamp)
 
     def get_author(self):
         return self.author

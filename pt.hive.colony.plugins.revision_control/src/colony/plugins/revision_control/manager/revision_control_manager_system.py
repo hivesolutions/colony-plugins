@@ -347,6 +347,9 @@ class Revision:
     date = None
     """ The revision datetime.datetime date """
 
+    timestamp = None
+    """ The revision utc timestamp """
+
     author = "none"
     """ The revision author """
 
@@ -419,6 +422,27 @@ class Revision:
         """
 
         self.date = date
+
+    def get_timestamp(self):
+        """
+        Retrieves the timestamp.
+
+        @rtype: Integer
+        @return: The date as an utc timestamp.
+        """
+
+        return self.timestamp
+
+    def set_timestamp(self, timestamp):
+        """
+        Sets the timestamp.
+
+        @type timestamp: Integer
+        @param timestamp: The utc timestamp for the revision.
+        """
+
+        # sets the timestamp
+        self.timestamp = timestamp
 
     def get_author(self):
         """
