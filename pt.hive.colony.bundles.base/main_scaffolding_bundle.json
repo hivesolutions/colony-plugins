@@ -8,19 +8,19 @@
                 "id" : "pt.hive.colony.plugins.main.scaffolding",
                 "version" : "1.0.0"
             }, {
-                "id" : "pt.hive.colony.plugins.main.scaffolding.minimal_mvc",
+                "id" : "pt.hive.colony.plugins.main.scaffolding.base",
                 "version" : "1.0.0"
             }, {
-                "id" : "pt.hive.colony.plugins.main.scaffolding.minimal_simple",
+                "id" : "pt.hive.colony.plugins.main.scaffolding.minimal_base",
+                "version" : "1.0.0"
+            }, {
+                "id" : "pt.hive.colony.plugins.main.scaffolding.minimal_mvc",
                 "version" : "1.0.0"
             }, {
                 "id" : "pt.hive.colony.plugins.main.scaffolding.mvc",
                 "version" : "1.0.0"
             }, {
                 "id" : "pt.hive.colony.plugins.main.scaffolding.mvc_manager",
-                "version" : "1.0.0"
-            }, {
-                "id" : "pt.hive.colony.plugins.main.scaffolding.simple",
                 "version" : "1.0.0"
             }],
     "dependencies" : [{
