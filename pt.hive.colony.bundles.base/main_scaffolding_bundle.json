@@ -8,7 +8,10 @@
                 "id" : "pt.hive.colony.plugins.main.scaffolding",
                 "version" : "1.0.0"
             }, {
-                "id" : "pt.hive.colony.plugins.main.scaffolding.minimal",
+                "id" : "pt.hive.colony.plugins.main.scaffolding.minimal_mvc",
+                "version" : "1.0.0"
+            }, {
+                "id" : "pt.hive.colony.plugins.main.scaffolding.minimal_simple",
                 "version" : "1.0.0"
             }, {
                 "id" : "pt.hive.colony.plugins.main.scaffolding.mvc",
