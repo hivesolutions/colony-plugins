@@ -46,10 +46,10 @@ RELATIVE_DESTINATION_FILE_PATH_FORMAT_VALUE = "relative_destination_file_path_fo
 UNIX_DIRECTORY_SEPARATOR = "/"
 """ The unix directory separator """
 
-SCAFFOLDER_TYPE = "minimal_simple"
+SCAFFOLDER_TYPE = "minimal_base"
 """ The scaffolder type """
 
-TEMPLATES_PATH = "minimal_simple_scaffolder/scaffolder/resources/templates"
+TEMPLATES_PATH = "minimal_base_scaffolder/scaffolder/resources/templates"
 """ The templates path """
 
 TEMPLATES_MAP = {
@@ -76,23 +76,23 @@ TEMPLATES_MAP = {
 }
 """ The templates map """
 
-class MinimalSimpleScaffolder:
+class MinimalBaseScaffolder:
     """
-    The minimal simple scaffolder.
+    The minimal base scaffolder.
     """
 
-    minimal_simple_scaffolder_plugin = None
-    """ The minimal simple scaffolder plugin """
+    minimal_base_scaffolder_plugin = None
+    """ The minimal base scaffolder plugin """
 
-    def __init__(self, minimal_simple_scaffolder_plugin):
+    def __init__(self, minimal_base_scaffolder_plugin):
         """
         Constructor of the class.
 
-        @type minimal_simple_scaffolder_plugin: MinimalSimpleScaffolderPlugin
-        @param minimal_simple_scaffolder_plugin: The minimal simple scaffolder plugin.
+        @type minimal_base_scaffolder_plugin: MinimalBaseScaffolderPlugin
+        @param minimal_base_scaffolder_plugin: The minimal base scaffolder plugin.
         """
 
-        self.minimal_simple_scaffolder_plugin = minimal_simple_scaffolder_plugin
+        self.minimal_base_scaffolder_plugin = minimal_base_scaffolder_plugin
 
     def get_scaffolder_type(self):
         return SCAFFOLDER_TYPE
