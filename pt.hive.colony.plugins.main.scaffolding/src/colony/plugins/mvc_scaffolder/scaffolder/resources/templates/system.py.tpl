@@ -43,9 +43,6 @@ DEFAULT_DATABASE_SUFFIX = "database.db"
 DEFAULT_DATABASE_PREFIX = "${out value=scaffold_attributes.variable_name /}_"
 """ The default database prefix """
 
-EXTRAS_PATH = "${out value=scaffold_attributes.relative_backend_path /}/resources/extras"
-""" The extras path """
-
 class ${out value=scaffold_attributes.class_name /}:
     """
     The ${out value=scaffold_attributes.short_name_lowercase /} class.

@@ -4,7 +4,6 @@ class ${out value=scaffold_attributes.class_name /}Plugin(colony.base.plugin_sys
     id = "${out value=scaffold_attributes.plugin_id /}"
     name = "${out value=scaffold_attributes.short_name /} Plugin"
     short_name = "${out value=scaffold_attributes.short_name /}"
-    description = "${out value=scaffold_attributes.description /} plugin"
     version = "${out value=scaffold_attributes.plugin_version /}"
     platforms = [
         colony.base.plugin_system.CPYTHON_ENVIRONMENT

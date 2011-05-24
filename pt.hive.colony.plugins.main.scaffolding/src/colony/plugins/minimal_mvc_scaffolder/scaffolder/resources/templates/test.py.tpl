@@ -10,19 +10,13 @@ class ${out value=scaffold_attributes.class_name /}Test:
         )
 
 class ${out value=scaffold_attributes.class_name /}TestCase(colony.libs.test_util.ColonyTestCase):
-
     def setUp(self):
         self.plugin.info("Setting up ${out value=scaffold_attributes.short_name_lowercase /} test case...")
 
     def tearDown(self):
         self.plugin.info("Tearing down ${out value=scaffold_attributes.short_name_lowercase /} test case...")
 
-    def test_dummy_method(self):
-        dummy_result = self.plugin.dummy_method()
-        self.assertEquals(dummy_result, "dummy_result")
-
 class ${out value=scaffold_attributes.class_name /}TestPluginTestCase:
-
     @staticmethod
     def get_test_case():
         return ${out value=scaffold_attributes.class_name /}TestCase

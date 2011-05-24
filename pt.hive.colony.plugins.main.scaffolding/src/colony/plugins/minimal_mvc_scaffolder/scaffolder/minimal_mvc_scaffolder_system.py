@@ -41,33 +41,37 @@ RELATIVE_PATH_VALUE = "relative_path"
 """ The relative path value """
 
 RELATIVE_DESTINATION_FILE_PATH_FORMAT_VALUE = "relative_destination_file_path_format"
-""" The relative destination file path format """
+""" The relative destination file path format value """
 
 UNIX_DIRECTORY_SEPARATOR = "/"
 """ The unix directory separator """
 
-SCAFFOLDER_TYPE = "minimal"
+SCAFFOLDER_TYPE = "minimal_mvc"
 """ The scaffolder type """
 
-TEMPLATES_PATH = "minimal_scaffolder/scaffolder/resources/templates"
+TEMPLATES_PATH = "minimal_mvc_scaffolder/scaffolder/resources/templates"
 """ The templates path """
 
 TEMPLATES_MAP = {
-    "console.py.tpl" : {
+    "controllers.py.tpl" : {
         RELATIVE_PATH_VALUE : TEMPLATES_PATH,
-        RELATIVE_DESTINATION_FILE_PATH_FORMAT_VALUE : "${relative_backend_path}/console_${variable_name}.py"
+        RELATIVE_DESTINATION_FILE_PATH_FORMAT_VALUE : "${relative_backend_path}/${variable_name}_controllers.py"
+    },
+    "entity_models.py.tpl" : {
+        RELATIVE_PATH_VALUE : TEMPLATES_PATH,
+        RELATIVE_DESTINATION_FILE_PATH_FORMAT_VALUE : "${relative_backend_path}/${variable_name}_entity_models.py"
     },
     "exceptions.py.tpl" : {
         RELATIVE_PATH_VALUE : TEMPLATES_PATH,
-        RELATIVE_DESTINATION_FILE_PATH_FORMAT_VALUE : "${relative_backend_path}/${variable_name}_exceptions.py",
+        RELATIVE_DESTINATION_FILE_PATH_FORMAT_VALUE : "${relative_backend_path}/${variable_name}_exceptions.py"
     },
     "system.py.tpl" : {
        RELATIVE_PATH_VALUE : TEMPLATES_PATH,
-       RELATIVE_DESTINATION_FILE_PATH_FORMAT_VALUE : "${relative_backend_path}/${variable_name}_system.py",
+       RELATIVE_DESTINATION_FILE_PATH_FORMAT_VALUE : "${relative_backend_path}/${variable_name}_system.py"
     },
     "test.py.tpl" : {
         RELATIVE_PATH_VALUE : TEMPLATES_PATH,
-        RELATIVE_DESTINATION_FILE_PATH_FORMAT_VALUE : "${relative_backend_path}/${variable_name}_test.py",
+        RELATIVE_DESTINATION_FILE_PATH_FORMAT_VALUE : "${relative_backend_path}/${variable_name}_test.py"
     },
     "plugin.py.tpl" : {
         RELATIVE_PATH_VALUE : TEMPLATES_PATH,
@@ -76,23 +80,23 @@ TEMPLATES_MAP = {
 }
 """ The templates map """
 
-class MinimalScaffolder:
+class MinimalMvcScaffolder:
     """
-    The minimal scaffolder.
+    The minimal mvc scaffolder.
     """
 
-    minimal_scaffolder_plugin = None
-    """ The minimal scaffolder plugin """
+    minimal_mvc_scaffolder_plugin = None
+    """ The minimal mvc scaffolder plugin """
 
-    def __init__(self, minimal_scaffolder_plugin):
+    def __init__(self, minimal_mvc_scaffolder_plugin):
         """
         Constructor of the class.
 
-        @type minimal_scaffolder_plugin: MinimalScaffolderPlugin
-        @param minimal_scaffolder_plugin: The minimal scaffolder plugin.
+        @type minimal_mvc_scaffolder_plugin: MinimalMvcScaffolderPlugin
+        @param minimal_mvc_scaffolder_plugin: The minimal mvc scaffolder plugin.
         """
 
-        self.minimal_scaffolder_plugin = minimal_scaffolder_plugin
+        self.minimal_mvc_scaffolder_plugin = minimal_mvc_scaffolder_plugin
 
     def get_scaffolder_type(self):
         return SCAFFOLDER_TYPE
