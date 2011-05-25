@@ -77,45 +77,26 @@ class RootEntityController:
         # sets the templates path
         self.set_templates_path(templates_path)
 
-    @web_mvc_utils.serialize_exceptions("all")
-    def handle_list_serialized(self, rest_request, parameters = {}):
-        # retrieves the serializer
-        serializer = parameters[SERIALIZER_VALUE]
-
-        # retrieves the form data by processing the form
-        form_data_map = self.process_form_data(rest_request, DEFAULT_ENCODING)
-
-        # retrieves the filter
-        filter = form_data_map.get("filter", {})
-
+    def handle_list(self, rest_request, parameters = {}):
         # retrieves the root entities
-        root_entities = self._get_root_entities(rest_request, filter)
+        root_entities = self._get_root_entities(rest_request, {})
 
-        # serializes the root entities
-        serialized_root_entities = serializer.dumps(root_entities)
+        # retrieves the template file
+        template_file = self.retrieve_template_file("list.html.tpl")
 
-        # sets the serialized root entities as the rest request contents
-        self.set_contents(rest_request, serialized_root_entities)
+        # applies the base path to the template file
+        self.apply_base_path_template_file(rest_request, template_file)
+
+        # assigns the root entities to the template file
+        template_file.assign("root_entities", root_entities)
+
+        # processes the template file and sets the request contents
+        self.process_set_contents(rest_request, template_file)
 
         # returns true
         return True
 
-    def handle_list_json(self, rest_request, parameters = {}):
-        # retrieves the json plugin
-        json_plugin = self.${out value=scaffold_attributes.variable_name /}_plugin.json_plugin
-
-        # sets the serializer in the parameters
-        parameters[SERIALIZER_VALUE] = json_plugin
-
-        # handles the request with the general
-        # handle list serialized method
-        return self.handle_list_serialized(rest_request, parameters)
-
-    @web_mvc_utils.serialize_exceptions("all")
-    def handle_show_serialized(self, rest_request, parameters = {}):
-        # retrieves the serializer
-        serializer = parameters[SERIALIZER_VALUE]
-
+    def handle_show(self, rest_request, parameters = {}):
         # retrieves the pattern names from the parameters
         pattern_names = parameters[PATTERN_NAMES_VALUE]
 
@@ -128,31 +109,29 @@ class RootEntityController:
         # retrieves the specified root entity
         root_entity = self._get_root_entity(rest_request, root_entity_object_id)
 
-        # serializes the root entity
-        serialized_root_entity = serializer.dumps(root_entity)
+        # retrieves the template file
+        template_file = self.retrieve_template_file("show.html.tpl")
 
-        # sets the serialized root entity as the rest request contents
-        self.set_contents(rest_request, serialized_root_entity)
+        # assigns the root entity to the template file
+        template_file.assign("root_entity", root_entity)
+
+        # processes the template file and sets the request contents
+        self.process_set_contents(rest_request, template_file)
 
         # returns true
         return True
 
-    def handle_show_json(self, rest_request, parameters = {}):
-        # retrieves the json plugin
-        json_plugin = self.${out value=scaffold_attributes.variable_name /}_plugin.json_plugin
+    def handle_new(self, rest_request, parameters = {}):
+        # retrieves the template file
+        template_file = self.retrieve_template_file("new.html.tpl")
 
-        # sets the serializer in the parameters
-        parameters[SERIALIZER_VALUE] = json_plugin
+        # processes the template file and sets the request contents
+        self.process_set_contents(rest_request, template_file)
 
-        # handles the request with the general
-        # handle show serialized method
-        return self.handle_show_serialized(rest_request, parameters)
+        # returns true
+        return True
 
-    @web_mvc_utils.serialize_exceptions("all")
-    def handle_create_serialized(self, rest_request, parameters = {}):
-        # retrieves the serializer
-        serializer = parameters[SERIALIZER_VALUE]
-
+    def handle_create(self, rest_request, parameters = {}):
         # retrieves the form data by processing the form
         form_data_map = self.process_form_data(rest_request, DEFAULT_ENCODING)
 
@@ -160,33 +139,40 @@ class RootEntityController:
         root_entity = form_data_map.get("root_entity", {})
 
         # saves the root entity
-        root_entity = self._save_root_entity(rest_request, root_entity)
+        self._save_root_entity(rest_request, root_entity)
 
-        # dumps the root entity
-        serialized_root_entity = serializer.dumps(root_entity)
-
-        # sets the serialized root entity as the rest request contents
-        self.set_contents(rest_request, serialized_root_entity)
+        # redirects to the root entities page
+        self.redirect_base_path(rest_request, "root_entities")
 
         # returns true
         return True
 
-    def handle_create_json(self, rest_request, parameters = {}):
-        # retrieves the json plugin
-        json_plugin = self.${out value=scaffold_attributes.variable_name /}_plugin.json_plugin
+    def handle_edit(self, rest_request, parameters = {}):
+        # retrieves the pattern names from the parameters
+        pattern_names = parameters[PATTERN_NAMES_VALUE]
 
-        # sets the serializer in the parameters
-        parameters[SERIALIZER_VALUE] = json_plugin
+        # retrieves the root entity object id pattern
+        root_entity_object_id = pattern_names["root_entity_object_id"]
 
-        # handles the request with the general
-        # handle create serialized method
-        return self.handle_create_serialized(rest_request, parameters)
+        # converts the root entity object id to integer
+        root_entity_object_id = int(root_entity_object_id)
 
-    @web_mvc_utils.serialize_exceptions("all")
-    def handle_update_serialized(self, rest_request, parameters = {}):
-        # retrieves the serializer
-        serializer = parameters[SERIALIZER_VALUE]
+        # retrieves the specified root entity
+        root_entity = self._get_root_entity(rest_request, root_entity_object_id)
 
+        # retrieves the template file
+        template_file = self.retrieve_template_file("edit.html.tpl")
+
+        # assigns the root entity to the template file
+        template_file.assign("root_entity", root_entity)
+
+        # processes the template file and sets the request contents
+        self.process_set_contents(rest_request, template_file)
+
+        # returns true
+        return True
+
+    def handle_update(self, rest_request, parameters = {}):
         # retrieves the form data by processing the form
         form_data_map = self.process_form_data(rest_request, DEFAULT_ENCODING)
 
@@ -205,31 +191,16 @@ class RootEntityController:
         # sets the object id in the root entity
         root_entity["object_id"] = root_entity_object_id
 
-        # saves the root entity
-        root_entity = self._save_root_entity(rest_request, root_entity)
+        # updates the root entity
+        self._save_root_entity(rest_request, root_entity)
 
-        # dumps the root entity
-        serialized_root_entity = serializer.dumps(root_entity)
-
-        # sets the serialized root entity as the rest request contents
-        self.set_contents(rest_request, serialized_root_entity)
+        # redirects to the root entities page
+        self.redirect_base_path(rest_request, "root_entities")
 
         # returns true
         return True
 
-    def handle_update_json(self, rest_request, parameters = {}):
-        # retrieves the json plugin
-        json_plugin = self.${out value=scaffold_attributes.variable_name /}_plugin.json_plugin
-
-        # sets the serializer in the parameters
-        parameters[SERIALIZER_VALUE] = json_plugin
-
-        # handles the request with the general
-        # handle update serialized method
-        return self.handle_update_serialized(rest_request, parameters)
-
-    @web_mvc_utils.serialize_exceptions("all")
-    def handle_delete_serialized(self, rest_request, parameters = {}):
+    def handle_delete(self, rest_request, parameters = {}):
         # retrieves the pattern names from the parameters
         pattern_names = parameters[PATTERN_NAMES_VALUE]
 
@@ -247,19 +218,11 @@ class RootEntityController:
         # deletes the specified root entity
         self._delete_root_entity(rest_request, root_entity)
 
+        # redirects to the root entities page
+        self.redirect_base_path(rest_request, "root_entities")
+
         # returns true
         return True
-
-    def handle_delete_json(self, rest_request, parameters = {}):
-        # retrieves the json plugin
-        json_plugin = self.${out value=scaffold_attributes.variable_name /}_plugin.json_plugin
-
-        # sets the serializer in the parameters
-        parameters[SERIALIZER_VALUE] = json_plugin
-
-        # handles the request with the general
-        # handle delete serialized method
-        return self.handle_delete_serialized(rest_request, parameters)
 
     @web_mvc_utils.transaction_method("${out value=scaffold_attributes.variable_name /}.${out value=scaffold_attributes.variable_name /}_entity_models.entity_manager")
     def _save_root_entity(self, rest_request, root_entity):

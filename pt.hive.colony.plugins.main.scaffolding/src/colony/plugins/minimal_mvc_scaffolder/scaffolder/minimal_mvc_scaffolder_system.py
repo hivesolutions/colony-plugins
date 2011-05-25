@@ -37,6 +37,9 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
+PROCESS_VALUE = "process"
+""" The process value """
+
 RELATIVE_PATH_VALUE = "relative_path"
 """ The relative path value """
 
@@ -64,6 +67,11 @@ TEMPLATES_MAP = {
     "exceptions.py.tpl" : {
         RELATIVE_PATH_VALUE : TEMPLATES_PATH,
         RELATIVE_DESTINATION_FILE_PATH_FORMAT_VALUE : "${relative_backend_path}/${variable_name}_exceptions.py"
+    },
+    "index.html.tpl" : {
+        RELATIVE_PATH_VALUE : TEMPLATES_PATH,
+        RELATIVE_DESTINATION_FILE_PATH_FORMAT_VALUE : "${relative_backend_path}/resources/templates/index.html.tpl",
+        PROCESS_VALUE : False
     },
     "system.py.tpl" : {
        RELATIVE_PATH_VALUE : TEMPLATES_PATH,

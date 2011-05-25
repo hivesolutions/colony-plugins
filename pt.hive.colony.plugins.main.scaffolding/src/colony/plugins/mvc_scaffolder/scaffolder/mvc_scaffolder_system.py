@@ -37,6 +37,9 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
+PROCESS_VALUE = "process"
+""" The process value """
+
 RELATIVE_PATH_VALUE = "relative_path"
 """ The relative path value """
 
@@ -57,6 +60,11 @@ TEMPLATES_MAP = {
         RELATIVE_PATH_VALUE : TEMPLATES_PATH,
         RELATIVE_DESTINATION_FILE_PATH_FORMAT_VALUE : "${relative_backend_path}/${variable_name}_controllers.py"
     },
+    "edit.html.tpl" : {
+        RELATIVE_PATH_VALUE : TEMPLATES_PATH,
+        RELATIVE_DESTINATION_FILE_PATH_FORMAT_VALUE : "${relative_backend_path}/resources/templates/edit.html.tpl",
+        PROCESS_VALUE : False
+    },
     "entity_models.py.tpl" : {
         RELATIVE_PATH_VALUE : TEMPLATES_PATH,
         RELATIVE_DESTINATION_FILE_PATH_FORMAT_VALUE : "${relative_backend_path}/${variable_name}_entity_models.py"
@@ -64,6 +72,21 @@ TEMPLATES_MAP = {
     "exceptions.py.tpl" : {
         RELATIVE_PATH_VALUE : TEMPLATES_PATH,
         RELATIVE_DESTINATION_FILE_PATH_FORMAT_VALUE : "${relative_backend_path}/${variable_name}_exceptions.py"
+    },
+    "list.html.tpl" : {
+        RELATIVE_PATH_VALUE : TEMPLATES_PATH,
+        RELATIVE_DESTINATION_FILE_PATH_FORMAT_VALUE : "${relative_backend_path}/resources/templates/list.html.tpl",
+        PROCESS_VALUE : False
+    },
+    "new.html.tpl" : {
+        RELATIVE_PATH_VALUE : TEMPLATES_PATH,
+        RELATIVE_DESTINATION_FILE_PATH_FORMAT_VALUE : "${relative_backend_path}/resources/templates/new.html.tpl",
+        PROCESS_VALUE : False
+    },
+    "show.html.tpl" : {
+        RELATIVE_PATH_VALUE : TEMPLATES_PATH,
+        RELATIVE_DESTINATION_FILE_PATH_FORMAT_VALUE : "${relative_backend_path}/resources/templates/show.html.tpl",
+        PROCESS_VALUE : False
     },
     "system.py.tpl" : {
        RELATIVE_PATH_VALUE : TEMPLATES_PATH,

@@ -18,6 +18,16 @@ class RootEntityController:
         self.entity_models = self.${out value=scaffold_attributes.variable_name /}.${out value=scaffold_attributes.variable_name /}_entity_models
         self.entity_manager = self.entity_models.entity_manager
 
+    def handle_index(self, rest_request, parameters = {}):
+        # processes the index template and sets it as the response
+        template_file = self.retrieve_template_file("index.html.tpl")
+        root_entities = self.entity_manager._find_all_options(self.entity_models.RootEntity, {})
+        template_file.assign("root_entities", root_entities)
+        self.process_set_contents(rest_request, template_file)
+
+        # returns true indicating that the response was valid
+        return True
+
     def handle_list_json(self, rest_request, parameters = {}):
         # retrieves the form data by processing the form
         form_data_map = self.process_form_data(rest_request, "utf-8")

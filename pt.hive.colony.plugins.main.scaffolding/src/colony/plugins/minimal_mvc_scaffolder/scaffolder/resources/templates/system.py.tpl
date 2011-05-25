@@ -31,9 +31,10 @@ class ${out value=scaffold_attributes.class_name /}:
 
     def get_patterns(self):
         return (
+            (r"^${out value=scaffold_attributes.variable_name /}/$", self.root_entity_controller.handle_index, "get"),
             (r"^${out value=scaffold_attributes.variable_name /}/root_entities$", self.root_entity_controller.handle_list_json, "get", "json"),
             (r"^${out value=scaffold_attributes.variable_name /}/root_entities$", self.root_entity_controller.handle_create_json, "post", "json"),
             (r"^${out value=scaffold_attributes.variable_name /}/root_entities/(?P<root_entity_object_id>[0-9]+)$", self.root_entity_controller.handle_show_json, "get", "json"),
             (r"^${out value=scaffold_attributes.variable_name /}/root_entities/(?P<root_entity_object_id>[0-9]+)/update$", self.root_entity_controller.handle_update_json, "post", "json"),
-            (r"^${out value=scaffold_attributes.variable_name /}/root_entities/(?P<root_entity_object_id>[0-9]+)/delete$", self.root_entity_controller.handle_delete_json, "post", "json")
+            (r"^${out value=scaffold_attributes.variable_name /}/root_entities/(?P<root_entity_object_id>[0-9]+)/delete$", self.root_entity_controller.handle_delete_json, "get", "json")
         )

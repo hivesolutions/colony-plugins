@@ -42,9 +42,15 @@ class RootEntity(base_entity.EntityClass):
     }
     """ The root entity's object id """
 
+    description = {
+        "data_type" : "text"
+    }
+    """ The root entity's description """
+
     def __init__(self):
         """
         Constructor of the class.
         """
 
         self.object_id = None
+        self.description = None

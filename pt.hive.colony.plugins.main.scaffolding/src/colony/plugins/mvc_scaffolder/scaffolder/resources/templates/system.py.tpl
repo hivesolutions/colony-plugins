@@ -111,11 +111,13 @@ class ${out value=scaffold_attributes.class_name /}:
         """
 
         return (
-            (r"^${out value=scaffold_attributes.variable_name /}/root_entities$", self.root_entity_controller.handle_list_json, "get", "json"),
-            (r"^${out value=scaffold_attributes.variable_name /}/root_entities$", self.root_entity_controller.handle_create_json, "post", "json"),
-            (r"^${out value=scaffold_attributes.variable_name /}/root_entities/(?P<root_entity_object_id>[0-9]+)$", self.root_entity_controller.handle_show_json, "get", "json"),
-            (r"^${out value=scaffold_attributes.variable_name /}/root_entities/(?P<root_entity_object_id>[0-9]+)/update$", self.root_entity_controller.handle_update_json, "post", "json"),
-            (r"^${out value=scaffold_attributes.variable_name /}/root_entities/(?P<root_entity_object_id>[0-9]+)/delete$", self.root_entity_controller.handle_delete_json, "post", "json")
+            (r"^${out value=scaffold_attributes.variable_name /}/root_entities$", self.root_entity_controller.handle_list, "get"),
+            (r"^${out value=scaffold_attributes.variable_name /}/root_entities/new$", self.root_entity_controller.handle_new, "get"),
+            (r"^${out value=scaffold_attributes.variable_name /}/root_entities/new$", self.root_entity_controller.handle_create, "post"),
+            (r"^${out value=scaffold_attributes.variable_name /}/root_entities/(?P<root_entity_object_id>[0-9]+)$", self.root_entity_controller.handle_show, "get"),
+            (r"^${out value=scaffold_attributes.variable_name /}/root_entities/(?P<root_entity_object_id>[0-9]+)/update$", self.root_entity_controller.handle_edit, "get"),
+            (r"^${out value=scaffold_attributes.variable_name /}/root_entities/(?P<root_entity_object_id>[0-9]+)/update$", self.root_entity_controller.handle_update, "post"),
+            (r"^${out value=scaffold_attributes.variable_name /}/root_entities/(?P<root_entity_object_id>[0-9]+)/delete$", self.root_entity_controller.handle_delete, "get")
         )
 
     def get_communication_patterns(self):

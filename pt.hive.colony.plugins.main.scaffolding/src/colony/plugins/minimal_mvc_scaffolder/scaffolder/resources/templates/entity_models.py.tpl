@@ -11,5 +11,10 @@ class RootEntity(base_entity.EntityClass):
         "table_generator_field_name" : "RootEntity"
     }
 
+    description = {
+        "data_type" : "text"
+    }
+
     def __init__(self):
         self.object_id = None
+        self.description = None
