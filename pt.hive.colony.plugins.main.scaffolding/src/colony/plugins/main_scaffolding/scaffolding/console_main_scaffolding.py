@@ -184,7 +184,7 @@ class ConsoleMainScaffolding:
                         "mandatory" : False
                     },
                     {
-                        "name" : "specifiation_file_path",
+                        "name" : "specification_file_path",
                         "description" : "the file path to the specification file",
                         "values" : self.get_path_names_list,
                         "mandatory" : False
