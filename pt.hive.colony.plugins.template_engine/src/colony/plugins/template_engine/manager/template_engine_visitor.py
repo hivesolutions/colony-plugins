@@ -37,6 +37,7 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
+import re
 import os
 import types
 import datetime
@@ -57,6 +58,12 @@ FUNCTION_TYPES = (
     types.BuiltinFunctionType
 )
 """ The function types """
+
+LITERAL_ESCAPE_REGEX_VALUE = "\$\\\\(?=\\\\*\{)"
+""" The literal escape regular expression value """
+
+LITERAL_ESCAPE_REGEX = re.compile(LITERAL_ESCAPE_REGEX_VALUE)
+""" The literal escape regular expression """
 
 VALUE_VALUE = "value"
 """ The value value """
@@ -480,7 +487,14 @@ class Visitor:
 
     @_visit(template_engine_ast.LiteralNode)
     def visit_literal_node(self, node):
-        self.string_buffer.write(node.value.match_value)
+        # retrieves the match value (literal value)
+        match_value = node.value.match_value
+
+        # escapes the match value (literal value)
+        escaped_match_value = self._escape_literal(match_value)
+
+        # writes the escaped match value
+        self.string_buffer.write(escaped_match_value)
 
     @_visit(template_engine_ast.MatchNode)
     def visit_match_node(self, node):
@@ -1441,3 +1455,21 @@ class Visitor:
 
         # returns the comparison result
         return comparison_result
+
+    def _escape_literal(self, literal_value):
+        """
+        Escapes the given literal value.
+        Allow the template engine to skip interpretation
+        of template tags.
+
+        @type literal_value: String
+        @param literal_value: The literal value to be escaped.
+        @rtype: String
+        @return: The escaped literal value
+        """
+
+        # escapes the literal value
+        escaped_literal_value = LITERAL_ESCAPE_REGEX.sub("$", literal_value)
+
+        # returns the escaped literal value
+        return escaped_literal_value
