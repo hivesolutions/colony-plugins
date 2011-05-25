@@ -172,6 +172,7 @@ class MainJsonrpcManager:
                     # in case the traceback list is valid
                     if traceback_list:
                         formated_traceback = traceback.format_tb(traceback_list)
+                    # otherwise there is no traceback list
                     else:
                         formated_traceback = ()
 
