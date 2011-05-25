@@ -38,6 +38,7 @@ __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
 import re
+import types
 
 import template_engine_ast
 import template_engine_visitor
@@ -483,6 +484,30 @@ class TemplateFile:
         """
 
         self.visitor.set_global_map(global_map)
+
+    def attach_process_methods(self, process_methods_map):
+        """
+        Attaches a series of process methods to the visitor
+        currently being used.
+
+        @type process_methods_map: Dictionary
+        @param process_methods_map: The map containing the process
+        method to be attached.
+        """
+
+        # retrieves the process methods map items
+        process_methods_map_items = process_methods_map.items()
+
+        # retrieves the visitor class
+        visitor_class = self.visitor.__class__
+
+        # iterates over all the process methods
+        for process_method_name, process_method in process_methods_map_items:
+            # creates the process method instance
+            process_method_instance = types.MethodType(process_method, self.visitor, visitor_class)
+
+            # sets the process method in the visitor
+            setattr(self.visitor, process_method_name, process_method_instance)
 
     def process(self):
         """
