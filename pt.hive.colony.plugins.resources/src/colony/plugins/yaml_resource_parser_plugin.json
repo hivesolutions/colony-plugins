@@ -1,0 +1,22 @@
+{
+    "type" : "plugin",
+    "platform" : "python",
+    "sub_platforms" : ["cpython"],
+    "id" : "pt.hive.colony.plugins.resources.yaml_resource_parser",
+    "name" : "Yaml Resource Parser Plugin",
+    "short_name" : "Yaml Resource Parser",
+    "description" : "A plugin to parse yaml resources",
+    "version" : "1.0.0",
+    "author" : "Hive Solutions Lda. <development@hive.pt>",
+    "capabilities" : ["resource_parser", "build_automation_item"],
+    "capabilities_allowed" : [],
+    "dependencies" : [{
+                "id" : "pt.hive.colony.plugins.misc.yaml",
+                "version" : "1.0.0"
+            }],
+    "main_file" : "yaml_resource_parser_plugin.py",
+    "resources" : ["yaml_resource_parser_plugin.py", "resources/__init__.py",
+            "resources/yaml_resource_parser/__init__.py",
+            "resources/yaml_resource_parser/yaml_resource_parser_system.py",
+            "resources/yaml_resource_parser/resources/baf.xml"]
+}
