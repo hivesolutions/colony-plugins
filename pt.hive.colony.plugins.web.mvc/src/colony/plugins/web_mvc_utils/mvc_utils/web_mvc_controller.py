@@ -846,6 +846,14 @@ def process_template_file(self, template_file, variable_encoding = None):
     # sets the template file variable encoding
     template_file.set_variable_encoding(variable_encoding)
 
+    # creates the process methods map
+    process_methods_map = {
+        "process_stylesheet_link" : __process_stylesheet_link
+    }
+
+    # attaches the process methods to the template file
+    template_file.attach_process_methods(process_methods_map)
+
     # processes the template file
     processed_template_file = template_file.process()
 
@@ -1945,3 +1953,6 @@ def _get_locales_map(self, accept_language):
 
     # returns the locales map
     return locales_map
+
+def __process_stylesheet_link(self):
+    self.string_buffer.write("<link href=\"/stylesheets/layout.css?1306145278\" rel=\"stylesheet\" type=\"text/css\" />")
