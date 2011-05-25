@@ -210,6 +210,7 @@ class MainServiceHttpTemplateErrorHandler:
 
             # decodes the traceback values using the file system encoding
             formated_traceback = [value.decode(file_system_encoding) for value in formated_traceback]
+        # otherwise there is no traceback list
         else:
             # sets an empty formated traceback
             formated_traceback = ()
