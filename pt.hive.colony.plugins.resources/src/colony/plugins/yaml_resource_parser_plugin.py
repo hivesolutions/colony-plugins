@@ -38,7 +38,6 @@ __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
 import colony.base.plugin_system
-import colony.base.decorators
 
 class YamlResourceParserPlugin(colony.base.plugin_system.Plugin):
     """
@@ -61,9 +60,6 @@ class YamlResourceParserPlugin(colony.base.plugin_system.Plugin):
     capabilities = [
         "resource_parser",
         "build_automation_item"
-    ]
-    dependencies = [
-        colony.base.plugin_system.PluginDependency("pt.hive.colony.plugins.misc.yaml", "1.0.0")
     ]
     main_modules = [
         "resources.yaml_resource_parser.yaml_resource_parser_system"
@@ -92,7 +88,6 @@ class YamlResourceParserPlugin(colony.base.plugin_system.Plugin):
     def unload_allowed(self, plugin, capability):
         colony.base.plugin_system.Plugin.unload_allowed(self, plugin, capability)
 
-    @colony.base.decorators.inject_dependencies("pt.hive.colony.plugins.resources.yaml_resource_parser", "1.0.0")
     def dependency_injected(self, plugin):
         colony.base.plugin_system.Plugin.dependency_injected(self, plugin)
 

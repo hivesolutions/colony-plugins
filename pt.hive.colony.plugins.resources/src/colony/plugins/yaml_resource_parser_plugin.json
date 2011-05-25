@@ -10,10 +10,7 @@
     "author" : "Hive Solutions Lda. <development@hive.pt>",
     "capabilities" : ["resource_parser", "build_automation_item"],
     "capabilities_allowed" : [],
-    "dependencies" : [{
-                "id" : "pt.hive.colony.plugins.misc.yaml",
-                "version" : "1.0.0"
-            }],
+    "dependencies" : [],
     "main_file" : "yaml_resource_parser_plugin.py",
     "resources" : ["yaml_resource_parser_plugin.py", "resources/__init__.py",
             "resources/yaml_resource_parser/__init__.py",
