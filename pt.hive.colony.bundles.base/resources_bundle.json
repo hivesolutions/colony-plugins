@@ -5,6 +5,9 @@
     "version" : "1.0.0",
     "author" : "Hive Solutions Lda. <development@hive.pt>",
     "plugins" : [{
+                "id" : "pt.hive.colony.plugins.resources.conf_resource_parser",
+                "version" : "1.0.0"
+            }, {
                 "id" : "pt.hive.colony.plugins.resources.json_resource_parser",
                 "version" : "1.0.0"
             }, {
@@ -12,6 +15,9 @@
                 "version" : "1.0.0"
             }, {
                 "id" : "pt.hive.colony.plugins.resources.resource_manager",
+                "version" : "1.0.0"
+            }, {
+                "id" : "pt.hive.colony.plugins.resources.yaml_resource_parser",
                 "version" : "1.0.0"
             }],
     "dependencies" : [{
