@@ -56,28 +56,28 @@ TEMPLATES_PATH = "minimal_mvc_scaffolder/scaffolder/resources/templates"
 """ The templates path """
 
 TEMPLATES_MAP = {
-    "controllers.py.tpl" : {
-        RELATIVE_PATH_VALUE : TEMPLATES_PATH,
-        RELATIVE_DESTINATION_FILE_PATH_FORMAT_VALUE : "${relative_backend_path}/${variable_name}_controllers.py"
-    },
-    "entity_models.py.tpl" : {
-        RELATIVE_PATH_VALUE : TEMPLATES_PATH,
-        RELATIVE_DESTINATION_FILE_PATH_FORMAT_VALUE : "${relative_backend_path}/${variable_name}_entity_models.py"
-    },
-    "exceptions.py.tpl" : {
-        RELATIVE_PATH_VALUE : TEMPLATES_PATH,
-        RELATIVE_DESTINATION_FILE_PATH_FORMAT_VALUE : "${relative_backend_path}/${variable_name}_exceptions.py"
-    },
-    "index.html.tpl" : {
+    "backend/resources/templates/index.html.tpl" : {
         RELATIVE_PATH_VALUE : TEMPLATES_PATH,
         RELATIVE_DESTINATION_FILE_PATH_FORMAT_VALUE : "${relative_backend_path}/resources/templates/index.html.tpl",
         PROCESS_VALUE : False
     },
-    "system.py.tpl" : {
+    "backend/controllers.py.tpl" : {
+        RELATIVE_PATH_VALUE : TEMPLATES_PATH,
+        RELATIVE_DESTINATION_FILE_PATH_FORMAT_VALUE : "${relative_backend_path}/${variable_name}_controllers.py"
+    },
+    "backend/entity_models.py.tpl" : {
+        RELATIVE_PATH_VALUE : TEMPLATES_PATH,
+        RELATIVE_DESTINATION_FILE_PATH_FORMAT_VALUE : "${relative_backend_path}/${variable_name}_entity_models.py"
+    },
+    "backend/exceptions.py.tpl" : {
+        RELATIVE_PATH_VALUE : TEMPLATES_PATH,
+        RELATIVE_DESTINATION_FILE_PATH_FORMAT_VALUE : "${relative_backend_path}/${variable_name}_exceptions.py"
+    },
+    "backend/system.py.tpl" : {
        RELATIVE_PATH_VALUE : TEMPLATES_PATH,
        RELATIVE_DESTINATION_FILE_PATH_FORMAT_VALUE : "${relative_backend_path}/${variable_name}_system.py"
     },
-    "test.py.tpl" : {
+    "backend/test.py.tpl" : {
         RELATIVE_PATH_VALUE : TEMPLATES_PATH,
         RELATIVE_DESTINATION_FILE_PATH_FORMAT_VALUE : "${relative_backend_path}/${variable_name}_test.py"
     },

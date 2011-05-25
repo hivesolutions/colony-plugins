@@ -56,43 +56,43 @@ TEMPLATES_PATH = "mvc_scaffolder/scaffolder/resources/templates"
 """ The templates path """
 
 TEMPLATES_MAP = {
-    "controllers.py.tpl" : {
-        RELATIVE_PATH_VALUE : TEMPLATES_PATH,
-        RELATIVE_DESTINATION_FILE_PATH_FORMAT_VALUE : "${relative_backend_path}/${variable_name}_controllers.py"
-    },
-    "edit.html.tpl" : {
+    "backend/resources/templates/edit.html.tpl" : {
         RELATIVE_PATH_VALUE : TEMPLATES_PATH,
         RELATIVE_DESTINATION_FILE_PATH_FORMAT_VALUE : "${relative_backend_path}/resources/templates/edit.html.tpl",
         PROCESS_VALUE : False
     },
-    "entity_models.py.tpl" : {
-        RELATIVE_PATH_VALUE : TEMPLATES_PATH,
-        RELATIVE_DESTINATION_FILE_PATH_FORMAT_VALUE : "${relative_backend_path}/${variable_name}_entity_models.py"
-    },
-    "exceptions.py.tpl" : {
-        RELATIVE_PATH_VALUE : TEMPLATES_PATH,
-        RELATIVE_DESTINATION_FILE_PATH_FORMAT_VALUE : "${relative_backend_path}/${variable_name}_exceptions.py"
-    },
-    "list.html.tpl" : {
+    "backend/resources/templates/list.html.tpl" : {
         RELATIVE_PATH_VALUE : TEMPLATES_PATH,
         RELATIVE_DESTINATION_FILE_PATH_FORMAT_VALUE : "${relative_backend_path}/resources/templates/list.html.tpl",
         PROCESS_VALUE : False
     },
-    "new.html.tpl" : {
+    "backend/resources/templates/new.html.tpl" : {
         RELATIVE_PATH_VALUE : TEMPLATES_PATH,
         RELATIVE_DESTINATION_FILE_PATH_FORMAT_VALUE : "${relative_backend_path}/resources/templates/new.html.tpl",
         PROCESS_VALUE : False
     },
-    "show.html.tpl" : {
+    "backend/resources/templates/show.html.tpl" : {
         RELATIVE_PATH_VALUE : TEMPLATES_PATH,
         RELATIVE_DESTINATION_FILE_PATH_FORMAT_VALUE : "${relative_backend_path}/resources/templates/show.html.tpl",
         PROCESS_VALUE : False
     },
-    "system.py.tpl" : {
+    "backend/controllers.py.tpl" : {
+        RELATIVE_PATH_VALUE : TEMPLATES_PATH,
+        RELATIVE_DESTINATION_FILE_PATH_FORMAT_VALUE : "${relative_backend_path}/${variable_name}_controllers.py"
+    },
+    "backend/entity_models.py.tpl" : {
+        RELATIVE_PATH_VALUE : TEMPLATES_PATH,
+        RELATIVE_DESTINATION_FILE_PATH_FORMAT_VALUE : "${relative_backend_path}/${variable_name}_entity_models.py"
+    },
+    "backend/exceptions.py.tpl" : {
+        RELATIVE_PATH_VALUE : TEMPLATES_PATH,
+        RELATIVE_DESTINATION_FILE_PATH_FORMAT_VALUE : "${relative_backend_path}/${variable_name}_exceptions.py"
+    },
+    "backend/system.py.tpl" : {
        RELATIVE_PATH_VALUE : TEMPLATES_PATH,
        RELATIVE_DESTINATION_FILE_PATH_FORMAT_VALUE : "${relative_backend_path}/${variable_name}_system.py"
     },
-    "test.py.tpl" : {
+    "backend/test.py.tpl" : {
         RELATIVE_PATH_VALUE : TEMPLATES_PATH,
         RELATIVE_DESTINATION_FILE_PATH_FORMAT_VALUE : "${relative_backend_path}/${variable_name}_test.py"
     },

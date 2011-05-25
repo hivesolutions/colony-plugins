@@ -61,23 +61,23 @@ TEMPLATES_PATH = "mvc_manager_scaffolder/scaffolder/resources/templates"
 """ The templates path """
 
 TEMPLATES_MAP = {
-    "controllers.py.tpl" : {
+    "backend/controllers.py.tpl" : {
         RELATIVE_PATH_VALUE : TEMPLATES_PATH,
         RELATIVE_DESTINATION_FILE_PATH_FORMAT : "${relative_backend_path}/${variable_name}_controllers.py"
     },
-    "entity_models.py.tpl" : {
+    "backend/entity_models.py.tpl" : {
         RELATIVE_PATH_VALUE : TEMPLATES_PATH,
         RELATIVE_DESTINATION_FILE_PATH_FORMAT : "${relative_backend_path}/${variable_name}_entity_models.py"
     },
-    "exceptions.py.tpl" : {
+    "backend/exceptions.py.tpl" : {
         RELATIVE_PATH_VALUE : TEMPLATES_PATH,
         RELATIVE_DESTINATION_FILE_PATH_FORMAT : "${relative_backend_path}/${variable_name}_exceptions.py"
     },
-    "system.py.tpl" : {
+    "backend/system.py.tpl" : {
        RELATIVE_PATH_VALUE : TEMPLATES_PATH,
        RELATIVE_DESTINATION_FILE_PATH_FORMAT : "${relative_backend_path}/${variable_name}_system.py"
     },
-    "test.py.tpl" : {
+    "backend/test.py.tpl" : {
         RELATIVE_PATH_VALUE : TEMPLATES_PATH,
         RELATIVE_DESTINATION_FILE_PATH_FORMAT : "${relative_backend_path}/${variable_name}_test.py"
     },
@@ -125,5 +125,9 @@ class MvcManagerScaffolder:
         # defines the templates path
         templates_path = scaffold_path + UNIX_DIRECTORY_SEPARATOR + relative_backend_path + UNIX_DIRECTORY_SEPARATOR + BACKEND_TEMPLATES_PATH
 
+        # checks if the path exists
+        path_exists = os.path.exists(templates_path)
+
         # creates the directories for the templates path
-        os.makedirs(templates_path)
+        # in case the path does not exist
+        not path_exists and os.makedirs(templates_path)
