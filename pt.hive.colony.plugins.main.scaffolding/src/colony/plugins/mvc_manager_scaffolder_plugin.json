@@ -18,10 +18,10 @@
             "mvc_manager_scaffolder/scaffolder/__init__.py",
             "mvc_manager_scaffolder/scaffolder/mvc_manager_scaffolder_system.py",
             "mvc_manager_scaffolder/scaffolder/resources/baf.xml",
-            "mvc_manager_scaffolder/scaffolder/resources/templates/controllers.py.tpl",
-            "mvc_manager_scaffolder/scaffolder/resources/templates/entity_models.py.tpl",
-            "mvc_manager_scaffolder/scaffolder/resources/templates/exceptions.py.tpl",
             "mvc_manager_scaffolder/scaffolder/resources/templates/plugin.py.tpl",
-            "mvc_manager_scaffolder/scaffolder/resources/templates/system.py.tpl",
-            "mvc_manager_scaffolder/scaffolder/resources/templates/test.py.tpl"]
+            "mvc_manager_scaffolder/scaffolder/resources/templates/backend/controllers.py.tpl",
+            "mvc_manager_scaffolder/scaffolder/resources/templates/backend/entity_models.py.tpl",
+            "mvc_manager_scaffolder/scaffolder/resources/templates/backend/exceptions.py.tpl",
+            "mvc_manager_scaffolder/scaffolder/resources/templates/backend/system.py.tpl",
+            "mvc_manager_scaffolder/scaffolder/resources/templates/backend/test.py.tpl"]
 }
