@@ -33,11 +33,11 @@
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://www.hive.pt xsd/baf.xsd">
     <artifact>
-        <id>pt.hive.colony.plugins.main.scaffolding.simple</id>
+        <id>pt.hive.colony.plugins.main.scaffolding.base</id>
         <version>1.0.0</version>
         <type>colony</type>
-        <name>Simple Scaffolder Plugin</name>
-        <description>The simple scaffolder plugin</description>
+        <name>Base Scaffolder Plugin</name>
+        <description>The base scaffolder plugin</description>
         <url>http://www.hive.pt</url>
     </artifact>
     <build>
@@ -49,7 +49,7 @@
                 <stage>build</stage>
                 <configuration>
                     <type>plugin</type>
-                    <specification_file>$base{plugin_directory}/simple_scaffolder_plugin.json</specification_file>
+                    <specification_file>$base{plugin_directory}/base_scaffolder_plugin.json</specification_file>
                 </configuration>
             </plugin>
         </plugins>

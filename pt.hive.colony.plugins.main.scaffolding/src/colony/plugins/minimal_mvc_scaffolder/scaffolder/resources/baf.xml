@@ -33,7 +33,7 @@
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://www.hive.pt xsd/baf.xsd">
     <artifact>
-        <id>pt.hive.colony.plugins.main.scaffolding.mvc</id>
+        <id>pt.hive.colony.plugins.main.scaffolding.minimal_mvc</id>
         <version>1.0.0</version>
         <type>colony</type>
         <name>Minimal Mvc Scaffolder Plugin</name>
