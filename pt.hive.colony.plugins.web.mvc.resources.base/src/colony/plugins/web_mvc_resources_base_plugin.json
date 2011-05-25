@@ -40,6 +40,7 @@
             "web_mvc_resources_base/resources_base/resources/extras/libs/jquery_util/selection/js/selection.js",
             "web_mvc_resources_base/resources_base/resources/extras/libs/util/base64.js",
             "web_mvc_resources_base/resources_base/resources/extras/libs/util/browser.js",
+            "web_mvc_resources_base/resources_base/resources/extras/libs/util/canvas.js",
             "web_mvc_resources_base/resources_base/resources/extras/libs/util/class_reference.js",
             "web_mvc_resources_base/resources_base/resources/extras/libs/util/cookie.js",
             "web_mvc_resources_base/resources_base/resources/extras/libs/util/date.js",
