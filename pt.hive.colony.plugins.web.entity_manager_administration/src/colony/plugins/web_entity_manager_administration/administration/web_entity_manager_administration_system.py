@@ -201,9 +201,6 @@ class WebEntityManagerAdministration:
         # flushes the rest request
         rest_request.flush()
 
-        # returns true
-        return True
-
     def _get_entity_manager(self):
         """
         Retrieves the entity manager, loading it if necessary.
