@@ -195,7 +195,10 @@ class WebMvc:
                 continue
 
             # handles the match, returning the result of the handling
-            return self._handle_resource_match(rest_request, resource_path, resource_path_match, resource_matching_regex)
+            self._handle_resource_match(rest_request, resource_path, resource_path_match, resource_matching_regex)
+
+            # returns immediately
+            return
 
         # iterates over all the communication matching regex in the communication matching regex list
         for communication_matching_regex in self.communication_matching_regex_list:
@@ -208,7 +211,10 @@ class WebMvc:
                 continue
 
             # handles the match, returning the result of the handling
-            return self._handle_communication_match(rest_request, resource_path, communication_path_match, communication_matching_regex)
+            self._handle_communication_match(rest_request, resource_path, communication_path_match, communication_matching_regex)
+
+            # returns immediately
+            return
 
         # iterates over all the matching regex in the matching regex list
         for matching_regex in self.matching_regex_list:
@@ -229,13 +235,13 @@ class WebMvc:
                 continue
 
             # handles the match, returning the result of the handling
-            return self._handle_match(rest_request, handle_tuple)
+            self._handle_match(rest_request, handle_tuple)
+
+            # returns immediately
+            return
 
         # raises the mvc request not handled exception
         raise web_mvc_exceptions.MvcRequestNotHandled("no mvc service plugin could handle the request")
-
-        # returns true
-        return True
 
     def load_web_mvc_service_plugin(self, web_mvc_service_plugin):
         """
@@ -467,7 +473,7 @@ class WebMvc:
         file_path = resource_base_path + "/" + resource_path[resource_initial_token_length:] + "." + rest_request.encoder_name
 
         # handles the given request by the web mvc file handler
-        return self.web_mvc_file_handler.handle_request(rest_request.request, file_path)
+        self.web_mvc_file_handler.handle_request(rest_request.request, file_path)
 
     def _handle_communication_match(self, rest_request, resource_path, communication_path_match, communication_matching_regex):
         # retrieves the base value for the matching regex
@@ -490,7 +496,7 @@ class WebMvc:
         data_handler_method, connection_changed_handler_method, connection_name = communication_information
 
         # handles the given request by the web mvc communication handler
-        return self.web_mvc_communication_handler.handle_request(rest_request.request, data_handler_method, connection_changed_handler_method, connection_name)
+        self.web_mvc_communication_handler.handle_request(rest_request.request, data_handler_method, connection_changed_handler_method, connection_name)
 
     def _validate_match(self, rest_request, resource_path, resource_path_match, matching_regex):
         # retrieves the base value for the matching regex
@@ -537,7 +543,7 @@ class WebMvc:
         handler_method, parameters = handler_tuple
 
         # handles the web mvc request to the handler method
-        return handler_method(rest_request, parameters)
+        handler_method(rest_request, parameters)
 
     def _update_matching_regex(self):
         """
