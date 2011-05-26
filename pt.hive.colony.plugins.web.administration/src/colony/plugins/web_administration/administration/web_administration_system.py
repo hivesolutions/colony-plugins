@@ -91,18 +91,6 @@ class WebAdministration:
         @return: The result of the handling.
         """
 
-        # retrieves the request
-        request = rest_request.get_request()
-
-        # retrieves the rest path list
-        path_list = rest_request.get_path_list()
-
-        # retrieves the rest encoder plugins
-        rest_encoder_plugins = rest_request.get_rest_encoder_plugins()
-
-        # retrieves the rest encoder name
-        encoder_name = rest_request.get_encoder_name()
-
         # retrieves the plugin manager
         plugin_manager = self.web_administration_plugin.manager
 
