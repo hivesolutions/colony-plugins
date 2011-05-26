@@ -1283,6 +1283,26 @@ class RestRequest:
 
         self.set_rest_encoder_plugins_map = set_rest_encoder_plugins_map
 
+    def get_status_code(self):
+        """
+        Retrieves the status code.
+
+        @rtype: int
+        @return: The status code.
+        """
+
+        return self.request.status_code
+
+    def set_status_code(self, status_code):
+        """
+        Sets the status code.
+
+        @type status_code: int
+        @param status_code: The status code.
+        """
+
+        self.request.status_code = status_code
+
     def _update_session_cookie(self):
         """
         Updates the current session.
