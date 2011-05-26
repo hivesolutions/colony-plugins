@@ -185,9 +185,6 @@ class JavascriptFileHandler:
         # flushes the request, sending the output to the client
         request.flush()
 
-        # returns true
-        return True
-
     def _compute_etag(self, file_stat, modified_timestamp):
         """
         Computes the etag for the given file stat and
