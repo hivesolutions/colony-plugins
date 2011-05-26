@@ -82,6 +82,12 @@ BASE_PATH_VALUE = "base_path"
 BACK_PATH_VALUE = "../"
 """ The back path value """
 
+EXTRAS_VALUE = "extras"
+""" The extras value """
+
+TEMPLATES_VALUE = "templates"
+""" The templates value """
+
 EXCEPTION_VALUE = "exception"
 """ The exception value """
 
@@ -846,13 +852,13 @@ def process_template_file(self, template_file, variable_encoding = None):
     # sets the template file variable encoding
     template_file.set_variable_encoding(variable_encoding)
 
-    # creates the process methods map
-    process_methods_map = {
-        "process_stylesheet_link" : __process_stylesheet_link
-    }
+    # creates the process methods list
+    process_methods_list = [
+        ("process_stylesheet_link", self.get_process_stylesheet_link())
+    ]
 
     # attaches the process methods to the template file
-    template_file.attach_process_methods(process_methods_map)
+    template_file.attach_process_methods(process_methods_list)
 
     # processes the template file
     processed_template_file = template_file.process()
@@ -1182,6 +1188,117 @@ def get_locale(self, rest_request, available_locales = (DEFAULT_LOCALE,), alias_
 
     # returns the locale
     return locale
+
+def update_resources_path(self):
+    """
+    Updates the resources path, changing the paths
+    for the extra and templates references.
+    """
+
+    # creates the templates path from the extras path
+    extras_path = os.path.join(self.resources_path, EXTRAS_VALUE)
+
+    # creates the templates path from the resources path
+    templates_path = os.path.join(self.resources_path, TEMPLATES_VALUE)
+
+    # sets the extras path
+    self.set_extras_path(extras_path)
+
+    # sets the templates path
+    self.set_templates_path(templates_path)
+
+def set_relative_resources_path(self, relative_resources_path, update_resources = True):
+    """
+    Sets the relative resources path and optionaly updates
+    the resources.
+
+    @type update_resources: bool
+    @param update_resources: If the associated resources
+    should be updated.
+    """
+
+    # retrieves the plugin manager
+    plugin_manager = self.plugin.manager
+
+    # retrieves the plugin id
+    plugin_id = self.plugin.id
+
+    # retrieves the hive site main plugin path
+    plugin_path = plugin_manager.get_plugin_path_by_id(plugin_id)
+
+    # creates the full absolute resources path from the plugin path
+    resources_path = os.path.join(plugin_path, relative_resources_path)
+
+    # sets the resources path
+    self.set_resources_path(resources_path, update_resources)
+
+def get_plugin(self):
+    """
+    Retrieves the plugin.
+
+    @rtype: Plugin
+    @return: The plugin.
+    """
+
+    return self.plugin
+
+def set_plugin(self, plugin):
+    """
+    Sets the plugin.
+
+    @type plugin: Plugin
+    @param plugin: The plugin.
+    """
+
+    self.plugin = plugin
+
+def get_resources_path(self):
+    """
+    Retrieves the resources path.
+
+    @rtype: Sring
+    @return: The resources path.
+    """
+
+    return self.resources_path
+
+def set_resources_path(self, resources_path, update_resources = True):
+    """
+    Sets the resources path.
+    Optionally an update on all resource related
+    path may be triggered.
+
+    @type resources_path: String
+    @param resources_path: The resources path.
+    @type update_resources: bool
+    @param update_resources: If the associated resources
+    should be updated.
+    """
+
+    self.resources_path = resources_path
+
+    # in case the update resources flag is set
+    update_resources and self.update_resources_path()
+
+def get_extras_path(self):
+    """
+    Retrieves the extras path.
+
+    @rtype: Sring
+    @return: The extras path.
+    """
+
+    return self.extras_path
+
+def set_extras_path(self, extras_path):
+    """
+    Sets the extras path.
+
+    @type extras_path: String
+    @param extras_path: The extras path.
+    """
+
+    self.extras_path = extras_path
 
 def get_templates_path(self):
     """
@@ -1954,5 +2071,25 @@ def _get_locales_map(self, accept_language):
     # returns the locales map
     return locales_map
 
-def __process_stylesheet_link(self):
-    self.string_buffer.write("<link href=\"/stylesheets/layout.css?1306145278\" rel=\"stylesheet\" type=\"text/css\" />")
+def get_process_stylesheet_link(controller):
+    def __process_stylesheet_link(self, node):
+        # retrieves the extras path from the controller
+        extras_path = controller.get_extras_path()
+
+        # retrieves the css path from the controller
+        css_path = os.path.join(extras_path, "css")
+
+        list_dir = os.listdir(css_path)
+
+        for item in list_dir:
+            # splits the item into base and extension
+            _item_base, item_extension = os.path.splitext(item)
+
+            # in case the item extension is not
+            if not item_extension == ".css":
+                # continues the loop
+                continue
+
+            self.string_buffer.write("<link rel=\"stylesheet\" href=\"resources/css/" + item + "\" type=\"text/css\" />\n")
+
+    return __process_stylesheet_link

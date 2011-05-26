@@ -166,17 +166,24 @@ class WebMvcUtils:
         return model
 
     def create_controller(self, base_controller, base_arguments_list, base_arguments_map):
+        # retrieves the template engine manager plugin
+        template_engine_manager_plugin = self.web_mvc_utils_plugin.template_engine_manager_plugin
+
+        # retrieves the first argument from the base arguments
+        # as the plugin
+        plugin = base_arguments_list[0]
+
         # sets the module functions in the base controller class
         self._set_module_functions(web_mvc_controller, base_controller)
 
         # creates the controller with the sent arguments list and the arguments map
         controller = base_controller(*base_arguments_list, **base_arguments_map)
 
+        # sets the plugin in the controller
+        controller.set_plugin(plugin)
+
         # starts the controller structures
         controller._start_controller()
-
-        # retrieves the template engine manager plugin
-        template_engine_manager_plugin = self.web_mvc_utils_plugin.template_engine_manager_plugin
 
         # sets the template engine manager plugin in the controller
         controller.set_template_engine_manager_plugin(template_engine_manager_plugin)
