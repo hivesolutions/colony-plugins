@@ -180,6 +180,9 @@ class TemplateHandler:
                     # retrieves the mime type for the given file name extension
                     mime_type = format_mime_plugin.get_mime_type_file_name(request.uri) or DEFAULT_MIME_TYPE
 
+                    # sets the request status code
+                    request.status_code = 200
+
                     # sets the empty content type
                     request.content_type = mime_type
 
@@ -191,6 +194,9 @@ class TemplateHandler:
 
                     # writes the file contents
                     request.write(file_contents)
+
+                    # flushes the request
+                    request.flush()
 
                     # returns immediately (the file is read)
                     return
