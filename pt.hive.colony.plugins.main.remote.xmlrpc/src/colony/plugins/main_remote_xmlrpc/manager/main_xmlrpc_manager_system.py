@@ -160,6 +160,9 @@ class MainXmlrpcManager:
         # writes the serialized result into the buffer
         request.write(result_request)
 
+        # sets the request status code in the request
+        request.status_code = 200
+
         # flushes the request, sending the output to the client
         request.flush()
 
