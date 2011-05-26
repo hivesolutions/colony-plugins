@@ -43,6 +43,9 @@ DEFAULT_ENCODING = "utf-8"
 DEFAULT_TEMPLATE_ENCODING = "Cp1252"
 """ The default template encoding """
 
+VALID_STATUS_CODE = 200
+""" The valid status code """
+
 XHTML_MIME_TYPE = "application/xhtml+xml"
 """ The xhtml mime type """
 
@@ -111,6 +114,9 @@ class WebAdministration:
 
         # encodes the processed template file using the default encoding
         processed_template_file_encoded = processed_template_file.encode(DEFAULT_ENCODING)
+
+        # sets the status code for the rest request
+        rest_request.set_status_code(VALID_STATUS_CODE)
 
         # sets the content type for the rest request
         rest_request.set_content_type(XHTML_MIME_TYPE)
