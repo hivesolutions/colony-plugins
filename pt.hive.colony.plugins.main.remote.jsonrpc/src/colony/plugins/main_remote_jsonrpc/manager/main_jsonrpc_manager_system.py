@@ -200,9 +200,6 @@ class MainJsonrpcManager:
         # flushes the request, sending the output to the client
         request.flush()
 
-        # returns true
-        return True
-
     def is_active(self):
         """
         Tests if the service is active.
