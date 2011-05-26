@@ -326,12 +326,20 @@ class Visitor:
     string_buffer = None
     """ The string buffer """
 
+    process_methods_list = []
+    """ The list of process methods (tuples) """
+
     def __init__(self):
+        """
+        Constructor of the class.
+        """
+
         self.node_method_map = {}
         self.visit_childs = True
         self.visit_next = True
         self.global_map = {}
         self.string_buffer = colony.libs.string_buffer_util.StringBuffer()
+        self.process_methods_list = []
 
         self.update_node_method_map()
 
@@ -353,6 +361,19 @@ class Visitor:
                 ast_node_class = getattr(self_class_real_element, "ast_node_class")
 
                 self.node_method_map[ast_node_class] = self_class_real_element
+
+    def attach_process_method(self, process_method_name, process_method):
+        # creates the process method instance
+        process_method_instance = types.MethodType(process_method, self, Visitor)
+
+        # sets the process method in the visitor
+        setattr(self, process_method_name, process_method_instance)
+
+        # creates the process method tuple
+        process_method_tuple = (process_method_name, process_method)
+
+        # adds the process method tuple to the list of process methods
+        self.process_methods_list.append(process_method_tuple)
 
     def get_global_map(self):
         return self.global_map
@@ -1091,7 +1112,7 @@ class Visitor:
             file_path = file_directory + "/" + attribute_file_literal_value
 
         # parses the file retrieving the template file
-        template_file = self.template_engine_manager.parse_file_path(file_path, self.encoding)
+        template_file = self.template_engine_manager.parse_file_path(file_path, self.encoding, self.process_methods_list)
 
         # sets the global map in template file
         template_file.set_global_map(self.global_map)
