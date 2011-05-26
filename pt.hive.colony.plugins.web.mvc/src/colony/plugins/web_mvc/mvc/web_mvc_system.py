@@ -70,6 +70,9 @@ ENCODER_NAME_VALUE = "encoder_name"
 PATTERN_NAMES_VALUE = "pattern_names"
 """ The pattern names value """
 
+DEFAULT_STATUS_CODE = 200
+""" The default status code """
+
 class WebMvc:
     """
     The web mvc class.
@@ -197,6 +200,9 @@ class WebMvc:
             # handles the match, returning the result of the handling
             self._handle_resource_match(rest_request, resource_path, resource_path_match, resource_matching_regex)
 
+            # runs the process request in the rest request
+            self._process_request(rest_request)
+
             # returns immediately
             return
 
@@ -212,6 +218,9 @@ class WebMvc:
 
             # handles the match, returning the result of the handling
             self._handle_communication_match(rest_request, resource_path, communication_path_match, communication_matching_regex)
+
+            # runs the process request in the rest request
+            self._process_request(rest_request)
 
             # returns immediately
             return
@@ -236,6 +245,9 @@ class WebMvc:
 
             # handles the match, returning the result of the handling
             self._handle_match(rest_request, handle_tuple)
+
+            # runs the process request in the rest request
+            self._process_request(rest_request)
 
             # returns immediately
             return
@@ -544,6 +556,24 @@ class WebMvc:
 
         # handles the web mvc request to the handler method
         handler_method(rest_request, parameters)
+
+    def _process_request(self, rest_request):
+        """
+        Processes the given rest request, changing its
+        attributes to provide a valid rest request.
+
+        @type rest_request: RestRequest
+        @param rest_request: The rest request to be "processed".
+        """
+
+        # retrieves the rest request status code
+        rest_request_status_code = rest_request.get_status_code()
+
+        # checks if the status code is set in the rest request
+        is_set_status_code = rest_request_status_code and True or False
+
+        # sets the default status code in case it's not already set
+        not is_set_status_code and rest_request.set_status_code(DEFAULT_STATUS_CODE)
 
     def _update_matching_regex(self):
         """
