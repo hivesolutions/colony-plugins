@@ -45,6 +45,9 @@ class MainModPython:
     main_mod_python_plugin = None
     """ The main mod python plugin """
 
+    http_python_handler_plugin_map = {}
+    """ The http python handler plugin map """
+
     def __init__(self, main_mod_python_plugin):
         """
         Constructor of the class.
@@ -54,6 +57,8 @@ class MainModPython:
         """
 
         self.main_mod_python_plugin = main_mod_python_plugin
+
+        self.http_python_handler_plugin_map = {}
 
     def handle_request(self, request, plugin_handler_id):
         """
@@ -67,14 +72,42 @@ class MainModPython:
 
         # in case the plugin handler id is already defined
         if plugin_handler_id:
-            # iterates over all the http python handler plugins
-            for http_python_handler_plugin in self.main_mod_python_plugin.http_python_handler_plugins:
-                if plugin_handler_id == http_python_handler_plugin.id:
-                    http_python_handler_plugin.handle_request(request)
-                    return
+            # retrieves the http python handler plugin
+            http_python_handler_plugin = self.http_python_handler_plugin_map.get(plugin_handler_id, None)
+
+            # handles the request using the http python handler plugin
+            http_python_handler_plugin.handle_request(request)
+
+            # returns immediately
+            return
+        # otherwise the plugin is not defined and it
+        # must be found first
         else:
             # iterates over all the http python handler plugins
             for http_python_handler_plugin in self.main_mod_python_plugin.http_python_handler_plugins:
-                if http_python_handler_plugin.is_request_handler(request):
-                    http_python_handler_plugin.handle_request(request)
-                    return
+                # checks if the current http python handler plugin
+                # is request handler for the current request
+                is_request_handler = http_python_handler_plugin.is_request_handler(request)
+
+                # in case it's not the request handler
+                if not is_request_handler:
+                    # continues the loop
+                    continue
+
+                # handles the request using the http python handler plugin
+                http_python_handler_plugin.handle_request(request)
+
+                # returns immediately
+                return
+
+    def http_python_handler_load(self, http_python_handler_plugin):
+        # retrieves the plugin id
+        plugin_id = http_python_handler_plugin.id
+
+        self.http_python_handler_plugin_map[plugin_id] = http_python_handler_plugin
+
+    def http_python_handler_unload(self, http_python_handler_plugin):
+        # retrieves the plugin id
+        plugin_id = http_python_handler_plugin.id
+
+        del self.http_python_handler_plugin_map[plugin_id]
