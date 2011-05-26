@@ -40,6 +40,9 @@ __license__ = "GNU General Public License (GPL), Version 3"
 FILE_PATH_VALUE = "file_path"
 """ The file path value """
 
+VALID_STATUS_CODE = 200
+""" The valid status code """
+
 DEFAULT_NUMBER_RECORDS = 30
 """ The default number records """
 
@@ -191,6 +194,9 @@ class WebEntityManagerAdministration:
 
             # retrieves the result encoded with the default encoder
             result_encoded = str(entity_objects)
+
+        # sets the status code for the rest request
+        rest_request.set_status_code(VALID_STATUS_CODE)
 
         # sets the content type for the rest request
         rest_request.set_content_type(content_type)
