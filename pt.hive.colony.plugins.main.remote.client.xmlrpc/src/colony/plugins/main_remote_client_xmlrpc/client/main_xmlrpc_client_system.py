@@ -40,6 +40,7 @@ __license__ = "GNU General Public License (GPL), Version 3"
 import xmlrpclib
 
 SERVICE_NAME = "xmlrpc"
+""" The service name """
 
 class MainXmlrpcClient:
     """
