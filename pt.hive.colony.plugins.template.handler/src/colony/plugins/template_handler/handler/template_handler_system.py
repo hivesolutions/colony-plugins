@@ -143,6 +143,8 @@ class TemplateHandler:
             if handler_filename == request_filename_striped:
                 # retrieves the complete path
                 complete_path = template_handler_extension_plugin.get_template_path()
+
+                # breaks the loop
                 break
             elif request_filename_striped.find(handler_filename) == 0:
                 # retrieves the handler file name length
@@ -164,6 +166,7 @@ class TemplateHandler:
 
                     # in case the path exists
                     if os.path.exists(complete_path):
+                        # breaks the loop
                         break
 
                 # retrieves the file extension from the filename
@@ -171,6 +174,7 @@ class TemplateHandler:
 
                 # in case the file extension is of type template
                 if file_name_extension == TEMPLATE_FILE_EXENSION:
+                    # breaks the loop
                     break
                 else:
                     # retrieves the mime type for the given file name extension
@@ -188,8 +192,8 @@ class TemplateHandler:
                     # writes the file contents
                     request.write(file_contents)
 
-                    # returns the call (the file is read)
-                    return True
+                    # returns immediately (the file is read)
+                    return
 
         # in case the paths does not exist
         if not os.path.exists(complete_path):
@@ -198,9 +202,6 @@ class TemplateHandler:
 
         # interprets the file
         self.interpret_file(complete_path, request)
-
-        # returns true
-        return True
 
     def interpret_file(self, file_path, request):
         """
