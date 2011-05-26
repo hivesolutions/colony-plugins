@@ -132,6 +132,3 @@ class WebAdministration:
 
         # flushes the rest request
         rest_request.flush()
-
-        # returns true
-        return True
