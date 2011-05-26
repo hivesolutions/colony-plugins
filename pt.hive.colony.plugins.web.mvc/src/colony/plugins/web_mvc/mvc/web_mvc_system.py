@@ -40,11 +40,11 @@ __license__ = "GNU General Public License (GPL), Version 3"
 import re
 import types
 
+import colony.libs.string_buffer_util
+
 import web_mvc_exceptions
 import web_mvc_file_handler
 import web_mvc_communication_handler
-
-import colony.libs.string_buffer_util
 
 NAMED_GROUPS_REGEX_VALUE = "\(\?\P\<[a-zA-Z_][a-zA-Z0-9_]*\>(.+?)\)"
 """ The named groups regex value """
