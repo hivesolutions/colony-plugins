@@ -38,7 +38,6 @@ __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
 import re
-import types
 
 import template_engine_ast
 import template_engine_visitor
@@ -135,13 +134,13 @@ class TemplateEngineManager:
 
         self.template_engine_manager_plugin = template_engine_manager_plugin
 
-    def parse_file_path(self, file_path, encoding = DEFAULT_ENCODING_VALUE):
+    def parse_file_path(self, file_path, encoding = DEFAULT_ENCODING_VALUE, process_methods_list = []):
         # opens the file for reading
         file = open(file_path, "r")
 
         try:
             # parses the file, retrieving the template file
-            template_file = self.parse_file(file, file_path, encoding)
+            template_file = self.parse_file(file, file_path, encoding, process_methods_list)
         finally:
             # closes the file
             file.close()
@@ -149,10 +148,10 @@ class TemplateEngineManager:
         # returns the template file
         return template_file
 
-    def parse_file_path_variable_encoding(self, file_path, encoding = DEFAULT_ENCODING_VALUE, variable_encoding = DEFAULT_ENCODING_VALUE):
+    def parse_file_path_variable_encoding(self, file_path, encoding = DEFAULT_ENCODING_VALUE, variable_encoding = DEFAULT_ENCODING_VALUE, process_methods_list = []):
         # parses the file for the given file path with the
         # given encoding retrieving the template_file
-        template_file = self.parse_file_path(file_path, encoding)
+        template_file = self.parse_file_path(file_path, encoding, process_methods_list)
 
         # sets the variable encoding in the template file
         template_file.set_variable_encoding(variable_encoding)
@@ -160,7 +159,7 @@ class TemplateEngineManager:
         # returns the template file
         return template_file
 
-    def parse_file(self, file, file_path = None, encoding = DEFAULT_ENCODING_VALUE):
+    def parse_file(self, file, file_path = None, encoding = DEFAULT_ENCODING_VALUE, process_methods_list = []):
         # reads the file contents
         file_contents = file.read()
 
@@ -358,6 +357,9 @@ class TemplateEngineManager:
         # creates the template file from the file path, encoding and root node
         template_file = TemplateFile(self, file_path, encoding, root_node)
 
+        # attaches the currently given process methods
+        template_file.attach_process_methods(process_methods_list)
+
         # returns the template file
         return template_file
 
@@ -485,29 +487,20 @@ class TemplateFile:
 
         self.visitor.set_global_map(global_map)
 
-    def attach_process_methods(self, process_methods_map):
+    def attach_process_methods(self, process_methods_list):
         """
         Attaches a series of process methods to the visitor
         currently being used.
 
-        @type process_methods_map: Dictionary
-        @param process_methods_map: The map containing the process
-        method to be attached.
+        @type process_methods_list: List
+        @param process_methods_list: The list of tuples containing the
+        method name and method (function).
         """
 
-        # retrieves the process methods map items
-        process_methods_map_items = process_methods_map.items()
-
-        # retrieves the visitor class
-        visitor_class = self.visitor.__class__
-
-        # iterates over all the process methods
-        for process_method_name, process_method in process_methods_map_items:
-            # creates the process method instance
-            process_method_instance = types.MethodType(process_method, self.visitor, visitor_class)
-
-            # sets the process method in the visitor
-            setattr(self.visitor, process_method_name, process_method_instance)
+        # iterates over all the process methods in the list
+        for process_method_name, process_method in process_methods_list:
+            # attaches the process method to the visitor
+            self.visitor.attach_process_method(process_method_name, process_method)
 
     def process(self):
         """
