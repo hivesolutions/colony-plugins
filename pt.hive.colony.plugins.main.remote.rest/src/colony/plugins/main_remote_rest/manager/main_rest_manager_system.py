@@ -296,39 +296,45 @@ class MainRestManager:
         # in case the request is meant to be handled by services
         if resource_name == SERVICES_SERVICE_NAME:
             # handles the request with the services request handler
-            return self.handle_rest_request_services(rest_request)
+            self.handle_rest_request_services(rest_request)
+
+            # returns immediately
+            return
         else:
             # iterates over all the matching regex in the matching regex list
             for matching_regex in self.matching_regex_list:
                 # retrieves the resource path match
                 resource_path_match = matching_regex.match(resource_path)
 
-                # in case there is a valid resource path match
-                if resource_path_match:
-                    # retrieves the base value for the matching regex
-                    base_value = self.matching_regex_base_values_map[matching_regex]
+                # in case there is no valid resource path match
+                if not resource_path_match:
+                    # continues the loop
+                    continue
 
-                    # retrieves the index of the captured group
-                    group_index = resource_path_match.lastindex
+                # retrieves the base value for the matching regex
+                base_value = self.matching_regex_base_values_map[matching_regex]
 
-                    # calculates the rest service plugin index from the base value,
-                    # the group index and subtracts one value
-                    rest_service_plugin_index = base_value + group_index - 1
+                # retrieves the index of the captured group
+                group_index = resource_path_match.lastindex
 
-                    # retrieves the plugin id from the rest service plugin index
-                    plugin_id = self.regex_index_plugin_id_map[rest_service_plugin_index]
+                # calculates the rest service plugin index from the base value,
+                # the group index and subtracts one value
+                rest_service_plugin_index = base_value + group_index - 1
 
-                    # retrieves the rest service plugin using the plugin id
-                    rest_service_plugin = self.plugin_id_plugin_map[plugin_id]
+                # retrieves the plugin id from the rest service plugin index
+                plugin_id = self.regex_index_plugin_id_map[rest_service_plugin_index]
 
-                    # handles the rest request to the rest servicxe plugin
-                    return rest_service_plugin.handle_rest_request(rest_request)
+                # retrieves the rest service plugin using the plugin id
+                rest_service_plugin = self.plugin_id_plugin_map[plugin_id]
 
-            # raises the rest request not handled exception
-            raise main_rest_manager_exceptions.RestRequestNotHandled("no rest service plugin could handle the request")
+                # handles the rest request to the rest servicxe plugin
+                rest_service_plugin.handle_rest_request(rest_request)
 
-        # returns true
-        return True
+                # returns immediately
+                return
+
+        # raises the rest request not handled exception
+        raise main_rest_manager_exceptions.RestRequestNotHandled("no rest service plugin could handle the request")
 
     def handle_rest_request_services(self, rest_request):
         """
@@ -395,9 +401,6 @@ class MainRestManager:
 
         # flushes the rest request
         rest_request.flush()
-
-        # returns true
-        return True
 
     def is_active(self):
         """
