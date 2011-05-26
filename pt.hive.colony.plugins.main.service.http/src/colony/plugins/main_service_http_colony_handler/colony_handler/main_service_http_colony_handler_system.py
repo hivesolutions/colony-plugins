@@ -45,6 +45,9 @@ HANDLER_NAME = "colony"
 PLUGIN_HANDLER_VALUE = "plugin_handler"
 """ The plugin handler value """
 
+DEFAULT_ERROR_STATUS_CODE = 500
+""" The default error status code """
+
 class MainServiceHttpColonyHandler:
     """
     The main service http colony handler class.
@@ -52,6 +55,9 @@ class MainServiceHttpColonyHandler:
 
     main_service_http_colony_handler_plugin = None
     """ The main service http colony handler plugin """
+
+    http_python_handler_plugin_map = {}
+    """ The http python handler plugin map """
 
     def __init__(self, main_service_http_colony_handler_plugin):
         """
@@ -62,6 +68,8 @@ class MainServiceHttpColonyHandler:
         """
 
         self.main_service_http_colony_handler_plugin = main_service_http_colony_handler_plugin
+
+        self.http_python_handler_plugin_map = {}
 
     def get_handler_name(self):
         """
@@ -87,41 +95,53 @@ class MainServiceHttpColonyHandler:
             # retrieves the plugin handler id for the plugin handler value
             plugin_handler_id = request.properties[PLUGIN_HANDLER_VALUE]
 
-            # iterates over all the http python handler plugins
-            for http_python_handler_plugin in self.main_service_http_colony_handler_plugin.http_python_handler_plugins:
-                if http_python_handler_plugin.id == plugin_handler_id:
-                    # handles the request by the http python handler plugin and
-                    # retrieves the return value
-                    return_value = http_python_handler_plugin.handle_request(request)
+            # retrieves the http python handler plugin
+            http_python_handler_plugin = self.http_python_handler_plugin_map.get(plugin_handler_id, None)
 
-                    # in case no status code is defined
-                    if not request.status_code:
-                        if return_value:
-                            # sets the default request status code
-                            request.status_code = 200
-                        else:
-                            # sets the default error request status code
-                            request.status_code = 500
+            # handles the request by the http python handler plugin and
+            # retrieves the return value
+            http_python_handler_plugin.handle_request(request)
 
-                    return
+            # sets the request status code in case it has
+            # not been already set
+            request.status_code = request.status_code or DEFAULT_ERROR_STATUS_CODE
+
+            # returns immediately
+            return
         else:
             # iterates over all the http python handler plugins
             for http_python_handler_plugin in self.main_service_http_colony_handler_plugin.http_python_handler_plugins:
-                if http_python_handler_plugin.is_request_handler(request):
-                    # handles the request by the http python handler plugin and
-                    # retrieves the return value
-                    return_value = http_python_handler_plugin.handle_request(request)
+                # checks if the current http python handler plugin
+                # is request handler for the current request
+                is_request_handler = http_python_handler_plugin.is_request_handler(request)
 
-                    # in case no status code is defined
-                    if not request.status_code:
-                        if return_value:
-                            # sets the default request status code
-                            request.status_code = 200
-                        else:
-                            # sets the default error request status code
-                            request.status_code = 500
+                # in case it's not the request handler
+                if not is_request_handler:
+                    # continues the loop
+                    continue
 
-                    return
+                # handles the request by the http python handler plugin and
+                # retrieves the return value
+                http_python_handler_plugin.handle_request(request)
+
+                # sets the request status code in case it has
+                # not been already set
+                request.status_code = request.status_code or DEFAULT_ERROR_STATUS_CODE
+
+                # returns immediately
+                return
 
         # raises the request not handled exception
         raise main_service_http_colony_handler_exceptions.RequestNotHandled("no python handler plugin could handle the request")
+
+    def http_python_handler_load(self, http_python_handler_plugin):
+        # retrieves the plugin id
+        plugin_id = http_python_handler_plugin.id
+
+        self.http_python_handler_plugin_map[plugin_id] = http_python_handler_plugin
+
+    def http_python_handler_unload(self, http_python_handler_plugin):
+        # retrieves the plugin id
+        plugin_id = http_python_handler_plugin.id
+
+        del self.http_python_handler_plugin_map[plugin_id]
