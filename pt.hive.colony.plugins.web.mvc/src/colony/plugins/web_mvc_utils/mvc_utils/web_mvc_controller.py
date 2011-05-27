@@ -854,7 +854,8 @@ def process_template_file(self, template_file, variable_encoding = None):
 
     # creates the process methods list
     process_methods_list = [
-        ("process_stylesheet_link", self.get_process_stylesheet_link())
+        ("process_stylesheet_link", self.get_process_method("process_stylesheet_link")),
+        ("process_javascript_include", self.get_process_method("process_javascript_include"))
     ]
 
     # attaches the process methods to the template file
@@ -2071,7 +2072,22 @@ def _get_locales_map(self, accept_language):
     # returns the locales map
     return locales_map
 
-def get_process_stylesheet_link(controller):
+def get_process_method(controller, process_method_name):
+    """
+    Retrieves the "real" process method from the given
+    process method name.
+
+    @type controller: Controller
+    @param controller: The controller associated with the
+    current context.
+    @type process_method_name: String
+    @param process_method_name: The name of the process
+    method to be retrieved.
+    @rtype: Method
+    @return: The "real" process method from the given
+    process method name.
+    """
+
     def __process_stylesheet_link(self, node):
         # retrieves the extras path from the controller
         extras_path = controller.get_extras_path()
@@ -2079,17 +2095,53 @@ def get_process_stylesheet_link(controller):
         # retrieves the css path from the controller
         css_path = os.path.join(extras_path, "css")
 
-        list_dir = os.listdir(css_path)
+        # retrieves the css path items
+        css_path_items = os.listdir(css_path)
 
-        for item in list_dir:
+        # iterates over all the css path items
+        for css_path_item in css_path_items:
             # splits the item into base and extension
-            _item_base, item_extension = os.path.splitext(item)
+            _item_base, item_extension = os.path.splitext(css_path_item)
 
             # in case the item extension is not
             if not item_extension == ".css":
                 # continues the loop
                 continue
 
-            self.string_buffer.write("<link rel=\"stylesheet\" href=\"resources/css/" + item + "\" type=\"text/css\" />\n")
+            # adds the stylesheet reference to the string buffer
+            self.string_buffer.write("<link rel=\"stylesheet\" href=\"resources/css/%s\" type=\"text/css\" />\n" % css_path_item)
 
-    return __process_stylesheet_link
+    def __process_javascript_include(self, node):
+        # retrieves the extras path from the controller
+        extras_path = controller.get_extras_path()
+
+        # retrieves the js path from the controller
+        js_path = os.path.join(extras_path, "js")
+
+        # retrieves the js path items
+        js_path_items = os.listdir(js_path)
+
+        # iterates over all the js path items
+        for js_path_item in js_path_items:
+            # splits the item into base and extension
+            _item_base, item_extension = os.path.splitext(js_path_item)
+
+            # in case the item extension is not
+            if not item_extension == ".js":
+                # continues the loop
+                continue
+
+            # adds the javscript reference to the string buffer
+            self.string_buffer.write("<script type=\"text/javascript\" src=\"resources/js/%s\"></script>\n" % js_path_item)
+
+    # creates the complete process method name
+    complete_process_method_name = "__" + process_method_name
+
+    # retrieves the local symbols list
+    local_symbols = locals()
+
+    # retrieves the process method from the local symbols
+    process_method = local_symbols.get(complete_process_method_name, None)
+
+    # returns the process method
+    return process_method
