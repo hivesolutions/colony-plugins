@@ -76,7 +76,7 @@ class BitmapLoader:
             # creates the full directory entry path
             full_path = path + "/" + directory_entry
 
-            # retrieves the mode from teh full path
+            # retrieves the mode from the full path
             mode = os.stat(full_path)[stat.ST_MODE]
 
             # in case the file is not a directory
