@@ -14,17 +14,11 @@
                 "id" : "pt.hive.colony.plugins.misc.gui.plugin_manager_interface",
                 "version" : "1.0.0"
             }, {
-                "id" : "pt.hive.colony.plugins.misc.gui.progress_information",
-                "version" : "1.0.0"
-            }, {
                 "id" : "pt.hive.colony.plugins.misc.gui.shell_interface",
                 "version" : "1.0.0"
             }],
     "dependencies" : [{
                 "id" : "pt.hive.colony.bundles.main.console",
-                "version" : "1.0.0"
-            }, {
-                "id" : "pt.hive.colony.bundles.main.log",
                 "version" : "1.0.0"
             }, {
                 "id" : "pt.hive.colony.bundles.bitmap_loader",
