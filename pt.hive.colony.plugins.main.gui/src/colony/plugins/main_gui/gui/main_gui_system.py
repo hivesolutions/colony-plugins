@@ -441,6 +441,9 @@ class MainFrame(wx.Frame):
         bitmap_loader_plugin.load_icons(self.plugin_path + UNIX_DIRECTORY_SEPARATOR + ICONS_16X16_PATH, self.bitmaps_16x16_map, self.icons_16x16_map)
         bitmap_loader_plugin.load_icons(self.plugin_path + UNIX_DIRECTORY_SEPARATOR + ICONS_32X32_PATH, self.bitmaps_32x32_map, self.icons_32x32_map)
 
+        # freezes the frame
+        self.Freeze()
+
         # tells the frame manager to manage this frame
         self._mgr = wx.aui.AuiManager()
         self._mgr.SetManagedWindow(self)
@@ -473,6 +476,9 @@ class MainFrame(wx.Frame):
 
         # refreshes the main frame
         self.Refresh()
+
+        # releases the frame
+        self.Thaw()
 
     def create_plugin_tree(self):
         # defines the plugin tree's position
@@ -717,8 +723,14 @@ class TabContainerPanel(wx.Panel):
         # creates the gui panel plugin's panel
         gui_panel = gui_panel_plugin.create_panel(notebook)
 
+        # freezes the tab container panel
+        self.Freeze()
+
         # adds the gui panel to the page
         notebook.AddPage(gui_panel, gui_panel_name, imageId = gui_panel_bitmap_index)
+
+        # releases the tab container panel
+        self.Thaw()
 
         # returns the gui panel
         return gui_panel
@@ -730,8 +742,14 @@ class TabContainerPanel(wx.Panel):
         # retrieves the platform
         platform = sys.platform
 
+        # freezes the tab container panel
+        self.Freeze()
+
         # removes the gui panel if supported
         (platform == DARWIN_VALUE) and notebook.DeletePage(gui_panel_index)
+
+        # releases the tab container panel
+        self.Thaw()
 
 class PluginTree(wx.TreeCtrl):
     """
@@ -822,6 +840,9 @@ class PluginTree(wx.TreeCtrl):
         # retrieves the gui panel plugins
         gui_panel_plugins = main_gui_plugin.gui_panel_plugins
 
+        # freezes the plugin tree
+        self.Freeze()
+
         # deletes all items
         self.DeleteAllItems()
 
@@ -850,6 +871,9 @@ class PluginTree(wx.TreeCtrl):
 
         # refreshes the interface
         self.Refresh()
+
+        # releases the plugin tree
+        self.Thaw()
 
     def on_left_double_click(self, event):
         # retrieves the main gui
