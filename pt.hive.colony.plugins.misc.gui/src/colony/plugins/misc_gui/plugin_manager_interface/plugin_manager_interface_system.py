@@ -509,7 +509,7 @@ class PluginManagerPanel(wx.Panel):
         # for each node in the tree map
         for node_id in self.tree_map:
             # retrieves the plugin instance
-            plugin = plugin_manager.plugin_instances_map[node_id]
+            plugin = plugin_manager._get_plugin_by_id(node_id)
 
             # checks if the plugin is loaded
             loaded = plugin.is_loaded()
@@ -694,10 +694,13 @@ class PluginManagerPanel(wx.Panel):
         node_id = self.tree.GetItemPyData(item)
 
         # retrieves the item's checked attribute
-        load = item._checked
+        checked = item._checked
+
+        # updates the node's checked attribute
+        self.set_node_attribute(node_id, CHECKED_VALUE, checked)
 
         # toggles the plugin's state
-        self.toggle_plugin_state(node_id, load)
+        self.toggle_plugin_state(node_id, checked)
 
     def on_hyperlink(self, event):
         # retrieves the item
