@@ -122,7 +122,7 @@
         <namespace>pt.hive.colony.plugins.distribution.registry_server</namespace>
         <name>handler_base_filename</name>
         <type>string</type>
-        <data>colony_mod_python/xmlrpc</data>
+        <data>colony_dynamic/xmlrpc</data>
     </resource>
     <resource>
         <namespace>pt.hive.colony.plugins.distribution.registry_server</namespace>
@@ -155,7 +155,7 @@
         <namespace>pt.hive.colony.plugins.distribution.registry_client</namespace>
         <name>handler_base_filename</name>
         <type>string</type>
-        <data>colony_mod_python/xmlrpc</data>
+        <data>colony_dynamic/xmlrpc</data>
     </resource>
     <resource>
         <namespace>pt.hive.colony.plugins.distribution.registry_client</namespace>

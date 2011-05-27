@@ -77,7 +77,7 @@ configuration = {
                     "/"
                 ],
                 "/" : {
-                    "target" : "/colony_mod_python/rest/mvc/pecway/",
+                    "target" : "/colony_dynamic/rest/mvc/pecway/",
                     "recursive_redirection" : True
                 }
             }
@@ -87,10 +87,10 @@ configuration = {
     },
     "contexts" : {
         "resolution_order" : [
-            "/colony_mod_python",
+            "/colony_dynamic",
             "/template_error_handler"
         ],
-        "/colony_mod_python" : {
+        "/colony_dynamic" : {
             "handler" : "colony",
             "allow_redirection" : False,
             "request_properties" : {}

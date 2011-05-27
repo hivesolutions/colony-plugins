@@ -81,7 +81,7 @@ configuration = {
                     "/"
                 ],
                 "/" : {
-                    "target" : "/colony_mod_python/rest/mvc/hive_blog/",
+                    "target" : "/colony_dynamic/rest/mvc/hive_blog/",
                     "recursive_redirection" : True
                 }
             }
@@ -92,7 +92,7 @@ configuration = {
                     "/"
                 ],
                 "/" : {
-                    "target" : "/colony_mod_python/rest/mvc/panzerini_web_mvc/",
+                    "target" : "/colony_dynamic/rest/mvc/panzerini_web_mvc/",
                     "recursive_redirection" : True
                 }
             }
@@ -118,63 +118,63 @@ configuration = {
             "/"
         ],
         "/push_apple" : {
-            "target" : "/colony_mod_python/rest/mvc/web_mvc_communication_push_apple/",
+            "target" : "/colony_dynamic/rest/mvc/web_mvc_communication_push_apple/",
             "recursive_redirection" : True
         },
         "/push" : {
-            "target" : "/colony_mod_python/rest/mvc/web_mvc_communication_push/",
+            "target" : "/colony_dynamic/rest/mvc/web_mvc_communication_push/",
             "recursive_redirection" : True
         },
         "/wiki" : {
-            "target" : "/colony_mod_python/rest/mvc/wiki/",
+            "target" : "/colony_dynamic/rest/mvc/wiki/",
             "recursive_redirection" : True
         },
         "/manager" : {
-            "target" : "/colony_mod_python/rest/mvc/web_mvc_manager/",
+            "target" : "/colony_dynamic/rest/mvc/web_mvc_manager/",
             "recursive_redirection" : True
         },
         "/hive" : {
-            "target" : "/colony_mod_python/rest/mvc/hive_site/",
+            "target" : "/colony_dynamic/rest/mvc/hive_site/",
             "recursive_redirection" : True
         },
         "/blog" : {
-            "target" : "/colony_mod_python/rest/mvc/hive_blog/",
+            "target" : "/colony_dynamic/rest/mvc/hive_blog/",
             "recursive_redirection" : True
         },
         "/media_dashboard" : {
-            "target" : "/colony_mod_python/rest/mvc/media_dashboard/",
+            "target" : "/colony_dynamic/rest/mvc/media_dashboard/",
             "recursive_redirection" : True
         },
         "/task_registry" : {
-            "target" : "/colony_mod_python/rest/mvc/task_registry/",
+            "target" : "/colony_dynamic/rest/mvc/task_registry/",
             "recursive_redirection" : True
         },
         "/openid" : {
-            "target" : "/colony_mod_python/rest/mvc/hive_openid/",
+            "target" : "/colony_dynamic/rest/mvc/hive_openid/",
             "recursive_redirection" : True
         },
         "/take_the_bill" : {
-            "target" : "/colony_mod_python/rest/mvc/take_the_bill/",
+            "target" : "/colony_dynamic/rest/mvc/take_the_bill/",
             "recursive_redirection" : True
         },
         "/a_la_carte" : {
-            "target" : "/colony_mod_python/rest/mvc/a_la_carte/",
+            "target" : "/colony_dynamic/rest/mvc/a_la_carte/",
             "recursive_redirection" : True
         },
         "/pecway" : {
-            "target" : "/colony_mod_python/rest/mvc/pecway/",
+            "target" : "/colony_dynamic/rest/mvc/pecway/",
             "recursive_redirection" : True
         },
         "/bargania" : {
-            "target" : "/colony_mod_python/rest/mvc/bargania_site/",
+            "target" : "/colony_dynamic/rest/mvc/bargania_site/",
             "recursive_redirection" : True
         },
         "/panzerini" : {
-            "target" : "/colony_mod_python/rest/mvc/panzerini_web_mvc/",
+            "target" : "/colony_dynamic/rest/mvc/panzerini_web_mvc/",
             "recursive_redirection" : True
         },
         "/encryption" : {
-            "target" : "/colony_mod_python/rest/mvc/web_mvc_encryption/",
+            "target" : "/colony_dynamic/rest/mvc/web_mvc_encryption/",
             "recursive_redirection" : True
         },
         "/" : {
@@ -187,7 +187,7 @@ configuration = {
             "/colony_web/plugins",
             "/colony_web",
             "/colony_manager",
-            "/colony_mod_python",
+            "/colony_dynamic",
             "/welcome_handler",
             "/system_information_handler",
             "/system_information",
@@ -231,7 +231,7 @@ configuration = {
             "allow_redirection" : False,
             "request_properties" : {}
         },
-        "/colony_mod_python" : {
+        "/colony_dynamic" : {
             "handler" : "colony",
             "allow_redirection" : False,
             "request_properties" : {}

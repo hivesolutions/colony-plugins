@@ -73,11 +73,11 @@ configuration = {
             "/"
         ],
         "/manager" : {
-            "target" : "/colony_mod_python/rest/mvc/web_mvc_manager/",
+            "target" : "/colony_dynamic/rest/mvc/web_mvc_manager/",
             "recursive_redirection" : True
         },
         "/encryption" : {
-            "target" : "/colony_mod_python/rest/mvc/web_mvc_encryption/",
+            "target" : "/colony_dynamic/rest/mvc/web_mvc_encryption/",
             "recursive_redirection" : True
         },
         "/" : {
@@ -89,7 +89,7 @@ configuration = {
         "resolution_order" : [
             "/colony_web/plugins",
             "/colony_web",
-            "/colony_mod_python",
+            "/colony_dynamic",
             "/cgi-bin",
             "/wsgi-bin/remote_sql_service_sqlite",
             "/"
@@ -109,7 +109,7 @@ configuration = {
                 "plugin_handler" : "pt.hive.colony.plugins.javascript.file_handler"
             }
         },
-        "/colony_mod_python" : {
+        "/colony_dynamic" : {
             "handler" : "colony",
             "allow_redirection" : False,
             "request_properties" : {}

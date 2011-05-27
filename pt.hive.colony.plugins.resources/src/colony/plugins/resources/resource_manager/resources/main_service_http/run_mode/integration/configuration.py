@@ -71,7 +71,7 @@ configuration = {
                     "/"
                 ],
                 "/" : {
-                    "target" : "/colony_mod_python/rest/mvc/media_dashboard/",
+                    "target" : "/colony_dynamic/rest/mvc/media_dashboard/",
                     "recursive_redirection" : True
                 }
             }
@@ -94,23 +94,23 @@ configuration = {
             "/media_dashboard"
         ],
         "/manager" : {
-            "target" : "/colony_mod_python/rest/mvc/web_mvc_manager/",
+            "target" : "/colony_dynamic/rest/mvc/web_mvc_manager/",
             "recursive_redirection" : True
         },
         "/media_dashboard" : {
-            "target" : "/colony_mod_python/rest/mvc/media_dashboard/",
+            "target" : "/colony_dynamic/rest/mvc/media_dashboard/",
             "recursive_redirection" : True
         }
     },
     "contexts" : {
         "resolution_order" : [
-            "/colony_mod_python",
+            "/colony_dynamic",
             "/template_error_handler",
             "/template_directory_list_handler",
             "/integration_public",
             "/integration"
         ],
-        "/colony_mod_python" : {
+        "/colony_dynamic" : {
             "handler" : "colony",
             "allow_redirection" : False,
             "request_properties" : {}
