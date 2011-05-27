@@ -40,6 +40,8 @@ __license__ = "GNU General Public License (GPL), Version 3"
 import imp
 import types
 
+import colony.libs.string_util
+
 import web_mvc_utils
 import web_mvc_model
 import web_mvc_controller
@@ -86,6 +88,17 @@ DEFAULT_CONNECTION_PARAMETERS = {
     "autocommit" : False
 }
 """ The default connection parameters """
+
+SYMBOLS_LIST = (
+    ("handle_list", r"^%s/%s$", "get"),
+    ("handle_new", r"^%s/%s/new$", "get"),
+    ("handle_create", r"^%s/%s$", "post"),
+    ("handle_show", r"^%s/%s/(?P<id>\w+)$", "get"),
+    ("handle_edit", r"^%s/%s/(?P<id>\w+)/edit$", "get"),
+    ("handle_update", r"^%s/%s/(?P<id>\w+)/update$", "post"),
+    ("handle_delete", r"^%s/%s/(?P<id>\w+)/delete$", "post")
+)
+""" The list of symbols to be used for pattern generation """
 
 class WebMvcUtils:
     """
@@ -267,6 +280,51 @@ class WebMvcUtils:
 
         # returns the created search index controller
         return search_index_controller
+
+    def generate_patterns(self, patterns, controller, prefix_name):
+        # retrieves the controller class
+        controller_class = controller.__class__
+
+        # retrieves the controller class name
+        controller_class_name = controller_class.__name__
+
+        # retrieves the base name and converts it into
+        # underscore notation
+        base_name = controller_class_name[:-10]
+        base_name = colony.libs.string_util.convert_underscore(base_name)
+
+        # converts the base name to plural
+        controller_name_plural = base_name + "s"
+
+        # iterates over all the symbols in the symbols
+        # list
+        for symbol in SYMBOLS_LIST:
+            # unpacks the symbol, retrieving the name
+            # the regex template and the operation
+            method_name, regex_template, operation = symbol
+
+            # checks if the controller contains the controller
+            # handler method
+            controller_contains_method = hasattr(controller, method_name)
+
+            # in case the controller does not contain the
+            # controller handler method
+            if not controller_contains_method:
+                # continues the loop
+                continue
+
+            # retrieves the controller handler method
+            controller_handler_method = getattr(controller, method_name)
+
+            # retrieves the regex value from the regex template
+            # using the prefix name and the controller name (in plural)
+            regex = regex_template % (prefix_name, controller_name_plural)
+
+            # creates the pattern tuple
+            pattern = (regex, controller_handler_method, operation)
+
+            # adds the pattern (tuple) to the list of patterns
+            patterns.append(pattern)
 
     def _resolve_connection_parameters(self, connection_parameters):
         """

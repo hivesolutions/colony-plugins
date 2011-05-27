@@ -131,6 +131,9 @@ class WebMvcUtilsPlugin(colony.base.plugin_system.Plugin):
     def create_search_index_controller(self, search_index_identifier, search_index_configuration_map, entity_models_modules):
         return self.web_mvc_utils.create_search_index_controller(search_index_identifier, search_index_configuration_map, entity_models_modules)
 
+    def generate_patterns(self, patterns, controller, prefix_name):
+        return self.web_mvc_utils.generate_patterns(patterns, controller, prefix_name)
+
     def get_template_engine_manager_plugin(self):
         return self.template_engine_manager_plugin
 
