@@ -190,14 +190,14 @@ class PluginManagerPanel(wx.Panel):
         self.node_item_map = {}
         self.dirty_node_map = {}
 
-        # creates the tree
-        self.create_tree(parent_widget)
-
         # creates the tree map
         self.create_tree_map()
 
         # indexes the tree map
         self.index_tree_map()
+
+        # creates the tree
+        self.create_tree(parent_widget)
 
         # creates the root node item
         self.create_root_node_item()
@@ -447,6 +447,9 @@ class PluginManagerPanel(wx.Panel):
         # retrieves the child node items
         child_nodes_items = child_nodes_map.items()
 
+        # freezes the tree
+        self.tree.Freeze()
+
         # for each child node
         for child_node_id, child_node_map in child_nodes_items:
             # retrieves the child nodes map
@@ -468,6 +471,9 @@ class PluginManagerPanel(wx.Panel):
 
         # deletes the fake node item
         self.tree.Delete(fake_node_item)
+
+        # releases the tree
+        self.tree.Thaw()
 
     def create_node_item(self, parent_item, node_id, node_map):
         # retrieves the node attributes
@@ -521,6 +527,9 @@ class PluginManagerPanel(wx.Panel):
         self.refresh_node_items()
 
     def refresh_node_items(self):
+        # freezes the tree
+        self.tree.Freeze()
+
         # for each node in the dirty nodes map
         for node_id in self.dirty_node_map:
             # retrieves the node map
@@ -531,6 +540,9 @@ class PluginManagerPanel(wx.Panel):
 
             # refreshes the node item
             self.refresh_node_item(node_id, node_map, node_item)
+
+        # releases the tree
+        self.tree.Thaw()
 
         # resets the dirty nodes map
         self.dirty_node_map = {}
