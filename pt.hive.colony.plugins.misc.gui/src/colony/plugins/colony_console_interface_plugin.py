@@ -38,16 +38,17 @@ __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
 import colony.base.plugin_system
+import colony.base.decorators
 
-class ShellInterfacePlugin(colony.base.plugin_system.Plugin):
+class ColonyConsoleInterfacePlugin(colony.base.plugin_system.Plugin):
     """
-    The main class for the Shell Interface plugin
+    The main class for the Colony Console Interface plugin.
     """
 
-    id = "pt.hive.colony.plugins.misc.gui.shell_interface"
-    name = "Shell Interface Plugin"
-    short_name = "Shell Interface"
-    description = "Shell Interface Plugin"
+    id = "pt.hive.colony.plugins.misc.gui.colony_console_interface"
+    name = "Colony Console Interface Plugin"
+    short_name = "Colony Console Interface"
+    description = "Colony Console Interface Plugin"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     loading_type = colony.base.plugin_system.EAGER_LOADING_TYPE
@@ -55,26 +56,31 @@ class ShellInterfacePlugin(colony.base.plugin_system.Plugin):
         colony.base.plugin_system.CPYTHON_ENVIRONMENT
     ]
     attributes = {
-        "build_automation_file_path" : "$base{plugin_directory}/misc_gui/shell_interface/resources/baf.xml"
+        "build_automation_file_path" : "$base{plugin_directory}/misc_gui/colony_console_interface/resources/baf.xml"
     }
     capabilities = [
         "gui_panel",
         "build_automation_item"
     ]
     dependencies = [
+        colony.base.plugin_system.PluginDependency("pt.hive.colony.plugins.main.console", "1.0.0"),
         colony.base.plugin_system.PackageDependency("Wx Python", "wx", "2.8.7.x", "http://wxpython.org")
     ]
     main_modules = [
-        "misc_gui.shell_interface.shell_interface_system"
+        "misc_gui.colony_console_interface.colony_console_interface_system",
+        "misc_gui.colony_console_interface.colony_console_window"
     ]
 
-    shell_interface = None
-    """ The shell interface """
+    colony_console_interface = None
+    """ The colony console interface """
+
+    colony_console_plugin = None
+    """ The colony console plugin """
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
-        import misc_gui.shell_interface.shell_interface_system
-        self.shell_interface = misc_gui.shell_interface.shell_interface_system.ShellInterface(self)
+        import misc_gui.colony_console_interface.colony_console_interface_system
+        self.colony_console_interface = misc_gui.colony_console_interface.colony_console_interface_system.ColonyConsoleInterface(self)
 
     def end_load_plugin(self):
         colony.base.plugin_system.Plugin.end_load_plugin(self)
@@ -91,11 +97,19 @@ class ShellInterfacePlugin(colony.base.plugin_system.Plugin):
     def unload_allowed(self, plugin, capability):
         colony.base.plugin_system.Plugin.unload_allowed(self, plugin, capability)
 
+    @colony.base.decorators.inject_dependencies("pt.hive.colony.plugins.misc.gui.colony_console_interface", "1.0.0")
     def dependency_injected(self, plugin):
         colony.base.plugin_system.Plugin.dependency_injected(self, plugin)
 
     def create_panel(self, parent):
-        return self.shell_interface.create_panel(parent)
+        return self.colony_console_interface.create_panel(parent)
 
     def get_icon_path(self):
-        return self.shell_interface.get_icon_path()
+        return self.colony_console_interface.get_icon_path()
+
+    def get_console_plugin(self):
+        return self.console_plugin
+
+    @colony.base.decorators.plugin_inject("pt.hive.colony.plugins.main.console")
+    def set_console_plugin(self, console_plugin):
+        self.console_plugin = console_plugin
