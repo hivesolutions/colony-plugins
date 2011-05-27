@@ -83,9 +83,6 @@ ICONS_PATH = GUI_RESOURCES_PATH + UNIX_DIRECTORY_SEPARATOR + "icons"
 IMAGES_PATH = GUI_RESOURCES_PATH + UNIX_DIRECTORY_SEPARATOR + "images"
 """ The images path """
 
-ICONS_10X10_PATH = ICONS_PATH + UNIX_DIRECTORY_SEPARATOR + "10x10"
-""" The icons 10x0 path """
-
 ICONS_16X16_PATH = ICONS_PATH + UNIX_DIRECTORY_SEPARATOR + "16x16"
 """ The icons 16x16 path """
 
@@ -371,17 +368,11 @@ class MainFrame(wx.Frame):
     tab_container_panel = None
     """ The tab container panel """
 
-    bitmaps_10x10_map = {}
-    """ The bitmaps map for 10x10 bitmaps """
-
     bitmaps_16x16_map = {}
     """ The bitmaps map for 16x16 bitmaps """
 
     bitmaps_32x32_map = {}
     """ The bitmaps map for 32x32 bitmaps """
-
-    icons_10x10_map = {}
-    """ The icons map for 10x10 icons """
 
     icons_16x16_map = {}
     """ The icons map for 16x16 icons """
@@ -403,10 +394,8 @@ class MainFrame(wx.Frame):
         wx.Frame.__init__(self, None, wx.ID_ANY, title, wx.DefaultPosition, size, wx.DEFAULT_FRAME_STYLE | wx.SUNKEN_BORDER | wx.CLIP_CHILDREN)
 
         # initializes the data structures
-        self.bitmaps_10x10_map = {}
         self.bitmaps_16x16_map = {}
         self.bitmaps_32x32_map = {}
-        self.icons_10x10_map = {}
         self.icons_16x16_map = {}
         self.icons_32x32_map = {}
         self.event_queue = []
@@ -437,7 +426,6 @@ class MainFrame(wx.Frame):
         self.plugin_path = plugin_manager.get_plugin_path_by_id(main_gui_plugin_id)
 
         # loads the icons using the bitmap loader plugin
-        bitmap_loader_plugin.load_icons(self.plugin_path + UNIX_DIRECTORY_SEPARATOR + ICONS_10X10_PATH, self.bitmaps_10x10_map, self.icons_10x10_map)
         bitmap_loader_plugin.load_icons(self.plugin_path + UNIX_DIRECTORY_SEPARATOR + ICONS_16X16_PATH, self.bitmaps_16x16_map, self.icons_16x16_map)
         bitmap_loader_plugin.load_icons(self.plugin_path + UNIX_DIRECTORY_SEPARATOR + ICONS_32X32_PATH, self.bitmaps_32x32_map, self.icons_32x32_map)
 
