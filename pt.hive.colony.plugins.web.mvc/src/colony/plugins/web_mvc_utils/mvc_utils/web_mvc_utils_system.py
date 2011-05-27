@@ -294,7 +294,7 @@ class WebMvcUtils:
         base_name = colony.libs.string_util.convert_underscore(base_name)
 
         # converts the base name to plural
-        controller_name_plural = base_name + "s"
+        controller_name_plural = colony.libs.string_util.pluralize(base_name)
 
         # iterates over all the symbols in the symbols
         # list
