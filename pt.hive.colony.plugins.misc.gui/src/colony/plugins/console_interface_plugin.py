@@ -19,7 +19,7 @@
 # You should have received a copy of the GNU General Public License
 # along with Hive Colony Framework. If not, see <http://www.gnu.org/licenses/>.
 
-__author__ = "João Magalhães <joamag@hive.pt>"
+__author__ = "João Magalhães <joamag@hive.pt> & Tiago Silva <tsilva@hive.pt>"
 """ The author(s) of the module """
 
 __version__ = "1.0.0"
@@ -101,8 +101,11 @@ class ConsoleInterfacePlugin(colony.base.plugin_system.Plugin):
     def dependency_injected(self, plugin):
         colony.base.plugin_system.Plugin.dependency_injected(self, plugin)
 
-    def do_panel(self, parent):
-        return self.console_interface.do_panel(parent)
+    def create_panel(self, parent):
+        return self.console_interface.create_panel(parent)
+
+    def get_icon_path(self):
+        return self.console_interface.get_icon_path()
 
     def get_console_plugin(self):
         return self.console_plugin

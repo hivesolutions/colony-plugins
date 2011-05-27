@@ -47,7 +47,7 @@ class PluginManagerInterfacePlugin(colony.base.plugin_system.Plugin):
     id = "pt.hive.colony.plugins.misc.gui.plugin_manager_interface"
     name = "Plugin Manager Interface Plugin"
     short_name = "Plugin Manager Interface"
-    description = "Lorem ipsum"
+    description = "A graphical interface for the plugin manager"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     loading_type = colony.base.plugin_system.EAGER_LOADING_TYPE
@@ -94,5 +94,8 @@ class PluginManagerInterfacePlugin(colony.base.plugin_system.Plugin):
     def dependency_injected(self, plugin):
         colony.base.plugin_system.Plugin.dependency_injected(self, plugin)
 
-    def do_panel(self, parent_widget):
-        return self.plugin_manager_interface.do_panel(parent_widget)
+    def create_panel(self, parent_widget):
+        return self.plugin_manager_interface.create_panel(parent_widget)
+
+    def get_icon_path(self):
+        return self.plugin_manager_interface.get_icon_path()

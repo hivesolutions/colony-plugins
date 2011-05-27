@@ -15,5 +15,7 @@
     "resources" : ["shell_interface_plugin.py", "misc_gui/__init__.py",
             "misc_gui/shell_interface/__init__.py",
             "misc_gui/shell_interface/shell_interface_system.py",
-            "misc_gui/shell_interface/resources/baf.xml"]
+            "misc_gui/shell_interface/resources/baf.xml",
+            "misc_gui/shell_interface/resources/icons/node.png",
+            "misc_gui/shell_interface/resources/icons/tab.png"]
 }

@@ -19,7 +19,7 @@
 # You should have received a copy of the GNU General Public License
 # along with Hive Colony Framework. If not, see <http://www.gnu.org/licenses/>.
 
-__author__ = "João Magalhães <joamag@hive.pt>"
+__author__ = "João Magalhães <joamag@hive.pt> & Tiago Silva <tsilva@hive.pt>"
 """ The author(s) of the module """
 
 __version__ = "1.0.0"
@@ -41,6 +41,9 @@ import sys
 
 import console_window
 
+UNIX_DIRECTORY_SEPARATOR = "/"
+""" The unix directory separator """
+
 BRANDING_TEXT = "Hive Colony %s (Hive Solutions Lda. r%s:%s %s)"
 """ The branding text value """
 
@@ -49,6 +52,9 @@ VERSION_PRE_TEXT = "Python "
 
 HELP_TEXT = "Type \"help\" for more information."
 """ The help text value """
+
+ICON_PATH = "misc_gui/console_interface/resources/icons"
+""" The console interface icon path """
 
 class ConsoleInterface:
     """
@@ -68,7 +74,7 @@ class ConsoleInterface:
 
         self.console_interface_plugin = console_interface_plugin
 
-    def do_panel(self, parent):
+    def create_panel(self, parent):
         # generates the information
         information = self.generate_information()
 
@@ -83,6 +89,23 @@ class ConsoleInterface:
 
         # returns the control panel
         return console_panel
+
+    def get_icon_path(self):
+        # retrieves the plugin manager
+        console_interface_plugin = self.console_interface_plugin
+        plugin_manager = console_interface_plugin.manager
+
+        # retrieves the console interface plugin id
+        console_interface_plugin_id = console_interface_plugin.id
+
+        # retrieves the plugin path
+        plugin_path = plugin_manager.get_plugin_path_by_id(console_interface_plugin_id)
+
+        # defines the console interface icon path
+        console_interface_icon_path = plugin_path + UNIX_DIRECTORY_SEPARATOR + ICON_PATH
+
+        # returns the console interface icon path
+        return console_interface_icon_path
 
     def generate_information(self):
         """

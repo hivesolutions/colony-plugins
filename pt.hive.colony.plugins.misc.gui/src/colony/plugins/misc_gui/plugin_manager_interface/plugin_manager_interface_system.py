@@ -64,8 +64,11 @@ CHILD_NODES_VALUE = "child_nodes"
 DEPENDENCIES_VALUE = "dependencies"
 """ The dependencies value """
 
-TEXT_VALUE = "text"
-""" The text value """
+IMAGE_HEIGHT = 16
+""" The image height """
+
+IMAGE_WIDTH = 16
+""" The image width """
 
 LINK_VALUE = "link"
 """ The link value """
@@ -73,11 +76,11 @@ LINK_VALUE = "link"
 LOADED_VALUE = "loaded"
 """ The loaded value """
 
-IMAGE_WIDTH = 16
-""" The image width """
+TEXT_VALUE = "text"
+""" The text value """
 
-IMAGE_HEIGHT = 16
-""" The image height """
+UNIX_DIRECTORY_SEPARATOR = "/"
+""" The unix directory separator """
 
 FAKE_NODE_ID_FORMAT = "%s_fake"
 """ The fake node id format """
@@ -93,6 +96,9 @@ PLUGIN_DEPENDENCY_CLASS_NAME = "PluginDependency"
 
 ROOT_NODE_ID = "root"
 """ The root node id """
+
+ICON_PATH = "misc_gui/plugin_manager_interface/resources/icons"
+""" The plugin manager interface icon path """
 
 IMAGE_SIZE = (
     IMAGE_WIDTH,
@@ -118,12 +124,29 @@ class PluginManagerInterface:
 
         self.plugin_manager_interface_plugin = plugin_manager_interface_plugin
 
-    def do_panel(self, parent_widget):
+    def create_panel(self, parent_widget):
         # creates the plugin manager panel
         plugin_manager_panel = PluginManagerPanel(self, parent_widget)
 
         # returns the plugin manager panel
         return plugin_manager_panel
+
+    def get_icon_path(self):
+        # retrieves the plugin manager
+        plugin_manager_interface_plugin = self.plugin_manager_interface_plugin
+        plugin_manager = plugin_manager_interface_plugin.manager
+
+        # retrieves the plugin manager interface plugin id
+        plugin_manager_interface_plugin_id = plugin_manager_interface_plugin.id
+
+        # retrieves the plugin path
+        plugin_path = plugin_manager.get_plugin_path_by_id(plugin_manager_interface_plugin_id)
+
+        # defines the plugin manager interface icon path
+        plugin_manager_interface_icon_path = plugin_path + UNIX_DIRECTORY_SEPARATOR + ICON_PATH
+
+        # returns the plugin manager interface icon path
+        return plugin_manager_interface_icon_path
 
 class PluginManagerPanel(wx.Panel):
     """
@@ -530,6 +553,14 @@ class PluginManagerPanel(wx.Panel):
         # retrieves the node map
         node_map = self.node_map[node_id]
 
+        # retrieves the current attribute value
+        current_attribute_value = node_map.get(attribute_name, None)
+
+        # in case the attribute value is the same as the current one
+        if attribute_value == current_attribute_value:
+            # returns
+            return
+
         # sets the attribute in the node map
         node_map[attribute_name] = attribute_value
 
@@ -538,14 +569,13 @@ class PluginManagerPanel(wx.Panel):
 
     def create_tree(self, parent_widget):
         # creates the images
-        images = wx.ImageList(IMAGE_WIDTH, IMAGE_HEIGHT)
+        image_list = wx.ImageList(IMAGE_WIDTH, IMAGE_HEIGHT)
         folder_bitmap = wx.ArtProvider_GetBitmap(wx.ART_FOLDER, wx.ART_OTHER, IMAGE_SIZE)
         file_open_bitmap = wx.ArtProvider_GetBitmap(wx.ART_FILE_OPEN, wx.ART_OTHER, IMAGE_SIZE)
         file_bitmap = wx.ArtProvider_GetBitmap(wx.ART_NORMAL_FILE, wx.ART_OTHER, IMAGE_SIZE)
-        self.fldridx = images.Add(folder_bitmap)
-        self.fldropenidx = images.Add(file_open_bitmap)
-        self.fileidx = images.Add(file_bitmap)
-        self.il = images
+        self.fldridx = image_list.Add(folder_bitmap)
+        self.fldropenidx = image_list.Add(file_open_bitmap)
+        self.fileidx = image_list.Add(file_bitmap)
 
         # creates the grid sizer
         grid_sizer = wx.FlexGridSizer(0, 1, 0)
@@ -559,10 +589,9 @@ class PluginManagerPanel(wx.Panel):
         self.search_textfield = wx.SearchCtrl(self, wx.ID_ANY, style = wx.TE_PROCESS_ENTER)
 
         # configures the components
-        self.tree.SetImageList(images)
+        self.tree.SetImageList(image_list)
         self.tree.EnableSelectionVista(True)
         self.search_textfield.ShowSearchButton(True)
-        self.search_textfield.ShowCancelButton(True)
 
         # binds the component's events
         self.Bind(wx.EVT_SIZE, self.on_size)
@@ -588,7 +617,7 @@ class PluginManagerPanel(wx.Panel):
         # searches for the specified value
         for node_id in self.tree_map:
             # checks if the node is a match
-            match = search_value in node_id
+            match = search_value and search_value in node_id
 
             # stores the first match
             first_match_node_id = not first_match_node_id and match and node_id or first_match_node_id
@@ -643,14 +672,19 @@ class PluginManagerPanel(wx.Panel):
 
     def toggle_plugin_state(self, node_id, load):
         # retrieves the plugin manager
-        plugin_manager_interface_plugin = self.plugin_manager_interface.plugin_manager_interface_plugin
+        plugin_manager_interface = self.plugin_manager_interface
+        plugin_manager_interface_plugin = plugin_manager_interface.plugin_manager_interface_plugin
         plugin_manager = plugin_manager_interface_plugin.manager
+
+        # retrieves the plugin manager interface plugin id
+        plugin_manager_interface_plugin_id = plugin_manager_interface_plugin.id
 
         # loads or unloads the plugin depending on the state
         load and plugin_manager.load_plugin(node_id) or plugin_manager.unload_plugin(node_id)
 
         # refreshes the node items checked state
-        self.refresh_node_items_checked()
+        # in case the selected plugin is not this one
+        not (node_id == plugin_manager_interface_plugin_id) and self.refresh_node_items_checked()
 
     def on_checked(self, event):
         # retrieves the item
@@ -686,7 +720,7 @@ class PluginManagerPanel(wx.Panel):
 
     def on_search(self, event):
         # retrieves the search value
-        search_value = event.GetString()
+        search_value = self.search_textfield.GetValue()
 
         # performs the search
         self.search(search_value)

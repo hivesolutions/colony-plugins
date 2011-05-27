@@ -42,7 +42,24 @@ import os
 import wx.stc
 
 CARET = ">>>"
-NAV_KEYS = (wx.WXK_END, wx.WXK_LEFT, wx.WXK_RIGHT, wx.WXK_UP, wx.WXK_DOWN, wx.WXK_PRIOR, wx.WXK_NEXT)
+""" The caret """
+
+NAVIGATION_KEYS = (
+    wx.WXK_END,
+    wx.WXK_LEFT,
+    wx.WXK_RIGHT,
+    wx.WXK_UP,
+    wx.WXK_DOWN,
+    wx.WXK_PRIOR,
+    wx.WXK_NEXT
+)
+""" The navigation keys """
+
+RETURN_KEYS = (
+    wx.WXK_RETURN,
+    wx.WXK_NUMPAD_ENTER
+)
+""" The return keys """
 
 # in case the current platform is windows
 if "wxMSW" in wx.PlatformInfo:
@@ -100,10 +117,11 @@ else:
 
 class ConsoleWindow(wx.stc.StyledTextCtrl):
     """
-    The console window class
+    The console window class.
     """
 
     def __init__(self, parent, id = wx.ID_ANY, pos = wx.DefaultPosition, size = wx.DefaultSize, style = wx.CLIP_CHILDREN, intro_message = "none"):
+        # calls the super
         wx.stc.StyledTextCtrl.__init__(self, parent, id, pos, size, style)
 
         # sets the intro message
@@ -112,15 +130,18 @@ class ConsoleWindow(wx.stc.StyledTextCtrl):
         # sets the editor to be in wrap mode
         self.SetWrapMode(True)
 
+        # sets the styles
         self.set_styles(FACES)
 
         # assign handlers for keyboard events
         self.Bind(wx.EVT_CHAR, self.on_char)
         self.Bind(wx.EVT_KEY_DOWN, self.on_key_down)
 
+        # starts the console
         self.start_console()
 
     def set_console_plugin(self, console_plugin):
+        # sets the console plugin
         self.console_plugin = console_plugin
 
     def set_display_line_numbers(self, state):
@@ -134,26 +155,31 @@ class ConsoleWindow(wx.stc.StyledTextCtrl):
 
     def set_styles(self, faces):
         """
-        Configures font size, typeface and color for lexer
+        Configures font size, typeface and color for lexer.
 
         @type faces: Dictionary
-        @param faces: The dictionary that contains the style attributes
+        @param faces: The dictionary that contains the style attributes.
         """
 
-        # default style
+        # sets the default style
         self.StyleSetSpec(wx.stc.STC_STYLE_DEFAULT, "face:%(mono)s,size:%(size)d,back:%(backcol)s" % faces)
 
-        self.StyleClearAll()
-        self.SetSelForeground(True, wx.SystemSettings.GetColour(wx.SYS_COLOUR_HIGHLIGHTTEXT))
-        self.SetSelBackground(True, wx.SystemSettings.GetColour(wx.SYS_COLOUR_HIGHLIGHT))
+        # retrieves the colors
+        foreground_color = wx.SystemSettings.GetColour(wx.SYS_COLOUR_HIGHLIGHTTEXT)
+        background_color = wx.SystemSettings.GetColour(wx.SYS_COLOUR_HIGHLIGHT)
 
-        # built in styles
+        # sets the colors
+        self.StyleClearAll()
+        self.SetSelForeground(True, foreground_color)
+        self.SetSelBackground(True, background_color)
+
+        # sets the built in styles
         self.StyleSetSpec(wx.stc.STC_STYLE_LINENUMBER, "back:#C0C0C0,face:%(mono)s,size:%(lnsize)d" % FACES)
         self.StyleSetSpec(wx.stc.STC_STYLE_CONTROLCHAR, "face:%(mono)s" % faces)
         self.StyleSetSpec(wx.stc.STC_STYLE_BRACELIGHT, "fore:#0000FF,back:#FFFF88")
         self.StyleSetSpec(wx.stc.STC_STYLE_BRACEBAD, "fore:#FF0000,back:#FFFF88")
 
-        # python styles
+        # sets the python styles
         self.StyleSetSpec(wx.stc.STC_P_DEFAULT, "face:%(mono)s" % faces)
         self.StyleSetSpec(wx.stc.STC_P_COMMENTLINE, "fore:#007F00,face:%(mono)s" % faces)
         self.StyleSetSpec(wx.stc.STC_P_NUMBER, "")
@@ -170,28 +196,39 @@ class ConsoleWindow(wx.stc.StyledTextCtrl):
         self.StyleSetSpec(wx.stc.STC_P_STRINGEOL, "fore:#000000,face:%(mono)s,back:#E0C0E0,eolfilled" % faces)
 
     def start_console(self):
+        # writes the introduction
         self.write_intro()
+
+        # writes the caret
         self.write_caret()
 
     def write(self, text):
         """
-        Display text in the shell
-        Replace line endings with OS-specific endings
+        Displays the text in the shell and replaces
+        line endings with OS-specific endings.
 
         @type text: String
-        @param text: The text to displayed
+        @param text: The text to displayed.
         """
 
+        # fixes the line endings
         text = self.fix_line_endings(text)
+
+        # adds the text
         self.AddText(text)
+
+        # ensures the caret is visible
         self.EnsureCaretVisible()
 
     def write_new_line(self, text, new_line = True):
+        # writes the text
         self.write(text)
-        if new_line:
-            self.AddText("\n")
+
+        # adds a new line
+        new_line and self.AddText("\n")
 
     def write_intro(self):
+        # writes the introduction message
         self.write_new_line(self.intro_message)
 
     def write_caret(self):
@@ -201,74 +238,117 @@ class ConsoleWindow(wx.stc.StyledTextCtrl):
         # moves the caret to the last position of the text
         self.SetCurrentPos(current_end_position)
 
+        # writes the caret
         self.write(CARET + " ")
+
+        # sets the carret position end
         self.carret_position_end = self.GetCurrentPos()
 
     def fix_line_endings(self, text):
         """
-        Return text with line endings replaced by OS-specific endings
+        Return text with line endings replaced by OS-specific endings.
 
         @type text: String
-        @param text: The text to be returned with line endings replaced by OS-specific endings
+        @param text: The text to be returned with line endings replaced by OS-specific endings.
         @rtype: String
-        @return: The text with line endings replaced by OS-specific endings
+        @return: The text with line endings replaced by OS-specific endings.
         """
 
+        # splits the text into lines
         lines = text.split("\r\n")
-        for line_index in range(len(lines)):
-            chunks = lines[line_index].split("\r")
-            for chunks_index in range(len(chunks)):
-                chunks[chunks_index] = os.linesep.join(chunks[chunks_index].split("\n"))
+
+        # calculates the number of lines
+        number_lines = len(lines)
+
+        # creates the line range
+        line_range = range(number_lines)
+
+        for line_index in line_range:
+            # retrieves the line
+            line = lines[line_index]
+
+            # splits the line into chunks
+            chunks = line.split("\r")
+
+            # calculates the number of chunks
+            number_chunks = len(chunks)
+
+            # creates the chunk range
+            chunk_range = range(number_chunks)
+
+            # for each chunk
+            for chunk_index in chunk_range:
+                # retrieves the chunk
+                chunk = chunks[chunk_index]
+
+                # retrieves the chunk tokens
+                chunk_tokens = chunk.split("\n")
+
+                # joins the chunk tokens
+                chunks[chunk_index] = os.linesep.join(chunk_tokens)
+
+            # joins the chunks
             lines[line_index] = os.linesep.join(chunks)
+
+        # joins the lines
         text = os.linesep.join(lines)
+
+        # returns the text
         return text
 
     def can_edit(self):
         """
-        Returns true if editing should succeed
+        Returns true if editing should succeed.
 
         @rtype: bool
-        @return: The result of the edit test (if successful or not)
+        @return: The result of the edit test (if successful or not).
         """
 
+        # retrieves the current position
         current_position = self.GetCurrentPos()
+
+        # retrieves the selection start
         selection_start = self.GetSelectionStart()
+
+        # retrieves the selection end
         selection_end = self.GetSelectionEnd()
 
-        if selection_start != selection_end:
-            if selection_start >= self.carret_position_end and selection_end >= self.carret_position_end:
-                return True
-            else:
-                return False
-        else:
-            return current_position >= self.carret_position_end
+        # tests if editing should succeed
+        edit = not selection_start == selection_end and (selection_start >= self.carret_position_end and selection_end >= self.carret_position_end) or current_position >= self.carret_position_end
+
+        # returns the edit flag
+        return edit
 
     def can_remove(self):
         """
-        Returns true if removal should succeed
+        Returns true if removal should succeed.
 
         @rtype: bool
         @return: The result of the removal test (if successful or not)
         """
 
+        # retrieves the current position
         current_position = self.GetCurrentPos()
+
+        # retrieves the selection start
         selection_start = self.GetSelectionStart()
+
+        # retrieves the selection end
         selection_end = self.GetSelectionEnd()
 
-        if selection_start != selection_end:
-            if selection_start >= self.carret_position_end and selection_end >= self.carret_position_end:
-                return True
-            else:
-                return False
-        else:
-            return current_position > self.carret_position_end
+        # tests if removal should succeed
+        remove = not selection_start == selection_end and (selection_start >= self.carret_position_end and selection_end >= self.carret_position_end) or current_position > self.carret_position_end
+
+        # returns the remove flag
+        return remove
 
     def on_char(self, event):
+        # skips the event
         event.Skip()
 
     def on_key_down(self, event):
         """
-        Handler for the key down event
+        Handler for the key down event.
 
         @type event: Event
         @param event: The triggered event
@@ -286,59 +366,77 @@ class ConsoleWindow(wx.stc.StyledTextCtrl):
         # retrieves the shift down status
         shift_down = event.ShiftDown()
 
+        # checks if edition is allowed
+        can_edit = self.can_edit()
+
         # in case the enter (or return) key has been pressed
-        if key in [wx.WXK_RETURN, wx.WXK_NUMPAD_ENTER] :
-            if self.can_edit():
-                # retrieves the current line and position
-                current_line, _position = self.GetCurLine()
+        if key in RETURN_KEYS and can_edit:
+            # retrieves the current line and position
+            current_line, _position = self.GetCurLine()
 
-                # moves the caret to the last position of the text
-                self.SetCurrentPos(current_end_position)
+            # moves the caret to the last position of the text
+            self.SetCurrentPos(current_end_position)
 
-                # removes the caret and the space from the current line
-                current_line_no_caret = current_line.replace(">>> ", "")
+            # removes the caret and the space from the current line
+            current_line_no_caret = current_line.replace(">>> ", "")
 
-                # writes a newline character
-                self.write("\n")
+            # writes a newline character
+            self.write("\n")
 
-                # processes the command in the console engine
-                self.console_plugin.process_command_line(current_line_no_caret, self.write_new_line)
+            # processes the command in the console engine
+            self.console_plugin.process_command_line(current_line_no_caret, self.write_new_line)
 
-                # writes the newline caret
-                self.write_caret()
+            # writes the newline caret
+            self.write_caret()
         # in case any of the navigation keys has been pressed
-        elif key in NAV_KEYS:
+        elif key in NAVIGATION_KEYS:
+            # skips the event
             event.Skip()
         # in case the backspace key has been pressed
         elif key == wx.WXK_BACK:
-            if self.can_remove():
-                event.Skip()
+            # skips the event in case removal is possible
+            self.can_remove() and event.Skip()
         # in case the control key is pressed and c is also pressed (copy)
         elif control_down and not shift_down and key in (ord('C'), ord('c'), wx.WXK_INSERT):
+            # copies the text
             self.copy()
         # in case any other key has been pressed
-        elif self.can_edit():
+        elif can_edit:
+            # skips the event
             event.Skip()
 
     def copy(self):
         """
-        Copies the current selection and place it on the clipboard
+        Copies the current selection and place it on the clipboard.
         """
 
+        # retrieves the selected text
         selected_text = self.GetSelectedText()
+
+        # retrieves the selected text data
         selected_text_data = wx.TextDataObject(selected_text)
+
+        # copies the selected text data to the clipboard
         self._clip(selected_text_data)
 
     def _clip(self, data):
         """
-        Copies the given data to the clipboard
+        Copies the given data to the clipboard.
 
         @type data: DataObject
         @param data: The data to be copied to the clipboard
         """
 
-        if wx.TheClipboard.Open():
-            wx.TheClipboard.UsePrimarySelection(False)
-            wx.TheClipboard.SetData(data)
-            wx.TheClipboard.Flush()
-            wx.TheClipboard.Close()
+        # checks if the clipboard is open
+        clipboard_open = wx.TheClipboard.Open()
+
+        # in case the clipboard is not open
+        if not clipboard_open:
+            # returns
+            return
+
+        # sets the data in the clipboard
+        wx.TheClipboard.UsePrimarySelection(False)
+        wx.TheClipboard.SetData(data)
+        wx.TheClipboard.Flush()
+        wx.TheClipboard.Close()

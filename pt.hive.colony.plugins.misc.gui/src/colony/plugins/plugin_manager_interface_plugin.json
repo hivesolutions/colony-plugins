@@ -5,7 +5,7 @@
     "id" : "pt.hive.colony.plugins.misc.gui.plugin_manager_interface",
     "name" : "Plugin Manager Interface Plugin",
     "short_name" : "Plugin Manager Interface",
-    "description" : "Lorem ipsum",
+    "description" : "A graphical interface for the plugin manager",
     "version" : "1.0.0",
     "author" : "Hive Solutions Lda. <development@hive.pt>",
     "capabilities" : ["gui_panel", "build_automation_item"],
@@ -17,5 +17,7 @@
             "misc_gui/__init__.py",
             "misc_gui/plugin_manager_interface/__init__.py",
             "misc_gui/plugin_manager_interface/plugin_manager_interface_system.py",
-            "misc_gui/plugin_manager_interface/resources/baf.xml"]
+            "misc_gui/plugin_manager_interface/resources/baf.xml",
+            "misc_gui/plugin_manager_interface/resources/icons/node.png",
+            "misc_gui/plugin_manager_interface/resources/icons/tab.png"]
 }

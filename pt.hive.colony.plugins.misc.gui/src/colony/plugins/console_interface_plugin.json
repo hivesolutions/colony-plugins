@@ -19,5 +19,7 @@
             "misc_gui/console_interface/__init__.py",
             "misc_gui/console_interface/console_interface_system.py",
             "misc_gui/console_interface/console_window.py",
-            "misc_gui/console_interface/resources/baf.xml"]
+            "misc_gui/console_interface/resources/baf.xml",
+            "misc_gui/console_interface/resources/icons/node.png",
+            "misc_gui/console_interface/resources/icons/tab.png"]
 }
