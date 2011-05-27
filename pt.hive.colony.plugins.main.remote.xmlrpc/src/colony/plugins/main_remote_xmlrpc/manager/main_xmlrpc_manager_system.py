@@ -42,7 +42,7 @@ import xmlrpclib
 
 import main_xmlrpc_manager_exceptions
 
-HANDLER_BASE_FILENAME = "colony_mod_python/xmlrpc"
+HANDLER_BASE_FILENAME = "/colony_dynamic/xmlrpc"
 """ The handler base filename """
 
 HANDLER_EXTENSION = "py"

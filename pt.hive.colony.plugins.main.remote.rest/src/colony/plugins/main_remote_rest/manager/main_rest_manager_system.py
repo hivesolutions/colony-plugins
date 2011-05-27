@@ -49,7 +49,7 @@ import main_rest_manager_exceptions
 REGEX_COMILATION_LIMIT = 99
 """ The regex compilation limit """
 
-HANDLER_BASE_FILENAME = "/colony_mod_python/rest/"
+HANDLER_BASE_FILENAME = "/colony_dynamic/rest/"
 """ The handler base filename """
 
 HANDLER_EXTENSION = "py"
