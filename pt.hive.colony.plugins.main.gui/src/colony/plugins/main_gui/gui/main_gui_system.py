@@ -542,7 +542,6 @@ class MainFrame(wx.Frame):
         # retrieves the main gui
         main_application = self.main_application
         main_gui = main_application.main_gui
-        main_frame = main_application.main_frame
 
         # retrieves the gui panel bitmap maps
         gui_panel_node_bitmap_map = main_gui.gui_panel_node_bitmap_map
@@ -554,22 +553,11 @@ class MainFrame(wx.Frame):
         # sets the bitmaps in the tab container panel
         self.tab_container_panel.set_bitmaps(tab_container_panel_bitmap_map)
 
-        # refreshes the tab container panel
-        self.tab_container_panel.refresh()
-
         # sets the bitmaps in the plugin tree
         self.plugin_tree.set_bitmaps(gui_panel_node_bitmap_map)
 
         # refreshes the plugin tree
         self.plugin_tree.refresh()
-
-        # retrieves the gui panels
-        gui_panels = main_frame.gui_panels
-
-        # for each gui panel
-        for gui_panel in gui_panels:
-            # refreshes the gui panel
-            gui_panel.Refresh()
 
     def create_gui_panel(self, gui_panel_plugin_id):
         # retrieves the main aplication
