@@ -617,7 +617,7 @@ class PluginManagerPanel(wx.Panel):
         # searches for the specified value
         for node_id in self.tree_map:
             # checks if the node is a match
-            match = search_value and search_value in node_id
+            match = search_value and search_value in node_id and True or False
 
             # stores the first match
             first_match_node_id = not first_match_node_id and match and node_id or first_match_node_id
