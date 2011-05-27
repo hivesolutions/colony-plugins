@@ -116,6 +116,9 @@ class WebMvcUtilsPlugin(colony.base.plugin_system.Plugin):
     def dependency_injected(self, plugin):
         colony.base.plugin_system.Plugin.dependency_injected(self, plugin)
 
+    def import_module(self, module_name, package_name):
+        return self.web_mvc_utils.import_module_mvc_utils(module_name, package_name)
+
     def import_module_mvc_utils(self, module_name, package_name, directory_path):
         return self.web_mvc_utils.import_module_mvc_utils(module_name, package_name, directory_path)
 
@@ -125,11 +128,17 @@ class WebMvcUtilsPlugin(colony.base.plugin_system.Plugin):
     def create_controller(self, base_controller, base_arguments_list, base_arguments_map):
         return self.web_mvc_utils.create_controller(base_controller, base_arguments_list, base_arguments_map)
 
+    def create_entity_models_(self, base_entity_models_module_name, entity_manager_arguments):
+        return self.web_mvc_utils.create_entity_models(base_entity_models_module_name, entity_manager_arguments)
+
     def create_entity_models(self, base_entity_models_module_name, entity_manager_arguments, directory_path):
         return self.web_mvc_utils.create_entity_models(base_entity_models_module_name, entity_manager_arguments, directory_path)
 
     def create_search_index_controller(self, search_index_identifier, search_index_configuration_map, entity_models_modules):
         return self.web_mvc_utils.create_search_index_controller(search_index_identifier, search_index_configuration_map, entity_models_modules)
+
+    def create_controllers(self, controllers_module, system_instance, plugin_instance, prefix_name):
+        return self.web_mvc_utils.create_controllers(controllers_module, system_instance, plugin_instance, prefix_name)
 
     def generate_patterns(self, patterns, controller, prefix_name):
         return self.web_mvc_utils.generate_patterns(patterns, controller, prefix_name)

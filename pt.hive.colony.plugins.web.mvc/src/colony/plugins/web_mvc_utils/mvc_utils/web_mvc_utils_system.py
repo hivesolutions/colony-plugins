@@ -40,6 +40,7 @@ __license__ = "GNU General Public License (GPL), Version 3"
 import imp
 import types
 
+import colony.libs.stack_util
 import colony.libs.string_util
 
 import web_mvc_utils
@@ -61,6 +62,15 @@ GLOBALS_REFERENCE_VALUE = "_globals"
 
 LOCALS_REFERENCE_VALUE = "_locals"
 """ The locals reference value """
+
+CONTROLLER_VALUE = "controller"
+""" The controller value """
+
+CONTROLLERS_VALUE = "controllers"
+""" The controllers value """
+
+CONTROLLER_CAMEL_VALUE = "Controller"
+""" The controller camel value """
 
 CONNECTION_PARAMETERS_VALUE = "connection_parameters"
 """ The connection parameters value """
@@ -118,7 +128,10 @@ class WebMvcUtils:
 
         self.web_mvc_utils_plugin = web_mvc_utils_plugin
 
-    def import_module_mvc_utils(self, module_name, package_name, directory_path):
+    def import_module_mvc_utils(self, module_name, package_name, directory_path = None, stack_depth_level = 2):
+        # retrieves the directory path taking into account the call module directory
+        directory_path = directory_path or colony.libs.stack_util.get_call_module_directory(stack_depth_level)
+
         # creates the globals map from
         # the current globals map
         globals_map = globals()
@@ -204,12 +217,15 @@ class WebMvcUtils:
         # returns the controller
         return controller
 
-    def create_entity_models(self, base_entity_models_module_name, entity_manager_arguments, directory_path):
+    def create_entity_models(self, base_entity_models_module_name, entity_manager_arguments, directory_path = None, stack_depth_level = 2):
         # retrieves the entity manager plugin
         entity_manager_plugin = self.web_mvc_utils_plugin.entity_manager_plugin
 
         # retrieves the business helper plugin
         business_helper_plugin = self.web_mvc_utils_plugin.business_helper_plugin
+
+        # retrieves the directory path taking into account the call module directory
+        directory_path = directory_path or colony.libs.stack_util.get_call_module_directory(stack_depth_level)
 
         # imports the base entity models module
         base_entity_models_module = business_helper_plugin.import_class_module_target(base_entity_models_module_name, globals(), locals(), [], directory_path, base_entity_models_module_name)
@@ -280,6 +296,51 @@ class WebMvcUtils:
 
         # returns the created search index controller
         return search_index_controller
+
+    def create_controllers(self, controllers_module, system_instance, plugin_instance, prefix_name = ""):
+        # initializes the controllers map
+        controllers_map = {}
+
+        # retrieves the controllers module items
+        controllers_module_items = dir(controllers_module)
+
+        # iterates over all the controllers module items
+        for controllers_module_item in controllers_module_items:
+            # checks if the controller module item name is a valid
+            # controller name
+            valid_controller_name = controllers_module_item.endswith(CONTROLLER_CAMEL_VALUE)
+
+            # in case the controller module item does
+            # not represent a valid controller name
+            if not valid_controller_name:
+                # continues the loop
+                continue
+
+            # retrieves the controller class
+            controller_class = getattr(controllers_module, controllers_module_item)
+
+            # retrieves the controller base name
+            controller_base_name = controllers_module_item[:-10]
+
+            # converts the controller base name to underscore notation
+            controller_base_name = colony.libs.string_util.convert_underscore(controller_base_name)
+
+            # creates the controller reference name
+            controller_reference_name = prefix_name + "_" + controller_base_name + "_" + CONTROLLER_VALUE
+
+            # creates the controller instance from the controller class
+            controller = self.create_controller(controller_class, [plugin_instance, system_instance], {})
+
+            # sets the controller in the current instance and in the
+            # controllers map
+            setattr(system_instance, controller_reference_name, controller)
+            controllers_map[controller_base_name] = controller
+
+        # creates the controllers map name
+        controllers_map_name = prefix_name + "_" + CONTROLLERS_VALUE
+
+        # sets the controllers map in the instance
+        setattr(system_instance, controllers_map_name, controllers_map)
 
     def generate_patterns(self, patterns, controller, prefix_name):
         # retrieves the controller class
