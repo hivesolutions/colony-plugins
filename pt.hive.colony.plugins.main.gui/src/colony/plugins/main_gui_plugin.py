@@ -19,7 +19,7 @@
 # You should have received a copy of the GNU General Public License
 # along with Hive Colony Framework. If not, see <http://www.gnu.org/licenses/>.
 
-__author__ = "João Magalhães <joamag@hive.pt>"
+__author__ = "João Magalhães <joamag@hive.pt> & Tiago Silva <tsilva@hive.pt>"
 """ The author(s) of the module """
 
 __version__ = "1.0.0"
@@ -63,34 +63,21 @@ class MainGuiPlugin(colony.base.plugin_system.Plugin):
         "build_automation_item"
     ]
     capabilities_allowed = [
-        "gui_manager",
-        "gui_panel",
-        "gui_progress_information"
+        "gui_panel"
     ]
     dependencies = [
-        colony.base.plugin_system.PluginDependency("pt.hive.colony.plugins.main.log", "1.0.0"),
         colony.base.plugin_system.PluginDependency("pt.hive.colony.plugins.misc.bitmap_loader", "1.0.0"),
         colony.base.plugin_system.PackageDependency("Wx Python", "wx", "2.8.7.x", "http://wxpython.org")
     ]
-    events_registrable = [
-        "gui_widget_plugin_changed",
-        "gui_progress_information_changed"
-    ]
     main_modules = [
-        "main_gui.gui.main_gui_system",
-        "main_gui.gui.main_window",
-        "main_gui.gui.plugin_tree",
-        "main_gui.gui.tab_container_panel"
+        "main_gui.gui.main_gui_system"
     ]
 
     main_gui = None
     """ The main gui """
 
-    main_window_module = None
-    """ The main window module """
-
-    application = None
-    """ The application """
+    gui_panel_plugins = []
+    """ The gui panel plugins """
 
     bitmap_loader_plugin = None
     """ The bitmap loader plugin """
@@ -98,22 +85,25 @@ class MainGuiPlugin(colony.base.plugin_system.Plugin):
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
         import main_gui.gui.main_gui_system
-        import main_gui.gui.main_window
         self.main_gui = main_gui.gui.main_gui_system.MainGui(self)
-        self.main_window_module = main_gui.gui.main_window
+
+        # initializes the gui panel plugins
+        self.gui_panel_plugins = []
 
         # notifies the ready semaphore
         self.release_ready_semaphore()
 
     def end_load_plugin(self):
         colony.base.plugin_system.Plugin.end_load_plugin(self)
-        self.application = not self.application and self.main_window_module.MainApplication(0, self) or self.application
-        self.application.load_main_frame()
-        self.application.MainLoop()
+
+        # loads the main application
+        self.main_gui.load_main_application()
 
     def unload_plugin(self):
         colony.base.plugin_system.Plugin.unload_plugin(self)
-        self.application.unload()
+
+        # unloads the main application
+        self.main_gui.unload_main_application()
 
         # notifies the ready semaphore
         self.release_ready_semaphore()
@@ -137,50 +127,26 @@ class MainGuiPlugin(colony.base.plugin_system.Plugin):
         colony.base.plugin_system.Plugin.dependency_injected(self, plugin)
 
     def init_complete(self):
-        return self.application.show_main_frame()
+        colony.base.plugin_system.Plugin.init_complete(self)
 
-    @colony.base.decorators.event_handler("pt.hive.colony.plugins.main.gui", "1.0.0")
-    def event_handler(self, event_name, *event_args):
-        try:
-            colony.base.plugin_system.Plugin.event_handler(self, event_name, *event_args)
-        except Exception, exception:
-            colony.base.plugin_system.Plugin.treat_exception(self, exception)
-
-    @colony.base.decorators.load_allowed_capability("gui_manager")
-    def gui_manager_load_allowed(self, plugin, capability):
-        if self.application.is_loaded():
-            self.application.main_frame.gui_plugins.append(plugin)
-            self.application.main_frame.refresh_tree()
+        # shows the main frame
+        self.main_gui.show_main_application()
 
     @colony.base.decorators.load_allowed_capability("gui_panel")
     def gui_panel_load_allowed(self, plugin, capability):
-        if self.application.is_loaded():
-            self.application.main_frame.gui_panel_plugins.append(plugin)
-            self.application.main_frame.refresh_tree()
+        # adds the plugin to the gui panel plugins list
+        self.gui_panel_plugins.append(plugin)
 
-    @colony.base.decorators.load_allowed_capability("gui_progress_information")
-    def gui_progress_information_load_allowed(self, plugin, capability):
-        if self.application.is_loaded():
-            self.application.main_frame.progress_information_plugin = plugin
-            self.application.main_frame.create_progress_information_frame()
-
-    @colony.base.decorators.unload_allowed_capability("gui_manager")
-    def gui_manager_unload_allowed(self, plugin, capability):
-        if self.application.is_loaded():
-            if plugin in self.application.main_frame.gui_plugins:
-                self.application.main_frame.gui_plugins.remove(plugin)
-                self.application.main_frame.refresh_tree()
+        # loads the gui panel plugin
+        self.main_gui.load_gui_panel_plugin(plugin)
 
     @colony.base.decorators.unload_allowed_capability("gui_panel")
     def gui_panel_unload_allowed(self, plugin, capability):
-        if self.application.is_loaded():
-            self.application.main_frame.gui_panel_plugins.remove(plugin)
-            self.application.main_frame.refresh_tree()
+        # removes the plugin from the gui panel plugins list
+        self.gui_panel_plugins.remove(plugin)
 
-    @colony.base.decorators.unload_allowed_capability("gui_progress_information")
-    def gui_progress_information_unload_allowed(self, plugin, capability):
-        if self.application.is_loaded():
-            self.application.main_frame.progress_information_plugin = None
+        # unloads the gui panel plugin
+        self.main_gui.unload_gui_panel_plugin(plugin)
 
     def get_bitmap_loader_plugin(self):
         return self.bitmap_loader_plugin
@@ -188,13 +154,3 @@ class MainGuiPlugin(colony.base.plugin_system.Plugin):
     @colony.base.decorators.plugin_inject("pt.hive.colony.plugins.misc.bitmap_loader")
     def set_bitmap_loader_plugin(self, bitmap_loader_plugin):
         self.bitmap_loader_plugin = bitmap_loader_plugin
-
-    @colony.base.decorators.event_handler_method("gui_widget_plugin_changed")
-    def gui_widget_plugin_changed_handler(self, event_name, *event_args):
-        if self.application.is_loaded():
-            self.application.main_frame.refresh_tree()
-
-    @colony.base.decorators.event_handler_method("gui_progress_information_changed")
-    def gui_progress_information_changed_handler(self, event_name, *event_args):
-        if self.application.is_loaded():
-            self.application.main_frame.process_gui_progress_information_changed_event(event_name, *event_args)

@@ -9,20 +9,14 @@
     "version" : "1.0.0",
     "author" : "Hive Solutions Lda. <development@hive.pt>",
     "capabilities" : ["main", "build_automation_item"],
-    "capabilities_allowed" : ["gui_manager", "gui_panel",
-            "gui_progress_information"],
+    "capabilities_allowed" : ["gui_panel"],
     "dependencies" : [{
-                "id" : "pt.hive.colony.plugins.main.log",
-                "version" : "1.0.0"
-            }, {
                 "id" : "pt.hive.colony.plugins.misc.bitmap_loader",
                 "version" : "1.0.0"
             }],
     "main_file" : "main_gui_plugin.py",
     "resources" : ["main_gui_plugin.py", "main_gui/__init__.py",
             "main_gui/gui/__init__.py", "main_gui/gui/main_gui_system.py",
-            "main_gui/gui/main_window.py", "main_gui/gui/plugin_tree.py",
-            "main_gui/gui/tab_container_panel.py",
             "main_gui/gui/resources/baf.xml",
             "main_gui/gui/resources/icons/10x10/scroll.png",
             "main_gui/gui/resources/icons/10x10/tab.png",
