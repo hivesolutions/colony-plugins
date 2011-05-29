@@ -580,7 +580,7 @@ class MainServiceHttp:
         # retrieves the log file path
         http_log_file_path = service_configuration.get("log_file_path", None)
 
-        # resolves thehttp  log file path using the plugin manager
+        # resolves the http  log file path using the plugin manager
         http_log_file_path = plugin_manager.resolve_file_path(http_log_file_path, True, True)
 
         # creates the http log file (using a file rotator)
