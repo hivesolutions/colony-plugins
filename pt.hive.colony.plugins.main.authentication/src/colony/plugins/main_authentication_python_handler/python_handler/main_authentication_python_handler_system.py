@@ -44,6 +44,9 @@ import main_authentication_python_handler_exceptions
 HANDLER_NAME = "python"
 """ The handler name """
 
+CONFIGURATION_PATH = "main_authentication_python_handler/python_handler/configuration"
+""" The configuration path """
+
 FILE_PATH_VALUE = "file_path"
 """ The file path value """
 
@@ -58,9 +61,6 @@ VALID_VALUE = "valid"
 
 AUTHENTICATION_CONFIGURATION_VALUE = "authentication_configuration"
 """ The authentication configuration value """
-
-CONFIGURATION_PATH = "main_authentication_python_handler/python_handler/configuration"
-""" The configuration path """
 
 class MainAuthenticationPythonHandler:
     """
