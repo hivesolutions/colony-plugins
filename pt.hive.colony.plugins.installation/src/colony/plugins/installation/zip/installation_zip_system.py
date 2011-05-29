@@ -212,12 +212,15 @@ class InstallationZip:
         current_local_time = time.localtime(current_time)
         current_valid_local_time = current_local_time[:6]
 
+        # calculates the permission value (octal based value)
+        permissions_value = directory_owner * 64 + directory_group * 8 + directory_mode
+
         # creates the zip info structure to hold
         # the directory entry information
         zip_info = zipfile.ZipInfo(directory_target + "/", current_valid_local_time)
 
         # sets the external attribute to directory
-        zip_info.external_attr = 48
+        zip_info.external_attr = 48 | permissions_value << 16
 
         # writes the zip info information to the zip file
         zip_file.writestr(zip_info, "")
