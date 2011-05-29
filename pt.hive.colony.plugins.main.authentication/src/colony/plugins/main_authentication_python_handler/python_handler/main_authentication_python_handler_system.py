@@ -37,6 +37,8 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
+import colony.libs.path_util
+
 import main_authentication_python_handler_exceptions
 
 HANDLER_NAME = "python"
@@ -57,6 +59,9 @@ VALID_VALUE = "valid"
 AUTHENTICATION_CONFIGURATION_VALUE = "authentication_configuration"
 """ The authentication configuration value """
 
+CONFIGURATION_PATH = "main_authentication_python_handler/python_handler/configuration"
+""" The configuration path """
+
 class MainAuthenticationPythonHandler:
     """
     The main authentication python handler class.
@@ -74,6 +79,9 @@ class MainAuthenticationPythonHandler:
         """
 
         self.main_authentication_python_handler_plugin = main_authentication_python_handler_plugin
+
+        # creates the default file
+        self.create_default_file()
 
     def get_handler_name(self):
         """
@@ -152,3 +160,27 @@ class MainAuthenticationPythonHandler:
 
         # returns the return value
         return return_value
+
+    def create_default_file(self):
+        """
+        Creates the default file in the default configuration
+        file in case it's necessary.
+        """
+
+        # retrieves the plugin manager
+        plugin_manager = self.main_authentication_python_handler_plugin.manager
+
+        # retrieves the main authentication python handler plugin id
+        main_authentication_python_handler_plugin_id = self.main_authentication_python_handler_plugin.id
+
+        # resolves the configuration file path
+        configuration_file_path = plugin_manager.resolve_file_path("%configuration:" + main_authentication_python_handler_plugin_id + "%/authentication.py", True)
+
+        # retrieves the main authentication python handler plugin path
+        main_authentication_python_handler_plugin_path = plugin_manager.get_plugin_path_by_id(main_authentication_python_handler_plugin_id)
+
+        # creates the authentication configuration file path
+        authentication_configuration_file_path = main_authentication_python_handler_plugin_path + "/" +  CONFIGURATION_PATH + "/authentication_configuration.py"
+
+        # ensures that the configuration file path exists and contains the default contents
+        colony.libs.path_util.ensure_file_path(configuration_file_path, authentication_configuration_file_path)
