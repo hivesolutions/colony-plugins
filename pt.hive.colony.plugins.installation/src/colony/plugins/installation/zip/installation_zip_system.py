@@ -39,6 +39,7 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 import os
 import re
+import time
 import zipfile
 
 import colony.libs.map_util
@@ -205,9 +206,15 @@ class InstallationZip:
             # returns immediately
             return
 
+        # retrieves the current valid local time to update
+        # the zip information
+        current_time = time.time()
+        current_local_time = time.localtime(current_time)
+        current_valid_local_time = current_local_time[:6]
+
         # creates the zip info structure to hold
         # the directory entry information
-        zip_info = zipfile.ZipInfo(directory_target + "/")
+        zip_info = zipfile.ZipInfo(directory_target + "/", current_valid_local_time)
 
         # sets the external attribute to directory
         zip_info.external_attr = 48
