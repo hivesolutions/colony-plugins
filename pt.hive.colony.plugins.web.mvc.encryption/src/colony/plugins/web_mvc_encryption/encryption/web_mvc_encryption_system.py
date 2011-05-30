@@ -137,7 +137,7 @@ class WebMvcEncryption:
         self.web_mvc_encryption_consumer_controller = web_mvc_utils_plugin.create_controller(web_mvc_encryption_controllers.ConsumerController, [self.web_mvc_encryption_plugin, self], {})
 
         # creates the entity models classes by creating the entity manager and updating the classes
-        self.web_mvc_encryption_entity_models = web_mvc_utils_plugin.create_entity_models("web_mvc_encryption_entity_models", entity_manager_arguments, current_directory_path)
+        self.web_mvc_encryption_entity_models = web_mvc_utils_plugin.create_entity_models_path("web_mvc_encryption_entity_models", entity_manager_arguments, current_directory_path)
 
         # creates the web mvc encryption controllers map
         self.web_mvc_encryption_controllers = {
