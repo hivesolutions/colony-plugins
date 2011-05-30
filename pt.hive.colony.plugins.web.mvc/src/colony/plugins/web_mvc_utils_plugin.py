@@ -66,7 +66,8 @@ class WebMvcUtilsPlugin(colony.base.plugin_system.Plugin):
         colony.base.plugin_system.PluginDependency("pt.hive.colony.plugins.template_engine.manager", "1.0.0"),
         colony.base.plugin_system.PluginDependency("pt.hive.colony.plugins.data.entity_manager", "1.0.0"),
         colony.base.plugin_system.PluginDependency("pt.hive.colony.plugins.business.helper", "1.0.0"),
-        colony.base.plugin_system.PluginDependency("pt.hive.colony.plugins.web.mvc.search", "1.0.0")
+        colony.base.plugin_system.PluginDependency("pt.hive.colony.plugins.web.mvc.search", "1.0.0"),
+        colony.base.plugin_system.PluginDependency("pt.hive.colony.plugins.resources.resource_manager", "1.0.0")
     ]
     main_modules = [
         "web_mvc_utils.mvc_utils.web_mvc_controller",
@@ -91,6 +92,9 @@ class WebMvcUtilsPlugin(colony.base.plugin_system.Plugin):
 
     web_mvc_search_plugin = None
     """ The web mvc search plugin """
+
+    resource_manager_plugin = None
+    """ The resource manager plugin """
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
@@ -143,6 +147,9 @@ class WebMvcUtilsPlugin(colony.base.plugin_system.Plugin):
     def generate_patterns(self, patterns, controller, prefix_name):
         return self.web_mvc_utils.generate_patterns(patterns, controller, prefix_name)
 
+    def generate_entity_manager_arguments(self, plugin, base_entity_manager_arguments, parameters = {}):
+        return self.web_mvc_utils.generate_entity_manager_arguments(plugin, base_entity_manager_arguments, parameters)
+
     def get_template_engine_manager_plugin(self):
         return self.template_engine_manager_plugin
 
@@ -170,3 +177,10 @@ class WebMvcUtilsPlugin(colony.base.plugin_system.Plugin):
     @colony.base.decorators.plugin_inject("pt.hive.colony.plugins.web.mvc.search")
     def set_web_mvc_search_plugin(self, web_mvc_search_plugin):
         self.web_mvc_search_plugin = web_mvc_search_plugin
+
+    def get_resource_manager_plugin(self):
+        return self.resource_manager_plugin
+
+    @colony.base.decorators.plugin_inject("pt.hive.colony.plugins.resources.resource_manager")
+    def set_resource_manager_plugin(self, resource_manager_plugin):
+        self.resource_manager_plugin = resource_manager_plugin

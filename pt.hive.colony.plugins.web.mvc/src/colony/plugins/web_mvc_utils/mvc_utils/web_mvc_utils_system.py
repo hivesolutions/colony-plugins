@@ -93,6 +93,12 @@ PYTHON_EXTENSION = ".py"
 DEFAULT_ENGINE = "sqlite"
 """ The default engine """
 
+DEFAULT_DATABASE_PREFIX = ""
+""" The default database prefix """
+
+DEFAULT_DATABASE_SUFFIX = "database.db"
+""" The default database suffix """
+
 DEFAULT_CONNECTION_PARAMETERS = {
     "file_path" : "mvc_utils_system.db",
     "autocommit" : False
@@ -401,6 +407,48 @@ class WebMvcUtils:
 
             # adds the pattern (tuple) to the list of patterns
             patterns.append(pattern)
+
+    def generate_entity_manager_arguments(self, plugin, base_entity_manager_arguments, parameters = {}):
+        # retrieves the resource manager plugin
+        resource_manager_plugin = self.web_mvc_utils_plugin.resource_manager_plugin
+
+        # retrieves the expected parameter values
+        default_database_prefix = parameters.get("default_database_prefix", DEFAULT_DATABASE_PREFIX)
+        default_database_sufix = parameters.get("default_database_sufix", DEFAULT_DATABASE_SUFFIX)
+
+        # creates the entity manager arguments map
+        entity_manager_arguments = {}
+
+        # copies the entity manager arguments constant to the new entity manager arguments
+        colony.libs.map_util.map_copy_deep(base_entity_manager_arguments, entity_manager_arguments)
+
+        # retrieves the system database file name resource
+        system_database_filename_resource = resource_manager_plugin.get_resource("system.database.file_name")
+
+        # in case the system database filename resource
+        # is defined
+        if system_database_filename_resource:
+            # retrieves the system database filename suffix
+            system_database_filename_suffix = system_database_filename_resource.data
+        # otherwise
+        else:
+            # sets the system database filename suffix as the default one
+            system_database_filename_suffix = default_database_sufix
+
+        # creates the system database file name value using the prefix and suffix values
+        system_database_filename = default_database_prefix + system_database_filename_suffix
+
+        # retrieves the plugin id
+        plugin_id = plugin.id
+
+        # creates the database file path using the plugin id and the system database filename
+        database_file_path = "%configuration:" + plugin_id + "%/" + system_database_filename
+
+        # sets the file path in the entity manager arguments
+        entity_manager_arguments[CONNECTION_PARAMETERS_VALUE][FILE_PATH_VALUE] = database_file_path
+
+        # returns the entity manager arguments
+        return entity_manager_arguments
 
     def _resolve_connection_parameters(self, connection_parameters):
         """
