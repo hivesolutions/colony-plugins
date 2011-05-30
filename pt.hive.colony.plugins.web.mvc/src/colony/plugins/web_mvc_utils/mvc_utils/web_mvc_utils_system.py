@@ -342,6 +342,15 @@ class WebMvcUtils:
         # sets the controllers map in the instance
         setattr(system_instance, controllers_map_name, controllers_map)
 
+    def create_models(self, base_entity_models_module_name, system_instance, plugin_instance, entity_manager_arguments = {}):
+        # creates the entity models using the base entity models module name
+        # and the entity manager arguments
+        entity_models = self.create_entity_models(base_entity_models_module_name, entity_manager_arguments, stack_depth_level = 3)
+
+        # sets the entity models in the system instance with the
+        # base entity models module name
+        setattr(system_instance, base_entity_models_module_name, entity_models)
+
     def generate_patterns(self, patterns, controller, prefix_name):
         # retrieves the controller class
         controller_class = controller.__class__
