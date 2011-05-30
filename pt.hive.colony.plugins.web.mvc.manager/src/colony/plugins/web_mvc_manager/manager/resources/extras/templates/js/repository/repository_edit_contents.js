@@ -50,8 +50,8 @@ jQuery(document).ready(function() {
                     var pluginVersion = button.attr("plugin_version");
 
                     jQuery.ajax({
-                                url : "repositories/install_plugin.json",
                                 type : "post",
+                                url : "repositories/install_plugin.json",
                                 data : {
                                     plugin_id : pluginId,
                                     plugin_version : pluginVersion
