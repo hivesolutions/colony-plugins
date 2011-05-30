@@ -128,9 +128,9 @@ class WebMvcUtils:
 
         self.web_mvc_utils_plugin = web_mvc_utils_plugin
 
-    def import_module_mvc_utils(self, module_name, package_name, directory_path = None, stack_depth_level = 2):
+    def import_module_mvc_utils(self, module_name, package_name, directory_path = None, system_instance = None):
         # retrieves the directory path taking into account the call module directory
-        directory_path = directory_path or colony.libs.stack_util.get_call_module_directory(stack_depth_level)
+        directory_path = directory_path or colony.libs.stack_util.get_instance_module_directory(system_instance)
 
         # creates the globals map from
         # the current globals map
@@ -217,15 +217,12 @@ class WebMvcUtils:
         # returns the controller
         return controller
 
-    def create_entity_models(self, base_entity_models_module_name, entity_manager_arguments, directory_path = None, stack_depth_level = 2):
+    def create_entity_models(self, base_entity_models_module_name, entity_manager_arguments, directory_path):
         # retrieves the entity manager plugin
         entity_manager_plugin = self.web_mvc_utils_plugin.entity_manager_plugin
 
         # retrieves the business helper plugin
         business_helper_plugin = self.web_mvc_utils_plugin.business_helper_plugin
-
-        # retrieves the directory path taking into account the call module directory
-        directory_path = directory_path or colony.libs.stack_util.get_call_module_directory(stack_depth_level)
 
         # imports the base entity models module
         base_entity_models_module = business_helper_plugin.import_class_module_target(base_entity_models_module_name, globals(), locals(), [], directory_path, base_entity_models_module_name)
@@ -297,9 +294,15 @@ class WebMvcUtils:
         # returns the created search index controller
         return search_index_controller
 
-    def create_controllers(self, controllers_module, system_instance, plugin_instance, prefix_name = ""):
+    def create_controllers(self, package_path, system_instance, plugin_instance, prefix_name = ""):
         # initializes the controllers map
         controllers_map = {}
+
+        # splits the package path into package name and module name
+        package_name, module_name = package_path.rsplit(".", 1)
+
+        # imports the controllers module with the mvc utils support
+        controllers_module = self.import_module_mvc_utils(module_name, package_name, system_instance = system_instance)
 
         # retrieves the controllers module items
         controllers_module_items = dir(controllers_module)
@@ -343,9 +346,12 @@ class WebMvcUtils:
         setattr(system_instance, controllers_map_name, controllers_map)
 
     def create_models(self, base_entity_models_module_name, system_instance, plugin_instance, entity_manager_arguments = {}):
+        # retrieves the directory path from the system instance
+        directory_path = colony.libs.stack_util.get_instance_module_directory(system_instance)
+
         # creates the entity models using the base entity models module name
         # and the entity manager arguments
-        entity_models = self.create_entity_models(base_entity_models_module_name, entity_manager_arguments, stack_depth_level = 3)
+        entity_models = self.create_entity_models(base_entity_models_module_name, entity_manager_arguments, directory_path)
 
         # sets the entity models in the system instance with the
         # base entity models module name
