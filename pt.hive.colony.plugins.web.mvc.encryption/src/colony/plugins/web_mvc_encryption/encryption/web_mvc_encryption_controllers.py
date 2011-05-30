@@ -121,8 +121,6 @@ class WebMvcEncryptionMainController:
         to be handled.
         @type parameters: Dictionary
         @param parameters: The handler parameters.
-        @rtype: bool
-        @return: The result of the handling.
         """
 
         # retrieves the form data by processing the form
@@ -146,9 +144,6 @@ class WebMvcEncryptionMainController:
         # sets the signature as the contents
         self.set_contents(rest_request, signature, "text/plain")
 
-        # returns true
-        return True
-
     def handle_web_mvc_encryption_verify(self, rest_request, parameters = {}):
         """
         Handles the given web mvc encryption verify rest request.
@@ -158,8 +153,6 @@ class WebMvcEncryptionMainController:
         to be handled.
         @type parameters: Dictionary
         @param parameters: The handler parameters.
-        @rtype: bool
-        @return: The result of the handling.
         """
 
         # retrieves the form data by processing the form
@@ -182,9 +175,6 @@ class WebMvcEncryptionMainController:
 
         # sets the return value string as the contents
         self.set_contents(rest_request, return_value_string, "text/plain")
-
-        # returns true
-        return True
 
     def _sign(self, rest_request, api_key, key_name, message, algorithm_name):
         # retrieves the encryption ssl plugin
@@ -334,8 +324,6 @@ class ConsumerController:
         @param rest_request: The web mvc encryption new rest request to be handled.
         @type parameters: Dictionary
         @param parameters: The handler parameters.
-        @rtype: bool
-        @return: The result of the handling.
         """
 
         # retrieves the form data by processing the form
@@ -346,9 +334,6 @@ class ConsumerController:
 
         # saves the consumer
         self._save_consumer(rest_request, consumer)
-
-        # returns true
-        return True
 
     @web_mvc_utils.transaction_method("web_mvc_encryption.web_mvc_encryption_entity_models.entity_manager")
     def _save_consumer(self, rest_request, consumer):
