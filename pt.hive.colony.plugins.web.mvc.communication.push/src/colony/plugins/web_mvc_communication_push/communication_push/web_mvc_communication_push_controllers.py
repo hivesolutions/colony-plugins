@@ -150,8 +150,6 @@ class WebMvcCommunicationPushController:
         to be handled.
         @type parameters: Dictionary
         @param parameters: The handler parameters.
-        @rtype: bool
-        @return: The result of the handling.
         """
 
         # retrieves the serializer
@@ -163,9 +161,6 @@ class WebMvcCommunicationPushController:
         # sets the request contents
         self.set_contents(rest_request, serialized_service_connection_name_communication_handler_map)
 
-        # returns true
-        return True
-
     def handle_show_json(self, rest_request, parameters = {}):
         """
         Handles the given show json rest request.
@@ -175,8 +170,6 @@ class WebMvcCommunicationPushController:
         to be handled.
         @type parameters: Dictionary
         @param parameters: The handler parameters.
-        @rtype: bool
-        @return: The result of the handling.
         """
 
         # retrieves the json plugin
@@ -187,7 +180,7 @@ class WebMvcCommunicationPushController:
 
         # handles the request with the general
         # handle show serialized method
-        return self.handle_show_serialized(rest_request, parameters)
+        self.handle_show_serialized(rest_request, parameters)
 
     @web_mvc_utils.serialize_exceptions("all")
     def handle_register_serialized(self, rest_request, parameters = {}):
@@ -199,8 +192,6 @@ class WebMvcCommunicationPushController:
         to be handled.
         @type parameters: Dictionary
         @param parameters: The handler parameters.
-        @rtype: bool
-        @return: The result of the handling.
         """
 
         # retrieves the serializer
@@ -230,9 +221,6 @@ class WebMvcCommunicationPushController:
         # sets the request contents
         self.set_contents(rest_request, serialized_register_result)
 
-        # returns true
-        return True
-
     def handle_register_json(self, rest_request, parameters = {}):
         """
         Handles the given register json rest request.
@@ -242,8 +230,6 @@ class WebMvcCommunicationPushController:
         to be handled.
         @type parameters: Dictionary
         @param parameters: The handler parameters.
-        @rtype: bool
-        @return: The result of the handling.
         """
 
         # retrieves the json plugin
@@ -254,7 +240,7 @@ class WebMvcCommunicationPushController:
 
         # handles the request with the general
         # handle register serialized method
-        return self.handle_register_serialized(rest_request, parameters)
+        self.handle_register_serialized(rest_request, parameters)
 
     @web_mvc_utils.serialize_exceptions("all")
     def handle_unregister_serialized(self, rest_request, parameters = {}):
@@ -266,8 +252,6 @@ class WebMvcCommunicationPushController:
         to be handled.
         @type parameters: Dictionary
         @param parameters: The handler parameters.
-        @rtype: bool
-        @return: The result of the handling.
         """
 
         # retrieves the serializer
@@ -294,9 +278,6 @@ class WebMvcCommunicationPushController:
         # sets the request contents
         self.set_contents(rest_request, serialized_unregister_result)
 
-        # returns true
-        return True
-
     def handle_unregister_json(self, rest_request, parameters = {}):
         """
         Handles the given unregister json rest request.
@@ -306,8 +287,6 @@ class WebMvcCommunicationPushController:
         to be handled.
         @type parameters: Dictionary
         @param parameters: The handler parameters.
-        @rtype: bool
-        @return: The result of the handling.
         """
 
         # retrieves the json plugin
@@ -318,7 +297,7 @@ class WebMvcCommunicationPushController:
 
         # handles the request with the general
         # handle unregister serialized method
-        return self.handle_unregister_serialized(rest_request, parameters)
+        self.handle_unregister_serialized(rest_request, parameters)
 
     @web_mvc_utils.serialize_exceptions("all")
     def handle_message_serialized(self, rest_request, parameters = {}):
@@ -330,8 +309,6 @@ class WebMvcCommunicationPushController:
         to be handled.
         @type parameters: Dictionary
         @param parameters: The handler parameters.
-        @rtype: bool
-        @return: The result of the handling.
         """
 
         # retrieves the serializer value
@@ -358,9 +335,6 @@ class WebMvcCommunicationPushController:
         # sets the request contents
         self.set_contents(rest_request, serialized_message_result)
 
-        # returns true
-        return True
-
     def handle_message_json(self, rest_request, parameters = {}):
         """
         Handles the given message json rest request.
@@ -370,8 +344,6 @@ class WebMvcCommunicationPushController:
         to be handled.
         @type parameters: Dictionary
         @param parameters: The handler parameters.
-        @rtype: bool
-        @return: The result of the handling.
         """
 
         # retrieves the json plugin
@@ -382,7 +354,7 @@ class WebMvcCommunicationPushController:
 
         # handles the request with the general
         # handle message serialized method
-        return self.handle_message_serialized(rest_request, parameters)
+        self.handle_message_serialized(rest_request, parameters)
 
     @web_mvc_utils.serialize_exceptions("all")
     def handle_set_property_serialized(self, rest_request, parameters = {}):
@@ -394,8 +366,6 @@ class WebMvcCommunicationPushController:
         to be handled.
         @type parameters: Dictionary
         @param parameters: The handler parameters.
-        @rtype: bool
-        @return: The result of the handling.
         """
 
         # retrieves the serializer
@@ -422,9 +392,6 @@ class WebMvcCommunicationPushController:
         # sets the request contents
         self.set_contents(rest_request, serialized_set_property_result)
 
-        # returns true
-        return True
-
     def handle_set_property_json(self, rest_request, parameters = {}):
         """
         Handles the given set property json rest request.
@@ -434,8 +401,6 @@ class WebMvcCommunicationPushController:
         to be handled.
         @type parameters: Dictionary
         @param parameters: The handler parameters.
-        @rtype: bool
-        @return: The result of the handling.
         """
 
         # retrieves the serializer
@@ -446,7 +411,7 @@ class WebMvcCommunicationPushController:
 
         # handles the request with the general
         # handle set property serialized method
-        return self.handle_set_property_serialized(rest_request, parameters)
+        self.handle_set_property_serialized(rest_request, parameters)
 
     @web_mvc_utils.serialize_exceptions("all")
     def handle_stat_serialized(self, rest_request, parameters = {}):
@@ -458,8 +423,6 @@ class WebMvcCommunicationPushController:
         to be handled.
         @type parameters: Dictionary
         @param parameters: The handler parameters.
-        @rtype: bool
-        @return: The result of the handling.
         """
 
         # retrieves the serializer
@@ -483,9 +446,6 @@ class WebMvcCommunicationPushController:
         # sets the request contents
         self.set_contents(rest_request, serialized_stat_result)
 
-        # returns true
-        return True
-
     def handle_stat_json(self, rest_request, parameters = {}):
         """
         Handles the given stat json rest request.
@@ -495,8 +455,6 @@ class WebMvcCommunicationPushController:
         to be handled.
         @type parameters: Dictionary
         @param parameters: The handler parameters.
-        @rtype: bool
-        @return: The result of the handling.
         """
 
         # retrieves the json plugin
@@ -507,7 +465,7 @@ class WebMvcCommunicationPushController:
 
         # handles the request with the general
         # handle stat serialized method
-        return self.handle_stat_serialized(rest_request, parameters)
+        self.handle_stat_serialized(rest_request, parameters)
 
     @web_mvc_utils.serialize_exceptions("all")
     def handle_load_profile_serialized(self, rest_request, parameters = {}):
@@ -519,8 +477,6 @@ class WebMvcCommunicationPushController:
         to be handled.
         @type parameters: Dictionary
         @param parameters: The handler parameters.
-        @rtype: bool
-        @return: The result of the handling.
         """
 
         # retrieves the serializer
@@ -550,9 +506,6 @@ class WebMvcCommunicationPushController:
         # sets the request contents
         self.set_contents(rest_request, serialized_load_profile_result)
 
-        # returns true
-        return True
-
     def handle_load_profile_json(self, rest_request, parameters = {}):
         """
         Handles the given load profile json rest request.
@@ -562,8 +515,6 @@ class WebMvcCommunicationPushController:
         to be handled.
         @type parameters: Dictionary
         @param parameters: The handler parameters.
-        @rtype: bool
-        @return: The result of the handling.
         """
 
         # retrieves the json plugin
@@ -574,7 +525,7 @@ class WebMvcCommunicationPushController:
 
         # handles the request with the general
         # handle load profile serialized method
-        return self.handle_load_profile_serialized(rest_request, parameters)
+        self.handle_load_profile_serialized(rest_request, parameters)
 
     @web_mvc_utils.serialize_exceptions("all")
     def handle_unload_profile_serialized(self, rest_request, parameters = {}):
@@ -586,8 +537,6 @@ class WebMvcCommunicationPushController:
         to be handled.
         @type parameters: Dictionary
         @param parameters: The handler parameters.
-        @rtype: bool
-        @return: The result of the handling.
         """
 
         # retrieves the serializer
@@ -614,9 +563,6 @@ class WebMvcCommunicationPushController:
         # sets the request contents
         self.set_contents(rest_request, serialized_unload_profile_result)
 
-        # returns true
-        return True
-
     def handle_unload_profile_json(self, rest_request, parameters = {}):
         """
         Handles the given unload profile json rest request.
@@ -626,8 +572,6 @@ class WebMvcCommunicationPushController:
         to be handled.
         @type parameters: Dictionary
         @param parameters: The handler parameters.
-        @rtype: bool
-        @return: The result of the handling.
         """
 
         # retrieves the json plugin
@@ -638,7 +582,7 @@ class WebMvcCommunicationPushController:
 
         # handles the request with the general
         # handle unload profile serialized method
-        return self.handle_unload_profile_serialized(rest_request, parameters)
+        self.handle_unload_profile_serialized(rest_request, parameters)
 
     @web_mvc_utils.serialize_exceptions("all")
     def handle_set_profile_serialized(self, rest_request, parameters = {}):
@@ -650,8 +594,6 @@ class WebMvcCommunicationPushController:
         to be handled.
         @type parameters: Dictionary
         @param parameters: The handler parameters.
-        @rtype: bool
-        @return: The result of the handling.
         """
 
         # retrieves the serializer
@@ -675,9 +617,6 @@ class WebMvcCommunicationPushController:
         # sets the request contents
         self.set_contents(rest_request, serialized_set_profile_result)
 
-        # returns true
-        return True
-
     def handle_set_profile_json(self, rest_request, parameters = {}):
         """
         Handles the given set profile json rest request.
@@ -687,8 +626,6 @@ class WebMvcCommunicationPushController:
         to be handled.
         @type parameters: Dictionary
         @param parameters: The handler parameters.
-        @rtype: bool
-        @return: The result of the handling.
         """
 
         # retrieves the json plugin
@@ -699,7 +636,7 @@ class WebMvcCommunicationPushController:
 
         # handles the request with the general
         # handle set profile serialized method
-        return self.handle_set_profile_serialized(rest_request, parameters)
+        self.handle_set_profile_serialized(rest_request, parameters)
 
     @web_mvc_utils.serialize_exceptions("all")
     def handle_unset_profile_serialized(self, rest_request, parameters = {}):
@@ -711,8 +648,6 @@ class WebMvcCommunicationPushController:
         to be handled.
         @type parameters: Dictionary
         @param parameters: The handler parameters.
-        @rtype: bool
-        @return: The result of the handling.
         """
 
         # retrieves the serializer
@@ -736,9 +671,6 @@ class WebMvcCommunicationPushController:
         # sets the request contents
         self.set_contents(rest_request, serialized_unset_profile_result)
 
-        # returns true
-        return True
-
     def handle_unset_profile_json(self, rest_request, parameters = {}):
         """
         Handles the given unset profile json rest request.
@@ -748,8 +680,6 @@ class WebMvcCommunicationPushController:
         to be handled.
         @type parameters: Dictionary
         @param parameters: The handler parameters.
-        @rtype: bool
-        @return: The result of the handling.
         """
 
         # retrieves the json plugin
@@ -760,7 +690,7 @@ class WebMvcCommunicationPushController:
 
         # handles the request with the general
         # handle unset profile serialized method
-        return self.handle_unset_profile_serialized(rest_request, parameters)
+        self.handle_unset_profile_serialized(rest_request, parameters)
 
     def generate_handler(self, return_url, method):
         """
