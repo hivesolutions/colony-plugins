@@ -56,6 +56,9 @@ CLASS_NAME_VALUE = "class_name"
 DESCRIPTION_VALUE = "description"
 """ The description value """
 
+DESTINATION_PATH_VALUE = "destination_path"
+""" The destination path value """
+
 NAME_VALUE = "name"
 """ The name value """
 
@@ -95,17 +98,11 @@ SHORT_NAME_UPPERCASE_VALUE = "short_name_uppercase"
 RELATIVE_BACKEND_PATH_VALUE = "relative_backend_path"
 """ The relative backend path """
 
-RELATIVE_DESTINATION_FILE_PATH_VALUE = "relative_destination_file_path"
-""" The relative destination file path value """
+RELATIVE_BACKEND_ROOT_PATH_VALUE = "relative_backend_root_path"
+""" The relative backend root path value """
 
-RELATIVE_DESTINATION_FILE_PATH_FORMAT_VALUE = "relative_destination_file_path_format"
-""" The relative destination file path format value """
-
-RELATIVE_PATH_VALUE = "relative_path"
-""" The relative path value """
-
-TEMPLATE_FILE_PATH_VALUE = "template_file_path"
-""" The template file path value """
+TEMPLATE_PATH_VALUE = "template_path"
+""" The template path """
 
 VARIABLE_NAME_VALUE = "variable_name"
 """ The variable name value """
@@ -125,20 +122,11 @@ DEFAULT_AUTHOR = "Hive Solutions Lda. <development@hive.pt>"
 DEFAULT_ENCODING = "Cp1252"
 """ The default encoding """
 
-INIT_FILE_NAME = "__init__.py"
-""" The init file name """
-
-INIT_TEMPLATE_FILE_NAME = "__init__.py.tpl"
-""" The init template file name """
-
 PLUGIN_ID_REGEX = re.compile("[a-z][a-z0-9_]*[a-z0-9]+\.(?:[a-z][a-z0-9_]*[a-z0-9]+\.)*[a-z][a-z0-9_]*[a-z0-9]+")
 """ The plugin id regex """
 
 UNIX_DIRECTORY_SEPARATOR = "/"
 """ The unix directory separator """
-
-TEMPLATES_PATH = "main_scaffolding/scaffolding/resources/templates"
-""" The templates path """
 
 EXTRAS_PATH = "extras"
 """ The extras path """
@@ -188,6 +176,12 @@ class MainScaffolding:
         # returns the scaffolder types
         return scaffolder_types
 
+    def generate_scaffolds(self, scaffolder_types, plugin_id, plugin_version, scaffold_path, specification_file_path):
+        # for each scaffolder type
+        for scaffolder_type in scaffolder_types:
+            # generates the scaffold for that type
+            self.generate_scaffold(scaffolder_type, plugin_id, plugin_version, scaffold_path, specification_file_path)
+
     def generate_scaffold(self, scaffolder_type, plugin_id, plugin_version, scaffold_path, specification_file_path):
         # retrieves the plugin manager
         plugin_manager = self.main_scaffolding_plugin.manager
@@ -206,13 +200,16 @@ class MainScaffolding:
         not scaffold_path_exists and os.makedirs(scaffold_path)
 
         # initializes the scaffold attributes map
-        scaffold_attributes_map = {
-            PLUGIN_ID_VALUE : plugin_id,
-            PLUGIN_VERSION_VALUE : plugin_version
-        }
+        scaffold_attributes_map = {}
 
         # loads the specification in case one was specified
         scaffold_attributes_map = specification_file_path and self._get_json_data(specification_file_path) or scaffold_attributes_map
+
+        # sets the plugin id in the scaffold attributes map
+        scaffold_attributes_map[PLUGIN_ID_VALUE] = plugin_id
+
+        # sets the plugin version in the scaffold attributes map
+        scaffold_attributes_map[PLUGIN_VERSION_VALUE] = plugin_version
 
         # processes the scaffold attributes map
         self.process_scaffold_attributes(scaffold_attributes_map)
@@ -220,26 +217,23 @@ class MainScaffolding:
         # processes the scaffold attributes map with the scaffolder plugin
         scaffolder_plugin.process_scaffold_attributes(scaffold_attributes_map)
 
-        # creates the init files
-        self.create_init_files(scaffold_path, scaffold_attributes_map)
-
         # retrieves the scaffolder's templates
-        templates_map = scaffolder_plugin.get_templates(scaffold_attributes_map)
+        templates = scaffolder_plugin.get_templates(scaffold_attributes_map)
 
         # retrieves the scaffolder plugin path
         scaffolder_plugin_path = plugin_manager.get_plugin_path_by_id(scaffolder_plugin.id)
 
         # for each template in the templates map
-        for template_file_name, template_map in templates_map.items():
+        for template_map in templates:
             # retrieves the mandatory template attributes
-            relative_template_path = template_map[RELATIVE_PATH_VALUE]
-            relative_destination_file_path_format = template_map[RELATIVE_DESTINATION_FILE_PATH_FORMAT_VALUE]
+            relative_template_file_path = template_map[TEMPLATE_PATH_VALUE]
+            relative_destination_file_path_format = template_map[DESTINATION_PATH_VALUE]
 
             # retrieves the optional template attributes
             process_template = template_map.get(PROCESS_VALUE, True)
 
             # defines the template file path
-            template_file_path = scaffolder_plugin_path + UNIX_DIRECTORY_SEPARATOR + relative_template_path + UNIX_DIRECTORY_SEPARATOR + template_file_name
+            template_file_path = scaffolder_plugin_path + UNIX_DIRECTORY_SEPARATOR + relative_template_file_path
 
             # applies the attributes to the relative destination file path format
             relative_destination_file_path = self._apply_attributes(relative_destination_file_path_format, scaffold_attributes_map)
@@ -251,7 +245,7 @@ class MainScaffolding:
             processed_template = process_template and self.process_template(template_file_path, scaffold_attributes_map) or self._get_file_data(template_file_path)
 
             # processes the template with the scaffolder
-            processed_template = process_template and scaffolder_plugin.process_template(template_file_name, processed_template, scaffold_attributes_map) or processed_template
+            processed_template = process_template and scaffolder_plugin.process_template(relative_template_file_path, processed_template, scaffold_attributes_map) or processed_template
 
             # creates the destination file
             self._create_file(destination_file_path, processed_template)
@@ -293,10 +287,7 @@ class MainScaffolding:
         short_name = short_name.replace("_", " ")
 
         # capitalizes the short name words
-        short_name = "".join([short_name_token.capitalize() + " " for short_name_token in short_name.split()])
-
-        # strips the short name
-        short_name = short_name.strip()
+        short_name = colony.libs.string_util.capitalize_all(short_name)
 
         # defines the lowercase version of the short name
         short_name_lowercase = short_name.lower()
@@ -323,7 +314,7 @@ class MainScaffolding:
         relative_backend_path = root_folder_name + UNIX_DIRECTORY_SEPARATOR + sub_folder_name
 
         # defines the class name
-        class_name = "".join([short_name_token.capitalize() for short_name_token in short_name.split()])
+        class_name = colony.libs.string_util.convert_camelcase(variable_name)
 
         # defines the description
         description = description or DESCRIPTION_FORMAT % short_name_lowercase
@@ -332,6 +323,7 @@ class MainScaffolding:
         backend_namespace = relative_backend_path.replace(UNIX_DIRECTORY_SEPARATOR, ".")
 
         # sets the attributes in the scaffold attributes map
+        scaffold_attributes_map[RELATIVE_BACKEND_ROOT_PATH_VALUE] = root_folder_name
         scaffold_attributes_map[RELATIVE_BACKEND_PATH_VALUE] = relative_backend_path
         scaffold_attributes_map[SHORT_NAME_VALUE] = short_name
         scaffold_attributes_map[SHORT_NAME_LOWERCASE_VALUE] = short_name_lowercase
@@ -357,39 +349,6 @@ class MainScaffolding:
 
         # returns the processed template
         return processed_template
-
-    def create_init_files(self, scaffold_path, scaffold_attributes_map):
-        # retrieves the plugin manager
-        plugin_manager = self.main_scaffolding_plugin.manager
-
-        # retrieves the main scaffolding plugin path
-        main_scaffolding_plugin_path = plugin_manager.get_plugin_path_by_id(self.main_scaffolding_plugin.id)
-
-        # defines the init template file path
-        init_template_file_path = main_scaffolding_plugin_path + UNIX_DIRECTORY_SEPARATOR + TEMPLATES_PATH + UNIX_DIRECTORY_SEPARATOR + INIT_TEMPLATE_FILE_NAME
-
-        # reads the init template
-        init_template = self._get_file_data(init_template_file_path)
-
-        # retrieves the scaffold attributes
-        relative_backend_path = scaffold_attributes_map[RELATIVE_BACKEND_PATH_VALUE]
-
-        # initializes the backend path
-        backend_path = scaffold_path
-
-        # retrieves the relative backend path tokens
-        relative_backend_path_tokens = relative_backend_path.split(UNIX_DIRECTORY_SEPARATOR)
-
-        # collects the backend sub-directory's init file paths
-        for relative_backend_path_token in relative_backend_path_tokens:
-            # defines the next backend sub-directory path
-            backend_path += UNIX_DIRECTORY_SEPARATOR + relative_backend_path_token
-
-            # defines the init file path
-            init_file_path = backend_path + UNIX_DIRECTORY_SEPARATOR + INIT_FILE_NAME
-
-            # creates the init file
-            self._create_file(init_file_path, init_template)
 
     def _validate_plugin_id(self, plugin_id):
         # matches the plugin id against the regular expression

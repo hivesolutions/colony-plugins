@@ -124,6 +124,9 @@ class MainScaffoldingPlugin(colony.base.plugin_system.Plugin):
     def get_scaffolder_types(self):
         return self.main_scaffolding.get_scaffolder_types()
 
+    def generate_scaffolds(self, scaffolder_types, plugin_id, plugin_version, scaffold_path, specification_file_path):
+        self.main_scaffolding.generate_scaffolds(scaffolder_types, plugin_id, plugin_version, scaffold_path, specification_file_path)
+
     def generate_scaffold(self, scaffolder_type, plugin_id, plugin_version, scaffold_path, specification_file_path):
         self.main_scaffolding.generate_scaffold(scaffolder_type, plugin_id, plugin_version, scaffold_path, specification_file_path)
 

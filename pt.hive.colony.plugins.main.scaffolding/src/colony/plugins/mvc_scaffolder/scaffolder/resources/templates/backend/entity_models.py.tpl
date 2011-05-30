@@ -42,15 +42,29 @@ class RootEntity(base_entity.EntityClass):
     }
     """ The root entity's object id """
 
-    description = {
-        "data_type" : "text"
-    }
-    """ The root entity's description """
-
     def __init__(self):
         """
         Constructor of the class.
         """
 
         self.object_id = None
-        self.description = None
+
+class ${out value=scaffold_attributes.model.class_name /}(RootEntity):
+    """
+    The ${out value=scaffold_attributes.model.name_lowercase /} entity class.
+    """
+    ${foreach item=attribute from=scaffold_attributes.model.attributes}
+    ${out value=attribute.name /} = {
+        "data_type" : "${out value=attribute.data_type /}"
+    }
+    """ The ${out value=scaffold_attributes.model.name_lowercase /}'s ${out value=attribute.name_lowercase /} """
+    ${/foreach}
+    def __init__(self):
+        """
+        Constructor of the class.
+        """
+
+        RootEntity.__init__(self)
+        ${foreach item=attribute from=scaffold_attributes.model.attributes}
+        self.${out value=attribute.name /} = None
+        ${/foreach}

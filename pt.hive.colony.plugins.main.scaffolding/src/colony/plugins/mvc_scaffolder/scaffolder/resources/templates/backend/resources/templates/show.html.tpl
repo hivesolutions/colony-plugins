@@ -1,32 +1,26 @@
 <html>
     <body>
-        <h1>Root Entity</h1>
-        <table border="1">
+        <h1>${out value=scaffold_attributes.model.name /}</h1>
+        <table>
             <thead>
                 <th>
-                    attribute
+                    name
                 </th>
                 <th>
                     value
                 </th>
             </thead>
             <tbody>
-                <tr>
-                    <td>
-                        object_id
-                    </td>
-                    <td>
-                        ${out value=root_entity.object_id /}
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        description
-                    </td>
-                    <td>
-                        ${out value=root_entity.description /}
-                    </td>
-                </tr>
+                ${foreach item=attribute from=scaffold_attributes.model.attributes}
+                    <tr>
+                        <td>
+                            ${out value=attribute.name /}
+                        </td>
+                        <td>
+                            $\{out value=${out value=scaffold_attributes.model.variable_name /}.${out value=attribute.name /} /}
+                        </td>
+                    </tr>
+                ${/foreach}
             </tbody>
         </table>
     </body>

@@ -37,19 +37,11 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-import os
+DESTINATION_PATH_VALUE = "destination_path"
+""" The destination path value """
 
-RELATIVE_BACKEND_PATH_VALUE = "relative_backend_path"
-""" The relative backend path value """
-
-RELATIVE_PATH_VALUE = "relative_path"
-""" The relative path value """
-
-RELATIVE_DESTINATION_FILE_PATH_FORMAT = "relative_destination_file_path_format"
-""" The relative destination file path format """
-
-UNIX_DIRECTORY_SEPARATOR = "/"
-""" The unix directory separator """
+TEMPLATE_PATH_VALUE = "template_path"
+""" The template path value """
 
 SCAFFOLDER_TYPE = "mvc_manager"
 """ The scaffolder type """
@@ -57,36 +49,47 @@ SCAFFOLDER_TYPE = "mvc_manager"
 BACKEND_TEMPLATES_PATH = "resources/templates"
 """ The backend templates path """
 
-TEMPLATES_PATH = "mvc_manager_scaffolder/scaffolder/resources/templates"
+TEMPLATES_PATH = "mvc_manager_scaffolder/scaffolder/resources/templates/"
 """ The templates path """
 
-TEMPLATES_MAP = {
-    "backend/controllers.py.tpl" : {
-        RELATIVE_PATH_VALUE : TEMPLATES_PATH,
-        RELATIVE_DESTINATION_FILE_PATH_FORMAT : "${relative_backend_path}/${variable_name}_controllers.py"
+TEMPLATES_BACKEND_PATH = TEMPLATES_PATH + "backend/"
+""" The templates backend path """
+
+TEMPLATES = (
+    {
+        TEMPLATE_PATH_VALUE : TEMPLATES_BACKEND_PATH + "__init__.py.tpl",
+        DESTINATION_PATH_VALUE : "${relative_backend_path}/__init__.py"
     },
-    "backend/entity_models.py.tpl" : {
-        RELATIVE_PATH_VALUE : TEMPLATES_PATH,
-        RELATIVE_DESTINATION_FILE_PATH_FORMAT : "${relative_backend_path}/${variable_name}_entity_models.py"
+    {
+        TEMPLATE_PATH_VALUE : TEMPLATES_BACKEND_PATH + "controllers.py.tpl",
+        DESTINATION_PATH_VALUE : "${relative_backend_path}/${variable_name}_controllers.py"
     },
-    "backend/exceptions.py.tpl" : {
-        RELATIVE_PATH_VALUE : TEMPLATES_PATH,
-        RELATIVE_DESTINATION_FILE_PATH_FORMAT : "${relative_backend_path}/${variable_name}_exceptions.py"
+    {
+        TEMPLATE_PATH_VALUE : TEMPLATES_BACKEND_PATH + "entity_models.py.tpl",
+        DESTINATION_PATH_VALUE : "${relative_backend_path}/${variable_name}_entity_models.py"
     },
-    "backend/system.py.tpl" : {
-       RELATIVE_PATH_VALUE : TEMPLATES_PATH,
-       RELATIVE_DESTINATION_FILE_PATH_FORMAT : "${relative_backend_path}/${variable_name}_system.py"
+    {
+        TEMPLATE_PATH_VALUE : TEMPLATES_BACKEND_PATH + "exceptions.py.tpl",
+        DESTINATION_PATH_VALUE : "${relative_backend_path}/${variable_name}_exceptions.py"
     },
-    "backend/test.py.tpl" : {
-        RELATIVE_PATH_VALUE : TEMPLATES_PATH,
-        RELATIVE_DESTINATION_FILE_PATH_FORMAT : "${relative_backend_path}/${variable_name}_test.py"
+    {
+        TEMPLATE_PATH_VALUE : TEMPLATES_BACKEND_PATH + "system.py.tpl",
+        DESTINATION_PATH_VALUE : "${relative_backend_path}/${variable_name}_system.py"
     },
-    "plugin.py.tpl" : {
-        RELATIVE_PATH_VALUE : TEMPLATES_PATH,
-        RELATIVE_DESTINATION_FILE_PATH_FORMAT : "${variable_name}_plugin.py"
+    {
+        TEMPLATE_PATH_VALUE : TEMPLATES_BACKEND_PATH + "test.py.tpl",
+        DESTINATION_PATH_VALUE : "${relative_backend_path}/${variable_name}_test.py"
+    },
+    {
+        TEMPLATE_PATH_VALUE : TEMPLATES_BACKEND_PATH + "__init__.py.tpl",
+        DESTINATION_PATH_VALUE : "${relative_backend_root_path}/__init__.py"
+    },
+    {
+        TEMPLATE_PATH_VALUE : TEMPLATES_PATH + "plugin.py.tpl",
+        DESTINATION_PATH_VALUE : "${variable_name}_plugin.py"
     }
-}
-""" The templates map """
+)
+""" The templates """
 
 class MvcManagerScaffolder:
     """
@@ -110,24 +113,13 @@ class MvcManagerScaffolder:
         return SCAFFOLDER_TYPE
 
     def get_templates(self, scaffold_attributes_map):
-        return TEMPLATES_MAP
+        return TEMPLATES
 
     def process_scaffold_attributes(self, scaffold_attributes_map):
         pass
 
-    def process_template(self, template_file_name, template, scaffold_attributes_map):
+    def process_template(self, template_path, template, scaffold_attributes_map):
         return template
 
     def generate_scaffold(self, scaffold_path, scaffold_attributes_map):
-        # retrieves the relative backend path
-        relative_backend_path = scaffold_attributes_map[RELATIVE_BACKEND_PATH_VALUE]
-
-        # defines the templates path
-        templates_path = scaffold_path + UNIX_DIRECTORY_SEPARATOR + relative_backend_path + UNIX_DIRECTORY_SEPARATOR + BACKEND_TEMPLATES_PATH
-
-        # checks if the path exists
-        path_exists = os.path.exists(templates_path)
-
-        # creates the directories for the templates path
-        # in case the path does not exist
-        not path_exists and os.makedirs(templates_path)
+        pass

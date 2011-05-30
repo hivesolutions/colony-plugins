@@ -40,6 +40,9 @@ __license__ = "GNU General Public License (GPL), Version 3"
 import os
 import re
 
+SCAFFOLDER_TYPE_SEPARATOR = ","
+""" The scaffolder type separator """
+
 DEFAULT_VERSION = "1.0.0"
 """ The default version """
 
@@ -95,7 +98,7 @@ class ConsoleMainScaffolding:
         main_scaffolding = self.main_scaffolding_plugin.main_scaffolding
 
         # retrieves the mandatory arguments
-        scaffolder_type = arguments_map["scaffolder_type"]
+        scaffolder_types_string = arguments_map["scaffolder_types"]
         plugin_id = arguments_map["plugin_id"]
 
         # retrieves the scaffold path for the plugin id
@@ -106,11 +109,14 @@ class ConsoleMainScaffolding:
         scaffold_path = arguments_map.get("scaffold_path", scaffold_path)
         specification_file_path = arguments_map.get("specification_file_path", None)
 
+        # retrieves the scaffolder types
+        scaffolder_types = scaffolder_types_string.split(SCAFFOLDER_TYPE_SEPARATOR)
+
         # prints a message
-        output_method("started generating %s scaffold files..." % scaffolder_type)
+        output_method("started generating %s scaffold files..." % scaffolder_types_string)
 
         # generates the scaffold
-        main_scaffolding.generate_scaffold(scaffolder_type, plugin_id, plugin_version, scaffold_path, specification_file_path)
+        main_scaffolding.generate_scaffolds(scaffolder_types, plugin_id, plugin_version, scaffold_path, specification_file_path)
 
         # prints a message
         output_method("finished generating scaffold files into: %s" % scaffold_path)
@@ -119,8 +125,23 @@ class ConsoleMainScaffolding:
         # retrieves the main scaffolding instance
         main_scaffolding = self.main_scaffolding_plugin.main_scaffolding
 
+        # splits the argument
+        argument_tokens = argument.rsplit(SCAFFOLDER_TYPE_SEPARATOR, 1)
+
+        # retrieves the number of argument tokens
+        number_argument_tokens = len(argument_tokens)
+
+        # retrieves the scaffolder type prefix
+        scaffolder_type_prefix = number_argument_tokens > 1 and argument_tokens[0] or ""
+
+        # retrieves the last argument token
+        last_argument_token = argument_tokens[-1]
+
         # retrieves the scaffolder types
         scaffolder_types = main_scaffolding.get_scaffolder_types()
+
+        # retrieves the scaffolder types that start with the last argument
+        scaffolder_types = [scaffolder_type_prefix + SCAFFOLDER_TYPE_SEPARATOR + scaffolder_type for scaffolder_type in scaffolder_types if scaffolder_type.startswith(last_argument_token)]
 
         # returns the scaffolder types
         return scaffolder_types
@@ -160,8 +181,8 @@ class ConsoleMainScaffolding:
                 "description" : "generates the scaffold",
                 "arguments" : [
                     {
-                        "name" : "scaffolder_type",
-                        "description" : "the type of plugin to scaffold",
+                        "name" : "scaffolder_types",
+                        "description" : "the scaffolds to generate separated by comma",
                         "values" : self.get_scaffolder_types,
                         "mandatory" : True
                     },

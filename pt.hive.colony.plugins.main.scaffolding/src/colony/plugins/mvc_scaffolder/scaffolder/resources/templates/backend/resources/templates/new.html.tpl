@@ -1,32 +1,32 @@
 <html>
     <body>
-        <h1>Root Entity</h1>
+        <h1>${out value=scaffold_attributes.model.name /}</h1>
         <form method="post">
-            <table border="1">
+            <table>
                 <thead>
                     <th>
-                    attribute
+                        attribute
                     </th>
                     <th>
-                    value
+                        value
                     </th>
                 </thead>
                 <tbody>
-                    <tr>
-                        <td>
-                            description
-                        </td>
-                        <td>
-                            <input name="root_entity[description]" />
-                        </td>
-                    </tr>
-                    <tr>
-                        <td colspan="2" align="right">
-                            <input type="submit" value="create" />
-                        </td>
-                    </tr>
+                    ${foreach item=attribute from=scaffold_attributes.model.attributes}
+                        <tr>
+                            <td>
+                                ${out value=attribute.name /}
+                            </td>
+                            <td>
+                                <input name="${out value=scaffold_attributes.model.variable_name /}[${out value=attribute.name /}]" />
+                            </td>
+                        </tr>
+                    ${/foreach}
                 </tbody>
             </table>
+            <p>
+                <input type="submit" value="create" />
+            </p>
         </form>
     </body>
 </html>

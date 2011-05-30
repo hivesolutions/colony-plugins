@@ -3,7 +3,8 @@ import colony.base.decorators
 
 class ${out value=scaffold_attributes.class_name /}Plugin(colony.base.plugin_system.Plugin):
     id = "${out value=scaffold_attributes.plugin_id /}"
-    short_name = "${out value=scaffold_attributes.short_name /} Plugin"
+    name = "${out value=scaffold_attributes.short_name /} Plugin"
+    short_name = "${out value=scaffold_attributes.short_name /}"
     version = "${out value=scaffold_attributes.plugin_version /}"
     platforms = [
         colony.base.plugin_system.CPYTHON_ENVIRONMENT
@@ -14,8 +15,7 @@ class ${out value=scaffold_attributes.class_name /}Plugin(colony.base.plugin_sys
     ]
     dependencies = [
         colony.base.plugin_system.PluginDependency("pt.hive.colony.plugins.web.mvc.utils", "${out value=scaffold_attributes.plugin_version /}"),
-        colony.base.plugin_system.PluginDependency("pt.hive.colony.plugins.resources.resource_manager", "${out value=scaffold_attributes.plugin_version /}"),
-        colony.base.plugin_system.PluginDependency("pt.hive.colony.plugins.misc.json", "${out value=scaffold_attributes.plugin_version /}")
+        colony.base.plugin_system.PluginDependency("pt.hive.colony.plugins.resources.resource_manager", "${out value=scaffold_attributes.plugin_version /}")
     ]
     main_modules = [
         "${out value=scaffold_attributes.backend_namespace /}.${out value=scaffold_attributes.variable_name /}_controllers",
@@ -35,20 +35,6 @@ class ${out value=scaffold_attributes.class_name /}Plugin(colony.base.plugin_sys
     def end_load_plugin(self):
         colony.base.plugin_system.Plugin.end_load_plugin(self)
         self.${out value=scaffold_attributes.variable_name /}.load_components()
-
-    def unload_plugin(self):
-        colony.base.plugin_system.Plugin.unload_plugin(self)
-
-    def end_unload_plugin(self):
-        colony.base.plugin_system.Plugin.end_unload_plugin(self)
-
-    @colony.base.decorators.load_allowed("${out value=scaffold_attributes.plugin_id /}", "${out value=scaffold_attributes.plugin_version /}")
-    def load_allowed(self, plugin, capability):
-        colony.base.plugin_system.Plugin.load_allowed(self, plugin, capability)
-
-    @colony.base.decorators.unload_allowed("${out value=scaffold_attributes.plugin_id /}", "${out value=scaffold_attributes.plugin_version /}")
-    def unload_allowed(self, plugin, capability):
-        colony.base.plugin_system.Plugin.unload_allowed(self, plugin, capability)
 
     @colony.base.decorators.inject_dependencies("${out value=scaffold_attributes.plugin_id /}", "${out value=scaffold_attributes.plugin_version /}")
     def dependency_injected(self, plugin):
@@ -73,7 +59,3 @@ class ${out value=scaffold_attributes.class_name /}Plugin(colony.base.plugin_sys
     @colony.base.decorators.plugin_inject("pt.hive.colony.plugins.resources.resource_manager")
     def set_resource_manager_plugin(self, resource_manager_plugin):
         self.resource_manager_plugin = resource_manager_plugin
-
-    @colony.base.decorators.plugin_inject("pt.hive.colony.plugins.misc.json")
-    def set_json_plugin(self, json_plugin):
-        self.json_plugin = json_plugin

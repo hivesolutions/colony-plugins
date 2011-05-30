@@ -100,8 +100,8 @@ class MvcScaffolderPlugin(colony.base.plugin_system.Plugin):
     def process_scaffold_attributes(self, scaffold_attributes_map):
         return self.mvc_scaffolder.process_scaffold_attributes(scaffold_attributes_map)
 
-    def process_template(self, template_file_name, template, scaffold_attributes_map):
-        return self.mvc_scaffolder.process_template(template_file_name, template, scaffold_attributes_map)
+    def process_template(self, template_path, template, scaffold_attributes_map):
+        return self.mvc_scaffolder.process_template(template_path, template, scaffold_attributes_map)
 
     def generate_scaffold(self, scaffold_path, scaffold_attributes_map):
         self.mvc_scaffolder.generate_scaffold(scaffold_path, scaffold_attributes_map)

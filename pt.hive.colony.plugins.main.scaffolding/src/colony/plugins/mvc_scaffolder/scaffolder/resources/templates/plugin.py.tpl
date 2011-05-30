@@ -43,8 +43,7 @@ class ${out value=scaffold_attributes.class_name /}Plugin(colony.base.plugin_sys
     ]
     dependencies = [
         colony.base.plugin_system.PluginDependency("pt.hive.colony.plugins.web.mvc.utils", "${out value=scaffold_attributes.plugin_version /}"),
-        colony.base.plugin_system.PluginDependency("pt.hive.colony.plugins.resources.resource_manager", "${out value=scaffold_attributes.plugin_version /}"),
-        colony.base.plugin_system.PluginDependency("pt.hive.colony.plugins.misc.json", "${out value=scaffold_attributes.plugin_version /}")
+        colony.base.plugin_system.PluginDependency("pt.hive.colony.plugins.resources.resource_manager", "${out value=scaffold_attributes.plugin_version /}")
     ]
     main_modules = [
         "${out value=scaffold_attributes.backend_namespace /}.${out value=scaffold_attributes.variable_name /}_controllers",
@@ -65,9 +64,6 @@ class ${out value=scaffold_attributes.class_name /}Plugin(colony.base.plugin_sys
 
     resource_manager_plugin = None
     """ The resource manager plugin """
-
-    json_plugin = None
-    """ The json plugin """
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
@@ -123,10 +119,3 @@ class ${out value=scaffold_attributes.class_name /}Plugin(colony.base.plugin_sys
     @colony.base.decorators.plugin_inject("pt.hive.colony.plugins.resources.resource_manager")
     def set_resource_manager_plugin(self, resource_manager_plugin):
         self.resource_manager_plugin = resource_manager_plugin
-
-    def get_json_plugin(self):
-        return self.json_plugin
-
-    @colony.base.decorators.plugin_inject("pt.hive.colony.plugins.misc.json")
-    def set_json_plugin(self, json_plugin):
-        self.json_plugin = json_plugin

@@ -43,64 +43,48 @@ DESTINATION_PATH_VALUE = "destination_path"
 TEMPLATE_PATH_VALUE = "template_path"
 """ The template path value """
 
-SCAFFOLDER_TYPE = "base"
+SCAFFOLDER_TYPE = "eclipse_project"
 """ The scaffolder type """
 
-TEMPLATES_PATH = "base_scaffolder/scaffolder/resources/templates/"
+TEMPLATES_PATH = "eclipse_project_scaffolder/scaffolder/resources/templates/"
 """ The templates path """
 
-TEMPLATES_BACKEND_PATH = TEMPLATES_PATH + "backend/"
-""" The templates backend path """
+TEMPLATES_SETTINGS_PATH = TEMPLATES_PATH + "settings/"
+""" The templates settings path """
 
 TEMPLATES = (
     {
-        TEMPLATE_PATH_VALUE : TEMPLATES_BACKEND_PATH + "__init__.py.tpl",
-        DESTINATION_PATH_VALUE : "${relative_backend_path}/__init__.py"
+        TEMPLATE_PATH_VALUE : TEMPLATES_SETTINGS_PATH + "org.eclipse.core.resources.prefs.tpl",
+        DESTINATION_PATH_VALUE : ".settings/org.eclipse.core.resources.prefs"
     },
     {
-        TEMPLATE_PATH_VALUE : TEMPLATES_BACKEND_PATH + "console.py.tpl",
-        DESTINATION_PATH_VALUE : "${relative_backend_path}/console_${variable_name}.py"
+        TEMPLATE_PATH_VALUE : TEMPLATES_PATH + "project.tpl",
+        DESTINATION_PATH_VALUE : ".project"
     },
     {
-        TEMPLATE_PATH_VALUE : TEMPLATES_BACKEND_PATH + "exceptions.py.tpl",
-        DESTINATION_PATH_VALUE : "${relative_backend_path}/${variable_name}_exceptions.py"
-    },
-    {
-        TEMPLATE_PATH_VALUE : TEMPLATES_BACKEND_PATH + "system.py.tpl",
-        DESTINATION_PATH_VALUE : "${relative_backend_path}/${variable_name}_system.py"
-    },
-    {
-        TEMPLATE_PATH_VALUE :TEMPLATES_BACKEND_PATH + "test.py.tpl",
-        DESTINATION_PATH_VALUE : "${relative_backend_path}/${variable_name}_test.py"
-    },
-    {
-        TEMPLATE_PATH_VALUE : TEMPLATES_BACKEND_PATH + "__init__.py.tpl",
-        DESTINATION_PATH_VALUE : "${relative_backend_root_path}/__init__.py"
-    },
-    {
-        TEMPLATE_PATH_VALUE : TEMPLATES_PATH + "plugin.py.tpl",
-        DESTINATION_PATH_VALUE : "${variable_name}_plugin.py"
+        TEMPLATE_PATH_VALUE : TEMPLATES_PATH + "pydevproject.tpl",
+        DESTINATION_PATH_VALUE : ".pydevproject"
     }
 )
 """ The templates """
 
-class BaseScaffolder:
+class EclipseProjectScaffolder:
     """
-    The base scaffolder.
+    The eclipse project scaffolder.
     """
 
-    base_scaffolder_plugin = None
-    """ The base scaffolder plugin """
+    eclipse_project_scaffolder_plugin = None
+    """ The eclipse project scaffolder plugin """
 
-    def __init__(self, base_scaffolder_plugin):
+    def __init__(self, eclipse_project_scaffolder_plugin):
         """
         Constructor of the class.
 
-        @type base_scaffolder_plugin: BaseScaffolderPlugin
-        @param base_scaffolder_plugin: The base scaffolder plugin.
+        @type eclipse_project_scaffolder_plugin: EclipseProjectScaffolderPlugin
+        @param eclipse_project_scaffolder_plugin: The eclipse project scaffolder plugin.
         """
 
-        self.base_scaffolder_plugin = base_scaffolder_plugin
+        self.eclipse_project_scaffolder_plugin = eclipse_project_scaffolder_plugin
 
     def get_scaffolder_type(self):
         return SCAFFOLDER_TYPE

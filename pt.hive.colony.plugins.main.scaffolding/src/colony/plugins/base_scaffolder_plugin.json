@@ -19,6 +19,7 @@
             "base_scaffolder/scaffolder/base_scaffolder_system.py",
             "base_scaffolder/scaffolder/resources/baf.xml",
             "base_scaffolder/scaffolder/resources/templates/plugin.py.tpl",
+            "base_scaffolder/scaffolder/resources/templates/backend/__init__.py.tpl",
             "base_scaffolder/scaffolder/resources/templates/backend/console.py.tpl",
             "base_scaffolder/scaffolder/resources/templates/backend/exceptions.py.tpl",
             "base_scaffolder/scaffolder/resources/templates/backend/system.py.tpl",

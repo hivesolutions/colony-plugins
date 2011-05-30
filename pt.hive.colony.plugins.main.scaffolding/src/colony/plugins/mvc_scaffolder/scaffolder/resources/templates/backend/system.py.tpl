@@ -51,8 +51,8 @@ class ${out value=scaffold_attributes.class_name /}:
     ${out value=scaffold_attributes.variable_name /}_plugin = None
     """ The ${out value=scaffold_attributes.short_name_lowercase /} plugin """
 
-    root_entity_controller = None
-    """ The root entity controller """
+    ${out value=scaffold_attributes.model.variable_name /}_controller = None
+    """ The ${out value=scaffold_attributes.model.name_lowercase /} controller """
 
     ${out value=scaffold_attributes.variable_name /}_entity_models = None
     """ The ${out value=scaffold_attributes.short_name_lowercase /} entity models """
@@ -85,18 +85,18 @@ class ${out value=scaffold_attributes.class_name /}:
         # retrieves the current directory path
         current_directory_path = os.path.dirname(__file__)
 
-        # loads the mvc utils in the ${out value=scaffold_attributes.short_name /} controllers
+        # loads the controllers
         ${out value=scaffold_attributes.variable_name /}_controllers = web_mvc_utils_plugin.import_module_mvc_utils("${out value=scaffold_attributes.variable_name /}_controllers", "${out value=scaffold_attributes.backend_namespace /}", current_directory_path)
 
-        # creates the ${out value=scaffold_attributes.short_name_lowercase /} controller
-        self.root_entity_controller = web_mvc_utils_plugin.create_controller(${out value=scaffold_attributes.variable_name /}_controllers.RootEntityController, [self.${out value=scaffold_attributes.variable_name /}_plugin, self], {})
+        # creates the ${out value=scaffold_attributes.model.name_lowercase /} controller
+        self.${out value=scaffold_attributes.model.variable_name /}_controller = web_mvc_utils_plugin.create_controller(${out value=scaffold_attributes.variable_name /}_controllers.${out value=scaffold_attributes.model.class_name /}Controller, [self.${out value=scaffold_attributes.variable_name /}_plugin, self], {})
 
         # creates the entity models classes by creating the entity manager and updating the classes
         self.${out value=scaffold_attributes.variable_name /}_entity_models = web_mvc_utils_plugin.create_entity_models_path("${out value=scaffold_attributes.variable_name /}_entity_models", entity_manager_arguments, current_directory_path)
 
         # defines the ${out value=scaffold_attributes.short_name_lowercase /} controllers map
         self.${out value=scaffold_attributes.variable_name /}_controllers = {
-            "root_entity" : self.root_entity_controller
+            "${out value=scaffold_attributes.model.variable_name /}" : self.${out value=scaffold_attributes.model.variable_name /}_controller
         }
 
     def get_patterns(self):
@@ -111,13 +111,13 @@ class ${out value=scaffold_attributes.class_name /}:
         """
 
         return (
-            (r"^${out value=scaffold_attributes.variable_name /}/root_entities$", self.root_entity_controller.handle_list, "get"),
-            (r"^${out value=scaffold_attributes.variable_name /}/root_entities/new$", self.root_entity_controller.handle_new, "get"),
-            (r"^${out value=scaffold_attributes.variable_name /}/root_entities/new$", self.root_entity_controller.handle_create, "post"),
-            (r"^${out value=scaffold_attributes.variable_name /}/root_entities/(?P<root_entity_object_id>[0-9]+)$", self.root_entity_controller.handle_show, "get"),
-            (r"^${out value=scaffold_attributes.variable_name /}/root_entities/(?P<root_entity_object_id>[0-9]+)/update$", self.root_entity_controller.handle_edit, "get"),
-            (r"^${out value=scaffold_attributes.variable_name /}/root_entities/(?P<root_entity_object_id>[0-9]+)/update$", self.root_entity_controller.handle_update, "post"),
-            (r"^${out value=scaffold_attributes.variable_name /}/root_entities/(?P<root_entity_object_id>[0-9]+)/delete$", self.root_entity_controller.handle_delete, "get")
+            (r"^${out value=scaffold_attributes.variable_name /}/${out value=scaffold_attributes.model.variable_name_plural /}$", self.${out value=scaffold_attributes.model.variable_name /}_controller.handle_list, "get"),
+            (r"^${out value=scaffold_attributes.variable_name /}/${out value=scaffold_attributes.model.variable_name_plural /}/new$", self.${out value=scaffold_attributes.model.variable_name /}_controller.handle_new, "get"),
+            (r"^${out value=scaffold_attributes.variable_name /}/${out value=scaffold_attributes.model.variable_name_plural /}/new$", self.${out value=scaffold_attributes.model.variable_name /}_controller.handle_create, "post"),
+            (r"^${out value=scaffold_attributes.variable_name /}/${out value=scaffold_attributes.model.variable_name_plural /}/(?P<${out value=scaffold_attributes.model.variable_name /}_object_id>[0-9]+)$", self.${out value=scaffold_attributes.model.variable_name /}_controller.handle_show, "get"),
+            (r"^${out value=scaffold_attributes.variable_name /}/${out value=scaffold_attributes.model.variable_name_plural /}/(?P<${out value=scaffold_attributes.model.variable_name /}_object_id>[0-9]+)/edit$", self.${out value=scaffold_attributes.model.variable_name /}_controller.handle_edit, "get"),
+            (r"^${out value=scaffold_attributes.variable_name /}/${out value=scaffold_attributes.model.variable_name_plural /}/(?P<${out value=scaffold_attributes.model.variable_name /}_object_id>[0-9]+)/update$", self.${out value=scaffold_attributes.model.variable_name /}_controller.handle_update, "post"),
+            (r"^${out value=scaffold_attributes.variable_name /}/${out value=scaffold_attributes.model.variable_name_plural /}/(?P<${out value=scaffold_attributes.model.variable_name /}_object_id>[0-9]+)/delete$", self.${out value=scaffold_attributes.model.variable_name /}_controller.handle_delete, "get")
         )
 
     def get_communication_patterns(self):

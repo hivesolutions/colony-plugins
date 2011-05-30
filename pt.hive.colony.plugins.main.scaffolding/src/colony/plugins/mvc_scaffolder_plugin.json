@@ -19,6 +19,7 @@
             "mvc_scaffolder/scaffolder/mvc_scaffolder_system.py",
             "mvc_scaffolder/scaffolder/resources/baf.xml",
             "mvc_scaffolder/scaffolder/resources/templates/plugin.py.tpl",
+            "mvc_scaffolder/scaffolder/resources/templates/backend/__init__.py.tpl",
             "mvc_scaffolder/scaffolder/resources/templates/backend/controllers.py.tpl",
             "mvc_scaffolder/scaffolder/resources/templates/backend/entity_models.py.tpl",
             "mvc_scaffolder/scaffolder/resources/templates/backend/exceptions.py.tpl",

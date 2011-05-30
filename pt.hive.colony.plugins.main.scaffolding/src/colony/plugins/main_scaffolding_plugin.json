@@ -24,6 +24,5 @@
             "main_scaffolding/scaffolding/console_main_scaffolding.py",
             "main_scaffolding/scaffolding/main_scaffolding_exceptions.py",
             "main_scaffolding/scaffolding/main_scaffolding_system.py",
-            "main_scaffolding/scaffolding/resources/baf.xml",
-            "main_scaffolding/scaffolding/resources/templates/__init__.py.tpl"]
+            "main_scaffolding/scaffolding/resources/baf.xml"]
 }

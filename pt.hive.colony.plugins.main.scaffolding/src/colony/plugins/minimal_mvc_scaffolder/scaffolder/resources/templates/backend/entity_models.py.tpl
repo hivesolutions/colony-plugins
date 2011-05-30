@@ -11,10 +11,17 @@ class RootEntity(base_entity.EntityClass):
         "table_generator_field_name" : "RootEntity"
     }
 
-    description = {
-        "data_type" : "text"
-    }
-
     def __init__(self):
         self.object_id = None
-        self.description = None
+
+class ${out value=scaffold_attributes.model.class_name /}(RootEntity):
+    ${foreach item=attribute from=scaffold_attributes.model.attributes}
+    ${out value=attribute.name /} = {
+        "data_type" : "${out value=attribute.data_type /}"
+    }
+    ${/foreach}
+    def __init__(self):
+        RootEntity.__init__(self)
+        ${foreach item=attribute from=scaffold_attributes.model.attributes}
+        self.${out value=attribute.name /} = None
+        ${/foreach}

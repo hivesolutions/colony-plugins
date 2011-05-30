@@ -1,40 +1,32 @@
 <html>
     <body>
-        <h1>Root Entity</h1>
+        <h1>${out value=scaffold_attributes.model.name /}</h1>
         <form action="update" method="post">
-            <table border="1">
+            <table>
                 <thead>
                     <th>
-                    attribute
+                        name
                     </th>
                     <th>
-                    value
+                        value
                     </th>
                 </thead>
                 <tbody>
-                    <tr>
-                        <td>
-                            object_id
-                        </td>
-                        <td>
-                            ${out value=root_entity.object_id /}
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            description
-                        </td>
-                        <td>
-                            <input name="root_entity[description]" value="${out value=root_entity.description /}" />
-                        </td>
-                    </tr>
-                    <tr>
-                        <td colspan="2">
-                            <input type="submit" value="update" />
-                        </td>
-                    </tr>
+                    ${foreach item=attribute from=scaffold_attributes.model.attributes}
+                        <tr>
+                            <td>
+                                ${out value=attribute.name /}
+                            </td>
+                            <td>
+                                <input name="${out value=scaffold_attributes.model.variable_name /}[${out value=attribute.name /}]" value="$\{out value=${out value=scaffold_attributes.model.variable_name /}.${out value=attribute.name /} /}" />
+                            </td>
+                        </tr>
+                    ${/foreach}
                 </tbody>
             </table>
+            <p>
+                <input type="submit" value="update" />
+            </p>
         </form>
     </body>
 </html>

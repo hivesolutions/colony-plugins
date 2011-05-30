@@ -37,71 +37,115 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-PROCESS_VALUE = "process"
-""" The process value """
+import colony.libs.string_util
 
-RELATIVE_PATH_VALUE = "relative_path"
-""" The relative path value """
+ATTRIBUTES_VALUE = "attributes"
+""" The attributes value """
 
-RELATIVE_DESTINATION_FILE_PATH_FORMAT_VALUE = "relative_destination_file_path_format"
-""" The relative destination file path format value """
+CLASS_NAME_VALUE = "class_name"
+""" The class name value """
 
-UNIX_DIRECTORY_SEPARATOR = "/"
-""" The unix directory separator """
+DATA_TYPE_VALUE = "data_type"
+""" The data type value """
+
+DESTINATION_PATH_VALUE = "destination_path"
+""" The destination path value """
+
+MODEL_VALUE = "model"
+""" The model value """
+
+NAME_VALUE = "name"
+""" The name value """
+
+NAME_LOWERCASE_VALUE = "name_lowercase"
+""" The name lowercase value """
+
+NAME_PLURAL_LOWERCASE_VALUE = "name_plural_lowercase"
+""" The name plural lowercase value """
+
+TEMPLATE_PATH_VALUE = "template_path"
+""" The template path value """
+
+VARIABLE_NAME_VALUE = "variable_name"
+""" The variable name """
+
+VARIABLE_NAME_PLURAL_VALUE = "variable_name_plural"
+""" The variable name plural """
 
 SCAFFOLDER_TYPE = "mvc"
 """ The scaffolder type """
 
-TEMPLATES_PATH = "mvc_scaffolder/scaffolder/resources/templates"
+TEMPLATES_PATH = "mvc_scaffolder/scaffolder/resources/templates/"
 """ The templates path """
 
-TEMPLATES_MAP = {
-    "backend/resources/templates/edit.html.tpl" : {
-        RELATIVE_PATH_VALUE : TEMPLATES_PATH,
-        RELATIVE_DESTINATION_FILE_PATH_FORMAT_VALUE : "${relative_backend_path}/resources/templates/edit.html.tpl",
-        PROCESS_VALUE : False
+TEMPLATES_BACKEND_PATH = TEMPLATES_PATH + "backend/"
+""" The templates backend path """
+
+TEMPLATES_BACKEND_RESOURCES_TEMPLATES_PATH = TEMPLATES_BACKEND_PATH + "resources/templates/"
+""" The templates backend resources templates path """
+
+TEMPLATES = (
+    {
+        TEMPLATE_PATH_VALUE : TEMPLATES_BACKEND_RESOURCES_TEMPLATES_PATH + "edit.html.tpl",
+        DESTINATION_PATH_VALUE : "${relative_backend_path}/resources/templates/edit.html.tpl"
     },
-    "backend/resources/templates/list.html.tpl" : {
-        RELATIVE_PATH_VALUE : TEMPLATES_PATH,
-        RELATIVE_DESTINATION_FILE_PATH_FORMAT_VALUE : "${relative_backend_path}/resources/templates/list.html.tpl",
-        PROCESS_VALUE : False
+    {
+        TEMPLATE_PATH_VALUE : TEMPLATES_BACKEND_RESOURCES_TEMPLATES_PATH + "list.html.tpl",
+        DESTINATION_PATH_VALUE : "${relative_backend_path}/resources/templates/list.html.tpl"
     },
-    "backend/resources/templates/new.html.tpl" : {
-        RELATIVE_PATH_VALUE : TEMPLATES_PATH,
-        RELATIVE_DESTINATION_FILE_PATH_FORMAT_VALUE : "${relative_backend_path}/resources/templates/new.html.tpl",
-        PROCESS_VALUE : False
+    {
+        TEMPLATE_PATH_VALUE : TEMPLATES_BACKEND_RESOURCES_TEMPLATES_PATH + "new.html.tpl",
+        DESTINATION_PATH_VALUE : "${relative_backend_path}/resources/templates/new.html.tpl"
     },
-    "backend/resources/templates/show.html.tpl" : {
-        RELATIVE_PATH_VALUE : TEMPLATES_PATH,
-        RELATIVE_DESTINATION_FILE_PATH_FORMAT_VALUE : "${relative_backend_path}/resources/templates/show.html.tpl",
-        PROCESS_VALUE : False
+    {
+        TEMPLATE_PATH_VALUE : TEMPLATES_BACKEND_RESOURCES_TEMPLATES_PATH + "show.html.tpl",
+        DESTINATION_PATH_VALUE : "${relative_backend_path}/resources/templates/show.html.tpl"
     },
-    "backend/controllers.py.tpl" : {
-        RELATIVE_PATH_VALUE : TEMPLATES_PATH,
-        RELATIVE_DESTINATION_FILE_PATH_FORMAT_VALUE : "${relative_backend_path}/${variable_name}_controllers.py"
+    {
+        TEMPLATE_PATH_VALUE : TEMPLATES_BACKEND_PATH + "__init__.py.tpl",
+        DESTINATION_PATH_VALUE : "${relative_backend_path}/__init__.py"
     },
-    "backend/entity_models.py.tpl" : {
-        RELATIVE_PATH_VALUE : TEMPLATES_PATH,
-        RELATIVE_DESTINATION_FILE_PATH_FORMAT_VALUE : "${relative_backend_path}/${variable_name}_entity_models.py"
+    {
+        TEMPLATE_PATH_VALUE : TEMPLATES_BACKEND_PATH + "controllers.py.tpl",
+        DESTINATION_PATH_VALUE : "${relative_backend_path}/${variable_name}_controllers.py"
     },
-    "backend/exceptions.py.tpl" : {
-        RELATIVE_PATH_VALUE : TEMPLATES_PATH,
-        RELATIVE_DESTINATION_FILE_PATH_FORMAT_VALUE : "${relative_backend_path}/${variable_name}_exceptions.py"
+    {
+        TEMPLATE_PATH_VALUE : TEMPLATES_BACKEND_PATH + "entity_models.py.tpl",
+        DESTINATION_PATH_VALUE : "${relative_backend_path}/${variable_name}_entity_models.py"
     },
-    "backend/system.py.tpl" : {
-       RELATIVE_PATH_VALUE : TEMPLATES_PATH,
-       RELATIVE_DESTINATION_FILE_PATH_FORMAT_VALUE : "${relative_backend_path}/${variable_name}_system.py"
+    {
+        TEMPLATE_PATH_VALUE : TEMPLATES_BACKEND_PATH + "exceptions.py.tpl",
+        DESTINATION_PATH_VALUE : "${relative_backend_path}/${variable_name}_exceptions.py"
     },
-    "backend/test.py.tpl" : {
-        RELATIVE_PATH_VALUE : TEMPLATES_PATH,
-        RELATIVE_DESTINATION_FILE_PATH_FORMAT_VALUE : "${relative_backend_path}/${variable_name}_test.py"
+    {
+        TEMPLATE_PATH_VALUE : TEMPLATES_BACKEND_PATH + "system.py.tpl",
+        DESTINATION_PATH_VALUE : "${relative_backend_path}/${variable_name}_system.py"
     },
-    "plugin.py.tpl" : {
-        RELATIVE_PATH_VALUE : TEMPLATES_PATH,
-        RELATIVE_DESTINATION_FILE_PATH_FORMAT_VALUE : "${variable_name}_plugin.py"
+    {
+        TEMPLATE_PATH_VALUE : TEMPLATES_BACKEND_PATH + "test.py.tpl",
+        DESTINATION_PATH_VALUE : "${relative_backend_path}/${variable_name}_test.py"
+    },
+    {
+        TEMPLATE_PATH_VALUE : TEMPLATES_BACKEND_PATH + "__init__.py.tpl",
+        DESTINATION_PATH_VALUE : "${relative_backend_root_path}/__init__.py"
+    },
+    {
+        TEMPLATE_PATH_VALUE : TEMPLATES_PATH + "plugin.py.tpl",
+        DESTINATION_PATH_VALUE : "${variable_name}_plugin.py"
     }
+)
+""" The templates """
+
+DEFAULT_MODEL_MAP = {
+    NAME_VALUE : "DefaultModel",
+    ATTRIBUTES_VALUE : (
+        {
+            NAME_VALUE : "value",
+            DATA_TYPE_VALUE : "text"
+        },
+    )
 }
-""" The templates map """
+""" The default model map """
 
 class MvcScaffolder:
     """
@@ -125,12 +169,56 @@ class MvcScaffolder:
         return SCAFFOLDER_TYPE
 
     def get_templates(self, scaffold_attributes_map):
-        return TEMPLATES_MAP
+        return TEMPLATES
 
     def process_scaffold_attributes(self, scaffold_attributes_map):
-        pass
+        # retrieves the model map
+        model_map = scaffold_attributes_map.get(MODEL_VALUE, DEFAULT_MODEL_MAP)
 
-    def process_template(self, template_file_name, template, scaffold_attributes_map):
+        # creates a copy of the model map
+        # to avoid manipulating the constant
+        model_map = dict(model_map)
+
+        # retrieves the model attributes
+        class_name = model_map[NAME_VALUE]
+        attributes = model_map[ATTRIBUTES_VALUE]
+
+        # creates the variable name
+        variable_name = colony.libs.string_util.convert_underscore(class_name)
+
+        # creates the variable name plural
+        variable_name_plural = colony.libs.string_util.pluralize(variable_name)
+
+        # creates the lowercase version of the name
+        name_lowercase = variable_name.replace("_", " ")
+        name_plural_lowercase = variable_name_plural.replace("_", " ")
+
+        # creates the name
+        name = colony.libs.string_util.capitalize_all(name_lowercase)
+
+        # sets the attributes in the model map
+        model_map[VARIABLE_NAME_VALUE] = variable_name
+        model_map[VARIABLE_NAME_PLURAL_VALUE] = variable_name_plural
+        model_map[NAME_LOWERCASE_VALUE] = name_lowercase
+        model_map[NAME_PLURAL_LOWERCASE_VALUE] = name_plural_lowercase
+        model_map[CLASS_NAME_VALUE] = class_name
+        model_map[NAME_VALUE] = name
+
+        # sets the model in the scaffold attributes map
+        scaffold_attributes_map[MODEL_VALUE] = model_map
+
+        # for each model attribute
+        for attribute_map in attributes:
+            # retrieves the attribute name
+            attribute_name = attribute_map[NAME_VALUE]
+
+            # defines the lowercase version of the name
+            name_lowercase = attribute_name.replace("_", " ")
+
+            # sets the lowercase version of the name in the attribute map
+            attribute_map[NAME_LOWERCASE_VALUE] = name_lowercase
+
+    def process_template(self, template_path, template, scaffold_attributes_map):
         return template
 
     def generate_scaffold(self, scaffold_path, scaffold_attributes_map):
