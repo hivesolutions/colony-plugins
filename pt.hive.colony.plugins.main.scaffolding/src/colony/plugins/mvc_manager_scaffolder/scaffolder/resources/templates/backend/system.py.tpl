@@ -83,7 +83,7 @@ class ${out value=scaffold_attributes.class_name /}:
         self.root_entity_controller = web_mvc_utils_plugin.create_controller(${out value=scaffold_attributes.variable_name /}_controllers.RootEntityController, [self.${out value=scaffold_attributes.variable_name /}_plugin, self], {})
 
         # creates the entity models classes by creating the entity manager and updating the classes
-        self.${out value=scaffold_attributes.variable_name /}_entity_models = web_mvc_utils_plugin.create_entity_models("${out value=scaffold_attributes.variable_name /}_entity_models", entity_manager_arguments, current_directory_path)
+        self.${out value=scaffold_attributes.variable_name /}_entity_models = web_mvc_utils_plugin.create_entity_models_path("${out value=scaffold_attributes.variable_name /}_entity_models", entity_manager_arguments, current_directory_path)
 
         # defines the ${out value=scaffold_attributes.short_name_lowercase /} controllers map
         self.${out value=scaffold_attributes.variable_name /}_controllers = {

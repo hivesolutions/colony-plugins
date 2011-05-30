@@ -26,7 +26,7 @@ class ${out value=scaffold_attributes.class_name /}:
         web_mvc_utils_plugin = self.${out value=scaffold_attributes.variable_name /}_plugin.web_mvc_utils_plugin
         current_directory_path = os.path.dirname(__file__)
         ${out value=scaffold_attributes.variable_name /}_controllers = web_mvc_utils_plugin.import_module_mvc_utils("${out value=scaffold_attributes.variable_name /}_controllers", "${out value=scaffold_attributes.backend_namespace /}", current_directory_path)
-        self.${out value=scaffold_attributes.variable_name /}_entity_models = web_mvc_utils_plugin.create_entity_models("${out value=scaffold_attributes.variable_name /}_entity_models", entity_manager_arguments, current_directory_path)
+        self.${out value=scaffold_attributes.variable_name /}_entity_models = web_mvc_utils_plugin.create_entity_models_path("${out value=scaffold_attributes.variable_name /}_entity_models", entity_manager_arguments, current_directory_path)
         self.root_entity_controller = web_mvc_utils_plugin.create_controller(${out value=scaffold_attributes.variable_name /}_controllers.RootEntityController, [self.${out value=scaffold_attributes.variable_name /}_plugin, self], {})
 
     def get_patterns(self):
