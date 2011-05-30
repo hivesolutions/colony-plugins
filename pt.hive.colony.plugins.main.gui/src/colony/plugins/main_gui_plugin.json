@@ -19,6 +19,8 @@
             "main_gui/gui/__init__.py", "main_gui/gui/main_gui_system.py",
             "main_gui/gui/resources/baf.xml",
             "main_gui/gui/resources/icons/16x16/colony.png",
+            "main_gui/gui/resources/icons/16x16/plugin-folder-closed.png",
+            "main_gui/gui/resources/icons/16x16/plugin-folder-open.png",
             "main_gui/gui/resources/icons/32x32/colony.png",
             "main_gui/gui/resources/images/colony_splash.png"]
 }

@@ -53,14 +53,14 @@ DARWIN_VALUE = "darwin"
 FILE_VALUE = "file"
 """ The file value """
 
-FOLDER_VALUE = "folder"
-""" The folder value """
-
-FOLDER_OPEN_VALUE = "folder_open"
-""" The folder open value """
-
 NODE_VALUE = "node"
 """ The node value """
+
+PLUGIN_FOLDER_CLOSED_VALUE = "plugin-folder-closed"
+""" The plugin folder closed value """
+
+PLUGIN_FOLDER_OPEN_VALUE = "plugin-folder-open"
+""" The plugin folder open value """
 
 TAB_VALUE = "tab"
 """ The tab value """
@@ -541,14 +541,19 @@ class MainFrame(wx.Frame):
         gui_panel_node_bitmap_map = main_gui.gui_panel_node_bitmap_map
         gui_panel_tab_bitmap_map = main_gui.gui_panel_tab_bitmap_map
 
-        # creates a copy of the gui panel tab bitmap map
+        # creates copies of the bitmap maps to avoid manipulating these references
         tab_container_panel_bitmap_map = dict(gui_panel_tab_bitmap_map)
+        plugin_tree_bitmap_map = dict(gui_panel_node_bitmap_map)
 
         # sets the bitmaps in the tab container panel
         self.tab_container_panel.set_bitmaps(tab_container_panel_bitmap_map)
 
+        # sets the plugin folder icons in the plugin tree bitmap map
+        plugin_tree_bitmap_map[PLUGIN_FOLDER_OPEN_VALUE] = self.bitmaps_16x16_map[PLUGIN_FOLDER_OPEN_VALUE]
+        plugin_tree_bitmap_map[PLUGIN_FOLDER_CLOSED_VALUE] = self.bitmaps_16x16_map[PLUGIN_FOLDER_CLOSED_VALUE]
+
         # sets the bitmaps in the plugin tree
-        self.plugin_tree.set_bitmaps(gui_panel_node_bitmap_map)
+        self.plugin_tree.set_bitmaps(plugin_tree_bitmap_map)
 
         # refreshes the plugin tree
         self.plugin_tree.refresh()
@@ -770,21 +775,6 @@ class PluginTree(wx.TreeCtrl):
         # creates the image list
         image_list = wx.ImageList(NODE_ICON_WIDTH, NODE_ICON_HEIGHT)
 
-        # create the icons
-        folder_icon = wx.ArtProvider_GetBitmap(wx.ART_FOLDER, wx.ART_OTHER, NODE_ICON_SIZE)
-        folder_open_icon = wx.ArtProvider_GetBitmap(wx.ART_FILE_OPEN, wx.ART_OTHER, NODE_ICON_SIZE)
-        file_icon = wx.ArtProvider_GetBitmap(wx.ART_NORMAL_FILE, wx.ART_OTHER, NODE_ICON_SIZE)
-
-        # adds the icons to the icon list
-        folder_icon_index = image_list.Add(folder_icon)
-        folder_open_icon_index = image_list.Add(folder_open_icon)
-        file_icon_index = image_list.Add(file_icon)
-
-        # sets the icon indexes in the bitmaps map
-        self.bitmaps_map[FOLDER_VALUE] = folder_icon_index
-        self.bitmaps_map[FOLDER_OPEN_VALUE] = folder_open_icon_index
-        self.bitmaps_map[FILE_VALUE] = file_icon_index
-
         # for each of the provided bitmaps
         for bitmap_id in bitmaps_map:
             # retrieves the bitmap
@@ -812,8 +802,8 @@ class PluginTree(wx.TreeCtrl):
             return
 
         # retrieves the icons
-        folder_icon_index = self.bitmaps_map[FOLDER_VALUE]
-        folder_open_icon_index = self.bitmaps_map[FOLDER_OPEN_VALUE]
+        folder_icon_index = self.bitmaps_map["plugin-folder-closed"]
+        folder_open_icon_index = self.bitmaps_map["plugin-folder-open"]
 
         # assigns the images to the root node item
         self.SetItemImage(self.root_node_item, folder_icon_index, wx.TreeItemIcon_Normal)
