@@ -131,8 +131,6 @@ class WebMvcWikiMainController:
 
         @type rest_request: RestRequest
         @param rest_request: The wiki rest request to be handled.
-        @rtype: bool
-        @return: The result of the handling.
         """
 
         # retrieves the initial time
@@ -229,8 +227,8 @@ class WebMvcWikiMainController:
                 # processes the template file and sets the request contents
                 self.process_set_contents(rest_request, template_file)
 
-                # returns true (valid)
-                return True
+                # returns
+                return
 
         # retrieves the file extension
         file_extension = encoder_name in ("ajx", "prt") and "html" or encoder_name
@@ -258,8 +256,8 @@ class WebMvcWikiMainController:
             # sets the request contents
             self.set_contents(rest_request, target_file_contents, mime_type)
 
-            # returns True
-            return True
+            # returns
+            return
 
         # in case there is no encoder name defined or the encoder name is html
         if not rest_request.encoder_name or rest_request.encoder_name == "html":
@@ -318,17 +316,12 @@ class WebMvcWikiMainController:
         # processes the template file and sets the request contents
         self.process_set_contents(rest_request, template_file)
 
-        # returns true
-        return True
-
     def handle_resources(self, rest_request, parameters):
         """
         Handles the given resources rest request.
 
         @type rest_request: RestRequest
         @param rest_request: The resources rest request to be handled.
-        @rtype: bool
-        @return: The result of the handling.
         """
 
         # retrieves the format mime plugin
@@ -373,9 +366,6 @@ class WebMvcWikiMainController:
 
         # sets the request contents
         self.set_contents(rest_request, resource_file_contents, mime_type)
-
-        # returns true
-        return True
 
     def _get_cache_directory_path(self, instance_name):
         """
@@ -530,8 +520,6 @@ class PageController:
         @type rest_request: RestRequest
         @param rest_request: The create page rest request to
         be handled.
-        @rtype: bool
-        @return: The result of the handling.
         """
 
         # retrieves the form data by processing the form
@@ -558,8 +546,6 @@ class PageController:
         # redirects the rest request
         self.redirect(rest_request, base_path + instance_name + "/" + page_name)
 
-        return True
-
     @web_mvc_utils.serialize_exceptions("all")
     def handle_update_serialized(self, rest_request, parameters = {}):
         """
@@ -568,8 +554,6 @@ class PageController:
         @type rest_request: RestRequest
         @param rest_request: The update page serialized rest request
         to be handled.
-        @rtype: bool
-        @return: The result of the handling.
         """
 
         # retrieves the serializer
@@ -605,9 +589,6 @@ class PageController:
         # sets the request contents
         self.set_contents(rest_request, serialized_update_revision_map)
 
-        # returns true
-        return True
-
     def handle_update_json(self, rest_request, parameters = {}):
         """
         Handles the given update page json rest request.
@@ -617,8 +598,6 @@ class PageController:
         to be handled.
         @type parameters: Dictionary
         @param parameters: The handler parameters.
-        @rtype: bool
-        @return: The result of the handling.
         """
 
         # retrieves the json plugin
@@ -629,7 +608,7 @@ class PageController:
 
         # handles the request with the general
         # handle update serialized method
-        return self.handle_update_serialized(rest_request, parameters)
+        self.handle_update_serialized(rest_request, parameters)
 
     def _create_page(self, rest_request, page, instance_name):
         # retrieves the plugin manager
