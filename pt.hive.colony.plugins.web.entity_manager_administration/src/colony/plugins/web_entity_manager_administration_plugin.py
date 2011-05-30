@@ -122,8 +122,6 @@ class WebEntityManagerAdministrationPlugin(colony.base.plugin_system.Plugin):
 
         @type rest_request: RestRequest
         @param rest_request: The rest request to be handled.
-        @rtype: bool
-        @return: The result of the handling.
         """
 
         return self.web_entity_manager_administration.handle_rest_request(rest_request)
