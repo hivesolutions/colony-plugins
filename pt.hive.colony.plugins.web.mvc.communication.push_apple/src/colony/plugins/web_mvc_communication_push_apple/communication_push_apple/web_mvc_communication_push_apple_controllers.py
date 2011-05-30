@@ -147,11 +147,9 @@ class WebMvcCommunicationPushAppleController:
 
         @type rest_request: RestRequest
         @param rest_request: The show serialized rest request
-to be handled.
+        to be handled.
         @type parameters: Dictionary
         @param parameters: The handler parameters.
-        @rtype: bool
-        @return: The result of the handling.
         """
 
         # retrieves the serializer
@@ -163,9 +161,6 @@ to be handled.
         # sets the request contents
         self.set_contents(rest_request, serialized_service_connection_name_communication_handler_map)
 
-        # returns true
-        return True
-
     def handle_show_json(self, rest_request, parameters = {}):
         """
         Handles the given show json rest request.
@@ -175,8 +170,6 @@ to be handled.
         to be handled.
         @type parameters: Dictionary
         @param parameters: The handler parameters.
-        @rtype: bool
-        @return: The result of the handling.
         """
 
         # retrieves the json plugin
@@ -187,7 +180,7 @@ to be handled.
 
         # handles the request with the general
         # handle show serialized method
-        return self.handle_show_serialized(rest_request, parameters)
+        self.handle_show_serialized(rest_request, parameters)
 
     @web_mvc_utils.serialize_exceptions("all")
     def handle_register_serialized(self, rest_request, parameters = {}):
@@ -199,8 +192,6 @@ to be handled.
         to be handled.
         @type parameters: Dictionary
         @param parameters: The handler parameters.
-        @rtype: bool
-        @return: The result of the handling.
         """
 
         # retrieves the serializer
@@ -230,9 +221,6 @@ to be handled.
         # sets the request contents
         self.set_contents(rest_request, serialized_register_result)
 
-        # returns true
-        return True
-
     def handle_register_json(self, rest_request, parameters = {}):
         """
         Handles the given register json rest request.
@@ -242,8 +230,6 @@ to be handled.
         to be handled.
         @type parameters: Dictionary
         @param parameters: The handler parameters.
-        @rtype: bool
-        @return: The result of the handling.
         """
 
         # retrieves the json plugin
@@ -254,7 +240,7 @@ to be handled.
 
         # handles the request with the general
         # handle register serialized method
-        return self.handle_register_serialized(rest_request, parameters)
+        self.handle_register_serialized(rest_request, parameters)
 
     @web_mvc_utils.serialize_exceptions("all")
     def handle_unregister_serialized(self, rest_request, parameters = {}):
@@ -266,8 +252,6 @@ to be handled.
         to be handled.
         @type parameters: Dictionary
         @param parameters: The handler parameters.
-        @rtype: bool
-        @return: The result of the handling.
         """
 
         # retrieves the serializer
@@ -294,9 +278,6 @@ to be handled.
         # sets the request contents
         self.set_contents(rest_request, serialized_unregister_result)
 
-        # returns true
-        return True
-
     def handle_unregister_json(self, rest_request, parameters = {}):
         """
         Handles the given unregister json rest request.
@@ -306,8 +287,6 @@ to be handled.
         to be handled.
         @type parameters: Dictionary
         @param parameters: The handler parameters.
-        @rtype: bool
-        @return: The result of the handling.
         """
 
         # retrieves the json plugin
@@ -318,7 +297,7 @@ to be handled.
 
         # handles the request with the general
         # handle unregister serialized method
-        return self.handle_unregister_serialized(rest_request, parameters)
+        self.handle_unregister_serialized(rest_request, parameters)
 
     @web_mvc_utils.serialize_exceptions("all")
     def handle_load_profile_serialized(self, rest_request, parameters = {}):
@@ -330,8 +309,6 @@ to be handled.
         to be handled.
         @type parameters: Dictionary
         @param parameters: The handler parameters.
-        @rtype: bool
-        @return: The result of the handling.
         """
 
         # retrieves the serialized
@@ -361,9 +338,6 @@ to be handled.
         # sets the request contents
         self.set_contents(rest_request, serialized_load_profile_result)
 
-        # returns true
-        return True
-
     def handle_load_profile_json(self, rest_request, parameters = {}):
         """
         Handles the given load profile json rest request.
@@ -373,8 +347,6 @@ to be handled.
         to be handled.
         @type parameters: Dictionary
         @param parameters: The handler parameters.
-        @rtype: bool
-        @return: The result of the handling.
         """
 
         # retrieves the json plugin
@@ -385,7 +357,7 @@ to be handled.
 
         # handles the request with the general
         # handle load profile serialized method
-        return self.handle_load_profile_serialized(rest_request, parameters)
+        self.handle_load_profile_serialized(rest_request, parameters)
 
     @web_mvc_utils.serialize_exceptions("all")
     def handle_unload_profile_serialized(self, rest_request, parameters = {}):
@@ -397,8 +369,6 @@ to be handled.
         to be handled.
         @type parameters: Dictionary
         @param parameters: The handler parameters.
-        @rtype: bool
-        @return: The result of the handling.
         """
 
         # retrieves the serializer
@@ -425,9 +395,6 @@ to be handled.
         # sets the request contents
         self.set_contents(rest_request, serialized_unload_profile_result)
 
-        # returns true
-        return True
-
     def handle_unload_profile_json(self, rest_request, parameters = {}):
         """
         Handles the given unload profile json rest request.
@@ -437,8 +404,6 @@ to be handled.
         to be handled.
         @type parameters: Dictionary
         @param parameters: The handler parameters.
-        @rtype: bool
-        @return: The result of the handling.
         """
 
         # retrieves the json plugin
@@ -449,7 +414,7 @@ to be handled.
 
         # handles the request with the general
         # handle unload profile serialized method
-        return self.handle_unload_profile_serialized(rest_request, parameters)
+        self.handle_unload_profile_serialized(rest_request, parameters)
 
     def default_notification_handler(self, notification):
         # retrieves the notification message
