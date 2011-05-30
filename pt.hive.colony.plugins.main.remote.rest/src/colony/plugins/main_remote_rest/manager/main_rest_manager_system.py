@@ -213,8 +213,6 @@ class MainRestManager:
 
         @type request: Request
         @param request: The request to be handled.
-        @rtype: bool
-        @return: The result of the handling.
         """
 
         # retrieves the rest encoder plugins
@@ -342,8 +340,6 @@ class MainRestManager:
 
         @type rest_request: RestRequest
         @param rest_request: The rest request to be handled.
-        @rtype: bool
-        @return: The result of the handling.
         """
 
         # retrieves the request
