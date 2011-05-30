@@ -38,6 +38,7 @@ __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
 import colony.base.plugin_system
+import colony.base.decorators
 
 class PluginManagerInterfacePlugin(colony.base.plugin_system.Plugin):
     """
@@ -62,6 +63,7 @@ class PluginManagerInterfacePlugin(colony.base.plugin_system.Plugin):
         "build_automation_item"
     ]
     dependencies = [
+        colony.base.plugin_system.PluginDependency("pt.hive.colony.plugins.misc.bitmap_loader", "1.0.0"),
         colony.base.plugin_system.PackageDependency("Wx Python", "wx", "2.8.7.x", "http://wxpython.org")
     ]
     main_modules = [
@@ -70,6 +72,9 @@ class PluginManagerInterfacePlugin(colony.base.plugin_system.Plugin):
 
     plugin_manager_interface = None
     """ The plugin manager interface """
+
+    bitmap_loader_plugin = None
+    """ The bitmap loader plugin """
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
@@ -91,6 +96,7 @@ class PluginManagerInterfacePlugin(colony.base.plugin_system.Plugin):
     def unload_allowed(self, plugin, capability):
         colony.base.plugin_system.Plugin.unload_allowed(self, plugin, capability)
 
+    @colony.base.decorators.inject_dependencies("pt.hive.colony.plugins.misc.gui.plugin_manager_interface", "1.0.0")
     def dependency_injected(self, plugin):
         colony.base.plugin_system.Plugin.dependency_injected(self, plugin)
 
@@ -99,3 +105,10 @@ class PluginManagerInterfacePlugin(colony.base.plugin_system.Plugin):
 
     def get_icon_path(self):
         return self.plugin_manager_interface.get_icon_path()
+
+    def get_bitmap_loader_plugin(self):
+        return self.bitmap_loader_plugin
+
+    @colony.base.decorators.plugin_inject("pt.hive.colony.plugins.misc.bitmap_loader")
+    def set_bitmap_loader_plugin(self, bitmap_loader_plugin):
+        self.bitmap_loader_plugin = bitmap_loader_plugin

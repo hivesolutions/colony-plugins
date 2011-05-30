@@ -79,6 +79,12 @@ LOADED_VALUE = "loaded"
 TEXT_VALUE = "text"
 """ The text value """
 
+TYPE_VALUE = "type"
+""" The type value """
+
+PLUGIN_TYPE = "plugin"
+""" The plugin type """
+
 UNIX_DIRECTORY_SEPARATOR = "/"
 """ The unix directory separator """
 
@@ -96,6 +102,63 @@ PLUGIN_DEPENDENCY_CLASS_NAME = "PluginDependency"
 
 ROOT_NODE_ID = "root"
 """ The root node id """
+
+CAPABILITY_ICON = "capability"
+""" The capability icon """
+
+CAPABILITY_FOLDER_OPEN_ICON = "capability-folder-open"
+""" The capability folder open icon """
+
+CAPABILITY_FOLDER_CLOSED_ICON = "capability-folder-closed"
+""" The capability folder closed icon """
+
+CAPABILITY_ALLOWED_ICON = "capability-allowed"
+""" The capability allowed icon """
+
+CAPABILITY_ALLOWED_FOLDER_OPEN_ICON = "capability-allowed-folder-open"
+""" The capability allowed folder open icon """
+
+CAPABILITY_ALLOWED_FOLDER_CLOSED_ICON = "capability-allowed-folder-closed"
+""" The capability allowed folder closed icon """
+
+DEPENDENCY_ICON = "dependency"
+""" The dependency icon """
+
+DEPENDENCY_FOLDER_OPEN_ICON = "dependency-folder-open"
+""" The dependency folder open icon """
+
+DEPENDENCY_FOLDER_CLOSED_ICON = "dependency-folder-closed"
+""" The dependency folder closed icon """
+
+FOLDER_OPEN_ICON = "folder-open"
+""" The folder open icon """
+
+FOLDER_CLOSED_ICON = "folder-closed"
+""" The folder closed icon """
+
+PLUGIN_FOLDER_OPEN_ICON = "plugin-folder-open"
+""" The plugin folder open icon """
+
+PLUGIN_FOLDER_CLOSED_ICON = "plugin-folder-closed"
+""" The plugin folder closed icon """
+
+CAPABILITIES_TYPE = "capabilities"
+""" The capabilities type """
+
+CAPABILITY_TYPE = "capability"
+""" The capability type """
+
+CAPABILITIES_ALLOWED_TYPE = "capabilities_allowed"
+""" The capabilities allowed type """
+
+CAPABILITY_ALLOWED_TYPE = "capability_allowed"
+""" The capability allowed type """
+
+DEPENDENCIES_TYPE = "dependencies"
+""" The dependencies type """
+
+DEPENDENCY_TYPE = "dependency"
+""" The dependency type """
 
 ICON_PATH = "misc_gui/plugin_manager_interface/resources/icons"
 """ The plugin manager interface icon path """
@@ -168,6 +231,9 @@ class PluginManagerPanel(wx.Panel):
     dirty_node_map = {}
     """ The ids of the nodes that must be refreshed """
 
+    bitmaps_map = {}
+    """ The bitmaps map """
+
     def __init__(self, plugin_manager_interface, parent_widget):
         """
         Constructor of the class.
@@ -189,6 +255,7 @@ class PluginManagerPanel(wx.Panel):
         self.node_map = {}
         self.node_item_map = {}
         self.dirty_node_map = {}
+        self.bitmaps_map = {}
 
         # creates the tree map
         self.create_tree_map()
@@ -198,6 +265,9 @@ class PluginManagerPanel(wx.Panel):
 
         # creates the tree
         self.create_tree(parent_widget)
+
+        # loads the bitmaps
+        self.load_bitmaps()
 
         # creates the root node item
         self.create_root_node_item()
@@ -248,6 +318,7 @@ class PluginManagerPanel(wx.Panel):
         plugin_map = {}
 
         # sets the plugin map's attributes
+        plugin_map[TYPE_VALUE] = PLUGIN_TYPE
         plugin_map[TEXT_VALUE] = plugin_text
         plugin_map[CHECKABLE_VALUE] = True
         plugin_map[CHECKED_VALUE] =  plugin_loaded
@@ -274,6 +345,7 @@ class PluginManagerPanel(wx.Panel):
             plugin_capability_map = {}
 
             # sets the attributes in the plugin capability map
+            plugin_capability_map[TYPE_VALUE] = CAPABILITY_TYPE
             plugin_capability_map[TEXT_VALUE] = plugin_capability
 
             # sets the plugin capability map in the capabilities map
@@ -283,6 +355,7 @@ class PluginManagerPanel(wx.Panel):
         plugin_capabilities_map = {}
 
         # sets the attributes in the plugin capabilities map
+        plugin_capabilities_map[TYPE_VALUE] = CAPABILITIES_TYPE
         plugin_capabilities_map[TEXT_VALUE] = CAPABILITIES_VALUE
         plugin_capabilities_map[CHILD_NODES_VALUE] = capabilities_map
 
@@ -313,6 +386,7 @@ class PluginManagerPanel(wx.Panel):
             plugin_capability_allowed_map = {}
 
             # sets the attributes in the plugin capability allowed map
+            plugin_capability_allowed_map[TYPE_VALUE] = CAPABILITY_ALLOWED_TYPE
             plugin_capability_allowed_map[TEXT_VALUE] = plugin_capability_allowed_id
 
             # sets the plugin capability allowed map in the capabilities allowed map
@@ -322,6 +396,7 @@ class PluginManagerPanel(wx.Panel):
         plugin_capabilities_allowed_map = {}
 
         # sets the plugin capabilities allowed map attributes
+        plugin_capabilities_allowed_map[TYPE_VALUE] = CAPABILITIES_ALLOWED_TYPE
         plugin_capabilities_allowed_map[TEXT_VALUE] = "capabilities allowed"
         plugin_capabilities_allowed_map[CHILD_NODES_VALUE] = capabilities_allowed_map
 
@@ -356,6 +431,7 @@ class PluginManagerPanel(wx.Panel):
             plugin_dependency_map = {}
 
             # sets the attributes in the plugin dependency map
+            plugin_dependency_map[TYPE_VALUE] = DEPENDENCY_TYPE
             plugin_dependency_map[TEXT_VALUE] = plugin_dependency_text
             plugin_dependency_map[LINK_VALUE] = plugin_dependency_id
 
@@ -366,6 +442,7 @@ class PluginManagerPanel(wx.Panel):
         plugin_dependencies_map = {}
 
         # sets the plugin dependencies map attributes
+        plugin_dependencies_map[TYPE_VALUE] = DEPENDENCIES_TYPE
         plugin_dependencies_map[TEXT_VALUE] = "dependencies"
         plugin_dependencies_map[CHILD_NODES_VALUE] = dependencies_map
 
@@ -419,10 +496,14 @@ class PluginManagerPanel(wx.Panel):
         root_node_map[TEXT_VALUE] = "Plugins"
         root_node_map[CHILD_NODES_VALUE] = self.tree_map
 
+        # retrieves the plugin folder icon indexes
+        plugin_folder_open_index = self.bitmaps_map[FOLDER_OPEN_ICON]
+        plugin_folder_closed_index = self.bitmaps_map[FOLDER_CLOSED_ICON]
+
         # creates the root node item
         root_node_item = self.tree.AddRoot("Plugins")
-        self.tree.SetItemImage(root_node_item, self.fldridx, wx.TreeItemIcon_Normal)
-        self.tree.SetItemImage(root_node_item, self.fldropenidx, wx.TreeItemIcon_Expanded)
+        self.tree.SetItemImage(root_node_item, plugin_folder_closed_index, wx.TreeItemIcon_Normal)
+        self.tree.SetItemImage(root_node_item, plugin_folder_open_index, wx.TreeItemIcon_Expanded)
         self.tree.SetItemPyData(root_node_item, ROOT_NODE_ID)
 
         # sets the root item in the node item map
@@ -477,23 +558,15 @@ class PluginManagerPanel(wx.Panel):
 
     def create_node_item(self, parent_item, node_id, node_map):
         # retrieves the node attributes
+        node_type = node_map.get(TYPE_VALUE, None)
         node_text = node_map.get(TEXT_VALUE, node_id)
         node_checkable = node_map.get(CHECKABLE_VALUE, False)
-
-        # sets the parent item's images
-        self.tree.SetItemImage(parent_item, self.fldridx, wx.TreeItemIcon_Normal)
-        self.tree.SetItemImage(parent_item, self.fldropenidx, wx.TreeItemIcon_Expanded)
-        self.tree.SetItemImage(parent_item, self.fldropenidx, wx.TreeItemIcon_Selected)
 
         # calculates the node item attributes
         node_item_type = node_checkable and 1 or 0
 
         # creates the node item
         node_item = self.tree.AppendItem(parent_item, node_text, ct_type = node_item_type)
-
-        # sets the item's iamges
-        self.tree.SetItemImage(node_item, self.fileidx, wx.TreeItemIcon_Normal)
-        self.tree.SetItemImage(node_item, self.fileidx, wx.TreeItemIcon_Selected)
 
         # sets the item's data
         self.tree.SetItemPyData(node_item, node_id)
@@ -503,6 +576,15 @@ class PluginManagerPanel(wx.Panel):
 
         # refreshes the node item
         self.refresh_node_item(node_id, node_map, node_item)
+
+        # sets the appropriate node item images
+        (node_type == PLUGIN_TYPE) and self._set_plugin_node_item_images(node_item)
+        (node_type == CAPABILITY_TYPE) and self._set_capability_node_item_images(node_item)
+        (node_type == CAPABILITIES_TYPE) and self._set_capabilities_node_item_images(node_item)
+        (node_type == CAPABILITY_ALLOWED_TYPE) and self._set_capability_allowed_node_item_images(node_item)
+        (node_type == CAPABILITIES_ALLOWED_TYPE) and self._set_capabilities_allowed_node_item_images(node_item)
+        (node_type == DEPENDENCY_TYPE) and self._set_dependency_node_item_images(node_item)
+        (node_type == DEPENDENCIES_TYPE) and self._set_dependencies_node_item_images(node_item)
 
         # returns the node item
         return node_item
@@ -580,15 +662,6 @@ class PluginManagerPanel(wx.Panel):
         self.dirty_node_map[node_id] = True
 
     def create_tree(self, parent_widget):
-        # creates the images
-        image_list = wx.ImageList(IMAGE_WIDTH, IMAGE_HEIGHT)
-        folder_bitmap = wx.ArtProvider_GetBitmap(wx.ART_FOLDER, wx.ART_OTHER, IMAGE_SIZE)
-        file_open_bitmap = wx.ArtProvider_GetBitmap(wx.ART_FILE_OPEN, wx.ART_OTHER, IMAGE_SIZE)
-        file_bitmap = wx.ArtProvider_GetBitmap(wx.ART_NORMAL_FILE, wx.ART_OTHER, IMAGE_SIZE)
-        self.fldridx = image_list.Add(folder_bitmap)
-        self.fldropenidx = image_list.Add(file_open_bitmap)
-        self.fileidx = image_list.Add(file_bitmap)
-
         # creates the grid sizer
         grid_sizer = wx.FlexGridSizer(0, 1, 0)
         grid_sizer.AddGrowableCol(0)
@@ -601,7 +674,6 @@ class PluginManagerPanel(wx.Panel):
         self.search_textfield = wx.SearchCtrl(self, wx.ID_ANY, style = wx.TE_PROCESS_ENTER)
 
         # configures the components
-        self.tree.SetImageList(image_list)
         self.tree.EnableSelectionVista(True)
         self.search_textfield.ShowSearchButton(True)
 
@@ -621,6 +693,38 @@ class PluginManagerPanel(wx.Panel):
 
         # performs the layout
         self.Layout()
+
+    def load_bitmaps(self):
+        # retrieves the plugin manager
+        plugin_manager_interface = self.plugin_manager_interface
+        plugin_manager_interface_plugin = plugin_manager_interface.plugin_manager_interface_plugin
+        bitmap_loader_plugin = plugin_manager_interface_plugin.bitmap_loader_plugin
+
+        # initializes the bitmaps maps
+        bitmaps_map = {}
+
+        # creates the image list
+        image_list = wx.ImageList(IMAGE_WIDTH, IMAGE_HEIGHT)
+
+        # retrieves the icon path
+        icon_path = plugin_manager_interface.get_icon_path() + "/tree"
+
+        # loads the bitmaps
+        bitmap_loader_plugin.load_icons(icon_path, bitmaps_map, {})
+
+        # for each of the provided bitmaps
+        for bitmap_id in bitmaps_map:
+            # retrieves the bitmap
+            bitmap = bitmaps_map[bitmap_id]
+
+            # adds the image to the image list
+            bitmap_index = image_list.Add(bitmap)
+
+            # sets the bitmap index in the bitmaps map
+            self.bitmaps_map[bitmap_id] = bitmap_index
+
+        # assigns the image list
+        self.tree.SetImageList(image_list)
 
     def search(self, search_value):
         # initializes the first match node id
@@ -739,3 +843,67 @@ class PluginManagerPanel(wx.Panel):
 
         # performs the search
         self.search(search_value)
+
+    def _set_plugin_node_item_images(self, node_item):
+        # retrieves the icon indexes
+        folder_open_icon_index = self.bitmaps_map[PLUGIN_FOLDER_OPEN_ICON]
+        folder_closed_icon_index = self.bitmaps_map[PLUGIN_FOLDER_CLOSED_ICON]
+
+        # sets the item's images
+        self.tree.SetItemImage(node_item, folder_closed_icon_index, wx.TreeItemIcon_Normal)
+        self.tree.SetItemImage(node_item, folder_open_icon_index, wx.TreeItemIcon_Expanded)
+        self.tree.SetItemImage(node_item, folder_open_icon_index, wx.TreeItemIcon_Selected)
+
+    def _set_capability_node_item_images(self, node_item):
+        # retrieves the icon index
+        file_icon_index = self.bitmaps_map[CAPABILITY_ICON]
+
+        # sets the item's images
+        self.tree.SetItemImage(node_item, file_icon_index, wx.TreeItemIcon_Normal)
+        self.tree.SetItemImage(node_item, file_icon_index, wx.TreeItemIcon_Selected)
+
+    def _set_capabilities_node_item_images(self, node_item):
+        # retrieves the icon indexes
+        folder_open_icon_index = self.bitmaps_map[CAPABILITY_FOLDER_OPEN_ICON]
+        folder_closed_icon_index = self.bitmaps_map[CAPABILITY_FOLDER_CLOSED_ICON]
+
+        # sets the item's images
+        self.tree.SetItemImage(node_item, folder_closed_icon_index, wx.TreeItemIcon_Normal)
+        self.tree.SetItemImage(node_item, folder_open_icon_index, wx.TreeItemIcon_Expanded)
+        self.tree.SetItemImage(node_item, folder_open_icon_index, wx.TreeItemIcon_Selected)
+
+    def _set_capability_allowed_node_item_images(self, node_item):
+        # retrieves the icon index
+        file_icon_index = self.bitmaps_map[CAPABILITY_ALLOWED_ICON]
+
+        # sets the item's images
+        self.tree.SetItemImage(node_item, file_icon_index, wx.TreeItemIcon_Normal)
+        self.tree.SetItemImage(node_item, file_icon_index, wx.TreeItemIcon_Selected)
+
+    def _set_capabilities_allowed_node_item_images(self, node_item):
+        # retrieves the icon indexes
+        folder_open_icon_index = self.bitmaps_map[CAPABILITY_ALLOWED_FOLDER_OPEN_ICON]
+        folder_closed_icon_index = self.bitmaps_map[CAPABILITY_ALLOWED_FOLDER_CLOSED_ICON]
+
+        # sets the item's images
+        self.tree.SetItemImage(node_item, folder_closed_icon_index, wx.TreeItemIcon_Normal)
+        self.tree.SetItemImage(node_item, folder_open_icon_index, wx.TreeItemIcon_Expanded)
+        self.tree.SetItemImage(node_item, folder_open_icon_index, wx.TreeItemIcon_Selected)
+
+    def _set_dependency_node_item_images(self, node_item):
+        # retrieves the icon index
+        file_icon_index = self.bitmaps_map[DEPENDENCY_ICON]
+
+        # sets the item's images
+        self.tree.SetItemImage(node_item, file_icon_index, wx.TreeItemIcon_Normal)
+        self.tree.SetItemImage(node_item, file_icon_index, wx.TreeItemIcon_Selected)
+
+    def _set_dependencies_node_item_images(self, node_item):
+        # retrieves the icon indexes
+        folder_open_icon_index = self.bitmaps_map[DEPENDENCY_FOLDER_OPEN_ICON]
+        folder_closed_icon_index = self.bitmaps_map[DEPENDENCY_FOLDER_CLOSED_ICON]
+
+        # sets the item's images
+        self.tree.SetItemImage(node_item, folder_closed_icon_index, wx.TreeItemIcon_Normal)
+        self.tree.SetItemImage(node_item, folder_open_icon_index, wx.TreeItemIcon_Expanded)
+        self.tree.SetItemImage(node_item, folder_open_icon_index, wx.TreeItemIcon_Selected)
