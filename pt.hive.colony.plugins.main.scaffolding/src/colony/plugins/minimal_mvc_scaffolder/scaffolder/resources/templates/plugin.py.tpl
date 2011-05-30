@@ -14,8 +14,7 @@ class ${out value=scaffold_attributes.class_name /}Plugin(colony.base.plugin_sys
         "web.mvc_service"
     ]
     dependencies = [
-        colony.base.plugin_system.PluginDependency("pt.hive.colony.plugins.web.mvc.utils", "${out value=scaffold_attributes.plugin_version /}"),
-        colony.base.plugin_system.PluginDependency("pt.hive.colony.plugins.resources.resource_manager", "${out value=scaffold_attributes.plugin_version /}")
+        colony.base.plugin_system.PluginDependency("pt.hive.colony.plugins.web.mvc.utils", "${out value=scaffold_attributes.plugin_version /}")
     ]
     main_modules = [
         "${out value=scaffold_attributes.backend_namespace /}.${out value=scaffold_attributes.variable_name /}_controllers",
@@ -55,7 +54,3 @@ class ${out value=scaffold_attributes.class_name /}Plugin(colony.base.plugin_sys
     @colony.base.decorators.plugin_inject("pt.hive.colony.plugins.web.mvc.utils")
     def set_web_mvc_utils_plugin(self, web_mvc_utils_plugin):
         self.web_mvc_utils_plugin = web_mvc_utils_plugin
-
-    @colony.base.decorators.plugin_inject("pt.hive.colony.plugins.resources.resource_manager")
-    def set_resource_manager_plugin(self, resource_manager_plugin):
-        self.resource_manager_plugin = resource_manager_plugin

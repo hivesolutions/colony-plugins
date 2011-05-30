@@ -8,10 +8,8 @@ class ${out value=scaffold_attributes.model.class_name /}Controller:
         self.${out value=scaffold_attributes.variable_name /} = ${out value=scaffold_attributes.variable_name /}
 
     def start(self):
-        # sets the templates path
-        ${out value=scaffold_attributes.variable_name /}_plugin_path = self.${out value=scaffold_attributes.variable_name /}_plugin.manager.get_plugin_path_by_id(self.${out value=scaffold_attributes.variable_name /}_plugin.id)
-        templates_path = ${out value=scaffold_attributes.variable_name /}_plugin_path + "/${out value=scaffold_attributes.relative_backend_path /}/resources/templates"
-        self.set_templates_path(templates_path)
+        # sets the relative resources path
+        self.set_relative_resources_path("${out value=scaffold_attributes.relative_backend_path /}/resources")
 
         # sets the entity models and the entity manager
         self.entity_models = self.${out value=scaffold_attributes.variable_name /}.${out value=scaffold_attributes.variable_name /}_entity_models
@@ -42,6 +40,7 @@ class ${out value=scaffold_attributes.model.class_name /}Controller:
         template_file = self.retrieve_template_file("new.html.tpl")
         self.process_set_contents(rest_request, template_file)
 
+    @web_mvc_utils.transaction_method("${out value=scaffold_attributes.variable_name /}.${out value=scaffold_attributes.variable_name /}_entity_models.entity_manager")
     def handle_create(self, rest_request, parameters = {}):
         # creates the ${out value=scaffold_attributes.model.name_lowercase /} entity
         form_data_map = self.process_form_data(rest_request, "utf-8")
@@ -62,6 +61,7 @@ class ${out value=scaffold_attributes.model.class_name /}Controller:
         template_file.assign("${out value=scaffold_attributes.model.variable_name /}", ${out value=scaffold_attributes.model.variable_name /}_entity)
         self.process_set_contents(rest_request, template_file)
 
+    @web_mvc_utils.transaction_method("${out value=scaffold_attributes.variable_name /}.${out value=scaffold_attributes.variable_name /}_entity_models.entity_manager")
     def handle_update(self, rest_request, parameters = {}):
         # updates the specified ${out value=scaffold_attributes.model.name_lowercase /} entity
         form_data_map = self.process_form_data(rest_request, "utf-8")
@@ -73,6 +73,7 @@ class ${out value=scaffold_attributes.model.class_name /}Controller:
         # redirects to the ${out value=scaffold_attributes.model.name_plural_lowercase /} entities page
         self.redirect_base_path(rest_request, "${out value=scaffold_attributes.model.variable_name_plural /}")
 
+    @web_mvc_utils.transaction_method("${out value=scaffold_attributes.variable_name /}.${out value=scaffold_attributes.variable_name /}_entity_models.entity_manager")
     def handle_delete(self, rest_request, parameters = {}):
         # removes the specified ${out value=scaffold_attributes.model.name_lowercase /} entity
         ${out value=scaffold_attributes.model.variable_name /}_entity = self.entity_models.${out value=scaffold_attributes.model.class_name /}()

@@ -30,9 +30,6 @@ DEFAULT_ENCODING = "utf-8"
 RESOURCES_PATH = "${out value=scaffold_attributes.relative_backend_path /}/resources"
 """ The resources path """
 
-TEMPLATES_PATH = RESOURCES_PATH + "/templates"
-""" The templates path """
-
 # imports the web mvc utils
 web_mvc_utils = colony.libs.importer_util.__importer__("web_mvc_utils")
 
