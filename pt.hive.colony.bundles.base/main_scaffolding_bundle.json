@@ -11,6 +11,9 @@
                 "id" : "pt.hive.colony.plugins.main.scaffolding.base",
                 "version" : "1.0.0"
             }, {
+                "id" : "pt.hive.colony.plugins.main.scaffolding.eclipse_project",
+                "version" : "1.0.0"
+            }, {
                 "id" : "pt.hive.colony.plugins.main.scaffolding.minimal_base",
                 "version" : "1.0.0"
             }, {
