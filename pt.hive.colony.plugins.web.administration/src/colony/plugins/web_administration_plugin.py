@@ -118,8 +118,6 @@ class WebAdministrationPlugin(colony.base.plugin_system.Plugin):
 
         @type rest_request: RestRequest
         @param rest_request: The rest request to be handled.
-        @rtype: bool
-        @return: The result of the handling.
         """
 
         return self.web_administration.handle_rest_request(rest_request)

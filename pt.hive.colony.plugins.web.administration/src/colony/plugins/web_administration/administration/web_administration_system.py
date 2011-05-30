@@ -90,8 +90,6 @@ class WebAdministration:
 
         @type rest_request: RestRequest
         @param rest_request: The rest request to be handled.
-        @rtype: bool
-        @return: The result of the handling.
         """
 
         # retrieves the plugin manager
