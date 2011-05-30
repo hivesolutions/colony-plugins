@@ -78,12 +78,9 @@ class WebMvcManagerCommunicationController:
         communication request to be handled.
         @type parameters: Dictionary
         @param parameters: The handler parameters.
-        @rtype: bool
-        @return: The result of the handling.
         """
 
-        # returns true
-        return True
+        pass
 
     def handle_connection_changed(self, rest_communication_request, parameters = {}):
         """
@@ -94,9 +91,6 @@ class WebMvcManagerCommunicationController:
         rest communication request to be handled.
         @type parameters: Dictionary
         @param parameters: The handler parameters.
-        @rtype: bool
-        @return: The result of the handling.
         """
 
-        # returns true
-        return True
+        pass

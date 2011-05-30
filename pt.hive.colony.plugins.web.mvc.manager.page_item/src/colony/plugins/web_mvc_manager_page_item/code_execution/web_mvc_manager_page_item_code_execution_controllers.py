@@ -117,9 +117,6 @@ class WebMvcManagerPageItemCodeExecutionController:
         # processes the template file and sets the request contents
         self.process_set_contents(rest_request, template_file)
 
-        # returns true
-        return True
-
     def handle_new(self, rest_request, parameters = {}):
         # retrieves the template file from the parameters
         template_file = parameters["template_file"]
@@ -138,9 +135,6 @@ class WebMvcManagerPageItemCodeExecutionController:
 
         # processes the template file and sets the request contents
         self.process_set_contents(rest_request, template_file)
-
-        # returns true
-        return True
 
     def handle_execute(self, rest_request, parameters = {}):
         # retrieves the form data by processing the form
@@ -166,9 +160,6 @@ class WebMvcManagerPageItemCodeExecutionController:
 
         # processes the template file and sets the request contents
         self.process_set_contents(rest_request, template_file)
-
-        # returns true
-        return True
 
     def execute_command(self, rest_request, command):
         # in case an invalid command is specified

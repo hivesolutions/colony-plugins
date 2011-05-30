@@ -44,6 +44,12 @@ import colony.libs.importer_util
 
 import web_mvc_manager_page_item_repository_exceptions
 
+INSTALLED_VALUE = "installed"
+""" The installed value """
+
+UNINSTALLED_VALUE = "uninstalled"
+""" The uninstalled value """
+
 WEB_MVC_UTILS_VALUE = "web_mvc_utils"
 """ The web mvc utils value """
 
@@ -134,9 +140,6 @@ class WebMvcManagerPageItemRepositoryController:
         # processes the template file and sets the request contents
         self.process_set_contents(rest_request, template_file)
 
-        # returns true
-        return True
-
     def handle_show(self, rest_request, parameters = {}):
         # retrieves the pattern names from the parameters
         pattern_names = parameters[PATTERN_NAMES_VALUE]
@@ -174,9 +177,6 @@ class WebMvcManagerPageItemRepositoryController:
         # processes the template file and sets the request contents
         self.process_set_contents(rest_request, template_file)
 
-        # returns true
-        return True
-
     def handle_list_ajx(self, rest_request, parameters = {}):
         # retrieves the template file
         template_file = self.retrieve_template_file("repository_list_contents.html.tpl")
@@ -189,9 +189,6 @@ class WebMvcManagerPageItemRepositoryController:
 
         # processes the template file and sets the request contents
         self.process_set_contents(rest_request, template_file)
-
-        # returns true
-        return True
 
     def handle_list(self, rest_request, parameters = {}):
         # retrieves the template file from the parameters
@@ -211,9 +208,6 @@ class WebMvcManagerPageItemRepositoryController:
 
         # processes the template file and sets the request contents
         self.process_set_contents(rest_request, template_file)
-
-        # returns true
-        return True
 
     def handle_partial_list(self, rest_request, parameters = {}):
         # retrieves the form data by processing the form
@@ -267,9 +261,6 @@ class WebMvcManagerPageItemRepositoryController:
         # processes the template file and sets the request contents
         self.process_set_contents(rest_request, template_file)
 
-        # returns true
-        return True
-
     def handle_install_plugin(self, rest_request, parameters = {}):
         # retrieves the json plugin
         json_plugin = self.web_mvc_manager_page_item_repository_plugin.json_plugin
@@ -297,8 +288,6 @@ class WebMvcManagerPageItemRepositoryController:
 
         # sends the serialized broadcast message
         communication_helper.send_serialized_broadcast_message(parameters, "web_mvc_manager/communication", "web_mvc_manager/plugin/install", serialized_status)
-
-        return True
 
     def handle_plugins_partial_list(self, rest_request, parameters = {}):
         # retrieves the form data by processing the form
@@ -352,9 +341,6 @@ class WebMvcManagerPageItemRepositoryController:
         # processes the template file and sets the request contents
         self.process_set_contents(rest_request, template_file)
 
-        # returns true
-        return True
-
     def handle_packages_partial_list(self, rest_request, parameters = {}):
         # retrieves the form data by processing the form
         form_data_map = self.process_form_data(rest_request, DEFAULT_ENCODING)
@@ -407,9 +393,6 @@ class WebMvcManagerPageItemRepositoryController:
         # processes the template file and sets the request contents
         self.process_set_contents(rest_request, template_file)
 
-        # returns true
-        return True
-
     def _get_repository(self, rest_request, repository_index):
         # retrieves the system updater plugin
         system_updater_plugin = self.web_mvc_manager_page_item_repository_plugin.system_updater_plugin
@@ -426,6 +409,7 @@ class WebMvcManagerPageItemRepositoryController:
         # retrieves the repository for the repository with the given name
         repository_information = system_updater_plugin.get_repository_information_by_repository_name(repository_name)
 
+        # returns the repository information
         return repository_information
 
     def _get_filtered_repositories(self, rest_request, search_query):
@@ -433,14 +417,7 @@ class WebMvcManagerPageItemRepositoryController:
         repositories = self._get_repositories()
 
         # creates the filtered repositories list
-        filtered_repositories = []
-
-        # iterates over all the repositories
-        for repository in repositories:
-            # in case the search query is found in the repository name
-            if not repository.name.find(search_query) == -1:
-                # adds the repository to the filtered repositories
-                filtered_repositories.append(repository)
+        filtered_repositories = [repository for repository in repositories if not repository.name.find(search_query) == -1]
 
         # returns the filtered repositories
         return filtered_repositories
@@ -450,15 +427,9 @@ class WebMvcManagerPageItemRepositoryController:
         repository = self._get_repository(rest_request, 1)
 
         # creates the filtered repository plugins
-        filtered_repository_plugins = []
+        filtered_repository_plugins = [repository_plugin for repository_plugin in repository.plugins if not repository_plugin.id.find(search_query) == -1]
 
-        # iterates over all the repository plugins
-        for repository_plugin in repository.plugins:
-            # in case the search query is found in the repository plugin id
-            if not repository_plugin.id.find(search_query) == -1:
-                # adds the repository plugin to the filtered repository plugins
-                filtered_repository_plugins.append(repository_plugin)
-
+        # returns the filtered repository plugins
         return filtered_repository_plugins
 
     def _get_repositories(self):
@@ -468,6 +439,7 @@ class WebMvcManagerPageItemRepositoryController:
         # retrieves all the repositories
         repositories = system_updater_plugin.get_repositories()
 
+        # returns the repositories
         return repositories
 
     def _install_plugin(self, rest_request, plugin_id, plugin_version):
@@ -479,8 +451,8 @@ class WebMvcManagerPageItemRepositoryController:
 
         # creates the delta plugin install map
         delta_plugin_install_map = {
-            "installed" : [],
-            "uninstalled" : []
+            INSTALLED_VALUE : [],
+            UNINSTALLED_VALUE : []
         }
 
         # retrieves the (beginning) list of available plugins
@@ -504,13 +476,13 @@ class WebMvcManagerPageItemRepositoryController:
         # to check if they exist in the current available plugins
         for available_plugin_beginning in available_plugins_beginning:
             if not available_plugin_beginning in available_plugins_end:
-                delta_plugin_install_map["uninstalled"].append(available_plugin_beginning.id)
+                delta_plugin_install_map[UNINSTALLED_VALUE].append(available_plugin_beginning.id)
 
         # iterates over all the plugins available at the end
         # to check if they exist in the previously available plugins
         for available_plugin_end in available_plugins_end:
             if not available_plugin_end in available_plugins_beginning:
-                delta_plugin_install_map["installed"].append(available_plugin_end.id)
+                delta_plugin_install_map[INSTALLED_VALUE].append(available_plugin_end.id)
 
         # returns the delta plugin install map
         return delta_plugin_install_map

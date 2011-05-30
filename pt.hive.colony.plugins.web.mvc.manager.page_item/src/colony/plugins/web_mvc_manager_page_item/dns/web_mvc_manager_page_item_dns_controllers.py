@@ -132,9 +132,6 @@ class WebMvcManagerPageItemDnsController:
         # processes the template file and sets the request contents
         self.process_set_contents(rest_request, template_file)
 
-        # returns true
-        return True
-
     def handle_show(self, rest_request, parameters = {}):
         # retrieves the pattern names
         pattern_names = parameters[PATTERN_NAMES_VALUE]
@@ -172,9 +169,6 @@ class WebMvcManagerPageItemDnsController:
         # processes the template file and sets the request contents
         self.process_set_contents(rest_request, template_file)
 
-        # returns true
-        return True
-
     def handle_list_ajx(self, rest_request, parameters = {}):
         # retrieves the template file
         template_file = self.retrieve_template_file("dns_list_contents.html.tpl")
@@ -187,9 +181,6 @@ class WebMvcManagerPageItemDnsController:
 
         # processes the template file and sets the request contents
         self.process_set_contents(rest_request, template_file)
-
-        # returns true
-        return True
 
     def handle_list(self, rest_request, parameters = {}):
         # retrieves the template file from the parameters
@@ -209,9 +200,6 @@ class WebMvcManagerPageItemDnsController:
 
         # processes the template file and sets the request contents
         self.process_set_contents(rest_request, template_file)
-
-        # returns true
-        return True
 
     def handle_partial_list(self, rest_request, parameters = {}):
         # retrieves the web search helper
@@ -262,9 +250,6 @@ class WebMvcManagerPageItemDnsController:
         # processes the template file and sets the request contents
         self.process_set_contents(rest_request, template_file)
 
-        # returns true
-        return True
-
     def _get_dns(self, rest_request, dns_index):
         # retrieves the system updater plugin
         system_updater_plugin = self.web_mvc_manager_page_item_dns_plugin.system_updater_plugin
@@ -281,6 +266,7 @@ class WebMvcManagerPageItemDnsController:
         # retrieves the dns for the dns with the given name
         dns_information = system_updater_plugin.get_dns_information_by_dns_name(dns_name)
 
+        # returns the dns information
         return dns_information
 
     def _get_filtered_dns_zones(self, rest_request):
@@ -294,14 +280,7 @@ class WebMvcManagerPageItemDnsController:
         dns_zones = self._get_dns_zones()
 
         # creates the filtered dns zones list
-        filtered_dns_zones = []
-
-        # iterates over all the dns zones
-        for dns_zone in dns_zones:
-            # in case the search query is found in the dns name
-            if not dns_zone.name.find(search_query) == -1:
-                # adds the dns to the filtered dns zones
-                filtered_dns_zones.append(dns_zone)
+        filtered_dns_zones = [dns_zone for dns_zone in dns_zones if not dns_zone.name.find(search_query) == -1]
 
         # returns the filtered dns zones
         return filtered_dns_zones

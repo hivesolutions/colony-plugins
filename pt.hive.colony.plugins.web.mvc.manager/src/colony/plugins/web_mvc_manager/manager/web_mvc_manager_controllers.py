@@ -168,8 +168,6 @@ class WebMvcManagerMainController:
         to be handled.
         @type parameters: Dictionary
         @param parameters: The handler parameters.
-        @rtype: bool
-        @return: The result of the handling.
         """
 
         # retrieves the exception handler
@@ -186,9 +184,6 @@ class WebMvcManagerMainController:
 
         # processes the template file and sets the request contents
         self.process_set_contents(rest_request, template_file)
-
-        # returns true
-        return True
 
     def generate_handle_handle_web_mvc_manager_page_item(self, original_handler):
         """
@@ -286,8 +281,6 @@ class SidePanelController:
         to be handled.
         @type parameters: Dictionary
         @param parameters: The handler parameters.
-        @rtype: bool
-        @return: The result of the handling.
         """
 
         # retrieves the template file
@@ -302,9 +295,6 @@ class SidePanelController:
         # processes the template file and sets the request contents
         self.process_set_contents(rest_request, template_file)
 
-        # returns true
-        return True
-
     def handle_configuration(self, rest_request, parameters = {}):
         """
         Handles the given configuration rest request.
@@ -314,8 +304,6 @@ class SidePanelController:
         to be handled.
         @type parameters: Dictionary
         @param parameters: The handler parameters.
-        @rtype: bool
-        @return: The result of the handling.
         """
 
         # retrieves the template file
@@ -329,9 +317,6 @@ class SidePanelController:
 
         # processes the template file and sets the request contents
         self.process_set_contents(rest_request, template_file)
-
-        # returns true
-        return True
 
     def _assign_update_variables(self, template_file):
         self.__assign_panel_item_variables(template_file)
@@ -404,8 +389,6 @@ class HeaderController:
         to be handled.
         @type parameters: Dictionary
         @param parameters: The handler parameters.
-        @rtype: bool
-        @return: The result of the handling.
         """
 
         # retrieves the template file
@@ -419,9 +402,6 @@ class HeaderController:
 
         # processes the template file and sets the request contents
         self.process_set_contents(rest_request, template_file)
-
-        # returns true
-        return True
 
     def _assign_header_variables(self, template_file):
         # assigns the menu items to the template
@@ -461,9 +441,6 @@ class PackageController:
         # deploys the package
         self._deploy_package(rest_request)
 
-        # returns true
-        return True
-
     def handle_create_json(self, rest_request, parameters = {}):
         # retrieves the json plugin
         json_plugin = self.web_mvc_manager_plugin.json_plugin
@@ -473,7 +450,7 @@ class PackageController:
 
         # handles the request with the general
         # handle create serialized method
-        return self.handle_create_serialized(rest_request, parameters)
+        self.handle_create_serialized(rest_request, parameters)
 
     def _deploy_package(self, rest_request, package_type = COLONY_PLUGIN_FILE_EXTENSION):
         # retrieves the plugin manager
@@ -567,9 +544,6 @@ class BundleController:
         # deploys the package
         web_mvc_manager_package_controller._deploy_package(rest_request, COLONY_BUNDLE_FILE_EXTENSION)
 
-        # returns true
-        return True
-
     def handle_create_json(self, rest_request, parameters = {}):
         # retrieves the json plugin
         json_plugin = self.web_mvc_manager_plugin.json_plugin
@@ -579,7 +553,7 @@ class BundleController:
 
         # handles the request with the general
         # handle create serialized method
-        return self.handle_create_serialized(rest_request, parameters)
+        self.handle_create_serialized(rest_request, parameters)
 
 class PluginController:
     """
@@ -659,9 +633,6 @@ class PluginController:
         # processes the template file and sets the request contents
         self.process_set_contents(rest_request, template_file)
 
-        # returns true
-        return True
-
     @web_mvc_utils.serialize_exceptions("all")
     @web_mvc_utils.validated_method("plugins.list")
     def handle_list_ajx(self, rest_request, parameters = {}):
@@ -682,9 +653,6 @@ class PluginController:
 
         # processes the template file and sets the request contents
         self.process_set_contents(rest_request, template_file)
-
-        # returns true
-        return True
 
     @web_mvc_utils.serialize_exceptions("all")
     @web_mvc_utils.validated_method("plugins.list")
@@ -746,9 +714,6 @@ class PluginController:
         # processes the template file and sets the request contents
         self.process_set_contents(rest_request, template_file)
 
-        # returns true
-        return True
-
     @web_mvc_utils.serialize_exceptions("all")
     @web_mvc_utils.validated_method("plugins.new")
     def handle_new(self, rest_request, parameters = {}):
@@ -776,9 +741,6 @@ class PluginController:
         # processes the template file and sets the request contents
         self.process_set_contents(rest_request, template_file)
 
-        # returns true
-        return True
-
     @web_mvc_utils.serialize_exceptions("all")
     @web_mvc_utils.validated_method("plugins.new")
     def handle_new_ajx(self, rest_request, parameters = {}):
@@ -800,9 +762,6 @@ class PluginController:
         # processes the template file and sets the request contents
         self.process_set_contents(rest_request, template_file)
 
-        # returns true
-        return True
-
     @web_mvc_utils.serialize_exceptions("all")
     @web_mvc_utils.validated_method("plugins.create")
     def handle_create_serialized(self, rest_request, parameters = {}):
@@ -811,9 +770,6 @@ class PluginController:
 
         # deploys the package
         web_mvc_manager_package_controller._deploy_package(rest_request, COLONY_PLUGIN_FILE_EXTENSION)
-
-        # returns true
-        return True
 
     def handle_create_json(self, rest_request, parameters = {}):
         # retrieves the json plugin
@@ -824,7 +780,7 @@ class PluginController:
 
         # handles the request with the general
         # handle create serialized method
-        return self.handle_create_serialized(rest_request, parameters)
+        self.handle_create_serialized(rest_request, parameters)
 
     @web_mvc_utils.serialize_exceptions("all")
     @web_mvc_utils.validated_method("plugins.show")
@@ -865,9 +821,6 @@ class PluginController:
         # processes the template file and sets the request contents
         self.process_set_contents(rest_request, template_file)
 
-        # returns true
-        return True
-
     @web_mvc_utils.serialize_exceptions("all")
     @web_mvc_utils.validated_method("plugins.show")
     def handle_show_ajx(self, rest_request, parameters = {}):
@@ -900,9 +853,6 @@ class PluginController:
 
         # processes the template file and sets the request contents
         self.process_set_contents(rest_request, template_file)
-
-        # returns true
-        return True
 
     @web_mvc_utils.serialize_exceptions("all")
     @web_mvc_utils.validated_method("plugins.change_status")
@@ -937,9 +887,6 @@ class PluginController:
         # sends the serialized broadcast message
         web_mvc_manager_communication_helper.send_serialized_broadcast_message(parameters, "web_mvc_manager/communication", "web_mvc_manager/plugin/change_status", serialized_status)
 
-        # returns true
-        return True
-
     def handle_change_status_json(self, rest_request, parameters = {}):
         # retrieves the json plugin
         json_plugin = self.web_mvc_manager_plugin.json_plugin
@@ -949,7 +896,7 @@ class PluginController:
 
         # handles the request with the general
         # handle create serialized method
-        return self.handle_change_status_serialized(rest_request, parameters)
+        self.handle_change_status_serialized(rest_request, parameters)
 
     def _get_plugin(self, rest_request, plugin_id):
         # retrieves the plugin manager
@@ -958,6 +905,7 @@ class PluginController:
         # retrieves the plugin from the given plugin id
         plugin = plugin_manager._get_plugin_by_id(plugin_id)
 
+        # returns the specified plugin
         return plugin
 
     def _get_filtered_plugins(self, rest_request, search_query):
@@ -965,14 +913,7 @@ class PluginController:
         plugins = self._get_plugins()
 
         # creates the filtered plugins list
-        filtered_plugins = []
-
-        # iterates over all the plugins
-        for plugin in plugins:
-            # in case the search query is found in the plugin id
-            if not plugin.id.find(search_query) == -1:
-                # adds the plugin to the filtered plugins
-                filtered_plugins.append(plugin)
+        filtered_plugins = [plugin for plugin in plugins if not plugin.id.find(search_query) == -1]
 
         # returns the filtered plugins
         return filtered_plugins
@@ -984,6 +925,7 @@ class PluginController:
         # retrieves the plugins
         plugins = plugin_manager.get_all_plugins()
 
+        # returns all plugins
         return plugins
 
     def _change_status_plugin(self, rest_request, plugin_id, plugin_status):
@@ -993,35 +935,28 @@ class PluginController:
         # retrieves the (beginning) list of loaded plugins
         loaded_plugins_beginning = copy.copy(plugin_manager.get_all_loaded_plugins())
 
-        # in case the plugin status is load
-        if plugin_status == LOAD_VALUE:
-            # loads the plugin for the given plugin id
-            plugin_manager.load_plugin(plugin_id)
-        # in case the plugin status in unload
-        elif plugin_status == UNLOAD_VALUE:
-            # unloads the plugin for the given plugin id
-            plugin_manager.unload_plugin(plugin_id)
+        # loads the plugin for the given plugin id in case the plugin status is load
+        (plugin_status == LOAD_VALUE) and plugin_manager.load_plugin(plugin_id)
+
+        # unloads the plugin for the given plugin id in case the plugin status in unload
+        (plugin_status == UNLOAD_VALUE) and plugin_manager.unload_plugin(plugin_id)
 
         # retrieves the (end) list of loaded plugins
         loaded_plugins_end = plugin_manager.get_all_loaded_plugins()
 
-        # creates the delta plugin status map
-        delta_plugin_status_map = {
-            LOADED_VALUE : [],
-            UNLOADED_VALUE : []
-        }
+        # iterates over all the plugins loaded at the end
+        # to check if they exist in the previously loaded plugins
+        loaded_list = [loaded_plugin_end.id for loaded_plugin_end in loaded_plugins_end if not loaded_plugin_end in loaded_plugins_beginning]
 
         # iterates over all the plugins loaded at the beginning
         # to check if they exist in the current loaded plugins
-        for loaded_plugin_beginning in loaded_plugins_beginning:
-            if not loaded_plugin_beginning in loaded_plugins_end:
-                delta_plugin_status_map[UNLOADED_VALUE].append(loaded_plugin_beginning.id)
+        unloaded_list = [loaded_plugin_beginning.id for loaded_plugin_beginning in loaded_plugins_beginning if not loaded_plugin_beginning in loaded_plugins_end]
 
-        # iterates over all the plugins loaded at the end
-        # to check if they exist in the previously loaded plugins
-        for loaded_plugin_end in loaded_plugins_end:
-            if not loaded_plugin_end in loaded_plugins_beginning:
-                delta_plugin_status_map[LOADED_VALUE].append(loaded_plugin_end.id)
+        # creates the delta plugin status map
+        delta_plugin_status_map = {
+            LOADED_VALUE : loaded_list,
+            UNLOADED_VALUE : unloaded_list
+        }
 
         # returns the delta plugin status map
         return delta_plugin_status_map
@@ -1098,9 +1033,6 @@ class CapabilityController:
         # processes the template file and sets the request contents
         self.process_set_contents(rest_request, template_file)
 
-        # returns true
-        return True
-
     @web_mvc_utils.serialize_exceptions("all")
     @web_mvc_utils.validated_method("capabilites.list")
     def handle_list_ajx(self, rest_request, parameters = {}):
@@ -1121,9 +1053,6 @@ class CapabilityController:
 
         # processes the template file and sets the request contents
         self.process_set_contents(rest_request, template_file)
-
-        # returns true
-        return True
 
     @web_mvc_utils.serialize_exceptions("all")
     @web_mvc_utils.validated_method("capabilites.list")
@@ -1185,9 +1114,6 @@ class CapabilityController:
         # processes the template file and sets the request contents
         self.process_set_contents(rest_request, template_file)
 
-        # returns true
-        return True
-
     @web_mvc_utils.validated_method("capabilites.show")
     def handle_show(self, rest_request, parameters = {}):
         # retrieves the pattern names from the parameters
@@ -1228,9 +1154,6 @@ class CapabilityController:
 
         # processes the template file and sets the request contents
         self.process_set_contents(rest_request, template_file)
-
-        # returns true
-        return True
 
     @web_mvc_utils.serialize_exceptions("all")
     @web_mvc_utils.validated_method("capabilites.show")
@@ -1274,22 +1197,12 @@ class CapabilityController:
         # processes the template file and sets the request contents
         self.process_set_contents(rest_request, template_file)
 
-        # returns true
-        return True
-
     def _get_filtered_capabilities(self, rest_request, search_query):
         # retrieves the capabilities
         capabilities = self._get_capabilities()
 
         # creates the filtered capabilities list
-        filtered_capabilities = []
-
-        # iterates over all the capabilities
-        for capability in capabilities:
-            # in case the search query is found in the capabiity name
-            if not capability.find(search_query) == -1:
-                # adds the capability to the filtered capabilities
-                filtered_capabilities.append(capability)
+        filtered_capabilities = [capability for capability in capabilities if not capability.find(search_query) == -1]
 
         # returns the filtered capabilities
         return filtered_capabilities
@@ -1304,6 +1217,7 @@ class CapabilityController:
         # sorts all the capabilities
         capabilities.sort()
 
+        # returns the capabilities
         return capabilities
 
     def _get_plugins_capability(self, rest_request, capability):
@@ -1390,8 +1304,6 @@ class ExceptionController:
         @param rest_request: The rest request for which the exception occurred.
         @type parameters: Dictionary
         @param parameters: The handler parameters.
-        @rtype: bool
-        @return: The result of the handling.
         """
 
         # retrieves the exception
@@ -1405,6 +1317,3 @@ class ExceptionController:
 
         # sets the exception message in the rest request
         self.set_contents(rest_request, exception_complete_message)
-
-        # returns true
-        return True
