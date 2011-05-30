@@ -22,6 +22,9 @@
             }, {
                 "id" : "pt.hive.colony.plugins.web.mvc.search",
                 "version" : "1.0.0"
+            }, {
+                "id" : "pt.hive.colony.plugins.resources.resource_manager",
+                "version" : "1.0.0"
             }],
     "main_file" : "web_mvc_utils_plugin.py",
     "resources" : ["web_mvc_utils_plugin.py", "web_mvc_utils/__init__.py",
