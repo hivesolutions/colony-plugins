@@ -27,7 +27,10 @@ PATTERN_NAMES_VALUE = "pattern_names"
 DEFAULT_ENCODING = "utf-8"
 """ The default encoding value """
 
-TEMPLATES_PATH = "${out value=scaffold_attributes.relative_backend_path /}/resources/templates"
+RESOURCES_PATH = "${out value=scaffold_attributes.relative_backend_path /}/resources"
+""" The resources path """
+
+TEMPLATES_PATH = RESOURCES_PATH + "/templates"
 """ The templates path """
 
 # imports the web mvc utils
@@ -62,17 +65,8 @@ class ${out value=scaffold_attributes.model.class_name /}Controller:
         Method called upon structure initialization.
         """
 
-        # retrieves the plugin manager
-        plugin_manager = self.${out value=scaffold_attributes.variable_name /}_plugin.manager
-
-        # retrieves the ${out value=scaffold_attributes.short_name_lowercase /} plugin path
-        ${out value=scaffold_attributes.variable_name /}_plugin_path = plugin_manager.get_plugin_path_by_id(self.${out value=scaffold_attributes.variable_name /}_plugin.id)
-
-        # creates the templates path
-        templates_path = ${out value=scaffold_attributes.variable_name /}_plugin_path + "/" + TEMPLATES_PATH
-
-        # sets the templates path
-        self.set_templates_path(templates_path)
+        # sets the relative resources path
+        self.set_relative_resources_path(RESOURCES_PATH)
 
     def handle_list(self, rest_request, parameters = {}):
         # retrieves the ${out value=scaffold_attributes.model.name_lowercase /} entities
