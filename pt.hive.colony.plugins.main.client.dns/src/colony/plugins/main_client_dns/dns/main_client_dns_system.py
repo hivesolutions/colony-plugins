@@ -46,6 +46,9 @@ import colony.libs.string_buffer_util
 DEFAULT_PORT = 53
 """ The default port """
 
+DEFAULT_PERSISTENT = True
+""" The default persistent """
+
 DEFAULT_SOCKET_NAME = "datagram"
 """ The default socket name """
 
@@ -208,11 +211,12 @@ class DnsClient:
         # stops the dns client
         self._dns_client.stop_client()
 
-    def resolve_queries(self, host, port, queries, parameters = {}, socket_name = DEFAULT_SOCKET_NAME, socket_parameters = DEFAULT_SOCKET_PARAMETERS):
+    def resolve_queries(self, host, port, queries, parameters = {}, persistent = DEFAULT_PERSISTENT, socket_name = DEFAULT_SOCKET_NAME, socket_parameters = DEFAULT_SOCKET_PARAMETERS):
         # defines the connection parameters
         connection_parameters = (
             host,
             port,
+            persistent,
             socket_name,
             socket_parameters
         )
