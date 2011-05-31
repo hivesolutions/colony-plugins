@@ -616,7 +616,7 @@ class MdnsResponse:
         # increments the current index with ten bytes
         current_index += 10
 
-        # processes the answer data from the answer type and the answer length
+        # processes the answer data from the answer type, answer length and answer cache flush
         answer_data = self._process_answer_data(data, current_index, answer_type_integer, answer_data_length, answer_cache_flush)
 
         # increments the current index with the answer data length
