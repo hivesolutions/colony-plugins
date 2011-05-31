@@ -20,13 +20,6 @@ class Console${out value=scaffold_attributes.class_name /}:
             "dummy_command" : {
                 "handler" : self.process_dummy_command,
                 "description" : "runs the dummy command",
-                "arguments" : [
-                    {
-                        "name" : "dummy_command",
-                        "description" : "performs the dummy command",
-                        "values" : str,
-                        "mandatory" : True
-                    }
-                ]
+                "arguments" : [{"name" : "dummy_command", "description" : "performs the dummy command", "values" : str, "mandatory" : True}]
             }
         }

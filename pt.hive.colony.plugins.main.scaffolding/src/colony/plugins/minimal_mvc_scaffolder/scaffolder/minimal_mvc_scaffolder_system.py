@@ -87,7 +87,14 @@ TEMPLATES_BACKEND_PATH = TEMPLATES_PATH + "backend/"
 TEMPLATES_BACKEND_RESOURCES_TEMPLATES_PATH = TEMPLATES_BACKEND_PATH + "resources/templates/"
 """ The templates backend resources templates path """
 
+TEMPLATES_BACKEND_RESOURCES_EXTRAS_JS_PATH = TEMPLATES_BACKEND_PATH + "resources/extras/js/"
+""" The templates backend resources extras js path """
+
 TEMPLATES = (
+    {
+        TEMPLATE_PATH_VALUE : TEMPLATES_BACKEND_RESOURCES_EXTRAS_JS_PATH + "main.js.tpl",
+        DESTINATION_PATH_VALUE : "${relative_backend_path}/resources/extras/js/main.js"
+    },
     {
         TEMPLATE_PATH_VALUE : TEMPLATES_BACKEND_RESOURCES_TEMPLATES_PATH + "edit.html.tpl",
         DESTINATION_PATH_VALUE : "${relative_backend_path}/resources/templates/edit.html.tpl"
@@ -117,16 +124,8 @@ TEMPLATES = (
         DESTINATION_PATH_VALUE : "${relative_backend_path}/${variable_name}_entity_models.py"
     },
     {
-        TEMPLATE_PATH_VALUE : TEMPLATES_BACKEND_PATH + "exceptions.py.tpl",
-        DESTINATION_PATH_VALUE : "${relative_backend_path}/${variable_name}_exceptions.py"
-    },
-    {
         TEMPLATE_PATH_VALUE : TEMPLATES_BACKEND_PATH + "system.py.tpl",
         DESTINATION_PATH_VALUE : "${relative_backend_path}/${variable_name}_system.py"
-    },
-    {
-        TEMPLATE_PATH_VALUE : TEMPLATES_BACKEND_PATH + "test.py.tpl",
-        DESTINATION_PATH_VALUE : "${relative_backend_path}/${variable_name}_test.py"
     },
     {
         TEMPLATE_PATH_VALUE : TEMPLATES_BACKEND_PATH + "__init__.py.tpl",

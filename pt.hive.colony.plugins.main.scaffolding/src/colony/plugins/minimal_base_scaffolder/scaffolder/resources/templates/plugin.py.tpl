@@ -9,24 +9,19 @@ class ${out value=scaffold_attributes.class_name /}Plugin(colony.base.plugin_sys
         colony.base.plugin_system.CPYTHON_ENVIRONMENT
     ]
     capabilities = [
-        "_console_command_extension",
-        "plugin_test_case_bundle"
+        "_console_command_extension"
     ]
     main_modules = [
         "${out value=scaffold_attributes.backend_namespace /}.console_${out value=scaffold_attributes.variable_name /}",
-        "${out value=scaffold_attributes.backend_namespace /}.${out value=scaffold_attributes.variable_name /}_exceptions",
-        "${out value=scaffold_attributes.backend_namespace /}.${out value=scaffold_attributes.variable_name /}_system",
-        "${out value=scaffold_attributes.backend_namespace /}.${out value=scaffold_attributes.variable_name /}_test"
+        "${out value=scaffold_attributes.backend_namespace /}.${out value=scaffold_attributes.variable_name /}_system"
     ]
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
         import ${out value=scaffold_attributes.backend_namespace /}.${out value=scaffold_attributes.variable_name /}_system
         import ${out value=scaffold_attributes.backend_namespace /}.console_${out value=scaffold_attributes.variable_name /}
-        import ${out value=scaffold_attributes.backend_namespace /}.${out value=scaffold_attributes.variable_name /}_test
         self.${out value=scaffold_attributes.variable_name /} = ${out value=scaffold_attributes.backend_namespace /}.${out value=scaffold_attributes.variable_name /}_system.${out value=scaffold_attributes.class_name /}(self)
         self.console_${out value=scaffold_attributes.variable_name /} = ${out value=scaffold_attributes.backend_namespace /}.console_${out value=scaffold_attributes.variable_name /}.Console${out value=scaffold_attributes.class_name /}(self)
-        self.${out value=scaffold_attributes.variable_name /}_test = ${out value=scaffold_attributes.backend_namespace /}.${out value=scaffold_attributes.variable_name /}_test.${out value=scaffold_attributes.class_name /}Test(self)
 
     def dummy_method(self):
         return self.${out value=scaffold_attributes.variable_name /}.dummy_method()
@@ -36,6 +31,3 @@ class ${out value=scaffold_attributes.class_name /}Plugin(colony.base.plugin_sys
 
     def get_commands_map(self):
         return self.console_${out value=scaffold_attributes.variable_name /}.get_commands_map()
-
-    def get_plugin_test_case_bundle(self):
-        return self.${out value=scaffold_attributes.variable_name /}_test.get_plugin_test_case_bundle()

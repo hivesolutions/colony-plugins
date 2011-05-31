@@ -86,7 +86,7 @@ class ${out value=scaffold_attributes.class_name /}:
             (r"^${out value=scaffold_attributes.variable_name /}/${out value=scaffold_attributes.model.variable_name_plural /}/(?P<${out value=scaffold_attributes.model.variable_name /}_object_id>[0-9]+)$", self.${out value=scaffold_attributes.variable_name /}_${out value=scaffold_attributes.model.variable_name /}_controller.handle_show, "get"),
             (r"^${out value=scaffold_attributes.variable_name /}/${out value=scaffold_attributes.model.variable_name_plural /}/(?P<${out value=scaffold_attributes.model.variable_name /}_object_id>[0-9]+)/edit$", self.${out value=scaffold_attributes.variable_name /}_${out value=scaffold_attributes.model.variable_name /}_controller.handle_edit, "get"),
             (r"^${out value=scaffold_attributes.variable_name /}/${out value=scaffold_attributes.model.variable_name_plural /}/(?P<${out value=scaffold_attributes.model.variable_name /}_object_id>[0-9]+)/update$", self.${out value=scaffold_attributes.variable_name /}_${out value=scaffold_attributes.model.variable_name /}_controller.handle_update, "post"),
-            (r"^${out value=scaffold_attributes.variable_name /}/${out value=scaffold_attributes.model.variable_name_plural /}/(?P<${out value=scaffold_attributes.model.variable_name /}_object_id>[0-9]+)/delete$", self.${out value=scaffold_attributes.variable_name /}_${out value=scaffold_attributes.model.variable_name /}_controller.handle_delete, "get")
+            (r"^${out value=scaffold_attributes.variable_name /}/${out value=scaffold_attributes.model.variable_name_plural /}/(?P<${out value=scaffold_attributes.model.variable_name /}_object_id>[0-9]+)/delete$", self.${out value=scaffold_attributes.variable_name /}_${out value=scaffold_attributes.model.variable_name /}_controller.handle_delete, "post")
         )
 
     def get_communication_patterns(self):
@@ -114,7 +114,15 @@ class ${out value=scaffold_attributes.class_name /}:
         to the web mvc service.
         """
 
-        return ()
+        # retrieves the plugin manager
+        plugin_manager = self.${out value=scaffold_attributes.variable_name /}_plugin.manager
+
+        # retrieves the ${out value=scaffold_attributes.short_name_lowercase /} plugin path
+        ${out value=scaffold_attributes.variable_name /}_plugin_path = plugin_manager.get_plugin_path_by_id(self.${out value=scaffold_attributes.variable_name /}_plugin.id)
+
+        return (
+            (r"^${out value=scaffold_attributes.variable_name /}/resources/.+$", (${out value=scaffold_attributes.variable_name /}_plugin_path + "/${out value=scaffold_attributes.relative_backend_path /}/resources/extras", "${out value=scaffold_attributes.variable_name /}/resources")),
+        )
 
     def get_entity_manager_arguments(self):
         """

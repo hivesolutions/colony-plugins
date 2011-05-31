@@ -10,7 +10,6 @@ class ${out value=scaffold_attributes.class_name /}Plugin(colony.base.plugin_sys
         colony.base.plugin_system.CPYTHON_ENVIRONMENT
     ]
     capabilities = [
-        "plugin_test_case_bundle",
         "web.mvc_service"
     ]
     dependencies = [
@@ -19,17 +18,13 @@ class ${out value=scaffold_attributes.class_name /}Plugin(colony.base.plugin_sys
     main_modules = [
         "${out value=scaffold_attributes.backend_namespace /}.${out value=scaffold_attributes.variable_name /}_controllers",
         "${out value=scaffold_attributes.backend_namespace /}.${out value=scaffold_attributes.variable_name /}_entity_models",
-        "${out value=scaffold_attributes.backend_namespace /}.${out value=scaffold_attributes.variable_name /}_exceptions",
-        "${out value=scaffold_attributes.backend_namespace /}.${out value=scaffold_attributes.variable_name /}_system",
-        "${out value=scaffold_attributes.backend_namespace /}.${out value=scaffold_attributes.variable_name /}_test"
+        "${out value=scaffold_attributes.backend_namespace /}.${out value=scaffold_attributes.variable_name /}_system"
     ]
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
         import ${out value=scaffold_attributes.backend_namespace /}.${out value=scaffold_attributes.variable_name /}_system
-        import ${out value=scaffold_attributes.backend_namespace /}.${out value=scaffold_attributes.variable_name /}_test
         self.${out value=scaffold_attributes.variable_name /} = ${out value=scaffold_attributes.backend_namespace /}.${out value=scaffold_attributes.variable_name /}_system.${out value=scaffold_attributes.class_name /}(self)
-        self.${out value=scaffold_attributes.variable_name /}_test = ${out value=scaffold_attributes.backend_namespace /}.${out value=scaffold_attributes.variable_name /}_test.${out value=scaffold_attributes.class_name /}Test(self)
 
     def end_load_plugin(self):
         colony.base.plugin_system.Plugin.end_load_plugin(self)
@@ -39,9 +34,6 @@ class ${out value=scaffold_attributes.class_name /}Plugin(colony.base.plugin_sys
     def dependency_injected(self, plugin):
         colony.base.plugin_system.Plugin.dependency_injected(self, plugin)
 
-    def get_plugin_test_case_bundle(self):
-        return self.${out value=scaffold_attributes.variable_name /}_test.get_plugin_test_case_bundle()
-
     def get_patterns(self):
         return self.${out value=scaffold_attributes.variable_name /}.get_patterns()
 
@@ -49,7 +41,7 @@ class ${out value=scaffold_attributes.class_name /}Plugin(colony.base.plugin_sys
         return ()
 
     def get_resource_patterns(self):
-        return ()
+        return self.${out value=scaffold_attributes.variable_name /}.get_resource_patterns()
 
     @colony.base.decorators.plugin_inject("pt.hive.colony.plugins.web.mvc.utils")
     def set_web_mvc_utils_plugin(self, web_mvc_utils_plugin):

@@ -21,7 +21,5 @@
             "minimal_base_scaffolder/scaffolder/resources/templates/plugin.py.tpl",
             "minimal_base_scaffolder/scaffolder/resources/templates/backend/__init__.py.tpl",
             "minimal_base_scaffolder/scaffolder/resources/templates/backend/console.py.tpl",
-            "minimal_base_scaffolder/scaffolder/resources/templates/backend/exceptions.py.tpl",
-            "minimal_base_scaffolder/scaffolder/resources/templates/backend/system.py.tpl",
-            "minimal_base_scaffolder/scaffolder/resources/templates/backend/test.py.tpl"]
+            "minimal_base_scaffolder/scaffolder/resources/templates/backend/system.py.tpl"]
 }

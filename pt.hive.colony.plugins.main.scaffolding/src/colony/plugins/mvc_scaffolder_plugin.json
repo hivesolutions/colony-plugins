@@ -25,6 +25,7 @@
             "mvc_scaffolder/scaffolder/resources/templates/backend/exceptions.py.tpl",
             "mvc_scaffolder/scaffolder/resources/templates/backend/system.py.tpl",
             "mvc_scaffolder/scaffolder/resources/templates/backend/test.py.tpl",
+            "mvc_scaffolder/scaffolder/resources/templates/backend/resources/extras/js/main.js.tpl",
             "mvc_scaffolder/scaffolder/resources/templates/backend/resources/templates/edit.html.tpl",
             "mvc_scaffolder/scaffolder/resources/templates/backend/resources/templates/list.html.tpl",
             "mvc_scaffolder/scaffolder/resources/templates/backend/resources/templates/new.html.tpl",

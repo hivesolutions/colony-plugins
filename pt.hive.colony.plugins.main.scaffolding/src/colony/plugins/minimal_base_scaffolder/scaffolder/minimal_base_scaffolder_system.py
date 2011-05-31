@@ -62,16 +62,8 @@ TEMPLATES = (
         DESTINATION_PATH_VALUE : "${relative_backend_path}/console_${variable_name}.py"
     },
     {
-        TEMPLATE_PATH_VALUE : TEMPLATES_BACKEND_PATH + "exceptions.py.tpl",
-        DESTINATION_PATH_VALUE : "${relative_backend_path}/${variable_name}_exceptions.py"
-    },
-    {
         TEMPLATE_PATH_VALUE : TEMPLATES_BACKEND_PATH + "system.py.tpl",
         DESTINATION_PATH_VALUE : "${relative_backend_path}/${variable_name}_system.py"
-    },
-    {
-        TEMPLATE_PATH_VALUE :TEMPLATES_BACKEND_PATH + "test.py.tpl",
-        DESTINATION_PATH_VALUE : "${relative_backend_path}/${variable_name}_test.py"
     },
     {
         TEMPLATE_PATH_VALUE : TEMPLATES_BACKEND_PATH + "__init__.py.tpl",
