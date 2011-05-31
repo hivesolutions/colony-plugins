@@ -500,6 +500,7 @@ class MainFrame(wx.Frame):
         plugin_tree_pane_info.Position(1)
         plugin_tree_pane_info.CloseButton(False)
         plugin_tree_pane_info.MaximizeButton(False)
+        plugin_tree_pane_info.Floatable(False)
 
         # adds the plugin tree
         self._mgr.AddPane(plugin_tree, plugin_tree_pane_info)
