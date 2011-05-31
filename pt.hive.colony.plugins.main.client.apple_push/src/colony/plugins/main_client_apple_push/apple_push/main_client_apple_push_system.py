@@ -44,6 +44,9 @@ import colony.libs.string_buffer_util
 
 import main_client_apple_push_structures
 
+DEFAULT_PERSISTENT = True
+""" The default persistent """
+
 DEFAULT_SOCKET_NAME = "ssl"
 """ The default socket name """
 
@@ -141,11 +144,12 @@ class ApplePushClient:
         # stops the apple push client
         self._apple_push_client.stop_client()
 
-    def notify_device(self, host, port, device_token, payload, identifier = None, expiry = None, socket_name = DEFAULT_SOCKET_NAME, socket_parameters = DEFAULT_SOCKET_PARAMETERS):
+    def notify_device(self, host, port, device_token, payload, identifier = None, expiry = None, persistent = DEFAULT_PERSISTENT, socket_name = DEFAULT_SOCKET_NAME, socket_parameters = DEFAULT_SOCKET_PARAMETERS):
         # defines the connection parameters
         connection_parameters = (
             host,
             port,
+            persistent,
             socket_name,
             socket_parameters
         )
@@ -173,11 +177,12 @@ class ApplePushClient:
             # releases the apple push client lock
             self._apple_push_client_lock.release()
 
-    def notify_device_error(self, host, port, device_token, payload, identifier = None, expiry = None, socket_name = DEFAULT_SOCKET_NAME, socket_parameters = DEFAULT_SOCKET_PARAMETERS):
+    def notify_device_error(self, host, port, device_token, payload, identifier = None, expiry = None, persistent = DEFAULT_PERSISTENT, socket_name = DEFAULT_SOCKET_NAME, socket_parameters = DEFAULT_SOCKET_PARAMETERS):
         # defines the connection parameters
         connection_parameters = (
             host,
             port,
+            persistent,
             socket_name,
             socket_parameters
         )
@@ -215,11 +220,12 @@ class ApplePushClient:
         # returns the response
         return response
 
-    def obtain_feedback(self, host, port, socket_name = DEFAULT_SOCKET_NAME, socket_parameters = DEFAULT_SOCKET_PARAMETERS):
+    def obtain_feedback(self, host, port, persistent = DEFAULT_PERSISTENT, socket_name = DEFAULT_SOCKET_NAME, socket_parameters = DEFAULT_SOCKET_PARAMETERS):
         # defines the connection parameters
         connection_parameters = (
             host,
             port,
+            persistent,
             socket_name,
             socket_parameters
         )
