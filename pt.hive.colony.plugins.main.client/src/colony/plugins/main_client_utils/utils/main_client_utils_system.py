@@ -313,9 +313,9 @@ class AbstractClient:
         @return: The created client connection.
         """
 
-        # retrieves the host, the port, the socket name and
+        # retrieves the host, the port, the persistent, the socket name and
         # the socket parameters from the connection tuple
-        host, port, socket_name, socket_parameters = connection_tuple
+        host, port, persistent, socket_name, socket_parameters = connection_tuple
 
         # creates the address tuple
         address = (
@@ -328,7 +328,7 @@ class AbstractClient:
         client_connection_socket = self._get_socket(socket_name, socket_parameters)
 
         # retrieves the client connection
-        client_connection = ClientConnection(self.client_plugin, self, client_connection_socket, address, socket_name, socket_parameters, self.request_timeout, self.response_timeout, self.chunk_size)
+        client_connection = ClientConnection(self.client_plugin, self, client_connection_socket, address, persistent, socket_name, socket_parameters, self.request_timeout, self.response_timeout, self.chunk_size)
 
         # returns the client connection
         return client_connection
@@ -387,7 +387,7 @@ class AbstractClient:
 
         # sets the last element of the connection tuple hashable as the
         # items tuple instead of the dictionary in order to avoid unhashable problems
-        connection_tuple_hashable[3] = tuple(connection_tuple_hashable[3].items())
+        connection_tuple_hashable[4] = tuple(connection_tuple_hashable[4].items())
 
         # converts the connection tuple hashable into a tuple
         # in order to hashable
@@ -413,6 +413,9 @@ class ClientConnection:
 
     connection_address = None
     """ The connection address """
+
+    connection_persistent = True
+    """ The connection persistent """
 
     connection_socket_name = None
     """ The connection socket name """
@@ -456,7 +459,7 @@ class ClientConnection:
     _write_lock = None
     """ The write lock """
 
-    def __init__(self, client_plugin, client, connection_socket, connection_address, connection_socket_name, connection_socket_parameters, connection_request_timeout, connection_response_timeout, connection_chunk_size):
+    def __init__(self, client_plugin, client, connection_socket, connection_address, connection_persistent, connection_socket_name, connection_socket_parameters, connection_request_timeout, connection_response_timeout, connection_chunk_size):
         """
         Constructor of the class.
 
@@ -468,6 +471,8 @@ class ClientConnection:
         @param connection_socket: The connection socket.
         @type connection_address: Tuple
         @param connection_address: The connection address.
+        @type connection_persistent: bool
+        @param connection_persistent: If the connection meant to be persistent.
         @type connection_socket_name: String
         @param connection_socket_name: The connection socket name.
         @type connection_socket_parameters: String
@@ -484,6 +489,7 @@ class ClientConnection:
         self.client = client
         self.connection_socket = connection_socket
         self.connection_address = connection_address
+        self.connection_persistent = connection_persistent
         self.connection_socket_name = connection_socket_name
         self.connection_socket_parameters = connection_socket_parameters
         self.connection_request_timeout = connection_request_timeout
@@ -509,7 +515,8 @@ class ClientConnection:
         """
 
         # connects the connection socket to the connection address
-        self.connection_socket.connect(self.connection_address)
+        # the connection is only created in case the connection is persistent
+        self.connection_persistent and self.connection_socket.connect(self.connection_address)
 
         # sets the socket to non blocking mode
         self.connection_socket.setblocking(0)
@@ -950,8 +957,9 @@ class ClientConnection:
             # sent through it
             elif not selected_values[1] == []:
                 try:
-                    # sends the data in chunks
-                    number_bytes_sent = self.connection_socket.send(message)
+                    # sends the data in chunks, the send command is created based on the
+                    # current persistent state
+                    number_bytes_sent = self.connection_persistent and self.connection_socket.send(message) or self.connection_socket.sendto(message, self.connection_address)
                 except BaseException, exception:
                     # in case the number of retries (available)
                     # is greater than zero
