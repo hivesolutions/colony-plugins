@@ -521,6 +521,7 @@ class WebMvcUtils:
         # retrieves the expected parameter values
         default_database_prefix = parameters.get("default_database_prefix", DEFAULT_DATABASE_PREFIX)
         default_database_sufix = parameters.get("default_database_sufix", DEFAULT_DATABASE_SUFFIX)
+        configuration_plugin = parameters.get("configuration_plugin", plugin)
 
         # retrieves the system database file name resource
         system_database_filename_resource = resource_manager_plugin.get_resource("system.database.file_name")
@@ -538,11 +539,11 @@ class WebMvcUtils:
         # creates the system database file name value using the prefix and suffix values
         system_database_filename = default_database_prefix + system_database_filename_suffix
 
-        # retrieves the plugin id
-        plugin_id = plugin.id
+        # retrieves the configuration plugin id
+        configuration_plugin_id = configuration_plugin.id
 
-        # creates the database file path using the plugin id and the system database filename
-        database_file_path = "%configuration:" + plugin_id + "%/" + system_database_filename
+        # creates the database file path using the configuration plugin id and the system database filename
+        database_file_path = "%configuration:" + configuration_plugin_id + "%/" + system_database_filename
 
         # sets the file path in the entity manager arguments
         entity_manager_arguments[CONNECTION_PARAMETERS_VALUE][FILE_PATH_VALUE] = database_file_path
