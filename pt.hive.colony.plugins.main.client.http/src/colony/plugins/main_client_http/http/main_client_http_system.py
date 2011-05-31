@@ -199,6 +199,9 @@ CONTENT_TYPE_CHARSET_VALUE = "content_type_charset"
 DEFAULT_PORTS = (80, 443)
 """ The tuple of default ports """
 
+DEFAULT_PERSISTENT = True
+""" The default persistent """
+
 DEFAULT_SOCKET_PARAMETERS = {}
 """ The default socket parameters """
 
@@ -381,6 +384,9 @@ class HttpClient:
         # extends the parameters map with the options map
         parameters = colony.libs.map_util.map_extend(parameters, options_map)
 
+        # retrieves the persistent (default)
+        persistent = DEFAULT_PERSISTENT
+
         # retrieves the socket name from the protocol socket map
         socket_name = PROTOCOL_SOCKET_NAME_MAP.get(protocol, None)
 
@@ -391,6 +397,7 @@ class HttpClient:
         connection_parameters = (
             host,
             port,
+            persistent,
             socket_name,
             socket_parameters
         )
