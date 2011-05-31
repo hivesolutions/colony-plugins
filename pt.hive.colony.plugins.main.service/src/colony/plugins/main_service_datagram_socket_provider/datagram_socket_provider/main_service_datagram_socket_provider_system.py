@@ -45,6 +45,9 @@ PROVIDER_NAME = "datagram"
 FAMILY_VALUE = "family"
 """ The family value """
 
+MULTICAST_ADDRESS_VALUE = "multicast_address"
+""" The multicast address value """
+
 class MainServiceDatagramSocketProvider:
     """
     The main service datagram socket provider class.
@@ -105,8 +108,43 @@ class MainServiceDatagramSocketProvider:
         # tries to retrieve the socket family
         socket_family = parameters.get(FAMILY_VALUE, socket.AF_INET)
 
+        # tries to retrieve the multicast value
+        multicast_address = parameters.get(MULTICAST_ADDRESS_VALUE, None)
+
         # creates the datagram socket
         datagram_socket = socket.socket(socket_family, socket.SOCK_DGRAM)
 
+        # wraps the socket for multicast
+        multicast_address and self._wrap_socket_multicast(datagram_socket, multicast_address)
+
         # returns the datagram socket
         return datagram_socket
+
+    def _wrap_socket_multicast(self, base_socket, multicast_address):
+        """
+        Wraps the given base socket in to a multicast supported layer.
+
+        @type base_socket: Socket
+        @param base_socket: The base socket to be wrapped.
+        @type multicast_address: Tuple
+        @param multicast_address: The multicast address to be used.
+        """
+
+        # unpacks the multicast address into host and port
+        multicast_host, multicast_port =  multicast_address
+
+        # sets the socket for reuse
+        base_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+
+        # sets the datagram socket options
+        base_socket.setsockopt(socket.IPPROTO_IP, socket.IP_MULTICAST_TTL, 32)
+        base_socket.setsockopt(socket.IPPROTO_IP, socket.IP_MULTICAST_LOOP, 1)
+
+        # binds the datagram socket
+        base_socket.bind(("", multicast_port))
+
+        # retrieves the default host (name)
+        host = socket.gethostbyname(socket.gethostname())
+
+        base_socket.setsockopt(socket.SOL_IP, socket.IP_MULTICAST_IF, socket.inet_aton(host))
+        base_socket.setsockopt(socket.IPPROTO_IP, socket.IP_ADD_MEMBERSHIP, socket.inet_aton(multicast_host) + socket.inet_aton(host));
