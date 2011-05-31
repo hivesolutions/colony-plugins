@@ -39,6 +39,9 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 import web_mvc_utils_exceptions
 
+ERROR_STATUS_CODE = 500
+""" The error status code """
+
 VALIDATE_VALUE = "validate"
 """ The validate value """
 
@@ -322,6 +325,9 @@ def serialize_exceptions(serialization_parameters = None):
 
                 # retrieves the exception map for the exception
                 exception_map = self.get_exception_map(exception)
+
+                # sets the error status code
+                self.set_status_code(rest_request, ERROR_STATUS_CODE)
 
                 # in case the serializer is set
                 if serializer:

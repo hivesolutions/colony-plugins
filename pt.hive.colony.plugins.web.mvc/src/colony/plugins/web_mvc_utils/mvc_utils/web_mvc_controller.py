@@ -58,6 +58,9 @@ DEFAULT_ENCODING = "utf-8"
 DEFAULT_LOCALE = "en_us"
 """ The default locale """
 
+DEFAULT_STATUS_CODE = 200
+""" The default status code """
+
 DEFAULT_ALIAS_LOCALES = {}
 """ The default alias locales """
 
@@ -764,6 +767,19 @@ def set_contents(self, rest_request, contents = "", content_type = DEFAULT_CONTE
 
     # flushes the rest request
     rest_request.flush()
+
+def set_status_code(setf, rest_request, status_code = DEFAULT_STATUS_CODE):
+    """
+    Sets the given status code in the given rest request.
+
+    @type rest_request: RestRequest
+    @param rest_request: The rest request to be set with the status code.
+    @type contents: String
+    @param contents: The status code to set in the rest request.
+    """
+
+    # sets the status code for the rest request
+    rest_request.set_status_code(status_code)
 
 def redirect(self, rest_request, target, status_code = 302, quote = True):
     """
