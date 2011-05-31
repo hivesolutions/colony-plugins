@@ -43,13 +43,21 @@ import threading
 import colony.libs.map_util
 import colony.libs.string_buffer_util
 
-DEFAULT_PORT = 53
+DEFAULT_HOST = "224.0.0.251"
 """ The default port """
+
+DEFAULT_PORT = 5353
+""" The default port """
+
+DEFAULT_PERSISTENT = False
+""" The default persistent """
 
 DEFAULT_SOCKET_NAME = "datagram"
 """ The default socket name """
 
-DEFAULT_SOCKET_PARAMETERS = {}
+DEFAULT_SOCKET_PARAMETERS = {
+    "multicast_address" : (DEFAULT_HOST, DEFAULT_PORT)
+}
 """ The default socket parameters """
 
 REQUEST_TIMEOUT = 10
@@ -83,7 +91,10 @@ TYPES_MAP = {
     "HINFO" : 0x0d,
     "MINFO" : 0x0e,
     "MX" : 0x0f,
-    "TXT" : 0x10
+    "TXT" : 0x10,
+    "AAAA" : 0x1c,
+    "SRV" : 0x21,
+    "NSEC" : 0x2f
 }
 """ The map associating the type string with the integer value """
 
@@ -103,7 +114,10 @@ TYPES_REVERSE_MAP = {
     0x0d : "HINFO",
     0x0e : "MINFO",
     0x0f : "MX",
-    0x10 : "TXT"
+    0x10 : "TXT",
+    0x1c : "AAAA",
+    0x21 : "SRV",
+    0x2f : "NSEC"
 }
 """ The map associating the type integer with the string value """
 
@@ -208,11 +222,12 @@ class MdnsClient:
         # stops the mdns client
         self._mdns_client.stop_client()
 
-    def resolve_queries(self, host, port, queries, parameters = {}, socket_name = DEFAULT_SOCKET_NAME, socket_parameters = DEFAULT_SOCKET_PARAMETERS):
+    def resolve_queries(self, queries, parameters = {}, persistent = DEFAULT_PERSISTENT, socket_name = DEFAULT_SOCKET_NAME, socket_parameters = DEFAULT_SOCKET_PARAMETERS):
         # defines the connection parameters
         connection_parameters = (
-            host,
-            port,
+            DEFAULT_HOST,
+            DEFAULT_PORT,
+            persistent,
             socket_name,
             socket_parameters
         )
@@ -297,14 +312,6 @@ class MdnsClient:
         @rtype: int
         @return: The newly generated transaction id.
         """
-
-        # in case the limit is reached
-        if self.current_transaction_id == 0xffff:
-            # resets the current transaction id
-            self.current_transaction_id = 0x0000
-
-        # increments the current transaction id
-        self.current_transaction_id += 1
 
         # returns the current transaction id
         return self.current_transaction_id
@@ -600,11 +607,17 @@ class MdnsResponse:
         # and data length integer values
         answer_type_integer, answer_class_integer, answer_time_to_live, answer_data_length = struct.unpack_from("!HHIH", data, current_index)
 
+        # filters the answer class integer value
+        answer_class_integer = answer_class_integer & 0x7fff
+
+        # filters the answer class integer to retrieve the answer cache flush
+        answer_cache_flush =  (answer_class_integer & 0x8000) >> 15
+
         # increments the current index with ten bytes
         current_index += 10
 
         # processes the answer data from the answer type and the answer length
-        answer_data = self._process_answer_data(data, current_index, answer_type_integer, answer_data_length)
+        answer_data = self._process_answer_data(data, current_index, answer_type_integer, answer_data_length, answer_cache_flush)
 
         # increments the current index with the answer data length
         current_index += answer_data_length
@@ -630,7 +643,7 @@ class MdnsResponse:
             current_index
         )
 
-    def _process_answer_data(self, data, current_index, answer_type_integer, answer_data_length):
+    def _process_answer_data(self, data, current_index, answer_type_integer, answer_data_length, answer_cache_flush):
         """
         Processes the answer data according to the mdns protocol
         specification.
@@ -645,14 +658,43 @@ class MdnsResponse:
         @param answer_type_integer: The answer type in integer mode.
         @type answer_data_length: int
         @param answer_data_length: The length of the answer data.
+        @type answer_cache_flush: int
+        @param answer_cache_flush: If the answer data should be flushed.
         @rtype: Object
         @return: The "processed" answer data.
         """
 
-        # in case the answer is of type ns or cname
-        if answer_type_integer in (0x02, 0x05):
+        # in case the answer is of type a or ns
+        if answer_type_integer in (0x01, 0x02):
+            # in case the is ipv4 (four bytes)
+            if answer_data_length == 4:
+                raw_answer_data_bytes = struct.unpack_from("!" + str(answer_data_length) + "B", data, current_index)
+                raw_answer_data_string = [str(value) for value in raw_answer_data_bytes]
+                answer_data = ".".join(raw_answer_data_string)
+            # in case the is ipv6 (sixteen bytes)
+            elif answer_data_length == 16:
+                raw_answer_data_shorts = struct.unpack_from("!" + str(answer_data_length / 2) + "H", data, current_index)
+                raw_answer_data_string = ["%x" % value for value in raw_answer_data_shorts if value > 0]
+                answer_data = ":".join(raw_answer_data_string)
+        # in case the answer is of type ns, cname, ptr or txt
+        elif answer_type_integer in (0x02, 0x05, 0x0c, 0x10):
             # retrieves the answer data as a joined name
             answer_data, _current_index = self._get_name_joined(data, current_index)
+        # in case the answer is of type srv
+        elif answer_type_integer in (0x21,):
+            # retrieves the priority the weight and the port
+            priority, weight, port = struct.unpack_from("!HHH", data, current_index)
+
+            # retrieves the answer data name as a joined name
+            answer_data_name, _current_index = self._get_name_joined(data, current_index + 6)
+
+            # sets the answer data tuple
+            answer_data = (
+                priority,
+                weight,
+                port,
+                answer_data_name
+            )
         # in case the answer is of type mx
         elif answer_type_integer in (0x0f,):
             # retrieves the answer data preference
@@ -666,20 +708,15 @@ class MdnsResponse:
                 answer_data_preference,
                 answer_data_name
             )
+        # in case the answer is of type aaaa
+        elif answer_type_integer in (0x1c,):
+            raw_answer_data_shorts = struct.unpack_from("!" + str(answer_data_length / 2) + "H", data, current_index)
+            raw_answer_data_string = ["%x" % value for value in raw_answer_data_shorts if value > 0]
+            answer_data = ":".join(raw_answer_data_string)
+        # otherwise it's a generic value
         else:
-            # in case the is ipv4 (four bytes)
-            if answer_data_length == 4:
-                raw_answer_data_bytes = struct.unpack_from("!" + str(answer_data_length) + "B", data, current_index)
-                raw_answer_data_string = [str(value) for value in raw_answer_data_bytes]
-                answer_data = ".".join(raw_answer_data_string)
-            # in case the is ipv6 (sixteen bytes)
-            elif answer_data_length == 16:
-                raw_answer_data_shorts = struct.unpack_from("!" + str(answer_data_length / 2) + "H", data, current_index)
-                raw_answer_data_string = ["%h" % value for value in raw_answer_data_shorts]
-                answer_data = ":".join(raw_answer_data_string)
-            else:
-                # sets the answer data as the raw answer data
-                answer_data = data[current_index:current_index + answer_data_length]
+            # sets the answer data as the raw answer data
+            answer_data = data[current_index:current_index + answer_data_length]
 
         # returns the answer data
         return answer_data
@@ -737,7 +774,7 @@ class MdnsResponse:
             # checks if the name already exists (according to the message compression)
             existing_resource = partial_name_length & 0xc0 == 0xc0
 
-            # in case the resource exists
+            # in case the resource exists (message compression reference)
             if existing_resource:
                 # sets the partial name length as the
                 # first offset byte
@@ -762,6 +799,7 @@ class MdnsResponse:
                     name_items,
                     current_index
                 )
+            # otherwise it's raw data
             else:
                 # retrieves the partial name from the data
                 partial_name = data[current_index + 1:current_index + partial_name_length + 1]
