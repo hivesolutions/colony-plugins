@@ -1,7 +1,7 @@
 <html>
     <body>
         <h1>${out value=scaffold_attributes.model.name /}</h1>
-        <form method="post">
+        <form action="$\{out_none value=base_path /}${out value=scaffold_attributes.model.variable_name_plural /}" method="post">
             <table>
                 <thead>
                     <th>

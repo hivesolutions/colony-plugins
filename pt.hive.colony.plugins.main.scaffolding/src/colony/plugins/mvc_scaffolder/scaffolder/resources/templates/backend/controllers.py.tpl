@@ -72,11 +72,11 @@ class ${out value=scaffold_attributes.model.class_name /}Controller:
         # retrieves the template file
         template_file = self.retrieve_template_file("list.html.tpl")
 
-        # applies the base path to the template file
-        self.apply_base_path_template_file(rest_request, template_file)
-
         # assigns the ${out value=scaffold_attributes.model.name_lowercase /} entities to the template file
         template_file.assign("${out value=scaffold_attributes.model.variable_name_plural /}", ${out value=scaffold_attributes.model.variable_name /}_entities)
+
+        # applies the base path to the template file
+        self.apply_base_path_template_file(rest_request, template_file)
 
         # processes the template file and sets the request contents
         self.process_set_contents(rest_request, template_file)
@@ -100,12 +100,18 @@ class ${out value=scaffold_attributes.model.class_name /}Controller:
         # assigns the ${out value=scaffold_attributes.model.name_lowercase /} entity to the template file
         template_file.assign("${out value=scaffold_attributes.model.variable_name /}", ${out value=scaffold_attributes.model.variable_name /}_entity)
 
+        # applies the base path to the template file
+        self.apply_base_path_template_file(rest_request, template_file)
+
         # processes the template file and sets the request contents
         self.process_set_contents(rest_request, template_file)
 
     def handle_new(self, rest_request, parameters = {}):
         # retrieves the template file
         template_file = self.retrieve_template_file("new.html.tpl")
+
+        # applies the base path to the template file
+        self.apply_base_path_template_file(rest_request, template_file)
 
         # processes the template file and sets the request contents
         self.process_set_contents(rest_request, template_file)
@@ -141,6 +147,9 @@ class ${out value=scaffold_attributes.model.class_name /}Controller:
 
         # assigns the ${out value=scaffold_attributes.model.name_lowercase /} to the template file
         template_file.assign("${out value=scaffold_attributes.model.variable_name /}", ${out value=scaffold_attributes.model.variable_name /}_entity)
+
+        # applies the base path to the template file
+        self.apply_base_path_template_file(rest_request, template_file)
 
         # processes the template file and sets the request contents
         self.process_set_contents(rest_request, template_file)

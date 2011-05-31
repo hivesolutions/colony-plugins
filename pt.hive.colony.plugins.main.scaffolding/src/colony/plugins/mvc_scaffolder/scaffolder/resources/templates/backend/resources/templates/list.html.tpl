@@ -21,9 +21,9 @@
                             </td>
                         ${/foreach}
                         <td>
-                            <a href="${out value=scaffold_attributes.model.variable_name_plural /}/$\{out value=${out value=scaffold_attributes.model.variable_name /}.object_id /}">show</a>
-                            <a href="${out value=scaffold_attributes.model.variable_name_plural /}/$\{out value=${out value=scaffold_attributes.model.variable_name /}.object_id /}/edit">edit</a>
-                            <a href="${out value=scaffold_attributes.model.variable_name_plural /}/$\{out value=${out value=scaffold_attributes.model.variable_name /}.object_id /}/delete">delete</a>
+                            <a href="$\{out_none value=base_path /}${out value=scaffold_attributes.model.variable_name_plural /}/$\{out value=${out value=scaffold_attributes.model.variable_name /}.object_id /}">show</a>
+                            <a href="$\{out_none value=base_path /}${out value=scaffold_attributes.model.variable_name_plural /}/$\{out value=${out value=scaffold_attributes.model.variable_name /}.object_id /}/edit">edit</a>
+                            <a href="$\{out_none value=base_path /}${out value=scaffold_attributes.model.variable_name_plural /}/$\{out value=${out value=scaffold_attributes.model.variable_name /}.object_id /}/delete">delete</a>
                         </td>
                     </tr>
                 $\{/foreach}
