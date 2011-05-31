@@ -64,6 +64,7 @@
             "base_bundles/bundles/specifications/main_client_dns_bundle.json",
             "base_bundles/bundles/specifications/main_client_http_bundle.json",
             "base_bundles/bundles/specifications/main_client_ldap_bundle.json",
+            "base_bundles/bundles/specifications/main_client_mdns_bundle.json",
             "base_bundles/bundles/specifications/main_client_smtp_bundle.json",
             "base_bundles/bundles/specifications/main_console_bundle.json",
             "base_bundles/bundles/specifications/main_gui_bundle.json",

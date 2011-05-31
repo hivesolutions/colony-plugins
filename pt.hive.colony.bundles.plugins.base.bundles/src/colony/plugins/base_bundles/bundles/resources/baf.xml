@@ -94,6 +94,7 @@
                         <specification_file>$base{plugin_directory}/base_bundles/bundles/specifications/main_client_dns_bundle.json</specification_file>
                         <specification_file>$base{plugin_directory}/base_bundles/bundles/specifications/main_client_http_bundle.json</specification_file>
                         <specification_file>$base{plugin_directory}/base_bundles/bundles/specifications/main_client_ldap_bundle.json</specification_file>
+                        <specification_file>$base{plugin_directory}/base_bundles/bundles/specifications/main_client_mdns_bundle.json</specification_file>
                         <specification_file>$base{plugin_directory}/base_bundles/bundles/specifications/main_client_smtp_bundle.json</specification_file>
                         <specification_file>$base{plugin_directory}/base_bundles/bundles/specifications/main_console_bundle.json</specification_file>
                         <specification_file>$base{plugin_directory}/base_bundles/bundles/specifications/main_gui_bundle.json</specification_file>
@@ -325,6 +326,10 @@
                         <specification>
                             <type>bundle</type>
                             <specification_file>$base{plugin_directory}/base_bundles/bundles/specifications/main_client_ldap_bundle.json</specification_file>
+                        </specification>
+                        <specification>
+                            <type>bundle</type>
+                            <specification_file>$base{plugin_directory}/base_bundles/bundles/specifications/main_client_mdns_bundle.json</specification_file>
                         </specification>
                         <specification>
                             <type>bundle</type>
