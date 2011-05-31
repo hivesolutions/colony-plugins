@@ -48,6 +48,9 @@ import main_client_smtp_exceptions
 DEFAULT_PORT = 25
 """ The default port """
 
+DEFAULT_PERSISTENT = True
+""" The default persistent """
+
 DEFAULT_SOCKET_NAME = "normal"
 """ The default socket name """
 
@@ -162,11 +165,12 @@ class SmtpClient:
         # stops the smtp client
         self._smtp_client.stop_client()
 
-    def send_mail(self, host, port, sender, recipients_list, message, parameters = {}, socket_name = DEFAULT_SOCKET_NAME, socket_parameters = DEFAULT_SOCKET_PARAMETERS):
+    def send_mail(self, host, port, sender, recipients_list, message, parameters = {}, persistent = DEFAULT_PERSISTENT, socket_name = DEFAULT_SOCKET_NAME, socket_parameters = DEFAULT_SOCKET_PARAMETERS):
         # defines the connection parameters
         connection_parameters = (
             host,
             port,
+            persistent,
             socket_name,
             socket_parameters
         )
