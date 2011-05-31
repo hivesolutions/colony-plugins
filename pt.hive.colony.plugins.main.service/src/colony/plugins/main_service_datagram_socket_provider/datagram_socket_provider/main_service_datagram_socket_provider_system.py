@@ -48,6 +48,15 @@ FAMILY_VALUE = "family"
 MULTICAST_ADDRESS_VALUE = "multicast_address"
 """ The multicast address value """
 
+MULTICAST_PARAMETERS_VALUE = "multicast_parameters"
+""" The multicast parameters value """
+
+TTL_VALUE = "ttl"
+""" The ttl value """
+
+DEFAULT_MULTICAST_TTL = 32
+""" The default multicast ttl """
+
 class MainServiceDatagramSocketProvider:
     """
     The main service datagram socket provider class.
@@ -111,16 +120,19 @@ class MainServiceDatagramSocketProvider:
         # tries to retrieve the multicast value
         multicast_address = parameters.get(MULTICAST_ADDRESS_VALUE, None)
 
+        # tries to retrieve the multicast parameters
+        multicast_parameters = parameters.get(MULTICAST_PARAMETERS_VALUE, {})
+
         # creates the datagram socket
         datagram_socket = socket.socket(socket_family, socket.SOCK_DGRAM)
 
         # wraps the socket for multicast
-        multicast_address and self._wrap_socket_multicast(datagram_socket, multicast_address)
+        multicast_address and self._wrap_socket_multicast(datagram_socket, multicast_address, multicast_parameters)
 
         # returns the datagram socket
         return datagram_socket
 
-    def _wrap_socket_multicast(self, base_socket, multicast_address):
+    def _wrap_socket_multicast(self, base_socket, multicast_address, multicast_parameters):
         """
         Wraps the given base socket in to a multicast supported layer.
 
@@ -128,16 +140,21 @@ class MainServiceDatagramSocketProvider:
         @param base_socket: The base socket to be wrapped.
         @type multicast_address: Tuple
         @param multicast_address: The multicast address to be used.
+        @type multicast_parameters: Dictionary
+        @param multicast_parameters: The parameters for multicast.
         """
 
         # unpacks the multicast address into host and port
-        multicast_host, multicast_port =  multicast_address
+        multicast_host, multicast_port = multicast_address
+
+        # retrieves the multicast parameters
+        multicast_ttl = multicast_parameters.get(TTL_VALUE, DEFAULT_MULTICAST_TTL)
 
         # sets the socket for reuse
         base_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
 
         # sets the datagram socket options
-        base_socket.setsockopt(socket.IPPROTO_IP, socket.IP_MULTICAST_TTL, 32)
+        base_socket.setsockopt(socket.IPPROTO_IP, socket.IP_MULTICAST_TTL, multicast_ttl)
         base_socket.setsockopt(socket.IPPROTO_IP, socket.IP_MULTICAST_LOOP, 1)
 
         # binds the datagram socket
