@@ -608,7 +608,7 @@ class DnsResponse:
         answer_class_integer = answer_class_integer & 0x7fff
 
         # filters the answer class integer to retrieve the answer cache flush
-        answer_cache_flush =  (answer_class_integer & 0x8000) >> 15
+        answer_cache_flush = (answer_class_integer & 0x8000) >> 15
 
         # increments the current index with ten bytes
         current_index += 10
@@ -661,18 +661,12 @@ class DnsResponse:
         @return: The "processed" answer data.
         """
 
-        # in case the answer is of type a or ns
-        if answer_type_integer in (0x01, 0x02):
-            # in case the is ipv4 (four bytes)
-            if answer_data_length == 4:
-                raw_answer_data_bytes = struct.unpack_from("!" + str(answer_data_length) + "B", data, current_index)
-                raw_answer_data_string = [str(value) for value in raw_answer_data_bytes]
-                answer_data = ".".join(raw_answer_data_string)
-            # in case the is ipv6 (sixteen bytes)
-            elif answer_data_length == 16:
-                raw_answer_data_shorts = struct.unpack_from("!" + str(answer_data_length / 2) + "H", data, current_index)
-                raw_answer_data_string = ["%x" % value for value in raw_answer_data_shorts if value > 0]
-                answer_data = ":".join(raw_answer_data_string)
+        # in case the answer is of type a
+        if answer_type_integer in (0x01,):
+            # processes the ipv4 address value
+            raw_answer_data_bytes = struct.unpack_from("!" + str(answer_data_length) + "B", data, current_index)
+            raw_answer_data_string = [str(value) for value in raw_answer_data_bytes]
+            answer_data = ".".join(raw_answer_data_string)
         # in case the answer is of type ns, cname, ptr or txt
         elif answer_type_integer in (0x02, 0x05, 0x0c, 0x10):
             # retrieves the answer data as a joined name
@@ -707,6 +701,7 @@ class DnsResponse:
             )
         # in case the answer is of type aaaa
         elif answer_type_integer in (0x1c,):
+            # processes the ipv6 address value
             raw_answer_data_shorts = struct.unpack_from("!" + str(answer_data_length / 2) + "H", data, current_index)
             raw_answer_data_string = ["%x" % value for value in raw_answer_data_shorts if value > 0]
             answer_data = ":".join(raw_answer_data_string)
