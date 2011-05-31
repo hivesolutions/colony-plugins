@@ -48,6 +48,9 @@ import main_client_ldap_exceptions
 DEFAULT_PORT = 389
 """ The default port """
 
+DEFAULT_PERSISTENT = True
+""" The default persistent """
+
 DEFAULT_SOCKET_NAME = "normal"
 """ The default socket name """
 
@@ -292,11 +295,12 @@ class LdapClient:
         # stops the ldap client
         self._ldap_client.stop_client()
 
-    def connect(self, host, port = DEFAULT_PORT, socket_name = DEFAULT_SOCKET_NAME, socket_parameters = DEFAULT_SOCKET_PARAMETERS, name = "", password = ""):
+    def connect(self, host, port = DEFAULT_PORT, persistent = DEFAULT_PERSISTENT, socket_name = DEFAULT_SOCKET_NAME, socket_parameters = DEFAULT_SOCKET_PARAMETERS, name = "", password = ""):
         # defines the connection parameters
         connection_parameters = (
             host,
             port,
+            persistent,
             socket_name,
             socket_parameters
         )
