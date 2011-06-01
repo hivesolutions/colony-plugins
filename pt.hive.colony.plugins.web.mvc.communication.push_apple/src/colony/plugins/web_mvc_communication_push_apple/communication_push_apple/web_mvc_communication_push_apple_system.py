@@ -37,8 +37,6 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-import os
-
 class WebMvcCommunicationPushApple:
     """
     The web mvc communication push apple class.
@@ -46,12 +44,6 @@ class WebMvcCommunicationPushApple:
 
     web_mvc_communication_push_apple_plugin = None
     """ The web mvc communication push apple plugin """
-
-    web_mvc_communication_push_apple_controller = None
-    """ The web mvc communication push apple controller """
-
-    web_mvc_communication_push_apple_controllers = None
-    """ The web mvc communication push apple controllers """
 
     notification_handler_apple_push_plugins_map = {}
     """ The notification handler apple push plugins map """
@@ -81,19 +73,8 @@ class WebMvcCommunicationPushApple:
         # retrieves the web mvc utils plugin
         web_mvc_utils_plugin = self.web_mvc_communication_push_apple_plugin.web_mvc_utils_plugin
 
-        # retrieves the current directory path
-        current_directory_path = os.path.dirname(__file__)
-
-        # loads the mvc utils in the web mvc communication push apple controllers module
-        web_mvc_communication_push_apple_controllers = web_mvc_utils_plugin.import_module_mvc_utils("web_mvc_communication_push_apple_controllers", "web_mvc_communication_push_apple.communication_push_apple", current_directory_path)
-
-        # creates the web mvc manager communication push apple controller
-        self.web_mvc_communication_push_apple_controller = web_mvc_utils_plugin.create_controller(web_mvc_communication_push_apple_controllers.WebMvcCommunicationPushAppleController, [self.web_mvc_communication_push_apple_plugin, self], {})
-
-        # creates the web mvc communication push apple controllers
-        self.web_mvc_communication_push_apple_controllers = {
-            "main" : self.web_mvc_communication_push_apple_controller
-        }
+        # creates the controllers for the web mvc communication push apple controllers module
+        web_mvc_utils_plugin.create_controllers("web_mvc_communication_push_apple.communication_push_apple.web_mvc_communication_push_apple_controllers", self, self.web_mvc_communication_push_apple_plugin, "web_mvc_communication_push_apple")
 
     def get_patterns(self):
         """
@@ -107,11 +88,11 @@ class WebMvcCommunicationPushApple:
         """
 
         return (
-            (r"^web_mvc_communication_push_apple/?$", self.web_mvc_communication_push_apple_controller.handle_show_json, "get"),
-            (r"^web_mvc_communication_push_apple/register$", self.web_mvc_communication_push_apple_controller.handle_register_json, "post", "json"),
-            (r"^web_mvc_communication_push_apple/unregister$", self.web_mvc_communication_push_apple_controller.handle_unregister_json, "post", "json"),
-            (r"^web_mvc_communication_push_apple/load_profile$", self.web_mvc_communication_push_apple_controller.handle_load_profile_json, "post", "json"),
-            (r"^web_mvc_communication_push_apple/unload_profile$", self.web_mvc_communication_push_apple_controller.handle_unload_profile_json, "post", "json")
+            (r"^web_mvc_communication_push_apple/?$", self.web_mvc_communication_push_apple_main_controller.handle_show_json, "get"),
+            (r"^web_mvc_communication_push_apple/register$", self.web_mvc_communication_push_apple_main_controller.handle_register_json, "post", "json"),
+            (r"^web_mvc_communication_push_apple/unregister$", self.web_mvc_communication_push_apple_main_controller.handle_unregister_json, "post", "json"),
+            (r"^web_mvc_communication_push_apple/load_profile$", self.web_mvc_communication_push_apple_main_controller.handle_load_profile_json, "post", "json"),
+            (r"^web_mvc_communication_push_apple/unload_profile$", self.web_mvc_communication_push_apple_main_controller.handle_unload_profile_json, "post", "json")
         )
 
     def get_communication_patterns(self):

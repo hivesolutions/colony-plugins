@@ -107,7 +107,7 @@ MAXIMUM_PAYLOAD_SIZE = 256
 # imports the web mvc utils
 web_mvc_utils = colony.libs.importer_util.__importer__(WEB_MVC_UTILS_VALUE)
 
-class WebMvcCommunicationPushAppleController:
+class MainController:
     """
     The web mvc communication push apple controller.
     """
