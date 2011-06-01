@@ -84,7 +84,7 @@ PATTERN_NAMES_VALUE = "pattern_names"
 # imports the web mvc utils
 web_mvc_utils = colony.libs.importer_util.__importer__(WEB_MVC_UTILS_VALUE)
 
-class WebMvcWikiMainController:
+class MainController:
     """
     The web mvc wiki main controller.
     """

@@ -37,14 +37,9 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-import os
-
 import colony.libs.structures_util
 
 import web_mvc_wiki_exceptions
-
-DEFAULT_ENCODING = "utf-8"
-""" The default encoding value """
 
 WEB_MVC_WIKI_RESOURCES_PATH = "web_mvc_wiki/mvc_wiki/resources"
 """ The web mvc wiki resources path """
@@ -59,15 +54,6 @@ class WebMvcWiki:
 
     web_mvc_wiki_plugin = None
     """ The web mvc wiki plugin """
-
-    web_mvc_wiki_main_controller = None
-    """ The web mvc wiki main controller """
-
-    web_mvc_wiki_page_controller = None
-    """ The web mvc wiki page controller """
-
-    web_mvc_wiki_controllers = None
-    """ The web mvc wiki controllers """
 
     instances_map = {}
     """ The map of instances reference """
@@ -93,23 +79,8 @@ class WebMvcWiki:
         # retrieves the web mvc utils plugin
         web_mvc_utils_plugin = self.web_mvc_wiki_plugin.web_mvc_utils_plugin
 
-        # retrieves the current directory path
-        current_directory_path = os.path.dirname(__file__)
-
-        # loads the mvc utils in the web mvc wiki controllers module
-        web_mvc_wiki_controllers = web_mvc_utils_plugin.import_module_mvc_utils("web_mvc_wiki_controllers", "web_mvc_wiki.mvc_wiki", current_directory_path)
-
-        # create the web mvc wiki main controller
-        self.web_mvc_wiki_main_controller = web_mvc_utils_plugin.create_controller(web_mvc_wiki_controllers.WebMvcWikiMainController, [self.web_mvc_wiki_plugin, self], {})
-
-        # create the web mvc wiki page controller
-        self.web_mvc_wiki_page_controller = web_mvc_utils_plugin.create_controller(web_mvc_wiki_controllers.PageController, [self.web_mvc_wiki_plugin, self], {})
-
-        # creates the web mvc wiki controllers map
-        self.web_mvc_wiki_controllers = {
-            "main" : self.web_mvc_wiki_main_controller,
-            "page" : self.web_mvc_wiki_page_controller
-        }
+        # creates the controllers for the web mvc wiki controllers module
+        web_mvc_utils_plugin.create_controllers("web_mvc_wiki.mvc_wiki.web_mvc_wiki_controllers", self, self.web_mvc_wiki_plugin, "web_mvc_wiki")
 
     def get_patterns(self):
         """
