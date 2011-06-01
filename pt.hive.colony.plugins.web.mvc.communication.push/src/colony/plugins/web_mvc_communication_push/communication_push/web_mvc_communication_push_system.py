@@ -37,8 +37,6 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-import os
-
 class WebMvcCommunicationPush:
     """
     The web mvc communication push class.
@@ -46,12 +44,6 @@ class WebMvcCommunicationPush:
 
     web_mvc_communication_push_plugin = None
     """ The web mvc communication push plugin """
-
-    web_mvc_communication_push_controller = None
-    """ The web mvc communication push controller """
-
-    web_mvc_communication_push_controllers = None
-    """ The web mvc communication push controllers """
 
     def __init__(self, web_mvc_communication_push_plugin):
         """
@@ -72,19 +64,8 @@ class WebMvcCommunicationPush:
         # retrieves the web mvc utils plugin
         web_mvc_utils_plugin = self.web_mvc_communication_push_plugin.web_mvc_utils_plugin
 
-        # retrieves the current directory path
-        current_directory_path = os.path.dirname(__file__)
-
-        # loads the mvc utils in the web mvc communication push controllers module
-        web_mvc_communication_push_controllers = web_mvc_utils_plugin.import_module_mvc_utils("web_mvc_communication_push_controllers", "web_mvc_communication_push.communication_push", current_directory_path)
-
-        # creates the web mvc manager communication push controller
-        self.web_mvc_communication_push_controller = web_mvc_utils_plugin.create_controller(web_mvc_communication_push_controllers.WebMvcCommunicationPushController, [self.web_mvc_communication_push_plugin, self], {})
-
-        # creates the web mvc communication push controllers map
-        self.web_mvc_communication_push_controllers = {
-            "main" : self.web_mvc_communication_push_controller
-        }
+        # creates the controllers for the web mvc communication push controllers module
+        web_mvc_utils_plugin.create_controllers("web_mvc_communication_push.communication_push.web_mvc_communication_push_controllers", self, self.web_mvc_communication_push_plugin, "web_mvc_communication_push")
 
     def get_patterns(self):
         """
@@ -98,16 +79,16 @@ class WebMvcCommunicationPush:
         """
 
         return (
-            (r"^web_mvc_communication_push/?$", self.web_mvc_communication_push_controller.handle_show_json, "get"),
-            (r"^web_mvc_communication_push/register$", self.web_mvc_communication_push_controller.handle_register_json, "post", "json"),
-            (r"^web_mvc_communication_push/unregister$", self.web_mvc_communication_push_controller.handle_unregister_json, "post", "json"),
-            (r"^web_mvc_communication_push/message$", self.web_mvc_communication_push_controller.handle_message_json, "post", "json"),
-            (r"^web_mvc_communication_push/set_property$", self.web_mvc_communication_push_controller.handle_set_property_json, "post", "json"),
-            (r"^web_mvc_communication_push/stat$", self.web_mvc_communication_push_controller.handle_stat_json, "get", "json"),
-            (r"^web_mvc_communication_push/load_profile$", self.web_mvc_communication_push_controller.handle_load_profile_json, "post", "json"),
-            (r"^web_mvc_communication_push/unload_profile$", self.web_mvc_communication_push_controller.handle_unload_profile_json, "post", "json"),
-            (r"^web_mvc_communication_push/set_profile$", self.web_mvc_communication_push_controller.handle_set_profile_json, "post", "json"),
-            (r"^web_mvc_communication_push/unset_profile$", self.web_mvc_communication_push_controller.handle_unset_profile_json, "post", "json")
+            (r"^web_mvc_communication_push/?$", self.web_mvc_communication_push_main_controller.handle_show_json, "get"),
+            (r"^web_mvc_communication_push/register$", self.web_mvc_communication_push_main_controller.handle_register_json, "post", "json"),
+            (r"^web_mvc_communication_push/unregister$", self.web_mvc_communication_push_main_controller.handle_unregister_json, "post", "json"),
+            (r"^web_mvc_communication_push/message$", self.web_mvc_communication_push_main_controller.handle_message_json, "post", "json"),
+            (r"^web_mvc_communication_push/set_property$", self.web_mvc_communication_push_main_controller.handle_set_property_json, "post", "json"),
+            (r"^web_mvc_communication_push/stat$", self.web_mvc_communication_push_main_controller.handle_stat_json, "get", "json"),
+            (r"^web_mvc_communication_push/load_profile$", self.web_mvc_communication_push_main_controller.handle_load_profile_json, "post", "json"),
+            (r"^web_mvc_communication_push/unload_profile$", self.web_mvc_communication_push_main_controller.handle_unload_profile_json, "post", "json"),
+            (r"^web_mvc_communication_push/set_profile$", self.web_mvc_communication_push_main_controller.handle_set_profile_json, "post", "json"),
+            (r"^web_mvc_communication_push/unset_profile$", self.web_mvc_communication_push_main_controller.handle_unset_profile_json, "post", "json")
         )
 
     def get_communication_patterns(self):
