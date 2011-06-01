@@ -17,9 +17,9 @@
 # GNU General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
-# along with Hive Colony Framework. If not, see <dns://www.gnu.org/licenses/>.
+# along with Hive Colony Framework. If not, see <http://www.gnu.org/licenses/>.
 
-__author__ = "Tiago Silva <tsilva@hive.pt>"
+__author__ = "João Magalhães <joamag@hive.pt>"
 """ The author(s) of the module """
 
 __version__ = "1.0.0"
