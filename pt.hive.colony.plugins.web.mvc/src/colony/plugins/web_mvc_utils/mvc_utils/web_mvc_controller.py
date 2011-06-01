@@ -103,6 +103,12 @@ MESSAGE_VALUE = "message"
 TRACEBACK_VALUE = "traceback"
 """ The traceback value """
 
+EXTRA_EXTRAS_PATH_VALUE = "extra_extras_path"
+""" The extra extras path value """
+
+EXTRA_TEMPLATES_PATH_VALUE = "extra_templates_path"
+""" The extra templates path value """
+
 VALIDATION_MAP_VALUE = "validation_map"
 """ The validation map value """
 
@@ -1206,17 +1212,26 @@ def get_locale(self, rest_request, available_locales = (DEFAULT_LOCALE,), alias_
     # returns the locale
     return locale
 
-def update_resources_path(self):
+def update_resources_path(self, parameters = {}):
     """
     Updates the resources path, changing the paths
     for the extra and templates references.
+
+    @type parameters: Dictionary
+    @param parameters: The parameters for the updating.
     """
+
+    # retrieves the extra path values
+    extra_extras_path = parameters.get(EXTRA_EXTRAS_PATH_VALUE, "")
+    extra_template_path = parameters.get(EXTRA_TEMPLATES_PATH_VALUE, "")
 
     # creates the templates path from the extras path
     extras_path = os.path.join(self.resources_path, EXTRAS_VALUE)
+    extras_path = os.path.join(extras_path, extra_extras_path)
 
     # creates the templates path from the resources path
     templates_path = os.path.join(self.resources_path, TEMPLATES_VALUE)
+    templates_path = os.path.join(templates_path, extra_template_path)
 
     # sets the extras path
     self.set_extras_path(extras_path)
@@ -1224,7 +1239,7 @@ def update_resources_path(self):
     # sets the templates path
     self.set_templates_path(templates_path)
 
-def set_relative_resources_path(self, relative_resources_path, extra_path = "", update_resources = True):
+def set_relative_resources_path(self, relative_resources_path, extra_extras_path = "", extra_templates_path = "", update_resources = True):
     """
     Sets the relative resources path for template resolution
     and optionally updates the resources.
@@ -1232,9 +1247,12 @@ def set_relative_resources_path(self, relative_resources_path, extra_path = "", 
     @type relative_resources_path: String
     @param relative_resources_path: The relative resources path
     to be used for template resolution.
-    @type extra_path: String
-    @param extra_path: The extra path to be appended to the
-    resources path after resolution.
+    @type extra_extras_path: String
+    @param extra_extras_path: The extra extras path to be appended to the
+    extras path after resolution.
+    @type extra_templates_path: String
+    @param extra_templates_path: The extra templates path to be appended to the
+    templates path after resolution.
     @type update_resources: bool
     @param update_resources: If the associated resources
     should be updated.
@@ -1252,11 +1270,14 @@ def set_relative_resources_path(self, relative_resources_path, extra_path = "", 
     # creates the full absolute resources path from the plugin path
     resources_path = os.path.join(plugin_path, relative_resources_path)
 
-    # appends the extra path to the resources path
-    resources_path = os.path.join(resources_path, extra_path)
+    # creates the parameters map to be used
+    parameters = {
+        EXTRA_EXTRAS_PATH_VALUE : extra_extras_path,
+        EXTRA_TEMPLATES_PATH_VALUE : extra_templates_path
+    }
 
     # sets the resources path
-    self.set_resources_path(resources_path, update_resources)
+    self.set_resources_path(resources_path, update_resources, parameters)
 
 def get_plugin(self):
     """
@@ -1288,7 +1309,7 @@ def get_resources_path(self):
 
     return self.resources_path
 
-def set_resources_path(self, resources_path, update_resources = True):
+def set_resources_path(self, resources_path, update_resources = True, parameters = {}):
     """
     Sets the resources path.
     Optionally an update on all resource related
@@ -1299,12 +1320,15 @@ def set_resources_path(self, resources_path, update_resources = True):
     @type update_resources: bool
     @param update_resources: If the associated resources
     should be updated.
+    @type parameters: Dictionary
+    @param parameters: The parameters for the setting.
     """
 
     self.resources_path = resources_path
 
-    # in case the update resources flag is set
-    update_resources and self.update_resources_path()
+    # in case the update resources flag is set (the updating
+    # of the resources path uses the parameters)
+    update_resources and self.update_resources_path(parameters)
 
 def get_extras_path(self):
     """
