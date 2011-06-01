@@ -251,7 +251,7 @@ class MdnsClient:
             # in case the callback function is defined
             if callback_function:
                 # retrieves the response using the callback approach
-                response = self.retrieve_response_callback(queries, request, callback_function, callback_timeout)
+                response = self.retrieve_response_callback(request, callback_function, callback_timeout)
             # otherwise it's a normal synchronous call
             else:
                 # retrieves the response
