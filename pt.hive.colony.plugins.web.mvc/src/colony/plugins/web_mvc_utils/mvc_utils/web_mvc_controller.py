@@ -1224,11 +1224,17 @@ def update_resources_path(self):
     # sets the templates path
     self.set_templates_path(templates_path)
 
-def set_relative_resources_path(self, relative_resources_path, update_resources = True):
+def set_relative_resources_path(self, relative_resources_path, extra_path = "", update_resources = True):
     """
-    Sets the relative resources path and optionaly updates
-    the resources.
+    Sets the relative resources path for template resolution
+    and optionally updates the resources.
 
+    @type relative_resources_path: String
+    @param relative_resources_path: The relative resources path
+    to be used for template resolution.
+    @type extra_path: String
+    @param extra_path: The extra path to be appended to the
+    resources path after resolution.
     @type update_resources: bool
     @param update_resources: If the associated resources
     should be updated.
@@ -1245,6 +1251,9 @@ def set_relative_resources_path(self, relative_resources_path, update_resources 
 
     # creates the full absolute resources path from the plugin path
     resources_path = os.path.join(plugin_path, relative_resources_path)
+
+    # appends the extra path to the resources path
+    resources_path = os.path.join(resources_path, extra_path)
 
     # sets the resources path
     self.set_resources_path(resources_path, update_resources)
