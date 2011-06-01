@@ -14,9 +14,6 @@
                 "id" : "pt.hive.colony.plugins.web.mvc.utils",
                 "version" : "1.0.0"
             }, {
-                "id" : "pt.hive.colony.plugins.resources.resource_manager",
-                "version" : "1.0.0"
-            }, {
                 "id" : "pt.hive.colony.plugins.misc.random",
                 "version" : "1.0.0"
             }, {

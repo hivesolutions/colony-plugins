@@ -37,18 +37,8 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-import os
-
-import colony.libs.map_util
-
-DEFAULT_ENCODING = "utf-8"
-""" The default encoding value """
-
 WEB_MVC_ENCRYPTION_RESOURCES_PATH = "web_mvc_encryption/encryption/resources"
 """ The web mvc encryption resources path """
-
-TEMPLATES_PATH = WEB_MVC_ENCRYPTION_RESOURCES_PATH + "/templates"
-""" The templates path """
 
 EXTRAS_PATH = WEB_MVC_ENCRYPTION_RESOURCES_PATH + "/extras"
 """ The extras path """
@@ -61,17 +51,10 @@ ENTITY_MANAGER_ARGUMENTS = {
 }
 """ The entity manager arguments """
 
-CONNECTION_PARAMETERS_VALUE = "connection_parameters"
-""" The connection parameters value """
-
-FILE_PATH_VALUE = "file_path"
-""" The file path value """
-
-DEFAULT_DATABASE_SUFFIX = "database.db"
-""" The default database suffix """
-
-DEFAULT_DATABASE_PREFIX = "web_mvc_encryption_"
-""" The default database prefix """
+ENTITY_MANAGER_PARAMETERS = {
+    "default_database_prefix" : "web_mvc_encryption_"
+}
+""" The entity manager parameters """
 
 class WebMvcEncryption:
     """
@@ -80,18 +63,6 @@ class WebMvcEncryption:
 
     web_mvc_encryption_plugin = None
     """ The web mvc encryption plugin """
-
-    web_mvc_encryption_main_controller = None
-    """ The web mvc encryption main controller """
-
-    web_mvc_encryption_consumer_controller = None
-    """ The web mvc encryption consumer controller """
-
-    web_mvc_encryption_entity_models = None
-    """ The web mvc encryption entity models """
-
-    web_mvc_encryption_controllers = None
-    """ The web mvc encryption controllers """
 
     keys_map = {}
     """ The map of keys """
@@ -124,26 +95,11 @@ class WebMvcEncryption:
         # retrieves the entity manager arguments
         entity_manager_arguments = self.get_entity_manager_arguments()
 
-        # retrieves the current directory path
-        current_directory_path = os.path.dirname(__file__)
-
-        # loads the mvc utils in the web mvc encryption controllers module
-        web_mvc_encryption_controllers = web_mvc_utils_plugin.import_module_mvc_utils("web_mvc_encryption_controllers", "web_mvc_encryption.encryption", current_directory_path)
-
-        # creates the web mvc encryption main controller
-        self.web_mvc_encryption_main_controller = web_mvc_utils_plugin.create_controller(web_mvc_encryption_controllers.WebMvcEncryptionMainController, [self.web_mvc_encryption_plugin, self], {})
-
-        # creates the web mvc encryption consumer controller
-        self.web_mvc_encryption_consumer_controller = web_mvc_utils_plugin.create_controller(web_mvc_encryption_controllers.ConsumerController, [self.web_mvc_encryption_plugin, self], {})
+        # creates the controllers for the web mvc encryption controllers module
+        web_mvc_utils_plugin.create_controllers("web_mvc_encryption.encryption.web_mvc_encryption_controllers", self, self.web_mvc_encryption_plugin, "web_mvc_encryption")
 
         # creates the entity models classes by creating the entity manager and updating the classes
-        self.web_mvc_encryption_entity_models = web_mvc_utils_plugin.create_entity_models_path("web_mvc_encryption_entity_models", entity_manager_arguments, current_directory_path)
-
-        # creates the web mvc encryption controllers map
-        self.web_mvc_encryption_controllers = {
-            "main" : self.web_mvc_encryption_main_controller,
-            "consumer" : self.web_mvc_encryption_consumer_controller
-        }
+        web_mvc_utils_plugin.create_models("web_mvc_encryption_entity_models", self, self.web_mvc_encryption_plugin, entity_manager_arguments)
 
     def get_patterns(self):
         """
@@ -228,39 +184,11 @@ class WebMvcEncryption:
         @return: The entity manager arguments.
         """
 
-        # retrieves the resource manager plugin
-        resource_manager_plugin = self.web_mvc_encryption_plugin.resource_manager_plugin
+        # retrieves the web mvc utils plugin
+        web_mvc_utils_plugin = self.web_mvc_encryption_plugin.web_mvc_utils_plugin
 
-        # creates the entity manager arguments map
-        entity_manager_arguments = {}
-
-        # copies the entity manager arguments constant to the new entity manager arguments
-        colony.libs.map_util.map_copy_deep(ENTITY_MANAGER_ARGUMENTS, entity_manager_arguments)
-
-        # retrieves the system database file name resource
-        system_database_filename_resource = resource_manager_plugin.get_resource("system.database.file_name")
-
-        # in case the system database filename resource
-        # is defined
-        if system_database_filename_resource:
-            # retrieves the system database filename suffix
-            system_database_filename_suffix = system_database_filename_resource.data
-        # otherwise
-        else:
-            # sets the system database filename suffix as the default one
-            system_database_filename_suffix = DEFAULT_DATABASE_SUFFIX
-
-        # creates the system database file name value using the prefix and suffix values
-        system_database_filename = DEFAULT_DATABASE_PREFIX + system_database_filename_suffix
-
-        # retrieves the web mvc encryption plugin id
-        web_mvc_encryption_plugin_id = self.web_mvc_encryption_plugin.id
-
-        # creates the database file path using the plugin id and the system database filename
-        database_file_path = "%configuration:" + web_mvc_encryption_plugin_id + "%/" + system_database_filename
-
-        # sets the file path in the entity manager arguments
-        entity_manager_arguments[CONNECTION_PARAMETERS_VALUE][FILE_PATH_VALUE] = database_file_path
+        # generates the entity manager arguments
+        entity_manager_arguments = web_mvc_utils_plugin.generate_entity_manager_arguments(self.web_mvc_encryption_plugin, ENTITY_MANAGER_ARGUMENTS, ENTITY_MANAGER_PARAMETERS)
 
         # returns the entity manager arguments
         return entity_manager_arguments
