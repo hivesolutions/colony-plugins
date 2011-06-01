@@ -37,6 +37,7 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
+import time
 import struct
 import threading
 
@@ -232,6 +233,10 @@ class MdnsClient:
             socket_parameters
         )
 
+        # retrieves the callback parameters
+        callback_function = parameters.get("callback_function", None)
+        callback_timeout = parameters.get("callback_timeout", RESPONSE_TIMEOUT)
+
         # retrieves the corresponding (mdns) client connection
         self.client_connection = self._mdns_client.get_client_connection(connection_parameters)
 
@@ -243,8 +248,14 @@ class MdnsClient:
             # parameters, and retrieves the request
             request = self.send_request(queries, parameters)
 
-            # retrieves the response
-            response = self.retrieve_response(request)
+            # in case the callback function is defined
+            if callback_function:
+                # retrieves the response using the callback approach
+                response = self.retrieve_response_callback(queries, request, callback_function, callback_timeout)
+            # otherwise it's a normal synchronous call
+            else:
+                # retrieves the response
+                response = self.retrieve_response(request)
         finally:
             # releases the mdns client lock
             self._mdns_client_lock.release()
@@ -304,6 +315,53 @@ class MdnsClient:
         # returns the response
         return response
 
+    def retrieve_response_callback(self, request, callback_function, callback_timeout):
+        """
+        Retrieves the responses from the sent request.
+        This approach uses a timeout and the responses are fed
+        to the given callback function.
+
+        @type request: MdnsRequest
+        @param request: The request that originated the responses.
+        @type callback_function: Function
+        @param callback_function: The callback function to be used.
+        @type callback_timeout: int
+        @param callback_timeout: The timeout for the callback.
+        """
+
+        # the request queries
+        request_queries = request.queries
+
+        # iterates continuously
+        while True:
+            # in case the callback timeout is invalid
+            if callback_timeout <= 0:
+                break
+
+            # retrieves the start time
+            start_time = time.time()
+
+            try:
+                # retrieves the response
+                response = self.retrieve_response(request, callback_timeout)
+
+                # validates the response against the (original request) queries
+                valid_query = self._validate_response(request_queries, response)
+
+                # in case there is a valid query calls the callback function
+                valid_query and callback_function(valid_query, response)
+            except:
+                # passes the exception (no need to handle it)
+                pass
+
+            # retrieves the end time and calculates the
+            # delta time using the start time
+            end_time = time.time()
+            delta_time = end_time - start_time
+
+            # subtracts the delta time from the callback timeout
+            callback_timeout -= delta_time
+
     def _get_transaction_id(self):
         """
         Retrieves the transaction id, incrementing the
@@ -340,6 +398,43 @@ class MdnsClient:
 
         # returns the parameters
         return parameters
+
+    def _validate_response(self, queries, response):
+        """
+        Validates the given response checking if any of the
+        queries included in the set represents the original
+        query for the given response.
+
+        @type queries: List
+        @param queries: The list of queries to be used in the
+        validation of the response.
+        @type response: MdnsResponse
+        @param response: The response to be validated.
+        @rtype: Tuple
+        @return: The original query tuple for the given response.
+        """
+
+        # in case no response is defined
+        if not response:
+            # returns immediately (in error)
+            return None
+
+        # retrieves the response answers
+        response_answers = response.answers
+
+        # iterates over all the response answers
+        for response_answer in response_answers:
+            # retrieves the query aprt of the response answer
+            response_answer_query = response_answer[:3]
+
+            # in case the response answer query does not
+            # exist in the list of queries
+            if not response_answer_query in queries:
+                # continues the loop
+                continue
+
+            # returns the response answer query
+            return response_answer_query
 
 class MdnsRequest:
     """
