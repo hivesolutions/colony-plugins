@@ -49,9 +49,6 @@ VALIDATION_METHOD_SUFFIX = "_validate"
 TARGET_VALUE = "target"
 """ The target value """
 
-MANDATORY_VALUE = "mandatory"
-""" The mandatory value """
-
 EMAIL_REGEX_VALUE = "[\w\d\._%+-]+@[\w\d\.-]+\.\w{2,4}"
 """ The email regex value """
 
