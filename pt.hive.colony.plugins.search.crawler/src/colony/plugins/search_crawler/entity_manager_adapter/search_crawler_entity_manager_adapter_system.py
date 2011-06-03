@@ -46,9 +46,6 @@ import search_crawler_entity_manager_adapter_exceptions
 SEARCH_CRAWLER_ADAPTER_TYPE = "entity_manager"
 """ The search crawler adapter type """
 
-OPTIONS_VALUE = "options"
-""" The options value """
-
 ENTITY_MANAGER_ARGUMENTS_VALUE = "entity_manager_arguments"
 """ The value for arguments for the entity manager """
 
