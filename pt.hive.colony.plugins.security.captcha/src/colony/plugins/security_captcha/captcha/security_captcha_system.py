@@ -304,7 +304,7 @@ class SecurityCaptcha:
             # increments the y position with the pattern height
             current_pattern_y += pattern_height
 
-    def _get_font(self, resources_path, font_name = None, font_size = 36):
+    def _get_font(self, resources_path, font_name = None, font_size = DEFAULT_FONT_SIZE):
         # retrieves the fonts path for the resources path
         fonts_path = resources_path + "/fonts"
 
