@@ -43,9 +43,6 @@ SCORE_VALUE = "score"
 SORT_ORDER_VALUE = "sort_order"
 """ The key to retrieve the sort order from the properties map """
 
-ASCENDING_SORT_ORDER = "ascending"
-""" The ascending sort order value """
-
 DESCENDING_SORT_ORDER = "descending"
 """ The descending sort order value """
 

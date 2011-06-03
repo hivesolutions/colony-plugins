@@ -42,12 +42,6 @@ import search_scorer_exceptions
 SCORER_FUNCTION_IDENTIFIER_VALUE = "search_scorer_function_identifier"
 """ The identifier for the main scoring function in the scorer function repository """
 
-INDEX_TIME_METRIC_TYPE = "index_time"
-""" The identifier for the index time metric type """
-
-SEARCH_TIME_METRIC_TYPE = "search_time"
-""" The identifier for the search time metric type """
-
 SCORE_VALUE = "score"
 """ The score value key in the search result dictionary """
 

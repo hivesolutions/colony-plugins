@@ -49,9 +49,6 @@ WORD_DOCUMENT_FREQUENCY_SCORER_METRIC_IDENTIFIER = "word_document_frequency_scor
 HIT_DISTANCE_TO_TOP_SCORER_METRIC_IDENTIFIER = "hit_distance_to_top_scorer_metric"
 """ The identifier for the hit distance to top scorer metric """
 
-HIT_LIST_VALUE = "hit_list"
-""" The key to retrieves the hit list value from a search result map """
-
 WORD_LEVEL = "word_level"
 """ The word-wide scorer metric level """
 

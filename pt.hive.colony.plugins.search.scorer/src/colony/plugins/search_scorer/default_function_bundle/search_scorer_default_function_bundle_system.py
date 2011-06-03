@@ -40,9 +40,6 @@ __license__ = "GNU General Public License (GPL), Version 3"
 WORD_DOCUMENT_FREQUENCY_SCORER_METRIC_IDENTIFIER = "word_document_frequency_scorer_metric"
 """ The identifier for the word document frequency metric """
 
-TERM_LIST_VALUE = "terms_list"
-""" The term list value """
-
 TERM_FREQUENCY_SCORER_FUNCTION_IDENTIFIER = "term_frequency_scorer_function"
 """ The term frequency function identifier """
 
@@ -63,8 +60,6 @@ METRICS_VALUE = "metrics"
 
 HITS_VALUE = "hits"
 """ The key to retrieve the hits at an arbitrary index level """
-
-DOCUMENT_ID_VALUE = "document_id"
 
 ASCENDING_SORT_ORDER = "ascending"
 """ The sort order for functions which score the top results with the lower values """
