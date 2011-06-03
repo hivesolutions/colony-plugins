@@ -54,26 +54,28 @@ import generic_post_attribute_mapping_handlers
 import generic_post_conversion_handlers
 
 IO_ADAPTER_PLUGIN_ID_VALUE = "io_adapter_plugin_id"
-
-NAME_VALUE = "name"
-
-RELATIONS_VALUE = "relations"
-
-ENTITIES_VALUE = "entities"
+""" The io adapter plugin id value """
 
 LOAD_OPTIONS_VALUE = "load_options"
+""" The load options value """
 
 LOAD_ENTITIES_VALUE = "load_entities"
+""" The load entities value """
 
 OUTPUT_ENTITY_MAPPING_VALUE = "OutputEntityMapping"
+""" The output entity mapping value """
 
 RELATION_MAPPING_VALUE = "RelationMapping"
+""" The relation mapping value """
 
 INPUT_ENTITY_MAPPING_VALUE = "InputEntityMapping"
+""" The input entity mapping value """
 
 INPUT_OUTPUT_ENTITY_MAPPING_VALUE = "InputOutputEntityMapping"
+""" The input output entity mapping value """
 
 OUTPUT_ATTRIBUTE_MAPPING_VALUE = "OutputAttributeMapping"
+""" The output attribute mapping value """
 
 class DataConverter:
     """

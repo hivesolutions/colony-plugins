@@ -42,17 +42,20 @@ import os
 
 import data_converter_io_adapter_csv_exceptions
 
-DIRECTORY_PATHS_VALUE = "directory_paths"
-
 INPUT_DIRECTORY_PATH_VALUE = "input_directory_path"
+""" The input directory path value """
 
 INPUT_ENTITY_HANDLERS_VALUE = "input_entity_handlers"
+""" The input entity handlers value """
 
 INPUT_ATTRIBUTE_HANDLERS_VALUE = "input_attribute_handlers"
+""" The input attribute handlers value """
 
 TOKEN_SEPARATOR_VALUE = "token_separator"
+""" The token separator value """
 
 TEXT_DELIMITER_VALUE = "text_delimiter"
+""" The text delimiter value """
 
 FILE_READ_MODE = "r"
 """ The read access mode for files in python """

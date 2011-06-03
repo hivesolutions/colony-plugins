@@ -42,68 +42,94 @@ import types
 import data_converter_exceptions
 
 ARGUMENTS_VALUE = "arguments"
-
-ATTRIBUTE_NAME_VALUE = "attribute_name"
+""" The arguments value """
 
 ATTRIBUTES_VALUE = "attributes"
+""" The attributes value """
 
 ATTRIBUTE_MAPPING_VALUE = "attribute_mapping"
+""" The attribute mapping value """
 
 CONNECTORS_VALUE = "connectors"
+""" The connectors value """
 
 ENTITY_MAPPING_VALUE = "entity_mapping"
+""" The entity mapping value """
 
 ENTITY_NAMES_VALUE = "entity_names"
+""" The entity names value """
 
 ENTITY_RELATION_ATTRIBUTE_NAMES_VALUE = "entity_relation_attribute_names"
+""" The entity relation attribute names value """
 
 FUNCTION_VALUE = "function"
+""" The function value """
 
 HANDLERS_VALUE = "handlers"
+""" The handlers value """
 
 INPUT_DEPENDENCIES_VALUE = "input_dependencies"
+""" The input dependencies value """
 
 INPUT_ENTITIES_VALUE = "input_entities"
+""" The input entities value """
 
 INPUT_ENTITY_MAPPING_VALUE = "InputEntityMapping"
+""" The input entity mapping value """
 
 INPUT_NAME_VALUE = "input_name"
+""" The input name value """
 
 INPUT_OUTPUT_ENTITY_MAPPING_VALUE = "InputOutputEntityMapping"
+""" The input output entity mapping value """
 
 INPUT_VALUE_VALUE = "input_value"
+""" The input value """
 
 LIST_TYPE_VALUE = "list_type"
+""" The list type value """
 
 NAME_VALUE = "name"
+""" The name value """
 
 OUTPUT_ATTRIBUTE_MAPPING_VALUE = "OutputAttributeMapping"
+""" The output attribute mapping value """
 
 OUTPUT_ENTITY_MAPPING_VALUE = "OutputEntityMapping"
+""" The output entity mapping value """
 
 OUTPUT_DEPENDENCIES_VALUE = "output_dependencies"
+""" The output dependencies value """
 
 OUTPUT_NAME_VALUE = "output_name"
+""" The output name value """
 
 RELATED_ENTITY_RELATION_ATTRIBUTE_NAMES_VALUE = "related_entity_relation_attribute_names"
+""" The related entity relation attribute names value """
 
 RELATION_MAPPING_VALUE = "RelationMapping"
+""" The relation mapping value """
 
 RELATIONS_VALUE = "relations"
+""" The relations value """
 
 TYPES_VALUE = "types"
+""" The types value """
 
 VALIDATORS_VALUE = "validators"
+""" The validators value """
 
 OUTPUT_ENTITY_MAPPING_DESCRIPTION_TEMPLATE = "name = %s"
+""" The output entity mapping description template """
 
 INPUT_ENTITY_MAPPING_DESCRIPTION_TEMPLATE = "name = %s"
+""" The input entity mapping description template """
 
 OUTPUT_ATTRIBUTE_MAPPING_DESCRIPTION_TEMPLATE = "name = %s"
+""" The output attribute mapping description template """
 
 RELATION_MAPPING_DESCRIPTION_TEMPLATE = "relation_attribute_names = %s; related_entity_relation_attribute_names = %s"
-
-COLUMN_SPACING = 4
+""" The relation mapping description template """
 
 class DataConverterConfiguration:
     """

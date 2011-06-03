@@ -43,35 +43,43 @@ import types
 import data_converter_io_adapter_entity_manager_exceptions
 
 AUTOCOMMIT_VALUE = "autocommit"
+""" The autocommit value """
 
 EAGER_LOADING_RELATIONS_VALUE = "eager_loading_relations"
+""" The eager loading relations value """
 
 ENTITY_MANAGER_ENGINE_VALUE = "entity_manager_engine"
+""" The entity manager engine value """
 
 ENTITY_MANAGER_VALUE = "entity_manager"
-
-ENTITY_NAME_VALUE = "entity_name"
+""" The entity manager value """
 
 EQUALS_VALUE = "="
+""" The equals value """
 
 FIELDS_VALUE = "fields"
+""" The fields value """
 
 FILE_PATH_VALUE = "file_path"
+""" The file path value """
 
 INPUT_FILE_PATH_VALUE = "input_file_path"
+""" The input file path value """
 
 OBJECT_ID_VALUE = "object_id"
+""" The object id value """
 
 OUTPUT_FILE_PATH_VALUE = "output_file_path"
+""" The output file path value """
 
 LOAD_OPTIONS_VALUE = "load_options"
+""" The load options value """
 
 LOAD_ENTITIES_VALUE = "load_entities"
+""" The load entities value """
 
 INPUT_ATTRIBUTE_HANDLERS_VALUE = "input_attribute_handlers"
-
-LAZY_LOADED = "%lazy-loaded%"
-""" String used by the entity manager to indicate that an entity's relation is lazy loaded """
+""" The input attribute handlers value """
 
 class IoAdapterEntityManager:
     """

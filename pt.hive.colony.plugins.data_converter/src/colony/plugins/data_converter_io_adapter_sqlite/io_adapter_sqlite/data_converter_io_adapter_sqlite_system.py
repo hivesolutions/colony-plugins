@@ -44,32 +44,40 @@ import sqlite3
 import data_converter_io_adapter_sqlite_exceptions
 
 ENTITY_OBJECT_ID_VALUE = "entity_object_id"
+""" The entity object id value """
 
 EQUALS_VALUE = "="
+""" The equals value """
 
 INPUT_ATTRIBUTE_HANDLERS_VALUE = "input_attribute_handlers"
+""" The input attribute handlers value """
 
 INPUT_ENTITY_HANDLERS_VALUE = "input_entity_handlers"
+""" The input entity handlers value """
 
 INPUT_FILE_PATH_VALUE = "input_file_path"
-
-NAME_VALUE = "name"
+""" The input file path value """
 
 OBJECT_ID_VALUE = "object_id"
+""" The object id value """
 
 OUTPUT_ATTRIBUTE_HANDLERS_VALUE = "output_attribute_handlers"
+""" The output attribute handlers value """
 
 OUTPUT_ENTITY_HANDLERS_VALUE = "output_entity_handlers"
+""" The output entity handlers value """
 
 OUTPUT_FILE_PATH_VALUE = "output_file_path"
-
-QUOTE_DOUBLE_VALUE = "''"
+""" The output file path value """
 
 RELATION_VALUE = "Relation"
+""" The relation value """
 
 RELATED_ENTITY_OBJECT_ID_VALUE = "related_entity_object_id"
+""" The related entity object id value """
 
 VARCHAR_VALUE = "varchar(255)"
+""" The varchar value """
 
 RELATION_COLUMN_NAMES = (
     ENTITY_OBJECT_ID_VALUE,

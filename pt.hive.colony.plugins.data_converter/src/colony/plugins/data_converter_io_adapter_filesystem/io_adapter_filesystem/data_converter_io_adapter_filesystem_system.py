@@ -43,15 +43,16 @@ import re
 import data_converter_io_adapter_filesystem_exceptions
 
 DIRECTORY_PATHS_VALUE = "directory_paths"
+""" The directory paths value """
 
 INPUT_ATTRIBUTE_HANDLERS_VALUE = "input_attribute_handlers"
+""" The input attribute handlers value """
 
 INPUT_ENTITY_HANDLERS_VALUE = "input_entity_handlers"
+""" The input entity handlers value """
 
 ENTITY_NAME_PATH_REGEX_MAP_VALUE = "entity_name_path_regex_map"
-
-FILE_BINARY_READ_MODE = "rb"
-""" The file binary read mode in python """
+""" The entity name path regex map value """
 
 class IoAdapterFilesystem:
     """

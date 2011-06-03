@@ -42,32 +42,43 @@ import types
 import data_converter_io_adapter_xml_exceptions
 
 BEAUTIFY_VALUE = "beautify"
+""" The beautify value """
 
 ENTITY_META_ATTRIBUTES_VALUE = "entity_meta_attributes"
+""" The entity meta attributes value """
 
 ENTITY_TAG_ORDER_VALUE = "entity_tag_order"
-
-INPUT_FILE_PATH_VALUE = "input_file_path"
+""" The entity tag order value """
 
 MANDATORY_TAGS_VALUE = "mandatory_tags"
+""" The mandatory tags value """
 
 OUTPUT_FILE_PATH_VALUE = "output_file_path"
+""" The output file path value """
 
 ROOT_ENTITY_NAME_VALUE = "root_entity_name"
+""" The root entity name value """
 
 XML_START_TAG = "<?xml version=\"%s\" encoding=\"%s\"?>"
+""" The xml start tag """
 
 XML_NODE_TAG_FORMAT = "<%s>%s</%s>"
+""" The xml node tag format """
 
 XML_NODE_EMPTY_TAG_FORMAT = "<%s/>"
+""" The xml empty tag format """
 
 XML_NODE_START_TAG_FORMAT = "<%s%s>"
+""" The xml node start tag format """
 
 XML_NODE_END_TAG_FORMAT = "</%s>"
+""" The xml node end tag format """
 
 XML_VERSION_VALUE = "xml_version"
+""" The xml version value """
 
 XML_ENCODING_VALUE = "xml_encoding"
+""" The xml encoding value """
 
 FIRST_INDENTATION_LEVEL = 0
 """ The number indentations that are applied to the first entry level """

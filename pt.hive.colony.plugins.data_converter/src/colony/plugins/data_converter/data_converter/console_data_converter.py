@@ -43,9 +43,6 @@ CONSOLE_EXTENSION_NAME = "data_converter"
 INVALID_NUMBER_ARGUMENTS_MESSAGE = "invalid number of arguments"
 """ The invalid number of arguments message """
 
-INVALID_ADDRESS_MESSAGE = "invalid address"
-""" The invalid address message """
-
 HELP_TEXT = "### DATA CONVERTER HELP ###\n\
 list_configurations                                                           - lists the data converter configurations\n\
 list_loaded_configurations                                                    - lists the currently loaded configurations\n\

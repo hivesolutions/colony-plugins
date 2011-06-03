@@ -47,19 +47,20 @@ import dbfpy.dbf
 
 import data_converter_io_adapter_dbase_exceptions
 
-ENTITY_NAME_VALUE = "entity_name"
-
-ENTITY_NAMES_VALUE = "entity_names"
-
 INPUT_ATTRIBUTE_HANDLERS_VALUE = "input_attribute_handlers"
+""" The input attribute handlers value """
 
 INPUT_DIRECTORY_PATH_VALUE = "input_directory_path"
+""" The input directory path value """
 
 INPUT_ENTITY_HANDLERS_VALUE = "input_entity_handlers"
+""" The input entity handlers value """
 
 LOAD_ENTITIES_VALUE = "load_entities"
+""" The load entities value """
 
 LOAD_OPTIONS_VALUE = "load_options"
+""" The load options value """
 
 DBASE_TABLE_FILE_EXTENSION = ".dbf"
 """ Extension of dbase table files """
