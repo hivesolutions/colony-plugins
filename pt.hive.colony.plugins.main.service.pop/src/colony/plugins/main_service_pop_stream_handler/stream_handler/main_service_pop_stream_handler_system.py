@@ -48,9 +48,6 @@ HANDLER_NAME = "stream"
 VALID_VALUE = "valid"
 """ The valid value """
 
-AUTHENTICATION_VALUE = "authentication"
-""" The authentication value """
-
 AUTHENTICATION_TYPE_VALUE = "authentication_type"
 """ The authentication type value """
 
