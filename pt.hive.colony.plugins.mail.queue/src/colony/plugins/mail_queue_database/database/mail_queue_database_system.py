@@ -46,15 +46,6 @@ import mail_queue_database_exceptions
 ENTITIES_MODULE_NAME = "mail_queue_database_entities"
 """ The entities module name """
 
-START_RECORD_VALUE = "start_record"
-""" The start record value """
-
-NUMBER_RECORDS_VALUE = "number_records"
-""" The number records value """
-
-ORDER_BY_VALUE = "order_by"
-""" The order by value """
-
 EAGER_LOADING_RELATIONS_VALUE = "eager_loading_relations"
 """ The eager loading relations value """
 
