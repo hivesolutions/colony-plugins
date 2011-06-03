@@ -56,9 +56,6 @@ DEFAULT_OUTPUT_FILE_NAME = "out.pyc"
 MODULE_MODE = "module"
 """ The module mode """
 
-INTERACTIVE_MODE = "interactive"
-""" The interactive mode """
-
 class PythonCodeGenerationVisitor(settler_visitor.Visitor):
     """
     The python code generation visitor class.
