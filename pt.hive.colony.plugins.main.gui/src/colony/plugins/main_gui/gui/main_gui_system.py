@@ -50,9 +50,6 @@ COLONY_VALUE = "colony"
 DARWIN_VALUE = "darwin"
 """ The darwin value """
 
-FILE_VALUE = "file"
-""" The file value """
-
 NODE_VALUE = "node"
 """ The node value """
 
