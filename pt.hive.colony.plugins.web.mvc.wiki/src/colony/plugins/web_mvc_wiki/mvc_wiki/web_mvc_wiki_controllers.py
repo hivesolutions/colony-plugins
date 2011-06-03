@@ -66,9 +66,6 @@ TARGET_FILE_ENCODING = "Cp1252"
 WIKI_FILE_ENCODING = "Cp1252"
 """ The wiki file encoding """
 
-TEMPLATES_PATH = WEB_MVC_WIKI_RESOURCES_PATH + "/templates"
-""" The templates path """
-
 WIKI_EXTENSION = ".wiki"
 """ The wiki extension """
 
@@ -113,17 +110,8 @@ class MainController:
         Method called upon structure initialization
         """
 
-        # retrieves the plugin manager
-        plugin_manager = self.web_mvc_wiki_plugin.manager
-
-        # retrieves the web mvc wiki plugin path
-        web_mvc_wiki_plugin_path = plugin_manager.get_plugin_path_by_id(self.web_mvc_wiki_plugin.id)
-
-        # creates the templates path
-        templates_path = web_mvc_wiki_plugin_path + "/" + TEMPLATES_PATH
-
-        # sets the templates path
-        self.set_templates_path(templates_path)
+        # sets the relative resources path
+        self.set_relative_resources_path(WEB_MVC_WIKI_RESOURCES_PATH)
 
     def handle_wiki(self, rest_request, parameters = {}):
         """
@@ -501,17 +489,8 @@ class PageController:
         Method called upon structure initialization
         """
 
-        # retrieves the plugin manager
-        plugin_manager = self.web_mvc_wiki_plugin.manager
-
-        # retrieves the web mvc wiki plugin path
-        web_mvc_wiki_plugin_path = plugin_manager.get_plugin_path_by_id(self.web_mvc_wiki_plugin.id)
-
-        # creates the templates path
-        templates_path = web_mvc_wiki_plugin_path + "/" + TEMPLATES_PATH
-
-        # sets the templates path
-        self.set_templates_path(templates_path)
+        # sets the relative resources path
+        self.set_relative_resources_path(WEB_MVC_WIKI_RESOURCES_PATH)
 
     def handle_create(self, rest_request, parameters = {}):
         """
