@@ -363,7 +363,7 @@ class AbeculaClientServiceHandler:
     """ The service configuration """
 
     service_utils_exception_class = None
-    """" The service utils exception class """
+    """ The service utils exception class """
 
     def __init__(self, service_plugin, service_connection_handler, service_configuration, service_utils_exception_class, extra_parameters):
         """
