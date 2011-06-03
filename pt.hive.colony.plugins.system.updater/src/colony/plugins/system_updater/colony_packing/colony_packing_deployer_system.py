@@ -46,9 +46,6 @@ COLONY_VALUE = "colony"
 TARGET_PATH_VALUE = "target_path"
 """ The target path value """
 
-DEFAULT_PLUGIN_PATH = "plugins"
-""" The default plugin path """
-
 class ColonyPackingDeployer:
     """
     The colony packing deployer class.
