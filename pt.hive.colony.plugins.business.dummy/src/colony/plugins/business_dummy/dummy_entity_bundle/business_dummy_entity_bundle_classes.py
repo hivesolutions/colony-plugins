@@ -252,5 +252,11 @@ class DummyEntityBundleNew(DummyEntityBundleParent):
             "join_table" : "DummyOtherJoin"
         }
 
-ENTITY_CLASSES = [TestEntity, DummyEntityBundleParent, DummyEntityBundleAssociation, DummyEntityBundle, DummyEntityBundleNew]
+ENTITY_CLASSES = [
+    TestEntity,
+    DummyEntityBundleParent,
+    DummyEntityBundleAssociation,
+    DummyEntityBundle,
+    DummyEntityBundleNew
+]
 """ The entity classes of the module """
