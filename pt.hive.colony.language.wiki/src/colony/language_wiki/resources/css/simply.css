@@ -250,10 +250,6 @@ h5:hover > a.headerlink {
     text-shadow: 1px 1px #333333;
 }
 
-.menu-contents .menu a:hover {
-    border-bottom: none;
-}
-
 .menu-contents .menu-index {
     background-color: #385e9a;
     padding: 0.6em 1.6em 0.6em 1.6em;
