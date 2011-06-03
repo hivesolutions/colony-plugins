@@ -53,15 +53,6 @@ DEFAULT_ENCODING = "utf-8"
 WEB_MVC_MANAGER_RESOURCES_PATH = "web_mvc_manager/manager/resources"
 """ The web mvc manager resources path """
 
-TEMPLATES_PATH = WEB_MVC_MANAGER_RESOURCES_PATH + "/templates"
-""" The templates path """
-
-AJAX_ENCODER_NAME = "ajx"
-""" The ajax encoder name """
-
-JSON_ENCODER_NAME = "json"
-""" The json encoder name """
-
 COLONY_BUNDLE_FILE_EXTENSION = "cbx"
 """ The colony bundle file extension """
 
@@ -113,7 +104,7 @@ EXCEPTION_HANDLER_VALUE = "exception_handler"
 # imports the web mvc utils
 web_mvc_utils = colony.libs.importer_util.__importer__(WEB_MVC_UTILS_VALUE)
 
-class WebMvcManagerMainController:
+class MainController:
     """
     The web mvc manager main controller.
     """
@@ -142,17 +133,8 @@ class WebMvcManagerMainController:
         Method called upon structure initialization.
         """
 
-        # retrieves the plugin manager
-        plugin_manager = self.web_mvc_manager_plugin.manager
-
-        # retrieves the web mvc manager plugin path
-        web_mvc_manager_plugin_path = plugin_manager.get_plugin_path_by_id(self.web_mvc_manager_plugin.id)
-
-        # creates the templates path
-        templates_path = web_mvc_manager_plugin_path + "/" + TEMPLATES_PATH
-
-        # sets the templates path
-        self.set_templates_path(templates_path)
+        # sets the relative resources path
+        self.set_relative_resources_path(WEB_MVC_MANAGER_RESOURCES_PATH)
 
     def validate(self, rest_request, parameters, validation_parameters):
         # returns the result of the require permission call
@@ -197,10 +179,10 @@ class WebMvcManagerMainController:
 
         def handle_web_mvc_manager_page_item(rest_request, parameters = {}):
             # retrieves the web mvc manager search helper
-            web_mvc_manager_search_helper = self.web_mvc_manager.web_mvc_manager_search_helper
+            web_mvc_manager_search_helper_controller = self.web_mvc_manager.web_mvc_manager_search_helper_controller
 
             # retrieves the web mvc manager communication helper
-            web_mvc_manager_communication_helper = self.web_mvc_manager.web_mvc_manager_communication_helper
+            web_mvc_manager_communication_helper_controller = self.web_mvc_manager.web_mvc_manager_communication_helper_controller
 
             # in case the encoder name is normal
             if rest_request.encoder_name == NORMAL_ENCODER_NAME:
@@ -219,8 +201,8 @@ class WebMvcManagerMainController:
             # defines the default parameters
             default_parameters = {
                 "template_file" : template_file,
-                "search_helper" : web_mvc_manager_search_helper,
-                "communication_helper" : web_mvc_manager_communication_helper
+                "search_helper" : web_mvc_manager_search_helper_controller,
+                "communication_helper" : web_mvc_manager_communication_helper_controller
             }
 
             # extends the parameters map with the template file reference
@@ -260,17 +242,8 @@ class SidePanelController:
         Method called upon structure initialization.
         """
 
-        # retrieves the plugin manager
-        plugin_manager = self.web_mvc_manager_plugin.manager
-
-        # retrieves the web mvc manager plugin path
-        web_mvc_manager_plugin_path = plugin_manager.get_plugin_path_by_id(self.web_mvc_manager_plugin.id)
-
-        # creates the templates path
-        templates_path = web_mvc_manager_plugin_path + "/" + TEMPLATES_PATH + "/side_panel"
-
-        # sets the templates path
-        self.set_templates_path(templates_path)
+        # sets the relative resources path
+        self.set_relative_resources_path(WEB_MVC_MANAGER_RESOURCES_PATH, extra_templates_path = "side_panel")
 
     def handle_update(self, rest_request, parameters = {}):
         """
@@ -368,17 +341,8 @@ class HeaderController:
         Method called upon structure initialization.
         """
 
-        # retrieves the plugin manager
-        plugin_manager = self.web_mvc_manager_plugin.manager
-
-        # retrieves the web mvc manager plugin path
-        web_mvc_manager_plugin_path = plugin_manager.get_plugin_path_by_id(self.web_mvc_manager_plugin.id)
-
-        # creates the templates path
-        templates_path = web_mvc_manager_plugin_path + "/" + TEMPLATES_PATH
-
-        # sets the templates path
-        self.set_templates_path(templates_path)
+        # sets the relative resources path
+        self.set_relative_resources_path(WEB_MVC_MANAGER_RESOURCES_PATH)
 
     def handle_header(self, rest_request, parameters = {}):
         """
@@ -584,17 +548,8 @@ class PluginController:
         Method called upon structure initialization.
         """
 
-        # retrieves the plugin manager
-        plugin_manager = self.web_mvc_manager_plugin.manager
-
-        # retrieves the web mvc manager plugin path
-        web_mvc_manager_plugin_path = plugin_manager.get_plugin_path_by_id(self.web_mvc_manager_plugin.id)
-
-        # creates the templates path
-        templates_path = web_mvc_manager_plugin_path + "/" + TEMPLATES_PATH + "/plugin"
-
-        # sets the templates path
-        self.set_templates_path(templates_path)
+        # sets the relative resources path
+        self.set_relative_resources_path(WEB_MVC_MANAGER_RESOURCES_PATH, extra_templates_path = "plugin")
 
     def validate(self, rest_request, parameters, validation_parameters):
         # returns the result of the require permission call
@@ -664,7 +619,7 @@ class PluginController:
         parameters[SERIALIZER_VALUE] = json_plugin
 
         # retrieves the web mvc manager search helper
-        web_mvc_manager_search_helper = self.web_mvc_manager.web_mvc_manager_search_helper
+        web_mvc_manager_search_helper_controller = self.web_mvc_manager.web_mvc_manager_search_helper_controller
 
         # retrieves the form data by processing the form
         form_data_map = self.process_form_data(rest_request, DEFAULT_ENCODING)
@@ -688,7 +643,7 @@ class PluginController:
         filtered_plugins = self._get_filtered_plugins(rest_request, search_query)
 
         # retrieves the partial filtered plugins and meta data
-        partial_filtered_plugins, start_record, number_records, total_number_records = web_mvc_manager_search_helper.partial_filter(rest_request, filtered_plugins, start_record, number_records)
+        partial_filtered_plugins, start_record, number_records, total_number_records = web_mvc_manager_search_helper_controller.partial_filter(rest_request, filtered_plugins, start_record, number_records)
 
         # retrieves the template file
         template_file = self.retrieve_template_file("plugin_partial_list_contents.html.tpl")
@@ -861,7 +816,7 @@ class PluginController:
         serializer = parameters[SERIALIZER_VALUE]
 
         # retrieves the web mvc communication helper
-        web_mvc_manager_communication_helper = self.web_mvc_manager.web_mvc_manager_communication_helper
+        web_mvc_manager_communication_helper_controller = self.web_mvc_manager.web_mvc_manager_communication_helper_controller
 
         # retrieves the form data by processing the form
         form_data_map = self.process_form_data(rest_request, DEFAULT_ENCODING)
@@ -885,7 +840,7 @@ class PluginController:
         self.set_contents(rest_request, serialized_status)
 
         # sends the serialized broadcast message
-        web_mvc_manager_communication_helper.send_serialized_broadcast_message(parameters, "web_mvc_manager/communication", "web_mvc_manager/plugin/change_status", serialized_status)
+        web_mvc_manager_communication_helper_controller.send_serialized_broadcast_message(parameters, "web_mvc_manager/communication", "web_mvc_manager/plugin/change_status", serialized_status)
 
     def handle_change_status_json(self, rest_request, parameters = {}):
         # retrieves the json plugin
@@ -990,17 +945,8 @@ class CapabilityController:
         Method called upon structure initialization.
         """
 
-        # retrieves the plugin manager
-        plugin_manager = self.web_mvc_manager_plugin.manager
-
-        # retrieves the web mvc manager plugin path
-        web_mvc_manager_plugin_path = plugin_manager.get_plugin_path_by_id(self.web_mvc_manager_plugin.id)
-
-        # creates the templates path
-        templates_path = web_mvc_manager_plugin_path + "/" + TEMPLATES_PATH + "/capability"
-
-        # sets the templates path
-        self.set_templates_path(templates_path)
+        # sets the relative resources path
+        self.set_relative_resources_path(WEB_MVC_MANAGER_RESOURCES_PATH, extra_templates_path = "capability")
 
     def validate(self, rest_request, parameters, validation_parameters):
         # returns the result of the require permission call
@@ -1064,7 +1010,7 @@ class CapabilityController:
         parameters[SERIALIZER_VALUE] = json_plugin
 
         # retrieves the web mvc manager search helper
-        web_mvc_manager_search_helper = self.web_mvc_manager.web_mvc_manager_search_helper
+        web_mvc_manager_search_helper_controller = self.web_mvc_manager.web_mvc_manager_search_helper_controller
 
         # retrieves the form data by processing the form
         form_data_map = self.process_form_data(rest_request, DEFAULT_ENCODING)
@@ -1088,7 +1034,7 @@ class CapabilityController:
         filtered_capabilities = self._get_filtered_capabilities(rest_request, search_query)
 
         # retrieves the partial filter from the filtered capabilities
-        partial_filtered_capabilities, start_record, number_records, total_number_records = web_mvc_manager_search_helper.partial_filter(rest_request, filtered_capabilities, start_record, number_records)
+        partial_filtered_capabilities, start_record, number_records, total_number_records = web_mvc_manager_search_helper_controller.partial_filter(rest_request, filtered_capabilities, start_record, number_records)
 
         # retrieves the template file
         template_file = self.retrieve_template_file("capability_partial_list_contents.html.tpl")
@@ -1284,17 +1230,8 @@ class ExceptionController:
         Method called upon structure initialization.
         """
 
-        # retrieves the plugin manager
-        plugin_manager = self.web_mvc_manager_plugin.manager
-
-        # retrieves the web mvc manager plugin path
-        web_mvc_manager_plugin_path = plugin_manager.get_plugin_path_by_id(self.web_mvc_manager_plugin.id)
-
-        # creates the templates path
-        templates_path = web_mvc_manager_plugin_path + "/" + TEMPLATES_PATH
-
-        # sets the templates path
-        self.set_templates_path(templates_path)
+        # sets the relative resources path
+        self.set_relative_resources_path(WEB_MVC_MANAGER_RESOURCES_PATH)
 
     def handle_exception(self, rest_request, parameters = {}):
         """

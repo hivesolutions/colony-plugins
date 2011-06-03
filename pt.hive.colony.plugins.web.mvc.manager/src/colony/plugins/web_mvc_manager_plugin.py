@@ -83,7 +83,7 @@ class WebMvcManagerPlugin(colony.base.plugin_system.Plugin):
         "web.mvc.side_panel_reload"
     ]
     main_modules = [
-        "web_mvc_manager.manager.web_mvc_manager_communication_controllers",
+        "web_mvc_manager.manager.web_mvc_manager_communication",
         "web_mvc_manager.manager.web_mvc_manager_controllers",
         "web_mvc_manager.manager.web_mvc_manager_exceptions",
         "web_mvc_manager.manager.web_mvc_manager_helpers",

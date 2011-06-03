@@ -37,20 +37,12 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-import os
 import types
 
-import web_mvc_manager_helpers
 import web_mvc_manager_exceptions
-
-DEFAULT_ENCODING = "utf-8"
-""" The default encoding value """
 
 WEB_MVC_MANAGER_RESOURCES_PATH = "web_mvc_manager/manager/resources"
 """ The web mvc manager resources path """
-
-TEMPLATES_PATH = WEB_MVC_MANAGER_RESOURCES_PATH + "/templates"
-""" The templates path """
 
 EXTRAS_PATH = WEB_MVC_MANAGER_RESOURCES_PATH + "/extras"
 """ The extras path """
@@ -65,42 +57,6 @@ class WebMvcManager:
 
     web_mvc_manager_plugin = None
     """ The web mvc manager plugin """
-
-    web_mvc_manager_main_controller = None
-    """ The web mvc manager main controller """
-
-    web_mvc_manager_communication_controller = None
-    """ The web mvc manager communication controller """
-
-    web_mvc_manager_side_panel_controller = None
-    """ The web mvc manager side panel controller """
-
-    web_mvc_manager_header_controller = None
-    """ The web mvc manager header controller """
-
-    web_mvc_manager_package_controller = None
-    """ The web mvc manager package controller """
-
-    web_mvc_manager_bundle_controller = None
-    """ The web mvc manager bundle controller """
-
-    web_mvc_manager_plugin_controller = None
-    """ The web mvc manager plugin controller """
-
-    web_mvc_manager_capability_controller = None
-    """ The web mvc manager capability controller """
-
-    web_mvc_manager_exception_controller = None
-    """ The web mvc manager exception controller """
-
-    web_mvc_manager_search_helper = None
-    """ The web mvc manager search helper """
-
-    web_mvc_manager_communication_helper = None
-    """ The web mvc manager communication helper """
-
-    web_mvc_manager_controllers = None
-    """ The web mvc manager controllers """
 
     menu_items_map = {}
     """ The menu items map """
@@ -138,60 +94,10 @@ class WebMvcManager:
         # retrieves the web mvc utils plugin
         web_mvc_utils_plugin = self.web_mvc_manager_plugin.web_mvc_utils_plugin
 
-        # retrieves the current directory path
-        current_directory_path = os.path.dirname(__file__)
-
-        # loads the mvc utils in the web mvc manager controllers module
-        web_mvc_manager_controllers = web_mvc_utils_plugin.import_module_mvc_utils("web_mvc_manager_controllers", "web_mvc_manager.manager", current_directory_path)
-
-        # loads the mvc utils in the web mvc manager communication controllers module
-        web_mvc_manager_communication_controllers = web_mvc_utils_plugin.import_module_mvc_utils("web_mvc_manager_communication_controllers", "web_mvc_manager.manager", current_directory_path)
-
-        # creates the web mvc manager main controller
-        self.web_mvc_manager_main_controller = web_mvc_utils_plugin.create_controller(web_mvc_manager_controllers.WebMvcManagerMainController, [self.web_mvc_manager_plugin, self], {})
-
-        # creates the web mvc manager communication controller
-        self.web_mvc_manager_communication_controller = web_mvc_utils_plugin.create_controller(web_mvc_manager_communication_controllers.WebMvcManagerCommunicationController, [self.web_mvc_manager_plugin, self], {})
-
-        # creates the web mvc manager side panel controller
-        self.web_mvc_manager_side_panel_controller = web_mvc_utils_plugin.create_controller(web_mvc_manager_controllers.SidePanelController, [self.web_mvc_manager_plugin, self], {})
-
-        # creates the web mvc manager header controller
-        self.web_mvc_manager_header_controller = web_mvc_utils_plugin.create_controller(web_mvc_manager_controllers.HeaderController, [self.web_mvc_manager_plugin, self], {})
-
-        # creates the web mvc manager package controller
-        self.web_mvc_manager_package_controller = web_mvc_utils_plugin.create_controller(web_mvc_manager_controllers.PackageController, [self.web_mvc_manager_plugin, self], {})
-
-        # creates the web mvc manager bundle controller
-        self.web_mvc_manager_bundle_controller = web_mvc_utils_plugin.create_controller(web_mvc_manager_controllers.BundleController, [self.web_mvc_manager_plugin, self], {})
-
-        # creates the web mvc manager plugin controller
-        self.web_mvc_manager_plugin_controller = web_mvc_utils_plugin.create_controller(web_mvc_manager_controllers.PluginController, [self.web_mvc_manager_plugin, self], {})
-
-        # creates the web mvc manager capability controller
-        self.web_mvc_manager_capability_controller = web_mvc_utils_plugin.create_controller(web_mvc_manager_controllers.CapabilityController, [self.web_mvc_manager_plugin, self], {})
-
-        # creates the web mvc manager exception controller
-        self.web_mvc_manager_exception_controller = web_mvc_utils_plugin.create_controller(web_mvc_manager_controllers.ExceptionController, [self.web_mvc_manager_plugin, self], {})
-
-        # creates the web mvc manager search helper
-        self.web_mvc_manager_search_helper = web_mvc_utils_plugin.create_controller(web_mvc_manager_helpers.SearchHelper, [self.web_mvc_manager_plugin, self], {})
-
-        # creates the web mvc manager communication helper
-        self.web_mvc_manager_communication_helper = web_mvc_utils_plugin.create_controller(web_mvc_manager_helpers.CommunicationHelper, [self.web_mvc_manager_plugin, self], {})
-
-        # creates the web mvc manager controllers map
-        self.web_mvc_manager_controllers = {
-            "main" : self.web_mvc_manager_main_controller,
-            "communication" : self.web_mvc_manager_communication_controller,
-            "side_panel" : self.web_mvc_manager_side_panel_controller,
-            "header" : self.web_mvc_manager_header_controller,
-            "plugin" : self.web_mvc_manager_plugin_controller,
-            "capability" : self.web_mvc_manager_capability_controller,
-            "search_helper" : self.web_mvc_manager_search_helper,
-            "communication_helper" : self.web_mvc_manager_communication_helper,
-            "exception" : self.web_mvc_manager_exception_controller
-        }
+        # creates the controllers for the web mvc manager controller modules
+        web_mvc_utils_plugin.create_controllers("web_mvc_manager.manager.web_mvc_manager_controllers", self, self.web_mvc_manager_plugin, "web_mvc_manager")
+        web_mvc_utils_plugin.create_controllers("web_mvc_manager.manager.web_mvc_manager_communication", self, self.web_mvc_manager_plugin, "web_mvc_manager")
+        web_mvc_utils_plugin.create_controllers("web_mvc_manager.manager.web_mvc_manager_helpers", self, self.web_mvc_manager_plugin, "web_mvc_manager")
 
     def get_patterns(self):
         """
@@ -462,13 +368,13 @@ class WebMvcManager:
 
     def _reload_ui(self):
         # retrieves the serialized message
-        serialized_message = self.web_mvc_manager_communication_helper._get_serialized_message("web_mvc_manager/header/reload", "")
+        serialized_message = self.web_mvc_manager_communication_helper_controller._get_serialized_message("web_mvc_manager/header/reload", "")
 
         # generates the communication event
         self.web_mvc_manager_plugin.generate_event("web.mvc.communication", ["web_mvc_manager/communication", serialized_message])
 
         # retrieves the serialized message
-        serialized_message = self.web_mvc_manager_communication_helper._get_serialized_message("web_mvc_manager/side_panel/reload", "")
+        serialized_message = self.web_mvc_manager_communication_helper_controller._get_serialized_message("web_mvc_manager/side_panel/reload", "")
 
         # generates the communication event
         self.web_mvc_manager_plugin.generate_event("web.mvc.communication", ["web_mvc_manager/communication", serialized_message])

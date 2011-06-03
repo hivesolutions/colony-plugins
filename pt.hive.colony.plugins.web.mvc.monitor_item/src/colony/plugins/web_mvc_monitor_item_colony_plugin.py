@@ -66,6 +66,7 @@ class WebMvcMonitorItemColonyPlugin(colony.base.plugin_system.Plugin):
         colony.base.plugin_system.PluginDependency("pt.hive.colony.plugins.web.mvc.utils", "1.0.0")
     ]
     main_modules = [
+        "web_mvc_monitor_item.colony.web_mvc_monitor_item_colony_controllers",
         "web_mvc_monitor_item.colony.web_mvc_monitor_item_colony_system"
     ]
 

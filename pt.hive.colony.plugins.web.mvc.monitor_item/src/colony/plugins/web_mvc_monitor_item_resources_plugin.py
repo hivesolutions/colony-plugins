@@ -67,6 +67,7 @@ class WebMvcMonitorItemResourcesPlugin(colony.base.plugin_system.Plugin):
         colony.base.plugin_system.PackageDependency("Process utilities module for Python", "psutil", "0.13.x", "http://code.google.com/p/psutil")
     ]
     main_modules = [
+        "web_mvc_monitor_item.resources.web_mvc_monitor_item_resources_controllers",
         "web_mvc_monitor_item.resources.web_mvc_monitor_item_resources_system"
     ]
 

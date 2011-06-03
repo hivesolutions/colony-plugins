@@ -45,7 +45,7 @@ WEB_MVC_UTILS_VALUE = "web_mvc_utils"
 # imports the web mvc utils
 web_mvc_utils = colony.libs.importer_util.__importer__(WEB_MVC_UTILS_VALUE)
 
-class WebMvcManagerCommunicationController:
+class CommunicationController:
     """
     The web mvc manager communication controller.
     """

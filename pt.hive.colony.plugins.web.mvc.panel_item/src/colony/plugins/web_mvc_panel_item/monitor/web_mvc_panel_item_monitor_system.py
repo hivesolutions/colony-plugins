@@ -37,12 +37,6 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-WEB_MVC_PANEL_ITEM_MONITOR_RESOURCES_PATH = "web_mvc_panel_item/monitor/resources"
-""" The web panel item monitor resources path """
-
-TEMPLATES_PATH = WEB_MVC_PANEL_ITEM_MONITOR_RESOURCES_PATH + "/templates"
-""" The templates path """
-
 class WebMvcPanelItemMonitor:
     """
     The web mvc panel item monitor class.
@@ -73,8 +67,8 @@ class WebMvcPanelItemMonitor:
         # retrieves the web mvc utils plugin
         web_mvc_utils_plugin = self.web_mvc_panel_item_monitor_plugin.web_mvc_utils_plugin
 
-        # creates the web mvc panel item monitor main controller
-        self.web_mvc_panel_item_monitor_main_controller = web_mvc_utils_plugin.create_controller(WebMvcPanelItemMonitorMainController, [self.web_mvc_panel_item_monitor_plugin, self], {})
+        # creates the controllers for the web mvc panel item monitor controllers module
+        web_mvc_utils_plugin.create_controllers("web_mvc_panel_item.monitor.web_mvc_panel_item_monitor_controllers", self, self.web_mvc_panel_item_monitor_plugin, "web_mvc_panel_item_monitor")
 
     def get_resource_patterns(self):
         """
@@ -122,72 +116,3 @@ class WebMvcPanelItemMonitor:
         """
 
         self.web_mvc_panel_item_monitor_plugin.generate_event("web.mvc.side_panel_reload", [])
-
-class WebMvcPanelItemMonitorMainController:
-    """
-    The web mvc panel item monitor main controller.
-    """
-
-    web_mvc_panel_item_monitor_plugin = None
-    """ The web mvc panel item monitor plugin """
-
-    web_mvc_panel_item_monitor = None
-    """ The web mvc panel item monitor """
-
-    def __init__(self, web_mvc_panel_item_monitor_plugin, web_mvc_panel_item_monitor):
-        """
-        Constructor of the class.
-
-        @type web_mvc_panel_item_monitor_plugin: WebMvcPanelItemMonitorPlugin
-        @param web_mvc_panel_item_monitor_plugin: The web mvc panel item monitor plugin.
-        @type web_mvc_panel_item_monitor: WebMvcPanelItemDidYouMonitor
-        @param web_mvc_panel_item_monitor: The web mvc panel item monitor.
-        """
-
-        self.web_mvc_panel_item_monitor_plugin = web_mvc_panel_item_monitor_plugin
-        self.web_mvc_panel_item_monitor = web_mvc_panel_item_monitor
-
-    def start(self):
-        """
-        Method called upon structure initialization.
-        """
-
-        # retrieves the plugin manager
-        plugin_manager = self.web_mvc_panel_item_monitor_plugin.manager
-
-        # retrieves the web mvc panel item monitor plugin path
-        web_mvc_panel_item_monitor_plugin_path = plugin_manager.get_plugin_path_by_id(self.web_mvc_panel_item_monitor_plugin.id)
-
-        # creates the templates path
-        templates_path = web_mvc_panel_item_monitor_plugin_path + "/" + TEMPLATES_PATH
-
-        # sets the templates path
-        self.set_templates_path(templates_path)
-
-    def get_panel_item(self):
-        # retrieves the template file
-        template_file = self.retrieve_template_file("panel_item_monitor.html.tpl")
-
-        # assigns the monitor variables
-        self.__assign_monitor_item_variables(template_file)
-
-        # processes the template file
-        processed_template_file = self.process_template_file(template_file)
-
-        # returns the processed template file
-        return processed_template_file
-
-    def __assign_monitor_item_variables(self, template_file):
-        # retrieves the web mvc monitor item plugins
-        web_mvc_monitor_item_plugins = self.web_mvc_panel_item_monitor_plugin.web_mvc_monitor_item_plugins
-
-        # starts the monitor items list
-        monitor_items_list = []
-
-        # iterates over all the web mvc monitor item plugins
-        for web_mvc_monitor_item_plugin in web_mvc_monitor_item_plugins:
-            monitor_item = web_mvc_monitor_item_plugin.get_monitor_item({})
-            monitor_items_list.append(monitor_item)
-
-        # assigns the monitor items to the template
-        template_file.assign("monitor_items", monitor_items_list)

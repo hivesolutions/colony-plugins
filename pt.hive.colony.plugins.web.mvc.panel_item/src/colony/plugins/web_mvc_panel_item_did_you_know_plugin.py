@@ -66,6 +66,7 @@ class WebMvcPanelItemDidYouKnowPlugin(colony.base.plugin_system.Plugin):
         colony.base.plugin_system.PluginDependency("pt.hive.colony.plugins.web.mvc.utils", "1.0.0")
     ]
     main_modules = [
+        "web_mvc_panel_item.did_you_know.web_mvc_panel_item_did_you_know_controllers",
         "web_mvc_panel_item.did_you_know.web_mvc_panel_item_did_you_know_system"
     ]
 

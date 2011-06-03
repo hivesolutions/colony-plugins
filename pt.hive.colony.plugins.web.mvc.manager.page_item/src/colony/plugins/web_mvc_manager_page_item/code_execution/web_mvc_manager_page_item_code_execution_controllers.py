@@ -51,19 +51,10 @@ DEFAULT_ENCODING = "utf-8"
 WEB_MVC_MANAGER_PAGE_ITEM_CODE_EXECUTION_RESOURCES_PATH = "web_mvc_manager_page_item/code_execution/resources"
 """ The web mvc manager page item code_execution resources path """
 
-TEMPLATES_PATH = WEB_MVC_MANAGER_PAGE_ITEM_CODE_EXECUTION_RESOURCES_PATH + "/templates"
-""" The templates path """
-
-AJAX_ENCODER_NAME = "ajx"
-""" The ajax encoder name """
-
-JSON_ENCODER_NAME = "json"
-""" The json encoder name """
-
 # imports the web mvc utils
 web_mvc_utils = colony.libs.importer_util.__importer__(WEB_MVC_UTILS_VALUE)
 
-class WebMvcManagerPageItemCodeExecutionController:
+class MainController:
     """
     The web mvc manager page item code execution controller.
     """
@@ -92,17 +83,8 @@ class WebMvcManagerPageItemCodeExecutionController:
         Method called upon structure initialization.
         """
 
-        # retrieves the plugin manager
-        plugin_manager = self.web_mvc_manager_page_item_code_execution_plugin.manager
-
-        # retrieves the web mvc manager plugin path
-        web_mvc_manager_page_item_code_execution_plugin_path = plugin_manager.get_plugin_path_by_id(self.web_mvc_manager_page_item_code_execution_plugin.id)
-
-        # creates the templates path
-        templates_path = web_mvc_manager_page_item_code_execution_plugin_path + "/" + TEMPLATES_PATH + "/code_execution"
-
-        # sets the templates path
-        self.set_templates_path(templates_path)
+        # sets the relative resources path
+        self.set_relative_resources_path(WEB_MVC_MANAGER_PAGE_ITEM_CODE_EXECUTION_RESOURCES_PATH, extra_templates_path = "code_execution")
 
     def handle_new_ajx(self, rest_request, parameters = {}):
         # retrieves the template file

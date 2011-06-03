@@ -66,6 +66,7 @@ class WebMvcMonitorItemUptimePlugin(colony.base.plugin_system.Plugin):
         colony.base.plugin_system.PluginDependency("pt.hive.colony.plugins.web.mvc.utils", "1.0.0")
     ]
     main_modules = [
+        "web_mvc_monitor_item.uptime.web_mvc_monitor_item_uptime_controllers",
         "web_mvc_monitor_item.uptime.web_mvc_monitor_item_uptime_system"
     ]
 

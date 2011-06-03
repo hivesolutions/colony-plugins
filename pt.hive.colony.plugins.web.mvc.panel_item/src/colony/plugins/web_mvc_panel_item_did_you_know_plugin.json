@@ -19,6 +19,7 @@
             "web_mvc_panel_item_did_you_know_plugin.py",
             "web_mvc_panel_item/__init__.py",
             "web_mvc_panel_item/did_you_know/__init__.py",
+            "web_mvc_panel_item/did_you_know/web_mvc_panel_item_did_you_know_controllers.py",
             "web_mvc_panel_item/did_you_know/web_mvc_panel_item_did_you_know_system.py",
             "web_mvc_panel_item/did_you_know/resources/baf.xml",
             "web_mvc_panel_item/did_you_know/resources/templates/panel_item_did_you_know.html.tpl"]

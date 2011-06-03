@@ -19,6 +19,7 @@
             "web_mvc_monitor_item_colony_plugin.py",
             "web_mvc_monitor_item/__init__.py",
             "web_mvc_monitor_item/colony/__init__.py",
+            "web_mvc_monitor_item/colony/web_mvc_monitor_item_colony_controllers.py",
             "web_mvc_monitor_item/colony/web_mvc_monitor_item_colony_system.py",
             "web_mvc_monitor_item/colony/resources/baf.xml",
             "web_mvc_monitor_item/colony/resources/templates/monitor_item_colony.html.tpl"]

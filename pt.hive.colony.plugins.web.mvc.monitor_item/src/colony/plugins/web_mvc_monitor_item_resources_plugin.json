@@ -19,6 +19,7 @@
             "web_mvc_monitor_item_resources_plugin.py",
             "web_mvc_monitor_item/__init__.py",
             "web_mvc_monitor_item/resources/__init__.py",
+            "web_mvc_monitor_item/resources/web_mvc_monitor_item_resources_controllers.py",
             "web_mvc_monitor_item/resources/web_mvc_monitor_item_resources_system.py",
             "web_mvc_monitor_item/resources/resources/baf.xml",
             "web_mvc_monitor_item/resources/resources/templates/monitor_item_resources.html.tpl"]

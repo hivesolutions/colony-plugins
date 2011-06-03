@@ -37,25 +37,6 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-import random
-
-WEB_MVC_PANEL_ITEM_DID_YOU_KNOW_RESOURCES_PATH = "web_mvc_panel_item/did_you_know/resources"
-""" The web panel item did you know resources path """
-
-TEMPLATES_PATH = WEB_MVC_PANEL_ITEM_DID_YOU_KNOW_RESOURCES_PATH + "/templates"
-""" The templates path """
-
-RANDOM_MESSAGE = False
-""" The random message flag """
-
-DID_YOU_KNOW_LIST = (
-    "Chuck Norris once shot down a German fighter plane with his finger, by yelling, \"Bang!\"",
-    "A Handicapped parking sign does not signify that this spot is for handicapped people. It is actually in fact a warning, that the spot belongs to Chuck Norris and that you will be handicapped if you park there.",
-    "Everybody loves Raymond. Except Chuck Norris.",
-    "Chuck Norris once round-house kicked a salesman. Over the phone."
-)
-""" The list of did you know sentences """
-
 class WebMvcPanelItemDidYouKnow:
     """
     The web mvc panel item did you know class.
@@ -86,8 +67,8 @@ class WebMvcPanelItemDidYouKnow:
         # retrieves the web mvc utils plugin
         web_mvc_utils_plugin = self.web_mvc_panel_item_did_you_know_plugin.web_mvc_utils_plugin
 
-        # creates the web mvc panel item did you know main controller
-        self.web_mvc_panel_item_did_you_know_main_controller = web_mvc_utils_plugin.create_controller(WebMvcPanelItemDidYouKnowMainController, [self.web_mvc_panel_item_did_you_know_plugin, self], {})
+        # creates the controllers for the web mvc panel item did you know controllers module
+        web_mvc_utils_plugin.create_controllers("web_mvc_panel_item.did_you_know.web_mvc_panel_item_did_you_know_controllers", self, self.web_mvc_panel_item_did_you_know_plugin, "web_mvc_panel_item_did_you_know")
 
     def get_resource_patterns(self):
         """
@@ -115,81 +96,3 @@ class WebMvcPanelItemDidYouKnow:
         """
 
         return self.web_mvc_panel_item_did_you_know_main_controller.get_panel_item()
-
-class WebMvcPanelItemDidYouKnowMainController:
-    """
-    The web mvc panel item did you know main controller.
-    """
-
-    web_mvc_panel_item_did_you_know_plugin = None
-    """ The web mvc panel item did you know plugin """
-
-    web_mvc_panel_item_did_you_know = None
-    """ The web mvc panel item did you know """
-
-    def __init__(self, web_mvc_panel_item_did_you_know_plugin, web_mvc_panel_item_did_you_know):
-        """
-        Constructor of the class.
-
-        @type web_mvc_panel_item_did_you_know_plugin: WebMvcPanelItemDidYouKnowPlugin
-        @param web_mvc_panel_item_did_you_know_plugin: The web mvc panel item did you know plugin.
-        @type web_mvc_panel_item_did_you_know: WebMvcPanelItemDidYouKnow
-        @param web_mvc_panel_item_did_you_know: The web mvc panel item did you know.
-        """
-
-        self.web_mvc_panel_item_did_you_know_plugin = web_mvc_panel_item_did_you_know_plugin
-        self.web_mvc_panel_item_did_you_know = web_mvc_panel_item_did_you_know
-
-    def start(self):
-        """
-        Method called upon structure initialization.
-        """
-
-        # retrieves the plugin manager
-        plugin_manager = self.web_mvc_panel_item_did_you_know_plugin.manager
-
-        # retrieves the web mvc panel item did you know plugin path
-        web_mvc_panel_item_did_you_know_plugin_path = plugin_manager.get_plugin_path_by_id(self.web_mvc_panel_item_did_you_know_plugin.id)
-
-        # creates the templates path
-        templates_path = web_mvc_panel_item_did_you_know_plugin_path + "/" + TEMPLATES_PATH
-
-        # sets the templates path
-        self.set_templates_path(templates_path)
-
-    def get_panel_item(self):
-        # retrieves the template file
-        template_file = self.retrieve_template_file("panel_item_did_you_know.html.tpl")
-
-        # assigns the did you know variables
-        self.__assign_did_you_know_variables(template_file)
-
-        # processes the template file
-        processed_template_file = self.process_template_file(template_file)
-
-        # returns the processed template file
-        return processed_template_file
-
-    def __assign_did_you_know_variables(self, template_file):
-        # in case random message value is set
-        if RANDOM_MESSAGE:
-            # sets the value as a random value
-            value = self.__get_random_value()
-        else:
-            # sets the value as zero the (first one)
-            value = 0
-
-        # retrieves the random did you know sentence
-        did_you_know = DID_YOU_KNOW_LIST[value]
-
-        # assigns the did you know to the template
-        template_file.assign("did_you_know", did_you_know)
-
-    def __get_random_value(self):
-        # retrieves the did you know list length
-        did_you_know_list_length = len(DID_YOU_KNOW_LIST)
-
-        # generates the random value
-        random_value = random.randint(0, did_you_know_list_length - 1)
-
-        return random_value

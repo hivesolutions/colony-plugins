@@ -72,6 +72,7 @@ class WebMvcPanelItemMonitorPlugin(colony.base.plugin_system.Plugin):
         "web.mvc.side_panel_reload"
     ]
     main_modules = [
+        "web_mvc_panel_item.monitor.web_mvc_panel_item_monitor_controllers",
         "web_mvc_panel_item.monitor.web_mvc_panel_item_monitor_system"
     ]
 

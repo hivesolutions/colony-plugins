@@ -37,11 +37,6 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-import os
-
-WEB_MVC_MANAGER_PAGE_ITEM_DNS_RESOURCES_PATH = "web_mvc_manager_page_item/dns/resources"
-""" The web mvc manager page item dns resources path """
-
 class WebMvcManagerPageItemDns:
     """
     The web mvc manager page item dns class.
@@ -49,12 +44,6 @@ class WebMvcManagerPageItemDns:
 
     web_mvc_manager_page_item_dns_plugin = None
     """ The web mvc manager page item dns plugin """
-
-    web_mvc_manager_page_item_dns_controller = None
-    """ The web mvc manager page item dns controller """
-
-    web_mvc_manager_page_item_dns_controllers = None
-    """ The web mvc manager page item dns controllers """
 
     def __init__(self, web_mvc_manager_page_item_dns_plugin):
         """
@@ -75,19 +64,8 @@ class WebMvcManagerPageItemDns:
         # retrieves the web mvc utils plugin
         web_mvc_utils_plugin = self.web_mvc_manager_page_item_dns_plugin.web_mvc_utils_plugin
 
-        # retrieves the current directory path
-        current_directory_path = os.path.dirname(__file__)
-
-        # loads the mvc utils in the web mvc manager page item dns controllers module
-        web_mvc_manager_page_item_dns_controllers = web_mvc_utils_plugin.import_module_mvc_utils("web_mvc_manager_page_item_dns_controllers", "web_mvc_manager_page_item.dns", current_directory_path)
-
-        # creates the web mvc manager page item dns controller
-        self.web_mvc_manager_page_item_dns_controller = web_mvc_utils_plugin.create_controller(web_mvc_manager_page_item_dns_controllers.WebMvcManagerPageItemDnsController, [self.web_mvc_manager_page_item_dns_plugin, self], {})
-
-        # creates the web mvc manager page item dns controllers
-        self.web_mvc_manager_page_item_dns_controllers = {
-            "main" : self.web_mvc_manager_page_item_dns_controller
-        }
+        # creates the controllers for the web mvc manager page item dns controller modules
+        web_mvc_utils_plugin.create_controllers("web_mvc_manager_page_item.dns.web_mvc_manager_page_item_dns_controllers", self, self.web_mvc_manager_page_item_dns_plugin, "web_mvc_manager_page_item_dns")
 
     def get_resource_patterns(self):
         """
@@ -120,10 +98,10 @@ class WebMvcManagerPageItemDns:
                 "menu" : "services/Dns",
                 "side_panel" : "lists/Dns",
                 "base_address" : "dns",
-                "pattern" : (r"^web_mvc_manager/dns$", self.web_mvc_manager_page_item_dns_controller.handle_list_ajx, "get", "ajx")
+                "pattern" : (r"^web_mvc_manager/dns$", self.web_mvc_manager_page_item_dns_main_controller.handle_list_ajx, "get", "ajx")
             },
-            (r"^web_mvc_manager/dns$", self.web_mvc_manager_page_item_dns_controller.handle_list, "get"),
-            (r"^web_mvc_manager/dns/partial$", self.web_mvc_manager_page_item_dns_controller.handle_partial_list, "get"),
-            (r"^web_mvc_manager/dns/(?P<dns_index>[0-9]+)$", self.web_mvc_manager_page_item_dns_controller.handle_show_ajx, "get", "ajx"),
-            (r"^web_mvc_manager/dns/(?P<dns_index>[0-9]+)$", self.web_mvc_manager_page_item_dns_controller.handle_show, "get")
+            (r"^web_mvc_manager/dns$", self.web_mvc_manager_page_item_dns_main_controller.handle_list, "get"),
+            (r"^web_mvc_manager/dns/partial$", self.web_mvc_manager_page_item_dns_main_controller.handle_partial_list, "get"),
+            (r"^web_mvc_manager/dns/(?P<dns_index>[0-9]+)$", self.web_mvc_manager_page_item_dns_main_controller.handle_show_ajx, "get", "ajx"),
+            (r"^web_mvc_manager/dns/(?P<dns_index>[0-9]+)$", self.web_mvc_manager_page_item_dns_main_controller.handle_show, "get")
         )

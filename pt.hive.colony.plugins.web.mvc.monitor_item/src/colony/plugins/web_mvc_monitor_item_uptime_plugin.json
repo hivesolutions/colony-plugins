@@ -19,6 +19,7 @@
             "web_mvc_monitor_item_uptime_plugin.py",
             "web_mvc_monitor_item/__init__.py",
             "web_mvc_monitor_item/uptime/__init__.py",
+            "web_mvc_monitor_item/uptime/web_mvc_monitor_item_uptime_controllers.py",
             "web_mvc_monitor_item/uptime/web_mvc_monitor_item_uptime_system.py",
             "web_mvc_monitor_item/uptime/resources/baf.xml",
             "web_mvc_monitor_item/uptime/resources/templates/monitor_item_uptime.html.tpl"]

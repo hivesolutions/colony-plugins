@@ -37,11 +37,6 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-import os
-
-WEB_MVC_MANAGER_PAGE_ITEM_CODE_EXECUTION_RESOURCES_PATH = "web_mvc_manager_page_item/code_execution/resources"
-""" The web mvc manager page item code_execution resources path """
-
 class WebMvcManagerPageItemCodeExecution:
     """
     The web mvc manager page item code execution class.
@@ -49,12 +44,6 @@ class WebMvcManagerPageItemCodeExecution:
 
     web_mvc_manager_page_item_code_execution_plugin = None
     """ The web mvc manager page item code execution plugin """
-
-    web_mvc_manager_page_item_code_execution_controller = None
-    """ The web mvc page item code execution controller """
-
-    web_mvc_manager_page_item_code_execution_controllers = None
-    """ The web mvc manager page item code execution controllers """
 
     def __init__(self, web_mvc_manager_page_item_code_execution_plugin):
         """
@@ -75,19 +64,8 @@ class WebMvcManagerPageItemCodeExecution:
         # retrieves the web mvc utils plugin
         web_mvc_utils_plugin = self.web_mvc_manager_page_item_code_execution_plugin.web_mvc_utils_plugin
 
-        # retrieves the current directory path
-        current_directory_path = os.path.dirname(__file__)
-
-        # loads the mvc utils in the web mvc manager page item code execution controllers module
-        web_mvc_manager_page_item_code_execution_controllers = web_mvc_utils_plugin.import_module_mvc_utils("web_mvc_manager_page_item_code_execution_controllers", "web_mvc_manager_page_item.code_execution", current_directory_path)
-
-        # creates the web mvc manager page item code_execution controller
-        self.web_mvc_manager_page_item_code_execution_controller = web_mvc_utils_plugin.create_controller(web_mvc_manager_page_item_code_execution_controllers.WebMvcManagerPageItemCodeExecutionController, [self.web_mvc_manager_page_item_code_execution_plugin, self], {})
-
-        # creates the web mvc manager page item code execution controllers
-        self.web_mvc_manager_page_item_code_execution_controllers = {
-            "main" : self.web_mvc_manager_page_item_code_execution_controller
-        }
+        # creates the controllers for the web mvc manager page item code execution controller modules
+        web_mvc_utils_plugin.create_controllers("web_mvc_manager_page_item.code_execution.web_mvc_manager_page_item_code_execution_controllers", self, self.web_mvc_manager_page_item_code_execution_plugin, "web_mvc_manager_page_item_code_execution")
 
     def get_resource_patterns(self):
         """
@@ -119,8 +97,8 @@ class WebMvcManagerPageItemCodeExecution:
             {
                 "menu" : "services/Code Execution",
                 "base_address" : "code_execution/new",
-                "pattern" : (r"^web_mvc_manager/code_execution/new$", self.web_mvc_manager_page_item_code_execution_controller.handle_new_ajx, "get", "ajx")
+                "pattern" : (r"^web_mvc_manager/code_execution/new$", self.web_mvc_manager_page_item_code_execution_main_controller.handle_new_ajx, "get", "ajx")
             },
-            (r"^web_mvc_manager/code_execution/new$", self.web_mvc_manager_page_item_code_execution_controller.handle_new, "get"),
-            (r"^web_mvc_manager/code_execution$", self.web_mvc_manager_page_item_code_execution_controller.handle_execute, "post", "ajx")
+            (r"^web_mvc_manager/code_execution/new$", self.web_mvc_manager_page_item_code_execution_main_controller.handle_new, "get"),
+            (r"^web_mvc_manager/code_execution$", self.web_mvc_manager_page_item_code_execution_main_controller.handle_execute, "post", "ajx")
         )

@@ -48,19 +48,13 @@ DEFAULT_ENCODING = "utf-8"
 WEB_MVC_MANAGER_PAGE_ITEM_DNS_RESOURCES_PATH = "web_mvc_manager_page_item/dns/resources"
 """ The web mvc manager page item dns resources path """
 
-TEMPLATES_PATH = WEB_MVC_MANAGER_PAGE_ITEM_DNS_RESOURCES_PATH + "/templates"
-""" The templates path """
-
-AJAX_ENCODER_NAME = "ajx"
-""" The ajax encoder name """
-
 PATTERN_NAMES_VALUE = "pattern_names"
 """ The pattern names value """
 
 # imports the web mvc utils
 web_mvc_utils = colony.libs.importer_util.__importer__(WEB_MVC_UTILS_VALUE)
 
-class WebMvcManagerPageItemDnsController:
+class MainController:
     """
     The web mvc manager page item dns controller.
     """
@@ -89,17 +83,8 @@ class WebMvcManagerPageItemDnsController:
         Method called upon structure initialization.
         """
 
-        # retrieves the plugin manager
-        plugin_manager = self.web_mvc_manager_page_item_dns_plugin.manager
-
-        # retrieves the web mvc manager plugin path
-        web_mvc_manager_page_item_dns_plugin_path = plugin_manager.get_plugin_path_by_id(self.web_mvc_manager_page_item_dns_plugin.id)
-
-        # creates the templates path
-        templates_path = web_mvc_manager_page_item_dns_plugin_path + "/" + TEMPLATES_PATH + "/dns"
-
-        # sets the templates path
-        self.set_templates_path(templates_path)
+        # sets the relative resources path
+        self.set_relative_resources_path(WEB_MVC_MANAGER_PAGE_ITEM_DNS_RESOURCES_PATH, extra_templates_path = "dns")
 
     def handle_show_ajx(self, rest_request, parameters = {}):
         # retrieves the pattern names

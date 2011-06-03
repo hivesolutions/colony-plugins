@@ -37,11 +37,6 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-import os
-
-WEB_MVC_MANAGER_PAGE_ITEM_REPOSITORY_RESOURCES_PATH = "web_mvc_manager_page_item/repository/resources"
-""" The web mvc manager page item repository resources path """
-
 class WebMvcManagerPageItemRepository:
     """
     The web mvc manager page item repository class.
@@ -49,12 +44,6 @@ class WebMvcManagerPageItemRepository:
 
     web_mvc_manager_page_item_repository_plugin = None
     """ The web mvc manager page item repository plugin """
-
-    web_mvc_manager_page_item_repository_controller = None
-    """ The web mvc manager page item repository controller """
-
-    web_mvc_manager_page_item_repository_controllers = None
-    """ The web mvc mananager page item repository controllers """
 
     def __init__(self, web_mvc_manager_page_item_repository_plugin):
         """
@@ -75,19 +64,8 @@ class WebMvcManagerPageItemRepository:
         # retrieves the web mvc utils plugin
         web_mvc_utils_plugin = self.web_mvc_manager_page_item_repository_plugin.web_mvc_utils_plugin
 
-        # retrieves the current directory path
-        current_directory_path = os.path.dirname(__file__)
-
-        # loads the mvc utils in the web mvc manager page item repository controllers module
-        web_mvc_manager_page_item_repository_controllers = web_mvc_utils_plugin.import_module_mvc_utils("web_mvc_manager_page_item_repository_controllers", "web_mvc_manager_page_item.repository", current_directory_path)
-
-        # creates the web mvc manager page item repository controller
-        self.web_mvc_manager_page_item_repository_controller = web_mvc_utils_plugin.create_controller(web_mvc_manager_page_item_repository_controllers.WebMvcManagerPageItemRepositoryController, [self.web_mvc_manager_page_item_repository_plugin, self], {})
-
-        # creates the web mvc manager page item repository controllers
-        self.web_mvc_manager_page_item_repository_controllers = {
-            "main" : self.web_mvc_manager_page_item_repository_controller
-        }
+        # creates the controllers for the web mvc manager page item code execution controller modules
+        web_mvc_utils_plugin.create_controllers("web_mvc_manager_page_item.repository.web_mvc_manager_page_item_repository_controllers", self, self.web_mvc_manager_page_item_repository_plugin, "web_mvc_manager_page_item_repository")
 
     def get_resource_patterns(self):
         """
@@ -120,13 +98,13 @@ class WebMvcManagerPageItemRepository:
                 "menu" : "update/Repositories",
                 "side_panel" : "lists/Repositories",
                 "base_address" : "repositories",
-                "pattern" : (r"^web_mvc_manager/repositories$", self.web_mvc_manager_page_item_repository_controller.handle_list_ajx, "get", "ajx")
+                "pattern" : (r"^web_mvc_manager/repositories$", self.web_mvc_manager_page_item_repository_main_controller.handle_list_ajx, "get", "ajx")
             },
-            (r"^web_mvc_manager/repositories$", self.web_mvc_manager_page_item_repository_controller.handle_list, "get"),
-            (r"^web_mvc_manager/repositories/partial$", self.web_mvc_manager_page_item_repository_controller.handle_partial_list, "get"),
-            (r"^web_mvc_manager/repositories/install_plugin$", self.web_mvc_manager_page_item_repository_controller.handle_install_plugin, "post", "json"),
-            (r"^web_mvc_manager/repositories/(?P<repository_index>[0-9]+)$", self.web_mvc_manager_page_item_repository_controller.handle_show_ajx, "get", "ajx"),
-            (r"^web_mvc_manager/repositories/(?P<repository_index>[0-9]+)$", self.web_mvc_manager_page_item_repository_controller.handle_show, "get"),
-            (r"^web_mvc_manager/repositories/(?P<repository_index>[0-9]+)/plugins_partial$", self.web_mvc_manager_page_item_repository_controller.handle_plugins_partial_list, "get"),
-            (r"^web_mvc_manager/repositories/(?P<repository_index>[0-9]+)/packages_partial$", self.web_mvc_manager_page_item_repository_controller.handle_packages_partial_list, "get")
+            (r"^web_mvc_manager/repositories$", self.web_mvc_manager_page_item_repository_main_controller.handle_list, "get"),
+            (r"^web_mvc_manager/repositories/partial$", self.web_mvc_manager_page_item_repository_main_controller.handle_partial_list, "get"),
+            (r"^web_mvc_manager/repositories/install_plugin$", self.web_mvc_manager_page_item_repository_main_controller.handle_install_plugin, "post", "json"),
+            (r"^web_mvc_manager/repositories/(?P<repository_index>[0-9]+)$", self.web_mvc_manager_page_item_repository_main_controller.handle_show_ajx, "get", "ajx"),
+            (r"^web_mvc_manager/repositories/(?P<repository_index>[0-9]+)$", self.web_mvc_manager_page_item_repository_main_controller.handle_show, "get"),
+            (r"^web_mvc_manager/repositories/(?P<repository_index>[0-9]+)/plugins_partial$", self.web_mvc_manager_page_item_repository_main_controller.handle_plugins_partial_list, "get"),
+            (r"^web_mvc_manager/repositories/(?P<repository_index>[0-9]+)/packages_partial$", self.web_mvc_manager_page_item_repository_main_controller.handle_packages_partial_list, "get")
         )

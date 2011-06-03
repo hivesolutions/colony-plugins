@@ -37,12 +37,9 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-DEFAULT_ENCODING = "utf-8"
-""" The default encoding value """
-
-class SearchHelper:
+class SearchHelperController:
     """
-    The search helper.
+    The search helper controller.
     """
 
     web_mvc_manager_plugin = None
@@ -88,9 +85,9 @@ class SearchHelper:
         # returns the filter contents tuple
         return filter_contents
 
-class CommunicationHelper:
+class CommunicationHelperController:
     """
-    The communication helper.
+    The communication helper controller.
     """
 
     web_mvc_manager_plugin = None
