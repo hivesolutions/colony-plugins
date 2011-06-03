@@ -45,9 +45,6 @@ CONSOLE_EXTENSION_NAME = "automation_scheduler"
 TABLE_TOP_TEXT = "ID      DATE_TIME      RECURSION      BUILD AUTOMATION ID"
 """ The table top text """
 
-COLUMN_SPACING = 8
-""" The column spacing """
-
 DATE_FORMAT = "%d-%m-%Y"
 """ The date format """
 
