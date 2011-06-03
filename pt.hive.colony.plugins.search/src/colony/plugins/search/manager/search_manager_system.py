@@ -63,9 +63,6 @@ DEFAULT_SEARCH_SCORER_FUNCTION_IDENTIFIER = "term_frequency_scorer_function"
 DEFAULT_QUERY_EVALUATOR_TYPE = "query_parser"
 """ The default value for the query evaluator type """
 
-SORT_ORDER_VALUE = "sort_order"
-""" The key to retrieve the sort order from the properties map """
-
 SEARCH_RESULTS_VALUE = "search_results"
 """ The key to retrieve the actual search results list from the search results map """
 
