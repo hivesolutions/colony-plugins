@@ -47,6 +47,12 @@ import web_mvc_encryption_exceptions
 WEB_MVC_UTILS_VALUE = "web_mvc_utils"
 """ The web mvc utils value """
 
+WEB_MVC_ENCRYPTION_RESOURCES_PATH = "web_mvc_encryption/encryption/resources"
+""" The web mvc encryption resources path """
+
+TEMPLATES_PATH = WEB_MVC_ENCRYPTION_RESOURCES_PATH + "/templates"
+""" The templates path """
+
 DEFAULT_NUMBER_BITS = 256
 """ The default number of bits """
 
@@ -88,6 +94,23 @@ class MainController:
 
         self.web_mvc_encryption_plugin = web_mvc_encryption_plugin
         self.web_mvc_encryption = web_mvc_encryption
+
+    def start(self):
+        """
+        Method called upon structure initialization.
+        """
+
+        # retrieves the plugin manager
+        plugin_manager = self.web_mvc_encryption_plugin.manager
+
+        # retrieves the web mvc encryption plugin path
+        web_mvc_encryption_plugin_path = plugin_manager.get_plugin_path_by_id(self.web_mvc_encryption_plugin.id)
+
+        # creates the templates path
+        templates_path = web_mvc_encryption_plugin_path + "/" + TEMPLATES_PATH
+
+        # sets the templates path
+        self.set_templates_path(templates_path)
 
     def handle_web_mvc_encryption_sign(self, rest_request, parameters = {}):
         """
