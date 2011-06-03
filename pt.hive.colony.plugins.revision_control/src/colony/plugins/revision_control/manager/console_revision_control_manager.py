@@ -62,9 +62,6 @@ revision_get_resource_revision <adapter_name> <resource_identifier> [revision]  
 revision_log_date <adapter_name> <resource_identifier> [date]                      - lists all the change sets for the specified resource identifier matching the date specification"
 """ The help text """
 
-DATE_FORMAT = "%Y/%m/%d"
-""" The format for the displayed dates """
-
 DATE_TIME_FORMAT = "%a %b %d %H:%M:%S %Y %Z"
 """ The format for the displayed date times """
 

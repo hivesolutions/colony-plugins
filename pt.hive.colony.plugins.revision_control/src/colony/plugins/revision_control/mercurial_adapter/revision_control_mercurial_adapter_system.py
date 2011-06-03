@@ -62,12 +62,6 @@ AUTHOR_VALUE = "author"
 MESSAGE_VALUE = "message"
 """ The message value """
 
-MERCURIAL_RESOLVED_STATE_VALUE = "r"
-""" The state signaling a conflict has been resolved """
-
-REVISION_RANGE_SEPARATOR = ":"
-""" The separator for revisions in revision ranges """
-
 class RevisionControlMercurialAdapter:
     """
     The revision control mercurial adapter class.
