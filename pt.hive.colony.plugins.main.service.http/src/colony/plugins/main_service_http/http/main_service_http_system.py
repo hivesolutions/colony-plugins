@@ -661,7 +661,7 @@ class HttpClientServiceHandler:
     """ The service configuration """
 
     service_utils_exception_class = None
-    """" The service utils exception class """
+    """ The service utils exception class """
 
     encoding = None
     """ The encoding """
