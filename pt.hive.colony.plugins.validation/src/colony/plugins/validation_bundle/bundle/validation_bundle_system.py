@@ -72,9 +72,6 @@ PLUGINS_VALUE = "plugins"
 PYTHON_VALUE = "python"
 """ The python value """
 
-REFERENCED_BUNDLE_DEPENDENCY_KEYS_VALUE = "referenced_bundle_dependency_keys"
-""" The referenced bundle dependency keys value """
-
 REQUIRED_VALUE = "required"
 """ The required value """
 
@@ -86,9 +83,6 @@ VERSION_VALUE = "version"
 
 BUNDLE_FILE_NAME_ENDING = "_bundle.json"
 """ The bundle file name ending """
-
-COLONY_BUNDLE_NAMESPACE = "pt.hive.colony.bundles."
-""" The colony bundle namespace """
 
 COLONY_PLUGIN_NAMESPACE = "pt.hive.colony.plugins."
 """ The colony plugin namespace """
