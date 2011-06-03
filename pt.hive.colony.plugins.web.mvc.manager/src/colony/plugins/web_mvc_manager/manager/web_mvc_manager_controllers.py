@@ -178,10 +178,10 @@ class MainController:
         """
 
         def handle_web_mvc_manager_page_item(rest_request, parameters = {}):
-            # retrieves the web mvc manager search helper
+            # retrieves the web mvc manager search helper controller
             web_mvc_manager_search_helper_controller = self.web_mvc_manager.web_mvc_manager_search_helper_controller
 
-            # retrieves the web mvc manager communication helper
+            # retrieves the web mvc manager communication helper controller
             web_mvc_manager_communication_helper_controller = self.web_mvc_manager.web_mvc_manager_communication_helper_controller
 
             # in case the encoder name is normal
@@ -618,7 +618,7 @@ class PluginController:
         # sets the serializer in the parameters
         parameters[SERIALIZER_VALUE] = json_plugin
 
-        # retrieves the web mvc manager search helper
+        # retrieves the web mvc manager search helper controller
         web_mvc_manager_search_helper_controller = self.web_mvc_manager.web_mvc_manager_search_helper_controller
 
         # retrieves the form data by processing the form
@@ -815,7 +815,7 @@ class PluginController:
         # retrieves the serializer
         serializer = parameters[SERIALIZER_VALUE]
 
-        # retrieves the web mvc communication helper
+        # retrieves the web mvc communication helper controller
         web_mvc_manager_communication_helper_controller = self.web_mvc_manager.web_mvc_manager_communication_helper_controller
 
         # retrieves the form data by processing the form
@@ -1009,7 +1009,7 @@ class CapabilityController:
         # sets the serializer in the parameters
         parameters[SERIALIZER_VALUE] = json_plugin
 
-        # retrieves the web mvc manager search helper
+        # retrieves the web mvc manager search helper controller
         web_mvc_manager_search_helper_controller = self.web_mvc_manager.web_mvc_manager_search_helper_controller
 
         # retrieves the form data by processing the form
