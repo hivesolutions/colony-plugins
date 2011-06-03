@@ -72,9 +72,6 @@ VARIABLE_NAME_VALUE = "variable_name"
 VARIABLE_NAME_PLURAL_VALUE = "variable_name_plural"
 """ The variable name plural """
 
-UNIX_DIRECTORY_SEPARATOR = "/"
-""" The unix directory separator """
-
 SCAFFOLDER_TYPE = "minimal_mvc"
 """ The scaffolder type """
 

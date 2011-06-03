@@ -59,15 +59,6 @@ DESCRIPTION_VALUE = "description"
 DESTINATION_PATH_VALUE = "destination_path"
 """ The destination path value """
 
-NAME_VALUE = "name"
-""" The name value """
-
-NAME_UNDERSCORE_VALUE = "name_underscore"
-""" The name underscore value """
-
-NAME_LOWERCASE_VALUE = "name_lowercase"
-""" The name lowercase value """
-
 PLUGIN_ID_VALUE = "plugin_id"
 """ The plugin id value """
 
@@ -82,9 +73,6 @@ PROCESS_VALUE = "process"
 
 SCAFFOLD_ATTRIBUTES_VALUE = "scaffold_attributes"
 """ The scaffold attributes value """
-
-SCAFFOLDER_TYPE_VALUE = "scaffolder_type"
-""" The scaffolder type value """
 
 SHORT_NAME_VALUE = "short_name"
 """ The short name value """

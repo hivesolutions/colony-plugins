@@ -46,9 +46,6 @@ TEMPLATE_PATH_VALUE = "template_path"
 SCAFFOLDER_TYPE = "mvc_manager"
 """ The scaffolder type """
 
-BACKEND_TEMPLATES_PATH = "resources/templates"
-""" The backend templates path """
-
 TEMPLATES_PATH = "mvc_manager_scaffolder/scaffolder/resources/templates/"
 """ The templates path """
 
