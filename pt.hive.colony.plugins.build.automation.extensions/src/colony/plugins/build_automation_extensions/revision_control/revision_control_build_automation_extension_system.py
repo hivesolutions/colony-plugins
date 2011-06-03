@@ -84,20 +84,11 @@ USER_VALUE = "user"
 VERSION_VALUE = "version"
 """ The version value """
 
-NAME_VALUE = "name"
-""" The name list value """
-
-USERNAME_VALUE = "username"
-""" The username list value """
-
 CHANGELOG_LIST_VALUE = "changelog_list"
 """ The changelog list value """
 
 CHANGERS_LIST_VALUE = "changers_list"
 """ The changers list value """
-
-UNKNOWN_VALUE = "Unknown"
-""" The unknown value """
 
 class RevisionControlBuildAutomationExtension:
     """
