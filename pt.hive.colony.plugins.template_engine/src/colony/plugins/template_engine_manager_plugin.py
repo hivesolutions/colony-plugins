@@ -71,7 +71,7 @@ class TemplateEngineManagerPlugin(colony.base.plugin_system.Plugin):
     ]
 
     template_engine_manager = None
-    """" The template engine manager """
+    """ The template engine manager """
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
