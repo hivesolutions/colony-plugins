@@ -76,9 +76,6 @@ WORK_SCHEDULING_ALGORITHM = 1
 MAXIMUM_NOTIFICATION_BUFFER_SIZE = 50
 """ The maximum size of the notification buffer """
 
-INITIAL_SEQUENCE_ID = 0
-""" The initial sequence id """
-
 PUSH_SERVICE_NOTIFICATION_TOKEN = "%{PUSH}%"
 """ The push service notification token """
 
