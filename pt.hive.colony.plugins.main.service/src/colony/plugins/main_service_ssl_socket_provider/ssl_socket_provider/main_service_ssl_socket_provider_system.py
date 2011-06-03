@@ -59,9 +59,6 @@ SERVER_SIDE_VALUE = "server_side"
 DO_HANDSHAKE_ON_CONNECT_VALUE = "do_handshake_on_connect"
 """ The do handshake on connect value """
 
-RESOURCES_PATH = "main_service_ssl_socket_provider/ssl_socket_provider/resources"
-""" The resources path """
-
 SSL_ERROR_WANT_READ = 2
 """ The ssl error want read value """
 

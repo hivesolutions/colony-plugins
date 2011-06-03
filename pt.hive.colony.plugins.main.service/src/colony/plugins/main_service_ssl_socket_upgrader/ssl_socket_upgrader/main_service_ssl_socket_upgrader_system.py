@@ -44,9 +44,6 @@ import select
 UPGRADER_NAME = "ssl"
 """ The upgrader name """
 
-RESOURCES_PATH = "main_service_ssl_socket_upgrader/ssl_socket_upgrader/resources"
-""" The resources path """
-
 KEY_FILE_PATH = "key_file_path"
 """ The key file path value """
 
@@ -61,9 +58,6 @@ DO_HANDSHAKE_ON_CONNECT_VALUE = "do_handshake_on_connect"
 
 SSL_ERROR_WANT_READ = 2
 """ The ssl error want read value """
-
-ERROR_SLEEP_TIME = 0.25
-""" The time to be used between error tries """
 
 class MainServiceSslSocketUpgrader:
     """
