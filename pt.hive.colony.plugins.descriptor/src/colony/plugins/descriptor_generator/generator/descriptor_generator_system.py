@@ -44,9 +44,6 @@ import colony.base.plugin_system
 AUTHOR_VALUE = "author"
 """ The author value """
 
-BUILD_AUTOMATION_FILE_PATH_VALUE = "build_automation_file_path"
-""" The build automation file path value """
-
 CAPABILITIES_VALUE = "capabilities"
 """ The capabilities value """
 
@@ -124,9 +121,6 @@ SYSTEM_FILE_NAME_ENDING = "_system.py"
 
 PLUGIN_MODULE_NAME_ENDING = "_plugin"
 """ The plugin module name ending """
-
-RESOURCES_DIRECTORY = "/resources"
-""" The resources directory """
 
 RESOURCE_FILE_NAME_EXCLUSION_LIST = (
     ".svn",
