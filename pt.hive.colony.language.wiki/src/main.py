@@ -44,9 +44,6 @@ import getopt
 USAGE_MESSAGE = "wiki_generator --file=file_path [--target=target_path] [--generation=generation_engine] [-v] [-d]"
 """ The usage message """
 
-DEFAULT_BASE_PATH = ""
-""" The default base path """
-
 DEFAULT_TARGET_PATH = "generated"
 """ The default target path """
 
