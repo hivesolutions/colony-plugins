@@ -37,9 +37,6 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-TEST_IMAGE_PATH = "printing/manager/resources/test_logo.png"
-""" The test image relative path """
-
 CONSOLE_EXTENSION_NAME = "printing"
 """ The console extension name """
 

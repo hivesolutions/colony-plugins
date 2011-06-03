@@ -50,17 +50,36 @@ IMAGE_SCALE_FACTOR = 0.5
 """ The image scale factor """
 
 EXCLUSION_LIST = [
-    "__class__", "__delattr__", "__dict__", "__doc__", "__getattribute__",
-    "__hash__", "__init__", "__module__", "__new__", "__reduce__",
-    "__reduce_ex__", "__repr__", "__setattr__", "__str__", "__weakref__",
-    "__format__", "__sizeof__", "__subclasshook__", "accept", "accept_double",
-    "accept_post_order", "add_child_node", "remove_child_node", "set_indent",
-    "set_value", "indent", "value", "child_nodes"
+    "__class__",
+    "__delattr__",
+    "__dict__",
+    "__doc__",
+    "__getattribute__",
+    "__hash__",
+    "__init__",
+    "__module__",
+    "__new__",
+    "__reduce__",
+    "__reduce_ex__",
+    "__repr__",
+    "__setattr__",
+    "__str__",
+    "__weakref__",
+    "__format__",
+    "__sizeof__",
+    "__subclasshook__",
+    "accept",
+    "accept_double",
+    "accept_post_order",
+    "add_child_node",
+    "remove_child_node",
+    "set_indent",
+    "set_value",
+    "indent",
+    "value",
+    "child_nodes"
 ]
 """ The exclusion list """
-
-DEFAULT_ENCODER = "Cp1252"
-""" The default encoder """
 
 LEFT_TEXT_ALIGN_VALUE = "left"
 """ The left text align value """
