@@ -75,9 +75,6 @@ BUNDLE_REGEX_VALUE = "bundle_regex"
 PLUGIN_REGEX_VALUE = "plugin_regex"
 """ The plugin regex value """
 
-LIBRARY_REGEX_VALUE = "library_regex"
-""" The library regex value """
-
 TARGET_PATH_VALUE = "target_path"
 """ The target path value """
 
@@ -86,12 +83,6 @@ PLUGINS_PATH_VALUE = "plugins_path"
 
 MAIN_FILE_VALUE = "main_file"
 """ The main file value """
-
-EXTRACT_VALUE = "extract"
-""" The extract value """
-
-EXTRACTALL_VALUE = "extractall"
-""" The extract all value """
 
 SPECIFICATION_FILE_PATH_VALUE = "specification_file_path"
 """ The specification file path value """
