@@ -39,9 +39,6 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 import search_query_evaluator_visitor
 
-HITS_VALUE = "hits"
-""" The key for the search result dictionary that retrieves the search result hits """
-
 QUERY_EVALUATOR_TYPE = "query_parser"
 """ The default query evaluator type """
 
@@ -114,7 +111,6 @@ class SearchQueryEvaluatorVisitorAdapter:
         # convert the index search visitor results map
         # into a search result list of search result information maps containing the key
         for index_search_visitor_result_key, index_search_visitor_result_value in index_search_visitor_results.items():
-
             # create a new map from each search result map
             search_result_map = index_search_visitor_result_value
 

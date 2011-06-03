@@ -44,9 +44,6 @@ import search_query_interpreter.query_interpreter.search_query_interpreter_ast a
 HITS_VALUE = "hits"
 """ The key that retrieves the set of results, contained in an arbitrary index level """
 
-WORDS_VALUE = "words"
-""" The key that retrieves the words list that generated each result """
-
 def _visit(ast_node_class):
     """
     Decorator for the visit of an ast node.
