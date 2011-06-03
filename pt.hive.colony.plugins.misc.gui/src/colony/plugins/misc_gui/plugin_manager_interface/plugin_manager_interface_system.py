@@ -163,12 +163,6 @@ DEPENDENCY_TYPE = "dependency"
 ICON_PATH = "misc_gui/plugin_manager_interface/resources/icons"
 """ The plugin manager interface icon path """
 
-IMAGE_SIZE = (
-    IMAGE_WIDTH,
-    IMAGE_HEIGHT
-)
-""" The image size """
-
 class PluginManagerInterface:
     """
     The plugin manager interface class.
