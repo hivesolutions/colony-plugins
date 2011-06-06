@@ -1500,6 +1500,16 @@ class AbstractServiceConnectionlessHandler:
 
         pass
 
+    def busy(self):
+        """
+        Retrieves the current busy status.
+
+        @rtype: bool
+        @return: The current busy status.
+        """
+
+        return self.busy_status
+
     def work_added(self, work_reference):
         """
         Called when a work is added.
@@ -2215,6 +2225,20 @@ class ServiceConnectionless(ServiceConnection):
         """
 
         return self.connection_socket.sendto(message, self.connection_address)
+
+    def send_to(self, message, connection_address):
+        """
+        Sends the given message to the socket.
+        This method controls the connection address to
+        be used in sending the message.
+
+        @type message: String
+        @param message: The message to be sent.
+        @type connection_address: Tuple
+        @param connection_address: The connection address tuple to be used.
+        """
+
+        return self.connection_socket.sendto(message, connection_address)
 
     def get_connection_tuple(self):
         """
