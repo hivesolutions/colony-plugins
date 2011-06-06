@@ -77,7 +77,7 @@ MAXIMUM_NUMBER_WORKS_THREAD = 5
 WORK_SCHEDULING_ALGORITHM = 1
 """ The work scheduling algorithm """
 
-DEFAULT_PORT = 53
+DEFAULT_PORT = 5353
 """ The default port """
 
 MESSAGE_HEADER_SIZE = 12
