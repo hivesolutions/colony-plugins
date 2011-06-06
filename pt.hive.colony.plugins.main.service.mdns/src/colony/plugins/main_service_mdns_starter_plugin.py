@@ -87,7 +87,10 @@ class MainServicMdnsStarterPlugin(colony.base.plugin_system.Plugin):
         # defines the parameters
         parameters = {
             "socket_provider" : "datagram",
-            "port" : 5353
+            "port" : 5353,
+            "socket_parameters" : {
+                "multicast_address" : ("224.0.0.251", 5353)
+            }
         }
 
         self.main_service_mdns_plugin.start_service(parameters)

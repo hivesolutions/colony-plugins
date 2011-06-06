@@ -363,7 +363,7 @@ class MainServiceMdns:
         @return: The service configuration map.
         """
 
-        return self.dns_service_configuration
+        return self.mdns_service_configuration
 
     def _generate_service_parameters(self, parameters):
         """
