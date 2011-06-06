@@ -54,7 +54,7 @@ MULTICAST_PARAMETERS_VALUE = "multicast_parameters"
 TTL_VALUE = "ttl"
 """ The ttl value """
 
-DEFAULT_MULTICAST_TTL = 32
+DEFAULT_MULTICAST_TTL = 255
 """ The default multicast ttl """
 
 class MainServiceDatagramSocketProvider:
