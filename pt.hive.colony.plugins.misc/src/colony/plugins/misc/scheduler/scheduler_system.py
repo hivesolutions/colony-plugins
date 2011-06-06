@@ -193,11 +193,12 @@ class Scheduler:
     def register_task(self, task, time):
         """
         Registers the given task for the given time.
+        The given time is a delta value from the current time.
 
         @type task: SchedulerTask
         @param task: The task to be registered.
         @type time: float
-        @param time: The timestamp to register the task.
+        @param time: The delta time to register the task.
         """
 
         # calculates the absolute time
@@ -207,9 +208,29 @@ class Scheduler:
         self.register_task_absolute(task, absolute_time)
 
     def register_task_absolute(self, task, absolute_time):
+        """
+        Registers the given task for the given absolute time.
+        The given time is an absolute time value.
+
+        @type task: SchedulerTask
+        @param task: The task to be registered.
+        @type absolute_time: float
+        @param absolute_time: The absolute time to register the task.
+        """
+
         self.register_task_absolute_recursive(task, absolute_time, None)
 
     def register_task_date_time(self, task, date_time):
+        """
+        Registers the given task for the given date time structure.
+        The given date time is a delta value from the current time.
+
+        @type task: SchedulerTask
+        @param task: The task to be registered.
+        @type time: datetime
+        @param time: The delta date time to register the task.
+        """
+
         # retrieves the current date time
         current_date_time = datetime.datetime.utcnow()
 
@@ -220,23 +241,59 @@ class Scheduler:
         new_timestamp = self.date_time_to_timestamp(new_date_time)
 
         # registers the task
-        return self.register_task_absolute(task, new_timestamp)
+        self.register_task_absolute(task, new_timestamp)
 
     def register_task_date_time_absolute(self, task, absolute_date_time):
+        """
+        Registers the given task for the given absolute date time.
+        The given date time is an absolute time value.
+
+        @type task: SchedulerTask
+        @param task: The task to be registered.
+        @type absolute_date_time: datetime
+        @param absolute_date_time: The absolute date time to register the task.
+        """
+
         # converts the absolute date time to timestamp
         absolute_timestamp = self.date_time_to_timestamp(absolute_date_time)
 
         # registers the task
-        return self.register_task_absolute(task, absolute_timestamp)
+        self.register_task_absolute(task, absolute_timestamp)
 
     def register_task_recursive(self, task, time, recursion_list):
+        """
+        Registers the given task for a recursive usage starting from
+        the given time value.
+        The given time is a delta value from the current time.
+
+        @type task: SchedulerTask
+        @param task: The task to be registered.
+        @type time: float
+        @param time: The delta time to register the task.
+        @type recursion_list: List
+        @param recursion_list: The recursion list to be used.
+        """
+
         # calculates the absolute time
         absolute_time = self.timestamp_to_absolute_timestamp(time)
 
         # registers the task
-        return self.register_task_absolute_recursive(task, absolute_time, recursion_list)
+        self.register_task_absolute_recursive(task, absolute_time, recursion_list)
 
     def register_task_absolute_recursive(self, task, absolute_time, recursion_list):
+        """
+        Registers the given task for a recursive usage starting from
+        the given absolute time value.
+        The given time is an absolute time value.
+
+        @type task: SchedulerTask
+        @param task: The task to be registered.
+        @type absolute_time: float
+        @param absolute_time: The absolute time to register the task.
+        @type recursion_list: List
+        @param recursion_list: The recursion list to be used.
+        """
+
         # retrieves the task_type
         task_type = task.task_type
 
@@ -252,7 +309,7 @@ class Scheduler:
             method_arguments = task_arguments[METHOD_ARGUMENTS_VALUE]
 
             # creates a new scheduler item
-            scheduler_item = self.create_scheduler_item(method, method_arguments, absolute_time, recursion_list)
+            scheduler_item = self.create_scheduler_item(method, method_arguments, absolute_time, recursion_list, task)
         # in case the task is of type console_command
         elif task_type == CONSOLE_COMMAND_TYPE:
             # retrieves the console command
@@ -265,12 +322,29 @@ class Scheduler:
             default_console_output_method = main_console_plugin.get_default_output_method()
 
             # creates a new scheduler item
-            scheduler_item = self.create_scheduler_item(main_console_plugin.process_command_line, [console_command, default_console_output_method], absolute_time, recursion_list)
+            scheduler_item = self.create_scheduler_item(main_console_plugin.process_command_line, [console_command, default_console_output_method], absolute_time, recursion_list, task)
+        # otherwise it's an invalid task type
+        else:
+            # raises an exception
+            raise Exception("Invalid task type: %s" % str(task_type))
 
         # adds the scheduler item
         self.add_scheduler_item(scheduler_item)
 
     def register_task_date_time_recursive(self, task, date_time, recursion_list):
+        """
+        Registers the given task for a recursive usage starting from
+        the given date time value.
+        The given date time is a delta value from the current date time.
+
+        @type task: SchedulerTask
+        @param task: The task to be registered.
+        @type date_time: float
+        @param date_time: The delta date time to register the task.
+        @type recursion_list: List
+        @param recursion_list: The recursion list to be used.
+        """
+
         # retrieves the current date time
         current_date_time = datetime.datetime.utcnow()
 
@@ -281,14 +355,42 @@ class Scheduler:
         new_timestamp = self.date_time_to_timestamp(new_date_time)
 
         # registers the task
-        return self.register_task_absolute_recursive(task, new_timestamp, recursion_list)
+        self.register_task_absolute_recursive(task, new_timestamp, recursion_list)
 
     def register_task_date_time_absolute_recursive(self, task, absolute_date_time, recursion_list):
+        """
+        Registers the given task for a recursive usage starting from
+        the given absolute date time value.
+        The given date time is an absolute date time value.
+
+        @type task: SchedulerTask
+        @param task: The task to be registered.
+        @type absolute_date_time: float
+        @param absolute_date_time: The absolute date time to register the task.
+        @type recursion_list: List
+        @param recursion_list: The recursion list to be used.
+        """
+
         # converts the absolute date time to timestamp
         absolute_timestamp = self.date_time_to_timestamp(absolute_date_time)
 
         # registers the task
-        return self.register_task_absolute_recursive(task, absolute_timestamp, recursion_list)
+        self.register_task_absolute_recursive(task, absolute_timestamp, recursion_list)
+
+    def unregister_task(self, task):
+        """
+        Unregisters the given task from the scheduler.
+        The task execution is suspended and then canceled.
+
+        @type task: SchedulerTask
+        @param task: The task to be unregistered.
+        """
+
+        # retrieves the scheduler item from the task
+        scheduler_item = task.scheduler_item
+
+        # removes the (active) scheduler item
+        self.remove_active_scheduler_item(scheduler_item)
 
     def get_task_class(self):
         """
@@ -315,7 +417,7 @@ class Scheduler:
         # cleans the startup configuration
         colony.libs.map_util.map_clean(self.startup_configuration)
 
-    def create_scheduler_item(self, task_method, task_method_arguments, absolute_time, recursion_list):
+    def create_scheduler_item(self, task_method, task_method_arguments, absolute_time, recursion_list, task):
         # retrieves the guid plugin
         guid_plugin = self.scheduler_plugin.guid_plugin
 
@@ -323,7 +425,10 @@ class Scheduler:
         item_id = guid_plugin.generate_guid()
 
         # creates the new scheduler item instance
-        scheduler_item = SchedulerItem(item_id, task_method, task_method_arguments, absolute_time, recursion_list)
+        scheduler_item = SchedulerItem(item_id, task_method, task_method_arguments, absolute_time, recursion_list, task)
+
+        # sets the scheduler item in the task
+        task.scheduler_item = scheduler_item
 
         # returns the scheduler item instance
         return scheduler_item
@@ -440,6 +545,7 @@ class Scheduler:
 
             # ads the new scheduler item to the scheduler
             self.add_scheduler_item(scheduler_item)
+
         # otherwise it's not recursive and there is no
         # need to re-schedule the task
         else:
@@ -509,7 +615,7 @@ class Scheduler:
             plugin_method = getattr(plugin, method)
 
             # creates the scheduler item from the plugin method and the arguments
-            scheduler_item = self.create_scheduler_item(plugin_method, arguments, current_time, recursion_list)
+            scheduler_item = self.create_scheduler_item(plugin_method, arguments, current_time, recursion_list, startup_task)
 
             # adds the scheduler item
             self.add_scheduler_item(scheduler_item)
@@ -555,7 +661,10 @@ class SchedulerTask:
     task_arguments = {}
     """ The task arguments map """
 
-    def __init__(self, task_type, task_arguments = {}):
+    scheduler_item = None
+    """ The scheduler item """
+
+    def __init__(self, task_type, task_arguments = {}, scheduler_item = None):
         """
         Constructor of the class.
 
@@ -563,14 +672,19 @@ class SchedulerTask:
         @param task_type: The task type.
         @type task_arguments: Dictionary
         @param task_arguments: The task arguments map.
+        @type scheduler_item: SchedulerItem
+        @param scheduler_item: The scheduler item.
         """
 
         self.task_type = task_type
         self.task_arguments = task_arguments
+        self.scheduler_item = scheduler_item
 
 class SchedulerItem:
     """
     The scheduler item class.
+    This is the runtime abstraction used to control the
+    execution of the tasks.
     """
 
     item_id = "none"
@@ -588,13 +702,16 @@ class SchedulerItem:
     recursion_list = None
     """ The recursion list """
 
+    scheduler_task = None
+    """ The task associated with this item """
+
     current_event = None
     """ The current event """
 
     canceled = False
     """ The canceled flag """
 
-    def __init__(self, item_id, task_method, task_method_arguments, absolute_time, recursion_list = None, current_event = None, canceled = False):
+    def __init__(self, item_id, task_method, task_method_arguments, absolute_time, recursion_list = None, scheduler_task = None, current_event = None, canceled = False):
         """
         Constructor of the class.
 
@@ -608,6 +725,8 @@ class SchedulerItem:
         @param absolute_time: The absolute time.
         @type recursion_list: List
         @param recursion_list: The recursion list.
+        @type scheduler_task: SchedulerTask
+        @param scheduler_task: The scheduler task.
         @type current_event: Event
         @param current_event: The current event.
         @type canceled: bool
@@ -619,6 +738,7 @@ class SchedulerItem:
         self.task_method_arguments = task_method_arguments
         self.absolute_time = absolute_time
         self.recursion_list = recursion_list
+        self.scheduler_task = scheduler_task
         self.current_event = current_event
         self.canceled = canceled
 

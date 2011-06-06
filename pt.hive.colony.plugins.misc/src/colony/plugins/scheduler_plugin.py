@@ -163,6 +163,9 @@ class SchedulerPlugin(colony.base.plugin_system.Plugin):
     def register_task_date_time_absolute_recursive(self, task, absolute_date_time, recursion_list):
         return self.scheduler.register_task_date_time_absolute_recursive(task, absolute_date_time, recursion_list)
 
+    def unregister_task(self, task):
+        return self.scheduler.unregister_task(task)
+
     def get_task_class(self):
         """
         Retrieves the class that represents
