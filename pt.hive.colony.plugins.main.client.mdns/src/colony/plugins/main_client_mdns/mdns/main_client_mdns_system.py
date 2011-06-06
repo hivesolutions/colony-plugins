@@ -769,6 +769,9 @@ class MdnsResponse:
         # retrieves the query type and the query class integer values
         query_type_integer, query_class_integer = struct.unpack_from("!HH", data, current_index)
 
+        # filters the query class integer value
+        query_class_integer = query_class_integer & 0x7fff
+
         # increments the current index with four bytes
         current_index += 4
 
