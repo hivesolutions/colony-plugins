@@ -145,7 +145,7 @@ class MainServiceDatagramSocketProvider:
         """
 
         # unpacks the multicast address into host and port
-        multicast_host, multicast_port = multicast_address
+        multicast_host, _multicast_port = multicast_address
 
         # retrieves the multicast parameters
         multicast_ttl = multicast_parameters.get(TTL_VALUE, DEFAULT_MULTICAST_TTL)
@@ -157,11 +157,9 @@ class MainServiceDatagramSocketProvider:
         base_socket.setsockopt(socket.IPPROTO_IP, socket.IP_MULTICAST_TTL, multicast_ttl)
         base_socket.setsockopt(socket.IPPROTO_IP, socket.IP_MULTICAST_LOOP, 1)
 
-        # binds the datagram socket
-        base_socket.bind(("", multicast_port))
-
-        # retrieves the default host (name)
-        host = socket.gethostbyname(socket.gethostname())
+        # retrieves the default host from the host name
+        hostname = socket.gethostname()
+        host = socket.gethostbyname(hostname)
 
         # sets the membership for the multicasting paradigm
         base_socket.setsockopt(socket.SOL_IP, socket.IP_MULTICAST_IF, socket.inet_aton(host))
