@@ -163,5 +163,6 @@ class MainServiceDatagramSocketProvider:
         # retrieves the default host (name)
         host = socket.gethostbyname(socket.gethostname())
 
+        # sets the membership for the multicasting paradigm
         base_socket.setsockopt(socket.SOL_IP, socket.IP_MULTICAST_IF, socket.inet_aton(host))
         base_socket.setsockopt(socket.IPPROTO_IP, socket.IP_ADD_MEMBERSHIP, socket.inet_aton(multicast_host) + socket.inet_aton(host));
