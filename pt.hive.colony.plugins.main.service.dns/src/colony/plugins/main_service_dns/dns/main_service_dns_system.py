@@ -1149,7 +1149,7 @@ class DnsRequest:
         self._write_name_serialized(answer_name, string_buffer, current_index)
 
         # serializes the answer data
-        answer_data_serialized = self._serialize_answer_data(answer_name, answer_data)
+        answer_data_serialized = self._serialize_answer_data(answer_type_integer, answer_data)
 
         # retrieves the answer data length from the answer data serialized
         answer_data_length = len(answer_data_serialized)
@@ -1205,8 +1205,8 @@ class DnsRequest:
                 # writes the name item index string to the string buffer
                 string_buffer.write(name_item_index_string)
 
-                # returns immediately
-                return
+                # breaks the loop
+                break
 
             # retrieves the name item length
             name_item_length = len(name_item)
@@ -1231,7 +1231,7 @@ class DnsRequest:
         # returns the string value (name serialized)
         return string_value
 
-    def _write_name_serialized(self, name, string_buffer , current_index = None):
+    def _write_name_serialized(self, name, string_buffer, current_index = None):
         # splits the name to retrieve the name items
         name_items = name.split(".")
 
@@ -1291,12 +1291,12 @@ class DnsRequest:
         # writes the end of string in the string buffer
         string_buffer.write("\0")
 
-    def _serialize_answer_data(self, answer_name_integer, answer_data):
-        # in case the answer is of type ns or cname
-        if answer_name_integer in (0x02, 0x05):
+    def _serialize_answer_data(self, answer_type_integer, answer_data):
+        # in case the answer is of type ns, cname, ptr or txt
+        if answer_type_integer in (0x02, 0x05, 0x0c, 0x10):
             serialized_answer_data = self._serialize_name(answer_data)
         # in case the answer is of type mx
-        elif answer_name_integer in (0x0f,):
+        elif answer_type_integer in (0x0f,):
             # unpacks the answer data into preference and name
             answer_data_preference, answer_data_name = answer_data
 
@@ -1306,9 +1306,23 @@ class DnsRequest:
             # serializes the answer data name
             answer_data_name_serialized = self._serialize_name(answer_data_name)
 
-            # sets the serializes answer data as the concatenation
+            # sets the serialized answer data as the concatenation
             # of the answer data preference and the answer data name (both serialized)
             serialized_answer_data = answer_data_preference_serialized + answer_data_name_serialized
+        # in case the answer is of type srv
+        elif answer_type_integer in (0x21,):
+            # unpacks the answer data into preference and name
+            priority, weight, port, answer_data_name = answer_data
+
+            # serializes (packs) the priority, weight and port (the parameters)
+            parameters_serialized = struct.pack("!HHH", priority, weight, port)
+
+            # serializes the answer data name
+            answer_data_name_serialized = self._serialize_name(answer_data_name)
+
+            # sets the serialized answer data as the concatenation
+            # of the parameters serialized and the answer data name (both serialized)
+            serialized_answer_data = parameters_serialized + answer_data_name_serialized
         else:
             # in case the is ipv4 (four bytes)
             if not answer_data.find(".") == -1:
