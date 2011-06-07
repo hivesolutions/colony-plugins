@@ -572,6 +572,27 @@ class MdnsClientServiceHandler:
             # handles the request by the request handler
             mdns_service_handler_plugin.handle_request(request, handler_arguments)
 
+            # checks if the request represents a response
+            request_is_response = request.is_response()
+
+            # in case the request is in fact a response
+            if request_is_response:
+                # returns true (connection remains open)
+                return True
+
+            # creates the record tuple
+            record_tuple = (
+                "_colony._tcp.local",
+                "PTR",
+                "IN",
+                10,
+                "srio-pc.local"
+            )
+
+            #request.queries = []
+
+            request.answers.append(record_tuple)
+
             try:
                 # sends the request to the client (response)
                 self.send_request(service_connection, request)
@@ -748,6 +769,20 @@ class MdnsRequest:
 
     def __repr__(self):
         return "(%s, 0x%04x, %s)" % (self.transaction_id, self.flags, str(self.queries))
+
+    def is_response(self):
+        """
+        Checks if the current request represents a response.
+
+        @rtype: bool
+        @return: If the current request represents a response.
+        """
+
+        # retrieves the response value from the flags
+        response_value = self.flags >> 15
+
+        # returns the response value
+        return response_value
 
     def process_data(self, data):
         """
@@ -1149,7 +1184,7 @@ class MdnsRequest:
         self._write_name_serialized(answer_name, string_buffer, current_index)
 
         # serializes the answer data
-        answer_data_serialized = self._serialize_answer_data(answer_name, answer_data)
+        answer_data_serialized = self._serialize_answer_data(answer_type_integer, answer_data)
 
         # retrieves the answer data length from the answer data serialized
         answer_data_length = len(answer_data_serialized)
@@ -1205,8 +1240,8 @@ class MdnsRequest:
                 # writes the name item index string to the string buffer
                 string_buffer.write(name_item_index_string)
 
-                # returns immediately
-                return
+                # breaks the loop
+                break
 
             # retrieves the name item length
             name_item_length = len(name_item)
@@ -1291,12 +1326,12 @@ class MdnsRequest:
         # writes the end of string in the string buffer
         string_buffer.write("\0")
 
-    def _serialize_answer_data(self, answer_name_integer, answer_data):
-        # in case the answer is of type ns or cname
-        if answer_name_integer in (0x02, 0x05):
+    def _serialize_answer_data(self, answer_type_integer, answer_data):
+        # in case the answer is of type ns, cname, ptr or txt
+        if answer_type_integer in (0x02, 0x05, 0x0c, 0x10):
             serialized_answer_data = self._serialize_name(answer_data)
         # in case the answer is of type mx
-        elif answer_name_integer in (0x0f,):
+        elif answer_type_integer in (0x0f,):
             # unpacks the answer data into preference and name
             answer_data_preference, answer_data_name = answer_data
 
@@ -1306,9 +1341,23 @@ class MdnsRequest:
             # serializes the answer data name
             answer_data_name_serialized = self._serialize_name(answer_data_name)
 
-            # sets the serializes answer data as the concatenation
+            # sets the serialized answer data as the concatenation
             # of the answer data preference and the answer data name (both serialized)
             serialized_answer_data = answer_data_preference_serialized + answer_data_name_serialized
+        # in case the answer is of type srv
+        elif answer_type_integer in (0x21,):
+            # unpacks the answer data into preference and name
+            priority, weight, port, answer_data_name = answer_data
+
+            # serializes (packs) the priority, weight and port (the parameters)
+            parameters_serialized = struct.pack("!HHH", priority, weight, port)
+
+            # serializes the answer data name
+            answer_data_name_serialized = self._serialize_name(answer_data_name)
+
+            # sets the serialized answer data as the concatenation
+            # of the parameters serialized and the answer data name (both serialized)
+            serialized_answer_data = parameters_serialized + answer_data_name_serialized
         else:
             # in case the is ipv4 (four bytes)
             if not answer_data.find(".") == -1:
