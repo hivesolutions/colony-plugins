@@ -78,4 +78,22 @@ class MainServiceMdnsRegisterHandler:
         @param arguments: The arguments to the mdns handling.
         """
 
-        pass
+        # checks if the request represents a response
+        request_is_response = request.is_response()
+
+        # in case the request is in fact a response
+        if request_is_response:
+            # returns true (connection remains open)
+            return True
+
+        # creates the record tuple
+        record_tuple = (
+            "_colony._tcp.local",
+            "PTR",
+            "IN",
+            10,
+            "srio-pc.local"
+        )
+
+        # adds the record tuple
+        request.answers.append(record_tuple)

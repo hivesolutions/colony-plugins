@@ -572,27 +572,6 @@ class MdnsClientServiceHandler:
             # handles the request by the request handler
             mdns_service_handler_plugin.handle_request(request, handler_arguments)
 
-            # checks if the request represents a response
-            request_is_response = request.is_response()
-
-            # in case the request is in fact a response
-            if request_is_response:
-                # returns true (connection remains open)
-                return True
-
-            # creates the record tuple
-            record_tuple = (
-                "_colony._tcp.local",
-                "PTR",
-                "IN",
-                10,
-                "srio-pc.local"
-            )
-
-            #request.queries = []
-
-            request.answers.append(record_tuple)
-
             try:
                 # sends the request to the client (response)
                 self.send_request(service_connection, request)
