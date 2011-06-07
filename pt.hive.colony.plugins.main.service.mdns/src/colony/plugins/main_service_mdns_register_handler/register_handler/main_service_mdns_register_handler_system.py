@@ -83,8 +83,8 @@ class MainServiceMdnsRegisterHandler:
 
         # in case the request is in fact a response
         if request_is_response:
-            # returns true (connection remains open)
-            return True
+            # returns immediately (no response)
+            return
 
         # creates the record tuple
         record_tuple = (
