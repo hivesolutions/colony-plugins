@@ -76,6 +76,9 @@ MESSAGE_HEADER_SIZE = 12
 NORMAL_REQUEST_VALUE = 0x0100
 """ The normal request value """
 
+UNICAST_QUERY_MASK_VALUE = 0x8000
+""" The unicast query mask value """
+
 TYPES_MAP = {
     "A" : 0x01,
     "NS" : 0x02,
@@ -653,6 +656,9 @@ class MdnsRequest:
 
         # writes the end of string in the string buffer
         string_buffer.write("\0")
+
+        # puts the query "unicast flag" in the query to force a "unicast" reply
+        query_class_integer = query_class_integer | UNICAST_QUERY_MASK_VALUE
 
         # creates the query data from the query type and class
         query_data = struct.pack("!HH", query_type_integer, query_class_integer)
