@@ -39,6 +39,8 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 import socket
 
+import colony.libs.host_util
+
 HANDLER_NAME = "register"
 """ The handler name """
 
@@ -88,12 +90,12 @@ class MainServiceMdnsRegisterHandler:
             # returns immediately (no response)
             return
 
-        # retrieves the default host from the host name
-        hostname = socket.gethostname()
-        host = socket.gethostbyname(hostname)
+        # retrieves the "local" host name
+        hostname_local = colony.libs.host_util.get_hostname_local()
 
-        # creates the "local" host name from the host name
-        local_hostname = hostname + ".local"
+        # retrieves the "preferred" addresses
+        address_ip4 = colony.libs.host_util.get_address_ip4()
+        address_ip6 = colony.libs.host_util.get_address_ip6()
 
         # creates the record tuple
         record_tuple = (
@@ -101,20 +103,32 @@ class MainServiceMdnsRegisterHandler:
             "PTR",
             "IN",
             10,
-            local_hostname
+            hostname_local
         )
 
-        # creates the address tuple
-        address_tuple = (
-            local_hostname,
+        # creates the address ip4 tuple
+        address_ip4_tuple = (
+            hostname_local,
             "A",
             "IN",
             10,
-            host
+            address_ip4
+        )
+
+        # creates the address ip6 tuple
+        address_ip6_tuple = (
+            hostname_local,
+            "AAAA",
+            "IN",
+            10,
+            address_ip6
         )
 
         # adds the record tuple
         request.answers.append(record_tuple)
 
         # adds the address tuple
-        request.additional_resource_records.append(address_tuple)
+        request.additional_resource_records.append(address_ip4_tuple)
+
+        # TENHO DE POR O ENCODING DE IPV6 como deve de ser no mdns e no dns
+        #request.additional_resource_records.append(address_ip6_tuple)
