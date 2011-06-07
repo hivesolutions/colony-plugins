@@ -1266,7 +1266,7 @@ class MdnsRequest:
         # returns the string value (name serialized)
         return string_value
 
-    def _write_name_serialized(self, name, string_buffer , current_index = None):
+    def _write_name_serialized(self, name, string_buffer, current_index = None):
         # splits the name to retrieve the name items
         name_items = name.split(".")
 
