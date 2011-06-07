@@ -83,6 +83,7 @@
             "base_bundles/bundles/specifications/main_service_dns_bundle.json",
             "base_bundles/bundles/specifications/main_service_http_bundle.json",
             "base_bundles/bundles/specifications/main_service_irc_bundle.json",
+            "base_bundles/bundles/specifications/main_service_mdns_bundle.json",
             "base_bundles/bundles/specifications/main_service_policy_bundle.json",
             "base_bundles/bundles/specifications/main_service_pop_bundle.json",
             "base_bundles/bundles/specifications/main_service_smtp_bundle.json",
