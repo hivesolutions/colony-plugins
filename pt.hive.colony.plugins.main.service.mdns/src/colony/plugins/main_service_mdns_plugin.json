@@ -1,0 +1,24 @@
+{
+    "type" : "plugin",
+    "platform" : "python",
+    "sub_platforms" : ["cpython"],
+    "id" : "pt.hive.colony.plugins.main.service.mdns",
+    "name" : "Mdns Service Main Plugin",
+    "short_name" : "Mdns Service Main",
+    "description" : "The plugin that offers the mdns service",
+    "version" : "1.0.0",
+    "author" : "Hive Solutions Lda. <development@hive.pt>",
+    "capabilities" : ["service.mdns", "build_automation_item"],
+    "capabilities_allowed" : ["mdns_service_handler"],
+    "dependencies" : [{
+                "id" : "pt.hive.colony.plugins.main.service.utils",
+                "version" : "1.0.0"
+            }],
+    "main_file" : "main_service_mdns_plugin.py",
+    "resources" : ["main_service_mdns_plugin.py",
+            "main_service_mdns/__init__.py",
+            "main_service_mdns/mdns/__init__.py",
+            "main_service_mdns/mdns/main_service_mdns_exceptions.py",
+            "main_service_mdns/mdns/main_service_mdns_system.py",
+            "main_service_mdns/mdns/resources/baf.xml"]
+}
