@@ -37,6 +37,8 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
+import socket
+
 HANDLER_NAME = "register"
 """ The handler name """
 
@@ -86,14 +88,33 @@ class MainServiceMdnsRegisterHandler:
             # returns immediately (no response)
             return
 
+        # retrieves the default host from the host name
+        hostname = socket.gethostname()
+        host = socket.gethostbyname(hostname)
+
+        # creates the "local" host name from the host name
+        local_hostname = hostname + ".local"
+
         # creates the record tuple
         record_tuple = (
             "_colony._tcp.local",
             "PTR",
             "IN",
             10,
-            "srio-pc.local"
+            local_hostname
+        )
+
+        # creates the address tuple
+        address_tuple = (
+            local_hostname,
+            "A",
+            "IN",
+            10,
+            host
         )
 
         # adds the record tuple
         request.answers.append(record_tuple)
+
+        # adds the address tuple
+        request.additional_resource_records.append(address_tuple)
