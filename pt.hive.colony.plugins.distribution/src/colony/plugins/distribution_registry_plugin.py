@@ -95,6 +95,9 @@ class DistributionRegistryPlugin(colony.base.plugin_system.Plugin):
     def load_registry(self, properties):
         return self.distribution_registry.load_registry(properties)
 
+    def unload_registry(self, properties):
+        return self.distribution_registry.unload_registry(properties)
+
     def register_entry(self, hostname, name, type, endpoints, metadata):
         return self.distribution_registry.register_entry(hostname, name, type, endpoints, metadata)
 

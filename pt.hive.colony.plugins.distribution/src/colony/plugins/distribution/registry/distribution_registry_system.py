@@ -74,6 +74,16 @@ class DistributionRegistry:
 
         pass
 
+    def unload_registry(self, properties):
+        """
+        Unloads the registry with the given properties.
+
+        @type properties: List
+        @param properties: The list of properties for the unload of the registry.
+        """
+
+        pass
+
     def register_entry(self, hostname, name, type, endpoints, metadata):
         """
         Registers an entry in the registry.
