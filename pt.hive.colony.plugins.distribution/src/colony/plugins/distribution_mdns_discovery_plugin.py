@@ -58,7 +58,7 @@ class DistributionMdnsDiscoveryPlugin(colony.base.plugin_system.Plugin):
         "build_automation_file_path" : "$base{plugin_directory}/distribution/mdns_discovery/resources/baf.xml"
     }
     capabilities = [
-        "distribution_discovery_handler",
+        "distribution_discovery_adapter",
         "build_automation_item"
     ]
     dependencies = [
@@ -102,15 +102,15 @@ class DistributionMdnsDiscoveryPlugin(colony.base.plugin_system.Plugin):
     def dependency_injected(self, plugin):
         colony.base.plugin_system.Plugin.dependency_injected(self, plugin)
 
-    def get_handler_name(self):
+    def get_adapter_name(self):
         """
-        Retrieves the handler name.
+        Retrieves the adapter name.
 
         @rtype: String
-        @return: The handler name.
+        @return: The adapter name.
         """
 
-        return self.distribution_mdns_discovery.get_handler_name()
+        return self.distribution_mdns_discovery.get_adapter_name()
 
     def handle_discover(self, arguments):
         """
