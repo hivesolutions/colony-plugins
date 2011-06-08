@@ -42,6 +42,21 @@ import colony.libs.host_util
 HANDLER_NAME = "_colony._tcp.local"
 """ The handler name """
 
+COLONY_SERVICE_ID = "_colony._tcp.local"
+""" The colony service id """
+
+A_TYPE = "A"
+""" The a type """
+
+PTR_TYPE = "PTR"
+""" The ptr type """
+
+IN_CLASS = "IN"
+""" The in class """
+
+DEFAULT_TTL = 10
+""" The default ttl (time to live) """
+
 class DistributionMdnsHandler:
     """
     The distribution mdns handler class.
@@ -93,40 +108,27 @@ class DistributionMdnsHandler:
 
         # retrieves the "preferred" addresses
         address_ip4 = colony.libs.host_util.get_address_ip4()
-        address_ip6 = colony.libs.host_util.get_address_ip6()
 
         # creates the record tuple
         record_tuple = (
-            "_colony._tcp.local",
-            "PTR",
-            "IN",
-            10,
+            COLONY_SERVICE_ID,
+            PTR_TYPE,
+            IN_CLASS,
+            DEFAULT_TTL,
             hostname_local
         )
 
         # creates the address ip4 tuple
         address_ip4_tuple = (
             hostname_local,
-            "A",
-            "IN",
-            10,
+            A_TYPE,
+            IN_CLASS,
+            DEFAULT_TTL,
             address_ip4
-        )
-
-        # creates the address ip6 tuple
-        address_ip6_tuple = (
-            hostname_local,
-            "AAAA",
-            "IN",
-            10,
-            address_ip6
         )
 
         # adds the record tuple
         request.answers.append(record_tuple)
 
-        # adds the address tuple
+        # adds the ip4 and ip6 address tuples
         request.additional_resource_records.append(address_ip4_tuple)
-
-        # TENHO DE POR O ENCODING DE IPV6 como deve de ser no mdns e no dns
-        #request.additional_resource_records.append(address_ip6_tuple)
