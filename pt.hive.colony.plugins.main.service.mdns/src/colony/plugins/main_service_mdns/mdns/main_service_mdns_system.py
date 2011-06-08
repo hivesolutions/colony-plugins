@@ -1306,8 +1306,15 @@ class MdnsRequest:
         string_buffer.write("\0")
 
     def _serialize_answer_data(self, answer_type_integer, answer_data):
+        # in case the answer is of type a
+        if answer_type_integer in (0x01,):
+            # processes the ipv4 address value
+            raw_answer_data_string = answer_data.split(".")
+            raw_answer_data_bytes = [int(value) for value in raw_answer_data_string]
+            raw_answer_data_bytes_length = len(raw_answer_data_bytes)
+            serialized_answer_data = struct.pack("!" + str(raw_answer_data_bytes_length) + "B", *raw_answer_data_bytes)
         # in case the answer is of type ns, cname, ptr or txt
-        if answer_type_integer in (0x02, 0x05, 0x0c, 0x10):
+        elif answer_type_integer in (0x02, 0x05, 0x0c, 0x10):
             serialized_answer_data = self._serialize_name(answer_data)
         # in case the answer is of type mx
         elif answer_type_integer in (0x0f,):
@@ -1337,22 +1344,16 @@ class MdnsRequest:
             # sets the serialized answer data as the concatenation
             # of the parameters serialized and the answer data name (both serialized)
             serialized_answer_data = parameters_serialized + answer_data_name_serialized
+        # in case the answer is of type aaaa
+        elif answer_type_integer in (0x1c,):
+            # processes the ipv6 address value
+            raw_answer_data_string = answer_data.split(":")
+            raw_answer_data_shorts = [int(value or "", 16) for value in raw_answer_data_string]
+            raw_answer_data_shorts_length = len(raw_answer_data_shorts)
+            serialized_answer_data = struct.pack("!" + raw_answer_data_shorts_length + "H", *raw_answer_data_shorts)
         else:
-            # in case the is ipv4 (four bytes)
-            if not answer_data.find(".") == -1:
-                raw_answer_data_string = answer_data.split(".")
-                raw_answer_data_bytes = [int(value) for value in raw_answer_data_string]
-                raw_answer_data_bytes_length = len(raw_answer_data_bytes)
-                serialized_answer_data = struct.pack("!" + str(raw_answer_data_bytes_length) + "B", *raw_answer_data_bytes)
-            # in case the is ipv6 (sixteen bytes)
-            elif not answer_data.find(":") == -1:
-                raw_answer_data_string = answer_data.split(":")
-                raw_answer_data_shorts = [int(value or "", 16) for value in raw_answer_data_string]
-                raw_answer_data_shorts_length = len(raw_answer_data_shorts)
-                serialized_answer_data = struct.pack("!" + raw_answer_data_shorts_length + "H", *raw_answer_data_shorts)
-            else:
-                # sets the serialized answer data as the raw answer data
-                serialized_answer_data = answer_data
+            # sets the serialized answer data as the raw answer data
+            serialized_answer_data = answer_data
 
         # returns the serialized answer data
         return serialized_answer_data
