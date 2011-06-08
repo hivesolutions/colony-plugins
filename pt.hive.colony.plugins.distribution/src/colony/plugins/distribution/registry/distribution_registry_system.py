@@ -156,8 +156,8 @@ class DistributionRegistry:
         for registry_entry in self.registry_entries:
             distribution_registry_information[registry_entry.name] = (
                 registry_entry.hostname,
-                "None",
-                "RUNNING"
+                registry_entry.endpoints or None,
+                "up"
             )
 
         # defines the distribution registry item columns
@@ -172,7 +172,7 @@ class DistributionRegistry:
             },
             {
                 "type" : "value",
-                "value" : "Endpoint"
+                "value" : "Endpoints"
             },
             {
                 "type" : "value",

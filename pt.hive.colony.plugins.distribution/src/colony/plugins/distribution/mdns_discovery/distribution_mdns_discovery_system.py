@@ -37,6 +37,15 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
+COLONY_SERVICE_ID = "_colony._tcp.local"
+""" The colony service id """
+
+TCP_VALUE = "tcp"
+""" The tcp value """
+
+DEFAULT_TIMEOUT_VALUE = 1
+""" The default timeout value """
+
 class DistributionMdnsDiscovery:
     """
     The distribution mdns discovery class.
@@ -62,7 +71,7 @@ class DistributionMdnsDiscovery:
         # creates the parameters for the queries resolution
         parameters = {
             "callback_function" : self._discovery_callback,
-            "callback_timeout" : 1
+            "callback_timeout" : DEFAULT_TIMEOUT_VALUE
         }
 
         # creates the main client mdns client
@@ -73,13 +82,48 @@ class DistributionMdnsDiscovery:
 
         try:
             # resolves the queries
-            mdns_client.resolve_queries([("_colony._tcp.local", "PTR", "IN")], parameters)
+            mdns_client.resolve_queries([(COLONY_SERVICE_ID, "PTR", "IN")], parameters)
         finally:
             # closes the mdns client
             mdns_client.close({})
 
     def _discovery_callback(self, query, response):
-        print "Original Query: %s" % str(query)
-        print "Queries: %s" % str(response.queries)
-        print "Answers: %s" % str(response.answers)
-        print "Additional Resource Records: %s" % str(response.additional_resource_records)
+        # retrieves the distribution registry plugin
+        distribution_registry_plugin = self.distribution_mdns_discovery_plugin.distribution_registry_plugin
+
+        response_answers = response.answers
+        response_additional_resource_records = response.additional_resource_records
+
+        hosts = []
+        hosts_resolved = []
+
+        for response_answer in response_answers:
+            # unpacks the answer tuple, retrieving the name,
+            # type, class and data
+            answer_name, _answer_type, _answer_class, _answer_time_to_live, answer_data = response_answer
+
+            # in case the answer name not is of type
+            # colony service
+            if not answer_name == COLONY_SERVICE_ID:
+                # continues the loop
+                continue
+
+            # adds the answer data (host) to he hosts list
+            hosts.append(answer_data)
+
+        for response_additional_resource_record in response_additional_resource_records:
+            # unpacks the additional resource record tuple, retrieving the name,
+            # type, class and data
+            record_name, record_type, _record_class, _record_time_to_live, record_data = response_additional_resource_record
+
+            if record_name in hosts and record_type == "A":
+                hosts_resolved.append((record_name, record_data))
+
+        for host_resolved in hosts_resolved:
+            # unpack the host resolved value
+            hostname, address = host_resolved
+
+            # adds the default endpoint
+            endpoints = [(address, DEFAULT_TIMEOUT_VALUE)]
+
+            distribution_registry_plugin.register_entry(hostname, "colony@" + hostname, "colony", endpoints, {})
