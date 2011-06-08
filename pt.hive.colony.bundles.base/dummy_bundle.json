@@ -38,9 +38,6 @@
                 "id" : "pt.hive.colony.plugins.dummy.business_logic_2",
                 "version" : "1.0.0"
             }, {
-                "id" : "pt.hive.colony.plugins.dummy.distribution_client",
-                "version" : "1.0.0"
-            }, {
                 "id" : "pt.hive.colony.plugins.dummy.english",
                 "version" : "1.0.0"
             }, {
@@ -82,9 +79,6 @@
             }],
     "dependencies" : [{
                 "id" : "pt.hive.colony.bundles.business",
-                "version" : "1.0.0"
-            }, {
-                "id" : "pt.hive.colony.bundles.distribution",
                 "version" : "1.0.0"
             }, {
                 "id" : "pt.hive.colony.bundles.main.remote",
