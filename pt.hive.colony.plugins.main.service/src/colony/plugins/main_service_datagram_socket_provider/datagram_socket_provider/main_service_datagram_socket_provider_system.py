@@ -152,6 +152,7 @@ class MainServiceDatagramSocketProvider:
 
         # sets the socket for reuse
         base_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+        hasattr(socket, "SO_REUSEPORT") and base_socket.seckopt(socket.SOL_SOCKET, socket.SO_REUSEPORT, 1) #@UndefinedVariable
 
         # sets the datagram socket options
         base_socket.setsockopt(socket.IPPROTO_IP, socket.IP_MULTICAST_TTL, multicast_ttl)
