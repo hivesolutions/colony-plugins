@@ -61,12 +61,24 @@ class DistributionDiscoveryPlugin(colony.base.plugin_system.Plugin):
         "distribution_discovery",
         "build_automation_item"
     ]
+    capabilities_allowed = [
+        "distribution_discovery_adapter",
+    ]
+    dependencies = [
+        colony.base.plugin_system.PluginDependency("pt.hive.colony.plugins.misc.scheduler", "1.0.0"),
+    ]
     main_modules = [
         "distribution.discovery.distribution_discovery_system"
     ]
 
     distribution_discovery = None
     """ The distribution discovery """
+
+    distribution_discovery_adapter_plugins = []
+    """ The distribution adapter plugins """
+
+    scheduler_plugin = None
+    """ The scheduler plugin """
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
@@ -75,21 +87,46 @@ class DistributionDiscoveryPlugin(colony.base.plugin_system.Plugin):
 
     def end_load_plugin(self):
         colony.base.plugin_system.Plugin.end_load_plugin(self)
+        self.distribution_discovery.load_discovery({})
 
     def unload_plugin(self):
         colony.base.plugin_system.Plugin.unload_plugin(self)
+        self.distribution_discovery.unload_discovery({})
 
     def end_unload_plugin(self):
         colony.base.plugin_system.Plugin.end_unload_plugin(self)
 
+    @colony.base.decorators.load_allowed("pt.hive.colony.plugins.distribution.discovery", "1.0.0")
     def load_allowed(self, plugin, capability):
         colony.base.plugin_system.Plugin.load_allowed(self, plugin, capability)
 
+    @colony.base.decorators.unload_allowed("pt.hive.colony.plugins.distribution.discovery", "1.0.0")
     def unload_allowed(self, plugin, capability):
         colony.base.plugin_system.Plugin.unload_allowed(self, plugin, capability)
 
+    @colony.base.decorators.inject_dependencies("pt.hive.colony.plugins.distribution.discovery", "1.0.0")
     def dependency_injected(self, plugin):
         colony.base.plugin_system.Plugin.dependency_injected(self, plugin)
 
     def load_discovery(self, properties):
         return self.distribution_discovery.load_discovery(properties)
+
+    def unload_discovery(self, properties):
+        return self.distribution_discovery.unload_discovery(properties)
+
+    @colony.base.decorators.load_allowed_capability("distribution_discovery_adapter")
+    def distribution_discovery_adapter_load_allowed(self, plugin, capability):
+        self.distribution_discovery_adapter_plugins.append(plugin)
+        self.distribution_discovery.distribution_discovery_adapter_load(plugin)
+
+    @colony.base.decorators.unload_allowed_capability("distribution_discovery_adapter")
+    def distribution_discovery_adapter_plugins_unload_allowed(self, plugin, capability):
+        self.distribution_discovery_adapter_plugins.remove(plugin)
+        self.distribution_discovery.distribution_discovery_adapter_unload(plugin)
+
+    def get_scheduler_plugin(self):
+        return self.scheduler_plugin
+
+    @colony.base.decorators.plugin_inject("pt.hive.colony.plugins.misc.scheduler")
+    def set_scheduler_plugin(self, scheduler_plugin):
+        self.scheduler_plugin = scheduler_plugin
