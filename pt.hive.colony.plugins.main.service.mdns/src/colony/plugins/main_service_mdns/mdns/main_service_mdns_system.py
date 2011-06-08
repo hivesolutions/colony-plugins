@@ -40,6 +40,7 @@ __license__ = "GNU General Public License (GPL), Version 3"
 import struct
 
 import colony.libs.map_util
+import colony.libs.host_util
 import colony.libs.string_buffer_util
 
 import main_service_mdns_exceptions
@@ -1036,10 +1037,9 @@ class MdnsRequest:
 
         # in case the answer is of type a
         if answer_type_integer in (0x01,):
-            # processes the ipv4 address value
-            raw_answer_data_bytes = struct.unpack_from("!" + str(answer_data_length) + "B", data, current_index)
-            raw_answer_data_string = [str(value) for value in raw_answer_data_bytes]
-            answer_data = ".".join(raw_answer_data_string)
+            # unserializes the ipv4 address value (answer data)
+            serialized_answer_data = data[current_index:current_index + answer_data_length]
+            answer_data = colony.libs.host_util.ip4_address_from_network(serialized_answer_data)
         # in case the answer is of type ns, cname, ptr or txt
         elif answer_type_integer in (0x02, 0x05, 0x0c, 0x10):
             # retrieves the answer data as a joined name
@@ -1074,10 +1074,9 @@ class MdnsRequest:
             )
         # in case the answer is of type aaaa
         elif answer_type_integer in (0x1c,):
-            # processes the ipv6 address value
-            raw_answer_data_shorts = struct.unpack_from("!" + str(answer_data_length / 2) + "H", data, current_index)
-            raw_answer_data_string = ["%x" % value for value in raw_answer_data_shorts if value > 0]
-            answer_data = ":".join(raw_answer_data_string)
+            # unserializes the ipv6 address value (answer data)
+            serialized_answer_data = data[current_index:current_index + answer_data_length]
+            answer_data = colony.libs.host_util.ip6_address_from_network(serialized_answer_data)
         # otherwise it's a generic value
         else:
             # sets the answer data as the raw answer data
@@ -1308,11 +1307,8 @@ class MdnsRequest:
     def _serialize_answer_data(self, answer_type_integer, answer_data):
         # in case the answer is of type a
         if answer_type_integer in (0x01,):
-            # processes the ipv4 address value
-            raw_answer_data_string = answer_data.split(".")
-            raw_answer_data_bytes = [int(value) for value in raw_answer_data_string]
-            raw_answer_data_bytes_length = len(raw_answer_data_bytes)
-            serialized_answer_data = struct.pack("!" + str(raw_answer_data_bytes_length) + "B", *raw_answer_data_bytes)
+            # serializes the ipv4 address value (answer data)
+            serialized_answer_data = colony.libs.host_util.ip4_address_to_network(answer_data)
         # in case the answer is of type ns, cname, ptr or txt
         elif answer_type_integer in (0x02, 0x05, 0x0c, 0x10):
             serialized_answer_data = self._serialize_name(answer_data)
@@ -1346,11 +1342,8 @@ class MdnsRequest:
             serialized_answer_data = parameters_serialized + answer_data_name_serialized
         # in case the answer is of type aaaa
         elif answer_type_integer in (0x1c,):
-            # processes the ipv6 address value
-            raw_answer_data_string = answer_data.split(":")
-            raw_answer_data_shorts = [int(value or "", 16) for value in raw_answer_data_string]
-            raw_answer_data_shorts_length = len(raw_answer_data_shorts)
-            serialized_answer_data = struct.pack("!" + raw_answer_data_shorts_length + "H", *raw_answer_data_shorts)
+            # serializes the ipv6 address value (answer data)
+            serialized_answer_data = colony.libs.host_util.ip6_address_to_network(answer_data)
         # otherwise it's a generic value
         else:
             # sets the serialized answer data as the raw answer data
