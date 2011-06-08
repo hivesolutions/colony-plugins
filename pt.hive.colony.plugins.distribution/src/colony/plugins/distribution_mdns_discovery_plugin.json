@@ -8,7 +8,7 @@
     "description" : "Distribution Mdns Discovery Plugin",
     "version" : "1.0.0",
     "author" : "Hive Solutions Lda. <development@hive.pt>",
-    "capabilities" : ["distribution_discovery", "build_automation_item"],
+    "capabilities" : ["distribution_discovery_adapter", "build_automation_item"],
     "capabilities_allowed" : [],
     "dependencies" : [{
                 "id" : "pt.hive.colony.plugins.distribution.registry",
