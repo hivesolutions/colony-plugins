@@ -51,6 +51,9 @@ MULTICAST_ADDRESS_VALUE = "multicast_address"
 MULTICAST_PARAMETERS_VALUE = "multicast_parameters"
 """ The multicast parameters value """
 
+SO_REUSEPORT_VALUE = "SO_REUSEPORT"
+""" The so reuseport value """
+
 TTL_VALUE = "ttl"
 """ The ttl value """
 
@@ -152,7 +155,7 @@ class MainServiceDatagramSocketProvider:
 
         # sets the socket for reuse
         base_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-        hasattr(socket, "SO_REUSEPORT") and base_socket.seckopt(socket.SOL_SOCKET, socket.SO_REUSEPORT, 1) #@UndefinedVariable
+        hasattr(socket, SO_REUSEPORT_VALUE) and base_socket.seckopt(socket.SOL_SOCKET, socket.SO_REUSEPORT, 1) #@UndefinedVariable
 
         # sets the datagram socket options
         base_socket.setsockopt(socket.IPPROTO_IP, socket.IP_MULTICAST_TTL, multicast_ttl)
