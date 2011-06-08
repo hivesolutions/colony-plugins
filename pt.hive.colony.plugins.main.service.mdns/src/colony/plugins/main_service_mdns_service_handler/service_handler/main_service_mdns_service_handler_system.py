@@ -37,10 +37,11 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-import colony.libs.host_util
-
 HANDLER_NAME = "service"
 """ The handler name """
+
+PTR_TYPE = "PTR"
+""" The ptr type """
 
 class MainServiceMdnsServiceHandler:
     """
@@ -49,6 +50,9 @@ class MainServiceMdnsServiceHandler:
 
     main_service_mdns_service_handler_plugin = None
     """ The main service mdns service handler plugin """
+
+    mdns_service_name_handler_plugins_map = {}
+    """ The mdns service name handler plugins map """
 
     def __init__(self, main_service_mdns_service_handler_plugin):
         """
@@ -59,6 +63,8 @@ class MainServiceMdnsServiceHandler:
         """
 
         self.main_service_mdns_service_handler_plugin = main_service_mdns_service_handler_plugin
+
+        self.mdns_service_name_handler_plugins_map = {}
 
     def get_handler_name(self):
         """
@@ -88,45 +94,33 @@ class MainServiceMdnsServiceHandler:
             # returns immediately (no response)
             return
 
-        # retrieves the "local" host name
-        hostname_local = colony.libs.host_util.get_hostname_local()
+        # retrieves the request queries
+        request_queries = request.queries
 
-        # retrieves the "preferred" addresses
-        address_ip4 = colony.libs.host_util.get_address_ip4()
-        address_ip6 = colony.libs.host_util.get_address_ip6()
+        # iterates over all the request queries to
+        # handle them with the proper plugin handler
+        for request_query in request_queries:
+            # unpacks the request query into name, type and class
+            query_name, query_type, _query_class = request_query
 
-        # creates the record tuple
-        record_tuple = (
-            "_colony._tcp.local",
-            "PTR",
-            "IN",
-            10,
-            hostname_local
-        )
+            # in case the query type is not a reverse (service resolution)
+            if not query_type == PTR_TYPE:
+                # continues the loop
+                continue
 
-        # creates the address ip4 tuple
-        address_ip4_tuple = (
-            hostname_local,
-            "A",
-            "IN",
-            10,
-            address_ip4
-        )
+            # tries to retrieve the service handler plugin and handles the
+            # request in case one exists
+            mdns_service_name_handler_plugin = self.mdns_service_name_handler_plugins_map.get(query_name, None)
+            mdns_service_name_handler_plugin and mdns_service_name_handler_plugin.handle_request(request, arguments)
 
-        # creates the address ip6 tuple
-        address_ip6_tuple = (
-            hostname_local,
-            "AAAA",
-            "IN",
-            10,
-            address_ip6
-        )
+    def mdns_service_name_handler_load(self, mdns_service_name_handler_plugin):
+        # retrieves the plugin handler name
+        handler_name = mdns_service_name_handler_plugin.get_handler_name()
 
-        # adds the record tuple
-        request.answers.append(record_tuple)
+        self.mdns_service_name_handler_plugins_map[handler_name] = mdns_service_name_handler_plugin
 
-        # adds the address tuple
-        request.additional_resource_records.append(address_ip4_tuple)
+    def mdns_service_name_handler_unload(self, mdns_service_name_handler_plugin):
+        # retrieves the plugin handler name
+        handler_name = mdns_service_name_handler_plugin.get_handler_name()
 
-        # TENHO DE POR O ENCODING DE IPV6 como deve de ser no mdns e no dns
-        #request.additional_resource_records.append(address_ip6_tuple)
+        del self.mdns_service_name_handler_plugins_map[handler_name]

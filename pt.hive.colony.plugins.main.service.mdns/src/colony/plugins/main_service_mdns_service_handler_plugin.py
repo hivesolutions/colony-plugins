@@ -40,7 +40,7 @@ __license__ = "GNU General Public License (GPL), Version 3"
 import colony.base.plugin_system
 import colony.base.decorators
 
-class MainServiceMdnsFileHandlerPlugin(colony.base.plugin_system.Plugin):
+class MainServiceMdnsServiceHandlerPlugin(colony.base.plugin_system.Plugin):
     """
     The main class for the Mdns Service Main Service Handler plugin.
     """
@@ -64,6 +64,9 @@ class MainServiceMdnsFileHandlerPlugin(colony.base.plugin_system.Plugin):
         "mdns_service_handler",
         "build_automation_item"
     ]
+    capabilities_allowed = [
+        "mdns_service_name_handler"
+    ]
     dependencies = [
         colony.base.plugin_system.PluginDependency("pt.hive.colony.plugins.resources.resource_manager", "1.0.0")
     ]
@@ -76,6 +79,9 @@ class MainServiceMdnsFileHandlerPlugin(colony.base.plugin_system.Plugin):
 
     resource_manager_plugin = None
     """ The resource manager plugin """
+
+    mdns_service_name_handler_plugins = []
+    """ the mdns service name handler plugins """
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
@@ -91,9 +97,11 @@ class MainServiceMdnsFileHandlerPlugin(colony.base.plugin_system.Plugin):
     def end_unload_plugin(self):
         colony.base.plugin_system.Plugin.end_unload_plugin(self)
 
+    @colony.base.decorators.load_allowed("pt.hive.colony.plugins.main.service.mdns.service_handler", "1.0.0")
     def load_allowed(self, plugin, capability):
         colony.base.plugin_system.Plugin.load_allowed(self, plugin, capability)
 
+    @colony.base.decorators.unload_allowed("pt.hive.colony.plugins.main.service.mdns.service_handler", "1.0.0")
     def unload_allowed(self, plugin, capability):
         colony.base.plugin_system.Plugin.unload_allowed(self, plugin, capability)
 
@@ -122,6 +130,16 @@ class MainServiceMdnsFileHandlerPlugin(colony.base.plugin_system.Plugin):
         """
 
         return self.main_service_mdns_service_handler.handle_request(request, arguments)
+
+    @colony.base.decorators.load_allowed_capability("mdns_service_name_handler")
+    def mdns_service_name_handler_load_allowed(self, plugin, capability):
+        self.mdns_service_name_handler_plugins.append(plugin)
+        self.main_service_mdns_service_handler.mdns_service_name_handler_load(plugin)
+
+    @colony.base.decorators.unload_allowed_capability("mdns_service_name_handler")
+    def mdns_service_name_handler_unload_allowed(self, plugin, capability):
+        self.mdns_service_name_handler_plugins.remove(plugin)
+        self.main_service_mdns_service_handler.mdns_service_name_handler_unload(plugin)
 
     def get_resource_manager_plugin(self):
         return self.resource_manager_plugin
