@@ -2,10 +2,10 @@
     "type" : "plugin",
     "platform" : "python",
     "sub_platforms" : ["cpython", "jython", "iron_python"],
-    "id" : "pt.hive.colony.plugins.main.service.mdns.register_handler",
-    "name" : "Mdns Service Main Register Handler Plugin",
-    "short_name" : "Mdns Service Main Register Handler",
-    "description" : "The plugin that offers the mdns service register handler",
+    "id" : "pt.hive.colony.plugins.main.service.mdns.service_handler",
+    "name" : "Mdns Service Main Service Handler Plugin",
+    "short_name" : "Mdns Service Main Service Handler",
+    "description" : "The plugin that offers the mdns service service handler",
     "version" : "1.0.0",
     "author" : "Hive Solutions Lda. <development@hive.pt>",
     "capabilities" : ["mdns_service_handler", "build_automation_item"],
@@ -14,11 +14,11 @@
                 "id" : "pt.hive.colony.plugins.resources.resource_manager",
                 "version" : "1.0.0"
             }],
-    "main_file" : "main_service_mdns_register_handler_plugin.py",
+    "main_file" : "main_service_mdns_service_handler_plugin.py",
     "resources" : [
-            "main_service_mdns_register_handler_plugin.py",
-            "main_service_mdns_register_handler/__init__.py",
-            "main_service_mdns_register_handler/register_handler/__init__.py",
-            "main_service_mdns_register_handler/register_handler/main_service_mdns_register_handler_system.py",
-            "main_service_mdns_register_handler/register_handler/resources/baf.xml"]
+            "main_service_mdns_service_handler_plugin.py",
+            "main_service_mdns_service_handler/__init__.py",
+            "main_service_mdns_service_handler/service_handler/__init__.py",
+            "main_service_mdns_service_handler/service_handler/main_service_mdns_service_handler_system.py",
+            "main_service_mdns_service_handler/service_handler/resources/baf.xml"]
 }

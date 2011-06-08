@@ -33,11 +33,11 @@
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://www.hive.pt xsd/baf.xsd">
     <artifact>
-        <id>pt.hive.colony.plugins.main.service.mdns.register_handler</id>
+        <id>pt.hive.colony.plugins.main.service.mdns.service_handler</id>
         <version>1.0.0</version>
         <type>colony</type>
-        <name>Mdns Service Main Register Handler Plugin</name>
-        <description>The plugin that offers the mdns service register handler</description>
+        <name>Mdns Service Main Service Handler Plugin</name>
+        <description>The plugin that offers the mdns service service handler</description>
         <url>http://www.hive.pt</url>
     </artifact>
     <build>
@@ -48,7 +48,7 @@
                 <version>1.0.0</version>
                 <stage>build</stage>
                 <configuration>
-                    <specification_file>$base{plugin_directory}/main_service_mdns_register_handler_plugin.json</specification_file>
+                    <specification_file>$base{plugin_directory}/main_service_mdns_service_handler_plugin.json</specification_file>
                 </configuration>
             </plugin>
         </plugins>

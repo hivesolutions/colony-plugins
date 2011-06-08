@@ -39,26 +39,26 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 import colony.libs.host_util
 
-HANDLER_NAME = "register"
+HANDLER_NAME = "service"
 """ The handler name """
 
-class MainServiceMdnsRegisterHandler:
+class MainServiceMdnsServiceHandler:
     """
-    The main service mdns register handler class.
+    The main service mdns service handler class.
     """
 
-    main_service_mdns_register_handler_plugin = None
-    """ The main service mdns register handler plugin """
+    main_service_mdns_service_handler_plugin = None
+    """ The main service mdns service handler plugin """
 
-    def __init__(self, main_service_mdns_register_handler_plugin):
+    def __init__(self, main_service_mdns_service_handler_plugin):
         """
         Constructor of the class.
 
-        @type main_service_mdns_register_handler_plugin: MainServiceMdnsRegisterHandlerPlugin
-        @param main_service_mdns_register_handler_plugin: The main service mdns register handler plugin.
+        @type main_service_mdns_service_handler_plugin: MainServiceMdnsServiceHandlerPlugin
+        @param main_service_mdns_service_handler_plugin: The main service mdns service handler plugin.
         """
 
-        self.main_service_mdns_register_handler_plugin = main_service_mdns_register_handler_plugin
+        self.main_service_mdns_service_handler_plugin = main_service_mdns_service_handler_plugin
 
     def get_handler_name(self):
         """

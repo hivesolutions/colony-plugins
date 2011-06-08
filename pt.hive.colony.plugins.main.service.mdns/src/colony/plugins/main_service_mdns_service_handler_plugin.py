@@ -42,13 +42,13 @@ import colony.base.decorators
 
 class MainServiceMdnsFileHandlerPlugin(colony.base.plugin_system.Plugin):
     """
-    The main class for the Mdns Service Main Register Handler plugin.
+    The main class for the Mdns Service Main Service Handler plugin.
     """
 
-    id = "pt.hive.colony.plugins.main.service.mdns.register_handler"
-    name = "Mdns Service Main Register Handler Plugin"
-    short_name = "Mdns Service Main Register Handler"
-    description = "The plugin that offers the mdns service register handler"
+    id = "pt.hive.colony.plugins.main.service.mdns.service_handler"
+    name = "Mdns Service Main Service Handler Plugin"
+    short_name = "Mdns Service Main Service Handler"
+    description = "The plugin that offers the mdns service service handler"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     loading_type = colony.base.plugin_system.EAGER_LOADING_TYPE
@@ -58,7 +58,7 @@ class MainServiceMdnsFileHandlerPlugin(colony.base.plugin_system.Plugin):
         colony.base.plugin_system.IRON_PYTHON_ENVIRONMENT
     ]
     attributes = {
-        "build_automation_file_path" : "$base{plugin_directory}/main_service_mdns_register_handler/register_handler/resources/baf.xml"
+        "build_automation_file_path" : "$base{plugin_directory}/main_service_mdns_service_handler/service_handler/resources/baf.xml"
     }
     capabilities = [
         "mdns_service_handler",
@@ -68,19 +68,19 @@ class MainServiceMdnsFileHandlerPlugin(colony.base.plugin_system.Plugin):
         colony.base.plugin_system.PluginDependency("pt.hive.colony.plugins.resources.resource_manager", "1.0.0")
     ]
     main_modules = [
-        "main_service_mdns_register_handler.register_handler.main_service_mdns_register_handler_system"
+        "main_service_mdns_service_handler.service_handler.main_service_mdns_service_handler_system"
     ]
 
-    main_service_mdns_register_handler = None
-    """ The main service mdns register handler """
+    main_service_mdns_service_handler = None
+    """ The main service mdns service handler """
 
     resource_manager_plugin = None
     """ The resource manager plugin """
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
-        import main_service_mdns_register_handler.register_handler.main_service_mdns_register_handler_system
-        self.main_service_mdns_register_handler = main_service_mdns_register_handler.register_handler.main_service_mdns_register_handler_system.MainServiceMdnsRegisterHandler(self)
+        import main_service_mdns_service_handler.service_handler.main_service_mdns_service_handler_system
+        self.main_service_mdns_service_handler = main_service_mdns_service_handler.service_handler.main_service_mdns_service_handler_system.MainServiceMdnsServiceHandler(self)
 
     def end_load_plugin(self):
         colony.base.plugin_system.Plugin.end_load_plugin(self)
@@ -97,7 +97,7 @@ class MainServiceMdnsFileHandlerPlugin(colony.base.plugin_system.Plugin):
     def unload_allowed(self, plugin, capability):
         colony.base.plugin_system.Plugin.unload_allowed(self, plugin, capability)
 
-    @colony.base.decorators.inject_dependencies("pt.hive.colony.plugins.main.service.mdns.register_handler", "1.0.0")
+    @colony.base.decorators.inject_dependencies("pt.hive.colony.plugins.main.service.mdns.service_handler", "1.0.0")
     def dependency_injected(self, plugin):
         colony.base.plugin_system.Plugin.dependency_injected(self, plugin)
 
@@ -109,7 +109,7 @@ class MainServiceMdnsFileHandlerPlugin(colony.base.plugin_system.Plugin):
         @return: The handler name.
         """
 
-        return self.main_service_mdns_register_handler.get_handler_name()
+        return self.main_service_mdns_service_handler.get_handler_name()
 
     def handle_request(self, request, arguments):
         """
@@ -121,7 +121,7 @@ class MainServiceMdnsFileHandlerPlugin(colony.base.plugin_system.Plugin):
         @param arguments: The arguments to the mdns handling.
         """
 
-        return self.main_service_mdns_register_handler.handle_request(request, arguments)
+        return self.main_service_mdns_service_handler.handle_request(request, arguments)
 
     def get_resource_manager_plugin(self):
         return self.resource_manager_plugin
