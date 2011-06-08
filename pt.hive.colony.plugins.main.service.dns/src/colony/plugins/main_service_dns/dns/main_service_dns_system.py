@@ -1337,6 +1337,7 @@ class DnsRequest:
             raw_answer_data_shorts = [int(value or "", 16) for value in raw_answer_data_string]
             raw_answer_data_shorts_length = len(raw_answer_data_shorts)
             serialized_answer_data = struct.pack("!" + raw_answer_data_shorts_length + "H", *raw_answer_data_shorts)
+        # otherwise it's a generic value
         else:
             # sets the serialized answer data as the raw answer data
             serialized_answer_data = answer_data
