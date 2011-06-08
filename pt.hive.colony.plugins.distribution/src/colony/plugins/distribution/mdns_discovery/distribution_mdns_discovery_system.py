@@ -43,8 +43,14 @@ ADAPTER_NAME = "mdns"
 COLONY_SERVICE_ID = "_colony._tcp.local"
 """ The colony service id """
 
+A_TYPE = "A"
+""" The a type """
+
 TCP_VALUE = "tcp"
 """ The tcp value """
+
+COLONY_VALUE = "colony"
+""" The colony value """
 
 DEFAULT_TIMEOUT_VALUE = 1
 """ The default timeout value """
@@ -112,12 +118,17 @@ class DistributionMdnsDiscovery:
         # retrieves the distribution registry plugin
         distribution_registry_plugin = self.distribution_mdns_discovery_plugin.distribution_registry_plugin
 
+        # retrieves the response answers and adition resource records
         response_answers = response.answers
         response_additional_resource_records = response.additional_resource_records
 
+        # creates the list of hosts and the list
+        # of resolved hosts
         hosts = []
         hosts_resolved = []
 
+        # iterates over all the response answers to gather
+        # the set of valid hosts referred in the answer
         for response_answer in response_answers:
             # unpacks the answer tuple, retrieving the name,
             # type, class and data
@@ -132,19 +143,30 @@ class DistributionMdnsDiscovery:
             # adds the answer data (host) to he hosts list
             hosts.append(answer_data)
 
+        # iterates over all the response additional resource records to gather
+        # the addresses for the previous host references
         for response_additional_resource_record in response_additional_resource_records:
             # unpacks the additional resource record tuple, retrieving the name,
             # type, class and data
             record_name, record_type, _record_class, _record_time_to_live, record_data = response_additional_resource_record
 
-            if record_name in hosts and record_type == "A":
-                hosts_resolved.append((record_name, record_data))
+            # in case the record name is not set in the list of hosts
+            # or in case the record is not of type address
+            if not record_name in hosts or not record_type == A_TYPE:
+                # continues the loop
+                continue
 
+            # adds the host tuple to the list of resolved hosts
+            hosts_resolved.append((record_name, record_data))
+
+        # iterates over all the resolved hosts
+        # to insert or update the "remote" entry
         for host_resolved in hosts_resolved:
             # unpack the host resolved value
             hostname, address = host_resolved
 
             # adds the default endpoint
-            endpoints = [(address, DEFAULT_TIMEOUT_VALUE)]
+            endpoints = [(address, TCP_VALUE)]
 
-            distribution_registry_plugin.register_entry(hostname, "colony@" + hostname, "colony", endpoints, {})
+            # registers the "remote" entry in the distribution registry
+            distribution_registry_plugin.register_entry(hostname, COLONY_VALUE + "@" + hostname, COLONY_VALUE, endpoints, {})
