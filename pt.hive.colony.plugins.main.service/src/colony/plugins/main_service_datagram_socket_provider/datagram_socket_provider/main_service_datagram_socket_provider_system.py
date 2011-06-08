@@ -164,14 +164,12 @@ class MainServiceDatagramSocketProvider:
         base_socket.setsockopt(socket.IPPROTO_IP, socket.IP_MULTICAST_LOOP, 1)
 
         # retrieves the addresses ip4
-        addresses_ip4 = colony.libs.host_util.get_addresses_ip4()
+        address_ip4 = colony.libs.host_util.get_address_ip4()
 
-        # iterates over all the addresses of type ip4 to set membership
-        for address_ip4 in addresses_ip4:
-            # converts the addresses to network mode
-            address_ip4_network = socket.inet_aton(address_ip4)
-            multicast_host_network = socket.inet_aton(multicast_host)
+        # converts the addresses to network mode
+        address_ip4_network = socket.inet_aton(address_ip4)
+        multicast_host_network = socket.inet_aton(multicast_host)
 
-            # sets the membership for the multicasting paradigm
-            base_socket.setsockopt(socket.SOL_IP, socket.IP_MULTICAST_IF, address_ip4_network)
-            base_socket.setsockopt(socket.IPPROTO_IP, socket.IP_ADD_MEMBERSHIP, multicast_host_network + address_ip4_network);
+        # sets the membership for the multicasting paradigm
+        base_socket.setsockopt(socket.SOL_IP, socket.IP_MULTICAST_IF, address_ip4_network)
+        base_socket.setsockopt(socket.IPPROTO_IP, socket.IP_ADD_MEMBERSHIP, multicast_host_network + address_ip4_network);
