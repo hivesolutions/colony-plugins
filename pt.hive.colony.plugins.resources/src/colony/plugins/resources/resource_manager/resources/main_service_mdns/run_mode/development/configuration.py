@@ -38,6 +38,6 @@ __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
 configuration = {
-    "default_handler" : "register",
+    "default_handler" : "service",
     "handler_properties" : {}
 }
