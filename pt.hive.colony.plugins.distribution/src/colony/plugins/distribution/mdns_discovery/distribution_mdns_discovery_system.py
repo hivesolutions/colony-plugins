@@ -37,6 +37,9 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
+HANDLER_NAME = "mdns"
+""" The handler name """
+
 COLONY_SERVICE_ID = "_colony._tcp.local"
 """ The colony service id """
 
@@ -64,7 +67,25 @@ class DistributionMdnsDiscovery:
 
         self.distribution_mdns_discovery_plugin = distribution_mdns_discovery_plugin
 
-    def handle_discover(self, parameters):
+    def get_handler_name(self):
+        """
+        Retrieves the handler name.
+
+        @rtype: String
+        @return: The handler name.
+        """
+
+        return HANDLER_NAME
+
+    def handle_discover(self, arguments):
+        """
+        Handles a (distribution) discovery.
+
+        @type arguments: Dictionary
+        @param arguments: The arguments to the
+        (distribution)discovery.
+        """
+
         # retrieves the main client mdns plugin
         main_client_mdns_plugin = self.distribution_mdns_discovery_plugin.main_client_mdns_plugin
 
