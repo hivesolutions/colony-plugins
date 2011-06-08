@@ -73,6 +73,8 @@
             "resources/resource_manager/resources/main_service_http_file_handler/configuration.json",
             "resources/resource_manager/resources/main_service_http_file_handler/configuration.py",
             "resources/resource_manager/resources/main_service_http_file_handler/resources.xml",
+            "resources/resource_manager/resources/main_service_mdns/run_mode/development/configuration.py",
+            "resources/resource_manager/resources/main_service_mdns/run_mode/development/resources.xml",
             "resources/resource_manager/resources/main_service_pop/run_mode/development/configuration.py",
             "resources/resource_manager/resources/main_service_pop/run_mode/development/resources.xml",
             "resources/resource_manager/resources/main_service_smtp/run_mode/development/configuration.py",
