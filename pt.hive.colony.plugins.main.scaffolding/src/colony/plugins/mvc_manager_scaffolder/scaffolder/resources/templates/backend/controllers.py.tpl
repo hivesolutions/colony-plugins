@@ -21,8 +21,8 @@
 
 import colony.libs.importer_util
 
-TEMPLATES_PATH = "${out value=scaffold_attributes.relative_backend_path /}/resources/templates"
-""" The templates path """
+RESOURCES_PATH = "${out value=scaffold_attributes.relative_backend_path /}/resources"
+""" The resources path """
 
 # imports the web mvc utils
 web_mvc_utils = colony.libs.importer_util.__importer__("web_mvc_utils")
@@ -56,17 +56,8 @@ class RootEntityController:
         Method called upon structure initialization.
         """
 
-        # retrieves the plugin manager
-        plugin_manager = self.${out value=scaffold_attributes.variable_name /}_plugin.manager
-
-        # retrieves the ${out value=scaffold_attributes.short_name_lowercase /} plugin path
-        ${out value=scaffold_attributes.variable_name /}_plugin_path = plugin_manager.get_plugin_path_by_id(self.${out value=scaffold_attributes.variable_name /}_plugin.id)
-
-        # creates the templates path
-        templates_path = ${out value=scaffold_attributes.variable_name /}_plugin_path + "/" + TEMPLATES_PATH
-
-        # sets the templates path
-        self.set_templates_path(templates_path)
+        # sets the relative resources path
+        self.set_relative_resources_path(RESOURCES_PATH)
 
     def handle_list(self, rest_request, parameters = {}):
         # sets the response contents

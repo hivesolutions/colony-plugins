@@ -23,9 +23,6 @@ import os
 
 import colony.libs.map_util
 
-FILE_PATH_VALUE = "file_path"
-""" The file path value """
-
 ENTITY_MANAGER_ARGUMENTS = {
     "engine" : "sqlite",
     "connection_parameters" : {
@@ -34,14 +31,10 @@ ENTITY_MANAGER_ARGUMENTS = {
 }
 """ The entity manager arguments """
 
-CONNECTION_PARAMETERS_VALUE = "connection_parameters"
-""" The connection parameters value """
-
-DEFAULT_DATABASE_SUFFIX = "database.db"
-""" The default database suffix """
-
-DEFAULT_DATABASE_PREFIX = "${out value=scaffold_attributes.variable_name /}_"
-""" The default database prefix """
+ENTITY_MANAGER_PARAMETERS = {
+    "default_database_prefix" : "${out value=scaffold_attributes.variable_name /}_"
+}
+""" The entity manager parameters """
 
 class ${out value=scaffold_attributes.class_name /}:
     """
@@ -73,22 +66,11 @@ class ${out value=scaffold_attributes.class_name /}:
         # retrieves the entity manager arguments
         entity_manager_arguments = self.get_entity_manager_arguments()
 
-        # retrieves the current directory path
-        current_directory_path = os.path.dirname(__file__)
-
-        # loads the mvc utils in the ${out value=scaffold_attributes.short_name /} controllers
-        ${out value=scaffold_attributes.variable_name /}_controllers = web_mvc_utils_plugin.import_module_mvc_utils("${out value=scaffold_attributes.variable_name /}_controllers", "${out value=scaffold_attributes.backend_namespace /}", current_directory_path)
-
-        # creates the ${out value=scaffold_attributes.short_name_lowercase /} controller
-        self.root_entity_controller = web_mvc_utils_plugin.create_controller(${out value=scaffold_attributes.variable_name /}_controllers.RootEntityController, [self.${out value=scaffold_attributes.variable_name /}_plugin, self], {})
+        # creates the controllers for the ${out value=scaffold_attributes.short_name_lowercase /} controllers module
+        web_mvc_utils_plugin.create_controllers("${out value=scaffold_attributes.backend_namespace /}.${out value=scaffold_attributes.variable_name /}_controllers", self, self.${out value=scaffold_attributes.variable_name /}_plugin, "${out value=scaffold_attributes.variable_name /}")
 
         # creates the entity models classes by creating the entity manager and updating the classes
-        self.${out value=scaffold_attributes.variable_name /}_entity_models = web_mvc_utils_plugin.create_entity_models_path("${out value=scaffold_attributes.variable_name /}_entity_models", entity_manager_arguments, current_directory_path)
-
-        # defines the ${out value=scaffold_attributes.short_name_lowercase /} controllers map
-        self.${out value=scaffold_attributes.variable_name /}_controllers = {
-            "root_entity" : self.root_entity_controller
-        }
+        web_mvc_utils_plugin.create_models("${out value=scaffold_attributes.variable_name /}_entity_models", self, self.${out value=scaffold_attributes.variable_name /}_plugin, entity_manager_arguments)
 
     def get_patterns(self):
         """
@@ -138,32 +120,11 @@ class ${out value=scaffold_attributes.class_name /}:
         @return: The entity manager arguments.
         """
 
-        # retrieves the resource manager plugin
-        resource_manager_plugin = self.${out value=scaffold_attributes.variable_name /}_plugin.resource_manager_plugin
+        # retrieves the web mvc utils plugin
+        web_mvc_utils_plugin = self.${out value=scaffold_attributes.variable_name /}_plugin.web_mvc_utils_plugin
 
-        # creates the entity manager arguments map
-        entity_manager_arguments = {}
-
-        # copies the entity manager arguments constant to the new entity manager arguments
-        colony.libs.map_util.map_copy_deep(ENTITY_MANAGER_ARGUMENTS, entity_manager_arguments)
-
-        # retrieves the system database file name resource
-        system_database_filename_resource = resource_manager_plugin.get_resource("system.database.file_name")
-
-        # retrieves the system database filename suffix
-        system_database_filename_suffix = system_database_filename_resource and system_database_filename_resource.data or DEFAULT_DATABASE_SUFFIX
-
-        # creates the system database file name value using the prefix and suffix values
-        system_database_filename = DEFAULT_DATABASE_PREFIX + system_database_filename_suffix
-
-        # retrieves the ${out value=scaffold_attributes.short_name_lowercase /} plugin id
-        ${out value=scaffold_attributes.variable_name /}_plugin_id = self.${out value=scaffold_attributes.variable_name /}_plugin.id
-
-        # creates the database file path using the plugin id and the system database filename
-        database_file_path = "%configuration:" + ${out value=scaffold_attributes.variable_name /}_plugin_id + "%/" + system_database_filename
-
-        # sets the file path in the entity manager arguments
-        entity_manager_arguments[CONNECTION_PARAMETERS_VALUE][FILE_PATH_VALUE] = database_file_path
+        # generates the entity manager arguments
+        entity_manager_arguments = web_mvc_utils_plugin.generate_entity_manager_arguments(self.${out value=scaffold_attributes.variable_name /}_plugin, ENTITY_MANAGER_ARGUMENTS, ENTITY_MANAGER_PARAMETERS)
 
         # returns the entity manager arguments
         return entity_manager_arguments
@@ -174,7 +135,7 @@ class ${out value=scaffold_attributes.class_name /}:
             {
                 "menu" : "scaffold/Scaffold",
                 "base_address" : "root_entities",
-                "pattern" : (r"^web_mvc_manager/root_entities$", self.root_entity_controller.handle_list, "get")
+                "pattern" : (r"^web_mvc_manager/root_entities$", self.${out value=scaffold_attributes.variable_name /}_root_entity_controller.handle_list, "get")
             }
         ]
 
