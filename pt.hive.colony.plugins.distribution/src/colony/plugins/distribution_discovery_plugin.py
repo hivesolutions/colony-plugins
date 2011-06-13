@@ -47,7 +47,7 @@ class DistributionDiscoveryPlugin(colony.base.plugin_system.Plugin):
     id = "pt.hive.colony.plugins.distribution.discovery"
     name = "Distribution Discovery Plugin"
     short_name = "Distribution Discovery"
-    description = "Plugin responsible for the registration of the various remote references"
+    description = "Plugin responsible for the scheduling and management of the discovery plugins"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     loading_type = colony.base.plugin_system.EAGER_LOADING_TYPE
