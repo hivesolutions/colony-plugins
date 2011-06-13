@@ -127,6 +127,9 @@ DEFAULT_EXPIRATION_DELTA_TIMESTAMP = 31536000
 DEFAULT_PATH = "/"
 """ The default path """
 
+DEFAULT_STATUS_CODE = 200
+""" The default status code """
+
 class MainRestManager:
     """
     The main rest manager class.
@@ -298,6 +301,7 @@ class MainRestManager:
 
             # returns immediately
             return
+        # otherwise it's a "general" request
         else:
             # iterates over all the matching regex in the matching regex list
             for matching_regex in self.matching_regex_list:
@@ -388,6 +392,9 @@ class MainRestManager:
         # serializes the result for the given encoder name retrieving the content type
         # and the translated result
         content_type, result_translated = self.translate_result(result, encoder_name)
+
+        # sets the default status code for the rest request
+        rest_request.set_status_code(DEFAULT_STATUS_CODE)
 
         # sets the content type for the rest request
         rest_request.set_content_type(content_type)
