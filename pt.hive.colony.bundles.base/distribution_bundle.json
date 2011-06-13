@@ -29,10 +29,19 @@
                 "id" : "pt.hive.colony.plugins.distribution.mdns.handler",
                 "version" : "1.0.0"
             }, {
+                "id" : "pt.hive.colony.plugins.distribution.ping.status",
+                "version" : "1.0.0"
+            }, {
                 "id" : "pt.hive.colony.plugins.distribution.registry",
+                "version" : "1.0.0"
+            }, {
+                "id" : "pt.hive.colony.plugins.distribution.status",
                 "version" : "1.0.0"
             }],
     "dependencies" : [{
+                "id" : "pt.hive.colony.bundles.main.client.http",
+                "version" : "1.0.0"
+            }, {
                 "id" : "pt.hive.colony.bundles.main.client.mdns",
                 "version" : "1.0.0"
             }, {
