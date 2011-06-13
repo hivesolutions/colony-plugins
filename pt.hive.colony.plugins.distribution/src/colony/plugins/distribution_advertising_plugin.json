@@ -1,0 +1,22 @@
+{
+    "type" : "plugin",
+    "platform" : "python",
+    "sub_platforms" : ["cpython"],
+    "id" : "pt.hive.colony.plugins.distribution.advertising",
+    "name" : "Distribution Advertising Plugin",
+    "short_name" : "Distribution Advertising",
+    "description" : "Plugin responsible for the scheduling and management of the advertising plugins",
+    "version" : "1.0.0",
+    "author" : "Hive Solutions Lda. <development@hive.pt>",
+    "capabilities" : ["distribution_advertising", "build_automation_item"],
+    "capabilities_allowed" : ["distribution_advertising_adapter"],
+    "dependencies" : [{
+                "id" : "pt.hive.colony.plugins.misc.scheduler",
+                "version" : "1.0.0"
+            }],
+    "main_file" : "distribution_advertising_plugin.py",
+    "resources" : ["distribution_advertising_plugin.py",
+            "distribution/__init__.py", "distribution/advertising/__init__.py",
+            "distribution/advertising/distribution_advertising_system.py",
+            "distribution/advertising/resources/baf.xml"]
+}
