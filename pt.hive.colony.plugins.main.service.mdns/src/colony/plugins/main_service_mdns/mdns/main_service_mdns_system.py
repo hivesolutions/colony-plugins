@@ -1176,11 +1176,11 @@ class MdnsRequest:
         # writes the answer data serialized to the string buffer
         string_buffer.write(answer_data_serialized)
 
-        # retrieves the serialized query value from the string buffer
-        query_serialized = string_buffer.get_value()
+        # retrieves the serialized answer value from the string buffer
+        answer_serialized = string_buffer.get_value()
 
-        # returns the serialized query
-        return query_serialized
+        # returns the serialized answer
+        return answer_serialized
 
     def _serialize_name(self, name):
         # creates the string buffer to hold the serialized
