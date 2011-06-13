@@ -89,33 +89,28 @@ class DistributionPingStatus:
         # retrieves the "current" list of registry entries for the colony type
         registry_entries_list = distribution_registry_plugin.get_registry_entries_type(COLONY_VALUE)
 
-#        # iterates over all the list of registry entries to "advertise"
-#        # the distribution information
-#        for registry_entry in registry_entries_list:
-#            # creates the main client ping client
-#            ping_client = main_client_ping_plugin.create_client({})
-#
-#            # opens the ping client
-#            ping_client.open({})
-#
-#            try:
-#                # retrieves the registry entry attributes
-#                registry_entry_hostname = registry_entry.hostname
-#                registry_entry_metadata = registry_entry.metadata
-#
-#                # retrieves the address attributes
-#                registry_entry_address_ip4 = registry_entry_metadata.get(ADDRESS_IP4_VALUE, DEFAULT_IP4_VALUE)
-#
-#                # creates the parameters for the queries resolution
-#                parameters = {
-#                    CALLBACK_FUNCTION_VALUE : self._status_callback,
-#                    CALLBACK_TIMEOUT_VALUE : DEFAULT_TIMEOUT_VALUE,
-#                    ANSWERS_VALUE : [(COLONY_SERVICE_ID, PTR_TYPE, IN_CLASS, DEFAULT_TTL_VALUE, registry_entry_hostname)],
-#                    ADDITIONAL_RESOURCE_RECORDS_VALUE : [(registry_entry_hostname, A_TYPE, IN_CLASS, DEFAULT_TTL_VALUE, registry_entry_address_ip4)]
-#                }
-#
-#                # resolves the queries
-#                ping_client.resolve_queries([(COLONY_SERVICE_ID, PTR_TYPE, IN_CLASS)], parameters)
-#            finally:
-#                # closes the ping client
-#                ping_client.close({})
+        # creates the main client http client
+        http_client = main_client_http_plugin.create_client({})
+
+        # opens the http client
+        http_client.open({})
+
+        try:
+            # iterates over all the list of registry entries to "check status"
+            # for the distribution information
+            for registry_entry in registry_entries_list:
+                address = registry_entry.endpoints[0][0]
+
+                try:
+                    # resolves the "ping" url
+                    result = http_client.fetch_url("http://" + address + ":8080/colony_dynamic/rest/services/main_distribution_service.ping.json")
+                except:
+                    registry_entry.metadata["status"] = "down"
+
+                if result.status_code == 200:
+                    registry_entry.metadata["status"] = "up"
+                else:
+                    registry_entry.metadata["status"] = "down"
+        finally:
+            # closes the http client
+            http_client.close({})
