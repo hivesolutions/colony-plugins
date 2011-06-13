@@ -1463,7 +1463,7 @@ class AbstractServiceConnectionlessHandler:
         self.response_timeout = response_timeout
         self.chunk_size = chunk_size
 
-        self.service_data_list = []
+        self.service_connections_list = []
         self.service_connections_map = {}
 
         # creates the client service object
