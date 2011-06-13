@@ -121,7 +121,7 @@ class DistributionMdnsAdvertisingPlugin(colony.base.plugin_system.Plugin):
         (distribution) advertising.
         """
 
-        return self.distribution_mdns_advertising.handle_discover(arguments)
+        return self.distribution_mdns_advertising.handle_advertise(arguments)
 
     def get_distribution_registry_plugin(self):
         return self.distribution_registry_plugin
