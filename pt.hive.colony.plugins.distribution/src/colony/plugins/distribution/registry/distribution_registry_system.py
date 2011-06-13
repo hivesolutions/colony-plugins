@@ -37,6 +37,12 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
+STATUS_VALUE = "status"
+""" The status value """
+
+UNKNOWN_VALUE = "unknown"
+""" The unknown value """
+
 class DistributionRegistry:
     """
     The distribution registry class.
@@ -167,7 +173,7 @@ class DistributionRegistry:
             distribution_registry_information[registry_entry.name] = (
                 registry_entry.hostname,
                 registry_entry.endpoints or None,
-                "up"
+                registry_entry.metadata.get(STATUS_VALUE, UNKNOWN_VALUE)
             )
 
         # defines the distribution registry item columns
