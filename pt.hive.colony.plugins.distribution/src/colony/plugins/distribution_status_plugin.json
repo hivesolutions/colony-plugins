@@ -1,0 +1,22 @@
+{
+    "type" : "plugin",
+    "platform" : "python",
+    "sub_platforms" : ["cpython"],
+    "id" : "pt.hive.colony.plugins.distribution.status",
+    "name" : "Distribution Status Plugin",
+    "short_name" : "Distribution Status",
+    "description" : "Plugin responsible for the scheduling and management of the status plugins",
+    "version" : "1.0.0",
+    "author" : "Hive Solutions Lda. <development@hive.pt>",
+    "capabilities" : ["distribution_status", "build_automation_item"],
+    "capabilities_allowed" : ["distribution_status_adapter"],
+    "dependencies" : [{
+                "id" : "pt.hive.colony.plugins.misc.scheduler",
+                "version" : "1.0.0"
+            }],
+    "main_file" : "distribution_status_plugin.py",
+    "resources" : ["distribution_status_plugin.py", "distribution/__init__.py",
+            "distribution/status/__init__.py",
+            "distribution/status/distribution_status_system.py",
+            "distribution/status/resources/baf.xml"]
+}
