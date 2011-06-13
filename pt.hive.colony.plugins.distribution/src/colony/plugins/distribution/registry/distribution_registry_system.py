@@ -57,6 +57,9 @@ class DistributionRegistry:
     entry_id_registry_entries_map = []
     """ The map relating the entry id and the registry entry """
 
+    type_registry_entries_map = []
+    """ The map relating the type and the registry entry """
+
     def __init__(self, distribution_registry_plugin):
         """
         Constructor of the class.
@@ -68,7 +71,8 @@ class DistributionRegistry:
         self.distribution_registry_plugin = distribution_registry_plugin
 
         self.registry_entries = []
-        self.name_registry_entries_map = {}
+        self.entry_id_registry_entries_map = {}
+        self.type_registry_entries_map = {}
 
     def load_registry(self, properties):
         """
@@ -106,17 +110,17 @@ class DistributionRegistry:
         @param metadata: The metadata map.
         """
 
-        # creates a new registry entry
-        registry_entry = RegistryEntry(hostname, name, type)
+        # creates the registry entry id tuple
+        registry_entry_id = (hostname, name)
 
-        # sets the registry entry endpoints
-        registry_entry.endpoints = endpoints
-
-        # sets the registry entry metadata
-        registry_entry.metadata = metadata
-
-        # adds the registry entry to the list of registry entries
-        self.add_registry_entry(registry_entry)
+        # in case the registry entry already exists in the registry
+        if registry_entry_id in self.entry_id_registry_entries_map:
+            # "only" updates the existent entry
+            self._update_entry(hostname, name, type, endpoints, metadata)
+        # otherwise the entry does not exists
+        else:
+            # registers the entry in the registry
+            self._register_entry(hostname, name, type, endpoints, metadata)
 
     def unregister_entry(self, hostname, name):
         """
@@ -128,22 +132,26 @@ class DistributionRegistry:
         @param param: The name.
         """
 
-        # creates the registry entry id tuple
-        registry_entry_id = (hostname, name)
+        self._unregister_entry(hostname, name)
 
-        # retrieves the registry entry
-        registry_entry = self.name_registry_entries_map.get(registry_entry_id, None)
+    def get_registry_entries_type(self, registy_entry_type):
+        """
+        Retrieves the list of registry entries for the
+        given registry entry type.
 
-        # in case the register entry is not found
-        if not registry_entry:
-            # returns immediately
-            return
+        @type registy_entry_type: String
+        @param registy_entry_type: Tyhe type of registry
+        entries to be retrieved.
+        @rtype: List
+        @return: The list of registry entries for the
+        given registry entry type.
+        """
 
-        # removes the register entry from the name registry entries map
-        del self.name_registry_entries_map[registry_entry_id]
+        # retrieves the list of registry entries for the type
+        type_registry_entries_list = self.type_registry_entries_map.get(registy_entry_type, [])
 
-        # removes the registry entry from the registry entries list
-        self.registry_entries.remove(registry_entry)
+        # returns the list of registry entries for the type
+        return type_registry_entries_list
 
     def get_all_registry_entries(self):
         """
@@ -220,16 +228,83 @@ class DistributionRegistry:
         # retrieves the registry entry hostname
         registy_entry_hostname = registry_entry.hostname
 
-        # retrieves the registry entry name
+        # retrieves the registry entry name and type
         registy_entry_name = registry_entry.name
+        registy_entry_type = registry_entry.type
 
         # creates the registry entry id tuple
         registry_entry_id = (registy_entry_hostname, registy_entry_name)
 
-        # adds the registry entry to the name registry entries map
+        # adds the registry entry to the entry id registry entries map
         # and to the registry entries list
-        self.name_registry_entries_map[registry_entry_id] = registry_entry
+        self.entry_id_registry_entries_map[registry_entry_id] = registry_entry
         self.registry_entries.append(registry_entry)
+
+        # adds the registry entry to the type registry entries
+        # list for the given registry entry type
+        type_registry_entries_list = self.type_registry_entries_map.get(registy_entry_type, [])
+        type_registry_entries_list.append(registry_entry)
+        self.type_registry_entries_map[registy_entry_type] = type_registry_entries_list
+
+    def _register_entry(self, hostname, name, type, endpoints, metadata):
+        # creates a new registry entry
+        registry_entry = RegistryEntry(hostname, name, type)
+
+        # sets the registry entry endpoints
+        registry_entry.endpoints = endpoints
+
+        # sets the registry entry metadata
+        registry_entry.metadata = metadata
+
+        # adds the registry entry to the list of registry entries
+        self.add_registry_entry(registry_entry)
+
+    def _unregister_entry(self, hostname, name):
+        # creates the registry entry id tuple
+        registry_entry_id = (hostname, name)
+
+        # retrieves the registry entry
+        registry_entry = self.entry_id_registry_entries_map.get(registry_entry_id, None)
+
+        # in case the register entry is not found
+        if not registry_entry:
+            # returns immediately
+            return
+
+        # retrieves the registry entry type
+        registy_entry_type = registry_entry.type
+
+        # removes the register entry from the entry id registry entries map
+        del self.entry_id_registry_entries_map[registry_entry_id]
+
+        # removes the registry entry from the registry entries list
+        self.registry_entries.remove(registry_entry)
+
+        # removes the registry entry from the type registry entries
+        # list for the given registry entry type
+        type_registry_entries_list = self.type_registry_entries_map.get(registy_entry_type, [])
+        type_registry_entries_list.remove(registry_entry)
+
+    def _update_entry(self, hostname, name, type, endpoints, metadata):
+        # creates the registry entry id tuple
+        registry_entry_id = (hostname, name)
+
+        # tries to retrieve the registry entry
+        register_entry = self.entry_id_registry_entries_map.get(registry_entry_id, None)
+
+        # in case the registry entry is not defined
+        if not register_entry:
+            # returns immediately
+            return
+
+        # updates the registry entry attributes
+        register_entry.hostname = hostname
+        register_entry.name = name
+        register_entry.type = type
+
+        # updates the registry entry structure attributes
+        register_entry.endpoints = endpoints
+        register_entry.metadata = metadata
 
 class RegistryEntry:
     """
