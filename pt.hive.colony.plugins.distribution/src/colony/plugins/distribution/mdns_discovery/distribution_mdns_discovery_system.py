@@ -46,11 +46,20 @@ COLONY_SERVICE_ID = "_colony._tcp.local"
 A_TYPE = "A"
 """ The a type """
 
+PTR_TYPE = "PTR"
+""" The ptr type """
+
+IN_CLASS = "IN"
+""" The in class """
+
 TCP_VALUE = "tcp"
 """ The tcp value """
 
 COLONY_VALUE = "colony"
 """ The colony value """
+
+ADDRESS_IP4_VALUE = "address_ip4"
+""" The address ip4 value value """
 
 CALLBACK_FUNCTION_VALUE = "callback_function"
 """ The callback function value """
@@ -115,7 +124,7 @@ class DistributionMdnsDiscovery:
 
         try:
             # resolves the queries
-            mdns_client.resolve_queries([(COLONY_SERVICE_ID, "PTR", "IN")], parameters)
+            mdns_client.resolve_queries([(COLONY_SERVICE_ID, PTR_TYPE, IN_CLASS)], parameters)
         finally:
             # closes the mdns client
             mdns_client.close({})
@@ -174,5 +183,10 @@ class DistributionMdnsDiscovery:
             # adds the default endpoint
             endpoints = [(address, TCP_VALUE)]
 
+            # creates the map that represents the metadata
+            metadata = {
+                ADDRESS_IP4_VALUE : address
+            }
+
             # registers the "remote" entry in the distribution registry
-            distribution_registry_plugin.register_entry(hostname, COLONY_VALUE + "@" + hostname, COLONY_VALUE, endpoints, {})
+            distribution_registry_plugin.register_entry(hostname, COLONY_VALUE + "@" + hostname, COLONY_VALUE, endpoints, metadata)
