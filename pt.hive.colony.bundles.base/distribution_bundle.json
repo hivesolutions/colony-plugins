@@ -11,6 +11,9 @@
                 "id" : "pt.hive.colony.plugins.distribution.discovery",
                 "version" : "1.0.0"
             }, {
+                "id" : "pt.hive.colony.plugins.distribution.local.discovery",
+                "version" : "1.0.0"
+            }, {
                 "id" : "pt.hive.colony.plugins.distribution.main.plugin_system",
                 "version" : "1.0.0"
             }, {
