@@ -1023,7 +1023,7 @@ class DnsRequest:
 
         # in case the answer is of type a
         if answer_type_integer in (0x01,):
-            # unserializes the ipv4 address value (answer data)
+            # unserializes the ip4 address value (answer data)
             serialized_answer_data = data[current_index:current_index + answer_data_length]
             answer_data = colony.libs.host_util.ip4_address_from_network(serialized_answer_data)
         # in case the answer is of type ns, cname, ptr or txt
@@ -1060,7 +1060,7 @@ class DnsRequest:
             )
         # in case the answer is of type aaaa
         elif answer_type_integer in (0x1c,):
-            # unserializes the ipv6 address value (answer data)
+            # unserializes the ip6 address value (answer data)
             serialized_answer_data = data[current_index:current_index + answer_data_length]
             answer_data = colony.libs.host_util.ip6_address_from_network(serialized_answer_data)
         # otherwise it's a generic value
@@ -1293,7 +1293,7 @@ class DnsRequest:
     def _serialize_answer_data(self, answer_type_integer, answer_data):
         # in case the answer is of type a
         if answer_type_integer in (0x01,):
-            # serializes the ipv4 address value (answer data)
+            # serializes the ip4 address value (answer data)
             serialized_answer_data = colony.libs.host_util.ip4_address_to_network(answer_data)
         # in case the answer is of type ns, cname, ptr or txt
         elif answer_type_integer in (0x02, 0x05, 0x0c, 0x10):
@@ -1328,7 +1328,7 @@ class DnsRequest:
             serialized_answer_data = parameters_serialized + answer_data_name_serialized
         # in case the answer is of type aaaa
         elif answer_type_integer in (0x1c,):
-            # serializes the ipv6 address value (answer data)
+            # serializes the ip6 address value (answer data)
             serialized_answer_data = colony.libs.host_util.ip6_address_to_network(answer_data)
         # otherwise it's a generic value
         else:
