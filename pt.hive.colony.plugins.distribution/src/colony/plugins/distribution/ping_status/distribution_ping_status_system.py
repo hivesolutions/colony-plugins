@@ -43,6 +43,9 @@ ADAPTER_NAME = "ping"
 COLONY_VALUE = "colony"
 """ The colony value """
 
+VALID_STATUS_CODE = 200
+""" The valid status code """
+
 class DistributionPingStatus:
     """
     The distribution ping status class.
@@ -104,12 +107,14 @@ class DistributionPingStatus:
                 try:
                     # resolves the "ping" url
                     result = http_client.fetch_url("http://" + address + ":8080/colony_dynamic/rest/services/main_distribution_service.ping.json")
-                except:
-                    registry_entry.metadata["status"] = "down"
 
-                if result.status_code == 200:
-                    registry_entry.metadata["status"] = "up"
-                else:
+                    # in case the result is valid
+                    if result.status_code == VALID_STATUS_CODE:
+                        registry_entry.metadata["status"] = "up"
+                    # in case the result is not valid
+                    else:
+                        registry_entry.metadata["status"] = "down"
+                except:
                     registry_entry.metadata["status"] = "down"
         finally:
             # closes the http client
