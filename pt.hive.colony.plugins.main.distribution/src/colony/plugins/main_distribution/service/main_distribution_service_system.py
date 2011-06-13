@@ -37,8 +37,13 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
+import time
+
 SERVICE_ID = "main_distribution_service"
 """ The service id """
+
+CURRENT_TIME_VALUE = "current_time"
+""" The current time value """
 
 class MainDistributionService:
     """
@@ -72,6 +77,18 @@ class MainDistributionService:
 
     def get_all_registry_entries(self):
         return []
+
+    def ping(self):
+        # retrieves the current time
+        current_time = time.time()
+
+        # creates the information ping map
+        ping_map = {
+            CURRENT_TIME_VALUE : current_time
+        }
+
+        # returns the ping map (structure)
+        return ping_map
 
     def unload_plugin_manager(self):
         # retrieves the plugin manager

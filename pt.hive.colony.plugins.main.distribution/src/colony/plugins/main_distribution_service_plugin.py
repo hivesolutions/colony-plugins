@@ -114,6 +114,10 @@ class MainDistributionServicePlugin(colony.base.plugin_system.Plugin):
         return self.main_distribution_service.get_rpc_methods_alias()
 
     @colony.base.decorators.plugin_meta_information("rpc_method", {"alias" : []})
+    def ping(self):
+        return self.main_distribution_service.ping()
+
+    @colony.base.decorators.plugin_meta_information("rpc_method", {"alias" : []})
     def unload_plugin_manager(self):
         return self.main_distribution_service.unload_plugin_manager()
 
