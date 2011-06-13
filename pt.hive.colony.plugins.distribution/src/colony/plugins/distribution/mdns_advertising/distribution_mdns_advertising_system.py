@@ -46,14 +46,41 @@ COLONY_SERVICE_ID = "_colony._tcp.local"
 A_TYPE = "A"
 """ The a type """
 
+PTR_TYPE = "PTR"
+""" The ptr type """
+
+IN_CLASS = "IN"
+""" The in class """
+
 TCP_VALUE = "tcp"
 """ The tcp value """
 
 COLONY_VALUE = "colony"
 """ The colony value """
 
-DEFAULT_TIMEOUT_VALUE = 1
+ADDRESS_IP4_VALUE = "address_ip4"
+""" The address ip4 value value """
+
+CALLBACK_FUNCTION_VALUE = "callback_function"
+""" The callback function value """
+
+CALLBACK_TIMEOUT_VALUE = "callback_timeout"
+""" The callback timeout value """
+
+ANSWERS_VALUE = "answers"
+""" The answers value """
+
+ADDITIONAL_RESOURCE_RECORDS_VALUE = "additional_resource_records"
+""" The additional resource records value """
+
+DEFAULT_TIMEOUT_VALUE = -1
 """ The default timeout value """
+
+DEFAULT_TTL_VALUE = 10
+""" The default ttl value """
+
+DEFAULT_IP4_VALUE = "0.0.0.0"
+""" The default ip4 value """
 
 class DistributionMdnsAdvertising:
     """
@@ -92,81 +119,45 @@ class DistributionMdnsAdvertising:
         (distribution) advertising.
         """
 
-        # retrieves the main client mdns plugin
-        main_client_mdns_plugin = self.distribution_mdns_advertising_plugin.main_client_mdns_plugin
-
-        # creates the parameters for the queries resolution
-        parameters = {
-            "callback_function" : self._advertising_callback,
-            "callback_timeout" : DEFAULT_TIMEOUT_VALUE
-        }
-
-        # creates the main client mdns client
-        mdns_client = main_client_mdns_plugin.create_client({})
-
-        # opens the mdns client
-        mdns_client.open({})
-
-        try:
-            # resolves the queries
-            mdns_client.resolve_queries([(COLONY_SERVICE_ID, "PTR", "IN")], parameters)
-        finally:
-            # closes the mdns client
-            mdns_client.close({})
-
-    def _advertising_callback(self, query, response):
         # retrieves the distribution registry plugin
         distribution_registry_plugin = self.distribution_mdns_advertising_plugin.distribution_registry_plugin
 
-        # retrieves the response answers and adition resource records
-        response_answers = response.answers
-        response_additional_resource_records = response.additional_resource_records
+        # retrieves the main client mdns plugin
+        main_client_mdns_plugin = self.distribution_mdns_advertising_plugin.main_client_mdns_plugin
 
-        # creates the list of hosts and the list
-        # of resolved hosts
-        hosts = []
-        hosts_resolved = []
+        # retrieves the "current" list of registry entries for the colony type
+        registry_entries_list = distribution_registry_plugin.get_registry_entries_type(COLONY_VALUE)
 
-        # iterates over all the response answers to gather
-        # the set of valid hosts referred in the answer
-        for response_answer in response_answers:
-            # unpacks the answer tuple, retrieving the name,
-            # type, class and data
-            answer_name, _answer_type, _answer_class, _answer_time_to_live, answer_data = response_answer
+        # iterates over all the list of registry entries to "advertise"
+        # the distribution information
+        for registry_entry in registry_entries_list:
+            # creates the main client mdns client
+            mdns_client = main_client_mdns_plugin.create_client({})
 
-            # in case the answer name not is of type
-            # colony service
-            if not answer_name == COLONY_SERVICE_ID:
-                # continues the loop
-                continue
+            # opens the mdns client
+            mdns_client.open({})
 
-            # adds the answer data (host) to he hosts list
-            hosts.append(answer_data)
+            try:
+                # retrieves the registry entry attributes
+                registry_entry_hostname = registry_entry.hostname
+                registry_entry_metadata = registry_entry.metadata
 
-        # iterates over all the response additional resource records to gather
-        # the addresses for the previous host references
-        for response_additional_resource_record in response_additional_resource_records:
-            # unpacks the additional resource record tuple, retrieving the name,
-            # type, class and data
-            record_name, record_type, _record_class, _record_time_to_live, record_data = response_additional_resource_record
+                # retrieves the address attributes
+                registry_entry_address_ip4 = registry_entry_metadata.get(ADDRESS_IP4_VALUE, DEFAULT_IP4_VALUE)
 
-            # in case the record name is not set in the list of hosts
-            # or in case the record is not of type address
-            if not record_name in hosts or not record_type == A_TYPE:
-                # continues the loop
-                continue
+                # creates the parameters for the queries resolution
+                parameters = {
+                    CALLBACK_FUNCTION_VALUE : self._advertising_callback,
+                    CALLBACK_TIMEOUT_VALUE : DEFAULT_TIMEOUT_VALUE,
+                    ANSWERS_VALUE : [(COLONY_SERVICE_ID, PTR_TYPE, IN_CLASS, DEFAULT_TTL_VALUE, registry_entry_hostname)],
+                    ADDITIONAL_RESOURCE_RECORDS_VALUE : [(registry_entry_hostname, A_TYPE, IN_CLASS, DEFAULT_TTL_VALUE, registry_entry_address_ip4)]
+                }
 
-            # adds the host tuple to the list of resolved hosts
-            hosts_resolved.append((record_name, record_data))
+                # resolves the queries
+                mdns_client.resolve_queries([(COLONY_SERVICE_ID, PTR_TYPE, IN_CLASS)], parameters)
+            finally:
+                # closes the mdns client
+                mdns_client.close({})
 
-        # iterates over all the resolved hosts
-        # to insert or update the "remote" entry
-        for host_resolved in hosts_resolved:
-            # unpack the host resolved value
-            hostname, address = host_resolved
-
-            # adds the default endpoint
-            endpoints = [(address, TCP_VALUE)]
-
-            # registers the "remote" entry in the distribution registry
-            distribution_registry_plugin.register_entry(hostname, COLONY_VALUE + "@" + hostname, COLONY_VALUE, endpoints, {})
+    def _advertising_callback(self, query, response):
+        pass
