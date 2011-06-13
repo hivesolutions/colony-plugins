@@ -37,7 +37,7 @@
         <version>1.0.0</version>
         <type>colony</type>
         <name>Distribution Discovery Plugin</name>
-        <description>Plugin responsible for the registration of the various remote references</description>
+        <description>Plugin responsible for the scheduling and management of the discovery plugins</description>
         <url>http://www.hive.pt</url>
     </artifact>
     <build>
