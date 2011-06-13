@@ -55,23 +55,23 @@ COLONY_VALUE = "colony"
 DEFAULT_TIMEOUT_VALUE = 1
 """ The default timeout value """
 
-class DistributionMdnsDiscovery:
+class DistributionMdnsAdvertising:
     """
-    The distribution mdns discovery class.
+    The distribution mdns advertising class.
     """
 
-    distribution_mdns_discovery_plugin = None
-    """ The distribution mdns discovery plugin """
+    distribution_mdns_advertising_plugin = None
+    """ The distribution mdns advertising plugin """
 
-    def __init__(self, distribution_mdns_discovery_plugin):
+    def __init__(self, distribution_mdns_advertising_plugin):
         """
         Constructor of the class.
 
-        @type distribution_mdns_discovery_plugin: DistributionMdnsDiscoveryPlugin
-        @param distribution_mdns_discovery_plugin: The distribution mdns discovery plugin.
+        @type distribution_mdns_advertising_plugin: DistributionMdnsAdvertisingPlugin
+        @param distribution_mdns_advertising_plugin: The distribution mdns advertising plugin.
         """
 
-        self.distribution_mdns_discovery_plugin = distribution_mdns_discovery_plugin
+        self.distribution_mdns_advertising_plugin = distribution_mdns_advertising_plugin
 
     def get_adapter_name(self):
         """
@@ -83,21 +83,21 @@ class DistributionMdnsDiscovery:
 
         return ADAPTER_NAME
 
-    def handle_discover(self, arguments):
+    def handle_advertise(self, arguments):
         """
-        Handles a (distribution) discovery.
+        Handles a (distribution) advertising.
 
         @type arguments: Dictionary
         @param arguments: The arguments to the
-        (distribution) discovery.
+        (distribution) advertising.
         """
 
         # retrieves the main client mdns plugin
-        main_client_mdns_plugin = self.distribution_mdns_discovery_plugin.main_client_mdns_plugin
+        main_client_mdns_plugin = self.distribution_mdns_advertising_plugin.main_client_mdns_plugin
 
         # creates the parameters for the queries resolution
         parameters = {
-            "callback_function" : self._discovery_callback,
+            "callback_function" : self._advertising_callback,
             "callback_timeout" : DEFAULT_TIMEOUT_VALUE
         }
 
@@ -114,9 +114,9 @@ class DistributionMdnsDiscovery:
             # closes the mdns client
             mdns_client.close({})
 
-    def _discovery_callback(self, query, response):
+    def _advertising_callback(self, query, response):
         # retrieves the distribution registry plugin
-        distribution_registry_plugin = self.distribution_mdns_discovery_plugin.distribution_registry_plugin
+        distribution_registry_plugin = self.distribution_mdns_advertising_plugin.distribution_registry_plugin
 
         # retrieves the response answers and adition resource records
         response_answers = response.answers

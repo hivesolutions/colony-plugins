@@ -1,0 +1,28 @@
+{
+    "type" : "plugin",
+    "platform" : "python",
+    "sub_platforms" : ["cpython"],
+    "id" : "pt.hive.colony.plugins.distribution.mdns.advertising",
+    "name" : "Distribution Mdns Advertising Plugin",
+    "short_name" : "Distribution Mdns Advertising",
+    "description" : "Distribution Mdns Advertising Plugin",
+    "version" : "1.0.0",
+    "author" : "Hive Solutions Lda. <development@hive.pt>",
+    "capabilities" : ["distribution_advertising_adapter",
+            "build_automation_item"],
+    "capabilities_allowed" : [],
+    "dependencies" : [{
+                "id" : "pt.hive.colony.plugins.distribution.registry",
+                "version" : "1.0.0"
+            }, {
+                "id" : "pt.hive.colony.plugins.main.client.mdns",
+                "version" : "1.0.0"
+            }],
+    "main_file" : "distribution_mdns_advertising_plugin.py",
+    "resources" : [
+            "distribution_mdns_advertising_plugin.py",
+            "distribution/__init__.py",
+            "distribution/mdns_advertising/__init__.py",
+            "distribution/mdns_advertising/distribution_mdns_advertising_system.py",
+            "distribution/mdns_advertising/resources/baf.xml"]
+}

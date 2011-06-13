@@ -138,6 +138,6 @@ class DistributionAdvertising:
     def _update_advertising(self):
         # iterates over all the distribution advertising adapter plugins
         for _adapter_name, distribution_advertising_adapter_plugin in self.distribution_advertising_adapter_plugins_map.items():
-            # handles a new discover in the distribution advertising adapter plugin
+            # handles a new advertise in the distribution advertising adapter plugin
             # this update shall change the current status of the distribution registry
-            distribution_advertising_adapter_plugin.handle_discover({})
+            distribution_advertising_adapter_plugin.handle_advertise({})
