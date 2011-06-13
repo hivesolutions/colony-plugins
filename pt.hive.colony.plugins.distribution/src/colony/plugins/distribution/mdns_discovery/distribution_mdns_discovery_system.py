@@ -52,6 +52,12 @@ TCP_VALUE = "tcp"
 COLONY_VALUE = "colony"
 """ The colony value """
 
+CALLBACK_FUNCTION_VALUE = "callback_function"
+""" The callback function value """
+
+CALLBACK_TIMEOUT_VALUE = "callback_timeout"
+""" The callback timeout value """
+
 DEFAULT_TIMEOUT_VALUE = 1
 """ The default timeout value """
 
@@ -97,8 +103,8 @@ class DistributionMdnsDiscovery:
 
         # creates the parameters for the queries resolution
         parameters = {
-            "callback_function" : self._discovery_callback,
-            "callback_timeout" : DEFAULT_TIMEOUT_VALUE
+            CALLBACK_FUNCTION_VALUE : self._discovery_callback,
+            CALLBACK_TIMEOUT_VALUE : DEFAULT_TIMEOUT_VALUE
         }
 
         # creates the main client mdns client
