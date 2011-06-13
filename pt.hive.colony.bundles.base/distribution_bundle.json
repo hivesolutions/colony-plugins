@@ -5,6 +5,9 @@
     "version" : "1.0.0",
     "author" : "Hive Solutions Lda. <development@hive.pt>",
     "plugins" : [{
+                "id" : "pt.hive.colony.plugins.distribution.advertising",
+                "version" : "1.0.0"
+            }, {
                 "id" : "pt.hive.colony.plugins.distribution.discovery",
                 "version" : "1.0.0"
             }, {
@@ -14,13 +17,13 @@
                 "id" : "pt.hive.colony.plugins.distribution.main.registry.service",
                 "version" : "1.0.0"
             }, {
+                "id" : "pt.hive.colony.plugins.distribution.mdns.advertising",
+                "version" : "1.0.0"
+            }, {
                 "id" : "pt.hive.colony.plugins.distribution.mdns.discovery",
                 "version" : "1.0.0"
             }, {
                 "id" : "pt.hive.colony.plugins.distribution.mdns.handler",
-                "version" : "1.0.0"
-            }, {
-                "id" : "pt.hive.colony.plugins.main.service.mdns.service_handler",
                 "version" : "1.0.0"
             }, {
                 "id" : "pt.hive.colony.plugins.distribution.registry",
@@ -28,9 +31,6 @@
             }],
     "dependencies" : [{
                 "id" : "pt.hive.colony.bundles.main.client.mdns",
-                "version" : "1.0.0"
-            }, {
-                "id" : "pt.hive.colony.bundles.resources",
                 "version" : "1.0.0"
             }, {
                 "id" : "pt.hive.colony.bundles.scheduler",

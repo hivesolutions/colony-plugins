@@ -8,11 +8,17 @@
                 "id" : "pt.hive.colony.plugins.main.service.mdns",
                 "version" : "1.0.0"
             }, {
+                "id" : "pt.hive.colony.plugins.main.service.mdns.service_handler",
+                "version" : "1.0.0"
+            }, {
                 "id" : "pt.hive.colony.plugins.main.service.mdns.starter",
                 "version" : "1.0.0"
             }],
     "dependencies" : [{
                 "id" : "pt.hive.colony.bundles.main.service",
+                "version" : "1.0.0"
+            }, {
+                "id" : "pt.hive.colony.bundles.resources",
                 "version" : "1.0.0"
             }]
 }
