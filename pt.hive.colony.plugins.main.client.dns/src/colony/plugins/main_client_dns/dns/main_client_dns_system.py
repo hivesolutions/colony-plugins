@@ -229,6 +229,15 @@ CLASSES_REVERSE_MAP = {
 }
 """ The map associating the class integer with the string value """
 
+ANSWERS_VALUE = "answers"
+""" The answers value """
+
+AUTHORITY_RESOURCE_RECORDS_VALUE = "authority_resource_records"
+""" The authority resource records value """
+
+ADDITIONAL_RESOURCE_RECORDS_VALUE = "additional_resource_records"
+""" The additional resource records value """
+
 class MainClientDns:
     """
     The main client dns class.
@@ -487,14 +496,24 @@ class DnsRequest:
         # validates the current request
         self.validate()
 
+        # retrieves the "additional" request values
+        answers = self.parameters.get(ANSWERS_VALUE, [])
+        authority_resource_records = self.parameters.get(AUTHORITY_RESOURCE_RECORDS_VALUE, [])
+        additional_resource_records = self.parameters.get(ADDITIONAL_RESOURCE_RECORDS_VALUE, [])
+
         # retrieves the result stream
         result = colony.libs.string_buffer_util.StringBuffer()
 
         # retrieves the number of queries
         number_queries = len(self.queries)
 
+        # retrieves the number of "additional" request values
+        number_answers = len(answers)
+        number_authority_resource_records = len(authority_resource_records)
+        number_additional_resource_records = len(additional_resource_records)
+
         # generates the query header
-        query_header = struct.pack("!HHHHHH", self.transaction_id, self.flags, number_queries, 0, 0, 0)
+        query_header = struct.pack("!HHHHHH", self.transaction_id, self.flags, number_queries, number_answers, number_authority_resource_records, number_additional_resource_records)
 
         # writes the query header to the result stream
         result.write(query_header)
@@ -506,6 +525,30 @@ class DnsRequest:
 
             # writes the serialized query to the result stream
             result.write(query_serialized)
+
+        # iterates over all the answers
+        for answer in answers:
+            # serializes the answer
+            answer_serialized = self._serialize_answer(answer)
+
+            # writes the serialized answer to the result stream
+            result.write(answer_serialized)
+
+        # iterates over all the authority resource records
+        for authority_resource_record in authority_resource_records:
+            # serializes the authority resource record
+            authority_resource_record_serialized = self._serialize_answer(authority_resource_record)
+
+            # writes the serialized authority resource record to the result stream
+            result.write(authority_resource_record_serialized)
+
+        # iterates over all the additional resource records
+        for additional_resource_record in additional_resource_records:
+            # serializes the additional resource record
+            additional_resource_record_serialized = self._serialize_answer(additional_resource_record)
+
+            # writes the serialized additional resource record to the result stream
+            result.write(additional_resource_record_serialized)
 
         # retrieves the value from the result buffer
         result_value = result.get_value()
@@ -574,6 +617,151 @@ class DnsRequest:
 
         # returns the serialized query
         return query_serialized
+
+    def _serialize_answer(self, answer,):
+        """
+        Serializes the given answer into the dns binary format.
+
+        @type answer: Tuple
+        @param answer: A tuple with the answer information.
+        @rtype: String
+        @return: The string containing the resource record.
+        """
+
+        # unpacks the answer tuple, retrieving the name,
+        # type, class and data
+        answer_name, answer_type, answer_class, answer_time_to_live, answer_data = answer
+
+        # converts the answer type to integer
+        answer_type_integer = TYPES_MAP[answer_type]
+
+        # converts the answer class to integer
+        answer_class_integer = CLASSES_MAP[answer_class]
+
+        # creates the string buffer to hold the stream
+        string_buffer = colony.libs.string_buffer_util.StringBuffer()
+
+        # writes the answer name into the string buffer
+        self._write_name_serialized(answer_name, string_buffer)
+
+        # serializes the answer data
+        answer_data_serialized = self._serialize_answer_data(answer_type_integer, answer_data)
+
+        # retrieves the answer data length from the answer data serialized
+        answer_data_length = len(answer_data_serialized)
+
+        # creates the answer information from the answer type, class, time to live and data length
+        answer_information = struct.pack("!HHIH", answer_type_integer, answer_class_integer, answer_time_to_live, answer_data_length)
+
+        # writes the answer information to the string buffer
+        string_buffer.write(answer_information)
+
+        # writes the answer data serialized to the string buffer
+        string_buffer.write(answer_data_serialized)
+
+        # retrieves the serialized answer value from the string buffer
+        answer_serialized = string_buffer.get_value()
+
+        # returns the serialized answer
+        return answer_serialized
+
+    def _serialize_answer_data(self, answer_type_integer, answer_data):
+        # in case the answer is of type a
+        if answer_type_integer in (0x01,):
+            # serializes the ip4 address value (answer data)
+            serialized_answer_data = colony.libs.host_util.ip4_address_to_network(answer_data)
+        # in case the answer is of type ns, cname, ptr or txt
+        elif answer_type_integer in (0x02, 0x05, 0x0c, 0x10):
+            serialized_answer_data = self._serialize_name(answer_data)
+        # in case the answer is of type mx
+        elif answer_type_integer in (0x0f,):
+            # unpacks the answer data into preference and name
+            answer_data_preference, answer_data_name = answer_data
+
+            # serializes (packs) the answer data preference
+            answer_data_preference_serialized, = struct.pack("!H", answer_data_preference)
+
+            # serializes the answer data name
+            answer_data_name_serialized = self._serialize_name(answer_data_name)
+
+            # sets the serialized answer data as the concatenation
+            # of the answer data preference and the answer data name (both serialized)
+            serialized_answer_data = answer_data_preference_serialized + answer_data_name_serialized
+        # in case the answer is of type srv
+        elif answer_type_integer in (0x21,):
+            # unpacks the answer data into preference and name
+            priority, weight, port, answer_data_name = answer_data
+
+            # serializes (packs) the priority, weight and port (the parameters)
+            parameters_serialized = struct.pack("!HHH", priority, weight, port)
+
+            # serializes the answer data name
+            answer_data_name_serialized = self._serialize_name(answer_data_name)
+
+            # sets the serialized answer data as the concatenation
+            # of the parameters serialized and the answer data name (both serialized)
+            serialized_answer_data = parameters_serialized + answer_data_name_serialized
+        # in case the answer is of type aaaa
+        elif answer_type_integer in (0x1c,):
+            # serializes the ip6 address value (answer data)
+            serialized_answer_data = colony.libs.host_util.ip6_address_to_network(answer_data)
+        # otherwise it's a generic value
+        else:
+            # sets the serialized answer data as the raw answer data
+            serialized_answer_data = answer_data
+
+        # returns the serialized answer data
+        return serialized_answer_data
+
+    def _serialize_name(self, name):
+        # creates the string buffer to hold the serialized
+        # name information
+        string_buffer = colony.libs.string_buffer_util.StringBuffer()
+
+        # splits the name to retrieve the name items
+        name_items = name.split(".")
+
+        # iterates over all the name items
+        for name_item in name_items:
+            # retrieves the name item length
+            name_item_length = len(name_item)
+
+            # retrieves the name item length in binary value
+            name_item_length_character = chr(name_item_length)
+
+            # writes the size of the name item (in binary value) and
+            # the name itself
+            string_buffer.write(name_item_length_character)
+            string_buffer.write(name_item)
+
+        # writes the end of string in the string buffer
+        string_buffer.write("\0")
+
+        # retrieves the string value
+        string_value = string_buffer.get_value()
+
+        # returns the string value (name serialized)
+        return string_value
+
+    def _write_name_serialized(self, name, string_buffer):
+        # splits the name to retrieve the name items
+        name_items = name.split(".")
+
+        # iterates over all the name items
+        for name_item in name_items:
+            # retrieves the name item length
+            name_item_length = len(name_item)
+
+            # retrieves the name item length in binary value
+            name_item_length_character = chr(name_item_length)
+
+            # writes the size of the name item (in binary value) and
+            # the name itself
+            string_buffer.write(name_item_length_character)
+            string_buffer.write(name_item)
+
+        # writes the end of string in the string buffer
+        string_buffer.write("\0")
 
 class DnsResponse:
     """
