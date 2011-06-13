@@ -104,6 +104,9 @@ class DistributionRegistryPlugin(colony.base.plugin_system.Plugin):
     def unregister_entry(self, hostname, name):
         return self.distribution_registry.unregister_entry(hostname, name)
 
+    def get_registry_entries_type(self, registy_entry_type):
+        return self.distribution_registry.get_registry_entries_type(registy_entry_type)
+
     def get_all_registry_entries(self):
         return self.distribution_registry.get_all_registry_entries()
 
