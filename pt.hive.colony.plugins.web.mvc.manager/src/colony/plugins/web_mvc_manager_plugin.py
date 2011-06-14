@@ -73,13 +73,13 @@ class WebMvcManagerPlugin(colony.base.plugin_system.Plugin):
         colony.base.plugin_system.PluginDependency("pt.hive.colony.plugins.misc.json", "1.0.0"),
         colony.base.plugin_system.PluginDependency("pt.hive.colony.plugins.system.installer", "1.0.0")
     ]
-    events_handled = [
+    events_fired = [
         "web.mvc.patterns_reload",
         "web.mvc.patterns_load",
         "web.mvc.patterns_unload",
         "web.mvc.communication"
     ]
-    events_registrable = [
+    events_handled = [
         "web.mvc.side_panel_reload"
     ]
     main_modules = [
