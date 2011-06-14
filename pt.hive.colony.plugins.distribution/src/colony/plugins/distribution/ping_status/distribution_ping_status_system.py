@@ -43,6 +43,15 @@ ADAPTER_NAME = "ping"
 COLONY_VALUE = "colony"
 """ The colony value """
 
+STATUS_VALUE = "status"
+""" The status value """
+
+UP_STATUS = "up"
+""" The up status """
+
+DOWN_STATUS = "down"
+""" The down status """
+
 VALID_STATUS_CODE = 200
 """ The valid status code """
 
@@ -110,12 +119,12 @@ class DistributionPingStatus:
 
                     # in case the result is valid
                     if result.status_code == VALID_STATUS_CODE:
-                        registry_entry.metadata["status"] = "up"
+                        registry_entry.metadata[STATUS_VALUE] = UP_STATUS
                     # in case the result is not valid
                     else:
-                        registry_entry.metadata["status"] = "down"
+                        registry_entry.metadata[STATUS_VALUE] = DOWN_STATUS
                 except:
-                    registry_entry.metadata["status"] = "down"
+                    registry_entry.metadata[STATUS_VALUE] = DOWN_STATUS
         finally:
             # closes the http client
             http_client.close({})
