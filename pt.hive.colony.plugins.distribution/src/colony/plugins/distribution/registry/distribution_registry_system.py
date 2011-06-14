@@ -37,6 +37,9 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
+import colony.libs.map_util
+import colony.libs.list_util
+
 STATUS_VALUE = "status"
 """ The status value """
 
@@ -303,8 +306,8 @@ class DistributionRegistry:
         register_entry.type = type
 
         # updates the registry entry structure attributes
-        register_entry.endpoints = endpoints
-        register_entry.metadata = metadata
+        colony.libs.list_util.list_extend(register_entry.endpoints, endpoints)
+        colony.libs.map_util.map_extend(register_entry.metadata, metadata)
 
 class RegistryEntry:
     """
