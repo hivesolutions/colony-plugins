@@ -589,8 +589,8 @@ class MainConsoleBase:
         output_method("capabilities:         " + str(plugin.capabilities))
         output_method("capabilities allowed: " + str(plugin.capabilities_allowed))
         output_method("dependencies:         " + str(plugin.dependencies))
+        output_method("events fired:         " + str(plugin.events_fired))
         output_method("events handled:       " + str(plugin.events_handled))
-        output_method("events registrable:   " + str(plugin.events_registrable))
 
     def get_plugin_id(self, id):
         """
