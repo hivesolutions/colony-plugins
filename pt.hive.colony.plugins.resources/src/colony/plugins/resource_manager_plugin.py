@@ -69,7 +69,7 @@ class ResourceManagerPlugin(colony.base.plugin_system.Plugin):
     capabilities_allowed = [
         "resource_parser"
     ]
-    events_registrable = [
+    events_handled = [
         "plugin_manager.plugin.end_load_plugin",
         "plugin_manager.plugin.unload_plugin"
     ]
