@@ -562,6 +562,9 @@ class MdnsRequest:
     flags = NORMAL_REQUEST_VALUE
     """ The flags byte """
 
+    serialize_data_methods_map = {}
+    """ The map containing the serialize data methods """
+
     def __init__(self, transaction_id, queries, parameters):
         """
         Constructor of the class.
@@ -577,6 +580,17 @@ class MdnsRequest:
         self.transaction_id = transaction_id
         self.queries = queries
         self.parameters = parameters
+
+        self.serialize_data_methods_map = {
+            0x01 : self.__serialize_data_ip4,
+            0x02 : self.__serialize_data_name,
+            0x05 : self.__serialize_data_name,
+            0x0c : self.__serialize_data_name,
+            0x0f : self.__serialize_data_mx,
+            0x10 : self.__serialize_data_text,
+            0x1c : self.__serialize_data_ip6,
+            0x21 : self.__serialize_data_service
+        }
 
     def get_result(self):
         """
@@ -764,48 +778,13 @@ class MdnsRequest:
         return answer_serialized
 
     def _serialize_answer_data(self, answer_type_integer, answer_data):
-        # in case the answer is of type a
-        if answer_type_integer in (0x01,):
-            # serializes the ip4 address value (answer data)
-            serialized_answer_data = colony.libs.host_util.ip4_address_to_network(answer_data)
-        # in case the answer is of type ns, cname or ptr
-        elif answer_type_integer in (0x02, 0x05, 0x0c):
-            serialized_answer_data = self._serialize_name(answer_data)
-        # in case the answer is of type txt
-        elif answer_type_integer in (0x10,):
-            serialized_answer_data = self._serialize_text(answer_data)
-        # in case the answer is of type mx
-        elif answer_type_integer in (0x0f,):
-            # unpacks the answer data into preference and name
-            answer_data_preference, answer_data_name = answer_data
+        # tries to retrieve the serialize data method for the answer type
+        serialize_data_method = self.serialize_data_methods_map.get(answer_type_integer, None)
 
-            # serializes (packs) the answer data preference
-            answer_data_preference_serialized, = struct.pack("!H", answer_data_preference)
-
-            # serializes the answer data name
-            answer_data_name_serialized = self._serialize_name(answer_data_name)
-
-            # sets the serialized answer data as the concatenation
-            # of the answer data preference and the answer data name (both serialized)
-            serialized_answer_data = answer_data_preference_serialized + answer_data_name_serialized
-        # in case the answer is of type srv
-        elif answer_type_integer in (0x21,):
-            # unpacks the answer data into preference and name
-            priority, weight, port, answer_data_name = answer_data
-
-            # serializes (packs) the priority, weight and port (the parameters)
-            parameters_serialized = struct.pack("!HHH", priority, weight, port)
-
-            # serializes the answer data name
-            answer_data_name_serialized = self._serialize_name(answer_data_name)
-
-            # sets the serialized answer data as the concatenation
-            # of the parameters serialized and the answer data name (both serialized)
-            serialized_answer_data = parameters_serialized + answer_data_name_serialized
-        # in case the answer is of type aaaa
-        elif answer_type_integer in (0x1c,):
-            # serializes the ip6 address value (answer data)
-            serialized_answer_data = colony.libs.host_util.ip6_address_to_network(answer_data)
+        # in case there is a valid serialize data method
+        if serialize_data_method:
+            # serializes the answer data
+            serialized_answer_data = serialize_data_method(answer_type_integer, answer_data)
         # otherwise it's a generic value
         else:
             # sets the serialized answer data as the raw answer data
@@ -889,6 +868,68 @@ class MdnsRequest:
         # writes the end of string in the string buffer
         string_buffer.write("\0")
 
+    def __serialize_data_ip4(self, answer_type_integer, answer_data):
+        # serializes the ip4 address value (answer data)
+        serialized_answer_data = colony.libs.host_util.ip4_address_to_network(answer_data)
+
+        # returns the serialized answer data
+        return serialized_answer_data
+
+    def __serialize_data_ip6(self, answer_type_integer, answer_data):
+        # serializes the ip6 address value (answer data)
+        serialized_answer_data = colony.libs.host_util.ip6_address_to_network(answer_data)
+
+        # returns the serialized answer data
+        return serialized_answer_data
+
+    def __serialize_data_name(self, answer_type_integer, answer_data):
+        # serializes the name value (answer data)
+        serialized_answer_data = self._serialize_name(answer_data)
+
+        # returns the serialized answer data
+        return serialized_answer_data
+
+    def __serialize_data_text(self, answer_type_integer, answer_data):
+        # serializes the text value (answer data)
+        serialized_answer_data = self._serialize_text(answer_data)
+
+        # returns the serialized answer data
+        return serialized_answer_data
+
+    def __serialize_data_service(self, answer_type_integer, answer_data):
+        # unpacks the answer data into preference and name
+        priority, weight, port, answer_data_name = answer_data
+
+        # serializes (packs) the priority, weight and port (the parameters)
+        parameters_serialized = struct.pack("!HHH", priority, weight, port)
+
+        # serializes the answer data name
+        answer_data_name_serialized = self._serialize_name(answer_data_name)
+
+        # sets the serialized answer data as the concatenation
+        # of the parameters serialized and the answer data name (both serialized)
+        serialized_answer_data = parameters_serialized + answer_data_name_serialized
+
+        # returns the serialized answer data
+        return serialized_answer_data
+
+    def __serialize_data_mx(self, answer_type_integer, answer_data):
+        # unpacks the answer data into preference and name
+        answer_data_preference, answer_data_name = answer_data
+
+        # serializes (packs) the answer data preference
+        answer_data_preference_serialized, = struct.pack("!H", answer_data_preference)
+
+        # serializes the answer data name
+        answer_data_name_serialized = self._serialize_name(answer_data_name)
+
+        # sets the serialized answer data as the concatenation
+        # of the answer data preference and the answer data name (both serialized)
+        serialized_answer_data = answer_data_preference_serialized + answer_data_name_serialized
+
+        # returns the serialized answer data
+        return serialized_answer_data
+
 class MdnsResponse:
     """
     The mdns response class.
@@ -918,6 +959,9 @@ class MdnsResponse:
     flags = None
     """ The flags byte """
 
+    process_data_methods_map = {}
+    """ The map containing the process data methods """
+
     def __init__(self, request):
         """
         Constructor of the class.
@@ -933,6 +977,17 @@ class MdnsResponse:
         self.authority_resource_records = []
         self.additional_resource_records = []
         self.parameters = {}
+
+        self.process_data_methods_map = {
+            0x01 : self.__process_data_ip4,
+            0x02 : self.__process_data_name,
+            0x05 : self.__process_data_name,
+            0x0c : self.__process_data_name,
+            0x0f : self.__process_data_mx,
+            0x10 : self.__process_data_text,
+            0x1c : self.__process_data_ip6,
+            0x21 : self.__process_data_service
+        }
 
     def process_data(self, data):
         # retrieves the message header from the data
@@ -1081,48 +1136,13 @@ class MdnsResponse:
         @return: The "processed" answer data.
         """
 
-        # in case the answer is of type a
-        if answer_type_integer in (0x01,):
-            # unserializes the ip4 address value (answer data)
-            serialized_answer_data = data[current_index:current_index + answer_data_length]
-            answer_data = colony.libs.host_util.ip4_address_from_network(serialized_answer_data)
-        # in case the answer is of type ns, cname, ptr or txt
-        elif answer_type_integer in (0x02, 0x05, 0x0c, 0x10):
-            # retrieves the answer data as a joined name
-            answer_data, _current_index = self._get_name_joined(data, current_index)
-        # in case the answer is of type srv
-        elif answer_type_integer in (0x21,):
-            # retrieves the priority the weight and the port
-            priority, weight, port = struct.unpack_from("!HHH", data, current_index)
+        # tries to retrieve the process data method for the answer type
+        process_data_method = self.process_data_methods_map.get(answer_type_integer, None)
 
-            # retrieves the answer data name as a joined name
-            answer_data_name, _current_index = self._get_name_joined(data, current_index + 6)
-
-            # sets the answer data tuple
-            answer_data = (
-                priority,
-                weight,
-                port,
-                answer_data_name
-            )
-        # in case the answer is of type mx
-        elif answer_type_integer in (0x0f,):
-            # retrieves the answer data preference
-            answer_data_preference, = struct.unpack_from("!H", data, current_index)
-
-            # retrieves the answer data name as a joined name
-            answer_data_name, _current_index = self._get_name_joined(data, current_index + 2)
-
-            # sets the answer data tuple
-            answer_data = (
-                answer_data_preference,
-                answer_data_name
-            )
-        # in case the answer is of type aaaa
-        elif answer_type_integer in (0x1c,):
-            # unserializes the ip6 address value (answer data)
-            serialized_answer_data = data[current_index:current_index + answer_data_length]
-            answer_data = colony.libs.host_util.ip6_address_from_network(serialized_answer_data)
+        # in case the process data method is valid
+        if process_data_method:
+            # processes the data retrieving the answer data
+            answer_data = process_data_method(data, current_index, answer_type_integer, answer_data_length, answer_cache_flush)
         # otherwise it's a generic value
         else:
             # sets the answer data as the raw answer data
@@ -1229,3 +1249,115 @@ class MdnsResponse:
             name_items,
             current_index
         )
+
+    def _get_text(self, data, data_length, current_index):
+        """
+        Retrieves the text "encoded" according to the mdns
+        specification in the given index.
+
+        @type data: String
+        @param data: The data buffer to be used.
+        @type data_length: int
+        @param data_length: The size of the data buffer to be used.
+        @type current_index: int
+        @param current_index: The index to be used as base index.
+        @rtype: Tuple
+        @return: The "decoded" text (in list) in the given index
+        and the current index encoded in a tuple.
+        """
+
+        # creates the list to hold the text items
+        text_items = []
+
+        # starts the index (counter) value
+        index = 0
+
+        # iterates over the range of the data length
+        while index < data_length:
+            # retrieves the length of the text item
+            text_item_length, = struct.unpack_from("!B", data, current_index)
+
+            # updates the current index with the length byte
+            current_index += 1
+
+            # retrieves the text item from the data
+            text_item = data[current_index:current_index + text_item_length]
+
+            # updates the current index with the text item bytes
+            current_index += text_item_length
+
+            # updates the index value with the text item length
+            # and the length byte
+            index += text_item_length + 1
+
+            # adds the text item to the list of text items
+            text_items.append(text_item)
+
+        return (
+            text_items,
+            current_index
+        )
+
+    def __process_data_ip4(self, data, current_index, answer_type_integer, answer_data_length, answer_cache_flush):
+        # unserializes the ip4 address value (answer data)
+        serialized_answer_data = data[current_index:current_index + answer_data_length]
+        answer_data = colony.libs.host_util.ip4_address_from_network(serialized_answer_data)
+
+        # returns the answer data
+        return answer_data
+
+    def __process_data_ip6(self, data, current_index, answer_type_integer, answer_data_length, answer_cache_flush):
+        # unserializes the ip6 address value (answer data)
+        serialized_answer_data = data[current_index:current_index + answer_data_length]
+        answer_data = colony.libs.host_util.ip6_address_from_network(serialized_answer_data)
+
+        # returns the answer data
+        return answer_data
+
+    def __process_data_name(self, data, current_index, answer_type_integer, answer_data_length, answer_cache_flush):
+        # retrieves the answer data as a joined name
+        answer_data, _current_index = self._get_name_joined(data, current_index)
+
+        # returns the answer data
+        return answer_data
+
+    def __process_data_text(self, data, current_index, answer_type_integer, answer_data_length, answer_cache_flush):
+        # retrieves the answer data as text
+        answer_data, _current_index = self._get_text(data, answer_data_length, current_index)
+
+        # returns the answer data
+        return answer_data
+
+    def __process_data_service(self, data, current_index, answer_type_integer, answer_data_length, answer_cache_flush):
+        # retrieves the priority the weight and the port
+        priority, weight, port = struct.unpack_from("!HHH", data, current_index)
+
+        # retrieves the answer data name as a joined name
+        answer_data_name, _current_index = self._get_name_joined(data, current_index + 6)
+
+        # sets the answer data tuple
+        answer_data = (
+            priority,
+            weight,
+            port,
+            answer_data_name
+        )
+
+        # returns the answer data
+        return answer_data
+
+    def __process_data_mx(self, data, current_index, answer_type_integer, answer_data_length, answer_cache_flush):
+        # retrieves the answer data preference
+        answer_data_preference, = struct.unpack_from("!H", data, current_index)
+
+        # retrieves the answer data name as a joined name
+        answer_data_name, _current_index = self._get_name_joined(data, current_index + 2)
+
+        # sets the answer data tuple
+        answer_data = (
+            answer_data_preference,
+            answer_data_name
+        )
+
+        # returns the answer data
+        return answer_data
