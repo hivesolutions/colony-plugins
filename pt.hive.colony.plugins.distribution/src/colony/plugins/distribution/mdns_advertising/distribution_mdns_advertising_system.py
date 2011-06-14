@@ -179,9 +179,12 @@ class DistributionMdnsAdvertising:
 
         # iterates over all the key value map items
         for key, value in key_value_map_items:
+            # converts the value into a string
+            value_string = str(value)
+
             # creates the key value string by appending
-            # the key and the value with a separator
-            key_value_string = key + "=" + value
+            # the key and the value string with a separator
+            key_value_string = key + "=" + value_string
 
             # adds the key value string to the list
             # of text values

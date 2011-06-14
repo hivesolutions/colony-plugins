@@ -48,6 +48,12 @@ COLONY_VALUE = "colony"
 TCP_VALUE = "tcp"
 """ The tcp value """
 
+UID_VALUE = "uid"
+""" The uid value """
+
+TIMESTAMP_VALUE = "timestamp"
+""" The timestamp value """
+
 ADDRESS_IP4_VALUE = "address_ip4"
 """ The address ip4 value value """
 
@@ -91,8 +97,15 @@ class DistributionLocalDiscovery:
         (distribution) discovery.
         """
 
+        # retrieves the plugin manager
+        plugin_manager = self.distribution_local_discovery_plugin.manager
+
         # retrieves the distribution registry plugin
         distribution_registry_plugin = self.distribution_local_discovery_plugin.distribution_registry_plugin
+
+        # retrieves the plugin manager attributes
+        plugin_manager_uid = plugin_manager.uid
+        plugin_manager_timestamp = plugin_manager.plugin_manager_timestamp
 
         # retrieves the "local" host name
         hostname_local = colony.libs.host_util.get_hostname_local()
@@ -106,6 +119,8 @@ class DistributionLocalDiscovery:
 
         # creates the map that represents the metadata
         metadata = {
+            UID_VALUE : plugin_manager_uid,
+            TIMESTAMP_VALUE : plugin_manager_timestamp,
             ADDRESS_IP4_VALUE : address_ip4,
             ADDRESS_IP6_VALUE : address_ip6
         }

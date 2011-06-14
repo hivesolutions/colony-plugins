@@ -306,8 +306,8 @@ class DistributionRegistry:
         register_entry.type = type
 
         # updates the registry entry structure attributes
-        colony.libs.list_util.list_extend(register_entry.endpoints, endpoints)
-        colony.libs.map_util.map_extend(register_entry.metadata, metadata)
+        colony.libs.list_util.list_extend(register_entry.endpoints, endpoints, copy_base_list = True)
+        colony.libs.map_util.map_extend(register_entry.metadata, metadata, copy_base_map = False)
 
 class RegistryEntry:
     """
