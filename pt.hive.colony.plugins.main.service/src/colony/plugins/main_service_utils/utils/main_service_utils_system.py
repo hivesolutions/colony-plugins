@@ -1431,6 +1431,9 @@ class AbstractServiceConnectionlessHandler:
     client_service = None
     """ The client service reference """
 
+    busy_status = False
+    """ The busy status of the handler """
+
     def __init__(self, service, service_plugin, service_configuration, connection_timeout, request_timeout, response_timeout, chunk_size, client_service_class, extra_parameters):
         """
         Constructor of the class.
