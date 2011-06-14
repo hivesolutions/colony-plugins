@@ -71,10 +71,10 @@ class DummyBase1Plugin(colony.base.plugin_system.Plugin):
     dependencies = [
         colony.base.plugin_system.PluginDependency("pt.hive.colony.plugins.main.threads.thread_pool_manager", "1.0.0")
     ]
-    events_handled = [
+    events_fired = [
         "dummy_base_1_event"
     ]
-    events_registrable = [
+    events_handled = [
         "plugin_manager.end_load_plugin"
     ]
     main_modules = [

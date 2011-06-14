@@ -67,10 +67,10 @@ class DummyPlugin(colony.base.plugin_system.Plugin):
         "dummy_base_1_capability",
         "dummy_base_2_capability"
     ]
-    events_handled = [
+    events_fired = [
         "dummy_event"
     ]
-    events_registrable = [
+    events_handled = [
         "dummy_base_1_event"
     ]
     main_modules = [

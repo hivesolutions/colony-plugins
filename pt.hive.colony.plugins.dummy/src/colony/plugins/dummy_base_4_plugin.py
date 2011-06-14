@@ -68,7 +68,7 @@ class DummyBase4Plugin(colony.base.plugin_system.Plugin):
     dependencies = [
         colony.base.plugin_system.PluginDependency("pt.hive.colony.plugins.main.tasks.task_manager", "1.0.0")
     ]
-    events_handled = [
+    events_fired = [
         "task_information_changed"
     ]
     main_modules = [
