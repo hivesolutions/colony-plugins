@@ -1026,10 +1026,14 @@ class DnsRequest:
             # unserializes the ip4 address value (answer data)
             serialized_answer_data = data[current_index:current_index + answer_data_length]
             answer_data = colony.libs.host_util.ip4_address_from_network(serialized_answer_data)
-        # in case the answer is of type ns, cname, ptr or txt
-        elif answer_type_integer in (0x02, 0x05, 0x0c, 0x10):
+        # in case the answer is of type ns, cname or ptr
+        elif answer_type_integer in (0x02, 0x05, 0x0c):
             # retrieves the answer data as a joined name
             answer_data, _current_index = self._get_name_joined(data, current_index)
+        # in case the answer is of type txt
+        elif answer_type_integer in (0x10,):
+            # retrieves the answer data as text
+            answer_data, _current_index = self._get_text(data, answer_data_length, current_index)
         # in case the answer is of type srv
         elif answer_type_integer in (0x21,):
             # retrieves the priority the weight and the port
@@ -1434,5 +1438,53 @@ class DnsRequest:
         # returns the name items list
         return (
             name_items,
+            current_index
+        )
+
+    def _get_text(self, data, data_length, current_index):
+        """
+        Retrieves the text "encoded" according to the mdns
+        specification in the given index.
+
+        @type data: String
+        @param data: The data buffer to be used.
+        @type data_length: int
+        @param data_length: The size of the data buffer to be used.
+        @type current_index: int
+        @param current_index: The index to be used as base index.
+        @rtype: Tuple
+        @return: The "decoded" text (in list) in the given index
+        and the current index encoded in a tuple.
+        """
+
+        # creates the list to hold the text items
+        text_items = []
+
+        # starts the index (counter) value
+        index = 0
+
+        # iterates over the range of the data length
+        while index < data_length:
+            # retrieves the length of the text item
+            text_item_length, = struct.unpack_from("!B", data, current_index)
+
+            # updates the current index with the length byte
+            current_index += 1
+
+            # retrieves the text item from the data
+            text_item = data[current_index:current_index + text_item_length]
+
+            # updates the current index with the text item bytes
+            current_index += text_item_length
+
+            # updates the index value with the text item length
+            # and the length byte
+            index += text_item_length + 1
+
+            # adds the text item to the list of text items
+            text_items.append(text_item)
+
+        return (
+            text_items,
             current_index
         )
