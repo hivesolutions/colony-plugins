@@ -107,7 +107,7 @@ class DistributionMdnsHandler:
         hostname_local = colony.libs.host_util.get_hostname_local()
 
         # retrieves the "preferred" addresses
-        address_ip4 = colony.libs.host_util.get_address_ip4()
+        address_ip4 = colony.libs.host_util.get_address_ip4_all()
 
         # creates the record tuple
         record_tuple = (

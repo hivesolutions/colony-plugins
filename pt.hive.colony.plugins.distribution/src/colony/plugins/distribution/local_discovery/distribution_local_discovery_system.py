@@ -98,8 +98,8 @@ class DistributionLocalDiscovery:
         hostname_local = colony.libs.host_util.get_hostname_local()
 
         # retrieves the "preferred" addresses
-        address_ip4 = colony.libs.host_util.get_address_ip4()
-        address_ip6 = colony.libs.host_util.get_address_ip6()
+        address_ip4 = colony.libs.host_util.get_address_ip4_all()
+        address_ip6 = colony.libs.host_util.get_address_ip6_all()
 
         # creates the list of endpoints
         endpoints = [(address_ip4, TCP_VALUE)]
