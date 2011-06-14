@@ -71,7 +71,7 @@ class WebMvcPlugin(colony.base.plugin_system.Plugin):
         colony.base.plugin_system.PluginDependency("pt.hive.colony.plugins.misc.random", "1.0.0"),
         colony.base.plugin_system.PluginDependency("pt.hive.colony.plugins.misc.json", "1.0.0")
     ]
-    events_registrable = [
+    events_handled = [
         "web.mvc.patterns_reload",
         "web.mvc.patterns_load",
         "web.mvc.patterns_unload",
