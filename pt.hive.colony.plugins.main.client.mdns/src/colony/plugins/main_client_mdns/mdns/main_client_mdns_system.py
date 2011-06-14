@@ -814,31 +814,6 @@ class MdnsRequest:
         # returns the serialized answer data
         return serialized_answer_data
 
-    def _serialize_text(self, text_items):
-        # creates the string buffer to hold the serialized
-        # text items information
-        string_buffer = colony.libs.string_buffer_util.StringBuffer()
-
-        # iterates over all the text items to
-        # serialize them
-        for text_item in text_items:
-            # retrieves the text item length
-            text_item_length = len(text_item)
-
-            # retrieves the text item length in binary value
-            text_item_length_character = chr(text_item_length)
-
-            # writes the size of the text item (in binary value) and
-            # the text item itself
-            string_buffer.write(text_item_length_character)
-            string_buffer.write(text_item)
-
-        # retrieves the string value
-        string_value = string_buffer.get_value()
-
-        # returns the string value
-        return string_value
-
     def _serialize_name(self, name):
         # creates the string buffer to hold the serialized
         # name information
@@ -867,6 +842,31 @@ class MdnsRequest:
         string_value = string_buffer.get_value()
 
         # returns the string value (name serialized)
+        return string_value
+
+    def _serialize_text(self, text_items):
+        # creates the string buffer to hold the serialized
+        # text items information
+        string_buffer = colony.libs.string_buffer_util.StringBuffer()
+
+        # iterates over all the text items to
+        # serialize them
+        for text_item in text_items:
+            # retrieves the text item length
+            text_item_length = len(text_item)
+
+            # retrieves the text item length in binary value
+            text_item_length_character = chr(text_item_length)
+
+            # writes the size of the text item (in binary value) and
+            # the text item itself
+            string_buffer.write(text_item_length_character)
+            string_buffer.write(text_item)
+
+        # retrieves the string value
+        string_value = string_buffer.get_value()
+
+        # returns the string value
         return string_value
 
     def _write_name_serialized(self, name, string_buffer):
