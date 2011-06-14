@@ -46,6 +46,9 @@ COLONY_SERVICE_ID = "_colony._tcp.local"
 A_TYPE = "A"
 """ The a type """
 
+TXT_TYPE = "TXT"
+""" The txt type """
+
 PTR_TYPE = "PTR"
 """ The ptr type """
 
@@ -145,12 +148,20 @@ class DistributionMdnsAdvertising:
                 # retrieves the address attributes
                 registry_entry_address_ip4 = registry_entry_metadata.get(ADDRESS_IP4_VALUE, DEFAULT_IP4_VALUE)
 
+                # creates the metadata key value set in text format
+                metadata_key_value_set_text = self._create_key_value_set_text(registry_entry_metadata)
+
                 # creates the parameters for the queries resolution
                 parameters = {
                     CALLBACK_FUNCTION_VALUE : self._advertising_callback,
                     CALLBACK_TIMEOUT_VALUE : DEFAULT_TIMEOUT_VALUE,
-                    ANSWERS_VALUE : [(COLONY_SERVICE_ID, PTR_TYPE, IN_CLASS, DEFAULT_TTL_VALUE, registry_entry_hostname)],
-                    ADDITIONAL_RESOURCE_RECORDS_VALUE : [(registry_entry_hostname, A_TYPE, IN_CLASS, DEFAULT_TTL_VALUE, registry_entry_address_ip4)]
+                    ANSWERS_VALUE : [
+                        (COLONY_SERVICE_ID, PTR_TYPE, IN_CLASS, DEFAULT_TTL_VALUE, registry_entry_hostname)
+                    ],
+                    ADDITIONAL_RESOURCE_RECORDS_VALUE : [
+                        (registry_entry_hostname, A_TYPE, IN_CLASS, DEFAULT_TTL_VALUE, registry_entry_address_ip4),
+                        (registry_entry_hostname, TXT_TYPE, IN_CLASS, DEFAULT_TTL_VALUE, metadata_key_value_set_text)
+                    ]
                 }
 
                 # resolves the queries
@@ -158,6 +169,26 @@ class DistributionMdnsAdvertising:
             finally:
                 # closes the mdns client
                 mdns_client.close({})
+
+    def _create_key_value_set_text(self, key_value_map):
+        # creates the list to hold the text values
+        text_values = []
+
+        # retrieves the key value map items
+        key_value_map_items = key_value_map.items()
+
+        # iterates over all the key value map items
+        for key, value in key_value_map_items:
+            # creates the key value string by appending
+            # the key and the value with a separator
+            key_value_string = key + "=" + value
+
+            # adds the key value string to the list
+            # of text values
+            text_values.append(key_value_string)
+
+        # returns the (list) text values
+        return text_values
 
     def _advertising_callback(self, query, response):
         pass
