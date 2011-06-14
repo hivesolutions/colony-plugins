@@ -768,9 +768,12 @@ class MdnsRequest:
         if answer_type_integer in (0x01,):
             # serializes the ip4 address value (answer data)
             serialized_answer_data = colony.libs.host_util.ip4_address_to_network(answer_data)
-        # in case the answer is of type ns, cname, ptr or txt
-        elif answer_type_integer in (0x02, 0x05, 0x0c, 0x10):
+        # in case the answer is of type ns, cname or ptr
+        elif answer_type_integer in (0x02, 0x05, 0x0c):
             serialized_answer_data = self._serialize_name(answer_data)
+        # in case the answer is of type txt
+        elif answer_type_integer in (0x10,):
+            serialized_answer_data = self._serialize_text(answer_data)
         # in case the answer is of type mx
         elif answer_type_integer in (0x0f,):
             # unpacks the answer data into preference and name
@@ -810,6 +813,31 @@ class MdnsRequest:
 
         # returns the serialized answer data
         return serialized_answer_data
+
+    def _serialize_text(self, text_items):
+        # creates the string buffer to hold the serialized
+        # text items information
+        string_buffer = colony.libs.string_buffer_util.StringBuffer()
+
+        # iterates over all the text items to
+        # serialize them
+        for text_item in text_items:
+            # retrieves the text item length
+            text_item_length = len(text_item)
+
+            # retrieves the text item length in binary value
+            text_item_length_character = chr(text_item_length)
+
+            # writes the size of the text item (in binary value) and
+            # the text item itself
+            string_buffer.write(text_item_length_character)
+            string_buffer.write(text_item)
+
+        # retrieves the string value
+        string_value = string_buffer.get_value()
+
+        # returns the string value
+        return string_value
 
     def _serialize_name(self, name):
         # creates the string buffer to hold the serialized
