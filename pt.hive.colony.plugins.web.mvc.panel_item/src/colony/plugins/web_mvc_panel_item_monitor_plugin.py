@@ -68,7 +68,7 @@ class WebMvcPanelItemMonitorPlugin(colony.base.plugin_system.Plugin):
     dependencies = [
         colony.base.plugin_system.PluginDependency("pt.hive.colony.plugins.web.mvc.utils", "1.0.0")
     ]
-    events_handled = [
+    events_fired = [
         "web.mvc.side_panel_reload"
     ]
     main_modules = [
