@@ -29,9 +29,6 @@
                 "id" : "pt.hive.colony.plugins.dummy.base_4",
                 "version" : "1.0.0"
             }, {
-                "id" : "pt.hive.colony.plugins.dummy.bonjour",
-                "version" : "1.0.0"
-            }, {
                 "id" : "pt.hive.colony.plugins.dummy.business_logic_1",
                 "version" : "1.0.0"
             }, {
@@ -94,9 +91,6 @@
                 "version" : "1.0.0"
             }, {
                 "id" : "pt.hive.colony.bundles.resources",
-                "version" : "1.0.0"
-            }, {
-                "id" : "pt.hive.colony.bundles.bonjour",
                 "version" : "1.0.0"
             }]
 }

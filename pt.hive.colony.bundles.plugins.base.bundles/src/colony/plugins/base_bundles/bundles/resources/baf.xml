@@ -52,7 +52,6 @@
                         <specification_file>$base{plugin_directory}/base_bundles/bundles/specifications/autoloader_bundle.json</specification_file>
                         <specification_file>$base{plugin_directory}/base_bundles/bundles/specifications/bencode_bundle.json</specification_file>
                         <specification_file>$base{plugin_directory}/base_bundles/bundles/specifications/bitmap_loader_bundle.json</specification_file>
-                        <specification_file>$base{plugin_directory}/base_bundles/bundles/specifications/bonjour_bundle.json</specification_file>
                         <specification_file>$base{plugin_directory}/base_bundles/bundles/specifications/build_automation_bundle.json</specification_file>
                         <specification_file>$base{plugin_directory}/base_bundles/bundles/specifications/build_automation_generator_bundle.json</specification_file>
                         <specification_file>$base{plugin_directory}/base_bundles/bundles/specifications/build_automation_items_colony_bundle.json</specification_file>
