@@ -348,8 +348,11 @@ class MainApplication(wx.App):
         loaded and self.main_frame.refresh()
 
     def remove_gui_panel(self, gui_panel):
+        # checks if the main application is loaded
+        loaded = self.is_loaded()
+
         # removes the gui panel
-        self.main_frame.remove_gui_panel(gui_panel)
+        loaded and self.main_frame.remove_gui_panel(gui_panel)
 
 class MainFrame(wx.Frame):
     """
