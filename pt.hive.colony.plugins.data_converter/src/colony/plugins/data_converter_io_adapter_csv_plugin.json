@@ -18,5 +18,11 @@
             "data_converter_io_adapter_csv/io_adapter_csv/__init__.py",
             "data_converter_io_adapter_csv/io_adapter_csv/data_converter_io_adapter_csv_exceptions.py",
             "data_converter_io_adapter_csv/io_adapter_csv/data_converter_io_adapter_csv_system.py",
-            "data_converter_io_adapter_csv/io_adapter_csv/resources/baf.xml"]
+            "data_converter_io_adapter_csv/io_adapter_csv/resources/baf.xml"],
+    "extra_resources" : [
+            "data_converter_io_adapter_csv_plugin.pyc",
+            "data_converter_io_adapter_csv/__init__.pyc",
+            "data_converter_io_adapter_csv/io_adapter_csv/__init__.pyc",
+            "data_converter_io_adapter_csv/io_adapter_csv/data_converter_io_adapter_csv_exceptions.pyc",
+            "data_converter_io_adapter_csv/io_adapter_csv/data_converter_io_adapter_csv_system.pyc"]
 }

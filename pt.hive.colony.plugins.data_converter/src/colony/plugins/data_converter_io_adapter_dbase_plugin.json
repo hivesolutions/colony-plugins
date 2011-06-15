@@ -20,5 +20,12 @@
             "data_converter_io_adapter_dbase/io_adapter_dbase/data_converter_io_adapter_dbase_exceptions.py",
             "data_converter_io_adapter_dbase/io_adapter_dbase/data_converter_io_adapter_dbase_system.py",
             "data_converter_io_adapter_dbase/io_adapter_dbase/dbfpy_extensions.py",
-            "data_converter_io_adapter_dbase/io_adapter_dbase/resources/baf.xml"]
+            "data_converter_io_adapter_dbase/io_adapter_dbase/resources/baf.xml"],
+    "extra_resources" : [
+            "data_converter_io_adapter_dbase_plugin.pyc",
+            "data_converter_io_adapter_dbase/__init__.pyc",
+            "data_converter_io_adapter_dbase/io_adapter_dbase/__init__.pyc",
+            "data_converter_io_adapter_dbase/io_adapter_dbase/data_converter_io_adapter_dbase_exceptions.pyc",
+            "data_converter_io_adapter_dbase/io_adapter_dbase/data_converter_io_adapter_dbase_system.pyc",
+            "data_converter_io_adapter_dbase/io_adapter_dbase/dbfpy_extensions.pyc"]
 }

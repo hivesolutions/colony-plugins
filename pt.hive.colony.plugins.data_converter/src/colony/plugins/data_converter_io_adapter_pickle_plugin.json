@@ -19,5 +19,11 @@
             "data_converter_io_adapter_pickle/io_adapter_pickle/__init__.py",
             "data_converter_io_adapter_pickle/io_adapter_pickle/data_converter_io_adapter_pickle_exceptions.py",
             "data_converter_io_adapter_pickle/io_adapter_pickle/data_converter_io_adapter_pickle_system.py",
-            "data_converter_io_adapter_pickle/io_adapter_pickle/resources/baf.xml"]
+            "data_converter_io_adapter_pickle/io_adapter_pickle/resources/baf.xml"],
+    "extra_resources" : [
+            "data_converter_io_adapter_pickle_plugin.pyc",
+            "data_converter_io_adapter_pickle/__init__.pyc",
+            "data_converter_io_adapter_pickle/io_adapter_pickle/__init__.pyc",
+            "data_converter_io_adapter_pickle/io_adapter_pickle/data_converter_io_adapter_pickle_exceptions.pyc",
+            "data_converter_io_adapter_pickle/io_adapter_pickle/data_converter_io_adapter_pickle_system.pyc"]
 }

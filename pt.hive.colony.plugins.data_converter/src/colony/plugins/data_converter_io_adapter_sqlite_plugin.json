@@ -19,5 +19,11 @@
             "data_converter_io_adapter_sqlite/io_adapter_sqlite/__init__.py",
             "data_converter_io_adapter_sqlite/io_adapter_sqlite/data_converter_io_adapter_sqlite_exceptions.py",
             "data_converter_io_adapter_sqlite/io_adapter_sqlite/data_converter_io_adapter_sqlite_system.py",
-            "data_converter_io_adapter_sqlite/io_adapter_sqlite/resources/baf.xml"]
+            "data_converter_io_adapter_sqlite/io_adapter_sqlite/resources/baf.xml"],
+    "extra_resources" : [
+            "data_converter_io_adapter_sqlite_plugin.pyc",
+            "data_converter_io_adapter_sqlite/__init__.pyc",
+            "data_converter_io_adapter_sqlite/io_adapter_sqlite/__init__.pyc",
+            "data_converter_io_adapter_sqlite/io_adapter_sqlite/data_converter_io_adapter_sqlite_exceptions.pyc",
+            "data_converter_io_adapter_sqlite/io_adapter_sqlite/data_converter_io_adapter_sqlite_system.pyc"]
 }

@@ -34,5 +34,23 @@
             "data_converter/data_converter/generic_post_attribute_mapping_handlers.py",
             "data_converter/data_converter/generic_post_conversion_handlers.py",
             "data_converter/data_converter/intermediate_structure.py",
-            "data_converter/data_converter/resources/baf.xml"]
+            "data_converter/data_converter/resources/baf.xml"],
+    "extra_resources" : [
+            "data_converter_plugin.pyc",
+            "data_converter/__init__.pyc",
+            "data_converter/data_converter/__init__.pyc",
+            "data_converter/data_converter/console_data_converter.pyc",
+            "data_converter/data_converter/data_converter_configuration.pyc",
+            "data_converter/data_converter/data_converter_exceptions.pyc",
+            "data_converter/data_converter/data_converter_system.pyc",
+            "data_converter/data_converter/generic_attribute_handlers.pyc",
+            "data_converter/data_converter/generic_attribute_validators.pyc",
+            "data_converter/data_converter/generic_connectors.pyc",
+            "data_converter/data_converter/generic_entity_handlers.pyc",
+            "data_converter/data_converter/generic_entity_validators.pyc",
+            "data_converter/data_converter/generic_input_entity_indexers.pyc",
+            "data_converter/data_converter/generic_output_entity_indexers.pyc",
+            "data_converter/data_converter/generic_post_attribute_mapping_handlers.pyc",
+            "data_converter/data_converter/generic_post_conversion_handlers.pyc",
+            "data_converter/data_converter/intermediate_structure.pyc"]
 }

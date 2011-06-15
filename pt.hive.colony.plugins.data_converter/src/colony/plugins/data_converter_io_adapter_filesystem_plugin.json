@@ -19,5 +19,11 @@
             "data_converter_io_adapter_filesystem/io_adapter_filesystem/__init__.py",
             "data_converter_io_adapter_filesystem/io_adapter_filesystem/data_converter_io_adapter_filesystem_exceptions.py",
             "data_converter_io_adapter_filesystem/io_adapter_filesystem/data_converter_io_adapter_filesystem_system.py",
-            "data_converter_io_adapter_filesystem/io_adapter_filesystem/resources/baf.xml"]
+            "data_converter_io_adapter_filesystem/io_adapter_filesystem/resources/baf.xml"],
+    "extra_resources" : [
+            "data_converter_io_adapter_filesystem_plugin.pyc",
+            "data_converter_io_adapter_filesystem/__init__.pyc",
+            "data_converter_io_adapter_filesystem/io_adapter_filesystem/__init__.pyc",
+            "data_converter_io_adapter_filesystem/io_adapter_filesystem/data_converter_io_adapter_filesystem_exceptions.pyc",
+            "data_converter_io_adapter_filesystem/io_adapter_filesystem/data_converter_io_adapter_filesystem_system.pyc"]
 }
