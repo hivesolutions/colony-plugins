@@ -244,8 +244,13 @@ class PackingBuildAutomationExtension:
             DEPENDENCIES_VALUE : specification_dependencies
         }
 
+        # checks if the packed item already exists in the
+        # packed items list
+        packed_item_exists = packed_item in packed_items_list
+
         # adds the packed item to the packed items list
-        packed_items_list.append(packed_item)
+        # in case it does not already exists
+        not packed_item_exists and packed_items_list.append(packed_item)
 
     def _load_specification(self, specification_file_path):
         # retrieves the json plugin
