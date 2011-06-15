@@ -717,7 +717,7 @@ class Visitor:
         Processes the out none node.
 
         @type node: SingleNode
-        @param node: The single node to be processed as out none.
+        @param node: The single node to be processed as out map.
         """
 
         # retrieves the attributes map
