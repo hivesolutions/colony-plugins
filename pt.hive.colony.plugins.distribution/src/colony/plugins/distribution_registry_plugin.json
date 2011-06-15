@@ -16,5 +16,8 @@
     "resources" : ["distribution_registry_plugin.py",
             "distribution/__init__.py", "distribution/registry/__init__.py",
             "distribution/registry/distribution_registry_system.py",
-            "distribution/registry/resources/baf.xml"]
+            "distribution/registry/resources/baf.xml"],
+    "extra_resources" : ["distribution_registry_plugin.pyc",
+            "distribution/__init__.pyc", "distribution/registry/__init__.pyc",
+            "distribution/registry/distribution_registry_system.pyc"]
 }

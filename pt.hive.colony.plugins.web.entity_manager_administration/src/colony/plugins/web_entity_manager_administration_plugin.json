@@ -24,5 +24,10 @@
             "web_entity_manager_administration/__init__.py",
             "web_entity_manager_administration/administration/__init__.py",
             "web_entity_manager_administration/administration/web_entity_manager_administration_system.py",
-            "web_entity_manager_administration/administration/resources/baf.xml"]
+            "web_entity_manager_administration/administration/resources/baf.xml"],
+    "extra_resources" : [
+            "web_entity_manager_administration_plugin.pyc",
+            "web_entity_manager_administration/__init__.pyc",
+            "web_entity_manager_administration/administration/__init__.pyc",
+            "web_entity_manager_administration/administration/web_entity_manager_administration_system.pyc"]
 }

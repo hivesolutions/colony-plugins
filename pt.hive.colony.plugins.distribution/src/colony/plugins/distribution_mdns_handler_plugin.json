@@ -16,5 +16,9 @@
             "distribution/__init__.py",
             "distribution/mdns_handler/__init__.py",
             "distribution/mdns_handler/distribution_mdns_handler_system.py",
-            "distribution/mdns_handler/resources/baf.xml"]
+            "distribution/mdns_handler/resources/baf.xml"],
+    "extra_resources" : ["distribution_mdns_handler_plugin.pyc",
+            "distribution/__init__.pyc",
+            "distribution/mdns_handler/__init__.pyc",
+            "distribution/mdns_handler/distribution_mdns_handler_system.pyc"]
 }

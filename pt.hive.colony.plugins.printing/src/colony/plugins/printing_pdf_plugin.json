@@ -20,5 +20,10 @@
             "printing/pdf/printing_pdf_exceptions.py",
             "printing/pdf/printing_pdf_system.py",
             "printing/pdf/printing_pdf_visitor.py",
-            "printing/pdf/resources/baf.xml"]
+            "printing/pdf/resources/baf.xml"],
+    "extra_resources" : ["printing_pdf_plugin.pyc", "printing/__init__.pyc",
+            "printing/pdf/__init__.pyc",
+            "printing/pdf/printing_pdf_exceptions.pyc",
+            "printing/pdf/printing_pdf_system.pyc",
+            "printing/pdf/printing_pdf_visitor.pyc"]
 }

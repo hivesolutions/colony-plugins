@@ -18,5 +18,9 @@
     "resources" : ["system_registry_plugin.py", "system_registry/__init__.py",
             "system_registry/registry/__init__.py",
             "system_registry/registry/system_registry_system.py",
-            "system_registry/registry/resources/baf.xml"]
+            "system_registry/registry/resources/baf.xml"],
+    "extra_resources" : ["system_registry_plugin.pyc",
+            "system_registry/__init__.pyc",
+            "system_registry/registry/__init__.pyc",
+            "system_registry/registry/system_registry_system.pyc"]
 }

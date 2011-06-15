@@ -24,5 +24,8 @@
     "resources" : ["dummy_business_logic_1_plugin.py", "dummy/__init__.py",
             "dummy/business_logic_1/__init__.py",
             "dummy/business_logic_1/dummy_business_logic_1_system.py",
-            "dummy/business_logic_1/resources/baf.xml"]
+            "dummy/business_logic_1/resources/baf.xml"],
+    "extra_resources" : ["dummy_business_logic_1_plugin.pyc",
+            "dummy/__init__.pyc", "dummy/business_logic_1/__init__.pyc",
+            "dummy/business_logic_1/dummy_business_logic_1_system.pyc"]
 }

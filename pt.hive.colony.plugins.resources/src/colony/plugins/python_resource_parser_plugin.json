@@ -17,5 +17,9 @@
             "resources/__init__.py",
             "resources/python_resource_parser/__init__.py",
             "resources/python_resource_parser/python_resource_parser_system.py",
-            "resources/python_resource_parser/resources/baf.xml"]
+            "resources/python_resource_parser/resources/baf.xml"],
+    "extra_resources" : ["python_resource_parser_plugin.pyc",
+            "resources/__init__.pyc",
+            "resources/python_resource_parser/__init__.pyc",
+            "resources/python_resource_parser/python_resource_parser_system.pyc"]
 }

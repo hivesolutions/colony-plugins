@@ -15,5 +15,8 @@
     "resources" : ["information_user_plugin.py", "information/__init__.py",
             "information/user/__init__.py",
             "information/user/information_user_system.py",
-            "information/user/resources/baf.xml"]
+            "information/user/resources/baf.xml"],
+    "extra_resources" : ["information_user_plugin.pyc",
+            "information/__init__.pyc", "information/user/__init__.pyc",
+            "information/user/information_user_system.pyc"]
 }

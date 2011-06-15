@@ -35,5 +35,9 @@
             "misc_gui/plugin_manager_interface/resources/icons/tree/folder-closed.png",
             "misc_gui/plugin_manager_interface/resources/icons/tree/folder-open.png",
             "misc_gui/plugin_manager_interface/resources/icons/tree/plugin-folder-closed.png",
-            "misc_gui/plugin_manager_interface/resources/icons/tree/plugin-folder-open.png"]
+            "misc_gui/plugin_manager_interface/resources/icons/tree/plugin-folder-open.png"],
+    "extra_resources" : ["plugin_manager_interface_plugin.pyc",
+            "misc_gui/__init__.pyc",
+            "misc_gui/plugin_manager_interface/__init__.pyc",
+            "misc_gui/plugin_manager_interface/plugin_manager_interface_system.pyc"]
 }

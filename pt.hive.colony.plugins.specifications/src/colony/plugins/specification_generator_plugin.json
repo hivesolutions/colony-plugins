@@ -18,5 +18,11 @@
             "specifications/specification_generator/__init__.py",
             "specifications/specification_generator/specification_generator_exceptions.py",
             "specifications/specification_generator/specification_generator_system.py",
-            "specifications/specification_generator/resources/baf.xml"]
+            "specifications/specification_generator/resources/baf.xml"],
+    "extra_resources" : [
+            "specification_generator_plugin.pyc",
+            "specifications/__init__.pyc",
+            "specifications/specification_generator/__init__.pyc",
+            "specifications/specification_generator/specification_generator_exceptions.pyc",
+            "specifications/specification_generator/specification_generator_system.pyc"]
 }

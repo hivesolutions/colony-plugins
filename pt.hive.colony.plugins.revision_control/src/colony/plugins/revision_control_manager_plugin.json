@@ -19,5 +19,11 @@
             "revision_control/manager/console_revision_control_manager.py",
             "revision_control/manager/revision_control_manager_exceptions.py",
             "revision_control/manager/revision_control_manager_system.py",
-            "revision_control/manager/resources/baf.xml"]
+            "revision_control/manager/resources/baf.xml"],
+    "extra_resources" : ["revision_control_manager_plugin.pyc",
+            "revision_control/__init__.pyc",
+            "revision_control/manager/__init__.pyc",
+            "revision_control/manager/console_revision_control_manager.pyc",
+            "revision_control/manager/revision_control_manager_exceptions.pyc",
+            "revision_control/manager/revision_control_manager_system.pyc"]
 }

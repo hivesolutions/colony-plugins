@@ -18,5 +18,8 @@
     "resources" : ["dummy_remote_client_plugin.py", "dummy/__init__.py",
             "dummy/remote_client/__init__.py",
             "dummy/remote_client/dummy_remote_client_system.py",
-            "dummy/remote_client/resources/baf.xml"]
+            "dummy/remote_client/resources/baf.xml"],
+    "extra_resources" : ["dummy_remote_client_plugin.pyc",
+            "dummy/__init__.pyc", "dummy/remote_client/__init__.pyc",
+            "dummy/remote_client/dummy_remote_client_system.pyc"]
 }

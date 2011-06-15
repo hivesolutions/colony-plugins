@@ -17,5 +17,8 @@
             "dummy/__init__.py",
             "dummy/windows_forms_label_1/__init__.py",
             "dummy/windows_forms_label_1/dummy_windows_forms_label_1_system.py",
-            "dummy/windows_forms_label_1/resources/baf.xml"]
+            "dummy/windows_forms_label_1/resources/baf.xml"],
+    "extra_resources" : ["dummy_windows_forms_label_1_plugin.pyc",
+            "dummy/__init__.pyc", "dummy/windows_forms_label_1/__init__.pyc",
+            "dummy/windows_forms_label_1/dummy_windows_forms_label_1_system.pyc"]
 }

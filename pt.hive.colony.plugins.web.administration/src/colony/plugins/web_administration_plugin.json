@@ -33,5 +33,9 @@
             "web_administration/administration/resources/images/separator_line.png",
             "web_administration/administration/resources/images/turning_page.png",
             "web_administration/administration/resources/images/welcome.png",
-            "web_administration/administration/resources/js/main.js"]
+            "web_administration/administration/resources/js/main.js"],
+    "extra_resources" : ["web_administration_plugin.pyc",
+            "web_administration/__init__.pyc",
+            "web_administration/administration/__init__.pyc",
+            "web_administration/administration/web_administration_system.pyc"]
 }

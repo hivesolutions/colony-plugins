@@ -16,5 +16,9 @@
             "messaging/manager/__init__.py",
             "messaging/manager/messaging_manager_exceptions.py",
             "messaging/manager/messaging_manager_system.py",
-            "messaging/manager/resources/baf.xml"]
+            "messaging/manager/resources/baf.xml"],
+    "extra_resources" : ["messaging_manager_plugin.pyc",
+            "messaging/__init__.pyc", "messaging/manager/__init__.pyc",
+            "messaging/manager/messaging_manager_exceptions.pyc",
+            "messaging/manager/messaging_manager_system.pyc"]
 }

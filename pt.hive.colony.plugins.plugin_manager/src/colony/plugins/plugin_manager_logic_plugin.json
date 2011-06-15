@@ -16,5 +16,9 @@
             "plugin_manager_logic/__init__.py",
             "plugin_manager_logic/logic/__init__.py",
             "plugin_manager_logic/logic/plugin_manager_logic_system.py",
-            "plugin_manager_logic/logic/resources/baf.xml"]
+            "plugin_manager_logic/logic/resources/baf.xml"],
+    "extra_resources" : ["plugin_manager_logic_plugin.pyc",
+            "plugin_manager_logic/__init__.pyc",
+            "plugin_manager_logic/logic/__init__.pyc",
+            "plugin_manager_logic/logic/plugin_manager_logic_system.pyc"]
 }

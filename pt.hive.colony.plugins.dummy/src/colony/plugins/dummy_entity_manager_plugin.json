@@ -27,5 +27,8 @@
     "resources" : ["dummy_entity_manager_plugin.py", "dummy/__init__.py",
             "dummy/entity_manager/__init__.py",
             "dummy/entity_manager/dummy_entity_manager_system.py",
-            "dummy/entity_manager/resources/baf.xml"]
+            "dummy/entity_manager/resources/baf.xml"],
+    "extra_resources" : ["dummy_entity_manager_plugin.pyc",
+            "dummy/__init__.pyc", "dummy/entity_manager/__init__.pyc",
+            "dummy/entity_manager/dummy_entity_manager_system.pyc"]
 }

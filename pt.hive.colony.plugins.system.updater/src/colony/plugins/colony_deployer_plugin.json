@@ -19,5 +19,10 @@
             "system_updater/colony_deployer/__init__.py",
             "system_updater/colony_deployer/colony_deployer_exceptions.py",
             "system_updater/colony_deployer/colony_deployer_system.py",
-            "system_updater/colony_deployer/resources/baf.xml"]
+            "system_updater/colony_deployer/resources/baf.xml"],
+    "extra_resources" : ["colony_deployer_plugin.pyc",
+            "system_updater/__init__.pyc",
+            "system_updater/colony_deployer/__init__.pyc",
+            "system_updater/colony_deployer/colony_deployer_exceptions.pyc",
+            "system_updater/colony_deployer/colony_deployer_system.pyc"]
 }

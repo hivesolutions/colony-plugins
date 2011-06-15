@@ -21,5 +21,11 @@
             "mail_queue_database/database/mail_queue_database_entities.py",
             "mail_queue_database/database/mail_queue_database_exceptions.py",
             "mail_queue_database/database/mail_queue_database_system.py",
-            "mail_queue_database/database/resources/baf.xml"]
+            "mail_queue_database/database/resources/baf.xml"],
+    "extra_resources" : ["mail_queue_database_plugin.pyc",
+            "mail_queue_database/__init__.pyc",
+            "mail_queue_database/database/__init__.pyc",
+            "mail_queue_database/database/mail_queue_database_entities.pyc",
+            "mail_queue_database/database/mail_queue_database_exceptions.pyc",
+            "mail_queue_database/database/mail_queue_database_system.pyc"]
 }

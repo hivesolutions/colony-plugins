@@ -20,5 +20,9 @@
             "distribution/__init__.py",
             "distribution/local_discovery/__init__.py",
             "distribution/local_discovery/distribution_local_discovery_system.py",
-            "distribution/local_discovery/resources/baf.xml"]
+            "distribution/local_discovery/resources/baf.xml"],
+    "extra_resources" : ["distribution_local_discovery_plugin.pyc",
+            "distribution/__init__.pyc",
+            "distribution/local_discovery/__init__.pyc",
+            "distribution/local_discovery/distribution_local_discovery_system.pyc"]
 }

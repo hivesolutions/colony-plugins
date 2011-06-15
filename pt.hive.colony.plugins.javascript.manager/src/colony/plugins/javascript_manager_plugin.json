@@ -21,5 +21,11 @@
             "javascript_manager/manager/javascript_manager_exceptions.py",
             "javascript_manager/manager/javascript_manager_parser.py",
             "javascript_manager/manager/javascript_manager_system.py",
-            "javascript_manager/manager/resources/baf.xml"]
+            "javascript_manager/manager/resources/baf.xml"],
+    "extra_resources" : ["javascript_manager_plugin.pyc",
+            "javascript_manager/__init__.pyc",
+            "javascript_manager/manager/__init__.pyc",
+            "javascript_manager/manager/javascript_manager_exceptions.pyc",
+            "javascript_manager/manager/javascript_manager_parser.pyc",
+            "javascript_manager/manager/javascript_manager_system.pyc"]
 }

@@ -15,5 +15,8 @@
     "resources" : ["dummy_rpc_service_plugin.py", "dummy/__init__.py",
             "dummy/rpc_service/__init__.py",
             "dummy/rpc_service/dummy_rpc_service_system.py",
-            "dummy/rpc_service/resources/baf.xml"]
+            "dummy/rpc_service/resources/baf.xml"],
+    "extra_resources" : ["dummy_rpc_service_plugin.pyc", "dummy/__init__.pyc",
+            "dummy/rpc_service/__init__.pyc",
+            "dummy/rpc_service/dummy_rpc_service_system.pyc"]
 }

@@ -12,10 +12,16 @@
     "capabilities_allowed" : [],
     "dependencies" : [],
     "main_file" : "python_console_interface_plugin.py",
-    "resources" : ["python_console_interface_plugin.py", "misc_gui/__init__.py",
+    "resources" : [
+            "python_console_interface_plugin.py",
+            "misc_gui/__init__.py",
             "misc_gui/python_console_interface/__init__.py",
             "misc_gui/python_console_interface/python_console_interface_system.py",
             "misc_gui/python_console_interface/resources/baf.xml",
             "misc_gui/python_console_interface/resources/icons/node.png",
-            "misc_gui/python_console_interface/resources/icons/tab.png"]
+            "misc_gui/python_console_interface/resources/icons/tab.png"],
+    "extra_resources" : ["python_console_interface_plugin.pyc",
+            "misc_gui/__init__.pyc",
+            "misc_gui/python_console_interface/__init__.pyc",
+            "misc_gui/python_console_interface/python_console_interface_system.pyc"]
 }

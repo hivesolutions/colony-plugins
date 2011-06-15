@@ -23,5 +23,10 @@
             "configuration_startup/startup/startup_configuration_system.py",
             "configuration_startup/startup/resources/baf.xml",
             "configuration_startup/startup/resources/startup_configuration.xml",
-            "configuration_startup/startup/resources/xsd/startup_configuration.xsd"]
+            "configuration_startup/startup/resources/xsd/startup_configuration.xsd"],
+    "extra_resources" : ["startup_configuration_plugin.pyc",
+            "configuration_startup/__init__.pyc",
+            "configuration_startup/startup/__init__.pyc",
+            "configuration_startup/startup/startup_configuration_parser.pyc",
+            "configuration_startup/startup/startup_configuration_system.pyc"]
 }

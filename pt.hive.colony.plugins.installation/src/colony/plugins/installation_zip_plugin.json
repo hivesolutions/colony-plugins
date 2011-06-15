@@ -16,5 +16,9 @@
             "installation/zip/__init__.py",
             "installation/zip/installation_zip_exceptions.py",
             "installation/zip/installation_zip_system.py",
-            "installation/zip/resources/baf.xml"]
+            "installation/zip/resources/baf.xml"],
+    "extra_resources" : ["installation_zip_plugin.pyc",
+            "installation/__init__.pyc", "installation/zip/__init__.pyc",
+            "installation/zip/installation_zip_exceptions.pyc",
+            "installation/zip/installation_zip_system.pyc"]
 }

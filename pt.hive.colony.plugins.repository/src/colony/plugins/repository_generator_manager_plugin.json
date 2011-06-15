@@ -18,5 +18,11 @@
             "repository/generator_manager/__init__.py",
             "repository/generator_manager/repository_generator_manager_exceptions.py",
             "repository/generator_manager/repository_generator_manager_system.py",
-            "repository/generator_manager/resources/baf.xml"]
+            "repository/generator_manager/resources/baf.xml"],
+    "extra_resources" : [
+            "repository_generator_manager_plugin.pyc",
+            "repository/__init__.pyc",
+            "repository/generator_manager/__init__.pyc",
+            "repository/generator_manager/repository_generator_manager_exceptions.pyc",
+            "repository/generator_manager/repository_generator_manager_system.pyc"]
 }

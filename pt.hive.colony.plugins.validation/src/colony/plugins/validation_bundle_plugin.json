@@ -21,5 +21,10 @@
             "validation_bundle/bundle/__init__.py",
             "validation_bundle/bundle/console_validation_bundle.py",
             "validation_bundle/bundle/validation_bundle_system.py",
-            "validation_bundle/bundle/resources/baf.xml"]
+            "validation_bundle/bundle/resources/baf.xml"],
+    "extra_resources" : ["validation_bundle_plugin.pyc",
+            "validation_bundle/__init__.pyc",
+            "validation_bundle/bundle/__init__.pyc",
+            "validation_bundle/bundle/console_validation_bundle.pyc",
+            "validation_bundle/bundle/validation_bundle_system.pyc"]
 }

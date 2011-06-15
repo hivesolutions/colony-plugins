@@ -19,5 +19,9 @@
             "encryption/pkcs_1/__init__.py",
             "encryption/pkcs_1/encryption_pkcs_1_exceptions.py",
             "encryption/pkcs_1/encryption_pkcs_1_system.py",
-            "encryption/pkcs_1/resources/baf.xml"]
+            "encryption/pkcs_1/resources/baf.xml"],
+    "extra_resources" : ["encryption_pkcs_1_plugin.pyc",
+            "encryption/__init__.pyc", "encryption/pkcs_1/__init__.pyc",
+            "encryption/pkcs_1/encryption_pkcs_1_exceptions.pyc",
+            "encryption/pkcs_1/encryption_pkcs_1_system.pyc"]
 }

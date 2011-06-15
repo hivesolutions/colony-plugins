@@ -17,5 +17,9 @@
             "configuration_manager/__init__.py",
             "configuration_manager/manager/__init__.py",
             "configuration_manager/manager/configuration_manager_system.py",
-            "configuration_manager/manager/resources/baf.xml"]
+            "configuration_manager/manager/resources/baf.xml"],
+    "extra_resources" : ["configuration_manager_plugin.pyc",
+            "configuration_manager/__init__.pyc",
+            "configuration_manager/manager/__init__.pyc",
+            "configuration_manager/manager/configuration_manager_system.pyc"]
 }

@@ -15,11 +15,19 @@
                 "version" : "1.0.0"
             }],
     "main_file" : "colony_console_interface_plugin.py",
-    "resources" : ["colony_console_interface_plugin.py", "misc_gui/__init__.py",
+    "resources" : [
+            "colony_console_interface_plugin.py",
+            "misc_gui/__init__.py",
             "misc_gui/colony_console_interface/__init__.py",
             "misc_gui/colony_console_interface/colony_console_interface_system.py",
             "misc_gui/colony_console_interface/colony_console_window.py",
             "misc_gui/colony_console_interface/resources/baf.xml",
             "misc_gui/colony_console_interface/resources/icons/node.png",
-            "misc_gui/colony_console_interface/resources/icons/tab.png"]
+            "misc_gui/colony_console_interface/resources/icons/tab.png"],
+    "extra_resources" : [
+            "colony_console_interface_plugin.pyc",
+            "misc_gui/__init__.pyc",
+            "misc_gui/colony_console_interface/__init__.pyc",
+            "misc_gui/colony_console_interface/colony_console_interface_system.pyc",
+            "misc_gui/colony_console_interface/colony_console_window.pyc"]
 }

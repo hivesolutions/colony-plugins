@@ -19,5 +19,9 @@
             "packaging/deb/__init__.py",
             "packaging/deb/packaging_deb_exceptions.py",
             "packaging/deb/packaging_deb_system.py",
-            "packaging/deb/resources/baf.xml"]
+            "packaging/deb/resources/baf.xml"],
+    "extra_resources" : ["packaging_deb_plugin.pyc", "packaging/__init__.pyc",
+            "packaging/deb/__init__.pyc",
+            "packaging/deb/packaging_deb_exceptions.pyc",
+            "packaging/deb/packaging_deb_system.pyc"]
 }

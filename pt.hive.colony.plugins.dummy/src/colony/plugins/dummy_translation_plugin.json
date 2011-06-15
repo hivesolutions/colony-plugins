@@ -15,5 +15,8 @@
     "resources" : ["dummy_translation_plugin.py", "dummy/__init__.py",
             "dummy/translation/__init__.py",
             "dummy/translation/dummy_translation_system.py",
-            "dummy/translation/resources/baf.xml"]
+            "dummy/translation/resources/baf.xml"],
+    "extra_resources" : ["dummy_translation_plugin.pyc", "dummy/__init__.pyc",
+            "dummy/translation/__init__.pyc",
+            "dummy/translation/dummy_translation_system.pyc"]
 }

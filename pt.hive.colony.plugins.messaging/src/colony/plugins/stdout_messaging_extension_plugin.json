@@ -16,5 +16,9 @@
             "messaging_extensions/__init__.py",
             "messaging_extensions/stdout/__init__.py",
             "messaging_extensions/stdout/stdout_messaging_extension_system.py",
-            "messaging_extensions/stdout/resources/baf.xml"]
+            "messaging_extensions/stdout/resources/baf.xml"],
+    "extra_resources" : ["stdout_messaging_extension_plugin.pyc",
+            "messaging_extensions/__init__.pyc",
+            "messaging_extensions/stdout/__init__.pyc",
+            "messaging_extensions/stdout/stdout_messaging_extension_system.pyc"]
 }

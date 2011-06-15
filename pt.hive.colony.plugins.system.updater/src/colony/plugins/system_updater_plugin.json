@@ -31,5 +31,12 @@
             "system_updater/updater/resources/repositories.xml",
             "system_updater/updater/resources/schema/repository_descriptor.xml",
             "system_updater/updater/resources/xsd/repositories.xsd",
-            "system_updater/updater/resources/xsd/repository_descriptor.xsd"]
+            "system_updater/updater/resources/xsd/repository_descriptor.xsd"],
+    "extra_resources" : ["system_updater_plugin.pyc",
+            "system_updater/__init__.pyc",
+            "system_updater/updater/__init__.pyc",
+            "system_updater/updater/console_system_updater.pyc",
+            "system_updater/updater/system_updater_exceptions.pyc",
+            "system_updater/updater/system_updater_parser.pyc",
+            "system_updater/updater/system_updater_system.pyc"]
 }

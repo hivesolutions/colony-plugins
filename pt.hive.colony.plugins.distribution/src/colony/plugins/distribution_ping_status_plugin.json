@@ -21,5 +21,9 @@
     "resources" : ["distribution_ping_status_plugin.py",
             "distribution/__init__.py", "distribution/ping_status/__init__.py",
             "distribution/ping_status/distribution_ping_status_system.py",
-            "distribution/ping_status/resources/baf.xml"]
+            "distribution/ping_status/resources/baf.xml"],
+    "extra_resources" : ["distribution_ping_status_plugin.pyc",
+            "distribution/__init__.pyc",
+            "distribution/ping_status/__init__.pyc",
+            "distribution/ping_status/distribution_ping_status_system.pyc"]
 }

@@ -22,5 +22,12 @@
             "mail_storage_database/database/mail_storage_database_entities.py",
             "mail_storage_database/database/mail_storage_database_exceptions.py",
             "mail_storage_database/database/mail_storage_database_system.py",
-            "mail_storage_database/database/resources/baf.xml"]
+            "mail_storage_database/database/resources/baf.xml"],
+    "extra_resources" : [
+            "mail_storage_database_plugin.pyc",
+            "mail_storage_database/__init__.pyc",
+            "mail_storage_database/database/__init__.pyc",
+            "mail_storage_database/database/mail_storage_database_entities.pyc",
+            "mail_storage_database/database/mail_storage_database_exceptions.pyc",
+            "mail_storage_database/database/mail_storage_database_system.pyc"]
 }

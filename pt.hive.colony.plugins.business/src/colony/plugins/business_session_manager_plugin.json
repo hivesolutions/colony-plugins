@@ -26,5 +26,9 @@
             "business/__init__.py", "business/session_manager/__init__.py",
             "business/session_manager/business_session_manager_exceptions.py",
             "business/session_manager/business_session_manager_system.py",
-            "business/session_manager/resources/baf.xml"]
+            "business/session_manager/resources/baf.xml"],
+    "extra_resources" : ["business_session_manager_plugin.pyc",
+            "business/__init__.pyc", "business/session_manager/__init__.pyc",
+            "business/session_manager/business_session_manager_exceptions.pyc",
+            "business/session_manager/business_session_manager_system.pyc"]
 }

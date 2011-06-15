@@ -21,5 +21,8 @@
     "resources" : ["encryption_ssl_plugin.py", "encryption/__init__.py",
             "encryption/ssl/__init__.py",
             "encryption/ssl/encryption_ssl_system.py",
-            "encryption/ssl/resources/baf.xml"]
+            "encryption/ssl/resources/baf.xml"],
+    "extra_resources" : ["encryption_ssl_plugin.pyc",
+            "encryption/__init__.pyc", "encryption/ssl/__init__.pyc",
+            "encryption/ssl/encryption_ssl_system.pyc"]
 }

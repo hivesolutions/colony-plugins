@@ -15,5 +15,9 @@
     "resources" : ["yaml_resource_parser_plugin.py", "resources/__init__.py",
             "resources/yaml_resource_parser/__init__.py",
             "resources/yaml_resource_parser/yaml_resource_parser_system.py",
-            "resources/yaml_resource_parser/resources/baf.xml"]
+            "resources/yaml_resource_parser/resources/baf.xml"],
+    "extra_resources" : ["yaml_resource_parser_plugin.pyc",
+            "resources/__init__.pyc",
+            "resources/yaml_resource_parser/__init__.pyc",
+            "resources/yaml_resource_parser/yaml_resource_parser_system.pyc"]
 }

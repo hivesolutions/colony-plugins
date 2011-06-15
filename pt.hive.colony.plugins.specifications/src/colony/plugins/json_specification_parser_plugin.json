@@ -21,5 +21,11 @@
             "specifications/json_specification_parser/__init__.py",
             "specifications/json_specification_parser/json_specification_parser_exceptions.py",
             "specifications/json_specification_parser/json_specification_parser_system.py",
-            "specifications/json_specification_parser/resources/baf.xml"]
+            "specifications/json_specification_parser/resources/baf.xml"],
+    "extra_resources" : [
+            "json_specification_parser_plugin.pyc",
+            "specifications/__init__.pyc",
+            "specifications/json_specification_parser/__init__.pyc",
+            "specifications/json_specification_parser/json_specification_parser_exceptions.pyc",
+            "specifications/json_specification_parser/json_specification_parser_system.pyc"]
 }

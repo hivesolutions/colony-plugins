@@ -20,5 +20,10 @@
             "communication_push_persistence_database/__init__.py",
             "communication_push_persistence_database/database/__init__.py",
             "communication_push_persistence_database/database/communication_push_persistence_database_system.py",
-            "communication_push_persistence_database/database/resources/baf.xml"]
+            "communication_push_persistence_database/database/resources/baf.xml"],
+    "extra_resources" : [
+            "communication_push_persistence_database_plugin.pyc",
+            "communication_push_persistence_database/__init__.pyc",
+            "communication_push_persistence_database/database/__init__.pyc",
+            "communication_push_persistence_database/database/communication_push_persistence_database_system.pyc"]
 }

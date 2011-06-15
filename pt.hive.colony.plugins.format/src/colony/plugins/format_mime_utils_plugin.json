@@ -18,5 +18,8 @@
     "resources" : ["format_mime_utils_plugin.py", "format/__init__.py",
             "format/mime_utils/__init__.py",
             "format/mime_utils/format_mime_utils_system.py",
-            "format/mime_utils/resources/baf.xml"]
+            "format/mime_utils/resources/baf.xml"],
+    "extra_resources" : ["format_mime_utils_plugin.pyc", "format/__init__.pyc",
+            "format/mime_utils/__init__.pyc",
+            "format/mime_utils/format_mime_utils_system.pyc"]
 }

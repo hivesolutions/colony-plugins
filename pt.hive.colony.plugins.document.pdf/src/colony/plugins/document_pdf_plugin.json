@@ -17,5 +17,10 @@
             "document_pdf/pdf/document_pdf_exceptions.py",
             "document_pdf/pdf/document_pdf_filters.py",
             "document_pdf/pdf/document_pdf_system.py",
-            "document_pdf/pdf/resources/baf.xml"]
+            "document_pdf/pdf/resources/baf.xml"],
+    "extra_resources" : ["document_pdf_plugin.pyc",
+            "document_pdf/__init__.pyc", "document_pdf/pdf/__init__.pyc",
+            "document_pdf/pdf/document_pdf_exceptions.pyc",
+            "document_pdf/pdf/document_pdf_filters.pyc",
+            "document_pdf/pdf/document_pdf_system.pyc"]
 }

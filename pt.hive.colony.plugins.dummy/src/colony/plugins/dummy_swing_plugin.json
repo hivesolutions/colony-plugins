@@ -14,5 +14,7 @@
     "main_file" : "dummy_swing_plugin.py",
     "resources" : ["dummy_swing_plugin.py", "dummy/__init__.py",
             "dummy/swing/__init__.py", "dummy/swing/dummy_swing_system.py",
-            "dummy/swing/resources/baf.xml"]
+            "dummy/swing/resources/baf.xml"],
+    "extra_resources" : ["dummy_swing_plugin.pyc", "dummy/__init__.pyc",
+            "dummy/swing/__init__.pyc", "dummy/swing/dummy_swing_system.pyc"]
 }

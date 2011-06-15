@@ -16,5 +16,9 @@
             "encryption/rsa/__init__.py",
             "encryption/rsa/encryption_rsa_exceptions.py",
             "encryption/rsa/encryption_rsa_system.py",
-            "encryption/rsa/resources/baf.xml"]
+            "encryption/rsa/resources/baf.xml"],
+    "extra_resources" : ["encryption_rsa_plugin.pyc",
+            "encryption/__init__.pyc", "encryption/rsa/__init__.pyc",
+            "encryption/rsa/encryption_rsa_exceptions.pyc",
+            "encryption/rsa/encryption_rsa_system.pyc"]
 }

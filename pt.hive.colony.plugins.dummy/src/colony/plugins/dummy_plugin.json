@@ -9,10 +9,13 @@
     "version" : "1.0.0",
     "author" : "Hive Solutions Lda. <development@hive.pt>",
     "capabilities" : ["dummy_capability", "build_automation_item"],
-    "capabilities_allowed" : ["dummy_base_1_capability", "dummy_base_2_capability"],
+    "capabilities_allowed" : ["dummy_base_1_capability",
+            "dummy_base_2_capability"],
     "dependencies" : [],
     "main_file" : "dummy_plugin.py",
     "resources" : ["dummy_plugin.py", "dummy/__init__.py",
             "dummy/dummy/__init__.py", "dummy/dummy/dummy_system.py",
-            "dummy/dummy/resources/baf.xml"]
+            "dummy/dummy/resources/baf.xml"],
+    "extra_resources" : ["dummy_plugin.pyc", "dummy/__init__.pyc",
+            "dummy/dummy/__init__.pyc", "dummy/dummy/dummy_system.pyc"]
 }

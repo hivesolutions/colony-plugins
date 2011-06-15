@@ -15,5 +15,9 @@
     "resources" : ["format_mime_plugin.py", "format/__init__.py",
             "format/mime/__init__.py", "format/mime/format_mime_exceptions.py",
             "format/mime/format_mime_system.py",
-            "format/mime/resources/baf.xml"]
+            "format/mime/resources/baf.xml"],
+    "extra_resources" : ["format_mime_plugin.pyc", "format/__init__.pyc",
+            "format/mime/__init__.pyc",
+            "format/mime/format_mime_exceptions.pyc",
+            "format/mime/format_mime_system.pyc"]
 }

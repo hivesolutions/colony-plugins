@@ -24,5 +24,11 @@
             "business_dummy/dummy_business_logic/__init__.py",
             "business_dummy/dummy_business_logic/business_dummy_business_logic_class.py",
             "business_dummy/dummy_business_logic/business_dummy_business_logic_system.py",
-            "business_dummy/dummy_business_logic/resources/baf.xml"]
+            "business_dummy/dummy_business_logic/resources/baf.xml"],
+    "extra_resources" : [
+            "business_dummy_business_logic_plugin.pyc",
+            "business_dummy/__init__.pyc",
+            "business_dummy/dummy_business_logic/__init__.pyc",
+            "business_dummy/dummy_business_logic/business_dummy_business_logic_class.pyc",
+            "business_dummy/dummy_business_logic/business_dummy_business_logic_system.pyc"]
 }

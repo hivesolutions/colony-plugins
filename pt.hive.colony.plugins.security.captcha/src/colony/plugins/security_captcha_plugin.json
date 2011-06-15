@@ -31,5 +31,9 @@
             "security_captcha/captcha/resources/patterns/pattern_4.jpg",
             "security_captcha/captcha/resources/patterns/pattern_5.jpg",
             "security_captcha/captcha/resources/patterns/pattern_6.jpg",
-            "security_captcha/captcha/resources/patterns/pattern_7.jpg"]
+            "security_captcha/captcha/resources/patterns/pattern_7.jpg"],
+    "extra_resources" : ["security_captcha_plugin.pyc",
+            "security_captcha/__init__.pyc",
+            "security_captcha/captcha/__init__.pyc",
+            "security_captcha/captcha/security_captcha_system.pyc"]
 }

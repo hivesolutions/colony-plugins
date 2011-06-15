@@ -21,5 +21,11 @@
             "data/entity_manager_sqlite_engine/__init__.py",
             "data/entity_manager_sqlite_engine/entity_manager_sqlite_engine_exceptions.py",
             "data/entity_manager_sqlite_engine/entity_manager_sqlite_engine_system.py",
-            "data/entity_manager_sqlite_engine/resources/baf.xml"]
+            "data/entity_manager_sqlite_engine/resources/baf.xml"],
+    "extra_resources" : [
+            "entity_manager_sqlite_engine_plugin.pyc",
+            "data/__init__.pyc",
+            "data/entity_manager_sqlite_engine/__init__.pyc",
+            "data/entity_manager_sqlite_engine/entity_manager_sqlite_engine_exceptions.pyc",
+            "data/entity_manager_sqlite_engine/entity_manager_sqlite_engine_system.pyc"]
 }

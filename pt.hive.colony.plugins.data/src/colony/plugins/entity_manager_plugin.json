@@ -18,5 +18,10 @@
             "data/entity_manager/entity_manager_decorators.py",
             "data/entity_manager/entity_manager_exceptions.py",
             "data/entity_manager/entity_manager_system.py",
-            "data/entity_manager/resources/baf.xml"]
+            "data/entity_manager/resources/baf.xml"],
+    "extra_resources" : ["entity_manager_plugin.pyc", "data/__init__.pyc",
+            "data/entity_manager/__init__.pyc",
+            "data/entity_manager/entity_manager_decorators.pyc",
+            "data/entity_manager/entity_manager_exceptions.pyc",
+            "data/entity_manager/entity_manager_system.pyc"]
 }

@@ -15,5 +15,8 @@
     "resources" : ["dummy_plugin_unit_test_plugin.py", "dummy/__init__.py",
             "dummy/plugin_unit_test/__init__.py",
             "dummy/plugin_unit_test/dummy_plugin_unit_test_system.py",
-            "dummy/plugin_unit_test/resources/baf.xml"]
+            "dummy/plugin_unit_test/resources/baf.xml"],
+    "extra_resources" : ["dummy_plugin_unit_test_plugin.pyc",
+            "dummy/__init__.pyc", "dummy/plugin_unit_test/__init__.pyc",
+            "dummy/plugin_unit_test/dummy_plugin_unit_test_system.pyc"]
 }

@@ -17,5 +17,7 @@
     "main_file" : "dummy_base_2_plugin.py",
     "resources" : ["dummy_base_2_plugin.py", "dummy/__init__.py",
             "dummy/base_2/__init__.py", "dummy/base_2/dummy_base_2_system.py",
-            "dummy/base_2/resources/baf.xml"]
+            "dummy/base_2/resources/baf.xml"],
+    "extra_resources" : ["dummy_base_2_plugin.pyc", "dummy/__init__.pyc",
+            "dummy/base_2/__init__.pyc", "dummy/base_2/dummy_base_2_system.pyc"]
 }

@@ -18,5 +18,10 @@
             "javascript_localization/__init__.py",
             "javascript_localization/localization_handler/__init__.py",
             "javascript_localization/localization_handler/javascript_localization_handler_system.py",
-            "javascript_localization/localization_handler/resources/baf.xml"]
+            "javascript_localization/localization_handler/resources/baf.xml"],
+    "extra_resources" : [
+            "javascript_localization_handler_plugin.pyc",
+            "javascript_localization/__init__.pyc",
+            "javascript_localization/localization_handler/__init__.pyc",
+            "javascript_localization/localization_handler/javascript_localization_handler_system.pyc"]
 }

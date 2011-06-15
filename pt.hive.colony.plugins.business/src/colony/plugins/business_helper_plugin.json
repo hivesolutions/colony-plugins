@@ -16,5 +16,8 @@
     "resources" : ["business_helper_plugin.py", "business/__init__.py",
             "business/helper/__init__.py",
             "business/helper/business_helper_system.py",
-            "business/helper/resources/baf.xml"]
+            "business/helper/resources/baf.xml"],
+    "extra_resources" : ["business_helper_plugin.pyc", "business/__init__.pyc",
+            "business/helper/__init__.pyc",
+            "business/helper/business_helper_system.pyc"]
 }

@@ -22,5 +22,10 @@
             "specifications/json_specification_generator_handler/__init__.py",
             "specifications/json_specification_generator_handler/json_specification_generator_handler_system.py",
             "specifications/json_specification_generator_handler/resources/baf.xml",
-            "specifications/json_specification_generator_handler/resources/plugin_specification.json.tpl"]
+            "specifications/json_specification_generator_handler/resources/plugin_specification.json.tpl"],
+    "extra_resources" : [
+            "json_specification_generator_handler_plugin.pyc",
+            "specifications/__init__.pyc",
+            "specifications/json_specification_generator_handler/__init__.pyc",
+            "specifications/json_specification_generator_handler/json_specification_generator_handler_system.pyc"]
 }

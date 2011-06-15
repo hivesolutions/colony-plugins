@@ -23,5 +23,9 @@
             "communication_push/__init__.py",
             "communication_push/push/__init__.py",
             "communication_push/push/communication_push_system.py",
-            "communication_push/push/resources/baf.xml"]
+            "communication_push/push/resources/baf.xml"],
+    "extra_resources" : ["communication_push_plugin.pyc",
+            "communication_push/__init__.pyc",
+            "communication_push/push/__init__.pyc",
+            "communication_push/push/communication_push_system.pyc"]
 }

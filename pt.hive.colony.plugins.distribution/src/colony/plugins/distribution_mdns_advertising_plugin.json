@@ -24,5 +24,9 @@
             "distribution/__init__.py",
             "distribution/mdns_advertising/__init__.py",
             "distribution/mdns_advertising/distribution_mdns_advertising_system.py",
-            "distribution/mdns_advertising/resources/baf.xml"]
+            "distribution/mdns_advertising/resources/baf.xml"],
+    "extra_resources" : ["distribution_mdns_advertising_plugin.pyc",
+            "distribution/__init__.pyc",
+            "distribution/mdns_advertising/__init__.pyc",
+            "distribution/mdns_advertising/distribution_mdns_advertising_system.pyc"]
 }

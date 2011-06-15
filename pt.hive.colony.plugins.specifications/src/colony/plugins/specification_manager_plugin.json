@@ -18,5 +18,11 @@
             "specifications/specification_manager/__init__.py",
             "specifications/specification_manager/specification_manager_exceptions.py",
             "specifications/specification_manager/specification_manager_system.py",
-            "specifications/specification_manager/resources/baf.xml"]
+            "specifications/specification_manager/resources/baf.xml"],
+    "extra_resources" : [
+            "specification_manager_plugin.pyc",
+            "specifications/__init__.pyc",
+            "specifications/specification_manager/__init__.pyc",
+            "specifications/specification_manager/specification_manager_exceptions.pyc",
+            "specifications/specification_manager/specification_manager_system.pyc"]
 }

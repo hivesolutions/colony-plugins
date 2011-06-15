@@ -20,5 +20,9 @@
             "javascript_manager/__init__.py",
             "javascript_manager/autoloader/__init__.py",
             "javascript_manager/autoloader/javascript_manager_autoloader_system.py",
-            "javascript_manager/autoloader/resources/baf.xml"]
+            "javascript_manager/autoloader/resources/baf.xml"],
+    "extra_resources" : ["javascript_manager_autoloader_plugin.pyc",
+            "javascript_manager/__init__.pyc",
+            "javascript_manager/autoloader/__init__.pyc",
+            "javascript_manager/autoloader/javascript_manager_autoloader_system.pyc"]
 }

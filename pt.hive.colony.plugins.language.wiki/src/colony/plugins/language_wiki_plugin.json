@@ -16,5 +16,9 @@
             "_language_wiki/wiki/__init__.py",
             "_language_wiki/wiki/language_wiki_exceptions.py",
             "_language_wiki/wiki/language_wiki_system.py",
-            "_language_wiki/wiki/resources/baf.xml"]
+            "_language_wiki/wiki/resources/baf.xml"],
+    "extra_resources" : ["language_wiki_plugin.pyc",
+            "_language_wiki/__init__.pyc", "_language_wiki/wiki/__init__.pyc",
+            "_language_wiki/wiki/language_wiki_exceptions.pyc",
+            "_language_wiki/wiki/language_wiki_system.pyc"]
 }

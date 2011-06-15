@@ -15,5 +15,9 @@
     "resources" : ["encryption_diffie_hellman_plugin.py",
             "encryption/__init__.py", "encryption/diffie_hellman/__init__.py",
             "encryption/diffie_hellman/encryption_diffie_hellman_system.py",
-            "encryption/diffie_hellman/resources/baf.xml"]
+            "encryption/diffie_hellman/resources/baf.xml"],
+    "extra_resources" : ["encryption_diffie_hellman_plugin.pyc",
+            "encryption/__init__.pyc",
+            "encryption/diffie_hellman/__init__.pyc",
+            "encryption/diffie_hellman/encryption_diffie_hellman_system.pyc"]
 }

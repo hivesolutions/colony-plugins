@@ -18,5 +18,11 @@
             "http_log_parser_common/log_parser_common/__init__.py",
             "http_log_parser_common/log_parser_common/http_log_parser_common_exceptions.py",
             "http_log_parser_common/log_parser_common/http_log_parser_common_system.py",
-            "http_log_parser_common/log_parser_common/resources/baf.xml"]
+            "http_log_parser_common/log_parser_common/resources/baf.xml"],
+    "extra_resources" : [
+            "http_log_parser_common_plugin.pyc",
+            "http_log_parser_common/__init__.pyc",
+            "http_log_parser_common/log_parser_common/__init__.pyc",
+            "http_log_parser_common/log_parser_common/http_log_parser_common_exceptions.pyc",
+            "http_log_parser_common/log_parser_common/http_log_parser_common_system.pyc"]
 }

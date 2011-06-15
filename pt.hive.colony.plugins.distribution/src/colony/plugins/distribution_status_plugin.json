@@ -18,5 +18,8 @@
     "resources" : ["distribution_status_plugin.py", "distribution/__init__.py",
             "distribution/status/__init__.py",
             "distribution/status/distribution_status_system.py",
-            "distribution/status/resources/baf.xml"]
+            "distribution/status/resources/baf.xml"],
+    "extra_resources" : ["distribution_status_plugin.pyc",
+            "distribution/__init__.pyc", "distribution/status/__init__.pyc",
+            "distribution/status/distribution_status_system.pyc"]
 }

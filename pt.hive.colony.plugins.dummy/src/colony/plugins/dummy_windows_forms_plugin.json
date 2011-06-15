@@ -15,5 +15,8 @@
     "resources" : ["dummy_windows_forms_plugin.py", "dummy/__init__.py",
             "dummy/windows_forms/__init__.py",
             "dummy/windows_forms/dummy_windows_forms_system.py",
-            "dummy/windows_forms/resources/baf.xml"]
+            "dummy/windows_forms/resources/baf.xml"],
+    "extra_resources" : ["dummy_windows_forms_plugin.pyc",
+            "dummy/__init__.pyc", "dummy/windows_forms/__init__.pyc",
+            "dummy/windows_forms/dummy_windows_forms_system.pyc"]
 }

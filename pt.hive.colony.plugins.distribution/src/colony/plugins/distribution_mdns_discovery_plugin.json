@@ -23,5 +23,9 @@
             "distribution/__init__.py",
             "distribution/mdns_discovery/__init__.py",
             "distribution/mdns_discovery/distribution_mdns_discovery_system.py",
-            "distribution/mdns_discovery/resources/baf.xml"]
+            "distribution/mdns_discovery/resources/baf.xml"],
+    "extra_resources" : ["distribution_mdns_discovery_plugin.pyc",
+            "distribution/__init__.pyc",
+            "distribution/mdns_discovery/__init__.pyc",
+            "distribution/mdns_discovery/distribution_mdns_discovery_system.pyc"]
 }

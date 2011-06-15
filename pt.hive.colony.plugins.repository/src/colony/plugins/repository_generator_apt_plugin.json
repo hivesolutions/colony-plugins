@@ -22,5 +22,8 @@
             "repository/__init__.py", "repository/generator_apt/__init__.py",
             "repository/generator_apt/repository_generator_apt_system.py",
             "repository/generator_apt/resources/baf.xml",
-            "repository/generator_apt/resources/repository_templates/packages.tpl"]
+            "repository/generator_apt/resources/repository_templates/packages.tpl"],
+    "extra_resources" : ["repository_generator_apt_plugin.pyc",
+            "repository/__init__.pyc", "repository/generator_apt/__init__.pyc",
+            "repository/generator_apt/repository_generator_apt_system.pyc"]
 }

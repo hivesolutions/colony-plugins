@@ -21,5 +21,12 @@
             "dns_storage_database/database/dns_storage_database_entities.py",
             "dns_storage_database/database/dns_storage_database_exceptions.py",
             "dns_storage_database/database/dns_storage_database_system.py",
-            "dns_storage_database/database/resources/baf.xml"]
+            "dns_storage_database/database/resources/baf.xml"],
+    "extra_resources" : [
+            "dns_storage_database_plugin.pyc",
+            "dns_storage_database/__init__.pyc",
+            "dns_storage_database/database/__init__.pyc",
+            "dns_storage_database/database/dns_storage_database_entities.pyc",
+            "dns_storage_database/database/dns_storage_database_exceptions.pyc",
+            "dns_storage_database/database/dns_storage_database_system.pyc"]
 }

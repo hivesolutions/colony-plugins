@@ -15,5 +15,8 @@
     "resources" : ["dummy_italian_dictionary_plugin.py", "dummy/__init__.py",
             "dummy/italian_dictionary/__init__.py",
             "dummy/italian_dictionary/dummy_italian_dictionary_system.py",
-            "dummy/italian_dictionary/resources/baf.xml"]
+            "dummy/italian_dictionary/resources/baf.xml"],
+    "extra_resources" : ["dummy_italian_dictionary_plugin.pyc",
+            "dummy/__init__.pyc", "dummy/italian_dictionary/__init__.pyc",
+            "dummy/italian_dictionary/dummy_italian_dictionary_system.pyc"]
 }

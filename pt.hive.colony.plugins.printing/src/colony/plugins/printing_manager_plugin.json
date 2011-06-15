@@ -22,5 +22,13 @@
             "printing/manager/printing_manager_exceptions.py",
             "printing/manager/printing_manager_system.py",
             "printing/manager/resources/baf.xml",
-            "printing/manager/resources/test_logo.png"]
+            "printing/manager/resources/test_logo.png"],
+    "extra_resources" : ["printing_manager_plugin.pyc",
+            "printing/__init__.pyc", "printing/manager/__init__.pyc",
+            "printing/manager/console_printing_manager.pyc",
+            "printing/manager/printing_language_ast.pyc",
+            "printing/manager/printing_language_parser.pyc",
+            "printing/manager/printing_language_visitor.pyc",
+            "printing/manager/printing_manager_exceptions.pyc",
+            "printing/manager/printing_manager_system.pyc"]
 }

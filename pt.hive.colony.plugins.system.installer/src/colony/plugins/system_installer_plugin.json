@@ -19,5 +19,11 @@
             "system_installer/installer/console_system_installer.py",
             "system_installer/installer/system_installer_exceptions.py",
             "system_installer/installer/system_installer_system.py",
-            "system_installer/installer/resources/baf.xml"]
+            "system_installer/installer/resources/baf.xml"],
+    "extra_resources" : ["system_installer_plugin.pyc",
+            "system_installer/__init__.pyc",
+            "system_installer/installer/__init__.pyc",
+            "system_installer/installer/console_system_installer.pyc",
+            "system_installer/installer/system_installer_exceptions.pyc",
+            "system_installer/installer/system_installer_system.pyc"]
 }

@@ -24,5 +24,9 @@
             "javascript_file_handler/__init__.py",
             "javascript_file_handler/file_handler/__init__.py",
             "javascript_file_handler/file_handler/javascript_file_handler_system.py",
-            "javascript_file_handler/file_handler/resources/baf.xml"]
+            "javascript_file_handler/file_handler/resources/baf.xml"],
+    "extra_resources" : ["javascript_file_handler_plugin.pyc",
+            "javascript_file_handler/__init__.pyc",
+            "javascript_file_handler/file_handler/__init__.pyc",
+            "javascript_file_handler/file_handler/javascript_file_handler_system.pyc"]
 }

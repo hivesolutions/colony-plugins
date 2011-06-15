@@ -16,5 +16,9 @@
             "packaging/ar/__init__.py",
             "packaging/ar/packaging_ar_exceptions.py",
             "packaging/ar/packaging_ar_system.py",
-            "packaging/ar/resources/baf.xml"]
+            "packaging/ar/resources/baf.xml"],
+    "extra_resources" : ["packaging_ar_plugin.pyc", "packaging/__init__.pyc",
+            "packaging/ar/__init__.pyc",
+            "packaging/ar/packaging_ar_exceptions.pyc",
+            "packaging/ar/packaging_ar_system.pyc"]
 }

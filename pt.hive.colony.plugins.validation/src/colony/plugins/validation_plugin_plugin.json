@@ -21,5 +21,10 @@
             "validation_plugin/plugin/__init__.py",
             "validation_plugin/plugin/console_validation_plugin.py",
             "validation_plugin/plugin/validation_plugin_system.py",
-            "validation_plugin/plugin/resources/baf.xml"]
+            "validation_plugin/plugin/resources/baf.xml"],
+    "extra_resources" : ["validation_plugin_plugin.pyc",
+            "validation_plugin/__init__.pyc",
+            "validation_plugin/plugin/__init__.pyc",
+            "validation_plugin/plugin/console_validation_plugin.pyc",
+            "validation_plugin/plugin/validation_plugin_system.pyc"]
 }

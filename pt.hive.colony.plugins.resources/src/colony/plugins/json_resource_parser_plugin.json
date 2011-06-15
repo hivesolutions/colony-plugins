@@ -18,5 +18,9 @@
     "resources" : ["json_resource_parser_plugin.py", "resources/__init__.py",
             "resources/json_resource_parser/__init__.py",
             "resources/json_resource_parser/json_resource_parser_system.py",
-            "resources/json_resource_parser/resources/baf.xml"]
+            "resources/json_resource_parser/resources/baf.xml"],
+    "extra_resources" : ["json_resource_parser_plugin.pyc",
+            "resources/__init__.pyc",
+            "resources/json_resource_parser/__init__.pyc",
+            "resources/json_resource_parser/json_resource_parser_system.pyc"]
 }

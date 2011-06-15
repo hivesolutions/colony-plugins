@@ -33,5 +33,9 @@
             "installation/deb/resources/control_file_templates/postinst.tpl.sh",
             "installation/deb/resources/control_file_templates/postrm.tpl.sh",
             "installation/deb/resources/control_file_templates/preinst.tpl.sh",
-            "installation/deb/resources/control_file_templates/prerm.tpl.sh"]
+            "installation/deb/resources/control_file_templates/prerm.tpl.sh"],
+    "extra_resources" : ["installation_deb_plugin.pyc",
+            "installation/__init__.pyc", "installation/deb/__init__.pyc",
+            "installation/deb/installation_deb_exceptions.pyc",
+            "installation/deb/installation_deb_system.pyc"]
 }

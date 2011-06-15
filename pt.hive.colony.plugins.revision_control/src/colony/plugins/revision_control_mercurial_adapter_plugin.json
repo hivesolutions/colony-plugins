@@ -17,5 +17,10 @@
             "revision_control/__init__.py",
             "revision_control/mercurial_adapter/__init__.py",
             "revision_control/mercurial_adapter/revision_control_mercurial_adapter_system.py",
-            "revision_control/mercurial_adapter/resources/baf.xml"]
+            "revision_control/mercurial_adapter/resources/baf.xml"],
+    "extra_resources" : [
+            "revision_control_mercurial_adapter_plugin.pyc",
+            "revision_control/__init__.pyc",
+            "revision_control/mercurial_adapter/__init__.pyc",
+            "revision_control/mercurial_adapter/revision_control_mercurial_adapter_system.pyc"]
 }

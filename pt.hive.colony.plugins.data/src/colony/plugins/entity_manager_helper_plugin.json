@@ -21,5 +21,8 @@
     "resources" : ["entity_manager_helper_plugin.py", "data/__init__.py",
             "data/entity_manager_helper/__init__.py",
             "data/entity_manager_helper/entity_manager_helper_system.py",
-            "data/entity_manager_helper/resources/baf.xml"]
+            "data/entity_manager_helper/resources/baf.xml"],
+    "extra_resources" : ["entity_manager_helper_plugin.pyc",
+            "data/__init__.pyc", "data/entity_manager_helper/__init__.pyc",
+            "data/entity_manager_helper/entity_manager_helper_system.pyc"]
 }

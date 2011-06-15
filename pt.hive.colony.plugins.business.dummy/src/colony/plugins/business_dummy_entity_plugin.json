@@ -23,5 +23,10 @@
             "business_dummy/dummy_entity/__init__.py",
             "business_dummy/dummy_entity/business_dummy_entity_class.py",
             "business_dummy/dummy_entity/business_dummy_entity_system.py",
-            "business_dummy/dummy_entity/resources/baf.xml"]
+            "business_dummy/dummy_entity/resources/baf.xml"],
+    "extra_resources" : ["business_dummy_entity_plugin.pyc",
+            "business_dummy/__init__.pyc",
+            "business_dummy/dummy_entity/__init__.pyc",
+            "business_dummy/dummy_entity/business_dummy_entity_class.pyc",
+            "business_dummy/dummy_entity/business_dummy_entity_system.pyc"]
 }

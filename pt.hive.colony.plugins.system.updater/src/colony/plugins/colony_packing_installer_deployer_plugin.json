@@ -21,5 +21,11 @@
             "system_updater/colony_packing_installer/__init__.py",
             "system_updater/colony_packing_installer/colony_packing_installer_deployer_exceptions.py",
             "system_updater/colony_packing_installer/colony_packing_installer_deployer_system.py",
-            "system_updater/colony_packing_installer/resources/baf.xml"]
+            "system_updater/colony_packing_installer/resources/baf.xml"],
+    "extra_resources" : [
+            "colony_packing_installer_deployer_plugin.pyc",
+            "system_updater/__init__.pyc",
+            "system_updater/colony_packing_installer/__init__.pyc",
+            "system_updater/colony_packing_installer/colony_packing_installer_deployer_exceptions.pyc",
+            "system_updater/colony_packing_installer/colony_packing_installer_deployer_system.pyc"]
 }

@@ -18,5 +18,8 @@
     "resources" : ["distribution_discovery_plugin.py",
             "distribution/__init__.py", "distribution/discovery/__init__.py",
             "distribution/discovery/distribution_discovery_system.py",
-            "distribution/discovery/resources/baf.xml"]
+            "distribution/discovery/resources/baf.xml"],
+    "extra_resources" : ["distribution_discovery_plugin.pyc",
+            "distribution/__init__.pyc", "distribution/discovery/__init__.pyc",
+            "distribution/discovery/distribution_discovery_system.pyc"]
 }

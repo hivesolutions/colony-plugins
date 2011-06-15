@@ -16,5 +16,9 @@
             "installation/__init__.py", "installation/manager/__init__.py",
             "installation/manager/installation_manager_exceptions.py",
             "installation/manager/installation_manager_system.py",
-            "installation/manager/resources/baf.xml"]
+            "installation/manager/resources/baf.xml"],
+    "extra_resources" : ["installation_manager_plugin.pyc",
+            "installation/__init__.pyc", "installation/manager/__init__.pyc",
+            "installation/manager/installation_manager_exceptions.pyc",
+            "installation/manager/installation_manager_system.pyc"]
 }

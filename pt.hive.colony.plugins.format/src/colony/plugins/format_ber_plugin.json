@@ -14,5 +14,8 @@
     "main_file" : "format_ber_plugin.py",
     "resources" : ["format_ber_plugin.py", "format/__init__.py",
             "format/ber/__init__.py", "format/ber/format_ber_exceptions.py",
-            "format/ber/format_ber_system.py", "format/ber/resources/baf.xml"]
+            "format/ber/format_ber_system.py", "format/ber/resources/baf.xml"],
+    "extra_resources" : ["format_ber_plugin.pyc", "format/__init__.pyc",
+            "format/ber/__init__.pyc", "format/ber/format_ber_exceptions.pyc",
+            "format/ber/format_ber_system.pyc"]
 }

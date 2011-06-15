@@ -18,5 +18,9 @@
     "resources" : ["distribution_advertising_plugin.py",
             "distribution/__init__.py", "distribution/advertising/__init__.py",
             "distribution/advertising/distribution_advertising_system.py",
-            "distribution/advertising/resources/baf.xml"]
+            "distribution/advertising/resources/baf.xml"],
+    "extra_resources" : ["distribution_advertising_plugin.pyc",
+            "distribution/__init__.pyc",
+            "distribution/advertising/__init__.pyc",
+            "distribution/advertising/distribution_advertising_system.pyc"]
 }
