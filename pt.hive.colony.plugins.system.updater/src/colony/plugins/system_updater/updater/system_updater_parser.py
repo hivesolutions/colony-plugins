@@ -415,6 +415,8 @@ class RepositoryDescriptorFileParser(Parser):
             bundle_descriptor.contents_file = self.parse_repository_descriptor_bundle_contents_file(repository_descriptor_bundle_element)
         elif node_name == "dependencies":
             bundle_descriptor.dependencies = self.parse_repository_descriptor_bundle_dependencies(repository_descriptor_bundle_element)
+        elif node_name == "hash_digest_items":
+            bundle_descriptor.hash_digest_items = self.parse_repository_descriptor_hash_digest_items(repository_descriptor_bundle_element)
 
     def parse_repository_descriptor_bundle_name(self, descriptor_bundle_name):
         repository_descriptor_bundle_name = descriptor_bundle_name.firstChild.data.strip()
@@ -473,6 +475,43 @@ class RepositoryDescriptorFileParser(Parser):
         repository_descriptor_bundle_dependency_version = bundle_dependency_version.firstChild.data.strip()
         return repository_descriptor_bundle_dependency_version
 
+    def parse_repository_descriptor_hash_digest_items(self, descriptor_hash_digest_items):
+        repository_descriptor_hash_digest_items_list = []
+        child_nodes = descriptor_hash_digest_items.childNodes
+
+        for child_node in child_nodes:
+            if valid_node(child_node):
+                repository_descriptor_hash_digest = self.parse_repository_descriptor_hash_digest(child_node)
+                repository_descriptor_hash_digest_items_list.append(repository_descriptor_hash_digest)
+
+        return repository_descriptor_hash_digest_items_list
+
+    def parse_repository_descriptor_hash_digest(self, hash_digest_):
+        hash_digest = HashDigest()
+        child_nodes = hash_digest_.childNodes
+
+        for child_node in child_nodes:
+            if valid_node(child_node):
+                self.parse_repository_descriptor_hash_digest_element(child_node, hash_digest)
+
+        return hash_digest
+
+    def parse_repository_descriptor_hash_digest_element(self, repository_descriptor_hash_digest_element, hash_digest):
+        node_name = repository_descriptor_hash_digest_element.nodeName
+
+        if node_name == "key":
+            hash_digest.key = self.parse_repository_descriptor_hash_digest_key(repository_descriptor_hash_digest_element)
+        elif node_name == "value":
+            hash_digest.value = self.parse_repository_descriptor_hash_digest_value(repository_descriptor_hash_digest_element)
+
+    def parse_repository_descriptor_hash_digest_key(self, hash_digest_key):
+        repository_descriptor_hash_digest_key = hash_digest_key.firstChild.data.strip()
+        return repository_descriptor_hash_digest_key
+
+    def parse_repository_descriptor_hash_digest_value(self, hash_digest_value):
+        repository_descriptor_hash_digest_value = hash_digest_value.firstChild.data.strip()
+        return repository_descriptor_hash_digest_value
+
     def parse_repository_descriptor_plugins(self, descriptor_plugins):
         repository_descriptor_plugins_list = []
         child_nodes = descriptor_plugins.childNodes
@@ -505,16 +544,12 @@ class RepositoryDescriptorFileParser(Parser):
             plugin_descriptor.id = self.parse_repository_descriptor_plugin_id(repository_descriptor_plugin_element)
         elif node_name == "version":
             plugin_descriptor.version = self.parse_repository_descriptor_plugin_version(repository_descriptor_plugin_element)
-        elif node_name == "main_module":
-            plugin_descriptor.main_module = self.parse_repository_descriptor_plugin_main_module(repository_descriptor_plugin_element)
-        elif node_name == "main_class":
-            plugin_descriptor.main_class = self.parse_repository_descriptor_plugin_main_class(repository_descriptor_plugin_element)
-        elif node_name == "file_name":
-            plugin_descriptor.file_name = self.parse_repository_descriptor_plugin_file_name(repository_descriptor_plugin_element)
         elif node_name == "contents_file":
             plugin_descriptor.contents_file = self.parse_repository_descriptor_plugin_contents_file(repository_descriptor_plugin_element)
         elif node_name == "dependencies":
             plugin_descriptor.dependencies = self.parse_repository_descriptor_plugin_dependencies(repository_descriptor_plugin_element)
+        elif node_name == "hash_digest_items":
+            plugin_descriptor.hash_digest_items = self.parse_repository_descriptor_hash_digest_items(repository_descriptor_plugin_element)
 
     def parse_repository_descriptor_plugin_name(self, descriptor_plugin_name):
         repository_descriptor_plugin_name = descriptor_plugin_name.firstChild.data.strip()
@@ -531,18 +566,6 @@ class RepositoryDescriptorFileParser(Parser):
     def parse_repository_descriptor_plugin_version(self, descriptor_plugin_version):
         repository_descriptor_plugin_version = descriptor_plugin_version.firstChild.data.strip()
         return repository_descriptor_plugin_version
-
-    def parse_repository_descriptor_plugin_main_module(self, descriptor_plugin_main_module):
-        repository_descriptor_plugin_main_module = descriptor_plugin_main_module.firstChild.data.strip()
-        return repository_descriptor_plugin_main_module
-
-    def parse_repository_descriptor_plugin_main_class(self, descriptor_plugin_main_class):
-        repository_descriptor_plugin_main_class = descriptor_plugin_main_class.firstChild.data.strip()
-        return repository_descriptor_plugin_main_class
-
-    def parse_repository_descriptor_plugin_file_name(self, descriptor_plugin_file_name):
-        repository_descriptor_plugin_file_name = descriptor_plugin_file_name.firstChild.data.strip()
-        return repository_descriptor_plugin_file_name
 
     def parse_repository_descriptor_plugin_contents_file(self, descriptor_plugin_contents_file):
         repository_descriptor_plugin_contents_file = descriptor_plugin_contents_file.firstChild.data.strip()
@@ -882,6 +905,9 @@ class BundleDescriptor:
     dependencies = []
     """ The dependencies of the bundle descriptor """
 
+    hash_digest_items = []
+    """ The hash digest items of the bundle descriptor """
+
     def __init__(self, name = "none", bundle_type = "none", id = "none", version = "none"):
         """
         Constructor of the class.
@@ -902,6 +928,7 @@ class BundleDescriptor:
         self.version = version
 
         self.dependencies = []
+        self.hash_digest_items = []
 
     def __repr__(self):
         return "<%s, %s, %s>" % (
@@ -958,19 +985,16 @@ class PluginDescriptor:
     version = "none"
     """ The version of the plugin descriptor """
 
-    main_class = "none"
-    """ The main class of the plugin descriptor """
-
-    file_name = "none"
-    """ The file class of the plugin descriptor """
-
     contents_file = "none"
     """ The contents file of the plugin descriptor """
 
     dependencies = []
     """ The dependencies of the plugin descriptor """
 
-    def __init__(self, name = "none", plugin_type = "none", id = "none", version = "none", main_class = "none", file_name = "none", contents_file = "none"):
+    hash_digest_items = []
+    """ The hash digest items of the plugin descriptor """
+
+    def __init__(self, name = "none", plugin_type = "none", id = "none", version = "none", contents_file = "none"):
         """
         Constructor of the class.
 
@@ -982,10 +1006,6 @@ class PluginDescriptor:
         @param id: The id of the plugin descriptor.
         @type version: String
         @param version: The version of the plugin descriptor.
-        @type main_class: String
-        @param main_class: The main class of the plugin descriptor.
-        @type file_name: String
-        @param file_name: The file name of the plugin descriptor.
         @type contents_file: String
         @param contents_file: The contents file of the plugin descriptor.
         """
@@ -994,11 +1014,10 @@ class PluginDescriptor:
         self.plugin_type = plugin_type
         self.id = id
         self.version = version
-        self.main_class = main_class
-        self.file_name = file_name
         self.contents_file = contents_file
 
         self.dependencies = []
+        self.hash_digest_items = []
 
     def __repr__(self):
         return "<%s, %s, %s>" % (
@@ -1036,6 +1055,37 @@ class PluginDependency:
             self.__class__.__name__,
             self.id,
             self.version
+        )
+
+class HashDigest:
+    """
+    The hash digest class.
+    """
+
+    key = "none"
+    """ The key of the hash digest """
+
+    value = "none"
+    """ The value of the hash digest """
+
+    def __init__(self, key = "none", value = "none"):
+        """
+        Constructor of the class.
+
+        @type key: String
+        @param key: The key of the hash digest.
+        @type value: String
+        @param value: The value of the hash digest.
+        """
+
+        self.key = key
+        self.value = value
+
+    def __repr__(self):
+        return "<%s, %s, %s>" % (
+            self.__class__.__name__,
+            self.key,
+            self.value
         )
 
 def valid_node(node):
