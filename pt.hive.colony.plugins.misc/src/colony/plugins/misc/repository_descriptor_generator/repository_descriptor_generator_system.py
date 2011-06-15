@@ -212,10 +212,15 @@ class RepositoryDescriptorGenerator:
 
         # iterates over all the plugins
         for plugin in plugins:
-            # retrieves the plugin id, version and dependencies
+            # retrieves the plugin id, version, dependencies
+            # and hash digest
             plugin_id = plugin["id"]
             plugin_version = plugin["version"]
             plugin_dependencies = plugin["dependencies"]
+            plugin_hash_digest = plugin["hash_digest"]
+
+            # retrieves the plugin hash digest items
+            plugin_hash_digest_items = plugin_hash_digest.items()
 
             # creates the plugin contents file
             plugin_contents_file = plugin_id + "_" + plugin_version + ".cpx"
@@ -295,6 +300,27 @@ class RepositoryDescriptorGenerator:
 
                 repository_plugin_plugin_version_value_node = xml_document.createTextNode(plugin_dependency_version)
                 repository_plugin_plugin_version_node.appendChild(repository_plugin_plugin_version_value_node)
+
+            repository_plugin_hash_digest_node = xml_document.createElement("hash_digest")
+            repository_plugin_node.appendChild(repository_plugin_hash_digest_node)
+
+            # iterates over all the plugin hash digest items to
+            # write the hash digest item values
+            for plugin_hash_digest_key, plugin_hash_digest_value in plugin_hash_digest_items:
+                repository_plugin_plugin_hash_digest_item_node = xml_document.createElement("hash_digest_item")
+                repository_plugin_hash_digest_node.appendChild(repository_plugin_plugin_hash_digest_item_node)
+
+                repository_plugin_plugin_hash_digest_key_node = xml_document.createElement("key")
+                repository_plugin_plugin_hash_digest_item_node.appendChild(repository_plugin_plugin_hash_digest_key_node)
+
+                repository_plugin_plugin_hash_digest_key_value_node = xml_document.createTextNode(plugin_hash_digest_key)
+                repository_plugin_plugin_hash_digest_key_node.appendChild(repository_plugin_plugin_hash_digest_key_value_node)
+
+                repository_plugin_plugin_hash_digest_value_node = xml_document.createTextNode("value")
+                repository_plugin_plugin_hash_digest_item_node.appendChild(repository_plugin_plugin_hash_digest_value_node)
+
+                repository_plugin_plugin_hash_digest_value_value_node = xml_document.createTextNode(plugin_hash_digest_value)
+                repository_plugin_plugin_hash_digest_value_node.appendChild(repository_plugin_plugin_hash_digest_value_value_node)
 
         # generates the repository descriptor string from the xml document
         repository_descriptor_string = xml_document.toprettyxml(indent = "    ")
