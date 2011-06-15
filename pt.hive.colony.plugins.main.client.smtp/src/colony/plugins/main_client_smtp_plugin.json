@@ -20,5 +20,10 @@
             "main_client_smtp/smtp/__init__.py",
             "main_client_smtp/smtp/main_client_smtp_exceptions.py",
             "main_client_smtp/smtp/main_client_smtp_system.py",
-            "main_client_smtp/smtp/resources/baf.xml"]
+            "main_client_smtp/smtp/resources/baf.xml"],
+    "extra_resources" : ["main_client_smtp_plugin.pyc",
+            "main_client_smtp/__init__.pyc",
+            "main_client_smtp/smtp/__init__.pyc",
+            "main_client_smtp/smtp/main_client_smtp_exceptions.pyc",
+            "main_client_smtp/smtp/main_client_smtp_system.pyc"]
 }

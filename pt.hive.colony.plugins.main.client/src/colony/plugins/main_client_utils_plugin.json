@@ -17,5 +17,10 @@
             "main_client_utils/utils/__init__.py",
             "main_client_utils/utils/main_client_utils_exceptions.py",
             "main_client_utils/utils/main_client_utils_system.py",
-            "main_client_utils/utils/resources/baf.xml"]
+            "main_client_utils/utils/resources/baf.xml"],
+    "extra_resources" : ["main_client_utils_plugin.pyc",
+            "main_client_utils/__init__.pyc",
+            "main_client_utils/utils/__init__.pyc",
+            "main_client_utils/utils/main_client_utils_exceptions.pyc",
+            "main_client_utils/utils/main_client_utils_system.pyc"]
 }

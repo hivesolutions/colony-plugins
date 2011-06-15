@@ -23,5 +23,10 @@
             "main_client_http/http/__init__.py",
             "main_client_http/http/main_client_http_exceptions.py",
             "main_client_http/http/main_client_http_system.py",
-            "main_client_http/http/resources/baf.xml"]
+            "main_client_http/http/resources/baf.xml"],
+    "extra_resources" : ["main_client_http_plugin.pyc",
+            "main_client_http/__init__.pyc",
+            "main_client_http/http/__init__.pyc",
+            "main_client_http/http/main_client_http_exceptions.pyc",
+            "main_client_http/http/main_client_http_system.pyc"]
 }

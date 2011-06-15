@@ -20,5 +20,10 @@
             "main_client_mdns/mdns/__init__.py",
             "main_client_mdns/mdns/main_client_mdns_exceptions.py",
             "main_client_mdns/mdns/main_client_mdns_system.py",
-            "main_client_mdns/mdns/resources/baf.xml"]
+            "main_client_mdns/mdns/resources/baf.xml"],
+    "extra_resources" : ["main_client_mdns_plugin.pyc",
+            "main_client_mdns/__init__.pyc",
+            "main_client_mdns/mdns/__init__.pyc",
+            "main_client_mdns/mdns/main_client_mdns_exceptions.pyc",
+            "main_client_mdns/mdns/main_client_mdns_system.pyc"]
 }

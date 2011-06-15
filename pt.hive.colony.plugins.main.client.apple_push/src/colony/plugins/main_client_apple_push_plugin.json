@@ -21,5 +21,11 @@
             "main_client_apple_push/apple_push/__init__.py",
             "main_client_apple_push/apple_push/main_client_apple_push_structures.py",
             "main_client_apple_push/apple_push/main_client_apple_push_system.py",
-            "main_client_apple_push/apple_push/resources/baf.xml"]
+            "main_client_apple_push/apple_push/resources/baf.xml"],
+    "extra_resources" : [
+            "main_client_apple_push_plugin.pyc",
+            "main_client_apple_push/__init__.pyc",
+            "main_client_apple_push/apple_push/__init__.pyc",
+            "main_client_apple_push/apple_push/main_client_apple_push_structures.pyc",
+            "main_client_apple_push/apple_push/main_client_apple_push_system.pyc"]
 }
