@@ -21,5 +21,10 @@
             "misc/downloader/console_downloader.py",
             "misc/downloader/downloader_exceptions.py",
             "misc/downloader/downloader_system.py",
-            "misc/downloader/resources/baf.xml"]
+            "misc/downloader/resources/baf.xml"],
+    "extra_resources" : ["downloader_plugin.pyc", "misc/__init__.pyc",
+            "misc/downloader/__init__.pyc",
+            "misc/downloader/console_downloader.pyc",
+            "misc/downloader/downloader_exceptions.pyc",
+            "misc/downloader/downloader_system.pyc"]
 }

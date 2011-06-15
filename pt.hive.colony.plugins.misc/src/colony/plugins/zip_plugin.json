@@ -13,5 +13,7 @@
     "dependencies" : [],
     "main_file" : "zip_plugin.py",
     "resources" : ["zip_plugin.py", "misc/__init__.py", "misc/zip/__init__.py",
-            "misc/zip/zip_system.py", "misc/zip/resources/baf.xml"]
+            "misc/zip/zip_system.py", "misc/zip/resources/baf.xml"],
+    "extra_resources" : ["zip_plugin.pyc", "misc/__init__.pyc",
+            "misc/zip/__init__.pyc", "misc/zip/zip_system.pyc"]
 }

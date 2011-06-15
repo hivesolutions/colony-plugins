@@ -15,5 +15,8 @@
     "resources" : ["image_treatment_plugin.py", "misc/__init__.py",
             "misc/image_treatment/__init__.py",
             "misc/image_treatment/image_treatment_system.py",
-            "misc/image_treatment/resources/baf.xml"]
+            "misc/image_treatment/resources/baf.xml"],
+    "extra_resources" : ["image_treatment_plugin.pyc", "misc/__init__.pyc",
+            "misc/image_treatment/__init__.pyc",
+            "misc/image_treatment/image_treatment_system.pyc"]
 }

@@ -17,5 +17,9 @@
             "misc/garbage_collector/__init__.py",
             "misc/garbage_collector/console_garbage_collector.py",
             "misc/garbage_collector/garbage_collector_system.py",
-            "misc/garbage_collector/resources/baf.xml"]
+            "misc/garbage_collector/resources/baf.xml"],
+    "extra_resources" : ["garbage_collector_plugin.pyc", "misc/__init__.pyc",
+            "misc/garbage_collector/__init__.pyc",
+            "misc/garbage_collector/console_garbage_collector.pyc",
+            "misc/garbage_collector/garbage_collector_system.pyc"]
 }

@@ -17,5 +17,9 @@
             "misc/autoloader/__init__.py",
             "misc/autoloader/autoloader_system.py",
             "misc/autoloader/console_autoloader.py",
-            "misc/autoloader/resources/baf.xml"]
+            "misc/autoloader/resources/baf.xml"],
+    "extra_resources" : ["autoloader_plugin.pyc", "misc/__init__.pyc",
+            "misc/autoloader/__init__.pyc",
+            "misc/autoloader/autoloader_system.pyc",
+            "misc/autoloader/console_autoloader.pyc"]
 }

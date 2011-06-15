@@ -15,5 +15,8 @@
     "resources" : ["string_normalization_plugin.py", "misc/__init__.py",
             "misc/string_normalization/__init__.py",
             "misc/string_normalization/string_normalization_system.py",
-            "misc/string_normalization/resources/baf.xml"]
+            "misc/string_normalization/resources/baf.xml"],
+    "extra_resources" : ["string_normalization_plugin.pyc",
+            "misc/__init__.pyc", "misc/string_normalization/__init__.pyc",
+            "misc/string_normalization/string_normalization_system.pyc"]
 }

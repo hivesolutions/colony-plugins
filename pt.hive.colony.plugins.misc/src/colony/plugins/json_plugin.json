@@ -15,5 +15,8 @@
     "resources" : ["json_plugin.py", "misc/__init__.py",
             "misc/json/__init__.py", "misc/json/json_exceptions.py",
             "misc/json/json_serializer.py", "misc/json/json_system.py",
-            "misc/json/resources/baf.xml"]
+            "misc/json/resources/baf.xml"],
+    "extra_resources" : ["json_plugin.pyc", "misc/__init__.pyc",
+            "misc/json/__init__.pyc", "misc/json/json_exceptions.pyc",
+            "misc/json/json_serializer.pyc", "misc/json/json_system.pyc"]
 }

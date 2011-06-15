@@ -24,5 +24,10 @@
             "misc/scheduler/console_scheduler.py",
             "misc/scheduler/scheduler_exceptions.py",
             "misc/scheduler/scheduler_system.py",
-            "misc/scheduler/resources/baf.xml"]
+            "misc/scheduler/resources/baf.xml"],
+    "extra_resources" : ["scheduler_plugin.pyc", "misc/__init__.pyc",
+            "misc/scheduler/__init__.pyc",
+            "misc/scheduler/console_scheduler.pyc",
+            "misc/scheduler/scheduler_exceptions.pyc",
+            "misc/scheduler/scheduler_system.pyc"]
 }

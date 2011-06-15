@@ -14,5 +14,7 @@
     "main_file" : "timer_plugin.py",
     "resources" : ["timer_plugin.py", "misc/__init__.py",
             "misc/timer/__init__.py", "misc/timer/timer_system.py",
-            "misc/timer/resources/baf.xml"]
+            "misc/timer/resources/baf.xml"],
+    "extra_resources" : ["timer_plugin.pyc", "misc/__init__.pyc",
+            "misc/timer/__init__.pyc", "misc/timer/timer_system.pyc"]
 }

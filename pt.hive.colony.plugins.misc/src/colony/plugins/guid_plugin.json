@@ -14,5 +14,7 @@
     "main_file" : "guid_plugin.py",
     "resources" : ["guid_plugin.py", "misc/__init__.py",
             "misc/guid/__init__.py", "misc/guid/guid_system.py",
-            "misc/guid/resources/baf.xml"]
+            "misc/guid/resources/baf.xml"],
+    "extra_resources" : ["guid_plugin.pyc", "misc/__init__.pyc",
+            "misc/guid/__init__.pyc", "misc/guid/guid_system.pyc"]
 }

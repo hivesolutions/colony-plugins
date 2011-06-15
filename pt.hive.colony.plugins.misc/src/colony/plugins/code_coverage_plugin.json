@@ -15,5 +15,8 @@
     "resources" : ["code_coverage_plugin.py", "misc/__init__.py",
             "misc/code_coverage/__init__.py",
             "misc/code_coverage/code_coverage_system.py",
-            "misc/code_coverage/resources/baf.xml"]
+            "misc/code_coverage/resources/baf.xml"],
+    "extra_resources" : ["code_coverage_plugin.pyc", "misc/__init__.pyc",
+            "misc/code_coverage/__init__.pyc",
+            "misc/code_coverage/code_coverage_system.pyc"]
 }

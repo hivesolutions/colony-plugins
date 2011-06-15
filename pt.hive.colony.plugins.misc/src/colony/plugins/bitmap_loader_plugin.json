@@ -15,5 +15,8 @@
     "resources" : ["bitmap_loader_plugin.py", "misc/__init__.py",
             "misc/bitmap_loader/__init__.py",
             "misc/bitmap_loader/bitmap_loader_system.py",
-            "misc/bitmap_loader/resources/baf.xml"]
+            "misc/bitmap_loader/resources/baf.xml"],
+    "extra_resources" : ["bitmap_loader_plugin.pyc", "misc/__init__.pyc",
+            "misc/bitmap_loader/__init__.pyc",
+            "misc/bitmap_loader/bitmap_loader_system.pyc"]
 }

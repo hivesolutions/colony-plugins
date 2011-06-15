@@ -13,5 +13,7 @@
     "dependencies" : [],
     "main_file" : "svn_plugin.py",
     "resources" : ["svn_plugin.py", "misc/__init__.py", "misc/svn/__init__.py",
-            "misc/svn/svn_system.py", "misc/svn/resources/baf.xml"]
+            "misc/svn/svn_system.py", "misc/svn/resources/baf.xml"],
+    "extra_resources" : ["svn_plugin.pyc", "misc/__init__.pyc",
+            "misc/svn/__init__.pyc", "misc/svn/svn_system.pyc"]
 }

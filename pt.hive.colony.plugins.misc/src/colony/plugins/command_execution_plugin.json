@@ -15,5 +15,8 @@
     "resources" : ["command_execution_plugin.py", "misc/__init__.py",
             "misc/command_execution/__init__.py",
             "misc/command_execution/command_execution_system.py",
-            "misc/command_execution/resources/baf.xml"]
+            "misc/command_execution/resources/baf.xml"],
+    "extra_resources" : ["command_execution_plugin.pyc", "misc/__init__.pyc",
+            "misc/command_execution/__init__.pyc",
+            "misc/command_execution/command_execution_system.pyc"]
 }

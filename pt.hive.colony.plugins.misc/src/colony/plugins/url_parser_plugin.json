@@ -16,5 +16,9 @@
             "misc/url_parser/__init__.py",
             "misc/url_parser/url_parser_exceptions.py",
             "misc/url_parser/url_parser_system.py",
-            "misc/url_parser/resources/baf.xml"]
+            "misc/url_parser/resources/baf.xml"],
+    "extra_resources" : ["url_parser_plugin.pyc", "misc/__init__.pyc",
+            "misc/url_parser/__init__.pyc",
+            "misc/url_parser/url_parser_exceptions.pyc",
+            "misc/url_parser/url_parser_system.pyc"]
 }

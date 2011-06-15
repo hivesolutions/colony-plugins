@@ -14,5 +14,7 @@
     "main_file" : "random_plugin.py",
     "resources" : ["random_plugin.py", "misc/__init__.py",
             "misc/random/__init__.py", "misc/random/random_system.py",
-            "misc/random/resources/baf.xml"]
+            "misc/random/resources/baf.xml"],
+    "extra_resources" : ["random_plugin.pyc", "misc/__init__.pyc",
+            "misc/random/__init__.pyc", "misc/random/random_system.pyc"]
 }

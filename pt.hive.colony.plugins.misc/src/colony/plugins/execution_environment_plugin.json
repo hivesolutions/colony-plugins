@@ -15,5 +15,8 @@
     "resources" : ["execution_environment_plugin.py", "misc/__init__.py",
             "misc/execution_environment/__init__.py",
             "misc/execution_environment/execution_environment_system.py",
-            "misc/execution_environment/resources/baf.xml"]
+            "misc/execution_environment/resources/baf.xml"],
+    "extra_resources" : ["execution_environment_plugin.pyc",
+            "misc/__init__.pyc", "misc/execution_environment/__init__.pyc",
+            "misc/execution_environment/execution_environment_system.pyc"]
 }

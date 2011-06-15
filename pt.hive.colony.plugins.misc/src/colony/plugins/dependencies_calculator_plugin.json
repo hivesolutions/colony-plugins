@@ -15,5 +15,8 @@
     "resources" : ["dependencies_calculator_plugin.py", "misc/__init__.py",
             "misc/dependencies_calculator/__init__.py",
             "misc/dependencies_calculator/dependencies_calculator_system.py",
-            "misc/dependencies_calculator/resources/baf.xml"]
+            "misc/dependencies_calculator/resources/baf.xml"],
+    "extra_resources" : ["dependencies_calculator_plugin.pyc",
+            "misc/__init__.pyc", "misc/dependencies_calculator/__init__.pyc",
+            "misc/dependencies_calculator/dependencies_calculator_system.pyc"]
 }

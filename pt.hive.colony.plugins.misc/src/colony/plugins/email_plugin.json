@@ -21,5 +21,8 @@
     "main_file" : "email_plugin.py",
     "resources" : ["email_plugin.py", "misc/__init__.py",
             "misc/email/__init__.py", "misc/email/console_email.py",
-            "misc/email/email_system.py", "misc/email/resources/baf.xml"]
+            "misc/email/email_system.py", "misc/email/resources/baf.xml"],
+    "extra_resources" : ["email_plugin.pyc", "misc/__init__.pyc",
+            "misc/email/__init__.pyc", "misc/email/console_email.pyc",
+            "misc/email/email_system.pyc"]
 }

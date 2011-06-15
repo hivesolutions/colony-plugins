@@ -14,5 +14,7 @@
     "main_file" : "gzip_plugin.py",
     "resources" : ["gzip_plugin.py", "misc/__init__.py",
             "misc/gzip/__init__.py", "misc/gzip/gzip_system.py",
-            "misc/gzip/resources/baf.xml"]
+            "misc/gzip/resources/baf.xml"],
+    "extra_resources" : ["gzip_plugin.pyc", "misc/__init__.pyc",
+            "misc/gzip/__init__.pyc", "misc/gzip/gzip_system.pyc"]
 }

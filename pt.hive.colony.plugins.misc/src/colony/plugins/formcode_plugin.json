@@ -17,5 +17,10 @@
             "misc/formcode/formcode_exceptions.py",
             "misc/formcode/formcode_serializer.py",
             "misc/formcode/formcode_system.py",
-            "misc/formcode/resources/baf.xml"]
+            "misc/formcode/resources/baf.xml"],
+    "extra_resources" : ["formcode_plugin.pyc", "misc/__init__.pyc",
+            "misc/formcode/__init__.pyc",
+            "misc/formcode/formcode_exceptions.pyc",
+            "misc/formcode/formcode_serializer.pyc",
+            "misc/formcode/formcode_system.pyc"]
 }
