@@ -25,5 +25,10 @@
             "descriptor_generator/generator/console_descriptor_generator.py",
             "descriptor_generator/generator/descriptor_generator_system.py",
             "descriptor_generator/generator/resources/baf.xml",
-            "descriptor_generator/generator/resources/templates/plugin_descriptor_template.tpl"]
+            "descriptor_generator/generator/resources/templates/plugin_descriptor_template.tpl"],
+    "extra_resources" : ["descriptor_generator_plugin.pyc",
+            "descriptor_generator/__init__.pyc",
+            "descriptor_generator/generator/__init__.pyc",
+            "descriptor_generator/generator/console_descriptor_generator.pyc",
+            "descriptor_generator/generator/descriptor_generator_system.pyc"]
 }
