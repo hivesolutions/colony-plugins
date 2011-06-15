@@ -21,5 +21,11 @@
             "build_automation_extensions/template_engine/__init__.py",
             "build_automation_extensions/template_engine/template_engine_build_automation_extension_exceptions.py",
             "build_automation_extensions/template_engine/template_engine_build_automation_extension_system.py",
-            "build_automation_extensions/template_engine/resources/baf.xml"]
+            "build_automation_extensions/template_engine/resources/baf.xml"],
+    "extra_resources" : [
+            "template_engine_build_automation_extension_plugin.pyc",
+            "build_automation_extensions/__init__.pyc",
+            "build_automation_extensions/template_engine/__init__.pyc",
+            "build_automation_extensions/template_engine/template_engine_build_automation_extension_exceptions.pyc",
+            "build_automation_extensions/template_engine/template_engine_build_automation_extension_system.pyc"]
 }

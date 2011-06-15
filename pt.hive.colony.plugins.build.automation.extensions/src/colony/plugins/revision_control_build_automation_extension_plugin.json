@@ -26,5 +26,10 @@
             "build_automation_extensions/__init__.py",
             "build_automation_extensions/revision_control/__init__.py",
             "build_automation_extensions/revision_control/revision_control_build_automation_extension_system.py",
-            "build_automation_extensions/revision_control/resources/baf.xml"]
+            "build_automation_extensions/revision_control/resources/baf.xml"],
+    "extra_resources" : [
+            "revision_control_build_automation_extension_plugin.pyc",
+            "build_automation_extensions/__init__.pyc",
+            "build_automation_extensions/revision_control/__init__.pyc",
+            "build_automation_extensions/revision_control/revision_control_build_automation_extension_system.pyc"]
 }

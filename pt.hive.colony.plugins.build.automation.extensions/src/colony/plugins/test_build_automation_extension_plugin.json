@@ -20,5 +20,9 @@
             "build_automation_extensions/__init__.py",
             "build_automation_extensions/test/__init__.py",
             "build_automation_extensions/test/test_build_automation_extension_system.py",
-            "build_automation_extensions/test/resources/baf.xml"]
+            "build_automation_extensions/test/resources/baf.xml"],
+    "extra_resources" : ["test_build_automation_extension_plugin.pyc",
+            "build_automation_extensions/__init__.pyc",
+            "build_automation_extensions/test/__init__.pyc",
+            "build_automation_extensions/test/test_build_automation_extension_system.pyc"]
 }

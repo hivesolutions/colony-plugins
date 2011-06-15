@@ -24,5 +24,11 @@
             "build_automation_extensions/packing/__init__.py",
             "build_automation_extensions/packing/packing_build_automation_extension_exceptions.py",
             "build_automation_extensions/packing/packing_build_automation_extension_system.py",
-            "build_automation_extensions/packing/resources/baf.xml"]
+            "build_automation_extensions/packing/resources/baf.xml"],
+    "extra_resources" : [
+            "packing_build_automation_extension_plugin.pyc",
+            "build_automation_extensions/__init__.pyc",
+            "build_automation_extensions/packing/__init__.pyc",
+            "build_automation_extensions/packing/packing_build_automation_extension_exceptions.pyc",
+            "build_automation_extensions/packing/packing_build_automation_extension_system.pyc"]
 }

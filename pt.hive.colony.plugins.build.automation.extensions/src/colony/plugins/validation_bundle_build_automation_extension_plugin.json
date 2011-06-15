@@ -20,5 +20,10 @@
             "build_automation_extensions/__init__.py",
             "build_automation_extensions/validation_bundle/__init__.py",
             "build_automation_extensions/validation_bundle/validation_bundle_build_automation_extension_system.py",
-            "build_automation_extensions/validation_bundle/resources/baf.xml"]
+            "build_automation_extensions/validation_bundle/resources/baf.xml"],
+    "extra_resources" : [
+            "validation_bundle_build_automation_extension_plugin.pyc",
+            "build_automation_extensions/__init__.pyc",
+            "build_automation_extensions/validation_bundle/__init__.pyc",
+            "build_automation_extensions/validation_bundle/validation_bundle_build_automation_extension_system.pyc"]
 }

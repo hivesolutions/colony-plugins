@@ -17,5 +17,10 @@
             "build_automation_extensions/__init__.py",
             "build_automation_extensions/properties/__init__.py",
             "build_automation_extensions/properties/properties_build_automation_extension_system.py",
-            "build_automation_extensions/properties/resources/baf.xml"]
+            "build_automation_extensions/properties/resources/baf.xml"],
+    "extra_resources" : [
+            "properties_build_automation_extension_plugin.pyc",
+            "build_automation_extensions/__init__.pyc",
+            "build_automation_extensions/properties/__init__.pyc",
+            "build_automation_extensions/properties/properties_build_automation_extension_system.pyc"]
 }

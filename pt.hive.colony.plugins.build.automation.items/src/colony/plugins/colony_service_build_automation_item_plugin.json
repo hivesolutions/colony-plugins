@@ -19,5 +19,10 @@
             "build_automation_items/colony_service/colony_service_build_automation_item_system.py",
             "build_automation_items/colony_service/resources/baf.xml",
             "build_automation_items/colony_service/resources/control_files/postinst.sh",
-            "build_automation_items/colony_service/resources/control_files/prerm.sh"]
+            "build_automation_items/colony_service/resources/control_files/prerm.sh"],
+    "extra_resources" : [
+            "colony_service_build_automation_item_plugin.pyc",
+            "build_automation_items/__init__.pyc",
+            "build_automation_items/colony_service/__init__.pyc",
+            "build_automation_items/colony_service/colony_service_build_automation_item_system.pyc"]
 }

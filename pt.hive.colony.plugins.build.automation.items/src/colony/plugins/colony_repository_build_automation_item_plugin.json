@@ -17,5 +17,10 @@
             "build_automation_items/__init__.py",
             "build_automation_items/colony_repository/__init__.py",
             "build_automation_items/colony_repository/colony_repository_build_automation_item_system.py",
-            "build_automation_items/colony_repository/resources/baf.xml"]
+            "build_automation_items/colony_repository/resources/baf.xml"],
+    "extra_resources" : [
+            "colony_repository_build_automation_item_plugin.pyc",
+            "build_automation_items/__init__.pyc",
+            "build_automation_items/colony_repository/__init__.pyc",
+            "build_automation_items/colony_repository/colony_repository_build_automation_item_system.pyc"]
 }

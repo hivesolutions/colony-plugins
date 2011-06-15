@@ -20,5 +20,10 @@
             "build_automation_extensions/__init__.py",
             "build_automation_extensions/continuous_integration/__init__.py",
             "build_automation_extensions/continuous_integration/continuous_integration_build_automation_extension_system.py",
-            "build_automation_extensions/continuous_integration/resources/baf.xml"]
+            "build_automation_extensions/continuous_integration/resources/baf.xml"],
+    "extra_resources" : [
+            "continuous_integration_build_automation_extension_plugin.pyc",
+            "build_automation_extensions/__init__.pyc",
+            "build_automation_extensions/continuous_integration/__init__.pyc",
+            "build_automation_extensions/continuous_integration/continuous_integration_build_automation_extension_system.pyc"]
 }

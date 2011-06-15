@@ -21,5 +21,11 @@
             "build_automation_extensions/command_execution/__init__.py",
             "build_automation_extensions/command_execution/command_execution_build_automation_extension_exceptions.py",
             "build_automation_extensions/command_execution/command_execution_build_automation_extension_system.py",
-            "build_automation_extensions/command_execution/resources/baf.xml"]
+            "build_automation_extensions/command_execution/resources/baf.xml"],
+    "extra_resources" : [
+            "command_execution_build_automation_extension_plugin.pyc",
+            "build_automation_extensions/__init__.pyc",
+            "build_automation_extensions/command_execution/__init__.pyc",
+            "build_automation_extensions/command_execution/command_execution_build_automation_extension_exceptions.pyc",
+            "build_automation_extensions/command_execution/command_execution_build_automation_extension_system.pyc"]
 }

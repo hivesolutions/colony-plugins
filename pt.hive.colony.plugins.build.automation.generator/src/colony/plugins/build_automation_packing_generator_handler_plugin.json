@@ -22,5 +22,10 @@
             "build_automation_generator/packing_generator_handler/__init__.py",
             "build_automation_generator/packing_generator_handler/build_automation_packing_generator_handler_system.py",
             "build_automation_generator/packing_generator_handler/resources/baf.xml",
-            "build_automation_generator/packing_generator_handler/resources/baf.xml.tpl"]
+            "build_automation_generator/packing_generator_handler/resources/baf.xml.tpl"],
+    "extra_resources" : [
+            "build_automation_packing_generator_handler_plugin.pyc",
+            "build_automation_generator/__init__.pyc",
+            "build_automation_generator/packing_generator_handler/__init__.pyc",
+            "build_automation_generator/packing_generator_handler/build_automation_packing_generator_handler_system.pyc"]
 }
