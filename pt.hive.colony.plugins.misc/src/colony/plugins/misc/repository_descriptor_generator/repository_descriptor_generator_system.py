@@ -316,7 +316,7 @@ class RepositoryDescriptorGenerator:
                 repository_plugin_plugin_hash_digest_key_value_node = xml_document.createTextNode(plugin_hash_digest_key)
                 repository_plugin_plugin_hash_digest_key_node.appendChild(repository_plugin_plugin_hash_digest_key_value_node)
 
-                repository_plugin_plugin_hash_digest_value_node = xml_document.createTextNode("value")
+                repository_plugin_plugin_hash_digest_value_node = xml_document.createElement("value")
                 repository_plugin_plugin_hash_digest_item_node.appendChild(repository_plugin_plugin_hash_digest_value_node)
 
                 repository_plugin_plugin_hash_digest_value_value_node = xml_document.createTextNode(plugin_hash_digest_value)
