@@ -37,7 +37,10 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
+import os
+
 import colony.libs.map_util
+import colony.libs.crypt_util
 
 import packing_build_automation_extension_exceptions
 
@@ -92,6 +95,9 @@ VERSION_VALUE = "version"
 DEPENDENCIES_VALUE = "dependencies"
 """ The dependencies value """
 
+HASH_DIGEST_VALUE = "hash_digest"
+""" The hash digest value """
+
 PACKED_BUNDLES_VALUE = "packed_bundles"
 """ The packed bundles value """
 
@@ -100,6 +106,20 @@ PACKED_PLUGINS_VALUE = "packed_plugins"
 
 PACKED_LIBRARIES_VALUE = "packed_libraries"
 """ The packed libraries value """
+
+PACKAGE_PACKED_KEY_MAP = {
+    BUNDLE_VALUE : PACKED_BUNDLES_VALUE,
+    PLUGIN_VALUE : PACKED_PLUGINS_VALUE,
+    LIBRARY_VALUE : PACKED_LIBRARIES_VALUE
+}
+""" The map associating the package file with the packed key """
+
+PACKAGE_FILE_EXTENSION_MAP = {
+    BUNDLE_VALUE : ".cbx",
+    PLUGIN_VALUE : ".cpx",
+    LIBRARY_VALUE : ".clx"
+}
+""" The map associating the package file with the extension """
 
 class PackingBuildAutomationExtension:
     """
@@ -202,24 +222,18 @@ class PackingBuildAutomationExtension:
         # prints an info message
         logger.info("Packing files using specification file %s into %s" % (specification_file, target_path))
 
-        # packs the directory
+        # packs the files into the directory
         main_packing_manager_plugin.pack_files(file_paths_list, properties, COLONY_VALUE)
 
         # updates the build automation structure with the new packing
-        self._update_build_automation_structure(type, specification_file, build_automation_structure_runtime)
+        self._update_build_automation_structure(type, specification_file, target_path, build_automation_structure_runtime)
 
-    def _update_build_automation_structure(self, type, specification_file, build_automation_structure_runtime):
+    def _update_build_automation_structure(self, type, specification_file, target_path, build_automation_structure_runtime):
         # loads the specification from the specification file
         specification = self._load_specification(specification_file)
 
-        # in case the packing type is bundle
-        if type == BUNDLE_VALUE:
-            packed_items_key = PACKED_BUNDLES_VALUE
-        # in case the packing type is plugin
-        elif type == PLUGIN_VALUE:
-            packed_items_key = PACKED_PLUGINS_VALUE
-        elif type == LIBRARY_VALUE:
-            packed_items_key = PACKED_LIBRARIES_VALUE
+        # retrieves the packed items key frm the type
+        packed_items_key = PACKAGE_PACKED_KEY_MAP.get(type, None)
 
         # in case the packed items key does not exist in the build automation
         # structure runtime properties a packed items list must be created
@@ -236,12 +250,23 @@ class PackingBuildAutomationExtension:
         specification_version = specification[VERSION_VALUE]
         specification_dependencies = specification[DEPENDENCIES_VALUE]
 
-        # creates the packed item from the specification id, version
-        # and dependencies
+        # retrieves the package file extension for the type
+        package_file_extension = PACKAGE_FILE_EXTENSION_MAP.get(type, None)
+
+        # creates the package file path from the concatenation of the id, version and extension
+        package_file_name = specification_id + "_" + specification_version + package_file_extension
+        package_file_path = os.path.join(target_path, package_file_name)
+
+        # generates the hash digest map for the package file
+        hash_digest_map = colony.libs.crypt_util.generate_hash_digest_map(package_file_path)
+
+        # creates the packed item from the specification id, version,
+        # dependencies and hash digest
         packed_item = {
             ID_VALUE : specification_id,
             VERSION_VALUE : specification_version,
-            DEPENDENCIES_VALUE : specification_dependencies
+            DEPENDENCIES_VALUE : specification_dependencies,
+            HASH_DIGEST_VALUE : hash_digest_map
         }
 
         # checks if the packed item already exists in the
@@ -249,7 +274,7 @@ class PackingBuildAutomationExtension:
         packed_item_exists = packed_item in packed_items_list
 
         # adds the packed item to the packed items list
-        # in case it does not already exists
+        # in case it does not already exists (avoids duplicates)
         not packed_item_exists and packed_items_list.append(packed_item)
 
     def _load_specification(self, specification_file_path):
