@@ -210,13 +210,13 @@ class RepositoryDescriptorGenerator:
                 repository_bundle_bundle_version_value_node = xml_document.createTextNode(bundle_dependency_version)
                 repository_bundle_bundle_version_node.appendChild(repository_bundle_bundle_version_value_node)
 
-            repository_bundle_hash_digest_node = xml_document.createElement("hash_digest")
+            repository_bundle_hash_digest_node = xml_document.createElement("hash_digest_items")
             repository_bundle_node.appendChild(repository_bundle_hash_digest_node)
 
             # iterates over all the bundle hash digest items to
             # write the hash digest item values
             for bundle_hash_digest_key, bundle_hash_digest_value in bundle_hash_digest_items:
-                repository_bundle_bundle_hash_digest_item_node = xml_document.createElement("hash_digest_item")
+                repository_bundle_bundle_hash_digest_item_node = xml_document.createElement("hash_digest")
                 repository_bundle_hash_digest_node.appendChild(repository_bundle_bundle_hash_digest_item_node)
 
                 repository_bundle_bundle_hash_digest_key_node = xml_document.createElement("key")
@@ -277,24 +277,6 @@ class RepositoryDescriptorGenerator:
             repository_plugin_version_value_node = xml_document.createTextNode(plugin_version)
             repository_plugin_version_node.appendChild(repository_plugin_version_value_node)
 
-            repository_plugin_main_module_node = xml_document.createElement("main_module")
-            repository_plugin_node.appendChild(repository_plugin_main_module_node)
-
-            repository_plugin_main_module_value_node = xml_document.createTextNode("none")
-            repository_plugin_main_module_node.appendChild(repository_plugin_main_module_value_node)
-
-            repository_plugin_main_class_node = xml_document.createElement("main_class")
-            repository_plugin_node.appendChild(repository_plugin_main_class_node)
-
-            repository_plugin_main_class_value_node = xml_document.createTextNode("none")
-            repository_plugin_main_class_node.appendChild(repository_plugin_main_class_value_node)
-
-            repository_plugin_file_name_node = xml_document.createElement("file_name")
-            repository_plugin_node.appendChild(repository_plugin_file_name_node)
-
-            repository_plugin_file_name_value_node = xml_document.createTextNode("none")
-            repository_plugin_file_name_node.appendChild(repository_plugin_file_name_value_node)
-
             repository_plugin_contents_file_node = xml_document.createElement("contents_file")
             repository_plugin_node.appendChild(repository_plugin_contents_file_node)
 
@@ -326,13 +308,13 @@ class RepositoryDescriptorGenerator:
                 repository_plugin_plugin_version_value_node = xml_document.createTextNode(plugin_dependency_version)
                 repository_plugin_plugin_version_node.appendChild(repository_plugin_plugin_version_value_node)
 
-            repository_plugin_hash_digest_node = xml_document.createElement("hash_digest")
+            repository_plugin_hash_digest_node = xml_document.createElement("hash_digest_items")
             repository_plugin_node.appendChild(repository_plugin_hash_digest_node)
 
             # iterates over all the plugin hash digest items to
             # write the hash digest item values
             for plugin_hash_digest_key, plugin_hash_digest_value in plugin_hash_digest_items:
-                repository_plugin_plugin_hash_digest_item_node = xml_document.createElement("hash_digest_item")
+                repository_plugin_plugin_hash_digest_item_node = xml_document.createElement("hash_digest")
                 repository_plugin_hash_digest_node.appendChild(repository_plugin_plugin_hash_digest_item_node)
 
                 repository_plugin_plugin_hash_digest_key_node = xml_document.createElement("key")
