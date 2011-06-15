@@ -614,8 +614,11 @@ class Scheduler:
             # retrieves the plugin method
             plugin_method = getattr(plugin, method)
 
+            # creates the "empty" startup task reference
+            startup_task_reference = SchedulerTask(METHOD_CALL_TYPE)
+
             # creates the scheduler item from the plugin method and the arguments
-            scheduler_item = self.create_scheduler_item(plugin_method, arguments, current_time, recursion_list, startup_task)
+            scheduler_item = self.create_scheduler_item(plugin_method, arguments, current_time, recursion_list, startup_task_reference)
 
             # adds the scheduler item
             self.add_scheduler_item(scheduler_item)
