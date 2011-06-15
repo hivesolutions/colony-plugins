@@ -218,8 +218,8 @@ class Specification:
     def set_file_buffer(self, file_buffer):
         self.file_buffer = file_buffer
 
-    def get_property(self, property_name):
-        return self.properties.get(property_name, None)
+    def get_property(self, property_name, property_value_default = None):
+        return self.properties.get(property_name, property_value_default)
 
     def set_property(self, property_name, property_value):
         self.properties[property_name] = property_value
