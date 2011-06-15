@@ -11,7 +11,7 @@
     "dependencies" : [{
                 "id" : "pt.hive.colony.bundles.encryption",
                 "version" : "1.0.0"
-            },{
+            }, {
                 "id" : "pt.hive.colony.bundles.random",
                 "version" : "1.0.0"
             }, {

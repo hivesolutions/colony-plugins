@@ -129,5 +129,8 @@
             "base_bundles/bundles/specifications/web_mvc_communication_push_apple_bundle.json",
             "base_bundles/bundles/specifications/web_mvc_encryption_bundle.json",
             "base_bundles/bundles/specifications/web_mvc_wiki_bundle.json",
-            "base_bundles/bundles/specifications/yadis_bundle.json"]
+            "base_bundles/bundles/specifications/yadis_bundle.json"],
+    "extra_resources" : ["base_bundles_plugin.pyc",
+            "base_bundles/__init__.pyc", "base_bundles/bundles/__init__.pyc",
+            "base_bundles/bundles/base_bundles_system.pyc"]
 }
