@@ -62,6 +62,9 @@ WEB_MVC_MANAGER_PAGE_ITEM_REPOSITORY_RESOURCES_PATH = "web_mvc_manager_page_item
 PATTERN_NAMES_VALUE = "pattern_names"
 """ The pattern names value """
 
+INSTALLATION_DELAY = 1.0
+""" The delay induce uppon installation """
+
 # imports the web mvc utils
 web_mvc_utils = colony.libs.importer_util.__importer__(WEB_MVC_UTILS_VALUE)
 
@@ -450,7 +453,8 @@ class MainController:
         return_value = system_updater_plugin.install_plugin(plugin_id, plugin_version)
 
         # sleeps for a second to give time for the autoloader to update
-        time.sleep(1.0)
+        # this delay is induced on purpose
+        time.sleep(INSTALLATION_DELAY)
 
         # in case the return value is not valid
         if not return_value:
