@@ -144,6 +144,10 @@ class RepositoryDescriptorGenerator:
             bundle_id = bundle["id"]
             bundle_version = bundle["version"]
             bundle_dependencies = bundle["dependencies"]
+            bundle_hash_digest = bundle["hash_digest"]
+
+            # retrieves the bundle hash digest items
+            bundle_hash_digest_items = bundle_hash_digest.items()
 
             # creates the bundle contents file
             bundle_contents_file = bundle_id + "_" + bundle_version + ".cbx"
@@ -205,6 +209,27 @@ class RepositoryDescriptorGenerator:
 
                 repository_bundle_bundle_version_value_node = xml_document.createTextNode(bundle_dependency_version)
                 repository_bundle_bundle_version_node.appendChild(repository_bundle_bundle_version_value_node)
+
+            repository_bundle_hash_digest_node = xml_document.createElement("hash_digest")
+            repository_bundle_node.appendChild(repository_bundle_hash_digest_node)
+
+            # iterates over all the bundle hash digest items to
+            # write the hash digest item values
+            for bundle_hash_digest_key, bundle_hash_digest_value in bundle_hash_digest_items:
+                repository_bundle_bundle_hash_digest_item_node = xml_document.createElement("hash_digest_item")
+                repository_bundle_hash_digest_node.appendChild(repository_bundle_bundle_hash_digest_item_node)
+
+                repository_bundle_bundle_hash_digest_key_node = xml_document.createElement("key")
+                repository_bundle_bundle_hash_digest_item_node.appendChild(repository_bundle_bundle_hash_digest_key_node)
+
+                repository_bundle_bundle_hash_digest_key_value_node = xml_document.createTextNode(bundle_hash_digest_key)
+                repository_bundle_bundle_hash_digest_key_node.appendChild(repository_bundle_bundle_hash_digest_key_value_node)
+
+                repository_bundle_bundle_hash_digest_value_node = xml_document.createElement("value")
+                repository_bundle_bundle_hash_digest_item_node.appendChild(repository_bundle_bundle_hash_digest_value_node)
+
+                repository_bundle_bundle_hash_digest_value_value_node = xml_document.createTextNode(bundle_hash_digest_value)
+                repository_bundle_bundle_hash_digest_value_node.appendChild(repository_bundle_bundle_hash_digest_value_value_node)
 
         # creates the repository plugins element
         repository_plugins_node = xml_document.createElement("plugins")
