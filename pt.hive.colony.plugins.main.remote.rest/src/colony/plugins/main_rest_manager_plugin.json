@@ -24,5 +24,10 @@
             "main_remote_rest/manager/__init__.py",
             "main_remote_rest/manager/main_rest_manager_exceptions.py",
             "main_remote_rest/manager/main_rest_manager_system.py",
-            "main_remote_rest/manager/resources/baf.xml"]
+            "main_remote_rest/manager/resources/baf.xml"],
+    "extra_resources" : ["main_rest_manager_plugin.pyc",
+            "main_remote_rest/__init__.pyc",
+            "main_remote_rest/manager/__init__.pyc",
+            "main_remote_rest/manager/main_rest_manager_exceptions.pyc",
+            "main_remote_rest/manager/main_rest_manager_system.pyc"]
 }

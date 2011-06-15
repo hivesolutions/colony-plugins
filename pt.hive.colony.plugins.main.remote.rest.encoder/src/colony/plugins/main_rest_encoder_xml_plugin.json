@@ -16,5 +16,9 @@
             "main_remote_rest_encoder/__init__.py",
             "main_remote_rest_encoder/xml/__init__.py",
             "main_remote_rest_encoder/xml/main_rest_encoder_xml_system.py",
-            "main_remote_rest_encoder/xml/resources/baf.xml"]
+            "main_remote_rest_encoder/xml/resources/baf.xml"],
+    "extra_resources" : ["main_rest_encoder_xml_plugin.pyc",
+            "main_remote_rest_encoder/__init__.pyc",
+            "main_remote_rest_encoder/xml/__init__.pyc",
+            "main_remote_rest_encoder/xml/main_rest_encoder_xml_system.pyc"]
 }

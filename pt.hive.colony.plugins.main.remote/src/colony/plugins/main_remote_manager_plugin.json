@@ -15,5 +15,8 @@
     "resources" : ["main_remote_manager_plugin.py", "main_remote/__init__.py",
             "main_remote/manager/__init__.py",
             "main_remote/manager/main_remote_manager_system.py",
-            "main_remote/manager/resources/baf.xml"]
+            "main_remote/manager/resources/baf.xml"],
+    "extra_resources" : ["main_remote_manager_plugin.pyc",
+            "main_remote/__init__.pyc", "main_remote/manager/__init__.pyc",
+            "main_remote/manager/main_remote_manager_system.pyc"]
 }

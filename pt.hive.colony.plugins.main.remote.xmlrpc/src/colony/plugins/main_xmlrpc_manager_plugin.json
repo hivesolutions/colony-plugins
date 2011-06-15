@@ -18,5 +18,10 @@
             "main_remote_xmlrpc/manager/__init__.py",
             "main_remote_xmlrpc/manager/main_xmlrpc_manager_exceptions.py",
             "main_remote_xmlrpc/manager/main_xmlrpc_manager_system.py",
-            "main_remote_xmlrpc/manager/resources/baf.xml"]
+            "main_remote_xmlrpc/manager/resources/baf.xml"],
+    "extra_resources" : ["main_xmlrpc_manager_plugin.pyc",
+            "main_remote_xmlrpc/__init__.pyc",
+            "main_remote_xmlrpc/manager/__init__.pyc",
+            "main_remote_xmlrpc/manager/main_xmlrpc_manager_exceptions.pyc",
+            "main_remote_xmlrpc/manager/main_xmlrpc_manager_system.pyc"]
 }

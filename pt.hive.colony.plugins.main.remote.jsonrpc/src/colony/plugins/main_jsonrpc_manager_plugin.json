@@ -21,5 +21,10 @@
             "main_remote_jsonrpc/manager/__init__.py",
             "main_remote_jsonrpc/manager/main_jsonrpc_manager_exceptions.py",
             "main_remote_jsonrpc/manager/main_jsonrpc_manager_system.py",
-            "main_remote_jsonrpc/manager/resources/baf.xml"]
+            "main_remote_jsonrpc/manager/resources/baf.xml"],
+    "extra_resources" : ["main_jsonrpc_manager_plugin.pyc",
+            "main_remote_jsonrpc/__init__.pyc",
+            "main_remote_jsonrpc/manager/__init__.pyc",
+            "main_remote_jsonrpc/manager/main_jsonrpc_manager_exceptions.pyc",
+            "main_remote_jsonrpc/manager/main_jsonrpc_manager_system.pyc"]
 }

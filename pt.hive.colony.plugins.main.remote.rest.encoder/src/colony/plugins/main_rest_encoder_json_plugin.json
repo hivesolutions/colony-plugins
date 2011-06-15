@@ -19,5 +19,9 @@
             "main_remote_rest_encoder/__init__.py",
             "main_remote_rest_encoder/json/__init__.py",
             "main_remote_rest_encoder/json/main_rest_encoder_json_system.py",
-            "main_remote_rest_encoder/json/resources/baf.xml"]
+            "main_remote_rest_encoder/json/resources/baf.xml"],
+    "extra_resources" : ["main_rest_encoder_json_plugin.pyc",
+            "main_remote_rest_encoder/__init__.pyc",
+            "main_remote_rest_encoder/json/__init__.pyc",
+            "main_remote_rest_encoder/json/main_rest_encoder_json_system.pyc"]
 }

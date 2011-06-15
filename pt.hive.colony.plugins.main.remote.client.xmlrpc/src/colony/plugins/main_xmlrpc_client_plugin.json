@@ -17,5 +17,9 @@
             "main_remote_client_xmlrpc/__init__.py",
             "main_remote_client_xmlrpc/client/__init__.py",
             "main_remote_client_xmlrpc/client/main_xmlrpc_client_system.py",
-            "main_remote_client_xmlrpc/client/resources/baf.xml"]
+            "main_remote_client_xmlrpc/client/resources/baf.xml"],
+    "extra_resources" : ["main_xmlrpc_client_plugin.pyc",
+            "main_remote_client_xmlrpc/__init__.pyc",
+            "main_remote_client_xmlrpc/client/__init__.pyc",
+            "main_remote_client_xmlrpc/client/main_xmlrpc_client_system.pyc"]
 }

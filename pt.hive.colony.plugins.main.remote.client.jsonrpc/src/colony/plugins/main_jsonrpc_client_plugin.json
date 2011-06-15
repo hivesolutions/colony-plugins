@@ -17,5 +17,9 @@
             "main_remote_client_jsonrpc/__init__.py",
             "main_remote_client_jsonrpc/client/__init__.py",
             "main_remote_client_jsonrpc/client/main_jsonrpc_client_system.py",
-            "main_remote_client_jsonrpc/client/resources/baf.xml"]
+            "main_remote_client_jsonrpc/client/resources/baf.xml"],
+    "extra_resources" : ["main_jsonrpc_client_plugin.pyc",
+            "main_remote_client_jsonrpc/__init__.pyc",
+            "main_remote_client_jsonrpc/client/__init__.pyc",
+            "main_remote_client_jsonrpc/client/main_jsonrpc_client_system.pyc"]
 }

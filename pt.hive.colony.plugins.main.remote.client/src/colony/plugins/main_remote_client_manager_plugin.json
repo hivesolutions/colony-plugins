@@ -16,5 +16,9 @@
             "main_remote_client/__init__.py",
             "main_remote_client/manager/__init__.py",
             "main_remote_client/manager/main_remote_client_manager_system.py",
-            "main_remote_client/manager/resources/baf.xml"]
+            "main_remote_client/manager/resources/baf.xml"],
+    "extra_resources" : ["main_remote_client_manager_plugin.pyc",
+            "main_remote_client/__init__.pyc",
+            "main_remote_client/manager/__init__.pyc",
+            "main_remote_client/manager/main_remote_client_manager_system.pyc"]
 }
