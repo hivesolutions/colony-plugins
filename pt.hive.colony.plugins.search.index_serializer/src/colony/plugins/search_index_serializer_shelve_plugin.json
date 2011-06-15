@@ -18,5 +18,11 @@
             "search_index_serializer/shelve/__init__.py",
             "search_index_serializer/shelve/search_index_serializer_shelve_exceptions.py",
             "search_index_serializer/shelve/search_index_serializer_shelve_system.py",
-            "search_index_serializer/shelve/resources/baf.xml"]
+            "search_index_serializer/shelve/resources/baf.xml"],
+    "extra_resources" : [
+            "search_index_serializer_shelve_plugin.pyc",
+            "search_index_serializer/__init__.pyc",
+            "search_index_serializer/shelve/__init__.pyc",
+            "search_index_serializer/shelve/search_index_serializer_shelve_exceptions.pyc",
+            "search_index_serializer/shelve/search_index_serializer_shelve_system.pyc"]
 }

@@ -18,5 +18,11 @@
             "search_index_persistence/index_persistence/__init__.py",
             "search_index_persistence/index_persistence/search_index_persistence_exceptions.py",
             "search_index_persistence/index_persistence/search_index_persistence_system.py",
-            "search_index_persistence/index_persistence/resources/baf.xml"]
+            "search_index_persistence/index_persistence/resources/baf.xml"],
+    "extra_resources" : [
+            "search_index_persistence_plugin.pyc",
+            "search_index_persistence/__init__.pyc",
+            "search_index_persistence/index_persistence/__init__.pyc",
+            "search_index_persistence/index_persistence/search_index_persistence_exceptions.pyc",
+            "search_index_persistence/index_persistence/search_index_persistence_system.pyc"]
 }

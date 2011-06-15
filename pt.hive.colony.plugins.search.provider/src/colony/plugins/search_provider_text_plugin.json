@@ -16,5 +16,10 @@
             "search_provider/__init__.py", "search_provider/text/__init__.py",
             "search_provider/text/search_provider_text_exceptions.py",
             "search_provider/text/search_provider_text_system.py",
-            "search_provider/text/resources/baf.xml"]
+            "search_provider/text/resources/baf.xml"],
+    "extra_resources" : ["search_provider_text_plugin.pyc",
+            "search_provider/__init__.pyc",
+            "search_provider/text/__init__.pyc",
+            "search_provider/text/search_provider_text_exceptions.pyc",
+            "search_provider/text/search_provider_text_system.pyc"]
 }

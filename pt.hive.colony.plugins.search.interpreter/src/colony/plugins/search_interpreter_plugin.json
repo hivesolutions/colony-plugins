@@ -16,5 +16,9 @@
             "search_interpreter/__init__.py",
             "search_interpreter/interpreter/__init__.py",
             "search_interpreter/interpreter/search_interpreter_system.py",
-            "search_interpreter/interpreter/resources/baf.xml"]
+            "search_interpreter/interpreter/resources/baf.xml"],
+    "extra_resources" : ["search_interpreter_plugin.pyc",
+            "search_interpreter/__init__.pyc",
+            "search_interpreter/interpreter/__init__.pyc",
+            "search_interpreter/interpreter/search_interpreter_system.pyc"]
 }

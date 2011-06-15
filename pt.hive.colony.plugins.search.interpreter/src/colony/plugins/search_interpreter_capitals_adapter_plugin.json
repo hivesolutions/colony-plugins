@@ -17,5 +17,10 @@
             "search_interpreter/__init__.py",
             "search_interpreter/capitals_adapter/__init__.py",
             "search_interpreter/capitals_adapter/search_interpreter_capitals_adapter_system.py",
-            "search_interpreter/capitals_adapter/resources/baf.xml"]
+            "search_interpreter/capitals_adapter/resources/baf.xml"],
+    "extra_resources" : [
+            "search_interpreter_capitals_adapter_plugin.pyc",
+            "search_interpreter/__init__.pyc",
+            "search_interpreter/capitals_adapter/__init__.pyc",
+            "search_interpreter/capitals_adapter/search_interpreter_capitals_adapter_system.pyc"]
 }

@@ -23,5 +23,9 @@
             "search_remote_service/__init__.py",
             "search_remote_service/remote_service/__init__.py",
             "search_remote_service/remote_service/search_remote_service_system.py",
-            "search_remote_service/remote_service/resources/baf.xml"]
+            "search_remote_service/remote_service/resources/baf.xml"],
+    "extra_resources" : ["search_remote_service_plugin.pyc",
+            "search_remote_service/__init__.pyc",
+            "search_remote_service/remote_service/__init__.pyc",
+            "search_remote_service/remote_service/search_remote_service_system.pyc"]
 }

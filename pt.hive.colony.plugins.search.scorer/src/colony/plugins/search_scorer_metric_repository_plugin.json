@@ -19,5 +19,11 @@
             "search_scorer/metric_repository/__init__.py",
             "search_scorer/metric_repository/search_scorer_metric_repository_exceptions.py",
             "search_scorer/metric_repository/search_scorer_metric_repository_system.py",
-            "search_scorer/metric_repository/resources/baf.xml"]
+            "search_scorer/metric_repository/resources/baf.xml"],
+    "extra_resources" : [
+            "search_scorer_metric_repository_plugin.pyc",
+            "search_scorer/__init__.pyc",
+            "search_scorer/metric_repository/__init__.pyc",
+            "search_scorer/metric_repository/search_scorer_metric_repository_exceptions.pyc",
+            "search_scorer/metric_repository/search_scorer_metric_repository_system.pyc"]
 }

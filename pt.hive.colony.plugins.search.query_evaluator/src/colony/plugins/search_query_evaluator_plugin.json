@@ -18,5 +18,11 @@
             "search_query_evaluator/query_evaluator/__init__.py",
             "search_query_evaluator/query_evaluator/search_query_evaluator_exceptions.py",
             "search_query_evaluator/query_evaluator/search_query_evaluator_system.py",
-            "search_query_evaluator/query_evaluator/resources/baf.xml"]
+            "search_query_evaluator/query_evaluator/resources/baf.xml"],
+    "extra_resources" : [
+            "search_query_evaluator_plugin.pyc",
+            "search_query_evaluator/__init__.pyc",
+            "search_query_evaluator/query_evaluator/__init__.pyc",
+            "search_query_evaluator/query_evaluator/search_query_evaluator_exceptions.pyc",
+            "search_query_evaluator/query_evaluator/search_query_evaluator_system.pyc"]
 }

@@ -19,5 +19,9 @@
             "search_sorter/sorter/__init__.py",
             "search_sorter/sorter/search_sorter_exceptions.py",
             "search_sorter/sorter/search_sorter_system.py",
-            "search_sorter/sorter/resources/baf.xml"]
+            "search_sorter/sorter/resources/baf.xml"],
+    "extra_resources" : ["search_sorter_plugin.pyc",
+            "search_sorter/__init__.pyc", "search_sorter/sorter/__init__.pyc",
+            "search_sorter/sorter/search_sorter_exceptions.pyc",
+            "search_sorter/sorter/search_sorter_system.pyc"]
 }

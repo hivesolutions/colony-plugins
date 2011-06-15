@@ -19,5 +19,11 @@
             "search_scorer/function_repository/__init__.py",
             "search_scorer/function_repository/search_scorer_function_repository_exceptions.py",
             "search_scorer/function_repository/search_scorer_function_repository_system.py",
-            "search_scorer/function_repository/resources/baf.xml"]
+            "search_scorer/function_repository/resources/baf.xml"],
+    "extra_resources" : [
+            "search_scorer_function_repository_plugin.pyc",
+            "search_scorer/__init__.pyc",
+            "search_scorer/function_repository/__init__.pyc",
+            "search_scorer/function_repository/search_scorer_function_repository_exceptions.pyc",
+            "search_scorer/function_repository/search_scorer_function_repository_system.pyc"]
 }

@@ -19,5 +19,11 @@
             "search_index_persistence/file_system_adapter/__init__.py",
             "search_index_persistence/file_system_adapter/search_index_persistence_file_system_adapter_exceptions.py",
             "search_index_persistence/file_system_adapter/search_index_persistence_file_system_adapter_system.py",
-            "search_index_persistence/file_system_adapter/resources/baf.xml"]
+            "search_index_persistence/file_system_adapter/resources/baf.xml"],
+    "extra_resources" : [
+            "search_index_persistence_file_system_adapter_plugin.pyc",
+            "search_index_persistence/__init__.pyc",
+            "search_index_persistence/file_system_adapter/__init__.pyc",
+            "search_index_persistence/file_system_adapter/search_index_persistence_file_system_adapter_exceptions.pyc",
+            "search_index_persistence/file_system_adapter/search_index_persistence_file_system_adapter_system.pyc"]
 }

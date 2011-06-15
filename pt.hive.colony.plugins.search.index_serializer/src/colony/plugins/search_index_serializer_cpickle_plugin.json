@@ -18,5 +18,11 @@
             "search_index_serializer/cpickle/__init__.py",
             "search_index_serializer/cpickle/search_index_serializer_cpickle_exceptions.py",
             "search_index_serializer/cpickle/search_index_serializer_cpickle_system.py",
-            "search_index_serializer/cpickle/resources/baf.xml"]
+            "search_index_serializer/cpickle/resources/baf.xml"],
+    "extra_resources" : [
+            "search_index_serializer_cpickle_plugin.pyc",
+            "search_index_serializer/__init__.pyc",
+            "search_index_serializer/cpickle/__init__.pyc",
+            "search_index_serializer/cpickle/search_index_serializer_cpickle_exceptions.pyc",
+            "search_index_serializer/cpickle/search_index_serializer_cpickle_system.pyc"]
 }

@@ -20,5 +20,13 @@
             "search_query_interpreter/query_interpreter/search_query_interpreter_lexer.py",
             "search_query_interpreter/query_interpreter/search_query_interpreter_parser.py",
             "search_query_interpreter/query_interpreter/search_query_interpreter_system.py",
-            "search_query_interpreter/query_interpreter/resources/baf.xml"]
+            "search_query_interpreter/query_interpreter/resources/baf.xml"],
+    "extra_resources" : [
+            "search_query_interpreter_plugin.pyc",
+            "search_query_interpreter/__init__.pyc",
+            "search_query_interpreter/query_interpreter/__init__.pyc",
+            "search_query_interpreter/query_interpreter/search_query_interpreter_ast.pyc",
+            "search_query_interpreter/query_interpreter/search_query_interpreter_lexer.pyc",
+            "search_query_interpreter/query_interpreter/search_query_interpreter_parser.pyc",
+            "search_query_interpreter/query_interpreter/search_query_interpreter_system.pyc"]
 }

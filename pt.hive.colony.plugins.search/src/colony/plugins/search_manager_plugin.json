@@ -46,5 +46,9 @@
             "search/manager/__init__.py",
             "search/manager/search_manager_exceptions.py",
             "search/manager/search_manager_system.py",
-            "search/manager/resources/baf.xml"]
+            "search/manager/resources/baf.xml"],
+    "extra_resources" : ["search_manager_plugin.pyc", "search/__init__.pyc",
+            "search/manager/__init__.pyc",
+            "search/manager/search_manager_exceptions.pyc",
+            "search/manager/search_manager_system.pyc"]
 }

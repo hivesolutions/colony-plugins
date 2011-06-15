@@ -16,5 +16,9 @@
             "search/index_repository/__init__.py",
             "search/index_repository/search_index_repository_exceptions.py",
             "search/index_repository/search_index_repository_system.py",
-            "search/index_repository/resources/baf.xml"]
+            "search/index_repository/resources/baf.xml"],
+    "extra_resources" : ["search_index_repository_plugin.pyc",
+            "search/__init__.pyc", "search/index_repository/__init__.pyc",
+            "search/index_repository/search_index_repository_exceptions.pyc",
+            "search/index_repository/search_index_repository_system.pyc"]
 }
