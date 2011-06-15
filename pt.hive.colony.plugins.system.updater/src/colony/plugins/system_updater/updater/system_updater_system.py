@@ -208,10 +208,13 @@ class SystemUpdater:
 
         # iterates over the repository list
         for repository in self.repository_list:
-            # in case the repository name matches
-            if repository.name == repository_name:
-                # retrieves the repository information for the repository
-                return self.get_repository_information(repository)
+            # in case the repository name does not matches
+            if not repository.name == repository_name:
+                # continues the loop
+                continue
+
+            # retrieves the repository information for the repository
+            return self.get_repository_information(repository)
 
     def get_package_information_list_by_repository_name(self, repository_name):
         """
