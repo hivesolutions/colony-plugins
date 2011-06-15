@@ -24,5 +24,11 @@
             "main_scaffolding/scaffolding/console_main_scaffolding.py",
             "main_scaffolding/scaffolding/main_scaffolding_exceptions.py",
             "main_scaffolding/scaffolding/main_scaffolding_system.py",
-            "main_scaffolding/scaffolding/resources/baf.xml"]
+            "main_scaffolding/scaffolding/resources/baf.xml"],
+    "extra_resources" : ["main_scaffolding_plugin.pyc",
+            "main_scaffolding/__init__.pyc",
+            "main_scaffolding/scaffolding/__init__.pyc",
+            "main_scaffolding/scaffolding/console_main_scaffolding.pyc",
+            "main_scaffolding/scaffolding/main_scaffolding_exceptions.pyc",
+            "main_scaffolding/scaffolding/main_scaffolding_system.pyc"]
 }

@@ -18,5 +18,10 @@
             "main_packing/manager/console_main_packing_manager.py",
             "main_packing/manager/main_packing_manager_exceptions.py",
             "main_packing/manager/main_packing_manager_system.py",
-            "main_packing/manager/resources/baf.xml"]
+            "main_packing/manager/resources/baf.xml"],
+    "extra_resources" : ["main_packing_manager_plugin.pyc",
+            "main_packing/__init__.pyc", "main_packing/manager/__init__.pyc",
+            "main_packing/manager/console_main_packing_manager.pyc",
+            "main_packing/manager/main_packing_manager_exceptions.pyc",
+            "main_packing/manager/main_packing_manager_system.pyc"]
 }

@@ -16,5 +16,9 @@
             "main_mock/mock/__init__.py",
             "main_mock/mock/main_mock_exceptions.py",
             "main_mock/mock/main_mock_system.py",
-            "main_mock/mock/resources/baf.xml"]
+            "main_mock/mock/resources/baf.xml"],
+    "extra_resources" : ["main_mock_plugin.pyc", "main_mock/__init__.pyc",
+            "main_mock/mock/__init__.pyc",
+            "main_mock/mock/main_mock_exceptions.pyc",
+            "main_mock/mock/main_mock_system.pyc"]
 }

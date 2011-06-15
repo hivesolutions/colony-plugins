@@ -17,5 +17,8 @@
     "resources" : ["main_test_plugin.py", "main_test/__init__.py",
             "main_test/test/__init__.py", "main_test/test/console_test.py",
             "main_test/test/main_test_system.py",
-            "main_test/test/resources/baf.xml"]
+            "main_test/test/resources/baf.xml"],
+    "extra_resources" : ["main_test_plugin.pyc", "main_test/__init__.pyc",
+            "main_test/test/__init__.pyc", "main_test/test/console_test.pyc",
+            "main_test/test/main_test_system.pyc"]
 }

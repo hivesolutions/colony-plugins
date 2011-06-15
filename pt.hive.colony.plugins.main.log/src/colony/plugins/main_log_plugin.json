@@ -14,5 +14,7 @@
     "main_file" : "main_log_plugin.py",
     "resources" : ["main_log_plugin.py", "main_log/__init__.py",
             "main_log/log/__init__.py", "main_log/log/main_log_system.py",
-            "main_log/log/resources/baf.xml"]
+            "main_log/log/resources/baf.xml"],
+    "extra_resources" : ["main_log_plugin.pyc", "main_log/__init__.pyc",
+            "main_log/log/__init__.pyc", "main_log/log/main_log_system.pyc"]
 }

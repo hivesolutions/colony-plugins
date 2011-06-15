@@ -17,5 +17,10 @@
             "main_authentication_openid_handler/__init__.py",
             "main_authentication_openid_handler/openid_handler/__init__.py",
             "main_authentication_openid_handler/openid_handler/main_authentication_openid_handler_system.py",
-            "main_authentication_openid_handler/openid_handler/resources/baf.xml"]
+            "main_authentication_openid_handler/openid_handler/resources/baf.xml"],
+    "extra_resources" : [
+            "main_authentication_openid_handler_plugin.pyc",
+            "main_authentication_openid_handler/__init__.pyc",
+            "main_authentication_openid_handler/openid_handler/__init__.pyc",
+            "main_authentication_openid_handler/openid_handler/main_authentication_openid_handler_system.pyc"]
 }

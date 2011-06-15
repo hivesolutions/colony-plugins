@@ -17,5 +17,9 @@
             "main_localization_manager/__init__.py",
             "main_localization_manager/manager/__init__.py",
             "main_localization_manager/manager/main_localization_manager_system.py",
-            "main_localization_manager/manager/resources/baf.xml"]
+            "main_localization_manager/manager/resources/baf.xml"],
+    "extra_resources" : ["main_localization_manager_plugin.pyc",
+            "main_localization_manager/__init__.pyc",
+            "main_localization_manager/manager/__init__.pyc",
+            "main_localization_manager/manager/main_localization_manager_system.pyc"]
 }

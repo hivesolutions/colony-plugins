@@ -21,5 +21,11 @@
             "main_packing/colony_service/__init__.py",
             "main_packing/colony_service/main_packing_colony_service_exceptions.py",
             "main_packing/colony_service/main_packing_colony_service_system.py",
-            "main_packing/colony_service/resources/baf.xml"]
+            "main_packing/colony_service/resources/baf.xml"],
+    "extra_resources" : [
+            "main_packing_colony_service_plugin.pyc",
+            "main_packing/__init__.pyc",
+            "main_packing/colony_service/__init__.pyc",
+            "main_packing/colony_service/main_packing_colony_service_exceptions.pyc",
+            "main_packing/colony_service/main_packing_colony_service_system.pyc"]
 }

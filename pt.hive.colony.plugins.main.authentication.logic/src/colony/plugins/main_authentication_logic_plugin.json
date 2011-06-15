@@ -28,5 +28,12 @@
             "main_authentication_logic/authentication_logic/main_authentication_logic_classes.py",
             "main_authentication_logic/authentication_logic/main_authentication_logic_exceptions.py",
             "main_authentication_logic/authentication_logic/main_authentication_logic_system.py",
-            "main_authentication_logic/authentication_logic/resources/baf.xml"]
+            "main_authentication_logic/authentication_logic/resources/baf.xml"],
+    "extra_resources" : [
+            "main_authentication_logic_plugin.pyc",
+            "main_authentication_logic/__init__.pyc",
+            "main_authentication_logic/authentication_logic/__init__.pyc",
+            "main_authentication_logic/authentication_logic/main_authentication_logic_classes.pyc",
+            "main_authentication_logic/authentication_logic/main_authentication_logic_exceptions.pyc",
+            "main_authentication_logic/authentication_logic/main_authentication_logic_system.pyc"]
 }

@@ -15,5 +15,9 @@
     "resources" : ["main_mod_python_plugin.py", "main_mod_python/__init__.py",
             "main_mod_python/mod_python/__init__.py",
             "main_mod_python/mod_python/main_mod_python_system.py",
-            "main_mod_python/mod_python/resources/baf.xml"]
+            "main_mod_python/mod_python/resources/baf.xml"],
+    "extra_resources" : ["main_mod_python_plugin.pyc",
+            "main_mod_python/__init__.pyc",
+            "main_mod_python/mod_python/__init__.pyc",
+            "main_mod_python/mod_python/main_mod_python_system.pyc"]
 }

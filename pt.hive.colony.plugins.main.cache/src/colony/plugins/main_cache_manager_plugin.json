@@ -16,5 +16,9 @@
             "main_cache_manager/__init__.py",
             "main_cache_manager/manager/__init__.py",
             "main_cache_manager/manager/main_cache_manager_system.py",
-            "main_cache_manager/manager/resources/baf.xml"]
+            "main_cache_manager/manager/resources/baf.xml"],
+    "extra_resources" : ["main_cache_manager_plugin.pyc",
+            "main_cache_manager/__init__.pyc",
+            "main_cache_manager/manager/__init__.pyc",
+            "main_cache_manager/manager/main_cache_manager_system.pyc"]
 }

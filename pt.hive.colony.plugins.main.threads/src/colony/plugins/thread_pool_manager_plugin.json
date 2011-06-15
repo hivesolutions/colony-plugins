@@ -16,5 +16,9 @@
     "resources" : ["thread_pool_manager_plugin.py", "main_threads/__init__.py",
             "main_threads/thread_pool_manager/__init__.py",
             "main_threads/thread_pool_manager/thread_pool_manager_system.py",
-            "main_threads/thread_pool_manager/resources/baf.xml"]
+            "main_threads/thread_pool_manager/resources/baf.xml"],
+    "extra_resources" : ["thread_pool_manager_plugin.pyc",
+            "main_threads/__init__.pyc",
+            "main_threads/thread_pool_manager/__init__.pyc",
+            "main_threads/thread_pool_manager/thread_pool_manager_system.pyc"]
 }

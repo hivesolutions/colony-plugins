@@ -19,5 +19,9 @@
             "main_distribution/__init__.py",
             "main_distribution/service/__init__.py",
             "main_distribution/service/main_distribution_service_system.py",
-            "main_distribution/service/resources/baf.xml"]
+            "main_distribution/service/resources/baf.xml"],
+    "extra_resources" : ["main_distribution_service_plugin.pyc",
+            "main_distribution/__init__.pyc",
+            "main_distribution/service/__init__.pyc",
+            "main_distribution/service/main_distribution_service_system.pyc"]
 }

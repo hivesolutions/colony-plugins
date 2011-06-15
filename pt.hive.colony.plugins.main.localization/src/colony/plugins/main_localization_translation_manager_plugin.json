@@ -18,5 +18,10 @@
             "main_localization_translation_manager/__init__.py",
             "main_localization_translation_manager/translation_manager/__init__.py",
             "main_localization_translation_manager/translation_manager/main_localization_translation_manager_system.py",
-            "main_localization_translation_manager/translation_manager/resources/baf.xml"]
+            "main_localization_translation_manager/translation_manager/resources/baf.xml"],
+    "extra_resources" : [
+            "main_localization_translation_manager_plugin.pyc",
+            "main_localization_translation_manager/__init__.pyc",
+            "main_localization_translation_manager/translation_manager/__init__.pyc",
+            "main_localization_translation_manager/translation_manager/main_localization_translation_manager_system.pyc"]
 }

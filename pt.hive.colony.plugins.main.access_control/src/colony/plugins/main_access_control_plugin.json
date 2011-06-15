@@ -16,5 +16,9 @@
             "main_access_control/__init__.py",
             "main_access_control/access_control/__init__.py",
             "main_access_control/access_control/main_access_control_system.py",
-            "main_access_control/access_control/resources/baf.xml"]
+            "main_access_control/access_control/resources/baf.xml"],
+    "extra_resources" : ["main_access_control_plugin.pyc",
+            "main_access_control/__init__.pyc",
+            "main_access_control/access_control/__init__.pyc",
+            "main_access_control/access_control/main_access_control_system.pyc"]
 }

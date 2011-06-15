@@ -16,5 +16,10 @@
             "main_pool/simple_pool_manager/__init__.py",
             "main_pool/simple_pool_manager/simple_pool_manager_exceptions.py",
             "main_pool/simple_pool_manager/simple_pool_manager_system.py",
-            "main_pool/simple_pool_manager/resources/baf.xml"]
+            "main_pool/simple_pool_manager/resources/baf.xml"],
+    "extra_resources" : ["simple_pool_manager_plugin.pyc",
+            "main_pool/__init__.pyc",
+            "main_pool/simple_pool_manager/__init__.pyc",
+            "main_pool/simple_pool_manager/simple_pool_manager_exceptions.pyc",
+            "main_pool/simple_pool_manager/simple_pool_manager_system.pyc"]
 }

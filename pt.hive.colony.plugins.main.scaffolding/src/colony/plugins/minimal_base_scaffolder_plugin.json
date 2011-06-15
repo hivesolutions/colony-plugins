@@ -21,5 +21,9 @@
             "minimal_base_scaffolder/scaffolder/resources/templates/plugin.py.tpl",
             "minimal_base_scaffolder/scaffolder/resources/templates/backend/__init__.py.tpl",
             "minimal_base_scaffolder/scaffolder/resources/templates/backend/console.py.tpl",
-            "minimal_base_scaffolder/scaffolder/resources/templates/backend/system.py.tpl"]
+            "minimal_base_scaffolder/scaffolder/resources/templates/backend/system.py.tpl"],
+    "extra_resources" : ["minimal_base_scaffolder_plugin.pyc",
+            "minimal_base_scaffolder/__init__.pyc",
+            "minimal_base_scaffolder/scaffolder/__init__.pyc",
+            "minimal_base_scaffolder/scaffolder/minimal_base_scaffolder_system.pyc"]
 }

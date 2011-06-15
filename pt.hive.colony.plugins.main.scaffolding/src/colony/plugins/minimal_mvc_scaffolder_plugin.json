@@ -27,5 +27,9 @@
             "minimal_mvc_scaffolder/scaffolder/resources/templates/backend/resources/templates/edit.html.tpl",
             "minimal_mvc_scaffolder/scaffolder/resources/templates/backend/resources/templates/list.html.tpl",
             "minimal_mvc_scaffolder/scaffolder/resources/templates/backend/resources/templates/new.html.tpl",
-            "minimal_mvc_scaffolder/scaffolder/resources/templates/backend/resources/templates/show.html.tpl"]
+            "minimal_mvc_scaffolder/scaffolder/resources/templates/backend/resources/templates/show.html.tpl"],
+    "extra_resources" : ["minimal_mvc_scaffolder_plugin.pyc",
+            "minimal_mvc_scaffolder/__init__.pyc",
+            "minimal_mvc_scaffolder/scaffolder/__init__.pyc",
+            "minimal_mvc_scaffolder/scaffolder/minimal_mvc_scaffolder_system.pyc"]
 }

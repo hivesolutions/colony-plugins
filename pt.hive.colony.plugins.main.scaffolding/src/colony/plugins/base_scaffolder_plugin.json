@@ -23,5 +23,9 @@
             "base_scaffolder/scaffolder/resources/templates/backend/console.py.tpl",
             "base_scaffolder/scaffolder/resources/templates/backend/exceptions.py.tpl",
             "base_scaffolder/scaffolder/resources/templates/backend/system.py.tpl",
-            "base_scaffolder/scaffolder/resources/templates/backend/test.py.tpl"]
+            "base_scaffolder/scaffolder/resources/templates/backend/test.py.tpl"],
+    "extra_resources" : ["base_scaffolder_plugin.pyc",
+            "base_scaffolder/__init__.pyc",
+            "base_scaffolder/scaffolder/__init__.pyc",
+            "base_scaffolder/scaffolder/base_scaffolder_system.pyc"]
 }

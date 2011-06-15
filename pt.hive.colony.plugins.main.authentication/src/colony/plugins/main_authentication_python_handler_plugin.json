@@ -8,7 +8,8 @@
     "description" : "Authentication Python Handler Main Plugin",
     "version" : "1.0.0",
     "author" : "Hive Solutions Lda. <development@hive.pt>",
-    "capabilities" : ["authentication_handler", "configuration_model_provider", "build_automation_item"],
+    "capabilities" : ["authentication_handler", "configuration_model_provider",
+            "build_automation_item"],
     "capabilities_allowed" : [],
     "dependencies" : [],
     "main_file" : "main_authentication_python_handler_plugin.py",
@@ -20,5 +21,13 @@
             "main_authentication_python_handler/python_handler/main_authentication_python_handler_system.py",
             "main_authentication_python_handler/python_handler/configuration/__init__.py",
             "main_authentication_python_handler/python_handler/configuration/authentication_configuration.py",
-            "main_authentication_python_handler/python_handler/resources/baf.xml"]
+            "main_authentication_python_handler/python_handler/resources/baf.xml"],
+    "extra_resources" : [
+            "main_authentication_python_handler_plugin.pyc",
+            "main_authentication_python_handler/__init__.pyc",
+            "main_authentication_python_handler/python_handler/__init__.pyc",
+            "main_authentication_python_handler/python_handler/main_authentication_python_handler_exceptions.pyc",
+            "main_authentication_python_handler/python_handler/main_authentication_python_handler_system.pyc",
+            "main_authentication_python_handler/python_handler/configuration/__init__.pyc",
+            "main_authentication_python_handler/python_handler/configuration/authentication_configuration.pyc"]
 }

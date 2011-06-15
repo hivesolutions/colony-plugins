@@ -17,5 +17,10 @@
             "main_storage_buffer_manager/__init__.py",
             "main_storage_buffer_manager/buffer_manager/__init__.py",
             "main_storage_buffer_manager/buffer_manager/main_storage_buffer_manager_system.py",
-            "main_storage_buffer_manager/buffer_manager/resources/baf.xml"]
+            "main_storage_buffer_manager/buffer_manager/resources/baf.xml"],
+    "extra_resources" : [
+            "main_storage_buffer_manager_plugin.pyc",
+            "main_storage_buffer_manager/__init__.pyc",
+            "main_storage_buffer_manager/buffer_manager/__init__.pyc",
+            "main_storage_buffer_manager/buffer_manager/main_storage_buffer_manager_system.pyc"]
 }

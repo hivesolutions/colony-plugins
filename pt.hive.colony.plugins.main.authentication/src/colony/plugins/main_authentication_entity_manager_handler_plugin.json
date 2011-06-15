@@ -18,5 +18,11 @@
             "main_authentication_entity_manager_handler/entity_manager_handler/__init__.py",
             "main_authentication_entity_manager_handler/entity_manager_handler/main_authentication_entity_manager_handler_exceptions.py",
             "main_authentication_entity_manager_handler/entity_manager_handler/main_authentication_entity_manager_handler_system.py",
-            "main_authentication_entity_manager_handler/entity_manager_handler/resources/baf.xml"]
+            "main_authentication_entity_manager_handler/entity_manager_handler/resources/baf.xml"],
+    "extra_resources" : [
+            "main_authentication_entity_manager_handler_plugin.pyc",
+            "main_authentication_entity_manager_handler/__init__.pyc",
+            "main_authentication_entity_manager_handler/entity_manager_handler/__init__.pyc",
+            "main_authentication_entity_manager_handler/entity_manager_handler/main_authentication_entity_manager_handler_exceptions.pyc",
+            "main_authentication_entity_manager_handler/entity_manager_handler/main_authentication_entity_manager_handler_system.pyc"]
 }

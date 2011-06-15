@@ -17,5 +17,9 @@
             "main_distribution/__init__.py",
             "main_distribution/plugin_system/__init__.py",
             "main_distribution/plugin_system/main_distribution_plugin_system_system.py",
-            "main_distribution/plugin_system/resources/baf.xml"]
+            "main_distribution/plugin_system/resources/baf.xml"],
+    "extra_resources" : ["main_distribution_plugin_system_plugin.pyc",
+            "main_distribution/__init__.pyc",
+            "main_distribution/plugin_system/__init__.pyc",
+            "main_distribution/plugin_system/main_distribution_plugin_system_system.pyc"]
 }

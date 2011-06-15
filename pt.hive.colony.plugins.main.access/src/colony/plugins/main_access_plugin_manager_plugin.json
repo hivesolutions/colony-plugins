@@ -16,5 +16,9 @@
             "main_access/__init__.py",
             "main_access/plugin_manager/__init__.py",
             "main_access/plugin_manager/main_access_plugin_manager_system.py",
-            "main_access/plugin_manager/resources/baf.xml"]
+            "main_access/plugin_manager/resources/baf.xml"],
+    "extra_resources" : ["main_access_plugin_manager_plugin.pyc",
+            "main_access/__init__.pyc",
+            "main_access/plugin_manager/__init__.pyc",
+            "main_access/plugin_manager/main_access_plugin_manager_system.pyc"]
 }

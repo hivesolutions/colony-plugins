@@ -19,5 +19,9 @@
     "resources" : ["main_restricted_plugin.py", "main_restricted/__init__.py",
             "main_restricted/restricted/__init__.py",
             "main_restricted/restricted/main_restricted_system.py",
-            "main_restricted/restricted/resources/baf.xml"]
+            "main_restricted/restricted/resources/baf.xml"],
+    "extra_resources" : ["main_restricted_plugin.pyc",
+            "main_restricted/__init__.pyc",
+            "main_restricted/restricted/__init__.pyc",
+            "main_restricted/restricted/main_restricted_system.pyc"]
 }

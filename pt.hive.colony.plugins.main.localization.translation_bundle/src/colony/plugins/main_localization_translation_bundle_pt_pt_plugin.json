@@ -19,5 +19,10 @@
             "main_localization_translation_bundle_pt_pt/pt_pt/__init__.py",
             "main_localization_translation_bundle_pt_pt/pt_pt/main_localization_translation_bundle_pt_pt_system.py",
             "main_localization_translation_bundle_pt_pt/pt_pt/resources/baf.xml",
-            "main_localization_translation_bundle_pt_pt/pt_pt/resources/localization_bundle_pt_pt.json"]
+            "main_localization_translation_bundle_pt_pt/pt_pt/resources/localization_bundle_pt_pt.json"],
+    "extra_resources" : [
+            "main_localization_translation_bundle_pt_pt_plugin.pyc",
+            "main_localization_translation_bundle_pt_pt/__init__.pyc",
+            "main_localization_translation_bundle_pt_pt/pt_pt/__init__.pyc",
+            "main_localization_translation_bundle_pt_pt/pt_pt/main_localization_translation_bundle_pt_pt_system.pyc"]
 }

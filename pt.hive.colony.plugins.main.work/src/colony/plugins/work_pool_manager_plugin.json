@@ -21,5 +21,11 @@
             "main_work/work_pool_manager/work_pool_manager_algorithms.py",
             "main_work/work_pool_manager/work_pool_manager_exceptions.py",
             "main_work/work_pool_manager/work_pool_manager_system.py",
-            "main_work/work_pool_manager/resources/baf.xml"]
+            "main_work/work_pool_manager/resources/baf.xml"],
+    "extra_resources" : ["work_pool_manager_plugin.pyc",
+            "main_work/__init__.pyc",
+            "main_work/work_pool_manager/__init__.pyc",
+            "main_work/work_pool_manager/work_pool_manager_algorithms.pyc",
+            "main_work/work_pool_manager/work_pool_manager_exceptions.pyc",
+            "main_work/work_pool_manager/work_pool_manager_system.pyc"]
 }

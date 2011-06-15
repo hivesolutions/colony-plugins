@@ -24,5 +24,9 @@
             "mvc_manager_scaffolder/scaffolder/resources/templates/backend/entity_models.py.tpl",
             "mvc_manager_scaffolder/scaffolder/resources/templates/backend/exceptions.py.tpl",
             "mvc_manager_scaffolder/scaffolder/resources/templates/backend/system.py.tpl",
-            "mvc_manager_scaffolder/scaffolder/resources/templates/backend/test.py.tpl"]
+            "mvc_manager_scaffolder/scaffolder/resources/templates/backend/test.py.tpl"],
+    "extra_resources" : ["mvc_manager_scaffolder_plugin.pyc",
+            "mvc_manager_scaffolder/__init__.pyc",
+            "mvc_manager_scaffolder/scaffolder/__init__.pyc",
+            "mvc_manager_scaffolder/scaffolder/mvc_manager_scaffolder_system.pyc"]
 }

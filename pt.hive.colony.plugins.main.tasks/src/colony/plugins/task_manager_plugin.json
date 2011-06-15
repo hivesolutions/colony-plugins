@@ -19,5 +19,8 @@
     "resources" : ["task_manager_plugin.py", "main_tasks/__init__.py",
             "main_tasks/task_manager/__init__.py",
             "main_tasks/task_manager/task_manager_system.py",
-            "main_tasks/task_manager/resources/baf.xml"]
+            "main_tasks/task_manager/resources/baf.xml"],
+    "extra_resources" : ["task_manager_plugin.pyc", "main_tasks/__init__.pyc",
+            "main_tasks/task_manager/__init__.pyc",
+            "main_tasks/task_manager/task_manager_system.pyc"]
 }

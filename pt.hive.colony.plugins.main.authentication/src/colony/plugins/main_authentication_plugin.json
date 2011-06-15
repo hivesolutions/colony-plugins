@@ -16,5 +16,9 @@
             "main_authentication/__init__.py",
             "main_authentication/authentication/__init__.py",
             "main_authentication/authentication/main_authentication_system.py",
-            "main_authentication/authentication/resources/baf.xml"]
+            "main_authentication/authentication/resources/baf.xml"],
+    "extra_resources" : ["main_authentication_plugin.pyc",
+            "main_authentication/__init__.pyc",
+            "main_authentication/authentication/__init__.pyc",
+            "main_authentication/authentication/main_authentication_system.pyc"]
 }
