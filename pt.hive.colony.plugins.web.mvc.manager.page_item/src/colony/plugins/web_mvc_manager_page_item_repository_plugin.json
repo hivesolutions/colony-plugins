@@ -35,5 +35,12 @@
             "web_mvc_manager_page_item/repository/resources/templates/repository/repository_edit_contents.html.tpl",
             "web_mvc_manager_page_item/repository/resources/templates/repository/repository_list_contents.html.tpl",
             "web_mvc_manager_page_item/repository/resources/templates/repository/repository_partial_list_contents.html.tpl",
-            "web_mvc_manager_page_item/repository/resources/templates/repository/repository_plugins_partial_list_contents.html.tpl"]
+            "web_mvc_manager_page_item/repository/resources/templates/repository/repository_plugins_partial_list_contents.html.tpl"],
+    "extra_resources" : [
+            "web_mvc_manager_page_item_repository_plugin.pyc",
+            "web_mvc_manager_page_item/__init__.pyc",
+            "web_mvc_manager_page_item/repository/__init__.pyc",
+            "web_mvc_manager_page_item/repository/web_mvc_manager_page_item_repository_controllers.pyc",
+            "web_mvc_manager_page_item/repository/web_mvc_manager_page_item_repository_exceptions.pyc",
+            "web_mvc_manager_page_item/repository/web_mvc_manager_page_item_repository_system.pyc"]
 }

@@ -58,5 +58,9 @@
             "web_mvc_resources_base/resources_base/resources/extras/libs/util/string_size.js",
             "web_mvc_resources_base/resources_base/resources/extras/libs/util/logging/logging.js",
             "web_mvc_resources_base/resources_base/resources/extras/libs/util/logging/loggy_handler.js",
-            "web_mvc_resources_base/resources_base/resources/extras/libs/util/logging/stream_handler.js"]
+            "web_mvc_resources_base/resources_base/resources/extras/libs/util/logging/stream_handler.js"],
+    "extra_resources" : ["web_mvc_resources_base_plugin.pyc",
+            "web_mvc_resources_base/__init__.pyc",
+            "web_mvc_resources_base/resources_base/__init__.pyc",
+            "web_mvc_resources_base/resources_base/web_mvc_resources_base_system.pyc"]
 }

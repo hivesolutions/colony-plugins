@@ -29,5 +29,13 @@
             "web_mvc_encryption/encryption/web_mvc_encryption_entity_models.py",
             "web_mvc_encryption/encryption/web_mvc_encryption_exceptions.py",
             "web_mvc_encryption/encryption/web_mvc_encryption_system.py",
-            "web_mvc_encryption/encryption/resources/baf.xml"]
+            "web_mvc_encryption/encryption/resources/baf.xml"],
+    "extra_resources" : [
+            "web_mvc_encryption_plugin.pyc",
+            "web_mvc_encryption/__init__.pyc",
+            "web_mvc_encryption/encryption/__init__.pyc",
+            "web_mvc_encryption/encryption/web_mvc_encryption_controllers.pyc",
+            "web_mvc_encryption/encryption/web_mvc_encryption_entity_models.pyc",
+            "web_mvc_encryption/encryption/web_mvc_encryption_exceptions.pyc",
+            "web_mvc_encryption/encryption/web_mvc_encryption_system.pyc"]
 }

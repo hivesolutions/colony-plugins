@@ -121,5 +121,9 @@
             "web_mvc_resources_ui/resources_ui/resources/extras/js/plugins_ui_general.js",
             "web_mvc_resources_ui/resources_ui/resources/extras/libs/autocomplete/css/autocomplete.css",
             "web_mvc_resources_ui/resources_ui/resources/extras/libs/autocomplete/images/autocomplete-highlight-background.png",
-            "web_mvc_resources_ui/resources_ui/resources/extras/libs/autocomplete/js/autocomplete.js"]
+            "web_mvc_resources_ui/resources_ui/resources/extras/libs/autocomplete/js/autocomplete.js"],
+    "extra_resources" : ["web_mvc_resources_ui_plugin.pyc",
+            "web_mvc_resources_ui/__init__.pyc",
+            "web_mvc_resources_ui/resources_ui/__init__.pyc",
+            "web_mvc_resources_ui/resources_ui/web_mvc_resources_ui_system.pyc"]
 }

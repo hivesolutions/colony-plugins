@@ -31,5 +31,12 @@
             "web_mvc_communication_push_apple/communication_push_apple/web_mvc_communication_push_apple_controllers.py",
             "web_mvc_communication_push_apple/communication_push_apple/web_mvc_communication_push_apple_exceptions.py",
             "web_mvc_communication_push_apple/communication_push_apple/web_mvc_communication_push_apple_system.py",
-            "web_mvc_communication_push_apple/communication_push_apple/resources/baf.xml"]
+            "web_mvc_communication_push_apple/communication_push_apple/resources/baf.xml"],
+    "extra_resources" : [
+            "web_mvc_communication_push_apple_plugin.pyc",
+            "web_mvc_communication_push_apple/__init__.pyc",
+            "web_mvc_communication_push_apple/communication_push_apple/__init__.pyc",
+            "web_mvc_communication_push_apple/communication_push_apple/web_mvc_communication_push_apple_controllers.pyc",
+            "web_mvc_communication_push_apple/communication_push_apple/web_mvc_communication_push_apple_exceptions.pyc",
+            "web_mvc_communication_push_apple/communication_push_apple/web_mvc_communication_push_apple_system.pyc"]
 }

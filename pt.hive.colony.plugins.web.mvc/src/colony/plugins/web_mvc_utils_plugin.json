@@ -35,5 +35,14 @@
             "web_mvc_utils/mvc_utils/web_mvc_utils.py",
             "web_mvc_utils/mvc_utils/web_mvc_utils_exceptions.py",
             "web_mvc_utils/mvc_utils/web_mvc_utils_system.py",
-            "web_mvc_utils/mvc_utils/resources/baf.xml"]
+            "web_mvc_utils/mvc_utils/resources/baf.xml"],
+    "extra_resources" : ["web_mvc_utils_plugin.pyc",
+            "web_mvc_utils/__init__.pyc",
+            "web_mvc_utils/mvc_utils/__init__.pyc",
+            "web_mvc_utils/mvc_utils/web_mvc_controller.pyc",
+            "web_mvc_utils/mvc_utils/web_mvc_entity_model.pyc",
+            "web_mvc_utils/mvc_utils/web_mvc_model.pyc",
+            "web_mvc_utils/mvc_utils/web_mvc_utils.pyc",
+            "web_mvc_utils/mvc_utils/web_mvc_utils_exceptions.pyc",
+            "web_mvc_utils/mvc_utils/web_mvc_utils_system.pyc"]
 }

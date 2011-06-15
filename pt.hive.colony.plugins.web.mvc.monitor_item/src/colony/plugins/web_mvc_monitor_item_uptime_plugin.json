@@ -22,5 +22,11 @@
             "web_mvc_monitor_item/uptime/web_mvc_monitor_item_uptime_controllers.py",
             "web_mvc_monitor_item/uptime/web_mvc_monitor_item_uptime_system.py",
             "web_mvc_monitor_item/uptime/resources/baf.xml",
-            "web_mvc_monitor_item/uptime/resources/templates/monitor_item_uptime.html.tpl"]
+            "web_mvc_monitor_item/uptime/resources/templates/monitor_item_uptime.html.tpl"],
+    "extra_resources" : [
+            "web_mvc_monitor_item_uptime_plugin.pyc",
+            "web_mvc_monitor_item/__init__.pyc",
+            "web_mvc_monitor_item/uptime/__init__.pyc",
+            "web_mvc_monitor_item/uptime/web_mvc_monitor_item_uptime_controllers.pyc",
+            "web_mvc_monitor_item/uptime/web_mvc_monitor_item_uptime_system.pyc"]
 }

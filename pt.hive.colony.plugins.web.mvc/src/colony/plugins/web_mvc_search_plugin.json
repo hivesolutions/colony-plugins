@@ -21,5 +21,9 @@
     "resources" : ["web_mvc_search_plugin.py", "web_mvc_search/__init__.py",
             "web_mvc_search/mvc_search/__init__.py",
             "web_mvc_search/mvc_search/web_mvc_search_system.py",
-            "web_mvc_search/mvc_search/resources/baf.xml"]
+            "web_mvc_search/mvc_search/resources/baf.xml"],
+    "extra_resources" : ["web_mvc_search_plugin.pyc",
+            "web_mvc_search/__init__.pyc",
+            "web_mvc_search/mvc_search/__init__.pyc",
+            "web_mvc_search/mvc_search/web_mvc_search_system.pyc"]
 }

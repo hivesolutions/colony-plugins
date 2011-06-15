@@ -26,5 +26,11 @@
             "web_mvc/mvc/web_mvc_communication_handler.py",
             "web_mvc/mvc/web_mvc_exceptions.py",
             "web_mvc/mvc/web_mvc_file_handler.py",
-            "web_mvc/mvc/web_mvc_system.py", "web_mvc/mvc/resources/baf.xml"]
+            "web_mvc/mvc/web_mvc_system.py", "web_mvc/mvc/resources/baf.xml"],
+    "extra_resources" : ["web_mvc_plugin.pyc", "web_mvc/__init__.pyc",
+            "web_mvc/mvc/__init__.pyc",
+            "web_mvc/mvc/web_mvc_communication_handler.pyc",
+            "web_mvc/mvc/web_mvc_exceptions.pyc",
+            "web_mvc/mvc/web_mvc_file_handler.pyc",
+            "web_mvc/mvc/web_mvc_system.pyc"]
 }

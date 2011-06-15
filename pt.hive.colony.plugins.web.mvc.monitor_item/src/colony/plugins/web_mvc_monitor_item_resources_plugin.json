@@ -22,5 +22,11 @@
             "web_mvc_monitor_item/resources/web_mvc_monitor_item_resources_controllers.py",
             "web_mvc_monitor_item/resources/web_mvc_monitor_item_resources_system.py",
             "web_mvc_monitor_item/resources/resources/baf.xml",
-            "web_mvc_monitor_item/resources/resources/templates/monitor_item_resources.html.tpl"]
+            "web_mvc_monitor_item/resources/resources/templates/monitor_item_resources.html.tpl"],
+    "extra_resources" : [
+            "web_mvc_monitor_item_resources_plugin.pyc",
+            "web_mvc_monitor_item/__init__.pyc",
+            "web_mvc_monitor_item/resources/__init__.pyc",
+            "web_mvc_monitor_item/resources/web_mvc_monitor_item_resources_controllers.pyc",
+            "web_mvc_monitor_item/resources/web_mvc_monitor_item_resources_system.pyc"]
 }

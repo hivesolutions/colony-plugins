@@ -76,5 +76,13 @@
             "web_mvc_manager/manager/resources/templates/repository/repository_partial_list_contents.html.tpl",
             "web_mvc_manager/manager/resources/templates/repository/repository_plugins_partial_list_contents.html.tpl",
             "web_mvc_manager/manager/resources/templates/side_panel/side_panel_configuration.html.tpl",
-            "web_mvc_manager/manager/resources/templates/side_panel/side_panel_update.html.tpl"]
+            "web_mvc_manager/manager/resources/templates/side_panel/side_panel_update.html.tpl"],
+    "extra_resources" : ["web_mvc_manager_plugin.pyc",
+            "web_mvc_manager/__init__.pyc",
+            "web_mvc_manager/manager/__init__.pyc",
+            "web_mvc_manager/manager/web_mvc_manager_communication.pyc",
+            "web_mvc_manager/manager/web_mvc_manager_controllers.pyc",
+            "web_mvc_manager/manager/web_mvc_manager_exceptions.pyc",
+            "web_mvc_manager/manager/web_mvc_manager_helpers.pyc",
+            "web_mvc_manager/manager/web_mvc_manager_system.pyc"]
 }

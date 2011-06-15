@@ -15,11 +15,18 @@
                 "version" : "1.0.0"
             }],
     "main_file" : "web_mvc_panel_item_monitor_plugin.py",
-    "resources" : ["web_mvc_panel_item_monitor_plugin.py",
+    "resources" : [
+            "web_mvc_panel_item_monitor_plugin.py",
             "web_mvc_panel_item/__init__.py",
             "web_mvc_panel_item/monitor/__init__.py",
             "web_mvc_panel_item/monitor/web_mvc_panel_item_monitor_controllers.py",
             "web_mvc_panel_item/monitor/web_mvc_panel_item_monitor_system.py",
             "web_mvc_panel_item/monitor/resources/baf.xml",
-            "web_mvc_panel_item/monitor/resources/templates/panel_item_monitor.html.tpl"]
+            "web_mvc_panel_item/monitor/resources/templates/panel_item_monitor.html.tpl"],
+    "extra_resources" : [
+            "web_mvc_panel_item_monitor_plugin.pyc",
+            "web_mvc_panel_item/__init__.pyc",
+            "web_mvc_panel_item/monitor/__init__.pyc",
+            "web_mvc_panel_item/monitor/web_mvc_panel_item_monitor_controllers.pyc",
+            "web_mvc_panel_item/monitor/web_mvc_panel_item_monitor_system.pyc"]
 }

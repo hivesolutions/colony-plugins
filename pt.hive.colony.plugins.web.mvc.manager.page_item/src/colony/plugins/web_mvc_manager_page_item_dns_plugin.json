@@ -29,5 +29,12 @@
             "web_mvc_manager_page_item/dns/resources/baf.xml",
             "web_mvc_manager_page_item/dns/resources/templates/dns/dns_edit_contents.html.tpl",
             "web_mvc_manager_page_item/dns/resources/templates/dns/dns_list_contents.html.tpl",
-            "web_mvc_manager_page_item/dns/resources/templates/dns/dns_partial_list_contents.html.tpl"]
+            "web_mvc_manager_page_item/dns/resources/templates/dns/dns_partial_list_contents.html.tpl"],
+    "extra_resources" : [
+            "web_mvc_manager_page_item_dns_plugin.pyc",
+            "web_mvc_manager_page_item/__init__.pyc",
+            "web_mvc_manager_page_item/dns/__init__.pyc",
+            "web_mvc_manager_page_item/dns/web_mvc_manager_page_item_dns_controllers.pyc",
+            "web_mvc_manager_page_item/dns/web_mvc_manager_page_item_dns_exceptions.pyc",
+            "web_mvc_manager_page_item/dns/web_mvc_manager_page_item_dns_system.pyc"]
 }

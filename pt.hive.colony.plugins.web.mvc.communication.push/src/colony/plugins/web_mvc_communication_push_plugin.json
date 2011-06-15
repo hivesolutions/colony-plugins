@@ -31,5 +31,12 @@
             "web_mvc_communication_push/communication_push/web_mvc_communication_push_controllers.py",
             "web_mvc_communication_push/communication_push/web_mvc_communication_push_exceptions.py",
             "web_mvc_communication_push/communication_push/web_mvc_communication_push_system.py",
-            "web_mvc_communication_push/communication_push/resources/baf.xml"]
+            "web_mvc_communication_push/communication_push/resources/baf.xml"],
+    "extra_resources" : [
+            "web_mvc_communication_push_plugin.pyc",
+            "web_mvc_communication_push/__init__.pyc",
+            "web_mvc_communication_push/communication_push/__init__.pyc",
+            "web_mvc_communication_push/communication_push/web_mvc_communication_push_controllers.pyc",
+            "web_mvc_communication_push/communication_push/web_mvc_communication_push_exceptions.pyc",
+            "web_mvc_communication_push/communication_push/web_mvc_communication_push_system.pyc"]
 }

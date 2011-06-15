@@ -80,5 +80,10 @@
             "web_mvc_wiki/mvc_wiki/resources/templates/header_print.html.tpl",
             "web_mvc_wiki/mvc_wiki/resources/templates/includes.html.tpl",
             "web_mvc_wiki/mvc_wiki/resources/templates/includes_print.html.tpl",
-            "web_mvc_wiki/mvc_wiki/resources/templates/new_contents.html.tpl"]
+            "web_mvc_wiki/mvc_wiki/resources/templates/new_contents.html.tpl"],
+    "extra_resources" : ["web_mvc_wiki_plugin.pyc",
+            "web_mvc_wiki/__init__.pyc", "web_mvc_wiki/mvc_wiki/__init__.pyc",
+            "web_mvc_wiki/mvc_wiki/web_mvc_wiki_controllers.pyc",
+            "web_mvc_wiki/mvc_wiki/web_mvc_wiki_exceptions.pyc",
+            "web_mvc_wiki/mvc_wiki/web_mvc_wiki_system.pyc"]
 }
