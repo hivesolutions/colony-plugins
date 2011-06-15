@@ -68,7 +68,7 @@ class WebMvcMonitorItemResources:
         web_mvc_utils_plugin = self.web_mvc_monitor_item_resources_plugin.web_mvc_utils_plugin
 
         # creates the controllers for the web mvc monitor item resources controllers module
-        web_mvc_utils_plugin.create_controllers("web_mvc_monitor_item.uptime.web_mvc_monitor_item_resources_controllers", self, self.web_mvc_monitor_item_resources_plugin, "web_mvc_monitor_item_resources")
+        web_mvc_utils_plugin.create_controllers("web_mvc_monitor_item.resources.web_mvc_monitor_item_resources_controllers", self, self.web_mvc_monitor_item_resources_plugin, "web_mvc_monitor_item_resources")
 
     def get_monitor_item(self, parameters):
         """
