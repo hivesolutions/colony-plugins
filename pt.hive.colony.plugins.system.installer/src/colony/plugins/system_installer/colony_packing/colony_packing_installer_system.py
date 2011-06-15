@@ -80,6 +80,9 @@ TYPE_VALUE = "type"
 RESOURCES_VALUE = "resources"
 """ The resources value """
 
+EXTRA_RESOURCES_VALUE = "extra_resources"
+""" The extra resources value """
+
 BUNDLE_VALUE = "bundle"
 """ The bundle value """
 
@@ -970,6 +973,12 @@ class ColonyPackingInstaller:
 
             # retrieves the plugin resources
             plugin_resources = packing_information.get_property(RESOURCES_VALUE)
+
+            # retrieves the plugin extra resources
+            plugin_extra_resources = packing_information.get_property(EXTRA_RESOURCES_VALUE, [])
+
+            # extends the plugin resources list with the plugin extra resources
+            plugin_resources.extend(plugin_extra_resources)
 
             # creates the list of directory paths for (possible)
             # later removal
