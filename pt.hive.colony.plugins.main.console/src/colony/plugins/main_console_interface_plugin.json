@@ -21,5 +21,11 @@
             "main_console/interface/main_console_interface_system.py",
             "main_console/interface/main_console_interface_unix.py",
             "main_console/interface/main_console_interface_win32.py",
-            "main_console/interface/resources/baf.xml"]
+            "main_console/interface/resources/baf.xml"],
+    "extra_resources" : ["main_console_interface_plugin.pyc",
+            "main_console/__init__.pyc", "main_console/interface/__init__.pyc",
+            "main_console/interface/main_console_interface_exceptions.pyc",
+            "main_console/interface/main_console_interface_system.pyc",
+            "main_console/interface/main_console_interface_unix.pyc",
+            "main_console/interface/main_console_interface_win32.pyc"]
 }

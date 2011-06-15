@@ -18,5 +18,8 @@
     "resources" : ["main_console_base_plugin.py", "main_console/__init__.py",
             "main_console/base/__init__.py",
             "main_console/base/main_console_base_system.py",
-            "main_console/base/resources/baf.xml"]
+            "main_console/base/resources/baf.xml"],
+    "extra_resources" : ["main_console_base_plugin.pyc",
+            "main_console/__init__.pyc", "main_console/base/__init__.pyc",
+            "main_console/base/main_console_base_system.pyc"]
 }

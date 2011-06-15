@@ -23,5 +23,12 @@
             "main_console/console/main_console_interfaces.py",
             "main_console/console/main_console_system.py",
             "main_console/console/main_console_test.py",
-            "main_console/console/resources/baf.xml"]
+            "main_console/console/resources/baf.xml"],
+    "extra_resources" : ["main_console_plugin.pyc",
+            "main_console/__init__.pyc", "main_console/console/__init__.pyc",
+            "main_console/console/main_console_authentication.pyc",
+            "main_console/console/main_console_exceptions.pyc",
+            "main_console/console/main_console_interfaces.pyc",
+            "main_console/console/main_console_system.pyc",
+            "main_console/console/main_console_test.pyc"]
 }
