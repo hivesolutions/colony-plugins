@@ -20,5 +20,10 @@
             "main_service_mdns_service_handler/__init__.py",
             "main_service_mdns_service_handler/service_handler/__init__.py",
             "main_service_mdns_service_handler/service_handler/main_service_mdns_service_handler_system.py",
-            "main_service_mdns_service_handler/service_handler/resources/baf.xml"]
+            "main_service_mdns_service_handler/service_handler/resources/baf.xml"],
+    "extra_resources" : [
+            "main_service_mdns_service_handler_plugin.pyc",
+            "main_service_mdns_service_handler/__init__.pyc",
+            "main_service_mdns_service_handler/service_handler/__init__.pyc",
+            "main_service_mdns_service_handler/service_handler/main_service_mdns_service_handler_system.pyc"]
 }

@@ -17,5 +17,10 @@
             "main_service_raw_socket_provider/__init__.py",
             "main_service_raw_socket_provider/raw_socket_provider/__init__.py",
             "main_service_raw_socket_provider/raw_socket_provider/main_service_raw_socket_provider_system.py",
-            "main_service_raw_socket_provider/raw_socket_provider/resources/baf.xml"]
+            "main_service_raw_socket_provider/raw_socket_provider/resources/baf.xml"],
+    "extra_resources" : [
+            "main_service_raw_socket_provider_plugin.pyc",
+            "main_service_raw_socket_provider/__init__.pyc",
+            "main_service_raw_socket_provider/raw_socket_provider/__init__.pyc",
+            "main_service_raw_socket_provider/raw_socket_provider/main_service_raw_socket_provider_system.pyc"]
 }

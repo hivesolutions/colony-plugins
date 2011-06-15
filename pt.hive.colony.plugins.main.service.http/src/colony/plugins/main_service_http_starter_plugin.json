@@ -20,5 +20,9 @@
             "main_service_http_starter/__init__.py",
             "main_service_http_starter/starter/__init__.py",
             "main_service_http_starter/starter/main_service_http_starter_system.py",
-            "main_service_http_starter/starter/resources/baf.xml"]
+            "main_service_http_starter/starter/resources/baf.xml"],
+    "extra_resources" : ["main_service_http_starter_plugin.pyc",
+            "main_service_http_starter/__init__.pyc",
+            "main_service_http_starter/starter/__init__.pyc",
+            "main_service_http_starter/starter/main_service_http_starter_system.pyc"]
 }

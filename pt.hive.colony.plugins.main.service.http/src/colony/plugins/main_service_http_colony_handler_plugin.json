@@ -18,5 +18,11 @@
             "main_service_http_colony_handler/colony_handler/__init__.py",
             "main_service_http_colony_handler/colony_handler/main_service_http_colony_handler_exceptions.py",
             "main_service_http_colony_handler/colony_handler/main_service_http_colony_handler_system.py",
-            "main_service_http_colony_handler/colony_handler/resources/baf.xml"]
+            "main_service_http_colony_handler/colony_handler/resources/baf.xml"],
+    "extra_resources" : [
+            "main_service_http_colony_handler_plugin.pyc",
+            "main_service_http_colony_handler/__init__.pyc",
+            "main_service_http_colony_handler/colony_handler/__init__.pyc",
+            "main_service_http_colony_handler/colony_handler/main_service_http_colony_handler_exceptions.pyc",
+            "main_service_http_colony_handler/colony_handler/main_service_http_colony_handler_system.pyc"]
 }

@@ -20,5 +20,10 @@
             "main_service_pop_database_message_provider/__init__.py",
             "main_service_pop_database_message_provider/database_message_provider/__init__.py",
             "main_service_pop_database_message_provider/database_message_provider/main_service_pop_database_message_provider_system.py",
-            "main_service_pop_database_message_provider/database_message_provider/resources/baf.xml"]
+            "main_service_pop_database_message_provider/database_message_provider/resources/baf.xml"],
+    "extra_resources" : [
+            "main_service_pop_database_message_provider_plugin.pyc",
+            "main_service_pop_database_message_provider/__init__.pyc",
+            "main_service_pop_database_message_provider/database_message_provider/__init__.pyc",
+            "main_service_pop_database_message_provider/database_message_provider/main_service_pop_database_message_provider_system.pyc"]
 }

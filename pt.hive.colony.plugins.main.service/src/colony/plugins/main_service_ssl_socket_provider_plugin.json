@@ -20,5 +20,10 @@
             "main_service_ssl_socket_provider/ssl_socket_provider/resources/baf.xml",
             "main_service_ssl_socket_provider/ssl_socket_provider/resources/dummy.crt",
             "main_service_ssl_socket_provider/ssl_socket_provider/resources/dummy.csr",
-            "main_service_ssl_socket_provider/ssl_socket_provider/resources/dummy.key"]
+            "main_service_ssl_socket_provider/ssl_socket_provider/resources/dummy.key"],
+    "extra_resources" : [
+            "main_service_ssl_socket_provider_plugin.pyc",
+            "main_service_ssl_socket_provider/__init__.pyc",
+            "main_service_ssl_socket_provider/ssl_socket_provider/__init__.pyc",
+            "main_service_ssl_socket_provider/ssl_socket_provider/main_service_ssl_socket_provider_system.pyc"]
 }

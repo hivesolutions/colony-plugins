@@ -28,5 +28,12 @@
             "main_service_bittorrent/bittorrent/main_service_bittorrent_exceptions.py",
             "main_service_bittorrent/bittorrent/main_service_bittorrent_parser.py",
             "main_service_bittorrent/bittorrent/main_service_bittorrent_system.py",
-            "main_service_bittorrent/bittorrent/resources/baf.xml"]
+            "main_service_bittorrent/bittorrent/resources/baf.xml"],
+    "extra_resources" : [
+            "main_service_bittorrent_plugin.pyc",
+            "main_service_bittorrent/__init__.pyc",
+            "main_service_bittorrent/bittorrent/__init__.pyc",
+            "main_service_bittorrent/bittorrent/main_service_bittorrent_exceptions.pyc",
+            "main_service_bittorrent/bittorrent/main_service_bittorrent_parser.pyc",
+            "main_service_bittorrent/bittorrent/main_service_bittorrent_system.pyc"]
 }

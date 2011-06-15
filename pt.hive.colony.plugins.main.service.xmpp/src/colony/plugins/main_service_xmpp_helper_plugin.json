@@ -18,5 +18,11 @@
             "main_service_xmpp_helper/xmpp_helper/__init__.py",
             "main_service_xmpp_helper/xmpp_helper/main_service_xmpp_helper_exceptions.py",
             "main_service_xmpp_helper/xmpp_helper/main_service_xmpp_helper_system.py",
-            "main_service_xmpp_helper/xmpp_helper/resources/baf.xml"]
+            "main_service_xmpp_helper/xmpp_helper/resources/baf.xml"],
+    "extra_resources" : [
+            "main_service_xmpp_helper_plugin.pyc",
+            "main_service_xmpp_helper/__init__.pyc",
+            "main_service_xmpp_helper/xmpp_helper/__init__.pyc",
+            "main_service_xmpp_helper/xmpp_helper/main_service_xmpp_helper_exceptions.pyc",
+            "main_service_xmpp_helper/xmpp_helper/main_service_xmpp_helper_system.pyc"]
 }

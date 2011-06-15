@@ -20,5 +20,10 @@
             "main_service_pop/__init__.py", "main_service_pop/pop/__init__.py",
             "main_service_pop/pop/main_service_pop_exceptions.py",
             "main_service_pop/pop/main_service_pop_system.py",
-            "main_service_pop/pop/resources/baf.xml"]
+            "main_service_pop/pop/resources/baf.xml"],
+    "extra_resources" : ["main_service_pop_plugin.pyc",
+            "main_service_pop/__init__.pyc",
+            "main_service_pop/pop/__init__.pyc",
+            "main_service_pop/pop/main_service_pop_exceptions.pyc",
+            "main_service_pop/pop/main_service_pop_system.pyc"]
 }

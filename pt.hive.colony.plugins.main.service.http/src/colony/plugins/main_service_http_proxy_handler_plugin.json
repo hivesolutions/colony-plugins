@@ -26,5 +26,10 @@
             "main_service_http_proxy_handler/__init__.py",
             "main_service_http_proxy_handler/proxy_handler/__init__.py",
             "main_service_http_proxy_handler/proxy_handler/main_service_http_proxy_handler_system.py",
-            "main_service_http_proxy_handler/proxy_handler/resources/baf.xml"]
+            "main_service_http_proxy_handler/proxy_handler/resources/baf.xml"],
+    "extra_resources" : [
+            "main_service_http_proxy_handler_plugin.pyc",
+            "main_service_http_proxy_handler/__init__.pyc",
+            "main_service_http_proxy_handler/proxy_handler/__init__.pyc",
+            "main_service_http_proxy_handler/proxy_handler/main_service_http_proxy_handler_system.pyc"]
 }

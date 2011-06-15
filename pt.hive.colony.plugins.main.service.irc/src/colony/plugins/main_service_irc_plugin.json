@@ -19,5 +19,10 @@
             "main_service_irc/__init__.py", "main_service_irc/irc/__init__.py",
             "main_service_irc/irc/main_service_irc_exceptions.py",
             "main_service_irc/irc/main_service_irc_system.py",
-            "main_service_irc/irc/resources/baf.xml"]
+            "main_service_irc/irc/resources/baf.xml"],
+    "extra_resources" : ["main_service_irc_plugin.pyc",
+            "main_service_irc/__init__.pyc",
+            "main_service_irc/irc/__init__.pyc",
+            "main_service_irc/irc/main_service_irc_exceptions.pyc",
+            "main_service_irc/irc/main_service_irc_system.pyc"]
 }

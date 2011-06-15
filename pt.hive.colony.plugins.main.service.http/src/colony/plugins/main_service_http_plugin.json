@@ -21,5 +21,10 @@
             "main_service_http/http/__init__.py",
             "main_service_http/http/main_service_http_exceptions.py",
             "main_service_http/http/main_service_http_system.py",
-            "main_service_http/http/resources/baf.xml"]
+            "main_service_http/http/resources/baf.xml"],
+    "extra_resources" : ["main_service_http_plugin.pyc",
+            "main_service_http/__init__.pyc",
+            "main_service_http/http/__init__.pyc",
+            "main_service_http/http/main_service_http_exceptions.pyc",
+            "main_service_http/http/main_service_http_system.pyc"]
 }

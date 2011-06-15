@@ -20,5 +20,10 @@
             "main_service_http_gzip_encoding/__init__.py",
             "main_service_http_gzip_encoding/gzip_encoding/__init__.py",
             "main_service_http_gzip_encoding/gzip_encoding/main_service_http_gzip_encoding_system.py",
-            "main_service_http_gzip_encoding/gzip_encoding/resources/baf.xml"]
+            "main_service_http_gzip_encoding/gzip_encoding/resources/baf.xml"],
+    "extra_resources" : [
+            "main_service_http_gzip_encoding_plugin.pyc",
+            "main_service_http_gzip_encoding/__init__.pyc",
+            "main_service_http_gzip_encoding/gzip_encoding/__init__.pyc",
+            "main_service_http_gzip_encoding/gzip_encoding/main_service_http_gzip_encoding_system.pyc"]
 }

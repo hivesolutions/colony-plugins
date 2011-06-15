@@ -23,5 +23,10 @@
             "main_service_xmpp/xmpp/__init__.py",
             "main_service_xmpp/xmpp/main_service_xmpp_exceptions.py",
             "main_service_xmpp/xmpp/main_service_xmpp_system.py",
-            "main_service_xmpp/xmpp/resources/baf.xml"]
+            "main_service_xmpp/xmpp/resources/baf.xml"],
+    "extra_resources" : ["main_service_xmpp_plugin.pyc",
+            "main_service_xmpp/__init__.pyc",
+            "main_service_xmpp/xmpp/__init__.pyc",
+            "main_service_xmpp/xmpp/main_service_xmpp_exceptions.pyc",
+            "main_service_xmpp/xmpp/main_service_xmpp_system.pyc"]
 }

@@ -20,5 +20,10 @@
             "main_service_abecula/abecula/__init__.py",
             "main_service_abecula/abecula/main_service_abecula_exceptions.py",
             "main_service_abecula/abecula/main_service_abecula_system.py",
-            "main_service_abecula/abecula/resources/baf.xml"]
+            "main_service_abecula/abecula/resources/baf.xml"],
+    "extra_resources" : ["main_service_abecula_plugin.pyc",
+            "main_service_abecula/__init__.pyc",
+            "main_service_abecula/abecula/__init__.pyc",
+            "main_service_abecula/abecula/main_service_abecula_exceptions.pyc",
+            "main_service_abecula/abecula/main_service_abecula_system.pyc"]
 }

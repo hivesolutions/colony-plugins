@@ -22,5 +22,10 @@
             "main_service_policy/policy/main_service_policy_system.py",
             "main_service_policy/policy/resources/baf.xml",
             "main_service_policy/policy/resources/default.policy",
-            "main_service_policy/policy/resources/error.policy"]
+            "main_service_policy/policy/resources/error.policy"],
+    "extra_resources" : ["main_service_policy_plugin.pyc",
+            "main_service_policy/__init__.pyc",
+            "main_service_policy/policy/__init__.pyc",
+            "main_service_policy/policy/main_service_policy_exceptions.pyc",
+            "main_service_policy/policy/main_service_policy_system.pyc"]
 }

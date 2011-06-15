@@ -30,5 +30,10 @@
             "main_service_http_welcome_handler/welcome_handler/resources/images/links_footer.png",
             "main_service_http_welcome_handler/welcome_handler/resources/images/powered_by_colony.png",
             "main_service_http_welcome_handler/welcome_handler/resources/images/separator.png",
-            "main_service_http_welcome_handler/welcome_handler/resources/js/main.js"]
+            "main_service_http_welcome_handler/welcome_handler/resources/js/main.js"],
+    "extra_resources" : [
+            "main_service_http_welcome_handler_plugin.pyc",
+            "main_service_http_welcome_handler/__init__.pyc",
+            "main_service_http_welcome_handler/welcome_handler/__init__.pyc",
+            "main_service_http_welcome_handler/welcome_handler/main_service_http_welcome_handler_system.pyc"]
 }

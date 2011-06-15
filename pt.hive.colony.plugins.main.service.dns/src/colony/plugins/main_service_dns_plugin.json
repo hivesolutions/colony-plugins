@@ -19,5 +19,10 @@
             "main_service_dns/__init__.py", "main_service_dns/dns/__init__.py",
             "main_service_dns/dns/main_service_dns_exceptions.py",
             "main_service_dns/dns/main_service_dns_system.py",
-            "main_service_dns/dns/resources/baf.xml"]
+            "main_service_dns/dns/resources/baf.xml"],
+    "extra_resources" : ["main_service_dns_plugin.pyc",
+            "main_service_dns/__init__.pyc",
+            "main_service_dns/dns/__init__.pyc",
+            "main_service_dns/dns/main_service_dns_exceptions.pyc",
+            "main_service_dns/dns/main_service_dns_system.pyc"]
 }

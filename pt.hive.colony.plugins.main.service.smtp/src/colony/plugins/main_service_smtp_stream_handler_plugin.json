@@ -12,5 +12,17 @@
     "capabilities_allowed" : [],
     "dependencies" : [],
     "main_file" : "main_service_smtp_stream_handler_plugin.py",
-    "resources" : ["main_service_smtp_stream_handler_plugin.py", "main_service_smtp_stream_handler/__init__.py", "main_service_smtp_stream_handler/stream_handler/__init__.py", "main_service_smtp_stream_handler/stream_handler/main_service_smtp_stream_handler_exceptions.py", "main_service_smtp_stream_handler/stream_handler/main_service_smtp_stream_handler_system.py", "main_service_smtp_stream_handler/stream_handler/resources/baf.xml"]
+    "resources" : [
+            "main_service_smtp_stream_handler_plugin.py",
+            "main_service_smtp_stream_handler/__init__.py",
+            "main_service_smtp_stream_handler/stream_handler/__init__.py",
+            "main_service_smtp_stream_handler/stream_handler/main_service_smtp_stream_handler_exceptions.py",
+            "main_service_smtp_stream_handler/stream_handler/main_service_smtp_stream_handler_system.py",
+            "main_service_smtp_stream_handler/stream_handler/resources/baf.xml"],
+    "extra_resources" : [
+            "main_service_smtp_stream_handler_plugin.pyc",
+            "main_service_smtp_stream_handler/__init__.pyc",
+            "main_service_smtp_stream_handler/stream_handler/__init__.pyc",
+            "main_service_smtp_stream_handler/stream_handler/main_service_smtp_stream_handler_exceptions.pyc",
+            "main_service_smtp_stream_handler/stream_handler/main_service_smtp_stream_handler_system.pyc"]
 }
