@@ -23,5 +23,10 @@
             "service_facebook/facebook/__init__.py",
             "service_facebook/facebook/service_facebook_exceptions.py",
             "service_facebook/facebook/service_facebook_system.py",
-            "service_facebook/facebook/resources/baf.xml"]
+            "service_facebook/facebook/resources/baf.xml"],
+    "extra_resources" : ["service_facebook_plugin.pyc",
+            "service_facebook/__init__.pyc",
+            "service_facebook/facebook/__init__.pyc",
+            "service_facebook/facebook/service_facebook_exceptions.pyc",
+            "service_facebook/facebook/service_facebook_system.pyc"]
 }

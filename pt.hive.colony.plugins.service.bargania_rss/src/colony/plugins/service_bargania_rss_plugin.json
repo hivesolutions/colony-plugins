@@ -19,5 +19,9 @@
             "service_bargania_rss/__init__.py",
             "service_bargania_rss/bargania_rss/__init__.py",
             "service_bargania_rss/bargania_rss/service_bargania_rss_system.py",
-            "service_bargania_rss/bargania_rss/resources/baf.xml"]
+            "service_bargania_rss/bargania_rss/resources/baf.xml"],
+    "extra_resources" : ["service_bargania_rss_plugin.pyc",
+            "service_bargania_rss/__init__.pyc",
+            "service_bargania_rss/bargania_rss/__init__.pyc",
+            "service_bargania_rss/bargania_rss/service_bargania_rss_system.pyc"]
 }

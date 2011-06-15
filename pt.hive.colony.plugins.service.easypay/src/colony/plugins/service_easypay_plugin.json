@@ -19,5 +19,10 @@
             "service_easypay/easypay/__init__.py",
             "service_easypay/easypay/service_easypay_exceptions.py",
             "service_easypay/easypay/service_easypay_system.py",
-            "service_easypay/easypay/resources/baf.xml"]
+            "service_easypay/easypay/resources/baf.xml"],
+    "extra_resources" : ["service_easypay_plugin.pyc",
+            "service_easypay/__init__.pyc",
+            "service_easypay/easypay/__init__.pyc",
+            "service_easypay/easypay/service_easypay_exceptions.pyc",
+            "service_easypay/easypay/service_easypay_system.pyc"]
 }

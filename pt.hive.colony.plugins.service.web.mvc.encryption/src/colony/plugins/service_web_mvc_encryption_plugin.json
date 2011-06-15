@@ -20,5 +20,10 @@
             "service_web_mvc_encryption/__init__.py",
             "service_web_mvc_encryption/web_mvc_encryption/__init__.py",
             "service_web_mvc_encryption/web_mvc_encryption/service_web_mvc_encryption_system.py",
-            "service_web_mvc_encryption/web_mvc_encryption/resources/baf.xml"]
+            "service_web_mvc_encryption/web_mvc_encryption/resources/baf.xml"],
+    "extra_resources" : [
+            "service_web_mvc_encryption_plugin.pyc",
+            "service_web_mvc_encryption/__init__.pyc",
+            "service_web_mvc_encryption/web_mvc_encryption/__init__.pyc",
+            "service_web_mvc_encryption/web_mvc_encryption/service_web_mvc_encryption_system.pyc"]
 }

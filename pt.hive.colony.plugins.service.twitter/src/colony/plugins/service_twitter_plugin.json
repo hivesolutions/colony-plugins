@@ -22,5 +22,10 @@
             "service_twitter/twitter/__init__.py",
             "service_twitter/twitter/service_twitter_exceptions.py",
             "service_twitter/twitter/service_twitter_system.py",
-            "service_twitter/twitter/resources/baf.xml"]
+            "service_twitter/twitter/resources/baf.xml"],
+    "extra_resources" : ["service_twitter_plugin.pyc",
+            "service_twitter/__init__.pyc",
+            "service_twitter/twitter/__init__.pyc",
+            "service_twitter/twitter/service_twitter_exceptions.pyc",
+            "service_twitter/twitter/service_twitter_system.pyc"]
 }

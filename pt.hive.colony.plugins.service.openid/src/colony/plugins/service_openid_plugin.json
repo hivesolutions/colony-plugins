@@ -29,5 +29,11 @@
             "service_openid/openid/service_openid_exceptions.py",
             "service_openid/openid/service_openid_parser.py",
             "service_openid/openid/service_openid_system.py",
-            "service_openid/openid/resources/baf.xml"]
+            "service_openid/openid/resources/baf.xml"],
+    "extra_resources" : ["service_openid_plugin.pyc",
+            "service_openid/__init__.pyc",
+            "service_openid/openid/__init__.pyc",
+            "service_openid/openid/service_openid_exceptions.pyc",
+            "service_openid/openid/service_openid_parser.pyc",
+            "service_openid/openid/service_openid_system.pyc"]
 }
