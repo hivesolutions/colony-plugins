@@ -43,6 +43,7 @@ import datetime
 import threading
 
 import colony.libs.file_util
+import colony.libs.crypt_util
 
 import colony_packing_installer_exceptions
 
@@ -69,6 +70,9 @@ VERSION_VALUE = "version"
 
 TIMESTAMP_VALUE = "timestamp"
 """ The timestamp value """
+
+HASH_DIGEST_VALUE = "hash_digest"
+""" The hash digest value """
 
 TYPE_VALUE = "type"
 """ The type value """
@@ -465,10 +469,14 @@ class ColonyPackingInstaller:
             # retrieves the package item key
             package_item_key = package_id
 
+            # generates the hash digest map for the package file
+            hash_digest_map = colony.libs.crypt_util.generate_hash_digest_map(real_file_path)
+
             # creates the package item value
             package_item_value = {
                 TYPE_VALUE : type,
-                VERSION_VALUE : package_version
+                VERSION_VALUE : package_version,
+                HASH_DIGEST_VALUE : hash_digest_map
             }
 
             # adds the package item
@@ -576,10 +584,17 @@ class ColonyPackingInstaller:
                 # retrieves the package item key
                 package_item_key = plugin_id
 
+                # resolves the plugin file path retrieving the real file path
+                real_plugin_file_path = file_context.resolve_file_path(file_path)
+
+                # generates the hash digest map for the package file
+                hash_digest_map = colony.libs.crypt_util.generate_hash_digest_map(real_plugin_file_path)
+
                 # creates the package item value
                 package_item_value = {
                     TYPE_VALUE : PLUGIN_VALUE,
-                    VERSION_VALUE : plugin_version
+                    VERSION_VALUE : plugin_version,
+                    HASH_DIGEST_VALUE : hash_digest_map
                 }
 
                 # adds the package item
@@ -588,9 +603,13 @@ class ColonyPackingInstaller:
             # retrieves the bundle item key
             bundle_item_key = bundle_id
 
+            # generates the hash digest map for the bundle file
+            hash_digest_map = colony.libs.crypt_util.generate_hash_digest_map(real_file_path)
+
             # creates the bundle item value
             bundle_item_value = {
-                VERSION_VALUE : bundle_version
+                VERSION_VALUE : bundle_version,
+                HASH_DIGEST_VALUE : hash_digest_map
             }
 
             # adds the bundle item
@@ -677,9 +696,13 @@ class ColonyPackingInstaller:
             # retrieves the plugin item key
             plugin_item_key = plugin_id
 
+            # generates the hash digest map for the plugin file
+            hash_digest_map = colony.libs.crypt_util.generate_hash_digest_map(real_file_path)
+
             # creates the plugin item value
             plugin_item_value = {
-                VERSION_VALUE : plugin_version
+                VERSION_VALUE : plugin_version,
+                HASH_DIGEST_VALUE : hash_digest_map
             }
 
             # adds the plugin item
