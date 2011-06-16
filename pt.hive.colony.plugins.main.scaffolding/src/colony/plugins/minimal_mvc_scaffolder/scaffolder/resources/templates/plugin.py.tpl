@@ -30,7 +30,7 @@ class ${out value=scaffold_attributes.class_name /}Plugin(colony.base.plugin_sys
         colony.base.plugin_system.Plugin.end_load_plugin(self)
         self.${out value=scaffold_attributes.variable_name /}.load_components()
 
-    @colony.base.decorators.inject_dependencies("${out value=scaffold_attributes.plugin_id /}", "${out value=scaffold_attributes.plugin_version /}")
+    @colony.base.decorators.inject_dependencies
     def dependency_injected(self, plugin):
         colony.base.plugin_system.Plugin.dependency_injected(self, plugin)
 
