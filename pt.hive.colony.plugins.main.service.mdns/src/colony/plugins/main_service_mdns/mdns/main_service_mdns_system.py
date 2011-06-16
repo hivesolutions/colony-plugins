@@ -593,6 +593,14 @@ class MdnsClientServiceHandler:
             # prints info message about exception
             self.service_plugin.info("There was an exception handling the request: " + unicode(exception))
 
+            import traceback
+            import sys
+
+            print "Exception in user code:"
+            print '-'*60
+            traceback.print_exc(file=sys.stdout)
+            print '-'*60
+
             try:
                 # sends the exception
                 self.send_exception(service_connection, request, exception)
