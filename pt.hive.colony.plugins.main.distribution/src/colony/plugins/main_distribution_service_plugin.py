@@ -72,7 +72,7 @@ class MainDistributionServicePlugin(colony.base.plugin_system.Plugin):
     main_distribution_service = None
     """ The main distribution service """
 
-    @colony.base.decorators.load_plugin("pt.hive.colony.plugins.distribution.main.registry.service", "1.0.0")
+    @colony.base.decorators.load_plugin()
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
         import main_distribution.service.main_distribution_service_system
@@ -93,7 +93,7 @@ class MainDistributionServicePlugin(colony.base.plugin_system.Plugin):
     def unload_allowed(self, plugin, capability):
         colony.base.plugin_system.Plugin.unload_allowed(self, plugin, capability)
 
-    @colony.base.decorators.inject_dependencies("pt.hive.colony.plugins.distribution.main.registry.service", "1.0.0")
+    @colony.base.decorators.inject_dependencies
     def dependency_injected(self, plugin):
         colony.base.plugin_system.Plugin.dependency_injected(self, plugin)
 
