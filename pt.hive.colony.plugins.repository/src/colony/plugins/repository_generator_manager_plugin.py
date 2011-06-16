@@ -90,11 +90,11 @@ class RepositoryGeneratorManagerPlugin(colony.base.plugin_system.Plugin):
     def end_unload_plugin(self):
         colony.base.plugin_system.Plugin.end_unload_plugin(self)
 
-    @colony.base.decorators.load_allowed("pt.hive.colony.plugins.repository.generator.manager", "1.0.0")
+    @colony.base.decorators.load_allowed
     def load_allowed(self, plugin, capability):
         colony.base.plugin_system.Plugin.load_allowed(self, plugin, capability)
 
-    @colony.base.decorators.unload_allowed("pt.hive.colony.plugins.repository.generator.manager", "1.0.0")
+    @colony.base.decorators.unload_allowed
     def unload_allowed(self, plugin, capability):
         colony.base.plugin_system.Plugin.unload_allowed(self, plugin, capability)
 
