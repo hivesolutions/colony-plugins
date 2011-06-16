@@ -40,6 +40,8 @@ __license__ = "GNU General Public License (GPL), Version 3"
 import os
 import threading
 
+import colony.libs.path_util
+
 import system_updater_parser
 import system_updater_exceptions
 
@@ -138,8 +140,14 @@ class SystemUpdater:
         # path relative path
         repositories_file_path = os.path.join(resources_path, REPOSITORIES_FILE_NAME)
 
+        # resolves the configuration file path
+        configuration_file_path = plugin_manager.resolve_file_path("%configuration:" + system_updater_plugin_id + "%/" + REPOSITORIES_FILE_NAME, True)
+
+        # ensures that the configuration file path exists and contains the default contents
+        colony.libs.path_util.ensure_file_path(configuration_file_path, repositories_file_path)
+
         # creates the repositories file parser for the
-        repositories_file_parser = system_updater_parser.RepositoriesFileParser(repositories_file_path)
+        repositories_file_parser = system_updater_parser.RepositoriesFileParser(configuration_file_path)
 
         # parses the repositories file using the repositories file parser
         repositories_file_parser.parse()
