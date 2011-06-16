@@ -71,7 +71,7 @@ class BusinessSessionSerializerPlugin(colony.base.plugin_system.Plugin):
     business_session_serializer = None
     """ The business session serializer """
 
-    @colony.base.decorators.load_plugin("pt.hive.colony.plugins.business.session_serializer", "1.0.0")
+    @colony.base.decorators.load_plugin()
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
         import business.session_serializer.business_session_serializer_system
