@@ -844,7 +844,8 @@ class HttpClientServiceHandler:
 
     def _log(self, request):
         # in case the log file is not defined
-        if not self.log_file:
+        # or in case it's closed
+        if not self.log_file or self.log_file.closed:
             # returns immediately
             return
 
