@@ -103,15 +103,15 @@ class WebMvcPanelItemMonitorPlugin(colony.base.plugin_system.Plugin):
     def end_unload_plugin(self):
         colony.base.plugin_system.Plugin.end_unload_plugin(self)
 
-    @colony.base.decorators.load_allowed("pt.hive.colony.plugins.web.mvc.panel_item.monitor", "1.0.0")
+    @colony.base.decorators.load_allowed
     def load_allowed(self, plugin, capability):
         colony.base.plugin_system.Plugin.load_allowed(self, plugin, capability)
 
-    @colony.base.decorators.unload_allowed("pt.hive.colony.plugins.web.mvc.panel_item.monitor", "1.0.0")
+    @colony.base.decorators.unload_allowed
     def unload_allowed(self, plugin, capability):
         colony.base.plugin_system.Plugin.unload_allowed(self, plugin, capability)
 
-    @colony.base.decorators.inject_dependencies("pt.hive.colony.plugins.web.mvc.panel_item.monitor", "1.0.0")
+    @colony.base.decorators.inject_dependencies
     def dependency_injected(self, plugin):
         colony.base.plugin_system.Plugin.dependency_injected(self, plugin)
 
