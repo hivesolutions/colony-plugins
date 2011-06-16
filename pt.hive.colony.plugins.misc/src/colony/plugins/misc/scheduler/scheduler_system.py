@@ -512,6 +512,14 @@ class Scheduler:
             # prints an error message
             self.scheduler_plugin.error("Problem executing scheduler task: " + unicode(exception))
 
+            import traceback
+            import sys
+
+            print "Exception in user code:"
+            print '-'*60
+            traceback.print_exc(file=sys.stdout)
+            print '-'*60
+
         # in case the continue flag is not set
         if not self.continue_flag:
             # raises the scheduler cancel exception
