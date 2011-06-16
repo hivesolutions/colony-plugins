@@ -79,7 +79,7 @@ class SearchRemoteServicePlugin(colony.base.plugin_system.Plugin):
     task_manager_plugin = None
     """ Task manager plugin """
 
-    @colony.base.decorators.load_plugin("pt.hive.colony.plugins.search.remote_service", "1.0.0")
+    @colony.base.decorators.load_plugin()
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
         import search_remote_service.remote_service.search_remote_service_system
@@ -100,7 +100,7 @@ class SearchRemoteServicePlugin(colony.base.plugin_system.Plugin):
     def unload_allowed(self, plugin, capability):
         colony.base.plugin_system.Plugin.unload_allowed(self, plugin, capability)
 
-    @colony.base.decorators.inject_dependencies("pt.hive.colony.plugins.search.remote_service", "1.0.0")
+    @colony.base.decorators.inject_dependencies
     def dependency_injected(self, plugin):
         colony.base.plugin_system.Plugin.dependency_injected(self, plugin)
 
