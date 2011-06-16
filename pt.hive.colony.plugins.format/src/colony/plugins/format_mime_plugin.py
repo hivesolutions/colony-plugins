@@ -95,11 +95,11 @@ class FormatMimePlugin(colony.base.plugin_system.Plugin):
     def dependency_injected(self, plugin):
         colony.base.plugin_system.Plugin.dependency_injected(self, plugin)
 
-    @colony.base.decorators.set_configuration_property("pt.hive.colony.plugins.format.mime", "1.0.0")
+    @colony.base.decorators.set_configuration_property
     def set_configuration_property(self, property_name, property):
         colony.base.plugin_system.Plugin.set_configuration_property(self, property_name, property)
 
-    @colony.base.decorators.unset_configuration_property("pt.hive.colony.plugins.format.mime", "1.0.0")
+    @colony.base.decorators.unset_configuration_property
     def unset_configuration_property(self, property_name):
         colony.base.plugin_system.Plugin.unset_configuration_property(self, property_name)
 
