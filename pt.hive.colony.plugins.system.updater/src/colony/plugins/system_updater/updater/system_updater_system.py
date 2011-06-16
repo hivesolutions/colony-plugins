@@ -453,11 +453,18 @@ class SystemUpdater:
 
         # iterates over all the repository descriptors available
         for repository_descriptor in self.repository_descriptor_list:
+            # retrieves the package from the repository descriptor for the given
+            # package id and version
             package_descripton = repository_descriptor.get_package(package_id, package_version)
 
-            # in case package descriptor exists in current repository descriptor
-            if package_descripton:
-                return package_descripton
+            # in case package descriptor does not exists in current
+            # repository descriptor
+            if not package_descripton:
+                # continues the loop
+                continue
+
+            # returns the package description
+            return package_descripton
 
     def get_bundle_descriptor(self, bundle_id, bundle_version = None):
         """
@@ -473,11 +480,18 @@ class SystemUpdater:
 
         # iterates over all the repository descriptors available
         for repository_descriptor in self.repository_descriptor_list:
+            # retrieves the bundle from the repository descriptor for the given
+            # bundle id and version
             bundle_descripton = repository_descriptor.get_bundle(bundle_id, bundle_version)
 
-            # in case bundle descriptor exists in current repository descriptor
+            # in case bundle descriptor does not exists in current
+            # repository descriptor
             if bundle_descripton:
-                return bundle_descripton
+                # continues the loop
+                continue
+
+            # returns the bundle descriptor
+            return bundle_descripton
 
     def get_plugin_descriptor(self, plugin_id, plugin_version = None):
         """
@@ -493,12 +507,18 @@ class SystemUpdater:
 
         # iterates over all the repository descriptors available
         for repository_descriptor in self.repository_descriptor_list:
-            # retrieves the plugin descriptor for repository descriptor
+            # retrieves the plugin from the repository descriptor for the given
+            # plugin id and version
             plugin_descripton = repository_descriptor.get_plugin(plugin_id, plugin_version)
 
-            # in case plugin descriptor exists in current repository descriptor
+            # in case plugin descriptor does not exists in current
+            # repository descriptor
             if plugin_descripton:
-                return plugin_descripton
+                # continues the loop
+                continue
+
+            # returns the plugin descriptor
+            return plugin_descripton
 
     def get_repository_descriptor_bundle_descriptor(self, bundle_descriptor):
         """
