@@ -62,6 +62,12 @@
                     <version></version>
                 </bundle_dependency>
             </dependencies>
+            <hash_digest_items>
+                <hash_digest>
+                    <key></key>
+                    <value></value>
+                </hash_digest>
+            </hash_digest_items>
         </bundle>
     </bundles>
     <plugins>
@@ -70,9 +76,6 @@
             <type></type>
             <id></id>
             <version></version>
-            <main_module></main_module>
-            <main_class></main_class>
-            <file_name></file_name>
             <contents_file></contents_file>
             <dependencies>
                 <plugin_dependency>
@@ -80,6 +83,12 @@
                     <version></version>
                 </plugin_dependency>
             </dependencies>
+            <hash_digest_items>
+                <hash_digest>
+                    <key></key>
+                    <value></value>
+                </hash_digest>
+            </hash_digest_items>
         </plugin>
     </plugins>
 </repository>
