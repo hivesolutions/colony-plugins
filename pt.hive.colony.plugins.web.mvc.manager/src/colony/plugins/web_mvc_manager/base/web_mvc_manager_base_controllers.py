@@ -140,8 +140,11 @@ class PluginController:
         # retrieves the template file from the parameters
         template_file = parameters["template_file"]
 
+        # resolves the relative resources path to obtain the absolute page include to be used
+        absolute_page_include = self.resolve_relative_path(WEB_MVC_MANAGER_BASE_RESOURCES_PATH, "templates/plugin/plugin_list_contents.html.tpl")
+
         # assigns the include to the template
-        self.assign_include_template_file(template_file, "page_include", "plugin/plugin_list_contents.html.tpl")
+        self.assign_include_template_file(template_file, "page_include", absolute_page_include)
 
         # assigns the include to the template
         self.assign_include_template_file(template_file, "side_panel_include", "side_panel/side_panel_configuration.html.tpl")
@@ -235,74 +238,6 @@ class PluginController:
 
         # processes the template file and sets the request contents
         self.process_set_contents(rest_request, template_file)
-
-    @web_mvc_utils.serialize_exceptions("all")
-    @web_mvc_utils.validated_method("plugins.new")
-    def handle_new(self, rest_request, parameters = {}):
-        # retrieves the exception handler
-        exception_handler = self.web_mvc_manager_base.web_mvc_manager_base_exception_controller
-
-        # sets the exception handler in the parameters
-        parameters[EXCEPTION_HANDLER_VALUE] = exception_handler
-
-        # retrieves the template file from the parameters
-        template_file = parameters["template_file"]
-
-        # assigns the include to the template
-        self.assign_include_template_file(template_file, "page_include", "plugin/plugin_list_contents.html.tpl")
-
-        # assigns the include to the template
-        self.assign_include_template_file(template_file, "side_panel_include", "side_panel/side_panel_configuration.html.tpl")
-
-        # assigns the session variables to the template file
-        self.assign_session_template_file(rest_request, template_file)
-
-        # applies the base path to the template file
-        self.apply_base_path_template_file(rest_request, template_file)
-
-        # processes the template file and sets the request contents
-        self.process_set_contents(rest_request, template_file)
-
-    @web_mvc_utils.serialize_exceptions("all")
-    @web_mvc_utils.validated_method("plugins.new")
-    def handle_new_ajx(self, rest_request, parameters = {}):
-        # retrieves the json plugin
-        json_plugin = self.web_mvc_manager_base_plugin.json_plugin
-
-        # sets the serializer in the parameters
-        parameters[SERIALIZER_VALUE] = json_plugin
-
-        # retrieves the template file
-        template_file = self.retrieve_template_file("plugin_new_contents.html.tpl")
-
-        # assigns the session variables to the template file
-        self.assign_session_template_file(rest_request, template_file)
-
-        # applies the base path to the template file
-        self.apply_base_path_template_file(rest_request, template_file)
-
-        # processes the template file and sets the request contents
-        self.process_set_contents(rest_request, template_file)
-
-    @web_mvc_utils.serialize_exceptions("all")
-    @web_mvc_utils.validated_method("plugins.create")
-    def handle_create_serialized(self, rest_request, parameters = {}):
-        # retrieves the package controller
-        web_mvc_manager_package_controller = self.web_mvc_manager_base.web_mvc_manager_package_controller
-
-        # deploys the package
-        web_mvc_manager_package_controller._deploy_package(rest_request, COLONY_PLUGIN_FILE_EXTENSION)
-
-    def handle_create_json(self, rest_request, parameters = {}):
-        # retrieves the json plugin
-        json_plugin = self.web_mvc_manager_base_plugin.json_plugin
-
-        # sets the serializer in the parameters
-        parameters[SERIALIZER_VALUE] = json_plugin
-
-        # handles the request with the general
-        # handle create serialized method
-        self.handle_create_serialized(rest_request, parameters)
 
     @web_mvc_utils.serialize_exceptions("all")
     @web_mvc_utils.validated_method("plugins.show")
