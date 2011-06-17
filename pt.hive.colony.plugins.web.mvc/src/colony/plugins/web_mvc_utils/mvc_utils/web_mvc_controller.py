@@ -1326,6 +1326,39 @@ def set_relative_resources_path(self, relative_resources_path, extra_extras_path
     # sets the resources path
     self.set_resources_path(resources_path, update_resources, parameters)
 
+def resolve_relative_path(self, relative_path, extra_path = None):
+    """
+    Resolves the relative path as an absolute path.
+    The resolution takes into account an extra path that may
+    be added to the resolved path.
+
+    @type relative_path: String
+    @param relative_path: The relative path to be used for resolution.
+    @param extra_extras_path: The extra path to be appended to the
+    relative resources path after resolution.
+    @rtype: String
+    @return: The resolved relative path as an absolute path.
+    """
+
+    # retrieves the plugin manager
+    plugin_manager = self.plugin.manager
+
+    # retrieves the plugin id
+    plugin_id = self.plugin.id
+
+    # retrieves the hive site main plugin path
+    plugin_path = plugin_manager.get_plugin_path_by_id(plugin_id)
+
+    # creates the full absolute path from the relative path
+    resolved_path = os.path.join(plugin_path, relative_path)
+
+    # appends the extra path to the resolved path to create
+    # the "final" resolved path (in case it's defined)
+    resolved_path = extra_path and os.path.join(resolved_path, extra_path) or resolved_path
+
+    # returns the resolved path
+    return resolved_path
+
 def get_plugin(self):
     """
     Retrieves the plugin.
