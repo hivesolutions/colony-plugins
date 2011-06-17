@@ -260,8 +260,11 @@ class PluginController:
         # retrieves the specified plugin
         plugin = self._get_plugin(rest_request, plugin_id)
 
+        # resolves the relative resources path to obtain the absolute page include to be used
+        absolute_page_include = self.resolve_relative_path(WEB_MVC_MANAGER_BASE_RESOURCES_PATH, "templates/plugin/plugin_list_contents.html.tpl")
+
         # assigns the include to the template
-        self.assign_include_template_file(template_file, "page_include", "plugin/plugin_list_contents.html.tpl")
+        self.assign_include_template_file(template_file, "page_include", absolute_page_include)
 
         # assigns the include to the template
         self.assign_include_template_file(template_file, "side_panel_include", "side_panel/side_panel_configuration.html.tpl")
@@ -463,11 +466,14 @@ class CapabilityController:
         # sets the exception handler in the parameters
         parameters[EXCEPTION_HANDLER_VALUE] = exception_handler
 
-        # retrieves the template file
-        template_file = self.retrieve_template_file("../general.html.tpl")
+        # retrieves the template file from the parameters
+        template_file = parameters["template_file"]
+
+        # resolves the relative resources path to obtain the absolute page include to be used
+        absolute_page_include = self.resolve_relative_path(WEB_MVC_MANAGER_BASE_RESOURCES_PATH, "templates/capability/capability_list_contents.html.tpl")
 
         # assigns the include to the template
-        self.assign_include_template_file(template_file, "page_include", "capability/capability_list_contents.html.tpl")
+        self.assign_include_template_file(template_file, "page_include", absolute_page_include)
 
         # assigns the include to the template
         self.assign_include_template_file(template_file, "side_panel_include", "side_panel/side_panel_configuration.html.tpl")
