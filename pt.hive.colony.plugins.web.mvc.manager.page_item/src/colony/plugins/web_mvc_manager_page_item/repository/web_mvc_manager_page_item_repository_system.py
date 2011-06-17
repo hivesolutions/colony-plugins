@@ -37,6 +37,12 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
+WEB_MVC_MANAGER_PAGE_ITEM_REPOSITORY_RESOURCES_PATH = "web_mvc_manager_page_item/repository/resources"
+""" The web mvc manager page item repository path """
+
+EXTRAS_PATH = WEB_MVC_MANAGER_PAGE_ITEM_REPOSITORY_RESOURCES_PATH + "/extras"
+""" The extras path """
+
 class WebMvcManagerPageItemRepository:
     """
     The web mvc manager page item repository class.
@@ -67,6 +73,33 @@ class WebMvcManagerPageItemRepository:
         # creates the controllers for the web mvc manager page item code execution controller modules
         web_mvc_utils_plugin.create_controllers("web_mvc_manager_page_item.repository.web_mvc_manager_page_item_repository_controllers", self, self.web_mvc_manager_page_item_repository_plugin, "web_mvc_manager_page_item_repository")
 
+    def get_patterns(self):
+        """
+        Retrieves the tuple of regular expressions to be used as patterns,
+        to the web mvc service. The tuple should relate the route with the handler
+        method/function.
+
+        @rtype: Tuple
+        @return: The tuple of regular expressions to be used as patterns,
+        to the web mvc service.
+        """
+
+        return ()
+
+    def get_communication_patterns(self):
+        """
+        Retrieves the tuple of regular expressions to be used as communication patterns,
+        to the web mvc service. The tuple should relate the route with a tuple
+        containing the data handler, the connection changed handler and the name
+        of the connection.
+
+        @rtype: Tuple
+        @return: The tuple of regular expressions to be used as communication patterns,
+        to the web mvc service.
+        """
+
+        return ()
+
     def get_resource_patterns(self):
         """
         Retrieves the tuple of regular expressions to be used as resource patterns,
@@ -78,7 +111,15 @@ class WebMvcManagerPageItemRepository:
         to the web mvc service.
         """
 
-        return ()
+        # retrieves the plugin manager
+        plugin_manager = self.web_mvc_manager_page_item_repository_plugin.manager
+
+        # retrieves the web web mvc manager page item repository plugin path
+        web_mvc_manager_page_item_repository_plugin_path = plugin_manager.get_plugin_path_by_id(self.web_mvc_manager_page_item_repository_plugin.id)
+
+        return (
+            (r"^web_mvc_manager/repositories/resources/.+$", (web_mvc_manager_page_item_repository_plugin_path + "/" + EXTRAS_PATH, "web_mvc_manager/repositories/resources")),
+        )
 
     def get_page_item_bundle(self, parameters):
         """
