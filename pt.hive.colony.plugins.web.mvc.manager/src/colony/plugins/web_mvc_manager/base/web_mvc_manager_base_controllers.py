@@ -37,7 +37,6 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-import time
 import copy
 
 import colony.libs.importer_util
@@ -45,11 +44,8 @@ import colony.libs.importer_util
 SERIALIZER_VALUE = "serializer"
 """ The serializer value """
 
-INSTALLED_VALUE = "installed"
-""" The installed value """
-
-UNINSTALLED_VALUE = "uninstalled"
-""" The uninstalled value """
+EXCEPTION_HANDLER_VALUE = "exception_handler"
+""" The exception handler value """
 
 WEB_MVC_UTILS_VALUE = "web_mvc_utils"
 """ The web mvc utils value """
@@ -60,35 +56,53 @@ DEFAULT_ENCODING = "utf-8"
 WEB_MVC_MANAGER_BASE_RESOURCES_PATH = "web_mvc_manager/repository/resources"
 """ The web mvc manager base resources path """
 
+COLONY_BUNDLE_FILE_EXTENSION = "cbx"
+""" The colony bundle file extension """
+
+COLONY_PLUGIN_FILE_EXTENSION = "cpx"
+""" The colony plugin file extension """
+
+LOAD_VALUE = "load"
+""" The load value """
+
+UNLOAD_VALUE = "unload"
+""" The unload value """
+
+LOADED_VALUE = "loaded"
+""" The loaded value """
+
+UNLOADED_VALUE = "unloaded"
+""" The unloaded value """
+
 PATTERN_NAMES_VALUE = "pattern_names"
 """ The pattern names value """
 
 # imports the web mvc utils
 web_mvc_utils = colony.libs.importer_util.__importer__(WEB_MVC_UTILS_VALUE)
 
-class MainController:
+class PluginController:
     """
-    The web mvc manager repository controller.
+    The web mvc manager base plugin controller.
     """
 
-    web_mvc_manager_repository_plugin = None
-    """ The web mvc manager repository plugin """
+    web_mvc_manager_base_plugin = None
+    """ The web mvc manager bae plugin """
 
-    web_mvc_manager_repository = None
-    """ The web mvc manager repository """
+    web_mvc_manager_base = None
+    """ The web mvc manager base """
 
-    def __init__(self, web_mvc_manager_repository_plugin, web_mvc_manager_repository):
+    def __init__(self, web_mvc_manager_base_plugin, web_mvc_manager_base):
         """
         Constructor of the class.
 
-        @type web_mvc_manager_repository_plugin: WebMvcManagerRepositoryPlugin
-        @param web_mvc_manager_repository_plugin: The web mvc manager repository plugin.
-        @type web_mvc_manager_repository: WebMvcManagerRepository
-        @param web_mvc_manager_repository: The web mvc manager repository.
+        @type web_mvc_manager_base_plugin: WebMvcManagerBasePlugin
+        @param web_mvc_manager_base_plugin: The web mvc manager base plugin.
+        @type web_mvc_manager_base: WebMvcManagerBase
+        @param web_mvc_manager_base: The web mvc manager base.
         """
 
-        self.web_mvc_manager_repository_plugin = web_mvc_manager_repository_plugin
-        self.web_mvc_manager_repository = web_mvc_manager_repository
+        self.web_mvc_manager_base_plugin = web_mvc_manager_base_plugin
+        self.web_mvc_manager_base = web_mvc_manager_base
 
     def start(self):
         """
@@ -96,95 +110,26 @@ class MainController:
         """
 
         # sets the relative resources path
-        self.set_relative_resources_path(WEB_MVC_MANAGER_REPOSITORY_RESOURCES_PATH, extra_templates_path = "repository")
+        self.set_relative_resources_path(WEB_MVC_MANAGER_BASE_RESOURCES_PATH, extra_templates_path = "plugin")
 
-    def handle_show_ajx(self, rest_request, parameters = {}):
-        # retrieves the pattern names from the parameters
-        pattern_names = parameters[PATTERN_NAMES_VALUE]
+    def validate(self, rest_request, parameters, validation_parameters):
+        # returns the result of the require permission call
+        return self.web_mvc_manager_base.require_permissions(self, rest_request, validation_parameters)
 
-        # retrieves the repository index pattern
-        repository_index = pattern_names["repository_index"]
-
-        # converts the repository index to integer
-        repository_index = int(repository_index)
-
-        # retrieves the specified capability
-        repository = self._get_repository(rest_request, repository_index)
-
-        # retrieves the template file
-        template_file = self.retrieve_template_file("repository_edit_contents.html.tpl")
-
-        # assigns the repository to the template
-        template_file.assign("repository", repository)
-
-        # assigns the repository index to the template
-        template_file.assign("repository_index", repository_index)
-
-        # assigns the session variables to the template file
-        self.assign_session_template_file(rest_request, template_file)
-
-        # applies the base path to the template file
-        self.apply_base_path_template_file(rest_request, template_file)
-
-        # processes the template file and sets the request contents
-        self.process_set_contents(rest_request, template_file)
-
-    def handle_show(self, rest_request, parameters = {}):
-        # retrieves the pattern names from the parameters
-        pattern_names = parameters[PATTERN_NAMES_VALUE]
-
-        # retrieves the repository index pattern
-        repository_index = pattern_names["repository_index"]
-
-        # converts the repository index to integer
-        repository_index = int(repository_index)
-
-        # retrieves the specified capability
-        repository = self._get_repository(rest_request, repository_index)
-
-        # retrieves the template file
-        template_file = self.retrieve_template_file("../general.html.tpl")
-
-        # assigns the include to the template
-        self.assign_include_template_file(template_file, "page_include", "capability/repository_edit_contents.html.tpl")
-
-        # assigns the include to the template
-        self.assign_include_template_file(template_file, "side_panel_include", "side_panel/side_panel_update.html.tpl")
-
-        # assigns the repository to the template
-        template_file.assign("repository", repository)
-
-        # assigns the repository index to the template
-        template_file.assign("repository_index", repository_index)
-
-        # assigns the session variables to the template file
-        self.assign_session_template_file(rest_request, template_file)
-
-        # applies the base path to the template file
-        self.apply_base_path_template_file(rest_request, template_file)
-
-        # processes the template file and sets the request contents
-        self.process_set_contents(rest_request, template_file)
-
-    def handle_list_ajx(self, rest_request, parameters = {}):
-        # retrieves the template file
-        template_file = self.retrieve_template_file("repository_list_contents.html.tpl")
-
-        # assigns the session variables to the template file
-        self.assign_session_template_file(rest_request, template_file)
-
-        # applies the base path to the template file
-        self.apply_base_path_template_file(rest_request, template_file)
-
-        # processes the template file and sets the request contents
-        self.process_set_contents(rest_request, template_file)
-
+    @web_mvc_utils.serialize_exceptions("all")
+    @web_mvc_utils.validated_method("plugins.list")
     def handle_list(self, rest_request, parameters = {}):
+        # retrieves the exception handler
+        exception_handler = self.web_mvc_manager_base.web_mvc_manager_exception_controller
+
+        # sets the exception handler in the parameters
+        parameters[EXCEPTION_HANDLER_VALUE] = exception_handler
+
         # retrieves the template file from the parameters
         template_file = parameters["template_file"]
 
         # assigns the include to the template
-        self.assign_include_template_file(template_file, "page_include", "repository/repository_list_contents.html.tpl")
+        self.assign_include_template_file(template_file, "page_include", "plugin/plugin_list_contents.html.tpl")
 
         # assigns the include to the template
         self.assign_include_template_file(template_file, "side_panel_include", "side_panel/side_panel_configuration.html.tpl")
@@ -198,14 +143,43 @@ class MainController:
         # processes the template file and sets the request contents
         self.process_set_contents(rest_request, template_file)
 
-    def handle_partial_list(self, rest_request, parameters = {}):
+    @web_mvc_utils.serialize_exceptions("all")
+    @web_mvc_utils.validated_method("plugins.list")
+    def handle_list_ajx(self, rest_request, parameters = {}):
+        # retrieves the json plugin
+        json_plugin = self.web_mvc_manager_base_plugin.json_plugin
+
+        # sets the serializer in the parameters
+        parameters[SERIALIZER_VALUE] = json_plugin
+
+        # retrieves the template file
+        template_file = self.retrieve_template_file("plugin_list_contents.html.tpl")
+
+        # assigns the session variables to the template file
+        self.assign_session_template_file(rest_request, template_file)
+
+        # applies the base path to the template file
+        self.apply_base_path_template_file(rest_request, template_file)
+
+        # processes the template file and sets the request contents
+        self.process_set_contents(rest_request, template_file)
+
+    @web_mvc_utils.serialize_exceptions("all")
+    @web_mvc_utils.validated_method("plugins.list")
+    def handle_partial_list_ajx(self, rest_request, parameters = {}):
+        # retrieves the json plugin
+        json_plugin = self.web_mvc_manager_base_plugin.json_plugin
+
+        # sets the serializer in the parameters
+        parameters[SERIALIZER_VALUE] = json_plugin
+
+        # retrieves the web mvc manager search helper controller
+        web_mvc_manager_search_helper_controller = self.web_mvc_manager_base.web_mvc_manager_search_helper_controller
+
         # retrieves the form data by processing the form
         form_data_map = self.process_form_data(rest_request, DEFAULT_ENCODING)
 
-        # retrieves the web search helper
-        search_helper = parameters["search_helper"]
-
-        # retrieves the search_query
+        # retrieves the form data attributes
         search_query = form_data_map["search_query"]
 
         # retrieves the start record
@@ -220,17 +194,17 @@ class MainController:
         # converts the number records to integer
         number_records = int(number_records)
 
-        # retrieves the filtered repositories
-        filtered_repositories = self._get_filtered_repositories(rest_request, search_query)
+        # retrieves the filtered plugins
+        filtered_plugins = self._get_filtered_plugins(rest_request, search_query)
 
-        # retrieves the partial filter from the filtered repositories
-        partial_filtered_repositories, start_record, number_records, total_number_records = search_helper.partial_filter(rest_request, filtered_repositories, start_record, number_records)
+        # retrieves the partial filtered plugins and meta data
+        partial_filtered_plugins, start_record, number_records, total_number_records = web_mvc_manager_search_helper_controller.partial_filter(rest_request, filtered_plugins, start_record, number_records)
 
         # retrieves the template file
-        template_file = self.retrieve_template_file("repository_partial_list_contents.html.tpl")
+        template_file = self.retrieve_template_file("plugin_partial_list_contents.html.tpl")
 
-        # assigns the repositories to the template
-        template_file.assign("repositories", partial_filtered_repositories)
+        # assigns the plugins to the template
+        template_file.assign("plugins", partial_filtered_plugins)
 
         # assigns the start record to the template
         template_file.assign("start_record", start_record)
@@ -251,87 +225,102 @@ class MainController:
         self.process_set_contents(rest_request, template_file)
 
     @web_mvc_utils.serialize_exceptions("all")
-    def handle_install_plugin_serialized(self, rest_request, parameters = {}):
-        # retrieves the serializer
-        serializer = parameters[SERIALIZER_VALUE]
+    @web_mvc_utils.validated_method("plugins.new")
+    def handle_new(self, rest_request, parameters = {}):
+        # retrieves the exception handler
+        exception_handler = self.web_mvc_manager_base.web_mvc_manager_exception_controller
 
-        # retrieves the form data by processing the form
-        form_data_map = self.process_form_data(rest_request, DEFAULT_ENCODING)
+        # sets the exception handler in the parameters
+        parameters[EXCEPTION_HANDLER_VALUE] = exception_handler
 
-        # retrieves the communication helper
-        communication_helper = parameters["communication_helper"]
+        # retrieves the template file from the parameters
+        template_file = parameters["template_file"]
 
-        # retrieves the plugin id
-        plugin_id = form_data_map["plugin_id"]
+        # assigns the include to the template
+        self.assign_include_template_file(template_file, "page_include", "plugin/plugin_list_contents.html.tpl")
 
-        # retrieves the plugin version
-        plugin_version = form_data_map["plugin_version"]
+        # assigns the include to the template
+        self.assign_include_template_file(template_file, "side_panel_include", "side_panel/side_panel_configuration.html.tpl")
 
-        # install the plugin and retrieves the result
-        install_plugin_result = self._install_plugin(rest_request, plugin_id, plugin_version)
+        # assigns the session variables to the template file
+        self.assign_session_template_file(rest_request, template_file)
 
-        # serializes the install result using the serializer
-        serialized_status = serializer.dumps(install_plugin_result)
+        # applies the base path to the template file
+        self.apply_base_path_template_file(rest_request, template_file)
 
-        # sets the serialized status as the rest request contents
-        self.set_contents(rest_request, serialized_status)
+        # processes the template file and sets the request contents
+        self.process_set_contents(rest_request, template_file)
 
-        # sends the serialized broadcast message
-        communication_helper.send_serialized_broadcast_message(parameters, "web_mvc_manager/communication", "web_mvc_manager/plugin/install", serialized_status)
-
-    def handle_install_plugin_json(self, rest_request, parameters = {}):
+    @web_mvc_utils.serialize_exceptions("all")
+    @web_mvc_utils.validated_method("plugins.new")
+    def handle_new_ajx(self, rest_request, parameters = {}):
         # retrieves the json plugin
-        json_plugin = self.web_mvc_manager_repository_plugin.json_plugin
+        json_plugin = self.web_mvc_manager_base_plugin.json_plugin
+
+        # sets the serializer in the parameters
+        parameters[SERIALIZER_VALUE] = json_plugin
+
+        # retrieves the template file
+        template_file = self.retrieve_template_file("plugin_new_contents.html.tpl")
+
+        # assigns the session variables to the template file
+        self.assign_session_template_file(rest_request, template_file)
+
+        # applies the base path to the template file
+        self.apply_base_path_template_file(rest_request, template_file)
+
+        # processes the template file and sets the request contents
+        self.process_set_contents(rest_request, template_file)
+
+    @web_mvc_utils.serialize_exceptions("all")
+    @web_mvc_utils.validated_method("plugins.create")
+    def handle_create_serialized(self, rest_request, parameters = {}):
+        # retrieves the package controller
+        web_mvc_manager_package_controller = self.web_mvc_manager_base.web_mvc_manager_package_controller
+
+        # deploys the package
+        web_mvc_manager_package_controller._deploy_package(rest_request, COLONY_PLUGIN_FILE_EXTENSION)
+
+    def handle_create_json(self, rest_request, parameters = {}):
+        # retrieves the json plugin
+        json_plugin = self.web_mvc_manager_base_plugin.json_plugin
 
         # sets the serializer in the parameters
         parameters[SERIALIZER_VALUE] = json_plugin
 
         # handles the request with the general
-        # handle install plugin serialized method
-        self.handle_install_plugin_serialized(rest_request, parameters)
+        # handle create serialized method
+        self.handle_create_serialized(rest_request, parameters)
 
-    def handle_plugins_partial_list(self, rest_request, parameters = {}):
-        # retrieves the form data by processing the form
-        form_data_map = self.process_form_data(rest_request, DEFAULT_ENCODING)
+    @web_mvc_utils.serialize_exceptions("all")
+    @web_mvc_utils.validated_method("plugins.show")
+    def handle_show(self, rest_request, parameters = {}):
+        # retrieves the exception handler
+        exception_handler = self.web_mvc_manager_base.web_mvc_manager_exception_controller
 
-        # retrieves the web search helper
-        search_helper = parameters["search_helper"]
+        # sets the exception handler in the parameters
+        parameters[EXCEPTION_HANDLER_VALUE] = exception_handler
 
-        # retrieves the search query
-        search_query = form_data_map["search_query"]
+        # retrieves the template file from the parameters
+        template_file = parameters["template_file"]
 
-        # retrieves the start record
-        start_record = form_data_map["start_record"]
+        # retrieves the pattern names from the parameters
+        pattern_names = parameters[PATTERN_NAMES_VALUE]
 
-        # retrieves the number records
-        number_records = form_data_map["number_records"]
+        # retrieves the plugin id pattern
+        plugin_id = pattern_names["plugin_id"]
 
-        # converts the start record to integer
-        start_record = int(start_record)
+        # retrieves the specified plugin
+        plugin = self._get_plugin(rest_request, plugin_id)
 
-        # converts the number records to integer
-        number_records = int(number_records)
+        # assigns the include to the template
+        self.assign_include_template_file(template_file, "page_include", "plugin/plugin_list_contents.html.tpl")
 
-        # retrieves the filtered repositories
-        filtered_repository_plugins = self._get_filtered_repository_plugins(rest_request, search_query)
+        # assigns the include to the template
+        self.assign_include_template_file(template_file, "side_panel_include", "side_panel/side_panel_configuration.html.tpl")
 
-        # retrieves the partial filter from the filtered repository plugins
-        partial_filtered_repository_plugins, start_record, number_records, total_number_records = search_helper.partial_filter(rest_request, filtered_repository_plugins, start_record, number_records)
-
-        # retrieves the template file
-        template_file = self.retrieve_template_file("repository_plugins_partial_list_contents.html.tpl")
-
-        # assigns the repositories to the template
-        template_file.assign("repository_plugins", partial_filtered_repository_plugins)
-
-        # assigns the start record to the template
-        template_file.assign("start_record", start_record)
-
-        # assigns the number records to the template
-        template_file.assign("number_records", number_records)
-
-        # assigns the total number records to the template
-        template_file.assign("total_number_records", total_number_records)
+        # assigns the plugin to the template
+        template_file.assign("plugin", plugin)
 
         # assigns the session variables to the template file
         self.assign_session_template_file(rest_request, template_file)
@@ -342,48 +331,29 @@ class MainController:
         # processes the template file and sets the request contents
         self.process_set_contents(rest_request, template_file)
 
-    def handle_packages_partial_list(self, rest_request, parameters = {}):
-        # retrieves the form data by processing the form
-        form_data_map = self.process_form_data(rest_request, DEFAULT_ENCODING)
+    @web_mvc_utils.serialize_exceptions("all")
+    @web_mvc_utils.validated_method("plugins.show")
+    def handle_show_ajx(self, rest_request, parameters = {}):
+        # retrieves the json plugin
+        json_plugin = self.web_mvc_manager_base_plugin.json_plugin
 
-        # retrieves the web search helper
-        search_helper = parameters["search_helper"]
+        # sets the serializer in the parameters
+        parameters[SERIALIZER_VALUE] = json_plugin
 
-        # retrieves the search query
-        search_query = form_data_map["search_query"]
+        # retrieves the pattern names from the parameters
+        pattern_names = parameters[PATTERN_NAMES_VALUE]
 
-        # retrieves the start record
-        start_record = form_data_map["start_record"]
+        # retrieves the plugin id pattern
+        plugin_id = pattern_names["plugin_id"]
 
-        # retrieves the number records
-        number_records = form_data_map["number_records"]
-
-        # converts the start record to integer
-        start_record = int(start_record)
-
-        # converts the number records to integer
-        number_records = int(number_records)
-
-        # retrieves the filtered repositories
-        filtered_repositories = self._get_filtered_repositories(rest_request, search_query)
-
-        # retrieves the partial filter from the filtered repositories
-        partial_filtered_repositories, start_record, number_records, total_number_records = search_helper.partial_filter(rest_request, filtered_repositories, start_record, number_records)
+        # retrieves the specified plugin
+        plugin = self._get_plugin(rest_request, plugin_id)
 
         # retrieves the template file
-        template_file = self.retrieve_template_file("repository_partial_list_contents.html.tpl")
+        template_file = self.retrieve_template_file("plugin_edit_contents.html.tpl")
 
-        # assigns the repositories to the template
-        template_file.assign("repositories", partial_filtered_repositories)
-
-        # assigns the start record to the template
-        template_file.assign("start_record", start_record)
-
-        # assigns the number records to the template
-        template_file.assign("number_records", number_records)
-
-        # assigns the total number records to the template
-        template_file.assign("total_number_records", total_number_records)
+        # assigns the plugin to the template
+        template_file.assign("plugin", plugin)
 
         # assigns the session variables to the template file
         self.assign_session_template_file(rest_request, template_file)
@@ -394,92 +364,109 @@ class MainController:
         # processes the template file and sets the request contents
         self.process_set_contents(rest_request, template_file)
 
-    def _get_repository(self, rest_request, repository_index):
-        # retrieves the system updater plugin
-        system_updater_plugin = self.web_mvc_manager_repository_plugin.system_updater_plugin
+    @web_mvc_utils.serialize_exceptions("all")
+    @web_mvc_utils.validated_method("plugins.change_status")
+    def handle_change_status_serialized(self, rest_request, parameters = {}):
+        # retrieves the serializer
+        serializer = parameters[SERIALIZER_VALUE]
 
-        # retrieves all the repositories
-        repositories = system_updater_plugin.get_repositories()
+        # retrieves the web mvc communication helper controller
+        web_mvc_manager_communication_helper_controller = self.web_mvc_manager_base.web_mvc_manager_communication_helper_controller
 
-        # retrieves the repository from the repositories list
-        repository = repositories[repository_index - 1]
+        # retrieves the form data by processing the form
+        form_data_map = self.process_form_data(rest_request, DEFAULT_ENCODING)
 
-        # retrieves the repository name
-        repository_name = repository.name
+        # retrieves the pattern names from the parameters
+        pattern_names = parameters[PATTERN_NAMES_VALUE]
 
-        # retrieves the repository for the repository with the given name
-        repository_information = system_updater_plugin.get_repository_information_by_repository_name(repository_name)
+        # retrieves the plugin id pattern
+        plugin_id = pattern_names["plugin_id"]
 
-        # returns the repository information
-        return repository_information
+        # retrieves the plugin status from the form data map
+        plugin_status = form_data_map["plugin_status"]
 
-    def _get_filtered_repositories(self, rest_request, search_query):
-        # retrieves the repositories
-        repositories = self._get_repositories()
+        # changes the plugin status and retrieves the result
+        change_status_plugin_result = self._change_status_plugin(rest_request, plugin_id, plugin_status)
 
-        # creates the filtered repositories list
-        filtered_repositories = [repository for repository in repositories if not repository.name.find(search_query) == -1]
+        # serializes the change status result using the json plugin
+        serialized_status = serializer.dumps(change_status_plugin_result)
 
-        # returns the filtered repositories
-        return filtered_repositories
+        # sets the serialized status as the rest request contents
+        self.set_contents(rest_request, serialized_status)
 
-    def _get_filtered_repository_plugins(self, rest_request, search_query):
-        # retrieves the repository
-        repository = self._get_repository(rest_request, 1)
+        # sends the serialized broadcast message
+        web_mvc_manager_communication_helper_controller.send_serialized_broadcast_message(parameters, "web_mvc_manager/communication", "web_mvc_manager/plugin/change_status", serialized_status)
 
-        # creates the filtered repository plugins
-        filtered_repository_plugins = [repository_plugin for repository_plugin in repository.plugins if not repository_plugin.id.find(search_query) == -1]
+    def handle_change_status_json(self, rest_request, parameters = {}):
+        # retrieves the json plugin
+        json_plugin = self.web_mvc_manager_base_plugin.json_plugin
 
-        # returns the filtered repository plugins
-        return filtered_repository_plugins
+        # sets the serializer in the parameters
+        parameters[SERIALIZER_VALUE] = json_plugin
 
-    def _get_repositories(self):
-        # retrieves the system updater plugin
-        system_updater_plugin = self.web_mvc_manager_repository_plugin.system_updater_plugin
+        # handles the request with the general
+        # handle create serialized method
+        self.handle_change_status_serialized(rest_request, parameters)
 
-        # retrieves all the repositories
-        repositories = system_updater_plugin.get_repositories()
-
-        # returns the repositories
-        return repositories
-
-    def _install_plugin(self, rest_request, plugin_id, plugin_version):
+    def _get_plugin(self, rest_request, plugin_id):
         # retrieves the plugin manager
-        plugin_manager = self.web_mvc_manager_repository_plugin.manager
+        plugin_manager = self.web_mvc_manager_base_plugin.manager
 
-        # retrieves the system updater plugin
-        system_updater_plugin = self.web_mvc_manager_repository_plugin.system_updater_plugin
+        # retrieves the plugin from the given plugin id
+        plugin = plugin_manager._get_plugin_by_id(plugin_id)
 
-        # creates the delta plugin install map
-        delta_plugin_install_map = {
-            INSTALLED_VALUE : [],
-            UNINSTALLED_VALUE : []
+        # returns the specified plugin
+        return plugin
+
+    def _get_filtered_plugins(self, rest_request, search_query):
+        # retrieves the plugins
+        plugins = self._get_plugins()
+
+        # creates the filtered plugins list
+        filtered_plugins = [plugin for plugin in plugins if not plugin.id.find(search_query) == -1]
+
+        # returns the filtered plugins
+        return filtered_plugins
+
+    def _get_plugins(self):
+        # retrieves the plugin manager
+        plugin_manager = self.web_mvc_manager_base_plugin.manager
+
+        # retrieves the plugins
+        plugins = plugin_manager.get_all_plugins()
+
+        # returns all plugins
+        return plugins
+
+    def _change_status_plugin(self, rest_request, plugin_id, plugin_status):
+        # retrieves the plugin manager
+        plugin_manager = self.web_mvc_manager_base_plugin.manager
+
+        # retrieves the (beginning) list of loaded plugins
+        loaded_plugins_beginning = copy.copy(plugin_manager.get_all_loaded_plugins())
+
+        # loads the plugin for the given plugin id in case the plugin status is load
+        (plugin_status == LOAD_VALUE) and plugin_manager.load_plugin(plugin_id)
+
+        # unloads the plugin for the given plugin id in case the plugin status in unload
+        (plugin_status == UNLOAD_VALUE) and plugin_manager.unload_plugin(plugin_id)
+
+        # retrieves the (end) list of loaded plugins
+        loaded_plugins_end = plugin_manager.get_all_loaded_plugins()
+
+        # iterates over all the plugins loaded at the end
+        # to check if they exist in the previously loaded plugins
+        loaded_list = [loaded_plugin_end.id for loaded_plugin_end in loaded_plugins_end if not loaded_plugin_end in loaded_plugins_beginning]
+
+        # iterates over all the plugins loaded at the beginning
+        # to check if they exist in the current loaded plugins
+        unloaded_list = [loaded_plugin_beginning.id for loaded_plugin_beginning in loaded_plugins_beginning if not loaded_plugin_beginning in loaded_plugins_end]
+
+        # creates the delta plugin status map
+        delta_plugin_status_map = {
+            LOADED_VALUE : loaded_list,
+            UNLOADED_VALUE : unloaded_list
         }
 
-        # retrieves the (beginning) list of available plugins
-        available_plugins_beginning = copy.copy(plugin_manager.get_all_plugins())
-
-        # tries to install the plugin
-        system_updater_plugin.install_plugin(plugin_id, plugin_version)
-
-        # sleeps for a second to give time for the autoloader to update
-        # this delay is induced on purpose
-        time.sleep(INSTALLATION_DELAY)
-
-        # retrieves the (end) list of available plugins
-        available_plugins_end = plugin_manager.get_all_plugins()
-
-        # iterates over all the plugins available at the beginning
-        # to check if they exist in the current available plugins
-        for available_plugin_beginning in available_plugins_beginning:
-            if not available_plugin_beginning in available_plugins_end:
-                delta_plugin_install_map[UNINSTALLED_VALUE].append(available_plugin_beginning.id)
-
-        # iterates over all the plugins available at the end
-        # to check if they exist in the previously available plugins
-        for available_plugin_end in available_plugins_end:
-            if not available_plugin_end in available_plugins_beginning:
-                delta_plugin_install_map[INSTALLED_VALUE].append(available_plugin_end.id)
-
-        # returns the delta plugin install map
-        return delta_plugin_install_map
+        # returns the delta plugin status map
+        return delta_plugin_status_map

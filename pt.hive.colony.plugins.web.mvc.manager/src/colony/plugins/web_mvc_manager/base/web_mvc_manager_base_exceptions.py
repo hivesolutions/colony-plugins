@@ -39,15 +39,15 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 import colony.base.plugin_system_exceptions
 
-class WebMvcManagerRepositoryException(colony.base.plugin_system_exceptions.ColonyException):
+class WebMvcManagerBaseException(colony.base.plugin_system_exceptions.ColonyException):
     """
-    The web mvc manager repository exception class.
+    The web mvc manager base exception class.
     """
 
     message = None
     """ The exception's message """
 
-class RuntimeException(WebMvcManagerRepositoryException):
+class RuntimeException(WebMvcManagerBaseException):
     """
     The runtime exception class.
     """
@@ -60,7 +60,7 @@ class RuntimeException(WebMvcManagerRepositoryException):
         @param message: The message to be printed.
         """
 
-        WebMvcManagerRepositoryException.__init__(self)
+        WebMvcManagerBaseException.__init__(self)
         self.message = message
 
     def __str__(self):

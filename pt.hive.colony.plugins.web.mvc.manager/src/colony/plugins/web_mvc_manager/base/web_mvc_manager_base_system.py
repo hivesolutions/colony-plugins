@@ -37,29 +37,29 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-WEB_MVC_MANAGER_REPOSITORY_RESOURCES_PATH = "web_mvc_manager/repository/resources"
-""" The web mvc manager repository path """
+WEB_MVC_MANAGER_BASe_RESOURCES_PATH = "web_mvc_manager/base/resources"
+""" The web mvc manager base path """
 
-EXTRAS_PATH = WEB_MVC_MANAGER_REPOSITORY_RESOURCES_PATH + "/extras"
+EXTRAS_PATH = WEB_MVC_MANAGER_BASe_RESOURCES_PATH + "/extras"
 """ The extras path """
 
-class WebMvcManagerRepository:
+class WebMvcManagerBase:
     """
-    The web mvc manager repository class.
+    The web mvc manager base class.
     """
 
-    web_mvc_manager_repository_plugin = None
-    """ The web mvc manager repository plugin """
+    web_mvc_manager_base_plugin = None
+    """ The web mvc manager base plugin """
 
-    def __init__(self, web_mvc_manager_repository_plugin):
+    def __init__(self, web_mvc_manager_base_plugin):
         """
         Constructor of the class.
 
-        @type web_mvc_manager_repository_plugin: WebMvcManagerRepositoryPlugin
-        @param web_mvc_manager_repository_plugin: The web mvc manager repository plugin.
+        @type web_mvc_manager_base_plugin: WebMvcManagerBasePlugin
+        @param web_mvc_manager_base_plugin: The web mvc manager base plugin.
         """
 
-        self.web_mvc_manager_repository_plugin = web_mvc_manager_repository_plugin
+        self.web_mvc_manager_base_plugin = web_mvc_manager_base_plugin
 
     def load_components(self):
         """
@@ -68,10 +68,10 @@ class WebMvcManagerRepository:
         """
 
         # retrieves the web mvc utils plugin
-        web_mvc_utils_plugin = self.web_mvc_manager_repository_plugin.web_mvc_utils_plugin
+        web_mvc_utils_plugin = self.web_mvc_manager_base_plugin.web_mvc_utils_plugin
 
-        # creates the controllers for the web mvc manager code execution controller modules
-        web_mvc_utils_plugin.create_controllers("web_mvc_manager.repository.web_mvc_manager_repository_controllers", self, self.web_mvc_manager_repository_plugin, "web_mvc_manager_repository")
+        # creates the controllers for the web mvc manager base controller modules
+        web_mvc_utils_plugin.create_controllers("web_mvc_manager.base.web_mvc_manager_base_controllers", self, self.web_mvc_manager_base_plugin, "web_mvc_manager_base")
 
     def get_patterns(self):
         """
@@ -112,13 +112,13 @@ class WebMvcManagerRepository:
         """
 
         # retrieves the plugin manager
-        plugin_manager = self.web_mvc_manager_repository_plugin.manager
+        plugin_manager = self.web_mvc_manager_base_plugin.manager
 
-        # retrieves the web web mvc manager repository plugin path
-        web_mvc_manager_repository_plugin_path = plugin_manager.get_plugin_path_by_id(self.web_mvc_manager_repository_plugin.id)
+        # retrieves the web web mvc manager base plugin path
+        web_mvc_manager_base_plugin_path = plugin_manager.get_plugin_path_by_id(self.web_mvc_manager_base_plugin.id)
 
         return (
-            (r"^web_mvc_manager/repositories/resources/.+$", (web_mvc_manager_repository_plugin_path + "/" + EXTRAS_PATH, "web_mvc_manager/repositories/resources")),
+            (r"^web_mvc_manager/repositories/resources/.+$", (web_mvc_manager_base_plugin_path + "/" + EXTRAS_PATH, "web_mvc_manager/repositories/resources")),
         )
 
     def get_page_item_bundle(self, parameters):
@@ -136,16 +136,17 @@ class WebMvcManagerRepository:
 
         return (
             {
-                "menu" : "update/Repositories",
-                "side_panel" : "lists/Repositories",
-                "base_address" : "repositories",
-                "pattern" : (r"^web_mvc_manager/repositories$", self.web_mvc_manager_repository_main_controller.handle_list_ajx, "get", "ajx")
+                "menu" : "configuration/Plugins",
+                "side_panel" : "lists/Plugins",
+                "base_address" : "plugins",
+                "pattern" : (r"^web_mvc_manager/plugins$", self.web_mvc_manager_base_plugin_controller.handle_list_ajx, "get", "ajx")
             },
-            (r"^web_mvc_manager/repositories$", self.web_mvc_manager_repository_main_controller.handle_list, "get"),
-            (r"^web_mvc_manager/repositories/partial$", self.web_mvc_manager_repository_main_controller.handle_partial_list, "get"),
-            (r"^web_mvc_manager/repositories/install_plugin$", self.web_mvc_manager_repository_main_controller.handle_install_plugin_json, "post", "json"),
-            (r"^web_mvc_manager/repositories/(?P<repository_index>[0-9]+)$", self.web_mvc_manager_repository_main_controller.handle_show_ajx, "get", "ajx"),
-            (r"^web_mvc_manager/repositories/(?P<repository_index>[0-9]+)$", self.web_mvc_manager_repository_main_controller.handle_show, "get"),
-            (r"^web_mvc_manager/repositories/(?P<repository_index>[0-9]+)/plugins_partial$", self.web_mvc_manager_repository_main_controller.handle_plugins_partial_list, "get"),
-            (r"^web_mvc_manager/repositories/(?P<repository_index>[0-9]+)/packages_partial$", self.web_mvc_manager_repository_main_controller.handle_packages_partial_list, "get")
+            (r"^web_mvc_manager/plugins$", self.web_mvc_manager_base_plugin_controller.handle_list, "get"),
+            (r"^web_mvc_manager/plugins/partial$", self.web_mvc_manager_base_plugin_controller.handle_partial_list_ajx, "get"),
+            (r"^web_mvc_manager/plugins/new$", self.web_mvc_manager_base_plugin_controller.handle_new_ajx, "get", "ajx"),
+            (r"^web_mvc_manager/plugins/new$", self.web_mvc_manager_base_plugin_controller.handle_new, "get"),
+            (r"^web_mvc_manager/plugins$", self.web_mvc_manager_base_plugin_controller.handle_create_json, "post", "json"),
+            (r"^web_mvc_manager/plugins/(?P<plugin_id>[a-zA-Z0-9\._]+)$", self.web_mvc_manager_base_plugin_controller.handle_show_ajx, "get", "ajx"),
+            (r"^web_mvc_manager/plugins/(?P<plugin_id>[a-zA-Z0-9\._]+)$", self.web_mvc_manager_base_plugin_controller.handle_show, "get"),
+            (r"^web_mvc_manager/plugins/(?P<plugin_id>[a-zA-Z0-9\._]+)/change_status$", self.web_mvc_manager_base_plugin_controller.handle_change_status_json, "post", "json"),
         )
