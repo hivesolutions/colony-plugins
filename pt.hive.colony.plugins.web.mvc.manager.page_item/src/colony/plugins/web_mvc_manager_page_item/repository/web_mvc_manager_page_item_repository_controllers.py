@@ -42,8 +42,6 @@ import copy
 
 import colony.libs.importer_util
 
-import web_mvc_manager_page_item_repository_exceptions
-
 INSTALLED_VALUE = "installed"
 """ The installed value """
 
@@ -450,16 +448,11 @@ class MainController:
         available_plugins_beginning = copy.copy(plugin_manager.get_all_plugins())
 
         # tries to install the plugin
-        return_value = system_updater_plugin.install_plugin(plugin_id, plugin_version)
+        system_updater_plugin.install_plugin(plugin_id, plugin_version)
 
         # sleeps for a second to give time for the autoloader to update
         # this delay is induced on purpose
         time.sleep(INSTALLATION_DELAY)
-
-        # in case the return value is not valid
-        if not return_value:
-            # raises a runtime exception
-            raise web_mvc_manager_page_item_repository_exceptions.RuntimeException("problem installing plugin")
 
         # retrieves the (end) list of available plugins
         available_plugins_end = plugin_manager.get_all_plugins()
