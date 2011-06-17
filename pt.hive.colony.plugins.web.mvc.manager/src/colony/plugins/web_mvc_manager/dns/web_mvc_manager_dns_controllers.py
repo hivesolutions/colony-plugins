@@ -272,7 +272,6 @@ class MainController:
 
     def _get_dns_zones(self):
         return [
-            DnsZone(),
             DnsZone()
         ]
 
@@ -281,10 +280,11 @@ class DnsZone:
     The dns zone class.
     """
 
-    name = "tobias"
+    name = None
     """ The name of the zone """
 
-    description = "asdas"
+    description = None
     """ The description of the zone """
 
-    layout = "nada"
+    layout = None
+    """ The layout of the zone """
