@@ -136,6 +136,9 @@ RELATIVE_VALUE_VALUE = "relative_value"
 HOST_VALUE = "Host"
 """ The host value """
 
+REFERER_VALUE = "Referer"
+""" The referer value """
+
 ACCEPT_LANGUAGE_VALUE = "Accept-Language"
 """ The accept language header value """
 
@@ -147,6 +150,9 @@ DASHED_WORD_PAIR_REPLACEMENT_VALUE = "\\1-\\2"
 
 UNDERSCORED_WORD_PAIR_REPLACEMENT_VALUE = "\\1_\\2"
 """ The replacement value for two capture groups to be separated by underscore """
+
+LOCALE_SESSION_ATTRIBUTE = "_locale"
+""" The locale session attribute name """
 
 DASH_VALUE = "-"
 """ The dash value """
@@ -834,6 +840,32 @@ def redirect_base_path(self, rest_request, target, status_code = 302, quote = Tr
     # redirects to the target base path
     self.redirect(rest_request, target_base_path, status_code, quote)
 
+def redirect_back(self, rest_request, default_target = "/", status_code = 302, quote = False):
+    """
+    Redirects the current request to the previous header
+    referred page or to the default target in case the no
+    referer page is defined.
+
+    @type rest_request: RestRequest
+    @param rest_request: The rest request to be used.
+    @type default_target: String
+    @param default_target: The default target (page) of the redirect.
+    @type status_code: int
+    @param status_code: The status code to be used.
+    @type quote: bool
+    @param quote: If the target path should be quoted.
+    """
+
+    # retrieves the "referer" header
+    referer_header = rest_request.get_header(REFERER_VALUE)
+
+    # sets the target to the "referer" header or the
+    # default target in case the "referer" is invalid
+    target = referer_header or default_target
+
+    # redirects the rest request to the target
+    self.redirect(rest_request, target, status_code, quote)
+
 def process_set_contents(self, rest_request, template_file, variable_encoding = None, content_type = DEFAULT_CONTENT_TYPE):
     """
     Processes the template file and set the result of it
@@ -1178,6 +1210,7 @@ def get_locale(self, rest_request, available_locales = (DEFAULT_LOCALE,), alias_
 
     # creates the get locales method tuple
     get_locales_methods = (
+        self._get_locales_session,
         self._get_locales_header,
         self._get_locales_default
     )
@@ -1211,6 +1244,20 @@ def get_locale(self, rest_request, available_locales = (DEFAULT_LOCALE,), alias_
 
     # returns the locale
     return locale
+
+def set_locale_session(self, rest_request, locale):
+    """
+    Sets the locale session attribute for later locale
+    retrieval.
+
+    @type rest_request: RestRequest
+    @param rest_request: The rest request to be used.
+    @type locale: String
+    @param locale: The locale to be set in session.
+    """
+
+    # sets the locale session attribute
+    self.set_session_attribute(rest_request, LOCALE_SESSION_ATTRIBUTE, locale)
 
 def update_resources_path(self, parameters = {}):
     """
@@ -2039,6 +2086,26 @@ def _lower_locale(self, locale):
 
     # returns the locale lower (value)
     return locale_lower
+
+def _get_locales_session(self, rest_request):
+    """
+    Retrieves the locales list value using a
+    request session strategy.
+
+    @type rest_request: RestRequest
+    @param rest_request: The rest request to be used.
+    @rtype: List
+    @return: The retrieved locales list.
+    """
+
+    # retrieves the accepted language
+    locale = self.get_session_attribute(rest_request, LOCALE_SESSION_ATTRIBUTE)
+
+    # creates the locales list
+    locales_list = locale and [locale] or []
+
+    # returns the locales list
+    return locales_list
 
 def _get_locales_header(self, rest_request):
     """
