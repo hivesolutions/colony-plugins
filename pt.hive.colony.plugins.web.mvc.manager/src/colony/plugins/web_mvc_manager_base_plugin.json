@@ -26,6 +26,7 @@
             "web_mvc_manager/base/web_mvc_manager_base_controllers.py",
             "web_mvc_manager/base/web_mvc_manager_base_exceptions.py",
             "web_mvc_manager/base/web_mvc_manager_base_system.py",
+            "web_mvc_manager/base/resources/baf.xml",
             "web_mvc_manager/base/resources/extras/templates/css/capability/capability_list_contents.css",
             "web_mvc_manager/base/resources/extras/templates/css/plugin/plugin_list_contents.css",
             "web_mvc_manager/base/resources/extras/templates/js/capability/capability_list_contents.js",
