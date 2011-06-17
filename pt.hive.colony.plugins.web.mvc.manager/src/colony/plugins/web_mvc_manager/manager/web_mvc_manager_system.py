@@ -238,7 +238,7 @@ class WebMvcManager:
             # sets the "new" page item pattern in the extra patterns map
             self.extra_patterns_map[page_item_pattern] = _page_item_pattern
 
-        # generates the patterns load event
+        # generates the patterns load event (to update the patterns)
         self.web_mvc_manager_plugin.generate_event("web.mvc.patterns_load", [self.web_mvc_manager_plugin])
 
         # reloads the ui in the client side
@@ -278,7 +278,7 @@ class WebMvcManager:
             # removes the page item pattern from the extra patterns map
             del self.extra_patterns_map[page_item_pattern]
 
-        # generates the patterns load event
+        # generates the patterns load event (to update the patterns)
         self.web_mvc_manager_plugin.generate_event("web.mvc.patterns_load", [self.web_mvc_manager_plugin])
 
         # reloads the ui in the client side
