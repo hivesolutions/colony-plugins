@@ -1,5 +1,5 @@
 <div id="includes">
-    <div class="javascript">resources/templates/js/repository/repository_edit_contents.js</div>
+    <div class="javascript">repositories/resources/templates/js/repository/repository_edit_contents.js</div>
     <div class="css">resources/templates/css/repository/repository_edit_contents.css</div>
 </div>
 <div id="meta-data">
