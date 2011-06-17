@@ -69,6 +69,21 @@ BUNDLES_VALUE = "bundles"
 PLUGINS_VALUE = "plugins"
 """ The plugins value """
 
+NOT_INSTALLED_STATUS = "not_installed"
+""" The not installed status """
+
+NEWER_VERSION_STATUS = "newer_version"
+""" The newer version status """
+
+OLDER_VERSION_STATUS = "older_version"
+""" The older version status """
+
+SAME_VERSION_STATUS = "same_version"
+""" The same version status """
+
+DIFFERENT_DIGEST_STATUS = "different_digest"
+""" The different digest status """
+
 class SystemUpdater:
     """
     The system updater class.
@@ -301,21 +316,6 @@ class SystemUpdater:
         return repository_descriptor
 
     def _process_item(self, repository_descriptor_item, item_information):
-        NOT_INSTALLED_STATUS = "not_installed"
-        """ The not installed status """
-
-        NEWER_VERSION_STATUS = "newer_version"
-        """ The newer version status """
-
-        OLDER_VERSION_STATUS = "older_version"
-        """ The older version status """
-
-        SAME_VERSION_STATUS = "same_version"
-        """ The same version status """
-
-        DIFFERENT_DIGEST_STATUS = "different_digest"
-        """ The different digest status """
-
         # in case the item information is defined the
         # item is considered to be installed
         if item_information:
@@ -716,6 +716,9 @@ class SystemUpdater:
             # re-raises the exception
             raise
 
+        # updates the bundle descriptor status
+        bundle_descriptor.status = SAME_VERSION_STATUS
+
     def _install_plugin(self, plugin_id, plugin_version = None, transaction_properties = None):
         """
         Installs the plugin with the given id and version from
@@ -782,6 +785,9 @@ class SystemUpdater:
 
             # re-raises the exception
             raise
+
+        # updates the plugin descriptor status
+        plugin_descriptor.status = SAME_VERSION_STATUS
 
     def _get_deployer_plugin_by_deployer_type(self, deployer_type):
         """
