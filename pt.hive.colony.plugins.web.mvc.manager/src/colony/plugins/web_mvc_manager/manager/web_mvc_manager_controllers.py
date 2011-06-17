@@ -172,6 +172,7 @@ class MainController:
 
                 # assigns the header variables to the template
                 self.web_mvc_manager.web_mvc_manager_header_controller._assign_header_variables(template_file)
+            # otherwise it's a different encoding
             else:
                 # sets the template file to invalid
                 template_file = None

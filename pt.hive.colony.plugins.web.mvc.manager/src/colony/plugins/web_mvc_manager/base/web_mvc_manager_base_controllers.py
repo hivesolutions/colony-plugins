@@ -261,7 +261,7 @@ class PluginController:
         plugin = self._get_plugin(rest_request, plugin_id)
 
         # resolves the relative resources path to obtain the absolute page include to be used
-        absolute_page_include = self.resolve_relative_path(WEB_MVC_MANAGER_BASE_RESOURCES_PATH, "templates/plugin/plugin_list_contents.html.tpl")
+        absolute_page_include = self.resolve_relative_path(WEB_MVC_MANAGER_BASE_RESOURCES_PATH, "templates/plugin/plugin_edit_contents.html.tpl")
 
         # assigns the include to the template
         self.assign_include_template_file(template_file, "page_include", absolute_page_include)
@@ -568,8 +568,18 @@ class CapabilityController:
         # processes the template file and sets the request contents
         self.process_set_contents(rest_request, template_file)
 
+    @web_mvc_utils.serialize_exceptions("all")
     @web_mvc_utils.validated_method("capabilites.show")
     def handle_show(self, rest_request, parameters = {}):
+        # retrieves the exception handler
+        exception_handler = self.web_mvc_manager_base.web_mvc_manager_base_exception_controller
+
+        # sets the exception handler in the parameters
+        parameters[EXCEPTION_HANDLER_VALUE] = exception_handler
+
+        # retrieves the template file from the parameters
+        template_file = parameters["template_file"]
+
         # retrieves the pattern names from the parameters
         pattern_names = parameters[PATTERN_NAMES_VALUE]
 
@@ -582,11 +592,11 @@ class CapabilityController:
         # retrieves the sub capabilities for the capability
         sub_capabilities = self._get_sub_capabilities(rest_request, capability)
 
-        # retrieves the template file
-        template_file = self.retrieve_template_file("../general.html.tpl")
+        # resolves the relative resources path to obtain the absolute page include to be used
+        absolute_page_include = self.resolve_relative_path(WEB_MVC_MANAGER_BASE_RESOURCES_PATH, "templates/capability/capability_edit_contents.html.tpl")
 
         # assigns the include to the template
-        self.assign_include_template_file(template_file, "page_include", "capability/capability_edit_contents.html.tpl")
+        self.assign_include_template_file(template_file, "page_include", absolute_page_include)
 
         # assigns the include to the template
         self.assign_include_template_file(template_file, "side_panel_include", "side_panel/side_panel_configuration.html.tpl")

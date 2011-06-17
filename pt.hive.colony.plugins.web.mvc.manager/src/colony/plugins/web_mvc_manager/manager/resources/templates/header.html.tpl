@@ -11,7 +11,7 @@
                 <div id="account-float-panel" class="float-panel">
                     <div class="float-panel-arrow"></div>
                     <div class="float-panel-content">
-                        <img src="resources/images/dummy-photo.png" height="64" width="64" alt="" />
+                        <img src="${out_none value=base_path /}resources/images/dummy-photo.png" height="64" width="64" alt="" />
                         <h1>${out_none value=session_user_information.username /}</h1>
                         <h2>${out_none value=session_user_information.company.name /}</h2>
                         <a href="#">Editar Perfil</a>
