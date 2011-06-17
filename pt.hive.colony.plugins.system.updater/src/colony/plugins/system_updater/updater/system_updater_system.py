@@ -294,8 +294,66 @@ class SystemUpdater:
             # sets the repository in the repository descriptor repository map
             self.repository_descriptor_repository_map[repository_descriptor] = repository
 
+            # runs a post-parse processing in the repository descriptor
+            self._process_respository_descriptor(repository_descriptor)
+
         # returns the repository descriptor
         return repository_descriptor
+
+    def _process_item(self, repository_descriptor_item, item_information):
+        NOT_INSTALLED_STATUS = "not_installed"
+        """ The not installed status """
+
+        NEWER_VERSION_STATUS = "newer_version"
+        """ The newer version status """
+
+        OLDER_VERSION_STATUS = "older_version"
+        """ The older version status """
+
+        SAME_VERSION_STATUS = "same_version"
+        """ The same version status """
+
+        DIFFERENT_DIGEST_STATUS = "different_digest"
+        """ The different digest status """
+
+        # in case the item information is defined the
+        # item is considered to be installed
+        if item_information:
+            item_version = item_information.get("version", "0.0.0")
+            item_hash_digest = item_information.get("hash_digest", {})
+            item_sha256 = item_hash_digest.get("sha256", None)
+
+            if item_version > repository_descriptor_item.version:
+                repository_descriptor_item.status = NEWER_VERSION_STATUS
+            elif item_version == repository_descriptor_item.version:
+                if item_sha256 == repository_descriptor_item.hash_digest_items[0].value:
+                    repository_descriptor_item.status = SAME_VERSION_STATUS
+                else:
+                    repository_descriptor_item.status = DIFFERENT_DIGEST_STATUS
+            else:
+                repository_descriptor_item.status = OLDER_VERSION_STATUS
+        else:
+            repository_descriptor_item.status = NOT_INSTALLED_STATUS
+
+    def _process_respository_descriptor(self, repository_descriptor):
+        # retrieves the system registry plugin
+        system_registry_plugin = self.system_updater_plugin.system_registry_plugin
+
+        # retrieves the repository descriptor bundles and plugins
+        repository_descriptor_bundles = repository_descriptor.bundles
+        repository_descriptor_plugins = repository_descriptor.plugins
+
+        for repository_descriptor_bundle in repository_descriptor_bundles:
+            # retrieves the bundle information
+            bundle_information = system_registry_plugin.get_bundle_information(repository_descriptor_bundle.id, repository_descriptor_bundle.version)
+
+            self._process_item(repository_descriptor_bundle, bundle_information)
+
+        for repository_descriptor_plugin in repository_descriptor_plugins:
+            # retrieves the plugin information
+            plugin_information = system_registry_plugin.get_plugin_information(repository_descriptor_plugin.id, repository_descriptor_plugin.version)
+
+            self._process_item(repository_descriptor_plugin, plugin_information)
 
     def get_repository_descriptor_file(self, repository_addresses):
         """
@@ -497,7 +555,7 @@ class SystemUpdater:
 
             # in case bundle descriptor does not exists in current
             # repository descriptor
-            if bundle_descripton:
+            if not bundle_descripton:
                 # continues the loop
                 continue
 
@@ -524,7 +582,7 @@ class SystemUpdater:
 
             # in case plugin descriptor does not exists in current
             # repository descriptor
-            if plugin_descripton:
+            if not plugin_descripton:
                 # continues the loop
                 continue
 
