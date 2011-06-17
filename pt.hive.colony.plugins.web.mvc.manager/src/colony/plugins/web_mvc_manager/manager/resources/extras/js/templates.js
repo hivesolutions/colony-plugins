@@ -51,7 +51,7 @@ PLUGIN_UNLOADED_WINDOW = {
  * @type Map
  */
 PLUGIN_INSTALLED_WINDOW = {
-    title : "<span class=\"red\">Plugin Installed</span>",
+    title : "<span class=\"green\">Plugin Installed</span>",
     subTitle : "",
     timeout : 5000
 };

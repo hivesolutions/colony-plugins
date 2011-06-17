@@ -29,14 +29,14 @@
                                  Older Version
                                </div>
                         ${elif item=repository_plugin.status value="same_version" operator=eq /}
-                            <div class="submit button button-blue"
+                            <div class="submit button button-gray"
                                  data-plugin_id="${out_none value=repository_plugin.id xml_escape=True /}"
                                  data-plugin_version="${out_none value=repository_plugin.version xml_escape=True /}"
                                  data-plugin_status="${out_none value=repository_plugin.status xml_escape=True /}">
                                 Installed
                             </div>
                         ${elif item=repository_plugin.status value="different_digest" operator=eq /}
-                            <div class="submit button button-green"
+                            <div class="submit button button-blue"
                                  data-plugin_id="${out_none value=repository_plugin.id xml_escape=True /}"
                                  data-plugin_version="${out_none value=repository_plugin.version xml_escape=True /}"
                                  data-plugin_status="${out_none value=repository_plugin.status xml_escape=True /}">
