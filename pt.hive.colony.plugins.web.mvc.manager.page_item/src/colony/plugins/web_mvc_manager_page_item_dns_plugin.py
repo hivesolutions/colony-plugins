@@ -106,19 +106,6 @@ class WebMvcManagerPageItemDnsPlugin(colony.base.plugin_system.Plugin):
     def dependency_injected(self, plugin):
         colony.base.plugin_system.Plugin.dependency_injected(self, plugin)
 
-    def get_resource_patterns(self):
-        """
-        Retrieves the tuple of regular expressions to be used as resource patterns,
-        to the web mvc service. The tuple should relate the route with the base
-        file system path to be used.
-
-        @rtype: Tuple
-        @return: The tuple of regular expressions to be used as resource patterns,
-        to the web mvc service.
-        """
-
-        return self.web_mvc_manager_page_item_dns.get_resource_patterns()
-
     def get_page_item_bundle(self, parameters):
         """
         Retrieves a bundle containing all the maps with information

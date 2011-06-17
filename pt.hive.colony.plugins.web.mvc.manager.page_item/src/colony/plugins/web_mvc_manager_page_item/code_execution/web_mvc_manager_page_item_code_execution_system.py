@@ -67,19 +67,6 @@ class WebMvcManagerPageItemCodeExecution:
         # creates the controllers for the web mvc manager page item code execution controller modules
         web_mvc_utils_plugin.create_controllers("web_mvc_manager_page_item.code_execution.web_mvc_manager_page_item_code_execution_controllers", self, self.web_mvc_manager_page_item_code_execution_plugin, "web_mvc_manager_page_item_code_execution")
 
-    def get_resource_patterns(self):
-        """
-        Retrieves the tuple of regular expressions to be used as resource patterns,
-        to the web mvc service. The tuple should relate the route with the base
-        file system path to be used.
-
-        @rtype: Tuple
-        @return: The tuple of regular expressions to be used as resource patterns,
-        to the web mvc service.
-        """
-
-        return ()
-
     def get_page_item_bundle(self, parameters):
         """
         Retrieves a bundle containing all the maps with information
