@@ -37,10 +37,10 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-WEB_MVC_MANAGER_BASe_RESOURCES_PATH = "web_mvc_manager/base/resources"
+WEB_MVC_MANAGER_BASE_RESOURCES_PATH = "web_mvc_manager/base/resources"
 """ The web mvc manager base path """
 
-EXTRAS_PATH = WEB_MVC_MANAGER_BASe_RESOURCES_PATH + "/extras"
+EXTRAS_PATH = WEB_MVC_MANAGER_BASE_RESOURCES_PATH + "/extras"
 """ The extras path """
 
 class WebMvcManagerBase:

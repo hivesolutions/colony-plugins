@@ -44,9 +44,6 @@ import colony.libs.importer_util
 SERIALIZER_VALUE = "serializer"
 """ The serializer value """
 
-EXCEPTION_HANDLER_VALUE = "exception_handler"
-""" The exception handler value """
-
 WEB_MVC_UTILS_VALUE = "web_mvc_utils"
 """ The web mvc utils value """
 
@@ -131,12 +128,6 @@ class PluginController:
     @web_mvc_utils.serialize_exceptions("all")
     @web_mvc_utils.validated_method("plugins.list")
     def handle_list(self, rest_request, parameters = {}):
-        # retrieves the exception handler
-        exception_handler = self.web_mvc_manager_base.web_mvc_manager_base_exception_controller
-
-        # sets the exception handler in the parameters
-        parameters[EXCEPTION_HANDLER_VALUE] = exception_handler
-
         # retrieves the template file from the parameters
         template_file = parameters["template_file"]
 
@@ -242,12 +233,6 @@ class PluginController:
     @web_mvc_utils.serialize_exceptions("all")
     @web_mvc_utils.validated_method("plugins.show")
     def handle_show(self, rest_request, parameters = {}):
-        # retrieves the exception handler
-        exception_handler = self.web_mvc_manager_base.web_mvc_manager_base_exception_controller
-
-        # sets the exception handler in the parameters
-        parameters[EXCEPTION_HANDLER_VALUE] = exception_handler
-
         # retrieves the template file from the parameters
         template_file = parameters["template_file"]
 
@@ -460,12 +445,6 @@ class CapabilityController:
     @web_mvc_utils.serialize_exceptions("all")
     @web_mvc_utils.validated_method("capabilites.list")
     def handle_list(self, rest_request, parameters = {}):
-        # retrieves the exception handler
-        exception_handler = self.web_mvc_manager_base.web_mvc_manager_base_exception_controller
-
-        # sets the exception handler in the parameters
-        parameters[EXCEPTION_HANDLER_VALUE] = exception_handler
-
         # retrieves the template file from the parameters
         template_file = parameters["template_file"]
 
@@ -571,12 +550,6 @@ class CapabilityController:
     @web_mvc_utils.serialize_exceptions("all")
     @web_mvc_utils.validated_method("capabilites.show")
     def handle_show(self, rest_request, parameters = {}):
-        # retrieves the exception handler
-        exception_handler = self.web_mvc_manager_base.web_mvc_manager_base_exception_controller
-
-        # sets the exception handler in the parameters
-        parameters[EXCEPTION_HANDLER_VALUE] = exception_handler
-
         # retrieves the template file from the parameters
         template_file = parameters["template_file"]
 
@@ -718,57 +691,3 @@ class CapabilityController:
 
         # returns the sub capabilities
         return sub_capabilities
-
-class ExceptionController:
-    """
-    The web mvc manager base exception controller.
-    """
-
-    web_mvc_manager_base_plugin = None
-    """ The web mvc manager base plugin """
-
-    web_mvc_manager_base = None
-    """ The web mvc manager base """
-
-    def __init__(self, web_mvc_manager_base_plugin, web_mvc_manager_base):
-        """
-        Constructor of the class.
-
-        @type web_mvc_manager_base_plugin: WebMvcManagerBasePlugin
-        @param web_mvc_manager_base_plugin: The web mvc manager base plugin.
-        @type web_mvc_manager_base: WebMvcManagerBase
-        @param web_mvc_manager_base: The web mvc manager base.
-        """
-
-        self.web_mvc_manager_base_plugin = web_mvc_manager_base_plugin
-        self.web_mvc_manager_base = web_mvc_manager_base
-
-    def start(self):
-        """
-        Method called upon structure initialization.
-        """
-
-        # sets the relative resources path
-        self.set_relative_resources_path(WEB_MVC_MANAGER_BASE_RESOURCES_PATH)
-
-    def handle_exception(self, rest_request, parameters = {}):
-        """
-        Handles an exception.
-
-        @type rest_request: RestRequest
-        @param rest_request: The rest request for which the exception occurred.
-        @type parameters: Dictionary
-        @param parameters: The handler parameters.
-        """
-
-        # retrieves the exception
-        exception = parameters.get(EXCEPTION_VALUE)
-
-        # retrieves the exception message
-        exception_message = exception.get(MESSAGE_VALUE)
-
-        # creates the exception complete message
-        exception_complete_message = "Exception: " + exception_message
-
-        # sets the exception message in the rest request
-        self.set_contents(rest_request, exception_complete_message)

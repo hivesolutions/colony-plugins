@@ -156,6 +156,9 @@ class MainController:
         """
 
         def handle_web_mvc_manager_page_item(rest_request, parameters = {}):
+            # retrieves the web mvc manager exception controller
+            web_mvc_manager_exception_controller = self.web_mvc_manager.web_mvc_manager_exception_controller
+
             # retrieves the web mvc manager search helper controller
             web_mvc_manager_search_helper_controller = self.web_mvc_manager.web_mvc_manager_search_helper_controller
 
@@ -180,6 +183,7 @@ class MainController:
             # defines the default parameters
             default_parameters = {
                 "template_file" : template_file,
+                "exception_handler" : web_mvc_manager_exception_controller,
                 "search_helper" : web_mvc_manager_search_helper_controller,
                 "communication_helper" : web_mvc_manager_communication_helper_controller
             }
