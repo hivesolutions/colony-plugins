@@ -30,6 +30,7 @@
             "web_mvc_manager/repository/web_mvc_manager_repository_exceptions.py",
             "web_mvc_manager/repository/web_mvc_manager_repository_system.py",
             "web_mvc_manager/repository/resources/baf.xml",
+            "web_mvc_manager/repository/resources/extras/templates/css/repository_list_contents.css",
             "web_mvc_manager/repository/resources/extras/templates/js/repository/repository_edit_contents.js",
             "web_mvc_manager/repository/resources/extras/templates/js/repository/repository_list_contents.js",
             "web_mvc_manager/repository/resources/templates/repository/repository_edit_contents.html.tpl",

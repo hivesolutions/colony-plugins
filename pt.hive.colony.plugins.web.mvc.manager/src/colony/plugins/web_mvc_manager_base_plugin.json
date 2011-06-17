@@ -1,0 +1,40 @@
+{
+    "type" : "plugin",
+    "platform" : "python",
+    "sub_platforms" : ["cpython"],
+    "id" : "pt.hive.colony.plugins.web.mvc.manager.base",
+    "name" : "Web Mvc Manager Base Plugin",
+    "short_name" : "Web Mvc Manager Base",
+    "description" : "The plugin that offers the web mvc manager base",
+    "version" : "1.0.0",
+    "author" : "Hive Solutions Lda. <development@hive.pt>",
+    "capabilities" : ["web.mvc_service", "web.mvc.manager.page_item_bundle",
+            "build_automation_item"],
+    "capabilities_allowed" : [],
+    "dependencies" : [{
+                "id" : "pt.hive.colony.plugins.web.mvc.utils",
+                "version" : "1.0.0"
+            }, {
+                "id" : "pt.hive.colony.plugins.misc.json",
+                "version" : "1.0.0"
+            }],
+    "main_file" : "web_mvc_manager_base_plugin.py",
+    "resources" : [
+            "web_mvc_manager_base_plugin.py",
+            "web_mvc_manager/__init__.py",
+            "web_mvc_manager/base/__init__.py",
+            "web_mvc_manager/base/web_mvc_manager_base_controllers.py",
+            "web_mvc_manager/base/web_mvc_manager_base_exceptions.py",
+            "web_mvc_manager/base/web_mvc_manager_base_system.py",
+            "web_mvc_manager/base/resources/extras/templates/css/capability/capability_list_contents.css",
+            "web_mvc_manager/base/resources/extras/templates/css/plugin/plugin_list_contents.css",
+            "web_mvc_manager/base/resources/extras/templates/js/capability/capability_list_contents.js",
+            "web_mvc_manager/base/resources/extras/templates/js/plugin/plugin_list_contents.js",
+            "web_mvc_manager/base/resources/templates/capability/capability_edit_contents.html.tpl",
+            "web_mvc_manager/base/resources/templates/capability/capability_list_contents.html.tpl",
+            "web_mvc_manager/base/resources/templates/capability/capability_partial_list_contents.html.tpl",
+            "web_mvc_manager/base/resources/templates/plugin/plugin_edit_contents.html.tpl",
+            "web_mvc_manager/base/resources/templates/plugin/plugin_list_contents.html.tpl",
+            "web_mvc_manager/base/resources/templates/plugin/plugin_new_contents.html.tpl",
+            "web_mvc_manager/base/resources/templates/plugin/plugin_partial_list_contents.html.tpl"]
+}
