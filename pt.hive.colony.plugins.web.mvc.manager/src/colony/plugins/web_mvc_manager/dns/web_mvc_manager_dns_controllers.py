@@ -280,11 +280,11 @@ class DnsZone:
     The dns zone class.
     """
 
-    name = None
+    name = "name"
     """ The name of the zone """
 
-    description = None
+    description = "description"
     """ The description of the zone """
 
-    layout = None
+    layout = "layout"
     """ The layout of the zone """
