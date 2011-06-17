@@ -49,7 +49,7 @@
                 <stage>build</stage>
                 <configuration>
                     <type>plugin</type>
-                    <specification_file>$base{plugin_directory}/web_mvc_manager_page_item_repository_plugin.json</specification_file>
+                    <specification_file>$base{plugin_directory}/web_mvc_manager_repository_plugin.json</specification_file>
                 </configuration>
             </plugin>
         </plugins>
