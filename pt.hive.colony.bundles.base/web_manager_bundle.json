@@ -8,13 +8,16 @@
                 "id" : "pt.hive.colony.plugins.web.mvc.manager",
                 "version" : "1.0.0"
             }, {
-                "id" : "pt.hive.colony.plugins.web.mvc.manager.page_item.code_execution",
+                "id" : "pt.hive.colony.plugins.web.mvc.manager.base",
                 "version" : "1.0.0"
             }, {
-                "id" : "pt.hive.colony.plugins.web.mvc.manager.page_item.dns",
+                "id" : "pt.hive.colony.plugins.web.mvc.manager.code_execution",
                 "version" : "1.0.0"
             }, {
-                "id" : "pt.hive.colony.plugins.web.mvc.manager.page_item.repository",
+                "id" : "pt.hive.colony.plugins.web.mvc.manager.dns",
+                "version" : "1.0.0"
+            }, {
+                "id" : "pt.hive.colony.plugins.web.mvc.manager.repository",
                 "version" : "1.0.0"
             }, {
                 "id" : "pt.hive.colony.plugins.web.mvc.monitor_item.colony",
