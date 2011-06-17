@@ -1100,7 +1100,7 @@ class Visitor:
             raise template_engine_exceptions.UndefinedReference(node_value_type)
 
         # in case the path is absolute
-        if attribute_file_literal_value[0] == "/":
+        if os.path.isabs(attribute_file_literal_value):
             # sets the file path as absolute
             file_path = attribute_file_literal_value
         # in case the path is relative to the current file
