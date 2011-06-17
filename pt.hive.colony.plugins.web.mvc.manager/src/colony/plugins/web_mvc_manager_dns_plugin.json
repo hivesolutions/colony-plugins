@@ -1,0 +1,33 @@
+{
+    "type" : "plugin",
+    "platform" : "python",
+    "sub_platforms" : ["cpython"],
+    "id" : "pt.hive.colony.plugins.web.mvc.manager.dns",
+    "name" : "Web Mvc Manager Dns Plugin",
+    "short_name" : "Web Mvc Manager Dns",
+    "description" : "The plugin that offers the web mvc manager dns",
+    "version" : "1.0.0",
+    "author" : "Hive Solutions Lda. <development@hive.pt>",
+    "capabilities" : ["web.mvc.manager.page_item_bundle",
+            "build_automation_item"],
+    "capabilities_allowed" : [],
+    "dependencies" : [{
+                "id" : "pt.hive.colony.plugins.web.mvc.utils",
+                "version" : "1.0.0"
+            }, {
+                "id" : "pt.hive.colony.plugins.dns.storage.database",
+                "version" : "1.0.0"
+            }],
+    "main_file" : "web_mvc_manager_dns_plugin.py",
+    "resources" : [
+            "web_mvc_manager_dns_plugin.py",
+            "web_mvc_manager/__init__.py",
+            "web_mvc_manager/dns/__init__.py",
+            "web_mvc_manager/dns/web_mvc_manager_dns_controllers.py",
+            "web_mvc_manager/dns/web_mvc_manager_dns_exceptions.py",
+            "web_mvc_manager/dns/web_mvc_manager_dns_system.py",
+            "web_mvc_manager/dns/resources/baf.xml",
+            "web_mvc_manager/dns/resources/templates/dns/dns_edit_contents.html.tpl",
+            "web_mvc_manager/dns/resources/templates/dns/dns_list_contents.html.tpl",
+            "web_mvc_manager/dns/resources/templates/dns/dns_partial_list_contents.html.tpl"]
+}
