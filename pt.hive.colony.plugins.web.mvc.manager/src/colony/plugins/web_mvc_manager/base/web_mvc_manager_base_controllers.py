@@ -114,7 +114,7 @@ class PluginController:
 
     def validate(self, rest_request, parameters, validation_parameters):
         # returns the result of the require permission call
-        return self.web_mvc_manager_base.require_permissions(self, rest_request, validation_parameters)
+        return True
 
     @web_mvc_utils.serialize_exceptions("all")
     @web_mvc_utils.validated_method("plugins.list")
