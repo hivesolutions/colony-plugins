@@ -69,6 +69,12 @@ BUNDLES_VALUE = "bundles"
 PLUGINS_VALUE = "plugins"
 """ The plugins value """
 
+VERSION_VALUE = "version"
+""" The version value """
+
+HASH_DIGEST_VALUE = "hash_digest"
+""" The hash digest value """
+
 NOT_INSTALLED_STATUS = "not_installed"
 """ The not installed status """
 
@@ -319,21 +325,62 @@ class SystemUpdater:
         # in case the item information is defined the
         # item is considered to be installed
         if item_information:
-            item_version = item_information.get("version", "0.0.0")
-            item_hash_digest = item_information.get("hash_digest", {})
-            item_sha256 = item_hash_digest.get("sha256", None)
+            # retrieves the item information values
+            item_version = item_information.get(VERSION_VALUE, "0.0.0")
+            item_hash_digest = item_information.get(HASH_DIGEST_VALUE, {})
 
+            # in case the item version is superior to the currently
+            # installed version
             if item_version > repository_descriptor_item.version:
+                # sets the repository descriptor item status as newer version
                 repository_descriptor_item.status = NEWER_VERSION_STATUS
+            # in case the item version is the same as the currently
+            # installed version
             elif item_version == repository_descriptor_item.version:
-                if item_sha256 == repository_descriptor_item.hash_digest_items[0].value:
+                # verifies the hash digest values from the repository descriptor
+                # trying to find any mismatch
+                valid_hash_digest_values = self._verify_hash_digest_values(repository_descriptor_item.hash_digest_items, item_hash_digest)
+
+                # in case the hash digestr values are valid
+                if valid_hash_digest_values:
+                    # sets the repository descriptor item status as same version
                     repository_descriptor_item.status = SAME_VERSION_STATUS
+                # otherwise it's a different version (based on digest only)
                 else:
+                    # sets the repository descriptor item status as different digest
                     repository_descriptor_item.status = DIFFERENT_DIGEST_STATUS
+            # otherwise it's an inferior (older) version
             else:
+                # sets the repository descriptor item status as older version
                 repository_descriptor_item.status = OLDER_VERSION_STATUS
+        # otherwise the defined itemis not installed
         else:
+            # sets the repository descriptor item status as not installed
             repository_descriptor_item.status = NOT_INSTALLED_STATUS
+
+    def _verify_hash_digest_values(self, hash_digest_items, item_hash_digest):
+        # iterates over all the hash digest items
+        # to check for any mismatch
+        for hash_digest_item in hash_digest_items:
+            # retrieves the hash digest item key and value
+            hash_digest_item_key = hash_digest_item.key
+            hash_digest_item_value = hash_digest_item.value
+
+            # retrieves item hash digest value from the item hash digest
+            item_hash_digest_value = item_hash_digest.get(hash_digest_item_key, None)
+
+            # in the item hash digest value is not valid
+            if not item_hash_digest_value:
+                # continues the loop
+                continue
+
+            # in case the hash digest does not match
+            if not item_hash_digest_value == hash_digest_item_value:
+                # return false (invalid)
+                return False
+
+        # returns true (valid)
+        return True
 
     def _process_respository_descriptor(self, repository_descriptor):
         # retrieves the system registry plugin
@@ -343,16 +390,20 @@ class SystemUpdater:
         repository_descriptor_bundles = repository_descriptor.bundles
         repository_descriptor_plugins = repository_descriptor.plugins
 
+        # iterates over all the repository descriptor bundles to process them
         for repository_descriptor_bundle in repository_descriptor_bundles:
             # retrieves the bundle information
             bundle_information = system_registry_plugin.get_bundle_information(repository_descriptor_bundle.id, repository_descriptor_bundle.version)
 
+            # process the repository descriptor bundle using the bundle information
             self._process_item(repository_descriptor_bundle, bundle_information)
 
+        # iterates over all the repository descriptor plugins to process them
         for repository_descriptor_plugin in repository_descriptor_plugins:
             # retrieves the plugin information
             plugin_information = system_registry_plugin.get_plugin_information(repository_descriptor_plugin.id, repository_descriptor_plugin.version)
 
+            # process the repository descriptor plugin using the plugin information
             self._process_item(repository_descriptor_plugin, plugin_information)
 
     def get_repository_descriptor_file(self, repository_addresses):
