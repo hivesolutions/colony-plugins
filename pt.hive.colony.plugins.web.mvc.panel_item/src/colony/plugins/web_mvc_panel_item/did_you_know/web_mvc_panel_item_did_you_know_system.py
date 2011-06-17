@@ -70,19 +70,6 @@ class WebMvcPanelItemDidYouKnow:
         # creates the controllers for the web mvc panel item did you know controllers module
         web_mvc_utils_plugin.create_controllers("web_mvc_panel_item.did_you_know.web_mvc_panel_item_did_you_know_controllers", self, self.web_mvc_panel_item_did_you_know_plugin, "web_mvc_panel_item_did_you_know")
 
-    def get_resource_patterns(self):
-        """
-        Retrieves the tuple of regular expressions to be used as resource patterns,
-        to the web mvc service. The tuple should relate the route with the base
-        file system path to be used.
-
-        @rtype: Tuple
-        @return: The tuple of regular expressions to be used as resource patterns,
-        to the web mvc service.
-        """
-
-        return ()
-
     def get_panel_item(self, parameters):
         """
         Retrieves the code for the panel item for

@@ -101,19 +101,6 @@ class WebMvcPanelItemDidYouKnowPlugin(colony.base.plugin_system.Plugin):
     def dependency_injected(self, plugin):
         colony.base.plugin_system.Plugin.dependency_injected(self, plugin)
 
-    def get_resource_patterns(self):
-        """
-        Retrieves the tuple of regular expressions to be used as resource patterns,
-        to the web mvc service. The tuple should relate the route with the base
-        file system path to be used.
-
-        @rtype: Tuple
-        @return: The tuple of regular expressions to be used as resource patterns,
-        to the web mvc service.
-        """
-
-        return self.web_mvc_panel_item_did_you_know.get_resource_patterns()
-
     def get_panel_item(self, parameters):
         """
         Retrieves the code for the panel item for

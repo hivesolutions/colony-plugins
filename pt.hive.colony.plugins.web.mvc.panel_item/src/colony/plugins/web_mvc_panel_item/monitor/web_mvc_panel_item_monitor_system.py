@@ -70,19 +70,6 @@ class WebMvcPanelItemMonitor:
         # creates the controllers for the web mvc panel item monitor controllers module
         web_mvc_utils_plugin.create_controllers("web_mvc_panel_item.monitor.web_mvc_panel_item_monitor_controllers", self, self.web_mvc_panel_item_monitor_plugin, "web_mvc_panel_item_monitor")
 
-    def get_resource_patterns(self):
-        """
-        Retrieves the tuple of regular expressions to be used as resource patterns,
-        to the web mvc service. The tuple should relate the route with the base
-        file system path to be used.
-
-        @rtype: Tuple
-        @return: The tuple of regular expressions to be used as resource patterns,
-        to the web mvc service.
-        """
-
-        return ()
-
     def get_panel_item(self, parameters):
         """
         Retrieves the code for the panel item for
