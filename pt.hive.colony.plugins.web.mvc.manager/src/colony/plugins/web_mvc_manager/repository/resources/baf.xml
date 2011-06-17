@@ -33,11 +33,11 @@
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://www.hive.pt xsd/baf.xsd">
     <artifact>
-        <id>pt.hive.colony.plugins.web.mvc.manager.page_item.repository</id>
+        <id>pt.hive.colony.plugins.web.mvc.manager.repository</id>
         <version>1.0.0</version>
         <type>colony</type>
-        <name>Web Mvc Manager Page Item Repository Plugin</name>
-        <description>The plugin that offers the web mvc manager page item repository</description>
+        <name>Web Mvc Manager Repository Plugin</name>
+        <description>The plugin that offers the web mvc manager repository</description>
         <url>http://www.hive.pt</url>
     </artifact>
     <build>
