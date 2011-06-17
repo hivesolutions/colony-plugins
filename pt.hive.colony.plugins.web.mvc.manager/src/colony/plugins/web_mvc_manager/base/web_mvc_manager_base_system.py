@@ -118,7 +118,7 @@ class WebMvcManagerBase:
         web_mvc_manager_base_plugin_path = plugin_manager.get_plugin_path_by_id(self.web_mvc_manager_base_plugin.id)
 
         return (
-            (r"^web_mvc_manager/repositories/resources/.+$", (web_mvc_manager_base_plugin_path + "/" + EXTRAS_PATH, "web_mvc_manager/repositories/resources")),
+            (r"^web_mvc_manager/base/resources/.+$", (web_mvc_manager_base_plugin_path + "/" + EXTRAS_PATH, "web_mvc_manager/base/resources")),
         )
 
     def get_page_item_bundle(self, parameters):
@@ -141,6 +141,12 @@ class WebMvcManagerBase:
                 "base_address" : "plugins",
                 "pattern" : (r"^web_mvc_manager/plugins$", self.web_mvc_manager_base_plugin_controller.handle_list_ajx, "get", "ajx")
             },
+            {
+                "menu" : "configuration/Capabilities",
+                "side_panel" : "lists/Capabilities",
+                "base_address" : "capabilities",
+                "pattern" : (r"^web_mvc_manager/capabilities$", self.web_mvc_manager_base_capability_controller.handle_list_ajx, "get", "ajx")
+            },
             (r"^web_mvc_manager/plugins$", self.web_mvc_manager_base_plugin_controller.handle_list, "get"),
             (r"^web_mvc_manager/plugins/partial$", self.web_mvc_manager_base_plugin_controller.handle_partial_list_ajx, "get"),
             (r"^web_mvc_manager/plugins/new$", self.web_mvc_manager_base_plugin_controller.handle_new_ajx, "get", "ajx"),
@@ -149,4 +155,8 @@ class WebMvcManagerBase:
             (r"^web_mvc_manager/plugins/(?P<plugin_id>[a-zA-Z0-9\._]+)$", self.web_mvc_manager_base_plugin_controller.handle_show_ajx, "get", "ajx"),
             (r"^web_mvc_manager/plugins/(?P<plugin_id>[a-zA-Z0-9\._]+)$", self.web_mvc_manager_base_plugin_controller.handle_show, "get"),
             (r"^web_mvc_manager/plugins/(?P<plugin_id>[a-zA-Z0-9\._]+)/change_status$", self.web_mvc_manager_base_plugin_controller.handle_change_status_json, "post", "json"),
+            (r"^web_mvc_manager/capabilities$", self.web_mvc_manager_base_capability_controller.handle_list, "get"),
+            (r"^web_mvc_manager/capabilities/partial$", self.web_mvc_manager_base_capability_controller.handle_partial_list_ajx, "get", "ajx"),
+            (r"^web_mvc_manager/capabilities/(?P<capability>[a-zA-Z0-9\._]+)$", self.web_mvc_manager_base_capability_controller.handle_show_ajx, "get", "ajx"),
+            (r"^web_mvc_manager/capabilities/(?P<capability>[a-zA-Z0-9\._]+)$", self.web_mvc_manager_base_capability_controller.handle_show, "get")
         )

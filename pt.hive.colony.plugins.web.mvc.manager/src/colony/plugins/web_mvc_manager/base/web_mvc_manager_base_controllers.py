@@ -53,7 +53,7 @@ WEB_MVC_UTILS_VALUE = "web_mvc_utils"
 DEFAULT_ENCODING = "utf-8"
 """ The default encoding value """
 
-WEB_MVC_MANAGER_BASE_RESOURCES_PATH = "web_mvc_manager/repository/resources"
+WEB_MVC_MANAGER_BASE_RESOURCES_PATH = "web_mvc_manager/base/resources"
 """ The web mvc manager base resources path """
 
 COLONY_BUNDLE_FILE_EXTENSION = "cbx"
@@ -73,6 +73,18 @@ LOADED_VALUE = "loaded"
 
 UNLOADED_VALUE = "unloaded"
 """ The unloaded value """
+
+PROVIDING_VALUE = "providing"
+""" The providing value """
+
+ALLOWING_VALUE = "allowing"
+""" The allowing value """
+
+EXCEPTION_VALUE = "exception"
+""" The exception value """
+
+MESSAGE_VALUE = "message"
+""" The message value """
 
 PATTERN_NAMES_VALUE = "pattern_names"
 """ The pattern names value """
@@ -114,13 +126,13 @@ class PluginController:
 
     def validate(self, rest_request, parameters, validation_parameters):
         # returns the result of the require permission call
-        return True
+        return []
 
     @web_mvc_utils.serialize_exceptions("all")
     @web_mvc_utils.validated_method("plugins.list")
     def handle_list(self, rest_request, parameters = {}):
         # retrieves the exception handler
-        exception_handler = self.web_mvc_manager_base.web_mvc_manager_exception_controller
+        exception_handler = self.web_mvc_manager_base.web_mvc_manager_base_exception_controller
 
         # sets the exception handler in the parameters
         parameters[EXCEPTION_HANDLER_VALUE] = exception_handler
@@ -173,11 +185,11 @@ class PluginController:
         # sets the serializer in the parameters
         parameters[SERIALIZER_VALUE] = json_plugin
 
-        # retrieves the web mvc manager search helper controller
-        web_mvc_manager_search_helper_controller = self.web_mvc_manager_base.web_mvc_manager_search_helper_controller
-
         # retrieves the form data by processing the form
         form_data_map = self.process_form_data(rest_request, DEFAULT_ENCODING)
+
+        # retrieves the web search helper
+        search_helper = parameters["search_helper"]
 
         # retrieves the form data attributes
         search_query = form_data_map["search_query"]
@@ -198,7 +210,7 @@ class PluginController:
         filtered_plugins = self._get_filtered_plugins(rest_request, search_query)
 
         # retrieves the partial filtered plugins and meta data
-        partial_filtered_plugins, start_record, number_records, total_number_records = web_mvc_manager_search_helper_controller.partial_filter(rest_request, filtered_plugins, start_record, number_records)
+        partial_filtered_plugins, start_record, number_records, total_number_records = search_helper.partial_filter(rest_request, filtered_plugins, start_record, number_records)
 
         # retrieves the template file
         template_file = self.retrieve_template_file("plugin_partial_list_contents.html.tpl")
@@ -228,7 +240,7 @@ class PluginController:
     @web_mvc_utils.validated_method("plugins.new")
     def handle_new(self, rest_request, parameters = {}):
         # retrieves the exception handler
-        exception_handler = self.web_mvc_manager_base.web_mvc_manager_exception_controller
+        exception_handler = self.web_mvc_manager_base.web_mvc_manager_base_exception_controller
 
         # sets the exception handler in the parameters
         parameters[EXCEPTION_HANDLER_VALUE] = exception_handler
@@ -296,7 +308,7 @@ class PluginController:
     @web_mvc_utils.validated_method("plugins.show")
     def handle_show(self, rest_request, parameters = {}):
         # retrieves the exception handler
-        exception_handler = self.web_mvc_manager_base.web_mvc_manager_exception_controller
+        exception_handler = self.web_mvc_manager_base.web_mvc_manager_base_exception_controller
 
         # sets the exception handler in the parameters
         parameters[EXCEPTION_HANDLER_VALUE] = exception_handler
@@ -370,14 +382,14 @@ class PluginController:
         # retrieves the serializer
         serializer = parameters[SERIALIZER_VALUE]
 
-        # retrieves the web mvc communication helper controller
-        web_mvc_manager_communication_helper_controller = self.web_mvc_manager_base.web_mvc_manager_communication_helper_controller
-
         # retrieves the form data by processing the form
         form_data_map = self.process_form_data(rest_request, DEFAULT_ENCODING)
 
         # retrieves the pattern names from the parameters
         pattern_names = parameters[PATTERN_NAMES_VALUE]
+
+        # retrieves the communication helper
+        communication_helper = parameters["communication_helper"]
 
         # retrieves the plugin id pattern
         plugin_id = pattern_names["plugin_id"]
@@ -395,7 +407,7 @@ class PluginController:
         self.set_contents(rest_request, serialized_status)
 
         # sends the serialized broadcast message
-        web_mvc_manager_communication_helper_controller.send_serialized_broadcast_message(parameters, "web_mvc_manager/communication", "web_mvc_manager/plugin/change_status", serialized_status)
+        communication_helper.send_serialized_broadcast_message(parameters, "web_mvc_manager/communication", "web_mvc_manager/plugin/change_status", serialized_status)
 
     def handle_change_status_json(self, rest_request, parameters = {}):
         # retrieves the json plugin
@@ -470,3 +482,342 @@ class PluginController:
 
         # returns the delta plugin status map
         return delta_plugin_status_map
+
+class CapabilityController:
+    """
+    The web mvc manager base capability controller.
+    """
+
+    web_mvc_manager_base_plugin = None
+    """ The web mvc manager base plugin """
+
+    web_mvc_manager_base = None
+    """ The web mvc manager base """
+
+    def __init__(self, web_mvc_manager_base_plugin, web_mvc_manager_base):
+        """
+        Constructor of the class.
+
+        @type web_mvc_manager_base_plugin: WebMvcManagerBasePlugin
+        @param web_mvc_manager_base_plugin: The web mvc manager base plugin.
+        @type web_mvc_manager_base: WebMvcManagerBase
+        @param web_mvc_manager_base: The web mvc manager base.
+        """
+
+        self.web_mvc_manager_base_plugin = web_mvc_manager_base_plugin
+        self.web_mvc_manager_base = web_mvc_manager_base
+
+    def start(self):
+        """
+        Method called upon structure initialization.
+        """
+
+        # sets the relative resources path
+        self.set_relative_resources_path(WEB_MVC_MANAGER_BASE_RESOURCES_PATH, extra_templates_path = "capability")
+
+    def validate(self, rest_request, parameters, validation_parameters):
+        # returns the result of the require permission call
+        return []
+
+    @web_mvc_utils.serialize_exceptions("all")
+    @web_mvc_utils.validated_method("capabilites.list")
+    def handle_list(self, rest_request, parameters = {}):
+        # retrieves the exception handler
+        exception_handler = self.web_mvc_manager_base.web_mvc_manager_base_exception_controller
+
+        # sets the exception handler in the parameters
+        parameters[EXCEPTION_HANDLER_VALUE] = exception_handler
+
+        # retrieves the template file
+        template_file = self.retrieve_template_file("../general.html.tpl")
+
+        # assigns the include to the template
+        self.assign_include_template_file(template_file, "page_include", "capability/capability_list_contents.html.tpl")
+
+        # assigns the include to the template
+        self.assign_include_template_file(template_file, "side_panel_include", "side_panel/side_panel_configuration.html.tpl")
+
+        # assigns the session variables to the template file
+        self.assign_session_template_file(rest_request, template_file)
+
+        # applies the base path to the template file
+        self.apply_base_path_template_file(rest_request, template_file)
+
+        # processes the template file and sets the request contents
+        self.process_set_contents(rest_request, template_file)
+
+    @web_mvc_utils.serialize_exceptions("all")
+    @web_mvc_utils.validated_method("capabilites.list")
+    def handle_list_ajx(self, rest_request, parameters = {}):
+        # retrieves the json plugin
+        json_plugin = self.web_mvc_manager_base_plugin.json_plugin
+
+        # sets the serializer in the parameters
+        parameters[SERIALIZER_VALUE] = json_plugin
+
+        # retrieves the template file
+        template_file = self.retrieve_template_file("capability_list_contents.html.tpl")
+
+        # assigns the session variables to the template file
+        self.assign_session_template_file(rest_request, template_file)
+
+        # applies the base path to the template file
+        self.apply_base_path_template_file(rest_request, template_file)
+
+        # processes the template file and sets the request contents
+        self.process_set_contents(rest_request, template_file)
+
+    @web_mvc_utils.serialize_exceptions("all")
+    @web_mvc_utils.validated_method("capabilites.list")
+    def handle_partial_list_ajx(self, rest_request, parameters = {}):
+        # retrieves the json plugin
+        json_plugin = self.web_mvc_manager_base_plugin.json_plugin
+
+        # sets the serializer in the parameters
+        parameters[SERIALIZER_VALUE] = json_plugin
+
+        # retrieves the form data by processing the form
+        form_data_map = self.process_form_data(rest_request, DEFAULT_ENCODING)
+
+        # retrieves the web search helper
+        search_helper = parameters["search_helper"]
+
+        # retrieves the form data attributes
+        search_query = form_data_map["search_query"]
+
+        # retrieves the start record
+        start_record = form_data_map["start_record"]
+
+        # retrieves the number records
+        number_records = form_data_map["number_records"]
+
+        # converts the start record to integer
+        start_record = int(start_record)
+
+        # converts the number records to integer
+        number_records = int(number_records)
+
+        # retrieves the filtered capabilities
+        filtered_capabilities = self._get_filtered_capabilities(rest_request, search_query)
+
+        # retrieves the partial filter from the filtered capabilities
+        partial_filtered_capabilities, start_record, number_records, total_number_records = search_helper.partial_filter(rest_request, filtered_capabilities, start_record, number_records)
+
+        # retrieves the template file
+        template_file = self.retrieve_template_file("capability_partial_list_contents.html.tpl")
+
+        # assigns the capabilities to the template
+        template_file.assign("capabilities", partial_filtered_capabilities)
+
+        # assigns the start record to the template
+        template_file.assign("start_record", start_record)
+
+        # assigns the number records to the template
+        template_file.assign("number_records", number_records)
+
+        # assigns the total number records to the template
+        template_file.assign("total_number_records", total_number_records)
+
+        # assigns the session variables to the template file
+        self.assign_session_template_file(rest_request, template_file)
+
+        # applies the base path to the template file
+        self.apply_base_path_template_file(rest_request, template_file)
+
+        # processes the template file and sets the request contents
+        self.process_set_contents(rest_request, template_file)
+
+    @web_mvc_utils.validated_method("capabilites.show")
+    def handle_show(self, rest_request, parameters = {}):
+        # retrieves the pattern names from the parameters
+        pattern_names = parameters[PATTERN_NAMES_VALUE]
+
+        # retrieves the capability pattern
+        capability = pattern_names["capability"]
+
+        # retrieves the plugins map for the capability
+        plugins_capability = self._get_plugins_capability(rest_request, capability)
+
+        # retrieves the sub capabilities for the capability
+        sub_capabilities = self._get_sub_capabilities(rest_request, capability)
+
+        # retrieves the template file
+        template_file = self.retrieve_template_file("../general.html.tpl")
+
+        # assigns the include to the template
+        self.assign_include_template_file(template_file, "page_include", "capability/capability_edit_contents.html.tpl")
+
+        # assigns the include to the template
+        self.assign_include_template_file(template_file, "side_panel_include", "side_panel/side_panel_configuration.html.tpl")
+
+        # assigns the capability to the template
+        template_file.assign("capability", capability)
+
+        # assigns the plugins capability to the template
+        template_file.assign("plugins_capability", plugins_capability)
+
+        # assigns the sub capabilities to the template
+        template_file.assign("sub_capabilities", sub_capabilities)
+
+        # assigns the session variables to the template file
+        self.assign_session_template_file(rest_request, template_file)
+
+        # applies the base path to the template file
+        self.apply_base_path_template_file(rest_request, template_file)
+
+        # processes the template file and sets the request contents
+        self.process_set_contents(rest_request, template_file)
+
+    @web_mvc_utils.serialize_exceptions("all")
+    @web_mvc_utils.validated_method("capabilites.show")
+    def handle_show_ajx(self, rest_request, parameters = {}):
+        # retrieves the json plugin
+        json_plugin = self.web_mvc_manager_base_plugin.json_plugin
+
+        # sets the serializer in the parameters
+        parameters[SERIALIZER_VALUE] = json_plugin
+
+        # retrieves the pattern names from the parameters
+        pattern_names = parameters[PATTERN_NAMES_VALUE]
+
+        # retrieves the capability pattern
+        capability = pattern_names["capability"]
+
+        # retrieves the plugins map for the capability
+        plugins_capability = self._get_plugins_capability(rest_request, capability)
+
+        # retrieves the sub capabilities for the capability
+        sub_capabilities = self._get_sub_capabilities(rest_request, capability)
+
+        # retrieves the template file
+        template_file = self.retrieve_template_file("capability_edit_contents.html.tpl")
+
+        # assigns the capability to the template
+        template_file.assign("capability", capability)
+
+        # assigns the plugins capability to the template
+        template_file.assign("plugins_capability", plugins_capability)
+
+        # assigns the sub capabilities to the template
+        template_file.assign("sub_capabilities", sub_capabilities)
+
+        # assigns the session variables to the template file
+        self.assign_session_template_file(rest_request, template_file)
+
+        # applies the base path to the template file
+        self.apply_base_path_template_file(rest_request, template_file)
+
+        # processes the template file and sets the request contents
+        self.process_set_contents(rest_request, template_file)
+
+    def _get_filtered_capabilities(self, rest_request, search_query):
+        # retrieves the capabilities
+        capabilities = self._get_capabilities()
+
+        # creates the filtered capabilities list
+        filtered_capabilities = [capability for capability in capabilities if not capability.find(search_query) == -1]
+
+        # returns the filtered capabilities
+        return filtered_capabilities
+
+    def _get_capabilities(self):
+        # retrieves the plugin manager
+        plugin_manager = self.web_mvc_manager_base_plugin.manager
+
+        # retrieves all the capabilities
+        capabilities = plugin_manager.capabilities_plugin_instances_map.keys()
+
+        # sorts all the capabilities
+        capabilities.sort()
+
+        # returns the capabilities
+        return capabilities
+
+    def _get_plugins_capability(self, rest_request, capability):
+        # retrieves the plugin manager
+        plugin_manager = self.web_mvc_manager_base_plugin.manager
+
+        # retrieves the plugins providing the capability
+        plugins_offering = list(set(plugin_manager.capabilities_plugin_instances_map.get(capability, [])))
+
+        # retrieves the plugins allowing the capability
+        plugins_allowing = list(set(plugin_manager.capabilities_plugins_map.get(capability, [])))
+
+        # creates an unique set of plugins offering the capability
+        plugins_offering_unique = set(plugins_offering)
+
+        # creates an unique set of plugins allowing the capability
+        plugins_allowing_unique = set(plugins_allowing)
+
+        # defines the plugins map
+        plugins_map = {
+            PROVIDING_VALUE : plugins_offering_unique,
+            ALLOWING_VALUE : plugins_allowing_unique
+        }
+
+        # returns the plugins map
+        return plugins_map
+
+    def _get_sub_capabilities(self, rest_request, capability):
+        # retrieves the plugin manager
+        plugin_manager = self.web_mvc_manager_base_plugin.manager
+
+        # retrieves the sub capabilities for the capability
+        sub_capabilities = plugin_manager.capabilities_sub_capabilities_map.get(capability, [])
+
+        # returns the sub capabilities
+        return sub_capabilities
+
+class ExceptionController:
+    """
+    The web mvc manager base exception controller.
+    """
+
+    web_mvc_manager_base_plugin = None
+    """ The web mvc manager base plugin """
+
+    web_mvc_manager_base = None
+    """ The web mvc manager base """
+
+    def __init__(self, web_mvc_manager_base_plugin, web_mvc_manager_base):
+        """
+        Constructor of the class.
+
+        @type web_mvc_manager_base_plugin: WebMvcManagerBasePlugin
+        @param web_mvc_manager_base_plugin: The web mvc manager base plugin.
+        @type web_mvc_manager_base: WebMvcManagerBase
+        @param web_mvc_manager_base: The web mvc manager base.
+        """
+
+        self.web_mvc_manager_base_plugin = web_mvc_manager_base_plugin
+        self.web_mvc_manager_base = web_mvc_manager_base
+
+    def start(self):
+        """
+        Method called upon structure initialization.
+        """
+
+        # sets the relative resources path
+        self.set_relative_resources_path(WEB_MVC_MANAGER_BASE_RESOURCES_PATH)
+
+    def handle_exception(self, rest_request, parameters = {}):
+        """
+        Handles an exception.
+
+        @type rest_request: RestRequest
+        @param rest_request: The rest request for which the exception occurred.
+        @type parameters: Dictionary
+        @param parameters: The handler parameters.
+        """
+
+        # retrieves the exception
+        exception = parameters.get(EXCEPTION_VALUE)
+
+        # retrieves the exception message
+        exception_message = exception.get(MESSAGE_VALUE)
+
+        # creates the exception complete message
+        exception_complete_message = "Exception: " + exception_message
+
+        # sets the exception message in the rest request
+        self.set_contents(rest_request, exception_complete_message)
