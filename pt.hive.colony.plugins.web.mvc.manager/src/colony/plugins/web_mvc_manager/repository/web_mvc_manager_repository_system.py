@@ -70,7 +70,7 @@ class WebMvcManagerRepository:
         # retrieves the web mvc utils plugin
         web_mvc_utils_plugin = self.web_mvc_manager_repository_plugin.web_mvc_utils_plugin
 
-        # creates the controllers for the web mvc manager code execution controller modules
+        # creates the controllers for the web mvc manager repository controller modules
         web_mvc_utils_plugin.create_controllers("web_mvc_manager.repository.web_mvc_manager_repository_controllers", self, self.web_mvc_manager_repository_plugin, "web_mvc_manager_repository")
 
     def get_patterns(self):
