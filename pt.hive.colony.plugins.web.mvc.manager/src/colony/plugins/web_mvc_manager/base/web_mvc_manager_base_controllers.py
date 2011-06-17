@@ -57,14 +57,11 @@ WEB_MVC_UTILS_VALUE = "web_mvc_utils"
 DEFAULT_ENCODING = "utf-8"
 """ The default encoding value """
 
-WEB_MVC_MANAGER_REPOSITORY_RESOURCES_PATH = "web_mvc_manager/repository/resources"
-""" The web mvc manager repository resources path """
+WEB_MVC_MANAGER_BASE_RESOURCES_PATH = "web_mvc_manager/repository/resources"
+""" The web mvc manager base resources path """
 
 PATTERN_NAMES_VALUE = "pattern_names"
 """ The pattern names value """
-
-INSTALLATION_DELAY = 1.0
-""" The delay induce uppon installation """
 
 # imports the web mvc utils
 web_mvc_utils = colony.libs.importer_util.__importer__(WEB_MVC_UTILS_VALUE)
