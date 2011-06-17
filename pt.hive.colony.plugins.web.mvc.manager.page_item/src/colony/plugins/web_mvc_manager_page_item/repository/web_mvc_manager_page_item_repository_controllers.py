@@ -42,6 +42,9 @@ import copy
 
 import colony.libs.importer_util
 
+SERIALIZER_VALUE = "serializer"
+""" The serializer value """
+
 INSTALLED_VALUE = "installed"
 """ The installed value """
 
@@ -250,9 +253,10 @@ class MainController:
         # processes the template file and sets the request contents
         self.process_set_contents(rest_request, template_file)
 
-    def handle_install_plugin(self, rest_request, parameters = {}):
-        # retrieves the json plugin
-        json_plugin = self.web_mvc_manager_page_item_repository_plugin.json_plugin
+    @web_mvc_utils.serialize_exceptions("all")
+    def handle_install_plugin_serialized(self, rest_request, parameters = {}):
+        # retrieves the serializer
+        serializer = parameters[SERIALIZER_VALUE]
 
         # retrieves the form data by processing the form
         form_data_map = self.process_form_data(rest_request, DEFAULT_ENCODING)
@@ -269,14 +273,25 @@ class MainController:
         # install the plugin and retrieves the result
         install_plugin_result = self._install_plugin(rest_request, plugin_id, plugin_version)
 
-        # serializes the install result using the json plugin
-        serialized_status = json_plugin.dumps(install_plugin_result)
+        # serializes the install result using the serializer
+        serialized_status = serializer.dumps(install_plugin_result)
 
         # sets the serialized status as the rest request contents
         self.set_contents(rest_request, serialized_status)
 
         # sends the serialized broadcast message
         communication_helper.send_serialized_broadcast_message(parameters, "web_mvc_manager/communication", "web_mvc_manager/plugin/install", serialized_status)
+
+    def handle_install_plugin_json(self, rest_request, parameters = {}):
+        # retrieves the json plugin
+        json_plugin = self.web_mvc_manager_page_item_repository_plugin.json_plugin
+
+        # sets the serializer in the parameters
+        parameters[SERIALIZER_VALUE] = json_plugin
+
+        # handles the request with the general
+        # handle install plugin serialized method
+        self.handle_install_plugin_serialized(rest_request, parameters)
 
     def handle_plugins_partial_list(self, rest_request, parameters = {}):
         # retrieves the form data by processing the form
