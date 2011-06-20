@@ -162,6 +162,10 @@ textarea.invalid {
     -moz-user-select: -moz-none;
 }
 
+.button.disabled {
+    opacity: 0.5;
+}
+
 .button-green {
     background: transparent url(../images/components/button/button-green-normal.png) no-repeat center center;
 }

@@ -74,9 +74,12 @@
 })(jQuery);
 
 (function($) {
-    jQuery.fn.button = function(options) {
+    jQuery.fn.button = function(method, options) {
         // the default values for the menu
         var defaults = {};
+
+        // sets the default method value
+        var method = method ? method : "default";
 
         // sets the default options value
         var options = options ? options : {};
@@ -117,8 +120,61 @@
                     });
         };
 
-        // initializes the plugin
-        initialize();
+        /**
+         * Enables the component, allowing interaction with it.
+         *
+         * @param {Element}
+         *            matchedObject The mathched object.
+         * @param {Map}
+         *            options The options of the plugin instance.
+         */
+        var _enable = function(matchedObject, options) {
+            matchedObject.mousedown(function(event) {
+                        // adds the click class
+                        jQuery(this).addClass("click");
+                    });
+
+            matchedObject.mouseup(function(event) {
+                        // removes the click class
+                        jQuery(this).removeClass("click");
+                    });
+
+            // removes the disabled class
+            matchedObject.removeClass("disabled");
+        };
+
+        /**
+         * Disables the component, disallowing any interaction with it.
+         *
+         * @param {Element}
+         *            matchedObject The mathched object.
+         * @param {Map}
+         *            options The options of the plugin instance.
+         */
+        var _disable = function(matchedObject, options) {
+            // unbinds the matched object for the mouse events
+            matchedObject.unbind("mousedown");
+            matchedObject.unbind("mouseup");
+
+            // adds the disabled class
+            matchedObject.addClass("disabled");
+        };
+
+        // switches over the method
+        switch (method) {
+            case "enable" :
+                _enable(matchedObject, options);
+                break;
+
+            case "disable" :
+                _disable(matchedObject, options);
+                break;
+
+            case "default" :
+                // initializes the plugin
+                initialize();
+                break;
+        }
 
         // returns the object
         return this;
