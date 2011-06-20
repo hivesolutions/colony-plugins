@@ -87,6 +87,30 @@ jQuery(document).ready(function() {
             // in case the install plugin flag is not set
             // no need to install the plugin
             if (!instalPlugin) {
+                var tobias = {
+                    title : "Warning",
+                    subTitle : "Uninstall existing plugin",
+                    message : "Uninstalling plugin pt.hive.colony.tobias ",
+                    buttonMessage : "Do you want to continue ?",
+                    successCallbackFunctions : [function() {
+                        // resolves the uninstall plugin url
+                        var uninstallPluginUrl = jQuery.resolveurl("repositories/uninstall_plugin.json");
+
+                        // processes a remote call for plugin installation
+                        jQuery.ajax({
+                                    type : "post",
+                                    url : uninstallPluginUrl,
+                                    data : {
+                                        plugin_id : pluginId,
+                                        plugin_version : pluginVersion
+                                    }
+                                });
+                    }]
+                };
+
+                // shows a dialog window in the body
+                _body.dialogwindow("default", tobias);
+
                 // returns immediately
                 return;
             }
@@ -124,6 +148,9 @@ jQuery(document).ready(function() {
                         // adds the not installed plugin button class
                         pluginButton.addClass("button-green");
 
+                        // updates the plugin button contents
+                        pluginButton.html("Install");
+
                         // sets the new plugin status
                         pluginButton.attr("data-plugin_status", "not_installed");
                     });
@@ -140,6 +167,9 @@ jQuery(document).ready(function() {
 
                         // adds the installed plugin button class
                         pluginButton.addClass("button-gray");
+
+                        // updates the plugin button contents
+                        pluginButton.html("Remove");
 
                         // sets the new plugin status
                         pluginButton.attr("data-plugin_status", "same_version");

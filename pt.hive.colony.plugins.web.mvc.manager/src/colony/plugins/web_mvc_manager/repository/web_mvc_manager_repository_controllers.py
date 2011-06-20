@@ -289,7 +289,7 @@ class RepositoryController:
         self.process_set_contents(rest_request, template_file)
 
     @web_mvc_utils.serialize_exceptions("all")
-    @web_mvc_utils.validated_method("repository.list")
+    @web_mvc_utils.validated_method("repository.install_plugin")
     def handle_install_plugin_serialized(self, rest_request, parameters = {}):
         # retrieves the serializer
         serializer = parameters[SERIALIZER_VALUE]
@@ -328,6 +328,47 @@ class RepositoryController:
         # handles the request with the general
         # handle install plugin serialized method
         self.handle_install_plugin_serialized(rest_request, parameters)
+
+    @web_mvc_utils.serialize_exceptions("all")
+    @web_mvc_utils.validated_method("repository.uninstall_plugin")
+    def handle_uninstall_plugin_serialized(self, rest_request, parameters = {}):
+        # retrieves the serializer
+        serializer = parameters[SERIALIZER_VALUE]
+
+        # retrieves the form data by processing the form
+        form_data_map = self.process_form_data(rest_request, DEFAULT_ENCODING)
+
+        # retrieves the communication helper
+        communication_helper = parameters["communication_helper"]
+
+        # retrieves the plugin id
+        plugin_id = form_data_map["plugin_id"]
+
+        # retrieves the plugin version
+        plugin_version = form_data_map["plugin_version"]
+
+        # uninstall the plugin and retrieves the result
+        uninstall_plugin_result = self._uninstall_plugin(rest_request, plugin_id, plugin_version)
+
+        # serializes the uninstall result using the serializer
+        serialized_status = serializer.dumps(uninstall_plugin_result)
+
+        # sets the serialized status as the rest request contents
+        self.set_contents(rest_request, serialized_status)
+
+        # sends the serialized broadcast message
+        communication_helper.send_serialized_broadcast_message(parameters, "web_mvc_manager/communication", "web_mvc_manager/plugin/install", serialized_status)
+
+    def handle_uninstall_plugin_json(self, rest_request, parameters = {}):
+        # retrieves the json plugin
+        json_plugin = self.web_mvc_manager_repository_plugin.json_plugin
+
+        # sets the serializer in the parameters
+        parameters[SERIALIZER_VALUE] = json_plugin
+
+        # handles the request with the general
+        # handle uninstall plugin serialized method
+        self.handle_uninstall_plugin_serialized(rest_request, parameters)
 
     @web_mvc_utils.serialize_exceptions("all")
     @web_mvc_utils.validated_method("repository.list")
@@ -516,6 +557,47 @@ class RepositoryController:
 
         # tries to install the plugin
         system_updater_plugin.install_plugin(plugin_id, plugin_version)
+
+        # sleeps for a second to give time for the autoloader to update
+        # this delay is induced on purpose
+        time.sleep(INSTALLATION_DELAY)
+
+        # retrieves the (end) list of available plugins
+        available_plugins_end = plugin_manager.get_all_plugins()
+
+        # iterates over all the plugins available at the beginning
+        # to check if they exist in the current available plugins
+        for available_plugin_beginning in available_plugins_beginning:
+            if not available_plugin_beginning in available_plugins_end:
+                delta_plugin_install_map[UNINSTALLED_VALUE].append(available_plugin_beginning.id)
+
+        # iterates over all the plugins available at the end
+        # to check if they exist in the previously available plugins
+        for available_plugin_end in available_plugins_end:
+            if not available_plugin_end in available_plugins_beginning:
+                delta_plugin_install_map[INSTALLED_VALUE].append(available_plugin_end.id)
+
+        # returns the delta plugin install map
+        return delta_plugin_install_map
+
+    def _uninstall_plugin(self, rest_request, plugin_id, plugin_version):
+        # retrieves the plugin manager
+        plugin_manager = self.web_mvc_manager_repository_plugin.manager
+
+        # retrieves the system installer plugin
+        system_installer_plugin = self.web_mvc_manager_repository_plugin.system_installer_plugin
+
+        # creates the delta plugin install map
+        delta_plugin_install_map = {
+            INSTALLED_VALUE : [],
+            UNINSTALLED_VALUE : []
+        }
+
+        # retrieves the (beginning) list of available plugins
+        available_plugins_beginning = copy.copy(plugin_manager.get_all_plugins())
+
+        # tries to uninstall the plugin
+        system_installer_plugin.uninstall_plugin(plugin_id, plugin_version, {}, "colony_packing")
 
         # sleeps for a second to give time for the autoloader to update
         # this delay is induced on purpose

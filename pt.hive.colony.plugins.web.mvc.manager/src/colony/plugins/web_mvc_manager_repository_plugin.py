@@ -65,6 +65,7 @@ class WebMvcManagerRepositoryPlugin(colony.base.plugin_system.Plugin):
     ]
     dependencies = [
         colony.base.plugin_system.PluginDependency("pt.hive.colony.plugins.web.mvc.utils", "1.0.0"),
+        colony.base.plugin_system.PluginDependency("pt.hive.colony.plugins.system.installer", "1.0.0"),
         colony.base.plugin_system.PluginDependency("pt.hive.colony.plugins.system.updater", "1.0.0"),
         colony.base.plugin_system.PluginDependency("pt.hive.colony.plugins.misc.json", "1.0.0")
     ]
@@ -79,6 +80,9 @@ class WebMvcManagerRepositoryPlugin(colony.base.plugin_system.Plugin):
 
     web_mvc_utils_plugin = None
     """ The web mvc utils plugin """
+
+    system_installer_plugin = None
+    """ The system installer plugin """
 
     system_updater_plugin = None
     """ The system updater plugin """
@@ -172,6 +176,13 @@ class WebMvcManagerRepositoryPlugin(colony.base.plugin_system.Plugin):
     @colony.base.decorators.plugin_inject("pt.hive.colony.plugins.web.mvc.utils")
     def set_web_mvc_utils_plugin(self, web_mvc_utils_plugin):
         self.web_mvc_utils_plugin = web_mvc_utils_plugin
+
+    def get_system_installer_plugin(self):
+        return self.system_installer_plugin
+
+    @colony.base.decorators.plugin_inject("pt.hive.colony.plugins.system.installer")
+    def set_system_installer_plugin(self, system_installer_plugin):
+        self.system_installer_plugin = system_installer_plugin
 
     def get_system_updater_plugin(self):
         return self.system_updater_plugin
