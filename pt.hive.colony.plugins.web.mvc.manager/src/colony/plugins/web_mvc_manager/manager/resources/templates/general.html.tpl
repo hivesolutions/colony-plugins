@@ -1,6 +1,6 @@
 ${include file="doctype.html.tpl" /}
 <head>
-    <title>Colony Framework - Manager</title>
+    <title>Colony Framework</title>
     ${include file="includes.html.tpl" /}
 </head>
 <body>
