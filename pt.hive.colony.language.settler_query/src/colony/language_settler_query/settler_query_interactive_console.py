@@ -88,8 +88,8 @@ def process_command_debug(command, processing_structure, global_interpretation_m
     interpret_command(command, processing_structure, global_interpretation_map, interpretation, True, verbose, code_generation)
 
 def interpret_command(command, processing_structure, global_interpretation_map, interpretation, debug, verbose, code_generation):
-    # retrieves the parse result
-    parse_result = settler_query_parser.parser.parse(command)
+    # parses the command
+    settler_query_parser.parser.parse(command)
 
 def interactive_console(interpretation = False, debug = False, verbose = True, code_generation = False):
     # creates the exit flag
