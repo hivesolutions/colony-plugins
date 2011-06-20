@@ -94,7 +94,9 @@ jQuery(document).ready(function() {
                 var uninstallDialogProperties = {
                     title : "Warning",
                     subTitle : "Uninstall existing plugin",
-                    message : "Uninstalling plugin pt.hive.colony.tobias ",
+                    message : "This action is going to uninstall plugin <b>"
+                            + pluginId
+                            + "</b> after that all the dependent plugins are going to be disabled.",
                     buttonMessage : "Do you want to continue ?",
                     successCallbackFunctions : [function() {
                         // resolves the uninstall plugin url
