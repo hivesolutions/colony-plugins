@@ -44,6 +44,9 @@ import colony.libs.importer_util
 SERIALIZER_VALUE = "serializer"
 """ The serializer value """
 
+TEMPLATE_FILE_VALUE = "template_file"
+""" The template file value """
+
 WEB_MVC_UTILS_VALUE = "web_mvc_utils"
 """ The web mvc utils value """
 
@@ -129,7 +132,7 @@ class PluginController:
     @web_mvc_utils.validated_method("plugins.list")
     def handle_list(self, rest_request, parameters = {}):
         # retrieves the template file from the parameters
-        template_file = parameters["template_file"]
+        template_file = parameters[TEMPLATE_FILE_VALUE]
 
         # resolves the relative resources path to obtain the absolute page include to be used
         absolute_page_include = self.resolve_relative_path(WEB_MVC_MANAGER_BASE_RESOURCES_PATH, "templates/plugin/plugin_list_contents.html.tpl")
@@ -234,7 +237,7 @@ class PluginController:
     @web_mvc_utils.validated_method("plugins.show")
     def handle_show(self, rest_request, parameters = {}):
         # retrieves the template file from the parameters
-        template_file = parameters["template_file"]
+        template_file = parameters[TEMPLATE_FILE_VALUE]
 
         # retrieves the pattern names from the parameters
         pattern_names = parameters[PATTERN_NAMES_VALUE]
@@ -446,7 +449,7 @@ class CapabilityController:
     @web_mvc_utils.validated_method("capabilites.list")
     def handle_list(self, rest_request, parameters = {}):
         # retrieves the template file from the parameters
-        template_file = parameters["template_file"]
+        template_file = parameters[TEMPLATE_FILE_VALUE]
 
         # resolves the relative resources path to obtain the absolute page include to be used
         absolute_page_include = self.resolve_relative_path(WEB_MVC_MANAGER_BASE_RESOURCES_PATH, "templates/capability/capability_list_contents.html.tpl")
@@ -551,7 +554,7 @@ class CapabilityController:
     @web_mvc_utils.validated_method("capabilites.show")
     def handle_show(self, rest_request, parameters = {}):
         # retrieves the template file from the parameters
-        template_file = parameters["template_file"]
+        template_file = parameters[TEMPLATE_FILE_VALUE]
 
         # retrieves the pattern names from the parameters
         pattern_names = parameters[PATTERN_NAMES_VALUE]
