@@ -497,6 +497,11 @@ h2 {
     background-image: url(../images/general/container/content-icon-yellow-background.png);
 }
 
+#content-icon #content-icon-logo {
+    height: 32px;
+    width: 32px;
+}
+
 #left-column {
     float: left;
     height: 100%;
