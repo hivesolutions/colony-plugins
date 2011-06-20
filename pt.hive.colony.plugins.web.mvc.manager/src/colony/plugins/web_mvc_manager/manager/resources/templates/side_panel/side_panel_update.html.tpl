@@ -1,6 +1,6 @@
 <div id="icon-bar" class="brown">
     <div id="content-icon">
-        <img src="${out_none value=base_path /}resources/images/icon/icon-omni.png" height="32" width="32" alt="Bill"/>
+        <div id="content-icon-logo"></div>
     </div>
 </div>
 <div id="left-column">
