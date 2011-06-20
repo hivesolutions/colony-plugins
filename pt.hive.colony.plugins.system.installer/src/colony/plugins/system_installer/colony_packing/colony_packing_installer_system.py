@@ -110,6 +110,9 @@ INSTALLED_BUNDLES_VALUE = "installed_bundles"
 INSTALLED_PLUGINS_VALUE = "installed_plugins"
 """ The installed plugins value """
 
+DUPLICATE_FILES_VALUE = "duplicate_files"
+""" The duplicate files values """
+
 LAST_MODIFIED_TIMESTAMP_VALUE = "last_modified_timestamp"
 """ The last modified timestamp value """
 
@@ -133,6 +136,9 @@ BUNDLES_FILE_NAME = "bundles.json"
 
 PLUGINS_FILE_NAME = "plugins.json"
 """ The plugins file name """
+
+DUPLICATES_FILE_NAME = "duplicates.json"
+""" The duplicates file name """
 
 COLONY_BUNDLE_FILE_EXTENSION = ".cbx"
 """ The colony bundle file extension """
@@ -677,6 +683,15 @@ class ColonyPackingInstaller:
             # retrieves the plugin version
             plugin_version = packing_information.get_property(VERSION_VALUE)
 
+            # retrieves the resources
+            plugin_resources = packing_information.get_property(RESOURCES_VALUE)
+
+            # retrieves the manager path
+            manager_path = plugin_manager.get_manager_path()
+
+            # retrieves the plugins path
+            plugins_path = plugin_manager.get_main_plugin_path()
+
             # reads the plugin file contents
             plugin_file_contents = file_context.read_file(file_path)
 
@@ -686,15 +701,50 @@ class ColonyPackingInstaller:
             # writes the plugin file contents to the plugin file path
             file_context.write_file(plugin_file_path, plugin_file_contents)
 
-            # retrieves the main plugin path
-            main_plugin_path = plugin_manager.get_main_plugin_path()
-
-            # retrieves the "virtual" main plugin path from the file context
+            # retrieves the "virtual" plugins path from the file context
             # this is necessary to ensure a transaction mode
-            main_plugin_virtual_path = file_context.get_file_path(main_plugin_path)
+            plugins_virtual_path = file_context.get_file_path(plugins_path)
 
-            # deploys the package using the main plugin "virtual" path
-            self._deploy_package(real_file_path, main_plugin_virtual_path)
+            # retrieves the duplicates structure (from file)
+            duplicates_structure = self._get_duplicates_structure(file_context)
+
+            # retrieves the duplicate files structure
+            duplicate_files_structure = duplicates_structure.get(DUPLICATE_FILES_VALUE, {})
+
+            # iterates over all the plugin resources to check for
+            # duplicate files
+            for plugin_resource in plugin_resources:
+                # creates the (complete) resource file path
+                resource_file_path = os.path.join(plugins_path, plugin_resource)
+
+                # in case the resource file path does not already exists
+                if not os.path.exists(resource_file_path):
+                    # continues the loop no need to update
+                    # the duplicate files structure
+                    continue
+
+                # "calculates" the relative path between the resource file
+                # path and the manager path
+                resource_relative_path = os.path.relpath(resource_file_path, manager_path)
+
+                # normalizes the path replacing the backslashes with
+                # "normal" slashes
+                resource_relative_path = resource_relative_path.replace("\\", "/")
+
+                # retrieves the number of times the file is "duplicated"
+                duplicate_file_count = duplicate_files_structure.get(resource_relative_path, 0)
+
+                # increments the duplicate count by one
+                duplicate_file_count += 1
+
+                # sets the duplicate file count in the duplicate files structure
+                duplicate_files_structure[resource_relative_path] = duplicate_file_count
+
+            # persists the duplicates structure
+            self._persist_duplicates_structure(duplicates_structure, file_context)
+
+            # deploys the package using the plugins "virtual" path
+            self._deploy_package(real_file_path, plugins_virtual_path)
 
             # retrieves the plugin item key
             plugin_item_key = plugin_id
@@ -920,6 +970,9 @@ class ColonyPackingInstaller:
         # retrieves the packing manager plugin
         packing_manager_plugin = self.colony_packing_installer_plugin.packing_manager_plugin
 
+        # retrieves the manager path
+        manager_path = plugin_manager.get_manager_path()
+
         # retrieves the variable path
         variable_path = plugin_manager.get_variable_path()
 
@@ -984,10 +1037,50 @@ class ColonyPackingInstaller:
             # later removal
             directory_path_list = []
 
+            # retrieves the duplicates structure (from file)
+            duplicates_structure = self._get_duplicates_structure(file_context)
+
+            # retrieves the duplicate files structure
+            duplicate_files_structure = duplicates_structure.get(DUPLICATE_FILES_VALUE, {})
+
             # iterates over all the resources to remove them
             for plugin_resource in plugin_resources:
                 # creates the (complete) resource file path
                 resource_file_path = os.path.join(plugins_path, plugin_resource)
+
+                # "calculates" the relative path between the resource file
+                # path and the manager path
+                resource_relative_path = os.path.relpath(resource_file_path, manager_path)
+
+                # normalizes the path replacing the backslashes with
+                # "normal" slashes
+                resource_relative_path = resource_relative_path.replace("\\", "/")
+
+                # retrieves the number of times the file is "duplicated"
+                duplicate_file_count = duplicate_files_structure.get(resource_relative_path, 0)
+
+                # checks if the file should be removed
+                remove_file = duplicate_file_count == 0
+
+                # decrements the duplicate count by one
+                duplicate_file_count -= 1
+
+                # in case the duplicate file count is superior to zero
+                if duplicate_file_count > 0:
+                    # sets the duplicate file count in the duplicate files structure
+                    duplicate_files_structure[resource_relative_path] = duplicate_file_count
+                # otherwise in case the resource relative path reference
+                # exists in the duplicate files structure
+                elif resource_relative_path in duplicate_files_structure:
+                    # removes the resource relative path from the duplicate
+                    # files structure
+                    del duplicate_files_structure[resource_relative_path]
+
+                # in case the remove file is not set
+                if not remove_file:
+                    # continues the loop no need to remove a file that
+                    # is duplicated
+                    continue
 
                 # in case the resource file path exists
                 if not file_context.exists_file_path(resource_file_path):
@@ -1006,6 +1099,9 @@ class ColonyPackingInstaller:
                     # adds the file directory path to the
                     # directory path list
                     directory_path_list.append(resource_file_directory_path)
+
+            # persists the duplicates structure
+            self._persist_duplicates_structure(duplicates_structure, file_context)
 
             # iterates over all the directory paths
             for directory_path in directory_path_list:
@@ -1243,6 +1339,78 @@ class ColonyPackingInstaller:
         """
 
         self.__remove_structure_item(item_key, file_context, PLUGINS_FILE_NAME, INSTALLED_PLUGINS_VALUE)
+
+    def _get_duplicates_structure(self, file_context):
+        """
+        Retrieves the duplicates structure from the file system.
+
+        @rtype: Dictionary
+        @return: The duplicates structure retrieved from the
+        file system.
+        @type file_context: FileContext
+        @param file_context: The file context to be used.
+        """
+
+        # retrieves the plugin manager
+        plugin_manager = self.colony_packing_installer_plugin.manager
+
+        # retrieves the json plugin
+        json_plugin = self.colony_packing_installer_plugin.json_plugin
+
+        # retrieves the variable path
+        variable_path = plugin_manager.get_variable_path()
+
+        # retrieves the registry path
+        registry_path = os.path.join(variable_path, RELATIVE_REGISTRY_PATH)
+
+        # creates the structure file path
+        structure_file_path = os.path.join(registry_path, DUPLICATES_FILE_NAME)
+
+        # reads the structure file contents
+        structure_file_contents = file_context.read_file(structure_file_path)
+
+        # loads the structure file contents from json
+        structure = json_plugin.loads(structure_file_contents)
+
+        # returns the structure
+        return structure
+
+    def _persist_duplicates_structure(self, duplicates_structure, file_context):
+        """
+        Persists the given duplicates structure into
+        the file system.
+
+        @type duplicates_structure: Dictionary
+        @param duplicates_structure: The duplicates structure to be
+        persisted into the file system.
+        @type file_context: FileContext
+        @param file_context: The file context to be used.
+        """
+
+        # retrieves the plugin manager
+        plugin_manager = self.colony_packing_installer_plugin.manager
+
+        # retrieves the json plugin
+        json_plugin = self.colony_packing_installer_plugin.json_plugin
+
+        # retrieves the variable path
+        variable_path = plugin_manager.get_variable_path()
+
+        # retrieves the registry path
+        registry_path = os.path.join(variable_path, RELATIVE_REGISTRY_PATH)
+
+        # creates the structure file path
+        structure_file_path = os.path.join(registry_path, DUPLICATES_FILE_NAME)
+
+        # touches the duplicates structure (internal structure)
+        # updating the dates in it
+        self._touch_structure(duplicates_structure)
+
+        # serializes the structure
+        structure_serialized = json_plugin.dumps_pretty(duplicates_structure)
+
+        # writes the structure file contents
+        file_context.write_file(structure_file_path, structure_serialized)
 
     def __get_structure(self, file_context, structure_file_name):
         """
