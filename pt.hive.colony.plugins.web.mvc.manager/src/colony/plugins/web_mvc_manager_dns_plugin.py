@@ -64,7 +64,8 @@ class WebMvcManagerDnsPlugin(colony.base.plugin_system.Plugin):
     ]
     dependencies = [
         colony.base.plugin_system.PluginDependency("pt.hive.colony.plugins.web.mvc.utils", "1.0.0"),
-        colony.base.plugin_system.PluginDependency("pt.hive.colony.plugins.dns.storage.database", "1.0.0")
+        colony.base.plugin_system.PluginDependency("pt.hive.colony.plugins.dns.storage.database", "1.0.0"),
+        colony.base.plugin_system.PluginDependency("pt.hive.colony.plugins.misc.json", "1.0.0")
     ]
     main_modules = [
         "web_mvc_manager.dns.web_mvc_manager_dns_controllers",
@@ -80,6 +81,9 @@ class WebMvcManagerDnsPlugin(colony.base.plugin_system.Plugin):
 
     dns_storage_database_plugin = None
     """ The dns storage database plugin """
+
+    json_plugin = None
+    """ The json plugin """
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
@@ -134,3 +138,10 @@ class WebMvcManagerDnsPlugin(colony.base.plugin_system.Plugin):
     @colony.base.decorators.plugin_inject("pt.hive.colony.plugins.dns.storage.database")
     def set_dns_storage_database_plugin(self, dns_storage_database_plugin):
         self.dns_storage_database_plugin = dns_storage_database_plugin
+
+    def get_json_plugin(self):
+        return self.json_plugin
+
+    @colony.base.decorators.plugin_inject("pt.hive.colony.plugins.misc.json")
+    def set_json_plugin(self, json_plugin):
+        self.json_plugin = json_plugin

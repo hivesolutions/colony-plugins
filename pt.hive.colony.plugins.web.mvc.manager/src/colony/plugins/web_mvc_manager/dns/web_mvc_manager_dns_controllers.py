@@ -39,6 +39,12 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 import colony.libs.importer_util
 
+SERIALIZER_VALUE = "serializer"
+""" The serializer value """
+
+TEMPLATE_FILE_VALUE = "template_file"
+""" The template file value """
+
 WEB_MVC_UTILS_VALUE = "web_mvc_utils"
 """ The web mvc utils value """
 
@@ -54,7 +60,7 @@ PATTERN_NAMES_VALUE = "pattern_names"
 # imports the web mvc utils
 web_mvc_utils = colony.libs.importer_util.__importer__(WEB_MVC_UTILS_VALUE)
 
-class MainController:
+class DnsController:
     """
     The web mvc manager dns controller.
     """
@@ -86,7 +92,19 @@ class MainController:
         # sets the relative resources path
         self.set_relative_resources_path(WEB_MVC_MANAGER_DNS_RESOURCES_PATH, extra_templates_path = "dns")
 
+    def validate(self, rest_request, parameters, validation_parameters):
+        # returns the result of the require permission call
+        return []
+
+    @web_mvc_utils.serialize_exceptions("all")
+    @web_mvc_utils.validated_method("dns.show")
     def handle_show_ajx(self, rest_request, parameters = {}):
+        # retrieves the json plugin
+        json_plugin = self.web_mvc_manager_dns_plugin.json_plugin
+
+        # sets the serializer in the parameters
+        parameters[SERIALIZER_VALUE] = json_plugin
+
         # retrieves the pattern names
         pattern_names = parameters[PATTERN_NAMES_VALUE]
 
@@ -117,6 +135,8 @@ class MainController:
         # processes the template file and sets the request contents
         self.process_set_contents(rest_request, template_file)
 
+    @web_mvc_utils.serialize_exceptions("all")
+    @web_mvc_utils.validated_method("dns.show")
     def handle_show(self, rest_request, parameters = {}):
         # retrieves the pattern names
         pattern_names = parameters[PATTERN_NAMES_VALUE]
@@ -131,7 +151,7 @@ class MainController:
         dns = self._get_dns(rest_request, dns_index)
 
         # retrieves the template file from the parameters
-        template_file = parameters["template_file"]
+        template_file = parameters[TEMPLATE_FILE_VALUE]
 
         # assigns the include to the template
         self.assign_include_template_file(template_file, "page_include", "dns/dns_edit_contents.html.tpl")
@@ -154,7 +174,15 @@ class MainController:
         # processes the template file and sets the request contents
         self.process_set_contents(rest_request, template_file)
 
+    @web_mvc_utils.serialize_exceptions("all")
+    @web_mvc_utils.validated_method("dns.list")
     def handle_list_ajx(self, rest_request, parameters = {}):
+        # retrieves the json plugin
+        json_plugin = self.web_mvc_manager_dns_plugin.json_plugin
+
+        # sets the serializer in the parameters
+        parameters[SERIALIZER_VALUE] = json_plugin
+
         # retrieves the template file
         template_file = self.retrieve_template_file("dns_list_contents.html.tpl")
 
@@ -167,9 +195,11 @@ class MainController:
         # processes the template file and sets the request contents
         self.process_set_contents(rest_request, template_file)
 
+    @web_mvc_utils.serialize_exceptions("all")
+    @web_mvc_utils.validated_method("dns.list")
     def handle_list(self, rest_request, parameters = {}):
         # retrieves the template file from the parameters
-        template_file = parameters["template_file"]
+        template_file = parameters[TEMPLATE_FILE_VALUE]
 
         # assigns the include to the template
         self.assign_include_template_file(template_file, "page_include", "dns/dns_list_contents.html.tpl")
@@ -186,7 +216,15 @@ class MainController:
         # processes the template file and sets the request contents
         self.process_set_contents(rest_request, template_file)
 
-    def handle_partial_list(self, rest_request, parameters = {}):
+    @web_mvc_utils.serialize_exceptions("all")
+    @web_mvc_utils.validated_method("dns.list")
+    def handle_partial_list_ajx(self, rest_request, parameters = {}):
+        # retrieves the json plugin
+        json_plugin = self.web_mvc_manager_dns_plugin.json_plugin
+
+        # sets the serializer in the parameters
+        parameters[SERIALIZER_VALUE] = json_plugin
+
         # retrieves the web search helper
         search_helper = parameters["search_helper"]
 

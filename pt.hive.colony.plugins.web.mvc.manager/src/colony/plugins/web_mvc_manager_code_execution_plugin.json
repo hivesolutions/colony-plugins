@@ -14,6 +14,9 @@
     "dependencies" : [{
                 "id" : "pt.hive.colony.plugins.web.mvc.utils",
                 "version" : "1.0.0"
+            }, {
+                "id" : "pt.hive.colony.plugins.misc.json",
+                "version" : "1.0.0"
             }],
     "main_file" : "web_mvc_manager_code_execution_plugin.py",
     "resources" : [

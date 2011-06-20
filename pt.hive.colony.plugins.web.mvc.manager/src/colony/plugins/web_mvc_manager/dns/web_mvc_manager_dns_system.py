@@ -85,10 +85,10 @@ class WebMvcManagerDns:
                 "menu" : "services/Dns",
                 "side_panel" : "lists/Dns",
                 "base_address" : "dns",
-                "pattern" : (r"^web_mvc_manager/dns$", self.web_mvc_manager_dns_main_controller.handle_list_ajx, "get", "ajx")
+                "pattern" : (r"^web_mvc_manager/dns$", self.web_mvc_manager_dns_dns_controller.handle_list_ajx, "get", "ajx")
             },
-            (r"^web_mvc_manager/dns$", self.web_mvc_manager_dns_main_controller.handle_list, "get"),
-            (r"^web_mvc_manager/dns/partial$", self.web_mvc_manager_dns_main_controller.handle_partial_list, "get"),
-            (r"^web_mvc_manager/dns/(?P<dns_index>[0-9]+)$", self.web_mvc_manager_dns_main_controller.handle_show_ajx, "get", "ajx"),
-            (r"^web_mvc_manager/dns/(?P<dns_index>[0-9]+)$", self.web_mvc_manager_dns_main_controller.handle_show, "get")
+            (r"^web_mvc_manager/dns$", self.web_mvc_manager_dns_dns_controller.handle_list, "get"),
+            (r"^web_mvc_manager/dns/partial$", self.web_mvc_manager_dns_dns_controller.handle_partial_list_ajx, "get"),
+            (r"^web_mvc_manager/dns/(?P<dns_index>[0-9]+)$", self.web_mvc_manager_dns_dns_controller.handle_show_ajx, "get", "ajx"),
+            (r"^web_mvc_manager/dns/(?P<dns_index>[0-9]+)$", self.web_mvc_manager_dns_dns_controller.handle_show, "get")
         )
