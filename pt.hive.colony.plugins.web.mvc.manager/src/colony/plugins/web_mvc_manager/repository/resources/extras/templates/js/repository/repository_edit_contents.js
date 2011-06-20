@@ -119,7 +119,7 @@ jQuery(document).ready(function() {
 
                         // removes the previous plugin button classes
                         pluginButton.removeClass("button-blue");
-                        pluginButton.removeClass("button-blue");
+                        pluginButton.removeClass("button-gray");
 
                         // adds the not installed plugin button class
                         pluginButton.addClass("button-green");
