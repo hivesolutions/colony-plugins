@@ -101,6 +101,22 @@ jQuery(document).ready(function() {
                         }
                     });
         });
+
+        jQuery("body").bind("plugin_install", function(event, status) {
+                    // retrieves the installed and uninstalled plugins
+                    var installedPlugins = status["installed"];
+                    var uninstalledPlugins = status["uninstalled"];
+
+                    // iterates over all the installed plugins
+                    jQuery(installedPlugins).each(function(index, element) {
+                                console.info(element);
+                            });
+
+                    // iterates over all the uninstalled plugins
+                    jQuery(uninstalledPlugins).each(function(index, element) {
+                                console.info(element);
+                            });
+                });
     };
 
     // retrieves the repository plugins plugin table

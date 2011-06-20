@@ -34,92 +34,115 @@ function messageProcessor(data) {
     var messageId = jsonData["id"];
     var messageContents = jsonData["contents"];
 
-    if (messageId == "web_mvc_manager/plugin/change_status") {
-        // parses the data (json) retrieving the status
-        var status = jQuery.parseJSON(messageContents);
+    // switches over the message id
+    switch (messageId) {
+        case "web_mvc_manager/plugin/change_status" :
+            // parses the data (json) retrieving the status
+            var status = jQuery.parseJSON(messageContents);
 
-        // retrieves the unloaded plugins
-        var unloadedPlugins = status["unloaded"];
+            // retrieves the unloaded plugins
+            var unloadedPlugins = status["unloaded"];
 
-        // retrieves the notification area contents
-        var notificationAreaContents = jQuery("#notification-area-contents");
+            // retrieves the notification area contents
+            var notificationAreaContents = jQuery("#notification-area-contents");
 
-        // iterates over all the unloaded plugins
-        jQuery(unloadedPlugins).each(function(index, element) {
-            var switchButtonElement = jQuery("#plugin-table .switch-button[plugin="
-                    + element + "]");
-            switchButtonElement.removeClass("on");
-            switchButtonElement.addClass("off");
+            // iterates over all the unloaded plugins
+            jQuery(unloadedPlugins).each(function(index, element) {
+                var switchButtonElement = jQuery("#plugin-table .switch-button[plugin="
+                        + element + "]");
+                switchButtonElement.removeClass("on");
+                switchButtonElement.addClass("off");
 
-            // sets the message in the plugin unloaded window
-            PLUGIN_UNLOADED_WINDOW["message"] = element;
+                // sets the message in the plugin unloaded window
+                PLUGIN_UNLOADED_WINDOW["message"] = element;
 
-            // shows the notification window
-            notificationAreaContents.notificationwindow("default",
-                    PLUGIN_UNLOADED_WINDOW);
-        });
+                // shows the notification window
+                notificationAreaContents.notificationwindow("default",
+                        PLUGIN_UNLOADED_WINDOW);
+            });
 
-        // retrieves the loaded plugins
-        var loadedPlugins = status["loaded"];
+            // retrieves the loaded plugins
+            var loadedPlugins = status["loaded"];
 
-        // iterates over all the loaded plugins
-        jQuery(loadedPlugins).each(function(index, element) {
-            var switchButtonElement = jQuery("#plugin-table .switch-button[plugin="
-                    + element + "]");
-            switchButtonElement.removeClass("off");
-            switchButtonElement.addClass("on");
+            // iterates over all the loaded plugins
+            jQuery(loadedPlugins).each(function(index, element) {
+                var switchButtonElement = jQuery("#plugin-table .switch-button[plugin="
+                        + element + "]");
+                switchButtonElement.removeClass("off");
+                switchButtonElement.addClass("on");
 
-            // sets the message in the plugin loaded window
-            PLUGIN_LOADED_WINDOW["message"] = element;
+                // sets the message in the plugin loaded window
+                PLUGIN_LOADED_WINDOW["message"] = element;
 
-            // shows the notification window
-            notificationAreaContents.notificationwindow("default",
-                    PLUGIN_LOADED_WINDOW);
-        });
-    } else if (messageId == "web_mvc_manager/plugin/install") {
-        // parses the data (json) retrieving the status
-        var status = jQuery.parseJSON(messageContents);
+                // shows the notification window
+                notificationAreaContents.notificationwindow("default",
+                        PLUGIN_LOADED_WINDOW);
+            });
 
-        // retrieves the uninstalled plugins
-        var uninstalledPlugins = status["uninstalled"];
+            // breaks the switch
+            break;
 
-        // retrieves the notification area contents
-        var notificationAreaContents = jQuery("#notification-area-contents");
+        case "web_mvc_manager/plugin/install" :
+            // parses the data (json) retrieving the status
+            var status = jQuery.parseJSON(messageContents);
 
-        // iterates over all the uninstalled plugins
-        jQuery(uninstalledPlugins).each(function(index, element) {
-            // sets the message in the plugin uninstalled window
-            PLUGIN_UNINSTALLED_WINDOW["message"] = element;
+            // retrieves the body element
+            var _body = jQuery("body");
 
-            // shows the notification window
-            notificationAreaContents.notificationwindow("default",
-                    PLUGIN_UNINSTALLED_WINDOW);
-        });
+            // triggers the set field event
+            _body.trigger("plugin_install", [status]);
 
-        // retrieves the installed plugins
-        var installedPlugins = status["installed"];
+            // retrieves the uninstalled plugins
+            var uninstalledPlugins = status["uninstalled"];
 
-        // iterates over all the installed plugins
-        jQuery(installedPlugins).each(function(index, element) {
-            // sets the message in the plugin installed window
-            PLUGIN_INSTALLED_WINDOW["message"] = element;
+            // retrieves the notification area contents
+            var notificationAreaContents = jQuery("#notification-area-contents");
 
-            // shows the notification window
-            notificationAreaContents.notificationwindow("default",
-                    PLUGIN_INSTALLED_WINDOW);
-        });
-    } else if (messageId == "web_mvc_manager/header/reload") {
-        // reloads the header
-        jQuery("body").page("reloadHeader");
-    } else if (messageId == "web_mvc_manager/side_panel/reload") {
-        // retrieves the current active menu as the target menu
-        var targetMenu = jQuery("#main-container").data("menu");
+            // iterates over all the uninstalled plugins
+            jQuery(uninstalledPlugins).each(function(index, element) {
+                // sets the message in the plugin uninstalled window
+                PLUGIN_UNINSTALLED_WINDOW["message"] = element;
 
-        // reloads the metadata in the main container
-        jQuery("#main-container").maincontainer("loadMetadata", {
-                    forceReload : true,
-                    target : targetMenu
-                });
+                // shows the notification window
+                notificationAreaContents.notificationwindow("default",
+                        PLUGIN_UNINSTALLED_WINDOW);
+            });
+
+            // retrieves the installed plugins
+            var installedPlugins = status["installed"];
+
+            // iterates over all the installed plugins
+            jQuery(installedPlugins).each(function(index, element) {
+                // sets the message in the plugin installed window
+                PLUGIN_INSTALLED_WINDOW["message"] = element;
+
+                // shows the notification window
+                notificationAreaContents.notificationwindow("default",
+                        PLUGIN_INSTALLED_WINDOW);
+            });
+
+            // breaks the switch
+            break;
+
+        case "web_mvc_manager/header/reload" :
+            // reloads the header
+            jQuery("body").page("reloadHeader");
+
+            // breaks the switch
+            break;
+
+        case "web_mvc_manager/side_panel/reload" :
+            // retrieves the current active menu as the target menu
+            var targetMenu = jQuery("#main-container").data("menu");
+
+            // reloads the metadata in the main container
+            jQuery("#main-container").maincontainer("loadMetadata", {
+                        forceReload : true,
+                        target : targetMenu
+                    });
+
+            // breaks the switch
+            break;
     }
 }
 
