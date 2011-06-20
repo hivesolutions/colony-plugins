@@ -597,7 +597,7 @@ class RepositoryController:
         available_plugins_beginning = copy.copy(plugin_manager.get_all_plugins())
 
         # tries to uninstall the plugin
-        system_installer_plugin.uninstall_plugin(plugin_id, plugin_version, {}, "colony_packing")
+        system_installer_plugin.uninstall_package(plugin_id, plugin_version, {}, "colony_packing")
 
         # sleeps for a second to give time for the autoloader to update
         # this delay is induced on purpose
