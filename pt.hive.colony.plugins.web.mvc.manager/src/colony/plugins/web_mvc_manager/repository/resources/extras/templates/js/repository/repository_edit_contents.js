@@ -38,7 +38,7 @@ jQuery(document).ready(function() {
 
     var _registerExtraHandlers = function(targetElement) {
         // retrieves the buttons from the target element
-        var buttons = jQuery("table .button", targetElement)
+        var buttons = jQuery(".button", targetElement)
 
         // creates the buttons
         buttons.button();
@@ -181,10 +181,14 @@ jQuery(document).ready(function() {
     // retrieves the repository plugins plugin table
     var repositoryPluginsTable = jQuery("#repository-plugins-table");
 
-    // registers the extra handlers for the repository plugins table
-    _registerExtraHandlers(repositoryPluginsTable);
+    // retrieves the table body from the repository plugins table
+    var tableBody = jQuery("#table-body", repositoryPluginsTable);
 
-    // bins the repository plugins table to the
+    // registers the extra handlers for the repository plugins table
+    // table body
+    _registerExtraHandlers(tableBody);
+
+    // binds the repository plugins table to the
     // content change event
     repositoryPluginsTable.bind("content_change",
             function(event, targetElements) {
