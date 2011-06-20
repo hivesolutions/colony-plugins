@@ -84,6 +84,9 @@ jQuery(document).ready(function() {
                     break;
             }
 
+            // disables the button
+            button.button("disable");
+
             // in case the install plugin flag is not set
             // no need to install the plugin
             if (!instalPlugin) {
@@ -104,9 +107,15 @@ jQuery(document).ready(function() {
                                     data : {
                                         plugin_id : pluginId,
                                         plugin_version : pluginVersion
+                                    },
+                                    complete : function() {
+                                        button.button("enable");
                                     }
                                 });
-                    }]
+                    }],
+                    errorCallbackFunctions : [function() {
+                                button.button("enable");
+                            }]
                 };
 
                 // shows a dialog window in the body
@@ -126,6 +135,9 @@ jQuery(document).ready(function() {
                         data : {
                             plugin_id : pluginId,
                             plugin_version : pluginVersion
+                        },
+                        complete : function() {
+                            button.button("enable");
                         }
                     });
         });
