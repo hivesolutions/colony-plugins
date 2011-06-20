@@ -87,7 +87,8 @@ jQuery(document).ready(function() {
             // in case the install plugin flag is not set
             // no need to install the plugin
             if (!instalPlugin) {
-                var tobias = {
+                // creates the uninstall dialog properties
+                var uninstallDialogProperties = {
                     title : "Warning",
                     subTitle : "Uninstall existing plugin",
                     message : "Uninstalling plugin pt.hive.colony.tobias ",
@@ -109,7 +110,7 @@ jQuery(document).ready(function() {
                 };
 
                 // shows a dialog window in the body
-                _body.dialogwindow("default", tobias);
+                _body.dialogwindow("default", uninstallDialogProperties);
 
                 // returns immediately
                 return;
