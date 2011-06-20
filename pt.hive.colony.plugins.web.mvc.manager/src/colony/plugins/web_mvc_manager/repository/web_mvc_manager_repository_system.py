@@ -139,13 +139,13 @@ class WebMvcManagerRepository:
                 "menu" : "update/Repositories",
                 "side_panel" : "lists/Repositories",
                 "base_address" : "repositories",
-                "pattern" : (r"^web_mvc_manager/repositories$", self.web_mvc_manager_repository_main_controller.handle_list_ajx, "get", "ajx")
+                "pattern" : (r"^web_mvc_manager/repositories$", self.web_mvc_manager_repository_repository_controller.handle_list_ajx, "get", "ajx")
             },
-            (r"^web_mvc_manager/repositories$", self.web_mvc_manager_repository_main_controller.handle_list, "get"),
-            (r"^web_mvc_manager/repositories/partial$", self.web_mvc_manager_repository_main_controller.handle_partial_list, "get"),
-            (r"^web_mvc_manager/repositories/install_plugin$", self.web_mvc_manager_repository_main_controller.handle_install_plugin_json, "post", "json"),
-            (r"^web_mvc_manager/repositories/(?P<repository_index>[0-9]+)$", self.web_mvc_manager_repository_main_controller.handle_show_ajx, "get", "ajx"),
-            (r"^web_mvc_manager/repositories/(?P<repository_index>[0-9]+)$", self.web_mvc_manager_repository_main_controller.handle_show, "get"),
-            (r"^web_mvc_manager/repositories/(?P<repository_index>[0-9]+)/plugins_partial$", self.web_mvc_manager_repository_main_controller.handle_plugins_partial_list, "get"),
-            (r"^web_mvc_manager/repositories/(?P<repository_index>[0-9]+)/packages_partial$", self.web_mvc_manager_repository_main_controller.handle_packages_partial_list, "get")
+            (r"^web_mvc_manager/repositories$", self.web_mvc_manager_repository_repository_controller.handle_list, "get"),
+            (r"^web_mvc_manager/repositories/partial$", self.web_mvc_manager_repository_repository_controller.handle_partial_list_ajx, "get"),
+            (r"^web_mvc_manager/repositories/install_plugin$", self.web_mvc_manager_repository_repository_controller.handle_install_plugin_json, "post", "json"),
+            (r"^web_mvc_manager/repositories/(?P<repository_index>[0-9]+)$", self.web_mvc_manager_repository_repository_controller.handle_show_ajx, "get", "ajx"),
+            (r"^web_mvc_manager/repositories/(?P<repository_index>[0-9]+)$", self.web_mvc_manager_repository_repository_controller.handle_show, "get"),
+            (r"^web_mvc_manager/repositories/(?P<repository_index>[0-9]+)/plugins_partial$", self.web_mvc_manager_repository_repository_controller.handle_plugins_partial_list_ajx, "get"),
+            (r"^web_mvc_manager/repositories/(?P<repository_index>[0-9]+)/packages_partial$", self.web_mvc_manager_repository_repository_controller.handle_packages_partial_list_ajx, "get")
         )

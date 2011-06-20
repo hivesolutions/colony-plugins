@@ -45,6 +45,9 @@ import colony.libs.importer_util
 SERIALIZER_VALUE = "serializer"
 """ The serializer value """
 
+TEMPLATE_FILE_VALUE = "template_file"
+""" The template file value """
+
 INSTALLED_VALUE = "installed"
 """ The installed value """
 
@@ -69,7 +72,7 @@ INSTALLATION_DELAY = 1.0
 # imports the web mvc utils
 web_mvc_utils = colony.libs.importer_util.__importer__(WEB_MVC_UTILS_VALUE)
 
-class MainController:
+class RepositoryController:
     """
     The web mvc manager repository controller.
     """
@@ -101,7 +104,19 @@ class MainController:
         # sets the relative resources path
         self.set_relative_resources_path(WEB_MVC_MANAGER_REPOSITORY_RESOURCES_PATH, extra_templates_path = "repository")
 
+    def validate(self, rest_request, parameters, validation_parameters):
+        # returns the result of the require permission call
+        return []
+
+    @web_mvc_utils.serialize_exceptions("all")
+    @web_mvc_utils.validated_method("repository.show")
     def handle_show_ajx(self, rest_request, parameters = {}):
+        # retrieves the json plugin
+        json_plugin = self.web_mvc_manager_repository_plugin.json_plugin
+
+        # sets the serializer in the parameters
+        parameters[SERIALIZER_VALUE] = json_plugin
+
         # retrieves the pattern names from the parameters
         pattern_names = parameters[PATTERN_NAMES_VALUE]
 
@@ -111,7 +126,7 @@ class MainController:
         # converts the repository index to integer
         repository_index = int(repository_index)
 
-        # retrieves the specified capability
+        # retrieves the specified repository
         repository = self._get_repository(rest_request, repository_index)
 
         # retrieves the template file
@@ -132,6 +147,8 @@ class MainController:
         # processes the template file and sets the request contents
         self.process_set_contents(rest_request, template_file)
 
+    @web_mvc_utils.serialize_exceptions("all")
+    @web_mvc_utils.validated_method("repository.show")
     def handle_show(self, rest_request, parameters = {}):
         # retrieves the pattern names from the parameters
         pattern_names = parameters[PATTERN_NAMES_VALUE]
@@ -142,14 +159,17 @@ class MainController:
         # converts the repository index to integer
         repository_index = int(repository_index)
 
-        # retrieves the specified capability
+        # retrieves the specified repository
         repository = self._get_repository(rest_request, repository_index)
 
-        # retrieves the template file
-        template_file = self.retrieve_template_file("../general.html.tpl")
+        # retrieves the template file from the parameters
+        template_file = parameters[TEMPLATE_FILE_VALUE]
+
+        # resolves the relative resources path to obtain the absolute page include to be used
+        absolute_page_include = self.resolve_relative_path(WEB_MVC_MANAGER_REPOSITORY_RESOURCES_PATH, "templates/repository/repository_edit_contents.html.tpl")
 
         # assigns the include to the template
-        self.assign_include_template_file(template_file, "page_include", "capability/repository_edit_contents.html.tpl")
+        self.assign_include_template_file(template_file, "page_include", absolute_page_include)
 
         # assigns the include to the template
         self.assign_include_template_file(template_file, "side_panel_include", "side_panel/side_panel_update.html.tpl")
@@ -169,7 +189,15 @@ class MainController:
         # processes the template file and sets the request contents
         self.process_set_contents(rest_request, template_file)
 
+    @web_mvc_utils.serialize_exceptions("all")
+    @web_mvc_utils.validated_method("repository.list")
     def handle_list_ajx(self, rest_request, parameters = {}):
+        # retrieves the json plugin
+        json_plugin = self.web_mvc_manager_repository_plugin.json_plugin
+
+        # sets the serializer in the parameters
+        parameters[SERIALIZER_VALUE] = json_plugin
+
         # retrieves the template file
         template_file = self.retrieve_template_file("repository_list_contents.html.tpl")
 
@@ -182,12 +210,17 @@ class MainController:
         # processes the template file and sets the request contents
         self.process_set_contents(rest_request, template_file)
 
+    @web_mvc_utils.serialize_exceptions("all")
+    @web_mvc_utils.validated_method("repository.list")
     def handle_list(self, rest_request, parameters = {}):
         # retrieves the template file from the parameters
-        template_file = parameters["template_file"]
+        template_file = parameters[TEMPLATE_FILE_VALUE]
+
+        # resolves the relative resources path to obtain the absolute page include to be used
+        absolute_page_include = self.resolve_relative_path(WEB_MVC_MANAGER_REPOSITORY_RESOURCES_PATH, "templates/repository/repository_list_contents.html.tpl")
 
         # assigns the include to the template
-        self.assign_include_template_file(template_file, "page_include", "repository/repository_list_contents.html.tpl")
+        self.assign_include_template_file(template_file, "page_include", absolute_page_include)
 
         # assigns the include to the template
         self.assign_include_template_file(template_file, "side_panel_include", "side_panel/side_panel_configuration.html.tpl")
@@ -201,7 +234,9 @@ class MainController:
         # processes the template file and sets the request contents
         self.process_set_contents(rest_request, template_file)
 
-    def handle_partial_list(self, rest_request, parameters = {}):
+    @web_mvc_utils.serialize_exceptions("all")
+    @web_mvc_utils.validated_method("repository.list")
+    def handle_partial_list_ajx(self, rest_request, parameters = {}):
         # retrieves the form data by processing the form
         form_data_map = self.process_form_data(rest_request, DEFAULT_ENCODING)
 
@@ -254,6 +289,7 @@ class MainController:
         self.process_set_contents(rest_request, template_file)
 
     @web_mvc_utils.serialize_exceptions("all")
+    @web_mvc_utils.validated_method("repository.list")
     def handle_install_plugin_serialized(self, rest_request, parameters = {}):
         # retrieves the serializer
         serializer = parameters[SERIALIZER_VALUE]
@@ -293,7 +329,15 @@ class MainController:
         # handle install plugin serialized method
         self.handle_install_plugin_serialized(rest_request, parameters)
 
-    def handle_plugins_partial_list(self, rest_request, parameters = {}):
+    @web_mvc_utils.serialize_exceptions("all")
+    @web_mvc_utils.validated_method("repository.list")
+    def handle_plugins_partial_list_ajx(self, rest_request, parameters = {}):
+        # retrieves the json plugin
+        json_plugin = self.web_mvc_manager_repository_plugin.json_plugin
+
+        # sets the serializer in the parameters
+        parameters[SERIALIZER_VALUE] = json_plugin
+
         # retrieves the form data by processing the form
         form_data_map = self.process_form_data(rest_request, DEFAULT_ENCODING)
 
@@ -345,7 +389,15 @@ class MainController:
         # processes the template file and sets the request contents
         self.process_set_contents(rest_request, template_file)
 
-    def handle_packages_partial_list(self, rest_request, parameters = {}):
+    @web_mvc_utils.serialize_exceptions("all")
+    @web_mvc_utils.validated_method("repository.list")
+    def handle_packages_partial_list_ajx(self, rest_request, parameters = {}):
+        # retrieves the json plugin
+        json_plugin = self.web_mvc_manager_repository_plugin.json_plugin
+
+        # sets the serializer in the parameters
+        parameters[SERIALIZER_VALUE] = json_plugin
+
         # retrieves the form data by processing the form
         form_data_map = self.process_form_data(rest_request, DEFAULT_ENCODING)
 
