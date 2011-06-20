@@ -142,7 +142,7 @@ jQuery(document).ready(function() {
                         pluginButton.addClass("button-gray");
 
                         // sets the new plugin status
-                        pluginButton.attr("data-plugin_status", "installed");
+                        pluginButton.attr("data-plugin_status", "same_version");
                     });
                 });
     };
