@@ -184,6 +184,8 @@ jQuery(document).ready(function() {
     // registers the extra handlers for the repository plugins table
     _registerExtraHandlers(repositoryPluginsTable);
 
+    // bins the repository plugins table to the
+    // content change event
     repositoryPluginsTable.bind("content_change",
             function(event, targetElements) {
                 _registerExtraHandlers(targetElements);
