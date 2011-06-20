@@ -125,6 +125,10 @@ class WebMvcCommunicationPushApplePlugin(colony.base.plugin_system.Plugin):
     def set_configuration_property(self, property_name, property):
         colony.base.plugin_system.Plugin.set_configuration_property(self, property_name, property)
 
+    @colony.base.decorators.unset_configuration_property
+    def unset_configuration_property(self, property_name, property):
+        colony.base.plugin_system.Plugin.unset_configuration_property(self, property_name, property)
+
     def get_patterns(self):
         """
         Retrieves the tuple of regular expressions to be used as patterns,
