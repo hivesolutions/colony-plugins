@@ -42,62 +42,65 @@ jQuery(document).ready(function() {
 
         // registers the callback for the click event
         buttons.click(function(event, element, status) {
-                    // retrieves the button
-                    var button = jQuery(this);
+            // retrieves the button
+            var button = jQuery(this);
 
-                    // retrieves the plugin id and version from the button
-                    var pluginId = button.attr("data-plugin_id");
-                    var pluginVersion = button.attr("data-plugin_version");
-                    var pluginStatus = button.attr("data-plugin_status");
+            // retrieves the plugin id and version from the button
+            var pluginId = button.attr("data-plugin_id");
+            var pluginVersion = button.attr("data-plugin_version");
+            var pluginStatus = button.attr("data-plugin_status");
 
-                    // starts the install plugin flag
-                    var instalPlugin = false;
+            // starts the install plugin flag
+            var instalPlugin = false;
 
-                    // switches over the plugin status
-                    switch (pluginStatus) {
-                        case "not_installed" :
-                            // sets the install plugin flag
-                            instalPlugin = true;
+            // switches over the plugin status
+            switch (pluginStatus) {
+                case "not_installed" :
+                    // sets the install plugin flag
+                    instalPlugin = true;
 
-                            // breaks the switch
-                            break;
-                        case "newer_version" :
-                            // sets the install plugin flag
-                            instalPlugin = true;
+                    // breaks the switch
+                    break;
+                case "newer_version" :
+                    // sets the install plugin flag
+                    instalPlugin = true;
 
-                            // breaks the switch
-                            break;
-                        case "older_version" :
-                            // breaks the switch
-                            break;
-                        case "same_version" :
-                            // breaks the switch
-                            break;
-                        case "different_digest" :
-                            // sets the install plugin flag
-                            instalPlugin = true;
+                    // breaks the switch
+                    break;
+                case "older_version" :
+                    // breaks the switch
+                    break;
+                case "same_version" :
+                    // breaks the switch
+                    break;
+                case "different_digest" :
+                    // sets the install plugin flag
+                    instalPlugin = true;
 
-                            // breaks the switch
-                            break;
-                    }
+                    // breaks the switch
+                    break;
+            }
 
-                    // in case the install plugin flag is not set
-                    // no need to install the plugin
-                    if (!instalPlugin) {
-                        // returns immediately
-                        return;
-                    }
+            // in case the install plugin flag is not set
+            // no need to install the plugin
+            if (!instalPlugin) {
+                // returns immediately
+                return;
+            }
 
-                    // processes a remote call for plugin installation
-                    jQuery.ajax({
-                                type : "post",
-                                url : "repositories/install_plugin.json",
-                                data : {
-                                    plugin_id : pluginId,
-                                    plugin_version : pluginVersion
-                                }
-                            });
-                });
+            // resolves the install plugin url
+            var installPluginUrl = jQuery.resolveurl("repositories/install_plugin.json");
+
+            // processes a remote call for plugin installation
+            jQuery.ajax({
+                        type : "post",
+                        url : installPluginUrl,
+                        data : {
+                            plugin_id : pluginId,
+                            plugin_version : pluginVersion
+                        }
+                    });
+        });
     };
 
     // retrieves the repository plugins plugin table
