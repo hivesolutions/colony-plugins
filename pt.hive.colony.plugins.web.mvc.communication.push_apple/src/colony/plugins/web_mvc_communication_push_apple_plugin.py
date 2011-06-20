@@ -126,8 +126,8 @@ class WebMvcCommunicationPushApplePlugin(colony.base.plugin_system.Plugin):
         colony.base.plugin_system.Plugin.set_configuration_property(self, property_name, property)
 
     @colony.base.decorators.unset_configuration_property
-    def unset_configuration_property(self, property_name, property):
-        colony.base.plugin_system.Plugin.unset_configuration_property(self, property_name, property)
+    def unset_configuration_property(self, property_name):
+        colony.base.plugin_system.Plugin.unset_configuration_property(self, property_name)
 
     def get_patterns(self):
         """
