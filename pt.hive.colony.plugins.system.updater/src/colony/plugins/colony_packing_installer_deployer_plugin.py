@@ -142,6 +142,38 @@ class ColonyPackingInstallerDeployerPlugin(colony.base.plugin_system.Plugin):
 
         return self.colony_packing_installer_deployer.deploy_plugin(plugin_id, plugin_version, contents_file, transaction_properties)
 
+    def undeploy_bundle(self, bundle_id, bundle_version, transaction_properties):
+        """
+        Method called upon undeployment of the bundle with
+        the given id and version.
+
+        @type bundle_id: String
+        @param bundle_id: The id of the bundle to be undeployed.
+        @type bundle_version: String
+        @param bundle_version: The version of the bundle to be undeployed.
+        @type transaction_properties: Dictionary
+        @param transaction_properties: The properties map for the
+        current transaction.
+        """
+
+        return self.colony_packing_installer_deployer.undeploy_bundle(bundle_id, bundle_version, transaction_properties)
+
+    def undeploy_plugin(self, plugin_id, plugin_version, transaction_properties):
+        """
+        Method called upon undeployment of the plugin with
+        the given id and version.
+
+        @type plugin_id: String
+        @param plugin_id: The id of the plugin to be undeployed.
+        @type plugin_version: String
+        @param plugin_version: The version of the plugin to be undeployed.
+        @type transaction_properties: Dictionary
+        @param transaction_properties: The properties map for the
+        current transaction.
+        """
+
+        return self.colony_packing_installer_deployer.undeploy_plugin(plugin_id, plugin_version, transaction_properties)
+
     def open_transaction(self, transaction_properties):
         """
         Opens a new transaction and retrieves the transaction

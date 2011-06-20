@@ -139,6 +139,56 @@ class ColonyPackingInstallerDeployer:
         # installs the package (plugin)
         colony_packing_installer_plugin.install_package(contents_file.name, installation_properties)
 
+    def undeploy_bundle(self, bundle_id, bundle_version, transaction_properties):
+        """
+        Method called upon undeployment of the bundle with
+        the given id and version.
+
+        @type bundle_id: String
+        @param bundle_id: The id of the bundle to be undeployed.
+        @type bundle_version: String
+        @param bundle_version: The version of the bundle to be undeployed.
+        @type transaction_properties: Dictionary
+        @param transaction_properties: The properties map for the
+        current transaction.
+        """
+
+        # retrieves the colony packing installer plugin
+        colony_packing_installer_plugin = self.colony_packing_installer_deployer_plugin.colony_packing_installer_plugin
+
+        # installation options
+        installation_properties = {
+            TRANSACTION_PROPERTIES_VALUE : transaction_properties
+        }
+
+        # uninstalls the package (bundle)
+        colony_packing_installer_plugin.uninstall_package(bundle_id, bundle_version, installation_properties)
+
+    def undeploy_plugin(self, plugin_id, plugin_version, transaction_properties):
+        """
+        Method called upon undeployment of the plugin with
+        the given id and version.
+
+        @type plugin_id: String
+        @param plugin_id: The id of the plugin to be undeployed.
+        @type plugin_version: String
+        @param plugin_version: The version of the plugin to be undeployed.
+        @type transaction_properties: Dictionary
+        @param transaction_properties: The properties map for the
+        current transaction.
+        """
+
+        # retrieves the colony packing installer plugin
+        colony_packing_installer_plugin = self.colony_packing_installer_deployer_plugin.colony_packing_installer_plugin
+
+        # installation options
+        installation_properties = {
+            TRANSACTION_PROPERTIES_VALUE : transaction_properties
+        }
+
+        # uninstalls the package (plugin)
+        colony_packing_installer_plugin.uninstall_package(plugin_id, plugin_version, installation_properties)
+
     def open_transaction(self, transaction_properties):
         """
         Opens a new transaction and retrieves the transaction

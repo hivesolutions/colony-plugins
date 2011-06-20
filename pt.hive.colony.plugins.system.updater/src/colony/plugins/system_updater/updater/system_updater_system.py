@@ -432,6 +432,77 @@ class SystemUpdater:
             # releases the system updater lock
             self.system_updater_lock.release()
 
+    def uninstall_package(self, package_id, package_version = None, transaction_properties = None):
+        """
+        Uninstalls the package with the given id and version.
+
+        @type package_id: String
+        @param package_id: The id of the package to uninstall.
+        @type package_version: String
+        @param package_version: The version of the package to uninstall.
+        @type transaction_properties: Dictionary
+        @param transaction_properties: The properties map for the
+        current transaction.
+        """
+
+        # acquires the system updater lock
+        self.system_updater_lock.acquire()
+
+        try:
+            # uninstalls the package (concrete)
+            self._uninstall_package(package_id, package_version, transaction_properties)
+        finally:
+            # releases the system updater lock
+            self.system_updater_lock.release()
+
+    def uninstall_bundle(self, bundle_id, bundle_version = None, transaction_properties = None):
+        """
+        Uninstalls the plugin with the given id and version
+        from a random repository.
+
+        @type bundle_id: String
+        @param bundle_id: The id of the bundle to uninstall.
+        @type bundle_version: String
+        @param bundle_version: The version of the bundle to uninstall.
+        @type transaction_properties: Dictionary
+        @param transaction_properties: The properties map for the
+        current transaction.
+        """
+
+        # acquires the system updater lock
+        self.system_updater_lock.acquire()
+
+        try:
+            # uninstalls the bundle (concrete)
+            self._uninstall_bundle(bundle_id, bundle_version, transaction_properties)
+        finally:
+            # releases the system updater lock
+            self.system_updater_lock.release()
+
+    def uninstall_plugin(self, plugin_id, plugin_version = None, transaction_properties = None):
+        """
+        Uninstalls the plugin with the given id and version from
+        a random repository.
+
+        @type plugin_id: String
+        @param plugin_id: The id of the plugin to uninstall.
+        @type plugin_version: String
+        @param plugin_version: The version of the plugin to uninstall.
+        @type transaction_properties: Dictionary
+        @param transaction_properties: The properties map for the
+        current transaction.
+        """
+
+        # acquires the system updater lock
+        self.system_updater_lock.acquire()
+
+        try:
+            # uninstalls the plugin (concrete)
+            self._uninstall_plugin(plugin_id, plugin_version, transaction_properties)
+        finally:
+            # releases the system updater lock
+            self.system_updater_lock.release()
+
     def deployer_load(self, deployer_plugin):
         # retrieves the plugin deployer type
         deployer_type = deployer_plugin.get_deployer_type()
@@ -754,6 +825,146 @@ class SystemUpdater:
 
         # updates the plugin descriptor status
         plugin_descriptor.status = SAME_VERSION_STATUS
+
+    def _uninstall_package(self, package_id, package_version = None, transaction_properties = None):
+        """
+        Uninstalls the package with the given id and version
+        from a random repository.
+
+        @type package_id: String
+        @param package_id: The id of the package to uninstall.
+        @type package_version: String
+        @param package_version: The version of the package to uninstall.
+        @type transaction_properties: Dictionary
+        @param transaction_properties: The properties map for the
+        current transaction.
+        """
+
+        # loads the information for the repositories
+        self.load_repositories_information()
+
+        # retrieves the descriptor of the package
+        package_descriptor = self.get_package_descriptor(package_id, package_version)
+
+        # retrieves the package plugins
+        package_plugins = package_descriptor.plugins
+
+        # iterates over all the plugins in the plugin descriptor
+        for plugin in package_plugins:
+            # retrieves the plugin id and version
+            plugin_id = plugin.id
+            plugin_version = plugin.version
+
+            # uninstalls the plugin
+            self.uninstall_plugin(plugin_id, plugin_version, transaction_properties)
+
+    def _uninstall_bundle(self, bundle_id, bundle_version = None, transaction_properties = None):
+        """
+        Uninstalls the plugin with the given id and version
+        from a random repository.
+
+        @type bundle_id: String
+        @param bundle_id: The id of the bundle to uninstall.
+        @type bundle_version: String
+        @param bundle_version: The version of the bundle to uninstall.
+        @type transaction_properties: Dictionary
+        @param transaction_properties: The properties map for the
+        current transaction.
+        """
+
+        # loads the information for the repositories
+        self.load_repositories_information()
+
+        # retrieves the descriptor of the bundle
+        bundle_descriptor = self.get_bundle_descriptor(bundle_id, bundle_version)
+
+        # in case the bundle was not found
+        if not bundle_descriptor:
+            # raises the invalid bundle exception
+            raise system_updater_exceptions.InvalidBundleException("bundle %s v%s not found" % (bundle_id, bundle_version))
+
+        # retrieves the bundle type
+        bundle_type = bundle_descriptor.bundle_type
+
+        # retrieves a deployer for the given plugin type
+        plugin_deployer = self._get_deployer_plugin_by_deployer_type(bundle_type)
+
+        # retrieves the current transaction properties or creates a new transaction
+        transaction_properties = plugin_deployer.open_transaction(transaction_properties)
+
+        try:
+            # sends the bundle information to the plugin type deployer
+            # to allow it to be undeployed, the transaction properties are
+            # also sent for transaction control
+            plugin_deployer.undeploy_bundle(bundle_descriptor.id, bundle_descriptor.version, transaction_properties)
+
+            # commits the transaction represented in the
+            # transaction properties
+            plugin_deployer.commit_transaction(transaction_properties)
+        except:
+            # "rollsback" the transaction represented in the
+            # transaction properties
+            plugin_deployer.rollback_transaction(transaction_properties)
+
+            # re-raises the exception
+            raise
+
+        # updates the bundle descriptor status
+        bundle_descriptor.status = NOT_INSTALLED_STATUS
+
+    def _uninstall_plugin(self, plugin_id, plugin_version = None, transaction_properties = None):
+        """
+        Uninstalls the plugin with the given id and version from
+        a random repository.
+
+        @type plugin_id: String
+        @param plugin_id: The id of the plugin to uninstall.
+        @type plugin_version: String
+        @param plugin_version: The version of the plugin to uninstall.
+        @type transaction_properties: Dictionary
+        @param transaction_properties: The properties map for the
+        current transaction.
+        """
+
+        # loads the information for the repositories
+        self.load_repositories_information()
+
+        # retrieves the descriptor of the plugin
+        plugin_descriptor = self.get_plugin_descriptor(plugin_id, plugin_version)
+
+        # in case the plugin was not found
+        if not plugin_descriptor:
+            # raises the invalid plugin exception
+            raise system_updater_exceptions.InvalidPluginException("plugin %s v%s not found" % (plugin_id, plugin_version))
+
+        # retrieves the plugin type
+        plugin_type = plugin_descriptor.plugin_type
+
+        # retrieves a deployer for the given plugin type
+        plugin_deployer = self._get_deployer_plugin_by_deployer_type(plugin_type)
+
+        # retrieves the current transaction properties or creates a new transaction
+        transaction_properties = plugin_deployer.open_transaction(transaction_properties)
+
+        try:
+            # sends the bundle information to the plugin type deployer
+            # to allow it to be undeployed, the transaction properties are
+            # also sent for transaction control
+            plugin_deployer.undeploy_bundle(plugin_descriptor.id, plugin_descriptor.version, transaction_properties)
+
+            # commits the transaction represented in the
+            # transaction properties
+            plugin_deployer.commit_transaction(transaction_properties)
+        except:
+            # "rollsback" the transaction represented in the
+            # transaction properties
+            plugin_deployer.rollback_transaction(transaction_properties)
+
+            # re-raises the exception
+            raise
+
+        # updates the plugin descriptor status
+        plugin_descriptor.status = NOT_INSTALLED_STATUS
 
     def _get_deployer_plugin_by_deployer_type(self, deployer_type):
         """
