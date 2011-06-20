@@ -39,6 +39,7 @@
             "web_mvc_manager/manager/web_mvc_manager_system.py",
             "web_mvc_manager/manager/resources/baf.xml",
             "web_mvc_manager/manager/resources/extras/css/layout.css",
+            "web_mvc_manager/manager/resources/extras/images/favicon.ico",
             "web_mvc_manager/manager/resources/extras/images/icon/icon-omni.png",
             "web_mvc_manager/manager/resources/extras/images/icon/icon-plugin-install.png",
             "web_mvc_manager/manager/resources/extras/images/logo/logo-omni.png",
