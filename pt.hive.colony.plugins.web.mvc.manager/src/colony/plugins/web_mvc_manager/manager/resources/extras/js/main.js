@@ -269,7 +269,7 @@ function fileInstallLoad() {
                     // sets the error message in the problem new plugi window
                     PROBLEM_NEW_PLUGIN_WINDOW["message"] = errorMessage;
 
-                    // shows a dialob window in the body
+                    // shows a dialog window in the body
                     _body.dialogwindow("default", PROBLEM_NEW_PLUGIN_WINDOW);
                 }
             });
