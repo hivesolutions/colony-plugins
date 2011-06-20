@@ -42,6 +42,12 @@ import StringIO
 
 import colony.libs.importer_util
 
+SERIALIZER_VALUE = "serializer"
+""" The serializer value """
+
+TEMPLATE_FILE_VALUE = "template_file"
+""" The template file value """
+
 WEB_MVC_UTILS_VALUE = "web_mvc_utils"
 """ The web mvc utils value """
 
@@ -54,7 +60,7 @@ WEB_MVC_MANAGER_CODE_EXECUTION_RESOURCES_PATH = "web_mvc_manager/code_execution/
 # imports the web mvc utils
 web_mvc_utils = colony.libs.importer_util.__importer__(WEB_MVC_UTILS_VALUE)
 
-class MainController:
+class CodeExecutionController:
     """
     The web mvc manager code execution controller.
     """
@@ -86,7 +92,19 @@ class MainController:
         # sets the relative resources path
         self.set_relative_resources_path(WEB_MVC_MANAGER_CODE_EXECUTION_RESOURCES_PATH, extra_templates_path = "code_execution")
 
+    def validate(self, rest_request, parameters, validation_parameters):
+        # returns the result of the require permission call
+        return []
+
+    @web_mvc_utils.serialize_exceptions("all")
+    @web_mvc_utils.validated_method("code_execution.create")
     def handle_new_ajx(self, rest_request, parameters = {}):
+        # retrieves the json plugin
+        json_plugin = self.web_mvc_manager_code_execution_plugin.json_plugin
+
+        # sets the serializer in the parameters
+        parameters[SERIALIZER_VALUE] = json_plugin
+
         # retrieves the template file
         template_file = self.retrieve_template_file("code_execution_contents.html.tpl")
 
@@ -99,9 +117,11 @@ class MainController:
         # processes the template file and sets the request contents
         self.process_set_contents(rest_request, template_file)
 
+    @web_mvc_utils.serialize_exceptions("all")
+    @web_mvc_utils.validated_method("code_execution.new")
     def handle_new(self, rest_request, parameters = {}):
         # retrieves the template file from the parameters
-        template_file = parameters["template_file"]
+        template_file = parameters[TEMPLATE_FILE_VALUE]
 
         # assigns the include to the template
         self.assign_include_template_file(template_file, "page_include", "code_execution/code_execution_contents.html.tpl")
@@ -118,7 +138,15 @@ class MainController:
         # processes the template file and sets the request contents
         self.process_set_contents(rest_request, template_file)
 
-    def handle_execute(self, rest_request, parameters = {}):
+    @web_mvc_utils.serialize_exceptions("all")
+    @web_mvc_utils.validated_method("code_execution.show")
+    def handle_execute_ajx(self, rest_request, parameters = {}):
+        # retrieves the json plugin
+        json_plugin = self.web_mvc_manager_code_execution_plugin.json_plugin
+
+        # sets the serializer in the parameters
+        parameters[SERIALIZER_VALUE] = json_plugin
+
         # retrieves the form data by processing the form
         form_data_map = self.process_form_data(rest_request, DEFAULT_ENCODING)
 
@@ -126,7 +154,7 @@ class MainController:
         command = form_data_map["command"]
 
         # executes the command
-        output_message = self.execute_command(rest_request, command)
+        output_message = self._execute_command(rest_request, command)
 
         # retrieves the template file
         template_file = self.retrieve_template_file("code_execution_contents.html.tpl")
@@ -143,7 +171,7 @@ class MainController:
         # processes the template file and sets the request contents
         self.process_set_contents(rest_request, template_file)
 
-    def execute_command(self, rest_request, command):
+    def _execute_command(self, rest_request, command):
         # in case an invalid command is specified
         if not command:
             # returns
