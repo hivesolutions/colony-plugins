@@ -38,7 +38,7 @@ jQuery(document).ready(function() {
 
     var _registerExtraHandlers = function(targetElement) {
         // retrieves the buttons from the target element
-        var buttons = jQuery(".button", targetElement)
+        var buttons = jQuery("#repository-plugins-table .button", targetElement)
 
         // creates the buttons
         buttons.button();
