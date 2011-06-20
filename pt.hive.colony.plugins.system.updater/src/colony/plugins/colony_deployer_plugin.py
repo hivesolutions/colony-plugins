@@ -162,7 +162,7 @@ class ColonyDeployerPlugin(colony.base.plugin_system.Plugin):
         current transaction.
         """
 
-        return self.colony_packing_deployer.undeploy_bundle(bundle_id, bundle_version, transaction_properties)
+        return self.colony_deployer.undeploy_bundle(bundle_id, bundle_version, transaction_properties)
 
     def undeploy_plugin(self, plugin_id, plugin_version, transaction_properties):
         """
@@ -178,7 +178,7 @@ class ColonyDeployerPlugin(colony.base.plugin_system.Plugin):
         current transaction.
         """
 
-        return self.colony_packing_deployer.undeploy_plugin(plugin_id, plugin_version, transaction_properties)
+        return self.colony_deployer.undeploy_plugin(plugin_id, plugin_version, transaction_properties)
 
     def open_transaction(self, transaction_properties):
         """
