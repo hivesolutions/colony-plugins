@@ -274,23 +274,8 @@ class DnsController:
         self.process_set_contents(rest_request, template_file)
 
     def _get_dns(self, rest_request, dns_index):
-        # retrieves the system updater plugin
-        system_updater_plugin = self.web_mvc_manager_dns_plugin.system_updater_plugin
-
-        # retrieves all the dns zones
-        dns_zones = system_updater_plugin.get_dns_zones()
-
-        # retrieves the dns from the dns zones list
-        dns = dns_zones[dns_index - 1]
-
-        # retrieves the dns name
-        dns_name = dns.name
-
-        # retrieves the dns for the dns with the given name
-        dns_information = system_updater_plugin.get_dns_information_by_dns_name(dns_name)
-
         # returns the dns information
-        return dns_information
+        return DnsZone()
 
     def _get_filtered_dns_zones(self, rest_request):
         # retrieves the form data by processing the form

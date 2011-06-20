@@ -1,20 +1,28 @@
 <div id="meta-data">
-    <div class="area">update</div>
+    <div class="area">services</div>
     <div class="side-panel">side_panel/update</div>
 </div>
 <div id="contents">
     <h1>Update</h1>
-    <h2>Repository - ${out_none value=repository.name xml_escape=True /}</h2>
-    <div id="repository-plugins-table" class="search-table" provider_url="repositories/${out_none value=repository_index xml_escape=True /}/plugins_partial">
+    <h2>Dns Zone - ${out_none value=dns.name xml_escape=True /}</h2>
+    <div id="records-table" class="search-table">
         <table class="table" cellspacing="0" cellpadding="0">
             <thead>
                 <tr>
                     <th>
-                        <span>Plugin ID</span>
+                        <span>Name</span>
                         <span class="order-down-inactive"></span>
                     </th>
                     <th width="75">
-                        <span>Install</span>
+                        <span>Type</span>
+                        <span class="order-down-inactive"></span>
+                    </th>
+                    <th width="75">
+                        <span>Class</span>
+                        <span class="order-down-inactive"></span>
+                    </th>
+                    <th width="75">
+                        <span>TTL</span>
                         <span class="order-down-inactive"></span>
                     </th>
                 </tr>
