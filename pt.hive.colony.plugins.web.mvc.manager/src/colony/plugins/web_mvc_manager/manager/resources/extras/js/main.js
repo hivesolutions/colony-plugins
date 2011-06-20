@@ -124,11 +124,8 @@ function messageProcessor(data) {
 }
 
 jQuery(document).ready(function() {
-    // retrieves the base path
-    var basePath = getBasePath();
-
-    // creates the "complete" communication url
-    var communicationUrl = basePath + "communication";
+    // resolves the communication url
+    var communicationUrl = jQuery.resolveurl("communication");
 
     // register the communication for the communig+cation
     // url given
