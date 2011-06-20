@@ -15,9 +15,6 @@
                 "id" : "pt.hive.colony.plugins.web.mvc.utils",
                 "version" : "1.0.0"
             }, {
-                "id" : "pt.hive.colony.plugins.system.installer",
-                "version" : "1.0.0"
-            }, {
                 "id" : "pt.hive.colony.plugins.system.updater",
                 "version" : "1.0.0"
             }, {

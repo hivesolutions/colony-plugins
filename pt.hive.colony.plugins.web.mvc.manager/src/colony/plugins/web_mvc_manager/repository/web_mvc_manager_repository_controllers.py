@@ -584,8 +584,8 @@ class RepositoryController:
         # retrieves the plugin manager
         plugin_manager = self.web_mvc_manager_repository_plugin.manager
 
-        # retrieves the system installer plugin
-        system_installer_plugin = self.web_mvc_manager_repository_plugin.system_installer_plugin
+        # retrieves the system updater plugin
+        system_updater_plugin = self.web_mvc_manager_repository_plugin.system_updater_plugin
 
         # creates the delta plugin install map
         delta_plugin_install_map = {
@@ -597,7 +597,7 @@ class RepositoryController:
         available_plugins_beginning = copy.copy(plugin_manager.get_all_plugins())
 
         # tries to uninstall the plugin
-        system_installer_plugin.uninstall_package(plugin_id, plugin_version, {}, "colony_packing")
+        system_updater_plugin.uninstall_plugin(plugin_id, plugin_version)
 
         # sleeps for a second to give time for the autoloader to update
         # this delay is induced on purpose
