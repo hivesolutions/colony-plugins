@@ -482,7 +482,7 @@ class WebMvc:
         resource_initial_token_length = len(resource_initial_token)
 
         # creates the file path from the resource base path and file path
-        file_path = resource_base_path + "/" + resource_path[resource_initial_token_length:] + "." + rest_request.encoder_name
+        file_path = resource_base_path + "/" + resource_path[resource_initial_token_length + 1:] + "." + rest_request.encoder_name
 
         # handles the given request by the web mvc file handler
         self.web_mvc_file_handler.handle_request(rest_request.request, file_path)
