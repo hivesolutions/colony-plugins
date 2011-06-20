@@ -43,6 +43,7 @@ import datetime
 import threading
 
 import colony.libs.file_util
+import colony.libs.path_util
 import colony.libs.crypt_util
 
 import colony_packing_installer_exceptions
@@ -727,9 +728,8 @@ class ColonyPackingInstaller:
                 # path and the manager path
                 resource_relative_path = os.path.relpath(resource_file_path, manager_path)
 
-                # normalizes the path replacing the backslashes with
-                # "normal" slashes
-                resource_relative_path = resource_relative_path.replace("\\", "/")
+                # aligns the path normalizing it into a system independent path
+                resource_relative_path = colony.libs.path_util.align_path(resource_relative_path)
 
                 # retrieves the number of times the file is "duplicated"
                 duplicate_file_count = duplicate_files_structure.get(resource_relative_path, 0)
@@ -1052,9 +1052,8 @@ class ColonyPackingInstaller:
                 # path and the manager path
                 resource_relative_path = os.path.relpath(resource_file_path, manager_path)
 
-                # normalizes the path replacing the backslashes with
-                # "normal" slashes
-                resource_relative_path = resource_relative_path.replace("\\", "/")
+                # aligns the path normalizing it into a system independent path
+                resource_relative_path = colony.libs.path_util.align_path(resource_relative_path)
 
                 # retrieves the number of times the file is "duplicated"
                 duplicate_file_count = duplicate_files_structure.get(resource_relative_path, 0)
