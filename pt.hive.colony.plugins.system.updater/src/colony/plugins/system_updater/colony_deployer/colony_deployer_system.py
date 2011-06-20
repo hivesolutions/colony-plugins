@@ -134,6 +134,40 @@ class ColonyDeployer:
         # uncompresses the zip file
         self._uncompress_zip_file(contents_file)
 
+    def undeploy_bundle(self, bundle_id, bundle_version, transaction_properties):
+        """
+        Method called upon undeployment of the bundle with
+        the given id and version.
+
+        @type bundle_id: String
+        @param bundle_id: The id of the bundle to be undeployed.
+        @type bundle_version: String
+        @param bundle_version: The version of the bundle to be undeployed.
+        @type transaction_properties: Dictionary
+        @param transaction_properties: The properties map for the
+        current transaction.
+        """
+
+        # raises an operation not implemented exception
+        raise colony_deployer_exceptions.OperationNotSupported("not possible to undeploy colony bundles")
+
+    def undeploy_plugin(self, plugin_id, plugin_version, transaction_properties):
+        """
+        Method called upon undeployment of the plugin with
+        the given id and version.
+
+        @type plugin_id: String
+        @param plugin_id: The id of the plugin to be undeployed.
+        @type plugin_version: String
+        @param plugin_version: The version of the plugin to be undeployed.
+        @type transaction_properties: Dictionary
+        @param transaction_properties: The properties map for the
+        current transaction.
+        """
+
+        # raises an operation not implemented exception
+        raise colony_deployer_exceptions.OperationNotSupported("not possible to undeploy colony plugins")
+
     def open_transaction(self, transaction_properties):
         """
         Opens a new transaction and retrieves the transaction

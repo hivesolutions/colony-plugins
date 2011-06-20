@@ -37,6 +37,8 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
+import colony_packing_deployer_exceptions
+
 DEPLOYER_TYPE = "colony_packing_base"
 """ The deployer type """
 
@@ -150,6 +152,40 @@ class ColonyPackingDeployer:
 
         # unpacks the files using the colony service
         packing_manager_plugin.unpack_files([contents_file.name], properties, COLONY_VALUE)
+
+    def undeploy_bundle(self, bundle_id, bundle_version, transaction_properties):
+        """
+        Method called upon undeployment of the bundle with
+        the given id and version.
+
+        @type bundle_id: String
+        @param bundle_id: The id of the bundle to be undeployed.
+        @type bundle_version: String
+        @param bundle_version: The version of the bundle to be undeployed.
+        @type transaction_properties: Dictionary
+        @param transaction_properties: The properties map for the
+        current transaction.
+        """
+
+        # raises an operation not implemented exception
+        raise colony_packing_deployer_exceptions.OperationNotSupported("not possible to undeploy colony bundles")
+
+    def undeploy_plugin(self, plugin_id, plugin_version, transaction_properties):
+        """
+        Method called upon undeployment of the plugin with
+        the given id and version.
+
+        @type plugin_id: String
+        @param plugin_id: The id of the plugin to be undeployed.
+        @type plugin_version: String
+        @param plugin_version: The version of the plugin to be undeployed.
+        @type transaction_properties: Dictionary
+        @param transaction_properties: The properties map for the
+        current transaction.
+        """
+
+        # raises an operation not implemented exception
+        raise colony_packing_deployer_exceptions.OperationNotSupported("not possible to undeploy colony plugins")
 
     def open_transaction(self, transaction_properties):
         """
