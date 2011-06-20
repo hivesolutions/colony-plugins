@@ -124,10 +124,16 @@ function messageProcessor(data) {
 }
 
 jQuery(document).ready(function() {
+    // retrieves the base path
+    var basePath = getBasePath();
+
+    // creates the "complete" communication url
+    var communicationUrl = basePath + "communication";
+
     // register the communication for the communig+cation
     // url given
     jQuery("body").communication("default", {
-                url : "communication",
+                url : communicationUrl,
                 timeout : 500,
                 dataCallbackFunctions : [messageProcessor]
             });
@@ -138,7 +144,6 @@ jQuery(document).ready(function() {
                                 jQuery("#account-float-panel").click(
                                         function(event) {
                                             event.stopPropagation();
-
                                         });
                                 jQuery(document).click(function(event) {
                                             jQuery("#account-float-panel").hide();
