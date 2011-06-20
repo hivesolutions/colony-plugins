@@ -24,6 +24,65 @@
 // __license__   = GNU General Public License (GPL), Version 3
 
 (function($) {
+    jQuery.resolveurl = function(url, options) {
+        // the default values for the resolve url
+        var defaults = {};
+
+        // sets the default method value
+        var method = method ? method : "default";
+
+        // sets the default options value
+        var options = options ? options : {};
+
+        // constructs the options
+        var options = jQuery.extend(defaults, options);
+
+        // sets the jquery matched object
+        var matchedObject = this;
+
+        // retrieves the base path environment variable
+        var basePath = jQuery.environment("base-path");
+
+        // re-creates the url using the base path, in case
+        // there is a valid base path
+        var url = basePath ? basePath + url : url;
+
+        // returns the "resolved" url
+        return url;
+    };
+})(jQuery);
+
+(function($) {
+    jQuery.environment = function(variableName, options) {
+        // the default values for the environment
+        var defaults = {
+            environmentElement : jQuery("#environment-variables")
+        };
+
+        // sets the default method value
+        var method = method ? method : "default";
+
+        // sets the default options value
+        var options = options ? options : {};
+
+        // constructs the options
+        var options = jQuery.extend(defaults, options);
+
+        // sets the jquery matched object
+        var matchedObject = this;
+
+        // retrieves the environment element
+        var environmentElement = options["environmentElement"];
+
+        // retrieves the (environement) variable value
+        var variableValue = jQuery("#" + variableName, environmentElement).html();
+
+        // returns the (environement) variable value
+        return variableValue;
+    };
+})(jQuery);
+
+(function($) {
     jQuery.fn.page = function(method, options) {
         // the default values for the menu
         var defaults = {

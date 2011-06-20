@@ -1769,7 +1769,8 @@
             // sets the callbacks in the dialog message
             dialogMessage.data("success_callback_functions",
                     successCallbackFunctions);
-            dialogMessage.data("error_callback_functions", errorCallbackFunctions);
+            dialogMessage.data("error_callback_functions",
+                    errorCallbackFunctions);
 
             // retrieves the matched object dimensions
             var matchedObjectHeight = matchedObject.height();
@@ -2165,6 +2166,10 @@
 
             // retrieves the provider url
             var providerUrl = searchTable.attr("provider_url");
+
+            // resolves the url taking into account the current
+            // environment
+            var providerUrl = jQuery.resolveurl(providerUrl);
 
             // retrieves the number of records
             var numberRecords = options["numberRecords"];
