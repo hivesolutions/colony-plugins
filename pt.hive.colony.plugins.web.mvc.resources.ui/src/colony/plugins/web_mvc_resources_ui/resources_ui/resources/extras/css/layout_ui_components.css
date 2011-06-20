@@ -741,9 +741,9 @@ table .dropbox {
     padding: 10px;
     background-color: #ffffff;
     overflow: hidden;
-    box-shadow: 2px 2px 6px #666666;
-    -moz-box-shadow: 2px 2px 6px #666666;
-    -webkit-box-shadow: 2px 2px 6px #666666;
+    box-shadow: 2px 2px 6px #888888;
+    -moz-box-shadow: 2px 2px 6px #888888;
+    -webkit-box-shadow: 2px 2px 6px #888888;
 }
 
 .window-header{
