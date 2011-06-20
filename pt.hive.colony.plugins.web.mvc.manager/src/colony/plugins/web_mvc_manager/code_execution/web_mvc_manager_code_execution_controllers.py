@@ -97,7 +97,7 @@ class CodeExecutionController:
         return []
 
     @web_mvc_utils.serialize_exceptions("all")
-    @web_mvc_utils.validated_method("code_execution.create")
+    @web_mvc_utils.validated_method("code_execution.new")
     def handle_new_ajx(self, rest_request, parameters = {}):
         # retrieves the json plugin
         json_plugin = self.web_mvc_manager_code_execution_plugin.json_plugin
