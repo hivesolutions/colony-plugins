@@ -24,6 +24,9 @@
 // __license__   = GNU General Public License (GPL), Version 3
 
 jQuery(document).ready(function() {
+    // retrieves the body
+    var _body = jQuery("body");
+
     // sets the logic loaded data
     var logicLoaded = jQuery("#contents").data("logic_loaded");
 
@@ -102,20 +105,45 @@ jQuery(document).ready(function() {
                     });
         });
 
-        jQuery("body").bind("plugin_install", function(event, status) {
+        // bns the body to the plugin install event
+        _body.bind("plugin_install", function(event, status) {
                     // retrieves the installed and uninstalled plugins
                     var installedPlugins = status["installed"];
                     var uninstalledPlugins = status["uninstalled"];
 
-                    // iterates over all the installed plugins
-                    jQuery(installedPlugins).each(function(index, element) {
-                                console.info(element);
-                            });
-
                     // iterates over all the uninstalled plugins
                     jQuery(uninstalledPlugins).each(function(index, element) {
-                                console.info(element);
-                            });
+                        // retrieves the plugin button reference
+                        var pluginButton = jQuery(".button[data-plugin_id="
+                                + element + "]");
+
+                        // removes the previous plugin button classes
+                        pluginButton.removeClass("button-blue");
+                        pluginButton.removeClass("button-blue");
+
+                        // adds the not installed plugin button class
+                        pluginButton.addClass("button-green");
+
+                        // sets the new plugin status
+                        pluginButton.attr("data-plugin_status", "not_installed");
+                    });
+
+                    // iterates over all the installed plugins
+                    jQuery(installedPlugins).each(function(index, element) {
+                        // retrieves the plugin button reference
+                        var pluginButton = jQuery(".button[data-plugin_id="
+                                + element + "]");
+
+                        // removes the previous plugin button classes
+                        pluginButton.removeClass("button-blue");
+                        pluginButton.removeClass("button-green");
+
+                        // adds the installed plugin button class
+                        pluginButton.addClass("button-gray");
+
+                        // sets the new plugin status
+                        pluginButton.attr("data-plugin_status", "installed");
+                    });
                 });
     };
 
