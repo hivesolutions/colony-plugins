@@ -123,8 +123,8 @@
             // sets the defaul history load value
             historyLoad = historyLoad != null ? historyLoad : true;
 
-            // retrieves the base path
-            var basePath = _getBasePath();
+            // resolves the partial url
+            var partialUrl = jQuery.resolveurl("search/autocomplete/partial");
 
             // creates the menu bar in the menu bar component
             jQuery("#menu-bar", matchedObject).menubar();
@@ -135,7 +135,7 @@
 
             // installs the autocomplete in the menu bar search field
             jQuery("#menu-bar-search-field", matchedObject).autocomplete({
-                        url : basePath + "search/autocomplete/partial",
+                        url : partialUrl,
                         showEffect : "slideDown",
                         hideEffect : "slideUp"
                     });
@@ -157,12 +157,9 @@
             // retrieves the header path
             var headerPath = options["headerPath"];
 
-            // retrieves the base path
-            var basePath = _getBasePath();
-
-            // creates the full target path by prepending the
-            // base path to the header path
-            var fullTarget = basePath + headerPath
+            // resolves the header path retrieving the
+            // "full" target
+            var fullTarget = jQuery.resolveurl(headerPath);
 
             jQuery.ajax({
                         url : fullTarget,
@@ -200,15 +197,6 @@
             // creates the menu bar in the menu bar component
             jQuery("#menu-bar", matchedObject).menubar();
         };
-
-        /**
-         * Retrieves the base path for the current environment.
-         *
-         * @return {String} The base path for the current environment.
-         */
-        var _getBasePath = function() {
-            return typeof(getBasePath) === "undefined" ? "" : getBasePath();
-        }
 
         // switches over the method
         switch (method) {
@@ -352,10 +340,6 @@
          *            options The options of the plugin instance.
          */
         var _reloadContents = function(matchedObject, options) {
-            // retrieves the base path to be used
-            // in the creation of the full action
-            var basePath = _getBasePath();
-
             // starts the overlay component
             jQuery("#overlay").overlay();
 
@@ -410,8 +394,11 @@
             // the form reset function
             jQuery("form div.cancel", matchedObject).bind("click", __formReset);
 
+            // retrieves the value of the ajax submit environment variable
+            var ajaxSubmit = jQuery.environment("ajax-submit");
+
             // in case ajax submission is enabled
-            if (_getAjaxSubmit() != "false") {
+            if (ajaxSubmit != "false") {
                 // binds the submit event of the forms to the form
                 // submit function
                 jQuery("form", matchedObject).bind("submit", function(event) {
@@ -436,8 +423,9 @@
                                 return;
                             }
 
-                            // creates the action path
-                            var action = basePath + actionTarget + ".ajx";
+                            // resolves the action path
+                            var action = jQuery.resolveurl(actionTarget
+                                    + ".ajx");
 
                             // sets the action in the form
                             formValue.attr("action", action);
@@ -462,7 +450,7 @@
                         }
 
                         // creates the href (action) path
-                        var href = basePath + actionTarget;
+                        var href = jQuery.resolveurl(actionTarget);
 
                         // sets the href (action) in the link
                         linkValue.attr("href", href);
@@ -714,9 +702,6 @@
                         messageOptions);
             }
 
-            // retrieves the base path
-            var basePath = _getBasePath();
-
             // retrieves the real target
             var realTarget = target.split("&", 1)[0];
 
@@ -726,9 +711,9 @@
             // retrieves the arguments from the target
             var arguments = target.slice(separatorIndex + 1);
 
-            // creates the full target path by prepending the
-            // base path to the target and appending the arguments
-            var fullTarget = basePath + realTarget + ".ajx?" + arguments;
+            // creates the full target by resolving the address
+            // resulting from appending the arguments to the real target
+            var fullTarget = jQuery.resolveurl(realTarget + ".ajx?" + arguments);
 
             jQuery.ajax({
                 url : fullTarget,
@@ -839,8 +824,11 @@
             // to trigger the submit start event
             __formSubmitStart(parentForm);
 
+            // retrieves the value of the ajax submit environment variable
+            var ajaxSubmit = jQuery.environment("ajax-submit");
+
             // in case ajax submission is disabled
-            if (_getAjaxSubmit() == "false") {
+            if (ajaxSubmit == "false") {
                 // submits the form normally
                 parentForm.submit();
             } else {
@@ -970,17 +958,13 @@
             // retrieves the head element
             var head = jQuery("head");
 
-            // retrieves the base path
-            var basePath = _getBasePath();
-
             // iterates over all the javascript file references
             javascriptFiles.each(function(index, element) {
                 // retrieves the target from the javascript element
                 var target = jQuery(element).html();
 
-                // creates the full target path by prepending the
-                // base path to the target
-                var fullTarget = basePath + target
+                // resolves the full target
+                var fullTarget = jQuery.resolveurl(target);
 
                 jQuery.ajax({
                     url : fullTarget,
@@ -1042,9 +1026,6 @@
                                 });
                     });
 
-            // retrieves the base path
-            var basePath = _getBasePath();
-
             // iterates over all the side panel file references
             sidePanels.each(function(index, element) {
                 // sets the current side panel in the matched object
@@ -1064,9 +1045,8 @@
                 // sets the side panel in the current object
                 matchedObject.data("side_panel", target);
 
-                // creates the full target path by prepending the
-                // base path to the target
-                var fullTarget = basePath + target
+                // resolves the full target (url)
+                var fullTarget = jQuery.resolveurl(target);
 
                 jQuery.ajax({
                     url : fullTarget,
@@ -1146,26 +1126,6 @@
                         jQuery.historyLoad(targetRequest);
                     });
         };
-
-        /**
-         * Retrieves the base path for the current environment.
-         *
-         * @return {String} The base path for the current environment.
-         */
-        var _getBasePath = function() {
-            return typeof(getBasePath) === "undefined" ? "" : getBasePath();
-        }
-
-        /**
-         * Retrieves the submit form for the current environment.
-         *
-         * @return {Boolean} The submit form for the current environment.
-         */
-        var _getAjaxSubmit = function() {
-            return typeof(getAjaxSubmit) === "undefined"
-                    ? "false"
-                    : getAjaxSubmit();
-        }
 
         // switches over the method
         switch (method) {
