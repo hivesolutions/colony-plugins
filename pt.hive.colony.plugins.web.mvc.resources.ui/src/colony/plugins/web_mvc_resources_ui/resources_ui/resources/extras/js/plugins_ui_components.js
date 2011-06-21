@@ -118,6 +118,20 @@
                         // removes the click class
                         jQuery(this).removeClass("click");
                     });
+
+            // registers for th click event for event propagation
+            // stopping
+            matchedObject.click(function(event, element) {
+                        // retrieves the element
+                        var element = jQuery(this);
+
+                        // checks if the element is disabled
+                        var elementDisabled = element.hasClass("disabled");
+
+                        // in case the element is disabled stops the
+                        // immediate propagation of the event
+                        elementDisabled && event.stopImmediatePropagation();
+                    });
         };
 
         /**
