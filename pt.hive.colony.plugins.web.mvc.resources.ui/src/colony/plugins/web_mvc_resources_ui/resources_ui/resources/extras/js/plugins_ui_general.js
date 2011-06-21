@@ -53,7 +53,7 @@
 })(jQuery);
 
 (function($) {
-    jQuery.environment = function(variableName, options) {
+    jQuery.environment = function(variableName, defaultValue, options) {
         // the default values for the environment
         var defaults = {
             environmentElement : jQuery("#environment-variables")
@@ -76,6 +76,9 @@
 
         // retrieves the (environement) variable value
         var variableValue = jQuery("#" + variableName, environmentElement).html();
+
+        // sets the variable value with the default value in case it's necessary
+        var variableValue = variableValue === null ? defaultValue : variableValue;
 
         // returns the (environement) variable value
         return variableValue;
@@ -395,7 +398,7 @@
             jQuery("form div.cancel", matchedObject).bind("click", __formReset);
 
             // retrieves the value of the ajax submit environment variable
-            var ajaxSubmit = jQuery.environment("ajax-submit");
+            var ajaxSubmit = jQuery.environment("ajax-submit", "false");
 
             // in case ajax submission is enabled
             if (ajaxSubmit != "false") {
@@ -825,7 +828,7 @@
             __formSubmitStart(parentForm);
 
             // retrieves the value of the ajax submit environment variable
-            var ajaxSubmit = jQuery.environment("ajax-submit");
+            var ajaxSubmit = jQuery.environment("ajax-submit", "false");
 
             // in case ajax submission is disabled
             if (ajaxSubmit == "false") {
