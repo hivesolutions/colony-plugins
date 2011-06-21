@@ -310,25 +310,3 @@ function changeContents(target) {
                 target : target
             });
 }
-
-/**
- * Retrieves the base path based on a component placed in the dom.
- *
- * @return {String} The base path.
- */
-function getBasePath() {
-    // returns the base path, based on the
-    // component in the dom
-    return jQuery("#environment-variables > #base-path").html();
-}
-
-/**
- * Retrieves the ajax submit value based on a component placed in the dom.
- *
- * @return {String} The ajax submit.
- */
-function getAjaxSubmit() {
-    // returns the ajax submit value, based on the
-    // component in the dom
-    return jQuery("#environment-variables > #ajax-submit").html();
-}
