@@ -793,6 +793,25 @@ def set_status_code(setf, rest_request, status_code = DEFAULT_STATUS_CODE):
     # sets the status code for the rest request
     rest_request.set_status_code(status_code)
 
+def get_referer(self, rest_request):
+    """
+    Retrieves the referer value for the current rest
+    request being used.
+    The referer value shall not be trusted as it may not
+    be defined in the request.
+
+    @type rest_request: RestRequest
+    @param rest_request: The rest request to be used.
+    @rtype: String
+    @return: The retrieved referer value (url).
+    """
+
+    # retrieves the "referer" header
+    referer_header = rest_request.get_header(REFERER_VALUE)
+
+    # returns the "referer" header (url)
+    return referer_header
+
 def redirect(self, rest_request, target, status_code = 302, quote = True):
     """
     Redirects the current request to the given
