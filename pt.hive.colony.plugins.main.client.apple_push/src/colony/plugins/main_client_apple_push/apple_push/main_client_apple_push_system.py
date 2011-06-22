@@ -350,7 +350,7 @@ class ApplePushRequest:
         """
         Constructor of the class.
 
-        @type notification_message: int
+        @type notification_message: NotificationMessage
         @param notification_message: The notification message for the request.
         """
 
