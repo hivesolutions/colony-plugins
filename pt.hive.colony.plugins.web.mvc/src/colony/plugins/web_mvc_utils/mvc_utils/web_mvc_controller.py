@@ -1016,10 +1016,11 @@ def assign_include_template_file(self, template_file, variable_name, variable_va
     # assigns the variable to the template file
     template_file.assign(variable_name, variable_value)
 
-def get_session_attribute(self, rest_request, session_attribute_name, namespace_name = None):
+def get_session_attribute(self, rest_request, session_attribute_name, namespace_name = None, unset_session_attribute = False):
     """
     Retrieves the session attribute from the given rest request
     with the given name and for the given namespace.
+    Optionally it may be unset from session after retrieval.
 
     @type rest_request: RestRequest
     @param rest_request: The rest request to be used.
@@ -1029,6 +1030,9 @@ def get_session_attribute(self, rest_request, session_attribute_name, namespace_
     @type namespace_name: String
     @param namespace_name: The name of the namespace for the
     attribute to be retrieved.
+    @type unset_session_attribute: bool
+    @param unset_session_attribute: If the session attribute should
+    be unset after retrieval.
     @rtype: Object
     @return The retrieved session attribute.
     """
@@ -1047,6 +1051,10 @@ def get_session_attribute(self, rest_request, session_attribute_name, namespace_
 
     # retrieves the attribute from the session
     session_attribute = rest_request_session.get_attribute(session_attribute_name)
+
+    # in case the unset the session attribute flag is set
+    # the session attribute is unset
+    unset_session_attribute and rest_request_session.unset_attribute(session_attribute_name)
 
     # returns the session attribute
     return session_attribute
