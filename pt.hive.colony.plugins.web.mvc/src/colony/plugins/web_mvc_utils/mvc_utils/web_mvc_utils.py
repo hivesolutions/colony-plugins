@@ -57,6 +57,9 @@ EXCEPTION_HANDLER_VALUE = "exception_handler"
 PATTERN_NAMES_VALUE = "pattern_names"
 """ The pattern names value """
 
+VALIDATION_METHOD_ENABLED_VALUE = "validation_method_enabled"
+""" The validation method enabled value """
+
 def validated_method(validation_parameters = None, validation_method = None):
     """
     Decorator for the validated method.
@@ -108,13 +111,20 @@ def validated_method(validation_parameters = None, validation_method = None):
                 # raises the controller validation failed
                 raise web_mvc_utils_exceptions.ControllerValidationError("validation method not found", self)
 
+            # tests if the controller instance contains the validate method
+            contains_validate = hasattr(self, "validate")
+
             # calls the validate method with the rest request
             # the parameters and the validation parameters and retrieves
-            # the list with the validation failure reasons
-            reasons_list = self.validate(rest_request, parameters, validation_parameters)
+            # the list with the validation failure reasons, in case no validate
+            # method is present ignores the call
+            reasons_list = contains_validate and self.validate(rest_request, parameters, validation_parameters) or []
 
             # tries to retrieves the validation failed method
             validation_failed_method = hasattr(self, VALIDATION_FAILED_VALUE) and self.validation_failed or None
+
+            # retrieves validation method enabled value from the parameters
+            validation_method_enabled = parameters.get(VALIDATION_METHOD_ENABLED_VALUE, True)
 
             # retrieves the patterns
             patterns = parameters.get(PATTERN_NAMES_VALUE, {})
@@ -122,8 +132,9 @@ def validated_method(validation_parameters = None, validation_method = None):
             # retrieves the session attributes map
             session_attributes = rest_request.get_session_attributes_map();
 
-            # in case the validation method is set
-            if validation_method:
+            # in case the validation method is set and the validation  method
+            # enabled flag is set in the parameters
+            if validation_method and validation_method_enabled:
                 # calls the validation method with the patterns and the session attributes
                 valitation_method_result = validation_method(patterns, session_attributes)
 
