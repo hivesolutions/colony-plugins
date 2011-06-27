@@ -140,7 +140,7 @@ class ModelValidationError(WebMvcUtilsExceptionException):
         @type message: String
         @param message: The message to be printed.
         @type model: Model
-        @param model: The model that failed the validation
+        @param model: The model that failed the validation.
         """
 
         WebMvcUtilsExceptionException.__init__(self)
@@ -172,7 +172,7 @@ class ControllerValidationError(WebMvcUtilsExceptionException):
         @type message: String
         @param message: The message to be printed.
         @type controller: Controller
-        @param controller: The controller that failed the validation
+        @param controller: The controller that failed the validation.
         """
 
         WebMvcUtilsExceptionException.__init__(self)
@@ -188,3 +188,62 @@ class ControllerValidationError(WebMvcUtilsExceptionException):
         """
 
         return "Controller validation error: %s" % self.message
+
+class ControllerValidationReasonFailed(ControllerValidationError):
+    """
+    The controller validation reason failed class.
+    """
+
+    reasons_list = []
+    """ The list of reasons for validation failure """
+
+    def __init__(self, message, controller, reasons_list = []):
+        """
+        Constructor of the class.
+
+        @type message: String
+        @param message: The message to be printed.
+        @type controller: Controller
+        @param controller: The controller that failed the validation.
+        @type reasons_list: String
+        @param reasons_list: The list of reasons for validation failure.
+        """
+
+        ControllerValidationError.__init__(self, message, controller)
+        self.reasons_list = reasons_list
+
+    def __str__(self):
+        """
+        Returns the string representation of the class.
+
+        @rtype: String
+        @return: The string representation of the class.
+        """
+
+        return "Controller validation reason error: %s" % self.message
+
+class ValidationMethodError(WebMvcUtilsExceptionException):
+    """
+    The validation method error class.
+    """
+
+    def __init__(self, message):
+        """
+        Constructor of the class.
+
+        @type message: String
+        @param message: The message to be printed.
+        """
+
+        WebMvcUtilsExceptionException.__init__(self)
+        self.message = message
+
+    def __str__(self):
+        """
+        Returns the string representation of the class.
+
+        @rtype: String
+        @return: The string representation of the class.
+        """
+
+        return "Validation method error: %s" % self.message

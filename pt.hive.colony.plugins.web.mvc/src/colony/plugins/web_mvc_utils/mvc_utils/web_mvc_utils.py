@@ -135,11 +135,15 @@ def validated_method(validation_parameters = None, validation_method = None):
             # in case the validation method is set and the validation  method
             # enabled flag is set in the parameters
             if validation_method and validation_method_enabled:
-                # calls the validation method with the patterns and the session attributes
-                valitation_method_result = validation_method(patterns, session_attributes)
+                try:
+                    # calls the validation method with the patterns and the session attributes
+                    valitation_method_result = validation_method(patterns, session_attributes)
 
-                # in case the validation method running failed
-                not valitation_method_result and reasons_list.append("Failed to validate extra context validations")
+                    # in case the validation method running failed
+                    not valitation_method_result and reasons_list.append(web_mvc_utils_exceptions.ValidationMethodError("validation method failed in running"))
+                except BaseException, exception:
+                    # adds the exception to the reasons list
+                    reasons_list.append(exception)
 
             # in case the reasons list is not empty
             if reasons_list:
@@ -151,7 +155,7 @@ def validated_method(validation_parameters = None, validation_method = None):
                 # otherwise there is no validation method defined
                 else:
                     # raises the controller validation failed
-                    raise web_mvc_utils_exceptions.ControllerValidationError("validation failed: " + str(reasons_list), self)
+                    raise web_mvc_utils_exceptions.ControllerValidationReasonFailed("validation failed for a series of reasons", self, reasons_list)
             # otherwise the reason list is empty (no errors)
             else:
                 # calls the callback function,
