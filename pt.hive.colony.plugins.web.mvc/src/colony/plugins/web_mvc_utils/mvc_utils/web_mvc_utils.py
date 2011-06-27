@@ -155,7 +155,7 @@ def validated_method(validation_parameters = None, validation_method = None):
                 # otherwise there is no validation method defined
                 else:
                     # raises the controller validation failed
-                    raise web_mvc_utils_exceptions.ControllerValidationReasonFailed("validation failed for a series of reasons", self, reasons_list)
+                    raise web_mvc_utils_exceptions.ControllerValidationReasonFailed("validation failed for a series of reasons: " + str(reasons_list), self, reasons_list)
             # otherwise the reason list is empty (no errors)
             else:
                 # calls the callback function,
