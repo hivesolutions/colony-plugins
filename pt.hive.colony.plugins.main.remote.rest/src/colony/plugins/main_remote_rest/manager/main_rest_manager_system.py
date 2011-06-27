@@ -1106,6 +1106,23 @@ class RestRequest:
 
         self.request.set_attribute(attribute_name, attribute_value)
 
+    def get_session_attributes_map(self):
+        """
+        Retrieves the session attributes map.
+        In case the session is not defined the default (empty)
+        attributes map is returned.
+
+        @rtype: Dictionary
+        @return: The session attributes map.
+        """
+
+        # retrieves the session attributes map in case the session
+        # is defined otherwise retrieves the default map
+        session_attributes_map = self.session and self.session.attributes_map or {}
+
+        # returns the session attributes map
+        return session_attributes_map
+
     def get_request(self):
         """
         Retrieves the associated request.
