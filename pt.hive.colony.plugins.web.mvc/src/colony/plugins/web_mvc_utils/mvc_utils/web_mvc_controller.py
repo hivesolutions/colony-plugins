@@ -497,14 +497,19 @@ def save_entity_relations(self, rest_request, entity_map, entity, relations_map)
         # sets the relation entity in the entity
         setattr(entity, relation_name, relation_entity)
 
-def get_entity_map_parameters(self, entity_map):
+def get_entity_map_parameters(self, entity_map, delete_parameters = True):
     """
     Retrieves the entity map parameters value.
     The parameters are stored in a special part of
     the entity map, that is removed after read.
+    The removal of the parameters is optional and may be
+    prevented.
 
     @type entity_map: Dictionary
     @param entity_map: The entity map.
+    @type delete_parameters: bool
+    @param delete_parameters: If the parameters value should be
+    removed from the entity map.
     @rtype: Dictionary
     @return: The parameters map for the entity.
     """
@@ -514,7 +519,8 @@ def get_entity_map_parameters(self, entity_map):
 
     # removes the parameters from the entity map
     # in order to avoid possible attribute problems
-    if PARAMETERS_VALUE in entity_map: del entity_map[PARAMETERS_VALUE]
+    # in case the delete parameters is set
+    if delete_parameters and (PARAMETERS_VALUE in entity_map): del entity_map[PARAMETERS_VALUE]
 
     # returns the entity parameters
     return entity_parameters
