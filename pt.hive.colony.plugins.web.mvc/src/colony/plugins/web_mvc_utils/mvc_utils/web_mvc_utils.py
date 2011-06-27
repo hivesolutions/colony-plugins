@@ -54,13 +54,19 @@ SERIALIZER_VALUE = "serializer"
 EXCEPTION_HANDLER_VALUE = "exception_handler"
 """ The exception handler value """
 
-def validated_method(validation_parameters = None):
+PATTERN_NAMES_VALUE = "pattern_names"
+""" The pattern names value """
+
+def validated_method(validation_parameters = None, validation_method = None):
     """
     Decorator for the validated method.
 
     @type validation_parameters: Object
     @param validation_parameters: The parameters to be used when calling
     the validate method.
+    @type validation_method: Method
+    @param validation_method: The validation method to be used for extra
+    validation (in case it's necessary).
     @rtype: Function
     @return: The created decorator.
     """
@@ -110,6 +116,20 @@ def validated_method(validation_parameters = None):
             # tries to retrieves the validation failed method
             validation_failed_method = hasattr(self, VALIDATION_FAILED_VALUE) and self.validation_failed or None
 
+            # retrieves the patterns
+            patterns = parameters.get(PATTERN_NAMES_VALUE, {})
+
+            # retrieves the session attributes map
+            session_attributes = rest_request.get_session_attributes_map();
+
+            # in case the validation method is set
+            if validation_method:
+                # calls the validation method with the patterns and the session attributes
+                valitation_method_result = validation_method(patterns, session_attributes)
+
+                # in case the validation method running failed
+                not valitation_method_result and reasons_list.append("Failed to validate extra context validations")
+
             # in case the reasons list is not empty
             if reasons_list:
                 # in case a validation failed method is defined
@@ -117,10 +137,11 @@ def validated_method(validation_parameters = None):
                     # calls the validation failed method with the rest request the parameters the
                     # validation parameters and the reasons list and sets the return value
                     return_value = validation_failed_method(rest_request, parameters, validation_parameters, reasons_list)
-                # otherwise
+                # otherwise there is no validation method defined
                 else:
                     # raises the controller validation failed
                     raise web_mvc_utils_exceptions.ControllerValidationError("validation failed: " + str(reasons_list), self)
+            # otherwise the reason list is empty (no errors)
             else:
                 # calls the callback function,
                 # retrieving the return value
