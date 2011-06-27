@@ -67,6 +67,12 @@ DEFAULT_ALIAS_LOCALES = {}
 DEFAULT_TEMPLATE_FILE_ENCODING = "Cp1252"
 """ The default template file encoding """
 
+DEFAULT_WILDCARD_ACL_VALUE = "*"
+""" The default wildcard value for acl """
+
+DEFAULT_MAXIMUM_ACL_VALUE = 10000
+""" The default maximum value for acl """
+
 HTTP_PREFIX_VALUE = "http://"
 """ The http prefix value """
 
@@ -715,6 +721,49 @@ def process_form_data_flat(self, rest_request, encoding = DEFAULT_ENCODING):
 
     # returns the base attributes map
     return base_attributes_map
+
+def process_acl_values(self, acl_list, key, wildcard_value = DEFAULT_WILDCARD_ACL_VALUE, maximum_value = DEFAULT_MAXIMUM_ACL_VALUE):
+    """
+    Processes the various acl values in the given list.
+    Retrieves the lowest value for the given key and takes into account
+    the wildcard value for global permission values.
+
+    @type acl_list: List
+    @param acl_list: The list of acl (access control list) to
+    be used for acl permission value retrieval.
+    @type key: String
+    @param key: The key to be used for retrieval of acl permissions
+    value (this key is joined with the current wildcard).
+    @type wildcard_key: String
+    @param wildcard_key: The wilcard key to be used for retrieval
+    of wildcard values.
+    @type maximum_value: int
+    @param maximum_value: The maximum value valid for acl permission
+    values (this value should be changed carefully).
+    @rtype: int
+    @return: The lowest processed acl permission value for the given key.
+    """
+
+    # starts the permission values list with only the maximum
+    # value in it
+    permission_values = [maximum_value]
+
+    # iterates over all the acl in the acl list
+    for acl in acl_list:
+        # retrieves the various permissions from the acl
+        wildcard_permissions = acl.get(wildcard_value, maximum_value)
+        key_permissions = acl.get(key, maximum_value)
+
+        # adds the various permission values to the permission
+        # values list
+        permission_values.append(wildcard_permissions)
+        permission_values.append(key_permissions)
+
+    # retrieves the minimum value from the permission values
+    permission = min(permission_values)
+
+    # returns the permission
+    return permission
 
 def get_base_path(self, rest_request):
     """
