@@ -109,17 +109,36 @@
          * Registers the event handlers for the created objects.
          */
         var _registerHandlers = function() {
+            // retrieves the body
+            var _body = jQuery("body");
+
+            // registers for the mouse down event in the matched
+            // object
             matchedObject.mousedown(function(event) {
-                        // adds the click class
-                        jQuery(this).addClass("click");
+                        // retrieves the element
+                        var element = jQuery(this);
+
+                        // adds the click class to the element
+                        element.addClass("click");
+
+                        // creates the mouse up handler function so that
+                        // there is a clojure in the element
+                        var _mouseUpHandler = function(event) {
+                            // retrieves the body
+                            var _body = jQuery("body");
+
+                            // removes the click class from the element
+                            element.removeClass("click");
+
+                            // unbinds the mouse up event from the body
+                            _body.unbind("mouseup", _mouseUpHandler);
+                        };
+
+                        // register for the mouse up in the body
+                        _body.mouseup(_mouseUpHandler);
                     });
 
-            matchedObject.mouseup(function(event) {
-                        // removes the click class
-                        jQuery(this).removeClass("click");
-                    });
-
-            // registers for th click event for event propagation
+            // registers for the click event for event propagation
             // stopping
             matchedObject.click(function(event, element) {
                         // retrieves the element
@@ -143,14 +162,33 @@
          *            options The options of the plugin instance.
          */
         var _enable = function(matchedObject, options) {
-            matchedObject.mousedown(function(event) {
-                        // adds the click class
-                        jQuery(this).addClass("click");
-                    });
+            // retrieves the body
+            var _body = jQuery("body");
 
-            matchedObject.mouseup(function(event) {
-                        // removes the click class
-                        jQuery(this).removeClass("click");
+            // registers for the mouse down event in the matched
+            // object
+            matchedObject.mousedown(function(event) {
+                        // retrieves the element
+                        var element = jQuery(this);
+
+                        // adds the click class to the element
+                        element.addClass("click");
+
+                        // creates the mouse up handler function so that
+                        // there is a clojure in the element
+                        var _mouseUpHandler = function(event) {
+                            // retrieves the body
+                            var _body = jQuery("body");
+
+                            // removes the click class from the element
+                            element.removeClass("click");
+
+                            // unbinds the mouse up event from the body
+                            _body.unbind("mouseup", _mouseUpHandler);
+                        };
+
+                        // register for the mouse up in the body
+                        _body.mouseup(_mouseUpHandler);
                     });
 
             // removes the disabled class
@@ -178,15 +216,21 @@
         switch (method) {
             case "enable" :
                 _enable(matchedObject, options);
+
+                // breaks the switch
                 break;
 
             case "disable" :
                 _disable(matchedObject, options);
+
+                // breaks the switch
                 break;
 
             case "default" :
                 // initializes the plugin
                 initialize();
+
+                // breaks the switch
                 break;
         }
 
@@ -416,6 +460,9 @@
          * Registers the event handlers for the created objects.
          */
         var _registerHandlers = function() {
+            // retrieves the body
+            var _body = jQuery("body");
+
             // retrieves the date field input
             var dateFieldInput = jQuery(".date-field-input", matchedObject);
 
@@ -464,14 +511,28 @@
                         __toggle(dateField);
                     });
 
-            dateFieldButton.mousedown(function() {
-                        // adds the click class
-                        jQuery(this).addClass("click");
-                    });
+            dateFieldButton.mousedown(function(event) {
+                        // retrieves the element
+                        var element = jQuery(this);
 
-            dateFieldButton.mouseup(function() {
-                        // removes the click class
-                        jQuery(this).removeClass("click");
+                        // adds the click class to the element
+                        element.addClass("click");
+
+                        // creates the mouse up handler function so that
+                        // there is a clojure in the element
+                        var _mouseUpHandler = function(event) {
+                            // retrieves the body
+                            var _body = jQuery("body");
+
+                            // removes the click class from the element
+                            element.removeClass("click");
+
+                            // unbinds the mouse up event from the body
+                            _body.unbind("mouseup", _mouseUpHandler);
+                        };
+
+                        // register for the mouse up in the body
+                        _body.mouseup(_mouseUpHandler);
                     });
 
             dateFieldHeaderButtonNext.click(function(event) {
@@ -1009,16 +1070,30 @@
 
                         // hides the dropbox
                         __hide(dropbox);
-                    });
+                    })
 
-            jQuery(".dropbox-button", matchedObject).mousedown(function() {
-                        // adds the click class
-                        jQuery(this).addClass("click");
-                    });
+            jQuery(".dropbox-button", matchedObject).mousedown(function(event) {
+                        // retrieves the element
+                        var element = jQuery(this);
 
-            jQuery(".dropbox-button", matchedObject).mouseup(function() {
-                        // removes the click class
-                        jQuery(this).removeClass("click");
+                        // adds the click class to the element
+                        element.addClass("click");
+
+                        // creates the mouse up handler function so that
+                        // there is a clojure in the element
+                        var _mouseUpHandler = function(event) {
+                            // retrieves the body
+                            var _body = jQuery("body");
+
+                            // removes the click class from the element
+                            element.removeClass("click");
+
+                            // unbinds the mouse up event from the body
+                            _body.unbind("mouseup", _mouseUpHandler);
+                        };
+
+                        // register for the mouse up in the body
+                        _body.mouseup(_mouseUpHandler);
                     });
         };
 
@@ -1825,7 +1900,7 @@
                     + "</div>" + "<div class=\"window-button-area\">"
                     + "<div class=\"button-message\" >" + buttonMessage
                     + "</div>"
-                    + "<div class=\"button button-blue\" >Cancel</div>"
+                    + "<div class=\"button button-red\" >Cancel</div>"
                     + "<div class=\"button button-green\" >Confirm</div>"
                     + "</div>" + "<div class=\"clear\"></div>" + "</div>"
                     + "</div>";
