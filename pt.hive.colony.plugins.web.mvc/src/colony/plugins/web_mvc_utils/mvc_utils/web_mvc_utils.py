@@ -137,10 +137,10 @@ def validated_method(validation_parameters = None, validation_method = None):
             if validation_method and validation_method_enabled:
                 try:
                     # calls the validation method with the patterns and the session attributes
-                    valitation_method_result = validation_method(patterns, session_attributes)
+                    validation_method_result = validation_method(patterns, session_attributes)
 
                     # in case the validation method running failed
-                    not valitation_method_result and reasons_list.append(web_mvc_utils_exceptions.ValidationMethodError("validation method failed in running"))
+                    not validation_method_result and reasons_list.append(web_mvc_utils_exceptions.ValidationMethodError("validation method failed in running"))
                 except BaseException, exception:
                     # adds the exception to the reasons list
                     reasons_list.append(exception)
