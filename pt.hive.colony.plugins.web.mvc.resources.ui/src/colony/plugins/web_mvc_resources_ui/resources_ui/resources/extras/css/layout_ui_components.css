@@ -162,44 +162,36 @@ textarea.invalid {
     -moz-user-select: -moz-none;
 }
 
+.button:hover {
+    background-position: 0px -26px;
+}
+
+.button.click {
+    background-position: 0px -52px;
+}
+
 .button.disabled {
-    opacity: 0.5;
+    background-position: 0px -78px;
 }
 
 .button-green {
-    background: transparent url(../images/components/button/button-green-normal.png) no-repeat center center;
-}
-
-.button-green:hover {
-    background-image: url(../images/components/button/button-green-hover.png);
-}
-
-.button-green.click {
-    background-image: url(../images/components/button/button-green-clicked.png);
+    background: transparent url(../images/components/button/button-green.png) no-repeat 0px 0px;
 }
 
 .button-blue {
-    background: transparent url(../images/components/button/button-blue-normal.png) no-repeat center center;
-}
-
-.button-blue:hover {
-    background-image: url(../images/components/button/button-blue-hover.png);
-}
-
-.button-blue.click {
-    background-image: url(../images/components/button/button-blue-clicked.png);
+    background: transparent url(../images/components/button/button-blue.png) no-repeat 0px 0px;
 }
 
 .button-gray {
-    background: transparent url(../images/components/button/button-gray-normal.png) no-repeat center center;
+    background: transparent url(../images/components/button/button-gray.png) no-repeat 0px 0px;
 }
 
-.button-gray:hover {
-    background-image: url(../images/components/button/button-gray-hover.png);
+.button-red {
+    background: transparent url(../images/components/button/button-red.png) no-repeat 0px 0px;
 }
 
-.button-gray.click {
-    background-image: url(../images/components/button/button-gray-clicked.png);
+.button-orange {
+    background: transparent url(../images/components/button/button-orange.png) no-repeat 0px 0px;
 }
 
 .button-big {
