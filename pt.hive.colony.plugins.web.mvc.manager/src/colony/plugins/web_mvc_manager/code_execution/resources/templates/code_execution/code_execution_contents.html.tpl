@@ -23,7 +23,7 @@
             ${/if}
         </div>
         <div class="form-button-area">
-            <div class="cancel button button-blue">Cancel</div>
+            <div class="cancel button button-red">Cancel</div>
             <div class="submit button button-green">Execute</div>
         </div>
     </form>
