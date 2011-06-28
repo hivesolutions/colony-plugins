@@ -48,5 +48,8 @@ configuration = {
             "password" : None,
             "tls" : False
         }
+    },
+    "site" : {
+        "base_url" : "http://lmartinho.hive:8080/bargania/"
     }
 }
