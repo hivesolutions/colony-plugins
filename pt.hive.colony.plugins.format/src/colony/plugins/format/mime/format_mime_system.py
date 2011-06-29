@@ -161,6 +161,52 @@ class MimeMessage:
         self.headers_map = {}
         self.message_stream = colony.libs.string_buffer_util.StringBuffer()
 
+    def read_simple(self, message_contents):
+        # strips the message contents
+        message_contents = message_contents.lstrip()
+
+        # finds the index for the end of the headers
+        end_headers_index = message_contents.find("\r\n\r\n")
+
+        # retrieves the header contents string value and
+        # splits the headers around the lines
+        headers_contents = message_contents[:end_headers_index]
+        headers_lines = headers_contents.split("\r\n")
+
+        # iterates over all the headers lines
+        # to construct the headers map
+        for header_line in headers_lines:
+            # splits the header line around the divider
+            # and checks the length of the resulting values
+            header_values = header_line.split(":", 2)
+            header_values_length = len(header_values)
+
+            # in case the length of the header values is
+            # "valid"
+            if header_values_length > 1:
+                # unpacks the header values into name
+                # and value
+                header_name, header_value = header_values
+            # otherwise it's a "simple" header with no value
+            else:
+                # only unpacks the name value and sets the
+                # value to default
+                header_name, = header_values
+                header_value = ""
+
+            # strips both the header name and value
+            header_name = header_name.strip()
+            header_value = header_value.strip()
+
+            # sets the header in the headers map
+            self.headers_map[header_name] = header_value
+
+        # retrieves the message (contents) value
+        message_value = message_contents[end_headers_index + 4:]
+
+        # writes the message value in the message stream
+        self.message_stream.write(message_value)
+
     def write(self, message, flush = 1, encode = True):
         # retrieves the message type
         message_type = type(message)
