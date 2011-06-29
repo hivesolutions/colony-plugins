@@ -95,6 +95,9 @@ class MainServiceSmtpRelayMessageHandler:
         # retrieves the main client dns plugin
         main_client_dns_plugin = self.main_service_smtp_relay_message_handler_plugin.main_client_dns_plugin
 
+        # retrieves the format mime plugin
+        format_mime_plugin = self.main_service_smtp_relay_message_handler_plugin.format_mime_plugin
+
         # creates a new smtp client, using the main client smtp plugin
         smtp_client = main_client_smtp_plugin.create_client({})
 
@@ -109,6 +112,18 @@ class MainServiceSmtpRelayMessageHandler:
 
         # retrieves the message list of recipients
         message_recipients_list = message.get_recipients_list()
+
+        # creates the mime message structure for message manipulation
+        # and reads the current message contents
+        message_mime = format_mime_plugin.create_message({})
+        message_mime.read_simple(message_contents)
+        message_mime.set_header("Message-ID", "2f3501cc3680$1e5baca0$5b1305e0$@com.pt")
+        #message.set_header("Received", "2f3501cc3680$1e5baca0$5b1305e0$@com.pt")
+        #by 10.216.81.4 with SMTP id l4mr2087710wee.15.1309367724359;
+        #Wed, 29 Jun 2011 10:15:24 -0700 (PDT)
+
+        # retrieves the re-parsed contents
+        message_contents = message_mime.get_value()
 
         # creates the domain recipients map for the message
         # recipients list

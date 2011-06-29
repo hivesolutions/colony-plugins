@@ -65,7 +65,8 @@ class MainServiceSmtpRelayMessageHandlerPlugin(colony.base.plugin_system.Plugin)
     ]
     dependencies = [
         colony.base.plugin_system.PluginDependency("pt.hive.colony.plugins.main.client.smtp", "1.0.0"),
-        colony.base.plugin_system.PluginDependency("pt.hive.colony.plugins.main.client.dns", "1.0.0")
+        colony.base.plugin_system.PluginDependency("pt.hive.colony.plugins.main.client.dns", "1.0.0"),
+        colony.base.plugin_system.PluginDependency("pt.hive.colony.plugins.format.mime", "1.0.0")
     ]
     main_modules = [
         "main_service_smtp_relay_message_handler.relay_message_handler.main_service_smtp_relay_message_handler_exceptions",
@@ -80,6 +81,9 @@ class MainServiceSmtpRelayMessageHandlerPlugin(colony.base.plugin_system.Plugin)
 
     main_client_dns_plugin = None
     """ The main client dns plugin """
+
+    format_plugin = None
+    """ The format plugin """
 
     def load_plugin(self):
         colony.base.plugin_system.Plugin.load_plugin(self)
@@ -140,3 +144,10 @@ class MainServiceSmtpRelayMessageHandlerPlugin(colony.base.plugin_system.Plugin)
     @colony.base.decorators.plugin_inject("pt.hive.colony.plugins.main.client.dns")
     def set_main_client_dns_plugin(self, main_client_dns_plugin):
         self.main_client_dns_plugin = main_client_dns_plugin
+
+    def get_format_mime_plugin(self):
+        return self.format_mime_plugin
+
+    @colony.base.decorators.plugin_inject("pt.hive.colony.plugins.format.mime")
+    def set_format_mime_plugin(self, format_mime_plugin):
+        self.format_mime_plugin = format_mime_plugin
