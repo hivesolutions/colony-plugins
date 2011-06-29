@@ -42,7 +42,7 @@
             </first_operand>
             <second_operand>
                 <type>string</type>
-                <data>development</data>
+                <data>hive_site</data>
             </second_operand>
         </equals_expression>
     </validation>
