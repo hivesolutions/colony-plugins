@@ -168,10 +168,18 @@ class MimeMessage:
         # finds the index for the end of the headers
         end_headers_index = message_contents.find("\r\n\r\n")
 
-        # retrieves the header contents string value and
-        # splits the headers around the lines
-        headers_contents = message_contents[:end_headers_index]
-        headers_lines = headers_contents.split("\r\n")
+        # in case there are no header values in the message
+        if end_headers_index == -1:
+            # sets the header lines as empty and the headers index
+            # to a valid value for later message contents retrieval
+            headers_lines = []
+            end_headers_index = -4
+        # otherwise there are header values in the message
+        else:
+            # retrieves the header contents string value and
+            # splits the headers around the lines
+            headers_contents = message_contents[:end_headers_index]
+            headers_lines = headers_contents.split("\r\n")
 
         # iterates over all the headers lines
         # to construct the headers map
