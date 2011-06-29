@@ -186,7 +186,7 @@ class MimeMessage:
         for header_line in headers_lines:
             # splits the header line around the divider
             # and checks the length of the resulting values
-            header_values = header_line.split(":", 2)
+            header_values = header_line.split(":", 1)
             header_values_length = len(header_values)
 
             # in case the length of the header values is
