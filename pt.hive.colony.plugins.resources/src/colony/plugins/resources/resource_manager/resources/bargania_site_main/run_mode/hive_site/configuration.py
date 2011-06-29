@@ -50,6 +50,6 @@ configuration = {
         }
     },
     "site" : {
-        "base_url" : "http://localhost:8080/bargania/"
+        "base_url" : "http://bargania.com/"
     }
 }
