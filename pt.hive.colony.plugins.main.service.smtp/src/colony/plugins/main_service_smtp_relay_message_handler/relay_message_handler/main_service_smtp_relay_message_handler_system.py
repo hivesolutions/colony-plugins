@@ -113,14 +113,23 @@ class MainServiceSmtpRelayMessageHandler:
         # retrieves the message list of recipients
         message_recipients_list = message.get_recipients_list()
 
+        # TENHO DE OBTER DA SESSAO OS SEGUINTES VALORES
+        # 1. tipo de sessao smtp vs esmtp
+        # 2. ip do cliente
+        # 3. hostname do cliente
+        # 4. hostname do servidor
+        # 5. id da mensagem (cofirmar que ja deve estar gerado)
+
+        session = arguments["session"]
+
         # creates the mime message structure for message manipulation
         # and reads the current message contents
         message_mime = format_mime_plugin.create_message({})
         message_mime.read_simple(message_contents)
-        message_mime.set_header("Message-ID", "2f3501cc3680$1e5baca0$5b1305e0$@com.pt")
-        #message.set_header("Received", "2f3501cc3680$1e5baca0$5b1305e0$@com.pt")
-        #by 10.216.81.4 with SMTP id l4mr2087710wee.15.1309367724359;
-        #Wed, 29 Jun 2011 10:15:24 -0700 (PDT)
+        message_mime.set_header("Message-ID", "<2f3501cc3680$1e5baca0$5b1305e0$@mail.sender.com>")
+        message_mime.set_header("Received", "from 188.81.141.175 (bl16-141-175.dsl.telepac.pt [188.81.141.175])\r\n\
+        by mail.sender.com with ESMTP id 2f3501cc3680$1e5baca0$5b1305e0$;\r\n\
+        Wed, 29 Jun 2011 10:58:56 -0700 (PDT)")
 
         # retrieves the re-parsed contents
         message_contents = message_mime.get_value()
