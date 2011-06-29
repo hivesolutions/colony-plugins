@@ -16,6 +16,9 @@
             }, {
                 "id" : "pt.hive.colony.plugins.main.client.dns",
                 "version" : "1.0.0"
+            }, {
+                "id" : "pt.hive.colony.plugins.format.mime",
+                "version" : "1.0.0"
             }],
     "main_file" : "main_service_smtp_relay_message_handler_plugin.py",
     "resources" : [
