@@ -88,7 +88,8 @@ configuration = {
             "www.getcolony.com",
             "takethebill.com",
             "www.takethebill.com",
-            "bargania.com"
+            "bargania.com",
+            "www.bargania.com"
         ],
         "blog.hive.pt" : {
             "redirections" : {
@@ -189,6 +190,17 @@ configuration = {
             }
         },
         "bargania.com" : {
+            "redirections" : {
+                "resolution_order" : [
+                    "/"
+                ],
+                "/" : {
+                    "target" : "/colony_dynamic/rest/mvc/bargania_site/",
+                    "recursive_redirection" : True
+                }
+            }
+        },
+        "www.bargania.com" : {
             "redirections" : {
                 "resolution_order" : [
                     "/"
