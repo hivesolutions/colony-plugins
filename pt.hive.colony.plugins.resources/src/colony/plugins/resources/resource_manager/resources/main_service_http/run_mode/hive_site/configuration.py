@@ -76,7 +76,8 @@ configuration = {
         "www.getcolony.com" : True,
         "takethebill.com" : True,
         "www.takethebill.com" : True,
-        "bargania.com" : True
+        "bargania.com" : True,
+        "www.bargania.com" : True
     },
     "virtual_servers" : {
         "resolution_order" : [
