@@ -101,12 +101,6 @@ class MainServiceSmtpRelayMessageHandler:
         # creates a new dns client, using the main client dns plugin
         dns_client = main_client_dns_plugin.create_client({})
 
-        # opens the smtp client
-        smtp_client.open({})
-
-        # opens the dns client
-        dns_client.open({})
-
         # retrieves the message contents
         message_contents = message.get_contents()
 
@@ -120,42 +114,25 @@ class MainServiceSmtpRelayMessageHandler:
         # recipients list
         domain_recipients_map = self._get_domain_recipients_map(message_recipients_list)
 
-        # iterates over all the domain in the domain
-        # recipients map
-        for domain in domain_recipients_map:
-            # retrieves the recipients list for the domain
-            recipients_list = domain_recipients_map[domain]
+        # opens the smtp client
+        smtp_client.open({})
 
-            # creates the domain query
-            domain_query = (
-                domain,
-                MX_VALUE,
-                IN_VALUE
-            )
+        # opens the dns client
+        dns_client.open({})
 
-            try:
-                # resolves the queries and retrieves the result
-                response = dns_client.resolve_queries("8.8.8.8", 53, (domain_query,))
-            except:
-                # raises the host resolution error
-                raise main_service_smtp_relay_message_handler_exceptions.HostResolutionError("problem while resolving domain: " + domain)
+        try:
+            # iterates over all the domain in the domain
+            # recipients map
+            for domain, recipients_list in domain_recipients_map.items():
+                # sends the email using the given clients, for the given domain
+                # and using the given message information
+                self._send_email(smtp_client, dns_client, domain, message_sender, recipients_list, message_contents)
+        finally:
+            # closes the dns client
+            dns_client.close({})
 
-            # in case no answers are retrieved
-            if not response.answers:
-                # raises the host resolution error
-                raise main_service_smtp_relay_message_handler_exceptions.HostResolutionError("could not resolve domain mx value: " + domain)
-
-            # retrieves the hostname
-            hostname = response.answers[0][4][1]
-
-            # send the email to the host
-            smtp_client.send_mail(hostname, SMTP_PORT, message_sender, recipients_list, message_contents, {})
-
-        # closes the dns client
-        dns_client.close({})
-
-        # closes the smtp client
-        smtp_client.close({})
+            # closes the smtp client
+            smtp_client.close({})
 
     def _get_domain_recipients_map(self, recipients_list):
         """
@@ -192,3 +169,43 @@ class MainServiceSmtpRelayMessageHandler:
 
         # returns the domain recipients map
         return domain_recipients_map
+
+    def _send_email(self, smtp_client, dns_client, domain, message_sender, recipients_list, message_contents):
+        """
+        Sends an email using the given system clients, for the given
+        domain and using the given message information.
+
+        @type smtp_client: SmtpClient
+        @param smtp_client: The smtp client to be used for sending the email.
+        @type dns_client: DnsClient
+        @param dns_client: The dns client to be for mx resource resolution.
+        @type domain: String
+        @param domain: The domain server of the target smtp server.
+        @type message_sender: String
+        @param message_sender: The message sender field.
+        @type recipients_list: List
+        @param recipients_list: The list of recipient fields.
+        @type message_contents: String
+        @param message_contents: The contents of the message to be sent.
+        """
+
+        # creates the domain query
+        domain_query = (domain, MX_VALUE, IN_VALUE)
+
+        try:
+            # resolves the queries and retrieves the result
+            response = dns_client.resolve_queries("8.8.8.8", 53, (domain_query,))
+        except:
+            # raises the host resolution error
+            raise main_service_smtp_relay_message_handler_exceptions.HostResolutionError("problem while resolving domain: " + domain)
+
+        # in case no answers are retrieved
+        if not response.answers:
+            # raises the host resolution error
+            raise main_service_smtp_relay_message_handler_exceptions.HostResolutionError("could not resolve domain mx value: " + domain)
+
+        # retrieves the hostname
+        hostname = response.answers[0][4][1]
+
+        # send the email to the host
+        smtp_client.send_mail(hostname, SMTP_PORT, message_sender, recipients_list, message_contents, {})
