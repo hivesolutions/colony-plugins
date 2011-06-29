@@ -159,7 +159,7 @@ class MainServiceSmtpMainSessionHandler:
                 duplicated_message.set_recipients_list(local_recipients_list)
 
                 # handles the duplicated message with the database message handler
-                database_message_handler_plugin.handle_message(duplicated_message, arguments)
+                database_message_handler_plugin.handle_message(duplicated_message, session, arguments)
 
             # in case there are relay recipients defined
             if relay_recipients_list:
@@ -167,7 +167,7 @@ class MainServiceSmtpMainSessionHandler:
                 duplicated_message.set_recipients_list(relay_recipients_list)
 
                 # handles the duplicated message with the relay message handler
-                relay_message_handler_plugin.handle_message(duplicated_message, arguments)
+                relay_message_handler_plugin.handle_message(duplicated_message, session, arguments)
 
     def smtp_service_message_handler_load(self, smtp_service_message_handler_plugin):
         # retrieves the plugin handler name

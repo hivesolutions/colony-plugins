@@ -110,17 +110,19 @@ class MainServiceSmtpDatabaseMessageHandlerPlugin(colony.base.plugin_system.Plug
 
         return self.main_service_smtp_database_message_handler.get_handler_name()
 
-    def handle_message(self, message, arguments):
+    def handle_message(self, message, session, arguments):
         """
         Handles the given smtp message.
 
         @type message: SmtpMessage
         @param message: The smtp message to handled.
+        @type session: SmtpSession
+        @param session: The smtp session to be used.
         @type arguments: Dictionary
         @param arguments: The arguments to the message handling.
         """
 
-        return self.main_service_smtp_database_message_handler.handle_message(message, arguments)
+        return self.main_service_smtp_relay_session_handler.handle_message(message, session, arguments)
 
     def get_mail_storage_database_plugin(self):
         return self.mail_storage_database_plugin

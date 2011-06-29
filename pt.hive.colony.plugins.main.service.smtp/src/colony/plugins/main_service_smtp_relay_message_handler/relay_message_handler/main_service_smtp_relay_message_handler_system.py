@@ -79,12 +79,14 @@ class MainServiceSmtpRelayMessageHandler:
 
         return HANDLER_NAME
 
-    def handle_message(self, message, arguments):
+    def handle_message(self, message, session, arguments):
         """
         Handles the given smtp message.
 
         @type message: SmtpMessage
         @param message: The smtp message to handled.
+        @type session: SmtpSession
+        @param session: The smtp session to be used.
         @type arguments: Dictionary
         @param arguments: The arguments to the message handling.
         """
@@ -113,6 +115,8 @@ class MainServiceSmtpRelayMessageHandler:
         # retrieves the message list of recipients
         message_recipients_list = message.get_recipients_list()
 
+
+
         # TENHO DE OBTER DA SESSAO OS SEGUINTES VALORES
         # 1. tipo de sessao smtp vs esmtp
         # 2. ip do cliente
@@ -120,7 +124,9 @@ class MainServiceSmtpRelayMessageHandler:
         # 4. hostname do servidor
         # 5. id da mensagem (cofirmar que ja deve estar gerado)
 
-        session = arguments["session"]
+        import datetime
+        current_datetime = datetime.datetime.utcnow()
+        current_datetime_string = current_datetime.strftime("%a, %d %b %Y %H:%M:%S +0000 (UTC)")
 
         # creates the mime message structure for message manipulation
         # and reads the current message contents
@@ -128,8 +134,11 @@ class MainServiceSmtpRelayMessageHandler:
         message_mime.read_simple(message_contents)
         message_mime.set_header("Message-ID", "<2f3501cc3680$1e5baca0$5b1305e0$@mail.sender.com>")
         message_mime.set_header("Received", "from 188.81.141.175 (bl16-141-175.dsl.telepac.pt [188.81.141.175])\r\n\
-        by mail.sender.com with ESMTP id 2f3501cc3680$1e5baca0$5b1305e0$;\r\n\
-        Wed, 29 Jun 2011 10:58:56 -0700 (PDT)")
+        by mail.sender.com with ESMTP id 2f3501cc3680$1e5baca0$5b1305e0$;\r\n" + current_datetime_string)
+
+
+
+
 
         # retrieves the re-parsed contents
         message_contents = message_mime.get_value()

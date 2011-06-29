@@ -119,17 +119,19 @@ class MainServiceSmtpRelayMessageHandlerPlugin(colony.base.plugin_system.Plugin)
 
         return self.main_service_smtp_relay_session_handler.get_handler_name()
 
-    def handle_message(self, message, arguments):
+    def handle_message(self, message, session, arguments):
         """
         Handles the given smtp message.
 
         @type message: SmtpMessage
         @param message: The smtp message to handled.
+        @type session: SmtpSession
+        @param session: The smtp session to be used.
         @type arguments: Dictionary
         @param arguments: The arguments to the message handling.
         """
 
-        return self.main_service_smtp_relay_session_handler.handle_message(message, arguments)
+        return self.main_service_smtp_relay_session_handler.handle_message(message, session, arguments)
 
     def get_main_client_smtp_plugin(self):
         return self.main_client_smtp_plugin

@@ -68,12 +68,14 @@ class MainServiceSmtpDatabaseMessageHandler:
 
         return HANDLER_NAME
 
-    def handle_message(self, message, arguments):
+    def handle_message(self, message, session, arguments):
         """
         Handles the given smtp message.
 
         @type message: SmtpMessage
         @param message: The smtp message to handled.
+        @type session: SmtpSession
+        @param session: The smtp session to be used.
         @type arguments: Dictionary
         @param arguments: The arguments to the message handling.
         """
