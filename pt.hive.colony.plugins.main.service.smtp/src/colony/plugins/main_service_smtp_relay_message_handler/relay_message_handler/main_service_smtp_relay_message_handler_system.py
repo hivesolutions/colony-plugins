@@ -51,6 +51,9 @@ IN_VALUE = "IN"
 SMTP_PORT = 25
 """ The smtp port """
 
+DATE_TIME_FORMAT = "%a, %d %b %Y %H:%M:%S +0000 (UTC)"
+""" The date time format for message header """
+
 class MainServiceSmtpRelayMessageHandler:
     """
     The main service smtp relay message handler class.
@@ -106,39 +109,32 @@ class MainServiceSmtpRelayMessageHandler:
         # creates a new dns client, using the main client dns plugin
         dns_client = main_client_dns_plugin.create_client({})
 
-        # retrieves the message contents
+        # retrieves the message information attributes
         message_contents = message.get_contents()
-
-        # retrieves the message sender
         message_sender = message.get_sender()
-
-        # retrieves the message list of recipients
+        message_id = message.get_message_id()
+        message_date_time = message.get_date_time()
         message_recipients_list = message.get_recipients_list()
 
+        # retrieves the session attributes
+        client_hostname = session.get_client_hostname()
+        connection_host, _connection_port = session.get_client_connection_address()
 
+        service_hostname = "mail.sender.com"
+        session_type = "ESMTP"
 
-        # TENHO DE OBTER DA SESSAO OS SEGUINTES VALORES
-        # 1. tipo de sessao smtp vs esmtp
-        # 2. ip do cliente
-        # 3. hostname do cliente
-        # 4. hostname do servidor
-        # 5. id da mensagem (cofirmar que ja deve estar gerado)
+        # constructs the (full) message id using the service hostname
+        message_id_full = "%s@%s" % (message_id, service_hostname)
 
-        import datetime
-        current_datetime = datetime.datetime.utcnow()
-        current_datetime_string = current_datetime.strftime("%a, %d %b %Y %H:%M:%S +0000 (UTC)")
+        # converts the message date time to string value
+        message_date_time_string = message_date_time.strftime(DATE_TIME_FORMAT)
 
         # creates the mime message structure for message manipulation
         # and reads the current message contents
         message_mime = format_mime_plugin.create_message({})
         message_mime.read_simple(message_contents)
-        message_mime.set_header("Message-ID", "<2f3501cc3680$1e5baca0$5b1305e0$@mail.sender.com>")
-        message_mime.set_header("Received", "from 188.81.141.175 (bl16-141-175.dsl.telepac.pt [188.81.141.175])\r\n\
-        by mail.sender.com with ESMTP id 2f3501cc3680$1e5baca0$5b1305e0$;\r\n" + current_datetime_string)
-
-
-
-
+        message_mime.set_header("Message-ID", "<%s>" % message_id_full)
+        message_mime.set_header("Received", "from %s ([%s])\r\nby %s with %s id %s;\r\n%s" % (client_hostname, connection_host, message_id, service_hostname, session_type, message_date_time_string))
 
         # retrieves the re-parsed contents
         message_contents = message_mime.get_value()
