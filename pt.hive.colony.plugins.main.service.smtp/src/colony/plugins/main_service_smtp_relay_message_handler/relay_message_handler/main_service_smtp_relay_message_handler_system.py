@@ -54,6 +54,11 @@ SMTP_PORT = 25
 DATE_TIME_FORMAT = "%a, %d %b %Y %H:%M:%S +0000 (UTC)"
 """ The date time format for message header """
 
+MESSAGE_PATH_FORMAT = "from %s ([%s])\r\n\
+        by %s with %s id %s;\r\n\
+        %s"
+""" The message path format """
+
 class MainServiceSmtpRelayMessageHandler:
     """
     The main service smtp relay message handler class.
@@ -134,7 +139,7 @@ class MainServiceSmtpRelayMessageHandler:
         message_mime = format_mime_plugin.create_message({})
         message_mime.read_simple(message_contents)
         message_mime.set_header("Message-ID", "<%s>" % message_id_full)
-        message_mime.set_header("Received", "from %s ([%s])\r\nby %s with %s id %s;\r\n%s" % (client_hostname, connection_host, message_id, service_hostname, session_type, message_date_time_string))
+        message_mime.set_header("Received", MESSAGE_PATH_FORMAT % (client_hostname, connection_host, service_hostname, session_type, message_id, message_date_time_string))
 
         # retrieves the re-parsed contents
         message_contents = message_mime.get_value()

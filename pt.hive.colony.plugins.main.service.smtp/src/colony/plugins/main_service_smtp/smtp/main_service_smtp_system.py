@@ -38,6 +38,8 @@ __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
 import sys
+import uuid
+import datetime
 import traceback
 
 import colony.libs.map_util
@@ -613,8 +615,12 @@ class SmtpClientServiceHandler:
             # retrieves the session properties
             session_properties = service_configuration.get("session_properties", {})
 
-            # sets the session properties in the session
+            # retrieves the client connection address
+            client_connection_address = service_connection.connection_address
+
+            # sets the session properties and the client connection address in the session
             session.set_session_properties(session_properties)
+            session.set_client_connection_address(client_connection_address)
 
             # retrieves the default handler name
             handler_name = service_configuration.get("default_handler", None)
@@ -1122,6 +1128,9 @@ class SmtpSession:
     smtp_client_service_task = None
     """ The smtp client service task """
 
+    client_connection_address = None
+    """ The client connection address """
+
     client_hostname = "none"
     """ The client hostname """
 
@@ -1188,6 +1197,10 @@ class SmtpSession:
     def generate_message(self, set_current_message = True):
         # creates the new message
         message = SmtpMessage()
+
+        # generates the initial structures
+        message.generate_message_id()
+        message.generate_date_time()
 
         # adds the message to the messages list
         self.add_message(message)
@@ -1302,6 +1315,26 @@ class SmtpSession:
         """
 
         self.smtp_client_service_task = smtp_client_service_task
+
+    def get_client_connection_address(self):
+        """
+        Retrieves the client connection address.
+
+        @rtype: Tuple
+        @return: The client connection address.
+        """
+
+        return self.client_connection_address
+
+    def set_client_connection_address(self, client_connection_address):
+        """
+        Sets the client connection address.
+
+        @type client_connection_address: Tuple
+        @param client_connection_address: The client connection address.
+        """
+
+        self.client_connection_address = client_connection_address
 
     def get_client_hostname(self):
         """
@@ -1615,6 +1648,12 @@ class SmtpMessage:
     sender = "none"
     """ The sender of the message """
 
+    message_id = "none"
+    """ The unique identifier of the message """
+
+    date_time = None
+    """ The date time representing the creation of the message """
+
     recipients_list = []
     """ The list of recipients for the message """
 
@@ -1641,6 +1680,8 @@ class SmtpMessage:
         duplicated_message.contents = self.contents
         duplicated_message.sender = self.sender
         duplicated_message.recipients_list = self.recipients_list
+        duplicated_message.message_id = self.message_id
+        duplicated_message.date_time = self.date_time
 
         # returns the duplicated message
         return duplicated_message
@@ -1654,6 +1695,30 @@ class SmtpMessage:
         """
 
         self.recipients_list.append(recipient)
+
+    def generate_message_id(self):
+        """
+        Generates the new message id based on a current
+        universal unique identifier.
+        """
+
+        # generates a new unique identifier
+        # and retrieves the hexadecimal value
+        uuid_value = uuid.uuid4()
+        uuid_string_value = uuid_value.hex
+
+        # sets the message id with the uuid string value
+        self.message_id = uuid_string_value
+
+    def generate_date_time(self):
+        """
+        Generates the date time field based on the
+        current utc time.
+        """
+
+        # generates the date time structure based on
+        # the current utc time
+        self.date_time = datetime.datetime.utcnow()
 
     def get_contents(self):
         """
@@ -1677,7 +1742,7 @@ class SmtpMessage:
 
     def get_sender(self):
         """
-        Retrieves the .
+        Retrieves the sender.
 
         @rtype: String
         @return: The sender.
@@ -1694,6 +1759,46 @@ class SmtpMessage:
         """
 
         self.sender = sender
+
+    def get_message_id(self):
+        """
+        Retrieves the message id.
+
+        @rtype: String
+        @return: The message id.
+        """
+
+        return self.message_id
+
+    def set_message_id(self, message_id):
+        """
+        Sets the message id.
+
+        @type message_id: String
+        @param message_id: The message id.
+        """
+
+        self.message_id = message_id
+
+    def get_date_time(self):
+        """
+        Retrieves the message id.
+
+        @rtype: datetime
+        @return: The date time.
+        """
+
+        return self.date_time
+
+    def set_date_time(self, date_time):
+        """
+        Sets the date time.
+
+        @type date_time: datetime
+        @param date_time: The date time.
+        """
+
+        self.date_time = date_time
 
     def get_recipients_list(self):
         """
