@@ -49,7 +49,21 @@ configuration = {
             "tls" : False
         }
     },
+    "facebook" : {
+        "consumer_id" : "193570730692520",
+        "consumer_key" : "70aa4a18192b1d3c7cd00eebd0189d0a",
+        "consumer_secret" : "2a6e545effd2776c0c6d6b3f2d8fb819",
+        "consumer_scope" : "email"
+    },
     "site" : {
         "base_url" : "http://localhost:8080/bargania/"
+    },
+    "tasks" : {
+        "fetch" : {
+            "schedule" : False
+        },
+        "cleanup" : {
+            "schedule" : False
+        }
     }
 }

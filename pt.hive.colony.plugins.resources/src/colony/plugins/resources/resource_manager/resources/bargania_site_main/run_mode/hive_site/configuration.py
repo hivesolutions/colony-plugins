@@ -51,5 +51,19 @@ configuration = {
     },
     "site" : {
         "base_url" : "http://bargania.com/"
+    },
+    "tasks" : {
+        "fetch" : {
+            "schedule" : True,
+            "recursion_list" : [
+                0, 0, 10, 0, 0
+            ]
+        },
+        "cleanup" : {
+            "schedule" : True,
+            "recursion_list" : [
+                0, 0, 30, 0, 0
+            ]
+        }
     }
 }
