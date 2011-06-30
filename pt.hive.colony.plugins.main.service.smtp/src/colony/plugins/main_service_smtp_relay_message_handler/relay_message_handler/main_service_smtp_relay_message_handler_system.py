@@ -48,11 +48,20 @@ MX_VALUE = "MX"
 IN_VALUE = "IN"
 """ The in value """
 
+MESSAGE_ID_VALUE = "Message-ID"
+""" The message id value """
+
+RECEIVED_VALUE = "Received"
+""" The received value """
+
 SMTP_PORT = 25
 """ The smtp port """
 
 DATE_TIME_FORMAT = "%a, %d %b %Y %H:%M:%S +0000 (UTC)"
 """ The date time format for message header """
+
+MESSAGE_ID_FORMAT = "<%s>"
+""" The message id format """
 
 MESSAGE_PATH_FORMAT = "from %s ([%s])\r\n\
         by %s with %s id %s;\r\n\
@@ -138,8 +147,8 @@ class MainServiceSmtpRelayMessageHandler:
         # and reads the current message contents
         message_mime = format_mime_plugin.create_message({})
         message_mime.read_simple(message_contents)
-        message_mime.set_header("Message-ID", "<%s>" % message_id_full)
-        message_mime.set_header("Received", MESSAGE_PATH_FORMAT % (client_hostname, connection_host, service_hostname, session_type, message_id, message_date_time_string))
+        message_mime.set_header(MESSAGE_ID_VALUE, MESSAGE_ID_FORMAT % message_id_full)
+        message_mime.set_header(RECEIVED_VALUE, MESSAGE_PATH_FORMAT % (client_hostname, connection_host, service_hostname, session_type, message_id, message_date_time_string))
 
         # retrieves the re-parsed contents
         message_contents = message_mime.get_value()
