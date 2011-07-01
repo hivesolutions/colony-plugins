@@ -1149,6 +1149,9 @@ class SmtpSession:
     started = False
     """ The started flag """
 
+    secure = False
+    """ The secure flag """
+
     closed = False
     """ The closed flag """
 
@@ -1287,6 +1290,9 @@ class SmtpSession:
 
         # upgrades the current service connection
         service_connection.upgrade(SOCKET_UPGRADER_NAME, parameters)
+
+        # sets the secure flag
+        self.secure = True
 
     def reset_end_token(self):
         """
@@ -1455,6 +1461,26 @@ class SmtpSession:
         """
 
         self.started = started
+
+    def get_secure(self):
+        """
+        Retrieves the secure.
+
+        @rtype: bool
+        @return: The secure.
+        """
+
+        return self.secure
+
+    def set_secure(self, secure):
+        """
+        Sets the secure.
+
+        @type closed: bool
+        @param closed: The secure.
+        """
+
+        self.secure = secure
 
     def get_closed(self):
         """

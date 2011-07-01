@@ -37,6 +37,8 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
+import colony.libs.host_util
+
 import main_service_smtp_relay_message_handler_exceptions
 
 HANDLER_NAME = "relay"
@@ -56,6 +58,9 @@ RECEIVED_VALUE = "Received"
 
 SMTP_PORT = 25
 """ The smtp port """
+
+EXTENDED_SMTP = "ESMTP"
+""" The extended smtp protocol """
 
 DATE_TIME_FORMAT = "%a, %d %b %Y %H:%M:%S +0000 (UTC)"
 """ The date time format for message header """
@@ -134,8 +139,9 @@ class MainServiceSmtpRelayMessageHandler:
         client_hostname = session.get_client_hostname()
         connection_host, _connection_port = session.get_client_connection_address()
 
-        service_hostname = "mail.sender.com"
-        session_type = "ESMTP"
+        # retrieves the service extra values
+        service_hostname = colony.libs.host_util.get_hostname()
+        session_type = EXTENDED_SMTP
 
         # constructs the (full) message id using the service hostname
         message_id_full = "%s@%s" % (message_id, service_hostname)
