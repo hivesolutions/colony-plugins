@@ -134,18 +134,23 @@
 
             // registers the upload element to the progress event
             uploadElement.bind("progress", function(event) {
-                // in case the length is not
-                // computable
-                if (!event.lengthComputable) {
-                    return;
-                }
+                        // retrieves the "original" event
+                        var originalEvent = event.originalEvent;
 
-                // calculates the percentage of loading
-                var percentage = Math.round((event.loaded * 100) / event.total);
+                        // in case the length is not
+                        // computable
+                        if (!originalEvent.lengthComputable) {
+                            return;
+                        }
 
-                // triggers the file progress change event
-                matchedObject.trigger("file_progress_change", [percentage]);
-            });
+                        // calculates the percentage of loading
+                        var percentage = Math.round((originalEvent.loaded * 100)
+                                / originalEvent.total);
+
+                        // triggers the file progress change event
+                        matchedObject.trigger("file_progress_change",
+                                [percentage]);
+                    });
 
             // registers the upload element to the load event
             uploadElement.bind("load", function(event) {
@@ -184,7 +189,7 @@
 
             // sets the content type header
             xmlHttpRequest.setRequestHeader(CONTENT_TYPE_VALUE,
-                    APPLICATION_OCTET_STREAM_VALUE)
+                    APPLICATION_OCTET_STREAM_VALUE);
 
             // sends the file contents (in base64)
             xmlHttpRequest.send(fileContentsBase64);
