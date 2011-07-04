@@ -73,6 +73,9 @@ MULTIPART_FORM_DATA_VALUE = "multipart/form-data"
 WWW_FORM_URLENCODED_VALUE = "application/x-www-form-urlencoded"
 """ The www form urlencoded value """
 
+OCTET_STREAM_VALUE = "application/octet-stream"
+""" The octet stream value """
+
 CONNECTION_TYPE = "connection"
 """ The connection type """
 
@@ -1135,6 +1138,11 @@ class HttpClientServiceHandler:
             for content_type_item in content_type_splited:
                 # strips the content type item
                 content_type_item_stripped = content_type_item.strip()
+
+                # in case the content is of type octet stream
+                if content_type_item_stripped.startswith(OCTET_STREAM_VALUE):
+                    # returns immediately
+                    return
 
                 # in case the content is of type multipart form data
                 if content_type_item_stripped.startswith(MULTIPART_FORM_DATA_VALUE):
