@@ -103,6 +103,9 @@ class FormatMime:
         # file name
         _base, extension = os.path.splitext(file_name)
 
+        # converts the extension to lower case
+        extension = extension.lower()
+
         # retrieves the (mime) type from the extension mime type mapping
         mime_type = self.extension_map.get(extension, None)
 
