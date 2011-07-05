@@ -63,6 +63,7 @@ configuration = {
     "virtual_servers" : {
         "resolution_order" : [
             "board.hive",
+            "tools.hive",
             "hivesolutions.dyndns.org"
         ],
         "board.hive" : {
@@ -72,6 +73,22 @@ configuration = {
                 ],
                 "/" : {
                     "target" : "/colony_dynamic/rest/mvc/media_dashboard/",
+                    "recursive_redirection" : True
+                }
+            }
+        },
+        "tools.hive" : {
+            "redirections" : {
+                "resolution_order" : [
+                    "/toolbar",
+                    "/dropbox"
+                ],
+                "/toolbar" : {
+                    "target" : "/colony_dynamic/rest/mvc/web_toolbar/",
+                    "recursive_redirection" : True
+                },
+                "/dropbox" : {
+                    "target" : "/colony_dynamic/rest/mvc/web_dropbox/",
                     "recursive_redirection" : True
                 }
             }
