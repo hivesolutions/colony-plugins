@@ -447,10 +447,12 @@ class WorkPoolImplementation:
         work_processing_task.work_task = work_task
 
         # creates a new work task descriptor
-        work_task_descriptor = self.task_descriptor_class(start_method = work_task.start,
-                                                          stop_method = work_task.stop,
-                                                          pause_method = work_task.pause,
-                                                          resume_method = work_task.resume)
+        work_task_descriptor = self.task_descriptor_class(
+            start_method = work_task.start,
+            stop_method = work_task.stop,
+            pause_method = work_task.pause,
+            resume_method = work_task.resume
+        )
 
         # inserts the new work task descriptor into the thread pool
         self.thread_pool.insert_task(work_task_descriptor)
