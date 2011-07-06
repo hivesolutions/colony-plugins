@@ -39,10 +39,10 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 configuration = {
     "base_configuration" : {
-        "base_url" : "http://tools.hive:8080/dropbox/",
+        "base_url" : "http://localhost:8080/colony_dynamic/rest/mvc/web_dropbox/",
         "local_repository_path" : "c:/uploads"
     },
     "web_toolbar_configuration" : {
-        "base_url" : "http://tools.hive:8080/toolbar/"
+        "base_url" : "http://localhost:8080/colony_dynamic/rest/mvc/web_toolbar/"
     }
 }
