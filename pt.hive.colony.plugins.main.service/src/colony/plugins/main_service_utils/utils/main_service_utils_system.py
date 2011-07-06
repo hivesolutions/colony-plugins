@@ -147,89 +147,6 @@ if EPOLL_SUPPORT:
     REGISTER_MASK = NEW_VALUE_MASK #@UndefinedVariable
     """ The register mask value """
 
-class ServiceSocketAcceptinThread(threading.Thread):
-    """
-    Class that handles the accepting of the service
-    socket.
-    """
-
-    abstract_service = None
-    """ The abstract service reference """
-
-    stop_flag = False
-    """ The flag that controls the execution of the thread """
-
-    service_socket_queue = []
-    """ The service socket queue """
-
-    service_socket_queue_condition = None
-    """ The condition that controls the service socket queue """
-
-    def __init__(self, abstract_service):
-        """
-        Constructor of the class.
-        """
-
-        self.abstract_service = abstract_service
-
-        self.service_socket_queue = []
-
-        self.service_socket_queue_condition = threading.Condition()
-
-    def run(self):
-        # unsets the stop flag
-        self.stop_flag = False
-
-        # Consume one item
-#        cv.acquire()
-#        while not an_item_is_available():
-#            cv.wait()
-#        get_an_available_item()
-#        cv.release()
-#
-#        # Produce one item
-#        cv.acquire()
-#        make_an_item_available()
-#        cv.notify()
-#        cv.release()
-
-        # iterates continuously
-        while True:
-            # in case the stop flag is set
-            if self.stop_flag:
-                # breaks the loop
-                break;
-
-            #while not an_item_is_available():
-                # waits for the service socket queue condition
-            #    self.service_socket_queue_condition.wait()
-
-            # pops the top service socket
-            service_socket = self.socket_queue.pop()
-
-#            # accepts the connection retrieving the service connection object and the address
-#            service_connection, service_address = service_socket.accept()
-#
-#            # sets the service connection to non blocking mode
-#            service_connection.setblocking(0)
-#
-#            # inserts the connection and address into the pool
-#            self._insert_connection_pool(service_connection, service_address, port)
-
-    def add_service_socket(self, service_socket):
-        # acquires the service socket queue condition
-        self.service_socket_queue_condition.acquire()
-
-        try:
-            # adds the service socket to the service socket queue
-            self.service_socket_queue.append(service_socket)
-
-            # notifies the service socket queue condition
-            self.service_socket_queue_condition.notify()
-        finally:
-            # releases the service socket queue condition
-            self.service_socket_queue_condition.release()
-
 class MainServiceUtils:
     """
     The main service utils class.
@@ -477,6 +394,9 @@ class AbstractService:
     response_timeout = RESPONSE_TIMEOUT
     """ The response timeout """
 
+    service_accepting_thread = None
+    """ the service accepting thread """
+
     def __init__(self, main_service_utils, main_service_utils_plugin, parameters = {}):
         """
         Constructor of the class.
@@ -514,6 +434,8 @@ class AbstractService:
         self.service_connection_close_event = threading.Event()
         self.service_connection_close_end_event = threading.Event()
 
+        self.service_accepting_thread = ServiceAcceptingThread(self)
+
         # in case no end points are defined and there is a socket provider
         # a default end point is creates with those values
         if not self.end_points and self.socket_provider:
@@ -534,6 +456,9 @@ class AbstractService:
         """
 
         try:
+            # starts the service accepting thread
+            self.service_accepting_thread.start()
+
             # creates the work pool
             self._create_pool()
 
@@ -586,6 +511,11 @@ class AbstractService:
 
         # stops the pool
         self.service_client_pool.stop_pool()
+
+        # sets the stop flag in the service accepting thread
+        # and stops the thread
+        self.service_accepting_thread.stop_flag = True
+        self.service_accepting_thread.stop()
 
     def _create_pool(self):
         """
@@ -773,11 +703,14 @@ class AbstractService:
             # sets the service connection to non blocking mode
             service_connection.setblocking(0)
 
-            # inserts the connection and address into the pool
-            self._insert_connection_pool(service_connection, service_address, port)
+            # creates the service tuple with the service connection, the
+            # service address and the port and adds it to the
+            # service accepting thread
+            service_tuple = (service_connection, service_address, port)
+            self.service_accepting_thread.add_service_tuple(service_tuple)
         except Exception, exception:
             # prints an error message about the problem accepting the socket
-            self.main_service_utils_plugin.error("Error accepting socket: " + unicode(exception))
+            self.main_service_utils_plugin.error("Error accepting service tuple: " + unicode(exception))
 
     def _read_service_socket(self, service_socket):
         """
@@ -2343,3 +2276,83 @@ class ServiceConnectionless(ServiceConnection):
             self.connection_address,
             self.connection_port
         )
+
+class ServiceAcceptingThread(threading.Thread):
+    """
+    Class that handles the accepting of the service
+    socket.
+    """
+
+    abstract_service = None
+    """ The abstract service reference """
+
+    stop_flag = False
+    """ The flag that controls the execution of the thread """
+
+    service_tuple_queue = []
+    """ The service tuple queue """
+
+    service_tuple_queue_condition = None
+    """ The condition that controls the service tuple queue """
+
+    def __init__(self, abstract_service):
+        """
+        Constructor of the class.
+        """
+        threading.Thread.__init__(self)
+
+        self.abstract_service = abstract_service
+
+        self.service_tuple_queue = []
+
+        self.service_tuple_queue_condition = threading.Condition()
+
+    def run(self):
+        # unsets the stop flag
+        self.stop_flag = False
+
+        # iterates continuously
+        while True:
+            # in case the stop flag is set
+            if self.stop_flag:
+                # breaks the loop
+                break;
+
+            # acquires the service tuple queue condition
+            self.service_tuple_queue_condition.acquire()
+
+            try:
+                # iterates while the service socker queue is empty
+                while not self.service_tuple_queue:
+                    # waits for the service tuple queue condition
+                    self.service_tuple_queue_condition.wait()
+
+                # pops the top service tuple
+                service_tuple = self.service_tuple_queue.pop()
+
+                # unpacks the service tuple retrieving the service connection,
+                # the service address and the port
+                service_connection, service_address, port = service_tuple
+
+                # inserts the connection and address into the pool
+                self.abstract_service._insert_connection_pool(service_connection, service_address, port)
+            except Exception, exception:
+                # prints an error message about the problem accepting the socket
+                self.abstract_service.main_service_utils_plugin.error("Error accepting socket: " + unicode(exception))
+            finally:
+                # releases the service tuple queue condition
+                self.service_tuple_queue_condition.release()
+
+    def add_service_tuple(self, service_tuple):
+        # acquires the service tuple queue condition
+        self.service_tuple_queue_condition.acquire()
+
+        try:
+            # adds the service tuple to the service tuple queue
+            self.service_tuple_queue.append(service_tuple)
+
+            # notifies the service tuple queue condition
+            self.service_tuple_queue_condition.notify()
+        finally:
+            # releases the service tuple queue condition
+            self.service_tuple_queue_condition.release()
