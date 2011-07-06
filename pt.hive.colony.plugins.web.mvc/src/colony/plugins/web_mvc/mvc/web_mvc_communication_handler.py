@@ -498,84 +498,86 @@ class ConnectionProcessingThread(threading.Thread):
         # acquires the processing queue lock
         self.processing_queue_lock.acquire()
 
-        # unpacks the communication element
-        communication_connection, _request, target_timestamp = communication_element
+        try:
+            # unpacks the communication element
+            communication_connection, _request, target_timestamp = communication_element
 
-        # in case the target timestamp is not yet present
-        # in the timestamp list
-        if not target_timestamp in self.timestamp_list:
-            # adds the target timestamp to the timestamp
-            # list and re-sorts the list
-            self.timestamp_list.append(target_timestamp)
-            self.timestamp_list.sort()
+            # in case the target timestamp is not yet present
+            # in the timestamp list
+            if not target_timestamp in self.timestamp_list:
+                # adds the target timestamp to the timestamp
+                # list and re-sorts the list
+                self.timestamp_list.append(target_timestamp)
+                self.timestamp_list.sort()
 
-        # retrieves the communication elements list for the target
-        # timestamp (if any) and adds the communication element to the list
-        communication_elements = self.timestamp_map.get(target_timestamp, [])
-        communication_elements.append(communication_element)
-        self.timestamp_map[target_timestamp] = communication_elements
+            # retrieves the communication elements list for the target
+            # timestamp (if any) and adds the communication element to the list
+            communication_elements = self.timestamp_map.get(target_timestamp, [])
+            communication_elements.append(communication_element)
+            self.timestamp_map[target_timestamp] = communication_elements
 
-        # retrieves the communication elements list for the communication
-        # connection (if any) and adds the communication element to the list
-        communication_elements = self.processing_map.get(communication_connection, [])
-        communication_elements.append(communication_element)
-        self.processing_map[communication_connection] = communication_elements
+            # retrieves the communication elements list for the communication
+            # connection (if any) and adds the communication element to the list
+            communication_elements = self.processing_map.get(communication_connection, [])
+            communication_elements.append(communication_element)
+            self.processing_map[communication_connection] = communication_elements
 
-        # adds the communication element to the processing queue
-        self.processing_queue.append(communication_element)
-
-        # releases the processing queue lock
-        self.processing_queue_lock.release()
+            # adds the communication element to the processing queue
+            self.processing_queue.append(communication_element)
+        finally:
+            # releases the processing queue lock
+            self.processing_queue_lock.release()
 
     def remove_queue(self, communication_element):
         # acquires the processing queue lock
         self.processing_queue_lock.acquire()
 
-        # in case the communication element is not present
-        # in the processing queue (possible add and remove)
-        if not communication_element in self.processing_queue:
-            # returns immediately
-            return
+        try:
+            # in case the communication element is not present
+            # in the processing queue (possible add and remove)
+            if not communication_element in self.processing_queue:
+                # returns immediately
+                return
 
-        # unpacks the communication element
-        communication_connection, _request, target_timestamp = communication_element
+            # unpacks the communication element
+            communication_connection, _request, target_timestamp = communication_element
 
-        # retrieves the communication elements associated with the
-        # target timestamp and removes the current communication
-        # element from the communication elements
-        communication_elements = self.timestamp_map[target_timestamp]
-        communication_elements.remove(communication_element)
+            # retrieves the communication elements associated with the
+            # target timestamp and removes the current communication
+            # element from the communication elements
+            communication_elements = self.timestamp_map[target_timestamp]
+            communication_elements.remove(communication_element)
 
-        # in case the communication elements list is empty
-        # it should be removed (house-keeping)
-        if not communication_elements:
-            # removes the communication elements list
-            # reference from the timestamp map (it's empty)
-            del self.timestamp_map[target_timestamp]
+            # in case the communication elements list is empty
+            # it should be removed (house-keeping)
+            if not communication_elements:
+                # removes the communication elements list
+                # reference from the timestamp map (it's empty)
+                del self.timestamp_map[target_timestamp]
 
-            # removes the target timestamp from the timestmap
-            # list (no more elements for the target timestamp)
-            self.timestamp_list.remove(target_timestamp)
+                # removes the target timestamp from the timestmap
+                # list (no more elements for the target timestamp)
+                self.timestamp_list.remove(target_timestamp)
 
-        # retrieves the communication elements associated with the
-        # communication connection and removes the current communication
-        # element from the communication elements
-        communication_elements = self.processing_map[communication_connection]
-        communication_elements.remove(communication_element)
+            # retrieves the communication elements associated with the
+            # communication connection and removes the current communication
+            # element from the communication elements
+            communication_elements = self.processing_map[communication_connection]
+            communication_elements.remove(communication_element)
 
-        # in case the communication elements list is empty
-        # it should be removed (house-keeping)
-        if not communication_elements:
-            # removes the communication elements list
-            # reference from the processing map (it's empty)
-            del self.processing_map[communication_connection]
+            # in case the communication elements list is empty
+            # it should be removed (house-keeping)
+            if not communication_elements:
+                # removes the communication elements list
+                # reference from the processing map (it's empty)
+                del self.processing_map[communication_connection]
 
-        # removes the communication element from the "main"
-        # processing queue
-        self.processing_queue.remove(communication_element)
-
-        # releases the processing queue lock
-        self.processing_queue_lock.release()
+            # removes the communication element from the "main"
+            # processing queue
+            self.processing_queue.remove(communication_element)
+        finally:
+            # releases the processing queue lock
+            self.processing_queue_lock.release()
 
     def _process_element(self, element):
         # unpacks the element into the communication connection the request
