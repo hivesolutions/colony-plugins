@@ -789,25 +789,47 @@ class HttpClientServiceHandler:
             # checks if the request is delayed
             request_delayed = request.delayed
 
-            # in case the request is not delayed processes the request (immediately)
-            not request_delayed and self.process_request(request, service_connection)
-
-            # retrieves the request timeout from the service connection
-            service_connection_request_timeout = service_connection.connection_request_timeout
-
-            # prints a debug message
-            self.service_plugin.debug("Connection: %s kept alive for %ss" % (str(service_connection), str(service_connection_request_timeout)))
+            # in case the request is of type delayed it should be processed (contents
+            # send) after
+            if request_delayed:
+                # processes the request as delayed, retrieving the return
+                # value (connection closed value)
+                return_value = self.process_delayed(request, service_connection)
+            # otherwise the request is not delayed processes the request (immediately)
+            else:
+                # processes the request normally, retrieving the return
+                # value (connection closed value)
+                return_value = self.process_request(request, service_connection)
         except Exception, exception:
-            self.process_exception(request, service_connection, exception)
+            # processes the exception, retrieving the return
+            # value (connection closed value)
+            return_value = self.process_exception(request, service_connection, exception)
 
         # runs the logging steps for the request
         self._log(request)
+
+        # in case the return value is invalid the connection
+        # is meant to be closed (no need to process any extra
+        # information)
+        if not return_value:
+            # returns false (connection closed)
+            return False
 
         # in case there is pending data calls the default
         # request handler to handle the remaining data (allows http pipelining)
         self.pending_data and self.default_request_handler(service_connection)
 
         # returns true (connection remains open)
+        return True
+
+    def process_delayed(self, request, service_connection):
+        # retrieves the request timeout from the service connection
+        service_connection_request_timeout = service_connection.connection_request_timeout
+
+        # prints a debug message
+        self.service_plugin.debug("Connection: %s kept alive for %ss for delayed request" % (str(service_connection), str(service_connection_request_timeout)))
+
+        # returns true (connection meant to be kept alive)
         return True
 
     def process_request(self, request, service_connection):
@@ -838,6 +860,15 @@ class HttpClientServiceHandler:
             # returns false (connection closed)
             return False
 
+        # retrieves the request timeout from the service connection
+        service_connection_request_timeout = service_connection.connection_request_timeout
+
+        # prints a debug message
+        self.service_plugin.debug("Connection: %s kept alive for %ss" % (str(service_connection), str(service_connection_request_timeout)))
+
+        # returns true (connection meant to be kept alive)
+        return True
+
     def process_exception(self, request, service_connection, exception):
         # prints info message about exception
         self.service_plugin.info("There was an exception handling the request: " + unicode(exception))
@@ -854,6 +885,9 @@ class HttpClientServiceHandler:
         except Exception, exception:
             # prints an error message
             self.service_plugin.debug("There was an exception handling the exception: " + unicode(exception))
+
+        # returns true (connection meant to be kept alive)
+        return True
 
     def _log(self, request):
         # in case the log file is not defined
@@ -885,7 +919,7 @@ class HttpClientServiceHandler:
         status_code = request.status_code
 
         # retrieves the content length (default to minus one or invalid)
-        content_length = request.content_length or -1
+        content_length = request.content_length or 0
 
         # retrieves the current date time value
         current_date_time = datetime.datetime.utcnow()
@@ -1257,8 +1291,10 @@ class HttpClientServiceHandler:
         # in case the request is mediated
         if request.is_mediated():
             self.send_request_mediated(service_connection, request)
+        # in case the request is chunked encoded
         elif request.is_chunked_encoded():
             self.send_request_chunked(service_connection, request)
+        # otherwise it's a simple request
         else:
             self.send_request_simple(service_connection, request)
 
