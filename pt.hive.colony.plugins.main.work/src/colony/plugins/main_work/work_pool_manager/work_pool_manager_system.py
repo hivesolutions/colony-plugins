@@ -470,11 +470,6 @@ class WorkPoolImplementation:
         @return: The result of the verification.
         """
 
-        # in case the work task is currently busy
-        if work_task.busy():
-            # returns false (invalid)
-            return False
-
         # in case the current number of works is equal or greater
         # than the maximum number of works per thread
         if work_task.work_counter >= self.maximum_number_works_thread:
