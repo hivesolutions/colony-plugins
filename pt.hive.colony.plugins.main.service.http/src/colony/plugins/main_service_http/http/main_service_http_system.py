@@ -2357,6 +2357,19 @@ class HttpRequest:
             # sets the current index as the end index
             current_index = end_index + boundary_value_length
 
+    def execute_background(self, callable):
+        """
+        Executes the given callable object in a background
+        thread.
+        This method is useful for avoid blocking the request
+        handling method in non critic tasks.
+
+        @type callable: Callable
+        @param callable: The callable to be called in background.
+        """
+
+        self.service_connection.execute_background(callable)
+
     def read(self):
         return self.received_message
 
