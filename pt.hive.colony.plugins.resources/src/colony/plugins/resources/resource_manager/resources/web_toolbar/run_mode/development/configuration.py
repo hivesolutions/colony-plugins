@@ -38,5 +38,5 @@ __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
 configuration = {
-    "base_url" : "http://localhost:8080/colony_dynamic/rest/mvc/web_toolbar/"
+    "base_url" : "http://tools.hive:8080/toolbar/"
 }
