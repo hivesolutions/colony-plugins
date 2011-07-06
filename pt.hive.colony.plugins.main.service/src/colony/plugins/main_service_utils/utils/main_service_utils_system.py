@@ -98,6 +98,9 @@ RECEIVE_RETRIES = 3
 SEND_RETRIES = 3
 """ The send retries """
 
+BACKLOG_SIZE = 300
+""" The size of the backlog for the service socket (system dependent) """
+
 SERVER_SIDE_VALUE = "server_side"
 """ The server side value """
 
@@ -743,7 +746,7 @@ class AbstractService:
             # in case the service type is connection
             if self.service_type == CONNECTION_TYPE_VALUE:
                 # start listening in the service socket
-                service_socket.listen(5)
+                service_socket.listen(BACKLOG_SIZE)
 
     def _disable_service_sockets(self):
         """
