@@ -153,8 +153,67 @@ class AceptingThread(threading.Thread):
     Class that handles the accepting of the
     """
 
-    def toibas(self):
-        pass
+    abstract_service = None
+    """ The abstract service reference """
+
+    stop_flag = False
+    """ The flag that controls the execution of the thread """
+
+    service_socket_queue = []
+    """ The service socket queue """
+
+    service_socket_queue_condition = None
+    """ The condition that controls the service socket queue """
+
+    def __init__(self, abstract_service):
+        """
+        Constructor of the class.
+        """
+
+        self.abstract_service = abstract_service
+
+        self.service_socket_queue = []
+
+        self.service_socket_queue_condition = threading.Condition()
+
+    def run(self):
+        # unsets the stop flag
+        self.stop_flag = False
+
+        # Consume one item
+#        cv.acquire()
+#        while not an_item_is_available():
+#            cv.wait()
+#        get_an_available_item()
+#        cv.release()
+#
+#        # Produce one item
+#        cv.acquire()
+#        make_an_item_available()
+#        cv.notify()
+#        cv.release()
+
+        # iterates continuously
+        while True:
+            # in case the stop flag is set
+            if self.stop_flag:
+                # breaks the loop
+                break;
+
+            # pops the top service socket
+            service_socket = self.socket_queue.pop()
+
+#            # accepts the connection retrieving the service connection object and the address
+#            service_connection, service_address = service_socket.accept()
+#
+#            # sets the service connection to non blocking mode
+#            service_connection.setblocking(0)
+#
+#            # inserts the connection and address into the pool
+#            self._insert_connection_pool(service_connection, service_address, port)
+
+    def add_service_socket(self, service_socket):
+        self.service_socket_queue.append(service_socket)
 
 class MainServiceUtils:
     """
@@ -1379,8 +1438,6 @@ class AbstractServiceConnectionHandler:
         # checks if the wake "file" exists in the selected
         # values for read list
         if self.wake_file in selected_values_read:
-            print "RECEBEU WAKE"
-
             # receives one byte from the wake "file"
             self.wake_file.recv(1)
 
