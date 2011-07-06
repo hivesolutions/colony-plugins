@@ -1044,6 +1044,19 @@ class RestRequest:
         # sets the location header (using the quoted target path)
         self.request.set_header(LOCATION_VALUE, target_path_quoted)
 
+    def execute_background(self, callable):
+        """
+        Executes the given callable object in a background
+        thread.
+        This method is useful for avoid blocking the request
+        handling method in non critic tasks.
+
+        @type callable: Callable
+        @param callable: The callable to be called in background.
+        """
+
+        self.request.execute_background(callable)
+
     def get_header(self, header_name):
         """
         Retrieves an header value of the request,
