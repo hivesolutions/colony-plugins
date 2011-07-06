@@ -98,7 +98,7 @@ RECEIVE_RETRIES = 3
 SEND_RETRIES = 3
 """ The send retries """
 
-BACKLOG_SIZE = 300
+BACKLOG_SIZE = 5
 """ The size of the backlog for the service socket (system dependent) """
 
 SERVER_SIDE_VALUE = "server_side"
