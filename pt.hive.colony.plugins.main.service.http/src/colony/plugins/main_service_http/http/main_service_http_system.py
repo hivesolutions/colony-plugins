@@ -786,32 +786,11 @@ class HttpClientServiceHandler:
             # handles the request by the request handler
             http_service_handler_plugin.handle_request(request)
 
-            try:
-                # sends the request to the client (response)
-                self.send_request(service_connection, request)
-            except main_service_http_exceptions.HttpRuntimeException, exception:
-                # prints a warning message message
-                self.service_plugin.warning("Runtime problem: %s, while sending request" % unicode(exception))
+            # checks if the request is delayed
+            request_delayed = request.delayed
 
-                # returns false (connection closed)
-                return False
-            except main_service_http_exceptions.MainServiceHttpException:
-                # prints a debug message
-                self.service_plugin.debug("Connection: %s closed by peer, while sending request" % str(service_connection))
-
-                # returns false (connection closed)
-                return False
-
-            # in case the connection is not meant to be kept alive
-            if not self.keep_alive(request):
-                # prints a debug message
-                self.service_plugin.debug("Connection: %s closed, not meant to be kept alive" % str(service_connection))
-
-                # runs the logging steps for the request
-                self._log(request)
-
-                # returns false (connection closed)
-                return False
+            # in case the request is not delayed processes the request (immediately)
+            not request_delayed and self.process_request(request, service_connection)
 
             # retrieves the request timeout from the service connection
             service_connection_request_timeout = service_connection.connection_request_timeout
@@ -819,21 +798,7 @@ class HttpClientServiceHandler:
             # prints a debug message
             self.service_plugin.debug("Connection: %s kept alive for %ss" % (str(service_connection), str(service_connection_request_timeout)))
         except Exception, exception:
-            # prints info message about exception
-            self.service_plugin.info("There was an exception handling the request: " + unicode(exception))
-
-            try:
-                # sends the exception
-                self.send_exception(service_connection, request, exception)
-            except main_service_http_exceptions.MainServiceHttpException:
-                # prints a debug message
-                self.service_plugin.debug("Connection: %s closed by peer, while sending exception" % str(service_connection))
-
-                # returns false (connection closed)
-                return False
-            except Exception, exception:
-                # prints an error message
-                self.service_plugin.debug("There was an exception handling the exception: " + unicode(exception))
+            self.process_exception(request, service_connection, exception)
 
         # runs the logging steps for the request
         self._log(request)
@@ -844,6 +809,51 @@ class HttpClientServiceHandler:
 
         # returns true (connection remains open)
         return True
+
+    def process_request(self, request, service_connection):
+        try:
+            # sends the request to the client (response)
+            self.send_request(service_connection, request)
+        except main_service_http_exceptions.HttpRuntimeException, exception:
+            # prints a warning message message
+            self.service_plugin.warning("Runtime problem: %s, while sending request" % unicode(exception))
+
+            # returns false (connection closed)
+            return False
+        except main_service_http_exceptions.MainServiceHttpException:
+            # prints a debug message
+            self.service_plugin.debug("Connection: %s closed by peer, while sending request" % str(service_connection))
+
+            # returns false (connection closed)
+            return False
+
+        # in case the connection is not meant to be kept alive
+        if not self.keep_alive(request):
+            # prints a debug message
+            self.service_plugin.debug("Connection: %s closed, not meant to be kept alive" % str(service_connection))
+
+            # runs the logging steps for the request
+            self._log(request)
+
+            # returns false (connection closed)
+            return False
+
+    def process_exception(self, request, service_connection, exception):
+        # prints info message about exception
+        self.service_plugin.info("There was an exception handling the request: " + unicode(exception))
+
+        try:
+            # sends the exception
+            self.send_exception(service_connection, request, exception)
+        except main_service_http_exceptions.MainServiceHttpException:
+            # prints a debug message
+            self.service_plugin.debug("Connection: %s closed by peer, while sending exception" % str(service_connection))
+
+            # returns false (connection closed)
+            return False
+        except Exception, exception:
+            # prints an error message
+            self.service_plugin.debug("There was an exception handling the exception: " + unicode(exception))
 
     def _log(self, request):
         # in case the log file is not defined
@@ -874,8 +884,8 @@ class HttpClientServiceHandler:
         # retrieves the status code
         status_code = request.status_code
 
-        # retrieves the content length
-        content_length = request.content_length
+        # retrieves the content length (default to minus one or invalid)
+        content_length = request.content_length or -1
 
         # retrieves the current date time value
         current_date_time = datetime.datetime.utcnow()
@@ -2014,6 +2024,9 @@ class HttpRequest:
 
     status_message = None
     """ The status message """
+
+    delayed = False
+    """ The delayed flag """
 
     redirected = False
     """ The redirected flag """
