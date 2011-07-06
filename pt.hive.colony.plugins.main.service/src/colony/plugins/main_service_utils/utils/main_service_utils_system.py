@@ -147,10 +147,10 @@ if EPOLL_SUPPORT:
     REGISTER_MASK = NEW_VALUE_MASK #@UndefinedVariable
     """ The register mask value """
 
-
-class AceptingThread(threading.Thread):
+class ServiceSocketAcceptinThread(threading.Thread):
     """
-    Class that handles the accepting of the
+    Class that handles the accepting of the service
+    socket.
     """
 
     abstract_service = None
@@ -200,6 +200,10 @@ class AceptingThread(threading.Thread):
                 # breaks the loop
                 break;
 
+            #while not an_item_is_available():
+                # waits for the service socket queue condition
+            #    self.service_socket_queue_condition.wait()
+
             # pops the top service socket
             service_socket = self.socket_queue.pop()
 
@@ -213,7 +217,18 @@ class AceptingThread(threading.Thread):
 #            self._insert_connection_pool(service_connection, service_address, port)
 
     def add_service_socket(self, service_socket):
-        self.service_socket_queue.append(service_socket)
+        # acquires the service socket queue condition
+        self.service_socket_queue_condition.acquire()
+
+        try:
+            # adds the service socket to the service socket queue
+            self.service_socket_queue.append(service_socket)
+
+            # notifies the service socket queue condition
+            self.service_socket_queue_condition.notify()
+        finally:
+            # releases the service socket queue condition
+            self.service_socket_queue_condition.release()
 
 class MainServiceUtils:
     """
