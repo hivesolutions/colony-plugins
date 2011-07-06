@@ -530,6 +530,10 @@ class WorkTask:
         self.work_access_condition = threading.Condition()
 
     def start(self):
+        """
+        Starts the current task.
+        """
+
         # calls the start method in the work
         # processing task
         self.work_processing_task.start()
@@ -565,6 +569,10 @@ class WorkTask:
         self.work_processing_task.stop()
 
     def stop(self):
+        """
+        Stops the current task.
+        """
+
         # wakes the work processing task
         self.wake()
 
@@ -582,9 +590,17 @@ class WorkTask:
             self.work_access_condition.release()
 
     def pause(self):
+        """
+        Pauses the current task.
+        """
+
         pass
 
     def resume(self):
+        """
+        Resumes the current task.
+        """
+
         pass
 
     def wake(self):
