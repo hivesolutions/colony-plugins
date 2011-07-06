@@ -147,6 +147,15 @@ if EPOLL_SUPPORT:
     REGISTER_MASK = NEW_VALUE_MASK #@UndefinedVariable
     """ The register mask value """
 
+
+class AceptingThread(threading.Thread):
+    """
+    Class that handles the accepting of the
+    """
+
+    def toibas(self):
+        pass
+
 class MainServiceUtils:
     """
     The main service utils class.
@@ -1370,6 +1379,8 @@ class AbstractServiceConnectionHandler:
         # checks if the wake "file" exists in the selected
         # values for read list
         if self.wake_file in selected_values_read:
+            print "RECEBEU WAKE"
+
             # receives one byte from the wake "file"
             self.wake_file.recv(1)
 
