@@ -250,30 +250,32 @@ class WebMvcCommunicationHandler:
         # acquires the connection queue lock
         self.connection_queue_lock.acquire()
 
-        # adds the connection to the connection queue
-        self.connection_queue.append(connection)
+        try:
+            # adds the connection to the connection queue
+            self.connection_queue.append(connection)
 
-        # sets the connection queue event
-        self.connection_queue_event.set()
-
-        # releases the connection queue lock
-        self.connection_queue_lock.release()
+            # sets the connection queue event
+            self.connection_queue_event.set()
+        finally:
+            # releases the connection queue lock
+            self.connection_queue_lock.release()
 
     def pop_connection_queue(self):
         # acquires the connection queue lock
         self.connection_queue_lock.acquire()
 
-        # saves the queue in the pop queue
-        pop_queue = self.connection_queue
+        try:
+            # saves the queue in the pop queue
+            pop_queue = self.connection_queue
 
-        # clears the current connection queue
-        self.connection_queue = []
+            # clears the current connection queue
+            self.connection_queue = []
 
-        # clears the connection queue event
-        self.connection_queue_event.clear()
-
-        # releases the connection queue lock
-        self.connection_queue_lock.release()
+            # clears the connection queue event
+            self.connection_queue_event.clear()
+        finally:
+            # releases the connection queue lock
+            self.connection_queue_lock.release()
 
         # returns the pop queue
         return pop_queue
@@ -421,23 +423,24 @@ class ConnectionProcessingThread(threading.Thread):
             # acquires the processing queue lock
             self.processing_queue_lock.acquire()
 
-            # pops the "current" connection queue from the communication handler
-            connection_queue = self.communication_handler.pop_connection_queue()
+            try:
+                # pops the "current" connection queue from the communication handler
+                connection_queue = self.communication_handler.pop_connection_queue()
 
-            # iterates over the connection queue "connections"
-            for communication_connection in connection_queue:
-                # retrieves the communication element from the processing
-                # map using the connection and processes them
-                communication_elements = self.processing_map.get(communication_connection, [])
+                # iterates over the connection queue "connections"
+                for communication_connection in connection_queue:
+                    # retrieves the communication element from the processing
+                    # map using the connection and processes them
+                    communication_elements = self.processing_map.get(communication_connection, [])
+                    self.process_communication_elements(communication_elements)
+
+                # retrieves the "overflown" communication elements
+                # and processes them
+                communication_elements = self.get_overflown_communication_elements()
                 self.process_communication_elements(communication_elements)
-
-            # retrieves the "overflown" communication elements
-            # and processes them
-            communication_elements = self.get_overflown_communication_elements()
-            self.process_communication_elements(communication_elements)
-
-            # releases the processing queue lock
-            self.processing_queue_lock.release()
+            finally:
+                # releases the processing queue lock
+                self.processing_queue_lock.release()
 
             # waits for the connection queue event
             connection_queue_event.wait(DEFAULT_UPDATE_POLL_TIMEOUT)
@@ -699,17 +702,18 @@ class CommunicationConnection:
         # acquires the message queue lock
         self.message_queue_lock.acquire()
 
-        # adds the message to the message queue
-        self.message_queue.append(message)
+        try:
+            # adds the message to the message queue
+            self.message_queue.append(message)
 
-        # sets the message queue event
-        self.message_queue_event.set()
+            # sets the message queue event
+            self.message_queue_event.set()
 
-        # adds the current connection to the connection queue
-        self.communication_handler.add_connection_queue(self)
-
-        # releases the message queue lock
-        self.message_queue_lock.release()
+            # adds the current connection to the connection queue
+            self.communication_handler.add_connection_queue(self)
+        finally:
+            # releases the message queue lock
+            self.message_queue_lock.release()
 
     def pop_message_queue(self):
         """
@@ -723,17 +727,18 @@ class CommunicationConnection:
         # acquires the message queue lock
         self.message_queue_lock.acquire()
 
-        # saves the queue in the pop queue
-        pop_queue = self.message_queue
+        try:
+            # saves the queue in the pop queue
+            pop_queue = self.message_queue
 
-        # clears the current message queue
-        self.message_queue = []
+            # clears the current message queue
+            self.message_queue = []
 
-        # clears the message queue event
-        self.message_queue_event.clear()
-
-        # releases the message queue lock
-        self.message_queue_lock.release()
+            # clears the message queue event
+            self.message_queue_event.clear()
+        finally:
+            # releases the message queue lock
+            self.message_queue_lock.release()
 
         # returns the pop queue
         return pop_queue
