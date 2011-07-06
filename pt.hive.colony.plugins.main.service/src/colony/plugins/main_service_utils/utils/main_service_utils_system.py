@@ -395,7 +395,10 @@ class AbstractService:
     """ The response timeout """
 
     service_accepting_thread = None
-    """ the service accepting thread """
+    """ The service accepting thread """
+
+    service_execution_thread = None
+    """ The service execution thread """
 
     def __init__(self, main_service_utils, main_service_utils_plugin, parameters = {}):
         """
@@ -435,6 +438,7 @@ class AbstractService:
         self.service_connection_close_end_event = threading.Event()
 
         self.service_accepting_thread = ServiceAcceptingThread(self)
+        self.service_execution_thread = ServiceExecutionThread(self)
 
         # in case no end points are defined and there is a socket provider
         # a default end point is creates with those values
@@ -456,8 +460,10 @@ class AbstractService:
         """
 
         try:
-            # starts the service accepting thread
+            # starts the service accepting and execution
+            # (background) threads
             self.service_accepting_thread.start()
+            self.service_execution_thread.start()
 
             # creates the work pool
             self._create_pool()
@@ -512,10 +518,12 @@ class AbstractService:
         # stops the pool
         self.service_client_pool.stop_pool()
 
-        # sets the stop flag in the service accepting thread
-        # and stops the thread
+        # sets the stop flag in the service accepting and
+        # execution (background) threads, then stops both threads
         self.service_accepting_thread.stop_flag = True
+        self.service_execution_thread.stop_flag = True
         self.service_accepting_thread.stop()
+        self.service_execution_thread.stop()
 
     def _create_pool(self):
         """
@@ -1114,8 +1122,10 @@ class AbstractServiceConnectionHandler:
             # raises the connection change failure exception
             raise main_service_utils_exceptions.ConnectionChangeFailure("trying to add duplicate socket: " + unicode(connection_socket))
 
-        # creates the new service connection
+        # creates the new service connection and sets the service execution thread
+        # on the service connection (for callable execution)
         service_connection = ServiceConnection(self.service_plugin, self, connection_socket, connection_address, connection_port, self.request_timeout, self.response_timeout, self.chunk_size)
+        service_connection.service_execution_thread = self.service.service_execution_thread
 
         # opens the service connection
         service_connection.open()
@@ -1578,8 +1588,10 @@ class AbstractServiceConnectionlessHandler:
         @return: The created service connection.
         """
 
-        # creates the new service connection
+        # creates the new service connection  and sets the service execution thread
+        # on the service connection (for callable execution)
         service_connection = ServiceConnectionless(self.service_plugin, self, connection_socket, connection_address, connection_port, connection_data, self.request_timeout, self.response_timeout, self.chunk_size)
+        service_connection.service_execution_thread = self.service.service_execution_thread
 
         # creates the connection tuple
         connection_tuple = (
@@ -1723,6 +1735,9 @@ class ServiceConnection:
     cancel_time = None
     """ The cancel time """
 
+    service_execution_thread = None
+    """ The service execution thread reference """
+
     _connection_socket = None
     """ The original connection socket """
 
@@ -1852,6 +1867,20 @@ class ServiceConnection:
 
         # sets the socket to non blocking mode
         self.connection_socket.setblocking(0)
+
+    def execute_background(self, callable):
+        """
+        Executes the given callable object in a background
+        thread.
+        This method is useful for avoid blocking the request
+        handling method in non critic tasks.
+
+        @type callable: Callable
+        @param callable: The callable to be called in background.
+        """
+
+        # adds the callable to the service execution thread
+        self.service_execution_thread.add_callable(callable)
 
     def receive(self, request_timeout = None, chunk_size = None, retries = RECEIVE_RETRIES):
         """
@@ -2356,3 +2385,79 @@ class ServiceAcceptingThread(threading.Thread):
         finally:
             # releases the service tuple queue condition
             self.service_tuple_queue_condition.release()
+
+class ServiceExecutionThread(threading.Thread):
+    """
+    Class that handles the execution of background
+    callable elements.
+    """
+
+    abstract_service = None
+    """ The abstract service reference """
+
+    stop_flag = False
+    """ The flag that controls the execution of the thread """
+
+    callable_queue = []
+    """ The callable queue """
+
+    callable_queue_condition = None
+    """ The condition that controls the callable queue """
+
+    def __init__(self, abstract_service):
+        """
+        Constructor of the class.
+        """
+        threading.Thread.__init__(self)
+
+        self.abstract_service = abstract_service
+
+        self.callable_queue = []
+
+        self.callable_queue_condition = threading.Condition()
+
+    def run(self):
+        # unsets the stop flag
+        self.stop_flag = False
+
+        # iterates continuously
+        while True:
+            # in case the stop flag is set
+            if self.stop_flag:
+                # breaks the loop
+                break;
+
+            # acquires the callable queue condition
+            self.callable_queue_condition.acquire()
+
+            try:
+                # iterates while the service socker queue is empty
+                while not self.callable_queue:
+                    # waits for the callable queue condition
+                    self.callable_queue_condition.wait()
+
+                # pops the top callable
+                callable = self.callable_queue.pop()
+
+                # calls the callable
+                callable()
+            except Exception, exception:
+                # prints an error message about the problem executing callable
+                self.abstract_service.main_service_utils_plugin.error("Error executing callable: " + unicode(exception))
+            finally:
+                # releases the callable queue condition
+                self.callable_queue_condition.release()
+
+    def add_callable(self, callable):
+        # acquires the callable queue condition
+        self.callable_queue_condition.acquire()
+
+        try:
+            # adds the callable to the callable queue
+            self.callable_queue.append(callable)
+
+            # notifies the callable queue condition
+            self.callable_queue_condition.notify()
+        finally:
+            # releases the callable queue condition
+            self.callable_queue_condition.release()
