@@ -325,7 +325,9 @@ class WebMvcCommunicationHandler:
         self.__set_communication_connection_complete_information_map(communication_connection)
 
     def _remove_communication_connection(self, communication_connection):
-        pass
+        self.__remove_communication_connection_name_map(communication_connection)
+        self.__remove_communication_service_connection_map(communication_connection)
+        self.__unset_communication_connection_complete_information_map(communication_connection)
 
     def __add_communication_connection_name_map(self, communication_connection):
         # retrieves the connection name
@@ -335,9 +337,8 @@ class WebMvcCommunicationHandler:
             self.connection_name_connections_map[connection_name] = []
 
         # retrieves the connection list from the connection name connections map
+        # and adds the communication connection to the connections list
         connections_list = self.connection_name_connections_map[connection_name]
-
-        # adds the communication connection to the connections list
         connections_list.append(communication_connection)
 
     def __add_communication_service_connection_map(self, communication_connection):
@@ -348,9 +349,8 @@ class WebMvcCommunicationHandler:
             self.service_connection_connections_map[service_connection] = []
 
         # retrieves the connection list from the service connection connections map
+        # and adds the communication connection to the connections list
         connections_list = self.service_connection_connections_map[service_connection]
-
-        # adds the communication connection to the connections list
         connections_list.append(communication_connection)
 
     def __set_communication_connection_complete_information_map(self, communication_connection):
@@ -359,6 +359,41 @@ class WebMvcCommunicationHandler:
 
         # set the communication connection in the connection complete information connection map
         self.connection_complete_information_connection_map[connection_complete_information] = communication_connection
+
+    def __remove_communication_connection_name_map(self, communication_connection):
+        # retrieves the connection name
+        connection_name = communication_connection.get_connection_name()
+
+        # retrieves the connection list from the connection name connections map
+        # and removes the communication connection from the connections list
+        connections_list = self.connection_name_connections_map[connection_name]
+        connections_list.remove(communication_connection)
+
+        # in case the connections list is empty
+        if not connections_list:
+            # removes the connection from the connection name connections map
+            del self.connection_name_connections_map[connection_name]
+
+    def __remove_communication_service_connection_map(self, communication_connection):
+        # retrieves the service connection
+        service_connection = communication_connection.get_service_connection()
+
+        # retrieves the connection list from the service connection connections map
+        # and remove the communication connection from the connections list
+        connections_list = self.service_connection_connections_map[service_connection]
+        connections_list.remove(communication_connection)
+
+        # in case the connections list is empty
+        if not connections_list:
+            # removes the connection from the service connection connections map
+            del self.service_connection_connections_map[service_connection]
+
+    def __unset_communication_connection_complete_information_map(self, communication_connection):
+        # retrieves the connection complete information
+        connection_complete_information = communication_connection.get_connection_complete_information()
+
+        # unsets the communication connection in the connection complete information connection map
+        del self.connection_complete_information_connection_map[connection_complete_information]
 
 class ConnectionProcessingThread(threading.Thread):
     """
@@ -543,7 +578,12 @@ class ConnectionProcessingThread(threading.Thread):
                 return
 
             # unpacks the communication element
-            communication_connection, _request, target_timestamp = communication_element
+            communication_connection, request, target_timestamp = communication_element
+
+            # retrieves the service connection from the request and
+            # checks if the service connection (data connection) is still open
+            service_connection = request.service_connection
+            service_connection_is_open = service_connection.is_open()
 
             # retrieves the communication elements associated with the
             # target timestamp and removes the current communication
@@ -574,6 +614,12 @@ class ConnectionProcessingThread(threading.Thread):
                 # removes the communication elements list
                 # reference from the processing map (it's empty)
                 del self.processing_map[communication_connection]
+
+                # in case the service connection is
+                # not open anymore
+                if not service_connection_is_open:
+                    # removes the communication connection (no more communication elements)
+                    self.communication_handler._remove_communication_connection(communication_connection)
 
             # removes the communication element from the "main"
             # processing queue
