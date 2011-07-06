@@ -157,6 +157,24 @@ class WebMvc:
         self.web_mvc_file_handler = web_mvc_file_handler.WebMvcFileHandler(web_mvc_plugin)
         self.web_mvc_communication_handler = web_mvc_communication_handler.WebMvcCommunicationHandler(web_mvc_plugin)
 
+    def start_system(self):
+        """
+        Starts the web mvc system structures.
+        This method starts all the persistent and
+        background execution tasks for web mvc.
+        """
+
+        self.web_mvc_communication_handler.start_processing()
+
+    def stop_system(self):
+        """
+        Stops the web mvc system structures.
+        This method stops all the persistent and
+        background execution tasks for web mvc.
+        """
+
+        self.web_mvc_communication_handler.stop_processing()
+
     def get_routes(self):
         """
         Retrieves the list of regular expressions to be used as route,

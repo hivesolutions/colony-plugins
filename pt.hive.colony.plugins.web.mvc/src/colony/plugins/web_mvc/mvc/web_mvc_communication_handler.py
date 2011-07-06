@@ -37,9 +37,13 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
+import time
 import threading
 
 import web_mvc_exceptions
+
+DEFAULT_UPDATE_POLL_TIMEOUT = 0.5
+""" The default update poll timeout """
 
 DEFAULT_UPDATE_WAIT_TIMEOUT = 5.0
 """ The default update wait timeout """
@@ -61,6 +65,18 @@ class WebMvcCommunicationHandler:
     connection_complete_information_connection_map = {}
     """ The map associating the connection complete information with the connection """
 
+    connection_queue = []
+    """ The queue that holds the connections with messages ready to be processed """
+
+    connection_queue_lock = None
+    """ The lock that controls the access to the connection (messages) queue """
+
+    connection_queue_event = None
+    """ The event that controls the existence of new messages in the connection queue """
+
+    connection_processing_thread = None
+    """ The thread that controls the processing of the messages """
+
     def __init__(self, web_mvc_plugin):
         """
         Constructor of the class.
@@ -74,6 +90,12 @@ class WebMvcCommunicationHandler:
         self.connection_name_connections_map = {}
         self.service_connection_connections_map = {}
         self.connection_complete_information_connection_map = {}
+
+        self.connection_queue = []
+        self.connection_queue_lock = threading.RLock()
+        self.connection_queue_event = threading.Event()
+
+        self.connection_processing_thread = ConnectionProcessingThread(self)
 
     def handle_request(self, request, data_handler_method, connection_changed_handler_method, connection_name):
         """
@@ -123,7 +145,7 @@ class WebMvcCommunicationHandler:
         connection_id = random_plugin.generate_random_md5_string()
 
         # creates a new communication connection from the service connection
-        communication_connection = CommunicationConnection(connection_id, connection_name, service_connection)
+        communication_connection = CommunicationConnection(self, connection_id, connection_name, service_connection)
 
         # adds the communication connection
         self._add_communication_connection(communication_connection)
@@ -147,32 +169,18 @@ class WebMvcCommunicationHandler:
             # raises the communication command exception
             raise web_mvc_exceptions.CommunicationCommandException("no communication connection available")
 
-        # iterates continuously
-        while True:
-            # retrieves the message queue
-            message_queue = communication_connection.pop_message_queue()
+        # calculates the target time for timeout of the connection
+        # element message
+        current_time = time.time()
+        target_time = current_time + DEFAULT_UPDATE_WAIT_TIMEOUT
 
-            # in case the message queue is valid
-            # and not empty
-            if message_queue:
-                # breaks the loop
-                break
-            # otherwise should wait for a
-            # message to become available
-            else:
-                # retrieves the message queue event
-                message_queue_event = communication_connection.message_queue_event
+        # creates the communication element tuple and adds it
+        # to the connection elements queue
+        communication_element = (communication_connection, request, target_time)
+        self.connection_processing_thread.add_queue(communication_element)
 
-                # waits for the message queue event
-                communication_connection.message_queue_event.wait(DEFAULT_UPDATE_WAIT_TIMEOUT)
-
-                # in case the message queue event is not set
-                if not message_queue_event.isSet():
-                    # breaks the loop
-                    break
-
-        # writes the message queue into the message
-        self._write_message(request, communication_connection, message_queue)
+        # sets the request as delayed (for latter writing)
+        request.delayed = True
 
         # returns true (valid)
         return True
@@ -215,6 +223,61 @@ class WebMvcCommunicationHandler:
             # adds the message to the communication connection queue
             communication_connection.add_message_queue(message)
 
+    def start_processing(self):
+        """
+        Starts processing the various communication
+        connection messages.
+        This method launches the thread for message processing.
+        """
+
+        # starts the connection processing thread
+        self.connection_processing_thread.start()
+
+    def stop_processing(self):
+        """
+        Stops processing the various communication
+        connection messages.
+        This method stops the thread for message processing.
+        """
+
+        # sets the stop flag in the connection processing thread
+        self.connection_processing_thread.stop_flag = True
+
+        # sets the connection queue event
+        self.connection_queue_event.set()
+
+    def add_connection_queue(self, connection):
+        # acquires the connection queue lock
+        self.connection_queue_lock.acquire()
+
+        # adds the connection to the connection queue
+        self.connection_queue.append(connection)
+
+        # sets the connection queue event
+        self.connection_queue_event.set()
+
+        # releases the connection queue lock
+        self.connection_queue_lock.release()
+
+    def pop_connection_queue(self):
+        # acquires the connection queue lock
+        self.connection_queue_lock.acquire()
+
+        # saves the queue in the pop queue
+        pop_queue = self.connection_queue
+
+        # clears the current connection queue
+        self.connection_queue = []
+
+        # clears the connection queue event
+        self.connection_queue_event.clear()
+
+        # releases the connection queue lock
+        self.connection_queue_lock.release()
+
+        # returns the pop queue
+        return pop_queue
+
     def _write_message(self, request, communication_connection, result_message):
         # retrieves the json plugin
         json_plugin = self.web_mvc_plugin.json_plugin
@@ -226,6 +289,21 @@ class WebMvcCommunicationHandler:
         request.write(serialized_result_message)
 
     def _get_connection(self, request, connection_name):
+        """
+        Retrieves the communication connection for the
+        given request (to use the id of it) and connection
+        name.
+
+        @type request: HttpRequest
+        @param request: The http request to be used to retrieve
+        the id.
+        @type connection_name: Srring
+        @param connection_name: The name of the connection to be
+        retrieved.
+        @rtype: CommunicationConnection
+        @return: The communication connection to be retrieved.
+        """
+
         # retrieves the request connection id
         connection_id = request.get_attribute("id")
 
@@ -280,10 +358,263 @@ class WebMvcCommunicationHandler:
         # set the communication connection in the connection complete information connection map
         self.connection_complete_information_connection_map[connection_complete_information] = communication_connection
 
+class ConnectionProcessingThread(threading.Thread):
+    """
+    Thread that controls the processing of "new"
+    messages in the communication connections.
+    """
+
+    communication_handler = None
+    """ The communication handler """
+
+    stop_flag = False
+    """ Flag controlling the execution of the thread """
+
+    processing_queue = []
+    """ The processing queue """
+
+    processing_map = []
+    """ The processing map """
+
+    timestamp_list = []
+    """ The map with the ordered timestamps """
+
+    timestamp_map = {}
+    """ The map associating the timestamp with the connection element """
+
+    processing_queue_lock = None
+    """ the processing queue lock """
+
+    def __init__(self, communication_handler):
+        """
+        Constructor of the class.
+
+        @type communication_handler: WebMvcCommunicationHandler
+        @param communication_handler: The communication handler reference.
+        """
+
+        threading.Thread.__init__(self)
+
+        self.communication_handler = communication_handler
+
+        self.processing_queue = []
+        self.processing_map = {}
+        self.timestamp_list = []
+        self.timestamp_map = {}
+
+        self.processing_queue_lock = threading.RLock()
+
+    def run(self):
+        # retrieves the connection queue event
+        connection_queue_event = self.communication_handler.connection_queue_event
+
+        # unsets the stop flag
+        self.stop_flag = False
+
+        # iterates continuously
+        while True:
+            # in case the stop flag is set
+            if self.stop_flag:
+                # breaks the loop
+                break
+
+            # acquires the processing queue lock
+            self.processing_queue_lock.acquire()
+
+            # pops the "current" connection queue from the communication handler
+            connection_queue = self.communication_handler.pop_connection_queue()
+
+            # iterates over the connection queue "connections"
+            for communication_connection in connection_queue:
+                # retrieves the communication element from the processing
+                # map using the connection and processes them
+                communication_elements = self.processing_map.get(communication_connection, [])
+                self.process_communication_elements(communication_elements)
+
+            # retrieves the "overflown" communication elements
+            # and processes them
+            communication_elements = self.get_overflown_communication_elements()
+            self.process_communication_elements(communication_elements)
+
+            # releases the processing queue lock
+            self.processing_queue_lock.release()
+
+            # waits for the connection queue event
+            connection_queue_event.wait(DEFAULT_UPDATE_POLL_TIMEOUT)
+
+    def process_communication_elements(self, communication_elements):
+        # starts the removal list (for communication
+        # element removal)
+        removal_list = []
+
+        # iterates over all the communication element in
+        # the communication elements list
+        for communication_element in communication_elements:
+            # processes the communication element
+            self._process_element(communication_element)
+
+            # adds the communication element to the removal
+            # list for later removal
+            removal_list.append(communication_element)
+
+        # iterates over all the communication elements
+        # in the removal list
+        for communication_element in removal_list:
+            # removes the communication element from the queue
+            self.remove_queue(communication_element)
+
+    def get_overflown_communication_elements(self):
+        # retrieves the current timestamp
+        current_timestamp = time.time()
+
+        # starts the overflown communication elements list
+        overflown_communication_elements = []
+
+        # iterates over all the timestamps in
+        # timestamp list
+        for timestamp in self.timestamp_list:
+            # in case the current timestamp is
+            # smaller than the timestamp in iteration
+            if current_timestamp < timestamp:
+                # breaks the loop
+                break
+
+            # retrieves the communication element for the
+            # timestamp in iteration
+            communication_elements = self.timestamp_map[timestamp]
+
+            # iterates over all the communication elements
+            # to add them to the overflown communication
+            # elements
+            for communication_element in communication_elements:
+                # adds the communication element to the overflown
+                # communication elements
+                overflown_communication_elements.append(communication_element)
+
+        # returns the overflown communication elements
+        return overflown_communication_elements
+
+    def add_queue(self, communication_element):
+        # acquires the processing queue lock
+        self.processing_queue_lock.acquire()
+
+        # unpacks the communication element
+        communication_connection, _request, target_timestamp = communication_element
+
+        # in case the target timestamp is not yet present
+        # in the timestamp list
+        if not target_timestamp in self.timestamp_list:
+            # adds the target timestamp to the timestamp
+            # list and re-sorts the list
+            self.timestamp_list.append(target_timestamp)
+            self.timestamp_list.sort()
+
+        # retrieves the communication elements list for the target
+        # timestamp (if any) and adds the communication element to the list
+        communication_elements = self.timestamp_map.get(target_timestamp, [])
+        communication_elements.append(communication_element)
+        self.timestamp_map[target_timestamp] = communication_elements
+
+        # retrieves the communication elements list for the communication
+        # connection (if any) and adds the communication element to the list
+        communication_elements = self.processing_map.get(communication_connection, [])
+        communication_elements.append(communication_element)
+        self.processing_map[communication_connection] = communication_elements
+
+        # adds the communication element to the processing queue
+        self.processing_queue.append(communication_element)
+
+        # releases the processing queue lock
+        self.processing_queue_lock.release()
+
+    def remove_queue(self, communication_element):
+        # acquires the processing queue lock
+        self.processing_queue_lock.acquire()
+
+        # in case the communication element is not present
+        # in the processing queue (possible add and remove)
+        if not communication_element in self.processing_queue:
+            # returns immediately
+            return
+
+        # unpacks the communication element
+        communication_connection, _request, target_timestamp = communication_element
+
+        # retrieves the communication elements associated with the
+        # target timestamp and removes the current communication
+        # element from the communication elements
+        communication_elements = self.timestamp_map[target_timestamp]
+        communication_elements.remove(communication_element)
+
+        # in case the communication elements list is empty
+        # it should be removed (house-keeping)
+        if not communication_elements:
+            # removes the communication elements list
+            # reference from the timestamp map (it's empty)
+            del self.timestamp_map[target_timestamp]
+
+            # removes the target timestamp from the timestmap
+            # list (no more elements for the target timestamp)
+            self.timestamp_list.remove(target_timestamp)
+
+        # retrieves the communication elements associated with the
+        # communication connection and removes the current communication
+        # element from the communication elements
+        communication_elements = self.processing_map[communication_connection]
+        communication_elements.remove(communication_element)
+
+        # in case the communication elements list is empty
+        # it should be removed (house-keeping)
+        if not communication_elements:
+            # removes the communication elements list
+            # reference from the processing map (it's empty)
+            del self.processing_map[communication_connection]
+
+        # removes the communication element from the "main"
+        # processing queue
+        self.processing_queue.remove(communication_element)
+
+        # releases the processing queue lock
+        self.processing_queue_lock.release()
+
+    def _process_element(self, element):
+        # unpacks the element into the communication connection the request
+        # and the target timestamp
+        communication_connection, request, _target_timestamp = element
+
+        # retrieves the request elements
+        http_client_service_handler = request.http_client_service_handler
+        service_connection = request.service_connection
+
+        # checks if the service connection (data connection) is still open
+        service_connection_is_open = service_connection.is_open()
+
+        # in case the service connection is
+        # not open anymore
+        if not service_connection_is_open:
+            # returns immediately (no need to write
+            # in a closed connection)
+            return True
+
+        # retrieves the message queue
+        message_queue = communication_connection.pop_message_queue()
+
+        # writes the message queue into the message and processes
+        # the request in the http client service handler (this represents
+        # the final part of the delayed processing of the request)
+        self.communication_handler._write_message(request, communication_connection, message_queue)
+        http_client_service_handler.process_request(request, service_connection)
+
+        # returns true (the element should be removed)
+        return True
+
 class CommunicationConnection:
     """
     The communication connection class.
     """
+
+    communication_handler = None
+    """ The communication handler """
 
     connection_id = None
     """ The connection id """
@@ -303,10 +634,12 @@ class CommunicationConnection:
     message_queue_event = None
     """ The event about the new message operation in the message queue """
 
-    def __init__(self, connection_id, connection_name, service_connection):
+    def __init__(self, communication_handler, connection_id, connection_name, service_connection):
         """
         Constructor of the class.
 
+        @type communication_handler: WebMvcCommunicationHandler
+        @param communication_handler: The communication handler (manager).
         @type connection_id: String
         @param connection_id: The identifier of the connection.
         @type connection_name: String
@@ -315,6 +648,7 @@ class CommunicationConnection:
         @param service_connection: The service connection for the connection.
         """
 
+        self.communication_handler = communication_handler
         self.connection_id = connection_id
         self.connection_name = connection_name
         self.service_connection = service_connection
@@ -368,6 +702,9 @@ class CommunicationConnection:
 
         # sets the message queue event
         self.message_queue_event.set()
+
+        # adds the current connection to the connection queue
+        self.communication_handler.add_connection_queue(self)
 
         # releases the message queue lock
         self.message_queue_lock.release()

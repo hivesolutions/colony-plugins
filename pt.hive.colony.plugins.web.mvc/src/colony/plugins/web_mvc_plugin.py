@@ -106,9 +106,11 @@ class WebMvcPlugin(colony.base.plugin_system.Plugin):
 
     def end_load_plugin(self):
         colony.base.plugin_system.Plugin.end_load_plugin(self)
+        self.web_mvc.start_system()
 
     def unload_plugin(self):
         colony.base.plugin_system.Plugin.unload_plugin(self)
+        self.web_mvc.stop_system()
 
     def end_unload_plugin(self):
         colony.base.plugin_system.Plugin.end_unload_plugin(self)
