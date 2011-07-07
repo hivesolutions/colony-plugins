@@ -263,7 +263,7 @@ class AbstractService:
             #if self.service_type == CONNECTION_TYPE_VALUE:
 
             # start listening in the service socket
-            service_socket.listen(300)
+            service_socket.listen(30)
 
             service_connection = ServiceConnection(self, service_socket)
 
@@ -582,7 +582,9 @@ class ClientConnection(Connection):
             try:
                 # tries to send the data through the socket
                 socket.send(data)
-            except:
+            except BaseException, exception:
+                print "problema a escrever %s" % str(exception)
+
                 # returns immediately (error)
                 return
 
