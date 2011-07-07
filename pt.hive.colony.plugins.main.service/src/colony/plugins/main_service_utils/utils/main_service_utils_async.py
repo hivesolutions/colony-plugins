@@ -37,5 +37,545 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
+import select
+import socket
+
+import colony.libs.map_util
+
+import main_service_utils_exceptions
+
+BIND_HOST = ""
+""" The bind host """
+
+PORT = 0
+""" The bind host """
+
+SERVER_SIDE_VALUE = "server_side"
+""" The server side value """
+
+DO_HANDSHAKE_ON_CONNECT_VALUE = "do_handshake_on_connect"
+""" The do handshake on connect value """
+
+
+_EPOLLIN = 0x001
+_EPOLLPRI = 0x002
+_EPOLLOUT = 0x004
+_EPOLLERR = 0x008
+_EPOLLHUP = 0x010
+_EPOLLRDHUP = 0x2000
+_EPOLLONESHOT = (1 << 30)
+_EPOLLET = (1 << 31)
+
+
+
+
+READ = _EPOLLIN
+
+WRITE = _EPOLLPRI
+
+ERROR = _EPOLLERR | _EPOLLHUP | _EPOLLRDHUP
+
+ALL = READ | WRITE | ERROR
+
 class AbstractService:
-    pass
+
+    main_service_utils = None
+    """ The main service utils """
+
+    main_service_utils_plugin = None
+    """ The main service utils plugin """
+
+    service_sockets = []
+    """ The service sockets """
+
+    service_socket_end_point_map = {}
+    """ The service socket end point map """
+
+
+
+
+    handers_map = {}
+
+
+
+    socket_fd_map = {}
+
+
+    client_connection_map = {}
+
+
+
+    def __init__(self, main_service_utils, main_service_utils_plugin, parameters = {}):
+        """
+        Constructor of the class.
+
+        @type main_service_utils: MainServiceUtils
+        @param main_service_utils: The main service utils.
+        @type main_service_utils_plugin: MainServiceUtilsPlugin
+        @param main_service_utils_plugin: The main service utils plugin.
+        @type parameters: Dictionary
+        @param parameters: The parameters
+        """
+
+        self.main_service_utils = main_service_utils
+        self.main_service_utils_plugin = main_service_utils_plugin
+
+        self.service_plugin = parameters.get("service_plugin", None)
+        self.service_handling_task_class = parameters.get("service_handling_task_class", None)
+        self.end_points = parameters.get("end_points", [])
+        self.socket_provider = parameters.get("socket_provider", None)
+        self.bind_host = parameters.get("bind_host", BIND_HOST)
+        self.port = parameters.get("port", PORT)
+        self.socket_parameters = parameters.get("socket_parameters", {})
+
+
+        #self.chunk_size = parameters.get("chunk_size", CHUNK_SIZE)
+
+        #self.service_configuration = parameters.get("service_configuration", {})
+        #self.extra_parameters = parameters.get("extra_parameters", {})
+
+        #self.client_connection_timeout = parameters.get("client_connection_timeout", CLIENT_CONNECTION_TIMEOUT)
+        #self.connection_timeout = parameters.get("connection_timeout", CONNECTION_TIMEOUT)
+        #self.request_timeout = parameters.get("request_timeout", REQUEST_TIMEOUT)
+        #self.response_timeout = parameters.get("response_timeout", RESPONSE_TIMEOUT)
+
+        self.service_sockets = []
+        self.service_socket_end_point_map = {}
+
+
+
+        self.handers_map = {}
+
+        self.socket_fd_map = {}
+
+
+        self.client_connection_map = {}
+
+
+
+
+        # in case no end points are defined and there is a socket provider
+        # a default end point is created with those values
+        if not self.end_points and self.socket_provider:
+            # defines the end point tuple
+            end_point_tuple = (
+                self.socket_provider,
+                self.bind_host,
+                self.port,
+                self.socket_parameters
+            )
+
+            # adds the end point
+            self.end_points.append(end_point_tuple)
+
+
+
+
+
+
+
+    def _create_service_sockets(self):
+        """
+        Creates the service sockets according to the
+        service configuration.
+        """
+
+        # iterates over all the end points
+        for end_point in self.end_points:
+            # unpacks the end point
+            socket_provider, _bind_host, _port, socket_parameters = end_point
+
+            # in case the socket provider is defined
+            if socket_provider:
+                # retrieves the socket provider plugins map
+                socket_provider_plugins_map = self.main_service_utils.socket_provider_plugins_map
+
+                # in case the socket provider is available in the socket
+                # provider plugins map
+                if socket_provider in socket_provider_plugins_map:
+                    # retrieves the socket provider plugin from the socket provider plugins map
+                    socket_provider_plugin = socket_provider_plugins_map[socket_provider]
+
+                    # the parameters for the socket provider
+                    parameters = {
+                        SERVER_SIDE_VALUE : True,
+                        DO_HANDSHAKE_ON_CONNECT_VALUE : False
+                    }
+
+                    # copies the socket parameters to the parameters map
+                    colony.libs.map_util.map_copy(socket_parameters, parameters)
+
+                    # creates a new service socket with the socket provider plugin
+                    service_socket = socket_provider_plugin.provide_socket_parameters(parameters)
+                else:
+                    # raises the socket provider not found exception
+                    raise main_service_utils_exceptions.SocketProviderNotFound("socket provider %s not found" % socket_provider)
+            else:
+                # creates the service socket
+                service_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+
+            # sets the service socket to non blocking
+            service_socket.setblocking(0)
+
+            # adds the service socket to the service sockets
+            self.service_sockets.append(service_socket)
+
+            # sets the end point in the service socket end point map
+            self.service_socket_end_point_map[service_socket] = end_point
+
+
+
+
+
+
+    def _activate_service_sockets(self):
+        """
+        Activates the service socket.
+        """
+
+        # iterates over the service sockets and the end points
+        for service_socket, end_point in zip(self.service_sockets, self.end_points):
+            # unpacks the end point
+            _socket_provider, bind_host, port, _socket_parameters = end_point
+
+            # sets the socket to be able to reuse the socket
+            service_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+
+            # defines the bind parameters
+            bind_parameters = (
+                bind_host,
+                port
+            )
+
+            # binds the service socket
+            service_socket.bind(bind_parameters)
+
+            # in case the service type is connection
+
+            #TENHO DE PENSAR MUITO BEM SOBRE ESTE ASSUNTO
+
+            #if self.service_type == CONNECTION_TYPE_VALUE:
+
+            # start listening in the service socket
+            service_socket.listen(300)
+
+            service_connection = ServiceConnection(self, service_socket)
+
+            socket_fd = service_socket.fileno()
+
+            self.socket_fd_map[socket_fd] = service_socket
+            self.poll_instance.register(socket_fd, READ | ERROR)
+
+            self.add_handler(socket_fd, service_connection.read_handler, READ)
+
+
+    # ---- ESTES SAO METODOS DA ABSTRACAO SERVICE------
+
+
+    def add_socket(self, client_socket):
+        client_socket_fd = client_socket.fileno()
+
+        self.socket_fd_map[client_socket_fd] = client_socket
+        self.poll_instance.register(client_socket_fd, READ | ERROR)
+
+        client_connection = ClientConnection(self, client_socket)
+        self.client_connection_map[client_socket] = client_connection
+
+        self.add_handler(client_socket_fd, client_connection.read_handler, READ)
+        self.add_handler(client_socket_fd, client_connection.write_handler, WRITE)
+        self.add_handler(client_socket_fd, client_connection.error_handler, ERROR)
+
+    def remove_socket(self, client_socket):
+        client_socket_fd = client_socket.fileno()
+
+        del self.socket_fd_map[client_socket_fd]
+        self.poll_instance.unregister(client_socket_fd)
+
+        client_connection = self.client_connection_map[client_socket]
+        del self.client_connection_map[client_socket]
+
+        self.remove_handler(client_socket_fd, client_connection.read_handler, READ)
+        self.remove_handler(client_socket_fd, client_connection.write_handler, WRITE)
+        self.remove_handler(client_socket_fd, client_connection.error_handler, ERROR)
+
+        # closes the client socket
+        client_socket.close()
+
+        #print "CONNECTION CLOSED !!!"
+
+
+    # ---- AKI ACABAM OS METODOS DA ABSTRACAO SERVICE------
+
+
+
+
+    def add_handler(self, socket_fd, callback_method, operation):
+        tuple = (socket_fd, operation)
+
+        if not tuple in self.handers_map:
+            self.handers_map[tuple] = []
+
+        lista = self.handers_map[tuple]
+        lista.append(callback_method)
+
+    def remove_handler(self, socket_fd, callback_method, operation):
+        tuple = (socket_fd, operation)
+
+        lista = self.handers_map[tuple]
+        lista.remove(callback_method)
+
+        if not lista:
+            del self.handers_map[tuple]
+
+    def call_handlers(self, socket_fd, operation):
+        tuple = (socket_fd, operation)
+
+        self.call_handlers_tuple(tuple)
+
+    def call_handlers_tuple(self, tuple):
+        handlers = self.handers_map.get(tuple, [])
+
+        if not handlers:
+            # returns immediately
+            return
+
+        # retrieves the socket fd and then
+        # retrieves the socket from the socket fd map
+        socket_fd = tuple[0]
+        socket = self.socket_fd_map[socket_fd]
+
+        # iterates over all the handlers for the
+        # tuple (to call them)
+        for handler in handlers:
+            # calls the handler with the socket
+            handler(socket)
+
+    def start_service(self):
+        """
+        Starts the service.
+        """
+
+
+        self.poll_instance = SelectPolling()
+
+
+
+        # creates and sets the service sockets
+        self._create_service_sockets()
+
+        # activates and listens the service sockets
+        self._activate_service_sockets()
+
+        while True:
+            events = self.poll_instance.poll(100)
+
+            for event in events:
+                socket_fd, operation_flag = event
+
+                read = operation_flag & READ
+                write = operation_flag & WRITE
+                error = operation_flag & ERROR
+
+                read and self.call_handlers_tuple((socket_fd, read))
+                write and self.call_handlers_tuple((socket_fd, write))
+                error and self.call_handlers_tuple((socket_fd, error))
+
+    def stop_service(self):
+        """
+        Stops the service.
+        """
+
+        pass
+
+
+
+
+
+
+
+
+class SelectPolling:
+
+    readable_socket_list = None
+    writeable_socket_list = None
+    errors_socket_list = None
+
+    def __init__(self):
+        self.readable_socket_list = set()
+        self.writeable_socket_list = set()
+        self.errors_socket_list = set()
+
+    def register(self, socket_fd, operations):
+        if operations & READ:
+            self.readable_socket_list.add(socket_fd)
+
+        if operations & WRITE:
+            self.writeable_socket_list.add(socket_fd)
+
+        if operations & ERROR:
+            self.errors_socket_list.add(socket_fd)
+
+            # adds the socket to the readable socket list
+            # as closed connections are reported as read in select
+            self.readable_socket_list.add(socket_fd)
+
+    def unregister(self, socket_fd, operations = ALL):
+        if operations & READ:
+            self.readable_socket_list.discard(socket_fd)
+
+        if operations & WRITE:
+            self.writeable_socket_list.discard(socket_fd)
+
+        if operations & ERROR:
+            self.errors_socket_list.discard(socket_fd)
+
+    def modify(self, socket_fd, operations):
+        self.unregister(socket_fd)
+        self.register(socket_fd, operations)
+
+    def poll(self, timeout):
+        # selects the values
+        readable, writeable, errors = select.select(self.readable_socket_list, self.writeable_socket_list, self.errors_socket_list, timeout)
+
+        #print "recebeu '%s', '%s', '%s'" % (readable, writeable, errors)
+
+        # creates the events map to hold the socket fd's
+        events_map = {}
+
+        for socket_fd in readable:
+            events_map[socket_fd] = events_map.get(socket_fd, 0) | READ
+
+        for socket_fd in writeable:
+            events_map[socket_fd] = events_map.get(socket_fd, 0) | WRITE
+
+        for socket_fd in errors:
+            events_map[socket_fd] = events_map.get(socket_fd, 0) | ERROR
+
+        # retrieves the list of event tuples
+        events_list = events_map.items()
+
+        # returns the events list
+        return events_list
+
+class EpollPolling:
+
+    def __init__(self):
+        pass
+
+    def register(self, socket):
+        pass
+
+    def unregister(self, socket):
+        pass
+
+    def poll(self):
+        pass
+
+class KqueuePolling:
+
+    def __init__(self):
+        pass
+
+    def register(self, socket):
+        pass
+
+    def unregister(self, socket):
+        pass
+
+    def poll(self):
+        pass
+
+
+class Connection:
+
+    service = None
+
+    socket = None
+
+    socket_fd = None
+
+    def __init__(self, service, socket):
+        self.service = service
+        self.socket = socket
+
+        self.socket_fd = socket.fileno()
+
+class ServiceConnection(Connection):
+
+    def __init__(self, service, socket):
+        Connection.__init__(self, service, socket)
+
+    def read_handler(self, socket):
+        # accepts the connection retrieving the service connection object and the address
+        service_connection, _service_address = socket.accept()
+
+        # sets the service connection to non blocking mode
+        service_connection.setblocking(0)
+
+        # adds service connection in the service
+        self.service.add_socket(service_connection)
+
+class ClientConnection(Connection):
+
+    write_data_buffer = []
+    """ The buffer to hold the data pending to be sent """
+
+    def __init__(self, service, socket):
+        Connection.__init__(self, service, socket)
+
+        self.write_data_buffer = []
+
+    def open(self):
+        pass
+
+    def close(self):
+        # removes the socket from the service
+        self.service.remove_socket(self.socket)
+
+    def read_handler(self, socket):
+        try:
+            data = socket.recv(1024)
+        except:
+            # closes the client connection
+            self.close()
+
+            # returns immediately (error)
+            return
+
+        if data == "":
+            # closes the client connection
+            self.close()
+        else:
+            self.write("HTTP/1.1 200 OK\r\nContent-Type: application/json\r\nContent-Length: 29\r\nConnection: Keep-Alive\r\nDate: Thu, 07 Jul 2011 12:44:47 GMT\r\nCache-Control: no-cache, must-revalidate\r\nServer: Hive-Colony-Web/1.0.0 (python/win32/2.6.6-final)\r\n\r\n{\"current_time\":1310042687.0}")
+
+    def write_handler(self, socket):
+        # iterates over the write data buffer
+        while self.write_data_buffer:
+            # retrieves the data from the write
+            # data buffer
+            data = self.write_data_buffer[0]
+
+            try:
+                # tries to send the data through the socket
+                socket.send(data)
+            except:
+                # returns immediately (error sending)
+                return
+
+            # pops the element from the write data buffer
+            self.write_data_buffer.pop()
+
+        # unregisters the socket fd for the write event
+        self.service.poll_instance.unregister(self.socket_fd, WRITE)
+
+    def error_handler(self, socket):
+        # closes the client connection
+        self.close()
+
+    def write(self, data):
+        # adds the data to the write buffer
+        self.write_data_buffer.append(data)
+
+        # registers the socket fd for the write event (in
+        # case it's not already registered)
+        self.service.poll_instance.register(self.socket_fd, WRITE)
