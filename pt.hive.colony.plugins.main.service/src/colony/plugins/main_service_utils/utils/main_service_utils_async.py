@@ -495,6 +495,7 @@ class KqueuePolling:
 class Connection:
 
     service = None
+    """ The reference to the service implementation """
 
     socket = None
 
