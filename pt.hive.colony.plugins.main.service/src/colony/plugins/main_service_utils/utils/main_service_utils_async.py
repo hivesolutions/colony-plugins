@@ -626,7 +626,7 @@ class ClientConnection(Connection):
                 # inserts it in first place in the write
                 # data buffer (queue)
                 pending_data = data[sent_bytes:]
-                self.write_data_buffer.insert(0, pending_data)
+                self.write_data_buffer.append(pending_data)
 
         # unregisters the socket fd for the write event
         self.unregister(self.socket_fd, WRITE)
