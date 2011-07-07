@@ -82,6 +82,9 @@ CONNECTION_TYPE = "connection"
 BIND_HOST = ""
 """ The bind host value """
 
+SERVICE_TYPE = "async"
+""" The service type """
+
 CLIENT_CONNECTION_TIMEOUT = 1
 """ The client connection timeout """
 
@@ -538,49 +541,23 @@ class MainServiceHttp:
         # retrieves the service configuration
         service_configuration = self._get_service_configuration()
 
-        # retrieves the end points configuration value
+        # retrieves the various service configuration values using
+        # the default values for each of the configuration items
         end_points = service_configuration.get("default_end_points", end_points)
-
-        # retrieves the socket provider configuration value
         socket_provider = service_configuration.get("default_socket_provider", socket_provider)
-
-        # retrieves the port configuration value
         port = service_configuration.get("default_port", port)
-
-        # retrieves the encoding configuration value
         encoding = service_configuration.get("default_encoding", encoding)
-
-        # retrieves the socket parameters configuration value
         socket_parameters = service_configuration.get("default_socket_parameters", socket_parameters)
-
-        # retrieves the client connection timeout parameters configuration value
+        service_type = service_configuration.get("default_service_type", SERVICE_TYPE)
         client_connection_timeout = service_configuration.get("default_client_connection_timeout", CLIENT_CONNECTION_TIMEOUT)
-
-        # retrieves the connection timeout parameters configuration value
         connection_timeout = service_configuration.get("default_connection_timeout", REQUEST_TIMEOUT)
-
-        # retrieves the request timeout parameters configuration value
         request_timeout = service_configuration.get("default_request_timeout", REQUEST_TIMEOUT)
-
-        # retrieves the response timeout parameters configuration value
         response_timeout = service_configuration.get("default_response_timeout", RESPONSE_TIMEOUT)
-
-        # retrieves the number threads configuration value
         number_threads = service_configuration.get("default_number_threads", NUMBER_THREADS)
-
-        # retrieves the scheduling algorithm configuration value
         scheduling_algorithm = service_configuration.get("default_scheduling_algorithm", SCHEDULING_ALGORITHM)
-
-        # retrieves the maximum number threads configuration value
         maximum_number_threads = service_configuration.get("default_maximum_number_threads", MAXIMUM_NUMBER_THREADS)
-
-        # retrieves the maximum number work threads configuration value
         maximum_number_work_threads = service_configuration.get("default_maximum_number_work_threads", MAXIMUM_NUMBER_WORKS_THREAD)
-
-        # retrieves the work scheduling algorithm configuration value
         work_scheduling_algorithm = service_configuration.get("default_work_scheduling_algorithm", WORK_SCHEDULING_ALGORITHM)
-
-        # retrieves the log file path
         http_log_file_path = service_configuration.get("log_file_path", None)
 
         # resolves the http  log file path using the plugin manager
@@ -627,6 +604,7 @@ class MainServiceHttp:
             "service_configuration" : service_configuration,
             "extra_parameters" :  extra_parameters,
             "pool_configuration" : pool_configuration,
+            "service_type" : service_type,
             "client_connection_timeout" : client_connection_timeout,
             "connection_timeout" : connection_timeout,
             "request_timeout" : request_timeout,
@@ -719,20 +697,20 @@ class HttpClientServiceHandler:
     def handle_closed(self, service_connection):
         pass
 
-    def handle_request(self, service_connection):
+    def handle_request(self, service_connection, request = None):
         # retrieves the request handler using the service connection request handler map
         request_handler = self.service_connection_request_handler_map.get(service_connection, self.default_request_handler)
 
         # handles the service connection with the request handler
-        return request_handler(service_connection)
+        return request_handler(service_connection, request)
 
-    def default_request_handler(self, service_connection):
+    def default_request_handler(self, service_connection, request = None):
         # retrieves the http service handler plugins map
         http_service_handler_plugins_map = self.service_plugin.main_service_http.http_service_handler_plugins_map
 
         try:
             # retrieves the request
-            request = self.retrieve_request(service_connection)
+            request = request or self.retrieve_request(service_connection)
         except main_service_http_exceptions.MainServiceHttpException:
             # prints a debug message about the connection closing
             self.service_plugin.debug("Connection: %s closed by peer, timeout or invalid request" % str(service_connection))
@@ -936,37 +914,15 @@ class HttpClientServiceHandler:
     def retrieve_request(self, service_connection):
         """
         Retrieves the request from the received message.
+        This method block until the complete request
+        message is received.
+        This method is not compatible with async communication.
 
         @type service_connection: ServiceConnection
         @param service_connection: The service connection to be used.
         @rtype: HttpRequest
         @return: The request from the received message.
         """
-
-        # creates the string buffer for the message
-        message = colony.libs.string_buffer_util.StringBuffer()
-
-        # creates a request object
-        request = HttpRequest(self, service_connection, self.content_type_charset)
-
-        # creates the start line loaded flag
-        start_line_loaded = False
-
-        # creates the header loaded flag
-        header_loaded = False
-
-        # creates the message loaded flag
-        message_loaded = False
-
-        # creates the message offset index, representing the
-        # offset byte to the initialization of the message
-        message_offset_index = 0
-
-        # creates the message size value
-        message_size = 0
-
-        # creates the received data size (counter)
-        received_data_size = 0
 
         # continuous loop
         while True:
@@ -991,160 +947,252 @@ class HttpClientServiceHandler:
                 # raises the http invalid data exception
                 raise main_service_http_exceptions.HttpInvalidDataException("empty data received")
 
-            # retrieves the data length
-            data_length = len(data)
+            # tries to retrieve the request using the retrieved data
+            request = self.retrieve_request_data(service_connection, data)
 
-            # increments the received data size (counter)
-            received_data_size += data_length
-
-            # writes the data to the string buffer
-            message.write(data)
-
-            # in case the header is not loaded or the message contents are completely loaded
-            if not header_loaded or received_data_size >= message_offset_index + message_size:
-                # retrieves the message value from the string buffer
-                message_value = message.get_value()
-            # in case there's no need to inspect the message contents
-            else:
-                # continues with the loop
+            # in case the request is not valid (not enough data for parsing)
+            if not request:
+                # continues the loop
                 continue
 
-            # in case the start line is not loaded
-            if not start_line_loaded:
-                # finds the first new line value
-                start_line_index = message_value.find("\r\n")
+            # breaks the loop
+            break
 
-                # in case there is a new line value found
-                if not start_line_index == -1:
-                    # retrieves the start line
-                    start_line = message_value[:start_line_index]
+        # returns the request
+        return request
 
-                    # splits the start line in spaces
-                    start_line_splitted = start_line.split(" ")
+    def retrieve_request_data(self, service_connection, data = None):
+        """
+        Retrieves the request from the received message.
+        This method retrieves the request using only the
+        provided data value.
 
-                    # retrieves the start line splitted length
-                    start_line_splitted_length = len(start_line_splitted)
+        @type service_connection: ServiceConnection
+        @param service_connection: The service connection to be used.
+        @type String: data
+        @param String: The data to be used in processing the request.
+        @rtype: HttpRequest
+        @return: The request from the received message.
+        """
 
-                    # in case the length of the splitted line is not valid
-                    if not start_line_splitted_length == 3:
-                        # raises the http invalid data exception
-                        raise main_service_http_exceptions.HttpInvalidDataException("invalid data received: " + start_line)
+        # creates the string buffer for the message
+        message = service_connection.request_data.get("message", colony.libs.string_buffer_util.StringBuffer())
 
-                    # retrieve the operation type the path and the protocol version
-                    # from the start line splitted
-                    operation_type, path, protocol_version = start_line_splitted
+        # creates a request object
+        request = service_connection.request_data.get("request", HttpRequest(self, service_connection, self.content_type_charset))
 
-                    # sets the request operation type
-                    request.set_operation_type(operation_type)
+        # creates the start line loaded flag
+        start_line_loaded = service_connection.request_data.get("start_line_loaded", False)
 
-                    # sets the request path
-                    request.set_path(path)
+        # creates the header loaded flag
+        header_loaded = service_connection.request_data.get("header_loaded", False)
 
-                    # sets the request protocol version
-                    request.set_protocol_version(protocol_version)
+        # creates the message loaded flag
+        message_loaded = service_connection.request_data.get("message_loaded", False)
 
-                    # sets the start line loaded flag
-                    start_line_loaded = True
+        # creates the message offset index, representing the
+        # offset byte to the initialization of the message
+        message_offset_index = service_connection.request_data.get("message_offset_index", 0)
 
-            # in case the header is not loaded
-            if not header_loaded:
-                # retrieves the end header index (two new lines)
-                end_header_index = message_value.find("\r\n\r\n")
+        # creates the message size value
+        message_size = service_connection.request_data.get("message_size", 0)
 
-                # in case the end header index is found
-                if not end_header_index == -1:
-                    # sets the message offset index as the end header index
-                    # plus the two sequences of newlines (four characters)
-                    message_offset_index = end_header_index + 4
+        # creates the received data size (counter)
+        received_data_size = service_connection.request_data.get("received_data_size", 0)
 
-                    # sets the header loaded flag
-                    header_loaded = True
+        # initializes the end header index
+        end_header_index = service_connection.request_data.get("end_header_index", 0)
 
-                    # retrieves the start header index
-                    start_header_index = start_line_index + 2
+        # sets the "initial" return request to invalid
+        return_request = None
 
-                    # retrieves the headers part of the message
-                    headers = message_value[start_header_index:end_header_index]
+        # sets the "continue" process flag
+        process_flag = True
 
-                    # splits the headers by line
-                    headers_splitted = headers.split("\r\n")
+        # retrieves the data length
+        data_length = len(data)
 
-                    # iterates over the headers lines
-                    for header_splitted in headers_splitted:
-                        # finds the header separator
-                        division_index = header_splitted.find(":")
+        # increments the received data size (counter)
+        received_data_size += data_length
 
-                        # retrieves the header name
-                        header_name = header_splitted[:division_index].strip()
+        # writes the data to the string buffer
+        message.write(data)
 
-                        # retrieves the header value
-                        header_value = header_splitted[division_index + 1:].strip()
+        # in case the header is not loaded or the message contents are completely loaded
+        if not header_loaded or received_data_size >= message_offset_index + message_size:
+            # retrieves the message value from the string buffer
+            message_value = message.get_value()
+        # in case there's no need to inspect the message contents
+        else:
+            # unsets the process flag
+            process_flag = False
 
-                        # sets the header in the headers map
-                        request.headers_map[header_name] = header_value
-                        request.headers_in[header_name] = header_value
+        # in case the start line is not loaded
+        if process_flag and not start_line_loaded:
+            # finds the first new line value
+            start_line_index = message_value.find("\r\n")
 
-                    # in case the operation type is get
-                    if request.operation_type == GET_METHOD_VALUE:
-                        # parses the get attributes
-                        request.__parse_get_attributes__()
+            # in case there is a new line value found
+            if not start_line_index == -1:
+                # retrieves the start line
+                start_line = message_value[:start_line_index]
 
-                    # in case the content length is defined in the headers map
-                    if CONTENT_LENGTH_VALUE in request.headers_map:
-                        # retrieves the message size
-                        message_size = int(request.headers_map[CONTENT_LENGTH_VALUE])
-                    elif CONTENT_LENGTH_LOWER_VALUE in request.headers_map:
-                        # retrieves the message size
-                        message_size = int(request.headers_map[CONTENT_LENGTH_LOWER_VALUE])
-                    elif UPGRADE_VALUE in request.headers_map:
-                        # retrieves the upgrade (type) value
-                        upgrade = request.headers_map[UPGRADE_VALUE]
+                # splits the start line in spaces
+                start_line_splitted = start_line.split(" ")
 
-                        # in case the upgrade (type) exists in the
-                        # upgrade message size map
-                        if upgrade in UPGRADE_MESSAGE_SIZE_MAP:
-                            # retrieves the message size for the upgrade (type)
-                            message_size = UPGRADE_MESSAGE_SIZE_MAP[upgrade]
-                        # otherwise
-                        else:
-                            # sets the message size to zero (not set)
-                            message_size = 0
+                # retrieves the start line splitted length
+                start_line_splitted_length = len(start_line_splitted)
 
-                            # breaks the loop
-                            break
-                    # in case there is no content length defined in the headers map
+                # in case the length of the splitted line is not valid
+                if not start_line_splitted_length == 3:
+                    # raises the http invalid data exception
+                    raise main_service_http_exceptions.HttpInvalidDataException("invalid data received: " + start_line)
+
+                # retrieve the operation type the path and the protocol version
+                # from the start line splitted
+                operation_type, path, protocol_version = start_line_splitted
+
+                # sets the request operation type
+                request.set_operation_type(operation_type)
+
+                # sets the request path
+                request.set_path(path)
+
+                # sets the request protocol version
+                request.set_protocol_version(protocol_version)
+
+                # sets the start line loaded flag
+                start_line_loaded = True
+
+        # in case the header is not loaded
+        if process_flag and not header_loaded:
+            # retrieves the end header index (two new lines)
+            end_header_index = message_value.find("\r\n\r\n")
+
+            # in case the end header index is found
+            if not end_header_index == -1:
+                # sets the message offset index as the end header index
+                # plus the two sequences of newlines (four characters)
+                message_offset_index = end_header_index + 4
+
+                # sets the header loaded flag
+                header_loaded = True
+
+                # retrieves the start header index
+                start_header_index = start_line_index + 2
+
+                # retrieves the headers part of the message
+                headers = message_value[start_header_index:end_header_index]
+
+                # splits the headers by line
+                headers_splitted = headers.split("\r\n")
+
+                # iterates over the headers lines
+                for header_splitted in headers_splitted:
+                    # finds the header separator
+                    division_index = header_splitted.find(":")
+
+                    # retrieves the header name
+                    header_name = header_splitted[:division_index].strip()
+
+                    # retrieves the header value
+                    header_value = header_splitted[division_index + 1:].strip()
+
+                    # sets the header in the headers map
+                    request.headers_map[header_name] = header_value
+                    request.headers_in[header_name] = header_value
+
+                # in case the operation type is get
+                if request.operation_type == GET_METHOD_VALUE:
+                    # parses the get attributes
+                    request.__parse_get_attributes__()
+
+                # in case the content length is defined in the headers map
+                if CONTENT_LENGTH_VALUE in request.headers_map:
+                    # retrieves the message size
+                    message_size = int(request.headers_map[CONTENT_LENGTH_VALUE])
+                elif CONTENT_LENGTH_LOWER_VALUE in request.headers_map:
+                    # retrieves the message size
+                    message_size = int(request.headers_map[CONTENT_LENGTH_LOWER_VALUE])
+                elif UPGRADE_VALUE in request.headers_map:
+                    # retrieves the upgrade (type) value
+                    upgrade = request.headers_map[UPGRADE_VALUE]
+
+                    # in case the upgrade (type) exists in the
+                    # upgrade message size map
+                    if upgrade in UPGRADE_MESSAGE_SIZE_MAP:
+                        # retrieves the message size for the upgrade (type)
+                        message_size = UPGRADE_MESSAGE_SIZE_MAP[upgrade]
+                    # otherwise
                     else:
                         # sets the message size to zero (not set)
                         message_size = 0
 
-                        # breaks the loop
-                        break
+                        # sets the return request as the request (valid), then
+                        # unsets the process flag and sets the message as loaded
+                        return_request = request
+                        process_flag = False
+                        message_loaded = True
 
-            # in case the message is not loaded and the header is loaded
-            if not message_loaded and header_loaded:
-                # retrieves the start message size
-                start_message_index = end_header_index + 4
+                # in case there is no content length defined in the headers map
+                else:
+                    # sets the message size to zero (not set)
+                    message_size = 0
 
-                # calculates the message value message length
-                message_value_message_length = len(message_value) - start_message_index
-
-                # in case the length of the message value message is the same
-                # as the message size
-                if message_value_message_length == message_size:
-                    # retrieves the message part of the message value
-                    message_value_message = message_value[start_message_index:]
-
-                    # sets the message loaded flag
+                    # sets the return request as the request (valid), then
+                    # unsets the process flag and sets the message as loaded
+                    return_request = request
+                    process_flag = False
                     message_loaded = True
 
-                    # sets the received message
-                    request.received_message = message_value_message
+        # in case the header is not loaded
+        if process_flag and not message_loaded and header_loaded:
+            # retrieves the start message size
+            start_message_index = end_header_index + 4
 
-                    # decodes the request if necessary
-                    self.decode_request(request)
+            # calculates the message value message length
+            message_value_message_length = len(message_value) - start_message_index
 
-                    # breaks the loop
-                    break
+            # in case the length of the message value message is the same
+            # as the message size
+            if message_value_message_length == message_size:
+                # retrieves the message part of the message value
+                message_value_message = message_value[start_message_index:]
+
+                # sets the message loaded flag
+                message_loaded = True
+
+                # sets the received message
+                request.received_message = message_value_message
+
+                # decodes the request if necessary
+                self.decode_request(request)
+
+                # sets the return request as the request (valid), then
+                # unsets the process flag and sets the message as loaded
+                return_request = request
+                process_flag = False
+                message_loaded = True
+
+        # in case the message is not yet loaded (not enought data)
+        if not message_loaded:
+            # saves the various state values representing the current
+            # request parsing state
+            service_connection.request_data["message"] = message
+            service_connection.request_data["request"] = request
+            service_connection.request_data["start_line_loaded"] = start_line_loaded
+            service_connection.request_data["header_loaded"] = header_loaded
+            service_connection.request_data["message_loaded"] = message_loaded
+            service_connection.request_data["message_offset_index"] = message_offset_index
+            service_connection.request_data["message_size"] = message_size
+            service_connection.request_data["received_data_size"] = received_data_size
+            service_connection.request_data["end_header_index"] = end_header_index
+
+            # returns the empty (request)
+            return return_request
+
+        # "resets" the request data map
+        service_connection.request_data = {}
 
         # calculates the complete message size
         complete_message_size = message_size + message_offset_index
@@ -1155,8 +1203,8 @@ class HttpClientServiceHandler:
             # retrieves the pending data
             self.pending_data = message_value[complete_message_size:]
 
-        # returns the request
-        return request
+        # returns the return request request
+        return return_request
 
     def decode_request(self, request):
         """
