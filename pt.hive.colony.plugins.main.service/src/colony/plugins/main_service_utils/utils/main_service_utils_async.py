@@ -362,8 +362,10 @@ class AbstractService:
                 # calls the handler with the socket
                 handler(socket)
             except BaseException:
-                # closes the socket
-                socket.close()
+                # retrieves the client connection from the client
+                # connection map using the socket and closes it
+                client_connection = self.client_connection_map[socket]
+                client_connection.close()
 
     def start_service(self):
         """
