@@ -129,10 +129,12 @@ class AbstractService:
         self.socket_parameters = parameters.get("socket_parameters", {})
 
 
+
+
         #self.chunk_size = parameters.get("chunk_size", CHUNK_SIZE)
 
-        #self.service_configuration = parameters.get("service_configuration", {})
-        #self.extra_parameters = parameters.get("extra_parameters", {})
+        self.service_configuration = parameters.get("service_configuration", {})
+        self.extra_parameters = parameters.get("extra_parameters", {})
 
         #self.client_connection_timeout = parameters.get("client_connection_timeout", CLIENT_CONNECTION_TIMEOUT)
         #self.connection_timeout = parameters.get("connection_timeout", CONNECTION_TIMEOUT)
@@ -151,6 +153,10 @@ class AbstractService:
 
         self.client_connection_map = {}
 
+
+        # TER CUIDADO COM ESTE NONE VER SE O POSSO REMOVER DOS SERVICOS !!!!!
+
+        self.client_service = self.service_handling_task_class(self.service_plugin, None, self.service_configuration, main_service_utils_exceptions.MainServiceUtilsException, self.extra_parameters)
 
 
 
@@ -494,11 +500,17 @@ class Connection:
 
     socket_fd = None
 
+    connection_status = True
+
+    request_data = {}
+
     def __init__(self, service, socket):
         self.service = service
         self.socket = socket
 
         self.socket_fd = socket.fileno()
+
+        self.request_data = {}
 
 class ServiceConnection(Connection):
 
@@ -525,12 +537,20 @@ class ClientConnection(Connection):
 
         self.write_data_buffer = []
 
+        # TODO IMPLMENTAR DE MODO REAL
+        self.connection_address = ("srio.tobias", 8888)
+        self.connection_request_timeout = 10
+
     def open(self):
-        pass
+        # sets the connection status to open
+        self.connection_status = True
 
     def close(self):
         # removes the socket from the service
         self.service.remove_socket(self.socket)
+
+        # sets the connection status to closed
+        self.connection_status = False
 
     def read_handler(self, socket):
         try:
@@ -546,36 +566,65 @@ class ClientConnection(Connection):
             # closes the client connection
             self.close()
         else:
-            self.write("HTTP/1.1 200 OK\r\nContent-Type: application/json\r\nContent-Length: 29\r\nConnection: Keep-Alive\r\nDate: Thu, 07 Jul 2011 12:44:47 GMT\r\nCache-Control: no-cache, must-revalidate\r\nServer: Hive-Colony-Web/1.0.0 (python/win32/2.6.6-final)\r\n\r\n{\"current_time\":1310042687.0}")
+            request = self.service.client_service.retrieve_request_data(self, data)
+
+            # in case the request is valid
+            if request:
+                # cleans the request data
+                self.request_data = {}
+
+                # handles the request using the client service
+                self.service.client_service.handle_request(self, request)
 
     def write_handler(self, socket):
         # iterates over the write data buffer
         while self.write_data_buffer:
-            # retrieves the data from the write
+            # retrieves the data (last element) from the write
             # data buffer
-            data = self.write_data_buffer[0]
+            data = self.write_data_buffer[-1]
 
             try:
                 # tries to send the data through the socket
                 socket.send(data)
             except:
-                # returns immediately (error sending)
+                # returns immediately (error)
                 return
 
             # pops the element from the write data buffer
             self.write_data_buffer.pop()
 
         # unregisters the socket fd for the write event
-        self.service.poll_instance.unregister(self.socket_fd, WRITE)
+        self.unregister(self.socket_fd, WRITE)
 
     def error_handler(self, socket):
         # closes the client connection
         self.close()
 
     def write(self, data):
+        if not self.connection_status:
+            raise Exception("Trying to write in a closed socket")
+
         # adds the data to the write buffer
-        self.write_data_buffer.append(data)
+        self.write_data_buffer.insert(0, data)
 
         # registers the socket fd for the write event (in
         # case it's not already registered)
-        self.service.poll_instance.register(self.socket_fd, WRITE)
+        self.register(self.socket_fd, WRITE)
+
+    def register(self, socket_fd, operations):
+        if not self.connection_status:
+            raise Exception("Trying to register in a closed socket")
+
+        self.service.poll_instance.register(socket_fd, operations)
+
+    def unregister(self, socket_fd, operations):
+        if not self.connection_status:
+            raise Exception("Trying to unregister in a closed socket")
+
+        self.service.poll_instance.unregister(socket_fd, operations)
+
+    def send(self, message, response_timeout = None, retries = None):
+        self.write(message)
+
+    def is_open(self):
+        return self.connection_status
