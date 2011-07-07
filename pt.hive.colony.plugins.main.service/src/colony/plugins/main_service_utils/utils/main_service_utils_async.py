@@ -365,9 +365,6 @@ class AbstractService:
                 # closes the socket
                 socket.close()
 
-                # re-raises the exception
-                raise
-
     def start_service(self):
         """
         Starts the service.
