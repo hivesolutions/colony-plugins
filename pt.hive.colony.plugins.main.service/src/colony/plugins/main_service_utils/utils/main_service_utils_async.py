@@ -37,6 +37,7 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
+import errno
 import select
 import socket
 
@@ -65,6 +66,10 @@ _EPOLLHUP = 0x010
 _EPOLLRDHUP = 0x2000
 _EPOLLONESHOT = (1 << 30)
 _EPOLLET = (1 << 31)
+
+
+
+WSAEWOULDBLOCK = 10035
 
 
 
@@ -353,8 +358,15 @@ class AbstractService:
         # iterates over all the handlers for the
         # tuple (to call them)
         for handler in handlers:
-            # calls the handler with the socket
-            handler(socket)
+            try:
+                # calls the handler with the socket
+                handler(socket)
+            except BaseException:
+                # closes the socket
+                socket.close()
+
+                # re-raises the exception
+                raise
 
     def start_service(self):
         """
@@ -518,9 +530,9 @@ class ServiceConnection(Connection):
     def __init__(self, service, socket):
         Connection.__init__(self, service, socket)
 
-    def read_handler(self, socket):
+    def read_handler(self, _socket):
         # accepts the connection retrieving the service connection object and the address
-        service_connection, _service_address = socket.accept()
+        service_connection, _service_address = _socket.accept()
 
         # sets the service connection to non blocking mode
         service_connection.setblocking(0)
@@ -553,26 +565,35 @@ class ClientConnection(Connection):
         # sets the connection status to closed
         self.connection_status = False
 
-    def read_handler(self, socket):
-        try:
-            data = socket.recv(1024)
-        except:
-            # closes the client connection
-            self.close()
+    def read_handler(self, _socket):
+        while True:
+            try:
+                data = _socket.recv(1024)
+            except socket.error, exception:
+                # in case the exception is normal
+                if exception.args[0] in (errno.EWOULDBLOCK, errno.EAGAIN, WSAEWOULDBLOCK):
+                    # returns immediately (no error)
+                    return
+                # otherwise the exception is more severe
+                else:
+                    # re-raises the exception
+                    raise
 
-            # returns immediately (error)
-            return
+            # in case the data is empty (connection closed)
+            if data == "":
+                # closes the client connection
+                self.close()
 
-        if data == "":
-            # closes the client connection
-            self.close()
-        else:
-            request = self.service.client_service.retrieve_request_data(self, data)
+                # returns immediately (no more
+                # data to be processed)
+                return
+            else:
+                request = self.service.client_service.retrieve_request_data(self, data)
 
-            # handles the request using the client service (in case the request is valid)
-            request and self.service.client_service.handle_request(self, request)
+                # handles the request using the client service (in case the request is valid)
+                request and self.service.client_service.handle_request(self, request)
 
-    def write_handler(self, socket):
+    def write_handler(self, _socket):
         # iterates over the write data buffer
         while self.write_data_buffer:
             # retrieves the data (last element) from the write
@@ -580,16 +601,32 @@ class ClientConnection(Connection):
             data = self.write_data_buffer[-1]
 
             try:
-                # tries to send the data through the socket
-                socket.send(data)
-            except BaseException, exception:
-                print "problema a escrever %s" % str(exception)
+                # retrieves the data bytes (length)
+                data_bytes = len(data)
 
-                # returns immediately (error)
-                return
+                # tries to send the data through the socket
+                sent_bytes = _socket.send(data)
+            except socket.error, exception:
+                # in case the exception is normal
+                if exception.args[0] in (errno.EWOULDBLOCK, errno.EAGAIN, WSAEWOULDBLOCK):
+                    # returns immediately (no error)
+                    return
+                # otherwise the exception is more severe
+                else:
+                    # re-raises the exception
+                    raise
 
             # pops the element from the write data buffer
             self.write_data_buffer.pop()
+
+            # in case the data was not completely
+            # sent (sent bytes not complete)
+            if sent_bytes < data_bytes:
+                # retrieves the "pending" data and
+                # inserts it in first place in the write
+                # data buffer (queue)
+                pending_data = data[sent_bytes:]
+                self.write_data_buffer.insert(0, pending_data)
 
         # unregisters the socket fd for the write event
         self.unregister(self.socket_fd, WRITE)
