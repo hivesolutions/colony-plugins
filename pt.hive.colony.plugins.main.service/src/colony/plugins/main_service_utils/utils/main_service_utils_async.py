@@ -569,13 +569,8 @@ class ClientConnection(Connection):
         else:
             request = self.service.client_service.retrieve_request_data(self, data)
 
-            # in case the request is valid
-            if request:
-                # cleans the request data
-                self.request_data = {}
-
-                # handles the request using the client service
-                self.service.client_service.handle_request(self, request)
+            # handles the request using the client service (in case the request is valid)
+            request and self.service.client_service.handle_request(self, request)
 
     def write_handler(self, socket):
         # iterates over the write data buffer

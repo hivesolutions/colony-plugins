@@ -1576,6 +1576,9 @@ class ServiceConnection:
     service_execution_thread = None
     """ The service execution thread reference """
 
+    request_data = {}
+    """ The data map to be used to persist the processing request data """
+
     _connection_socket = None
     """ The original connection socket """
 
@@ -1624,6 +1627,7 @@ class ServiceConnection:
         self.connection_opened_handlers = []
         self.connection_closed_handlers = []
         self.connection_properties = {}
+        self.request_data = {}
 
         self._read_buffer = []
         self._read_lock = threading.RLock()
