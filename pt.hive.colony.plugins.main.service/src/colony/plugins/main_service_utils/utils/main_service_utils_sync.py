@@ -265,7 +265,7 @@ class AbstractService:
         self.service_execution_thread = ServiceExecutionThread(self)
 
         # in case no end points are defined and there is a socket provider
-        # a default end point is creates with those values
+        # a default end point is created with those values
         if not self.end_points and self.socket_provider:
             # defines the end point tuple
             end_point_tuple = (
@@ -284,10 +284,8 @@ class AbstractService:
         """
 
         try:
-            # starts the service accepting and execution
-            # (background) threads
-            self.service_accepting_thread.start()
-            self.service_execution_thread.start()
+            # starts the background threads
+            self._start_threads()
 
             # creates the work pool
             self._create_pool()
@@ -342,10 +340,8 @@ class AbstractService:
         # stops the pool
         self.service_client_pool.stop_pool()
 
-        # stops the service accepting and execution
-        # (background) threads
-        self.service_accepting_thread.stop()
-        self.service_execution_thread.stop()
+        # stops the background threads
+        self._stop_threads()
 
     def _create_pool(self):
         """
@@ -676,6 +672,26 @@ class AbstractService:
 
         # returns the service handler class
         return service_handler_class
+
+    def _start_threads(self):
+        """
+        Stars the base threads for background execution.
+        """
+
+        # starts the service accepting and execution
+        # (background) threads
+        self.service_accepting_thread.start()
+        self.service_execution_thread.start()
+
+    def _stop_threads(self):
+        """
+        Stars the base threads for background execution.
+        """
+
+        # stops the service accepting and execution
+        # (background) threads
+        self.service_accepting_thread.stop()
+        self.service_execution_thread.stop()
 
 class AbstractServiceConnectionHandler:
     """
