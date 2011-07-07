@@ -613,8 +613,6 @@ class ClientConnection(Connection):
                     # re-raises the exception
                     raise
 
-            print "looping %d" % sent_bytes
-
             # pops the element from the write data buffer
             self.write_data_buffer.pop()
 
