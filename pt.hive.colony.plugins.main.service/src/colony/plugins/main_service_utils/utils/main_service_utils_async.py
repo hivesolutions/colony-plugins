@@ -559,14 +559,26 @@ class ServiceConnection(Connection):
         Connection.__init__(self, service, socket)
 
     def read_handler(self, _socket):
-        # accepts the connection retrieving the service connection object and the address
-        service_connection, service_address = _socket.accept()
+        # iterates continuously
+        while True:
+            try:
+                # accepts the connection retrieving the service connection object and the address
+                service_connection, service_address = _socket.accept()
+            except socket.error, exception:
+                # in case the exception is normal
+                if exception.args[0] in (errno.EWOULDBLOCK, errno.EAGAIN, WSAEWOULDBLOCK):
+                    # returns immediately (no error)
+                    return
+                # otherwise the exception is more severe
+                else:
+                    # re-raises the exception
+                    raise
 
-        # sets the service connection to non blocking mode
-        service_connection.setblocking(0)
+            # sets the service connection to non blocking mode
+            service_connection.setblocking(0)
 
-        # adds service connection in the service
-        self.service.add_socket(service_connection, service_address)
+            # adds service connection in the service
+            self.service.add_socket(service_connection, service_address)
 
 class ClientConnection(Connection):
 
@@ -601,6 +613,7 @@ class ClientConnection(Connection):
         self.connection_status = False
 
     def read_handler(self, _socket):
+        # iterates continuously
         while True:
             try:
                 data = _socket.recv(1024)
