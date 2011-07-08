@@ -37,9 +37,11 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
+import sys
 import errno
 import select
 import socket
+import traceback
 
 import colony.libs.map_util
 
@@ -285,13 +287,13 @@ class AbstractService:
     # ---- ESTES SAO METODOS DA ABSTRACAO SERVICE------
 
 
-    def add_socket(self, client_socket):
+    def add_socket(self, client_socket, client_address):
         client_socket_fd = client_socket.fileno()
 
         self.socket_fd_map[client_socket_fd] = client_socket
         self.poll_instance.register(client_socket_fd, READ | ERROR)
 
-        client_connection = ClientConnection(self, client_socket)
+        client_connection = ClientConnection(self, client_socket, client_address)
         client_connection.service_execution_thread = self.service_execution_thread
         self.client_connection_map[client_socket] = client_connection
 
@@ -314,9 +316,6 @@ class AbstractService:
 
         # closes the client socket
         client_socket.close()
-
-        #print "CONNECTION CLOSED !!!"
-
 
     # ---- AKI ACABAM OS METODOS DA ABSTRACAO SERVICE------
 
@@ -365,6 +364,11 @@ class AbstractService:
                 # calls the handler with the socket
                 handler(socket)
             except BaseException:
+                print "Exception in user code:"
+                print '-'*60
+                traceback.print_exc(file = sys.stdout)
+                print '-'*60
+
                 # retrieves the client connection from the client
                 # connection map using the socket and closes it
                 client_connection = self.client_connection_map[socket]
@@ -374,7 +378,6 @@ class AbstractService:
         """
         Starts the service.
         """
-
 
         self.poll_instance = SelectPolling()
 
@@ -387,10 +390,15 @@ class AbstractService:
         # activates and listens the service sockets
         self._activate_service_sockets()
 
+        # iterates continuously
         while True:
             events = self.poll_instance.poll(100)
 
+            # iterates over all the events to
+            # call the proper handlers
             for event in events:
+                # unpacks the event into the socket fd
+                # and the operation flag
                 socket_fd, operation_flag = event
 
                 read = operation_flag & READ
@@ -468,7 +476,7 @@ class SelectPolling:
         # selects the values
         readable, writeable, errors = select.select(self.readable_socket_list, self.writeable_socket_list, self.errors_socket_list, timeout)
 
-        #print "recebeu '%s', '%s', '%s'" % (readable, writeable, errors)
+        print "recebeu '%s', '%s', '%s'" % (readable, writeable, errors)
 
         # creates the events map to hold the socket fd's
         events_map = {}
@@ -545,15 +553,18 @@ class ServiceConnection(Connection):
 
     def read_handler(self, _socket):
         # accepts the connection retrieving the service connection object and the address
-        service_connection, _service_address = _socket.accept()
+        service_connection, service_address = _socket.accept()
 
         # sets the service connection to non blocking mode
         service_connection.setblocking(0)
 
         # adds service connection in the service
-        self.service.add_socket(service_connection)
+        self.service.add_socket(service_connection, service_address)
 
 class ClientConnection(Connection):
+
+    connection_address = None
+    """ The address for the connection """
 
     write_data_buffer = []
     """ The buffer to hold the data pending to be sent """
@@ -561,13 +572,14 @@ class ClientConnection(Connection):
     service_execution_thread = None
     """ The service execution thread """
 
-    def __init__(self, service, socket):
+    def __init__(self, service, socket, connection_address):
         Connection.__init__(self, service, socket)
+
+        self.connection_address = connection_address
 
         self.write_data_buffer = []
 
         # TODO IMPLMENTAR DE MODO REAL
-        self.connection_address = ("srio.tobias", 8888)
         self.connection_request_timeout = 10
 
     def open(self):
