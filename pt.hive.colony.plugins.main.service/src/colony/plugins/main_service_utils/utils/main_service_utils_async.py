@@ -43,6 +43,7 @@ import socket
 
 import colony.libs.map_util
 
+import main_service_utils_threads
 import main_service_utils_exceptions
 
 BIND_HOST = ""
@@ -108,6 +109,8 @@ class AbstractService:
 
     client_connection_map = {}
 
+    service_execution_thread = None
+
 
 
     def __init__(self, main_service_utils, main_service_utils_plugin, parameters = {}):
@@ -162,8 +165,7 @@ class AbstractService:
         # TER CUIDADO COM ESTE NONE VER SE O POSSO REMOVER DOS SERVICOS !!!!!
 
         self.client_service = self.service_handling_task_class(self.service_plugin, None, self.service_configuration, main_service_utils_exceptions.MainServiceUtilsException, self.extra_parameters)
-
-
+        self.service_execution_thread = main_service_utils_threads.ServiceExecutionThread(self)
 
         # in case no end points are defined and there is a socket provider
         # a default end point is created with those values
@@ -290,6 +292,7 @@ class AbstractService:
         self.poll_instance.register(client_socket_fd, READ | ERROR)
 
         client_connection = ClientConnection(self, client_socket)
+        client_connection.service_execution_thread = self.service_execution_thread
         self.client_connection_map[client_socket] = client_connection
 
         self.add_handler(client_socket_fd, client_connection.read_handler, READ)
@@ -375,7 +378,8 @@ class AbstractService:
 
         self.poll_instance = SelectPolling()
 
-
+        # starts the background threads
+        self._start_threads()
 
         # creates and sets the service sockets
         self._create_service_sockets()
@@ -402,14 +406,24 @@ class AbstractService:
         Stops the service.
         """
 
-        pass
+        # stops the background threads
+        self._stop_threads()
 
+    def _start_threads(self):
+        """
+        Stars the base threads for background execution.
+        """
 
+        # starts the service execution (background) thread
+        self.service_execution_thread.start()
 
+    def _stop_threads(self):
+        """
+        Stars the base threads for background execution.
+        """
 
-
-
-
+        # stops the service execution (background) thread
+        self.service_execution_thread.stop()
 
 class SelectPolling:
 
@@ -544,6 +558,9 @@ class ClientConnection(Connection):
     write_data_buffer = []
     """ The buffer to hold the data pending to be sent """
 
+    service_execution_thread = None
+    """ The service execution thread """
+
     def __init__(self, service, socket):
         Connection.__init__(self, service, socket)
 
@@ -656,6 +673,20 @@ class ClientConnection(Connection):
             raise Exception("Trying to unregister in a closed socket")
 
         self.service.poll_instance.unregister(socket_fd, operations)
+
+    def execute_background(self, callable):
+        """
+        Executes the given callable object in a background
+        thread.
+        This method is useful for avoid blocking the request
+        handling method in non critic tasks.
+
+        @type callable: Callable
+        @param callable: The callable to be called in background.
+        """
+
+        # adds the callable to the service execution thread
+        self.service_execution_thread.add_callable(callable)
 
     def send(self, message, response_timeout = None, retries = None):
         self.write(message)
