@@ -461,21 +461,21 @@ class ConnectionProcessingThread(threading.Thread):
             try:
                 # pops the "current" connection queue from the communication handler
                 connection_queue = self.communication_handler.pop_connection_queue()
-
-                # iterates over the connection queue "connections"
-                for communication_connection in connection_queue:
-                    # retrieves the communication element from the processing
-                    # map using the connection and processes them
-                    communication_elements = self.processing_map.get(communication_connection, [])
-                    self.process_communication_elements(communication_elements)
-
-                # retrieves the "overflown" communication elements
-                # and processes them
-                communication_elements = self.get_overflown_communication_elements()
-                self.process_communication_elements(communication_elements)
             finally:
                 # releases the processing queue lock
                 self.processing_queue_lock.release()
+
+            # iterates over the connection queue "connections"
+            for communication_connection in connection_queue:
+                # retrieves the communication element from the processing
+                # map using the connection and processes them
+                communication_elements = self.processing_map.get(communication_connection, [])
+                self.process_communication_elements(communication_elements)
+
+            # retrieves the "overflown" communication elements
+            # and processes them
+            communication_elements = self.get_overflown_communication_elements()
+            self.process_communication_elements(communication_elements)
 
             # waits for the connection queue event
             connection_queue_event.wait(DEFAULT_UPDATE_POLL_TIMEOUT)
