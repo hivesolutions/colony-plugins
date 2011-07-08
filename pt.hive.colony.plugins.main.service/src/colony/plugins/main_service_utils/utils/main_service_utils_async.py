@@ -85,6 +85,13 @@ ERROR = _EPOLLERR | _EPOLLHUP | _EPOLLRDHUP
 
 ALL = READ | WRITE | ERROR
 
+
+
+
+
+POLL_TIMEOUT = 0.2
+
+
 class AbstractService:
 
     main_service_utils = None
@@ -392,7 +399,7 @@ class AbstractService:
 
         # iterates continuously
         while True:
-            events = self.poll_instance.poll(100)
+            events = self.poll_instance.poll(POLL_TIMEOUT)
 
             # iterates over all the events to
             # call the proper handlers
@@ -476,7 +483,7 @@ class SelectPolling:
         # selects the values
         readable, writeable, errors = select.select(self.readable_socket_list, self.writeable_socket_list, self.errors_socket_list, timeout)
 
-        print "recebeu '%s', '%s', '%s'" % (readable, writeable, errors)
+        #print "recebeu '%s', '%s', '%s'" % (readable, writeable, errors)
 
         # creates the events map to hold the socket fd's
         events_map = {}
