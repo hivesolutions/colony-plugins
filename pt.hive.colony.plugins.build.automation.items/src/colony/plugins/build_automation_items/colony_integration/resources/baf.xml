@@ -47,7 +47,7 @@
             <plugin>
                 <id>pt.hive.colony.plugins.build.automation.extensions.properties</id>
                 <version>1.0.0</version>
-                   <stage>build</stage>
+                <stage>build</stage>
                 <configuration>
                     <property>
                         <key>integration_base_url</key>
@@ -76,6 +76,19 @@
                     <adapter>svn</adapter>
                     <path>http://svn.hive.pt/hive-main/pt.hive.colony/trunk</path>
                     <target_path>$base{plugin_system_directory}/tmp/checkout/pt.hive.colony</target_path>
+                    <version_file_path>${build_automation.build.resources_directory}/version</version_file_path>
+                    <previous_version_file_path>$resource{system.path.integration}/LATEST_SUCCESS.version</previous_version_file_path>
+                    <changelog_file_path>${build_automation.build.resources_directory}/changelog</changelog_file_path>
+                </configuration>
+            </plugin>
+            <plugin>
+                <id>pt.hive.colony.plugins.build.automation.extensions.revision_control</id>
+                <version>1.0.0</version>
+                <stage>install</stage>
+                <configuration>
+                    <adapter>svn</adapter>
+                    <path>http://svn.hive.pt/hive-main/pt.hive.colony.plugins/trunk</path>
+                    <target_path>$base{plugin_system_directory}/tmp/checkout/pt.hive.colony.plugins</target_path>
                     <version_file_path>${build_automation.build.resources_directory}/version</version_file_path>
                     <previous_version_file_path>$resource{system.path.integration}/LATEST_SUCCESS.version</previous_version_file_path>
                     <changelog_file_path>${build_automation.build.resources_directory}/changelog</changelog_file_path>
