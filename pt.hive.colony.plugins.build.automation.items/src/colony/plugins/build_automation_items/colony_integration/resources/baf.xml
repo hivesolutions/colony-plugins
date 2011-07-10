@@ -74,7 +74,7 @@
                 <stage>install</stage>
                 <configuration>
                     <adapter>svn</adapter>
-                    <path>http://svn.hive.pt/hive-main/pt.hive.colony/trunk</path>
+                    <path>http://svn.hive.pt/hive-main/pt.hive.colony</path>
                     <target_path>$base{plugin_system_directory}/tmp/checkout/pt.hive.colony</target_path>
                     <version_file_path>${build_automation.build.resources_directory}/version</version_file_path>
                     <previous_version_file_path>$resource{system.path.integration}/LATEST_SUCCESS.version</previous_version_file_path>
@@ -87,8 +87,21 @@
                 <stage>install</stage>
                 <configuration>
                     <adapter>svn</adapter>
-                    <path>http://svn.hive.pt/hive-main/pt.hive.colony.plugins/trunk</path>
+                    <path>http://svn.hive.pt/hive-main/pt.hive.colony.plugins</path>
                     <target_path>$base{plugin_system_directory}/tmp/checkout/pt.hive.colony.plugins</target_path>
+                    <version_file_path>${build_automation.build.resources_directory}/version</version_file_path>
+                    <previous_version_file_path>$resource{system.path.integration}/LATEST_SUCCESS.version</previous_version_file_path>
+                    <changelog_file_path>${build_automation.build.resources_directory}/changelog</changelog_file_path>
+                </configuration>
+            </plugin>
+            <plugin>
+                <id>pt.hive.colony.plugins.build.automation.extensions.revision_control</id>
+                <version>1.0.0</version>
+                <stage>install</stage>
+                <configuration>
+                    <adapter>svn</adapter>
+                    <path>http://svn.hive.pt/hive-main/pt.hive.colony.extras</path>
+                    <target_path>$base{plugin_system_directory}/tmp/checkout/pt.hive.colony.extras</target_path>
                     <version_file_path>${build_automation.build.resources_directory}/version</version_file_path>
                     <previous_version_file_path>$resource{system.path.integration}/LATEST_SUCCESS.version</previous_version_file_path>
                     <changelog_file_path>${build_automation.build.resources_directory}/changelog</changelog_file_path>
@@ -101,11 +114,11 @@
                 <configuration>
                     <contents>
                         <file>
-                            <path>$base{plugin_system_directory}/tmp/checkout/pt.hive.colony/pt.hive.colony/src/colony/base/plugin_system_information.py</path>
+                            <path>$base{plugin_system_directory}/tmp/checkout/pt.hive.colony/trunk/pt.hive.colony/src/colony/base/plugin_system_information.py</path>
                             <encoding>Cp1252</encoding>
                         </file>
                         <file>
-                            <path>$base{plugin_system_directory}/tmp/checkout/pt.hive.colony/pt.hive.colony/src/scripts/all/colony_deploy.py</path>
+                            <path>$base{plugin_system_directory}/tmp/checkout/pt.hive.colony/trunk/pt.hive.colony/src/scripts/all/colony_deploy.py</path>
                             <encoding>Cp1252</encoding>
                         </file>
                     </contents>
@@ -118,9 +131,9 @@
                 <configuration>
                     <command>python</command>
                     <arguments>
-                        <argument>$base{plugin_system_directory}/tmp/checkout/pt.hive.colony/pt.hive.colony/src/main.py</argument>
+                        <argument>$base{plugin_system_directory}/tmp/checkout/pt.hive.colony/trunk/pt.hive.colony/src/main.py</argument>
                         <argument>--configuration_file=config/python/configuration_integration_run.py</argument>
-                        <argument>--manager_dir=$base{plugin_system_directory}/tmp/checkout/pt.hive.colony/pt.hive.colony/src</argument>
+                        <argument>--manager_dir=$base{plugin_system_directory}/tmp/checkout/pt.hive.colony/trunk/pt.hive.colony/src</argument>
                         <argument>--execution_command=pt.hive.colony.plugins.build.automation:run_automation_raise_exception pt.hive.colony.plugins.build.automation.items.colony_bundle$1.0.0$build$3%int$0%null$1%bool</argument>
                     </arguments>
                     <shell>true</shell>
