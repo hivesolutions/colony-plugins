@@ -79,7 +79,7 @@
                         <target_path>$base{plugin_system_directory}/tmp/checkout/pt.hive.colony</target_path>
                         <version_file_path>${build_automation.build.resources_directory}/version</version_file_path>
                         <previous_version_file_path>$resource{system.path.integration}/LATEST_SUCCESS.version</previous_version_file_path>
-                        <changelog_file_path>${build_automation.build.resources_directory}/changelog</changelog_file_path>
+                        <changelog_file_path>${build_automation.build.resources_directory}/pt.hive.colony.changelog</changelog_file_path>
                     </repository>
                     <repository>
                         <adapter>svn</adapter>
@@ -87,7 +87,7 @@
                         <target_path>$base{plugin_system_directory}/tmp/checkout/pt.hive.colony.plugins</target_path>
                         <version_file_path>${build_automation.build.resources_directory}/version</version_file_path>
                         <previous_version_file_path>$resource{system.path.integration}/LATEST_SUCCESS.version</previous_version_file_path>
-                        <changelog_file_path>${build_automation.build.resources_directory}/changelog</changelog_file_path>
+                        <changelog_file_path>${build_automation.build.resources_directory}/pt.hive.colony.plugins.changelog</changelog_file_path>
                     </repository>
                     <repository>
                         <adapter>svn</adapter>
@@ -95,7 +95,7 @@
                         <target_path>$base{plugin_system_directory}/tmp/checkout/pt.hive.colony.extras</target_path>
                         <version_file_path>${build_automation.build.resources_directory}/version</version_file_path>
                         <previous_version_file_path>$resource{system.path.integration}/LATEST_SUCCESS.version</previous_version_file_path>
-                        <changelog_file_path>${build_automation.build.resources_directory}/changelog</changelog_file_path>
+                        <changelog_file_path>${build_automation.build.resources_directory}/pt.hive.colony.extras.changelog</changelog_file_path>
                     </repository>
                     <repository>
                         <adapter>svn</adapter>
@@ -103,7 +103,7 @@
                         <target_path>$base{plugin_system_directory}/tmp/checkout/pt.hive.colony.language</target_path>
                         <version_file_path>${build_automation.build.resources_directory}/version</version_file_path>
                         <previous_version_file_path>$resource{system.path.integration}/LATEST_SUCCESS.version</previous_version_file_path>
-                        <changelog_file_path>${build_automation.build.resources_directory}/changelog</changelog_file_path>
+                        <changelog_file_path>${build_automation.build.resources_directory}/pt.hive.colony.language.changelog</changelog_file_path>
                     </repository>
                 </configuration>
             </plugin>
