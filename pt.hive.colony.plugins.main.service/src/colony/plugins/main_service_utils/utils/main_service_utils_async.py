@@ -460,6 +460,7 @@ class AbstractService:
                 # and the operation flag
                 socket_fd, operation_flag = event
 
+                # "unpacks" the various operation flags
                 read = operation_flag & READ
                 write = operation_flag & WRITE
                 error = operation_flag & ERROR
