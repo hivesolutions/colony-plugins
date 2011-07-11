@@ -422,6 +422,9 @@ class AbstractService:
             # disables the service sockets
             self._disable_service_sockets()
 
+            # removes the client sockets
+            self._remove_client_sockets()
+
             # sets the service connection close end event
             self.service_connection_close_end_event.set()
 
@@ -482,8 +485,17 @@ class AbstractService:
             # closes the service socket
             service_socket.close()
 
-        for tobias in  self.client_connection_map:
-            self.remove_socket(tobias)
+    def _remove_client_sockets(self):
+        """
+        Removes all the "remaining" client sockets.
+        """
+
+        # iterates over all the client sockets in the
+        # client connection map
+        for client_socket in self.client_connection_map:
+            # removes the client socket from
+            # internal structures
+            self.remove_socket(client_socket)
 
     def _start_threads(self):
         """
