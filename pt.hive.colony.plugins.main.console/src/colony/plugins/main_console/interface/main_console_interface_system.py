@@ -123,7 +123,7 @@ class MainConsoleInterface:
 
         # retrieves the active configuration value (checks if
         # the console interface should start)
-        active = self.console_interface_configuration.get(ACTIVE_VALUE, False)
+        active = self.console_interface_configuration.get(ACTIVE_VALUE, True)
 
         # in case the active flag is not set
         if not active:
