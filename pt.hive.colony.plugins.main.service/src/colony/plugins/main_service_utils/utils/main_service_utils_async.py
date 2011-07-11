@@ -41,6 +41,7 @@ import sys
 import errno
 import select
 import socket
+import threading
 import traceback
 
 import colony.libs.map_util
@@ -125,6 +126,10 @@ class AbstractService:
 
 
 
+    service_connection_close_end_event = None
+
+
+
     def __init__(self, main_service_utils, main_service_utils_plugin, parameters = {}):
         """
         Constructor of the class.
@@ -172,6 +177,10 @@ class AbstractService:
 
 
         self.client_connection_map = {}
+
+
+
+        self.service_connection_close_end_event = threading.Event()
 
 
         # TER CUIDADO COM ESTE NONE VER SE O POSSO REMOVER DOS SERVICOS !!!!!
@@ -389,6 +398,9 @@ class AbstractService:
         Starts the service.
         """
 
+        # clears the service connection close end event
+        self.service_connection_close_end_event.clear()
+
         # unsets the stop flag
         self.stop_flag = False
 
@@ -403,31 +415,35 @@ class AbstractService:
         # activates and listens the service sockets
         self._activate_service_sockets()
 
-        # iterates continuously
-        while True:
-            # in case the stop flag is set
-            if self.stop_flag:
-                # breaks the loop
-                break
+        try:
+            # iterates continuously
+            while True:
+                # in case the stop flag is set
+                if self.stop_flag:
+                    # breaks the loop
+                    break
 
-            # pools the poll instance to retrieve the
-            # current loop events
-            events = self.poll_instance.poll(POLL_TIMEOUT)
+                # pools the poll instance to retrieve the
+                # current loop events
+                events = self.poll_instance.poll(POLL_TIMEOUT)
 
-            # iterates over all the events to
-            # call the proper handlers
-            for event in events:
-                # unpacks the event into the socket fd
-                # and the operation flag
-                socket_fd, operation_flag = event
+                # iterates over all the events to
+                # call the proper handlers
+                for event in events:
+                    # unpacks the event into the socket fd
+                    # and the operation flag
+                    socket_fd, operation_flag = event
 
-                read = operation_flag & READ
-                write = operation_flag & WRITE
-                error = operation_flag & ERROR
+                    read = operation_flag & READ
+                    write = operation_flag & WRITE
+                    error = operation_flag & ERROR
 
-                read and self.call_handlers_tuple((socket_fd, read))
-                write and self.call_handlers_tuple((socket_fd, write))
-                error and self.call_handlers_tuple((socket_fd, error))
+                    read and self.call_handlers_tuple((socket_fd, read))
+                    write and self.call_handlers_tuple((socket_fd, write))
+                    error and self.call_handlers_tuple((socket_fd, error))
+        finally:
+            # sets the service connection close end event
+            self.service_connection_close_end_event.set()
 
     def stop_service(self):
         """
@@ -439,6 +455,9 @@ class AbstractService:
 
         # sets the stop flag
         self.stop_flag = True
+
+        # waits for the service connection close end event
+        self.service_connection_close_end_event.wait()
 
     def _start_threads(self):
         """
