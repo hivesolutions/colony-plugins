@@ -419,6 +419,9 @@ class AbstractService:
             # runs the main loop
             self._loop()
         finally:
+            # disables the service sockets
+            self._disable_service_sockets()
+
             # sets the service connection close end event
             self.service_connection_close_end_event.set()
 
@@ -468,6 +471,16 @@ class AbstractService:
                 read and self.call_handlers_tuple((socket_fd, read))
                 write and self.call_handlers_tuple((socket_fd, write))
                 error and self.call_handlers_tuple((socket_fd, error))
+
+    def _disable_service_sockets(self):
+        """
+        Disables the service sockets.
+        """
+
+        # iterates over all the service sockets
+        for service_socket in self.service_sockets:
+            # closes the service socket
+            service_socket.close()
 
     def _start_threads(self):
         """
