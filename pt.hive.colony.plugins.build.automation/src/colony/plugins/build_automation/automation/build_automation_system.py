@@ -954,8 +954,7 @@ class BuildAutomation:
                 self._set_configuration_composite_value(base_map, configuration_name, configuration_item, build_automation_structure)
 
     def generate_build_automation_profiles_structure(self, build_automation_parsing_structure, build_automation_structure):
-        # retrieves the profiles parsing value
-        profiles = build_automation_parsing_structure.profiles
+        pass
 
     def create_build_automation_directories(self, build_automation_structure):
         # retrieves the build properties
