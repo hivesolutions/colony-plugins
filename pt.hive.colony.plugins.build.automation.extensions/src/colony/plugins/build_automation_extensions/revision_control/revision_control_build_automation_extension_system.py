@@ -44,8 +44,8 @@ import colony.libs.map_util
 DEFAULT_ENCODING = "utf-8"
 """ The default encoding """
 
-CHECKOUT_VALUE = "checkout"
-""" The checkout value """
+REPOSITORY_VALUE = "repository"
+""" The repository value """
 
 ADAPTER_VALUE = "adapter"
 """ The adapter value """
@@ -121,17 +121,17 @@ class RevisionControlBuildAutomationExtension:
         build_automation_structure_runtime = build_automation_structure.runtime
 
         # retrieves the checkout values to be processed
-        checkouts = colony.libs.map_util.map_get_values(parameters, CHECKOUT_VALUE)
+        repositories = colony.libs.map_util.map_get_values(parameters, REPOSITORY_VALUE)
 
-        # iterates over all the checkout values
-        for checkout in checkouts:
-            # retrieves the required checkout parameters
-            adapter = checkout[ADAPTER_VALUE]
-            path = checkout[PATH_VALUE]
-            target_path = checkout[TARGET_PATH_VALUE]
-            version_file_path = checkout.get(VERSION_FILE_PATH_VALUE, None)
-            previous_version_file_path = checkout.get(PREVIOUS_VERSION_FILE_PATH_VALUE, None)
-            changelog_file_path = checkout.get(CHANGELOG_FILE_PATH_VALUE, None)
+        # iterates over all the repository values
+        for repository in repositories:
+            # retrieves the required repository parameters
+            adapter = repository[ADAPTER_VALUE]
+            path = repository[PATH_VALUE]
+            target_path = repository[TARGET_PATH_VALUE]
+            version_file_path = repository.get(VERSION_FILE_PATH_VALUE, None)
+            previous_version_file_path = repository.get(PREVIOUS_VERSION_FILE_PATH_VALUE, None)
+            changelog_file_path = repository.get(CHANGELOG_FILE_PATH_VALUE, None)
 
             # creates the revision control parameters
             revision_control_parameters = {
