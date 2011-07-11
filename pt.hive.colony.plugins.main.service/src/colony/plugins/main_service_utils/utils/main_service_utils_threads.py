@@ -84,10 +84,16 @@ class ServiceAcceptingThread(threading.Thread):
             self.service_tuple_queue_condition.acquire()
 
             try:
-                # iterates while the service socker queue is empty
-                while not self.service_tuple_queue:
+                # iterates while the service tuple queue is empty
+                # and the stop flag is not set
+                while not self.service_tuple_queue and not self.stop_flag:
                     # waits for the service tuple queue condition
                     self.service_tuple_queue_condition.wait()
+
+                # in case the stop flag is set
+                if self.stop_flag:
+                    # breaks the loop
+                    break;
 
                 # pops the top service tuple
                 service_tuple = self.service_tuple_queue.pop()
@@ -169,19 +175,20 @@ class ServiceExecutionThread(threading.Thread):
 
         # iterates continuously
         while True:
-            # in case the stop flag is set
-            if self.stop_flag:
-                # breaks the loop
-                break;
-
             # acquires the callable queue condition
             self.callable_queue_condition.acquire()
 
             try:
-                # iterates while the service socker queue is empty
-                while not self.callable_queue:
+                # iterates while the service socket queue is empty
+                # and the stop flag is not set
+                while not self.callable_queue and not self.stop_flag:
                     # waits for the callable queue condition
                     self.callable_queue_condition.wait()
+
+                # in case the stop flag is set
+                if self.stop_flag:
+                    # breaks the loop
+                    break;
 
                 # pops the top callable
                 callable = self.callable_queue.pop()
