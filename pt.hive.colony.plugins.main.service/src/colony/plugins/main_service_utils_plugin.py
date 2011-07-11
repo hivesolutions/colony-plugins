@@ -70,8 +70,11 @@ class MainServiceUtilsPlugin(colony.base.plugin_system.Plugin):
         colony.base.plugin_system.PluginDependency("pt.hive.colony.plugins.main.work.work_pool_manager", "1.0.0")
     ]
     main_modules = [
+        "main_service_utils.utils.main_service_utils_async",
         "main_service_utils.utils.main_service_utils_exceptions",
-        "main_service_utils.utils.main_service_utils_system"
+        "main_service_utils.utils.main_service_utils_sync",
+        "main_service_utils.utils.main_service_utils_system",
+        "main_service_utils.utils.main_service_utils_threads"
     ]
 
     main_service_utils = None
