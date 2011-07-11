@@ -416,31 +416,8 @@ class AbstractService:
         self._activate_service_sockets()
 
         try:
-            # iterates continuously
-            while True:
-                # in case the stop flag is set
-                if self.stop_flag:
-                    # breaks the loop
-                    break
-
-                # pools the poll instance to retrieve the
-                # current loop events
-                events = self.poll_instance.poll(POLL_TIMEOUT)
-
-                # iterates over all the events to
-                # call the proper handlers
-                for event in events:
-                    # unpacks the event into the socket fd
-                    # and the operation flag
-                    socket_fd, operation_flag = event
-
-                    read = operation_flag & READ
-                    write = operation_flag & WRITE
-                    error = operation_flag & ERROR
-
-                    read and self.call_handlers_tuple((socket_fd, read))
-                    write and self.call_handlers_tuple((socket_fd, write))
-                    error and self.call_handlers_tuple((socket_fd, error))
+            # runs the main loop
+            self._loop()
         finally:
             # sets the service connection close end event
             self.service_connection_close_end_event.set()
@@ -458,6 +435,38 @@ class AbstractService:
 
         # waits for the service connection close end event
         self.service_connection_close_end_event.wait()
+
+    def _loop(self):
+        """
+        Method representing the main loop for
+        request and connection handling.
+        """
+
+        # iterates continuously
+        while True:
+            # in case the stop flag is set
+            if self.stop_flag:
+                # breaks the loop
+                return
+
+            # pools the poll instance to retrieve the
+            # current loop events
+            events = self.poll_instance.poll(POLL_TIMEOUT)
+
+            # iterates over all the events to
+            # call the proper handlers
+            for event in events:
+                # unpacks the event into the socket fd
+                # and the operation flag
+                socket_fd, operation_flag = event
+
+                read = operation_flag & READ
+                write = operation_flag & WRITE
+                error = operation_flag & ERROR
+
+                read and self.call_handlers_tuple((socket_fd, read))
+                write and self.call_handlers_tuple((socket_fd, write))
+                error and self.call_handlers_tuple((socket_fd, error))
 
     def _start_threads(self):
         """
