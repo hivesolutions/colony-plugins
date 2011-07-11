@@ -39,8 +39,13 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 import os
 
+import colony.libs.map_util
+
 DEFAULT_ENCODING = "utf-8"
 """ The default encoding """
+
+CHECKOUT_VALUE = "checkout"
+""" The checkout value """
 
 ADAPTER_VALUE = "adapter"
 """ The adapter value """
@@ -115,95 +120,100 @@ class RevisionControlBuildAutomationExtension:
         # retrieves the build automation structure runtime
         build_automation_structure_runtime = build_automation_structure.runtime
 
-        # retrieves the required parameters
-        adapter = parameters[ADAPTER_VALUE]
-        path = parameters[PATH_VALUE]
-        target_path = parameters[TARGET_PATH_VALUE]
-        version_file_path = parameters.get(VERSION_FILE_PATH_VALUE, None)
-        previous_version_file_path = parameters.get(PREVIOUS_VERSION_FILE_PATH_VALUE, None)
-        changelog_file_path = parameters.get(CHANGELOG_FILE_PATH_VALUE, None)
+        # retrieves the checkout values to be processed
+        checkouts = colony.libs.map_util.map_get_values(parameters, CHECKOUT_VALUE)
 
-        # creates the revision control parameters
-        revision_control_parameters = {
-            REPOSITORY_PATH_VALUE : target_path
-        }
+        # iterates over all the checkout values
+        for checkout in checkouts:
+            # retrieves the required checkout parameters
+            adapter = checkout[ADAPTER_VALUE]
+            path = checkout[PATH_VALUE]
+            target_path = checkout[TARGET_PATH_VALUE]
+            version_file_path = checkout.get(VERSION_FILE_PATH_VALUE, None)
+            previous_version_file_path = checkout.get(PREVIOUS_VERSION_FILE_PATH_VALUE, None)
+            changelog_file_path = checkout.get(CHANGELOG_FILE_PATH_VALUE, None)
 
-        # loads a new revision control manager for the specified adapter name
-        revision_control_manager = revision_control_manager_plugin.load_revision_control_manager(adapter, revision_control_parameters)
+            # creates the revision control parameters
+            revision_control_parameters = {
+                REPOSITORY_PATH_VALUE : target_path
+            }
 
-        # in case the target path already exists
-        if os.path.exists(target_path):
-            # prints an info message
-            logger.info("Running cleanup deep in %s" % target_path)
+            # loads a new revision control manager for the specified adapter name
+            revision_control_manager = revision_control_manager_plugin.load_revision_control_manager(adapter, revision_control_parameters)
 
-            # cleans the repository from locks (deep mode)
-            revision_control_manager.cleanup_deep([target_path])
+            # in case the target path already exists
+            if os.path.exists(target_path):
+                # prints an info message
+                logger.info("Running cleanup deep in %s" % target_path)
 
-            # prints an info message
-            logger.info("Running revert in %s" % target_path)
+                # cleans the repository from locks (deep mode)
+                revision_control_manager.cleanup_deep([target_path])
 
-            # reverts the repository to the previous version
-            # and removes unnecessary files
-            revision_control_manager.revert([target_path])
+                # prints an info message
+                logger.info("Running revert in %s" % target_path)
 
-            # prints an info message
-            logger.info("Running update in %s" % target_path)
+                # reverts the repository to the previous version
+                # and removes unnecessary files
+                revision_control_manager.revert([target_path])
 
-            # updates the repository to the current head revision
-            revision = revision_control_manager.update([target_path], None)
-        else:
-            # prints an info message
-            logger.info("Checking out repository %s out into %s" % (path, target_path))
+                # prints an info message
+                logger.info("Running update in %s" % target_path)
 
-            # checks out the repository to the target path
-            revision = revision_control_manager.checkout(path, target_path)
-
-        # in case the version file path is defined
-        if version_file_path:
-            # prints an info message
-            logger.info("Writing version number to file %s" % version_file_path)
-
-            # writes the version number to the file
-            self._write_version_number(version_file_path, revision)
-
-        # in case previous version file path and the changelog file path are defined
-        if previous_version_file_path and changelog_file_path:
-            # prints an info message
-            logger.info("Writing changelog to file %s" % changelog_file_path)
-
-            # retrieves the current revision number
-            current_revision_number = revision.get_number()
-
-            # reads the previous revision number from the
-            previous_revision_number = self._read_version_number(previous_version_file_path)
-
-            # in case the previous revision number is defined
-            if previous_revision_number:
-                # sets the base revision number as the previous revision
-                # number plus one in case it's less than the current version
-                # otherwise the base version is the current version
-                base_revision_number = previous_revision_number < current_revision_number and previous_revision_number + 1 or current_revision_number
-            # otherwise
+                # updates the repository to the current head revision
+                revision = revision_control_manager.update([target_path], None)
             else:
-                # sets the base revision number as invalid (start from zero)
-                base_revision_number = None
+                # prints an info message
+                logger.info("Checking out repository %s out into %s" % (path, target_path))
 
-            # retrieves the log of revision in the revision
-            revision_list = revision_control_manager.log([target_path], base_revision_number, current_revision_number)
+                # checks out the repository to the target path
+                revision = revision_control_manager.checkout(path, target_path)
 
-            # converts the revision list into a changelog list
-            changelog_list = self._convert_revision_list_changelog(revision_list)
+            # in case the version file path is defined
+            if version_file_path:
+                # prints an info message
+                logger.info("Writing version number to file %s" % version_file_path)
 
-            # creates the changers list from the the revision list
-            changers_list = self._create_changers_list(revision_list)
+                # writes the version number to the file
+                self._write_version_number(version_file_path, revision)
 
-            # writes the changelog for the given file path and changelog list
-            self._write_changelog(changelog_file_path, changelog_list)
+            # in case previous version file path and the changelog file path are defined
+            if previous_version_file_path and changelog_file_path:
+                # prints an info message
+                logger.info("Writing changelog to file %s" % changelog_file_path)
 
-        # sets the build automation structure runtime properties
-        build_automation_structure_runtime.local_properties[VERSION_VALUE] = current_revision_number
-        build_automation_structure_runtime.local_properties[CHANGELOG_LIST_VALUE] = changelog_list
-        build_automation_structure_runtime.local_properties[CHANGERS_LIST_VALUE] = changers_list
+                # retrieves the current revision number
+                current_revision_number = revision.get_number()
+
+                # reads the previous revision number from the
+                previous_revision_number = self._read_version_number(previous_version_file_path)
+
+                # in case the previous revision number is defined
+                if previous_revision_number:
+                    # sets the base revision number as the previous revision
+                    # number plus one in case it's less than the current version
+                    # otherwise the base version is the current version
+                    base_revision_number = previous_revision_number < current_revision_number and previous_revision_number + 1 or current_revision_number
+                # otherwise
+                else:
+                    # sets the base revision number as invalid (start from zero)
+                    base_revision_number = None
+
+                # retrieves the log of revision in the revision
+                revision_list = revision_control_manager.log([target_path], base_revision_number, current_revision_number)
+
+                # converts the revision list into a changelog list
+                changelog_list = self._convert_revision_list_changelog(revision_list)
+
+                # creates the changers list from the the revision list
+                changers_list = self._create_changers_list(revision_list)
+
+                # writes the changelog for the given file path and changelog list
+                self._write_changelog(changelog_file_path, changelog_list)
+
+            # sets the build automation structure runtime properties
+            build_automation_structure_runtime.local_properties[VERSION_VALUE] = current_revision_number
+            build_automation_structure_runtime.local_properties[CHANGELOG_LIST_VALUE] = changelog_list
+            build_automation_structure_runtime.local_properties[CHANGERS_LIST_VALUE] = changers_list
 
         # returns true (success)
         return True
