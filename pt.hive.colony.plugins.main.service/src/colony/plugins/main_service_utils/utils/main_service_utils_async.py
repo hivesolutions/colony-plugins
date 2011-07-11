@@ -456,6 +456,10 @@ class AbstractService:
         # stops the service execution (background) thread
         self.service_execution_thread.stop()
 
+        # joins (waits for) the service execution
+        # (background) thread
+        self.service_execution_thread.join()
+
 class SelectPolling:
 
     readable_socket_list = None

@@ -694,6 +694,11 @@ class AbstractService:
         self.service_accepting_thread.stop()
         self.service_execution_thread.stop()
 
+        # stops (waits for) the service accepting
+        # and execution (background) threads
+        self.service_accepting_thread.join()
+        self.service_execution_thread.join()
+
 class AbstractServiceConnectionHandler:
     """
     The abstract service connection handler.
