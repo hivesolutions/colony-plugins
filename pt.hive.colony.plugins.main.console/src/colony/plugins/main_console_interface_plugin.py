@@ -93,13 +93,13 @@ class MainConsoleInterfacePlugin(colony.base.plugin_system.Plugin):
         colony.base.plugin_system.Plugin.end_load_plugin(self)
 
         # loads the console
-        self.console_interface.load_console()
+        #self.console_interface.load_console()
 
     def unload_plugin(self):
         colony.base.plugin_system.Plugin.unload_plugin(self)
 
         # unloads the console
-        self.console_interface.unload_console()
+        #self.console_interface.unload_console()
 
     def end_unload_plugin(self):
         colony.base.plugin_system.Plugin.end_unload_plugin(self)
