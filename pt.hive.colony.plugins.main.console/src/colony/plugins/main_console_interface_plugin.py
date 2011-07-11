@@ -92,20 +92,14 @@ class MainConsoleInterfacePlugin(colony.base.plugin_system.Plugin):
     def end_load_plugin(self):
         colony.base.plugin_system.Plugin.end_load_plugin(self)
 
-        # notifies the ready semaphore
-        self.release_ready_semaphore()
-
         # loads the console
-        #self.console_interface.load_console()
+        self.console_interface.load_console()
 
     def unload_plugin(self):
         colony.base.plugin_system.Plugin.unload_plugin(self)
 
-        # notifies the ready semaphore
-        self.release_ready_semaphore()
-
         # unloads the console
-        #self.console_interface.unload_console()
+        self.console_interface.unload_console()
 
     def end_unload_plugin(self):
         colony.base.plugin_system.Plugin.end_unload_plugin(self)
