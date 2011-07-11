@@ -100,6 +100,9 @@ class AbstractService:
     main_service_utils_plugin = None
     """ The main service utils plugin """
 
+    stop_flag = False
+    """ The flag that controls the execution of the main loop """
+
     service_sockets = []
     """ The service sockets """
 
@@ -386,6 +389,9 @@ class AbstractService:
         Starts the service.
         """
 
+        # unsets the stop flag
+        self.stop_flag = False
+
         self.poll_instance = SelectPolling()
 
         # starts the background threads
@@ -399,6 +405,13 @@ class AbstractService:
 
         # iterates continuously
         while True:
+            # in case the stop flag is set
+            if self.stop_flag:
+                # breaks the loop
+                break
+
+            # pools the poll instance to retrieve the
+            # current loop events
             events = self.poll_instance.poll(POLL_TIMEOUT)
 
             # iterates over all the events to
@@ -423,6 +436,9 @@ class AbstractService:
 
         # stops the background threads
         self._stop_threads()
+
+        # sets the stop flag
+        self.stop_flag = True
 
     def _start_threads(self):
         """
