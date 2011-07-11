@@ -52,7 +52,7 @@ configuration = {
                 1
             ],
             "recursion_list" : [
-                0, 0, 5, 0, 0
+                0, 0, 1, 0, 0
             ]
         },
         {
