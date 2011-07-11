@@ -447,7 +447,7 @@ class AbstractService:
             # in case the stop flag is set
             if self.stop_flag:
                 # breaks the loop
-                return
+                break
 
             # pools the poll instance to retrieve the
             # current loop events
