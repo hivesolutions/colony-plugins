@@ -12,5 +12,6 @@
     "capabilities_allowed" : ${out value=plugin_descriptor.capabilities_allowed /},
     "dependencies" : ${out value=plugin_descriptor.dependencies /},
     "main_file" : "${out value=plugin_descriptor.main_file /}",
-    "resources" : ${out value=plugin_descriptor.resources /}
+    "resources" : ${out value=plugin_descriptor.resources /},
+    "extra_resources" : ${out value=plugin_descriptor.extra_resources /}
 }
