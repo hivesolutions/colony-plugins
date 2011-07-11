@@ -84,7 +84,6 @@ class CommandExecutionBuildAutomationExtension:
         parameters = {
             "command" : command,
             "arguments" : _arguments,
-            "stdin" : subprocess.PIPE,
             "stdout" : subprocess.PIPE,
             "stderr" : subprocess.PIPE,
             "shell" : shell
