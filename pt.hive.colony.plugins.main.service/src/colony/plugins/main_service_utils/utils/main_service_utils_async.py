@@ -482,6 +482,9 @@ class AbstractService:
             # closes the service socket
             service_socket.close()
 
+        for tobias in  self.client_connection_map:
+            self.remove_socket(tobias)
+
     def _start_threads(self):
         """
         Stars the base threads for background execution.
