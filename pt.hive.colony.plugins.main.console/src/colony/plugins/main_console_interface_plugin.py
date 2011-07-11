@@ -123,3 +123,11 @@ class MainConsoleInterfacePlugin(colony.base.plugin_system.Plugin):
     @colony.base.decorators.plugin_inject("pt.hive.colony.plugins.main.console")
     def set_main_console_plugin(self, main_console_plugin):
         self.main_console_plugin = main_console_plugin
+
+    @colony.base.decorators.set_configuration_property_method("configuration")
+    def configuration_set_configuration_property(self, property_name, property):
+        self.console_interface.set_configuration_property(property)
+
+    @colony.base.decorators.unset_configuration_property_method("configuration")
+    def configuration_unset_configuration_property(self, property_name):
+        self.console_interface.unset_configuration_property()

@@ -39,6 +39,8 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 import sys
 
+import colony.libs.map_util
+
 import main_console_interface_exceptions
 
 main_console_interface_class = None
@@ -69,6 +71,9 @@ PASSWORD_MESSAGE = "Password"
 LOGIN_FAILED_MESSAGE = "Login failed, try again..."
 """ The login failed message """
 
+ACTIVE_VALUE = "active"
+""" The active value """
+
 CONSOLE_CONTEXT_VALUE = "console_context"
 """ The console context value """
 
@@ -86,6 +91,9 @@ class MainConsoleInterface:
     main_console_interface_plugin = None
     """ The main console interface plugin """
 
+    console_inteface_configuration = {}
+    """ The console interface configuation configuration """
+
     continue_flag = True
     """ The continue flag, used to control the shutdown of the plugin """
 
@@ -99,6 +107,7 @@ class MainConsoleInterface:
 
         self.main_console_interface_plugin = main_console_interface_plugin
 
+        self.console_interface_configuration = {}
         self.continue_flag = True
 
     def load_console(self):
@@ -111,6 +120,15 @@ class MainConsoleInterface:
 
         # notifies the ready semaphore
         self.main_console_interface_plugin.release_ready_semaphore()
+
+        # retrieves the active configuration value (checks if
+        # the console interface should start)
+        active = self.console_interface_configuration.get(ACTIVE_VALUE, False)
+
+        # in case the active flag is not set
+        if not active:
+            # returns immediately
+            return
 
         # in case the main console interface class is
         # not defined
@@ -165,6 +183,20 @@ class MainConsoleInterface:
 
         # notifies the ready semaphore
         self.main_console_interface_plugin.release_ready_semaphore()
+
+    def set_configuration_property(self, configuration_property):
+        # retrieves the configuration
+        configuration = configuration_property.get_data()
+
+        # cleans the console interface configuration
+        colony.libs.map_util.map_clean(self.console_interface_configuration)
+
+        # copies the service configuration to the console interface configuration
+        colony.libs.map_util.map_copy(configuration, self.console_interface_configuration)
+
+    def unset_configuration_property(self):
+        # cleans the console interface configuration
+        colony.libs.map_util.map_clean(self.console_interface_configuration)
 
     def _prompt_login(self, main_console_context, main_console_interface_method):
         # unsets the authentication result
