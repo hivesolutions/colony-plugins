@@ -407,8 +407,8 @@ class AbstractService:
             # starts the background threads
             self._start_threads()
 
-            # sets the service connection active flag as true
-            self.service_connection_active = True
+            # creates the base infra-structure for the service
+            self._create_base()
 
             # creates and sets the service sockets
             self._create_service_sockets()
@@ -453,6 +453,15 @@ class AbstractService:
 
         # stops the background threads
         self._stop_threads()
+
+    def _create_base(self):
+        """
+        Creates the base infra-structure for the running og the
+        service.
+        """
+
+        # sets the service connection active flag as true
+        self.service_connection_active = True
 
     def _loop(self):
         """
