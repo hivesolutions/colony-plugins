@@ -401,9 +401,6 @@ class AbstractService:
         # clears the service connection close end event
         self.service_connection_close_end_event.clear()
 
-        # unsets the stop flag
-        self.stop_flag = False
-
         self.poll_instance = SelectPolling()
 
         # starts the background threads
