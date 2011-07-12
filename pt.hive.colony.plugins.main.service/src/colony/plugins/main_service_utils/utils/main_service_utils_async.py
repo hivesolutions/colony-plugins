@@ -398,9 +398,7 @@ class AbstractService:
         Starts the service.
         """
 
-        # clears the service connection close end event
-        self.service_connection_close_end_event.clear()
-
+        # sets the initial poll instance
         self.poll_instance = SelectPolling()
 
         # starts the background threads
