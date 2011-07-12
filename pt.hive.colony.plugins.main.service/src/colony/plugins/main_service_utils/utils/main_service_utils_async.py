@@ -400,9 +400,6 @@ class AbstractService:
         Starts the service.
         """
 
-        # sets the initial poll instance
-        self.poll_instance = SelectPolling()
-
         try:
             # starts the background threads
             self._start_threads()
@@ -459,6 +456,9 @@ class AbstractService:
         Creates the base infra-structure for the running og the
         service.
         """
+
+        # sets the initial poll instance
+        self.poll_instance = SelectPolling()
 
         # sets the service connection active flag as true
         self.service_connection_active = True
