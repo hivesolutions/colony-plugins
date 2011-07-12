@@ -93,12 +93,12 @@ class MainServiceHttpStarterPlugin(colony.base.plugin_system.Plugin):
             "encoding" : "gzip"
         }
 
-        #self.main_service_http_plugin.start_service(parameters)
+        self.main_service_http_plugin.start_service(parameters)
 
     def unload_plugin(self):
         colony.base.plugin_system.Plugin.unload_plugin(self)
 
-        #self.main_service_http_plugin.stop_service({})
+        self.main_service_http_plugin.stop_service({})
 
         # notifies the ready semaphore
         self.release_ready_semaphore()
