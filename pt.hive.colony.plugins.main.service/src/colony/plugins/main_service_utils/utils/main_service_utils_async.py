@@ -110,6 +110,8 @@ class AbstractService:
     service_socket_end_point_map = {}
     """ The service socket end point map """
 
+    service_connection_active = False
+    """ The service connection active flag """
 
 
 
@@ -401,18 +403,24 @@ class AbstractService:
         # sets the initial poll instance
         self.poll_instance = SelectPolling()
 
-        # starts the background threads
-        self._start_threads()
-
-        # creates and sets the service sockets
-        self._create_service_sockets()
-
-        # activates and listens the service sockets
-        self._activate_service_sockets()
-
         try:
+            # starts the background threads
+            self._start_threads()
+
+            # sets the service connection active flag as true
+            self.service_connection_active = True
+
+            # creates and sets the service sockets
+            self._create_service_sockets()
+
+            # activates and listens the service sockets
+            self._activate_service_sockets()
+
             # runs the main loop
             self._loop()
+        except:
+            # sets the service connection active flag as false
+            self.service_connection_active = False
         finally:
             # disables the service sockets
             self._disable_service_sockets()
@@ -431,8 +439,8 @@ class AbstractService:
         Stops the service.
         """
 
-        # stops the background threads
-        self._stop_threads()
+        # sets the service connection active flag as false
+        self.service_connection_active = False
 
         # sets the stop flag
         self.stop_flag = True
@@ -442,6 +450,9 @@ class AbstractService:
 
         # clears the service connection close end event
         self.service_connection_close_end_event.clear()
+
+        # stops the background threads
+        self._stop_threads()
 
     def _loop(self):
         """
