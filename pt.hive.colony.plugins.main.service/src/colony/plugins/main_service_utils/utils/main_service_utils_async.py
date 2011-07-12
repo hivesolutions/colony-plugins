@@ -415,7 +415,10 @@ class AbstractService:
 
             # runs the main loop
             self._loop()
-        except:
+        except BaseException, exception:
+            # prints a warning message message
+            self.service_plugin.warning("Runtime problem: %s, while starting the service" % unicode(exception))
+
             # sets the service connection active flag as false
             self.service_connection_active = False
         finally:

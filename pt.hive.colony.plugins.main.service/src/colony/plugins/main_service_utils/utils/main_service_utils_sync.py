@@ -305,7 +305,10 @@ class AbstractService:
             elif self.service_type == CONNECTIONLESS_TYPE_VALUE:
                 # runs the loop for connectionless type
                 self._loop_connectionless()
-        except:
+        except BaseException, exception:
+            # prints a warning message message
+            self.service_plugin.warning("Runtime problem: %s, while starting the service" % unicode(exception))
+
             # sets the service connection active flag as false
             self.service_connection_active = False
         finally:
