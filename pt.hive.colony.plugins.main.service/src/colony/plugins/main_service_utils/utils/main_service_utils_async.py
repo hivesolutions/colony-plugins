@@ -425,6 +425,9 @@ class AbstractService:
             # sets the service connection close end event
             self.service_connection_close_end_event.set()
 
+            # unsets the stop flag
+            self.stop_flag = False
+
     def stop_service(self):
         """
         Stops the service.
@@ -438,6 +441,9 @@ class AbstractService:
 
         # waits for the service connection close end event
         self.service_connection_close_end_event.wait()
+
+        # clears the service connection close end event
+        self.service_connection_close_end_event.clear()
 
     def _loop(self):
         """
