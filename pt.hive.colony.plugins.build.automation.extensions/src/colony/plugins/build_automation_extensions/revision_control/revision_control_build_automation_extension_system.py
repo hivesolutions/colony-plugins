@@ -195,7 +195,7 @@ class RevisionControlBuildAutomationExtension:
                     base_revision_number = previous_revision_number < current_revision_number and previous_revision_number + 1 or current_revision_number
                 # otherwise
                 else:
-                    # sets the base revision number as invalid (start from zero)
+                    # sets the base revision number as invalid (start from zero, complete log)
                     base_revision_number = None
 
                 # retrieves the log of revision in the revision
