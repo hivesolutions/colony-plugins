@@ -183,6 +183,9 @@ class ContinuousIntegrationBuildAutomationExtension:
             # returns true (success)
             return True
 
+        # prints an info message
+        logger.info("Updating continuous integration, for release %s" % release_string)
+
         # writes the version hash and the release number to
         # the latest files
         self._write_version_hash(latest_version_path, version)
