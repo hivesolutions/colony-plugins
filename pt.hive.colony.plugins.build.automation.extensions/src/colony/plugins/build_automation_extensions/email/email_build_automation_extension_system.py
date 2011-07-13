@@ -82,8 +82,8 @@ DEFAULT_LOG_FILE_PATH = "log/build_automation.log"
 VERSION_VALUE = "version"
 """ The version value """
 
-RELEASE_VALUE = "release"
-""" The release value """
+BUILD_VALUE = "build"
+""" The build value """
 
 TOTAL_TIME_FORMATED_VALUE = "total_time_formated"
 """ The total time formated """
@@ -251,7 +251,7 @@ class EmailBuildAutomationExtension:
         # retrieves the build automation properties
         build_automation_success = build_automation["success"]
         build_automation_plugin_name = build_automation["plugin_name"]
-        build_automation_release = build_automation["release"]
+        build_automation_build = build_automation["build"]
 
         # retrieves the sender parameters from the parameters map
         sender_name = parameters.get("sender_name", DEFAULT_SENDER_NAME)
@@ -276,7 +276,7 @@ class EmailBuildAutomationExtension:
         sender_line = "\"" + sender_name + "\" <" + sender_email + ">"
 
         # writes the initial subject line
-        subject = "r%i - %s " % (build_automation_release, build_automation_plugin_name)
+        subject = "b%i - %s " % (build_automation_build, build_automation_plugin_name)
 
         # in case the build automation was successful
         if build_automation_success:
@@ -390,7 +390,7 @@ class EmailBuildAutomationExtension:
         # retrieves the build automation properties
         build_automation_success = build_automation["success"]
         build_automation_plugin_name = build_automation["plugin_name"]
-        build_automation_release = build_automation["release"]
+        build_automation_build = build_automation["build"]
         build_automation_changers_list = build_automation["changers_list"]
 
         # retrieves the sender parameters from the parameters map
@@ -404,7 +404,7 @@ class EmailBuildAutomationExtension:
         sender_line = "\"" + sender_name + "\" <" + sender_email + ">"
 
         # writes the initial subject line
-        subject = "r%i - %s " % (build_automation_release, build_automation_plugin_name)
+        subject = "b%i - %s " % (build_automation_build, build_automation_plugin_name)
 
         # in case the build automation was successful
         if build_automation_success:
@@ -514,8 +514,8 @@ class EmailBuildAutomationExtension:
         # retrieves the build automation version (revision)
         build_automation_version = build_automation_structure_runtime.local_properties.get(VERSION_VALUE, None)
 
-        # retrieves the build automation release
-        build_automation_release = build_automation_structure_runtime.local_properties.get(RELEASE_VALUE, -1)
+        # retrieves the build automation build
+        build_automation_build = build_automation_structure_runtime.local_properties.get(BUILD_VALUE, -1)
 
         # retrieves the build automation total time formated
         build_automation_total_time_formated = build_automation_structure_runtime.local_properties.get(TOTAL_TIME_FORMATED_VALUE, "")
@@ -538,9 +538,9 @@ class EmailBuildAutomationExtension:
         # retrieves the build automation success in capitals format
         build_automation_success_capitals = SUCCESS_CAPITALS_MAP[build_automation_success]
 
-        # creates the repository url appending the current build automation release
+        # creates the repository url appending the current build automation build
         # to the integration base url
-        repository_url = integration_base_url + "/" + str(build_automation_release)
+        repository_url = integration_base_url + "/" + str(build_automation_build)
 
         # creates the build automation structure converted
         build_automation_structure_converted = {}
@@ -550,7 +550,7 @@ class EmailBuildAutomationExtension:
         build_automation_structure_converted["success_capitals"] = build_automation_success_capitals
         build_automation_structure_converted["plugin_name"] = build_automation_plugin_name
         build_automation_structure_converted["version"] = build_automation_version
-        build_automation_structure_converted["release"] = build_automation_release
+        build_automation_structure_converted["build"] = build_automation_build
         build_automation_structure_converted["total_time_formated"] = build_automation_total_time_formated
         build_automation_structure_converted["changelog_list"] = build_automation_changelog_list
         build_automation_structure_converted["issues_list"] = build_automation_issues_list

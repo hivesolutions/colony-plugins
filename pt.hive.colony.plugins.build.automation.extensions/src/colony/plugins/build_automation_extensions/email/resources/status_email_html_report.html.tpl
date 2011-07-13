@@ -47,7 +47,7 @@
                             <tr height="20">
                                 <td align="center">
                                     <font face="Rockwell, Arial" size="5" color="#214c8f">build</font>
-                                    <font face="Rockwell, Arial" size="5" color="#214c8f"><b>${out_none value=build_automation.release xml_escape=True /}</b></font>
+                                    <font face="Rockwell, Arial" size="5" color="#214c8f"><b>${out_none value=build_automation.build xml_escape=True /}</b></font>
                                 </td>
                             </tr>
                             ${if item=build_automation.success value=True operator=eq}
@@ -84,7 +84,7 @@
                         </h1>
                         <p>
                             <font face="Arial" size="2" color="#333333">
-                                Code has been updated to <font face="Rockwell, Arial" size="2" color="#214c8f"><b>r${out_none value=build_automation.release xml_escape=True /}</b></font>.<br />
+                                Code has been updated to <font face="Rockwell, Arial" size="2" color="#214c8f"><b>r${out_none value=build_automation.build xml_escape=True /}</b></font>.<br />
                                 The updating of the code involved:
                                 ${foreach item=changer from=build_automation.changers_list}
                                     <font face="Rockwell, Arial" size="2" color="#214c8f">

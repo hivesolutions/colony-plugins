@@ -51,8 +51,8 @@ DEPLOYMENT_PATH_VALUE = "deployment_path"
 VERSION_FILE_PATH_VALUE = "version_file_path"
 """ The version file path value """
 
-RELEASE_VALUE = "release"
-""" The release value """
+BUILD_VALUE = "build"
+""" The build value """
 
 INTEGRATION_VERSION_VALUE = "integration_version"
 """ The integration version value """
@@ -66,11 +66,11 @@ LATEST_FILE_NAME = "LATEST.version"
 LATEST_SUCCESS_FILE_NAME = "LATEST_SUCCESS.version"
 """ The latest success file name """
 
-LATEST_RELEASE_FILE_NAME = "LATEST.release"
-""" The latest release file name """
+LATEST_BUILD_FILE_NAME = "LATEST.build"
+""" The latest build file name """
 
-LATEST_SUCCESS_RELEASE_FILE_NAME = "LATEST_SUCCESS.release"
-""" The latest success release file name """
+LATEST_SUCCESS_BUILD_FILE_NAME = "LATEST_SUCCESS.build"
+""" The latest success build file name """
 
 LATEST_DIRECTORY_NAME = "LATEST"
 """ The latest directory name """
@@ -81,8 +81,8 @@ LATEST_SUCCESS_DIRECTORY_NAME = "LATEST_SUCCESS"
 ZIP_EXTENSION = ".zip"
 """ The zip extension value """
 
-FIRST_RELEASE_NUMBER = 0
-""" The first release number """
+FIRST_BUILD_NUMBER = 0
+""" The first build number """
 
 class ContinuousIntegrationBuildAutomationExtension:
     """
@@ -135,11 +135,11 @@ class ContinuousIntegrationBuildAutomationExtension:
 
         # creates the latest file paths
         latest_version_path = deployment_path + "/" + LATEST_FILE_NAME
-        latest_release_path = deployment_path + "/" + LATEST_RELEASE_FILE_NAME
+        latest_build_path = deployment_path + "/" + LATEST_BUILD_FILE_NAME
 
         # creates the latest success file paths
         latest_success_version_path = deployment_path + "/" + LATEST_SUCCESS_FILE_NAME
-        latest_success_release_path = deployment_path + "/" + LATEST_SUCCESS_RELEASE_FILE_NAME
+        latest_success_build_path = deployment_path + "/" + LATEST_SUCCESS_BUILD_FILE_NAME
 
         # retrieves the current version (to check for changes)
         current_version = self._get_version_hash(latest_version_path)
@@ -159,41 +159,41 @@ class ContinuousIntegrationBuildAutomationExtension:
             return True
 
         try:
-            # retrieves the release from the latst release file path
-            release = self._get_release(latest_release_path)
+            # retrieves the build from the latst build file path
+            build = self._get_build(latest_build_path)
         except:
-            # sets the "default" first release
-            release = FIRST_RELEASE_NUMBER
+            # sets the "default" first build
+            build = FIRST_BUILD_NUMBER
 
-        # increments the release number (new release)
-        release += 1
+        # increments the build number (new build)
+        build += 1
 
-        # converts the release to string
-        release_string = str(release)
+        # converts the build to string
+        build_string = str(build)
 
         # prints an info message
-        logger.info("Updating continuous integration, for release %s" % release_string)
+        logger.info("Updating continuous integration, for build %s" % build_string)
 
-        # creates the deployment release path, representing the
-        # path to the directory to the current release
-        deployment_release_path = deployment_path + "/" + release_string
+        # creates the deployment build path, representing the
+        # path to the directory to the current build
+        deployment_build_path = deployment_path + "/" + build_string
 
-        # in case the deployment release path does not exist
-        if not os.path.exists(deployment_release_path):
-            # creates the directories for the deployment release path
-            os.makedirs(deployment_release_path)
+        # in case the deployment build path does not exist
+        if not os.path.exists(deployment_build_path):
+            # creates the directories for the deployment build path
+            os.makedirs(deployment_build_path)
 
-        # writes the version hash and the release number to
+        # writes the version hash and the build number to
         # the latest files
         self._write_version_hash(latest_version_path, version)
-        self._write_release_number(latest_release_path, release)
+        self._write_build_number(latest_build_path, build)
 
         # in case the build is successful, updates the success files
         if build_automation_structure_runtime.success:
-            # writes the version hash and the release number
+            # writes the version hash and the build number
             # to the success files
             self._write_version_hash(latest_success_version_path, version)
-            self._write_release_number(latest_success_release_path, release)
+            self._write_build_number(latest_success_build_path, build)
 
         # retrieves the build properties
         build_properties = build_automation_structure.get_all_build_properties()
@@ -201,8 +201,8 @@ class ContinuousIntegrationBuildAutomationExtension:
         # retrieves the target directory
         target_directory = build_properties[TARGET_DIRECTORY_VALUE]
 
-        # copies the target directory to the deployment release path (directory)
-        colony.libs.path_util.copy_directory(target_directory, deployment_release_path)
+        # copies the target directory to the deployment build path (directory)
+        colony.libs.path_util.copy_directory(target_directory, deployment_build_path)
 
         # retrieves the zip plugin
         zip_plugin = self.continuous_integration_build_automation_extension_plugin.zip_plugin
@@ -210,10 +210,10 @@ class ContinuousIntegrationBuildAutomationExtension:
         # iterates over all the zip to create the zip file
         for zip in zips:
             # creates the zip file path
-            zip_file_path = deployment_release_path + "/" + zip + ZIP_EXTENSION
+            zip_file_path = deployment_build_path + "/" + zip + ZIP_EXTENSION
 
             # creates the zip directory path
-            zip_directory_path = deployment_release_path + "/" + zip
+            zip_directory_path = deployment_build_path + "/" + zip
 
             # creates the zip file for the zip directory
             zip_plugin.zip(zip_file_path, zip_directory_path)
@@ -225,13 +225,13 @@ class ContinuousIntegrationBuildAutomationExtension:
         latest_success_version_path = deployment_path + "/" + LATEST_SUCCESS_DIRECTORY_NAME
 
         # updates the latest version path (link)
-        self._update_link(deployment_release_path, latest_version_path)
+        self._update_link(deployment_build_path, latest_version_path)
 
         # in case the build is successful, updates the latest success version path (link)
-        build_automation_structure_runtime.success and self._update_link(deployment_release_path, latest_success_version_path)
+        build_automation_structure_runtime.success and self._update_link(deployment_build_path, latest_success_version_path)
 
         # sets the build automation structure runtime properties
-        build_automation_structure_runtime.local_properties[RELEASE_VALUE] = release
+        build_automation_structure_runtime.local_properties[BUILD_VALUE] = build
         build_automation_structure_runtime.local_properties[INTEGRATION_VERSION_VALUE] = version
 
         # returns true (success)
@@ -316,63 +316,63 @@ class ContinuousIntegrationBuildAutomationExtension:
         # returns the revision hash string
         return revision_hash_string
 
-    def _write_release_number(self, release_file_path, release_number):
+    def _write_build_number(self, build_file_path, build_number):
         """
-        Writes the given release number into the file in the given
+        Writes the given build number into the file in the given
         path.
 
-        @type release_file_path: String
-        @param release_file_path: The path to the file that will
-        hold the release number.
-        @type release_number: int
-        @param release_number: The release number to be written.
+        @type build_file_path: String
+        @param build_file_path: The path to the file that will
+        hold the build number.
+        @type build_number: int
+        @param build_number: The build number to be written.
         """
 
-        # converts the release number to a string
-        release_number_string = str(release_number)
+        # converts the build number to a string
+        build_number_string = str(build_number)
 
-        # opens the release file
-        release_file = open(release_file_path, "wb")
+        # opens the build file
+        build_file = open(build_file_path, "wb")
 
         try:
-            # writes the release number string value
-            release_file.write(release_number_string)
+            # writes the build number string value
+            build_file.write(build_number_string)
         finally:
-            # closes the release file
-            release_file.close()
+            # closes the build file
+            build_file.close()
 
-    def _get_release(self, release_file_path):
+    def _get_build(self, build_file_path):
         """
-        Retrieves the current release using the given
-        release file path.
+        Retrieves the current build using the given
+        build file path.
 
-        @type release_file_path: String
-        @param release_file_path: The file path to the
-        release file.
+        @type build_file_path: String
+        @param build_file_path: The file path to the
+        build file.
         @rtype: int
-        @return: The release number.
+        @return: The build number.
         """
 
-        # in case the release file path does not exist
-        if not os.path.exists(release_file_path):
+        # in case the build file path does not exist
+        if not os.path.exists(build_file_path):
             # returns (default first value)
-            return FIRST_RELEASE_NUMBER
+            return FIRST_BUILD_NUMBER
 
-        # opens the release file
-        release_file = open(release_file_path, "rb")
+        # opens the build file
+        build_file = open(build_file_path, "rb")
 
         try:
-            # reads the release number string value
-            release_number_string = release_file.read()
+            # reads the build number string value
+            build_number_string = build_file.read()
 
-            # strips the release number string
-            release_number_string = release_number_string.strip()
+            # strips the build number string
+            build_number_string = build_number_string.strip()
 
-            # converts the release number string to integer
-            release_number = int(release_number_string)
+            # converts the build number string to integer
+            build_number = int(build_number_string)
         finally:
-            # closes the release file
-            release_file.close()
+            # closes the build file
+            build_file.close()
 
-        # returns the release number
-        return release_number
+        # returns the build number
+        return build_number
