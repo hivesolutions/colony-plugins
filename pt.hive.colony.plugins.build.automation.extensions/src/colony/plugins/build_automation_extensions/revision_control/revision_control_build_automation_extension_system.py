@@ -271,6 +271,9 @@ class RevisionControlBuildAutomationExtension:
             # writes the changelog for the given file path and changelog map
             self._write_changelog(global_changelog_file_path, changelog_map)
 
+        # prints an info message
+        logger.info("Flattening the changelog and changers maps")
+
         changelog_list = set([item for sublist in changelog_map.values() for item in sublist])
         changers_list = set([item for sublist in changers_map.values() for item in sublist])
 
