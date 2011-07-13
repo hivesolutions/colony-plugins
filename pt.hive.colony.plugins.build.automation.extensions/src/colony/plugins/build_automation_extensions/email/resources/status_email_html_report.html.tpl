@@ -46,7 +46,7 @@
                         <table width="160" cellpadding="0">
                             <tr height="20">
                                 <td align="center">
-                                    <font face="Rockwell, Arial" size="5" color="#214c8f">build</font>
+                                    <font face="Rockwell, Arial" size="4" color="#214c8f">build</font>
                                     <font face="Rockwell, Arial" size="5" color="#214c8f"><b>${out_none value=build_automation.build xml_escape=True /}</b></font>
                                 </td>
                             </tr>
