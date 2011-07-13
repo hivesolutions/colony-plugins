@@ -133,32 +133,6 @@ class ContinuousIntegrationBuildAutomationExtension:
             # returns true (success)
             return True
 
-        # creates the latest release path to retrieve the current
-        # release number (incrementing the value by one)
-        latest_release_path = deployment_path + "/" + LATEST_RELEASE_FILE_NAME
-
-        try:
-            # retrieves the release from the latst release file path
-            release = self._get_release(latest_release_path)
-        except:
-            # sets the "default" first release
-            release = FIRST_RELEASE_NUMBER
-
-        # increments the release number (new release)
-        release += 1
-
-        # converts the release to string
-        release_string = str(release)
-
-        # creates the deployment release path, representing the
-        # path to the directory to the current release
-        deployment_release_path = deployment_path + "/" + release_string
-
-        # in case the deployment release path does not exist
-        if not os.path.exists(deployment_release_path):
-            # creates the directories for the deployment release path
-            os.makedirs(deployment_release_path)
-
         # creates the latest file paths
         latest_version_path = deployment_path + "/" + LATEST_FILE_NAME
         latest_release_path = deployment_path + "/" + LATEST_RELEASE_FILE_NAME
@@ -184,8 +158,30 @@ class ContinuousIntegrationBuildAutomationExtension:
             # returns true (success)
             return True
 
+        try:
+            # retrieves the release from the latst release file path
+            release = self._get_release(latest_release_path)
+        except:
+            # sets the "default" first release
+            release = FIRST_RELEASE_NUMBER
+
+        # increments the release number (new release)
+        release += 1
+
+        # converts the release to string
+        release_string = str(release)
+
         # prints an info message
         logger.info("Updating continuous integration, for release %s" % release_string)
+
+        # creates the deployment release path, representing the
+        # path to the directory to the current release
+        deployment_release_path = deployment_path + "/" + release_string
+
+        # in case the deployment release path does not exist
+        if not os.path.exists(deployment_release_path):
+            # creates the directories for the deployment release path
+            os.makedirs(deployment_release_path)
 
         # writes the version hash and the release number to
         # the latest files
