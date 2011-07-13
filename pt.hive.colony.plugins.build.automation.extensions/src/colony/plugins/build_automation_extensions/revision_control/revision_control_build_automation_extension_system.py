@@ -278,8 +278,9 @@ class RevisionControlBuildAutomationExtension:
 
         # flattens the changelog and changers map values to create a flat structure
         # of changes and changers
-        changelog_list = set([value for sub_list in changelog_map.values() for value in sub_list])
+        #changelog_list = set([value for sub_list in changelog_map.values() for value in sub_list])
         changers_list = set([value for sub_list in changers_map.values() for value in sub_list])
+        changelog_list = []
 
         # prints an info message
         logger.info("Updating build automation structure runtime properties")
