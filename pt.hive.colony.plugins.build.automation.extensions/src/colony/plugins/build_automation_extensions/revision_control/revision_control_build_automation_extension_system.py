@@ -247,7 +247,7 @@ class RevisionControlBuildAutomationExtension:
             hash_value = name + "-" + str(current_revision_number)
 
             # prints an info message
-            logger.info("Updating version hash value with " % hash_value)
+            logger.info("Updating version hash value with %s" % hash_value)
 
             # updates the version hash value with the current hash value
             version_hash_value.update(hash_value)
