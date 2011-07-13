@@ -41,6 +41,7 @@ import os
 import hashlib
 
 import colony.libs.map_util
+import colony.libs.list_util
 
 DEFAULT_ENCODING = "utf-8"
 """ The default encoding """
@@ -278,9 +279,12 @@ class RevisionControlBuildAutomationExtension:
 
         # flattens the changelog and changers map values to create a flat structure
         # of changes and changers
-        #changelog_list = set([value for sub_list in changelog_map.values() for value in sub_list])
-        changers_list = set([value for sub_list in changers_map.values() for value in sub_list])
-        changelog_list = []
+        changelog_list = [value for sub_list in changelog_map.values() for value in sub_list]
+        changers_list = [value for sub_list in changers_map.values() for value in sub_list]
+
+        # removes the duplicate values from both the changelog and changers lists
+        changelog_list = colony.libs.list_util.list_no_duplicates(changelog_list)
+        changers_list = colony.libs.list_util.list_no_duplicates(changers_list)
 
         # prints an info message
         logger.info("Updating build automation structure runtime properties")
