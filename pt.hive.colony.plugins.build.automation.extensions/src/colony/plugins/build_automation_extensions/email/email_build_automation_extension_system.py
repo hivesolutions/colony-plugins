@@ -251,7 +251,7 @@ class EmailBuildAutomationExtension:
         # retrieves the build automation properties
         build_automation_success = build_automation["success"]
         build_automation_plugin_name = build_automation["plugin_name"]
-        build_automation_version = build_automation["version"]
+        build_automation_release = build_automation["release"]
 
         # retrieves the sender parameters from the parameters map
         sender_name = parameters.get("sender_name", DEFAULT_SENDER_NAME)
@@ -276,7 +276,7 @@ class EmailBuildAutomationExtension:
         sender_line = "\"" + sender_name + "\" <" + sender_email + ">"
 
         # writes the initial subject line
-        subject = "b%s - %s " % (build_automation_version, build_automation_plugin_name)
+        subject = "r%i - %s " % (build_automation_release, build_automation_plugin_name)
 
         # in case the build automation was successful
         if build_automation_success:
@@ -390,7 +390,7 @@ class EmailBuildAutomationExtension:
         # retrieves the build automation properties
         build_automation_success = build_automation["success"]
         build_automation_plugin_name = build_automation["plugin_name"]
-        build_automation_version = build_automation["version"]
+        build_automation_release = build_automation["release"]
         build_automation_changers_list = build_automation["changers_list"]
 
         # retrieves the sender parameters from the parameters map
@@ -404,7 +404,7 @@ class EmailBuildAutomationExtension:
         sender_line = "\"" + sender_name + "\" <" + sender_email + ">"
 
         # writes the initial subject line
-        subject = "b%i - %s " % (build_automation_version, build_automation_plugin_name)
+        subject = "r%i - %s " % (build_automation_release, build_automation_plugin_name)
 
         # in case the build automation was successful
         if build_automation_success:
@@ -538,9 +538,9 @@ class EmailBuildAutomationExtension:
         # retrieves the build automation success in capitals format
         build_automation_success_capitals = SUCCESS_CAPITALS_MAP[build_automation_success]
 
-        # creates the repository url appending the current build automation version
+        # creates the repository url appending the current build automation release
         # to the integration base url
-        repository_url = integration_base_url + "/" + str(build_automation_version)
+        repository_url = integration_base_url + "/" + str(build_automation_release)
 
         # creates the build automation structure converted
         build_automation_structure_converted = {}
