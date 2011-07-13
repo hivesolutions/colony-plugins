@@ -161,3 +161,9 @@ class TemplateEngineBuildAutomationExtension:
 
         # assigns the date time to the template file
         template_file.assign(DATE_TIME_VALUE, current_date_time_string)
+
+        # iterates over all the local properties to assign their
+        # value to the template file
+        for property_name, property_value in build_automation_structure_runtime.local_properties.items():
+            # assigns the property to the template file
+            template_file.assign(property_name, property_value)
