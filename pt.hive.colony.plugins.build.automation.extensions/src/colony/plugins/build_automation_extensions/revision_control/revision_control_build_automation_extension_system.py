@@ -38,6 +38,7 @@ __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
 import os
+import hashlib
 
 import colony.libs.map_util
 
@@ -49,6 +50,9 @@ REPOSITORY_VALUE = "repository"
 
 ADAPTER_VALUE = "adapter"
 """ The adapter value """
+
+NAME_VALUE = "name"
+""" The path value """
 
 PATH_VALUE = "path"
 """ The path value """
@@ -92,8 +96,14 @@ VERSION_VALUE = "version"
 CHANGELOG_LIST_VALUE = "changelog_list"
 """ The changelog list value """
 
+CHANGELOG_MAP_VALUE = "changelog_map"
+""" The changelog map value """
+
 CHANGERS_LIST_VALUE = "changers_list"
 """ The changers list value """
+
+CHANGERS_MAP_VALUE = "changers_map"
+""" The changers map value """
 
 class RevisionControlBuildAutomationExtension:
     """
@@ -120,13 +130,21 @@ class RevisionControlBuildAutomationExtension:
         # retrieves the build automation structure runtime
         build_automation_structure_runtime = build_automation_structure.runtime
 
-        # retrieves the checkout values to be processed
+        # retrieves the values to be processed
+        global_version_file_path = parameters.get(VERSION_FILE_PATH_VALUE, None)
+        global_changelog_file_path = parameters.get(CHANGELOG_FILE_PATH_VALUE, None)
         repositories = colony.libs.map_util.map_get_values(parameters, REPOSITORY_VALUE)
+
+        changelog_map = {}
+        changers_map = {}
+
+        version_hash_value = hashlib.sha1()
 
         # iterates over all the repository values
         for repository in repositories:
             # retrieves the required repository parameters
             adapter = repository[ADAPTER_VALUE]
+            name = repository[NAME_VALUE]
             path = repository[PATH_VALUE]
             target_path = repository[TARGET_PATH_VALUE]
             version_file_path = repository.get(VERSION_FILE_PATH_VALUE, None)
@@ -210,13 +228,69 @@ class RevisionControlBuildAutomationExtension:
                 # writes the changelog for the given file path and changelog list
                 self._write_changelog(changelog_file_path, changelog_list)
 
-            # sets the build automation structure runtime properties
-            build_automation_structure_runtime.local_properties[VERSION_VALUE] = current_revision_number
-            build_automation_structure_runtime.local_properties[CHANGELOG_LIST_VALUE] = changelog_list
-            build_automation_structure_runtime.local_properties[CHANGERS_LIST_VALUE] = changers_list
+                # sets the changelog list in the changelog map for the name
+                # and sets the changers list for the changers map (also for the name)
+                changelog_map[name] = changelog_list
+                changers_map[name] = changers_list
+
+                # prints an info message
+                logger.info("Writing version number to file %s" % version_file_path)
+
+                # writes the version number to the file
+                self._write_version_number(version_file_path, revision)
+
+                # creates the hash value to be used in updating the hash,
+                # using the name and the current revision number
+                hash_value = name + "-" + str(current_revision_number)
+
+                # prints an info message
+                logger.info("Updating version hash value with " % hash_value)
+
+                # updates the version hash value with the current hash value
+                version_hash_value.update(hash_value)
+
+        # retrieves the (final) version hash value digest
+        version_hash_value_digest = version_hash_value.hexdigest()
+
+        # in case the global version file path is defined
+        if global_version_file_path:
+            # prints an info message
+            logger.info("Writing global version to file %s" % global_version_file_path)
+
+            # writes the version hash for the given file path and version hash value digest
+            self._write_version_hash(global_version_file_path, version_hash_value_digest)
+
+        # in case the global changelog file path is defined
+        if global_changelog_file_path:
+            # prints an info message
+            logger.info("Writing global changelog to file %s" % global_changelog_file_path)
+
+            # writes the changelog for the given file path and changelog map
+            self._write_changelog(global_changelog_file_path, changelog_map)
+
+        changelog_list = set([item for sublist in changelog_map.values() for item in sublist])
+        changers_list = set([item for sublist in changers_map.values() for item in sublist])
+
+        # sets the build automation structure runtime properties
+        build_automation_structure_runtime.local_properties[VERSION_VALUE] = version_hash_value_digest
+        build_automation_structure_runtime.local_properties[CHANGELOG_LIST_VALUE] = changelog_list
+        build_automation_structure_runtime.local_properties[CHANGELOG_MAP_VALUE] = changelog_map
+        build_automation_structure_runtime.local_properties[CHANGERS_LIST_VALUE] = changers_list
+        build_automation_structure_runtime.local_properties[CHANGERS_MAP_VALUE] = changers_map
 
         # returns true (success)
         return True
+
+    def _write_version_hash(self, version_file_path, version_hash):
+        # opens the version file
+        version_file = open(version_file_path, "wb")
+
+        try:
+            # writes the version hash value
+            version_file.write(version_hash)
+        finally:
+            # closes the version file
+            version_file.close()
 
     def _read_version_number(self, version_file_path):
         # in case the version file path does not exist
