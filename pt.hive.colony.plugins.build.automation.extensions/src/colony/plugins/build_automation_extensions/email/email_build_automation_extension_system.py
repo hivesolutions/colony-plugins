@@ -276,7 +276,7 @@ class EmailBuildAutomationExtension:
         sender_line = "\"" + sender_name + "\" <" + sender_email + ">"
 
         # writes the initial subject line
-        subject = "b%i - %s " % (build_automation_version, build_automation_plugin_name)
+        subject = "b%s - %s " % (build_automation_version, build_automation_plugin_name)
 
         # in case the build automation was successful
         if build_automation_success:
