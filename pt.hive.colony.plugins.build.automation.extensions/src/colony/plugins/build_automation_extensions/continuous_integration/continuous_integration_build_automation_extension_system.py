@@ -172,6 +172,9 @@ class ContinuousIntegrationBuildAutomationExtension:
         # retrieves the current version (to check for changes)
         current_version = self._get_version_hash(latest_version_path)
 
+        # prints an info message
+        logger.info("Comparing new version '%s' against current version '%s'" % (version, current_version))
+
         # in case the current version is the same (no changes in repository)
         if version == current_version:
             # prints an info message
