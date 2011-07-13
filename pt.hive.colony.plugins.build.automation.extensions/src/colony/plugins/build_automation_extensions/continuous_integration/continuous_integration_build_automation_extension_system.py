@@ -51,9 +51,6 @@ DEPLOYMENT_PATH_VALUE = "deployment_path"
 VERSION_FILE_PATH_VALUE = "version_file_path"
 """ The version file path value """
 
-RELEASE_FILE_PATH_VALUE = "release_file_path"
-""" The release file path value """
-
 RELEASE_VALUE = "release"
 """ The release value """
 
@@ -115,9 +112,6 @@ class ContinuousIntegrationBuildAutomationExtension:
         # retrieves the version file path
         version_file_path = parameters[VERSION_FILE_PATH_VALUE]
 
-        # retrieves the release file path
-        release_file_path = parameters[RELEASE_FILE_PATH_VALUE]
-
         # retrieves the zip values
         zips = colony.libs.map_util.map_get_values(parameters, ZIP_VALUE)
 
@@ -139,9 +133,13 @@ class ContinuousIntegrationBuildAutomationExtension:
             # returns true (success)
             return True
 
+        # creates the latest release path to retrieve the current
+        # release number (incrementing the value by one)
+        latest_release_path = deployment_path + "/" + LATEST_RELEASE_FILE_NAME
+
         try:
-            # retrieves the release from the release file path
-            release = self._get_release(release_file_path)
+            # retrieves the release from the latst release file path
+            release = self._get_release(latest_release_path)
         except:
             # sets the "default" first release
             release = FIRST_RELEASE_NUMBER
