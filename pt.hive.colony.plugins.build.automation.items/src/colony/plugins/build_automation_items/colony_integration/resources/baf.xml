@@ -50,6 +50,10 @@
                 <stage>build</stage>
                 <configuration>
                     <property>
+                        <key>colony_version</key>
+                        <value>1.0.0</value>
+                    </property>
+                    <property>
                         <key>integration_base_url</key>
                         <value>http://repo.hive:8080/integration</value>
                     </property>
