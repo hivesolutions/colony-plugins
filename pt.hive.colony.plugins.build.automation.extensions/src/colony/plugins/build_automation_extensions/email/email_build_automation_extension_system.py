@@ -82,6 +82,9 @@ DEFAULT_LOG_FILE_PATH = "log/build_automation.log"
 VERSION_VALUE = "version"
 """ The version value """
 
+RELEASE_VALUE = "release"
+""" The release value """
+
 TOTAL_TIME_FORMATED_VALUE = "total_time_formated"
 """ The total time formated """
 
@@ -509,7 +512,10 @@ class EmailBuildAutomationExtension:
         build_automation_success = build_automation_structure_runtime.success
 
         # retrieves the build automation version (revision)
-        build_automation_version = build_automation_structure_runtime.local_properties.get(VERSION_VALUE, -1)
+        build_automation_version = build_automation_structure_runtime.local_properties.get(VERSION_VALUE, None)
+
+        # retrieves the build automation release
+        build_automation_release = build_automation_structure_runtime.local_properties.get(RELEASE_VALUE, -1)
 
         # retrieves the build automation total time formated
         build_automation_total_time_formated = build_automation_structure_runtime.local_properties.get(TOTAL_TIME_FORMATED_VALUE, "")
@@ -544,6 +550,7 @@ class EmailBuildAutomationExtension:
         build_automation_structure_converted["success_capitals"] = build_automation_success_capitals
         build_automation_structure_converted["plugin_name"] = build_automation_plugin_name
         build_automation_structure_converted["version"] = build_automation_version
+        build_automation_structure_converted["release"] = build_automation_release
         build_automation_structure_converted["total_time_formated"] = build_automation_total_time_formated
         build_automation_structure_converted["changelog_list"] = build_automation_changelog_list
         build_automation_structure_converted["issues_list"] = build_automation_issues_list
