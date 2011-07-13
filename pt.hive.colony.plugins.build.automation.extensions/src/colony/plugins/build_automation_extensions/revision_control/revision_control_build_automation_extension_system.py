@@ -282,9 +282,9 @@ class RevisionControlBuildAutomationExtension:
         # sets the build automation structure runtime properties
         build_automation_structure_runtime.local_properties[VERSION_VALUE] = version_hash_value_digest
         build_automation_structure_runtime.local_properties[CHANGELOG_LIST_VALUE] = changelog_list
-        build_automation_structure_runtime.local_properties[CHANGELOG_MAP_VALUE] = changelog_map
+        #build_automation_structure_runtime.local_properties[CHANGELOG_MAP_VALUE] = changelog_map
         build_automation_structure_runtime.local_properties[CHANGERS_LIST_VALUE] = changers_list
-        build_automation_structure_runtime.local_properties[CHANGERS_MAP_VALUE] = changers_map
+        #build_automation_structure_runtime.local_properties[CHANGERS_MAP_VALUE] = changers_map
 
         # returns true (success)
         return True
