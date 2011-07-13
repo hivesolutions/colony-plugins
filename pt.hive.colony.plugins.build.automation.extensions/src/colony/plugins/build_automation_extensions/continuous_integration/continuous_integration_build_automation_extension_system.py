@@ -51,6 +51,12 @@ DEPLOYMENT_PATH_VALUE = "deployment_path"
 VERSION_FILE_PATH_VALUE = "version_file_path"
 """ The version file path value """
 
+RELEASE_FILE_PATH_VALUE = "release_file_path"
+""" The release file path value """
+
+RELEASE_VALUE = "release"
+""" The release value """
+
 INTEGRATION_VERSION_VALUE = "integration_version"
 """ The integration version value """
 
@@ -63,6 +69,12 @@ LATEST_FILE_NAME = "LATEST.version"
 LATEST_SUCCESS_FILE_NAME = "LATEST_SUCCESS.version"
 """ The latest success file name """
 
+LATEST_RELEASE_FILE_NAME = "LATEST.release"
+""" The latest release file name """
+
+LATEST_SUCCESS_RELEASE_FILE_NAME = "LATEST_SUCCESS.release"
+""" The latest success release file name """
+
 LATEST_DIRECTORY_NAME = "LATEST"
 """ The latest directory name """
 
@@ -71,6 +83,9 @@ LATEST_SUCCESS_DIRECTORY_NAME = "LATEST_SUCCESS"
 
 ZIP_EXTENSION = ".zip"
 """ The zip extension value """
+
+FIRST_RELEASE_NUMBER = 0
+""" The first release number """
 
 class ContinuousIntegrationBuildAutomationExtension:
     """
@@ -100,12 +115,15 @@ class ContinuousIntegrationBuildAutomationExtension:
         # retrieves the version file path
         version_file_path = parameters[VERSION_FILE_PATH_VALUE]
 
+        # retrieves the release file path
+        release_file_path = parameters[RELEASE_FILE_PATH_VALUE]
+
         # retrieves the zip values
         zips = colony.libs.map_util.map_get_values(parameters, ZIP_VALUE)
 
         try:
-            # retrieves the version from the version file path
-            version = self._get_version(version_file_path)
+            # retrieves the version (hash) from the version file path
+            version = self._get_version_hash(version_file_path)
         except:
             # invalidates the version
             version = None
@@ -121,26 +139,38 @@ class ContinuousIntegrationBuildAutomationExtension:
             # returns true (success)
             return True
 
-        # converts the version to string
-        version_string = str(version)
+        try:
+            # retrieves the release from the release file path
+            release = self._get_release(release_file_path)
+        except:
+            # sets the "default" first release
+            release = FIRST_RELEASE_NUMBER
 
-        # creates the deployment version path, representing the
-        # path to the directory to the current version
-        deployment_version_path = deployment_path + "/" + version_string
+        # increments the release number (new release)
+        release += 1
 
-        # in case the deployment version path does not exist
-        if not os.path.exists(deployment_version_path):
-            # creates the directories for the deployment version path
-            os.makedirs(deployment_version_path)
+        # converts the release to string
+        release_string = str(release)
 
-        # creates the latest version path
+        # creates the deployment release path, representing the
+        # path to the directory to the current release
+        deployment_release_path = deployment_path + "/" + release_string
+
+        # in case the deployment release path does not exist
+        if not os.path.exists(deployment_release_path):
+            # creates the directories for the deployment release path
+            os.makedirs(deployment_release_path)
+
+        # creates the latest file paths
         latest_version_path = deployment_path + "/" + LATEST_FILE_NAME
+        latest_release_path = deployment_path + "/" + LATEST_RELEASE_FILE_NAME
 
-        # creates the latest success version path
+        # creates the latest success file paths
         latest_success_version_path = deployment_path + "/" + LATEST_SUCCESS_FILE_NAME
+        latest_success_release_path = deployment_path + "/" + LATEST_SUCCESS_RELEASE_FILE_NAME
 
         # retrieves the current version (to check for changes)
-        current_version = self._get_version(latest_version_path)
+        current_version = self._get_version_hash(latest_version_path)
 
         # in case the current version is the same (no changes in repository)
         if version == current_version:
@@ -153,11 +183,17 @@ class ContinuousIntegrationBuildAutomationExtension:
             # returns true (success)
             return True
 
-        # writes the version number
+        # writes the version hash and the release number to
+        # the latest files
         self._write_version_number(latest_version_path, version)
+        self._write_release_number(latest_release_path, release)
 
-        # in case the build is successful, writes the version number to the success file
-        build_automation_structure_runtime.success and  self._write_version_number(latest_success_version_path, version)
+        # in case the build is successful, updates the success files
+        if build_automation_structure_runtime.success:
+            # writes the version hash and the release number
+            # to the success files
+            self._write_version_hash(latest_success_version_path, version)
+            self._write_release_number(latest_success_release_path, release)
 
         # retrieves the build properties
         build_properties = build_automation_structure.get_all_build_properties()
@@ -165,8 +201,8 @@ class ContinuousIntegrationBuildAutomationExtension:
         # retrieves the target directory
         target_directory = build_properties[TARGET_DIRECTORY_VALUE]
 
-        # copies the target directory to the deployment version path (directory)
-        colony.libs.path_util.copy_directory(target_directory, deployment_version_path)
+        # copies the target directory to the deployment release path (directory)
+        colony.libs.path_util.copy_directory(target_directory, deployment_release_path)
 
         # retrieves the zip plugin
         zip_plugin = self.continuous_integration_build_automation_extension_plugin.zip_plugin
@@ -174,10 +210,10 @@ class ContinuousIntegrationBuildAutomationExtension:
         # iterates over all the zip to create the zip file
         for zip in zips:
             # creates the zip file path
-            zip_file_path = deployment_version_path + "/" + zip + ZIP_EXTENSION
+            zip_file_path = deployment_release_path + "/" + zip + ZIP_EXTENSION
 
             # creates the zip directory path
-            zip_directory_path = deployment_version_path + "/" + zip
+            zip_directory_path = deployment_release_path + "/" + zip
 
             # creates the zip file for the zip directory
             zip_plugin.zip(zip_file_path, zip_directory_path)
@@ -189,12 +225,13 @@ class ContinuousIntegrationBuildAutomationExtension:
         latest_success_version_path = deployment_path + "/" + LATEST_SUCCESS_DIRECTORY_NAME
 
         # updates the latest version path (link)
-        self._update_link(deployment_version_path, latest_version_path)
+        self._update_link(deployment_release_path, latest_version_path)
 
         # in case the build is successful, updates the latest success version path (link)
-        build_automation_structure_runtime.success and self._update_link(deployment_version_path, latest_success_version_path)
+        build_automation_structure_runtime.success and self._update_link(deployment_release_path, latest_success_version_path)
 
         # sets the build automation structure runtime properties
+        build_automation_structure_runtime.local_properties[RELEASE_VALUE] = release
         build_automation_structure_runtime.local_properties[INTEGRATION_VERSION_VALUE] = version
 
         # returns true (success)
@@ -224,41 +261,38 @@ class ContinuousIntegrationBuildAutomationExtension:
         # path and the link path
         colony.libs.path_util.link(target_path, link_path)
 
-    def _write_version_number(self, version_file_path, version_number):
+    def _write_version_hash(self, version_file_path, version_hash):
         """
-        Writes the given version number into the file in the given
+        Writes the given version hash into the file in the given
         path.
 
         @type version_file_path: String
         @param version_file_path: The path to the file that will
-        hold the version number.
-        @type version_number: int
-        @param version_number: The version number to be written.
+        hold the version hash.
+        @type version_hash: String
+        @param version_hash: The version hash to be written.
         """
-
-        # converts the version number to a string
-        version_number_string = str(version_number)
 
         # opens the version file
         version_file = open(version_file_path, "wb")
 
         try:
-            # writes the version number string value
-            version_file.write(version_number_string)
+            # writes the version hash
+            version_file.write(version_hash)
         finally:
             # closes the version file
             version_file.close()
 
-    def _get_version(self, version_file_path):
+    def _get_version_hash(self, version_file_path):
         """
-        Retrieves the current version using the given
+        Retrieves the current version hash using the given
         version file path.
 
         @type version_file_path: String
         @param version_file_path: The file path to the
         version file.
-        @rtype: int
-        @return: The version (revision) number.
+        @rtype: String
+        @return: The version hash value.
         """
 
         # in case the version file path does not exist
@@ -270,17 +304,75 @@ class ContinuousIntegrationBuildAutomationExtension:
         version_file = open(version_file_path, "rb")
 
         try:
-            # reads the revision number string value
-            revision_number_string = version_file.read()
+            # reads the revision hash string value
+            revision_hash_string = version_file.read()
 
-            # strips the revision number string
-            revision_number_string = revision_number_string.strip()
-
-            # converts the revision number string to integer
-            revision_number = int(revision_number_string)
+            # strips the revision hash string
+            revision_hash_string = revision_hash_string.strip()
         finally:
             # closes the version file
             version_file.close()
 
-        # returns the revision number
-        return revision_number
+        # returns the revision hash string
+        return revision_hash_string
+
+    def _write_release_number(self, release_file_path, release_number):
+        """
+        Writes the given release number into the file in the given
+        path.
+
+        @type release_file_path: String
+        @param release_file_path: The path to the file that will
+        hold the release number.
+        @type release_number: int
+        @param release_number: The release number to be written.
+        """
+
+        # converts the release number to a string
+        release_number_string = str(release_number)
+
+        # opens the release file
+        release_file = open(release_file_path, "wb")
+
+        try:
+            # writes the release number string value
+            release_file.write(release_number_string)
+        finally:
+            # closes the release file
+            release_file.close()
+
+    def _get_release(self, release_file_path):
+        """
+        Retrieves the current release using the given
+        release file path.
+
+        @type release_file_path: String
+        @param release_file_path: The file path to the
+        release file.
+        @rtype: int
+        @return: The release number.
+        """
+
+        # in case the release file path does not exist
+        if not os.path.exists(release_file_path):
+            # returns (default first value)
+            return FIRST_RELEASE_NUMBER
+
+        # opens the release file
+        release_file = open(release_file_path, "rb")
+
+        try:
+            # reads the release number string value
+            release_number_string = release_file.read()
+
+            # strips the release number string
+            release_number_string = release_number_string.strip()
+
+            # converts the release number string to integer
+            release_number = int(release_number_string)
+        finally:
+            # closes the release file
+            release_file.close()
+
+        # returns the release number
+        return release_number
