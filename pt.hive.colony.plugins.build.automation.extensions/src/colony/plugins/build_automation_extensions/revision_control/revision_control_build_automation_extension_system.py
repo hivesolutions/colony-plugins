@@ -282,7 +282,7 @@ class RevisionControlBuildAutomationExtension:
         changers_list = set([value for sub_list in changers_map.values() for value in sub_list])
 
         # prints an info message
-        logger.info("Updating build automation structure local properties")
+        logger.info("Updating build automation structure runtime properties")
 
         # sets the build automation structure runtime properties
         build_automation_structure_runtime.local_properties[VERSION_VALUE] = version_hash_value_digest
