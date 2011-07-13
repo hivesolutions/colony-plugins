@@ -51,7 +51,7 @@
                 <configuration>
                     <property>
                         <key>colony_version</key>
-                        <value>1.0.0</value>
+                        <value>1.0.0-alpha</value>
                     </property>
                     <property>
                         <key>integration_base_url</key>
