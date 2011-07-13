@@ -233,12 +233,6 @@ class RevisionControlBuildAutomationExtension:
                 changelog_map[name] = changelog_list
                 changers_map[name] = changers_list
 
-                # prints an info message
-                logger.info("Writing version number to file %s" % version_file_path)
-
-                # writes the version number to the file
-                self._write_version_number(version_file_path, revision)
-
                 # creates the hash value to be used in updating the hash,
                 # using the name and the current revision number
                 hash_value = name + "-" + str(current_revision_number)
