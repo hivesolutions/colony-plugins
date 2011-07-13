@@ -135,9 +135,11 @@ class RevisionControlBuildAutomationExtension:
         global_changelog_file_path = parameters.get(CHANGELOG_FILE_PATH_VALUE, None)
         repositories = colony.libs.map_util.map_get_values(parameters, REPOSITORY_VALUE)
 
+        # creates the initial changelog and changers maps
         changelog_map = {}
         changers_map = {}
 
+        # creates the version hash value
         version_hash_value = hashlib.sha1()
 
         # iterates over all the repository values
@@ -279,12 +281,15 @@ class RevisionControlBuildAutomationExtension:
         changelog_list = set([value for sub_list in changelog_map.values() for value in sub_list])
         changers_list = set([value for sub_list in changers_map.values() for value in sub_list])
 
+        # prints an info message
+        logger.info("Updating build automation structure local properties")
+
         # sets the build automation structure runtime properties
         build_automation_structure_runtime.local_properties[VERSION_VALUE] = version_hash_value_digest
         build_automation_structure_runtime.local_properties[CHANGELOG_LIST_VALUE] = changelog_list
-        #build_automation_structure_runtime.local_properties[CHANGELOG_MAP_VALUE] = changelog_map
+        build_automation_structure_runtime.local_properties[CHANGELOG_MAP_VALUE] = changelog_map
         build_automation_structure_runtime.local_properties[CHANGERS_LIST_VALUE] = changers_list
-        #build_automation_structure_runtime.local_properties[CHANGERS_MAP_VALUE] = changers_map
+        build_automation_structure_runtime.local_properties[CHANGERS_MAP_VALUE] = changers_map
 
         # returns true (success)
         return True
