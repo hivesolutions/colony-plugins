@@ -179,6 +179,7 @@ class RevisionControlBuildAutomationExtension:
 
                 # updates the repository to the current head revision
                 revision = revision_control_manager.update([target_path], None)
+            # otherwise there is no target path (initial checkout)
             else:
                 # prints an info message
                 logger.info("Checking out repository %s out into %s" % (path, target_path))
@@ -227,21 +228,29 @@ class RevisionControlBuildAutomationExtension:
 
                 # writes the changelog for the given file path and changelog list
                 self._write_changelog(changelog_file_path, changelog_list)
+            # otherwise there is no changelog file path defined
+            else:
+                # sets an empty changerlog and changers list
+                changelog_list = []
+                changers_list = []
 
-                # sets the changelog list in the changelog map for the name
-                # and sets the changers list for the changers map (also for the name)
-                changelog_map[name] = changelog_list
-                changers_map[name] = changers_list
+            # retrieves the current revision number
+            current_revision_number = revision.get_number()
 
-                # creates the hash value to be used in updating the hash,
-                # using the name and the current revision number
-                hash_value = name + "-" + str(current_revision_number)
+            # sets the changelog list in the changelog map for the name
+            # and sets the changers list for the changers map (also for the name)
+            changelog_map[name] = changelog_list
+            changers_map[name] = changers_list
 
-                # prints an info message
-                logger.info("Updating version hash value with " % hash_value)
+            # creates the hash value to be used in updating the hash,
+            # using the name and the current revision number
+            hash_value = name + "-" + str(current_revision_number)
 
-                # updates the version hash value with the current hash value
-                version_hash_value.update(hash_value)
+            # prints an info message
+            logger.info("Updating version hash value with " % hash_value)
+
+            # updates the version hash value with the current hash value
+            version_hash_value.update(hash_value)
 
         # retrieves the (final) version hash value digest
         version_hash_value_digest = version_hash_value.hexdigest()
