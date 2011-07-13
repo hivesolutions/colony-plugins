@@ -154,6 +154,7 @@
                 <configuration>
                     <deployment_path>$resource{system.path.integration}</deployment_path>
                     <version_file_path>${build_automation.build.resources_directory}/version</version_file_path>
+                    <release_file_path>${build_automation.build.resources_directory}/release</release_file_path>
                     <zip>plugins</zip>
                     <zip>repository</zip>
                     <zip>resources</zip>
