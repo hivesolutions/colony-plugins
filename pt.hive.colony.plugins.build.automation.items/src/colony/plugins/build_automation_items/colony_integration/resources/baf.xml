@@ -121,11 +121,11 @@
                     <contents>
                         <file>
                             <path>$base{plugin_system_directory}/tmp/checkout/pt.hive.colony/trunk/pt.hive.colony/src/colony/base/plugin_system_information.py</path>
-                            <encoding>Cp1252</encoding>
+                            <encoding>utf-8</encoding>
                         </file>
                         <file>
                             <path>$base{plugin_system_directory}/tmp/checkout/pt.hive.colony/trunk/pt.hive.colony/src/scripts/all/colony_deploy.py</path>
-                            <encoding>Cp1252</encoding>
+                            <encoding>utf-8</encoding>
                         </file>
                     </contents>
                 </configuration>
