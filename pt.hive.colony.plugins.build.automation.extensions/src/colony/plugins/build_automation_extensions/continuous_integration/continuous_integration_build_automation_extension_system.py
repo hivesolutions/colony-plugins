@@ -185,7 +185,7 @@ class ContinuousIntegrationBuildAutomationExtension:
 
         # writes the version hash and the release number to
         # the latest files
-        self._write_version_number(latest_version_path, version)
+        self._write_version_hash(latest_version_path, version)
         self._write_release_number(latest_release_path, release)
 
         # in case the build is successful, updates the success files
