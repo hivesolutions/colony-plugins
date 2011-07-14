@@ -19,7 +19,7 @@
 -->
 
 <!--
- __author__    = João Magalhães <joamag@hive.pt>
+ __author__    = JoÃ£o MagalhÃ£es <joamag@hive.pt>
  __version__   = 1.0.0
  __revision__  = $LastChangedRevision: 9251 $
  __date__      = $LastChangedDate: 2010-07-09 23:19:45 +0100 (sex, 09 Jul 2010) $
@@ -166,7 +166,7 @@
                 </tr>
                 <tr height="86">
                     <td colspan="3" valign="bottom" align="left" id="copyright">
-                        <font face="verdana" size="1" color="#dddddd">© Copyright ${year /} Hive Solutions Lda. - All rights reseved</font>
+                        <font face="verdana" size="1" color="#dddddd">Â© Copyright ${year /} Hive Solutions Lda. - All rights reseved</font>
                     </td>
                 </tr>
             </table>
