@@ -23,5 +23,13 @@
             "main_service_utils/utils/main_service_utils_sync.py",
             "main_service_utils/utils/main_service_utils_system.py",
             "main_service_utils/utils/main_service_utils_threads.py",
-            "main_service_utils/utils/resources/baf.xml"]
+            "main_service_utils/utils/resources/baf.xml"],
+    "extra_resources" : ["main_service_utils_plugin.pyc",
+            "main_service_utils/__init__.pyc",
+            "main_service_utils/utils/__init__.pyc",
+            "main_service_utils/utils/main_service_utils_async.pyc",
+            "main_service_utils/utils/main_service_utils_exceptions.pyc",
+            "main_service_utils/utils/main_service_utils_sync.pyc",
+            "main_service_utils/utils/main_service_utils_system.pyc",
+            "main_service_utils/utils/main_service_utils_threads.pyc"]
 }
