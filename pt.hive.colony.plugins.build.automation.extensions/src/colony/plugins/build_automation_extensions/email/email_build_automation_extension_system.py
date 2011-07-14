@@ -91,6 +91,9 @@ TOTAL_TIME_FORMATED_VALUE = "total_time_formated"
 CHANGELOG_LIST_VALUE = "changelog_list"
 """ The changelog list value """
 
+CHANGELOG_MAP_VALUE = "changelog_map"
+""" The changelog map value """
+
 ISSUES_LIST_VALUE = "issues_list"
 """ The issues list value """
 
@@ -523,6 +526,9 @@ class EmailBuildAutomationExtension:
         # retrieves the build automation changelog list
         build_automation_changelog_list = build_automation_structure_runtime.local_properties.get(CHANGELOG_LIST_VALUE, [])
 
+        # retrieves the build automation changelog map
+        build_automation_changelog_map = build_automation_structure_runtime.local_properties.get(CHANGELOG_MAP_VALUE, [])
+
         # retrieves the build automation issues list
         build_automation_issues_list = build_automation_structure_runtime.local_properties.get(ISSUES_LIST_VALUE, [])
 
@@ -553,6 +559,7 @@ class EmailBuildAutomationExtension:
         build_automation_structure_converted["build"] = build_automation_build
         build_automation_structure_converted["total_time_formated"] = build_automation_total_time_formated
         build_automation_structure_converted["changelog_list"] = build_automation_changelog_list
+        build_automation_structure_converted["changelog_map"] = build_automation_changelog_map
         build_automation_structure_converted["issues_list"] = build_automation_issues_list
         build_automation_structure_converted["changers_list"] = build_automation_changers_list
         build_automation_structure_converted["repository_url"] = repository_url
