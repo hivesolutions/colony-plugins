@@ -514,9 +514,20 @@ class AbstractService:
         Removes all the "remaining" client sockets.
         """
 
+        # the list to hold the client sockets
+        # to be removed
+        removal_list = []
+
         # iterates over all the client sockets in the
         # client connection map
         for client_socket in self.client_connection_map:
+            # adds the client socket ot the
+            # removal list (for later removal)
+            removal_list.append(client_socket)
+
+        # iterates over all the client sockets
+        # to be removed
+        for client_socket in removal_list:
             # removes the client socket from
             # internal structures
             self.remove_socket(client_socket)
