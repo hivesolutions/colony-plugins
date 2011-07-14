@@ -112,6 +112,7 @@ BUILD_AUTOMATION_STAGES = [
     "test",
     "build",
     "install",
+    "post-build"
     "deploy",
     "clean",
     "site",
