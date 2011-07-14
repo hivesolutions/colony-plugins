@@ -103,6 +103,38 @@ class ContinuousIntegrationBuildAutomationExtension:
         self.continuous_integration_build_automation_extension_plugin = continuous_integration_build_automation_extension_plugin
 
     def run_automation(self, plugin, stage, parameters, build_automation_structure, logger):
+        if stage == "build":
+            return self.run_automation_build(plugin, stage, parameters, build_automation_structure, logger)
+        else:
+            return self.run_automation_all(plugin, stage, parameters, build_automation_structure, logger)
+
+    def run_automation_build(self, plugin, stage, parameters, build_automation_structure, logger):
+        # retrieves the build automation structure runtime
+        build_automation_structure_runtime = build_automation_structure.runtime
+
+        # retrieves the deployment path
+        deployment_path = parameters[DEPLOYMENT_PATH_VALUE]
+
+        # creates the latest build path
+        latest_build_path = deployment_path + "/" + LATEST_BUILD_FILE_NAME
+
+        try:
+            # retrieves the build from the latst build file path
+            build = self._get_build(latest_build_path)
+        except:
+            # sets the "default" first build
+            build = FIRST_BUILD_NUMBER
+
+        # increments the build number (new build)
+        build += 1
+
+        # sets the build automation structure runtime properties
+        build_automation_structure_runtime.local_properties[BUILD_VALUE] = build
+
+        # returns true (success)
+        return True
+
+    def run_automation_all(self, plugin, stage, parameters, build_automation_structure, logger):
         # retrieves the build automation structure runtime
         build_automation_structure_runtime = build_automation_structure.runtime
 

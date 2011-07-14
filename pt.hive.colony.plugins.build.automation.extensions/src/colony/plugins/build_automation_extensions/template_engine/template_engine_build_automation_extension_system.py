@@ -50,8 +50,8 @@ DATE_FORMAT = "%b %d %Y"
 DATE_TIME_FORMAT = "%b %d %Y %H:%M:%S"
 """ The format used to convert date times to strings """
 
-VERSION_VALUE = "version"
-""" The version value """
+BUILD_VALUE = "build"
+""" The build value """
 
 RELEASE_VERSION_VALUE = "release_version"
 """ The release version value """
@@ -147,14 +147,14 @@ class TemplateEngineBuildAutomationExtension:
         # formats the current datetime to date time string
         current_date_time_string = current_datetime.strftime(DATE_TIME_FORMAT)
 
-        # retrieves the current version value
-        version_value = build_automation_structure_runtime.local_properties.get(VERSION_VALUE, None)
+        # retrieves the current build value
+        build_value = build_automation_structure_runtime.local_properties.get(BUILD_VALUE, -1)
 
         # assigns the release version to the template file
-        template_file.assign(RELEASE_VERSION_VALUE, version_value)
+        template_file.assign(RELEASE_VERSION_VALUE, build_value)
 
         # assigns the build version to the template file
-        template_file.assign(BUILD_VERSION_VALUE, version_value)
+        template_file.assign(BUILD_VERSION_VALUE, build_value)
 
         # assigns the date to the template file
         template_file.assign(DATE_VALUE, current_date_string)
