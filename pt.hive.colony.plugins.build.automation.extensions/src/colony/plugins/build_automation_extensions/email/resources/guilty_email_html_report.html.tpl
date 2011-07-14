@@ -103,7 +103,7 @@
                         ${foreach item=changelog_list key=name from=build_automation.changelog_map}
                             <p>
                                 <font face="Arial" size="2" color="#333333">
-                                    <font face="Rockwell, Arial" size="2" color="#c0c0c0">
+                                    <font face="Rockwell, Arial" size="3" color="#214c8f">
                                         <strong>${out_none value=name xml_escape=True /}</strong>
                                     </font>
                                     <br />
