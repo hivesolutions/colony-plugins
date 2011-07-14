@@ -110,10 +110,12 @@
                                         </font>
                                         <br />
                                         <font face="Rockwell, Arial" size="3" color="#214c8f">
-                                            <b>
-                                                <a href="${out_none value=build_automation.changelog_url xml_escape=True /}/${out_none value=change.number xml_escape=True /}">r${out_none value=change.number xml_escape=True /}
-                                                </a> - ${out_none value=change.user.name xml_escape=True /} (${out_none value=change.user.username xml_escape=True /})
-                                            </b>
+                                            <font face="Rockwell, Arial" size="2" color="#c0c0c0">
+                                                <b>
+                                                    <a href="${out_none value=build_automation.changelog_url xml_escape=True /}/${out_none value=change.number xml_escape=True /}">r${out_none value=change.number xml_escape=True /}</a>
+                                                    - ${out_none value=change.user.name xml_escape=True /} (${out_none value=change.user.username xml_escape=True /})
+                                                </b>
+                                            </font>
                                         </font>
                                         <br />
                                         ${out_none value=change.message xml_escape=True /}
