@@ -1,5 +1,5 @@
 #!/usr/bin/python
-# -*- coding: Cp1252 -*-
+# -*- coding: utf-8 -*-
 
 # Hive Colony Framework
 # Copyright (C) 2008 Hive Solutions Lda.
@@ -19,7 +19,7 @@
 # You should have received a copy of the GNU General Public License
 # along with Hive Colony Framework. If not, see <http://www.gnu.org/licenses/>.
 
-__author__ = "João Magalhães <joamag@hive.pt>"
+__author__ = "JoÃ£o MagalhÃ£es <joamag@hive.pt>"
 """ The author(s) of the module """
 
 __version__ = "1.0.0"
@@ -40,9 +40,9 @@ __license__ = "GNU General Public License (GPL), Version 3"
 configuration = {
     "user_information" : {
         "joamag" : {
-            "name" : u"João Magalhães",
-            "first_name" : u"João",
-            "last_name" : u"Magalhães",
+            "name" : u"JoÃ£o MagalhÃ£es",
+            "first_name" : u"JoÃ£o",
+            "last_name" : u"MagalhÃ£es",
             "email" : u"joamag@hive.pt",
             "username" : u"joamag",
             "website" : u"http://joaomagalhaes.eu",
@@ -60,7 +60,7 @@ configuration = {
                 "position" : u"Software Developer",
                 "email" : u"joamag@hive.pt",
                 "address" : {
-                    "street" : u"Rua 31 de Janeiro, 190A 3º Dto.",
+                    "street" : u"Rua 31 de Janeiro, 190A 3Âº Dto.",
                     "zip_code" : u"4000-542",
                     "city" : u"Porto",
                     "country" : u"Portugal",
@@ -87,7 +87,7 @@ configuration = {
                 "position" : u"Software Developer",
                 "email" : u"tsilva@hive.pt",
                 "address" : {
-                    "street" : u"Rua 31 de Janeiro, 190A 3º Dto.",
+                    "street" : u"Rua 31 de Janeiro, 190A 3Âº Dto.",
                     "zip_code" : u"4000-542",
                     "city" : u"Porto",
                     "country" : u"Portugal",
@@ -114,7 +114,7 @@ configuration = {
                 "position" : u"Software Developer",
                 "email" : u"lmartinho@hive.pt",
                 "address" : {
-                    "street" : u"Rua 31 de Janeiro, 190A 3º Dto.",
+                    "street" : u"Rua 31 de Janeiro, 190A 3Âº Dto.",
                     "zip_code" : u"4000-542",
                     "city" : u"Porto",
                     "country" : u"Portugal",
@@ -140,7 +140,7 @@ configuration = {
                 "position" : u"Designer",
                 "email" : u"v-fcastro@hive.pt",
                 "address" : {
-                    "street" : u"Rua 31 de Janeiro, 190A 3º Dto.",
+                    "street" : u"Rua 31 de Janeiro, 190A 3Âº Dto.",
                     "zip_code" : u"4000-542",
                     "city" : u"Porto",
                     "country" : u"Portugal",
@@ -168,7 +168,7 @@ configuration = {
                 "position" : u"Designer",
                 "email" : u"v-msousa@hive.pt",
                 "address" : {
-                    "street" : u"Rua 31 de Janeiro, 190A 3º Dto.",
+                    "street" : u"Rua 31 de Janeiro, 190A 3Âº Dto.",
                     "zip_code" : u"4000-542",
                     "city" : u"Porto",
                     "country" : u"Portugal",

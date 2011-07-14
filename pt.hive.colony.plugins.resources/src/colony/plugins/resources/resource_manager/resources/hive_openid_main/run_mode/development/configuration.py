@@ -1,5 +1,5 @@
 #!/usr/bin/python
-# -*- coding: Cp1252 -*-
+# -*- coding: utf-8 -*-
 
 # Hive Solutions Openid
 # Copyright (C) 2010 Hive Solutions Lda.
@@ -16,7 +16,7 @@
 # If you have any questions regarding the terms of this license please
 # refer to <http://www.hive.pt/licenses/>.
 
-__author__ = "Jo„o Magalh„es <joamag@hive.pt>"
+__author__ = "Jo√£o Magalh√£es <joamag@hive.pt>"
 """ The author(s) of the module """
 
 __version__ = "1.0.0"
