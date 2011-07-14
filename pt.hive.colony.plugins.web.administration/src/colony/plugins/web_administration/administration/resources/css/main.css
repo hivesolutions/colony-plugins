@@ -1,4 +1,4 @@
-@charset "Cp1252";
+@charset "utf-8";
 
 /*
  Hive Colony Framework
@@ -21,7 +21,7 @@
 */
 
 /*
- __author__    = Jo„o Magalh„es <joamag@hive.pt>
+ __author__    = Jo√£o Magalh√£es <joamag@hive.pt>
  __version__   = 1.0.0
  __revision__  = $LastChangedRevision: 5971 $
  __date__      = $LastChangedDate: 2009-10-30 05:40:10 +0000 (sex, 30 Out 2009) $
@@ -32,7 +32,7 @@
 /**
  * @fileoverview This file contains some initial CSS styles for the environment.
  *
- * @author Jo„o Magalh„es <joamag@hive.pt>
+ * @author Jo√£o Magalh√£es <joamag@hive.pt>
  * @version 1.0.0
  */
 
