@@ -27,5 +27,12 @@
             "web_mvc_manager/code_execution/web_mvc_manager_code_execution_exceptions.py",
             "web_mvc_manager/code_execution/web_mvc_manager_code_execution_system.py",
             "web_mvc_manager/code_execution/resources/baf.xml",
-            "web_mvc_manager/code_execution/resources/templates/code_execution/code_execution_contents.html.tpl"]
+            "web_mvc_manager/code_execution/resources/templates/code_execution/code_execution_contents.html.tpl"],
+    "extra_resources" : [
+            "web_mvc_manager_code_execution_plugin.pyc",
+            "web_mvc_manager/__init__.pyc",
+            "web_mvc_manager/code_execution/__init__.pyc",
+            "web_mvc_manager/code_execution/web_mvc_manager_code_execution_controllers.pyc",
+            "web_mvc_manager/code_execution/web_mvc_manager_code_execution_exceptions.pyc",
+            "web_mvc_manager/code_execution/web_mvc_manager_code_execution_system.pyc"]
 }
