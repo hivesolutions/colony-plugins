@@ -101,7 +101,7 @@
                         <font face="Rockwell, Arial" size="3" color="#808080"><strong>Code Changes</strong></font>
                         <br />
                         ${foreach item=changelog_list key=name from=build_automation.changelog_map}
-                            ${if item=changelog_list value=0 op=lengt}
+                            ${if item=changelog_list value=0 operator=lengt}
                                 <p>
                                     <font face="Arial" size="2" color="#333333">
                                         <font face="Rockwell, Arial" size="3" color="#214c8f">
