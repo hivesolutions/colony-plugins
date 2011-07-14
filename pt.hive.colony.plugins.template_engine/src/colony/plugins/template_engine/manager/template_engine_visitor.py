@@ -168,7 +168,9 @@ COMPARISION_FUNCTIONS = {
     "gt" : lambda attribute_item, attribute_value: attribute_item > attribute_value,
     "lte" : lambda attribute_item, attribute_value: attribute_item <= attribute_value,
     "lt" : lambda attribute_item, attribute_value: attribute_item < attribute_value,
-    "len" : lambda attribute_item, attribute_value: len(attribute_item) == attribute_value
+    "len" : lambda attribute_item, attribute_value: len(attribute_item) == attribute_value,
+    "lengt" : lambda attribute_item, attribute_value: len(attribute_item) > attribute_value,
+    "lenlt" : lambda attribute_item, attribute_value: len(attribute_item) < attribute_value
 }
 """ The map containing the comparison functions (lambda) """
 
