@@ -64,6 +64,14 @@
                 </configuration>
             </plugin>
             <plugin>
+                <id>pt.hive.colony.plugins.build.automation.extensions.continuous_integration</id>
+                <version>1.0.0</version>
+                <stage>build</stage>
+                <configuration>
+                    <deployment_path>$resource{system.path.integration}</deployment_path>
+                </configuration>
+            </plugin>
+            <plugin>
                 <id>pt.hive.colony.plugins.build.automation.extensions.packing</id>
                 <version>1.0.0</version>
                 <stage>build</stage>
