@@ -1,5 +1,5 @@
 #!/usr/bin/python
-# -*- coding: Cp1252 -*-
+# -*- coding: utf-8 -*-
 
 # Hive Colony Framework
 # Copyright (C) 2008 Hive Solutions Lda.
@@ -19,7 +19,7 @@
 # You should have received a copy of the GNU General Public License
 # along with Hive Colony Framework. If not, see <http://www.gnu.org/licenses/>.
 
-__author__ = "João Magalhães <joamag@hive.pt> & Luís Martinho <lmartinho@hive.pt>"
+__author__ = "JoÃ£o MagalhÃ£es <joamag@hive.pt> & LuÃ­s Martinho <lmartinho@hive.pt>"
 """ The author(s) of the module """
 
 __version__ = "1.0.0"
@@ -2636,7 +2636,7 @@ class EntityManagerSqliteEngine:
         The valid attributes are the ones that are simple attributes or that
         are relation attributes mapped in the current entity class.
 
-        @type entity_class: Class
+        @typeÂ entity_class: Class
         @param entity_class: The entity class.
         @rtype: List
         @return: The list with the names of all attributes from the given entity class.
@@ -2657,7 +2657,7 @@ class EntityManagerSqliteEngine:
         The mapped by other attributes are the ones that are mapped by the other side
         of the relation, in this case the entity class is a non owner one.
 
-        @type entity_class: Class
+        @typeÂ entity_class: Class
         @param entity_class: The entity class.
         @rtype: List
         @return: The list with the names of all attributes from the given entity class.
@@ -2678,7 +2678,7 @@ class EntityManagerSqliteEngine:
         The indirect attributes are the ones that are mapped by a join table or by the other
         entity (non owner case).
 
-        @type entity_class: Class
+        @typeÂ entity_class: Class
         @param entity_class: The entity class.
         @rtype: List
         @return: The list with the names of all the indirect attributes from the given entity class.
@@ -2697,7 +2697,7 @@ class EntityManagerSqliteEngine:
         """
         Retrieves a list with the names of all attributes from the given entity instance.
 
-        @type entity: Object
+        @type entity: Object
         @param entity: The entity instance.
         @rtype: List
         @return: The list with the names of all attributes from the given entity instance.
@@ -2712,7 +2712,7 @@ class EntityManagerSqliteEngine:
         """
         Retrieves a list with the names of all indirect attributes from the given entity instance.
 
-        @type entity: Object
+        @typeÂ entity: Object
         @param entity: The entity instance.
         @rtype: List
         @return: The list with the names of all indirect attributes from the given entity instance.
