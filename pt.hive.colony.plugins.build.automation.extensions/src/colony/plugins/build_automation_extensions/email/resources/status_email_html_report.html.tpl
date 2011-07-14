@@ -108,7 +108,7 @@
                                     </font>
                                     <br />
                                     ${foreach item=change from=changelog_list}
-                                        <font face="Rockwell, Arial" size="2" color="#c0c0c0">
+                                        <font face="Rockwell, Arial" size="2" color="#214c8f">
                                             <b>
                                                 <a href="${out_none value=build_automation.changelog_url xml_escape=True /}/${out_none value=change.number xml_escape=True /}">r${out_none value=change.number xml_escape=True /}</a>
                                                 - ${out_none value=change.user.name xml_escape=True /} (${out_none value=change.user.username xml_escape=True /})
