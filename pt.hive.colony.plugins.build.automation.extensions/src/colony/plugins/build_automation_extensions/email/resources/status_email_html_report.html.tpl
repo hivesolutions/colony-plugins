@@ -101,27 +101,25 @@
                         <font face="Rockwell, Arial" size="3" color="#808080"><strong>Code Changes</strong></font>
                         <br />
                         ${foreach item=changelog_list key=name from=build_automation.changelog_map}
-                            <font face="Rockwell, Arial" size="2" color="#c0c0c0"><strong>${out_none value=name xml_escape=True /}</strong></font>
-                            ${foreach item=change from=changelog_list}
-                                <p>
-                                    <font face="Arial" size="2" color="#333333">
-                                        <font face="Rockwell, Arial" size="3" color="#214c8f">
-                                            <strong>${out_none value=name xml_escape=True /}</strong>
-                                        </font>
-                                        <br />
-                                        <font face="Rockwell, Arial" size="3" color="#214c8f">
-                                            <font face="Rockwell, Arial" size="2" color="#c0c0c0">
-                                                <b>
-                                                    <a href="${out_none value=build_automation.changelog_url xml_escape=True /}/${out_none value=change.number xml_escape=True /}">r${out_none value=change.number xml_escape=True /}</a>
-                                                    - ${out_none value=change.user.name xml_escape=True /} (${out_none value=change.user.username xml_escape=True /})
-                                                </b>
-                                            </font>
+                            <p>
+                                <font face="Arial" size="2" color="#333333">
+                                    <font face="Rockwell, Arial" size="2" color="#c0c0c0">
+                                        <strong>${out_none value=name xml_escape=True /}</strong>
+                                    </font>
+                                    <br />
+                                    ${foreach item=change from=changelog_list}
+                                        <font face="Rockwell, Arial" size="2" color="#c0c0c0">
+                                            <b>
+                                                <a href="${out_none value=build_automation.changelog_url xml_escape=True /}/${out_none value=change.number xml_escape=True /}">r${out_none value=change.number xml_escape=True /}</a>
+                                                - ${out_none value=change.user.name xml_escape=True /} (${out_none value=change.user.username xml_escape=True /})
+                                            </b>
                                         </font>
                                         <br />
                                         ${out_none value=change.message xml_escape=True /}
-                                    </font>
-                                </p>
-                            ${/foreach}
+                                        <br />
+                                    ${/foreach}
+                                </font>
+                            </p>
                         ${/foreach}
                         <img src="cid:line.gif" width="100%" height="1" alt="separator" />
                         <p align="right">
