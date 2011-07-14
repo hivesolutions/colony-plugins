@@ -103,9 +103,13 @@ class ContinuousIntegrationBuildAutomationExtension:
         self.continuous_integration_build_automation_extension_plugin = continuous_integration_build_automation_extension_plugin
 
     def run_automation(self, plugin, stage, parameters, build_automation_structure, logger):
-        if stage == "build":
+        # in case the stage is build (minimal run)
+        if stage == BUILD_VALUE:
+            # runs the automation in "build" mode
             return self.run_automation_build(plugin, stage, parameters, build_automation_structure, logger)
+        # otherwise it should be a normal run
         else:
+            # runs the automation in "all" normal mode
             return self.run_automation_all(plugin, stage, parameters, build_automation_structure, logger)
 
     def run_automation_build(self, plugin, stage, parameters, build_automation_structure, logger):
