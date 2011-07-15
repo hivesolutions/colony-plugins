@@ -64,7 +64,7 @@ DEFAULT_STATUS_CODE = 200
 DEFAULT_ALIAS_LOCALES = {}
 """ The default alias locales """
 
-DEFAULT_TEMPLATE_FILE_ENCODING = "Cp1252"
+DEFAULT_TEMPLATE_FILE_ENCODING = "utf-8"
 """ The default template file encoding """
 
 DEFAULT_WILDCARD_ACL_VALUE = "*"
