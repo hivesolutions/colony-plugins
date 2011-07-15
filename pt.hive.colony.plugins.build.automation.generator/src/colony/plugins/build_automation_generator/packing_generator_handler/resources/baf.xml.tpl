@@ -21,7 +21,7 @@
 -->
 
 <!--
- __author__    = Jo„o Magalh„es <joamag@hive.pt>
+ __author__    = Jo√£o Magalh√£es <joamag@hive.pt>
  __version__   = 1.0.0
  __revision__  = $LastChangedRevision: 72 $
  __date__      = $LastChangedDate: 2008-10-21 23:29:54 +0100 (Tue, 21 Oct 2008) $
