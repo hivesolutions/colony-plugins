@@ -40,7 +40,7 @@ __license__ = "GNU General Public License (GPL), Version 3"
 RESOURCE_PARSER_NAME = "json"
 """ The resource parser name """
 
-JSON_FILE_ENCODING = "Cp1252"
+JSON_FILE_ENCODING = "utf-8"
 """ The json file encoding """
 
 class JsonResourceParser:
