@@ -101,7 +101,7 @@ configuration = {
                     "/",
                 ],
                 "/" : {
-                    "target" : "/colony_dynamic/rest/mvc/web_dropbox/library_repository/resources/libs/",
+                    "target" : "/colony_dynamic/rest/mvc/library_repository/resources/libs/",
                     "recursive_redirection" : True
                 }
             }
