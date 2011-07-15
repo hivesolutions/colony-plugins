@@ -52,7 +52,7 @@ EXPIRATION_DELTA_TIMESTAMP = 31536000
 DEFAULT_MIME_TYPE = "text/plain"
 """ The default mime type """
 
-DEFAULT_CHARSET = "Cp1252"
+DEFAULT_CHARSET = "utf-8"
 """ The default charset """
 
 class JavascriptFileHandler:
