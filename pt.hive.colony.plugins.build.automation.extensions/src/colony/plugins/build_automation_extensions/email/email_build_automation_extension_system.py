@@ -61,7 +61,7 @@ GUILTY_EMAIL_HTML_REPORT_TEMPLATE_FILE_NAME = "guilty_email_html_report.html.tpl
 DEFAULT_ENCODING = "utf-8"
 """ The default encoding """
 
-DEFAULT_TEMPLATE_ENCODING = "Cp1252"
+DEFAULT_TEMPLATE_ENCODING = "utf-8"
 """ The default template encoding """
 
 DEFAULT_SMTP_HOSTNAME = "localhost"

@@ -44,7 +44,7 @@ import colony.libs.crypt_util
 
 import packing_build_automation_extension_exceptions
 
-DEFAULT_ENCODING = "Cp1252"
+DEFAULT_ENCODING = "utf-8"
 """ The default encoding """
 
 BUNDLES_DIRECTORY_VALUE = "bundles_directory"

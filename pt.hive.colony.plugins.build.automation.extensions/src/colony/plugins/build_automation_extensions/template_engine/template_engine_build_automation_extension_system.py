@@ -41,7 +41,7 @@ import datetime
 
 import colony.libs.map_util
 
-DEFAULT_ENCODING = "Cp1252"
+DEFAULT_ENCODING = "utf-8"
 """ The default encoding """
 
 DATE_FORMAT = "%b %d %Y"
