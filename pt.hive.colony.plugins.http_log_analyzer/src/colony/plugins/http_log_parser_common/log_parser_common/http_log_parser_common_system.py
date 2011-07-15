@@ -45,7 +45,7 @@ import http_log_parser_common_exceptions
 COMMON_VALUE = "common"
 """ The common value """
 
-LOG_FILE_ENCODING = "Cp1252"
+LOG_FILE_ENCODING = "utf-8"
 """ The log file encoding """
 
 COMMON_LOG_FILE_ENTRY_REGEX = re.compile(
