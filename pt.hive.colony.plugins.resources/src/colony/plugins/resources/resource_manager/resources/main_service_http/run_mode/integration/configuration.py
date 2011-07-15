@@ -65,6 +65,7 @@ configuration = {
         "resolution_order" : [
             "board.hive",
             "tools.hive",
+            "lib.hive",
             "hivesolutions.dyndns.org"
         ],
         "board.hive" : {
@@ -90,6 +91,17 @@ configuration = {
                 },
                 "/dropbox" : {
                     "target" : "/colony_dynamic/rest/mvc/web_dropbox/",
+                    "recursive_redirection" : True
+                }
+            }
+        },
+        "lib.hive" : {
+            "redirections" : {
+                "resolution_order" : [
+                    "/",
+                ],
+                "/" : {
+                    "target" : "/colony_dynamic/rest/mvc/web_dropbox/library_repository/resources/libs/",
                     "recursive_redirection" : True
                 }
             }
