@@ -107,7 +107,7 @@ DESCRIPTION_FORMAT = "The %s"
 DEFAULT_AUTHOR = "Hive Solutions Lda. <development@hive.pt>"
 """ The default author """
 
-DEFAULT_ENCODING = "Cp1252"
+DEFAULT_ENCODING = "utf-8"
 """ The default encoding """
 
 PLUGIN_ID_REGEX = re.compile("[a-z][a-z0-9_]*[a-z0-9]+\.(?:[a-z][a-z0-9_]*[a-z0-9]+\.)*[a-z][a-z0-9_]*[a-z0-9]+")
