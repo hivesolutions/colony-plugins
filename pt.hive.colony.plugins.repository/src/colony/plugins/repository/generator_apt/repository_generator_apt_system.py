@@ -45,7 +45,7 @@ import colony.libs.map_util
 import colony.libs.path_util
 import colony.libs.string_buffer_util
 
-DEFAULT_ENCODING = "Cp1252"
+DEFAULT_ENCODING = "utf-8"
 """ The default encoding """
 
 BUFFER_SIZE = 4096
