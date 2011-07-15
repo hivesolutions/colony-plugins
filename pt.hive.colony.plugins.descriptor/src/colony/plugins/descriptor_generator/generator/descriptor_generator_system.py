@@ -92,7 +92,7 @@ SUB_PLATFORMS_VALUE = "sub_platforms"
 VERSION_VALUE = "version"
 """ The version value """
 
-DEFAULT_ENCODING = "Cp1252"
+DEFAULT_ENCODING = "utf-8"
 """ The default encoding """
 
 UNIX_DIRECTORY_SEPARATOR = "/"
