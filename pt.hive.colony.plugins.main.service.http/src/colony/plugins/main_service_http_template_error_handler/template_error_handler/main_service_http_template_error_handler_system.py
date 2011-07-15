@@ -44,7 +44,7 @@ import traceback
 DEFAULT_ENCODING = "utf-8"
 """ The default encoding """
 
-DEFAULT_TEMPLATE_ENCODING = "Cp1252"
+DEFAULT_TEMPLATE_ENCODING = "utf-8"
 """ The default template encoding """
 
 ERROR_HANDLER_NAME = "template"

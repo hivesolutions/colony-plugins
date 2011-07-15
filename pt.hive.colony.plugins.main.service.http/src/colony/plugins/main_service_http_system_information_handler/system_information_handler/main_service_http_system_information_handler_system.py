@@ -48,7 +48,7 @@ HANDLER_NAME = "system_information"
 DEFAULT_ENCODING = "utf-8"
 """ The default encoding """
 
-DEFAULT_TEMPLATE_ENCODING = "Cp1252"
+DEFAULT_TEMPLATE_ENCODING = "utf-8"
 """ The default template encoding """
 
 HTML_MIME_TYPE = "text/html"
