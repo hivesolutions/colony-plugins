@@ -1,8 +1,10 @@
 <!DOCTYPE html>
 <html lang="en">
     <head>
-        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
         <title>Colony Framework</title>
+
+        <!--  metadata inclusion -->
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 
         <!-- css inclusion -->
         <link rel="stylesheet" type="text/css" href="/template_directory_list_handler/css/main.css" />
