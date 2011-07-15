@@ -87,7 +87,7 @@ BUNDLE_FILE_NAME_ENDING = "_bundle.json"
 COLONY_PLUGIN_NAMESPACE = "pt.hive.colony.plugins."
 """ The colony plugin namespace """
 
-DEFAULT_JSON_ENCODING = "Cp1252"
+DEFAULT_JSON_ENCODING = "utf-8"
 """ The default json encoding """
 
 MANDATORY_BUNDLE_ATTRIBUTE_NAMES = (

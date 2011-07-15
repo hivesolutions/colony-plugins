@@ -107,7 +107,7 @@ VERSION_VALUE = "version"
 SYSTEM_FILE_DIRECTORY_DEPTH = 2
 """ The directory depth at which system files should be located """
 
-DEFAULT_JSON_ENCODING = "Cp1252"
+DEFAULT_JSON_ENCODING = "utf-8"
 """ The default json encoding """
 
 INIT_FILE_NAME = "__init__.py"
