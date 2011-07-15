@@ -46,7 +46,7 @@ import colony.libs.string_buffer_util
 
 import installation_deb_exceptions
 
-DEFAULT_ENCODING = "Cp1252"
+DEFAULT_ENCODING = "utf-8"
 """ The default encoding """
 
 ADAPTER_NAME = "deb"
