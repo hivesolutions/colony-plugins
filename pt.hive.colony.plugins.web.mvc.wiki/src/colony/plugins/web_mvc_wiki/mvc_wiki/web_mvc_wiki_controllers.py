@@ -60,10 +60,10 @@ SERIALIZER_VALUE = "serializer"
 DEFAULT_SUMMARY = "automated wiki commit"
 """ The default summary value """
 
-TARGET_FILE_ENCODING = "Cp1252"
+TARGET_FILE_ENCODING = "utf-8"
 """ The target file encoding """
 
-WIKI_FILE_ENCODING = "Cp1252"
+WIKI_FILE_ENCODING = "utf-8"
 """ The wiki file encoding """
 
 WIKI_EXTENSION = ".wiki"
