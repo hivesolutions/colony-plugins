@@ -54,7 +54,7 @@ DEFAULT_INDEX_TIME = 3
 DEFAULT_LIMIT_COUNTER = 10
 """ The default limit counter """
 
-DEFAULT_CHARSET = "Cp1252"
+DEFAULT_CHARSET = "utf-8"
 """ The default charset """
 
 class JavascriptManager:
