@@ -40,7 +40,7 @@ __license__ = "GNU General Public License (GPL), Version 3"
 DEFAULT_ENCODING = "utf-8"
 """ The default encoding """
 
-DEFAULT_TEMPLATE_ENCODING = "Cp1252"
+DEFAULT_TEMPLATE_ENCODING = "utf-8"
 """ The default template encoding """
 
 VALID_STATUS_CODE = 200
