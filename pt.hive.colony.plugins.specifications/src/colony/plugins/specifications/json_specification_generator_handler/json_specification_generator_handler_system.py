@@ -42,7 +42,7 @@ import os
 import colony.base.plugin_system
 import colony.libs.string_buffer_util
 
-DEFAULT_ENCODING = "Cp1252"
+DEFAULT_ENCODING = "utf-8"
 """ The default encoding """
 
 SPECIFICATION_GENERATOR_HANDLER_NAME = "json"

@@ -44,7 +44,7 @@ import json_specification_parser_exceptions
 SPECIFICATION_PARSER_NAME = "json"
 """ The specification parser name """
 
-JSON_FILE_ENCODING = "Cp1252"
+JSON_FILE_ENCODING = "utf-8"
 """ The json file encoding """
 
 class JsonSpecificationParser:
