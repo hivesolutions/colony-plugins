@@ -39,6 +39,7 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 import sys
 import errno
+import types
 import select
 import socket
 import threading
@@ -757,8 +758,20 @@ class ClientConnection(Connection):
         # iterates over the write data buffer
         while self.write_data_buffer:
             # retrieves the data (last element) from the write
-            # data buffer
+            # data buffer and checks the type of it
             data = self.write_data_buffer[-1]
+            data_type = type(data)
+
+            # in case the type is a tuple (callback
+            # exists)
+            if data_type == types.TupleType:
+                # unpacks the data into data and
+                # callback information
+                data, callback = data
+            # otherwise no callback exists
+            else:
+                # unsets the callback value
+                callback = None
 
             try:
                 # retrieves the data bytes (length)
@@ -782,11 +795,15 @@ class ClientConnection(Connection):
             # in case the data was not completely
             # sent (sent bytes not complete)
             if sent_bytes < data_bytes:
-                # retrieves the "pending" data and
+                # retrieves the "pending" data (including callback) and
                 # inserts it in first place in the write
                 # data buffer (queue)
-                pending_data = data[sent_bytes:]
+                pending_data = (data[sent_bytes:], callback)
                 self.write_data_buffer.append(pending_data)
+            # otherwise in case there is a callback to be called
+            elif callback:
+                # calls the callback
+                callback()
 
         # unregisters the socket fd for the write event
         self.unregister(self.socket_fd, WRITE)
@@ -835,5 +852,12 @@ class ClientConnection(Connection):
     def send(self, message, response_timeout = None, retries = None):
         self.write(message)
 
+    def send_callback(self, message, callback, response_timeou = None, retries = None):
+        message_tuple = (message, callback)
+        self.write(message_tuple)
+
     def is_open(self):
         return self.connection_status
+
+    def is_async(self):
+        return True

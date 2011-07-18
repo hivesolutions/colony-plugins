@@ -1785,6 +1785,18 @@ class ServiceConnection:
             # releases the write lock
             self._write_lock.release()
 
+    def is_async(self):
+        """
+        Retrieves if the current connection is
+        of type asynchronous.
+
+        @rtype: bool
+        @return: If the current connection is of type
+        asynchronous.
+        """
+
+        return False
+
     def is_open(self):
         """
         Retrieves if the current connection is open.
