@@ -574,8 +574,9 @@ class ConnectionProcessingThread(threading.Thread):
             # adds the communication element to the processing queue
             self.processing_queue.append(communication_element)
 
+            # in case the communication connection message queue is not empty
             # processes the communication elements (flushes queue)
-            self.process_communication_elements(communication_elements)
+            not communication_connection.is_empty() and self.process_communication_elements(communication_elements)
         finally:
             # releases the processing queue lock
             self.processing_queue_lock.release()
@@ -802,6 +803,23 @@ class CommunicationConnection:
 
         # returns the pop queue
         return pop_queue
+
+    def is_empty(self):
+        """
+        Checks if the internal message queue is empty.
+
+        @rtype: bool
+        @return: The result of the testing of the internal
+        message queue.
+        """
+
+        # retrieves the message queue length for checking
+        # it the message queue is empty
+        message_queue_length = len(self.message_queue)
+        message_queue_is_empty = message_queue_length == 0
+
+        # return the result of the message queue empty test
+        return message_queue_is_empty
 
     def get_connection_complete_information(self):
         """
