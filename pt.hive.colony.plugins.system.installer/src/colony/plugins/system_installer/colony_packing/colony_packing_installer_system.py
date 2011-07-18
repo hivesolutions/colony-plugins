@@ -726,7 +726,7 @@ class ColonyPackingInstaller:
 
                 # "calculates" the relative path between the resource file
                 # path and the manager path
-                resource_relative_path = os.path.relpath(resource_file_path, manager_path)
+                resource_relative_path = colony.libs.path_util.relative_path(resource_file_path, manager_path)
 
                 # aligns the path normalizing it into a system independent path
                 resource_relative_path = colony.libs.path_util.align_path(resource_relative_path)
@@ -1050,7 +1050,7 @@ class ColonyPackingInstaller:
 
                 # "calculates" the relative path between the resource file
                 # path and the manager path
-                resource_relative_path = os.path.relpath(resource_file_path, manager_path)
+                resource_relative_path = colony.libs.path_util.relative_path(resource_file_path, manager_path)
 
                 # aligns the path normalizing it into a system independent path
                 resource_relative_path = colony.libs.path_util.align_path(resource_relative_path)
