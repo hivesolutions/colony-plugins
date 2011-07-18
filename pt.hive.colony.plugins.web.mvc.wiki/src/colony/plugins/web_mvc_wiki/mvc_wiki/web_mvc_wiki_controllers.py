@@ -78,6 +78,9 @@ WIKI_EXTENSION = ".wiki"
 PATTERN_NAMES_VALUE = "pattern_names"
 """ The pattern names value """
 
+DEFAULT_LOGO_PATH = "images/colony_logo.png"
+""" The default logo path """
+
 # imports the web mvc utils
 web_mvc_utils = colony.libs.importer_util.__importer__(WEB_MVC_UTILS_VALUE)
 
@@ -151,6 +154,9 @@ class MainController:
         # retrieves the instance repository path
         instance_repository_path = instance["repository_path"]
 
+        # retrieves the instance logo path
+        instance_logo_path = instance.get("logo_path", DEFAULT_LOGO_PATH)
+
         # retrieves the instance configuration map
         instance_configuration_map = instance.get("configuration_map", {})
 
@@ -208,6 +214,9 @@ class MainController:
 
                 # sets the instance configuration index in the template file
                 template_file.assign("instance_configuration_index", instance_configuration_index)
+
+                # sets the logo path in the template file
+                template_file.assign("logo_path", instance_logo_path)
 
                 # applies the base path to the template file
                 self.apply_base_path_template_file(rest_request, template_file)
@@ -294,6 +303,9 @@ class MainController:
 
         # sets the instance configuration index in the template file
         template_file.assign("instance_configuration_index", instance_configuration_index)
+
+        # sets the logo path in the template file
+        template_file.assign("logo_path", instance_logo_path)
 
         # assigns the session variables to the template file
         self.assign_session_template_file(rest_request, template_file)

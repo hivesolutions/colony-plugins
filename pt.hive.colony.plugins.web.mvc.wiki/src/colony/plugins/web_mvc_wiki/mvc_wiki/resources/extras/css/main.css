@@ -44,16 +44,16 @@
 }
 
 #wiki-sub-header {
-    display: none;
     background: transparent url(../images/sub-header-shadow.png) repeat-x;
+    display: none;
     height: 60px;
     margin-top: -15px;
 }
 
 #wiki-sub-header-contents {
-    width: 70%;
     margin: 0 auto;
     min-width: 800px;
+    width: 70%;
 }
 
 #wiki-sub-header-left {
@@ -67,31 +67,31 @@
 }
 
 #wiki-page-title {
-    margin-top: 14px;
     background-color: transparent;
     border-bottom: none;
-    padding: 0px 0 0px 0px;
     color: #ffffff;
-    text-shadow: 1px 1px #333333;
     font-size: 120%;
+    margin-top: 14px;
+    padding: 0px 0 0px 0px;
+    text-shadow: 1px 1px #333333;
 }
 
 #wiki-page-edit {
-    display: none;
     background: #cad4e4 url(../images/wiki-page-edit-background.png) repeat-x;
-    margin: 0 auto 10px;
-    clear: both;
-    width: 60%;
-    min-width: 320px;
-    height: 480px;
-    padding: 18px 20px 24px 20px;
-    border: 1px solid #4b6ea4;
     border-radius: 0px 0px 6px 6px;
     -moz-border-radius: 0px 0px 6px 6px;
     -webkit-border-radius: 0px 0px 6px 6px;
+    border: 1px solid #4b6ea4;
     box-shadow: 1px 1px 6px 0px #666666;;
     -moz-box-shadow: 1px 1px 6px 0px #666666;
     -webkit-box-shadow: 1px 1px 6px 0px #666666;
+    clear: both;
+    display: none;
+    height: 480px;
+    margin: 0 auto 10px;
+    min-width: 320px;
+    padding: 18px 20px 24px 20px;
+    width: 60%;
 }
 
 #wiki-page-search-container {
@@ -103,12 +103,12 @@
 }
 
 #wiki-page-search-background {
+    background: transparent url(../images/wiki-page-search-background.png) no-repeat right top;
     float: right;
-    width: 18px;
     height: 18px;
     margin-right: 6px;
     margin-top: -25px;
-    background: transparent url(../images/wiki-page-search-background.png) no-repeat right top;
+    width: 18px;
 }
 
 #wiki-page-new-buttons {
@@ -166,17 +166,17 @@
 }
 
 #wiki-page-new-contents-text-area {
-    height: 360px;
-    margin: 0px 0px 0px 0px;
     font-family: monospace;
     font-size: 120%;
+    height: 360px;
+    margin: 0px 0px 0px 0px;
 }
 
 #wiki-page-edit-contents-text-area {
-    height: 360px;
-    margin: 0px 0px 0px 0px;
     font-family: monospace;
     font-size: 120%;
+    height: 360px;
+    margin: 0px 0px 0px 0px;
 }
 
 #wiki-footer-contents-left {
@@ -190,38 +190,38 @@
 
 .wiki-button-container {
     float: left;
-    width: 122px;
     height: 32px;
-    margin-left: 6px;
     margin-right: 6px;
+    margin-left: 6px;
+    width: 122px;
 }
 
 .wiki-button-container.wiki-button-blue {
     border-top: 1px solid #2a629c;
-    border-left: 1px solid #2a629c;
-    border-bottom: 1px solid #214c8f;
     border-right: 1px solid #214c8f;
+    border-bottom: 1px solid #214c8f;
+    border-left: 1px solid #2a629c;
 }
 
 .wiki-button-container.wiki-button-gray {
     border-top: 1px solid #444444;
-    border-left: 1px solid #444444;
-    border-bottom: 1px solid #222222;
     border-right: 1px solid #222222;
+    border-bottom: 1px solid #222222;
+    border-left: 1px solid #444444;
 }
 
 .wiki-button {
-    float: left;
-    width: 120px;
-    height: 23px;
     background: transparent none repeat-x 0px 0px;
-    padding-top: 7px;
-    vertical-align: middle;
     color: #ffffff;
+    cursor: pointer;
+    float: left;
     font-size: 90%;
+    height: 23px;
+    padding-top: 7px;
     text-align: center;
     text-shadow: 1px 1px #333333;
-    cursor: pointer;
+    vertical-align: middle;
+    width: 120px;
 }
 
 .wiki-button:hover {
@@ -239,36 +239,36 @@
 
 .wiki-button.wiki-button-blue {
     background-image: url(../images/wiki-button-sprite-blue.png);
+    border-top: 1px solid #9cb4cf;
+    border-right: 1px solid transparent;
+    border-bottom: 1px solid transparent;
+    border-left: 1px solid #9cb4cf;
     color: #ffffff;
     text-shadow: 1px 1px #2a629c;
-    border-top: 1px solid #9cb4cf;
-    border-left: 1px solid #9cb4cf;
-    border-bottom: 1px solid transparent;
-    border-right: 1px solid transparent;
 }
 
 .wiki-button.wiki-button-gray {
     background-image: url(../images/wiki-button-sprite-gray.png);
+    border-top: 1px solid #ffffff;
+    border-right: 1px solid transparent;
+    border-bottom: 1px solid transparent;
+    border-left: 1px solid #ffffff;
     color: #222222;
     text-shadow: 1px 1px #ffffff;
-    border-top: 1px solid #ffffff;
-    border-left: 1px solid #ffffff;
-    border-bottom: 1px solid transparent;
-    border-right: 1px solid transparent;
 }
 
 .wiki-input {
-    width: 100%;
-    height: 16px;
-    background: #ffffff url(../images/wiki-input-background.png) repeat-x;
-    padding-top: 8px;
-    padding-bottom: 8px;
     background-color: #ffffff;
-    text-indent: 8px;
+    background: #ffffff url(../images/wiki-input-background.png) repeat-x;
     border: 1px solid #214c8f;
     font-family:"Lucida Grande",Verdana,Lucida,Helvetica,Arial,sans-serif;
     font-size: 90%;
+    height: 16px;
     outline: none;
+    padding-top: 8px;
+    padding-bottom: 8px;
+    text-indent: 8px;
+    width: 100%;
 }
 
 .wiki-input.lower {
@@ -280,12 +280,12 @@
 }
 
 .wiki-text-area {
-    width: 100%;
     background: #ffffff url(../images/wiki-text-area-background.png) repeat-x;
-    padding: 0px 0px 0px 0px;
     border: 1px solid #214c8f;
     font-family:"Lucida Grande",Verdana,Lucida,Helvetica,Arial,sans-serif;
     font-size: 90%;
+    padding: 0px 0px 0px 0px;
+    width: 100%;
 }
 
 .wiki-text-area.selected {
@@ -293,13 +293,13 @@
 }
 
 #wiki-controls {
-    width: 100%;
-    height: 32px;
-    margin: 0px 0px 0px 0px;
     background-color: #bcc9dd;
     border-top: 1px solid #214c8f;
-    border-left: 1px solid #214c8f;
     border-right: 1px solid #214c8f;
+    border-left: 1px solid #214c8f;
+    height: 32px;
+    margin: 0px 0px 0px 0px;
+    width: 100%;
 }
 
 #wiki-controls-icons {
@@ -309,8 +309,8 @@
 
 .wiki-control-icon {
     float: left;
-    width: 22px;
     height: 22px;
+    width: 22px;
 }
 
 .wiki-control-icon.wiki-control-icon-bold {
@@ -318,7 +318,7 @@
 }
 
 .wiki-control-icon.wiki-control-icon-bold:hover {
-    background-image: url(../images/bold-hover.png)
+    background-image: url(../images/bold-hover.png);
 }
 
 .wiki-control-icon.wiki-control-icon-italic {
@@ -326,7 +326,7 @@
 }
 
 .wiki-control-icon.wiki-control-icon-italic:hover {
-    background-image: url(../images/italic-hover.png)
+    background-image: url(../images/italic-hover.png);
 }
 
 .wiki-control-icon.wiki-control-icon-quote {
@@ -334,5 +334,5 @@
 }
 
 .wiki-control-icon.wiki-control-icon-quote:hover {
-    background-image: url(../images/quote-hover.png)
+    background-image: url(../images/quote-hover.png);
 }

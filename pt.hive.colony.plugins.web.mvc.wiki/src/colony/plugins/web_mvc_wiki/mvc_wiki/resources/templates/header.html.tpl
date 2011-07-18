@@ -1,7 +1,7 @@
 <div id="wiki-header">
     <div class="wiki-header-contents">
         <div class="logo-image">
-            <a href="${out_none value=base_path /}${out_none value=instance_name /}/${out_none value=main_page /}"><img src="${out_none value=base_path /}${out_none value=instance_name /}/images/colony_logo.png"/></a>
+            <a href="${out_none value=base_path /}${out_none value=instance_name /}/${out_none value=main_page /}"><img src="${out_none value=base_path /}${out_none value=instance_name /}/${out_none value=logo_path /}"/></a>
         </div>
         <div class="menu-contents">
             <ul>
