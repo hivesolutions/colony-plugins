@@ -45,6 +45,7 @@ configuration = {
             "main_page" : "documentation_index",
             "repository_type" : "svn",
             "repository_path" : "%manager_path%/../../pt.hive.colony.documentation.technical",
+            "logo_path" : "colony_logo.png",
             "repository_arguments" : {
                 "save_username_password" : False
             },
