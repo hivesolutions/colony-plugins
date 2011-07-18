@@ -48,9 +48,18 @@ DEFAULT_UPDATE_POLL_TIMEOUT = 0.5
 DEFAULT_UPDATE_WAIT_TIMEOUT = 5.0
 """ The default update wait timeout """
 
+VALID_STATUS_CODE = 200
+""" The valid status code """
+
 class WebMvcCommunicationHandler:
     """
     The web mvc communication handler class.
+    The concept of communication in the mvc context is expressed
+    through long polling.
+    A communication connection is the virtual connection created
+    between peers through various http request.
+    A communication element is the three element tuple for connection,
+    request and timestamp.
     """
 
     web_mvc_plugin = None
@@ -169,6 +178,11 @@ class WebMvcCommunicationHandler:
             # raises the communication command exception
             raise web_mvc_exceptions.CommunicationCommandException("no communication connection available")
 
+        # sets the request as delayed (for latter writing)
+        # and sets the status code as valid
+        request.delayed = True
+        request.status_code = VALID_STATUS_CODE
+
         # calculates the target time for timeout of the connection
         # element message
         current_time = time.time()
@@ -178,9 +192,6 @@ class WebMvcCommunicationHandler:
         # to the connection elements queue
         communication_element = (communication_connection, request, target_time)
         self.connection_processing_thread.add_queue(communication_element)
-
-        # sets the request as delayed (for latter writing)
-        request.delayed = True
 
         # returns true (valid)
         return True
@@ -562,6 +573,9 @@ class ConnectionProcessingThread(threading.Thread):
 
             # adds the communication element to the processing queue
             self.processing_queue.append(communication_element)
+
+            # processes the communication elements (flushes queue)
+            self.process_communication_elements(communication_elements)
         finally:
             # releases the processing queue lock
             self.processing_queue_lock.release()
