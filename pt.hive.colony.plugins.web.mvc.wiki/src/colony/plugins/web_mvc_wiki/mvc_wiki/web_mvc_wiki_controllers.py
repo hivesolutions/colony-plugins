@@ -157,6 +157,9 @@ class MainController:
         # retrieves the instance logo path
         instance_logo_path = instance.get("logo_path", DEFAULT_LOGO_PATH)
 
+        # retrieves the instance header links
+        instance_header_links = instance.get("header_links", [])
+
         # retrieves the instance configuration map
         instance_configuration_map = instance.get("configuration_map", {})
 
@@ -217,6 +220,9 @@ class MainController:
 
                 # sets the logo path in the template file
                 template_file.assign("logo_path", instance_logo_path)
+
+                # sets the header links in the template file
+                template_file.assign("header_links", instance_header_links)
 
                 # applies the base path to the template file
                 self.apply_base_path_template_file(rest_request, template_file)
@@ -306,6 +312,9 @@ class MainController:
 
         # sets the logo path in the template file
         template_file.assign("logo_path", instance_logo_path)
+
+        # sets the header links in the template file
+        template_file.assign("header_links", instance_header_links)
 
         # assigns the session variables to the template file
         self.assign_session_template_file(rest_request, template_file)

@@ -24,12 +24,11 @@
                         </dl>
                     </div>
                 </li>
-                <li class="menu">
-                    <a href="documentation_how_can_i_help.html">Contribute</a>
-                </li>
-                <li class="menu">
-                    <a href="documentation_credits.html">Credits</a>
-                </li>
+                ${foreach item=header_link from=header_links}
+                    <li class="menu">
+                        <a href="${out_none value=header_link.address /}">${out_none value=header_link.name /}</a>
+                    </li>
+                ${/foreach}
                 <li class="menu">
                     <a id="wiki-more-button" href="#">More</a>
                 </li>
