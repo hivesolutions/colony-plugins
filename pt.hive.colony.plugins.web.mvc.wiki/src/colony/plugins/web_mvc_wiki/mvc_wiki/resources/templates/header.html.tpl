@@ -29,9 +29,11 @@
                         <a href="${out_none value=header_link.address /}">${out_none value=header_link.name /}</a>
                     </li>
                 ${/foreach}
-                <li class="menu">
-                    <a id="wiki-more-button" href="#">More</a>
-                </li>
+                ${if item=options_enabled value=True operator=eq}
+                    <li class="menu">
+                        <a id="wiki-more-button" href="#">More</a>
+                    </li>
+                ${/if}
             </ul>
         </div>
     </div>

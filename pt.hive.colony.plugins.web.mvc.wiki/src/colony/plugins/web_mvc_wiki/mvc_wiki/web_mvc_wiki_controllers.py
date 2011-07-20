@@ -81,6 +81,9 @@ PATTERN_NAMES_VALUE = "pattern_names"
 DEFAULT_LOGO_PATH = "images/colony_logo.png"
 """ The default logo path """
 
+DEFAULT_ICON_PATH = "images/colony_icon_ico"
+""" The default icon path """
+
 # imports the web mvc utils
 web_mvc_utils = colony.libs.importer_util.__importer__(WEB_MVC_UTILS_VALUE)
 
@@ -145,6 +148,9 @@ class MainController:
         # retrieves the instance for the rest request
         instance = self.web_mvc_wiki._get_instance(instance_name)
 
+        # retrieves the instance wiki name
+        instance_wiki_name = instance.get("wiki_name", instance_name)
+
         # retrieves the instance template
         instance_template = instance.get("template", "main")
 
@@ -156,6 +162,18 @@ class MainController:
 
         # retrieves the instance logo path
         instance_logo_path = instance.get("logo_path", DEFAULT_LOGO_PATH)
+
+        # retrieves the instance icon path
+        instance_icon_path = instance.get("icon_path", DEFAULT_ICON_PATH)
+
+        # retrieves the instance footer enabled
+        instance_footer_enabled = instance.get("footer_enabled", True)
+
+        # retrieves the instance options enabled
+        instance_options_enabled = instance.get("options_enabled", True)
+
+        # retrieves the instance print enabled
+        instance_print_enabled = instance.get("print_enabled", True)
 
         # retrieves the instance header links
         instance_header_links = instance.get("header_links", [])
@@ -206,6 +224,9 @@ class MainController:
                 # sets the page name in the template file
                 template_file.assign("page_name", file_path)
 
+                # sets the wiki name to be set in the template file
+                template_file.assign("wiki_name", instance_wiki_name)
+
                 # sets the template to be loaded in the template file
                 template_file.assign("template", instance_template)
 
@@ -220,6 +241,18 @@ class MainController:
 
                 # sets the logo path in the template file
                 template_file.assign("logo_path", instance_logo_path)
+
+                # sets the icon path in the template file
+                template_file.assign("icon_path", instance_icon_path)
+
+                # sets the footer enabled in the template file
+                template_file.assign("footer_enabled", instance_footer_enabled)
+
+                # sets the options enabled in the template file
+                template_file.assign("options_enabled", instance_options_enabled)
+
+                # sets the print enabled in the template file
+                template_file.assign("print_enabled", instance_print_enabled)
 
                 # sets the header links in the template file
                 template_file.assign("header_links", instance_header_links)
@@ -295,6 +328,9 @@ class MainController:
         # sets the page contents to be loaded in the template file
         template_file.assign("page_contents", target_file_contents)
 
+        # sets the wiki name to be set in the template file
+        template_file.assign("wiki_name", instance_wiki_name)
+
         # sets the template to be loaded in the template file
         template_file.assign("template", instance_template)
 
@@ -312,6 +348,18 @@ class MainController:
 
         # sets the logo path in the template file
         template_file.assign("logo_path", instance_logo_path)
+
+        # sets the icon path in the template file
+        template_file.assign("icon_path", instance_icon_path)
+
+        # sets the footer enabled in the template file
+        template_file.assign("footer_enabled", instance_footer_enabled)
+
+        # sets the options enabled in the template file
+        template_file.assign("options_enabled", instance_options_enabled)
+
+        # sets the print enabled in the template file
+        template_file.assign("print_enabled", instance_print_enabled)
 
         # sets the header links in the template file
         template_file.assign("header_links", instance_header_links)

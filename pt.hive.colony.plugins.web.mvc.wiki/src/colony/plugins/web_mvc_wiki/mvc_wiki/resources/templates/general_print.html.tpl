@@ -1,6 +1,6 @@
 ${include file="doctype.html.tpl" /}
 <head>
-    <title>Hive Wiki - ${out_none value=page_name /}</title>
+    <title>${out_none value=wiki_name /} - ${out_none value=page_name /}</title>
     ${include file="includes_print.html.tpl" /}
 </head>
 <body>
