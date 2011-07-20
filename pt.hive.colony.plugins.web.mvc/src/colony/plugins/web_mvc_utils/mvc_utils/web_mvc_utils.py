@@ -239,7 +239,7 @@ def transaction_method(entity_manager_reference, raise_exception = True):
                 current = self
 
                 # iterates over all the entity manager reference values
-                # splited in parts
+                # splitted in parts
                 for entity_manager_reference_value in entity_manager_reference_splitted:
                     # retrieves the current value using the entity
                     # manager reference value

@@ -55,23 +55,76 @@ TO_MANY_RELATIONS = (
 )
 """ The tuple containing the "to-many" relations """
 
-def save(self):
+def save(self, entity_manager = None):
+    """
+    Saves the current instance into the data source
+    described in the current entity manager.
+    This method provides the persistence layer for
+    creating an object.
+
+    @type entity_manager: EntityManager
+    @param entity_manager: The optional entity manager
+    reference to be used.
+    """
+
+    # retrieves the entity manager to be used or the
+    # default "embedded" entity manager
+    entity_manger = entity_manager or self._entity_manager
+
     # saves the entity using the entity manager
-    self._entity_manager.save(self)
+    entity_manger.save(self)
 
-def update(self):
+def update(self, entity_manager = None):
+    """
+    Updates the current instance in the data source
+    described in the current entity manager.
+    This method provides the persistence layer for
+    updating an object.
+
+    @type entity_manager: EntityManager
+    @param entity_manager: The optional entity manager
+    reference to be used.
+    """
+
+    # retrieves the entity manager to be used or the
+    # default "embedded" entity manager
+    entity_manger = entity_manager or self._entity_manager
+
     # updates the entity using the entity manager
-    self._entity_manager.update(self)
+    entity_manger.update(self)
 
-def remove(self):
+def remove(self, entity_manager = None):
+    """
+    Removes the current instance from the data source
+    described in the current entity manager.
+    This method provides the persistence layer for
+    removing an object.
+
+    @type entity_manager: EntityManager
+    @param entity_manager: The optional entity manager
+    reference to be used.
+    """
+
+    # retrieves the entity manager to be used or the
+    # default "embedded" entity manager
+    entity_manger = entity_manager or self._entity_manager
+
     # removes the entity using the entity manager
-    self._entity_manager.remove(self)
+    entity_manger.remove(self)
 
-def save_update(self):
+def save_update(self, entity_manager = None):
+    # retrieves the entity manager to be used or the
+    # default "embedded" entity manager
+    entity_manger = entity_manager or self._entity_manager
+
     # saves or updates the entity using the entity manager
-    self._entity_manager.save_update(self)
+    entity_manger.save_update(self)
 
-def lock(self):
+def lock(self, entity_manager = None):
+    # retrieves the entity manager to be used or the
+    # default "embedded" entity manager
+    entity_manger = entity_manager or self._entity_manager
+
     # retrieves the class of the current object
     entity_class = self.__class__
 
@@ -79,21 +132,29 @@ def lock(self):
     id_attribute_value = self.get_id_attribute_value()
 
     # locks the entity with the given attribute
-    self._entity_manager.lock(entity_class, id_attribute_value)
+    entity_manger.lock(entity_class, id_attribute_value)
 
-def get_id_attribute_name(self):
+def get_id_attribute_name(self, entity_manager = None):
+    # retrieves the entity manager to be used or the
+    # default "embedded" entity manager
+    entity_manger = entity_manager or self._entity_manager
+
     # retrieves the class of the current object
     entity_class = self.__class__
 
     # retrieves the id attribute name from the current object
-    id_attribute_name = self._entity_manager.get_entity_class_id_attribute_name(entity_class)
+    id_attribute_name = entity_manger.get_entity_class_id_attribute_name(entity_class)
 
     # returns the id attribute name
     return id_attribute_name
 
-def get_id_attribute_value(self):
+def get_id_attribute_value(self, entity_manager = None):
+    # retrieves the entity manager to be used or the
+    # default "embedded" entity manager
+    entity_manger = entity_manager or self._entity_manager
+
     # retrieves the id attribute value from the current object
-    id_attribute_value = self._entity_manager.get_entity_id_attribute_value(self)
+    id_attribute_value = entity_manger.get_entity_id_attribute_value(self)
 
     # returns the id attribute value
     return id_attribute_value
@@ -113,6 +174,15 @@ def get_resource_path(self):
     return entity_class_pluralized + "/" + id_attribute_value_string
 
 def _get_entity_class_pluralized(self):
+    """
+    Converts the name of the current entity instance
+    class to a pluralized form.
+    This method is a utility for this common task.
+
+    @rtype: String
+    @return: The entity class name in pluralized form.
+    """
+
     # retrieves the class of the current object
     entity_class = self.__class__
 

@@ -48,6 +48,9 @@ import web_mvc_model
 import web_mvc_controller
 import web_mvc_entity_model
 
+ID_VALUE = "id"
+""" The id value """
+
 ENGINE_VALUE = "engine"
 """ The engine value """
 
@@ -243,6 +246,10 @@ class WebMvcUtils:
         # creating the map associating the class names with the classes
         base_entity_models_map = business_helper_plugin.generate_bundle_map(base_entity_models)
 
+        # retrieves the entity id from the entity manager arguments or sets
+        # the id as undefined
+        id = entity_manager_arguments.get(ID_VALUE, None)
+
         # retrieves the engine from the entity manager arguments or uses
         # the default engine
         engine = entity_manager_arguments.get(ENGINE_VALUE, DEFAULT_ENGINE)
@@ -256,6 +263,7 @@ class WebMvcUtils:
 
         # creates the entity manager properties
         entity_manager_properties = {
+            ID_VALUE : id,
             ENTITY_CLASSES_LIST_VALUE : base_entity_models,
             ENTITY_CLASSES_MAP_VALUE : base_entity_models_map
         }
