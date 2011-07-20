@@ -40,6 +40,8 @@ __license__ = "GNU General Public License (GPL), Version 3"
 import types
 import thread
 
+import colony.libs.map_util
+
 import entity_manager_exceptions
 
 ATTRIBUTE_EXCLUSION_LIST = (
@@ -239,6 +241,10 @@ class DataEntityManager:
             # manager map
             entity_manager = self.loaded_entity_manager_map[id]
 
+            # updates the entity manager entity class structures
+            entity_manager.entity_classes_map = colony.libs.map_util.map_extend(entity_manager.entity_classes_map, entity_classes_map)
+            entity_manager.entity_classes_list.extend(entity_classes_list)
+
             # returns the entity manager (immediately)
             return entity_manager
 
@@ -275,6 +281,9 @@ class EntityManager:
     entity_classes_map = {}
     """ The map associating the entity classes with their names """
 
+    registered_entity_classes_list = []
+    """ The list of entity classes that are already registered """
+
     connection_thread_id_map = {}
     """ The map containing the connection object (representing the database connection and the connection parameters) for the thread id """
 
@@ -306,11 +315,11 @@ class EntityManager:
         self.entity_classes_list = entity_classes_list
         self.entity_classes_map = entity_classes_map
 
+        self.registered_entity_classes_list = []
         self.connection_thread_id_map = {}
         self.database_connection_thread_id_map = {}
         self.database_system_connection_thread_id_map = {}
         self.transaction_stack_thread_id_map = {}
-
         self.connection_parameters = {}
 
     def get_connection(self):
@@ -455,15 +464,21 @@ class EntityManager:
 
         self.connection_parameters = connection_parameters
 
-    def load_entity_manager(self):
+    def load_entity_manager(self, flush = False):
         """
         Loads the entity manager, registering the classes
         and creating the table generator (generates the tables).
         This method may be used for reloading the classes
         structures in the data source (without any side effect).
+        Using the flush method all the internal data structures are
+        updated at the cost of some performance impact.
+
+        @type flush: bool
+        @param flush: If the the internal data structures should be
+        forced for update (more resources used).
         """
 
-        self.register_classes()
+        self.register_classes(flush)
         self.create_table_generator()
 
     def unload_entity_manager(self):
@@ -474,11 +489,15 @@ class EntityManager:
 
         pass
 
-    def register_classes(self):
+    def register_classes(self, flush = False):
         """
         Registers all the available classes in the entity manager,
         the registration includes updating or creating the table definition
         in the target data source.
+
+        @type flush: bool
+        @param flush: If the entity classes should be registered even
+        if they've already been registered.
         """
 
         # retrieves the connection object
@@ -487,6 +506,13 @@ class EntityManager:
         # iterates over all the entity classes in the entity
         # classes list (to update or create the entity definition)
         for entity_class in self.entity_classes_list:
+            # in case the registration of classes does not require flushing
+            # and the entity class is already registered (no need to use
+            # data source resources)
+            if not flush and entity_class in self.registered_entity_classes_list:
+                # continues the loop (no need to lock data source resources)
+                continue
+
             # in case the entity class is already defined in the data
             # source "schema"
             if self.entity_manager_engine_plugin.exists_entity_definition(connection, entity_class):
@@ -498,6 +524,12 @@ class EntityManager:
             else:
                 # creates the entity definition in the data source
                 self.entity_manager_engine_plugin.create_entity_definition(connection, entity_class)
+
+            # in case the entity class does not already exists in the registered
+            # entity classes list (first time registration)
+            if not entity_class in self.registered_entity_classes_list:
+                # adds the entity class to the list of registered entity classes
+                self.registered_entity_classes_list.append(entity_class)
 
     def create_table_generator(self):
         # retrieves the connection object
