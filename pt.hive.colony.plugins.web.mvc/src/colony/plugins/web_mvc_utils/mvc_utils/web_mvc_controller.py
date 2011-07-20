@@ -404,6 +404,10 @@ def get_entity_model(self, entity_manager, entity_model, update_values_map = {},
     if created_entity:
         # iterates over all the create values items
         for create_value_key, create_value_value in create_values_map.items():
+            # checks if the create value value is "callable" (and calls it) or
+            # uses the "raw" value in case it's not
+            create_value_value = callable(create_value_value) and create_value_value() or create_value_value
+
             # sets the create value in the entity
             self._set_entity_attribute(create_value_key, create_value_value, entity, entity_model)
 
@@ -414,6 +418,10 @@ def get_entity_model(self, entity_manager, entity_model, update_values_map = {},
         if secure_value_keys_list and not update_value_key in secure_value_keys_list:
             # continues the loop
             continue
+
+        # checks if the update value value is "callable" (and calls it) or
+        # uses the "raw" value in case it's not
+        create_value_value = callable(update_value_value) and update_value_value() or update_value_value
 
         # sets the update value in the entity
         self._set_entity_attribute(update_value_key, update_value_value, entity, entity_model)
