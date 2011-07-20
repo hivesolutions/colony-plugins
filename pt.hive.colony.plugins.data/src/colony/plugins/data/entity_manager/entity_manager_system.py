@@ -85,6 +85,9 @@ DATA_TYPE_FIELD = "data_type"
 ID_ATTRIBUTE_NAME_VALUE = "id_attribute_name"
 """ The id attribute name value """
 
+ID_VALUE = "id"
+""" The id value """
+
 ENTITY_CLASSES_LIST_VALUE = "entity_classes_list"
 """ The entity classes list value """
 
@@ -108,6 +111,9 @@ class DataEntityManager:
     loaded_entity_classes_map = {}
     """ The map associating the loaded entity classes with their names """
 
+    loaded_entity_manager_map = {}
+    """ The map associating the id with the (loaded) entity manager """
+
     def __init__(self, entity_manager_plugin):
         """
         Constructor of the class.
@@ -121,6 +127,7 @@ class DataEntityManager:
         self.entity_manager_engine_plugins_map = {}
         self.loaded_entities_list = []
         self.loaded_entity_classes_map = {}
+        self.loaded_entity_manager_map = {}
 
     def register_entity_manager_engine_plugin(self, entity_manager_engine_plugin):
         # retrieves the plugin engine name
@@ -191,6 +198,9 @@ class DataEntityManager:
     def load_entity_manager(self, engine_name, properties = {}):
         """
         Loads an entity manager for the given engine name.
+        The loading of an entity manager may return an existing
+        instance in case an entity manager with the same id is
+        already loaded.
 
         @type engine_name: String
         @param engine_name: The name of the engine to be used.
@@ -200,6 +210,10 @@ class DataEntityManager:
         @rtype: EntityManager
         @return: The loaded entity manager.
         """
+
+        # tries to retrieve the id of the "target" entity manager, falling back to
+        # an undefined value for the id
+        id = properties.get(ID_VALUE, None)
 
         # tries to retrieve the entity classes list, falling back to all
         # the currently loaded entity classes list
@@ -215,12 +229,34 @@ class DataEntityManager:
             # raises the entity manager engine not found exception
             raise entity_manager_exceptions.EntityManagerEngineNotFound("engine " + engine_name + " not available")
 
+        # in case the id is already defined in the loaded
+        # entity manager map (no need to load the entity manager)
+        if id in self.loaded_entity_manager_map:
+            # prints a debug message
+            self.entity_manager_plugin.debug("Re-loading existent entity manager with id: %s" % id)
+
+            # retrieves the entity manager from the loaded entity
+            # manager map
+            entity_manager = self.loaded_entity_manager_map[id]
+
+            # returns the entity manager (immediately)
+            return entity_manager
+
+        # prints a debug message
+        self.entity_manager_plugin.debug("Loading new entity manager with engine: %s" % engine_name)
+
         # retrieves the entity mager engine plugin
         entity_manager_engine_plugin = self.entity_manager_engine_plugins_map[engine_name]
 
         # creates a new entity manager with the entity manager engine plugin, entity classes list
         # and the entity classes map
         entity_manager = EntityManager(entity_manager_engine_plugin, entity_classes_list, entity_classes_map)
+
+        # in case the id of the entity manager is defined
+        # (need to set the entity manager in the map)
+        if id:
+            # sets the entity manager in the loaded entity manager(s) map
+            self.loaded_entity_manager_map[id] = entity_manager
 
         # returns the entity manager
         return entity_manager
@@ -423,6 +459,8 @@ class EntityManager:
         """
         Loads the entity manager, registering the classes
         and creating the table generator (generates the tables).
+        This method may be used for reloading the classes
+        structures in the data source (without any side effect).
         """
 
         self.register_classes()
@@ -446,14 +484,19 @@ class EntityManager:
         # retrieves the connection object
         connection = self.get_connection()
 
-        # iterates over all the entity classes
-        # in the entity classes list
+        # iterates over all the entity classes in the entity
+        # classes list (to update or create the entity definition)
         for entity_class in self.entity_classes_list:
+            # in case the entity class is already defined in the data
+            # source "schema"
             if self.entity_manager_engine_plugin.exists_entity_definition(connection, entity_class):
+                # in case the entity definition is not synced with the data source
                 if not self.entity_manager_engine_plugin.synced_entity_definition(connection, entity_class):
                     # updates the entity definition (because the model is not synced)
                     self.entity_manager_engine_plugin.update_entity_definition(connection, entity_class)
+            # otherwise the entity class is not defined and should be created
             else:
+                # creates the entity definition in the data source
                 self.entity_manager_engine_plugin.create_entity_definition(connection, entity_class)
 
     def create_table_generator(self):
