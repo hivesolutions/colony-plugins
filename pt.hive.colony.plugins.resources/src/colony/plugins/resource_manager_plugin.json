@@ -111,8 +111,6 @@
             "resources/resource_manager/resources/web_mvc_wiki/run_mode/development/resources.xml",
             "resources/resource_manager/resources/web_mvc_wiki/run_mode/hive_site/configuration.py",
             "resources/resource_manager/resources/web_mvc_wiki/run_mode/hive_site/resources.xml",
-            "resources/resource_manager/resources/web_mvc_wiki/run_mode/integration/configuration.py",
-            "resources/resource_manager/resources/web_mvc_wiki/run_mode/integration/resources.xml",
             "resources/resource_manager/resources/web_toolbar/run_mode/development/configuration.py",
             "resources/resource_manager/resources/web_toolbar/run_mode/development/resources.xml",
             "resources/resource_manager/resources/web_toolbar/run_mode/integration/configuration.py",
@@ -165,7 +163,6 @@
             "resources/resource_manager/resources/web_mvc_encryption/run_mode/production/configuration.pyc",
             "resources/resource_manager/resources/web_mvc_wiki/run_mode/development/configuration.pyc",
             "resources/resource_manager/resources/web_mvc_wiki/run_mode/hive_site/configuration.pyc",
-            "resources/resource_manager/resources/web_mvc_wiki/run_mode/integration/configuration.pyc",
             "resources/resource_manager/resources/web_toolbar/run_mode/development/configuration.pyc",
             "resources/resource_manager/resources/web_toolbar/run_mode/integration/configuration.pyc"]
 }
