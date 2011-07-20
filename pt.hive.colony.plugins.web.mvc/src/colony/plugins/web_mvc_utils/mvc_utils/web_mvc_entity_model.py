@@ -40,6 +40,8 @@ __license__ = "GNU General Public License (GPL), Version 3"
 import types
 import datetime
 
+import colony.libs.string_util
+
 PLURALIZATION_SUFFIX_VALUE = "s"
 """ The pluralization suffix value """
 
@@ -190,7 +192,7 @@ def _get_entity_class_pluralized(self):
     entity_class_name = entity_class.__name__
 
     # lower cased entity class name
-    lower_cased_entity_class_name = entity_class_name.lower()
+    lower_cased_entity_class_name = colony.libs.string_util.convert_underscore(entity_class_name)
 
     # pluralizes the entity class name
     controller_path = lower_cased_entity_class_name + PLURALIZATION_SUFFIX_VALUE
