@@ -101,6 +101,23 @@ configuration = {
                     ]
                 }
             ]
+        },
+        "bargania" : {
+            "name" : "bargania",
+            "template" : "simply",
+            "main_page" : "index",
+            "repository_type" : "svn",
+            "repository_path" : "%manager_path%/../../com.bargania.documentation",
+            "logo_path" : "bargania_logo.png",
+            "header_links" : [],
+            "repository_arguments" : {
+                "save_username_password" : False
+            },
+            "configuration_map" : {
+                "auto_numbered_sections" : True,
+                "generate_footer" : False,
+                "simple_parse" : True
+            }
         }
     }
 }
