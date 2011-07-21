@@ -78,9 +78,9 @@ jQuery(document).ready(function() {
         var classesList = classes.split(" ")
 
         // for each class
-        for (var i = 0; i < classesList.length; i++) {
+        for (var index = 0; index < classesList.length; i++) {
             // retrieves the class value
-            var classValue = classesList[i].trim();
+            var classValue = classesList[index].trim();
 
             // in case the class is not the wiki button class
             if (classValue != "wiki-button") {
@@ -108,16 +108,6 @@ jQuery(document).ready(function() {
                 // stops the event propagation
                 event.stopPropagation();
             });
-
-    jQuery(document).click(function() {
-                jQuery("#wiki-page-edit").fadeOut(200);
-            });
-
-    jQuery("#wiki-page-edit").click(function(event) {
-                // stops the event propagation to avoid handling by the body
-                event.stopPropagation();
-            });
-
 
     jQuery(".wiki-input, .wiki-text-area").focus(function() {
                 jQuery(this).addClass("selected");
