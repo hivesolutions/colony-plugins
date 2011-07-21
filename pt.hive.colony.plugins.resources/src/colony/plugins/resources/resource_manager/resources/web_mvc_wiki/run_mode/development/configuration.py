@@ -48,6 +48,9 @@ configuration = {
             "repository_path" : "%manager_path%/../../pt.hive.colony.documentation.technical",
             "logo_path" : "colony_logo.png",
             "icon_path" : "colony_icon.ico",
+            "footer_enabled" : False,
+            "options_enabled" : True,
+            "print_enabled" : True,
             "header_links" : [
                 {
                     "name" : "Contribute",
