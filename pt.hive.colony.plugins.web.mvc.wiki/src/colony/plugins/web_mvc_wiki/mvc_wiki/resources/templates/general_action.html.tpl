@@ -6,6 +6,7 @@ ${include file="doctype.html.tpl" /}
 <body>
     ${include file="header.html.tpl" /}
     <div id="wiki-contents">
+        ${include file="options.html.tpl" /}
         ${include file_value=page_include /}
     </div>
     ${include file="footer.html.tpl" /}
