@@ -40,8 +40,6 @@ __license__ = "GNU General Public License (GPL), Version 3"
 import types
 import thread
 
-import colony.libs.map_util
-
 import entity_manager_exceptions
 
 ATTRIBUTE_EXCLUSION_LIST = (
@@ -241,9 +239,9 @@ class DataEntityManager:
             # manager map
             entity_manager = self.loaded_entity_manager_map[id]
 
-            # updates the entity manager entity class structures
-            entity_manager.entity_classes_map = colony.libs.map_util.map_extend(entity_manager.entity_classes_map, entity_classes_map)
-            entity_manager.entity_classes_list.extend(entity_classes_list)
+            # extends the entity manager with the current entity classes list
+            # and the entity classes map
+            entity_manager.extend_entity_manager(entity_classes_list, entity_classes_map)
 
             # returns the entity manager (immediately)
             return entity_manager
@@ -488,6 +486,45 @@ class EntityManager:
         """
 
         pass
+
+    def extend_entity_manager(self, entity_classes_list, entity_classes_map):
+        """
+        Extends the current entity manager instance with the given
+        list of entity classes and the map of (the same) entity classes.
+
+        @type entity_classes_list: List
+        @param entity_classes_list: The entity classes list to be
+        used in the extension of the entity manager instance.
+        @type entity_classes_map: Dictionary
+        @param entity_classes_map: The entity classes map to be
+        used in the extension of the entity manager instance.
+        """
+
+        # iterates over all the entity classes to be registered to add
+        # them to the current internal structures (taking into account
+        # a possible garbage collection)
+        for entity_class_name, entity_class in entity_classes_map.items():
+            # checks if the entity class already exists (registered) in the
+            # entity manager (garbage collection required)
+            entity_class_exists = entity_class_name in self.entity_classes_map
+
+            # in case the entity classes exists (runs garbage collection)
+            if entity_class_exists:
+                # retrieves the current entity class (reference)
+                current_entity_class = self.entity_classes_map[entity_class_name]
+
+                # removes the current entity class from the entity classes
+                # list and in case it exists in the registered entity classes
+                # list removes it from there also
+                self.entity_classes_list.remove(current_entity_class)
+                if current_entity_class in self.registered_entity_classes_list:
+                    self.registered_entity_classes_list.remove(current_entity_class)
+
+            # adds the entity class to the entity classes list
+            # and registers it in the entity classes map (internal
+            # structures update)
+            self.entity_classes_list.append(entity_class)
+            self.entity_classes_map[entity_class_name] = entity_class
 
     def register_classes(self, flush = False):
         """
