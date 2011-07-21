@@ -118,6 +118,9 @@ class BusinessHelperPlugin(colony.base.plugin_system.Plugin):
     def import_class_module_target(self, class_module_name, globals, locals, global_values, base_directory_path, target_module_name):
         return self.business_helper.import_class_module(class_module_name, globals, locals, global_values, base_directory_path, target_module_name)
 
+    def import_class_module_extra(self, class_module_name, globals, locals, global_values, base_directory_path, target_module_name, extra_symbols_map):
+        return self.business_helper.import_class_module(class_module_name, globals, locals, global_values, base_directory_path, target_module_name, extra_symbols_map)
+
     def generate_bundle_map(self, bundle_classes):
         return self.business_helper.generate_bundle_map(bundle_classes)
 

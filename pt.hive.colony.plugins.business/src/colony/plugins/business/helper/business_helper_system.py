@@ -75,7 +75,7 @@ class BusinessHelper:
 
         self.business_helper_plugin = business_helper_plugin
 
-    def import_class_module(self, class_module_name, globals, locals, global_values, base_directory_path, target_module_name=DEFAULT_MODULE_NAME):
+    def import_class_module(self, class_module_name, globals, locals, global_values, base_directory_path, target_module_name = DEFAULT_MODULE_NAME, extra_symbols_map = {}):
         """
         Imports the class module using the globals and locals from the current target,
         it imports the symbols in the module to the current globals environment.
@@ -92,6 +92,9 @@ class BusinessHelper:
         @param base_directory_path: The base directory path to be used.
         @type target_module_name: String
         @param target_module_name: The name of the module to import the classes.
+        @type extra_symbols_map: Dictionary
+        @param extra_symbols_map: A map containing a set of (extra) symbols to be set in
+        the imported module under the base entity module.
         @rtype: Module
         @return: The created target module.
         """
@@ -107,6 +110,11 @@ class BusinessHelper:
 
         # sets the entity class in the base entity module
         base_entity_module.__dict__[EntityClass.__name__] = EntityClass
+
+        # iterates over all the extra symbols (in map)
+        for extra_symbol_name, extra_symbol_value in extra_symbols_map.items():
+            # sets the extra symbol in the base entity module (for the class name)
+            base_entity_module.__dict__[extra_symbol_name] = extra_symbol_value
 
         # sets the base entity module in the globals
         globals[BASE_ENTITY_MODULE_VALUE] = base_entity_module
