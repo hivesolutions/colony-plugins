@@ -328,7 +328,7 @@ def process_map_model_validation_error(self, exception_map, exception):
     exception_map[VALIDATION_MAP_VALUE] = exception_validation_map
     exception_map[VALIDATION_ERRORS_MAP_VALUE] = exception_validation_errors_map
 
-def get_entity_model(self, entity_manager, entity_model, update_values_map = {}, create_values_map = {}, secure_value_keys_list = None):
+def get_entity_model(self, entity_manager, entity_model, update_values_map = {}, create_values_map = {}, secure_value_keys_list = None, nullify = True):
     """
     Retrieves an entity model instance from the given entity manager
     for the provided entity model (class).
@@ -350,6 +350,9 @@ def get_entity_model(self, entity_manager, entity_model, update_values_map = {},
     @param secure_value_keys_list: The list of value keys that may be used
     while setting the values automatically (update), use this list to control the
     access to the values.
+    @type nullify: bool
+    @param nullify: If the data to be processed should be nullified
+    in case empty string values are found.
     @rtype: EntityModel
     @return: The retrieved entity model.
     """
@@ -410,7 +413,7 @@ def get_entity_model(self, entity_manager, entity_model, update_values_map = {},
             create_value_value = callable(create_value_value) and create_value_value() or create_value_value
 
             # sets the create value in the entity
-            self._set_entity_attribute(create_value_key, create_value_value, entity, entity_model)
+            self._set_entity_attribute(create_value_key, create_value_value, entity, entity_model, nullify)
 
     # iterates over all the update values items
     for update_value_key, update_value_value in update_values_map.items():
@@ -425,7 +428,7 @@ def get_entity_model(self, entity_manager, entity_model, update_values_map = {},
         create_value_value = callable(update_value_value) and update_value_value() or update_value_value
 
         # sets the update value in the entity
-        self._set_entity_attribute(update_value_key, update_value_value, entity, entity_model)
+        self._set_entity_attribute(update_value_key, update_value_value, entity, entity_model, nullify)
 
     # returns the entity
     return entity
@@ -639,7 +642,7 @@ def create_form_data(self, rest_request, data_map, encoding = DEFAULT_ENCODING):
     # returns the form data map
     return form_data_map
 
-def process_form_data(self, rest_request, encoding = DEFAULT_ENCODING, nullify = True):
+def process_form_data(self, rest_request, encoding = DEFAULT_ENCODING, nullify = False):
     """
     Processes the form data (attributes), creating a map containing
     the hierarchy of defined structure for the "form" contents.
@@ -709,7 +712,7 @@ def process_form_data(self, rest_request, encoding = DEFAULT_ENCODING, nullify =
     # returns the base attributes map
     return base_attributes_map
 
-def process_form_data_flat(self, rest_request, encoding = DEFAULT_ENCODING, nullify = True):
+def process_form_data_flat(self, rest_request, encoding = DEFAULT_ENCODING, nullify = False):
     """
     Processes the form data (attributes), creating a map containing
     the hierarchy of defined structure for the "form" contents.
@@ -2211,7 +2214,7 @@ def _get_complete_session_attribute_name(session_attribute_name, namespace_name)
     # returns the complete session attribute name
     return complete_session_attribute_name
 
-def _set_entity_attribute(self, attribute_key, attribute_value, entity, entity_model):
+def _set_entity_attribute(self, attribute_key, attribute_value, entity, entity_model, nullify):
     """
     Sets the given entity attribute for the given attribute key and value.
     The entity to set the attribute is the instance of the entity model
@@ -2226,6 +2229,9 @@ def _set_entity_attribute(self, attribute_key, attribute_value, entity, entity_m
     @type entity_model: Class
     @param entity_model: The entity model of the entity to have
     the attribute set.
+    @type nullify: bool
+    @param nullify: If the data to be processed should be nullified
+    in case empty string values are found.
     """
 
     # retrieves the entity model attribute value
@@ -2242,6 +2248,10 @@ def _set_entity_attribute(self, attribute_key, attribute_value, entity, entity_m
     if not cast_type:
         # returns immediately (no set is made)
         return
+
+    # in case the nullify option is set and the attribute value
+    # is an empty string sets the attribute value to none (null)
+    if nullify and attribute_value == "": attribute_value = None
 
     # casts the attribute value is using the safe mode
     attribute_value_casted = self._cast_safe(attribute_value, cast_type)
