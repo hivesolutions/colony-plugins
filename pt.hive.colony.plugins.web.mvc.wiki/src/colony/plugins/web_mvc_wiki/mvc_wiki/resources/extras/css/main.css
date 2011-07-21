@@ -29,6 +29,26 @@
  __license__   = GNU General Public License (GPL), Version 3
 */
 
+#wiki-contents-header {
+    border-bottom: 1px solid #eeeeee;
+    margin-bottom: 12px;
+    padding: 12px 0px 12px 0px;
+}
+
+.wiki-contents-title {
+    color: #20435c;
+}
+
+.wiki-contents-action {
+    color: #214c8f;
+    margin: 0px 4px 0px 4px;
+}
+
+.wiki-contents-action:hover {
+    border-bottom: none;
+    color: #142f42;
+}
+
 #environment-variables {
     display: none;
 }
@@ -37,69 +57,19 @@
     float: left;
 }
 
-#wiki-page-edit-container {
-    position: absolute;
-    top: 129px;
-    width: 100%;
-}
-
-#wiki-sub-header {
-    background: transparent url(../images/sub-header-shadow.png) repeat-x;
-    display: none;
-    height: 60px;
-    margin-top: -15px;
-}
-
-#wiki-sub-header-contents {
-    margin: 0 auto;
-    min-width: 800px;
-    width: 70%;
-}
-
-#wiki-sub-header-left {
-    float: left;
-    height: 50px;
-}
-
-#wiki-sub-header-right {
+.wiki-float-right {
     float: right;
-    margin-top: 8px;
 }
 
-#wiki-page-title {
-    background-color: transparent;
-    border-bottom: none;
-    color: #ffffff;
-    font-size: 120%;
-    margin-top: 14px;
-    padding: 0px 0 0px 0px;
-    text-shadow: 1px 1px #333333;
-}
-
-#wiki-page-edit {
-    background: #cad4e4 url(../images/wiki-page-edit-background.png) repeat-x;
-    border-radius: 0px 0px 6px 6px;
-    -moz-border-radius: 0px 0px 6px 6px;
-    -webkit-border-radius: 0px 0px 6px 6px;
-    border: 1px solid #4b6ea4;
-    box-shadow: 1px 1px 6px 0px #666666;;
-    -moz-box-shadow: 1px 1px 6px 0px #666666;
-    -webkit-box-shadow: 1px 1px 6px 0px #666666;
+.wiki-clear {
     clear: both;
-    display: none;
-    height: 480px;
-    margin: 0 auto 10px;
-    min-width: 320px;
-    padding: 18px 20px 24px 20px;
-    width: 60%;
-}
-
-#wiki-page-search-container {
-    width: 260px;
 }
 
 #wiki-page-search {
-    float: left;
+    margin-left: 1.6em;
+    padding-right: 12px;
+    padding-left: 12px;
+    width: 170px;
 }
 
 #wiki-page-search-background {
@@ -185,7 +155,6 @@
 
 #wiki-footer-contents-right {
     float: right;
-    font-size: 160%;
 }
 
 .wiki-button-container {
@@ -260,14 +229,15 @@
 .wiki-input {
     background-color: #ffffff;
     background: #ffffff url(../images/wiki-input-background.png) repeat-x;
-    border: 1px solid #214c8f;
-    font-family:"Lucida Grande",Verdana,Lucida,Helvetica,Arial,sans-serif;
+    border-radius: 6px 6px 6px 6px;
+    -moz-border-radius: 6px 6px 6px 6px;
+    -webkit-border-radius: 6px 6px 6px 6px;
+    border: none;
+    font-family: "Lucida Grande",Verdana,Lucida,Helvetica,Arial,sans-serif;
     font-size: 90%;
     height: 16px;
     outline: none;
-    padding-top: 8px;
-    padding-bottom: 8px;
-    text-indent: 8px;
+    padding: 8px 0px 8px 0px;
     width: 100%;
 }
 

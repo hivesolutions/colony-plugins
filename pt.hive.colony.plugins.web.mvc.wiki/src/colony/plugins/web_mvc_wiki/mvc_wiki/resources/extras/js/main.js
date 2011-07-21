@@ -90,10 +90,6 @@ jQuery(document).ready(function() {
         }
     });
 
-    jQuery("#wiki-options-button").click(function() {
-                window.location = jQuery("#wiki-page-title").html() + ".prt";
-            });
-
     jQuery(".wiki-button").mousedown(function() {
                 jQuery(this).addClass("click");
             });
@@ -122,13 +118,6 @@ jQuery(document).ready(function() {
                 event.stopPropagation();
             });
 
-    jQuery("#wiki-more-button").click(function() {
-                if (jQuery("#wiki-sub-header").is(":visible")) {
-                    jQuery("#wiki-sub-header").fadeOut(200);
-                } else {
-                    jQuery("#wiki-sub-header").fadeIn(300);
-                }
-            });
 
     jQuery(".wiki-input, .wiki-text-area").focus(function() {
                 jQuery(this).addClass("selected");

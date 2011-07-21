@@ -29,49 +29,10 @@
                         <a href="${out_none value=header_link.address /}">${out_none value=header_link.name /}</a>
                     </li>
                 ${/foreach}
-                ${if item=options_enabled value=True operator=eq}
-                    <li class="menu">
-                        <a id="wiki-more-button" href="#">More</a>
-                    </li>
-                ${/if}
+                <li>
+                    <input id="wiki-page-search" name="wiki-page-search" class="wiki-input" type="text" value="Search" current_status="" original_value="Search" />
+                </li>
             </ul>
-        </div>
-    </div>
-</div>
-<div id="wiki-sub-header">
-    <div id="wiki-sub-header-contents">
-        <div id="wiki-sub-header-left">
-            <h1 id="wiki-page-title">${out_none value=page_name /}</h1>
-        </div>
-        <div id="wiki-sub-header-right">
-            <div class="wiki-float-left">
-                <div id="wiki-page-edit-button" class="wiki-button wiki-button-blue">Edit</div>
-            </div>
-            <div id="wiki-page-search-container" class="wiki-float-left">
-                <input id="wiki-page-search" name="wiki-page-search" class="wiki-input" type="text" value="Search" current_status="" original_value="Search" />
-                <div id="wiki-page-search-background"></div>
-            </div>
-        </div>
-    </div>
-</div>
-<div id="wiki-page-edit-container">
-    <div id="wiki-page-edit">
-        <div class="wiki-page-edit-line">
-            <input id="wiki-page-edit-summary-input" name="wiki_page_edit_summary" class="wiki-input" type="text" value="Describe your wiki modification" current_status="" original_value="Describe your wiki modification" />
-        </div>
-        <div class="wiki-page-edit-line">
-            <div id="wiki-controls">
-                <div id="wiki-controls-icons">
-                    <div class="wiki-control-icon wiki-control-icon-bold"></div>
-                    <div class="wiki-control-icon wiki-control-icon-italic"></div>
-                    <div class="wiki-control-icon wiki-control-icon-quote"></div>
-                </div>
-            </div>
-            <textarea id="wiki-page-edit-contents-text-area" name="wiki_page_edit_contents" class="wiki-text-area">${out_none value=page_source /}</textarea>
-        </div>
-        <div id="wiki-page-edit-buttons" class="wiki-page-edit-line">
-            <div id="wiki-page-edit-publish-button" class="wiki-button wiki-button-blue">Publish</div>
-            <div class="wiki-button wiki-button-blue disabled">Preview</div>
         </div>
     </div>
 </div>

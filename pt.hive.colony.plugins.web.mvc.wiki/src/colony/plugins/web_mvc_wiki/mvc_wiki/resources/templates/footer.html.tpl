@@ -13,11 +13,7 @@
                     Copyright <a href="http://hive.pt">Hive Solutions Lda.</a> distributed under <a href="http://creativecommons.org/licenses/by-sa/3.0"> Creative Commons License</a>
                 </div>
             </div>
-            <div id="wiki-footer-contents-right">
-                ${if item=print_enabled value=True operator=eq}
-                    <div id="wiki-options-button" class="wiki-button wiki-button-gray">Print</div>
-                ${/if}
-            </div>
+            <div id="wiki-footer-contents-right"></div>
         </div>
     ${/if}
 </div>
