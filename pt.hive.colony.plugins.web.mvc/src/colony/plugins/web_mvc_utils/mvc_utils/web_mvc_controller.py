@@ -46,6 +46,7 @@ import traceback
 
 import web_mvc_utils_exceptions
 
+import colony.libs.map_util
 import colony.libs.time_util
 import colony.libs.string_util
 
@@ -638,7 +639,7 @@ def create_form_data(self, rest_request, data_map, encoding = DEFAULT_ENCODING):
     # returns the form data map
     return form_data_map
 
-def process_form_data(self, rest_request, encoding = DEFAULT_ENCODING):
+def process_form_data(self, rest_request, encoding = DEFAULT_ENCODING, nullify = True):
     """
     Processes the form data (attributes), creating a map containing
     the hierarchy of defined structure for the "form" contents.
@@ -648,6 +649,9 @@ def process_form_data(self, rest_request, encoding = DEFAULT_ENCODING):
     @type encoding: String
     @param encoding: The encoding to be used when retrieving
     the attribute values.
+    @type nullify: bool
+    @param nullify: If the data to be processed should be nullified
+    in case empty string values are found.
     @rtype: Dictionary
     @return: The map containing the hierarchy of defined structure
     for the "form" contents.
@@ -681,6 +685,10 @@ def process_form_data(self, rest_request, encoding = DEFAULT_ENCODING):
 
             # iterates over all the attribute value items
             for attribute_value_item in attribute_value:
+                # nullifies the attribute value item in case it's empty
+                # (in case the nullify flag is set)
+                if nullify: attribute_value_item = attribute_value_item or None
+
                 # starts the processing of the form attribute with the base attributes map
                 # the base attribute name and the attribute value and the index of the current
                 # attribute value item
@@ -690,6 +698,10 @@ def process_form_data(self, rest_request, encoding = DEFAULT_ENCODING):
                 index += 1
         # otherwise the attribute type must be a string
         else:
+            # nullifies the attribute value in case it's empty
+            # in case the nullify flag is set)
+            if nullify: attribute_value = attribute_value or None
+
             # starts the processing of the form attribute with the base attributes map
             # the base attribute name and the attribute value
             self._process_form_attribute(base_attributes_map, attribute, attribute_value)
@@ -697,7 +709,7 @@ def process_form_data(self, rest_request, encoding = DEFAULT_ENCODING):
     # returns the base attributes map
     return base_attributes_map
 
-def process_form_data_flat(self, rest_request, encoding = DEFAULT_ENCODING):
+def process_form_data_flat(self, rest_request, encoding = DEFAULT_ENCODING, nullify = True):
     """
     Processes the form data (attributes), creating a map containing
     the hierarchy of defined structure for the "form" contents.
@@ -708,6 +720,9 @@ def process_form_data_flat(self, rest_request, encoding = DEFAULT_ENCODING):
     @type encoding: String
     @param encoding: The encoding to be used when retrieving
     the attribute values.
+    @type nullify: String
+    @param nullify: If the data to be processed should be nullified
+    in case empty string values are found.
     @rtype: Dictionary
     @return: The map containing the hierarchy of defined structure
     for the "form" contents.
@@ -724,6 +739,10 @@ def process_form_data_flat(self, rest_request, encoding = DEFAULT_ENCODING):
     for attribute in attributes_list:
         # retrieves the attribute value from the request
         attribute_value = self.get_attribute_decoded(rest_request, attribute, encoding)
+
+        # nullifies the attribute value in case it's empty
+        # in case the nullify flag is set)
+        if nullify: attribute_value = attribute_value or None
 
         # creates the attribute names list by splitting the attribute
         # "around" the dot values
@@ -904,6 +923,150 @@ def redirect(self, rest_request, target, status_code = 302, quote = True):
 
     # sets the contents (null)
     self.set_contents(rest_request)
+
+def redirect_list(self, rest_request, entity, status_code = 302, quote = True):
+    """
+    Redirects the current request to the list action
+    of the given entity (instance).
+
+    @type rest_request: RestRequest
+    @param rest_request: The rest request to be used.
+    @type entity: Entity
+    @param entity: The entity to be used for the redirection.
+    @type status_code: int
+    @param status_code: The status code to be used.
+    @type quote: bool
+    @param quote: If the target path should be quoted.
+    """
+
+    # converts the entity class name to pluralized version
+    entity_class_pluralized = entity._get_entity_class_pluralized()
+
+    # creates the target (list url) from the pluralized entity name
+    target = entity_class_pluralized
+
+    # redirects the request to the target (path)
+    self.redirect_base_path(rest_request, target, status_code, quote)
+
+def redirect_create(self, rest_request, entity, status_code = 302, quote = True):
+    """
+    Redirects the current request to the create action
+    of the given entity (instance).
+
+    @type rest_request: RestRequest
+    @param rest_request: The rest request to be used.
+    @type entity: Entity
+    @param entity: The entity to be used for the redirection.
+    @type status_code: int
+    @param status_code: The status code to be used.
+    @type quote: bool
+    @param quote: If the target path should be quoted.
+    """
+
+    # converts the entity class name to pluralized version
+    entity_class_pluralized = entity._get_entity_class_pluralized()
+
+    # creates the target (create url) from the pluralized entity name
+    target = entity_class_pluralized + "/new"
+
+    # redirects the request to the target (path)
+    self.redirect_base_path(rest_request, target, status_code, quote)
+
+def redirect_show(self, rest_request, entity, status_code = 302, quote = True):
+    """
+    Redirects the current request to the show action
+    of the given entity (instance).
+
+    @type rest_request: RestRequest
+    @param rest_request: The rest request to be used.
+    @type entity: Entity
+    @param entity: The entity to be used for the redirection.
+    @type status_code: int
+    @param status_code: The status code to be used.
+    @type quote: bool
+    @param quote: If the target path should be quoted.
+    """
+
+    # converts the entity class name to pluralized version
+    entity_class_pluralized = entity._get_entity_class_pluralized()
+
+    # retrieves the entity id attribute value from the entity
+    entity_id_attribute_value = entity.get_id_attribute_value()
+
+    # retrieves the entity id attribute value,
+    # and converts it to string
+    entity_id_attribute_value_string = str(entity_id_attribute_value)
+
+    # creates the target (show url) from the pluralized entity name
+    # and the entity id attribute value string
+    target = entity_class_pluralized + "/" + entity_id_attribute_value_string
+
+    # redirects the request to the target (path)
+    self.redirect_base_path(rest_request, target, status_code, quote)
+
+def redirect_edit(self, rest_request, entity, status_code = 302, quote = True):
+    """
+    Redirects the current request to the edit action
+    of the given entity (instance).
+
+    @type rest_request: RestRequest
+    @param rest_request: The rest request to be used.
+    @type entity: Entity
+    @param entity: The entity to be used for the redirection.
+    @type status_code: int
+    @param status_code: The status code to be used.
+    @type quote: bool
+    @param quote: If the target path should be quoted.
+    """
+
+    # converts the entity class name to pluralized version
+    entity_class_pluralized = entity._get_entity_class_pluralized()
+
+    # retrieves the entity id attribute value from the entity
+    entity_id_attribute_value = entity.get_id_attribute_value()
+
+    # retrieves the entity id attribute value,
+    # and converts it to string
+    entity_id_attribute_value_string = str(entity_id_attribute_value)
+
+    # creates the target (edit url) from the pluralized entity name
+    # and the entity id attribute value string
+    target = entity_class_pluralized + "/" + entity_id_attribute_value_string + "/edit"
+
+    # redirects the request to the target (path)
+    self.redirect_base_path(rest_request, target, status_code, quote)
+
+def redirect_delete(self, rest_request, entity, status_code = 302, quote = True):
+    """
+    Redirects the current request to the delete action
+    of the given entity (instance).
+
+    @type rest_request: RestRequest
+    @param rest_request: The rest request to be used.
+    @type entity: Entity
+    @param entity: The entity to be used for the redirection.
+    @type status_code: int
+    @param status_code: The status code to be used.
+    @type quote: bool
+    @param quote: If the target path should be quoted.
+    """
+
+    # converts the entity class name to pluralized version
+    entity_class_pluralized = entity._get_entity_class_pluralized()
+
+    # retrieves the entity id attribute value from the entity
+    entity_id_attribute_value = entity.get_id_attribute_value()
+
+    # retrieves the entity id attribute value,
+    # and converts it to string
+    entity_id_attribute_value_string = str(entity_id_attribute_value)
+
+    # creates the target (delete url) from the pluralized entity name
+    # and the entity id attribute value string
+    target = entity_class_pluralized + "/" + entity_id_attribute_value_string + "/delete"
+
+    # redirects the request to the target (path)
+    self.redirect_base_path(rest_request, target, status_code, quote)
 
 def redirect_base_path(self, rest_request, target, status_code = 302, quote = True):
     """

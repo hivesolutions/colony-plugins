@@ -144,7 +144,7 @@ def _load_value(self, key, value):
     # sets the value in the current object
     setattr(self, key, value)
 
-def add_validation_method(self, attribute_name, validation_method_name, properties = {}):
+def add_validation_method(self, attribute_name, validation_method_name, validate_null = False, properties = {}):
     """
     Adds a validation method to the attribute with the given name.
     The adding of the validation can be configured using the properties
@@ -154,6 +154,9 @@ def add_validation_method(self, attribute_name, validation_method_name, properti
     @param attribute_name: The name of the attribute to "receive" the validation.
     @type validation_method_name: String
     @param validation_method_name: The name of the validation method to be added to the attribute.
+    @type validate_null: bool
+    @param validate_null: If the validation method should be applied to
+    null attribute values.
     @type properties: Dictionary
     @param properties: The properties of the adding of the validation method.
     """
@@ -171,6 +174,7 @@ def add_validation_method(self, attribute_name, validation_method_name, properti
     # in case the validation method does not exist in
     # the current object
     if not hasattr(self, validation_method_name):
+        # raises an invalid validation method exception
         raise web_mvc_utils_exceptions.InvalidValidationMethod("the current validation method does not exist: " + validation_method_name)
 
     # retrieves the validation method
@@ -180,6 +184,7 @@ def add_validation_method(self, attribute_name, validation_method_name, properti
     # method and the properties
     validation_tuple = (
         validation_method,
+        validate_null,
         properties
     )
 
@@ -218,16 +223,17 @@ def validate(self):
         # retrieves the attribute value
         attribute_value = getattr(self, attribute_name)
 
-        # in case the attribute value is none
-        if attribute_value == None:
-            # continues the loop
-            continue
-
         # iterates over all the validation tuples
         for validation_tuple in validation_tuple_list:
-            # retrieves the validation method and properties
+            # retrieves the validation method the validate null and properties
             # from the validation tuple
-            validation_method, properties = validation_tuple
+            validation_method, validate_null, properties = validation_tuple
+
+            # in case the validate null is not set and the
+            # attribute value is none (skip)
+            if not validate_null and attribute_value == None:
+                # continues the loop
+                continue
 
             # calls the validation method for validation
             validation_method(attribute_name, attribute_value, properties)
