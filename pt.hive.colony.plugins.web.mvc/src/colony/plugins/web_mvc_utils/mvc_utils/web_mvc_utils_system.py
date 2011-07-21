@@ -226,20 +226,24 @@ class WebMvcUtils:
         # returns the controller
         return controller
 
-    def create_entity_models(self, base_entity_models_module_name, entity_manager_arguments, directory_path):
+    def create_entity_models(self, base_entity_models_module_name, entity_manager_arguments, directory_path, extra_entity_models = []):
         # retrieves the entity manager plugin
         entity_manager_plugin = self.web_mvc_utils_plugin.entity_manager_plugin
 
         # retrieves the business helper plugin
         business_helper_plugin = self.web_mvc_utils_plugin.business_helper_plugin
 
-        # imports the base entity models module
-        base_entity_models_module = business_helper_plugin.import_class_module_target(base_entity_models_module_name, globals(), locals(), [], directory_path, base_entity_models_module_name)
-
         # retrieves the entity class
         entity_class = business_helper_plugin.get_entity_class()
 
+        # retrieves the extra symbols map for the module importing
+        extra_symbols_map = self._get_extra_symbols_map(extra_entity_models, entity_class)
+
+        # imports the base entity models module
+        base_entity_models_module = business_helper_plugin.import_class_module_extra(base_entity_models_module_name, globals(), locals(), [], directory_path, base_entity_models_module_name, extra_symbols_map)
+
         # retrieves all the entity classes from the base entity models module
+        # the entity class is used as reference (all entity classes must inheirt from that class)
         base_entity_models = self._get_entity_classes(base_entity_models_module, entity_class)
 
         # generates the entity models map from the base entity models list
@@ -359,13 +363,13 @@ class WebMvcUtils:
         # sets the controllers map in the instance
         setattr(system_instance, controllers_map_name, controllers_map)
 
-    def create_models(self, base_entity_models_module_name, system_instance, plugin_instance, entity_manager_arguments = {}):
+    def create_models(self, base_entity_models_module_name, system_instance, plugin_instance, entity_manager_arguments = {}, extra_models = []):
         # retrieves the directory path from the system instance
         directory_path = colony.libs.stack_util.get_instance_module_directory(system_instance)
 
         # creates the entity models using the base entity models module name
         # and the entity manager arguments
-        entity_models = self.create_entity_models(base_entity_models_module_name, entity_manager_arguments, directory_path)
+        entity_models = self.create_entity_models(base_entity_models_module_name, entity_manager_arguments, directory_path, extra_models)
 
         # sets the entity models in the system instance with the
         # base entity models module name
@@ -453,7 +457,8 @@ class WebMvcUtils:
         @param module: The module to be used to retrieve the entity classes.
         @type entity_class: Class
         @param entity_class: The entity class to be used as reference
-        to retrieve the entity classes.
+        to retrieve the entity classes (all entity class must inherit
+        from this base class).
         @rtype: List
         @return: The list of entity classes in the module.
         """
@@ -480,6 +485,40 @@ class WebMvcUtils:
 
         # returns the entity classes
         return entity_classes
+
+    def _get_extra_symbols_map(self, extra_entity_models, entity_class):
+        """
+        Retrieves the map that holds the extra symbols to be used
+        during a models module import.
+
+        @type extra_entity_models: List
+        @param extra_entity_models: A list of extra entity models (modules)
+        to be used to construct the extra symbols map.
+        @type entity_class: EntityClass
+        @param entity_class: The base entity class from all the
+        entity classes must inherit (for reference).
+        @rtype: Dictionary
+        @return: A map containing all the extra symbols for the models
+        module importing.
+        """
+
+        # starts the map to hold the extra symbols (for the importing
+        # of the entity module)
+        extra_symbols_map = {}
+
+        # iterates over all the extra entity models (modules)
+        for extra_entity_model_module in extra_entity_models:
+            # retrieves the entity classes from the extra entity model module
+            entity_classes = self._get_entity_classes(extra_entity_model_module, entity_class)
+
+            # iterates over all the entity classes to set them in
+            # the extra symbols map
+            for entity_class in entity_classes:
+                # sets the entity class in the extra symbols map
+                extra_symbols_map[entity_class.__name__] = entity_class
+
+        # returns the extra symbols map
+        return extra_symbols_map
 
     def _set_module_functions(self, module, target_class):
         """

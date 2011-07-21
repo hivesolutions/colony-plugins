@@ -144,6 +144,9 @@ class WebMvcUtilsPlugin(colony.base.plugin_system.Plugin):
     def create_models(self, base_entity_models_module_name, system_instance, plugin_instance, entity_manager_arguments):
         return self.web_mvc_utils.create_models(base_entity_models_module_name, system_instance, plugin_instance, entity_manager_arguments)
 
+    def create_models_extra(self, base_entity_models_module_name, system_instance, plugin_instance, entity_manager_arguments, extra_models):
+        return self.web_mvc_utils.create_models(base_entity_models_module_name, system_instance, plugin_instance, entity_manager_arguments, extra_models)
+
     def generate_patterns(self, patterns, controller, prefix_name):
         return self.web_mvc_utils.generate_patterns(patterns, controller, prefix_name)
 
