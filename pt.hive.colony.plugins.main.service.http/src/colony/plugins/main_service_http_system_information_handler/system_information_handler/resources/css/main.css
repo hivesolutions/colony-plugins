@@ -38,7 +38,6 @@
 
 body {
     color: #000000;
-    margin: 0px 0px 0px 0px;
     font-family: "Lucida Grande", Verdana, Lucida, Helvetica, Arial, sans-serif;
     font-size: 90%;
     font-size-adjust: none;
@@ -46,24 +45,25 @@ body {
     font-variant: normal;
     font-weight: normal;
     line-height: normal;
+    margin: 0px 0px 0px 0px;
 }
 
 #wiki-contents {
-    width: 70%;
-    min-width: 800px;
     margin: 0px auto 10px auto;
+    min-width: 800px;
+    width: 70%;
 }
 
 p {
-    margin: 1.0em 0.0em 1.0em 0.0em;
-    line-height: 1.6em;
     font-size: 9pt;
+    line-height: 1.6em;
+    margin: 1.0em 0.0em 1.0em 0.0em;
 }
 
 h1, h2, h3, h4, h5 {
+    color: #20435c;
     font-family: "Trebuchet MS", "Lucida Grande", Verdana, Lucida, Helvetica, Arial, sans-serif;
     font-weight: bold;
-    color: #20435c;
 }
 
 h1, h2, h3 {
@@ -130,7 +130,7 @@ li > div {
 }
 
 a {
-    color: #355F7c;
+    color: #355f7c;
     text-decoration: none;
 }
 
@@ -195,10 +195,10 @@ h5:hover > a.headerlink {
 }
 
 #wiki-header .wiki-header-contents {
-    width: 70%;
-    min-width: 800px;
     margin: 0px auto 10px auto;
+    min-width: 800px;
     padding-top: 12px;
+    width: 70%;
 }
 
 .wiki-header-contents .logo-image {
@@ -220,17 +220,17 @@ h5:hover > a.headerlink {
 }
 
 #wiki-footer .wiki-footer-contents {
-    width: 70%;
     height: 38px;
     margin: 0px auto 0px auto;
     padding-top: 12px;
     padding-bottom: 12px;
+    width: 70%;
 }
 
 .wiki-footer-contents .logo-image {
     float: left;
-    margin-top: 4px;
     margin-right: 12px;
+    margin-top: 4px;
 }
 
 .wiki-footer-contents .logo-image img {
@@ -247,15 +247,15 @@ h5:hover > a.headerlink {
 
 .wiki-footer-contents .text-contents {
     float: left;
-    margin-top: 4px;
     margin-left: 12px;
+    margin-top: 4px;
 }
 
 .highlight {
     background: #d5e9f6 url(../images/colony_watermark.png) no-repeat scroll right bottom;
+    color: #444444;
     min-height: 64px;
     padding: 18px 22px 14px 22px;
-    color: #444444;
 }
 
 .highlight b {
@@ -269,8 +269,8 @@ h5:hover > a.headerlink {
 
 .highlight ul {
     color: #333333;
-    list-style-type: upper-roman;
     line-height: 2.0em;
+    list-style-type: upper-roman;
 }
 
 .highlight li > div {
@@ -292,27 +292,27 @@ h5:hover > a.headerlink {
 
 .command {
     background: #eeeeee url(../images/console_icon.png) no-repeat scroll 6px 5px;
-    padding: 4px 8px 4px 28px;
     color: #20435c;
     font-family: monospace;
     font-size: 110%;
     font-weight: bold;
+    padding: 4px 8px 4px 28px;
 }
 
 .system-information-list {
     background: #fbebd3 url(../images/listing_note.gif) no-repeat scroll 0px 0px;
-    padding: 18px 32px 18px 52px;
     line-height: 1.5em;
+    padding: 18px 32px 18px 52px;
 }
 
 .system-information-list .title {
-    display: block;
-    font-weight: bold;
-    text-align: center;
-    margin: 0px 0px 20px 0px;
     color: #444444;
+    display: block;
     font-family: "Lucida Grande", Verdana, Lucida, Helvetica, Arial, sans-serif;
     font-size: 160%;
+    font-weight: bold;
+    margin: 0px 0px 20px 0px;
+    text-align: center;
 }
 
 .system-information-list .table-view {
@@ -320,28 +320,28 @@ h5:hover > a.headerlink {
 }
 
 .system-information-list .table-view .table {
-     margin-bottom: 16px;
+    margin-bottom: 16px;
 }
 
 .system-information-list .table-view table {
-    width: 100%;
     border-top: 1px solid #b2b2b2;
     border-right: 1px solid #b2b2b2;
     border-left: 1px solid #b2b2b2;
+    width: 100%;
 }
 
 .system-information-list .table-view table th {
     background-color: #fccd8d;
-    padding: 6px 12px 6px 12px;
     border-bottom: 1px solid #b2b2b2;
     border-left: 1px solid #b2b2b2;
+    padding: 6px 12px 6px 12px;
 }
 
 .system-information-list .table-view table td {
     background-color : #fdf3e6;
-    padding: 6px 12px 6px 12px;
     border-bottom: 1px solid #b2b2b2;
     border-left: 1px solid #b2b2b2;
+    padding: 6px 12px 6px 12px;
 }
 
 .system-information-list .table-view table th.column.name {

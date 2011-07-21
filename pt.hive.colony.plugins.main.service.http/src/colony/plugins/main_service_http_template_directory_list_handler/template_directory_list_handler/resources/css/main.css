@@ -38,7 +38,6 @@
 
 body {
     color: #000000;
-    margin: 0px 0px 0px 0px;
     font-family: "Lucida Grande", Verdana, Lucida, Helvetica, Arial, sans-serif;
     font-size: 90%;
     font-size-adjust: none;
@@ -46,24 +45,25 @@ body {
     font-variant: normal;
     font-weight: normal;
     line-height: normal;
+    margin: 0px 0px 0px 0px;
 }
 
 #wiki-contents {
-    width: 70%;
-    min-width: 800px;
     margin: 0px auto 10px auto;
+    min-width: 800px;
+    width: 70%;
 }
 
 p {
-    margin: 1.0em 0.0em 1.0em 0.0em;
-    line-height: 1.6em;
     font-size: 9pt;
+    line-height: 1.6em;
+    margin: 1.0em 0.0em 1.0em 0.0em;
 }
 
 h1, h2, h3, h4, h5 {
+    color: #20435c;
     font-family: "Trebuchet MS", "Lucida Grande", Verdana, Lucida, Helvetica, Arial, sans-serif;
     font-weight: bold;
-    color: #20435c;
 }
 
 h1, h2, h3 {
@@ -130,7 +130,7 @@ li > div {
 }
 
 a {
-    color: #355F7c;
+    color: #355f7c;
     text-decoration: none;
 }
 
@@ -195,10 +195,10 @@ h5:hover > a.headerlink {
 }
 
 #wiki-header .wiki-header-contents {
-    width: 70%;
-    min-width: 800px;
     margin: 0px auto 10px auto;
+    min-width: 800px;
     padding-top: 12px;
+    width: 70%;
 }
 
 .wiki-header-contents .logo-image {
@@ -220,17 +220,17 @@ h5:hover > a.headerlink {
 }
 
 #wiki-footer .wiki-footer-contents {
-    width: 70%;
     height: 38px;
     margin: 0px auto 0px auto;
     padding-top: 12px;
     padding-bottom: 12px;
+    width: 70%;
 }
 
 .wiki-footer-contents .logo-image {
     float: left;
-    margin-top: 4px;
     margin-right: 12px;
+    margin-top: 4px;
 }
 
 .wiki-footer-contents .logo-image img {
@@ -247,15 +247,15 @@ h5:hover > a.headerlink {
 
 .wiki-footer-contents .text-contents {
     float: left;
-    margin-top: 4px;
     margin-left: 12px;
+    margin-top: 4px;
 }
 
 .highlight {
     background: #d5e9f6 url(../images/colony_watermark.png) no-repeat scroll right bottom;
+    color: #444444;
     min-height: 64px;
     padding: 18px 22px 14px 22px;
-    color: #444444;
 }
 
 .highlight b {
@@ -269,8 +269,8 @@ h5:hover > a.headerlink {
 
 .highlight ul {
     color: #333333;
-    list-style-type: upper-roman;
     line-height: 2.0em;
+    list-style-type: upper-roman;
 }
 
 .highlight li > div {
@@ -292,27 +292,27 @@ h5:hover > a.headerlink {
 
 .command {
     background: #eeeeee url(../images/console_icon.png) no-repeat scroll 6px 5px;
-    padding: 4px 8px 4px 28px;
     color: #20435c;
     font-family: monospace;
     font-size: 110%;
     font-weight: bold;
+    padding: 4px 8px 4px 28px;
 }
 
 .directory-list {
     background: #fbebd3 url(../images/listing_note.gif) no-repeat scroll 0px 0px;
-    padding: 18px 32px 18px 52px;
     line-height: 1.5em;
+    padding: 18px 32px 18px 52px;
 }
 
 .directory-list .table-view table {
-    width: 100%;
     margin-bottom: 20px;
+    width: 100%;
 }
 
 .directory-list .table-view table th {
-    height: 36px;
     border-bottom: 1px solid #b2b2b2;
+    height: 36px;
 }
 
 .directory-list .table-view table tr {
@@ -324,18 +324,18 @@ h5:hover > a.headerlink {
 }
 
 .directory-list .table-view table .column.date {
-    width: 240px;
     text-align: right;
+    width: 240px;
 }
 
 .directory-list .table-view table .column.size {
-    width: 60px;
     text-align: right;
+    width: 60px;
 }
 
 .directory-list .table-view table .name {
-    padding-left: 30px;
     background-position: 0px 4px;
+    padding-left: 30px;
 }
 
 .directory-list .table-view table .date , .size {
@@ -345,8 +345,8 @@ h5:hover > a.headerlink {
 .directory-list .mosaic-view .item {
     float: left;
     height: 60px;
-    width: 250px;
     margin-bottom: 20px;
+    width: 250px;
 }
 
 .directory-list .mosaic-view .item p {
@@ -358,15 +358,15 @@ h5:hover > a.headerlink {
 }
 
 .directory-list .mosaic-view .item .description {
-    font-size: 8pt;
     color: #666666;
+    font-size: 8pt;
 }
 
 .directory-list .thumbnail-view .item {
+    background-position: top center;
     float: left;
     height: 100px;
     width: 150px;
-    background-position: top center;
 }
 
 .directory-list .thumbnail-view .item .name {
@@ -398,9 +398,9 @@ h5:hover > a.headerlink {
 }
 
 .view-modes {
+    clear: both;
     margin: 0px auto 0px auto;
     text-align: center;
-    clear: both;
 }
 
 .view-modes a {
