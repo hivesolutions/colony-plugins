@@ -122,6 +122,9 @@ KEY_ORDER_LIST_VALUE = "key_order_list"
 XML_ESCAPE_VALUE = "xml_escape"
 """ The xml escape value """
 
+NEWLINE_CONVERT_VALUE = "newline_convert"
+""" The newline convert value """
+
 ALLOW_EMPTY_VALUE = "allow_empty"
 """ The allow empty value """
 
@@ -160,6 +163,12 @@ DEFAULT_TIME_FORMAT = "%H:%M:%S"
 
 DEFAULT_DATE_TIME_FORMAT = "%d/%m/%y %H:%M:%S"
 """ The default date time format """
+
+NEWLINE_CHARACTER = "\n"
+""" The newline character """
+
+LINE_BREAK_TAG = "<br/>"
+""" The line break tag """
 
 COMPARISION_FUNCTIONS = {
     "eq" : lambda attribute_item, attribute_value: attribute_item == attribute_value,
@@ -591,6 +600,16 @@ class Visitor:
             # unsets the attribute xml escape value
             attribute_xml_escape_value = False
 
+        # in case the new line convert exists in the attributes map
+        if NEWLINE_CONVERT_VALUE in attributes_map:
+            # retrieves attribute newline convert value
+            attribute_newline_convert = attributes_map[NEWLINE_CONVERT_VALUE]
+            attribute_newline_convert_value = self.get_boolean_value(attribute_newline_convert)
+        # otherwise
+        else:
+            # unsets the attribute newline convert value
+            attribute_newline_convert_value = False
+
         # in case the variable encoding is defined
         if self.variable_encoding:
             # re-encodes the variable value
@@ -611,6 +630,11 @@ class Visitor:
         if attribute_xml_escape_value:
             # escapes the attribute value value using xml escaping
             attribute_value_value = xml.sax.saxutils.escape(attribute_value_value)
+
+        # in case the attribute newline convert value is set
+        if attribute_newline_convert_value:
+            # converts the attribute value value newlines
+            attribute_value_value = attribute_value_value.replace(NEWLINE_CHARACTER, LINE_BREAK_TAG)
 
         # adds the attribute prefix value to the attribute value value
         attribute_value_value = attribute_prefix_value + attribute_value_value
@@ -670,6 +694,16 @@ class Visitor:
             # unsets the attribute xml escape value
             attribute_xml_escape_value = False
 
+        # in case the new line convert exists in the attributes map
+        if NEWLINE_CONVERT_VALUE in attributes_map:
+            # retrieves attribute newline convert value
+            attribute_newline_convert = attributes_map[NEWLINE_CONVERT_VALUE]
+            attribute_newline_convert_value = self.get_boolean_value(attribute_newline_convert)
+        # otherwise
+        else:
+            # unsets the attribute newline convert value
+            attribute_newline_convert_value = False
+
         # in case the allow empty exists in the attributes map
         if ALLOW_EMPTY_VALUE in attributes_map:
             # retrieves attribute allow empty value
@@ -708,6 +742,11 @@ class Visitor:
         if attribute_xml_escape_value:
             # escapes the attribute value value using xml escaping
             attribute_value_value = xml.sax.saxutils.escape(attribute_value_value)
+
+        # in case the attribute newline convert value is set
+        if attribute_newline_convert_value:
+            # converts the attribute value value newlines
+            attribute_value_value = attribute_value_value.replace(NEWLINE_CHARACTER, LINE_BREAK_TAG)
 
         # adds the attribute prefix value to the attribute value value
         attribute_value_value = attribute_prefix_value + attribute_value_value
@@ -768,7 +807,7 @@ class Visitor:
         # otherwise
         else:
             # sets the attribute item separator value
-            attribute_item_separator_value = "\n"
+            attribute_item_separator_value = NEWLINE_CHARACTER
 
         # in case the xml escape exists in the attributes map
         if XML_ESCAPE_VALUE in attributes_map:
@@ -779,6 +818,16 @@ class Visitor:
         else:
             # unsets the attribute xml escape value
             attribute_xml_escape_value = False
+
+        # in case the new line convert exists in the attributes map
+        if NEWLINE_CONVERT_VALUE in attributes_map:
+            # retrieves attribute newline convert value
+            attribute_newline_convert = attributes_map[NEWLINE_CONVERT_VALUE]
+            attribute_newline_convert_value = self.get_boolean_value(attribute_newline_convert)
+        # otherwise
+        else:
+            # unsets the attribute newline convert value
+            attribute_newline_convert_value = False
 
         # in case the allow empty exists in the attributes map
         if ALLOW_EMPTY_VALUE in attributes_map:
@@ -823,6 +872,14 @@ class Visitor:
 
                 # escapes the value using xml escaping
                 value = xml.sax.saxutils.escape(value)
+
+            # in case the attribute newline convert value is set
+            if attribute_newline_convert_value:
+                # converts the key newlines
+                key = key.replace(NEWLINE_CHARACTER, LINE_BREAK_TAG)
+
+                # converts the value newlines
+                value = value.replace(NEWLINE_CHARACTER, LINE_BREAK_TAG)
 
             # writes the attribute value value in the string buffer
             self.string_buffer.write(key + attribute_key_separator_value + value + attribute_item_separator_value)
