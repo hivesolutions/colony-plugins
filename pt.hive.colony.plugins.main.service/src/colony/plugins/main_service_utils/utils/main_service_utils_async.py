@@ -296,7 +296,7 @@ class AbstractService:
             # start listening in the service socket
             service_socket.listen(30)
 
-            service_connection = ServiceConnection(self, service_socket)
+            service_connection = ServiceConnection(self, service_socket, bind_host, port)
 
             socket_fd = service_socket.fileno()
 
@@ -309,13 +309,13 @@ class AbstractService:
     # ---- ESTES SAO METODOS DA ABSTRACAO SERVICE------
 
 
-    def add_socket(self, client_socket, client_address):
+    def add_socket(self, client_socket, client_address, service_port):
         client_socket_fd = client_socket.fileno()
 
         self.socket_fd_map[client_socket_fd] = client_socket
         self.poll_instance.register(client_socket_fd, READ | ERROR)
 
-        client_connection = ClientConnection(self, client_socket, client_address)
+        client_connection = ClientConnection(self, client_socket, client_address, service_port)
         client_connection.service_execution_thread = self.service_execution_thread
         self.client_connection_map[client_socket] = client_connection
 
@@ -522,7 +522,7 @@ class AbstractService:
         # iterates over all the client sockets in the
         # client connection map
         for client_socket in self.client_connection_map:
-            # adds the client socket ot the
+            # adds the client socket or the
             # removal list (for later removal)
             removal_list.append(client_socket)
 
@@ -654,22 +654,33 @@ class Connection:
 
     socket_fd = None
 
+    connection_address = None
+    """ The address for the connection """
+
+    connection_port = None
+    """ The port for the connection """
+
     connection_status = True
 
     request_data = {}
 
-    def __init__(self, service, socket):
+    def __init__(self, service, socket, connection_address, connection_port):
         self.service = service
         self.socket = socket
+        self.connection_address = connection_address
+        self.connection_port = connection_port
 
         self.socket_fd = socket.fileno()
 
         self.request_data = {}
 
+    def __repr__(self):
+        return "(%s, %s)" % (self.connection_address, self.connection_port)
+
 class ServiceConnection(Connection):
 
-    def __init__(self, service, socket):
-        Connection.__init__(self, service, socket)
+    def __init__(self, service, socket, connection_address, connection_port):
+        Connection.__init__(self, service, socket, connection_address, connection_port)
 
     def read_handler(self, _socket):
         # iterates continuously
@@ -691,12 +702,9 @@ class ServiceConnection(Connection):
             service_connection.setblocking(0)
 
             # adds service connection in the service
-            self.service.add_socket(service_connection, service_address)
+            self.service.add_socket(service_connection, service_address, self.connection_port)
 
 class ClientConnection(Connection):
-
-    connection_address = None
-    """ The address for the connection """
 
     write_data_buffer = []
     """ The buffer to hold the data pending to be sent """
@@ -704,10 +712,8 @@ class ClientConnection(Connection):
     service_execution_thread = None
     """ The service execution thread """
 
-    def __init__(self, service, socket, connection_address):
-        Connection.__init__(self, service, socket)
-
-        self.connection_address = connection_address
+    def __init__(self, service, socket, connection_address, connection_port):
+        Connection.__init__(self, service, socket, connection_address, connection_port)
 
         self.write_data_buffer = []
 
