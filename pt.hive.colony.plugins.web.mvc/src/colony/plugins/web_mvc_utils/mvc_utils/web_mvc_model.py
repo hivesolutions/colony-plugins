@@ -46,6 +46,9 @@ import web_mvc_utils_exceptions
 VALIDATION_METHOD_SUFFIX = "_validate"
 """ The validation method suffix """
 
+DEFAULT_VALIDATION_CONTEXT = "default"
+""" The default validation context """
+
 TARGET_VALUE = "target"
 """ The target value """
 
@@ -73,6 +76,10 @@ def _start_model(self):
     # start the validation errors map associating an
     # attribute name with the list of errors
     self.validation_errors_map = {}
+
+    # sets the initial (and default) context for
+    # the running of the validation process
+    self.validation_context = DEFAULT_VALIDATION_CONTEXT
 
     # in case the model has the start method
     if hasattr(self, "start"):
@@ -144,7 +151,7 @@ def _load_value(self, key, value):
     # sets the value in the current object
     setattr(self, key, value)
 
-def add_validation_method(self, attribute_name, validation_method_name, validate_null = False, properties = {}):
+def add_validation_method(self, attribute_name, validation_method_name, validate_null = False, properties = {}, contexts = (DEFAULT_VALIDATION_CONTEXT,)):
     """
     Adds a validation method to the attribute with the given name.
     The adding of the validation can be configured using the properties
@@ -159,14 +166,10 @@ def add_validation_method(self, attribute_name, validation_method_name, validate
     null attribute values.
     @type properties: Dictionary
     @param properties: The properties of the adding of the validation method.
+    @type contexts: Tuple
+    @param contexts: The (validation) contexts for which the the validation
+    method should be applied.
     """
-
-    # in case the attribute name does not exist
-    # in the validation map
-    if not attribute_name in self.validation_map:
-        # creates a list for the attribute name in
-        # the validation map
-        self.validation_map[attribute_name] = []
 
     # adds the validation method suffix to the validate method name
     validation_method_name = validation_method_name + VALIDATION_METHOD_SUFFIX
@@ -188,8 +191,24 @@ def add_validation_method(self, attribute_name, validation_method_name, validate
         properties
     )
 
-    # adds the validation tuple to the validation map
-    self.validation_map[attribute_name].append(validation_tuple)
+    # iterates over all the defined contexts to update
+    # the appropriate internal structures
+    for context in contexts:
+        # retrieves the context validation map from the validation
+        # map (creating a new map if necessary)
+        context_validation_map = self.validation_map.get(context, {})
+
+        # retrieves the attribute validation list from the context
+        # validation map (creating a new list if necessary)
+        attribute_validation_list = context_validation_map.get(attribute_name, [])
+
+        # adds the validation tuple to the
+        # attribute (validation) list
+        attribute_validation_list.append(validation_tuple)
+
+        # sets the correct references in the structures
+        context_validation_map[attribute_name] = attribute_validation_list
+        self.validation_map[context] = context_validation_map
 
 def add_error(self, attribute_name, error_message):
     """
@@ -218,8 +237,11 @@ def validate(self):
     Validates all the attributes in the current object.
     """
 
-    # iterates over all the items in the validation maps
-    for attribute_name, validation_tuple_list in self.validation_map.items():
+    # retrieves the context validation map for the current validation context
+    context_validation_map = self.validation_map.get(self.validation_context, [])
+
+    # iterates over all the items in the context validation map
+    for attribute_name, validation_tuple_list in context_validation_map.items():
         # retrieves the attribute value
         attribute_value = getattr(self, attribute_name)
 
@@ -258,6 +280,26 @@ def is_valid(self):
     else:
         # returns true (valid)
         return True
+
+def get_validation_context(self):
+    """
+    Retrieves the validation context.
+
+    @rtype: String
+    @return: The validation context.
+    """
+
+    return self.validation_context
+
+def set_validation_context(self, validation_context):
+    """
+    Sets the validation context.
+
+    @type validation_context: String
+    @param validation_context: The validation context.
+    """
+
+    self.validation_context = validation_context
 
 def not_none_validate(self, attribute_name, attribute_value, properties):
     """
