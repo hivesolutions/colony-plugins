@@ -74,6 +74,9 @@ DEFAULT_WILDCARD_ACL_VALUE = "*"
 DEFAULT_MAXIMUM_ACL_VALUE = 10000
 """ The default maximum value for acl """
 
+BASE_PATH_DELTA_VALUE = 2
+""" The delta value to be applied to retrieve the base path """
+
 HTTP_PREFIX_VALUE = "http://"
 """ The http prefix value """
 
@@ -85,6 +88,9 @@ DATE_FORMAT = "%Y/%m/%d"
 
 DATE_TIME_FORMAT = "%Y/%m/%d %H:%M:%S"
 """ The date time format """
+
+MVC_PATH_VALUE = "mvc_path"
+""" The mvc path value """
 
 BASE_PATH_VALUE = "base_path"
 """ The base path value """
@@ -804,14 +810,18 @@ def process_acl_values(self, acl_list, key, wildcard_value = DEFAULT_WILDCARD_AC
     # returns the permission
     return permission
 
-def get_base_path(self, rest_request):
+def get_mvc_path(self, rest_request, delta_value = 1):
     """
-    Retrieves the base path according to
+    Retrieves the mvc path according to
     the current rest request path.
 
     @type rest_request: RestRequest
     @param rest_request: The rest request to be used to retrieve
-    the base path.
+    the mvc path.
+    @type delta_value: int
+    @param delta_value: The integer value that represents
+    the number of partial paths to be removed from the
+    original path to get the mvc path.
     @rtype: String
     @return: The base path.
     """
@@ -824,12 +834,26 @@ def get_base_path(self, rest_request):
 
     # iterates over all the path list length without
     # the delta value
-    for _index in range(path_list_length - 2):
+    for _index in range(path_list_length - delta_value):
         # adds the back path to the base path
         base_path += BACK_PATH_VALUE
 
     # returns the base path
     return base_path
+
+def get_base_path(self, rest_request):
+    """
+    Retrieves the base path according to
+    the current rest request path.
+
+    @type rest_request: RestRequest
+    @param rest_request: The rest request to be used to retrieve
+    the base path.
+    @rtype: String
+    @return: The base path.
+    """
+
+    return self.get_mvc_path(rest_request, BASE_PATH_DELTA_VALUE)
 
 def get_base_path_absolute(self, rest_request):
     """
@@ -1202,10 +1226,16 @@ def apply_base_path_template_file(self, rest_request, template_file):
     @param template_file: The template to be "applied" with the base path.
     """
 
+    # retrieves the mvc path
+    mvc_path = self.get_mvc_path(rest_request)
+
     # retrieves the base path
     base_path = self.get_base_path(rest_request)
 
-    # assigns the area value
+    # assigns the mvc path value
+    template_file.assign(MVC_PATH_VALUE, mvc_path)
+
+    # assigns the base path value
     template_file.assign(BASE_PATH_VALUE, base_path)
 
 def assign_session_template_file(self, rest_request, template_file, variable_prefix = "session_"):
