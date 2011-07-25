@@ -65,6 +65,9 @@ CONFIGURATION_VALUE = "configuration"
 DEPENDENCIES_VALUE = "dependencies"
 """ The dependencies value """
 
+EXTRA_RESOURCES_VALUE = "extra_resources"
+""" The extra resources value """
+
 ID_VALUE = "id"
 """ The id value """
 
@@ -148,6 +151,12 @@ BUILD_AUTOMATION_ITEM_CAPABILITY = "build_automation_item"
 
 BUILD_AUTOMATION_FILE_PATH_ATTRIBUTE = "build_automation_file_path"
 """ The build automation file path attribute """
+
+PYTHON_FILE_EXTENSION = ".py"
+""" The python file extension """
+
+PYC_FILE_EXTENSION_FORMAT = "%sc"
+""" The pyc file extension format """
 
 RESOURCE_FILE_NAME_EXCLUSION_LIST = (
     ".svn",
@@ -258,7 +267,10 @@ class ValidationPlugin:
         self._validate_plugin_file(plugin_information, validation_errors)
 
         # checks that if the plugin descriptor file exists
-        if not os.path.exists(plugin_information.plugin_descriptor_file_path):
+        plugin_descriptor_file_path_exists = os.path.exists(plugin_information.plugin_descriptor_file_path)
+
+        # in case the plugin descriptor file path does not exist
+        if not plugin_descriptor_file_path_exists:
             # logs the validation error
             self.add_validation_error(validation_errors, plugin_information, "'%s' is missing file '%s'" % (plugin_information.plugin_module_name, plugin_information.plugin_descriptor_file_path))
 
@@ -281,8 +293,11 @@ class ValidationPlugin:
         # splits the base plugin system directory path
         base_plugin_system_directory_path_tokens = base_plugin_system_directory_path.split(UNIX_DIRECTORY_SEPARATOR)
 
+        # retrieves the number of base plugin system directory path tokens
+        number_base_plugin_system_directory_path_tokens = len(base_plugin_system_directory_path_tokens)
+
         # checks that the system directory path has the appropriate depth
-        if not len(base_plugin_system_directory_path_tokens) == SYSTEM_FILE_DIRECTORY_DEPTH:
+        if not number_base_plugin_system_directory_path_tokens == SYSTEM_FILE_DIRECTORY_DEPTH:
             # logs the validation error
             self.add_validation_error(validation_errors, plugin_information, "'%s' doesn't have a valid directory structure leading to the system file" % plugin_information.plugin_module_name)
 
@@ -310,12 +325,18 @@ class ValidationPlugin:
         plugin_file_path = plugin_information.plugin_file_path
 
         # retrieves the plugin class name
-        plugin_class_name = plugin_information.plugin_class_name
+        plugin_information_class_name = plugin_information.plugin_class_name
+
+        # retrieves the plugin class
+        plugin_class = plugin.__class__
+
+        # retrieves the plugin class name
+        plugin_class_name = plugin_class.__name__
 
         # checks if the plugin class name matches the one computed from its module name
-        if not plugin_class_name == plugin.__class__.__name__:
+        if not plugin_information_class_name == plugin_class_name:
             # logs the validation error
-            self.add_validation_error(validation_errors, plugin_information, "'%s' has a class name '%s' that does not match its file name '%s'" % (plugin_module_name, plugin.__class__.__name__, plugin_file_path))
+            self.add_validation_error(validation_errors, plugin_information, "'%s' has a class name '%s' that does not match its file name '%s'" % (plugin_module_name, plugin_class_name, plugin_file_path))
 
     def __validate_plugin_capabilities(self, plugin_information, validation_errors):
         # retrieves the plugin
@@ -333,8 +354,11 @@ class ValidationPlugin:
         # retrieves the number of unique plugin capabilities
         number_unique_plugin_capabilities = len(unique_plugin_capabilities)
 
+        # retrieves the number of plugin capabilities
+        number_plugin_capabilities = len(plugin.capabilities)
+
         # checks for duplicate capabilities in the plugin
-        if not len(plugin.capabilities) == number_unique_plugin_capabilities:
+        if not number_plugin_capabilities == number_unique_plugin_capabilities:
             # logs the validation error
             self.add_validation_error(validation_errors, plugin_information, "'%s' has duplicate capabilities" % plugin_module_name)
 
@@ -353,7 +377,11 @@ class ValidationPlugin:
 
         # checks that all plugin init files exist
         for plugin_resource_main_module_init_file_path in plugin_information.plugin_resource_main_module_init_file_paths:
-            if not os.path.exists(plugin_resource_main_module_init_file_path):
+            # checks if the plugin resource main module init file path exists
+            plugin_resource_main_module_init_file_path_exists = os.path.exists(plugin_resource_main_module_init_file_path)
+
+            # in case the plugin resource main module init file path does not exist
+            if not plugin_resource_main_module_init_file_path_exists:
                 # logs the validation error
                 self.add_validation_error(validation_errors, plugin_information, "'%s' is missing an init file '%s'" % (plugin_module_name, plugin_resource_main_module_init_file_path))
 
@@ -379,16 +407,19 @@ class ValidationPlugin:
         # retrieves the number of unique plugin main_modules
         number_unique_plugin_main_modules = len(unique_plugin_main_modules)
 
-        # checks for duplicate main modules in the plugin
-        if not len(plugin.main_modules) == number_unique_plugin_main_modules:
-            # logs the validation error
-            self.add_validation_error(validation_errors, plugin_information, "'%s' has duplicate main modules" % plugin_module_name)
+        # retrieves the number of main modules
+        number_main_modules = len(plugin.main_modules)
 
         # copies the main modules list
         plugin_main_modules_sorted = list(plugin.main_modules)
 
         # sorts the main modules list
         plugin_main_modules_sorted.sort()
+
+        # checks for duplicate main modules in the plugin
+        if not number_main_modules == number_unique_plugin_main_modules:
+            # logs the validation error
+            self.add_validation_error(validation_errors, plugin_information, "'%s' has duplicate main modules" % plugin_module_name)
 
         # checks if the main modules list is ordered
         if not plugin.main_modules == plugin_main_modules_sorted:
@@ -397,12 +428,17 @@ class ValidationPlugin:
 
         # checks that plugin's main module file paths exist
         for plugin_main_module_file_path in plugin_main_module_file_paths:
-            if not os.path.exists(plugin_main_module_file_path):
+            # checks if the plugin main module file path exists
+            plugin_main_module_file_path_exists = os.path.exists(plugin_main_module_file_path)
+
+            # in case the plugin main module file does not exist
+            if not plugin_main_module_file_path_exists:
                 # logs the validation error
                 self.add_validation_error(validation_errors, plugin_information, "'%s' is missing main module file '%s'" % (plugin_module_name, plugin_main_module_file_path))
 
         # checks that the plugin has declarations for all main modules found in the plugin's resources
         for plugin_resource_main_module in plugin_resource_main_modules:
+            # in case the plugin resource main module is not in the main modules
             if not plugin_resource_main_module in plugin.main_modules:
                 # logs the validation error
                 self.add_validation_error(validation_errors, plugin_information, "'%s' is missing main module declaration '%s'" % (plugin_module_name, plugin_resource_main_module))
@@ -433,6 +469,9 @@ class ValidationPlugin:
             # validates the plugin descriptor file resources
             self.__validate_plugin_descriptor_file_resources(plugin_information, plugin_descriptor_data, validation_errors)
 
+            # validates the plugin descriptor file extra resources
+            self.__validate_plugin_descriptor_file_extra_resources(plugin_information, plugin_descriptor_data, validation_errors)
+
     def __validate_plugin_descriptor_file_attributes(self, plugin_information, plugin_descriptor_data, validation_errors):
         # retrieves the plugin
         plugin = plugin_information.plugin
@@ -446,13 +485,16 @@ class ValidationPlugin:
         # retrieves the plugin descriptor type
         plugin_descriptor_type = plugin_descriptor_data.get(TYPE_VALUE, None)
 
+        # retrieves the plugin descriptor platform
+        plugin_descriptor_platform = plugin_descriptor_data.get(PLATFORM_VALUE, None)
+
+        # retrieves the plugin descriptor attributes map items
+        plugin_descriptor_attributes_map_items = PLUGIN_DESCRIPTOR_ATTRIBUTES_MAP.items()
+
         # checks that the plugin descriptor type is correct
         if not plugin_descriptor_type == PLUGIN_VALUE:
             # logs the validation error
             self.add_validation_error(validation_errors, plugin_information, "'%s' json descriptor file has invalid attribute 'type'" % plugin_module_name)
-
-        # retrieves the plugin descriptor platform
-        plugin_descriptor_platform = plugin_descriptor_data.get(PLATFORM_VALUE, None)
 
         # checks that the plugin descriptor platform is correct
         if not plugin_descriptor_platform == PYTHON_VALUE:
@@ -460,7 +502,7 @@ class ValidationPlugin:
             self.add_validation_error(validation_errors, plugin_information, "'%s' json descriptor file has invalid attribute 'platform'" % plugin_module_name)
 
         # searches for plugin descriptor attributes with invalid content
-        for plugin_descriptor_attribute_name, plugin_attribute_name in PLUGIN_DESCRIPTOR_ATTRIBUTES_MAP.items():
+        for plugin_descriptor_attribute_name, plugin_attribute_name in plugin_descriptor_attributes_map_items:
             # retrieves the plugin descriptor data attribute
             plugin_descriptor_data_attribute = plugin_descriptor_data.get(plugin_descriptor_attribute_name, None)
 
@@ -504,8 +546,11 @@ class ValidationPlugin:
         # retrieves the number of unique plugin descriptor data capabilities
         number_unique_plugin_descriptor_data_capabilities = len(unique_plugin_descriptor_data_capabilities)
 
+        # retrieves the number of pluginb descriptor data capabilities
+        number_plugin_descriptor_data_capabilities = len(plugin_descriptor_data_capabilities)
+
         # checks for duplicate capabilities
-        if not len(plugin_descriptor_data_capabilities) == number_unique_plugin_descriptor_data_capabilities:
+        if not number_plugin_descriptor_data_capabilities == number_unique_plugin_descriptor_data_capabilities:
             # logs the validation error
             self.add_validation_error(validation_errors, plugin_information, "'%s' json descriptor file has duplicate capabilities" % plugin_module_name)
 
@@ -536,13 +581,22 @@ class ValidationPlugin:
         # retrieves the number of unique plugin descriptor data capabilities allowed
         number_unique_plugin_descriptor_data_capabilities_allowed = len(unique_plugin_descriptor_data_capabilities_allowed)
 
+        # retrieves the number of plugin descriptor data capabilities allowed
+        number_plugin_descriptor_data_capabilities_allowed = len(plugin_descriptor_data_capabilities_allowed)
+
+        # retrieves the number of plugin capabilities allowed
+        number_plugin_capabilities_allowed = len(plugin.capabilities_allowed)
+
+        # retrieves the plugin capabilities allowed range
+        plugin_capabilities_allowed_range = range(number_plugin_capabilities_allowed)
+
         # checks for duplicate capabilities allowed
-        if not len(plugin_descriptor_data_capabilities_allowed) == number_unique_plugin_descriptor_data_capabilities_allowed:
+        if not number_plugin_descriptor_data_capabilities_allowed == number_unique_plugin_descriptor_data_capabilities_allowed:
             # logs the validation error
             self.add_validation_error(validation_errors, plugin_information, "'%s' json descriptor file has duplicate capabilities allowed" % plugin_module_name)
 
         # checks if the number of capabilities allowed is the same as in the plugin
-        if not len(plugin_descriptor_data_capabilities_allowed) == len(plugin.capabilities_allowed):
+        if not number_plugin_descriptor_data_capabilities_allowed == number_plugin_capabilities_allowed:
             # logs the validation error
             self.add_validation_error(validation_errors, plugin_information, "'%s' json descriptor file doesn't have the same number of capabilities allowed as its plugin" % plugin_module_name)
 
@@ -550,7 +604,7 @@ class ValidationPlugin:
             return
 
         # checks that the capabilites allowed are the same
-        for capability_allowed_index in range(len(plugin.capabilities_allowed)):
+        for capability_allowed_index in plugin_capabilities_allowed_range:
             # retrieves the capability allowed
             capability_allowed = plugin.capabilities_allowed[capability_allowed_index]
 
@@ -590,8 +644,17 @@ class ValidationPlugin:
         # retrieves the plugin descriptor data dependencies
         plugin_descriptor_data_dependencies = plugin_descriptor_data[DEPENDENCIES_VALUE]
 
+        # retrieves the number of plugin dependencies
+        number_plugin_dependencies = len(plugin_dependencies)
+
+        # retrieves the number of plugin descriptor data dependencies
+        number_plugin_descriptor_data_dependencies = len(plugin_descriptor_data_dependencies)
+
+        # retrieves the plugin dependencies range
+        plugin_dependencies_range = range(number_plugin_dependencies)
+
         # checks if the number of plugin dependencies is the same as in the plugin descriptor file
-        if not len(plugin_dependencies) == len(plugin_descriptor_data_dependencies):
+        if not number_plugin_dependencies == number_plugin_descriptor_data_dependencies:
             # logs the validation error
             self.add_validation_error(validation_errors, plugin_information, "'%s' json descriptor file doesn't have the same number of dependencies as its plugin" % plugin_module_name)
 
@@ -599,7 +662,7 @@ class ValidationPlugin:
             return
 
         # checks that the dependencies in the plugin descriptor file match the plugin's and are in the same order
-        for plugin_dependency_index in range(len(plugin_dependencies)):
+        for plugin_dependency_index in plugin_dependencies_range:
             # retrieves the plugin's dependency
             plugin_dependency = plugin_dependencies[plugin_dependency_index]
 
@@ -609,13 +672,13 @@ class ValidationPlugin:
             # retrieves the plugin descriptor data dependency id
             plugin_descriptor_data_dependency_id = plugin_descriptor_data_dependency[ID_VALUE]
 
+            # retrieves the plugin descriptor data dependency version
+            plugin_descriptor_data_dependency_version = plugin_descriptor_data_dependency[VERSION_VALUE]
+
             # checks if the dependency ids match
             if not plugin_descriptor_data_dependency_id == plugin_dependency.plugin_id:
                 # logs the validation error
                 self.add_validation_error(validation_errors, plugin_information, "'%s' json descriptor file dependency '%s' doesn't exist or is not in correct order" % (plugin_module_name, plugin_descriptor_data_dependency_id))
-
-            # retrieves the plugin descriptor data dependency version
-            plugin_descriptor_data_dependency_version = plugin_descriptor_data_dependency[VERSION_VALUE]
 
             # checks if the dependency versions match
             if not plugin_descriptor_data_dependency_version == plugin_dependency.plugin_version:
@@ -649,29 +712,40 @@ class ValidationPlugin:
         # retrieves the number of unique plugin descriptor data resources
         number_unique_plugin_descriptor_data_resources = len(unique_plugin_descriptor_data_resources)
 
+        # retrieves the number of plugin descriptor data resources
+        number_plugin_descriptor_data_resources = len(plugin_descriptor_data_resources)
+
+        # retrieves the number of plugin resource file paths
+        number_plugin_resource_file_paths = len(plugin_resource_file_paths)
+
+        # retrieves the plugin resource file paths range
+        plugin_resource_file_paths_range = range(number_plugin_resource_file_paths)
+
         # checks for duplicate resource paths
-        if not len(plugin_descriptor_data_resources) == number_unique_plugin_descriptor_data_resources:
+        if not number_plugin_descriptor_data_resources == number_unique_plugin_descriptor_data_resources:
             # logs the validation error
             self.add_validation_error(validation_errors, plugin_information, "'%s' json descriptor file has duplicate resource paths" % plugin_module_name)
 
         # checks that the plugin resources are in the plugin descriptor
         for plugin_resource_file_path in plugin_resource_file_paths:
+            # in case the plugin resource file path is not in the plugin descriptor data resources
             if not plugin_resource_file_path in plugin_descriptor_data_resources:
                 # logs the validation error
                 self.add_validation_error(validation_errors, plugin_information, "'%s' json descriptor file is missing plugin resource file '%s'" % (plugin_module_name, plugin_resource_file_path))
 
         # checks that the plugin descriptor resources are in the plugin
         for plugin_descriptor_data_resource in plugin_descriptor_data_resources:
+            # in case the plugin resource is not in the plugin resource file paths
             if not plugin_descriptor_data_resource in plugin_resource_file_paths:
                 # logs the validation error
                 self.add_validation_error(validation_errors, plugin_information, "'%s' is missing resource file '%s' referenced in json descriptor file" % (plugin_module_name, plugin_descriptor_data_resource))
 
         # returns in case the number of resources in the plugin is different from the descriptor
-        if not len(plugin_resource_file_paths) == len(plugin_descriptor_data_resources):
+        if not number_plugin_resource_file_paths == number_plugin_descriptor_data_resources:
             return
 
         # looks for resource declarations in the descriptor for each of the discovered resource files
-        for plugin_resource_file_path_index in range(len(plugin_resource_file_paths)):
+        for plugin_resource_file_path_index in plugin_resource_file_paths_range:
             # retrieves the plugin resource file path
             plugin_resource_file_path = plugin_resource_file_paths[plugin_resource_file_path_index]
 
@@ -682,6 +756,74 @@ class ValidationPlugin:
                     self.add_validation_error(validation_errors, plugin_information, "'%s' json descriptor file has misordered resource declaration for file '%s'" % (plugin_module_name, plugin_resource_file_path))
                 else:
                     self.add_validation_error(validation_errors, plugin_information, "'%s' json descriptor file is missing resource declaration for file '%s'" % (plugin_module_name, plugin_resource_file_path))
+
+    def __validate_plugin_descriptor_file_extra_resources(self, plugin_information, plugin_descriptor_data, validation_errors):
+        # retrieves the plugin module name
+        plugin_module_name = plugin_information.plugin_module_name
+
+        # retrieves the plugin resource file paths
+        plugin_resource_file_paths = plugin_information.plugin_resource_file_paths
+
+        # creates the pyc file paths list
+        pyc_file_paths = [PYC_FILE_EXTENSION_FORMAT % plugin_resource_file_path for plugin_resource_file_path in plugin_resource_file_paths if plugin_resource_file_path.endswith(PYTHON_FILE_EXTENSION)]
+
+        # checks that the extra resources attribute exists
+        if not EXTRA_RESOURCES_VALUE in plugin_descriptor_data:
+            # logs the validation error
+            self.add_validation_error(validation_errors, plugin_information, "'%s' json descriptor file is missing attribute 'extra_resources'" % plugin_module_name)
+
+            # returns since nothing else can be tested
+            return
+
+        # retrieves the plugin descriptor data extra resources
+        plugin_descriptor_data_extra_resources = plugin_descriptor_data[EXTRA_RESOURCES_VALUE]
+
+        # creates a set with the plugin descriptor extra data resources
+        plugin_descriptor_data_extra_resources_set = set(plugin_descriptor_data_extra_resources)
+
+        # creates a list with the unique plugin descriptor data extra resources
+        unique_plugin_descriptor_data_extra_resources = list(plugin_descriptor_data_extra_resources_set)
+
+        # retrieves the number of unique plugin descriptor data extra resources
+        number_unique_plugin_descriptor_data_extra_resources = len(unique_plugin_descriptor_data_extra_resources)
+
+        # retrieves the number of plugin descriptor data extra resources
+        number_plugin_descriptor_data_extra_resources = len(plugin_descriptor_data_extra_resources)
+
+        # retrieves the number of pyc file paths
+        number_pyc_file_paths = len(pyc_file_paths)
+
+        # creates the pyc file path range
+        pyc_file_path_range = range(number_pyc_file_paths)
+
+        # checks for duplicate resource paths
+        if not number_plugin_descriptor_data_extra_resources == number_unique_plugin_descriptor_data_extra_resources:
+            # logs the validation error
+            self.add_validation_error(validation_errors, plugin_information, "'%s' json descriptor file has duplicate extra resource paths" % plugin_module_name)
+
+        # checks that the pyc files are in the plugin descriptor
+        for pyc_file_path in pyc_file_paths:
+            # in case the pyc file path is not in the plugin descriptor data extra resources
+            if not pyc_file_path in plugin_descriptor_data_extra_resources:
+                # logs the validation error
+                self.add_validation_error(validation_errors, plugin_information, "'%s' json descriptor file is missing plugin resource file '%s'" % (plugin_module_name, pyc_file_path))
+
+        # returns in case the number of resources in the plugin is different from the descriptor
+        if not number_pyc_file_paths == number_plugin_descriptor_data_extra_resources:
+            return
+
+        # for each pyc file path
+        for pyc_file_path_index in pyc_file_path_range:
+            # retrieves the plugin resource file path
+            pyc_file_path = pyc_file_paths[pyc_file_path_index]
+
+            # checks if there's a resource declaration for the resource file
+            if not pyc_file_path == plugin_descriptor_data_extra_resources[pyc_file_path_index]:
+                # logs the appropriate message depending on whether the declaration is missing or is out of order
+                if pyc_file_path in plugin_descriptor_data_extra_resources:
+                    self.add_validation_error(validation_errors, plugin_information, "'%s' json descriptor file has misordered resource declaration for file '%s'" % (plugin_module_name, pyc_file_path))
+                else:
+                    self.add_validation_error(validation_errors, plugin_information, "'%s' json descriptor file is missing resource declaration for file '%s'" % (plugin_module_name, pyc_file_path))
 
     def _validate_build_automation_file(self, plugin_information, validation_errors):
         # retrieves the plugin
@@ -707,8 +849,11 @@ class ValidationPlugin:
         # retrieves the build automation file path
         build_automation_file_path = base_build_automation_file_path.replace(BASE_PLUGIN_DIRECTORY_VARIABLE, plugin_path)
 
+        # checks if the build automation file path exists
+        build_automation_file_path_exists = os.path.exists(build_automation_file_path)
+
         # checks for the existence of the build automation file
-        if not build_automation_file_path or not os.path.exists(build_automation_file_path):
+        if not build_automation_file_path or not build_automation_file_path_exists:
             # logs the validation error
             self.add_validation_error(validation_errors, plugin_information, "'%s' is missing the referenced build automation file '%s'" % (plugin_module_name, build_automation_file_path))
 
@@ -1235,12 +1380,14 @@ class PluginInformation:
         # replaces windows directory separators with unix directory separators
         path = path.replace(WINDOWS_DIRECTORY_SEPARATOR, UNIX_DIRECTORY_SEPARATOR)
 
+        # returns the path
         return path
 
     def get_file_paths(self, path):
         # retrieves the file paths within the specified path
         file_paths = self._get_file_paths(path, [])
 
+        # returns the file paths
         return file_paths
 
     def _get_file_paths(self, path, file_paths):
@@ -1281,4 +1428,5 @@ class PluginInformation:
         for directory_path in directory_paths:
             file_paths = self._get_file_paths(directory_path, file_paths)
 
+        # returns the file paths
         return file_paths
