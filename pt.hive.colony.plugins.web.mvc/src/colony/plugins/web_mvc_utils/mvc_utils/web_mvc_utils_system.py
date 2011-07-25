@@ -513,9 +513,9 @@ class WebMvcUtils:
 
             # iterates over all the entity classes to set them in
             # the extra symbols map
-            for entity_class in entity_classes:
+            for _entity_class in entity_classes:
                 # sets the entity class in the extra symbols map
-                extra_symbols_map[entity_class.__name__] = entity_class
+                extra_symbols_map[_entity_class.__name__] = _entity_class
 
         # returns the extra symbols map
         return extra_symbols_map
