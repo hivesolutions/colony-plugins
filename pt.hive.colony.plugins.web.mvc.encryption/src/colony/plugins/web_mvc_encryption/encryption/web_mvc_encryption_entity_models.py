@@ -59,7 +59,7 @@ class RootEntity(base_entity.EntityClass):
 
     object_id = {
         "id" : True,
-        "data_type" : "numeric",
+        "data_type" : "integer",
         "generated" : True,
         "generator_type" : "table",
         "table_generator_field_name" : "RootEntity"
@@ -88,17 +88,20 @@ class Consumer(RootEntity):
     """
 
     name = {
-        "data_type" : "text"
+        "data_type" : "text",
+        "mandatory" : True
     }
     """ The consumers's name """
 
     api_key = {
-        "data_type" : "text"
+        "data_type" : "text",
+        "mandatory" : True
     }
     """ The consumers's value """
 
     status = {
-        "data_type" : "numeric"
+        "data_type" : "integer",
+        "mandatory" : True
     }
     """ The consumers's status (1 - active, 2 - inactive) """
 
@@ -129,11 +132,20 @@ class Consumer(RootEntity):
             )
         }
 
-        # validates that a non empty name was set
-        self.add_validation_method("name", "not_empty", {})
+        # validates that the name is not none
+        self.add_validation_method("name", "not_none", True)
 
-        # validates that a non empty api key was set
-        self.add_validation_method("api_key", "not_empty", {})
+        # validates that the name is not empty
+        self.add_validation_method("name", "not_empty")
 
-        # validates that the status value is valid
-        self.add_validation_method("status", "in_enumeration", status_validation_properties)
+        # validates that the api key is not none
+        self.add_validation_method("api_key", "not_none", True)
+
+        # validates that the api key is not empty
+        self.add_validation_method("api_key", "not_empty")
+
+        # validates that the status is not none
+        self.add_validation_method("status", "not_none", True)
+
+        # validates that the status is in the enumeration
+        self.add_validation_method("status", "in_enumeration", properties = status_validation_properties)
