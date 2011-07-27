@@ -46,7 +46,6 @@ import traceback
 
 import web_mvc_utils_exceptions
 
-import colony.libs.map_util
 import colony.libs.time_util
 import colony.libs.string_util
 
@@ -525,8 +524,8 @@ def save_entity_relations(self, rest_request, entity_map, entity, relations_map)
             relation_entity = exception.model
 
             # extends the entity validation errors map with the relation entity
-            # validation errors map
-            entity.validation_errors_map = colony.libs.map_util.map_extend(entity.validation_errors_map, relation_entity.validation_errors_map)
+            # validation errors map for the relation name
+            entity.validation_errors_map[relation_name] = relation_entity.validation_errors_map
 
         # sets the relation entity in the entity
         setattr(entity, relation_name, relation_entity)
