@@ -442,6 +442,7 @@ def get_entity_model(self, entity_manager, entity_model, update_values_map = {},
 def set_entity_relation(self, entity, relation_name, relation_value):
     """
     Sets the given relation value in the given entity.
+    This method provides a safety mechanism for setting relations.
 
     @type entity: Object
     @param entity: The entity to set the relation.
