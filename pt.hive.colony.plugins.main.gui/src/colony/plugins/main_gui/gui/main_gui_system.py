@@ -42,6 +42,8 @@ import sys
 import wx.aui
 import wx._core
 
+import colony.libs.map_util
+
 import colony.base.util
 
 COLONY_VALUE = "colony"
@@ -49,6 +51,9 @@ COLONY_VALUE = "colony"
 
 DARWIN_VALUE = "darwin"
 """ The darwin value """
+
+ACTIVE_VALUE = "active"
+""" The active value """
 
 NODE_VALUE = "node"
 """ The node value """
@@ -167,6 +172,9 @@ class MainGui:
     gui_panel_tab_bitmap_map = {}
     """ The gui panel tab bitmap map """
 
+    gui_configuration = {}
+    """ The gui configuation configuration """
+
     def __init__(self, main_gui_plugin):
         """
         Constructor of the class.
@@ -183,6 +191,15 @@ class MainGui:
         self.gui_panel_tab_bitmap_map = {}
 
     def load_main_application(self):
+        # retrieves the active configuration value (checks if
+        # the gui should start)
+        active = self.gui_configuration.get(ACTIVE_VALUE, True)
+
+        # in case the active flag is not set
+        if not active:
+            # returns immediately
+            return
+
         # initializes the main application
         self.main_application = not self.main_application and MainApplication(self) or self.main_application
 
@@ -193,18 +210,54 @@ class MainGui:
         self.main_application.MainLoop()
 
     def unload_main_application(self):
+        # retrieves the active configuration value (checks if
+        # the gui should start)
+        active = self.gui_configuration.get(ACTIVE_VALUE, True)
+
+        # in case the active flag is not set
+        if not active:
+            # returns immediately
+            return
+
         # unloads the main application
         self.main_application.unload()
 
     def show_main_application(self):
+        # retrieves the active configuration value (checks if
+        # the gui should start)
+        active = self.gui_configuration.get(ACTIVE_VALUE, True)
+
+        # in case the active flag is not set
+        if not active:
+            # returns immediately
+            return
+
         # shows the application
         self.main_application.show()
 
     def refresh_main_application(self):
+        # retrieves the active configuration value (checks if
+        # the gui should start)
+        active = self.gui_configuration.get(ACTIVE_VALUE, True)
+
+        # in case the active flag is not set
+        if not active:
+            # returns immediately
+            return
+
         # refreshes the main application
         self.main_application.refresh()
 
     def load_gui_panel_plugin(self, plugin):
+        # retrieves the active configuration value (checks if
+        # the gui should start)
+        active = self.gui_configuration.get(ACTIVE_VALUE, True)
+
+        # in case the active flag is not set
+        if not active:
+            # returns immediately
+            return
+
         # retrieves the bitmap loader plugin
         main_gui_plugin = self.main_gui_plugin
         bitmap_loader_plugin = main_gui_plugin.bitmap_loader_plugin
@@ -236,6 +289,15 @@ class MainGui:
         self.refresh_main_application()
 
     def unload_gui_panel_plugin(self, plugin):
+        # retrieves the active configuration value (checks if
+        # the gui should start)
+        active = self.gui_configuration.get(ACTIVE_VALUE, True)
+
+        # in case the active flag is not set
+        if not active:
+            # returns immediately
+            return
+
         # retrieves the plugin id
         plugin_id = plugin.id
 
@@ -251,6 +313,20 @@ class MainGui:
 
         # refreshes the main application
         self.refresh_main_application()
+
+    def set_configuration_property(self, configuration_property):
+        # retrieves the configuration
+        configuration = configuration_property.get_data()
+
+        # cleans the gui configuration
+        colony.libs.map_util.map_clean(self.gui_configuration)
+
+        # copies the service configuration to the gui configuration
+        colony.libs.map_util.map_copy(configuration, self.gui_configuration)
+
+    def unset_configuration_property(self):
+        # cleans the gui configuration
+        colony.libs.map_util.map_clean(self.gui_configuration)
 
 class MainApplication(wx.App):
     """

@@ -126,6 +126,14 @@ class MainGuiPlugin(colony.base.plugin_system.Plugin):
     def dependency_injected(self, plugin):
         colony.base.plugin_system.Plugin.dependency_injected(self, plugin)
 
+    @colony.base.decorators.set_configuration_property
+    def set_configuration_property(self, property_name, property):
+        colony.base.plugin_system.Plugin.set_configuration_property(self, property_name, property)
+
+    @colony.base.decorators.unset_configuration_property
+    def unset_configuration_property(self, property_name):
+        colony.base.plugin_system.Plugin.unset_configuration_property(self, property_name)
+
     def init_complete(self):
         colony.base.plugin_system.Plugin.init_complete(self)
 
@@ -154,3 +162,11 @@ class MainGuiPlugin(colony.base.plugin_system.Plugin):
     @colony.base.decorators.plugin_inject("pt.hive.colony.plugins.misc.bitmap_loader")
     def set_bitmap_loader_plugin(self, bitmap_loader_plugin):
         self.bitmap_loader_plugin = bitmap_loader_plugin
+
+    @colony.base.decorators.set_configuration_property_method("configuration")
+    def configuration_set_configuration_property(self, property_name, property):
+        self.main_gui.set_configuration_property(property)
+
+    @colony.base.decorators.unset_configuration_property_method("configuration")
+    def configuration_unset_configuration_property(self, property_name):
+        self.main_gui.unset_configuration_property()
