@@ -1933,9 +1933,6 @@ class EntityManagerSqliteEngine:
 
             # in case the entity is already buffered
             if buffered_entity:
-                # closes the cursor
-                cursor.close()
-
                 # unsets the lazy loaded flag
                 lazy_loaded_flag = False
 
@@ -1954,6 +1951,9 @@ class EntityManagerSqliteEngine:
 
                 # in case the lazy loaded flag is not set
                 if not lazy_loaded_flag:
+                    # closes the cursor
+                    cursor.close()
+
                     # returns the buffered entity
                     return buffered_entity
             # otherwise the entity is not buffered
@@ -1971,9 +1971,6 @@ class EntityManagerSqliteEngine:
 
                     # sets the relation attribute in the instance
                     setattr(entity, entity_class_valid_attribute_name, relation_attribute_value)
-
-                # closes the cursor
-                cursor.close()
 
             # retrieves all the valid indirect attribute names, removes method values and the name exceptions
             entity_valid_indirect_attribute_names = self.get_entity_indirect_attribute_names(entity)
@@ -2053,6 +2050,9 @@ class EntityManagerSqliteEngine:
 
             # sets the entity fields
             entity = self.set_fields(entity, fields)
+
+            # closes the cursor
+            cursor.close()
 
             # returns the created entity
             return entity
