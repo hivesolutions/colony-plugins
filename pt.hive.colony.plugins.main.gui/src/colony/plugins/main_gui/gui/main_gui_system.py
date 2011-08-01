@@ -189,6 +189,7 @@ class MainGui:
         self.gui_panel_plugins_map = {}
         self.gui_panel_node_bitmap_map = {}
         self.gui_panel_tab_bitmap_map = {}
+        self.gui_configuration = {}
 
     def load_main_application(self):
         # retrieves the active configuration value (checks if
