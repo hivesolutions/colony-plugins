@@ -214,51 +214,20 @@ class MainGui:
         self.main_application.MainLoop()
 
     def unload_main_application(self):
-        # retrieves the active configuration value (checks if
-        # the gui should start)
-        active = self.gui_configuration.get(ACTIVE_VALUE, True)
-
-        # in case the active flag is not set
-        if not active:
-            # returns immediately
-            return
-
-        # unloads the main application
-        self.main_application.unload()
+        # unloads the main application (in case it's loaded)
+        self.main_application and self.main_application.unload()
 
     def show_main_application(self):
-        # retrieves the active configuration value (checks if
-        # the gui should start)
-        active = self.gui_configuration.get(ACTIVE_VALUE, True)
-
-        # in case the active flag is not set
-        if not active:
-            # returns immediately
-            return
-
-        # shows the application
-        self.main_application.show()
+        # shows the application (in case it's loaded)
+        self.main_application and self.main_application.show()
 
     def refresh_main_application(self):
-        # retrieves the active configuration value (checks if
-        # the gui should start)
-        active = self.gui_configuration.get(ACTIVE_VALUE, True)
-
-        # in case the active flag is not set
-        if not active:
-            # returns immediately
-            return
-
-        # refreshes the main application
-        self.main_application.refresh()
+        # refreshes the main application (in case it's loaded)
+        self.main_application and self.main_application.refresh()
 
     def load_gui_panel_plugin(self, plugin):
-        # retrieves the active configuration value (checks if
-        # the gui should start)
-        active = self.gui_configuration.get(ACTIVE_VALUE, True)
-
-        # in case the active flag is not set
-        if not active:
+        # in case the main application is not loaded
+        if not self.main_application:
             # returns immediately
             return
 
@@ -293,12 +262,8 @@ class MainGui:
         self.refresh_main_application()
 
     def unload_gui_panel_plugin(self, plugin):
-        # retrieves the active configuration value (checks if
-        # the gui should start)
-        active = self.gui_configuration.get(ACTIVE_VALUE, True)
-
-        # in case the active flag is not set
-        if not active:
+        # in case the main application is not loaded
+        if not self.main_application:
             # returns immediately
             return
 
