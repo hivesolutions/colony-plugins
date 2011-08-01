@@ -197,6 +197,9 @@ class MainGui:
 
         # in case the active flag is not set
         if not active:
+            # notifies the ready semaphore
+            self.main_gui_plugin.release_ready_semaphore()
+
             # returns immediately
             return
 
