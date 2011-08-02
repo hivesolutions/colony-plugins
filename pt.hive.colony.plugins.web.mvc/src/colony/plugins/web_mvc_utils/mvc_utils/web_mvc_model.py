@@ -352,6 +352,48 @@ def not_empty_validate(self, attribute_name, attribute_value, properties):
         # adds an error to the given attribute name
         self.add_error(attribute_name, "value is empty")
 
+def length_less_than_validate(self, attribute_name, attribute_value, properties):
+    """
+    Validates an attribute to ensure that its length is less than target.
+
+    @type attribute_name: String
+    @param attribute_name: The name of the attribute to be validated.
+    @type attribute_value: Object
+    @param attribute_value: The value of the attribute to be validated.
+    @type properties: Dictionary
+    @param properties: The properties for the validation.
+    """
+
+    # retrieves the target value from the properties
+    target_value = properties[TARGET_VALUE]
+
+    # in case the attribute value is not less than
+    # the target value
+    if not len(attribute_value) < target_value:
+        # adds an error to the given attribute name
+        self.add_error(attribute_name, "length of value is greater or equal that the target")
+
+def length_greater_than_validate(self, attribute_name, attribute_value, properties):
+    """
+    Validates an attribute to ensure that its length is greater than target.
+
+    @type attribute_name: String
+    @param attribute_name: The name of the attribute to be validated.
+    @type attribute_value: Object
+    @param attribute_value: The value of the attribute to be validated.
+    @type properties: Dictionary
+    @param properties: The properties for the validation.
+    """
+
+    # retrieves the target value from the properties
+    target_value = properties[TARGET_VALUE]
+
+    # in case the attribute value is not less than
+    # the target value
+    if not len(attribute_value) > target_value:
+        # adds an error to the given attribute name
+        self.add_error(attribute_name, "length of value is less or equal that the target")
+
 def in_enumeration_validate(self, attribute_name, attribute_value, properties):
     """
     Validates an attribute to ensure that it is greater than zero.
