@@ -1175,8 +1175,8 @@ def redirect_back(self, rest_request, default_target = "/", status_code = 302, q
 
 def set_redirect_to(self, rest_request, target, reason = None):
     """
-    Sets the redirect to operation information,
-    for latter usage.
+    Sets the "redirect to" operation information (target
+    and optionally reason), for latter usage.
 
     @type rest_request: RestRequest
     @param rest_request: The rest request to be used.
@@ -1194,7 +1194,7 @@ def set_redirect_to(self, rest_request, target, reason = None):
 def redirect_to(self, rest_request):
     """
     Redirects the current request to the current
-    redirect to target.
+    "redirect to" target.
     This method should be used after the setting of
     a redirect to attributes.
 
@@ -1206,14 +1206,40 @@ def redirect_to(self, rest_request):
     # it after the retrieval (avoid duplicate redirections)
     redirect_to_target = self.get_session_attribute(rest_request, "redirect_to_target", unset_session_attribute = True)
 
-    # in case no redirect to target is found
+    # in case no "redirect to" target is found
     # (there was no previous assignment of redirect to)
     if not redirect_to_target:
         # returns immediately
         return
 
-    # redirects the request to the redirect to target
+    # redirects the request to the "redirect to" target
     self.redirect(rest_request, redirect_to_target)
+
+def redirect_to_base_path(self, rest_request):
+    """
+    Redirects the current request to the current
+    "redirect to" target.
+    This method should be used after the setting of
+    a redirect to attributes.
+    This method also updates the target to conform
+    with the current base path.
+
+    @type rest_request: RestRequest
+    @param rest_request: The rest request to be used.
+    """
+
+    # retrieves the redirect to target value from session, the unsets
+    # it after the retrieval (avoid duplicate redirections)
+    redirect_to_target = self.get_session_attribute(rest_request, "redirect_to_target", unset_session_attribute = True)
+
+    # in case no "redirect to" target is found
+    # (there was no previous assignment of redirect to)
+    if not redirect_to_target:
+        # returns immediately
+        return
+
+    # redirects (with base) the request to the "redirect to" target
+    self.redirect_base_path(rest_request, redirect_to_target)
 
 def process_set_contents(self, rest_request, template_file, variable_encoding = None, content_type = DEFAULT_CONTENT_TYPE):
     """
