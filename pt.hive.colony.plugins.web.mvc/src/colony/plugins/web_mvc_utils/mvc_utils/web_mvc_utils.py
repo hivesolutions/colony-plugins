@@ -60,7 +60,7 @@ PATTERN_NAMES_VALUE = "pattern_names"
 VALIDATION_METHOD_ENABLED_VALUE = "validation_method_enabled"
 """ The validation method enabled value """
 
-def validated_method(validation_parameters = None, validation_method = None):
+def validated_method(validation_parameters = None, validation_method = None, call_validation_failed = False):
     """
     Decorator for the validated method.
 
@@ -70,6 +70,9 @@ def validated_method(validation_parameters = None, validation_method = None):
     @type validation_method: Method
     @param validation_method: The validation method to be used for extra
     validation (in case it's necessary).
+    @type call_validation_failed: bool
+    @param call_validation_failed: If the validation failed method should be
+    called in case the validation fails.
     @rtype: Function
     @return: The created decorator.
     """
@@ -132,7 +135,7 @@ def validated_method(validation_parameters = None, validation_method = None):
             # retrieves the session attributes map
             session_attributes = rest_request.get_session_attributes_map();
 
-            # in case the validation method is set and the validation  method
+            # in case the validation method is set and the validation method
             # enabled flag is set in the parameters
             if validation_method and validation_method_enabled:
                 try:
@@ -147,8 +150,9 @@ def validated_method(validation_parameters = None, validation_method = None):
 
             # in case the reasons list is not empty
             if reasons_list:
-                # in case a validation failed method is defined
-                if validation_failed_method:
+                # in case a validation failed method is defined and
+                # the call validation failed flag is set
+                if validation_failed_method and call_validation_failed:
                     # calls the validation failed method with the rest request the parameters the
                     # validation parameters and the reasons list and sets the return value
                     return_value = validation_failed_method(rest_request, parameters, validation_parameters, reasons_list)
