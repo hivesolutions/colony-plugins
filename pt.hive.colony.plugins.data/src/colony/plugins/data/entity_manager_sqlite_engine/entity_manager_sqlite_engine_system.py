@@ -3517,7 +3517,14 @@ class EntityManagerSqliteEngine:
 
         # in case the attribute date type is date
         if attribute_data_type == "date":
-            return datetime.datetime.utcfromtimestamp(float(attribute_value))
+            # converts the attribute value to float
+            attribute_value = float(attribute_value)
+
+            # converts the attribute value to date time value
+            date_time_value = datetime.datetime.utcfromtimestamp(attribute_value)
+
+            # returns the date time (converted) value
+            return date_time_value
 
         # returns the attribute value
         return attribute_value
