@@ -1121,6 +1121,32 @@ def redirect_base_path(self, rest_request, target, status_code = 302, quote = Tr
     # redirects to the target base path
     self.redirect(rest_request, target_base_path, status_code, quote)
 
+def redirect_mvc_path(self, rest_request, target, status_code = 302, quote = True):
+    """
+    Redirects the current request to the given
+    target (page).
+    This method updates the target to conform with the
+    current mvc path.
+
+    @type rest_request: RestRequest
+    @param rest_request: The rest request to be used.
+    @type target: String
+    @param target: The target (page) of the redirect.
+    @type status_code: int
+    @param status_code: The status code to be used.
+    @type quote: bool
+    @param quote: If the target path should be quoted.
+    """
+
+    # retrieves the mvc path
+    mvc_path = self.get_mvc_path(rest_request)
+
+    # creates the "new" target with the mvc path
+    target_mvc_path = mvc_path + target
+
+    # redirects to the target mvc path
+    self.redirect(rest_request, target_mvc_path, status_code, quote)
+
 def redirect_back(self, rest_request, default_target = "/", status_code = 302, quote = False):
     """
     Redirects the current request to the previous header
@@ -1146,6 +1172,48 @@ def redirect_back(self, rest_request, default_target = "/", status_code = 302, q
 
     # redirects the rest request to the target
     self.redirect(rest_request, target, status_code, quote)
+
+def set_redirect_to(self, rest_request, target, reason = None):
+    """
+    Sets the redirect to operation information,
+    for latter usage.
+
+    @type rest_request: RestRequest
+    @param rest_request: The rest request to be used.
+    @type target: String
+    @param target: The target (page) of the redirect to operation.
+    @type reason: String
+    @param reason: A string describing the reason for
+    the redirect to operation.
+    """
+
+    # sets both the target and the reason for the redirect to operation
+    self.set_session_attribute(rest_request, "redirect_to_target", target)
+    self.set_session_attribute(rest_request, "redirect_to_reason", reason)
+
+def redirect_to(self, rest_request):
+    """
+    Redirects the current request to the current
+    redirect to target.
+    This method should be used after the setting of
+    a redirect to attributes.
+
+    @type rest_request: RestRequest
+    @param rest_request: The rest request to be used.
+    """
+
+    # retrieves the redirect to target value from session, the unsets
+    # it after the retrieval (avoid duplicate redirections)
+    redirect_to_target = self.get_session_attribute(rest_request, "redirect_to_target", unset_session_attribute = True)
+
+    # in case no redirect to target is found
+    # (there was no previous assignment of redirect to)
+    if not redirect_to_target:
+        # returns immediately
+        return
+
+    # redirects the request to the redirect to target
+    self.redirect(rest_request, redirect_to_target)
 
 def process_set_contents(self, rest_request, template_file, variable_encoding = None, content_type = DEFAULT_CONTENT_TYPE):
     """
