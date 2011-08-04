@@ -70,11 +70,13 @@ class WebMvcPanelItemMonitor:
         # creates the controllers for the web mvc panel item monitor controllers module
         web_mvc_utils_plugin.create_controllers("web_mvc_panel_item.monitor.web_mvc_panel_item_monitor_controllers", self, self.web_mvc_panel_item_monitor_plugin, "web_mvc_panel_item_monitor")
 
-    def get_panel_item(self, parameters):
+    def get_panel_item(self, rest_request, parameters):
         """
         Retrieves the code for the panel item for
         the given parameters.
 
+        @type rest_request: RestRequest
+        @param rest_request: The current rest request.
         @type parameters: Dictionary
         @param parameters: The parameters to retrieve the code for
         the panel item.
@@ -82,7 +84,7 @@ class WebMvcPanelItemMonitor:
         @return: The code for the monitor item.
         """
 
-        return self.web_mvc_panel_item_monitor_main_controller.get_panel_item()
+        return self.web_mvc_panel_item_monitor_main_controller.get_panel_item(rest_request)
 
     def load_web_mvc_monitor_item_plugin(self, web_mvc_monitor_item_plugin):
         """

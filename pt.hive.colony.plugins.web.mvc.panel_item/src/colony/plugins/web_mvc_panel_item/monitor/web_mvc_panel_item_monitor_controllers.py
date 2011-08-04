@@ -72,20 +72,20 @@ class MainController:
         # sets the relative resources path
         self.set_relative_resources_path(WEB_MVC_PANEL_ITEM_MONITOR_RESOURCES_PATH)
 
-    def get_panel_item(self):
+    def get_panel_item(self, rest_request):
         # retrieves the template file
         template_file = self.retrieve_template_file("panel_item_monitor.html.tpl")
 
         # assigns the monitor variables
-        self.__assign_monitor_item_variables(template_file)
+        self.__assign_monitor_item_variables(rest_request, template_file)
 
         # processes the template file
-        processed_template_file = self.process_template_file(template_file)
+        processed_template_file = self.process_template_file(rest_request, template_file)
 
         # returns the processed template file
         return processed_template_file
 
-    def __assign_monitor_item_variables(self, template_file):
+    def __assign_monitor_item_variables(self, rest_request, template_file):
         # retrieves the web mvc monitor item plugins
         web_mvc_monitor_item_plugins = self.web_mvc_panel_item_monitor_plugin.web_mvc_monitor_item_plugins
 
@@ -94,7 +94,7 @@ class MainController:
 
         # iterates over all the web mvc monitor item plugins
         for web_mvc_monitor_item_plugin in web_mvc_monitor_item_plugins:
-            monitor_item = web_mvc_monitor_item_plugin.get_monitor_item({})
+            monitor_item = web_mvc_monitor_item_plugin.get_monitor_item(rest_request, {})
             monitor_items_list.append(monitor_item)
 
         # assigns the monitor items to the template

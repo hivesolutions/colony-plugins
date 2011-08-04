@@ -115,11 +115,13 @@ class WebMvcPanelItemMonitorPlugin(colony.base.plugin_system.Plugin):
     def dependency_injected(self, plugin):
         colony.base.plugin_system.Plugin.dependency_injected(self, plugin)
 
-    def get_panel_item(self, parameters):
+    def get_panel_item(self, rest_request, parameters):
         """
         Retrieves the code for the panel item for
         the given parameters.
 
+        @type rest_request: RestRequest
+        @param rest_request: The current rest request.
         @type parameters: Dictionary
         @param parameters: The parameters to retrieve the code for
         the panel item.
@@ -127,7 +129,7 @@ class WebMvcPanelItemMonitorPlugin(colony.base.plugin_system.Plugin):
         @return: The code for the monitor item.
         """
 
-        return self.web_mvc_panel_item_monitor.get_panel_item(parameters)
+        return self.web_mvc_panel_item_monitor.get_panel_item(rest_request, parameters)
 
     @colony.base.decorators.load_allowed_capability("web.mvc.monitor_item")
     def web_mvc_monitor_item_load_allowed(self, plugin, capability):

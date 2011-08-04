@@ -70,11 +70,13 @@ class WebMvcPanelItemDidYouKnow:
         # creates the controllers for the web mvc panel item did you know controllers module
         web_mvc_utils_plugin.create_controllers("web_mvc_panel_item.did_you_know.web_mvc_panel_item_did_you_know_controllers", self, self.web_mvc_panel_item_did_you_know_plugin, "web_mvc_panel_item_did_you_know")
 
-    def get_panel_item(self, parameters):
+    def get_panel_item(self, rest_request, parameters):
         """
         Retrieves the code for the panel item for
         the given parameters.
 
+        @type rest_request: RestRequest
+        @param rest_request: The current rest request.
         @type parameters: Dictionary
         @param parameters: The parameters to retrieve the code for
         the panel item.
@@ -82,4 +84,4 @@ class WebMvcPanelItemDidYouKnow:
         @return: The code for the monitor item.
         """
 
-        return self.web_mvc_panel_item_did_you_know_main_controller.get_panel_item()
+        return self.web_mvc_panel_item_did_you_know_main_controller.get_panel_item(rest_request)
