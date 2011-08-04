@@ -71,10 +71,10 @@ def save(self, entity_manager = None):
 
     # retrieves the entity manager to be used or the
     # default "embedded" entity manager
-    entity_manger = entity_manager or self._entity_manager
+    entity_manager = entity_manager or self._entity_manager
 
     # saves the entity using the entity manager
-    entity_manger.save(self)
+    entity_manager.save(self)
 
 def update(self, entity_manager = None):
     """
@@ -90,10 +90,10 @@ def update(self, entity_manager = None):
 
     # retrieves the entity manager to be used or the
     # default "embedded" entity manager
-    entity_manger = entity_manager or self._entity_manager
+    entity_manager = entity_manager or self._entity_manager
 
     # updates the entity using the entity manager
-    entity_manger.update(self)
+    entity_manager.update(self)
 
 def remove(self, entity_manager = None):
     """
@@ -109,23 +109,62 @@ def remove(self, entity_manager = None):
 
     # retrieves the entity manager to be used or the
     # default "embedded" entity manager
-    entity_manger = entity_manager or self._entity_manager
+    entity_manager = entity_manager or self._entity_manager
 
     # removes the entity using the entity manager
-    entity_manger.remove(self)
+    entity_manager.remove(self)
 
 def save_update(self, entity_manager = None):
+    """
+    Saves or updates the current instance into the data source
+    described in the current entity manager.
+    This method provides the persistence layer for
+    creating an object.
+
+    @type entity_manager: EntityManager
+    @param entity_manager: The optional entity manager
+    reference to be used.
+    """
+
     # retrieves the entity manager to be used or the
     # default "embedded" entity manager
-    entity_manger = entity_manager or self._entity_manager
+    entity_manager = entity_manager or self._entity_manager
 
     # saves or updates the entity using the entity manager
-    entity_manger.save_update(self)
+    entity_manager.save_update(self)
+
+def is_persisted(self, entity_manager = None):
+    """
+    Checks the internal structure of the entity
+    to guess if the entity  model is persisted.
+    The heuristic involves checking the id attribute
+    of the entity is already defined.
+    This method should be used carefully because
+    it assumes the entity id is generated automatically
+    on the first save.
+
+    @type entity_manager: EntityManager
+    @param entity_manager: The optional entity manager
+    reference to be used.
+    """
+
+    # retrieves the entity manager to be used or the
+    # default "embedded" entity manager
+    entity_manager = entity_manager or self._entity_manager
+
+    # retrieves the id attribute value
+    id_attribute_value = entity_manager.get_entity_id_attribute_value(self)
+
+    # checks if the id attribute value is not none (persisted)
+    persisted = not id_attribute_value == None
+
+    # returns the persisted value
+    return persisted
 
 def lock(self, entity_manager = None):
     # retrieves the entity manager to be used or the
     # default "embedded" entity manager
-    entity_manger = entity_manager or self._entity_manager
+    entity_manager = entity_manager or self._entity_manager
 
     # retrieves the class of the current object
     entity_class = self.__class__
@@ -134,18 +173,18 @@ def lock(self, entity_manager = None):
     id_attribute_value = self.get_id_attribute_value()
 
     # locks the entity with the given attribute
-    entity_manger.lock(entity_class, id_attribute_value)
+    entity_manager.lock(entity_class, id_attribute_value)
 
 def get_id_attribute_name(self, entity_manager = None):
     # retrieves the entity manager to be used or the
     # default "embedded" entity manager
-    entity_manger = entity_manager or self._entity_manager
+    entity_manager = entity_manager or self._entity_manager
 
     # retrieves the class of the current object
     entity_class = self.__class__
 
     # retrieves the id attribute name from the current object
-    id_attribute_name = entity_manger.get_entity_class_id_attribute_name(entity_class)
+    id_attribute_name = entity_manager.get_entity_class_id_attribute_name(entity_class)
 
     # returns the id attribute name
     return id_attribute_name
@@ -153,10 +192,10 @@ def get_id_attribute_name(self, entity_manager = None):
 def get_id_attribute_value(self, entity_manager = None):
     # retrieves the entity manager to be used or the
     # default "embedded" entity manager
-    entity_manger = entity_manager or self._entity_manager
+    entity_manager = entity_manager or self._entity_manager
 
     # retrieves the id attribute value from the current object
-    id_attribute_value = entity_manger.get_entity_id_attribute_value(self)
+    id_attribute_value = entity_manager.get_entity_id_attribute_value(self)
 
     # returns the id attribute value
     return id_attribute_value
