@@ -171,7 +171,7 @@ class MainController:
                 template_file = self.retrieve_template_file("general.html.tpl")
 
                 # assigns the configuration (side panel) variables to the template
-                self.web_mvc_manager.web_mvc_manager_side_panel_controller._assign_configuration_variables(template_file)
+                self.web_mvc_manager.web_mvc_manager_side_panel_controller._assign_configuration_variables(rest_request, template_file)
 
                 # assigns the header variables to the template
                 self.web_mvc_manager.web_mvc_manager_header_controller._assign_header_variables(template_file)
@@ -243,7 +243,7 @@ class SidePanelController:
         template_file = self.retrieve_template_file("side_panel_update.html.tpl")
 
         # assigns the update variables
-        self._assign_update_variables(template_file)
+        self._assign_update_variables(rest_request, template_file)
 
         # applies the base path to the template file
         self.apply_base_path_template_file(rest_request, template_file)
@@ -266,7 +266,7 @@ class SidePanelController:
         template_file = self.retrieve_template_file("side_panel_configuration.html.tpl")
 
         # assigns the configuration variables
-        self._assign_configuration_variables(template_file)
+        self._assign_configuration_variables(rest_request, template_file)
 
         # applies the base path to the template file
         self.apply_base_path_template_file(rest_request, template_file)
@@ -274,13 +274,13 @@ class SidePanelController:
         # processes the template file and sets the request contents
         self.process_set_contents(rest_request, template_file)
 
-    def _assign_update_variables(self, template_file):
-        self.__assign_panel_item_variables(template_file)
+    def _assign_update_variables(self, rest_request, template_file):
+        self.__assign_panel_item_variables(rest_request, template_file)
 
-    def _assign_configuration_variables(self, template_file):
-        self.__assign_panel_item_variables(template_file)
+    def _assign_configuration_variables(self, rest_request, template_file):
+        self.__assign_panel_item_variables(rest_request, template_file)
 
-    def __assign_panel_item_variables(self, template_file):
+    def __assign_panel_item_variables(self, rest_request, template_file):
         # retrieves the web mvc panel item plugins
         web_mvc_panel_item_plugins = self.web_mvc_manager_plugin.web_mvc_panel_item_plugins
 
@@ -289,7 +289,7 @@ class SidePanelController:
 
         # iterates over all the web mvc panel item plugins
         for web_mvc_panel_item_plugin in web_mvc_panel_item_plugins:
-            panel_item = web_mvc_panel_item_plugin.get_panel_item({})
+            panel_item = web_mvc_panel_item_plugin.get_panel_item(rest_request, {})
             panel_items_list.append(panel_item)
 
         # assigns the panel items to the template
