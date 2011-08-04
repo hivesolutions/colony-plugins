@@ -39,7 +39,9 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 import re
 import time
+import heapq
 import datetime
+import threading
 
 import colony.libs.quote_util
 import colony.libs.string_buffer_util
@@ -130,6 +132,9 @@ DEFAULT_PATH = "/"
 DEFAULT_STATUS_CODE = 200
 """ The default status code """
 
+DEFAULT_TIMEOUT = 3600
+""" The default timeout """
+
 class MainRestManager:
     """
     The main rest manager class.
@@ -159,8 +164,14 @@ class MainRestManager:
     service_methods_map = {}
     """ The service methods map """
 
+    rest_session_list = []
+    """ The list used as priority queue for session cancellation """
+
     rest_session_map = {}
     """ The map associating the session id with the rest session """
+
+    rest_session_lock = None
+    """ The lock that controls the access to the critical sections in session information """
 
     def __init__(self, main_rest_manager_plugin):
         """
@@ -179,7 +190,9 @@ class MainRestManager:
         self.regex_index_plugin_id_map = {}
         self.service_methods = []
         self.service_methods_map = {}
+        self.rest_session_list = []
         self.rest_session_map = {}
+        self.rest_session_lock = threading.RLock()
 
     def get_handler_filename(self):
         """
@@ -271,6 +284,9 @@ class MainRestManager:
 
         # constructs the rest path list
         path_list = middle_path_name + [last_path_initial_name]
+
+        # updates the session list (garbage collection)
+        self.update_session_list()
 
         # creates the rest request
         rest_request = RestRequest(self, request)
@@ -404,6 +420,50 @@ class MainRestManager:
 
         # flushes the rest request
         rest_request.flush()
+
+    def update_session_list(self):
+        """
+        Updates the session list, checking for old
+        session and stopping them (garbage collection).
+        """
+
+        # retrieves the current time
+        current_time = time.time()
+
+        # iterates continuously
+        while True:
+            # in case the rest session list
+            # is not valid (empty)
+            if not self.rest_session_list:
+                # breaks the loop
+                break
+
+            # acquires the rest session lock
+            self.rest_session_lock.acquire()
+
+            try:
+                # retrieves the first session information
+                # form the rest session list (ordered list)
+                session_expire_time, session_id = self.rest_session_list[0]
+
+                # in case the session expire time is
+                # still in the future
+                if session_expire_time > current_time:
+                    # breaks the loop
+                    break
+
+                # retrieves the session information
+                # and removes it from the system
+                # (garbage collection)
+                session = self.get_session(session_id)
+                self.remove_session(session)
+
+                # pops the last element from the res
+                # session list (heap)
+                heapq.heappop(self.rest_session_list)
+            finally:
+                # releases the rest session lock
+                self.rest_session_lock.release()
 
     def is_active(self):
         """
@@ -669,6 +729,19 @@ class MainRestManager:
         # retrieves the session id
         session_id = session.get_session_id()
 
+        # retrieves the session expire time
+        session_expire_time = session.get_expire_time()
+
+        # creates the session tuple form the session
+        # expire time and id (to be used for session cancellation)
+        session_tuple = (session_expire_time, session_id)
+
+        # sets the session in the rest session map
+        self.rest_session_map[session_id] = session
+
+        # pushes the session tuple to the rest session list (heap)
+        heapq.heappush(self.rest_session_list, session_tuple)
+
         # sets the session in the rest session map
         self.rest_session_map[session_id] = session
 
@@ -851,20 +924,24 @@ class RestRequest:
         self.rest_encoder_plugins = []
         self.rest_encoder_plugins_map = {}
 
-    def start_session(self, force = False, session_id = None):
+    def start_session(self, force = False, session_id = None, timeout = DEFAULT_TIMEOUT):
         """
         Starts the session for the given session id,
         or generates a new session id.
+        In case the session id is not provided a new
+        session id is generated in a secure manner.
 
         @type force: bool
         @param force: If the session should be created if a session
         is already selected.
         @type session_id: String
         @param session_id: The session id to be used.
+        @type timeout: float
+        @param timeout: The timeout to be used in the session.
         """
 
         # in case a session exists and force flag is disabled
-        # avoids creation
+        # avoids creation (provides duplicate creation blocking)
         if self.session and not force:
             # returns immediately
             return
@@ -1423,23 +1500,52 @@ class RestSession:
     session_id = None
     """ The session id """
 
+    timeout = None
+    """ The timeout """
+
+    expire_time = None
+    """ The expire time """
+
     cookie = None
     """ The cookie """
 
     attributes_map = {}
     """ The attributes map """
 
-    def __init__(self, session_id = None):
+    def __init__(self, session_id = None, timeout = DEFAULT_TIMEOUT):
         """
         Constructor of the class.
 
         @type session_id: String
         @param session_id: The session id.
+        @type timeout: float
+        @param timeout: The timeout.
         """
 
         self.session_id = session_id
 
         self.attributes_map = {}
+
+        # generates the expire time from the
+        # current time and the given timeout
+        self.generate_expire_time(timeout)
+
+    def generate_expire_time(self, timeout):
+        """
+        Generates the expire time value from the
+        given timeout value using the current
+        time.
+
+        @type timeout: float
+        @param timeout: The timeout value to be
+        used for expire time generation.
+        """
+
+        # retrieves the current time to be used
+        # in the calculate of the expire time from
+        # the timeout value
+        current_time = time.time()
+        self.expire_time = current_time + timeout
 
     def start(self, domain = None, include_sub_domain = True):
         """
@@ -1503,6 +1609,46 @@ class RestSession:
         """
 
         self.session_id = session_id
+
+    def get_timeout(self):
+        """
+        Retrieves the timeout.
+
+        @rtype: float
+        @return: The timeout.
+        """
+
+        return self.timeout
+
+    def set_timeout(self, timeout):
+        """
+        Sets the timeout.
+
+        @type timeout: float
+        @param timeout: The timeout.
+        """
+
+        self.timeout = timeout
+
+    def get_expire_time(self):
+        """
+        Retrieves the expire time.
+
+        @rtype: float
+        @return: The expire time.
+        """
+
+        return self.expire_time
+
+    def set_expire_time(self, expire_time):
+        """
+        Sets the expire time.
+
+        @type expire_time: float
+        @param expire_time: The expire time.
+        """
+
+        self.expire_time = expire_time
 
     def get_cookie(self):
         """
