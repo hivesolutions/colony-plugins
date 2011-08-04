@@ -71,11 +71,13 @@ class WebMvcMonitorItemColony:
         # creates the controllers for the web mvc monitor item colony controllers module
         web_mvc_utils_plugin.create_controllers("web_mvc_monitor_item.colony.web_mvc_monitor_item_colony_controllers", self, self.web_mvc_monitor_item_colony_plugin, "web_mvc_monitor_item_colony")
 
-    def get_monitor_item(self, parameters):
+    def get_monitor_item(self, rest_request, parameters):
         """
         Retrieves the code for the monitor item for
         the given parameters.
 
+        @type rest_request: RestRequest
+        @param rest_request: The current rest request.
         @type parameters: Dictionary
         @param parameters: The parameters to retrieve the code for
         the monitor item.
@@ -83,4 +85,4 @@ class WebMvcMonitorItemColony:
         @return: The code for the monitor item.
         """
 
-        return self.web_mvc_monitor_item_colony_main_controller.get_monitor_item()
+        return self.web_mvc_monitor_item_colony_main_controller.get_monitor_item(rest_request)

@@ -76,7 +76,7 @@ class MainController:
         # sets the relative resources path
         self.set_relative_resources_path(WEB_MVC_MONITOR_ITEM_UPTIME_RESOURCES_PATH)
 
-    def get_monitor_item(self):
+    def get_monitor_item(self, rest_request):
         # retrieves the template file
         template_file = self.retrieve_template_file("monitor_item_uptime.html.tpl")
 
@@ -84,7 +84,7 @@ class MainController:
         self.__assign_uptime_variables(template_file)
 
         # processes the template file
-        processed_template_file = self.process_template_file(template_file)
+        processed_template_file = self.process_template_file(rest_request, template_file)
 
         # returns the processed template file
         return processed_template_file

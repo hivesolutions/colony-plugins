@@ -101,11 +101,13 @@ class WebMvcMonitorItemUptimePlugin(colony.base.plugin_system.Plugin):
     def dependency_injected(self, plugin):
         colony.base.plugin_system.Plugin.dependency_injected(self, plugin)
 
-    def get_monitor_item(self, parameters):
+    def get_monitor_item(self, rest_request, parameters):
         """
         Retrieves the code for the monitor item for
         the given parameters.
 
+        @type rest_request: RestRequest
+        @param rest_request: The current rest request.
         @type parameters: Dictionary
         @param parameters: The parameters to retrieve the code for
         the monitor item.
@@ -113,7 +115,7 @@ class WebMvcMonitorItemUptimePlugin(colony.base.plugin_system.Plugin):
         @return: The code for the monitor item.
         """
 
-        return self.web_mvc_monitor_uptime_system.get_monitor_item(parameters)
+        return self.web_mvc_monitor_uptime_system.get_monitor_item(rest_request, parameters)
 
     def get_web_mvc_utils_plugin(self):
         return self.web_mvc_utils_plugin

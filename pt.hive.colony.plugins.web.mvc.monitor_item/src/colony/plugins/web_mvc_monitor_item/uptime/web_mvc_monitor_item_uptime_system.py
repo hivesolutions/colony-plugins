@@ -70,11 +70,13 @@ class WebMvcMonitorItemUptime:
         # creates the controllers for the web mvc monitor item uptime controllers module
         web_mvc_utils_plugin.create_controllers("web_mvc_monitor_item.uptime.web_mvc_monitor_item_uptime_controllers", self, self.web_mvc_monitor_item_uptime_plugin, "web_mvc_monitor_item_uptime")
 
-    def get_monitor_item(self, parameters):
+    def get_monitor_item(self, rest_request, parameters):
         """
         Retrieves the code for the monitor item for
         the given parameters.
 
+        @type rest_request: RestRequest
+        @param rest_request: The current rest request.
         @type parameters: Dictionary
         @param parameters: The parameters to retrieve the code for
         the monitor item.
@@ -82,4 +84,4 @@ class WebMvcMonitorItemUptime:
         @return: The code for the monitor item.
         """
 
-        return self.web_mvc_monitor_item_uptime_main_controller.get_monitor_item()
+        return self.web_mvc_monitor_item_uptime_main_controller.get_monitor_item(rest_request)
