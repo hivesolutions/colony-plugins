@@ -1191,6 +1191,32 @@ def set_redirect_to(self, rest_request, target, reason = None):
     self.set_session_attribute(rest_request, "redirect_to_target", target)
     self.set_session_attribute(rest_request, "redirect_to_reason", reason)
 
+def mark_redirect_to(self, rest_request):
+    """
+    "Marks" the "redirect to" operation, so that only one
+    try for redirection is accepted.
+    This method avoid possible (unwanted) replicas in the
+    redirection process.
+    This should be called in the redirection manager method.
+
+    @type rest_request: RestRequest
+    @param rest_request: The rest request to be used.
+    """
+
+    # retrieves both the target and the mark session attributes
+    # for processing of the mark
+    redirect_target = self.get_session_attribute(rest_request, "redirect_to_target")
+    redirect_mark = self.get_session_attribute(rest_request, "redirect_to_mark", unset_session_attribute = True)
+
+    # in case the "redirect to" is already "marked" the redirection has
+    # been done and now the normal behavior should prevail (removes the
+    # "redirect to" session attribute)
+    redirect_mark and self.unset_session_attribute(rest_request, "redirect_to_target")
+
+    # in case the redirect target is set and no marking
+    # is do, need to mark it
+    redirect_target and not redirect_mark and self.set_session_attribute(rest_request, "redirect_to_mark", True)
+
 def redirect_to(self, rest_request):
     """
     Redirects the current request to the current
@@ -1257,18 +1283,21 @@ def process_set_contents(self, rest_request, template_file, variable_encoding = 
     @param content_type: The content type to be set.
     """
 
-    # processes the template file with the given variable encoding
+    # processes the template file with the given rest request and variable encoding
     # retrieving the processed template file
-    processed_template_file = self.process_template_file(template_file, variable_encoding)
+    processed_template_file = self.process_template_file(rest_request, template_file, variable_encoding)
 
     # sets the request contents, using the given content type
     self.set_contents(rest_request, processed_template_file, content_type)
 
-def process_template_file(self, template_file, variable_encoding = None):
+def process_template_file(self, rest_request, template_file, variable_encoding = None):
     """
     Processes the given template file, using the given
     variable encoding.
 
+    @type rest_request: RestRequest
+    @param rest_request: The rest request to be used in the template
+    file processing.
     @type template_file: Template
     @param template_file: The template file to be processed.
     @type variable_encoding: String
@@ -1283,8 +1312,9 @@ def process_template_file(self, template_file, variable_encoding = None):
 
     # creates the process methods list
     process_methods_list = [
-        ("process_stylesheet_link", self.get_process_method("process_stylesheet_link")),
-        ("process_javascript_include", self.get_process_method("process_javascript_include"))
+        ("process_stylesheet_link", self.get_process_method(rest_request, "process_stylesheet_link")),
+        ("process_javascript_include", self.get_process_method(rest_request, "process_javascript_include")),
+        ("process_ifacl", self.get_process_method(rest_request, "process_ifacl"))
     ]
 
     # attaches the process methods to the template file
@@ -2617,7 +2647,7 @@ def _get_locales_map(self, accept_language):
     # returns the locales map
     return locales_map
 
-def get_process_method(controller, process_method_name):
+def get_process_method(controller, rest_request, process_method_name):
     """
     Retrieves the "real" process method from the given
     process method name.
@@ -2625,6 +2655,8 @@ def get_process_method(controller, process_method_name):
     @type controller: Controller
     @param controller: The controller associated with the
     current context.
+    @type rest_request: RestRequest
+    @param rest_request: The current rest request.
     @type process_method_name: String
     @param process_method_name: The name of the process
     method to be retrieved.
@@ -2678,6 +2710,50 @@ def get_process_method(controller, process_method_name):
 
             # adds the javscript reference to the string buffer
             self.string_buffer.write("<script type=\"text/javascript\" src=\"resources/js/%s\"></script>\n" % js_path_item)
+
+    def __process_ifacl(self, node):
+        # evaluates the node as comparison
+        #result = self._evaluate_comparison_node(node)
+
+        VALUE_VALUE = "value"
+        """ The value value """
+
+        PERMISSION_VALUE = "permission"
+        """ The permission value """
+
+        attributes_map = node.get_attributes_map()
+
+        attribute_permission = attributes_map[PERMISSION_VALUE]
+        attribute_permission_value = self.get_literal_value(attribute_permission)
+
+        attribute_value = attributes_map[VALUE_VALUE]
+        attribute_value_value = self.get_value(attribute_value)
+
+        user_acl = controller.get_session_attribute(rest_request, "user_acl") or {}
+
+        # process the acl values, retrieving the permissions value
+        permissions = controller.process_acl_values((user_acl, ), attribute_permission_value)
+
+        # sets the initial accept node value
+        accept_node = permissions <= attribute_value_value
+
+        # in case the visit child is set
+        if self.visit_childs:
+            # iterates over all the node child nodes
+            for node_child_node in node.child_nodes:
+                # validates the accept node using the node child node
+                # and the accept node
+                accept_node = self._validate_accept_node(node_child_node, accept_node)
+
+                # in case the accept node is set to invalid
+                # the evaluation is over
+                if accept_node == None:
+                    # returns immediately
+                    return
+
+                # in case the accept node flag is set
+                # accepts the node child node
+                accept_node and node_child_node.accept(self)
 
     # creates the complete process method name
     complete_process_method_name = "__" + process_method_name
