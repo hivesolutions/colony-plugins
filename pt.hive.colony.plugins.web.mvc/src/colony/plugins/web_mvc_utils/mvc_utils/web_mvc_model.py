@@ -183,6 +183,31 @@ def add_validation_method(self, attribute_name, validation_method_name, validate
     # retrieves the validation method
     validation_method = getattr(self, validation_method_name)
 
+    # adds the "custom" validation method to the current model
+    self.add_custom_validation_method(attribute_name, validation_method, validate_null, properties, contexts)
+
+def add_custom_validation_method(self, attribute_name, validation_method, validate_null = False, properties = {}, contexts = (DEFAULT_VALIDATION_CONTEXT,)):
+    """
+    Adds a "custom" validation method to the attribute with the given name.
+    The adding of the validation can be configured using the properties
+    map.
+    This method should be used carefully and should be considered a secondary
+    resource for attribute validation.
+
+    @type attribute_name: String
+    @param attribute_name: The name of the attribute to "receive" the validation.
+    @type validation_method: String
+    @param validation_method: The the validation method to be added to the attribute.
+    @type validate_null: bool
+    @param validate_null: If the validation method should be applied to
+    null attribute values.
+    @type properties: Dictionary
+    @param properties: The properties of the adding of the validation method.
+    @type contexts: Tuple
+    @param contexts: The (validation) contexts for which the the validation
+    method should be applied.
+    """
+
     # creates the validation tuple as the set of the validation
     # method and the properties
     validation_tuple = (
