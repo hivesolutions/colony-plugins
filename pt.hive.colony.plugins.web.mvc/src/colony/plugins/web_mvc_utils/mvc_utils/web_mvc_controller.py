@@ -115,6 +115,15 @@ MESSAGE_VALUE = "message"
 TRACEBACK_VALUE = "traceback"
 """ The traceback value """
 
+PERMISSION_VALUE = "permission"
+""" The permission value """
+
+VALUE_VALUE = "value"
+""" The value value """
+
+SESSION_ATTRIBUTE_VALUE = "session_attribute"
+""" The session attribute value """
+
 EXTRA_EXTRAS_PATH_VALUE = "extra_extras_path"
 """ The extra extras path value """
 
@@ -207,6 +216,9 @@ NON_CHARACTER_REGEX = re.compile(NON_CHARACTER_REGEX_VALUE)
 
 LOCALE_REGEX = re.compile(LOCALE_REGEX_VALUE)
 """ The locale regex """
+
+DEFAULT_SESSION_ATTRIBUTE = "user_acl"
+""" The default session attribute to be used in template """
 
 DATA_TYPE_CAST_TYPES_MAP = {
     "text" : unicode,
@@ -1364,14 +1376,14 @@ def apply_base_path_template_file(self, rest_request, template_file):
 
 def assign_session_template_file(self, rest_request, template_file, variable_prefix = "session_"):
     """
-    Assigns the session variables to the given template file.
-    The name of the session variables is modified replacing
+    Assigns the session attributes to the given template file.
+    The name of the session attributes is modified replacing
     the dots with underscores.
 
     @type rest_request: RestRequest
     @param rest_request: The rest request to be used.
     @type template_file: TemplateFile
-    @param template_file: The template to be "applied" with the session variables.
+    @param template_file: The template to be "applied" with the session attributes.
     @type variable_prefix: String
     @param variable_prefix: The variable prefix to be prepended to the variable names.
     """
@@ -2712,24 +2724,29 @@ def get_process_method(controller, rest_request, process_method_name):
             self.string_buffer.write("<script type=\"text/javascript\" src=\"resources/js/%s\"></script>\n" % js_path_item)
 
     def __process_ifacl(self, node):
-        # evaluates the node as comparison
-        #result = self._evaluate_comparison_node(node)
-
-        VALUE_VALUE = "value"
-        """ The value value """
-
-        PERMISSION_VALUE = "permission"
-        """ The permission value """
-
+        # retrieves the attributes map
         attributes_map = node.get_attributes_map()
 
+        # retrieves the attribute permission value
         attribute_permission = attributes_map[PERMISSION_VALUE]
         attribute_permission_value = self.get_literal_value(attribute_permission)
 
+        # retrieves the attribute value value
         attribute_value = attributes_map[VALUE_VALUE]
         attribute_value_value = self.get_value(attribute_value)
 
-        user_acl = controller.get_session_attribute(rest_request, "user_acl") or {}
+        # in case the session attribute exists in the attributes map
+        if SESSION_ATTRIBUTE_VALUE in attributes_map:
+            # retrieves the attribute session attribute value
+            attribute_session_attribute = attributes_map[SESSION_ATTRIBUTE_VALUE]
+            attribute_session_attribute_value = self.get_literal_value(attribute_session_attribute)
+        # otherwise
+        else:
+            # sets the default attribute session attribute value
+            attribute_session_attribute_value = DEFAULT_SESSION_ATTRIBUTE
+
+        # retrieves the user acl value
+        user_acl = controller.get_session_attribute(rest_request, attribute_session_attribute_value) or {}
 
         # process the acl values, retrieving the permissions value
         permissions = controller.process_acl_values((user_acl, ), attribute_permission_value)
