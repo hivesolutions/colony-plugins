@@ -135,6 +135,9 @@ DEFAULT_STATUS_CODE = 200
 DEFAULT_TIMEOUT = 3600
 """ The default timeout """
 
+DEFAULT_MAXIMUM_TIMEOUT = DEFAULT_TIMEOUT * 10
+""" The default maximum timeout """
+
 class MainRestManager:
     """
     The main rest manager class.
@@ -298,6 +301,10 @@ class MainRestManager:
             # logs a debug message
             self.main_rest_manager_plugin.debug("Session is invalid no session loaded or updated")
 
+        # "touches" the rest request updating it's
+        # internal timing structures
+        rest_request.touch()
+
         # sets the resource name in the rest request
         rest_request.set_resource_name(resource_name)
 
@@ -420,50 +427,6 @@ class MainRestManager:
 
         # flushes the rest request
         rest_request.flush()
-
-    def update_session_list(self):
-        """
-        Updates the session list, checking for old
-        session and stopping them (garbage collection).
-        """
-
-        # retrieves the current time
-        current_time = time.time()
-
-        # iterates continuously
-        while True:
-            # in case the rest session list
-            # is not valid (empty)
-            if not self.rest_session_list:
-                # breaks the loop
-                break
-
-            # acquires the rest session lock
-            self.rest_session_lock.acquire()
-
-            try:
-                # retrieves the first session information
-                # form the rest session list (ordered list)
-                session_expire_time, session_id = self.rest_session_list[0]
-
-                # in case the session expire time is
-                # still in the future
-                if session_expire_time > current_time:
-                    # breaks the loop
-                    break
-
-                # retrieves the session information
-                # and removes it from the system
-                # (garbage collection)
-                session = self.get_session(session_id)
-                self.remove_session(session)
-
-                # pops the last element from the res
-                # session list (heap)
-                heapq.heappop(self.rest_session_list)
-            finally:
-                # releases the rest session lock
-                self.rest_session_lock.release()
 
     def is_active(self):
         """
@@ -773,6 +736,66 @@ class MainRestManager:
 
         return self.rest_session_map.get(session_id, None)
 
+    def update_session_list(self):
+        """
+        Updates the session list, checking for old
+        session and stopping them (garbage collection).
+        """
+
+        # retrieves the current time
+        current_time = time.time()
+
+        # iterates continuously
+        while True:
+            # in case the rest session list
+            # is not valid (empty)
+            if not self.rest_session_list:
+                # breaks the loop
+                break
+
+            # acquires the rest session lock
+            self.rest_session_lock.acquire()
+
+            try:
+                # retrieves the first session information
+                # form the rest session list (ordered list)
+                session_expire_time, session_id = self.rest_session_list[0]
+
+                # in case the session expire time is
+                # still in the future
+                if session_expire_time > current_time:
+                    # breaks the loop
+                    break
+
+                # retrieves the session information from the
+                # session id to check for session removal
+                session = self.get_session(session_id)
+                session_expire_time_current = session.get_expire_time()
+
+                # in case the session expire time for current time
+                # is the same (no touch in between) the session should
+                # be removed (garbage collection)
+                if session_expire_time_current == session_expire_time:
+                    # removes the session from the rest manager structures
+                    self.remove_session(session)
+                # otherwise there has been a new session expire time
+                # update (no cancellation should be made)
+                else:
+                    # creates the session tuple form the session
+                    # expire (current) time and id (to be used for
+                    # session cancellation)
+                    session_tuple = (session_expire_time_current, session_id)
+
+                    # pushes the session tuple to the rest session list (heap)
+                    heapq.heappush(self.rest_session_list, session_tuple)
+
+                # pops the last element from the res
+                # session list (heap)
+                heapq.heappop(self.rest_session_list)
+            finally:
+                # releases the rest session lock
+                self.rest_session_lock.release()
+
     def _update_matching_regex(self):
         """
         Updates the matching regex.
@@ -924,7 +947,7 @@ class RestRequest:
         self.rest_encoder_plugins = []
         self.rest_encoder_plugins_map = {}
 
-    def start_session(self, force = False, session_id = None, timeout = DEFAULT_TIMEOUT):
+    def start_session(self, force = False, session_id = None, timeout = DEFAULT_TIMEOUT, maximum_timeout = DEFAULT_MAXIMUM_TIMEOUT):
         """
         Starts the session for the given session id,
         or generates a new session id.
@@ -938,6 +961,8 @@ class RestRequest:
         @param session_id: The session id to be used.
         @type timeout: float
         @param timeout: The timeout to be used in the session.
+        @type maximum_timeout: float
+        @param maximum_timeout: The maximum timeout to be used in the session.
         """
 
         # in case a session exists and force flag is disabled
@@ -955,8 +980,8 @@ class RestRequest:
             session_id = random_plugin.generate_random_md5_string()
 
         # creates a new rest session and sets
-        # it as the current session
-        self.session = RestSession(session_id)
+        # it as the current session (uses the timeout information)
+        self.session = RestSession(session_id, timeout, maximum_timeout)
 
         # retrieves the host name value
         domain = self._get_domain()
@@ -981,7 +1006,7 @@ class RestRequest:
         domain = self._get_domain()
 
         # stops the session with the defined domain
-        self.session.start(domain)
+        self.session.stop(domain)
 
         # removes the session from the main rest manager
         self.main_rest_manager.remove_session(self.session)
@@ -989,6 +1014,8 @@ class RestRequest:
     def update_session(self):
         """
         Updates the current session.
+        This method tries to "load" the session associated
+        with the current request.
         The updating of the session will be archived using
         a set of predefined techniques.
         """
@@ -998,6 +1025,17 @@ class RestRequest:
 
         # updates the session using the attribute method
         self._update_session_attribute()
+
+    def touch(self):
+        """
+        Touches the internal session, updating the expire
+        time with the timeout value.
+        """
+
+        # in case the session is defined updates the
+        # expire time according to the timeout and
+        # the current time
+        self.session and self.session.update_expire_time()
 
     def parse_post(self):
         """
@@ -1503,6 +1541,9 @@ class RestSession:
     timeout = None
     """ The timeout """
 
+    maximum_timeout = None
+    """ The maximum timeout """
+
     expire_time = None
     """ The expire time """
 
@@ -1512,7 +1553,10 @@ class RestSession:
     attributes_map = {}
     """ The attributes map """
 
-    def __init__(self, session_id = None, timeout = DEFAULT_TIMEOUT):
+    _maximum_expire_time = None
+    """ The maximum expire time """
+
+    def __init__(self, session_id = None, timeout = DEFAULT_TIMEOUT, maximum_timeout = DEFAULT_MAXIMUM_TIMEOUT):
         """
         Constructor of the class.
 
@@ -1520,32 +1564,20 @@ class RestSession:
         @param session_id: The session id.
         @type timeout: float
         @param timeout: The timeout.
+        @type maxmimum_timeout: float
+        @param maxmimum_timeout: The maximum timeout.
         """
 
         self.session_id = session_id
+        self.timeout = timeout
+        self.maximum_timeout = maximum_timeout
 
         self.attributes_map = {}
 
         # generates the expire time from the
         # current time and the given timeout
-        self.generate_expire_time(timeout)
-
-    def generate_expire_time(self, timeout):
-        """
-        Generates the expire time value from the
-        given timeout value using the current
-        time.
-
-        @type timeout: float
-        @param timeout: The timeout value to be
-        used for expire time generation.
-        """
-
-        # retrieves the current time to be used
-        # in the calculate of the expire time from
-        # the timeout value
-        current_time = time.time()
-        self.expire_time = current_time + timeout
+        # and maximum timeout
+        self._generate_expire_time(timeout, maximum_timeout)
 
     def start(self, domain = None, include_sub_domain = True):
         """
@@ -1570,7 +1602,7 @@ class RestSession:
 
         self._set_domain(domain, include_sub_domain)
 
-    def stop(self, domain, include_sub_domain = True):
+    def stop(self, domain = None, include_sub_domain = True):
         """
         Stops the current session.
 
@@ -1589,6 +1621,15 @@ class RestSession:
         self.cookie.set_attribute(EXPIRES_VALUE, DEFAULT_EXPIRATION_DATE)
 
         self._set_domain(domain, include_sub_domain)
+
+    def update_expire_time(self):
+        """
+        Updates the expire time value according
+        to the currently defined timeout and
+        maximum timeout values.
+        """
+
+        self._generate_expire_time(self.timeout, self.maximum_timeout)
 
     def get_session_id(self):
         """
@@ -1629,6 +1670,26 @@ class RestSession:
         """
 
         self.timeout = timeout
+
+    def get_maximum_timeout(self):
+        """
+        Retrieves the maximum timeout.
+
+        @rtype: float
+        @return: The maximum timeout.
+        """
+
+        return self.maximum_timeout
+
+    def set_maximum_timeout(self, maximum_timeout):
+        """
+        Sets the maximum timeout.
+
+        @type maximum_timeout: float
+        @param maximum_timeout: The maximum timeout.
+        """
+
+        self.maximum_timeout = maximum_timeout
 
     def get_expire_time(self):
         """
@@ -1761,6 +1822,37 @@ class RestSession:
         else:
             # sets the domain in the cookie
             self.cookie.set_attribute(DOMAIN_VALUE, domain)
+
+    def _generate_expire_time(self, timeout, maximum_timeout):
+        """
+        Generates the expire time value from the
+        given timeout value using the current
+        time.
+        The maximum timeout is used to control the generated
+        expire time, and for calculation of the maximum expire time.
+
+        @type timeout: float
+        @param timeout: The timeout value to be
+        used for expire time generation.
+        @type maximum_timeout: float
+        @param maximum_timeout: The maximum timeout value to be
+        used to control the new expire time.
+        """
+
+        # retrieves the current time for
+        # expire time calculation
+        current_time = time.time()
+
+        # calculates the maximum expire time in case it's not defined
+        self._maximum_expire_time = self._maximum_expire_time or current_time + maximum_timeout
+
+        # calculates the expire time incrementing
+        # the timeout to the current time
+        expire_time = current_time + timeout
+
+        # sets the expire time as the calculated expire time
+        # or as the maximum expire time in case it's smaller
+        self.expire_time = self._maximum_expire_time > expire_time and expire_time or self._maximum_expire_time
 
 class Cookie:
     """
