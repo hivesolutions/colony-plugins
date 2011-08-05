@@ -320,6 +320,30 @@ class EntityManager:
         self.transaction_stack_thread_id_map = {}
         self.connection_parameters = {}
 
+    def get_engine_name(self):
+        """
+        Retrieves the engine name for the current
+        connection.
+
+        @rtype: String
+        @return: The engine name for the current
+        connection.
+        """
+
+        return self.entity_manager_engine_plugin.get_engine_name()
+
+    def get_internal_version(self):
+        """
+        Retrieves the internal version for the current
+        connection.
+
+        @rtype: String
+        @return: The internal version for the current
+        connection.
+        """
+
+        return self.entity_manager_engine_plugin.get_internal_version()
+
     def get_connection(self):
         """
         Retrieves the current available connection.
@@ -427,6 +451,20 @@ class EntityManager:
 
         # closes the database system connection to the specified engine
         self.entity_manager_engine_plugin.close_connection(database_system_connection)
+
+    def get_database_size(self):
+        """
+        Retrieves the database size for the current
+        connection.
+
+        @rtype: int
+        @return: The database size for the current connection.
+        """
+
+        # retrieves the connection object
+        connection = self.get_connection()
+
+        return self.entity_manager_engine_plugin.get_database_size(connection)
 
     def get_transaction_stack(self):
         """

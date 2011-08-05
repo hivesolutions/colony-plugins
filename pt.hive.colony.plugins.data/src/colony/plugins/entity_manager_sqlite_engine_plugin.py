@@ -106,9 +106,6 @@ class EntityManagerSqliteEnginePlugin(colony.base.plugin_system.Plugin):
     def get_internal_version(self):
         return self.entity_manager_sqlite_engine.get_internal_version()
 
-    def get_database_size(self, connection):
-        return self.entity_manager_sqlite_engine.get_database_size(connection)
-
     def create_connection(self, connection_parameters):
         return self.entity_manager_sqlite_engine.create_connection(connection_parameters)
 
@@ -120,6 +117,9 @@ class EntityManagerSqliteEnginePlugin(colony.base.plugin_system.Plugin):
 
     def rollback_connection(self, connection):
         return self.entity_manager_sqlite_engine.rollback_connection(connection)
+
+    def get_database_size(self, connection):
+        return self.entity_manager_sqlite_engine.get_database_size(connection)
 
     def create_transaction(self, connection, transaction_name):
         return self.entity_manager_sqlite_engine.create_transaction(connection, transaction_name)

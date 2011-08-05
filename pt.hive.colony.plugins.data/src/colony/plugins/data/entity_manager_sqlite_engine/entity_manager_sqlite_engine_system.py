@@ -264,26 +264,6 @@ class EntityManagerSqliteEngine:
 
         return sqlite3.sqlite_version
 
-    def get_database_size(self, connection):
-        """
-        Retrieves the size of the database referred
-        in the given connection.
-        The returned value is measured in bytes.
-
-        @rtype: int
-        @return: The size of the database referred
-        in the given connection.
-        """
-
-        # retrieves the file path to the database
-        file_path = connection.get_connection_parameter(FILE_PATH_VALUE)
-
-        # retrieves the file size for the database
-        file_size = os.path.getsize(file_path)
-
-        # returns the file size
-        return file_size
-
     def create_connection(self, connection_parameters):
         """
         Creates the connection using the given connection parameters.
@@ -398,6 +378,26 @@ class EntityManagerSqliteEngine:
 
         # "rollsback" the changes to the connection
         database_system_connection.rollback()
+
+    def get_database_size(self, connection):
+        """
+        Retrieves the size of the database referred
+        in the given connection.
+        The returned value is measured in bytes.
+
+        @rtype: int
+        @return: The size of the database referred
+        in the given connection.
+        """
+
+        # retrieves the file path to the database
+        file_path = connection.get_connection_parameter(FILE_PATH_VALUE)
+
+        # retrieves the file size for the database
+        file_size = os.path.getsize(file_path)
+
+        # returns the file size
+        return file_size
 
     def create_transaction(self, connection, transaction_name):
         """
