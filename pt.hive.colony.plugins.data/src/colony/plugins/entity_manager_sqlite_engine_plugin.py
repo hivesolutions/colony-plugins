@@ -103,6 +103,12 @@ class EntityManagerSqliteEnginePlugin(colony.base.plugin_system.Plugin):
     def get_engine_name(self):
         return self.entity_manager_sqlite_engine.get_engine_name()
 
+    def get_internal_version(self):
+        return self.entity_manager_sqlite_engine.get_internal_version()
+
+    def get_database_size(self, connection):
+        return self.entity_manager_sqlite_engine.get_database_size(connection)
+
     def create_connection(self, connection_parameters):
         return self.entity_manager_sqlite_engine.create_connection(connection_parameters)
 

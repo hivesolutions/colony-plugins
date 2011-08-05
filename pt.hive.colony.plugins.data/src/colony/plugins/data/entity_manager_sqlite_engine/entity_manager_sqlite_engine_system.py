@@ -37,6 +37,7 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
+import os
 import time
 import types
 import sqlite3
@@ -251,14 +252,46 @@ class EntityManagerSqliteEngine:
 
         return ENGINE_NAME
 
+    def get_internal_version(self):
+        """
+        Retrieves the internal database manager oriented
+        version of the engine.
+
+        @rtype: String
+        @return: internal database manager oriented
+        version of the engine.
+        """
+
+        return sqlite3.sqlite_version
+
+    def get_database_size(self, connection):
+        """
+        Retrieves the size of the database referred
+        in the given connection.
+        The returned value is measured in bytes.
+
+        @rtype: int
+        @return: The size of the database referred
+        in the given connection.
+        """
+
+        # retrieves the file path to the database
+        file_path = connection.get_connection_parameter(FILE_PATH_VALUE)
+
+        # retrieves the file size for the database
+        file_size = os.path.getsize(file_path)
+
+        # returns the file size
+        return file_size
+
     def create_connection(self, connection_parameters):
         """
         Creates the connection using the given connection parameters.
 
         @type connection_parameters: List
         @param connection_parameters: The connection parameters.
-        @rtype: Connection
-        @return: The created connection.
+        @rtype: DatabaseConnection
+        @return: The created database connection.
         """
 
         # in case the file path is not defined
@@ -286,10 +319,11 @@ class EntityManagerSqliteEngine:
             isolation_level_value = connection_parameters[ISOLATION_LEVEL_VALUE]
 
         # creates the sqlite database connection
-        connection = sqlite3.connect(file_path, timeout = DEFAULT_TIMEOUT_VALUE, isolation_level = isolation_level_value)
+        # the connection object to be used internally
+        database_connection = sqlite3.connect(file_path, timeout = DEFAULT_TIMEOUT_VALUE, isolation_level = isolation_level_value)
 
-        # returns the created connection
-        return connection
+        # returns the created database connection
+        return database_connection
 
     def close_connection(self, connection):
         """
@@ -299,8 +333,11 @@ class EntityManagerSqliteEngine:
         @param connection: The connection to be closed.
         """
 
+        # retrieves the database connection from the connection object
+        database_connection = connection.database_connection
+
         # closes the connection
-        connection.close()
+        database_connection.close()
 
     def commit_connection(self, connection):
         """
