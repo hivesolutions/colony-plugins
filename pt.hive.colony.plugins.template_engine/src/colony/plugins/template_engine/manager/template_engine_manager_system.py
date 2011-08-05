@@ -360,6 +360,9 @@ class TemplateEngineManager:
         # attaches the currently given process methods
         template_file.attach_process_methods(process_methods_list)
 
+        # loads the system variable in the template file
+        template_file.load_system_variable()
+
         # returns the template file
         return template_file
 
@@ -501,6 +504,28 @@ class TemplateFile:
         for process_method_name, process_method in process_methods_list:
             # attaches the process method to the visitor
             self.visitor.attach_process_method(process_method_name, process_method)
+
+    def load_system_variable(self, variable_name = "_system"):
+        """
+        Loads a system infrmation variable to the template
+        file.
+
+        @type variable_name: String
+        @param variable_name: The name of the variable used
+        to retain the system wide information.
+        """
+
+        # retrieves the template engine manager plugin
+        # in order to obtain the plugin manager
+        template_engine_manager_plugin = self.manager.template_engine_manager_plugin
+        plugin_manager = template_engine_manager_plugin.manager
+
+        # retrieves the map containing the "global" system information
+        system_information_map = plugin_manager.get_system_information_map()
+
+        # assigns the system information map variable
+        # to the template
+        self.assign(variable_name, system_information_map)
 
     def process(self):
         """
