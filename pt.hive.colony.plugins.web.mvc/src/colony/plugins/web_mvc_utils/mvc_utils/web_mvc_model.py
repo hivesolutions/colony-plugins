@@ -91,6 +91,34 @@ def _start_model(self):
         # calls the set validation method (to be implemented)
         self.set_validation()
 
+def get_attribute_name(self, attribute_name):
+    """
+    Retrieves the attribute from the given composite
+    attribute name.
+    The attribute is retrieved using a composite approach
+    and the name is separated by dots.
+
+    @type attribute_name: String
+    @param attribute_name: The name of the attribute
+    to be retrieved.
+    @rtype: Object
+    @return: The attribute for the given attribute name.
+    """
+
+    # splits the attribute name into tokens
+    attribute_name_tokens = attribute_name and attribute_name.split(".") or []
+
+    # sets the initial current attribute value
+    current_attribute = self
+
+    # iterates over all the attribute name tokens
+    for attribute_name_token in attribute_name_tokens:
+        # updates the current attribute with the attribute name token
+        current_attribute = getattr(current_attribute, attribute_name_token)
+
+    # returns the current attribute
+    return current_attribute
+
 def dumps(self, serializer):
     """
     Serializes (dumps) the current object with
