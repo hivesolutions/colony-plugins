@@ -1377,6 +1377,7 @@ def apply_base_path_template_file(self, rest_request, template_file):
 def assign_session_template_file(self, rest_request, template_file, variable_prefix = "session_"):
     """
     Assigns the session attributes to the given template file.
+    The properties of the session are also set for base accessing.
     The name of the session attributes is modified replacing
     the dots with underscores.
 
@@ -1396,6 +1397,18 @@ def assign_session_template_file(self, rest_request, template_file, variable_pre
     if not rest_request_session:
         # returns immediately
         return
+
+    # retrieves the various session properties
+    session_id = rest_request_session.get_session_id()
+    session_timeout = rest_request_session.get_timeout()
+    session_maximum_timeout = rest_request_session.get_maximum_timeout()
+    session_expire_time = rest_request_session.get_expire_time()
+
+    # assigns the various session properties to the template file
+    template_file.assign(variable_prefix + "id", session_id)
+    template_file.assign(variable_prefix + "timeout", session_timeout)
+    template_file.assign(variable_prefix + "maximum_timeout", session_maximum_timeout)
+    template_file.assign(variable_prefix + "expire_time", session_expire_time)
 
     # retrieves the session attributes map
     session_attributes_map = rest_request_session.get_attributes_map()
