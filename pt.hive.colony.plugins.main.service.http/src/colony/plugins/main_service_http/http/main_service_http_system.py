@@ -1000,6 +1000,9 @@ class HttpClientServiceHandler:
         # creates the received data size (counter)
         received_data_size = service_connection.request_data.get("received_data_size", 0)
 
+        # initializes the start line index
+        start_line_index = service_connection.request_data.get("start_line_index", 0)
+
         # initializes the end header index
         end_header_index = service_connection.request_data.get("end_header_index", 0)
 
@@ -1186,6 +1189,7 @@ class HttpClientServiceHandler:
             service_connection.request_data["message_offset_index"] = message_offset_index
             service_connection.request_data["message_size"] = message_size
             service_connection.request_data["received_data_size"] = received_data_size
+            service_connection.request_data["start_line_index"] = start_line_index
             service_connection.request_data["end_header_index"] = end_header_index
 
             # returns the empty (request)

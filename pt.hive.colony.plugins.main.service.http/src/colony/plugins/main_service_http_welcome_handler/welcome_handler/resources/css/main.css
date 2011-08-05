@@ -222,8 +222,8 @@ h5:hover > a.headerlink {
 #wiki-footer .wiki-footer-contents {
     height: 38px;
     margin: 0px auto 0px auto;
-    padding-top: 12px;
     padding-bottom: 12px;
+    padding-top: 12px;
     width: 70%;
 }
 

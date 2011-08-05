@@ -222,8 +222,8 @@ h5:hover > a.headerlink {
 #wiki-footer .wiki-footer-contents {
     height: 38px;
     margin: 0px auto 0px auto;
-    padding-top: 12px;
     padding-bottom: 12px;
+    padding-top: 12px;
     width: 70%;
 }
 
@@ -324,9 +324,9 @@ h5:hover > a.headerlink {
 }
 
 .system-information-list .table-view table {
-    border-top: 1px solid #b2b2b2;
-    border-right: 1px solid #b2b2b2;
     border-left: 1px solid #b2b2b2;
+    border-right: 1px solid #b2b2b2;
+    border-top: 1px solid #b2b2b2;
     width: 100%;
 }
 
@@ -338,7 +338,7 @@ h5:hover > a.headerlink {
 }
 
 .system-information-list .table-view table td {
-    background-color : #fdf3e6;
+    background-color: #fdf3e6;
     border-bottom: 1px solid #b2b2b2;
     border-left: 1px solid #b2b2b2;
     padding: 6px 12px 6px 12px;
@@ -353,27 +353,27 @@ h5:hover > a.headerlink {
 }
 
 .system-information-list .table-view table tr.critical td {
-    background-color : #f2afaf;
+    background-color: #f2afaf;
 }
 
 .system-information-list .table-view table tr.error td {
-    background-color : #efceb9;
+    background-color: #efceb9;
 }
 
 .system-information-list .table-view table tr.warning td {
-    background-color : #efebb9;
+    background-color: #efebb9;
 }
 
 .system-information-list .table-view table tr.info td {
-    background-color : #dfedef;
+    background-color: #dfedef;
 }
 
 .system-information-list .table-view table tr.debug td {
-    background-color : #efefef;
+    background-color: #efefef;
 }
 
 .system-information-list .table-view table tr.filter td {
-    background-color : #e9f2df;
+    background-color: #e9f2df;
 }
 
 .system-information-list .table-view table th.column a {
