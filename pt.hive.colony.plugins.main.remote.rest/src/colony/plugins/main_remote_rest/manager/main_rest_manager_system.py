@@ -296,6 +296,8 @@ class MainRestManager:
 
         try:
             # updates the rest request session
+            # loading the appropriate session in
+            # case it exists
             rest_request.update_session()
         except:
             # logs a debug message
