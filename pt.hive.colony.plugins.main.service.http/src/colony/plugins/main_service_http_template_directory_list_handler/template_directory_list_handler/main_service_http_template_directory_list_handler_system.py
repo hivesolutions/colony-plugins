@@ -40,6 +40,8 @@ __license__ = "GNU General Public License (GPL), Version 3"
 import copy
 import time
 
+import colony.libs.size_util
+
 DEFAULT_ENCODING = "utf-8"
 """ The default encoding """
 
@@ -57,17 +59,6 @@ TEMPLATE_DIRECTORY_LIST_HANDLER_RESOURCES_PATH = "main_service_http_template_dir
 
 HTTP_SERVICE_DIRECTORY_LIST_HTML_TEMPLATE_FILE_NAME = "http_service_directory_list.html.tpl"
 """ The http service directory list html template file name """
-
-SIZE_UNITS_LIST = (
-    "B", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB"
-)
-""" The size units list """
-
-SIZE_UNIT_COEFFICIENT = 1024
-""" The size unit coefficient """
-
-DEFAULT_MINIMUM = 1024
-""" The default minimum value """
 
 FORMATS_MAP = {
     "table" : "",
@@ -130,7 +121,7 @@ class MainServiceHttpTemplateDirectoryListHandler:
 
             # in case the directory entry type is file
             if directory_entry_type == "file":
-                directory_entry_size_string = self._round_size_unit(directory_entry_size)
+                directory_entry_size_string = colony.libs.size_util.size_round_unit(directory_entry_size)
             else:
                 directory_entry_size_string = "-"
 
@@ -223,47 +214,3 @@ class MainServiceHttpTemplateDirectoryListHandler:
 
         # writes the processed template file encoded to the request
         request.write(processed_template_file_encoded)
-
-    def _round_size_unit(self, size_value, minimum = DEFAULT_MINIMUM, depth = 0):
-        """
-        Rounds the size unit, returning a string representation
-        of the value with a good rounding precision.
-
-        @type size_value: int
-        @param size_value: The current size value.
-        @type minimum: int
-        @param minimum: The minimum value to be used.
-        @type depth: int
-        @param depth: The current iteration depth value.
-        @rtype: String
-        @return: The string representation of the value in
-        a simplified manner.
-        """
-
-        # in case the current size value is
-        # acceptable (less than the minimum)
-        if size_value < minimum:
-            # rounds the size value
-            rounded_size_value = int(size_value)
-
-            # converts the rounded size value to string
-            rounded_size_value_string = str(rounded_size_value)
-
-            # retrieves the size unit (string mode)
-            size_unit = SIZE_UNITS_LIST[depth]
-
-            # creates the size value string appending the rounded
-            # size value string and the size unit
-            size_value_string = rounded_size_value_string + size_unit
-
-            # returns the size value string
-            return size_value_string
-        else:
-            # re-calculates the new size value
-            new_size_value = size_value / SIZE_UNIT_COEFFICIENT
-
-            # increments the depth
-            new_depth = depth + 1
-
-            # runs the round size unit again with the new values
-            return self._round_size_unit(new_size_value, minimum, new_depth)
