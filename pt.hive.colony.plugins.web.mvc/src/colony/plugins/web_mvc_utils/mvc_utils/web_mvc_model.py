@@ -43,6 +43,12 @@ import colony.libs.control_util
 
 import web_mvc_utils_exceptions
 
+SOURCE_ATTRIBUTE_NAME_VALUE = "source_attribute_name"
+""" The source attribute name value """
+
+TARGET_ATTRIBUTE_NAME_VALUE = "target_attribute_name"
+""" The target attribute name value """
+
 VALIDATION_METHOD_SUFFIX = "_validate"
 """ The validation method suffix """
 
@@ -668,3 +674,29 @@ def is_tax_number_validate(self, attribute_name, attribute_value, properties):
     if not control_value == calculated_control_value:
         # adds an error to the given attribute name
         self.add_error(attribute_name, "value is not a valid tax number")
+
+def is_different_validate(self, attribute_name, attribute_value, properties):
+    """
+    Validates an attribute to ensure that its value is different
+    from the another specified attribute.
+
+    @type attribute_name: String
+    @param attribute_name: The name of the attribute to be validated.
+    @type attribute_value: Object
+    @param attribute_value: The value of the attribute to be validated.
+    @type properties: Dictionary
+    @param properties: The properties for the validation.
+    """
+
+    # retrieves the attribute names from the properties
+    source_attribute_name = properties[SOURCE_ATTRIBUTE_NAME_VALUE]
+    target_attribute_name = properties[TARGET_ATTRIBUTE_NAME_VALUE]
+
+    # retrieves the attribute values
+    source_attribute_value = self.get_attribute_name(source_attribute_name)
+    target_attribute_value = self.get_attribute_name(target_attribute_name)
+
+    # in case the attribute values are the same
+    if source_attribute_value == target_attribute_value:
+        # adds the error to the given attribute name
+        self.add_error(attribute_name, "value is not different")
