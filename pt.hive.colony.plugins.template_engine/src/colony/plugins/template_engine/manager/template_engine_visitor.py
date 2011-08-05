@@ -1327,6 +1327,36 @@ class Visitor:
         # writes the attribute value formatted
         self.string_buffer.write(attribute_value_formatted)
 
+    def process_format_timestamp(self, node):
+        """
+        Processes the format datetime node.
+
+        @type node: SingleNode
+        @param node: The single node to be processed as format datetime.
+        """
+
+        # retrieves the attributes map
+        attributes_map = node.get_attributes_map()
+
+        # retrieves the attributes map values
+        attribute_value = attributes_map[VALUE_VALUE]
+        attribute_value_value = self.get_value(attribute_value)
+        attribute_format = attributes_map[FORMAT_VALUE]
+        attribute_format_literal_value = self.get_literal_value(attribute_format)
+
+        # converts the attribute format literal value to string, in order
+        # to avoid possible problems with string formatting
+        attribute_format_literal_value = str(attribute_format_literal_value)
+
+        # converts the attribute value value to date time
+        attribute_date_time = datetime.datetime.utcfromtimestamp(attribute_value_value)
+
+        # date formats the attribute value (in datetime format)
+        attribute_value_formatted = attribute_date_time.strftime(attribute_format_literal_value)
+
+        # writes the attribute value formatted
+        self.string_buffer.write(attribute_value_formatted)
+
     def get_value(self, attribute_value, process_literal = False):
         """
         Retrieves the value (variable or literal) of the given
