@@ -1317,6 +1317,11 @@ class Visitor:
         attribute_format = attributes_map[FORMAT_VALUE]
         attribute_format_literal_value = self.get_literal_value(attribute_format)
 
+        # in case the value is not defined
+        if not attribute_value_value:
+            # returns immediately
+            return
+
         # converts the attribute format literal value to string, in order
         # to avoid possible problems with string formatting
         attribute_format_literal_value = str(attribute_format_literal_value)
@@ -1343,6 +1348,11 @@ class Visitor:
         attribute_value_value = self.get_value(attribute_value)
         attribute_format = attributes_map[FORMAT_VALUE]
         attribute_format_literal_value = self.get_literal_value(attribute_format)
+
+        # in case the value is not defined
+        if not attribute_value_value:
+            # returns immediately
+            return
 
         # converts the attribute format literal value to string, in order
         # to avoid possible problems with string formatting
