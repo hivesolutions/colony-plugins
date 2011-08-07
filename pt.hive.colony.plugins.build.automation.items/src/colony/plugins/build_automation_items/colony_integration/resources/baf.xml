@@ -68,7 +68,7 @@
                 <version>1.0.0</version>
                 <stage>build</stage>
                 <configuration>
-                    <deployment_path>$resource{system.path.integration}</deployment_path>
+                    <deployment_path>$resource{system.path.integration}/omni</deployment_path>
                 </configuration>
             </plugin>
             <plugin>
@@ -93,7 +93,7 @@
                         <path>http://svn.hive.pt/hive-main/pt.hive.colony</path>
                         <target_path>$base{plugin_system_directory}/tmp/checkout/pt.hive.colony</target_path>
                         <version_file_path>${build_automation.build.resources_directory}/pt.hive.colony.version</version_file_path>
-                        <previous_version_file_path>$resource{system.path.integration}/LATEST_SUCCESS/pt.hive.colony.version</previous_version_file_path>
+                        <previous_version_file_path>$resource{system.path.integration}/omni/LATEST_SUCCESS/pt.hive.colony.version</previous_version_file_path>
                         <changelog_file_path>${build_automation.build.resources_directory}/pt.hive.colony.changelog</changelog_file_path>
                     </repository>
                     <repository>
@@ -102,7 +102,7 @@
                         <path>http://svn.hive.pt/hive-main/pt.hive.colony.plugins</path>
                         <target_path>$base{plugin_system_directory}/tmp/checkout/pt.hive.colony.plugins</target_path>
                         <version_file_path>${build_automation.build.resources_directory}/pt.hive.colony.plugins.version</version_file_path>
-                        <previous_version_file_path>$resource{system.path.integration}/LATEST_SUCCESS/resources/pt.hive.colony.plugins.version</previous_version_file_path>
+                        <previous_version_file_path>$resource{system.path.integration}/omni/LATEST_SUCCESS/resources/pt.hive.colony.plugins.version</previous_version_file_path>
                         <changelog_file_path>${build_automation.build.resources_directory}/pt.hive.colony.plugins.changelog</changelog_file_path>
                     </repository>
                     <repository>
@@ -111,7 +111,7 @@
                         <path>http://svn.hive.pt/hive-main/pt.hive.colony.extras</path>
                         <target_path>$base{plugin_system_directory}/tmp/checkout/pt.hive.colony.extras</target_path>
                         <version_file_path>${build_automation.build.resources_directory}/pt.hive.colony.language.version</version_file_path>
-                        <previous_version_file_path>$resource{system.path.integration}/LATEST_SUCCESS/resources/pt.hive.colony.language.version</previous_version_file_path>
+                        <previous_version_file_path>$resource{system.path.integration}/omni/LATEST_SUCCESS/resources/pt.hive.colony.language.version</previous_version_file_path>
                         <changelog_file_path>${build_automation.build.resources_directory}/pt.hive.colony.extras.changelog</changelog_file_path>
                     </repository>
                     <repository>
@@ -120,7 +120,7 @@
                         <path>http://svn.hive.pt/hive-main/pt.hive.colony.language</path>
                         <target_path>$base{plugin_system_directory}/tmp/checkout/pt.hive.colony.language</target_path>
                         <version_file_path>${build_automation.build.resources_directory}/pt.hive.colony.language.version</version_file_path>
-                        <previous_version_file_path>$resource{system.path.integration}/pt.hive.colony.language.version</previous_version_file_path>
+                        <previous_version_file_path>$resource{system.path.integration}/omni/pt.hive.colony.language.version</previous_version_file_path>
                         <changelog_file_path>${build_automation.build.resources_directory}/pt.hive.colony.language.changelog</changelog_file_path>
                     </repository>
                 </configuration>
@@ -164,7 +164,7 @@
                 <stage>post-build</stage>
                 <stage_dependency>install</stage_dependency>
                 <configuration>
-                    <deployment_path>$resource{system.path.integration}</deployment_path>
+                    <deployment_path>$resource{system.path.integration}/omni</deployment_path>
                     <version_file_path>${build_automation.build.resources_directory}/version</version_file_path>
                     <zip>plugins</zip>
                     <zip>repository</zip>
