@@ -779,6 +779,20 @@ def process_form_data_flat(self, rest_request, encoding = DEFAULT_ENCODING, null
     # returns the base attributes map
     return base_attributes_map
 
+def validate_acl(self, rest_request, key, value = 10, session_attribute = "user.acl"):
+    # retrieves the user acl value
+    user_acl = self.get_session_attribute(rest_request, session_attribute) or {}
+
+    # process the acl values, retrieving the permissions value
+    permissions = self.process_acl_values((user_acl, ), key)
+
+    # checks if the value is valid according
+    # to the retrieved permissions
+    valid_acl = permissions <= value
+
+    # returns the result of the valid acl test
+    return valid_acl
+
 def process_acl_values(self, acl_list, key, wildcard_value = DEFAULT_WILDCARD_ACL_VALUE, maximum_value = DEFAULT_MAXIMUM_ACL_VALUE):
     """
     Processes the various acl values in the given list.
