@@ -163,7 +163,7 @@ configuration = {
             "handler" : "file",
             "allow_redirection" : False,
             "request_properties" : {
-                "base_path" : "$resource{system.path.integration}"
+                "base_path" : "$resource{system.path.integration}/colony"
             }
         },
         "/integration" : {
@@ -171,7 +171,7 @@ configuration = {
             "authentication_handler" : "main",
             "allow_redirection" : False,
             "request_properties" : {
-                "base_path" : "$resource{system.path.integration}"
+                "base_path" : "$resource{system.path.integration}/colony"
             },
             "authentication_properties" : {
                 "authentication_handler" : "python",
