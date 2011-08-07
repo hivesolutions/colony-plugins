@@ -46,7 +46,7 @@ configuration = {
             "plugin_version" : "1.0.0",
             "method" : "run_automation",
             "arguments" : [
-                "pt.hive.colony.plugins.build.automation.items.colony_integration",
+                "pt.hive.omni.plugins.build.automation.items.omni_integration",
                 "1.0.0",
                 "install",
                 1
