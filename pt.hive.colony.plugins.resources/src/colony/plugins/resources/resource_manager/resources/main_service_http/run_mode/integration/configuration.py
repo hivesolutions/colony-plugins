@@ -178,6 +178,21 @@ configuration = {
             "authentication_handler" : "main",
             "allow_redirection" : False,
             "request_properties" : {
+                "base_path" : "$resource{system.path.integration}/omni"
+            },
+            "authentication_properties" : {
+                "authentication_handler" : "python",
+                "authentication_realm" : "system",
+                "arguments" : {
+                    "file_path" : "%configuration:pt.hive.colony.plugins.main.authentication.python_handler%/authentication.py"
+                }
+            }
+        },
+        "/integration" : {
+            "handler" : "file",
+            "authentication_handler" : "main",
+            "allow_redirection" : False,
+            "request_properties" : {
                 "base_path" : "$resource{system.path.integration}/colony"
             },
             "authentication_properties" : {
