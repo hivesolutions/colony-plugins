@@ -313,11 +313,8 @@ class EntityManagerSqliteEngine:
         @param connection: The connection to be closed.
         """
 
-        # retrieves the database connection from the connection object
-        database_connection = connection.database_connection
-
-        # closes the connection
-        database_connection.close()
+        # closes the connection (database connection)
+        connection.close()
 
     def commit_connection(self, connection):
         """
