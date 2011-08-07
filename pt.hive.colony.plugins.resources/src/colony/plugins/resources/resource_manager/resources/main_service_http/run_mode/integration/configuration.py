@@ -173,7 +173,7 @@ configuration = {
                 "base_path" : "$resource{system.path.integration}/colony"
             }
         },
-        "/integration" : {
+        "/integration_omni" : {
             "handler" : "file",
             "authentication_handler" : "main",
             "allow_redirection" : False,
