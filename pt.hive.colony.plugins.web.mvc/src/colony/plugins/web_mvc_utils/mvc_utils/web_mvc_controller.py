@@ -779,7 +779,7 @@ def process_form_data_flat(self, rest_request, encoding = DEFAULT_ENCODING, null
     # returns the base attributes map
     return base_attributes_map
 
-def validate_acl(self, rest_request, key, value = 10, session_attribute = "user.acl"):
+def validate_acl(self, rest_request, key, value = 10, session_attribute = DEFAULT_SESSION_ATTRIBUTE):
     # retrieves the user acl value
     user_acl = self.get_session_attribute(rest_request, session_attribute) or {}
 
