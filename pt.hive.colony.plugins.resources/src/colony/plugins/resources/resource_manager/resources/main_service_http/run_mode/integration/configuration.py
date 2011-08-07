@@ -137,7 +137,9 @@ configuration = {
             "/colony_dynamic",
             "/template_error_handler",
             "/template_directory_list_handler",
+            "/integration_omni_public",
             "/integration_public",
+            "/integration_omni",
             "/integration"
         ],
         "/colony_dynamic" : {
