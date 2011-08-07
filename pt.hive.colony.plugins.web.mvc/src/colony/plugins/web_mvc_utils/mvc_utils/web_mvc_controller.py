@@ -217,6 +217,9 @@ NON_CHARACTER_REGEX = re.compile(NON_CHARACTER_REGEX_VALUE)
 LOCALE_REGEX = re.compile(LOCALE_REGEX_VALUE)
 """ The locale regex """
 
+DEFAULT_VALUE_ATTRIBUTE = 10
+""" The default value attribute to be used in template """
+
 DEFAULT_SESSION_ATTRIBUTE = "user_acl"
 """ The default session attribute to be used in template """
 
@@ -779,20 +782,6 @@ def process_form_data_flat(self, rest_request, encoding = DEFAULT_ENCODING, null
     # returns the base attributes map
     return base_attributes_map
 
-def validate_acl(self, rest_request, key, value = 10, session_attribute = DEFAULT_SESSION_ATTRIBUTE):
-    # retrieves the user acl value
-    user_acl = self.get_session_attribute(rest_request, session_attribute) or {}
-
-    # process the acl values, retrieving the permissions value
-    permissions = self.process_acl_values((user_acl, ), key)
-
-    # checks if the value is valid according
-    # to the retrieved permissions
-    valid_acl = permissions <= value
-
-    # returns the result of the valid acl test
-    return valid_acl
-
 def process_acl_values(self, acl_list, key, wildcard_value = DEFAULT_WILDCARD_ACL_VALUE, maximum_value = DEFAULT_MAXIMUM_ACL_VALUE):
     """
     Processes the various acl values in the given list.
@@ -835,6 +824,39 @@ def process_acl_values(self, acl_list, key, wildcard_value = DEFAULT_WILDCARD_AC
 
     # returns the permission
     return permission
+
+def validate_acl_session(self, rest_request, key, value = DEFAULT_VALUE_ATTRIBUTE, session_attribute = DEFAULT_SESSION_ATTRIBUTE):
+    """
+    Validates the current session defined acl agains the
+    defined key and value.
+
+    @type rest_request: RestRequest
+    @param rest_request: The rest request to be used.
+    @type key: String
+    @param key: The key to be used for retrieval of acl permissions
+    value (this key is joined with the current wildcard).
+    @type value: int
+    @param value: The value to be used for testing as minimal
+    valid value.
+    @type session_attribute: String
+    @param session_attribute: The name of the session attribute
+    to retrieve the acl list.
+    @rtype: bool
+    @return: If the key is valid for the current session acl.
+    """
+
+    # retrieves the user acl value
+    user_acl = self.get_session_attribute(rest_request, session_attribute) or {}
+
+    # process the acl values, retrieving the permissions value
+    permissions = self.process_acl_values((user_acl, ), key)
+
+    # checks if the value is valid according
+    # to the retrieved permissions
+    valid_acl = permissions <= value
+
+    # returns the result of the valid acl test
+    return valid_acl
 
 def get_mvc_path(self, rest_request, delta_value = 1):
     """
