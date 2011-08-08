@@ -1239,6 +1239,9 @@ def set_redirect_to(self, rest_request, target, reason = None):
     self.set_session_attribute(rest_request, "redirect_to_target", target)
     self.set_session_attribute(rest_request, "redirect_to_reason", reason)
 
+    # sets the redirect to mark as false to provide support for a first mark
+    self.set_session_attribute(rest_request, "redirect_to_mark", False)
+
 def mark_redirect_to(self, rest_request):
     """
     "Marks" the "redirect to" operation, so that only one
