@@ -113,7 +113,7 @@ class ServiceAcceptingThread(threading.Thread):
                 self.abstract_service._insert_connection_pool(service_connection, service_address, port)
             except BaseException, exception:
                 # prints a warning message about the problem accepting the socket
-                self.abstract_service.main_service_utils_plugin.warn("Error accepting socket: " + unicode(exception))
+                self.abstract_service.main_service_utils_plugin.warning("Error accepting socket: " + unicode(exception))
 
     def stop(self):
         # acquires the service tuple queue condition
@@ -208,7 +208,7 @@ class ServiceExecutionThread(threading.Thread):
                 callable()
             except BaseException, exception:
                 # prints a warning message about the problem executing callable
-                self.abstract_service.main_service_utils_plugin.warn("Error executing callable: " + unicode(exception))
+                self.abstract_service.main_service_utils_plugin.warning("Error executing callable: " + unicode(exception))
 
     def stop(self):
         # acquires the callable queue condition
