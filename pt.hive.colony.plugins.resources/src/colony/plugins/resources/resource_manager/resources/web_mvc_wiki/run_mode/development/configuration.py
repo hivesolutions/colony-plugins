@@ -137,6 +137,49 @@ configuration = {
                             "link" : "index"
                         }
                     ]
+                },
+                {
+                    "name" : "Learn",
+                    "items" : [
+                        {
+                            "name" : "What you get",
+                            "link" : "what_you_get"
+                        },
+                        {
+                            "name" : "Bargania RSS Specification",
+                            "link" : "rss_specification"
+                        },
+                        {
+                            "name" : "Bargania RSS Examples",
+                            "link" : "rss_examples"
+                        },
+                    ]
+                },
+                {
+                    "name" : "Cities and Categories",
+                    "items" : [
+                        {
+                            "name" : "Locations",
+                            "link" : "locations"
+                        },
+                        {
+                            "name" : "Categories",
+                            "link" : "categories"
+                        }
+                    ]
+                },
+                {
+                    "name" : "Get Help",
+                    "items" : [
+                        {
+                            "name" : "FAQ",
+                            "link" : "faq"
+                        },
+                        {
+                            "name" : "Support",
+                            "link" : "support"
+                        }
+                    ]
                 }
             ]
         }

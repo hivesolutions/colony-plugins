@@ -56,6 +56,82 @@ configuration = {
                 "generate_footer" : False,
                 "simple_parse" : True
             }
+        },
+        "bargania" : {
+            "name" : "bargania",
+            "wiki_name" : "Bargania Developers",
+            "template" : "simply",
+            "main_page" : "index",
+            "repository_type" : "svn",
+            "repository_path" : "%manager_path%/../../com.bargania.documentation",
+            "logo_path" : "bargania_logo.png",
+            "icon_path" : "bargania_icon.ico",
+            "footer_enabled" : False,
+            "options_enabled" : False,
+            "print_enabled" : False,
+            "header_links" : [],
+            "repository_arguments" : {
+                "save_username_password" : False
+            },
+            "configuration_map" : {
+                "auto_numbered_sections" : True,
+                "generate_footer" : False,
+                "simple_parse" : True
+            },
+            "configuration_index" : [
+                {
+                    "name" : "Global",
+                    "items" : [
+                        {
+                            "name" : "Index",
+                            "link" : "index"
+                        }
+                    ]
+                },
+                {
+                    "name" : "Learn",
+                    "items" : [
+                        {
+                            "name" : "What you get",
+                            "link" : "what_you_get"
+                        },
+                        {
+                            "name" : "Bargania RSS Specification",
+                            "link" : "rss_specification"
+                        },
+                        {
+                            "name" : "Bargania RSS Examples",
+                            "link" : "rss_examples"
+                        },
+                    ]
+                },
+                {
+                    "name" : "Cities and Categories",
+                    "items" : [
+                        {
+                            "name" : "Locations",
+                            "link" : "locations"
+                        },
+                        {
+                            "name" : "Categories",
+                            "link" : "categories"
+                        }
+                    ]
+                },
+                {
+                    "name" : "Get Help",
+                    "items" : [
+                        {
+                            "name" : "FAQ",
+                            "link" : "faq"
+                        },
+                        {
+                            "name" : "Support",
+                            "link" : "support"
+                        }
+                    ]
+                }
+            ]
         }
     }
 }
