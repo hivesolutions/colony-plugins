@@ -91,7 +91,7 @@
                         <adapter>svn</adapter>
                         <name>pt.hive.colony</name>
                         <path>http://svn.hive.pt/hive-main/pt.hive.colony</path>
-                        <target_path>$base{plugin_system_directory}/tmp/checkout/pt.hive.colony</target_path>
+                        <target_path>$base{plugin_system_directory}/tmp/checkout/colony/pt.hive.colony</target_path>
                         <version_file_path>${build_automation.build.resources_directory}/pt.hive.colony.version</version_file_path>
                         <previous_version_file_path>$resource{system.path.integration}/colony/LATEST_SUCCESS/pt.hive.colony.version</previous_version_file_path>
                         <changelog_file_path>${build_automation.build.resources_directory}/pt.hive.colony.changelog</changelog_file_path>
@@ -100,7 +100,7 @@
                         <adapter>svn</adapter>
                         <name>pt.hive.colony.plugins</name>
                         <path>http://svn.hive.pt/hive-main/pt.hive.colony.plugins</path>
-                        <target_path>$base{plugin_system_directory}/tmp/checkout/pt.hive.colony.plugins</target_path>
+                        <target_path>$base{plugin_system_directory}/tmp/checkout/colony/pt.hive.colony.plugins</target_path>
                         <version_file_path>${build_automation.build.resources_directory}/pt.hive.colony.plugins.version</version_file_path>
                         <previous_version_file_path>$resource{system.path.integration}/colony/LATEST_SUCCESS/resources/pt.hive.colony.plugins.version</previous_version_file_path>
                         <changelog_file_path>${build_automation.build.resources_directory}/pt.hive.colony.plugins.changelog</changelog_file_path>
@@ -109,7 +109,7 @@
                         <adapter>svn</adapter>
                         <name>pt.hive.colony.extras</name>
                         <path>http://svn.hive.pt/hive-main/pt.hive.colony.extras</path>
-                        <target_path>$base{plugin_system_directory}/tmp/checkout/pt.hive.colony.extras</target_path>
+                        <target_path>$base{plugin_system_directory}/tmp/checkout/colony/pt.hive.colony.extras</target_path>
                         <version_file_path>${build_automation.build.resources_directory}/pt.hive.colony.language.version</version_file_path>
                         <previous_version_file_path>$resource{system.path.integration}/colony/LATEST_SUCCESS/resources/pt.hive.colony.language.version</previous_version_file_path>
                         <changelog_file_path>${build_automation.build.resources_directory}/pt.hive.colony.extras.changelog</changelog_file_path>
@@ -118,7 +118,7 @@
                         <adapter>svn</adapter>
                         <name>pt.hive.colony.language</name>
                         <path>http://svn.hive.pt/hive-main/pt.hive.colony.language</path>
-                        <target_path>$base{plugin_system_directory}/tmp/checkout/pt.hive.colony.language</target_path>
+                        <target_path>$base{plugin_system_directory}/tmp/checkout/colony/pt.hive.colony.language</target_path>
                         <version_file_path>${build_automation.build.resources_directory}/pt.hive.colony.language.version</version_file_path>
                         <previous_version_file_path>$resource{system.path.integration}/colony/pt.hive.colony.language.version</previous_version_file_path>
                         <changelog_file_path>${build_automation.build.resources_directory}/pt.hive.colony.language.changelog</changelog_file_path>
@@ -132,11 +132,11 @@
                 <configuration>
                     <contents>
                         <file>
-                            <path>$base{plugin_system_directory}/tmp/checkout/pt.hive.colony/trunk/pt.hive.colony/src/colony/base/plugin_system_information.py</path>
+                            <path>$base{plugin_system_directory}/tmp/checkout/colony/pt.hive.colony/trunk/pt.hive.colony/src/colony/base/plugin_system_information.py</path>
                             <encoding>utf-8</encoding>
                         </file>
                         <file>
-                            <path>$base{plugin_system_directory}/tmp/checkout/pt.hive.colony/trunk/pt.hive.colony/src/scripts/all/colony_deploy.py</path>
+                            <path>$base{plugin_system_directory}/tmp/checkout/colony/pt.hive.colony/trunk/pt.hive.colony/src/scripts/all/colony_deploy.py</path>
                             <encoding>utf-8</encoding>
                         </file>
                     </contents>
@@ -149,9 +149,9 @@
                 <configuration>
                     <command>python</command>
                     <arguments>
-                        <argument>$base{plugin_system_directory}/tmp/checkout/pt.hive.colony/trunk/pt.hive.colony/src/main.py</argument>
+                        <argument>$base{plugin_system_directory}/tmp/checkout/colony/pt.hive.colony/trunk/pt.hive.colony/src/main.py</argument>
                         <argument>--configuration_file=config/python/configuration_integration_run.py</argument>
-                        <argument>--manager_dir=$base{plugin_system_directory}/tmp/checkout/pt.hive.colony/trunk/pt.hive.colony/src</argument>
+                        <argument>--manager_dir=$base{plugin_system_directory}/tmp/checkout/colony/pt.hive.colony/trunk/pt.hive.colony/src</argument>
                         <argument>--execution_command=pt.hive.colony.plugins.build.automation:run_automation_raise_exception pt.hive.colony.plugins.build.automation.items.colony_bundle$1.0.0$build$3%int$0%null$1%bool</argument>
                     </arguments>
                     <shell>true</shell>
