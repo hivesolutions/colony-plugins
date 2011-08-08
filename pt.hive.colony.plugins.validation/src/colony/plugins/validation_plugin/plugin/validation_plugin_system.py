@@ -113,6 +113,9 @@ SYSTEM_FILE_DIRECTORY_DEPTH = 2
 DEFAULT_JSON_ENCODING = "utf-8"
 """ The default json encoding """
 
+HIDDEN_FILE_INDICATOR = "."
+""" The hidden file indicator """
+
 INIT_FILE_NAME = "__init__.py"
 """ The init file name """
 
@@ -1402,6 +1405,11 @@ class PluginInformation:
 
         # collects file paths and directory paths
         for path_entry in path_entries:
+            # in case it is an hidden file
+            if path_entry.startswith(HIDDEN_FILE_INDICATOR):
+                # continues
+                continue
+
             # skips in case this entry is in the exclusion list
             if path_entry in RESOURCE_FILE_NAME_EXCLUSION_LIST:
                 continue
