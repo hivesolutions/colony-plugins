@@ -97,19 +97,23 @@ class ServiceAcceptingThread(threading.Thread):
 
                 # pops the top service tuple
                 service_tuple = self.service_tuple_queue.pop()
-            except Exception, exception:
-                # prints an error message about the problem accepting the socket
-                self.abstract_service.main_service_utils_plugin.error("Error accepting socket: " + unicode(exception))
+            except BaseException, exception:
+                # prints an error message about the problem accessing the service tuple queue
+                self.abstract_service.main_service_utils_plugin.error("Error accessing service tuple queue: " + unicode(exception))
             finally:
                 # releases the service tuple queue condition
                 self.service_tuple_queue_condition.release()
 
-            # unpacks the service tuple retrieving the service connection,
-            # the service address and the port
-            service_connection, service_address, port = service_tuple
+            try:
+                # unpacks the service tuple retrieving the service connection,
+                # the service address and the port
+                service_connection, service_address, port = service_tuple
 
-            # inserts the connection and address into the pool
-            self.abstract_service._insert_connection_pool(service_connection, service_address, port)
+                # inserts the connection and address into the pool
+                self.abstract_service._insert_connection_pool(service_connection, service_address, port)
+            except BaseException, exception:
+                # prints a warning message about the problem accepting the socket
+                self.abstract_service.main_service_utils_plugin.warn("Error accepting socket: " + unicode(exception))
 
     def stop(self):
         # acquires the service tuple queue condition
@@ -192,15 +196,19 @@ class ServiceExecutionThread(threading.Thread):
 
                 # pops the top callable
                 callable = self.callable_queue.pop()
-            except Exception, exception:
-                # prints an error message about the problem executing callable
-                self.abstract_service.main_service_utils_plugin.error("Error executing callable: " + unicode(exception))
+            except BaseException, exception:
+                # prints an error message about the problem accessing the callable queue
+                self.abstract_service.main_service_utils_plugin.error("Error accessing callable queue: " + unicode(exception))
             finally:
                 # releases the callable queue condition
                 self.callable_queue_condition.release()
 
-            # calls the callable
-            callable()
+            try:
+                # calls the callable
+                callable()
+            except BaseException, exception:
+                # prints a warning message about the problem executing callable
+                self.abstract_service.main_service_utils_plugin.warn("Error executing callable: " + unicode(exception))
 
     def stop(self):
         # acquires the callable queue condition
