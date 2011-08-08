@@ -41,9 +41,6 @@ configuration = {
     "default_end_points" : [
         (
             "normal", "", 8888, {}
-        ),
-        (
-            "ssl", "", 443, {}
         )
     ],
     "default_handler" : "file",
