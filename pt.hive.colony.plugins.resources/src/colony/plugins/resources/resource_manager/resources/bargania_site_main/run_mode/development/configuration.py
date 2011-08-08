@@ -59,10 +59,13 @@ configuration = {
         "base_url" : "http://localhost:8080/bargania/"
     },
     "tasks" : {
-        "fetch" : {
+        "fetch_deals" : {
             "schedule" : False
         },
-        "cleanup" : {
+        "cleanup_deals" : {
+            "schedule" : False
+        },
+        "close_trades" : {
             "schedule" : False
         }
     }

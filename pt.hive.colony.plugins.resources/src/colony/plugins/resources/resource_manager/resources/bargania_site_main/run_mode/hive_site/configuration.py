@@ -53,13 +53,19 @@ configuration = {
         "base_url" : "http://bargania.com/"
     },
     "tasks" : {
-        "fetch" : {
+        "fetch_deals" : {
             "schedule" : True,
             "recursion_list" : [
                 0, 0, 10, 0, 0
             ]
         },
-        "cleanup" : {
+        "cleanup_deals" : {
+            "schedule" : True,
+            "recursion_list" : [
+                0, 0, 30, 0, 0
+            ]
+        },
+        "close_trades" : {
             "schedule" : True,
             "recursion_list" : [
                 0, 0, 30, 0, 0
