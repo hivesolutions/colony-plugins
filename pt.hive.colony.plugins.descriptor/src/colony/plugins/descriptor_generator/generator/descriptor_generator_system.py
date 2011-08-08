@@ -110,6 +110,9 @@ PLUGIN_DESCRIPTOR_TEMPLATE_FILE_NAME = "plugin_descriptor_template.tpl"
 PLUGIN_DESCRIPTOR_DEPENDENCY_FORMAT = "{\"id\" : \"%s\", \"version\" : \"%s\"}"
 """ The plugin descriptor dependency format """
 
+HIDDEN_FILE_INDICATOR = "."
+""" The hidden file indicator """
+
 INIT_FILE_NAME = "__init__.py"
 """ The init file name """
 
@@ -356,6 +359,11 @@ class DescriptorGenerator:
         for file_path in file_paths:
             # splits the file path
             root, file = os.path.split(file_path)
+
+            # in case it is an hidden file
+            if file.startswith(HIDDEN_FILE_INDICATOR):
+                # continues
+                continue
 
             # converts the root path separators from the windows mode to unix mode
             root = root.replace(WINDOWS_DIRECTORY_SEPARATOR, UNIX_DIRECTORY_SEPARATOR)
