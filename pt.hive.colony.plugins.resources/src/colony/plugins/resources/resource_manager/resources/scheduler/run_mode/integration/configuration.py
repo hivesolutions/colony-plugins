@@ -72,6 +72,21 @@ configuration = {
         },
         {
             "type" : "plugin",
+            "plugin_id" : "pt.hive.colony.plugins.build.automation",
+            "plugin_version" : "1.0.0",
+            "method" : "run_automation",
+            "arguments" : [
+                "pt.hive.products.plugins.build.automation.items.products_integration",
+                "1.0.0",
+                "install",
+                1
+            ],
+            "recursion_list" : [
+                0, 0, 15, 0, 0
+            ]
+        },
+        {
+            "type" : "plugin",
             "plugin_id" : "pt.hive.hive_development.plugins.media_dashboard.updater.revision_control",
             "plugin_version" : "1.0.0",
             "method" : "update_media_dashboard",
