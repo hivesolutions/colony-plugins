@@ -52,7 +52,7 @@
                     <specification_file>$base{plugin_directory}/colony_system_build_automation_item_plugin.json</specification_file>
                     <resource_specifications>
                         <specification>
-                            <type>bundle</type>
+                            <type>container</type>
                             <specification_file>$base{plugin_system_directory}/colony_container.json</specification_file>
                         </specification>
                     </resource_specifications>
