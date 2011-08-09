@@ -53,8 +53,8 @@ BUNDLES_DIRECTORY_VALUE = "bundles_directory"
 PLUGINS_DIRECTORY_VALUE = "plugins_directory"
 """ The plugins directory value """
 
-LIBRARIES_DIRECTORY_VALUE = "libraries_directory"
-""" The libraries directory value """
+CONTAINERS_DIRECTORY_VALUE = "containers_directory"
+""" The containers directory value """
 
 TARGET_PATH_VALUE = "target_path"
 """ The target path value """
@@ -83,8 +83,8 @@ BUNDLE_VALUE = "bundle"
 PLUGIN_VALUE = "plugin"
 """ The plugin value """
 
-LIBRARY_VALUE = "library"
-""" The library value """
+CONTAINER_VALUE = "container"
+""" The container value """
 
 ID_VALUE = "id"
 """ The id value """
@@ -104,20 +104,20 @@ PACKED_BUNDLES_VALUE = "packed_bundles"
 PACKED_PLUGINS_VALUE = "packed_plugins"
 """ The packed plugins value """
 
-PACKED_LIBRARIES_VALUE = "packed_libraries"
-""" The packed libraries value """
+PACKED_CONTAINERS_VALUE = "packed_containers"
+""" The packed containers value """
 
 PACKAGE_PACKED_KEY_MAP = {
     BUNDLE_VALUE : PACKED_BUNDLES_VALUE,
     PLUGIN_VALUE : PACKED_PLUGINS_VALUE,
-    LIBRARY_VALUE : PACKED_LIBRARIES_VALUE
+    CONTAINER_VALUE : PACKED_CONTAINERS_VALUE
 }
 """ The map associating the package file with the packed key """
 
 PACKAGE_FILE_EXTENSION_MAP = {
     BUNDLE_VALUE : ".cbx",
     PLUGIN_VALUE : ".cpx",
-    LIBRARY_VALUE : ".clx"
+    CONTAINER_VALUE : ".ccx"
 }
 """ The map associating the package file with the extension """
 
@@ -149,8 +149,8 @@ class PackingBuildAutomationExtension:
         # retrieves the plugins directory
         plugins_directory = build_properties[PLUGINS_DIRECTORY_VALUE]
 
-        # retrieves the libraries directory
-        libraries_directory = build_properties[LIBRARIES_DIRECTORY_VALUE]
+        # retrieves the containers directory
+        containers_directory = build_properties[CONTAINERS_DIRECTORY_VALUE]
 
         # retrieves the type
         type = parameters.get(TYPE_VALUE, PLUGIN_VALUE)
@@ -171,17 +171,17 @@ class PackingBuildAutomationExtension:
         specifications = colony.libs.map_util.map_get_values(resource_specifications, SPECIFICATION_VALUE)
 
         # packs the main specification
-        self._pack_specification(specification, bundles_directory, plugins_directory, libraries_directory, build_automation_structure, logger)
+        self._pack_specification(specification, bundles_directory, plugins_directory, containers_directory, build_automation_structure, logger)
 
         # iterates over all the specifications
         for specification in specifications:
             # packs the (resource) specification
-            self._pack_specification(specification, bundles_directory, plugins_directory, libraries_directory, build_automation_structure, logger)
+            self._pack_specification(specification, bundles_directory, plugins_directory, containers_directory, build_automation_structure, logger)
 
         # returns true (success)
         return True
 
-    def _pack_specification(self, specification, bundles_directory, plugins_directory, libraries_directory, build_automation_structure, logger):
+    def _pack_specification(self, specification, bundles_directory, plugins_directory, containers_directory, build_automation_structure, logger):
         # retrieves the main packing manager plugin
         main_packing_manager_plugin = self.packing_build_automation_extension_plugin.main_packing_manager_plugin
 
@@ -205,9 +205,9 @@ class PackingBuildAutomationExtension:
         # in case the packing type is plugin
         elif type == PLUGIN_VALUE:
             target_path = plugins_directory
-        # in case the packaing type is library
-        elif type == LIBRARY_VALUE:
-            target_path = libraries_directory
+        # in case the packaing type is container
+        elif type == CONTAINER_VALUE:
+            target_path = containers_directory
         # otherwise it must be invalid
         else:
             # raises the invalid packing type exception

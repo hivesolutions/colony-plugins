@@ -50,8 +50,8 @@ BUNDLES_DIRECTORY_VALUE = "bundles_directory"
 PLUGINS_DIRECTORY_VALUE = "plugins_directory"
 """ The plugins directory value """
 
-LIBRARIES_DIRECTORY_VALUE = "libraries_directory"
-""" The libraries directory value """
+CONTAINERS_DIRECTORY_VALUE = "containers_directory"
+""" The containers directory value """
 
 TARGET_VALUE = "target"
 """ The target value """
@@ -71,8 +71,8 @@ PACKED_BUNDLES_VALUE = "packed_bundles"
 PACKED_PLUGINS_VALUE = "packed_plugins"
 """ The packed plugins value """
 
-PACKED_LIBRARIES_VALUE = "packed_libraries"
-""" The packed libraries value """
+PACKED_CONTAINERS_VALUE = "packed_containers"
+""" The packed containers value """
 
 BUNDLE_EXTENSION_VALUE = ".cbx"
 """ The bundle extension value """
@@ -80,8 +80,8 @@ BUNDLE_EXTENSION_VALUE = ".cbx"
 PLUGIN_EXTENSION_VALUE = ".cpx"
 """ The plugin extension value """
 
-LIBRARY_EXTENSION_VALUE = ".clx"
-""" The library extension value """
+CONTAINER_EXTENSION_VALUE = ".ccx"
+""" The container extension value """
 
 COLONY_VALUE = "colony"
 """ The colony value """
@@ -92,8 +92,8 @@ BUNDLES_VALUE = "bundles"
 PLUGINS_VALUE = "plugins"
 """ The plugins value """
 
-LIBRARIES_VALUE = "libraries"
-""" The libraries value """
+CONTAINERS_VALUE = "containers"
+""" The containers value """
 
 ID_VALUE = "id"
 """ The id value """
@@ -141,8 +141,8 @@ class ColonyRepositoryGeneratorBuildAutomationExtension:
         # retrieves the plugins directory
         plugins_directory = build_properties[PLUGINS_DIRECTORY_VALUE]
 
-        # retrieves the libraries directory
-        libraries_directory = build_properties[LIBRARIES_DIRECTORY_VALUE]
+        # retrieves the containers directory
+        containers_directory = build_properties[CONTAINERS_DIRECTORY_VALUE]
 
         # retrieves the repository name
         repository_name = parameters[REPOSITORY_NAME_VALUE]
@@ -153,11 +153,11 @@ class ColonyRepositoryGeneratorBuildAutomationExtension:
         # retrieves the repository layout
         repository_layout = parameters[REPOSITORY_LAYOUT]
 
-        # retrieves the packed bundles, plugins and libraries from
+        # retrieves the packed bundles, plugins and containers from
         # the build automation structure runtime
         packed_bundles = build_automation_structure_runtime.global_properties.get(PACKED_BUNDLES_VALUE, [])
         packed_plugins = build_automation_structure_runtime.global_properties.get(PACKED_PLUGINS_VALUE, [])
-        packed_libraries = build_automation_structure_runtime.global_properties.get(PACKED_LIBRARIES_VALUE, [])
+        packed_containers = build_automation_structure_runtime.global_properties.get(PACKED_CONTAINERS_VALUE, [])
 
         # retrieves the target
         target = parameters.get(TARGET_VALUE, target_directory)
@@ -175,7 +175,7 @@ class ColonyRepositoryGeneratorBuildAutomationExtension:
         repository_descriptor_file_path = full_target_directory + "/" + DEFAULT_REPOSITORY_DESCRIPTOR_NAME
 
         # generates the repository descriptor file using the given artifacts
-        repository_descriptor_generator_plugin.generate_repository_descriptor_file_artifacts(repository_descriptor_file_path, repository_name, repository_description, repository_layout, packed_bundles, packed_plugins, packed_libraries)
+        repository_descriptor_generator_plugin.generate_repository_descriptor_file_artifacts(repository_descriptor_file_path, repository_name, repository_description, repository_layout, packed_bundles, packed_plugins, packed_containers)
 
         # processes the bundles copying them to the repository directory
         self._process_bundles(packed_bundles, bundles_directory, full_target_directory)
@@ -183,8 +183,8 @@ class ColonyRepositoryGeneratorBuildAutomationExtension:
         # processes the plugins copying them to the repository directory
         self._process_plugins(packed_plugins, plugins_directory, full_target_directory)
 
-        # processes the libraries copying them to the repository directory
-        self._process_libraries(packed_libraries, libraries_directory, full_target_directory)
+        # processes the containers copying them to the repository directory
+        self._process_containers(packed_containers, containers_directory, full_target_directory)
 
         # returns true (success)
         return True
@@ -217,19 +217,19 @@ class ColonyRepositoryGeneratorBuildAutomationExtension:
             # installs (deploy) the plugin to the target path
             self._deploy_packed_item(packed_plugin, PLUGIN_EXTENSION_VALUE, plugins_directory, full_plugins_directory)
 
-    def _process_libraries(self, packed_libraries, libraries_directory, full_target_directory):
-        # creates the full libraries directory
-        full_libraries_directory = full_target_directory + "/" + LIBRARIES_VALUE
+    def _process_containers(self, packed_containers, containers_directory, full_target_directory):
+        # creates the full containers directory
+        full_containers_directory = full_target_directory + "/" + CONTAINERS_VALUE
 
-        # in case the full libraries directory does not exist
-        if not os.path.exists(full_libraries_directory):
-            # creates the full libraries directory
-            os.makedirs(full_libraries_directory)
+        # in case the full containers directory does not exist
+        if not os.path.exists(full_containers_directory):
+            # creates the full containers directory
+            os.makedirs(full_containers_directory)
 
-        # iterates over all the packed libraries to copy the files
-        for packed_library in packed_libraries:
-            # installs (deploy) the library to the target path
-            self._deploy_packed_item(packed_library, LIBRARY_EXTENSION_VALUE, libraries_directory, full_libraries_directory)
+        # iterates over all the packed containers to copy the files
+        for packed_container in packed_containers:
+            # installs (deploy) the container to the target path
+            self._deploy_packed_item(packed_container, CONTAINER_EXTENSION_VALUE, containers_directory, full_containers_directory)
 
     def _deploy_packed_item(self, packed_item, packed_item_extension, packed_item_directoy, full_packed_item_directory):
         # retrieves the packed item id and version
