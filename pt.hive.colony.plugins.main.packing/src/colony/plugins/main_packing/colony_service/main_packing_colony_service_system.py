@@ -75,6 +75,9 @@ BUNDLE_REGEX_VALUE = "bundle_regex"
 PLUGIN_REGEX_VALUE = "plugin_regex"
 """ The plugin regex value """
 
+CONTAINER_REGEX_VALUE = "container_regex"
+""" The container regex value """
+
 TARGET_PATH_VALUE = "target_path"
 """ The target path value """
 
@@ -93,8 +96,8 @@ JSON_BUNDLE_REGEX = ".+bundle.json$"
 JSON_PLUGIN_REGEX = ".+plugin.json$"
 """ The json plugin regex """
 
-JSON_LIBRARY_REGEX = ".+library.json$"
-""" The json library regex """
+JSON_CONTAINER_REGEX = ".+container.json$"
+""" The json container regex """
 
 ZIP_FILE_MODE = 1
 """ The zip file mode """
@@ -117,8 +120,8 @@ DEFAULT_COLONY_BUNDLE_FILE_EXTENSION = ".cbx"
 DEFAULT_COLONY_PLUGIN_FILE_EXTENSION = ".cpx"
 """ The default colony plugin file extension """
 
-DEFAULT_COLONY_LIBRARY_FILE_EXTENSION = ".clx"
-""" The default colony library file extension """
+DEFAULT_COLONY_CONTAINER_FILE_EXTENSION = ".ccx"
+""" The default colony container file extension """
 
 DEFAULT_TARGET_PATH = "."
 """ The default target path """
@@ -146,8 +149,8 @@ class MainPackingColonyService:
     plugin_regex = None
     """ The plugin regex """
 
-    library_regex = None
-    """ The library regex """
+    container_regex = None
+    """ The container regex """
 
     def __init__(self, main_packing_colony_service_plugin):
         """
@@ -162,7 +165,7 @@ class MainPackingColonyService:
         # compiles the regex values
         self.bundle_regex = re.compile(JSON_BUNDLE_REGEX)
         self.plugin_regex = re.compile(JSON_PLUGIN_REGEX)
-        self.library_regex = re.compile(JSON_LIBRARY_REGEX)
+        self.container_regex = re.compile(JSON_CONTAINER_REGEX)
 
     def get_service_name(self):
         """
@@ -303,11 +306,11 @@ class MainPackingColonyService:
             elif self.plugin_regex.match(file_path):
                 # processes the plugin file
                 self._process_plugin_file(file_path, target_path)
-            # in case there is a library match in
+            # in case there is a container match in
             # the directory file name
-            elif self.library_regex.match(file_path):
-                # processes the library file
-                self._process_library_file(file_path, target_path)
+            elif self.container_regex.match(file_path):
+                # processes the container file
+                self._process_container_file(file_path, target_path)
             # otherwise the file path is not valid
             else:
                 # raises the invalid file path exception
@@ -337,16 +340,16 @@ class MainPackingColonyService:
 
             # in case it's a bundle extension
             if file_extension == DEFAULT_COLONY_BUNDLE_FILE_EXTENSION:
-                #(un)processes the bundle file using the given specification file path
+                # (un)processes the bundle file using the given specification file path
                 self._unprocess_bundle_file(file_path, target_path, specification_file_path)
             # in case it's a plugin extension
             elif file_extension == DEFAULT_COLONY_PLUGIN_FILE_EXTENSION:
-                #(un)processes the plugin file using the given specification file path
+                # (un)processes the plugin file using the given specification file path
                 self._unprocess_plugin_file(file_path, target_path, specification_file_path)
-            # in case it's a library extension
-            elif file_extension == DEFAULT_COLONY_LIBRARY_FILE_EXTENSION:
-                #(un)processes the library file using the given specification file path
-                self._unprocess_plugin_library(file_path, target_path, specification_file_path)
+            # in case it's a container extension
+            elif file_extension == DEFAULT_COLONY_CONTAINER_FILE_EXTENSION:
+                # (un)processes the container file using the given specification file path
+                self._unprocess_plugin_container(file_path, target_path, specification_file_path)
             # otherwise the file extension is not valid
             else:
                 # raises the invalid file extension
@@ -372,8 +375,8 @@ class MainPackingColonyService:
         # retrieves the plugin regex attribute
         plugin_regex = arguments[PLUGIN_REGEX_VALUE]
 
-        # retrieves the library regex attribute
-        library_regex = arguments[PLUGIN_REGEX_VALUE]
+        # retrieves the container regex attribute
+        container_regex = arguments[CONTAINER_REGEX_VALUE]
 
         # retrieves the target path attribute
         target_path = arguments.get(TARGET_PATH_VALUE, DEFAULT_TARGET_PATH)
@@ -392,10 +395,10 @@ class MainPackingColonyService:
             elif plugin_regex.match(directory_file_name):
                 # processes the plugin file
                 self._process_plugin_file(full_file_path, target_path)
-            # in case there is a library match in the directory file name
-            elif library_regex.match(directory_file_name):
-                # processes the library file
-                self._process_library_file(full_file_path, target_path)
+            # in case there is a container match in the directory file name
+            elif container_regex.match(directory_file_name):
+                # processes the container file
+                self._process_container_file(full_file_path, target_path)
 
     def _process_bundle_file(self, file_path, target_path, plugins_path):
         """
@@ -466,6 +469,62 @@ class MainPackingColonyService:
 
         @type file_path: String
         @param file_path: The path to the plugin file to be processed.
+        @type target_path: String
+        @param target_path: The target path to be used in the results.
+        """
+
+        # retrieves the specification manager plugin
+        specification_manager_plugin = self.main_packing_colony_service_plugin.specification_manager_plugin
+
+        # retrieves the plugin specification for the given file
+        plugin_specification = specification_manager_plugin.get_specification(file_path, {})
+
+        # retrieves the plugin id
+        plugin_id = plugin_specification.get_property(ID_VALUE)
+
+        # retrieves the plugin version
+        plugin_version = plugin_specification.get_property(VERSION_VALUE)
+
+        # retrieves the plugin resources
+        plugin_resources = plugin_specification.get_property(RESOURCES_VALUE)
+
+        # in case the plugin contains no resources
+        if not plugin_resources:
+            # raises the plugin processing exception
+            raise main_packing_colony_service_exceptions.PluginProcessingException("no plugin resources found")
+
+        # retrieves the base directory
+        base_directory = os.path.dirname(file_path)
+
+        # retrieves the base path and extension from the file path
+        _file_base_path, file_extension = os.path.splitext(file_path)
+
+        # creates a new compressed file
+        compressed_file = ColonyCompressedFile()
+
+        # opens the compressed file
+        compressed_file.open(target_path + "/" + plugin_id + "_" + plugin_version + DEFAULT_COLONY_PLUGIN_FILE_EXTENSION, "w")
+
+        try:
+            # iterates over all the plugin resources
+            for plugin_resource in plugin_resources:
+                # adds the plugin resource to the compressed file, using
+                # the correct relative paths
+                compressed_file.add(base_directory + "/" + plugin_resource, RESOURCES_BASE_PATH + "/" + plugin_resource)
+
+            # adds the specification file to the compressed file
+            compressed_file.add(file_path, SPECIFICATION_VALUE + file_extension)
+        finally:
+            # closes the compressed file
+            compressed_file.close()
+
+    def _process_container_file(self, file_path, target_path):
+        """
+        Processes the container file in the given file path, putting
+        the results in the target path.
+
+        @type file_path: String
+        @param file_path: The path to the container file to be processed.
         @type target_path: String
         @param target_path: The target path to be used in the results.
         """
