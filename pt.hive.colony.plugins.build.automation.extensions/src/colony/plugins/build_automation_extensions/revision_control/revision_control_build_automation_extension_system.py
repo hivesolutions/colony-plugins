@@ -213,16 +213,16 @@ class RevisionControlBuildAutomationExtension:
                 # to better process the log values
                 revision_changed = not current_revision_number == previous_revision_number
 
-                # in case the revision has changed
+                # in case the revision (number) has changed
                 # from previous update
                 if revision_changed:
                     # prints an info message
-                    logger.info("The revision has changed from previous update")
-                # otherwise the revision has changed
+                    logger.info("The revision number has changed from previous update")
+                # otherwise the revision (number) has changed
                 # from previous update
                 else:
                     # prints an info message
-                    logger.info("The revision remain the same from previous update")
+                    logger.info("The revision number remains the same from previous update")
 
                 # in case the previous revision number is defined
                 if previous_revision_number:
