@@ -146,6 +146,9 @@ PLUGIN_MODULE_NAME_ENDING = "_plugin"
 RESOURCES_DIRECTORY = "/resources"
 """ The resources directory """
 
+BASE_PLUGIN_SYSTEM_DIRECTORY_VARIABLE = "$base{plugin_system_directory}"
+""" The base plugin system directory variable """
+
 BASE_PLUGIN_DIRECTORY_VARIABLE = "$base{plugin_directory}"
 """ The base plugin directory variable """
 
@@ -829,11 +832,17 @@ class ValidationPlugin:
                     self.add_validation_error(validation_errors, plugin_information, "'%s' json descriptor file is missing resource declaration for file '%s'" % (plugin_module_name, pyc_file_path))
 
     def _validate_build_automation_file(self, plugin_information, validation_errors):
+        # retrieves the plugin manager
+        plugin_manager = self.validation_plugin_plugin.manager
+
         # retrieves the plugin
         plugin = plugin_information.plugin
 
         # retrieves the plugin module name
         plugin_module_name = plugin_information.plugin_module_name
+
+        # retrieves the (plugin) manager (base) path
+        manager_path = plugin_manager.get_manager_path()
 
         # retrieves the plugin path
         plugin_path = plugin_information.plugin_path
@@ -849,8 +858,10 @@ class ValidationPlugin:
         # retrieves the base build automation file path
         base_build_automation_file_path = plugin.attributes[BUILD_AUTOMATION_FILE_PATH_VALUE]
 
-        # retrieves the build automation file path
-        build_automation_file_path = base_build_automation_file_path.replace(BASE_PLUGIN_DIRECTORY_VARIABLE, plugin_path)
+        # retrieves the (real) build automation file path replacing the plugin
+        # system and the plugin path references
+        build_automation_file_path = base_build_automation_file_path.replace(BASE_PLUGIN_SYSTEM_DIRECTORY_VARIABLE, manager_path)
+        build_automation_file_path = build_automation_file_path.replace(BASE_PLUGIN_DIRECTORY_VARIABLE, plugin_path)
 
         # checks if the build automation file path exists
         build_automation_file_path_exists = os.path.exists(build_automation_file_path)
@@ -977,11 +988,17 @@ class ValidationPlugin:
             self.__validate_build_automation_file_attributes_plugin_tag(plugin_information, build_automation_file_path, plugin_tag, validation_errors)
 
     def __validate_build_automation_file_attributes_plugin_tag(self, plugin_information, build_automation_file_path, plugin_tag, validation_errors):
+        # retrieves the plugin manager
+        plugin_manager = self.validation_plugin_plugin.manager
+
         # retrieves the plugin path
         plugin_path = plugin_information.plugin_path
 
         # retrieves the plugin module name
         plugin_module_name = plugin_information.plugin_module_name
+
+        # retrieves the (plugin) manager (base) path
+        manager_path = plugin_manager.get_manager_path()
 
         # retrieves the id tags
         id_tags = plugin_tag.getElementsByTagName(ID_VALUE)
@@ -1035,8 +1052,10 @@ class ValidationPlugin:
         # retrieves the specification file path
         specification_file_path = self.get_xml_node_text(specification_file_tag)
 
-        # sets the plugin path in the specification file path
-        specification_file_path = specification_file_path.replace(BASE_PLUGIN_DIRECTORY_VARIABLE, plugin_path)
+        # retrieves the (real) specification file path replacing the plugin
+        # system and the plugin path references
+        specification_file_path = specification_file_path.replace(BASE_PLUGIN_SYSTEM_DIRECTORY_VARIABLE, manager_path)
+        build_automation_file_path = specification_file_path.replace(BASE_PLUGIN_DIRECTORY_VARIABLE, plugin_path)
 
         # checks if the specification file exists
         if not os.path.exists(specification_file_path):
