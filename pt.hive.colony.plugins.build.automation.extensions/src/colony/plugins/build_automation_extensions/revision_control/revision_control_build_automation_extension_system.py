@@ -209,9 +209,15 @@ class RevisionControlBuildAutomationExtension:
                 # reads the previous revision number from the
                 previous_revision_number = self._read_version_number(previous_version_file_path)
 
+                # prints an info message
+                logger.info("Comparing current revision number '%d' with previous '%d'" % (current_revision_number, previous_revision_number))
+
                 # checks if the revision number has changed in order
                 # to better process the log values
-                revision_changed = not current_revision_number == current_revision_number
+                revision_changed = not current_revision_number == previous_revision_number
+
+                # prints an info message
+                logger.info("The revision has changed from previous update")
 
                 # in case the previous revision number is defined
                 if previous_revision_number:
