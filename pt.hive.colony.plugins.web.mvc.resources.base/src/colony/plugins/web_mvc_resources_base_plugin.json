@@ -49,6 +49,7 @@
             "web_mvc_resources_base/resources_base/resources/extras/libs/util/firebug_redirector.js",
             "web_mvc_resources_base/resources_base/resources/extras/libs/util/import.js",
             "web_mvc_resources_base/resources_base/resources/extras/libs/util/json.js",
+            "web_mvc_resources_base/resources_base/resources/extras/libs/util/md5.js",
             "web_mvc_resources_base/resources_base/resources/extras/libs/util/mock_data_generator.js",
             "web_mvc_resources_base/resources_base/resources/extras/libs/util/namespace.js",
             "web_mvc_resources_base/resources_base/resources/extras/libs/util/object.js",
