@@ -754,7 +754,10 @@ class ClientConnection(Connection):
                 # returns immediately (no more
                 # data to be processed)
                 return
+            # otherwise a try for parsing should be made
             else:
+                # tries to retrieve the request from the given data (only a successful
+                # parse is valid for request handling)
                 request = self.service.client_service.retrieve_request_data(self, data)
 
                 # handles the request using the client service (in case the request is valid)
