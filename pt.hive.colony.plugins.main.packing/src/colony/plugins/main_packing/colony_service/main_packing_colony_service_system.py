@@ -349,7 +349,7 @@ class MainPackingColonyService:
             # in case it's a container extension
             elif file_extension == DEFAULT_COLONY_CONTAINER_FILE_EXTENSION:
                 # (un)processes the container file using the given specification file path
-                self._unprocess_plugin_container(file_path, target_path, specification_file_path)
+                self._unprocess_container_file(file_path, target_path, specification_file_path)
             # otherwise the file extension is not valid
             else:
                 # raises the invalid file extension
@@ -547,7 +547,7 @@ class MainPackingColonyService:
         # in case the container contains no resources
         if not container_resources:
             # raises the container processing exception
-            raise main_packing_colony_service_exceptions.PluginProcessingException("no container resources found")
+            raise main_packing_colony_service_exceptions.ContainerProcessingException("no container resources found")
 
         # retrieves the base directory
         base_directory = os.path.dirname(file_path)
@@ -706,6 +706,63 @@ class MainPackingColonyService:
 
             # the main file is extracted at the end to avoid any problem
             compressed_file.extract(plugin_main_file_path, plugin_main_file_target_path, False)
+        finally:
+            # closes the compressed file
+            compressed_file.close()
+
+    def _unprocess_container_file(self, file_path, target_path, specification_file_path):
+        """
+        (Un)processes the container file in the given file path, putting
+        the results in the target path.
+
+        @type file_path: String
+        @param file_path: The path to the container file to be (un)processed.
+        @type target_path: String
+        @param target_path: The target path to be used in the results.
+        @type specification_file_path: String
+        @param specification_file_path: The specification file path in the container file.
+        """
+
+        # prints a debug message
+        self.main_packing_colony_service_plugin.debug("Unpacking container file '%s' into '%s'" % (file_path, target_path))
+
+        # retrieves the specification manager plugin
+        specification_manager_plugin = self.main_packing_colony_service_plugin.specification_manager_plugin
+
+        # creates a new compressed file
+        compressed_file = ColonyCompressedFile()
+
+        # opens the compressed file
+        compressed_file.open(file_path, "r")
+
+        try:
+            # reads the specification file from the compressed file
+            specification_file_buffer = compressed_file.read(specification_file_path)
+
+            # retrieves the container specification for the given file
+            container_specification = specification_manager_plugin.get_specification_file_buffer(specification_file_buffer, {})
+
+            # retrieves the container resources
+            container_resources = container_specification.get_property(RESOURCES_VALUE)
+
+            # in case the container contains no resources
+            if not container_resources:
+                # raises the container (un)processing exception
+                raise main_packing_colony_service_exceptions.ContainerUnprocessingException("no container resources found")
+
+            # iterates over all the container resources
+            for container_resource in container_resources:
+                # creates the container resource path
+                container_resource_path = RESOURCES_BASE_PATH + "/" + container_resource
+
+                # creates the container resource target path
+                container_resource_target_path = target_path + "/" + container_resource
+
+                # prints a debug message
+                self.main_packing_colony_service_plugin.debug("Extracting resource '%s'" % container_resource)
+
+                # extracts the resource
+                compressed_file.extract(container_resource_path, container_resource_target_path, False)
         finally:
             # closes the compressed file
             compressed_file.close()

@@ -73,6 +73,32 @@ class PluginProcessingException(MainPackingColonyServiceException):
 
         return "Plugin processing exception: %s" % self.message
 
+class ContainerProcessingException(MainPackingColonyServiceException):
+    """
+    The container processing exception class.
+    """
+
+    def __init__(self, message):
+        """
+        Constructor of the class.
+
+        @type message: String
+        @param message: The message to be printed.
+        """
+
+        MainPackingColonyServiceException.__init__(self)
+        self.message = message
+
+    def __str__(self):
+        """
+        Returns the string representation of the class.
+
+        @rtype: String
+        @return: The string representation of the class.
+        """
+
+        return "Container processing exception: %s" % self.message
+
 class PluginUnprocessingException(MainPackingColonyServiceException):
     """
     The plugin (un)processing exception class.
@@ -98,6 +124,32 @@ class PluginUnprocessingException(MainPackingColonyServiceException):
         """
 
         return "Plugin (un)processing exception: %s" % self.message
+
+class ContainerUnprocessingException(MainPackingColonyServiceException):
+    """
+    The container (un)processing exception class.
+    """
+
+    def __init__(self, message):
+        """
+        Constructor of the class.
+
+        @type message: String
+        @param message: The message to be printed.
+        """
+
+        MainPackingColonyServiceException.__init__(self)
+        self.message = message
+
+    def __str__(self):
+        """
+        Returns the string representation of the class.
+
+        @rtype: String
+        @return: The string representation of the class.
+        """
+
+        return "Container (un)processing exception: %s" % self.message
 
 class InvalidFilePath(MainPackingColonyServiceException):
     """
