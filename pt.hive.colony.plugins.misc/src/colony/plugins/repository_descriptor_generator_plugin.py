@@ -101,14 +101,14 @@ class RepositoryDescriptorGeneratorPlugin(colony.base.plugin_system.Plugin):
     def generate_repository_descriptor_file(self, file_path, repository_name, repository_description, repository_layout):
         return self.repository_descriptor_generator.generate_repository_descriptor_file(file_path, repository_name, repository_description, repository_layout)
 
-    def generate_repository_descriptor_file_artifacts(self, file_path, repository_name, repository_description, repository_layout, bundles, plugins, libraries):
-        return self.repository_descriptor_generator.generate_repository_descriptor_file(file_path, repository_name, repository_description, repository_layout, bundles, plugins, libraries)
+    def generate_repository_descriptor_file_artifacts(self, file_path, repository_name, repository_description, repository_layout, bundles, plugins, containers):
+        return self.repository_descriptor_generator.generate_repository_descriptor_file(file_path, repository_name, repository_description, repository_layout, bundles, plugins, containers)
 
     def generate_repository_descriptor(self, repository_name, repository_description, repository_layout):
         return self.repository_descriptor_generator.generate_repository_descriptor(repository_name, repository_description, repository_layout)
 
-    def generate_repository_descriptor_artifacts(self, repository_name, repository_description, repository_layout, bundles, plugins, libraries):
-        return self.repository_descriptor_generator.generate_repository_descriptor(repository_name, repository_description, repository_layout, bundles, plugins, libraries)
+    def generate_repository_descriptor_artifacts(self, repository_name, repository_description, repository_layout, bundles, plugins, containers):
+        return self.repository_descriptor_generator.generate_repository_descriptor(repository_name, repository_description, repository_layout, bundles, plugins, containers)
 
     def get_console_extension_name(self):
         return self.console_repository_descriptor_generator.get_console_extension_name()

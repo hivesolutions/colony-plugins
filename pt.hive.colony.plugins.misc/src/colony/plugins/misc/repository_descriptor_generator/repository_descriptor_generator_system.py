@@ -63,9 +63,9 @@ class RepositoryDescriptorGenerator:
 
         self.repository_descriptor_generator_plugin = repository_descriptor_generator_plugin
 
-    def generate_repository_descriptor_file(self, file_path, repository_name = "none", repository_description = "none", repository_layout = DEFAULT_REPOSITORY_LAYOUT, bundles = [], plugins = [], libraries = []):
+    def generate_repository_descriptor_file(self, file_path, repository_name = "none", repository_description = "none", repository_layout = DEFAULT_REPOSITORY_LAYOUT, bundles = [], plugins = [], containers = []):
         # retrieves the repository descriptor string from the repository descriptor generator
-        repository_descriptor_string = self.generate_repository_descriptor(repository_name, repository_description, repository_layout, bundles, plugins, libraries)
+        repository_descriptor_string = self.generate_repository_descriptor(repository_name, repository_description, repository_layout, bundles, plugins, containers)
 
         # opens the file (to write the repository descriptor)
         file = open(file_path, "wb")
@@ -78,7 +78,7 @@ class RepositoryDescriptorGenerator:
             # closes the file
             file.close()
 
-    def generate_repository_descriptor(self, repository_name = "none", repository_description = "none", repository_layout = DEFAULT_REPOSITORY_LAYOUT, bundles = [], plugins = [], libraries = []):
+    def generate_repository_descriptor(self, repository_name = "none", repository_description = "none", repository_layout = DEFAULT_REPOSITORY_LAYOUT, bundles = [], plugins = [], containers = []):
         """
         Generates a repository descriptor file (xml) using the current loaded plugins.
         The generated repository is named after the sent argument and description.
@@ -94,8 +94,8 @@ class RepositoryDescriptorGenerator:
         @param bundles: The list of bundle descriptors to generate the bundles.
         @type plugins: List
         @param plugins: The list of plugin descriptors to generate the plugins.
-        @type libraries: List
-        @param libraries: The list of library descriptors to generate the libraries.
+        @type containers: List
+        @param containers: The list of container descriptors to generate the containers.
         @rtype: String
         @return: The string containing the repository descriptor.
         """
