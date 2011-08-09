@@ -220,8 +220,13 @@ class RevisionControlBuildAutomationExtension:
                     # sets the base revision number as invalid (start from zero, complete log)
                     base_revision_number = None
 
-                # retrieves the log of revision in the revision
-                revision_list = revision_control_manager.log([target_path], base_revision_number, current_revision_number)
+                # checks if the revision number has changed in order
+                # to better process the log values
+                revision_changed = not base_revision_number == current_revision_number
+
+                # retrieves the log of revision in the revision (only in case the
+                # revision number has changed)
+                revision_list = revision_changed and revision_control_manager.log([target_path], base_revision_number, current_revision_number) or []
 
                 # converts the revision list into a changelog list
                 changelog_list = self._convert_revision_list_changelog(revision_list)
