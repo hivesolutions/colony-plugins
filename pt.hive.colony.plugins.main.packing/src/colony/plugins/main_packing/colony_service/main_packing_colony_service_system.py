@@ -532,22 +532,22 @@ class MainPackingColonyService:
         # retrieves the specification manager plugin
         specification_manager_plugin = self.main_packing_colony_service_plugin.specification_manager_plugin
 
-        # retrieves the plugin specification for the given file
-        plugin_specification = specification_manager_plugin.get_specification(file_path, {})
+        # retrieves the container specification for the given file
+        container_specification = specification_manager_plugin.get_specification(file_path, {})
 
-        # retrieves the plugin id
-        plugin_id = plugin_specification.get_property(ID_VALUE)
+        # retrieves the container id
+        container_id = container_specification.get_property(ID_VALUE)
 
-        # retrieves the plugin version
-        plugin_version = plugin_specification.get_property(VERSION_VALUE)
+        # retrieves the container version
+        container_version = container_specification.get_property(VERSION_VALUE)
 
-        # retrieves the plugin resources
-        plugin_resources = plugin_specification.get_property(RESOURCES_VALUE)
+        # retrieves the container resources
+        container_resources = container_specification.get_property(RESOURCES_VALUE)
 
-        # in case the plugin contains no resources
-        if not plugin_resources:
-            # raises the plugin processing exception
-            raise main_packing_colony_service_exceptions.PluginProcessingException("no plugin resources found")
+        # in case the container contains no resources
+        if not container_resources:
+            # raises the container processing exception
+            raise main_packing_colony_service_exceptions.PluginProcessingException("no container resources found")
 
         # retrieves the base directory
         base_directory = os.path.dirname(file_path)
@@ -559,14 +559,14 @@ class MainPackingColonyService:
         compressed_file = ColonyCompressedFile()
 
         # opens the compressed file
-        compressed_file.open(target_path + "/" + plugin_id + "_" + plugin_version + DEFAULT_COLONY_PLUGIN_FILE_EXTENSION, "w")
+        compressed_file.open(target_path + "/" + container_id + "_" + container_version + DEFAULT_COLONY_CONTAINER_FILE_EXTENSION, "w")
 
         try:
-            # iterates over all the plugin resources
-            for plugin_resource in plugin_resources:
-                # adds the plugin resource to the compressed file, using
+            # iterates over all the container resources
+            for container_resource in container_resources:
+                # adds the container resource to the compressed file, using
                 # the correct relative paths
-                compressed_file.add(base_directory + "/" + plugin_resource, RESOURCES_BASE_PATH + "/" + plugin_resource)
+                compressed_file.add(base_directory + "/" + container_resource, RESOURCES_BASE_PATH + "/" + container_resource)
 
             # adds the specification file to the compressed file
             compressed_file.add(file_path, SPECIFICATION_VALUE + file_extension)
