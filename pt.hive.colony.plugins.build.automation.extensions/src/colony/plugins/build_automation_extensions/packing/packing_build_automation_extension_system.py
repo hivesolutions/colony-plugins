@@ -245,10 +245,10 @@ class PackingBuildAutomationExtension:
         # runtime properties
         packed_items_list = build_automation_structure_runtime.global_properties[packed_items_key]
 
-        # retrieves the specification id and version
+        # retrieves the specification id, version and dependencies
         specification_id = specification[ID_VALUE]
         specification_version = specification[VERSION_VALUE]
-        specification_dependencies = specification[DEPENDENCIES_VALUE]
+        specification_dependencies = specification.get(DEPENDENCIES_VALUE, [])
 
         # retrieves the package file extension for the type
         package_file_extension = PACKAGE_FILE_EXTENSION_MAP.get(type, None)
