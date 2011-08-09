@@ -50,15 +50,12 @@
                 <configuration>
                     <type>plugin</type>
                     <specification_file>$base{plugin_directory}/colony_system_build_automation_item_plugin.json</specification_file>
-                </configuration>
-            </plugin>
-            <plugin>
-                <id>pt.hive.colony.plugins.build.automation.extensions.packing</id>
-                <version>1.0.0</version>
-                <stage>build</stage>
-                <configuration>
-                    <type>container</type>
-                    <specification_file>$base{plugin_system_directory}/colony_container.json</specification_file>
+                    <resource_specifications>
+                        <specification>
+                            <type>bundle</type>
+                            <specification_file>$base{plugin_system_directory}/colony_container.json</specification_file>
+                        </specification>
+                    </resource_specifications>
                 </configuration>
             </plugin>
         </plugins>
