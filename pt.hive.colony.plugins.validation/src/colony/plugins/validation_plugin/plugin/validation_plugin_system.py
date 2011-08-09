@@ -1055,7 +1055,7 @@ class ValidationPlugin:
         # retrieves the (real) specification file path replacing the plugin
         # system and the plugin path references
         specification_file_path = specification_file_path.replace(BASE_PLUGIN_SYSTEM_DIRECTORY_VARIABLE, manager_path)
-        build_automation_file_path = specification_file_path.replace(BASE_PLUGIN_DIRECTORY_VARIABLE, plugin_path)
+        specification_file_path = specification_file_path.replace(BASE_PLUGIN_DIRECTORY_VARIABLE, plugin_path)
 
         # checks if the specification file exists
         if not os.path.exists(specification_file_path):
