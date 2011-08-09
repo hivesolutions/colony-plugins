@@ -47,6 +47,7 @@
         <classes_directory>target/classes</classes_directory>
         <bundles_directory>target/bundles</bundles_directory>
         <plugins_directory>target/plugins</plugins_directory>
+        <containers_directory>target/containers</containers_directory>
         <libraries_directory>target/libraries</libraries_directory>
         <documentation_directory>target/documentation</documentation_directory>
         <repository_directory>target/repository</repository_directory>

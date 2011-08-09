@@ -802,6 +802,11 @@ class BuildAutomation:
             build_automation_plugins_directory = self.parse_string(build.plugins_directory, build_automation_structure)
             build_automation_structure.build_properties["plugins_directory"] = build_automation_plugins_directory
 
+        if build.containers_directory:
+            # retrieves the build containers directory
+            build_automation_containers_directory = self.parse_string(build.containers_directory, build_automation_structure)
+            build_automation_structure.build_properties["containers_directory"] = build_automation_containers_directory
+
         if build.libraries_directory:
             # retrieves the build libraries directory
             build_automation_libraries_directory = self.parse_string(build.libraries_directory, build_automation_structure)
@@ -976,6 +981,9 @@ class BuildAutomation:
         # retrieves the plugins directory path value
         plugins_directory_path = build_properties["plugins_directory"]
 
+        # retrieves the containers directory path value
+        containers_directory_path = build_properties["containers_directory"]
+
         # retrieves the libraries directory path value
         libraries_directory_path = build_properties["libraries_directory"]
 
@@ -1005,6 +1013,9 @@ class BuildAutomation:
 
         # creates the complete plugins directory path
         complete_plugins_directory_path = execution_directory_path + "/" + plugins_directory_path
+
+        # creates the complete containers directory path
+        complete_containers_directory_path = execution_directory_path + "/" + containers_directory_path
 
         # creates the complete libraries directory path
         complete_libraries_directory_path = execution_directory_path + "/" + libraries_directory_path
@@ -1048,6 +1059,11 @@ class BuildAutomation:
         if not os.path.isdir(complete_plugins_directory_path):
             # creates the plugins directory
             os.mkdir(complete_plugins_directory_path)
+
+        # in case the containers directory does not exist
+        if not os.path.isdir(complete_containers_directory_path):
+            # creates the containers directory
+            os.mkdir(complete_containers_directory_path)
 
         # in case the libraries directory does not exist
         if not os.path.isdir(complete_libraries_directory_path):
