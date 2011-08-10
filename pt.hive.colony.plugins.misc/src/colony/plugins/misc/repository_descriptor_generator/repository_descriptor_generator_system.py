@@ -335,8 +335,7 @@ class RepositoryDescriptorGenerator:
 
         # iterates over all the containers
         for container in containers:
-            # retrieves the container id, version, dependencies
-            # and hash digest
+            # retrieves the container id, version and hash digest
             container_id = container["id"]
             container_version = container["version"]
             container_hash_digest = container["hash_digest"]
