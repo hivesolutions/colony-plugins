@@ -54,19 +54,19 @@ jQuery(document).ready(function() {
             var bundleStatus = button.attr("data-bundle_status");
 
             // starts the install bundle flag
-            var instalBundle = false;
+            var installBundle = false;
 
             // switches over the bundle status
             switch (bundleStatus) {
                 case "not_installed" :
                     // sets the install bundle flag
-                    instalBundle = true;
+                    installBundle = true;
 
                     // breaks the switch
                     break;
                 case "newer_version" :
                     // sets the install bundle flag
-                    instalBundle = true;
+                    installBundle = true;
 
                     // breaks the switch
                     break;
@@ -78,7 +78,7 @@ jQuery(document).ready(function() {
                     break;
                 case "different_digest" :
                     // sets the install bundle flag
-                    instalBundle = true;
+                    installBundle = true;
 
                     // breaks the switch
                     break;
@@ -89,7 +89,7 @@ jQuery(document).ready(function() {
 
             // in case the install bundle flag is not set
             // no need to install the bundle
-            if (!instalBundle) {
+            if (!installBundle) {
                 // creates the uninstall dialog properties
                 var uninstallDialogProperties = {
                     title : "Warning",

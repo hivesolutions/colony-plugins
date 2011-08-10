@@ -327,6 +327,16 @@ class RepositoryController:
         # returns the filtered repository plugins
         return filtered_repository_plugins
 
+    def _get_filtered_repository_containers(self, rest_request, search_query, repository_index):
+        # retrieves the repository
+        repository = self._get_repository(rest_request, repository_index)
+
+        # creates the filtered repository containers
+        filtered_repository_containers = [repository_container for repository_container in repository.containers if not repository_container.id.find(search_query) == -1]
+
+        # returns the filtered repository containers
+        return filtered_repository_containers
+
     def _get_repositories(self):
         # retrieves the system updater plugin
         system_updater_plugin = self.web_mvc_manager_repository_plugin.system_updater_plugin
@@ -976,6 +986,337 @@ class RepositoryPluginsController:
 
         # tries to uninstall the plugin
         system_updater_plugin.uninstall_plugin(plugin_id, plugin_version)
+
+        # sleeps for a second to give time for the autoloader to update
+        # this delay is induced on purpose
+        time.sleep(INSTALLATION_DELAY)
+
+        # retrieves the (end) list of available plugins
+        available_plugins_end = plugin_manager.get_all_plugins()
+
+        # iterates over all the plugins available at the beginning
+        # to check if they exist in the current available plugins
+        for available_plugin_beginning in available_plugins_beginning:
+            if not available_plugin_beginning in available_plugins_end:
+                delta_plugin_install_map[UNINSTALLED_VALUE].append(available_plugin_beginning.id)
+
+        # iterates over all the plugins available at the end
+        # to check if they exist in the previously available plugins
+        for available_plugin_end in available_plugins_end:
+            if not available_plugin_end in available_plugins_beginning:
+                delta_plugin_install_map[INSTALLED_VALUE].append(available_plugin_end.id)
+
+        # returns the delta plugin install map
+        return delta_plugin_install_map
+
+class RepositoryContainersController:
+    """
+    The web mvc manager repository containers controller.
+    """
+
+    web_mvc_manager_repository_plugin = None
+    """ The web mvc manager repository plugin """
+
+    web_mvc_manager_repository = None
+    """ The web mvc manager repository """
+
+    def __init__(self, web_mvc_manager_repository_plugin, web_mvc_manager_repository):
+        """
+        Constructor of the class.
+
+        @type web_mvc_manager_repository_plugin: WebMvcManagerRepositoryPlugin
+        @param web_mvc_manager_repository_plugin: The web mvc manager repository plugin.
+        @type web_mvc_manager_repository: WebMvcManagerRepository
+        @param web_mvc_manager_repository: The web mvc manager repository.
+        """
+
+        self.web_mvc_manager_repository_plugin = web_mvc_manager_repository_plugin
+        self.web_mvc_manager_repository = web_mvc_manager_repository
+
+    def start(self):
+        """
+        Method called upon structure initialization.
+        """
+
+        # sets the relative resources path
+        self.set_relative_resources_path(WEB_MVC_MANAGER_REPOSITORY_RESOURCES_PATH, extra_templates_path = "repository_containers")
+
+    def validate(self, rest_request, parameters, validation_parameters):
+        # returns the result of the require permission call
+        return []
+
+    @web_mvc_utils.serialize_exceptions("all")
+    @web_mvc_utils.validated_method("repository.list")
+    def handle_list_ajx(self, rest_request, parameters = {}):
+        # retrieves the json plugin
+        json_plugin = self.web_mvc_manager_repository_plugin.json_plugin
+
+        # sets the serializer in the parameters
+        parameters[SERIALIZER_VALUE] = json_plugin
+
+        # retrieves the pattern names from the parameters
+        pattern_names = parameters[PATTERN_NAMES_VALUE]
+
+        # retrieves the repository index pattern
+        repository_index = pattern_names["repository_index"]
+
+        # converts the repository index to integer
+        repository_index = int(repository_index)
+
+        # retrieves the template file
+        template_file = self.retrieve_template_file("repository_containers_list_contents.html.tpl")
+
+        # assigns the repository index to the template
+        template_file.assign("repository_index", repository_index)
+
+        # assigns the session variables to the template file
+        self.assign_session_template_file(rest_request, template_file)
+
+        # applies the base path to the template file
+        self.apply_base_path_template_file(rest_request, template_file)
+
+        # processes the template file and sets the request contents
+        self.process_set_contents(rest_request, template_file)
+
+    @web_mvc_utils.serialize_exceptions("all")
+    @web_mvc_utils.validated_method("repository.list")
+    def handle_list(self, rest_request, parameters = {}):
+        # retrieves the template file from the parameters
+        template_file = parameters[TEMPLATE_FILE_VALUE]
+
+        # retrieves the pattern names from the parameters
+        pattern_names = parameters[PATTERN_NAMES_VALUE]
+
+        # retrieves the repository index pattern
+        repository_index = pattern_names["repository_index"]
+
+        # converts the repository index to integer
+        repository_index = int(repository_index)
+
+        # resolves the relative resources path to obtain the absolute page include to be used
+        absolute_page_include = self.resolve_relative_path(WEB_MVC_MANAGER_REPOSITORY_RESOURCES_PATH, "templates/repository_containers/repository_containers_list_contents.html.tpl")
+
+        # assigns the include to the template
+        self.assign_include_template_file(template_file, "page_include", absolute_page_include)
+
+        # assigns the include to the template
+        self.assign_include_template_file(template_file, "side_panel_include", "side_panel/side_panel_configuration.html.tpl")
+
+        # assigns the repository index to the template
+        template_file.assign("repository_index", repository_index)
+
+        # assigns the session variables to the template file
+        self.assign_session_template_file(rest_request, template_file)
+
+        # applies the base path to the template file
+        self.apply_base_path_template_file(rest_request, template_file)
+
+        # processes the template file and sets the request contents
+        self.process_set_contents(rest_request, template_file)
+
+    @web_mvc_utils.serialize_exceptions("all")
+    @web_mvc_utils.validated_method("repository.list")
+    def handle_partial_list_ajx(self, rest_request, parameters = {}):
+        # retrieves the json plugin
+        json_plugin = self.web_mvc_manager_repository_plugin.json_plugin
+
+        # sets the serializer in the parameters
+        parameters[SERIALIZER_VALUE] = json_plugin
+
+        # retrieves the required controllers
+        web_mvc_manager_repository_repository_controller = self.web_mvc_manager_repository.web_mvc_manager_repository_repository_controller
+
+        # retrieves the form data by processing the form
+        form_data_map = self.process_form_data(rest_request, DEFAULT_ENCODING)
+
+        # retrieves the pattern names from the parameters
+        pattern_names = parameters[PATTERN_NAMES_VALUE]
+
+        # retrieves the web search helper
+        search_helper = parameters["search_helper"]
+
+        # retrieves the repository index pattern
+        repository_index = pattern_names["repository_index"]
+
+        # retrieves the search values
+        search_query = form_data_map["search_query"]
+        start_record = form_data_map["start_record"]
+        number_records = form_data_map["number_records"]
+
+        # converts the repository index to integer
+        repository_index = int(repository_index)
+
+        # converts the the search values
+        start_record = int(start_record)
+        number_records = int(number_records)
+
+        # retrieves the filtered repositories
+        filtered_repository_containers = web_mvc_manager_repository_repository_controller._get_filtered_repository_containers(rest_request, search_query, repository_index)
+
+        # retrieves the partial filter from the filtered repository containers
+        partial_filtered_repository_containers, start_record, number_records, total_number_records = search_helper.partial_filter(rest_request, filtered_repository_containers, start_record, number_records)
+
+        # retrieves the template file
+        template_file = self.retrieve_template_file("repository_containers_partial_list_contents.html.tpl")
+
+        # assigns the repositories to the template
+        template_file.assign("repository_containers", partial_filtered_repository_containers)
+
+        # assigns the various search values to the template
+        template_file.assign("start_record", start_record)
+        template_file.assign("number_records", number_records)
+        template_file.assign("total_number_records", total_number_records)
+
+        # assigns the session variables to the template file
+        self.assign_session_template_file(rest_request, template_file)
+
+        # applies the base path to the template file
+        self.apply_base_path_template_file(rest_request, template_file)
+
+        # processes the template file and sets the request contents
+        self.process_set_contents(rest_request, template_file)
+
+    @web_mvc_utils.serialize_exceptions("all")
+    @web_mvc_utils.validated_method("repository.install_container")
+    def handle_install_container_serialized(self, rest_request, parameters = {}):
+        # retrieves the serializer
+        serializer = parameters[SERIALIZER_VALUE]
+
+        # retrieves the form data by processing the form
+        form_data_map = self.process_form_data(rest_request, DEFAULT_ENCODING)
+
+        # retrieves the communication helper
+        communication_helper = parameters["communication_helper"]
+
+        # retrieves the container id
+        container_id = form_data_map["container_id"]
+
+        # retrieves the container version
+        container_version = form_data_map["container_version"]
+
+        # install the container and retrieves the result
+        install_container_result = self._install_container(rest_request, container_id, container_version)
+
+        # serializes the install result using the serializer
+        serialized_status = serializer.dumps(install_container_result)
+
+        # sets the serialized status as the rest request contents
+        self.set_contents(rest_request, serialized_status)
+
+        # sends the serialized broadcast message
+        communication_helper.send_serialized_broadcast_message(parameters, "web_mvc_manager/communication", "web_mvc_manager/plugin/install", serialized_status)
+
+    def handle_install_container_json(self, rest_request, parameters = {}):
+        # retrieves the json container
+        json_plugin = self.web_mvc_manager_repository_plugin.json_plugin
+
+        # sets the serializer in the parameters
+        parameters[SERIALIZER_VALUE] = json_plugin
+
+        # handles the request with the general
+        # handle install container serialized method
+        self.handle_install_container_serialized(rest_request, parameters)
+
+    @web_mvc_utils.serialize_exceptions("all")
+    @web_mvc_utils.validated_method("repository.uninstall_container")
+    def handle_uninstall_container_serialized(self, rest_request, parameters = {}):
+        # retrieves the serializer
+        serializer = parameters[SERIALIZER_VALUE]
+
+        # retrieves the form data by processing the form
+        form_data_map = self.process_form_data(rest_request, DEFAULT_ENCODING)
+
+        # retrieves the communication helper
+        communication_helper = parameters["communication_helper"]
+
+        # retrieves the container id
+        container_id = form_data_map["container_id"]
+
+        # retrieves the container version
+        container_version = form_data_map["container_version"]
+
+        # uninstall the container and retrieves the result
+        uninstall_container_result = self._uninstall_container(rest_request, container_id, container_version)
+
+        # serializes the uninstall result using the serializer
+        serialized_status = serializer.dumps(uninstall_container_result)
+
+        # sets the serialized status as the rest request contents
+        self.set_contents(rest_request, serialized_status)
+
+        # sends the serialized broadcast message
+        communication_helper.send_serialized_broadcast_message(parameters, "web_mvc_manager/communication", "web_mvc_manager/plugin/install", serialized_status)
+
+    def handle_uninstall_container_json(self, rest_request, parameters = {}):
+        # retrieves the json plugin
+        json_plugin = self.web_mvc_manager_repository_plugin.json_plugin
+
+        # sets the serializer in the parameters
+        parameters[SERIALIZER_VALUE] = json_plugin
+
+        # handles the request with the general
+        # handle uninstall container serialized method
+        self.handle_uninstall_container_serialized(rest_request, parameters)
+
+    def _install_container(self, rest_request, container_id, container_version):
+        # retrieves the plugin manager
+        plugin_manager = self.web_mvc_manager_repository_plugin.manager
+
+        # retrieves the system updater plugin
+        system_updater_plugin = self.web_mvc_manager_repository_plugin.system_updater_plugin
+
+        # creates the delta plugin install map
+        delta_plugin_install_map = {
+            INSTALLED_VALUE : [],
+            UNINSTALLED_VALUE : []
+        }
+
+        # retrieves the (beginning) list of available containers
+        available_plugins_beginning = copy.copy(plugin_manager.get_all_plugins())
+
+        # tries to install the container
+        system_updater_plugin.install_container(container_id, container_version)
+
+        # sleeps for a second to give time for the autoloader to update
+        # this delay is induced on purpose
+        time.sleep(INSTALLATION_DELAY)
+
+        # retrieves the (end) list of available plugins
+        available_plugins_end = plugin_manager.get_all_plugins()
+
+        # iterates over all the plugins available at the beginning
+        # to check if they exist in the current available plugins
+        for available_plugin_beginning in available_plugins_beginning:
+            if not available_plugin_beginning in available_plugins_end:
+                delta_plugin_install_map[UNINSTALLED_VALUE].append(available_plugin_beginning.id)
+
+        # iterates over all the plugins available at the end
+        # to check if they exist in the previously available plugins
+        for available_plugin_end in available_plugins_end:
+            if not available_plugin_end in available_plugins_beginning:
+                delta_plugin_install_map[INSTALLED_VALUE].append(available_plugin_end.id)
+
+        # returns the delta plugin install map
+        return delta_plugin_install_map
+
+    def _uninstall_container(self, rest_request, container_id, container_version):
+        # retrieves the plugin manager
+        plugin_manager = self.web_mvc_manager_repository_plugin.manager
+
+        # retrieves the system updater plugin
+        system_updater_plugin = self.web_mvc_manager_repository_plugin.system_updater_plugin
+
+        # creates the delta plugin install map
+        delta_plugin_install_map = {
+            INSTALLED_VALUE : [],
+            UNINSTALLED_VALUE : []
+        }
+
+        # retrieves the (beginning) list of available plugins
+        available_plugins_beginning = copy.copy(plugin_manager.get_all_plugins())
+
+        # tries to uninstall the container
+        system_updater_plugin.uninstall_container(container_id, container_version)
 
         # sleeps for a second to give time for the autoloader to update
         # this delay is induced on purpose

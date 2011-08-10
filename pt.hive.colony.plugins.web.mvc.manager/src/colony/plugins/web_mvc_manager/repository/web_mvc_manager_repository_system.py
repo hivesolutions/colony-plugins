@@ -151,8 +151,13 @@ class WebMvcManagerRepository:
             (r"^web_mvc_manager/repositories/(?P<repository_index>[0-9]+)/plugins$", self.web_mvc_manager_repository_repository_plugins_controller.handle_list_ajx, "get", "ajx"),
             (r"^web_mvc_manager/repositories/(?P<repository_index>[0-9]+)/plugins$", self.web_mvc_manager_repository_repository_plugins_controller.handle_list, "get"),
             (r"^web_mvc_manager/repositories/(?P<repository_index>[0-9]+)/plugins_partial$", self.web_mvc_manager_repository_repository_plugins_controller.handle_partial_list_ajx, "get"),
+            (r"^web_mvc_manager/repositories/(?P<repository_index>[0-9]+)/containers$", self.web_mvc_manager_repository_repository_containers_controller.handle_list_ajx, "get", "ajx"),
+            (r"^web_mvc_manager/repositories/(?P<repository_index>[0-9]+)/containers$", self.web_mvc_manager_repository_repository_containers_controller.handle_list, "get"),
+            (r"^web_mvc_manager/repositories/(?P<repository_index>[0-9]+)/containers_partial$", self.web_mvc_manager_repository_repository_containers_controller.handle_partial_list_ajx, "get"),
             (r"^web_mvc_manager/repositories/install_bundle$", self.web_mvc_manager_repository_repository_bundles_controller.handle_install_bundle_json, "post", "json"),
             (r"^web_mvc_manager/repositories/uninstall_bundle$", self.web_mvc_manager_repository_repository_bundles_controller.handle_uninstall_bundle_json, "post", "json"),
             (r"^web_mvc_manager/repositories/install_plugin$", self.web_mvc_manager_repository_repository_plugins_controller.handle_install_plugin_json, "post", "json"),
             (r"^web_mvc_manager/repositories/uninstall_plugin$", self.web_mvc_manager_repository_repository_plugins_controller.handle_uninstall_plugin_json, "post", "json"),
+            (r"^web_mvc_manager/repositories/install_container$", self.web_mvc_manager_repository_repository_containers_controller.handle_install_container_json, "post", "json"),
+            (r"^web_mvc_manager/repositories/uninstall_container$", self.web_mvc_manager_repository_repository_containers_controller.handle_uninstall_container_json, "post", "json")
         )

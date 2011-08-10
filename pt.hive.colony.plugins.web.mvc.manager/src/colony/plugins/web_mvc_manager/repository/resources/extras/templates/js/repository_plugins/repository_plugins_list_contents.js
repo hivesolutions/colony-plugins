@@ -54,19 +54,19 @@ jQuery(document).ready(function() {
             var pluginStatus = button.attr("data-plugin_status");
 
             // starts the install plugin flag
-            var instalPlugin = false;
+            var installPlugin = false;
 
             // switches over the plugin status
             switch (pluginStatus) {
                 case "not_installed" :
                     // sets the install plugin flag
-                    instalPlugin = true;
+                    installPlugin = true;
 
                     // breaks the switch
                     break;
                 case "newer_version" :
                     // sets the install plugin flag
-                    instalPlugin = true;
+                    installPlugin = true;
 
                     // breaks the switch
                     break;
@@ -78,7 +78,7 @@ jQuery(document).ready(function() {
                     break;
                 case "different_digest" :
                     // sets the install plugin flag
-                    instalPlugin = true;
+                    installPlugin = true;
 
                     // breaks the switch
                     break;
@@ -89,7 +89,7 @@ jQuery(document).ready(function() {
 
             // in case the install plugin flag is not set
             // no need to install the plugin
-            if (!instalPlugin) {
+            if (!installPlugin) {
                 // creates the uninstall dialog properties
                 var uninstallDialogProperties = {
                     title : "Warning",
