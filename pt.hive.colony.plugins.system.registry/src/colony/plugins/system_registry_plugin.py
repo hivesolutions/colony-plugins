@@ -183,6 +183,24 @@ class SystemRegistryPlugin(colony.base.plugin_system.Plugin):
 
         return self.system_registry.get_plugin_information(plugin_id, plugin_version)
 
+    def get_container_information(self, container_id, container_version):
+        """
+        Retrieves the container information for the container
+        with the given id and version.
+
+        @type container_id: String
+        @param container_id: The id of the container information
+        to retrieve.
+        @type container_version: String
+        @param container_version: The version of the container information
+        to retrieve.
+        @rtype: Dictionary
+        @return: The container information for the container
+        with the given id and version.
+        """
+
+        return self.system_registry.get_container_information(container_id, container_version)
+
     def get_json_plugin(self):
         return self.json_plugin
 

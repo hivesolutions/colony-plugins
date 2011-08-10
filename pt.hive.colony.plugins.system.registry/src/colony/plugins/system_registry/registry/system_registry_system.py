@@ -52,6 +52,9 @@ INSTALLED_BUNDLES_VALUE = "installed_bundles"
 INSTALLED_PLUGINS_VALUE = "installed_plugins"
 """ The installed plugins value """
 
+INSTALLED_CONTAINERS_VALUE = "installed_containers"
+""" The installed containers value """
+
 RELATIVE_REGISTRY_PATH = "registry"
 """ The path relative to the variable path for the registry """
 
@@ -63,6 +66,9 @@ BUNDLES_FILE_NAME = "bundles.json"
 
 PLUGINS_FILE_NAME = "plugins.json"
 """ The plugins file name """
+
+CONTAINERS_FILE_NAME = "containers.json"
+""" The containers file name """
 
 DEFAULT_STRUCTURE_TUPLE = (None, -1)
 """ The structure tuple to be used by default """
@@ -119,6 +125,16 @@ class SystemRegistry:
         """
 
         return self._get_structure(PLUGINS_FILE_NAME)
+
+    def get_containers_structure(self):
+        """
+        Retrieves the containers structure.
+
+        @rtype: Dictionary
+        @return: The containers structure.
+        """
+
+        return self._get_structure(CONTAINERS_FILE_NAME)
 
     def get_package_information(self, package_id, package_version):
         """
@@ -230,6 +246,43 @@ class SystemRegistry:
 
         # returns the plugin information
         return plugin_information
+
+    def get_container_information(self, container_id, container_version):
+        """
+        Retrieves the container information for the container
+        with the given id and version.
+
+        @type container_id: String
+        @param container_id: The id of the container information
+        to retrieve.
+        @type container_version: String
+        @param container_version: The version of the container information
+        to retrieve.
+        @rtype: Dictionary
+        @return: The container information for the container
+        with the given id and version.
+        """
+
+        # retrieves the plguins structure
+        containers_structure = self.get_containers_structure()
+
+        # retrieves the installed containers
+        installed_containers = containers_structure[INSTALLED_CONTAINERS_VALUE]
+
+        # retrieves the container "information" from the installed containers
+        container_information = installed_containers.get(container_id, {})
+
+        # retrieves the container version information
+        container_information_version = container_information.get(VERSION_VALUE, None)
+
+        # in case the container information is not valid or in
+        # case the version is not the same
+        if not container_information or not container_version == container_information_version:
+            # returns invalid
+            return None
+
+        # returns the container information
+        return container_information
 
     def _get_structure(self, structure_file_name):
         """
