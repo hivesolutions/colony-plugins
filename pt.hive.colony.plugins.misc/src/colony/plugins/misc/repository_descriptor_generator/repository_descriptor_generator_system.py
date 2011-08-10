@@ -381,9 +381,6 @@ class RepositoryDescriptorGenerator:
             repository_container_contents_file_value_node = xml_document.createTextNode(container_contents_file)
             repository_container_contents_file_node.appendChild(repository_container_contents_file_value_node)
 
-            repository_container_contents_file_value_node = xml_document.createTextNode(container_contents_file)
-            repository_container_contents_file_node.appendChild(repository_container_contents_file_value_node)
-
             repository_container_dependencies_node = xml_document.createElement("dependencies")
             repository_container_node.appendChild(repository_container_dependencies_node)
 
