@@ -1,6 +1,5 @@
 <div id="includes">
     <div class="javascript">repositories/resources/templates/js/repository/repository_list_contents.js</div>
-    <div class="css">repositories/resources/templates/css/repository/repository_list_contents.css</div>
 </div>
 <div id="meta-data">
     <div class="area">update</div>
