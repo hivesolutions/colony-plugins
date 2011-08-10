@@ -329,6 +329,78 @@ class RepositoryDescriptorGenerator:
                 repository_plugin_plugin_hash_digest_value_value_node = xml_document.createTextNode(plugin_hash_digest_value)
                 repository_plugin_plugin_hash_digest_value_node.appendChild(repository_plugin_plugin_hash_digest_value_value_node)
 
+        # creates the repository containers element
+        repository_containers_node = xml_document.createElement("containers")
+        repository_node.appendChild(repository_containers_node)
+
+        # iterates over all the containers
+        for container in containers:
+            # retrieves the container id, version, dependencies
+            # and hash digest
+            container_id = container["id"]
+            container_version = container["version"]
+            container_hash_digest = container["hash_digest"]
+
+            # retrieves the container hash digest items
+            container_hash_digest_items = container_hash_digest.items()
+
+            # creates the container contents file
+            container_contents_file = container_id + "_" + container_version + ".ccx"
+
+            repository_container_node = xml_document.createElement("container")
+            repository_containers_node.appendChild(repository_container_node)
+
+            repository_container_name_node = xml_document.createElement("name")
+            repository_container_node.appendChild(repository_container_name_node)
+
+            repository_container_name_value_node = xml_document.createTextNode(container_id)
+            repository_container_name_node.appendChild(repository_container_name_value_node)
+
+            repository_container_type_node = xml_document.createElement("type")
+            repository_container_node.appendChild(repository_container_type_node)
+
+            repository_container_type_value_node = xml_document.createTextNode(COLONY_PACKING_TYPE)
+            repository_container_type_node.appendChild(repository_container_type_value_node)
+
+            repository_container_id_node = xml_document.createElement("id")
+            repository_container_node.appendChild(repository_container_id_node)
+
+            repository_container_id_value_node = xml_document.createTextNode(container_id)
+            repository_container_id_node.appendChild(repository_container_id_value_node)
+
+            repository_container_version_node = xml_document.createElement("version")
+            repository_container_node.appendChild(repository_container_version_node)
+
+            repository_container_version_value_node = xml_document.createTextNode(container_version)
+            repository_container_version_node.appendChild(repository_container_version_value_node)
+
+            repository_container_contents_file_node = xml_document.createElement("contents_file")
+            repository_container_node.appendChild(repository_container_contents_file_node)
+
+            repository_container_contents_file_value_node = xml_document.createTextNode(container_contents_file)
+            repository_container_contents_file_node.appendChild(repository_container_contents_file_value_node)
+
+            repository_container_hash_digest_node = xml_document.createElement("hash_digest_items")
+            repository_container_node.appendChild(repository_container_hash_digest_node)
+
+            # iterates over all the container hash digest items to
+            # write the hash digest item values
+            for container_hash_digest_key, container_hash_digest_value in container_hash_digest_items:
+                repository_container_container_hash_digest_item_node = xml_document.createElement("hash_digest")
+                repository_container_hash_digest_node.appendChild(repository_container_container_hash_digest_item_node)
+
+                repository_container_container_hash_digest_key_node = xml_document.createElement("key")
+                repository_container_container_hash_digest_item_node.appendChild(repository_container_container_hash_digest_key_node)
+
+                repository_container_container_hash_digest_key_value_node = xml_document.createTextNode(container_hash_digest_key)
+                repository_container_container_hash_digest_key_node.appendChild(repository_container_container_hash_digest_key_value_node)
+
+                repository_container_container_hash_digest_value_node = xml_document.createElement("value")
+                repository_container_container_hash_digest_item_node.appendChild(repository_container_container_hash_digest_value_node)
+
+                repository_container_container_hash_digest_value_value_node = xml_document.createTextNode(container_hash_digest_value)
+                repository_container_container_hash_digest_value_node.appendChild(repository_container_container_hash_digest_value_value_node)
+
         # generates the repository descriptor string from the xml document
         repository_descriptor_string = xml_document.toprettyxml(indent = "    ")
 
