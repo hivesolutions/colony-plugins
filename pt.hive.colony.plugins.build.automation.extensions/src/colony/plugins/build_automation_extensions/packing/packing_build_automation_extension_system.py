@@ -248,7 +248,7 @@ class PackingBuildAutomationExtension:
         # retrieves the specification id, version and dependencies
         specification_id = specification[ID_VALUE]
         specification_version = specification[VERSION_VALUE]
-        specification_dependencies = specification.get(DEPENDENCIES_VALUE, [])
+        specification_dependencies = specification[DEPENDENCIES_VALUE]
 
         # retrieves the package file extension for the type
         package_file_extension = PACKAGE_FILE_EXTENSION_MAP.get(type, None)
