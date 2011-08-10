@@ -209,6 +209,17 @@ class RevisionControlBuildAutomationExtension:
                 # reads the previous revision number from the
                 previous_revision_number = self._read_version_number(previous_version_file_path)
 
+                # in case a previous revision number is valid
+                # a valid file was found
+                if previous_revision_number:
+                    # prints an info message
+                    logger.info("Previous revision found with number %d" % previous_revision_number)
+                # otherwise no valid file was found
+                # no previous build was created
+                else:
+                    # prints an info message
+                    logger.info("No previous revision number found")
+
                 # checks if the revision number has changed in order
                 # to better process the log values
                 revision_changed = not current_revision_number == previous_revision_number
