@@ -532,7 +532,7 @@ class RepositoryBundlesController:
         self.set_contents(rest_request, serialized_status)
 
         # sends the serialized broadcast message
-        communication_helper.send_serialized_broadcast_message(parameters, "web_mvc_manager/communication", "web_mvc_manager/bundle/install", serialized_status)
+        communication_helper.send_serialized_broadcast_message(parameters, "web_mvc_manager/communication", "web_mvc_manager/plugin/install", serialized_status)
 
     def handle_install_bundle_json(self, rest_request, parameters = {}):
         # retrieves the json bundle
@@ -573,7 +573,7 @@ class RepositoryBundlesController:
         self.set_contents(rest_request, serialized_status)
 
         # sends the serialized broadcast message
-        communication_helper.send_serialized_broadcast_message(parameters, "web_mvc_manager/communication", "web_mvc_manager/bundle/install", serialized_status)
+        communication_helper.send_serialized_broadcast_message(parameters, "web_mvc_manager/communication", "web_mvc_manager/plugin/install", serialized_status)
 
     def handle_uninstall_bundle_json(self, rest_request, parameters = {}):
         # retrieves the json plugin
