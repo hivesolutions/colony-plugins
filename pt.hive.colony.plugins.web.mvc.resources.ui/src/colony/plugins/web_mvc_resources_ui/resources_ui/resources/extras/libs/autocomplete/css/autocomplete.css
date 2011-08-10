@@ -30,25 +30,25 @@
 */
 
 .autocomplete-container {
-    display: none;
-    position: relative;
-    float: right;
-    width: 250px;
-    border: 1px solid #5193c2;
     background-color: #ffffff;
+    border: 1px solid #5193c2;
+    box-shadow: 1px 1px 3px #777777;
     -moz-box-shadow: 1px 1px 3px #777777;
     -webkit-box-shadow: 1px 1px 3px #777777;
-    box-shadow: 1px 1px 3px #777777;
+    display: none;
+    float: right;
+    position: relative;
+    width: 250px;
 }
 
 .autocomplete-container > ul.autocomplete-items {
-    padding: 0px;
     color: #005b9c;
+    padding: 0px;
 }
 
 .autocomplete-container > ul.autocomplete-items > li {
-    padding: 6px;
     cursor: pointer;
+    padding: 6px;
 }
 
 .autocomplete-container > ul.autocomplete-items > li.highlighted {
@@ -57,35 +57,35 @@
 }
 
 .autocomplete-container > ul.autocomplete-items > li > img {
+    background-color: #a8c8df;
     float: left;
     height: 48px;
-    width: 48px;
     margin-right: 6px;
-    background-color: #a8c8df;
+    width: 48px;
 }
 
 .autocomplete-container > ul.autocomplete-items > li > h3 {
-    margin: 0px;
     font-size: 10pt;
+    margin: 0px;
 }
 
 .autocomplete-container > ul.autocomplete-items > li > h4 {
-    margin: 0px;
     font-size: 9pt;
     font-weight: normal;
+    margin: 0px;
 }
 
 .autocomplete-container > ul.autocomplete-items > li.autocomplete-footer {
-    text-align: center;
     background: #eef4f9 url(../images/separator-dotted-horizontal.png) repeat-x left top;
+    color: #005b9c;
     font-size: 8pt;
     font-weight: bold;
     height: 32px;
     padding-top: 18px;
-    color: #005b9c;
+    text-align: center;
 }
 
 .autocomplete-container > ul.autocomplete-items > li.autocomplete-footer.highlighted {
-    color: #ffffff;
     background: #5d97c0 url(../images/autocomplete-highlight-background.png) repeat-x left top;
+    color: #ffffff;
 }

@@ -43,9 +43,9 @@
 
 body {
     background: transparent url(../images/general/body/body-background.png);
-    margin: 10px 0px 0px 0px;
     font-family: Tahoma, Arial;
     font-size: 8pt;
+    margin: 10px 0px 0px 0px;
     overflow: -moz-scrollbars-vertical;
     overflow-x: auto;
     overflow-y: scroll;
@@ -62,14 +62,14 @@ ul li {
 
 hr {
     background: transparent url(../images/general/separator/separator-dotted-horizontal.png) repeat-x left top;
-    height: 1px;
     border: none;
+    height: 1px;
     margin-bottom: 16px;
 }
 
 a, a:active, a:visited {
-    text-decoration: none;
     color: #005b9c;
+    text-decoration: none;
 }
 
 a:hover {
@@ -81,11 +81,11 @@ img {
 }
 
 h1 {
-    padding: 0px;
-    margin: 0px;
-    font-weight: Normal;
-    font-size: 8pt;
     color: #5193c2;
+    font-size: 8pt;
+    font-weight: Normal;
+    margin: 0px;
+    padding: 0px;
 }
 
 h1 .green {
@@ -97,12 +97,12 @@ h1 .red {
 }
 
 h2 {
-    padding: 0px;
-    margin: 0px 0px 16px 0px;
-    font-family: Arial;
-    font-weight: Normal;
-    font-size: 18pt;
     color: #666666;
+    font-family: Arial;
+    font-size: 18pt;
+    font-weight: Normal;
+    margin: 0px 0px 16px 0px;
+    padding: 0px;
 }
 
 /* General */
@@ -113,18 +113,18 @@ h2 {
 
 /* Globals */
 #filter {
-    position: absolute;
-    display: none;
     background-color: #eaeff2;
+    display: none;
     opacity: 0.6;
+    position: absolute;
 }
 
 #loading-message {
-    position: absolute;
-    display: none;
     background-color: #fbb03b;
-    padding: 4px 16px 4px 16px;
+    display: none;
     font-weight: bold;
+    padding: 4px 16px 4px 16px;
+    position: absolute;
 }
 
 /* Helpers */
@@ -139,9 +139,9 @@ h2 {
 }
 
 #notification-area.right {
-    width: auto;
-    right: 0px;
     min-width: 1px;
+    right: 0px;
+    width: auto;
 }
 
 #notification-area-contents {
@@ -156,8 +156,8 @@ h2 {
 #header {
     background: transparent url(../images/general/header/header-background.png);
     height: 74px;
-    width: 960px;
     margin: 0px auto 0px auto;
+    width: 960px;
 }
 
 #header #logo {
@@ -172,13 +172,13 @@ h2 {
 }
 
 #account-area-container a, #account-area-container a:link, #account-area-container a:active, #account-area-container a:visited {
-    font-size: 8pt;
     color: #a8c9e0;
     cursor: pointer;
+    font-size: 8pt;
 }
 
 #account-area-container a:hover {
-    color: #FFFFFF;
+    color: #ffffff;
 }
 
 #account-area-container ul {
@@ -201,12 +201,12 @@ h2 {
 }
 
 .menu-area-container a, .menu-area-container a:link, .menu-area-container a:active, .menu-area-container a:visited {
-    display: block;
-    height: 22px;
-    padding: 9px 14px 0px 14px;
-    font-weight: bold;
     color: #ffffff;
     cursor: pointer;
+    display: block;
+    font-weight: bold;
+    height: 22px;
+    padding: 9px 14px 0px 14px;
 }
 
 .menu-area-container a:hover {
@@ -216,7 +216,7 @@ h2 {
 
 .menu-area-container .active a, .menu-area-container .active a:link, .menu-area-container .active a:active, .menu-area-container .active a:visited {
     background-color: #fafdff;
-    color: #005b9C;
+    color: #005b9c;
 }
 
 .menu-area-container .selected a, .menu-area-container .selected a:link, .menu-area-container .selected a:active, .menu-area-container .selected a:visited {
@@ -230,8 +230,8 @@ h2 {
 .menu-area-container > ul li {
     background: transparent url(../images/general/separator/separator-vertical.png) no-repeat center right;
     float: left;
-    padding: 0px 3px 0px 2px;
     max-width: 150px;
+    padding: 0px 3px 0px 2px;
 }
 
 .menu-area-container .search-field {
@@ -240,19 +240,19 @@ h2 {
 
 /* Drop Menu */
 .drop-menu {
-    position: absolute;
-    float: left;
-    width: 160px;
-    border-top: 1px solid #5793bd;
-    border-left: 1px solid #5793bd;
-    border-bottom: 1px solid #22568b;
-    border-right: 1px solid #22568b;
     background-color: #337caf;
-    display: none;
-    z-index: 5;
+    border-bottom: 1px solid #22568b;
+    border-left: 1px solid #5793bd;
+    border-right: 1px solid #22568b;
+    border-top: 1px solid #5793bd;
     box-shadow: 1px 1px 3px #777777;
     -moz-box-shadow: 1px 1px 3px #777777;
     -webkit-box-shadow: 1px 1px 3px #777777;
+    display: none;
+    float: left;
+    position: absolute;
+    width: 160px;
+    z-index: 5;
 }
 
 .drop-menu ul {
@@ -269,17 +269,17 @@ h2 {
 }
 
 .drop-menu a:link, .drop-menu a:active, .drop-menu a:visited {
+    color: #ffffff;
     display: block;
     height: 19px;
     padding-top: 5px;
-    width: 100%;
     text-indent: 12px;
-    color: #ffffff;
+    width: 100%;
 
 }
 
 .drop-menu a:hover {
-     background: transparent url(../images/general/drop_menu/drop-menu-hover-background.png) repeat-x left bottom;
+    background: transparent url(../images/general/drop_menu/drop-menu-hover-background.png) repeat-x left bottom;
 }
 
 /* Float Panel */
@@ -291,10 +291,10 @@ h2 {
 .float-panel .float-panel-arrow {
     background: transparent url(../images/general/float_panel/float-panel-arrow-blue.png) no-repeat center bottom;
     float: left;
-    position: relative;
     height: 10px;
-    width: 13px;
     margin-left: 10px;
+    position: relative;
+    width: 13px;
 }
 
 #account-float-panel {
@@ -302,46 +302,46 @@ h2 {
 }
 
 #account-float-panel .float-panel-content {
-    position:relative;
     background-color: #337caf;
+    border-bottom: 1px solid #22568b;
+    border-left: 1px solid #5793bd;
+    border-right: 1px solid #22568b;
+    border-top: 1px solid #5793bd;
     height: 64px;
-    width: 250px;
     margin-top: 10px;
     padding: 10px;
-    border-top: 1px solid #5793bd;
-    border-left: 1px solid #5793bd;
-    border-bottom: 1px solid #22568b;
-    border-right: 1px solid #22568b;
+    position: relative;
     text-align: right;
+    width: 250px;
 }
 
 .float-panel-content {
+    box-shadow: 1px 1px 3px #777777;
     -moz-box-shadow: 1px 1px 3px #777777;
     -webkit-box-shadow: 1px 1px 3px #777777;
-    box-shadow: 1px 1px 3px #777777;
 }
 
 #account-float-panel .float-panel-content img {
+    background-color: #ffffff;
     float: left;
     margin-right: 14px;
-    background-color: #ffffff;
 }
 
 .float-panel-content h1 {
-    margin: 0px 0px 3px 0px;
+    color: #ffffff;
     font-family: Arial;
     font-size: 12pt;
     font-weight: normal;
+    margin: 0px 0px 3px 0px;
     text-align: left;
-    color: #ffffff;
 }
 
 .float-panel-content h2 {
-    margin: 0px 0px 16px 0px;
+    color: #ffffff;
     font-size: 8pt;
     font-weight: normal;
+    margin: 0px 0px 16px 0px;
     text-align: left;
-    color: #ffffff;
 }
 
 .float-panel-content a {
@@ -351,11 +351,11 @@ h2 {
 /* Loading Animations */
 .loading-animation {
     background: transparent url(../images/general/loading/loading-icon-square.gif) no-repeat left top;
-    float: right;
     display: none;
+    float: right;
     height: 32px;
-    width: 32px;
     margin: -13px 6px 0px 0px;
+    width: 32px;
 }
 
 .active.loading .loading-animation {
@@ -364,24 +364,24 @@ h2 {
 
 /* Main container */
 #main-container {
-    width: 960px;
     margin: 10px auto 0px auto;
+    width: 960px;
 }
 
 #content-body {
-    margin-left: 31px;
     background-color: #ffffff;
+    box-shadow: 2px 2px 4px #cccccc;
     -moz-box-shadow: 2px 2px 4px #cccccc;
     -webkit-box-shadow: 2px 2px 4px #cccccc;
-    box-shadow: 2px 2px 4px #cccccc;
+    margin-left: 31px;
 }
 
 #icon-bar {
     background: transparent url(../images/general/container/main-container-background.png) repeat-y right top;
     float: left;
     height: 100%;
-    width: 32px;
     margin-left: -32px;
+    width: 32px;
 }
 
 #icon-bar.blue {
@@ -437,12 +437,12 @@ h2 {
 }
 
 #content-icon {
-    position: absolute;
+    background: transparent url(../images/general/container/content-icon-background.png) no-repeat right top;
     cursor: pointer;
     float: left;
     height: 32px;
+    position: absolute;
     width: 32px;
-    background: transparent url(../images/general/container/content-icon-background.png) no-repeat right top;
 }
 
 .blue #content-icon {
@@ -503,22 +503,22 @@ h2 {
 }
 
 #left-column {
+    background: #eaeff2 url(../images/general/left_column/left-column-background.png) repeat-y right top;
     float: left;
     height: 100%;
     width: 200px;
-    background: #eaeff2 url(../images/general/left_column/left-column-background.png) repeat-y right top;
 }
 
 #left-column h1 {
     background: transparent url(../images/general/separator/separator-horizontal.png) repeat-x center bottom;
-    height: 24px;
-    margin: 12px 0px 8px 0px;
-    padding: 0px 0px 0px 12px;
-    letter-spacing: 0.5pt;
+    color: #808080;
     font-size: 9pt;
     font-weight: bold;
+    height: 24px;
+    letter-spacing: 0.5pt;
+    margin: 12px 0px 8px 0px;
+    padding: 0px 0px 0px 12px;
     text-transform: uppercase;
-    color: #808080;
 }
 
 #left-column h1.active {
@@ -531,16 +531,16 @@ h2 {
 }
 
 #left-column ul li {
+    color: #5193c2;
     cursor: pointer;
     height: 20px;
     padding-left: 24px;
     padding-top: 6px;
-    color: #5193c2;
 }
 
 #left-column a:link, #left-column a:active, #left-column a:visited {
-    width: 180px;
     color: #5193c2;
+    width: 180px;
 }
 
 #left-column a:hover {
@@ -553,25 +553,25 @@ h2 {
 
 #left-column ul li.active span {
     background: transparent url(../images/general/left_column/left-column-arrow-right-yellow.png) no-repeat right center;
-    display: block;
-    width: 182px;
-    margin-right: -10px;
     color: #ffffff;
+    display: block;
     font-weight: bold;
+    margin-right: -10px;
+    width: 182px;
 }
 
 #option-buttons-area {
-     float: right;
-     height: 26px;
+    float: right;
+    height: 26px;
 }
 
 /* Footer */
 #footer {
-    height: 30px;
-    width: 960px;
-    margin: 20px auto 0px auto;
     color: #86b4d4;
+    height: 30px;
+    margin: 20px auto 0px auto;
     text-align: center;
+    width: 960px;
 }
 
 #footer a {
@@ -581,10 +581,10 @@ h2 {
 
 /* Paging area */
 .pagging-area {
+    color: #86b4d4;
+    font-size: 12pt;
     text-align: right;
     width: 100%;
-    font-size: 12pt;
-    color: #86b4d4;
 }
 
 .pagging-area .control-button {
@@ -606,20 +606,20 @@ h2 {
 
 .form-field-area .autocomplete-container {
     float: left;
-    position: absolute;
     margin-top: -20px;
+    position: absolute;
 }
 
 .form-field-area .autocomplete-container > ul.autocomplete-items > li > h3 {
-    margin: 0px;
     font-size: 10pt;
     font-weight: normal;
+    margin: 0px;
 }
 
 .form-field-area table .autocomplete-container {
     float: left;
-    position: absolute;
     margin-top: 0px;
+    position: absolute;
 }
 
 /* Dashboard */
@@ -629,23 +629,23 @@ h2 {
 }
 
 .dashboard-panel {
-    max-height: 250px;
-    width: 100%;
-    padding: 6px 0px 10px 0px;
-    overflow: hidden;
     background-color: #ffffff;
     box-shadow: 0px 0px 8px 0px #dddddd;
     -moz-box-shadow: 0px 0px 8px 0px #dddddd;
     -webkit-box-shadow: 0px 0px 8px 0px #dddddd;
+    max-height: 250px;
+    overflow: hidden;
+    padding: 6px 0px 10px 0px;
+    width: 100%;
 }
 
 .dashboard-panel-plus-button-big {
     background: transparent url(../images/components/button_plus/button-plus-big-normal.png) no-repeat center center;
+    cursor: pointer;
     float: right;
     height: 24px;
-    width: 24px;
     margin-right: 10px;
-    cursor: pointer;
+    width: 24px;
 }
 
 .dashboard-panel-plus-button-big:hover {
@@ -654,10 +654,10 @@ h2 {
 
 .dashboard-panel-plus-button-small {
     background: transparent url(../images/components/button_plus/button-plus-small-normal.png) no-repeat center top;
+    cursor: pointer;
     float: right;
     height: 24px;
     width: 24px;
-    cursor: pointer;
 }
 
 .dashboard-panel-plus-button-small:hover {
@@ -665,34 +665,34 @@ h2 {
 }
 
 .dashboard-panel-header {
-    width: 100%;
     margin-bottom: 10px;
+    width: 100%;
 }
 
 .dashboard-panel-header h1 {
-    padding: 0px 0px 0px 10px;
+    color: #5193c2;
     font-family: Arial;
     font-size: 18pt;
     font-weight: normal;
-    color: #5193c2;
-    white-space: nowrap;
     overflow: hidden;
+    padding: 0px 0px 0px 10px;
+    white-space: nowrap;
 }
 
 .dashboard-panel-header h2 {
-    margin: 0px;
-    padding: 0px 0px 0px 10px;
+    color: #cccccc;
     font-family: Tahoma;
     font-size: 10pt;
     font-weight: normal;
-    color: #cccccc;
+    margin: 0px;
+    padding: 0px 0px 0px 10px;
     white-space: nowrap;
 }
 
 .dashboard-panel-content {
-    min-height: 200px;
-    margin: 10px 10px 0px 10px;
     background-color: #f5f9fb;
+    margin: 10px 10px 0px 10px;
+    min-height: 200px;
 }
 
 .dashboard-panel-content .widget-table {
@@ -725,21 +725,21 @@ h2 {
 }
 
 .dashboard-panel-content .table thead tr th {
+    background: none;
+    color: #5193c2;
+    font-weight: normal;
     padding-left: 10px;
     padding-right: 10px;
-    font-weight: normal;
-    color: #5193C2;
-    background: none;
 }
 
 .dashboard-panel-content .table tbody tr td {
-    padding: 6px 2px 2px 10px;
-    font-size: 10pt;
     color: #333333;
+    font-size: 10pt;
+    padding: 6px 2px 2px 10px;
 }
 
 .dashboard-panel-content .table .value {
-       text-align: center;
+    text-align: center;
 }
 
 .dashboard-panel-content .table .bold {

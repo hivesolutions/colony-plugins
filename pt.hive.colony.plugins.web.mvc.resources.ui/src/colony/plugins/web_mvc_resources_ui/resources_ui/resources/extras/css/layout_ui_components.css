@@ -36,9 +36,9 @@
 }
 
 .center {
+    float: none !important;
     margin-left: auto !important;
     margin-right: auto !important;
-    float: none !important;
 }
 
 /* Forms */
@@ -51,11 +51,11 @@ form {
 }
 
 .form-field-area h4 {
-    padding: 0px;
-    margin: 0px;
+    color: #74a9ce;
     font-size: 8pt;
     font-weight: normal;
-    color: #74a9ce;
+    margin: 0px;
+    padding: 0px;
 }
 
 .form-field-area .column-first {
@@ -73,8 +73,8 @@ form {
 }
 
 .form-field label {
-    font-size: 8pt;
     color: #5193c2;
+    font-size: 8pt;
 }
 
 .form-field label.mandatory {
@@ -83,16 +83,16 @@ form {
 /* Input */
 input {
     background: #ffffff url(../images/components/text_field/text-field-background.png) repeat-x left top;
-    height: 17px;
-    width: 100%;
     border: 1px solid #ccdeeb;
-    margin: 3px 0px 20px 0px;
-    padding: 2px 0px 3px 0px;
-    text-indent: 3px;
     color: #1a1a1a;
     font-family: Tahoma, Arial;
     font-size: 10pt;
+    height: 17px;
+    margin: 3px 0px 20px 0px;
     outline: none;
+    padding: 2px 0px 3px 0px;
+    text-indent: 3px;
+    width: 100%;
 }
 
 input.active {
@@ -100,8 +100,8 @@ input.active {
 }
 
 input.inactive {
-    border: 1px solid #f2f2f2;
     background: none;
+    border: 1px solid #f2f2f2;
 }
 
 input.valid {
@@ -119,15 +119,15 @@ table input {
 /* Text Area */
 textarea {
     background: #ffffff url(../images/components/text_field/text-field-background.png) repeat-x left top;
-    height: 77px;
-    width: 100%;
     border: 1px solid #ccdeeb;
-    margin: 3px 0px 20px 0px;
-    padding: 2px 0px 3px 0px;
-    text-indent: 3px;
     color: #1a1a1a;
     font-family: Tahoma, Arial;
     font-size: 10pt;
+    height: 77px;
+    margin: 3px 0px 20px 0px;
+    padding: 2px 0px 3px 0px;
+    text-indent: 3px;
+    width: 100%;
 }
 
 textarea.active {
@@ -135,8 +135,8 @@ textarea.active {
 }
 
 textarea.inactive {
-    border: 1px solid #f2f2f2;
     background: none;
+    border: 1px solid #f2f2f2;
 }
 
 textarea.valid {
@@ -149,18 +149,18 @@ textarea.invalid {
 
 /* Button */
 .button {
+    color: #ffffff;
+    cursor: pointer;
     float: right;
+    font-weight: bold;
     height: 20px;
-    width: 80px;
     margin: 12px 0px 0px 10px;
     padding-top: 6px;
-    color: #ffffff;
-    font-weight: bold;
     text-align: center;
-    cursor: pointer;
     user-select: none;
     -moz-user-select: -moz-none;
     -khtml-user-select: none;
+    width: 80px;
 }
 
 .button:hover {
@@ -196,13 +196,13 @@ textarea.invalid {
 }
 
 .button-big {
-    height: 78px;
-    width: 360px;
-    margin: 0px 0px 0px 0px;
-    padding-top: 38px;
     font-family: Arial;
     font-size: 24pt;
     font-weight: normal;
+    height: 78px;
+    margin: 0px 0px 0px 0px;
+    padding-top: 38px;
+    width: 360px;
 }
 
 .button-big-blue {
@@ -219,20 +219,20 @@ textarea.invalid {
 
 /* Button Drop */
 .button-drop-small-gray {
-    float: right;
     cursor: pointer;
+    float: right;
 }
 
 .button-drop-small-gray .label {
     background: transparent url(../images/components/button_drop/button-drop-small-gray-normal.png) no-repeat center center;
+    color: #5193c2;
     float: left;
+    font-weight: bold;
     height: 18px;
-    width: 80px;
     margin-left: 10px;
     padding-top: 4px;
-    color: #5193c2;
-    font-weight: bold;
     text-align: center;
+    width: 80px;
 }
 
 .button-drop-small-gray .label:hover {
@@ -253,10 +253,10 @@ textarea.invalid {
 
 /* Form Button */
 .form-button-area {
+    background: #eef4f9 url(../images/general/separator/separator-dotted-horizontal.png) repeat-x left top;
     float: right;
     height: 50px;
     width: 100%;
-    background: #eef4f9 url(../images/general/separator/separator-dotted-horizontal.png) repeat-x left top;
 }
 
 .form-button-area .button {
@@ -265,9 +265,9 @@ textarea.invalid {
 
 /* Switch Button */
 .switch-button {
+    cursor: pointer;
     height: 18px;
     width: 42px;
-    cursor: pointer;
 }
 
 .switch-button.on {
@@ -285,8 +285,8 @@ textarea.invalid {
 .switch-button-cursor {
     background: transparent url(../images/components/switch_button/switch-button-cursor.png) no-repeat center center;
     height: 16px;
-    width: 16px;
     margin: 1px;
+    width: 16px;
 }
 
 .on .switch-button-cursor {
@@ -303,33 +303,33 @@ table.table {
 }
 
 .table thead tr th {
-    height: 32px;
-    vertical-align: middle;
-    font-size: 9pt;
-    text-align: left;
-    color: #005b9c;
-    border-bottom: 1px solid #a8c9e0;
     background: transparent url(../images/components/table/table-header-background.png) repeat-x left bottom;
+    border-bottom: 1px solid #a8c9e0;
+    color: #005b9c;
+    font-size: 9pt;
+    height: 32px;
+    text-align: left;
+    vertical-align: middle;
 }
 
 .table tbody tr td {
+    background: transparent url(../images/components/table/table-cell-separator.png) no-repeat left bottom;
+    border-bottom: 1px solid #eef4f9;
     height: 32px;
     padding-left: 6px;
-    vertical-align: middle;
     text-align: left;
-    border-bottom: 1px solid #eef4f9;
-    background: transparent url(../images/components/table/table-cell-separator.png) no-repeat left bottom;
+    vertical-align: middle;
 }
 
 .table .first {
-    width: 16px;
     background: none;
+    width: 16px;
 }
 
 .table tfoot tr td {
-    height: 8px;
-    border-top: 1px solid #a8c9e0;
     background: transparent url(../images/components/table/table-footer-background.png) repeat-x left bottom;
+    border-top: 1px solid #a8c9e0;
+    height: 8px;
 }
 
 .table thead tr th span {
@@ -337,12 +337,12 @@ table.table {
 }
 
 .table .order-down, .table .order-down-inactive {
-    float: left;
-    display: block;
-    height: 4px;
-    width: 7px;
-    margin: 6px 0px 0px 6px;
     background: transparent url(../images/components/table/table-column-arrow-down-active.png) no-repeat center center;
+    display: block;
+    float: left;
+    height: 4px;
+    margin: 6px 0px 0px 6px;
+    width: 7px;
 
 }
 
@@ -355,8 +355,8 @@ table.table {
     background: #ffffff url(../images/components/text_field/text-field-background.png) repeat-x center top;
     float: right;
     height: 24px;
-    margin-top: 5px;
     margin-right: 3px;
+    margin-top: 5px;
     overflow: visible;
 }
 
@@ -367,13 +367,13 @@ table.table {
 }
 
 .search-button {
+    background: transparent url(../images/components/search_field/search-field-icon-magnifier.png) no-repeat center center;
+    border-left: none;
+    cursor: pointer;
     float: left;
     height: 22px;
-    width: 24px;
     margin-left: -26px;
-    border-left: none;
-    background: transparent url(../images/components/search_field/search-field-icon-magnifier.png) no-repeat center center;
-    cursor: pointer;
+    width: 24px;
 }
 
 .search-button:hover {
@@ -408,11 +408,11 @@ table .date-field  {
 
 .date-field-button {
     background: transparent url(../images/components/date_field/date-field-button-normal.png) no-repeat left top;
+    cursor: pointer;
     float: right;
     height: 24px;
-    width: 30px;
     margin-top: -24px;
-    cursor: pointer;
+    width: 30px;
 }
 
 .date-field-button:hover {
@@ -424,18 +424,18 @@ table .date-field  {
 }
 
 .date-field-contents {
-    display: none;
-    float: right;
-    position: relative;
-    width: 230px;
-    margin-top: 1px;
-    margin-bottom: -247px;
     background-color: #ffffff;
     border: 1px solid #6ba0c5;
-    font-family: Tahoma;
+    box-shadow: 1px 1px 3px #777777;
     -moz-box-shadow: 1px 1px 3px #777777;
     -webkit-box-shadow: 1px 1px 3px #777777;
-    box-shadow: 1px 1px 3px #777777;
+    display: none;
+    float: right;
+    font-family: Tahoma;
+    margin-bottom: -247px;
+    margin-top: 1px;
+    position: relative;
+    width: 230px;
 }
 
 .date-field-contents-header, .date-field-contents-footer {
@@ -443,12 +443,12 @@ table .date-field  {
 }
 
 .date-field-contents-header h1, .date-field-contents-footer h1 {
-    width: 100px;
-    font-size: 8pt;
     color: #74a9ce;
+    font-size: 8pt;
     margin: 0px auto 0px auto;
     padding-top: 12px;
     text-align: center;
+    width: 100px;
 }
 
 .date-field-contents span {
@@ -456,46 +456,46 @@ table .date-field  {
 }
 
 .date-field-contents span.active {
-    font-size: 8pt;
-    text-decoration: none;
     color: #74a9ce;
     cursor: pointer;
+    font-size: 8pt;
+    text-decoration: none;
 }
 
 .date-field-contents span.active:hover {
-    color: #005B9C;
+    color: #005b9c;
 }
 
 .date-field-contents-body table {
-    width: 100%;
     text-align: right;
+    width: 100%;
 }
 
 .date-field-contents-body table thead {
 }
 
 .date-field-contents-body table thead th {
-    height: 24px;
-    font-size: 8pt;
     color: #005b9c;
+    font-size: 8pt;
+    height: 24px;
 }
 
 .date-field-contents-body table tbody {
-    width: 100%;
+    background-color: #f5f8fa;
     font-size: 8pt;
     padding: 0px 10px 0px 10px;
-    background-color: #f5f8fa;
+    width: 100%;
 }
 
 .date-field-contents-body table tbody .first td {
+    border-top: 1px solid #5193c2;
     height: 20px;
     padding-top: 10px;
-    border-top: 1px solid #5193c2;
 }
 
 .date-field-contents-body table tbody td {
-    height: 20px;
     color: #dddddd;
+    height: 20px;
 }
 
 .date-field-contents-body table tbody .today {
@@ -503,9 +503,9 @@ table .date-field  {
 }
 
 .date-field-contents-body table tbody .last td {
+    border-bottom: 1px solid #5193c2;
     height: 20px;
     padding-bottom: 10px;
-    border-bottom: 1px solid #5193c2;
 }
 
 .date-field-contents-body table td, .date-field-contents-body table th {
@@ -514,11 +514,11 @@ table .date-field  {
 
 .date-field-contents .button-next {
     background: transparent url(../images/components/date_field/date-field-arrow-blue-right.png) no-repeat center center;
+    cursor: pointer;
     float: right;
     height: 28px;
-    width: 28px;
     margin: 4px 4px 0px 0px;
-    cursor: pointer;
+    width: 28px;
 }
 
 .date-field-contents .button-next:hover {
@@ -527,11 +527,11 @@ table .date-field  {
 
 .date-field-contents .button-previous {
     background: transparent url(../images/components/date_field/date-field-arrow-blue-left.png) no-repeat center center;
+    cursor: pointer;
     float: left;
     height: 28px;
-    width: 28px;
     margin: 4px 0px 4px 4px;
-    cursor: pointer;
+    width: 28px;
 }
 
 .date-field-contents .button-previous:hover {
@@ -564,15 +564,15 @@ table .dropbox {
 }
 
 .dropbox-text-input {
-    height: 1px;
-    width: 1px;
-    margin: 0px 0px 0px 0px;
-    padding: 0px 0px 0px 0px;
     border: 0px;
     float: left;
-    margin-top: -1px;
     font-size: 0px;
+    height: 1px;
+    margin: 0px 0px 0px 0px;
+    margin-top: -1px;
     outline: none;
+    padding: 0px 0px 0px 0px;
+    width: 1px;
 }
 
 .dropbox-container {
@@ -581,9 +581,9 @@ table .dropbox {
 }
 
 .dropbox-container {
+    background: transparent url(../images/components/dropbox/dropbox-left-background.png) no-repeat left top;
     height: 22px;
     padding: 0px 0px 0px 0px;
-    background: transparent url(../images/components/dropbox/dropbox-left-background.png) no-repeat left top;
 }
 
 .dropbox-left-corners {
@@ -594,22 +594,22 @@ table .dropbox {
 
 .dropbox-text-field {
     background: transparent url(../images/components/dropbox/dropbox-center-background.png) repeat-x left top;
+    cursor: default;
     float: left;
     height: 19px;
-    width: 100%;
     margin: 0px 0px 0px 1px;
     padding-top: 3px;
     text-indent: 3px;
-    cursor: default;
+    width: 100%;
 }
 
 .dropbox-button {
     background: transparent url(../images/components/dropbox/dropbox-button-normal.png) no-repeat left top;
+    cursor: pointer;
     float: right;
     height: 22px;
-    width: 22px;
     margin: -3px -2px 0px 0px;
-    cursor: pointer;
+    width: 22px;
 }
 
 .dropbox-button:hover {
@@ -622,24 +622,24 @@ table .dropbox {
 
 .dropbox ul {
     background-color: #ffffff;
-    display: none;
-    position: relative;
-    max-height: 320px;
-    margin: 0px 0px -322px 3px;
-    padding: 0px 0px 0px 0px;
     border: 1px solid #6ba0c5;
-    overflow: auto;
+    box-shadow: 1px 1px 3px #777777;
     -moz-box-shadow: 1px 1px 3px #777777;
     -webkit-box-shadow: 1px 1px 3px #777777;
-    box-shadow: 1px 1px 3px #777777;
+    display: none;
+    margin: 0px 0px -322px 3px;
+    max-height: 320px;
+    overflow: auto;
+    padding: 0px 0px 0px 0px;
+    position: relative;
 }
 
 .dropbox ul li {
-    list-style: none;
+    cursor: pointer;
     height: 21px;
+    list-style: none;
     padding: 4px 0px 0px 6px;
     text-indent: 3px;
-    cursor: pointer;
 }
 
 .dropbox ul li:hover, .dropbox ul li.selected {
@@ -649,12 +649,12 @@ table .dropbox {
 
 /* Error message */
 .message {
-    display: none;
-    width: 100%;
-    margin: 0px 0px 16px 0px;
     box-shadow: 1px 1px 2px #bbbbbb;
     -moz-box-shadow: 1px 1px 2px #bbbbbb;
     -webkit-box-shadow: 1px 1px 2px #bbbbbb;
+    display: none;
+    margin: 0px 0px 16px 0px;
+    width: 100%;
 }
 
 .message.error {
@@ -688,8 +688,8 @@ table .dropbox {
 .message-icon {
     float: left;
     height: 24px;
-    width: 24px;
     margin: 12px 0px 8px 16px;
+    width: 24px;
 }
 
 .error .message-icon {
@@ -723,10 +723,10 @@ table .dropbox {
 
 .message-button {
     background: transparent url(../images/components/message/message-button-close-white.png) no-repeat center center;
+    cursor: pointer;
     float: right;
     height: 16px;
     width: 16px;
-    cursor: pointer;
 }
 
 .message-button:hover {
@@ -735,13 +735,13 @@ table .dropbox {
 
 /* Window */
 .window {
-    margin: 0px auto 0px auto;
-    padding: 10px;
     background-color: #ffffff;
-    overflow: hidden;
     box-shadow: 2px 2px 6px #888888;
     -moz-box-shadow: 2px 2px 6px #888888;
     -webkit-box-shadow: 2px 2px 6px #888888;
+    margin: 0px auto 0px auto;
+    overflow: hidden;
+    padding: 10px;
 }
 
 .window-header{
@@ -758,27 +758,27 @@ table .dropbox {
 }
 
 .window-header-content h1 {
-    margin: 0px;
+    color: #5193c2;
     font-family: Arial;
     font-size: 26pt;
     font-weight: normal;
-    color: #5193c2;
+    margin: 0px;
 }
 
 .window-header-content h2 {
-    margin: 0px 0px 10px 0px;
+    color: #accbe2;
     font-family: Tahoma;
     font-size: 11pt;
     font-weight: normal;
-    color: #accbe2;
+    margin: 0px 0px 10px 0px;
 }
 
 .window-button-close {
     background: transparent url(../images/components/window/window-button-close-normal.png) no-repeat center center;
+    cursor: pointer;
     float: right;
     height: 16px;
     width: 16px;
-    cursor: pointer;
 }
 
 .window-button-close:hover {
@@ -786,8 +786,8 @@ table .dropbox {
 }
 
 .window .panel-container {
-    width: 100%;
     background-color: #f5f8fa;
+    width: 100%;
 }
 
 .window .panel-content {
@@ -796,18 +796,18 @@ table .dropbox {
 
 .window .panel-message {
     color: #5193c2;
-    padding: 10px 10px 10px 10px;
-    line-height: 14pt;
     font-family: Tahoma;
     font-size: 9pt;
+    line-height: 14pt;
+    padding: 10px 10px 10px 10px;
 }
 
 .notification-message {
-    float: right;
-    width: 330px;
-    display: none;
-    margin: 6px 12px 6px 12px;
     clear: both;
+    display: none;
+    float: right;
+    margin: 6px 12px 6px 12px;
+    width: 330px;
 }
 
 .alert-message {
@@ -815,13 +815,13 @@ table .dropbox {
 }
 
 .dialog-message {
-    width: 400px;
     display: none;
+    width: 400px;
 }
 
 .message-message {
-    width: 400px;
     display: none;
+    width: 400px;
 }
 
 .window-button-area {
@@ -834,11 +834,11 @@ table .dropbox {
 .window-button-area .button-message {
     color: #5193c2;
     float: left;
-    padding: 14px 14px 14px 14px;
-    line-height: 14pt;
     font-family: Tahoma;
-    font-weight: bold;
     font-size: 10pt;
+    font-weight: bold;
+    line-height: 14pt;
+    padding: 14px 14px 14px 14px;
 }
 
 .window-button-area .button {
@@ -851,12 +851,12 @@ table .dropbox {
 }
 
 .widget-table table {
-    width: 100%;
-    border-spacing: 0px;
     background-color: #ffffff;
+    border-spacing: 0px;
     box-shadow: 1px 1px 2px #bbbbbb;
     -moz-box-shadow: 1px 1px 2px #bbbbbb;
     -webkit-box-shadow: 1px 1px 2px #bbbbbb;
+    width: 100%;
 }
 
 .widget-table table tr {
@@ -873,8 +873,8 @@ table .dropbox {
 }
 
 .widget-table .section-end td {
+    border-bottom: 1px solid #e6e6e6;
     padding-bottom: 6px;
-    border-bottom: 1px solid #E6E6E6;
 }
 
 .widget-table .bold {
@@ -882,19 +882,19 @@ table .dropbox {
 }
 
 .widget-table .red {
-    color: #C1272D;
+    color: #c1272d;
 }
 
 .widget-table .green {
-    color: #8CC63F;
+    color: #8cc63f;
 }
 
 .widget-table .light-blue {
-    color: #5193C2;
+    color: #5193c2;
 }
 
 .widget-table .dark-blue {
-    color: #005B9C;
+    color: #005b9c;
 }
 
 /* Widget Text */
@@ -903,29 +903,29 @@ table .dropbox {
 }
 
 .widget-text p {
-    width: 100%;
-    margin-top: 0px;
-    line-height: 1.5em;
     color: #333333;
+    line-height: 1.5em;
+    margin-top: 0px;
+    width: 100%;
 }
 
 /* Progress Indicator */
 .progress-indicator {
-    height: 22px;
     border: 1px solid #4d8cba;
+    height: 22px;
 }
 
 .progress-indicator-bar {
-    height: 22px;
     background: #73adcd url(progress_indicator_bar_background.png) repeat-x left top;
+    height: 22px;
 }
 
 .progress-indicator-value {
-    margin-top: -21px;
-    text-align: center;
     color: #5193c2;
     font-size: 9pt;
     font-weight: bold;
+    margin-top: -21px;
+    text-align: center;
 }
 
 .progress-indicator-value.white {
@@ -934,11 +934,11 @@ table .dropbox {
 
 /* Overlay */
 .overlay {
-    display: none;
-    position: absolute;
-    left: 0px;
-    top: 0px;
     background-color: #000000;
+    display: none;
+    left: 0px;
     opacity: 0.5;
+    position: absolute;
+    top: 0px;
     z-index: 1;
 }

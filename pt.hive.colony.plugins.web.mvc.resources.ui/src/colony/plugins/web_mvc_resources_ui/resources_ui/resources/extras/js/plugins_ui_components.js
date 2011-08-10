@@ -2312,6 +2312,12 @@
             // retrieves the provider url
             var providerUrl = searchTable.attr("provider_url");
 
+            // in case the provider url is not defined
+            if (!providerUrl) {
+                // returns immediately
+                return
+            }
+
             // resolves the url taking into account the current
             // environment
             var providerUrl = jQuery.resolveurl(providerUrl);
