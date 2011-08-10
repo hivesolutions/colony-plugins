@@ -249,7 +249,7 @@ class RevisionControlBuildAutomationExtension:
                 self._write_changelog(changelog_file_path, changelog_list)
             # otherwise there is no changelog file path defined
             else:
-                # sets an empty changerlog and changers list
+                # sets an empty changelog and changers list
                 changelog_list = []
                 changers_list = []
 
