@@ -109,6 +109,95 @@ class RepositoryController:
         return []
 
     @web_mvc_utils.serialize_exceptions("all")
+    @web_mvc_utils.validated_method("repository.list")
+    def handle_list_ajx(self, rest_request, parameters = {}):
+        # retrieves the json plugin
+        json_plugin = self.web_mvc_manager_repository_plugin.json_plugin
+
+        # sets the serializer in the parameters
+        parameters[SERIALIZER_VALUE] = json_plugin
+
+        # retrieves the template file
+        template_file = self.retrieve_template_file("repository_list_contents.html.tpl")
+
+        # assigns the session variables to the template file
+        self.assign_session_template_file(rest_request, template_file)
+
+        # applies the base path to the template file
+        self.apply_base_path_template_file(rest_request, template_file)
+
+        # processes the template file and sets the request contents
+        self.process_set_contents(rest_request, template_file)
+
+    @web_mvc_utils.serialize_exceptions("all")
+    @web_mvc_utils.validated_method("repository.list")
+    def handle_list(self, rest_request, parameters = {}):
+        # retrieves the template file from the parameters
+        template_file = parameters[TEMPLATE_FILE_VALUE]
+
+        # resolves the relative resources path to obtain the absolute page include to be used
+        absolute_page_include = self.resolve_relative_path(WEB_MVC_MANAGER_REPOSITORY_RESOURCES_PATH, "templates/repository/repository_list_contents.html.tpl")
+
+        # assigns the include to the template
+        self.assign_include_template_file(template_file, "page_include", absolute_page_include)
+
+        # assigns the include to the template
+        self.assign_include_template_file(template_file, "side_panel_include", "side_panel/side_panel_configuration.html.tpl")
+
+        # assigns the session variables to the template file
+        self.assign_session_template_file(rest_request, template_file)
+
+        # applies the base path to the template file
+        self.apply_base_path_template_file(rest_request, template_file)
+
+        # processes the template file and sets the request contents
+        self.process_set_contents(rest_request, template_file)
+
+    @web_mvc_utils.serialize_exceptions("all")
+    @web_mvc_utils.validated_method("repository.list")
+    def handle_partial_list_ajx(self, rest_request, parameters = {}):
+        # retrieves the form data by processing the form
+        form_data_map = self.process_form_data(rest_request, DEFAULT_ENCODING)
+
+        # retrieves the web search helper
+        search_helper = parameters["search_helper"]
+
+        # retrieves the search values
+        search_query = form_data_map["search_query"]
+        start_record = form_data_map["start_record"]
+        number_records = form_data_map["number_records"]
+
+        # converts the the search values
+        start_record = int(start_record)
+        number_records = int(number_records)
+
+        # retrieves the filtered repositories
+        filtered_repositories = self._get_filtered_repositories(rest_request, search_query)
+
+        # retrieves the partial filter from the filtered repositories
+        partial_filtered_repositories, start_record, number_records, total_number_records = search_helper.partial_filter(rest_request, filtered_repositories, start_record, number_records)
+
+        # retrieves the template file
+        template_file = self.retrieve_template_file("repository_partial_list_contents.html.tpl")
+
+        # assigns the repositories to the template
+        template_file.assign("repositories", partial_filtered_repositories)
+
+        # assigns the various search values to the template
+        template_file.assign("start_record", start_record)
+        template_file.assign("number_records", number_records)
+        template_file.assign("total_number_records", total_number_records)
+
+        # assigns the session variables to the template file
+        self.assign_session_template_file(rest_request, template_file)
+
+        # applies the base path to the template file
+        self.apply_base_path_template_file(rest_request, template_file)
+
+        # processes the template file and sets the request contents
+        self.process_set_contents(rest_request, template_file)
+
+    @web_mvc_utils.serialize_exceptions("all")
     @web_mvc_utils.validated_method("repository.show")
     def handle_show_ajx(self, rest_request, parameters = {}):
         # retrieves the json plugin
@@ -191,92 +280,52 @@ class RepositoryController:
 
     @web_mvc_utils.serialize_exceptions("all")
     @web_mvc_utils.validated_method("repository.list")
-    def handle_list_ajx(self, rest_request, parameters = {}):
+    def handle_plugins_partial_list_ajx(self, rest_request, parameters = {}):
         # retrieves the json plugin
         json_plugin = self.web_mvc_manager_repository_plugin.json_plugin
 
         # sets the serializer in the parameters
         parameters[SERIALIZER_VALUE] = json_plugin
 
-        # retrieves the template file
-        template_file = self.retrieve_template_file("repository_list_contents.html.tpl")
-
-        # assigns the session variables to the template file
-        self.assign_session_template_file(rest_request, template_file)
-
-        # applies the base path to the template file
-        self.apply_base_path_template_file(rest_request, template_file)
-
-        # processes the template file and sets the request contents
-        self.process_set_contents(rest_request, template_file)
-
-    @web_mvc_utils.serialize_exceptions("all")
-    @web_mvc_utils.validated_method("repository.list")
-    def handle_list(self, rest_request, parameters = {}):
-        # retrieves the template file from the parameters
-        template_file = parameters[TEMPLATE_FILE_VALUE]
-
-        # resolves the relative resources path to obtain the absolute page include to be used
-        absolute_page_include = self.resolve_relative_path(WEB_MVC_MANAGER_REPOSITORY_RESOURCES_PATH, "templates/repository/repository_list_contents.html.tpl")
-
-        # assigns the include to the template
-        self.assign_include_template_file(template_file, "page_include", absolute_page_include)
-
-        # assigns the include to the template
-        self.assign_include_template_file(template_file, "side_panel_include", "side_panel/side_panel_configuration.html.tpl")
-
-        # assigns the session variables to the template file
-        self.assign_session_template_file(rest_request, template_file)
-
-        # applies the base path to the template file
-        self.apply_base_path_template_file(rest_request, template_file)
-
-        # processes the template file and sets the request contents
-        self.process_set_contents(rest_request, template_file)
-
-    @web_mvc_utils.serialize_exceptions("all")
-    @web_mvc_utils.validated_method("repository.list")
-    def handle_partial_list_ajx(self, rest_request, parameters = {}):
         # retrieves the form data by processing the form
         form_data_map = self.process_form_data(rest_request, DEFAULT_ENCODING)
+
+        # retrieves the pattern names from the parameters
+        pattern_names = parameters[PATTERN_NAMES_VALUE]
 
         # retrieves the web search helper
         search_helper = parameters["search_helper"]
 
-        # retrieves the search_query
+        # retrieves the repository index pattern
+        repository_index = pattern_names["repository_index"]
+
+        # retrieves the search values
         search_query = form_data_map["search_query"]
-
-        # retrieves the start record
         start_record = form_data_map["start_record"]
-
-        # retrieves the number records
         number_records = form_data_map["number_records"]
 
-        # converts the start record to integer
-        start_record = int(start_record)
+        # converts the repository index to integer
+        repository_index = int(repository_index)
 
-        # converts the number records to integer
+        # converts the the search values
+        start_record = int(start_record)
         number_records = int(number_records)
 
         # retrieves the filtered repositories
-        filtered_repositories = self._get_filtered_repositories(rest_request, search_query)
+        filtered_repository_plugins = self._get_filtered_repository_plugins(rest_request, search_query, repository_index)
 
-        # retrieves the partial filter from the filtered repositories
-        partial_filtered_repositories, start_record, number_records, total_number_records = search_helper.partial_filter(rest_request, filtered_repositories, start_record, number_records)
+        # retrieves the partial filter from the filtered repository plugins
+        partial_filtered_repository_plugins, start_record, number_records, total_number_records = search_helper.partial_filter(rest_request, filtered_repository_plugins, start_record, number_records)
 
         # retrieves the template file
-        template_file = self.retrieve_template_file("repository_partial_list_contents.html.tpl")
+        template_file = self.retrieve_template_file("repository_plugins_partial_list_contents.html.tpl")
 
         # assigns the repositories to the template
-        template_file.assign("repositories", partial_filtered_repositories)
+        template_file.assign("repository_plugins", partial_filtered_repository_plugins)
 
-        # assigns the start record to the template
+        # assigns the various search values to the template
         template_file.assign("start_record", start_record)
-
-        # assigns the number records to the template
         template_file.assign("number_records", number_records)
-
-        # assigns the total number records to the template
         template_file.assign("total_number_records", total_number_records)
 
         # assigns the session variables to the template file
@@ -369,75 +418,6 @@ class RepositoryController:
         # handles the request with the general
         # handle uninstall plugin serialized method
         self.handle_uninstall_plugin_serialized(rest_request, parameters)
-
-    @web_mvc_utils.serialize_exceptions("all")
-    @web_mvc_utils.validated_method("repository.list")
-    def handle_plugins_partial_list_ajx(self, rest_request, parameters = {}):
-        # retrieves the json plugin
-        json_plugin = self.web_mvc_manager_repository_plugin.json_plugin
-
-        # sets the serializer in the parameters
-        parameters[SERIALIZER_VALUE] = json_plugin
-
-        # retrieves the form data by processing the form
-        form_data_map = self.process_form_data(rest_request, DEFAULT_ENCODING)
-
-        # retrieves the pattern names from the parameters
-        pattern_names = parameters[PATTERN_NAMES_VALUE]
-
-        # retrieves the web search helper
-        search_helper = parameters["search_helper"]
-
-        # retrieves the repository index pattern
-        repository_index = pattern_names["repository_index"]
-
-        # retrieves the search query
-        search_query = form_data_map["search_query"]
-
-        # retrieves the start record
-        start_record = form_data_map["start_record"]
-
-        # retrieves the number records
-        number_records = form_data_map["number_records"]
-
-        # converts the repository index to integer
-        repository_index = int(repository_index)
-
-        # converts the start record to integer
-        start_record = int(start_record)
-
-        # converts the number records to integer
-        number_records = int(number_records)
-
-        # retrieves the filtered repositories
-        filtered_repository_plugins = self._get_filtered_repository_plugins(rest_request, search_query, repository_index)
-
-        # retrieves the partial filter from the filtered repository plugins
-        partial_filtered_repository_plugins, start_record, number_records, total_number_records = search_helper.partial_filter(rest_request, filtered_repository_plugins, start_record, number_records)
-
-        # retrieves the template file
-        template_file = self.retrieve_template_file("repository_plugins_partial_list_contents.html.tpl")
-
-        # assigns the repositories to the template
-        template_file.assign("repository_plugins", partial_filtered_repository_plugins)
-
-        # assigns the start record to the template
-        template_file.assign("start_record", start_record)
-
-        # assigns the number records to the template
-        template_file.assign("number_records", number_records)
-
-        # assigns the total number records to the template
-        template_file.assign("total_number_records", total_number_records)
-
-        # assigns the session variables to the template file
-        self.assign_session_template_file(rest_request, template_file)
-
-        # applies the base path to the template file
-        self.apply_base_path_template_file(rest_request, template_file)
-
-        # processes the template file and sets the request contents
-        self.process_set_contents(rest_request, template_file)
 
     def _get_repository(self, rest_request, repository_index):
         # retrieves the system updater plugin
