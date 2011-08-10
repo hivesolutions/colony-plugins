@@ -335,9 +335,11 @@ class RepositoryDescriptorGenerator:
 
         # iterates over all the containers
         for container in containers:
-            # retrieves the container id, version and hash digest
+            # retrieves the container id, version, dependencies
+            # and hash digest
             container_id = container["id"]
             container_version = container["version"]
+            container_dependencies = plugin["dependencies"]
             container_hash_digest = container["hash_digest"]
 
             # retrieves the container hash digest items
@@ -378,6 +380,34 @@ class RepositoryDescriptorGenerator:
 
             repository_container_contents_file_value_node = xml_document.createTextNode(container_contents_file)
             repository_container_contents_file_node.appendChild(repository_container_contents_file_value_node)
+
+            repository_container_contents_file_value_node = xml_document.createTextNode(container_contents_file)
+            repository_container_contents_file_node.appendChild(repository_container_contents_file_value_node)
+
+            repository_container_dependencies_node = xml_document.createElement("dependencies")
+            repository_container_node.appendChild(repository_container_dependencies_node)
+
+            # iterates over all the container dependencies to
+            # write the dependencies values
+            for container_dependency in container_dependencies:
+                # retrieves the container dependency id and version
+                container_dependency_id = container_dependency["id"]
+                container_dependency_version = container_dependency["version"]
+
+                repository_container_container_dependency_node = xml_document.createElement("container_dependency")
+                repository_container_dependencies_node.appendChild(repository_container_container_dependency_node)
+
+                repository_container_container_id_node = xml_document.createElement("id")
+                repository_container_container_dependency_node.appendChild(repository_container_container_id_node)
+
+                repository_container_container_id_value_node = xml_document.createTextNode(container_dependency_id)
+                repository_container_container_id_node.appendChild(repository_container_container_id_value_node)
+
+                repository_container_container_version_node = xml_document.createElement("version")
+                repository_container_container_dependency_node.appendChild(repository_container_container_version_node)
+
+                repository_container_container_version_value_node = xml_document.createTextNode(container_dependency_version)
+                repository_container_container_version_node.appendChild(repository_container_container_version_value_node)
 
             repository_container_hash_digest_node = xml_document.createElement("hash_digest_items")
             repository_container_node.appendChild(repository_container_hash_digest_node)
