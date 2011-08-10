@@ -206,6 +206,9 @@ class RevisionControlBuildAutomationExtension:
                 # retrieves the current revision number
                 current_revision_number = revision.get_number()
 
+                # prints an info message
+                logger.info("Retrieving previous revision number from file %s" % previous_version_file_path)
+
                 # reads the previous revision number from the
                 previous_revision_number = self._read_version_number(previous_version_file_path)
 
