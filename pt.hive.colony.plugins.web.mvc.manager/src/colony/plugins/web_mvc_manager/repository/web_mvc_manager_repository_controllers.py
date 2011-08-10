@@ -219,7 +219,7 @@ class RepositoryController:
         repository = self._get_repository(rest_request, repository_index)
 
         # retrieves the template file
-        template_file = self.retrieve_template_file("repository_edit_contents.html.tpl")
+        template_file = self.retrieve_template_file("repository_show_contents.html.tpl")
 
         # assigns the repository to the template
         template_file.assign("repository", repository)
@@ -255,7 +255,7 @@ class RepositoryController:
         template_file = parameters[TEMPLATE_FILE_VALUE]
 
         # resolves the relative resources path to obtain the absolute page include to be used
-        absolute_page_include = self.resolve_relative_path(WEB_MVC_MANAGER_REPOSITORY_RESOURCES_PATH, "templates/repository/repository_edit_contents.html.tpl")
+        absolute_page_include = self.resolve_relative_path(WEB_MVC_MANAGER_REPOSITORY_RESOURCES_PATH, "templates/repository/repository_show_contents.html.tpl")
 
         # assigns the include to the template
         self.assign_include_template_file(template_file, "page_include", absolute_page_include)
@@ -278,14 +278,171 @@ class RepositoryController:
         # processes the template file and sets the request contents
         self.process_set_contents(rest_request, template_file)
 
+    def _get_repository(self, rest_request, repository_index):
+        # retrieves the system updater plugin
+        system_updater_plugin = self.web_mvc_manager_repository_plugin.system_updater_plugin
+
+        # retrieves all the repositories
+        repositories = system_updater_plugin.get_repositories()
+
+        # retrieves the repository from the repositories list
+        repository = repositories[repository_index - 1]
+
+        # retrieves the repository name
+        repository_name = repository.name
+
+        # retrieves the repository for the repository with the given name
+        repository_information = system_updater_plugin.get_repository_information_by_repository_name(repository_name)
+
+        # returns the repository information
+        return repository_information
+
+    def _get_filtered_repositories(self, rest_request, search_query):
+        # retrieves the repositories
+        repositories = self._get_repositories()
+
+        # creates the filtered repositories list
+        filtered_repositories = [repository for repository in repositories if not repository.name.find(search_query) == -1]
+
+        # returns the filtered repositories
+        return filtered_repositories
+
+    def _get_filtered_repository_plugins(self, rest_request, search_query, repository_index):
+        # retrieves the repository
+        repository = self._get_repository(rest_request, repository_index)
+
+        # creates the filtered repository plugins
+        filtered_repository_plugins = [repository_plugin for repository_plugin in repository.plugins if not repository_plugin.id.find(search_query) == -1]
+
+        # returns the filtered repository plugins
+        return filtered_repository_plugins
+
+    def _get_repositories(self):
+        # retrieves the system updater plugin
+        system_updater_plugin = self.web_mvc_manager_repository_plugin.system_updater_plugin
+
+        # retrieves all the repositories
+        repositories = system_updater_plugin.get_repositories()
+
+        # returns the repositories
+        return repositories
+
+class RepositoryPluginsController:
+    """
+    The web mvc manager repository plugins controller.
+    """
+
+    web_mvc_manager_repository_plugin = None
+    """ The web mvc manager repository plugin """
+
+    web_mvc_manager_repository = None
+    """ The web mvc manager repository """
+
+    def __init__(self, web_mvc_manager_repository_plugin, web_mvc_manager_repository):
+        """
+        Constructor of the class.
+
+        @type web_mvc_manager_repository_plugin: WebMvcManagerRepositoryPlugin
+        @param web_mvc_manager_repository_plugin: The web mvc manager repository plugin.
+        @type web_mvc_manager_repository: WebMvcManagerRepository
+        @param web_mvc_manager_repository: The web mvc manager repository.
+        """
+
+        self.web_mvc_manager_repository_plugin = web_mvc_manager_repository_plugin
+        self.web_mvc_manager_repository = web_mvc_manager_repository
+
+    def start(self):
+        """
+        Method called upon structure initialization.
+        """
+
+        # sets the relative resources path
+        self.set_relative_resources_path(WEB_MVC_MANAGER_REPOSITORY_RESOURCES_PATH, extra_templates_path = "repository_plugins")
+
+    def validate(self, rest_request, parameters, validation_parameters):
+        # returns the result of the require permission call
+        return []
+
     @web_mvc_utils.serialize_exceptions("all")
     @web_mvc_utils.validated_method("repository.list")
-    def handle_plugins_partial_list_ajx(self, rest_request, parameters = {}):
+    def handle_list_ajx(self, rest_request, parameters = {}):
         # retrieves the json plugin
         json_plugin = self.web_mvc_manager_repository_plugin.json_plugin
 
         # sets the serializer in the parameters
         parameters[SERIALIZER_VALUE] = json_plugin
+
+        # retrieves the pattern names from the parameters
+        pattern_names = parameters[PATTERN_NAMES_VALUE]
+
+        # retrieves the repository index pattern
+        repository_index = pattern_names["repository_index"]
+
+        # converts the repository index to integer
+        repository_index = int(repository_index)
+
+        # retrieves the template file
+        template_file = self.retrieve_template_file("repository_plugins_list_contents.html.tpl")
+
+        # assigns the repository index to the template
+        template_file.assign("repository_index", repository_index)
+
+        # assigns the session variables to the template file
+        self.assign_session_template_file(rest_request, template_file)
+
+        # applies the base path to the template file
+        self.apply_base_path_template_file(rest_request, template_file)
+
+        # processes the template file and sets the request contents
+        self.process_set_contents(rest_request, template_file)
+
+    @web_mvc_utils.serialize_exceptions("all")
+    @web_mvc_utils.validated_method("repository.list")
+    def handle_list(self, rest_request, parameters = {}):
+        # retrieves the template file from the parameters
+        template_file = parameters[TEMPLATE_FILE_VALUE]
+
+        # retrieves the pattern names from the parameters
+        pattern_names = parameters[PATTERN_NAMES_VALUE]
+
+        # retrieves the repository index pattern
+        repository_index = pattern_names["repository_index"]
+
+        # converts the repository index to integer
+        repository_index = int(repository_index)
+
+        # resolves the relative resources path to obtain the absolute page include to be used
+        absolute_page_include = self.resolve_relative_path(WEB_MVC_MANAGER_REPOSITORY_RESOURCES_PATH, "templates/repository_plugins/repository_plugins_list_contents.html.tpl")
+
+        # assigns the include to the template
+        self.assign_include_template_file(template_file, "page_include", absolute_page_include)
+
+        # assigns the include to the template
+        self.assign_include_template_file(template_file, "side_panel_include", "side_panel/side_panel_configuration.html.tpl")
+
+        # assigns the repository index to the template
+        template_file.assign("repository_index", repository_index)
+
+        # assigns the session variables to the template file
+        self.assign_session_template_file(rest_request, template_file)
+
+        # applies the base path to the template file
+        self.apply_base_path_template_file(rest_request, template_file)
+
+        # processes the template file and sets the request contents
+        self.process_set_contents(rest_request, template_file)
+
+    @web_mvc_utils.serialize_exceptions("all")
+    @web_mvc_utils.validated_method("repository.list")
+    def handle_partial_list_ajx(self, rest_request, parameters = {}):
+        # retrieves the json plugin
+        json_plugin = self.web_mvc_manager_repository_plugin.json_plugin
+
+        # sets the serializer in the parameters
+        parameters[SERIALIZER_VALUE] = json_plugin
+
+        # retrieves the required controllers
+        web_mvc_manager_repository_repository_controller = self.web_mvc_manager_repository.web_mvc_manager_repository_repository_controller
 
         # retrieves the form data by processing the form
         form_data_map = self.process_form_data(rest_request, DEFAULT_ENCODING)
@@ -312,7 +469,7 @@ class RepositoryController:
         number_records = int(number_records)
 
         # retrieves the filtered repositories
-        filtered_repository_plugins = self._get_filtered_repository_plugins(rest_request, search_query, repository_index)
+        filtered_repository_plugins = web_mvc_manager_repository_repository_controller._get_filtered_repository_plugins(rest_request, search_query, repository_index)
 
         # retrieves the partial filter from the filtered repository plugins
         partial_filtered_repository_plugins, start_record, number_records, total_number_records = search_helper.partial_filter(rest_request, filtered_repository_plugins, start_record, number_records)
@@ -418,55 +575,6 @@ class RepositoryController:
         # handles the request with the general
         # handle uninstall plugin serialized method
         self.handle_uninstall_plugin_serialized(rest_request, parameters)
-
-    def _get_repository(self, rest_request, repository_index):
-        # retrieves the system updater plugin
-        system_updater_plugin = self.web_mvc_manager_repository_plugin.system_updater_plugin
-
-        # retrieves all the repositories
-        repositories = system_updater_plugin.get_repositories()
-
-        # retrieves the repository from the repositories list
-        repository = repositories[repository_index - 1]
-
-        # retrieves the repository name
-        repository_name = repository.name
-
-        # retrieves the repository for the repository with the given name
-        repository_information = system_updater_plugin.get_repository_information_by_repository_name(repository_name)
-
-        # returns the repository information
-        return repository_information
-
-    def _get_filtered_repositories(self, rest_request, search_query):
-        # retrieves the repositories
-        repositories = self._get_repositories()
-
-        # creates the filtered repositories list
-        filtered_repositories = [repository for repository in repositories if not repository.name.find(search_query) == -1]
-
-        # returns the filtered repositories
-        return filtered_repositories
-
-    def _get_filtered_repository_plugins(self, rest_request, search_query, repository_index):
-        # retrieves the repository
-        repository = self._get_repository(rest_request, repository_index)
-
-        # creates the filtered repository plugins
-        filtered_repository_plugins = [repository_plugin for repository_plugin in repository.plugins if not repository_plugin.id.find(search_query) == -1]
-
-        # returns the filtered repository plugins
-        return filtered_repository_plugins
-
-    def _get_repositories(self):
-        # retrieves the system updater plugin
-        system_updater_plugin = self.web_mvc_manager_repository_plugin.system_updater_plugin
-
-        # retrieves all the repositories
-        repositories = system_updater_plugin.get_repositories()
-
-        # returns the repositories
-        return repositories
 
     def _install_plugin(self, rest_request, plugin_id, plugin_version):
         # retrieves the plugin manager
