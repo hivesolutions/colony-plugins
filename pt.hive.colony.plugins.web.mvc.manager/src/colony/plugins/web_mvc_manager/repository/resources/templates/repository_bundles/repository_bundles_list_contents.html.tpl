@@ -13,7 +13,7 @@
             <thead>
                 <tr>
                     <th><span>Bundle ID</span><span class="order-down-inactive"></span></th>
-                    <th width="75"><span>Install</span><span class="order-down-inactive"></span></th>
+                    <th width="75"><span>Operation</span><span class="order-down-inactive"></span></th>
                 </tr>
             </thead>
             <tbody></tbody>
