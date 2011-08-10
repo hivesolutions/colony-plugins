@@ -192,7 +192,7 @@ jQuery(document).ready(function() {
                 });
     };
 
-    // retrieves the repository plugins plugin table
+    // retrieves the repository plugins table
     var repositoryPluginsTable = jQuery("#repository-plugins-table");
 
     // retrieves the table body from the repository plugins table

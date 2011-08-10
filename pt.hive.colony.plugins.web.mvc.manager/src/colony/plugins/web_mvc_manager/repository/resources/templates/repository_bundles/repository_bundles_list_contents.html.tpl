@@ -1,5 +1,5 @@
 <div id="includes">
-    <div class="javascript">repositories/resources/templates/js/repository_plugins/repository_plugins_list_contents.js</div>
+    <div class="javascript">repositories/resources/templates/js/repository_bundles/repository_bundles_list_contents.js</div>
 </div>
 <div id="meta-data">
     <div class="area">update</div>
