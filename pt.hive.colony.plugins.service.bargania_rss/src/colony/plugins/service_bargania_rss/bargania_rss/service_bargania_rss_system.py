@@ -19,7 +19,7 @@
 # You should have received a copy of the GNU General Public License
 # along with Hive Colony Framework. If not, see <http://www.gnu.org/licenses/>.
 
-__author__ = "João Magalhães <joamag@hive.pt>"
+__author__ = "João Magalhães <joamag@hive.pt> & Luís Martinho <lmartinho@hive.pt>"
 """ The author(s) of the module """
 
 __version__ = "1.0.0"
@@ -66,6 +66,15 @@ XML_TEXT_NODES = (
     xml.dom.minidom.Node.CDATA_SECTION_NODE
 )
 """ The xml text nodes """
+
+DEFAULT_NUMBER_PURCHASES = "0"
+""" The default number of purchases """
+
+DEFAULT_MINIMUM_PURCHASES = "0"
+""" The default minimum purchases """
+
+DEFAULT_MAXIMUM_PURCHASES = None
+""" The default maximum purchases """
 
 class ServiceBarganiaRss:
     """
@@ -228,13 +237,14 @@ class BarganiaRssClient:
             bargania_deal_currency = self.get_xml_node_text(item_node, "bargania:currency")
             bargania_deal_retail_price = self.get_xml_node_text(item_node, "bargania:retail_price")
             bargania_deal_discounted_price = self.get_xml_node_text(item_node, "bargania:discounted_price")
-            bargania_deal_number_purchases = self.get_xml_node_text(item_node, "bargania:number_purchases")
-            bargania_deal_minimum_purchases = self.get_xml_node_text(item_node, "bargania:minimum_purchases")
-            bargania_deal_maximum_purchases = self.get_xml_node_text(item_node, "bargania:maximum_purchases")
+            bargania_deal_number_purchases = self.get_xml_node_text(item_node, "bargania:number_purchases", DEFAULT_NUMBER_PURCHASES)
+            bargania_deal_minimum_purchases = self.get_xml_node_text(item_node, "bargania:minimum_purchases", DEFAULT_MINIMUM_PURCHASES)
+            bargania_deal_maximum_purchases = self.get_xml_node_text(item_node, "bargania:maximum_purchases", DEFAULT_MAXIMUM_PURCHASES)
             bargania_deal_expiration_date = self.get_xml_node_text(item_node, "bargania:expiration_date")
 
             # retrieves the bargania deal relations
             bargania_deal_advertisement_media = self._get_media(item_node, "bargania:advertisement_media")
+            bargania_deal_category = self._get_category(item_node, "bargania:category")
             bargania_deal_store = self._get_store(item_node, "bargania:store")
             bargania_deal_primary_address = self._get_address(item_node, "bargania:primary_address")
             bargania_deal_primary_contact_information = self._get_contact_information(item_node, "bargania:primary_contact_information")
@@ -262,6 +272,7 @@ class BarganiaRssClient:
             # sets the relations in the bargania deal (map)
             bargania_deal["advertisement_media"] = [bargania_deal_advertisement_media]
             bargania_deal["store"] = bargania_deal_store
+            bargania_deal["category"] = bargania_deal_category
             bargania_deal["primary_address"] = bargania_deal_primary_address
             bargania_deal["primary_contact_information"] = bargania_deal_primary_contact_information
 
@@ -400,21 +411,21 @@ class BarganiaRssClient:
         # returns the http client
         return self.http_client
 
-    def get_xml_node_text(self, xml_document, xml_tag_name):
+    def get_xml_node_text(self, xml_document, xml_tag_name, default_value = None):
         # retrieves the xml nodes
         xml_nodes = xml_document.getElementsByTagName(xml_tag_name)
 
         # in case the retrieved xml
         # nodes are empty
         if not xml_nodes:
-            # returns invalid
-            return None
+            # returns the default value
+            return default_value
 
         # retrieves the xml node (first)
-        xml_node = xml_nodes[0]
+        xml_node = xml_nodes and xml_nodes[0] or None
 
         # retrieves the xml node text
-        xml_node_text = self._get_xml_node_text(xml_node)
+        xml_node_text = xml_node and self._get_xml_node_text(xml_node) or default_value
 
         # returns the xml node text
         return xml_node_text
@@ -431,30 +442,6 @@ class BarganiaRssClient:
 
         # returns the xml node text
         return xml_node_text
-
-    def _get_location(self, item_node, advertisement_location_node_name):
-        # creates the location map
-        location = {}
-
-        # retrieves the location nodes
-        location_nodes = item_node.getElementsByTagName(advertisement_location_node_name)
-
-        # in case the location nodes is not valid
-        if not location_nodes:
-            # returns invalid
-            return None
-
-        # retrieves the location node
-        location_node = location_nodes[0]
-
-        # retrieves the basic location details
-        location_id = self.get_xml_node_text(location_node, "bargania:id")
-
-        # sets the values in the location (map)
-        location["id"] = location_id
-
-        # returns the location
-        return location
 
     def _get_media(self, item_node, advertisement_media_node_name):
         # creates the media map
@@ -481,6 +468,30 @@ class BarganiaRssClient:
 
         # returns the media
         return media
+
+    def _get_category(self, item_node, category_node_name):
+        # creates the category map
+        category = {}
+
+        # retrieves the category nodes
+        category_nodes = item_node.getElementsByTagName(category_node_name)
+
+        # in case the category nodes is not valid
+        if not category_nodes:
+            # returns invalid
+            return None
+
+        # retrieves the category node
+        category_node = category_nodes[0]
+
+        # retrieves the basic category details
+        category_object_id = self.get_xml_node_text(category_node, "bargania:object_id")
+
+        # sets the values in the category (map)
+        category["object_id"] = category_object_id
+
+        # returns the category
+        return category
 
     def _get_store(self, item_node, store_node_name):
         # creates the store map
