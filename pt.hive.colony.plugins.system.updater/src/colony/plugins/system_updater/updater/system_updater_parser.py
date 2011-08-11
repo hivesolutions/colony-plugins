@@ -278,6 +278,8 @@ class RepositoryDescriptorFileParser(Parser):
             repository_descriptor.bundles = self.parse_repository_descriptor_bundles(repository_descriptor_element)
         elif node_name == "plugins":
             repository_descriptor.plugins = self.parse_repository_descriptor_plugins(repository_descriptor_element)
+        elif node_name == "containers":
+            repository_descriptor.containers = self.parse_repository_descriptor_containers(repository_descriptor_element)
 
     def parse_repository_descriptor_name(self, descriptor_name):
         repository_descriptor_name = descriptor_name.firstChild.data.strip()
@@ -608,6 +610,102 @@ class RepositoryDescriptorFileParser(Parser):
         repository_descriptor_plugin_dependency_version = plugin_dependency_version.firstChild.data.strip()
         return repository_descriptor_plugin_dependency_version
 
+    def parse_repository_descriptor_containers(self, descriptor_containers):
+        repository_descriptor_containers_list = []
+        child_nodes = descriptor_containers.childNodes
+
+        for child_node in child_nodes:
+            if valid_node(child_node):
+                repository_descriptor_container = self.parse_repository_descriptor_container(child_node)
+                repository_descriptor_containers_list.append(repository_descriptor_container)
+
+        return repository_descriptor_containers_list
+
+    def parse_repository_descriptor_container(self, descriptor_container):
+        container_descriptor = ContainerDescriptor()
+        child_nodes = descriptor_container.childNodes
+
+        for child_node in child_nodes:
+            if valid_node(child_node):
+                self.parse_repository_descriptor_container_element(child_node, container_descriptor)
+
+        return container_descriptor
+
+    def parse_repository_descriptor_container_element(self, repository_descriptor_container_element, container_descriptor):
+        node_name = repository_descriptor_container_element.nodeName
+
+        if node_name == "name":
+            container_descriptor.name = self.parse_repository_descriptor_container_name(repository_descriptor_container_element)
+        elif node_name == "type":
+            container_descriptor.container_type = self.parse_repository_descriptor_container_type(repository_descriptor_container_element)
+        elif node_name == "id":
+            container_descriptor.id = self.parse_repository_descriptor_container_id(repository_descriptor_container_element)
+        elif node_name == "version":
+            container_descriptor.version = self.parse_repository_descriptor_container_version(repository_descriptor_container_element)
+        elif node_name == "contents_file":
+            container_descriptor.contents_file = self.parse_repository_descriptor_container_contents_file(repository_descriptor_container_element)
+        elif node_name == "dependencies":
+            container_descriptor.dependencies = self.parse_repository_descriptor_container_dependencies(repository_descriptor_container_element)
+        elif node_name == "hash_digest_items":
+            container_descriptor.hash_digest_items = self.parse_repository_descriptor_hash_digest_items(repository_descriptor_container_element)
+
+    def parse_repository_descriptor_container_name(self, descriptor_container_name):
+        repository_descriptor_container_name = descriptor_container_name.firstChild.data.strip()
+        return repository_descriptor_container_name
+
+    def parse_repository_descriptor_container_type(self, descriptor_container_type):
+        repository_descriptor_container_type = descriptor_container_type.firstChild.data.strip()
+        return repository_descriptor_container_type
+
+    def parse_repository_descriptor_container_id(self, descriptor_container_id):
+        repository_descriptor_container_id = descriptor_container_id.firstChild.data.strip()
+        return repository_descriptor_container_id
+
+    def parse_repository_descriptor_container_version(self, descriptor_container_version):
+        repository_descriptor_container_version = descriptor_container_version.firstChild.data.strip()
+        return repository_descriptor_container_version
+
+    def parse_repository_descriptor_container_contents_file(self, descriptor_container_contents_file):
+        repository_descriptor_container_contents_file = descriptor_container_contents_file.firstChild.data.strip()
+        return repository_descriptor_container_contents_file
+
+    def parse_repository_descriptor_container_dependencies(self, descriptor_container_dependencies):
+        repository_descriptor_container_dependencies_list = []
+        child_nodes = descriptor_container_dependencies.childNodes
+
+        for child_node in child_nodes:
+            if valid_node(child_node):
+                repository_descriptor_container_dependency = self.parse_repository_descriptor_container_dependency(child_node)
+                repository_descriptor_container_dependencies_list.append(repository_descriptor_container_dependency)
+
+        return repository_descriptor_container_dependencies_list
+
+    def parse_repository_descriptor_container_dependency(self, dependency_container):
+        container_dependency = ContainerDependency()
+        child_nodes = dependency_container.childNodes
+
+        for child_node in child_nodes:
+            if valid_node(child_node):
+                self.parse_repository_descriptor_container_dependency_element(child_node, container_dependency)
+
+        return container_dependency
+
+    def parse_repository_descriptor_container_dependency_element(self, repository_descriptor_container_dependency_element, container_dependency):
+        node_name = repository_descriptor_container_dependency_element.nodeName
+
+        if node_name == "id":
+            container_dependency.id = self.parse_repository_descriptor_container_dependency_id(repository_descriptor_container_dependency_element)
+        elif node_name == "version":
+            container_dependency.version = self.parse_repository_descriptor_container_dependency_version(repository_descriptor_container_dependency_element)
+
+    def parse_repository_descriptor_container_dependency_id(self, container_dependency_id):
+        repository_descriptor_container_dependency_id = container_dependency_id.firstChild.data.strip()
+        return repository_descriptor_container_dependency_id
+
+    def parse_repository_descriptor_container_dependency_version(self, container_dependency_version):
+        repository_descriptor_container_dependency_version = container_dependency_version.firstChild.data.strip()
+        return repository_descriptor_container_dependency_version
+
 class Repository:
     """
     The repository class.
@@ -797,6 +895,14 @@ class RepositoryDescriptor:
                     return plugin
                 elif plugin.version == plugin_version:
                     return plugin
+
+    def get_container(self, container_id, container_version = None):
+        for container in self.containers:
+            if container.id == container_id:
+                if not container_version:
+                    return container
+                elif container.version == container_version:
+                    return container
 
     def get_plugin_name(self, plugin_name, plugin_version = None):
         for plugin in self.plugins:
@@ -1045,6 +1151,95 @@ class PluginDependency:
         @param id: The id of the plugin dependency.
         @type version: String
         @param version: The version of the plugin dependency.
+        """
+
+        self.id = id
+        self.version = version
+
+    def __repr__(self):
+        return "<%s, %s, %s>" % (
+            self.__class__.__name__,
+            self.id,
+            self.version
+        )
+
+class ContainerDescriptor:
+    """
+    The container descriptor class.
+    """
+
+    name = "none"
+    """ The name of the container descriptor """
+
+    container_type = "none"
+    """ The container type of the container descriptor """
+
+    id = "none"
+    """ The id of the container descriptor """
+
+    version = "none"
+    """ The version of the container descriptor """
+
+    contents_file = "none"
+    """ The contents file of the container descriptor """
+
+    dependencies = []
+    """ The dependencies of the container descriptor """
+
+    hash_digest_items = []
+    """ The hash digest items of the container descriptor """
+
+    def __init__(self, name = "none", container_type = "none", id = "none", version = "none", contents_file = "none"):
+        """
+        Constructor of the class.
+
+        @type name: String
+        @param name: The name of the container descriptor.
+        @type container_type: String
+        @param container_type: The container type of the container descriptor.
+        @type id: String
+        @param id: The id of the container descriptor.
+        @type version: String
+        @param version: The version of the container descriptor.
+        @type contents_file: String
+        @param contents_file: The contents file of the container descriptor.
+        """
+
+        self.name = name
+        self.container_type = container_type
+        self.id = id
+        self.version = version
+        self.contents_file = contents_file
+
+        self.dependencies = []
+        self.hash_digest_items = []
+
+    def __repr__(self):
+        return "<%s, %s, %s>" % (
+            self.__class__.__name__,
+            self.name,
+            self.version
+        )
+
+class ContainerDependency:
+    """
+    The container dependency class.
+    """
+
+    id = "none"
+    """ The id of the container dependency """
+
+    version = "none"
+    """ The version of the container dependency """
+
+    def __init__(self, id = "none", version = "none"):
+        """
+        Constructor of the class.
+
+        @type id: String
+        @param id: The id of the container dependency.
+        @type version: String
+        @param version: The version of the container dependency.
         """
 
         self.id = id

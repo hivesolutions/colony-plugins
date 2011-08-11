@@ -142,6 +142,25 @@ class ColonyPackingInstallerDeployerPlugin(colony.base.plugin_system.Plugin):
 
         return self.colony_packing_installer_deployer.deploy_plugin(plugin_id, plugin_version, contents_file, transaction_properties)
 
+    def deploy_container(self, container_id, container_version, contents_file, transaction_properties):
+        """
+        Method called upon deployment of the container with
+        the given id, version and contents file.
+
+        @type container_id: String
+        @param container_id: The id of the container to be deployed.
+        @type container_version: String
+        @param container_version: The version of the container to be deployed.
+        @type contents_file: ContentsFile
+        @param contents_file: The contents file of the container to
+        be deployed.
+        @type transaction_properties: Dictionary
+        @param transaction_properties: The properties map for the
+        current transaction.
+        """
+
+        return self.colony_packing_installer_deployer.deploy_container(container_id, container_version, contents_file, transaction_properties)
+
     def undeploy_bundle(self, bundle_id, bundle_version, transaction_properties):
         """
         Method called upon undeployment of the bundle with
@@ -173,6 +192,22 @@ class ColonyPackingInstallerDeployerPlugin(colony.base.plugin_system.Plugin):
         """
 
         return self.colony_packing_installer_deployer.undeploy_plugin(plugin_id, plugin_version, transaction_properties)
+
+    def undeploy_container(self, container_id, container_version, transaction_properties):
+        """
+        Method called upon undeployment of the container with
+        the given id and version.
+
+        @type container_id: String
+        @param container_id: The id of the container to be undeployed.
+        @type container_version: String
+        @param container_version: The version of the container to be undeployed.
+        @type transaction_properties: Dictionary
+        @param transaction_properties: The properties map for the
+        current transaction.
+        """
+
+        return self.colony_packing_installer_deployer.undeploy_container(container_id, container_version, transaction_properties)
 
     def open_transaction(self, transaction_properties):
         """

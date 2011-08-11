@@ -69,6 +69,9 @@ BUNDLES_VALUE = "bundles"
 PLUGINS_VALUE = "plugins"
 """ The plugins value """
 
+CONTAINERS_VALUE = "containers"
+""" The containers value """
+
 VERSION_VALUE = "version"
 """ The version value """
 
@@ -432,6 +435,30 @@ class SystemUpdater:
             # releases the system updater lock
             self.system_updater_lock.release()
 
+    def install_container(self, container_id, container_version = None, transaction_properties = None):
+        """
+        Installs the container with the given id and version from
+        a random repository.
+
+        @type container_id: String
+        @param container_id: The id of the container to install.
+        @type container_version: String
+        @param container_version: The version of the container to install.
+        @type transaction_properties: Dictionary
+        @param transaction_properties: The properties map for the
+        current transaction.
+        """
+
+        # acquires the system updater lock
+        self.system_updater_lock.acquire()
+
+        try:
+            # installs the container (concrete)
+            self._install_container(container_id, container_version, transaction_properties)
+        finally:
+            # releases the system updater lock
+            self.system_updater_lock.release()
+
     def uninstall_package(self, package_id, package_version = None, transaction_properties = None):
         """
         Uninstalls the package with the given id and version.
@@ -499,6 +526,30 @@ class SystemUpdater:
         try:
             # uninstalls the plugin (concrete)
             self._uninstall_plugin(plugin_id, plugin_version, transaction_properties)
+        finally:
+            # releases the system updater lock
+            self.system_updater_lock.release()
+
+    def uninstall_container(self, container_id, container_version = None, transaction_properties = None):
+        """
+        Uninstalls the container with the given id and version from
+        a random repository.
+
+        @type container_id: String
+        @param container_id: The id of the container to uninstall.
+        @type container_version: String
+        @param container_version: The version of the container to uninstall.
+        @type transaction_properties: Dictionary
+        @param transaction_properties: The properties map for the
+        current transaction.
+        """
+
+        # acquires the system updater lock
+        self.system_updater_lock.acquire()
+
+        try:
+            # uninstalls the container (concrete)
+            self._uninstall_container(container_id, container_version, transaction_properties)
         finally:
             # releases the system updater lock
             self.system_updater_lock.release()
@@ -626,6 +677,33 @@ class SystemUpdater:
             # returns the plugin descriptor
             return plugin_descripton
 
+    def get_container_descriptor(self, container_id, container_version = None):
+        """
+        Retrieves the container descriptor for the given container id and version.
+
+        @type container_id: String
+        @param container_id: The id of the container to retrieve the container descriptor.
+        @type container_version: String
+        @param container_version: The version of the container to retrieve the container descriptor.
+        @rtype: ContainerDescriptor
+        @return: The container descriptor for the container with the given id and version.
+        """
+
+        # iterates over all the repository descriptors available
+        for repository_descriptor in self.repository_descriptor_list:
+            # retrieves the container from the repository descriptor for the given
+            # container id and version
+            container_descripton = repository_descriptor.get_container(container_id, container_version)
+
+            # in case container descriptor does not exists in current
+            # repository descriptor
+            if not container_descripton:
+                # continues the loop
+                continue
+
+            # returns the container descriptor
+            return container_descripton
+
     def get_repository_descriptor_bundle_descriptor(self, bundle_descriptor):
         """
         Retrieves the repository descriptor for the given bundle descriptor.
@@ -652,6 +730,20 @@ class SystemUpdater:
 
         for repository_descriptor in self.repository_descriptor_list:
             if plugin_descriptor in repository_descriptor.plugins:
+                return repository_descriptor
+
+    def get_repository_descriptor_container_descriptor(self, container_descriptor):
+        """
+        Retrieves the repository descriptor for the given container descriptor.
+
+        @type container_descriptor: ContainerDescriptor
+        @param container_descriptor: The container descriptor to get the repository descriptor.
+        @rtype: RepositoryDescriptor
+        @return: The repository descriptor for the given container descriptor.
+        """
+
+        for repository_descriptor in self.repository_descriptor_list:
+            if container_descriptor in repository_descriptor.containers:
                 return repository_descriptor
 
     def _install_package(self, package_id, package_version = None, transaction_properties = None):
@@ -826,6 +918,76 @@ class SystemUpdater:
         # updates the plugin descriptor status
         plugin_descriptor.status = SAME_VERSION_STATUS
 
+    def _install_container(self, container_id, container_version = None, transaction_properties = None):
+        """
+        Installs the container with the given id and version from
+        a random repository.
+
+        @type container_id: String
+        @param container_id: The id of the container to install.
+        @type container_version: String
+        @param container_version: The version of the container to install.
+        @type transaction_properties: Dictionary
+        @param transaction_properties: The properties map for the
+        current transaction.
+        """
+
+        # loads the information for the repositories
+        self.load_repositories_information()
+
+        # retrieves the descriptor of the container
+        container_descriptor = self.get_container_descriptor(container_id, container_version)
+
+        # in case the container was not found
+        if not container_descriptor:
+            # raises the invalid container exception
+            raise system_updater_exceptions.InvalidContainerException("container %s v%s not found" % (container_id, container_version))
+
+        # retrieves the container type
+        container_type = container_descriptor.container_type
+
+        # retrieves a deployer for the given container type
+        plugin_deployer = self._get_deployer_plugin_by_deployer_type(container_type)
+
+        # retrieves the current transaction properties or creates a new transaction
+        transaction_properties = plugin_deployer.open_transaction(transaction_properties)
+
+        try:
+            # installs the container dependencies
+            self._install_container_dependencies(container_descriptor, transaction_properties)
+
+            # retrieves the repository descriptor from the container descriptor
+            repository_descriptor = self.get_repository_descriptor_container_descriptor(container_descriptor)
+
+            # retrieves the repository structure for the provided repository descriptor
+            repository = self.repository_descriptor_repository_map[repository_descriptor]
+
+            # retrieves the contents file
+            contents_file = self._get_contents_file(repository.name, container_descriptor.name, container_descriptor.version, container_descriptor.contents_file, CONTAINERS_VALUE)
+
+            try:
+                # sends the contents file (container) to the plugin type deployer
+                # to allow it to be deployed, the transaction properties are
+                # also sent for transaction control
+                plugin_deployer.deploy_container(container_descriptor.id, container_descriptor.version, contents_file, transaction_properties)
+            finally:
+                # deletes the contents file
+                self._delete_contents_file(contents_file)
+
+            # commits the transaction represented in the
+            # transaction properties
+            plugin_deployer.commit_transaction(transaction_properties)
+        except:
+            # "rollsback" the transaction represented in the
+            # transaction properties
+            plugin_deployer.rollback_transaction(transaction_properties)
+
+            # re-raises the exception
+            raise
+
+        # updates the container descriptor status
+        container_descriptor.status = SAME_VERSION_STATUS
+
     def _uninstall_package(self, package_id, package_version = None, transaction_properties = None):
         """
         Uninstalls the package with the given id and version
@@ -966,6 +1128,60 @@ class SystemUpdater:
         # updates the plugin descriptor status
         plugin_descriptor.status = NOT_INSTALLED_STATUS
 
+    def _uninstall_container(self, container_id, container_version = None, transaction_properties = None):
+        """
+        Uninstalls the container with the given id and version from
+        a random repository.
+
+        @type container_id: String
+        @param container_id: The id of the container to uninstall.
+        @type container_version: String
+        @param container_version: The version of the container to uninstall.
+        @type transaction_properties: Dictionary
+        @param transaction_properties: The properties map for the
+        current transaction.
+        """
+
+        # loads the information for the repositories
+        self.load_repositories_information()
+
+        # retrieves the descriptor of the container
+        container_descriptor = self.get_container_descriptor(container_id, container_version)
+
+        # in case the container was not found
+        if not container_descriptor:
+            # raises the invalid container exception
+            raise system_updater_exceptions.InvalidContainerException("container %s v%s not found" % (container_id, container_version))
+
+        # retrieves the container type
+        container_type = container_descriptor.container_type
+
+        # retrieves a deployer for the given container type
+        plugin_deployer = self._get_deployer_plugin_by_deployer_type(container_type)
+
+        # retrieves the current transaction properties or creates a new transaction
+        transaction_properties = plugin_deployer.open_transaction(transaction_properties)
+
+        try:
+            # sends the bundle information to the plugin type deployer
+            # to allow it to be undeployed, the transaction properties are
+            # also sent for transaction control
+            plugin_deployer.undeploy_bundle(container_descriptor.id, container_descriptor.version, transaction_properties)
+
+            # commits the transaction represented in the
+            # transaction properties
+            plugin_deployer.commit_transaction(transaction_properties)
+        except:
+            # "rollsback" the transaction represented in the
+            # transaction properties
+            plugin_deployer.rollback_transaction(transaction_properties)
+
+            # re-raises the exception
+            raise
+
+        # updates the container descriptor status
+        container_descriptor.status = NOT_INSTALLED_STATUS
+
     def _get_deployer_plugin_by_deployer_type(self, deployer_type):
         """
         Retrieves a deployer plugin for the given deployer type.
@@ -1059,6 +1275,42 @@ class SystemUpdater:
             except Exception, exception:
                 # raises the dependency installation exception
                 raise system_updater_exceptions.DependencyInstallationException("problem installing plugin depdency %s v%s: %s" % (plugin_dependency.id, plugin_dependency.version, unicode(exception)))
+
+    def _install_container_dependencies(self, container_descriptor, transaction_properties):
+        """
+        Install the container dependencies for the given container
+        descriptor.
+
+        @type container_descriptor: ContainerDescriptor
+        @param container_descriptor: The container descriptor of the container to
+        install the dependencies.
+        @type transaction_properties: Dictionary
+        @param transaction_properties: The properties map for the
+        current transaction.
+        """
+
+        # retrieves the system registry plugin
+        system_registry_plugin = self.system_updater_plugin.system_registry_plugin
+
+        # retrieves the container dependencies
+        container_dependencies = container_descriptor.dependencies
+
+        # iterates over the container dependencies
+        for container_dependency in container_dependencies:
+            # retrieves the container information for the container dependency
+            container_information = system_registry_plugin.get_container_information(container_dependency.id, container_dependency.version)
+
+            # in case the container information is valid
+            if container_information:
+                # continues the loop
+                continue
+
+            try:
+                # installs the container dependency
+                self.install_container(container_dependency.id, container_dependency.version, transaction_properties)
+            except Exception, exception:
+                # raises the dependency installation exception
+                raise system_updater_exceptions.DependencyInstallationException("problem installing container depdency %s v%s: %s" % (container_dependency.id, container_dependency.version, unicode(exception)))
 
     def _get_contents_file(self, repository_name, content_name, content_version, contents_file, content_type = PLUGINS_VALUE):
         """
@@ -1196,9 +1448,10 @@ class SystemUpdater:
         # retrieves the system registry plugin
         system_registry_plugin = self.system_updater_plugin.system_registry_plugin
 
-        # retrieves the repository descriptor bundles and plugins
+        # retrieves the repository descriptor bundles, plugins and containers
         repository_descriptor_bundles = repository_descriptor.bundles
         repository_descriptor_plugins = repository_descriptor.plugins
+        repository_descriptor_containers = repository_descriptor.containers
 
         # iterates over all the repository descriptor bundles to process them
         for repository_descriptor_bundle in repository_descriptor_bundles:
@@ -1215,6 +1468,14 @@ class SystemUpdater:
 
             # process the repository descriptor plugin using the plugin information
             self._process_repository_item(repository_descriptor_plugin, plugin_information)
+
+        # iterates over all the repository descriptor containers to process them
+        for repository_descriptor_container in repository_descriptor_containers:
+            # retrieves the container information
+            container_information = system_registry_plugin.get_container_information(repository_descriptor_container.id, repository_descriptor_container.version)
+
+            # process the repository descriptor container using the container information
+            self._process_repository_item(repository_descriptor_container, container_information)
 
     def _process_repository_item(self, repository_descriptor_item, item_information):
         """

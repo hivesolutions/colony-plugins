@@ -136,6 +136,9 @@ class SystemUpdaterPlugin(colony.base.plugin_system.Plugin):
     def install_plugin(self, plugin_id, plugin_version):
         return self.system_updater.install_plugin(plugin_id, plugin_version)
 
+    def install_container(self, container_id, container_version):
+        return self.system_updater.install_container(container_id, container_version)
+
     def uninstall_package(self, package_id, package_version):
         return self.system_updater.uninstall_package(package_id, package_version)
 
@@ -144,6 +147,9 @@ class SystemUpdaterPlugin(colony.base.plugin_system.Plugin):
 
     def uninstall_plugin(self, plugin_id, plugin_version):
         return self.system_updater.uninstall_plugin(plugin_id, plugin_version)
+
+    def uninstall_container(self, container_id, container_version):
+        return self.system_updater.uninstall_container(container_id, container_version)
 
     def get_console_extension_name(self):
         return self.console_system_updater.get_console_extension_name()

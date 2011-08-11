@@ -139,6 +139,35 @@ class ColonyPackingInstallerDeployer:
         # installs the package (plugin)
         colony_packing_installer_plugin.install_package(contents_file.name, installation_properties)
 
+    def deploy_container(self, container_id, container_version, contents_file, transaction_properties):
+        """
+        Method called upon deployment of the container with
+        the given id, version and contents file.
+
+        @type container_id: String
+        @param container_id: The id of the container to be deployed.
+        @type container_version: String
+        @param container_version: The version of the container to be deployed.
+        @type contents_file: ContentsFile
+        @param contents_file: The contents file of the container to
+        be deployed.
+        @type transaction_properties: Dictionary
+        @param transaction_properties: The properties map for the
+        current transaction.
+        """
+
+        # retrieves the colony packing installer plugin
+        colony_packing_installer_plugin = self.colony_packing_installer_deployer_plugin.colony_packing_installer_plugin
+
+        # installation options
+        installation_properties = {
+            UPGRADE_VALUE : True,
+            TRANSACTION_PROPERTIES_VALUE : transaction_properties
+        }
+
+        # installs the package (container)
+        colony_packing_installer_plugin.install_package(contents_file.name, installation_properties)
+
     def undeploy_bundle(self, bundle_id, bundle_version, transaction_properties):
         """
         Method called upon undeployment of the bundle with
@@ -188,6 +217,31 @@ class ColonyPackingInstallerDeployer:
 
         # uninstalls the package (plugin)
         colony_packing_installer_plugin.uninstall_package(plugin_id, plugin_version, installation_properties)
+
+    def undeploy_container(self, container_id, container_version, transaction_properties):
+        """
+        Method called upon undeployment of the container with
+        the given id and version.
+
+        @type container_id: String
+        @param container_id: The id of the container to be undeployed.
+        @type container_version: String
+        @param container_version: The version of the container to be undeployed.
+        @type transaction_properties: Dictionary
+        @param transaction_properties: The properties map for the
+        current transaction.
+        """
+
+        # retrieves the colony packing installer plugin
+        colony_packing_installer_plugin = self.colony_packing_installer_deployer_plugin.colony_packing_installer_plugin
+
+        # installation options
+        installation_properties = {
+            TRANSACTION_PROPERTIES_VALUE : transaction_properties
+        }
+
+        # uninstalls the package (container)
+        colony_packing_installer_plugin.uninstall_package(container_id, container_version, installation_properties)
 
     def open_transaction(self, transaction_properties):
         """

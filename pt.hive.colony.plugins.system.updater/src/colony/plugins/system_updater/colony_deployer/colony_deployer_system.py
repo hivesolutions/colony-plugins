@@ -134,6 +134,26 @@ class ColonyDeployer:
         # uncompresses the zip file
         self._uncompress_zip_file(contents_file)
 
+    def deploy_container(self, container_id, container_version, contents_file, transaction_properties):
+        """
+        Method called upon deployment of the container with
+        the given id, version and contents file.
+
+        @type container_id: String
+        @param container_id: The id of the container to be deployed.
+        @type container_version: String
+        @param container_version: The version of the container to be deployed.
+        @type contents_file: ContentsFile
+        @param contents_file: The contents file of the container to
+        be deployed.
+        @type transaction_properties: Dictionary
+        @param transaction_properties: The properties map for the
+        current transaction.
+        """
+
+        # raises an operation not implemented exception
+        raise colony_deployer_exceptions.OperationNotSupported("not possible to deploy colony containers")
+
     def undeploy_bundle(self, bundle_id, bundle_version, transaction_properties):
         """
         Method called upon undeployment of the bundle with
@@ -167,6 +187,23 @@ class ColonyDeployer:
 
         # raises an operation not implemented exception
         raise colony_deployer_exceptions.OperationNotSupported("not possible to undeploy colony plugins")
+
+    def undeploy_container(self, container_id, container_version, transaction_properties):
+        """
+        Method called upon undeployment of the container with
+        the given id and version.
+
+        @type container_id: String
+        @param container_id: The id of the container to be undeployed.
+        @type container_version: String
+        @param container_version: The version of the container to be undeployed.
+        @type transaction_properties: Dictionary
+        @param transaction_properties: The properties map for the
+        current transaction.
+        """
+
+        # raises an operation not implemented exception
+        raise colony_deployer_exceptions.OperationNotSupported("not possible to undeploy colony containers")
 
     def open_transaction(self, transaction_properties):
         """
