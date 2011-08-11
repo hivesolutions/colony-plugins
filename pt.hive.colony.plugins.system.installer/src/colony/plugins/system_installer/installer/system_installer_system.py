@@ -83,6 +83,13 @@ class SystemInstaller:
         # installs the plugin with the installer plugin
         installer_plugin.install_plugin(file_path, properties)
 
+    def install_container(self, file_path, properties, installer_type):
+        # retrieves the installer container for the installer type
+        installer_container = self._get_installer_container_by_installer_type(installer_type)
+
+        # installs the container with the installer container
+        installer_container.install_container(file_path, properties)
+
     def uninstall_package(self, package_id, package_version, properties, installer_type):
         # retrieves the installer plugin for the installer type
         installer_plugin = self._get_installer_plugin_by_installer_type(installer_type)
@@ -103,6 +110,13 @@ class SystemInstaller:
 
         # uninstalls the plugin with the installer plugin
         installer_plugin.uninstall_plugin(plugin_id, plugin_version, properties)
+
+    def uninstall_container(self, container_id, container_version, properties, installer_type):
+        # retrieves the installer container for the installer type
+        installer_container = self._get_installer_container_by_installer_type(installer_type)
+
+        # uninstalls the container with the installer container
+        installer_container.uninstall_container(container_id, container_version, properties)
 
     def open_transaction(self, transaction_properties, installer_type):
         # retrieves the installer plugin for the installer type

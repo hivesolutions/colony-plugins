@@ -146,6 +146,19 @@ class ColonyPackingInstallerPlugin(colony.base.plugin_system.Plugin):
 
         return self.colony_packing_installer.install_plugin(file_path, properties)
 
+    def install_container(self, file_path, properties):
+        """
+        Method called upon installation of the container with
+        the given file path and properties.
+
+        @type file_path: String
+        @param file_path: The path to the container file to be installed.
+        @type properties: Dictionary
+        @param properties: The map of properties for installation.
+        """
+
+        return self.colony_packing_installer.install_container(file_path, properties)
+
     def uninstall_package(self, package_id, package_version, properties):
         """
         Method called upon removal of the package with
@@ -190,6 +203,21 @@ class ColonyPackingInstallerPlugin(colony.base.plugin_system.Plugin):
         """
 
         return self.colony_packing_installer.uninstall_plugin(plugin_id, plugin_version, properties)
+
+    def uninstall_container(self, container_id, container_version, properties):
+        """
+        Method called upon removal of the container with
+        the given id, version and properties.
+
+        @type container_id: String
+        @param container_id: The id of the container to be removed.
+        @type container_version: String
+        @param container_version: The version of the container to be removed.
+        @type properties: Dictionary
+        @param properties: The map of properties for removal.
+        """
+
+        return self.colony_packing_installer.uninstall_container(container_id, container_version, properties)
 
     def open_transaction(self, transaction_properties):
         """

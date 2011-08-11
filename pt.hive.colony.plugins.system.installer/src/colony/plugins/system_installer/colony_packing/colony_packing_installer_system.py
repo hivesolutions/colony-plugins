@@ -90,6 +90,9 @@ BUNDLE_VALUE = "bundle"
 PLUGIN_VALUE = "plugin"
 """ The plugin value """
 
+CONTAINER_VALUE = "container"
+""" The container value """
+
 BUNDLES_VALUE = "bundles"
 """ The bundles value """
 
@@ -111,6 +114,9 @@ INSTALLED_BUNDLES_VALUE = "installed_bundles"
 INSTALLED_PLUGINS_VALUE = "installed_plugins"
 """ The installed plugins value """
 
+INSTALLED_CONTAINERS_VALUE = "installed_containers"
+""" The installed containers value """
+
 DUPLICATE_FILES_VALUE = "duplicate_files"
 """ The duplicate files values """
 
@@ -126,6 +132,9 @@ RELATIVE_BUNDLES_PATH = "bundles"
 RELATIVE_PLUGINS_PATH = "plugins"
 """ The path relative to the manager path for the plugins """
 
+RELATIVE_CONTAINERS_PATH = "containers"
+""" The path relative to the manager path for the containers """
+
 RELATIVE_REGISTRY_PATH = "registry"
 """ The path relative to the variable path for the registry """
 
@@ -138,6 +147,9 @@ BUNDLES_FILE_NAME = "bundles.json"
 PLUGINS_FILE_NAME = "plugins.json"
 """ The plugins file name """
 
+CONTAINERS_FILE_NAME = "containers.json"
+""" The containers file name """
+
 DUPLICATES_FILE_NAME = "duplicates.json"
 """ The duplicates file name """
 
@@ -146,6 +158,9 @@ COLONY_BUNDLE_FILE_EXTENSION = ".cbx"
 
 COLONY_PLUGIN_FILE_EXTENSION = ".cpx"
 """ The colony plugin file extension """
+
+COLONY_CONTAINER_FILE_EXTENSION = ".ccx"
+""" The colony container file extension """
 
 class ColonyPackingInstaller:
     """
@@ -282,6 +297,29 @@ class ColonyPackingInstaller:
             # releases the colony packing installer lock
             self.colony_packing_installer_lock.release()
 
+    def install_container(self, file_path, properties, file_context = None):
+        """
+        Method called upon installation of the container with
+        the given file path and properties.
+
+        @type file_path: String
+        @param file_path: The path to the container file to be installed.
+        @type properties: Dictionary
+        @param properties: The map of properties for installation.
+        @type file_context: FileContext
+        @param file_context: The file context to be used.
+        """
+
+        # acquires the colony packing installer lock
+        self.colony_packing_installer_lock.acquire()
+
+        try:
+            # installs the container (concrete method)
+            self._install_container(file_path, properties, file_context)
+        finally:
+            # releases the colony packing installer lock
+            self.colony_packing_installer_lock.release()
+
     def uninstall_package(self, package_id, package_version, properties, file_context = None):
         """
         Method called upon removal of the package with
@@ -353,6 +391,31 @@ class ColonyPackingInstaller:
         try:
             # installs the plugin (concrete method)
             self._uninstall_plugin(plugin_id, plugin_version, properties, file_context)
+        finally:
+            # releases the colony packing installer lock
+            self.colony_packing_installer_lock.release()
+
+    def uninstall_container(self, container_id, container_version, properties, file_context = None):
+        """
+        Method called upon removal of the container with
+        the given id, version and properties.
+
+        @type container_id: String
+        @param container_id: The id of the container to be removed.
+        @type container_version: String
+        @param container_version: The version of the container to be removed.
+        @type properties: Dictionary
+        @param properties: The map of properties for removal.
+        @type file_context: FileContext
+        @param file_context: The file context to be used.
+        """
+
+        # acquires the colony packing installer lock
+        self.colony_packing_installer_lock.acquire()
+
+        try:
+            # installs the container (concrete method)
+            self._uninstall_container(container_id, container_version, properties, file_context)
         finally:
             # releases the colony packing installer lock
             self.colony_packing_installer_lock.release()
@@ -471,6 +534,10 @@ class ColonyPackingInstaller:
             elif type == PLUGIN_VALUE:
                 # installs the plugin
                 self.install_plugin(file_path, properties, file_context)
+            # in case the type is container
+            elif type == CONTAINER_VALUE:
+                # installs the container
+                self.install_container(file_path, properties, file_context)
             # otherwise it's not a valid type
             else:
                 # raises a plugin installation error
@@ -770,6 +837,141 @@ class ColonyPackingInstaller:
             # re-raises the exception
             raise
 
+    def _install_container(self, file_path, properties, file_context = None):
+        """
+        Method called upon installation of the container with
+        the given file path and properties.
+
+        @type file_path: String
+        @param file_path: The path to the container file to be installed.
+        @type properties: Dictionary
+        @param properties: The map of properties for installation.
+        @type file_context: FileContext
+        @param file_context: The file context to be used.
+        """
+
+        # retrieves the container manager
+        plugin_manager = self.colony_packing_installer_plugin.manager
+
+        # retrieves the packing manager plugin
+        packing_manager_plugin = self.colony_packing_installer_plugin.packing_manager_plugin
+
+        # retrieves the variable path
+        variable_path = plugin_manager.get_variable_path()
+
+        # creates the containers directory path
+        containers_directory_path = os.path.join(variable_path, RELATIVE_REGISTRY_PATH + "/" + RELATIVE_CONTAINERS_PATH)
+
+        # retrieves the transaction properties
+        transaction_properties = properties.get(TRANSACTION_PROPERTIES_VALUE, {})
+
+        # creates a new file transaction context
+        file_context = file_context or transaction_properties.get(FILE_CONTEXT_VALUE, None) or colony.libs.file_util.FileTransactionContext()
+
+        # opens a new transaction in the file context
+        file_context.open()
+
+        try:
+            # resolves the file path retrieving the real file path
+            real_file_path = file_context.resolve_file_path(file_path)
+
+            # retrieves the packing information
+            packing_information = packing_manager_plugin.get_packing_information(real_file_path, {}, COLONY_VALUE)
+
+            # retrieves the container id
+            container_id = packing_information.get_property(ID_VALUE)
+
+            # retrieves the container version
+            container_version = packing_information.get_property(VERSION_VALUE)
+
+            # retrieves the resources
+            container_resources = packing_information.get_property(RESOURCES_VALUE)
+
+            # retrieves the manager path
+            manager_path = plugin_manager.get_manager_path()
+
+            # retrieves the containers path in order to be used
+            # to determine the containers exclusive (unique usage) path
+            containers_path = plugin_manager.get_containers_path()
+            containers_exclusive_path = os.path.join(containers_path, container_id)
+
+            # reads the container file contents
+            container_file_contents = file_context.read_file(file_path)
+
+            # creates the container descriptor file path
+            container_file_path = os.path.join(containers_directory_path, container_id + "_" + container_version + COLONY_CONTAINER_FILE_EXTENSION)
+
+            # writes the container file contents to the container file path
+            file_context.write_file(container_file_path, container_file_contents)
+
+            # retrieves the "virtual" containers path from the file context
+            # this is necessary to ensure a transaction mode
+            containers_virtual_path = file_context.get_file_path(containers_exclusive_path)
+
+            # retrieves the duplicates structure (from file)
+            duplicates_structure = self._get_duplicates_structure(file_context)
+
+            # retrieves the duplicate files structure
+            duplicate_files_structure = duplicates_structure.get(DUPLICATE_FILES_VALUE, {})
+
+            # iterates over all the container resources to check for
+            # duplicate files
+            for container_resource in container_resources:
+                # creates the (complete) resource file path
+                resource_file_path = os.path.join(containers_exclusive_path, container_resource)
+
+                # in case the resource file path does not already exists
+                if not os.path.exists(resource_file_path):
+                    # continues the loop no need to update
+                    # the duplicate files structure
+                    continue
+
+                # "calculates" the relative path between the resource file
+                # path and the manager path
+                resource_relative_path = colony.libs.path_util.relative_path(resource_file_path, manager_path)
+
+                # aligns the path normalizing it into a system independent path
+                resource_relative_path = colony.libs.path_util.align_path(resource_relative_path)
+
+                # retrieves the number of times the file is "duplicated"
+                duplicate_file_count = duplicate_files_structure.get(resource_relative_path, 0)
+
+                # increments the duplicate count by one
+                duplicate_file_count += 1
+
+                # sets the duplicate file count in the duplicate files structure
+                duplicate_files_structure[resource_relative_path] = duplicate_file_count
+
+            # persists the duplicates structure
+            self._persist_duplicates_structure(duplicates_structure, file_context)
+
+            # deploys the package using the containers "virtual" path
+            self._deploy_package(real_file_path, containers_virtual_path)
+
+            # retrieves the container item key
+            container_item_key = container_id
+
+            # generates the hash digest map for the container file
+            hash_digest_map = colony.libs.crypt_util.generate_hash_digest_map(real_file_path)
+
+            # creates the container item value
+            container_item_value = {
+                VERSION_VALUE : container_version,
+                HASH_DIGEST_VALUE : hash_digest_map
+            }
+
+            # adds the container item
+            self._add_container_item(container_item_key, container_item_value, file_context)
+
+            # commits the transaction
+            file_context.commit()
+        except:
+            # rollsback the transaction
+            file_context.rollback()
+
+            # re-raises the exception
+            raise
+
     def _uninstall_package(self, package_id, package_version, properties, file_context = None):
         """
         Method called upon removal of the package with
@@ -828,6 +1030,10 @@ class ColonyPackingInstaller:
             elif package_type == PLUGIN_VALUE:
                 # removes the plugin
                 self.uninstall_plugin(package_id, package_version, properties, file_context)
+            # in case the type is container
+            elif package_type == CONTAINER_VALUE:
+                # removes the container
+                self.uninstall_container(package_id, package_version, properties, file_context)
             # otherwise it's not a valid type
             else:
                 # raises a plugin installation error
@@ -979,7 +1185,7 @@ class ColonyPackingInstaller:
         # retrieves the registry path
         registry_path = os.path.join(variable_path, RELATIVE_REGISTRY_PATH)
 
-        # creates the plugins path
+        # retrieves the plugins path
         plugins_path = plugin_manager.get_main_plugin_path()
 
         # retrieves the transaction properties
@@ -1128,6 +1334,187 @@ class ColonyPackingInstaller:
             # re-raises the exception
             raise
 
+    def _uninstall_container(self, container_id, container_version, properties, file_context = None):
+        """
+        Method called upon removal of the container with
+        the given id, version and properties.
+
+        @type container_id: String
+        @param container_id: The id of the container to be removed.
+        @type container_version: String
+        @param container_version: The version of the container to be removed.
+        @type properties: Dictionary
+        @param properties: The map of properties for removal.
+        @type file_context: FileContext
+        @param file_context: The file context to be used.
+        """
+
+        # retrieves the plugin manager
+        plugin_manager = self.colony_packing_installer_plugin.manager
+
+        # retrieves the packing manager plugin
+        packing_manager_plugin = self.colony_packing_installer_plugin.packing_manager_plugin
+
+        # retrieves the manager path
+        manager_path = plugin_manager.get_manager_path()
+
+        # retrieves the variable path
+        variable_path = plugin_manager.get_variable_path()
+
+        # retrieves the registry path
+        registry_path = os.path.join(variable_path, RELATIVE_REGISTRY_PATH)
+
+        # retrieves the containers path in order to be used
+        # to determine the containers exclusive (unique usage) path
+        containers_path = plugin_manager.get_containers_path()
+        containers_exclusive_path = os.path.join(containers_path, container_id)
+
+        # retrieves the transaction properties
+        transaction_properties = properties.get(TRANSACTION_PROPERTIES_VALUE, {})
+
+        # creates a new file transaction context
+        file_context = file_context or transaction_properties.get(FILE_CONTEXT_VALUE, None) or colony.libs.file_util.FileTransactionContext()
+
+        # opens a new transaction in the file context
+        file_context.open()
+
+        try:
+            # retrieves the containers structure
+            containers = self._get_containers(file_context)
+
+            # retrieves the installed containers
+            installed_containers = containers.get(INSTALLED_CONTAINERS_VALUE, {})
+
+            # in case the container id is not found in the installed containers
+            if not container_id in installed_containers:
+                # raises the container installation error
+                raise colony_packing_installer_exceptions.containerInstallationError("container '%s' v'%s' is not installed" % (container_id, container_version))
+
+            # retrieves the container (information) from the
+            # installed containers
+            container = installed_containers[container_id]
+
+            # retrieves the container version as the container version
+            # or from the container structure
+            container_version = container_version or container[VERSION_VALUE]
+
+            # creates the container file name from the container
+            # id and version
+            container_file_name = container_id + "_" + container_version + COLONY_CONTAINER_FILE_EXTENSION
+
+            # creates the container file path from the
+            container_path = os.path.join(registry_path, RELATIVE_CONTAINERS_PATH + "/" + container_file_name)
+
+            # resolves the container path
+            real_container_path = file_context.resolve_file_path(container_path)
+
+            # retrieves the packing information
+            packing_information = packing_manager_plugin.get_packing_information(real_container_path, {}, COLONY_VALUE)
+
+            # retrieves the container resources
+            container_resources = packing_information.get_property(RESOURCES_VALUE)
+
+            # retrieves the container extra resources
+            container_extra_resources = packing_information.get_property(EXTRA_RESOURCES_VALUE, [])
+
+            # extends the container resources list with the container extra resources
+            container_resources.extend(container_extra_resources)
+
+            # creates the list of directory paths for (possible)
+            # later removal
+            directory_path_list = []
+
+            # retrieves the duplicates structure (from file)
+            duplicates_structure = self._get_duplicates_structure(file_context)
+
+            # retrieves the duplicate files structure
+            duplicate_files_structure = duplicates_structure.get(DUPLICATE_FILES_VALUE, {})
+
+            # iterates over all the resources to remove them
+            for container_resource in container_resources:
+                # creates the (complete) resource file path
+                resource_file_path = os.path.join(containers_exclusive_path, container_resource)
+
+                # "calculates" the relative path between the resource file
+                # path and the manager path
+                resource_relative_path = colony.libs.path_util.relative_path(resource_file_path, manager_path)
+
+                # aligns the path normalizing it into a system independent path
+                resource_relative_path = colony.libs.path_util.align_path(resource_relative_path)
+
+                # retrieves the number of times the file is "duplicated"
+                duplicate_file_count = duplicate_files_structure.get(resource_relative_path, 0)
+
+                # checks if the file should be removed
+                remove_file = duplicate_file_count == 0
+
+                # decrements the duplicate count by one
+                duplicate_file_count -= 1
+
+                # in case the duplicate file count is superior to zero
+                if duplicate_file_count > 0:
+                    # sets the duplicate file count in the duplicate files structure
+                    duplicate_files_structure[resource_relative_path] = duplicate_file_count
+                # otherwise in case the resource relative path reference
+                # exists in the duplicate files structure
+                elif resource_relative_path in duplicate_files_structure:
+                    # removes the resource relative path from the duplicate
+                    # files structure
+                    del duplicate_files_structure[resource_relative_path]
+
+                # in case the remove file is not set
+                if not remove_file:
+                    # continues the loop no need to remove a file that
+                    # is duplicated
+                    continue
+
+                # in case the resource file path exists
+                if not file_context.exists_file_path(resource_file_path):
+                    # continues the loop
+                    continue
+
+                # removes the resource file in the resource file path
+                file_context.remove_file(resource_file_path)
+
+                # retrieves the resource file directory path
+                resource_file_directory_path = os.path.dirname(resource_file_path)
+
+                # in case the resource file directory path is not yet
+                # present in the directory path list
+                if not resource_file_directory_path in directory_path_list:
+                    # adds the file directory path to the
+                    # directory path list
+                    directory_path_list.append(resource_file_directory_path)
+
+            # persists the duplicates structure
+            self._persist_duplicates_structure(duplicates_structure, file_context)
+
+            # iterates over all the directory paths
+            for directory_path in directory_path_list:
+                # in case the directory path does not refers
+                # a directory
+                if not file_context.is_directory_path(directory_path):
+                    # continues the loop
+                    continue
+
+                # removes the directories in the directory path
+                file_context.remove_directory(directory_path)
+
+            # removes the container file
+            file_context.remove_file(real_container_path)
+
+            # removes the container item
+            self._remove_container_item(container_id, file_context)
+
+            # commits the transaction
+            file_context.commit()
+        except:
+            # rollsback the transaction
+            file_context.rollback()
+
+            # re-raises the exception
+            raise
+
     def _deploy_package(self, package_path, target_path = None):
         """
         Deploys the package in the given path.
@@ -1255,6 +1642,18 @@ class ColonyPackingInstaller:
 
         return self.__get_structure(file_context, PLUGINS_FILE_NAME)
 
+    def _get_containers(self, file_context):
+        """
+        Retrieves the containers structure.
+
+        @type file_context: FileContext
+        @param file_context: The file context to be used.
+        @rtype: Dictionary
+        @return: The retrieved plugins structure.
+        """
+
+        return self.__get_structure(file_context, CONTAINERS_FILE_NAME)
+
     def _add_package_item(self, item_key, item_value, file_context, update_time = True):
         """
         Adds a package item to the packages file structure.
@@ -1303,6 +1702,22 @@ class ColonyPackingInstaller:
 
         self.__add_structure_item(item_key, item_value, file_context, update_time, PLUGINS_FILE_NAME, INSTALLED_PLUGINS_VALUE)
 
+    def _add_container_item(self, item_key, item_value, file_context, update_time = True):
+        """
+        Adds a container item to the containers file structure.
+
+        @type item_key: String
+        @param item_key: The key to the item to be added.
+        @type item_value: Dictionary
+        @param item_value: The map containing the item value to be added.
+        @type file_context: FileContext
+        @param file_context: The file context to be used.
+        @type update_time: bool
+        @param update_time: If the timetamp value should be updated.
+        """
+
+        self.__add_structure_item(item_key, item_value, file_context, update_time, CONTAINERS_FILE_NAME, INSTALLED_CONTAINERS_VALUE)
+
     def _remove_package_item(self, item_key, file_context):
         """
         Removes a package item from the packages file structure.
@@ -1338,6 +1753,18 @@ class ColonyPackingInstaller:
         """
 
         self.__remove_structure_item(item_key, file_context, PLUGINS_FILE_NAME, INSTALLED_PLUGINS_VALUE)
+
+    def _remove_container_item(self, item_key, file_context):
+        """
+        Removes a container item from the bundles file structure.
+
+        @type item_key: String
+        @param item_key: The key to the item to be removed.
+        @type file_context: FileContext
+        @param file_context: The file context to be used.
+        """
+
+        self.__remove_structure_item(item_key, file_context, CONTAINERS_FILE_NAME, INSTALLED_CONTAINERS_VALUE)
 
     def _get_duplicates_structure(self, file_context):
         """

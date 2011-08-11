@@ -118,6 +118,9 @@ class SystemInstallerPlugin(colony.base.plugin_system.Plugin):
     def install_plugin(self, file_path, properties, installer_type):
         return self.system_installer.install_plugin(file_path, properties, installer_type)
 
+    def install_container(self, file_path, properties, installer_type):
+        return self.system_installer.install_container(file_path, properties, installer_type)
+
     def uninstall_package(self, package_id, package_version, properties, installer_type):
         return self.system_installer.uninstall_package(package_id, package_version, properties, installer_type)
 
@@ -126,6 +129,9 @@ class SystemInstallerPlugin(colony.base.plugin_system.Plugin):
 
     def uninstall_plugin(self, plugin_id, plugin_version, properties, installer_type):
         return self.system_installer.uninstall_plugin(plugin_id, plugin_version, properties, installer_type)
+
+    def uninstall_container(self, container_id, container_version, properties, installer_type):
+        return self.system_installer.uninstall_container(container_id, container_version, properties, installer_type)
 
     def open_transaction(self, transaction_properties, installer_type):
         return self.system_installer.open_transaction(transaction_properties, installer_type)
