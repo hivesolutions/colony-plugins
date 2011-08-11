@@ -1,0 +1,27 @@
+{
+    "type" : "plugin",
+    "platform" : "python",
+    "sub_platforms" : ["cpython"],
+    "id" : "pt.hive.colony.plugins.service.wone_rss",
+    "name" : "Wone Rss Service Plugin",
+    "short_name" : "Wone Rss Service Main",
+    "description" : "The plugin that offers the wone rss service",
+    "version" : "1.0.0",
+    "author" : "Hive Solutions Lda. <development@hive.pt>",
+    "capabilities" : ["service.wone_rss", "build_automation_item"],
+    "capabilities_allowed" : [],
+    "dependencies" : [{
+                "id" : "pt.hive.colony.plugins.main.client.http",
+                "version" : "1.0.0"
+            }],
+    "main_file" : "service_wone_rss_plugin.py",
+    "resources" : ["service_wone_rss_plugin.py",
+            "service_wone_rss/__init__.py",
+            "service_wone_rss/wone_rss/__init__.py",
+            "service_wone_rss/wone_rss/service_wone_rss_system.py",
+            "service_wone_rss/wone_rss/resources/baf.xml"],
+    "extra_resources" : ["service_wone_rss_plugin.pyc",
+            "service_wone_rss/__init__.pyc",
+            "service_wone_rss/wone_rss/__init__.pyc",
+            "service_wone_rss/wone_rss/service_wone_rss_system.pyc"]
+}
