@@ -1388,7 +1388,7 @@ class ColonyPackingInstaller:
             # in case the container id is not found in the installed containers
             if not container_id in installed_containers:
                 # raises the container installation error
-                raise colony_packing_installer_exceptions.containerInstallationError("container '%s' v'%s' is not installed" % (container_id, container_version))
+                raise colony_packing_installer_exceptions.ContainerInstallationError("container '%s' v'%s' is not installed" % (container_id, container_version))
 
             # retrieves the container (information) from the
             # installed containers
