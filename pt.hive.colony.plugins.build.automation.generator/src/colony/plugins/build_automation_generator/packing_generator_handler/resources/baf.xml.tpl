@@ -37,7 +37,7 @@
         <version>${out value=build_automation.version /}</version>
         <type>colony</type>
         <name>${out value=build_automation.name /}</name>
-        <description>${out value=build_automation.name /}</description>
+        <description>${out value=build_automation.description /}</description>
         <url>http://www.hive.pt</url>
     </artifact>
     <build>
@@ -48,6 +48,7 @@
                 <version>1.0.0</version>
                 <stage>build</stage>
                 <configuration>
+                    <type>plugin</type>
                     <specification_file>$base{plugin_directory}/${out value=build_automation.packing_file /}</specification_file>
                 </configuration>
             </plugin>
