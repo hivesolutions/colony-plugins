@@ -758,7 +758,7 @@ class ColonyPackingInstaller:
             plugin_resources = packing_information.get_property(RESOURCES_VALUE)
 
             # retrieves the keep resources
-            plugin_keep_resources = packing_information.get_property(KEEP_RESOURCES_VALUE)
+            plugin_keep_resources = packing_information.get_property(KEEP_RESOURCES_VALUE, [])
 
             # retrieves the manager path
             manager_path = plugin_manager.get_manager_path()
@@ -900,7 +900,7 @@ class ColonyPackingInstaller:
             container_resources = packing_information.get_property(RESOURCES_VALUE)
 
             # retrieves the keep resources
-            container_keep_resources = packing_information.get_property(KEEP_RESOURCES_VALUE)
+            container_keep_resources = packing_information.get_property(KEEP_RESOURCES_VALUE, [])
 
             # retrieves the manager path
             manager_path = plugin_manager.get_manager_path()
