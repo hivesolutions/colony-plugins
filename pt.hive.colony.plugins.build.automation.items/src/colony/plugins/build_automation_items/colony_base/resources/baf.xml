@@ -166,6 +166,21 @@
                             </parameters>
                         </directory>
                         <directory>
+                            <path>$base{plugin_system_directory}/containers</path>
+                            <owner>0</owner>
+                            <group>0</group>
+                            <mode>755</mode>
+                            <recursive>false</recursive>
+                            <parameters>
+                                <deb>
+                                    <target>usr/lib/colony/containers</target>
+                                </deb>
+                                <zip>
+                                    <target>colony/containers</target>
+                                </zip>
+                            </parameters>
+                        </directory>
+                        <directory>
                             <path>$base{plugin_system_directory}/deploy</path>
                             <owner>0</owner>
                             <group>0</group>
@@ -177,6 +192,21 @@
                                 </deb>
                                 <zip>
                                     <target>colony/deploy</target>
+                                </zip>
+                            </parameters>
+                        </directory>
+                        <directory>
+                            <path>$base{plugin_system_directory}/lib</path>
+                            <owner>0</owner>
+                            <group>0</group>
+                            <mode>755</mode>
+                            <recursive>false</recursive>
+                            <parameters>
+                                <deb>
+                                    <target>usr/lib/colony/lib</target>
+                                </deb>
+                                <zip>
+                                    <target>colony/lib</target>
                                 </zip>
                             </parameters>
                         </directory>
