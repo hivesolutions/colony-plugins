@@ -81,6 +81,9 @@ TYPE_VALUE = "type"
 RESOURCES_VALUE = "resources"
 """ The resources value """
 
+KEEP_RESOURCES_VALUE = "keep_resources"
+""" The keep resources value """
+
 EXTRA_RESOURCES_VALUE = "extra_resources"
 """ The extra resources value """
 
@@ -637,8 +640,8 @@ class ColonyPackingInstaller:
             temporary_bundles_path = os.path.join(temporary_path, BUNDLES_VALUE)
 
             # retrieves the "virtual" main bundle path from the file context
-            # this is necessary to ensure a transaction mode
-            main_bundle_virtual_path = file_context.get_file_path(temporary_bundles_path)
+            # this is necessary to ensure a transaction mode (no duplicate files are replaced)
+            main_bundle_virtual_path = file_context.get_file_path(temporary_bundles_path, False)
 
             # deploys the package using the main bundle "virtual" path
             self._deploy_package(real_file_path, main_bundle_virtual_path)
@@ -754,6 +757,9 @@ class ColonyPackingInstaller:
             # retrieves the resources
             plugin_resources = packing_information.get_property(RESOURCES_VALUE)
 
+            # retrieves the keep resources
+            plugin_keep_resources = packing_information.get_property(KEEP_RESOURCES_VALUE)
+
             # retrieves the manager path
             manager_path = plugin_manager.get_manager_path()
 
@@ -770,8 +776,8 @@ class ColonyPackingInstaller:
             file_context.write_file(plugin_file_path, plugin_file_contents)
 
             # retrieves the "virtual" plugins path from the file context
-            # this is necessary to ensure a transaction mode
-            plugins_virtual_path = file_context.get_file_path(plugins_path)
+            # this is necessary to ensure a transaction mode (no duplicate files are replaced)
+            plugins_virtual_path = file_context.get_file_path(plugins_path, False)
 
             # retrieves the duplicates structure (from file)
             duplicates_structure = self._get_duplicates_structure(file_context)
@@ -782,6 +788,12 @@ class ColonyPackingInstaller:
             # iterates over all the plugin resources to check for
             # duplicate files
             for plugin_resource in plugin_resources:
+                # in case the plugin resource is of type keep
+                # (it should not be counted as duplicate)
+                if plugin_resource in plugin_keep_resources:
+                    # continues the loop
+                    continue
+
                 # creates the (complete) resource file path
                 resource_file_path = os.path.join(plugins_path, plugin_resource)
 
@@ -887,6 +899,9 @@ class ColonyPackingInstaller:
             # retrieves the resources
             container_resources = packing_information.get_property(RESOURCES_VALUE)
 
+            # retrieves the keep resources
+            container_keep_resources = packing_information.get_property(KEEP_RESOURCES_VALUE)
+
             # retrieves the manager path
             manager_path = plugin_manager.get_manager_path()
 
@@ -905,8 +920,8 @@ class ColonyPackingInstaller:
             file_context.write_file(container_file_path, container_file_contents)
 
             # retrieves the "virtual" containers path from the file context
-            # this is necessary to ensure a transaction mode
-            containers_virtual_path = file_context.get_file_path(containers_exclusive_path)
+            # this is necessary to ensure a transaction mode (no duplicate files are replaced)
+            containers_virtual_path = file_context.get_file_path(containers_exclusive_path, False)
 
             # retrieves the duplicates structure (from file)
             duplicates_structure = self._get_duplicates_structure(file_context)
@@ -917,6 +932,12 @@ class ColonyPackingInstaller:
             # iterates over all the container resources to check for
             # duplicate files
             for container_resource in container_resources:
+                # in case the container resource is of type keep
+                # (it should not be counted as duplicate)
+                if container_resource in container_keep_resources:
+                    # continues the loop
+                    continue
+
                 # creates the (complete) resource file path
                 resource_file_path = os.path.join(containers_exclusive_path, container_resource)
 
@@ -1233,10 +1254,16 @@ class ColonyPackingInstaller:
             # retrieves the plugin resources
             plugin_resources = packing_information.get_property(RESOURCES_VALUE)
 
+            # retrieves the plugin keep resources
+            plugin_keep_resources = packing_information.get_property(KEEP_RESOURCES_VALUE, [])
+
             # retrieves the plugin extra resources
             plugin_extra_resources = packing_information.get_property(EXTRA_RESOURCES_VALUE, [])
 
-            # extends the plugin resources list with the plugin extra resources
+            # filters the plugin resources that are meant to be kept in
+            # the system and then extends the plugin resources list with
+            # the plugin extra resources
+            plugin_resources = [value for value in plugin_resources if not value in plugin_keep_resources]
             plugin_resources.extend(plugin_extra_resources)
 
             # creates the list of directory paths for (possible)
@@ -1414,10 +1441,16 @@ class ColonyPackingInstaller:
             # retrieves the container resources
             container_resources = packing_information.get_property(RESOURCES_VALUE)
 
+            # retrieves the container keep resources
+            container_keep_resources = packing_information.get_property(KEEP_RESOURCES_VALUE, [])
+
             # retrieves the container extra resources
             container_extra_resources = packing_information.get_property(EXTRA_RESOURCES_VALUE, [])
 
-            # extends the container resources list with the container extra resources
+            # filters the container resources that are meant to be kept in
+            # the system and then extends the container resources list with
+            # the container extra resources
+            container_resources = [value for value in container_resources if not value in container_keep_resources]
             container_resources.extend(container_extra_resources)
 
             # creates the list of directory paths for (possible)
