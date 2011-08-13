@@ -70,6 +70,12 @@ configuration = {
             "recursion_list" : [
                 0, 0, 30, 0, 0
             ]
+        },
+        "take_snapshot" : {
+            "schedule" : True,
+            "recursion_list" : [
+                0, 0, 15, 0, 0
+            ]
         }
     }
 }

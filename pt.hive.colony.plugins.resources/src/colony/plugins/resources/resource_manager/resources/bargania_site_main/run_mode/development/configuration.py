@@ -67,6 +67,9 @@ configuration = {
         },
         "close_trades" : {
             "schedule" : False
+        },
+        "take_snapshot" : {
+            "schedule" : False
         }
     }
 }
