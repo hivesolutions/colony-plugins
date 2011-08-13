@@ -1104,6 +1104,9 @@ class ColonyPackingInstaller:
             # deploys the package using the libraries "virtual" path
             self._deploy_package(real_file_path, libraries_virtual_path)
 
+            # adds a commit callback for the updating of the libraries path
+            file_context.add_commit_callback(self._update_libraries_path())
+
             # commits the transaction
             file_context.commit()
         except:
@@ -2348,3 +2351,15 @@ class ColonyPackingInstaller:
 
         # writes the structure file contents
         file_context.write_file(structure_file_path, structure_serialized)
+
+    def _update_libraries_path(self):
+        """
+        Updates the libraries paths in the plugin manager,
+        causing the system to detect and flush the new paths.
+        """
+
+        # retrieves the plugin manager
+        plugin_manager = self.colony_packing_installer_plugin.manager
+
+        # updates the libraries path
+        plugin_manager.update_libraries_path()
