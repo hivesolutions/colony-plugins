@@ -1021,6 +1021,21 @@ class ColonyPackingInstaller:
             # re-raises the exception
             raise
 
+    def _install_plugin_system(self, file_path, properties, file_context = None):
+        """
+        Method called upon installation of the plugin system with
+        the given file path and properties.
+
+        @type file_path: String
+        @param file_path: The path to the plugin system file to be installed.
+        @type properties: Dictionary
+        @param properties: The map of properties for installation.
+        @type file_context: FileContext
+        @param file_context: The file context to be used.
+        """
+
+        pass
+
     def _install_library(self, file_path, properties, file_context = None):
         """
         Method called upon installation of the library with
@@ -1097,6 +1112,21 @@ class ColonyPackingInstaller:
 
             # re-raises the exception
             raise
+
+    def _install_configuration(self, file_path, properties, file_context = None):
+        """
+        Method called upon installation of the configuration with
+        the given file path and properties.
+
+        @type file_path: String
+        @param file_path: The path to the configuration file to be installed.
+        @type properties: Dictionary
+        @param properties: The map of properties for installation.
+        @type file_context: FileContext
+        @param file_context: The file context to be used.
+        """
+
+        pass
 
     def _uninstall_package(self, package_id, package_version, properties, file_context = None):
         """
@@ -1543,6 +1573,9 @@ class ColonyPackingInstaller:
             # retrieves the packing information
             packing_information = packing_manager_plugin.get_packing_information(real_container_path, {}, COLONY_VALUE)
 
+            # retrieves the container sub type
+            container_sub_type = packing_information.get_property(SUB_TYPE_VALUE)
+
             # retrieves the container resources
             container_resources = packing_information.get_property(RESOURCES_VALUE)
 
@@ -1644,6 +1677,19 @@ class ColonyPackingInstaller:
             # removes the container item
             self._remove_container_item(container_id, file_context)
 
+            # in case the container sub type is plugin system
+            if container_sub_type == PLUGIN_SYSTEM_VALUE:
+                # uninstalls the plugin system
+                self._uninstall_plugin_system(container_id, container_version, container, properties, file_context)
+            # in case the container sub type is library
+            elif container_sub_type == LIBRARY_VALUE:
+                # uninstalls the library
+                self._uninstall_library(container_id, container_version, container, properties, file_context)
+            # in case the container sub type is configuration
+            elif container_sub_type == CONFIGURATION_VALUE:
+                # uninstalls the configuration
+                self._uninstall_configuration(container_id, container_version, container, properties, file_context)
+
             # commits the transaction
             file_context.commit()
         except:
@@ -1652,6 +1698,177 @@ class ColonyPackingInstaller:
 
             # re-raises the exception
             raise
+
+    def _uninstall_plugin_system(self, plugin_system_id, plugin_system_version, plugin_system, properties, file_context = None):
+        """
+        Method called upon removal of the plugin system with
+        the given id, version and properties.
+
+        @type plugin_system_id: String
+        @param plugin_system_id: The id of the plugin system to be removed.
+        @type plugin_system_version: String
+        @param plugin_system_version: The version of the plugin system to be removed.
+        @type plugin_system: Dictionary
+        @param plugin_system: The map containing the plugin system description.
+        @type properties: Dictionary
+        @param properties: The map of properties for removal.
+        @type file_context: FileContext
+        @param file_context: The file context to be used.
+        """
+
+        pass
+
+    def _uninstall_library(self, library_id, library_version, library, properties, file_context = None):
+        """
+        Method called upon removal of the library with
+        the given id, version and properties.
+
+        @type library_id: String
+        @param library_id: The id of the library to be removed.
+        @type library_version: String
+        @param library_version: The version of the library to be removed.
+        @type library: Dictionary
+        @param library: The map containing the library description.
+        @type properties: Dictionary
+        @param properties: The map of properties for removal.
+        @type file_context: FileContext
+        @param file_context: The file context to be used.
+        """
+
+        # retrieves the plugin manager
+        plugin_manager = self.colony_packing_installer_plugin.manager
+
+        # retrieves the packing manager plugin
+        packing_manager_plugin = self.colony_packing_installer_plugin.packing_manager_plugin
+
+        # retrieves the manager path
+        manager_path = plugin_manager.get_manager_path()
+
+        # retrieves the variable path
+        variable_path = plugin_manager.get_variable_path()
+
+        # retrieves the registry path
+        registry_path = os.path.join(variable_path, RELATIVE_REGISTRY_PATH)
+
+        # retrieves the libraries path in order to be used
+        # to determine the libraries exclusive (unique usage) path
+        libraries_path = plugin_manager.get_libraries_path()
+        libraries_exclusive_path = os.path.join(libraries_path, library_id)
+
+        # retrieves the transaction properties
+        transaction_properties = properties.get(TRANSACTION_PROPERTIES_VALUE, {})
+
+        # creates a new file transaction context
+        file_context = file_context or transaction_properties.get(FILE_CONTEXT_VALUE, None) or colony.libs.file_util.FileTransactionContext()
+
+        # opens a new transaction in the file context
+        file_context.open()
+
+        try:
+            # retrieves the library version as the library version
+            # or from the library structure
+            library_version = library_version or library[VERSION_VALUE]
+
+            # creates the library file name from the library
+            # id and version
+            library_file_name = library_id + "_" + library_version + COLONY_CONTAINER_FILE_EXTENSION
+
+            # creates the library file path from the
+            library_path = os.path.join(registry_path, RELATIVE_CONTAINERS_PATH + "/" + library_file_name)
+
+            # resolves the library path
+            real_library_path = file_context.resolve_file_path(library_path)
+
+            # retrieves the packing information
+            packing_information = packing_manager_plugin.get_packing_information(real_library_path, {}, COLONY_VALUE)
+
+            # retrieves the library resources
+            library_resources = packing_information.get_property(RESOURCES_VALUE)
+
+            # retrieves the library keep resources
+            library_keep_resources = packing_information.get_property(KEEP_RESOURCES_VALUE, [])
+
+            # retrieves the library extra resources
+            library_extra_resources = packing_information.get_property(EXTRA_RESOURCES_VALUE, [])
+
+            # filters the library resources that are meant to be kept in
+            # the system and then extends the library resources list with
+            # the library extra resources
+            library_resources = [value for value in library_resources if not value in library_keep_resources]
+            library_resources.extend(library_extra_resources)
+
+            # creates the list of directory paths for (possible)
+            # later removal
+            directory_path_list = []
+
+            # iterates over all the resources to remove them
+            for library_resource in library_resources:
+                # creates the (complete) resource file path
+                resource_file_path = os.path.join(libraries_exclusive_path, library_resource)
+
+                # "calculates" the relative path between the resource file
+                # path and the manager path
+                resource_relative_path = colony.libs.path_util.relative_path(resource_file_path, manager_path)
+
+                # aligns the path normalizing it into a system independent path
+                resource_relative_path = colony.libs.path_util.align_path(resource_relative_path)
+
+                # in case the resource file path exists
+                if not file_context.exists_file_path(resource_file_path):
+                    # continues the loop
+                    continue
+
+                # removes the resource file in the resource file path
+                file_context.remove_file(resource_file_path)
+
+                # retrieves the resource file directory path
+                resource_file_directory_path = os.path.dirname(resource_file_path)
+
+                # in case the resource file directory path is not yet
+                # present in the directory path list
+                if not resource_file_directory_path in directory_path_list:
+                    # adds the file directory path to the
+                    # directory path list
+                    directory_path_list.append(resource_file_directory_path)
+
+            # iterates over all the directory paths
+            for directory_path in directory_path_list:
+                # in case the directory path does not refers
+                # a directory
+                if not file_context.is_directory_path(directory_path):
+                    # continues the loop
+                    continue
+
+                # removes the directories in the directory path
+                file_context.remove_directory(directory_path)
+
+            # commits the transaction
+            file_context.commit()
+        except:
+            # rollsback the transaction
+            file_context.rollback()
+
+            # re-raises the exception
+            raise
+
+    def _uninstall_configuration(self, configuration_id, configuration_version, configuration, properties, file_context = None):
+        """
+        Method called upon removal of the configuration with
+        the given id, version and properties.
+
+        @type configuration_id: String
+        @param configuration_id: The id of the configuration to be removed.
+        @type configuration_version: String
+        @param configuration_version: The version of the configuration to be removed.
+        @type configuration: Dictionary
+        @param configuration: The map containing the configuration description.
+        @type properties: Dictionary
+        @param properties: The map of properties for removal.
+        @type file_context: FileContext
+        @param file_context: The file context to be used.
+        """
+
+        pass
 
     def _deploy_package(self, package_path, target_path = None):
         """
