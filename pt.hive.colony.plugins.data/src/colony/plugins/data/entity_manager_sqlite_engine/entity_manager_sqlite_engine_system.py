@@ -2628,8 +2628,17 @@ class EntityManagerSqliteEngine:
 
                     # in case the attribute exists for the current entity class
                     if hasattr(entity_class, entity_class_valid_attribute_name):
+                        # retrieves the entity class attribute value
+                        entity_class_valid_attribute_value = getattr(entity_class, entity_class_valid_attribute_name)
+
+                        # retrieves the attribute data type
+                        attribute_data_type = self.get_attribute_data_type(entity_class_valid_attribute_value, entity_class, entity_class_valid_attribute_name)
+
+                        # retrieves the processed attribute value
+                        processed_attribute_value = self.get_processed_sqlite_attribute_value(attribute_value, attribute_data_type)
+
                         # sets the attribute value in the entity
-                        setattr(entity, entity_class_valid_attribute_name, attribute_value)
+                        setattr(entity, entity_class_valid_attribute_name, processed_attribute_value)
 
                     # increments the index value
                     index += 1
