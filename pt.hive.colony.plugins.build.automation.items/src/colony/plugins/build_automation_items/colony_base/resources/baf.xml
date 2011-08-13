@@ -196,17 +196,17 @@
                             </parameters>
                         </directory>
                         <directory>
-                            <path>$base{plugin_system_directory}/lib</path>
+                            <path>$base{plugin_system_directory}/libraries</path>
                             <owner>0</owner>
                             <group>0</group>
                             <mode>755</mode>
                             <recursive>false</recursive>
                             <parameters>
                                 <deb>
-                                    <target>usr/lib/colony/lib</target>
+                                    <target>usr/lib/colony/libraries</target>
                                 </deb>
                                 <zip>
-                                    <target>colony/lib</target>
+                                    <target>colony/libraries</target>
                                 </zip>
                             </parameters>
                         </directory>
