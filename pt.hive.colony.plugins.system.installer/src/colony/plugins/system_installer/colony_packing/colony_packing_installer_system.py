@@ -63,6 +63,9 @@ FILE_CONTEXT_VALUE = "file_context"
 TRANSACTION_PROPERTIES_VALUE = "transaction_properties"
 """ The transaction properties value """
 
+SUB_TYPE_VALUE = "sub_type"
+""" The sub type value """
+
 ID_VALUE = "id"
 """ The id value """
 
@@ -101,6 +104,15 @@ BUNDLES_VALUE = "bundles"
 
 PLUGINS_VALUE = "plugins"
 """ The plugins value """
+
+PLUGIN_SYSTEM_VALUE = "plugin_system"
+""" The plugin system value """
+
+LIBRARY_VALUE = "library"
+""" The library value """
+
+CONFIGURATION_VALUE = "configuration"
+""" The configuration value """
 
 UPGRADE_VALUE = "upgrade"
 """ The upgrade value """
@@ -862,7 +874,7 @@ class ColonyPackingInstaller:
         @param file_context: The file context to be used.
         """
 
-        # retrieves the container manager
+        # retrieves the plugin manager
         plugin_manager = self.colony_packing_installer_plugin.manager
 
         # retrieves the packing manager plugin
@@ -889,6 +901,9 @@ class ColonyPackingInstaller:
 
             # retrieves the packing information
             packing_information = packing_manager_plugin.get_packing_information(real_file_path, {}, COLONY_VALUE)
+
+            # retrieves the container sub type
+            container_sub_type = packing_information.get_property(SUB_TYPE_VALUE)
 
             # retrieves the container id
             container_id = packing_information.get_property(ID_VALUE)
@@ -983,6 +998,96 @@ class ColonyPackingInstaller:
 
             # adds the container item
             self._add_container_item(container_item_key, container_item_value, file_context)
+
+            # in case the container sub type is plugin system
+            if container_sub_type == PLUGIN_SYSTEM_VALUE:
+                # installs the plugin system
+                self._install_plugin_system(file_path, properties, file_context)
+            # in case the container sub type is library
+            elif container_sub_type == LIBRARY_VALUE:
+                # installs the library
+                self._install_library(file_path, properties, file_context)
+            # in case the container sub type is configuration
+            elif container_sub_type == CONFIGURATION_VALUE:
+                # installs the configuration
+                self._install_configuration(file_path, properties, file_context)
+
+            # commits the transaction
+            file_context.commit()
+        except:
+            # rollsback the transaction
+            file_context.rollback()
+
+            # re-raises the exception
+            raise
+
+    def _install_library(self, file_path, properties, file_context = None):
+        """
+        Method called upon installation of the library with
+        the given file path and properties.
+
+        @type file_path: String
+        @param file_path: The path to the library file to be installed.
+        @type properties: Dictionary
+        @param properties: The map of properties for installation.
+        @type file_context: FileContext
+        @param file_context: The file context to be used.
+        """
+
+        # retrieves the plugin manager
+        plugin_manager = self.colony_packing_installer_plugin.manager
+
+        # retrieves the packing manager plugin
+        packing_manager_plugin = self.colony_packing_installer_plugin.packing_manager_plugin
+
+        # retrieves the variable path
+        variable_path = plugin_manager.get_variable_path()
+
+        # creates the containers directory path
+        containers_directory_path = os.path.join(variable_path, RELATIVE_REGISTRY_PATH + "/" + RELATIVE_CONTAINERS_PATH)
+
+        # retrieves the transaction properties
+        transaction_properties = properties.get(TRANSACTION_PROPERTIES_VALUE, {})
+
+        # creates a new file transaction context
+        file_context = file_context or transaction_properties.get(FILE_CONTEXT_VALUE, None) or colony.libs.file_util.FileTransactionContext()
+
+        # opens a new transaction in the file context
+        file_context.open()
+
+        try:
+            # resolves the file path retrieving the real file path
+            real_file_path = file_context.resolve_file_path(file_path)
+
+            # retrieves the packing information
+            packing_information = packing_manager_plugin.get_packing_information(real_file_path, {}, COLONY_VALUE)
+
+            # retrieves the library id
+            library_id = packing_information.get_property(ID_VALUE)
+
+            # retrieves the library version
+            library_version = packing_information.get_property(VERSION_VALUE)
+
+            # retrieves the libraries path in order to be used
+            # to determine the libraries exclusive (unique usage) path
+            libraries_path = plugin_manager.get_libraries_path()
+            libraries_exclusive_path = os.path.join(libraries_path, library_id)
+
+            # reads the library file contents
+            library_file_contents = file_context.read_file(file_path)
+
+            # creates the library descriptor file path
+            library_file_path = os.path.join(containers_directory_path, library_id + "_" + library_version + COLONY_CONTAINER_FILE_EXTENSION)
+
+            # writes the library file contents to the library file path
+            file_context.write_file(library_file_path, library_file_contents)
+
+            # retrieves the "virtual" libraries path from the file context
+            # this is necessary to ensure a transaction mode (no duplicate files are replaced)
+            libraries_virtual_path = file_context.get_file_path(libraries_exclusive_path, False)
+
+            # deploys the package using the libraries "virtual" path
+            self._deploy_package(real_file_path, libraries_virtual_path)
 
             # commits the transaction
             file_context.commit()
