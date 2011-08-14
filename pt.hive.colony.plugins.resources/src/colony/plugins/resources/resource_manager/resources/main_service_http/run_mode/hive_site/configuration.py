@@ -194,8 +194,13 @@ configuration = {
         "bargania.com" : {
             "redirections" : {
                 "resolution_order" : [
+                    "/docs",
                     "/"
                 ],
+                "/docs" : {
+                    "target" : "/colony_dynamic/rest/mvc/wiki/",
+                    "recursive_redirection" : True
+                },
                 "/" : {
                     "target" : "/colony_dynamic/rest/mvc/bargania_site/",
                     "recursive_redirection" : True
@@ -205,8 +210,13 @@ configuration = {
         "www.bargania.com" : {
             "redirections" : {
                 "resolution_order" : [
+                    "/docs",
                     "/"
                 ],
+                "/docs" : {
+                    "target" : "/colony_dynamic/rest/mvc/wiki/",
+                    "recursive_redirection" : True
+                },
                 "/" : {
                     "target" : "/colony_dynamic/rest/mvc/bargania_site/",
                     "recursive_redirection" : True
