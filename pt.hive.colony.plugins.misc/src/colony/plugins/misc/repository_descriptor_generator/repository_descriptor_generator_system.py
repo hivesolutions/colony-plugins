@@ -339,7 +339,7 @@ class RepositoryDescriptorGenerator:
             # and hash digest
             container_id = container["id"]
             container_version = container["version"]
-            container_dependencies = plugin["dependencies"]
+            container_dependencies = container["dependencies"]
             container_hash_digest = container["hash_digest"]
 
             # retrieves the container hash digest items
