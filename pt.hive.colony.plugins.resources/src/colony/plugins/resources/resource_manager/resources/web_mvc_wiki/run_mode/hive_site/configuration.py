@@ -59,7 +59,7 @@ configuration = {
         },
         "bargania" : {
             "name" : "bargania",
-            "wiki_name" : "Bargania Developers",
+            "wiki_name" : "Bargania Documentation",
             "template" : "simply",
             "main_page" : "index",
             "repository_type" : "svn",
