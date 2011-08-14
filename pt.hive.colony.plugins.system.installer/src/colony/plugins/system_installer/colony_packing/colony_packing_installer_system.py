@@ -1103,7 +1103,7 @@ class ColonyPackingInstaller:
             self._deploy_package(real_file_path, libraries_virtual_path)
 
             # adds a commit callback for the updating of the libraries path
-            file_context.add_commit_callback(self._update_libraries_path())
+            file_context.add_commit_callback(self._update_libraries_path)
 
             # commits the transaction
             file_context.commit()
