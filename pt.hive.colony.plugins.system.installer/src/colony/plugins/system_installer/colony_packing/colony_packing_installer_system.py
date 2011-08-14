@@ -1083,10 +1083,8 @@ class ColonyPackingInstaller:
             # retrieves the library version
             library_version = packing_information.get_property(VERSION_VALUE)
 
-            # retrieves the libraries path in order to be used
-            # to determine the libraries exclusive (unique usage) path
+            # retrieves the libraries path
             libraries_path = plugin_manager.get_libraries_path()
-            libraries_exclusive_path = os.path.join(libraries_path, library_id)
 
             # reads the library file contents
             library_file_contents = file_context.read_file(file_path)
@@ -1099,7 +1097,7 @@ class ColonyPackingInstaller:
 
             # retrieves the "virtual" libraries path from the file context
             # this is necessary to ensure a transaction mode (no duplicate files are replaced)
-            libraries_virtual_path = file_context.get_file_path(libraries_exclusive_path, False)
+            libraries_virtual_path = file_context.get_file_path(libraries_path, False)
 
             # deploys the package using the libraries "virtual" path
             self._deploy_package(real_file_path, libraries_virtual_path)
@@ -1753,10 +1751,8 @@ class ColonyPackingInstaller:
         # retrieves the registry path
         registry_path = os.path.join(variable_path, RELATIVE_REGISTRY_PATH)
 
-        # retrieves the libraries path in order to be used
-        # to determine the libraries exclusive (unique usage) path
+        # retrieves the libraries path
         libraries_path = plugin_manager.get_libraries_path()
-        libraries_exclusive_path = os.path.join(libraries_path, library_id)
 
         # retrieves the transaction properties
         transaction_properties = properties.get(TRANSACTION_PROPERTIES_VALUE, {})
@@ -1807,7 +1803,7 @@ class ColonyPackingInstaller:
             # iterates over all the resources to remove them
             for library_resource in library_resources:
                 # creates the (complete) resource file path
-                resource_file_path = os.path.join(libraries_exclusive_path, library_resource)
+                resource_file_path = os.path.join(libraries_path, library_resource)
 
                 # "calculates" the relative path between the resource file
                 # path and the manager path
