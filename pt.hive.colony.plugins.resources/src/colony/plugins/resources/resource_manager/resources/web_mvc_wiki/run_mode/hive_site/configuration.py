@@ -63,7 +63,7 @@ configuration = {
             "template" : "simply",
             "main_page" : "index",
             "repository_type" : "svn",
-            "repository_path" : "%manager_path%/../../com.bargania.documentation",
+            "repository_path" : "%plugin_path:com.bargania.documentation.plugins.main%/bargania_documentation_main/main/resources/container",
             "logo_path" : "bargania_logo.png",
             "icon_path" : "bargania_icon.ico",
             "footer_enabled" : False,
