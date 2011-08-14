@@ -2354,8 +2354,5 @@ class ColonyPackingInstaller:
         causing the system to detect and flush the new paths.
         """
 
-        # retrieves the plugin manager
-        plugin_manager = self.colony_packing_installer_plugin.manager
-
-        # updates the libraries path
-        plugin_manager.update_libraries_path()
+        # prints a debug message
+        self.colony_packing_installer_plugin.debug("Updating libraries path")
