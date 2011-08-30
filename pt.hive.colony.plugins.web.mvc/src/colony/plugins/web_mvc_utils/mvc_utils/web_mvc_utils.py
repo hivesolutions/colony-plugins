@@ -133,7 +133,7 @@ def validated_method(validation_parameters = None, validation_method = None, cal
             patterns = parameters.get(PATTERN_NAMES_VALUE, {})
 
             # retrieves the session attributes map
-            session_attributes = rest_request.get_session_attributes_map();
+            session_attributes = rest_request.get_session_attributes_map()
 
             # in case the validation method is set and the validation method
             # enabled flag is set in the parameters
