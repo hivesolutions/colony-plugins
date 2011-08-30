@@ -822,6 +822,7 @@ class ClientConnection(Connection):
         self.close()
 
     def write(self, data):
+        # in case the connection status is closed
         if not self.connection_status:
             raise Exception("Trying to write in a closed socket")
 
