@@ -525,25 +525,47 @@ def save_entity_relations(self, rest_request, entity_map, entity, relations_map)
 
         # retrieves the relation value
         relation_value = entity_map.get(relation_name, default_relation_value)
+        relation_values = relation_type == 1 and [relation_value] or relation_value
 
-        try:
-            # in case the relation type is single
-            if relation_type == 1:
+        # initializes the relation entities list
+        relation_entities = []
+
+        # initializes the relation validation
+        # flag which will be used to mark if
+        # the validation failed in one of the
+        # relation entities
+        relation_validation_failed = False
+
+        # for each relation value
+        for relation_value in relation_values:
+            try:
+                # invokes the relation method for the entity
                 relation_entity = relation_value and relation_method(rest_request, relation_value) or None
-            # otherwise it must be a multiple relation
-            else:
-                relation_entity = relation_value and [relation_method(rest_request, relation_value_item) for relation_value_item in relation_value] or []
-        except web_mvc_utils_exceptions.ModelValidationError, exception:
-            # updates the relation entity with the model
-            # in the model validation error
-            relation_entity = exception.model
+            except web_mvc_utils_exceptions.ModelValidationError, exception:
+                # updates the relation entity with the model
+                # in the model validation error
+                relation_entity = exception.model
 
-            # extends the entity validation errors map with the relation entity
-            # validation errors map for the relation name
-            entity.validation_errors_map[relation_name] = relation_entity.validation_errors_map
+                # sets the relation validation
+                # failed flag to true
+                relation_validation_failed = True
 
-        # sets the relation entity in the entity
-        setattr(entity, relation_name, relation_entity)
+            # adds the relation entity to the list
+            # in case the entity was created
+            relation_entity and relation_entities.append(relation_entity)
+
+        # adds an error to the relation name in case
+        # the validation in one of its entities failed
+        relation_validation_failed and entity.add_error(relation_name, "relation validation failed")
+
+        # in case it is a to one relation
+        if relation_type == 1:
+            # sets the relation entity in the entity
+            setattr(entity, relation_name, relation_entity)
+        # in case it is a to many relation
+        else:
+            # sets the relation entities in the entity
+            setattr(entity, relation_name, relation_entities)
 
 def get_entity_map_parameters(self, entity_map, delete_parameters = True):
     """
