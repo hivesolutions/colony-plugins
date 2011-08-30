@@ -19,7 +19,7 @@
 # You should have received a copy of the GNU General Public License
 # along with Hive Colony Framework. If not, see <http://www.gnu.org/licenses/>.
 
-__author__ = "João Magalhães <joamag@hive.pt>"
+__author__ = "João Magalhães <joamag@hive.pt> & Tiago Silva <tsilva@hive.pt>"
 """ The author(s) of the module """
 
 __version__ = "1.0.0"
@@ -38,16 +38,11 @@ __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
 import re
+import types
 
 import colony.libs.control_util
 
 import web_mvc_utils_exceptions
-
-SOURCE_ATTRIBUTE_NAME_VALUE = "source_attribute_name"
-""" The source attribute name value """
-
-TARGET_ATTRIBUTE_NAME_VALUE = "target_attribute_name"
-""" The target attribute name value """
 
 VALIDATION_METHOD_SUFFIX = "_validate"
 """ The validation method suffix """
@@ -55,13 +50,22 @@ VALIDATION_METHOD_SUFFIX = "_validate"
 DEFAULT_VALIDATION_CONTEXT = "default"
 """ The default validation context """
 
+LAZY_LOADED_VALUE = "%lazy-loaded%"
+""" The lazy loaded value """
+
+REGEX_VALUE = "regex"
+""" The regex value """
+
 TARGET_VALUE = "target"
 """ The target value """
 
-EMAIL_REGEX_VALUE = "[\w\d\._%+-]+@[\w\d\.-]+\.\w{2,4}"
+VALUES_VALUE = "values"
+""" The values value """
+
+EMAIL_REGEX_VALUE = "^[\w\d\._%+-]+@[\w\d\.-]+\.\w{2,4}$"
 """ The email regex value """
 
-URL_REGEX_VALUE = "\w+\:\/\/[^\:\/\?#]+(\:\d+)?(\/[^\?#]+)*\/?(\?[^#]*)?(#.*)?"
+URL_REGEX_VALUE = "^\w+\:\/\/[^\:\/\?#]+(\:\d+)?(\/[^\?#]+)*\/?(\?[^#]*)?(#.*)?$"
 """ The url regex value """
 
 EMAIL_REGEX = re.compile(EMAIL_REGEX_VALUE)
@@ -304,6 +308,11 @@ def validate(self):
         # retrieves the attribute value
         attribute_value = getattr(self, attribute_name)
 
+        # in case the attribute is lazy loaded
+        if attribute_value == LAZY_LOADED_VALUE:
+            # continues since nothing else can be tested
+            continue
+
         # iterates over all the validation tuples
         for validation_tuple in validation_tuple_list:
             # retrieves the validation method the validate null and properties
@@ -411,6 +420,26 @@ def not_empty_validate(self, attribute_name, attribute_value, properties):
         # adds an error to the given attribute name
         self.add_error(attribute_name, "value is empty")
 
+def is_stripped_validate(self, attribute_name, attribute_value, properties):
+    """
+    Validates an attribute to ensure that it has no trailing or leading spaces.
+
+    @type attribute_name: String
+    @param attribute_name: The name of the attribute to be validated.
+    @type attribute_value: Object
+    @param attribute_value: The value of the attribute to be validated.
+    @type properties: Dictionary
+    @param properties: The properties for the validation.
+    """
+
+    # retrieves the stripped version of the attribute value
+    stripped_attribute_value = attribute_value.strip()
+
+    # in case the attribute value has extraneous spaces
+    if not attribute_value == stripped_attribute_value:
+        # adds an error to the given attribute name
+        self.add_error(attribute_name, "value has extraneous whitespaces")
+
 def length_less_than_validate(self, attribute_name, attribute_value, properties):
     """
     Validates an attribute to ensure that its length is less than target.
@@ -430,7 +459,7 @@ def length_less_than_validate(self, attribute_name, attribute_value, properties)
     # the target value
     if not len(attribute_value) < target_value:
         # adds an error to the given attribute name
-        self.add_error(attribute_name, "length of value is greater or equal that the target")
+        self.add_error(attribute_name, "length of value is greater or equal to the target")
 
 def length_greater_than_validate(self, attribute_name, attribute_value, properties):
     """
@@ -451,7 +480,7 @@ def length_greater_than_validate(self, attribute_name, attribute_value, properti
     # the target value
     if not len(attribute_value) > target_value:
         # adds an error to the given attribute name
-        self.add_error(attribute_name, "length of value is less or equal that the target")
+        self.add_error(attribute_name, "length of value is less or equal to the target")
 
 def in_enumeration_validate(self, attribute_name, attribute_value, properties):
     """
@@ -466,12 +495,75 @@ def in_enumeration_validate(self, attribute_name, attribute_value, properties):
     """
 
     # retrieves the values from the properties
-    values = properties["values"]
+    values = properties[VALUES_VALUE]
 
     # in case the attribute value is not in the values
     if not attribute_value in values:
         # adds an error to the given attribute name
         self.add_error(attribute_name, "value is not in enumeration")
+
+def is_equal_validate(self, attribute_name, attribute_value, properties):
+    """
+    Validates an attribute to ensure that its value is equal
+    to another specified attribute.
+
+    @type attribute_name: String
+    @param attribute_name: The name of the attribute to be validated.
+    @type attribute_value: Object
+    @param attribute_value: The value of the attribute to be validated.
+    @type properties: Dictionary
+    @param properties: The properties for the validation.
+    """
+
+    # retrieves the target value from the properties
+    target_value = properties[TARGET_VALUE]
+
+    # in case the values are different
+    if not attribute_value == target_value:
+        # adds the error to the given attribute name
+        self.add_error(attribute_name, "value is different")
+
+def is_different_validate(self, attribute_name, attribute_value, properties):
+    """
+    Validates an attribute to ensure that its value is different
+    from the other specified attribute.
+
+    @type attribute_name: String
+    @param attribute_name: The name of the attribute to be validated.
+    @type attribute_value: Object
+    @param attribute_value: The value of the attribute to be validated.
+    @type properties: Dictionary
+    @param properties: The properties for the validation.
+    """
+
+    # retrieves the target value from the properties
+    target_value = properties[TARGET_VALUE]
+
+    # in case the values are the same
+    if attribute_value == target_value:
+        # adds the error to the given attribute name
+        self.add_error(attribute_name, "value is the same")
+
+def greater_than_validate(self, attribute_name, attribute_value, properties):
+    """
+    Validates an attribute to ensure that it is greater than the target value.
+
+    @type attribute_name: String
+    @param attribute_name: The name of the attribute to be validated.
+    @type attribute_value: Object
+    @param attribute_value: The value of the attribute to be validated.
+    @type properties: Dictionary
+    @param properties: The properties for the validation.
+    """
+
+    # retrieves the target value from the properties
+    target_value = properties[TARGET_VALUE]
+
+    # in case the attribute value is not
+    # greater than the target value
+    if not attribute_value > target_value:
+        # adds an error to the given attribute name
+        self.add_error(attribute_name, "value is less or equal to the target")
 
 def greater_than_zero_validate(self, attribute_name, attribute_value, properties):
     """
@@ -488,7 +580,28 @@ def greater_than_zero_validate(self, attribute_name, attribute_value, properties
     # in case the attribute value is not greater than zero
     if not attribute_value > 0:
         # adds an error to the given attribute name
-        self.add_error(attribute_name, "value is less or equal to zero")
+        self.add_error(attribute_name, "value is less than or equal to zero")
+
+def greater_than_or_equal_validate(self, attribute_name, attribute_value, properties):
+    """
+    Validates an attribute to ensure that it is greater than or equal to the target.
+
+    @type attribute_name: String
+    @param attribute_name: The name of the attribute to be validated.
+    @type attribute_value: Object
+    @param attribute_value: The value of the attribute to be validated.
+    @type properties: Dictionary
+    @param properties: The properties for the validation.
+    """
+
+    # retrieves the target value from the properties
+    target_value = properties[TARGET_VALUE]
+
+    # in case the attribute value is not greater
+    # than or equal to the target value
+    if not attribute_value >= target_value:
+        # adds an error to the given attribute name
+        self.add_error(attribute_name, "value is less than the target")
 
 def greater_than_or_equal_to_zero_validate(self, attribute_name, attribute_value, properties):
     """
@@ -507,9 +620,9 @@ def greater_than_or_equal_to_zero_validate(self, attribute_name, attribute_value
         # adds an error to the given attribute name
         self.add_error(attribute_name, "value is less than zero")
 
-def greater_than_validate(self, attribute_name, attribute_value, properties):
+def less_than_validate(self, attribute_name, attribute_value, properties):
     """
-    Validates an attribute to ensure that it is greater than.
+    Validates an attribute to ensure that it is less than the target value.
 
     @type attribute_name: String
     @param attribute_name: The name of the attribute to be validated.
@@ -522,11 +635,11 @@ def greater_than_validate(self, attribute_name, attribute_value, properties):
     # retrieves the target value from the properties
     target_value = properties[TARGET_VALUE]
 
-    # in case the attribute value is not greater than
-    # the target value
-    if not attribute_value > target_value:
+    # in case the attribute value is not
+    # less than the target value
+    if not attribute_value < target_value:
         # adds an error to the given attribute name
-        self.add_error(attribute_name, "value is less or equal that the target")
+        self.add_error(attribute_name, "value is greater or equal to the target")
 
 def less_than_zero_validate(self, attribute_name, attribute_value, properties):
     """
@@ -545,9 +658,9 @@ def less_than_zero_validate(self, attribute_name, attribute_value, properties):
         # adds an error to the given attribute name
         self.add_error(attribute_name, "value is greater or equal to zero")
 
-def less_than_validate(self, attribute_name, attribute_value, properties):
+def less_than_or_equal_validate(self, attribute_name, attribute_value, properties):
     """
-    Validates an attribute to ensure that it is less than target.
+    Validates an attribute to ensure that it is less than or equal to the target.
 
     @type attribute_name: String
     @param attribute_name: The name of the attribute to be validated.
@@ -560,11 +673,28 @@ def less_than_validate(self, attribute_name, attribute_value, properties):
     # retrieves the target value from the properties
     target_value = properties[TARGET_VALUE]
 
-    # in case the attribute value is not less than
-    # the target value
-    if not attribute_value < target_value:
+    # in case the attribute value is not less
+    # than or equal to the target value
+    if not attribute_value <= target_value:
         # adds an error to the given attribute name
-        self.add_error(attribute_name, "value is greater or equal that the target")
+        self.add_error(attribute_name, "value is greater than the target")
+
+def less_than_or_equal_to_zero_validate(self, attribute_name, attribute_value, properties):
+    """
+    Validates an attribute to ensure that it is less than or equal to zero.
+
+    @type attribute_name: String
+    @param attribute_name: The name of the attribute to be validated.
+    @type attribute_value: Object
+    @param attribute_value: The value of the attribute to be validated.
+    @type properties: Dictionary
+    @param properties: The properties for the validation.
+    """
+
+    # in case the value is not within the decimal percentage boundaries
+    if not attribute_value <= 0:
+        # adds an error to the given attribute name
+        self.add_error(attribute_name, "value is greater than zero")
 
 def is_percentage_decimal_validate(self, attribute_name, attribute_value, properties):
     """
@@ -675,10 +805,9 @@ def is_tax_number_validate(self, attribute_name, attribute_value, properties):
         # adds an error to the given attribute name
         self.add_error(attribute_name, "value is not a valid tax number")
 
-def is_different_validate(self, attribute_name, attribute_value, properties):
+def matches_regex_validate(self, attribute_name, attribute_value, properties):
     """
-    Validates an attribute to ensure that its value is different
-    from the another specified attribute.
+    Validates an attribute to ensure that it matches the provided regular expression.
 
     @type attribute_name: String
     @param attribute_name: The name of the attribute to be validated.
@@ -688,15 +817,99 @@ def is_different_validate(self, attribute_name, attribute_value, properties):
     @param properties: The properties for the validation.
     """
 
-    # retrieves the attribute names from the properties
-    source_attribute_name = properties[SOURCE_ATTRIBUTE_NAME_VALUE]
-    target_attribute_name = properties[TARGET_ATTRIBUTE_NAME_VALUE]
+    # retrieves the regex (the regex string is
+    # passed instead of the compiled regular
+    # expression or else the entity would become
+    # unserializable)
+    regex = properties[REGEX_VALUE]
 
-    # retrieves the attribute values
-    source_attribute_value = self.get_attribute_name(source_attribute_name)
-    target_attribute_value = self.get_attribute_name(target_attribute_name)
+    # matches the regex
+    match = re.match(regex, attribute_value)
 
-    # in case the attribute values are the same
-    if source_attribute_value == target_attribute_value:
-        # adds the error to the given attribute name
-        self.add_error(attribute_name, "value is not different")
+    # in case no match was found
+    if not match:
+        # adds an error to the given attribute name
+        self.add_error(attribute_name, "value has incorrect format")
+
+def all_different_validate(self, attribute_name, attribute_value, properties):
+    """
+    Validates an attribute to ensure that it has no duplicate values.
+    This validator expects the attribute value to be a list, and will
+    search the list's items for the specified attribute, adding validation
+    errors in case more than one item has the same attribute value.
+    These validation errors will be added to the attribute being
+    validated, the referenced composite attribute, and the entity
+    to which the composite attribute belongs.
+
+    @type attribute_name: String
+    @param attribute_name: The name of the attribute to be validated.
+    @type attribute_value: Object
+    @param attribute_value: The value of the attribute to be validated.
+    @type properties: Dictionary
+    @param properties: The properties for the validation.
+    """
+
+    # retrieves the target
+    target = properties[TARGET_VALUE]
+
+    # initializes the validation failed flag
+    validation_failed = False
+
+    # retrieves the target attribute name which is the
+    # last token in the specified composite attribute name
+    target_tokens = target and target.split(".") or []
+    target_attribute_name = target_tokens and target_tokens[-1] or target
+
+    # retrieves the name of the attribute from which
+    # the target attribute name is accessed if any
+    entity_attribute_name = len(target_tokens) > 1 and target_tokens[-2] or None
+
+    # initializes the allocated entities map
+    allocated_entities_map = {}
+
+    # for each entity in the attribute value
+    for entity in attribute_value:
+        # retrieves the attribute value
+        value = entity.get_attribute_name(target)
+
+        # associates the entity with the value in order
+        # to later detect which entities have duplicate attributes
+        allocated_entities = allocated_entities_map.get(value, [])
+        allocated_entities.append(entity)
+        allocated_entities_map[value] = allocated_entities
+
+    # retrieves the allocated entities lists that have more
+    # than one entity and are therefore invalid
+    allocated_entities_lists = [allocated_entities for allocated_entities in allocated_entities_map.values() if len(allocated_entities) > 1]
+
+    # removes the last target token since this
+    # list is going to be used to retrieve the
+    # the entity that owns the last attribute
+    target_tokens = target_tokens and target_tokens[:-1] or []
+
+    # for each allocated entities list
+    for allocated_entities in allocated_entities_lists:
+        # for each allocated entity
+        for allocated_entity in allocated_entities:
+            # marks the validation as failed
+            validation_failed = True
+
+            # initializes the entity and the
+            # attribute entity
+            entity = None
+            attribute_entity = allocated_entity
+
+            # iterates over all the attribute name tokens
+            for target_token in target_tokens:
+                # updates the entity and attribute entity
+                entity = attribute_entity
+                attribute_entity = getattr(attribute_entity, target_token)
+
+            # adds an error to the duplicated attribute
+            attribute_entity.add_error(target_attribute_name, "value is same")
+
+            # adds an error to the entity that has the duplicated attribute
+            entity and entity.add_error(entity_attribute_name, "value has duplicate")
+
+    # in case the validation failed adds an error to the attribute
+    validation_failed and self.add_error(attribute_name, "value has duplicates")
