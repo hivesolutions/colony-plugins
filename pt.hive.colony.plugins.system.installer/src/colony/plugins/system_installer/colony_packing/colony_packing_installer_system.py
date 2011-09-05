@@ -810,7 +810,7 @@ class ColonyPackingInstaller:
                 resource_file_path = os.path.join(plugins_path, plugin_resource)
 
                 # in case the resource file path does not already exists
-                if not os.path.exists(resource_file_path):
+                if not file_context.exists_file_path(resource_file_path):
                     # continues the loop no need to update
                     # the duplicate files structure
                     continue
@@ -957,7 +957,7 @@ class ColonyPackingInstaller:
                 resource_file_path = os.path.join(containers_exclusive_path, container_resource)
 
                 # in case the resource file path does not already exists
-                if not os.path.exists(resource_file_path):
+                if not file_context.exists_file_path(resource_file_path):
                     # continues the loop no need to update
                     # the duplicate files structure
                     continue
