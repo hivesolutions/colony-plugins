@@ -54,3 +54,5 @@ class ColonyBaseBuildAutomationItem:
         """
 
         self.colony_base_build_automation_item_plugin = colony_base_build_automation_item_plugin
+
+# minor dummy chage
