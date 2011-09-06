@@ -2431,6 +2431,42 @@ class EntityManagerSqliteEngine:
 
                         query_string_value += filter_field_name + " < " + filter_field_value_sqlite_string_value
 
+                # in case the filter is of type is null
+                elif filter_type == "is_null":
+                    # retrieves the filter fields
+                    filter_fields = filter["filter_fields"]
+
+                    is_first_field = True
+
+                    for filter_field in filter_fields:
+                        if is_first_field:
+                            is_first_field = False
+                        else:
+                            query_string_value += " or "
+
+                        # retrieves the filter field name
+                        filter_field_name = filter_field["field_name"]
+
+                        query_string_value += filter_field_name + " is null"
+
+                # in case the filter is of type is not null
+                elif filter_type == "is_not_null":
+                    # retrieves the filter fields
+                    filter_fields = filter["filter_fields"]
+
+                    is_first_field = True
+
+                    for filter_field in filter_fields:
+                        if is_first_field:
+                            is_first_field = False
+                        else:
+                            query_string_value += " or "
+
+                        # retrieves the filter field name
+                        filter_field_name = filter_field["field_name"]
+
+                        query_string_value += filter_field_name + " is not null"
+
                 query_string_value += ")"
 
         # in case it's a count select
