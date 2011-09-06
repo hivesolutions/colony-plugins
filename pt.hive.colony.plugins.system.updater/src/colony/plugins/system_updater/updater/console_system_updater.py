@@ -314,6 +314,36 @@ class ConsoleSystemUpdater:
         else:
             system_updater.install_plugin(plugin_id)
 
+    def process_install_container(self, arguments, arguments_map, output_method, console_context):
+        """
+        Processes the install container command, with the given
+        arguments and output method.
+
+        @type arguments: List
+        @param arguments: The arguments for the processing.
+        @type arguments_map: Dictionary
+        @param arguments_map: The map of arguments for the processing.
+        @type output_method: Method
+        @param output_method: The output method to be used in the processing.
+        @type console_context: ConsoleContext
+        @param console_context: The console context for the processing.
+        """
+
+        # retrieves the system updater
+        system_updater = self.system_updater_plugin.system_updater
+
+        # retrieves the container identifier
+        container_id = arguments_map["container_id"]
+
+        # retrieves the container version
+        container_version = arguments_map.get("container_version", None)
+
+        # installs the container
+        if container_version:
+            system_updater.install_container(container_id, container_version)
+        else:
+            system_updater.install_container(container_id)
+
     def print_repository_info(self, repository_information, output_method):
         output_method("name:        " + repository_information.name)
         output_method("description: " + repository_information.description)
@@ -487,6 +517,24 @@ class ConsoleSystemUpdater:
                     {
                         "name" : "plugin_version",
                         "description" : "the version of the plugin to install",
+                        "values" : str,
+                        "mandatory" : False
+                    }
+                ]
+            },
+            "install_container" : {
+                "handler" : self.process_install_container,
+                "description" : "installs the container with the given id and version",
+                "arguments" : [
+                    {
+                        "name" : "container_id",
+                        "description" : "the id of the container to install",
+                        "values" : str,
+                        "mandatory" : True
+                    },
+                    {
+                        "name" : "container_version",
+                        "description" : "the version of the container to install",
                         "values" : str,
                         "mandatory" : False
                     }
