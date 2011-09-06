@@ -798,6 +798,11 @@ class SystemUpdater:
         # retrieves the descriptor of the package
         package_descriptor = self.get_package_descriptor(package_id, package_version)
 
+        # in case the package was not found
+        if not package_descriptor:
+            # raises the invalid package exception
+            raise system_updater_exceptions.InvalidPackageException("package %s v%s not found" % (package_id, package_version))
+
         # retrieves the package plugins
         package_plugins = package_descriptor.plugins
 

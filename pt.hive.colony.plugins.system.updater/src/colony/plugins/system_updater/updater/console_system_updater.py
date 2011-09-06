@@ -344,6 +344,126 @@ class ConsoleSystemUpdater:
         else:
             system_updater.install_container(container_id)
 
+    def process_uninstall_package(self, arguments, arguments_map, output_method, console_context):
+        """
+        Processes the uninstall package command, with the given
+        arguments and output method.
+
+        @type arguments: List
+        @param arguments: The arguments for the processing.
+        @type arguments_map: Dictionary
+        @param arguments_map: The map of arguments for the processing.
+        @type output_method: Method
+        @param output_method: The output method to be used in the processing.
+        @type console_context: ConsoleContext
+        @param console_context: The console context for the processing.
+        """
+
+        # retrieves the system updater
+        system_updater = self.system_updater_plugin.system_updater
+
+        # retrieves the package identifier
+        package_id = arguments_map["package_id"]
+
+        # retrieves the package version
+        package_version = arguments_map.get("package_version", None)
+
+        # uninstalls the package
+        if package_version:
+            system_updater.uninstall_package(package_id, package_version)
+        else:
+            system_updater.uninstall_package(package_id)
+
+    def process_uninstall_bundle(self, arguments, arguments_map, output_method, console_context):
+        """
+        Processes the uninstall bundle command, with the given
+        arguments and output method.
+
+        @type arguments: List
+        @param arguments: The arguments for the processing.
+        @type arguments_map: Dictionary
+        @param arguments_map: The map of arguments for the processing.
+        @type output_method: Method
+        @param output_method: The output method to be used in the processing.
+        @type console_context: ConsoleContext
+        @param console_context: The console context for the processing.
+        """
+
+        # retrieves the system updater
+        system_updater = self.system_updater_plugin.system_updater
+
+        # retrieves the bundle identifier
+        bundle_id = arguments_map["bundle_id"]
+
+        # retrieves the bundle version
+        bundle_version = arguments_map.get("bundle_version", None)
+
+        # uninstalls the bundle
+        if bundle_version:
+            system_updater.uninstall_bundle(bundle_id, bundle_version)
+        else:
+            system_updater.uninstall_bundle(bundle_id)
+
+    def process_uninstall_plugin(self, arguments, arguments_map, output_method, console_context):
+        """
+        Processes the uninstall plugin command, with the given
+        arguments and output method.
+
+        @type arguments: List
+        @param arguments: The arguments for the processing.
+        @type arguments_map: Dictionary
+        @param arguments_map: The map of arguments for the processing.
+        @type output_method: Method
+        @param output_method: The output method to be used in the processing.
+        @type console_context: ConsoleContext
+        @param console_context: The console context for the processing.
+        """
+
+        # retrieves the system updater
+        system_updater = self.system_updater_plugin.system_updater
+
+        # retrieves the plugin identifier
+        plugin_id = arguments_map["plugin_id"]
+
+        # retrieves the plugin version
+        plugin_version = arguments_map.get("plugin_version", None)
+
+        # uninstalls the plugin
+        if plugin_version:
+            system_updater.uninstall_plugin(plugin_id, plugin_version)
+        else:
+            system_updater.uninstall_plugin(plugin_id)
+
+    def process_uninstall_container(self, arguments, arguments_map, output_method, console_context):
+        """
+        Processes the uninstall container command, with the given
+        arguments and output method.
+
+        @type arguments: List
+        @param arguments: The arguments for the processing.
+        @type arguments_map: Dictionary
+        @param arguments_map: The map of arguments for the processing.
+        @type output_method: Method
+        @param output_method: The output method to be used in the processing.
+        @type console_context: ConsoleContext
+        @param console_context: The console context for the processing.
+        """
+
+        # retrieves the system updater
+        system_updater = self.system_updater_plugin.system_updater
+
+        # retrieves the container identifier
+        container_id = arguments_map["container_id"]
+
+        # retrieves the container version
+        container_version = arguments_map.get("container_version", None)
+
+        # uninstalls the container
+        if container_version:
+            system_updater.uninstall_container(container_id, container_version)
+        else:
+            system_updater.uninstall_container(container_id)
+
     def print_repository_info(self, repository_information, output_method):
         output_method("name:        " + repository_information.name)
         output_method("description: " + repository_information.description)
@@ -535,6 +655,78 @@ class ConsoleSystemUpdater:
                     {
                         "name" : "container_version",
                         "description" : "the version of the container to install",
+                        "values" : str,
+                        "mandatory" : False
+                    }
+                ]
+            },
+            "uninstall_bundle" : {
+                "handler" : self.process_uninstall_package,
+                "description" : "uninstalls the package with the given id and version",
+                "arguments" : [
+                    {
+                        "name" : "package_id",
+                        "description" : "the id of the package to uninstall",
+                        "values" : str,
+                        "mandatory" : True
+                    },
+                    {
+                        "name" : "package_version",
+                        "description" : "the version of the package to uninstall",
+                        "values" : str,
+                        "mandatory" : False
+                    }
+                ]
+            },
+            "uninstall_bundle" : {
+                "handler" : self.process_uninstall_bundle,
+                "description" : "uninstalls the bundle with the given id and version",
+                "arguments" : [
+                    {
+                        "name" : "bundle_id",
+                        "description" : "the id of the bundle to uninstall",
+                        "values" : str,
+                        "mandatory" : True
+                    },
+                    {
+                        "name" : "bundle_version",
+                        "description" : "the version of the bundle to uninstall",
+                        "values" : str,
+                        "mandatory" : False
+                    }
+                ]
+            },
+            "uninstall_plugin" : {
+                "handler" : self.process_uninstall_plugin,
+                "description" : "uninstalls the plugin with the given id and version",
+                "arguments" : [
+                    {
+                        "name" : "plugin_id",
+                        "description" : "the id of the plugin to uninstall",
+                        "values" : str,
+                        "mandatory" : True
+                    },
+                    {
+                        "name" : "plugin_version",
+                        "description" : "the version of the plugin to uninstall",
+                        "values" : str,
+                        "mandatory" : False
+                    }
+                ]
+            },
+            "uninstall_container" : {
+                "handler" : self.process_uninstall_container,
+                "description" : "uninstalls the container with the given id and version",
+                "arguments" : [
+                    {
+                        "name" : "container_id",
+                        "description" : "the id of the container to uninstall",
+                        "values" : str,
+                        "mandatory" : True
+                    },
+                    {
+                        "name" : "container_version",
+                        "description" : "the version of the container to uninstall",
                         "values" : str,
                         "mandatory" : False
                     }
