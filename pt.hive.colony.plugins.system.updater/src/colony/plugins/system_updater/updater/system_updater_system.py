@@ -267,6 +267,22 @@ class SystemUpdater:
         # returns the repository packages
         return repository_information.packages
 
+    def get_bundle_information_list_by_repository_name(self, repository_name):
+        """
+        Retrieves the list of bundle information for the given repository name.
+
+        @type repository_name: String
+        @param repository_name: The name of the repository to get the list of bundle information.
+        @rtype: List
+        @return: The list of bundle information for the given repository name.
+        """
+
+        # retrieves the repository information for the repository name
+        repository_information = self.get_repository_information_by_repository_name(repository_name)
+
+        # returns the repository bundles
+        return repository_information.bundles
+
     def get_plugin_information_list_by_repository_name(self, repository_name):
         """
         Retrieves the list of plugin information for the given repository name.
@@ -282,6 +298,22 @@ class SystemUpdater:
 
         # returns the repository plugins
         return repository_information.plugins
+
+    def get_container_information_list_by_repository_name(self, repository_name):
+        """
+        Retrieves the list of container information for the given repository name.
+
+        @type repository_name: String
+        @param repository_name: The name of the repository to get the list of container information.
+        @rtype: List
+        @return: The list of container information for the given repository name.
+        """
+
+        # retrieves the repository information for the repository name
+        repository_information = self.get_repository_information_by_repository_name(repository_name)
+
+        # returns the repository containers
+        return repository_information.containers
 
     def get_repository_information(self, repository):
         """

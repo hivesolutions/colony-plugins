@@ -138,7 +138,18 @@ class ConsoleSystemUpdater:
         @param console_context: The console context for the processing.
         """
 
-        pass
+        # retrieves the system updater
+        system_updater = self.system_updater_plugin.system_updater
+
+        # retrieves the repository name
+        repository_name = arguments_map["repository_name"]
+
+        # retrieves the bundle information list
+        bundle_information_list = system_updater.get_bundle_information_list_by_repository_name(repository_name)
+
+        # prints the bundle information
+        for bundle_information in bundle_information_list:
+            self.print_bundle_info(bundle_information, output_method)
 
     def process_list_repository_plugins(self, arguments, arguments_map, output_method, console_context):
         """
@@ -167,6 +178,34 @@ class ConsoleSystemUpdater:
         # prints the plugin information
         for plugin_information in plugin_information_list:
             self.print_plugin_info(plugin_information, output_method)
+
+    def process_list_repository_containers(self, arguments, arguments_map, output_method, console_context):
+        """
+        Processes the list repository containers command, with the given
+        arguments and output method.
+
+        @type arguments: List
+        @param arguments: The arguments for the processing.
+        @type arguments_map: Dictionary
+        @param arguments_map: The map of arguments for the processing.
+        @type output_method: Method
+        @param output_method: The output method to be used in the processing.
+        @type console_context: ConsoleContext
+        @param console_context: The console context for the processing.
+        """
+
+        # retrieves the system updater
+        system_updater = self.system_updater_plugin.system_updater
+
+        # retrieves the repository name
+        repository_name = arguments_map["repository_name"]
+
+        # retrieves the container information list
+        container_information_list = system_updater.get_container_information_list_by_repository_name(repository_name)
+
+        # prints the container information
+        for container_information in container_information_list:
+            self.print_container_info(container_information, output_method)
 
     def process_install(self, arguments, arguments_map, output_method, console_context):
         """
@@ -287,6 +326,21 @@ class ConsoleSystemUpdater:
         output_method("version: " + package_information.version)
         output_method("plugins: " + str(package_information.plugins))
 
+    def print_bundle_info(self, bundle_information, output_method):
+        output_method("name:          " + bundle_information.name)
+        output_method("type:          " + bundle_information.bundle_type)
+        output_method("id:            " + bundle_information.id)
+        output_method("version:       " + bundle_information.version)
+        output_method("contents_file: " + bundle_information.contents_file)
+
+        for dependency_information in bundle_information.dependencies:
+            output_method("dependency")
+            self.print_dependency_info(dependency_information, output_method)
+
+        for hash_digest_information in bundle_information.hash_digest_items:
+            output_method("hash_digest")
+            self.print_hash_digest_info(hash_digest_information, output_method)
+
     def print_plugin_info(self, plugin_information, output_method):
         output_method("name:          " + plugin_information.name)
         output_method("type:          " + plugin_information.plugin_type)
@@ -299,6 +353,21 @@ class ConsoleSystemUpdater:
             self.print_dependency_info(dependency_information, output_method)
 
         for hash_digest_information in plugin_information.hash_digest_items:
+            output_method("hash_digest")
+            self.print_hash_digest_info(hash_digest_information, output_method)
+
+    def print_container_info(self, container_information, output_method):
+        output_method("name:          " + container_information.name)
+        output_method("type:          " + container_information.container_type)
+        output_method("id:            " + container_information.id)
+        output_method("version:       " + container_information.version)
+        output_method("contents_file: " + container_information.contents_file)
+
+        for dependency_information in container_information.dependencies:
+            output_method("dependency")
+            self.print_dependency_info(dependency_information, output_method)
+
+        for hash_digest_information in container_information.hash_digest_items:
             output_method("hash_digest")
             self.print_hash_digest_info(hash_digest_information, output_method)
 
@@ -331,7 +400,15 @@ class ConsoleSystemUpdater:
             },
             "list_repository_bundles" : {
                 "handler" : self.process_list_repository_bundles,
-                "description" : "lists the bundles for the given repository"
+                "description" : "lists the bundles for the given repository",
+                "arguments" : [
+                    {
+                        "name" : "repository_name",
+                        "description" : "the name of the repository from where to list the bundles",
+                        "values" : str,
+                        "mandatory" : True
+                    }
+                ]
             },
             "list_repository_plugins" : {
                 "handler" : self.process_list_repository_plugins,
@@ -340,6 +417,18 @@ class ConsoleSystemUpdater:
                     {
                         "name" : "repository_name",
                         "description" : "the name of the repository from where to list the plugins",
+                        "values" : str,
+                        "mandatory" : True
+                    }
+                ]
+            },
+            "list_repository_containers" : {
+                "handler" : self.process_list_repository_containers,
+                "description" : "lists the containers for the given repository",
+                "arguments" : [
+                    {
+                        "name" : "repository_name",
+                        "description" : "the name of the repository from where to list the containers",
                         "values" : str,
                         "mandatory" : True
                     }
