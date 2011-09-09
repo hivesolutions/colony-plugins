@@ -58,6 +58,9 @@ BASE_REST_URL = "http://bargania.com/"
 BASE_REST_SECURE_URL = "https://bargania.com/"
 """ The base rest secure url to be used """
 
+WEEK_DAYS_COUNT = 7
+""" The number of days in a week """
+
 class ServiceBargania:
     """
     The service bargania class.
@@ -150,7 +153,7 @@ class BarganiaClient:
             # closes the http client
             self.http_client.close({})
 
-    def get_status(self, start_date, end_date = None, steps = 7):
+    def get_status(self, start_date, end_date = None, steps = WEEK_DAYS_COUNT):
         """
         Retrieves the status of the bargania system from the start
         data until the end date.
