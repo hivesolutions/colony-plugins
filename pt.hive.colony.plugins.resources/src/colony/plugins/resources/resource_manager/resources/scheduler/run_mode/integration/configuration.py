@@ -87,7 +87,7 @@ configuration = {
         },
         {
             "type" : "plugin",
-            "plugin_id" : "pt.hive.hive_development.plugins.media_dashboard.updater.revision_control",
+            "plugin_id" : "pt.hive.hive_development.plugins.media_dashboard.updater.bargania",
             "plugin_version" : "1.0.0",
             "method" : "update_media_dashboard",
             "arguments" : [
