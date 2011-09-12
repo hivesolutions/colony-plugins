@@ -37,9 +37,24 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-import hashlib
+import colony.libs.crypt_util
 
 import main_authentication_entity_manager_handler_exceptions
+
+FILTERS_VALUE = "filters"
+""" The filters value """
+
+FILTER_TYPE_VALUE = "filter_type"
+""" The filter type value """
+
+FILTER_FIELDS_VALUE = "filter_fields"
+""" The filter fields value """
+
+FIELD_NAME_VALUE = "field_name"
+""" The field name value """
+
+FIELD_VALUE_VALUE = "field_value"
+""" The field value value """
 
 HANDLER_NAME = "entity_manager"
 """ The handler name """
@@ -56,8 +71,8 @@ ENTITY_MANAGER_VALUE = "entity_manager"
 LOGIN_ENTITY_NAME_VALUE = "login_entity_name"
 """ The login entity name value """
 
-PASSWORD_HASH_TYPE_VALUE = "password_hash_type"
-""" The password hash type value """
+LOGIN_SALT_VALUE = "login_salt"
+""" The login salt value """
 
 class MainAuthenticationEntityManagerHandler:
     """
@@ -117,56 +132,51 @@ class MainAuthenticationEntityManagerHandler:
         # retrieves the entity manager
         entity_manager = arguments[ENTITY_MANAGER_VALUE]
 
+        # retrieves the login salt
+        login_salt = arguments.get(LOGIN_SALT_VALUE, "")
+
         # retrieves the login entity name
         login_entity_name = arguments[LOGIN_ENTITY_NAME_VALUE]
-
-        # retrieves the password hash type
-        password_hash_type = arguments.get(PASSWORD_HASH_TYPE_VALUE, None)
-
-        # in case the hash type is defined
-        if password_hash_type:
-            # creates the password hash for the given
-            # password hash type
-            password_hash = hashlib.new(password_hash_type)
-
-            # updates the password hash
-            password_hash.update(password)
-
-            # retrieves the password hash value
-            password = password_hash.hexdigest()
 
         # retrieves the login entity class
         login_entity_class = entity_manager.get_entity_class(login_entity_name)
 
-        # creates the find options
-        find_options = {
-            "filters" : (
+        # in case the username or password are not defined
+        if not username or not password:
+            # raises an authentication error
+            raise main_authentication_entity_manager_handler_exceptions.AuthenticationError("an username and a password must be provided")
+
+        # creates the filter map
+        filter = {
+            FILTERS_VALUE : (
                 {
-                    "filter_type" : "equals",
-                    "filter_fields" : (
+                    FILTER_TYPE_VALUE : "equals",
+                    FILTER_FIELDS_VALUE : (
                         {
-                            "field_name" : "username",
-                            "field_value" : username
+                            FIELD_NAME_VALUE : "username",
+                            FIELD_VALUE_VALUE : username
                         },
                     )
                 },
-                {
-                    "filter_type" : "equals",
-                    "filter_fields" : (
-                        {
-                            "field_name" : "password_hash",
-                            "field_value" : password
-                        },
-                    )
-                }
             )
         }
 
-        # finds all options in the entity manager
-        user_entities = entity_manager._find_all_options(login_entity_class, find_options)
+        # retrieves the users that match the authentication parameters
+        user_entities = entity_manager._find_all_options(login_entity_class, filter)
 
-        # in case there are user entities defined
-        if user_entities:
+        # retrieves the user
+        user_entity = user_entities and user_entities[0] or None
+
+        # in case the user was not found
+        if not user_entity:
+            # raises an authentication error
+            raise main_authentication_entity_manager_handler_exceptions.AuthenticationError("user not found")
+
+        # checks that the password is valid
+        password_valid = colony.libs.crypt_util.password_match(user_entity.password_hash, password, login_salt)
+
+        # in case the password is valid
+        if password_valid:
             # creates the return value
             return_value = {
                 VALID_VALUE : True,
