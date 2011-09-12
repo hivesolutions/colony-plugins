@@ -92,7 +92,8 @@ configuration = {
             "method" : "update_media_dashboard",
             "arguments" : [
                 {
-                    "base_url" : "http://localhost:8080/media_dashboard/"
+                    "base_url" : "http://localhost:8080/media_dashboard/",
+                    "bargania_base_url" : "http://bargania.com/",
                 }
             ],
             "recursion_list" : [
