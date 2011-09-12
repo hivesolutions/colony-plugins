@@ -113,6 +113,11 @@ class MainAuthenticationPythonHandler:
         # retrieves the request arguments
         arguments = request.get_arguments()
 
+        # in case the username or password are not defined
+        if not username or not password:
+            # raises an authentication error
+            raise main_authentication_python_handler_exceptions.AuthenticationError("an username and a password must be provided")
+
         # in case the file path in not defined in arguments
         if not FILE_PATH_VALUE in arguments:
             # raises an exception

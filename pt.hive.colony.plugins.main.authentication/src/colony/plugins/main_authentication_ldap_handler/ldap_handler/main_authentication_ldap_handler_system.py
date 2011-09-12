@@ -150,6 +150,11 @@ class MainAuthenticationLdapHandler:
         # retrieves the search dn
         search_dn = arguments[SEARCH_DN_VALUE]
 
+        # in case the username or password are not defined
+        if not username or not password:
+            # raises an authentication error
+            raise main_authentication_ldap_handler_exceptions.AuthenticationError("an username and a password must be provided")
+
         # creates a new ldap client
         ldap_client = main_client_ldap_plugin.create_client({})
 
