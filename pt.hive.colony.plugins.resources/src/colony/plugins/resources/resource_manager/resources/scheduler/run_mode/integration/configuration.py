@@ -42,6 +42,38 @@ configuration = {
     "tasks" : [
         {
             "type" : "plugin",
+            "plugin_id" : "pt.hive.hive_development.plugins.media_dashboard.updater.bargania",
+            "plugin_version" : "1.0.0",
+            "method" : "update_media_dashboard",
+            "arguments" : [
+                {
+                    "bargania_base_url" : "http://bargania.com/",
+                    "base_url" : "http://localhost:8080/media_dashboard/"
+                }
+            ],
+            "recursion_list" : [
+                0, 0, 1, 0, 0
+            ]
+        },
+        {
+            "type" : "plugin",
+            "plugin_id" : "pt.hive.hive_development.plugins.media_dashboard.updater.revision_control",
+            "plugin_version" : "1.0.0",
+            "method" : "update_media_dashboard",
+            "arguments" : [
+                {
+                    "adapter_name" : "svn",
+                    "revision_control_parameters" : {},
+                    "repository_path" : "http://svn.hive.pt/hive-main",
+                    "base_url" : "http://localhost:8080/media_dashboard/"
+                }
+            ],
+            "recursion_list" : [
+                0, 0, 1, 0, 0
+            ]
+        },
+        {
+            "type" : "plugin",
             "plugin_id" : "pt.hive.colony.plugins.build.automation",
             "plugin_version" : "1.0.0",
             "method" : "run_automation",
@@ -83,38 +115,6 @@ configuration = {
             ],
             "recursion_list" : [
                 0, 0, 15, 0, 0
-            ]
-        },
-        {
-            "type" : "plugin",
-            "plugin_id" : "pt.hive.hive_development.plugins.media_dashboard.updater.bargania",
-            "plugin_version" : "1.0.0",
-            "method" : "update_media_dashboard",
-            "arguments" : [
-                {
-                    "bargania_base_url" : "http://bargania.com/",
-                    "base_url" : "http://localhost:8080/media_dashboard/"
-                }
-            ],
-            "recursion_list" : [
-                0, 0, 1, 0, 0
-            ]
-        },
-        {
-            "type" : "plugin",
-            "plugin_id" : "pt.hive.hive_development.plugins.media_dashboard.updater.revision_control",
-            "plugin_version" : "1.0.0",
-            "method" : "update_media_dashboard",
-            "arguments" : [
-                {
-                    "adapter_name" : "svn",
-                    "revision_control_parameters" : {},
-                    "repository_path" : "http://svn.hive.pt/hive-main",
-                    "base_url" : "http://localhost:8080/media_dashboard/"
-                }
-            ],
-            "recursion_list" : [
-                0, 0, 1, 0, 0
             ]
         }
     ]
