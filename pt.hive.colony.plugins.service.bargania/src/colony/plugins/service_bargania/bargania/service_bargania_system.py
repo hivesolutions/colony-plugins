@@ -55,9 +55,6 @@ POST_METHOD_VALUE = "POST"
 BASE_REST_URL = "http://bargania.com/"
 """ The base rest url to be used """
 
-BASE_REST_SECURE_URL = "https://bargania.com/"
-""" The base rest secure url to be used """
-
 WEEK_DAYS_COUNT = 7
 """ The number of days in a week """
 
@@ -97,8 +94,11 @@ class ServiceBargania:
         # retrieves the json plugin
         json_plugin = self.service_bargania_plugin.json_plugin
 
+        # retrieves the base url (if available)
+        base_url = service_attributes.get("base_url", None)
+
         # creates a new bargania client with the given options
-        bargania_client = BarganiaClient(json_plugin, main_client_http_plugin)
+        bargania_client = BarganiaClient(json_plugin, main_client_http_plugin, base_url)
 
         # in case the client is meant to be open
         # open the client
@@ -118,10 +118,13 @@ class BarganiaClient:
     main_client_http_plugin = None
     """ The main client http plugin """
 
+    base_url = None
+    """ The base url for the bargania service """
+
     http_client = None
     """ The http client for the connection """
 
-    def __init__(self, json_plugin = None, main_client_http_plugin = None):
+    def __init__(self, json_plugin = None, main_client_http_plugin = None, base_url = None):
         """
         Constructor of the class.
 
@@ -129,10 +132,13 @@ class BarganiaClient:
         @param json_plugin: The json plugin.
         @type main_client_http_plugin: MainClientHttpPlugin
         @param main_client_http_plugin: The main client http plugin.
+        @type base_url: String
+        @param base_url: The base url for the bargania service.
         """
 
         self.json_plugin = json_plugin
         self.main_client_http_plugin = main_client_http_plugin
+        self.base_url = base_url or BASE_REST_URL
 
         self.request_header = {}
 
@@ -179,7 +185,7 @@ class BarganiaClient:
         }
 
         # sets the retrieval
-        retrieval_url = BASE_REST_URL + "status.json"
+        retrieval_url = self.base_url + "status.json"
 
         # fetches the retrieval url with the given parameters retrieving the json
         json = self._fetch_url(retrieval_url, parameters)
