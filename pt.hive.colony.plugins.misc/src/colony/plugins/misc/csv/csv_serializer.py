@@ -47,6 +47,12 @@ import csv_exceptions
 DEFAULT_ENCODING = "Cp1252"
 """ The default encoding for csv files """
 
+NEWLINE_CHARACTER = "\n"
+""" The newline character """
+
+SEPARATOR_CHARACTER = ";"
+""" The separator character """
+
 def dumps(object):
     # creates a new string buffer
     string_buffer = colony.libs.string_buffer_util.StringBuffer()
@@ -66,7 +72,7 @@ def _chunk(object, string_buffer):
     object_type = type(object)
 
     # in case the object type is an instance
-    if object_type == types.InstanceType:
+    if object_type == types.InstanceType or hasattr(object, "__class__"):
         # converts the object into a list
         object = [object]
     elif not object_type == types.ListType:
@@ -79,7 +85,7 @@ def _chunk(object, string_buffer):
     # retrieves the attribute names in order to
     # create the header value
     attribute_names = colony.libs.object_util.object_attribute_names(object_item)
-    header_value = ";".join(attribute_names) + "\n"
+    header_value = SEPARATOR_CHARACTER.join(attribute_names) + NEWLINE_CHARACTER
 
     # writes the header value to the string buffer
     string_buffer.write(header_value)
@@ -116,13 +122,13 @@ def _chunk(object, string_buffer):
                 continue
 
             # writes the separator character
-            string_buffer.write(";")
+            string_buffer.write(SEPARATOR_CHARACTER)
 
             # increments the index
             index += 1
 
         # writes the new line in the string buffer
-        string_buffer.write("\n")
+        string_buffer.write(NEWLINE_CHARACTER)
 
 def loads(data):
     # strips the data from extra lines
@@ -130,7 +136,7 @@ def loads(data):
     data = data.strip()
 
     # splits the data around the new line character
-    chunks = [value.strip() for value in data.split("\n")]
+    chunks = [value.strip() for value in data.split(NEWLINE_CHARACTER)]
 
     # "dechunks" the data (retrieving the object list)
     object = _dechunk(chunks)
@@ -146,7 +152,7 @@ def _dechunk(chunks):
     header_value = chunks[0]
 
     # retrieves the various header names
-    header_names = [value.strip() for value in header_value.split(";")]
+    header_names = [value.strip() for value in header_value.split(SEPARATOR_CHARACTER)]
 
     # retrieves the "various" content values
     content_values = chunks[1:]
@@ -158,7 +164,7 @@ def _dechunk(chunks):
         object = CsvObject()
 
         # retrieves the various object attributes
-        object_attributes = [value.strip() for value in content.split(";")]
+        object_attributes = [value.strip() for value in content.split(SEPARATOR_CHARACTER)]
 
         # starts the index value
         index = 0
