@@ -39,6 +39,7 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 import types
 
+import colony.libs.object_util
 import colony.libs.string_buffer_util
 
 import csv_exceptions
