@@ -53,6 +53,9 @@ NEWLINE_CHARACTER = "\n"
 SEPARATOR_CHARACTER = ";"
 """ The separator character """
 
+LIST_TYPES = (types.ListType, types.TupleType)
+""" A tuple with the various list types """
+
 def dumps(object):
     # creates a new string buffer
     string_buffer = colony.libs.string_buffer_util.StringBuffer()
@@ -75,7 +78,9 @@ def _chunk(object, string_buffer):
     if object_type == types.InstanceType or hasattr(object, "__class__"):
         # converts the object into a list
         object = [object]
-    elif not object_type == types.ListType:
+    # in case the object type is neither an
+    # instance nor a list
+    elif not object_type in LIST_TYPES:
         # raises the csv encoder exception
         csv_exceptions.CsvEncodeException("invalid object type")
 
