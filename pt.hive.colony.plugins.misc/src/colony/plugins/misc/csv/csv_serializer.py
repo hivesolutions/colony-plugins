@@ -105,7 +105,60 @@ def _chunk(object, string_buffer):
         string_buffer.write("\n")
 
 def loads(data):
-    pass
+    # splits the data around the new line character
+    chunks = [value.strip() for value in data.split("\n")]
+
+    # "dechunks" the data (retrieving the object list)
+    object = _dechunk(chunks)
+
+    # returns the object (list)
+    return object
 
 def _dechunk(chunks):
+    # creates the object list
+    object_list = []
+
+    # retrieves the header value
+    header_value = chunks[0]
+
+    # retrieves the various header names
+    header_names = [value.strip() for value in header_value.split(";")]
+
+    # retrieves the "various" content values
+    content_values = chunks[1:]
+
+    # iterates over all the content
+    # in the content values
+    for content in content_values:
+        # creates a new (csv) object
+        object = CsvObject()
+
+        # retrieves the various object attributes
+        object_attributes = [value.strip() for value in content.split(";")]
+
+        # starts the index value
+        index = 0
+
+        # iterates over all the object attributes
+        # to set them in the object
+        for attribute in object_attributes:
+            # retrieves the (current) attribute name
+            # from the header names
+            attribute_name = header_names[index]
+
+            # set the attribute in the object
+            setattr(object, attribute_name, attribute)
+
+        # adds the object to the object list
+        object_list.append(object)
+
+    # returns the object list
+    return object_list
+
+class CsvObject:
+    """
+    The "dummy" class to support the
+    various loded csv objects.
+    """
+
     pass
