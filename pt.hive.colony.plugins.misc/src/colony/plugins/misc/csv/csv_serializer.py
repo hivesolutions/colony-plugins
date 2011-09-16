@@ -90,6 +90,12 @@ def _chunk(object, string_buffer):
         # attribute values
         attribute_values = colony.libs.object_util.object_attribute_values(object_item)
 
+        # retrieves the attribute values length
+        attribute_values_length = len(attribute_values)
+
+        # starts the index value
+        index = 0
+
         # iterates over all the
         for attribute_value in attribute_values:
             # retrieves the attribute value type
@@ -99,12 +105,29 @@ def _chunk(object, string_buffer):
             attribute_value_encoded = attribute_value_type == types.UnicodeType and attribute_value.encode(DEFAULT_ENCODING) or str(attribute_value)
 
             # writes the encoded attribute value
-            string_buffer.write(attribute_value_encoded + ";")
+            string_buffer.write(attribute_value_encoded)
+
+            # in case the current index represents
+            # the last attribute
+            if index == attribute_values_length - 1:
+                # continue the loop skipping the separator
+                # character writing
+                continue
+
+            # writes the separator character
+            string_buffer.write(";")
+
+            # increments the index
+            index += 1
 
         # writes the new line in the string buffer
         string_buffer.write("\n")
 
 def loads(data):
+    # strips the data from extra lines
+    # (avoids possible problems)
+    data = data.strip()
+
     # splits the data around the new line character
     chunks = [value.strip() for value in data.split("\n")]
 
@@ -148,6 +171,9 @@ def _dechunk(chunks):
 
             # set the attribute in the object
             setattr(object, attribute_name, attribute)
+
+            # increments the index value
+            index += 1
 
         # adds the object to the object list
         object_list.append(object)
