@@ -39,6 +39,7 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 import types
 
+import colony.libs.list_util
 import colony.libs.object_util
 import colony.libs.string_buffer_util
 
@@ -75,7 +76,7 @@ def _chunk(object, string_buffer):
     object_type = type(object)
 
     # in case the object type is an instance
-    if object_type == types.InstanceType or hasattr(object, "__class__"):
+    if object_type == types.InstanceType:
         # converts the object into a list
         object = [object]
     # in case the object type is neither an
@@ -84,12 +85,9 @@ def _chunk(object, string_buffer):
         # raises the csv encoder exception
         csv_exceptions.CsvEncodeException("invalid object type")
 
-    # retrieves the first element (for reference)
-    object_item = object[0]
-
-    # retrieves the attribute names in order to
+    # retrieves the (header) attribute names in order to
     # create the header value
-    attribute_names = colony.libs.object_util.object_attribute_names(object_item)
+    attribute_names = _attribute_names(object)
     header_value = SEPARATOR_CHARACTER.join(attribute_names) + NEWLINE_CHARACTER
 
     # writes the header value to the string buffer
@@ -98,9 +96,9 @@ def _chunk(object, string_buffer):
     # iterates over all the object (items)
     # in the object list for serialization
     for object_item in object:
-        # retrieves the various object items
-        # attribute values
-        attribute_values = colony.libs.object_util.object_attribute_values(object_item)
+        # retrieves the various object items attribute values
+        # (from the previously calculated attribute names)
+        attribute_values = colony.libs.object_util.object_attribute_values(object_item, attribute_names)
 
         # retrieves the attribute values length
         attribute_values_length = len(attribute_values)
@@ -108,16 +106,18 @@ def _chunk(object, string_buffer):
         # starts the index value
         index = 0
 
-        # iterates over all the
+        # iterates over all the attribute values
+        # to write them to the string buffer
         for attribute_value in attribute_values:
             # retrieves the attribute value type
             attribute_value_type = type(attribute_value)
 
             # encodes the attribute value using the default encoding
-            attribute_value_encoded = attribute_value_type == types.UnicodeType and attribute_value.encode(DEFAULT_ENCODING) or str(attribute_value)
+            attribute_value_encoded = attribute_value_type == types.UnicodeType and attribute_value.encode(DEFAULT_ENCODING) or (attribute_value and str(attribute_value))
 
-            # writes the encoded attribute value
-            string_buffer.write(attribute_value_encoded)
+            # writes the encoded attribute value (in case
+            # the value is valid)
+            attribute_value_encoded and string_buffer.write(attribute_value_encoded)
 
             # in case the current index represents
             # the last attribute
@@ -134,6 +134,30 @@ def _chunk(object, string_buffer):
 
         # writes the new line in the string buffer
         string_buffer.write(NEWLINE_CHARACTER)
+
+def _attribute_names(object):
+    # retrieves the first element (for initial
+    # set reference)
+    object_item = object[0]
+
+    # creates the first and initial set of attribute names
+    # from the first object item
+    attribute_names = colony.libs.object_util.object_attribute_names(object_item)
+
+    # iterates over all the other object items in the set
+    # in order to intersect the attributes name list with the
+    # previous
+    for object_item in object:
+        # retrieves the object attribute names for the current
+        # object item value
+        object_attribute_names = colony.libs.object_util.object_attribute_names(object_item)
+
+        # intersects the attribute names list with the object attribute names
+        # list to calculate the current attribute names
+        attribute_names = colony.libs.list_util.list_intersect(attribute_names, object_attribute_names)
+
+    # returns the attribute names
+    return attribute_names
 
 def loads(data):
     # strips the data from extra lines
