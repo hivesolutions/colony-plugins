@@ -37,6 +37,7 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
+import os
 import imp
 import types
 
@@ -312,15 +313,63 @@ class WebMvcUtils:
         # returns the created search index controller
         return search_index_controller
 
-    def create_controllers(self, package_path, system_instance, plugin_instance, prefix_name = ""):
+    def create_controllers(self, package_path, system_instance, plugin_instance, prefix_name = "", directory_path = None):
         # initializes the controllers map
         controllers_map = {}
 
         # splits the package path into package name and module name
         package_name, module_name = package_path.rsplit(".", 1)
 
+        # retrieves the directory path taking into account the call module directory
+        directory_path = directory_path or colony.libs.stack_util.get_instance_module_directory(system_instance)
+
+        # creates the (possible) module directory path taking into
+        # account the module name and then normalizes the path
+        module_directory_path = os.path.join(directory_path, module_name)
+        module_directory_path = os.path.normpath(module_directory_path)
+
+        # in case the module directory path really exists,
+        # this is the case where the referred module contains
+        # modules each with different modules
+        if os.path.isdir(module_directory_path):
+            # retrieves the various module items from the
+            # module directory path
+            module_items = os.listdir(module_directory_path)
+
+            # starts the module package paths list
+            module_package_paths = []
+
+            # iterates over all the (possible) module items in order
+            # to filter only those o correspond to python modules
+            for module_item in module_items:
+                # splits the module item into the base and extension
+                # values
+                module_base, module_extension = os.path.splitext(module_item)
+
+                # in case the module extension is not
+                # a python file
+                if not module_extension == PYTHON_EXTENSION:
+                    # continues the loop
+                    continue
+
+                # creates the module package paths from the (current)
+                # package path and the module base and then adds
+                # it to the list of module package paths
+                module_package_path = package_path + "." + module_base
+                module_package_paths.append(module_package_path)
+
+            # iterates over all the module package paths to create
+            # the appropriate controllers
+            for module_package_path in module_package_paths:
+                # creates the controllers for the module package path
+                self.create_controllers(module_package_path, system_instance, plugin_instance, prefix_name, module_directory_path)
+
+            # returns immediately (the directory
+            # is interpreted there's no need to continue)
+            return
+
         # imports the controllers module with the mvc utils support
-        controllers_module = self.import_module_mvc_utils(module_name, package_name, system_instance = system_instance)
+        controllers_module = self.import_module_mvc_utils(module_name, package_name, directory_path, system_instance)
 
         # retrieves the controllers module items
         controllers_module_items = dir(controllers_module)
