@@ -76,7 +76,8 @@ def _chunk(object, string_buffer):
     object_type = type(object)
 
     # in case the object type is an instance
-    if object_type == types.InstanceType:
+    # or a map (dictionary)
+    if object_type in (types.InstanceType, types.DictionaryType):
         # converts the object into a list
         object = [object]
     # in case the object type is neither an
@@ -189,8 +190,8 @@ def _dechunk(chunks):
     # iterates over all the content
     # in the content values
     for content in content_values:
-        # creates a new (csv) object
-        object = CsvObject()
+        # creates a new (csv) object (map)
+        object = {}
 
         # retrieves the various object attributes
         object_attributes = [value.strip() for value in content.split(SEPARATOR_CHARACTER)]
@@ -206,7 +207,7 @@ def _dechunk(chunks):
             attribute_name = header_names[index]
 
             # set the attribute in the object
-            setattr(object, attribute_name, attribute)
+            object[attribute_name] = attribute
 
             # increments the index value
             index += 1
@@ -216,11 +217,3 @@ def _dechunk(chunks):
 
     # returns the object list
     return object_list
-
-class CsvObject:
-    """
-    The "dummy" class to support the
-    various loded csv objects.
-    """
-
-    pass
