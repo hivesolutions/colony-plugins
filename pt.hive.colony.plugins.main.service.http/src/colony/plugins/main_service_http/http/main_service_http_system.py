@@ -656,9 +656,6 @@ class HttpClientServiceHandler:
     log_file = None
     """ The log file """
 
-    pending_data = None
-    """ The current pending data """
-
     service_connection_request_handler_map = {}
     """ The map associating the service connection with the request handler (method) """
 
@@ -793,9 +790,13 @@ class HttpClientServiceHandler:
             # returns false (connection closed)
             return False
 
-        # in case there is pending data calls the default
-        # request handler to handle the remaining data (allows http pipelining)
-        self.pending_data and self.default_request_handler(service_connection)
+        # checks if the service connection is of type asynchronous
+        service_connection_is_async = service_connection.is_async()
+
+        # in case there is pending data and the service connection is of
+        # type asynchronous calls the default request handler to handle the
+        # remaining data (allows http pipelining)
+        service_connection.pending_data() and not service_connection_is_async and self.default_request_handler(service_connection)
 
         # returns true (connection remains open)
         return True
@@ -928,12 +929,10 @@ class HttpClientServiceHandler:
         while True:
             try:
                 # in case there is pending data to be read
-                if self.pending_data:
+                # (the pending data buffer is not empty)
+                if service_connection.pending_data():
                     # sets the data as the pending data
-                    data = self.pending_data
-
-                    # unsets the pending data (it has been read)
-                    self.pending_data = None
+                    data = service_connection.pop_pending_data()
                 # otherwise (read normally)
                 else:
                     # receives the data
@@ -1205,7 +1204,10 @@ class HttpClientServiceHandler:
         # the complete message size
         if received_data_size > complete_message_size:
             # retrieves the pending data
-            self.pending_data = message_value[complete_message_size:]
+            pending_data = message_value[complete_message_size:]
+
+            # adds the pending data to the service connection
+            service_connection.add_pending_data(pending_data)
 
         # returns the return request request
         return return_request
@@ -1379,19 +1381,6 @@ class HttpClientServiceHandler:
             self.send_request_mediated_sync(service_connection, request)
 
     def send_request_mediated_async(self, service_connection, request):
-        # retrieves the result value
-        result_value = request.get_result()
-
-        try:
-            # sends the result value to the client
-            service_connection.send(result_value)
-        except self.service_utils_exception_class, exception:
-            # error in the client side
-            self.service_plugin.error("Problem sending request mediated: " + unicode(exception))
-
-            # raises the http data sending exception
-            raise main_service_http_exceptions.HttpDataSendingException("problem sending data")
-
         def request_mediated_writer():
             # retrieves the mediated value
             mediated_value = request.mediated_handler.get_chunk(CHUNK_SIZE)
@@ -1408,9 +1397,9 @@ class HttpClientServiceHandler:
                 return
 
             try:
-                # sends the mediated value to the client
+                # sends the mediated value to the client (writes in front of the others)
                 # and sets the callback as the current writer
-                service_connection.send_callback(mediated_value, request_mediated_writer)
+                service_connection.send_callback(mediated_value, request_mediated_writer, write_front = True)
             except self.service_utils_exception_class, exception:
                 # error in the client side
                 self.service_plugin.error("Problem sending request mediated: " + unicode(exception))
@@ -1418,9 +1407,19 @@ class HttpClientServiceHandler:
                 # raises the http data sending exception
                 raise main_service_http_exceptions.HttpDataSendingException("problem sending data")
 
-        # calls the initial request mediated writer
-        # for the initial writing (start of loop)
-        request_mediated_writer()
+        # retrieves the result value
+        result_value = request.get_result()
+
+        try:
+            # sends the result value to the client and sets the request
+            # mediated writer as the callback handler
+            service_connection.send_callback(result_value, request_mediated_writer)
+        except self.service_utils_exception_class, exception:
+            # error in the client side
+            self.service_plugin.error("Problem sending request mediated: " + unicode(exception))
+
+            # raises the http data sending exception
+            raise main_service_http_exceptions.HttpDataSendingException("problem sending data")
 
     def send_request_mediated_sync(self, service_connection, request):
         # retrieves the result value
@@ -1477,19 +1476,6 @@ class HttpClientServiceHandler:
             self.send_request_chunked_sync(service_connection, request)
 
     def send_request_chunked_async(self, service_connection, request):
-        # retrieves the result value
-        result_value = request.get_result()
-
-        try:
-            # sends the result value to the client
-            service_connection.send(result_value)
-        except self.service_utils_exception_class, exception:
-            # error in the client side
-            self.service_plugin.error("Problem sending request chunked: " + unicode(exception))
-
-            # raises the http data sending exception
-            raise main_service_http_exceptions.HttpDataSendingException("problem sending data")
-
         def request_chunked_writer():
             # retrieves the chunk value
             chunk_value = request.chunk_handler.get_chunk(CHUNK_SIZE)
@@ -1519,15 +1505,29 @@ class HttpClientServiceHandler:
                 # sets the message value
                 message_value = length_chunk_value_hexadecimal_string + chunk_value + "\r\n"
 
-                # sends the message value to the client
+                # sends the message value to the client (writes in front of the others)
                 # and sets the callback as the current writer
-                service_connection.send_callback(message_value, request_chunked_writer)
+                service_connection.send_callback(message_value, request_chunked_writer, write_front = True)
             except self.service_utils_exception_class, exception:
                 # error in the client side
                 self.service_plugin.error("Problem sending request chunked: " + unicode(exception))
 
                 # raises the http data sending exception
                 raise main_service_http_exceptions.HttpDataSendingException("problem sending data")
+
+        # retrieves the result value
+        result_value = request.get_result()
+
+        try:
+            # sends the result value to the client and sets the request
+            # chunked writer as the callback handler
+            service_connection.send_callback(result_value, request_chunked_writer)
+        except self.service_utils_exception_class, exception:
+            # error in the client side
+            self.service_plugin.error("Problem sending request chunked: " + unicode(exception))
+
+            # raises the http data sending exception
+            raise main_service_http_exceptions.HttpDataSendingException("problem sending data")
 
         # calls the initial request chunked writer
         # for the initial writing (start of loop)
@@ -2054,7 +2054,7 @@ class HttpClientServiceHandler:
 
                         # merges the service configuration map with the service configuration virtual server value,
                         # to retrieve the final service configuration for this request
-                        service_configuration = self._mege_values(service_configuration, service_configuration_virtual_server_value)
+                        service_configuration = self._merge_values(service_configuration, service_configuration_virtual_server_value)
 
                         # breaks the loop
                         break
@@ -2062,7 +2062,7 @@ class HttpClientServiceHandler:
         # returns the service configuration
         return service_configuration
 
-    def _mege_values(self, target_value, source_value):
+    def _merge_values(self, target_value, source_value):
         """
         Merges two values into one, the type of the values
         is taken into account and the merge only occurs when
@@ -2147,7 +2147,7 @@ class HttpClientServiceHandler:
                 target_value = final_map[source_key]
 
                 # merges both maps returning the final value
-                final_value = self._mege_values(target_value, source_value)
+                final_value = self._merge_values(target_value, source_value)
 
                 # sets the ginal value in the final map
                 final_map[source_key] = final_value
