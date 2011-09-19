@@ -1588,6 +1588,9 @@ class ServiceConnection:
     request_data = {}
     """ The data map to be used to persist the processing request data """
 
+    pending_data_buffer = []
+    """ The buffer that holds the pending data """
+
     _connection_socket = None
     """ The original connection socket """
 
@@ -1637,6 +1640,7 @@ class ServiceConnection:
         self.connection_closed_handlers = []
         self.connection_properties = {}
         self.request_data = {}
+        self.pending_data_buffer = []
 
         self._read_buffer = []
         self._read_lock = threading.RLock()
@@ -1761,7 +1765,7 @@ class ServiceConnection:
         # returns the return value
         return return_value
 
-    def send(self, message, response_timeout = None, retries = SEND_RETRIES):
+    def send(self, message, response_timeout = None, retries = SEND_RETRIES, write_front = False):
         """
         Sends the given message to the socket.
         Raises an exception in case there is a problem sending
@@ -1773,6 +1777,9 @@ class ServiceConnection:
         @param request_timeout: The timeout to be used in data sending.
         @type retries: int
         @param retries: The number of retries to be used.
+        @type write_front: bool
+        @param write_front: If the write of the message should be
+        made to the front of the buffer.
         """
 
         # acquires the write lock
@@ -1843,6 +1850,59 @@ class ServiceConnection:
         """
 
         del self.connection_properties[property_name]
+
+    def add_pending_data(self, pending_data):
+        """
+        Adds a chunk of pending data to the pending
+        data buffer.
+
+        @type pending_data: String
+        @param pending_data: The pending data to be
+        added to the pending data buffer.
+        """
+
+        # in case the pending data is not valid
+        if not pending_data:
+            # returns immediately
+            return
+
+        # adds the pending data to the pending data
+        # buffer (list)
+        self.pending_data_buffer.append(pending_data)
+
+    def pop_pending_data(self):
+        """
+        "Pops" the current pending data from the
+        service connection.
+
+        @rtype: String
+        @return: The current pending data from the
+        service connection (in case there is one).
+        """
+
+        # in case the pending data buffer is
+        # not valid
+        if not self.pending_data_buffer:
+            # returns none (invalid)
+            return None
+
+        # returns the result of a "pop" in the
+        # pending data buffer
+        return self.pending_data_buffer.pop(0)
+
+    def pending_data(self):
+        """
+        Checks if there is pending data to be "read"
+        or interpreted by the client service.
+
+        @rtype: bool
+        @return: If there is pending data to be "read"
+        or interpreted by the client service.
+        """
+
+        # returns the boolean value base on the status
+        # of the pending data buffer
+        return self.pending_data_buffer and True or False
 
     def get_connection_tuple(self):
         """

@@ -706,6 +706,9 @@ class ServiceConnection(Connection):
 
 class ClientConnection(Connection):
 
+    pending_data_buffer = []
+    """ The buffer that holds the pending data """
+
     write_data_buffer = []
     """ The buffer to hold the data pending to be sent """
 
@@ -715,6 +718,7 @@ class ClientConnection(Connection):
     def __init__(self, service, socket, connection_address, connection_port):
         Connection.__init__(self, service, socket, connection_address, connection_port)
 
+        self.pending_data_buffer = []
         self.write_data_buffer = []
 
         # TODO IMPLMENTAR DE MODO REAL
@@ -735,6 +739,7 @@ class ClientConnection(Connection):
         # iterates continuously
         while True:
             try:
+                # receives the data from the socket
                 data = _socket.recv(1024)
             except socket.error, exception:
                 # in case the exception is normal
@@ -756,12 +761,19 @@ class ClientConnection(Connection):
                 return
             # otherwise a try for parsing should be made
             else:
-                # tries to retrieve the request from the given data (only a successful
-                # parse is valid for request handling)
-                request = self.service.client_service.retrieve_request_data(self, data)
+                # iterates while there is data available to
+                # be processed
+                while data:
+                    # tries to retrieve the request from the given data (only a successful
+                    # parse is valid for request handling)
+                    request = self.service.client_service.retrieve_request_data(self, data)
 
-                # handles the request using the client service (in case the request is valid)
-                request and self.service.client_service.handle_request(self, request)
+                    # handles the request using the client service (in case the request is valid)
+                    request and self.service.client_service.handle_request(self, request)
+
+                    # pops the pending data from the client service and sets it
+                    # as the current data
+                    data = self.pop_pending_data()
 
     def write_handler(self, _socket):
         # iterates over the write data buffer
@@ -821,13 +833,22 @@ class ClientConnection(Connection):
         # closes the client connection
         self.close()
 
-    def write(self, data):
+    def write(self, data, write_front = False):
         # in case the connection status is closed
         if not self.connection_status:
             raise Exception("Trying to write in a closed socket")
 
-        # adds the data to the write buffer
-        self.write_data_buffer.insert(0, data)
+        # in case the write front flag is set
+        if write_front:
+            # adds the data to the write buffer
+            # in the front part of the buffer
+            self.write_data_buffer.append(data)
+        # otherwise the write front is disabled
+        # the data shall be inserted to the back
+        else:
+            # adds the data to the write buffer
+            # in the back part of the buffer
+            self.write_data_buffer.insert(0, data)
 
         # registers the socket fd for the write event (in
         # case it's not already registered)
@@ -859,15 +880,78 @@ class ClientConnection(Connection):
         # adds the callable to the service execution thread
         self.service_execution_thread.add_callable(callable)
 
-    def send(self, message, response_timeout = None, retries = None):
-        self.write(message)
+    def send(self, message, response_timeout = None, retries = None, write_front = False):
+        self.write(message, write_front)
 
-    def send_callback(self, message, callback, response_timeou = None, retries = None):
+    def send_callback(self, message, callback, response_timeout = None, retries = None, write_front = False):
         message_tuple = (message, callback)
-        self.write(message_tuple)
+        self.write(message_tuple, write_front)
 
     def is_open(self):
         return self.connection_status
 
     def is_async(self):
+        """
+        Checks if the connection is of type asynchronous
+        or synchronous.
+        Useful to provide conditional execution in the premises
+        of the connection type.
+
+        @rtype: bool
+        @return: If the connection is of type asynchronous.
+        """
+
         return True
+
+    def add_pending_data(self, pending_data):
+        """
+        Adds a chunk of pending data to the pending
+        data buffer.
+
+        @type pending_data: String
+        @param pending_data: The pending data to be
+        added to the pending data buffer.
+        """
+
+        # in case the pending data is not valid
+        if not pending_data:
+            # returns immediately
+            return
+
+        # adds the pending data to the pending data
+        # buffer (list)
+        self.pending_data_buffer.append(pending_data)
+
+    def pop_pending_data(self):
+        """
+        "Pops" the current pending data from the
+        service connection.
+
+        @rtype: String
+        @return: The current pending data from the
+        service connection (in case there is one).
+        """
+
+        # in case the pending data buffer is
+        # not valid
+        if not self.pending_data_buffer:
+            # returns none (invalid)
+            return None
+
+        # returns the result of a "pop" in the
+        # pending data buffer
+        return self.pending_data_buffer.pop(0)
+
+    def pending_data(self):
+        """
+        Checks if there is pending data to be "read"
+        or interpreted by the client service.
+
+        @rtype: bool
+        @return: If there is pending data to be "read"
+        or interpreted by the client service.
+        """
+
+        # returns the boolean value base on the status
+        # of the pending data buffer
+        return self.pending_data_buffer and True or False
