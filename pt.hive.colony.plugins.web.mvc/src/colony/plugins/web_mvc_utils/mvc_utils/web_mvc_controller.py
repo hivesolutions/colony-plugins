@@ -187,6 +187,15 @@ TO_ONE_RELATION_VALUE = 1
 TO_MANY_RELATION_VALUE = 2
 """ The to many relation value """
 
+PERSIST_ALL_TYPE = 1
+""" The persist all persist type """
+
+PERSIST_SAVE_TYPE = 2
+""" The persist only on save persist type """
+
+PERISST_NONE_TYPE = 3
+""" The persist none persist type """
+
 ATTRIBUTE_PARSING_REGEX_VALUE = "(?P<name>[\w]+)|(?P<sequence>\[\])|(?P<map>\[\w+\])"
 """ The attribute parsing regular expression value """
 
@@ -525,14 +534,15 @@ def save_entity_relations(self, rest_request, entity_map, entity, relations_map)
             # type and relation method
             relation_type, relation_method = relation_item
 
-            # sets the relation persist flag (default value)
-            relation_persist = True
+            # sets the relation persist type to persist
+            # all (default value)
+            relation_persist_type = PERSIST_ALL_TYPE
         # in case the relation item length is three
         # (it contains the relation persist flag)
         elif relation_item_length == 3:
             # unpacks the relation item, retrieving the relation
-            # type relation method and relation persist
-            relation_type, relation_method, relation_persist = relation_item
+            # type relation method and relation persist type
+            relation_type, relation_method, relation_persist_type = relation_item
         # otherwise the relation item length is invalid
         else:
             # raises a runtime error
@@ -560,7 +570,7 @@ def save_entity_relations(self, rest_request, entity_map, entity, relations_map)
         for relation_value in relation_values:
             try:
                 # invokes the relation method for the entity
-                relation_entity = relation_value and relation_method(rest_request, relation_value, relation_persist) or None
+                relation_entity = relation_value and relation_method(rest_request, relation_value, relation_persist_type) or None
             except web_mvc_utils_exceptions.ModelValidationError, exception:
                 # updates the relation entity with the model
                 # in the model validation error

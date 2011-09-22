@@ -42,6 +42,15 @@ import datetime
 
 import colony.libs.string_util
 
+PERSIST_ALL_TYPE = 1
+""" The persist all persist type """
+
+PERSIST_SAVE_TYPE = 2
+""" The persist only on save persist type """
+
+PERISST_NONE_TYPE = 3
+""" The persist none persist type """
+
 PLURALIZATION_SUFFIX_VALUE = "s"
 """ The pluralization suffix value """
 
@@ -132,6 +141,32 @@ def save_update(self, entity_manager = None):
 
     # saves or updates the entity using the entity manager
     entity_manager.save_update(self)
+
+def persist(self, persist_type, entity_manager = None):
+    """
+    Persists the current instance into the data source
+    described in the current entity manager.
+    The persist method take into account the persist type
+    in order to provide an additional layer of security.
+    This method provides the persistence layer for
+    creating an object.
+
+    @type persist_type: int
+    @param persist_type: The type of persist to be used
+    in the entity.
+    @type entity_manager: EntityManager
+    @param entity_manager: The optional entity manager
+    reference to be used.
+    """
+
+    # in case the persist type is all
+    if persist_type == PERSIST_ALL_TYPE:
+        # saves or updates the entity using the entity manager
+        entity_manager.save_update(self)
+    # in case the persist type is save
+    elif persist_type == PERSIST_SAVE_TYPE:
+        # saves the entity using the entity manager
+        entity_manager.save(self)
 
 def is_persisted(self, entity_manager = None):
     """
