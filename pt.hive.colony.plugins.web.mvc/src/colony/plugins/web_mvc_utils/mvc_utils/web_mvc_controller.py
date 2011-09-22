@@ -1387,7 +1387,8 @@ def process_template_file(self, rest_request, template_file, variable_encoding =
     process_methods_list = [
         ("process_stylesheet_link", self.get_process_method(rest_request, "process_stylesheet_link")),
         ("process_javascript_include", self.get_process_method(rest_request, "process_javascript_include")),
-        ("process_ifacl", self.get_process_method(rest_request, "process_ifacl"))
+        ("process_ifacl", self.get_process_method(rest_request, "process_ifacl")),
+        ("process_ifnotacl", self.get_process_method(rest_request, "process_ifnotacl"))
     ]
 
     # attaches the process methods to the template file
