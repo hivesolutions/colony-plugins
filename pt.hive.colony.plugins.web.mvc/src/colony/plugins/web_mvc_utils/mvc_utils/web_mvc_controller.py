@@ -2846,6 +2846,55 @@ def get_process_method(controller, rest_request, process_method_name):
                 # accepts the node child node
                 accept_node and node_child_node.accept(self)
 
+    def __process_ifnotacl(self, node):
+        # retrieves the attributes map
+        attributes_map = node.get_attributes_map()
+
+        # retrieves the attribute permission value
+        attribute_permission = attributes_map[PERMISSION_VALUE]
+        attribute_permission_value = self.get_literal_value(attribute_permission)
+
+        # retrieves the attribute value value
+        attribute_value = attributes_map[VALUE_VALUE]
+        attribute_value_value = self.get_value(attribute_value)
+
+        # in case the session attribute exists in the attributes map
+        if SESSION_ATTRIBUTE_VALUE in attributes_map:
+            # retrieves the attribute session attribute value
+            attribute_session_attribute = attributes_map[SESSION_ATTRIBUTE_VALUE]
+            attribute_session_attribute_value = self.get_literal_value(attribute_session_attribute)
+        # otherwise
+        else:
+            # sets the default attribute session attribute value
+            attribute_session_attribute_value = DEFAULT_SESSION_ATTRIBUTE
+
+        # retrieves the user acl value
+        user_acl = controller.get_session_attribute(rest_request, attribute_session_attribute_value) or {}
+
+        # process the acl values, retrieving the permissions value
+        permissions = controller.process_acl_values((user_acl, ), attribute_permission_value)
+
+        # sets the initial accept node value
+        accept_node = permissions > attribute_value_value
+
+        # in case the visit child is set
+        if self.visit_childs:
+            # iterates over all the node child nodes
+            for node_child_node in node.child_nodes:
+                # validates the accept node using the node child node
+                # and the accept node
+                accept_node = self._validate_accept_node(node_child_node, accept_node)
+
+                # in case the accept node is set to invalid
+                # the evaluation is over
+                if accept_node == None:
+                    # returns immediately
+                    return
+
+                # in case the accept node flag is set
+                # accepts the node child node
+                accept_node and node_child_node.accept(self)
+
     # creates the complete process method name
     complete_process_method_name = "__" + process_method_name
 
