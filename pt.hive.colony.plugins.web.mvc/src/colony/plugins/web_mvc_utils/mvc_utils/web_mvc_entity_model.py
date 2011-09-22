@@ -42,14 +42,17 @@ import datetime
 
 import colony.libs.string_util
 
-PERSIST_ALL_TYPE = 1
+PERSIST_ALL_TYPE = 0x0f
 """ The persist all persist type """
 
-PERSIST_SAVE_TYPE = 2
+PERSIST_UPDATE_TYPE = 0x01
+""" The persist only on update (or save) persist type """
+
+PERSIST_SAVE_TYPE = 0x02
 """ The persist only on save persist type """
 
-PERISST_NONE_TYPE = 3
-""" The persist none persist type """
+PERSIST_ASSOCIATE_TYPE = 0x04
+""" The persist associate persist type """
 
 PLURALIZATION_SUFFIX_VALUE = "s"
 """ The pluralization suffix value """
@@ -159,18 +162,23 @@ def persist(self, persist_type, entity_manager = None):
     reference to be used.
     """
 
-    # in case the persist type is all
-    if persist_type == PERSIST_ALL_TYPE:
-        # saves or updates the entity using the entity method
-        self.save_update(entity_manager)
-    # in case the persist type is save
-    elif persist_type == PERSIST_SAVE_TYPE:
-        # checks if the entity is persisted
-        is_persisted = self.is_persisted()
+    # retrieves the entity manager to be used or the
+    # default "embedded" entity manager
+    entity_manager = entity_manager or self._entity_manager
 
-        # saves the entity using the entity method,
-        # only if the entity is not persisted
-        not is_persisted and self.save(entity_manager)
+    # checks if the entity is persisted
+    is_persisted = self.is_persisted()
+
+    # in case the entity is persisted and the persist
+    # type allows updating
+    if is_persisted and persist_type & PERSIST_UPDATE_TYPE:
+        # updates the entity using the entity manager
+        entity_manager.update(self)
+    # in case the entity is not persisted and the persist
+    # type allows saving
+    elif not is_persisted and persist_type & PERSIST_SAVE_TYPE:
+        # saves the entity using the entity manager
+        entity_manager.save(self)
 
 def is_persisted(self, entity_manager = None):
     """
