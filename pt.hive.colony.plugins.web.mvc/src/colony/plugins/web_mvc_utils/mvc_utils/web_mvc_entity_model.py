@@ -165,8 +165,12 @@ def persist(self, persist_type, entity_manager = None):
         self.save_update(entity_manager)
     # in case the persist type is save
     elif persist_type == PERSIST_SAVE_TYPE:
-        # saves the entity using the entity method
-        self.save(entity_manager)
+        # checks if the entity is persisted
+        is_persisted = self.is_persisted()
+
+        # saves the entity using the entity method,
+        # only if the entity is not persisted
+        not is_persisted and self.save(entity_manager)
 
 def is_persisted(self, entity_manager = None):
     """
