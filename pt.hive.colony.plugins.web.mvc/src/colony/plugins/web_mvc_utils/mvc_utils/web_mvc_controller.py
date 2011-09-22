@@ -515,9 +515,28 @@ def save_entity_relations(self, rest_request, entity_map, entity, relations_map)
             # continues the loop
             continue
 
-        # unpacks the relation item, retrieving the relation
-        # type and relation method
-        relation_type, relation_method = relation_item
+        # retrieves the relation item length
+        relation_item_length = len(relation_item)
+
+        # in case the relation item length is three
+        # (it does contain the relation persist flag)
+        if relation_item_length == 2:
+            # unpacks the relation item, retrieving the relation
+            # type and relation method
+            relation_type, relation_method = relation_item
+
+            # sets the relation persist flag (default value)
+            relation_persist = True
+        # in case the relation item length is three
+        # (it contains the relation persist flag)
+        elif relation_item_length == 3:
+            # unpacks the relation item, retrieving the relation
+            # type relation method and relation persist
+            relation_type, relation_method, relation_persist = relation_item
+        # otherwise the relation item length is invalid
+        else:
+            # raises a runtime error
+            raise RuntimeError("invalid relation item length")
 
         # retrieves the default relation value according
         # to the relation type
@@ -541,7 +560,7 @@ def save_entity_relations(self, rest_request, entity_map, entity, relations_map)
         for relation_value in relation_values:
             try:
                 # invokes the relation method for the entity
-                relation_entity = relation_value and relation_method(rest_request, relation_value) or None
+                relation_entity = relation_value and relation_method(rest_request, relation_value, relation_persist) or None
             except web_mvc_utils_exceptions.ModelValidationError, exception:
                 # updates the relation entity with the model
                 # in the model validation error
