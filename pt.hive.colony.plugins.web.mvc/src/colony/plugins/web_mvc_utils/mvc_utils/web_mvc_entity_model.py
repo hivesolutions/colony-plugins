@@ -161,12 +161,12 @@ def persist(self, persist_type, entity_manager = None):
 
     # in case the persist type is all
     if persist_type == PERSIST_ALL_TYPE:
-        # saves or updates the entity using the entity manager
-        entity_manager.save_update(self)
+        # saves or updates the entity using the entity method
+        self.save_update(entity_manager)
     # in case the persist type is save
     elif persist_type == PERSIST_SAVE_TYPE:
-        # saves the entity using the entity manager
-        entity_manager.save(self)
+        # saves the entity using the entity method
+        self.save(entity_manager)
 
 def is_persisted(self, entity_manager = None):
     """
