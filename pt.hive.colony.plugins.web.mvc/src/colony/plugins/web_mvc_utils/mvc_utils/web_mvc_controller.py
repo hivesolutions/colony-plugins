@@ -536,7 +536,8 @@ def save_entity_relations(self, rest_request, entity_map, entity, relations_map)
         # relation entities
         relation_validation_failed = False
 
-        # for each relation value
+        # iterates over all the relation values to
+        # create (or save) the entities
         for relation_value in relation_values:
             try:
                 # invokes the relation method for the entity
