@@ -188,6 +188,19 @@ class EntityManagerSqliteEnginePlugin(colony.base.plugin_system.Plugin):
         return self.entity_manager_sqlite_engine.find_all_entities_options(connection, entity_class, value, search_field_name, options = options)
 
     def lock(self, connection, entity_class, id_value):
+        """
+        Locks the database using the given connection
+        for the given entity class and id value.
+
+        @type connection: Connection
+        @param connection: The database connection to use.
+        @type entity_class: Class
+        @param entity_class: The entity class.
+        @type id_value: Object
+        @param id_value: The value of the id attribute
+        of the entity to be used for locking.
+        """
+
         return self.entity_manager_sqlite_engine.lock(connection, entity_class, id_value)
 
     def get_business_helper_plugin(self):

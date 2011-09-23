@@ -2714,6 +2714,19 @@ class EntityManagerSqliteEngine:
         return entities_list
 
     def lock(self, connection, entity_class, id_value):
+        """
+        Locks the database using the given connection
+        for the given entity class and id value.
+
+        @type connection: Connection
+        @param connection: The database connection to use.
+        @type entity_class: Class
+        @param entity_class: The entity class.
+        @type id_value: Object
+        @param id_value: The value of the id attribute
+        of the entity to be used for locking.
+        """
+
         # retrieves the entity class name
         entity_class_name = entity_class.__name__
 

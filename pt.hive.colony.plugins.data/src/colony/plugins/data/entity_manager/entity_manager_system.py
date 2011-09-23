@@ -862,6 +862,20 @@ class EntityManager:
             # updates the entity
             self._update(entity)
 
+    def get(self, entity_class, id_value, options = {}):
+        # retrieves the connection object
+        connection = self.get_connection()
+
+        # finds the entity
+        return self.entity_manager_engine_plugin.find_entity_options(connection, entity_class, id_value, options)
+
+    def find_a(self, entity_class, options):
+        # retrieves the connection object
+        connection = self.get_connection()
+
+        # finds all the entities
+        return self.entity_manager_engine_plugin.find_all_entities_options(connection, entity_class, None, None, options)
+
     def find(self, entity_class, id_value):
         # retrieves the connection object
         connection = self.get_connection()
@@ -908,7 +922,8 @@ class EntityManager:
         # retrieves the connection object
         connection = self.get_connection()
 
-        # finds all the entities
+        # locks the connection for the given entity class
+        # and id value
         return self.entity_manager_engine_plugin.lock(connection, entity_class, id_value)
 
     def get_entity_class_attribute_names(self, entity_class):
