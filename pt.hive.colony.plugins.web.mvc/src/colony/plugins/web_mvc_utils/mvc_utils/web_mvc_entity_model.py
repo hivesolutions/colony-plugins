@@ -198,20 +198,6 @@ def persist(self, persist_type, entity_manager = None):
         # saves the entity using the entity manager
         entity_manager.save(self)
 
-def is_saved(self):
-    # in case the current entity model
-    # does not contain the data state value
-    if not hasattr(self, DATA_SATE_VALUE):
-        # returns false
-        return False
-
-    # checks if the current data state
-    # is saved (value)
-    saved = self.data_state == SAVED_STATE_VALUE
-
-    # returns the saved value
-    return saved
-
 def is_persisted(self, entity_manager = None):
     """
     Checks the internal structure of the entity
@@ -292,6 +278,78 @@ def get_resource_path(self):
 
     # creates and returns the target request
     return entity_class_pluralized + "/" + id_attribute_value_string
+
+def is_saved(self):
+    """
+    Checks the internal structure of the entity
+    to check if the last operation being made on
+    it was a save.
+
+    @rtype: bool
+    @return: If the last operation done in the
+    entity was a save.
+    """
+
+    # in case the current entity model
+    # does not contain the data state value
+    if not hasattr(self, DATA_SATE_VALUE):
+        # returns false
+        return False
+
+    # checks if the current data state
+    # is saved (value)
+    saved = self.data_state == SAVED_STATE_VALUE
+
+    # returns the saved value
+    return saved
+
+def is_updated(self):
+    """
+    Checks the internal structure of the entity
+    to check if the last operation being made on
+    it was an update.
+
+    @rtype: bool
+    @return: If the last operation done in the
+    entity was an update.
+    """
+
+    # in case the current entity model
+    # does not contain the data state value
+    if not hasattr(self, DATA_SATE_VALUE):
+        # returns false
+        return False
+
+    # checks if the current data state
+    # is updated (value)
+    updated = self.data_state == UPDATED_STATE_VALUE
+
+    # returns the updated value
+    return updated
+
+def is_removed(self):
+    """
+    Checks the internal structure of the entity
+    to check if the last operation being made on
+    it was a remove.
+
+    @rtype: bool
+    @return: If the last operation done in the
+    entity was a remove.
+    """
+
+    # in case the current entity model
+    # does not contain the data state value
+    if not hasattr(self, DATA_SATE_VALUE):
+        # returns false
+        return False
+
+    # checks if the current data state
+    # is removed (value)
+    removed = self.data_state == REMOVED_STATE_VALUE
+
+    # returns the removed value
+    return removed
 
 def _get_entity_class_pluralized(self):
     """
