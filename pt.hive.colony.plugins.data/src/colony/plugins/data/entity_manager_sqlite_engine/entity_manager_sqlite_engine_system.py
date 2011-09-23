@@ -124,7 +124,7 @@ ATTRIBUTE_EXCLUSION_LIST = (
     "__format__",
     "__sizeof__",
     "__subclasshook__",
-    "_data_state_",
+    "data_state",
     "mapping_options",
     "id_attribute_name"
 )
@@ -1133,7 +1133,7 @@ class EntityManagerSqliteEngine:
         self.save_entity_indirect_relations(connection, entity)
 
         # sets the entity data state as saved
-        entity._data_state_ = SAVED_STATE_VALUE
+        entity.data_state = SAVED_STATE_VALUE
 
     def save_entities(self, connection, entities):
         # iterates over all the entities
@@ -1633,7 +1633,7 @@ class EntityManagerSqliteEngine:
         self.save_entity_indirect_relations(connection, entity)
 
         # sets the entity data state as updated
-        entity._data_state_ = UPDATED_STATE_VALUE
+        entity.data_state = UPDATED_STATE_VALUE
 
     def remove_entity(self, connection, entity):
         """
@@ -1688,7 +1688,7 @@ class EntityManagerSqliteEngine:
         self.remove_entity_indirect_relations(connection, entity)
 
         # sets the entity data state as removed
-        entity._data_state_ = REMOVED_STATE_VALUE
+        entity.data_state = REMOVED_STATE_VALUE
 
     def remove_entity_indirect_relations(self, connection, entity, remove_lazy = True):
         # retrieves the database connection from the connection object
