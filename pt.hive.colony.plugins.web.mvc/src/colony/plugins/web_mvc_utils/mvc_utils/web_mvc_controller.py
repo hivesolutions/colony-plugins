@@ -502,11 +502,13 @@ def set_entity_relation(self, entity, relation_name, relation_value):
     # sets the relation value in entity
     setattr(entity, relation_name, relation_value)
 
-def save_entity_relations(self, rest_request, entity_map, entity, relations_map):
+def save_entity_relations(self, rest_request, entity_map, entity, relations_map, persist_type):
     """
     Saves the entity relations in the in the entity with the given map and values.
     The relations map describes the various entity relation with a tuple
     containing the type of relation and the method to be sun to save it.
+    The persist type mask is going to be used to filter some of the attributes
+    sent to the underlying layer of relations saving.
 
     @type rest_request: RestRequest
     @param rest_request: The rest request to be used.
@@ -517,6 +519,9 @@ def save_entity_relations(self, rest_request, entity_map, entity, relations_map)
     @type relations_map: Dictionary
     @param relations_map: The map containing the description of
     the relation to be set.
+    @type persist_type: int
+    @param persist_type: Mask controlling the permissions of persistence
+    for the saving of the entity relations.
     """
 
     # iterates over all the relations
@@ -574,9 +579,27 @@ def save_entity_relations(self, rest_request, entity_map, entity, relations_map)
         # iterates over all the relation values to
         # save (or update) the entities
         for relation_value in relation_values:
+            # validate the given entity for relation with the relation
+            # value in the attribute of name relation name
+            valid_relation = self.validate_entity_relation(entity, relation_value, relation_name)
+
+            # in case the relation is valid (no need to remove update)
+            if valid_relation:
+                # "calculates" the new relation persist type based on the base relation persist type
+                # plus the filtering based on the top level persist type (only update or save in case the top
+                # level contains it, propagation)
+                _relation_persist_type = relation_persist_type & (persist_type | PERSIST_ASSOCIATE_TYPE)
+            # otherwise the relation is not valid (update is not safe)
+            else:
+                # "calculates" the new relation persist type based on the base relation persist type
+                # plus the filtering based on the top level persist type (only update or save in case the top
+                # level contains it, propagation) and then finally removes the update type from the
+                # persist type (it's not safe)
+                _relation_persist_type = relation_persist_type & (persist_type | PERSIST_ASSOCIATE_TYPE) & (PERSIST_ALL_TYPE ^ PERSIST_UPDATE_TYPE)
+
             try:
                 # calls the relation method for the entity (saving or updating it)
-                relation_entity = relation_value and relation_method(rest_request, relation_value, relation_persist_type) or None
+                relation_entity = relation_value and relation_method(rest_request, relation_value, _relation_persist_type) or None
             except web_mvc_utils_exceptions.ModelValidationError, exception:
                 # updates the relation entity with the model
                 # in the model validation error
@@ -614,6 +637,51 @@ def save_entity_relations(self, rest_request, entity_map, entity, relations_map)
             # sets the relation entities in the entity
             # in all cases (it's a list)
             setattr(entity, relation_name, relation_entities)
+
+def validate_entity_relation(self, entity, relation_entity_map, relation_name):
+    """
+    Validates the entity relation, checking if the given entity
+    and the entity represented by the relation entity map are really
+    related in the data source.
+
+    @type entity: Entity
+    @param entity: The base entity to be used in the validation.
+    @type relation_entity_map: Dictionary
+    @param relation_entity_map: The map containing the entity
+    definition to be validated as relation.
+    @type relation_name: String
+    @param relation_name: The name of the attribute for "joining"
+    the relation.
+    @rtype: bool
+    @return: The result of the validation for relation.
+    """
+
+    # retrieves the entity manager from the entity
+    entity_manager = entity._entity_manager
+
+    # retrieves the relation entity class
+    relation_entity_class = entity.get_relation_entity_class(relation_name)
+
+    # retrieves the relation attribute type and
+    # the converts it into the real (python) data type
+    relation_attribute_type = entity.get_attribute_data_type(relation_name)
+    relation_attribute_real_type = DATA_TYPE_CAST_TYPES_MAP[relation_attribute_type]
+
+    # retrieves the id attribute name for the relation entity class
+    id_attribute_name = entity_manager.get_entity_class_id_attribute_name(relation_entity_class)
+
+    # retrieves the value for the id attribute (of the relation)
+    id_attribute_value = relation_entity_map.get(id_attribute_name, None)
+    id_attribute_value = self._cast_safe(id_attribute_value, relation_attribute_real_type)
+
+    # in case the id attribute is set (and valid) entity is not persisted
+    # and so it need to be validated for relation coherence, this method
+    # checks if the relation is really associated with the given entity using
+    # id attribute value for the checking
+    valid_relation = id_attribute_value == None or entity_manager.validate_relation(entity, id_attribute_value, relation_name)
+
+    # returns if the relation is valid
+    return valid_relation
 
 def get_entity_map_parameters(self, entity_map, delete_parameters = True):
     """
