@@ -124,6 +124,7 @@ ATTRIBUTE_EXCLUSION_LIST = (
     "__format__",
     "__sizeof__",
     "__subclasshook__",
+    "_data_state_",
     "mapping_options",
     "id_attribute_name"
 )
@@ -250,6 +251,9 @@ class EntityManagerSqliteEngine:
     _query_time = None
     """ The value that control the time spent in query execution """
 
+    _attribute_names_cache_map = {}
+    """ The map that holds cache data related with attribute names for the entity classes """
+
     def __init__(self, entity_manager_sqlite_engine_plugin):
         """
         Constructor of the class
@@ -262,6 +266,7 @@ class EntityManagerSqliteEngine:
 
         self._query_counter = 0
         self._query_time = 0.0
+        self._attribute_names_cache_map = {}
 
     def get_engine_name(self):
         """
@@ -1885,7 +1890,7 @@ class EntityManagerSqliteEngine:
 
                 query_string_buffer.write("'" + entity_sub_class_name + "' as class_data_type")
 
-                # @todo cache this value it's to painful to use
+                # retrieves the entity sub class valid attribute names
                 entity_sub_class_valid_attribute_names = self.get_entity_class_attribute_names(entity_sub_class)
 
                 for entity_class_valid_attribute_name in entity_class_valid_attribute_names:
@@ -2752,11 +2757,25 @@ class EntityManagerSqliteEngine:
         @return: The list with the names of all attributes from the given entity class.
         """
 
+        # tries to retrieves the entity class valid attribute
+        # names from the attribute names cache map
+        entity_class_valid_attribute_names = self._attribute_names_cache_map.get(entity_class, None)
+
+        # in case the entity class valid attribute names
+        # are found and valid
+        if not entity_class_valid_attribute_names == None:
+            # returns the entity class valid attribute names
+            return entity_class_valid_attribute_names
+
         # retrieves all the class attribute names
         entity_class_attribute_names = dir(entity_class)
 
         # retrieves all the valid class attribute names, removes method values, the name exceptions, the indirect attributes and the mapped by other attributes
         entity_class_valid_attribute_names = [attribute_name for attribute_name in entity_class_attribute_names if not attribute_name in ATTRIBUTE_EXCLUSION_LIST and not type(getattr(entity_class, attribute_name)) in TYPE_EXCLUSION_LIST and not self.is_attribute_name_table_joined_relation(attribute_name, entity_class) and not self.is_attribute_name_mapped_by_other(attribute_name, entity_class)]
+
+        # sets the entity class valid attribute names in the
+        # attribute names cache map
+        self._attribute_names_cache_map[entity_class] = entity_class_valid_attribute_names
 
         # returns the entity class valid attribute names
         return entity_class_valid_attribute_names

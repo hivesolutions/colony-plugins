@@ -60,6 +60,7 @@ ATTRIBUTE_EXCLUSION_LIST = (
     "__format__",
     "__sizeof__",
     "__subclasshook__",
+    "_data_state_",
     "mapping_options",
     "id_attribute_name"
 )
