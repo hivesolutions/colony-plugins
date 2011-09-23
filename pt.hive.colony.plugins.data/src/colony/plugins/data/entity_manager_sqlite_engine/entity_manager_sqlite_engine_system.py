@@ -209,6 +209,15 @@ ID_ATTRIBUTE_NAME_VALUE = "id_attribute_name"
 EXISTS_ENTITY_DEFINITION_QUERY = "select name from SQLite_Master"
 """ The exists entity definition query """
 
+SAVED_STATE_VALUE = 1
+""" The saved state value """
+
+UPDATED_STATE_VALUE = 2
+""" The updated state value """
+
+REMOVED_STATE_VALUE = 3
+""" The removed state value """
+
 INEXISTING_ATTRIBUTE_REASON_CODE = 1
 """ The inexisting attribute reason code """
 
@@ -1081,20 +1090,24 @@ class EntityManagerSqliteEngine:
         # creates the cursor for the given connection
         cursor = database_connection.cursor()
 
-        # generates the id for the entity if necessary
-        self.generate_id(connection, entity)
+        try:
+            # generates the id for the entity if necessary
+            self.generate_id(connection, entity)
 
-        # retrieves the query string value
-        query_string_value = self.create_save_entity_query(entity)
+            # retrieves the query string value
+            query_string_value = self.create_save_entity_query(entity)
 
-        # executes the query inserting the values
-        self.execute_query(cursor, query_string_value)
-
-        # closes the cursor
-        cursor.close()
+            # executes the query inserting the values
+            self.execute_query(cursor, query_string_value)
+        finally:
+            # closes the cursor
+            cursor.close()
 
         # saves the entity indirect relations
         self.save_entity_indirect_relations(connection, entity)
+
+        # sets the entity data state as saved
+        entity._data_state_ = SAVED_STATE_VALUE
 
     def save_entities(self, connection, entities):
         # iterates over all the entities
@@ -1591,6 +1604,9 @@ class EntityManagerSqliteEngine:
         # saves the entity indirect relations
         self.save_entity_indirect_relations(connection, entity)
 
+        # sets the entity data state as updated
+        entity._data_state_ = UPDATED_STATE_VALUE
+
     def remove_entity(self, connection, entity):
         """
         Removes the given entity instance from the database, using the given connection.
@@ -1641,6 +1657,9 @@ class EntityManagerSqliteEngine:
 
         # removes entity indirect relations
         self.remove_entity_indirect_relations(connection, entity)
+
+        # sets the entity data state as removed
+        entity._data_state_ = REMOVED_STATE_VALUE
 
     def remove_entity_indirect_relations(self, connection, entity, remove_lazy = True):
         # retrieves the database connection from the connection object
