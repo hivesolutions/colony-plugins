@@ -254,6 +254,12 @@ class EntityManagerSqliteEngine:
     _attribute_names_cache_map = {}
     """ The map that holds cache data related with attribute names for the entity classes """
 
+    _mapped_by_other_names_cache_map = {}
+    """ The map that holds cache data related with mapped by other names for the entity classes """
+
+    _indirect_attribute_names_cache_map = {}
+    """ The map that holds cache data related with indirect attribute names for the entity classes """
+
     def __init__(self, entity_manager_sqlite_engine_plugin):
         """
         Constructor of the class
@@ -267,6 +273,10 @@ class EntityManagerSqliteEngine:
         self._query_counter = 0
         self._query_time = 0.0
         self._attribute_names_cache_map = {}
+        self._mapped_by_other_names_cache_map = {}
+        self._indirect_attribute_names_cache_map = {}
+
+        self._aux = 0.0
 
     def get_engine_name(self):
         """
@@ -1783,6 +1793,8 @@ class EntityManagerSqliteEngine:
         return self.find_entity_options(connection, entity_class, id_value, search_field_name, retrieved_entities_list)
 
     def find_entity_options(self, connection, entity_class, id_value, search_field_name = None, retrieved_entities_list = None, options = {}):
+        # ZONA 0 BEGIN 15 MS
+
         # retrieves the eager loading relations option
         eager_loading_relations = options.get("eager_loading_relations", {})
 
@@ -1839,7 +1851,12 @@ class EntityManagerSqliteEngine:
         # creates the cursor for the given connection
         cursor = database_connection.cursor()
 
+        # ZONA 0 END 15MS
+
+
         try:
+            # ZONA 1 BEGIN (40 MS)
+
             # retrieves the entity sub classes
             entity_sub_classes = self.get_entity_sub_classes(entity_class)
 
@@ -1912,14 +1929,33 @@ class EntityManagerSqliteEngine:
             # retrieves the query string value
             query_string_value = query_string_buffer.get_value()
 
+
+            # ZONA 1 END (40 MS)
+
+            # ZONA 2 BEGIN (40 MS)
+
             # executes the query retrieving the values
             self.execute_query(cursor, query_string_value)
+
+            # ZONA 2 END (40 MS)
+
+
+            # ZONA 3 BEGIN (9 MS)
 
             # selects the values from the cursor
             values_list = [value for value in cursor]
 
+            # ZONA 3 END (9 MS)
+
+
+
+
             # in case there is at least one selection
             if len(values_list):
+                # ZONA 4 BEGIN (140 MS) --> PODE TER DUPLICADOS DE TEMPO
+
+
+
                 # retrieves the first value from the values list
                 first_value = values_list[0]
 
@@ -1966,6 +2002,7 @@ class EntityManagerSqliteEngine:
                                 # adds the relation attribute tuple to the list of relation attributes
                                 relation_attributes_list.append(relation_attribute_tuple)
                         else:
+
                             # retrieves the entity class attribute value
                             entity_class_valid_attribute_value = getattr(entity_class, entity_class_valid_attribute_name)
 
@@ -1980,6 +2017,12 @@ class EntityManagerSqliteEngine:
 
                     # increments the index value
                     index += 1
+
+                # ZONA 4 END (60 MS) --> PODE TER DUPLICADOS DE TEMPO
+
+                # ZONA 5 START (287 MS)
+
+                init = time.clock()
 
                 # retrieves all the mapped by other names
                 mapped_by_other_names = self.get_entity_class_mapped_by_other_names(entity_class)
@@ -2045,6 +2088,15 @@ class EntityManagerSqliteEngine:
 
                         # sets the relation attribute in the instance
                         setattr(entity, entity_class_valid_attribute_name, relation_attribute_value)
+
+                delta = time.clock() - init
+
+                self._aux += delta
+
+                print self._aux
+
+                # END ZONA 5 (287 MS)
+
 
                 # retrieves all the valid indirect attribute names, removes method values and the name exceptions
                 entity_valid_indirect_attribute_names = self.get_entity_indirect_attribute_names(entity)
@@ -2757,7 +2809,7 @@ class EntityManagerSqliteEngine:
         @return: The list with the names of all attributes from the given entity class.
         """
 
-        # tries to retrieves the entity class valid attribute
+        # tries to retrieve the entity class valid attribute
         # names from the attribute names cache map
         entity_class_valid_attribute_names = self._attribute_names_cache_map.get(entity_class, None)
 
@@ -2792,11 +2844,29 @@ class EntityManagerSqliteEngine:
         @return: The list with the names of all attributes from the given entity class.
         """
 
+
+
+        # tries to retrieves the entity class mapped by
+        # other attribute names from the mapped by other
+        # names cache map
+        entity_class_mapped_by_other_attribute_names = self._mapped_by_other_names_cache_map.get(entity_class, None)
+
+        # in case the entity class mapped by other attribute names
+        # are found and valid
+        if not entity_class_mapped_by_other_attribute_names == None:
+            # returns the entity class mapped by other
+            # attribute names
+            return entity_class_mapped_by_other_attribute_names
+
         # retrieves all the class attribute names
         entity_class_attribute_names = dir(entity_class)
 
         # retrieves all the mapped by other attribute names, removes method values, the name exceptions, the indirect attributes and filters the mapped by other attributes
         entity_class_mapped_by_other_attribute_names = [attribute_name for attribute_name in entity_class_attribute_names if not attribute_name in ATTRIBUTE_EXCLUSION_LIST and not type(getattr(entity_class, attribute_name)) in TYPE_EXCLUSION_LIST and not self.is_attribute_name_table_joined_relation(attribute_name, entity_class) and self.is_attribute_name_mapped_by_other(attribute_name, entity_class)]
+
+
+
+        self._mapped_by_other_names_cache_map[entity_class] = entity_class_mapped_by_other_attribute_names
 
         # returns the entity class mapped by other names
         return entity_class_mapped_by_other_attribute_names
@@ -2813,11 +2883,21 @@ class EntityManagerSqliteEngine:
         @return: The list with the names of all the indirect attributes from the given entity class.
         """
 
+        entity_class_valid_indirect_attribute_names = self._indirect_attribute_names_cache_map.get(entity_class, None)
+
+        if not entity_class_valid_indirect_attribute_names == None:
+            return entity_class_valid_indirect_attribute_names
+
+
+
         # retrieves all the class attribute names
         entity_class_attribute_names = dir(entity_class)
 
         # retrieves all the valid class indirect attribute names, removes method values and the name exceptions and the non indirect attributes
         entity_class_valid_indirect_attribute_names = [attribute_name for attribute_name in entity_class_attribute_names if not attribute_name in ATTRIBUTE_EXCLUSION_LIST and not type(getattr(entity_class, attribute_name)) in TYPE_EXCLUSION_LIST and self.is_attribute_name_indirect_relation(attribute_name, entity_class)]
+
+
+        self._indirect_attribute_names_cache_map[entity_class] = entity_class_valid_indirect_attribute_names
 
         # returns the entity class valid indirect attribute names
         return entity_class_valid_indirect_attribute_names
